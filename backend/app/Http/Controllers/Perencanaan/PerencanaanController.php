@@ -52,6 +52,8 @@ use App\Transaksi\LPJ;
 use App\Transaksi\PemungutanPajak;
 use App\Transaksi\PenyetoranPajak;
 use App\Transaksi\JasaGiro;
+use App\Transaksi\Retur;
+use App\Transaksi\Jurnal;
 use App\Master\AsalProduk;
 use App\Transaksi\UraianPendapatan;
 use phpDocumentor\Reflection\Types\Null_;
@@ -3266,6 +3268,162 @@ class PerencanaanController extends ApiController {
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
 
+    public function saveRetur(Request $request) {
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        try{ 
+                    if($request['norec'] == ''){
+                        $MA = new Retur();
+                        $norecKS = $MA->generateNewId();
+                        $MA->norec = $norecKS;
+                        $MA->kdprofile = $idProfile;
+                        $MA->statusenabled = true;
+                    } else{
+                        $MA = Retur::where('norec', '=', $request['norec'])->first();
+                    }
+                    
+                    
+                    $MA->keteranganretur = $request['keteranganretur'];
+                    $MA->tglretur = $request['tglretur'];
+                    $MA->jumlahretur = $request['jumlahretur'];
+                    $MA->noretur = $request['noretur'];
+                    $MA->save();
+
+           $transStatus = 'true';
+       } catch (\Exception $e) {
+            $transStatus = 'false';
+       }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'result' => $MA,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'line'=> $e->getLine(),
+                'message'=> $e->getMessage(),
+                'as' => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function saveJurnal(Request $request) {
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        try{ 
+                    if($request['norec'] == ''){
+                        $MA = new Jurnal();
+                        $norecKS = $MA->generateNewId();
+                        $MA->norec = $norecKS;
+                        $MA->kdprofile = $idProfile;
+                        $MA->statusenabled = true;
+                    } else{
+                        $MA = Jurnal::where('norec', '=', $request['norec'])->first();
+                    }
+                    
+                    
+                    $MA->keteranganjurnal = $request['keteranganjurnal'];
+                    $MA->tgljurnal = $request['tgljurnal'];
+                    $MA->debet = $request['debet'];
+                    $MA->kredit = $request['kredit'];
+                    $MA->nojurnal = $request['nojurnal'];
+                    $MA->kdakun = $request['kdakun'];
+                    $MA->jenis = 1;
+                    $MA->save();
+
+           $transStatus = 'true';
+       } catch (\Exception $e) {
+            $transStatus = 'false';
+       }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'result' => $MA,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'line'=> $e->getLine(),
+                'message'=> $e->getMessage(),
+                'as' => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function saveJurnalP(Request $request) {
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        try{ 
+                    if($request['norec'] == ''){
+                        $MA = new Jurnal();
+                        $norecKS = $MA->generateNewId();
+                        $MA->norec = $norecKS;
+                        $MA->kdprofile = $idProfile;
+                        $MA->statusenabled = true;
+                    } else{
+                        $MA = Jurnal::where('norec', '=', $request['norec'])->first();
+                    }
+                    
+                    
+                    $MA->keteranganjurnal = $request['keteranganjurnal'];
+                    $MA->tgljurnal = $request['tgljurnal'];
+                    $MA->debet = $request['debet'];
+                    $MA->kredit = $request['kredit'];
+                    $MA->nojurnal = $request['nojurnal'];
+                    $MA->kdakun = $request['kdakun'];
+                    $MA->jenis = 2;
+                    $MA->save();
+
+           $transStatus = 'true';
+       } catch (\Exception $e) {
+            $transStatus = 'false';
+       }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'result' => $MA,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'line'=> $e->getLine(),
+                'message'=> $e->getMessage(),
+                'as' => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
     public function saveBKUDetail(Request $request) {
         DB::beginTransaction();
         $kdProfile = $this->getDataKdProfile($request);
@@ -3714,6 +3872,82 @@ class PerencanaanController extends ApiController {
             );
         } else {
             $transMessage = "Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'line'=> $e->getLine(),
+                'message'=> $e->getMessage(),
+                'as' => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    
+
+    public function deleteJurnal(Request $request) {
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        try{ 
+                    $MA = Jurnal::where('norec', '=', $request['norec'])->first();
+                    $MA->statusenabled = false;
+                    $MA->save();
+
+           $transStatus = 'true';
+       } catch (\Exception $e) {
+            $transStatus = 'false';
+       }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Hapus";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'result' => $MA,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Hapus Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'line'=> $e->getLine(),
+                'message'=> $e->getMessage(),
+                'as' => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function deleteRetur(Request $request) {
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        try{ 
+                    $MA = Retur::where('norec', '=', $request['norec'])->first();
+                    $MA->statusenabled = false;
+                    $MA->save();
+
+           $transStatus = 'true';
+       } catch (\Exception $e) {
+            $transStatus = 'false';
+       }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Hapus";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'result' => $MA,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Hapus Gagal";
             DB::rollBack();
             $result = array(
                 'status' => 400,
@@ -5739,6 +5973,76 @@ order by kodemataanggaran"));
         $data = DB::select(DB::raw("
         select id, jenisbukti from jenisbukti_m where kdprofile = 30 and statusenabled = true
         and kodeexternal = 'BKU'
+        ")
+        );
+
+        $result = array(
+            'data' => $data,
+            'message' => '@epic',
+        );
+
+        return $this->respond($result);
+    }
+    
+
+    public function getRetur(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $tglAwal = $request['awal'];
+        $tglAkhir = $request['akhir'];
+        
+        $data = DB::select(DB::raw("
+        select *
+        from returakuntansi_t where kdprofile = 30 and statusenabled = true
+        and tglretur between '$tglAwal' and '$tglAkhir'
+        ")
+        );
+
+        $result = array(
+            'data' => $data,
+            'message' => '@epic',
+        );
+
+        return $this->respond($result);
+    }
+
+    public function getJurnal(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $tglAwal = $request['awal'];
+        $tglAkhir = $request['akhir'];
+        
+        $data = DB::select(DB::raw("
+        select jpp.*, pr.noaccount kdakun, pr.namaaccount namaakun, pr.id idakun
+        from jurnalpenyesuaianpenutupan_t jpp 
+        inner join chartofaccount_m as pr on pr.id = jpp.kdakun
+        where jpp.kdprofile = 30 and jpp.statusenabled = true
+        and jpp.tgljurnal between '$tglAwal' and '$tglAkhir'
+        and jpp.jenis = 1
+        ")
+        );
+
+        $result = array(
+            'data' => $data,
+            'message' => '@epic',
+        );
+
+        return $this->respond($result);
+    }
+
+    public function getJurnalP(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $tglAwal = $request['awal'];
+        $tglAkhir = $request['akhir'];
+        
+        $data = DB::select(DB::raw("
+        select jpp.*, pr.noaccount kdakun, pr.namaaccount namaakun, pr.id idakun
+        from jurnalpenyesuaianpenutupan_t jpp 
+        inner join chartofaccount_m as pr on pr.id = jpp.kdakun
+        where jpp.kdprofile = 30 and jpp.statusenabled = true
+        and jpp.tgljurnal between '$tglAwal' and '$tglAkhir'
+        and jpp.jenis = 2
         ")
         );
 

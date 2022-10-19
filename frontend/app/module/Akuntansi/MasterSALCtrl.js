@@ -52,6 +52,29 @@ define(['initialize'], function (initialize) {
 			}
 
             $scope.daftarMasterOpt = {
+                toolbar: [
+                    "excel",
+                ],
+                excel: {
+                    fileName: "SAL.xlsx",
+                    allPages: true,
+                },
+                excelExport: function (e) {
+                    var sheet = e.workbook.sheets[0];
+                    sheet.frozenRows = 2;
+                    sheet.mergedCells = ["A1:D1"];
+                    sheet.name = "Report";
+
+                    var myHeaders = [{
+                        value: "SAL",
+                        fontSize: 20,
+                        textAlign: "center",
+                        background: "#ffffff",
+                        // color:"#ffffff"
+                    }];
+
+                    sheet.rows.splice(0, 0, { cells: myHeaders, type: "header", height: 70 });
+                },
                 pageable: true,
                 scrollable: true,
                 columns: [

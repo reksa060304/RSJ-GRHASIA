@@ -1017,6 +1017,18 @@
             "urlDep": "module/Perencanaan/JasaGiroCtrl"
         },
         {
+            "nameDep": "MasterDataAkuntansiCtrl",
+            "urlDep": "module/Perencanaan/MasterDataAkuntansiCtrl"
+        },
+        {
+            "nameDep": "JurnalPenyesuaianCtrl",
+            "urlDep": "module/Perencanaan/JurnalPenyesuaianCtrl"
+        },
+        {
+            "nameDep": "JurnalPenutupanCtrl",
+            "urlDep": "module/Perencanaan/JurnalPenutupanCtrl"
+        },
+        {
             "nameDep": "MasterPihakKetigaCtrl",
             "urlDep": "module/Perencanaan/MasterPihakKetigaCtrl"
         },

@@ -5179,6 +5179,66 @@
     ]
   },
   {
+    "name": "MasterDataAkuntansi",
+    "url": "/TWFzdGVyRGF0YUFrdW50YW5zaQ==",
+    "templateurl": "module/Perencanaan/MasterDataAkuntansi.html",
+    "controller": "MasterDataAkuntansiCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "JurnalPenyesuaian",
+    "url": "/SnVybmFsUGVueWVzdWFpYW4=",
+    "templateurl": "module/Perencanaan/JurnalPenyesuaian.html",
+    "controller": "JurnalPenyesuaianCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "JurnalPenutupan",
+    "url": "/SnVybmFsUGVudXR1cGFu",
+    "templateurl": "module/Perencanaan/JurnalPenutupan.html",
+    "controller": "JurnalPenutupanCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
     "name": "MasterPihakKetiga",
     "url": "/TWFzdGVyUGloYWtLZXRpZ2E=",
     "templateurl": "module/Perencanaan/MasterPihakKetiga.html",
