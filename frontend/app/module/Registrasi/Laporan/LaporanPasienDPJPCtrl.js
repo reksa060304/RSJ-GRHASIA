@@ -14,6 +14,13 @@ define(['initialize'], function (initialize) {
                 LoadData()
             }
             function loadCombo(){
+                $scope.listInstalasi = [{
+                    id: 1,
+                    nama: "Instalasi Rawat Jalan"
+                }, {
+                    id: 2,
+                    nama: "Instalasi Rawat Inap"
+                }]
                  medifirstService.get("registrasi/laporan/get-combo-box-laporan-summary")
                     .then(function (data) {
                         $scope.listRuangans=data.data.ruanganrajal;
@@ -30,7 +37,7 @@ define(['initialize'], function (initialize) {
                 LoadData()
             }
             function LoadData() {
-
+                
                 $scope.isRouteLoading = false;
                 var tglAwal = moment($scope.item.tglawal).format('YYYY-MM-DD HH:mm');
                 var tglAkhir = moment($scope.item.tglakhir).format('YYYY-MM-DD HH:mm');;
@@ -49,7 +56,11 @@ define(['initialize'], function (initialize) {
                 if ($scope.item.jenisPelayanan != undefined) {
                     tempJenPelId = "&jenisPelayanan=" + $scope.item.jenisPelayanan.id;
                 }
-
+                var instalasi = '';
+                if ($scope.item.instalasi != undefined){
+                    instalasi = "&instalasi=" + $scope.item.instalasi.id
+                }
+                
                 var chacePeriode = {
                     0: tglAwal,
                     1: tglAkhir
@@ -58,89 +69,11 @@ define(['initialize'], function (initialize) {
 
              medifirstService.get("registrasi/laporan/get-data-lap-pasien-dpjp?"
                     + "tglAwal=" + tglAwal
-                    + "&tglAkhir=" + tglAkhir).then(function (data) {
-                        // $scope.totallaki = 0;
-                        // $scope.totalwanita = 0;
-                        // $scope.totalbaru = 0;
-                        // $scope.totallama = 0;
-                        // $scope.jumlahkunjungan = 0;
+                    + "&tglAkhir=" + tglAkhir + instalasi).then(function (data) {
                         var data =data.data
                         var group =  []
                         var podo = false
-                        for (var i = 0; i < data.length; i++) {
-                            var element1 = data[i]
-                            podo = false
-                            // for (var x = 0; x < group.length; x++) {
-                            //    var element=  group[x]
-                            //    // var jumlah = 
-                            //     group[x].no = x + 1
-                            //    if(element.namaruangan == element1.namaruangan && element.kelompokpasien == element1.kelompokpasien){
-                                    
-                            //         // $scope.totallaki= $scope.totallaki + parseFloat(group[x].laki)
-                            //         // $scope.totalwanita= $scope.totalwanita + parseFloat(group[x].wanita)
-                            //         // $scope.totalbaru= $scope.totalbaru + parseFloat(group[x].baru)
-                            //         // $scope.totallama= $scope.totallama + parseFloat(group[x].lama)
-                            //         // $scope.totaljumlah = $scope.totaljumlah + parseFloat(group[x].jumlah)
-
-                            //         element.laki = parseFloat(element.laki) + parseFloat(element1.laki)
-                            //         element.wanita = parseFloat(element.wanita) + parseFloat(element1.wanita)        
-                            //         element.baru = parseFloat(element.baru) + parseFloat(element1.baru)       
-                            //         element.lama = parseFloat(element.lama) + parseFloat(element1.lama)
-                            //         element.tunai = parseFloat(element.tunai) + parseFloat(element1.tunai)
-                            //         element.bpjs = parseFloat(element.bpjs) + parseFloat(element1.bpjs)
-                            //         element.jamsostek = parseFloat(element.jamsostek) + parseFloat(element1.jamsostek)
-                            //         element.swasta = parseFloat(element.swasta) + parseFloat(element1.swasta)
-                            //         element.hardient = parseFloat(element.hardient) + parseFloat(element1.hardient)
-                            //         element.iks = parseFloat(element.iks) + parseFloat(element1.iks)
-                            //         element.thamrin = parseFloat(element.thamrin) + parseFloat(element1.thamrin)
-                            //         element.jamkesda = parseFloat(element.jamkesda) + parseFloat(element1.jamkesda)
-                            //         element.jamkesmas = parseFloat(element.jamkesmas) + parseFloat(element1.jamkesmas)
-                            //         element.skmm = parseFloat(element.skmm) + parseFloat(element1.skmm)
-                            //         element.karyawan = parseFloat(element.karyawan) + parseFloat(element1.karyawan)
-                            //         // element.jumlah = parseFloat(element.laki) + parseFloat(element.wanita)
-                            //         // element.total = parseFloat(element.jumlah) + parseFloat(element1.jumlah)  
-                            //         podo = true  
-                            //    }
-                            // }
-                            if(podo== false){
-                                var datass ={
-                                    anggrek1: element1.anggrek1,
-                                    anggrek2: element1.anggrek2,
-                                    dahlia: element1.dahlia,
-                                    nicu: element1.nicu,
-                                    icucovid: element1.icucovid,
-                                    bougenvilleatas: element1.bougenvilleatas,
-                                    bougenvillebawah: element1.bougenvillebawah,
-                                    terataiatas: element1.terataiatas,
-                                    terataibawah: element1.terataibawah,
-                                    flamboyan: element1.flamboyan,
-                                    cempaka: element1.cempaka,
-                                    seruniatas: element1.seruniatas,
-                                    serunibawah: element1.serunibawah,
-                                    vip: element1.vip,
-                                    icu: element1.icu,
-                                    iccu: element1.iccu,
-                                    melati1: element1.melati1,
-                                    melati2: element1.melati2,
-                                    melati3: element1.melati3,
-                                    melati4: element1.melati4,
-                                    camelia: element1.camelia,
-                                    flamboyan2: element1.flamboyan2,
-                                    hccu: element1.hccu,
-                                    dokter: element1.dokter,
-                                    total: element1.total,
-                                }
-                                group.push(datass)
-                            }
-
-                        }
-
-                        for (var i = 0; i < group.length; i++) {
-                           var elemn= group[i] 
-                            elemn.jumlah = parseFloat(elemn.laki) + parseFloat(elemn.wanita)
-                            // elemn.total = parseFloat(elemn.jumlah) + parseFloat(elemn.jumlah)
-                        }
-                        $scope.dataSourceGridK ={
+                        $scope.dataSourceGridKranap ={
                             // group: $scope.group,
                             data: group,
                             pageSize: 10,
@@ -157,29 +90,18 @@ define(['initialize'], function (initialize) {
                                 model: {
                                     fields: {   
                                         dokter: { type: "string" },
-                                        anggrek1: { type: "number" },
-                                        anggrek2: { type: "number" },
-                                        dahlia: { type: "number" },
-                                        nicu: { type: "number" },
-                                        icucovid: { type: "number" },
-                                        bougenvilleatas: { type: "number" },
-                                        bougenvillebawah: { type: "number" },
-                                        terataiatas: { type: "number" },
-                                        terataibawah: { type: "number" },
-                                        flamboyan: { type: "number" },
-                                        cempaka: { type: "number" },
-                                        seruniatas: { type: "number" },
-                                        serunibawah: { type: "number" },
-                                        vip: { type: "number" },
-                                        icu: { type: "number" },
-                                        iccu: { type: "number" },
-                                        melati1: { type: "number" },
-                                        melati2: { type: "number" },
-                                        melati3: { type: "number" },
-                                        melati4: { type: "number" },
-                                        camelia: { type: "number" },
-                                        flamboyan2: { type: "number" },
-                                        hccu: { type: "number" },
+                                        bima: { type: "number" },
+                                        gatotkaca: { type: "number" },
+                                        sadewa: { type: "number" },
+                                        srikandi: { type: "number" },
+                                        drupadi: { type: "number" },
+                                        sembodro: { type: "number" },
+                                        abimanyu: { type: "number" },
+                                        kresna: { type: "number" },
+                                        arjuna: { type: "number" },
+                                        arimbi: { type: "number" },
+                                        nakula: { type: "number" },
+                                        yudistira: { type: "number" },
                                         total: { type: "number" },
                                     }
                                 }
@@ -228,6 +150,415 @@ define(['initialize'], function (initialize) {
 
 
                         }
+                        $scope.dataSourceGridKrajal ={
+                            // group: $scope.group,
+                            data: group,
+                            pageSize: 10,
+                            total: group.length,
+                            serverPaging: false,
+                            schema: 
+                            
+                            {
+                                model: {
+                                    fields: {   
+                                        dokter: { type: "string" },
+                                        akupuntur: { type: "number" },
+                                        ekg: { type: "number" },
+                                        fisio: { type: "number" },
+                                        gigi: { type: "number" },
+                                        keswa: { type: "number" },
+                                        kirbebas: { type: "number" },
+                                        kirjasmani: { type: "number" },
+                                        klinikkeperawatanjiwa: { type: "number" },
+                                        konsulpsikologi: { type: "number" },
+                                        napza: { type: "number" },
+                                        ot: { type: "number" },
+                                        penyakitdalam: { type: "number" },
+                                        polijiwa: { type: "number" },
+                                        poliumum: { type: "number" },
+                                        spesialisanak: { type: "number" },
+                                        spesialissaraf: { type: "number" },
+                                        tw: { type: "number" },
+                                        usg: { type: "number" },
+                                        vct: { type: "number" },
+                                        total: { type: "number" },
+                                        
+                                    }
+                                }
+                            },
+                            pageSize: 200,
+                            total: group.length,
+                            serverPaging: false,
+                        }
+                        if ($scope.item.instalasi.id == 1) {
+                            $scope.rajal = true;
+                            $scope.ranap = false;
+
+                            for (var i = 0; i < data.length; i++) {
+                                var element1 = data[i]
+                                podo = false
+                                if (podo == false) {
+                                    var datass = {
+                                        akupuntur: element1.akupuntur,
+                                        dokter: element1.dokter,
+                                        ekg: element1.ekg,
+                                        fisio: element1.fisio,
+                                        gigi: element1.gigi,
+                                        keswa: element1.keswa,
+                                        kirbebas: element1.kirbebas,
+                                        kirjasmani: element1.kirjasmani,
+                                        klinikkeperawatanjiwa: element1.klinikkeperawatanjiwa,
+                                        konsulpsikologi: element1.konsulpsikologi,
+                                        napza: element1.napza,
+                                        ot: element1.ot,
+                                        penyakitdalam: element1.penyakitdalam,
+                                        polijiwa: element1.polijiwa,
+                                        poliumum: element1.poliumum,
+                                        spesialisanak: element1.spesialisanak,
+                                        spesialissaraf: element1.spesialissaraf,
+                                        total: element1.total,
+                                        tw: element1.tw,
+                                        usg: element1.usg,
+                                        vct: element1.vct,
+                                    }
+                                    group.push(datass)
+                                }
+
+                            }
+                            $scope.columnGridKrajal = {
+                                toolbar: ["excel"],
+                                // , "pdf"],
+
+                                excel: {
+                                    fileName: "Laporan Pasien DPJP.xlsx",
+                                    allPages: true,
+
+                                },
+
+                                dataSource: $scope.dataExcel,
+                                sortable: true,
+                                pageable: true,
+                                resizable: true,
+                                excelExport: function (e) {
+                                    var rows = e.workbook.sheets[0].rows;
+                                    rows.unshift({
+                                        cells: [{
+                                            value: "Laporan Pasien DPJP",
+                                            background: "#fffff"
+                                        }]
+                                    });
+                                },
+                                columns: [
+
+                                    {
+                                        "field": "dokter",
+                                        "title": "Dokter",
+                                        "width": "200px",
+                                    },
+                                    {
+                                        "field": "akupuntur",
+                                        "title": "AKUPUNTUR",
+                                        "width": "82px",
+                                        // groupFooterTemplate: "#=data.tunai.sum  #",
+                                        //  footerTemplate: "#:data.tunai.sum  #"
+
+                                    },
+                                    {
+                                        "field": "ekg",
+                                        "title": "EKG",
+                                        "width": "85px",
+                                        // groupFooterTemplate: "#=data.tunai.sum  #",
+                                        //  footerTemplate: "#:data.tunai.sum  #"
+
+                                    },
+                                    {
+                                        "field": "fisio",
+                                        "title": "FISIOTHERAPY",
+                                        "width": "63px",
+                                        // groupFooterTemplate: "#=data.tunai.sum  #",
+                                        //  footerTemplate: "#:data.tunai.sum  #"
+
+                                    },
+                                    {
+                                        "field": "gigi",
+                                        "title": "POLIKLINIK GIGI",
+                                        "width": "49px",
+                                        // groupFooterTemplate: "#=data.tunai.sum  #",
+                                        //  footerTemplate: "#:data.tunai.sum  #"
+
+                                    },
+                                    {
+                                        "field": "keswa",
+                                        "title": "KIR KESWA",
+                                        "width": "87px",
+                                        // groupFooterTemplate: "#=data.tunai.sum  #",
+                                        //  footerTemplate: "#:data.tunai.sum  #"
+
+                                    },
+                                    {
+                                        "field": "kirbebas",
+                                        "title": "KIR BEBAS NARKOBA",
+                                        "width": "127px",
+                                        // groupFooterTemplate: "#=data.tunai.sum  #",
+                                        //  footerTemplate: "#:data.tunai.sum  #"
+
+                                    },
+                                    {
+                                        "field": "kirjasmani",
+                                        "title": "KIR FISIK / JASMANI",
+                                        "width": "150px",
+                                        // groupFooterTemplate: "#=data.tunai.sum  #",
+                                        //  footerTemplate: "#:data.tunai.sum  #"
+
+                                    },
+                                    {
+                                        "field": "klinikkeperawatanjiwa",
+                                        "title": "KLINIK KEPERAWATAN JIWA",
+                                        "width": "100px",
+                                        // groupFooterTemplate: "#=data.tunai.sum  #",
+                                        //  footerTemplate: "#:data.tunai.sum  #"
+
+                                    },
+                                    {
+                                        "field": "konsulpsikologi",
+                                        "title": "KONSULTASI PSIKOLOGI",
+                                        "width": "120px",
+                                        // groupFooterTemplate: "#=data.tunai.sum  #",
+                                        //  footerTemplate: "#:data.tunai.sum  #"
+
+                                    },
+                                    {
+                                        "field": "napza",
+                                        "title": "NAPZA",
+                                        "width": "150px",
+                                        // groupFooterTemplate: "#=data.tunai.sum  #",
+                                        //  footerTemplate: "#:data.tunai.sum  #"
+
+                                    },
+                                    {
+                                        "field": "ot",
+                                        "title": "OKUPASI TERAPI",
+                                        "width": "100px",
+                                        // groupFooterTemplate: "#=data.tunai.sum  #",
+                                        //  footerTemplate: "#:data.tunai.sum  #"
+
+                                    },
+                                    {
+                                        "field": "penyakitdalam",
+                                        "title": "SPESIALIS PENYAKIT DALAM",
+                                        "width": "100px",
+                                    },
+                                    {
+                                        "field": "polijiwa",
+                                        "title": "POLIKLINIK JIWA",
+                                        "width": "100px",
+                                    },
+                                    {
+                                        "field": "poliumum",
+                                        "title": "POLIKLINIK UMUM",
+                                        "width": "100px",
+                                    },
+                                    {
+                                        "field": "spesialisanak",
+                                        "title": "SPESIALIS ANAK",
+                                        "width": "100px",
+                                    },
+                                    {
+                                        "field": "spesialissaraf",
+                                        "title": "SPESIALIS SARAF",
+                                        "width": "100px",
+                                    },
+                                    {
+                                        "field": "tw",
+                                        "title": "TERAPI WICARA",
+                                        "width": "100px",
+                                    },
+                                    {
+                                        "field": "usg",
+                                        "title": "USG",
+                                        "width": "100px",
+                                    },
+                                    {
+                                        "field": "vct",
+                                        "title": "VCT (Voluntari Conseling & Testing)",
+                                        "width": "100px",
+                                    },
+                                    {
+                                        "field": "total",
+                                        "title": "Total",
+                                        "width": "100px",
+                                        // groupFooterTemplate: "#=data.tunai.sum  #",
+                                        //  footerTemplate: "#:data.tunai.sum  #"
+
+                                    },
+
+                                ]
+                            }
+                        } else {
+                            for (var i = 0; i < data.length; i++) {
+                                var element1 = data[i]
+                                podo = false
+                                if (podo == false) {
+                                    var datass = {
+                                        bima: element1.bima,
+                                        gatotkaca: element1.gatotkaca,
+                                        sadewa: element1.sadewa,
+                                        srikandi: element1.srikandi,
+                                        drupadi: element1.drupadi,
+                                        sembodro: element1.sembodro,
+                                        abimanyu: element1.abimanyu,
+                                        kresna: element1.kresna,
+                                        arjuna: element1.arjuna,
+                                        arimbi: element1.arimbi,
+                                        nakula: element1.nakula,
+                                        yudistira: element1.yudistira,
+                                        dokter: element1.dokter,
+                                        total: element1.total,
+                                    }
+                                    group.push(datass)
+                                }
+
+                            }
+                                $scope.rajal = false
+                                $scope.ranap = true
+                            $scope.columnGridKranap = {
+                                toolbar: ["excel"],
+                                // , "pdf"],
+
+                                excel: {
+                                    fileName: "Laporan Pasien DPJP.xlsx",
+                                    allPages: true,
+
+                                },
+
+                                dataSource: $scope.dataExcel,
+                                sortable: true,
+                                pageable: true,
+                                resizable: true,
+                                excelExport: function (e) {
+                                    var rows = e.workbook.sheets[0].rows;
+                                    rows.unshift({
+                                        cells: [{
+                                            value: "Laporan Pasien DPJP",
+                                            background: "#fffff"
+                                        }]
+                                    });
+                                },
+                                columns: [
+
+                                    {
+                                        "field": "dokter",
+                                        "title": "Dokter",
+                                        "width": "200px",
+                                    },
+                                    {
+                                        "field": "bima",
+                                        "title": "BIMA",
+                                        "width": "82px",
+                                        // groupFooterTemplate: "#=data.tunai.sum  #",
+                                        //  footerTemplate: "#:data.tunai.sum  #"
+
+                                    },
+                                    {
+                                        "field": "gatotkaca",
+                                        "title": "GATOTKACA",
+                                        "width": "85px",
+                                        // groupFooterTemplate: "#=data.tunai.sum  #",
+                                        //  footerTemplate: "#:data.tunai.sum  #"
+
+                                    },
+                                    {
+                                        "field": "sadewa",
+                                        "title": "SADEWA",
+                                        "width": "63px",
+                                        // groupFooterTemplate: "#=data.tunai.sum  #",
+                                        //  footerTemplate: "#:data.tunai.sum  #"
+
+                                    },
+                                    {
+                                        "field": "srikandi",
+                                        "title": "SRIKANDI",
+                                        "width": "49px",
+                                        // groupFooterTemplate: "#=data.tunai.sum  #",
+                                        //  footerTemplate: "#:data.tunai.sum  #"
+
+                                    },
+                                    {
+                                        "field": "drupadi",
+                                        "title": "DRUPADI",
+                                        "width": "87px",
+                                        // groupFooterTemplate: "#=data.tunai.sum  #",
+                                        //  footerTemplate: "#:data.tunai.sum  #"
+
+                                    },
+                                    {
+                                        "field": "sembodro",
+                                        "title": "SEMBODRO",
+                                        "width": "127px",
+                                        // groupFooterTemplate: "#=data.tunai.sum  #",
+                                        //  footerTemplate: "#:data.tunai.sum  #"
+
+                                    },
+                                    {
+                                        "field": "abimanyu",
+                                        "title": "ABIMANYU",
+                                        "width": "150px",
+                                        // groupFooterTemplate: "#=data.tunai.sum  #",
+                                        //  footerTemplate: "#:data.tunai.sum  #"
+
+                                    },
+                                    {
+                                        "field": "kresna",
+                                        "title": "KRESNA",
+                                        "width": "100px",
+                                        // groupFooterTemplate: "#=data.tunai.sum  #",
+                                        //  footerTemplate: "#:data.tunai.sum  #"
+
+                                    },
+                                    {
+                                        "field": "arjuna",
+                                        "title": "ARJUNA",
+                                        "width": "120px",
+                                        // groupFooterTemplate: "#=data.tunai.sum  #",
+                                        //  footerTemplate: "#:data.tunai.sum  #"
+
+                                    },
+                                    {
+                                        "field": "arimbi",
+                                        "title": "ARIMBI",
+                                        "width": "150px",
+                                        // groupFooterTemplate: "#=data.tunai.sum  #",
+                                        //  footerTemplate: "#:data.tunai.sum  #"
+
+                                    },
+                                    {
+                                        "field": "nakula",
+                                        "title": "NAKULA",
+                                        "width": "100px",
+                                        // groupFooterTemplate: "#=data.tunai.sum  #",
+                                        //  footerTemplate: "#:data.tunai.sum  #"
+
+                                    },
+                                    {
+                                        "field": "yudistira",
+                                        "title": "YUDISTIRA",
+                                        "width": "100px",
+                                        // groupFooterTemplate: "#=data.tunai.sum  #",
+                                        //  footerTemplate: "#:data.tunai.sum  #"
+
+                                    },
+                                    {
+                                        "field": "total",
+                                        "title": "Total",
+                                        "width": "100px",
+                                        // groupFooterTemplate: "#=data.tunai.sum  #",
+                                        //  footerTemplate: "#:data.tunai.sum  #"
+
+                                    },
+
+                                ]
+                            }
+                        }
                         // $scope.isRouteLoading = false;
                     })
 
@@ -248,247 +579,159 @@ define(['initialize'], function (initialize) {
             //             aggregate: "count"
             //         }]
             // };
-            $scope.columnGridK = {
-                toolbar: ["excel"],
-                // , "pdf"],
+            // $scope.columnGridK = {
+            //     toolbar: ["excel"],
+            //     // , "pdf"],
 
-                excel: {
-                    fileName: "Laporan Pasien DPJP.xlsx",
-                    allPages: true,
+            //     excel: {
+            //         fileName: "Laporan Pasien DPJP.xlsx",
+            //         allPages: true,
 
-                },
-                // pdf: {
-                //     fileName: "LaporanPasienMasuk.pdf",
-                //     allPages: true,
-                // },
+            //     },
+            //     // pdf: {
+            //     //     fileName: "LaporanPasienMasuk.pdf",
+            //     //     allPages: true,
+            //     // },
 
-                dataSource: $scope.dataExcel,
-                sortable: true,
-                // reorderable: true,
-                // filterable: true,
-                pageable: true,
-                // groupable: true,
-                // columnMenu: true,
-                resizable: true,
-                excelExport: function (e) {
-                    var rows = e.workbook.sheets[0].rows;
-                    rows.unshift({
-                        cells: [{ value: "Laporan Pasien DPJP", background: "#fffff" }]
-                    });
-                },      
-                columns: [
+            //     dataSource: $scope.dataExcel,
+            //     sortable: true,
+            //     // reorderable: true,
+            //     // filterable: true,
+            //     pageable: true,
+            //     // groupable: true,
+            //     // columnMenu: true,
+            //     resizable: true,
+            //     excelExport: function (e) {
+            //         var rows = e.workbook.sheets[0].rows;
+            //         rows.unshift({
+            //             cells: [{ value: "Laporan Pasien DPJP", background: "#fffff" }]
+            //         });
+            //     },      
+            //     columns: [
                     
-                     {
-                        "field": "dokter",
-                        "title": "Dokter",
-                        "width": "200px",
+            //          {
+            //             "field": "dokter",
+            //             "title": "Dokter",
+            //             "width": "200px",
                         
-                        // groupFooterTemplate: "Jumlah",
-                        // footerTemplate: "Total"
-                    },
-                    {
-                        "field": "anggrek1",
-                        "title": "Anggrek 1",
-                        "width": "82px",
-                        // groupFooterTemplate: "#=data.tunai.sum  #",
-                        //  footerTemplate: "#:data.tunai.sum  #"
+            //             // groupFooterTemplate: "Jumlah",
+            //             // footerTemplate: "Total"
+            //         },
+            //         {
+            //             "field": "bima",
+            //             "title": "BIMA",
+            //             "width": "82px",
+            //             // groupFooterTemplate: "#=data.tunai.sum  #",
+            //             //  footerTemplate: "#:data.tunai.sum  #"
 
-                     },
-                     {
-                        "field": "anggrek2",
-                        "title": "Anggrek 2",
-                        "width": "85px",
-                        // groupFooterTemplate: "#=data.tunai.sum  #",
-                        //  footerTemplate: "#:data.tunai.sum  #"
+            //          },
+            //          {
+            //             "field": "gatotkaca",
+            //             "title": "GATOTKACA",
+            //             "width": "85px",
+            //             // groupFooterTemplate: "#=data.tunai.sum  #",
+            //             //  footerTemplate: "#:data.tunai.sum  #"
 
-                     },
-                     {
-                        "field": "dahlia",
-                        "title": "Dahlia",
-                        "width": "63px",
-                        // groupFooterTemplate: "#=data.tunai.sum  #",
-                        //  footerTemplate: "#:data.tunai.sum  #"
+            //          },
+            //          {
+            //             "field": "sadewa",
+            //             "title": "SADEWA",
+            //             "width": "63px",
+            //             // groupFooterTemplate: "#=data.tunai.sum  #",
+            //             //  footerTemplate: "#:data.tunai.sum  #"
 
-                     },
-                     {
-                        "field": "nicu",
-                        "title": "Nicu",
-                        "width": "49px",
-                        // groupFooterTemplate: "#=data.tunai.sum  #",
-                        //  footerTemplate: "#:data.tunai.sum  #"
+            //          },
+            //          {
+            //             "field": "srikandi",
+            //             "title": "SRIKANDI",
+            //             "width": "49px",
+            //             // groupFooterTemplate: "#=data.tunai.sum  #",
+            //             //  footerTemplate: "#:data.tunai.sum  #"
 
-                     },
-                     {
-                        "field": "icucovid",
-                        "title": "ICU Covid",
-                        "width": "87px",
-                        // groupFooterTemplate: "#=data.tunai.sum  #",
-                        //  footerTemplate: "#:data.tunai.sum  #"
+            //          },
+            //          {
+            //             "field": "drupadi",
+            //             "title": "DRUPADI",
+            //             "width": "87px",
+            //             // groupFooterTemplate: "#=data.tunai.sum  #",
+            //             //  footerTemplate: "#:data.tunai.sum  #"
 
-                     },
-                     {
-                        "field": "bougenvilleatas",
-                        "title": "Bougenvile Atas",
-                        "width": "127px",
-                        // groupFooterTemplate: "#=data.tunai.sum  #",
-                        //  footerTemplate: "#:data.tunai.sum  #"
+            //          },
+            //          {
+            //             "field": "sembodro",
+            //             "title": "SEMBODRO",
+            //             "width": "127px",
+            //             // groupFooterTemplate: "#=data.tunai.sum  #",
+            //             //  footerTemplate: "#:data.tunai.sum  #"
 
-                     },
-                     {
-                        "field": "bougenvillebawah",
-                        "title": "Bougenvile Bawah",
-                        "width": "150px",
-                        // groupFooterTemplate: "#=data.tunai.sum  #",
-                        //  footerTemplate: "#:data.tunai.sum  #"
+            //          },
+            //          {
+            //             "field": "abimanyu",
+            //             "title": "ABIMANYU",
+            //             "width": "150px",
+            //             // groupFooterTemplate: "#=data.tunai.sum  #",
+            //             //  footerTemplate: "#:data.tunai.sum  #"
 
-                     },
-                     {
-                        "field": "terataiatas",
-                        "title": "Teratai Atas",
-                        "width": "100px",
-                        // groupFooterTemplate: "#=data.tunai.sum  #",
-                        //  footerTemplate: "#:data.tunai.sum  #"
+            //          },
+            //          {
+            //             "field": "kresna",
+            //             "title": "KRESNA",
+            //             "width": "100px",
+            //             // groupFooterTemplate: "#=data.tunai.sum  #",
+            //             //  footerTemplate: "#:data.tunai.sum  #"
 
-                     },
-                     {
-                        "field": "terataibawah",
-                        "title": "Teratai Bawah",
-                        "width": "120px",
-                        // groupFooterTemplate: "#=data.tunai.sum  #",
-                        //  footerTemplate: "#:data.tunai.sum  #"
+            //          },
+            //          {
+            //             "field": "arjuna",
+            //             "title": "ARJUNA",
+            //             "width": "120px",
+            //             // groupFooterTemplate: "#=data.tunai.sum  #",
+            //             //  footerTemplate: "#:data.tunai.sum  #"
 
-                     },
-                     {
-                        "field": "flamboyan",
-                        "title": "Flamboyan Covid",
-                        "width": "150px",
-                        // groupFooterTemplate: "#=data.tunai.sum  #",
-                        //  footerTemplate: "#:data.tunai.sum  #"
+            //          },
+            //          {
+            //             "field": "arimbi",
+            //             "title": "ARIMBI",
+            //             "width": "150px",
+            //             // groupFooterTemplate: "#=data.tunai.sum  #",
+            //             //  footerTemplate: "#:data.tunai.sum  #"
 
-                     },
-                     {
-                        "field": "cempaka",
-                        "title": "Cempaka",
-                        "width": "100px",
-                        // groupFooterTemplate: "#=data.tunai.sum  #",
-                        //  footerTemplate: "#:data.tunai.sum  #"
+            //          },
+            //          {
+            //             "field": "nakula",
+            //             "title": "NAKULA",
+            //             "width": "100px",
+            //             // groupFooterTemplate: "#=data.tunai.sum  #",
+            //             //  footerTemplate: "#:data.tunai.sum  #"
 
-                     },
-                     {
-                        "field": "seruniatas",
-                        "title": "Seruni Atas",
-                        "width": "100px",
-                        // groupFooterTemplate: "#=data.tunai.sum  #",
-                        //  footerTemplate: "#:data.tunai.sum  #"
+            //          },
+            //          {
+            //             "field": "yudistira",
+            //             "title": "YUDISTIRA",
+            //             "width": "100px",
+            //             // groupFooterTemplate: "#=data.tunai.sum  #",
+            //             //  footerTemplate: "#:data.tunai.sum  #"
 
-                     },
-                     {
-                        "field": "serunibawah",
-                        "title": "Seruni Bawah",
-                        "width": "120px",
-                        // groupFooterTemplate: "#=data.tunai.sum  #",
-                        //  footerTemplate: "#:data.tunai.sum  #"
+            //          },
+            //          {
+            //             "field": "total",
+            //             "title": "Total",
+            //             "width": "100px",
+            //             // groupFooterTemplate: "#=data.tunai.sum  #",
+            //             //  footerTemplate: "#:data.tunai.sum  #"
 
-                     },
-                     {
-                        "field": "vip",
-                        "title": "VIP",
-                        "width": "100px",
-                        // groupFooterTemplate: "#=data.tunai.sum  #",
-                        //  footerTemplate: "#:data.tunai.sum  #"
+            //          },
 
-                     },
-                     {
-                        "field": "icu",
-                        "title": "ICU",
-                        "width": "100px",
-                        // groupFooterTemplate: "#=data.tunai.sum  #",
-                        //  footerTemplate: "#:data.tunai.sum  #"
+            //     //     {
+            //     //     hidden: true,
+            //     //     field: "namaruangan",
+            //     //     title: "Nama Ruangan",
+            //     //     aggregates: ["count"],
+            //     //     groupHeaderTemplate: "   #= value #    "
+            //     // }
 
-                     },
-                     {
-                        "field": "iccu",
-                        "title": "ICCU",
-                        "width": "100px",
-                        // groupFooterTemplate: "#=data.tunai.sum  #",
-                        //  footerTemplate: "#:data.tunai.sum  #"
-
-                     },
-                     {
-                        "field": "melati1",
-                        "title": "Melati 1",
-                        "width": "100px",
-                        // groupFooterTemplate: "#=data.tunai.sum  #",
-                        //  footerTemplate: "#:data.tunai.sum  #"
-
-                     },
-                     {
-                        "field": "melati2",
-                        "title": "Melati 2",
-                        "width": "100px",
-                        // groupFooterTemplate: "#=data.tunai.sum  #",
-                        //  footerTemplate: "#:data.tunai.sum  #"
-
-                     },
-                     {
-                        "field": "melati3",
-                        "title": "Melati 3",
-                        "width": "100px",
-                        // groupFooterTemplate: "#=data.tunai.sum  #",
-                        //  footerTemplate: "#:data.tunai.sum  #"
-
-                     },
-                     {
-                        "field": "melati4",
-                        "title": "Melati 4",
-                        "width": "100px",
-                        // groupFooterTemplate: "#=data.tunai.sum  #",
-                        //  footerTemplate: "#:data.tunai.sum  #"
-
-                     },
-                     {
-                        "field": "camelia",
-                        "title": "Camelia",
-                        "width": "100px",
-                        // groupFooterTemplate: "#=data.tunai.sum  #",
-                        //  footerTemplate: "#:data.tunai.sum  #"
-
-                     },
-                     {
-                        "field": "flamboyan2",
-                        "title": "Flamboyan",
-                        "width": "100px",
-                        // groupFooterTemplate: "#=data.tunai.sum  #",
-                        //  footerTemplate: "#:data.tunai.sum  #"
-
-                     },
-                     {
-                        "field": "hccu",
-                        "title": "HCCU",
-                        "width": "100px",
-                        // groupFooterTemplate: "#=data.tunai.sum  #",
-                        //  footerTemplate: "#:data.tunai.sum  #"
-
-                     },
-                     {
-                        "field": "total",
-                        "title": "Total",
-                        "width": "100px",
-                        // groupFooterTemplate: "#=data.tunai.sum  #",
-                        //  footerTemplate: "#:data.tunai.sum  #"
-
-                     },
-
-                //     {
-                //     hidden: true,
-                //     field: "namaruangan",
-                //     title: "Nama Ruangan",
-                //     aggregates: ["count"],
-                //     groupHeaderTemplate: "   #= value #    "
-                // }
-
-                ]
-            }
+            //     ]
+            // }
 
             //fungsi clear kriteria search
             $scope.ClearSearch = function () {
