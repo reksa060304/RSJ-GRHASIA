@@ -307,6 +307,11 @@ define(['initialize'], function (initialize) {
                         "width": "100px"
                     },
                     {
+                        "field": "registrasi",
+                        "title": "Cara Daftar",
+                        "width": "80px",
+                    },
+                    {
                         "title": "Keterangan Dirawat",
                         "width": "80px",
                         "columns": [{

@@ -409,9 +409,9 @@ class LaporanRegistrasiController extends  App\Http\Controllers\ApiController
         // ORDER BY pd.tglregistrasi
         
         // "));
-        $data = \DB::select(DB::raw("SELECT 
+        $data = \DB::select(DB::raw("SELECT case when x.norec_apr is null then 'Onsite' else 'Reservasi Online' end as registrasi,
         x.statuskeluar, x.namadokter, x.norec, x.namakecamatan, x.namakotakabupaten, x. nocm, x.noregistrasi, x.statuspasien, x.tglregistrasi1, x.tglpulang1, x.jamregistrasi, x.tgllahir, x.lamadirawat, x.namapasien, x.alamatlengkap, x.datadiy, x.dataluardiy, x.statusperkawinan,	 x. tglregistrasi, x.jk, x.alamatrmh, x.penanggungjawab, x.ruangandaftar, x.namakelas, x.kelompokpasien, x.namarekanan, x.agama, x.pendidikan, x.pekerjaan, string_agg(x.kodesekunder, ' ')as kodesekunder, string_agg(x.kodeprimer, ' ')as kodeprimer, string_agg(x.diagnosaprimer, ' ')as diagnosaprimer, string_agg(x.pegawaiprimer, ' ')as pegawaiprimer, string_agg(x.kasus, ' ')as kasus FROM (
-        SELECT distinct ru.objectdepartemenfk, 
+        SELECT distinct ru.objectdepartemenfk, apr.norec as norec_apr,
         case 
         when pd.tglpulang is not null and ru.objectdepartemenfk = 16 and pd.objectstatuskeluarfk is not null then sk.statuskeluar
         when pd.tglpulang is not null and ru.objectdepartemenfk = 16 and pd.objectstatuskeluarfk is null then 'Pindah'
@@ -430,6 +430,7 @@ class LaporanRegistrasiController extends  App\Http\Controllers\ApiController
         inner join antrianpasiendiperiksa_t apd on apd.noregistrasifk = pd.norec
         inner join pasien_m pm on pm.id = pd.nocmfk
         inner join jeniskelamin_m as jk on jk.id=pm.objectjeniskelaminfk
+        left join antrianpasienregistrasi_t apr on apr.nocmfk = pm.id and apr.tanggalreservasi::date = pd.tglregistrasi::date
         left join ruangan_m as ru on ru.id=pd.objectruanganlastfk
         left join statusperkawinan_m as sp on sp.id = pm.objectstatusperkawinanfk
         left join alamat_m as alm on alm.nocmfk = pm.id
@@ -456,14 +457,14 @@ class LaporanRegistrasiController extends  App\Http\Controllers\ApiController
         $idKelompok
         $norm
 
-        GROUP BY sk.statuskeluar, pd.objectstatuskeluarfk, pg.namalengkap, pm.nocm, pd.noregistrasi, pd.statuspasien, pm.tgllahir, pm.namapasien,alm.alamatlengkap, kab.objectpropinsifk,
+        GROUP BY apr.norec, sk.statuskeluar, pd.objectstatuskeluarfk, pg.namalengkap, pm.nocm, pd.noregistrasi, pd.statuspasien, pm.tgllahir, pm.namapasien,alm.alamatlengkap, kab.objectpropinsifk,
         alm.namakotakabupaten, prop.namapropinsi, sp.statusperkawinan, pd.tglregistrasi,jk.reportdisplay,pm.alamatrmh, pm.penanggungjawab,
         ru.namaruangan ,kl.namakelas,klp.kelompokpasien,rk.namarekanan,ag.agama,pend.pendidikan, peker.pekerjaan,pd.tglpulang,ru.objectdepartemenfk,
         dt.iskasusbaru, dt.iskasuslama, apd.norec, alm.namakecamatan, alm.namakotakabupaten
         
         ORDER BY pd.tglregistrasi
         )as x
-        group by x.namakecamatan, x.namakotakabupaten, x.statuskeluar, x.norec, x. nocm, x.noregistrasi, x.statuspasien, x.tglregistrasi1, x.tglpulang1, x.jamregistrasi, 
+        group by x.norec_apr, x.namakecamatan, x.namakotakabupaten, x.statuskeluar, x.norec, x. nocm, x.noregistrasi, x.statuspasien, x.tglregistrasi1, x.tglpulang1, x.jamregistrasi, 
         x.tgllahir, x.lamadirawat, x.namapasien, x.alamatlengkap, x.datadiy, x.dataluardiy, x.statusperkawinan,	 
         x.tglregistrasi, x.jk, x.alamatrmh, x.penanggungjawab, x.ruangandaftar, x.namakelas, x.kelompokpasien, x.namarekanan, x.agama, x.pendidikan, x.pekerjaan,x.namadokter
         "));
