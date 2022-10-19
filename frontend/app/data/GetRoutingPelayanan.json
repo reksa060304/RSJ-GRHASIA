@@ -19171,6 +19171,50 @@
         "define": "RekamMedisCtrl"
       }
     ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.AsesmenAwalMedisRINAPZA",
+    "url": "/AsesmenAwalMedisRINAPZA",
+    "templateurl": "module/EMR/AsesmenAwalMedisRINAPZA.html",
+    "controller": "AsesmenAwalMedisRINAPZACtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.MenuIndex.FormulirTransferPasienGrh",
+    "url": "/FormulirTransferPasienGrh/:index/:idEM",
+    "templateurl": "module/EMR/FormulirTransferPasienGrh.html",
+    "controller": "FormulirTransferPasienGrhCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
   }
  
 ]

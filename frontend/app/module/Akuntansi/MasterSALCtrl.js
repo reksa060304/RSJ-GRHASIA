@@ -52,7 +52,7 @@ define(['initialize'], function (initialize) {
 			}
 
             $scope.daftarMasterOpt = {
-                toolbar: [
+				toolbar: [
                     "excel",
                 ],
                 excel: {
@@ -74,8 +74,7 @@ define(['initialize'], function (initialize) {
                     }];
 
                     sheet.rows.splice(0, 0, { cells: myHeaders, type: "header", height: 70 });
-                },
-                pageable: true,
+                },                pageable: true,
                 scrollable: true,
                 columns: [
                     { 
