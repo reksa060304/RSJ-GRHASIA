@@ -3,6 +3,10 @@
         {
             "nameDep": "tesCtrl",
             "urlDep": "module/SysAdmin/tesCtrl"
+        },
+        {
+            "nameDep": "MasterEkuitasCtrl",
+            "urlDep": "module/Akuntansi/MasterEkuitasCtrl"
         }
     ]
 }
