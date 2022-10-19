@@ -410,16 +410,16 @@ class LaporanRegistrasiController extends  App\Http\Controllers\ApiController
         
         // "));
         $data = \DB::select(DB::raw("SELECT 
-        x.statuskeluar, x.namadokter, x.norec, x. nocm, x.noregistrasi, x.statuspasien, x.tglregistrasi1, x.tglpulang1, x.jamregistrasi, x.tgllahir, x.lamadirawat, x.namapasien, x.alamatlengkap, x.datadiy, x.dataluardiy, x.statusperkawinan,	 x. tglregistrasi, x.jk, x.alamatrmh, x.penanggungjawab, x.ruangandaftar, x.namakelas, x.kelompokpasien, x.namarekanan, x.agama, x.pendidikan, x.pekerjaan, string_agg(x.kodesekunder, ' ')as kodesekunder, string_agg(x.kodeprimer, ' ')as kodeprimer, string_agg(x.diagnosaprimer, ' ')as diagnosaprimer, string_agg(x.pegawaiprimer, ' ')as pegawaiprimer, string_agg(x.kasus, ' ')as kasus FROM (
+        x.statuskeluar, x.namadokter, x.norec, x.namakecamatan, x.namakotakabupaten, x. nocm, x.noregistrasi, x.statuspasien, x.tglregistrasi1, x.tglpulang1, x.jamregistrasi, x.tgllahir, x.lamadirawat, x.namapasien, x.alamatlengkap, x.datadiy, x.dataluardiy, x.statusperkawinan,	 x. tglregistrasi, x.jk, x.alamatrmh, x.penanggungjawab, x.ruangandaftar, x.namakelas, x.kelompokpasien, x.namarekanan, x.agama, x.pendidikan, x.pekerjaan, string_agg(x.kodesekunder, ' ')as kodesekunder, string_agg(x.kodeprimer, ' ')as kodeprimer, string_agg(x.diagnosaprimer, ' ')as diagnosaprimer, string_agg(x.pegawaiprimer, ' ')as pegawaiprimer, string_agg(x.kasus, ' ')as kasus FROM (
         SELECT distinct ru.objectdepartemenfk, 
         case 
         when pd.tglpulang is not null and ru.objectdepartemenfk = 16 and pd.objectstatuskeluarfk is not null then sk.statuskeluar
         when pd.tglpulang is not null and ru.objectdepartemenfk = 16 and pd.objectstatuskeluarfk is null then 'Pindah'
         else ''
-        end as statuskeluar
+        end as statuskeluar, alm.namakecamatan, alm.namakotakabupaten
         , pg.namalengkap as namadokter, apd.norec, pm.nocm, pd.noregistrasi, pd.statuspasien, to_char(pd.tglregistrasi,'DD-MM-YYYY') as tglregistrasi1,to_char(pd.tglpulang,'DD-MM-YYYY') as tglpulang1,to_char(pd.tglregistrasi,'HH24:MI') as jamregistrasi, pm.tgllahir::date,case when pd.tglpulang::date - pd.tglregistrasi::date >1 then
         pd.tglpulang::date - pd.tglregistrasi::date when pd.tglpulang::date - pd.tglregistrasi::date = 0 and ru.objectdepartemenfk = 16 then
-        1 else 0 end as lamadirawat,pm.namapasien,alm.alamatlengkap, case when kab.objectpropinsifk = 14 then alm.namakotakabupaten else 'LUARDIY' end as datadiy, case when kab.objectpropinsifk != 14 then alm.namakotakabupaten ||',' || prop.namapropinsi else ' ' end as dataluardiy, sp.statusperkawinan,
+        1 else 0 end as lamadirawat,pm.namapasien,alm.alamatlengkap, case when kab.objectpropinsifk = 14 then alm.namakotakabupaten else '' end as datadiy, case when kab.objectpropinsifk != 14 then alm.namakotakabupaten ||',' || prop.namapropinsi else '' end as dataluardiy, sp.statusperkawinan,
         pd.tglregistrasi,jk.reportdisplay as jk,pm.alamatrmh, pm.penanggungjawab, ru.namaruangan as ruangandaftar,kl.namakelas,klp.kelompokpasien,rk.namarekanan,ag.agama,pend.pendidikan, peker.pekerjaan,
         string_agg(dg1.kddiagnosa, ', ')filter (where ddp1.objectjenisdiagnosafk = 2)as kodesekunder,
         string_agg(dg1.kddiagnosa, ', ')filter (where ddp1.objectjenisdiagnosafk = 1)as kodeprimer,
@@ -459,11 +459,11 @@ class LaporanRegistrasiController extends  App\Http\Controllers\ApiController
         GROUP BY sk.statuskeluar, pd.objectstatuskeluarfk, pg.namalengkap, pm.nocm, pd.noregistrasi, pd.statuspasien, pm.tgllahir, pm.namapasien,alm.alamatlengkap, kab.objectpropinsifk,
         alm.namakotakabupaten, prop.namapropinsi, sp.statusperkawinan, pd.tglregistrasi,jk.reportdisplay,pm.alamatrmh, pm.penanggungjawab,
         ru.namaruangan ,kl.namakelas,klp.kelompokpasien,rk.namarekanan,ag.agama,pend.pendidikan, peker.pekerjaan,pd.tglpulang,ru.objectdepartemenfk,
-        dt.iskasusbaru, dt.iskasuslama, apd.norec
+        dt.iskasusbaru, dt.iskasuslama, apd.norec, alm.namakecamatan, alm.namakotakabupaten
         
         ORDER BY pd.tglregistrasi
         )as x
-        group by x.statuskeluar, x.norec, x. nocm, x.noregistrasi, x.statuspasien, x.tglregistrasi1, x.tglpulang1, x.jamregistrasi, 
+        group by x.namakecamatan, x.namakotakabupaten, x.statuskeluar, x.norec, x. nocm, x.noregistrasi, x.statuspasien, x.tglregistrasi1, x.tglpulang1, x.jamregistrasi, 
         x.tgllahir, x.lamadirawat, x.namapasien, x.alamatlengkap, x.datadiy, x.dataluardiy, x.statusperkawinan,	 
         x.tglregistrasi, x.jk, x.alamatrmh, x.penanggungjawab, x.ruangandaftar, x.namakelas, x.kelompokpasien, x.namarekanan, x.agama, x.pendidikan, x.pekerjaan,x.namadokter
         "));

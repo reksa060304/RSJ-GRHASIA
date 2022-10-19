@@ -368,23 +368,28 @@ define(['initialize'], function (initialize) {
                         "title": "Data Kabupaten",
                         "width": "100px",
                         "columns": [{
-                            // 'field': 'datadiy',
+                            'field': 'datadiy',
                             "title" : "DIY",
                             "width": "70px",
-                            "template": "#: datadiy == 'LUARDIY' ? 'LUAR DIY' : datadiy #"
+                            "template": "#: datadiy == 'LUARDIY' ? ' ' : datadiy #"
                         },
                         {
-                            // 'field': 'dataluardiy',
+                            'field': 'dataluardiy',
                             "title": "Luar DIY",
                             "width": "100px",
                             "template": "#: dataluardiy != ' ' ? dataluardiy : ' ' #"
                         }]
                     },
-                    // {
-                    //     "field": "kecamatan",
-                    //     "title": "Kecamatan",
-                    //     "width": "200px"
-                    // }, 
+                    {
+                        "field": "namakecamatan",
+                        "title": "Kecamatan",
+                        "width": "200px"
+                    }, 
+                    {
+                        "field": "namakotakabupaten",
+                        "title": "Kabupaten",
+                        "width": "200px"
+                    },
                     // {
                     //     "field": "kelurahan",
                     //     "title": "Kelurahan",
