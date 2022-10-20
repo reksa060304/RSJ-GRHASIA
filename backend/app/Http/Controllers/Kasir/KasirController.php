@@ -468,6 +468,8 @@ class KasirController extends ApiController{
                 "status" => 400,
                 "message"  => $transMessage,
                 "data" => $SP,
+                'e'=> $e->getLine(),
+                'messafe'=>$e->getMessage(),
                 "as" => 'as@epic',
             );
         }

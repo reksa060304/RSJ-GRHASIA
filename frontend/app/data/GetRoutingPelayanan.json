@@ -17160,26 +17160,6 @@
     ]
   },
   {
-    "name": "LaporanRekapResep",
-    "url": "/TGFwb3JhblJla2FwUmVzZXBQZXJIYXJp",
-    "templateurl": "module/Farmasi/LaporanFarmasi/LaporanRekapResep.html",
-    "controller": "LaporanRekapResepCtrl",
-    "deps": [
-      {
-        "module": "Services",
-        "define": "Service"
-      },
-      {
-        "module": "LoginServices",
-        "define": "LoginService"
-      },
-      {
-        "module": "MedifirstService",
-        "define": "MedifirstService"
-      }
-    ]
-  },
-  {
     "name": "LaporanObatAntibiotik",
     "url": "/LaporanObatAntibiotik",
     "templateurl": "module/Farmasi/LaporanFarmasi/LaporanObatAntibiotik.html",
