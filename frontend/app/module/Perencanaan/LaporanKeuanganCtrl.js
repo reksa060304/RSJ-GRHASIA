@@ -31,6 +31,40 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 { id: 2, jenisrekening: "Tampilkan Rek Permen"}
             ];
 
+            $scope.listTglBKU = [
+                { id: 1, tanggal: 1 },
+                { id: 2, tanggal: 2},
+                { id: 3, tanggal: 3 },
+                { id: 4, tanggal: 4},
+                { id: 5, tanggal: 5 },
+                { id: 6, tanggal: 6},
+                { id: 7, tanggal: 7 },
+                { id: 8, tanggal: 8},
+                { id: 9, tanggal:  9},
+                { id: 10, tanggal: 10},
+                { id: 11, tanggal: 11 },
+                { id: 12, tanggal: 12},
+                { id: 13, tanggal: 13 },
+                { id: 14, tanggal: 14},
+                { id: 15, tanggal: 15 },
+                { id: 16, tanggal: 16},
+                { id: 17, tanggal: 17 },
+                { id: 18, tanggal: 18},
+                { id: 19, tanggal: 19 },
+                { id: 20, tanggal: 20},
+                { id: 21, tanggal: 21 },
+                { id: 22, tanggal: 22},
+                { id: 23, tanggal: 23 },
+                { id: 24, tanggal: 24},
+                { id: 25, tanggal: 25 },
+                { id: 26, tanggal: 26},
+                { id: 27, tanggal: 27 },
+                { id: 28, tanggal: 28},
+                { id: 29, tanggal: 29 },
+                { id: 30, tanggal: 30},
+                { id: 31, tanggal: 31 },
+            ];
+
             medifirstService.get("perencanaan/get-data-combo").then(function (e) {
                 $scope.listTahap = e.data.tahap
                 $scope.listAsalProduk = e.data.asalproduk
@@ -213,6 +247,18 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                 window.open(baseTransaksi + "report/get-cetak-buku-panjar?tahunpanjar=" + tahunpanjar + "&bulanpanjar=" + bulanpanjar + "&tglcetakpanjar=" + tglcetakpanjar, '_blank');
             }
+
+            medifirstService.get("perencanaan/get-data-combo").then(function (e) {
+                $scope.listTahap = e.data.tahap
+                $scope.listKegiatan = e.data.kegiatancombo
+            });
+
+            $scope.changeKegiatan = function () {
+                medifirstService.get("perencanaan/get-detail-sub-kegiatan?kegiatan="+$scope.item.kegiatandetail.id+"&tahap="+$scope.item.tahapdetail.id+"&tahun="+moment($scope.item.tahundetail).format('YYYY')).then(function (e) {
+                    $scope.listSubKegiatan = e.data.data
+                });
+            }
+
             $scope.Perbaharui = function () {
                 $scope.ClearSearch();
             }
