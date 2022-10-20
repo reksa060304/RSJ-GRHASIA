@@ -63,6 +63,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             /*END GET*/
 
             /*POST*/
+            Route::get('akuntansi/get-data-ekuitas', 'Akuntansi\AkuntansiController@getDataEkuitas');
+            Route::post('akuntansi/save-data-ekuitas','Akuntansi\AkuntansiController@SaveDataEkuitas');
             Route::post('akuntansi/save-data-saldo-awal', 'Akuntansi\AkuntansiController@SaveSaldoAwal');
             Route::post('akuntansi/save-hapus-saldo-awal', 'Akuntansi\AkuntansiController@SaveHapusSaldoAwal');
             Route::post('akuntansi/save-data-closing-jurnal', 'Akuntansi\AkuntansiController@SaveClosingJurnal');
@@ -78,6 +80,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::post('akuntansi/save-unposting-jurnalv1/', 'Akuntansi\AkuntansiController@UnPostingJurnalRev2018');
             Route::post('akuntansi/save-data-sal', 'Akuntansi\AkuntansiController@SaveDataSal'); //done
             Route::post('akuntansi/delete-data-sal', 'Akuntansi\AkuntansiController@deleteDataSal'); //done
+            Route::post('akuntansi/delete-data-ekuitas', 'Akuntansi\AkuntansiController@deleteDataEkuitas'); //done
             /*END POST*/
         // });
         // Route::group(['prefix' => 'ambulance'], function () {

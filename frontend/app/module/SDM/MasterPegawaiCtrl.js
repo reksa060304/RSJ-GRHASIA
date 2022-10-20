@@ -226,6 +226,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 			}
 			
 			function init() {
+				$scope.isRouteLoading = false;
 				if (jenisCache != '') {
 					if (jenisCache == 'EditPegawai') {
 						medifirstService.get("sdm/get-data-detail-pegawai?idPegawai=" + $scope.item.idPegawai, true).then(function (dat) {
@@ -1565,6 +1566,7 @@ $scope.formatRupiah = function (value, currency) {
 				$scope.itemKeluarga.alamat = dataItem.alamat;
 				$scope.itemKeluarga.keterangan = dataItem.keterangan;
 				$scope.itemKeluarga.pendidikan = { id: dataItem.objectpendidikanterakhirfk, pendidikan: dataItem.pendidikan };
+				$scope.itemKeluarga.Tunjangan = dataItem.tunjangan
 				$scope.popUpDataKeluarga.center().open();
 			}
 
@@ -2466,6 +2468,7 @@ $scope.formatRupiah = function (value, currency) {
 								data.objectpegawaifk = $scope.item.idPegawai
 								data.objectpendidikanterakhirfk = $scope.itemKeluarga.pendidikan.id
 								data.pendidikan = $scope.itemKeluarga.pendidikan.pendidikan
+								data.tunjangan = $scope.itemKeluarga.Tunjangan
 
 								dataKeluarga[i] = data;
 								$scope.gridKeluarga = new kendo.data.DataSource({
@@ -2503,7 +2506,8 @@ $scope.formatRupiah = function (value, currency) {
 							alamat: $scope.itemKeluarga.alamat,
 							objectpendidikanterakhirfk: $scope.itemKeluarga.pendidikan.id,
 							pendidikan: $scope.itemKeluarga.pendidikan.pendidikan,
-							objectpegawaifk: $scope.item.idPegawai
+							objectpegawaifk: $scope.item.idPegawai,
+							tunjangan: $scope.itemKeluarga.Tunjangan
 						}
 						dataKeluarga.push(data)
 						

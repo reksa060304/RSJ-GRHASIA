@@ -7188,6 +7188,9 @@ public function daftarKenaikanGajiBerkala(Request $request){
                     $dataSaveKeluarga->objectstatusperkawinanpegawaifk = $request['objectstatusperkawinanpegawaifk'];
                     $dataSaveKeluarga->statustanggungan = $request['statustanggungan'];
                     $dataSaveKeluarga->tgllahir = $request['tgllahir'];
+                    if(isset($request['tunjangan']) && $request['tunjangan'] != ""){
+                        $dataSaveKeluarga->tunjangan = $request['tunjangan'];
+                    }
                     if (isset($request['tglsuratkuliah']) && $request['tglsuratkuliah'] != 'Invalid date'){
                         $dataSaveKeluarga->tglsuratkuliah = $request['tglsuratkuliah'];
                     }
