@@ -1029,6 +1029,10 @@
             "urlDep": "module/Perencanaan/JurnalPenutupanCtrl"
         },
         {
+            "nameDep": "LaporanHutangCtrl",
+            "urlDep": "module/Perencanaan/LaporanHutangCtrl"
+        },
+        {
             "nameDep": "MasterPihakKetigaCtrl",
             "urlDep": "module/Perencanaan/MasterPihakKetigaCtrl"
         },

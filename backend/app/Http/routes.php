@@ -1451,6 +1451,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('perencanaan/get-retur', 'Perencanaan\PerencanaanController@getRetur');
             Route::get('perencanaan/get-jurnal', 'Perencanaan\PerencanaanController@getJurnal');
             Route::get('perencanaan/get-jurnalp', 'Perencanaan\PerencanaanController@getJurnalP');
+            Route::get('perencanaan/get-telemedicine', 'Perencanaan\PerencanaanController@getTelemedicine');
             Route::get('perencanaan/get-panjar-bku', 'Perencanaan\PerencanaanController@getPanjarBKU');
             Route::get('perencanaan/get-spm-bku', 'Perencanaan\PerencanaanController@getSPMBKU');
             Route::get('perencanaan/get-jasgir-bku', 'Perencanaan\PerencanaanController@getJasgirBKU');
@@ -1485,10 +1486,12 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::post('perencanaan/delete-jasgir','Perencanaan\PerencanaanController@deleteJasgir');
             Route::post('perencanaan/delete-retur','Perencanaan\PerencanaanController@deleteRetur');
             Route::post('perencanaan/delete-jurnal','Perencanaan\PerencanaanController@deleteJurnal');
+            Route::post('perencanaan/delete-telemedicine','Perencanaan\PerencanaanController@deleteTelemedicine');
             Route::post('perencanaan/save-pajak','Perencanaan\PerencanaanController@savePajak');
             Route::post('perencanaan/save-jasgir','Perencanaan\PerencanaanController@saveJasgir');
             Route::post('perencanaan/save-retur','Perencanaan\PerencanaanController@saveRetur');
             Route::post('perencanaan/save-jurnal','Perencanaan\PerencanaanController@saveJurnal');
+            Route::post('perencanaan/save-telemedicine','Perencanaan\PerencanaanController@saveTelemedicine');
             Route::post('perencanaan/save-jurnalp','Perencanaan\PerencanaanController@saveJurnalP');
             Route::post('perencanaan/save-sumber-pendapatan','Perencanaan\PerencanaanController@saveSumberPendapatan');
             Route::post('perencanaan/delete-sumber-pendapatan','Perencanaan\PerencanaanController@deleteSumberPendapatan');

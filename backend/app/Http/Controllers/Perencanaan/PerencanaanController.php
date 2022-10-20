@@ -54,6 +54,7 @@ use App\Transaksi\PenyetoranPajak;
 use App\Transaksi\JasaGiro;
 use App\Transaksi\Retur;
 use App\Transaksi\Jurnal;
+use App\Transaksi\Telemedicine;
 use App\Master\AsalProduk;
 use App\Transaksi\UraianPendapatan;
 use phpDocumentor\Reflection\Types\Null_;
@@ -3371,6 +3372,62 @@ class PerencanaanController extends ApiController {
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
 
+    public function saveTelemedicine(Request $request) {
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        try{ 
+                    if($request['norec'] == ''){
+                        $MA = new Telemedicine();
+                        $norecKS = $MA->generateNewId();
+                        $MA->norec = $norecKS;
+                        $MA->kdprofile = $idProfile;
+                        $MA->statusenabled = true;
+                    } else{
+                        $MA = Telemedicine::where('norec', '=', $request['norec'])->first();
+                    }
+                    
+                    
+                    $MA->kdreservasi = $request['kdreservasi'];
+                    $MA->norm = $request['norm'];
+                    $MA->tglreservasi = $request['tglreservasi'];
+                    $MA->namapasien = $request['namapasien'];
+                    $MA->jam = $request['jam'];
+                    $MA->nohp = $request['nohp'];
+                    $MA->objectruanganfk = $request['objectruanganfk'];
+                    $MA->objectkelompokpasienfk = $request['objectkelompokpasienfk'];
+                    $MA->objectdokterfk = $request['objectdokterfk'];
+                    $MA->nominal = $request['nominal'];
+                    $MA->save();
+
+           $transStatus = 'true';
+       } catch (\Exception $e) {
+            $transStatus = 'false';
+       }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'result' => $MA,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'line'=> $e->getLine(),
+                'message'=> $e->getMessage(),
+                'as' => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
     public function saveJurnalP(Request $request) {
         DB::beginTransaction();
         $kdProfile = $this->getDataKdProfile($request);
@@ -3884,6 +3941,43 @@ class PerencanaanController extends ApiController {
     }
 
     
+
+    public function deleteTelemedicine(Request $request) {
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        try{ 
+                    $MA = Telemedicine::where('norec', '=', $request['norec'])->first();
+                    $MA->statusenabled = false;
+                    $MA->save();
+
+           $transStatus = 'true';
+       } catch (\Exception $e) {
+            $transStatus = 'false';
+       }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Hapus";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'result' => $MA,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Hapus Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'line'=> $e->getLine(),
+                'message'=> $e->getMessage(),
+                'as' => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
 
     public function deleteJurnal(Request $request) {
         DB::beginTransaction();
@@ -5995,6 +6089,34 @@ order by kodemataanggaran"));
         select *
         from returakuntansi_t where kdprofile = 30 and statusenabled = true
         and tglretur between '$tglAwal' and '$tglAkhir'
+        ")
+        );
+
+        $result = array(
+            'data' => $data,
+            'message' => '@epic',
+        );
+
+        return $this->respond($result);
+    }
+
+    
+
+
+    public function getTelemedicine(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $tglAwal = $request['awal'];
+        $tglAkhir = $request['akhir'];
+        
+        $data = DB::select(DB::raw("
+        select pt.*, ru.id idruangan, ru.namaruangan, pg.id idpegawai, pg.namalengkap, kp.id idkelompok, kp.kelompokpasien
+        from pasientelemedicine_t pt 
+        inner join ruangan_m as ru on ru.id = pt.objectruanganfk
+        inner join kelompokpasien_m as kp on kp.id = pt.objectkelompokpasienfk
+        inner join pegawai_m as pg on pg.id = pt.objectdokterfk
+        where pt.kdprofile = 30 and pt.statusenabled = true
+        and pt.tglreservasi between '$tglAwal' and '$tglAkhir'
         ")
         );
 

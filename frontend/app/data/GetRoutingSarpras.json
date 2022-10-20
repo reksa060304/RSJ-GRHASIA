@@ -5239,6 +5239,26 @@
     ]
   },
   {
+    "name": "LaporanHutang",
+    "url": "/TGFwb3Jhbkh1dGFuZw==",
+    "templateurl": "module/Perencanaan/LaporanHutang.html",
+    "controller": "LaporanHutangCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
     "name": "MasterPihakKetiga",
     "url": "/TWFzdGVyUGloYWtLZXRpZ2E=",
     "templateurl": "module/Perencanaan/MasterPihakKetiga.html",
