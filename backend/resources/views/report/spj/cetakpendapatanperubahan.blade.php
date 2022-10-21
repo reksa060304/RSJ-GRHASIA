@@ -12,8 +12,8 @@
 </head>
 <style type="text/css" media="print">
         @page {
-            size: auto;   /* auto is the initial value */
-            margin: 10;  /* this affects the margin in the printer settings */
+            size: landscape;   /* auto is the initial value */
+            margin: 2cm 2cm 2cm 3cm;  /* this affects the margin in the printer settings */
         }
 </style>
 <style>
@@ -49,11 +49,11 @@
 </style>
 <body style="background-color: #CCCCCC;">
 <div align="center" >
-    <table width="{{$pageWidth}}" bgcolor="#FFFFFF" style="border-left: 3px solid black; border-right: 3px solid black; border-top: 3px solid black;">
+    <table width="{{$pageWidth}}" bgcolor="#FFFFFF" style="border-left: 3px solid black; border-top: 3px solid black;">
         <tbody >
         <tr>
             <td rowspan="2"  style="padding: 5px; width: 50px; border-right: 3px solid black;" align="center">
-                    <p align="left">
+                    <p align="center">
                             @if(stripos(\Request::url(), 'localhost') !== FALSE)
                             <img src="{{ asset('img/logo_grhasia.png') }}" style="width: 120px" >
                             @else

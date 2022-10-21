@@ -12,9 +12,9 @@
 </head>
 <style type="text/css" media="print">
     @page {
-        size: auto;   /* auto is the initial value */
-        margin: 30;  /* this affects the margin in the printer settings */
-    }
+            size: landscape;   /* auto is the initial value */
+            margin: 2cm 2cm 2cm 3cm;  /* this affects the margin in the printer settings */
+        }
 </style>
 <style>
 

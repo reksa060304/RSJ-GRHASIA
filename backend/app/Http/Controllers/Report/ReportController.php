@@ -2518,7 +2518,7 @@ class ReportController extends ApiController{
         ) as z"));
         
 
-        $pageWidth = 950;
+        $pageWidth = 1200;
         //return $this->respond($result);
         return view('report.spj.cetakjenisanggaran',compact('data', 'pageWidth', 'jumlah', 'tahap', 'tanggalcetak'));
     }
@@ -2645,7 +2645,7 @@ class ReportController extends ApiController{
                 group by map3.kode || '.' || map2.kode || '.' || map1.kode || '.' || map.kode, map.mataanggaranpermen, x.totalbelanja, y.jumlah        
         "));
 
-        $pageWidth = 950;
+        $pageWidth = 1200;
         //return $this->respond($result);
         return view('report.spj.cetakspjmonev',compact('data', 'pageWidth', 'tahun', 'subkegiatan', 'subsubkegiatan'));
     }
@@ -3847,7 +3847,7 @@ class ReportController extends ApiController{
         ) as a order by kode) as k on j.kegiatan = k.kegiatan"));
         
 
-        $pageWidth = 1200;
+        $pageWidth = 1300;
         //return $this->respond($result);
         return view('report.spj.cetakjenisanggaransebelumsesudah',compact('sebelum', 'pageWidth', 'tahap', 'tanggalcetak'));
     }
@@ -6405,7 +6405,7 @@ inner join(
         $qsama
         "));
 
-        $pageWidth = 1500;
+        $pageWidth = 1200;
         return view('report.spj.cetakrbadetailsebelumsesudah',compact('sebelum','pageWidth', 'data', 'tanggalcetak'));
     }
     
@@ -7114,7 +7114,7 @@ public function suratBuktiPengembalian(Request $request)
                         ) as x group by x.kegiatan, x.subkegiatan, x.subtotal, x.kode, x.div, x.id_asalproduk
                     ) as y group by subkegiatan, kode, div
                 ) as a order by kode"));
-        $pageWidth = 1110;
+        $pageWidth = 1200;
         return view('report.spj.cetakrekapanggaransumberdana', compact('data', 'pageWidth','tahap', 'tanggalcetak'));
     }
     public function CetakRekapSumberDanaAnggaran(Request $request)
