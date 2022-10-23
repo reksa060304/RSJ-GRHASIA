@@ -324,7 +324,7 @@
     <div kendo-window="popUpPanggil" k-title="'Panggil ke Ruangan'" k-width="400" k-height="120" k-visible="false"
         k-on-open="win2visible = true" k-on-close="win2visible = false">
         <label c-label item="item " c-label-text="pilihRuang"></label>
-        <input style="width: 100%; " kendo-combo-box k-ng-model="item.pilihRuangan" k-data-text-field="'namaruangan'"
+        <input style="width: 100%; " kendo-combo-box k-ng-model="item.pilihRuangan" k-data-text-field="'namaexternal'"
             k-filter=" 'contains' " k-data-value-field=" 'id' " k-auto-bind="false " k-data-source="listPilihRuang" />
         <div class="clear">
             <button class="k-button" ng-click="simpanPanggil()"

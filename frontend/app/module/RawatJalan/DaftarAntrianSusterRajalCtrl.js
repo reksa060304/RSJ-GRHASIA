@@ -1760,14 +1760,22 @@ define(['initialize'], function (initialize) {
                 saveAntrol(param)
                 var data = {
                     0: $scope.item.pilihRuangan.id,
-                    1: $scope.item.pilihRuangan.namaruangan
+                    1: $scope.item.pilihRuangan.namaexternal,
+                    2: $scope.item.pilihRuangan.namaruangan
                 }
+                console.log(data);
                 cacheHelper.set("PanggilPerawat", data)
                 socket.emit('call-antrian-poli', {
                     namapasien:$scope.dataPasienSelected.namapasien,
                     namaruangan: $scope.item.pilihRuangan.namaruangan,
                     noantri:$scope.dataPasienSelected.noantrian,
                     nocm:$scope.dataPasienSelected.nocm,
+                });
+                console.log({
+                    namapasien: $scope.dataPasienSelected.namapasien,
+                    namaruangan: $scope.item.pilihRuangan.namaruangan,
+                    noantri: $scope.dataPasienSelected.noantrian,
+                    nocm: $scope.dataPasienSelected.nocm,
                 });
                 var cookie = document.cookie.split(';');
                 cookie = cookie[0].split('=');
@@ -1794,7 +1802,7 @@ define(['initialize'], function (initialize) {
                 var cacheperawat = cacheHelper.get('PanggilPerawat')
                 if (cacheperawat != undefined) {
                     $scope.item.pilihRuangan = {
-                        id: cacheperawat[0], namaruangan: cacheperawat[1]
+                        id: cacheperawat[0], namaexternal: cacheperawat[1], namaruangan: cacheperawat[2]
                     }
                 }
                 $scope.popUpPanggil.center().open()

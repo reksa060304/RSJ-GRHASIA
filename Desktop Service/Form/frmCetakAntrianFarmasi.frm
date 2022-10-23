@@ -250,6 +250,10 @@ Dim Apoteker As String
                 .usnamadokter.SetUnboundFieldSource ("{ado.namadokter}")
                 .usStatusPasien.SetUnboundFieldSource ("{ado.statuspasien}")
                 .txtAntrian.SetText RS3!jenis & "-" & RS3!NoAntri
+                If RS3!jenis = "R" Then
+                .txtRacikan.SetText "Obat Racikan, mohon sabar menunggu karena membutuhkan waktu yang lebih lama dan membutuhkan ketelitian."
+                End If
+                
 '                .txtPetugas.SetText Apoteker
              End If
                         
