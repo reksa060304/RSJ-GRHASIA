@@ -19281,6 +19281,50 @@
         "define": "RekamMedisCtrl"
       }
     ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.PengkajianAwalKepHCU",
+    "url": "/PengkajianAwalKepHCU",
+    "templateurl": "module/EMR/PengkajianAwalKepHCU.html",
+    "controller": "PengkajianAwalKepHCUCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.PengkajianAwalKepRanapUmum",
+    "url": "/PengkajianAwalKepRanapUmum",
+    "templateurl": "module/EMR/PengkajianAwalKepRanapUmum.html",
+    "controller": "PengkajianAwalKepRanapUmumCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
   }
  
 ]

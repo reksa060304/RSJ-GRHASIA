@@ -3482,6 +3482,14 @@
         {
             "nameDep": "RencanaPemulanganPasienGrhCtrl",
             "urlDep": "module/EMR/RencanaPemulanganPasienGrhCtrl"
-        }            
+        },
+        {
+            "nameDep": "PengkajianAwalKepHCUCtrl",
+            "urlDep": "module/EMR/PengkajianAwalKepHCUCtrl"
+        },
+        {
+            "nameDep": "PengkajianAwalKepRanapUmumCtrl",
+            "urlDep": "module/EMR/PengkajianAwalKepRanapUmumCtrl"
+        }             
     ]
 }
