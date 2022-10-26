@@ -3905,6 +3905,11 @@ class GeneralController extends ApiController
         return $this->respond(array('terbilang' => $terbilang));
     }
 
+    public function getTerbilangTidakBulat($number){
+        $terbilang = $this->makeTerbilangTidakDibulatkan($number);
+        return $this->respond(array('terbilang' => $terbilang));
+    }
+
     public function getPaketTindakan(Request $request){
         $kdProfile = (int) $this->getDataKdProfile($request);
         $data = \DB::table('paket_m as mpr')

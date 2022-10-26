@@ -86,8 +86,8 @@
                             </div>
                             <div class="grid_12">
                                 <div class="grid_12">
-                                    <input style="width: 100%" k-ng-model="item.tglawal" kendo-datetimepicker placeholer="yyyy-mm-dd"
-                                    k-format="'yyyy-MM-dd HH:mm'" />
+                                    <input style="width: 100%" k-ng-model="item.tglawal" kendo-datepicker placeholer="yyyy-mm-dd"
+                                    k-format="'yyyy-MM-dd'" />
                                 </div>
                             </div>
                         </div>
@@ -95,8 +95,8 @@
                             <br>
                             <div class="grid_12">
                                 <div class="grid_12">
-                                    <input style="width: 100%" k-ng-model="item.tglakhir" kendo-datetimepicker placeholer="yyyy-mm-dd"
-                                    k-format="'yyyy-MM-dd HH:mm'" />
+                                    <input style="width: 100%" k-ng-model="item.tglakhir" kendo-datepicker placeholer="yyyy-mm-dd"
+                                    k-format="'yyyy-MM-dd'" />
                                 </div>
                             </div>
                         </div>
@@ -168,6 +168,12 @@
                     k-ng-model="dataSelected" ng-click="klikGrid(dataSelected)" style="min-height: 0px; max-height: 500px;" >
                 </kendo-grid>
             </div>
+            <div class="grid_12 borderBox" ng-hide="hidests">
+                <kendo-grid id="gridsts" data-source="dataGridSTS" options="columnGridSTS" k-pageable="'true'"
+                    k-sortable="'true'" k-groupable="'false'" k-resizable="'true'" k-selectable="'row'"
+                    k-ng-model="dataSelected" ng-click="klikGrid(dataSelected)" style="min-height: 0px; max-height: 500px;" >
+                </kendo-grid>
+            </div>
             <div class="grid_12 borderBox" ng-hide="hidepajak">
                 <kendo-grid id="gridp" data-source="dataGridPajak" options="columnGridPajak" k-pageable="'true'"
                     k-sortable="'true'" k-groupable="'false'" k-resizable="'true'" k-selectable="'row'"
@@ -191,8 +197,8 @@
                         Tanggal BKU
                     </div>
                     <div class="grid_12" style="margin-top: 10px;">
-                        <input style="width: 100%" k-ng-model="item.tglbku" kendo-datetimepicker placeholer="yyyy-mm-dd"
-                                    k-format="'yyyy-MM-dd HH:mm'" />
+                        <input style="width: 100%" k-ng-model="item.tglbku" kendo-datepicker placeholer="yyyy-mm-dd"
+                                    k-format="'yyyy-MM-dd'" />
                     </div>
                     <div class="grid_12" style="text-align: left; margin-top: 10px;">
                         Jenis Bukti
@@ -272,6 +278,12 @@
             </div>
             <div class="grid_12 borderBox" ng-hide="hidejasgir">
                 <kendo-grid id="gridj" data-source="dataGridJasaGiro" options="columnGridJasaGiro" k-pageable="'true'"
+                    k-sortable="'true'" k-groupable="'false'" k-resizable="'true'" k-selectable="'row'"
+                    k-ng-model="dataSelected" ng-click="klikGrid(dataSelected)" style="min-height: 0px; max-height: 500px;" >
+                </kendo-grid>
+            </div>
+            <div class="grid_12 borderBox" ng-hide="hidests">
+                <kendo-grid id="gridsts" data-source="dataGridSTS" options="columnGridSTS" k-pageable="'true'"
                     k-sortable="'true'" k-groupable="'false'" k-resizable="'true'" k-selectable="'row'"
                     k-ng-model="dataSelected" ng-click="klikGrid(dataSelected)" style="min-height: 0px; max-height: 500px;" >
                 </kendo-grid>

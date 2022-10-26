@@ -86,10 +86,47 @@ Trait Valet {
         return Carbon::now();
     }
 
+    protected function decimalAdd($a,$b,$numDecimals=2) {
+        $intSum=(int)str_replace(".","",$a)+(int)str_replace(".","",$b);
+        $paddedIntSum=str_pad(abs($intSum),$numDecimals,0,STR_PAD_LEFT);
+        $result=($intSum<0?"-":"").($intSum<100&&$intSum>-100?"0":"").substr_replace($paddedIntSum,".",-$numDecimals,0);
+        return $result;
+    }
+
+    protected function terbilangkomanya($number){
+        $x = abs($number);
+        $angka = array("nol ", "satu ", "dua ", "tiga ", "empat ", "lima ",
+            "enam ", "tujuh ", "delapan ", "sembilan ");
+
+        $pembulatan = $number;
+        $digit = strlen(substr(strrchr(sprintf("%s", $pembulatan), "."), 1));
+        $decimalfloor = bcsub($pembulatan, floor($pembulatan), $digit);
+        //var_dump($digit);
+        // var_dump(floor((float)$pembulatan));
+        
+        // var_dump();
+        // var_dump(bcsub(367.09, 367, 2));
+        $string = sprintf("%s", $decimalfloor);
+        $fix = str_split($string);
+        //var_dump($fix);
+
+        $temp2 = "";
+        if($decimalfloor != 0){
+            $temp2 = " koma ";
+            for($i = 2; $i < count($fix); $i++){
+                $temp2 = $temp2.$angka[(int)$fix[$i]];
+                //var_dump($angka[(int)$fix[$i]]);
+            }
+        }
+
+        return $temp2;
+    }
+
     protected function terbilang($number){
             $x = abs($number);
             $angka = array("", "satu", "dua", "tiga", "empat", "lima",
                 "enam", "tujuh", "delapan", "sembilan", "sepuluh", "sebelas");
+            
             $temp = "";
             if ($number <12) {
                 $temp = " ". $angka[$number];
@@ -120,6 +157,15 @@ Trait Valet {
             $hasil = "negatif ". trim($this->terbilang($number));
         } else {
             $hasil = trim($this->terbilang($number));
+        }
+        return $suffix.$hasil.$prefix;
+    }
+
+    protected function makeTerbilangTidakDibulatkan($number, $prefix=' rupiah', $suffix=''){
+        if($number<0) {
+            $hasil = "negatif ".$this->terbilang($number);
+        } else {
+            $hasil =$this->terbilang($number).$this->terbilangkomanya($number);
         }
         return $suffix.$hasil.$prefix;
     }

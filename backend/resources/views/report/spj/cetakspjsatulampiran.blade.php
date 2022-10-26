@@ -91,14 +91,18 @@
             <td style="padding: 5px; width: 10%;" align="left">
                 {{$dt->uraian}}
             </td>
+            @php
+                $digitharga = strlen(substr(strrchr(sprintf("%s", $dt->harga), "."), 1));
+                $digitsubtotal = strlen(substr(strrchr(sprintf("%s", $dt->subtotal), "."), 1));
+            @endphp
             <td style="padding: 5px; width: 10%;" align="left">
-                @ {{ number_format($dt->harga,0,',','.') }} x {{$dt->jml}} {{$dt->satuan}}
+                @ {{ number_format($dt->harga,$digitharga,',','.') }} x {{$dt->jml}} {{$dt->satuan}}
             </td>
             <td style="padding: 5px; width: 10%;" align="center">
                 =
             </td>
             <td style="padding: 5px; width: 10%;" align="left">
-                {{ number_format($dt->subtotal,0,',','.') }}
+                {{ number_format($dt->subtotal,$digitsubtotal,',','.') }}
             </td>
             @endforeach
         </tr>

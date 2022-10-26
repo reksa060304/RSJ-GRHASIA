@@ -362,14 +362,18 @@
             <td style="padding: 10px; border: 1px solid black; width: 50px; height: 20px; " align="center">
                 {{$dt->uraian}}
             </td>
+            @php
+                $digitharga = strlen(substr(strrchr(sprintf("%s", $dt->harga), "."), 1));
+                $digitsubtotal = strlen(substr(strrchr(sprintf("%s", $dt->subtotal), "."), 1));
+            @endphp
             <td style="padding: 10px; border: 1px solid black; width: 50px; height: 20px; " align="center">
-                {{ number_format($dt->harga,0,',','.') }}
+                {{ number_format($dt->harga,$digitharga,',','.') }}
             </td>
             <td style="padding: 10px; border: 1px solid black; width: 50px; height: 20px; " align="center">
                 {{ $dt->jml }}
             </td>
             <td style="padding: 10px; border: 1px solid black; width: 50px; height: 20px; " align="center">
-                {{ number_format($dt->subtotal,0,',','.') }}
+                {{ number_format($dt->subtotal,$digitsubtotal,',','.') }}
             </td>
             @endforeach
         </tr>
@@ -377,8 +381,11 @@
             <td colspan="4" style="padding: 10px; border: 1px solid black; width: 200px; " align="center">
                 JUMLAH TOTAL
             </td>
+            @php
+                $digittotal = strlen(substr(strrchr(sprintf("%s", $jumlah[0]->totalfix), "."), 1));
+            @endphp
             <td style="padding: 10px; width: 50px; border: 1px solid black " align="center">
-                {{ number_format($jumlah[0]->totalfix,0,',','.') }}
+                {{ number_format($jumlah[0]->totalfix,$digittotal,',','.') }}
             </td>
         </tr>
         <tr style="border: 1px solid black;" >

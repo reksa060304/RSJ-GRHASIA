@@ -80,6 +80,33 @@ define(['initialize'], function (initialize) {
                     });
             }
 
+            $scope.$watch('item.caridatapajak', function (newValue, oldValue) {
+                $scope.isRouteLoading = true;
+
+                var awal = moment($scope.item.tglawal).format('YYYY-MM-DD HH:mm');
+				var akhir = moment($scope.item.tglakhir).format('YYYY-MM-DD HH:mm');
+                // var tgl = moment($scope.tanggal).format('DD/MM/YYYY');
+                medifirstService.get("perencanaan/get-spj-to-pajak?awal="+awal+"&akhir="+akhir+"&key="+$scope.item.caridatapajak).then(function (e) {
+                        $scope.isRouteLoading = false;
+                        
+                        $scope.dataGrid = new kendo.data.DataSource({
+                            data: e.data.data,
+                            group: $scope.group,
+                            pageSize: 100,
+                            total: e.data.data.length,
+                            serverPaging: false,
+                            schema: {
+                                model: {
+                                    fields: {
+                                    }
+                                }
+                            },
+                            aggregate: [
+                            ]
+                        });
+                    });
+            });
+
 
             $scope.EntryPenyetoran = function(){
                 //$scope.item.itemJenisBukti = { id: 1, jenisbukti: "UP" }

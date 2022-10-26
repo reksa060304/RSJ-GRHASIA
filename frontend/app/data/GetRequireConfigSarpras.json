@@ -1017,6 +1017,10 @@
             "urlDep": "module/Perencanaan/JasaGiroCtrl"
         },
         {
+            "nameDep": "STSKeuanganCtrl",
+            "urlDep": "module/Perencanaan/STSKeuanganCtrl"
+        },
+        {
             "nameDep": "MasterDataAkuntansiCtrl",
             "urlDep": "module/Perencanaan/MasterDataAkuntansiCtrl"
         },

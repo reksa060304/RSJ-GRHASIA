@@ -542,11 +542,20 @@
 							<div class="grid_12">
 								<div class="grid_12 borderBox">
 									<kendo-grid id="kGrids" k-data-source="dataSourceSPP" k-selectable="'row'"  class="max-height"
-										k-options="columnSPP" k-ng-model="dataSPPSelected" ng-click="klikPanjar(dataSPPSelected)">
+										k-options="columnSPP" k-ng-model="dataSPPSelected" ng-click="klikSPPSPM(dataSPPSelected)">
 									</kendo-grid>
 								</div>
 							</div>
-							<div class="grid_11"></div>
+							<div class="grid_5"></div>
+							<div class="grid_2">
+								<button class="btnTemplate1" ng-click="SuratPengantarSPP()">Surat Pengantar SPP</button>
+							</div>
+							<div class="grid_2">
+								<button class="btnTemplate1" ng-click="SuratPertanggungjawabanSPP()">Surat Ringkasan SPP</button>
+							</div>
+							<div class="grid_2">
+								<button class="btnTemplate1" ng-click="SuratRincianSPP()">Surat Rincian SPP</button>
+							</div>
 							<div class="grid_1">
 								<button class="btnTemplate1" ng-click="TambahSPP()">Tambah</button>
 							</div>
@@ -562,7 +571,15 @@
 									</kendo-grid>
 								</div>
 							</div>
-							<div class="grid_11"></div>
+							<div class="grid_2">
+								<button class="btnTemplate1" ng-click="SuratPengantarSPM()">Surat Pengantar SPM</button>
+							</div>
+							<div class="grid_2">
+								<button class="btnTemplate1" ng-click="SuratPertanggungjawabanSPM()">Surat Pertanggungjawaban SPM</button>
+							</div>
+							<div class="grid_2">
+								<button class="btnTemplate1" ng-click="SuratRincianSPM()">Surat Rincian SPM</button>
+							</div>
 						</md-content>
 					</md-tab>
 				</md-tabs>
@@ -1853,7 +1870,7 @@
 				<div class="grid_3" >
 					<md-radio-group ng-model="item.radioPencairan">
 						<div class="grid_6"><md-radio-button value="1" class="md-primary">Transfer Bank</md-radio-button></div>
-						<div class="grid_6"><md-radio-button value="2" class="md-primary">Panjar</md-radio-button></div>
+						<div class="grid_6" ng-hide="dispptk"><md-radio-button value="2" class="md-primary">Panjar</md-radio-button></div>
 					</md-radio-group>
 				</div>
 				<div class="grid_3" style="margin-top: -10px;" >
@@ -1943,11 +1960,14 @@
 				<div class="grid_3">
 					NAMA PIHAK KETIGA 
 				</div>
-				<div class="grid_6">
+				<div class="grid_4">
 					<input kendo-combo-box k-ng-model="item.pihakKetigaSPJ"
 						k-data-text-field="'namarekanan'" k-data-value-field="'id'"
 						k-filter="'contains'" k-auto-bind="false"
 						k-data-source="listPihakKetiga"  />
+				</div>
+				<div class="grid_1" style="margin-top: 0px;">
+					<button class="btnTemplate1" ng-click="TambahPihakKetiga()">Add</button>           
 				</div>
 			</div>
 		</div>
@@ -1964,6 +1984,26 @@
 			<div class="grid_2" style="margin-left: 10px; margin-top: 20px;">
 				<button class="btnTemplate1" ng-click="SimpanPopUpDetailSPJ()">Simpan</button>
 			</div>
+		</div>
+	</div>
+</div>
+<div kendo-window="PihakKetiga" k-title="'Pihak Ketiga'" k-visible="false" k-width="500" style="overflow-y: hidden; overflow-x: hidden;">
+	<div class="panel panel-default container_12">
+		<div class="grid_12">
+			<div class="grid_12" style="text-align: left; margin-top: 10px;">
+				Nama Pihak Ketiga
+			</div>
+			<div class="grid_12" style="margin-top: 10px;">
+				<input c-text-box type="input" class="k-textbox" ng-model="item.namapihakketiga"/>
+			</div>
+		</div>
+		
+		<div class="grid_12" style="margin-top: 10px;">
+			<div class="grid_9" ></div>
+			<div class="grid_2" >
+					<button class="btnTemplate1" ng-click="SavePihakKetiga()">Simpan</button>
+			</div>
+			<div class="grid_1" ></div>
 		</div>
 	</div>
 </div>
@@ -2547,7 +2587,7 @@
 		<br>
 		<div class="grid_12 borderBox">
 			<kendo-grid id="kGrids" k-data-source="dataSourceCariSPD" k-selectable="'row'"  class="max-height"
-				k-options="columnCariSPD" k-ng-model="dataSPPSelected" ng-click="klikPanjar(dataSPPSelected)">
+				k-options="columnCariSPD" k-ng-model="dataSPDSelected" ng-click="klikPanjar(dataSPDSelected)">
 			</kendo-grid>
 		</div>
 	</div>
@@ -2602,7 +2642,24 @@
 					Cara Pembayaran
 				</div>
 				<div class="grid_6" >
-					<input c-text-box type="input" class="k-textbox" ng-model="item.combocarabayar" disabled="true" />
+					<md-radio-group ng-model="item.radioPencairanVerifikasi">
+						<div class="grid_6"><md-radio-button value="1" class="md-primary">Transfer Bank</md-radio-button></div>
+						<div class="grid_6"><md-radio-button value="2" class="md-primary">Panjar</md-radio-button></div>
+					</md-radio-group>
+				</div>
+			</div>
+			<div class="grid_12">
+				<div class="grid_3"></div>
+				<div class="grid_6">
+					<div class="grid_6" style="margin-top: -10px;" >
+						<input c-text-box type="input" class="k-textbox" ng-model="item.panjar" ng-hide="false" />
+					</div>
+					<div class="grid_2" ng-if="disidpegawai === false" style="margin-top: -10px;">
+						<button class="btnTemplate1" ng-click="TambahPanjarVerifSPJ()" ng-hide="false">Add</button>
+					</div>
+					<div class="grid_2" style="margin-top: -10px; margin-left: 10px;">
+						<button class="btnTemplate1" ng-click="CariPanjarVerifSPJ()" ng-hide="false">Cari</button>
+					</div>
 				</div>
 			</div>
 			<div class="grid_12" style="margin-top: 30px;">
