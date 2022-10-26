@@ -7875,25 +7875,7 @@ class EMRController  extends ApiController
                     GROUP BY emrdp.emrpasienfk,
                     emrdp.emrfk,emrp.norec,emr.caption,
                     emr.reportdisplay 
-                union all 
-                SELECT
-                emrdp.emrpasienfk,
-                emrdp.emrfk,
-                emr.reportdisplay,
-                emrp.norec,emr.caption as namaform
-                FROM
-                emrcakem_t AS emrdp
-                INNER JOIN emrpasien_t AS emrp ON emrp.noemr = emrdp.emrpasienfk
-                INNER JOIN emr_t AS emr ON emr.id = emrdp.emrfk
-                WHERE emrdp.kdprofile = $idProfile and
-                emrdp.statusenabled = true
-                $paramNocm
-                $paramNoreg
-                AND emrp.jenisemr ILIKE '%$jenisEMr%'
-                and emrdp.emrpasienfk='$noemr'
-                GROUP BY emrdp.emrpasienfk,
-                emrdp.emrfk,emrp.norec,emr.caption,
-                emr.reportdisplay
+                
 
             "));
 
@@ -10649,6 +10631,19 @@ class EMRController  extends ApiController
             $EMR->save();
 
             $norec_EMR = $EMR->noemr;
+            $EMRD = new EMRPasienD();
+            $norecD = $EMRD->generateNewId();
+            $EMRD->norec = $norecD;
+            $EMRD->kdprofile = $kdProfile;
+            $EMRD->statusenabled = 1;
+            $EMRD->emrpasienfk = $norec_EMR;
+            $EMRD->value = 'Data Masuk';
+            $EMRD->emrdfk = 3006001;
+            $EMRD->emrfk = $head['emrfk'];
+            $EMRD->pegawaifk = $data['pegawaiinput'];
+            $EMRD->tgl = $this->getDateTime()->format('Y-m-d H:i:s');
+            $EMRD->save();
+
             if($data['norec']== '-'){
                 $emrcakem = \DB::table('emrcakem_t')->insert([
                     'norec'=>substr(Uuid::generate(), 0, 32),
