@@ -7,6 +7,10 @@
         {
             "nameDep": "MasterEkuitasCtrl",
             "urlDep": "module/Akuntansi/MasterEkuitasCtrl"
+        },
+        {
+            "nameDep": "CatatanPerkembanganBaruCtrl",
+            "urlDep": "module/EMR/CatatanPerkembanganBaruCtrl"
         }
     ]
 }
