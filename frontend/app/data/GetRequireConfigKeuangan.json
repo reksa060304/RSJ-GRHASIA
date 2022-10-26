@@ -411,6 +411,10 @@
         {
             "nameDep": "DaftarPiutangBPJSCtrl",
             "urlDep": "module/Piutang/DaftarPiutangBPJSCtrl"
+        },
+        {
+            "nameDep": "DaftarPiutangSelainBPJSCtrl",
+            "urlDep": "module/Piutang/DaftarPiutangSelainBPJSCtrl"
         }
     ]
 }

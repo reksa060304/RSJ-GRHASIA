@@ -2866,6 +2866,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::post('tatarekening/save-dana-ffs', 'TataRekening\TagihanController@saveDanaFFS');
           Route::post('tatarekening/save-dana-p3', 'TataRekening\TagihanController@saveDanaP3');
           Route::post('tatarekening/save-poin-remun', 'TataRekening\TagihanController@saveImportRemun');
+          Route::post('tatarekening/save-piutang-bpjs', 'TataRekening\TagihanController@savePiutangBPJS');
+          Route::post('tatarekening/save-piutang-bpjs-manual', 'TataRekening\TagihanController@savePiutangBPJSManual');
           Route::get('tatarekening/get-detail_apd', 'TataRekening\TagihanController@getDetailpasien');
           Route::get('tatarekening/get-sisa-dana-p3', 'TataRekening\TagihanController@getSisaDanaP3');
           Route::get('tatarekening/get-daftar-dana-pagu', 'TataRekening\TagihanController@getDanaPagu');
@@ -2925,6 +2927,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::post('tatarekening/save-update-rekanan_pd', 'TataRekening\TagihanController@simpanUpdateRekananPD');
           Route::get('tatarekening/daftar-piutang-pasien', 'TataRekening\TagihanController@daftarPiutangPasien');
           Route::get('tatarekening/daftar-piutang-bpjs', 'TataRekening\TagihanController@daftarPiutangBPJS');
+          Route::get('tatarekening/daftar-piutang-bpjs-manual', 'TataRekening\TagihanController@daftarPiutangBPJSManual');
+          Route::get('tatarekening/daftar-piutang-selain-bpjs', 'TataRekening\TagihanController@daftarPiutangSelainBPJS');
           Route::get('tatarekening/daftar-piutang-pasiencek', 'TataRekening\TagihanController@daftarPiutangPasiencek');
           Route::post('tatarekening/verify-piutang-pasien', 'TataRekening\TagihanController@verifyPiutangPasien');
           Route::post('tatarekening/cancel-verify-piutang-pasien', 'TataRekening\TagihanController@cancelVerifyPiutangPasien');
