@@ -5483,7 +5483,7 @@ class GeneralController extends ApiController
               
             }
             if( $request['method'] =='get'){
-                $cek =  ListNotif::where('statusenabled',true)->orderBy('tgl','desc')->get();
+                $cek =  ListNotif::where('statusenabled',true)->orderBy('tgl','desc')->limit(10)->get();
          
             }
            

@@ -54,6 +54,7 @@ define(['initialize'], function (initialize) {
                 });
                 medifirstService.get('emr/get-combo-diagnosis').then(function (data) {
                     $scope.listJenisDiagnosa = data.data.jenisdiagnosa;
+                    $scope.listDiagnosaKeperawatan = data.data.diagnosakeperawatan
                 });
                 $scope.item.jenisDiagnosis = {id: 1, jenisDiagnosa: "Primary / utama"}
 
@@ -215,6 +216,14 @@ define(['initialize'], function (initialize) {
                         pageSize: 10
                     });
                 });
+                medifirstService.get('emr/get-diagnosakeperawatanbynoreg?'+param).then(function(data){
+                    $scope.isRouteLoading = false;
+                    var diagnosaKep = data.data.datas;
+                    $scope.dataSourceDiagnosaKeperawatan = new kendo.data.DataSource({
+                        data: diagnosaKep,
+                        pageSize: 10
+                    });
+                })
             }
 
             $scope.columnDiagnosaIcd9 = [{
@@ -293,7 +302,37 @@ define(['initialize'], function (initialize) {
                 "title": "Tgl Input",
                 "width": "200px"
             }];
-
+            $scope.columnDiagnosaKeperawatan = [{
+                    "title": "No",
+                    "template": "{{dataSourceDiagnosaKeperawatan.indexOf(dataItem) + 1}}",
+                    "width": "30px"
+                },
+                {
+                    "field": "noregistrasi",
+                    "title": "No Registrasi",
+                    "width": "100px"
+                }, 
+                {
+                    "field": "diagnosakeperawatan",
+                    "title": "Diagnosa Keperawatan",
+                    "width": "150px"
+                },
+                {
+                    "field": "namaruangan",
+                    "title": "Ruangan",
+                    "width": "150px"
+                },
+                {
+                    "field": "namalengkap",
+                    "title": "Penginput",
+                    "width": "200px"
+                },
+                {
+                    "field": "tglinput",
+                    "title": "Tgl Input",
+                    "width": "200px"
+                }
+            ];
             
             function loadResep() {
                 $scope.isRouteLoading = true;
@@ -680,6 +719,59 @@ define(['initialize'], function (initialize) {
                 var arrStr = cacheHelper.get('CacheInputDiagnosaDokter');
                 cacheHelper.set('cacheCPPT', arrStr);
                 $state.go('CPPT')
+            }
+            $scope.saveDiagnosaKeperawatan = function(){
+                var norec = '-'
+                if ($scope.dataDiagnosaKeperawatanSelected != undefined){
+                    norec = $scope.dataDiagnosaKeperawatanSelected.norec
+                }
+                var tglinput = moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+                var objectdiagnosakepfk = $scope.item.diagnosakeperawatan.id
+                // var norec_apd = norec_apd
+                var objectpegawaifk = medifirstService.getPegawaiLogin().id
+                var data = {
+                    norec: norec,
+                    tglinput: tglinput,
+                    objectdiagnosakepfk: objectdiagnosakepfk,
+                    norec_apd: norec_apd,
+                    objectpegawaifk: objectpegawaifk,
+                }
+                var objSave = {
+                    data:data
+                }
+                console.log(objSave);
+                // return
+                medifirstService.post('emr/save-diagnosa-keperawatan', objSave).then(function(e){
+                    $scope.item.diagnosakeperawatan = undefined
+                    $scope.dataDiagnosaKeperawatanSelected = undefined
+                    loadDiagnosa()
+                })
+            }
+            $scope.klikDiagnosaKep = function (dataDiagnosaKeperawatanSelected) {
+                $scope.dataDiagnosaKeperawatanSelected.norec = dataDiagnosaKeperawatanSelected.norec_dk
+                $scope.item.diagnosakeperawatan = {
+                    id: dataDiagnosaKeperawatanSelected.objectdiagnosakepfk,
+                    diagnosakeperawatan: dataDiagnosaKeperawatanSelected.diagnosakeperawatan
+                }
+            }
+            $scope.deleteDiagnosaKeperawatan = function(){
+                var norec = '-'
+                if ($scope.dataDiagnosaKeperawatanSelected.norec != undefined) {
+                    norec = $scope.dataDiagnosaKeperawatanSelected.norec
+                }
+                var data = {
+                    norec: norec,
+                }
+                var objSave = {
+                    data: data
+                }
+                console.log(objSave);
+                // return
+                medifirstService.post('emr/hapus-diagnosa-keperawatan', objSave).then(function (e) {
+                    $scope.item.diagnosakeperawatan = undefined
+                    $scope.dataDiagnosaKeperawatanSelected.norec = undefined
+                    loadDiagnosa()
+                })
             }
 
         }

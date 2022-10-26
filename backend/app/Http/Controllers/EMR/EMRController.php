@@ -4847,9 +4847,11 @@ class EMRController  extends ApiController
             ->where('lu.statusenabled', true)
             ->get();
 
+            $dp = \DB::table('diagnosakep_m')->where('kdprofile', 30)->where('statusenabled', true)->get();
 
         $result = array(
             'jenisdiagnosa' => $jd,
+            'diagnosakeperawatan'=>$dp,
             'message' => 'inhuman',
         );
 
@@ -7873,6 +7875,7 @@ class EMRController  extends ApiController
                     GROUP BY emrdp.emrpasienfk,
                     emrdp.emrfk,emrp.norec,emr.caption,
                     emr.reportdisplay 
+                
 
             "));
 
@@ -8607,6 +8610,7 @@ class EMRController  extends ApiController
             $result = array(
                 'status' => 400,
                 'message' => $transStatus,
+                'e'=> $e->getMessage() . $e->getLine(),
                 'as' => 'er@epic',
             );
         }
@@ -10534,4 +10538,330 @@ class EMRController  extends ApiController
         return $this->respond($result);
     }
 
+    public function saveCakem(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+
+        $dataReq = $request->all();
+
+        $head = $dataReq['head'];
+        $data = $dataReq['data'];
+        DB::beginTransaction();
+        try {
+            
+            if ($head['norec_emr'] == '-') {
+
+                $noemr = $this->generateCodeBySeqTable(new EMRPasien, 'noemr', 15, 'MR' . date('ym') . '/',$kdProfile);
+                if ($noemr == '') {
+                    $transMessage = "Gagal mengumpukan data, Coba lagi.!";
+                    DB::rollBack();
+                    $result = array(
+                        "status" => 400,
+                        "message" => $transMessage,
+                        "as" => 'as@epic',
+                    );
+                    return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+                }
+
+                $EMR = new EMRPasien();
+                $norecHead = $EMR->generateNewId();
+                $EMR->norec = $norecHead;
+                $norecTehMenikitunyaeuy = $norecHead;
+                $EMR->norec = $norecTehMenikitunyaeuy;
+                $EMR->kdprofile = $kdProfile;
+                $EMR->statusenabled = 1;
+
+                if (isset($head['noregistrasi'])) {
+                    $EMR->noregistrasifk = $head['noregistrasi'];
+                }
+                
+            } else {
+                $EMR = EMRPasien::where('noemr', $head['norec_emr'])
+                   ->where('noregistrasifk', $head['noregistrasi'])
+                      ->where('kdprofile',$kdProfile)
+                    ->first();
+                $noemr = $EMR->noemr;
+            }
+            $EMR->noemr = $noemr;
+            $EMR->emrfk = $head['emrfk'];
+            $EMR->nocm = $head['nocm'];
+            $EMR->namapasien = $head['namapasien'];
+            $EMR->jeniskelamin = $head['jeniskelamin'];
+
+            $EMR->umur = $head['umur'];
+            if (isset($head['kelompokpasien'])) {
+                $EMR->kelompokpasien = $head['kelompokpasien'];
+            }
+            if (isset($head['tglregistrasi'])) {
+                $EMR->tglregistrasi = $head['tglregistrasi'];
+            }else{
+                $EMR->tglregistrasi = date('Y-m-d H:i:s');
+            }
+            if (isset($head['norec'])) {
+                $EMR->norec_apd = $head['norec'];
+            }
+            if (isset($head['namakelas'])) {
+                $EMR->namakelas = $head['namakelas'];
+            }
+            if (isset($head['namaruangan'])) {
+                $EMR->namaruangan = $head['namaruangan'];
+            } else {
+                $EMR->namaruangan = "Triage Gawat Darurat";
+            }
+            if (isset($head['tgllahir'])) {
+                $EMR->tgllahir = $head['tgllahir'];
+            }
+            if (isset($head['notelepon'])) {
+                $EMR->notelepon = $head['notelepon'];
+            }
+            if (isset($head['alamatlengkap'])) {
+                $EMR->alamat = $head['alamatlengkap'];
+            }
+            if (isset($head['jenisemr'])) {
+                $EMR->jenisemr = $head['jenisemr'];
+            }
+
+             if (isset($head['jenis']) && $head['jenis'] == 'pasien') {
+                $EMR->pegawaifk = null;
+            } else {
+                $EMR->pegawaifk = $this->getCurrentUserID();
+            }
+
+            $EMR->tglemr = $this->getDateTime()->format('Y-m-d H:i:s');
+            $EMR->save();
+
+            $norec_EMR = $EMR->noemr;
+            $EMRD = new EMRPasienD();
+            $norecD = $EMRD->generateNewId();
+            $EMRD->norec = $norecD;
+            $EMRD->kdprofile = $kdProfile;
+            $EMRD->statusenabled = 1;
+            $EMRD->emrpasienfk = $norec_EMR;
+            $EMRD->value = 'Data Masuk';
+            $EMRD->emrdfk = 3006001;
+            $EMRD->emrfk = $head['emrfk'];
+            $EMRD->pegawaifk = $data['pegawaiinput'];
+            $EMRD->tgl = $this->getDateTime()->format('Y-m-d H:i:s');
+            $EMRD->save();
+
+            if($data['norec']== '-'){
+                $emrcakem = \DB::table('emrcakem_t')->insert([
+                    'norec'=>substr(Uuid::generate(), 0, 32),
+                    'kdprofile'=> $kdProfile,
+                    'statusenabled'=> true,
+                    'tanggal'=> $data['tanggal'],
+                    'jam'=> $data['jam'],
+                    'pelaksanaan'=> $data['pelaksanaan'],
+                    'evaluasi'=> $data['evaluasi'],
+                    'pegawaiinput'=> $data['pegawaiinput'],
+                    'objectpegawaifk'=> $data['objectpegawaifk'],
+                    'emrpasienfk'=> $norec_EMR,
+                    'emrfk'=> $head['emrfk'],
+                ]);
+            }else if($data['norec'] != '-'){
+                $emrcakem = \DB::table('emrcakem_t')->where('norec', $data['norec'])->update([
+                    'tanggal'=> $data['tanggal'],
+                    'jam'=> $data['jam'],
+                    'pelaksanaan'=> $data['pelaksanaan'],
+                    'evaluasi'=> $data['evaluasi'],
+                    'pegawaiinput'=> $data['pegawaiinput'],
+                    'objectpegawaifk'=> $data['objectpegawaifk'],
+                    // 'emrpasienfk'=> $data['emrpasienfk'],
+                ]);
+            }
+        
+
+
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+        $transMessage = 'Saving EMR Pasien ';
+
+        if ($transStatus == 'true') {
+            $transMessage = $transMessage . "Sukses";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "data" => $EMR,
+                "as" => 'as@epic',
+            );
+
+        } else {
+            $transMessage = $transMessage . " Gagal!!";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "data" => $data,
+                "e" => $e->getMessage().' '.$e->getLine(),
+                "as" => 'as@epic',
+            );
+        }
+
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function getCakem(Request $request)
+    {
+        $data = \DB::table('emrcakem_t as ec')->select('ec.tanggal','ec.jam','ec.pelaksanaan','ec.evaluasi','ec.objectpegawaifk', 'pg.namalengkap','ec.norec as norec_ec')->join('pegawai_m as pg','pg.id','=','ec.objectpegawaifk')->where('emrpasienfk',$request['noemr'])->orderBy('jam','asc')->get();
+
+        $result = array(
+            'data'=> $data,
+            'as'=>'Fizi'
+        );
+        return $this->respond($result);
+    }
+    public function hapusCakem(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $emrcakem = \DB::table('emrcakem_t')->where('norec', $request['norec'])->delete();
+            $transStatus = true;
+        } catch (\Throwable $th) {
+            $transStatus = false;        
+        }
+        $transMessage = 'Hapus Data Catatan Perkembangan ';
+        if ($transStatus == 'true') {
+
+            $transMessage = $transMessage . "Sukses";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "as" => 'as@epic',
+            );
+
+        } else {
+            $transMessage = $transMessage . " Gagal!!";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "e" => $th->getMessage().' '.$th->getLine(),
+                "as" => 'as@epic',
+            );
+        }
+
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    public function saveDiagnosaKeperawatan(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $data = $request['data'];
+        DB::beginTransaction();
+        try {
+            if($data['norec'] == '-'){
+                $diagnosakep = \DB::table('diagnosakep_t')->insert([
+                    'norec'=>substr(Uuid::generate(), 0, 32),
+                    'kdprofile'=> $kdProfile,
+                    'statusenabled'=> true,
+                    'tglinput'=> $data['tglinput'],
+                    'objectdiagnosakepfk'=> $data['objectdiagnosakepfk'],
+                    'norec_apd'=> $data['norec_apd'],
+                    'objectpegawaifk'=> $data['objectpegawaifk'],
+                ]);
+            }else{
+                $diagnosakep = \DB::table('diagnosakep_t')->where('norec', $data['norec'])->update([
+                    'tglinput'=> $data['tglinput'],
+                    'objectdiagnosakepfk'=> $data['objectdiagnosakepfk'],
+                    'norec_apd'=> $data['norec_apd'],
+                    'objectpegawaifk'=> $data['objectpegawaifk'],
+                ]);
+            }
+            $transStatus=true;
+        } catch (\Throwable $th) {
+            $transStatus=false;
+        }
+        $transMessage = 'Diagnosa Keperawatan ';
+        if ($transStatus == 'true') {
+
+            $transMessage = $transMessage . "Sukses";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "as" => 'as@epic',
+            );
+
+        } else {
+            $transMessage = $transMessage . " Gagal!!";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "e" => $th->getMessage().' '.$th->getLine(),
+                "as" => 'as@epic',
+            );
+        }
+
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    public function getDiagnosaKeperawatanByNoreg(Request $request)
+    {
+        
+        $data = \DB::table('diagnosakep_t as dk')
+        ->select('dk.norec as norec_dk', 'dke.diagnosakeperawatan', 'pd.noregistrasi','dk.tglinput','pg.namalengkap','ru.namaruangan','dk.objectdiagnosakepfk')
+        ->join('antrianpasiendiperiksa_t as apd','dk.norec_apd', '=','apd.norec')
+        ->join('pasiendaftar_t as pd','pd.norec', '=','apd.noregistrasifk')
+        ->join('pasien_m as ps','ps.id', '=','pd.nocmfk')
+        ->join('diagnosakep_m as dke', 'dke.id','=','dk.objectdiagnosakepfk')
+        ->join('ruangan_m as ru','ru.id','=','apd.objectruanganfk')
+        ->join('pegawai_m as pg','pg.id','=','dk.objectpegawaifk')
+        ->where('dk.kdprofile', 30)->where('dk.statusenabled', true);
+
+        if(isset($request['noReg'])){
+            $data= $data->where('pd.noregistrasi', $request['noReg']);
+        }else{
+            $data= $data->where('pd.noregistrasi', $request['noCm']);
+        }
+        $data = $data->get();
+        $result = array(
+            'datas' => $data,
+            'message' => 'as@epic',
+        );
+        return $this->respond($result);
+    }
+    public function hapusDiagnosaKeperawatan(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $data = $request['data'];
+        DB::beginTransaction();
+        try {
+            if($data['norec'] == '-'){
+                $diagnosakep = \DB::table('diagnosakep_t')->insert([
+                    'norec'=>substr(Uuid::generate(), 0, 32),
+                    'kdprofile'=> $kdProfile,
+                    'statusenabled'=> true,
+                    'tglinput'=> $data['tglinput'],
+                    'objectdiagnosakepfk'=> $data['objectdiagnosakepfk'],
+                    'norec_apd'=> $data['norec_apd'],
+                    'objectpegawaifk'=> $data['objectpegawaifk'],
+                ]);
+            }else{
+                $diagnosakep = \DB::table('diagnosakep_t')->where('norec', $data['norec'])->update([
+                    'statusenabled'=>false
+                ]);
+            }
+            $transStatus=true;
+        } catch (\Throwable $th) {
+            $transStatus=false;
+        }
+        $transMessage = 'Hapus data Diagnosa Keperawatan ';
+        if ($transStatus == 'true') {
+
+            $transMessage = $transMessage . "Sukses";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "as" => 'as@epic',
+            );
+
+        } else {
+            $transMessage = $transMessage . " Gagal!!";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "e" => $th->getMessage().' '.$th->getLine(),
+                "as" => 'as@epic',
+            );
+        }
+
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
 }

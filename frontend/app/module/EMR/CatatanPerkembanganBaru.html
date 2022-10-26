@@ -1,0 +1,146 @@
+<style type="text/css">
+    fieldset {
+        border-radius: 5px;
+        border: 1px solid #228be6;
+    }
+
+    .k-slider-horizontal {
+        display: inline-block;
+        width: 450px;
+
+        height: 26px;
+
+
+    }
+
+    .k-slider {
+
+        margin-left: 3%;
+        margin-right: 3%;
+        margin-top: 1%;
+        margin-bottom: 5%;
+        display: inline-block;
+    }
+
+    .activeBtn {
+        background-color: #10c4b2;
+        color: #ffffff;
+    }
+
+    table,
+    th,
+    td {
+        border: 1px solid #929191;
+        border-collapse: collapse;
+        padding: 5px;
+    }
+
+    th,
+    td {
+        padding: 5px;
+        text-align: left;
+    }
+</style>
+
+<div class="grid_12">
+    <div class="grid_12">
+        <div class="panel panel-default container_12">
+            <div class="panel-heading" c-translate> Catatan Perkembangan</div>
+        </div>
+        <fieldset style="margin-top: 10px">
+            <div class="grid_12">
+                <div class="grid_12">
+                    <div class="grid_12" style="margin-top: 10px;">
+                        <div class="grid_12 borderBox">
+                            <kendo-grid id="kGrid" data-source="dataSourceGrid" options="columnGrid"
+                                k-selectable="'row'" k-sortable="'true'" k-resizable="'true'" k-ng-model="dataSelected"
+                                ng-click="klikGrid(dataSelected)">
+                            </kendo-grid>
+                        </div>
+                    </div>
+                    <div class="grid_2" style="margin-top: 22px; margin-left: 10px;" ng-show='tombolSimpanVis'>
+                        <button class="btnTemplate1" ng-click="Cetak()"><i class="fa fa-print"></i>Cetak</button>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+        <div kendo-window="popUpLembarCakem" k-title="'Data Catatan Perkembangan'" k-width="650" k-height="550"
+            k-visible="false" k-on-open="win2visible = true" k-on-close="win2visible = false">
+            <div class="panel panel-default container_12" style="padding: 0px 10px;">
+                <div class="grid_12" style="margin-top: 10px;">
+                    <div class="grid_12">
+                        <div class="grid_12">
+                            <div class="grid_12">
+                                <label c-label item="item">Tanggal</label>
+                            </div>
+                        </div>
+                        <div class="grid_4">
+                            <div class="grid_12">
+                                <input style="width: 70%" k-ng-model="item.tanggal" kendo-datepicker
+                                    placeholer="dd-MM-yyyy" k-format="'dd-MM-yyyy'" parsedate="dd-MM-yyyy" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid_12">
+                        <div class="grid_12">
+                            <div class="grid_12">
+                                <label c-label item="item">Jam</label>
+                            </div>
+                        </div>
+                        <div class="grid_4">
+                            <div class="grid_12">
+                                <input style="width: 70%" k-ng-model="item.jam" kendo-timepicker placeholer="HH:mm"
+                                    k-format="'HH:mm'" parsedate="HH:mm" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid_12">
+                        <div class="grid_12">
+                            <div class="grid_12">
+                                <label c-label item="item">Pelaksanaan</label>
+                            </div>
+                        </div>
+                        <div class="grid_12 margin-top-20 margin-bottom">
+                            <label c-label item="item" class="margin-bottom"></label>
+                            <textarea c-text-area type="input" filter="'string'" class="k-textbox"
+                                ng-model="item.pelaksanaan" k-data-source="" style="height: 100px; width: 80%; " />
+                            </div>
+                    </div>
+                    
+                    
+                    <div class="grid_12">
+                        <div class="grid_12">
+                            <div class="grid_12">
+                                <label c-label item="item">Evaluasi</label>
+                            </div>
+                        </div>
+                        <div class="grid_12 margin-top-20 margin-bottom">
+                            <label c-label item="item" class="margin-bottom"></label>
+                            <textarea c-text-area type="input" filter="'string'" class="k-textbox"
+                                ng-model="item.evaluasi" k-data-source=""
+                                style="height: 100px; width: 80%; " />
+                        </div>
+                    </div>
+                    <div class="grid_12 ">
+                        <div class="grid_12">
+                            <label c-label item="item">Pegawai</label>
+                        </div>
+                        <div class="grid_12">
+                            <input style="width: 250px;" kendo-combo-box k-ng-model="item.pegawai"
+                                k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                                k-auto-bind="false" k-data-source="listPegawai"/>
+                        </div>
+                    </div>
+                    <div class="grid_12">
+                        <div class="grid_2" style="margin-top: 22px; margin-left: 10px;" ng-show='tombolSimpanVis'>
+                            <button class="btnTemplate1" ng-click="Save()"><i class="fa fa-save"></i>Simpan</button>
+                        </div>
+                        <div class="grid_2" style="margin-top: 22px;margin-left: 10px">
+                            <button class="btnTemplate1" ng-click="Batal()"><i class="fa fa-refresh"></i>Batal</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

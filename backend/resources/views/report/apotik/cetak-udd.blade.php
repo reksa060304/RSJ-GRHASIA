@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <title>Report Cetak UDD</title>
-    @if(stripos(\Request::url(), 'localhost') !== FALSE)
+    {{-- @if(stripos(\Request::url(), 'localhost') !== FALSE)
     <link href="{{ asset('css/style.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/report/paper.css') }}">
     <link rel="stylesheet" href="{{ asset('css/report/table.css') }}">
@@ -31,7 +31,7 @@
     <script src="{{ asset('service/js/angular/angular-material.js') }}" type="text/javascript"></script>
     <script src="{{ asset('service/js/jquery.min.js') }}"></script>
     <script src="{{ asset('service/js/jquery.qr-code.js') }}"></script>
-    @endif
+    @endif --}}
     <style>
         @page {
             size: A4;
@@ -87,12 +87,104 @@
             font-family: Arial;
             font-size: 10pt;
         }
+        
+        @media print {
+        #waktu{
+            writing-mode:lr-tb;
+            /* text-orientation: upright */
+        }
+    
+     
+
+
+        }
     </style>
 </head>
 
-<body class="A4" style="font-family:Arial;height: auto">
-    <section class="sheet padding-10mm" style="font-family:Arial;" >
-        @foreach ($date as $date)
+<body style="font-family:Arial;">
+
+    @foreach ($result as $r)
+        <div style="display:inline-table;margin-right: 5px" >
+            @foreach ($r['tglpelayanan'] as $rt)
+            {{-- {{dd($r['pelayanan'])}} --}}
+                <table  cellpadding="0"style="border-collapse: collapse;border: 1px solid black; margin-bottom: 9px; ">
+                <tr>
+                    <td height="25px" style="border-collapse: collapse;border: 1px solid black; font-family:Arial; text-align: center; font-weight: bold; font-size: 11pt">{{$r['pelayanan']['pasien'][0]->namapasien}}</td>
+                    <td rowspan="2" style="border-collapse: collapse;border: 1px solid black; font-family:Arial; text-align: center; font-weight: bold; font-size: 9pt">TGL <br> {{date('d/m/Y', strtotime($rt->tglcetak))}}</td>
+                </tr>
+                <tr>
+                    <td height="17px" style="border-collapse: collapse;border: 1px solid black; font-family:Arial; text-align: left; font-weight: bold; font-size: 9pt">TL :  {{date('d/m/Y', strtotime($r['pelayanan']['pasien'][0]->tgllahir))}}</td>
+                </tr>
+                <tr>
+                    <td> 
+                        <table style="font-family:Arial; font-size: 7pt">
+                            @foreach ($r['pelayanan']['detailobat'] as $rpd)
+                                <tr>
+                                    <td width="100px" height="15px" >{{$rpd->namaproduk}}</td>
+                                    <td width="27px" height="15px"style="text-align: center">{{$rpd->aturan}}</td>
+                                    <td width="24px" height="15px">{{$rpd->satuan}}</td>
+                                </tr>
+                            @endforeach
+                        </table>
+                    </td>
+                    <td id="waktu" height="75px"cellpadding="0"style=" border-collapse: collapse;border: 1px solid black; font-family:Arial; text-align: center; font-weight: bold; font-size: 9pt">
+                        {{$r['pelayanan']['waktu']}}
+                    </td>
+                </tr>
+            </table>
+            @endforeach
+            
+        </div>
+    @endforeach
+
+
+
+
+
+        {{-- @foreach ($detail as $d)
+            <div style="display: grid;
+  grid: 150px / auto auto auto;">
+
+        @foreach ($d['date'] as $dt)
+        @foreach ($d['pasien'] as $p)
+
+                <table cellpadding="0"style="border-collapse: collapse;border: 1px solid black; margin-bottom: 10px" >
+                <tr>
+                    <td style="border-collapse: collapse;border: 1px solid black; font-family:Arial; text-align: center; font-weight: bold; font-size: 12pt">{{$p->namapasien}}</td>
+                    <td rowspan="2" style="border-collapse: collapse;border: 1px solid black; font-family:Arial; text-align: center; font-weight: bold; font-size: 10pt"> TGL <br> {{date('d/m/Y',strtotime($dt->date))}}</td>
+                </tr>
+                <tr>
+                    <td style="border-collapse: collapse;border: 1px solid black; font-family:Arial; font-weight: bold; font-size: 10pt">TL : {{date('d/m/Y', strtotime($p->tgllahir))}}</td>
+                </tr>
+                <tr>
+                    <td>
+                        <table>
+                            @foreach ($d['obat'] as $ob)
+                            <tr style="font-size: 8pt;">
+                                <td style="width: 100px">{{$ob->namaproduk}}</td>
+                                <td>{{$ob->aturan}}</td>
+                                <td>{{$ob->satuan}}</td>
+                            </tr>
+                        @endforeach
+                        </table>
+                    </td>
+                    <td style="border-collapse: collapse;border: 1px solid black; font-family:Arial; text-align: center;  writing-mode: vertical-rl;text-orientation: upright;font-weight: bold; font-size: 10pt">{{$dt->waktu}}</td>
+                </tr>
+            </table>
+
+        @endforeach
+        @endforeach
+            </div>
+
+        @endforeach --}}
+        
+        {{-- @foreach ($detail as $d)
+        @foreach ($d['date'] as $date)
+            {{var_dump($date)}}
+            
+        @endforeach
+        @endforeach --}}
+        {{-- @foreach ($date as $date)
             <table cellpadding="0"style="border-collapse: collapse;border: 1px solid black; margin-bottom: 10px" >
                 <tr>
                     <td style="border-collapse: collapse;border: 1px solid black; font-family:Arial; text-align: center; font-weight: bold; font-size: 12pt">{{$pasien[0]->namapasien}}</td>
@@ -118,7 +210,7 @@
                 </tr>
                     
             </table>
-        @endforeach
+        @endforeach --}}
         {{-- <table cellspacing="0" cellpadding="0" border="0" width="100%" >
             <tbody>
                 <tr>
@@ -160,7 +252,6 @@
                 </tr>
             </tbody>
         </table> --}}
-    </section>
 </body>
 <style>
     .footer {

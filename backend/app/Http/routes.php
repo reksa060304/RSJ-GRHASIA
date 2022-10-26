@@ -621,7 +621,9 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::post('emr/save-emr-dinamis', 'EMR\EMRController@SaveTransaksiEMRBackup');
           Route::get('emr/get-soap', 'Bridging\DokterKeluargaController@getSOAP');
           Route::post('emr/simpan-cppt', 'EMR\EMRController@SaveTransaksiEMRBackup');
-          
+          Route::post('emr/save-emr-cakem', 'EMR\EMRController@saveCakem');
+          Route::get('emr/get-emr-cakem', 'EMR\EMRController@getCakem');
+          Route::post('emr/hapus-emr-cakem', 'EMR\EMRController@hapusCakem');
           // Route::post('emr/save-emr-dinamis', 'EMR\EMRController@SaveTransaksiEMR');
           Route::get('emr/get-emr-transaksi', 'EMR\EMRController@getEMRTransaksiRiwayat');
           Route::get('emr/get-emr-transaksi-detail', 'EMR\EMRController@getEMRTransaksiDetail');
@@ -710,10 +712,13 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('emr/get-combo-diagnosis', 'EMR\EMRController@getComboDiagnosis');
           Route::get('emr/get-diagnosapasienbynoregicd9', 'EMR\EMRController@getDiagnosaPasienByNoregICD9');
           Route::get('emr/get-diagnosapasienbynoreg', 'EMR\EMRController@getDiagnosaPasienByNoreg');
+          Route::get('emr/get-diagnosakeperawatanbynoreg', 'EMR\EMRController@getDiagnosaKeperawatanByNoreg');
           Route::post('emr/save-diagnosa-tindakan-pasien', 'EMR\EMRController@saveDiagnosaTindakanPasien');
           Route::post('emr/delete-diagnosa-tindakan-pasien', 'EMR\EMRController@deleteDiagnosaTindakanPasien');
           Route::post('emr/save-diagnosa-pasien', 'EMR\EMRController@saveDiagnosaPasien');
           Route::post('emr/delete-diagnosa-pasien', 'EMR\EMRController@deleteDiagnosaPasien');
+          Route::post('emr/save-diagnosa-keperawatan','EMR\EMRController@saveDiagnosaKeperawatan');
+          Route::post('emr/hapus-diagnosa-keperawatan','EMR\EMRController@hapusDiagnosaKeperawatan');
 
           Route::get('emr/get-combo-resep-emr', 'EMR\EMRController@getDataComboResepEMR');
           Route::get('emr/get-daftar-detail-order', 'EMR\EMRController@getDaftarDetailOrder');
@@ -1157,6 +1162,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
 
         // });
         // Route::group(['prefix' => 'laboratorium'], function () {
+          Route::get('report/cetak-udd','Report\ReportController@cetakUDD');
+          Route::get('report/get-cetak-cakem','Report\ReportController@cetakCakem');
           Route::get('laboratorium/get-hasil-lab','Laboratorium\LaboratoriumController@getHasilLab');
           Route::get('laboratorium/get-hasil-lab-vans','Laboratorium\LaboratoriumController@getHasilLaborat');
           Route::get('laboratorium/get-datfar-pasien-ri-lab','Laboratorium\LaboratoriumController@getDaftarRIlabRad');

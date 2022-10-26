@@ -99,7 +99,7 @@
                                             </div>
                                         </div>
                                         <div class="grid_3" style="margin-top:20px">
-                                            <textarea style="height:70px;" placeholder="Diagnosis Awal"
+                                            <textarea style="height:70px;" placeholder="Keterangan"
                                                 ng-model="item.keterangan"></textarea>
                                         </div>
                                         <div class="grid_6"></div>
@@ -277,6 +277,86 @@
                                         </div>
                                     </div>
                                 </md-content>
+                            </md-tab>
+                            <md-tab label="Diagnosa Keperawatan">
+                                <md-content class="md-padding">
+                                    <div class="grid_12" style="margin-top: 10px">
+                                        <div class="grid_3">
+                                            <label c-label statment>Diagnosa Keperawatan</label>
+                                            <input kendo-combo-box style="width:100%" k-ng-model="item.diagnosakeperawatan"
+                                                k-data-text-field="'diagnosakeperawatan'" k-data-value-field="'id'"
+                                                k-filter="'contains'" k-auto-bind="false"
+                                                k-data-source="listDiagnosaKeperawatan" />
+                                        </div>
+                                        
+                                        <div class="grid_6"></div>
+                                        <div class="grid_6" 
+                                            style="margin-top:10px">
+                                            
+                                            <div class="grid_2">
+                                                <button class="btnTemplate1" ng-click="saveDiagnosaKeperawatan()"><i
+                                                        class="fa fa-save"></i>Tambah</button>
+                                                <!-- <button class="c-button success" ng-click="saveDiagnosaKeperawatan()">
+                                                    <span style="font-size:10!important">Tambah</span>
+                                                </button> -->
+                                            </div>
+                                            <div class="grid_2">
+                                                <button class="btnTemplate1 cancel" ng-click="deleteDiagnosaKeperawatan()"><i
+                                                        class="fa fa-trash"></i>Hapus</button>
+                                                <!-- <button class="c-button cancel" ng-click="deleteIcd10()">
+                                                    <span style="font-size:10!important">Hapus</span>
+                                                </button> -->
+                                            </div>
+                                            <div class="grid_2">
+                                                <button class="btnTemplate1" ng-click="batal()"><i
+                                                        class="fa fa-refresh"></i>Batal</button>
+                                                <!-- <button class="c-button" ng-click="batal()">
+                                                    <span style="font-size:10!important">Batal</span>
+                                                </button> -->
+                                            </div>
+                                            <div class="grid_2">
+                                                <button class="btnTemplate1" is-back><i
+                                                        class="fa fa-arrow-left"></i>Kembali</button>
+                                                <!-- <button class="c-button" is-back>
+                                                    <span style="font-size:10!important">Kembali</span>
+                                                </button> -->
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- grid diagnosis -->
+                                    <div class="grid_12 borderBox">
+
+                                        <div class="grid_12 headerBox">
+                                            <p>Data Diagnosa Keperawatan</p>
+                                        </div>
+                                    </div>
+                                    <div class="grid_12" ng-hide="findBy==='2'">
+                                        <div kendo-grid k-data-source="dataSourceDiagnosaKeperawatan" k-selectable="'row'"
+                                            k-pageable="'true'" k-columns="columnDiagnosaKeperawatan"
+                                            k-ng-model="dataDiagnosaKeperawatanSelected" ng-click="klikDiagnosaKep(dataDiagnosaKeperawatanSelected)">
+                                        </div>
+                                    </div>
+                                    <div class="clear"></div>
+
+                                    <div class="grid_4" style="display:none">
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading">
+                                                <div class="panel-heading">Top Diagnosis 9</div>
+                                            </div>
+                                            <div class="panel-body">
+                                                <div class="grid_12 list" ng-repeat="data in topDiagnosis"
+                                                    ng-click="addFromTopTen(data)">
+                                                    <div class="grid_3 left">{{data.kdDiagnosaTindakan}}</div>
+                                                    <div class="grid_8 right">{{data.diagnosaTindakan}}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                </md-content>
+
                             </md-tab>
                         </md-tabs>
                     </md-content>
