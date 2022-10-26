@@ -3470,6 +3470,26 @@
         {
             "nameDep": "FormulirTransferPasienGrhCtrl",
             "urlDep": "module/EMR/FormulirTransferPasienGrhCtrl"
-        }   
+        },
+        {
+            "nameDep": "PersetujuanTindakanMedisFisksasiCtrl",
+            "urlDep": "module/EMR/PersetujuanTindakanMedisFisksasiCtrl"
+        },
+        {
+            "nameDep": "PemberianInformasiGrhCtrl",
+            "urlDep": "module/EMR/PemberianInformasiGrhCtrl"
+        },
+        {
+            "nameDep": "RencanaPemulanganPasienGrhCtrl",
+            "urlDep": "module/EMR/RencanaPemulanganPasienGrhCtrl"
+        },
+        {
+            "nameDep": "PengkajianAwalKepHCUCtrl",
+            "urlDep": "module/EMR/PengkajianAwalKepHCUCtrl"
+        },
+        {
+            "nameDep": "PengkajianAwalKepRanapUmumCtrl",
+            "urlDep": "module/EMR/PengkajianAwalKepRanapUmumCtrl"
+        }             
     ]
 }
