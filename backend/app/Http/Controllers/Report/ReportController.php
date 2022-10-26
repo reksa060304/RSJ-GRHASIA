@@ -7993,4 +7993,192 @@ public function suratBuktiPengembalian(Request $request)
         $tglakhir = $this->tanggal_indonesia(date('Y-m-d',strtotime($request['tglAkhir'])));
         return view("report.lab.rekap-pemeriksaan", compact("data", 'res','tglawal','tglakhir'));
     }
+    
+    public function cetakUDD(Request $request)
+    {
+        //setting waktu
+        $waktuid = explode(",",$request['waktu']);
+        $waktu= '';
+        $tempWaktu = '';
+        //setting tgl
+        $tgl = explode(",",$request['tgl']);
+        
+        // if($request['waktu'] == 1){
+        //     $waktu = 'PAGI';
+        //     $tempWaktu = 'and pp.ispagi = true';
+        // }if($request['waktu'] == 2){
+        //     $waktu = 'SIANG';
+        //     $tempWaktu = 'and pp.issiang = true';
+        // }
+        // // if($request['waktu'] == 3){
+        // //     $waktu = 'SORE';
+        // //     $tempWaktu = 'and pp.issore = true';
+        // // }
+        // if($request['waktu'] == 4){
+        //     $waktu = 'MALAM';
+        //     $tempWaktu = 'and pp.ismalam = true';
+        // }
+        $dataAll = [];
+        $tglmain = '';
+        $date = '';
+        $detailobat = [];
+        $detail = [];
+        $result = [];
+        for ($i=0; $i < count($tgl); $i++) { 
+            if($tgl[$i] != ""){
+                $pasien = \DB::select(DB::raw("SELECT ps.namapasien, ps.tgllahir::date 
+                FROM pasien_m ps where ps.statusenabled=true and ps.kdprofile = $request[kodeprofile] and ps.nocm = '$request[nocm]'"));
+                if($waktuid[$i] == 1){
+                $waktu = 'PAGI';
+                $tempWaktu = 'and pp.ispagi = true';
+                } else if($waktuid[$i] == 2){
+                    $waktu = 'SIANG';
+                    $tempWaktu = 'and pp.issiang = true';
+                }
+                // if($waktuid[$i] == 3){
+                //     $waktu = 'SORE';
+                //     $tempWaktu = 'and pp.issore = true';
+                // }
+                 else if($waktuid[$i] == 4){
+                    $waktu = 'MALAM';
+                    $tempWaktu = 'and pp.ismalam = true';
+                }
+                $date = DB::select(DB::raw("SELECT generate_series('$tgl[$i]'::date, '$tgl[$i]'::date+6, '1 day'::interval)::date as tglcetak"));
+                for ($j=0; $j < count($date); $j++) { 
+                        $pasien = \DB::select(DB::raw("SELECT ps.namapasien, ps.tgllahir::date 
+                        FROM pasien_m ps where ps.statusenabled=true and ps.kdprofile = $request[kodeprofile] and ps.nocm = '$request[nocm]'"));
+                        $data = \DB::select(DB::raw("SELECT 
+                            case 
+                            when pp.satuanviewfk = 335 then 'tab' 
+                            when pp.satuanviewfk = 345 then 'kaps' 
+                            end as satuan, pr.namaproduk,split_part(pp.aturanpakai, 'x', 2) as aturan FROM pelayananpasien_t pp
+                            inner join strukresep_t sr on sr.norec = pp.strukresepfk
+                            inner join produk_m pr on pr.id = pp.produkfk
+                            where pp.isobat = true and pp.noregistrasifk ilike '$request[norec_apd]' and sr.noresep ilike '$request[noorder]' $tempWaktu "));
+                        $detail = $data;
+                }
+
+                
+                $dataAll=array(
+                    'pasien'=> $pasien,
+                    'detailobat'=> $detail,
+                    'waktu'=> $waktu
+                );
+                // $detailobat[] = array(
+                //     'pasien'=> $pasien,
+                //     'obat'=> $data,
+                //     'waktu'=> $waktu
+                // );
+                $result[] = array(
+                'tglpelayanan'=> $date,
+                'pelayanan'=> $dataAll,
+            );
+            }
+            
+            // $result = array()
+            // $dataAll[]=array(
+            //     // 'dataAll'=> array(),
+            //     'data'=> $detailobat
+            // );
+            
+        }
+        // dd($result,$dataAll);
+        return view("report.apotik.cetak-udd", compact('result'));
+        // $date = DB::select(DB::raw("SELECT generate_series('$tglAwal[$i]'::date, '$tglAwal[$i]'::date+6, '1 day'::interval)::date as date"));
+        // $datapagi = \DB::select(DB::raw("SELECT 
+        //     case 
+        //     when pp.satuanviewfk = 335 then 'tab' 
+        //     when pp.satuanviewfk = 345 then 'kaps' 
+        //     end as satuan, pr.namaproduk,split_part(pp.aturanpakai, 'x', 2) as aturan FROM pelayananpasien_t pp
+        //     inner join strukresep_t sr on sr.norec = pp.strukresepfk
+        //     inner join produk_m pr on pr.id = pp.produkfk
+        //     where pp.isobat = true and pp.noregistrasifk ilike '$request[norec_apd]' and pp.ismalam = true and sr.noresep ilike '$request[noorder]'$tempWaktupagi "));
+
+
+        // $noresep = explode(",",$request['noorder']) ;
+        // $norec_apd = explode(",",$request['norec_apd']) ;
+        // $nocm = explode(",",$request['nocm']) ;
+        // $tglAwal = explode(",",$request['tglAwal']) ;
+
+        // $detail = [];
+        // $obat = [];
+        
+            // for ($i=1; $i < count($noresep); $i++) { 
+            //     $date = DB::select(DB::raw("SELECT generate_series('$tglAwal[$i]'::date, '$tglAwal[$i]'::date+6, '1 day'::interval)::date as date, '$waktu' as waktu"));
+
+            //     $pasien = \DB::select(DB::raw("SELECT ps.namapasien, ps.tgllahir::date 
+            //     FROM pasien_m ps where ps.statusenabled=true and ps.kdprofile = $request[kodeprofile] and ps.nocm = '$nocm[$i]'"));
+
+            //     $data = \DB::select(DB::raw("SELECT 
+            //     case 
+            //     when pp.satuanviewfk = 335 then 'tab' 
+            //     when pp.satuanviewfk = 345 then 'kaps' 
+            //     end as satuan, pr.namaproduk,split_part(pp.aturanpakai, 'x', 2) as aturan FROM pelayananpasien_t pp
+            //     inner join strukresep_t sr on sr.norec = pp.strukresepfk
+            //     inner join produk_m pr on pr.id = pp.produkfk
+            //     where pp.isobat = true and pp.noregistrasifk ilike '$norec_apd[$i]' and pp.ismalam = true and sr.noresep ilike '$noresep[$i]'"));
+            //     $obat = $data;
+            //     $detail[] = array(
+            //         'date'=> $date,
+            //         'pasien'=> $pasien,
+            //         'obat'=> $obat,
+            //         // 'waktu'=> $waktu
+            //     ); 
+            // }
+           
+        // if()
+        
+        
+    }
+    public function cetakCakem(Request $request)
+    {
+        
+        $data = \DB::select(DB::raw("
+        SELECT ec.tanggal, ec.jam, ec.pelaksanaan,ec.evaluasi, pg.namalengkap FROM emrcakem_t ec 
+        inner join pegawai_m pg on pg.id = ec.objectpegawaifk
+        where emrpasienfk ilike '$request[noemr]'
+        ORDER BY ec.tanggal asc, ec.jam asc
+        "));
+        $dataevaluasi = \DB::select(DB::raw("
+        SELECT ec.tanggal, ec.emrpasienfk,ec.evaluasi, pg.namalengkap FROM emrcakem_t ec 
+        inner join pegawai_m pg on pg.id = ec.objectpegawaifk
+        where emrpasienfk ilike '$request[noemr]'
+        GROUP BY ec.tanggal, ec.emrpasienfk,ec.evaluasi, pg.namalengkap
+        "));
+        $result = [];
+        $detail = [];
+        $evaluasi = '';
+        $pelaksanaan = [];
+        $jam = [];
+        $tanggal = '';
+        $namalengkap = '';
+        foreach ($dataevaluasi as $ev) {
+            $evaluasi = '';
+            $tanggal = '';
+            $namalengkap = '';
+            $pelaksanaan = [];
+            $jam = [];
+            foreach ($data as $d) {
+                if($ev->evaluasi == $d->evaluasi){
+                    $tanggal = $ev->tanggal;
+                    $evaluasi = $ev->evaluasi;
+                    $namalengkap = $ev->namalengkap;
+                    $pelaksanaan[]= $d->pelaksanaan;
+                    $jam[]= $d->jam;
+                }
+            }
+            $detail[]= array(
+                'tanggal'=> $tanggal,
+                'evaluasi'=> $evaluasi,
+                'pelaksanaan'=>$pelaksanaan,
+                'namalengkap'=>$namalengkap,
+                'jam'=>$jam,
+            );
+        }
+        $result = array(
+            'data'=> $detail
+        );
+        // dd($data,$detail);
+        return view("report.keperawatan.catatan-perkembangan", compact('result'));
+    }
 }
