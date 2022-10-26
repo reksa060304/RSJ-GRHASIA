@@ -52,6 +52,7 @@ use App\Transaksi\LPJ;
 use App\Transaksi\PemungutanPajak;
 use App\Transaksi\PenyetoranPajak;
 use App\Transaksi\JasaGiro;
+use App\Transaksi\STSKeuangan;
 use App\Transaksi\Retur;
 use App\Transaksi\Jurnal;
 use App\Transaksi\Telemedicine;
@@ -76,7 +77,7 @@ class PerencanaanController extends ApiController {
             ->JOIN ('kelompokanggaranhead_m as k0','k0.id','=','rk.objectheadfk')
             ->JOIN ('kelompokanggaranpertama_m as k1','k1.id','=','rk.objectchildpertamafk')
             ->JOIN ('kelompokanggarankedua_m as k2','k2.id','=','rk.objectchildkeduafk')
-            ->JOIN ('kelompokanggaranketiga_m as k3','k3.id','=','rk.objectchildketigafk')
+            ->JOIN ('kelompokanggarsanketiga_m as k3','k3.id','=','rk.objectchildketigafk')
             ->JOIN ('kelompokanggarankeempat_m as k4','k4.id','=','rk.objectchildkeempatfk')
             ->select( 'rk.norec','k0.kdkelompokhead','k0.id as id0','k0.kelompokhead','k1.id as id1','k1.childpertama',
                 'k2.id as id2','k2.childkedua','k3.id as id3','k3.childketiga',
@@ -3269,6 +3270,60 @@ class PerencanaanController extends ApiController {
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
 
+    public function saveSTSKeuangan(Request $request) {
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        try{ 
+                    if($request['norec'] == ''){
+                        $MA = new STSKeuangan();
+                        $norecKS = $MA->generateNewId();
+                        $MA->norec = $norecKS;
+                        $MA->kdprofile = $idProfile;
+                        $MA->statusenabled = true;
+                        
+                    } else{
+                        $MA = STSKeuangan::where('norec', '=', $request['norec'])->first();
+                    }
+                    
+                    $MA->nosts = $request['nosts'];
+                    $MA->uraiansts = $request['uraiansts'];
+                    $MA->tglsts = $request['tglsts'];
+                    $MA->nilaists = $request['nilaists'];
+                    $MA->objectsubkegiatanfk = $request['objectsubkegiatanfk'];
+                    $MA->objectmataanggaranfk = $request['objectmataanggaranfk'];
+                    $MA->objectsubsubkegiatanfk = $request['objectsubsubkegiatanfk'];
+                    $MA->objectsumberdanafk = $request['objectsumberdanafk'];
+                    $MA->save();
+
+           $transStatus = 'true';
+       } catch (\Exception $e) {
+            $transStatus = 'false';
+       }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'result' => $MA,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'line'=> $e->getLine(),
+                'message'=> $e->getMessage(),
+                'as' => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
     public function saveRetur(Request $request) {
         DB::beginTransaction();
         $kdProfile = $this->getDataKdProfile($request);
@@ -3715,6 +3770,37 @@ class PerencanaanController extends ApiController {
                             $MP->objectbkufk = $MA->norec;
                             $MP->save();
                         }
+                    } else if($request['jenisbukti'] == 6){
+                        $MA = new BKU();
+                        $norecKS = $MA->generateNewId();
+                        $MA->norec = $norecKS;
+                        $MA->kdprofile = $idProfile;
+                        $MA->statusenabled = true;
+                        $noa = $this->generateCode(new BKU, 'nobku', 5, '', $idProfile);
+                        $MA->nobku = $noa.'-B02';$MA->objectjenisbuktifk = $request['jenisbukti'];
+                        $MA->tglbku = $request['tglbku'];
+                        $MA->uraianbku = $request['uraian'];
+                        $MA->rekananfk = $request['rekananfk'];
+
+                        $MA->objectmataanggaranfk = null;
+
+                        for($i = 0; $i < count($request['bku']); $i++){
+                            $saldofix += $request['bku'][$i]['nilaists'];
+                            $saldofix -= $request['bku'][$i]['nilaists'];
+                            $penerimaan += $request['bku'][$i]['nilaists'];
+                            $pengeluaran += $request['bku'][$i]['nilaists'];
+                        }
+
+                        $MA->penerimaan = $penerimaan;
+                        $MA->pengeluaran = $pengeluaran;
+                        $MA->saldo = $saldofix;
+                        $MA->save();
+
+                        for($x = 0; $x < count($request['bku']); $x++){
+                            $MP = STSKeuangan::where('norec', '=', $request['bku'][$x]['norec'])->first();
+                            $MP->objectbkufk = $MA->norec;
+                            $MP->save();
+                        }
                     } else if($request['jenisbukti'] == 4){
                         
 
@@ -4060,6 +4146,43 @@ class PerencanaanController extends ApiController {
 
         try{ 
                     $MA = JasaGiro::where('norec', '=', $request['norec'])->first();
+                    $MA->statusenabled = false;
+                    $MA->save();
+
+           $transStatus = 'true';
+       } catch (\Exception $e) {
+            $transStatus = 'false';
+       }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Hapus";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'result' => $MA,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Hapus Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'line'=> $e->getLine(),
+                'message'=> $e->getMessage(),
+                'as' => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function deleteSTSKeuangan(Request $request) {
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        try{ 
+                    $MA = STSKeuangan::where('norec', '=', $request['norec'])->first();
                     $MA->statusenabled = false;
                     $MA->save();
 
@@ -4559,6 +4682,9 @@ class PerencanaanController extends ApiController {
             } else{
                 $KB->tglverif = null;
             }
+            
+            $KB->objectpanjarfk = $request['norecpanjar'];
+            $KB->objectcarabayarfk = $request['carabayar'];
             $KB->keterangan = $request['keterangan'];
             $KB->jumlahdibayarverif = $request['jumlahdibayarverif'];
             $KB->save();
@@ -6036,7 +6162,7 @@ order by kodemataanggaran"));
 
         $qkey = '';
         if(isset($request['key']) && $request['key'] != '' && $request['key'] != "undefined"){
-            $qkey = " and (bku.uraianbku ilike '%".$request['key']."%' or jb.jenisbukti ilike '%".$request['key']."%')";
+            $qkey = " and (bku.uraianbku ilike '%".$request['key']."%' or jb.jenisbukti ilike '%".$request['key']."%' or bku.penerimaan::varchar ilike '%".$request['key']."%' or bku.pengeluaran::varchar ilike '%".$request['key']."%')";
         }
         
         $data = DB::select(DB::raw("
@@ -6445,7 +6571,7 @@ order by kodemataanggaran"));
         select string_agg(DISTINCT rd.uraian, ',') uraian, sr.*, cbs.carabayar, sr.tglverif, sr.keterangan, sr.jumlahdibayarverif, ka.tahun,--sr.norealisasi,sr.deskripsi,sr.totalbelanja,
                 pg1.namalengkap as bendahara, pg2.namalengkap as penerima, rkn.namarekanan as pihakketiga,
                 ka.kode || '~' || ka.keterangan as kegiatan, ma.kodemataanggaran || '~' || ma.namamataanggaran as mataanggaran,
-                dp0.kode kodesubkegiatan, dp0.keterangan keterangansubkegiatan, ma.kodemataanggaran
+                dp0.kode kodesubkegiatan, dp0.keterangan keterangansubkegiatan, ma.kodemataanggaran, ma.namamataanggaran, dp0.id idsubkegiatan, ka.keterangan subsubkegiatan, ka.id idsubsubkegiatan
                 from strukrealisasi_t sr
                 inner join realisasidetail_t rd on rd.strukrealisasifk = sr.norec
                 left JOIN kegiatananggaran_m ka on ka.id=sr.objectkegiatanfk
@@ -6461,7 +6587,7 @@ order by kodemataanggaran"));
                 and sr.statusenabled = true
                 $pegawai
 				group by dp0.kode, dp0.keterangan, sr.norec, cbs.carabayar, sr.tglverif, sr.keterangan, sr.jumlahdibayarverif, sr.kdprofile, sr.statusenabled, sr.tglrealisasi, sr.norealisasi, sr.status, sr.totalbelanja, sr.objectcarabayarfk, sr.rekananfk, sr.deskripsi, sr.objectkegiatanfk, sr.objectmataanggaranfk, sr.bendaharafk, sr.penerimafk, sr.pph, sr.ppn, pg1.namalengkap, pg2.namalengkap, rkn.namarekanan ,
-                ka.kode || '~' || ka.keterangan, ma.kodemataanggaran || '~' || ma.namamataanggaran, ka.tahun, ma.kodemataanggaran
+                ka.kode || '~' || ka.keterangan, ma.kodemataanggaran || '~' || ma.namamataanggaran, ka.tahun, ma.kodemataanggaran, ma.namamataanggaran, dp0.id, ka.keterangan, ka.id
             ")
         );
         $result = [];
@@ -6487,6 +6613,55 @@ order by kodemataanggaran"));
         $result = array(
             'data' => $data,
             'detail' => $result,
+            'message' => '@epic',
+        );
+
+        return $this->respond($result);
+    }
+
+    public function getSTSKeuangan(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $tglAwal = $request['awal'];
+        $tglAkhir = $request['akhir'];
+
+        $tgl = '';
+        if(isset($request['awal']) && isset($request['akhir']) && $request['awal'] != '' && $request['akhir'] != ''){
+            $tgl = "and sr.tglsts between '$tglAwal' and '$tglAkhir'";
+        }
+
+        $qkey = "";
+        if(isset($request['key']) && $request['key'] != '' && $request['key'] != "undefined" && $request['key'] == 'bku'){
+            $qkey = "and sr.objectbkufk is null";
+        }
+
+        $qnorec = "";
+        if(isset($request['norec']) && $request['norec'] != '' && $request['norec'] != "undefined"){
+            $qnorec = "and sr.objectbkufk = '".$request['norec']."'";
+        }
+
+        $data = DB::select(DB::raw("
+        select  sr.nosts, sr.objectbkufk, sr.norec, sr.uraiansts, sr.tglsts, sr.nilaists, ma.id idmataanggaran, ma.kodemataanggaran, ma.namamataanggaran,
+                ka.id idsubsubkegiatan, ka.keterangan keterangansubsubkegiatan, dp0.id idsubkegiatan, dp0.keterangan keterangansubkegiatan, 
+                ap.id idsumberdana, ap.asalproduk, ka.kode || ' - ' || ka.keterangan as subsubkegiatan, dp0.kode || ' - ' || dp0.keterangan as subkegiatan,
+                ma.kodemataanggaran || ' - ' || ma.namamataanggaran mataanggaran
+                from stskeuangan_t sr
+                inner JOIN kegiatananggaran_m ka on ka.id=sr.objectsubsubkegiatanfk
+                inner join kegiatananggaran_m as dp0 on dp0.id=sr.objectsubkegiatanfk
+                inner JOIN mataanggaran_m ma on ma.id=sr.objectmataanggaranfk
+                inner JOIN asalproduk_m ap on ap.id=sr.objectsumberdanafk
+                where sr.statusenabled = true
+                $tgl
+                $qkey
+                $qnorec
+                and ka.kdprofile = 30 and ka.statusenabled=true
+                and dp0.kdprofile = 30 and dp0.statusenabled=true
+            ")
+        );
+
+
+        $result = array(
+            'data' => $data,
             'message' => '@epic',
         );
 
@@ -6531,18 +6706,25 @@ order by kodemataanggaran"));
         $tglAwal = $request['awal'];
         $tglAkhir = $request['akhir'];
 
+        $qkey = '';
+        if(isset($request['key']) && $request['key'] != '' && $request['key'] != "undefined"){
+            $qkey = " and (sr.jumlahdibayarverif::varchar ilike '%".$request['key']."%' or rd.uraian ilike '%".$request['key']."%' or rkn.namarekanan ilike '%".$request['key']."%' or ma.kodemataanggaran || '~' || ma.namamataanggaran ilike '%".$request['key']."%')";
+        }
+
         $data = DB::select(DB::raw("
-        select sr.norec, sr.norealisasi, string_agg(DISTINCT rd.uraian, ',') uraian, cbs.carabayar, ma.kodemataanggaran || '~' || ma.namamataanggaran as mataanggaran,
+        select rkn.namarekanan, sr.norec, sr.norealisasi, string_agg(DISTINCT rd.uraian, ',') uraian, cbs.carabayar, ma.kodemataanggaran || '~' || ma.namamataanggaran as mataanggaran,
         sr.keterangan, sr.tglverif, sr.jumlahdibayarverif  FROM
         strukrealisasi_t sr
         inner join realisasidetail_t rd on rd.strukrealisasifk = sr.norec
         inner join carabayarspj_m cbs on cbs.id = sr.objectcarabayarfk
         inner JOIN mataanggaran_m ma on ma.id=sr.objectmataanggaranfk
+        left JOIN rekanan_m rkn on rkn.id=sr.rekananfk
         where sr.statusenabled = true
         and sr.kdprofile = 30
         and sr.tglrealisasi between '$tglAwal' and '$tglAkhir'
         and sr.status = 'Sudah Diverifikasi'
-        group by sr.norec, sr.norealisasi, cbs.carabayar, ma.kodemataanggaran || '~' || ma.namamataanggaran,
+        $qkey
+        group by rkn.namarekanan, sr.norec, sr.norealisasi, cbs.carabayar, ma.kodemataanggaran || '~' || ma.namamataanggaran,
         sr.keterangan, sr.tglverif, sr.jumlahdibayarverif
             ")
         );
@@ -6566,7 +6748,7 @@ order by kodemataanggaran"));
         }
 
         $data = DB::select(DB::raw("
-        select ma.kodemataanggaran, pj.norec norecpanjar,
+        select rkn.namarekanan, rkn.id idrekanan, ma.kodemataanggaran, pj.norec norecpanjar,
         case 
         when pj.jumlah is not null then sr.jumlahdibayarverif
         when pj.jumlah is null then 0
@@ -6578,11 +6760,12 @@ order by kodemataanggaran"));
         inner join carabayarspj_m cbs on cbs.id = sr.objectcarabayarfk
         inner JOIN mataanggaran_m ma on ma.id=sr.objectmataanggaranfk
 		left join panjar_t pj on pj.norec = sr.objectpanjarfk
+        left JOIN rekanan_m rkn on rkn.id=sr.rekananfk
         where sr.statusenabled = true
         and sr.kdprofile = 30
         $norec
         and sr.status = 'Sudah Diverifikasi'
-        group by ma.kodemataanggaran, pj.norec, pj.jumlah, sr.norec, sr.norealisasi, cbs.carabayar, ma.kodemataanggaran || '~' || ma.namamataanggaran,
+        group by rkn.namarekanan, rkn.id, ma.kodemataanggaran, pj.norec, pj.jumlah, sr.norec, sr.norealisasi, cbs.carabayar, ma.kodemataanggaran || '~' || ma.namamataanggaran,
         sr.keterangan, sr.tglverif, sr.jumlahdibayarverif
             ")
         );

@@ -2331,6 +2331,150 @@ class ReportController extends ApiController{
         return view('report.spj.cetakspjsatulampiran',compact('kegiatan','pageWidth', 'keterangan', 'mataanggaran', 'spj', 'detail', 'jumlah', 'terbilang', 'tampilsumberdana'));
     }
 
+    public function getCetakPengantarSPM(Request $request){
+        $norec = $request['norec'];
+        $terbilang = $request['terbilang'];
+        
+
+        $detail = DB::select(DB::raw("
+            select * from spm_t where statusenabled = true and kdprofile = 30 and norec = '$norec'
+            ")
+        );
+
+        $tgl = $this->tanggal_indonesia(date('Y-m-d',strtotime($detail[0]->tglspm)));
+
+        $result = array(
+            'data' => $detail,
+            'message' => '@epic',
+        );
+
+        $pageWidth = 950;
+        return view('report.spj.cetaksuratpengantarspm',compact('pageWidth', 'detail', 'terbilang', 'tgl'));
+    }
+
+    public function getCetakPengantarSPP(Request $request){
+        $norec = $request['norec'];
+        $terbilang = $request['terbilang'];
+        
+
+        $detail = DB::select(DB::raw("
+            select * from spp_t where statusenabled = true and kdprofile = 30 and norec = '$norec'
+            ")
+        );
+
+        $tgl = $this->tanggal_indonesia(date('Y-m-d',strtotime($detail[0]->tglspp)));
+
+        $result = array(
+            'data' => $detail,
+            'message' => '@epic',
+        );
+
+        $pageWidth = 950;
+        return view('report.spj.cetaksuratpengantarspp',compact('pageWidth', 'detail', 'terbilang', 'tgl'));
+    }
+
+    public function getCetakRingkasanSPP(Request $request){
+        $norec = $request['norec'];
+        $terbilang = $request['terbilang'];
+        
+
+        $detail = DB::select(DB::raw("
+            select * from spp_t where statusenabled = true and kdprofile = 30 and norec = '$norec'
+            ")
+        );
+
+        $tgl = $this->tanggal_indonesia(date('Y-m-d',strtotime($detail[0]->tglspp)));
+
+        $result = array(
+            'data' => $detail,
+            'message' => '@epic',
+        );
+
+        $pageWidth = 950;
+        return view('report.spj.cetakringkasanspp',compact('pageWidth', 'detail', 'terbilang', 'tgl'));
+    }
+
+    public function getCetakRincianSPP(Request $request){
+        $norec = $request['norec'];
+        $terbilang = $request['terbilang'];
+        
+
+        $detail = DB::select(DB::raw("
+            select * from spp_t where statusenabled = true and kdprofile = 30 and norec = '$norec'
+            ")
+        );
+
+        $permen = DB::select(DB::raw("select row_number() over(order by id) as nomor, *
+            from mataanggaranpermen_m where statusenabled = true and kdprofile = 30 and div = 2
+        "));
+
+        $tgl = $this->tanggal_indonesia(date('Y-m-d',strtotime($detail[0]->tglspp)));
+
+        $result = array(
+            'data' => $detail,
+            'message' => '@epic',
+        );
+
+        $pageWidth = 950;
+        return view('report.spj.cetakrincianspp',compact('pageWidth', 'detail', 'terbilang', 'tgl', 'permen'));
+    }
+
+    public function getCetakPertanggungjawabanSPM(Request $request){
+        $norec = $request['norec'];
+        $terbilang = $request['terbilang'];
+        
+
+        $detail = DB::select(DB::raw("
+            select * from spm_t where statusenabled = true and kdprofile = 30 and norec = '$norec'
+            ")
+        );
+
+        $tgl = $this->tanggal_indonesia(date('Y-m-d',strtotime($detail[0]->tglspm)));
+
+        $result = array(
+            'data' => $detail,
+            'message' => '@epic',
+        );
+
+        $pageWidth = 950;
+        return view('report.spj.cetaksuratpertanggungjawabanspm',compact('pageWidth', 'detail', 'terbilang', 'tgl'));
+    }
+
+    public function getCetakRincianSPM(Request $request){
+        $norec = $request['norec'];
+        $terbilang = $request['terbilang'];
+        
+
+        $detail = DB::select(DB::raw("
+            select * from spm_t where statusenabled = true and kdprofile = 30 and norec = '$norec'
+            ")
+        );
+
+        $spd = DB::select(DB::raw("
+            select spd.* 
+                from spm_t spm
+            inner join spp_t spp on spp.norec = spm.objectsppfk
+            left join spd_t spd on spd.norec = spp.objectspdfk and spd.statusenabled = true 
+            where spm.statusenabled = true 
+            and spm.kdprofile = 30
+            and spp.statusenabled = true 
+            and spp.kdprofile = 30 
+            and spm.norec = '$norec'
+        "));
+
+        $tglspd = '';
+        $tglspd = $this->tanggal_indonesia(date('Y-m-d',strtotime($spd[0]->tglspd)));
+        $tgl = $this->tanggal_indonesia(date('Y-m-d',strtotime($detail[0]->tglspm)));
+
+        $result = array(
+            'data' => $detail,
+            'message' => '@epic',
+        );
+
+        $pageWidth = 950;
+        return view('report.spj.cetaksuratrincianspm',compact('pageWidth', 'detail', 'terbilang', 'tgl', 'tglspd'));
+    }
+
     public function getCetakSPJ(Request $request){
         $norec = $request['norec'];
         $terbilang = $request['terbilang'];
@@ -3528,7 +3672,7 @@ class ReportController extends ApiController{
         }
 
         $data = DB::select(DB::raw("
-            select * from(
+            selectx * from(
                 select 0 nourut, '' nobku, '' tgl, 'Saldo Awal Bulan' uraianbku, (saldo-penerimaan+pengeluaran) penerimaan, 0 pengeluaran, 0 saldoawal
                 from bukukasumum_t
                 where kdprofile = 30
@@ -3557,6 +3701,208 @@ class ReportController extends ApiController{
         $pageWidth = 950;
         //return $this->respond($result);
         return view('report.keuangan.cetakbku',compact('data', 'pageWidth', 'tahunjudul', 'tanggalcetak', 'periode'));
+    }
+
+    public function CetakBKUReal(Request $request){
+        $tahunjudul = $request['tahunbku'];
+        $tanggalcetak = $this->tanggal_indonesia(date('Y-m-d',strtotime($request['tglcetak'])));
+        // $bawal = date('F', mktime(0, 0, 0, $request['bulanawal'], 10));
+        // $bakhir = date('F', mktime(0, 0, 0, $request['bulanakhir'], 10));
+
+        $bulan = $request['bulanbku'];
+
+
+        if($bulan == '01'){
+            $periode = 'JANUARI';
+        }
+        else if($bulan == '02'){
+            $periode = 'FEBRUARI';
+        }
+        else if($bulan == '03'){
+            $periode = 'MARET';
+        }
+        else if($bulan == '04'){
+            $periode = 'APRIL';
+        }
+        else if($bulan == '05'){
+            $periode = 'MEI';
+        }
+        else if($bulan == '06'){
+            $periode = 'JUNI';
+        }
+        else if($bulan == '07'){
+            $periode = 'JULI';
+        }
+        else if($bulan == '08'){
+            $periode = 'AGUSTUS';
+        }
+        else if($bulan == '09'){
+            $periode = 'SEPTEMBER';
+        }
+        else if($bulan == '10'){
+            $periode = 'OKTOBER';
+        }
+        else if($bulan == '11'){
+            $periode = 'NOVEMBER';
+        }
+        else if($bulan == '12'){
+            $periode = 'DDESEMBER';
+        }
+
+        $qtahun  = '';
+        if (isset($request['tahunbku']) && $request['tahunbku'] != "" && $request['tahunbku'] != "undefined") {
+            $qtahun =  " and extract(year from tglbku) =  '" . $request['tahunbku']."'";
+        }
+
+        $qbulan  = '';
+        if (isset($request['bulanbku']) && $request['bulanbku'] != "" && $request['bulanbku'] != "undefined") {
+            $qbulan =  " and extract(month from tglbku) =  '" . $request['bulanbku']."'";
+        }
+
+        $data = DB::select(DB::raw("select * from(
+            select 0 nourut, '' objectmataanggaranfk, '' nobku, '' tgl, 'Saldo Awal Bulan' uraianbku, (saldo-penerimaan+pengeluaran) penerimaan, 0 pengeluaran, 0 saldoawal, '' nodokumen
+            from bukukasumum_t
+            where kdprofile = 30
+            and statusenabled = true
+            $qbulan
+            $qtahun
+            order by tglbku asc limit 1
+            ) as x
+            
+            union all
+            
+            
+            select nourut, objectmataanggaranfk, nobku, tgl, uraianbku, penerimaan, pengeluaran, saldoawal,
+            case 
+                when norealisasi is not null then norealisasi
+                when nopanjar is not null then nopanjar
+                when nospm is not null then nospm
+                when nopemungutan is not null then nopemungutan
+                when nopenyetoran is not null then nopenyetoran
+                when nojasagiro is not null then nojasagiro
+                when nosts is not null then nosts
+            end as nodokumen
+            from(
+                select ROW_NUMBER ( ) OVER ( ORDER BY bku.tglbku ) nourut, bku.objectmataanggaranfk, bku.nobku, 
+                to_char(bku.tglbku::date, 'DD-MM-YYYY') tgl, bku.uraianbku, bku.penerimaan, 
+                bku.pengeluaran, 0 saldoawal, sr.norealisasi, pj.nopanjar, spm.nospm,
+                pp.nopajak nopemungutan, ppj.nopajak nopenyetoran, jg.nojasagiro, sk.nosts 
+                from bukukasumum_t bku
+                left join strukrealisasi_t sr on sr.objectbkufk = bku.norec
+                and sr.kdprofile = 30
+                and sr.statusenabled = true
+                left join panjar_t pj on pj.objectbkufk = bku.norec
+                and pj.kdprofile = 30
+                and pj.statusenabled = true
+                left join spm_t spm on spm.objectbkufk = bku.norec
+                and spm.kdprofile = 30
+                and spm.statusenabled = true
+                left join penyetoranpajak_t ppj on ppj.objectbkufk = bku.norec
+                and ppj.kdprofile = 30
+                and ppj.statusenabled = true
+                left join pemungutanpajak_t pp on pp.objectbkufk = bku.norec
+                and pp.kdprofile = 30
+                and pp.statusenabled = true
+                left join jasagiro_t jg on jg.objectbkufk = bku.norec
+                and jg.kdprofile = 30
+                and jg.statusenabled = true
+                left join stskeuangan_t sk on sk.objectbkufk = bku.norec
+                and sk.kdprofile = 30
+                and sk.statusenabled = true
+                where bku.kdprofile = 30
+                and bku.statusenabled = true 
+                $qbulan
+                $qtahun
+            ) as x"));
+
+        $saldoakhir = 0;
+
+        foreach($data as $row){
+            $saldoakhir = $saldoakhir + $row->penerimaan - $row->pengeluaran; 
+            $row->saldoawal = $saldoakhir;
+        }
+
+        $pageWidth = 950;
+        //return $this->respond($result);
+        return view('report.keuangan.cetakbkureal',compact('data', 'pageWidth', 'tahunjudul', 'tanggalcetak', 'periode'));
+    }
+
+    public function getRegisterPenutupanKas(Request $request){
+        $tahunjudul = $request['tahun'];
+        $tanggalcetak = $this->tanggal_indonesia(date('Y-m-d',strtotime($request['tglcetak'])));
+        // $bawal = date('F', mktime(0, 0, 0, $request['bulanawal'], 10));
+        // $bakhir = date('F', mktime(0, 0, 0, $request['bulanakhir'], 10));
+
+        $bulan = $request['bulan'];
+
+
+        if($bulan == '01'){
+            $periode = 'JANUARI';
+        }
+        else if($bulan == '02'){
+            $periode = 'FEBRUARI';
+        }
+        else if($bulan == '03'){
+            $periode = 'MARET';
+        }
+        else if($bulan == '04'){
+            $periode = 'APRIL';
+        }
+        else if($bulan == '05'){
+            $periode = 'MEI';
+        }
+        else if($bulan == '06'){
+            $periode = 'JUNI';
+        }
+        else if($bulan == '07'){
+            $periode = 'JULI';
+        }
+        else if($bulan == '08'){
+            $periode = 'AGUSTUS';
+        }
+        else if($bulan == '09'){
+            $periode = 'SEPTEMBER';
+        }
+        else if($bulan == '10'){
+            $periode = 'OKTOBER';
+        }
+        else if($bulan == '11'){
+            $periode = 'NOVEMBER';
+        }
+        else if($bulan == '12'){
+            $periode = 'DDESEMBER';
+        }
+
+        $qtahun  = '';
+        if (isset($request['tahun']) && $request['tahun'] != "" && $request['tahun'] != "undefined") {
+            $qtahun =  " and extract(year from tglbku) =  '" . $request['tahun']."'";
+        }
+
+        $qbulan  = '';
+        if (isset($request['bulan']) && $request['bulan'] != "" && $request['bulan'] != "undefined") {
+            $qbulan =  " and extract(month from tglbku) =  '" . $request['bulan']."'";
+        }
+
+        $data = DB::select(DB::raw("select sum(bku.penerimaan) penerimaan, sum(bku.pengeluaran) pengeluaran
+        from bukukasumum_t bku
+        where bku.kdprofile = 30
+        and bku.statusenabled = true 
+        $qbulan
+        $qtahun"));
+
+        $akhirbulanini = DB::select(DB::raw("SELECT (date_trunc('month', '$tahunjudul-$bulan-01'::date) + interval '1 month' - interval '1 day')::date
+        AS end_of_month"));
+
+        $indakhirbulanini = $this->tanggal_indonesia(date('Y-m-d',strtotime($akhirbulanini[0]->end_of_month)));
+
+        $akhirbulanlalu = DB::select(DB::raw("SELECT (date_trunc('month', '$tahunjudul-$bulan-01'::date) - interval '1 day')::date
+        AS end_of_month_past;"));
+
+        $indakhirbulanlalu = $this->tanggal_indonesia(date('Y-m-d',strtotime($akhirbulanlalu[0]->end_of_month_past)));
+        
+        $pageWidth = 950;
+        //return $this->respond($result);
+        return view('report.keuangan.penutupankas',compact('data', 'pageWidth', 'tahunjudul', 'tanggalcetak', 'periode', 'indakhirbulanlalu', 'indakhirbulanini'));
     }
 
     public function CetakBukuPanjar(Request $request){

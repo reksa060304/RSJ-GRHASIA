@@ -1204,6 +1204,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('report/get-cetak-persandingan-angkas-penyerapan','Report\ReportController@CetakAngkasPenyerapan');
           Route::get('report/get-cetak-pertanggungjawaban-bendahara','Report\ReportController@CetakPertanggungjawaban');
           Route::get('report/get-cetak-bku','Report\ReportController@CetakBKU');
+          Route::get('report/get-cetak-bku-real','Report\ReportController@CetakBKUReal');
+          Route::get('report/get-register-penutupan-kas','Report\ReportController@getRegisterPenutupanKas');
           Route::get('report/get-cetak-buku-panjar','Report\ReportController@CetakBukuPanjar');
           Route::get('report/get-rekap-order-kirim-barang-cetak','Report\ReportController@CetakLapOrderKirim');
           Route::get('report/get-cetak-suratketerangannapza','Report\ReportController@CetakSKNapza');
@@ -1468,6 +1470,12 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('perencanaan/get-pajak-bku', 'Perencanaan\PerencanaanController@getPajakBKU');
             Route::get('report/get-cetak-spj', 'Report\ReportController@getCetakSPJ');
             Route::get('report/get-cetak-spj-satu-lampiran', 'Report\ReportController@getCetakSPJSatuLampiran');
+            Route::get('report/get-cetak-pengantar-spm', 'Report\ReportController@getCetakPengantarSPM');
+            Route::get('report/get-cetak-pengantar-spp', 'Report\ReportController@getCetakPengantarSPP');
+            Route::get('report/get-cetak-pertanggungjawaban-spm', 'Report\ReportController@getCetakPertanggungjawabanSPM');
+            Route::get('report/get-cetak-rincian-spm', 'Report\ReportController@getCetakRincianSPM');
+            Route::get('report/get-cetak-ringkasan-spp', 'Report\ReportController@getCetakRingkasanSPP');
+            Route::get('report/get-cetak-rincian-spp', 'Report\ReportController@getCetakRincianSPP');
             Route::get('perencanaan/get-datacombo-part-rekanan', 'Perencanaan\PerencanaanController@getDataComboRekananPart');
             Route::get('perencanaan/get-datacombo-part-rekanan-semua', 'Perencanaan\PerencanaanController@getDataComboRekananPartSemua');
             Route::get('perencanaan/get-kel-keempat-part','Perencanaan\PerencanaanController@getKelAnggaranKeempat');
@@ -1494,11 +1502,13 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::post('perencanaan/save-lpj','Perencanaan\PerencanaanController@saveLPJ');
             Route::post('perencanaan/delete-lpj','Perencanaan\PerencanaanController@saveLPJ');
             Route::post('perencanaan/delete-jasgir','Perencanaan\PerencanaanController@deleteJasgir');
+            Route::post('perencanaan/delete-sts-keuangan','Perencanaan\PerencanaanController@deleteSTSKeuangan');
             Route::post('perencanaan/delete-retur','Perencanaan\PerencanaanController@deleteRetur');
             Route::post('perencanaan/delete-jurnal','Perencanaan\PerencanaanController@deleteJurnal');
             Route::post('perencanaan/delete-telemedicine','Perencanaan\PerencanaanController@deleteTelemedicine');
             Route::post('perencanaan/save-pajak','Perencanaan\PerencanaanController@savePajak');
             Route::post('perencanaan/save-jasgir','Perencanaan\PerencanaanController@saveJasgir');
+            Route::post('perencanaan/save-sts-keuangan','Perencanaan\PerencanaanController@saveSTSKeuangan');
             Route::post('perencanaan/save-retur','Perencanaan\PerencanaanController@saveRetur');
             Route::post('perencanaan/save-jurnal','Perencanaan\PerencanaanController@saveJurnal');
             Route::post('perencanaan/save-telemedicine','Perencanaan\PerencanaanController@saveTelemedicine');
@@ -1568,6 +1578,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('perencanaan/get-rincian-kegiatan', 'Perencanaan\PerencanaanController@getRincianKegiatan');
             Route::get('perencanaan/get-keterangan-belanja', 'Perencanaan\PerencanaanController@getKeteranganBelanja');
             Route::get('perencanaan/get-spj', 'Perencanaan\PerencanaanController@getDataSPJ');
+            Route::get('perencanaan/get-sts-keuangan', 'Perencanaan\PerencanaanController@getSTSKeuangan');
             Route::get('perencanaan/get-spj-to-lpj', 'Perencanaan\PerencanaanController@getSPJtoLPJ');
             Route::get('perencanaan/get-spj-to-pajak', 'Perencanaan\PerencanaanController@getSPJtoPajak');
             Route::get('perencanaan/get-spj-bku', 'Perencanaan\PerencanaanController@getSPJBKU');
@@ -2629,6 +2640,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
 				Route::get('sysadmin/general/get-icd9-part', 'SysAdmin\GeneralController@getPartIcd9');
                 Route::get('sysadmin/general/get-icd10-part', 'SysAdmin\GeneralController@getPartIcd10');
 				Route::get('sysadmin/general/get-terbilang/{number}', 'SysAdmin\GeneralController@getTerbilangGeneral');                // GET //
+        Route::get('sysadmin/general/get-terbilang-tidak-bulat/{number}', 'SysAdmin\GeneralController@getTerbilangTidakBulat');                // GET //
                 Route::get('sysadmin/general/get-icd9-part', 'SysAdmin\GeneralController@getPartIcd9');
                 Route::get('sysadmin/general/get-icd10-part', 'SysAdmin\GeneralController@getPartIcd10');
                 Route::get('sysadmin/general/settingdatafixed/get/{namaField}','SysAdmin\Master\SettingDataFixedController@getSettingDataFixedGeneric');

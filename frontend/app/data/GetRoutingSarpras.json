@@ -5179,6 +5179,26 @@
     ]
   },
   {
+    "name": "STSKeuangan",
+    "url": "/U1RTS2V1YW5nYW4=",
+    "templateurl": "module/Perencanaan/STSKeuangan.html",
+    "controller": "STSKeuanganCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
     "name": "MasterDataAkuntansi",
     "url": "/TWFzdGVyRGF0YUFrdW50YW5zaQ==",
     "templateurl": "module/Perencanaan/MasterDataAkuntansi.html",

@@ -522,7 +522,7 @@
                                         </div>
                                         <div class="grid_12">
                                             <div class="grid_12">
-                                                <input style="width: 100%" k-ng-model="item.tglcetakpanjar" kendo-datetimepicker placeholer="yyyy-mm-dd"
+                                                <input style="width: 100%" k-ng-model="item.tglcetakbku" kendo-datetimepicker placeholer="yyyy-mm-dd"
 									            k-format="'yyyy-MM-dd'" />
                                             </div>
                                         </div>
@@ -534,7 +534,7 @@
                                         <div class="grid_12">
                                             <div class="grid_12">
                                                 <input style="width: 100%" k-options="yearUngkul"
-                                                    k-ng-model="item.tahunpanjar" kendo-date-picker placeholer="YYYY"
+                                                    k-ng-model="item.tahuncetakbku" kendo-date-picker placeholer="YYYY"
                                                     k-format="'yyyy'" />
                                             </div>
                                         </div>
@@ -545,7 +545,7 @@
                                         </div>
                                         <div class="grid_12">
                                             <div class="grid_12">
-                                                <input style="width: 100%" k-options="monthUngkul" k-ng-model="item.bulanpanjar"
+                                                <input style="width: 100%" k-options="monthUngkul" k-ng-model="item.bulancetakbku"
                                                     kendo-date-picker placeholer="MMMM" k-format="'MMMM'" />
                                             </div>
                                         </div>
@@ -556,13 +556,13 @@
                                         </div>
                                         <div class="grid_12">
                                             <button class="primary c-button" style="margin-top: 6px"
-                                                ng-click="CetakBukuPanjar()">Cetak</button>
+                                                ng-click="CetakBKUReal()">Cetak</button>
                                         </div>
                                     </div>
                                 </div>
                             </md-content>
                         </md-tab>
-                        <md-tab label="LAPORAN FUNGSIONAL">
+                        <md-tab label="REGISTER PENUTUPAN KAS">
                             <md-content class="md-padding" ng-hide="false">
                                 <div class="grid_12" style="margin-top: 25px;">
                                     <div class="grid_2" style="margin-top: 0px;">
@@ -571,7 +571,7 @@
                                         </div>
                                         <div class="grid_12">
                                             <div class="grid_12">
-                                                <input style="width: 100%" k-ng-model="item.tglcetakpanjar" kendo-datetimepicker placeholer="yyyy-mm-dd"
+                                                <input style="width: 100%" k-ng-model="item.tglkas" kendo-datetimepicker placeholer="yyyy-mm-dd"
 									            k-format="'yyyy-MM-dd'" />
                                             </div>
                                         </div>
@@ -583,7 +583,7 @@
                                         <div class="grid_12">
                                             <div class="grid_12">
                                                 <input style="width: 100%" k-options="yearUngkul"
-                                                    k-ng-model="item.tahunpanjar" kendo-date-picker placeholer="YYYY"
+                                                    k-ng-model="item.tahunkas" kendo-date-picker placeholer="YYYY"
                                                     k-format="'yyyy'" />
                                             </div>
                                         </div>
@@ -594,7 +594,7 @@
                                         </div>
                                         <div class="grid_12">
                                             <div class="grid_12">
-                                                <input style="width: 100%" k-options="monthUngkul" k-ng-model="item.bulanpanjar"
+                                                <input style="width: 100%" k-options="monthUngkul" k-ng-model="item.bulankas"
                                                     kendo-date-picker placeholer="MMMM" k-format="'MMMM'" />
                                             </div>
                                         </div>
@@ -605,7 +605,7 @@
                                         </div>
                                         <div class="grid_12">
                                             <div class="grid_12">
-                                                <input kendo-combo-box k-ng-model="item.asalproduk"
+                                                <input kendo-combo-box k-ng-model="item.asalprodukkas"
                                                 k-data-text-field="'asalproduk'" k-data-value-field="'id'"
                                                 k-filter="'contains'" k-auto-bind="false"
                                                 k-data-source="listAsalProduk"  />
@@ -618,7 +618,7 @@
                                         </div>
                                         <div class="grid_12">
                                             <button class="primary c-button" style="margin-top: 6px"
-                                                ng-click="CetakBukuPanjar()">Cetak</button>
+                                                ng-click="CetakKas()">Cetak</button>
                                         </div>
                                     </div>
                                 </div>

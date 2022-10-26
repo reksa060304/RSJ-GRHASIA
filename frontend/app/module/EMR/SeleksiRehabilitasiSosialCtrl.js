@@ -107,14 +107,14 @@ define(['initialize'], function (initialize) {
                     ]
                 },
                 {
-                    "id" : 1, "nama": "2. Status Kelulusan Pendidikan",
+                    "id" : 2, "nama": "2. Status Kelulusan Pendidikan",
                     "detail": [
                         {"id": 3012905, "nama": "Lulus","type": "checkbox"},
                         {"id": 3012906, "nama": "Tidak Lulus","type": "checkbox"},
                     ]
                 },
                 {
-                    "id" : 1, "nama": "3. Pekerjaan",
+                    "id" : 3, "nama": "3. Pekerjaan",
                     "detail": [
                         {"id": 3012907, "nama": "Belum","type": "checkbox"},
                         {"id": 3012908, "nama": "Sudah","type": "checkbox"},
@@ -122,7 +122,7 @@ define(['initialize'], function (initialize) {
                     ]
                 },
                 {
-                    "id" : 1, "nama": "4. Ketrampilan yang dimiliki",
+                    "id" : 4, "nama": "4. Ketrampilan yang dimiliki",
                     "detail": [
                         {"id": 3012910, "nama": "Bertani","type": "checkbox"},
                         {"id": 3012911, "nama": "Menjahit","type": "checkbox"},
@@ -132,7 +132,7 @@ define(['initialize'], function (initialize) {
                     ]
                 },
                 {
-                    "id" : 1, "nama": "5. ",
+                    "id" : 5, "nama": "5. Sosok lekat di keluarga ",
                     "detail": [
                         {"id": 3012915, "nama": "Ayah","type": "checkbox"},
                         {"id": 3012916, "nama": "Ibu","type": "checkbox"},
@@ -142,14 +142,14 @@ define(['initialize'], function (initialize) {
                     ]
                 },
                 {
-                    "id" : 1, "nama": "3. Pekerjaan",
+                    "id" : 6, "nama": "6. Suku",
                     "detail": [
                         {"id": 3012920, "nama": "Jawa","type": "checkbox"},
                         {"id": 3012921, "nama": "Lainnya","type": "textbox"},
                     ]
                 },
                 {
-                    "id" : 1, "nama": "5. Permasalahan Sosial",
+                    "id" : 7, "nama": "7. Permasalahan Psikosial",
                     "detail": [
                         {"id": 3012922, "nama": "Dihina","type": "checkbox"},
                         {"id": 3012923, "nama": "Dikucilkan","type": "checkbox"},

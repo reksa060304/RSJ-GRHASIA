@@ -213,6 +213,77 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                 window.open(baseTransaksi + "report/get-cetak-bku?tahunbku=" + tahunbku + "&bulanbku=" + bulanbku + "&tglcetak=" + tglcetak, '_blank');
             }
+
+            $scope.CetakBKUReal = function(){
+
+                if ($scope.item.tahuncetakbku == undefined){
+                    toastr.warning('Tahun harus diisi', 'Informasi');
+                    return
+                }
+
+                if ($scope.item.bulancetakbku == undefined){
+                    toastr.warning('Bulan harus diisi', 'Informasi');
+                    return
+                }
+
+                if ($scope.item.tglcetakbku == undefined){
+                    toastr.warning('Tgl cetak harus diisi', 'Informasi');
+                    return
+                }
+
+                var tahunbku = ""
+                if ($scope.item.tahuncetakbku != undefined){
+                    tahunbku = moment($scope.item.tahuncetakbku).format('YYYY')
+                }
+
+                var bulanbku = ""
+                if ($scope.item.bulancetakbku != undefined){
+                    bulanbku = moment($scope.item.bulancetakbku).format('MM')
+                }
+
+                var tglcetak = ""
+                if ($scope.item.tglcetakbku != undefined){
+                    tglcetak = moment($scope.item.tglcetakbku).format('YYYY-MM-DD')
+                }
+
+                window.open(baseTransaksi + "report/get-cetak-bku-real?tahunbku=" + tahunbku + "&bulanbku=" + bulanbku + "&tglcetak=" + tglcetak, '_blank');
+            }
+
+            $scope.CetakKas = function(){
+
+                if ($scope.item.tahunkas == undefined){
+                    toastr.warning('Tahun harus diisi', 'Informasi');
+                    return
+                }
+
+                if ($scope.item.bulankas == undefined){
+                    toastr.warning('Bulan harus diisi', 'Informasi');
+                    return
+                }
+
+                if ($scope.item.tglkas == undefined){
+                    toastr.warning('Tgl cetak harus diisi', 'Informasi');
+                    return
+                }
+
+                var tahunbku = ""
+                if ($scope.item.tahunkas != undefined){
+                    tahunbku = moment($scope.item.tahunkas).format('YYYY')
+                }
+
+                var bulanbku = ""
+                if ($scope.item.bulankas != undefined){
+                    bulanbku = moment($scope.item.bulankas).format('MM')
+                }
+
+                var tglcetak = ""
+                if ($scope.item.tglkas != undefined){
+                    tglcetak = moment($scope.item.tglkas).format('YYYY-MM-DD')
+                }
+
+                window.open(baseTransaksi + "report/get-register-penutupan-kas?tahun=" + tahunbku + "&bulan=" + bulanbku + "&tglcetak=" + tglcetak, '_blank');
+            }
+
             $scope.CetakBukuPanjar = function(){
 
                 if ($scope.item.tahunpanjar == undefined){
