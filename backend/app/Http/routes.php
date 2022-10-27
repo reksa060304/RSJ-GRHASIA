@@ -3038,6 +3038,10 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         Route::get('report/cetak-catatan-klinik','Report\ReportController@cetakCatatanKlinik');
         Route::get('report/cetak-resume-medis2','Report\ReportController@cetakResume2');
         Route::get('report/diklat-kwitansi', 'Report\ReportController@cetakKwitansiDiklat');
+        Route::get('report/cetak-antrian','Report\ReportController@cetakAntrianKiosk');
+        Route::get('report/cetak-bukti-pendaftaran','Report\ReportController@cetakBuktiPendaftaran');
+        Route::get('report/cetak-sep','Report\ReportController@cetakSEP');
+        Route::get('report/get-cetak-bukti-pendaftaran','Report\ReportController@cetakBuktiPendaftaranGet');
 
         Route::get('viewer/get-list-antrian','Antrian\AntrianController@getListAntrian');
         Route::get('viewer/update-antrian','Antrian\AntrianController@updatePanggil');
