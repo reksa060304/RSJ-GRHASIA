@@ -521,9 +521,14 @@ class KiosKController extends ApiController
             $kodePPKRujukan = $this->settingDataFixed('kodePPKRujukan',$kdProfile);
             $isTemporaryBrigding = $this->settingDataFixed('isTemporaryBrigding',$kdProfile);
             $isAdminOtomatisKiosk = $this->settingDataFixed('isAdminOtomatisKiosk',$kdProfile);
+            $isAktifSlotRuanganKiosk = $this->settingDataFixed('isAktifSlotRuanganKiosk',$kdProfile);
+            $isCetakDSKiosk = $this->settingDataFixed('isCetakDSKiosk',$kdProfile);
+            
             $data['ppkpelayanan']= $kodePPKRujukan;
             $data['isTemporaryBrigding']= $isTemporaryBrigding;
             $data['isAdminOtomatisKiosk']= $isAdminOtomatisKiosk;
+            $data['isAktifSlotRuanganKiosk']= $isAktifSlotRuanganKiosk;
+            $data['isCetakDSKiosk']= $isCetakDSKiosk;
             return $this->respond($data);
     }
 
