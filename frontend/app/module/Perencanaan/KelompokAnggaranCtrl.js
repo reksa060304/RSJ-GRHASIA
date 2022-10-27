@@ -929,7 +929,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 for (let x = 0; x < $scope.dataSourceDetailKeteranganBelanja.options.data.length; x++) {
                     var el = $scope.dataSourceDetailKeteranganBelanja.options.data[x]
                     console.log(el)
-                    if (el.kodemataanggaran.match(dataItem.kodemataanggaran)) {
+                    if (el.kodemataanggaran == dataItem.kodemataanggaran && el.keterangan == dataItem.keterangan) {
                         el.subtotalRP = formatRupiah(el.subtotal, "Rp. ")
                      
                         totalAnggaran = totalAnggaran + parseFloat(el.subtotal)
