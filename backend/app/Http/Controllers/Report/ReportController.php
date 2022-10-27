@@ -1248,6 +1248,69 @@ class ReportController extends ApiController{
             compact('raw', 'pageWidth','r','details','profile', 'skrining'));
     }
 
+    public function cetakAntrianKiosk(Request $request) {
+        $kdProfile = (int)$request['kdprofile'];
+        $norec = $request['norec'];
+        $TglAwal =  date('Y-m-d '). '00:00';
+        $TglAkhir = date('Y-m-d '). '23:59';
+        $tglAyeuna = date('Y-m-d H:i:s');
+        $profile = collect(DB::select
+            ("
+                select * from profile_m where id = $kdProfile limit 1
+            "))->first();
+
+        $antrian = DB::table('antrianpasienregistrasi_t AS apr')
+                    ->leftJoin('ruangan_m AS ru','ru.id','=','apr.objectruanganfk')
+                    ->select(DB::raw("apr.*,CASE WHEN ru.namaruangan IS NULL 
+                                        THEN '' ELSE ru.namaruangan END AS namaruangan"))
+                    ->where('apr.norec','=',$norec)
+                    ->first();
+
+        $str = $antrian->jenis;
+        $jmlAntrian = DB::table('antrianpasienregistrasi_t')
+            ->select(DB::raw("count(noantrian) as jmlantri"))
+            ->where('statuspanggil','=',0)
+            ->whereBetween('tanggalreservasi',[$TglAwal, $TglAkhir])
+            ->where('jenis','=',$str)
+            ->first();
+
+        $noAntrian = $antrian->noantrian;
+        $strJenis = $antrian->jenis;
+        $jenis = "";
+        if ($strJenis == "A"){
+            $jenis = "UMUM";
+        }elseif ($strJenis == "B"){
+            $jenis = "BPJS";
+        }
+        if (strlen($antrian->noantrian) == 1){
+            $noAntrian = "00" . $antrian->noantrian;
+        }else{
+            $noAntrian = "0" . $antrian->noantrian;
+        }
+        $pageWidth = 250;
+        $dataReport = array(
+            'namaprofile' => $profile->namalengkap,
+            'alamat' => $profile->alamatlengkap,
+            'jenis' => $jenis,
+            'noantrian' => $strJenis . "-" . $noAntrian,
+            'jmlantrian' => $jmlAntrian->jmlantri,
+            'pageWidth'  => 365,
+            'tanggal'  => $tglAyeuna,
+        );
+
+//        $pdf = PDF::loadView('report.pendaftaran.antrian', array(
+//                'dataReport' => $dataReport,
+//        ));
+//        return $pdf->stream();
+
+        return view('report.pendaftaran.antrian',
+            compact('dataReport', 'pageWidth','profile'));
+//        return view('','$result');
+    }
+
+    
+
+  
 
     public function cetakCPPT(Request $request)
     {
