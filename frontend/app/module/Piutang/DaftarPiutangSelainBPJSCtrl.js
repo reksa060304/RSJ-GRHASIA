@@ -726,7 +726,8 @@ define(['initialize'], function (initialize) {
 										userloginfk: $scope.dataLogin.id,
                                     }
 
-                                    console.log(XL_row_object)
+                                    console.log(XL_row_object[0].noregistrasi)
+									
 
                                     medifirstService.post('tatarekening/save-piutang-bpjs', objSave).then(function (data) {
                                         loadData()

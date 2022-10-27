@@ -841,6 +841,7 @@ class TagihanController  extends ApiController
                 $harga = (float)$value->hargajual;
                 $diskon = (float)$value->hargadiscount;
                 $detail = array(
+                    //'data' => $value,
                     'norec' => $value->norec,
                     'tglPelayanan' => $value->tglpelayanan,
                     'namaPelayanan' => $value->namaproduk,

@@ -488,9 +488,8 @@ class BendaharaPenerimaanController extends ApiController {
                     ->update([
                         'statusenabled' => false
                     ]);
-                $sbm = StrukBuktiPenerimaan::where('norec', $item['norec_sbm'])
+                $sbm = StrukBuktiPenerimaan::where('noclosingfk', $sc->norec)
                         ->where('kdprofile', $idProfile)
-                        ->whereNotNull('noclosingfk')
                         ->update(
                             [
                                 'noclosingfk' => null
