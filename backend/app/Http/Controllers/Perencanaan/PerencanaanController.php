@@ -653,6 +653,8 @@ class PerencanaanController extends ApiController {
             INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
             where kb.kdprofile = 30 and kb.statusenabled = true
             and ka.id = $idsubsub
+            and ma.kdprofile = 30 and ma.statusenabled = true
+            and ka.kdprofile = 30 and ka.statusenabled = true
             group by ma.id, ma.kodemataanggaran, ma.namamataanggaran"));
         } else{
             $mataanggarancombo = \DB::table('mataanggaran_m as cbs')
@@ -997,7 +999,7 @@ class PerencanaanController extends ApiController {
         $idProfile = (int) $kdProfile;
         $kode =$request['mataanggaran'];
         $idkegiatan = $request['kegiatan'];
-        $ma = DB::select(DB::raw("select id from mataanggaran_m where kodemataanggaran = '$kode'"));
+        $ma = DB::select(DB::raw("select id from mataanggaran_m where kodemataanggaran = '$kode' and statusenabled = true and kdprofile = 30"));
         $idma = $ma[0]->id;
         $data = DB::select(DB::raw("select * from keteranganbelanja_t where objectkegiatanfk = $idkegiatan and objectmataanggaranfk = $idma and statusenabled = true and kdprofile = 30"));
 
@@ -5858,7 +5860,9 @@ order by kodemataanggaran"));
         $data = DB::select(DB::raw("
         select kodemataanggaran
         from mataanggaran_m 
-        where namamataanggaran = '$namamataanggaran';
+        where namamataanggaran = '$namamataanggaran'
+        and statusenabled = true
+        and kdprofile = 30;
             ")
         );
 
