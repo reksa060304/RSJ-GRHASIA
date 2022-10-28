@@ -1256,7 +1256,7 @@ class ReportController extends ApiController{
         $tglAyeuna = date('Y-m-d H:i:s');
         $profile = collect(DB::select
             ("
-                select * from profile_m where id = $kdProfile limit 1
+                select * from profile_m where statusenabled=true limit 1
             "))->first();
 
         $antrian = DB::table('antrianpasienregistrasi_t AS apr')
@@ -1312,7 +1312,7 @@ class ReportController extends ApiController{
         $kdProfile = (int)$request['kdprofile'];
         $profile = collect(DB::select
         ("
-                select * from profile_m where id = $kdProfile limit 1
+                select * from profile_m where statusenabled=true limit 1
             "))->first();
 
         $registrasi = DB::table('pasiendaftar_t AS pd')
@@ -1375,7 +1375,7 @@ class ReportController extends ApiController{
 
         $profile = collect(DB::select
         ("
-                select * from profile_m where id = $kdProfile limit 1
+                select * from profile_m where statusenabled=true limit 1
             "))->first();
 
         $registrasi = collect(DB::select("
@@ -1427,6 +1427,9 @@ class ReportController extends ApiController{
             compact('dataReport', 'pageWidth','profile'));
 //        return view('','$result');
     }
+    
+
+  
 
     public function cetakCPPT(Request $request)
     {
@@ -8181,4 +8184,5 @@ public function suratBuktiPengembalian(Request $request)
         // dd($data,$detail);
         return view("report.keperawatan.catatan-perkembangan", compact('result'));
     }
+   
 }
