@@ -740,10 +740,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     // $scope.item.kodeHead = dataItem.kode.substring(0,4) + '.' + dataItem.kode.substring(5,7) + '.' + dataItem.kode.substring(8,12)
                     // $scope.item.kode = dataItem.kode.substring(13,15)
                 }else if(dataItem.div == 4){
-                    medifirstService.getPart('emr/get-datacombo-part-pegawai', true, true, 20).then(function (data) {
-                        $scope.listBendahara = data
-                        $scope.listPenerima = data
-                    })
+                    
                     console.log(dataItem)
                     $scope.idkegiatananggaran = dataItem.id
                     buttonhide = false
@@ -5749,6 +5746,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 medifirstService.get("reservasionline/get-daftar-slotting?id=1").then(function (e) {
 
 				})
+
+                medifirstService.getPart('emr/get-datacombo-part-pegawai', true, true, 20).then(function (data) {
+                    $scope.listBendahara = data
+                    $scope.listPenerima = data
+                })
 
                 $scope.norecspj = dataItem.norec
                 console.log(dataItem)
