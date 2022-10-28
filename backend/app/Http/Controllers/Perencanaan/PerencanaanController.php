@@ -549,7 +549,7 @@ class PerencanaanController extends ApiController {
 
         $ksubkegiatan = '';
         if (isset($request['subkegiatan']) && $request['subkegiatan'] != "" && $request['subkegiatan'] != "undefined") {
-            $ksubkegiatan =  "and dp2.id = ".$request['subkegiatan'];
+            $ksubkegiatan =  "and dp2.kode = '".$request['subkegiatan']."'";
         }
 
         $ktahap = '';
@@ -7235,6 +7235,7 @@ order by kodemataanggaran"));
        try{
 
         $KM= MataAnggaran::where('kodemataanggaran',$request['objectmataanggaranfk'])
+            ->where('statusenabled',true)
                     ->first();
 
             if ($request['norec']==''){
