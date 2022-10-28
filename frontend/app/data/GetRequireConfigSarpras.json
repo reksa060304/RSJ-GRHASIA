@@ -419,10 +419,19 @@
         },
         {
             "nameDep": "DaftarMataAnggaranCtrl",
-            "urlDep": "module/Perencanaan/DaftarMataAnggaranCtrl"        },
+            "urlDep": "module/Perencanaan/DaftarMataAnggaranCtrl"        
+        },
         {
             "nameDep": "KelompokAnggaranCtrl",
             "urlDep": "module/Perencanaan/KelompokAnggaranCtrl"
+        },
+        {
+            "nameDep": "LockEntrySPJCtrl",
+            "urlDep": "module/Perencanaan/LockEntrySPJCtrl"
+        },
+        {
+            "nameDep": "LockEntryRBACtrl",
+            "urlDep": "module/Perencanaan/LockEntryRBACtrl"
         },
         {
             "nameDep": "KirimBarangLaundryCtrl",

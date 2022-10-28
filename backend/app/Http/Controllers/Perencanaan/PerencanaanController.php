@@ -56,6 +56,7 @@ use App\Transaksi\STSKeuangan;
 use App\Transaksi\Retur;
 use App\Transaksi\Jurnal;
 use App\Transaksi\Telemedicine;
+use App\Transaksi\LockSPJ;
 use App\Master\AsalProduk;
 use App\Transaksi\UraianPendapatan;
 use phpDocumentor\Reflection\Types\Null_;
@@ -5872,6 +5873,212 @@ order by kodemataanggaran"));
         );
 
         return $this->respond($result);
+    }
+
+    public function getLockSPJ(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $tahun = $request['tahun'];
+
+        $qsub = '';
+        if(isset($request['subsubkegiatan']) && $request['subsubkegiatan'] != "undefined" && $request['subsubkegiatan'] != ""){
+            $qsub = "and dp.id = ".$request['subsubkegiatan'];
+        }
+
+        $qthp = '';
+        if(isset($request['tahap']) && $request['tahap'] != "undefined" && $request['tahap'] != ""){
+            $qthp = "and ta.id = ".$request['tahap'];
+        }
+
+        $qtahun = '';
+        if(isset($request['tahun']) && $request['tahun'] != "undefined" && $request['tahun'] != ""){
+            $qtahun = "and dp.tahun = '".$request['tahun']."'";
+        }
+
+        $data = DB::select(DB::raw("select dp.norec, ta.id idtahap, ta.tahap, dp0.kode kodesubkegiatan, dp0.keterangan keterangansubkegiatan, dp0.id idsubkegiatan,
+        dp.kode kodesubsubkegiatan, dp.keterangan keterangansubsubkegiatan, dp.id idsubsubkegiatan,
+        dp0.keterangan || ' ~ ' || dp.keterangan as text, dp.tahun, dp.islock, dp.islockrba
+        from kegiatananggaran_m as dp  
+        inner join kegiatananggaran_m as dp0 on dp.kode ilike dp0.kode || '%' and dp0.div = 3
+        inner join keteranganbelanja_t kb on kb.objectkegiatanfk = dp.id
+        inner join tahapanggaran_m ta on ta.id = kb.objecttahapfk
+        where dp.statusenabled = true
+        and dp.kdprofile = 30
+        and dp.div = 4
+        and dp0.statusenabled = true
+        and dp0.kdprofile = 30
+        and kb.statusenabled = true
+        and kb.kdprofile = 30
+        and ta.statusenabled = true
+        and ta.kdprofile = 30 
+        $qtahun
+        $qthp
+        $qsub 
+        group by dp.norec, ta.id, ta.tahap, dp0.kode, dp0.keterangan, dp0.id, dp.tahun, dp.islock,
+        dp.kode, dp.keterangan, dp.id, dp0.keterangan || ' ~ ' || dp.keterangan, dp.islockrba
+            ")
+        );
+
+        $result = array(
+            'data' => $data,
+            'message' => '@epic',
+        );
+
+        return $this->respond($result);
+    }
+
+    public function getLockSPJPerRekening(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $id = $request['subsubkegiatan'];
+
+        $qmata = '';
+        if(isset($request['mataanggaran']) && $request['mataanggaran'] != "undefined" && $request['mataanggaran'] != ""){
+            $qmata = "and ma.kodemataanggaran = '".$request['mataanggaran']."'";
+        }
+
+        $data = DB::select(DB::raw("select '' iscekrekening, dp.tahun, dp.keterangan, dp.id idsubsubkegiatan, kb.islock, ma.id idmataanggaran, ma.kodemataanggaran, ma.namamataanggaran
+        , split_part(ma.kodemataanggaran, '.', 1) as subkodepertama
+        , split_part(ma.kodemataanggaran, '.', 2) as subkodekedua
+        , case when split_part(ma.kodemataanggaran, '.', 3) = '' then '0' else split_part(ma.kodemataanggaran, '.', 3)::int4 end as subkodeketiga
+        , case when split_part(ma.kodemataanggaran, '.', 4) = '' then '0' else split_part(ma.kodemataanggaran, '.', 4)::int4 end as subkodekeempat
+        , case when split_part(ma.kodemataanggaran, '.', 5) = '' then '0' else split_part(ma.kodemataanggaran, '.', 5)::int4 end as subkodekelima
+        from kegiatananggaran_m as dp 
+        inner join keteranganbelanja_t kb on kb.objectkegiatanfk = dp.id
+        INNER JOIN mataanggaran_m ma on ma.id=kb.objectmataanggaranfk
+        where dp.statusenabled = true
+        and dp.kdprofile = 30
+        and ma.statusenabled = true
+        and ma.kdprofile = 30
+        and kb.statusenabled = true
+        and kb.kdprofile = 30
+        and dp.id = $id
+        $qmata
+        group by dp.keterangan, dp.tahun, dp.id, kb.islock, ma.id, ma.kodemataanggaran, ma.namamataanggaran
+        order by subkodepertama asc, subkodekedua asc, subkodeketiga asc, subkodekeempat asc, subkodekelima asc
+        
+            ")
+        );
+
+        $result = array(
+            'data' => $data,
+            'message' => '@epic',
+        );
+
+        return $this->respond($result);
+    }
+
+    public function saveLockSPJ(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $dataLogin=$request->all();
+
+        for($i = 0; $i < count($request['data']); $i++){
+            $STSK = KegiatanAnggaran::where('norec', '=', $request['data'][$i]['norec'])->first();
+            $STSK->islock = $request['data'][$i]['iscek'];
+            $STSK->save();
+        }
+        
+        
+                
+        if($STSK->save()){
+            $transStatus = 'true';
+        } else{
+            $transStatus = 'false';
+        }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan Sukses";
+            $status = 201;
+        } else if ($transStatus == 'false') {
+            $transMessage = "Simpan Gagal";
+            $status = 400;
+        }
+
+        
+        $result = array(
+            'status' => $status,
+            'message'=> $transMessage,
+            'as' => 'er@epic',
+        );
+        return $this->setStatusCode($result['status'])->respond($result, $result['message']);
+    }
+
+    public function saveLockRBA(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $dataLogin=$request->all();
+
+        for($i = 0; $i < count($request['data']); $i++){
+            $STSK = KegiatanAnggaran::where('norec', '=', $request['data'][$i]['norec'])->first();
+            $STSK->islockrba = $request['data'][$i]['iscek'];
+            $STSK->save();
+        }
+        
+        
+                
+        if($STSK->save()){
+            $transStatus = 'true';
+        } else{
+            $transStatus = 'false';
+        }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan Sukses";
+            $status = 201;
+        } else if ($transStatus == 'false') {
+            $transMessage = "Simpan Gagal";
+            $status = 400;
+        }
+
+        
+        $result = array(
+            'status' => $status,
+            'message'=> $transMessage,
+            'as' => 'er@epic',
+        );
+        return $this->setStatusCode($result['status'])->respond($result, $result['message']);
+    }
+
+    public function saveLockSPJRekening(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $dataLogin=$request->all();
+
+        for($i = 0; $i < count($request['data']); $i++){
+
+            $STSK = KeteranganBelanja::where('objectkegiatanfk', '=', $request['data'][$i]['idsubsubkegiatan'])
+            ->where('objectmataanggaranfk', '=', $request['data'][$i]['idmataanggaran'])->first();
+            $STSK->islock = $request['data'][$i]['iscek'];
+            $STSK->save();
+        }
+        
+        
+                
+        if($STSK->save()){
+            $transStatus = 'true';
+        } else{
+            $transStatus = 'false';
+        }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan Sukses";
+            $status = 201;
+        } else if ($transStatus == 'false') {
+            $transMessage = "Simpan Gagal";
+            $status = 400;
+        }
+
+        
+        $result = array(
+            'status' => $status,
+            'message'=> $transMessage,
+            'as' => 'er@epic',
+        );
+        return $this->setStatusCode($result['status'])->respond($result, $result['message']);
     }
 
     public function getTotalRealisasiDetail(Request $request){

@@ -1491,6 +1491,9 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('perencanaan/get-kel-keenam-part','Perencanaan\PerencanaanController@getKelAnggaranKeenam');
 
             Route::post('perencanaan/save-pihak-ketiga','Perencanaan\PerencanaanController@savePihakKetiga');
+            Route::post('perencanaan/save-lock-entry-spj','Perencanaan\PerencanaanController@saveLockSPJ');
+            Route::post('perencanaan/save-lock-entry-rba','Perencanaan\PerencanaanController@saveLockRBA');
+            Route::post('perencanaan/save-lock-entry-spj-rekening','Perencanaan\PerencanaanController@saveLockSPJRekening');
             Route::post('perencanaan/save-child','Perencanaan\PerencanaanController@saveChild');
             Route::post('perencanaan/save-setting-tahap','Perencanaan\PerencanaanController@saveSettingTahap');
             Route::post('perencanaan/save-permen-kelima','Perencanaan\PerencanaanController@savePermenKelima');
@@ -1568,6 +1571,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('perencanaan/get-pengembalian-bku', 'Perencanaan\PerencanaanController@getPengembalianBKU');
             Route::get('perencanaan/get-one-panjar', 'Perencanaan\PerencanaanController@getOnePanjar');
             Route::get('perencanaan/get-kodemataanggaran', 'Perencanaan\PerencanaanController@getKodemataanggaran');
+            Route::get('perencanaan/get-lock-entry-spj', 'Perencanaan\PerencanaanController@getLockSPJ');
+            Route::get('perencanaan/get-lock-entry-spj-perrekening', 'Perencanaan\PerencanaanController@getLockSPJPerRekening');
             Route::get('perencanaan/get-total-keterangan', 'Perencanaan\PerencanaanController@getTotalKeterangan');
             Route::get('perencanaan/get-total-belanja', 'Perencanaan\PerencanaanController@getTotalBelanja');
             Route::get('perencanaan/get-total-realisasi-detail', 'Perencanaan\PerencanaanController@getTotalRealisasiDetail');
@@ -2575,6 +2580,9 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
               Route::post('sysadmin/logging/save-log-input-tindakan', 'SysAdmin\LoggingController@saveLoggingInputTindakan');
               Route::post('sysadmin/logging/save-log-batal-sts', 'SysAdmin\LoggingController@saveLoggingBatalSts');
               Route::post('sysadmin/logging/save-log-simpan-setting-anggaran', 'SysAdmin\LoggingController@saveLoggingSimpanSettingAnggaran');
+              Route::post('sysadmin/logging/save-log-lock-spj', 'SysAdmin\LoggingController@saveLoggingLockSPJ');
+              Route::post('sysadmin/logging/save-log-lock', 'SysAdmin\LoggingController@saveLoggingLock');
+              Route::post('sysadmin/logging/save-log-lock-rekening', 'SysAdmin\LoggingController@saveLoggingLockRekening');
               Route::post('sysadmin/logging/save-log-hapus-tindakan', 'SysAdmin\LoggingController@saveLogHapusTindakan');
               Route::get('sysadmin/logging/save-log-konsul', 'SysAdmin\LoggingController@saveLoggingKonsulRuangan');
               Route::get('sysadmin/logging/save-log-input-resep', 'SysAdmin\LoggingController@saveLogInputResep');
