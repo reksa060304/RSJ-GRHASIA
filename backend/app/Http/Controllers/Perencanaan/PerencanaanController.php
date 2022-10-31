@@ -617,11 +617,30 @@ class PerencanaanController extends ApiController {
             ->where('cbs.statusenabled', true)
             ->get();
 
-        $mataanggarancombo = \DB::table('mataanggaran_m as cbs')
-            ->select('cbs.id', 'cbs.kodemataanggaran', 'cbs.namamataanggaran')
-            ->where('cbs.kdprofile', $idProfile)
-            ->where('cbs.statusenabled', true)
-            ->get();
+        $mataanggarancombo = DB::select(DB::raw("select cbs.id, cbs.kodemataanggaran, cbs.namamataanggaran, cbs.kodemataanggaran || ' - ' || cbs.namamataanggaran as text
+        , split_part(cbs.kodemataanggaran, '.', 1) as subkodepertama
+        , split_part(cbs.kodemataanggaran, '.', 2) as subkodekedua
+        , case when split_part(cbs.kodemataanggaran, '.', 3) = '' then '0' else split_part(cbs.kodemataanggaran, '.', 3)::int4 end as subkodeketiga
+        , case when split_part(cbs.kodemataanggaran, '.', 4) = '' then '0' else split_part(cbs.kodemataanggaran, '.', 4)::int4 end as subkodekeempat
+        , case when split_part(cbs.kodemataanggaran, '.', 5) = '' then '0' else split_part(cbs.kodemataanggaran, '.', 5)::int4 end as subkodekelima
+        from mataanggaran_m as cbs
+        where cbs.kdprofile = $idProfile
+        and cbs.statusenabled = true
+        order by subkodepertama asc, subkodekedua asc, subkodeketiga asc, subkodekeempat asc, subkodekelima asc ;"));
+
+        
+
+        $mataanggarancombodiv = DB::select(DB::raw("select cbs.id, cbs.kodemataanggaran, cbs.namamataanggaran, cbs.kodemataanggaran || ' - ' || cbs.namamataanggaran as text
+        , split_part(cbs.kodemataanggaran, '.', 1) as subkodepertama
+        , split_part(cbs.kodemataanggaran, '.', 2) as subkodekedua
+        , case when split_part(cbs.kodemataanggaran, '.', 3) = '' then '0' else split_part(cbs.kodemataanggaran, '.', 3)::int4 end as subkodeketiga
+        , case when split_part(cbs.kodemataanggaran, '.', 4) = '' then '0' else split_part(cbs.kodemataanggaran, '.', 4)::int4 end as subkodekeempat
+        , case when split_part(cbs.kodemataanggaran, '.', 5) = '' then '0' else split_part(cbs.kodemataanggaran, '.', 5)::int4 end as subkodekelima
+        from mataanggaran_m as cbs
+        where cbs.kdprofile = $idProfile
+        and cbs.statusenabled = true
+        and length(cbs.kodemataanggaran) in (9,10)
+        order by subkodepertama asc, subkodekedua asc, subkodeketiga asc, subkodekeempat asc, subkodekelima asc ;"));
 
         $setting = \DB::table('settinganggaran_t as st')
             ->join('pegawai_m as pg','pg.id','=','st.objectkepalabludfk')
@@ -648,7 +667,8 @@ class PerencanaanController extends ApiController {
             ->get();
 
         if(!empty($idsubsub) && $idsubsub != "undefined" && $idsubsub != ''){
-            $mataanggarancombo = DB::select(DB::raw("select ma.id, ma.kodemataanggaran, ma.namamataanggaran
+            $mataanggarancombo = DB::select(DB::raw("select ma.id, ma.kodemataanggaran, ma.namamataanggaran,
+            ma.kodemataanggaran || ' - ' || ma.namamataanggaran as text
             from keteranganbelanja_t kb
             INNER JOIN mataanggaran_m ma on ma.id=kb.objectmataanggaranfk
             INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
@@ -656,14 +676,19 @@ class PerencanaanController extends ApiController {
             and ka.id = $idsubsub
             and ma.kdprofile = 30 and ma.statusenabled = true
             and ka.kdprofile = 30 and ka.statusenabled = true
-            group by ma.id, ma.kodemataanggaran, ma.namamataanggaran"));
+            group by ma.id, ma.kodemataanggaran, ma.namamataanggaran, ma.kodemataanggaran || ' - ' || ma.namamataanggaran"));
         } else{
-            $mataanggarancombo = \DB::table('mataanggaran_m as cbs')
-            ->select('cbs.id', 'cbs.kodemataanggaran', 'cbs.namamataanggaran')
-            ->where('cbs.kdprofile', $idProfile)
-            ->where('cbs.statusenabled', true)
-            ->get();
-        }
+            $mataanggarancombo = DB::select(DB::raw("select cbs.id, cbs.kodemataanggaran, cbs.namamataanggaran, cbs.kodemataanggaran || ' - ' || cbs.namamataanggaran as text
+            , split_part(cbs.kodemataanggaran, '.', 1) as subkodepertama
+            , split_part(cbs.kodemataanggaran, '.', 2) as subkodekedua
+            , case when split_part(cbs.kodemataanggaran, '.', 3) = '' then '0' else split_part(cbs.kodemataanggaran, '.', 3)::int4 end as subkodeketiga
+            , case when split_part(cbs.kodemataanggaran, '.', 4) = '' then '0' else split_part(cbs.kodemataanggaran, '.', 4)::int4 end as subkodekeempat
+            , case when split_part(cbs.kodemataanggaran, '.', 5) = '' then '0' else split_part(cbs.kodemataanggaran, '.', 5)::int4 end as subkodekelima
+                from mataanggaran_m as cbs
+                where cbs.kdprofile = $idProfile
+                and cbs.statusenabled = true
+            order by subkodepertama asc, subkodekedua asc, subkodeketiga asc, subkodekeempat asc, subkodekelima asc ;"));
+            }
 
         if(!empty($idmataanggaran) && !empty($tahapaktif)){
             $keteranganperubahan = \DB::table('keteranganbelanja_t as ktb')
@@ -962,6 +987,7 @@ class PerencanaanController extends ApiController {
             'mataanggaranpermen' => $mataanggaranpermen,
             'keteranganperubahan' => $keteranganperubahan,
             'mataanggarancombo' => $mataanggarancombo,
+            'mataanggarancombodiv' => $mataanggarancombodiv,
             'jenisanggaran' => $jenisanggaran,
             'jenisbelanja' => $jenisbelanja,
             'keterangan' => $keterangan,

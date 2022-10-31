@@ -177,6 +177,14 @@
             "urlDep": "module/Akuntansi/MasterChartOfAccountCtrl"
         },
         {
+            "nameDep": "ChartOfAccountCtrl",
+            "urlDep": "module/Akuntansi/ChartOfAccountCtrl"
+        },
+        {
+            "nameDep": "MapCOAKeRekeningCtrl",
+            "urlDep": "module/Akuntansi/MapCOAKeRekeningCtrl"
+        },
+        {
             "nameDep": "DaftarPiutangPasienCtrl",
             "urlDep": "module/Piutang/DaftarPiutangPasienCtrl"
         },
@@ -393,6 +401,11 @@
             "urlDep": "module/BendaharaPenerimaan/STSBulananCtrl"
         },
         {
+            "nameDep": "STSBulananKlaimCtrl",
+            "urlDep": "module/BendaharaPenerimaan/STSBulananKlaimCtrl"
+        },
+        {
+
             "nameDep": "RealisasiPerTriwulanCtrl",
             "urlDep": "module/BendaharaPenerimaan/RealisasiPerTriwulanCtrl"
         },

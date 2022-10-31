@@ -880,6 +880,46 @@
     ]
   },
   {
+    "name": "ChartOfAccount",
+    "url": "/Q2hhcnRPZkFjY291bnQ=",
+    "templateurl": "module/Akuntansi/ChartOfAccount.html",
+    "controller": "ChartOfAccountCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "MapCOAKeRekening",
+    "url": "/TWFwcGluZ0NPQWtlTWF0YUFuZ2dhcmFu",
+    "templateurl": "module/Akuntansi/MapCOAKeRekening.html",
+    "controller": "MapCOAKeRekeningCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
     "name": "DaftarPiutangPasien",
     "url": "/RGFmdGFyUGl1dGFuZ1Bhc2llbg==",
     "templateurl": "module/Piutang/DaftarPiutangPasien.html",
@@ -1924,6 +1964,26 @@
     "url": "/U1RTQnVsYW5hbg==",
     "templateurl": "module/BendaharaPenerimaan/STSBulanan.html",
     "controller": "STSBulananCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "STSBulananKlaim",
+    "url": "/U1RTQnVsYW5hbktsYWlt",
+    "templateurl": "module/BendaharaPenerimaan/STSBulananKlaim.html",
+    "controller": "STSBulananKlaimCtrl",
     "deps": [
       {
         "module": "Services",

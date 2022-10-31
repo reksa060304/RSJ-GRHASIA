@@ -55,6 +55,9 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('akuntansi/get-data-combo-master', 'Akuntansi\AkuntansiController@getDataComboMasterAkun');
             Route::get('akuntansi/get-data-piutang-pasien', 'Akuntansi\AkuntansiController@getDataPiutangPasien');
             Route::get('akuntansi/get-data-daftar-master-coa', 'Akuntansi\AkuntansiController@getDaftarCoa');
+            Route::get('akuntansi/get-map-coa-to-rba', 'Akuntansi\AkuntansiController@getMapCoaToRba');
+            Route::get('akuntansi/get-head-coa', 'Akuntansi\AkuntansiController@getHeadCoa');
+            Route::get('akuntansi/get-coa-belum-mapping', 'Akuntansi\AkuntansiController@getCoaBelumMapping');
             Route::get('akuntansi/get-data-detail-jurnal', 'Akuntansi\AkuntansiController@getDetailJurnalRev2018'); //done
             Route::get('akuntansi/get-data-detail-jurnal-posting', 'Akuntansi\AkuntansiController@getDetailJurnalPosting'); //done
             Route::get('akuntansi/get-data-combo-coa-part', 'Akuntansi\AkuntansiController@getCoaSaeutik');
@@ -63,6 +66,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             /*END GET*/
 
             /*POST*/
+            Route::post('akuntansi/copy-coa','Akuntansi\AkuntansiController@copyCOA');
+            Route::post('akuntansi/delete-copy-coa','Akuntansi\AkuntansiController@copyCOADelete');
             Route::get('akuntansi/get-data-ekuitas', 'Akuntansi\AkuntansiController@getDataEkuitas');
             Route::post('akuntansi/save-data-ekuitas','Akuntansi\AkuntansiController@SaveDataEkuitas');
             Route::post('akuntansi/save-data-saldo-awal', 'Akuntansi\AkuntansiController@SaveSaldoAwal');
@@ -139,6 +144,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('bendaharapenerimaan/get-sts', 'BendaharaPenerimaan\BendaharaPenerimaanController@getSTS');
           Route::get('bendaharapenerimaan/get-penjagaan-batal-setor', 'BendaharaPenerimaan\BendaharaPenerimaanController@getPenjagaanBatalSetor');
           Route::get('bendaharapenerimaan/get-sts-bulanan', 'BendaharaPenerimaan\BendaharaPenerimaanController@getSTSBulanan');
+          Route::get('bendaharapenerimaan/get-sts-bulanan-klaim', 'BendaharaPenerimaan\BendaharaPenerimaanController@getSTSBulananKlaim');
           Route::get('bendaharapenerimaan/get-sts-pertanggal', 'BendaharaPenerimaan\BendaharaPenerimaanController@getSTSPertanggal');
           Route::get('bendaharapenerimaan/get-deatil-sts-pertanggal', 'BendaharaPenerimaan\BendaharaPenerimaanController@getDetailSTSPertanggal');
           Route::get('bendaharapenerimaan/get-sts-popup', 'BendaharaPenerimaan\BendaharaPenerimaanController@getSTSPopup');
@@ -2883,6 +2889,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::post('tatarekening/save-poin-remun', 'TataRekening\TagihanController@saveImportRemun');
           Route::post('tatarekening/save-piutang-bpjs', 'TataRekening\TagihanController@savePiutangBPJS');
           Route::post('tatarekening/save-piutang-bpjs-manual', 'TataRekening\TagihanController@savePiutangBPJSManual');
+          Route::post('tatarekening/save-posting-ipwl', 'TataRekening\TagihanController@savePostingIPWL');
           Route::get('tatarekening/get-detail_apd', 'TataRekening\TagihanController@getDetailpasien');
           Route::get('tatarekening/get-sisa-dana-p3', 'TataRekening\TagihanController@getSisaDanaP3');
           Route::get('tatarekening/get-daftar-dana-pagu', 'TataRekening\TagihanController@getDanaPagu');

@@ -18,6 +18,7 @@ define(['initialize'], function (initialize) {
 			$scope.dataLogin = medifirstService.getUserLogin();
 			$scope.pegawaiLogin = medifirstService.getPegawaiLogin();
             $scope.norecbpjs = ''
+			$scope.selectedData = []
 			var DataTotalMataAnggaran = [];
 			loadCombo();
 			loadData();
@@ -97,9 +98,9 @@ define(['initialize'], function (initialize) {
 			$scope.columnDataPasienPiutang = [
 				{
 					"field": "iscek",
+					"title": "",
 					"template": "# if( iscek==true) {# <input type='checkbox' class='checkbox style-center' ng-checked='true' ng-click='onClickSatu($event,2)'/> # } else {# <input type='checkbox' class='checkbox style-center' ng-checked='false' ng-click='onClickSatu($event,2)'/> #} #",
 					"width": "30px",
-                    "hidden" : true
 				},
 				{
 					"field": "nosep",
@@ -477,169 +478,82 @@ define(['initialize'], function (initialize) {
 				var row = element.closest('tr')
 				var grid = $("#grid").data("kendoGrid")
 				var dataItem = grid.dataItem(row);
-
-				if(dataItem.tglbayar != null){
-					var confirm = $mdDialog.confirm()
-					.title('Peringatan')
-					.textContent('Data dengan nosep '+dataItem.nosep+' sudah memiliki tanggal bayar pada tanggal '+ dataItem.tglbayar+' klik ok untuk melanjutkan, atau klik tidak kemudian unchecked data untuk membatalkan')
-					.ariaLabel('Lucky day')
-					.cancel('Tidak')
-					.ok('OK')
-					$mdDialog.show(confirm).then(function () {
-						console.log(checked)
-						if (checked) {
-							var result = $.grep($scope.selectedData2, function (e) {
-								return e.noregistrasi == dataItem.noregistrasi;
-							});
-		
-							if (result.length == 0) {
-								for (let index = 0; index < DataTotalMataAnggaran.length; index++) {
-									let element = DataTotalMataAnggaran[index];
-									if(element.noregistrasi == dataItem.noregistrasi){
-										element.iscek = true
-									}
-								}
-								for (let index = 0; index < $scope.dataPasienPiutang.length; index++) {
-								
-									let el = $scope.dataPasienPiutang.options.data[index]
-									if(el.noregistrasi == dataItem.noregistrasi){
-										el.iscek = true
-									}
-								}
-		
-								dataItem.iscek = true
-								$scope.selectedData2.push(dataItem);
-							} else {
-								for (var i = 0; i < $scope.selectedData2.length; i++)
-									if ($scope.selectedData2[i].noregistrasi === dataItem.noregistrasi) {
-										$scope.selectedData2.splice(i, 1);
-										break;
-									}
-		
-								for (let index = 0; index < DataTotalMataAnggaran.length; index++) {
-									let element = DataTotalMataAnggaran[index];
-									if(element.noregistrasi == dataItem.noregistrasi){
-										element.iscek = false
-									}
-								}
-		
-								for (let index = 0; index < $scope.dataPasienPiutang.length; index++) {
-								
-									let el = $scope.dataPasienPiutang.options.data[index]
-									if(el.noregistrasi == dataItem.noregistrasi){
-										el.iscek = false
-									}
-								}
-								
-								dataItem.iscek = false
-								$scope.selectedData2.push(dataItem);
-							}
-							row.addClass("k-state-selected");
-						} else {
-							for (var i = 0; i < $scope.selectedData2.length; i++)
-								if ($scope.selectedData2[i].noregistrasi === dataItem.noregistrasi) {
-									$scope.selectedData2.splice(i, 1);
-									break;
-								}
-		
-							for (let index = 0; index < DataTotalMataAnggaran.length; index++) {
-								let element = DataTotalMataAnggaran[index];
-								if(element.noregistrasi == dataItem.noregistrasi){
-									element.iscek = false
-								}
-							}
-		
-							for (let index = 0; index < $scope.dataPasienPiutang.length; index++) {
-								
-								let el = $scope.dataPasienPiutang.options.data[index]
-								if(el.noregistrasi == dataItem.noregistrasi){
-									el.iscek = false
-								}
-							}
-							
-							dataItem.iscek = false
-							row.removeClass("k-state-selected");
-						}
+				
+				if (checked) {
+					var result = $.grep($scope.selectedData2, function (e) {
+						return e.noregistrasi == dataItem.noregistrasi;
 					});
-				} else{
-					if (checked) {
-						var result = $.grep($scope.selectedData2, function (e) {
-							return e.noregistrasi == dataItem.noregistrasi;
-						});
-	
-						if (result.length == 0) {
-							for (let index = 0; index < DataTotalMataAnggaran.length; index++) {
-								let element = DataTotalMataAnggaran[index];
-								if(element.noregistrasi == dataItem.noregistrasi){
-									element.iscek = true
-								}
+		
+					if (result.length == 0) {
+						for (let index = 0; index < DataTotalMataAnggaran.length; index++) {
+							let element = DataTotalMataAnggaran[index];
+							if(element.noregistrasi == dataItem.noregistrasi){
+								element.iscek = true
 							}
-							for (let index = 0; index < $scope.dataPasienPiutang.length; index++) {
-							
-								let el = $scope.dataPasienPiutang.options.data[index]
-								if(el.noregistrasi == dataItem.noregistrasi){
-									el.iscek = true
-								}
-							}
-	
-							dataItem.iscek = true
-							$scope.selectedData2.push(dataItem);
-						} else {
-							for (var i = 0; i < $scope.selectedData2.length; i++)
-								if ($scope.selectedData2[i].noregistrasi === dataItem.noregistrasi) {
-									$scope.selectedData2.splice(i, 1);
-									break;
-								}
-	
-							for (let index = 0; index < DataTotalMataAnggaran.length; index++) {
-								let element = DataTotalMataAnggaran[index];
-								if(element.noregistrasi == dataItem.noregistrasi){
-									element.iscek = false
-								}
-							}
-	
-							for (let index = 0; index < $scope.dataPasienPiutang.length; index++) {
-							
-								let el = $scope.dataPasienPiutang.options.data[index]
-								if(el.noregistrasi == dataItem.noregistrasi){
-									el.iscek = false
-								}
-							}
-							
-							dataItem.iscek = false
-							$scope.selectedData2.push(dataItem);
 						}
-						row.addClass("k-state-selected");
+						for (let index = 0; index < $scope.dataPasienPiutang.length; index++) {
+								
+							let el = $scope.dataPasienPiutang.options.data[index]
+							if(el.noregistrasi == dataItem.noregistrasi){
+								el.iscek = true
+							}
+						}
+		
+						dataItem.iscek = true
+						$scope.selectedData2.push(dataItem);
 					} else {
 						for (var i = 0; i < $scope.selectedData2.length; i++)
 							if ($scope.selectedData2[i].noregistrasi === dataItem.noregistrasi) {
 								$scope.selectedData2.splice(i, 1);
 								break;
 							}
-	
+		
 						for (let index = 0; index < DataTotalMataAnggaran.length; index++) {
 							let element = DataTotalMataAnggaran[index];
 							if(element.noregistrasi == dataItem.noregistrasi){
 								element.iscek = false
 							}
 						}
-	
+		
 						for (let index = 0; index < $scope.dataPasienPiutang.length; index++) {
-							
+								
 							let el = $scope.dataPasienPiutang.options.data[index]
 							if(el.noregistrasi == dataItem.noregistrasi){
 								el.iscek = false
 							}
 						}
-						
+								
 						dataItem.iscek = false
-						row.removeClass("k-state-selected");
+						$scope.selectedData2.push(dataItem);
 					}
+					row.addClass("k-state-selected");
+				} else {
+					for (var i = 0; i < $scope.selectedData2.length; i++)
+						if ($scope.selectedData2[i].noregistrasi === dataItem.noregistrasi) {
+							$scope.selectedData2.splice(i, 1);
+							break;
+						}
+		
+					for (let index = 0; index < DataTotalMataAnggaran.length; index++) {
+						let element = DataTotalMataAnggaran[index];
+						if(element.noregistrasi == dataItem.noregistrasi){
+							element.iscek = false
+						}
+					}
+		
+					for (let index = 0; index < $scope.dataPasienPiutang.length; index++) {
+								
+						let el = $scope.dataPasienPiutang.options.data[index]
+						if(el.noregistrasi == dataItem.noregistrasi){
+							el.iscek = false
+						}
+					}
+							
+					dataItem.iscek = false
+					row.removeClass("k-state-selected");
 				}
 				
 				console.log($scope.selectedData2)
-                $scope.item.dipilih = $scope.selectedData2.length;
-				
 			}
 
 			$scope.TambahData = function(){
@@ -743,6 +657,27 @@ define(['initialize'], function (initialize) {
                 },
 
             });
+
+			$scope.PostingIPWL = function(){
+				$scope.popupTanggalBayarIPWL.center().open()
+			}
+
+			$scope.SimpanPopUpTanggalIPWL = function(){
+				console.log($scope.selectedData2)
+				var objSave = {
+					"data" : $scope.selectedData2,
+					"tglbayar" : moment($scope.item.tglBayarIPWL).format('YYYY-MM-DD HH:mm:ss')
+				}
+
+				medifirstService.post('tatarekening/save-posting-ipwl', objSave).then(function (e) {
+					loadData();
+					$scope.popupTanggalBayarIPWL.center().close()
+				}, function (error) {
+		
+				})
+
+				console.log($scope.selectedData)
+			};
 
 			$scope.selectRow = function (dataItem) {
 				var dataSelect = _.find($scope.dataPasienPiutang._data, function (data) {

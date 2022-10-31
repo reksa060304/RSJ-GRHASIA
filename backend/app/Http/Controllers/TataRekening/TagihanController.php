@@ -5462,7 +5462,7 @@ class TagihanController  extends ApiController
             $qkey = "and pd.noregistrasi ilike '%".$filter['key']."%'";
         }
 
-        $piutang = DB::select(DB::raw("select norecpd, tglbayar, tglsep, iscek, nosep, tglpulang, noregistrasi, namapasien, kelompokpasien, namarekanan,
+        $piutang = DB::select(DB::raw("selectx norecpd, tglbayar, tglsep, iscek, nosep, tglpulang, noregistrasi, namapasien, kelompokpasien, namarekanan,
         sum(totalbilling) totalbilling, sum(totalbayar) totalbayar, sum(totalklaim) totalklaim,
         sum(selisih) selisih
         from(
@@ -5530,9 +5530,14 @@ class TagihanController  extends ApiController
             $qkey = "and pd.noregistrasi ilike '%".$filter['key']."%'";
         }
 
+        $qkp = '';
+        if(isset($filter['kelompokpasienlastfk']) && $filter['kelompokpasienlastfk']!=""){
+            $qkp = "and pd.objectkelompokpasienlastfk = ".$filter['kelompokpasienlastfk'];
+        }
+
         $piutang = DB::select(DB::raw("select norecpd, tglbayar, tglsep, iscek, nosep, tglpulang, noregistrasi, namapasien, kelompokpasien, namarekanan,
-        sum(totalbilling) totalbilling, sum(totalbayar) totalbayar, sum(totalklaim) totalklaim,
-        sum(selisih) selisih
+        sum(totalbilling) totalbilling, sum(totalbayar) totalbayar, totalklaim,
+        (sum(totalbilling) - totalklaim) selisih
         from(
                 select pd.norec norecpd, rkbpjs.tglbayar, mk.tglsep, false as iscek, pd.nostruklastfk, sp.norec, coalesce(mk.nosep,'-') nosep, pd.tglpulang, pd.noregistrasi, ps.namapasien, kp.kelompokpasien, rek.namarekanan,
                 coalesce(sp.totalprekanan,0) totalbilling, 0 as totalbayar, coalesce(mk.totalsetujui,rkbpjs.totalsetujui) totalklaim, 
@@ -5554,10 +5559,11 @@ class TagihanController  extends ApiController
                 and pd.nostruklastfk is not null
                 and pd.nosbmlastfk is null
                 $qkey
+                $qkp
                 group by rkbpjs.totalsetujui, mk.totalsetujui, pd.norec, rkbpjs.tglbayar, mk.tglsep, pd.nostruklastfk, sp.norec, coalesce(mk.nosep,'-'), pd.tglpulang, pd.noregistrasi, ps.namapasien, kp.kelompokpasien, rek.namarekanan,
                 sp.totalprekanan, coalesce(mk.totalsetujui,0)
                 order by pd.noregistrasi
-        ) as x group by norecpd, tglbayar, tglsep, iscek, nosep, tglpulang, noregistrasi, namapasien, kelompokpasien, namarekanan
+        ) as x group by totalklaim, norecpd, tglbayar, tglsep, iscek, nosep, tglpulang, noregistrasi, namapasien, kelompokpasien, namarekanan
         order by noregistrasi;"));
 
         $datadata =array(
@@ -14314,6 +14320,77 @@ $result = array(
             $status = 201;
         } else if ($transStatus == 'false') {
             $transMessage = "Import Gagal";
+            $status = 400;
+        }
+
+        
+        $result = array(
+            'status' => $status,
+            'message'=> $transMessage,
+            'as' => 'er@epic',
+        );
+        return $this->setStatusCode($result['status'])->respond($result, $result['message']);
+    }
+
+    public function savePostingIPWL(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $dataLogin=$request->all();
+
+        for($i = 0; $i < count($request['data']); $i++){
+
+            if($request['data'][$i]['kelompokpasien'] == 'IPWL'){
+                $noregistrasi = $request['data'][$i]['noregistrasi'];
+
+                $cek = DB::select(DB::raw("
+                select pd.norec, pd.tglregistrasi, sp.totalprekanan totaltarifrs
+                    from pasiendaftar_t pd
+                INNER JOIN antrianpasiendiperiksa_t as apd on apd.noregistrasifk=pd.norec
+                INNER JOIN pelayananpasien_t as pp on pp.noregistrasifk=apd.norec
+                INNER JOIN strukpelayanan_t as sp on sp.norec=pp.strukfk
+                where pd.statusenabled = true 
+                and pd.kdprofile = 30 
+                and pd.noregistrasi = '$noregistrasi'
+                group by pd.norec, pd.tglregistrasi, sp.totalprekanan"));
+
+                $cekada = DB::select(DB::raw("select pd.norec from 
+                rekapklaimbpjs_t rkb 
+                inner join pasiendaftar_t pd on pd.norec = rkb.norecpdfk
+                where pd.statusenabled = true 
+                and pd.kdprofile = 30 
+                and pd.noregistrasi = '$noregistrasi'"));
+
+                if(empty($cekada)){
+                    $STSK = new RekapKlaim();
+                    $STSK->norec  = $STSK->generateNewId();
+                    $STSK->kdprofile = $idProfile;
+                    $STSK->statusenabled = true;
+                } else{
+                    $STSK = RekapKlaim::where('norecpdfk', '=', $cekada[0]->norec)->first();
+                }
+                $STSK->nosep = '-';
+                $STSK->totalsetujui = $cek[0]->totaltarifrs;
+                $STSK->totaltarifrs = $cek[0]->totaltarifrs;
+                $STSK->norecpdfk = $cek[0]->norec;
+                $STSK->tglsep = null;
+                $STSK->tglbayar = $request['tglbayar'];
+                $STSK->save();
+            }
+            
+        }
+                
+        if($STSK->save()){
+            $transStatus = 'true';
+        } else{
+            $transStatus = 'false';
+        }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan Sukses";
+            $status = 201;
+        } else if ($transStatus == 'false') {
+            $transMessage = "Simpan Gagal";
             $status = 400;
         }
 
