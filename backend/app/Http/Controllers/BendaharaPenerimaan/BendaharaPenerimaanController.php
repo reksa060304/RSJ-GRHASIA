@@ -6003,6 +6003,562 @@ class BendaharaPenerimaanController extends ApiController {
         return $this->setStatusCode(201)->respond($result, 'tes msg');
     }
 
+    public function getSTSTriwulan(Request $request) {
+        ini_set('max_execution_time', 600);
+        $tahun = $request['tahun'];
+
+        $detail = DB::select(DB::raw("select x.nourut, x.date, x.kdrekening, x.nomer, x.uraian, sum(x.vol) as totalvol, sum(x.kolom1) as totalkolom1, sum(x.kolom2) as totalkolom2,
+        (
+            case 
+            when sum(x.kolom1) is null and sum(x.kolom2) is null then sum(x.kolom1)
+            when sum(x.kolom1) is null and sum(x.kolom2) is not null then sum(x.kolom2)
+            when sum(x.kolom1) is not null and sum(x.kolom2) is null then sum(x.kolom1)
+            else 0 
+            end
+        ) as totalfix
+        from(	
+				select to_char(sts.tglpenerimaan, 'MM') as date, stsd.nourut, stsd.kdrekening, stsd.nomer, stsd.uraian, stsd.vol, stsd.kolom1, stsd.kolom2
+                from surattandasetoran_t sts
+                inner join surattandasetorandetail_t stsd on stsd.objectstsfk = sts.nosts
+                left join ststosck_t as ssc on sts.norec = ssc.objectstsfk
+                left join strukclosingkasir_t as sck on ssc.objectsckfk = sck.norec
+                left join strukclosing_t as sc on sc.norec = sck.noclosingfk
+                left join strukbuktipenerimaan_t AS sbm on sbm.noclosingfk = sc.norec
+                left join strukbuktipenerimaancarabayar_t as sbmcr ON sbmcr.nosbmfk = sbm.norec
+                left JOIN carabayar_m as cb ON cb.id = sbmcr.objectcarabayarfk
+                where sts.statusenabled = true
+                and stsd.statusenabled = true and stsd.kdprofile = 30
+                and sc.noclosing not in (
+                    select sc.noclosing from strukclosing_t sc
+                    inner join strukhistori_t sh on sh.noclosing = sc.norec
+                    where sh.statusenabled = false
+                )
+                and date_part('year', sts.tglpenerimaan::timestamp ) = '$tahun'
+                group by to_char(sts.tglpenerimaan, 'MM'), stsd.nourut, stsd.kdrekening, stsd.nomer, stsd.uraian, stsd.vol, stsd.kolom1, stsd.kolom2
+        ) as x
+        group by x.nourut, x.date, x.kdrekening, x.nomer, x.uraian
+        
+        union all
+
+        select nourut, date, kdrekening, nomer, uraian, sum(totalvol) totalvol,
+        sum(totalkolom1) totalkolom1, sum(totalkolom2) totalkolom2, sum(totalfix) totalfix
+        from(
+            select 0 nourut, to_char(rkb.tglbayar, 'MM') as date, '' kdrekening, '0' nomer,
+            case 
+                when rkb.nosep != '-' and ru.objectdepartemenfk != 16 then 'RAWAT JALAN BPJS' 
+                when rkb.nosep != '-' and ru.objectdepartemenfk = 16 then 'RAWAT INAP BPJS'
+                when rkb.nosep = '-' and ru.objectdepartemenfk = 16 and rkb.totalsetujui = rkb.totaltarifrs then 'RAWAT INAP IPWL'
+                when rkb.nosep = '-' and ru.objectdepartemenfk != 16 and rkb.totalsetujui = rkb.totaltarifrs then 'RAWAT JALAN IPWL'
+                when rkb.nosep = '-' and ru.objectdepartemenfk = 16 and rkb.totalsetujui != rkb.totaltarifrs then 'RAWAT INAP Jamkesda Jamkesos'
+                when rkb.nosep = '-' and ru.objectdepartemenfk != 16 and rkb.totalsetujui != rkb.totaltarifrs then 'RAWAT JALAN Jamkesda Jamkesos'
+            end as uraian, count(rkb.norec) totalvol, 0 totalkolom1, 0 totalkolom2, rkb.totalsetujui totalfix
+            from rekapklaimbpjs_t rkb
+            inner join pasiendaftar_t pd on rkb.norecpdfk = pd.norec
+            inner join ruangan_m ru on ru.id = pd.objectruanganlastfk
+            where rkb.kdprofile = 30
+            and rkb.statusenabled = true
+            and pd.kdprofile = 30
+            and pd.statusenabled = true
+            and date_part('year', rkb.tglbayar::timestamp ) = '$tahun'
+            group by to_char(rkb.tglbayar, 'MM'), rkb.nosep, ru.objectdepartemenfk, rkb.totalsetujui, rkb.totaltarifrs
+        ) as x group by nourut, date, kdrekening, nomer, uraian
+        order by date, nourut"));
+        
+        $mainuraian = array('Pendapatan Usaha BLUD', 'Pendapatan Jasa Layanan', 'RAWAT JALAN', 'Klinik Umum', 'Klinik Jiwa',
+        'Klinik Jiwa Umum', 'TM. Poli Umum',
+        'Klinik Gigi', 'Poli Gigi', 'TM. Gigi', 'Klinik Syaraf', 'Klinik Penyakit Dalam', 'Klinik Anak', 'Klinik Kulit dan Kelamin',
+        'Poli Kulit Kelamin', 'TM. Kulit', 'Pelayanan NAPZA', 'UGD', 'TM. UGD', 'Kunjungan UGD Umum', 
+        'Obat-obatan Rajal', 'Pasien Umum', 'Test Psikologi / Konsul Psikologi', 'Surat Keterangan Dokter (KIR)',
+        'DIPAM / Addministrasi', 'PENUNJANG', 'Laboratorium', 'Laboratorium Umum', 'Pemeriksaan Elektromedik',
+        'Fisioterapi', 'Radiologi', 'Diklat', 'RAWAT INAP', 'Perawatan Pasien', 'VIP', 'UPPI', 'Kelas I', 'Kelas II', 'Kelas III',
+        'Tindakan Khusus Jiwa', 'TM Pasien Umum', 'Visite Dokter', 'Visite Dokter Pasien Umum',
+        'Rehab Mental dan Work Terapi', 'RM. Pasien Umum', 'Konsultasi Spesialis Lain',
+        'Obat-obatan Ranap', 'Obat Ranap Umum', 'Lain-lain Pendapatan BLUD', 'Sewa Gedung Terapi', 'Sewa Kantin / Tempat Fotocopy',
+        'Pemakaian Mobil / Kendaraan', 'Legalisir', 'Diklat', 'Parkir', 'Work Terapi', 'Sewa Lapangan Sepak Bola', 'Sewa Tanah Pertanian', 'Kontribusi Akreditasi', 'Sewa Manekin',
+        'Denda BPJS', 'Pemulasaran Jenazah', 'Sewa Grhasia Inn', 'Jasa Bank', 'Lain-lain Pendapatan BLUD', 'Liquid Gas', 'Saldo slipa di rekening lain', 'Pengembalian Klaim BPJS Tenaga Kerja',
+        'Giro BTN', 'Ada Saldo Sutera BPD Sudah Diakui Sebagai Pendapatan'
+        );
+
+        $loopuraian = array('PENDAPATAN USAHA BLUD', 'JASA LAYANAN RUMAH SAKIT', 'RAWAT JALAN', 'RAWAT JALAN BPJS',
+        'RAWAT JALAN IPWL', 'RAWAT JALAN Jamkesda Jamkesos',
+        'PERIKSA DOKTER UMUM', 'PERIKSA DOKTER SPESIALIS JIWA',
+        'Klinik Jiwa Umum', 'TM. Poli Umum',
+        'Klinik Gigi', 'PERIKSA DOKTER GIGI', 'TINDAKAN MEDIK PASIEN GIGI', 'PERIKSA DOKTER SYARAF', 'PERIKSA DOKTER PENYAKIT DALAM', 'PERIKSA DOKTER ANAK', 'Klinik Kulit dan Kelamin',
+        'Poli Kulit Kelamin', 'TM. Kulit', 'PERIKSA DOKTER SPESIALIS JIWA (NAPZA)', 'UGD', 'TINDAKAN MEDIK IGD', 'Kunjungan UGD Umum',
+        'OBAT-OBATAN', 'Pasien Umum', 'Pasien Jamkesdasos', 'Pasien JKN', 'PSIKOLOGI', 'SURAT KETERANGAN (KIR)',
+        'DIPAM/PENDAFTARAN', 'PENUNJANG', 'LABORATORIUM', 'Laboratorium Umum', 'ELEKTROMEDIK',
+        'FISIOTERAPY', 'RADIOLOGI', 'DIKLAT', 'RAWAT INAP', 
+        'RAWAT INAP BPJS', 'RAWAT INAP IPWL', 'RAWAT INAP Jamkesda Jamkesos',
+        'PERAWATAN PASIEN', 'VIP', 'Kelas UPPI', 'Kelas I', 'Kelas II', 'Kelas III',
+        'TINDAKAN MEDIK RANAP', 'TM Pasien Umum', 'VISITE DOKTER', 'Visite Dokter Pasien Umum',
+        'REHABILITASI MENTAL', 'RM. Pasien Umum', 'Konsultasi Spesialis Lain',
+        'OBAT-OBATAN RANAP', 'Obat Ranap Umum', 'LAIN-LAIN PENDAPATAN BLUD YANG SAH', 'SEWA GEDUNG TERAPI', 'Sewa Kantin / Tempat Fotocopy',
+        'Pemakaian Mobil / Kendaraan', 'LEGALISIR', 'SEWA GEDUNG DIKLAT', 'PARKIR', 'HASIL KETRAMPILAN PASIEN', 'SEWA LAPANGAN SEPAK BOLA', 'SEWA TANAH PERTANIAN', 'Kontribusi Akreditasi', 'SEWA MANEKIN',
+        'Denda BPJS', 'PERAWATAN JENAZAH', 'SEWA GEDUNG GRHASIA INN', 'Jasa Bank', 'Lain-lain Pendapatan BLUD', 'Liquid Gas', 'Saldo slipa di rekening lain', 'Pengembalian Klaim BPJS Tenaga Kerja',
+        'Giro BTN', 'Ada Saldo Sutera BPD Sudah Diakui Sebagai Pendapatan'
+        );
+
+        $target = DB::select(DB::raw("select rp.norec,rp.isperubahan, rp.jumlahpendapatan,rp.tahun, rp.tglinput, rp.keterangan, rp.objectasalprodukfk, rp.objecturaianpendapatanfk,up.uraianpendapatan,ap.namaexternal, rp.uraianpendapatan as uraian
+        from rincianpendapatan_t as rp
+        inner join asalproduk_m as ap on ap.id = rp.objectasalprodukfk
+        inner join uraianpendapatan_m as up on up.id = rp.objecturaianpendapatanfk
+        where rp.kdprofile = 30
+        and rp.statusenabled = true
+        and up.kdprofile = 30
+        and up.statusenabled = true
+        and rp.tahun = '$tahun'"));
+        
+        $jumlahtriwulan1 = 0;
+        $jumlahtriwulan2 = 0;
+        $jumlahtriwulan3 = 0;
+        $jumlahtriwulan4 = 0;
+        $jumlahtarget = 0;
+        $data = [];
+
+        foreach($loopuraian as $main){
+            $jumlahtriwulan1 = 0;
+            $jumlahtriwulan2 = 0;
+            $jumlahtriwulan3 = 0;
+            $jumlahtriwulan4 = 0;
+            $jumlahtarget = 0;
+            $uraian = $main;
+            foreach($detail as $row){
+                if(($row->date == '01' || $row->date == '02' || $row->date == '03') && $main == 'Klinik Gigi' && ($row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI')){
+                    $jumlahtriwulan1 += $row->totalfix;
+                }
+                else if(($row->date == '01' || $row->date == '02' || $row->date == '03') && $main == 'Konsultasi Spesialis Lain' && $row->uraian == 'KONSULTASI GIZI'){
+                    $jumlahtriwulan1 += $row->totalfix;
+                }
+                else if(($row->date == '01' || $row->date == '02' || $row->date == '03') && $main == 'RAWAT INAP' && ($row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI' || $row->uraian == 'RAWAT INAP BPJS' || $row->uraian == 'RAWAT INAP IPWL' || $row->uraian == 'RAWAT INAP Jamkesda Jamkesos')){
+                    $jumlahtriwulan1 += $row->totalfix;
+                }
+                else if(($row->date == '01' || $row->date == '02' || $row->date == '03') && $main == 'Sewa Kantin / Tempat Fotocopy' && $row->uraian == 'SEWA TEMPAT FOTOCOPY'){
+                    $jumlahtriwulan1 += $row->totalfix;
+                }
+                else if(($row->date == '01' || $row->date == '02' || $row->date == '03') && $main == 'Pemakaian Mobil / Kendaraan' && ($row->uraian == 'SEWA AMBULAN/MOBIL JENAZAH' || $row->uraian == 'SEWA BUS')){
+                    $jumlahtriwulan1 += $row->totalfix;
+                }
+                else if(($row->date == '01' || $row->date == '02' || $row->date == '03') && $main == 'RAWAT JALAN' && ($row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA' || $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA (NAPZA)' || $row->uraian == 'PERIKSA DOKTER UMUM' || $row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'PERIKSA DOKTER PENYAKIT DALAM' || $row->uraian == 'PERIKSA DOKTER ANAK' || $row->uraian == 'PERIKSA DOKTER SYARAF' || $row->uraian == 'PERIKSA DOKTER IGD' || $row->uraian == 'DIPAM/PENDAFTARAN' || $row->uraian == 'TINDAKAN MEDIK POLIKLINIK' || $row->uraian == 'TINDAKAN MEDIK IGD' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI' || $row->uraian == 'OBAT-OBATAN' || $row->uraian == 'SURAT KETERANGAN (KIR)' || $row->uraian == 'PSIKOLOGI' || $row->uraian == 'RAWAT JALAN BPJS' || $row->uraian == 'RAWAT JALAN IPWL' || $row->uraian == 'RAWAT JALAN Jamkesda Jamkesos')){
+                    $jumlahtriwulan1 += $row->totalfix;
+                }
+                else if(($row->date == '01' || $row->date == '02' || $row->date == '03') && $main == 'JASA LAYANAN RUMAH SAKIT' && ($row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA' || $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA (NAPZA)' || $row->uraian == 'PERIKSA DOKTER UMUM' || $row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'PERIKSA DOKTER PENYAKIT DALAM' || $row->uraian == 'PERIKSA DOKTER ANAK' || $row->uraian == 'PERIKSA DOKTER SYARAF' || $row->uraian == 'PERIKSA DOKTER IGD' || $row->uraian == 'DIPAM/PENDAFTARAN' || $row->uraian == 'TINDAKAN MEDIK POLIKLINIK' || $row->uraian == 'TINDAKAN MEDIK IGD' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI' || $row->uraian == 'OBAT-OBATAN' || $row->uraian == 'SURAT KETERANGAN (KIR)' || $row->uraian == 'PSIKOLOGI' || $row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI' || $row->uraian == 'PENUNJANG' || $row->uraian == 'PERIKSA DOKTER FISIK DAN REHABILITASI (ELEKTROMEDIK)')){
+                    $jumlahtriwulan1 += $row->totalfix;
+                }
+                else if(($row->date == '01' || $row->date == '02' || $row->date == '03') && $main == 'ELEKTROMEDIK' && ($row->uraian == 'PERIKSA DOKTER FISIK DAN REHABILITASI (ELEKTROMEDIK)' || $row->uraian == 'ELEKTROMEDIK')){
+                    $jumlahtriwulan1 += $row->totalfix;
+                }
+                else if(($row->date == '01' || $row->date == '02' || $row->date == '03') && $main == 'PENDAPATAN USAHA BLUD' && ($row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA' || $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA (NAPZA)' || $row->uraian == 'PERIKSA DOKTER UMUM' || $row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'PERIKSA DOKTER PENYAKIT DALAM' || $row->uraian == 'PERIKSA DOKTER ANAK' || $row->uraian == 'PERIKSA DOKTER SYARAF' || $row->uraian == 'PERIKSA DOKTER IGD' || $row->uraian == 'DIPAM/PENDAFTARAN' || $row->uraian == 'TINDAKAN MEDIK POLIKLINIK' || $row->uraian == 'TINDAKAN MEDIK IGD' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI' || $row->uraian == 'OBAT-OBATAN' || $row->uraian == 'SURAT KETERANGAN (KIR)' || $row->uraian == 'PSIKOLOGI' || $row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI' || $row->uraian == 'PENUNJANG' || $row->uraian == 'PERIKSA DOKTER FISIK DAN REHABILITASI (ELEKTROMEDIK)' || $row->uraian == 'SEWA TEMPAT FOTOCOPY' || $row->uraian == 'SEWA AMBULAN/MOBIL JENAZAH' || $row->uraian == 'SEWA BUS' || $row->uraian == 'LEGALISIR' || $row->uraian == 'SEWA GEDUNG TERAPI' || $row->uraian == 'SEWA LAPANGAN SEPAK BOLA' || $row->uraian == 'SEWA GEDUNG DIKLAT' || $row->uraian == 'SEWA GEDUNG GRHASIA INN' || $row->uraian == 'SEWA TANAH PERTANIAN' || $row->uraian == 'SEWA KALANDRA' || $row->uraian == 'SEWA MANEKIN' || $row->uraian == 'HASIL KETRAMPILAN PASIEN' || $row->uraian == 'PARKIR' || $row->uraian == 'LAIN-LAIN' )){
+                    $jumlahtriwulan1 += $row->totalfix;
+                }
+                else if(($row->date == '01' || $row->date == '02' || $row->date == '03') && $main == 'Klinik Jiwa Umum' && $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA'){
+                    $jumlahtriwulan1 += $row->totalfix;
+                }
+                else if(($row->date == '01' || $row->date == '02' || $row->date == '03') && $main == 'TM. Poli Umum' && $row->uraian == 'TINDAKAN MEDIK POLIKLINIK'){
+                    $jumlahtriwulan1 += $row->totalfix;
+                }
+                else if(($row->date == '01' || $row->date == '02' || $row->date == '03') && $main == 'Kunjungan UGD Umum' && $row->uraian == 'PERIKSA DOKTER IGD'){
+                    $jumlahtriwulan1 += $row->totalfix;
+                }
+                else if(($row->date == '01' || $row->date == '02' || $row->date == '03') && $main == 'Pasien Umum' && $row->uraian == 'Obat Rajal Umum'){
+                    $jumlahtriwulan1 += $row->totalfix;
+                }
+                else if(($row->date == '01' || $row->date == '02' || $row->date == '03') && $main == 'Laboratorium Umum' && $row->uraian == 'LABORATORIUM'){
+                    $jumlahtriwulan1 += $row->totalfix;
+                }
+                else if(($row->date == '01' || $row->date == '02' || $row->date == '03') && $main == 'TM Pasien Umum' && $row->uraian == 'TINDAKAN MEDIK RANAP'){
+                    $jumlahtriwulan1 += $row->totalfix;
+                }
+                else if(($row->date == '01' || $row->date == '02' || $row->date == '03') && $main == 'Visite Dokter Pasien Umum' && $row->uraian == 'VISITE DOKTER'){
+                    $jumlahtriwulan1 += $row->totalfix;
+                }
+                else if(($row->date == '01' || $row->date == '02' || $row->date == '03') && $main == 'RM. Pasien Umum' && $row->uraian == 'REHABILITASI MENTAL'){
+                    $jumlahtriwulan1 += $row->totalfix;
+                }
+                else if(($row->date == '01' || $row->date == '02' || $row->date == '03') && $row->uraian == $main){
+                    $jumlahtriwulan1 += $row->totalfix;
+                } 
+                else if(($row->date == '01' || $row->date == '02' || $row->date == '03') && $main == 'RAWAT JALAN BPJS' && $row->uraian == 'RAWAT JALAN BPJS'){
+                    $jumlahtriwulan1 += $row->totalfix;
+                }
+                else if(($row->date == '01' || $row->date == '02' || $row->date == '03') && $main == 'RAWAT INAP BPJS' && $row->uraian == 'RAWAT INAP BPJS'){
+                    $jumlahtriwulan1 += $row->totalfix;
+                }
+                else if(($row->date == '01' || $row->date == '02' || $row->date == '03') && $main == 'RAWAT INAP IPWL' && $row->uraian == 'RAWAT INAP IPWL'){
+                    $jumlahtriwulan1 += $row->totalfix;
+                }
+                else if(($row->date == '01' || $row->date == '02' || $row->date == '03') && $main == 'RAWAT JALAN IPWL' && $row->uraian == 'RAWAT JALAN IPWL'){
+                    $jumlahtriwulan1 += $row->totalfix;
+                }
+                else if(($row->date == '01' || $row->date == '02' || $row->date == '03') && $main == 'RAWAT INAP Jamkesda Jamkesos' && $row->uraian == 'RAWAT INAP Jamkesda Jamkesos'){
+                    $jumlahtriwulan1 += $row->totalfix;
+                }
+                else if(($row->date == '01' || $row->date == '02' || $row->date == '03') && $main == 'RAWAT JALAN Jamkesda Jamkesos' && $row->uraian == 'RAWAT JALAN Jamkesda Jamkesos'){
+                    $jumlahtriwulan1 += $row->totalfix;
+                }
+
+                if(($row->date == '04' || $row->date == '05' || $row->date == '06') && $main == 'Klinik Gigi' && ($row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI')){
+                    $jumlahtriwulan2 += $row->totalfix;
+                }
+                else if(($row->date == '04' || $row->date == '05' || $row->date == '06') && $main == 'Konsultasi Spesialis Lain' && $row->uraian == 'KONSULTASI GIZI'){
+                    $jumlahtriwulan2 += $row->totalfix;
+                }
+                else if(($row->date == '04' || $row->date == '05' || $row->date == '06') && $main == 'RAWAT INAP' && ($row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI' || $row->uraian == 'RAWAT INAP BPJS' || $row->uraian == 'RAWAT INAP IPWL' || $row->uraian == 'RAWAT INAP Jamkesda Jamkesos')){
+                    $jumlahtriwulan2 += $row->totalfix;
+                }
+                else if(($row->date == '04' || $row->date == '05' || $row->date == '06') && $main == 'Sewa Kantin / Tempat Fotocopy' && $row->uraian == 'SEWA TEMPAT FOTOCOPY'){
+                    $jumlahtriwulan2 += $row->totalfix;
+                }
+                else if(($row->date == '04' || $row->date == '05' || $row->date == '06') && $main == 'Pemakaian Mobil / Kendaraan' && ($row->uraian == 'SEWA AMBULAN/MOBIL JENAZAH' || $row->uraian == 'SEWA BUS')){
+                    $jumlahtriwulan2 += $row->totalfix;
+                }
+                else if(($row->date == '04' || $row->date == '05' || $row->date == '06') && $main == 'RAWAT JALAN' && ($row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA' || $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA (NAPZA)' || $row->uraian == 'PERIKSA DOKTER UMUM' || $row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'PERIKSA DOKTER PENYAKIT DALAM' || $row->uraian == 'PERIKSA DOKTER ANAK' || $row->uraian == 'PERIKSA DOKTER SYARAF' || $row->uraian == 'PERIKSA DOKTER IGD' || $row->uraian == 'DIPAM/PENDAFTARAN' || $row->uraian == 'TINDAKAN MEDIK POLIKLINIK' || $row->uraian == 'TINDAKAN MEDIK IGD' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI' || $row->uraian == 'OBAT-OBATAN' || $row->uraian == 'SURAT KETERANGAN (KIR)' || $row->uraian == 'PSIKOLOGI' || $row->uraian == 'RAWAT JALAN BPJS' || $row->uraian == 'RAWAT JALAN IPWL' || $row->uraian == 'RAWAT JALAN Jamkesda Jamkesos')){
+                    $jumlahtriwulan2 += $row->totalfix;
+                }
+                else if(($row->date == '04' || $row->date == '05' || $row->date == '06') && $main == 'JASA LAYANAN RUMAH SAKIT' && ($row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA' || $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA (NAPZA)' || $row->uraian == 'PERIKSA DOKTER UMUM' || $row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'PERIKSA DOKTER PENYAKIT DALAM' || $row->uraian == 'PERIKSA DOKTER ANAK' || $row->uraian == 'PERIKSA DOKTER SYARAF' || $row->uraian == 'PERIKSA DOKTER IGD' || $row->uraian == 'DIPAM/PENDAFTARAN' || $row->uraian == 'TINDAKAN MEDIK POLIKLINIK' || $row->uraian == 'TINDAKAN MEDIK IGD' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI' || $row->uraian == 'OBAT-OBATAN' || $row->uraian == 'SURAT KETERANGAN (KIR)' || $row->uraian == 'PSIKOLOGI' || $row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI' || $row->uraian == 'PENUNJANG' || $row->uraian == 'PERIKSA DOKTER FISIK DAN REHABILITASI (ELEKTROMEDIK)')){
+                    $jumlahtriwulan2 += $row->totalfix;
+                }
+                else if(($row->date == '04' || $row->date == '05' || $row->date == '06') && $main == 'ELEKTROMEDIK' && ($row->uraian == 'PERIKSA DOKTER FISIK DAN REHABILITASI (ELEKTROMEDIK)' || $row->uraian == 'ELEKTROMEDIK')){
+                    $jumlahtriwulan2 += $row->totalfix;
+                }
+                else if(($row->date == '04' || $row->date == '05' || $row->date == '06') && $main == 'PENDAPATAN USAHA BLUD' && ($row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA' || $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA (NAPZA)' || $row->uraian == 'PERIKSA DOKTER UMUM' || $row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'PERIKSA DOKTER PENYAKIT DALAM' || $row->uraian == 'PERIKSA DOKTER ANAK' || $row->uraian == 'PERIKSA DOKTER SYARAF' || $row->uraian == 'PERIKSA DOKTER IGD' || $row->uraian == 'DIPAM/PENDAFTARAN' || $row->uraian == 'TINDAKAN MEDIK POLIKLINIK' || $row->uraian == 'TINDAKAN MEDIK IGD' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI' || $row->uraian == 'OBAT-OBATAN' || $row->uraian == 'SURAT KETERANGAN (KIR)' || $row->uraian == 'PSIKOLOGI' || $row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI' || $row->uraian == 'PENUNJANG' || $row->uraian == 'PERIKSA DOKTER FISIK DAN REHABILITASI (ELEKTROMEDIK)' || $row->uraian == 'SEWA TEMPAT FOTOCOPY' || $row->uraian == 'SEWA AMBULAN/MOBIL JENAZAH' || $row->uraian == 'SEWA BUS' || $row->uraian == 'LEGALISIR' || $row->uraian == 'SEWA GEDUNG TERAPI' || $row->uraian == 'SEWA LAPANGAN SEPAK BOLA' || $row->uraian == 'SEWA GEDUNG DIKLAT' || $row->uraian == 'SEWA GEDUNG GRHASIA INN' || $row->uraian == 'SEWA TANAH PERTANIAN' || $row->uraian == 'SEWA KALANDRA' || $row->uraian == 'SEWA MANEKIN' || $row->uraian == 'HASIL KETRAMPILAN PASIEN' || $row->uraian == 'PARKIR' || $row->uraian == 'LAIN-LAIN' )){
+                    $jumlahtriwulan2 += $row->totalfix;
+                }
+                else if(($row->date == '04' || $row->date == '05' || $row->date == '06') && $main == 'Klinik Jiwa Umum' && $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA'){
+                    $jumlahtriwulan2 += $row->totalfix;
+                }
+                else if(($row->date == '04' || $row->date == '05' || $row->date == '06') && $main == 'TM. Poli Umum' && $row->uraian == 'TINDAKAN MEDIK POLIKLINIK'){
+                    $jumlahtriwulan2 += $row->totalfix;
+                }
+                else if(($row->date == '04' || $row->date == '05' || $row->date == '06') && $main == 'Kunjungan UGD Umum' && $row->uraian == 'PERIKSA DOKTER IGD'){
+                    $jumlahtriwulan2 += $row->totalfix;
+                }
+                else if(($row->date == '04' || $row->date == '05' || $row->date == '06') && $main == 'Pasien Umum' && $row->uraian == 'Obat Rajal Umum'){
+                    $jumlahtriwulan2 += $row->totalfix;
+                }
+                else if(($row->date == '04' || $row->date == '05' || $row->date == '06') && $main == 'Laboratorium Umum' && $row->uraian == 'LABORATORIUM'){
+                    $jumlahtriwulan2 += $row->totalfix;
+                }
+                else if(($row->date == '04' || $row->date == '05' || $row->date == '06') && $main == 'TM Pasien Umum' && $row->uraian == 'TINDAKAN MEDIK RANAP'){
+                    $jumlahtriwulan2 += $row->totalfix;
+                }
+                else if(($row->date == '04' || $row->date == '05' || $row->date == '06') && $main == 'Visite Dokter Pasien Umum' && $row->uraian == 'VISITE DOKTER'){
+                    $jumlahtriwulan2 += $row->totalfix;
+                }
+                else if(($row->date == '04' || $row->date == '05' || $row->date == '06') && $main == 'RM. Pasien Umum' && $row->uraian == 'REHABILITASI MENTAL'){
+                    $jumlahtriwulan2 += $row->totalfix;
+                }
+                else if(($row->date == '04' || $row->date == '05' || $row->date == '06') && $row->uraian == $main){
+                    $jumlahtriwulan2 += $row->totalfix;
+                }
+                else if(($row->date == '04' || $row->date == '05' || $row->date == '06') && $main == 'RAWAT JALAN BPJS' && $row->uraian == 'RAWAT JALAN BPJS'){
+                    $jumlahtriwulan2 += $row->totalfix;
+                }
+                else if(($row->date == '04' || $row->date == '05' || $row->date == '06') && $main == 'RAWAT INAP BPJS' && $row->uraian == 'RAWAT INAP BPJS'){
+                    $jumlahtriwulan2 += $row->totalfix;
+                }
+                else if(($row->date == '04' || $row->date == '05' || $row->date == '06') && $main == 'RAWAT INAP IPWL' && $row->uraian == 'RAWAT INAP IPWL'){
+                    $jumlahtriwulan2 += $row->totalfix;
+                }
+                else if(($row->date == '04' || $row->date == '05' || $row->date == '06') && $main == 'RAWAT JALAN IPWL' && $row->uraian == 'RAWAT JALAN IPWL'){
+                    $jumlahtriwulan2 += $row->totalfix;
+                }
+                else if(($row->date == '04' || $row->date == '05' || $row->date == '06') && $main == 'RAWAT INAP Jamkesda Jamkesos' && $row->uraian == 'RAWAT INAP Jamkesda Jamkesos'){
+                    $jumlahtriwulan2 += $row->totalfix;
+                }
+                else if(($row->date == '04' || $row->date == '05' || $row->date == '06') && $main == 'RAWAT JALAN Jamkesda Jamkesos' && $row->uraian == 'RAWAT JALAN Jamkesda Jamkesos'){
+                    $jumlahtriwulan2 += $row->totalfix;
+                }
+
+                if(($row->date == '07' || $row->date == '08' || $row->date == '09') && $main == 'Klinik Gigi' && ($row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI')){
+                    $jumlahtriwulan3 += $row->totalfix;
+                }
+                else if(($row->date == '07' || $row->date == '08' || $row->date == '09') && $main == 'Konsultasi Spesialis Lain' && $row->uraian == 'KONSULTASI GIZI'){
+                    $jumlahtriwulan3 += $row->totalfix;
+                }
+                else if(($row->date == '07' || $row->date == '08' || $row->date == '09') && $main == 'RAWAT INAP' && ($row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI' || $row->uraian == 'RAWAT INAP BPJS' || $row->uraian == 'RAWAT INAP IPWL' || $row->uraian == 'RAWAT INAP Jamkesda Jamkesos')){
+                    $jumlahtriwulan3 += $row->totalfix;
+                }
+                else if(($row->date == '07' || $row->date == '08' || $row->date == '09') && $main == 'Sewa Kantin / Tempat Fotocopy' && $row->uraian == 'SEWA TEMPAT FOTOCOPY'){
+                    $jumlahtriwulan3 += $row->totalfix;
+                }
+                else if(($row->date == '07' || $row->date == '08' || $row->date == '09') && $main == 'Pemakaian Mobil / Kendaraan' && ($row->uraian == 'SEWA AMBULAN/MOBIL JENAZAH' || $row->uraian == 'SEWA BUS')){
+                    $jumlahtriwulan3 += $row->totalfix;
+                }
+                else if(($row->date == '07' || $row->date == '08' || $row->date == '09') && $main == 'RAWAT JALAN' && ($row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA' || $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA (NAPZA)' || $row->uraian == 'PERIKSA DOKTER UMUM' || $row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'PERIKSA DOKTER PENYAKIT DALAM' || $row->uraian == 'PERIKSA DOKTER ANAK' || $row->uraian == 'PERIKSA DOKTER SYARAF' || $row->uraian == 'PERIKSA DOKTER IGD' || $row->uraian == 'DIPAM/PENDAFTARAN' || $row->uraian == 'TINDAKAN MEDIK POLIKLINIK' || $row->uraian == 'TINDAKAN MEDIK IGD' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI' || $row->uraian == 'OBAT-OBATAN' || $row->uraian == 'SURAT KETERANGAN (KIR)' || $row->uraian == 'PSIKOLOGI' || $row->uraian == 'RAWAT JALAN BPJS' || $row->uraian == 'RAWAT JALAN IPWL' || $row->uraian == 'RAWAT JALAN Jamkesda Jamkesos')){
+                    $jumlahtriwulan3 += $row->totalfix;
+                }
+                else if(($row->date == '07' || $row->date == '08' || $row->date == '09') && $main == 'JASA LAYANAN RUMAH SAKIT' && ($row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA' || $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA (NAPZA)' || $row->uraian == 'PERIKSA DOKTER UMUM' || $row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'PERIKSA DOKTER PENYAKIT DALAM' || $row->uraian == 'PERIKSA DOKTER ANAK' || $row->uraian == 'PERIKSA DOKTER SYARAF' || $row->uraian == 'PERIKSA DOKTER IGD' || $row->uraian == 'DIPAM/PENDAFTARAN' || $row->uraian == 'TINDAKAN MEDIK POLIKLINIK' || $row->uraian == 'TINDAKAN MEDIK IGD' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI' || $row->uraian == 'OBAT-OBATAN' || $row->uraian == 'SURAT KETERANGAN (KIR)' || $row->uraian == 'PSIKOLOGI' || $row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI' || $row->uraian == 'PENUNJANG' || $row->uraian == 'PERIKSA DOKTER FISIK DAN REHABILITASI (ELEKTROMEDIK)')){
+                    $jumlahtriwulan3 += $row->totalfix;
+                }
+                else if(($row->date == '07' || $row->date == '08' || $row->date == '09') && $main == 'ELEKTROMEDIK' && ($row->uraian == 'PERIKSA DOKTER FISIK DAN REHABILITASI (ELEKTROMEDIK)' || $row->uraian == 'ELEKTROMEDIK')){
+                    $jumlahtriwulan3 += $row->totalfix;
+                }
+                else if(($row->date == '07' || $row->date == '08' || $row->date == '09') && $main == 'PENDAPATAN USAHA BLUD' && ($row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA' || $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA (NAPZA)' || $row->uraian == 'PERIKSA DOKTER UMUM' || $row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'PERIKSA DOKTER PENYAKIT DALAM' || $row->uraian == 'PERIKSA DOKTER ANAK' || $row->uraian == 'PERIKSA DOKTER SYARAF' || $row->uraian == 'PERIKSA DOKTER IGD' || $row->uraian == 'DIPAM/PENDAFTARAN' || $row->uraian == 'TINDAKAN MEDIK POLIKLINIK' || $row->uraian == 'TINDAKAN MEDIK IGD' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI' || $row->uraian == 'OBAT-OBATAN' || $row->uraian == 'SURAT KETERANGAN (KIR)' || $row->uraian == 'PSIKOLOGI' || $row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI' || $row->uraian == 'PENUNJANG' || $row->uraian == 'PERIKSA DOKTER FISIK DAN REHABILITASI (ELEKTROMEDIK)' || $row->uraian == 'SEWA TEMPAT FOTOCOPY' || $row->uraian == 'SEWA AMBULAN/MOBIL JENAZAH' || $row->uraian == 'SEWA BUS' || $row->uraian == 'LEGALISIR' || $row->uraian == 'SEWA GEDUNG TERAPI' || $row->uraian == 'SEWA LAPANGAN SEPAK BOLA' || $row->uraian == 'SEWA GEDUNG DIKLAT' || $row->uraian == 'SEWA GEDUNG GRHASIA INN' || $row->uraian == 'SEWA TANAH PERTANIAN' || $row->uraian == 'SEWA KALANDRA' || $row->uraian == 'SEWA MANEKIN' || $row->uraian == 'HASIL KETRAMPILAN PASIEN' || $row->uraian == 'PARKIR' || $row->uraian == 'LAIN-LAIN' )){
+                    $jumlahtriwulan3 += $row->totalfix;
+                }
+                else if(($row->date == '07' || $row->date == '08' || $row->date == '09') && $main == 'Klinik Jiwa Umum' && $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA'){
+                    $jumlahtriwulan3 += $row->totalfix;
+                }
+                else if(($row->date == '07' || $row->date == '08' || $row->date == '09') && $main == 'TM. Poli Umum' && $row->uraian == 'TINDAKAN MEDIK POLIKLINIK'){
+                    $jumlahtriwulan3 += $row->totalfix;
+                }
+                else if(($row->date == '07' || $row->date == '08' || $row->date == '09') && $main == 'Kunjungan UGD Umum' && $row->uraian == 'PERIKSA DOKTER IGD'){
+                    $jumlahtriwulan3 += $row->totalfix;
+                }
+                else if(($row->date == '07' || $row->date == '08' || $row->date == '09') && $main == 'Pasien Umum' && $row->uraian == 'Obat Rajal Umum'){
+                    $jumlahtriwulan3 += $row->totalfix;
+                }
+                else if(($row->date == '07' || $row->date == '08' || $row->date == '09') && $main == 'Laboratorium Umum' && $row->uraian == 'LABORATORIUM'){
+                    $jumlahtriwulan3 += $row->totalfix;
+                }
+                else if(($row->date == '07' || $row->date == '08' || $row->date == '09') && $main == 'TM Pasien Umum' && $row->uraian == 'TINDAKAN MEDIK RANAP'){
+                    $jumlahtriwulan3 += $row->totalfix;
+                }
+                else if(($row->date == '07' || $row->date == '08' || $row->date == '09') && $main == 'Visite Dokter Pasien Umum' && $row->uraian == 'VISITE DOKTER'){
+                    $jumlahtriwulan3 += $row->totalfix;
+                }
+                else if(($row->date == '07' || $row->date == '08' || $row->date == '09') && $main == 'RM. Pasien Umum' && $row->uraian == 'REHABILITASI MENTAL'){
+                    $jumlahtriwulan3 += $row->totalfix;
+                }
+                else if(($row->date == '07' || $row->date == '08' || $row->date == '09') && $row->uraian == $main){
+                    $jumlahtriwulan3 += $row->totalfix;
+                }
+                else if(($row->date == '07' || $row->date == '08' || $row->date == '09') && $main == 'RAWAT JALAN BPJS' && $row->uraian == 'RAWAT JALAN BPJS'){
+                    $jumlahtriwulan3 += $row->totalfix;
+                }
+                else if(($row->date == '07' || $row->date == '08' || $row->date == '09') && $main == 'RAWAT INAP BPJS' && $row->uraian == 'RAWAT INAP BPJS'){
+                    $jumlahtriwulan3 += $row->totalfix;
+                }
+                else if(($row->date == '07' || $row->date == '08' || $row->date == '09') && $main == 'RAWAT INAP IPWL' && $row->uraian == 'RAWAT INAP IPWL'){
+                    $jumlahtriwulan3 += $row->totalfix;
+                }
+                else if(($row->date == '07' || $row->date == '08' || $row->date == '09') && $main == 'RAWAT JALAN IPWL' && $row->uraian == 'RAWAT JALAN IPWL'){
+                    $jumlahtriwulan3 += $row->totalfix;
+                }
+                else if(($row->date == '07' || $row->date == '08' || $row->date == '09') && $main == 'RAWAT INAP Jamkesda Jamkesos' && $row->uraian == 'RAWAT INAP Jamkesda Jamkesos'){
+                    $jumlahtriwulan3 += $row->totalfix;
+                }
+                else if(($row->date == '07' || $row->date == '08' || $row->date == '09') && $main == 'RAWAT JALAN Jamkesda Jamkesos' && $row->uraian == 'RAWAT JALAN Jamkesda Jamkesos'){
+                    $jumlahtriwulan3 += $row->totalfix;
+                }
+
+                if(($row->date == '10' || $row->date == '11' || $row->date == '12') && $main == 'Klinik Gigi' && ($row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI')){
+                    $jumlahtriwulan4 += $row->totalfix;
+                }
+                else if(($row->date == '10' || $row->date == '11' || $row->date == '12') && $main == 'Konsultasi Spesialis Lain' && $row->uraian == 'KONSULTASI GIZI'){
+                    $jumlahtriwulan4 += $row->totalfix;
+                }
+                else if(($row->date == '10' || $row->date == '11' || $row->date == '12') && $main == 'RAWAT INAP' && ($row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI' || $row->uraian == 'RAWAT INAP BPJS' || $row->uraian == 'RAWAT INAP IPWL' || $row->uraian == 'RAWAT INAP Jamkesda Jamkesos')){
+                    $jumlahtriwulan4 += $row->totalfix;
+                }
+                else if(($row->date == '10' || $row->date == '11' || $row->date == '12') && $main == 'Sewa Kantin / Tempat Fotocopy' && $row->uraian == 'SEWA TEMPAT FOTOCOPY'){
+                    $jumlahtriwulan4 += $row->totalfix;
+                }
+                else if(($row->date == '10' || $row->date == '11' || $row->date == '12') && $main == 'Pemakaian Mobil / Kendaraan' && ($row->uraian == 'SEWA AMBULAN/MOBIL JENAZAH' || $row->uraian == 'SEWA BUS')){
+                    $jumlahtriwulan4 += $row->totalfix;
+                }
+                else if(($row->date == '10' || $row->date == '11' || $row->date == '12') && $main == 'RAWAT JALAN' && ($row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA' || $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA (NAPZA)' || $row->uraian == 'PERIKSA DOKTER UMUM' || $row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'PERIKSA DOKTER PENYAKIT DALAM' || $row->uraian == 'PERIKSA DOKTER ANAK' || $row->uraian == 'PERIKSA DOKTER SYARAF' || $row->uraian == 'PERIKSA DOKTER IGD' || $row->uraian == 'DIPAM/PENDAFTARAN' || $row->uraian == 'TINDAKAN MEDIK POLIKLINIK' || $row->uraian == 'TINDAKAN MEDIK IGD' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI' || $row->uraian == 'OBAT-OBATAN' || $row->uraian == 'SURAT KETERANGAN (KIR)' || $row->uraian == 'PSIKOLOGI' || $row->uraian == 'RAWAT JALAN BPJS' || $row->uraian == 'RAWAT JALAN IPWL' || $row->uraian == 'RAWAT JALAN Jamkesda Jamkesos')){
+                    $jumlahtriwulan4 += $row->totalfix;
+                }
+                else if(($row->date == '10' || $row->date == '11' || $row->date == '12') && $main == 'JASA LAYANAN RUMAH SAKIT' && ($row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA' || $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA (NAPZA)' || $row->uraian == 'PERIKSA DOKTER UMUM' || $row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'PERIKSA DOKTER PENYAKIT DALAM' || $row->uraian == 'PERIKSA DOKTER ANAK' || $row->uraian == 'PERIKSA DOKTER SYARAF' || $row->uraian == 'PERIKSA DOKTER IGD' || $row->uraian == 'DIPAM/PENDAFTARAN' || $row->uraian == 'TINDAKAN MEDIK POLIKLINIK' || $row->uraian == 'TINDAKAN MEDIK IGD' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI' || $row->uraian == 'OBAT-OBATAN' || $row->uraian == 'SURAT KETERANGAN (KIR)' || $row->uraian == 'PSIKOLOGI' || $row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI' || $row->uraian == 'PENUNJANG' || $row->uraian == 'PERIKSA DOKTER FISIK DAN REHABILITASI (ELEKTROMEDIK)')){
+                    $jumlahtriwulan4 += $row->totalfix;
+                }
+                else if(($row->date == '10' || $row->date == '11' || $row->date == '12') && $main == 'ELEKTROMEDIK' && ($row->uraian == 'PERIKSA DOKTER FISIK DAN REHABILITASI (ELEKTROMEDIK)' || $row->uraian == 'ELEKTROMEDIK')){
+                    $jumlahtriwulan4 += $row->totalfix;
+                }
+                else if(($row->date == '10' || $row->date == '11' || $row->date == '12') && $main == 'PENDAPATAN USAHA BLUD' && ($row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA' || $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA (NAPZA)' || $row->uraian == 'PERIKSA DOKTER UMUM' || $row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'PERIKSA DOKTER PENYAKIT DALAM' || $row->uraian == 'PERIKSA DOKTER ANAK' || $row->uraian == 'PERIKSA DOKTER SYARAF' || $row->uraian == 'PERIKSA DOKTER IGD' || $row->uraian == 'DIPAM/PENDAFTARAN' || $row->uraian == 'TINDAKAN MEDIK POLIKLINIK' || $row->uraian == 'TINDAKAN MEDIK IGD' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI' || $row->uraian == 'OBAT-OBATAN' || $row->uraian == 'SURAT KETERANGAN (KIR)' || $row->uraian == 'PSIKOLOGI' || $row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI' || $row->uraian == 'PENUNJANG' || $row->uraian == 'PERIKSA DOKTER FISIK DAN REHABILITASI (ELEKTROMEDIK)' || $row->uraian == 'SEWA TEMPAT FOTOCOPY' || $row->uraian == 'SEWA AMBULAN/MOBIL JENAZAH' || $row->uraian == 'SEWA BUS' || $row->uraian == 'LEGALISIR' || $row->uraian == 'SEWA GEDUNG TERAPI' || $row->uraian == 'SEWA LAPANGAN SEPAK BOLA' || $row->uraian == 'SEWA GEDUNG DIKLAT' || $row->uraian == 'SEWA GEDUNG GRHASIA INN' || $row->uraian == 'SEWA TANAH PERTANIAN' || $row->uraian == 'SEWA KALANDRA' || $row->uraian == 'SEWA MANEKIN' || $row->uraian == 'HASIL KETRAMPILAN PASIEN' || $row->uraian == 'PARKIR' || $row->uraian == 'LAIN-LAIN' )){
+                    $jumlahtriwulan4 += $row->totalfix;
+                }
+                else if(($row->date == '10' || $row->date == '11' || $row->date == '12') && $main == 'Klinik Jiwa Umum' && $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA'){
+                    $jumlahtriwulan4 += $row->totalfix;
+                }
+                else if(($row->date == '10' || $row->date == '11' || $row->date == '12') && $main == 'TM. Poli Umum' && $row->uraian == 'TINDAKAN MEDIK POLIKLINIK'){
+                    $jumlahtriwulan4 += $row->totalfix;
+                }
+                else if(($row->date == '10' || $row->date == '11' || $row->date == '12') && $main == 'Kunjungan UGD Umum' && $row->uraian == 'PERIKSA DOKTER IGD'){
+                    $jumlahtriwulan4 += $row->totalfix;
+                }
+                else if(($row->date == '10' || $row->date == '11' || $row->date == '12') && $main == 'Pasien Umum' && $row->uraian == 'Obat Rajal Umum'){
+                    $jumlahtriwulan4 += $row->totalfix;
+                }
+                else if(($row->date == '10' || $row->date == '11' || $row->date == '12') && $main == 'Laboratorium Umum' && $row->uraian == 'LABORATORIUM'){
+                    $jumlahtriwulan4 += $row->totalfix;
+                }
+                else if(($row->date == '10' || $row->date == '11' || $row->date == '12') && $main == 'TM Pasien Umum' && $row->uraian == 'TINDAKAN MEDIK RANAP'){
+                    $jumlahtriwulan4 += $row->totalfix;
+                }
+                else if(($row->date == '10' || $row->date == '11' || $row->date == '12') && $main == 'Visite Dokter Pasien Umum' && $row->uraian == 'VISITE DOKTER'){
+                    $jumlahtriwulan4 += $row->totalfix;
+                }
+                else if(($row->date == '10' || $row->date == '11' || $row->date == '12') && $main == 'RM. Pasien Umum' && $row->uraian == 'REHABILITASI MENTAL'){
+                    $jumlahtriwulan4 += $row->totalfix;
+                }
+                else if(($row->date == '10' || $row->date == '11' || $row->date == '12') && $row->uraian == $main){
+                    $jumlahtriwulan4 += $row->totalfix;
+                }
+                else if(($row->date == '10' || $row->date == '11' || $row->date == '12') && $main == 'RAWAT JALAN BPJS' && $row->uraian == 'RAWAT JALAN BPJS'){
+                    $jumlahtriwulan4 += $row->totalfix;
+                }
+                else if(($row->date == '10' || $row->date == '11' || $row->date == '12') && $main == 'RAWAT INAP BPJS' && $row->uraian == 'RAWAT INAP BPJS'){
+                    $jumlahtriwulan4 += $row->totalfix;
+                }
+                else if(($row->date == '10' || $row->date == '11' || $row->date == '12') && $main == 'RAWAT INAP IPWL' && $row->uraian == 'RAWAT INAP IPWL'){
+                    $jumlahtriwulan4 += $row->totalfix;
+                }
+                else if(($row->date == '10' || $row->date == '11' || $row->date == '12') && $main == 'RAWAT JALAN IPWL' && $row->uraian == 'RAWAT JALAN IPWL'){
+                    $jumlahtriwulan4 += $row->totalfix;
+                }
+                else if(($row->date == '10' || $row->date == '11' || $row->date == '12') && $main == 'RAWAT INAP Jamkesda Jamkesos' && $row->uraian == 'RAWAT INAP Jamkesda Jamkesos'){
+                    $jumlahtriwulan4 += $row->totalfix;
+                }
+                else if(($row->date == '10' || $row->date == '11' || $row->date == '12') && $main == 'RAWAT JALAN Jamkesda Jamkesos' && $row->uraian == 'RAWAT JALAN Jamkesda Jamkesos'){
+                    $jumlahtriwulan4 += $row->totalfix;
+                }
+            }
+
+            foreach($target as $tg){
+                if($tg->uraianpendapatan == $main){
+                    $jumlahtarget += $tg->jumlahpendapatan;
+                }
+            }
+
+            $data[] =array(
+                'mainuraian' =>   $uraian,
+                'jumlahtriwulan1' =>   $jumlahtriwulan1,
+                'jumlahtriwulan2' =>   $jumlahtriwulan2,
+                'jumlahtriwulan3' =>   $jumlahtriwulan3,
+                'jumlahtriwulan4' =>   $jumlahtriwulan4,
+                'jumlahtarget' =>   $jumlahtarget,
+            );
+
+            
+        }
+
+        
+
+
+        $result = array(
+            'detail' => $data,
+        );
+        
+        return $this->setStatusCode(201)->respond($result, 'tes msg');
+    }
+
+    public function getRekapPendapatan(Request $request) {
+        ini_set('max_execution_time', 600);
+        $tahun = $request['tahun'];
+
+        $data = DB::select(DB::raw("select c.bulan, d.*
+        from(
+            select to_char(DATE '2008-01-01' + (interval '1' month * generate_series(0,11)), 'Month') as bulan
+        ) as c
+        left join(
+            select date, sum(jumlahjasagiro) jumlahjasagiro, sum(jumlahdiklat) jumlahdiklat, sum(jumlahbpjs) jumlahbpjs,
+            sum(jumlahipwl) jumlahipwl, sum(jumlahjamkesos) jumlahjamkesos, sum(jumlahjamkesda) jumlahjamkesda,
+            sum(jumlahrajal) jumlahrajal, sum(jumlahranap) jumlahranap, sum(jumlahlainlain) jumlahlainlain, sum(klaimcovid) klaimcovid
+            from(
+                select date,
+                case when jenis = 'jasa giro' then sum(totalfix) else 0 end as jumlahjasagiro,
+                case when uraian = 'DIKLAT' then sum(totalfix) else 0 end as jumlahdiklat,
+                case when jenis = 'klaim' and uraian ilike '%BPJS%' then sum(totalfix) else 0 end as jumlahbpjs,
+                case when jenis = 'klaim' and uraian ilike '%IPWL%' then sum(totalfix) else 0 end as jumlahipwl,
+                case when jenis = 'klaim' and uraian ilike '%Jamkesos%' then sum(totalfix) else 0 end as jumlahjamkesos,
+                case when jenis = 'klaim' and uraian ilike '%Jamkesda%' then sum(totalfix) else 0 end as jumlahjamkesda,
+                case when nomer = '04' then sum(totalfix) else 0 end as jumlahlainlain,
+                case when uraian = 'KLAIM COVID' then sum(totalfix) else 0 end as klaimcovid,
+                case when uraian in('KUNJUNGAN POLIKLINIK', 'DIPAM/PENDAFTARAN', 'TINDAKAN MEDIK POLIKLINIK',
+                'TINDAKAN MEDIK IGD', 'TINDAKAN MEDIK PASIEN GIGI', 'OBAT-OBATAN', 'SURAT KETERANGAN (KIR)', 'PSIKOLOGI',
+                'KONSULTASI GIZI', 'LABORATORIUM', 'ELEKTROMEDIK', 'FISIOTERAPY', 'RADIOLOGI', 'PERAWATAN PASIEN')
+                then sum(totalfix) else 0 end as jumlahrajal,
+                case when uraian in('VIP', 'Kelas I', 'Kelas UPPI', 'Kelas II', 'Kelas III', 'OBAT-OBATAN RANAP',
+                'TINDAKAN MEDIK RANAP', 'VISITE DOKTER', 'REHABILITASI MENTAL', 'PERAWATAN JENAZAH')
+                then sum(totalfix) else 0 end as jumlahranap
+                from(
+                                select 'sts' jenis, x.date, x.nomer, x.uraian, sum(x.vol) as totalvol, sum(x.kolom1) as totalkolom1, sum(x.kolom2) as totalkolom2,
+                                (
+                                        case 
+                                        when sum(x.kolom1) is null and sum(x.kolom2) is null then sum(x.kolom1)
+                                        when sum(x.kolom1) is null and sum(x.kolom2) is not null then sum(x.kolom2)
+                                        when sum(x.kolom1) is not null and sum(x.kolom2) is null then sum(x.kolom1)
+                                        else 0 
+                                        end
+                                ) as totalfix
+                                from(	
+                                select to_char(sts.tglpenerimaan, 'Month') as date, stsd.nomer, stsd.uraian, stsd.vol, stsd.kolom1, stsd.kolom2
+                                                from surattandasetoran_t sts
+                                                inner join surattandasetorandetail_t stsd on stsd.objectstsfk = sts.nosts
+                                                left join ststosck_t as ssc on sts.norec = ssc.objectstsfk
+                                                left join strukclosingkasir_t as sck on ssc.objectsckfk = sck.norec
+                                                left join strukclosing_t as sc on sc.norec = sck.noclosingfk
+                                                left join strukbuktipenerimaan_t AS sbm on sbm.noclosingfk = sc.norec
+                                                left join strukbuktipenerimaancarabayar_t as sbmcr ON sbmcr.nosbmfk = sbm.norec
+                                                left JOIN carabayar_m as cb ON cb.id = sbmcr.objectcarabayarfk
+                                                where sts.statusenabled = true
+                                                and stsd.statusenabled = true and stsd.kdprofile = 30
+                                                and sc.noclosing not in (
+                                                        select sc.noclosing from strukclosing_t sc
+                                                        inner join strukhistori_t sh on sh.noclosing = sc.norec
+                                                        where sh.statusenabled = false
+                                                )
+                                                and date_part('year', sts.tglpenerimaan::timestamp ) = '$tahun'
+                                                group by to_char(sts.tglpenerimaan, 'Month'), stsd.nomer, stsd.uraian, stsd.vol, stsd.kolom1, stsd.kolom2
+                                ) as x
+                                where (x.nomer in('04') or x.uraian in('KUNJUNGAN POLIKLINIK', 'DIPAM/PENDAFTARAN', 'TINDAKAN MEDIK POLIKLINIK',
+                                'TINDAKAN MEDIK IGD', 'TINDAKAN MEDIK PASIEN GIGI', 'OBAT-OBATAN', 'SURAT KETERANGAN (KIR)', 'PSIKOLOGI',
+                                'KONSULTASI GIZI', 'VIP', 'Kelas I', 'Kelas UPPI', 'Kelas II', 'Kelas III', 'OBAT-OBATAN RANAP',
+                                'TINDAKAN MEDIK RANAP', 'VISITE DOKTER', 'REHABILITASI MENTAL', 'PERAWATAN JENAZAH', 'DIKLAT',
+                                'LABORATORIUM', 'ELEKTROMEDIK', 'FISIOTERAPY', 'RADIOLOGI', 'PERAWATAN PASIEN'))
+                                group by x.date, x.nomer, x.uraian
+                                
+                                union all
+        
+                                select 'klaim' jenis, date, nomer, uraian, sum(totalvol) totalvol,
+                                sum(totalkolom1) totalkolom1, sum(totalkolom2) totalkolom2, sum(totalfix) totalfix
+                                from(
+                                        select 0 nourut, to_char(rkb.tglbayar, 'Month') as date, '' kdrekening, '0' nomer,
+                                        case 
+                                                when rkb.nosep != '-' and ru.objectdepartemenfk != 16 then 'RAWAT JALAN BPJS' 
+                                                when rkb.nosep != '-' and ru.objectdepartemenfk = 16 then 'RAWAT INAP BPJS'
+                                                when rkb.nosep = '-' and ru.objectdepartemenfk = 16 and rkb.totalsetujui = rkb.totaltarifrs then 'RAWAT INAP IPWL'
+                                                when rkb.nosep = '-' and ru.objectdepartemenfk != 16 and rkb.totalsetujui = rkb.totaltarifrs then 'RAWAT JALAN IPWL'
+                                                when rkb.nosep = '-' and ru.objectdepartemenfk = 16 and rkb.totalsetujui != rkb.totaltarifrs and pd.objectkelompokpasienlastfk = 18 then 'RAWAT INAP Jamkesos'
+                                                when rkb.nosep = '-' and ru.objectdepartemenfk != 16 and rkb.totalsetujui != rkb.totaltarifrs and pd.objectkelompokpasienlastfk = 18 then 'RAWAT JALAN Jamkesos'
+                                                when rkb.nosep = '-' and ru.objectdepartemenfk = 16 and rkb.totalsetujui != rkb.totaltarifrs and pd.objectkelompokpasienlastfk = 8 then 'RAWAT INAP Jamkesda'
+                                                when rkb.nosep = '-' and ru.objectdepartemenfk != 16 and rkb.totalsetujui != rkb.totaltarifrs and pd.objectkelompokpasienlastfk = 8 then 'RAWAT JALAN Jamkesda'
+                                                when rkb.nosep = '-' and rkb.totalsetujui != rkb.totaltarifrs and pd.objectkelompokpasienlastfk = 16 then 'KLAIM COVID'
+                                        end as uraian, count(rkb.norec) totalvol, 0 totalkolom1, 0 totalkolom2, rkb.totalsetujui totalfix
+                                        from rekapklaimbpjs_t rkb
+                                        inner join pasiendaftar_t pd on rkb.norecpdfk = pd.norec
+                                        inner join ruangan_m ru on ru.id = pd.objectruanganlastfk
+                                        where rkb.kdprofile = 30
+                                        and rkb.statusenabled = true
+                                        and pd.kdprofile = 30
+                                        and pd.statusenabled = true
+                                        and date_part('year', rkb.tglbayar::timestamp ) = '$tahun'
+                                        group by to_char(rkb.tglbayar, 'Month'), rkb.nosep, ru.objectdepartemenfk, rkb.totalsetujui, rkb.totaltarifrs, pd.objectkelompokpasienlastfk
+                                ) as x 
+                                where x.uraian not in('RAWAT INAP Jamkesda Jamkesos', 'RAWAT JALAN Jamkesda Jamkesos')
+                                group by date, nomer, uraian
+        
+                                union all
+        
+                                select 'jasa giro' jenis, to_char(tglpemasukan, 'Month') as date, '0' nomer, uraianjasagiro uraian, 0 totalvol,
+                                0 totalkolom1, 0totalkolom2, jumlahpemasukan totalfix
+                                from jasagiro_t 
+                                where kdprofile = 30 and statusenabled = true
+                                and date_part('year', tglpemasukan::timestamp ) = '$tahun'
+                ) as y group by nomer, date, jenis, uraian
+            ) as a group by date
+        ) as d on c.bulan = d.date;"));
+
+        $result = array(
+            'detail' => $data,
+        );
+        
+        return $this->setStatusCode(201)->respond($result, 'tes msg');
+    }
+        
+
     public function getSTSPertanggal(Request $request) {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;

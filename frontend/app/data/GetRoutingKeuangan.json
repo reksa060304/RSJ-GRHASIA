@@ -920,6 +920,26 @@
     ]
   },
   {
+    "name": "LaporanAkuntansi",
+    "url": "/TGFwb3JhbkFrdW50YW5zaQ==",
+    "templateurl": "module/Akuntansi/LaporanAkuntansi.html",
+    "controller": "LaporanAkuntansiCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
     "name": "DaftarPiutangPasien",
     "url": "/RGFmdGFyUGl1dGFuZ1Bhc2llbg==",
     "templateurl": "module/Piutang/DaftarPiutangPasien.html",
@@ -2004,6 +2024,26 @@
     "url": "/UmVhbGlzYXNpUGVuZXJpbWFhblBlclRyaXd1bGFu",
     "templateurl": "module/BendaharaPenerimaan/RealisasiPerTriwulan.html",
     "controller": "RealisasiPerTriwulanCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "RekapitulasiPendapatan",
+    "url": "/UmVrYXBpdHVsYXNpUGVuZGFwYXRhbg==",
+    "templateurl": "module/BendaharaPenerimaan/RekapitulasiPendapatan.html",
+    "controller": "RekapitulasiPendapatanCtrl",
     "deps": [
       {
         "module": "Services",

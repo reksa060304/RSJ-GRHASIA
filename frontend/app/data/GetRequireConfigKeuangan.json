@@ -185,6 +185,10 @@
             "urlDep": "module/Akuntansi/MapCOAKeRekeningCtrl"
         },
         {
+            "nameDep": "LaporanAkuntansiCtrl",
+            "urlDep": "module/Akuntansi/LaporanAkuntansiCtrl"
+        },
+        {
             "nameDep": "DaftarPiutangPasienCtrl",
             "urlDep": "module/Piutang/DaftarPiutangPasienCtrl"
         },
@@ -408,6 +412,11 @@
 
             "nameDep": "RealisasiPerTriwulanCtrl",
             "urlDep": "module/BendaharaPenerimaan/RealisasiPerTriwulanCtrl"
+        },
+        {
+
+            "nameDep": "RekapitulasiPendapatanCtrl",
+            "urlDep": "module/BendaharaPenerimaan/RekapitulasiPendapatanCtrl"
         },
         {
             "nameDep": "RemunTagihanDiklatCtrl",

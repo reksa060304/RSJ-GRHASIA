@@ -39,7 +39,7 @@ define(['initialize'], function (initialize) {
                 tglAwal = moment(tglAwal).format('YYYY-MM-DD 00:00');
                 tglAkhir = moment(tglAkhir).format('YYYY-MM-DD 00:00');
                 // var tgl = moment($scope.tanggal).format('DD/MM/YYYY');
-                medifirstService.get("bendaharapenerimaan/get-sts-bulanan?" 
+                medifirstService.get("bendaharapenerimaan/get-sts-per-triwulan?" 
                  + "&tahun=" + tahun
                     , true).then(function (dat) {
                         $scope.isRouteLoading = false;
@@ -124,11 +124,11 @@ define(['initialize'], function (initialize) {
                 excelExport: function (e) {
                     var sheet = e.workbook.sheets[0];
                     sheet.frozenRows = 0;
-                    sheet.mergedCells = ["A1:O1"];
+                    sheet.mergedCells = ["A1:G1"];
                     sheet.name = "STSBulanan";
                     var tahun = moment($scope.item.tahun).format('YYYY');
                     var myHeaders = [{
-                        value: "SPJ PENDAPATAN PER BULAN TH. " + tahun,
+                        value: "REALISASI PENERIMAAN PER TRIWULAN TH. " + tahun,
                         fontSize: 16,
                         textAlign: "center",
                         background: "#ffffff",
@@ -154,13 +154,13 @@ define(['initialize'], function (initialize) {
                     sheet.rows.splice(99, 0, { cells: myHeaders, type: "header", height: 30 });
                     
                     sheet.rows.splice(100, 0, {
-                        cells: [{value:"", colSpan: 1},{value:"Mengetahui:", colSpan: 2, textAlign: "center"},{value:"", colSpan: 8},{value:"Yogyakarta, " + tahun,colSpan: 3, textAlign: "center"},{value:"", colSpan: 1}],
+                        cells: [{value:"", colSpan: 1},{value:"Mengetahui:", colSpan: 1, textAlign: "center"},{value:"", colSpan: 1},{value:"Yogyakarta, " + tahun,colSpan: 3, textAlign: "center"},{value:"", colSpan: 1}],
                         type: "data",
                         height: 20,
                     });
 
                     sheet.rows.splice(101, 0, {
-                        cells: [{value:"", colSpan: 1},{value:"Pimpinan BLUD:", colSpan: 2, textAlign: "center"},{value:"", colSpan: 8},{value:"Bendahara Penerima",colSpan: 3, textAlign: "center"},{value:"", colSpan: 1}],
+                        cells: [{value:"", colSpan: 1},{value:"Pimpinan BLUD:", colSpan: 1, textAlign: "center"},{value:"", colSpan: 1},{value:"Bendahara Penerima",colSpan: 3, textAlign: "center"},{value:"", colSpan: 1}],
                         type: "data",
                         height: 20,
                     });
@@ -174,28 +174,18 @@ define(['initialize'], function (initialize) {
                     sheet.rows.splice(102, 0, { cells: myHeaders, type: "header", height: 100 });
 
                     sheet.rows.splice(103, 0, {
-                        cells: [{value:"", colSpan: 1},{value:"dr. AKHMAD AKHADI S. MPH", colSpan: 2, textAlign: "center"},{value:"", colSpan: 8},{value:"SURI HERLINA PRATIWI, S.KM, M.PH" + tahun,colSpan: 3, textAlign: "center"},{value:"", colSpan: 1}],
+                        cells: [{value:"", colSpan: 1},{value:"dr. AKHMAD AKHADI S. MPH", colSpan: 1, textAlign: "center"},{value:"", colSpan: 1},{value:"SURI HERLINA PRATIWI, S.KM, M.PH" + tahun,colSpan: 3, textAlign: "center"},{value:"", colSpan: 1}],
                         type: "data",
                         height: 20,
                     });
 
                     sheet.rows.splice(104, 0, {
-                        cells: [{value:"", colSpan: 1},{value:"NIP. 19680714 200012 1 002", colSpan: 2, textAlign: "center"},{value:"", colSpan: 8},{value:"NIP. 19860422 201101 2 013" + tahun,colSpan: 3, textAlign: "center"},{value:"", colSpan: 1}],
+                        cells: [{value:"", colSpan: 1},{value:"NIP. 19680714 200012 1 002", colSpan: 1, textAlign: "center"},{value:"", colSpan: 1},{value:"NIP. 19860422 201101 2 013" + tahun,colSpan: 3, textAlign: "center"},{value:"", colSpan: 1}],
                         type: "data",
                         height: 20,
                     });
                     
-                    for(var j = 2; j<= 92; j++){
-                        for(var i = 0; i<=14; i++){
-                            sheet.rows[2].cells[i].background = "#ffffff";
-                            sheet.rows[2].cells[i].color = "#000000";
-                            sheet.rows[2].cells[i].textAlign = 'center';
-                            sheet.rows[j].cells[i]["borderTop"] = { color: "#000000", size: 1 };
-                            sheet.rows[j].cells[i]["borderRight"] = { color: "#000000", size: 1 };
-                            sheet.rows[j].cells[i]["borderBottom"] = { color: "#000000", size: 1 };
-                            sheet.rows[j].cells[i]["borderLeft"] = { color: "#000000", size: 1 };
-                        }
-                    }
+                    
 
                 },
                 sortable: true,
@@ -212,91 +202,46 @@ define(['initialize'], function (initialize) {
                         
                         "field": "mainuraian",
                         "title": "URAIAN",
-                        "width": "250px",
+                        "width": "200px",
                     },
                     {
                         
-                        "field": "",
+                        "field": "jumlahtarget",
                         "title": "TARGET",
                         "width": "100px",
                     },
                     {
-                        
-                        "field": "jumlahjanuari",
-                        "title": "JANUARI",
-                        "width": "100px",
-                    },
-                    {
-                        
-                        "field": "jumlahfebruari",
-                        "title": "FEBRUARI",
-                        "width": "100px",
-                    },
-                    {
-                        
-                        "field": "jumlahmaret",
-                        "title": "MARET",
-                        "width": "100px",
-                    },
-                    {
-                        
-                        "field": "jumlahapril",
-                        "title": "APRIL",
-                        "width": "100px",
-                    },
-                    {
-                        
-                        "field": "jumlahmei",
-                        "title": "MEI",
-                        "width": "100px",
-                    },
-                    {
-                        
-                        "field": "jumlahjuni",
-                        "title": "JUNI",
-                        "width": "100px",
-                    },
-                    {
-                        
-                        "field": "jumlahjuli",
-                        "title": "JULI",
-                        "width": "100px",
-                    },
-                    {
-                        
-                        "field": "jumlahagustus",
-                        "title": "AGUSTUS",
-                        "width": "100px",
-                    },
-                    {
-                        
-                        "field": "jumlahseptember",
-                        "title": "SEPTEMBER",
-                        "width": "100px",
-                    },
-                    {
-                        
-                        "field": "jumlahoktober",
-                        "title": "OKTOBER",
-                        "width": "100px",
-                    },
-                    {
-                        
-                        "field": "jumlahnovember",
-                        "title": "NOVEMBER",
-                        "width": "100px",
-                    },
-                    {
-                        
-                        "field": "jumlahdesember",
-                        "title": "DESEMBER",
-                        "width": "100px",
-                    },
-                    {
-                        
-                        "field": "jumlahrealisasi",
-                        "title": "REALISASI",
-                        "width": "100px",
+                        "title": "Realisasi Penerimaan",
+                        "width": "400px",
+                        columns: [
+                            {
+                                "field": 'jumlahtriwulan1',
+                                "title": "TRIWULAN I",
+                                "width": "100px",
+                                "template": "<span class='style-right'>{{formatRupiah('#: jumlahtriwulan1 #', 'Rp.')}}</span>",
+                            },
+                            {
+                                "field": 'jumlahtriwulan1',
+                                "title": "TRIWULAN II",
+                                "width": "100px",
+                                "template": "<span class='style-right'>{{formatRupiah('#: jumlahtriwulan2 #', 'Rp.')}}</span>",
+
+                            },
+                            {
+                                "field": 'jumlahtriwulan1',
+                                "title": "TRIWULAN III",
+                                "width": "100px",
+                                "template": "<span class='style-right'>{{formatRupiah('#: jumlahtriwulan3 #', 'Rp.')}}</span>",
+
+                            },
+                            {
+                                "field": 'jumlahtriwulan1',
+                                "title": "TRIWULAN IV",
+                                "width": "100px",
+                                "template": "<span class='style-right'>{{formatRupiah('#: jumlahtriwulan4 #', 'Rp.')}}</span>",
+
+                            },
+                        ]
                     },
                 ]
             };

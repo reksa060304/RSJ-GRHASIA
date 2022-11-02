@@ -1552,6 +1552,7 @@ class AkuntansiController extends ApiController{
             $newCOA->noaccount = $request['kdaccount'];
             $newCOA->namaaccount = $request['namaaccount'];
             $newCOA->objectaccountheadfk = $request['objectaccountheadfk'];
+            $newCOA->objectjenisaccountfk = $request['objectjenisaccountfk'];
             $newCOA->save();
 
             $norecHead2 = $newCOA->norec;

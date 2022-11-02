@@ -134,6 +134,11 @@ define(['initialize'], function (initialize) {
                         "width": "250px"
                     },
                     {
+                        "field": "jenisaccount",
+                        "title": "Jenis",
+                        "width": "100px"
+                    },
+                    {
                         "field": "strukturaccount",
                         "title": "Struktur",
                         "width": "100px"
@@ -355,6 +360,10 @@ define(['initialize'], function (initialize) {
                 if ($scope.item.head != undefined)
                     objectaccountheadfk = $scope.item.head.id
 
+                var objectjenisaccountfk = null
+                if ($scope.item.jenis != undefined)
+                    objectjenisaccountfk = $scope.item.jenis.id
+
                 var objSave =
                 {
                     "id": idCoa,
@@ -362,7 +371,8 @@ define(['initialize'], function (initialize) {
                     "objectstrukturaccountfk": objectstrukturaccountfk,
                     "kdaccount": $scope.item.noakun,
                     "namaaccount": $scope.item.namaAkun,
-                    "objectaccountheadfk" : objectaccountheadfk
+                    "objectaccountheadfk" : objectaccountheadfk,
+                    "objectjenisaccountfk" : objectjenisaccountfk
                 }
                 medifirstService.post('akuntansi/save-data-master-coa',objSave).then(function (e) {
                     init()
