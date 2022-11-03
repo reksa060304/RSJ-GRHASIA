@@ -61,18 +61,102 @@ define(['initialize'], function (initialize) {
             //* SKRINING */
             $scope.currentPrinsipBesar = [];
             $scope.currentAturanPakai = [];
-            $scope.listDataPenulis = [
-                { name: "Ya", id: 1 },
-                { name: "Tidak", id: 2 }
+            $scope.listDataPenulis1 = [
+                {skrining: "a. Nama, tanggal lahir, jenis kelamin, dan identitas", id:1,
+                masalah: [{ name: "Ya", id: 1 },
+                { name: "Tidak", id: 2 }]},
             ];
-            $scope.listDataTanggal = [
-                { name: "Ya", id: 1 },
-                { name: "Tidak", id: 2 }
+            $scope.listDataPenulis2 = [
+                {skrining: "b. Identitas dokter penulis resep dan paraf/keabsahan dokter", id:2,
+                masalah: [{ name: "Ya", id: 1 },
+                { name: "Tidak", id: 2 }]},
             ];
-            $scope.listKlinis = [
-                { name: "Ya", id: 1 },
-                { name: "Tidak", id: 2 }
+            $scope.listDataPenulis3 = [
+                {skrining: "c. Tanggal Resep", id:3,
+                masalah: [{ name: "Ya", id: 1 },
+                { name: "Tidak", id: 2 }]},
             ];
+            $scope.listDataPenulis4 = [
+                {skrining: "d. Cara bayar pasien", id:4,
+                masalah: [{ name: "Ya", id: 1 },
+                { name: "Tidak", id: 2 }]},
+                // {skrining: "e. Ruangan/unit asal resep", id:5,
+                // masalah: [{ name: "Ya", id: 1 },
+                // { name: "Tidak", id: 2 }]},
+            ];
+            $scope.listDataPenulis5 = [
+                {skrining: "e. Ruangan/unit asal resep", id:5,
+                masalah: [{ name: "Ya", id: 1 },
+                { name: "Tidak", id: 2 }]},
+            ];
+            
+            //farmaetis
+            $scope.listDataTanggal1 = [
+                {skrining: "a. Nama obat, bentuk sediaan",
+                masalah: [{ name: "Ya", id: 1 },
+                { name: "Tidak", id: 2 }]},
+            ];
+            $scope.listDataTanggal2 = [
+                {skrining: "b. Dosis dan jumlah obat",
+                masalah: [{ name: "Ya", id: 1 },
+                { name: "Tidak", id: 2 }]},
+            ];
+            $scope.listDataTanggal3 = [
+                {skrining: "c. Stabilitas dan inkompatibilitas sediaan",
+                masalah: [{ name: "Ya", id: 1 },
+                { name: "Tidak", id: 2 }]},
+            ];
+            $scope.listDataTanggal4 = [
+                {skrining: "d. Aturan dan cara penggunaan",
+                masalah: [{ name: "Ya", id: 1 },
+                { name: "Tidak", id: 2 }]},
+            ];
+            //list klinis
+            $scope.listKlinis1 = [
+                {skrining: "a. Ketepatan indikasi, dosis, dan waktu penggunaan obat",
+                masalah: [{ name: "Ya", id: 1 },
+                { name: "Tidak", id: 2 }]},
+            ];
+            $scope.listKlinis2 = [
+                {skrining: "b. Duplikasi pengobatan",
+                masalah: [{ name: "Ya", id: 1 },
+                { name: "Tidak", id: 2 }]},
+            ];
+            $scope.listKlinis3 = [
+                {skrining: "c. Potensi Alergi/Hipersensitivitas dan reaksi Obat yang Tidak Dikehendaki",
+                masalah: [{ name: "Ya", id: 1 },
+                { name: "Tidak", id: 2 }]},
+            ];
+            $scope.listKlinis4 = [
+                {skrining: "d. Interaksi antara obat dan obat lain atau dengan makanan",
+                masalah: [{ name: "Ya", id: 1 },
+                { name: "Tidak", id: 2 }]},
+            ];
+            $scope.listKlinis5 = [
+                {skrining: "e. Variasi kriteria penggunaan dari rumah sakit(PPK dan Formularium",
+                masalah: [{ name: "Ya", id: 1 },
+                { name: "Tidak", id: 2 }]},
+            ];
+            $scope.listKlinis6 = [
+                {skrining: "f. Berat badan, tinggi badan pasien dan atau informasi fisiologis lainnya(jika diperlukan)",
+                masalah: [{ name: "Ya", id: 1 },
+                { name: "Tidak", id: 2 }]},
+            ];
+            $scope.listKlinis7 = [
+                {skrining: "g. Kontraindikasi",
+                masalah: [{ name: "Ya", id: 1 },
+                { name: "Tidak", id: 2 }]},
+            ];
+            $scope.listDataPasienRM = [
+                {skrining: "Tepat Pasien",
+                masalah: [{ name: "Ya", id: 1 },
+                { name: "Tidak", id: 2 }]},
+            ];
+            // $scope.listDataTepatNama = [
+            //     {skrining: "Tepat Nama Obat",
+            //     masalah: [{ name: "Ya", id: 1 },
+            //     { name: "Tidak", id: 2 }]},
+            // ];
             $scope.listDataRM = [
                 { name: "Ya", id: 1 },
                 { name: "Tidak", id: 2 }
@@ -94,12 +178,14 @@ define(['initialize'], function (initialize) {
                 { name: "Tidak", id: 2 }
             ];
             $scope.listDataRuang = [
-                { name: "Ya", id: 1 },
-                { name: "Tidak", id: 2 }
-            ];
+                {skrining: "Tepat Nama Obat",
+                masalah: [{ name: "Ya", id: 1 },
+                { name: "Tidak", id: 2 }]},
+            ]
             $scope.listDataStatus = [
-                { name: "Ya", id: 1 },
-                { name: "Tidak", id: 2 }
+                {skrining: "Tepat dosis dan jumlah obat",
+                masalah: [{ name: "Ya", id: 1 },
+                { name: "Tidak", id: 2 }]},
             ];
             $scope.listDataObat = [
                 { name: "Ya", id: 1 },
@@ -110,8 +196,14 @@ define(['initialize'], function (initialize) {
                 { name: "Tidak", id: 2 }
             ];
             $scope.listDataJumlah = [
-                { name: "Ya", id: 1 },
-                { name: "Tidak", id: 2 }
+                {skrining: "Tepat rute pemberian",
+                masalah: [{ name: "Ya", id: 1 },
+                { name: "Tidak", id: 2 }]},
+            ];
+            $scope.listDataWaktu = [
+                {skrining: "Tepat waktu pemberian",
+                masalah: [{ name: "Ya", id: 1 },
+                { name: "Tidak", id: 2 }]},
             ];
             $scope.listDataStabilitas = [
                 { name: "Ya", id: 1 },
@@ -407,28 +499,48 @@ define(['initialize'], function (initialize) {
             }
 
             function loadDefaultSkrining() {
-                $scope.data.Penulis = 1;
-                $scope.data.Tanggal = 1;
-                $scope.data.klinis = 1;
-                $scope.data.DataRM = 1;
-                $scope.data.Pasien = 1;
-                $scope.data.DataLahir = 1;
-                $scope.data.Berat = 2;
-                $scope.data.DataDokter = 2;
+                $scope.data.Penulis1 = 1;
+                $scope.data.Penulis2 = 1;
+                $scope.data.Penulis3 = 1;
+                $scope.data.Penulis4 = 1;
+                $scope.data.Penulis5 = 1;
+                $scope.data.Tanggal1 = 1;
+                $scope.data.Tanggal2 = 1;
+                $scope.data.Tanggal3 = 1;
+                $scope.data.Tanggal4 = 1;
+                $scope.data.klinis1 = 1;
+                $scope.data.klinis2 = 1;
+                $scope.data.klinis3 = 1;
+                $scope.data.klinis4 = 1;
+                $scope.data.klinis5 = 1;
+                $scope.data.klinis6 = 1;
+                $scope.data.klinis7 = 1;
+                $scope.data.datapasienrm = 1;
                 $scope.data.DataRuang = 1;
                 $scope.data.DataStatus = 1;
-                $scope.data.Obat = 1;
-                $scope.data.DataKekuatan = 1;
                 $scope.data.DataJumlah = 1;
-                $scope.data.DataStabilitas = 2;
-                $scope.data.DataAturan = 2;
-                $scope.data.DataIndikasi = 2;
-                $scope.data.DataAlergi = 2;
-                $scope.data.DataKonsumsi = 2;
-                $scope.data.DataDuplikat = 2;
-                $scope.data.DataInteraksi = 2;
-                $scope.data.DataAntibiotik = 2;
-                $scope.data.DataPoli = 2;
+                $scope.data.DataWaktu = 1;
+                // $scope.data.Tanggal = 1;
+                // $scope.data.klinis = 1;
+                // $scope.data.DataRM = 1;
+                // $scope.data.Pasien = 1;
+                // $scope.data.DataLahir = 1;
+                // $scope.data.Berat = 2;
+                // $scope.data.DataDokter = 2;
+                // $scope.data.DataRuang = 1;
+                // $scope.data.DataStatus = 1;
+                // $scope.data.Obat = 1;
+                // $scope.data.DataKekuatan = 1;
+                // $scope.data.DataJumlah = 1;
+                // $scope.data.DataStabilitas = 2;
+                // $scope.data.DataAturan = 2;
+                // $scope.data.DataIndikasi = 2;
+                // $scope.data.DataAlergi = 2;
+                // $scope.data.DataKonsumsi = 2;
+                // $scope.data.DataDuplikat = 2;
+                // $scope.data.DataInteraksi = 2;
+                // $scope.data.DataAntibiotik = 2;
+                // $scope.data.DataPoli = 2;
             }
 
             $scope.getCheckisKronis = function (getCheckisKronis) {
@@ -686,6 +798,28 @@ define(['initialize'], function (initialize) {
                     $scope.data.DataKekuatan = datas.rkekuatan;
                     $scope.data.DataJumlah = datas.rjumlahobat;
                     $scope.data.keteranganskrining = datas.ketskrining;
+                    $scope.data.Penulis1 = datas.rpenulis
+                    $scope.data.Penulis2 = datas.ridentitasdokter
+                    $scope.data.Penulis3 = datas.rtanggalresep
+                    $scope.data.Penulis4 = datas.rcarabayar
+                    $scope.data.Penulis5 = datas.rruanganresep
+                    $scope.data.Tanggal1 = datas.rnamaobat
+                    $scope.data.Tanggal2 = datas.robat
+                    $scope.data.Tanggal3 = datas.rstabilitas
+                    $scope.data.Tanggal4 = datas.raturan
+                    $scope.data.klinis1 = datas.rmr
+                    $scope.data.klinis2 = datas.rberatbedan
+                    $scope.data.klinis3 = datas.ralergi
+                    $scope.data.klinis4 = datas.rinteraksi
+                    $scope.data.klinis5 = datas.rvariasi
+                    $scope.data.klinis6= datas.rbeban
+                    $scope.data.klinis7 = datas.rdokter
+                    $scope.data.datapasienrm = datas.rpasien
+                    $scope.data.DataRuang = datas.rruang
+                    $scope.data.DataStatus = datas.rstatusjamin
+                    $scope.data.DataJumlah = datas.rjumlahobat
+                    $scope.data.DataWaktu = datas.rdatawaktu
+                    
                     if (datas.prinsipbesar != '' || datas.prinsipbesar != null) {
                         var prinsipbesar = datas.prinsipbesar.split(',')
                         prinsipbesar.forEach(function (data) {
@@ -1769,7 +1903,8 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
             }
 
             $scope.simpan = function () {
-
+                // $scope.simpanSkrining()
+                // return
                 medifirstService.get("farmasi/get-penjagaan-closing-kasir?noregistrasi=" + $scope.item.noRegistrasi ).then(function (e) {
                     
 
@@ -1782,6 +1917,7 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                     console.log(cek);
 
                     if(cek == 234){
+                            
                         messageContainer.error("Data yang sudah diclosing tidak bisa ditambah obat");
                     } else if (cek == 123){
                         $scope.isRouteLoading = true;
@@ -2207,22 +2343,31 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                     "norec": norecSkrining,
                     "norec_apd": $scope.data.noresep,
                     "objectruanganfk": $scope.item.ruangan.id,
-                    "rpenulis": parseInt($scope.data.Penulis),
-                    "rtanggalresep": parseInt($scope.data.Tanggal),
-                    "rklinis": parseInt($scope.data.klinis),
-                    "rmr": parseInt($scope.data.DataRM),
-                    "rpasien": parseInt($scope.data.Pasien),
-                    "rtanggallahir": parseInt($scope.data.DataLahir),
-                    "rberatbedan": parseInt($scope.data.Berat),
-                    "rdokter": parseInt($scope.data.DataDokter),
+                    "rpenulis": parseInt($scope.data.Penulis1),//udah
+                    "ridentitasdokter": parseInt($scope.data.Penulis2),//udah
+                    "rtanggalresep": parseInt($scope.data.Penulis3),//udah
+                    "rcarabayar": parseInt($scope.data.Penulis4),//udah
+                    "rruanganresep": parseInt($scope.data.Penulis5),//udah
+                    "rnamaobat": parseInt($scope.data.Tanggal1),//udah
+                    "robat": parseInt($scope.data.Tanggal2),//udah
+                    "rstabilitas": parseInt($scope.data.Tanggal3),//udah
+                    "raturan": parseInt($scope.data.Tanggal4),//udah
+                    "rmr": parseInt($scope.data.klinis1),//udah
+                    "rberatbedan": parseInt($scope.data.klinis2),//udah
+                    "ralergi": parseInt($scope.data.klinis3),//udah
+                    "rinteraksi": parseInt($scope.data.klinis4),//udah
+                    "rvariasi": parseInt($scope.data.klinis5),//udah
+                    "rbeban": parseInt($scope.data.klinis6),//udah
+                    "rdokter": parseInt($scope.data.klinis7),//udah
+                    "rpasien": parseInt($scope.data.datapasienrm),//udah
                     "rruang": parseInt($scope.data.DataRuang),
                     "rstatusjamin": parseInt($scope.data.DataStatus),
-                    "robat": parseInt($scope.data.Obat),
-                    "rkekuatan": parseInt($scope.data.DataKekuatan),
                     "rjumlahobat": parseInt($scope.data.DataJumlah),
+                    "rdatawaktu": parseInt($scope.data.DataWaktu),
                     "ketskrining": ketskrining,
                 }
-
+                console.log(objSave);
+                // return
                 medifirstService.post('farmasi/save-data-skrining-farmasi', objSave).then(function (e) {
                     
                 })
@@ -2230,28 +2375,27 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
 
             $scope.BatalSkring = function () {
                 $scope.data = {}
-                $scope.data.Penulis = 2;
-                $scope.data.klinis = 2;
-                $scope.data.Tanggal = 2;
-                $scope.data.DataRM = 2;
-                $scope.data.Pasien = 2;
-                $scope.data.DataLahir = 2;
-                $scope.data.Berat = 2;
-                $scope.data.DataDokter = 2;
+                $scope.data.Penulis1 = 2;
+                $scope.data.Penulis2 = 2;
+                $scope.data.Penulis3 = 2;
+                $scope.data.Penulis4 = 2;
+                $scope.data.Penulis5 = 2;
+                $scope.data.Tanggal1 = 2;
+                $scope.data.Tanggal2 = 2;
+                $scope.data.Tanggal3 = 2;
+                $scope.data.Tanggal4 = 2;
+                $scope.data.klinis1 = 2;
+                $scope.data.klinis2 = 2;
+                $scope.data.klinis3 = 2;
+                $scope.data.klinis4 = 2;
+                $scope.data.klinis5 = 2;
+                $scope.data.klinis6 = 2;
+                $scope.data.klinis7 = 2;
+                $scope.data.datapasienrm = 2;
                 $scope.data.DataRuang = 2;
                 $scope.data.DataStatus = 2;
-                $scope.data.Obat = 2;
-                $scope.data.DataKekuatan = 2;
                 $scope.data.DataJumlah = 2;
-                $scope.data.DataStabilitas = 2;
-                $scope.data.DataAturan = 2;
-                $scope.data.DataIndikasi = 2;
-                $scope.data.DataAlergi = 2;
-                $scope.data.DataKonsumsi = 2;
-                $scope.data.DataDuplikat = 2;
-                $scope.data.DataInteraksi = 2;
-                $scope.data.DataAntibiotik = 2;
-                $scope.data.DataPoli = 2;
+                $scope.data.DataWaktu = 2;
             }
 
             $scope.kembaliSKiring = function () {

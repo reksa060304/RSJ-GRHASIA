@@ -711,7 +711,7 @@ class ResepElektronikController extends ApiController
     }
 
     public function saveSkriningFarmasi(Request $request){
-        $kdProfile = $this->getDataKdProfile($request);
+        $kdProfile = (int) $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
         $detLogin = $request->all();
         $dataLogin = $request->all();
@@ -722,62 +722,51 @@ class ResepElektronikController extends ApiController
             ->first();
         DB::beginTransaction();
         try{
-
+        $dataPP ='';
             if ($request['norec'] == ''){
                 $keterangan = 'Input Skrining Farmasi';
 
-                $dataPP = \DB::table('skriningfarmasi_t')->insert([
-                    'norec'=> substr(\Webpatser\Uuid\Uuid::generate(), 0, 32),
-                    'kdprofile'=> $kdProfile,
-                    'statusenabled'=>true,
-                    'norec_apd' => $request['norec'],
-                    'objectruanganfk' => $request['objectruanganfk'],
-                    'rpenulis' => $request['rpenulis'],
-                    'rtanggalresep' => $request['rtanggalresep'],
-                    'rklinis' => $request['rklinis'],
-                    'rmr' => $request['rmr'],
-                    'rpasien' => $request['rpasien'],
-                    'rtanggallahir' => $request['rtanggallahir'],
-                    'rberatbedan' => $request['rberatbedan'],
-                    'rdokter' => $request['rdokter'],
-                    'rruang' => $request['rruang'],
-                    'rstatusjamin' => $request['rstatusjamin'],
-                    'robat' => $request['robat'],
-                    'rkekuatan' => $request['rkekuatan'],
-                    'rjumlahobat' => $request['rjumlahobat'],
-                    'ketskrining' => $request['ketskrining'],
-                    'norec_apd' => $request['norec_apd'],
-                    'tglinput' => date('Y-m-d H:m:s'),
-                    ]);
+                $dataPP = new SkriningFarmasi;
+                $dataPP->norec= substr(\Webpatser\Uuid\Uuid::generate(), 0, 32);
+                $dataPP->kdprofile = $kdProfile;
+                $dataPP->statusenabled = true;
+                
             }else{
                 $keterangan = 'Edit Skrining Farmasi';
-
-                $dataPP = \DB::table('skriningfarmasi_t')->where('norec',$request['norec'])->update([
-                    'norec'=> substr(\Webpatser\Uuid\Uuid::generate(), 0, 32),
-                    'kdprofile'=> $kdProfile,
-                    'statusenabled'=>true,
-                    'norec_apd' => $request['norec'],
-                    'objectruanganfk' => $request['objectruanganfk'],
-                    'rpenulis' => $request['rpenulis'],
-                    'rtanggalresep' => $request['rtanggalresep'],
-                    'rklinis' => $request['rklinis'],
-                    'rmr' => $request['rmr'],
-                    'rpasien' => $request['rpasien'],
-                    'rtanggallahir' => $request['rtanggallahir'],
-                    'rberatbedan' => $request['rberatbedan'],
-                    'rdokter' => $request['rdokter'],
-                    'rruang' => $request['rruang'],
-                    'rstatusjamin' => $request['rstatusjamin'],
-                    'robat' => $request['robat'],
-                    'rkekuatan' => $request['rkekuatan'],
-                    'rjumlahobat' => $request['rjumlahobat'],
-                    'ketskrining' => $request['ketskrining'],
-                    'norec_apd' => $request['norec_apd'],
-                    'tglinput' => date('Y-m-d H:m:s'),
-                    ]);
+                $dataPP = SkriningFarmasi::where('norec', $request['norec'])->first();
             }
-                $idPP=$dataPP['norec'];
+                $dataPP->norec_apd = $request['norec'];
+                $dataPP->objectruanganfk = $request['objectruanganfk'];
+                $dataPP->rpenulis = $request['rpenulis'];
+                $dataPP->rtanggalresep = $request['rtanggalresep'];
+                $dataPP->rklinis = $request['rklinis'];
+                $dataPP->rmr = $request['rmr'];
+                $dataPP->rpasien = $request['rpasien'];
+                $dataPP->rtanggallahir = $request['rtanggallahir'];
+                $dataPP->rberatbedan = $request['rberatbedan'];
+                $dataPP->rdokter = $request['rdokter'];
+                $dataPP->rruang = $request['rruang'];
+                $dataPP->rstatusjamin = $request['rstatusjamin'];
+                $dataPP->robat = $request['robat'];
+                $dataPP->rkekuatan = $request['rkekuatan'];
+                $dataPP->rjumlahobat = $request['rjumlahobat'];
+                $dataPP->ketskrining = $request['ketskrining'];
+                $dataPP->norec_apd = $request['norec_apd'];
+                $dataPP->tglinput = date('Y-m-d H:m:s');
+                $dataPP->rcarabayar = $request['rcarabayar'];
+                $dataPP->rruanganresep = $request['rruanganresep'];
+                $dataPP->rnamaobat = $request['rnamaobat'];
+                $dataPP->rstabilitas = $request['rstabilitas'];
+                $dataPP->raturan = $request['raturan'];
+                $dataPP->ralergi = $request['ralergi'];
+                $dataPP->rinteraksi = $request['rinteraksi'];
+                $dataPP->rvariasi = $request['rvariasi'];
+                $dataPP->rbeban = $request['rbeban'];
+                $dataPP->ridentitasdokter = $request['ridentitasdokter'];
+                $dataPP->rdatawaktu = $request['rdatawaktu'];
+                $dataPP->save();
 
+                $idPP=$dataPP->norec;
             //## Logging User
             $newId = LoggingUser::max('id');
             $newId = $newId +1;
@@ -828,8 +817,7 @@ class ResepElektronikController extends ApiController
         if(isset($request['norecResep']) && $request['norecResep']!="" && $request['norecResep']!="undefined"){
             $sf = "and sf.norec_apd = '$nresep'";
         }
-        $data = DB::select(DB::raw("select sf.norec, sf.rpenulis,sf.rtanggalresep,sf.rmr,sf.rpasien,sf.rtanggallahir,sf.rberatbedan,sf.rdokter,sf.rruang,sf.rstatusjamin,sf.robat,sf.rkekuatan,
-        sf.rjumlahobat, sf.ketskrining, sf.rklinis
+        $data = DB::select(DB::raw("select sf.norec, sf.norec_apd,sf.objectruanganfk,sf.rpenulis,sf.rtanggalresep,sf.rklinis,sf.rmr,sf.rpasien,sf.rtanggallahir,sf.rberatbedan,sf.rdokter,sf.rruang,sf.rstatusjamin,sf.robat,sf.rkekuatan,sf.rjumlahobat,sf.ketskrining,sf.norec_apd,sf.tglinput,sf.rcarabayar,sf.rruanganresep,sf.rnamaobat,sf.rstabilitas,sf.raturan,sf.ralergi,sf.rinteraksi,sf.rvariasi,sf.rbeban,sf.ridentitasdokter,sf.rdatawaktu
         from skriningfarmasi_t as sf
         where sf.kdprofile = 30
         $sf

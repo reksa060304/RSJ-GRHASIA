@@ -867,18 +867,82 @@
                                     <div class="grid_12">
                                         <div class="grid_6">
                                             <div class="grid_8" style="padding-top:10px">
-                                                <!-- <label c-label item="item" c-label-text="Alergi"></label> -->
-                                                <label c-label>1. Administrasi</label>
+                                                <label c-label>1. Aspek Administrasi</label>
                                             </div>
-                                            <!-- <div class="grid_" style="padding-top:10px" align="right"></div>                     -->
-                                            <div ng-repeat="stat in listDataPenulis | orderBy:'id'">
-                                                <div class="grid_2">
-                                                    <md-radio-group ng-model="data.Penulis">
-                                                        <md-radio-button value="{{stat.id}}" class="md-primary">
-                                                            {{stat.name}}
-                                                        </md-radio-button>
-                                                    </md-radio-group>
+                                            <div ng-repeat="stat in listDataPenulis1 | orderBy:'id'">
+                                                <div class="grid_8" >
+                                                    <label c-label style="margin-left: 30px;">{{stat.skrining}}</label>
                                                 </div>
+                                                <div ng-repeat="statt in stat.masalah">
+                                                    <div class="grid_2">
+                                                        <md-radio-group ng-model="data.Penulis1">
+                                                            <md-radio-button value="{{statt.id}}" class="md-primary">
+                                                                {{statt.name}}
+                                                            </md-radio-button>
+                                                        </md-radio-group>
+                                                    </div>
+                                                </div>
+                                                
+                                            </div>
+                                            <div ng-repeat="stat in listDataPenulis2 | orderBy:'id'">
+                                                <div class="grid_8">
+                                                    <label c-label style="margin-left: 30px;">{{stat.skrining}}</label>
+                                                </div>
+                                                <div ng-repeat="statt in stat.masalah">
+                                                    <div class="grid_2">
+                                                        <md-radio-group ng-model="data.Penulis2">
+                                                            <md-radio-button value="{{statt.id}}" class="md-primary">
+                                                                {{statt.name}}
+                                                            </md-radio-button>
+                                                        </md-radio-group>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                            <div ng-repeat="stat in listDataPenulis3 | orderBy:'id'">
+                                                <div class="grid_8">
+                                                    <label c-label style="margin-left: 30px;">{{stat.skrining}}</label>
+                                                </div>
+                                                <div ng-repeat="statt in stat.masalah">
+                                                    <div class="grid_2">
+                                                        <md-radio-group ng-model="data.Penulis3">
+                                                            <md-radio-button value="{{statt.id}}" class="md-primary">
+                                                                {{statt.name}}
+                                                            </md-radio-button>
+                                                        </md-radio-group>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                            <div ng-repeat="stat in listDataPenulis4 | orderBy:'id'">
+                                                <div class="grid_8">
+                                                    <label c-label style="margin-left: 30px;">{{stat.skrining}}</label>
+                                                </div>
+                                                <div ng-repeat="statt in stat.masalah">
+                                                    <div class="grid_2">
+                                                        <md-radio-group ng-model="data.Penulis4">
+                                                            <md-radio-button value="{{statt.id}}" class="md-primary">
+                                                                {{statt.name}}
+                                                            </md-radio-button>
+                                                        </md-radio-group>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                            <div ng-repeat="stat in listDataPenulis5 | orderBy:'id'">
+                                                <div class="grid_8">
+                                                    <label c-label style="margin-left: 30px;">{{stat.skrining}}</label>
+                                                </div>
+                                                <div ng-repeat="statt in stat.masalah">
+                                                    <div class="grid_2">
+                                                        <md-radio-group ng-model="data.Penulis5">
+                                                            <md-radio-button value="{{statt.id}}" class="md-primary">
+                                                                {{statt.name}}
+                                                            </md-radio-button>
+                                                        </md-radio-group>
+                                                    </div>
+                                                </div>
+
                                             </div>
                                         </div>
                                         <div class="grid_1"></div>
@@ -890,17 +954,62 @@
                                     <div class="grid_12">
                                         <div class="grid_6">
                                             <div class="grid_8" style="padding-top:10px">
-                                                <!-- <label c-label item="item" c-label-text="Alergi"></label> -->
-                                                <label c-label>2. Farmasetis</label>
+                                                <label c-label>2. Aspek Farmasetis</label>
                                             </div>
-                                            <!-- <div class="grid_" style="padding-top:10px" align="right"></div>                     -->
-                                            <div ng-repeat="stat in listDataTanggal | orderBy:'id'">
-                                                <div class="grid_2">
-                                                    <md-radio-group ng-model="data.Tanggal">
-                                                        <md-radio-button value="{{stat.id}}" class="md-primary">
-                                                            {{stat.name}}
-                                                        </md-radio-button>
-                                                    </md-radio-group>
+                                            <div ng-repeat="stat in listDataTanggal1">
+                                                <div class="grid_8">
+                                                    <label c-label style="margin-left: 30px;">{{stat.skrining}}</label>
+                                                </div>
+                                                <div ng-repeat="statt in stat.masalah">
+                                                    <div class="grid_2">
+                                                        <md-radio-group ng-model="data.Tanggal1">
+                                                            <md-radio-button value="{{statt.id}}" class="md-primary">
+                                                                {{statt.name}}
+                                                            </md-radio-button>
+                                                        </md-radio-group>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div ng-repeat="stat in listDataTanggal2">
+                                                <div class="grid_8">
+                                                    <label c-label style="margin-left: 30px;">{{stat.skrining}}</label>
+                                                </div>
+                                                <div ng-repeat="statt in stat.masalah">
+                                                    <div class="grid_2">
+                                                        <md-radio-group ng-model="data.Tanggal2">
+                                                            <md-radio-button value="{{statt.id}}" class="md-primary">
+                                                                {{statt.name}}
+                                                            </md-radio-button>
+                                                        </md-radio-group>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div ng-repeat="stat in listDataTanggal3">
+                                                <div class="grid_8">
+                                                    <label c-label style="margin-left: 30px;">{{stat.skrining}}</label>
+                                                </div>
+                                                <div ng-repeat="statt in stat.masalah">
+                                                    <div class="grid_2">
+                                                        <md-radio-group ng-model="data.Tanggal3">
+                                                            <md-radio-button value="{{statt.id}}" class="md-primary">
+                                                                {{statt.name}}
+                                                            </md-radio-button>
+                                                        </md-radio-group>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div ng-repeat="stat in listDataTanggal4">
+                                                <div class="grid_8">
+                                                    <label c-label style="margin-left: 30px;">{{stat.skrining}}</label>
+                                                </div>
+                                                <div ng-repeat="statt in stat.masalah">
+                                                    <div class="grid_2">
+                                                        <md-radio-group ng-model="data.Tanggal4">
+                                                            <md-radio-button value="{{statt.id}}" class="md-primary">
+                                                                {{statt.name}}
+                                                            </md-radio-button>
+                                                        </md-radio-group>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -913,17 +1022,104 @@
                                     <div class="grid_12">
                                         <div class="grid_6">
                                             <div class="grid_8" style="padding-top:10px">
-                                                <!-- <label c-label item="item" c-label-text="Alergi"></label> -->
-                                                <label c-label>3. Klinis</label>
+                                                <label c-label>3. Aspek Klinis</label>
                                             </div>
-                                            <!-- <div class="grid_" style="padding-top:10px" align="right"></div>                     -->
-                                            <div ng-repeat="stat in listKlinis | orderBy:'id'">
-                                                <div class="grid_2">
-                                                    <md-radio-group ng-model="data.klinis">
-                                                        <md-radio-button value="{{stat.id}}" class="md-primary">
-                                                            {{stat.name}}
-                                                        </md-radio-button>
-                                                    </md-radio-group>
+                                            <div ng-repeat="stat in listKlinis1">
+                                                <div class="grid_8">
+                                                    <label c-label style="margin-left: 30px;">{{stat.skrining}}</label>
+                                                </div>
+                                                <div ng-repeat="statt in stat.masalah">
+                                                    <div class="grid_2">
+                                                        <md-radio-group ng-model="data.klinis1">
+                                                            <md-radio-button value="{{statt.id}}" class="md-primary">
+                                                                {{statt.name}}
+                                                            </md-radio-button>
+                                                        </md-radio-group>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div ng-repeat="stat in listKlinis2">
+                                                <div class="grid_8">
+                                                    <label c-label style="margin-left: 30px;">{{stat.skrining}}</label>
+                                                </div>
+                                                <div ng-repeat="statt in stat.masalah">
+                                                    <div class="grid_2">
+                                                        <md-radio-group ng-model="data.klinis2">
+                                                            <md-radio-button value="{{statt.id}}" class="md-primary">
+                                                                {{statt.name}}
+                                                            </md-radio-button>
+                                                        </md-radio-group>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div ng-repeat="stat in listKlinis3">
+                                                <div class="grid_8">
+                                                    <label c-label style="margin-left: 30px;">{{stat.skrining}}</label>
+                                                </div>
+                                                <div ng-repeat="statt in stat.masalah">
+                                                    <div class="grid_2">
+                                                        <md-radio-group ng-model="data.klinis3">
+                                                            <md-radio-button value="{{statt.id}}" class="md-primary">
+                                                                {{statt.name}}
+                                                            </md-radio-button>
+                                                        </md-radio-group>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div ng-repeat="stat in listKlinis4">
+                                                <div class="grid_8">
+                                                    <label c-label style="margin-left: 30px;">{{stat.skrining}}</label>
+                                                </div>
+                                                <div ng-repeat="statt in stat.masalah">
+                                                    <div class="grid_2">
+                                                        <md-radio-group ng-model="data.klinis4">
+                                                            <md-radio-button value="{{statt.id}}" class="md-primary">
+                                                                {{statt.name}}
+                                                            </md-radio-button>
+                                                        </md-radio-group>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div ng-repeat="stat in listKlinis5">
+                                                <div class="grid_8">
+                                                    <label c-label style="margin-left: 30px;">{{stat.skrining}}</label>
+                                                </div>
+                                                <div ng-repeat="statt in stat.masalah">
+                                                    <div class="grid_2">
+                                                        <md-radio-group ng-model="data.klinis5">
+                                                            <md-radio-button value="{{statt.id}}" class="md-primary">
+                                                                {{statt.name}}
+                                                            </md-radio-button>
+                                                        </md-radio-group>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div ng-repeat="stat in listKlinis6">
+                                                <div class="grid_8">
+                                                    <label c-label style="margin-left: 30px;">{{stat.skrining}}</label>
+                                                </div>
+                                                <div ng-repeat="statt in stat.masalah">
+                                                    <div class="grid_2">
+                                                        <md-radio-group ng-model="data.klinis6">
+                                                            <md-radio-button value="{{statt.id}}" class="md-primary">
+                                                                {{statt.name}}
+                                                            </md-radio-button>
+                                                        </md-radio-group>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div ng-repeat="stat in listKlinis7">
+                                                <div class="grid_8">
+                                                    <label c-label style="margin-left: 30px;">{{stat.skrining}}</label>
+                                                </div>
+                                                <div ng-repeat="statt in stat.masalah">
+                                                    <div class="grid_2">
+                                                        <md-radio-group ng-model="data.klinis7">
+                                                            <md-radio-button value="{{statt.id}}" class="md-primary">
+                                                                {{statt.name}}
+                                                            </md-radio-button>
+                                                        </md-radio-group>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -936,17 +1132,76 @@
                                     <div class="grid_12">
                                         <div class="grid_6">
                                             <div class="grid_8" style="padding-top:10px">
-                                                <!-- <label c-label item="item" c-label-text="Alergi"></label> -->
-                                                <label c-label>4. Tepat Dosis</label>
+                                                <label c-label>4. telaah Obat</label>
                                             </div>
-                                            <!-- <div class="grid_" style="padding-top:10px" align="right"></div>                     -->
-                                            <div ng-repeat="stat in listDataRM | orderBy:'id'">
-                                                <div class="grid_2">
-                                                    <md-radio-group ng-model="data.DataRM">
-                                                        <md-radio-button value="{{stat.id}}" class="md-primary">
-                                                            {{stat.name}}
-                                                        </md-radio-button>
-                                                    </md-radio-group>
+                                            <div ng-repeat="stat in listDataPasienRM">
+                                                <div class="grid_8">
+                                                    <label c-label style="margin-left: 30px;">{{stat.skrining}}</label>
+                                                </div>
+                                                <div ng-repeat="statt in stat.masalah">
+                                                    <div class="grid_2">
+                                                        <md-radio-group ng-model="data.datapasienrm">
+                                                            <md-radio-button value="{{statt.id}}" class="md-primary">
+                                                                {{statt.name}}
+                                                            </md-radio-button>
+                                                        </md-radio-group>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div ng-repeat="stat in listDataRuang">
+                                                <div class="grid_8">
+                                                    <label c-label style="margin-left: 30px;">{{stat.skrining}}</label>
+                                                </div>
+                                                <div ng-repeat="statt in stat.masalah">
+                                                    <div class="grid_2">
+                                                        <md-radio-group ng-model="data.DataRuang">
+                                                            <md-radio-button value="{{statt.id}}" class="md-primary">
+                                                                {{statt.name}}
+                                                            </md-radio-button>
+                                                        </md-radio-group>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div ng-repeat="stat in listDataStatus">
+                                                <div class="grid_8">
+                                                    <label c-label style="margin-left: 30px;">{{stat.skrining}}</label>
+                                                </div>
+                                                <div ng-repeat="statt in stat.masalah">
+                                                    <div class="grid_2">
+                                                        <md-radio-group ng-model="data.DataStatus">
+                                                            <md-radio-button value="{{statt.id}}" class="md-primary">
+                                                                {{statt.name}}
+                                                            </md-radio-button>
+                                                        </md-radio-group>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div ng-repeat="stat in listDataJumlah">
+                                                <div class="grid_8">
+                                                    <label c-label style="margin-left: 30px;">{{stat.skrining}}</label>
+                                                </div>
+                                                <div ng-repeat="statt in stat.masalah">
+                                                    <div class="grid_2">
+                                                        <md-radio-group ng-model="data.DataJumlah">
+                                                            <md-radio-button value="{{statt.id}}" class="md-primary">
+                                                                {{statt.name}}
+                                                            </md-radio-button>
+                                                        </md-radio-group>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div ng-repeat="stat in listDataWaktu">
+                                                <div class="grid_8">
+                                                    <label c-label style="margin-left: 30px;">{{stat.skrining}}</label>
+                                                </div>
+                                                <div ng-repeat="statt in stat.masalah">
+                                                    <div class="grid_2">
+                                                        <md-radio-group ng-model="data.DataWaktu">
+                                                            <md-radio-button value="{{statt.id}}" class="md-primary">
+                                                                {{statt.name}}
+                                                            </md-radio-button>
+                                                        </md-radio-group>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -954,213 +1209,6 @@
                                         <div class="grid_5" ng-hide="true">
                                             <input c-text-box type="input" filter="" class="k-textbox"
                                                 ng-model="data.KetRM" />
-                                        </div>
-                                    </div>
-                                    <div class="grid_12">
-                                        <div class="grid_6">
-                                            <div class="grid_8" style="padding-top:10px">
-                                                <!-- <label c-label item="item" c-label-text="Alergi"></label> -->
-                                                <label c-label>5. Tepat Rute</label>
-                                            </div>
-                                            <!-- <div class="grid_" style="padding-top:10px" align="right"></div>                     -->
-                                            <div ng-repeat="stat in listDataPasien| orderBy:'id'">
-                                                <div class="grid_2">
-                                                    <md-radio-group ng-model="data.Pasien">
-                                                        <md-radio-button value="{{stat.id}}" class="md-primary">
-                                                            {{stat.name}}
-                                                        </md-radio-button>
-                                                    </md-radio-group>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="grid_1"></div>
-                                        <div class="grid_5" ng-hide="true">
-                                            <input c-text-box type="input" filter="" class="k-textbox"
-                                                ng-model="data.KetPasien" />
-                                        </div>
-                                    </div>
-                                    <div class="grid_12">
-                                        <div class="grid_6">
-                                            <div class="grid_8" style="padding-top:10px">
-                                                <!-- <label c-label item="item" c-label-text="Alergi"></label> -->
-                                                <label c-label>6. Tepat Waktu</label>
-                                            </div>
-                                            <!-- <div class="grid_" style="padding-top:10px" align="right"></div>                     -->
-                                            <div ng-repeat="stat in listDataLahir| orderBy:'id'">
-                                                <div class="grid_2">
-                                                    <md-radio-group ng-model="data.DataLahir">
-                                                        <md-radio-button value="{{stat.id}}" class="md-primary">
-                                                            {{stat.name}}
-                                                        </md-radio-button>
-                                                    </md-radio-group>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="grid_1"></div>
-                                        <div class="grid_5" ng-hide="true">
-                                            <input c-text-box type="input" filter="" class="k-textbox"
-                                                ng-model="data.KetLahir" />
-                                        </div>
-                                    </div>
-                                    <div class="grid_12">
-                                        <div class="grid_6">
-                                            <div class="grid_8" style="padding-top:10px">
-                                                <!-- <label c-label item="item" c-label-text="Alergi"></label> -->
-                                                <label c-label>7. Duplikasi</label>
-                                            </div>
-                                            <!-- <div class="grid_" style="padding-top:10px" align="right"></div>                     -->
-                                            <div ng-repeat="stat in listDataBerat| orderBy:'id'">
-                                                <div class="grid_2">
-                                                    <md-radio-group ng-model="data.Berat">
-                                                        <md-radio-button value="{{stat.id}}" class="md-primary">
-                                                            {{stat.name}}
-                                                        </md-radio-button>
-                                                    </md-radio-group>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="grid_1"></div>
-                                        <div class="grid_5" ng-hide="true">
-                                            <input c-text-box type="input" filter="" class="k-textbox"
-                                                ng-model="data.KetBerat" />
-                                        </div>
-                                    </div>
-                                    <div class="grid_12">
-                                        <div class="grid_6">
-                                            <div class="grid_8" style="padding-top:10px">
-                                                <!-- <label c-label item="item" c-label-text="Alergi"></label> -->
-                                                <label c-label>8. Kontrak Indikasi</label>
-                                            </div>
-                                            <!-- <div class="grid_" style="padding-top:10px" align="right"></div>                     -->
-                                            <div ng-repeat="stat in listDataDokter| orderBy:'id'">
-                                                <div class="grid_2">
-                                                    <md-radio-group ng-model="data.DataDokter">
-                                                        <md-radio-button value="{{stat.id}}" class="md-primary">
-                                                            {{stat.name}}
-                                                        </md-radio-button>
-                                                    </md-radio-group>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="grid_1"></div>
-                                        <div class="grid_5" ng-hide="true">
-                                            <input c-text-box type="input" filter="" class="k-textbox"
-                                                ng-model="data.KetDokter" />
-                                        </div>
-                                    </div>
-                                    <div class="grid_12">
-                                        <div class="grid_6">
-                                            <div class="grid_8" style="padding-top:10px">
-                                                <!-- <label c-label item="item" c-label-text="Alergi"></label> -->
-                                                <label c-label>9. Obat Sesuai</label>
-                                            </div>
-                                            <!-- <div class="grid_" style="padding-top:10px" align="right"></div>                     -->
-                                            <div ng-repeat="stat in listDataRuang| orderBy:'id'">
-                                                <div class="grid_2">
-                                                    <md-radio-group ng-model="data.DataRuang">
-                                                        <md-radio-button value="{{stat.id}}" class="md-primary">
-                                                            {{stat.name}}
-                                                        </md-radio-button>
-                                                    </md-radio-group>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="grid_1"></div>
-                                        <div class="grid_5" ng-hide="true">
-                                            <input c-text-box type="input" filter="" class="k-textbox"
-                                                ng-model="data.KetRuang" />
-                                        </div>
-                                    </div>
-                                    <div class="grid_12">
-                                        <div class="grid_6">
-                                            <div class="grid_8" style="padding-top:10px">
-                                                <!-- <label c-label item="item" c-label-text="Alergi"></label> -->
-                                                <label c-label>10. Dosis</label>
-                                            </div>
-                                            <!-- <div class="grid_" style="padding-top:10px" align="right"></div>                     -->
-                                            <div ng-repeat="stat in listDataStatus| orderBy:'id'">
-                                                <div class="grid_2">
-                                                    <md-radio-group ng-model="data.DataStatus">
-                                                        <md-radio-button value="{{stat.id}}" class="md-primary">
-                                                            {{stat.name}}
-                                                        </md-radio-button>
-                                                    </md-radio-group>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="grid_1"></div>
-                                        <div class="grid_5" ng-hide="true">
-                                            <input c-text-box type="input" filter="" class="k-textbox"
-                                                ng-model="data.KetStatus" />
-                                        </div>
-                                    </div>
-                                    <div class="grid_12">
-                                        <div class="grid_6">
-                                            <div class="grid_8" style="padding-top:10px">
-                                                <!-- <label c-label item="item" c-label-text="Alergi"></label> -->
-                                                <label c-label>11. Jumlah</label>
-                                            </div>
-                                            <!-- <div class="grid_" style="padding-top:10px" align="right"></div>                     -->
-                                            <div ng-repeat="stat in listDataObat| orderBy:'id'">
-                                                <div class="grid_2">
-                                                    <md-radio-group ng-model="data.Obat">
-                                                        <md-radio-button value="{{stat.id}}" class="md-primary">
-                                                            {{stat.name}}
-                                                        </md-radio-button>
-                                                    </md-radio-group>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="grid_1"></div>
-                                        <div class="grid_5" ng-hide="true">
-                                            <input c-text-box type="input" filter="" class="k-textbox"
-                                                ng-model="data.KetObat" />
-                                        </div>
-                                    </div>
-                                    <div class="grid_12">
-                                        <div class="grid_6">
-                                            <div class="grid_8" style="padding-top:10px">
-                                                <!-- <label c-label item="item" c-label-text="Alergi"></label> -->
-                                                <label c-label>12. Frekuensi</label>
-                                            </div>
-                                            <!-- <div class="grid_" style="padding-top:10px" align="right"></div>                     -->
-                                            <div ng-repeat="stat in listDataKekuatan| orderBy:'id'">
-                                                <div class="grid_2">
-                                                    <md-radio-group ng-model="data.DataKekuatan">
-                                                        <md-radio-button value="{{stat.id}}" class="md-primary">
-                                                            {{stat.name}}
-                                                        </md-radio-button>
-                                                    </md-radio-group>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="grid_1"></div>
-                                        <div class="grid_5" ng-hide="true">
-                                            <input c-text-box type="input" filter="" class="k-textbox"
-                                                ng-model="data.KetKekuatan" />
-                                        </div>
-                                    </div>
-                                    <div class="grid_12">
-                                        <div class="grid_6">
-                                            <div class="grid_8" style="padding-top:10px">
-                                                <!-- <label c-label item="item" c-label-text="Alergi"></label> -->
-                                                <label c-label>13. Rute</label>
-                                            </div>
-                                            <!-- <div class="grid_" style="padding-top:10px" align="right"></div>                     -->
-                                            <div ng-repeat="stat in listDataJumlah| orderBy:'id'">
-                                                <div class="grid_2">
-                                                    <md-radio-group ng-model="data.DataJumlah">
-                                                        <md-radio-button value="{{stat.id}}" class="md-primary">
-                                                            {{stat.name}}
-                                                        </md-radio-button>
-                                                    </md-radio-group>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="grid_1"></div>
-                                        <div class="grid_5" ng-hide="true">
-                                            <input c-text-box type="input" filter="" class="k-textbox"
-                                                ng-model="data.KetJumlah" />
                                         </div>
                                     </div>
                                 </div>
