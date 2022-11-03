@@ -9213,6 +9213,9 @@ public function suratBuktiPengembalian(Request $request)
                     $satuansiang = '';
                     $aturansiang='';
                     $rutesiang='';
+                    $detailobatmalam = [];                
+                    $detailobatpagi = [];                
+                    $detailobatsiang = [];    
                     foreach ($datamalam as $dm) {
                             $obatmalam = $dm->namaproduk;
                             $aturanmalam = $dm->aturan;
