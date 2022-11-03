@@ -225,78 +225,91 @@ define(['initialize'], function (initialize) {
                         "field": "jumlahjanuari",
                         "title": "JANUARI",
                         "width": "100px",
+                        "template": "<span class='style-right'>{{formatRupiah('#: jumlahjanuari #', 'Rp.')}}</span>",
                     },
                     {
                         
                         "field": "jumlahfebruari",
                         "title": "FEBRUARI",
                         "width": "100px",
+                        "template": "<span class='style-right'>{{formatRupiah('#: jumlahfebruari #', 'Rp.')}}</span>",
                     },
                     {
                         
                         "field": "jumlahmaret",
                         "title": "MARET",
                         "width": "100px",
+                        "template": "<span class='style-right'>{{formatRupiah('#: jumlahmaret #', 'Rp.')}}</span>",
                     },
                     {
                         
                         "field": "jumlahapril",
                         "title": "APRIL",
                         "width": "100px",
+                        "template": "<span class='style-right'>{{formatRupiah('#: jumlahapril #', 'Rp.')}}</span>",
                     },
                     {
                         
                         "field": "jumlahmei",
                         "title": "MEI",
                         "width": "100px",
+                        "template": "<span class='style-right'>{{formatRupiah('#: jumlahmei #', 'Rp.')}}</span>",
                     },
                     {
                         
                         "field": "jumlahjuni",
                         "title": "JUNI",
                         "width": "100px",
+                        "template": "<span class='style-right'>{{formatRupiah('#: jumlahjuni #', 'Rp.')}}</span>",
                     },
                     {
                         
                         "field": "jumlahjuli",
                         "title": "JULI",
                         "width": "100px",
+                        "template": "<span class='style-right'>{{formatRupiah('#: jumlahjuli #', 'Rp.')}}</span>",
                     },
                     {
                         
                         "field": "jumlahagustus",
                         "title": "AGUSTUS",
                         "width": "100px",
+                        "template": "<span class='style-right'>{{formatRupiah('#: jumlahagustus #', 'Rp.')}}</span>",
                     },
                     {
                         
                         "field": "jumlahseptember",
                         "title": "SEPTEMBER",
                         "width": "100px",
+                        "template": "<span class='style-right'>{{formatRupiah('#: jumlahseptember #', 'Rp.')}}</span>",
                     },
                     {
                         
                         "field": "jumlahoktober",
                         "title": "OKTOBER",
                         "width": "100px",
+                        "template": "<span class='style-right'>{{formatRupiah('#: jumlahoktober #', 'Rp.')}}</span>",
                     },
                     {
                         
                         "field": "jumlahnovember",
                         "title": "NOVEMBER",
                         "width": "100px",
+                        "template": "<span class='style-right'>{{formatRupiah('#: jumlahnovember #', 'Rp.')}}</span>",
                     },
                     {
                         
                         "field": "jumlahdesember",
                         "title": "DESEMBER",
                         "width": "100px",
+                        "template": "<span class='style-right'>{{formatRupiah('#: jumlahdesember #', 'Rp.')}}</span>",
                     },
                     {
                         
                         "field": "jumlahrealisasi",
                         "title": "REALISASI",
                         "width": "100px",
+                        "template": "<span class='style-right'>{{formatRupiah('#: jumlahrealisasi #', 'Rp.')}}</span>",
                     },
                 ]
             };

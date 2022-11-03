@@ -880,6 +880,66 @@
     ]
   },
   {
+    "name": "ChartOfAccount",
+    "url": "/Q2hhcnRPZkFjY291bnQ=",
+    "templateurl": "module/Akuntansi/ChartOfAccount.html",
+    "controller": "ChartOfAccountCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "MapCOAKeRekening",
+    "url": "/TWFwcGluZ0NPQWtlTWF0YUFuZ2dhcmFu",
+    "templateurl": "module/Akuntansi/MapCOAKeRekening.html",
+    "controller": "MapCOAKeRekeningCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "LaporanAkuntansi",
+    "url": "/TGFwb3JhbkFrdW50YW5zaQ==",
+    "templateurl": "module/Akuntansi/LaporanAkuntansi.html",
+    "controller": "LaporanAkuntansiCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
     "name": "DaftarPiutangPasien",
     "url": "/RGFmdGFyUGl1dGFuZ1Bhc2llbg==",
     "templateurl": "module/Piutang/DaftarPiutangPasien.html",
@@ -1940,10 +2000,50 @@
     ]
   },
   {
+    "name": "STSBulananKlaim",
+    "url": "/U1RTQnVsYW5hbktsYWlt",
+    "templateurl": "module/BendaharaPenerimaan/STSBulananKlaim.html",
+    "controller": "STSBulananKlaimCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
     "name": "RealisasiPerTriwulan",
     "url": "/UmVhbGlzYXNpUGVuZXJpbWFhblBlclRyaXd1bGFu",
     "templateurl": "module/BendaharaPenerimaan/RealisasiPerTriwulan.html",
     "controller": "RealisasiPerTriwulanCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "RekapitulasiPendapatan",
+    "url": "/UmVrYXBpdHVsYXNpUGVuZGFwYXRhbg==",
+    "templateurl": "module/BendaharaPenerimaan/RekapitulasiPendapatan.html",
+    "controller": "RekapitulasiPendapatanCtrl",
     "deps": [
       {
         "module": "Services",
@@ -2022,6 +2122,26 @@
     "url": "/RGFmdGFyUGl1dGFuZ0JQSlM=",
     "templateurl": "module/Piutang/DaftarPiutangBPJS.html",
     "controller": "DaftarPiutangBPJSCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "DaftarPiutangSelainBPJS",
+    "url": "/RGFmdGFyUGl1dGFuZ1NlbGFpbkJQSlNkYW5VbXVt",
+    "templateurl": "module/Piutang/DaftarPiutangSelainBPJS.html",
+    "controller": "DaftarPiutangSelainBPJSCtrl",
     "deps": [
       {
         "module": "Services",

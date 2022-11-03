@@ -21,7 +21,7 @@ use App\Transaksi\PostingJurnalTransaksiD;
 use App\Transaksi\PostingJurnalTransaksi;
 use App\Transaksi\PostingJurnal;
 use App\Transaksi\PostingJurnalD;
-
+use App\Transaksi\MapCOA;
 use App\Transaksi\Sal;
 use App\Transaksi\Ekuitas;
 use Carbon\Carbon;
@@ -1330,26 +1330,200 @@ class AkuntansiController extends ApiController{
                 'coa.objectkategoryaccountfk','ka.kategoryaccount',
                 'coa.objectstatusaccountfk','sa.statusaccount',
                 'coa.objectstrukturaccountfk','sta.strukturaccount',
-                'coa.saldonormaladd','coa.saldonormalmin','coa.statusenabled')
+                'coa.saldonormaladd','coa.saldonormalmin','coa.statusenabled', 'coa1.id as idhead',
+                'coa1.namaaccount as namahead')
             ->leftJOIN('jenisaccount_m as ja','ja.id','=','coa.objectjenisaccountfk')
             ->leftJOIN('kategoryaccount_m as ka','ka.id','=','coa.objectkategoryaccountfk')
             ->leftJOIN('statusaccount_m as sa','sa.id','=','coa.objectstatusaccountfk')
             ->leftJOIN('strukturaccount_m as sta','sta.id','=','coa.objectstrukturaccountfk')
-            ->JOIN('suratkeputusan_m as sk','sk.id','=','coa.suratkeputusanfk')
+            ->leftJOIN('suratkeputusan_m as sk','sk.id','=','coa.suratkeputusanfk')
+            ->leftJOIN('chartofaccount_m as coa1','coa1.id','=','coa.objectaccountheadfk')
             ->where('coa.kdprofile',$idProfile)
-            ->where('sk.statusenabled','=',1)
+            ->where('coa.statusenabled',true)
             ->orderBy('coa.noaccount');
 
 
         if(isset($request['noaccount']) && $request['noaccount']!="" && $request['noaccount']!="undefined"){
-            $data = $data->where('noaccount','ilike',''. $request['noaccount'].'%');
+            $data = $data->where('coa.noaccount','ilike',''. $request['noaccount'].'%');
         }
         if(isset($request['namaaccount']) && $request['namaaccount']!="" && $request['namaaccount']!="undefined"){
-            $data = $data->where('namaaccount','ilike','%'. $request['namaaccount'].'%');
+            $data = $data->where('coa.namaaccount','ilike','%'. $request['namaaccount'].'%');
         }
         $data = $data->take(100);
         $data = $data->get();
         return $this->respond($data);
+    }
+
+    public function getMapCoaToRba(Request $request) {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        $qno = '';
+        if(isset($request['noaccount']) && $request['noaccount'] != "" && $request['noaccount'] != "undefined"){
+            $qno = "and coa.noaccount ilike '%".$request['noaccount']."%'";
+        }
+
+        $qnama = '';
+        if(isset($request['namaaccount']) && $request['namaaccount'] != "" && $request['namaaccount'] != "undefined"){
+            $qnama = "and coa.namaaccount ilike '%".$request['namaaccount']."%'";
+        }
+
+        $data = $data = DB::select(DB::raw("select coa.id idcoa, coa.namaaccount namaakun, ma.id idmataanggaran,
+        ma.namamataanggaran, mcr.norec, coa.noaccount, ma.kodemataanggaran
+        from chartofaccount_m coa
+        inner join mapcoatorekening_t mcr on coa.id = mcr.objectcoafk
+        and mcr.statusenabled = true
+        and mcr.kdprofile = 30
+        inner join mataanggaran_m ma on ma.id = mcr.objectmataanggaranfk
+        and ma.statusenabled = true
+        and ma.kdprofile = 30
+        where coa.statusenabled = true
+        and coa.kdprofile = 30
+        and coa.objectstrukturaccountfk = 6
+        $qno
+        $qnama"));
+
+        return $this->respond($data);
+    }
+
+    public function getHeadCoa(Request $request) {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        $qdiv = '';
+        if(isset($request['div']) && $request['div'] != "" && $request['div'] != "undefined"){
+            if($request['div'] == 2){
+                $qdiv = 'and objectstrukturaccountfk = 1';
+            } else if($request['div'] == 3){
+                $qdiv = 'and objectstrukturaccountfk = 2';
+            } else if($request['div'] == 4){
+                $qdiv = 'and objectstrukturaccountfk = 3';
+            } else if($request['div'] == 5){
+                $qdiv = 'and objectstrukturaccountfk = 4';
+            } else if($request['div'] == 6){
+                $qdiv = 'and objectstrukturaccountfk = 5';
+            }
+        }
+
+        $data = DB::select(DB::raw("select * from chartofaccount_m
+        where statusenabled = true
+        and kdprofile = 30
+        $qdiv"));
+
+        return $this->respond($data);
+    }
+
+    public function getCoaBelumMapping(Request $request) {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        $qma = '';
+        if(isset($request['key']) && $request['key'] != "" && $request['key'] != "undefined" && $request['key'] == "belum"){
+            $qma = 'and mcr.norec is null';
+        } else if(isset($request['key']) && $request['key'] != "" && $request['key'] != "undefined" && $request['key'] == "sudah"){
+            $qma = 'and mcr.norec is not null';
+        }
+
+        $qmata = '';
+        if(isset($request['idmataanggaran']) && $request['idmataanggaran'] != "" && $request['idmataanggaran'] != "undefined"){
+            $qmata = 'and ma.id = '.$request['idmataanggaran'];
+        }
+
+        $data = DB::select(DB::raw("select coa.id idcoa, coa.namaaccount namaakun, ma.id idmataanggaran,
+        ma.namamataanggaran, mcr.norec
+        from chartofaccount_m coa
+        left join mapcoatorekening_t mcr on coa.id = mcr.objectcoafk
+        and mcr.statusenabled = true
+        and mcr.kdprofile = 30
+        left join mataanggaran_m ma on ma.id = mcr.objectmataanggaranfk
+        and ma.statusenabled = true
+        and ma.kdprofile = 30
+        where coa.statusenabled = true
+        and coa.kdprofile = 30
+        and coa.objectstrukturaccountfk = 6
+        $qma
+        $qmata"));
+
+        return $this->respond($data);
+    }
+
+    public function copyCOA(Request $request) {
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        try{
+
+            $MA = new MAPCOA();
+            $MA->norec =  substr(\Webpatser\Uuid\Uuid::generate(), 0, 32);
+            $MA->kdprofile = $idProfile;
+            $MA->statusenabled = true;
+            $MA->objectcoafk = $request['coa'];
+            $MA->objectmataanggaranfk = $request['idanggaran'];
+            $MA->save();
+
+           $transStatus = 'true';
+       } catch (\Exception $e) {
+            $transStatus = 'false';
+       }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan Sukses";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'result' => $MA,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'line'=> $e->getLine(),
+                'message'=> $e->getMessage(),
+                'as' => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function copyCOADelete(Request $request) {
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        try{
+            $MA = MAPCOA::where('objectcoafk', '=', $request['coa'])->where('statusenabled', '=', true)->first();           
+            $MA->statusenabled = false;
+            $MA->save();
+
+           $transStatus = 'true';
+       } catch (\Exception $e) {
+            $transStatus = 'false';
+       }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Hapus Sukses";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'result' => $MA,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Hapus Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'line'=> $e->getLine(),
+                'message'=> $e->getMessage(),
+                'as' => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
 
     public function SaveDataChartOfAccount(Request $request) {
@@ -1373,16 +1547,12 @@ class AkuntansiController extends ApiController{
 
                 $newCOA =  ChartOfAccount::where('id',$request['id'])->where('kdprofile', $idProfile)->first();
             }
-            $newCOA->namaexternal = '2018-03-01';
             $newCOA->statusenabled = $request['statusenabled'];
-            $newCOA->objectjenisaccountfk = $request['objectjenisaccountfk'];
-            $newCOA->objectkategoryaccountfk = $request['objectkategoryaccountfk'];
-            $newCOA->objectstatusaccountfk = $request['objectstatusaccountfk'];
             $newCOA->objectstrukturaccountfk = $request['objectstrukturaccountfk'];
             $newCOA->noaccount = $request['kdaccount'];
             $newCOA->namaaccount = $request['namaaccount'];
-            $newCOA->saldonormaladd = $request['saldonormaladd'];
-            $newCOA->saldonormalmin = $request['saldonormalmin'];
+            $newCOA->objectaccountheadfk = $request['objectaccountheadfk'];
+            $newCOA->objectjenisaccountfk = $request['objectjenisaccountfk'];
             $newCOA->save();
 
             $norecHead2 = $newCOA->norec;

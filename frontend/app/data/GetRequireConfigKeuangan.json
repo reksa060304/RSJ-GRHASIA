@@ -177,6 +177,18 @@
             "urlDep": "module/Akuntansi/MasterChartOfAccountCtrl"
         },
         {
+            "nameDep": "ChartOfAccountCtrl",
+            "urlDep": "module/Akuntansi/ChartOfAccountCtrl"
+        },
+        {
+            "nameDep": "MapCOAKeRekeningCtrl",
+            "urlDep": "module/Akuntansi/MapCOAKeRekeningCtrl"
+        },
+        {
+            "nameDep": "LaporanAkuntansiCtrl",
+            "urlDep": "module/Akuntansi/LaporanAkuntansiCtrl"
+        },
+        {
             "nameDep": "DaftarPiutangPasienCtrl",
             "urlDep": "module/Piutang/DaftarPiutangPasienCtrl"
         },
@@ -393,8 +405,18 @@
             "urlDep": "module/BendaharaPenerimaan/STSBulananCtrl"
         },
         {
+            "nameDep": "STSBulananKlaimCtrl",
+            "urlDep": "module/BendaharaPenerimaan/STSBulananKlaimCtrl"
+        },
+        {
+
             "nameDep": "RealisasiPerTriwulanCtrl",
             "urlDep": "module/BendaharaPenerimaan/RealisasiPerTriwulanCtrl"
+        },
+        {
+
+            "nameDep": "RekapitulasiPendapatanCtrl",
+            "urlDep": "module/BendaharaPenerimaan/RekapitulasiPendapatanCtrl"
         },
         {
             "nameDep": "RemunTagihanDiklatCtrl",
@@ -411,6 +433,10 @@
         {
             "nameDep": "DaftarPiutangBPJSCtrl",
             "urlDep": "module/Piutang/DaftarPiutangBPJSCtrl"
+        },
+        {
+            "nameDep": "DaftarPiutangSelainBPJSCtrl",
+            "urlDep": "module/Piutang/DaftarPiutangSelainBPJSCtrl"
         }
     ]
 }

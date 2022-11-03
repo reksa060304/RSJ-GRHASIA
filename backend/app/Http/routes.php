@@ -55,6 +55,9 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('akuntansi/get-data-combo-master', 'Akuntansi\AkuntansiController@getDataComboMasterAkun');
             Route::get('akuntansi/get-data-piutang-pasien', 'Akuntansi\AkuntansiController@getDataPiutangPasien');
             Route::get('akuntansi/get-data-daftar-master-coa', 'Akuntansi\AkuntansiController@getDaftarCoa');
+            Route::get('akuntansi/get-map-coa-to-rba', 'Akuntansi\AkuntansiController@getMapCoaToRba');
+            Route::get('akuntansi/get-head-coa', 'Akuntansi\AkuntansiController@getHeadCoa');
+            Route::get('akuntansi/get-coa-belum-mapping', 'Akuntansi\AkuntansiController@getCoaBelumMapping');
             Route::get('akuntansi/get-data-detail-jurnal', 'Akuntansi\AkuntansiController@getDetailJurnalRev2018'); //done
             Route::get('akuntansi/get-data-detail-jurnal-posting', 'Akuntansi\AkuntansiController@getDetailJurnalPosting'); //done
             Route::get('akuntansi/get-data-combo-coa-part', 'Akuntansi\AkuntansiController@getCoaSaeutik');
@@ -63,6 +66,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             /*END GET*/
 
             /*POST*/
+            Route::post('akuntansi/copy-coa','Akuntansi\AkuntansiController@copyCOA');
+            Route::post('akuntansi/delete-copy-coa','Akuntansi\AkuntansiController@copyCOADelete');
             Route::get('akuntansi/get-data-ekuitas', 'Akuntansi\AkuntansiController@getDataEkuitas');
             Route::post('akuntansi/save-data-ekuitas','Akuntansi\AkuntansiController@SaveDataEkuitas');
             Route::post('akuntansi/save-data-saldo-awal', 'Akuntansi\AkuntansiController@SaveSaldoAwal');
@@ -139,6 +144,9 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('bendaharapenerimaan/get-sts', 'BendaharaPenerimaan\BendaharaPenerimaanController@getSTS');
           Route::get('bendaharapenerimaan/get-penjagaan-batal-setor', 'BendaharaPenerimaan\BendaharaPenerimaanController@getPenjagaanBatalSetor');
           Route::get('bendaharapenerimaan/get-sts-bulanan', 'BendaharaPenerimaan\BendaharaPenerimaanController@getSTSBulanan');
+          Route::get('bendaharapenerimaan/get-sts-per-triwulan', 'BendaharaPenerimaan\BendaharaPenerimaanController@getSTSTriwulan');
+          Route::get('bendaharapenerimaan/get-rekapitulasi-pendapatan', 'BendaharaPenerimaan\BendaharaPenerimaanController@getRekapPendapatan');
+          Route::get('bendaharapenerimaan/get-sts-bulanan-klaim', 'BendaharaPenerimaan\BendaharaPenerimaanController@getSTSBulananKlaim');
           Route::get('bendaharapenerimaan/get-sts-pertanggal', 'BendaharaPenerimaan\BendaharaPenerimaanController@getSTSPertanggal');
           Route::get('bendaharapenerimaan/get-deatil-sts-pertanggal', 'BendaharaPenerimaan\BendaharaPenerimaanController@getDetailSTSPertanggal');
           Route::get('bendaharapenerimaan/get-sts-popup', 'BendaharaPenerimaan\BendaharaPenerimaanController@getSTSPopup');
@@ -1204,6 +1212,9 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('report/get-cetak-kas','Report\ReportController@CetakKas');
           Route::get('report/get-cetak-persandingan-angkas-penyerapan','Report\ReportController@CetakAngkasPenyerapan');
           Route::get('report/get-cetak-pertanggungjawaban-bendahara','Report\ReportController@CetakPertanggungjawaban');
+          Route::get('report/get-cetak-lo','Report\ReportController@CetakLO');
+          Route::get('report/get-cetak-lra','Report\ReportController@CetakLRA');
+          Route::get('report/get-cetak-neraca','Report\ReportController@CetakNeraca');
           Route::get('report/get-cetak-bku','Report\ReportController@CetakBKU');
           Route::get('report/get-cetak-bku-real','Report\ReportController@CetakBKUReal');
           Route::get('report/get-register-penutupan-kas','Report\ReportController@getRegisterPenutupanKas');
@@ -1492,6 +1503,9 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('perencanaan/get-kel-keenam-part','Perencanaan\PerencanaanController@getKelAnggaranKeenam');
 
             Route::post('perencanaan/save-pihak-ketiga','Perencanaan\PerencanaanController@savePihakKetiga');
+            Route::post('perencanaan/save-lock-entry-spj','Perencanaan\PerencanaanController@saveLockSPJ');
+            Route::post('perencanaan/save-lock-entry-rba','Perencanaan\PerencanaanController@saveLockRBA');
+            Route::post('perencanaan/save-lock-entry-spj-rekening','Perencanaan\PerencanaanController@saveLockSPJRekening');
             Route::post('perencanaan/save-child','Perencanaan\PerencanaanController@saveChild');
             Route::post('perencanaan/save-setting-tahap','Perencanaan\PerencanaanController@saveSettingTahap');
             Route::post('perencanaan/save-permen-kelima','Perencanaan\PerencanaanController@savePermenKelima');
@@ -1569,6 +1583,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('perencanaan/get-pengembalian-bku', 'Perencanaan\PerencanaanController@getPengembalianBKU');
             Route::get('perencanaan/get-one-panjar', 'Perencanaan\PerencanaanController@getOnePanjar');
             Route::get('perencanaan/get-kodemataanggaran', 'Perencanaan\PerencanaanController@getKodemataanggaran');
+            Route::get('perencanaan/get-lock-entry-spj', 'Perencanaan\PerencanaanController@getLockSPJ');
+            Route::get('perencanaan/get-lock-entry-spj-perrekening', 'Perencanaan\PerencanaanController@getLockSPJPerRekening');
             Route::get('perencanaan/get-total-keterangan', 'Perencanaan\PerencanaanController@getTotalKeterangan');
             Route::get('perencanaan/get-total-belanja', 'Perencanaan\PerencanaanController@getTotalBelanja');
             Route::get('perencanaan/get-total-realisasi-detail', 'Perencanaan\PerencanaanController@getTotalRealisasiDetail');
@@ -2576,6 +2592,9 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
               Route::post('sysadmin/logging/save-log-input-tindakan', 'SysAdmin\LoggingController@saveLoggingInputTindakan');
               Route::post('sysadmin/logging/save-log-batal-sts', 'SysAdmin\LoggingController@saveLoggingBatalSts');
               Route::post('sysadmin/logging/save-log-simpan-setting-anggaran', 'SysAdmin\LoggingController@saveLoggingSimpanSettingAnggaran');
+              Route::post('sysadmin/logging/save-log-lock-spj', 'SysAdmin\LoggingController@saveLoggingLockSPJ');
+              Route::post('sysadmin/logging/save-log-lock', 'SysAdmin\LoggingController@saveLoggingLock');
+              Route::post('sysadmin/logging/save-log-lock-rekening', 'SysAdmin\LoggingController@saveLoggingLockRekening');
               Route::post('sysadmin/logging/save-log-hapus-tindakan', 'SysAdmin\LoggingController@saveLogHapusTindakan');
               Route::get('sysadmin/logging/save-log-konsul', 'SysAdmin\LoggingController@saveLoggingKonsulRuangan');
               Route::get('sysadmin/logging/save-log-input-resep', 'SysAdmin\LoggingController@saveLogInputResep');
@@ -2874,6 +2893,9 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::post('tatarekening/save-dana-ffs', 'TataRekening\TagihanController@saveDanaFFS');
           Route::post('tatarekening/save-dana-p3', 'TataRekening\TagihanController@saveDanaP3');
           Route::post('tatarekening/save-poin-remun', 'TataRekening\TagihanController@saveImportRemun');
+          Route::post('tatarekening/save-piutang-bpjs', 'TataRekening\TagihanController@savePiutangBPJS');
+          Route::post('tatarekening/save-piutang-bpjs-manual', 'TataRekening\TagihanController@savePiutangBPJSManual');
+          Route::post('tatarekening/save-posting-ipwl', 'TataRekening\TagihanController@savePostingIPWL');
           Route::get('tatarekening/get-detail_apd', 'TataRekening\TagihanController@getDetailpasien');
           Route::get('tatarekening/get-sisa-dana-p3', 'TataRekening\TagihanController@getSisaDanaP3');
           Route::get('tatarekening/get-daftar-dana-pagu', 'TataRekening\TagihanController@getDanaPagu');
@@ -2933,6 +2955,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::post('tatarekening/save-update-rekanan_pd', 'TataRekening\TagihanController@simpanUpdateRekananPD');
           Route::get('tatarekening/daftar-piutang-pasien', 'TataRekening\TagihanController@daftarPiutangPasien');
           Route::get('tatarekening/daftar-piutang-bpjs', 'TataRekening\TagihanController@daftarPiutangBPJS');
+          Route::get('tatarekening/daftar-piutang-bpjs-manual', 'TataRekening\TagihanController@daftarPiutangBPJSManual');
+          Route::get('tatarekening/daftar-piutang-selain-bpjs', 'TataRekening\TagihanController@daftarPiutangSelainBPJS');
           Route::get('tatarekening/daftar-piutang-pasiencek', 'TataRekening\TagihanController@daftarPiutangPasiencek');
           Route::post('tatarekening/verify-piutang-pasien', 'TataRekening\TagihanController@verifyPiutangPasien');
           Route::post('tatarekening/cancel-verify-piutang-pasien', 'TataRekening\TagihanController@cancelVerifyPiutangPasien');
@@ -3035,6 +3059,10 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         Route::get('report/cetak-catatan-klinik','Report\ReportController@cetakCatatanKlinik');
         Route::get('report/cetak-resume-medis2','Report\ReportController@cetakResume2');
         Route::get('report/diklat-kwitansi', 'Report\ReportController@cetakKwitansiDiklat');
+        Route::get('report/cetak-antrian','Report\ReportController@cetakAntrianKiosk');
+        Route::get('report/cetak-bukti-pendaftaran','Report\ReportController@cetakBuktiPendaftaran');
+        Route::get('report/cetak-sep','Report\ReportController@cetakSEP');
+        Route::get('report/get-cetak-bukti-pendaftaran','Report\ReportController@cetakBuktiPendaftaranGet');
 
         Route::get('viewer/get-list-antrian','Antrian\AntrianController@getListAntrian');
         Route::get('viewer/update-antrian','Antrian\AntrianController@updatePanggil');

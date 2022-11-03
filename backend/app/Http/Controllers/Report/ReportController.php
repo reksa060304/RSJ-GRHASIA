@@ -1256,7 +1256,7 @@ class ReportController extends ApiController{
         $tglAyeuna = date('Y-m-d H:i:s');
         $profile = collect(DB::select
             ("
-                select * from profile_m where id = $kdProfile limit 1
+                select * from profile_m where statusenabled=true limit 1
             "))->first();
 
         $antrian = DB::table('antrianpasienregistrasi_t AS apr')
@@ -1312,7 +1312,7 @@ class ReportController extends ApiController{
         $kdProfile = (int)$request['kdprofile'];
         $profile = collect(DB::select
         ("
-                select * from profile_m where id = $kdProfile limit 1
+                select * from profile_m where statusenabled=true limit 1
             "))->first();
 
         $registrasi = DB::table('pasiendaftar_t AS pd')
@@ -1375,7 +1375,7 @@ class ReportController extends ApiController{
 
         $profile = collect(DB::select
         ("
-                select * from profile_m where id = $kdProfile limit 1
+                select * from profile_m where statusenabled=true limit 1
             "))->first();
 
         $registrasi = collect(DB::select("
@@ -1427,6 +1427,9 @@ class ReportController extends ApiController{
             compact('dataReport', 'pageWidth','profile'));
 //        return view('','$result');
     }
+    
+
+  
 
     public function cetakCPPT(Request $request)
     {
@@ -3591,7 +3594,7 @@ class ReportController extends ApiController{
                                     inner join strukrealisasi_t sr on ma.id=sr.objectmataanggaranfk
                                     where sr.kdprofile = 30 and sr.statusenabled = true
                                     and sr.status = 'Sudah Diverifikasi'
-                                    and extract(year from sr.tglrealisasi) = '2022'
+                                    and extract(year from sr.tglrealisasi) = '$tahun'
                                     and TO_CHAR(sr.tglrealisasi, 'YYYY-MM') in(
                                         SELECT TO_CHAR(months, 'YYYY-MM') AS dateMonth
                                         FROM generate_series(
@@ -3613,6 +3616,990 @@ class ReportController extends ApiController{
         $pageWidth = 950;
         //return $this->respond($result);
         return view('report.keuangan.pertanggungjawaban',compact('data', 'pageWidth', 'tahun', 'periode'));
+    }
+
+    public function CetakLO(Request $request){
+        $tahun = $request['tahun'];
+
+        $lalu = DB::select(DB::raw("SELECT extract('year' from(date '$tahun-12-31' - interval '1 year')) as tahun;"));
+
+        $tahunlalu = $lalu[0]->tahun;
+
+        $data = DB::select(DB::raw("select id, noaccount, namaaccount, sum(subtotalbulanlalu) subtotalbulanlalu, sum(subtotalbulanini) subtotalbulanini,
+        case 
+            when sum(subtotalbulanini) - sum(subtotalbulanlalu) >= 0 then sum(subtotalbulanini) - sum(subtotalbulanlalu)
+            when sum(subtotalbulanini) - sum(subtotalbulanlalu) < 0 then (sum(subtotalbulanini) - sum(subtotalbulanlalu))*(-1)
+        end as selisih,
+        case 
+            when sum(subtotalbulanini) != 0 and sum(subtotalbulanlalu) != 0 and sum(subtotalbulanini) - sum(subtotalbulanlalu) >= 0 then ((sum(subtotalbulanini) - sum(subtotalbulanlalu))/sum(subtotalbulanlalu))*100
+            when sum(subtotalbulanini) != 0 and sum(subtotalbulanlalu) != 0 and sum(subtotalbulanini) - sum(subtotalbulanlalu) < 0 then (((sum(subtotalbulanini) - sum(subtotalbulanlalu))*(-1))/sum(subtotalbulanlalu))*100
+            when sum(subtotalbulanini) != 0 or sum(subtotalbulanlalu) != 0 then 0
+        end as persentase
+        from(
+            select id, noaccount, namaaccount, 
+            case when tahun = '$tahunlalu' then sum(subtotal) else 0 end as subtotalbulanlalu,
+            case when tahun = '$tahun' then sum(subtotal) else 0 end as subtotalbulanini
+            from(
+                select coa1.id, coa1.noaccount, coa1.namaaccount,
+                ma.kodemataanggaran, ma.namamataanggaran,
+                sum(kb.subtotal) subtotal, ka.tahun
+                    from chartofaccount_m coa
+                inner join mapcoatorekening_t mcr on coa.id = mcr.objectcoafk
+                inner join mataanggaran_m ma on ma.id = mcr.objectmataanggaranfk
+                inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
+                INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
+                INNER JOIN chartofaccount_m coa5 on coa5.id=coa.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa4 on coa4.id=coa5.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa3 on coa3.id=coa4.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa2 on coa2.id=coa3.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa1 on coa1.id=coa2.objectaccountheadfk
+                where coa.statusenabled = true
+                and coa.kdprofile = 30
+                and coa1.statusenabled = true
+                and coa1.kdprofile = 30
+                and coa2.statusenabled = true
+                and coa2.kdprofile = 30
+                and coa3.statusenabled = true
+                and coa3.kdprofile = 30
+                and coa4.statusenabled = true
+                and coa4.kdprofile = 30
+                and coa5.statusenabled = true
+                and coa5.kdprofile = 30
+                and mcr.statusenabled = true
+                and mcr.kdprofile = 30
+                and ma.statusenabled = true
+                and ma.kdprofile = 30
+                and kb.statusenabled = true
+                and kb.kdprofile = 30
+                and ka.statusenabled = true
+                and ka.kdprofile = 30
+                and ka.tahun in ('$tahunlalu','$tahun')
+                and coa.objectjenisaccountfk = 1
+                group by coa1.id, coa1.noaccount, coa1.namaaccount,
+                ma.kodemataanggaran, ma.namamataanggaran, ka.tahun
+        
+                union all
+        
+                select coa2.id, coa1.noaccount || '.' || coa2.noaccount as noaccount, coa2.namaaccount,
+                ma.kodemataanggaran, ma.namamataanggaran,
+                sum(kb.subtotal) subtotal, ka.tahun
+                    from chartofaccount_m coa
+                inner join mapcoatorekening_t mcr on coa.id = mcr.objectcoafk
+                inner join mataanggaran_m ma on ma.id = mcr.objectmataanggaranfk
+                inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
+                INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
+                INNER JOIN chartofaccount_m coa5 on coa5.id=coa.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa4 on coa4.id=coa5.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa3 on coa3.id=coa4.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa2 on coa2.id=coa3.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa1 on coa1.id=coa2.objectaccountheadfk
+                where coa.statusenabled = true
+                and coa.kdprofile = 30
+                and coa1.statusenabled = true
+                and coa1.kdprofile = 30
+                and coa2.statusenabled = true
+                and coa2.kdprofile = 30
+                and coa3.statusenabled = true
+                and coa3.kdprofile = 30
+                and coa4.statusenabled = true
+                and coa4.kdprofile = 30
+                and coa5.statusenabled = true
+                and coa5.kdprofile = 30
+                and mcr.statusenabled = true
+                and mcr.kdprofile = 30
+                and ma.statusenabled = true
+                and ma.kdprofile = 30
+                and kb.statusenabled = true
+                and kb.kdprofile = 30
+                and ka.statusenabled = true
+                and ka.kdprofile = 30
+                and ka.tahun in ('$tahunlalu','$tahun')
+                and coa.objectjenisaccountfk = 1
+                group by coa2.id, coa1.noaccount || '.' || coa2.noaccount, coa2.namaaccount,
+                ma.kodemataanggaran, ma.namamataanggaran, ka.tahun
+        
+                union all
+        
+                select coa3.id, coa1.noaccount || '.' || coa2.noaccount || '.' || coa3.noaccount as noaccount, coa3.namaaccount,
+                ma.kodemataanggaran, ma.namamataanggaran,
+                sum(kb.subtotal) subtotal, ka.tahun
+                    from chartofaccount_m coa
+                inner join mapcoatorekening_t mcr on coa.id = mcr.objectcoafk
+                inner join mataanggaran_m ma on ma.id = mcr.objectmataanggaranfk
+                inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
+                INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
+                INNER JOIN chartofaccount_m coa5 on coa5.id=coa.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa4 on coa4.id=coa5.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa3 on coa3.id=coa4.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa2 on coa2.id=coa3.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa1 on coa1.id=coa2.objectaccountheadfk
+                where coa.statusenabled = true
+                and coa.kdprofile = 30
+                and coa1.statusenabled = true
+                and coa1.kdprofile = 30
+                and coa2.statusenabled = true
+                and coa2.kdprofile = 30
+                and coa3.statusenabled = true
+                and coa3.kdprofile = 30
+                and coa4.statusenabled = true
+                and coa4.kdprofile = 30
+                and coa5.statusenabled = true
+                and coa5.kdprofile = 30
+                and mcr.statusenabled = true
+                and mcr.kdprofile = 30
+                and ma.statusenabled = true
+                and ma.kdprofile = 30
+                and kb.statusenabled = true
+                and kb.kdprofile = 30
+                and ka.statusenabled = true
+                and ka.kdprofile = 30
+                and ka.tahun in ('$tahunlalu','$tahun')
+                and coa.objectjenisaccountfk = 1
+                group by coa3.id, coa1.noaccount || '.' || coa2.noaccount || '.' || coa3.noaccount, coa3.namaaccount,
+                ma.kodemataanggaran, ma.namamataanggaran, ka.tahun
+        
+                union all
+        
+                select coa4.id, coa1.noaccount || '.' || coa2.noaccount || '.' || coa3.noaccount || '.' || coa4.noaccount as noaccount, coa4.namaaccount,
+                ma.kodemataanggaran, ma.namamataanggaran,
+                sum(kb.subtotal) subtotal, ka.tahun
+                    from chartofaccount_m coa
+                inner join mapcoatorekening_t mcr on coa.id = mcr.objectcoafk
+                inner join mataanggaran_m ma on ma.id = mcr.objectmataanggaranfk
+                inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
+                INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
+                INNER JOIN chartofaccount_m coa5 on coa5.id=coa.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa4 on coa4.id=coa5.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa3 on coa3.id=coa4.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa2 on coa2.id=coa3.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa1 on coa1.id=coa2.objectaccountheadfk
+                where coa.statusenabled = true
+                and coa.kdprofile = 30
+                and coa1.statusenabled = true
+                and coa1.kdprofile = 30
+                and coa2.statusenabled = true
+                and coa2.kdprofile = 30
+                and coa3.statusenabled = true
+                and coa3.kdprofile = 30
+                and coa4.statusenabled = true
+                and coa4.kdprofile = 30
+                and coa5.statusenabled = true
+                and coa5.kdprofile = 30
+                and mcr.statusenabled = true
+                and mcr.kdprofile = 30
+                and ma.statusenabled = true
+                and ma.kdprofile = 30
+                and kb.statusenabled = true
+                and kb.kdprofile = 30
+                and ka.statusenabled = true
+                and ka.kdprofile = 30
+                and ka.tahun in ('$tahunlalu','$tahun')
+                and coa.objectjenisaccountfk = 1
+                group by coa4.id, coa1.noaccount || '.' || coa2.noaccount || '.' || coa3.noaccount || '.' || coa4.noaccount, coa4.namaaccount,
+                ma.kodemataanggaran, ma.namamataanggaran, ka.tahun
+        
+                union all
+        
+                select coa5.id, coa1.noaccount || '.' || coa2.noaccount || '.' || coa3.noaccount || '.' || coa4.noaccount || '.' || coa5.noaccount as noaccount, coa5.namaaccount,
+                ma.kodemataanggaran, ma.namamataanggaran,
+                sum(kb.subtotal) subtotal, ka.tahun
+                    from chartofaccount_m coa
+                inner join mapcoatorekening_t mcr on coa.id = mcr.objectcoafk
+                inner join mataanggaran_m ma on ma.id = mcr.objectmataanggaranfk
+                inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
+                INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
+                INNER JOIN chartofaccount_m coa5 on coa5.id=coa.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa4 on coa4.id=coa5.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa3 on coa3.id=coa4.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa2 on coa2.id=coa3.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa1 on coa1.id=coa2.objectaccountheadfk
+                where coa.statusenabled = true
+                and coa.kdprofile = 30
+                and coa1.statusenabled = true
+                and coa1.kdprofile = 30
+                and coa2.statusenabled = true
+                and coa2.kdprofile = 30
+                and coa3.statusenabled = true
+                and coa3.kdprofile = 30
+                and coa4.statusenabled = true
+                and coa4.kdprofile = 30
+                and coa5.statusenabled = true
+                and coa5.kdprofile = 30
+                and mcr.statusenabled = true
+                and mcr.kdprofile = 30
+                and ma.statusenabled = true
+                and ma.kdprofile = 30
+                and kb.statusenabled = true
+                and kb.kdprofile = 30
+                and ka.statusenabled = true
+                and ka.kdprofile = 30
+                and ka.tahun in ('$tahunlalu','$tahun')
+                and coa.objectjenisaccountfk = 1
+                group by coa5.id, coa1.noaccount || '.' || coa2.noaccount || '.' || coa3.noaccount || '.' || coa4.noaccount || '.' || coa5.noaccount, coa5.namaaccount,
+                ma.kodemataanggaran, ma.namamataanggaran, ka.tahun
+        
+                union all
+        
+                select coa.id, coa1.noaccount || '.' || coa2.noaccount || '.' || coa3.noaccount || '.' || coa4.noaccount || '.' || coa5.noaccount || '.' || coa.noaccount as noaccount, coa.namaaccount,
+                ma.kodemataanggaran, ma.namamataanggaran,
+                sum(kb.subtotal) subtotal, ka.tahun
+                    from chartofaccount_m coa
+                inner join mapcoatorekening_t mcr on coa.id = mcr.objectcoafk
+                inner join mataanggaran_m ma on ma.id = mcr.objectmataanggaranfk
+                inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
+                INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
+                INNER JOIN chartofaccount_m coa5 on coa5.id=coa.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa4 on coa4.id=coa5.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa3 on coa3.id=coa4.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa2 on coa2.id=coa3.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa1 on coa1.id=coa2.objectaccountheadfk
+                where coa.statusenabled = true
+                and coa.kdprofile = 30
+                and coa1.statusenabled = true
+                and coa1.kdprofile = 30
+                and coa2.statusenabled = true
+                and coa2.kdprofile = 30
+                and coa3.statusenabled = true
+                and coa3.kdprofile = 30
+                and coa4.statusenabled = true
+                and coa4.kdprofile = 30
+                and coa5.statusenabled = true
+                and coa5.kdprofile = 30
+                and mcr.statusenabled = true
+                and mcr.kdprofile = 30
+                and ma.statusenabled = true
+                and ma.kdprofile = 30
+                and kb.statusenabled = true
+                and kb.kdprofile = 30
+                and ka.statusenabled = true
+                and ka.kdprofile = 30
+                and ka.tahun in ('$tahunlalu','$tahun')
+                and coa.objectjenisaccountfk = 1
+                group by coa.id, coa1.noaccount || '.' || coa2.noaccount || '.' || coa3.noaccount || '.' || coa4.noaccount || '.' || coa5.noaccount || '.' || coa.noaccount, coa.namaaccount,
+                ma.kodemataanggaran, ma.namamataanggaran, ka.tahun
+            ) as x 
+            group by id, noaccount, namaaccount, tahun
+        ) as y
+        group by id, noaccount, namaaccount
+        order by noaccount;"));
+
+        $pageWidth = 950;
+        
+        return view('report.akuntansi.lorinci',compact('data', 'pageWidth', 'tahun', 'tahunlalu'));
+    }
+
+    public function CetakLRA(Request $request){
+        $tahun = $request['tahun'];
+
+        $lalu = DB::select(DB::raw("SELECT extract('year' from(date '$tahun-12-31' - interval '1 year')) as tahun;"));
+
+        $tahunlalu = $lalu[0]->tahun;
+
+        $data = DB::select(DB::raw("select id, noaccount, namaaccount, sum(subtotalbulanini) subtotalbulanini,
+        sum(totalbelanjabulanini) totalbelanjabulanini, sum(totalbelanjabulanlalu) totalbelanjabulanlalu,
+        case
+        when sum(totalbelanjabulanini) != 0 and sum(totalbelanjabulanlalu) != 0 then (sum(totalbelanjabulanini)/sum(totalbelanjabulanlalu))*100
+        when sum(totalbelanjabulanini) != 0 or sum(totalbelanjabulanlalu) != 0 then 0
+        end as persentase
+        from(
+            select id, noaccount, namaaccount,
+            case when tahun = '$tahunlalu' then sum(subtotal) else 0 end as subtotalbulanlalu,
+            case when tahun = '$tahun' then sum(subtotal) else 0 end as subtotalbulanini,
+            case when tahun = '$tahunlalu' then sum(totalbelanja) else 0 end as totalbelanjabulanlalu,
+            case when tahun = '$tahun' then sum(totalbelanja) else 0 end as totalbelanjabulanini
+            from(
+                select coa1.id, coa1.noaccount, coa1.namaaccount,
+                ma.kodemataanggaran, ma.namamataanggaran,
+                kb.subtotal, ka.tahun, sum(sr.totalbelanja) totalbelanja, ka.keterangan
+                from chartofaccount_m coa
+                inner join mapcoatorekening_t mcr on coa.id = mcr.objectcoafk
+                inner join mataanggaran_m ma on ma.id = mcr.objectmataanggaranfk
+                inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
+                INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
+                INNER JOIN strukrealisasi_t sr on sr.objectkegiatanfk=ka.id
+                INNER JOIN chartofaccount_m coa5 on coa5.id=coa.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa4 on coa4.id=coa5.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa3 on coa3.id=coa4.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa2 on coa2.id=coa3.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa1 on coa1.id=coa2.objectaccountheadfk
+                where coa.statusenabled = true
+                and coa.kdprofile = 30
+                and coa1.statusenabled = true
+                and coa1.kdprofile = 30
+                and coa2.statusenabled = true
+                and coa2.kdprofile = 30
+                and coa3.statusenabled = true
+                and coa3.kdprofile = 30
+                and coa4.statusenabled = true
+                and coa4.kdprofile = 30
+                and coa5.statusenabled = true
+                and coa5.kdprofile = 30
+                and mcr.statusenabled = true
+                and mcr.kdprofile = 30
+                and ma.statusenabled = true
+                and ma.kdprofile = 30
+                and kb.statusenabled = true
+                and kb.kdprofile = 30
+                and ka.statusenabled = true
+                and ka.kdprofile = 30
+                and sr.statusenabled = true
+                and sr.kdprofile = 30
+                and ka.tahun in ('$tahunlalu','$tahun')
+                group by coa1.id, coa1.noaccount, coa1.namaaccount,kb.subtotal,
+                ma.kodemataanggaran, ma.namamataanggaran, ka.tahun, ka.keterangan
+        
+                union all
+        
+                select coa2.id, coa1.noaccount || '.' || coa2.noaccount as noaccount, coa2.namaaccount,
+                ma.kodemataanggaran, ma.namamataanggaran,
+                kb.subtotal, ka.tahun, sum(sr.totalbelanja) totalbelanja, ka.keterangan
+                from chartofaccount_m coa
+                inner join mapcoatorekening_t mcr on coa.id = mcr.objectcoafk
+                inner join mataanggaran_m ma on ma.id = mcr.objectmataanggaranfk
+                inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
+                INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
+                INNER JOIN strukrealisasi_t sr on sr.objectkegiatanfk=ka.id
+                INNER JOIN chartofaccount_m coa5 on coa5.id=coa.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa4 on coa4.id=coa5.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa3 on coa3.id=coa4.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa2 on coa2.id=coa3.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa1 on coa1.id=coa2.objectaccountheadfk
+                where coa.statusenabled = true
+                and coa.kdprofile = 30
+                and coa1.statusenabled = true
+                and coa1.kdprofile = 30
+                and coa2.statusenabled = true
+                and coa2.kdprofile = 30
+                and coa3.statusenabled = true
+                and coa3.kdprofile = 30
+                and coa4.statusenabled = true
+                and coa4.kdprofile = 30
+                and coa5.statusenabled = true
+                and coa5.kdprofile = 30
+                and mcr.statusenabled = true
+                and mcr.kdprofile = 30
+                and ma.statusenabled = true
+                and ma.kdprofile = 30
+                and kb.statusenabled = true
+                and kb.kdprofile = 30
+                and ka.statusenabled = true
+                and ka.kdprofile = 30
+                and sr.statusenabled = true
+                and sr.kdprofile = 30
+                and ka.tahun in ('$tahunlalu','$tahun')
+                group by coa2.id, coa1.noaccount || '.' || coa2.noaccount, coa2.namaaccount,kb.subtotal,
+                ma.kodemataanggaran, ma.namamataanggaran, ka.tahun, ka.keterangan
+        
+                union all
+        
+                select coa3.id, coa1.noaccount || '.' || coa2.noaccount || '.' || coa3.noaccount as noaccount, coa3.namaaccount,
+                ma.kodemataanggaran, ma.namamataanggaran,
+                kb.subtotal, ka.tahun, sum(sr.totalbelanja) totalbelanja, ka.keterangan
+                from chartofaccount_m coa
+                inner join mapcoatorekening_t mcr on coa.id = mcr.objectcoafk
+                inner join mataanggaran_m ma on ma.id = mcr.objectmataanggaranfk
+                inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
+                INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
+                INNER JOIN strukrealisasi_t sr on sr.objectkegiatanfk=ka.id
+                INNER JOIN chartofaccount_m coa5 on coa5.id=coa.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa4 on coa4.id=coa5.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa3 on coa3.id=coa4.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa2 on coa2.id=coa3.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa1 on coa1.id=coa2.objectaccountheadfk
+                where coa.statusenabled = true
+                and coa.kdprofile = 30
+                and coa1.statusenabled = true
+                and coa1.kdprofile = 30
+                and coa2.statusenabled = true
+                and coa2.kdprofile = 30
+                and coa3.statusenabled = true
+                and coa3.kdprofile = 30
+                and coa4.statusenabled = true
+                and coa4.kdprofile = 30
+                and coa5.statusenabled = true
+                and coa5.kdprofile = 30
+                and mcr.statusenabled = true
+                and mcr.kdprofile = 30
+                and ma.statusenabled = true
+                and ma.kdprofile = 30
+                and kb.statusenabled = true
+                and kb.kdprofile = 30
+                and ka.statusenabled = true
+                and ka.kdprofile = 30
+                and sr.statusenabled = true
+                and sr.kdprofile = 30
+                and ka.tahun in ('$tahunlalu','$tahun')
+                group by coa3.id, coa1.noaccount || '.' || coa2.noaccount || '.' || coa3.noaccount, coa3.namaaccount,kb.subtotal,
+                ma.kodemataanggaran, ma.namamataanggaran, ka.tahun, ka.keterangan
+        
+                union all
+        
+                select coa4.id, coa1.noaccount || '.' || coa2.noaccount || '.' || coa3.noaccount || '.' || coa4.noaccount as noaccount, coa4.namaaccount,
+                ma.kodemataanggaran, ma.namamataanggaran,
+                kb.subtotal, ka.tahun, sum(sr.totalbelanja) totalbelanja, ka.keterangan
+                from chartofaccount_m coa
+                inner join mapcoatorekening_t mcr on coa.id = mcr.objectcoafk
+                inner join mataanggaran_m ma on ma.id = mcr.objectmataanggaranfk
+                inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
+                INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
+                INNER JOIN strukrealisasi_t sr on sr.objectkegiatanfk=ka.id
+                INNER JOIN chartofaccount_m coa5 on coa5.id=coa.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa4 on coa4.id=coa5.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa3 on coa3.id=coa4.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa2 on coa2.id=coa3.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa1 on coa1.id=coa2.objectaccountheadfk
+                where coa.statusenabled = true
+                and coa.kdprofile = 30
+                and coa1.statusenabled = true
+                and coa1.kdprofile = 30
+                and coa2.statusenabled = true
+                and coa2.kdprofile = 30
+                and coa3.statusenabled = true
+                and coa3.kdprofile = 30
+                and coa4.statusenabled = true
+                and coa4.kdprofile = 30
+                and coa5.statusenabled = true
+                and coa5.kdprofile = 30
+                and mcr.statusenabled = true
+                and mcr.kdprofile = 30
+                and ma.statusenabled = true
+                and ma.kdprofile = 30
+                and kb.statusenabled = true
+                and kb.kdprofile = 30
+                and ka.statusenabled = true
+                and ka.kdprofile = 30
+                and sr.statusenabled = true
+                and sr.kdprofile = 30
+                and ka.tahun in ('$tahunlalu','$tahun')
+                group by coa4.id, coa1.noaccount || '.' || coa2.noaccount || '.' || coa3.noaccount || '.' || coa4.noaccount, coa4.namaaccount,kb.subtotal,
+                ma.kodemataanggaran, ma.namamataanggaran, ka.tahun, ka.keterangan
+            
+                union all
+        
+                select coa5.id, coa1.noaccount || '.' || coa2.noaccount || '.' || coa3.noaccount || '.' || coa4.noaccount || '.' || coa5.noaccount as noaccount, coa5.namaaccount,
+                ma.kodemataanggaran, ma.namamataanggaran,
+                kb.subtotal, ka.tahun, sum(sr.totalbelanja) totalbelanja, ka.keterangan
+                from chartofaccount_m coa
+                inner join mapcoatorekening_t mcr on coa.id = mcr.objectcoafk
+                inner join mataanggaran_m ma on ma.id = mcr.objectmataanggaranfk
+                inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
+                INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
+                INNER JOIN strukrealisasi_t sr on sr.objectkegiatanfk=ka.id
+                INNER JOIN chartofaccount_m coa5 on coa5.id=coa.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa4 on coa4.id=coa5.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa3 on coa3.id=coa4.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa2 on coa2.id=coa3.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa1 on coa1.id=coa2.objectaccountheadfk
+                where coa.statusenabled = true
+                and coa.kdprofile = 30
+                and coa1.statusenabled = true
+                and coa1.kdprofile = 30
+                and coa2.statusenabled = true
+                and coa2.kdprofile = 30
+                and coa3.statusenabled = true
+                and coa3.kdprofile = 30
+                and coa4.statusenabled = true
+                and coa4.kdprofile = 30
+                and coa5.statusenabled = true
+                and coa5.kdprofile = 30
+                and mcr.statusenabled = true
+                and mcr.kdprofile = 30
+                and ma.statusenabled = true
+                and ma.kdprofile = 30
+                and kb.statusenabled = true
+                and kb.kdprofile = 30
+                and ka.statusenabled = true
+                and ka.kdprofile = 30
+                and sr.statusenabled = true
+                and sr.kdprofile = 30
+                and ka.tahun in ('$tahunlalu','$tahun')
+                group by coa5.id, coa1.noaccount || '.' || coa2.noaccount || '.' || coa3.noaccount || '.' || coa4.noaccount || '.' || coa5.noaccount, coa5.namaaccount,kb.subtotal,
+                ma.kodemataanggaran, ma.namamataanggaran, ka.tahun, ka.keterangan
+        
+                union all
+        
+                select coa.id, coa1.noaccount || '.' || coa2.noaccount || '.' || coa3.noaccount || '.' || coa4.noaccount || '.' || coa5.noaccount || '.' || coa.noaccount as noaccount, coa.namaaccount,
+                ma.kodemataanggaran, ma.namamataanggaran,
+                kb.subtotal, ka.tahun, sum(sr.totalbelanja) totalbelanja, ka.keterangan
+                from chartofaccount_m coa
+                inner join mapcoatorekening_t mcr on coa.id = mcr.objectcoafk
+                inner join mataanggaran_m ma on ma.id = mcr.objectmataanggaranfk
+                inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
+                INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
+                INNER JOIN strukrealisasi_t sr on sr.objectkegiatanfk=ka.id
+                INNER JOIN chartofaccount_m coa5 on coa5.id=coa.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa4 on coa4.id=coa5.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa3 on coa3.id=coa4.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa2 on coa2.id=coa3.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa1 on coa1.id=coa2.objectaccountheadfk
+                where coa.statusenabled = true
+                and coa.kdprofile = 30
+                and coa1.statusenabled = true
+                and coa1.kdprofile = 30
+                and coa2.statusenabled = true
+                and coa2.kdprofile = 30
+                and coa3.statusenabled = true
+                and coa3.kdprofile = 30
+                and coa4.statusenabled = true
+                and coa4.kdprofile = 30
+                and coa5.statusenabled = true
+                and coa5.kdprofile = 30
+                and mcr.statusenabled = true
+                and mcr.kdprofile = 30
+                and ma.statusenabled = true
+                and ma.kdprofile = 30
+                and kb.statusenabled = true
+                and kb.kdprofile = 30
+                and ka.statusenabled = true
+                and ka.kdprofile = 30
+                and sr.statusenabled = true
+                and sr.kdprofile = 30
+                and ka.tahun in ('$tahunlalu','$tahun')
+                group by coa.id, coa1.noaccount || '.' || coa2.noaccount || '.' || coa3.noaccount || '.' || coa4.noaccount || '.' || coa5.noaccount || '.' || coa.noaccount, coa.namaaccount,kb.subtotal,
+                ma.kodemataanggaran, ma.namamataanggaran, ka.tahun, ka.keterangan
+        
+                union all
+        
+                select coa1.id, coa1.noaccount || '.' || coa2.noaccount || '.' || coa3.noaccount || '.' || coa4.noaccount || '.' || coa5.noaccount || '.' || coa.noaccount || '.0001' as noaccount, 'JUMLAH' || coa1.namaaccount,
+                ma.kodemataanggaran, ma.namamataanggaran,
+                kb.subtotal, ka.tahun, sum(sr.totalbelanja) totalbelanja, ka.keterangan
+                from chartofaccount_m coa
+                inner join mapcoatorekening_t mcr on coa.id = mcr.objectcoafk
+                inner join mataanggaran_m ma on ma.id = mcr.objectmataanggaranfk
+                inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
+                INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
+                INNER JOIN strukrealisasi_t sr on sr.objectkegiatanfk=ka.id
+                INNER JOIN chartofaccount_m coa5 on coa5.id=coa.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa4 on coa4.id=coa5.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa3 on coa3.id=coa4.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa2 on coa2.id=coa3.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa1 on coa1.id=coa2.objectaccountheadfk
+                where coa.statusenabled = true
+                and coa.kdprofile = 30
+                and coa1.statusenabled = true
+                and coa1.kdprofile = 30
+                and coa2.statusenabled = true
+                and coa2.kdprofile = 30
+                and coa3.statusenabled = true
+                and coa3.kdprofile = 30
+                and coa4.statusenabled = true
+                and coa4.kdprofile = 30
+                and coa5.statusenabled = true
+                and coa5.kdprofile = 30
+                and mcr.statusenabled = true
+                and mcr.kdprofile = 30
+                and ma.statusenabled = true
+                and ma.kdprofile = 30
+                and kb.statusenabled = true
+                and kb.kdprofile = 30
+                and ka.statusenabled = true
+                and ka.kdprofile = 30
+                and sr.statusenabled = true
+                and sr.kdprofile = 30
+                and ka.tahun in ('$tahunlalu','$tahun')
+                group by coa1.id, coa1.noaccount || '.' || coa2.noaccount || '.' || coa3.noaccount || '.' || coa4.noaccount || '.' || coa5.noaccount || '.' || coa.noaccount || '.0001', 'JUMLAH' || coa1.namaaccount,kb.subtotal,
+                ma.kodemataanggaran, ma.namamataanggaran, ka.tahun, ka.keterangan
+        
+            ) as x
+            group by id, noaccount, namaaccount, tahun
+        ) as y
+        group by id, noaccount, namaaccount
+        order by noaccount"));
+
+        $pageWidth = 950;
+        
+        return view('report.akuntansi.lrarinci',compact('data', 'pageWidth', 'tahun', 'tahunlalu'));
+    }
+
+    public function CetakNeraca(Request $request){
+        $tahun = $request['tahun'];
+
+        $lalu = DB::select(DB::raw("SELECT extract('year' from(date '$tahun-12-31' - interval '1 year')) as tahun;"));
+
+        $tahunlalu = $lalu[0]->tahun;
+
+        $data = DB::select(DB::raw("select id, noaccount, namaaccount, sum(subtotalbulanlalu) subtotalbulanlalu, sum(subtotalbulanini) subtotalbulanini,
+        case 
+            when sum(subtotalbulanini) - sum(subtotalbulanlalu) >= 0 then sum(subtotalbulanini) - sum(subtotalbulanlalu)
+            when sum(subtotalbulanini) - sum(subtotalbulanlalu) < 0 then (sum(subtotalbulanini) - sum(subtotalbulanlalu))*(-1)
+        end as selisih,
+        case 
+            when sum(subtotalbulanini) != 0 and sum(subtotalbulanlalu) != 0 and sum(subtotalbulanini) - sum(subtotalbulanlalu) >= 0 then ((sum(subtotalbulanini) - sum(subtotalbulanlalu))/sum(subtotalbulanlalu))*100
+            when sum(subtotalbulanini) != 0 and sum(subtotalbulanlalu) != 0 and sum(subtotalbulanini) - sum(subtotalbulanlalu) < 0 then (((sum(subtotalbulanini) - sum(subtotalbulanlalu))*(-1))/sum(subtotalbulanlalu))*100
+            when sum(subtotalbulanini) != 0 or sum(subtotalbulanlalu) != 0 then 0
+        end as persentase
+        from(
+            select id, noaccount, namaaccount, 
+            case when tahun = '$tahunlalu' then sum(subtotal) else 0 end as subtotalbulanlalu,
+            case when tahun = '$tahun' then sum(subtotal) else 0 end as subtotalbulanini
+            from(
+                select coa1.id, coa1.noaccount, coa1.namaaccount,
+                ma.kodemataanggaran, ma.namamataanggaran,
+                sum(kb.subtotal) subtotal, ka.tahun
+                    from chartofaccount_m coa
+                inner join mapcoatorekening_t mcr on coa.id = mcr.objectcoafk
+                inner join mataanggaran_m ma on ma.id = mcr.objectmataanggaranfk
+                inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
+                INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
+                INNER JOIN chartofaccount_m coa5 on coa5.id=coa.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa4 on coa4.id=coa5.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa3 on coa3.id=coa4.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa2 on coa2.id=coa3.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa1 on coa1.id=coa2.objectaccountheadfk
+                where coa.statusenabled = true
+                and coa.kdprofile = 30
+                and coa1.statusenabled = true
+                and coa1.kdprofile = 30
+                and coa2.statusenabled = true
+                and coa2.kdprofile = 30
+                and coa3.statusenabled = true
+                and coa3.kdprofile = 30
+                and coa4.statusenabled = true
+                and coa4.kdprofile = 30
+                and coa5.statusenabled = true
+                and coa5.kdprofile = 30
+                and mcr.statusenabled = true
+                and mcr.kdprofile = 30
+                and ma.statusenabled = true
+                and ma.kdprofile = 30
+                and kb.statusenabled = true
+                and kb.kdprofile = 30
+                and ka.statusenabled = true
+                and ka.kdprofile = 30
+                and ka.tahun in ('$tahunlalu','$tahun')
+                and coa.objectjenisaccountfk = 2
+                group by coa1.id, coa1.noaccount, coa1.namaaccount,
+                ma.kodemataanggaran, ma.namamataanggaran, ka.tahun
+        
+                union all
+        
+                select coa2.id, coa1.noaccount || '.' || coa2.noaccount as noaccount, coa2.namaaccount,
+                ma.kodemataanggaran, ma.namamataanggaran,
+                sum(kb.subtotal) subtotal, ka.tahun
+                    from chartofaccount_m coa
+                inner join mapcoatorekening_t mcr on coa.id = mcr.objectcoafk
+                inner join mataanggaran_m ma on ma.id = mcr.objectmataanggaranfk
+                inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
+                INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
+                INNER JOIN chartofaccount_m coa5 on coa5.id=coa.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa4 on coa4.id=coa5.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa3 on coa3.id=coa4.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa2 on coa2.id=coa3.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa1 on coa1.id=coa2.objectaccountheadfk
+                where coa.statusenabled = true
+                and coa.kdprofile = 30
+                and coa1.statusenabled = true
+                and coa1.kdprofile = 30
+                and coa2.statusenabled = true
+                and coa2.kdprofile = 30
+                and coa3.statusenabled = true
+                and coa3.kdprofile = 30
+                and coa4.statusenabled = true
+                and coa4.kdprofile = 30
+                and coa5.statusenabled = true
+                and coa5.kdprofile = 30
+                and mcr.statusenabled = true
+                and mcr.kdprofile = 30
+                and ma.statusenabled = true
+                and ma.kdprofile = 30
+                and kb.statusenabled = true
+                and kb.kdprofile = 30
+                and ka.statusenabled = true
+                and ka.kdprofile = 30
+                and ka.tahun in ('$tahunlalu','$tahun')
+                and coa.objectjenisaccountfk = 2
+                group by coa2.id, coa1.noaccount || '.' || coa2.noaccount, coa2.namaaccount,
+                ma.kodemataanggaran, ma.namamataanggaran, ka.tahun
+        
+                union all
+        
+                select coa3.id, coa1.noaccount || '.' || coa2.noaccount || '.' || coa3.noaccount as noaccount, coa3.namaaccount,
+                ma.kodemataanggaran, ma.namamataanggaran,
+                sum(kb.subtotal) subtotal, ka.tahun
+                    from chartofaccount_m coa
+                inner join mapcoatorekening_t mcr on coa.id = mcr.objectcoafk
+                inner join mataanggaran_m ma on ma.id = mcr.objectmataanggaranfk
+                inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
+                INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
+                INNER JOIN chartofaccount_m coa5 on coa5.id=coa.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa4 on coa4.id=coa5.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa3 on coa3.id=coa4.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa2 on coa2.id=coa3.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa1 on coa1.id=coa2.objectaccountheadfk
+                where coa.statusenabled = true
+                and coa.kdprofile = 30
+                and coa1.statusenabled = true
+                and coa1.kdprofile = 30
+                and coa2.statusenabled = true
+                and coa2.kdprofile = 30
+                and coa3.statusenabled = true
+                and coa3.kdprofile = 30
+                and coa4.statusenabled = true
+                and coa4.kdprofile = 30
+                and coa5.statusenabled = true
+                and coa5.kdprofile = 30
+                and mcr.statusenabled = true
+                and mcr.kdprofile = 30
+                and ma.statusenabled = true
+                and ma.kdprofile = 30
+                and kb.statusenabled = true
+                and kb.kdprofile = 30
+                and ka.statusenabled = true
+                and ka.kdprofile = 30
+                and ka.tahun in ('$tahunlalu','$tahun')
+                and coa.objectjenisaccountfk = 2
+                group by coa3.id, coa1.noaccount || '.' || coa2.noaccount || '.' || coa3.noaccount, coa3.namaaccount,
+                ma.kodemataanggaran, ma.namamataanggaran, ka.tahun
+        
+                union all
+        
+                select coa4.id, coa1.noaccount || '.' || coa2.noaccount || '.' || coa3.noaccount || '.' || coa4.noaccount as noaccount, coa4.namaaccount,
+                ma.kodemataanggaran, ma.namamataanggaran,
+                sum(kb.subtotal) subtotal, ka.tahun
+                    from chartofaccount_m coa
+                inner join mapcoatorekening_t mcr on coa.id = mcr.objectcoafk
+                inner join mataanggaran_m ma on ma.id = mcr.objectmataanggaranfk
+                inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
+                INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
+                INNER JOIN chartofaccount_m coa5 on coa5.id=coa.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa4 on coa4.id=coa5.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa3 on coa3.id=coa4.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa2 on coa2.id=coa3.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa1 on coa1.id=coa2.objectaccountheadfk
+                where coa.statusenabled = true
+                and coa.kdprofile = 30
+                and coa1.statusenabled = true
+                and coa1.kdprofile = 30
+                and coa2.statusenabled = true
+                and coa2.kdprofile = 30
+                and coa3.statusenabled = true
+                and coa3.kdprofile = 30
+                and coa4.statusenabled = true
+                and coa4.kdprofile = 30
+                and coa5.statusenabled = true
+                and coa5.kdprofile = 30
+                and mcr.statusenabled = true
+                and mcr.kdprofile = 30
+                and ma.statusenabled = true
+                and ma.kdprofile = 30
+                and kb.statusenabled = true
+                and kb.kdprofile = 30
+                and ka.statusenabled = true
+                and ka.kdprofile = 30
+                and ka.tahun in ('$tahunlalu','$tahun')
+                and coa.objectjenisaccountfk = 2
+                group by coa4.id, coa1.noaccount || '.' || coa2.noaccount || '.' || coa3.noaccount || '.' || coa4.noaccount, coa4.namaaccount,
+                ma.kodemataanggaran, ma.namamataanggaran, ka.tahun
+        
+                union all
+        
+                select coa5.id, coa1.noaccount || '.' || coa2.noaccount || '.' || coa3.noaccount || '.' || coa4.noaccount || '.' || coa5.noaccount as noaccount, coa5.namaaccount,
+                ma.kodemataanggaran, ma.namamataanggaran,
+                sum(kb.subtotal) subtotal, ka.tahun
+                    from chartofaccount_m coa
+                inner join mapcoatorekening_t mcr on coa.id = mcr.objectcoafk
+                inner join mataanggaran_m ma on ma.id = mcr.objectmataanggaranfk
+                inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
+                INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
+                INNER JOIN chartofaccount_m coa5 on coa5.id=coa.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa4 on coa4.id=coa5.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa3 on coa3.id=coa4.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa2 on coa2.id=coa3.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa1 on coa1.id=coa2.objectaccountheadfk
+                where coa.statusenabled = true
+                and coa.kdprofile = 30
+                and coa1.statusenabled = true
+                and coa1.kdprofile = 30
+                and coa2.statusenabled = true
+                and coa2.kdprofile = 30
+                and coa3.statusenabled = true
+                and coa3.kdprofile = 30
+                and coa4.statusenabled = true
+                and coa4.kdprofile = 30
+                and coa5.statusenabled = true
+                and coa5.kdprofile = 30
+                and mcr.statusenabled = true
+                and mcr.kdprofile = 30
+                and ma.statusenabled = true
+                and ma.kdprofile = 30
+                and kb.statusenabled = true
+                and kb.kdprofile = 30
+                and ka.statusenabled = true
+                and ka.kdprofile = 30
+                and ka.tahun in ('$tahunlalu','$tahun')
+                and coa.objectjenisaccountfk = 2
+                group by coa5.id, coa1.noaccount || '.' || coa2.noaccount || '.' || coa3.noaccount || '.' || coa4.noaccount || '.' || coa5.noaccount, coa5.namaaccount,
+                ma.kodemataanggaran, ma.namamataanggaran, ka.tahun
+        
+                union all
+        
+                select coa.id, coa1.noaccount || '.' || coa2.noaccount || '.' || coa3.noaccount || '.' || coa4.noaccount || '.' || coa5.noaccount || '.' || coa.noaccount as noaccount, coa.namaaccount,
+                ma.kodemataanggaran, ma.namamataanggaran,
+                sum(kb.subtotal) subtotal, ka.tahun
+                    from chartofaccount_m coa
+                inner join mapcoatorekening_t mcr on coa.id = mcr.objectcoafk
+                inner join mataanggaran_m ma on ma.id = mcr.objectmataanggaranfk
+                inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
+                INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
+                INNER JOIN chartofaccount_m coa5 on coa5.id=coa.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa4 on coa4.id=coa5.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa3 on coa3.id=coa4.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa2 on coa2.id=coa3.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa1 on coa1.id=coa2.objectaccountheadfk
+                where coa.statusenabled = true
+                and coa.kdprofile = 30
+                and coa1.statusenabled = true
+                and coa1.kdprofile = 30
+                and coa2.statusenabled = true
+                and coa2.kdprofile = 30
+                and coa3.statusenabled = true
+                and coa3.kdprofile = 30
+                and coa4.statusenabled = true
+                and coa4.kdprofile = 30
+                and coa5.statusenabled = true
+                and coa5.kdprofile = 30
+                and mcr.statusenabled = true
+                and mcr.kdprofile = 30
+                and ma.statusenabled = true
+                and ma.kdprofile = 30
+                and kb.statusenabled = true
+                and kb.kdprofile = 30
+                and ka.statusenabled = true
+                and ka.kdprofile = 30
+                and ka.tahun in ('$tahunlalu','$tahun')
+                and coa.objectjenisaccountfk = 2
+                group by coa.id, coa1.noaccount || '.' || coa2.noaccount || '.' || coa3.noaccount || '.' || coa4.noaccount || '.' || coa5.noaccount || '.' || coa.noaccount, coa.namaaccount,
+                ma.kodemataanggaran, ma.namamataanggaran, ka.tahun
+
+                union all
+
+                select coa1.id, '1.1.01.01.01.0001.001' as noaccount, 'JUMLAH ASET' namaaccount,
+                ma.kodemataanggaran, ma.namamataanggaran,
+                sum(kb.subtotal) subtotal, ka.tahun
+                from chartofaccount_m coa
+                inner join mapcoatorekening_t mcr on coa.id = mcr.objectcoafk
+                inner join mataanggaran_m ma on ma.id = mcr.objectmataanggaranfk
+                inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
+                INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
+                INNER JOIN chartofaccount_m coa5 on coa5.id=coa.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa4 on coa4.id=coa5.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa3 on coa3.id=coa4.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa2 on coa2.id=coa3.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa1 on coa1.id=coa2.objectaccountheadfk
+                where coa.statusenabled = true
+                and coa.kdprofile = 30
+                and coa1.statusenabled = true
+                and coa1.kdprofile = 30
+                and coa2.statusenabled = true
+                and coa2.kdprofile = 30
+                and coa3.statusenabled = true
+                and coa3.kdprofile = 30
+                and coa4.statusenabled = true
+                and coa4.kdprofile = 30
+                and coa5.statusenabled = true
+                and coa5.kdprofile = 30
+                and mcr.statusenabled = true
+                and mcr.kdprofile = 30
+                and ma.statusenabled = true
+                and ma.kdprofile = 30
+                and kb.statusenabled = true
+                and kb.kdprofile = 30
+                and ka.statusenabled = true
+                and ka.kdprofile = 30
+                and ka.tahun in ('$tahunlalu','$tahun')
+                and coa.objectjenisaccountfk = 2
+                and coa1.namaaccount = 'ASET'
+                group by coa1.id, ma.kodemataanggaran, ma.namamataanggaran, ka.tahun
+
+                union all
+
+                select coa1.id, '2.1.01.01.01.0001.001' as noaccount, 'JUMLAH KEWAJIBAN' namaaccount,
+                ma.kodemataanggaran, ma.namamataanggaran,
+                sum(kb.subtotal) subtotal, ka.tahun
+                from chartofaccount_m coa
+                inner join mapcoatorekening_t mcr on coa.id = mcr.objectcoafk
+                inner join mataanggaran_m ma on ma.id = mcr.objectmataanggaranfk
+                inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
+                INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
+                INNER JOIN chartofaccount_m coa5 on coa5.id=coa.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa4 on coa4.id=coa5.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa3 on coa3.id=coa4.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa2 on coa2.id=coa3.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa1 on coa1.id=coa2.objectaccountheadfk
+                where coa.statusenabled = true
+                and coa.kdprofile = 30
+                and coa1.statusenabled = true
+                and coa1.kdprofile = 30
+                and coa2.statusenabled = true
+                and coa2.kdprofile = 30
+                and coa3.statusenabled = true
+                and coa3.kdprofile = 30
+                and coa4.statusenabled = true
+                and coa4.kdprofile = 30
+                and coa5.statusenabled = true
+                and coa5.kdprofile = 30
+                and mcr.statusenabled = true
+                and mcr.kdprofile = 30
+                and ma.statusenabled = true
+                and ma.kdprofile = 30
+                and kb.statusenabled = true
+                and kb.kdprofile = 30
+                and ka.statusenabled = true
+                and ka.kdprofile = 30
+                and ka.tahun in ('$tahunlalu','$tahun')
+                and coa.objectjenisaccountfk = 2
+                and coa1.namaaccount = 'KEWAJIBAN'
+                group by coa1.id, ma.kodemataanggaran, ma.namamataanggaran, ka.tahun
+
+                union all
+
+                select coa1.id, '3.1.01.01.01.0001.001' as noaccount, 'JUMLAH EKUITAS DANA' namaaccount,
+                ma.kodemataanggaran, ma.namamataanggaran,
+                sum(kb.subtotal) subtotal, ka.tahun
+                from chartofaccount_m coa
+                inner join mapcoatorekening_t mcr on coa.id = mcr.objectcoafk
+                inner join mataanggaran_m ma on ma.id = mcr.objectmataanggaranfk
+                inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
+                INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
+                INNER JOIN chartofaccount_m coa5 on coa5.id=coa.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa4 on coa4.id=coa5.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa3 on coa3.id=coa4.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa2 on coa2.id=coa3.objectaccountheadfk
+                INNER JOIN chartofaccount_m coa1 on coa1.id=coa2.objectaccountheadfk
+                where coa.statusenabled = true
+                and coa.kdprofile = 30
+                and coa1.statusenabled = true
+                and coa1.kdprofile = 30
+                and coa2.statusenabled = true
+                and coa2.kdprofile = 30
+                and coa3.statusenabled = true
+                and coa3.kdprofile = 30
+                and coa4.statusenabled = true
+                and coa4.kdprofile = 30
+                and coa5.statusenabled = true
+                and coa5.kdprofile = 30
+                and mcr.statusenabled = true
+                and mcr.kdprofile = 30
+                and ma.statusenabled = true
+                and ma.kdprofile = 30
+                and kb.statusenabled = true
+                and kb.kdprofile = 30
+                and ka.statusenabled = true
+                and ka.kdprofile = 30
+                and ka.tahun in ('$tahunlalu','$tahun')
+                and coa.objectjenisaccountfk = 2
+                and coa1.namaaccount = 'EKUITAS'
+                group by coa1.id, ma.kodemataanggaran, ma.namamataanggaran, ka.tahun
+
+            ) as x 
+            group by id, noaccount, namaaccount, tahun
+        ) as y
+        group by id, noaccount, namaaccount
+        order by noaccount;"));
+
+        $pageWidth = 950;
+        
+        return view('report.akuntansi.neracarinci',compact('data', 'pageWidth', 'tahun', 'tahunlalu'));
     }
 
     public function CetakBKU(Request $request){
@@ -8181,4 +9168,5 @@ public function suratBuktiPengembalian(Request $request)
         // dd($data,$detail);
         return view("report.keperawatan.catatan-perkembangan", compact('result'));
     }
+   
 }

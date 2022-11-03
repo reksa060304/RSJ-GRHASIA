@@ -740,6 +740,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     // $scope.item.kodeHead = dataItem.kode.substring(0,4) + '.' + dataItem.kode.substring(5,7) + '.' + dataItem.kode.substring(8,12)
                     // $scope.item.kode = dataItem.kode.substring(13,15)
                 }else if(dataItem.div == 4){
+                    
                     console.log(dataItem)
                     $scope.idkegiatananggaran = dataItem.id
                     buttonhide = false
@@ -929,7 +930,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 for (let x = 0; x < $scope.dataSourceDetailKeteranganBelanja.options.data.length; x++) {
                     var el = $scope.dataSourceDetailKeteranganBelanja.options.data[x]
                     console.log(el)
-                    if (el.kodemataanggaran.match(dataItem.kodemataanggaran)) {
+                    if (el.kodemataanggaran == dataItem.kodemataanggaran && el.keterangan == dataItem.keterangan) {
                         el.subtotalRP = formatRupiah(el.subtotal, "Rp. ")
                      
                         totalAnggaran = totalAnggaran + parseFloat(el.subtotal)
@@ -4942,135 +4943,65 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         idtahap: $scope.item.tahapdetail.id,
                         tahap: $scope.item.tahapdetail.tahap,
                     }
-                medifirstService.post('perencanaan/save-keterangan-belanja', objSave).then(function (e) {
-                    
-                    if($scope.idkegiatanangkas != 0){
-                        $scope.item.id = $scope.idkegiatanangkas
+
+                medifirstService.get("perencanaan/get-lock-entry-spj?subsubkegiatan="+$scope.item.id+"&tahap="+$scope.item.searchtahap.id).then(function (e) {
+                    if(e.data.data[0].islockrba == true){
+                        toastr.error('Entry SPJ Sudah Dilock, Silahkan Hubungi Admin Untuk Unlock', 'Informasi');
+                        return
                     } else{
-                        $scope.item.id = $scope.item.id
-                    }
-
-
-
-
-
-
-
-                            
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                    let TotalAnggaran = 0;
-                    medifirstService.get("perencanaan/get-keterangan-belanja?objectkegiatanfk=" + $scope.item.id+"&idmataanggaran="+$scope.rcn.idmataanggaran).then(function (e) {
-                        DataKeteranganBelanja = e.data.data
-                        $scope.dataSourceRincianAnggaran = new kendo.data.DataSource({
-                            data: DataKeteranganBelanja
-                        });
-                        for (let index = 0; index < DataKeteranganBelanja.length; index++) {
-                            let element = DataKeteranganBelanja[index];
-                            TotalAnggaran = TotalAnggaran + parseFloat(element.subtotal)
-                        }
-                        TotalAnggaran = parseFloat(TotalAnggaran)
-                        medifirstService.get("perencanaan/get-total-anggaran-rcn?kegiatan=" + $scope.norecrcntotalanggaran).then(function (e) {
-                            var total = 0
-                            if(e.data.data.length == 0){
-                                $scope.rcn.totalAnggaran = formatRupiah(total, "Rp. ")
-                                $scope.rcn.paguAnggaran = 0
-                            } else{
-                                total = e.data.data[0].total
-                                $scope.rcn.totalAnggaran = formatRupiah(total, "Rp. ")
-                                $scope.rcn.paguAnggaran = 0
-                            }
-
-                            $scope.item.targetKinerjaMasukan = formatRupiah(total, "Rp. ")
-                        })
-                        // $scope.rcn.paguAnggaran = formatRupiah(0, "Rp. ")
-                        // $scope.rcn.totalAnggaran = formatRupiah(TotalAnggaran, "Rp. ")
-                        //$scope.rcn.sisaAnggaran = formatRupiah(TotalAnggaran - 0, "Rp. ")
-                        
-                        
-                    })
-                    // medifirstService.get("perencanaan/get-total-mata-anggaran").then(function (e) {
-                    //     DataTotalMataAnggaran = e.data.data
-                    //     $scope.listAsalProduk = e.data.asalproduk
-                    //     $scope.dataSourceDetailMT = new kendo.data.DataSource({
-                    //         data: DataTotalMataAnggaran
-                    //     });
-                    //     DataTabKeteranganBelanja  = e.data.keteranganbelanja
-                    //     $scope.dataSourceKeteranganBelanja = new kendo.data.DataSource({
-                    //         data: DataTabKeteranganBelanja,
-                    //         group: $scope.group
-                    //     });
-                        
-                    // })
-                    LoadTotalKeterangan()
-
-                        var idpegawai = ''
-                        $scope.pegawaiLogin = medifirstService.getPegawaiLogin();
-                        idpegawai = $scope.pegawaiLogin.id
-
-                        
-                        medifirstService.get("perencanaan/get-total-mata-anggaran?tahun="+moment($scope.item.thnAnggaran).format('YYYY')+"&tahap="+$scope.item.tahapdetail.id+"&idpegawai="+idpegawai+"&cek=" + $scope.item.isCekAdaAnggaranSaja+"&noreckegiatan=" + $scope.idkegiatananggaran).then(function (e) {
-                            DataTotalMataAnggaran = e.data.data
-                            $scope.listAsalProduk = e.data.asalproduk
-                            $scope.dataSourceDetailMT = new kendo.data.DataSource({
-                                data: DataTotalMataAnggaran
-                            });
-                        });
-
-                    // let kodeArr = $scope.subtotalgakilang.kodemataanggaran.split(".");
-                    //         let a1 = kodeArr[0] 
-                    //         let b1 = kodeArr[1]
-                    //         let c1 = kodeArr[2] 
-                            
-                    //         let myRega1 = new RegExp(a1 + ".*")
-                    //         let myRegb1 = new RegExp(a1 + '.' + b1 + ".*")
-                    //         let myRegc1 = new RegExp(a1 + '.' + b1 + '.' + c1 + ".*")
-                            
-                    //         let d1 = $scope.subtotalgakilang.kodemataanggaran
-                    //         let totallv1 = 0
-                    //         let totallv2 = 0
-                    //         let totallv3 = 0
-                    //         for (let index = 0; index < $scope.dataSourceDetailMT._data.length; index++) {
-                    //             let element = $scope.dataSourceDetailMT._data[index];
-                    //             if(element.kodemataanggaran.match(myRega1)){
-                    //                 $scope.rcn.mataAnggaranlv1 = a1
-                    //                 totallv1 += parseInt(element.total)
-                    //                 console.log(element.total)
-                    //             }
-                    //             if(element.kodemataanggaran.match(myRegb1)){
-                    //                 $scope.rcn.mataAnggaranlv2 = a1 + '.' + b1
-                    //                 totallv2 += parseInt(element.total)
-                    //             }
-                    //             if(element.kodemataanggaran.match(myRegc1)){
-                    //                 $scope.rcn.mataAnggaranlv3 = a1 + '.' + b1 + '.' + c1
-                    //                 totallv3 += parseInt(element.total)
-                    //             }
-                    //         }
-                    //         $scope.rcn.totallv3 = formatRupiah(totallv3, "Rp. ")
-                    //         $scope.rcn.totallv2 = formatRupiah(totallv2, "Rp. ")
-                    //         $scope.rcn.totallv1 = formatRupiah(totallv1, "Rp. ")
-                    //         $scope.rcn.mataAnggaranDipilih= $scope.subtotalgakilang.kodemataanggaran + " " + $scope.subtotalgakilang.namamataanggaran
-                    //         $scope.rcn.idmataanggaran = $scope.subtotalgakilang.id
-
+                        medifirstService.post('perencanaan/save-keterangan-belanja', objSave).then(function (e) {
                     
-                    $scope.popupTambahKeteranganBelanja.center().close()
-                }, function (error) {
-
-                })
+                            if($scope.idkegiatanangkas != 0){
+                                $scope.item.id = $scope.idkegiatanangkas
+                            } else{
+                                $scope.item.id = $scope.item.id
+                            }
+                            let TotalAnggaran = 0;
+                            medifirstService.get("perencanaan/get-keterangan-belanja?objectkegiatanfk=" + $scope.item.id+"&idmataanggaran="+$scope.rcn.idmataanggaran).then(function (e) {
+                                DataKeteranganBelanja = e.data.data
+                                $scope.dataSourceRincianAnggaran = new kendo.data.DataSource({
+                                    data: DataKeteranganBelanja
+                                });
+                                for (let index = 0; index < DataKeteranganBelanja.length; index++) {
+                                    let element = DataKeteranganBelanja[index];
+                                    TotalAnggaran = TotalAnggaran + parseFloat(element.subtotal)
+                                }
+                                TotalAnggaran = parseFloat(TotalAnggaran)
+                                medifirstService.get("perencanaan/get-total-anggaran-rcn?kegiatan=" + $scope.norecrcntotalanggaran).then(function (e) {
+                                    var total = 0
+                                    if(e.data.data.length == 0){
+                                        $scope.rcn.totalAnggaran = formatRupiah(total, "Rp. ")
+                                        $scope.rcn.paguAnggaran = 0
+                                    } else{
+                                        total = e.data.data[0].total
+                                        $scope.rcn.totalAnggaran = formatRupiah(total, "Rp. ")
+                                        $scope.rcn.paguAnggaran = 0
+                                    }
+        
+                                    $scope.item.targetKinerjaMasukan = formatRupiah(total, "Rp. ")
+                                })
+                            })
+                            LoadTotalKeterangan()
+        
+                                var idpegawai = ''
+                                $scope.pegawaiLogin = medifirstService.getPegawaiLogin();
+                                idpegawai = $scope.pegawaiLogin.id
+        
+                                
+                                medifirstService.get("perencanaan/get-total-mata-anggaran?tahun="+moment($scope.item.thnAnggaran).format('YYYY')+"&tahap="+$scope.item.tahapdetail.id+"&idpegawai="+idpegawai+"&cek=" + $scope.item.isCekAdaAnggaranSaja+"&noreckegiatan=" + $scope.idkegiatananggaran).then(function (e) {
+                                    DataTotalMataAnggaran = e.data.data
+                                    $scope.listAsalProduk = e.data.asalproduk
+                                    $scope.dataSourceDetailMT = new kendo.data.DataSource({
+                                        data: DataTotalMataAnggaran
+                                    });
+                                });
+                            $scope.popupTambahKeteranganBelanja.center().close()
+                        }, function (error) {
+        
+                        })
+                    }
+                });
+                
             }
             function formatRupiah(value, currency) {
                 return currency + " " + parseFloat(value).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
@@ -5708,13 +5639,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     return
                 }
                 
-                // let idAnggaran = 0;
-                // for (let index = 0; index < DataMataAnggaranCombo.length; index++) {
-                //     const element = DataMataAnggaranCombo[index];
-                //     if(element.kodemataanggaran == $scope.item.mataAnggaranSPJ.kodemataanggaran ){
-                //         idAnggaran = element.id
-                //     }
-                // }
+                
+
+
                 var datasave =
                     {
                         norec :  $scope.norecverif,
@@ -5734,74 +5661,84 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         norecpanjar:  $scope.norecpanjar
                     }
 
-                    //console.log(datasave)
-
-                if($scope.norecpanjar != ''){
-                    medifirstService.get("perencanaan/get-sisa-panjar?panjar=" + $scope.norecpanjar ).then(function (e) {
-                        if(((parseInt(e.data.jumlah[0].jumlah) - parseInt(e.data.totalbelanja[0].totalbelanja) - parseInt(e.data.pengembalian[0].jumlahpengembalian)) + $scope.totalspjawal) >= $scope.item.jumlahSPJ){
-                            medifirstService.get("perencanaan/get-penjagaan-verif-spj?norec=" + $scope.norecverif ).then(function (e) {
-                    
-                                if(e.data.detail.length == 0){
-                                        var cek = 123;
-                                }
-                                 else if(e.data.detail.length > 0){
-                                    if(e.data.detail[0].tglverif != null){
-                                        var cek = 234;
-                                    } else{
-                                        var cek = 123;
-                                    }
-                                }
-                          
-                                //console.log(cek);
-                          
-                                if(cek == 234){
-                                    messageContainer.error("Data yang sudah diverif tidak bisa diubah");
-                                } else if (cek == 123){
-                                    medifirstService.post('perencanaan/save-realisasi-spj',datasave).then(function (e) {
-                                        loadDataGrid();
-                                        $scope.popupTambahSPJ.center().close()
-                                    }, function (error) {
-                    
-                                    })
-                                }
-                            });
-                        } else{
-                            toastr.error('Total SPJ melebihi sisa panjar', 'Informasi');
-                            return
-                        }
-                    });
-                } else{
-                    medifirstService.get("perencanaan/get-penjagaan-verif-spj?norec=" + $scope.norecverif ).then(function (e) {
-                    
-                        if(e.data.detail.length == 0){
-                                var cek = 123;
-                        }
-                         else if(e.data.detail.length > 0){
-                            if(e.data.detail[0].tglverif != null){
-                                var cek = 234;
+                medifirstService.get("perencanaan/get-lock-entry-spj?subsubkegiatan=" + $scope.item.subSubKegiatanSPJ.id ).then(function (e) {
+                    if(e.data.data[0].islock == true){
+                        toastr.error('Entry SPJ Sudah Dilock, Silahkan Hubungi Admin Untuk Unlock', 'Informasi');
+                        return
+                    } else{
+                        medifirstService.get("perencanaan/get-lock-entry-spj-perrekening?mataanggaran=" + $scope.item.mataAnggaranSPJ.kodemataanggaran +"&subsubkegiatan=" + $scope.item.subSubKegiatanSPJ.id).then(function (e) {
+                            if(e.data.data[0].islock == true){
+                                toastr.error('Entry SPJ Sudah Dilock, Silahkan Hubungi Admin Untuk Unlock', 'Informasi');
+                                return
                             } else{
-                                var cek = 123;
+
+                                if($scope.norecpanjar != ''){
+                                    medifirstService.get("perencanaan/get-sisa-panjar?panjar=" + $scope.norecpanjar ).then(function (e) {
+                                        if(((parseInt(e.data.jumlah[0].jumlah) - parseInt(e.data.totalbelanja[0].totalbelanja) - parseInt(e.data.pengembalian[0].jumlahpengembalian)) + $scope.totalspjawal) >= $scope.item.jumlahSPJ){
+                                            medifirstService.get("perencanaan/get-penjagaan-verif-spj?norec=" + $scope.norecverif ).then(function (e) {
+                                    
+                                                if(e.data.detail.length == 0){
+                                                        var cek = 123;
+                                                }
+                                                 else if(e.data.detail.length > 0){
+                                                    if(e.data.detail[0].tglverif != null){
+                                                        var cek = 234;
+                                                    } else{
+                                                        var cek = 123;
+                                                    }
+                                                }
+                                          
+                                                //console.log(cek);
+                                          
+                                                if(cek == 234){
+                                                    messageContainer.error("Data yang sudah diverif tidak bisa diubah");
+                                                } else if (cek == 123){
+                                                    medifirstService.post('perencanaan/save-realisasi-spj',datasave).then(function (e) {
+                                                        loadDataGrid();
+                                                        $scope.popupTambahSPJ.center().close()
+                                                    }, function (error) {
+                                    
+                                                    })
+                                                }
+                                            });
+                                        } else{
+                                            toastr.error('Total SPJ melebihi sisa panjar', 'Informasi');
+                                            return
+                                        }
+                                    });
+                                } else{
+                                    medifirstService.get("perencanaan/get-penjagaan-verif-spj?norec=" + $scope.norecverif ).then(function (e) {
+                                    
+                                        if(e.data.detail.length == 0){
+                                                var cek = 123;
+                                        }
+                                         else if(e.data.detail.length > 0){
+                                            if(e.data.detail[0].tglverif != null){
+                                                var cek = 234;
+                                            } else{
+                                                var cek = 123;
+                                            }
+                                        }
+                                  
+                                        //console.log(cek);
+                                  
+                                        if(cek == 234){
+                                            messageContainer.error("Data yang sudah diverif tidak bisa diubah");
+                                        } else if (cek == 123){
+                                            medifirstService.post('perencanaan/save-realisasi-spj',datasave).then(function (e) {
+                                                loadDataGrid();
+                                                $scope.popupTambahSPJ.center().close()
+                                            }, function (error) {
+                            
+                                            })
+                                        }
+                                    });
+                                }
+
                             }
-                        }
-                  
-                        //console.log(cek);
-                  
-                        if(cek == 234){
-                            messageContainer.error("Data yang sudah diverif tidak bisa diubah");
-                        } else if (cek == 123){
-                            medifirstService.post('perencanaan/save-realisasi-spj',datasave).then(function (e) {
-                                loadDataGrid();
-                                $scope.popupTambahSPJ.center().close()
-                            }, function (error) {
-            
-                            })
-                        }
-                    });
-                }
-                
-                
-                
-                
+                        });
+                    }
+                });
             }
             function editDetailSPJ(e) {
                 e.preventDefault();
@@ -5809,6 +5746,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 medifirstService.get("reservasionline/get-daftar-slotting?id=1").then(function (e) {
 
 				})
+
+                medifirstService.getPart('emr/get-datacombo-part-pegawai', true, true, 20).then(function (data) {
+                    $scope.listBendahara = data
+                    $scope.listPenerima = data
+                })
 
                 $scope.norecspj = dataItem.norec
                 console.log(dataItem)

@@ -15,6 +15,8 @@ define(['initialize'], function (initialize) {
 			$scope.item.akhirPeriode = $scope.now;
 			$scope.cboDefault = true;
 			$scope.cboRekanan = false;
+			$scope.dataLogin = medifirstService.getUserLogin();
+			$scope.pegawaiLogin = medifirstService.getPegawaiLogin();
 			var DataTotalMataAnggaran = [];
 			loadCombo();
 			loadData();
@@ -99,7 +101,7 @@ define(['initialize'], function (initialize) {
 				},
 				{
 					"field": "nosep",
-					"title": "No. SEP",
+					"title": "No. SEP/No. Klaim",
 					"width": "150px",
 				},
 				{
@@ -665,6 +667,67 @@ define(['initialize'], function (initialize) {
                     })
                 
             }
+
+			$("#upload").kendoUpload({
+                localization: {
+                    "select": "Import"
+                },
+
+                select: function (e) {
+                    var ALLOWED_EXTENSIONS = [".xlsx"];
+                    var extension = e.files[0].extension.toLowerCase();
+                    if (ALLOWED_EXTENSIONS.indexOf(extension) == -1) {
+                        toastr.error('Mohon Pilih File Excel (.xls)')
+                        e.preventDefault();
+                        // return
+                    }
+                    var file = e.files[0];
+                    var stringFile = e.files[0].name
+                    var strFile = stringFile.split('.')
+                    var nmFileArr = strFile[0].split('_')
+
+                    for (var i = 0; i < e.files.length; i++) {
+                        var file = e.files[i].rawFile;
+
+                        if (file) {
+                            var reader = new FileReader();
+                            reader.onload = function (e) {
+                                var data = e.target.result;
+                                var workbook = XLSX.read(data, {
+                                    type: 'binary'
+                                });
+
+                                workbook.SheetNames.forEach(function (sheetName) {
+									
+                                    var XL_row_object = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]);
+                                    var json_object = JSON.stringify(XL_row_object);
+                                    console.log(XL_row_object);
+                                    var objSave =
+                                    {
+                                        data: XL_row_object,
+										pegawai: $scope.pegawaiLogin.namaLengkap,
+										userloginfk: $scope.dataLogin.id,
+                                    }
+
+                                    console.log(XL_row_object)
+
+                                    medifirstService.post('tatarekening/save-piutang-bpjs', objSave).then(function (data) {
+                                        loadData()
+                                    })
+                                })
+
+                            };
+
+                            reader.onerror = function (ex) {
+                                console.log(ex);
+                            };
+
+                            reader.readAsBinaryString(file);
+                        }
+                    }
+                },
+
+            });
 
 			$scope.selectRow = function (dataItem) {
 				var dataSelect = _.find($scope.dataPasienPiutang._data, function (data) {

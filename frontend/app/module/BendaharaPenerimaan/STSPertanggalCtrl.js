@@ -63,11 +63,99 @@ define(['initialize'], function (initialize) {
                                 model: {
                                     fields: {
                                         jumlahjiwa: { type: "number" },
+                                        jumlahnapza: { type: "number" },
+                                        jumlahperiksadokterumum: { type: "number" },
+                                        jumlahperiksadoktergigi: { type: "number" },
+                                        jumlahperiksadokterpenydalam: { type: "number" },
+                                        jumlahperiksadokteranak: { type: "number" },
+                                        jumlahperiksadoktersyaraf: { type: "number" },
+                                        jumlahperiksadokterelektromedik: { type: "number" },
+                                        jumlahperiksadokterigd: { type: "number" },
+                                        jumlahdipam: { type: "number" },
+                                        jumlahtmpoli: { type: "number" },
+                                        jumlahtmigd: { type: "number" },
+                                        jumlahtmgigi: { type: "number" },
+                                        jumlahobatrajal: { type: "number" },
+                                        jumlahkir: { type: "number" },
+                                        jumlahpsikolog: { type: "number" },
+                                        jumlahlab: { type: "number" },
+                                        jumlahtmelektromedik: { type: "number" },
+                                        jumlahfisio: { type: "number" },
+                                        jumlahradio: { type: "number" },
+                                        jumlahdiklat: { type: "number" },
+                                        jumlahvip: { type: "number" },
+                                        jumlahkelas1: { type: "number" },
+                                        jumlahkelasuppi: { type: "number" },
+                                        jumlahkelas2: { type: "number" },
+                                        jumlahkelas3: { type: "number" },
+                                        jumlahobatranap: { type: "number" },
+                                        jumlahtmranap: { type: "number" },
+                                        jumlahvisite: { type: "number" },
+                                        jumlahrehabmental: { type: "number" },
+                                        jumlahjenazah: { type: "number" },
+                                        jumlahlegalisir: { type: "number" },
+                                        jumlahgedungterapi: { type: "number" },
+                                        jumlahsewalapangan: { type: "number" },
+                                        jumlahgedungdiklat: { type: "number" },
+                                        jumlahgrhasiainn: { type: "number" },
+                                        jumlahpertanian: { type: "number" },
+                                        jumlahkalandra: { type: "number" },
+                                        jumlahsewatempatfc: { type: "number" },
+                                        jumlahmanekin: { type: "number" },
+                                        jumlahsewaambulan: { type: "number" },
+                                        jumlahketerampilan: { type: "number" },
+                                        jumlahparkir: { type: "number" },
+                                        jumlahlainlain: { type: "number" },
+                                        jumlahtotal: { type: "number" },
                                     }
                                 }
                             },
                             aggregate: [
                                 { field: 'jumlahjiwa', aggregate: 'sum' },
+                                { field: 'jumlahnapza', aggregate: 'sum' },
+                                { field: 'jumlahperiksadokterumum', aggregate: 'sum' },
+                                { field: 'jumlahperiksadoktergigi', aggregate: 'sum' },
+                                { field: 'jumlahperiksadokterpenydalam', aggregate: 'sum' },
+                                { field: 'jumlahperiksadokteranak', aggregate: 'sum' },
+                                { field: 'jumlahperiksadoktersyaraf', aggregate: 'sum' },
+                                { field: 'jumlahperiksadokterelektromedik', aggregate: 'sum' },
+                                { field: 'jumlahperiksadokterigd', aggregate: 'sum' },
+                                { field: 'jumlahdipam', aggregate: 'sum' },
+                                { field: 'jumlahtmpoli', aggregate: 'sum' },
+                                { field: 'jumlahtmigd', aggregate: 'sum' },
+                                { field: 'jumlahtmgigi', aggregate: 'sum' },
+                                { field: 'jumlahobatrajal', aggregate: 'sum' },
+                                { field: 'jumlahkir', aggregate: 'sum' },
+                                { field: 'jumlahpsikolog', aggregate: 'sum' },
+                                { field: 'jumlahlab', aggregate: 'sum' },
+                                { field: 'jumlahtmelektromedik', aggregate: 'sum' },
+                                { field: 'jumlahfisio', aggregate: 'sum' },
+                                { field: 'jumlahradio', aggregate: 'sum' },
+                                { field: 'jumlahdiklat', aggregate: 'sum' },
+                                { field: 'jumlahvip', aggregate: 'sum' },
+                                { field: 'jumlahkelas1', aggregate: 'sum' },
+                                { field: 'jumlahkelasuppi', aggregate: 'sum' },
+                                { field: 'jumlahkelas2', aggregate: 'sum' },
+                                { field: 'jumlahkelas3', aggregate: 'sum' },
+                                { field: 'jumlahobatranap', aggregate: 'sum' },
+                                { field: 'jumlahtmranap', aggregate: 'sum' },
+                                { field: 'jumlahvisite', aggregate: 'sum' },
+                                { field: 'jumlahrehabmental', aggregate: 'sum' },
+                                { field: 'jumlahjenazah', aggregate: 'sum' },
+                                { field: 'jumlahlegalisir', aggregate: 'sum' },
+                                { field: 'jumlahgedungterapi', aggregate: 'sum' },
+                                { field: 'jumlahsewalapangan', aggregate: 'sum' },
+                                { field: 'jumlahgedungdiklat', aggregate: 'sum' },
+                                { field: 'jumlahgrhasiainn', aggregate: 'sum' },
+                                { field: 'jumlahpertanian', aggregate: 'sum' },
+                                { field: 'jumlahkalandra', aggregate: 'sum' },
+                                { field: 'jumlahsewatempatfc', aggregate: 'sum' },
+                                { field: 'jumlahmanekin', aggregate: 'sum' },
+                                { field: 'jumlahsewaambulan', aggregate: 'sum' },
+                                { field: 'jumlahketerampilan', aggregate: 'sum' },
+                                { field: 'jumlahparkir', aggregate: 'sum' },
+                                { field: 'jumlahlainlain', aggregate: 'sum' },
+                                { field: 'jumlahtotal', aggregate: 'sum' },
                             ]
                         });
                     });
@@ -160,6 +248,9 @@ define(['initialize'], function (initialize) {
                         "title": "Periksa Dokter Jiwa",
                         "width": "100px",
                         "template": "<span class='style-right'>{{formatRupiah('#: jumlahjiwa #', 'Rp.')}}</span>",
+                        aggregates: ["sum"],
+                        groupFooterTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahjiwa.sum #', 'Rp.')}}</span>",
+                        footerTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahjiwa.sum #', 'Rp.')}}</span>"
                     },
                     {
                         
@@ -167,6 +258,9 @@ define(['initialize'], function (initialize) {
                         "title": "Periksa Dokter NAPZA",
                         "width": "100px",
                         "template": "<span class='style-right'>{{formatRupiah('#: jumlahnapza #', 'Rp.')}}</span>",
+                        aggregates: ["sum"],
+                        groupFooterTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahnapza.sum #', 'Rp.')}}</span>",
+                        footerTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahnapza.sum #', 'Rp.')}}</span>"
                     },
                     {
                         
@@ -174,6 +268,9 @@ define(['initialize'], function (initialize) {
                         "title": "Periksa Dokter Umum",
                         "width": "100px",
                         "template": "<span class='style-right'>{{formatRupiah('#: jumlahperiksadokterumum #', 'Rp.')}}</span>",
+                        aggregates: ["sum"],
+                        groupFooterTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahperiksadokterumum.sum #', 'Rp.')}}</span>",
+                        footerTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahperiksadokterumum.sum #', 'Rp.')}}</span>"
                     },
                     {
                         
@@ -181,6 +278,9 @@ define(['initialize'], function (initialize) {
                         "title": "Periksa Dokter Gigi",
                         "width": "100px",
                         "template": "<span class='style-right'>{{formatRupiah('#: jumlahperiksadoktergigi #', 'Rp.')}}</span>",
+                        aggregates: ["sum"],
+                        groupFooterTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahperiksadoktergigi.sum #', 'Rp.')}}</span>",
+                        footerTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahperiksadoktergigi.sum #', 'Rp.')}}</span>"
                     },
                     {
                         
@@ -188,6 +288,9 @@ define(['initialize'], function (initialize) {
                         "title": "Periksa Dokter Penyakit Dalam",
                         "width": "100px",
                         "template": "<span class='style-right'>{{formatRupiah('#: jumlahperiksadokterpenydalam #', 'Rp.')}}</span>",
+                        aggregates: ["sum"],
+                        groupFooterTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahperiksadokterpenydalam.sum #', 'Rp.')}}</span>",
+                        footerTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahperiksadokterpenydalam.sum #', 'Rp.')}}</span>"
                     },
                     {
                         
@@ -195,6 +298,9 @@ define(['initialize'], function (initialize) {
                         "title": "Periksa Dokter Anak",
                         "width": "100px",
                         "template": "<span class='style-right'>{{formatRupiah('#: jumlahperiksadokteranak #', 'Rp.')}}</span>",
+                        aggregates: ["sum"],
+                        groupFooterTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahperiksadokteranak.sum #', 'Rp.')}}</span>",
+                        footerTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahperiksadokteranak.sum #', 'Rp.')}}</span>"
                     },
                     {
                         
@@ -202,6 +308,9 @@ define(['initialize'], function (initialize) {
                         "title": "Periksa Dokter Syaraf",
                         "width": "100px",
                         "template": "<span class='style-right'>{{formatRupiah('#: jumlahperiksadoktersyaraf #', 'Rp.')}}</span>",
+                        aggregates: ["sum"],
+                        groupFooterTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahperiksadoktersyaraf.sum #', 'Rp.')}}</span>",
+                        footerTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahperiksadoktersyaraf.sum #', 'Rp.')}}</span>"
                     },
                     {
                         
@@ -209,6 +318,9 @@ define(['initialize'], function (initialize) {
                         "title": "Periksa Dokter Elektromedik",
                         "width": "100px",
                         "template": "<span class='style-right'>{{formatRupiah('#: jumlahperiksadokterelektromedik #', 'Rp.')}}</span>",
+                        aggregates: ["sum"],
+                        groupFooterTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahperiksadokterelektromedik.sum #', 'Rp.')}}</span>",
+                        footerTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahperiksadokterelektromedik.sum #', 'Rp.')}}</span>"
                     },
                     {
                         
@@ -216,6 +328,9 @@ define(['initialize'], function (initialize) {
                         "title": "Periksa Dokter IGD",
                         "width": "100px",
                         "template": "<span class='style-right'>{{formatRupiah('#: jumlahperiksadokterigd #', 'Rp.')}}</span>",
+                        aggregates: ["sum"],
+                        groupFooterTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahperiksadokterigd.sum #', 'Rp.')}}</span>",
+                        footerTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahperiksadokterigd.sum #', 'Rp.')}}</span>"
                     },
                     {
                         
@@ -223,6 +338,9 @@ define(['initialize'], function (initialize) {
                         "title": "DIPAM",
                         "template": "<span class='style-right'>{{formatRupiah('#: jumlahdipam #', 'Rp.')}}</span>",
                         "width": "100px",
+                        aggregates: ["sum"],
+                        groupFooterTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahdipam.sum #', 'Rp.')}}</span>",
+                        footerTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahdipam.sum #', 'Rp.')}}</span>"
                     },
                     {
                         
@@ -230,6 +348,9 @@ define(['initialize'], function (initialize) {
                         "title": "TM Poli",
                         "width": "100px",
                         "template": "<span class='style-right'>{{formatRupiah('#: jumlahtmpoli #', 'Rp.')}}</span>",
+                        aggregates: ["sum"],
+                        groupFooterTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahtmpoli.sum #', 'Rp.')}}</span>",
+                        footerTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahtmpoli.sum #', 'Rp.')}}</span>"
                     },
                     {
                         
@@ -237,6 +358,9 @@ define(['initialize'], function (initialize) {
                         "title": "TM IGD",
                         "width": "100px",
                         "template": "<span class='style-right'>{{formatRupiah('#: jumlahtmigd #', 'Rp.')}}</span>",
+                        aggregates: ["sum"],
+                        groupFooterTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahtmigd.sum #', 'Rp.')}}</span>",
+                        footerTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahtmigd.sum #', 'Rp.')}}</span>"
                     },
                     {
                         
@@ -244,6 +368,9 @@ define(['initialize'], function (initialize) {
                         "title": "TM Gigi",
                         "width": "100px",
                         "template": "<span class='style-right'>{{formatRupiah('#: jumlahtmgigi #', 'Rp.')}}</span>",
+                        aggregates: ["sum"],
+                        groupFooterTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahtmgigi.sum #', 'Rp.')}}</span>",
+                        footerTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahtmgigi.sum #', 'Rp.')}}</span>"
                     },
                     {
                         
@@ -251,6 +378,9 @@ define(['initialize'], function (initialize) {
                         "title": "Obat Rajal",
                         "width": "100px",
                         "template": "<span class='style-right'>{{formatRupiah('#: jumlahobatrajal #', 'Rp.')}}</span>",
+                        aggregates: ["sum"],
+                        groupFooterTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahobatrajal.sum #', 'Rp.')}}</span>",
+                        footerTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahobatrajal.sum #', 'Rp.')}}</span>"
                     },
                     {
                         
@@ -258,6 +388,9 @@ define(['initialize'], function (initialize) {
                         "title": "KIR",
                         "width": "100px",
                         "template": "<span class='style-right'>{{formatRupiah('#: jumlahkir #', 'Rp.')}}</span>",
+                        aggregates: ["sum"],
+                        groupFooterTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahkir.sum #', 'Rp.')}}</span>",
+                        footerTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahkir.sum #', 'Rp.')}}</span>"
                     },
                     {
                         
@@ -265,6 +398,9 @@ define(['initialize'], function (initialize) {
                         "title": "Psikologi",
                         "width": "100px",
                         "template": "<span class='style-right'>{{formatRupiah('#: jumlahpsikolog #', 'Rp.')}}</span>",
+                        aggregates: ["sum"],
+                        groupFooterTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahpsikolog.sum #', 'Rp.')}}</span>",
+                        footerTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahpsikolog.sum #', 'Rp.')}}</span>"
                     },
                     {
                         
@@ -272,6 +408,9 @@ define(['initialize'], function (initialize) {
                         "title": "Laboratorium",
                         "width": "100px",
                         "template": "<span class='style-right'>{{formatRupiah('#: jumlahlab #', 'Rp.')}}</span>",
+                        aggregates: ["sum"],
+                        groupFooterTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahlab.sum #', 'Rp.')}}</span>",
+                        footerTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahlab.sum #', 'Rp.')}}</span>"
                     },
                     {
                         
@@ -279,6 +418,9 @@ define(['initialize'], function (initialize) {
                         "title": "Elektromedik",
                         "width": "100px",
                         "template": "<span class='style-right'>{{formatRupiah('#: jumlahtmelektromedik #', 'Rp.')}}</span>",
+                        aggregates: ["sum"],
+                        groupFooterTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahtmelektromedik.sum #', 'Rp.')}}</span>",
+                        footerTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahtmelektromedik.sum #', 'Rp.')}}</span>"
                     },
                     {
                         
@@ -286,6 +428,9 @@ define(['initialize'], function (initialize) {
                         "title": "Fisiotherapy",
                         "width": "100px",
                         "template": "<span class='style-right'>{{formatRupiah('#: jumlahfisio #', 'Rp.')}}</span>",
+                        aggregates: ["sum"],
+                        groupFooterTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahfisio.sum #', 'Rp.')}}</span>",
+                        footerTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahfisio.sum #', 'Rp.')}}</span>"
                     },
                     {
                         
@@ -293,6 +438,9 @@ define(['initialize'], function (initialize) {
                         "title": "Radiologi",
                         "width": "100px",
                         "template": "<span class='style-right'>{{formatRupiah('#: jumlahradio #', 'Rp.')}}</span>",
+                        aggregates: ["sum"],
+                        groupFooterTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahradio.sum #', 'Rp.')}}</span>",
+                        footerTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahradio.sum #', 'Rp.')}}</span>"
                     },
                     {
                         
@@ -300,6 +448,9 @@ define(['initialize'], function (initialize) {
                         "title": "Diklat",
                         "width": "100px",
                         "template": "<span class='style-right'>{{formatRupiah('#: jumlahdiklat #', 'Rp.')}}</span>",
+                        aggregates: ["sum"],
+                        groupFooterTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahdiklat.sum #', 'Rp.')}}</span>",
+                        footerTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahdiklat.sum #', 'Rp.')}}</span>"
                     },
                     {
                         
@@ -307,6 +458,9 @@ define(['initialize'], function (initialize) {
                         "title": "VIP",
                         "width": "100px",
                         "template": "<span class='style-right'>{{formatRupiah('#: jumlahvip #', 'Rp.')}}</span>",
+                        aggregates: ["sum"],
+                        groupFooterTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahvip.sum #', 'Rp.')}}</span>",
+                        footerTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahvip.sum #', 'Rp.')}}</span>"
                     },
                     {
                         
@@ -314,6 +468,9 @@ define(['initialize'], function (initialize) {
                         "title": "Kelas I",
                         "width": "100px",
                         "template": "<span class='style-right'>{{formatRupiah('#: jumlahkelas1 #', 'Rp.')}}</span>",
+                        aggregates: ["sum"],
+                        groupFooterTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahkelas1.sum #', 'Rp.')}}</span>",
+                        footerTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahkelas1.sum #', 'Rp.')}}</span>"
                     },
                     {
                         
@@ -321,6 +478,9 @@ define(['initialize'], function (initialize) {
                         "title": "UPPI",
                         "width": "100px",
                         "template": "<span class='style-right'>{{formatRupiah('#: jumlahkelasuppi #', 'Rp.')}}</span>",
+                        aggregates: ["sum"],
+                        groupFooterTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahkelasuppi.sum #', 'Rp.')}}</span>",
+                        footerTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahkelasuppi.sum #', 'Rp.')}}</span>"
                     },
                     {
                         
@@ -328,6 +488,9 @@ define(['initialize'], function (initialize) {
                         "title": "Kelas II",
                         "width": "100px",
                         "template": "<span class='style-right'>{{formatRupiah('#: jumlahkelas2 #', 'Rp.')}}</span>",
+                        aggregates: ["sum"],
+                        groupFooterTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahkelas2.sum #', 'Rp.')}}</span>",
+                        footerTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahkelas2.sum #', 'Rp.')}}</span>"
                     },
                     {
                         
@@ -335,6 +498,9 @@ define(['initialize'], function (initialize) {
                         "title": "Kelas III",
                         "width": "100px",
                         "template": "<span class='style-right'>{{formatRupiah('#: jumlahkelas3 #', 'Rp.')}}</span>",
+                        aggregates: ["sum"],
+                        groupFooterTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahkelas3.sum #', 'Rp.')}}</span>",
+                        footerTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahkelas3.sum #', 'Rp.')}}</span>"
                     },
                     {
                         
@@ -342,6 +508,9 @@ define(['initialize'], function (initialize) {
                         "title": "Obat Ranap",
                         "width": "100px",
                         "template": "<span class='style-right'>{{formatRupiah('#: jumlahobatranap #', 'Rp.')}}</span>",
+                        aggregates: ["sum"],
+                        groupFooterTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahobatranap.sum #', 'Rp.')}}</span>",
+                        footerTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahobatranap.sum #', 'Rp.')}}</span>"
                     },
                     {
                         
@@ -349,6 +518,9 @@ define(['initialize'], function (initialize) {
                         "title": "TM Ranap",
                         "width": "100px",
                         "template": "<span class='style-right'>{{formatRupiah('#: jumlahtmranap #', 'Rp.')}}</span>",
+                        aggregates: ["sum"],
+                        groupFooterTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahtmranap.sum #', 'Rp.')}}</span>",
+                        footerTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahtmranap.sum #', 'Rp.')}}</span>"
                     },
                     {
                         
@@ -356,6 +528,9 @@ define(['initialize'], function (initialize) {
                         "title": "Visite",
                         "width": "100px",
                         "template": "<span class='style-right'>{{formatRupiah('#: jumlahvisite #', 'Rp.')}}</span>",
+                        aggregates: ["sum"],
+                        groupFooterTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahvisite.sum #', 'Rp.')}}</span>",
+                        footerTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahvisite.sum #', 'Rp.')}}</span>"
                     },
                     {
                         
@@ -363,6 +538,9 @@ define(['initialize'], function (initialize) {
                         "title": "Rehab Mental",
                         "width": "100px",
                         "template": "<span class='style-right'>{{formatRupiah('#: jumlahrehabmental #', 'Rp.')}}</span>",
+                        aggregates: ["sum"],
+                        groupFooterTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahrehabmental.sum #', 'Rp.')}}</span>",
+                        footerTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahrehabmental.sum #', 'Rp.')}}</span>"
                     },
                     {
                         
@@ -370,6 +548,9 @@ define(['initialize'], function (initialize) {
                         "title": "Perawatan Jenazah",
                         "width": "100px",
                         "template": "<span class='style-right'>{{formatRupiah('#: jumlahjenazah #', 'Rp.')}}</span>",
+                        aggregates: ["sum"],
+                        groupFooterTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahjenazah.sum #', 'Rp.')}}</span>",
+                        footerTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahjenazah.sum #', 'Rp.')}}</span>"
                     },
                     {
                         
@@ -377,6 +558,9 @@ define(['initialize'], function (initialize) {
                         "title": "Legalisir",
                         "width": "100px",
                         "template": "<span class='style-right'>{{formatRupiah('#: jumlahlegalisir #', 'Rp.')}}</span>",
+                        aggregates: ["sum"],
+                        groupFooterTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahlegalisir.sum #', 'Rp.')}}</span>",
+                        footerTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahlegalisir.sum #', 'Rp.')}}</span>"
                     },
                     {
                         
@@ -384,6 +568,9 @@ define(['initialize'], function (initialize) {
                         "title": "Sewa Gedung Terapi",
                         "width": "100px",
                         "template": "<span class='style-right'>{{formatRupiah('#: jumlahgedungterapi #', 'Rp.')}}</span>",
+                        aggregates: ["sum"],
+                        groupFooterTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahgedungterapi.sum #', 'Rp.')}}</span>",
+                        footerTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahgedungterapi.sum #', 'Rp.')}}</span>"
                     },
                     {
                         
@@ -391,6 +578,9 @@ define(['initialize'], function (initialize) {
                         "title": "Sewa Sewa Lapangan",
                         "width": "100px",
                         "template": "<span class='style-right'>{{formatRupiah('#: jumlahsewalapangan #', 'Rp.')}}</span>",
+                        aggregates: ["sum"],
+                        groupFooterTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahsewalapangan.sum #', 'Rp.')}}</span>",
+                        footerTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahsewalapangan.sum #', 'Rp.')}}</span>"
                     },
                     {
                         
@@ -398,6 +588,9 @@ define(['initialize'], function (initialize) {
                         "title": "Sewa Gedung Diklat",
                         "width": "100px",
                         "template": "<span class='style-right'>{{formatRupiah('#: jumlahgedungdiklat #', 'Rp.')}}</span>",
+                        aggregates: ["sum"],
+                        groupFooterTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahgedungdiklat.sum #', 'Rp.')}}</span>",
+                        footerTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahgedungdiklat.sum #', 'Rp.')}}</span>"
                     },
                     {
                         
@@ -405,6 +598,9 @@ define(['initialize'], function (initialize) {
                         "title": "Sewa Grhasia Inn",
                         "width": "100px",
                         "template": "<span class='style-right'>{{formatRupiah('#: jumlahgrhasiainn #', 'Rp.')}}</span>",
+                        aggregates: ["sum"],
+                        groupFooterTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahgrhasiainn.sum #', 'Rp.')}}</span>",
+                        footerTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahgrhasiainn.sum #', 'Rp.')}}</span>"
                     },
                     {
                         
@@ -412,6 +608,9 @@ define(['initialize'], function (initialize) {
                         "title": "Sewa Lahan Pertanian",
                         "width": "100px",
                         "template": "<span class='style-right'>{{formatRupiah('#: jumlahpertanian #', 'Rp.')}}</span>",
+                        aggregates: ["sum"],
+                        groupFooterTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahpertanian.sum #', 'Rp.')}}</span>",
+                        footerTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahpertanian.sum #', 'Rp.')}}</span>"
                     },
                     {
                         
@@ -419,6 +618,9 @@ define(['initialize'], function (initialize) {
                         "title": "Sewa Kalandra",
                         "width": "100px",
                         "template": "<span class='style-right'>{{formatRupiah('#: jumlahkalandra #', 'Rp.')}}</span>",
+                        aggregates: ["sum"],
+                        groupFooterTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahkalandra.sum #', 'Rp.')}}</span>",
+                        footerTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahkalandra.sum #', 'Rp.')}}</span>"
                     },
                     {
                         
@@ -426,6 +628,9 @@ define(['initialize'], function (initialize) {
                         "title": "Sewa Tempat Fotokopi",
                         "width": "100px",
                         "template": "<span class='style-right'>{{formatRupiah('#: jumlahsewatempatfc #', 'Rp.')}}</span>",
+                        aggregates: ["sum"],
+                        groupFooterTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahsewatempatfc.sum #', 'Rp.')}}</span>",
+                        footerTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahsewatempatfc.sum #', 'Rp.')}}</span>"
                     },
                     {
                         
@@ -433,6 +638,9 @@ define(['initialize'], function (initialize) {
                         "title": "Sewa Manekin",
                         "width": "100px",
                         "template": "<span class='style-right'>{{formatRupiah('#: jumlahmanekin #', 'Rp.')}}</span>",
+                        aggregates: ["sum"],
+                        groupFooterTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahmanekin.sum #', 'Rp.')}}</span>",
+                        footerTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahmanekin.sum #', 'Rp.')}}</span>"
                     },
                     {
                         
@@ -440,6 +648,9 @@ define(['initialize'], function (initialize) {
                         "title": "Sewa Ambulan",
                         "width": "100px",
                         "template": "<span class='style-right'>{{formatRupiah('#: jumlahsewaambulan #', 'Rp.')}}</span>",
+                        aggregates: ["sum"],
+                        groupFooterTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahsewaambulan.sum #', 'Rp.')}}</span>",
+                        footerTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahsewaambulan.sum #', 'Rp.')}}</span>"
                     },
                     {
                         
@@ -447,6 +658,9 @@ define(['initialize'], function (initialize) {
                         "title": "Work Therapy",
                         "width": "100px",
                         "template": "<span class='style-right'>{{formatRupiah('#: jumlahketerampilan #', 'Rp.')}}</span>",
+                        aggregates: ["sum"],
+                        groupFooterTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahketerampilan.sum #', 'Rp.')}}</span>",
+                        footerTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahketerampilan.sum #', 'Rp.')}}</span>"
                     },
                     {
                         
@@ -454,6 +668,9 @@ define(['initialize'], function (initialize) {
                         "title": "Parkir",
                         "width": "100px",
                         "template": "<span class='style-right'>{{formatRupiah('#: jumlahparkir #', 'Rp.')}}</span>",
+                        aggregates: ["sum"],
+                        groupFooterTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahparkir.sum #', 'Rp.')}}</span>",
+                        footerTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahparkir.sum #', 'Rp.')}}</span>"
                     },
                     {
                         
@@ -461,6 +678,9 @@ define(['initialize'], function (initialize) {
                         "title": "Lain-Lain",
                         "width": "100px",
                         "template": "<span class='style-right'>{{formatRupiah('#: jumlahlainlain #', 'Rp.')}}</span>",
+                        aggregates: ["sum"],
+                        groupFooterTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahlainlain.sum #', 'Rp.')}}</span>",
+                        footerTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahlainlain.sum #', 'Rp.')}}</span>"
                     },
                     {
                         
@@ -468,6 +688,9 @@ define(['initialize'], function (initialize) {
                         "title": "Jumlah",
                         "width": "100px",
                         "template": "<span class='style-right'>{{formatRupiah('#: jumlahtotal #', 'Rp.')}}</span>",
+                        aggregates: ["sum"],
+                        groupFooterTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahtotal.sum #', 'Rp.')}}</span>",
+                        footerTemplate: "<span class='style-right'>{{formatRupiah('#: data.jumlahtotal.sum #', 'Rp.')}}</span>"
                     },
                 ]
             };

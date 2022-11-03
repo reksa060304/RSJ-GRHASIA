@@ -3,7 +3,11 @@
     <title>
         Report
     </title>
-    <link href="{{ asset('service/css/style.css') }}" rel="stylesheet">
+        @if(stripos(\Request::url(), 'localhost') !== FALSE)
+            <link href="{{ asset('css/style.css') }}" rel="stylesheet">
+        @else
+         <link href="{{ asset('service/css/style.css') }}" rel="stylesheet">
+        @endif
 </head>
 <style type="text/css" media="print">
     @media print
@@ -37,14 +41,19 @@
 {{----}}
 <body style="background-color: #CCCCCC;margin: 0" onLoad="window.print()">
 <div align="left">
-    <table class="bayangprint" cellspacing="0" cellpadding="0" bgcolor="#FFFFFF" border="0" width="{{$pageWidth}}">
+    <table cellspacing="0" cellpadding="0" bgcolor="#FFFFFF" border="0" width="{{$pageWidth}}">
         <tbody>
         <tr>
             <td width="2%"></td>
             <td width="16%">
                 <p align="left">
+                      @if(stripos(\Request::url(), 'localhost') !== FALSE)
                     <img src="{{ asset('img/logo_bpjs.png') }}"
                          style="width: 200px" border="0"/>
+                           @else
+                     <img src="{{ asset('service/img/logo_bpjs.png') }}"
+                         style="width: 200px" border="0"/>
+                        @endif
                 </p>
             </td>
             <td width="82%">
@@ -57,7 +66,7 @@
         </tr>
         </tbody>
     </table>
-    <table class="bayangprint" cellspacing="0" cellpadding="0" bgcolor="#FFFFFF" border="0" width="{{$pageWidth}}" style="margin-top: -25px">
+    <table cellspacing="0" cellpadding="0" bgcolor="#FFFFFF" border="0" width="{{$pageWidth}}" style="margin-top: -25px">
         <tbody>
         <tr>
             <td style="padding: 30px;text-align: left">

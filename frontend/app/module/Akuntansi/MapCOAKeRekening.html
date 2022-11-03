@@ -1,0 +1,101 @@
+<style type="text/css">
+    .style-center {
+        display: inline-block;
+        text-align: center;
+        width: 100%;
+    }
+
+    .style-right {
+        display: inline-block;
+        text-align: right;
+        width: 100%;
+    }
+
+    .style-left {
+        display: inline-block;
+        text-align: left;
+        width: 100%;
+    }
+</style>
+
+<div class="grid_12">
+    <div class="grid_12 headerBox">
+        <h1 style="color: white;"><b>Mapping COA ke Rek RBA</b></h1>
+    </div>
+    <div class="grid_8">
+
+        <div class="grid_6">
+            <div class="grid_3">
+                <div class="grid_12">
+                    <label c-label item="item">Kode Akun</label>
+                </div>
+
+                <div class="grid_12">
+                    <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.noakunS" />
+                </div>
+            </div>
+            <div class="grid_7">
+                <div class="grid_12">
+                    <label c-label item="item">Nama Akun</label>
+                </div>
+
+                <div class="grid_12">
+                    <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.namaAkunS" />
+                </div>
+            </div>
+            <div class="grid_2" style="margin-top: 22px">
+                <button class="c-button" ng-click="cariFilter()">Cari</button>
+            </div>
+        </div>
+    </div>
+    <div class="grid_12">
+        <kendo-grid id="kGrid" k-data-source="dataGrid" k-selectable="'row'" options="columnGridExcel"
+            class="max-height" k-pageable="'true'" k-sortable="'true'" k-ng-model="dataSelected"
+            ng-click="klikGrid(dataSelected)"></kendo-grid>
+    </div>
+    <div class="grid_12">
+        <div class="grid_10">
+        </div>
+        <div class="grid_2" style="margin-top: 22px">
+            <button class="c-button" ng-click="tambahmapping()">Tambah Mapping</button>
+        </div>
+    </div>
+    <div class="grid_12" style="margin-top:60px">
+        <div ng-include='"../app/template/Shared/TemplateLoading"'></div>
+    </div>
+</div>
+<div kendo-window="popupMapping" k-title="'Mapping COA Ke Rek RBA'" k-visible="false" k-width="1500" k-height="600" style="overflow-y: hidden; overflow-x: hidden;">
+	<div class="panel panel-default container_12">
+		<div class="grid_12">
+			<div class="grid_12">
+				<div class="grid_4" style="margin-left: 10px;">
+					<input style="width: 100%;" kendo-combo-box k-ng-model="item.combomataanggaran"
+                    k-data-text-field="'text'" k-data-value-field="'id'"
+                    k-filter="'contains'" k-auto-bind="false" k-data-source="listMataAnggaranCombo" />
+				</div>
+			</div>
+			<div class="grid_6" style="margin-top: 20px;">
+				<legend id="filterData" style="margin-left: 10px;">
+					<a ng-click="showAndHide()">COA YANG BELUM DIMAPPING</a>
+				</legend>
+				<br>
+				<div class="grid_12" style="margin-left: 10px; margin-top: -10px;">
+					<kendo-grid id="kGrids" k-data-source="dataSourceRBABelum" k-selectable="'row'"  style="height: 1000px"
+						k-options="columnRBABelum" k-ng-model="dataRBABelumSelected" ng-click="klikRBABelum(dataRBABelumSelected)">
+					</kendo-grid>
+				</div>
+			</div>
+			<div class="grid_6" style="margin-top: 20px;">
+				<legend id="filterData" style="margin-left: 10px;">
+					<a ng-click="showAndHide()">COA YANG SUDAH DIMAPPING</a>
+				</legend>
+				<br>
+				<div class="grid_12" style="margin-left: 10px; margin-top: -10px;">
+					<kendo-grid id="kGrids" k-data-source="dataSourceRBASudah" k-selectable="'row'"  style="height: 1000px"
+						k-options="columnRBASudah" k-ng-model="dataRBASudahSelected" ng-click="klikRBASudah(dataRBASudahSelected)">
+					</kendo-grid>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

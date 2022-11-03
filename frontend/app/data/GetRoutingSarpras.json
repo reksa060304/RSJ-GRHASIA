@@ -2120,12 +2120,53 @@
         "module": "MedifirstService",
         "define": "MedifirstService"
       }
-    ]  },
+    ]  
+  },
   {
     "name": "KelompokAnggaran",
     "url": "/S2Vsb21wb2tBbmdnYXJhbg==/:parameter",
     "templateurl": "module/Perencanaan/KelompokAnggaran.html",
     "controller": "KelompokAnggaranCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "LockEntrySPJ",
+    "url": "/TG9ja0VudHJ5U1BK",
+    "templateurl": "module/Perencanaan/LockEntrySPJ.html",
+    "controller": "LockEntrySPJCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "LockEntryRBA",
+    "url": "/TG9ja0VudHJ5UkJB",
+    "templateurl": "module/Perencanaan/LockEntryRBA.html",
+    "controller": "LockEntryRBACtrl",
     "deps": [
       {
         "module": "Services",
