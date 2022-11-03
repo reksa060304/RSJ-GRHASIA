@@ -8983,138 +8983,84 @@ public function suratBuktiPengembalian(Request $request)
     
     public function cetakUDD(Request $request)
     {
-        //setting waktu
-        $waktuid = explode(",",$request['waktu']);
+        //variable
+        $tgl = '';
         $waktu= '';
         $tempWaktu = '';
+
+        //setting waktu
+        if(isset($request['waktusiang'])){
+            $waktu = 'SIANG';
+            $tempWaktu = 'and pp.issiang = true';
+        }
+        if(isset($request['waktupagi'])){
+            $waktu = 'PAGI';
+            $tempWaktu = 'and pp.ispagi = true';
+        }
+        if(isset($request['waktumalam'])){
+            $waktu = 'MALAM';
+            $tempWaktu = 'and pp.ismalam = true';
+        }
         //setting tgl
-        $tgl = explode(",",$request['tgl']);
+        if(isset($request['tglmalam'])){
+            $tgl = explode(",",$request['tglmalam']);
+        }
+        if(isset($request['tglpagi'])){
+            $tgl = explode(",",$request['tglpagi']);
+        }
+        if(isset($request['tglsiang'])){
+            $tgl = explode(",",$request['tglsiang']);
+        }
         
-        // if($request['waktu'] == 1){
-        //     $waktu = 'PAGI';
-        //     $tempWaktu = 'and pp.ispagi = true';
-        // }if($request['waktu'] == 2){
-        //     $waktu = 'SIANG';
-        //     $tempWaktu = 'and pp.issiang = true';
-        // }
-        // // if($request['waktu'] == 3){
-        // //     $waktu = 'SORE';
-        // //     $tempWaktu = 'and pp.issore = true';
-        // // }
-        // if($request['waktu'] == 4){
-        //     $waktu = 'MALAM';
-        //     $tempWaktu = 'and pp.ismalam = true';
-        // }
+        //nocm
+        $nocm = explode(",",$request['nocm']);
+        $noresep = explode(",",$request['noorder']);
+        $norec_apd= explode(",",$request['norec_apd']);
         $dataAll = [];
         $tglmain = '';
         $date = '';
-        $detailobat = [];
         $detail = [];
         $result = [];
-        for ($i=0; $i < count($tgl); $i++) { 
-            if($tgl[$i] != ""){
-                $pasien = \DB::select(DB::raw("SELECT ps.namapasien, ps.tgllahir::date 
-                FROM pasien_m ps where ps.statusenabled=true and ps.kdprofile = $request[kodeprofile] and ps.nocm = '$request[nocm]'"));
-                if($waktuid[$i] == 1){
-                $waktu = 'PAGI';
-                $tempWaktu = 'and pp.ispagi = true';
-                } else if($waktuid[$i] == 2){
-                    $waktu = 'SIANG';
-                    $tempWaktu = 'and pp.issiang = true';
-                }
-                // if($waktuid[$i] == 3){
-                //     $waktu = 'SORE';
-                //     $tempWaktu = 'and pp.issore = true';
-                // }
-                 else if($waktuid[$i] == 4){
-                    $waktu = 'MALAM';
-                    $tempWaktu = 'and pp.ismalam = true';
-                }
-                $date = DB::select(DB::raw("SELECT generate_series('$tgl[$i]'::date, '$tgl[$i]'::date+6, '1 day'::interval)::date as tglcetak"));
-                for ($j=0; $j < count($date); $j++) { 
-                        $pasien = \DB::select(DB::raw("SELECT ps.namapasien, ps.tgllahir::date 
-                        FROM pasien_m ps where ps.statusenabled=true and ps.kdprofile = $request[kodeprofile] and ps.nocm = '$request[nocm]'"));
-                        $data = \DB::select(DB::raw("SELECT 
-                            case 
-                            when pp.satuanviewfk = 335 then 'tab' 
-                            when pp.satuanviewfk = 345 then 'kaps' 
-                            end as satuan, pr.namaproduk,split_part(pp.aturanpakai, 'x', 2) as aturan FROM pelayananpasien_t pp
-                            inner join strukresep_t sr on sr.norec = pp.strukresepfk
-                            inner join produk_m pr on pr.id = pp.produkfk
-                            where pp.isobat = true and pp.noregistrasifk ilike '$request[norec_apd]' and sr.noresep ilike '$request[noorder]' $tempWaktu "));
-                        $detail = $data;
-                }
-
-                
-                $dataAll=array(
-                    'pasien'=> $pasien,
-                    'detailobat'=> $detail,
-                    'waktu'=> $waktu
-                );
-                // $detailobat[] = array(
-                //     'pasien'=> $pasien,
-                //     'obat'=> $data,
-                //     'waktu'=> $waktu
-                // );
-                $result[] = array(
-                'tglpelayanan'=> $date,
-                'pelayanan'=> $dataAll,
-            );
+        $namapasien= '';        
+        $tgllahir= '';
+        $i=0;
+        foreach ($nocm as $cm) {
+            $pasien = \DB::select(DB::raw("SELECT ps.namapasien, ps.tgllahir::date 
+            FROM pasien_m ps where ps.statusenabled=true and ps.kdprofile = $request[kodeprofile] and ps.nocm = '$cm'"));
+            foreach ($pasien as $ps) {
+                $namapasien = $ps->namapasien;
+                $tgllahir = $ps->tgllahir;
             }
-            
-            // $result = array()
-            // $dataAll[]=array(
-            //     // 'dataAll'=> array(),
-            //     'data'=> $detailobat
-            // );
-            
+            $detail = [];
+            $date = DB::select(DB::raw("SELECT generate_series('$tgl[$i]'::date, '$tgl[$i]'::date+6, '1 day'::interval)::date as tglcetak"));
+            $eresep = '';
+            $norec='';
+            // var_dump($date);
+            foreach ($date as $d) {
+                $tglpelayanan = $d->tglcetak;
+                $data = \DB::select(DB::raw("SELECT 
+                case 
+                when pp.satuanviewfk = 335 then 'tab' 
+                when pp.satuanviewfk = 345 then 'kaps' 
+                end as satuan, pr.namaproduk,split_part(pp.aturanpakai, 'x', 2) as aturan FROM pelayananpasien_t pp
+                inner join strukresep_t sr on sr.norec = pp.strukresepfk
+                inner join produk_m pr on pr.id = pp.produkfk
+                where pp.isobat = true and pp.noregistrasifk ilike '$norec_apd[$i]' and sr.noresep ilike '$noresep[$i]' $tempWaktu "));
+                $detailobat = $data; 
+                $detail[]= array(
+                'namapasien'=> $namapasien,
+                'tgllahir'=> $tgllahir,
+                'tglpelayanan'=> $tglpelayanan,
+                'detailobat'=> $detailobat,
+                'waktu'=> $waktu
+                );
+            }
+            $result[]= $detail;
+            $i++;
+
         }
-        // dd($result,$dataAll);
+        // dd($result);
         return view("report.apotik.cetak-udd", compact('result'));
-        // $date = DB::select(DB::raw("SELECT generate_series('$tglAwal[$i]'::date, '$tglAwal[$i]'::date+6, '1 day'::interval)::date as date"));
-        // $datapagi = \DB::select(DB::raw("SELECT 
-        //     case 
-        //     when pp.satuanviewfk = 335 then 'tab' 
-        //     when pp.satuanviewfk = 345 then 'kaps' 
-        //     end as satuan, pr.namaproduk,split_part(pp.aturanpakai, 'x', 2) as aturan FROM pelayananpasien_t pp
-        //     inner join strukresep_t sr on sr.norec = pp.strukresepfk
-        //     inner join produk_m pr on pr.id = pp.produkfk
-        //     where pp.isobat = true and pp.noregistrasifk ilike '$request[norec_apd]' and pp.ismalam = true and sr.noresep ilike '$request[noorder]'$tempWaktupagi "));
-
-
-        // $noresep = explode(",",$request['noorder']) ;
-        // $norec_apd = explode(",",$request['norec_apd']) ;
-        // $nocm = explode(",",$request['nocm']) ;
-        // $tglAwal = explode(",",$request['tglAwal']) ;
-
-        // $detail = [];
-        // $obat = [];
-        
-            // for ($i=1; $i < count($noresep); $i++) { 
-            //     $date = DB::select(DB::raw("SELECT generate_series('$tglAwal[$i]'::date, '$tglAwal[$i]'::date+6, '1 day'::interval)::date as date, '$waktu' as waktu"));
-
-            //     $pasien = \DB::select(DB::raw("SELECT ps.namapasien, ps.tgllahir::date 
-            //     FROM pasien_m ps where ps.statusenabled=true and ps.kdprofile = $request[kodeprofile] and ps.nocm = '$nocm[$i]'"));
-
-            //     $data = \DB::select(DB::raw("SELECT 
-            //     case 
-            //     when pp.satuanviewfk = 335 then 'tab' 
-            //     when pp.satuanviewfk = 345 then 'kaps' 
-            //     end as satuan, pr.namaproduk,split_part(pp.aturanpakai, 'x', 2) as aturan FROM pelayananpasien_t pp
-            //     inner join strukresep_t sr on sr.norec = pp.strukresepfk
-            //     inner join produk_m pr on pr.id = pp.produkfk
-            //     where pp.isobat = true and pp.noregistrasifk ilike '$norec_apd[$i]' and pp.ismalam = true and sr.noresep ilike '$noresep[$i]'"));
-            //     $obat = $data;
-            //     $detail[] = array(
-            //         'date'=> $date,
-            //         'pasien'=> $pasien,
-            //         'obat'=> $obat,
-            //         // 'waktu'=> $waktu
-            //     ); 
-            // }
-           
-        // if()
-        
         
     }
     public function cetakCakem(Request $request)
@@ -9168,5 +9114,183 @@ public function suratBuktiPengembalian(Request $request)
         // dd($data,$detail);
         return view("report.keperawatan.catatan-perkembangan", compact('result'));
     }
-   
+    public function cetakTilik(Request $request)
+    {
+        //variable
+        $tglpagi = '';
+        $tglsiang = '';
+        $tglmalam = '';
+        $waktu= '';
+        $tempWaktu = '';
+
+        //setting tgl
+        if(isset($request['tglmalam'])){
+            $tglmalam = explode(",",$request['tglmalam']);
+        }
+        if(isset($request['tglpagi'])){
+            $tglpagi = explode(",",$request['tglpagi']);
+        }
+        if(isset($request['tglsiang'])){
+            $tglsiang = explode(",",$request['tglsiang']);
+        }
+        
+        //nocm
+        $nocm = explode(",",$request['nocm']);
+        $noresep = explode(",",$request['noorder']);
+        $norec_apd= explode(",",$request['norec_apd']);
+        $dataAll = [];
+        $tglmain = '';
+        $date = '';
+        $detail = [];
+        $result = [];
+        $namapasien= '';        
+        $tgllahir= '';
+        $nocms= '';
+        $i=0;
+        $obat = [];
+        foreach ($nocm as $cm) {
+            
+            $detail = [];
+            $date = DB::select(DB::raw("SELECT generate_series('$tglmalam[$i]'::date, '$tglmalam[$i]'::date+6, '1 day'::interval)::date as tglcetakmalam,
+            generate_series('$tglpagi[$i]'::date, '$tglpagi[$i]'::date+6, '1 day'::interval)::date as tglcetakpagi,
+            generate_series('$tglsiang[$i]'::date, '$tglsiang[$i]'::date+6, '1 day'::interval)::date as tglcetaksiang
+            "));
+            $eresep = '';
+            $norec='';
+                $detailmalam = [];
+                $detailpagi = [];
+                $detailsiang = [];
+                $detailobat = [];
+                foreach ($date as $dd) {
+                    $datamalam = \DB::select(DB::raw("SELECT 
+                    case 
+                    when pp.satuanviewfk = 335 then 'tab' 
+                    when pp.satuanviewfk = 345 then 'kaps' 
+                    end as satuan, pr.namaproduk,split_part(pp.aturanpakai, 'x', 2) as aturan, 
+                    case when pp.satuanviewfk in(335,345) then 'Oral' 
+                    when pp.satuanviewfk in(337) then 'Injeksi' end as
+                    rute, pp.ismalam, pp.ispagi, pp.issiang FROM pelayananpasien_t pp
+                    inner join strukresep_t sr on sr.norec = pp.strukresepfk
+                    inner join produk_m pr on pr.id = pp.produkfk
+                    left join routefarmasi rf on rf.id = pp.routefk
+                    where pp.isobat = true and pp.noregistrasifk ilike '$norec_apd[$i]' and sr.noresep ilike '$noresep[$i]' and pp.ismalam = true"));
+                    $datapagi = \DB::select(DB::raw("SELECT 
+                    case 
+                    when pp.satuanviewfk = 335 then 'tab' 
+                    when pp.satuanviewfk = 345 then 'kaps' 
+                    end as satuan, pr.namaproduk,split_part(pp.aturanpakai, 'x', 2) as aturan, 
+                    case when pp.satuanviewfk in(335,345) then 'Oral' 
+                    when pp.satuanviewfk in(337) then 'Injeksi' end as
+                    rute, pp.ismalam, pp.ispagi, pp.issiang FROM pelayananpasien_t pp
+                    inner join strukresep_t sr on sr.norec = pp.strukresepfk
+                    inner join produk_m pr on pr.id = pp.produkfk
+                    left join routefarmasi rf on rf.id = pp.routefk
+                    where pp.isobat = true and pp.noregistrasifk ilike '$norec_apd[$i]' and sr.noresep ilike '$noresep[$i]' and pp.ispagi = true"));
+                    $datasiang = \DB::select(DB::raw("SELECT 
+                    case 
+                    when pp.satuanviewfk = 335 then 'tab' 
+                    when pp.satuanviewfk = 345 then 'kaps' 
+                    end as satuan, pr.namaproduk,split_part(pp.aturanpakai, 'x', 2) as aturan, 
+                    case when pp.satuanviewfk in(335,345) then 'Oral' 
+                    when pp.satuanviewfk in(337) then 'Injeksi' end as
+                    rute, pp.ismalam, pp.ispagi, pp.issiang FROM pelayananpasien_t pp
+                    inner join strukresep_t sr on sr.norec = pp.strukresepfk
+                    inner join produk_m pr on pr.id = pp.produkfk
+                    left join routefarmasi rf on rf.id = pp.routefk
+                    where pp.isobat = true and pp.noregistrasifk ilike '$norec_apd[$i]' and sr.noresep ilike '$noresep[$i]' and pp.issiang = true"));
+                    //detailmalam
+                    $obatmalam = '';
+                    $satuanmalam = '';
+                    $aturanmalam='';
+                    $rutemalam='';
+                    //detailpagi
+                    $obatpagi = '';
+                    $satuanpagi = '';
+                    $aturanpagi='';
+                    $rutepagi='';
+                    //detailsiang
+                    $obatsiang = '';
+                    $satuansiang = '';
+                    $aturansiang='';
+                    $rutesiang='';
+                    foreach ($datamalam as $dm) {
+                            $obatmalam = $dm->namaproduk;
+                            $aturanmalam = $dm->aturan;
+                            $satuanmalam = $dm->satuan;
+                            $rutemalam = $dm->rute;
+                       
+                        $detailobatmalam[] = array(
+                        'v'=> '',
+                        'obatmalam'=> $obatmalam,
+                        'aturanmalam'=> $aturanmalam,
+                        'satuanmalam'=> $satuanmalam,
+                        'rutemalam'=> $rutemalam,
+                        
+                        );
+                    }
+                    foreach ($datapagi as $dp) {
+                            $obatpagi = $dp->namaproduk;
+                            $aturanpagi = $dp->aturan;
+                            $satuanpagi = $dp->satuan;
+                            $rutepagi = $dp->rute;
+                      
+                        $detailobatpagi[] = array(
+                        'v'=> '',
+                        'obatpagi'=> $obatpagi,
+                        'aturanpagi'=> $aturanpagi,
+                        'satuanpagi'=> $satuanpagi,
+                        'rutepagi'=> $rutepagi,
+                       
+                        );
+                    }
+                    foreach ($datasiang as $ds) {
+                            $obatsiang = $ds->namaproduk;
+                            $aturansiang = $ds->aturan;
+                            $satuansiang = $ds->satuan;
+                            $rutesiang = $ds->rute;
+                       
+                        $detailobatsiang[] = array(
+                        'v'=> '',
+                        'obatsiang'=> $obatsiang,
+                        'aturansiang'=> $aturansiang,
+                        'satuansiang'=> $satuansiang,
+                        'rutesiang'=> $rutesiang,
+                       
+                        );
+                    }
+                    $detailobat[] = array(
+                        'obatmalam'=> $detailobatmalam,
+                        'obatpagi'=> $detailobatpagi,
+                        'obatsiang'=> $detailobatsiang,
+                        'tglpagi'=> $dd->tglcetakpagi,
+                        'tglsiang'=> $dd->tglcetaksiang,
+                        'tglmalam'=> $dd->tglcetakmalam,
+                        'waktumalam'=> 'MALAM',
+                        'waktusiang'=> 'SIANG',
+                        'waktupagi'=> 'PAGI',
+                    );
+                    $detailobatmalam = null;                
+                    $detailobatpagi = null;                
+                    $detailobatsiang = null;                
+                }
+                $detail = $detailobat;
+                $obat=null;
+            $pasien = \DB::select(DB::raw("SELECT ps.namapasien, ps.tgllahir::date, ps.nocm 
+            FROM pasien_m ps where ps.statusenabled=true and ps.kdprofile = $request[kodeprofile] and ps.nocm = '$cm'"));
+            foreach ($pasien as $ps) {
+                $namapasien = $ps->namapasien;
+                $tgllahir = $ps->tgllahir;
+                $nocms = $ps->nocm;
+            }
+            $result[]= array(
+                'namapasien'=>$namapasien,
+                'tgllahir'=>$tgllahir,
+                'nocm'=>$nocms,
+                'details'=> $detail,
+            );
+            $i++;
+        }
+        $pageWidth = 1300;
+        return view("report.apotik.cetak-tilik", compact('result','pageWidth'));
+    }
 }
