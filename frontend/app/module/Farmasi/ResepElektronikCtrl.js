@@ -6,6 +6,31 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             $scope.dataVOloaded = true;
             $scope.item = {};
             $rootScope.isOpen = true;
+            $scope.listwaktuPakai = [
+                {id:1,waktupakai: 'Pagi'},
+                {id:2,waktupakai: 'Siang'},
+                {id:3,waktupakai: 'Sore'},
+                {id:4,waktupakai: 'Malam'}
+            ]
+                $scope.selectedData2 = [];
+                $scope.cetak = []
+                $scope.rmcetak = []
+                $scope.startPrint = []
+                $scope.fieldset = []
+                $scope.resep = []
+                $scope.norm = []
+                $scope.checkpagi = []
+                $scope.checksiang = []
+                $scope.checkmalam = []
+                $scope.cetakpagi = []
+                $scope.cetaksiang = []
+                $scope.cetakmalam = []
+                $scope.WaktuPakaiMalam = []
+                $scope.WaktuPakaiPagi = []
+                $scope.WaktuPakaiSiang = [] 
+                $scope.startPrintPagi = []
+                $scope.startPrintSiang = []
+                $scope.startPrintMalam = []
             FormLoad();
             // $scope.item.namaPasien = "";
             // $scope.item.ruangan = "";
@@ -79,6 +104,10 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 pageable: true,
                 groupable: true,  
                 columns: [
+                {
+                    "template": "<input type='checkbox' class='checkbox' ng-click='onClick($event)' />",
+                    "width": 40
+                },
                 {
                     "field": "noantri",
                     "title": "No Antri",
@@ -433,7 +462,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         group: $scope.group
                     });
 
-
+                
                 });
                 var chacePeriode = {
                     0: tglAwal,
@@ -762,7 +791,44 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     $scope.popUpRiwayat.center().open();
                 });
             }
+            $scope.onClick = function (e) {
 
+                var element = $(e.currentTarget);
+                var checked = element.is(':checked'),
+                    row = element.closest('tr'),
+                    grid = $("#kGrid").data("kendoGrid"),
+                    // grid = $("#grid").data("kendoGrid"),
+                    dataItem = grid.dataItem(row);
+                if (checked) {
+                    var result = $.grep($scope.selectedData2, function (e) {
+                        return e.noresep == dataItem.noresep;
+                    });
+                    console.log(result);
+                    if (result.length == 0) {
+                        $scope.selectedData2.push(dataItem);
+                    } else {
+                        for (var i = 0; i < $scope.selectedData2.length; i++){
+                            
+                            if ($scope.selectedData2[i].noresep === dataItem.noresep) {
+                                $scope.selectedData2.splice(i, 1);
+                                break;
+                            }
+                            
+                        }
+                        $scope.selectedData2.push(dataItem);
+                    }
+                    row.addClass("k-state-selected");
+                } else {
+                    for (var i = 0; i < $scope.selectedData2.length; i++){
+                        if ($scope.selectedData2[i].noresep === dataItem.noresep) {
+                            $scope.selectedData2.splice(i, 1);
+                            break;
+                        }
+                        
+                    }
+                    row.removeClass("k-state-selected");
+                }
+            }
             $scope.data22 = function (dataItem) {
                 // debugger
                 for (var i = 0; i < dataItem.details.length; i++) {
@@ -1782,6 +1848,232 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                    }
                }
                medifirstService.postNonMessage('bridging/bpjs/tools', data).then(function (e) {})
+            }
+            
+            
+            $scope.waktucetak = function () {
+                for (let i = 0; i < $scope.selectedData2.length; i++) {
+                    if($scope.checkpagi[i]== true){
+                    $scope.cetakpagi[i] = true
+                    $scope.WaktuPakaiPagi[i] = {id:1,waktupakai: 'Pagi'}
+                    } else if ($scope.checkpagi[i] == false) {
+                        $scope.cetakpagi[i] = false
+                        $scope.WaktuPakaiPagi[i] = undefined
+                    }
+                    if ($scope.checksiang[i] == true) {
+                        $scope.cetaksiang[i] = true
+                        $scope.WaktuPakaiSiang[i] = {id:2,waktupakai: 'Siang'}
+                    } else if ($scope.checksiang[i] == false) {
+                        $scope.cetaksiang[i] = false
+                        $scope.WaktuPakaiSiang[i] = undefined
+                    }
+                    if ($scope.checkmalam[i] == true) {
+                        $scope.cetakmalam[i] = true
+                        $scope.WaktuPakaiMalam[i] = {id:4,waktupakai: 'Malam'}
+                    } else if ($scope.checkmalam[i] == false) {
+                        $scope.cetakmalam[i] = false
+                        $scope.WaktuPakaiMalam[i] = undefined
+                    }
+                }
+                
+            }
+            $scope.cetakUDD = function(){
+                // if ($scope.item.noorder == undefined){
+                //     toastr.error("Pilih Data !!")
+                //     return;
+                // }
+                // if($scope.item.noorder == 'Menunggu'){
+                //     toastr.error("Status Data Belum Diverifikasi !!")
+                //     return;
+                // }
+                // $scope.WaktuPakaiPagi = {id:1,waktupakai: 'Pagi'}
+                // $scope.WaktuPakaiSiang = {id:2,waktupakai: 'Siang'},
+                // $scope.WaktuPakaiMalam = {id:4,waktupakai: 'Malam'}
+                // $scope.normcetak = $scope.item.nocm
+                // $scope.resepcetak = $scope.item.noresep
+                    // $scope.popUpDetailUDD.center().open()
+
+                console.log($scope.selectedData2);
+                for (let i = 0; i < $scope.selectedData2.length; i++) {
+                    if ($scope.selectedData2[i].statusorder == 'Menunggu') {
+                        toastr.error("Status Data Belum Diverifikasi !!")
+                        return;
+                    }
+                    $scope.norm[i] = $scope.selectedData2[i].nocm
+                    $scope.resep[i] = $scope.selectedData2[i].noresep
+                    $scope.fieldset[i] = true
+                    
+                    
+                }
+
+                if ($scope.selectedData2.length > 0 && $scope.selectedData2.length < 4){
+                    $scope.popUpDetailUDD.center().open()
+                }else{
+                    toastr.error("Checklist maksimal 3")
+                    return;
+                }
+            }
+            
+            $scope.cancelCetakUDDnya = function () {
+                for (let i = 0; i < $scope.selectedData2.length; i++) {
+                }
+                $scope.popUpDetailUDD.close()
+            }
+            $scope.CetakUDDnya = function(){
+                var local = JSON.parse(localStorage.getItem('profile'));
+                var profile = local.id;
+                var noreseparr = [], nocmarr = [], norec_apdarr = [], tglpagiarr = [], tglsiangarr = [], tglmalamarr = [],waktupagiarr = [],
+                    waktusiangarr = [],
+                    waktumalamarr = []
+                var tglpagi = '',
+                    tglsiang = '',
+                    tglmalam = '',
+                    waktupagi = '',
+                    waktusiang = '',
+                    waktumalam = ''
+
+                for (let i = 0; i < $scope.selectedData2.length; i++) {
+                    noreseparr[i] = $scope.selectedData2[i].noresep
+                    nocmarr[i] = $scope.selectedData2[i].nocm
+                    norec_apdarr[i] = $scope.selectedData2[i].norec_apd
+                    console.log($scope.startPrintPagi[i]);
+                    if ($scope.startPrintPagi[i] != undefined) {
+                        tglpagiarr[i] = moment($scope.startPrintPagi[i]).format('YYYY-MM-DD')
+                    }
+                    if ($scope.startPrintSiang[i] != undefined) {
+                        tglsiangarr[i] = moment($scope.startPrintSiang[i]).format('YYYY-MM-DD')
+                    }
+                    if ($scope.startPrintMalam[i] != undefined) {
+                        tglmalamarr[i] = moment($scope.startPrintMalam[i]).format('YYYY-MM-DD')
+                    }
+                    if($scope.WaktuPakaiPagi[i] != undefined){
+                        waktupagiarr[i] = $scope.WaktuPakaiPagi[i].id
+                    }
+                    if ($scope.WaktuPakaiSiang[i] != undefined) {
+                        waktusiangarr[i] = $scope.WaktuPakaiSiang[i].id
+                    }
+                    if ($scope.WaktuPakaiMalam[i] != undefined) {
+                        waktumalamarr[i] = $scope.WaktuPakaiMalam[i].id
+                    }
+                    
+                }
+                var noresep = noreseparr.join()
+                var nocm = nocmarr.join()
+                var norec_apd = norec_apdarr.join()
+                if (waktumalamarr.join() != ''){
+                    waktumalam = "&waktumalam=" + waktumalamarr.join()
+                }
+                if (waktupagiarr.join() != '') {
+                    waktupagi = "&waktupagi=" + waktupagiarr.join()
+                }
+                if (waktusiangarr.join() != '') {
+                    waktusiang = "&waktusiang=" + waktusiangarr.join()
+                }
+                if (tglsiangarr.join() != '') {
+                    tglsiang = "&tglsiang=" + tglsiangarr.join()
+                }
+                if (tglpagiarr.join() != '') {
+                    tglpagi = "&tglpagi=" + tglpagiarr.join()
+                }
+                if (tglmalamarr.join() != '') {
+                    tglmalam = "&tglmalam=" + tglmalamarr.join()
+                }
+                window.open(config.baseApiBackend + "report/cetak-udd?noorder=" + noresep + "&norec_apd=" + norec_apd
+                +"&nocm=" + nocm + '&kodeprofile=' +profile+ tglmalam+tglpagi+tglsiang+ waktumalam+waktupagi+waktusiang);
+            }
+            $scope.cetakTilik = function () {
+                 console.log($scope.selectedData2);
+                for (let i = 0; i < $scope.selectedData2.length; i++) {
+                    if ($scope.selectedData2[i].statusorder == 'Menunggu') {
+                        toastr.error("Status Data Belum Diverifikasi !!")
+                        return;
+                    }
+                    $scope.norm[i] = $scope.selectedData2[i].nocm
+                    $scope.resep[i] = $scope.selectedData2[i].noresep
+                    $scope.fieldset[i] = true
+
+
+                }
+
+                if ($scope.selectedData2.length > 0 && $scope.selectedData2.length < 4) {
+                    $scope.popUpDetailTilik.center().open()
+                } else {
+                    toastr.error("Checklist maksimal 3")
+                    return;
+                }
+            }
+
+            $scope.cancelCetakTiliknya = function () {
+                for (let i = 0; i < $scope.selectedData2.length; i++) {}
+                $scope.popUpDetailTilik.close()
+            }
+            $scope.CetakTiliknya = function () {
+                var local = JSON.parse(localStorage.getItem('profile'));
+                var profile = local.id;
+                var noreseparr = [],
+                    nocmarr = [],
+                    norec_apdarr = [],
+                    tglpagiarr = [],
+                    tglsiangarr = [],
+                    tglmalamarr = [],
+                    waktupagiarr = [],
+                    waktusiangarr = [],
+                    waktumalamarr = []
+                var tglpagi = '',
+                    tglsiang = '',
+                    tglmalam = '',
+                    waktupagi = '',
+                    waktusiang = '',
+                    waktumalam = ''
+
+                for (let i = 0; i < $scope.selectedData2.length; i++) {
+                    noreseparr[i] = $scope.selectedData2[i].noresep
+                    nocmarr[i] = $scope.selectedData2[i].nocm
+                    norec_apdarr[i] = $scope.selectedData2[i].norec_apd
+                    console.log($scope.startPrintPagi[i]);
+                    if ($scope.startPrintPagi[i] != undefined) {
+                        tglpagiarr[i] = moment($scope.startPrintPagi[i]).format('YYYY-MM-DD')
+                    }
+                    if ($scope.startPrintSiang[i] != undefined) {
+                        tglsiangarr[i] = moment($scope.startPrintSiang[i]).format('YYYY-MM-DD')
+                    }
+                    if ($scope.startPrintMalam[i] != undefined) {
+                        tglmalamarr[i] = moment($scope.startPrintMalam[i]).format('YYYY-MM-DD')
+                    }
+                    if ($scope.WaktuPakaiPagi[i] != undefined) {
+                        waktupagiarr[i] = $scope.WaktuPakaiPagi[i].id
+                    }
+                    if ($scope.WaktuPakaiSiang[i] != undefined) {
+                        waktusiangarr[i] = $scope.WaktuPakaiSiang[i].id
+                    }
+                    if ($scope.WaktuPakaiMalam[i] != undefined) {
+                        waktumalamarr[i] = $scope.WaktuPakaiMalam[i].id
+                    }
+
+                }
+                var noresep = noreseparr.join()
+                var nocm = nocmarr.join()
+                var norec_apd = norec_apdarr.join()
+                if (waktumalamarr.join() != '') {
+                    waktumalam = "&waktumalam=" + waktumalamarr.join()
+                }
+                if (waktupagiarr.join() != '') {
+                    waktupagi = "&waktupagi=" + waktupagiarr.join()
+                }
+                if (waktusiangarr.join() != '') {
+                    waktusiang = "&waktusiang=" + waktusiangarr.join()
+                }
+                if (tglsiangarr.join() != '') {
+                    tglsiang = "&tglsiang=" + tglsiangarr.join()
+                }
+                if (tglpagiarr.join() != '') {
+                    tglpagi = "&tglpagi=" + tglpagiarr.join()
+                }
+                if (tglmalamarr.join() != '') {
+                    tglmalam = "&tglmalam=" + tglmalamarr.join()
+                }
+                window.open(config.baseApiBackend + "report/cetak-tilik?noorder=" + noresep + "&norec_apd=" + norec_apd +
+                    "&nocm=" + nocm + '&kodeprofile=' + profile + tglmalam + tglpagi + tglsiang + waktumalam + waktupagi + waktusiang);
             }
             //** BATAS SUCI */
         }
