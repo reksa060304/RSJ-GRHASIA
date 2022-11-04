@@ -3667,6 +3667,7 @@ select '-' as smf,* from  (
                 $jumlahhariperawatan = $jumlahpasienawal + $jumlahpasienpindah + $jumlahpasienmasuk;
                 $jumlahpulang = $jumlahpasiendipindahkan + $jumlahpasienpulang + $jumlahpasienpulangaps + $jumlahpasienpulangmelarikandiri;
                 $jumlahsisa = $jumlahhariperawatan - $jumlahpulang;
+                $jumlahpulangsementara = $jumlahpasienpulang + $jumlahpasienpulangaps + $jumlahpasienpulangmelarikandiri;
 
                 $detail[] =array(
                     'tanggal' =>   $tanggal,
@@ -3688,7 +3689,7 @@ select '-' as smf,* from  (
                     'jumlahpasienkelasuppi' =>   $jumlahpasienkelasuppi,
                     'jumlahpasienkelasinfeksi' =>   $jumlahpasienkelasinfeksi,
                     'jumlahhariperawatan' =>   $jumlahhariperawatan,
-                    'jumlahpulang' =>   $jumlahpulang,
+                    'jumlahpulang' =>   $jumlahpulangsementara,
                     'jumlahsisa' =>   $jumlahsisa,
                     'jumlahtt' =>   $jumlahtttotal,
                     'jumlahttruangan' =>   $jumlahttruangan,
