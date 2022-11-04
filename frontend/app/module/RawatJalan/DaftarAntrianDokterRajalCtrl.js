@@ -1550,10 +1550,10 @@ define(['initialize'], function (initialize) {
                     toastr.error('Pilih Data dulu')
                     return
                 }
-                if ($scope.dataPasienSelected.stts == '-') {
-                    toastr.info('Pasien belum Di Panggil Perawat')
-                    return
-                }
+                // if ($scope.dataPasienSelected.stts == '-') {
+                //     toastr.info('Pasien belum Di Panggil Perawat')
+                //     return
+                // }
                 console.log($scope.dataPasienSelected);
                 if ($scope.dataPasienSelected.noregistrasi == undefined) {
                     toastr.error('Pilih Data dulu')

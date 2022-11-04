@@ -221,9 +221,20 @@
             <span class="title"><label c-label c-label-text='Cetak Resep Dokter V2' font-size="13"></label></span>
         </c-button>
     </div>
-     <div class="grid_2">
+     <!-- <div class="grid_2">
         <c-button class="error" style="width: 100%; padding:0px; margin:0px;" item="item" position="'right'" click="orderGrab">
             <span class="title"><label c-label c-label-text='Order Grab' font-size="13"></label></span>
+        </c-button>
+    </div> -->
+    <div class="grid_2">
+        <c-button class="primary" style="width: 100%; padding:0px; margin:0px;" item="item" position="'right'" click="cetakUDD">
+            <span class="title"><label c-label font-size="13"> Cetak UDD</label></span>
+        </c-button>
+    </div>
+    <div class="grid_2">
+        <c-button class="primary" style="width: 100%; padding:0px; margin:0px;" item="item" position="'right'"
+            click="cetakTilik">
+            <span class="title"><label c-label font-size="13"> Cetak Tilik</label></span>
         </c-button>
     </div>
     <div class="grid_2" style="margin-top: 5px">
@@ -385,6 +396,494 @@
                         </div>
                     </div>
                 </kendo-tabstrip>
+            </div>
+        </div>
+    </div>
+    <div kendo-window="popUpDetailUDD" k-title="'Cetak UDD'" k-width="1100" k-height="400" k-visible="false"
+        k-on-open="win2visible = true" k-on-close="win2visible = false">
+        <div class="panel panel-default container_12" style="padding: 0px 10px;">
+            <div class="grid_4">
+                <fieldset ng-show="fieldset[0]">
+                    <!-- <legend>Informasi Cetak</legend> -->
+                    <div class="grid_12">
+                        <div class="grid_6">
+                            <div class="grid_12">
+                                <label c-label c-label-text="No Rekam Medis" real></label>
+                            </div>
+                            <div class="grid_12">
+                                <input c-text-box type="input" filter="" class="k-textbox" ng-model="norm[0]"
+                                    disabled />
+                            </div>
+                        </div>
+                        <div class="grid_6">
+                            <div class="grid_12">
+                                <label c-label c-label-text="No Resep" real></label>
+                            </div>
+                            <div class="grid_12">
+                                <input c-text-box type="input" filter="" class="k-textbox" ng-model="resep[0]"
+                                    disabled />
+                            </div>
+                        </div>
+                        <div class="grid_12">
+                            <div class="grid_12">
+                                <label c-label c-label-text="waktu Cetak" real></label>
+                            </div>
+                            <div class="grid_4">
+                                <input type="checkbox" class="k-checkbox" ng-model="checkmalam[0]" id="checkmalam[0]"
+                                    ng-click="waktucetak()">
+                                <label class="k-checkbox-label" for="checkmalam[0]"><b> &nbsp; Malam</b></label>
+                            </div>
+                            <div class="grid_4">
+                                <input type="checkbox" class="k-checkbox" ng-model="checkpagi[0]" id="checkpagi[0]"
+                                    ng-click="waktucetak()">
+                                <label class="k-checkbox-label" for="checkpagi[0]"><b> &nbsp; Pagi</b></label>
+                            </div>
+                            <div class="grid_4">
+                                <input type="checkbox" class="k-checkbox" ng-model="checksiang[0]" id="checksiang[0]"
+                                    ng-click="waktucetak()">
+                                <label class="k-checkbox-label" for="checksiang[0]"><b> &nbsp; Siang</b></label>
+                            </div>
+                            
+                        </div>
+                        <div class="grid_12">
+                            <label c-label c-label-text="Tanggal Cetak" real></label>
+                        </div>
+                        <div class="grid_12">
+                            <div class="grid_4" ng-show="cetakmalam[0]">
+                                <input style="width: 100%;" kendo-combo-box k-ng-model="WaktuPakaiMalam[0]"
+                                    k-data-text-field="'waktupakai'" k-data-value-field="'id'" k-filter="'contains'"
+                                    k-auto-bind="false" k-data-source="listwaktuPakai" disabled />
+                                <input style="width: 100%" k-ng-model='startPrintMalam[0]' kendo-date-picker
+                                    placeholer="dd-mm-yyyy" k-format="'dd-MM-yyyy'" />
+                            </div>
+                            <div class="grid_4" ng-show="cetakpagi[0]">
+                                
+                                <input style="width: 100%;" kendo-combo-box k-ng-model="WaktuPakaiPagi[0]"
+                                    k-data-text-field="'waktupakai'" k-data-value-field="'id'" k-filter="'contains'"
+                                    k-auto-bind="false" k-data-source="listwaktuPakai" disabled />
+                                <input style="width: 100%" k-ng-model='startPrintPagi[0]' kendo-date-picker
+                                    placeholer="dd-mm-yyyy" k-format="'dd-MM-yyyy'" />
+                            </div>
+                            <div class="grid_4" ng-show="cetaksiang[0]">
+                                <input style="width: 100%;" kendo-combo-box k-ng-model="WaktuPakaiSiang[0]"
+                                    k-data-text-field="'waktupakai'" k-data-value-field="'id'" k-filter="'contains'"
+                                    k-auto-bind="false" k-data-source="listwaktuPakai" disabled />
+                                <input style="width: 100%" k-ng-model='startPrintSiang[0]' kendo-date-picker
+                                    placeholer="dd-mm-yyyy" k-format="'dd-MM-yyyy'" />
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+            <div class="grid_4">
+                <fieldset ng-show="fieldset[1]">
+                    <!-- <legend>Informasi Cetak</legend> -->
+                    <div class="grid_12">
+                        <div class="grid_6">
+                            <div class="grid_12">
+                                <label c-label c-label-text="No Rekam Medis" real></label>
+                            </div>
+                            <div class="grid_12">
+                                <input c-text-box type="input" filter="" class="k-textbox" ng-model="norm[1]"
+                                    disabled />
+                            </div>
+                        </div>
+                        <div class="grid_6">
+                            <div class="grid_12">
+                                <label c-label c-label-text="No Resep" real></label>
+                            </div>
+                            <div class="grid_12">
+                                <input c-text-box type="input" filter="" class="k-textbox" ng-model="resep[1]"
+                                    disabled />
+                            </div>
+                        </div>
+                        <div class="grid_12">
+                            <div class="grid_12">
+                                <label c-label c-label-text="waktu Cetak" real></label>
+                            </div>
+                            <div class="grid_4">
+                                <input type="checkbox" class="k-checkbox" ng-model="checkmalam[1]" id="checkmalam[1]"
+                                    ng-click="waktucetak()">
+                                <label class="k-checkbox-label" for="checkmalam[1]"><b> &nbsp; Malam</b></label>
+                            </div>
+                            <div class="grid_4">
+                                <input type="checkbox" class="k-checkbox" ng-model="checkpagi[1]" id="checkpagi[1]"
+                                    ng-click="waktucetak()">
+                                <label class="k-checkbox-label" for="checkpagi[1]"><b> &nbsp; Pagi</b></label>
+                            </div>
+                            <div class="grid_4">
+                                <input type="checkbox" class="k-checkbox" ng-model="checksiang[1]" id="checksiang[1]"
+                                    ng-click="waktucetak()">
+                                <label class="k-checkbox-label" for="checksiang[1]"><b> &nbsp; Siang</b></label>
+                            </div>
+                            
+                        </div>
+                        <div class="grid_12">
+                            <label c-label c-label-text="Tanggal Cetak" real></label>
+                        </div>
+                        <div class="grid_12">
+                            <div class="grid_4" ng-show="cetakmalam[1]">
+                                <!-- <input c-text-box type="input" filter="" class="k-textbox" ng-model="rmcetak[3]"
+                            disabled /> -->
+                                <input style="width: 100%;" kendo-combo-box k-ng-model="WaktuPakaiMalam[1]"
+                                    k-data-text-field="'waktupakai'" k-data-value-field="'id'" k-filter="'contains'"
+                                    k-auto-bind="false" k-data-source="listwaktuPakai" disabled />
+                                <input style="width: 100%" k-ng-model='startPrintMalam[1]' kendo-date-picker
+                                    placeholer="dd-mm-yyyy" k-format="'dd-MM-yyyy'" />
+                            </div>
+                            <div class="grid_4" ng-show="cetakpagi[1]">
+                                <!-- <input c-text-box type="input" filter="" class="k-textbox" ng-model="rmcetak[1]"
+                            disabled /> -->
+                                <input style="width: 100%;" kendo-combo-box k-ng-model="WaktuPakaiPagi[1]"
+                                    k-data-text-field="'waktupakai'" k-data-value-field="'id'" k-filter="'contains'"
+                                    k-auto-bind="false" k-data-source="listwaktuPakai" disabled />
+                                <input style="width: 100%" k-ng-model='startPrintPagi[1]' kendo-date-picker
+                                    placeholer="dd-mm-yyyy" k-format="'dd-MM-yyyy'" />
+                            </div>
+                            <div class="grid_4" ng-show="cetaksiang[1]">
+                                <!-- <input c-text-box type="input" filter="" class="k-textbox" ng-model="rmcetak[2]"
+                            disabled /> -->
+                                <input style="width: 100%;" kendo-combo-box k-ng-model="WaktuPakaiSiang[1]"
+                                    k-data-text-field="'waktupakai'" k-data-value-field="'id'" k-filter="'contains'"
+                                    k-auto-bind="false" k-data-source="listwaktuPakai" disabled />
+                                <input style="width: 100%" k-ng-model='startPrintSiang[1]' kendo-date-picker
+                                    placeholer="dd-mm-yyyy" k-format="'dd-MM-yyyy'" />
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+            <div class="grid_4">
+                <fieldset ng-show="fieldset[2]">
+                    <!-- <legend>Informasi Cetak</legend> -->
+                    <div class="grid_12">
+                        <div class="grid_6">
+                            <div class="grid_12">
+                                <label c-label c-label-text="No Rekam Medis" real></label>
+                            </div>
+                            <div class="grid_12">
+                                <input c-text-box type="input" filter="" class="k-textbox" ng-model="norm[2]"
+                                    disabled />
+                            </div>
+                        </div>
+                        <div class="grid_6">
+                            <div class="grid_12">
+                                <label c-label c-label-text="No Resep" real></label>
+                            </div>
+                            <div class="grid_12">
+                                <input c-text-box type="input" filter="" class="k-textbox" ng-model="resep[2]"
+                                    disabled />
+                            </div>
+                        </div>
+                        <div class="grid_12">
+                            <div class="grid_12">
+                                <label c-label c-label-text="waktu Cetak" real></label>
+                            </div>
+                            <div class="grid_4">
+                                <input type="checkbox" class="k-checkbox" ng-model="checkmalam[2]" id="checkmalam[2]"
+                                    ng-click="waktucetak()">
+                                <label class="k-checkbox-label" for="checkmalam[2]"><b> &nbsp; Malam</b></label>
+                            </div>
+                            <div class="grid_4">
+                                <input type="checkbox" class="k-checkbox" ng-model="checkpagi[2]" id="checkpagi[2]"
+                                    ng-click="waktucetak()">
+                                <label class="k-checkbox-label" for="checkpagi[2]"><b> &nbsp; Pagi</b></label>
+                            </div>
+                            <div class="grid_4">
+                                <input type="checkbox" class="k-checkbox" ng-model="checksiang[2]" id="checksiang[2]"
+                                    ng-click="waktucetak()">
+                                <label class="k-checkbox-label" for="checksiang[2]"><b> &nbsp; Siang</b></label>
+                            </div>
+                            
+                        </div>
+                        <div class="grid_12">
+                            <label c-label c-label-text="Tanggal Cetak" real></label>
+                        </div>
+                        <div class="grid_12">
+                            <div class="grid_4" ng-show="cetakmalam[2]">
+                                <!-- <input c-text-box type="input" filter="" class="k-textbox" ng-model="rmcetak[3]"
+                            disabled /> -->
+                                <input style="width: 100%;" kendo-combo-box k-ng-model="WaktuPakaiMalam[2]"
+                                    k-data-text-field="'waktupakai'" k-data-value-field="'id'" k-filter="'contains'"
+                                    k-auto-bind="false" k-data-source="listwaktuPakai" disabled />
+                                <input style="width: 100%" k-ng-model='startPrintMalam[2]' kendo-date-picker
+                                    placeholer="dd-mm-yyyy" k-format="'dd-MM-yyyy'" />
+                            </div>
+                            <div class="grid_4" ng-show="cetakpagi[2]">
+                                <!-- <input c-text-box type="input" filter="" class="k-textbox" ng-model="rmcetak[1]"
+                            disabled /> -->
+                                <input style="width: 100%;" kendo-combo-box k-ng-model="WaktuPakaiPagi[2]"
+                                    k-data-text-field="'waktupakai'" k-data-value-field="'id'" k-filter="'contains'"
+                                    k-auto-bind="false" k-data-source="listwaktuPakai" disabled />
+                                <input style="width: 100%" k-ng-model='startPrintPagi[2]' kendo-date-picker
+                                    placeholer="dd-mm-yyyy" k-format="'dd-MM-yyyy'" />
+                            </div>
+                            <div class="grid_4" ng-show="cetaksiang[2]">
+                                <!-- <input c-text-box type="input" filter="" class="k-textbox" ng-model="rmcetak[2]"
+                            disabled /> -->
+                                <input style="width: 100%;" kendo-combo-box k-ng-model="WaktuPakaiSiang[2]"
+                                    k-data-text-field="'waktupakai'" k-data-value-field="'id'" k-filter="'contains'"
+                                    k-auto-bind="false" k-data-source="listwaktuPakai" disabled />
+                                <input style="width: 100%" k-ng-model='startPrintSiang[2]' kendo-date-picker
+                                    placeholer="dd-mm-yyyy" k-format="'dd-MM-yyyy'" />
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+            <div class="grid_12">
+                <div class="grid_2">
+                    <button class="k-button   k-button-icontext" ng-click="CetakUDDnya()"><span
+                            class="k-icon fa fa-print"></span>Cetak</button>
+                </div>
+                <div class="grid_2">
+                    <button class="k-button   k-button-icontext" ng-click="cancelCetakUDDnya()"><span
+                            class="k-icon fa fa-cancel"></span>Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div kendo-window="popUpDetailTilik" k-title="'Cetak Tilik'" k-width="1100" k-height="400" k-visible="false"
+        k-on-open="win2visible = true" k-on-close="win2visible = false">
+        <div class="panel panel-default container_12" style="padding: 0px 10px;">
+            <div class="grid_4">
+                <fieldset ng-show="fieldset[0]">
+                    <!-- <legend>Informasi Cetak</legend> -->
+                    <div class="grid_12">
+                        <div class="grid_6">
+                            <div class="grid_12">
+                                <label c-label c-label-text="No Rekam Medis" real></label>
+                            </div>
+                            <div class="grid_12">
+                                <input c-text-box type="input" filter="" class="k-textbox" ng-model="norm[0]"
+                                    disabled />
+                            </div>
+                        </div>
+                        <div class="grid_6">
+                            <div class="grid_12">
+                                <label c-label c-label-text="No Resep" real></label>
+                            </div>
+                            <div class="grid_12">
+                                <input c-text-box type="input" filter="" class="k-textbox" ng-model="resep[0]"
+                                    disabled />
+                            </div>
+                        </div>
+                        <div class="grid_12">
+                            <div class="grid_12">
+                                <label c-label c-label-text="waktu Cetak" real></label>
+                            </div>
+                            <div class="grid_4">
+                                <input type="checkbox" class="k-checkbox" ng-model="checkmalam[0]" id="checkmalam[0]"
+                                    ng-click="waktucetak()">
+                                <label class="k-checkbox-label" for="checkmalam[0]"><b> &nbsp; Malam</b></label>
+                            </div>
+                            <div class="grid_4">
+                                <input type="checkbox" class="k-checkbox" ng-model="checkpagi[0]" id="checkpagi[0]"
+                                    ng-click="waktucetak()">
+                                <label class="k-checkbox-label" for="checkpagi[0]"><b> &nbsp; Pagi</b></label>
+                            </div>
+                            <div class="grid_4">
+                                <input type="checkbox" class="k-checkbox" ng-model="checksiang[0]" id="checksiang[0]"
+                                    ng-click="waktucetak()">
+                                <label class="k-checkbox-label" for="checksiang[0]"><b> &nbsp; Siang</b></label>
+                            </div>
+
+                        </div>
+                        <div class="grid_12">
+                            <label c-label c-label-text="Tanggal Cetak" real></label>
+                        </div>
+                        <div class="grid_12">
+                            <div class="grid_4" ng-show="cetakmalam[0]">
+                                <input style="width: 100%;" kendo-combo-box k-ng-model="WaktuPakaiMalam[0]"
+                                    k-data-text-field="'waktupakai'" k-data-value-field="'id'" k-filter="'contains'"
+                                    k-auto-bind="false" k-data-source="listwaktuPakai" disabled />
+                                <input style="width: 100%" k-ng-model='startPrintMalam[0]' kendo-date-picker
+                                    placeholer="dd-mm-yyyy" k-format="'dd-MM-yyyy'" />
+                            </div>
+                            <div class="grid_4" ng-show="cetakpagi[0]">
+
+                                <input style="width: 100%;" kendo-combo-box k-ng-model="WaktuPakaiPagi[0]"
+                                    k-data-text-field="'waktupakai'" k-data-value-field="'id'" k-filter="'contains'"
+                                    k-auto-bind="false" k-data-source="listwaktuPakai" disabled />
+                                <input style="width: 100%" k-ng-model='startPrintPagi[0]' kendo-date-picker
+                                    placeholer="dd-mm-yyyy" k-format="'dd-MM-yyyy'" />
+                            </div>
+                            <div class="grid_4" ng-show="cetaksiang[0]">
+                                <input style="width: 100%;" kendo-combo-box k-ng-model="WaktuPakaiSiang[0]"
+                                    k-data-text-field="'waktupakai'" k-data-value-field="'id'" k-filter="'contains'"
+                                    k-auto-bind="false" k-data-source="listwaktuPakai" disabled />
+                                <input style="width: 100%" k-ng-model='startPrintSiang[0]' kendo-date-picker
+                                    placeholer="dd-mm-yyyy" k-format="'dd-MM-yyyy'" />
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+            <div class="grid_4">
+                <fieldset ng-show="fieldset[1]">
+                    <!-- <legend>Informasi Cetak</legend> -->
+                    <div class="grid_12">
+                        <div class="grid_6">
+                            <div class="grid_12">
+                                <label c-label c-label-text="No Rekam Medis" real></label>
+                            </div>
+                            <div class="grid_12">
+                                <input c-text-box type="input" filter="" class="k-textbox" ng-model="norm[1]"
+                                    disabled />
+                            </div>
+                        </div>
+                        <div class="grid_6">
+                            <div class="grid_12">
+                                <label c-label c-label-text="No Resep" real></label>
+                            </div>
+                            <div class="grid_12">
+                                <input c-text-box type="input" filter="" class="k-textbox" ng-model="resep[1]"
+                                    disabled />
+                            </div>
+                        </div>
+                        <div class="grid_12">
+                            <div class="grid_12">
+                                <label c-label c-label-text="waktu Cetak" real></label>
+                            </div>
+                            <div class="grid_4">
+                                <input type="checkbox" class="k-checkbox" ng-model="checkmalam[1]" id="checkmalam[1]"
+                                    ng-click="waktucetak()">
+                                <label class="k-checkbox-label" for="checkmalam[1]"><b> &nbsp; Malam</b></label>
+                            </div>
+                            <div class="grid_4">
+                                <input type="checkbox" class="k-checkbox" ng-model="checkpagi[1]" id="checkpagi[1]"
+                                    ng-click="waktucetak()">
+                                <label class="k-checkbox-label" for="checkpagi[1]"><b> &nbsp; Pagi</b></label>
+                            </div>
+                            <div class="grid_4">
+                                <input type="checkbox" class="k-checkbox" ng-model="checksiang[1]" id="checksiang[1]"
+                                    ng-click="waktucetak()">
+                                <label class="k-checkbox-label" for="checksiang[1]"><b> &nbsp; Siang</b></label>
+                            </div>
+
+                        </div>
+                        <div class="grid_12">
+                            <label c-label c-label-text="Tanggal Cetak" real></label>
+                        </div>
+                        <div class="grid_12">
+                            <div class="grid_4" ng-show="cetakmalam[1]">
+                                <!-- <input c-text-box type="input" filter="" class="k-textbox" ng-model="rmcetak[3]"
+                            disabled /> -->
+                                <input style="width: 100%;" kendo-combo-box k-ng-model="WaktuPakaiMalam[1]"
+                                    k-data-text-field="'waktupakai'" k-data-value-field="'id'" k-filter="'contains'"
+                                    k-auto-bind="false" k-data-source="listwaktuPakai" disabled />
+                                <input style="width: 100%" k-ng-model='startPrintMalam[1]' kendo-date-picker
+                                    placeholer="dd-mm-yyyy" k-format="'dd-MM-yyyy'" />
+                            </div>
+                            <div class="grid_4" ng-show="cetakpagi[1]">
+                                <!-- <input c-text-box type="input" filter="" class="k-textbox" ng-model="rmcetak[1]"
+                            disabled /> -->
+                                <input style="width: 100%;" kendo-combo-box k-ng-model="WaktuPakaiPagi[1]"
+                                    k-data-text-field="'waktupakai'" k-data-value-field="'id'" k-filter="'contains'"
+                                    k-auto-bind="false" k-data-source="listwaktuPakai" disabled />
+                                <input style="width: 100%" k-ng-model='startPrintPagi[1]' kendo-date-picker
+                                    placeholer="dd-mm-yyyy" k-format="'dd-MM-yyyy'" />
+                            </div>
+                            <div class="grid_4" ng-show="cetaksiang[1]">
+                                <!-- <input c-text-box type="input" filter="" class="k-textbox" ng-model="rmcetak[2]"
+                            disabled /> -->
+                                <input style="width: 100%;" kendo-combo-box k-ng-model="WaktuPakaiSiang[1]"
+                                    k-data-text-field="'waktupakai'" k-data-value-field="'id'" k-filter="'contains'"
+                                    k-auto-bind="false" k-data-source="listwaktuPakai" disabled />
+                                <input style="width: 100%" k-ng-model='startPrintSiang[1]' kendo-date-picker
+                                    placeholer="dd-mm-yyyy" k-format="'dd-MM-yyyy'" />
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+            <div class="grid_4">
+                <fieldset ng-show="fieldset[2]">
+                    <!-- <legend>Informasi Cetak</legend> -->
+                    <div class="grid_12">
+                        <div class="grid_6">
+                            <div class="grid_12">
+                                <label c-label c-label-text="No Rekam Medis" real></label>
+                            </div>
+                            <div class="grid_12">
+                                <input c-text-box type="input" filter="" class="k-textbox" ng-model="norm[2]"
+                                    disabled />
+                            </div>
+                        </div>
+                        <div class="grid_6">
+                            <div class="grid_12">
+                                <label c-label c-label-text="No Resep" real></label>
+                            </div>
+                            <div class="grid_12">
+                                <input c-text-box type="input" filter="" class="k-textbox" ng-model="resep[2]"
+                                    disabled />
+                            </div>
+                        </div>
+                        <div class="grid_12">
+                            <div class="grid_12">
+                                <label c-label c-label-text="waktu Cetak" real></label>
+                            </div>
+                            <div class="grid_4">
+                                <input type="checkbox" class="k-checkbox" ng-model="checkmalam[2]" id="checkmalam[2]"
+                                    ng-click="waktucetak()">
+                                <label class="k-checkbox-label" for="checkmalam[2]"><b> &nbsp; Malam</b></label>
+                            </div>
+                            <div class="grid_4">
+                                <input type="checkbox" class="k-checkbox" ng-model="checkpagi[2]" id="checkpagi[2]"
+                                    ng-click="waktucetak()">
+                                <label class="k-checkbox-label" for="checkpagi[2]"><b> &nbsp; Pagi</b></label>
+                            </div>
+                            <div class="grid_4">
+                                <input type="checkbox" class="k-checkbox" ng-model="checksiang[2]" id="checksiang[2]"
+                                    ng-click="waktucetak()">
+                                <label class="k-checkbox-label" for="checksiang[2]"><b> &nbsp; Siang</b></label>
+                            </div>
+
+                        </div>
+                        <div class="grid_12">
+                            <label c-label c-label-text="Tanggal Cetak" real></label>
+                        </div>
+                        <div class="grid_12">
+                            <div class="grid_4" ng-show="cetakmalam[2]">
+                                <!-- <input c-text-box type="input" filter="" class="k-textbox" ng-model="rmcetak[3]"
+                            disabled /> -->
+                                <input style="width: 100%;" kendo-combo-box k-ng-model="WaktuPakaiMalam[2]"
+                                    k-data-text-field="'waktupakai'" k-data-value-field="'id'" k-filter="'contains'"
+                                    k-auto-bind="false" k-data-source="listwaktuPakai" disabled />
+                                <input style="width: 100%" k-ng-model='startPrintMalam[2]' kendo-date-picker
+                                    placeholer="dd-mm-yyyy" k-format="'dd-MM-yyyy'" />
+                            </div>
+                            <div class="grid_4" ng-show="cetakpagi[2]">
+                                <!-- <input c-text-box type="input" filter="" class="k-textbox" ng-model="rmcetak[1]"
+                            disabled /> -->
+                                <input style="width: 100%;" kendo-combo-box k-ng-model="WaktuPakaiPagi[2]"
+                                    k-data-text-field="'waktupakai'" k-data-value-field="'id'" k-filter="'contains'"
+                                    k-auto-bind="false" k-data-source="listwaktuPakai" disabled />
+                                <input style="width: 100%" k-ng-model='startPrintPagi[2]' kendo-date-picker
+                                    placeholer="dd-mm-yyyy" k-format="'dd-MM-yyyy'" />
+                            </div>
+                            <div class="grid_4" ng-show="cetaksiang[2]">
+                                <!-- <input c-text-box type="input" filter="" class="k-textbox" ng-model="rmcetak[2]"
+                            disabled /> -->
+                                <input style="width: 100%;" kendo-combo-box k-ng-model="WaktuPakaiSiang[2]"
+                                    k-data-text-field="'waktupakai'" k-data-value-field="'id'" k-filter="'contains'"
+                                    k-auto-bind="false" k-data-source="listwaktuPakai" disabled />
+                                <input style="width: 100%" k-ng-model='startPrintSiang[2]' kendo-date-picker
+                                    placeholer="dd-mm-yyyy" k-format="'dd-MM-yyyy'" />
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+            <div class="grid_12">
+                <div class="grid_2">
+                    <button class="k-button   k-button-icontext" ng-click="CetakTiliknya()"><span
+                            class="k-icon fa fa-print"></span>Cetak</button>
+                </div>
+                <div class="grid_2">
+                    <button class="k-button   k-button-icontext" ng-click="cancelCetakTiliknya()"><span
+                            class="k-icon fa fa-cancel"></span>Cancel</button>
+                </div>
             </div>
         </div>
     </div>
@@ -590,7 +1089,7 @@
               <div id="map" style="width:100%;height:380px;"></div>
                 <!-- <div id="map" style="position: relative; overflow: hidden;"> -->
            </div>
-            <div class="grid_12">
+            <!-- <div class="grid_12">
                 <div class="k-edit-buttons  k-state-default pull-right" style="margin-top:10px">
                        <img ng-show="isShowOrder" style="position:absolute;right:0;top:7px;"
                                         height="24" src="stylesheets\Flat\loading-image.gif" />
@@ -600,7 +1099,7 @@
                             ng-click="cancelOrder()"><span class="k-icon fa fa-refresh"></span>Batal</button>
                 </div>
              
-            </div>
+            </div> -->
         </div>
     </div>
 
