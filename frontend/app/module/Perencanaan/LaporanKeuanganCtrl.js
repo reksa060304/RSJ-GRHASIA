@@ -319,6 +319,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 window.open(baseTransaksi + "report/get-cetak-buku-panjar?tahunpanjar=" + tahunpanjar + "&bulanpanjar=" + bulanpanjar + "&tglcetakpanjar=" + tglcetakpanjar, '_blank');
             }
 
+            $scope.CetakFungsional = function(){
+                window.open(baseTransaksi + "report/get-cetak-fungsional", '_blank');
+            }
+
             medifirstService.get("perencanaan/get-data-combo").then(function (e) {
                 $scope.listTahap = e.data.tahap
                 $scope.listKegiatan = e.data.kegiatancombo

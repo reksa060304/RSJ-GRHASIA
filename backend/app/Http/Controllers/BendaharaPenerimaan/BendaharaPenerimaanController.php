@@ -310,6 +310,7 @@ class BendaharaPenerimaanController extends ApiController {
             $SC = new StrukClosing();
             $SC->norec  = $SC->generateNewId();
             $SC->kdprofile = $idProfile;
+            $SC->statusenabled= true;
             $SC->noclosing = $this->generateCode(new StrukClosing, 'noclosing', 10, 'C-'.$this->getDateTime()->format('ym'),$idProfile);
             $SC->objectpegawaidiclosefk = $input['kdPegawai'];
             $SC->tglclosing = $input['tglsetor'];
@@ -2430,25 +2431,25 @@ class BendaharaPenerimaanController extends ApiController {
         $carabayar = '';
 
         if (isset($request['status']) && $request['status'] != "" && $request['status'] != "undefined" && $request['status']==1) {
-            $status = ' and sts.nosts is not null';
+            $status = ' and nosts is not null';
         } else{
-            $status = ' and sts.nosts is null';
+            $status = ' and nosts is null';
         }
 
         if (isset($request['status']) && $request['status'] != "" && $request['status'] != "undefined" && $request['status']==2) {
-            $status = ' and sts.nosts is null';
+            $status = ' and nosts is null';
         }
 
         if(isset($request['idCaraBayar']) && $request['idCaraBayar'] != "" && $request['idCaraBayar'] != "undefined") {
-            $carabayar = ' AND cb.id = ' . $request['idCaraBayar'];
+            $carabayar = ' AND idcarabayar = ' . $request['idCaraBayar'];
         }
 
         if(isset($request['noclosing']) && $request['noclosing'] != "" && $request['noclosing'] != "undefined" && $request['noclosing'] != 1) {
-            $noclosing = " and sc.noclosing ilike '%".$request['noclosing']."%'";
+            $noclosing = " and nopenerimaan ilike '%".$request['noclosing']."%'";
         }
 
         if(isset($request['nosts']) && $request['nosts'] != "" && $request['nosts'] != "undefined" && $request['noclosing'] != 1) {
-            $nosts = " and sts.nosts ilike '%".$request['nosts']."%'";
+            $nosts = " and nosts ilike = ".$request['nosts'];
         }
 
         // $noclosingbatal = DB::select(DB::raw("select sc.noclosing from strukclosing_t sc
@@ -2480,7 +2481,8 @@ class BendaharaPenerimaanController extends ApiController {
         //     return (array)$noclosingbatal;
         // }, $nobatal);
 
-        $detail = DB::select(DB::raw("select distinct sc.noclosing as nopenerimaan, sc.tglclosing as tglpenerimaan, sck.totaldibayar as totalpenerimaan, sts.nosts, cb.carabayar, sc.objectpegawaidiclosefk as pegawai, sc.norec as scfk, sck.norec as sckfk 
+        $detail = DB::select(DB::raw("select * from(
+        select distinct cb.id idcarabayar, sc.noclosing as nopenerimaan, sc.tglclosing as tglpenerimaan, sck.totaldibayar as totalpenerimaan, sts.nosts, cb.carabayar, sc.objectpegawaidiclosefk as pegawai, sc.norec as scfk, sck.norec as sckfk 
         from strukclosing_t sc
         inner join strukclosingkasir_t sck on sck.noclosingfk = sc.norec
         inner join strukbuktipenerimaan_t sbm on sbm.noclosingfk = sc.norec
@@ -2494,14 +2496,15 @@ class BendaharaPenerimaanController extends ApiController {
                     inner join strukhistori_t sh on sh.noclosing = sc.norec
                     where sh.statusenabled = false
                     )
-                    $status
-                    $noclosing
-                    $nosts
-                    $carabayar
         and sc.kdprofile = $kdProfile
         and sc.statusenabled is null or sc.statusenabled=true
                     
-        order by sc.tglclosing desc"));
+        order by sc.tglclosing desc
+        ) as x where nopenerimaan is not null
+        $status
+        $noclosing
+        $nosts
+        $carabayar"));
         
 
         $result = array(
@@ -2645,7 +2648,7 @@ class BendaharaPenerimaanController extends ApiController {
 
         // konten STS Detail
 
-        $data = DB::select(DB::raw("select sc.tglclosing, ru.namaruangan, ru.id idruangan, pr.namaproduk, pr.id idproduk, pp.isobat,
+        $data = DB::select(DB::raw("select distinct pp.norec, sc.tglclosing, ru.namaruangan, ru.id idruangan, pr.namaproduk, pr.id idproduk, pp.isobat,
         (((CASE WHEN pp.hargajual IS NULL THEN 0 ELSE pp.hargajual END - CASE WHEN pp.hargadiscount IS NULL THEN
         0 ELSE pp.hargadiscount END) * pp.jumlah) + CASE WHEN pp.jasa IS NULL THEN 0 ELSE pp.jasa END ) AS totaldibayarclosing,
         ru.objectdepartemenfk, sbmcr.objectcarabayarfk, sbm.totaldibayar as totaldibayarsbm, sc.noclosing, sc.tglclosing,
@@ -2672,13 +2675,13 @@ class BendaharaPenerimaanController extends ApiController {
                         left join ststosck_t as ssc on ssc.objectsckfk = sck.norec
                         left join surattandasetoran_t as sts on sts.norec = ssc.objectstsfk
         where pd.statusenabled = true
-        and sts.statusenabled = true
+        --and sts.statusenabled = true
         and pd.kdprofile = 30
         and sc.noclosing IN('".implode("','",$noclosing)."')
         
         union all
         
-        select sc.tglclosing, ru.namaruangan, ru.id idruangan, pr.namaproduk, pr.id idproduk, pp.isobat,
+        select distinct sp.norec, sc.tglclosing, ru.namaruangan, ru.id idruangan, pr.namaproduk, pr.id idproduk, pp.isobat,
         (spd.qtyproduk * spd.hargasatuan * spd.qtyoranglast)::float4 as totaldibayarclosing,
         ru.objectdepartemenfk, sbmcr.objectcarabayarfk, sbm.totaldibayar as totaldibayarsbm, sc.noclosing, sc.tglclosing,
         sck.totaldibayar as totaldibayarclosing,sck.carabayarfk, cb.carabayar, djp.detailjenisproduk, jpr.id as jenisproduk
@@ -2699,7 +2702,7 @@ class BendaharaPenerimaanController extends ApiController {
         left join ststosck_t as ssc on ssc.objectsckfk = sck.norec
         left join surattandasetoran_t as sts on sts.norec = ssc.objectstsfk
         where sbm.keteranganlainnya = 'Pembayaran Tagihan Non Layanan'
-        and sts.statusenabled = true
+        --and sts.statusenabled = true
         and sc.noclosing IN('".implode("','",$noclosing)."')"));
        
         $jumlahpoliklinik = 0;
