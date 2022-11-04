@@ -3009,13 +3009,15 @@ AND sp.statusenabled <> false
 
             $jumlahhariperawatantt = $jumlahpasienawal + $jumlahpasienmasuk + $jumlahpasienpindah;
             $jumlahpulang = $jumlahpasiendipindahkan + $jumlahpasienpulang + $jumlahpasienpulangaps + $jumlahpasienpulangmelarikandiri;
+            $jumlahpulangsementara = $jumlahpasienpulang + $jumlahpasienpulangaps + $jumlahpasienpulangmelarikandiri;
 
             // var_dump($jumlahhariperawatantt/$jumlahpulang);
             // var_dump($jumlahpulang);
             // var_dump($jumlahgrandtotaltt);
             // var_dump($jumlahttkalihari);
             
-            
+            //dd($jumlahharidirawat/$jumlahpulangsementara);
+            //dd($jumlahpulang);
             
                 if($jumlahpulang == 0){
                     $bor = $jumlahhariperawatantt/$jumlahttkalihari*100;
@@ -3026,7 +3028,7 @@ AND sp.statusenabled <> false
                     $gdr = 0;
                 } else{
                     $bor = $jumlahhariperawatantt/$jumlahttkalihari*100;
-                    $alos = $jumlahharidirawat/$jumlahpulang;
+                    $alos = $jumlahharidirawat/$jumlahpulangsementara;
                     $toi = ($jumlahttkalihari - $jumlahhariperawatantt)/$jumlahpulang;
                     $bto = $jumlahpulang/$jumlahgrandtotaltt;
                     $ndr = $jumlahpasienmeninggallebihdari/$jumlahpulang*1000;
