@@ -1219,6 +1219,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('report/get-cetak-bku-real','Report\ReportController@CetakBKUReal');
           Route::get('report/get-register-penutupan-kas','Report\ReportController@getRegisterPenutupanKas');
           Route::get('report/get-cetak-buku-panjar','Report\ReportController@CetakBukuPanjar');
+          Route::get('report/get-cetak-fungsional','Report\ReportController@CetakFungsional');
           Route::get('report/get-rekap-order-kirim-barang-cetak','Report\ReportController@CetakLapOrderKirim');
           Route::get('report/get-cetak-suratketerangannapza','Report\ReportController@CetakSKNapza');
           Route::get('report/get-cetak-suratketerangankesehatanjiwa','Report\ReportController@CetakSKJiwa');
