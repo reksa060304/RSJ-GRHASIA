@@ -35,7 +35,7 @@
     }
 </style>
 {{----}}
-<body style="background-color: #CCCCCC;margin: 0" onLoad="window.print()" onafterPrint="window.close()">
+<body style="background-color: #CCCCCC;margin: 0"  >
     <div align="left">
         <table  cellspacing="0" cellpadding="0" bgcolor="#FFFFFF" border="0" width="365">
             <tbody>
@@ -90,3 +90,8 @@
     </div>
     </body>
 </html>
+<script type="text/javascript">
+    setTimeout(function () { window.print(); }, 0);
+
+    window.onafterprint = function () { setTimeout(function () { window.close(); }, 0); }
+</script>
