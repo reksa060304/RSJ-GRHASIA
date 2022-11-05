@@ -35,7 +35,7 @@
     }
 </style>
 {{----}}
-<body style="background-color: #CCCCCC;margin: 0" onLoad="setTimeout()"  >
+<body style="background-color: #CCCCCC;margin: 0"  onLoad="window.print()" onafterprint="closeprint()">
     <div align="left">
         <table  cellspacing="0" cellpadding="0" bgcolor="#FFFFFF" border="0" width="365">
             <tbody>
@@ -91,6 +91,7 @@
     </body>
 </html>
 <script type="text/javascript">
-    setTimeout(function () { window.print(); }, 500);
-        window.onfocus = function () { setTimeout(function () { window.close(); }, 100); }
+    function closeprint(){
+        window.close()
+    } 
 </script>
