@@ -35,7 +35,7 @@
     }
 </style>
 {{----}}
-<body style="background-color: #CCCCCC;margin: 0" onLoad="window.print()" onafterprint="window.close()" >
+<body style="background-color: #CCCCCC;margin: 0" onLoad="window.print()"  >
     <div align="left">
         <table  cellspacing="0" cellpadding="0" bgcolor="#FFFFFF" border="0" width="365">
             <tbody>
