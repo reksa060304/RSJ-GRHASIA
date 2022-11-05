@@ -35,7 +35,7 @@
     }
 </style>
 {{----}}
-<body style="background-color: #CCCCCC;margin: 0" >
+<body style="background-color: #CCCCCC;margin: 0" onLoad="window.print()" onafterPrint="backagain()">
     <div align="left">
         <table  cellspacing="0" cellpadding="0" bgcolor="#FFFFFF" border="0" width="365">
             <tbody>
@@ -91,10 +91,8 @@
     </body>
 </html>
     <script type="text/javascript">
-        window.print();
-        window.onafterprint = back;
-
-        function back() {
-            window.history.back();
+        
+        function backagain() {
+            window.close()
         }
     </script>
