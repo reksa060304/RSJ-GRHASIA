@@ -2793,13 +2793,23 @@ class PelatihanController extends ApiController {
         $jeniskegiatan = \DB::table('diklatkategori_m')->where('kdprofile', $kdProfile)
         ->where('statusenabled', true)->get();
 
-        $masterdatakampus = \DB::table('pegawai_m')->where('kdprofile', $kdProfile)
-        ->select('namalengkap','email', 'nohandphone','alamat', 'nama as namapj','usereksternal','id')
-        ->where('usereksternal', true)
-        ->where('statusenabled', true)->get();
+        $masterdatakampus = \DB::table('pegawai_m as pg')->where('pg.kdprofile', $kdProfile)
+        ->select('pg.namalengkap','pg.email', 'pg.nohandphone','pg.alamat', 'pg.nama as namapj','pg.id', 'pg.namalengkap as datakampus')
+        ->where('pg.usereksternal', true)
+        ->whereNotIn('pg.id', [320261136,320261180,320261181,320261182,2])
+        ->where('pg.statusenabled', true)->get();
+        $pendidikan = \DB::select(DB::raw("SELECT row_number ()over(order by x.a)id, x.a as pendidikan FROM (
+            SELECT split_part(pr.namaproduk, ' - ',2)as a FROM produk_m pr 
+            inner join detailjenisproduk_m djp on djp.id = pr.objectdetailjenisprodukfk
+            inner join jenisproduk_m jp on jp.id = djp.objectjenisprodukfk
+            where jp.id = 27688) as x
+            GROUP BY x.a"));
+        $kegiatan = \DB::table('detailjenisproduk_m')->where('objectjenisprodukfk', 27688)->get();
         $result = array(
             'jeniskegiatan'=> $jeniskegiatan,
             'masterdatakampus'=> $masterdatakampus,
+            'kegiatan'=> $kegiatan,
+            'pendidikan'=> $pendidikan,
         );
         return $this->respond($result);
     }
@@ -2914,5 +2924,69 @@ class PelatihanController extends ApiController {
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
 
+    }
+    public function getDataDetailMahasiswa(Request $request)
+    {
+        $tahun = '';
+        if(isset($request['tahun'])){
+            $tahun = "and date_part('year',spe.tanggalmulai) = $request[tahun] ";
+        }
+        $bulan = '';
+        if(isset($request['bulan'])){
+            $bulan = "and date_part('month',spe.tanggalmulai) = $request[bulan] ";
+        }
+        $instansi = '';
+        if(isset($request['instansi'])){
+            $instansi = "and spe.institusipendidikan ilike '%$request[instansi]%' ";
+        }
+        $kegiatan = '';
+        if(isset($request['kegiatan'])){
+            $kegiatan = "and spe.objectdetailjenisprodukfk = '$request[kegiatan]' ";
+        }
+        $pendidikan = '';
+        if(isset($request['pendidikan'])){
+            $pendidikan = "and split_part(pr.namaproduk, ' - ',2) ilike '%$request[pendidikan]%' ";
+        }
+        $data = \DB::select(DB::raw("SELECT djp.id, spd.nama, spd.nim, djp.detailjenisproduk as kegiatan, 
+        spe.institusipendidikan, split_part(pr.namaproduk, ' - ',2)as pendidikan, pr.namaproduk,kp.diklatkategori  FROM sdm_pesertadidik_t spd 
+        inner join sdm_penelitianeksternal_t spe on spe.norec = spd.noregistrasifk
+        inner join detailjenisproduk_m djp on djp.id = spe.objectdetailjenisprodukfk
+        inner join produk_m pr on pr.id = spe.objectprodukfk
+        inner join diklatkategori_m kp on kp.id = spe.objectdiklatkategorifk
+        where 
+        spe.kdprofile = 30 and spe.statusenabled = true and spd.kdprofile = 30 and spd.statusenabled = true 
+        $tahun
+        $bulan
+        $instansi
+        $kegiatan
+        $pendidikan
+        order by spe.institusipendidikan
+        "));
+        $result = array(
+            "data"=> $data,
+            "as"=> 'feezy'
+        );
+
+        return $this->respond($result);
+    }
+    public function getDataPiutang(Request $request)
+    {
+        $tglAwal = $request['tglAwal'];
+        $tglAkhir = $request['tglAkhir'];
+        $data=\DB::select(DB::raw("SELECT djp.detailjenisproduk as kegiatan, dk.diklatkategori as jeniskegiatan, split_part(pr.namaproduk, '  -  ', 2) as jenjangpendidikan,spe.institusipendidikan, 
+            spe.tanggalmulai::date, spe.tanggalselesai::date, spe.jumlahpeserta, spe.qty, spe.satuan, spe.hargasatuan, spe.biayapenelitian
+            FROM sdm_penelitianeksternal_t spe
+            inner join produk_m pr on pr.id = spe.objectprodukfk
+            inner join detailjenisproduk_m djp on djp.id = spe.objectdetailjenisprodukfk
+            inner join diklatkategori_m dk on dk.id = spe.objectdiklatkategorifk
+            inner join strukpelayanan_t sp on sp.norec = spe.noregistrasifk
+            where sp.nosbmlastfk is null and spe.tanggalmulai::date between '$tglAwal' and '$tglAkhir'
+            order by spe.tanggalmulai asc
+        "));
+        $result = array(
+            'data'=> $data,
+            'a'=> 'FeezyTM'
+        );
+        return $this->respond($result);
     }
 }

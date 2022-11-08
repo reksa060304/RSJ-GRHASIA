@@ -1118,11 +1118,13 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('sdm/diklat/get-data-detail-diklat', 'Kasir\KasirController@getDataLaporanRekapPendapatanRuangan');
             Route::get('tatarekening/get-daftar-remun-diklat', 'Kasir\KasirController@DaftarRemunDiklat');
             Route::get('diklat/get-laporan-pengguna-total','SDM\SumberDayaManusiaController@LaporanPenggunaTotal');
+            Route::get('diklat/get-laporan-pengguna-total-tw','SDM\SumberDayaManusiaController@LaporanPenggunaTotalTW');
             Route::get('diklat/get-daftar-kegiatan-pembimbing','SDM\SumberDayaManusiaController@DaftarKegiatanPembimbing');
             Route::post('diklat/save/kegiatan-diklat','SDM\SumberDayaManusiaController@saveKegiatanPembimbing');
             Route::post('diklat/save-master-data-kampus', 'SDM\PelatihanController@saveMasterDataKampus');
             Route::get('diklat/get-hasilkegiatan', 'SDM\SumberDayaManusiaController@DetailHasilKegiatan');
             Route::get('sdm/penelitian/get-daftar-mahasiswa-aktif','SDM\SumberDayaManusiaController@getDaftarMahasiswaAktif');
+            Route::get('sdm/penelitian/get-data-piutang-institusi','SDM\PelatihanController@getDataPiutang');
             Route::get('diklat/get-tanggal-otomatis','SDM\PenelitianController@getTanggalOtomatis');
             Route::get('diklat/get-combo-diklat', 'SDM\PelatihanController@getComboDiklat');
             Route::post('diklat/hapus-master-data-kampus','SDM\PelatihanController@hapusMasterDataKampus');

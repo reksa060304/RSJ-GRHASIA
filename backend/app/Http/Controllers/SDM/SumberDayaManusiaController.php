@@ -7307,4 +7307,46 @@ public function daftarKenaikanGajiBerkala(Request $request){
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
+    public function LaporanPenggunaTotalTW(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $satu = '';
+        $dua = '';
+        $tiga = '';
+        if($request['triwulan'] == 1){
+            $satu = 1;
+            $dua = 2;
+            $tiga = 3;
+        } else if($request['triwulan'] == 2){
+            $satu = 4;
+            $dua = 5;
+            $tiga = 6;
+        } else if($request['triwulan'] == 3){
+            $satu = 7;
+            $dua = 8;
+            $tiga =9;
+        } else if($request['triwulan'] == 4){
+            $satu = 10;
+            $dua = 11;
+            $tiga =12;
+        }
+        $data = \DB::select(DB::raw("SELECT 
+        x.pelayanan, 
+        sum(x.mhs)filter(where x.bulan = $satu) as satu,
+        sum(x.mhs)filter(where x.bulan = $dua) as dua,
+        sum(x.mhs)filter(where x.bulan = $tiga) as tiga,
+        sum(x.mhs)filter(where x.bulan in ($satu,$dua,$tiga)) as total
+        FROM (
+            SELECT djp.detailjenisproduk as pelayanan,date_part('month', pe.tanggalmulai::date)as bulan, pe.jumlahpeserta as mhs
+            from sdm_penelitianeksternal_t pe 
+            left join detailjenisproduk_m djp on djp.id = pe.objectdetailjenisprodukfk
+            where date_part('year', pe.tanggalmulai) = $request[tahun] and pe.kdprofile = $idProfile and pe.statusenabled = true 
+            ORDER BY djp.detailjenisproduk
+        )as x
+        GROUP BY x.pelayanan
+        "));
+
+        return $this->respond($data);
+    }
 }

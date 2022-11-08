@@ -7,17 +7,26 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.item = {};
             $scope.itemMa = {};
             $scope.isRouteLoading = false;
+            $scope.current = {}
             $scope.now = new Date();
+            $scope.item.tahun = moment($scope.now).format('YYYY')
+            $scope.item.bulan = moment($scope.now).format('MM')
             var cachetglawal = "";
             if (cacheHelper.get('DaftarPenelitianEksternalCtrl')) {
-                console.log(cacheHelper.get('DaftarPenelitianEksternalCtrl'));
                 $scope.item.tglawal = new moment(cacheHelper.get('DaftarPenelitianEksternalCtrl')[0]).format('YYYY-MM-DD 00:00');
                 $scope.item.tglakhir = new moment(cacheHelper.get('DaftarPenelitianEksternalCtrl')[1]).format('YYYY-MM-DD 23:59');
             }else{
                 $scope.item.tglawal = new moment($scope.now).format('YYYY-MM-DD 00:00');
                 $scope.item.tglakhir = new moment($scope.now).format('YYYY-MM-DD 23:59');
             }
-            
+            $scope.monthUngkul = {
+                start: "year",
+                depth: "year"
+            }
+            $scope.yearUngkul = {
+                start: "decade",
+                depth: "decade"
+            }
             $scope.item.tanggalmulai = new moment($scope.now).format('YYYY-MM-DD 00:00');
             $scope.item.tanggalselesai = new moment($scope.now).format('YYYY-MM-DD 23:59');
             var norec = "";
@@ -25,7 +34,41 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             getCombo()
             GetData()
             getDataMahasiswa()
-            console.log(medifirstService.getPegawai());
+            getDataDetailMahasiswa()
+            function getDataDetailMahasiswa(){
+                var tahun = ''
+                if ($scope.item.tahun != undefined) {
+                    tahun = "&tahun=" + moment($scope.item.tahun).format('YYYY')
+                }
+                var bulan =''
+                if($scope.item.bulan != undefined){
+                    bulan = "bulan=" + moment($scope.item.bulan).format('MM')
+                }
+                var instansi = '';
+                if ($scope.item.instansi != undefined){
+                    instansi = "&instansi=" + $scope.item.instansi.datakampus
+                }
+                var kegiatan = ''
+                if($scope.item.kegiatan != undefined){
+                    kegiatan = '&kegiatan='+ $scope.item.kegiatan.id
+                }
+                var pendidikan = ''
+                if ($scope.item.pendidikan != undefined) {
+                    pendidikan = '&pendidikan=' + $scope.item.pendidikan.pendidikan
+                }
+                medifirstService.get('diklat/get-data-detail-mahasiswa?' + bulan + tahun + instansi + kegiatan+pendidikan).then(function(data){
+                    for (let i = 0; i < data.data.data.length; i++) {
+                        data.data.data[i].no = i + 1
+                    }
+                    $scope.dataDetailMahasiswaGrid = new kendo.data.DataSource({
+                        data: data.data.data,
+                        total: data.data.data.length,
+                    })
+                })
+            }
+            $scope.searchDetailMahasiswa = function(){
+                getDataDetailMahasiswa()
+            }
             $scope.tambahmahasiswa = function (current) {
                 if ($scope.current == undefined) {
                     toastr.error('Data Kegiatan Belum Dipilih', 'Info');
@@ -92,6 +135,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             "width": "20%",
                             "template": "<span class='style-center'>#: tanggalmulai # s/d #: tanggalselesai #</span>",
                             "footerTemplate": "TOTAL"
+                        },
+                        {
+                            "title": "Status Bayar",
+                            "width": "50px",
+                            "template": "<span class='style-center'>#: nosbmlastfk != null || nosbklastfk != null  ? 'Lunas': 'Belum Bayar' #</span>"
                         },
                         {
                             "field": "biayapenelitian",
@@ -168,6 +216,14 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             "template": "<span class='style-center'>#: nosbmlastfk != null || nosbklastfk != null  ? 'Lunas': 'Belum Bayar' #</span>"
                         },
                         {
+                            "field": "biayapenelitian",
+                            "title": "Biaya",
+                            "width": "20%",
+                            "template": "<span class='style-right'>{{formatRupiah('#: biayapenelitian #', 'Rp. ')}}</span>",
+                            aggregates: ['sum'],
+                            footerTemplate: "<span class='style-right'>{{formatRupiah('#: data.biayapenelitian.sum #', 'Rp. ')}}</span>",
+                        },
+                        {
                             'command': [
                                 {
                                     text: "Invoice",
@@ -183,6 +239,91 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             "width": 100
                         },
                     ],
+                }
+                $scope.columnDetailMahasiswaGrid = {
+                    toolbar: ["excel"],
+                    excel: {
+                        fileName: "Data Mahasiswa Semua Instansi" + moment($scope.now).format('DD/MMM/YYYY'),
+                        allPages: true,
+                    },
+                    excelExport: function (e) {
+                        var sheet = e.workbook.sheets[0];
+                        sheet.mergedCells = ["A1:G1", "A2:G2"];
+                        sheet.frozenRows = 2;
+                        sheet.name = "Report";
+                        var instansi = '';
+                        var bulan = '';
+                        if($scope.item.instansi != undefined){
+                            instansi = $scope.item.instansi.datakampus
+                        } else if ($scope.item.instansi == undefined) {
+                            instansi = 'Semua Instansi'
+                        }
+                        if($scope.item.bulan != undefined){
+
+                            bulan = 'Bulan ' + dateHelper.getBulanFormatted(new Date($scope.item.bulan)).split(" ")[0]
+                            // moment($scope.item.bulan).format('MMMM')
+                        }
+                        var myHeaders = [{
+                            value: "Data Mahasiswa "+ instansi,
+                            fontSize: 16,
+                            textAlign: "center",
+                            background: "#ffffff",
+                        }];
+                        sheet.rows.splice(0, 0, {
+                            cells: myHeaders,
+                            type: "header",
+                            height: 25
+                        });
+                        var myheader2 = [{
+                            value: bulan + " Tahun "+ moment($scope.item.tahun).format('YYYY'),
+                            fontSize: 14,
+                            textAlign: "center",
+                            background: "#ffffff",
+                        }];
+                        sheet.rows.splice(1, 0, {
+                            cells: myheader2,
+                            type: "header",
+                            height: 25
+                        });
+                    },
+                    selectable: 'row',
+                    pageable: true,
+                    columns: [{
+                            "field": "no",
+                            "title": "No",
+                            "width": "25px"
+                        },
+                        {
+                            "field": "nama",
+                            "title": "Nama Mahasiswa",
+                            "width": "200px"
+                        },
+                        {
+                            "field": "nim",
+                            "title": "NIM",
+                            "width": "100px"
+                        },
+                        {
+                            "field": "kegiatan",
+                            "title": "Kegiatan",
+                            "width": "120px"
+                        },
+                        {
+                            "field": "institusipendidikan",
+                            "title": "Instalasi Asal",
+                            "width": "135px",
+                        },
+                        {
+                            "field": "pendidikan",
+                            "title": "Pendidikan",
+                            "width": "180px",
+                        },
+                        {
+                            "field": "diklatkategori",
+                            "title": "Jenis",
+                            "width": "85px",
+                        },
+                    ]
                 }
             }
             function cetakInvoice(e){
@@ -264,7 +405,6 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 }
                 var statusbayar = '';
                 if ($scope.item.statusbayar != undefined) {
-                    console.log('masuk', $scope.item.statusbayar.id);
                     statusbayar = "&statusbayar=" + $scope.item.statusbayar.id
                 }
                 // return
@@ -277,7 +417,6 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         }
                         $scope.idpegawai = dat.data.idpegawai[0].usereksternal;
                         
-                    console.log($scope.idpegawai);
                         $scope.DataPenelitian = new kendo.data.DataSource({
                             data: datas,
                             total: datas.length,
@@ -344,7 +483,6 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     }
                     // $scope.idpegawai = dat.data.idpegawai[0].usereksternal;
 
-                    console.log($scope.idpegawai);
                     $scope.DataMahasiswaAktif = new kendo.data.DataSource({
                         data: datas,
                         total: datas.length,
@@ -373,7 +511,6 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }
 
             $scope.kl = function (current) {
-                console.log(current);
                 toastr.info(current.norec + " Terpilih");
                 $scope.current = current.norec;
                 $scope.biayapenelitian = current.biayapenelitian;
@@ -389,7 +526,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.nostruk = current.nostruk
                 $scope.isverifikasi = current.isverifikasi
                 $scope.count = current.count
-                console.log(JSON.stringify($scope.current));
+                $scope.tanggalmulai = current.tanggalmulai
                 if (medifirstService.getKelompokUser() == 'diklit') {
                     if (current.noregistrasifk != null) {
                         $scope.verif = false;
@@ -452,8 +589,6 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     .ok('Ok');
                     $mdDialog.show(confirm).then(function () {
                         $scope.isRouteLoading = true
-                        // console.log($scope.count);
-                        // console.log($scope.isverifikasi);
                         if ($scope.count > 0) {
                         $scope.isRouteLoading = false
                             toastr.error("Informasi, Sudah ada data mahasiswa record tidak bisa dihapus....!")
@@ -473,14 +608,12 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         var objSave = {
                             norec: $scope.current
                         }
-                        // console.log(objSave);
 
                         medifirstService.post('sdm/penelitian/batal-kegiatan-penelitian-eksternal', objSave).then(function (e) {
                             GetData()
                         })
                     })
             }
-            // console.log(ModelItem.getPegawai());
             
             
             $scope.verifikasi = function(){
@@ -504,13 +637,12 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     keteranganlainnya: $scope.keteranganlainnya,
                     namapasien_klien: $scope.institusi,
                     notelp_klien: $scope.notelp,
-                    tglstruk: moment($scope.now).format('YYYY-MM-DD hh:mm:ss'),
+                    tglstruk: moment($scope.tanggalmulai).format('YYYY-MM-DD hh:mm:ss'),
                     totalharusdibayar: parseFloat($scope.biayapenelitian), //parseFloat($scope.item.totalBilling),
                     isverifikasi: false,
                     details: dataProduk,
                 }
                 medifirstService.post('kasir/save-input-non-layanan', objSave).then(function (data) {
-                    console.log(data.data.data.norec);
                     var data = {
                         "verif": 'true',
                         norec: $scope.current,
@@ -519,9 +651,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     var objSave = {
                         data: data,
                     }
-                    console.log(objSave);
                     medifirstService.post('sdm/penelitian/verif-kegiatan-penelitian-eksternal', objSave).then(function (e) {
-                        console.log(e);
                         GetData();
                         $scope.isRouteLoading = false
                     })
@@ -562,10 +692,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         data: data,
 
                     }
-                    console.log(objSave);
 
                     medifirstService.post('sdm/penelitian/verif-kegiatan-penelitian-eksternal', objSave).then(function (e) {
-                        console.log(e);
                         GetData();
                         $scope.isRouteLoading = false
                     })
@@ -583,7 +711,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.isRouteLoading = true
                 var data = {
                     norec: $scope.norec_sp,
-                    isverifikasi: null
+                    isverifikasi: null,
+                    tglverif: moment($scope.tanggalmulai).format('YYYY-MM-DD hh:mm:ss')
                 }
                 medifirstService.post('sdm/penelitian/verif-tagihan-kegiatan-penelitian-eksternal', data).then(function (e) {
                     GetData();
@@ -632,7 +761,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             function getCombo(){
                 medifirstService.get('diklat/get-combo-diklat').then(function(data){
                     $scope.listJenisKegiatan = data.data.jeniskegiatan
+                    $scope.listInstansi = data.data.masterdatakampus
+                    $scope.listKegiatan = data.data.kegiatan
+                    $scope.listPendidikan = data.data.pendidikan
                 })
+
             }
             
             // var timeoutPromise;

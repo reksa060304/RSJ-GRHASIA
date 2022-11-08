@@ -373,7 +373,10 @@ class PenelitianController extends ApiController {
         $verif = '';
         try{
             $dataKPE = \DB::table('strukpelayanan_t')->where('norec',$request['norec'])
-            ->update(['isverifikasi'=> $request['isverifikasi']]);
+            ->update([
+                'isverifikasi'=> $request['isverifikasi'],
+                'tglstruk'=> $request['tglverif']
+            ]);
             // $verif = $dataKPE->isverifikasi;
             // //## Logging User
             // $newId = LoggingUser::max('id');
@@ -425,6 +428,7 @@ class PenelitianController extends ApiController {
             $result = array(
                 'status' => 400,
                 'message'  => $transStatus,
+                'e'=> $e->getMessage() . $e->getLine(),
                 'as' => 'ea@epic',
             );
         }

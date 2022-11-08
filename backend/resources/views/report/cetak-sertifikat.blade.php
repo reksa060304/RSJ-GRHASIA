@@ -29,14 +29,14 @@
     .space{
         padding-left: 125px;
         padding-bottom: 15px;
-        width: 40%
+        width: 150px
     }
     #name{
 
     }
 </style>
 </head>
-<body style="background-color: #CCCCCC">
+<body style="background-color: #CCCCCC" onload="window.print()" onafterprint="window.close()">
     <div align="center">
         <table class="bayangprint" cellspacing="0" cellpadding="0" bgcolor="#FFFFFF" border="0" width="{{$pageWidth}}" >
                             @foreach ($data as $d)
@@ -76,7 +76,7 @@
                         :
                     </td>
                     <td>
-                        {{$d->namalengkap}}
+                        dr. Akhmad Akhadi S., MPH
                     </td>
                 </tr>
                 <tr style="font-weight: bold">
@@ -87,18 +87,18 @@
                         :
                     </td>
                     <td>
-                        {{$d->nippns}}
+                        196807142000121002
                     </td>
                 </tr>
                 <tr style="font-weight: bold">
-                    <td class="space" >
+                    <td class="space">
                         Pangkat/Gol
                     </td>
                     <td>
                         :
                     </td>
                     <td>
-                        {{$d->namaexternal}} {{$d->name}}
+                        Pembina Tingkat I IV/B
                     </td>
                 </tr>
                 <tr style="font-weight: bold">
@@ -109,7 +109,7 @@
                         :
                     </td>
                     <td>
-                        {{$d->namajabatan}}
+                        Direktur Rumah Sakit Jiwa Grhasia
                     </td>
                 </tr>
                 <tr>
@@ -118,7 +118,7 @@
                     </td>
                 </tr>
                 <tr style="font-weight: bold">
-                    <td class="space" >
+                    <td class="space">
                         NAMA
                     </td>
                     <td>
@@ -129,7 +129,7 @@
                     </td>
                 </tr>
                 <tr style="font-weight: bold">
-                    <td class="space" >
+                    <td class="space">
                         NIM
                     </td>
                     <td>
@@ -156,14 +156,15 @@
                 <tr>
                     <td colspan="3" class="space">
                             <p>Telah Selesai melaksanakan <strong>{{$d->detailjenisproduk}}</strong> DI Rumah Sakit Jiwa
-grhasia D.I Yogyakarta <br> Pada tanggal {{\Carbon\Carbon::now()->format('d M Y')}} S/D {{date('d-M-Y', strtotime($d->tanggalselesai))}} </p>
+grhasia D.I Yogyakarta <br> Pada tanggal {{$d->tanggalmulai}} S/D {{$d->tanggalselesai}} </p>
 <p>Demikian Surat Keterangan Ini dibuat untuk dapat dipergunakan sebagaimana mestinya</p>
                     </td>
                 </tr>
                 <tr align="right" >
-                    <td colspan="3" style="padding-right: 150px">
+                    <td></td>
+                    <td colspan="3" style="padding-right: 30px;text-align: center">
                         <p>
-                            <strong>Yogyakarta, {{\Carbon\Carbon::now()->format('d M Y')}}</strong>
+                            <strong>Yogyakarta, {{$d->tanggal_sekarang}}</strong>
                         </p>
                         <p>
                             <strong>Disyahkan Oleh</strong>
@@ -171,23 +172,31 @@ grhasia D.I Yogyakarta <br> Pada tanggal {{\Carbon\Carbon::now()->format('d M Y'
                     </td>
                 </tr>
                 <tr height="100">
-                    <td>
-                        
+                    <td></td>
+                    <td colspan="3" style="padding-right: 40px;text-align: center">
+                        @if(stripos(\Request::url(), 'localhost') !== FALSE)
+                            <img src="{{ asset('img/tt_dir.png') }}" alt="ttd_dir" width="250px" style="position: absolute; right: 230px; top:980px;">
+                            <img src="{{ asset('img/caprsjgrhasia.png') }}" alt="cap ttd" width="120px" style="position: absolute; right: 330px; top:970px;z-index: 0;">
+
+                        @else
+                            <img src="{{ asset('service/img/caprsjgrhasia.png') }}" alt="cap ttd">
+                        @endif
                     </td>
                 </tr>
                 <tr align="right" class="space">
-                    <td style="padding-right: 150px" colspan="3">
+                    <td></td>
+                    <td style="padding-right: 40px;padding-bottom:235px;text-align: center" colspan="3">
                         <p style="margin: 0px 0px 0px 0px">
                             <strong>
                                 <u>
-                        {{$d->namalengkap}} 
+                                dr. Akhmad Akhadi S., MPH 
                             </u>
                             </strong>
                             
                         </p>
                         <p style="margin: 0px 0px 0px 0px"> <strong>
                                 
-                        {{$d->nippns}} 
+                        NIP : 196807142000121002
                                 </strong></p>
                     </td>
                 </tr>

@@ -2139,6 +2139,11 @@ class ReportController extends ApiController{
         // ->join('sdm')
         ->select('sdm.institusipendidikan','sdmp.nim','sdmp.nama','gp.namaexternal','gp.name','sdmp.norec','sdmp.nama','ja.namajabatan','sdmp.image','djp.detailjenisproduk','sdm.institusipendidikan','pg.namalengkap','pg.nippns','sdm.nosertifikat',DB::raw('sdm.tanggalmulai::date,sdm.tanggalselesai::date'))
         ->get();
+        foreach ($data as $d) {
+            $d->tanggalmulai = $this->tanggal_indonesia(date('Y-m-d',strtotime($d->tanggalmulai)));
+            $d->tanggalselesai = $this->tanggal_indonesia(date('Y-m-d',strtotime($d->tanggalselesai)));
+            $d->tanggal_sekarang = $this->tanggal_indonesia(date('Y-m-d',strtotime(\Carbon\Carbon::now())));
+        }
         // $pdf = PDF::loadview('report.diklat-nametag', compact('data','pageWidth'));
         //        return $pdf->stream();
 

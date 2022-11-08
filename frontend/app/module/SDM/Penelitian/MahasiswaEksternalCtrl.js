@@ -61,6 +61,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 medifirstService.get("sdm/penelitian/get-data-combo-penelitian?" + noregistrasi, true).then(function (datas) {
                     $scope.isRouteLoading = false;
                     var dat = datas.data
+                    console.log();
+                    $scope.kampus = datas.data.sp[0].institusipendidikan
                     $scope.ListInstitusiPendidikan = dat.institusi;
                     $scope.ListJenisDiklat = dat.jenisdiklat;
                     $scope.ListJenisLayanan = dat.detailjenisproduk;
@@ -124,7 +126,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                       sheet.name = "Orders";
 
                       var myHeaders = [{
-                          value: "Laporan Mahasiswa Diklatlitbang",
+                          value: "Laporan Mahasiswa "+ $scope.kampus,
                           fontSize: 20,
                           textAlign: "center",
                           background: "#ffffff",
@@ -217,7 +219,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         sheet.name = "Orders";
 
                         var myHeaders = [{
-                            value: "Laporan Mahasiswa Diklatlitbang",
+                            value: "Laporan Mahasiswa " + $scope.kampus,
                             fontSize: 20,
                             textAlign: "center",
                             background: "#ffffff",

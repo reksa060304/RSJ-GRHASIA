@@ -264,6 +264,10 @@
     {
       "nameDep": "LaporanPermintaanMakanPasienWaktuCtrl",
       "urlDep": "module/Gizi/Laporan/LaporanPermintaanMakanPasienWaktuCtrl"
+    },
+    {
+      "nameDep": "DataPiutangInstitusiCtrl",
+      "urlDep": "module/SDM/Penelitian/DataPiutangInstitusiCtrl"
     }
   ]
 }
