@@ -1129,6 +1129,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('diklat/get-combo-diklat', 'SDM\PelatihanController@getComboDiklat');
             Route::post('diklat/hapus-master-data-kampus','SDM\PelatihanController@hapusMasterDataKampus');
             Route::get('diklat/get-data-detail-mahasiswa', 'SDM\PelatihanController@getDataDetailMahasiswa');
+            Route::get('sdm/penelitian/get-data-pkk','SDM\PelatihanController@getDataPKK');
             // GET
 
             // POST

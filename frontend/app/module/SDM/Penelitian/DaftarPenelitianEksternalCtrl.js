@@ -224,6 +224,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             footerTemplate: "<span class='style-right'>{{formatRupiah('#: data.biayapenelitian.sum #', 'Rp. ')}}</span>",
                         },
                         {
+                            "field": "tglsbm",
+                            "title": "Tanggal Pembayaran",
+                            "width": "50px",
+                        },
+                        {
                             'command': [
                                 {
                                     text: "Invoice",
@@ -236,7 +241,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                 text: "Cetak Hasil Kegiatan",
                                 click: cetakhasilkegiatan,
                             }],
-                            "width": 100
+                            "width": 80
                         },
                     ],
                 }
