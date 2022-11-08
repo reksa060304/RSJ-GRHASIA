@@ -19325,6 +19325,138 @@
         "define": "RekamMedisCtrl"
       }
     ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.AsesmenAwalKeperawatanRIJiwaKomGrh",
+    "url": "/AsesmenAwalKeperawatanRIJiwaKomGrh",
+    "templateurl": "module/EMR/AsesmenAwalKeperawatanRIJiwaKomGrh.html",
+    "controller": "AsesmenAwalKeperawatanRIJiwaKomGrhCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.PengkajianKeperawatanRawatJalanNonJiwa",
+    "url": "/PengkajianKeperawatanRawatJalanNonJiwa",
+    "templateurl": "module/EMR/PengkajianKeperawatanRawatJalanNonJiwa.html",
+    "controller": "PengkajianKeperawatanRawatJalanNonJiwaCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.PengkajianAwalKeperawatanRIJiwaKom",
+    "url": "/PengkajianAwalKeperawatanRIJiwaKom",
+    "templateurl": "module/EMR/PengkajianAwalKeperawatanRIJiwaKom.html",
+    "controller": "PengkajianAwalKeperawatanRIJiwaKomCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.PengkajianAwalKeperawatanRIJiwa",
+    "url": "/PengkajianAwalKeperawatanRIJiwa",
+    "templateurl": "module/EMR/PengkajianAwalKeperawatanRIJiwa.html",
+    "controller": "PengkajianAwalKeperawatanRIJiwaCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.PengkajianAwalKeperawatanRINonJiwa",
+    "url": "/PengkajianAwalKeperawatanRINonJiwa",
+    "templateurl": "module/EMR/PengkajianAwalKeperawatanRINonJiwa.html",
+    "controller": "PengkajianAwalKeperawatanRINonJiwaCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.PengkajianAwalKeperawatanRJNonJiwa",
+    "url": "/PengkajianAwalKeperawatanRJNonJiwa",
+    "templateurl": "module/EMR/PengkajianAwalKeperawatanRJNonJiwa.html",
+    "controller": "PengkajianAwalKeperawatanRJNonJiwaCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
   }
 ]
 
