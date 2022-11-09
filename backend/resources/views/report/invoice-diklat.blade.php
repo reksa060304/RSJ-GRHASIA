@@ -213,6 +213,37 @@
                         </table>
                     </td>
                 </tr>
+                <tr>
+                    <table>
+                        <tr>
+                            <td colspan="2" style="padding-top: 20px;">
+                                Pembayaran bisa dilakukan : 
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="10px">
+                                1. 
+                            </td>
+                            <td>
+                                Langsung Ke Kasa RSJ Grhasia
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                2. 
+                            </td>
+                            <td>
+                                Kirim Ke Rekening : 041 111 000043 a.n RS Grhasia Prop DIY QQ BLU dengan format: Nama - Asal Insitusi-Jenis Pembayaran Kegiatan
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                Apabila sudah melakukan pembayaran mohon konfirmasi ke Instalasi Diklatlitbang. 
+                            </td>
+                        </tr>
+                    </table>
+                </tr>
+                <tr></tr>
             @endforeach
         </table>
     </section>

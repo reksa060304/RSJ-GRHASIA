@@ -3494,6 +3494,30 @@
         {
             "nameDep": "PengkajianAwalKepRanapUmumCtrl",
             "urlDep": "module/EMR/PengkajianAwalKepRanapUmumCtrl"
-        }             
+        },
+        {
+            "nameDep": "AsesmenAwalKeperawatanRIJiwaKomGrhCtrl",
+            "urlDep": "module/EMR/AsesmenAwalKeperawatanRIJiwaKomGrhCtrl"
+        },
+        {
+            "nameDep": "PengkajianKeperawatanRawatJalanNonJiwaCtrl",
+            "urlDep": "module/EMR/PengkajianKeperawatanRawatJalanNonJiwaCtrl"
+        },
+        {
+            "nameDep": "PengkajianAwalKeperawatanRIJiwaKomCtrl",
+            "urlDep": "module/EMR/PengkajianAwalKeperawatanRIJiwaKomCtrl"
+        },
+        {
+            "nameDep": "PengkajianAwalKeperawatanRIJiwaCtrl",
+            "urlDep": "module/EMR/PengkajianAwalKeperawatanRIJiwaCtrl"
+        },
+        {
+            "nameDep": "PengkajianAwalKeperawatanRINonJiwaCtrl",
+            "urlDep": "module/EMR/PengkajianAwalKeperawatanRINonJiwaCtrl"
+        },
+        {
+            "nameDep": "PengkajianAwalKeperawatanRJNonJiwaCtrl",
+            "urlDep": "module/EMR/PengkajianAwalKeperawatanRJNonJiwaCtrl"
+        }  
     ]
 }

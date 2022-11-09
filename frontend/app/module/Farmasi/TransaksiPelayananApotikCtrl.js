@@ -70,6 +70,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         $scope.isRouteLoading = false;
                         for (var i = 0; i < dat.data.length; i++) {
                             dat.data[i].no = i + 1
+                            dat.data[i].statCheckbox = false;
                             dat.data[i].total = parseFloat(dat.data[i].jumlah) * (parseFloat(dat.data[i].hargasatuan) - parseFloat(dat.data[i].hargadiscount))
                             dat.data[i].total = parseFloat(dat.data[i].total) + parseFloat(dat.data[i].jasa)
                             if (dat.data[i].iskronis == true || dat.data[i].iskronis == 't') {
@@ -79,6 +80,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             }
                         }
                         $scope.dataGrid = dat.data;
+                        console.log($scope.dataGrid);
                     });
 
                     medifirstService.get("farmasi/get-transaksi-pelayanan-obat-kronis?noReg=" + $scope.item.noregistrasi, true).then(function (dat) {
@@ -97,6 +99,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         medifirstService.get("farmasi/get-transaksi-pelayanan?noReg=" + $scope.item.noregistrasi + "&norec_resep=" + noresep, true).then(function (dat) {
                             $scope.isRouteLoading = false;
                             for (var i = 0; i < dat.data.length; i++) {
+                                dat.data[i].statCheckbox = false;
                                 dat.data[i].no = i + 1
                                 dat.data[i].total = parseFloat(dat.data[i].jumlah) * (parseFloat(dat.data[i].hargasatuan) - parseFloat(dat.data[i].hargadiscount))
                                 dat.data[i].total = parseFloat(dat.data[i].total) + parseFloat(dat.data[i].jasa)
@@ -107,6 +110,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                 }
                             }
                             $scope.dataGrid = dat.data;
+                            console.log($scope.dataGrid);
                         });
 
                         medifirstService.get("farmasi/get-transaksi-pelayanan-obat-kronis?noReg=" + $scope.item.noregistrasi + "&norec_resep=" + noresep, true).then(function (dat) {
@@ -124,6 +128,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     medifirstService.get("farmasi/get-transaksi-pelayanan?noReg=" + $scope.item.noregistrasi, true).then(function (dat) {
                         $scope.isRouteLoading = false;
                         for (var i = 0; i < dat.data.length; i++) {
+                            dat.data[i].statCheckbox = false;
                             dat.data[i].no = i + 1
                             dat.data[i].total = parseFloat(dat.data[i].jumlah) * (parseFloat(dat.data[i].hargasatuan) - parseFloat(dat.data[i].hargadiscount))
                             dat.data[i].total = parseFloat(dat.data[i].total) + parseFloat(dat.data[i].jasa)
@@ -134,6 +139,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             }
                         }
                         $scope.dataGrid = dat.data;
+                        console.log($scope.dataGrid);
                     });
 
                     medifirstService.get("farmasi/get-transaksi-pelayanan-obat-kronis?noReg=" + $scope.item.noregistrasi, true).then(function (dat) {
@@ -193,7 +199,43 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     row.removeClass("k-state-selected");
                 }
             }
+            $scope.selectRow = function (e) {
+                var element = $(e.currentTarget);
+                var checked = element.is(':checked'),
+                    row = element.closest('tr'),
+                    grid = $("#kGrid").data("kendoGrid"),
+                    // grid = $("#grid").data("kendoGrid"),
+                    dataItem = grid.dataItem(row);
+                if (checked) {
+                    var result = $.grep($scope.selectedData2, function (e) {
+                        return e.produkfk == dataItem.produkfk;
+                    });
+                    if (result.length == 0) {
+                        console.log(1);
+    					dataItem.statCheckbox = false;
 
+                        $scope.selectedData2.push(dataItem);
+                    } else {
+                        console.log(2);
+                        for (var i = 0; i < $scope.selectedData2.length; i++)
+                            if ($scope.selectedData2[i].produkfk === dataItem.produkfk) {
+                                $scope.selectedData2.splice(i, 1);
+                                break;
+                            }
+                        $scope.selectedData2.push(dataItem);
+                    }
+                    row.addClass("k-state-selected");
+                } else {
+                        console.log(3);
+    					dataItem.statCheckbox = true;
+                    for (var i = 0; i < $scope.selectedData2.length; i++)
+                        if ($scope.selectedData2[i].produkfk === dataItem.produkfk) {
+                            $scope.selectedData2.splice(i, 1);
+                            break;
+                        }
+                    row.removeClass("k-state-selected");
+                }
+            }
             $scope.onClick = function (e) {
 
                 var element = $(e.currentTarget);
@@ -202,7 +244,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     grid = $("#kGrid").data("kendoGrid"),
                     // grid = $("#grid").data("kendoGrid"),
                     dataItem = grid.dataItem(row);
-
+                console.log(checked);
                 // $scope.selectedData[dataItem.noRec] = checked;
                 if (checked) {
                     var result = $.grep($scope.selectedData2, function (e) {
@@ -228,10 +270,60 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     row.removeClass("k-state-selected");
                 }
             }
+			var isCheckAll = false
+            $scope.selectUnselectAllRow = function () {
+                var tempData = $scope.dataGrid;
+                console.log(tempData);
+                if (isCheckAll) {
+                    isCheckAll = false;
+                    for (var i = 0; i < tempData.length; i++) {
+                        tempData[i].statCheckbox = false;
+                        $scope.selectedData2 = []
+                    }
+                } else {
+                    isCheckAll = true;
+                    for (var i = 0; i < tempData.length; i++) {
+                        tempData[i].statCheckbox = true;
+                        $scope.selectedData2.push(tempData[i])
+                    }
+                }
+
+                console.log($scope.selectedData2)
+                reloaddataSourceGrid(tempData);
+            }
+            
+            function reloaddataSourceGrid(ds) {
+
+                var newDs = new kendo.data.DataSource({
+                    data: ds,
+                    pageSize: 20,
+                    total: ds.length,
+                    serverPaging: true,
+
+                });
+
+                var grid = $('#kGrid').data("kendoGrid");
+
+                grid.setDataSource(newDs);
+                grid.refresh();
+
+            }
+
+          
             $scope.columnGrid = [
+                // {
+                //     "template": "<input type='checkbox' class='checkbox' ng-click='onClick($event)' />",
+                //     "title": "<input type='checkbox' ng-click='selectUnselectAllRow($event)'  class='checkbox'>",
+                //     "width": 40
+                // },
                 {
-                    "template": "<input type='checkbox' class='checkbox' ng-click='onClick($event)' />",
-                    "width": 40
+                    "title": "<input type='checkbox' class='checkbox' ng-click='selectUnselectAllRow()' />",
+                    template: "# if (statCheckbox) { #" +
+                        "<input type='checkbox' class='checkbox' ng-click='selectRow($event)' checked />" +
+                        "# } else { #" +
+                        "<input type='checkbox' class='checkbox' ng-click='selectRow($event)' />" +
+                        "# } #",
+                    width: "30px"
                 },
                 {
                     "field": "no",
@@ -1696,6 +1788,157 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     ]
                 }
             };
+            $scope.cetak = []
+            $scope.rmcetak = []
+            $scope.startPrint = []
+            $scope.listwaktuPakai = [
+                    {id:1,waktupakai: 'Pagi'},
+                    {id:2,waktupakai: 'Siang'},
+                    {id:3,waktupakai: 'Sore'},
+                    {id:4,waktupakai: 'Malam'}
+                ]
+            $scope.waktucetak = function () {
+                if ($scope.checkpagi == true) {
+                $scope.cetak[1] = true
+                } else if ($scope.checkpagi == false) {
+                    $scope.cetak[1] = false
+                }
+                if ($scope.checksiang == true) {
+                    $scope.cetak[2] = true
+                } else if ($scope.checksiang == false) {
+                    $scope.cetak[2] = false
+                }
+                if ($scope.checkmalam == true) {
+                    $scope.cetak[3] = true
+                } else if ($scope.checkmalam == false) {
+                    $scope.cetak[3] = false
+                }
+            }
+            $scope.CetakUDD = function () {
+                // $scope.cetak[2] = true
+                // $scope.cetak[3] = true
+
+                console.log($scope.selectedData2);
+                if ($scope.dataSelected.noresep == undefined) {
+                    toastr.error("Pilih Data !!")
+                    return;
+                }
+                // if ($scope.dataSelected.noorder == 'Menunggu') {
+                //     toastr.error("Status Data Belum Diverifikasi !!")
+                //     return;
+                // }
+                $scope.WaktuPakaiPagi = {
+                    id: 1,
+                    waktupakai: 'Pagi'
+                }
+                $scope.WaktuPakaiSiang = {
+                        id: 2,
+                        waktupakai: 'Siang'
+                    },
+                    $scope.WaktuPakaiMalam = {
+                        id: 4,
+                        waktupakai: 'Malam'
+                    }
+                $scope.normcetak = $scope.dataSelected.nocm
+                $scope.resepcetak = $scope.dataSelected.noresep
+                $scope.popUpDetailUDD.center().open()
+                // if()
+
+
+                // for (let i = 0; i < $scope.selectedData2.length; i++) {
+                //     if ($scope.selectedData2[i].statusorder == 'Menunggu') {
+                //         toastr.error("Status Data Belum Diverifikasi !!")
+                //         return;
+                //     }
+                //     $scope.rmcetak[i+1] = $scope.selectedData2[i].nocm
+                //     $scope.cetak[i+1] = true
+                // }
+
+                // if ($scope.selectedData2.length > 0 && $scope.selectedData2.length < 4){
+                //     $scope.popUpDetailUDD.center().open()
+                // }else{
+                //     toastr.error("Checklist maksimal 3")
+                //     return;
+                // }
+            }
+            $scope.cancelCetakUDDnya = function () {
+                for (let i = 0; i < $scope.selectedData2.length; i++) {}
+                $scope.popUpDetailUDD.close()
+            }
+            $scope.CetakUDDnya = function () {
+                var local = JSON.parse(localStorage.getItem('profile'));
+                var profile = local.id;
+
+                var norec_apd = $scope.dataSelected.norec_apd
+                var noresep = $scope.resepcetak
+                var nocm = $scope.normcetak
+
+                var tglpagi = '',
+                    tglsiang = '',
+                    tglmalam = '',
+                    pagi = '',
+                    siang = '',
+                    malam = ''
+                // var tglpagi = '&tglpagi=' + moment($scope.startPrint[1]).format('YYYY-MM-DD')
+                // var tglsiang = '&tglsiang=' + moment($scope.startPrint[2]).format('YYYY-MM-DD')
+                // var tglmalam = '&tglmalam=' + moment($scope.startPrint[3]).format('YYYY-MM-DD')
+                // var pagi = '&pagi=' + $scope.WaktuPakaiPagi.id
+                // var siang = '&siang=' + $scope.WaktuPakaiSiang.id
+                // var malam = '&malam=' + $scope.WaktuPakaiMalam.id
+
+                if ($scope.checkpagi == true) {
+                    tglpagi = moment($scope.startPrint[1]).format('YYYY-MM-DD')
+                    pagi = $scope.WaktuPakaiPagi.id
+                } else if ($scope.checkpagi == false) {
+                    pagi = ''
+                    tglpagi = ''
+                }
+                if ($scope.checksiang == true) {
+                    tglsiang = moment($scope.startPrint[2]).format('YYYY-MM-DD')
+                    siang = $scope.WaktuPakaiSiang.id
+
+                } else if ($scope.checksiang == false) {
+                    siang = ''
+                    tglsiang = ''
+
+                }
+                if ($scope.checkmalam == true) {
+                    tglmalam = moment($scope.startPrint[3]).format('YYYY-MM-DD')
+                    malam = $scope.WaktuPakaiMalam.id
+
+                } else if ($scope.checkmalam == false) {
+                    malam = ''
+                    tglmalam = ''
+                }
+                var tgl = '&tgl=' + tglmalam + ',' + tglpagi + ',' + tglsiang
+                var waktu = '&waktu=' + malam + ',' + pagi + ',' + siang
+
+
+                window.open(configuration.baseApiBackend + "report/cetak-udd?noorder=" + noresep + "&norec_apd=" + norec_apd +
+                    "&nocm=" + nocm + '&kodeprofile=' + profile + tgl + waktu);
+                // var norec_apd = ''
+                // var noresep = ''
+                // var nocm = ''
+                // var tglAwal = ''
+                // for (var i = $scope.selectedData2.length - 1; i >= 0; i--) {
+                //     norec_apd = norec_apd + ',' +$scope.selectedData2[i].norec_apd
+                //     noresep = noresep + ',' + $scope.selectedData2[i].noresep
+                //     nocm = nocm + ',' + $scope.selectedData2[i].nocm
+                //     tglAwal = tglAwal + ',' + moment($scope.startPrint[i+1]).format('YYYY-MM-DD')
+                // }
+                // console.log(norec_apd, noresep);
+                // window.open(config.baseApiBackend + "report/cetak-udd?noorder=" + noresep + "&norec_apd="+norec_apd
+                //     +"&nocm=" + nocm + '&kodeprofile=' + profile + '&tglAwal=' + tglAwal +"&waktu=" + $scope.WaktuPakai.id);
+            }
+            $scope.CetakDaftarTilik = function(){
+                var local = JSON.parse(localStorage.getItem('profile'));
+                var profile = local.id;
+
+                var norec_apd = $scope.dataSelected.norec_apd
+                // var 
+                window.open(configuration.baseApiBackend + "report/cetak-udd?noorder=" + noresep + "&norec_apd=" + norec_apd +
+                    "&nocm=" + nocm + '&kodeprofile=' + profile + tgl + waktu);
+            }
             //***********************************
         }
     ]);

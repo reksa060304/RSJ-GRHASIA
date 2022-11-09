@@ -166,6 +166,76 @@
 							</div>
 						</md-content>
 					</md-tab>
+					<md-tab label="detail mahasiswa" ng-disabled="daftarmahasiswa">
+						<md-content class="md-padding">
+							<div class="panel-body">
+								<fieldset style="min-height:50px !important" align="left">
+									<legend>
+										<h2>Pencarian</h2>
+									</legend>
+									<div class="grid_12">
+										<div class="grid_10">
+											<div class="grid_4">
+												<label c-label item="item" c-label-text="Instansi"></label>
+												<input style="width: 100%;" kendo-combo-box k-ng-model="item.instansi"
+													k-data-text-field="'datakampus'" k-data-value-field="'id'" k-filter="'contains'"
+													k-auto-bind="false" k-data-source="listInstansi" />
+											</div>
+											<div class="grid_4">
+												<label c-label item="item" c-label-text="Bulan" real></label>
+												<input style="width: 100%" k-options="monthUngkul" k-ng-model="item.bulan" kendo-date-picker
+													placeholer="MMMM" k-format="'MM'" />
+											</div>
+											<div class="grid_4">
+												<label c-label item="item" c-label-text="Tahun" real></label>
+												<input style="width: 100%" k-options="yearUngkul" k-ng-model="item.tahun" kendo-date-picker
+													placeholer="YYYY" k-format="'yyyy'" />
+											</div>
+										</div>
+										<div class="grid_10">
+											
+											<div class="grid_4">
+												<label c-label item="item" c-label-text="Kegiatan" real></label>
+												<input style="width: 100%;" kendo-combo-box k-ng-model="item.kegiatan"
+													k-data-text-field="'detailjenisproduk'" k-data-value-field="'id'" k-auto-bind="false"
+													k-data-source="listKegiatan" />
+											</div>
+											<div class="grid_4">
+												<label c-label item="item" c-label-text="Pendidikan" real></label>
+												<input style="width: 100%;" kendo-combo-box k-ng-model="item.pendidikan" k-data-text-field="'pendidikan'"
+													k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listPendidikan" />
+											</div>
+											<div class="grid_4">
+												<label c-label item="item" c-label-text="Jenis Kegiatan" real></label>
+												<input style="width: 100%;" kendo-combo-box k-ng-model="item.jeniskegiatan"
+													k-data-text-field="'diklatkategori'" k-data-value-field="'id'" k-filter="'contains'"
+													k-auto-bind="false" k-data-source="listJenisKegiatan" />
+											</div>
+											
+										</div>
+										<div class="grid_2">
+											<div class="grid_12" style="margin-top:27px">
+												<button class="k-button k-button-icontext k-primary k-grid-update" ng-click="searchDetailMahasiswa()"
+													style="width:100px"><span class="k-sprite k-icon k-i-search"></span>Cari </button>
+												<button class="k-button  k-button-icontext" ng-click="ClearData()" style="width:100px"><span
+														class="k-sprite k-icon k-delete"></span>Clear</button>
+											</div>
+										</div>
+
+									</div>
+
+								</fieldset>
+								<div class="grid_12" style="margin-top: 10px;">
+									<kendo-grid id="kGrid" k-data-source="dataDetailMahasiswaGrid" k-options="columnDetailMahasiswaGrid"
+										k-ng-model="current">
+									</kendo-grid>
+								</div>
+								<div class="grid_12" style="margin-top:60px">
+									<div ng-include='"../app/template/Shared/TemplateLoading"'></div>
+								</div>
+							</div>
+						</md-content>
+					</md-tab>
 				</md-tabs>
 			</md-content>
 		</div>

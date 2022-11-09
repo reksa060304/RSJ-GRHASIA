@@ -373,7 +373,10 @@ class PenelitianController extends ApiController {
         $verif = '';
         try{
             $dataKPE = \DB::table('strukpelayanan_t')->where('norec',$request['norec'])
-            ->update(['isverifikasi'=> $request['isverifikasi']]);
+            ->update([
+                'isverifikasi'=> $request['isverifikasi'],
+                'tglstruk'=> $request['tglverif']
+            ]);
             // $verif = $dataKPE->isverifikasi;
             // //## Logging User
             // $newId = LoggingUser::max('id');
@@ -425,6 +428,7 @@ class PenelitianController extends ApiController {
             $result = array(
                 'status' => 400,
                 'message'  => $transStatus,
+                'e'=> $e->getMessage() . $e->getLine(),
                 'as' => 'ea@epic',
             );
         }
@@ -469,7 +473,7 @@ class PenelitianController extends ApiController {
             sdmp.norec,dk.diklatkategori,djp.detailjenisproduk,sdmp.objectprodukfk,sdmp.jumlahpeserta,
             sdmp.institusipendidikan,sdmp.tanggalmulai::date,sdmp.tanggalselesai::date,sdmp.biayapenelitian,
             sdmp.notelp,sdmp.hargasatuan,sdmp.qty, sp.isverifikasi,sp.nosbmlastfk,sp.nosbklastfk,
-            sp.norec as norec_sp,sdmp.noregistrasifk,sp.nostruk, count(sdmpd.norec), sdmp.judulpeneltian, sdmp.namapengawas, sdmp.namapendamping
+            sp.norec as norec_sp,sdmp.noregistrasifk,sp.nostruk, count(sdmpd.norec), sdmp.judulpeneltian, sdmp.namapengawas, sdmp.namapendamping, sbm.tglsbm
             FROM
                 sdm_penelitianeksternal_t sdmp
                 left JOIN detailjenisproduk_m djp ON sdmp.objectdetailjenisprodukfk = djp.id
@@ -477,12 +481,13 @@ class PenelitianController extends ApiController {
                 left join produk_m pr on pr.id= sdmp.objectprodukfk
                 left join strukpelayanan_t sp on sp.norec = sdmp.noregistrasifk
                 left join sdm_pesertadidik_t sdmpd on sdmpd.noregistrasifk = sdmp.norec
+                left join strukbuktipenerimaan_t sbm on sbm.norec = sp.nosbmlastfk
                 where sdmp.kdprofile = $kdProfile and sdmp.tanggalmulai::date between '$tglAwal'and '$tglAkhir' and sdmp.statusenabled = true
                 $user $Fakultas $statusbayar
                 group by sdmp.norec,dk.diklatkategori,djp.detailjenisproduk,sdmp.objectprodukfk,sdmp.jumlahpeserta,
             sdmp.institusipendidikan,sdmp.tanggalmulai::date,sdmp.tanggalselesai::date,sdmp.biayapenelitian,
             sdmp.notelp,sdmp.hargasatuan,sdmp.qty, sp.isverifikasi,sp.nosbmlastfk,sp.nosbklastfk,
-            sp.norec,sdmp.noregistrasifk,sp.nostruk, sdmp.judulpeneltian, sdmp.namapengawas, sdmp.namapendamping
+            sp.norec,sdmp.noregistrasifk,sp.nostruk, sdmp.judulpeneltian, sdmp.namapengawas, sdmp.namapendamping,sbm.tglsbm
                 ")
         );
         $IdPegawai = \DB::table('pegawai_m')->where('id', $request['modelid'])->get();

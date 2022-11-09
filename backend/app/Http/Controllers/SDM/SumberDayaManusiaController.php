@@ -7307,4 +7307,109 @@ public function daftarKenaikanGajiBerkala(Request $request){
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
+    public function LaporanPenggunaTotalTW(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $satu = '';
+        $dua = '';
+        $tiga = '';
+        if($request['triwulan'] == 1){
+            $satu = 1;
+            $dua = 2;
+            $tiga = 3;
+        } else if($request['triwulan'] == 2){
+            $satu = 4;
+            $dua = 5;
+            $tiga = 6;
+        } else if($request['triwulan'] == 3){
+            $satu = 7;
+            $dua = 8;
+            $tiga =9;
+        } else if($request['triwulan'] == 4){
+            $satu = 10;
+            $dua = 11;
+            $tiga =12;
+        }
+        $data = \DB::select(DB::raw("SELECT 
+        x.pelayanan, 
+        sum(x.mhs)filter(where x.bulan = $satu) as satu,
+        sum(x.mhs)filter(where x.bulan = $dua) as dua,
+        sum(x.mhs)filter(where x.bulan = $tiga) as tiga,
+        sum(x.mhs)filter(where x.bulan in ($satu,$dua,$tiga)) as total
+        FROM (
+            SELECT djp.detailjenisproduk as pelayanan,date_part('month', pe.tanggalmulai::date)as bulan, pe.jumlahpeserta as mhs
+            from sdm_penelitianeksternal_t pe 
+            left join detailjenisproduk_m djp on djp.id = pe.objectdetailjenisprodukfk
+            where date_part('year', pe.tanggalmulai) = $request[tahun] and pe.kdprofile = $idProfile and pe.statusenabled = true 
+            ORDER BY djp.detailjenisproduk
+        )as x
+        GROUP BY x.pelayanan
+        "));
+
+        return $this->respond($data);
+    }
+    public function LaporanPenggunaPKKTotalTW(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $satu = '';
+        $dua = '';
+        $tiga = '';
+        if($request['triwulan'] == 1){
+            $satu = 1;
+            $dua = 2;
+            $tiga = 3;
+        } else if($request['triwulan'] == 2){
+            $satu = 4;
+            $dua = 5;
+            $tiga = 6;
+        } else if($request['triwulan'] == 3){
+            $satu = 7;
+            $dua = 8;
+            $tiga =9;
+        } else if($request['triwulan'] == 4){
+            $satu = 10;
+            $dua = 11;
+            $tiga =12;
+        }
+        $data = \DB::select(DB::raw("SELECT y.jeniskegiatan, y.diklatkategori, 
+        sum(y.satu)::integer as satu, 
+        sum(y.dua)::integer as dua,
+        sum(y.tiga)::integer as tiga,
+        
+        sum(y.total)::integer as total
+        FROM (
+        SELECT
+        x.diklatkategori,
+        x.id_jenis,
+        x.id_produk,
+        case 
+        when x.id_produk in (40400003) then 'Co-Ass'
+        when x.id_produk in (40400001) then 'DI-DIII'
+        when x.id_produk in (40400002) then 'DIV-S1'
+        when x.id_produk in (40400004) then 'Ners'
+        when x.id_produk in (40400005) then 'S2'
+        when x.id_produk in (40400000) then 'SMU/Sederajat'
+        end as jeniskegiatan,
+        sum(x.mhs)filter(where x.bulan = $satu)as satu,
+        sum(x.mhs)filter(where x.bulan = $dua)as dua,
+        sum(x.mhs)filter(where x.bulan = $tiga)as tiga,
+        sum(x.mhs) filter(where x.bulan in($satu, $dua, $tiga)) as total
+        FROM (
+        SELECT dk.diklatkategori, pr.namaproduk,pr.id as id_produk, dk.id as id_jenis,date_part('month', pe.tanggalmulai::date)as bulan, pe.objectprodukfk,pe.jumlahpeserta as mhs
+        from sdm_penelitianeksternal_t pe
+        left join detailjenisproduk_m djp on djp.id = pe.objectdetailjenisprodukfk
+        inner join produk_m pr on pr.id = pe.objectprodukfk
+        inner join diklatkategori_m dk on dk.id = pe.objectdiklatkategorifk
+
+        where date_part('year', pe.tanggalmulai) = 2022 and pe.kdprofile = 30 and pe.statusenabled = true and pe.objectdetailjenisprodukfk = 1947
+        ORDER BY pe.tanggalmulai asc
+        )as x
+        GROUP BY x.diklatkategori, x.id_jenis,x.id_produk)as y
+        GROUP BY y.jeniskegiatan, y.diklatkategori
+        "));
+
+        return $this->respond($data);
+    }
 }
