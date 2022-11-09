@@ -62,6 +62,8 @@ define(['initialize'], function (initialize) {
             $scope.EditPihakKetiga = function(){
                 $scope.idrekanan = $scope.dataSelected.id
                 $scope.item.namapihakketiga = $scope.dataSelected.namarekanan
+                $scope.item.npwp = $scope.dataSelected.npwp
+                $scope.item.alamat = $scope.dataSelected.alamatlengkap
                 $scope.PihakKetiga.center().open()
             }
 
@@ -73,6 +75,8 @@ define(['initialize'], function (initialize) {
                 var objSave = {
                     "id": $scope.idrekanan,
                     "namarekanan": $scope.item.namapihakketiga,
+                    "npwp": $scope.item.npwp,
+                    "alamat": $scope.item.alamat,
                 }
                 console.log(objSave);
                 // return
@@ -144,6 +148,18 @@ define(['initialize'], function (initialize) {
                         
                         "field": "namarekanan",
                         "title": "Nama Pihak Ketiga",
+                        "width": "100px",
+                    },
+                    {
+                        
+                        "field": "npwp",
+                        "title": "NPWP",
+                        "width": "100px",
+                    },
+                    {
+                        
+                        "field": "alamatlengkap",
+                        "title": "Alamat Lengkap",
                         "width": "100px",
                     },
                 ]

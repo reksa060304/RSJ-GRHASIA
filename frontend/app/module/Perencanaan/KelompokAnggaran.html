@@ -499,14 +499,14 @@
 							<br />
 							<div class="grid_3">
 								<label c-label item="item" c-label-text="Tanggal awal"></label>
-								<input style="width: 100%" k-ng-model="item.tglawal" kendo-datetimepicker placeholer="yyyy-mm-dd"
-									k-format="'yyyy-MM-dd HH:mm'" />
+								<input style="width: 100%" k-ng-model="item.tglawal" kendo-datepicker placeholer="yyyy-mm-dd"
+									k-format="'yyyy-MM-dd'" />
 							</div>
 						
 							<div class="grid_3">
 								<label c-label item="item" c-label-text="Tanggal Akhir"></label>
-								<input style="width: 100%" k-ng-model="item.tglakhir" kendo-datetimepicker placeholer="yyyy-mm-dd"
-									k-format="'yyyy-MM-dd HH:mm'" />
+								<input style="width: 100%" k-ng-model="item.tglakhir" kendo-datepicker placeholer="yyyy-mm-dd"
+									k-format="'yyyy-MM-dd'" />
 							</div>
 							<div class="grid_1" style="margin-top: 12px;">
 								<button class="btnTemplate1" ng-click="CariSPJ()">Cari</button>
@@ -1807,9 +1807,9 @@
 					Tanggal Pelaksanaan Kegiatan
 				</div>
 				<div class="grid_4" style="margin-top: -10px;">
-					<input style="width: 100%" k-ng-model="item.tglSPJ" kendo-datetimepicker 
-                     placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'"
-                    parsedate="yyyy-MM-dd HH:mm"   />
+					<input style="width: 100%" k-ng-model="item.tglSPJ" kendo-datepicker 
+                     placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd'"
+                    parsedate="yyyy-MM-dd"   />
 				</div>
 			</div>
 			<div class="grid_12">
@@ -1997,6 +1997,25 @@
 				<input c-text-box type="input" class="k-textbox" ng-model="item.namapihakketiga"/>
 			</div>
 		</div>
+		<div class="grid_12">
+			<div class="grid_12" style="text-align: left; margin-top: 10px;">
+				NPWP
+			</div>
+			<div class="grid_12" style="margin-top: 10px;">
+				<input c-text-box type="input" class="k-textbox" ng-model="item.npwp"/>
+			</div>
+		</div>
+		<div class="grid_12">
+			<div class="grid_12" style="text-align: left; margin-top: 10px;">
+				Alamat Lengkap
+			</div>
+			<div class="grid_12" style="margin-top: 10px;">
+				<textarea required class="k-textbox" style="    height: 76px;
+				width: 100%;
+				margin-top: 5px;
+				resize: none;" ng-model="item.alamatrekanan"></textarea>
+			</div>
+		</div>
 		
 		<div class="grid_12" style="margin-top: 10px;">
 			<div class="grid_9" ></div>
@@ -2091,6 +2110,65 @@
 				</div>
 				<div class="grid_6" >
 					<input c-text-box type="input" class="k-textbox" ng-model="item.sisaAnggaranPanjar" />
+				</div>
+			</div>
+			<div class="grid_12">
+				<div class="grid_3" style="text-align: left; margin-top: 10px;" >
+					Jenis PPh
+				</div>
+				<div class="grid_6" style="margin-top: 10px;">
+					<input kendo-combo-box k-ng-model="item.jenispajak"
+						k-data-text-field="'jenispajak'" k-data-value-field="'id'"
+						k-filter="'contains'" k-auto-bind="false"
+						k-data-source="listJenisPajak"  />
+				</div>
+			</div>
+			<div class="grid_12">
+				<div class="grid_3" style="text-align: left;margin-top: 15px;">
+					PPh
+				</div>
+				<div class="grid_6" >
+					<input c-text-box type="input" class="k-textbox" ng-model="item.pphpanjar" />
+				</div>
+			</div>
+			<div class="grid_12">
+				<div class="grid_3" style="text-align: left;margin-top: 15px;">
+					Id Billing
+				</div>
+				<div class="grid_6" >
+					<input c-text-box type="input" class="k-textbox" ng-model="item.idbillpph" />
+				</div>
+			</div>
+			<div class="grid_12">
+				<div class="grid_3" style="text-align: left;margin-top: 15px;">
+					NTPN
+				</div>
+				<div class="grid_6" >
+					<input c-text-box type="input" class="k-textbox" ng-model="item.ntpnpph" />
+				</div>
+			</div>
+			<div class="grid_12">
+				<div class="grid_3" style="text-align: left;margin-top: 15px;">
+					PPN
+				</div>
+				<div class="grid_6" >
+					<input c-text-box type="input" class="k-textbox" ng-model="item.ppnpanjar" />
+				</div>
+			</div>
+			<div class="grid_12">
+				<div class="grid_3" style="text-align: left;margin-top: 15px;">
+					Id Billing
+				</div>
+				<div class="grid_6" >
+					<input c-text-box type="input" class="k-textbox" ng-model="item.idbill" />
+				</div>
+			</div>
+			<div class="grid_12">
+				<div class="grid_3" style="text-align: left;margin-top: 15px;">
+					NTPN
+				</div>
+				<div class="grid_6" >
+					<input c-text-box type="input" class="k-textbox" ng-model="item.ntpn" />
 				</div>
 			</div>
 		</div>

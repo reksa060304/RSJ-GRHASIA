@@ -188,11 +188,19 @@
                         : {{$detail[0]->untukpengeluaran}} RS Jiwa GRHASIA DINKES DIY <br> Tahun Anggaran {{ date('Y', strtotime($detail[0]->tglspm)) }}
                         </td>
                     </tr>
+                    @if($detail[0]->objectasalprodukfk == 18)
                     <tr>
                         <td class="child" colspan="2" style="padding: 5px;" align="left">
                         <strike>1. Belanja Tidak Langsung </strike> **)
                         </td>
                     </tr>
+                    @elseif($detail[0]->objectasalprodukfk == 15)
+                    <tr>
+                        <td class="child" colspan="2" style="padding: 5px;" align="left">
+                        1. Belanja Tidak Langsung **)
+                        </td>
+                    </tr>
+                    @endif
                     <tr>
                         <td class="child" colspan="2" style="padding: 5px;" align="left">
                         2. Belanja Langsung **)

@@ -3055,6 +3055,10 @@
             "urlDep": "module/Farmasi/LaporanFarmasi/LaporanLayananFarmasiCtrl"
         },
         {
+            "nameDep": "LaporanRekapResepCtrl",
+            "urlDep": "module/Farmasi/LaporanFarmasi/LaporanRekapResepCtrl"
+        },
+        {
             "nameDep": "LaporanSensusNewCtrl",
             "urlDep": "module/Registrasi/Laporan/LaporanSensusNewCtrl"
         },

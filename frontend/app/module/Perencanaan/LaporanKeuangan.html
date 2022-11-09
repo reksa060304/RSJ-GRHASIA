@@ -282,8 +282,31 @@
                                         </div>
                                         <div class="grid_12">
                                             <div class="grid_12">
-                                                <input style="width: 100%" k-ng-model="item.tglcetakpanjar" kendo-datetimepicker placeholer="yyyy-mm-dd"
+                                                <input style="width: 100%" k-ng-model="item.tglcetakro" kendo-datetimepicker placeholer="yyyy-mm-dd"
 									            k-format="'yyyy-MM-dd'" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="grid_2">
+                                        <div class="grid_12">
+                                            <label c-label item="item" c-label-text="Tahun"></label>
+                                        </div>
+                                        <div class="grid_12">
+                                            <div class="grid_12">
+                                                <input style="width: 100%" k-options="yearUngkul"
+                                                    k-ng-model="item.tahunro" kendo-date-picker placeholer="YYYY"
+                                                    k-format="'yyyy'" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="grid_2" style="margin-top: 0px;">
+                                        <div class="grid_12">
+                                            <label c-label item="item" c-label-text="Bulan"></label>
+                                        </div>
+                                        <div class="grid_12">
+                                            <div class="grid_12">
+                                                <input style="width: 100%" k-options="monthUngkul" k-ng-model="item.bulanro"
+                                                    kendo-date-picker placeholer="MMMM" k-format="'MMMM'" />
                                             </div>
                                         </div>
                                     </div>
@@ -293,7 +316,7 @@
                                         </div>
                                         <div class="grid_12">
                                             <div class="grid_12">
-                                                <input kendo-combo-box k-ng-model="item.kegiatandetail"
+                                                <input kendo-combo-box k-ng-model="item.subkegiatanro"
                                                 k-data-text-field="'keterangan'" k-data-value-field="'id'"
                                                 k-filter="'contains'" k-auto-bind="false" 
                                                 k-data-source="listKegiatan" k-on-change='changeKegiatan()'/>
@@ -306,46 +329,23 @@
                                         </div>
                                         <div class="grid_12">
                                             <div class="grid_12">
-                                                <input kendo-combo-box k-ng-model="item.subkegiatandetail"
-                                                k-data-text-field="'text'" k-data-value-field="'id'"
+                                                <input kendo-combo-box k-ng-model="item.subsubkegiatanro"
+                                                k-data-text-field="'keterangansubsubkegiatan'" k-data-value-field="'idsubsubkegiatan'"
                                                 k-filter="'contains'" k-auto-bind="false" 
-                                                k-data-source="listSubKegiatan"/>
+                                                k-data-source="listSubSubKegiatanRO"/>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="grid_2">
                                         <div class="grid_12">
-                                            <label c-label item="item" c-label-text="Jenis Rekening"></label>
+                                            <label c-label item="item" c-label-text="Mata Anggaran"></label>
                                         </div>
                                         <div class="grid_12">
                                             <div class="grid_12">
-                                                <input kendo-combo-box k-ng-model="item.jenisrekeningmonev"
-                                                k-data-text-field="'jenisrekening'" k-data-value-field="'id'"
+                                                <input kendo-combo-box k-ng-model="item.mataanggaranro"
+                                                k-data-text-field="'namamataanggaran'" k-data-value-field="'id'"
                                                 k-filter="'contains'" k-auto-bind="false"
-                                                k-data-source="listJenisRekening"  />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="grid_2">
-                                        <div class="grid_12">
-                                            <label c-label item="item" c-label-text="Tahun"></label>
-                                        </div>
-                                        <div class="grid_12">
-                                            <div class="grid_12">
-                                                <input style="width: 100%" k-options="yearUngkul"
-                                                    k-ng-model="item.tahunpanjar" kendo-date-picker placeholer="YYYY"
-                                                    k-format="'yyyy'" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="grid_2" style="margin-top: 0px;">
-                                        <div class="grid_12">
-                                            <label c-label item="item" c-label-text="Bulan"></label>
-                                        </div>
-                                        <div class="grid_12">
-                                            <div class="grid_12">
-                                                <input style="width: 100%" k-options="monthUngkul" k-ng-model="item.bulanpanjar"
-                                                    kendo-date-picker placeholer="MMMM" k-format="'MMMM'" />
+                                                k-data-source="listMataAnggaranRO" k-on-change='changeCboPilihNoRekening()'  />
                                             </div>
                                         </div>
                                     </div>
@@ -355,7 +355,7 @@
                                         </div>
                                         <div class="grid_12">
                                             <button class="primary c-button" style="margin-top: 6px"
-                                                ng-click="CetakBukuPanjar()">Cetak</button>
+                                                ng-click="CetakRO()">Cetak</button>
                                         </div>
                                     </div>
                                 </div>
@@ -364,13 +364,47 @@
                         <md-tab label="LAPORAN RK">
                             <md-content class="md-padding" ng-hide="false">
                                 <div class="grid_12" style="margin-top: 25px;">
+                                    <div class="grid_2" style="margin-top: 0px;">
+                                        <div class="grid_12">
+                                            <label c-label item="item" c-label-text="Tanggal Cetak"></label>
+                                        </div>
+                                        <div class="grid_12">
+                                            <div class="grid_12">
+                                                <input style="width: 100%" k-ng-model="item.tglcetakrk" kendo-datetimepicker placeholer="yyyy-mm-dd"
+									            k-format="'yyyy-MM-dd'" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="grid_2">
+                                        <div class="grid_12">
+                                            <label c-label item="item" c-label-text="Tahun"></label>
+                                        </div>
+                                        <div class="grid_12">
+                                            <div class="grid_12">
+                                                <input style="width: 100%" k-options="yearUngkul"
+                                                    k-ng-model="item.tahunrk" kendo-date-picker placeholer="YYYY"
+                                                    k-format="'yyyy'" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="grid_2" style="margin-top: 0px;">
+                                        <div class="grid_12">
+                                            <label c-label item="item" c-label-text="Bulan"></label>
+                                        </div>
+                                        <div class="grid_12">
+                                            <div class="grid_12">
+                                                <input style="width: 100%" k-options="monthUngkul" k-ng-model="item.bulanrk"
+                                                    kendo-date-picker placeholer="MMMM" k-format="'MMMM'" />
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="grid_2">
                                         <div class="grid_12">
                                             <label c-label item="item" c-label-text="Sub Kegiatan"></label>
                                         </div>
                                         <div class="grid_12">
                                             <div class="grid_12">
-                                                <input kendo-combo-box k-ng-model="item.kegiatandetail"
+                                                <input kendo-combo-box k-ng-model="item.subkegiatanrk"
                                                 k-data-text-field="'keterangan'" k-data-value-field="'id'"
                                                 k-filter="'contains'" k-auto-bind="false" 
                                                 k-data-source="listKegiatan" k-on-change='changeKegiatan()'/>
@@ -383,33 +417,10 @@
                                         </div>
                                         <div class="grid_12">
                                             <div class="grid_12">
-                                                <input kendo-combo-box k-ng-model="item.subkegiatandetail"
-                                                k-data-text-field="'text'" k-data-value-field="'id'"
+                                                <input kendo-combo-box k-ng-model="item.subsubkegiatanrk"
+                                                k-data-text-field="'keterangansubsubkegiatan'" k-data-value-field="'idsubsubkegiatan'"
                                                 k-filter="'contains'" k-auto-bind="false" 
-                                                k-data-source="listSubKegiatan"/>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="grid_2">
-                                        <div class="grid_12">
-                                            <label c-label item="item" c-label-text="Tahun"></label>
-                                        </div>
-                                        <div class="grid_12">
-                                            <div class="grid_12">
-                                                <input style="width: 100%" k-options="yearUngkul"
-                                                    k-ng-model="item.tahunpanjar" kendo-date-picker placeholer="YYYY"
-                                                    k-format="'yyyy'" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="grid_2" style="margin-top: 0px;">
-                                        <div class="grid_12">
-                                            <label c-label item="item" c-label-text="Bulan"></label>
-                                        </div>
-                                        <div class="grid_12">
-                                            <div class="grid_12">
-                                                <input style="width: 100%" k-options="monthUngkul" k-ng-model="item.bulanpanjar"
-                                                    kendo-date-picker placeholer="MMMM" k-format="'MMMM'" />
+                                                k-data-source="listSubSubKegiatanRK"/>
                                             </div>
                                         </div>
                                     </div>
@@ -419,7 +430,7 @@
                                         </div>
                                         <div class="grid_12">
                                             <button class="primary c-button" style="margin-top: 6px"
-                                                ng-click="CetakBukuPanjar()">Cetak</button>
+                                                ng-click="CetakRK()">Cetak</button>
                                         </div>
                                     </div>
                                 </div>
@@ -452,26 +463,14 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="grid_2">
-                                        <div class="grid_12">
-                                            <label c-label item="item" c-label-text="Tahun"></label>
-                                        </div>
-                                        <div class="grid_12">
-                                            <div class="grid_12">
-                                                <input style="width: 100%" k-options="yearUngkul"
-                                                    k-ng-model="item.tahunpanjar" kendo-date-picker placeholer="YYYY"
-                                                    k-format="'yyyy'" />
-                                            </div>
-                                        </div>
-                                    </div>
                                     <div class="grid_2" style="margin-top: 0px;">
                                         <div class="grid_12">
-                                            <label c-label item="item" c-label-text="Bulan"></label>
+                                            <label c-label item="item" c-label-text="Tanggal BKU"></label>
                                         </div>
                                         <div class="grid_12">
                                             <div class="grid_12">
-                                                <input style="width: 100%" k-options="monthUngkul" k-ng-model="item.bulanpanjar"
-                                                    kendo-date-picker placeholer="MMMM" k-format="'MMMM'" />
+                                                <input style="width: 100%" k-ng-model="item.tglbkufungsional" kendo-datetimepicker placeholer="yyyy-mm-dd"
+									            k-format="'yyyy-MM-dd'" />
                                             </div>
                                         </div>
                                     </div>
@@ -485,19 +484,6 @@
                                                 k-data-text-field="'asalproduk'" k-data-value-field="'id'"
                                                 k-filter="'contains'" k-auto-bind="false"
                                                 k-data-source="listAsalProduk"  />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="grid_2">
-                                        <div class="grid_12">
-                                            <label c-label item="item" c-label-text="Tanggal BKU"></label>
-                                        </div>
-                                        <div class="grid_12">
-                                            <div class="grid_12">
-                                                <input kendo-combo-box k-ng-model="item.tglbku"
-                                                k-data-text-field="'tanggal'" k-data-value-field="'id'"
-                                                k-filter="'contains'" k-auto-bind="false"
-                                                k-data-source="listTglBKU"  />
                                             </div>
                                         </div>
                                     </div>
@@ -557,6 +543,68 @@
                                         <div class="grid_12">
                                             <button class="primary c-button" style="margin-top: 6px"
                                                 ng-click="CetakBKUReal()">Cetak</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </md-content>
+                        </md-tab>
+                        <md-tab label="LAPORAN BUKU PAJAK">
+                            <md-content class="md-padding" ng-hide="false">
+                                <div class="grid_12" style="margin-top: 25px;">
+                                    <div class="grid_2" style="margin-top: 0px;">
+                                        <div class="grid_12">
+                                            <label c-label item="item" c-label-text="Tanggal Cetak"></label>
+                                        </div>
+                                        <div class="grid_12">
+                                            <div class="grid_12">
+                                                <input style="width: 100%" k-ng-model="item.tglpajak" kendo-datetimepicker placeholer="yyyy-mm-dd"
+									            k-format="'yyyy-MM-dd'" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="grid_2">
+                                        <div class="grid_12">
+                                            <label c-label item="item" c-label-text="Tahun"></label>
+                                        </div>
+                                        <div class="grid_12">
+                                            <div class="grid_12">
+                                                <input style="width: 100%" k-options="yearUngkul"
+                                                    k-ng-model="item.tahunpajak" kendo-date-picker placeholer="YYYY"
+                                                    k-format="'yyyy'" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="grid_2" style="margin-top: 0px;">
+                                        <div class="grid_12">
+                                            <label c-label item="item" c-label-text="Bulan"></label>
+                                        </div>
+                                        <div class="grid_12">
+                                            <div class="grid_12">
+                                                <input style="width: 100%" k-options="monthUngkul" k-ng-model="item.bulanpajak"
+                                                    kendo-date-picker placeholer="MMMM" k-format="'MMMM'" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="grid_2">
+                                        <div class="grid_12">
+                                            <label c-label item="item" c-label-text="Sumber Dana"></label>
+                                        </div>
+                                        <div class="grid_12">
+                                            <div class="grid_12">
+                                                <input kendo-combo-box k-ng-model="item.asalprodukpajak"
+                                                k-data-text-field="'asalproduk'" k-data-value-field="'id'"
+                                                k-filter="'contains'" k-auto-bind="false"
+                                                k-data-source="listAsalProduk"  />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="grid_1">
+                                        <div class="grid_12">
+                                            <label>&nbsp;</label>
+                                        </div>
+                                        <div class="grid_12">
+                                            <button class="primary c-button" style="margin-top: 6px"
+                                                ng-click="CetakPajak()">Cetak</button>
                                         </div>
                                     </div>
                                 </div>

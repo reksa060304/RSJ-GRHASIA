@@ -9,8 +9,8 @@ define(['initialize'], function (initialize) {
             $scope.date = new Date();
             $scope.dataSelected = {};
             $scope.item.jmlRows = 15;
-            $scope.item.tglawal = moment($scope.now).format('YYYY-MM-DD HH:mm');
-            $scope.item.tglakhir = moment($scope.now).format('YYYY-MM-DD HH:mm');
+            $scope.item.tglawal = moment($scope.now).format('YYYY-MM-DD');
+            $scope.item.tglakhir = moment($scope.now).format('YYYY-MM-DD');
             $scope.tglveriftopajak = undefined
             $scope.norecspj = ''
             FormLoad();
@@ -56,8 +56,8 @@ define(['initialize'], function (initialize) {
             function init() {
                 $scope.isRouteLoading = true;
 
-                var awal = moment($scope.item.tglawal).format('YYYY-MM-DD HH:mm');
-				var akhir = moment($scope.item.tglakhir).format('YYYY-MM-DD HH:mm');
+                var awal = moment($scope.item.tglawal).format('YYYY-MM-DD');
+				var akhir = moment($scope.item.tglakhir).format('YYYY-MM-DD');
                 // var tgl = moment($scope.tanggal).format('DD/MM/YYYY');
                 medifirstService.get("perencanaan/get-spj-to-pajak?awal="+awal+"&akhir="+akhir).then(function (e) {
                         $scope.isRouteLoading = false;
@@ -83,8 +83,8 @@ define(['initialize'], function (initialize) {
             $scope.$watch('item.caridatapajak', function (newValue, oldValue) {
                 $scope.isRouteLoading = true;
 
-                var awal = moment($scope.item.tglawal).format('YYYY-MM-DD HH:mm');
-				var akhir = moment($scope.item.tglakhir).format('YYYY-MM-DD HH:mm');
+                var awal = moment($scope.item.tglawal).format('YYYY-MM-DD');
+				var akhir = moment($scope.item.tglakhir).format('YYYY-MM-DD');
                 // var tgl = moment($scope.tanggal).format('DD/MM/YYYY');
                 medifirstService.get("perencanaan/get-spj-to-pajak?awal="+awal+"&akhir="+akhir+"&key="+$scope.item.caridatapajak).then(function (e) {
                         $scope.isRouteLoading = false;
@@ -121,6 +121,10 @@ define(['initialize'], function (initialize) {
                         $scope.item.jumlahPPnDinamis = e.data.data[0].ppn
                         $scope.item.nopajak = e.data.data[0].nopajakpp
                         $scope.item.uraianpajak = e.data.data[0].uraianpajak
+                        $scope.item.idbillppn = e.data.data[0].idbillppn
+                        $scope.item.ntpnppn = e.data.data[0].ntpnppn
+                        $scope.item.idbillpph = e.data.data[0].idbillpph
+                        $scope.item.ntpnpph = e.data.data[0].ntpnpph
                     } else{
                         $scope.item.tglPPh = $scope.tglveriftopajak;
                         $scope.item.tglPPn = $scope.tglveriftopajak;
@@ -150,6 +154,10 @@ define(['initialize'], function (initialize) {
                         $scope.item.jumlahPPnDinamis = e.data.data[0].ppn
                         $scope.item.nopajak = e.data.data[0].nopajakpep
                         $scope.item.uraianpajak = e.data.data[0].uraianpajak
+                        $scope.item.idbillppn = e.data.data[0].idbillppn
+                        $scope.item.ntpnppn = e.data.data[0].ntpnppn
+                        $scope.item.idbillpph = e.data.data[0].idbillpph
+                        $scope.item.ntpnpph = e.data.data[0].ntpnpph
                     } else{
                         $scope.item.tglPPh = $scope.tglveriftopajak;
                         $scope.item.tglPPn = $scope.tglveriftopajak;
@@ -212,6 +220,10 @@ define(['initialize'], function (initialize) {
                     "jenispph": $scope.item.jenispajak.id,
                     "pph": $scope.item.jumlahPPh,
                     "ppn": $scope.item.jumlahPPn,
+                    "idbillppn": $scope.item.idbillppn,
+                    "ntpnppn": $scope.item.ntpnppn,
+                    "idbillpph": $scope.item.idbillpph,
+                    "ntpnpph": $scope.item.ntpnpph,
                     "tglpph": moment($scope.item.tglPPh).format('YYYY-MM-DD'),
                     "tglppn": moment($scope.item.tglPPn).format('YYYY-MM-DD'),
                 }
@@ -227,10 +239,18 @@ define(['initialize'], function (initialize) {
                     $scope.item.jenispajak = {id: 20, jenispajak: 'PPh : Pajak Penghasilan'}
                     $scope.item.jumlahPPh = 0
                     $scope.item.jumlahPPn = 0
+                    $scope.item.idbillppn = e.data.result.idbillppn
+                    $scope.item.ntpnppn = e.data.result.ntpnppn
+                    $scope.item.idbillpph = e.data.result.idbillpph
+                    $scope.item.ntpnpph = e.data.result.ntpnpph
                     $scope.item.jumlahPPhDinamis = 0
                     $scope.item.jumlahPPnDinamis = 0
                     $scope.item.nopajak = ''
                     $scope.item.uraianpajak = ''
+                    $scope.item.idbillppn = ''
+                    $scope.item.ntpnppn = ''
+                    $scope.item.idbillpph = ''
+                    $scope.item.ntpnpph = ''
 
                     $scope.popupTambahPajak.center().close()
                 })
@@ -251,8 +271,8 @@ define(['initialize'], function (initialize) {
             }
 
             $scope.ClearData = function () {
-                $scope.item.tglAwal = moment($scope.now).format('YYYY-MM-DD 00:00');
-                $scope.item.tglAkhir = moment($scope.now).format('YYYY-MM-DD 23:59');
+                $scope.item.tglAwal = moment($scope.now).format('YYYY-MM-DD');
+                $scope.item.tglAkhir = moment($scope.now).format('YYYY-MM-DD');
             }
 
             $scope.cariFilter = function () {

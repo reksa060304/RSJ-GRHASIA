@@ -30,6 +30,10 @@ define(['initialize'], function (initialize) {
                 $scope.listPihakKetiga = data
             })
 
+            medifirstService.get("perencanaan/get-data-combo").then(function (e) {
+                $scope.listAsalProduk = e.data.asalproduk
+            });
+
             function init() {
                 $scope.isRouteLoading = true;
 
@@ -296,6 +300,7 @@ define(['initialize'], function (initialize) {
                     "bku": $scope.selectedData2,
                     "tglbku": moment($scope.item.tglbku).format('YYYY-MM-DD'),
                     "jenisbukti": $scope.item.itemJenisBukti.id,
+                    "asalproduk": $scope.item.sumberDana.id,
                     "uraian": $scope.item.uraianBKU,
                     "rekananfk": $scope.item.pihakKetiga.id,
                 }
@@ -893,6 +898,12 @@ define(['initialize'], function (initialize) {
                         
                         "field": "jenisbukti",
                         "title": "Jenis Bukti",
+                        "width": "100px",
+                    },
+                    {
+                        
+                        "field": "asalproduk",
+                        "title": "Sumber Dana",
                         "width": "100px",
                     },
                     {

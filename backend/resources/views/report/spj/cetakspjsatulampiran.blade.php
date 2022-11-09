@@ -106,9 +106,12 @@
             </td>
             @endforeach
         </tr>
+        @php
+            $digitterbilang = strlen(substr(strrchr(sprintf("%s", $jumlah[0]->totalfix), "."), 1));
+        @endphp
         <tr>
             <td colspan="2" style="text-align:left; padding-left: 50px; padding-bottom: 5px; padding-top: 15px;">
-                <font style="font-size: 12pt" color="#000000">Terbilang: {{ number_format($jumlah[0]->totalfix,0,',','.') }}</font>
+                <font style="font-size: 12pt" color="#000000">Terbilang: {{ number_format($jumlah[0]->totalfix,$digitterbilang,',','.') }}</font>
             </td>
         </tr>
         @if($kegiatan[0]->namalengkap != null && $tampilsumberdana == true)

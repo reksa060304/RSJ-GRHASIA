@@ -68,7 +68,7 @@
         <tr>
             <td colspan="5" style="text-align:justify; padding-bottom: 10px; padding-top: 10px; ">
             <br>
-                <font style="font-size: 12pt" color="#000000">Berdasarkan Keputusan Gubernur Daerah Istimewa Yogyakarta Nomor Tanggal tentang Penetapan
+                <font style="font-size: 12pt" color="#000000">Berikut ini merupakan Penetapan
                     Besaran Uang Persediaan (UP) Bendahara Pengeluaran Pembantu Pada Satuan Kerja Perangkat
                     Daerah / Unit Satuan Kerja Perangkat Daerah Di Lingkungan Pemerintah Daerah Daerah Istimewa
                     Yogyakarta untuk RS Jiwa GRHASIA DINKES DIY sejumlah Rp {{ number_format($detail[0]->nilaispp,2,',','.') }}</font>
