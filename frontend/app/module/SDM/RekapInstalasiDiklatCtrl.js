@@ -146,7 +146,7 @@ define(['initialize'], function (initialize) {
                         "excel",
                     ],
                     excel: {
-                        fileName: "JamPelatihanKaryawan.xlsx",
+                        fileName: "Rekap Data Pengguna.xlsx",
                         allPages: true,
                     },
                     excelExport: function (e) {
@@ -170,7 +170,7 @@ define(['initialize'], function (initialize) {
                             // color:"#ffffff"
                         }];
                         var myHeaders3 = [{
-                            value: "TAHUN 2021",
+                            value: "TAHUN " + moment($scope.item.tahun).format('YYYY'),
                             fontSize: 11,
                             textAlign: "center",
                             background: "#ffffff",
@@ -911,6 +911,820 @@ define(['initialize'], function (initialize) {
             }
             $scope.Searchtw = function () {
                 LoadDataTW()
+            }
+            $scope.SearchPKK = function(){
+                loadDataPKK()
+            }
+            loadDataPKK()
+            $scope.Searchpkktw = function(){
+                loadDataTWPKK()
+            }
+            function loadDataPKK(){
+                var jan = 0,
+                    feb = 0,
+                    mar = 0,
+                    apr = 0,
+                    mei = 0,
+                    jun = 0,
+                    jul = 0,
+                    ags = 0,
+                    sep = 0,
+                    okt = 0,
+                    nov = 0,
+                    des = 0,
+                    sum = 0;
+                medifirstService.get('sdm/penelitian/get-data-pkk').then(function(data){
+                    var datas = data.data.data
+                    for (let i = 0; i < datas.length; i++) {
+                        jan += Number(datas[i].jan)
+                        feb += Number(datas[i].feb)
+                        mar += Number(datas[i].mar)
+                        apr += Number(datas[i].apr)
+                        mei += Number(datas[i].mei)
+                        jun += Number(datas[i].jun)
+                        jul += Number(datas[i].jul)
+                        ags += Number(datas[i].ags)
+                        sep += Number(datas[i].sep)
+                        okt += Number(datas[i].okt)
+                        nov += Number(datas[i].nov)
+                        des += Number(datas[i].des)
+                        sum += Number(datas[i].total)
+                    }
+                    $scope.group = {
+                        field: "diklatkategori",
+                    };
+                    $scope.dataGridPraktikPKK = new kendo.data.DataSource({
+                        data: datas,
+                        group: $scope.group,
+                        pageSize: 100,
+                        total: datas.length,
+                        serverPaging: false,
+                        change: function (e) {
+                            console.log(e);
+                            e.items.forEach(function (data) {
+                            var row = 1;
+                                data.items.forEach(function(data){
+                                data.rowNumber = row++;
+                                    console.log(data);
+                                })
+                            })
+                        }
+                    })
+                })
+                $scope.columnGridPraktikPKK = {
+                    toolbar: [
+                        "excel",
+                    ],
+                    excel: {
+                        fileName: "Rekap Data Pengguna Praktik PKK.xlsx",
+                        allPages: true,
+                    },
+                    excelExport: function (e) {
+                        var sheet = e.workbook.sheets[0];
+                        sheet.frozenRows = 3;
+                        sheet.mergedCells = ["A1:P1", "A2:P2", "A3:P3"];
+                        sheet.name = "sheet 1";
+
+                        var myHeaders = [{
+                            value: "REKAP PENGGUNA PRAKTIK PKK",
+                            fontSize: 11,
+                            textAlign: "center",
+                            background: "#ffffff",
+                            // color:"#ffffff"
+                        }];
+                        var myHeaders2 = [{
+                            value: "RSJ GRHASIA DAERAH ISTIMEWA YOGYAKARTA",
+                            fontSize: 11,
+                            textAlign: "center",
+                            background: "#ffffff",
+                            // color:"#ffffff"
+                        }];
+                        var myHeaders3 = [{
+                            value: "TAHUN "+ moment($scope.item.tahun).format('YYYY'),
+                            fontSize: 11,
+                            textAlign: "center",
+                            background: "#ffffff",
+                            // color:"#ffffff"
+                        }];
+                        sheet.rows.splice(0, 0, {
+                            cells: myHeaders,
+                            type: "header",
+                            // height: 70
+                        });
+                        sheet.rows.splice(1, 0, {
+                            cells: myHeaders2,
+                            type: "header",
+                            // height: 70
+                        });
+                        sheet.rows.splice(2, 0, {
+                            cells: myHeaders3,
+                            type: "header",
+                            // height: 70
+                        });
+
+                        sheet.rows.splice(100, 0, {
+                            cells: [{
+                                    value: "Total Mhs",
+                                    colSpan: 3,
+                                    textAlign: "center"
+                                },
+                                {
+                                    value: jan
+                                }, {
+                                    value: feb
+                                }, {
+                                    value: mar
+                                },
+                                {
+                                    value: apr
+                                }, {
+                                    value: mei
+                                }, {
+                                    value: jun
+                                },
+                                {
+                                    value: jul
+                                }, {
+                                    value: ags
+                                }, {
+                                    value: sep
+                                },
+                                {
+                                    value: okt
+                                }, {
+                                    value: nov
+                                }, {
+                                    value: des
+                                }, {
+                                    value: sum,
+                                    rowSpan: 2,
+                                    textAlign: "center",
+                                    verticalAlign: "center"
+                                }
+                            ],
+                            type: "data",
+                        });
+                        sheet.rows.splice(101, 0, {
+                            cells: [{
+                                    value: "TOTAL MAHASISWA PER TRI WULAN",
+                                    colSpan: 3,
+                                    textAlign: "center"
+                                },
+                                {
+                                    value: jan + feb + mar,
+                                    colSpan: 3,
+                                    textAlign: "center"
+                                },
+                                {
+                                    value: apr + mei + jun,
+                                    colSpan: 3,
+                                    textAlign: "center"
+                                },
+                                {
+                                    value: jul + ags + sep,
+                                    colSpan: 3,
+                                    textAlign: "center"
+                                },
+                                {
+                                    value: okt + nov + des,
+                                    colSpan: 3,
+                                    textAlign: "center"
+                                }
+                            ],
+                            type: "data",
+                        });
+                        // sheet.rows.splice(102, 0, {
+                        //     cells: [{
+                        //             value: "TOTAL",
+                        //             colSpan: 2,
+                        //             textAlign: "center"
+                        //         },
+                        //         {
+                        //             value: jan + feb + mar + apr + mei + jun + jul + ags + sep + okt + nov + des,
+                        //             colSpan: 12,
+                        //             textAlign: "center"
+                        //         }
+                        //     ],
+                        //     type: "data",
+                        // });
+                    },
+                    selectable: 'row',
+                    pageable: true,
+                    scrollable: true,
+                    columns: [{
+                            "field": "rowNumber",
+                            title: "#",
+                            "width": 40
+                        },
+                        {
+                            "field": "diklatkategori",
+                            "width": "250px",
+                            groupHeaderTemplate: "#= value # ",
+                            hidden: true
+                        },
+                        {
+                            "field": "jeniskegiatan",
+                            "title": "Jenis Kegiatan",
+                            "width": "80px",
+
+                        }, {
+                            "field": "jan",
+                            "title": "Jan",
+                            "width": "40px",
+                        }, {
+                            "field": "feb",
+                            "title": "Feb",
+                            "width": "40px",
+                        }, {
+                            "field": "mar",
+                            "title": "Mar",
+                            "width": "40px",
+                        }, {
+                            "field": "apr",
+                            "title": "Apr",
+                            "width": "40px",
+                        }, {
+                            "field": "mei",
+                            "title": "Mei",
+                            "width": "40px",
+                        }, {
+                            "field": "jun",
+                            "title": "Juni",
+                            "width": "40px",
+                        }, {
+                            "field": "jul",
+                            "title": "Juli",
+                            "width": "40px",
+                        }, {
+                            "field": "ags",
+                            "title": "Agst",
+                            "width": "40px",
+                        }, {
+                            "field": "sep",
+                            "title": "Sept",
+                            "width": "40px",
+                        }, {
+                            "field": "okt",
+                            "title": "Okt",
+                            "width": "40px",
+                        }, {
+                            "field": "nov",
+                            "title": "Nov",
+                            "width": "40px",
+                        }, {
+                            "field": "des",
+                            "title": "Des",
+                            "width": "40px",
+                        }, {
+                            "field": "total",
+                            "title": "Total",
+                            "width": "60px",
+                        },
+                    ]
+                };
+            }
+            function loadDataTWPKK() {
+                $scope.isRouteLoading = true;
+                var tahun = 'tahun=' + moment($scope.item.tahun).format('YYYY');
+
+                var status = "";
+                if ($scope.item.status != undefined) {
+                    status = "&status=" + $scope.item.status.id;
+                }
+                var triwulan = "";
+                if ($scope.item.triwulan != undefined) {
+                    triwulan = "&triwulan=" + $scope.item.triwulan.id;
+                }
+                var jan = 0,
+                    feb = 0,
+                    mar = 0,
+                    apr = 0,
+                    mei = 0,
+                    jun = 0,
+                    jul = 0,
+                    ags = 0,
+                    sep = 0,
+                    okt = 0,
+                    nov = 0,
+                    des = 0,
+                    sum = 0;
+                medifirstService.get("diklat/get-laporan-pengguna-pkk-total-tw?" + tahun + status + triwulan).then(function (data) {
+                    var datas = data.data;
+                    console.log(datas);
+                    $scope.group = {
+                        field: "diklatkategori",
+                    };
+                    for (let i = 0; i < datas.length; i++) {
+                        sum += Number(data.data[i].total)
+                        if ($scope.item.triwulan.id == 1) {
+                            console.log(1);
+                            jan += Number(data.data[i].satu)
+                            feb += Number(data.data[i].dua)
+                            mar += Number(data.data[i].tiga)
+                        } else if ($scope.item.triwulan.id == 2) {
+                            apr += Number(data.data[i].satu)
+                            mei += Number(data.data[i].dua)
+                            jun += Number(data.data[i].tiga)
+                        } else if ($scope.item.triwulan.id == 3) {
+                            jul += Number(data.data[i].satu)
+                            ags += Number(data.data[i].dua)
+                            sep += Number(data.data[i].tiga)
+                        } else if ($scope.item.triwulan.id == 4) {
+                            okt += Number(data.data[i].satu)
+                            nov += Number(data.data[i].dua)
+                            des += Number(data.data[i].tiga)
+                        }
+                    }
+
+                    $scope.dataGridPKKTW = new kendo.data.DataSource({
+                        data: datas,
+                        group: $scope.group,
+                        pageSize: 100,
+                        total: datas.length,
+                        serverPaging: false,
+                        change: function (e) {
+                            console.log(e);
+                            e.items.forEach(function (data) {
+                                var row = 1;
+                                data.items.forEach(function (data) {
+                                    data.rowNumber = row++;
+                                    console.log(data);
+                                })
+                            })
+                        }
+                    });
+                    $scope.isRouteLoading = false;
+                });
+                if ($scope.item.triwulan.id == 1) {
+
+                    console.log(1);
+                    $scope.tw1 = true
+                    $scope.tw2 = false
+                    $scope.tw3 = false
+                    $scope.tw4 = false
+                    $scope.columnGridPKKTW1 = {
+                        toolbar: [
+                            "excel",
+                        ],
+                        excel: {
+                            fileName: "rekap Pengguna PKK TW1.xlsx",
+                            allPages: true,
+                        },
+                        excelExport: function (e) {
+                            var sheet = e.workbook.sheets[0];
+                            sheet.frozenRows = 3;
+                            sheet.mergedCells = ["A1:G1", "A2:G2", "A3:G3"];
+                            sheet.name = "Triwulan 1";
+
+                            var myHeaders = [{
+                                value: "REKAP PENGGUNA PRAKTIK TRIWULAN I",
+                                fontSize: 11,
+                                textAlign: "center",
+                                background: "#ffffff",
+                                // color:"#ffffff"
+                            }];
+                            var myHeaders2 = [{
+                                value: "RSJ GRHASIA DAERAH ISTIMEWA YOGYAKARTA",
+                                fontSize: 11,
+                                textAlign: "center",
+                                background: "#ffffff",
+                                // color:"#ffffff"
+                            }];
+                            var myHeaders3 = [{
+                                value: "TAHUN " + moment($scope.item.tahun).format('YYYY'),
+                                fontSize: 11,
+                                textAlign: "center",
+                                background: "#ffffff",
+                                // color:"#ffffff"
+                            }];
+                            sheet.rows.splice(0, 0, {
+                                cells: myHeaders,
+                                type: "header",
+                                // height: 70
+                            });
+                            sheet.rows.splice(1, 0, {
+                                cells: myHeaders2,
+                                type: "header",
+                                // height: 70
+                            });
+                            sheet.rows.splice(2, 0, {
+                                cells: myHeaders3,
+                                type: "header",
+                                // height: 70
+                            });
+
+                            sheet.rows.splice(100, 0, {
+                                cells: [
+                                    {
+                                        value: "Jumlah",
+                                        colSpan: 3,
+                                        textAlign: "center"
+                                    },
+                                    {
+                                        value: jan
+                                    }, {
+                                        value: feb
+                                    }, {
+                                        value: mar
+                                    }, {
+                                        value: sum,
+                                        textAlign: "center",
+                                        verticalAlign: "center"
+                                    }
+                                ],
+                                type: "data",
+                            });
+                            
+                        },
+                        selectable: 'row',
+                        pageable: true,
+                        scrollable: true,
+                        columns: [
+                            {
+                                    "field": "rowNumber",
+                                    title: "#",
+                                    "width": 30
+                                },
+                                {
+                                    "field": "diklatkategori",
+                                    "width": "250px",
+                                    groupHeaderTemplate: "#= value # ",
+                                    hidden: true
+                                },
+                                {
+                                    "field": "jeniskegiatan",
+                                    "title": "Jenis Kegiatan",
+                                    "width": "80px",
+
+                                }, {
+                                "field": "satu",
+                                "title": "Januari",
+                                "width": "40px",
+                            }, {
+                                "field": "dua",
+                                "title": "Februari",
+                                "width": "40px",
+                            }, {
+                                "field": "tiga",
+                                "title": "Maret",
+                                "width": "40px",
+                            }, {
+                                "field": "total",
+                                "title": "Total",
+                                "width": "60px",
+                            },
+                        ]
+                    };
+                } else if ($scope.item.triwulan.id == 2) {
+                    $scope.tw1 = false
+                    $scope.tw2 = true
+                    $scope.tw3 = false
+                    $scope.tw4 = false
+                    $scope.columnGridPKKTW2 = {
+                        toolbar: [
+                            "excel",
+                        ],
+                        excel: {
+                            fileName: "rekap Pengguna PKK TW2.xlsx",
+                            allPages: true,
+                        },
+                        excelExport: function (e) {
+                            var sheet = e.workbook.sheets[0];
+                            sheet.frozenRows = 3;
+                            sheet.mergedCells = ["A1:G1", "A2:G2", "A3:G3"];
+                            sheet.name = "Triwulan 1";
+
+                            var myHeaders = [{
+                                value: "REKAP PENGGUNA PRAKTIK TRIWULAN II",
+                                fontSize: 11,
+                                textAlign: "center",
+                                background: "#ffffff",
+                                // color:"#ffffff"
+                            }];
+                            var myHeaders2 = [{
+                                value: "RSJ GRHASIA DAERAH ISTIMEWA YOGYAKARTA",
+                                fontSize: 11,
+                                textAlign: "center",
+                                background: "#ffffff",
+                                // color:"#ffffff"
+                            }];
+                            var myHeaders3 = [{
+                                value: "TAHUN " + moment($scope.item.tahun).format('YYYY'),
+                                fontSize: 11,
+                                textAlign: "center",
+                                background: "#ffffff",
+                                // color:"#ffffff"
+                            }];
+                            sheet.rows.splice(0, 0, {
+                                cells: myHeaders,
+                                type: "header",
+                                // height: 70
+                            });
+                            sheet.rows.splice(1, 0, {
+                                cells: myHeaders2,
+                                type: "header",
+                                // height: 70
+                            });
+                            sheet.rows.splice(2, 0, {
+                                cells: myHeaders3,
+                                type: "header",
+                                // height: 70
+                            });
+
+                            sheet.rows.splice(100, 0, {
+                                cells: [{
+                                        value: "Jumlah",
+                                        colSpan: 3,
+                                        textAlign: "center"
+                                    },
+                                    {
+                                        value: apr
+                                    }, {
+                                        value: mei
+                                    }, {
+                                        value: jun
+                                    }, {
+                                        value: sum,
+                                        textAlign: "center",
+                                        verticalAlign: "center"
+                                    }
+                                ],
+                                type: "data",
+                            });
+
+                        },
+                        selectable: 'row',
+                        pageable: true,
+                        scrollable: true,
+                        columns: [{
+                                "field": "rowNumber",
+                                title: "#",
+                                "width": 30
+                            },
+                            {
+                                "field": "diklatkategori",
+                                "width": "250px",
+                                groupHeaderTemplate: "#= value # ",
+                                hidden: true
+                            },
+                            {
+                                "field": "jeniskegiatan",
+                                "title": "Jenis Kegiatan",
+                                "width": "80px",
+
+                            }, {
+                                "field": "satu",
+                                "title": "April",
+                                "width": "40px",
+                            }, {
+                                "field": "dua",
+                                "title": "Mei",
+                                "width": "40px",
+                            }, {
+                                "field": "tiga",
+                                "title": "Juni",
+                                "width": "40px",
+                            }, {
+                                "field": "total",
+                                "title": "Total",
+                                "width": "60px",
+                            },
+                        ]
+                    };
+                } else if ($scope.item.triwulan.id == 3) {
+                    $scope.tw1 = false
+                    $scope.tw2 = false
+                    $scope.tw3 = true
+                    $scope.tw4 = false
+                    $scope.columnGridPKKTW3 = {
+                        toolbar: [
+                            "excel",
+                        ],
+                        excel: {
+                            fileName: "rekap Pengguna PKK TW3.xlsx",
+                            allPages: true,
+                        },
+                        excelExport: function (e) {
+                            var sheet = e.workbook.sheets[0];
+                            sheet.frozenRows = 3;
+                            sheet.mergedCells = ["A1:G1", "A2:G2", "A3:G3"];
+                            sheet.name = "Triwulan 1";
+
+                            var myHeaders = [{
+                                value: "REKAP PENGGUNA PRAKTIK TRIWULAN III",
+                                fontSize: 11,
+                                textAlign: "center",
+                                background: "#ffffff",
+                                // color:"#ffffff"
+                            }];
+                            var myHeaders2 = [{
+                                value: "RSJ GRHASIA DAERAH ISTIMEWA YOGYAKARTA",
+                                fontSize: 11,
+                                textAlign: "center",
+                                background: "#ffffff",
+                                // color:"#ffffff"
+                            }];
+                            var myHeaders3 = [{
+                                value: "TAHUN " + moment($scope.item.tahun).format('YYYY'),
+                                fontSize: 11,
+                                textAlign: "center",
+                                background: "#ffffff",
+                                // color:"#ffffff"
+                            }];
+                            sheet.rows.splice(0, 0, {
+                                cells: myHeaders,
+                                type: "header",
+                                // height: 70
+                            });
+                            sheet.rows.splice(1, 0, {
+                                cells: myHeaders2,
+                                type: "header",
+                                // height: 70
+                            });
+                            sheet.rows.splice(2, 0, {
+                                cells: myHeaders3,
+                                type: "header",
+                                // height: 70
+                            });
+
+                            sheet.rows.splice(100, 0, {
+                                cells: [{
+                                        value: "Jumlah",
+                                        colSpan: 3,
+                                        textAlign: "center"
+                                    },
+                                    {
+                                        value: jul
+                                    }, {
+                                        value: ags
+                                    }, {
+                                        value: sep
+                                    }, {
+                                        value: sum,
+                                        textAlign: "center",
+                                        verticalAlign: "center"
+                                    }
+                                ],
+                                type: "data",
+                            });
+
+                        },
+                        selectable: 'row',
+                        pageable: true,
+                        scrollable: true,
+                        columns: [{
+                                "field": "rowNumber",
+                                title: "#",
+                                "width": 30
+                            },
+                            {
+                                "field": "diklatkategori",
+                                "width": "250px",
+                                groupHeaderTemplate: "#= value # ",
+                                hidden: true
+                            },
+                            {
+                                "field": "jeniskegiatan",
+                                "title": "Jenis Kegiatan",
+                                "width": "80px",
+
+                            }, {
+                                "field": "satu",
+                                "title": "Juli",
+                                "width": "40px",
+                            }, {
+                                "field": "dua",
+                                "title": "Agustus",
+                                "width": "40px",
+                            }, {
+                                "field": "tiga",
+                                "title": "September",
+                                "width": "40px",
+                            }, {
+                                "field": "total",
+                                "title": "Total",
+                                "width": "60px",
+                            },
+                        ]
+                    };
+                } else if ($scope.item.triwulan.id == 4) {
+                    $scope.tw1 = false
+                    $scope.tw2 = false
+                    $scope.tw3 = false
+                    $scope.tw4 = true
+                    $scope.columnGridPKKTW4 = {
+                        toolbar: [
+                            "excel",
+                        ],
+                        excel: {
+                            fileName: "rekap Pengguna PKK TW4.xlsx",
+                            allPages: true,
+                        },
+                        excelExport: function (e) {
+                            var sheet = e.workbook.sheets[0];
+                            sheet.frozenRows = 3;
+                            sheet.mergedCells = ["A1:G1", "A2:G2", "A3:G3"];
+                            sheet.name = "Triwulan 1";
+
+                            var myHeaders = [{
+                                value: "REKAP PENGGUNA PRAKTIK TRIWULAN IV",
+                                fontSize: 11,
+                                textAlign: "center",
+                                background: "#ffffff",
+                                // color:"#ffffff"
+                            }];
+                            var myHeaders2 = [{
+                                value: "RSJ GRHASIA DAERAH ISTIMEWA YOGYAKARTA",
+                                fontSize: 11,
+                                textAlign: "center",
+                                background: "#ffffff",
+                                // color:"#ffffff"
+                            }];
+                            var myHeaders3 = [{
+                                value: "TAHUN " + moment($scope.item.tahun).format('YYYY'),
+                                fontSize: 11,
+                                textAlign: "center",
+                                background: "#ffffff",
+                                // color:"#ffffff"
+                            }];
+                            sheet.rows.splice(0, 0, {
+                                cells: myHeaders,
+                                type: "header",
+                                // height: 70
+                            });
+                            sheet.rows.splice(1, 0, {
+                                cells: myHeaders2,
+                                type: "header",
+                                // height: 70
+                            });
+                            sheet.rows.splice(2, 0, {
+                                cells: myHeaders3,
+                                type: "header",
+                                // height: 70
+                            });
+
+                            sheet.rows.splice(100, 0, {
+                                cells: [{
+                                        value: "Jumlah",
+                                        colSpan: 3,
+                                        textAlign: "center"
+                                    },
+                                    {
+                                        value: okt
+                                    }, {
+                                        value: nov
+                                    }, {
+                                        value: des
+                                    }, {
+                                        value: sum,
+                                        textAlign: "center",
+                                        verticalAlign: "center"
+                                    }
+                                ],
+                                type: "data",
+                            });
+
+                        },
+                        selectable: 'row',
+                        pageable: true,
+                        scrollable: true,
+                        columns: [{
+                                "field": "rowNumber",
+                                title: "#",
+                                "width": 30
+                            },
+                            {
+                                "field": "diklatkategori",
+                                "width": "250px",
+                                groupHeaderTemplate: "#= value # ",
+                                hidden: true
+                            },
+                            {
+                                "field": "jeniskegiatan",
+                                "title": "Jenis Kegiatan",
+                                "width": "80px",
+
+                            }, {
+                                "field": "satu",
+                                "title": "Oktober",
+                                "width": "40px",
+                            }, {
+                                "field": "dua",
+                                "title": "November",
+                                "width": "40px",
+                            }, {
+                                "field": "tiga",
+                                "title": "Desember",
+                                "width": "40px",
+                            }, {
+                                "field": "total",
+                                "title": "Total",
+                                "width": "60px",
+                            },
+                        ]
+                    };
+                }
+
             }
             //** BATAS SUCI */
         }
