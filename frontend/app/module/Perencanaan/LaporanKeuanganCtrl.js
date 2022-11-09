@@ -339,6 +339,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 window.open(baseTransaksi + "report/get-register-penutupan-kas?tahun=" + tahunbku + "&bulan=" + bulanbku + "&tglcetak=" + tglcetak + "&sumberdana=" + sumberdanakas, '_blank');
             }
 
+            $scope.CetakSP = function(){
+                window.open(baseTransaksi + "report/get-cetak-sp3bp", '_blank');
+            }
+
             $scope.CetakBukuPanjar = function(){
 
                 if ($scope.item.tahunpanjar == undefined){

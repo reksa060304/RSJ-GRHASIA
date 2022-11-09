@@ -5085,6 +5085,15 @@ class ReportController extends ApiController{
         return view('report.keuangan.cetakbku',compact('data', 'pageWidth', 'tahunjudul', 'tanggalcetak', 'periode'));
     }
 
+    public function CetakSP3BP(Request $request){
+
+        $data = DB::select(DB::raw(""));
+
+        $pageWidth = 950;
+        //return $this->respond($result);
+        return view('report.keuangan.cetaksp3bp',compact('pageWidth'));
+    }
+
     public function CetakRO(Request $request){
         $tahunjudul = $request['tahun'];
         $tanggalcetak = $this->tanggal_indonesia(date('Y-m-d',strtotime($request['tglcetak'])));

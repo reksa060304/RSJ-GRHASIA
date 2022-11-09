@@ -5656,7 +5656,7 @@ order by kodemataanggaran"));
             ->orderBy('ap.asalproduk')
             ->get();
 
-        $asalproduk = DB::select(DB::raw("selectx ap.id, ap.asalproduk
+        $asalproduk = DB::select(DB::raw("select ap.id, ap.asalproduk
         from kegiatananggaran_m as dp 
         inner join keteranganbelanja_t as kb on kb.objectkegiatanfk = dp.id
         inner join asalproduk_m ap on ap.id = kb.objectasalprodukfk 
