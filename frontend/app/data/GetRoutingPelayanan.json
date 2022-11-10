@@ -19477,6 +19477,28 @@
         "define": "RekamMedisCtrl"
       }
     ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.PengkajianAwalKeperawatanRJJiwaDanIntegrasi",
+    "url": "/PengkajianAwalKeperawatanRJJiwaDanIntegrasi",
+    "templateurl": "module/EMR/PengkajianAwalKeperawatanRJJiwaDanIntegrasi.html",
+    "controller": "PengkajianAwalKeperawatanRJJiwaDanIntegrasiCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
   }
 ]
 
