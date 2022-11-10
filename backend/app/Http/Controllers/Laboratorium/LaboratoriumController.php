@@ -1494,5 +1494,23 @@ class LaboratoriumController extends ApiController
     
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
+    public function getJumlahDetailPemeriksaan(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $data = \DB::select(DB::raw("
+        SELECT hl.detailpemeriksaan, count(hl.detailpemeriksaan) FROM hasillaboratorium_t hl 
+        inner join produk_m pr on pr.id = hl.produkfk
+        where hl.tglhasil::date between '$request[tglAwal]' and '$request[tglAkhir]' and hl.statusenabled = true and hl.kdprofile= $idProfile
+        group by hl.detailpemeriksaan
+        order by count(hl.detailpemeriksaan)desc
+        "));
+
+        $result = array(
+            'data'=> $data,
+            'as'=> 'Feezy'
+        );
+        return $this->respond($result);
+    }
 
 }

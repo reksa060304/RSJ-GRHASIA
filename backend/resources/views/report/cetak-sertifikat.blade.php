@@ -177,9 +177,9 @@ grhasia D.I Yogyakarta <br> Pada tanggal {{$d->tanggalmulai}} S/D {{$d->tanggals
                         @if(stripos(\Request::url(), 'localhost') !== FALSE)
                             <img src="{{ asset('img/tt_dir.png') }}" alt="ttd_dir" width="250px" style="position: absolute; right: 230px; top:980px;">
                             <img src="{{ asset('img/caprsjgrhasia.png') }}" alt="cap ttd" width="120px" style="position: absolute; right: 330px; top:970px;z-index: 0;">
-
                         @else
-                            <img src="{{ asset('service/img/caprsjgrhasia.png') }}" alt="cap ttd">
+                            <img src="{{ asset('service/img/tt_dir.png') }}" alt="ttd_dir" width="250px" style="position: absolute; right: 230px; top:980px;">
+                            <img src="{{ asset('service/img/caprsjgrhasia.png') }}" alt="cap ttd" width="120px" style="position: absolute; right: 330px; top:970px;z-index: 0;">
                         @endif
                     </td>
                 </tr>

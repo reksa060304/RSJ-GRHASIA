@@ -62,7 +62,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     $scope.isRouteLoading = false;
                     var dat = datas.data
                     console.log();
-                    $scope.kampus = datas.data.sp[0].institusipendidikan
+                    // $scope.kampus = datas.data.sp[0].institusipendidikan
                     $scope.ListInstitusiPendidikan = dat.institusi;
                     $scope.ListJenisDiklat = dat.jenisdiklat;
                     $scope.ListJenisLayanan = dat.detailjenisproduk;
@@ -126,7 +126,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                       sheet.name = "Orders";
 
                       var myHeaders = [{
-                          value: "Laporan Mahasiswa "+ $scope.kampus,
+                          value: "Laporan Mahasiswa ",
                           fontSize: 20,
                           textAlign: "center",
                           background: "#ffffff",
