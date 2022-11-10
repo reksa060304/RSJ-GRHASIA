@@ -2731,6 +2731,396 @@ class ReportController extends ApiController{
         return view('report.keuangan.perrekening',compact('data', 'pageWidth', 'tahun'));
     }
 
+    public function CetakRK(Request $request){
+        $tahunjudul = $request['tahun'];
+        $tanggalcetak = $this->tanggal_indonesia(date('Y-m-d',strtotime($request['tglcetak'])));
+
+        $bulan = $request['bulan'];
+
+        $periode = '';
+        if($bulan == '01'){
+            $periode = 'JANUARI';
+        }
+        else if($bulan == '02'){
+            $periode = 'FEBRUARI';
+        }
+        else if($bulan == '03'){
+            $periode = 'MARET';
+        }
+        else if($bulan == '04'){
+            $periode = 'APRIL';
+        }
+        else if($bulan == '05'){
+            $periode = 'MEI';
+        }
+        else if($bulan == '06'){
+            $periode = 'JUNI';
+        }
+        else if($bulan == '07'){
+            $periode = 'JULI';
+        }
+        else if($bulan == '08'){
+            $periode = 'AGUSTUS';
+        }
+        else if($bulan == '09'){
+            $periode = 'SEPTEMBER';
+        }
+        else if($bulan == '10'){
+            $periode = 'OKTOBER';
+        }
+        else if($bulan == '11'){
+            $periode = 'NOVEMBER';
+        }
+        else if($bulan == '12'){
+            $periode = 'DESEMBER';
+        }
+
+        $lalu = DB::select(DB::raw("SELECT extract('month' from(date '$tahunjudul-$bulan-01' - interval '1 month')) as bulan;"));
+
+        $bulanlalu = $lalu[0]->bulan;
+
+        $subsubkegiatan = '';
+        $subsubkegiatankm = '';
+        if(isset($request['idsubsubkegiatan']) && $request['idsubsubkegiatan'] != '' && $request['idsubsubkegiatan'] != null){
+            $subsubkegiatan = "and ka.id = ".$request['idsubsubkegiatan'];
+            $subsubkegiatankm = "and km.id = ".$request['idsubsubkegiatan'];
+        }
+
+        $mataanggaran = '';
+        if(isset($request['idmataanggaran']) && $request['idmataanggaran'] != '' && $request['idmataanggaran'] != null){
+            $mataanggaran = "and ma.id = ".$request['idmataanggaran'];
+        }
+
+        $data = DB::select(DB::raw("
+        select div, kode, keterangan, sum(jumlahanggaran) jumlahanggaran, sum(jumlahbulanlalu) jumlahbulanlalu, sum(jumlahbulanini) jumlahbulanini
+        from(
+            select kode div, kode, keterangan, jumlahanggaran, sum(jumlahbulanlalu) jumlahbulanlalu, sum(jumlahbulanini) jumlahbulanini
+            from(
+                select ka.kode, ka.keterangan, sum(kb.subtotal) jumlahanggaran,
+                case when x.bulan = '10' then x.totalbelanja else 0 end as jumlahbulanlalu,
+                case when x.bulan = '11' then x.totalbelanja else 0 end as jumlahbulanini
+                from mataanggaran_m ma
+                inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
+                INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
+                inner join (
+                    select km.kode, extract(month from sr.tglrealisasi) bulan, ma.kodemataanggaran, ma.namamataanggaran, sum(sr.totalbelanja) totalbelanja
+                    from mataanggaran_m ma
+                    inner join strukrealisasi_t sr on ma.id=sr.objectmataanggaranfk
+                    INNER JOIN kegiatananggaran_m km on km.id=sr.objectkegiatanfk
+                    where sr.kdprofile = 30 and sr.statusenabled = true
+                    and sr.status = 'Sudah Diverifikasi'
+                    and extract(year from sr.tglrealisasi) = '$tahunjudul'
+                    and extract(month from sr.tglrealisasi) in('$bulanlalu', '$bulan')
+                    $subsubkegiatankm
+                    $mataanggaran
+                    group by km.kode, ma.kodemataanggaran, ma.namamataanggaran, extract(month from sr.tglrealisasi)
+                ) as x on x.kodemataanggaran = ma.kodemataanggaran and x.kode = ka.kode
+                where ma.kdprofile = 30 and ma.statusenabled = true
+                and kb.kdprofile = 30 and kb.statusenabled = true
+                and ka.kdprofile = 30 and ka.statusenabled = true
+                and kb.objectasalprodukfk = 15
+                and ka.tahun = '$tahunjudul'
+                $subsubkegiatan
+                $mataanggaran
+                group by ka.kode, ka.keterangan, x.totalbelanja, x.bulan
+            ) as b
+            group by div, kode, keterangan, jumlahanggaran
+        ) as j
+        group by div, kode, keterangan
+
+        union all
+
+        select div, kode, keterangan, sum(jumlahanggaran) jumlahanggaran, sum(jumlahbulanlalu) jumlahbulanlalu, sum(jumlahbulanini) jumlahbulanini
+        from(
+            select kode div, kode, keterangan, jumlahanggaran, sum(jumlahbulanlalu) jumlahbulanlalu, sum(jumlahbulanini) jumlahbulanini
+            from(
+                select dp0.kode, dp0.keterangan, sum(kb.subtotal) jumlahanggaran,
+                case when x.bulan = '10' then x.totalbelanja else 0 end as jumlahbulanlalu,
+                case when x.bulan = '11' then x.totalbelanja else 0 end as jumlahbulanini
+                from mataanggaran_m ma
+                inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
+                INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
+                inner join kegiatananggaran_m as dp0 on ka.kode ilike dp0.kode || '%' and dp0.div = 3
+                inner join (
+                    select km.kode, extract(month from sr.tglrealisasi) bulan, ma.kodemataanggaran, ma.namamataanggaran, sum(sr.totalbelanja) totalbelanja
+                    from mataanggaran_m ma
+                    inner join strukrealisasi_t sr on ma.id=sr.objectmataanggaranfk
+                    INNER JOIN kegiatananggaran_m km on km.id=sr.objectkegiatanfk
+                    where sr.kdprofile = 30 and sr.statusenabled = true
+                    and sr.status = 'Sudah Diverifikasi'
+                    and extract(year from sr.tglrealisasi) = '$tahunjudul'
+                    and extract(month from sr.tglrealisasi) in('$bulanlalu', '$bulan')
+                    $subsubkegiatankm
+                    $mataanggaran
+                    group by km.kode, ma.kodemataanggaran, ma.namamataanggaran, extract(month from sr.tglrealisasi)
+                ) as x on x.kodemataanggaran = ma.kodemataanggaran and x.kode = ka.kode
+                where ma.kdprofile = 30 and ma.statusenabled = true
+                and kb.kdprofile = 30 and kb.statusenabled = true
+                and ka.kdprofile = 30 and ka.statusenabled = true
+                and dp0.kdprofile = 30 and dp0.statusenabled = true
+                and kb.objectasalprodukfk = 15
+                and ka.tahun = '$tahunjudul'
+                $subsubkegiatan
+                $mataanggaran
+                group by dp0.kode, dp0.keterangan, x.totalbelanja, x.bulan
+            ) as b
+            group by div, kode, keterangan, jumlahanggaran
+        ) as i
+        group by div, kode, keterangan
+
+        union all
+
+        select div, kode, keterangan, sum(jumlahanggaran) jumlahanggaran, sum(jumlahbulanlalu) jumlahbulanlalu, sum(jumlahbulanini) jumlahbulanini
+        from(
+            select kode div, kode, keterangan, jumlahanggaran, sum(jumlahbulanlalu) jumlahbulanlalu, sum(jumlahbulanini) jumlahbulanini
+            from(
+                select ka.kode || '.' ||  ma1.kodemataanggaran kode,
+                ma1.namamataanggaran keterangan, sum(kb.subtotal) jumlahanggaran,
+                case when x.bulan = '10' then x.totalbelanja else 0 end as jumlahbulanlalu,
+                case when x.bulan = '11' then x.totalbelanja else 0 end as jumlahbulanini
+                from mataanggaran_m ma
+                inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
+                INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
+                inner join kegiatananggaran_m as dp0 on ka.kode ilike dp0.kode || '%' and dp0.div = 3
+                inner JOIN mataanggaran_m ma4 on ma4.id=kb.objectmataanggaranfk
+                inner JOIN mataanggaran_m ma1 on ma4.kodemataanggaran ilike '%' || ma1.kodemataanggaran || '%'
+                and ma1.kodemataanggaran in('I', 'II', 'III')
+                inner join mataanggaran_m ma2 on ma4.kodemataanggaran ilike ma2.kodemataanggaran || '%'
+                and 
+                case 
+                    when ma2.kodemataanggaran ilike 'I.%' then char_length(ma2.kodemataanggaran) = 3
+                    when ma2.kodemataanggaran ilike 'II.%' then char_length(ma2.kodemataanggaran) = 4
+                    when ma2.kodemataanggaran ilike 'III.%' then char_length(ma2.kodemataanggaran) = 5
+                end
+                inner join mataanggaran_m ma3 on ma4.kodemataanggaran ilike ma3.kodemataanggaran || '%'
+                and 
+                case 
+                    when ma3.kodemataanggaran ilike 'I.%' then char_length(ma3.kodemataanggaran) = 5
+                    when ma3.kodemataanggaran ilike 'II.%' then char_length(ma3.kodemataanggaran) = 4
+                    when ma3.kodemataanggaran ilike 'III.%' then char_length(ma3.kodemataanggaran) = 5
+                end
+                inner join (
+                    select km.kode, extract(month from sr.tglrealisasi) bulan, ma.kodemataanggaran, ma.namamataanggaran, sum(sr.totalbelanja) totalbelanja
+                    from mataanggaran_m ma
+                    inner join strukrealisasi_t sr on ma.id=sr.objectmataanggaranfk
+                    INNER JOIN kegiatananggaran_m km on km.id=sr.objectkegiatanfk
+                    where sr.kdprofile = 30 and sr.statusenabled = true
+                    and sr.status = 'Sudah Diverifikasi'
+                    and extract(year from sr.tglrealisasi) = '$tahunjudul'
+                    and extract(month from sr.tglrealisasi) in('$bulanlalu', '$bulan')
+                    $subsubkegiatankm
+                    $mataanggaran
+                    group by km.kode, ma.kodemataanggaran, ma.namamataanggaran, extract(month from sr.tglrealisasi)
+                ) as x on x.kodemataanggaran = ma.kodemataanggaran and x.kode = ka.kode
+                where ma.kdprofile = 30 and ma.statusenabled = true
+                and ma1.kdprofile = 30 and ma1.statusenabled = true
+                and kb.kdprofile = 30 and kb.statusenabled = true
+                and ka.kdprofile = 30 and ka.statusenabled = true
+                and dp0.kdprofile = 30 and dp0.statusenabled = true
+                and kb.objectasalprodukfk = 15
+                and ka.tahun = '$tahunjudul'
+                $subsubkegiatan
+                $mataanggaran
+                group by ka.kode || '.' ||  ma1.kodemataanggaran, 
+                ma1.namamataanggaran, x.totalbelanja, x.bulan
+            ) as b
+            group by div, kode, keterangan, jumlahanggaran
+        ) as f
+        group by div, kode, keterangan
+
+        union all
+
+        select div, kode, keterangan, sum(jumlahanggaran) jumlahanggaran, sum(jumlahbulanlalu) jumlahbulanlalu, sum(jumlahbulanini) jumlahbulanini
+        from(
+            select div, kode, keterangan, jumlahanggaran, sum(jumlahbulanlalu) jumlahbulanlalu, sum(jumlahbulanini) jumlahbulanini
+            from(
+                select ka.kode || '.' ||  ma2.kodemataanggaran div, ka.kode || '.' ||  right(ma2.kodemataanggaran, 1) kode,
+                ma2.namamataanggaran keterangan, sum(kb.subtotal) jumlahanggaran,
+                case when x.bulan = '10' then x.totalbelanja else 0 end as jumlahbulanlalu,
+                case when x.bulan = '11' then x.totalbelanja else 0 end as jumlahbulanini
+                from mataanggaran_m ma
+                inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
+                INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
+                inner join kegiatananggaran_m as dp0 on ka.kode ilike dp0.kode || '%' and dp0.div = 3
+                inner JOIN mataanggaran_m ma4 on ma4.id=kb.objectmataanggaranfk
+                inner JOIN mataanggaran_m ma1 on ma4.kodemataanggaran ilike '%' || ma1.kodemataanggaran || '%'
+                and ma1.kodemataanggaran in('I', 'II', 'III')
+                inner join mataanggaran_m ma2 on ma4.kodemataanggaran ilike ma2.kodemataanggaran || '%'
+                and 
+                case 
+                    when ma2.kodemataanggaran ilike 'I.%' then char_length(ma2.kodemataanggaran) = 3
+                    when ma2.kodemataanggaran ilike 'II.%' then char_length(ma2.kodemataanggaran) = 4
+                    when ma2.kodemataanggaran ilike 'III.%' then char_length(ma2.kodemataanggaran) = 5
+                end
+                inner join mataanggaran_m ma3 on ma4.kodemataanggaran ilike ma3.kodemataanggaran || '%'
+                and 
+                case 
+                    when ma3.kodemataanggaran ilike 'I.%' then char_length(ma3.kodemataanggaran) = 5
+                    when ma3.kodemataanggaran ilike 'II.%' then char_length(ma3.kodemataanggaran) = 4
+                    when ma3.kodemataanggaran ilike 'III.%' then char_length(ma3.kodemataanggaran) = 5
+                end
+                inner join (
+                    select km.kode, extract(month from sr.tglrealisasi) bulan, ma.kodemataanggaran, ma.namamataanggaran, sum(sr.totalbelanja) totalbelanja
+                    from mataanggaran_m ma
+                    inner join strukrealisasi_t sr on ma.id=sr.objectmataanggaranfk
+                    INNER JOIN kegiatananggaran_m km on km.id=sr.objectkegiatanfk
+                    where sr.kdprofile = 30 and sr.statusenabled = true
+                    and sr.status = 'Sudah Diverifikasi'
+                    and extract(year from sr.tglrealisasi) = '$tahunjudul'
+                    and extract(month from sr.tglrealisasi) in('$bulanlalu', '$bulan')
+                    $subsubkegiatankm
+                    $mataanggaran
+                    group by km.kode, ma.kodemataanggaran, ma.namamataanggaran, extract(month from sr.tglrealisasi)
+                ) as x on x.kodemataanggaran = ma.kodemataanggaran and x.kode = ka.kode
+                where ma.kdprofile = 30 and ma.statusenabled = true
+                and ma1.kdprofile = 30 and ma1.statusenabled = true
+                and kb.kdprofile = 30 and kb.statusenabled = true
+                and ka.kdprofile = 30 and ka.statusenabled = true
+                and dp0.kdprofile = 30 and dp0.statusenabled = true
+                and kb.objectasalprodukfk = 15
+                and ka.tahun = '$tahunjudul'
+                $subsubkegiatan
+                $mataanggaran
+                group by ka.kode || '.' ||  ma2.kodemataanggaran, ka.kode || '.' ||  right(ma2.kodemataanggaran, 1), 
+                ma2.namamataanggaran, x.totalbelanja, x.bulan
+            ) as b
+            group by div, kode, keterangan, jumlahanggaran
+        ) as e
+        group by div, kode, keterangan
+
+        union all
+
+        select div, kode, keterangan, sum(jumlahanggaran) jumlahanggaran, sum(jumlahbulanlalu) jumlahbulanlalu, sum(jumlahbulanini) jumlahbulanini
+        from(
+            select div, kode, keterangan, jumlahanggaran, sum(jumlahbulanlalu) jumlahbulanlalu, sum(jumlahbulanini) jumlahbulanini
+            from(
+                select ka.kode || '.' ||  ma3.kodemataanggaran div, ka.kode || '.' ||  right(ma3.kodemataanggaran, 1) kode,
+                ma3.namamataanggaran keterangan, sum(kb.subtotal) jumlahanggaran,
+                case when x.bulan = '10' then x.totalbelanja else 0 end as jumlahbulanlalu,
+                case when x.bulan = '11' then x.totalbelanja else 0 end as jumlahbulanini
+                from mataanggaran_m ma
+                inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
+                INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
+                inner join kegiatananggaran_m as dp0 on ka.kode ilike dp0.kode || '%' and dp0.div = 3
+                inner JOIN mataanggaran_m ma4 on ma4.id=kb.objectmataanggaranfk
+                inner JOIN mataanggaran_m ma1 on ma4.kodemataanggaran ilike '%' || ma1.kodemataanggaran || '%'
+                and ma1.kodemataanggaran in('I', 'II', 'III')
+                inner join mataanggaran_m ma2 on ma4.kodemataanggaran ilike ma2.kodemataanggaran || '%'
+                and 
+                case 
+                    when ma2.kodemataanggaran ilike 'I.%' then char_length(ma2.kodemataanggaran) = 3
+                    when ma2.kodemataanggaran ilike 'II.%' then char_length(ma2.kodemataanggaran) = 4
+                    when ma2.kodemataanggaran ilike 'III.%' then char_length(ma2.kodemataanggaran) = 5
+                end
+                inner join mataanggaran_m ma3 on ma4.kodemataanggaran ilike ma3.kodemataanggaran || '%'
+                and 
+                case 
+                    when ma3.kodemataanggaran ilike 'I.%' then char_length(ma3.kodemataanggaran) = 5
+                    when ma3.kodemataanggaran ilike 'II.%' then char_length(ma3.kodemataanggaran) = 4
+                    when ma3.kodemataanggaran ilike 'III.%' then char_length(ma3.kodemataanggaran) = 5
+                end
+                inner join (
+                    select km.kode, extract(month from sr.tglrealisasi) bulan, ma.kodemataanggaran, ma.namamataanggaran, sum(sr.totalbelanja) totalbelanja
+                    from mataanggaran_m ma
+                    inner join strukrealisasi_t sr on ma.id=sr.objectmataanggaranfk
+                    INNER JOIN kegiatananggaran_m km on km.id=sr.objectkegiatanfk
+                    where sr.kdprofile = 30 and sr.statusenabled = true
+                    and sr.status = 'Sudah Diverifikasi'
+                    and extract(year from sr.tglrealisasi) = '$tahunjudul'
+                    and extract(month from sr.tglrealisasi) in('$bulanlalu', '$bulan')
+                    $subsubkegiatankm
+                    $mataanggaran
+                    group by km.kode, ma.kodemataanggaran, ma.namamataanggaran, extract(month from sr.tglrealisasi)
+                ) as x on x.kodemataanggaran = ma.kodemataanggaran and x.kode = ka.kode
+                where ma.kdprofile = 30 and ma.statusenabled = true
+                and ma1.kdprofile = 30 and ma1.statusenabled = true
+                and kb.kdprofile = 30 and kb.statusenabled = true
+                and ka.kdprofile = 30 and ka.statusenabled = true
+                and dp0.kdprofile = 30 and dp0.statusenabled = true
+                and kb.objectasalprodukfk = 15
+                and ka.tahun = '$tahunjudul'
+                $subsubkegiatan
+                $mataanggaran
+                group by ka.kode || '.' ||  ma3.kodemataanggaran, ka.kode || '.' ||  right(ma3.kodemataanggaran, 1), 
+                ma3.namamataanggaran, x.totalbelanja, x.bulan
+            ) as b
+            group by div, kode, keterangan, jumlahanggaran
+        ) as g
+        group by div, kode, keterangan
+
+        union all
+
+        select div, kode, keterangan, sum(jumlahanggaran) jumlahanggaran, sum(jumlahbulanlalu) jumlahbulanlalu, sum(jumlahbulanini) jumlahbulanini
+        from(
+            select div, kode, keterangan, jumlahanggaran, sum(jumlahbulanlalu) jumlahbulanlalu, sum(jumlahbulanini) jumlahbulanini
+            from(
+                select ka.kode || '.' ||  ma4.kodemataanggaran div,
+                case
+                    when ma4.kodemataanggaran ilike 'I.%' or ma4.kodemataanggaran ilike 'III.%' and length(ma4.kodemataanggaran) = 9 then ka.kode || '.' || right(ma4.kodemataanggaran, 3)
+                    when ma4.kodemataanggaran ilike 'I.%' or ma4.kodemataanggaran ilike 'III.%' and length(ma4.kodemataanggaran) = 10 then ka.kode || '.' || right(ma4.kodemataanggaran,4)
+                    when ma4.kodemataanggaran ilike 'II.%' and length(ma4.kodemataanggaran) = 8 then ka.kode || '.' || right(ma4.kodemataanggaran, 3)
+                    when ma4.kodemataanggaran ilike 'II.%' and length(ma4.kodemataanggaran) = 9 then ka.kode || '.' || right(ma4.kodemataanggaran, 4)
+                end as kode,
+                ma4.namamataanggaran keterangan, sum(kb.subtotal) jumlahanggaran,
+                case when x.bulan = '10' then x.totalbelanja else 0 end as jumlahbulanlalu,
+                case when x.bulan = '11' then x.totalbelanja else 0 end as jumlahbulanini
+                from mataanggaran_m ma
+                inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
+                INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
+                inner join kegiatananggaran_m as dp0 on ka.kode ilike dp0.kode || '%' and dp0.div = 3
+                inner JOIN mataanggaran_m ma4 on ma4.id=kb.objectmataanggaranfk
+                inner JOIN mataanggaran_m ma1 on ma4.kodemataanggaran ilike '%' || ma1.kodemataanggaran || '%'
+                and ma1.kodemataanggaran in('I', 'II', 'III')
+                inner join mataanggaran_m ma2 on ma4.kodemataanggaran ilike ma2.kodemataanggaran || '%'
+                and 
+                case 
+                    when ma2.kodemataanggaran ilike 'I.%' then char_length(ma2.kodemataanggaran) = 3
+                    when ma2.kodemataanggaran ilike 'II.%' then char_length(ma2.kodemataanggaran) = 4
+                    when ma2.kodemataanggaran ilike 'III.%' then char_length(ma2.kodemataanggaran) = 5
+                end
+                inner join mataanggaran_m ma3 on ma4.kodemataanggaran ilike ma3.kodemataanggaran || '%'
+                and 
+                case 
+                    when ma3.kodemataanggaran ilike 'I.%' then char_length(ma3.kodemataanggaran) = 5
+                    when ma3.kodemataanggaran ilike 'II.%' then char_length(ma3.kodemataanggaran) = 4
+                    when ma3.kodemataanggaran ilike 'III.%' then char_length(ma3.kodemataanggaran) = 5
+                end
+                inner join (
+                    select km.kode, extract(month from sr.tglrealisasi) bulan, ma.kodemataanggaran, ma.namamataanggaran, sum(sr.totalbelanja) totalbelanja
+                    from mataanggaran_m ma
+                    inner join strukrealisasi_t sr on ma.id=sr.objectmataanggaranfk
+                    INNER JOIN kegiatananggaran_m km on km.id=sr.objectkegiatanfk
+                    where sr.kdprofile = 30 and sr.statusenabled = true
+                    and sr.status = 'Sudah Diverifikasi'
+                    and extract(year from sr.tglrealisasi) = '$tahunjudul'
+                    and extract(month from sr.tglrealisasi) in('$bulanlalu', '$bulan')
+                    $subsubkegiatankm
+                    $mataanggaran
+                    group by km.kode, ma.kodemataanggaran, ma.namamataanggaran, extract(month from sr.tglrealisasi)
+                ) as x on x.kodemataanggaran = ma.kodemataanggaran and x.kode = ka.kode
+                where ma.kdprofile = 30 and ma.statusenabled = true
+                and ma1.kdprofile = 30 and ma1.statusenabled = true
+                and kb.kdprofile = 30 and kb.statusenabled = true
+                and ka.kdprofile = 30 and ka.statusenabled = true
+                and dp0.kdprofile = 30 and dp0.statusenabled = true
+                and kb.objectasalprodukfk = 15
+                and ka.tahun = '$tahunjudul'
+                $subsubkegiatan
+                $mataanggaran
+                group by ka.kode || '.' ||  ma4.kodemataanggaran, ka.kode, ka.kode || '.' || right(ma4.kodemataanggaran, 3), 
+                ma4.kodemataanggaran, ma4.namamataanggaran, x.totalbelanja, x.bulan
+            ) as b
+            group by div, kode, keterangan, jumlahanggaran
+        ) as h
+        group by div, kode, keterangan
+
+        order by div"));
+
+        $pageWidth = 950;
+        //return $this->respond($result);
+        return view('report.keuangan.cetakrk',compact('data', 'pageWidth', 'tahunjudul', 'tanggalcetak', 'periode'));
+    }
+
     public function CetakSPJMonev(Request $request){
         $tahun = $request['tahun'];
 
@@ -4664,7 +5054,7 @@ class ReportController extends ApiController{
         }
 
         $data = DB::select(DB::raw("
-            selectx * from(
+            select * from(
                 select 0 nourut, '' nobku, '' tgl, 'Saldo Awal Bulan' uraianbku, (saldo-penerimaan+pengeluaran) penerimaan, 0 pengeluaran, 0 saldoawal
                 from bukukasumum_t
                 where kdprofile = 30
@@ -4693,6 +5083,94 @@ class ReportController extends ApiController{
         $pageWidth = 950;
         //return $this->respond($result);
         return view('report.keuangan.cetakbku',compact('data', 'pageWidth', 'tahunjudul', 'tanggalcetak', 'periode'));
+    }
+
+    public function CetakSP3BP(Request $request){
+
+        $data = DB::select(DB::raw(""));
+
+        $pageWidth = 950;
+        //return $this->respond($result);
+        return view('report.keuangan.cetaksp3bp',compact('pageWidth'));
+    }
+
+    public function CetakRO(Request $request){
+        $tahunjudul = $request['tahun'];
+        $tanggalcetak = $this->tanggal_indonesia(date('Y-m-d',strtotime($request['tglcetak'])));
+
+        $bulan = $request['bulan'];
+
+        $subsubkegiatan = '';
+        if(isset($request['idsubsubkegiatan']) && $request['idsubsubkegiatan'] != '' && $request['idsubsubkegiatan'] != null){
+            $subsubkegiatan = "and ka.id = ".$request['idsubsubkegiatan'];
+        }
+
+        $mataanggaran = '';
+        if(isset($request['idmataanggaran']) && $request['idmataanggaran'] != '' && $request['idmataanggaran'] != null){
+            $mataanggaran = "and ma.id = ".$request['idmataanggaran'];
+        }
+
+        $data = DB::select(DB::raw("
+        select * from(
+            select 0 nourut, '' nobku, '' tgl, 'ANGGARAN' uraianbku, (saldo-penerimaan+pengeluaran) penerimaan, 0 pengeluaran, 0 saldoawal,
+            '' subsubkegiatan, '' subkegiatan, '' kodemataanggaran, '' namamataanggaran
+            from bukukasumum_t
+            where kdprofile = 30
+            and statusenabled = true
+            and extract(month from tglbku) = '$bulan'
+            and extract(year from tglbku) = '$tahunjudul'
+            order by tglbku asc limit 1
+            ) as x
+            
+            union all
+            
+            select ROW_NUMBER ( ) OVER ( ORDER BY bku.tglbku ) nourut, bku.nobku, to_char(bku.tglbku::date, 'DD-MM-YYYY') tgl, bku.uraianbku, bku.penerimaan, bku.pengeluaran, 0 saldoawal,
+            ka.keterangan subsubkegiatan, dp0.keterangan subkegiatan, ma.kodemataanggaran, ma.namamataanggaran
+            from strukrealisasi_t sr
+            inner JOIN kegiatananggaran_m ka on ka.id=sr.objectkegiatanfk
+            inner join kegiatananggaran_m as dp0 on ka.kode ilike dp0.kode || '%' and dp0.div = 3
+            inner JOIN mataanggaran_m ma on ma.id=sr.objectmataanggaranfk
+            inner join bukukasumum_t bku on bku.norec = sr.objectbkufk
+            where bku.kdprofile = 30
+            and bku.statusenabled = true
+            and ka.kdprofile = 30 and ka.statusenabled=true
+            and dp0.kdprofile = 30 and dp0.statusenabled=true
+            and ma.kdprofile = 30 and ma.statusenabled=true
+            and sr.kdprofile = 30 and sr.statusenabled=true
+            and extract(month from bku.tglbku) = '$bulan'
+            and extract(year from bku.tglbku) = '$tahunjudul'
+            $subsubkegiatan
+            $mataanggaran"));
+        
+        $anggaran = DB::select(DB::raw("select coalesce(sum(kb.subtotal),0) jumlahanggaran
+        from keteranganbelanja_t kb
+        inner JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
+        inner JOIN mataanggaran_m ma on ma.id=kb.objectmataanggaranfk
+        where ka.kdprofile = 30 and ka.statusenabled=true
+        and kb.kdprofile = 30 and kb.statusenabled=true
+        and ma.kdprofile = 30 and ma.statusenabled=true
+        $subsubkegiatan
+        $mataanggaran"));
+
+        $totalanggaran = 0;
+        if(count($anggaran) != 0){
+            $totalanggaran = $anggaran[0]->jumlahanggaran;
+        }
+
+        $saldoakhir = 0;
+
+        foreach($data as $row){
+            if($row->uraianbku == 'ANGGARAN'){
+                $saldoakhir = $saldoakhir + $row->penerimaan - $row->pengeluaran;  
+            } else{
+                $saldoakhir = $saldoakhir - $row->pengeluaran;   
+            }
+            $row->saldoawal = $saldoakhir;
+        }
+
+        $pageWidth = 950;
+        //return $this->respond($result);
+        return view('report.keuangan.cetakro',compact('data', 'pageWidth', 'tahunjudul', 'tanggalcetak', 'totalanggaran'));
     }
 
     public function CetakBKUReal(Request $request){
@@ -4819,6 +5297,165 @@ class ReportController extends ApiController{
         return view('report.keuangan.cetakbkureal',compact('data', 'pageWidth', 'tahunjudul', 'tanggalcetak', 'periode'));
     }
 
+    public function CetakBukuPajak(Request $request){
+        $tahunjudul = $request['tahun'];
+        $tanggalcetak = $this->tanggal_indonesia(date('Y-m-d',strtotime($request['tglcetak'])));
+        $bulan = $request['bulan'];
+        $sumberdana = $request['sumberdana'];
+
+        $blalu = DB::select(DB::raw("SELECT extract('month' from(date '$tahunjudul-$bulan-01' - interval '1 month')) as bulan;"));
+
+        $bulanlalu = $blalu[0]->bulan;
+
+        $qtahun  = '';
+        if (isset($request['tahun']) && $request['tahun'] != "" && $request['tahun'] != "undefined") {
+            $qtahun =  " and extract(year from sr.tglrealisasi) =  '" . $request['tahun']."'";
+        }
+
+        $qbulan  = '';
+        if (isset($request['bulan']) && $request['bulan'] != "" && $request['bulan'] != "undefined") {
+            $qbulan =  " and extract(month from sr.tglrealisasi) =  '" . $request['bulan']."'";
+        }
+
+        $qasalproduk  = '';
+        if (isset($request['sumberdana']) && $request['sumberdana'] != "" && $request['sumberdana'] != "undefined") {
+            $qasalproduk =  " and ap.id =  " . $request['sumberdana'];
+        }
+
+        $data = DB::select(DB::raw("select ROW_NUMBER ( ) OVER ( ORDER BY norec ) nourut, norec, tglrealisasi, totalbelanja, namarekanan, npwp, alamatlengkap, billpph, billppn,
+        idbillpph, idbillppn, ntpnpph, ntpnppn, ppn, pph21, pph22, pph23, pph26, pph4, pph
+        from(
+            select distinct sr.norec, sr.tglrealisasi::varchar, sr.totalbelanja, rk.namarekanan, rk.npwp, rk.alamatlengkap,
+            'ID BILLING ' || jp.namaexternal billpph, 'ID BILLING PPN' billppn, pp.idbillpph, pp.idbillppn,
+            pp.ntpnpph, pp.ntpnppn,
+            pp.ppn ppn, 
+            case when jp.id = 15 then pp.pph else null end as pph21,
+            case when jp.id = 16 then pp.pph else null end as pph22,
+            case when jp.id = 17 then pp.pph else null end as pph23,
+            case when jp.id = 18 then pp.pph else null end as pph26,
+            case when jp.id = 19 then pp.pph else null end as pph4,
+            case when jp.id = 20 then pp.pph else null end as pph
+                from strukrealisasi_t sr 
+            inner join pemungutanpajak_t pp on pp.objectspjfk = sr.norec 
+            inner join jenispajak_m jp on jp.id = pp.objectjenispphfk 
+            inner join rekanan_m rk on rk.id = sr.rekananfk 
+            inner join kegiatananggaran_m as dp on dp.id = sr.objectkegiatanfk
+            inner join keteranganbelanja_t as kb on kb.objectkegiatanfk = dp.id
+            inner join asalproduk_m ap on ap.id = kb.objectasalprodukfk
+            inner join mataanggaran_m ma on ma.id = kb.objectmataanggaranfk
+            where sr.statusenabled = true
+            and sr.kdprofile = 30
+            and pp.statusenabled = true 
+            and pp.kdprofile = 30
+            and jp.statusenabled = true 
+            and jp.kdprofile = 30
+            and sr.status = 'Sudah Diverifikasi'
+            $qbulan
+            $qtahun
+            $qasalproduk
+        
+            union all
+        
+            select distinct sr.norec, sr.tglrealisasi::varchar, sr.totalbelanja, rk.namarekanan, rk.npwp, rk.alamatlengkap,
+            'ID BILLING ' || jp.namaexternal billpph, 'ID BILLING PPN' billppn, pj.idbillpph, pj.idbill idbillppn,
+            pj.ntpnpph, pj.ntpn ntpnppn,
+            pj.ppn ppn, 
+            case when jp.id = 15 then pj.pph else null end as pph21,
+            case when jp.id = 16 then pj.pph else null end as pph22,
+            case when jp.id = 17 then pj.pph else null end as pph23,
+            case when jp.id = 18 then pj.pph else null end as pph26,
+            case when jp.id = 19 then pj.pph else null end as pph4,
+            case when jp.id = 20 then pj.pph else null end as pph
+                from strukrealisasi_t sr 
+            inner join panjar_t pj on pj.norec = sr.objectpanjarfk 
+            inner join jenispajak_m jp on jp.id = pj.objectjenispphfk 
+            inner join rekanan_m rk on rk.id = sr.rekananfk 
+            inner join kegiatananggaran_m as dp on dp.id = sr.objectkegiatanfk
+            inner join keteranganbelanja_t as kb on kb.objectkegiatanfk = dp.id
+            inner join asalproduk_m ap on ap.id = kb.objectasalprodukfk
+            inner join mataanggaran_m ma on ma.id = kb.objectmataanggaranfk
+            where sr.statusenabled = true
+            and sr.kdprofile = 30
+            and pj.statusenabled = true 
+            and pj.kdprofile = 30
+            and jp.statusenabled = true 
+            and jp.kdprofile = 30
+            and sr.status = 'Sudah Diverifikasi'
+            $qbulan
+            $qtahun
+            $qasalproduk
+        ) as x"));
+
+        $lalu = DB::select(DB::raw("select coalesce(sum(ppn), 0) ppn, coalesce(sum(pph21), 0) pph21, coalesce(sum(pph22), 0) pph22, 
+        coalesce(sum(pph23), 0) pph23, coalesce(sum(pph26), 0) pph26, coalesce(sum(pph4), 0) pph4, 
+        coalesce(sum(pph), 0) pph
+        from(
+            select distinct sr.norec, sr.tglrealisasi::varchar, sr.totalbelanja, rk.namarekanan, rk.npwp, rk.alamatlengkap,
+            'ID BILLING ' || jp.namaexternal billpph, 'ID BILLING PPN' billppn, pp.idbillpph, pp.idbillppn,
+            pp.ntpnpph, pp.ntpnppn,
+            pp.ppn ppn, 
+            case when jp.id = 15 then pp.pph else null end as pph21,
+            case when jp.id = 16 then pp.pph else null end as pph22,
+            case when jp.id = 17 then pp.pph else null end as pph23,
+            case when jp.id = 18 then pp.pph else null end as pph26,
+            case when jp.id = 19 then pp.pph else null end as pph4,
+            case when jp.id = 20 then pp.pph else null end as pph
+                from strukrealisasi_t sr 
+            inner join pemungutanpajak_t pp on pp.objectspjfk = sr.norec 
+            inner join jenispajak_m jp on jp.id = pp.objectjenispphfk 
+            inner join rekanan_m rk on rk.id = sr.rekananfk 
+            inner join kegiatananggaran_m as dp on dp.id = sr.objectkegiatanfk
+            inner join keteranganbelanja_t as kb on kb.objectkegiatanfk = dp.id
+            inner join asalproduk_m ap on ap.id = kb.objectasalprodukfk
+            inner join mataanggaran_m ma on ma.id = kb.objectmataanggaranfk
+            where sr.statusenabled = true
+            and sr.kdprofile = 30
+            and pp.statusenabled = true 
+            and pp.kdprofile = 30
+            and jp.statusenabled = true 
+            and jp.kdprofile = 30
+            and sr.status = 'Sudah Diverifikasi'
+            and extract('month' from sr.tglrealisasi) = '$bulanlalu'
+            $qtahun
+            $qasalproduk
+        
+            union all
+        
+            select distinct sr.norec, sr.tglrealisasi::varchar, sr.totalbelanja, rk.namarekanan, rk.npwp, rk.alamatlengkap,
+            'ID BILLING ' || jp.namaexternal billpph, 'ID BILLING PPN' billppn, pj.idbillpph, pj.idbill idbillppn,
+            pj.ntpnpph, pj.ntpn ntpnppn,
+            pj.ppn ppn, 
+            case when jp.id = 15 then pj.pph else null end as pph21,
+            case when jp.id = 16 then pj.pph else null end as pph22,
+            case when jp.id = 17 then pj.pph else null end as pph23,
+            case when jp.id = 18 then pj.pph else null end as pph26,
+            case when jp.id = 19 then pj.pph else null end as pph4,
+            case when jp.id = 20 then pj.pph else null end as pph
+                from strukrealisasi_t sr 
+            inner join panjar_t pj on pj.norec = sr.objectpanjarfk 
+            inner join jenispajak_m jp on jp.id = pj.objectjenispphfk 
+            inner join rekanan_m rk on rk.id = sr.rekananfk 
+            inner join kegiatananggaran_m as dp on dp.id = sr.objectkegiatanfk
+            inner join keteranganbelanja_t as kb on kb.objectkegiatanfk = dp.id
+            inner join asalproduk_m ap on ap.id = kb.objectasalprodukfk
+            inner join mataanggaran_m ma on ma.id = kb.objectmataanggaranfk
+            where sr.statusenabled = true
+            and sr.kdprofile = 30
+            and pj.statusenabled = true 
+            and pj.kdprofile = 30
+            and jp.statusenabled = true 
+            and jp.kdprofile = 30
+            and sr.status = 'Sudah Diverifikasi'
+            and extract('month' from sr.tglrealisasi) = '$bulanlalu'
+            $qtahun
+            $qasalproduk
+        ) as x"));
+
+        $pageWidth = 950;
+        //return $this->respond($result);
+        return view('report.keuangan.cetakbukupajak',compact('data', 'pageWidth', 'lalu', 'sumberdana', 'tanggalcetak', 'bulan', 'tahunjudul'));
+    }
+
     public function getRegisterPenutupanKas(Request $request){
         $tahunjudul = $request['tahun'];
         $tanggalcetak = $this->tanggal_indonesia(date('Y-m-d',strtotime($request['tglcetak'])));
@@ -4875,10 +5512,17 @@ class ReportController extends ApiController{
             $qbulan =  " and extract(month from tglbku) =  '" . $request['bulan']."'";
         }
 
+        $qsumberdana  = '';
+        if (isset($request['sumberdana']) && $request['sumberdana'] != "" && $request['sumberdana'] != "undefined") {
+            $qsumberdana =  " and ap.id = " . $request['sumberdana'];
+        }
+
         $data = DB::select(DB::raw("select sum(bku.penerimaan) penerimaan, sum(bku.pengeluaran) pengeluaran
         from bukukasumum_t bku
+        left join asalproduk_m ap on ap.id = bku.objectasalprodukfk
         where bku.kdprofile = 30
         and bku.statusenabled = true 
+        $qsumberdana
         $qbulan
         $qtahun"));
 
@@ -5035,7 +5679,7 @@ class ReportController extends ApiController{
                 and kmsss.kdprofile = 30 and kmsss.statusenabled = true
                 and ap.kdprofile = 30 and ap.statusenabled = true
                 and kb.kdprofile = 30 and kb.statusenabled = true
-                and km.tahun = '2023'
+                and km.tahun = '$tahunjudul'
                 group by kmsss.keterangan, kmsss.kode, kmsss.div, sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi)
             ) as a group by text, kode, div, bulan
         
@@ -5063,7 +5707,7 @@ class ReportController extends ApiController{
                 and kmsss.kdprofile = 30 and kmsss.statusenabled = true
                 and ap.kdprofile = 30 and ap.statusenabled = true
                 and kb.kdprofile = 30 and kb.statusenabled = true
-                and km.tahun = '2023'
+                and km.tahun = '$tahunjudul'
                 group by kmss.keterangan, kmss.kode, kmss.div, sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi)
             ) as b group by text, kode, div, bulan
         
@@ -5091,7 +5735,7 @@ class ReportController extends ApiController{
                 and kmsss.kdprofile = 30 and kmsss.statusenabled = true
                 and ap.kdprofile = 30 and ap.statusenabled = true
                 and kb.kdprofile = 30 and kb.statusenabled = true
-                and km.tahun = '2023'
+                and km.tahun = '$tahunjudul'
                 group by kms.keterangan, kms.kode, kms.div, sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi)
             ) as c group by text, kode, div, bulan
         
@@ -5119,7 +5763,7 @@ class ReportController extends ApiController{
                 and kmsss.kdprofile = 30 and kmsss.statusenabled = true
                 and ap.kdprofile = 30 and ap.statusenabled = true
                 and kb.kdprofile = 30 and kb.statusenabled = true
-                and km.tahun = '2023'
+                and km.tahun = '$tahunjudul'
                 group by km.keterangan, km.kode, km.div, sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi)
             ) as d group by text, kode, div, bulan
         ) as x

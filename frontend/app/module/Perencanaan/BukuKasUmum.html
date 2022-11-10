@@ -219,6 +219,15 @@
                             k-data-source="listPihakKetiga"  />
                     </div>
                     <div class="grid_12" style="text-align: left; margin-top: 10px;">
+                        Sumber Dana 
+                    </div>
+                    <div class="grid_12">
+                        <input kendo-combo-box k-ng-model="item.sumberDana"
+                            k-data-text-field="'asalproduk'" k-data-value-field="'id'"
+                            k-filter="'contains'" k-auto-bind="false"
+                            k-data-source="listAsalProduk"  />
+                    </div>
+                    <div class="grid_12" style="text-align: left; margin-top: 10px;">
                         Uraian BKU
                     </div>
                     <div class="grid_12" style="margin-top: 10px;">

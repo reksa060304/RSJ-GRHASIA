@@ -1220,11 +1220,15 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('report/get-cetak-lo','Report\ReportController@CetakLO');
           Route::get('report/get-cetak-lra','Report\ReportController@CetakLRA');
           Route::get('report/get-cetak-neraca','Report\ReportController@CetakNeraca');
+          Route::get('report/get-cetak-sp3bp','Report\ReportController@CetakSP3BP');
           Route::get('report/get-cetak-bku','Report\ReportController@CetakBKU');
           Route::get('report/get-cetak-bku-real','Report\ReportController@CetakBKUReal');
+          Route::get('report/get-cetak-buku-pajak','Report\ReportController@CetakBukuPajak');
           Route::get('report/get-register-penutupan-kas','Report\ReportController@getRegisterPenutupanKas');
           Route::get('report/get-cetak-buku-panjar','Report\ReportController@CetakBukuPanjar');
           Route::get('report/get-cetak-fungsional','Report\ReportController@CetakFungsional');
+          Route::get('report/get-cetak-ro','Report\ReportController@CetakRO');
+          Route::get('report/get-cetak-rk','Report\ReportController@CetakRK');
           Route::get('report/get-rekap-order-kirim-barang-cetak','Report\ReportController@CetakLapOrderKirim');
           Route::get('report/get-cetak-suratketerangannapza','Report\ReportController@CetakSKNapza');
           Route::get('report/get-cetak-suratketerangankesehatanjiwa','Report\ReportController@CetakSKJiwa');

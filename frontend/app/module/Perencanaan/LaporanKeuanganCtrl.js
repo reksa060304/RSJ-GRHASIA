@@ -249,6 +249,51 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 window.open(baseTransaksi + "report/get-cetak-bku-real?tahunbku=" + tahunbku + "&bulanbku=" + bulanbku + "&tglcetak=" + tglcetak, '_blank');
             }
 
+            $scope.CetakPajak = function(){
+
+                if ($scope.item.tahunpajak == undefined){
+                    toastr.warning('Tahun harus diisi', 'Informasi');
+                    return
+                }
+
+                if ($scope.item.bulanpajak == undefined){
+                    toastr.warning('Bulan harus diisi', 'Informasi');
+                    return
+                }
+
+                if ($scope.item.tglpajak == undefined){
+                    toastr.warning('Tgl cetak harus diisi', 'Informasi');
+                    return
+                }
+
+                if ($scope.item.asalprodukpajak == undefined){
+                    toastr.warning('Sumber dana harus diisi', 'Informasi');
+                    return
+                }
+
+                var tahunpajak = ""
+                if ($scope.item.tahunpajak != undefined){
+                    tahunpajak = moment($scope.item.tahunpajak).format('YYYY')
+                }
+
+                var bulanpajak = ""
+                if ($scope.item.bulanpajak != undefined){
+                    bulanpajak = moment($scope.item.bulanpajak).format('MM')
+                }
+
+                var tglcepajak = ""
+                if ($scope.item.tglpajak != undefined){
+                    tglcepajak = moment($scope.item.tglpajak).format('YYYY-MM-DD')
+                }
+
+                var sumberdanapajak = ""
+                if ($scope.item.asalprodukpajak != undefined){
+                    sumberdanapajak = $scope.item.asalprodukpajak.id
+                }
+
+                window.open(baseTransaksi + "report/get-cetak-buku-pajak?tahun=" + tahunpajak + "&bulan=" + bulanpajak + "&tglcetak=" + tglcepajak + "&sumberdana=" + sumberdanapajak, '_blank');
+            }
+
             $scope.CetakKas = function(){
 
                 if ($scope.item.tahunkas == undefined){
@@ -263,6 +308,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                 if ($scope.item.tglkas == undefined){
                     toastr.warning('Tgl cetak harus diisi', 'Informasi');
+                    return
+                }
+
+                if ($scope.item.asalprodukkas == undefined){
+                    toastr.warning('Sumber dana harus diisi', 'Informasi');
                     return
                 }
 
@@ -281,7 +331,16 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     tglcetak = moment($scope.item.tglkas).format('YYYY-MM-DD')
                 }
 
-                window.open(baseTransaksi + "report/get-register-penutupan-kas?tahun=" + tahunbku + "&bulan=" + bulanbku + "&tglcetak=" + tglcetak, '_blank');
+                var sumberdanakas = ""
+                if ($scope.item.asalprodukkas != undefined){
+                    sumberdanakas = $scope.item.asalprodukkas.id
+                }
+
+                window.open(baseTransaksi + "report/get-register-penutupan-kas?tahun=" + tahunbku + "&bulan=" + bulanbku + "&tglcetak=" + tglcetak + "&sumberdana=" + sumberdanakas, '_blank');
+            }
+
+            $scope.CetakSP = function(){
+                window.open(baseTransaksi + "report/get-cetak-sp3bp", '_blank');
             }
 
             $scope.CetakBukuPanjar = function(){
@@ -322,6 +381,144 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.CetakFungsional = function(){
                 window.open(baseTransaksi + "report/get-cetak-fungsional", '_blank');
             }
+
+            $scope.CetakRO = function(){
+
+                if ($scope.item.tahunro == undefined){
+                    toastr.warning('Tahun harus diisi', 'Informasi');
+                    return
+                }
+
+                if ($scope.item.bulanro == undefined){
+                    toastr.warning('Bulan harus diisi', 'Informasi');
+                    return
+                }
+
+                if ($scope.item.tglcetakro == undefined){
+                    toastr.warning('Tgl cetak harus diisi', 'Informasi');
+                    return
+                }
+
+                if ($scope.item.subkegiatanro == undefined){
+                    toastr.warning('Sub Kegiatan harus diisi', 'Informasi');
+                    return
+                }
+
+                if ($scope.item.subsubkegiatanro == undefined){
+                    toastr.warning('Sub Sub Kegiatan harus diisi', 'Informasi');
+                    return
+                }
+
+                if ($scope.item.mataanggaranro == undefined){
+                    toastr.warning('Mata Anggaran harus diisi', 'Informasi');
+                    return
+                }
+
+                var tahunro = ""
+                if ($scope.item.tahunro != undefined){
+                    tahunro = moment($scope.item.tahunro).format('YYYY')
+                }
+
+                var bulanro = ""
+                if ($scope.item.bulanro != undefined){
+                    bulanro = moment($scope.item.bulanro).format('MM')
+                }
+
+                var tglcetakro = ""
+                if ($scope.item.tglcetakro != undefined){
+                    tglcetakro = moment($scope.item.tglcetakro).format('YYYY-MM-DD')
+                }
+
+                var idsubsubkegiatan = ""
+                if ($scope.item.subsubkegiatanro != undefined){
+                    idsubsubkegiatan = $scope.item.subsubkegiatanro.idsubsubkegiatan
+                }
+
+                var idmataanggaran = ""
+                if ($scope.item.mataanggaranro != undefined){
+                    idmataanggaran = $scope.item.mataanggaranro.id
+                }
+
+                window.open(baseTransaksi + "report/get-cetak-ro?tahun="+tahunro+"&bulan="+bulanro+"&tglcetak="+tglcetakro+"&idsubsubkegiatan="+idsubsubkegiatan+"&idmataanggaran="+idmataanggaran, '_blank');
+            }
+
+            $scope.CetakRK = function(){
+
+                if ($scope.item.tahunrk == undefined){
+                    toastr.warning('Tahun harus diisi', 'Informasi');
+                    return
+                }
+
+                if ($scope.item.bulanrk == undefined){
+                    toastr.warning('Bulan harus diisi', 'Informasi');
+                    return
+                }
+
+                if ($scope.item.tglcetakrk == undefined){
+                    toastr.warning('Tgl cetak harus diisi', 'Informasi');
+                    return
+                }
+
+                if ($scope.item.subkegiatanrk == undefined){
+                    toastr.warning('Sub Kegiatan harus diisi', 'Informasi');
+                    return
+                }
+
+                if ($scope.item.subsubkegiatanrk == undefined){
+                    toastr.warning('Sub Sub Kegiatan harus diisi', 'Informasi');
+                    return
+                }
+
+                var tahunrk = ""
+                if ($scope.item.tahunrk != undefined){
+                    tahunrk = moment($scope.item.tahunrk).format('YYYY')
+                }
+
+                var bulanrk = ""
+                if ($scope.item.bulanrk != undefined){
+                    bulanrk = moment($scope.item.bulanrk).format('MM')
+                }
+
+                var tglcetakrk = ""
+                if ($scope.item.tglcetakrk != undefined){
+                    tglcetakrk = moment($scope.item.tglcetakrk).format('YYYY-MM-DD')
+                }
+
+                var idsubsubkegiatanrk = ""
+                if ($scope.item.subsubkegiatanrk != undefined){
+                    idsubsubkegiatanrk = $scope.item.subsubkegiatanrk.idsubsubkegiatan
+                }
+
+                window.open(baseTransaksi + "report/get-cetak-rk?tahun="+tahunrk+"&bulan="+bulanrk+"&tglcetak="+tglcetakrk+"&idsubsubkegiatan="+idsubsubkegiatanrk, '_blank');
+            }
+
+            $scope.$watch('item.subkegiatanro', function (newValue, oldValue) {
+                if (newValue != oldValue) {
+                    medifirstService.get("perencanaan/get-data-combo").then(function (e) {
+                        medifirstService.get("perencanaan/get-data-combo?tahunawal="+moment($scope.item.tahunro).format('YYYY')+"&tahap="+e.data.setting[0].objecttahapaktivfk+"&subkegiatan="+$scope.item.subkegiatanro.id).then(function (e) {
+                            $scope.listSubSubKegiatanRO = e.data.kegiatansubsub
+                        });
+                    })
+                }
+            });
+
+            $scope.$watch('item.subkegiatanrk', function (newValue, oldValue) {
+                if (newValue != oldValue) {
+                    medifirstService.get("perencanaan/get-data-combo").then(function (e) {
+                        medifirstService.get("perencanaan/get-data-combo?tahunawal="+moment($scope.item.tahunrk).format('YYYY')+"&tahap="+e.data.setting[0].objecttahapaktivfk+"&subkegiatan="+$scope.item.subkegiatanrk.id).then(function (e) {
+                            $scope.listSubSubKegiatanRK = e.data.kegiatansubsub
+                        });
+                    })
+                }
+            });
+
+            $scope.$watch('item.subsubkegiatanro', function (newValue, oldValue) {
+                if (newValue != oldValue) {
+                    medifirstService.get("perencanaan/get-data-combo?tahun="+moment($scope.item.tahunro).format('YYYY')+"&idsubsub="+$scope.item.subsubkegiatanro.id).then(function (e) {
+                        $scope.listMataAnggaranRO = e.data.mataanggarancombo
+                    })
+                }
+            });
 
             medifirstService.get("perencanaan/get-data-combo").then(function (e) {
                 $scope.listTahap = e.data.tahap

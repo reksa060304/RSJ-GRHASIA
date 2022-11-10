@@ -549,7 +549,7 @@ class PerencanaanController extends ApiController {
 
         $ksubkegiatan = '';
         if (isset($request['subkegiatan']) && $request['subkegiatan'] != "" && $request['subkegiatan'] != "undefined") {
-            $ksubkegiatan =  "and dp2.kode = '".$request['subkegiatan']."'";
+            $ksubkegiatan =  "and dp2.id = '".$request['subkegiatan']."'";
         }
 
         $ktahap = '';
@@ -557,7 +557,7 @@ class PerencanaanController extends ApiController {
             $ktahap =  "and ktb.objecttahapfk = ".$request['tahap'];
         }
 
-        $kegiatansubsub = DB::select(DB::raw("select dp.tahun tahunsubsubkegiatan, dp.id idsubsubkegiatan, dp.kode kodesubsubkegiatan, dp.keterangan keterangansubsubkegiatan,
+        $kegiatansubsub = DB::select(DB::raw("select dp.tahun tahunsubsubkegiatan, dp.id idsubsubkegiatan, dp.kode kodesubsubkegiatan, dp.id || '-' || dp.keterangan keterangansubsubkegiatan,
         dp.indikatormasuk, dp.indikatorkeluaran, dp.indikatorhasil, dp.targetmasuk, dp.targetkeluaran, dp.targethasil, dp.div,
         dp.objectjenisbelanjafk, dp.objectpptkfk, dp.id, dp.keterangan
         from kegiatananggaran_m as dp
@@ -574,7 +574,7 @@ class PerencanaanController extends ApiController {
         $ktahap
         $ktahun
         $ksubkegiatan
-        group by dp.id, dp.kode, dp.keterangan, dp.tahun, dp.indikatormasuk, dp.indikatorkeluaran, dp.indikatorhasil, dp.targetmasuk, dp.targetkeluaran, dp.targethasil, dp.div,
+        group by dp.id, dp.kode, dp.id || '-' || dp.keterangan, dp.tahun, dp.indikatormasuk, dp.indikatorkeluaran, dp.indikatorhasil, dp.targetmasuk, dp.targetkeluaran, dp.targethasil, dp.div,
         dp.objectjenisbelanjafk, dp.objectpptkfk, dp.id, dp.keterangan
         order by dp.kode"));
 
@@ -1076,7 +1076,7 @@ class PerencanaanController extends ApiController {
         $idProfile = (int) $kdProfile;
         $req = $request->all();
         $rekanan = \DB::table('rekanan_m as dp')
-            ->select('dp.id','dp.namarekanan')
+            ->select('dp.id','dp.namarekanan','dp.npwp','dp.alamatlengkap')
             ->where('dp.kdprofile', $idProfile)
             ->where('dp.statusenabled', true)
             ->where('dp.objectjenisrekananfk', 1)
@@ -3195,6 +3195,10 @@ class PerencanaanController extends ApiController {
                     $MA->objectspjfk = $request['norec'];
                     $MA->tglpph = $request['tglpph'];
                     $MA->tglppn = $request['tglppn'];
+                    $MA->idbillppn = $request['idbillppn'];
+                    $MA->ntpnppn = $request['ntpnppn'];
+                    $MA->idbillpph = $request['idbillpph'];
+                    $MA->ntpnpph = $request['ntpnpph'];
                     $MA->save();
 
                     $MP->uraianpajak = $request['uraianpajak'];
@@ -3204,6 +3208,10 @@ class PerencanaanController extends ApiController {
                     $MP->objectspjfk = $request['norec'];
                     $MP->tglpph = $request['tglpph'];
                     $MP->tglppn = $request['tglppn'];
+                    $MP->idbillppn = $request['idbillppn'];
+                    $MP->ntpnppn = $request['ntpnppn'];
+                    $MP->idbillpph = $request['idbillpph'];
+                    $MP->ntpnpph = $request['ntpnpph'];
                     $MP->save();
 
                     $SP = StrukRealisasi::where('norec', '=', $request['norec'])->first();
@@ -3304,6 +3312,9 @@ class PerencanaanController extends ApiController {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
 
+        $thn = date("Y", strtotime($request['tglsts']) );
+        $tgl = date("n", strtotime($request['tglsts']) );
+
         try{ 
                     if($request['norec'] == ''){
                         $MA = new STSKeuangan();
@@ -3311,12 +3322,15 @@ class PerencanaanController extends ApiController {
                         $MA->norec = $norecKS;
                         $MA->kdprofile = $idProfile;
                         $MA->statusenabled = true;
+
+                        $nos = $this->generateCodeBySeqTable(new STSKeuangan, 'nojasagiro', 6, ' ',$kdProfile);
+                        $noSTS = $nos.'/STS/'.$tgl.'/'.$thn;
+                        $MA->nosts = $noSTS;
                         
                     } else{
                         $MA = STSKeuangan::where('norec', '=', $request['norec'])->first();
                     }
                     
-                    $MA->nosts = $request['nosts'];
                     $MA->uraiansts = $request['uraiansts'];
                     $MA->tglsts = $request['tglsts'];
                     $MA->nilaists = $request['nilaists'];
@@ -3750,6 +3764,7 @@ class PerencanaanController extends ApiController {
                         $MA->tglbku = $request['tglbku'];
                         $MA->uraianbku = $request['uraian'];
                         $MA->rekananfk = $request['rekananfk'];
+                        $MA->objectasalprodukfk = $request['asalproduk'];
 
                         $MA->objectmataanggaranfk = null;
 
@@ -3779,6 +3794,7 @@ class PerencanaanController extends ApiController {
                         $MA->tglbku = $request['tglbku'];
                         $MA->uraianbku = $request['uraian'];
                         $MA->rekananfk = $request['rekananfk'];
+                        $MA->objectasalprodukfk = $request['asalproduk'];
 
                         $MA->objectmataanggaranfk = null;
 
@@ -3810,6 +3826,7 @@ class PerencanaanController extends ApiController {
                         $MA->tglbku = $request['tglbku'];
                         $MA->uraianbku = $request['uraian'];
                         $MA->rekananfk = $request['rekananfk'];
+                        $MA->objectasalprodukfk = $request['asalproduk'];
 
                         $MA->objectmataanggaranfk = null;
 
@@ -3853,6 +3870,7 @@ class PerencanaanController extends ApiController {
                                 $MA->tglbku = $request['tglbku'];
                                 $MA->uraianbku = $request['uraian'];
                                 $MA->rekananfk = $request['rekananfk'];
+                                $MA->objectasalprodukfk = $request['asalproduk'];
                                 $MA->objectmataanggaranfk = $request['bku'][$i]['koderek'];
                                 $MA->penerimaan = (int)$request['bku'][$i]['pph'] + (int)$request['bku'][$i]['ppn'];
                                 $MA->pengeluaran = (int)$request['bku'][$i]['jumlahpengeluaran'];
@@ -3869,6 +3887,7 @@ class PerencanaanController extends ApiController {
                                 $MA->tglbku = $request['tglbku'];
                                 $MA->uraianbku = $request['uraian'];
                                 $MA->rekananfk = $request['rekananfk'];
+                                $MA->objectasalprodukfk = $request['asalproduk'];
                                 $MA->objectmataanggaranfk = $request['bku'][$i]['koderek'];
                                 $MA->penerimaan = (int)$request['bku'][$i]['jumlahpenerimaan'];
                                 $MA->pengeluaran = (int)$request['bku'][$i]['pph'] + (int)$request['bku'][$i]['ppn'];
@@ -3907,6 +3926,7 @@ class PerencanaanController extends ApiController {
                             $MA->tglbku = $request['tglbku'];
                             $MA->uraianbku = $request['uraian'];
                             $MA->rekananfk = $request['rekananfk'];
+                            $MA->objectasalprodukfk = $request['asalproduk'];
 
                             $MA->objectmataanggaranfk = $request['bku'][0]['kodemataanggaran'];
 
@@ -3939,6 +3959,7 @@ class PerencanaanController extends ApiController {
                             $MB->tglbku = $request['tglbku'];
                             $MB->uraianbku = $request['uraian'];
                             $MA->rekananfk = $request['rekananfk'];
+                            $MA->objectasalprodukfk = $request['asalproduk'];
 
                             $MB->objectmataanggaranfk = $request['bku'][0]['kodemataanggaran'];
 
@@ -3973,6 +3994,7 @@ class PerencanaanController extends ApiController {
                             $MA->tglbku = $request['tglbku'];
                             $MA->uraianbku = $request['uraian'];
                             $MA->rekananfk = $request['rekananfk'];
+                            $MA->objectasalprodukfk = $request['asalproduk'];
 
                             $MA->objectmataanggaranfk = $request['bku'][0]['kodemataanggaran'];
 
@@ -4004,6 +4026,7 @@ class PerencanaanController extends ApiController {
                         $MA->tglbku = $request['tglbku'];
                         $MA->uraianbku = $request['uraian'];
                         $MA->rekananfk = $request['rekananfk'];
+                        $MA->objectasalprodukfk = $request['asalproduk'];
 
                         $MA->objectmataanggaranfk = $request['bku'][0]['kodemataanggaran'];
 
@@ -4490,6 +4513,8 @@ class PerencanaanController extends ApiController {
                     $MA = Rekanan::where('id', '=', $request['id'])->first();
                 }
                     $MA->namarekanan = $request['namarekanan'];
+                    $MA->npwp = $request['npwp'];
+                    $MA->alamatlengkap = $request['alamat'];
 
                     $MA->save();
 
@@ -5724,13 +5749,25 @@ order by kodemataanggaran"));
         $idProfile = (int) $kdProfile;
 
         $data = DB::select(DB::raw("
-                select ma.kodemataanggaran kodemataanggaran, ma.namamataanggaran namamataanggaran, kasub.id idsubkegiatan, kasubsub.id idsubsubkegiatan, kasub.keterangan keterangansubkegiatan, kasubsub.keterangan keterangansubsubkegiatan, pj.norec, pj.nopanjar, pj.uraian, pj.tglpanjar, pj.jumlah, pj.jenispanjar, pj.jumlahpengembalian, pj.sumberpanjar
+                select pj.pph, pj.ppn, jp.id idpajak, jp.jenispajak, ma.kodemataanggaran kodemataanggaran, ma.namamataanggaran namamataanggaran, kasub.id idsubkegiatan, 
+                kasubsub.id idsubsubkegiatan, kasub.keterangan keterangansubkegiatan, kasubsub.keterangan keterangansubsubkegiatan, 
+                pj.norec, pj.nopanjar, pj.uraian, pj.tglpanjar, pj.jumlah, pj.jenispanjar, pj.jumlahpengembalian, pj.sumberpanjar,
+                pj.idbill, pj.ntpn, pj.idbillpph, pj.ntpnpph
                 from panjar_t pj
                 inner join kegiatananggaran_m kasub on kasub.id = pj.objectsubkegiatanfk
                 inner join kegiatananggaran_m kasubsub on kasubsub.id = pj.objectsubsubkegiatanfk
                 inner join mataanggaran_m ma on ma.id = pj.objectmataanggaranfk
+                left join jenispajak_m jp on jp.id = pj.objectjenispphfk
+                and jp.kdprofile = 30
+                and jp.statusenabled = true
                 where pj.kdprofile = 30
-                and pj.statusenabled = true;
+                and pj.statusenabled = true
+                and kasub.kdprofile = 30
+                and kasub.statusenabled = true
+                and kasubsub.kdprofile = 30
+                and kasubsub.statusenabled = true
+                and ma.kdprofile = 30
+                and ma.statusenabled = true;
             ")
         );
 
@@ -6403,10 +6440,11 @@ order by kodemataanggaran"));
         }
         
         $data = DB::select(DB::raw("
-        select (right(left(bku.nobku, -4), 2))::int4 nourut, rm.namarekanan, bku.norec norecbku, bku.nobku, jb.jenisbukti, jb.id, bku.objectmataanggaranfk kodemataanggaran, bku.tglbku, bku.uraianbku, bku.penerimaan, bku.pengeluaran, bku.saldo
+        select ap.id idasalproduk, ap.asalproduk, (right(left(bku.nobku, -4), 2))::int4 nourut, rm.namarekanan, bku.norec norecbku, bku.nobku, jb.jenisbukti, jb.id, bku.objectmataanggaranfk kodemataanggaran, bku.tglbku, bku.uraianbku, bku.penerimaan, bku.pengeluaran, bku.saldo
         from bukukasumum_t bku
         left join jenisbukti_m jb on jb.id = bku.objectjenisbuktifk
         left join rekanan_m rm on rm.id = bku.rekananfk
+        left join asalproduk_m ap on ap.id = bku.objectasalprodukfk
         where bku.statusenabled = true and bku.kdprofile = 30
         $rekanan
         $qkey
@@ -7058,7 +7096,7 @@ order by kodemataanggaran"));
         $norec = $request['norec'];
 
         $data = DB::select(DB::raw("
-                select pp.objectspjfk norecspj, pp.norec norecpajak, pp.nopajak nopajakpp, pp.uraianpajak, pp.pph, pp.ppn, pp.tglpph, pp.tglppn, pep.nopajak nopajakpep, jp.id idpajak, jp.jenispajak 
+                select pp.idbillpph, pp.idbillppn, pp.ntpnpph, pp.ntpnppn, pp.objectspjfk norecspj, pp.norec norecpajak, pp.nopajak nopajakpp, pp.uraianpajak, pp.pph, pp.ppn, pp.tglpph, pp.tglppn, pep.nopajak nopajakpep, jp.id idpajak, jp.jenispajak 
                 from penyetoranpajak_t pp
                 inner join jenispajak_m jp on jp.id = pp.objectjenispphfk
                 inner join pemungutanpajak_t as pep on pep.objectspjfk = pp.objectspjfk
@@ -7388,6 +7426,13 @@ order by kodemataanggaran"));
                 $MA->uraian = $request['uraianPanjar'];
                 $MA->jumlah = $request['jumlahpanjar'];
                 $MA->sumberpanjar = $request['sumberPanjar'];
+                $MA->idbill = $request['idbill'];
+                $MA->ntpn = $request['ntpn'];
+                $MA->idbillpph = $request['idbillpph'];
+                $MA->ntpnpph = $request['ntpnpph'];
+                $MA->objectjenispphfk = $request['objectjenispphfk'];
+                $MA->pph = $request['pph'];
+                $MA->ppn = $request['ppn'];
                 $MA->save();
 
            $transStatus = 'true';

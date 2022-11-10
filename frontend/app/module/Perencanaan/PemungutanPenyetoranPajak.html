@@ -86,16 +86,16 @@
                         <div class="grid_5">
                             <div class="grid_12">
                                 <div class="grid_12">
-                                    <input style="width: 100%" k-ng-model="item.tglawal" kendo-datetimepicker placeholer="yyyy-mm-dd"
-									k-format="'yyyy-MM-dd HH:mm'" />
+                                    <input style="width: 100%" k-ng-model="item.tglawal" kendo-datepicker placeholer="yyyy-mm-dd"
+									k-format="'yyyy-MM-dd'" />
                                 </div>
                             </div>
                         </div>
                         <div class="grid_5">
                             <div class="grid_12">
                                 <div class="grid_12">
-                                    <input style="width: 100%" k-ng-model="item.tglakhir" kendo-datetimepicker placeholer="yyyy-mm-dd"
-									k-format="'yyyy-MM-dd HH:mm'" />
+                                    <input style="width: 100%" k-ng-model="item.tglakhir" kendo-datepicker placeholer="yyyy-mm-dd"
+									k-format="'yyyy-MM-dd'" />
                                 </div>
                             </div>
                         </div>
@@ -259,6 +259,18 @@
                             placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd'"/>
                         </div>
                         <div class="grid_12" style="text-align: left; margin-top: 10px;">
+                            Id Billing
+                        </div>
+                        <div class="grid_12" style="margin-top: 10px;">
+                            <input c-text-box type="input" class="k-textbox" ng-model="item.idbillpph" />
+                        </div>
+                        <div class="grid_12" style="text-align: left; margin-top: 10px;">
+                            NTPN
+                        </div>
+                        <div class="grid_12" style="margin-top: 10px;">
+                            <input c-text-box type="input" class="k-textbox" ng-model="item.ntpnpph" />
+                        </div>
+                        <div class="grid_12" style="text-align: left; margin-top: 10px;">
                             <label c-label item="item" c-label-text="Jumlah Penyetoran"></label>
                         </div>
                         <div class="grid_12" style="margin-top: 10px;">
@@ -277,6 +289,18 @@
                         <div class="grid_12" style="margin-top: 10px;">
                             <input style="width: 100%" k-ng-model="item.tglPPn" kendo-datepicker 
                             placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd'"/>
+                        </div>
+                        <div class="grid_12" style="text-align: left; margin-top: 10px;">
+                            Id Billing
+                        </div>
+                        <div class="grid_12" style="margin-top: 10px;">
+                            <input c-text-box type="input" class="k-textbox" ng-model="item.idbillppn" />
+                        </div>
+                        <div class="grid_12" style="text-align: left; margin-top: 10px;">
+                            NTPN
+                        </div>
+                        <div class="grid_12" style="margin-top: 10px;">
+                            <input c-text-box type="input" class="k-textbox" ng-model="item.ntpnppn" />
                         </div>
                         <div class="grid_12" style="text-align: left; margin-top: 10px;">
                             <label c-label item="item" c-label-text="Jumlah Penyetoran"></label>

@@ -62,8 +62,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.hidetabspm = false
             $scope.item.tahun = null
             $scope.item.tahunkas = null
-            $scope.item.tglawal = moment($scope.now).format('YYYY-MM-DD HH:mm');
-            $scope.item.tglakhir = moment($scope.now).format('YYYY-MM-DD HH:mm');
+            $scope.item.tglawal = moment($scope.now).format('YYYY-MM-DD');
+            $scope.item.tglakhir = moment($scope.now).format('YYYY-MM-DD');
             $scope.item.tglVerifSPJ = moment($scope.now).format('YYYY-MM-DD');
             $scope.item.tglPanjar = moment($scope.now).format('YYYY-MM-DD');
             $scope.totalketerangan = 0;
@@ -114,6 +114,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 { id: 5, tahap: "Pegeseran BLUD ~ 3" },
                 { id: 6, tahap: "Perubahan APBD ~ 1" },
             ];
+
+            medifirstService.get("perencanaan/get-data-combo-pajak").then(function (e) {
+                $scope.listJenisPajak = e.data.data
+            })
 
             medifirstService.get("perencanaan/get-data-combo").then(function (e) {
                 $scope.listJenisBelanja = e.data.jenisbelanja
@@ -866,7 +870,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 
                 // $scope.item.id = dataItem.id
                 // $scope.item.kodeAddMT = dataItem.kodemataanggaran
-                $scope.item.tglSPJ =  new Date(moment($scope.now).format('YYYY-MM-DD HH:mm'));
+                $scope.item.tglSPJ =  new Date(moment($scope.now).format('YYYY-MM-DD'));
                 $scope.popupTambahSPJ.center().open();
             }
             $scope.bagiarataAlokasiDetail = function() {
@@ -2616,6 +2620,13 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         sumberPanjar: $scope.item.sumberPanjar,
                         uraianPanjar: $scope.item.uraianPanjar,
                         jumlahpanjar: $scope.item.jumlahpanjar,
+                        idbill: $scope.item.idbill,
+                        ntpn: $scope.item.ntpn,
+                        idbillpph: $scope.item.idbillpph,
+                        ntpnpph: $scope.item.ntpnpph,
+                        objectjenispphfk: $scope.item.jenispajak.id,
+                        pph: $scope.item.pphpanjar,
+                        ppn: $scope.item.ppnpanjar,
                         subkegiatan: $scope.item.subkegiatanpanjar.id,
                         subsusbkegiatan: $scope.item.subsubkegiatanpanjar.id,
                         mataanggaran: $scope.item.darirekeningpanjar.kodemataanggaran,
@@ -2953,8 +2964,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     })
             }
             function LoadSPJ(){
-                var tglawal = moment($scope.item.tglawal).format('YYYY-MM-DD HH:mm');
-                var tglakhir = moment($scope.item.tglakhir).format('YYYY-MM-DD HH:mm');
+                var tglawal = moment($scope.item.tglawal).format('YYYY-MM-DD');
+                var tglakhir = moment($scope.item.tglakhir).format('YYYY-MM-DD');
                 
                 medifirstService.get("perencanaan/get-spj?tglAwal="+tglawal+"&tglAkhir="+tglakhir+"&idpegawai="+$scope.idpegawailogin).then(function (e) {
                     DataSPJ = e.data.data
@@ -5017,6 +5028,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 var objSave = {
                     "id": $scope.idrekanan,
                     "namarekanan": $scope.item.namapihakketiga,
+                    "npwp": $scope.item.npwp,
+                    "alamat": $scope.item.alamat,
                 }
                 console.log(objSave);
                 // return
@@ -5252,7 +5265,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     $scope.dispptk = false
                 }
                 
-                $scope.item.tglSPJ =  new Date(moment($scope.now).format('YYYY-MM-DD HH:mm'));
+                $scope.item.tglSPJ =  new Date(moment($scope.now).format('YYYY-MM-DD'));
                 
                 $scope.listSubKegiatanSPJ = [];
                 ListSubKegiatan = [];
@@ -5645,7 +5658,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 var datasave =
                     {
                         norec :  $scope.norecverif,
-                        tglrealisasi:  moment($scope.item.tglSPJ).format('YYYY-MM-DD HH:mm:ss'),
+                        tglrealisasi:  moment($scope.item.tglSPJ).format('YYYY-MM-DD'),
                         status: null,
                         totalbelanja:  $scope.item.jumlahSPJ,
                         rekananfk:  $scope.item.pihakKetigaSPJ.id,
@@ -5802,7 +5815,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.item.subKegiatanSPJ = {id: dataItem.kodesubkegiatan,keterangan: dataItem.keterangansubkegiatan}
                 
 
-                $scope.item.tglSPJ =  new Date(moment($scope.now).format('YYYY-MM-DD HH:mm'));
+                $scope.item.tglSPJ =  new Date(moment($scope.now).format('YYYY-MM-DD'));
 
                 $scope.listSubSubKegiatanSPJ =[{id: dataItem.objectkegiatanfk,keterangan: dataItem.kegiatan}] 
                 $scope.item.subSubKegiatanSPJ =  {id: dataItem.objectkegiatanfk,keterangan: dataItem.kegiatan}
@@ -6315,6 +6328,13 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     $scope.item.sumberPanjar = dataPanjarSelected.sumberpanjar
                     $scope.item.uraianPanjar = dataPanjarSelected.uraian
                     $scope.item.jumlahpanjar = dataPanjarSelected.jumlah
+                    $scope.item.idbill = dataPanjarSelected.idbill
+                    $scope.item.ntpn = dataPanjarSelected.ntpn
+                    $scope.item.idbillpph = dataPanjarSelected.idbillpph
+                    $scope.item.ntpnpph = dataPanjarSelected.ntpnpph
+                    $scope.item.pphpanjar = dataPanjarSelected.pph
+                    $scope.item.ppnpanjar = dataPanjarSelected.ppn
+                    $scope.item.jenispajak = {id: dataPanjarSelected.idpajak, jenispajak: dataPanjarSelected.jenispajak}
                     $scope.item.subkegiatanpanjar = {id: dataPanjarSelected.idsubkegiatan, keterangan: dataPanjarSelected.keterangansubkegiatan}
                     $scope.item.subsubkegiatanpanjar = {id: dataPanjarSelected.idsubsubkegiatan, keterangan: dataPanjarSelected.keterangansubsubkegiatan}
                     $scope.item.darirekeningpanjar = {kodemataanggaran: dataPanjarSelected.kodemataanggaran, namamataanggaran: dataPanjarSelected.namamataanggaran}

@@ -173,6 +173,18 @@ define(['initialize'], function (initialize) {
             
 
             $scope.columnGrid = {
+                toolbar: [
+                    "excel",
+                    "pdf",
+                ],
+                excel: {
+                    fileName: "STSBendaharaPengeluaran.xlsx",
+                    allPages: true,
+                },
+                pdf: {
+                    fileName: "STSBendaharaPengeluaran.pdf",
+                    allPages: true,
+                },
                 sortable: true,
                 selectable: true,
                 pageable: true,
