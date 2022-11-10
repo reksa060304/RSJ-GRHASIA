@@ -3518,6 +3518,10 @@
         {
             "nameDep": "PengkajianAwalKeperawatanRJNonJiwaCtrl",
             "urlDep": "module/EMR/PengkajianAwalKeperawatanRJNonJiwaCtrl"
+        },
+        {
+            "nameDep": "PengkajianAwalKeperawatanRJJiwaDanIntegrasiCtrl",
+            "urlDep": "module/EMR/PengkajianAwalKeperawatanRJJiwaDanIntegrasiCtrl"
         }  
     ]
 }
