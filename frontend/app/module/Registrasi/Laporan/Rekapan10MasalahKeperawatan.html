@@ -81,39 +81,37 @@
             k-data-text-field=" 'namakotakabupaten' " k-filter=" 'contains' " k-data-value-field=" 'id' "
             k-auto-bind="false " k-data-source="listKotaKabupaten" />
     </div> -->
-    <div class="grid_4" style="margin-top:5px">
-        <div class="grid_12">
-            <label c-label item="item" c-label-text="Periode Input"></label>
+    <div class="grid_12" style="margin-top:5px">
+        <div class="grid_6">
+            <label c-label item="item" c-label-text="Periode Input" real></label>
+        </div>
+        <div class="grid_6">
+            <label  c-label item="item" c-label-text="Periode Input" real>Instalasi</label>
         </div>
         <div class="clear"></div>
 
         <div class="grid_12">
             <!-- AwalPeriode -->
-            <div class="grid_6 padDatePicker">
+            <div class="grid_3 padDatePicker">
                 <input style="width: 100%" k-ng-model="item.periodeAwal" kendo-datetimepicker k-max="now"
                     placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
             </div>
 
             <!-- AkhirPeriode -->
-            <div class="grid_6 padDatePicker">
+            <div class="grid_3 padDatePicker">
                 <input style="width: 100%" k-ng-model="item.periodeAkhir" kendo-datetimepicker
                     placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" />
+            </div>
+            <div class="grid_3">
+                <input style="width: 100%;" kendo-combo-box k-ng-model="item.instalasi" k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'" k-auto-bind="false" k-data-source="listInstalasi" />
+            </div>  
+            <div class="grid_3">
+                <button class="btnTemplate1" style="margin-left: 0;" ng-click="SearchData()"> <i
+                        class="fa fa-search"></i>Cari</button>
             </div>
             <div class="clear"></div>
         </div>
     </div>
-    <div class="grid_1" style="margin-top:5px">
-        <div class="grid_12">
-            <label>&nbsp;</label>
-        </div>
-        <div class="clear"></div>
-
-        <div class="grid_12">
-            <button class="btnTemplate1" style="margin-left: 0;" ng-click="SearchData()"> <i
-                    class="fa fa-search"></i>Cari</button>
-        </div>
-    </div>
-
     <div class="grid_12" >
         <!-- <div class="grid_12 headerBox">
             <p>Daftar Pengunjung</p>

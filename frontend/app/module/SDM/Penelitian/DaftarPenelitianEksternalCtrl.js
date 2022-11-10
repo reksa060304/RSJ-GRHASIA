@@ -7,7 +7,6 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.item = {};
             $scope.itemMa = {};
             $scope.isRouteLoading = false;
-            $scope.current = {}
             $scope.now = new Date();
             $scope.item.tahun = moment($scope.now).format('YYYY')
             $scope.item.bulan = moment($scope.now).format('MM')
