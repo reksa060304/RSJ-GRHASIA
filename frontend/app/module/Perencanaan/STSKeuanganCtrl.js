@@ -1,5 +1,6 @@
-define(['initialize'], function (initialize) {
+define(['initialize', 'Configuration'], function (initialize, configuration) {
     'use strict';
+    var baseTransaksi = configuration.baseApiBackend;
     initialize.controller('STSKeuanganCtrl', ['$scope', 'DateHelper', '$http', '$state', 'MedifirstService',
         function ($scope, dateHelper, $http, $state, medifirstService) {
             //Inisial Variable   
@@ -155,6 +156,13 @@ define(['initialize'], function (initialize) {
                 return moment(tanggal).format('YYYY-MM-DD');
             }
 
+            $scope.CetakPDF = function(){
+                var tglAwal = moment($scope.item.tglawal).format('YYYY-MM-DD');
+                var tglAkhir = moment($scope.item.tglakhir).format('YYYY-MM-DD');
+
+                window.open(baseTransaksi + "report/get-cetak-sts-keuangan?tglAwal=" + tglAwal + "&tglAkhir=" + tglAkhir, '_blank');
+            }
+
             var HttpClient = function () {
                 this.get = function (aUrl, aCallback) {
                     var anHttpRequest = new XMLHttpRequest();
@@ -175,14 +183,9 @@ define(['initialize'], function (initialize) {
             $scope.columnGrid = {
                 toolbar: [
                     "excel",
-                    "pdf",
                 ],
                 excel: {
                     fileName: "STSBendaharaPengeluaran.xlsx",
-                    allPages: true,
-                },
-                pdf: {
-                    fileName: "STSBendaharaPengeluaran.pdf",
                     allPages: true,
                 },
                 sortable: true,

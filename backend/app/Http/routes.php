@@ -1498,6 +1498,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('report/get-cetak-rincian-spm', 'Report\ReportController@getCetakRincianSPM');
             Route::get('report/get-cetak-ringkasan-spp', 'Report\ReportController@getCetakRingkasanSPP');
             Route::get('report/get-cetak-rincian-spp', 'Report\ReportController@getCetakRincianSPP');
+            Route::get('report/get-cetak-sts-keuangan', 'Report\ReportController@getCetakSTSKeuangan');
             Route::get('perencanaan/get-datacombo-part-rekanan', 'Perencanaan\PerencanaanController@getDataComboRekananPart');
             Route::get('perencanaan/get-datacombo-part-rekanan-semua', 'Perencanaan\PerencanaanController@getDataComboRekananPartSemua');
             Route::get('perencanaan/get-kel-keempat-part','Perencanaan\PerencanaanController@getKelAnggaranKeempat');

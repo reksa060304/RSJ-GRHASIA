@@ -2449,7 +2449,7 @@ class BendaharaPenerimaanController extends ApiController {
         }
 
         if(isset($request['nosts']) && $request['nosts'] != "" && $request['nosts'] != "undefined" && $request['noclosing'] != 1) {
-            $nosts = " and nosts ilike = ".$request['nosts'];
+            $nosts = " and nosts ilike '%".$request['nosts']."%'";
         }
 
         // $noclosingbatal = DB::select(DB::raw("select sc.noclosing from strukclosing_t sc
