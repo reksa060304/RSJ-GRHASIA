@@ -5841,7 +5841,7 @@ class ReportController extends ApiController{
 
     public function CetakFungsional(Request $request){
         // $tahunjudul = $request['tahunpanjar'];
-        // $tanggalcetak = $this->tanggal_indonesia(date('Y-m-d',strtotime($request['tglcetakpanjar'])));
+        $tanggalcetak = $this->tanggal_indonesia(date('Y-m-d',strtotime($request['tglcetak'])));
         // $bulan = $request['bulanpanjar'];
 
         // $qtahun  = '';
@@ -5879,7 +5879,7 @@ class ReportController extends ApiController{
                 and kmsss.kdprofile = 30 and kmsss.statusenabled = true
                 and ap.kdprofile = 30 and ap.statusenabled = true
                 and kb.kdprofile = 30 and kb.statusenabled = true
-                and km.tahun = '$tahunjudul'
+                and km.tahun = '2022'
                 group by kmsss.keterangan, kmsss.kode, kmsss.div, sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi)
             ) as a group by text, kode, div, bulan
         
@@ -5907,7 +5907,7 @@ class ReportController extends ApiController{
                 and kmsss.kdprofile = 30 and kmsss.statusenabled = true
                 and ap.kdprofile = 30 and ap.statusenabled = true
                 and kb.kdprofile = 30 and kb.statusenabled = true
-                and km.tahun = '$tahunjudul'
+                and km.tahun = '2022'
                 group by kmss.keterangan, kmss.kode, kmss.div, sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi)
             ) as b group by text, kode, div, bulan
         
@@ -5935,7 +5935,7 @@ class ReportController extends ApiController{
                 and kmsss.kdprofile = 30 and kmsss.statusenabled = true
                 and ap.kdprofile = 30 and ap.statusenabled = true
                 and kb.kdprofile = 30 and kb.statusenabled = true
-                and km.tahun = '$tahunjudul'
+                and km.tahun = '2022'
                 group by kms.keterangan, kms.kode, kms.div, sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi)
             ) as c group by text, kode, div, bulan
         
@@ -5963,7 +5963,7 @@ class ReportController extends ApiController{
                 and kmsss.kdprofile = 30 and kmsss.statusenabled = true
                 and ap.kdprofile = 30 and ap.statusenabled = true
                 and kb.kdprofile = 30 and kb.statusenabled = true
-                and km.tahun = '$tahunjudul'
+                and km.tahun = '2022'
                 group by km.keterangan, km.kode, km.div, sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi)
             ) as d group by text, kode, div, bulan
         ) as x
@@ -6124,6 +6124,20 @@ class ReportController extends ApiController{
             group by uraianjasagiro, nojasagiro, extract(month from tglpemasukan)
         ) as x
         group by text, kode, div, subtotal
+
+				union all
+
+						select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
+						from(
+							select 'STS' as text, 'MMMMM' kode, 18 div, 0 subtotal, 
+							case when extract(month from tglsts) = '10' then sum(nilaists::float8) else 0 end as totalbulanlalu,
+							case when extract(month from tglsts) = '11' then sum(nilaists::float8) else 0 end as totalbulanini
+								from stskeuangan_t
+							where kdprofile = 30 and statusenabled = true
+							and extract(month from tglsts) in('10', '11')
+							group by uraiansts, extract(month from tglsts)
+						) as x
+						group by text, kode, div, subtotal
         
         union all
         
@@ -6218,6 +6232,20 @@ class ReportController extends ApiController{
                 group by uraianpajak, extract(month from tglpph)
             ) as x
             group by text, kode, div, subtotal
+
+						union all
+
+						select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
+						from(
+							select 'STS' as text, 'MMMMM' kode, 18 div, 0 subtotal, 
+							case when extract(month from tglsts) = '10' then sum(nilaists::float8) else 0 end as totalbulanlalu,
+							case when extract(month from tglsts) = '11' then sum(nilaists::float8) else 0 end as totalbulanini
+								from stskeuangan_t
+							where kdprofile = 30 and statusenabled = true
+							and extract(month from tglsts) in('10', '11')
+							group by uraiansts, extract(month from tglsts)
+						) as x
+						group by text, kode, div, subtotal
         ) as y
         
         union all 
@@ -6252,12 +6280,26 @@ class ReportController extends ApiController{
             group by uraianjasagiro, nojasagiro, extract(month from tglpemasukan)
         ) as x
         group by text, kode, div, subtotal
+
+				union all
+
+						select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
+						from(
+							select 'STS' as text, 'TTTTT' kode, 12 div, 0 subtotal, 
+							case when extract(month from tglsts) = '10' then sum(nilaists::float8) else 0 end as totalbulanlalu,
+							case when extract(month from tglsts) = '11' then sum(nilaists::float8) else 0 end as totalbulanini
+								from stskeuangan_t
+							where kdprofile = 30 and statusenabled = true
+							and extract(month from tglsts) in('10', '11')
+							group by uraiansts, extract(month from tglsts)
+						) as x
+						group by text, kode, div, subtotal
         
         union all
         
         select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
         from(
-            select 'Penyetoran Pajak' as text, 'TTTTT' kode, 12 div, 0 subtotal, 
+            select 'Penyetoran Pajak' as text, 'UUUUU' kode, 13 div, 0 subtotal, 
             case when extract(month from tglpph) = '10' then sum(ppn+pph) else 0 end as totalbulanlalu,
             case when extract(month from tglpph) = '11' then sum(ppn+pph) else 0 end as totalbulanini
                 from penyetoranpajak_t pp
@@ -6271,7 +6313,7 @@ class ReportController extends ApiController{
         
         select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
         from(
-            select 'PPN' as text, 'TTTTT' kode, 13 div, 0 subtotal, 
+            select 'PPN' as text, 'VVVVV' kode, 14 div, 0 subtotal, 
             case when extract(month from tglpph) = '10' then sum(ppn) else 0 end as totalbulanlalu,
             case when extract(month from tglpph) = '11' then sum(ppn) else 0 end as totalbulanini
                 from penyetoranpajak_t pp
@@ -6283,7 +6325,7 @@ class ReportController extends ApiController{
         
         union all
         
-        select jp.jenispajak as text, 'TTTTT' kode, 13 div, 0 subtotal, 
+        select jp.jenispajak as text, 'WWWWW' kode, 15 div, 0 subtotal, 
         case when extract(month from tglpph) = '10' then sum(pmp.pph) else 0 end as totalbulanlalu,
         case when extract(month from tglpph) = '11' then sum(pmp.pph) else 0 end as totalbulanini
             from pemungutanpajak_t pmp
@@ -6294,7 +6336,7 @@ class ReportController extends ApiController{
         
         union all
         
-        select 'JUMLAH PENGELUARAN:' as text, 'UUUUU' kode, 14 div, 0 subtotal,
+        select 'JUMLAH PENGELUARAN:' as text, 'XXXXX' kode, 16 div, 0 subtotal,
         sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
         from(
             select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
@@ -6314,7 +6356,7 @@ class ReportController extends ApiController{
         
             select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
             from(
-                select 'Jasa Giro' as text, 'SSSSS' kode, 11 div, 0 subtotal, 
+                select 'Jasa Giro' as text, 'YYYYY' kode, 17 div, 0 subtotal, 
                 case when extract(month from tglpemasukan) = '10' then sum(jumlahpemasukan) else 0 end as totalbulanlalu,
                 case when extract(month from tglpemasukan) = '11' then sum(jumlahpemasukan) else 0 end as totalbulanini
                     from jasagiro_t
@@ -6323,12 +6365,26 @@ class ReportController extends ApiController{
                 group by uraianjasagiro, nojasagiro, extract(month from tglpemasukan)
             ) as x
             group by text, kode, div, subtotal
+
+						union all
+
+						select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
+						from(
+							select 'STS' as text, 'ZZZZZ' kode, 18 div, 0 subtotal, 
+							case when extract(month from tglsts) = '10' then sum(nilaists::float8) else 0 end as totalbulanlalu,
+							case when extract(month from tglsts) = '11' then sum(nilaists::float8) else 0 end as totalbulanini
+								from stskeuangan_t
+							where kdprofile = 30 and statusenabled = true
+							and extract(month from tglsts) in('10', '11')
+							group by uraiansts, extract(month from tglsts)
+						) as x
+						group by text, kode, div, subtotal
         
             union all
         
             select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
             from(
-                select 'Penyetoran Pajak' as text, 'TTTTT' kode, 12 div, 0 subtotal, 
+                select 'Penyetoran Pajak' as text, 'ZZZZZZ' kode, 13 div, 0 subtotal, 
                 case when extract(month from tglpph) = '10' then sum(ppn+pph) else 0 end as totalbulanlalu,
                 case when extract(month from tglpph) = '11' then sum(ppn+pph) else 0 end as totalbulanini
                     from penyetoranpajak_t pp
@@ -6345,7 +6401,7 @@ class ReportController extends ApiController{
 
         $pageWidth = 950;
         
-        return view('report.keuangan.cetakfungsional',compact('data', 'pageWidth'));
+        return view('report.keuangan.cetakfungsional',compact('data', 'pageWidth', 'tanggalcetak'));
     }
 
     public function CetakPerJenisAnggaranSebelumSesudah(Request $request){
