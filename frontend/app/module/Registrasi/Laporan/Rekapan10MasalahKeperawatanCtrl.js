@@ -23,6 +23,10 @@ define(['initialize'], function (initialize) {
                 pageSizes: true,
                 buttonCount: 5
             }
+            $scope.listInstalasi = [
+                {text:'Rawat Jalan', 'value': '1'},
+                {text:'Rawat Inap', 'value': '2'}
+            ]
             var kelompokUserLogin = ModelItem.getStatusUser()
             if (kelompokUserLogin == 'radiologi' || kelompokUserLogin == 'laborat') {
                 $scope.isPenunjang = true
@@ -56,7 +60,7 @@ define(['initialize'], function (initialize) {
                     $scope.item.periodeAkhir = moment($scope.now).format('YYYY-MM-DD 23:59');
                 }
             }
-            loadData()
+            // loadData()
             $scope.SearchData = function () {
                 loadData()
             }
@@ -69,13 +73,14 @@ define(['initialize'], function (initialize) {
             $scope.SearchTglLahir = function () {
                 loadData()
             }
-            loadData()
+            // loadData()
 
             function loadData() {
 
                 $scope.isRouteLoading = true;
                 var tglAwal = moment($scope.item.periodeAwal).format('DD-MMM-YYYY HH:mm');
                 var tglAkhir = moment($scope.item.periodeAkhir).format('DD-MMM-YYYY HH:mm');
+                var instalasi = $scope.item.instalasi.value
 
                 var rm = ""
                 if ($scope.item.noRM != undefined) {
@@ -104,7 +109,8 @@ define(['initialize'], function (initialize) {
 
                 medifirstService.get("registrasi/laporan/get-data-masalah-Perawat?" +
                         "tglAwal=" + tglAwal +
-                        "&tglAkhir=" + tglAkhir)
+                        "&tglAkhir=" + tglAkhir +
+                        "&instalasi=" + instalasi)
                     .then(function (data) {
                         $scope.isRouteLoading = false;
                         for (var i = 0; i < data.data.data.length; i++) {
@@ -166,13 +172,13 @@ define(['initialize'], function (initialize) {
                         "width": "30px",
                     },
                     {
-                        "field": "caption",
+                        "field": "masalahkeperawatan",
                         "title": "Masalah Keperawatan",
                         "width": "100px",
                         // "template": "<span class='style-center'>#: nocm #</span>"
                     },
                     {
-                        "field": "count",
+                        "field": "jumlah",
                         "title": "Jumlah",
                         "width": "50px",
                         // "template": "<span class='style-left'>{{formatTanggal('#: tglregistrasi #')}}</span>"

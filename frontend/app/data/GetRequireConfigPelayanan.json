@@ -3522,6 +3522,10 @@
         {
             "nameDep": "PengkajianAwalKeperawatanRJJiwaDanIntegrasiCtrl",
             "urlDep": "module/EMR/PengkajianAwalKeperawatanRJJiwaDanIntegrasiCtrl"
-        }  
+        },
+        {
+            "nameDep": "AsuhanKeperawatanGigiMulutCtrl",
+            "urlDep": "module/EMR/AsuhanKeperawatanGigiMulutCtrl"
+        }    
     ]
 }

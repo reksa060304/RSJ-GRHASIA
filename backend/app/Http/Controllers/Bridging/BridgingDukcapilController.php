@@ -35,21 +35,29 @@ class BridgingDukcapilController extends ApiController
     }
     public function getDataMasalahKeperawatan(Request $request)
     {
-        $data = \DB::select(DB::raw(
-            "SELECT epd.emrdfk, emrd.caption, count(epd.emrdfk) FROM emrpasiend_t epd 
-            INNER JOIN emrd_t emrd on emrd.id = epd.emrdfk
-            INNER JOIN emrpasien_t ep on ep.noemr = epd.emrpasienfk
-            inner JOIN antrianpasiendiperiksa_t apd on apd.norec = ep.norec_apd
-            inner JOIN pasiendaftar_t pd on pd.norec = apd.noregistrasifk
-            where epd.emrdfk BETWEEN 301100 and 301157 
-            and epd.statusenabled = true and epd.kdprofile=30 
-            and ep.statusenabled = true and ep.kdprofile=30
-            and apd.statusenabled = true and apd.kdprofile=30
-            and pd.statusenabled = true and pd.kdprofile=30
-            and epd.tgl between '$request[tglAwal]' and '$request[tglAkhir]'
-            GROUP BY epd.emrdfk, emrd.caption
-            ORDER BY count desc"
-        ));
+        $data = '';
+        $tglAkhir = $request['tglAkhir'];
+        if($request['instalasi']=='1'){
+            $data=\DB::select(DB::raw(
+                "SELECT dkm.diagnosakeperawatan as masalahkeperawatan, count(dkt.norec) as jumlah from diagnosakep_t dkt
+                INNER JOIN diagnosakep_m dkm on dkm.id = dkt.objectdiagnosakepfk
+                where dkt.statusenabled=true and dkt.kdprofile=30 and dkt.tglinput BETWEEN '$request[tglAwal]' and '$tglAkhir'
+                
+                group by dkm.diagnosakeperawatan
+                ORDER by count(dkt.norec) desc;"
+            ));
+        }else{
+            $data = \DB::select(DB::raw(
+                "SELECT ed.caption as masalahkeperawatan, count(emrpd.value) as jumlah FROM emrpasiend_t emrpd
+                inner join emrd_t ed on ed.id = emrpd.emrdfk 
+                where 
+                emrpd.statusenabled = true and emrpd.kdprofile = 30
+                emrpd.tgl between '$request[tglAwal]' and '$tglAkhir' and emrpd.emrdfk in(3015887,3015884,3015881,3015878,3015875,3015872,3015869,3015866,3015863,3015860,3015857,3015854,3015851,3015848,3015845,3015842,3015839,3015836,3015833,3015830,3015827,3015824,3015821,3015818,3015815,3015812,3015809,3015806,3015803,3015800,3015797,3015794,3015791,3015788,3015785,3015782,3015779,3015776,3015773,3015770,3015767,3015764,3015761,3015758,3015755,3015752,3015749,3015746,3015743,3015740,3015737,3015734,3015731,3015728,3015725,3015722,3015719,3015716)
+                group by ed.caption
+                ORDER BY count(emrpd.value) desc"
+            ));
+        }
+        
         $result = array(
             "data"=> $data,
             'as'=> 'Fizy'
