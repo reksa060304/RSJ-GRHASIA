@@ -2427,6 +2427,39 @@ class ReportController extends ApiController{
         return view('report.spj.cetakrincianspp',compact('pageWidth', 'detail', 'terbilang', 'tgl', 'permen'));
     }
 
+    public function getCetakSTSKeuangan(Request $request){
+        $tglAwal = $request['tglAwal'];
+        $tglAkhir = $request['tglAkhir'];
+
+        $periodeawal = $this->tanggal_indonesia(date('Y-m-d',strtotime($tglAwal)));
+        $periodeakhir = $this->tanggal_indonesia(date('Y-m-d',strtotime($tglAkhir)));
+
+        $detail = DB::select(DB::raw("
+        select  sr.nosts, sr.objectbkufk, sr.norec, sr.uraiansts, sr.tglsts, sr.nilaists, ma.id idmataanggaran, ma.kodemataanggaran, ma.namamataanggaran,
+        ka.id idsubsubkegiatan, ka.keterangan keterangansubsubkegiatan, dp0.id idsubkegiatan, dp0.keterangan keterangansubkegiatan, 
+        ap.id idsumberdana, ap.asalproduk, ka.kode || ' - ' || ka.keterangan as subsubkegiatan, dp0.kode || ' - ' || dp0.keterangan as subkegiatan,
+        ma.kodemataanggaran || ' - ' || ma.namamataanggaran mataanggaran
+        from stskeuangan_t sr
+        inner JOIN kegiatananggaran_m ka on ka.id=sr.objectsubsubkegiatanfk
+        inner join kegiatananggaran_m as dp0 on dp0.id=sr.objectsubkegiatanfk
+        inner JOIN mataanggaran_m ma on ma.id=sr.objectmataanggaranfk
+        inner JOIN asalproduk_m ap on ap.id=sr.objectsumberdanafk
+        where sr.statusenabled = true
+        and sr.tglsts between '$tglAwal' and '$tglAkhir'
+        and ka.kdprofile = 30 and ka.statusenabled=true
+        and dp0.kdprofile = 30 and dp0.statusenabled=true
+            ")
+        );
+
+        $result = array(
+            'data' => $detail,
+            'message' => '@epic',
+        );
+
+        $pageWidth = 850;
+        return view('report.spj.cetakstskeuangan',compact('pageWidth', 'detail', 'periodeawal', 'periodeakhir'));
+    }
+
     public function getCetakPertanggungjawabanSPM(Request $request){
         $norec = $request['norec'];
         $terbilang = $request['terbilang'];
@@ -5040,7 +5073,7 @@ class ReportController extends ApiController{
             $periode = 'NOVEMBER';
         }
         else if($bulan == '12'){
-            $periode = 'DDESEMBER';
+            $periode = 'DESEMBER';
         }
 
         $qtahun  = '';
@@ -5087,11 +5120,178 @@ class ReportController extends ApiController{
 
     public function CetakSP3BP(Request $request){
 
-        $data = DB::select(DB::raw(""));
+        $tahun = $request['tahun'];
+        $tanggalcetak = $this->tanggal_indonesia(date('Y-m-d',strtotime($request['tglcetak'])));
 
-        $pageWidth = 950;
+        $bulan = $request['bulan'];
+
+        $tglakhir = DB::select(DB::raw("SELECT (date_trunc('month', '$tahun-$bulan-01'::date) + interval '1 month' - interval '1 day')::date
+        AS end_of_month;"));
+
+        $date = $tglakhir[0]->end_of_month;
+
+        $tanggal = $this->tanggal_indonesia(date('Y-m-d',strtotime($date)));
+
+        if($bulan == '01'){
+            $periode = 'Januari';
+        }
+        else if($bulan == '02'){
+            $periode = 'Februari';
+        }
+        else if($bulan == '03'){
+            $periode = 'Maret';
+        }
+        else if($bulan == '04'){
+            $periode = 'April';
+        }
+        else if($bulan == '05'){
+            $periode = 'Mei';
+        }
+        else if($bulan == '06'){
+            $periode = 'Juni';
+        }
+        else if($bulan == '07'){
+            $periode = 'Juli';
+        }
+        else if($bulan == '08'){
+            $periode = 'Agustus';
+        }
+        else if($bulan == '09'){
+            $periode = 'September';
+        }
+        else if($bulan == '10'){
+            $periode = 'Oktober';
+        }
+        else if($bulan == '11'){
+            $periode = 'November';
+        }
+        else if($bulan == '12'){
+            $periode = 'Desember';
+        }
+
+        $penerimaan = DB::select(DB::raw("select sum(jumlahpenerimaan) jumlahpenerimaan
+        from(
+            select sum(stsd.kolom2) jumlahpenerimaan from
+            surattandasetoran_t sts
+            inner join surattandasetorandetail_t stsd on stsd.objectstsfk = sts.nosts
+            inner join ststosck_t as ssc on sts.norec = ssc.objectstsfk
+            inner join strukclosingkasir_t as sck on ssc.objectsckfk = sck.norec
+            inner join strukclosing_t as sc on sc.norec = sck.noclosingfk
+            inner join strukhistori_t sh on sh.noclosing = sc.norec
+            where sts.statusenabled = true
+            and sts.kdprofile = 30
+            and stsd.statusenabled = true
+            and stsd.kdprofile = 30
+            and (sc.statusenabled = true or sc.statusenabled is null)
+            and sc.kdprofile = 30
+            and ssc.statusenabled = true
+            and ssc.kdprofile = 30
+            and sh.statusenabled = true
+            and stsd.uraian = 'JUMLAH'
+            and extract(month from sts.tglpenerimaan) = '$bulan'
+            and extract(year from sts.tglpenerimaan) = '$tahun'
+        
+            union all
+        
+            select sum(totalsetujui) jumlahpenerimaan
+            from rekapklaimbpjs_t
+            where statusenabled = true
+            and kdprofile = 30
+            and extract(month from tglbayar) = '$bulan'
+            and extract(year from tglbayar) = '$tahun'
+        ) as x"));
+
+        $belanja = DB::select(DB::raw("select map3.kode || '.' || map2.kode || '.' || map1.kode || '.' || map.kode as kodepermendagri,
+        sum(sr.totalbelanja) jumlahbelanja
+        from strukrealisasi_t sr
+        inner JOIN kegiatananggaran_m ka on ka.id=sr.objectkegiatanfk
+        inner join kegiatananggaran_m as dp0 on ka.kode ilike dp0.kode || '%' and dp0.div = 3
+        inner JOIN mataanggaran_m ma on ma.id=sr.objectmataanggaranfk
+        inner join mataanggaranpermen_m map on map.id = ma.mataanggaranpermenfk
+        inner join mataanggaranpermen_m map1 on map1.id = map.mataanggaranpermenfk and map1.div = 4
+        inner join mataanggaranpermen_m map2 on map2.id = map1.mataanggaranpermenfk and map2.div = 3
+        inner join mataanggaranpermen_m map3 on map3.id = map2.mataanggaranpermenfk and map3.div = 2
+        where sr.statusenabled =true
+        and sr.kdprofile = 30
+        and ka.statusenabled =true
+        and ka.kdprofile = 30
+        and dp0.statusenabled =true
+        and dp0.kdprofile = 30
+        and ma.statusenabled =true
+        and ma.kdprofile = 30
+        and map.statusenabled =true
+        and map.kdprofile = 30
+        and extract(month from sr.tglrealisasi) = '$bulan'
+        and extract(year from sr.tglrealisasi) = '$tahun'
+        group by map3.kode || '.' || map2.kode || '.' || map1.kode || '.' || map.kode"));
+
+        $totalbelanja = 0;
+        foreach($belanja as $bl){
+            $totalbelanja += $bl->jumlahbelanja;
+        }
+
+        $penerimaanawal = DB::select(DB::raw("select coalesce(sum(jumlahpenerimaan),0) jumlahpenerimaan
+        from(
+            select coalesce(sum(stsd.kolom2),0) jumlahpenerimaan from
+            surattandasetoran_t sts
+            inner join surattandasetorandetail_t stsd on stsd.objectstsfk = sts.nosts
+            inner join ststosck_t as ssc on sts.norec = ssc.objectstsfk
+            inner join strukclosingkasir_t as sck on ssc.objectsckfk = sck.norec
+            inner join strukclosing_t as sc on sc.norec = sck.noclosingfk
+            inner join strukhistori_t sh on sh.noclosing = sc.norec
+            where sts.statusenabled = true
+            and sts.kdprofile = 30
+            and stsd.statusenabled = true
+            and stsd.kdprofile = 30
+            and (sc.statusenabled = true or sc.statusenabled is null)
+            and sc.kdprofile = 30
+            and ssc.statusenabled = true
+            and ssc.kdprofile = 30
+            and sh.statusenabled = true
+            and stsd.uraian = 'JUMLAH'
+            and extract(month from sts.tglpenerimaan) < '$bulan'
+            and extract(year from sts.tglpenerimaan) = '$tahun'
+        
+            union all
+        
+            select coalesce(sum(totalsetujui),0) jumlahpenerimaan
+            from rekapklaimbpjs_t
+            where statusenabled = true
+            and kdprofile = 30
+            and extract(month from tglbayar) < '$bulan'
+            and extract(year from tglbayar) = '$tahun'
+        ) as x"));
+
+        $belanjaawal = DB::select(DB::raw("select coalesce(sum(sr.totalbelanja), 0) jumlahbelanja
+        from strukrealisasi_t sr
+        inner JOIN kegiatananggaran_m ka on ka.id=sr.objectkegiatanfk
+        inner join kegiatananggaran_m as dp0 on ka.kode ilike dp0.kode || '%' and dp0.div = 3
+        inner JOIN mataanggaran_m ma on ma.id=sr.objectmataanggaranfk
+        inner join mataanggaranpermen_m map on map.id = ma.mataanggaranpermenfk
+        inner join mataanggaranpermen_m map1 on map1.id = map.mataanggaranpermenfk and map1.div = 4
+        inner join mataanggaranpermen_m map2 on map2.id = map1.mataanggaranpermenfk and map2.div = 3
+        inner join mataanggaranpermen_m map3 on map3.id = map2.mataanggaranpermenfk and map3.div = 2
+        where sr.statusenabled =true
+        and sr.kdprofile = 30
+        and ka.statusenabled =true
+        and ka.kdprofile = 30
+        and dp0.statusenabled =true
+        and dp0.kdprofile = 30
+        and ma.statusenabled =true
+        and ma.kdprofile = 30
+        and map.statusenabled =true
+        and map.kdprofile = 30
+        and extract(month from sr.tglrealisasi) < '$bulan'
+        and extract(year from sr.tglrealisasi) = '$tahun'"));
+
+        $saldoawal = 0;
+        if($bulan != '01'){
+            $saldoawal = $penerimaanawal[0]->jumlahpenerimaan - $belanjaawal[0]->jumlahbelanja;
+        }
+
+        $pageWidth = 800;
         //return $this->respond($result);
-        return view('report.keuangan.cetaksp3bp',compact('pageWidth'));
+        return view('report.keuangan.cetaksp3bp',compact('pageWidth', 'penerimaan', 'belanja', 'totalbelanja', 'saldoawal', 'tanggalcetak', 'periode', 'tahun', 'tanggal'));
     }
 
     public function CetakRO(Request $request){
@@ -5216,7 +5416,7 @@ class ReportController extends ApiController{
             $periode = 'NOVEMBER';
         }
         else if($bulan == '12'){
-            $periode = 'DDESEMBER';
+            $periode = 'DESEMBER';
         }
 
         $qtahun  = '';
@@ -5499,7 +5699,7 @@ class ReportController extends ApiController{
             $periode = 'NOVEMBER';
         }
         else if($bulan == '12'){
-            $periode = 'DDESEMBER';
+            $periode = 'DESEMBER';
         }
 
         $qtahun  = '';
@@ -5584,7 +5784,7 @@ class ReportController extends ApiController{
             $periode = 'NOVEMBER';
         }
         else if($bulan == '12'){
-            $periode = 'DDESEMBER';
+            $periode = 'DESEMBER';
         }
 
         $qtahun  = '';
