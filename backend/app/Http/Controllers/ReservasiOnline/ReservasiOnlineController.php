@@ -3881,128 +3881,99 @@ class ReservasiOnlineController extends ApiController
                 ->where('apr.statusenabled',true)
                 ->get();
     
-            $ruangan = \DB::table('jadwaldokter_m as slot')
+            $ruangan = \DB::table('slottingonline_m as slot')
                 ->join('ruangan_m as ru', 'slot.objectruanganfk', '=', 'ru.id')
                 ->join('pegawai_m as pg', 'slot.objectpegawaifk', '=', 'pg.id')
-                ->select('ru.id', 'ru.namaruangan', 'ru.objectdepartemenfk', 'slot.jammulai as jambuka', 'slot.jamakhir as jamtutup',
-                    'slot.quota','pg.namalengkap as dokter','slot.hari','slot.objectpegawaifk','pg.namalengkap',
-                    DB::raw("( EXTRACT ( EPOCH FROM slot.jamakhir ) - EXTRACT ( EPOCH FROM slot.jammulai ) ) / 3600 AS totaljam "))
-                ->where('ru.statusenabled', true)
+                ->select('ru.id as idruangan','slot.id', 'ru.namaruangan', 'ru.objectdepartemenfk', 'slot.jambuka', 'slot.jamtutup',
+                    'slot.quota','pg.namalengkap','slot.objectpegawaifk','slot.hari',
+                    DB::raw("extract(hour from slot.jamtutup) -extract(hour from slot.jambuka)as totaljam"))
+                // DB::raw("datepart(hour,slot.jamtutup) -datepart(hour, slot.jambuka)as totaljam"))
+                ->where('pg.statusenabled', true)
                 ->where('ru.statusenabled', true)
                 ->where('ru.id', $request['id_ruangan'])
                 ->where('slot.objectpegawaifk', $request['id_dokter'])
                 ->where('slot.statusenabled', true)
                 ->get();
-          
+    
             if(count($ruangan) == 0){
                 $result = array(
-                    'message'=>'Slot tidak ada/belum dijadwalkan',
+                    'message'=> 'Slot tidak ada/belum dijadwalkan',
                     'code'=> 201,
                 );
                 return $this->respond($result);
              }   
-             $data10 = null;
-             $hari = $this->hari_ini($request['tgl']);
-             foreach($ruangan as $ruu){
-                $now = explode(', ',$ruu->hari);
-                for ($i2 = count($now) - 1; $i2 >= 0; $i2--) {
-                   if(strtoupper($now[$i2]) == strtoupper($hari)){
-                       $data10 = $ruu;
-                       break;
-                   }
-                } 
-             }
-            //  dd($data10);
-            //  $now = explode(', ',$ruangan->hari);
-          
-            //  for ($i2 = count($now) - 1; $i2 >= 0; $i2--) {
-            //     if(strtoupper($now[$i2]) == strtoupper($hari)){
-            //         $data10 = $ruangan;
-            //         break;
-            //     }
-            //  }   
-             if(empty($data10)){
-                $result = array(
-                    'message'=> 'Jadwal Dokter tidak ditemukan',
-                    'status'=> 201,
-                );
-                return $this->respond($result);
-             }   
-       
-             $begin = new Carbon($data10->jambuka);
-             $jamBuka = $begin->format('H:i');
-             $end = new Carbon($data10->jamtutup);
-             $jamTutup = $end->format('H:i');
-             $quota =(float)$data10->quota;
-             if($quota == 0){
-                $result = array(
-                    'message'=> 'Kuota belum tersedia',
-                    'status'=> 201,
-                );
-                return $this->respond($result);
-             }
-             $waktuPerorang = ((float)$data10->totaljam / (float)$data10->quota) * 60;
 
-             $i =0;
-             $reservasi = [];
-             foreach ($dataReservasi as $items){
-                 $jamUse =  new Carbon($items->tanggalreservasi);
-                 $reservasi [] = array(
-                     'jamreservasi' => $jamUse->format('H:i')
-                 );
-             }
-          
-             $intervals = [];
-             $begin = new \DateTime($jamBuka);
-             $end = new \DateTime($jamTutup);
-             $interval = \DateInterval::createFromDateString(floor($waktuPerorang).' minutes');
-       
-             $period = new \DatePeriod($begin, $interval, $end);
-      
-             foreach ($period as $dt) {
-                 $intervals[] = array(
-                     'jam'=>  $dt->format("H:i"),
-                     'terpakai'=> false
-                 );
-             }
-           
-             if(count($intervals) == 0){
-                 $result = array(
-                    'message'=> 'Slotting tidak ditemukan',
-                    'status'=> 201,
-                 );
-                 return $this->respond($result);
-             }
-           
-             if (count($reservasi) > 0) {
-                 for ( $j = count($reservasi) - 1; $j >= 0; $j--) {
-                     for ( $k =count($intervals)- 1; $k >= 0; $k--) {
-                         if ($intervals[$k]['jam'] == $reservasi[$j]['jamreservasi']) {
-                             // $intervals[$k]['terpakai'] = true;
-                             array_splice($intervals,$k,1);
-                         }
+             $data10 =[];
+             $hari = $this->hari_ini($request['tgl']);
+             for ($i = count($ruangan) - 1; $i >= 0; $i--) {
+                 $now = explode(', ',$ruangan[$i]->hari);
+                 for ($i2 = count($now) - 1; $i2 >= 0; $i2--) {
+                     if(strtoupper($now[$i2]) == strtoupper($hari)){
+                           $jamawal =   date('H:i',strtotime($ruangan[$i]->jambuka)) ; 
+                           $jamakhir =   date('H:i',strtotime($ruangan[$i]->jamtutup)) ; 
+                           $data10 [] = array(
+                               'id'=> $ruangan[$i]-> objectpegawaifk,
+                               'namalengkap'=> $ruangan[$i]-> namalengkap,
+                               'jadwal'=>  strtoupper($hari),
+                               'jam'=> $jamawal . ' - '.$jamakhir,
+                               'jamawal'=> $request['tgl'] . ' '.$jamawal,
+                               'jamakhir'=> $request['tgl'] . ' '.$jamakhir,
+                               'quota'=> $ruangan[$i]->quota,
+                               'sisaquota'=> $ruangan[$i]->quota,
+                           );
                      }
                  }
              }
-             $slot  = array(
-                 'id_ruangan' => $data10->id,
-                 'namaruangan' => $data10->namaruangan,
-                 'id_dokter' => $data10->objectpegawaifk,
-                 'namalengkap' => $data10->namalengkap,
-                 'hari' => $hari,
-                 'tgl' =>  $request['tgl'],
-                 'jambuka' => $jamBuka,
-                 'jamtutup' => $jamTutup,
-                 'totaljam' => $data10->totaljam,
-                 'quota' => (float)$quota,
-                 'interval' => $waktuPerorang,
+     
+             $reservasi = [];
+         
+             foreach ($dataReservasi as $items){
+                 $jamUse =  new Carbon($items->tanggalreservasi);
+                 $reservasi [] = array(
+                     'jamreservasi' => $jamUse->format('Y-m-d H:i')
+                 );
+             }
+    
+             if (count($reservasi) > 0) {
+                for ( $j = count($reservasi) - 1; $j >= 0; $j--) {
+                    for ( $k =count($data10)- 1; $k >= 0; $k--) {
+                        if ($reservasi[$j]['jamreservasi'] >= $data10[$k]['jamawal'] 
+                                 && $reservasi[$j]['jamreservasi']  < $data10[$k]['jamakhir'] ) {
+                            $data10[$k]['sisaquota'] =$data10[$k]['sisaquota']  -1;
+                            // array_splice($intervals,$k,1);
+                        }
+                    }
+                }
+            }
+   //          $d['a']= $data10;
+   //            $d['b']= $reservasi;
+   // dd($d);
+            for ( $k =count($data10)- 1; $k >= 0; $k--) {
+                if ($data10[$k]['sisaquota']  <=0 ){
+                      array_splice($data10,$k,1);
+                }
+            }
+        
+            //  $slot  = array(
+            //      'id_ruangan' => $data10->id,
+            //      'namaruangan' => $data10->namaruangan,
+            //      'id_dokter' => $data10->objectpegawaifk,
+            //      'namalengkap' => $data10->namalengkap,
+            //      'hari' => $hari,
+            //      'tgl' =>  $request['tgl'],
+            //      'jambuka' => $jamBuka,
+            //      'jamtutup' => $jamTutup,
+            //      'totaljam' => $data10->totaljam,
+            //      'quota' => (float)$quota,
+            //      'interval' => $waktuPerorang,
               
-             );
+            //  );
             $result = array(
                 'message'=>'success',
                 'status'=> 200,
-                'slot' => $slot,
-                'listjam'=>$intervals,
+                'slot' => $ruangan,
+                'listjam'=> $data10,
+                'count_reservasi' => count($reservasi),
                 'reservasi' => $reservasi,
             );
    
