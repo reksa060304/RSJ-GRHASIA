@@ -411,7 +411,18 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }
 
             $scope.CetakFungsional = function(){
-                window.open(baseTransaksi + "report/get-cetak-fungsional", '_blank');
+
+                var tglcetakfungsional = ""
+                if ($scope.item.tglcetakfungsional != undefined){
+                    tglcetakfungsional = moment($scope.item.tglcetakfungsional).format('YYYY-MM-DD')
+                }
+
+                var tglbkufungsional = ""
+                if ($scope.item.tglbkufungsional != undefined){
+                    tglbkufungsional = moment($scope.item.tglbkufungsional).format('YYYY-MM-DD')
+                }
+
+                window.open(baseTransaksi + "report/get-cetak-fungsional?tglcetak=" + tglcetakfungsional + "&tglbku=" + tglbkufungsional, '_blank');
             }
 
             $scope.CetakRO = function(){
