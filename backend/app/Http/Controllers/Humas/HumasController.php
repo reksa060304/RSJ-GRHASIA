@@ -474,7 +474,7 @@ class HumasController extends ApiController
             // ->leftJoin('hari_m AS hr1','hr1.id','=','jd.objecthariakhir')
             ->select(DB::raw("jd.id as idjadwalpegawai,jd.objectruanganfk,ru.namaruangan,
                               jd.objectpegawaifk,pg.namalengkap,pg.nosip,pg.nostr,pg.noidentitas as nik,
-                              jd.jammulai,jd.jamakhir,jd.keterangan, jd.hari,jd.quota"))
+                              jd.jammulai,jd.jamakhir,jd.keterangan, jd.hari"))
             ->where('jd.kdprofile', $idProfile)
              ->where('ru.statusenabled',true)
               ->where('pg.statusenabled', true)
@@ -1920,21 +1920,20 @@ class HumasController extends ApiController
                 $dataJadwalDokter->statusenabled = true;
                 $dataJadwalDokter->id = $idDK + 1;
                 $dataJadwalDokter->norec = $norecDK;
-            
+                $dataJadwalDokter->objectpegawaifk = $request['objectpegawaifk'];
                 $dataJadwalDokter->tglinput = $tglAyeuna;
             }else{
                 $dataJadwalDokter =  JadwalDokter::where('id',$request['idjadwal'])->where('kdprofile', $idProfile)->first();
             }
-            $dataJadwalDokter->objectpegawaifk = $request['objectpegawaifk'];
-            $dataJadwalDokter->objectruanganfk = $request['objectruanganfk'];
-            $dataJadwalDokter->hari = $request['hari'];
-            $dataJadwalDokter->quota = isset($request['quota'])?$request['quota']:null;
-            // $dataJadwalDokter->objecthariakhir = $request['objecthariakhir'];
-            $dataJadwalDokter->jammulai = $request['jammulai'];
-            $dataJadwalDokter->jamakhir = $request['jamakhir'];
-            $dataJadwalDokter->keterangan = $request['keterangan'];
-            $dataJadwalDokter->save();
-            $idPegawai = $dataJadwalDokter->id;
+                $dataJadwalDokter->objectruanganfk = $request['objectruanganfk'];
+                $dataJadwalDokter->hari = $request['hari'];
+                // $dataJadwalDokter->objecthariawal = $request['objecthariawal'];
+                // $dataJadwalDokter->objecthariakhir = $request['objecthariakhir'];
+                $dataJadwalDokter->jammulai = $request['jammulai'];
+                $dataJadwalDokter->jamakhir = $request['jamakhir'];
+                $dataJadwalDokter->keterangan = $request['keterangan'];
+                $dataJadwalDokter->save();
+                $idPegawai = $dataJadwalDokter->id;
 
            //## Logging User
             $newId = LoggingUser::max('id');
