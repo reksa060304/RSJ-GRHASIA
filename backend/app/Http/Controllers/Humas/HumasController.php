@@ -474,7 +474,7 @@ class HumasController extends ApiController
             // ->leftJoin('hari_m AS hr1','hr1.id','=','jd.objecthariakhir')
             ->select(DB::raw("jd.id as idjadwalpegawai,jd.objectruanganfk,ru.namaruangan,
                               jd.objectpegawaifk,pg.namalengkap,pg.nosip,pg.nostr,pg.noidentitas as nik,
-                              jd.jammulai,jd.jamakhir,jd.keterangan, jd.hari"))
+                              jd.jammulai,jd.jamakhir,jd.keterangan, jd.hari,jd.quota"))
             ->where('jd.kdprofile', $idProfile)
              ->where('ru.statusenabled',true)
               ->where('pg.statusenabled', true)
