@@ -3984,7 +3984,7 @@ class ReportController extends ApiController{
                                             SELECT TO_CHAR(months, 'YYYY-MM') AS dateMonth
                                             FROM generate_series(
                                                     '$tahun-01-01' :: DATE,
-                                                    '$tahun-$bulan-31' :: DATE ,
+                                                    '$tahun-$bulan-28' :: DATE ,
                                                     '1 month'
                                             ) AS months
                                         )
@@ -4027,7 +4027,7 @@ class ReportController extends ApiController{
                                         SELECT TO_CHAR(months, 'YYYY-MM') AS dateMonth
                                         FROM generate_series(
                                                 '$tahun-01-01' :: DATE,
-                                                '$tahun-$bulan-31' :: DATE ,
+                                                '$tahun-$bulan-28' :: DATE ,
                                                 '1 month'
                                         ) AS months
                                     )
@@ -4049,7 +4049,7 @@ class ReportController extends ApiController{
     public function CetakLO(Request $request){
         $tahun = $request['tahun'];
 
-        $lalu = DB::select(DB::raw("SELECT extract('year' from(date '$tahun-12-31' - interval '1 year')) as tahun;"));
+        $lalu = DB::select(DB::raw("SELECT extract('year' from(date '$tahun-12-28' - interval '1 year')) as tahun;"));
 
         $tahunlalu = $lalu[0]->tahun;
 
@@ -4319,7 +4319,7 @@ class ReportController extends ApiController{
     public function CetakLRA(Request $request){
         $tahun = $request['tahun'];
 
-        $lalu = DB::select(DB::raw("SELECT extract('year' from(date '$tahun-12-31' - interval '1 year')) as tahun;"));
+        $lalu = DB::select(DB::raw("SELECT extract('year' from(date '$tahun-12-28' - interval '1 year')) as tahun;"));
 
         $tahunlalu = $lalu[0]->tahun;
 
@@ -4642,7 +4642,7 @@ class ReportController extends ApiController{
     public function CetakNeraca(Request $request){
         $tahun = $request['tahun'];
 
-        $lalu = DB::select(DB::raw("SELECT extract('year' from(date '$tahun-12-31' - interval '1 year')) as tahun;"));
+        $lalu = DB::select(DB::raw("SELECT extract('year' from(date '$tahun-12-28' - interval '1 year')) as tahun;"));
 
         $tahunlalu = $lalu[0]->tahun;
 
