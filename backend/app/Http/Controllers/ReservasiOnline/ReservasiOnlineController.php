@@ -416,9 +416,11 @@ class ReservasiOnlineController extends ApiController
 
 
         if(isset($request['nocmNama']) && $request['nocmNama'] != "" && $request['nocmNama'] != "undefined" && $request['nocmNama'] != "null") {
-            $data =$data->where('pm.nocm', $request['nocmNama'])
-//                     ->Orwhere('pm.noidentitas', $request['nocmNama'])
-                 -> Orwhere('apr.namapasien', 'ilike','%'.$request['nocmNama'].'%');
+            $data =
+
+            $data->whereRaw("(pm.nocm  = '$request[nocmNama]' or apr.namapasien ilike '%$request[nocmNama]%')");
+                //  $data->where('pm.nocm', $request['nocmNama'])
+                //  -> Orwhere('apr.namapasien', 'ilike','%'.$request['nocmNama'].'%');
 
         }
         if(isset($request['tgllahir']) && $request['tgllahir'] != "" && $request['tgllahir'] != "undefined" && $request['tgllahir'] != "null" &&  $request['tgllahir'] !='Invaliddate'  &&  $request['tgllahir'] !='Invalid date') {
