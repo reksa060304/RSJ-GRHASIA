@@ -1990,4 +1990,50 @@ class RawatInapController extends ApiController
         $data = $data->get();
         return $this->respond($data);
     }
+    public function getLaporanAsuhanGizi(Request $request)
+    {
+        $tglAwal = $request['tglAwal'];
+        $tglAkhir = $request['tglAkhir'];
+        $data = \DB::select(DB::raw(
+            "SELECT lo.tanggal, case 
+            when split_part(lo.keterangan, ' ', 1)= 'AsuhanGiziPasienRawatInap' then 'Asuhan Gizi Pasien Rawat Inap dengan No EMR - ' || split_part(lo.keterangan, ' ', 6)|| ' pada No Registrasi ' || split_part(lo.keterangan, ' ', 10)
+            when split_part(lo.keterangan, ' ', 1)= 'AsuhanGiziAwalPasienRawatInapCtrl' then 'Asuhan Gizi Awal Pasien Rawat Inap dengan No EMR - ' || split_part(lo.keterangan, ' ', 6)|| ' pada No Registrasi ' || split_part(lo.keterangan, ' ', 10)
+            when split_part(lo.keterangan, ' ', 1)= 'AsuhanGiziLanjutPasienRawatInapCtrl' then 'Asuhan Gizi Lanjut Pasien Rawat Inap dengan No EMR - ' || split_part(lo.keterangan, ' ', 6)|| ' pada No Registrasi ' || split_part(lo.keterangan, ' ', 10)
+            when split_part(lo.keterangan, ' ', 1)= 'SkrinningGiziLanjutCtrl' then 'Skrinning Gizi Lanjut dengan No EMR - ' || split_part(lo.keterangan, ' ', 6)|| ' pada No Registrasi ' || split_part(lo.keterangan, ' ', 10)
+            end as keterangan, pg.namalengkap FROM logginguser_t lo 
+            inner join loginuser_s lu on lu.id = lo.objectloginuserfk
+            inner join pegawai_m pg on pg.id = lu.objectpegawaifk
+            where pg.id = $request[idpegawai] and lo.tanggal between '$tglAwal' and '$tglAkhir'
+            and lo.keterangan ilike 
+            any(array['%AsuhanGiziPasienRawatInap%','%AsuhanGiziAwalPasienRawatInapCtrl%','%AsuhanGiziLanjutPasienRawatInapCtrl%','%AsuhanGiziPasienRawatJalanCtrl%','%SkrinningGiziLanjutCtrl%'])
+            order by lo.tanggal asc
+            "
+        ));
+        $result = array(
+            'data'=> $data,
+            'as' => 'Feezy'
+        );
+        return $this->respond($result);
+    }
+    public function getLaporancpptGizi(Request $request)
+    {
+        $tglAwal = $request['tglAwal'];
+        $tglAkhir = $request['tglAkhir'];
+        $data = \DB::select(DB::raw(
+            "SELECT x.tanggal , x.emrpasienfk,split_part(y.pegawai, '~', 2)as pegawai, z.soap FROM (SELECT emrpd.value as tanggal,emrpd.emrpasienfk FROM emrpasiend_t emrpd
+            where emrpd.emrdfk = 111348)as x
+            inner join (SELECT emrpd.value as pegawai, emrpd.emrpasienfk FROM emrpasiend_t emrpd
+            where emrpd.emrdfk = 111351)as y on y.emrpasienfk = x.emrpasienfk
+            inner join (SELECT emrpd.value as soap, emrpd.emrpasienfk FROM emrpasiend_t emrpd
+            where emrpd.emrdfk = 111350)as z on y.emrpasienfk = z.emrpasienfk
+            where x.tanggal::date between '$tglAwal' and '$tglAkhir' and split_part(y.pegawai, '~', 1)::integer = $request[idpegawai]
+            ORDER BY x.tanggal asc
+            "
+        ));
+        $result = array(
+            'data'=> $data,
+            'as' => 'Feezy'
+        );
+        return $this->respond($result);
+    }
 }

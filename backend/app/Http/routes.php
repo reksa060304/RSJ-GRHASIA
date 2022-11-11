@@ -963,6 +963,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::post('gizi/hapus-peritem-order', 'Gizi\GiziController@hapusOrderGziPeritem');
           Route::post('gizi/update-peritem-order', 'Gizi\GiziController@updateOrderGizi');
           Route::get('gizi/get-laporan-gizi','Gizi\GiziController@getLaporanGizi');
+          Route::get('gizi/get-laporan-asuhan-gizi','RawatInap\RawatInapController@getLaporanAsuhanGizi');
+          Route::get('gizi/get-laporan-cppt-gizi','RawatInap\RawatInapController@getLaporancpptGizi');
           Route::post('gizi/save-label', 'Gizi\GiziController@saveLabelGizi');
           Route::get('gizi/get-laporan-permintaan-makanpasien','Gizi\GiziController@LaporanPermintaanMakanGizi');
         // });
