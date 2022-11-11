@@ -1136,6 +1136,31 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         }
                         if (dataLoad[i].type == "textbox2") {
                             $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
+                            if (dataLoad[i].emrdfk ==  3016988)
+                            $scope.skorNutrisiAnak =parseFloat( dataLoad[i].value)
+                            if (dataLoad[i].emrdfk ==  3017001)
+                            $scope.skorNutrisiDewasa =parseFloat( dataLoad[i].value)
+                        }
+                        if (dataLoad[i].type == "textbox3") {
+                            $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
+                            if (dataLoad[i].emrdfk ==  3016988)
+                            $scope.skorNutrisiAnak =parseFloat( dataLoad[i].value)
+                            if (dataLoad[i].emrdfk ==  3017001)
+                            $scope.skorNutrisiDewasa =parseFloat( dataLoad[i].value)
+                        }
+                        if (dataLoad[i].type == "textbox12") {
+                            $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
+                            if (dataLoad[i].emrdfk ==  3016988)
+                            $scope.skorNutrisiAnak =parseFloat( dataLoad[i].value)
+                            if (dataLoad[i].emrdfk ==  3017001)
+                            $scope.skorNutrisiDewasa =parseFloat( dataLoad[i].value)
+                        }
+                        if (dataLoad[i].type == "textboxr") {
+                            $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
+                            if (dataLoad[i].emrdfk ==  3016988)
+                            $scope.skorNutrisiAnak =parseFloat( dataLoad[i].value)
+                            if (dataLoad[i].emrdfk ==  3017001)
+                            $scope.skorNutrisiDewasa =parseFloat( dataLoad[i].value)
                         }
                         if (dataLoad[i].type == "checkbox") {
                             chekedd = false
@@ -1154,11 +1179,85 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                                 var datass = { id: dataLoad[i].emrdfk, descNilai: dataLoad[i].reportdisplay }
                                 $scope.skorNutrisiDewasa(datass)
                             }
-                            
-
 
                         }
                         if (dataLoad[i].type == "checkbox2") {
+                            chekedd = false
+                            if (dataLoad[i].value == '1') {
+                                chekedd = true
+                            }
+                            $scope.item.obj[dataLoad[i].emrdfk] = chekedd
+                           // if (dataLoad[i].emrdfk >= 7590 && dataLoad[i].emrdfk <= 7593 && chekedd) {
+                             //   $scope.getSkalaNyeri(1, { descNilai: dataLoad[i].reportdisplay })
+                            //}
+                            if (dataLoad[i].emrdfk >= 5085 && dataLoad[i].emrdfk <= 5093 && dataLoad[i].reportdisplay != null) {
+                                var datass = { id: dataLoad[i].emrdfk, descNilai: dataLoad[i].reportdisplay }
+                                $scope.getSkorNutrisiAnak(datass)
+                            }
+                            if (dataLoad[i].emrdfk >= 5085 && dataLoad[i].emrdfk <= 5093 && dataLoad[i].reportdisplay != null) {
+                                var datass = { id: dataLoad[i].emrdfk, descNilai: dataLoad[i].reportdisplay }
+                                $scope.skorNutrisiDewasa(datass)
+                            }
+
+                        }
+                        if (dataLoad[i].type == "checkbox4") {
+                            chekedd = false
+                            if (dataLoad[i].value == '1') {
+                                chekedd = true
+                            }
+                            $scope.item.obj[dataLoad[i].emrdfk] = chekedd
+                           // if (dataLoad[i].emrdfk >= 7590 && dataLoad[i].emrdfk <= 7593 && chekedd) {
+                             //   $scope.getSkalaNyeri(1, { descNilai: dataLoad[i].reportdisplay })
+                            //}
+                            if (dataLoad[i].emrdfk >= 5085 && dataLoad[i].emrdfk <= 5093 && dataLoad[i].reportdisplay != null) {
+                                var datass = { id: dataLoad[i].emrdfk, descNilai: dataLoad[i].reportdisplay }
+                                $scope.getSkorNutrisiAnak(datass)
+                            }
+                            if (dataLoad[i].emrdfk >= 5085 && dataLoad[i].emrdfk <= 5093 && dataLoad[i].reportdisplay != null) {
+                                var datass = { id: dataLoad[i].emrdfk, descNilai: dataLoad[i].reportdisplay }
+                                $scope.skorNutrisiDewasa(datass)
+                            }
+
+                        }
+                        if (dataLoad[i].type == "checkbox6") {
+                            chekedd = false
+                            if (dataLoad[i].value == '1') {
+                                chekedd = true
+                            }
+                            $scope.item.obj[dataLoad[i].emrdfk] = chekedd
+                           // if (dataLoad[i].emrdfk >= 7590 && dataLoad[i].emrdfk <= 7593 && chekedd) {
+                             //   $scope.getSkalaNyeri(1, { descNilai: dataLoad[i].reportdisplay })
+                            //}
+                            if (dataLoad[i].emrdfk >= 5085 && dataLoad[i].emrdfk <= 5093 && dataLoad[i].reportdisplay != null) {
+                                var datass = { id: dataLoad[i].emrdfk, descNilai: dataLoad[i].reportdisplay }
+                                $scope.getSkorNutrisiAnak(datass)
+                            }
+                            if (dataLoad[i].emrdfk >= 5085 && dataLoad[i].emrdfk <= 5093 && dataLoad[i].reportdisplay != null) {
+                                var datass = { id: dataLoad[i].emrdfk, descNilai: dataLoad[i].reportdisplay }
+                                $scope.skorNutrisiDewasa(datass)
+                            }
+
+                        }
+                        if (dataLoad[i].type == "checkbox12") {
+                            chekedd = false
+                            if (dataLoad[i].value == '1') {
+                                chekedd = true
+                            }
+                            $scope.item.obj[dataLoad[i].emrdfk] = chekedd
+                           // if (dataLoad[i].emrdfk >= 7590 && dataLoad[i].emrdfk <= 7593 && chekedd) {
+                             //   $scope.getSkalaNyeri(1, { descNilai: dataLoad[i].reportdisplay })
+                            //}
+                            if (dataLoad[i].emrdfk >= 5085 && dataLoad[i].emrdfk <= 5093 && dataLoad[i].reportdisplay != null) {
+                                var datass = { id: dataLoad[i].emrdfk, descNilai: dataLoad[i].reportdisplay }
+                                $scope.getSkorNutrisiAnak(datass)
+                            }
+                            if (dataLoad[i].emrdfk >= 5085 && dataLoad[i].emrdfk <= 5093 && dataLoad[i].reportdisplay != null) {
+                                var datass = { id: dataLoad[i].emrdfk, descNilai: dataLoad[i].reportdisplay }
+                                $scope.skorNutrisiDewasa(datass)
+                            }
+
+                        }
+                        if (dataLoad[i].type == "checkbo") {
                             chekedd = false
                             if (dataLoad[i].value == '1') {
                                 chekedd = true
@@ -1187,6 +1286,9 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                             $scope.item.obj2[dataLoad[i].emrdfk] = true
                         }
                         if (dataLoad[i].type == "textarea") {
+                            $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
+                        }
+                        if (dataLoad[i].type == "textarea2") {
                             $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
                         }
                         if (dataLoad[i].type == "combobox") {
