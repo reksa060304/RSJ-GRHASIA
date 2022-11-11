@@ -1920,20 +1920,21 @@ class HumasController extends ApiController
                 $dataJadwalDokter->statusenabled = true;
                 $dataJadwalDokter->id = $idDK + 1;
                 $dataJadwalDokter->norec = $norecDK;
-                $dataJadwalDokter->objectpegawaifk = $request['objectpegawaifk'];
+            
                 $dataJadwalDokter->tglinput = $tglAyeuna;
             }else{
                 $dataJadwalDokter =  JadwalDokter::where('id',$request['idjadwal'])->where('kdprofile', $idProfile)->first();
             }
-                $dataJadwalDokter->objectruanganfk = $request['objectruanganfk'];
-                $dataJadwalDokter->hari = $request['hari'];
-                // $dataJadwalDokter->objecthariawal = $request['objecthariawal'];
-                // $dataJadwalDokter->objecthariakhir = $request['objecthariakhir'];
-                $dataJadwalDokter->jammulai = $request['jammulai'];
-                $dataJadwalDokter->jamakhir = $request['jamakhir'];
-                $dataJadwalDokter->keterangan = $request['keterangan'];
-                $dataJadwalDokter->save();
-                $idPegawai = $dataJadwalDokter->id;
+            $dataJadwalDokter->objectpegawaifk = $request['objectpegawaifk'];
+            $dataJadwalDokter->objectruanganfk = $request['objectruanganfk'];
+            $dataJadwalDokter->hari = $request['hari'];
+            $dataJadwalDokter->quota = isset($request['quota'])?$request['quota']:null;
+            // $dataJadwalDokter->objecthariakhir = $request['objecthariakhir'];
+            $dataJadwalDokter->jammulai = $request['jammulai'];
+            $dataJadwalDokter->jamakhir = $request['jamakhir'];
+            $dataJadwalDokter->keterangan = $request['keterangan'];
+            $dataJadwalDokter->save();
+            $idPegawai = $dataJadwalDokter->id;
 
            //## Logging User
             $newId = LoggingUser::max('id');

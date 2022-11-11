@@ -98,6 +98,11 @@ define(['initialize'], function (initialize) {
 					"width": "100px"
 				},
 				{
+					"field": "quota",
+					"title": "Kuota",
+					"width": "100px"
+				},
+				{
 					"field": "keterangan",
 					"title": "Keterangan",
 					"width": "200px"
@@ -173,6 +178,8 @@ define(['initialize'], function (initialize) {
 				$scope.ListDokter.add( { id: dataItem.objectpegawaifk, namalengkap: dataItem.namalengkap })
 				$scope.item.dokterInput = { id: dataItem.objectpegawaifk, namalengkap: dataItem.namalengkap };
 				$scope.item.KeteranganJadwal =dataItem.keterangan;
+				if(dataItem.quota)
+				$scope.item.quota =dataItem.quota;
 				$scope.winJadwalPraktek.center().open()
 			}
 			$scope.kl = function (dataSelected) {
@@ -276,6 +283,7 @@ define(['initialize'], function (initialize) {
 					"jammulai": $scope.item.jamAwal != undefined ? moment($scope.item.jamAwal).format('HH:mm') : null,
 					"jamakhir": $scope.item.jamAkhir != undefined ? moment($scope.item.jamAkhir).format('HH:mm') : null,
 					"keterangan": $scope.item.KeteranganJadwal != undefined ? $scope.item.KeteranganJadwal : "",
+					"quota": $scope.item.quota ? $scope.item.quota :null,
 				}
 				$scope.isSave =true
 				medifirstService.post('humas/save-informasi-dokter', objSave).then(function (res) {
