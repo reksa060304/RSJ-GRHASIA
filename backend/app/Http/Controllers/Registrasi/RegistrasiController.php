@@ -384,7 +384,6 @@ class RegistrasiController extends ApiController
                             ->delete();
                     }
                 }
-
                 $dataPD->objectruanganlastfk = $r_NewPD['objectruanganfk'];
                 $dataPD->objectdokterpemeriksafk =  isset($r_NewPD['objectpegawaifk']) ? $r_NewPD['objectpegawaifk'] : null;
                 $dataPD->objectpegawaifk = isset($r_NewPD['objectpegawaifk']) ? $r_NewPD['objectpegawaifk'] : null;
@@ -2986,7 +2985,7 @@ class RegistrasiController extends ApiController
                     'ps.objectgolongandarahfk','gol.golongandarah','ps.objectsukufk','sk.suku','ps.bahasa','ps.teleponpenanggungjawab',
                     'ps.dokterpengirim','ps.alamatdokterpengirim','jk1.id as jkidpenanggungjawab','ps.jeniskelaminpenanggungjawab','ps.umurpenanggungjawab','ps.hambatankomunikasifk','ps.bahasafk','ham.hambatankomunikasi','bh.bahasa',
                     'ps.penanggungjawab2','ps.hubungankeluargapj2','ps.pekerjaanpenangggungjawab2','ps.alamatrmh2','ps.bahasa2',
-                    'ps.teleponpenanggungjawab2','ps.jeniskelaminpenanggungjawab2','ps.umurpenanggungjawab2','jk2.id as idjk2','pk2.id as idpek2','ps.nik1','ps.nik2')
+                    'ps.teleponpenanggungjawab2','ps.jeniskelaminpenanggungjawab2','ps.umurpenanggungjawab2','jk2.id as idjk2','pk2.id as idpek2','ps.nik1','ps.nik2','ps.alergi')
             ->where('ps.kdprofile', (int)$kdProfile);
 
         if(isset($request['noCm'] ) && $request['noCm']!= '' && $request['noCm']!= 'undefined'){
@@ -3073,6 +3072,7 @@ class RegistrasiController extends ApiController
                 'alamatd' => $alamatd,
                 'nik1' => $data->nik1,
                 'nik2' => $data->nik2,
+                'alergi' => $data->alergi,
             );
 //        }
         $result = array(
@@ -3784,6 +3784,7 @@ class RegistrasiController extends ApiController
             $dataPS->objectkebangsaanfk = $request['kebangsaan']?$request['kebangsaan']['id']:1;
             $dataPS->objectnegarafk = $request['negara']?$request['negara']['id']:0;
             $dataPS->namaayah = $request['namaAyah'];
+            $dataPS->alergi = $request['alergi'] ? $request['alergi'] : null;
             if (isset($request['pasien']['namaSuamiIstri'])){
                 $dataPS->namasuamiistri = $request['pasien']['namaSuamiIstri'];
             }

@@ -309,7 +309,6 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     } else {
 
                     }
-
                 }, function (error) {
                     $scope.isRouteLoading = false
                 })
@@ -402,7 +401,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     $scope.item.UmurP = result.umurpenanggungjawab;
                     $scope.item.DokterPengirim = result.dokterpengirim;
                     $scope.item.alamatDokterPengirim = result.alamatdokterpengirim;
-
+                    $scope.item.alergi = result.alergi
                     if (result.pekerjaanpenangggungjawab) {
                         $scope.item.pekerjaanP = { id: result.idpek, pekerjaan: result.pekerjaanpenangggungjawab };
                     }
@@ -821,6 +820,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                             return
                                         }
                                         var postJson = {
+                                            'alergi': $scope.item.alergi != undefined ? $scope.item.alergi : null,
                                             'isbayi': $scope.isBayi,
                                             'isEditPasien': $scope.isEditPasien,
                                             'istriageigd': $scope.isTriage,
@@ -972,6 +972,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             return
                         }else{
                             var postJson = {
+                                'alergi': $scope.item.alergi != undefined ? $scope.item.alergi : null,
                                 'isbayi': $scope.isBayi,
                                 'isEditPasien': $scope.isEditPasien,
                                 'istriageigd': $scope.isTriage,
