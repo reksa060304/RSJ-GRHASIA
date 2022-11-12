@@ -14691,10 +14691,10 @@ class LogistikController extends ApiController{
         $data = DB::select(DB::raw("select kdproduk, namaproduk, satuanstandar, round(hargabeli) hargabeli, round(hargajual) hargajual, sum(qtyfarmasi) qtyfarmasi,
         sum(qtygudang) qtygudang from(
             select kdproduk, namaproduk, satuanstandar, hargabeli, hargajual,
-            case when idruangan = 94 then qtyproduk else 0 end as qtyfarmasi,
-            case when idruangan = 59 then qtyproduk else 0 end as qtygudang
+            case when idruangan = 94 then sum(qtyproduk) else 0 end as qtyfarmasi,
+            case when idruangan = 59 then sum(qtyproduk) else 0 end as qtygudang
             from(
-                select ru.id idruangan, ru.namaruangan, pr.id as kdproduk,pr.namaproduk,CAST(spd.qtyproduk AS FLOAT) as qtyproduk,
+                select spd.norec, ru.id idruangan, ru.namaruangan, pr.id as kdproduk,pr.namaproduk,CAST(spd.qtyproduk AS FLOAT) as qtyproduk,
                 ss.satuanstandar,CAST(spdh.harganetto1 AS FLOAT) hargabeli, CAST((spdh.harganetto1+(0.25*spdh.harganetto1)) AS FLOAT) hargajual
                 from stokprodukdetail_t as spd
                 left join strukpelayanan_t as sp on sp.norec = spd.nostrukterimafk
@@ -14718,7 +14718,7 @@ class LogistikController extends ApiController{
                 and ru.id in(59, 94)
                 $namaproduk
                 $produkid
-                group by ru.id, ru.namaruangan, pr.id,pr.namaproduk,
+                group by spd.norec, ru.id, ru.namaruangan, pr.id,pr.namaproduk,
                 ss.satuanstandar,CAST((spdh.harganetto1+(0.25*spdh.harganetto1)) AS FLOAT), CAST(spdh.harganetto1 AS FLOAT), CAST(spd.qtyproduk AS FLOAT)
             ) as x group by kdproduk, namaproduk, satuanstandar, hargabeli, hargajual, idruangan, qtyproduk
         ) as y 
