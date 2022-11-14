@@ -721,6 +721,55 @@
                                 </div>
                             </md-content>
                         </md-tab>
+                        <md-tab label="LPJ Format Baru">
+                            <md-content class="md-padding" ng-hide="false">
+                                <div class="grid_12" style="margin-top: 25px;">
+                                    <div class="grid_2" style="margin-top: 0px;">
+                                        <div class="grid_12">
+                                            <label c-label item="item" c-label-text="Tanggal Cetak"></label>
+                                        </div>
+                                        <div class="grid_12">
+                                            <div class="grid_12">
+                                                <input style="width: 100%" k-ng-model="item.tglcetaksp" kendo-datetimepicker placeholer="yyyy-mm-dd"
+									            k-format="'yyyy-MM-dd'" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="grid_2">
+                                        <div class="grid_12">
+                                            <label c-label item="item" c-label-text="Tahun"></label>
+                                        </div>
+                                        <div class="grid_12">
+                                            <div class="grid_12">
+                                                <input style="width: 100%" k-options="yearUngkul"
+                                                    k-ng-model="item.tahunsp" kendo-date-picker placeholer="YYYY"
+                                                    k-format="'yyyy'" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="grid_2" style="margin-top: 0px;">
+                                        <div class="grid_12">
+                                            <label c-label item="item" c-label-text="Bulan"></label>
+                                        </div>
+                                        <div class="grid_12">
+                                            <div class="grid_12">
+                                                <input style="width: 100%" k-options="monthUngkul" k-ng-model="item.bulansp"
+                                                    kendo-date-picker placeholer="MMMM" k-format="'MMMM'" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="grid_1">
+                                        <div class="grid_12">
+                                            <label>&nbsp;</label>
+                                        </div>
+                                        <div class="grid_12">
+                                            <button class="primary c-button" style="margin-top: 6px"
+                                                ng-click="CetakSP()">Cetak</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </md-content>
+                        </md-tab>
                     </md-tabs>
                 </md-content>
             </div>

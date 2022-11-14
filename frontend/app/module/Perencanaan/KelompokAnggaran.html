@@ -2672,8 +2672,21 @@
 </div>
 <div kendo-window="popupPanjarAktif" k-title="'Tambah Data Panjar'" k-visible="false" k-width="700" k-height="600">
 	<div class="panel panel-default container_12">
-		<div class="grid_12 borderBox">
+		<legend id="filterData">
+			<a ng-click="showAndHide()">Panjar Yang Tersedia:</a>
+		</legend>
+		<br>
+		<div class="grid_12 borderBox" style="margin-bottom: 50px;">
 			<div id="kGrid" kendo-grid k-data-source="dataSourcePanjarAktif" k-selectable="'row'" options="columnPanjarAktif"
+                        k-pageable="'true'" k-sortable="'true'" k-ng-model="dataSelected">
+                    </div>
+		</div>
+		<legend id="filterData" style="margin-top: 50px;">
+			<a ng-click="showAndHide()">Panjar Yang Dipilih:</a>
+		</legend>
+		<br>
+		<div class="grid_12 borderBox">
+			<div id="kGrid" kendo-grid k-data-source="dataSourcePanjarDipilih" k-selectable="'row'" options="columnPanjarDipilih"
                         k-pageable="'true'" k-sortable="'true'" k-ng-model="dataSelected">
                     </div>
 		</div><br>
