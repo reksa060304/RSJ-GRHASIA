@@ -7237,49 +7237,86 @@ class LaporanPengunjungController extends ApiController
         $data = [];
         $tglAwal = $request['tglAwal'];
         $tglAkhir = $request['tglAkhir'];
-
         $deptRawatJalan = $this->settingDataFixed('kdDepartemenRawatJalanFix',$idProfile);
+        if($request['instalasi'] == 1){
+            $data = DB::select(DB::raw("SELECT x.namalengkap as dokter,sum(x.polijiwa) as polijiwa,sum(x.spesialisanak) as spesialisanak,sum(x.spesialissaraf) as spesialissaraf,
+            sum(x.penyakitdalam) as penyakitdalam,sum(x.vct) as vct,sum(x.poliumum) as poliumum,sum(x.gigi) as gigi,
+            sum(x.fisio) as fisio,sum(x.keswa) as keswa, sum(x.napza) as napza,sum(x.usg) as usg, sum(x.kirbebas) as kirbebas,  sum(x.kirjasmani) as kirjasmani, 
+            sum(x.akupuntur) as akupuntur,sum(x.ekg) as ekg,sum(x.ot) as ot,sum(x.tw) as tw,sum(x.klinikkeperawatanjiwa) as klinikkeperawatanjiwa,sum(x.konsulpsikologi) as konsulpsikologi,
+            sum(x.polijiwa)+sum(x.spesialisanak)+sum(x.spesialissaraf)+sum(x.penyakitdalam)+sum(x.vct)+sum(x.poliumum)+sum(x.gigi)+
+            sum(x.fisio)+sum(x.napza)+sum(x.usg)+sum(x.kirbebas)+sum(x.kirjasmani)+sum(x.akupuntur)+sum(x.ekg)+sum(x.ot)+sum(x.tw)+sum(x.klinikkeperawatanjiwa)+sum(x.konsulpsikologi) as total
+            from (select pt.objectdokterpemeriksafk, pt.tglregistrasi, rm.namaruangan, pm.namalengkap, pm2.nocm, pm2.namapasien, 
+            case when pt.objectruanganlastfk = 752 then 1 else 0 end as polijiwa,  
+            case when pt.objectruanganlastfk = 753 then 1 else 0 end as spesialisanak,
+            case when pt.objectruanganlastfk = 755 then 1 else 0 end as spesialissaraf,
+            case when pt.objectruanganlastfk = 756 then 1 else 0 end as penyakitdalam, 
+            case when pt.objectruanganlastfk = 757 then 1 else 0 end as vct, 
+            case when pt.objectruanganlastfk = 758 then 1 else 0 end as poliumum, 
+            case when pt.objectruanganlastfk = 759 then 1 else 0 end as gigi, 
+            case when pt.objectruanganlastfk = 762 then 1 else 0 end as fisio,
+            case when pt.objectruanganlastfk = 764 then 1 else 0 end as keswa, 
+            case when pt.objectruanganlastfk = 768 then 1 else 0 end as napza, 
+            case when pt.objectruanganlastfk = 769 then 1 else 0 end as usg,
+            case when pt.objectruanganlastfk = 770 then 1 else 0 end as kirbebas,
+            case when pt.objectruanganlastfk = 771 then 1 else 0 end as kirjasmani,
+            case when pt.objectruanganlastfk = 772 then 1 else 0 end as akupuntur,
+            case when pt.objectruanganlastfk = 773 then 1 else 0 end as ekg,
+            case when pt.objectruanganlastfk = 774 then 1 else 0 end as ot,
+            case when pt.objectruanganlastfk = 777 then 1 else 0 end as tw,
+            case when pt.objectruanganlastfk = 782 then 1 else 0 end as klinikkeperawatanjiwa,
+            case when pt.objectruanganlastfk = 767 then 1 else 0 end as konsulpsikologi
+            /*case when pt.objectruanganlastfk = 728 then 1 else 0 end as seruniatas, 
+            case when pt.objectruanganlastfk = 729 then 1 else 0 end as serunibawah, 
+            case when pt.objectruanganlastfk = 730 then 1 else 0 end as vip, 
+            case when pt.objectruanganlastfk = 731 then 1 else 0 end as icu, 
+            case when pt.objectruanganlastfk = 732 then 1 else 0 end as iccu, 
+            case when pt.objectruanganlastfk = 733 then 1 else 0 end as melati1, 
+            case when pt.objectruanganlastfk = 734 then 1 else 0 end as melati2,
+            case when pt.objectruanganlastfk = 735 then 1 else 0 end as melati3, 
+            case when pt.objectruanganlastfk = 736 then 1 else 0 end as melati4, 
+            case when pt.objectruanganlastfk = 737 then 1 else 0 end as camelia, 
+            case when pt.objectruanganlastfk = 739 then 1 else 0 end as hccu */
+            from pasiendaftar_t pt 
+            -- inner join antrianpasiendiperiksa_t as apd on apd.noregistrasifk = pt.norec
+            inner join ruangan_m as rm on rm.id = pt.objectruanganlastfk 
+            inner join pegawai_m as pm on pm.id = pt.objectpegawaifk 
+            inner join pasien_m as pm2 on pm2.id = pt.nocmfk 
+            where rm.objectdepartemenfk != 16 and pt.statusenabled = true and pt.kdprofile = $idProfile and pt.tglregistrasi::date between '$tglAwal' and '$tglAkhir') as x
+            group by x.namalengkap
+            order by x.namalengkap asc"));
+        }else{
+            $data = DB::select(DB::raw("SELECT x.namalengkap as dokter,sum(x.bima) as bima,sum(x.gatotkaca) as gatotkaca,sum(x.sadewa) as sadewa,sum(x.srikandi) as srikandi,
+            sum(x.drupadi) as drupadi,sum(x.sembodro) as sembodro,sum(x.abimanyu) as abimanyu,sum(x.kresna) as kresna,
+            sum(x.arjuna) as arjuna,sum(x.nakula) as nakula,sum(x.yudistira) as yudistira, sum(x.arimbi) as arimbi,
+            /* sum(x.seruniatas) as seruniatas,sum(x.serunibawah) as serunibawah,
+            sum(x.vip) as vip,sum(x.icu) as icu,sum(x.iccu) as iccu,sum(x.melati1) as melati1,sum(x.melati2) as melati2,sum(x.melati3) as melati3,sum(x.melati4) as melati4,
+            sum(x.camelia) as camelia,sum(x.arimbi) as arimbi,sum(x.hccu) as hccu,*/
+            sum(x.bima)+sum(x.gatotkaca)+sum(x.sadewa)+sum(x.srikandi)+sum(x.drupadi)+sum(x.sembodro)+sum(x.abimanyu)+sum(x.kresna)+
+            sum(x.arjuna)+sum(x.nakula)+sum(x.yudistira) as total
+            from (select pt.objectdokterpemeriksafk, pt.tglregistrasi, rm.namaruangan, pm.namalengkap, pm2.nocm, pm2.namapasien, 
+            case when pt.objectruanganlastfk = 792 then 1 else 0 end as bima,  
+            case when pt.objectruanganlastfk = 793 then 1 else 0 end as gatotkaca,
+            case when pt.objectruanganlastfk = 794 then 1 else 0 end as sadewa,
+            case when pt.objectruanganlastfk = 795 then 1 else 0 end as srikandi,
+            case when pt.objectruanganlastfk = 796 then 1 else 0 end as drupadi, 
+            case when pt.objectruanganlastfk = 797 then 1 else 0 end as sembodro, 
+            case when pt.objectruanganlastfk = 799 then 1 else 0 end as abimanyu, 
+            case when pt.objectruanganlastfk = 800 then 1 else 0 end as kresna, 
+            case when pt.objectruanganlastfk = 801 then 1 else 0 end as arjuna,
+            case when pt.objectruanganlastfk = 802 then 1 else 0 end as arimbi, 
+            case when pt.objectruanganlastfk = 803 then 1 else 0 end as nakula, 
+            case when pt.objectruanganlastfk = 805 then 1 else 0 end as yudistira
+            from pasiendaftar_t pt 
+            -- inner join antrianpasiendiperiksa_t as apd on apd.noregistrasifk = pt.norec
+            inner join ruangan_m as rm on rm.id = pt.objectruanganlastfk 
+            inner join pegawai_m as pm on pm.id = pt.objectpegawaifk 
+            inner join pasien_m as pm2 on pm2.id = pt.nocmfk 
+            where rm.objectdepartemenfk = 16 and pt.statusenabled = true and pt.kdprofile = $idProfile and pt.tglregistrasi::date between '$tglAwal' and '$tglAkhir') as x
+            group by x.namalengkap
+            order by x.namalengkap asc"));
+        }
 
-        $data = DB::select(DB::raw("select x.namalengkap as dokter,sum(x.anggrek1) as anggrek1,sum(x.anggrek2) as anggrek2,sum(x.dahlia) as dahlia,sum(x.nicu) as nicu,
-        sum(x.icucovid) as icucovid,sum(x.bougenvilleatas) as bougenvilleatas,sum(x.bougenvillebawah) as bougenvillebawah,sum(x.terataiatas) as terataiatas,
-        sum(x.terataibawah) as terataibawah,sum(x.flamboyan) as flamboyan,sum(x.cempaka) as cempaka,sum(x.seruniatas) as seruniatas,sum(x.serunibawah) as serunibawah,
-        sum(x.vip) as vip,sum(x.icu) as icu,sum(x.iccu) as iccu,sum(x.melati1) as melati1,sum(x.melati2) as melati2,sum(x.melati3) as melati3,sum(x.melati4) as melati4,
-        sum(x.camelia) as camelia,sum(x.flamboyan2) as flamboyan2,sum(x.hccu) as hccu,
-        sum(x.anggrek1)+sum(x.anggrek2)+sum(x.dahlia)+sum(x.nicu)+sum(x.icucovid)+sum(x.bougenvilleatas)+sum(x.bougenvillebawah)+sum(x.terataiatas)+
-        sum(x.terataibawah)+sum(x.flamboyan)+sum(x.cempaka)+sum(x.seruniatas)+sum(x.serunibawah)+sum(x.vip)+sum(x.icu)+sum(x.iccu)+sum(x.melati1)+
-        sum(x.melati2)+sum(x.melati3)+sum(x.melati4)+sum(x.flamboyan2)+sum(x.hccu)+sum(x.camelia) as total
-        from (select pt.objectdokterpemeriksafk, apd.objectruanganfk , pt.tglregistrasi, rm.namaruangan, pm.namalengkap, pm2.nocm, pm2.namapasien, 
-        case when apd.objectruanganfk = 717 then 1 else 0 end as anggrek1,  
-        case when apd.objectruanganfk = 718 then 1 else 0 end as anggrek2,
-        case when apd.objectruanganfk = 719 then 1 else 0 end as dahlia,
-        case when apd.objectruanganfk = 720 then 1 else 0 end as nicu,
-        case when apd.objectruanganfk = 721 then 1 else 0 end as icucovid, 
-        case when apd.objectruanganfk = 722 then 1 else 0 end as bougenvilleatas, 
-        case when apd.objectruanganfk = 723 then 1 else 0 end as bougenvillebawah, 
-        case when apd.objectruanganfk = 724 then 1 else 0 end as terataiatas, 
-        case when apd.objectruanganfk = 725 then 1 else 0 end as terataibawah, 
-        case when apd.objectruanganfk = 726 then 1 else 0 end as flamboyan, 
-        case when apd.objectruanganfk = 727 then 1 else 0 end as cempaka, 
-        case when apd.objectruanganfk = 728 then 1 else 0 end as seruniatas, 
-        case when apd.objectruanganfk = 729 then 1 else 0 end as serunibawah, 
-        case when apd.objectruanganfk = 730 then 1 else 0 end as vip, 
-        case when apd.objectruanganfk = 731 then 1 else 0 end as icu, 
-        case when apd.objectruanganfk = 732 then 1 else 0 end as iccu, 
-        case when apd.objectruanganfk = 733 then 1 else 0 end as melati1, 
-        case when apd.objectruanganfk = 734 then 1 else 0 end as melati2,
-        case when apd.objectruanganfk = 735 then 1 else 0 end as melati3, 
-        case when apd.objectruanganfk = 736 then 1 else 0 end as melati4, 
-        case when apd.objectruanganfk = 737 then 1 else 0 end as camelia, 
-        case when apd.objectruanganfk = 738 then 1 else 0 end as flamboyan2, 
-        case when apd.objectruanganfk = 739 then 1 else 0 end as hccu 
-        from pasiendaftar_t pt 
-        inner join antrianpasiendiperiksa_t as apd on apd.noregistrasifk = pt.norec
-        inner join ruangan_m as rm on rm.id = apd.objectruanganfk 
-        inner join pegawai_m as pm on pm.id = pt.objectdokterpemeriksafk 
-        inner join pasien_m as pm2 on pm2.id = pt.nocmfk 
-        where rm.objectdepartemenfk = 16 and pt.statusenabled = true and pt.kdprofile = 21 and pt.tglregistrasi between '$tglAwal' and '$tglAkhir') as x
-        group by x.namalengkap
-        order by x.namalengkap asc"));
+        
         return $this->respond($data);
     }
 
