@@ -1739,8 +1739,9 @@ class PerencanaanController extends ApiController {
                 $spj->totalbelanja = $update[0]->total;
                 $spj->save();
 
-                $transStatus = 'true';
+                
             }
+            $transStatus = 'true';
         }
         catch(\Exception $e){
             $transStatus= 'false';
@@ -6349,6 +6350,21 @@ order by kodemataanggaran"));
             $spj = "and stp.objectspjfk = '".$request['spj']."'";
         }
 
+        $panjar = '';
+        $spanjar = '';
+        if(isset($request['panjar']) && $request['panjar'] != "undefined"){
+            $panjar = "and stp.objectpanjarfk = '".$request['panjar']."'";
+            $spanjar = "and objectpanjarfk = '".$request['panjar']."'";
+        }
+
+        $sisaperpanjar = DB::select(DB::raw("select jumlahpanjar, sum(jumlahspj) jumlahspj
+            from spjtopanjar_t 
+        where kdprofile = 30
+        and statusenabled = true
+        and objectspjfk != ''
+        $spanjar
+        group by jumlahpanjar"));
+
         $jumlah = DB::select(DB::raw("
         select sum(pj.jumlah) jumlah 
         from panjar_t pj
@@ -6381,27 +6397,32 @@ order by kodemataanggaran"));
         ) as x
         "));
 
-        $pengembalian = DB::select(DB::raw("
-        select coalesce(sum(pp.jumlahpengembalian),0) jumlahpengembalian 
-        from panjar_t pj
-        inner join spjtopanjar_t stp on stp.objectpanjarfk = pj.norec
-        inner join strukrealisasi_t sr on stp.objectspjfk = sr.norec 
-        inner join pengembalianpanjar_t pp on pp.objectpanjarfk = pj.norec
-        where stp.kdprofile = 30
-        and stp.statusenabled = true
-        and pj.kdprofile = 30
-        and pj.statusenabled = true
-        and sr.kdprofile = 30
-        and sr.statusenabled = true
-        and pp.kdprofile = 30
-        and pp.statusenabled = true
-        $spj
+        $pengembalian = DB::select(DB::raw("select coalesce(sum(jumlahpengembalian),0) jumlahpengembalian 
+        from(
+            select pp.jumlahpengembalian, pp.norec
+            from panjar_t pj
+            inner join spjtopanjar_t stp on stp.objectpanjarfk = pj.norec
+            inner join strukrealisasi_t sr on stp.objectspjfk = sr.norec 
+            inner join pengembalianpanjar_t pp on pp.objectpanjarfk = pj.norec
+            where stp.kdprofile = 30
+            and stp.statusenabled = true
+            and pj.kdprofile = 30
+            and pj.statusenabled = true
+            and sr.kdprofile = 30
+            and sr.statusenabled = true
+            and pp.kdprofile = 30
+            and pp.statusenabled = true
+            $spj
+            $panjar
+            group by pp.jumlahpengembalian, pp.norec
+        ) as x
         "));
 
         $result = array(
             'jumlah' => $jumlah,
             'totalbelanja' => $totalbelanja,
             'pengembalian' => $pengembalian,
+            'sisapanjar' => $sisaperpanjar,
             'message' => '@epic',
         );
 
