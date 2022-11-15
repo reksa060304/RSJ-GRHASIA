@@ -5449,9 +5449,10 @@ class GeneralController extends ApiController
         return $this->respond($data);
     }
     public function storeNotif(Request $request){
+        $method = '';
         try {
             if( $request['method'] =='save'){
-                $cek = ListNotif::where('norec_trans',$request['norec'])->first();
+                $cek = ListNotif::where('norec',$request['norec'])->first();
                 if(empty($cek)){
                     $gl = $request['tgl'];
                     // $hari = $this->hari_ini($gl);
@@ -5474,15 +5475,18 @@ class GeneralController extends ApiController
                     $da->urlform = $request['urlForm'];
                     $da->save();
     
-                  
+                  $method="save";
                 }
           
             }
-            if( $request['method'] =='delete'){
-                $cek = ListNotif::where('norec_trans',$request['norec'])->update(['statusenabled' =>false]);
+            if( $request['method'] == 'delete'){
+                  $method="delete";
+                $cek = ListNotif::where('norec',$request['norec'])->update(['statusenabled' => false]);
               
             }
             if( $request['method'] =='get'){
+                  $method="get";
+
                 $cek =  ListNotif::where('statusenabled',true)->orderBy('tgl','desc')->limit(10)->get();
          
             }
@@ -5496,6 +5500,7 @@ class GeneralController extends ApiController
             $transMessage = "Sukses";
             DB::commit();
             $result = array(
+                'method'=> $method,
                 "status" => 201,
                 "message" => '@',
                 "data" => $cek,
@@ -5504,6 +5509,7 @@ class GeneralController extends ApiController
             $transMessage = $e->getMessage().' '.$e->getLine();
             DB::rollBack();
             $result = array(
+                'norec'=> $request['norec'],
                 "status" => 201,
                 "message" => $transMessage
             );

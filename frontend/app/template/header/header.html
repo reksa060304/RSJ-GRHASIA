@@ -330,7 +330,7 @@
     .badge {
     display: inline-block;
     padding: 0.35em 0.6em;
-    font-size: 75%;
+    font-size: 85%;
     font-weight: 700;
     line-height: 1;
     text-align: center;
@@ -348,7 +348,7 @@
     .badge2 {
     display: inline-block;
     padding: 0.35em 0.6em;
-    font-size: 75%;
+    font-size: 85%;
     font-weight: 700;
     line-height: 1;
     text-align: center;
@@ -360,6 +360,14 @@
     .badge-danger {
     color: #fff;
     background-color: #dc3545;
+    }
+    .badge-notdanger{
+        color: #fff;
+        background-color: #1d057f;
+    }
+    .badge2-notdanger{
+    color: #fff;
+    background-color: #1d057f;
     }
 </style>
 <div ng-controller="HeaderCtrl">
@@ -456,7 +464,7 @@
                     <md-menu>
                         <a class="wrapper-image-profile" ng-mouseenter="$mdMenu.open()">
                             <i ng-if="!imgProfile" class="fa fa-bell" style="font-size: 20px;"></i>
-                            <span class="badge badge-danger">{{ listNotif.length }}</span>
+                            <span class="badge {{listNotif.length > 0 ? 'badge-danger' : '' }}">{{ listNotif.length > 0 ? listNotif.length : '' }}</span>
                             <!-- <img id="idImageProfile" src="{{imgProfile}}" ng-if="imgProfile" alt="image-profile"
                             class="image-profile"> -->
                         </a>
@@ -470,7 +478,9 @@
                                 <md-button>
                                     <i class="fa fa-bell" style="color: black;"></i>
                                     Notifikasi
-                                    <span class="badge2 badge2-danger">{{ listNotif.length }}</span>
+                                    <span
+                                        class="badge2
+                                        {{listNotif.length > 0 ? 'badge2-danger' : '' }}">{{ listNotif.length > 0 ? listNotif.length : '' }}</span>
                                 </md-button>
                             </md-menu-item>
                             <md-menu-divider ng-hide="isInactive"></md-menu-divider>
