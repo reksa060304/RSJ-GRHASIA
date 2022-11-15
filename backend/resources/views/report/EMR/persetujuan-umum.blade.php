@@ -209,7 +209,7 @@
                 <td></td>
                 <td style="text-align: justify;font-family: Arial"><b>PRIVASI. </b>  Saya memberi kuasa kepada Rumah Sakit Jiwa Grhasia untuk menjaga privasi dan kerahasiaan penyakit saya selama
                 dalam perawatan. Saya 
-                @if ($d->ismengizinkan != true)
+                @if ($d->ismengizinkan == true)
                     menginginkan / <s>tidak menginginkan</s>
                 @else
                     <s>menginginkan</s> / tidak menginginkan
