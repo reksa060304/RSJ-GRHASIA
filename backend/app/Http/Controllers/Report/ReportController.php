@@ -11224,4 +11224,22 @@ public function suratBuktiPengembalian(Request $request)
         $pageWidth = 1300;
         return view("report.apotik.cetak-tilik", compact('result','pageWidth'));
     }
+    public function persetujuanUmum(Request $request)
+    {
+        $data = \DB::select(DB::raw("SELECT ps.kerahasiaan1,ps.kerahasiaan2,ps.kerahasiaan3,ps.kerahasiaan4,
+        ps.privasi1,ps.privasi2,ps.privasi3,ps.privasi4,ps.ismengizinkan, pg.id, pg.namalengkap  
+        from pasiendaftar_t pd 
+        inner join pasien_m ps on ps.id = pd.nocmfk
+        left join pegawai_m pg on pg.id = pd.objectpetugasinformasifk
+        where pd.norec ilike '$request[norec_pd]' and pd.kdprofile = $request[kdprofile] and pd.statusenabled = true
+        "));
+        foreach($data as $d){
+            $d->saksi = $request['saksi'];
+            $d->penanggungjawab = $request['penanggungjawab'];
+            $d->tglnow = $this->tanggal_indonesia(date('Y-m-d'));
+            $d->waktu = date('H:i');
+        }
+        $pageWidth = 1300;
+        return view("report.EMR.persetujuan-umum", compact('data','pageWidth'));
+    }
 }

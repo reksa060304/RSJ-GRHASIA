@@ -190,6 +190,11 @@ define(['initialize'], function (initialize) {
 						"title": "Lama Rawat",
 						"width": "100px",
 						"template": "<span class='style-center'>#: lamarawat #</span>"
+					},
+					{
+						"field": "pj",
+						"title": "Penanggung Jawab",
+						"width": "100px",
 					}
 				]
 			}
