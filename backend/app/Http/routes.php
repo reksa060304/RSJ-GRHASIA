@@ -1219,6 +1219,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('report/get-cetak-kas','Report\ReportController@CetakKas');
           Route::get('report/get-cetak-persandingan-angkas-penyerapan','Report\ReportController@CetakAngkasPenyerapan');
           Route::get('report/get-cetak-pertanggungjawaban-bendahara','Report\ReportController@CetakPertanggungjawaban');
+          Route::get('report/get-cetak-lpj-baru','Report\ReportController@CetakPertanggungjawabanBaru');
           Route::get('report/get-cetak-lo','Report\ReportController@CetakLO');
           Route::get('report/get-cetak-lra','Report\ReportController@CetakLRA');
           Route::get('report/get-cetak-neraca','Report\ReportController@CetakNeraca');
@@ -1478,6 +1479,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('perencanaan/get-penjagaan-setting-anggaran', 'Perencanaan\PerencanaanController@getPenjagaanSettingAnggaran');
             Route::get('perencanaan/get-jenis-angagran', 'Perencanaan\PerencanaanController@getJenisAnggaran');
             Route::get('perencanaan/get-sisa-panjar', 'Perencanaan\PerencanaanController@getSisaPanjar');
+            //Route::get('perencanaan/get-sisa-panjar-pengembalian', 'Perencanaan\PerencanaanController@getSisaPanjarPengembalian');
             Route::get('perencanaan/get-lpj', 'Perencanaan\PerencanaanController@getLPJ');
             Route::get('perencanaan/get-bku', 'Perencanaan\PerencanaanController@getBKU');
             Route::get('perencanaan/get-detail-sub-kegiatan', 'Perencanaan\PerencanaanController@getDetailSubKegiatan');
@@ -1588,10 +1590,12 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::post('perencanaan/save-alokasi-keterangan-belanja','Perencanaan\PerencanaanController@saveAlokasiKeteranganBelanja');
             Route::post('perencanaan/save-realisasi-spj','Perencanaan\PerencanaanController@saveRealisasiSPJ');
             Route::post('perencanaan/save-panjar','Perencanaan\PerencanaanController@savePanjar');
+            Route::post('perencanaan/save-spj-panjar','Perencanaan\PerencanaanController@saveSPJPanjar');
             Route::get('perencanaan/get-total-mata-anggaran', 'Perencanaan\PerencanaanController@getTotalMataAnggaran');
             Route::get('perencanaan/get-daftar-panjar', 'Perencanaan\PerencanaanController@getPanjar');
             Route::get('perencanaan/get-daftar-pptk', 'Perencanaan\PerencanaanController@getPPTK');
             Route::get('perencanaan/get-daftar-panjar-aktif', 'Perencanaan\PerencanaanController@getPanjarAktif');
+            Route::get('perencanaan/get-daftar-panjar-dipilih', 'Perencanaan\PerencanaanController@getPanjarDipilih');
             Route::get('perencanaan/get-pengembalian-panjar', 'Perencanaan\PerencanaanController@getPengembalianPanjar');
             Route::get('perencanaan/get-pengembalian-bku', 'Perencanaan\PerencanaanController@getPengembalianBKU');
             Route::get('perencanaan/get-one-panjar', 'Perencanaan\PerencanaanController@getOnePanjar');

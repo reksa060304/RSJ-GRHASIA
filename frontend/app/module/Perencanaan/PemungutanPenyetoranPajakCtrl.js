@@ -213,6 +213,27 @@ define(['initialize'], function (initialize) {
             });
 
             $scope.SavePajak = function () {
+
+                var idbillppn = null;
+                if($scope.item.idbillppn != undefined){
+                    idbillppn = $scope.item.idbillppn
+                }
+
+                var ntpnppn = null;
+                if($scope.item.ntpnppn != undefined){
+                    ntpnppn = $scope.item.ntpnppn
+                }
+
+                var idbillpph = null;
+                if($scope.item.idbillpph != undefined){
+                    idbillpph = $scope.item.idbillpph
+                }
+
+                var ntpnpph = null;
+                if($scope.item.ntpnpph != undefined){
+                    ntpnpph = $scope.item.ntpnpph
+                }
+
                 var objSave = {
                     "norec": $scope.norecspj,
                     "uraianpajak": $scope.item.uraianPajak,
@@ -220,10 +241,10 @@ define(['initialize'], function (initialize) {
                     "jenispph": $scope.item.jenispajak.id,
                     "pph": $scope.item.jumlahPPh,
                     "ppn": $scope.item.jumlahPPn,
-                    "idbillppn": $scope.item.idbillppn,
-                    "ntpnppn": $scope.item.ntpnppn,
-                    "idbillpph": $scope.item.idbillpph,
-                    "ntpnpph": $scope.item.ntpnpph,
+                    "idbillppn": idbillppn,
+                    "ntpnppn": ntpnppn,
+                    "idbillpph": idbillpph,
+                    "ntpnpph": ntpnpph,
                     "tglpph": moment($scope.item.tglPPh).format('YYYY-MM-DD'),
                     "tglppn": moment($scope.item.tglPPn).format('YYYY-MM-DD'),
                 }
