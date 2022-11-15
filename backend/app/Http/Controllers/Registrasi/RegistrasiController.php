@@ -74,7 +74,7 @@ class RegistrasiController extends ApiController
             ->leftjoin ('jeniskelamin_m as jk','jk.id','=','ps.objectjeniskelaminfk')
 //            ->leftjoin ('pasiendaftar_t as pd','pd.nocmfk','=','ps.id')
             ->select('ps.nocm','ps.id as nocmfk','ps.namapasien','ps.objectjeniskelaminfk','jk.jeniskelamin','ps.tgllahir',
-                'alm.alamatlengkap','pdd.pendidikan','pk.pekerjaan','ps.noidentitas','ps.notelepon','ps.foto','ps.nobpjs'
+                'alm.alamatlengkap','pdd.pendidikan','pk.pekerjaan','ps.noidentitas','ps.notelepon','ps.foto','ps.nobpjs','ps.pj1','ps.pj2','ps.pj3'
 //                DB::raw('encode(foto, \'base64\') AS foto'))
             )
             ->where('ps.statusenabled', true)
@@ -12844,6 +12844,95 @@ GROUP BY y.KET
         $data['detail']  =$dataz;
         return $this->respond($data);
     }
+    public function savePjPasin(request $request)
+    {
+        try {
+            $ps = Pasien::where('id', $request['id'])->first();
+            $ps->pj1 = $request['pj1'];
+            $ps->pj2 = $request['pj2'];
+            $ps->pj3 = $request['pj3'];
+            $ps->save();
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+        $transMessage = "Simpan Penanggung Jawab Pasien";
 
+        if ($transStatus == 'true') {
+            $transMessage = $transMessage . "";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+            //                "data" => $selisihjam,
+                "as" => 'er@epic',
+            );
+        } else {
+            $transMessage = $transMessage ." Gagal!!";
+            DB::rollBack();
+            $result = array(
+                "status" => 201,
+            //                "data" => $data2,
+                "as" => 'er@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function savePersetujuanUmum(Request $request)
+    {
+        try {
+            $ps = Pasien::where('id', $request['id'])->first();
+            $ps->kerahasiaan1 = $request['kerahasiaan1'];
+            $ps->kerahasiaan2 = $request['kerahasiaan2'];
+            $ps->kerahasiaan3 = $request['kerahasiaan3'];
+            $ps->kerahasiaan4 = $request['kerahasiaan4'];
+            $ps->privasi1 = $request['privasi1'];
+            $ps->privasi2 = $request['privasi2'];
+            $ps->privasi3 = $request['privasi3'];
+            $ps->privasi4 = $request['privasi4'];
+            $ps->ismengizinkan = $request['ismengizinkan'];
+            $ps->save();
+
+            $pd = PasienDaftar::where('norec', $request['norec_pd'])->first();
+            $pd->objectpetugasinformasifk = $request['petugasinformasi'];
+            $pd->save();
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+        $transMessage = "Simpan Persetujuan Umum";
+
+        if ($transStatus == 'true') {
+            $transMessage = $transMessage . "";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+            //                "data" => $selisihjam,
+                "as" => 'er@epic',
+            );
+        } else {
+            $transMessage = $transMessage ." Gagal!!";
+            DB::rollBack();
+            $result = array(
+                "status" => 201,
+                "e" => $e->getLine() . $e->getMessage(),
+                "as" => 'er@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    public function getPersetujuanUmum(Request $request)
+    {
+        $data = \DB::table('pasiendaftar_t as pd')
+        ->join('pasien_m as ps', 'ps.id','=','pd.nocmfk')
+        ->leftjoin('pegawai_m as pg', 'pg.id','=','pd.objectpetugasinformasifk')
+        ->where('pd.norec', $request['norec_pd'])->select('ps.kerahasiaan1','ps.kerahasiaan2','ps.kerahasiaan3','ps.kerahasiaan4','ps.privasi1','ps.privasi2','ps.privasi3','ps.privasi4','ps.ismengizinkan', 'pg.namalengkap', 'pg.id')
+        ->get();
+        $result = array(
+            'data'=> $data,
+            'as'=> 'Feezy'
+        );
+        return $this->respond($result);
+    }
     
 }

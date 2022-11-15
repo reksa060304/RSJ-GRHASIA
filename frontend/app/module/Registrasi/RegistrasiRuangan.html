@@ -128,7 +128,57 @@
                                 k-data-text-field=" 'namalengkap' " k-filter=" 'contains' " k-data-value-field=" 'id' "
                                 k-auto-bind="false " k-data-source="listDokter " />
                         </div>
-
+                        <div class="grid_12" ng-show="model.rawatInap">
+                            <div class="grid_12">
+                                <div class="grid_4" style="margin-top: 13px">
+                                    <label c-label item="item" c-label-text="PJ yang boleh tahu kerahasiaan medis
+                                pasien" real></label>
+                                </div>
+                                <div class="grid_8">
+                                    <div class="grid_11">
+                                        <input style="width: 100%; " c-text-box type="input" filter="'string'"
+                                            class="k-textbox" ng-model="item.pj1" />
+                                    </div>
+                                    <div class="grid_1" style="margin-top: 7px" ng-show="btn0">
+                                        <label ng-click="tambah(0)" class="clicks"><img src="stylesheets/Addd.png"
+                                                width="25" alt="Picture"></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="grid_12" ng-show="pj1">
+                                <div class="grid_4" style="margin-top: 13px">
+                                    <label c-label item="item"></label>
+                                </div>
+                                <div class="grid_8">
+                                    <div class="grid_11">
+                                        <input style="width: 100%; " c-text-box type="input" filter="'string'"
+                                            class="k-textbox" ng-model="item.pj2" />
+                                    </div>
+                                    <div class="grid_1" style="margin-top: 7px" ng-show="btn1">
+                                        <label ng-click="tambah(1)" class="clicks"><img src="stylesheets/Addd.png"
+                                                width="25" alt="Picture"></label>
+                                        <label ng-click="hapus(1)" class="clicks"><img src="stylesheets/cancel.png"
+                                                width="25" alt="Picture"></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="grid_12" ng-show="pj2">
+                                <div class="grid_4" style="margin-top: 13px">
+                                    <label c-label item="item"></label>
+                                </div>
+                                <div class="grid_8">
+                                    <div class="grid_11">
+                                        <input style="width: 100%; " c-text-box type="input" filter="'string'"
+                                            class="k-textbox" ng-model="item.pj3" />
+                                    </div>
+                                    <div class="grid_1" style="margin-top: 7px" ng-show="btn2">
+                                        <label ng-click="hapus(2)" class="clicks"><img src="stylesheets/cancel.png"
+                                                width="25" alt="Picture"></label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
                     </div>
                 </div>
             </div>
@@ -722,4 +772,218 @@
                             class="k-icon k-cancel"></span>Batal</button>
                 </div>
             </div>
-        </div>                     
+        </div>
+        <div kendo-window="popPersetujuan" k-title="'Persetujuan Umum Pasien'" k-width="750" k-height="650"
+            k-visible="false" k-on-open="win2visible = true" k-on-close="win2visible = false">
+            <div class="panel panel-default container_12">
+                <div class="grid_12" style="margin-top: 10px;">
+                    <div class="grid_12">
+                        <div class="grid_12">
+                            <div class="grid_4"></div>
+                            <div class="grid_6"><label c-label
+                                    style="padding:5px;font-size:14px; font-weight:600">Kerahasiaan Informasi</label>
+                            </div>
+                            <div class="grid_2"></div>
+                        </div>
+                        <div class="grid_12">
+                            <div class="grid_4">
+                                <md-radio-group ng-model="listPJ"
+                                    layout-align="left left" layout-wrap>
+                                    <div class="grid_6">
+                                        <md-radio-button value="0" class="md-primary">Penanggung Jawab</md-radio-button>
+                                    </div>
+                                </md-radio-group>
+                                <md-radio-group ng-model="listSaksi" layout-align="left left"
+                                    layout-wrap>
+                                    <div class="grid_6">
+                                        <md-radio-button value="0" class="md-primary">Saksi</md-radio-button>
+                                    </div>
+                                </md-radio-group>
+                            </div>
+                            <div class="grid_6">
+                                <input style="width: 100%; " c-text-box type="input" class="k-textbox"
+                                    ng-model="item.KI0" />
+                            </div>
+                            <div class="grid_2" style="margin-top: 7px" ng-show="btnKI0">
+                                <label ng-click="tambahPU(0)" class="clicks"><img src="stylesheets/Addd.png" width="25"
+                                        alt="Picture"></label>
+                            </div>
+                        </div>
+                        <div class="grid_12" ng-show="KI1">
+                            <div class="grid_4">
+                                <md-radio-group ng-model="listPJ" layout-align="left left"
+                                    layout-wrap>
+                                    <div class="grid_6">
+                                        <md-radio-button value="1" class="md-primary">Penanggung Jawab</md-radio-button>
+                                    </div>
+                                </md-radio-group>
+                                <md-radio-group ng-model="listSaksi"
+                                    layout-align="left left" layout-wrap>
+                                    <div class="grid_6">
+                                        <md-radio-button value="1" class="md-primary">Saksi</md-radio-button>
+                                    </div>
+                                </md-radio-group>
+                            </div>
+                            <div class="grid_6">
+                                <input style="width: 100%; " c-text-box type="input" class="k-textbox"
+                                    ng-model="item.KI1" />
+                            </div>
+                            <div class="grid_2" style="margin-top: 7px" ng-show="btnKI1">
+                                <label ng-click="tambahPU(1)" class="clicks"><img src="stylesheets/Addd.png" width="25"
+                                        alt="Picture"></label>
+                                <label ng-click="hapusPU(1)" class="clicks"><img src="stylesheets/cancel.png" width="25"
+                                        alt="Picture"></label>
+                            </div>
+                        </div>
+                        <div class="grid_12" ng-show="KI2">
+                            <div class="grid_4">
+                                <md-radio-group ng-model="listPJ" layout-align="left left"
+                                    layout-wrap>
+                                    <div class="grid_6">
+                                        <md-radio-button value="2" class="md-primary">Penanggung Jawab</md-radio-button>
+                                    </div>
+                                </md-radio-group>
+                                <md-radio-group ng-model="listSaksi"
+                                    layout-align="left left" layout-wrap>
+                                    <div class="grid_6">
+                                        <md-radio-button value="2" class="md-primary">Saksi</md-radio-button>
+                                    </div>
+                                </md-radio-group>
+                            </div>
+                            <div class="grid_6">
+                                <input style="width: 100%; " c-text-box type="input" class="k-textbox"
+                                    ng-model="item.KI2" />
+                            </div>
+                            <div class="grid_2" style="margin-top: 7px" ng-show="btnKI2">
+                                <label ng-click="tambahPU(2)" class="clicks"><img src="stylesheets/Addd.png" width="25"
+                                        alt="Picture"></label>
+                                <label ng-click="hapusPU(2)" class="clicks"><img src="stylesheets/cancel.png" width="25"
+                                        alt="Picture"></label>
+                            </div>
+                        </div>
+                        <div class="grid_12" ng-show="KI3">
+                            <div class="grid_4">
+                                <md-radio-group ng-model="listPJ" layout-align="left left"
+                                    layout-wrap>
+                                    <div class="grid_6">
+                                        <md-radio-button value="3" class="md-primary">Penanggung Jawab</md-radio-button>
+                                    </div>
+                                </md-radio-group>
+                                <md-radio-group ng-model="listSaksi"
+                                    layout-align="left left" layout-wrap>
+                                    <div class="grid_6">
+                                        <md-radio-button value="3" class="md-primary">Saksi</md-radio-button>
+                                    </div>
+                                </md-radio-group>
+                            </div>
+                            <div class="grid_6">
+                                <input style="width: 100%; " c-text-box type="input" class="k-textbox"
+                                    ng-model="item.KI3" />
+                            </div>
+                            <div class="grid_2" style="margin-top: 7px">
+                                <label ng-click="hapusPU(3)" class="clicks"><img src="stylesheets/cancel.png" width="25"
+                                        alt="Picture"></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid_12">
+                        <div class="grid_3"><label c-label
+                                style="padding:5px;font-size:14px; font-weight:600">Privasi
+                                Khusus: </label></div>
+                        <div class="grid_5">
+                            <md-radio-group ng-model="listPrivasi" layout="row" layout-sm="row" layout-align="left left"
+                                layout-wrap>
+                                <div class="grid_6">
+                                    <md-radio-button value="1" class="md-primary">Mengizinkan</md-radio-button>
+                                </div>
+                                <div class="grid_6">
+                                    <md-radio-button value="0" class="md-primary">Tidak Mengizinkan</md-radio-button>
+                                </div>
+                            </md-radio-group>
+                        </div>
+                    </div>
+                    <div class="grid_12">
+                        <div class="grid_12">
+                            <div class="grid_4"></div>
+                            <div class="grid_6"><label c-label
+                                    style="padding:5px;font-size:14px; font-weight:600">Privasi</label>
+                            </div>
+                            <div class="grid_2"></div>
+                        </div>
+                        <div class="grid_12">
+                            <div class="grid_4">
+                            </div>
+                            <div class="grid_6">
+                                <input style="width: 100%; " c-text-box type="input" class="k-textbox"
+                                    ng-model="item.PR0" />
+                            </div>
+                            <div class="grid_2" style="margin-top: 7px" ng-show="btnPR0">
+                                <label ng-click="tambahPU2(0)" class="clicks"><img src="stylesheets/Addd.png" width="25"
+                                        alt="Picture"></label>
+                            </div>
+                        </div>
+                        <div class="grid_12" ng-show="PR1">
+                            <div class="grid_4">
+                            </div>
+                            <div class="grid_6">
+                                <input style="width: 100%; " c-text-box type="input" class="k-textbox"
+                                    ng-model="item.PR1" />
+                            </div>
+                            <div class="grid_2" style="margin-top: 7px" ng-show="btnPR1">
+                                <label ng-click="tambahPU2(1)" class="clicks"><img src="stylesheets/Addd.png" width="25"
+                                        alt="Picture"></label>
+                                <label ng-click="hapusPU2(1)" class="clicks"><img src="stylesheets/cancel.png" width="25"
+                                        alt="Picture"></label>
+                            </div>
+                        </div>
+                        <div class="grid_12" ng-show="PR2">
+                            <div class="grid_4">
+                            </div>
+                            <div class="grid_6">
+                                <input style="width: 100%; " c-text-box type="input" class="k-textbox"
+                                    ng-model="item.PR2" />
+                            </div>
+                            <div class="grid_2" style="margin-top: 7px" ng-show="btnPR2">
+                                <label ng-click="tambahPU2(2)" class="clicks"><img src="stylesheets/Addd.png" width="25"
+                                        alt="Picture"></label>
+                                <label ng-click="hapusPU2(2)" class="clicks"><img src="stylesheets/cancel.png" width="25"
+                                        alt="Picture"></label>
+                            </div>
+                        </div>
+                        <div class="grid_12" ng-show="PR3">
+                            <div class="grid_4">
+                            </div>
+                            <div class="grid_6">
+                                <input style="width: 100%; " c-text-box type="input" class="k-textbox"
+                                    ng-model="item.PR3" />
+                            </div>
+                            <div class="grid_2" style="margin-top: 7px">
+                                <label ng-click="hapusPU2(3)" class="clicks"><img src="stylesheets/cancel.png" width="25"
+                                        alt="Picture"></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid_12">
+                        <div class="grid_6">
+                            <!-- <div class="grid_4" style="margin-top:5px"> -->
+                            <label c-label real>Petugas Pemberi Informasi</label>
+                            <input style="width: 100%;" kendo-combo-box k-ng-model="pegawaipetugas"
+                                k-data-text-field="'namalengkap'" k-filter="'contains'" 
+                                k-data-value-field="'id'" k-data-source="listDataPegawai" />
+                            <!-- </div> -->
+                        </div>
+                    </div>
+                </div>
+                <div class="k-edit-buttons  k-state-default pull-right" style="margin-top:15px">
+                    <button class="k-button k-button-icontext k-primary k-grid-update" ng-click="savePersetujuanUmum()"
+                        ng-hide="hideScr">
+                        <span class="k-icon k-update"></span>Simpan</button>
+                    <button class="k-button k-button-icontext k-primary k-grid-update" ng-click="cetakPersetujuan()"><span
+                            class="k-icon k-print"></span>Cetak</button>
+                    <!-- <button class="k-button  k-button-icontext" ng-click="cariPersetujuan()"><span
+                            class="k-icon k-delete"></span>Hapus</button> -->
+                    <button class="k-button  k-button-icontext" ng-click="batalPersetujuan()"><span
+                            class="k-icon k-cancel"></span>Batal</button>
+                </div>
+            </div>
+        </div>

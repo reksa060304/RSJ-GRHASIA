@@ -651,6 +651,7 @@ class RawatInapController extends ApiController
 			                (
 			select pd.tglregistrasi,
 				p.nocm,
+                concat_ws(',', p.pj1, p.pj2, p.pj3)as pj,
 				pd.noregistrasi,
 				ru.namaruangan,
 				p.namapasien,

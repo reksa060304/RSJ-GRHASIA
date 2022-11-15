@@ -21,7 +21,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.model.tglSEP = $scope.now;
             $scope.model.tglRujukan = $scope.now;
             $scope.model.tglPelayanan = $scope.now;
-            
+            $scope.btn0 = true
+            $scope.btn1 = false
+            $scope.btn2 = false
+            $scope.pj1 = false
+            $scope.pj2 = false
             loadCache();
             GetCombo();
 
@@ -141,7 +145,19 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         var umur = dateHelper.CountAge(new Date($scope.item.pasien.tgllahir), now);
                         $scope.item.pasien.umur = umur.year + ' thn ' + umur.month + ' bln ' + umur.day + ' hari'
                         $scope.item.nocmfk = e.data.data[0].nocmfk;
-
+                        $scope.item.pj1 = e.data.data[0].pj1
+                        $scope.item.pj2 = e.data.data[0].pj2
+                        $scope.item.pj3 = e.data.data[0].pj3
+                        if (e.data.data[0].pj2 != null){
+                            $scope.pj1 = true
+                            $scope.btn1 = true
+                        }
+                        if (e.data.data[0].pj3 != null){
+                            $scope.btn0 = false
+                            $scope.btn1 = false
+                            $scope.pj2 = true
+                            $scope.btn2 = true
+                        }
                     });
 
 
@@ -265,9 +281,31 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.Save = function () {
 
                 $scope.SimpanRegistrasi();
-
+                $scope.simpanPasienPJ();
             }
+            $scope.simpanPasienPJ = function(){
+                var pj1 = null
+                var pj2 = null
+                var pj3 = null
+                if($scope.item.pj1 != undefined){
+                    pj1 = $scope.item.pj1
+                }
+                if ($scope.item.pj2 != undefined) {
+                    pj2 = $scope.item.pj2
+                }
+                if ($scope.item.pj3 != undefined) {
+                    pj3 = $scope.item.pj3
+                }
+                var objSave = {
+                    id: $scope.currentNoCm,
+                    pj1: pj1,
+                    pj2: pj2,
+                    pj3: pj3,
+                }
+                medifirstService.post('save/pj-pasien', objSave).then(function(){
 
+                })
+            }
             $scope.SimpanRegistrasi = function () {
                 if ($scope.item.kelas == undefined) {
                     toastr.error('Kelas harus di isi')
@@ -826,7 +864,31 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     });
                 }
             }
-
+            
+            $scope.tambah = function(data){
+                if(data == 0){
+                    $scope.pj1 = true;
+                    $scope.btn0 = false;
+                    $scope.btn1 = true
+                } else if(data == 1){
+                    $scope.pj2 = true
+                    $scope.btn1 = false
+                    $scope.btn2 = true
+                }
+            }
+            $scope.hapus = function(data){
+                if(data == 2){
+                    $scope.pj2 = false;
+                    $scope.btn2 = false
+                    $scope.btn1 = true;
+                    $scope.item.pj3 = undefined;
+                } else if(data == 1){
+                    $scope.btn1 = false;
+                    $scope.btn0 =true;
+                    $scope.pj1 = false;
+                    $scope.item.pj2 = undefined;
+                }
+            }
             //** BATAS */
         }
     ]);
