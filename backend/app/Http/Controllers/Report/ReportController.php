@@ -4046,6 +4046,521 @@ class ReportController extends ApiController{
         return view('report.keuangan.pertanggungjawaban',compact('data', 'pageWidth', 'tahun', 'periode'));
     }
 
+    public function CetakPertanggungjawabanBaru(Request $request){
+        // $tahun = $request['tahun'];
+        // $bulan = $request['bulan'];
+
+        // $periode = '';
+        // if($bulan == '01'){
+        //     $periode = 'JANUARI';
+        // }
+        // else if($bulan == '02'){
+        //     $periode = 'FEBRUARI';
+        // }
+        // else if($bulan == '03'){
+        //     $periode = 'MARET';
+        // }
+        // else if($bulan == '04'){
+        //     $periode = 'APRIL';
+        // }
+        // else if($bulan == '05'){
+        //     $periode = 'MEI';
+        // }
+        // else if($bulan == '06'){
+        //     $periode = 'JUNI';
+        // }
+        // else if($bulan == '07'){
+        //     $periode = 'JULI';
+        // }
+        // else if($bulan == '08'){
+        //     $periode = 'AGUSTUS';
+        // }
+        // else if($bulan == '09'){
+        //     $periode = 'SEPTEMBER';
+        // }
+        // else if($bulan == '10'){
+        //     $periode = 'OKTOBER';
+        // }
+        // else if($bulan == '11'){
+        //     $periode = 'NOVEMBER';
+        // }
+        // else if($bulan == '12'){
+        //     $periode = 'DESEMBER';
+        // }
+
+        $data = DB::select(DB::raw("select bold, nourut, kode, keterangan, coalesce(sum(jumlahanggaran), 0) jumlahanggaran,
+        coalesce(sum(jumlahspjsdbulanlalugaji),0) jumlahspjsdbulanlalugaji,
+        coalesce(sum(jumlahspjbulaninigaji),0) jumlahspjbulaninigaji, 
+        coalesce(sum(totalsemuabulangaji),0) totalsemuabulangaji,
+        coalesce(sum(jumlahspjsdbulanlalubarangjasa),0) jumlahspjsdbulanlalubarangjasa,
+        coalesce(sum(jumlahspjbulaninibarangjasa),0) jumlahspjbulaninibarangjasa, 
+        coalesce(sum(totalsemuabulanbarangjasa),0) totalsemuabulanbarangjasa
+        from(
+            select 'iya' as bold, nourut, kode, keterangan, jumlahanggaran,
+            case when tglrealisasi < '11' and idjenisanggaran = 3 then sum(totalbelanja) end as jumlahspjsdbulanlalugaji,
+            case when tglrealisasi = '11' and idjenisanggaran = 3 then sum(totalbelanja) end as jumlahspjbulaninigaji,
+            case when tglrealisasi <= '11' and idjenisanggaran = 3 then sum(totalbelanja) end as totalsemuabulangaji,
+            case when tglrealisasi < '11' and idjenisanggaran = 4 then sum(totalbelanja) end as jumlahspjsdbulanlalubarangjasa,
+            case when tglrealisasi = '11' and idjenisanggaran = 4 then sum(totalbelanja) end as jumlahspjbulaninibarangjasa,
+            case when tglrealisasi <= '11' and idjenisanggaran = 4 then sum(totalbelanja) end as totalsemuabulanbarangjasa
+            from(
+                select ja.id idjenisanggaran, TO_CHAR(x.tglrealisasi, 'MM') tglrealisasi, RANK ( ) OVER ( order by ka.kode ) AS nourut, ka.kode,
+                ka.keterangan, sum(kb.subtotal) jumlahanggaran, x.totalbelanja
+                from mataanggaran_m ma
+                inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
+                INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
+                inner join mataanggaran_m ma3 on ma.kodemataanggaran ilike ma3.kodemataanggaran || '.%'
+                and 
+              case 
+                    when ma3.kodemataanggaran ilike 'I.%' then char_length(ma3.kodemataanggaran) = 5
+                    when ma3.kodemataanggaran ilike 'I.%' then char_length(ma3.kodemataanggaran) = 6
+                    when ma3.kodemataanggaran ilike 'III.%' then char_length(ma3.kodemataanggaran) = 7
+                end 
+                inner join jenisanggaran_m ja on ja.id = ma3.objectjenisanggaranfk
+                inner join mataanggaranpermen_m map on map.id = ma.mataanggaranpermenfk
+                inner join mataanggaranpermen_m map1 on map1.id = map.mataanggaranpermenfk and map1.div = 4
+                inner join mataanggaranpermen_m map2 on map2.id = map1.mataanggaranpermenfk and map2.div = 3
+                inner join mataanggaranpermen_m map3 on map3.id = map2.mataanggaranpermenfk and map3.div = 2
+                inner join (
+                    select ma.kodemataanggaran, ma.namamataanggaran, sr.totalbelanja, sr.tglrealisasi
+                    from mataanggaran_m ma
+                    inner join strukrealisasi_t sr on ma.id=sr.objectmataanggaranfk
+                    where sr.kdprofile = 30 and sr.statusenabled = true
+                    and sr.status = 'Sudah Diverifikasi'
+                    and extract(year from sr.tglrealisasi) = '2022'
+                    and TO_CHAR(sr.tglrealisasi, 'YYYY-MM') in(
+                        SELECT TO_CHAR(months, 'YYYY-MM') AS dateMonth
+                        FROM generate_series(
+                        '2022-01-01' :: DATE,
+                        '2022-11-28' :: DATE ,
+                        '1 month'
+                    ) AS months
+                    )
+                ) as x on x.kodemataanggaran = ma.kodemataanggaran
+                where ma.kdprofile = 30 and ma.statusenabled = true
+                and kb.kdprofile = 30 and kb.statusenabled = true
+                and ka.kdprofile = 30 and ka.statusenabled = true
+                group by ja.id, TO_CHAR(x.tglrealisasi, 'MM'), ka.kode, ka.keterangan, x.totalbelanja
+            ) as y group by idjenisanggaran, bold, nourut, kode, keterangan, jumlahanggaran, tglrealisasi order by nourut
+        ) as a group by bold, nourut, kode, keterangan
+        
+        union all
+        
+        select bold, nourut, kode, keterangan, jumlahanggaran,
+        coalesce(sum(jumlahspjsdbulanlalugaji),0) jumlahspjsdbulanlalugaji,
+        coalesce(sum(jumlahspjbulaninigaji),0) jumlahspjbulaninigaji, 
+        coalesce(sum(totalsemuabulangaji),0) totalsemuabulangaji,
+        coalesce(sum(jumlahspjsdbulanlalubarangjasa),0) jumlahspjsdbulanlalubarangjasa,
+        coalesce(sum(jumlahspjbulaninibarangjasa),0) jumlahspjbulaninibarangjasa, 
+        coalesce(sum(totalsemuabulanbarangjasa),0) totalsemuabulanbarangjasa
+        from(
+            select bold, nourut, kode, keterangan, jumlahanggaran,
+            case when tglrealisasi < '11' and idjenisanggaran = 3 then sum(totalbelanja) end as jumlahspjsdbulanlalugaji,
+            case when tglrealisasi = '11' and idjenisanggaran = 3 then sum(totalbelanja) end as jumlahspjbulaninigaji,
+            case when tglrealisasi <= '11' and idjenisanggaran = 3 then sum(totalbelanja) end as totalsemuabulangaji,
+            case when tglrealisasi < '11' and idjenisanggaran = 4 then sum(totalbelanja) end as jumlahspjsdbulanlalubarangjasa,
+            case when tglrealisasi = '11' and idjenisanggaran = 4 then sum(totalbelanja) end as jumlahspjbulaninibarangjasa,
+            case when tglrealisasi <= '11' and idjenisanggaran = 4 then sum(totalbelanja) end as totalsemuabulanbarangjasa
+            from(
+                select ja.id idjenisanggaran, TO_CHAR(x.tglrealisasi, 'MM') tglrealisasi, 'tidak' as bold, RANK ( ) OVER ( order by ka.kode ) AS nourut, map3.kode || '.' || map2.kode || '.' || map1.kode || '.' || map.kode kode,
+                map.mataanggaranpermen keterangan, sum(kb.subtotal) jumlahanggaran, x.totalbelanja
+                from mataanggaran_m ma
+                inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
+                INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
+                inner join mataanggaran_m ma3 on ma.kodemataanggaran ilike ma3.kodemataanggaran || '.%'
+                and 
+              case 
+                    when ma3.kodemataanggaran ilike 'I.%' then char_length(ma3.kodemataanggaran) = 5
+                    when ma3.kodemataanggaran ilike 'I.%' then char_length(ma3.kodemataanggaran) = 6
+                    when ma3.kodemataanggaran ilike 'III.%' then char_length(ma3.kodemataanggaran) = 7
+                end 
+                inner join jenisanggaran_m ja on ja.id = ma3.objectjenisanggaranfk
+                inner join mataanggaranpermen_m map on map.id = ma.mataanggaranpermenfk
+                inner join mataanggaranpermen_m map1 on map1.id = map.mataanggaranpermenfk and map1.div = 4
+                inner join mataanggaranpermen_m map2 on map2.id = map1.mataanggaranpermenfk and map2.div = 3
+                inner join mataanggaranpermen_m map3 on map3.id = map2.mataanggaranpermenfk and map3.div = 2
+                inner join (
+                    select ma.kodemataanggaran, ma.namamataanggaran, sr.totalbelanja, sr.tglrealisasi
+                    from mataanggaran_m ma
+                    inner join strukrealisasi_t sr on ma.id=sr.objectmataanggaranfk
+                    where sr.kdprofile = 30 and sr.statusenabled = true
+                    and sr.status = 'Sudah Diverifikasi'
+                    and extract(year from sr.tglrealisasi) = '2022'
+                    and TO_CHAR(sr.tglrealisasi, 'YYYY-MM') in(
+                        SELECT TO_CHAR(months, 'YYYY-MM') AS dateMonth
+                        FROM generate_series(
+                        '2022-01-01' :: DATE,
+                        '2022-11-28' :: DATE ,
+                        '1 month'
+                        ) AS months
+                    )
+                ) as x on x.kodemataanggaran = ma.kodemataanggaran
+                where ma.kdprofile = 30 and ma.statusenabled = true
+                and kb.kdprofile = 30 and kb.statusenabled = true
+                and ka.kdprofile = 30 and ka.statusenabled = true
+                group by ja.id, TO_CHAR(x.tglrealisasi, 'MM'), ka.kode, map3.kode || '.' || map2.kode || '.' || map1.kode || '.' || map.kode, map.mataanggaranpermen, x.totalbelanja
+                order by nourut
+            ) as y group by idjenisanggaran, bold, nourut, kode, keterangan, jumlahanggaran, tglrealisasi order by nourut
+        ) as a group by bold, nourut, kode, keterangan, jumlahanggaran
+        
+        union all
+        
+        select bold, nourut, kode, keterangan, jumlahanggaran,
+        coalesce(sum(jumlahspjsdbulanlalugaji),0) jumlahspjsdbulanlalugaji,
+        coalesce(sum(jumlahspjbulaninigaji),0) jumlahspjbulaninigaji, 
+        coalesce(sum(totalsemuabulangaji),0) totalsemuabulangaji,
+        coalesce(sum(jumlahspjsdbulanlalubarangjasa),0) jumlahspjsdbulanlalubarangjasa,
+        coalesce(sum(jumlahspjbulaninibarangjasa),0) jumlahspjbulaninibarangjasa, 
+        coalesce(sum(totalsemuabulanbarangjasa),0) totalsemuabulanbarangjasa
+        from(
+            select bold, nourut, kode, keterangan, jumlahanggaran,
+            case when tglrealisasi < '11' and idjenisanggaran = 3 then sum(totalbelanja) end as jumlahspjsdbulanlalugaji,
+            case when tglrealisasi = '11' and idjenisanggaran = 3 then sum(totalbelanja) end as jumlahspjbulaninigaji,
+            case when tglrealisasi <= '11' and idjenisanggaran = 3 then sum(totalbelanja) end as totalsemuabulangaji,
+            case when tglrealisasi < '11' and idjenisanggaran = 4 then sum(totalbelanja) end as jumlahspjsdbulanlalubarangjasa,
+            case when tglrealisasi = '11' and idjenisanggaran = 4 then sum(totalbelanja) end as jumlahspjbulaninibarangjasa,
+            case when tglrealisasi <= '11' and idjenisanggaran = 4 then sum(totalbelanja) end as totalsemuabulanbarangjasa
+            from(
+                select ja.id idjenisanggaran, TO_CHAR(x.tglrealisasi, 'MM') tglrealisasi, 'tidak' as bold, RANK ( ) OVER ( order by ka.kode ) AS nourut, map3.kode || '.' || map2.kode || '.' || map1.kode kode,
+                map1.mataanggaranpermen keterangan, sum(kb.subtotal) jumlahanggaran, x.totalbelanja
+                from mataanggaran_m ma
+                inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
+                INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
+                inner join mataanggaran_m ma3 on ma.kodemataanggaran ilike ma3.kodemataanggaran || '.%'
+                and 
+              case 
+                    when ma3.kodemataanggaran ilike 'I.%' then char_length(ma3.kodemataanggaran) = 5
+                    when ma3.kodemataanggaran ilike 'I.%' then char_length(ma3.kodemataanggaran) = 6
+                    when ma3.kodemataanggaran ilike 'III.%' then char_length(ma3.kodemataanggaran) = 7
+                end 
+                inner join jenisanggaran_m ja on ja.id = ma3.objectjenisanggaranfk
+                inner join mataanggaranpermen_m map on map.id = ma.mataanggaranpermenfk
+                inner join mataanggaranpermen_m map1 on map1.id = map.mataanggaranpermenfk and map1.div = 4
+                inner join mataanggaranpermen_m map2 on map2.id = map1.mataanggaranpermenfk and map2.div = 3
+                inner join mataanggaranpermen_m map3 on map3.id = map2.mataanggaranpermenfk and map3.div = 2
+                inner join (
+                    select ma.kodemataanggaran, ma.namamataanggaran, sr.totalbelanja, sr.tglrealisasi
+                    from mataanggaran_m ma
+                    inner join strukrealisasi_t sr on ma.id=sr.objectmataanggaranfk
+                    where sr.kdprofile = 30 and sr.statusenabled = true
+                    and sr.status = 'Sudah Diverifikasi'
+                    and extract(year from sr.tglrealisasi) = '2022'
+                    and TO_CHAR(sr.tglrealisasi, 'YYYY-MM') in(
+                        SELECT TO_CHAR(months, 'YYYY-MM') AS dateMonth
+                        FROM generate_series(
+                        '2022-01-01' :: DATE,
+                        '2022-11-28' :: DATE ,
+                        '1 month'
+                        ) AS months
+                    )
+                ) as x on x.kodemataanggaran = ma.kodemataanggaran
+                where ma.kdprofile = 30 and ma.statusenabled = true
+                and kb.kdprofile = 30 and kb.statusenabled = true
+                and ka.kdprofile = 30 and ka.statusenabled = true
+                group by ja.id, TO_CHAR(x.tglrealisasi, 'MM'), ka.kode, map3.kode || '.' || map2.kode || '.' || map1.kode, map1.mataanggaranpermen, x.totalbelanja
+                order by nourut
+            ) as y group by idjenisanggaran, bold, nourut, kode, keterangan, jumlahanggaran, tglrealisasi order by nourut
+        ) as a group by bold, nourut, kode, keterangan, jumlahanggaran
+        
+        union all
+        
+        select bold, nourut, kode, keterangan, jumlahanggaran,
+        coalesce(sum(jumlahspjsdbulanlalugaji),0) jumlahspjsdbulanlalugaji,
+        coalesce(sum(jumlahspjbulaninigaji),0) jumlahspjbulaninigaji, 
+        coalesce(sum(totalsemuabulangaji),0) totalsemuabulangaji,
+        coalesce(sum(jumlahspjsdbulanlalubarangjasa),0) jumlahspjsdbulanlalubarangjasa,
+        coalesce(sum(jumlahspjbulaninibarangjasa),0) jumlahspjbulaninibarangjasa, 
+        coalesce(sum(totalsemuabulanbarangjasa),0) totalsemuabulanbarangjasa
+        from(
+            select bold, nourut, kode, keterangan, jumlahanggaran,
+            case when tglrealisasi < '11' and idjenisanggaran = 3 then sum(totalbelanja) end as jumlahspjsdbulanlalugaji,
+            case when tglrealisasi = '11' and idjenisanggaran = 3 then sum(totalbelanja) end as jumlahspjbulaninigaji,
+            case when tglrealisasi <= '11' and idjenisanggaran = 3 then sum(totalbelanja) end as totalsemuabulangaji,
+            case when tglrealisasi < '11' and idjenisanggaran = 4 then sum(totalbelanja) end as jumlahspjsdbulanlalubarangjasa,
+            case when tglrealisasi = '11' and idjenisanggaran = 4 then sum(totalbelanja) end as jumlahspjbulaninibarangjasa,
+            case when tglrealisasi <= '11' and idjenisanggaran = 4 then sum(totalbelanja) end as totalsemuabulanbarangjasa
+            from(
+                select ja.id idjenisanggaran, TO_CHAR(x.tglrealisasi, 'MM') tglrealisasi, 'tidak' as bold, RANK ( ) OVER ( order by ka.kode ) AS nourut, map3.kode || '.' || map2.kode kode,
+                map2.mataanggaranpermen keterangan, sum(kb.subtotal) jumlahanggaran, x.totalbelanja
+                from mataanggaran_m ma
+                inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
+                INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
+                inner join mataanggaran_m ma3 on ma.kodemataanggaran ilike ma3.kodemataanggaran || '.%'
+                and 
+              case 
+                    when ma3.kodemataanggaran ilike 'I.%' then char_length(ma3.kodemataanggaran) = 5
+                    when ma3.kodemataanggaran ilike 'I.%' then char_length(ma3.kodemataanggaran) = 6
+                    when ma3.kodemataanggaran ilike 'III.%' then char_length(ma3.kodemataanggaran) = 7
+                end 
+                inner join jenisanggaran_m ja on ja.id = ma3.objectjenisanggaranfk
+                inner join mataanggaranpermen_m map on map.id = ma.mataanggaranpermenfk
+                inner join mataanggaranpermen_m map1 on map1.id = map.mataanggaranpermenfk and map1.div = 4
+                inner join mataanggaranpermen_m map2 on map2.id = map1.mataanggaranpermenfk and map2.div = 3
+                inner join mataanggaranpermen_m map3 on map3.id = map2.mataanggaranpermenfk and map3.div = 2
+                inner join (
+                    select ma.kodemataanggaran, ma.namamataanggaran, sr.totalbelanja, sr.tglrealisasi
+                    from mataanggaran_m ma
+                    inner join strukrealisasi_t sr on ma.id=sr.objectmataanggaranfk
+                    where sr.kdprofile = 30 and sr.statusenabled = true
+                    and sr.status = 'Sudah Diverifikasi'
+                    and extract(year from sr.tglrealisasi) = '2022'
+                    and TO_CHAR(sr.tglrealisasi, 'YYYY-MM') in(
+                        SELECT TO_CHAR(months, 'YYYY-MM') AS dateMonth
+                        FROM generate_series(
+                        '2022-01-01' :: DATE,
+                        '2022-11-28' :: DATE ,
+                        '1 month'
+                        ) AS months
+                    )
+                ) as x on x.kodemataanggaran = ma.kodemataanggaran
+                where ma.kdprofile = 30 and ma.statusenabled = true
+                and kb.kdprofile = 30 and kb.statusenabled = true
+                and ka.kdprofile = 30 and ka.statusenabled = true
+                group by ja.id, TO_CHAR(x.tglrealisasi, 'MM'), ka.kode, map3.kode || '.' || map2.kode, map2.mataanggaranpermen, x.totalbelanja
+                order by nourut
+            ) as y group by idjenisanggaran, bold, nourut, kode, keterangan, jumlahanggaran, tglrealisasi order by nourut
+        ) as a group by bold, nourut, kode, keterangan, jumlahanggaran
+        
+        union all
+        
+        select bold, nourut, kode, keterangan, jumlahanggaran,
+        coalesce(sum(jumlahspjsdbulanlalugaji),0) jumlahspjsdbulanlalugaji,
+        coalesce(sum(jumlahspjbulaninigaji),0) jumlahspjbulaninigaji, 
+        coalesce(sum(totalsemuabulangaji),0) totalsemuabulangaji,
+        coalesce(sum(jumlahspjsdbulanlalubarangjasa),0) jumlahspjsdbulanlalubarangjasa,
+        coalesce(sum(jumlahspjbulaninibarangjasa),0) jumlahspjbulaninibarangjasa, 
+        coalesce(sum(totalsemuabulanbarangjasa),0) totalsemuabulanbarangjasa
+        from(
+            select bold, nourut, kode, keterangan, jumlahanggaran,
+            case when tglrealisasi < '11' and idjenisanggaran = 3 then sum(totalbelanja) end as jumlahspjsdbulanlalugaji,
+            case when tglrealisasi = '11' and idjenisanggaran = 3 then sum(totalbelanja) end as jumlahspjbulaninigaji,
+            case when tglrealisasi <= '11' and idjenisanggaran = 3 then sum(totalbelanja) end as totalsemuabulangaji,
+            case when tglrealisasi < '11' and idjenisanggaran = 4 then sum(totalbelanja) end as jumlahspjsdbulanlalubarangjasa,
+            case when tglrealisasi = '11' and idjenisanggaran = 4 then sum(totalbelanja) end as jumlahspjbulaninibarangjasa,
+            case when tglrealisasi <= '11' and idjenisanggaran = 4 then sum(totalbelanja) end as totalsemuabulanbarangjasa
+            from(
+                select ja.id idjenisanggaran, TO_CHAR(x.tglrealisasi, 'MM') tglrealisasi, 'tidak' as bold, RANK ( ) OVER ( order by ka.kode ) AS nourut, map3.kode,
+                map3.mataanggaranpermen keterangan, sum(kb.subtotal) jumlahanggaran, x.totalbelanja
+                from mataanggaran_m ma
+                inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
+                INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
+                inner join mataanggaran_m ma3 on ma.kodemataanggaran ilike ma3.kodemataanggaran || '.%'
+                and 
+              case 
+                    when ma3.kodemataanggaran ilike 'I.%' then char_length(ma3.kodemataanggaran) = 5
+                    when ma3.kodemataanggaran ilike 'I.%' then char_length(ma3.kodemataanggaran) = 6
+                    when ma3.kodemataanggaran ilike 'III.%' then char_length(ma3.kodemataanggaran) = 7
+                end 
+                inner join jenisanggaran_m ja on ja.id = ma3.objectjenisanggaranfk
+                inner join mataanggaranpermen_m map on map.id = ma.mataanggaranpermenfk
+                inner join mataanggaranpermen_m map1 on map1.id = map.mataanggaranpermenfk and map1.div = 4
+                inner join mataanggaranpermen_m map2 on map2.id = map1.mataanggaranpermenfk and map2.div = 3
+                inner join mataanggaranpermen_m map3 on map3.id = map2.mataanggaranpermenfk and map3.div = 2
+                inner join (
+                    select ma.kodemataanggaran, ma.namamataanggaran, sr.totalbelanja, sr.tglrealisasi
+                    from mataanggaran_m ma
+                    inner join strukrealisasi_t sr on ma.id=sr.objectmataanggaranfk
+                    where sr.kdprofile = 30 and sr.statusenabled = true
+                    and sr.status = 'Sudah Diverifikasi'
+                    and extract(year from sr.tglrealisasi) = '2022'
+                    and TO_CHAR(sr.tglrealisasi, 'YYYY-MM') in(
+                        SELECT TO_CHAR(months, 'YYYY-MM') AS dateMonth
+                        FROM generate_series(
+                        '2022-01-01' :: DATE,
+                        '2022-11-28' :: DATE ,
+                        '1 month'
+                        ) AS months
+                    )
+                ) as x on x.kodemataanggaran = ma.kodemataanggaran
+                where ma.kdprofile = 30 and ma.statusenabled = true
+                and kb.kdprofile = 30 and kb.statusenabled = true
+                and ka.kdprofile = 30 and ka.statusenabled = true
+                group by ja.id, TO_CHAR(x.tglrealisasi, 'MM'), ka.kode, map3.kode, map3.mataanggaranpermen, x.totalbelanja
+                order by nourut
+            ) as y group by idjenisanggaran, bold, nourut, kode, keterangan, jumlahanggaran, tglrealisasi order by nourut
+        ) as a group by bold, nourut, kode, keterangan, jumlahanggaran
+        
+        union all
+        
+        select bold, nourut, kode, keterangan, coalesce(sum(jumlahanggaran), 0) jumlahanggaran,
+        coalesce(sum(jumlahspjsdbulanlalugaji),0) jumlahspjsdbulanlalugaji,
+        coalesce(sum(jumlahspjbulaninigaji),0) jumlahspjbulaninigaji, 
+        coalesce(sum(totalsemuabulangaji),0) totalsemuabulangaji,
+        coalesce(sum(jumlahspjsdbulanlalubarangjasa),0) jumlahspjsdbulanlalubarangjasa,
+        coalesce(sum(jumlahspjbulaninibarangjasa),0) jumlahspjbulaninibarangjasa, 
+        coalesce(sum(totalsemuabulanbarangjasa),0) totalsemuabulanbarangjasa
+        from(
+            select 'iya' as bold, nourut, kode, keterangan, jumlahanggaran,
+            case when tglrealisasi < '11' and idjenisanggaran = 3 then sum(totalbelanja) end as jumlahspjsdbulanlalugaji,
+            case when tglrealisasi = '11' and idjenisanggaran = 3 then sum(totalbelanja) end as jumlahspjbulaninigaji,
+            case when tglrealisasi <= '11' and idjenisanggaran = 3 then sum(totalbelanja) end as totalsemuabulangaji,
+            case when tglrealisasi < '11' and idjenisanggaran = 4 then sum(totalbelanja) end as jumlahspjsdbulanlalubarangjasa,
+            case when tglrealisasi = '11' and idjenisanggaran = 4 then sum(totalbelanja) end as jumlahspjbulaninibarangjasa,
+            case when tglrealisasi <= '11' and idjenisanggaran = 4 then sum(totalbelanja) end as totalsemuabulanbarangjasa
+            from(
+                select ja.id idjenisanggaran, TO_CHAR(x.tglrealisasi, 'MM') tglrealisasi, RANK ( ) OVER ( order by dp0.kode ) AS nourut, dp0.kode,
+                dp0.keterangan, sum(kb.subtotal) jumlahanggaran, x.totalbelanja
+                from mataanggaran_m ma
+                inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
+                INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
+                inner join kegiatananggaran_m as dp0 on ka.kode ilike dp0.kode || '%' and dp0.div = 3
+                inner join mataanggaran_m ma3 on ma.kodemataanggaran ilike ma3.kodemataanggaran || '.%'
+                and 
+              case 
+                    when ma3.kodemataanggaran ilike 'I.%' then char_length(ma3.kodemataanggaran) = 5
+                    when ma3.kodemataanggaran ilike 'I.%' then char_length(ma3.kodemataanggaran) = 6
+                    when ma3.kodemataanggaran ilike 'III.%' then char_length(ma3.kodemataanggaran) = 7
+                end 
+                inner join jenisanggaran_m ja on ja.id = ma3.objectjenisanggaranfk
+                inner join mataanggaranpermen_m map on map.id = ma.mataanggaranpermenfk
+                inner join mataanggaranpermen_m map1 on map1.id = map.mataanggaranpermenfk and map1.div = 4
+                inner join mataanggaranpermen_m map2 on map2.id = map1.mataanggaranpermenfk and map2.div = 3
+                inner join mataanggaranpermen_m map3 on map3.id = map2.mataanggaranpermenfk and map3.div = 2
+                inner join (
+                    select ma.kodemataanggaran, ma.namamataanggaran, sr.totalbelanja, sr.tglrealisasi
+                    from mataanggaran_m ma
+                    inner join strukrealisasi_t sr on ma.id=sr.objectmataanggaranfk
+                    where sr.kdprofile = 30 and sr.statusenabled = true
+                    and sr.status = 'Sudah Diverifikasi'
+                    and extract(year from sr.tglrealisasi) = '2022'
+                    and TO_CHAR(sr.tglrealisasi, 'YYYY-MM') in(
+                        SELECT TO_CHAR(months, 'YYYY-MM') AS dateMonth
+                        FROM generate_series(
+                        '2022-01-01' :: DATE,
+                        '2022-11-28' :: DATE ,
+                        '1 month'
+                    ) AS months
+                    )
+                ) as x on x.kodemataanggaran = ma.kodemataanggaran
+                where ma.kdprofile = 30 and ma.statusenabled = true
+                and kb.kdprofile = 30 and kb.statusenabled = true
+                and ka.kdprofile = 30 and ka.statusenabled = true
+                group by ja.id, TO_CHAR(x.tglrealisasi, 'MM'), dp0.kode, dp0.keterangan, x.totalbelanja
+            ) as y group by idjenisanggaran, bold, nourut, kode, keterangan, jumlahanggaran, tglrealisasi order by nourut
+        ) as a group by bold, nourut, kode, keterangan
+        
+        union all
+        
+        select bold, nourut, kode, keterangan, coalesce(sum(jumlahanggaran), 0) jumlahanggaran,
+        coalesce(sum(jumlahspjsdbulanlalugaji),0) jumlahspjsdbulanlalugaji,
+        coalesce(sum(jumlahspjbulaninigaji),0) jumlahspjbulaninigaji, 
+        coalesce(sum(totalsemuabulangaji),0) totalsemuabulangaji,
+        coalesce(sum(jumlahspjsdbulanlalubarangjasa),0) jumlahspjsdbulanlalubarangjasa,
+        coalesce(sum(jumlahspjbulaninibarangjasa),0) jumlahspjbulaninibarangjasa, 
+        coalesce(sum(totalsemuabulanbarangjasa),0) totalsemuabulanbarangjasa
+        from(
+            select 'iya' as bold, nourut, kode, keterangan, jumlahanggaran,
+            case when tglrealisasi < '11' and idjenisanggaran = 3 then sum(totalbelanja) end as jumlahspjsdbulanlalugaji,
+            case when tglrealisasi = '11' and idjenisanggaran = 3 then sum(totalbelanja) end as jumlahspjbulaninigaji,
+            case when tglrealisasi <= '11' and idjenisanggaran = 3 then sum(totalbelanja) end as totalsemuabulangaji,
+            case when tglrealisasi < '11' and idjenisanggaran = 4 then sum(totalbelanja) end as jumlahspjsdbulanlalubarangjasa,
+            case when tglrealisasi = '11' and idjenisanggaran = 4 then sum(totalbelanja) end as jumlahspjbulaninibarangjasa,
+            case when tglrealisasi <= '11' and idjenisanggaran = 4 then sum(totalbelanja) end as totalsemuabulanbarangjasa
+            from(
+                select ja.id idjenisanggaran, TO_CHAR(x.tglrealisasi, 'MM') tglrealisasi, RANK ( ) OVER ( order by dp0.kode ) AS nourut, dp0.kode,
+                dp0.keterangan, sum(kb.subtotal) jumlahanggaran, x.totalbelanja
+                from mataanggaran_m ma
+                inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
+                INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
+                inner join kegiatananggaran_m as dp0 on ka.kode ilike dp0.kode || '%' and dp0.div = 2
+                inner join mataanggaran_m ma3 on ma.kodemataanggaran ilike ma3.kodemataanggaran || '.%'
+                and 
+              case 
+                    when ma3.kodemataanggaran ilike 'I.%' then char_length(ma3.kodemataanggaran) = 5
+                    when ma3.kodemataanggaran ilike 'I.%' then char_length(ma3.kodemataanggaran) = 6
+                    when ma3.kodemataanggaran ilike 'III.%' then char_length(ma3.kodemataanggaran) = 7
+                end 
+                inner join jenisanggaran_m ja on ja.id = ma3.objectjenisanggaranfk
+                inner join mataanggaranpermen_m map on map.id = ma.mataanggaranpermenfk
+                inner join mataanggaranpermen_m map1 on map1.id = map.mataanggaranpermenfk and map1.div = 4
+                inner join mataanggaranpermen_m map2 on map2.id = map1.mataanggaranpermenfk and map2.div = 3
+                inner join mataanggaranpermen_m map3 on map3.id = map2.mataanggaranpermenfk and map3.div = 2
+                inner join (
+                    select ma.kodemataanggaran, ma.namamataanggaran, sr.totalbelanja, sr.tglrealisasi
+                    from mataanggaran_m ma
+                    inner join strukrealisasi_t sr on ma.id=sr.objectmataanggaranfk
+                    where sr.kdprofile = 30 and sr.statusenabled = true
+                    and sr.status = 'Sudah Diverifikasi'
+                    and extract(year from sr.tglrealisasi) = '2022'
+                    and TO_CHAR(sr.tglrealisasi, 'YYYY-MM') in(
+                        SELECT TO_CHAR(months, 'YYYY-MM') AS dateMonth
+                        FROM generate_series(
+                        '2022-01-01' :: DATE,
+                        '2022-11-28' :: DATE ,
+                        '1 month'
+                    ) AS months
+                    )
+                ) as x on x.kodemataanggaran = ma.kodemataanggaran
+                where ma.kdprofile = 30 and ma.statusenabled = true
+                and kb.kdprofile = 30 and kb.statusenabled = true
+                and ka.kdprofile = 30 and ka.statusenabled = true
+                group by ja.id, TO_CHAR(x.tglrealisasi, 'MM'), dp0.kode, dp0.keterangan, x.totalbelanja
+            ) as y group by idjenisanggaran, bold, nourut, kode, keterangan, jumlahanggaran, tglrealisasi order by nourut
+        ) as a group by bold, nourut, kode, keterangan
+        order by nourut, bold, kode;"));
+
+        $total = DB::select(DB::raw("select coalesce(sum(jumlahanggaran), 0) jumlahanggaran,
+        coalesce(sum(jumlahspjsdbulanlalugaji),0) jumlahspjsdbulanlalugaji,
+        coalesce(sum(jumlahspjbulaninigaji),0) jumlahspjbulaninigaji, 
+        coalesce(sum(totalsemuabulangaji),0) totalsemuabulangaji,
+        coalesce(sum(jumlahspjsdbulanlalubarangjasa),0) jumlahspjsdbulanlalubarangjasa,
+        coalesce(sum(jumlahspjbulaninibarangjasa),0) jumlahspjbulaninibarangjasa, 
+        coalesce(sum(totalsemuabulanbarangjasa),0) totalsemuabulanbarangjasa
+        from(
+            select 'iya' as bold, nourut, kode, keterangan, jumlahanggaran,
+            case when tglrealisasi < '11' and idjenisanggaran = 3 then sum(totalbelanja) end as jumlahspjsdbulanlalugaji,
+            case when tglrealisasi = '11' and idjenisanggaran = 3 then sum(totalbelanja) end as jumlahspjbulaninigaji,
+            case when tglrealisasi <= '11' and idjenisanggaran = 3 then sum(totalbelanja) end as totalsemuabulangaji,
+            case when tglrealisasi < '11' and idjenisanggaran = 4 then sum(totalbelanja) end as jumlahspjsdbulanlalubarangjasa,
+            case when tglrealisasi = '11' and idjenisanggaran = 4 then sum(totalbelanja) end as jumlahspjbulaninibarangjasa,
+            case when tglrealisasi <= '11' and idjenisanggaran = 4 then sum(totalbelanja) end as totalsemuabulanbarangjasa
+            from(
+                select ja.id idjenisanggaran, TO_CHAR(x.tglrealisasi, 'MM') tglrealisasi, RANK ( ) OVER ( order by dp0.kode ) AS nourut, dp0.kode,
+                dp0.keterangan, sum(kb.subtotal) jumlahanggaran, x.totalbelanja
+                from mataanggaran_m ma
+                inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
+                INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
+                inner join kegiatananggaran_m as dp0 on ka.kode ilike dp0.kode || '%' and dp0.div = 2
+                inner join mataanggaran_m ma3 on ma.kodemataanggaran ilike ma3.kodemataanggaran || '.%'
+                and 
+              case 
+                    when ma3.kodemataanggaran ilike 'I.%' then char_length(ma3.kodemataanggaran) = 5
+                    when ma3.kodemataanggaran ilike 'I.%' then char_length(ma3.kodemataanggaran) = 6
+                    when ma3.kodemataanggaran ilike 'III.%' then char_length(ma3.kodemataanggaran) = 7
+                end 
+                inner join jenisanggaran_m ja on ja.id = ma3.objectjenisanggaranfk
+                inner join mataanggaranpermen_m map on map.id = ma.mataanggaranpermenfk
+                inner join mataanggaranpermen_m map1 on map1.id = map.mataanggaranpermenfk and map1.div = 4
+                inner join mataanggaranpermen_m map2 on map2.id = map1.mataanggaranpermenfk and map2.div = 3
+                inner join mataanggaranpermen_m map3 on map3.id = map2.mataanggaranpermenfk and map3.div = 2
+                inner join (
+                    select ma.kodemataanggaran, ma.namamataanggaran, sr.totalbelanja, sr.tglrealisasi
+                    from mataanggaran_m ma
+                    inner join strukrealisasi_t sr on ma.id=sr.objectmataanggaranfk
+                    where sr.kdprofile = 30 and sr.statusenabled = true
+                    and sr.status = 'Sudah Diverifikasi'
+                    and extract(year from sr.tglrealisasi) = '2022'
+                    and TO_CHAR(sr.tglrealisasi, 'YYYY-MM') in(
+                        SELECT TO_CHAR(months, 'YYYY-MM') AS dateMonth
+                        FROM generate_series(
+                        '2022-01-01' :: DATE,
+                        '2022-11-28' :: DATE ,
+                        '1 month'
+                    ) AS months
+                    )
+                ) as x on x.kodemataanggaran = ma.kodemataanggaran
+                where ma.kdprofile = 30 and ma.statusenabled = true
+                and kb.kdprofile = 30 and kb.statusenabled = true
+                and ka.kdprofile = 30 and ka.statusenabled = true
+                group by ja.id, TO_CHAR(x.tglrealisasi, 'MM'), dp0.kode, dp0.keterangan, x.totalbelanja
+            ) as y group by idjenisanggaran, bold, nourut, kode, keterangan, jumlahanggaran, tglrealisasi order by nourut
+        ) as a"));
+
+        $pageWidth = 950;
+        
+        return view('report.keuangan.pertanggungjawabanbaru',compact('data', 'pageWidth', 'total'));
+    }
+
     public function CetakLO(Request $request){
         $tahun = $request['tahun'];
 

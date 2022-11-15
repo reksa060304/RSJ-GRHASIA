@@ -375,6 +375,42 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 window.open(baseTransaksi + "report/get-cetak-sp3bp?tahun=" + tahunsp + "&bulan=" + bulansp + "&tglcetak=" + tglcetaksp, '_blank');
             }
 
+            $scope.CetakLPJBaru = function(){
+
+                // if ($scope.item.tahunsp == undefined){
+                //     toastr.warning('Tahun harus diisi', 'Informasi');
+                //     return
+                // }
+
+                // if ($scope.item.bulansp == undefined){
+                //     toastr.warning('Bulan harus diisi', 'Informasi');
+                //     return
+                // }
+
+                // if ($scope.item.tglcetaksp == undefined){
+                //     toastr.warning('Tgl cetak harus diisi', 'Informasi');
+                //     return
+                // }
+
+                // var tahunsp = ""
+                // if ($scope.item.tahunsp != undefined){
+                //     tahunsp = moment($scope.item.tahunsp).format('YYYY')
+                // }
+
+                // var bulansp = ""
+                // if ($scope.item.bulansp != undefined){
+                //     bulansp = moment($scope.item.bulansp).format('MM')
+                // }
+
+                // var tglcetaksp = ""
+                // if ($scope.item.tglcetaksp != undefined){
+                //     tglcetaksp = moment($scope.item.tglcetaksp).format('YYYY-MM-DD')
+                // }
+
+
+                window.open(baseTransaksi + "report/get-cetak-lpj-baru", '_blank');
+            }
+
             $scope.CetakBukuPanjar = function(){
 
                 if ($scope.item.tahunpanjar == undefined){
