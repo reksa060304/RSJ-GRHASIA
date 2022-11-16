@@ -747,6 +747,7 @@ sb.id,
     {
         $user = \DB::table('loginuser_s')
             ->where('namauser', $data["username"])
+            ->where('namauser', '!=', 'G2471')
             ->where('passcode', $this->encryptSHA1($data['password']))
             ->first();
 //            dd($user);
