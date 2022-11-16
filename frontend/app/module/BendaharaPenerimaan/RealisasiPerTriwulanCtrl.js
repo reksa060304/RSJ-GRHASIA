@@ -209,6 +209,7 @@ define(['initialize'], function (initialize) {
                         "field": "jumlahtarget",
                         "title": "TARGET",
                         "width": "100px",
+                        "template": "<span class='style-right'>{{formatRupiah('#: jumlahtarget #', 'Rp.')}}</span>",
                     },
                     {
                         "title": "Realisasi Penerimaan",

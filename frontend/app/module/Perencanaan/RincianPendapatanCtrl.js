@@ -90,7 +90,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     },
                     {
                         "field": "uraianpendapatan",
-                        "title": "Uraian Pendapatan",
+                        "title": "Rincian Uraian Pendapatan",
                         "width": "100px",
                         // hidden: true
                     },
