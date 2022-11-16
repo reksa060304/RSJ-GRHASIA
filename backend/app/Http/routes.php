@@ -1870,7 +1870,9 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('registrasi/get-combo-pemakaian-asuransi', 'Registrasi\RegistrasiController@getDataComboAsuransiPasien');
             Route::get('registrasi/get-daftar-combo-pegawai-all', 'Registrasi\RegistrasiController@getDataPegawaiAll');
             Route::get('registrasi/cek-piutang-pasien', 'Registrasi\RegistrasiController@cekPiutangPasien');
-
+            Route::post('save/pj-pasien', 'Registrasi\RegistrasiController@savePjPasin');
+            Route::post('registrasi/save-persetujuan-umum', 'Registrasi\RegistrasiController@savePersetujuanUmum');
+            Route::get('registrasi/persetujuan-umum', 'Registrasi\RegistrasiController@getPersetujuanUmum');
             //###BAYI
             Route::get('registrasi/get-nocm-ibu', 'Registrasi\RegistrasiController@getNoCmIbu');
             Route::get('registrasi/get-desakelurahan-part', 'Registrasi\RegistrasiController@getDesaKelurahanPart');
@@ -2389,6 +2391,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::post('sdm/save-total-cuti','SDM\SumberDayaManusiaController@saveTotalCuti');
             Route::post('sdm/upload-data-sipstr', 'SDM\SumberDayaManusiaController@simpanSipStr');
             Route::get('report/cetak-sertifikat','Report\ReportController@cetakSertifikat');
+            Route::get('report/persetujuan-umum', 'Report\ReportController@persetujuanUmum');
             Route::post('sdm/update-data-pegawai-form-pensiun', 'SDM\SumberDayaManusiaController@updateDataPegawaiFormPensiun');
             Route::post('sdm/save-data-pensiun-pegawai', 'SDM\SumberDayaManusiaController@SavePensiunPegawai');
             Route::post('sdm/save-jadwal-perbulan-pegawai', 'SDM\SumberDayaManusiaController@saveJadwalBulananPegawai');

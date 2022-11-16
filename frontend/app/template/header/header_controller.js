@@ -48,7 +48,7 @@ define(['kendo.menu'], function (kendoMenu) {
                             toastr.warning(objectData.judul, 'Notif ' + objectData.jenis, {
                                 "closeButton": true,
                                 "positionClass": "toast-bottom-right",
-                                "hideDuration": "10000",
+                                "hideDuration": "15000",
                             });
                             $scope.listNotif.sort(function (a, b) {
                                 if (a.tgl < b.tgl) {
@@ -122,7 +122,7 @@ define(['kendo.menu'], function (kendoMenu) {
                                         kelompokUser: element.kelompokuser,
                                         idKelompokUser: element.kelompokuserfk,
                                         dataArray: null,
-                                        urlForm: null,
+                                        urlForm: element.urlform,
                                         idPegawai: element.pegawaifk,
                                         namaFungsiFrontEnd: null,
                                         tgl: element.tgl,
@@ -438,12 +438,13 @@ define(['kendo.menu'], function (kendoMenu) {
         $scope.tglSkrg = moment($scope.now).format('YYYY-MM-DD HH:mm:ss');
 
         $scope.goToNotif = function (data) {
+            console.log(data);
             if (data.urlForm != null && data.urlForm != '') {
                 if (data.params != null) {
                     $state.go(data.urlForm, data.params);
-                    console.log(data.urlForm, data.params);
                 } else {
                     $state.go(data.urlForm);
+
                 }
 
             }
