@@ -19521,6 +19521,50 @@
         "define": "RekamMedisCtrl"
       }
     ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.PengkajianUlangMedisRJJiwa",
+    "url": "/PengkajianUlangMedisRJJiwa",
+    "templateurl": "module/EMR/PengkajianUlangMedisRJJiwa.html",
+    "controller": "PengkajianUlangMedisRJJiwaCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.PengkajianUlangMedisRJNonJiwa",
+    "url": "/PengkajianUlangMedisRJNonJiwa",
+    "templateurl": "module/EMR/PengkajianUlangMedisRJNonJiwa.html",
+    "controller": "PengkajianUlangMedisRJNonJiwaCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
   }
 ]
 
