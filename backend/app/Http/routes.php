@@ -2782,6 +2782,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
                 // GET //
                 Route::get('sysadmin/master/replace-isi-table', 'SysAdmin\Master\MasterController@replaceTableField');
                 Route::get('sysadmin/master/get-data-produk', 'SysAdmin\Master\MasterController@getListProduk');
+                Route::get('sysadmin/master/get-data-ruangan', 'SysAdmin\Master\MasterController@getListRuangan');
                 Route::get('sysadmin/master/get-produkbyid', 'SysAdmin\Master\MasterController@getProdukbyId');
                 Route::get('sysadmin/master/get-jenis-produk', 'SysAdmin\Master\MasterController@getjenisproduk');
                 Route::get('sysadmin/master/get-detail-jenis-produk', 'SysAdmin\Master\MasterController@getDetailjenisprodukbyIdjenisproduk');

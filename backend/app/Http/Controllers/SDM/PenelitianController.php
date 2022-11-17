@@ -467,7 +467,18 @@ class PenelitianController extends ApiController {
         }
         if ($request['statusbayar'] == 2 && $request['statusbayar'] != "" && $request['statusbayar'] != "undefined"){
         $statusbayar = "and sp.nosbmlastfk is null";
+        }
 
+        $statusverif = '';
+        if ($request['statusverif'] == 1 && $request['statusverif'] != "" && $request['statusverif'] != "undefined") {
+        $statusverif = "and sdmp.noregistrasifk is not null";
+        }
+        if ($request['statusverif'] == 2 && $request['statusverif'] != "" && $request['statusverif'] != "undefined"){
+        $statusverif = "and sdmp.noregistrasifk is null";
+        }
+        $kegiatandiklat = '';
+        if (isset($request['kegiatandiklat']) && $request['kegiatandiklat'] != "") {
+        $kegiatandiklat = "and sdmp.objectdetailjenisprodukfk = '$request[kegiatandiklat]'";
         }
         $data = DB::select(DB::raw("SELECT
             sdmp.norec,dk.diklatkategori,djp.detailjenisproduk,sdmp.objectprodukfk,sdmp.jumlahpeserta,
@@ -483,7 +494,7 @@ class PenelitianController extends ApiController {
                 left join sdm_pesertadidik_t sdmpd on sdmpd.noregistrasifk = sdmp.norec
                 left join strukbuktipenerimaan_t sbm on sbm.norec = sp.nosbmlastfk
                 where sdmp.kdprofile = $kdProfile and sdmp.tanggalmulai::date between '$tglAwal'and '$tglAkhir' and sdmp.statusenabled = true
-                $user $Fakultas $statusbayar
+                $user $Fakultas $statusbayar $kegiatandiklat $statusverif
                 group by sdmp.norec,dk.diklatkategori,djp.detailjenisproduk,sdmp.objectprodukfk,sdmp.jumlahpeserta,
             sdmp.institusipendidikan,sdmp.tanggalmulai::date,sdmp.tanggalselesai::date,sdmp.biayapenelitian,
             sdmp.notelp,sdmp.hargasatuan,sdmp.qty, sp.isverifikasi,sp.nosbmlastfk,sp.nosbklastfk,

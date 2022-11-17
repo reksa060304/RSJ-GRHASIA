@@ -96,6 +96,13 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     'id': 2,
                     statusbayar: "Belum Bayar"
             }]
+            $scope.listStatusVerif = [{
+                'id': 1,
+                statusverif: "Sudah Verif"
+            }, {
+                'id': 2,
+                statusverif: "Belum Verif"
+            }]
 
             if (medifirstService.getKelompokUser() != 'diklit') {
                 $scope.verif = false
@@ -413,7 +420,15 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 }
                 // return
                 var modelid = "&modelid="+ModelItem.getPegawai().id;
-                medifirstService.get("sdm/penelitian/get-daftar-penelitian-eksternal?"+ usr+tglAwal+tglAkhir+InstitusiPendidikan+modelid+statusbayar, true).then(function (dat) {
+                var kegiatandiklat= ''
+                if ($scope.item.kegiatandiklat != undefined){
+                    kegiatandiklat = "&kegiatandiklat=" + $scope.item.kegiatandiklat.id
+                }
+                var statusverif = '';
+                if ($scope.item.statusverif != undefined) {
+                    statusverif = "&statusverif=" + $scope.item.statusverif.id
+                }
+                medifirstService.get("sdm/penelitian/get-daftar-penelitian-eksternal?" + usr + tglAwal + tglAkhir + InstitusiPendidikan + modelid + statusbayar + kegiatandiklat + statusverif, true).then(function (dat) {
                         $scope.isRouteLoading = false;
                         var datas = dat.data.datas;
                         for (var i = 0; i < datas.length; i++) {
@@ -851,6 +866,24 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             //     $scope.item = {};
             //     $scope.filteredData = [];
             // };
+            $scope.tglbayar = function(){
+                if ($scope.norec_sp == undefined || $scope.norec_sp == '') {
+                    toastr.error('Data Kegiatan Belum Dipilih', 'Info');
+                    return;
+                }
+                if ($scope.statusBayar == "Lunas") {
+                    toastr.error("Informasi, Tagihan Sudah Lunas !")
+                    return;
+                    // var alertDialog = modelItemAkuntansi.showAlertDialog("Informasi",
+                    //     "Tagihan sudah Lunas", "Ok");
+
+                    // $mdDialog.show(alertDialog).then(function () {
+
+                    // });
+                } else {
+                    $scope.changePage2("PembayaranTagihanNonLayananKasir");
+                }
+            }
         }
     ]);
 });
