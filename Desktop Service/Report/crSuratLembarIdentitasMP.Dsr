@@ -3,7 +3,7 @@ Begin {BD4B4E61-F7B8-11D0-964D-00A0C9273C2A} crSuratLembarIdentitasMP
    ClientHeight    =   9240
    ClientLeft      =   0
    ClientTop       =   0
-   ClientWidth     =   15210
+   ClientWidth     =   14760
    OleObjectBlob   =   "crSuratLembarIdentitasMP.dsx":0000
 End
 Attribute VB_Name = "crSuratLembarIdentitasMP"

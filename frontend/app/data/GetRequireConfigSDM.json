@@ -276,6 +276,14 @@
     {
       "nameDep": "LaporanCPPTGiziCtrl",
       "urlDep": "module/Gizi/Laporan/LaporanCPPTGiziCtrl"
+    },
+    {
+      "nameDep": "TglBayarDiklatCtrl",
+      "urlDep": "module/SDM/Penelitian/TglBayarDiklatCtrl"
+    },
+    {
+      "nameDep": "DaftarPenerimaanKasirCtrl",
+      "urlDep": "module/Kasir/DaftarPenerimaanKasirCtrl"
     }
   ]
 }

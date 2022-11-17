@@ -4999,4 +4999,16 @@ class MasterController extends ApiController{
         ->get();
         return $this->respond($data);
     }
+    public function getListRuangan(Request $request)
+    {
+        $data = Ruangan::where('statusenabled', true)
+        ->where('kdprofile', 30)
+        ->where('objectdepartemenfk', 16)
+        ->get();
+        $result = array(
+            'data'=>$data,
+            'as'=> 'Feezy'
+        );
+        return $this->respond($result);
+    }
 }

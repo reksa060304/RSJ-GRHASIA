@@ -1,0 +1,43 @@
+<style>
+    .btn-disabled {
+        background-color: red;
+    }
+
+    .btn-enabled {
+        background-color: green;
+    }
+</style>
+<div class="grid_12">
+    <div class="grid_12 headerBox">
+        <h1 style="color: white;"><b>Master Ruangan Rawat Inap</b></h1>
+    </div>
+    <!-- <div class="grid_12" style="margin-top: 30px;">
+		<label c-label item="item" c-label-text="Detail Jenis Produk"></label>
+		<div class="grid_12" ng-repeat="list in listJenisProdukDetail">
+			<div ng-repeat="opsi in list.detail | orderBy:'no'" class="grid_1">
+				<input type='radio' class='k-radio' name="{{opsi.nama}}" id="{{opsi.nama}}" ng-model="item.jenisProdukDetail" value="{{opsi.id}}">
+				<label class="k-radio-label" for="{{opsi.nama}}">{{opsi.nama}}</label>
+			</div>
+		</div>
+	</div>		 -->
+</div>
+<div class="grid_12" style="margin-top: 10px;">
+    <div class="grid_12" style="margin-top: 20px;">
+        <div class="grid_12 borderBox">
+            <kendo-grid options="mainGridOptions" k-data-source="dataSource" k-sortable="'true'" k-ng-model="current"
+                ng-click="klik(current)">
+
+            </kendo-grid>
+        </div>
+
+    </div>
+</div>
+<div class="grid_12" style="margin-top: 20px;">
+    <div class="grid_2">
+        <button class="c-button" ng-click="edit()">Ubah</button>
+    </div>
+    <div class="grid_2">
+        <button class="c-button" ng-click="tambah()">Tambah</button>
+    </div>
+</div>
+</div>

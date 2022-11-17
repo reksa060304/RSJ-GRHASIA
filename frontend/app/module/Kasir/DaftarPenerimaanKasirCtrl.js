@@ -10,6 +10,9 @@ define(['initialize','Configuration'], function (initialize,configuration) {
 			var NRG = "";
 			var dataLogin = {};
 			var dataPegawai = [];
+			if ($state.params.noOrder != undefined) {
+				$scope.item.nosbm = $state.params.noOrder
+			}
 			$scope.pegawai = medifirstService.getPegawaiLogin();
 			$scope.item.listKasirMulti = []
 			loadCombo();
@@ -54,7 +57,10 @@ define(['initialize','Configuration'], function (initialize,configuration) {
 					}
 					listKasir = a.slice(1, a.length)
 				}
-
+				var diklat = ''
+				if($scope.item.cbxDiklat == true){
+					diklat = '&diklat=' + $scope.item.cbxDiklat
+				}
 				$q.all([
 					medifirstService.get("kasir/data-daftar-sbm?"
 						+ "dateStartTglSbm=" + tglAwal
@@ -67,7 +73,7 @@ define(['initialize','Configuration'], function (initialize,configuration) {
 						+ "&nocm=" + $scope.item.norm
 						+ "&nama=" + $scope.item.nama
 						+ "&desk=" + $scope.item.desk
-						+ "&KasirArr=" + listKasir
+						+ "&KasirArr=" + listKasir+diklat
 					)
 				]).then(function (data) {
 					var cash = 0;

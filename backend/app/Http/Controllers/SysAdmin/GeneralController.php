@@ -5473,6 +5473,7 @@ class GeneralController extends ApiController
                     $da->tgl_string =  $request['tgl_string'];//$hari.', '.$this->getDateIndo($gl);
                     $da->statusenabled = true;
                     $da->urlform = $request['urlForm'];
+                    $da->params = $request['params']['noOrder'];
                     $da->save();
     
                   $method="save";
