@@ -3526,6 +3526,14 @@
         {
             "nameDep": "AsuhanKeperawatanGigiMulutCtrl",
             "urlDep": "module/EMR/AsuhanKeperawatanGigiMulutCtrl"
-        }    
+        },
+        {
+            "nameDep": "PengkajianUlangMedisRJJiwaCtrl",
+            "urlDep": "module/EMR/PengkajianUlangMedisRJJiwaCtrl"
+        },   
+        {
+            "nameDep": "PengkajianUlangMedisRJNonJiwaCtrl",
+            "urlDep": "module/EMR/PengkajianUlangMedisRJNonJiwaCtrl"
+        } 
     ]
 }

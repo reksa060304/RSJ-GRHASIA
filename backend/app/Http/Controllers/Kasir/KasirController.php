@@ -917,6 +917,9 @@ class KasirController extends ApiController{
             }
             $data = $data->whereIn('p.id',$kodeRuang);
         }
+        if(isset($request['diklat']) && $request['diklat']== true){
+            $data = $data->where('sp.objectkelompoktransaksifk', 13);
+        }
 
 //        $data = $data->take($request['jmlRows']);
         $data = $data->get();

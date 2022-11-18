@@ -166,7 +166,7 @@ Dim tglRegis As String
 Dim JamRegis As String
 
 
-         strSQL = " SELECT pd.noregistrasi,pm.nocm,pm.namapasien,pd.tglregistrasi,pm.tempatlahir,pm.tgllahir,jk.jeniskelamin, " & _
+         strSQL = " SELECT pm.alergi, pd.noregistrasi,pm.nocm,pm.namapasien,pd.tglregistrasi,pm.tempatlahir,pm.tgllahir,jk.jeniskelamin, " & _
                   " alm.alamatlengkap,alm.namadesakelurahan,alm.namakecamatan,alm.namakotakabupaten, " & _
                   " prop.namapropinsi,gd.golongandarah,spn.statusperkawinan,ag.agama,kp.kelompokpasien, " & _
                   " pkr.pekerjaan,pm.penanggungjawab,pm.alamatrmh,pm.teleponpenanggungjawab,pend.pendidikan,pm.noidentitas " & _
@@ -228,6 +228,7 @@ Dim JamRegis As String
             .txtNamapenanggungJawab.SetText IIf(IsNull(RS2("penanggungjawab")), "", RS2("penanggungjawab"))
             .txtAlamatPenanggungJawab.SetText IIf(IsNull(RS2("alamatrmh")), "", RS2("alamatrmh"))
             .txtTelepon.SetText IIf(IsNull(RS2("teleponpenanggungjawab")), "", RS2("teleponpenanggungjawab"))
+            .Text62.SetText IIf(IsNull(RS2("alergi")), "", RS2("alergi"))
         End If
         
         If view = "false" Then

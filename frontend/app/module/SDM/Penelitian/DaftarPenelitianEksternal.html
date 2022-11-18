@@ -36,7 +36,17 @@
 													placeholer="yyyy-mm-dd" k-format="'yyyy-MM-dd HH:mm'" />
 											</div>
 										</div>
-										<div class="grid_4">
+										<div class="grid_2">
+											<div class="grid_12" style="margin-top: 6px;">
+												<label c-label>Kegiatan</label>
+												<div class="grid_12">
+													<input style="width: 100%;" kendo-combo-box k-ng-model="item.kegiatandiklat"
+														k-data-text-field="'detailjenisproduk'" k-data-value-field="'id'" k-filter="'contains'"
+														k-auto-bind="false" k-data-source="listKegiatan" />
+												</div>
+											</div>
+										</div>
+										<div class="grid_2">
 											<div class="grid_12" style="margin-top: 6px;">
 												<label c-label>Status Bayar</label>
 												<div class="grid_12">
@@ -46,10 +56,25 @@
 												</div>
 											</div>
 										</div>
-										<div class="grid_2 k-edit-buttons  k-state-default " style="margin-top:27px">
+										<div class="grid_2">
+											<div class="grid_12" style="margin-top: 6px;">
+												<label c-label>Status Verifikasi</label>
+												<div class="grid_12">
+													<input style="width: 100%;" kendo-combo-box k-ng-model="item.statusverif"
+														k-data-text-field="'statusverif'" k-data-value-field="'id'" k-filter="'contains'"
+														k-auto-bind="false" k-data-source="listStatusVerif" />
+												</div>
+											</div>
+										</div>
+										
+									</div>
+									<div class="grid_12">
+										<div class="grid_1" style="margin-right: 10px;">
 											<button class="k-button k-button-icontext k-primary k-grid-update" ng-click="SearchData()"
 												style="width:100px"><span class="k-sprite k-icon k-i-search"></span>Cari </button>
-											<button class="k-button  k-button-icontext" ng-click="ClearData()" style="width:100px"><span
+										</div>
+										<div class="grid_1">
+											<button class="k-button k-button-icontext" ng-click="ClearData()" style="width:100px"><span
 													class="k-sprite k-icon k-delete"></span>Clear</button>
 										</div>
 									</div>
@@ -101,6 +126,12 @@
 										<button ng-show="unveriftagih" style="width: 99.5%; font-size: 24px; padding:0px; margin: 0px;"
 											item="item" size="36" position="'right'" class="c-button primary" ng-click="unveriftagihan()">
 											<span class="title">Unverif Tagihan</span>
+										</button>
+									</div>
+									<div class="grid_3">
+										<button ng-show="tglpembayaran" style="width: 99.5%; font-size: 24px; padding:0px; margin:0px;" item="item" size="36"
+											position="'right'" class="c-button primary" ng-click="tglbayar()">
+											<span class="title">Tgl Pembayaran</span>
 										</button>
 									</div>
 								</div>

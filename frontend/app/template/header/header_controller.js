@@ -25,13 +25,11 @@ define(['kendo.menu'], function (kendoMenu) {
         $scope.mapLogin = mapLogin ? JSON.parse(mapLogin) : [];
         function savDB(data) {
             data.method = 'save'
-            console.log(data);
             MenuService.postNonMessage('sysadmin/store-notif', data).then(function (e) { })
         }
 
         socket.on('set-server-socket', function (e) {
             var json = JSON.parse(e);
-            console.log(json);
             if (json.name == "sendNotification") {
                 var objectData = json.body
                 if ($scope.mapLogin.length > 0) {
@@ -127,6 +125,9 @@ define(['kendo.menu'], function (kendoMenu) {
                                         namaFungsiFrontEnd: null,
                                         tgl: element.tgl,
                                         tgl_string: element.tgl_string,
+                                        params: {
+                                            noOrder: element.params
+                                        }
                                     })
                                 }
                             }
@@ -438,7 +439,6 @@ define(['kendo.menu'], function (kendoMenu) {
         $scope.tglSkrg = moment($scope.now).format('YYYY-MM-DD HH:mm:ss');
 
         $scope.goToNotif = function (data) {
-            console.log(data);
             if (data.urlForm != null && data.urlForm != '') {
                 if (data.params != null) {
                     $state.go(data.urlForm, data.params);
