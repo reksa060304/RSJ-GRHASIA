@@ -461,7 +461,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         $scope.changePage("InputTagihanNonLayanan");
                         break;
                     case "DaftarNonLayananKasir":
-                        $scope.changePage("DaftarNonLayananKasir");
+                        $scope.changePage("DaftarPenelitianEksternal");
                         break;
                     case "DaftarPenjualanApotekKasir/terimaUmum":
                         $state.go("DaftarPenjualanApotekKasir", {
@@ -732,6 +732,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     tgl: $scope.item.TglBayar,
                     tgl_string: dateHelper.getTanggalJamFormatted($scope.item.TglBayar),
                 }
+                console.log(body);
                 medifirstService.sendSocket("sendNotification", body);
             }
             //** BATAS */

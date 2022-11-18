@@ -1233,7 +1233,7 @@ class ReportController extends ApiController{
             st.rstatusjamin,
             st.robat,
             st.rkekuatan,
-            st.rjumlahobat, st.ketskrining
+            st.rjumlahobat, st.ketskrining, st.ridentitasdokter,st.rcarabayar,st.rruanganresep, st.rnamaobat, st.rstabilitas, st.raturan, st.ralergi, st.rinteraksi, st.rvariasi, st.rbeban, st.rdatawaktu 
             from strukresep_t s
             left join skriningfarmasi_t st on st.norec_apd = s.norec
             where s.norec = '$norec'
