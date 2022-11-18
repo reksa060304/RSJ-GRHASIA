@@ -413,6 +413,83 @@ class LoggingController extends ApiController
         return $this->respond($result);
     }
 
+    public function saveLoggingBatalStsManual(Request $request) {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $setor = $request['setoran'];
+
+        $dataLogin = $request->all();
+        $iduser = '';
+        $dataPegawaiUser = DB::select(DB::raw("select pg.id,pg.namalengkap from loginuser_s as lu
+                INNER JOIN pegawai_m as pg on lu.objectpegawaifk=pg.id
+                where pg.kdprofile = $kdProfile and lu.id=:idLoginUser"),
+            array(
+                'idLoginUser' => $dataLogin['userData']['id'],
+            )
+        );
+
+        foreach($dataPegawaiUser as $dat){
+            $iduser = $dat->id;
+        }
+
+        for($i=0; $i<count($setor); $i++){
+
+            $updatests = DB::statement("update surattandasetoran_t 
+            set statusenabled = false
+            where nosts = '" . $setor[$i]['nosts']. "'");
+
+            $updatestsd = DB::statement("update surattandasetorandetail_t 
+            set statusenabled = false
+            where objectstsfk = '" . $setor[$i]['nosts']. "'");
+
+        
+            $dataLogin = $request->all();
+            $newId = LoggingUser::max('id');
+            $newId = $newId +1;
+            $logUser = new LoggingUser();
+            $logUser->id = $newId;
+            $logUser->norec = $logUser->generateNewId();
+            $logUser->kdprofile= $kdProfile;
+            $logUser->statusenabled=true;
+            $logUser->jenislog ='Batal STS';
+            $logUser->noreff = $setor[$i]['nosts'];
+            $logUser->referensi='No STS Surat Tanda Setoran';
+            $logUser->keterangan='Batal STS dengan No STS '.$setor[$i]['nosts'].' dan Tanggal STS '.$setor[$i]['tglpenerimaan']. ' dan Total STS '.$setor[$i]['totalsetoran'];
+            $logUser->objectloginuserfk =  $iduser;
+            $logUser->tanggal = $this->getDateTime()->format('Y-m-d H:i:s');
+            $logUser->save();
+
+        }
+
+        $data = DB::select(DB::raw("select sts.nosts, sts.totalsetoran, sts.terbilang, sts.keterangan,
+        stsd.*
+        from surattandasetoran_t sts
+        inner join surattandasetorandetail_t stsd on sts.nosts = stsd.objectstsfk
+        where sts.kdprofile = 30
+        and sts.statusenabled = true
+        and stsd.kdprofile = 30
+        and stsd.statusenabled = true
+        and sts.ismanual = true
+        and sts.nosts = '" . $setor[0]['nosts']. "'"));
+
+
+
+        if($logUser->save()){
+            $transStatus = 'true';
+        }
+
+       
+
+        if ($transStatus == 'true') {
+            $transMessage = "Batal STS Sukses";
+            $result = array(
+                'messages' => $transMessage,
+                'data' => $data,
+            );
+        }
+
+        return $this->respond($result);
+    }
+
     public function saveLoggingSimpanSettingAnggaran(Request $request) {
         $kdProfile = (int) $this->getDataKdProfile($request);
 

@@ -1980,6 +1980,46 @@
     ]
   },
   {
+    "name": "CetakanBP",
+    "url": "/Q2V0YWthbkJlbmRhaGFyYVBlbmVyaW1hYW4=",
+    "templateurl": "module/BendaharaPenerimaan/CetakanBP.html",
+    "controller": "CetakanBPCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "STSManual",
+    "url": "/U1RTTWFudWFs",
+    "templateurl": "module/BendaharaPenerimaan/STSManual.html",
+    "controller": "STSManualCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
     "name": "STSBulanan",
     "url": "/U1RTQnVsYW5hbg==",
     "templateurl": "module/BendaharaPenerimaan/STSBulanan.html",

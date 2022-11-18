@@ -401,6 +401,14 @@
             "urlDep": "module/BendaharaPenerimaan/SuratTandaSetoranCtrl"
         },
         {
+            "nameDep": "CetakanBPCtrl",
+            "urlDep": "module/BendaharaPenerimaan/CetakanBPCtrl"
+        },
+        {
+            "nameDep": "STSManualCtrl",
+            "urlDep": "module/BendaharaPenerimaan/STSManualCtrl"
+        },
+        {
             "nameDep": "STSBulananCtrl",
             "urlDep": "module/BendaharaPenerimaan/STSBulananCtrl"
         },

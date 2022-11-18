@@ -5462,7 +5462,7 @@ class TagihanController  extends ApiController
             $qkey = "and pd.noregistrasi ilike '%".$filter['key']."%'";
         }
 
-        $piutang = DB::select(DB::raw("selectx norecpd, tglbayar, tglsep, iscek, nosep, tglpulang, noregistrasi, namapasien, kelompokpasien, namarekanan,
+        $piutang = DB::select(DB::raw("select norecpd, tglbayar, tglsep, iscek, nosep, tglpulang, noregistrasi, namapasien, kelompokpasien, namarekanan,
         sum(totalbilling) totalbilling, sum(totalbayar) totalbayar, sum(totalklaim) totalklaim,
         sum(selisih) selisih
         from(

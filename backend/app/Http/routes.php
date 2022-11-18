@@ -142,6 +142,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('bendaharapenerimaan/get-data-rekapitulasi-pendapatan-daerahtahun', 'BendaharaPenerimaan\BendaharaPenerimaanController@getDataRekapitulasiPendapatanDaerahTahunan');
           Route::get('bendaharapenerimaan/get-data-pendapatan-bendahara', 'BendaharaPenerimaan\BendaharaPenerimaanController@getDataPendapatanBP');
           Route::get('bendaharapenerimaan/get-sts', 'BendaharaPenerimaan\BendaharaPenerimaanController@getSTS');
+          Route::get('bendaharapenerimaan/get-sts-manual', 'BendaharaPenerimaan\BendaharaPenerimaanController@getSTSManual');
           Route::get('bendaharapenerimaan/get-penjagaan-batal-setor', 'BendaharaPenerimaan\BendaharaPenerimaanController@getPenjagaanBatalSetor');
           Route::get('bendaharapenerimaan/get-sts-bulanan', 'BendaharaPenerimaan\BendaharaPenerimaanController@getSTSBulanan');
           Route::get('bendaharapenerimaan/get-sts-per-triwulan', 'BendaharaPenerimaan\BendaharaPenerimaanController@getSTSTriwulan');
@@ -151,6 +152,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('bendaharapenerimaan/get-deatil-sts-pertanggal', 'BendaharaPenerimaan\BendaharaPenerimaanController@getDetailSTSPertanggal');
           Route::get('bendaharapenerimaan/get-sts-popup', 'BendaharaPenerimaan\BendaharaPenerimaanController@getSTSPopup');
           Route::get('bendaharapenerimaan/detail-sts', 'BendaharaPenerimaan\BendaharaPenerimaanController@detailSTS');
+          Route::get('bendaharapenerimaan/detail-sts-manual', 'BendaharaPenerimaan\BendaharaPenerimaanController@detailSTSManual');
           
           //**GET**//
 
@@ -163,6 +165,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::post('bendaharapenerimaan/save-lampiran-beritaacara', 'BendaharaPenerimaan\BendaharaPenerimaanController@saveTempLampiranBA');
           Route::post('bendaharapenerimaan/hapus-bku', 'BendaharaPenerimaan\BendaharaPenerimaanController@hapusBKU');
           Route::post('bendaharapenerimaan/save-sts', 'BendaharaPenerimaan\BendaharaPenerimaanController@saveSTS');
+          Route::post('bendaharapenerimaan/save-sts-manual', 'BendaharaPenerimaan\BendaharaPenerimaanController@saveSTSManual');
           Route::post('tatarekening/save-rekap-klaim', 'BendaharaPenerimaan\BendaharaPenerimaanController@saveKlaim');
           //**POST**//
         // });
@@ -2611,6 +2614,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
               Route::get('sysadmin/logging/save-log-unverifikasi-tarek', 'SysAdmin\LoggingController@saveLoggingUnverifTarek');
               Route::post('sysadmin/logging/save-log-input-tindakan', 'SysAdmin\LoggingController@saveLoggingInputTindakan');
               Route::post('sysadmin/logging/save-log-batal-sts', 'SysAdmin\LoggingController@saveLoggingBatalSts');
+              Route::post('sysadmin/logging/save-log-batal-sts-manual', 'SysAdmin\LoggingController@saveLoggingBatalStsManual');
               Route::post('sysadmin/logging/save-log-simpan-setting-anggaran', 'SysAdmin\LoggingController@saveLoggingSimpanSettingAnggaran');
               Route::post('sysadmin/logging/save-log-lock-spj', 'SysAdmin\LoggingController@saveLoggingLockSPJ');
               Route::post('sysadmin/logging/save-log-lock', 'SysAdmin\LoggingController@saveLoggingLock');
