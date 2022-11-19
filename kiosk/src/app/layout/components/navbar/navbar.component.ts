@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, HostBinding, HostListener, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, HostBinding, HostListener, ViewEncapsulation,Inject } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
 
 import * as _ from 'lodash';
@@ -15,6 +15,7 @@ import { User } from 'app/auth/models';
 
 import { coreConfig } from 'app/app-config';
 import { Router } from '@angular/router';
+import { DOCUMENT } from '@angular/common';
 
 @Component({
   selector: 'app-navbar',
@@ -73,6 +74,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
    * @param {MediaObserver} _mediaObserver
    * @param {TranslateService} _translateService
    */
+    isFullscreen: boolean = false;
+    elem: any;
+
   constructor(
     private _router: Router,
     private _authenticationService: AuthenticationService,
@@ -80,7 +84,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
     private _coreMediaService: CoreMediaService,
     private _coreSidebarService: CoreSidebarService,
     private _mediaObserver: MediaObserver,
-    public _translateService: TranslateService
+    public _translateService: TranslateService,
+     @Inject(DOCUMENT) private document: any
   ) {
     this._authenticationService.currentUser.subscribe(x => (this.currentUser = x));
 
@@ -118,7 +123,36 @@ export class NavbarComponent implements OnInit, OnDestroy {
   toggleSidebar(key): void {
     this._coreSidebarService.getSidebarRegistry(key).toggleOpen();
   }
-
+  openFullscreen() {
+        if (this.elem.requestFullscreen) {
+            this.elem.requestFullscreen();
+        } else if (this.elem.mozRequestFullScreen) {
+            /* Firefox */
+            this.elem.mozRequestFullScreen();
+        } else if (this.elem.webkitRequestFullscreen) {
+            /* Chrome, Safari and Opera */
+            this.elem.webkitRequestFullscreen();
+        } else if (this.elem.msRequestFullscreen) {
+            /* IE/Edge */
+            this.elem.msRequestFullscreen();
+        }
+        this.isFullscreen = true
+    }
+    closeFullscreen() {
+        if (this.document.exitFullscreen) {
+            this.document.exitFullscreen();
+        } else if (this.document.mozCancelFullScreen) {
+            /* Firefox */
+            this.document.mozCancelFullScreen();
+        } else if (this.document.webkitExitFullscreen) {
+            /* Chrome, Safari and Opera */
+            this.document.webkitExitFullscreen();
+        } else if (this.document.msExitFullscreen) {
+            /* IE/Edge */
+            this.document.msExitFullscreen();
+        }
+        this.isFullscreen = false
+    }
   /**
    * Set the language
    *
@@ -175,6 +209,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
    * On init
    */
   ngOnInit(): void {
+    this.elem = document.documentElement;
     // get the currentUser details from localStorage
     this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
 
