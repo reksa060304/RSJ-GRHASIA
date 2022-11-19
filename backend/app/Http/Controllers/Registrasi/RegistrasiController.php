@@ -12656,7 +12656,7 @@ GROUP BY y.KET
             INNER JOIN departemen_m de ON de.ID = ru.objectdepartemenfk 
         WHERE
             pd.kdprofile = $kdProfile
-            and pd.tglpulang is not null
+            and pd.statusenabled = true
             $paramRanap
             $paramRuangan
             $paramDep
