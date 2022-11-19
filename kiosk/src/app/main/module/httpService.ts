@@ -135,6 +135,33 @@ export class HttpService {
         })
       )
   }
+  postNonMessage(url, data, callBack: (res: any) => any = null, auth: boolean = false, tokenSuper: string = null) {
+
+    let headers = new HttpHeaders();
+    headers = headers.set('Content-Type', 'application/json; charset=utf-8');
+    headers = headers.set('X-AUTH-TOKEN', this.token);
+    this.showLoader();
+
+
+    return this._http.post(Configuration.get().apiBackend + url, data
+      , { headers: headers, withCredentials: false }
+    )
+      .pipe(map((res: any) => {
+        // this.responseSuccess(res)
+        if (callBack !== undefined && callBack !== null) {
+          callBack(res);
+        }
+        return res;
+      })
+        , catchError(error => {
+          // this.handleError(error);
+          return of([]);
+        })
+        , finalize(() => {
+          this.hideLoader();
+        })
+      )
+  }
   private responseSuccess(res: Response | any) {
 
     if (this.listSucces.includes(res.status)) {

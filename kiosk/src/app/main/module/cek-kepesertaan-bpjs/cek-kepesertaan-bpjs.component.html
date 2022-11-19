@@ -1,0 +1,126 @@
+<div class="content-wrapper">
+    <div class="content-body">
+        <!-- content-header component -->
+        <app-content-header [contentHeader]="contentHeader"></app-content-header>
+
+        <form [formGroup]="formGroup">
+            <section class="basic-select" *ngIf="!isInfoPasien">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <div class="row">
+                                    <div class="col-12 col-md-3 col-lg-4"></div>
+
+                                    <div class="col-12 col-md-6 col-lg-4">
+                                        <label for="largeInput" style="display: inline;">
+                                            <h3>Scan atau masukan No Kartu BPJS Anda </h3>
+                                        </label>
+                                        <input class="form-control form-control-lg" type="text"
+                                            placeholder="Masukan Nomor" formControlName="noKartu" />
+                                    </div>
+                                </div>
+
+                                <div class="row mt-1">
+                            	 	<div class="col-12 col-md-3 col-lg-4"></div>
+
+                                    <div class="col-12 col-md-2 p-field-checkbox" *ngFor="let items of listRadio">
+                                        <div class="custom-control custom-radio">
+                                            <input type="radio" id="{{items.id}}" value="{{items.id}}" formControlName="pCare"
+                                                name="pCare" class="custom-control-input" />
+                                            <label class="custom-control-label" for="{{items.id}}"
+                                                style="text-align:left">{{items.name}} </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mt-1">
+                                    <div class="col-12 col-md-3 col-lg-4"></div>
+                                    <div class="col-12 col-md-6 col-lg-4">
+                                        <button type="button" class="btn btn-outline-primary mb-1" rippleEffect
+                                            style="width:100%" (click)="getInfoPasien()">Selanjutnya</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section *ngIf="isInfoPasien">
+                <div class="row">
+                    <div class="col-12 col-md-12">
+                        <div class="card">
+                        	<div class="card-header " style="display: inline;text-align: center;">
+                        		<h3 class="no-cm" style="color: brown;">Data Peserta</h3>
+                    		</div>
+                    		<div class="card-body" style="text-align: center;">
+                    			<div class="row">
+                                    <div class="col-12 col-md-4">
+                                	 	<p class="card-text"> NIK </p>
+                                        <h4 class="card-title">{{item.nik}}</h4>
+
+                                        <p class="card-text"> Jenis Kelamin </p>
+                                        <h4 class="card-title">{{item.sex}}</h4>
+
+                                        <p class="card-text"> Jenis Peserta </p>
+                                        <h4 class="card-title">{{item.jenisPeserta.keterangan}}</h4>
+
+                                        <p class="card-text"> Tgl Cetak Kartu </p>
+                                        <h4 class="card-title">{{item.tglCetakKartu}}</h4>
+                                    </div>
+                                    <div class="col-12 col-md-4">
+                                    	<p class="card-text"> Nama Pasien </p>
+                                        <h4 class="card-title">{{item.nama}}</h4>
+
+                                        <p class="card-text"> Tanggal Lahir </p>
+                                        <h4 class="card-title">{{item.tglLahir}}</h4>
+
+                                        <p class="card-text"> Hak Kelas </p>
+                                        <h4 class="card-title">{{item.hakKelas.keterangan}}</h4>
+
+                                        <p class="card-text"> Tangga TAT </p>
+                                        <h4 class="card-title">{{item.tglTAT}}</h4>
+                                    </div>
+                                    <div class="col-12 col-md-4">
+                                    	<p class="card-text"> No BPJS </p>
+                                        <h4 class="card-title">{{item.noKartu}}</h4>
+
+                                        <p class="card-text"> Umur </p>
+                                        <h4 class="card-title">{{item.umur.umurSekarang}}</h4>
+
+                                        <p class="card-text"> Status </p>
+                                        <h4 class="card-title">{{item.statusPeserta.keterangan}}</h4>
+
+                                        <p class="card-text"> Tanggal TMT </p>
+                                        <h4 class="card-title">{{item.tglTMT}}</h4>
+                                    </div>
+                                </div>
+                                <div class="row mt-1">
+                                	<div class="col-12">
+                        				<h3 class="no-cm" style="color: brown;">Data Rujukan</h3>
+                                	</div>
+                                	<div class="col-2"></div>
+                                	<div class="col-8">
+                                		<table class="table">
+                                			<tr>
+                                				<th>No Rujukan</th>
+                                				<th>Perujuk</th>
+                                				<th>Tgl Rujukan</th>
+                                			</tr>
+                                			<tr *ngFor="let items of rujukan">
+                                				<td>{{ items.noKunjungan }}</td>
+                                				<td>{{ items.provPerujuk.nama }}</td>
+                                				<td>{{ items.tglKunjungan }}</td>
+                                			</tr>
+                                		</table>
+                                	</div>
+                                	<div class="col-2"></div>
+                                </div>
+                			</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </form>
+    </div>
+</div>

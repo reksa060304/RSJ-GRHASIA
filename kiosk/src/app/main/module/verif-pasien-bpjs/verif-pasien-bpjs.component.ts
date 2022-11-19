@@ -45,7 +45,7 @@ export class VerifPasienBpjsComponent implements OnInit {
   isStatusPasien: any
   kodeDokter: any = null
   eksekutif: any = 1
-  isSave: boolean = false
+  isSave:boolean = false
   isCetakDSKiosk: any = 'true'
   constructor(private router: Router,
     private route: ActivatedRoute,
@@ -53,12 +53,12 @@ export class VerifPasienBpjsComponent implements OnInit {
     private fb: FormBuilder,
     private cacheHelper: CacheService,
     private service: HttpClient,
-    private alertService: ToastrService,) {
-    let sett = localStorage.getItem('isCetakDS')
-    if (sett != null) {
-      this.isCetakDSKiosk = sett
+    private alertService: ToastrService,) { 
+      let sett = localStorage.getItem('isCetakDS')
+      if (sett != null) {
+        this.isCetakDSKiosk = sett
+      }
     }
-  }
   ngOnInit(): void {
     this.contentHeader = {
       headerTitle: 'Self Registration - Pasien BPJS',
@@ -257,7 +257,7 @@ export class VerifPasienBpjsComponent implements OnInit {
           this.item = element.rujukan;
 
           if (element.rujukan.peserta.mr.noMR != null)
-            this.getPasienByNoCM(element.rujukan.peserta.mr.noMR, element.rujukan.peserta.noKartu)
+            this.getPasienByNoCM(element.rujukan.peserta.mr.noMR,element.rujukan.peserta.noKartu)
           else
             element.rujukan.peserta.mr.noMR = '-'
           this.httpService.get('medifirst2000/kiosk/get-ruanganbykode/' + element.rujukan.poliRujukan.kode).subscribe(res => {
@@ -327,7 +327,7 @@ export class VerifPasienBpjsComponent implements OnInit {
       if (e.metaData.code === "200") {
         this.item = e.response.rujukan;
         if (e.response.rujukan.peserta.mr.noMR != null)
-          this.getPasienByNoCM(e.response.rujukan.peserta.mr.noMR, e.response.rujukan.peserta.noKartu)
+          this.getPasienByNoCM(e.response.rujukan.peserta.mr.noMR,e.response.rujukan.peserta.noKartu)
         for (var i = this.listPoliTemp.length - 1; i >= 0; i--) {
           if (this.listPoliTemp[i].kditernal == this.item.poliRujukan.kode) {
             this.getRuanganInternal(this.item.poliRujukan.kode)
@@ -507,7 +507,7 @@ export class VerifPasienBpjsComponent implements OnInit {
 
     })
   }
-  getPasienByNoCM(nocm, noKartu) {
+  getPasienByNoCM(nocm,noKartu) {
     // this.httpService.get('medifirst2000/reservasionline/get-pasien/' + nocm + '/null').subscribe(e => {
     //   if (e.data.length > 0) {
     //     this.pasien = e.data[0]
@@ -516,14 +516,14 @@ export class VerifPasienBpjsComponent implements OnInit {
 
     //   }
     // })
-    this.httpService.get('medifirst2000/kiosk/get-pasien-by-noka?nokartu=' + noKartu).subscribe(e => {
+     this.httpService.get('medifirst2000/kiosk/get-pasien-by-noka?nokartu='+noKartu).subscribe(e => {
       if (e.data.length > 0) {
         this.pasien = e.data[0]
       } else {
 
       }
     })
-
+    
   }
   getHistoriPelayananPesesta(noKartu) {
     // debugger
@@ -635,7 +635,7 @@ export class VerifPasienBpjsComponent implements OnInit {
       }
       this.httpService.get('medifirst2000/kiosk/get-slotting-kosong?ruanganfk=' + this.formGroup.get('poliTujuan').value.value.kodeinternal).subscribe(es => {
         if (es.status == true) {
-
+       
           this.insertLiveBridging()
         } else {
           this.isSave = false
@@ -1078,7 +1078,29 @@ export class VerifPasienBpjsComponent implements OnInit {
     if (this.isCetakDSKiosk == 'true') {
       this.service.get('http://127.0.0.1:1237/printvb/Pendaftaran?cetak-buktipendaftaran=1&norec='
         + this.pasienDaftar.noregistrasi + '&petugas=' + petugas + '&view=false').subscribe(response => { });
-    } else {
+    } else if (this.isCetakDSKiosk == 'android') {
+      this.httpService.get("medifirst2000/report/get-cetak-bukti-pendaftaran?noregistrasi="
+        + this.pasienDaftar.noregistrasi
+      ).subscribe(e => {
+        window.open(
+          'https://apps.transmedic.co.id/cetak-antrian?isBukti=true'
+          + '&namaProfile=' + Configuration.profile().nama
+          + '&alamat=' + Configuration.profile().alamat
+          + '&noregistrasi=' + e.noregistrasi
+          + '&norm=' + e.norm
+          + '&namapasien=' + e.namapasien
+          + '&kelompokpasien=' + e.kelompokpasien
+          + '&noantrian=' + e.noantrian
+          + '&statuspasien=' + e.statuspasien
+          + '&tanggalreservasi=' + e.tanggalreservasi
+          + '&ruangan=' + e.ruangan
+          + '&status=' + e.statusonline
+          + '&namadokter=' + e.namadokter
+          + '&tglregistrasi=' + e.tglregistrasi
+          + '&link=' + Configuration.profile().link
+        );
+      })
+    }else {
       window.open(Configuration.get().apiBackend + 'medifirst2000/report/cetak-bukti-pendaftaran?noregistrasi='
         + this.pasienDaftar.noregistrasi
         + '&kdprofile=21', '_blank');

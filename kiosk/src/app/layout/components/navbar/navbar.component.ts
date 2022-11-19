@@ -16,7 +16,6 @@ import { User } from 'app/auth/models';
 import { coreConfig } from 'app/app-config';
 import { Router } from '@angular/router';
 import { DOCUMENT } from '@angular/common';
-
 @Component({
   selector: 'app-navbar',
   templateUrl: './navbar.component.html',
@@ -75,8 +74,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
    * @param {TranslateService} _translateService
    */
     isFullscreen: boolean = false;
-    elem: any;
 
+    isActive = false;
+    elem: any;
   constructor(
     private _router: Router,
     private _authenticationService: AuthenticationService,
@@ -123,7 +123,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
   toggleSidebar(key): void {
     this._coreSidebarService.getSidebarRegistry(key).toggleOpen();
   }
-  openFullscreen() {
+
+ openFullscreen() {
         if (this.elem.requestFullscreen) {
             this.elem.requestFullscreen();
         } else if (this.elem.mozRequestFullScreen) {
@@ -209,7 +210,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
    * On init
    */
   ngOnInit(): void {
-    this.elem = document.documentElement;
+
+        this.elem = document.documentElement;
     // get the currentUser details from localStorage
     this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
 
@@ -247,6 +249,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.selectedLanguage = _.find(this.languageOptions, {
       id: this._translateService.currentLang
     });
+    // this.openFullscreen()
   }
 
   /**
@@ -256,5 +259,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
     // Unsubscribe from all subscriptions
     this._unsubscribeAll.next();
     this._unsubscribeAll.complete();
+    // this.openFullscreen()
   }
 }

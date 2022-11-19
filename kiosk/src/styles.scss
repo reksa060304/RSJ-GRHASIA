@@ -17,3 +17,8 @@
   content: " *";
   color: red;
 }
+@media (max-width: 860px) {
+  .hide-leutik{
+    display: none;
+  }
+}

@@ -23,4 +23,12 @@ export class Configuration {
       }
     }
   }
+  static profile() {
+      return {
+        nama:'RSJ. GRHASIA',
+        alamat: 'Jl. Kaliurang KM.17, Duwetsari, Pakembinangun, Kec. Pakem, Kabupaten Sleman, Daerah Istimewa Yogyakarta',
+        link: 'https://drive.google.com/file/d/1GCx6WDTTykrGWSFIa6S6guVGRqZR9uQ1/view?usp=sharing',
+      }
+    
+  }
 }
