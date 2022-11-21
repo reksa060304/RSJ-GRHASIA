@@ -13,6 +13,7 @@ define(['initialize'], function (initialize) {
             $scope.dataSelected = {};
             $scope.item.jmlRows = 50;
             $scope.item.jumlahlain = 0
+            $scope.item.jumlahranap = 0
             $scope.item.kendaraan = 0 
             $scope.item.akreditasi = 0 
             $scope.item.dendabpjs = 0
@@ -25,6 +26,7 @@ define(['initialize'], function (initialize) {
             $scope.item.saldosutera = 0
             $scope.item.klaimcovid = 0
             $scope.item.voljumlahlain = 0
+            $scope.item.voljumlahranap = 0
             $scope.item.volkendaraan = 0 
             $scope.item.volakreditasi = 0 
             $scope.item.voldendabpjs = 0
@@ -36,6 +38,7 @@ define(['initialize'], function (initialize) {
             $scope.item.volgirobtn = 0 
             $scope.item.volsaldosutera = 0
             $scope.item.volklaimcovid = 0
+            $scope.item.terbilang = ''
 
             FormLoad();
 
@@ -179,51 +182,54 @@ define(['initialize'], function (initialize) {
 
             $scope.simpanSTS = function () {
 
-                medifirstService.get("sysadmin/general/get-terbilang/" + $scope.item.jumlahlain).then(
+                var toltal = parseInt($scope.item.jumlahlain) + parseInt($scope.item.jumlahranap) 
+                medifirstService.get("sysadmin/general/get-terbilang/" + toltal).then(
 					function (dat) {
 						$scope.item.terbilang = dat.data.terbilang;
-					}
+
+                        var objSave =
+                        {
+                            tglsts: moment($scope.item.tglstsmanual).format('YYYY-MM-DD'),
+                            uraian: $scope.item.uraiansts,
+                            terbilang: $scope.item.terbilang,
+                            jumlahlain: $scope.item.jumlahlain,
+                            jumlahranap: $scope.item.jumlahranap,
+                            kendaraan: $scope.item.kendaraan,
+                            akreditasi: $scope.item.akreditasi,
+                            dendabpjs: $scope.item.dendabpjs,
+                            jasabank: $scope.item.jasabank,
+                            lainlain: $scope.item.lainlain,
+                            liquidgas: $scope.item.liquidgas,
+                            saldoslipa: $scope.item.saldoslipa,
+                            klaimbpjs: $scope.item.klaimbpjs,
+                            girobtn: $scope.item.girobtn,
+                            saldosutera: $scope.item.saldosutera,
+                            klaimcovid: $scope.item.klaimcovid,
+                            voljumlahlain: $scope.item.voljumlahlain,
+                            voljumlahranap: $scope.item.voljumlahranap,
+                            volkendaraan: $scope.item.volkendaraan,
+                            volakreditasi: $scope.item.volakreditasi,
+                            voldendabpjs: $scope.item.voldendabpjs,
+                            voljasabank: $scope.item.voljasabank,
+                            vollainlain: $scope.item.vollainlain,
+                            volliquidgas: $scope.item.volliquidgas,
+                            volsaldoslipa: $scope.item.volsaldoslipa,
+                            volklaimbpjs: $scope.item.volklaimbpjs,
+                            volgirobtn: $scope.item.volgirobtn,
+                            volsaldosutera: $scope.item.volsaldosutera,
+                            volklaimcovid: $scope.item.volklaimcovid,
+                        }
+
+                        medifirstService.post('bendaharapenerimaan/save-sts-manual', objSave).then(function (dat) {});
+                    }
                 );
-
-                var objSave =
-                {
-                    tglsts: moment($scope.item.tglstsmanual).format('YYYY-MM-DD'),
-                    uraian: $scope.item.uraiansts,
-                    terbilang: $scope.item.terbilang,
-                    jumlahlain: $scope.item.jumlahlain,
-                    kendaraan: $scope.item.kendaraan,
-                    akreditasi: $scope.item.akreditasi,
-                    dendabpjs: $scope.item.dendabpjs,
-                    jasabank: $scope.item.jasabank,
-                    lainlain: $scope.item.lainlain,
-                    liquidgas: $scope.item.liquidgas,
-                    saldoslipa: $scope.item.saldoslipa,
-                    klaimbpjs: $scope.item.klaimbpjs,
-                    girobtn: $scope.item.girobtn,
-                    saldosutera: $scope.item.saldosutera,
-                    klaimcovid: $scope.item.klaimcovid,
-                    voljumlahlain: $scope.item.voljumlahlain,
-                    volkendaraan: $scope.item.volkendaraan,
-                    volakreditasi: $scope.item.volakreditasi,
-                    voldendabpjs: $scope.item.voldendabpjs,
-                    voljasabank: $scope.item.voljasabank,
-                    vollainlain: $scope.item.vollainlain,
-                    volliquidgas: $scope.item.volliquidgas,
-                    volsaldoslipa: $scope.item.volsaldoslipa,
-                    volklaimbpjs: $scope.item.volklaimbpjs,
-                    volgirobtn: $scope.item.volgirobtn,
-                    volsaldosutera: $scope.item.volsaldosutera,
-                    volklaimcovid: $scope.item.volklaimcovid,
-                }
-
-                medifirstService.post('bendaharapenerimaan/save-sts-manual', objSave).then(function (dat) {});
             }
 
             $scope.$watch('item.kendaraan', function (newValue, oldValue) {
                 if (newValue != oldValue) {
                     $scope.item.jumlahlain = parseInt($scope.item.kendaraan) + parseInt($scope.item.akreditasi) + parseInt($scope.item.dendabpjs) +
                     parseInt($scope.item.jasabank) + parseInt($scope.item.lainlain) + parseInt($scope.item.liquidgas) + parseInt($scope.item.saldoslipa) + parseInt($scope.item.klaimbpjs) + 
-                    parseInt($scope.item.girobtn) + parseInt($scope.item.saldosutera) + parseInt($scope.item.klaimcovid)
+                    parseInt($scope.item.girobtn) + parseInt($scope.item.saldosutera)
                 }
             });
 
@@ -231,7 +237,7 @@ define(['initialize'], function (initialize) {
                 if (newValue != oldValue) {
                     $scope.item.jumlahlain = parseInt($scope.item.kendaraan) + parseInt($scope.item.akreditasi) + parseInt($scope.item.dendabpjs) +
                     parseInt($scope.item.jasabank) + parseInt($scope.item.lainlain) + parseInt($scope.item.liquidgas) + parseInt($scope.item.saldoslipa) + parseInt($scope.item.klaimbpjs) + 
-                    parseInt($scope.item.girobtn) + parseInt($scope.item.saldosutera) + parseInt($scope.item.klaimcovid)
+                    parseInt($scope.item.girobtn) + parseInt($scope.item.saldosutera)
                 }
             });
 
@@ -239,7 +245,7 @@ define(['initialize'], function (initialize) {
                 if (newValue != oldValue) {
                     $scope.item.jumlahlain = parseInt($scope.item.kendaraan) + parseInt($scope.item.akreditasi) + parseInt($scope.item.dendabpjs) +
                     parseInt($scope.item.jasabank) + parseInt($scope.item.lainlain) + parseInt($scope.item.liquidgas) + parseInt($scope.item.saldoslipa) + parseInt($scope.item.klaimbpjs) + 
-                    parseInt($scope.item.girobtn) + parseInt($scope.item.saldosutera) + parseInt($scope.item.klaimcovid)
+                    parseInt($scope.item.girobtn) + parseInt($scope.item.saldosutera)
                 }
             });
 
@@ -247,7 +253,7 @@ define(['initialize'], function (initialize) {
                 if (newValue != oldValue) {
                     $scope.item.jumlahlain = parseInt($scope.item.kendaraan) + parseInt($scope.item.akreditasi) + parseInt($scope.item.dendabpjs) +
                     parseInt($scope.item.jasabank) + parseInt($scope.item.lainlain) + parseInt($scope.item.liquidgas) + parseInt($scope.item.saldoslipa) + parseInt($scope.item.klaimbpjs) + 
-                    parseInt($scope.item.girobtn) + parseInt($scope.item.saldosutera) + parseInt($scope.item.klaimcovid)
+                    parseInt($scope.item.girobtn) + parseInt($scope.item.saldosutera)
                 }
             });
 
@@ -255,7 +261,7 @@ define(['initialize'], function (initialize) {
                 if (newValue != oldValue) {
                     $scope.item.jumlahlain = parseInt($scope.item.kendaraan) + parseInt($scope.item.akreditasi) + parseInt($scope.item.dendabpjs) +
                     parseInt($scope.item.jasabank) + parseInt($scope.item.lainlain) + parseInt($scope.item.liquidgas) + parseInt($scope.item.saldoslipa) + parseInt($scope.item.klaimbpjs) + 
-                    parseInt($scope.item.girobtn) + parseInt($scope.item.saldosutera) + parseInt($scope.item.klaimcovid)
+                    parseInt($scope.item.girobtn) + parseInt($scope.item.saldosutera)
                 }
             });
 
@@ -263,7 +269,7 @@ define(['initialize'], function (initialize) {
                 if (newValue != oldValue) {
                     $scope.item.jumlahlain = parseInt($scope.item.kendaraan) + parseInt($scope.item.akreditasi) + parseInt($scope.item.dendabpjs) +
                     parseInt($scope.item.jasabank) + parseInt($scope.item.lainlain) + parseInt($scope.item.liquidgas) + parseInt($scope.item.saldoslipa) + parseInt($scope.item.klaimbpjs) + 
-                    parseInt($scope.item.girobtn) + parseInt($scope.item.saldosutera) + parseInt($scope.item.klaimcovid)
+                    parseInt($scope.item.girobtn) + parseInt($scope.item.saldosutera)
                 }
             });
 
@@ -271,7 +277,7 @@ define(['initialize'], function (initialize) {
                 if (newValue != oldValue) {
                     $scope.item.jumlahlain = parseInt($scope.item.kendaraan) + parseInt($scope.item.akreditasi) + parseInt($scope.item.dendabpjs) +
                     parseInt($scope.item.jasabank) + parseInt($scope.item.lainlain) + parseInt($scope.item.liquidgas) + parseInt($scope.item.saldoslipa) + parseInt($scope.item.klaimbpjs) + 
-                    parseInt($scope.item.girobtn) + parseInt($scope.item.saldosutera) + parseInt($scope.item.klaimcovid)
+                    parseInt($scope.item.girobtn) + parseInt($scope.item.saldosutera)
                 }
             });
 
@@ -279,7 +285,7 @@ define(['initialize'], function (initialize) {
                 if (newValue != oldValue) {
                     $scope.item.jumlahlain = parseInt($scope.item.kendaraan) + parseInt($scope.item.akreditasi) + parseInt($scope.item.dendabpjs) +
                     parseInt($scope.item.jasabank) + parseInt($scope.item.lainlain) + parseInt($scope.item.liquidgas) + parseInt($scope.item.saldoslipa) + parseInt($scope.item.klaimbpjs) + 
-                    parseInt($scope.item.girobtn) + parseInt($scope.item.saldosutera) + parseInt($scope.item.klaimcovid)
+                    parseInt($scope.item.girobtn) + parseInt($scope.item.saldosutera)
                 }
             });
 
@@ -287,7 +293,7 @@ define(['initialize'], function (initialize) {
                 if (newValue != oldValue) {
                     $scope.item.jumlahlain = parseInt($scope.item.kendaraan) + parseInt($scope.item.akreditasi) + parseInt($scope.item.dendabpjs) +
                     parseInt($scope.item.jasabank) + parseInt($scope.item.lainlain) + parseInt($scope.item.liquidgas) + parseInt($scope.item.saldoslipa) + parseInt($scope.item.klaimbpjs) + 
-                    parseInt($scope.item.girobtn) + parseInt($scope.item.saldosutera) + parseInt($scope.item.klaimcovid)
+                    parseInt($scope.item.girobtn) + parseInt($scope.item.saldosutera)
                 }
             });
 
@@ -295,15 +301,13 @@ define(['initialize'], function (initialize) {
                 if (newValue != oldValue) {
                     $scope.item.jumlahlain = parseInt($scope.item.kendaraan) + parseInt($scope.item.akreditasi) + parseInt($scope.item.dendabpjs) +
                     parseInt($scope.item.jasabank) + parseInt($scope.item.lainlain) + parseInt($scope.item.liquidgas) + parseInt($scope.item.saldoslipa) + parseInt($scope.item.klaimbpjs) + 
-                    parseInt($scope.item.girobtn) + parseInt($scope.item.saldosutera) + parseInt($scope.item.klaimcovid)
+                    parseInt($scope.item.girobtn) + parseInt($scope.item.saldosutera)
                 }
             });
 
             $scope.$watch('item.klaimcovid', function (newValue, oldValue) {
                 if (newValue != oldValue) {
-                    $scope.item.jumlahlain = parseInt($scope.item.kendaraan) + parseInt($scope.item.akreditasi) + parseInt($scope.item.dendabpjs) +
-                    parseInt($scope.item.jasabank) + parseInt($scope.item.lainlain) + parseInt($scope.item.liquidgas) + parseInt($scope.item.saldoslipa) + parseInt($scope.item.klaimbpjs) + 
-                    parseInt($scope.item.girobtn) + parseInt($scope.item.saldosutera) + parseInt($scope.item.klaimcovid)
+                    $scope.item.jumlahranap = parseInt($scope.item.klaimcovid)
                 }
             });
 
@@ -312,7 +316,7 @@ define(['initialize'], function (initialize) {
                 if (newValue != oldValue) {
                     $scope.item.voljumlahlain = parseInt($scope.item.volkendaraan) + parseInt($scope.item.volakreditasi) + parseInt($scope.item.voldendabpjs) +
                     parseInt($scope.item.voljasabank) + parseInt($scope.item.vollainlain) + parseInt($scope.item.volliquidgas) + parseInt($scope.item.volsaldoslipa) + parseInt($scope.item.volklaimbpjs) + 
-                    parseInt($scope.item.volgirobtn) + parseInt($scope.item.volsaldosutera) + parseInt($scope.item.volklaimcovid)
+                    parseInt($scope.item.volgirobtn) + parseInt($scope.item.volsaldosutera)
                 }
             });
 
@@ -320,7 +324,7 @@ define(['initialize'], function (initialize) {
                 if (newValue != oldValue) {
                     $scope.item.voljumlahlain = parseInt($scope.item.volkendaraan) + parseInt($scope.item.volakreditasi) + parseInt($scope.item.voldendabpjs) +
                     parseInt($scope.item.voljasabank) + parseInt($scope.item.vollainlain) + parseInt($scope.item.volliquidgas) + parseInt($scope.item.volsaldoslipa) + parseInt($scope.item.volklaimbpjs) + 
-                    parseInt($scope.item.volgirobtn) + parseInt($scope.item.volsaldosutera) + parseInt($scope.item.volklaimcovid)
+                    parseInt($scope.item.volgirobtn) + parseInt($scope.item.volsaldosutera)
                 }
             });
 
@@ -328,7 +332,7 @@ define(['initialize'], function (initialize) {
                 if (newValue != oldValue) {
                     $scope.item.voljumlahlain = parseInt($scope.item.volkendaraan) + parseInt($scope.item.volakreditasi) + parseInt($scope.item.voldendabpjs) +
                     parseInt($scope.item.voljasabank) + parseInt($scope.item.vollainlain) + parseInt($scope.item.volliquidgas) + parseInt($scope.item.volsaldoslipa) + parseInt($scope.item.volklaimbpjs) + 
-                    parseInt($scope.item.volgirobtn) + parseInt($scope.item.volsaldosutera) + parseInt($scope.item.volklaimcovid)
+                    parseInt($scope.item.volgirobtn) + parseInt($scope.item.volsaldosutera)
                 }
             });
 
@@ -336,7 +340,7 @@ define(['initialize'], function (initialize) {
                 if (newValue != oldValue) {
                     $scope.item.voljumlahlain = parseInt($scope.item.volkendaraan) + parseInt($scope.item.volakreditasi) + parseInt($scope.item.voldendabpjs) +
                     parseInt($scope.item.voljasabank) + parseInt($scope.item.vollainlain) + parseInt($scope.item.volliquidgas) + parseInt($scope.item.volsaldoslipa) + parseInt($scope.item.volklaimbpjs) + 
-                    parseInt($scope.item.volgirobtn) + parseInt($scope.item.volsaldosutera) + parseInt($scope.item.volklaimcovid)
+                    parseInt($scope.item.volgirobtn) + parseInt($scope.item.volsaldosutera)
                 }
             });
 
@@ -344,7 +348,7 @@ define(['initialize'], function (initialize) {
                 if (newValue != oldValue) {
                     $scope.item.voljumlahlain = parseInt($scope.item.volkendaraan) + parseInt($scope.item.volakreditasi) + parseInt($scope.item.voldendabpjs) +
                     parseInt($scope.item.voljasabank) + parseInt($scope.item.vollainlain) + parseInt($scope.item.volliquidgas) + parseInt($scope.item.volsaldoslipa) + parseInt($scope.item.volklaimbpjs) + 
-                    parseInt($scope.item.volgirobtn) + parseInt($scope.item.volsaldosutera) + parseInt($scope.item.volklaimcovid)
+                    parseInt($scope.item.volgirobtn) + parseInt($scope.item.volsaldosutera)
                 }
             });
 
@@ -352,7 +356,7 @@ define(['initialize'], function (initialize) {
                 if (newValue != oldValue) {
                     $scope.item.voljumlahlain = parseInt($scope.item.volkendaraan) + parseInt($scope.item.volakreditasi) + parseInt($scope.item.voldendabpjs) +
                     parseInt($scope.item.voljasabank) + parseInt($scope.item.vollainlain) + parseInt($scope.item.volliquidgas) + parseInt($scope.item.volsaldoslipa) + parseInt($scope.item.volklaimbpjs) + 
-                    parseInt($scope.item.volgirobtn) + parseInt($scope.item.volsaldosutera) + parseInt($scope.item.volklaimcovid)
+                    parseInt($scope.item.volgirobtn) + parseInt($scope.item.volsaldosutera)
                 }
             });
 
@@ -360,7 +364,7 @@ define(['initialize'], function (initialize) {
                 if (newValue != oldValue) {
                     $scope.item.voljumlahlain = parseInt($scope.item.volkendaraan) + parseInt($scope.item.volakreditasi) + parseInt($scope.item.voldendabpjs) +
                     parseInt($scope.item.voljasabank) + parseInt($scope.item.vollainlain) + parseInt($scope.item.volliquidgas) + parseInt($scope.item.volsaldoslipa) + parseInt($scope.item.volklaimbpjs) + 
-                    parseInt($scope.item.volgirobtn) + parseInt($scope.item.volsaldosutera) + parseInt($scope.item.volklaimcovid)
+                    parseInt($scope.item.volgirobtn) + parseInt($scope.item.volsaldosutera)
                 }
             });
 
@@ -368,7 +372,7 @@ define(['initialize'], function (initialize) {
                 if (newValue != oldValue) {
                     $scope.item.voljumlahlain = parseInt($scope.item.volkendaraan) + parseInt($scope.item.volakreditasi) + parseInt($scope.item.voldendabpjs) +
                     parseInt($scope.item.voljasabank) + parseInt($scope.item.vollainlain) + parseInt($scope.item.volliquidgas) + parseInt($scope.item.volsaldoslipa) + parseInt($scope.item.volklaimbpjs) + 
-                    parseInt($scope.item.volgirobtn) + parseInt($scope.item.volsaldosutera) + parseInt($scope.item.volklaimcovid)
+                    parseInt($scope.item.volgirobtn) + parseInt($scope.item.volsaldosutera)
                 }
             });
 
@@ -376,7 +380,7 @@ define(['initialize'], function (initialize) {
                 if (newValue != oldValue) {
                     $scope.item.voljumlahlain = parseInt($scope.item.volkendaraan) + parseInt($scope.item.volakreditasi) + parseInt($scope.item.voldendabpjs) +
                     parseInt($scope.item.voljasabank) + parseInt($scope.item.vollainlain) + parseInt($scope.item.volliquidgas) + parseInt($scope.item.volsaldoslipa) + parseInt($scope.item.volklaimbpjs) + 
-                    parseInt($scope.item.volgirobtn) + parseInt($scope.item.volsaldosutera) + parseInt($scope.item.volklaimcovid)
+                    parseInt($scope.item.volgirobtn) + parseInt($scope.item.volsaldosutera)
                 }
             });
 
@@ -384,15 +388,13 @@ define(['initialize'], function (initialize) {
                 if (newValue != oldValue) {
                     $scope.item.voljumlahlain = parseInt($scope.item.volkendaraan) + parseInt($scope.item.volakreditasi) + parseInt($scope.item.voldendabpjs) +
                     parseInt($scope.item.voljasabank) + parseInt($scope.item.vollainlain) + parseInt($scope.item.volliquidgas) + parseInt($scope.item.volsaldoslipa) + parseInt($scope.item.volklaimbpjs) + 
-                    parseInt($scope.item.volgirobtn) + parseInt($scope.item.volsaldosutera) + parseInt($scope.item.volklaimcovid)
+                    parseInt($scope.item.volgirobtn) + parseInt($scope.item.volsaldosutera)
                 }
             });
 
             $scope.$watch('item.volklaimcovid', function (newValue, oldValue) {
                 if (newValue != oldValue) {
-                    $scope.item.voljumlahlain = parseInt($scope.item.volkendaraan) + parseInt($scope.item.volakreditasi) + parseInt($scope.item.voldendabpjs) +
-                    parseInt($scope.item.voljasabank) + parseInt($scope.item.vollainlain) + parseInt($scope.item.volliquidgas) + parseInt($scope.item.volsaldoslipa) + parseInt($scope.item.volklaimbpjs) + 
-                    parseInt($scope.item.volgirobtn) + parseInt($scope.item.volsaldosutera) + parseInt($scope.item.volklaimcovid)
+                    $scope.item.voljumlahranap = parseInt($scope.item.volklaimcovid)
                 }
             });
 
@@ -548,7 +550,7 @@ define(['initialize'], function (initialize) {
                     var terbilang = $scope.item.terbilangsts;
                     var nosts = $scope.item.nosts;
                     var total = $scope.item.totalsts;
-                    var tglpenerimaan = $scope.item.tglpenerimaansts;
+                    var tglpenerimaan = moment($scope.item.tglpenerimaansts).format('DD-MM-YYYY');
                     var carabayar = $scope.item.carabayarsts;
                     var nama = $scope.item.namasts;
 
@@ -713,7 +715,7 @@ define(['initialize'], function (initialize) {
                     });
 
                     sheet.rows.splice(84, 0, {
-                        cells: [{value:"NIP. 19680714 200012 1 002", colSpan: 2},{value:"", colSpan: 1},{value:"NIP. 19650626 198902 1 001",colSpan: 2},{value:"", colSpan: 1},{value:"NIP. 19860422 201101 2 013", colSpan: 2}],
+                        cells: [{value:"NIP. 19680714 200012 1 002", colSpan: 2},{value:"", colSpan: 1},{value:"NIP. 19700404 199303 2005",colSpan: 2},{value:"", colSpan: 1},{value:"NIP. 19860422 201101 2 013", colSpan: 2}],
                         type: "data",
                         height: 20,
                     });

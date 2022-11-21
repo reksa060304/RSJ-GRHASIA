@@ -409,6 +409,10 @@
             "urlDep": "module/BendaharaPenerimaan/STSManualCtrl"
         },
         {
+            "nameDep": "STSKlaimCtrl",
+            "urlDep": "module/BendaharaPenerimaan/STSKlaimCtrl"
+        },
+        {
             "nameDep": "STSBulananCtrl",
             "urlDep": "module/BendaharaPenerimaan/STSBulananCtrl"
         },

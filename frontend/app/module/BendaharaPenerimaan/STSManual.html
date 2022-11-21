@@ -136,6 +136,35 @@
                         </div>
                         <div class="grid_12">
                             <div class="grid_4" style="text-align: left;margin-top: 15px;">
+                                RAWAT INAP
+                            </div>
+                            <div class="grid_4" >
+                                <input c-text-box type="input" class="k-textbox" ng-model="item.jumlahranap" disabled/>
+                            </div>
+                            <div class="grid_1" style="text-align: left;margin-top: 15px; text-align: right;">
+                                Vol
+                            </div>
+                            <div class="grid_3" >
+                                <input c-text-box type="input" class="k-textbox" ng-model="item.voljumlahranap" disabled/>
+                            </div>
+                        </div>
+                        
+                        <div class="grid_12">
+                            <div class="grid_4" style="text-align: left;margin-top: 15px;">
+                                Klaim Covid
+                            </div>
+                            <div class="grid_4" >
+                                <input c-text-box type="input" class="k-textbox" ng-model="item.klaimcovid" ng-change="hitungJumlah"/>
+                            </div>
+                            <div class="grid_1" style="text-align: left;margin-top: 15px; text-align: right;">
+                                Vol
+                            </div>
+                            <div class="grid_3" >
+                                <input c-text-box type="input" class="k-textbox" ng-model="item.volklaimcovid"/>
+                            </div>
+                        </div>
+                        <div class="grid_12">
+                            <div class="grid_4" style="text-align: left;margin-top: 15px;">
                                 LAIN-LAIN PENDAPATAN BLUD YANG SAH
                             </div>
                             <div class="grid_4" >
@@ -218,7 +247,7 @@
                                 <input c-text-box type="input" class="k-textbox" ng-model="item.vollainlain"/>
                             </div>
                         </div>
-                        <div class="grid_12">
+                        <div class="grid_12" hidden="true">
                             <div class="grid_4" style="text-align: left;margin-top: 15px;">
                                 Liquid Gas
                             </div>
@@ -262,7 +291,7 @@
                         </div>
                         <div class="grid_12">
                             <div class="grid_4" style="text-align: left;margin-top: 15px;">
-                                Giro BTN
+                                Jasa Giro
                             </div>
                             <div class="grid_4" >
                                 <input c-text-box type="input" class="k-textbox" ng-model="item.girobtn" ng-change="hitungJumlah"/>
@@ -274,7 +303,7 @@
                                 <input c-text-box type="input" class="k-textbox" ng-model="item.volgirobtn"/>
                             </div>
                         </div>
-                        <div class="grid_12">
+                        <div class="grid_12" hidden="true">
                             <div class="grid_4" style="text-align: left;margin-top: 15px;">
                                 Ada Saldo Sutera BPD Sudah Diakui Sebagai Pendapatan
                             </div>
@@ -286,20 +315,6 @@
                             </div>
                             <div class="grid_3" >
                                 <input c-text-box type="input" class="k-textbox" ng-model="item.volsaldosutera"/>
-                            </div>
-                        </div>
-                        <div class="grid_12">
-                            <div class="grid_4" style="text-align: left;margin-top: 15px;">
-                                Klaim Covid
-                            </div>
-                            <div class="grid_4" >
-                                <input c-text-box type="input" class="k-textbox" ng-model="item.klaimcovid" ng-change="hitungJumlah"/>
-                            </div>
-                            <div class="grid_1" style="text-align: left;margin-top: 15px; text-align: right;">
-                                Vol
-                            </div>
-                            <div class="grid_3" >
-                                <input c-text-box type="input" class="k-textbox" ng-model="item.volklaimcovid"/>
                             </div>
                         </div>
                         <div class="grid_12" hidden="true">
