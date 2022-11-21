@@ -12657,6 +12657,7 @@ GROUP BY y.KET
         WHERE
             pd.kdprofile = $kdProfile
             and pd.statusenabled = true
+            and pd.tglpulang is not null
             $paramRanap
             $paramRuangan
             $paramDep
@@ -12891,6 +12892,8 @@ GROUP BY y.KET
             $ps->privasi3 = $request['privasi3'];
             $ps->privasi4 = $request['privasi4'];
             $ps->ismengizinkan = $request['ismengizinkan'];
+            $ps->saksipersetujuan = $request['saksipersetujuan'];
+            $ps->pjpersetujuan = $request['pjpersetujuan'];
             $ps->save();
 
             $pd = PasienDaftar::where('norec', $request['norec_pd'])->first();
@@ -12926,7 +12929,7 @@ GROUP BY y.KET
         $data = \DB::table('pasiendaftar_t as pd')
         ->join('pasien_m as ps', 'ps.id','=','pd.nocmfk')
         ->leftjoin('pegawai_m as pg', 'pg.id','=','pd.objectpetugasinformasifk')
-        ->where('pd.norec', $request['norec_pd'])->select('ps.kerahasiaan1','ps.kerahasiaan2','ps.kerahasiaan3','ps.kerahasiaan4','ps.privasi1','ps.privasi2','ps.privasi3','ps.privasi4','ps.ismengizinkan', 'pg.namalengkap', 'pg.id')
+        ->where('pd.norec', $request['norec_pd'])->select('ps.pjpersetujuan','ps.saksipersetujuan','ps.kerahasiaan1','ps.kerahasiaan2','ps.kerahasiaan3','ps.kerahasiaan4','ps.privasi1','ps.privasi2','ps.privasi3','ps.privasi4','ps.ismengizinkan', 'pg.namalengkap', 'pg.id')
         ->get();
         $result = array(
             'data'=> $data,

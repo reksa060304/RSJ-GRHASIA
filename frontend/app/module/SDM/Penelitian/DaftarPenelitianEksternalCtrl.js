@@ -28,6 +28,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }
             $scope.item.tanggalmulai = new moment($scope.now).format('YYYY-MM-DD 00:00');
             $scope.item.tanggalselesai = new moment($scope.now).format('YYYY-MM-DD 23:59');
+            $scope.tglpembayaran = false
             var norec = "";
 			var dataProduk = [];
             getCombo()
@@ -546,13 +547,17 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.isverifikasi = current.isverifikasi
                 $scope.count = current.count
                 $scope.tanggalmulai = current.tanggalmulai
+                $scope.noRegistrasi = current.noregistrasifk
                 if (medifirstService.getKelompokUser() == 'diklit') {
                     if (current.noregistrasifk != null) {
                         $scope.verif = false;
                         $scope.batalverif = true;
+                        $scope.tglpembayaran = true
                     } else {
                         $scope.verif = true;
                         $scope.batalverif = false;
+                        $scope.tglpembayaran = false
+
                     }
 
                     if (current.isverifikasi == 0) {
@@ -871,7 +876,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     toastr.error('Data Kegiatan Belum Dipilih', 'Info');
                     return;
                 }
-                if ($scope.statusBayar == "Lunas") {
+                if ($scope.statusBayar != null) {
                     toastr.error("Informasi, Tagihan Sudah Lunas !")
                     return;
                     // var alertDialog = modelItemAkuntansi.showAlertDialog("Informasi",
@@ -881,8 +886,18 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                     // });
                 } else {
-                    $scope.changePage2("PembayaranTagihanNonLayananKasir");
+                    $scope.changePage2("TglPembayaranDiklat");
                 }
+            }
+            $scope.changePage2 = function (stateName) {
+                var obj = {
+                    pageFrom: "DaftarNonLayananKasir", //"PembayaranTagihanNonLayananKasir",
+                    noRegistrasi: $scope.noRegistrasi
+                }
+
+                $state.go(stateName, {
+                    dataPasien: JSON.stringify(obj)
+                });
             }
         }
     ]);
