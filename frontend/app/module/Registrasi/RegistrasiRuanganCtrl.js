@@ -675,7 +675,6 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         medifirstService.post('registrasi/save-registrasipasien', objSave).then(function (e) {
                             $scope.isSimpan = false;
                             $scope.resultAPD = e.data.dataAPD;
-                            console.log($scope.resultAPD);
                             // responData = e.data;
                             $scope.resultPD = e.data.dataPD;
                             $scope.Noregistrasi = e.data.dataPD.noregistrasi;
@@ -1542,7 +1541,6 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                 medifirstService.get('registrasi/get-data-skrining-awal-pasien?noregistrasi=' + $scope.cacheNoRegistrasi).then(function (dat) {                    
                     var dataScr = dat.data.data;
-                        console.log(dataScr);
                         // return
                     if(dataScr != 'undefined'){
                         $scope.norecScr = dataScr[0].norec;
@@ -1589,7 +1587,6 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     'tb': $scope.listTb != undefined ? $scope.listTb : null,
                     'keterangan': $scope.item.KeteranganAlasan != undefined ? $scope.item.KeteranganAlasan : null,                    
                 }
-                console.log(objSave);
                 $scope.hideScr = true
                 medifirstService.post('registrasi/save-skrining-awal-pasien', objSave).then(function (e) {                    
                     $scope.norecScr = e.data.data.norec;
@@ -2036,7 +2033,6 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 }
             }
             $scope.PersetujuanUmum = function(){
-                loadPersetujuanUmum()
                 $scope.btnKI0 = true;
                 $scope.btnKI1 = true;
                 $scope.btnKI2 = true;
@@ -2051,6 +2047,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.PR1 = false
                 $scope.PR2 = false
                 $scope.PR3 = false
+                loadPersetujuanUmum()
                 $scope.popPersetujuan.center().open()
             }
             $scope.tambahPU = function(data){
@@ -2119,6 +2116,20 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     $scope.NORECPD = norecPD
                 }
                 medifirstService.get('registrasi/persetujuan-umum?' + "norec_pd=" + $scope.NORECPD).then(function (data) {
+                    $scope.btnKI0 = true;
+                    $scope.btnKI1 = true;
+                    $scope.btnKI2 = true;
+                    $scope.btnKI3 = true;
+                    $scope.KI1 = false
+                    $scope.KI2 = false
+                    $scope.KI3 = false
+                    $scope.btnPR0 = true;
+                    $scope.btnPR1 = true;
+                    $scope.btnPR2 = true;
+                    $scope.btnPR3 = true;
+                    $scope.PR1 = false
+                    $scope.PR2 = false
+                    $scope.PR3 = false
                     $scope.item.KI0 = data.data.data[0].kerahasiaan1
                     $scope.item.KI1 = data.data.data[0].kerahasiaan2
                     $scope.item.KI2 = data.data.data[0].kerahasiaan3
@@ -2127,16 +2138,42 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     $scope.item.PR1 = data.data.data[0].privasi2
                     $scope.item.PR2 = data.data.data[0].privasi3
                     $scope.item.PR3 = data.data.data[0].privasi4
+                    $scope.item.pjpersetujuan = data.data.data[0].pjpersetujuan
+                    $scope.item.saksipersetujuan = data.data.data[0].saksipersetujuan
                     $scope.pegawaipetugas = {
                         id: data.data.data[0].id,
                         namalengkap: data.data.data[0].namalengkap,
                     }
-                    console.log($scope.pegawaipetugas);
+                    if ($scope.item.KI3 != undefined && $scope.item.KI3 != null && $scope.item.KI3 != "") {
+                        $scope.KI3 = true
+                        $scope.btnKI2 = false
+                    }
+                    if ($scope.item.KI2 != undefined && $scope.item.KI2 != null && $scope.item.KI2 != "") {
+                        $scope.KI2 = true
+                        $scope.btnKI1 = false
+                    }
+                    if ($scope.item.KI1 != undefined && $scope.item.KI1 != null && $scope.item.KI1 != "") {
+                        $scope.KI1 = true
+                        $scope.btnKI0 = false
+                    }
                     if(data.data.data[0].ismengizinkan == true){
                         $scope.listPrivasi = 1
                     } else if (data.data.data[0].ismengizinkan == null) {
                         $scope.listPrivasi = 0
                     }
+                    if ($scope.item.PR3 != undefined && $scope.item.PR3 != null && $scope.item.PR3 != "") {
+                        $scope.PR3 = true
+                        $scope.btnPR2 = false
+                    }
+                    if ($scope.item.PR2 != undefined && $scope.item.PR2 != null && $scope.item.PR2 != "") {
+                        $scope.PR2 = true
+                        $scope.btnPR1 = false
+                    }
+                    if ($scope.item.PR1 != undefined && $scope.item.PR1 != null && $scope.item.PR1 != "") {
+                        $scope.PR1 = true
+                        $scope.btnPR0 = false
+                    }
+                    
                 })
             }
             $scope.cariPersetujuan = function(){
@@ -2199,7 +2236,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     'privasi4': privasi4,
                     'ismengizinkan': ismengizinkan,
                     'petugasinformasi': petugasinformasi,
-                    'norec_pd': $scope.NORECPD
+                    'norec_pd': $scope.NORECPD,
+                    'pjpersetujuan': $scope.item.saksipersetujuan,
+                    'saksipersetujuan': $scope.item.pjpersetujuan
                 }
                 medifirstService.post('registrasi/save-persetujuan-umum',objSave).then(function(){
                     loadPersetujuanUmum()
@@ -2209,32 +2248,31 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 var local = JSON.parse(localStorage.getItem('profile'))
                 var penanggungjawab = '';
                 var saksi = '';
-                if ($scope.listPJ == 0){
-                    penanggungjawab = $scope.item.KI0
-                }
-                if ($scope.listPJ == 1) {
-                    penanggungjawab = $scope.item.KI1
-                }
-                if ($scope.listPJ == 2) {
-                    penanggungjawab = $scope.item.KI2
-                }
-                if ($scope.listPJ == 3) {
-                    penanggungjawab = $scope.item.KI3
-                }
-                if ($scope.listSaksi == 0) {
-                    saksi = $scope.item.KI0
-                }
-                if ($scope.listSaksi == 1) {
-                    saksi = $scope.item.KI1
-                }
-                if ($scope.listSaksi == 2) {
-                    saksi = $scope.item.KI2
-                }
-                if ($scope.listSaksi == 3) {
-                    saksi = $scope.item.KI3
-                }
-                window.open(configuration.baseApiBackend + 'report/persetujuan-umum?' + 'norec_pd=' + $scope.NORECPD + '&saksi=' + saksi + '&penanggungjawab=' + penanggungjawab + '&kdprofile=' + local.id, '_blank');
+                window.open(configuration.baseApiBackend + 'report/persetujuan-umum?' + 'norec_pd=' + $scope.NORECPD + '&kdprofile=' + local.id, '_blank');
             }
+            $scope.$watch('listPJ', function(newValue, oldValue){
+                if($scope.listPJ == 0){
+                    $scope.item.KI0 = $scope.item.pjpersetujuan
+                }
+                else if($scope.listPJ == 1) {
+                    $scope.item.KI1 = $scope.item.pjpersetujuan
+                } else if ($scope.listPJ == 2) {
+                    $scope.item.KI2 = $scope.item.pjpersetujuan
+                } else if ($scope.listPJ == 3) {
+                    $scope.item.KI3 = $scope.item.pjpersetujuan
+                }
+            })
+            $scope.$watch('listSaksi', function (newValue, oldValue) {
+                if ($scope.listSaksi == 0) {
+                    $scope.item.KI0 = $scope.item.saksipersetujuan
+                } else if ($scope.listSaksi == 1) {
+                    $scope.item.KI1 = $scope.item.saksipersetujuan
+                } else if ($scope.listSaksi == 2) {
+                    $scope.item.KI2 = $scope.item.saksipersetujuan
+                } else if ($scope.listSaksi == 3) {
+                    $scope.item.KI3 = $scope.item.saksipersetujuan
+                }
+            })
             //** BATAS */
         }
     ]);

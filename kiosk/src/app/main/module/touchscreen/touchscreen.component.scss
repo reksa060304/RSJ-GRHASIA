@@ -15,3 +15,9 @@
 .cursor{
   cursor: pointer;
 }
+
+@media (max-width: 910px) {
+  .hide-leutik{
+    display: none;
+  }
+}

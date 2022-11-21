@@ -282,9 +282,9 @@
                             <td></td>
                         </tr>
                         <tr>
-                            <td style="text-align: center;font-family: Arial">{{$dd->penanggungjawab}}</td>
+                            <td style="text-align: center;font-family: Arial">{{$dd->pjpersetujuan}}</td>
                             <td style="text-align: center;font-family: Arial">{{$dd->namalengkap}}</td>
-                            <td style="text-align: center;font-family: Arial">{{$dd->saksi}}</td>
+                            <td style="text-align: center;font-family: Arial">{{$dd->saksipersetujuan}}</td>
                         </tr>
                         
                     </table>

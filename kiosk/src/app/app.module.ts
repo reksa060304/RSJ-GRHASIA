@@ -37,6 +37,8 @@ import { HttpService } from './main/module/httpService';
 import { LoaderComp } from './main/components/loader/loader.component';
 import { LoaderService } from './main/components/loader/loader.service';
 import { APP_BASE_HREF, HashLocationStrategy, LocationStrategy } from '@angular/common';
+import { ServiceWorkerModule } from '@angular/service-worker';
+import { environment } from '../environments/environment';
 const appRoutes: Routes = [
   // {
   //   path: 'dashboard',
@@ -87,7 +89,9 @@ const appRoutes: Routes = [
   { path: 'touchscreen/self-regis/verif-pasien', loadChildren: () => import('./main/module/verif-pasien/verif-pasien.module').then(m => m.VerifPasienModule), },
   { path: 'touchscreen/self-regis/verif-pasien/poli', loadChildren: () => import('./main/module/pilih-poli/pilih-poli.module').then(m => m.PilihPoliModule), },
   { path: 'touchscreen/checkin', loadChildren: () => import('./main/module/checkin/checkin.module').then(m => m.CheckinModule), },
-  { path: 'touchscreen/self-regis/verif-pasien-bpjs', loadChildren: () => import('./main/module/verif-pasien-bpjs/verif-pasien-bpjs.module').then(m => m.VerifPasienBpjsModule), },
+  { path: 'touchscreen/self-regis/verif-pasien-bpjs-old', loadChildren: () => import('./main/module/verif-pasien-bpjs/verif-pasien-bpjs.module').then(m => m.VerifPasienBpjsModule), },
+  { path: 'touchscreen/self-regis/verif-pasien-bpjs', loadChildren: () => import('./main/module/verif-pasien-bpjs-old/verif-pasien-bpjs-old.module').then(m => m.VerifPasienBpjsOldModule), },
+  
   { path: 'informasi-profil', loadChildren: () => import('./main/module/informasi-profil/informasi-profil.module').then(m => m.InformasiProfilModule), },
   { path: 'gallery', loadChildren: () => import('./main/module/gallery/gallery.module').then(m => m.GalleryModule), },
   { path: 'informasi-pelayanan', loadChildren: () => import('./main/module/informasi-pelayanan/informasi-pelayanan.module').then(m => m.InformasiPelayananModule), },
@@ -96,6 +100,7 @@ const appRoutes: Routes = [
   { path: 'informasi-bantuan', loadChildren: () => import('./main/module/informasi-bantuan/informasi-bantuan.module').then(m => m.InformasiBantuanModule), },
   { path: 'informasi-kamar', loadChildren: () => import('./main/module/informasi-kamar/informasi-kamar.module').then(m => m.InformasiKamarModule), },
   { path: 'info-kritik', loadChildren: () => import('./main/module/info-kritik/info-kritik.module').then(m => m.InfoKritikModule), },
+  { path: 'cek-kepesertaan-bpjs', loadChildren: () => import('./main/module/cek-kepesertaan-bpjs/cek-kepesertaan-bpjs.module').then(m => m.CekKepesertaanBpjsModule), },
  
 
   {
@@ -145,6 +150,12 @@ const appRoutes: Routes = [
     CardSnippetModule,
     LayoutModule,
     ContentHeaderModule,
+    ServiceWorkerModule.register('ngsw-worker.js', {
+      enabled: environment.production,
+      // Register the ServiceWorker as soon as the app is stable
+      // or after 30 seconds (whichever comes first).
+      registrationStrategy: 'registerWhenStable:30000'
+    }),
   ],
 
   providers: [

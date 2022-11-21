@@ -1,0 +1,339 @@
+<div class="content-wrapper">
+    <div class="content-body">
+        <!-- content-header component -->
+        <app-content-header [contentHeader]="contentHeader"></app-content-header>
+
+        <form [formGroup]="formGroup">
+            <section class="basic-select" *ngIf="!isInfoPasien">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <!-- <div class="card-header">
+                            <h4 class="card-title">Nama Pasien : {{ dataCache.namapasien}}</h4>
+                        </div> -->
+
+                            <div class="card-body text-center">
+                                <div class="row">
+                                    <div class="col-12 col-md-3 col-lg-4"></div>
+
+                                    <div class="col-12 col-md-6 col-lg-4">
+                                        <label for="largeInput" style="display: inline;">
+                                            <h3>Scan kartu BPJS Anda atau masukan No Kartu BPJS anda </h3>
+                                        </label>
+                                        <input class="form-control form-control-lg" type="text"
+                                            placeholder="No Rujukan / No Kartu" formControlName="noRujukan" />
+                                    </div>
+                                </div>
+                                <div class="row mt-1">
+                                    <div class="col-12 col-md-12">
+                                        <label for="largeInput" style="display: inline;">
+                                            <h3>Silahkan pilih asal rujukan anda dari :</h3>
+                                        </label>
+                                    </div>
+                                    <!-- <div class="col-12 col-md-3 col-lg-4"></div>
+                                    <div class="col-12 col-md-2 col-lg-2">
+                                        <div class="custom-control custom-radio">
+                                            <input type="radio" id="opt1" value="pcare" formControlName="pCare"
+                                                name="pCare" class="custom-control-input" />
+                                            <label class="custom-control-label" for="opt1" style="text-align:left">P-Care </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-md-2 col-lg-2">
+                                        <div class="custom-control custom-radio">
+                                            <input type="radio" id="opt2" value="rs" name="pCare"
+                                                formControlName="pCare" class="custom-control-input" />
+                                            <label class="custom-control-label" for="opt2">Rumah Sakit</label>
+                                        </div>
+                                    </div> -->
+                                    <div class="col-12 col-md-2"></div>
+                                    <div class="col-12 col-md-2 p-field-checkbox" *ngFor="let items of listRadio">
+                                        <div class="custom-control custom-radio">
+                                            <input type="radio" id="{{items.id}}" value="{{items.id}}" formControlName="pCare"
+                                                name="pCare" class="custom-control-input" />
+                                            <label class="custom-control-label" for="{{items.id}}"
+                                                style="text-align:left">{{items.name}} </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mt-1">
+                                    <div class="col-12 col-md-3 col-lg-4"></div>
+                                    <div class="col-12 col-md-6 col-lg-4">
+                                        <button type="button" class="btn btn-outline-primary mb-1" rippleEffect
+                                            style="width:100%" (click)="getNoRujukan()">Selanjutnya</button>
+                                    </div>
+                                </div>
+                                <br>
+                                <br>
+                                <br>
+                                <label for="largeInput" style="display: inline;">
+                                    <h3 style="text-align:center;color: brown;">*No Kartu akan mencari nomor Rujukan
+                                        terbaru</h3>
+                                </label>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section *ngIf="isInfoPasien">
+                <!-- *ngIf="isInfoPasien" -->
+                <div class="row">
+                    <!-- <div class="col-12 col-md-2">
+                    </div>
+                    <div class="col-12 col-md-8"> -->
+                    <div class="col-12 col-md-12">
+                        <div class="card">
+                            <div class="card-header " style="display: inline;text-align: center;">
+                                <h3 class="no-cm" *ngIf="!isSuksesSEP" style="color: brown;">No. Rujukan : {{item.noKunjungan}}</h3>
+                                <h3 class="no-cm" *ngIf="isSuksesSEP" style="color: brown;">No. SEP : {{dataSEP.nosep}}</h3>
+                            </div>
+                            <div class="card-body" style="text-align: center;">
+                                <div class="row" *ngIf="listRujukan.length > 0">
+                                    <div class="col-12 col-md-4"></div>
+                                    <div class="col-12 col-md-4">
+                                        <label style="font-size: 1.143rem;">History Rujukan </label>
+                                        <div class="form-group">
+                                            <ng-select class="ng-select-size-lg" [items]="listRujukan"
+                                                formControlName="multiRujukan" (change)="changeNoRujukan($event)">
+                                            </ng-select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12 col-md-4">
+                                        <p class="card-text"> No RM </p>
+                                        <h4 class="card-title"> {{item.peserta.mr.noMR}}</h4>
+
+                                        <p class="card-text">Nama Pasien </p>
+                                        <h4 class="card-title"> {{item.peserta.nama}}</h4>
+
+                                        <p class="card-text">Jenis Kelamin </p>
+                                        <h4 class="card-title"> {{item.peserta.sex}}</h4>
+
+                                        <p class="card-text">No. Identitas</p>
+                                        <h4 class="card-title"> {{item.peserta.nik}}</h4>
+                                    </div>
+                                    <div class="col-12 col-md-4">
+                                        <p class="card-text">Tanggal Lahir</p>
+                                        <h4 class="card-title"> {{item.peserta.tglLahir}}</h4>
+
+                                        <p class="card-text">Umur </p>
+                                        <h4 class="card-title">{{item.peserta.umur.umurSekarang}}</h4>
+
+                                        <p class="card-text">Jenis Peserta </p>
+                                        <h4 class="card-title">{{item.peserta.jenisPeserta.keterangan}}</h4>
+
+                                        <p class="card-text">No. Telpon</p>
+                                        <h4 class="card-title">{{item.peserta.mr.noTelepon}}</h4>
+
+                                    </div>
+                                    <div class="col-12 col-md-4">
+                                        <p class="card-text"> Tanggal Rujukan </p>
+                                        <h4 class="card-title"> {{item.tglKunjungan}}</h4>
+
+                                        <p class="card-text">No Kartu </p>
+                                        <h4 class="card-title"> {{item.peserta.noKartu}}</h4>
+
+                                        <p class="card-text">Asal Rujukan</p>
+                                        <h4 class="card-title"> {{item.provPerujuk.nama}}</h4>
+
+                                        <p class="card-text">Diagnosa</p>
+                                        <h4 class="card-title"> {{item.diagnosa.nama}}</h4>
+
+                                    </div>
+                                    <div class="col-12 col-md-4">
+                                    </div>
+                                    <div class="col-12 col-md-4" style="margin-top: -20px;">
+                                        <p class="card-text">Anda Dirujuk Ke</p>
+                                        <h4 class="card-title" style="color: brown;"> {{item.poliRujukan.nama}}</h4>
+
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12 col-md-2">
+                                    </div>
+                                    <div class="col-12 col-md-2">
+                                        <label style="font-size: 1.143rem;">Tujuan Kunjungan</label>
+                                        <div class="form-group">
+                                            <ng-select class="ng-select-size-lg" [items]="listTujuanKun"
+                                                formControlName="tujuanKunj" (change)="changeTujuan($event)">
+                                            </ng-select>
+                                        </div>
+                                        <!-- <p class="text-regular">Tujuan Kunjungan</p>
+                                        <p-dropdown formControlName="tujuanKunj" [options]="listTujuanKun"
+                                            [filter]="true" [autoWidth]="false" (onChange)="changeTujuan($event)">
+                                        </p-dropdown> -->
+                                    </div>
+                                    <div class="col-12 col-md-2"
+                                        *ngIf="formGroup.get('tujuanKunj').value  &&  formGroup.get('tujuanKunj').value.value.kode != '0' ">
+                                        <label style="font-size: 1.143rem;">No.Surat Kontrol/SKDP</label>
+                                        <input class="form-control form-control-lg" type="text"
+                                            placeholder="No Surat Kontrol" formControlName="noSKDP" />
+
+                                    </div>
+
+                                    <div class="col-12 col-md-2"
+                                        *ngIf="formGroup.get('tujuanKunj').value && formGroup.get('tujuanKunj').value.value.kode != '0' ">
+                                        <label style="font-size: 1.143rem;">DPJP Kontrol</label>
+                                        <div class="form-group">
+                                            <ng-select class="ng-select-size-lg" [items]="listDokter"
+                                                formControlName="dokterDPJP">
+                                            </ng-select>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-md-2"
+                                        *ngIf="formGroup.get('tujuanKunj').value && formGroup.get('tujuanKunj').value.value.kode == '1' ">
+                                        <label style="font-size: 1.143rem;">Flag Procedure</label>
+                                        <div class="form-group">
+                                            <ng-select class="ng-select-size-lg" [items]="listFlag"
+                                                formControlName="flagProcedure" (change)="changeFlag($event)">
+                                            </ng-select>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-md-2" *ngIf="formGroup.get('flagProcedure').value">
+                                        <label style="font-size: 1.143rem;">Penunjang</label>
+                                        <div class="form-group">
+                                            <ng-select class="ng-select-size-lg" [items]="listPenunjang"
+                                                formControlName="kdPenunjang">
+                                            </ng-select>
+                                        </div>
+
+                                    </div>
+                                    <div class="col-12 col-md-2"
+                                        *ngIf=" formGroup.get('tujuanKunj').value && formGroup.get('tujuanKunj').value.value.kode == '2'  ">
+                                        <label style="font-size: 1.143rem;">Assesment</label>
+                                        <div class="form-group">
+                                            <ng-select class="ng-select-size-lg" [items]="listAsses"
+                                                formControlName="assesmentPel">
+                                            </ng-select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12 col-md-4"></div>
+                                    <div class="col-12 col-md-2">
+                                        <label style="font-size: 1.143rem;" *ngIf="showPasca" >Poli </label>
+                                        <div class="form-group"  *ngIf="showPasca" >
+                                            <ng-select class="ng-select-size-lg" [items]="listPoli" 
+                                                formControlName="poliTujuan" (change)="changePoli($event)">
+                                            </ng-select>
+                                        </div>
+                                        <button *ngIf="!showPasca" type="button" class="btn btn-info mb-1" rippleEffect
+                                            style="width:100%;margin-top: 29px;" (click)="showPopUp2(modalSuccess2)">{{
+                                            tests }}
+                                        </button>
+                                    </div>
+
+                                    <div class="col-12 col-md-2">
+                                        <button type="button" class="btn btn-info mb-1" rippleEffect
+                                            style="width:100%;margin-top: 29px;" (click)="showPopUp(modalSuccess)">{{
+                                            test }}
+                                        </button>
+
+                                    </div>
+                                    <div class="col-12 col-md-4" *ngIf="showDPJP">
+                                        <label style="font-size: 1.143rem;">DPJP yg Melayani</label>
+                                        <div class="form-group">
+                                            <ng-select class="ng-select-size-lg" [items]="listDokterMelayani"
+                                                formControlName="dokterDPJPMelayani">
+                                            </ng-select>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <!-- <div class="row">
+                                    <div class="col-md-6 col-12">
+                                        <label style="font-size: 1.143rem;">Poli </label>
+                                        <div class="form-group">
+                                            <ng-select class="ng-select-size-lg" [items]="listPoli"
+                                                formControlName="poliTujuan" (change)="changePoli($event)">
+                                            </ng-select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-12">
+                                        <label style="font-size: 1.143rem;">Dokter</label>
+                                        <div class="form-group">
+                                            <ng-select class="ng-select-size-lg" [items]="listDokter"
+                                                formControlName="dokterDPJP">
+                                            </ng-select>
+                                        </div>
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="customCheck2"
+                                                formControlName="allDPJP" (change)="changeClick()" />
+                                            <label class="custom-control-label" for="customCheck2">Semua DPJP</label>
+                                        </div>
+                                    </div>
+
+                                </div> -->
+                                <div class="row mt-2">
+                                    <div class="col-12 col-md-3 col-lg-4"></div>
+                                    <div class="col-12 col-md-6 col-lg-4" *ngIf="!showCetak">
+                                        <button type="button" [disabled]="isSave" class="btn btn-danger mb-1"
+                                            rippleEffect style="width:100%" (click)="insertSep()">Simpan</button>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12 col-md-3 col-lg-4"></div>
+                                    <div class="col-12 col-md-6 col-lg-4" *ngIf="showCetak">
+                                        <button type="button" class="btn btn-outline-success mb-1" rippleEffect
+                                            style="width:100%" (click)="cetakSep()">Cetak SEP
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12 col-md-3 col-lg-4"></div>
+                                    <div class="col-12 col-md-6 col-lg-4" *ngIf="showCetak">
+                                        <button type="button" class="btn btn-outline-warning mb-1" rippleEffect
+                                            style="width:100%" (click)="cetakAntrian()">Cetak
+                                            Nomor Antrian</button>
+                                    </div>
+                                    <img *ngIf="loading" style="margin-top:10px"
+                                        src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+        </form>
+    </div>
+</div>
+
+<ng-template #modalSuccess let-modal>
+    <div class="modal-header">
+        <h5 class="modal-title" id="myModalLabel160">Pilih DPJP yang Melayani</h5>
+        <button type="button" class="close" (click)="modal.dismiss('Cross click')" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-12 col-md-2" *ngFor="let button of buttons">
+                <button type="button" class="btn btn-warning mb-1" rippleEffect style="width:100%"
+                    (click)="ChangeScreen(button)">{{ button.label }}
+                </button>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #modalSuccess2 let-modal2>
+    <div class="modal-header">
+        <h5 class="modal-title" id="myModalLabel160">Pilih Poli Tujuan</h5>
+        <button type="button" class="close" (click)="modal2.dismiss('Cross click')" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-12 col-md-2" *ngFor="let button of buttonss">
+                <button type="button" class="btn btn-warning mb-1" rippleEffect style="width:100%"
+                    (click)="ChangeScreens(button)">{{ button.label }}
+                </button>
+            </div>
+        </div>
+    </div>
+</ng-template>

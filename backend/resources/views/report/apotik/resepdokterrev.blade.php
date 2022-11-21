@@ -187,10 +187,15 @@
                     </tr>
                 </thead>
                 <tbody>
-                    
                     <tr>
                         <td class="price fs-9" style="text-align: center; border: 1px solid black;">1.</td>
                         <td class="price fs-9" style="text-align: left; border: 1px solid black;">Administrasi</td>
+                        <td class="price fs-9" style="text-align: center; border: 1px solid black;"></td>
+                        <td class="description fs-9" style="text-align: center; border: 1px solid black;"></td>
+                    </tr>
+                    <tr>
+                        <td class="price fs-9" style="text-align: center;"></td>
+                        <td class="price fs-9" style="text-align: left; border: 1px solid black;">Nama, tanggal lahir, jenis kelamin, dan identitas pasien</td>
                         @if($skrining->rpenulis == 1)
                         <td class="price fs-9" style="text-align: center; border: 1px solid black;">✓</td>
                         <td class="description fs-9" style="text-align: center; border: 1px solid black;"></td>
@@ -203,8 +208,22 @@
                         @endif
                     </tr>
                     <tr>
-                        <td class="price fs-9" style="text-align: center; border: 1px solid black;">2.</td>
-                        <td class="price fs-9" style="text-align: left; border: 1px solid black;">Farmasetis</td>
+                        <td class="price fs-9" style="text-align: center;"></td>
+                        <td class="price fs-9" style="text-align: left; border: 1px solid black;">Identitas dokter penulis resep dan paraf/keabsahan dokter</td>
+                        @if($skrining->ridentitasdokter == 1)
+                        <td class="price fs-9" style="text-align: center; border: 1px solid black;">✓</td>
+                        <td class="description fs-9" style="text-align: center; border: 1px solid black;"></td>
+                        @elseif($skrining->ridentitasdokter == 2)
+                        <td class="price fs-9" style="text-align: center; border: 1px solid black;"></td>
+                        <td class="description fs-9" style="text-align: center; border: 1px solid black;">✓</td>
+                        @else
+                        <td class="price fs-9" style="text-align: center; border: 1px solid black;"></td>
+                        <td class="description fs-9" style="text-align: center; border: 1px solid black;"></td>
+                        @endif
+                    </tr>
+                    <tr>
+                        <td class="price fs-9" style="text-align: center;"></td>
+                        <td class="price fs-9" style="text-align: left; border: 1px solid black;">Tanggal resep</td>
                         @if($skrining->rtanggalresep == 1)
                         <td class="price fs-9" style="text-align: center; border: 1px solid black;">✓</td>
                         <td class="description fs-9" style="text-align: center; border: 1px solid black;"></td>
@@ -217,12 +236,12 @@
                         @endif
                     </tr>
                     <tr>
-                        <td class="price fs-9" style="text-align: center; border: 1px solid black;">3.</td>
-                        <td class="price fs-9" style="text-align: left; border: 1px solid black;">Klinis</td>
-                        @if($skrining->rklinis == 1)
+                        <td class="price fs-9" style="text-align: center;"></td>
+                        <td class="price fs-9" style="text-align: left; border: 1px solid black;">Cara Bayar Pasien</td>
+                        @if($skrining->rcarabayar == 1)
                         <td class="price fs-9" style="text-align: center; border: 1px solid black;">✓</td>
                         <td class="description fs-9" style="text-align: center; border: 1px solid black;"></td>
-                        @elseif($skrining->rklinis == 2)
+                        @elseif($skrining->rcarabayar == 2)
                         <td class="price fs-9" style="text-align: center; border: 1px solid black;"></td>
                         <td class="description fs-9" style="text-align: center; border: 1px solid black;">✓</td>
                         @else
@@ -232,7 +251,89 @@
                     </tr>
                     <tr>
                         <td class="price fs-9" style="text-align: center;"></td>
-                        <td class="price fs-9" style="text-align: left; border: 1px solid black;">Tepat Dosis</td>
+                        <td class="price fs-9" style="text-align: left; border: 1px solid black;">Ruang / unit asal resep</td>
+                        @if($skrining->rruanganresep == 1)
+                        <td class="price fs-9" style="text-align: center; border: 1px solid black;">✓</td>
+                        <td class="description fs-9" style="text-align: center; border: 1px solid black;"></td>
+                        @elseif($skrining->rruanganresep == 2)
+                        <td class="price fs-9" style="text-align: center; border: 1px solid black;"></td>
+                        <td class="description fs-9" style="text-align: center; border: 1px solid black;">✓</td>
+                        @else
+                        <td class="price fs-9" style="text-align: center; border: 1px solid black;"></td>
+                        <td class="description fs-9" style="text-align: center; border: 1px solid black;"></td>
+                        @endif
+                    </tr>
+                    <tr>
+                        <td class="price fs-9" style="text-align: center; border: 1px solid black;">2.</td>
+                        <td class="price fs-9" style="text-align: left; border: 1px solid black;">Farmasetis</td>
+                        <td class="price fs-9" style="text-align: center; border: 1px solid black;"></td>
+                        <td class="description fs-9" style="text-align: center; border: 1px solid black;"></td>
+                    </tr>
+                    <tr>
+                        <td class="price fs-9" style="text-align: center;"></td>
+                        <td class="price fs-9" style="text-align: left; border: 1px solid black;">Nama obat, bentuk sediaan</td>
+                        @if($skrining->rnamaobat == 1)
+                        <td class="price fs-9" style="text-align: center; border: 1px solid black;">✓</td>
+                        <td class="description fs-9" style="text-align: center; border: 1px solid black;"></td>
+                        @elseif($skrining->rnamaobat == 2)
+                        <td class="price fs-9" style="text-align: center; border: 1px solid black;"></td>
+                        <td class="description fs-9" style="text-align: center; border: 1px solid black;">✓</td>
+                        @else
+                        <td class="price fs-9" style="text-align: center; border: 1px solid black;"></td>
+                        <td class="description fs-9" style="text-align: center; border: 1px solid black;"></td>
+                        @endif
+                    </tr>
+                    <tr>
+                        <td class="price fs-9" style="text-align: center;"></td>
+                        <td class="price fs-9" style="text-align: left; border: 1px solid black;">Dosis dan jumlah obat</td>
+                        @if($skrining->robat == 1)
+                        <td class="price fs-9" style="text-align: center; border: 1px solid black;">✓</td>
+                        <td class="description fs-9" style="text-align: center; border: 1px solid black;"></td>
+                        @elseif($skrining->robat == 2)
+                        <td class="price fs-9" style="text-align: center; border: 1px solid black;"></td>
+                        <td class="description fs-9" style="text-align: center; border: 1px solid black;">✓</td>
+                        @else
+                        <td class="price fs-9" style="text-align: center; border: 1px solid black;"></td>
+                        <td class="description fs-9" style="text-align: center; border: 1px solid black;"></td>
+                        @endif
+                    </tr>
+                    <tr>
+                        <td class="price fs-9" style="text-align: center;"></td>
+                        <td class="price fs-9" style="text-align: left; border: 1px solid black;">Stabilitas dan inkompatibilitas sediaan</td>
+                        @if($skrining->rstabilitas == 1)
+                        <td class="price fs-9" style="text-align: center; border: 1px solid black;">✓</td>
+                        <td class="description fs-9" style="text-align: center; border: 1px solid black;"></td>
+                        @elseif($skrining->rstabilitas == 2)
+                        <td class="price fs-9" style="text-align: center; border: 1px solid black;"></td>
+                        <td class="description fs-9" style="text-align: center; border: 1px solid black;">✓</td>
+                        @else
+                        <td class="price fs-9" style="text-align: center; border: 1px solid black;"></td>
+                        <td class="description fs-9" style="text-align: center; border: 1px solid black;"></td>
+                        @endif
+                    </tr>
+                    <tr>
+                        <td class="price fs-9" style="text-align: center;"></td>
+                        <td class="price fs-9" style="text-align: left; border: 1px solid black;">Aturan dan cara penggunaan</td>
+                        @if($skrining->raturan == 1)
+                        <td class="price fs-9" style="text-align: center; border: 1px solid black;">✓</td>
+                        <td class="description fs-9" style="text-align: center; border: 1px solid black;"></td>
+                        @elseif($skrining->raturan == 2)
+                        <td class="price fs-9" style="text-align: center; border: 1px solid black;"></td>
+                        <td class="description fs-9" style="text-align: center; border: 1px solid black;">✓</td>
+                        @else
+                        <td class="price fs-9" style="text-align: center; border: 1px solid black;"></td>
+                        <td class="description fs-9" style="text-align: center; border: 1px solid black;"></td>
+                        @endif
+                    </tr>
+                    <tr>
+                        <td class="price fs-9" style="text-align: center; border: 1px solid black;">3.</td>
+                        <td class="price fs-9" style="text-align: left; border: 1px solid black;">Klinis</td>
+                        <td class="price fs-9" style="text-align: center; border: 1px solid black;"></td>
+                        <td class="description fs-9" style="text-align: center; border: 1px solid black;"></td>
+                    </tr>
+                    <tr>
+                        <td class="price fs-9" style="text-align: center;"></td>
+                        <td class="price fs-9" style="text-align: left; border: 1px solid black;">Ketepatan indikasi, dosis, dan waktu penggunaan obat </td>
                         @if($skrining->rmr == 1)
                         <td class="price fs-9" style="text-align: center; border: 1px solid black;">✓</td>
                         <td class="description fs-9" style="text-align: center; border: 1px solid black;"></td>
@@ -246,35 +347,7 @@
                     </tr>
                     <tr>
                         <td class="price fs-9" style="text-align: center;"></td>
-                        <td class="price fs-9" style="text-align: left; border: 1px solid black;">Tepat Rute</td>
-                        @if($skrining->rpasien == 1)
-                        <td class="price fs-9" style="text-align: center; border: 1px solid black;">✓</td>
-                        <td class="description fs-9" style="text-align: center; border: 1px solid black;"></td>
-                        @elseif($skrining->rpasien == 2)
-                        <td class="price fs-9" style="text-align: center; border: 1px solid black;"></td>
-                        <td class="description fs-9" style="text-align: center; border: 1px solid black;">✓</td>
-                        @else
-                        <td class="price fs-9" style="text-align: center; border: 1px solid black;"></td>
-                        <td class="description fs-9" style="text-align: center; border: 1px solid black;"></td>
-                        @endif
-                    </tr>
-                    <tr>
-                        <td class="price fs-9" style="text-align: center;"></td>
-                        <td class="price fs-9" style="text-align: left; border: 1px solid black;">Tepat Waktu</td>
-                        @if($skrining->rtanggallahir == 1)
-                        <td class="price fs-9" style="text-align: center; border: 1px solid black;">✓</td>
-                        <td class="description fs-9" style="text-align: center; border: 1px solid black;"></td>
-                        @elseif($skrining->rtanggallahir == 2)
-                        <td class="price fs-9" style="text-align: center; border: 1px solid black;"></td>
-                        <td class="description fs-9" style="text-align: center; border: 1px solid black;">✓</td>
-                        @else
-                        <td class="price fs-9" style="text-align: center; border: 1px solid black;"></td>
-                        <td class="description fs-9" style="text-align: center; border: 1px solid black;"></td>
-                        @endif
-                    </tr>
-                    <tr>
-                        <td class="price fs-9" style="text-align: center;"></td>
-                        <td class="price fs-9" style="text-align: left; border: 1px solid black;">Duplikasi</td>
+                        <td class="price fs-9" style="text-align: left; border: 1px solid black;">Duplikasi pengobatan</td>
                         @if($skrining->rberatbedan == 1)
                         <td class="price fs-9" style="text-align: center; border: 1px solid black;">✓</td>
                         <td class="description fs-9" style="text-align: center; border: 1px solid black;"></td>
@@ -288,7 +361,63 @@
                     </tr>
                     <tr>
                         <td class="price fs-9" style="text-align: center;"></td>
-                        <td class="price fs-9" style="text-align: left; border: 1px solid black;">Kontra-indikasi</td>
+                        <td class="price fs-9" style="text-align: left; border: 1px solid black;">Potensi Alergi/Hipertensitivitas dan Reaksi Obat yang Tidak Dikehendaki</td>
+                        @if($skrining->ralergi == 1)
+                        <td class="price fs-9" style="text-align: center; border: 1px solid black;">✓</td>
+                        <td class="description fs-9" style="text-align: center; border: 1px solid black;"></td>
+                        @elseif($skrining->ralergi == 2)
+                        <td class="price fs-9" style="text-align: center; border: 1px solid black;"></td>
+                        <td class="description fs-9" style="text-align: center; border: 1px solid black;">✓</td>
+                        @else
+                        <td class="price fs-9" style="text-align: center; border: 1px solid black;"></td>
+                        <td class="description fs-9" style="text-align: center; border: 1px solid black;"></td>
+                        @endif
+                    </tr>
+                    <tr>
+                        <td class="price fs-9" style="text-align: center;"></td>
+                        <td class="price fs-9" style="text-align: left; border: 1px solid black;">Interaksi antara obat dan obat lain atau dengan makanan</td>
+                        @if($skrining->rinteraksi == 1)
+                        <td class="price fs-9" style="text-align: center; border: 1px solid black;">✓</td>
+                        <td class="description fs-9" style="text-align: center; border: 1px solid black;"></td>
+                        @elseif($skrining->rinteraksi == 2)
+                        <td class="price fs-9" style="text-align: center; border: 1px solid black;"></td>
+                        <td class="description fs-9" style="text-align: center; border: 1px solid black;">✓</td>
+                        @else
+                        <td class="price fs-9" style="text-align: center; border: 1px solid black;"></td>
+                        <td class="description fs-9" style="text-align: center; border: 1px solid black;"></td>
+                        @endif
+                    </tr>
+                    <tr>
+                        <td class="price fs-9" style="text-align: center;"></td>
+                        <td class="price fs-9" style="text-align: left; border: 1px solid black;">Variasi Kriteria penggunaan dari rumah sakit(PPK dan Formularium)</td>
+                        @if($skrining->rvariasi == 1)
+                        <td class="price fs-9" style="text-align: center; border: 1px solid black;">✓</td>
+                        <td class="description fs-9" style="text-align: center; border: 1px solid black;"></td>
+                        @elseif($skrining->rvariasi == 2)
+                        <td class="price fs-9" style="text-align: center; border: 1px solid black;"></td>
+                        <td class="description fs-9" style="text-align: center; border: 1px solid black;">✓</td>
+                        @else
+                        <td class="price fs-9" style="text-align: center; border: 1px solid black;"></td>
+                        <td class="description fs-9" style="text-align: center; border: 1px solid black;"></td>
+                        @endif
+                    </tr>
+                    <tr>
+                        <td class="price fs-9" style="text-align: center;"></td>
+                        <td class="price fs-9" style="text-align: left; border: 1px solid black;">Berat badan, tinggi badan pasien dan atau informasi fisiologis lainnya (jika diperlukan)</td>
+                        @if($skrining->rbeban == 1)
+                        <td class="price fs-9" style="text-align: center; border: 1px solid black;">✓</td>
+                        <td class="description fs-9" style="text-align: center; border: 1px solid black;"></td>
+                        @elseif($skrining->rbeban == 2)
+                        <td class="price fs-9" style="text-align: center; border: 1px solid black;"></td>
+                        <td class="description fs-9" style="text-align: center; border: 1px solid black;">✓</td>
+                        @else
+                        <td class="price fs-9" style="text-align: center; border: 1px solid black;"></td>
+                        <td class="description fs-9" style="text-align: center; border: 1px solid black;"></td>
+                        @endif
+                    </tr>
+                    <tr>
+                        <td class="price fs-9" style="text-align: center;"></td>
+                        <td class="price fs-9" style="text-align: left; border: 1px solid black;">Kontra Indikasi</td>
                         @if($skrining->rdokter == 1)
                         <td class="price fs-9" style="text-align: center; border: 1px solid black;">✓</td>
                         <td class="description fs-9" style="text-align: center; border: 1px solid black;"></td>
@@ -317,7 +446,21 @@
                 <tbody>
                     <tr>
                         <td class="price fs-9" style="text-align: center; border: 1px solid black;">1.</td>
-                        <td class="price fs-9" style="text-align: left; border: 1px solid black;">Obat Sesuai</td>
+                        <td class="price fs-9" style="text-align: left; border: 1px solid black;">Tepat pasien</td>
+                        @if($skrining->rpasien == 1)
+                        <td class="price fs-9" style="text-align: center; border: 1px solid black;">✓</td>
+                        <td class="description fs-9" style="text-align: center; border: 1px solid black;"></td>
+                        @elseif($skrining->rpasien == 2)
+                        <td class="price fs-9" style="text-align: center; border: 1px solid black;"></td>
+                        <td class="description fs-9" style="text-align: center; border: 1px solid black;">✓</td>
+                        @else
+                        <td class="price fs-9" style="text-align: center; border: 1px solid black;"></td>
+                        <td class="description fs-9" style="text-align: center; border: 1px solid black;"></td>
+                        @endif
+                    </tr>
+                    <tr>
+                        <td class="price fs-9" style="text-align: center; border: 1px solid black;">2.</td>
+                        <td class="price fs-9" style="text-align: left; border: 1px solid black;">Tepat nama obat</td>
                         @if($skrining->rruang == 1)
                         <td class="price fs-9" style="text-align: center; border: 1px solid black;">✓</td>
                         <td class="description fs-9" style="text-align: center; border: 1px solid black;"></td>
@@ -330,8 +473,8 @@
                         @endif
                     </tr>
                     <tr>
-                        <td class="price fs-9" style="text-align: center; border: 1px solid black;">2.</td>
-                        <td class="price fs-9" style="text-align: left; border: 1px solid black;">Dosis</td>
+                        <td class="price fs-9" style="text-align: center; border: 1px solid black;">3.</td>
+                        <td class="price fs-9" style="text-align: left; border: 1px solid black;">Tepat dosis dan jumlah obat</td>
                         @if($skrining->rstatusjamin == 1)
                         <td class="price fs-9" style="text-align: center; border: 1px solid black;">✓</td>
                         <td class="description fs-9" style="text-align: center; border: 1px solid black;"></td>
@@ -344,26 +487,12 @@
                         @endif
                     </tr>
                     <tr>
-                        <td class="price fs-9" style="text-align: center; border: 1px solid black;">3.</td>
-                        <td class="price fs-9" style="text-align: left; border: 1px solid black;">Jumlah</td>
-                        @if($skrining->robat == 1)
-                        <td class="price fs-9" style="text-align: center; border: 1px solid black;">✓</td>
-                        <td class="description fs-9" style="text-align: center; border: 1px solid black;"></td>
-                        @elseif($skrining->robat == 2)
-                        <td class="price fs-9" style="text-align: center; border: 1px solid black;"></td>
-                        <td class="description fs-9" style="text-align: center; border: 1px solid black;">✓</td>
-                        @else
-                        <td class="price fs-9" style="text-align: center; border: 1px solid black;"></td>
-                        <td class="description fs-9" style="text-align: center; border: 1px solid black;"></td>
-                        @endif
-                    </tr>
-                    <tr>
                         <td class="price fs-9" style="text-align: center; border: 1px solid black;">4.</td>
-                        <td class="price fs-9" style="text-align: left; border: 1px solid black;">Frekuensi</td>
-                        @if($skrining->rkekuatan == 1)
+                        <td class="price fs-9" style="text-align: left; border: 1px solid black;">Tepat rute pemberian</td>
+                        @if($skrining->rjumlahobat == 1)
                         <td class="price fs-9" style="text-align: center; border: 1px solid black;">✓</td>
                         <td class="description fs-9" style="text-align: center; border: 1px solid black;"></td>
-                        @elseif($skrining->rkekuatan == 2)
+                        @elseif($skrining->rjumlahobat == 2)
                         <td class="price fs-9" style="text-align: center; border: 1px solid black;"></td>
                         <td class="description fs-9" style="text-align: center; border: 1px solid black;">✓</td>
                         @else
@@ -373,11 +502,11 @@
                     </tr>
                     <tr>
                         <td class="price fs-9" style="text-align: center; border: 1px solid black;">5.</td>
-                        <td class="price fs-9" style="text-align: left; border: 1px solid black;">Rute</td>
-                        @if($skrining->rjumlahobat == 1)
+                        <td class="price fs-9" style="text-align: left; border: 1px solid black;">Tepat waktu pemberian</td>
+                        @if($skrining->rdatawaktu == 1)
                         <td class="price fs-9" style="text-align: center; border: 1px solid black;">✓</td>
                         <td class="description fs-9" style="text-align: center; border: 1px solid black;"></td>
-                        @elseif($skrining->rjumlahobat == 2)
+                        @elseif($skrining->rdatawaktu == 2)
                         <td class="price fs-9" style="text-align: center; border: 1px solid black;"></td>
                         <td class="description fs-9" style="text-align: center; border: 1px solid black;">✓</td>
                         @else

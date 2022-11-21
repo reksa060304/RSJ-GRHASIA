@@ -1233,7 +1233,7 @@ class ReportController extends ApiController{
             st.rstatusjamin,
             st.robat,
             st.rkekuatan,
-            st.rjumlahobat, st.ketskrining
+            st.rjumlahobat, st.ketskrining, st.ridentitasdokter,st.rcarabayar,st.rruanganresep, st.rnamaobat, st.rstabilitas, st.raturan, st.ralergi, st.rinteraksi, st.rvariasi, st.rbeban, st.rdatawaktu 
             from strukresep_t s
             left join skriningfarmasi_t st on st.norec_apd = s.norec
             where s.norec = '$norec'
@@ -11226,7 +11226,7 @@ public function suratBuktiPengembalian(Request $request)
     }
     public function persetujuanUmum(Request $request)
     {
-        $data = \DB::select(DB::raw("SELECT ps.kerahasiaan1,ps.kerahasiaan2,ps.kerahasiaan3,ps.kerahasiaan4,
+        $data = \DB::select(DB::raw("SELECT ps.saksipersetujuan, ps.pjpersetujuan, ps.kerahasiaan1,ps.kerahasiaan2,ps.kerahasiaan3,ps.kerahasiaan4,
         ps.privasi1,ps.privasi2,ps.privasi3,ps.privasi4,ps.ismengizinkan, pg.id, pg.namalengkap  
         from pasiendaftar_t pd 
         inner join pasien_m ps on ps.id = pd.nocmfk
