@@ -5558,8 +5558,6 @@ class BendaharaPenerimaanController extends ApiController {
         $STSD->jenisdata = 'konten';
         $STSD->nomer = '03';
         $STSD->uraian = 'RAWAT INAP';
-        $STSD->kolom2 = $request['jumlahranap'];
-        $STSD->vol = $request['voljumlahranap'];;
         $STSD->statusenabled = true;
         $STSD->objectstsfk = $nosts;
         $STSD->save();
@@ -7116,8 +7114,8 @@ class BendaharaPenerimaanController extends ApiController {
                 inner join surattandasetorandetail_t stsd on stsd.objectstsfk = sts.nosts
                 where sts.statusenabled = true
                 and stsd.statusenabled = true and stsd.kdprofile = 30
-								and sts.kdprofile = 30
-								and sts.ismanual = true
+				and sts.kdprofile = 30
+				and sts.ismanual = true
                 and date_part('year', sts.tglpenerimaan::timestamp ) = '$tahun'
                 group by to_char(sts.tglpenerimaan, 'MM'), stsd.nourut, stsd.kdrekening, stsd.nomer, stsd.uraian, stsd.vol, stsd.kolom1, stsd.kolom2
         ) as x
@@ -7125,28 +7123,33 @@ class BendaharaPenerimaanController extends ApiController {
         
         union all
 
-        select nourut, date, kdrekening, nomer, uraian, sum(totalvol) totalvol,
-        sum(totalkolom1) totalkolom1, sum(totalkolom2) totalkolom2, sum(totalfix) totalfix
-        from(
-            select 0 nourut, to_char(rkb.tglbayar, 'MM') as date, '' kdrekening, '0' nomer,
+        select x.nourut, x.date, x.kdrekening, x.nomer, x.uraian, sum(x.vol) as totalvol, sum(x.kolom1) as totalkolom1, sum(x.kolom2) as totalkolom2,
+        (
             case 
-                when rkb.nosep != '-' and ru.objectdepartemenfk != 16 then 'RAWAT JALAN BPJS' 
-                when rkb.nosep != '-' and ru.objectdepartemenfk = 16 then 'RAWAT INAP BPJS'
-                when rkb.nosep = '-' and ru.objectdepartemenfk = 16 and rkb.totalsetujui = rkb.totaltarifrs then 'RAWAT INAP IPWL'
-                when rkb.nosep = '-' and ru.objectdepartemenfk != 16 and rkb.totalsetujui = rkb.totaltarifrs then 'RAWAT JALAN IPWL'
-                when rkb.nosep = '-' and ru.objectdepartemenfk = 16 and rkb.totalsetujui != rkb.totaltarifrs then 'RAWAT INAP Jamkesda Jamkesos'
-                when rkb.nosep = '-' and ru.objectdepartemenfk != 16 and rkb.totalsetujui != rkb.totaltarifrs then 'RAWAT JALAN Jamkesda Jamkesos'
-            end as uraian, count(rkb.norec) totalvol, 0 totalkolom1, 0 totalkolom2, rkb.totalsetujui totalfix
-            from rekapklaimbpjs_t rkb
-            inner join pasiendaftar_t pd on rkb.norecpdfk = pd.norec
-            inner join ruangan_m ru on ru.id = pd.objectruanganlastfk
-            where rkb.kdprofile = 30
-            and rkb.statusenabled = true
-            and pd.kdprofile = 30
-            and pd.statusenabled = true
-            and date_part('year', rkb.tglbayar::timestamp ) = '$tahun'
-            group by to_char(rkb.tglbayar, 'MM'), rkb.nosep, ru.objectdepartemenfk, rkb.totalsetujui, rkb.totaltarifrs
-        ) as x group by nourut, date, kdrekening, nomer, uraian
+            when sum(x.kolom1) is null and sum(x.kolom2) is null then sum(x.kolom1)
+            when sum(x.kolom1) is null and sum(x.kolom2) is not null then sum(x.kolom2)
+            when sum(x.kolom1) is not null and sum(x.kolom2) is null then sum(x.kolom1)
+            else 0 
+            end
+        ) as totalfix
+        from(	
+				select to_char(sts.tglpenerimaan, 'MM') as date, stsd.nourut, stsd.kdrekening, stsd.nomer, stsd.uraian, stsd.vol, stsd.kolom1, stsd.kolom2
+                from surattandasetoran_t sts
+                inner join surattandasetorandetail_t stsd on stsd.objectstsfk = sts.nosts
+				inner join ststorekapklaim_t str on sts.norec = str.objectstsfk
+				inner join rekapklaimbpjs_t rkb on str.objectrekapklaimfk = rkb.norec
+                where sts.statusenabled = true
+                and stsd.statusenabled = true 
+                and stsd.kdprofile = 30
+                and str.statusenabled = true 
+                and str.kdprofile = 30
+                and rkb.statusenabled = true 
+                and rkb.kdprofile = 30
+				and sts.kdprofile = 30
+                and date_part('year', sts.tglpenerimaan::timestamp ) = '$tahun'
+                group by to_char(sts.tglpenerimaan, 'MM'), stsd.nourut, stsd.kdrekening, stsd.nomer, stsd.uraian, stsd.vol, stsd.kolom1, stsd.kolom2
+        ) as x
+        group by x.nourut, x.date, x.kdrekening, x.nomer, x.uraian
         order by date, nourut"));
 
         $target = DB::select(DB::raw("select rp.norec,rp.isperubahan, rp.jumlahpendapatan,rp.tahun, rp.tglinput, rp.keterangan, rp.objectasalprodukfk, rp.objecturaianpendapatanfk,up.uraianpendapatan,ap.namaexternal, rp.uraianpendapatan as uraian
@@ -7244,30 +7247,12 @@ class BendaharaPenerimaanController extends ApiController {
                 else if($row->date == '01' && $main->uraianpendapatan == 'RM. Pasien Umum' && $row->uraian == 'REHABILITASI MENTAL'){
                     $jumlahjanuari += $row->totalfix;
                 }
-                else if($row->date == '01' && $row->uraian == $main->uraianpendapatan){
-                    $jumlahjanuari += $row->totalfix;
-                } 
-                else if($row->date == '01' && $main->uraianpendapatan == 'RAWAT JALAN BPJS' && $row->uraian == 'RAWAT JALAN BPJS'){
-                    $jumlahjanuari += $row->totalfix;
-                }
-                else if($row->date == '01' && $main->uraianpendapatan == 'RAWAT INAP BPJS' && $row->uraian == 'RAWAT INAP BPJS'){
-                    $jumlahjanuari += $row->totalfix;
-                }
-                else if($row->date == '01' && $main->uraianpendapatan == 'RAWAT INAP IPWL' && $row->uraian == 'RAWAT INAP IPWL'){
-                    $jumlahjanuari += $row->totalfix;
-                }
-                else if($row->date == '01' && $main->uraianpendapatan == 'RAWAT JALAN IPWL' && $row->uraian == 'RAWAT JALAN IPWL'){
-                    $jumlahjanuari += $row->totalfix;
-                }
-                else if($row->date == '01' && $main->uraianpendapatan == 'RAWAT INAP Jamkesda Jamkesos' && $row->uraian == 'RAWAT INAP Jamkesda Jamkesos'){
-                    $jumlahjanuari += $row->totalfix;
-                }
-                else if($row->date == '01' && $main->uraianpendapatan == 'RAWAT JALAN Jamkesda Jamkesos' && $row->uraian == 'RAWAT JALAN Jamkesda Jamkesos'){
-                    $jumlahjanuari += $row->totalfix;
-                }
                 else if($row->date == '01' && $main->uraianpendapatan == 'Lain-lain Pendapatan BLUD' && $row->uraian == 'LAIN-LAIN'){
                     $jumlahjanuari += $row->totalfix;
                 }
+                else if($row->date == '01' && $row->uraian == $main->uraianpendapatan){
+                    $jumlahjanuari += $row->totalfix;
+                } 
 
                 if($row->date == '02' && $main->uraianpendapatan == 'Klinik Gigi' && ($row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI')){
                     $jumlahfebruari += $row->totalfix;
@@ -7320,28 +7305,10 @@ class BendaharaPenerimaanController extends ApiController {
                 else if($row->date == '02' && $main->uraianpendapatan == 'RM. Pasien Umum' && $row->uraian == 'REHABILITASI MENTAL'){
                     $jumlahfebruari += $row->totalfix;
                 }
-                else if($row->date == '02' && $row->uraian == $main->uraianpendapatan){
-                    $jumlahfebruari += $row->totalfix;
-                }
-                else if($row->date == '02' && $main->uraianpendapatan == 'RAWAT JALAN BPJS' && $row->uraian == 'RAWAT JALAN BPJS'){
-                    $jumlahfebruari += $row->totalfix;
-                }
-                else if($row->date == '02' && $main->uraianpendapatan == 'RAWAT INAP BPJS' && $row->uraian == 'RAWAT INAP BPJS'){
-                    $jumlahfebruari += $row->totalfix;
-                }
-                else if($row->date == '02' && $main->uraianpendapatan == 'RAWAT INAP IPWL' && $row->uraian == 'RAWAT INAP IPWL'){
-                    $jumlahfebruari += $row->totalfix;
-                }
-                else if($row->date == '02' && $main->uraianpendapatan == 'RAWAT JALAN IPWL' && $row->uraian == 'RAWAT JALAN IPWL'){
-                    $jumlahfebruari += $row->totalfix;
-                }
-                else if($row->date == '02' && $main->uraianpendapatan == 'RAWAT INAP Jamkesda Jamkesos' && $row->uraian == 'RAWAT INAP Jamkesda Jamkesos'){
-                    $jumlahfebruari += $row->totalfix;
-                }
-                else if($row->date == '02' && $main->uraianpendapatan == 'RAWAT JALAN Jamkesda Jamkesos' && $row->uraian == 'RAWAT JALAN Jamkesda Jamkesos'){
-                    $jumlahfebruari += $row->totalfix;
-                }
                 else if($row->date == '02' && $main->uraianpendapatan == 'Lain-lain Pendapatan BLUD' && $row->uraian == 'LAIN-LAIN'){
+                    $jumlahfebruari += $row->totalfix;
+                }
+                else if($row->date == '02' && $row->uraian == $main->uraianpendapatan){
                     $jumlahfebruari += $row->totalfix;
                 }
 
@@ -7396,28 +7363,10 @@ class BendaharaPenerimaanController extends ApiController {
                 else if($row->date == '03' && $main->uraianpendapatan == 'RM. Pasien Umum' && $row->uraian == 'REHABILITASI MENTAL'){
                     $jumlahmaret += $row->totalfix;
                 }
-                else if($row->date == '03' && $row->uraian == $main->uraianpendapatan){
-                    $jumlahmaret += $row->totalfix;
-                }
-                else if($row->date == '03' && $main->uraianpendapatan == 'RAWAT JALAN BPJS' && $row->uraian == 'RAWAT JALAN BPJS'){
-                    $jumlahmaret += $row->totalfix;
-                }
-                else if($row->date == '03' && $main->uraianpendapatan == 'RAWAT INAP BPJS' && $row->uraian == 'RAWAT INAP BPJS'){
-                    $jumlahmaret += $row->totalfix;
-                }
-                else if($row->date == '03' && $main->uraianpendapatan == 'RAWAT INAP IPWL' && $row->uraian == 'RAWAT INAP IPWL'){
-                    $jumlahmaret += $row->totalfix;
-                }
-                else if($row->date == '03' && $main->uraianpendapatan == 'RAWAT JALAN IPWL' && $row->uraian == 'RAWAT JALAN IPWL'){
-                    $jumlahmaret += $row->totalfix;
-                }
-                else if($row->date == '03' && $main->uraianpendapatan == 'RAWAT INAP Jamkesda Jamkesos' && $row->uraian == 'RAWAT INAP Jamkesda Jamkesos'){
-                    $jumlahmaret += $row->totalfix;
-                }
-                else if($row->date == '03' && $main->uraianpendapatan == 'RAWAT JALAN Jamkesda Jamkesos' && $row->uraian == 'RAWAT JALAN Jamkesda Jamkesos'){
-                    $jumlahmaret += $row->totalfix;
-                }
                 else if($row->date == '03' && $main->uraianpendapatan == 'Lain-lain Pendapatan BLUD' && $row->uraian == 'LAIN-LAIN'){
+                    $jumlahmaret += $row->totalfix;
+                }
+                else if($row->date == '03' && $row->uraian == $main->uraianpendapatan){
                     $jumlahmaret += $row->totalfix;
                 }
 
@@ -7472,28 +7421,10 @@ class BendaharaPenerimaanController extends ApiController {
                 else if($row->date == '04' && $main->uraianpendapatan == 'RM. Pasien Umum' && $row->uraian == 'REHABILITASI MENTAL'){
                     $jumlahapril += $row->totalfix;
                 }
-                else if($row->date == '04' && $row->uraian == $main->uraianpendapatan){
-                    $jumlahapril += $row->totalfix;
-                }
-                else if($row->date == '04' && $main->uraianpendapatan == 'RAWAT JALAN BPJS' && $row->uraian == 'RAWAT JALAN BPJS'){
-                    $jumlahapril += $row->totalfix;
-                }
-                else if($row->date == '04' && $main->uraianpendapatan == 'RAWAT INAP BPJS' && $row->uraian == 'RAWAT INAP BPJS'){
-                    $jumlahapril += $row->totalfix;
-                }
-                else if($row->date == '04' && $main->uraianpendapatan == 'RAWAT INAP IPWL' && $row->uraian == 'RAWAT INAP IPWL'){
-                    $jumlahapril += $row->totalfix;
-                }
-                else if($row->date == '04' && $main->uraianpendapatan == 'RAWAT JALAN IPWL' && $row->uraian == 'RAWAT JALAN IPWL'){
-                    $jumlahapril += $row->totalfix;
-                }
-                else if($row->date == '04' && $main->uraianpendapatan == 'RAWAT INAP Jamkesda Jamkesos' && $row->uraian == 'RAWAT INAP Jamkesda Jamkesos'){
-                    $jumlahapril += $row->totalfix;
-                }
-                else if($row->date == '04' && $main->uraianpendapatan == 'RAWAT JALAN Jamkesda Jamkesos' && $row->uraian == 'RAWAT JALAN Jamkesda Jamkesos'){
-                    $jumlahapril += $row->totalfix;
-                }
                 else if($row->date == '04' && $main->uraianpendapatan == 'Lain-lain Pendapatan BLUD' && $row->uraian == 'LAIN-LAIN'){
+                    $jumlahapril += $row->totalfix;
+                }
+                else if($row->date == '04' && $row->uraian == $main->uraianpendapatan){
                     $jumlahapril += $row->totalfix;
                 }
 
@@ -7548,28 +7479,10 @@ class BendaharaPenerimaanController extends ApiController {
                 else if($row->date == '05' && $main->uraianpendapatan == 'RM. Pasien Umum' && $row->uraian == 'REHABILITASI MENTAL'){
                     $jumlahmei += $row->totalfix;
                 }
-                else if($row->date == '05' && $row->uraian == $main->uraianpendapatan){
-                    $jumlahmei += $row->totalfix;
-                }
-                else if($row->date == '05' && $main->uraianpendapatan == 'RAWAT JALAN BPJS' && $row->uraian == 'RAWAT JALAN BPJS'){
-                    $jumlahmei += $row->totalfix;
-                }
-                else if($row->date == '05' && $main->uraianpendapatan == 'RAWAT INAP BPJS' && $row->uraian == 'RAWAT INAP BPJS'){
-                    $jumlahmei += $row->totalfix;
-                }
-                else if($row->date == '05' && $main->uraianpendapatan == 'RAWAT INAP IPWL' && $row->uraian == 'RAWAT INAP IPWL'){
-                    $jumlahmei += $row->totalfix;
-                }
-                else if($row->date == '05' && $main->uraianpendapatan == 'RAWAT JALAN IPWL' && $row->uraian == 'RAWAT JALAN IPWL'){
-                    $jumlahmei += $row->totalfix;
-                }
-                else if($row->date == '05' && $main->uraianpendapatan == 'RAWAT INAP Jamkesda Jamkesos' && $row->uraian == 'RAWAT INAP Jamkesda Jamkesos'){
-                    $jumlahmei += $row->totalfix;
-                }
-                else if($row->date == '05' && $main->uraianpendapatan == 'RAWAT JALAN Jamkesda Jamkesos' && $row->uraian == 'RAWAT JALAN Jamkesda Jamkesos'){
-                    $jumlahmei += $row->totalfix;
-                }
                 else if($row->date == '05' && $main->uraianpendapatan == 'Lain-lain Pendapatan BLUD' && $row->uraian == 'LAIN-LAIN'){
+                    $jumlahmei += $row->totalfix;
+                }
+                else if($row->date == '05' && $row->uraian == $main->uraianpendapatan){
                     $jumlahmei += $row->totalfix;
                 }
 
@@ -7624,28 +7537,10 @@ class BendaharaPenerimaanController extends ApiController {
                 else if($row->date == '06' && $main->uraianpendapatan == 'RM. Pasien Umum' && $row->uraian == 'REHABILITASI MENTAL'){
                     $jumlahjuni += $row->totalfix;
                 }
-                else if($row->date == '06' && $row->uraian == $main->uraianpendapatan){
-                    $jumlahjuni += $row->totalfix;
-                }
-                else if($row->date == '06' && $main->uraianpendapatan == 'RAWAT JALAN BPJS' && $row->uraian == 'RAWAT JALAN BPJS'){
-                    $jumlahjuni += $row->totalfix;
-                }
-                else if($row->date == '06' && $main->uraianpendapatan == 'RAWAT INAP BPJS' && $row->uraian == 'RAWAT INAP BPJS'){
-                    $jumlahjuni += $row->totalfix;
-                }
-                else if($row->date == '06' && $main->uraianpendapatan == 'RAWAT INAP IPWL' && $row->uraian == 'RAWAT INAP IPWL'){
-                    $jumlahjuni += $row->totalfix;
-                }
-                else if($row->date == '06' && $main->uraianpendapatan == 'RAWAT JALAN IPWL' && $row->uraian == 'RAWAT JALAN IPWL'){
-                    $jumlahjuni += $row->totalfix;
-                }
-                else if($row->date == '06' && $main->uraianpendapatan == 'RAWAT INAP Jamkesda Jamkesos' && $row->uraian == 'RAWAT INAP Jamkesda Jamkesos'){
-                    $jumlahjuni += $row->totalfix;
-                }
-                else if($row->date == '06' && $main->uraianpendapatan == 'RAWAT JALAN Jamkesda Jamkesos' && $row->uraian == 'RAWAT JALAN Jamkesda Jamkesos'){
-                    $jumlahjuni += $row->totalfix;
-                }
                 else if($row->date == '06' && $main->uraianpendapatan == 'Lain-lain Pendapatan BLUD' && $row->uraian == 'LAIN-LAIN'){
+                    $jumlahjuni += $row->totalfix;
+                }
+                else if($row->date == '06' && $row->uraian == $main->uraianpendapatan){
                     $jumlahjuni += $row->totalfix;
                 }
 
@@ -7700,28 +7595,10 @@ class BendaharaPenerimaanController extends ApiController {
                 else if($row->date == '07' && $main->uraianpendapatan == 'RM. Pasien Umum' && $row->uraian == 'REHABILITASI MENTAL'){
                     $jumlahjuli += $row->totalfix;
                 }
-                else if($row->date == '07' && $row->uraian == $main->uraianpendapatan){
-                    $jumlahjuli += $row->totalfix;
-                }
-                else if($row->date == '07' && $main->uraianpendapatan == 'RAWAT JALAN BPJS' && $row->uraian == 'RAWAT JALAN BPJS'){
-                    $jumlahjuli += $row->totalfix;
-                }
-                else if($row->date == '07' && $main->uraianpendapatan == 'RAWAT INAP BPJS' && $row->uraian == 'RAWAT INAP BPJS'){
-                    $jumlahjuli += $row->totalfix;
-                }
-                else if($row->date == '07' && $main->uraianpendapatan == 'RAWAT INAP IPWL' && $row->uraian == 'RAWAT INAP IPWL'){
-                    $jumlahjuli += $row->totalfix;
-                }
-                else if($row->date == '07' && $main->uraianpendapatan == 'RAWAT JALAN IPWL' && $row->uraian == 'RAWAT JALAN IPWL'){
-                    $jumlahjuli += $row->totalfix;
-                }
-                else if($row->date == '07' && $main->uraianpendapatan == 'RAWAT INAP Jamkesda Jamkesos' && $row->uraian == 'RAWAT INAP Jamkesda Jamkesos'){
-                    $jumlahjuli += $row->totalfix;
-                }
-                else if($row->date == '07' && $main->uraianpendapatan == 'RAWAT JALAN Jamkesda Jamkesos' && $row->uraian == 'RAWAT JALAN Jamkesda Jamkesos'){
-                    $jumlahjuli += $row->totalfix;
-                }
                 else if($row->date == '07' && $main->uraianpendapatan == 'Lain-lain Pendapatan BLUD' && $row->uraian == 'LAIN-LAIN'){
+                    $jumlahjuli += $row->totalfix;
+                }
+                else if($row->date == '07' && $row->uraian == $main->uraianpendapatan){
                     $jumlahjuli += $row->totalfix;
                 }
 
@@ -7776,28 +7653,10 @@ class BendaharaPenerimaanController extends ApiController {
                 else if($row->date == '08' && $main->uraianpendapatan == 'RM. Pasien Umum' && $row->uraian == 'REHABILITASI MENTAL'){
                     $jumlahagustus += $row->totalfix;
                 }
-                else if($row->date == '08' && $row->uraian == $main->uraianpendapatan){
-                    $jumlahagustus += $row->totalfix;
-                }
-                else if($row->date == '08' && $main->uraianpendapatan == 'RAWAT JALAN BPJS' && $row->uraian == 'RAWAT JALAN BPJS'){
-                    $jumlahagustus += $row->totalfix;
-                }
-                else if($row->date == '08' && $main->uraianpendapatan == 'RAWAT INAP BPJS' && $row->uraian == 'RAWAT INAP BPJS'){
-                    $jumlahagustus += $row->totalfix;
-                }
-                else if($row->date == '08' && $main->uraianpendapatan == 'RAWAT INAP IPWL' && $row->uraian == 'RAWAT INAP IPWL'){
-                    $jumlahagustus += $row->totalfix;
-                }
-                else if($row->date == '08' && $main->uraianpendapatan == 'RAWAT JALAN IPWL' && $row->uraian == 'RAWAT JALAN IPWL'){
-                    $jumlahagustus += $row->totalfix;
-                }
-                else if($row->date == '08' && $main->uraianpendapatan == 'RAWAT INAP Jamkesda Jamkesos' && $row->uraian == 'RAWAT INAP Jamkesda Jamkesos'){
-                    $jumlahagustus += $row->totalfix;
-                }
-                else if($row->date == '08' && $main->uraianpendapatan == 'RAWAT JALAN Jamkesda Jamkesos' && $row->uraian == 'RAWAT JALAN Jamkesda Jamkesos'){
-                    $jumlahagustus += $row->totalfix;
-                }
                 else if($row->date == '08' && $main->uraianpendapatan == 'Lain-lain Pendapatan BLUD' && $row->uraian == 'LAIN-LAIN'){
+                    $jumlahagustus += $row->totalfix;
+                }
+                else if($row->date == '08' && $row->uraian == $main->uraianpendapatan){
                     $jumlahagustus += $row->totalfix;
                 }
 
@@ -7852,28 +7711,10 @@ class BendaharaPenerimaanController extends ApiController {
                 else if($row->date == '09' && $main->uraianpendapatan == 'RM. Pasien Umum' && $row->uraian == 'REHABILITASI MENTAL'){
                     $jumlahseptember += $row->totalfix;
                 }
-                else if($row->date == '09' && $row->uraian == $main->uraianpendapatan){
-                    $jumlahseptember += $row->totalfix;
-                }
-                else if($row->date == '09' && $main->uraianpendapatan == 'RAWAT JALAN BPJS' && $row->uraian == 'RAWAT JALAN BPJS'){
-                    $jumlahseptember += $row->totalfix;
-                }
-                else if($row->date == '09' && $main->uraianpendapatan == 'RAWAT INAP BPJS' && $row->uraian == 'RAWAT INAP BPJS'){
-                    $jumlahseptember += $row->totalfix;
-                }
-                else if($row->date == '09' && $main->uraianpendapatan == 'RAWAT INAP IPWL' && $row->uraian == 'RAWAT INAP IPWL'){
-                    $jumlahseptember += $row->totalfix;
-                }
-                else if($row->date == '09' && $main->uraianpendapatan == 'RAWAT JALAN IPWL' && $row->uraian == 'RAWAT JALAN IPWL'){
-                    $jumlahseptember += $row->totalfix;
-                }
-                else if($row->date == '09' && $main->uraianpendapatan == 'RAWAT INAP Jamkesda Jamkesos' && $row->uraian == 'RAWAT INAP Jamkesda Jamkesos'){
-                    $jumlahseptember += $row->totalfix;
-                }
-                else if($row->date == '09' && $main->uraianpendapatan == 'RAWAT JALAN Jamkesda Jamkesos' && $row->uraian == 'RAWAT JALAN Jamkesda Jamkesos'){
-                    $jumlahseptember += $row->totalfix;
-                }
                 else if($row->date == '09' && $main->uraianpendapatan == 'Lain-lain Pendapatan BLUD' && $row->uraian == 'LAIN-LAIN'){
+                    $jumlahseptember += $row->totalfix;
+                }
+                else if($row->date == '09' && $row->uraian == $main->uraianpendapatan){
                     $jumlahseptember += $row->totalfix;
                 }
 
@@ -7928,28 +7769,10 @@ class BendaharaPenerimaanController extends ApiController {
                 else if($row->date == '10' && $main->uraianpendapatan == 'RM. Pasien Umum' && $row->uraian == 'REHABILITASI MENTAL'){
                     $jumlahoktober += $row->totalfix;
                 }
-                else if($row->date == '10' && $row->uraian == $main->uraianpendapatan){
-                    $jumlahoktober += $row->totalfix;
-                }
-                else if($row->date == '10' && $main->uraianpendapatan == 'RAWAT JALAN BPJS' && $row->uraian == 'RAWAT JALAN BPJS'){
-                    $jumlahoktober += $row->totalfix;
-                }
-                else if($row->date == '10' && $main->uraianpendapatan == 'RAWAT INAP BPJS' && $row->uraian == 'RAWAT INAP BPJS'){
-                    $jumlahoktober += $row->totalfix;
-                }
-                else if($row->date == '10' && $main->uraianpendapatan == 'RAWAT INAP IPWL' && $row->uraian == 'RAWAT INAP IPWL'){
-                    $jumlahoktober += $row->totalfix;
-                }
-                else if($row->date == '10' && $main->uraianpendapatan == 'RAWAT JALAN IPWL' && $row->uraian == 'RAWAT JALAN IPWL'){
-                    $jumlahoktober += $row->totalfix;
-                }
-                else if($row->date == '10' && $main->uraianpendapatan == 'RAWAT INAP Jamkesda Jamkesos' && $row->uraian == 'RAWAT INAP Jamkesda Jamkesos'){
-                    $jumlahoktober += $row->totalfix;
-                }
-                else if($row->date == '10' && $main->uraianpendapatan == 'RAWAT JALAN Jamkesda Jamkesos' && $row->uraian == 'RAWAT JALAN Jamkesda Jamkesos'){
-                    $jumlahoktober += $row->totalfix;
-                }
                 else if($row->date == '10' && $main->uraianpendapatan == 'Lain-lain Pendapatan BLUD' && $row->uraian == 'LAIN-LAIN'){
+                    $jumlahoktober += $row->totalfix;
+                }
+                else if($row->date == '10' && $row->uraian == $main->uraianpendapatan){
                     $jumlahoktober += $row->totalfix;
                 }
 
@@ -8004,28 +7827,10 @@ class BendaharaPenerimaanController extends ApiController {
                 else if($row->date == '11' && $main->uraianpendapatan == 'RM. Pasien Umum' && $row->uraian == 'REHABILITASI MENTAL'){
                     $jumlahnovember += $row->totalfix;
                 }
-                else if($row->date == '11' && $main->uraianpendapatan == 'RAWAT JALAN BPJS' && $row->uraian == 'RAWAT JALAN BPJS'){
-                    $jumlahnovember += $row->totalfix;
-                }
-                else if($row->date == '11' && $main->uraianpendapatan == 'RAWAT INAP IPWL' && $row->uraian == 'RAWAT INAP IPWL'){
-                    $jumlahnovember += $row->totalfix;
-                }
-                else if($row->date == '11' && $main->uraianpendapatan == 'RAWAT JALAN IPWL' && $row->uraian == 'RAWAT JALAN IPWL'){
-                    $jumlahnovember += $row->totalfix;
-                }
-                else if($row->date == '11' && $main->uraianpendapatan == 'RAWAT INAP Jamkesda Jamkesos' && $row->uraian == 'RAWAT INAP Jamkesda Jamkesos'){
-                    $jumlahnovember += $row->totalfix;
-                }
-                else if($row->date == '11' && $main->uraianpendapatan == 'RAWAT JALAN Jamkesda Jamkesos' && $row->uraian == 'RAWAT JALAN Jamkesda Jamkesos'){
-                    $jumlahnovember += $row->totalfix;
-                }
                 else if($row->date == '11' && $main->uraianpendapatan == 'Lain-lain Pendapatan BLUD' && $row->uraian == 'LAIN-LAIN'){
                     $jumlahnovember += $row->totalfix;
                 }
-                else if($row->date == '11' && $main->uraianpendapatan == 'RAWAT INAP BPJS' && $row->uraian == 'RAWAT INAP BPJS'){
-                    $jumlahnovember += $row->totalfix;
-                }
-                else{
+                else if($row->date == '11' && $row->uraian == $main->uraianpendapatan){
                     $jumlahnovember += $row->totalfix;
                 }
 
@@ -8080,28 +7885,10 @@ class BendaharaPenerimaanController extends ApiController {
                 else if($row->date == '12' && $main->uraianpendapatan == 'RM. Pasien Umum' && $row->uraian == 'REHABILITASI MENTAL'){
                     $jumlahdesember += $row->totalfix;
                 }
-                else if($row->date == '12' && $row->uraian == $main->uraianpendapatan){
-                    $jumlahdesember += $row->totalfix;
-                }
-                else if($row->date == '12' && $main->uraianpendapatan == 'RAWAT JALAN BPJS' && $row->uraian == 'RAWAT JALAN BPJS'){
-                    $jumlahdesember += $row->totalfix;
-                }
-                else if($row->date == '12' && $main->uraianpendapatan == 'RAWAT INAP BPJS' && $row->uraian == 'RAWAT INAP BPJS'){
-                    $jumlahdesember += $row->totalfix;
-                }
-                else if($row->date == '12' && $main->uraianpendapatan == 'RAWAT INAP IPWL' && $row->uraian == 'RAWAT INAP IPWL'){
-                    $jumlahdesember += $row->totalfix;
-                }
-                else if($row->date == '12' && $main->uraianpendapatan == 'RAWAT JALAN IPWL' && $row->uraian == 'RAWAT JALAN IPWL'){
-                    $jumlahdesember += $row->totalfix;
-                }
-                else if($row->date == '12' && $main->uraianpendapatan == 'RAWAT INAP Jamkesda Jamkesos' && $row->uraian == 'RAWAT INAP Jamkesda Jamkesos'){
-                    $jumlahdesember += $row->totalfix;
-                }
-                else if($row->date == '12' && $main->uraianpendapatan == 'RAWAT JALAN Jamkesda Jamkesos' && $row->uraian == 'RAWAT JALAN Jamkesda Jamkesos'){
-                    $jumlahdesember += $row->totalfix;
-                }
                 else if($row->date == '12' && $main->uraianpendapatan == 'Lain-lain Pendapatan BLUD' && $row->uraian == 'LAIN-LAIN'){
+                    $jumlahdesember += $row->totalfix;
+                }
+                else if($row->date == '12' && $row->uraian == $main->uraianpendapatan){
                     $jumlahdesember += $row->totalfix;
                 }
 
@@ -8154,24 +7941,6 @@ class BendaharaPenerimaanController extends ApiController {
                     $jumlahrealisasi += $row->totalfix;
                 }
                 else if($main->uraianpendapatan == 'RM. Pasien Umum' && $row->uraian == 'REHABILITASI MENTAL'){
-                    $jumlahrealisasi += $row->totalfix;
-                }
-                else if($main->uraianpendapatan == 'RAWAT JALAN BPJS' && $row->uraian == 'RAWAT JALAN BPJS'){
-                    $jumlahrealisasi += $row->totalfix;
-                }
-                else if($main->uraianpendapatan == 'RAWAT INAP BPJS' && $row->uraian == 'RAWAT INAP BPJS'){
-                    $jumlahrealisasi += $row->totalfix;
-                }
-                else if($main->uraianpendapatan == 'RAWAT INAP IPWL' && $row->uraian == 'RAWAT INAP IPWL'){
-                    $jumlahrealisasi += $row->totalfix;
-                }
-                else if($main->uraianpendapatan == 'RAWAT JALAN IPWL' && $row->uraian == 'RAWAT JALAN IPWL'){
-                    $jumlahrealisasi += $row->totalfix;
-                }
-                else if($main->uraianpendapatan == 'RAWAT INAP Jamkesda Jamkesos' && $row->uraian == 'RAWAT INAP Jamkesda Jamkesos'){
-                    $jumlahrealisasi += $row->totalfix;
-                }
-                else if($main->uraianpendapatan == 'RAWAT JALAN Jamkesda Jamkesos' && $row->uraian == 'RAWAT JALAN Jamkesda Jamkesos'){
                     $jumlahrealisasi += $row->totalfix;
                 }
                 else if($main->uraianpendapatan == 'Lain-lain Pendapatan BLUD' && $row->uraian == 'LAIN-LAIN'){
