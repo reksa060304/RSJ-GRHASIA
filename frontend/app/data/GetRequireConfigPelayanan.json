@@ -3534,6 +3534,10 @@
         {
             "nameDep": "PengkajianUlangMedisRJNonJiwaCtrl",
             "urlDep": "module/EMR/PengkajianUlangMedisRJNonJiwaCtrl"
-        } 
+        },
+        {
+            "nameDep": "PengkajianAwalMedisRJNAPZACtrl",
+            "urlDep": "module/EMR/PengkajianAwalMedisRJNAPZACtrl"
+        }  
     ]
 }
