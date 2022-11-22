@@ -8040,8 +8040,8 @@ class BendaharaPenerimaanController extends ApiController {
                 inner join surattandasetorandetail_t stsd on stsd.objectstsfk = sts.nosts
                 where sts.statusenabled = true
                 and stsd.statusenabled = true and stsd.kdprofile = 30
-								and sts.kdprofile = 30
-								and sts.ismanual = true
+				and sts.kdprofile = 30
+				and sts.ismanual = true
                 and date_part('year', sts.tglpenerimaan::timestamp ) = '$tahun'
                 group by to_char(sts.tglpenerimaan, 'MM'), stsd.nourut, stsd.kdrekening, stsd.nomer, stsd.uraian, stsd.vol, stsd.kolom1, stsd.kolom2
         ) as x
@@ -8049,63 +8049,34 @@ class BendaharaPenerimaanController extends ApiController {
         
         union all
 
-        select nourut, date, kdrekening, nomer, uraian, sum(totalvol) totalvol,
-        sum(totalkolom1) totalkolom1, sum(totalkolom2) totalkolom2, sum(totalfix) totalfix
-        from(
-            select 0 nourut, to_char(rkb.tglbayar, 'MM') as date, '' kdrekening, '0' nomer,
+        select x.nourut, x.date, x.kdrekening, x.nomer, x.uraian, sum(x.vol) as totalvol, sum(x.kolom1) as totalkolom1, sum(x.kolom2) as totalkolom2,
+        (
             case 
-                when rkb.nosep != '-' and ru.objectdepartemenfk != 16 then 'RAWAT JALAN BPJS' 
-                when rkb.nosep != '-' and ru.objectdepartemenfk = 16 then 'RAWAT INAP BPJS'
-                when rkb.nosep = '-' and ru.objectdepartemenfk = 16 and rkb.totalsetujui = rkb.totaltarifrs then 'RAWAT INAP IPWL'
-                when rkb.nosep = '-' and ru.objectdepartemenfk != 16 and rkb.totalsetujui = rkb.totaltarifrs then 'RAWAT JALAN IPWL'
-                when rkb.nosep = '-' and ru.objectdepartemenfk = 16 and rkb.totalsetujui != rkb.totaltarifrs then 'RAWAT INAP Jamkesda Jamkesos'
-                when rkb.nosep = '-' and ru.objectdepartemenfk != 16 and rkb.totalsetujui != rkb.totaltarifrs then 'RAWAT JALAN Jamkesda Jamkesos'
-            end as uraian, count(rkb.norec) totalvol, 0 totalkolom1, 0 totalkolom2, rkb.totalsetujui totalfix
-            from rekapklaimbpjs_t rkb
-            inner join pasiendaftar_t pd on rkb.norecpdfk = pd.norec
-            inner join ruangan_m ru on ru.id = pd.objectruanganlastfk
-            where rkb.kdprofile = 30
-            and rkb.statusenabled = true
-            and pd.kdprofile = 30
-            and pd.statusenabled = true
-            and date_part('year', rkb.tglbayar::timestamp ) = '$tahun'
-            group by to_char(rkb.tglbayar, 'MM'), rkb.nosep, ru.objectdepartemenfk, rkb.totalsetujui, rkb.totaltarifrs
-        ) as x group by nourut, date, kdrekening, nomer, uraian
+            when sum(x.kolom1) is null and sum(x.kolom2) is null then sum(x.kolom1)
+            when sum(x.kolom1) is null and sum(x.kolom2) is not null then sum(x.kolom2)
+            when sum(x.kolom1) is not null and sum(x.kolom2) is null then sum(x.kolom1)
+            else 0 
+            end
+        ) as totalfix
+        from(	
+				select to_char(sts.tglpenerimaan, 'MM') as date, stsd.nourut, stsd.kdrekening, stsd.nomer, stsd.uraian, stsd.vol, stsd.kolom1, stsd.kolom2
+                from surattandasetoran_t sts
+                inner join surattandasetorandetail_t stsd on stsd.objectstsfk = sts.nosts
+				inner join ststorekapklaim_t str on sts.norec = str.objectstsfk
+				inner join rekapklaimbpjs_t rkb on str.objectrekapklaimfk = rkb.norec
+                where sts.statusenabled = true
+                and stsd.statusenabled = true 
+                and stsd.kdprofile = 30
+                and str.statusenabled = true 
+                and str.kdprofile = 30
+                and rkb.statusenabled = true 
+                and rkb.kdprofile = 30
+				and sts.kdprofile = 30
+                and date_part('year', sts.tglpenerimaan::timestamp ) = '$tahun'
+                group by to_char(sts.tglpenerimaan, 'MM'), stsd.nourut, stsd.kdrekening, stsd.nomer, stsd.uraian, stsd.vol, stsd.kolom1, stsd.kolom2
+        ) as x
+        group by x.nourut, x.date, x.kdrekening, x.nomer, x.uraian
         order by date, nourut"));
-        
-        $mainuraian = array('Pendapatan Usaha BLUD', 'Pendapatan Jasa Layanan', 'RAWAT JALAN', 'Klinik Umum', 'Klinik Jiwa',
-        'Klinik Jiwa Umum', 'TM. Poli Umum',
-        'Klinik Gigi', 'Poli Gigi', 'TM. Gigi', 'Klinik Syaraf', 'Klinik Penyakit Dalam', 'Klinik Anak', 'Klinik Kulit dan Kelamin',
-        'Poli Kulit Kelamin', 'TM. Kulit', 'Pelayanan NAPZA', 'UGD', 'TM. UGD', 'Kunjungan UGD Umum', 
-        'Obat-obatan Rajal', 'Pasien Umum', 'Test Psikologi / Konsul Psikologi', 'Surat Keterangan Dokter (KIR)',
-        'DIPAM / Addministrasi', 'PENUNJANG', 'Laboratorium', 'Laboratorium Umum', 'Pemeriksaan Elektromedik',
-        'Fisioterapi', 'Radiologi', 'Diklat', 'RAWAT INAP', 'Perawatan Pasien', 'VIP', 'UPPI', 'Kelas I', 'Kelas II', 'Kelas III',
-        'Tindakan Khusus Jiwa', 'TM Pasien Umum', 'Visite Dokter', 'Visite Dokter Pasien Umum',
-        'Rehab Mental dan Work Terapi', 'RM. Pasien Umum', 'Konsultasi Spesialis Lain',
-        'Obat-obatan Ranap', 'Obat Ranap Umum', 'Lain-lain Pendapatan BLUD', 'Sewa Gedung Terapi', 'Sewa Kantin / Tempat Fotocopy',
-        'Pemakaian Mobil / Kendaraan', 'Legalisir', 'Diklat', 'Parkir', 'Work Terapi', 'Sewa Lapangan Sepak Bola', 'Sewa Tanah Pertanian', 'Kontribusi Akreditasi', 'Sewa Manekin',
-        'Denda BPJS', 'Pemulasaran Jenazah', 'Sewa Grhasia Inn', 'Jasa Bank', 'Lain-lain Pendapatan BLUD', 'Liquid Gas', 'Saldo slipa di rekening lain', 'Pengembalian Klaim BPJS Tenaga Kerja',
-        'Jasa Giro', 'Ada Saldo Sutera BPD Sudah Diakui Sebagai Pendapatan', 'Klaim Covid'
-        );
-
-        $loopuraian = array('PENDAPATAN USAHA BLUD', 'JASA LAYANAN RUMAH SAKIT', 'RAWAT JALAN', 'RAWAT JALAN BPJS',
-        'RAWAT JALAN IPWL', 'RAWAT JALAN Jamkesda Jamkesos',
-        'PERIKSA DOKTER UMUM', 'PERIKSA DOKTER SPESIALIS JIWA',
-        'Klinik Jiwa Umum', 'TM. Poli Umum',
-        'Klinik Gigi', 'PERIKSA DOKTER GIGI', 'TINDAKAN MEDIK PASIEN GIGI', 'PERIKSA DOKTER SYARAF', 'PERIKSA DOKTER PENYAKIT DALAM', 'PERIKSA DOKTER ANAK', 'Klinik Kulit dan Kelamin',
-        'Poli Kulit Kelamin', 'TM. Kulit', 'PERIKSA DOKTER SPESIALIS JIWA (NAPZA)', 'UGD', 'TINDAKAN MEDIK IGD', 'Kunjungan UGD Umum',
-        'OBAT-OBATAN', 'Pasien Umum', 'Pasien Jamkesdasos', 'Pasien JKN', 'PSIKOLOGI', 'SURAT KETERANGAN (KIR)',
-        'DIPAM/PENDAFTARAN', 'PENUNJANG', 'LABORATORIUM', 'Laboratorium Umum', 'ELEKTROMEDIK',
-        'FISIOTERAPY', 'RADIOLOGI', 'DIKLAT', 'RAWAT INAP', 
-        'RAWAT INAP BPJS', 'RAWAT INAP IPWL', 'RAWAT INAP Jamkesda Jamkesos',
-        'PERAWATAN PASIEN', 'VIP', 'Kelas UPPI', 'Kelas I', 'Kelas II', 'Kelas III',
-        'TINDAKAN MEDIK RANAP', 'TM Pasien Umum', 'VISITE DOKTER', 'Visite Dokter Pasien Umum',
-        'REHABILITASI MENTAL', 'RM. Pasien Umum', 'Konsultasi Spesialis Lain',
-        'OBAT-OBATAN RANAP', 'Obat Ranap Umum', 'LAIN-LAIN PENDAPATAN BLUD YANG SAH', 'SEWA GEDUNG TERAPI', 'Sewa Kantin / Tempat Fotocopy',
-        'Pemakaian Mobil / Kendaraan', 'LEGALISIR', 'SEWA GEDUNG DIKLAT', 'PARKIR', 'HASIL KETRAMPILAN PASIEN', 'SEWA LAPANGAN SEPAK BOLA', 'SEWA TANAH PERTANIAN', 'Kontribusi Akreditasi', 'SEWA MANEKIN',
-        'Denda BPJS', 'PERAWATAN JENAZAH', 'SEWA GEDUNG GRHASIA INN', 'Jasa Bank', 'Lain-lain Pendapatan BLUD', 'Liquid Gas', 'Saldo slipa di rekening lain', 'Pengembalian Klaim BPJS Tenaga Kerja',
-        'Jasa Giro', 'Ada Saldo Sutera BPD Sudah Diakui Sebagai Pendapatan', 'Klaim Covid'
-        );
 
         $target = DB::select(DB::raw("select rp.norec,rp.isperubahan, rp.jumlahpendapatan,rp.tahun, rp.tglinput, rp.keterangan, rp.objectasalprodukfk, rp.objecturaianpendapatanfk,up.uraianpendapatan,ap.namaexternal, rp.uraianpendapatan as uraian
         from rincianpendapatan_t as rp
@@ -8115,7 +8086,8 @@ class BendaharaPenerimaanController extends ApiController {
         and rp.statusenabled = true
         and up.kdprofile = 30
         and up.statusenabled = true
-        and rp.tahun = '$tahun'"));
+        and rp.tahun = '$tahun'
+        order by up.nourut"));
         
         $jumlahtriwulan1 = 0;
         $jumlahtriwulan2 = 0;
@@ -8124,7 +8096,7 @@ class BendaharaPenerimaanController extends ApiController {
         $jumlahtarget = 0;
         $data = [];
 
-        foreach($loopuraian as $main){
+        foreach($target as $main){
             $jumlahtriwulan1 = 0;
             $jumlahtriwulan2 = 0;
             $jumlahtriwulan3 = 0;
@@ -8183,27 +8155,12 @@ class BendaharaPenerimaanController extends ApiController {
                 else if(($row->date == '01' || $row->date == '02' || $row->date == '03') && $main->uraianpendapatan == 'RM. Pasien Umum' && $row->uraian == 'REHABILITASI MENTAL'){
                     $jumlahtriwulan1 += $row->totalfix;
                 }
+                else if(($row->date == '01' || $row->date == '02' || $row->date == '03') && $main->uraianpendapatan == 'Lain-lain Pendapatan BLUD' && $row->uraian == 'LAIN-LAIN'){
+                    $jumlahtriwulan1 += $row->totalfix;
+                }
                 else if(($row->date == '01' || $row->date == '02' || $row->date == '03') && $row->uraian == $main->uraianpendapatan){
                     $jumlahtriwulan1 += $row->totalfix;
                 } 
-                else if(($row->date == '01' || $row->date == '02' || $row->date == '03') && $main->uraianpendapatan == 'RAWAT JALAN BPJS' && $row->uraian == 'RAWAT JALAN BPJS'){
-                    $jumlahtriwulan1 += $row->totalfix;
-                }
-                else if(($row->date == '01' || $row->date == '02' || $row->date == '03') && $main->uraianpendapatan == 'RAWAT INAP BPJS' && $row->uraian == 'RAWAT INAP BPJS'){
-                    $jumlahtriwulan1 += $row->totalfix;
-                }
-                else if(($row->date == '01' || $row->date == '02' || $row->date == '03') && $main->uraianpendapatan == 'RAWAT INAP IPWL' && $row->uraian == 'RAWAT INAP IPWL'){
-                    $jumlahtriwulan1 += $row->totalfix;
-                }
-                else if(($row->date == '01' || $row->date == '02' || $row->date == '03') && $main->uraianpendapatan == 'RAWAT JALAN IPWL' && $row->uraian == 'RAWAT JALAN IPWL'){
-                    $jumlahtriwulan1 += $row->totalfix;
-                }
-                else if(($row->date == '01' || $row->date == '02' || $row->date == '03') && $main->uraianpendapatan == 'RAWAT INAP Jamkesda Jamkesos' && $row->uraian == 'RAWAT INAP Jamkesda Jamkesos'){
-                    $jumlahtriwulan1 += $row->totalfix;
-                }
-                else if(($row->date == '01' || $row->date == '02' || $row->date == '03') && $main->uraianpendapatan == 'RAWAT JALAN Jamkesda Jamkesos' && $row->uraian == 'RAWAT JALAN Jamkesda Jamkesos'){
-                    $jumlahtriwulan1 += $row->totalfix;
-                }
 
                 if(($row->date == '04' || $row->date == '05' || $row->date == '06') && $main->uraianpendapatan == 'Klinik Gigi' && ($row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI')){
                     $jumlahtriwulan2 += $row->totalfix;
@@ -8256,25 +8213,10 @@ class BendaharaPenerimaanController extends ApiController {
                 else if(($row->date == '04' || $row->date == '05' || $row->date == '06') && $main->uraianpendapatan == 'RM. Pasien Umum' && $row->uraian == 'REHABILITASI MENTAL'){
                     $jumlahtriwulan2 += $row->totalfix;
                 }
+                else if(($row->date == '04' || $row->date == '05' || $row->date == '06') && $main->uraianpendapatan == 'Lain-lain Pendapatan BLUD' && $row->uraian == 'LAIN-LAIN'){
+                    $jumlahtriwulan2 += $row->totalfix;
+                }
                 else if(($row->date == '04' || $row->date == '05' || $row->date == '06') && $row->uraian == $main->uraianpendapatan){
-                    $jumlahtriwulan2 += $row->totalfix;
-                }
-                else if(($row->date == '04' || $row->date == '05' || $row->date == '06') && $main->uraianpendapatan == 'RAWAT JALAN BPJS' && $row->uraian == 'RAWAT JALAN BPJS'){
-                    $jumlahtriwulan2 += $row->totalfix;
-                }
-                else if(($row->date == '04' || $row->date == '05' || $row->date == '06') && $main->uraianpendapatan == 'RAWAT INAP BPJS' && $row->uraian == 'RAWAT INAP BPJS'){
-                    $jumlahtriwulan2 += $row->totalfix;
-                }
-                else if(($row->date == '04' || $row->date == '05' || $row->date == '06') && $main->uraianpendapatan == 'RAWAT INAP IPWL' && $row->uraian == 'RAWAT INAP IPWL'){
-                    $jumlahtriwulan2 += $row->totalfix;
-                }
-                else if(($row->date == '04' || $row->date == '05' || $row->date == '06') && $main->uraianpendapatan == 'RAWAT JALAN IPWL' && $row->uraian == 'RAWAT JALAN IPWL'){
-                    $jumlahtriwulan2 += $row->totalfix;
-                }
-                else if(($row->date == '04' || $row->date == '05' || $row->date == '06') && $main->uraianpendapatan == 'RAWAT INAP Jamkesda Jamkesos' && $row->uraian == 'RAWAT INAP Jamkesda Jamkesos'){
-                    $jumlahtriwulan2 += $row->totalfix;
-                }
-                else if(($row->date == '04' || $row->date == '05' || $row->date == '06') && $main->uraianpendapatan == 'RAWAT JALAN Jamkesda Jamkesos' && $row->uraian == 'RAWAT JALAN Jamkesda Jamkesos'){
                     $jumlahtriwulan2 += $row->totalfix;
                 }
 
@@ -8329,25 +8271,10 @@ class BendaharaPenerimaanController extends ApiController {
                 else if(($row->date == '07' || $row->date == '08' || $row->date == '09') && $main->uraianpendapatan == 'RM. Pasien Umum' && $row->uraian == 'REHABILITASI MENTAL'){
                     $jumlahtriwulan3 += $row->totalfix;
                 }
+                else if(($row->date == '07' || $row->date == '08' || $row->date == '09') && $main->uraianpendapatan == 'Lain-lain Pendapatan BLUD' && $row->uraian == 'LAIN-LAIN'){
+                    $jumlahtriwulan3 += $row->totalfix;
+                }
                 else if(($row->date == '07' || $row->date == '08' || $row->date == '09') && $row->uraian == $main->uraianpendapatan){
-                    $jumlahtriwulan3 += $row->totalfix;
-                }
-                else if(($row->date == '07' || $row->date == '08' || $row->date == '09') && $main->uraianpendapatan == 'RAWAT JALAN BPJS' && $row->uraian == 'RAWAT JALAN BPJS'){
-                    $jumlahtriwulan3 += $row->totalfix;
-                }
-                else if(($row->date == '07' || $row->date == '08' || $row->date == '09') && $main->uraianpendapatan == 'RAWAT INAP BPJS' && $row->uraian == 'RAWAT INAP BPJS'){
-                    $jumlahtriwulan3 += $row->totalfix;
-                }
-                else if(($row->date == '07' || $row->date == '08' || $row->date == '09') && $main->uraianpendapatan == 'RAWAT INAP IPWL' && $row->uraian == 'RAWAT INAP IPWL'){
-                    $jumlahtriwulan3 += $row->totalfix;
-                }
-                else if(($row->date == '07' || $row->date == '08' || $row->date == '09') && $main->uraianpendapatan == 'RAWAT JALAN IPWL' && $row->uraian == 'RAWAT JALAN IPWL'){
-                    $jumlahtriwulan3 += $row->totalfix;
-                }
-                else if(($row->date == '07' || $row->date == '08' || $row->date == '09') && $main->uraianpendapatan == 'RAWAT INAP Jamkesda Jamkesos' && $row->uraian == 'RAWAT INAP Jamkesda Jamkesos'){
-                    $jumlahtriwulan3 += $row->totalfix;
-                }
-                else if(($row->date == '07' || $row->date == '08' || $row->date == '09') && $main->uraianpendapatan == 'RAWAT JALAN Jamkesda Jamkesos' && $row->uraian == 'RAWAT JALAN Jamkesda Jamkesos'){
                     $jumlahtriwulan3 += $row->totalfix;
                 }
 
@@ -8402,25 +8329,10 @@ class BendaharaPenerimaanController extends ApiController {
                 else if(($row->date == '10' || $row->date == '11' || $row->date == '12') && $main->uraianpendapatan == 'RM. Pasien Umum' && $row->uraian == 'REHABILITASI MENTAL'){
                     $jumlahtriwulan4 += $row->totalfix;
                 }
+                else if(($row->date == '10' || $row->date == '11' || $row->date == '12') && $main->uraianpendapatan == 'Lain-lain Pendapatan BLUD' && $row->uraian == 'LAIN-LAIN'){
+                    $jumlahtriwulan4 += $row->totalfix;
+                }
                 else if(($row->date == '10' || $row->date == '11' || $row->date == '12') && $row->uraian == $main->uraianpendapatan){
-                    $jumlahtriwulan4 += $row->totalfix;
-                }
-                else if(($row->date == '10' || $row->date == '11' || $row->date == '12') && $main->uraianpendapatan == 'RAWAT JALAN BPJS' && $row->uraian == 'RAWAT JALAN BPJS'){
-                    $jumlahtriwulan4 += $row->totalfix;
-                }
-                else if(($row->date == '10' || $row->date == '11' || $row->date == '12') && $main->uraianpendapatan == 'RAWAT INAP BPJS' && $row->uraian == 'RAWAT INAP BPJS'){
-                    $jumlahtriwulan4 += $row->totalfix;
-                }
-                else if(($row->date == '10' || $row->date == '11' || $row->date == '12') && $main->uraianpendapatan == 'RAWAT INAP IPWL' && $row->uraian == 'RAWAT INAP IPWL'){
-                    $jumlahtriwulan4 += $row->totalfix;
-                }
-                else if(($row->date == '10' || $row->date == '11' || $row->date == '12') && $main->uraianpendapatan == 'RAWAT JALAN IPWL' && $row->uraian == 'RAWAT JALAN IPWL'){
-                    $jumlahtriwulan4 += $row->totalfix;
-                }
-                else if(($row->date == '10' || $row->date == '11' || $row->date == '12') && $main->uraianpendapatan == 'RAWAT INAP Jamkesda Jamkesos' && $row->uraian == 'RAWAT INAP Jamkesda Jamkesos'){
-                    $jumlahtriwulan4 += $row->totalfix;
-                }
-                else if(($row->date == '10' || $row->date == '11' || $row->date == '12') && $main->uraianpendapatan == 'RAWAT JALAN Jamkesda Jamkesos' && $row->uraian == 'RAWAT JALAN Jamkesda Jamkesos'){
                     $jumlahtriwulan4 += $row->totalfix;
                 }
             }
@@ -8518,33 +8430,33 @@ class BendaharaPenerimaanController extends ApiController {
                                 
                                 union all
         
-                                select 'klaim' jenis, date, nomer, uraian, sum(totalvol) totalvol,
-                                sum(totalkolom1) totalkolom1, sum(totalkolom2) totalkolom2, sum(totalfix) totalfix
-                                from(
-                                        select 0 nourut, to_char(rkb.tglbayar, 'Month') as date, '' kdrekening, '0' nomer,
-                                        case 
-                                                when rkb.nosep != '-' and ru.objectdepartemenfk != 16 then 'RAWAT JALAN BPJS' 
-                                                when rkb.nosep != '-' and ru.objectdepartemenfk = 16 then 'RAWAT INAP BPJS'
-                                                when rkb.nosep = '-' and ru.objectdepartemenfk = 16 and rkb.totalsetujui = rkb.totaltarifrs then 'RAWAT INAP IPWL'
-                                                when rkb.nosep = '-' and ru.objectdepartemenfk != 16 and rkb.totalsetujui = rkb.totaltarifrs then 'RAWAT JALAN IPWL'
-                                                when rkb.nosep = '-' and ru.objectdepartemenfk = 16 and rkb.totalsetujui != rkb.totaltarifrs and pd.objectkelompokpasienlastfk = 18 then 'RAWAT INAP Jamkesos'
-                                                when rkb.nosep = '-' and ru.objectdepartemenfk != 16 and rkb.totalsetujui != rkb.totaltarifrs and pd.objectkelompokpasienlastfk = 18 then 'RAWAT JALAN Jamkesos'
-                                                when rkb.nosep = '-' and ru.objectdepartemenfk = 16 and rkb.totalsetujui != rkb.totaltarifrs and pd.objectkelompokpasienlastfk = 8 then 'RAWAT INAP Jamkesda'
-                                                when rkb.nosep = '-' and ru.objectdepartemenfk != 16 and rkb.totalsetujui != rkb.totaltarifrs and pd.objectkelompokpasienlastfk = 8 then 'RAWAT JALAN Jamkesda'
-                                                when rkb.nosep = '-' and rkb.totalsetujui != rkb.totaltarifrs and pd.objectkelompokpasienlastfk = 16 then 'KLAIM COVID'
-                                        end as uraian, count(rkb.norec) totalvol, 0 totalkolom1, 0 totalkolom2, rkb.totalsetujui totalfix
-                                        from rekapklaimbpjs_t rkb
-                                        inner join pasiendaftar_t pd on rkb.norecpdfk = pd.norec
-                                        inner join ruangan_m ru on ru.id = pd.objectruanganlastfk
-                                        where rkb.kdprofile = 30
-                                        and rkb.statusenabled = true
-                                        and pd.kdprofile = 30
-                                        and pd.statusenabled = true
-                                        and date_part('year', rkb.tglbayar::timestamp ) = '$tahun'
-                                        group by to_char(rkb.tglbayar, 'Month'), rkb.nosep, ru.objectdepartemenfk, rkb.totalsetujui, rkb.totaltarifrs, pd.objectkelompokpasienlastfk
-                                ) as x 
-                                where x.uraian not in('RAWAT INAP Jamkesda Jamkesos', 'RAWAT JALAN Jamkesda Jamkesos')
-                                group by date, nomer, uraian
+                                select 'klaim' jenis, x.date, '0' nomer, x.uraian, sum(x.vol) as totalvol, sum(x.kolom1) as totalkolom1, sum(x.kolom2) as totalkolom2,
+                                (
+                                    case 
+                                    when sum(x.kolom1) is null and sum(x.kolom2) is null then sum(x.kolom1)
+                                    when sum(x.kolom1) is null and sum(x.kolom2) is not null then sum(x.kolom2)
+                                    when sum(x.kolom1) is not null and sum(x.kolom2) is null then sum(x.kolom1)
+                                    else 0 
+                                    end
+                                ) as totalfix
+                                from(	
+                                        select to_char(sts.tglpenerimaan, 'Month') as date, stsd.nourut, stsd.kdrekening, stsd.nomer, stsd.uraian, stsd.vol, stsd.kolom1, stsd.kolom2
+                                        from surattandasetoran_t sts
+                                        inner join surattandasetorandetail_t stsd on stsd.objectstsfk = sts.nosts
+                                        inner join ststorekapklaim_t str on sts.norec = str.objectstsfk
+                                        inner join rekapklaimbpjs_t rkb on str.objectrekapklaimfk = rkb.norec
+                                        where sts.statusenabled = true
+                                        and stsd.statusenabled = true 
+                                        and stsd.kdprofile = 30
+                                        and str.statusenabled = true 
+                                        and str.kdprofile = 30
+                                        and rkb.statusenabled = true 
+                                        and rkb.kdprofile = 30
+                                        and sts.kdprofile = 30
+                                        and date_part('year', sts.tglpenerimaan::timestamp ) = '2022'
+                                        group by to_char(sts.tglpenerimaan, 'Month'), stsd.nourut, stsd.kdrekening, stsd.nomer, stsd.uraian, stsd.vol, stsd.kolom1, stsd.kolom2
+                                ) as x
+                                group by x.date,x.uraian
                 ) as y group by nomer, date, jenis, uraian
             ) as a group by date
         ) as d on c.bulan = d.date;"));
