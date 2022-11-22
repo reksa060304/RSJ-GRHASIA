@@ -2080,6 +2080,26 @@
     ]
   },
   {
+    "name": "STSRingkas",
+    "url": "/U1RTUmluZ2thcw==",
+    "templateurl": "module/BendaharaPenerimaan/STSRingkas.html",
+    "controller": "STSRingkasCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
     "name": "RealisasiPerTriwulan",
     "url": "/UmVhbGlzYXNpUGVuZXJpbWFhblBlclRyaXd1bGFu",
     "templateurl": "module/BendaharaPenerimaan/RealisasiPerTriwulan.html",
