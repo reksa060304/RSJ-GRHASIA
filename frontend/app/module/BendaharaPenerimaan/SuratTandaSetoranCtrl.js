@@ -482,7 +482,7 @@ define(['initialize'], function (initialize) {
                     var terbilang = $scope.item.terbilangsts;
                     var nosts = $scope.item.nosts;
                     var total = $scope.item.totalsts;
-                    var tglpenerimaan = $scope.item.tglpenerimaansts;
+                    var tglpenerimaan = moment($scope.item.tglpenerimaansts).format('DD-MM-YYYY');
                     var carabayar = $scope.item.carabayarsts;
                     var nama = $scope.item.namasts;
 
