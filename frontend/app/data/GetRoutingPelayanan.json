@@ -19565,6 +19565,28 @@
         "define": "RekamMedisCtrl"
       }
     ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.PengkajianAwalMedisRJNAPZA",
+    "url": "/PengkajianAwalMedisRJNAPZA",
+    "templateurl": "module/EMR/PengkajianAwalMedisRJNAPZA.html",
+    "controller": "PengkajianAwalMedisRJNAPZACtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
   }
 ]
 
