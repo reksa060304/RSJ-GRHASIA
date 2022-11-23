@@ -49,12 +49,14 @@ define(['initialize'], function (initialize) {
             $scope.TambahJasgir = function(){
                 $scope.norecjasgir = ''
                 $scope.item.uraianpendapatan = ''
+                $scope.item.nourut = 0
                 $scope.popupTambahJasgir.center().open()
             }
 
             $scope.EditJasgir = function(){
                 $scope.norecjasgir = $scope.dataSelected.id
                 $scope.item.uraianpendapatan = $scope.dataSelected.uraianpendapatan
+                $scope.item.nourut = $scope.dataSelected.nourut
                 $scope.popupTambahJasgir.center().open()
             }
 
@@ -66,6 +68,7 @@ define(['initialize'], function (initialize) {
                 var objSave = {
                     "id": $scope.norecjasgir,
                     "uraianpendapatan": $scope.item.uraianpendapatan,
+                    "nourut": $scope.item.nourut,
                 }
                 console.log(objSave);
                 // return
@@ -128,6 +131,12 @@ define(['initialize'], function (initialize) {
                         
                         "field": "uraianpendapatan",
                         "title": "Uraian Pendapatan",
+                        "width": "100px",
+                    },
+                    {
+                        
+                        "field": "nourut",
+                        "title": "No Urut",
                         "width": "100px",
                     },
                 ]

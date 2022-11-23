@@ -3700,6 +3700,7 @@ class PerencanaanController extends ApiController {
                             'namaexternal'=>null,
                             'reportdisplay'=>null,
                             'uraianpendapatan'=>$request['uraianpendapatan'],
+                            'nourut'=>$request['nourut'],
                         ]);
 
                     } else{
@@ -3707,6 +3708,7 @@ class PerencanaanController extends ApiController {
                         $MA->namaexternal = null;
                         $MA->reportdisplay = null;
                         $MA->uraianpendapatan = $request['uraianpendapatan'];
+                        $MA->nourut = $request['nourut'];
                         $MA->save();
                     }
                     
@@ -7789,7 +7791,7 @@ order by kodemataanggaran"));
 public function loadComboRincian(Request $request)
     {
         $sumberpendapatan = \DB::table('asalproduk_m')->where('kdprofile', 30)->where('statusenabled', true)->where('isanggaran', null)->get();
-        $uraianpendapatan = \DB::table('uraianpendapatan_m')->where('kdprofile', 30)->where('statusenabled', true)->get();
+        $uraianpendapatan = \DB::table('uraianpendapatan_m')->where('kdprofile', 30)->where('statusenabled', true)->orderBy('nourut')->get();
         $rincianpendapatan = \DB::table('rincianpendapatan_t as rp')
         ->join('asalproduk_m as ap','ap.id','=','rp.objectasalprodukfk')
         ->join('uraianpendapatan_m as up','up.id','=','rp.objecturaianpendapatanfk')

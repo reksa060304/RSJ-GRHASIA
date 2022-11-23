@@ -2040,10 +2040,50 @@
     ]
   },
   {
+    "name": "STSKlaim",
+    "url": "/U1RTS2xhaW0=",
+    "templateurl": "module/BendaharaPenerimaan/STSKlaim.html",
+    "controller": "STSKlaimCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
     "name": "STSBulananKlaim",
     "url": "/U1RTQnVsYW5hbktsYWlt",
     "templateurl": "module/BendaharaPenerimaan/STSBulananKlaim.html",
     "controller": "STSBulananKlaimCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "STSRingkas",
+    "url": "/U1RTUmluZ2thcw==",
+    "templateurl": "module/BendaharaPenerimaan/STSRingkas.html",
+    "controller": "STSRingkasCtrl",
     "deps": [
       {
         "module": "Services",

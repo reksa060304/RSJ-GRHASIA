@@ -482,7 +482,7 @@ define(['initialize'], function (initialize) {
                     var terbilang = $scope.item.terbilangsts;
                     var nosts = $scope.item.nosts;
                     var total = $scope.item.totalsts;
-                    var tglpenerimaan = $scope.item.tglpenerimaansts;
+                    var tglpenerimaan = moment($scope.item.tglpenerimaansts).format('DD-MM-YYYY');
                     var carabayar = $scope.item.carabayarsts;
                     var nama = $scope.item.namasts;
 
@@ -675,13 +675,13 @@ define(['initialize'], function (initialize) {
 
 
                     sheet.rows.splice(78, 0, {
-                        cells: [{value:"dr. Akhmad Akhadi S, MPH", colSpan: 2},{value:"", colSpan: 1},{value:"Gamal Iskandar, SKM",colSpan: 2},{value:"", colSpan: 1},{value:"Suri Herlina Pratiwi, S.KM, M.PH", colSpan: 2}],
+                        cells: [{value:"dr. Akhmad Akhadi S, MPH", colSpan: 2},{value:"", colSpan: 1},{value:"Reny Astuti, SE",colSpan: 2},{value:"", colSpan: 1},{value:"Suri Herlina Pratiwi, S.KM, M.PH", colSpan: 2}],
                         type: "data",
                         height: 20,
                     });
 
                     sheet.rows.splice(79, 0, {
-                        cells: [{value:"NIP. 19680714 200012 1 002", colSpan: 2},{value:"", colSpan: 1},{value:"NIP. 19650626 198902 1 001",colSpan: 2},{value:"", colSpan: 1},{value:"NIP. 19860422 201101 2 013", colSpan: 2}],
+                        cells: [{value:"NIP. 19680714 200012 1 002", colSpan: 2},{value:"", colSpan: 1},{value:"NIP. 19700404 199303 2005",colSpan: 2},{value:"", colSpan: 1},{value:"NIP. 19860422 201101 2 013", colSpan: 2}],
                         type: "data",
                         height: 20,
                     });
