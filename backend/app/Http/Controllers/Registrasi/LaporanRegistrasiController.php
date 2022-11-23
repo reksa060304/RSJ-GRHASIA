@@ -223,7 +223,13 @@ class LaporanRegistrasiController extends  App\Http\Controllers\ApiController
 
         
         //$produk = $produk->get();
-
+        $jeniskelamin = \DB::table('jeniskelamin_m')
+        ->where('statusenabled', true)
+        ->where('kdprofile', $idProfile)
+        ->get();
+        $pendidikan = \DB::table('pendidikan_m')->where('statusenabled', true)->where('kdprofile', $idProfile)->get();
+        $kecamatan = \DB::table('kecamatan_m')->where('statusenabled', true)->where('kdprofile', $idProfile)->get();
+        $kabupaten = \DB::table('kotakabupaten_m')->where('statusenabled', true)->where('kdprofile', $idProfile)->get();
         $result = array(
             'departemen' => $dataDepartemen,
             'ruangan' => $dataRuangan,
@@ -244,6 +250,10 @@ class LaporanRegistrasiController extends  App\Http\Controllers\ApiController
             'user' => $dataPegawaiLogin,
             'produk' => $produk,
             'produkobat' => $produkobat,
+            'jeniskelamin' => $jeniskelamin,
+            'pendidikan' => $pendidikan,
+            'kecamatan' => $kecamatan,
+            'kabupaten' => $kabupaten,
             'message' => 'as@egieramdan',
         );
 
@@ -3732,24 +3742,101 @@ select '-' as smf,* from  (
                 }
             }    
         }
-        $data = \DB::select(DB::raw("SELECT
-            x.tahun, SUM ( x.jumlahpasien ) as jumlahpasien
-        FROM (
-            SELECT date_part( 'year', pd.tglregistrasi ) AS tahun,COUNT ( pd.norec ) AS jumlahpasien,pd.objectruanganlastfk FROM pasiendaftar_t pd 
-            WHERE
-                pd.kdprofile = 30 AND pd.statusenabled = TRUE 
-                $jenisLaporan 
-            GROUP BY pd.norec, pd.objectruanganlastfk ) AS x 
+        $data = \DB::select(DB::raw("
+        WITH jumlahpasien AS (
+        SELECT DISTINCT
+            date_part( 'year', pd.tglpulang :: DATE ) tahun,
+            ps.nocm,
+            ps.namapasien,
+            de.namadepartemen,
+            pd.objectruanganlastfk
+        FROM
+            pasiendaftar_t pd
+            INNER JOIN pasien_m ps ON ps.ID = pd.nocmfk
+            INNER JOIN ruangan_m ru ON ru.ID = pd.objectruanganlastfk
+            INNER JOIN departemen_m de ON de.ID = ru.objectdepartemenfk 
+        WHERE
+            pd.kdprofile = 30
+            and pd.statusenabled = true
+            and pd.tglpulang is not null
+            $jenisLaporan 
+        ORDER BY
+            ps.nocm ASC 
+        ) SELECT
+            x.tahun,
+            COUNT ( x.nocm ) as jumlahpasien 
+        FROM
+            jumlahpasien x 
             $jenisPasien
-            -- WHERE x.objectruanganlastfk in(804,805,806)
         GROUP BY
-            x.tahun
-            order by x.tahun asc
-        "));
+            x.tahun 
+        ORDER BY
+            x.tahun ASC"));
+        // $data = \DB::select(DB::raw("SELECT
+        //     x.tahun, SUM ( x.jumlahpasien ) as jumlahpasien
+        // FROM (
+        //     SELECT date_part( 'year', pd.tglregistrasi ) AS tahun,COUNT ( pd.norec ) AS jumlahpasien,pd.objectruanganlastfk FROM pasiendaftar_t pd 
+        //     WHERE
+        //         pd.kdprofile = 30 AND pd.statusenabled = TRUE 
+        //         $jenisLaporan 
+        //     GROUP BY pd.norec, pd.objectruanganlastfk ) AS x 
+        //     $jenisPasien
+        //     -- WHERE x.objectruanganlastfk in(804,805,806)
+        // GROUP BY
+        //     x.tahun
+        //     order by x.tahun asc
+        // "));
         $result = array(
             'data'=> $data,
             'as'=> 'Fizi'
         );
+        return $this->respond($result);
+    }
+    public function getLaporanTindakanPPA(Request $request)
+    {
+        $tempdokter ='';
+        if(isset($request['dokter'])){
+            $tempdokter = 'and ppg.objectpegawaifk = '. $request['dokter'];
+        }
+        $tempdepartemen ='';
+        if(isset($request['idDept']) && $request['idDept'] == 1){
+            $tempdepartemen = 'and ru.objectdepartemenfk <> 16';
+        } else if(isset($request['idDept']) && $request['idDept'] == 2){
+            $tempdepartemen = 'and ru.objectdepartemenfk = 16';
+        }
+        $tempakomodasi ='';
+        if(isset($request['akomodasi']) && $request['akomodasi'] == 1){
+            $tempakomodasi = '';
+        } else if(isset($request['akomodasi']) && $request['akomodasi'] == 2){
+            $tempakomodasi = "and pr.namaproduk ilike '%akomodasi%'";
+        }
+        else if(isset($request['akomodasi']) && $request['akomodasi'] == 3){
+            $tempakomodasi = "and pr.namaproduk not ilike '%akomodasi%'";
+        }
+        $data = \DB::select(DB::raw("select x.tglpelayanan, x.nocm, x.namaproduk, string_agg(x.jasasarana::text, '')::text as sarana,string_agg(x.jasapelayanan::text, '')::text as pelayanan
+            FROM (SELECT distinct pp.norec, pp.tglpelayanan::date, ps.nocm, pr.namaproduk, 
+            case when ppd.komponenhargafk = '93' then ppd.harganetto end as jasasarana,
+            case when ppd.komponenhargafk = '94' then ppd.harganetto end as jasapelayanan
+            FROM pelayananpasien_t pp 
+            inner join pelayananpasienpetugas_t ppg on ppg.pelayananpasien = pp.norec
+            inner join pelayananpasiendetail_t ppd on ppd.pelayananpasien = pp.norec
+            inner join produk_m pr on pr.id = ppd.produkfk
+            inner join antrianpasiendiperiksa_t apd on apd.norec = pp.noregistrasifk 
+            inner join pasiendaftar_t pd on pd.norec = apd.noregistrasifk
+            inner join pasien_m ps on ps.id = pd.nocmfk
+            inner join ruangan_m ru on ru.id = apd.objectruanganfk
+            where pp.tglpelayanan::date between '$request[tglAwal]' and '$request[tglAkhir]' 
+            $tempdokter
+            $tempdepartemen
+            $tempakomodasi
+            and pp.isobat is null)as x
+            GROUP BY x.tglpelayanan,x.nocm, x.namaproduk, x.norec
+            ORDER BY x.tglpelayanan asc, x.nocm asc"));
+        $result = array(
+            "data"=> $data,
+            "as"=> "Feezy"
+        );
+
         return $this->respond($result);
     }
 }

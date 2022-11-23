@@ -2090,7 +2090,6 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
               Route::get('registrasi/get-datacombo-sensus', 'SensusHarianRawatJalanController@getDataCombo');
               Route::get('registrasi/get-data-grafik','Registrasi\SensusHarianRawatJalanController@GrafikRajal');
               Route::get('registrasi/laporan/get-data-lap-jumlah-pasien-cara-v2', 'Registrasi\RegistrasiController@getLaporanJumlahPasienDanCaraBayarv2'); 
-
               
               Route::get('registrasi/laporan/get-combo-box-laporan-summary','Registrasi\RegistrasiController@getDataComboSummary');
               Route::get('registrasi/laporan/get-data-lap-summary-hambatan-komunikasi','Registrasi\RegistrasiController@getLaporanSummaryHambatanKomunikasi');
@@ -2132,7 +2131,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
 
               Route::get('registrasi/laporan/get-kinerja-pelayanan-ranap','Registrasi\LaporanRegistrasiController@getKinerjaPelayananRanap');
               Route::get('registrasi/laporan/get-kinerja-pelayanan-ranap-tahunan','Registrasi\LaporanRegistrasiController@getKinerjaPelayananRanapTahunan');
-            // });
+              Route::get('registrasi/laporan/get-laporan-tindakan-ppa' ,'Registrasi\LaporanRegistrasiController@getLaporanTindakanPPA');
+              // });
 
               Route::post('registrasi/hapus-sep', 'Registrasi\RegistrasiController@updateNoseppa');
               Route::post('registrasi/save-skrining-awal-pasien','Registrasi\RegistrasiController@saveSkringAwalPasien');

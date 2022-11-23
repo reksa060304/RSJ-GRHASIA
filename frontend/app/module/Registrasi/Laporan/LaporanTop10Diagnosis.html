@@ -80,15 +80,28 @@
                                     <div class="grid_2">
                                         <label c-label item="item" c-label-text="Departement"></label>
                                         <input style="width: 100%;" kendo-combo-box k-ng-model="item.departement"
-                                            k-data-text-field="'departemen'" k-data-value-field="'id'"
+                                            k-data-text-field="'namadepartemen'" k-data-value-field="'id'"
                                             k-filter="'contains'" k-auto-bind="false" k-data-source="listDepartemen"
                                             k-on-change="getIsiComboRuangan()" />
                                     </div>
-                                    <div class="grid_2" ng-hide="true">
+                                    <div class="grid_2" ng-hide="false">
                                         <label c-label item="item" c-label-text="Ruangan"></label>
                                         <input style="width: 100%;" kendo-combo-box k-ng-model="item.ruangan" k-data-text-field="'ruangan'"
 					                	k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
 					                	k-data-source="listRuangan" />
+                                    </div>
+                                    <div class="grid_2">
+                                        <div class="grid_12">
+                                            <label c-label item="item" c-label-text="Jenis Pasien" real></label>
+                                        </div>
+                                        <div class="clear"></div>
+
+                                        <div class="grid_12">
+                                            <input style="width: 100%;" kendo-combo-box k-ng-model="item.jenispasien"
+                                                k-data-text-field="'jenispasien'" k-data-value-field="'id'"
+                                                k-filter="'contains'" k-auto-bind="false"
+                                                k-data-source="listJenisPasien" />
+                                        </div>
                                     </div>
                                     <div class="grid_2">
                                         <div class="grid_12">

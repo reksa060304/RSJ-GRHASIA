@@ -6585,6 +6585,10 @@ class TagihanController  extends ApiController
     $statusPasien = $request['statusPasien'];
     $kodeawal= $request['kodeawal'];
     $dep = $request['dep'];
+    $jeniskelamin = $request['jeniskelamin'];
+    $pendidikan = $request['pendidikan'];
+    $kecamatan = $request['kecamatan'];
+    $kabupaten = $request['kabupaten'];
     $pardep ="";
     if (isset($dep) && $dep != "" && $dep != "undefined") {
     $pardep = " and ru.objectdepartemenfk = '$dep'";
@@ -6592,6 +6596,10 @@ class TagihanController  extends ApiController
     $paramkodeawal = ' ';
     if (isset($kodeawal) && $kodeawal != "" && $kodeawal != "undefined") {
     $paramkodeawal = " and di.kddiagnosa ilike '$kodeawal%'";
+    }
+    $paramjeniskelamin = ' ';
+    if (isset($jeniskelamin) && $jeniskelamin != "" && $jeniskelamin != "undefined") {
+    $paramjeniskelamin = " and ps.objectjeniskelaminfk = '$jeniskelamin'";
     }
     $paramtglmasuk = ' ';
     if(isset($tglAkhirmasuk) && isset($tglAwalmasuk) && ($tglAwalmasuk != "" && $tglAkhirmasuk != "")){
@@ -6629,7 +6637,18 @@ class TagihanController  extends ApiController
         if (isset($statusPasien) && $statusPasien != "" && $statusPasien != "undefined") {
         $paramstatusPasien = ' and pd.statuspasien ILIKE'. "'%". $statusPasien . "%'";
         }
-
+        $parampendidikan = ' ';
+        if (isset($pendidikan) && $pendidikan != "" && $pendidikan != "undefined") {
+        $parampendidikan = ' and ps.objectpendidikanfk = '.$pendidikan;
+        }
+        $paramkecamatan = ' ';
+        if (isset($kecamatan) && $kecamatan != "" && $kecamatan != "undefined") {
+        $paramkecamatan = ' and alm.objectkecamatanfk ='. $kecamatan;
+        }
+        $paramkabupaten = ' ';
+        if (isset($kabupaten) && $kabupaten != "" && $kabupaten != "undefined") {
+        $paramkabupaten = ' and alm.objectkotakabupatenfk ='. $kabupaten;
+        }
         $data = DB::select(DB::raw("
             SELECT 
         ddp.norec,
@@ -6694,6 +6713,7 @@ class TagihanController  extends ApiController
                 left join registrasipelayananpasien_t rpp on rpp.noregistrasifk = pd.norec
             WHERE
             pd.kdprofile = $idProfile
+            and pd.statusenabled = true
             $paramtglmasuk
             $paramtglkeluar
             $paramDep
@@ -6703,6 +6723,10 @@ class TagihanController  extends ApiController
             $paramstatusPasien
             $pardep
             $paramkodeawal
+            $paramjeniskelamin
+            $parampendidikan
+            $paramkecamatan
+            $paramkabupaten
             and pd.tglpulang is not null
 
             GROUP BY
@@ -6745,54 +6769,80 @@ class TagihanController  extends ApiController
             $data = [];
             $kdProfile = $this->getDataKdProfile($request);
             $tglAwal = $request['tglAwal'];
-            $tglAkhir = $request['tglAkhir'];
-            $tglAwalmasuk = $request['tglAwalmasuk'];
-            $tglAkhirmasuk = $request['tglAkhirmasuk'];
-            $deptId = $request['idDept'];
-            $ruanganId = $request['idRuangan'];
-            $idJenisDiagnosa = $request['idJenisDiagnosa'];
-            $diagnosaId = $request['idDiagnosa'];
-            $statusPasien = $request['statusPasien'];
-            $kodeawal = $request['kodeawal'];
+    $tglAkhir = $request['tglAkhir'];
+    $tglAwalmasuk = $request['tglAwalmasuk'];
+    $tglAkhirmasuk = $request['tglAkhirmasuk'];
+    $deptId = $request['idDept'];
+    $ruanganId = $request['idRuangan'];
+    $idJenisDiagnosa = $request['idJenisDiagnosa'];
+    $diagnosaId = $request['idDiagnosa'];
+    $statusPasien = $request['statusPasien'];
+    $kodeawal= $request['kodeawal'];
+    $dep = $request['dep'];
+    $jeniskelamin = $request['jeniskelamin'];
+    $pendidikan = $request['pendidikan'];
+    $kecamatan = $request['kecamatan'];
+    $kabupaten = $request['kabupaten'];
+    $pardep ="";
+    if (isset($dep) && $dep != "" && $dep != "undefined") {
+    $pardep = " and ru.objectdepartemenfk = '$dep'";
+    }
+    $paramkodeawal = ' ';
+    if (isset($kodeawal) && $kodeawal != "" && $kodeawal != "undefined") {
+    $paramkodeawal = " and di.kddiagnosa ilike '$kodeawal%'";
+    }
+    $paramjeniskelamin = ' ';
+    if (isset($jeniskelamin) && $jeniskelamin != "" && $jeniskelamin != "undefined") {
+    $paramjeniskelamin = " and ps.objectjeniskelaminfk = '$jeniskelamin'";
+    }
+    $paramtglmasuk = ' ';
+    if(isset($tglAkhirmasuk) && isset($tglAwalmasuk) && ($tglAwalmasuk != "" && $tglAkhirmasuk != "")){
+    $paramtglmasuk = " AND pd.tglregistrasi::date BETWEEN '". $tglAwalmasuk. "'
+    AND '". $tglAkhirmasuk."' ";
+    }
+    $paramtglkeluar = ' ';
+    if(isset($tglAwal) && isset($tglAkhir) && ($tglAwal != "" && $tglAkhir != "")){
+    $paramtglkeluar = " AND pd.tglpulang::date BETWEEN '$tglAwal'
+    AND '$tglAkhir' ";
+    }
+    $paramDep = ' ';
+    if (isset($deptId) && $deptId != "" && $deptId == 1) {
+    $paramDep = ' and ru.objectdepartemenfk = 16 ';
+    }
+    if (isset($deptId) && $deptId != "" && $deptId == 2) {
+    $paramDep = ' and ru.objectdepartemenfk <> 16 ';
+        }
 
-            
-            $paramtglmasuk = ' ';
-            if(isset($tglAkhirmasuk) && isset($tglAwalmasuk) && ($tglAwalmasuk != "" && $tglAkhirmasuk != "")){
-            $paramtglmasuk = "and pd.tglregistrasi::date BETWEEN '". $tglAwalmasuk. "'
-            AND '". $tglAkhirmasuk."' ";
-            }
-            $paramtglkeluar = ' ';
-            if(isset($tglAkhir) && isset($tglAwal) && ($tglAwal != "" && $tglAkhir != "")){
-            $paramtglkeluar = "and pd.tglpulang::date BETWEEN '$tglAwal'
-            AND '$tglAkhir' ";
-            }
+        $paramRuangan = ' ';
+        if (isset($ruanganId) && $ruanganId != "" && $ruanganId != "undefined") {
+        $paramRuangan = ' and ru.id = ' . $ruanganId;
+        }
 
-            $paramDep = ' ';
-            if (isset($deptId) && $deptId != "" && $deptId == 1) {
-            $paramDep = ' and ru.objectdepartemenfk = 16 ';
-            }
-            if (isset($deptId) && $deptId != "" && $deptId == 2) {
-            $paramDep = ' and ru.objectdepartemenfk <> 16 ';
-                }
+        $paramJenisDiagnosa = ' ';
+        if (isset($idJenisDiagnosa) && $idJenisDiagnosa != "" && $idJenisDiagnosa != "undefined") {
+        $paramJenisDiagnosa = ' and jd.id = '.$idJenisDiagnosa;
+        }
 
-            $paramRuangan = ' ';
-            if (isset($ruanganId) && $ruanganId != "" && $ruanganId != "undefined") {
-            $paramRuangan = ' and ru.id = ' . $ruanganId;
-            }
-
-            $paramJenisDiagnosa = ' ';
-            if (isset($idJenisDiagnosa) && $idJenisDiagnosa != "" && $idJenisDiagnosa != "undefined") {
-            $paramJenisDiagnosa = ' and jd.id = '.$idJenisDiagnosa;
-            }
-
-            // $paramDiagnosa = ' ';
-            // if (isset($diagnosaId) && $diagnosaId != "" && $diagnosaId != "undefined") {
-            // $paramDiagnosa = ' and di.id = '.$diagnosaId;
-            // }
-            $paramstatusPasien = ' ';
-            if (isset($statusPasien) && $statusPasien != "" && $statusPasien != "undefined") {
-            $paramstatusPasien = ' and pd.statuspasien ILIKE'. "'%". $statusPasien . "%'";
-            }
+        $paramDiagnosa = ' ';
+        if (isset($diagnosaId) && $diagnosaId != "" && $diagnosaId != "undefined") {
+        $paramDiagnosa = ' and di.id = '.$diagnosaId;
+        }
+        $paramstatusPasien = ' ';
+        if (isset($statusPasien) && $statusPasien != "" && $statusPasien != "undefined") {
+        $paramstatusPasien = ' and pd.statuspasien ILIKE'. "'%". $statusPasien . "%'";
+        }
+        $parampendidikan = ' ';
+        if (isset($pendidikan) && $pendidikan != "" && $pendidikan != "undefined") {
+        $parampendidikan = ' and ps.objectpendidikanfk = '.$pendidikan;
+        }
+        $paramkecamatan = ' ';
+        if (isset($kecamatan) && $kecamatan != "" && $kecamatan != "undefined") {
+        $paramkecamatan = ' and alm.objectkecamatanfk ='. $kecamatan;
+        }
+        $paramkabupaten = ' ';
+        if (isset($kabupaten) && $kabupaten != "" && $kabupaten != "undefined") {
+        $paramkabupaten = ' and alm.objectkotakabupatenfk ='. $kabupaten;
+        }
 
             $data = DB::select(DB::raw("
             WITH diagnosapasien AS (
@@ -6817,13 +6867,20 @@ class TagihanController  extends ApiController
             LEFT JOIN alamat_m AS alm ON alm.nocmfk = ps.ID
             WHERE
             pd.kdprofile = $idProfile
+            and pd.statusenabled = true
             $paramtglmasuk
             $paramtglkeluar
             $paramDep
             $paramRuangan
             $paramJenisDiagnosa
-            
+            $paramDiagnosa
             $paramstatusPasien
+            $pardep
+            $paramkodeawal
+            $paramjeniskelamin
+            $parampendidikan
+            $paramkecamatan
+            $paramkabupaten
             GROUP BY
             ps.nocm,
             di.kddiagnosa,
