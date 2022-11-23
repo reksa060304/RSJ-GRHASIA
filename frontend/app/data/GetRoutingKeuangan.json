@@ -2140,6 +2140,26 @@
     ]
   },
   {
+    "name": "RincianObyekPenerimaan",
+    "url": "/UGVyaW5jaWFuT2J5ZWtQZW5lcmltYWFu",
+    "templateurl": "module/BendaharaPenerimaan/RincianObyekPenerimaan.html",
+    "controller": "RincianObyekPenerimaanCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
     "name": "RemunTagihanDIklat",
     "url": "/PostingRemunDiklat",
     "templateurl": "module/SDM/Penelitian/RemunTagihanDiklat.html",
