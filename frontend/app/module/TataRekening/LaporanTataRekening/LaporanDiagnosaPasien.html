@@ -147,7 +147,14 @@
                                 </div>
                             </div>
                             <div class="grid_6">
-                                <div class="grid_5">
+                                <div class="grid_2">
+                                    <label c-label item="item" c-label-text="Jenis Kelamin" real></label>
+                                    <input ng-disabled="isDisable" style="width: 100%;" kendo-combo-box
+                                        k-ng-model="item.jeniskelamin" k-data-text-field="'jeniskelamin'"
+                                        k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
+                                        k-data-source="listJenisKelamin" />
+                                </div>
+                                <div class="grid_3">
                                     <label c-label item="item" c-label-text="Departement"></label>
                                     <input style="width: 100%;" kendo-combo-box k-ng-model="item.departemen"
                                         k-data-text-field="'departemen'" k-data-value-field="'id'" k-filter="'contains'"
@@ -167,7 +174,29 @@
                                         placeholder="Kode Awal..." ng-model="item.kodeawal" />
                                 </div>
                             </div>
-                            
+                            <div class="grid_6">
+                                <div class="grid_2">
+                                    <label c-label item="item" c-label-text="Pendidikan" real></label>
+                                    <input ng-disabled="isDisable" style="width: 100%;" kendo-combo-box
+                                        k-ng-model="item.pendidikan" k-data-text-field="'pendidikan'"
+                                        k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
+                                        k-data-source="listPendidikan" />
+                                </div>
+                                <div class="grid_2">
+                                    <label c-label item="item" c-label-text="Kecamatan" real></label>
+                                    <input ng-disabled="isDisable" style="width: 100%;" kendo-combo-box
+                                        k-ng-model="item.kecamatan" k-data-text-field="'namakecamatan'"
+                                        k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
+                                        k-data-source="listKecamatan" />
+                                </div>
+                                <div class="grid_2">
+                                    <label c-label item="item" c-label-text="Kabupaten" real></label>
+                                    <input ng-disabled="isDisable" style="width: 100%;" kendo-combo-box
+                                        k-ng-model="item.kabupaten" k-data-text-field="'namakotakabupaten'"
+                                        k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
+                                        k-data-source="listKabupaten" />
+                                </div>
+                            </div>
                         </div>
                         
                         <!-- <div class="grid_2" style="margin-top:28px">       
@@ -187,7 +216,7 @@
                                     <div class="grid_12" style="margin-top: 10px;">
                                         <div class="grid_12 borderBox">
                                             <kendo-grid id="kGrid2" data-source="sourceLaporan" options="columnLaporan"
-                                                k-selectable="'row'" k-sortable="'true'" class="max-height"
+                                                k-selectable="'row'" class="max-height"
                                                 k-resizable="'true'" k-ng-model="dataSelected"
                                                 ng-click="klik(dataSelected)">
                                             </kendo-grid>

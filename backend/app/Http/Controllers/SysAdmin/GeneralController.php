@@ -441,12 +441,14 @@ class GeneralController extends ApiController
             ->where('statusenabled',true)
             ->orderBy('namakecamatan')
             ->get();
+        $carakeluar=\DB::table('statuskeluar_m')->where('statusenabled', true)->where('kdprofile',30)->get();
         $result = array(
             'kebangsaan' => $kebangsaan,
             'negara' => $negara,
             'kotakabupaten' => $kotakabupaten,
             'propinsi' => $propinsi,
             'kecamatan' => $kecamatan,
+            'carakeluar' => $carakeluar,
             'message' => 'inhuman',
         );
 

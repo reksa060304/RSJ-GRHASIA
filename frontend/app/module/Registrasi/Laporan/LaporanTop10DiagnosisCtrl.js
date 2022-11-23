@@ -25,13 +25,14 @@ define(['initialize'], function (initialize) {
                     $scope.listJenisDiagnosa = dat.data.jenisdiagnosa;                                    
                 });
 
-                $scope.listDepartemen = [
-                    { id: 1, departemen: "Instalasi Rawat Jalan" },
-                    { id: 2, departemen: "Instalasi Rawat Inap"}
-                ];
+                // $scope.listDepartemen = [
+                //     { id: 1, departemen: "Instalasi Rawat Jalan" },
+                //     { id: 2, departemen: "Instalasi Rawat Inap"}
+                // ];
 
                 medifirstService.get("registrasi/daftar-registrasi/get-data-combo-operator", false).then(function (data) {
 					$scope.listKelompokPasien = data.data.kelompokpasien;
+                    $scope.listDepartemen = data.data.deptrirj
                 });
 
                 medifirstService.getPart("sysadmin/general/get-datacombo-icd10", true, true, 10).then(function(data) {
@@ -78,7 +79,12 @@ define(['initialize'], function (initialize) {
                 var tempDiagnosa = ""
                 if ($scope.item.Diagnosa != undefined) {
                     tempDiagnosa = "&idDiagnosa=" + $scope.item.Diagnosa.id;
-                }                                                        
+                }
+                var tempjenispasien = ""
+                if ($scope.item.jenispasien != undefined) {
+                    tempjenispasien = "&idjenispasien=" + $scope.item.jenispasien.id;
+                }
+                
 
                 var chacePeriode = {
                     0: tglAwal,
@@ -92,7 +98,7 @@ define(['initialize'], function (initialize) {
                 medifirstService.get("registrasi/laporan/get-laporan-topten-diagnosa?"
                     + "tglAwal=" + tglAwal
                     + "&tglAkhir=" + tglAkhir
-                    + tempDepartemenId + tempCaraBayarId + tempRuanganId).then(function (data) {
+                    + tempDepartemenId + tempCaraBayarId + tempRuanganId + tempjenispasien).then(function (data) {
                     $scope.isRouteLoading = false;                                    
                     var datas = data.data;
                     for (var i = 0; i < datas.length; i++) {
@@ -141,21 +147,29 @@ define(['initialize'], function (initialize) {
             $scope.formatTanggal = function (tanggal) {
                 return moment(tanggal).format('DD-MM-YYYY');
             }
-
+            $scope.listJenisPasien = [{
+                    id: 1,
+                    jenispasien: 'Jiwa'
+                },
+                {
+                    id: 2,
+                    jenispasien: 'Non Jiwa'
+                },
+            ]
             $scope.columnLaporan = {
                 toolbar: [
-                    "excel",                    
+                    "excel", 
                 ],
-                excel: { fileName: "LaporanDiagnosaPasien.xlsx", allPages: true, },
+                excel: { fileName: "LaporanDiagnosaPasienTop10.xlsx", allPages: true, },
                 // pdf: { fileName: "RekapPembayaranJasaPelayanan.pdf", allPages: true, },
                 excelExport: function (e) {
                     var sheet = e.workbook.sheets[0];
                     sheet.frozenRows = 3;
-                    sheet.mergedCells = ["A1:P1"];
+                    sheet.mergedCells = ["A1:G1"];
                     sheet.name = "Orders";
 
                     var myHeaders = [{
-                        value: "Laporan Diagnosa Pasien",
+                        value: "Laporan Data 10 Besar Data Penyakit Rawat Jalan",
                         fontSize: 20,
                         textAlign: "center",
                         background: "#ffffff",

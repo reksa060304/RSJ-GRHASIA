@@ -171,7 +171,7 @@
                 <td>{{$d->namaproduk}}</td>
                 <td>{{$d->jumlah}}</td>
                 <td>Rp. {{number_format($d->hargasatuan,2)}}</td>
-                <td>Rp. {{number_format($d->hargasatuan * $d->jumlah, 2)}}</td>
+                <td>Rp. {{number_format($d->total, 2)}}</td>
             </tr>
             
         </table>

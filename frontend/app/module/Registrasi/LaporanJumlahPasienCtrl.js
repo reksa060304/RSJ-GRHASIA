@@ -62,6 +62,43 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             ]
             $scope.opsiGridJumlahPasien = {
                 toolbar: ['excel'],
+                excelExport: function (e) {
+                    var sheet = e.workbook.sheets[0];
+                    sheet.frozenRows = 3;
+                    sheet.mergedCells = ["A1:C1"];
+                    sheet.name = "Orders";
+                    var jenispasien = ''
+                    if($scope.item.jenisPasien != undefined){
+                        jenispasien = $scope.item.jenisPasien.jenispasien
+                    }
+                    var myHeaders = [{
+                        value: "Jumlah Pasien Rawat Jalan Per Tahun",
+                        fontSize: 14,
+                        textAlign: "center",
+                        background: "#ffffff",
+                        // color:"#ffffff"
+                    }];
+
+                    sheet.rows.splice(0, 0, {
+                        cells: myHeaders,
+                        type: "header",
+                        height: 35
+                    });
+                    var myFooters = [{
+                        value: "Keterangan : " + jenispasien,
+                        fontSize: 11,
+                        textAlign: "left",
+                        background: "#ffffff",
+                        colSpan: 3
+                        // color:"#ffffff"
+                    }];
+
+                    sheet.rows.splice(100, 0, {
+                        cells: myFooters,
+                        type: "header",
+                        height: 35
+                    });
+                },
                 sortable: true,
                 filterable: false,
                 pageable: true,
