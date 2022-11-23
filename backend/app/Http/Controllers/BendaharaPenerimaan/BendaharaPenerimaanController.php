@@ -3076,7 +3076,13 @@ class BendaharaPenerimaanController extends ApiController {
                 $cekjumlah = $konten->namaproduk;
             }
 
-            else if($konten->idproduk == 5008612){
+            else if($konten->idproduk == 1002122273 || $konten->idproduk == 1002122274){
+                $jumlahsewagedunggrhasiainn += $konten->totaldibayarclosing;
+                $voljumlahsewagedunggrhasiainn++;
+                $cekjumlah = $konten->namaproduk;
+            }
+
+            else if($konten->idproduk == 5008612 || $konten->idproduk == 1002122275 || $konten->idproduk == 1002122276 || $konten->idproduk == 1002122277){
                 $jumlahsewalapangan += $konten->totaldibayarclosing;
                 $voljumlahsewalapangan++;
                 $cekjumlah = $konten->namaproduk;
@@ -7952,7 +7958,7 @@ class BendaharaPenerimaanController extends ApiController {
             }
 
             foreach($target as $tg){
-                if($tg->uraianpendapatan == $main){
+                if($tg->uraianpendapatan == $main->uraianpendapatan){
                     $jumlahtarget += $tg->jumlahpendapatan;
                 }
             }
@@ -8579,7 +8585,7 @@ class BendaharaPenerimaanController extends ApiController {
             }
 
             foreach($target as $tg){
-                if($tg->uraianpendapatan == $main){
+                if($tg->uraianpendapatan == $main->uraianpendapatan){
                     $jumlahtarget += $tg->jumlahpendapatan;
                 }
             }
@@ -8704,6 +8710,123 @@ class BendaharaPenerimaanController extends ApiController {
 
         $result = array(
             'detail' => $data,
+        );
+        
+        return $this->setStatusCode(201)->respond($result, 'tes msg');
+    }
+
+    public function getPerincianObyekPenerimaan(Request $request) {
+        ini_set('max_execution_time', 600);
+        $tahun = $request['tahun'];
+        $bulan = $request['bulan'];
+
+        $data = DB::select(DB::raw("select '' nobku, x.nosts, x.nourut, x.date, x.kdrekening, x.nomer, x.uraian, sum(x.vol) as totalvol, sum(x.kolom1) as totalkolom1, sum(x.kolom2) as totalkolom2,
+        (
+            case 
+            when sum(x.kolom1) is null and sum(x.kolom2) is null then sum(x.kolom1)
+            when sum(x.kolom1) is null and sum(x.kolom2) is not null then sum(x.kolom2)
+            when sum(x.kolom1) is not null and sum(x.kolom2) is null then sum(x.kolom1)
+            else 0 
+            end
+        ) as totalfix
+        from(	
+				select sts.nosts, sts.tglpenerimaan::date as date, stsd.nourut, stsd.kdrekening, stsd.nomer, stsd.uraian, stsd.vol, stsd.kolom1, stsd.kolom2
+                from surattandasetoran_t sts
+                inner join surattandasetorandetail_t stsd on stsd.objectstsfk = sts.nosts
+                left join ststosck_t as ssc on sts.norec = ssc.objectstsfk
+                left join strukclosingkasir_t as sck on ssc.objectsckfk = sck.norec
+                left join strukclosing_t as sc on sc.norec = sck.noclosingfk
+                left join strukbuktipenerimaan_t AS sbm on sbm.noclosingfk = sc.norec
+                left join strukbuktipenerimaancarabayar_t as sbmcr ON sbmcr.nosbmfk = sbm.norec
+                left JOIN carabayar_m as cb ON cb.id = sbmcr.objectcarabayarfk
+                where sts.statusenabled = true
+                and stsd.statusenabled = true and stsd.kdprofile = 30
+				and stsd.uraian = 'JUMLAH'
+                and sc.noclosing not in (
+                    select sc.noclosing from strukclosing_t sc
+                    inner join strukhistori_t sh on sh.noclosing = sc.norec
+                    where sh.statusenabled = false
+                )
+                and date_part('month', sts.tglpenerimaan::timestamp ) = '$bulan'
+                and date_part('year', sts.tglpenerimaan::timestamp ) = '$tahun'
+                group by sts.nosts, sts.tglpenerimaan::date, stsd.nourut, stsd.kdrekening, stsd.nomer, stsd.uraian, stsd.vol, stsd.kolom1, stsd.kolom2
+        ) as x
+        group by x.nosts, x.nourut, x.date, x.kdrekening, x.nomer, x.uraian
+
+        union all
+
+		select '' nobku, x.nosts, x.nourut, x.date, x.kdrekening, x.nomer, x.uraian, sum(x.vol) as totalvol, sum(x.kolom1) as totalkolom1, sum(x.kolom2) as totalkolom2,
+        (
+            case 
+            when sum(x.kolom1) is null and sum(x.kolom2) is null then sum(x.kolom1)
+            when sum(x.kolom1) is null and sum(x.kolom2) is not null then sum(x.kolom2)
+            when sum(x.kolom1) is not null and sum(x.kolom2) is null then sum(x.kolom1)
+            else 0 
+            end
+        ) as totalfix
+        from(	
+				select sts.nosts, sts.tglpenerimaan::date as date, stsd.nourut, stsd.kdrekening, stsd.nomer, stsd.uraian, stsd.vol, stsd.kolom1, stsd.kolom2
+                from surattandasetoran_t sts
+                inner join surattandasetorandetail_t stsd on stsd.objectstsfk = sts.nosts
+                where sts.statusenabled = true
+                and stsd.statusenabled = true and stsd.kdprofile = 30
+				and sts.kdprofile = 30
+				and sts.ismanual = true
+				and stsd.uraian = 'JUMLAH'
+                and date_part('month', sts.tglpenerimaan::timestamp ) = '$bulan'
+                and date_part('year', sts.tglpenerimaan::timestamp ) = '$tahun'
+                group by sts.nosts, sts.tglpenerimaan::date, stsd.nourut, stsd.kdrekening, stsd.nomer, stsd.uraian, stsd.vol, stsd.kolom1, stsd.kolom2
+        ) as x
+        group by x.nosts, x.nourut, x.date, x.kdrekening, x.nomer, x.uraian
+        
+        union all
+
+        select '' nobku, x.nosts, x.nourut, x.date, x.kdrekening, x.nomer, x.uraian, sum(x.vol) as totalvol, sum(x.kolom1) as totalkolom1, sum(x.kolom2) as totalkolom2,
+        (
+            case 
+            when sum(x.kolom1) is null and sum(x.kolom2) is null then sum(x.kolom1)
+            when sum(x.kolom1) is null and sum(x.kolom2) is not null then sum(x.kolom2)
+            when sum(x.kolom1) is not null and sum(x.kolom2) is null then sum(x.kolom1)
+            else 0 
+            end
+        ) as totalfix
+        from(	
+				select sts.nosts, sts.tglpenerimaan::date as date, stsd.nourut, stsd.kdrekening, stsd.nomer, stsd.uraian, stsd.vol, stsd.kolom1, stsd.kolom2
+                from surattandasetoran_t sts
+                inner join surattandasetorandetail_t stsd on stsd.objectstsfk = sts.nosts
+				inner join ststorekapklaim_t str on sts.norec = str.objectstsfk
+				inner join rekapklaimbpjs_t rkb on str.objectrekapklaimfk = rkb.norec
+                where sts.statusenabled = true
+                and stsd.statusenabled = true 
+                and stsd.kdprofile = 30
+                and str.statusenabled = true 
+                and str.kdprofile = 30
+                and rkb.statusenabled = true 
+                and rkb.kdprofile = 30
+				and sts.kdprofile = 30
+				and stsd.uraian = 'JUMLAH'
+                and date_part('month', sts.tglpenerimaan::timestamp ) = '$bulan'
+                and date_part('year', sts.tglpenerimaan::timestamp ) = '$tahun'
+                group by sts.nosts, sts.tglpenerimaan::date, stsd.nourut, stsd.kdrekening, stsd.nomer, stsd.uraian, stsd.vol, stsd.kolom1, stsd.kolom2
+        ) as x
+        group by x.nosts, x.nourut, x.date, x.kdrekening, x.nomer, x.uraian
+        order by date, nourut"));
+
+        $target = DB::select(DB::raw("select rp.norec,rp.isperubahan, rp.jumlahpendapatan,rp.tahun, rp.tglinput, rp.keterangan, rp.objectasalprodukfk, rp.objecturaianpendapatanfk,up.uraianpendapatan,ap.namaexternal, rp.uraianpendapatan as uraian
+        from rincianpendapatan_t as rp
+        inner join asalproduk_m as ap on ap.id = rp.objectasalprodukfk
+        inner join uraianpendapatan_m as up on up.id = rp.objecturaianpendapatanfk
+        where rp.kdprofile = 30
+        and rp.statusenabled = true
+        and up.kdprofile = 30
+        and up.statusenabled = true
+        and rp.tahun = '$tahun'
+        and up.uraianpendapatan = 'PENDAPATAN USAHA BLUD'
+        order by up.nourut"));
+
+        $result = array(
+            'detail' => $data,
+            'target' => $target,
         );
         
         return $this->setStatusCode(201)->respond($result, 'tes msg');

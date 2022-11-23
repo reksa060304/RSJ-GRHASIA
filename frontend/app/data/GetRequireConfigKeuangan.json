@@ -435,6 +435,11 @@
             "urlDep": "module/BendaharaPenerimaan/RekapitulasiPendapatanCtrl"
         },
         {
+
+            "nameDep": "RincianObyekPenerimaanCtrl",
+            "urlDep": "module/BendaharaPenerimaan/RincianObyekPenerimaanCtrl"
+        },
+        {
             "nameDep": "RemunTagihanDiklatCtrl",
             "urlDep": "module/SDM/Penelitian/RemunTagihanDiklatCtrl"
         },
