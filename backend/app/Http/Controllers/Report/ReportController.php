@@ -10834,7 +10834,8 @@ public function suratBuktiPengembalian(Request $request)
                         END AS hargasatuan,
                         ( CASE WHEN spd.hargadiscount IS NULL THEN 0 ELSE spd.hargadiscount END ) AS diskon,
                         ( CASE WHEN spd.hargatambahan IS NULL THEN 0 ELSE spd.hargatambahan END ) AS jasa,
-                    ( spd.hargasatuan - ( CASE WHEN spd.hargadiscount IS NULL THEN 0 ELSE spd.hargadiscount END ) ) * spd.qtyproduk + ( CASE WHEN spd.hargatambahan IS NULL THEN 0 ELSE spd.hargatambahan END ) AS total,
+                         
+                         sp.totalharusdibayar AS total,
                     '-' AS namakelas,
                     '-' AS asalrujukan,
                     sp.tglstruk,

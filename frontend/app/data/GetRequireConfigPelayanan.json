@@ -3538,6 +3538,10 @@
         {
             "nameDep": "PengkajianAwalMedisRJNAPZACtrl",
             "urlDep": "module/EMR/PengkajianAwalMedisRJNAPZACtrl"
-        }  
+        },
+        {
+            "nameDep": "laporanTindakanPPACtrl",
+            "urlDep": "module/Registrasi/Laporan/laporanTindakanPPACtrl"
+        }
     ]
 }
