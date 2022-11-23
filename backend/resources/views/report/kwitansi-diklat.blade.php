@@ -93,8 +93,8 @@
     </style>
 </head>
 
-<body class="A4" style="font-family:Arial;height: auto">
-    <section class="sheet padding-15mm" style="font-family:Arial">
+<body class="A4" style="font-family:Tahoma;height: auto">
+    <section class="sheet padding-15mm" style="font-family:Tahoma">
 
         <table cellspacing="0" cellpadding="0" border="0" width="100%" >
             <tbody>
@@ -109,7 +109,7 @@
                         @endif
 
                     </td>
-                    <td style="text-align: left; font-family: Arial">
+                    <td style="text-align: left; font-family: Tahoma">
 
                         <span style="font-size: 14pt; "><b>Rumah Sakit Jiwa Grhasia</b></span><br>
                         
@@ -127,7 +127,7 @@
                     
                 </tr>
                 <tr>
-                    <th colspan="2" style="font-family: Arial">PERINCIAN BIAYA DIKLAT</th>
+                    <th colspan="2" style="font-family: Tahoma">PERINCIAN BIAYA DIKLAT</th>
                 </tr>
             </tbody>
         </table>
@@ -139,19 +139,19 @@
                     <td>
                         <table>
                             <tr>
-                                <td style="font-family: Arial">No. Kwitansi</td>
+                                <td style="font-family: Tahoma">No. Kwitansi</td>
                                 <td> : </td>
-                                <td style="font-family: Arial">{{$d->nosbm}}</td>
+                                <td style="font-family: Tahoma">{{$d->nosbm}}</td>
                             </tr>
                             <tr>
-                                <td style="font-family: Arial">Nama Institusi</td>
+                                <td style="font-family: Tahoma">Nama Institusi</td>
                                 <td> : </td>
-                                <td style="font-family: Arial">{{$d->namapasien}}</td>
+                                <td style="font-family: Tahoma">{{$d->namapasien}}</td>
                             </tr>
                             <tr>
-                                <td style="font-family: Arial">Tanggal Kegiatan</td>
+                                <td style="font-family: Tahoma">Tanggal Kegiatan</td>
                                 <td> : </td>
-                                <td style="font-family: Arial">{{\Carbon\Carbon::parse($d->tanggalmulai)->format('d-m-Y')}} S/D {{\Carbon\Carbon::parse($d->tanggalselesai)->format('d-m-Y')}}</td>
+                                <td style="font-family: Tahoma">{{\Carbon\Carbon::parse($d->tanggalmulai)->format('d-m-Y')}} S/D {{\Carbon\Carbon::parse($d->tanggalselesai)->format('d-m-Y')}}</td>
                             </tr>
                         </table>
                     </td>
@@ -160,36 +160,36 @@
         {{-- <hr style="border:1px solid #000;margin-bottom:0px"> --}}
         <table  width="100%" style="border-bottom: 1pt solid black;border-top: 1pt solid black;">
             <tr>
-                <th style="font-family: Arial">Tanggal</th>
-                <th style="font-family: Arial">Kegiatan</th>
-                <th style="font-family: Arial">Jumlah</th>
-                <th style="font-family: Arial">Tarif</th>
-                <th style="font-family: Arial">Total</th>
+                <th style="font-family: Tahoma">Tanggal</th>
+                <th style="font-family: Tahoma">Kegiatan</th>
+                <th style="font-family: Tahoma">Jumlah</th>
+                <th style="font-family: Tahoma">Tarif</th>
+                <th style="font-family: Tahoma">Total</th>
             </tr>
             <tr style="text-align: center;">
-                <td style="font-family: Arial">{{\Carbon\Carbon::parse($d->tglregistrasi)->format('d-m-Y')}}</td>
-                <td style="font-family: Arial">{{$d->namaproduk}}</td>
-                <td style="font-family: Arial">{{$d->jumlah}}</td>
-                <td style="font-family: Arial">Rp. {{number_format($d->hargasatuan,2)}}</td>
-                <td style="font-family: Arial">Rp. {{number_format($d->total, 2)}}</td>
+                <td style="font-family: Tahoma">{{\Carbon\Carbon::parse($d->tglregistrasi)->format('d-m-Y')}}</td>
+                <td style="font-family: Tahoma">{{$d->namaproduk}}</td>
+                <td style="font-family: Tahoma">{{$d->jumlah}}</td>
+                <td style="font-family: Tahoma">Rp. {{number_format($d->hargasatuan,2)}}</td>
+                <td style="font-family: Tahoma">Rp. {{number_format($d->total, 2)}}</td>
             </tr>
             
         </table>
         <table width="100%" >
             <tr style="text-align: right;">
-                <td style="font-family: Arial">Total Transaksi</td>
-                <td style="font-family: Arial" width="100px">Rp. {{number_format($d->total, 2)}}</td>
+                <td style="font-family: Tahoma">Total Transaksi</td>
+                <td style="font-family: Tahoma" width="100px">Rp. {{number_format($d->total, 2)}}</td>
             </tr>
         </table>
         <table style="text-align: center">
             <tr>
-                <td style="font-family: Arial" style="height: 20px">Sleman, {{\Carbon\Carbon::now()->format('d-m-Y')}}</td>
+                <td style="font-family: Tahoma" style="height: 20px">Sleman, {{\Carbon\Carbon::now()->format('d-m-Y')}}</td>
             </tr>
             <tr>
                 <td style="height: 80px"></td>
             </tr>
             <tr>
-                <td style="font-family: Arial">{{$d->namalengkap}}</td>
+                <td style="font-family: Tahoma">{{$d->namalengkap}}</td>
             </tr>
         </table>
         @endforeach
