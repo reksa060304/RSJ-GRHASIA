@@ -11,33 +11,123 @@
     <div class="grid_12 headerBox">
         <h1 style="color: white;"><b>Master Ruangan Rawat Inap</b></h1>
     </div>
-    <!-- <div class="grid_12" style="margin-top: 30px;">
-		<label c-label item="item" c-label-text="Detail Jenis Produk"></label>
-		<div class="grid_12" ng-repeat="list in listJenisProdukDetail">
-			<div ng-repeat="opsi in list.detail | orderBy:'no'" class="grid_1">
-				<input type='radio' class='k-radio' name="{{opsi.nama}}" id="{{opsi.nama}}" ng-model="item.jenisProdukDetail" value="{{opsi.id}}">
-				<label class="k-radio-label" for="{{opsi.nama}}">{{opsi.nama}}</label>
-			</div>
-		</div>
-	</div>		 -->
 </div>
-<div class="grid_12" style="margin-top: 10px;">
-    <div class="grid_12" style="margin-top: 20px;">
-        <div class="grid_12 borderBox">
-            <kendo-grid options="mainGridOptions" k-data-source="dataSource" k-sortable="'true'" k-ng-model="current"
-                ng-click="klik(current)">
+<div class="grid_12">
+    <div ng-cloak>
+        <md-content>
+            <md-tabs md-dynamic-height md-border-bottom>
+                <md-tab label="ruangan">
+                    <md-content class="md-padding">
+                        <div class="grid_12">
+                        </div>
+                        <div class="grid_12">
+                            <div class="grid_12 borderBox">
+                                <kendo-grid options="columnRuangan" k-data-source="dataRuangan" k-sortable="'true'"
+                                    k-ng-model="current" ng-click="klik(current)">
+                                </kendo-grid>
+                            </div>
+                        </div>
+                        <div class="grid_12" style="margin-top: 20px;">
+                            <div class="grid_2">
+                                <button class="c-button" ng-click="editRuangan()">Ubah</button>
+                            </div>
+                            <div class="grid_2">
+                                <button class="c-button" ng-click="tambahRuangan()">Tambah</button>
+                            </div>
+                            <div class="grid_2">
+                                <button class="c-button" ng-click="hapusRuangan()">Hapus</button>
+                            </div>
+                        </div>
+                        <div kendo-window="popUpDataRuangan" k-title="'Ruangan'" k-width="850"
+                            k-height="350" k-visible="false" k-on-open="win2visible = true"
+                            k-on-close="win2visible = false">
+                            <div class="panel panel-default container_12" style="padding: 0px 10px;">
+                                <div class="grid_12">
+                                    <div class="grid_3">
+                                        <div class="grid_12">
+                                            <label c-label item="item" c-label-text="Nama Ruangan" real></label>
+                                        </div>
+                                        <div class="grid_12">
+                                            <input c-text-box type="input" filter="'string'" class="k-textbox"
+                                                ng-model="itemRuangan.namaRuangan" />
+                                        </div>
+                                    </div>
+                                    <div class="grid_3">
+                                        <div class="grid_12">
+                                            <label c-label item="item" c-label-text="Departemen"></label>
+                                        </div>
+                                        <div class="grid_12">
+                                            <input style="width: 100%;" kendo-combo-box
+                                                k-ng-model="itemRuangan.departemen"
+                                                k-data-text-field="'namadepartemen'" k-data-value-field="'id'"
+                                                k-filter="'contains'" k-auto-bind="false"
+                                                k-data-source="listDepartemen" />
+                                        </div>
+                                    </div>
+                                    <div class="grid_3">
+                                        <div class="grid_12">
+                                            <label c-label item="item" c-label-text="Kode Internal" real></label>
+                                        </div>
+                                        <div class="grid_12">
+                                            <input c-text-box type="input" filter="'string'" class="k-textbox"
+                                                ng-model="itemRuangan.kodeInternal" />
+                                        </div>
+                                    </div>
+                                <div class="grid_12">
+                                    <div class="k-edit-buttons  k-state-default pull-right" style="margin-top:10px">
+                                        <button class="k-button k-button-icontext k-primary k-grid-update"
+                                            ng-click="simpanDataRuangan()"><span
+                                                class="k-icon k-update"></span>Simpan</button>
+                                        <button class="k-button  k-button-icontext" ng-click="batalDataRuangan()"><span
+                                                class="k-icon k-cancel"></span>Batal</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </md-content>
+                </md-tab>
+                <md-tab label="kamar">
+                    <md-content class="md-padding">
+                        <div class="grid_12">
+                        </div>
+                        <div class="grid_12">
+                            <div class="grid_12 borderBox">
+                                <kendo-grid options="columnKamar" k-data-source="dataKamar" k-sortable="'true'"
+                                    k-ng-model="dataSelectedKamar" ng-click="klikDataKamar(dataSelectedKamar)">
+                                </kendo-grid>
+                            </div>
+                        </div>
+                    </md-content>
+                </md-tab>
+                <md-tab label="tempat tidur">
+                    <md-content class="md-padding">
+                        <div class="grid_12">
+                        </div>
+                        <div class="grid_12">
+                            <div class="grid_12 borderBox">
+                                <kendo-grid options="mainGridOptions" k-data-source="dataSource" k-sortable="'true'"
+                                    k-ng-model="current" ng-click="klik(current)">
+                                </kendo-grid>
+                            </div>
+                        </div>
+                    </md-content>
+                </md-tab>
+                <md-tab label="riwayat kamar">
+                    <md-content class="md-padding">
+                        <div class="grid_12">
+                        </div>
+                        <div class="grid_12">
+                            <div class="grid_12 borderBox">
+                                <kendo-grid options="mainGridOptions" k-data-source="dataSource" k-sortable="'true'"
+                                    k-ng-model="current" ng-click="klik(current)">
+                                </kendo-grid>
+                            </div>
+                        </div>
+                    </md-content>
+                </md-tab>
+            </md-tabs>
+        </md-content>
+    </div>
 
-            </kendo-grid>
-        </div>
+</div>
 
-    </div>
-</div>
-<div class="grid_12" style="margin-top: 20px;">
-    <div class="grid_2">
-        <button class="c-button" ng-click="edit()">Ubah</button>
-    </div>
-    <div class="grid_2">
-        <button class="c-button" ng-click="tambah()">Tambah</button>
-    </div>
-</div>
-</div>
