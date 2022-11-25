@@ -4999,16 +4999,87 @@ class MasterController extends ApiController{
         ->get();
         return $this->respond($data);
     }
-    public function getListRuangan(Request $request)
+    public function getLoadRuanganDll(Request $request)
     {
-        $data = Ruangan::where('statusenabled', true)
-        ->where('kdprofile', 30)
-        ->where('objectdepartemenfk', 16)
-        ->get();
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $ruangan = \DB::select(DB::raw("select ru.id as idRuangan, ru.statusenabled, de.id as idDepartemen, de.namadepartemen,ru.namaruangan, ru.kdinternal  from ruangan_m as ru left join departemen_m de on de.id = ru.objectdepartemenfk where ru.kdprofile = $kdProfile and ru.statusenabled = $request[status]"));
         $result = array(
-            'data'=>$data,
+            'ruangan'=>$ruangan,
             'as'=> 'Feezy'
         );
         return $this->respond($result);
+    }
+    public function getComboMaster(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $departemen = \DB::table('departemen_m')->where('statusenabled', true)
+        ->where('kdprofile', $kdProfile)->get();
+
+        $result = array(
+            'departemen'=> $departemen,
+            'as'=> 'Feezy'
+        );
+        return $this->respond($result);
+    }
+    public function saveMasterRuangan(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        DB::beginTransaction();
+        $data = $request['data'];
+        $transMessage = "";
+        try{
+            if($request['method'] == 'post'){
+                $idJenis = Ruangan::max('id');
+                $idJenis= $idJenis +1;
+                if ($data['id'] == "") {
+                    $JD = new Ruangan();
+                    $JD->norec = $JD->generateNewId();
+                    $JD->id = $idJenis;
+                    $JD->kdprofile = $kdProfile;
+                    $JD->statusenabled = true;
+                    $transMessage = "Tambah";
+                }else{
+                    $transMessage = "Ubah";
+                    $JD = Ruangan::where('id',$data['id'])->where('kdprofile', $kdProfile)->first();
+                }
+                $JD->kodeexternal = $idJenis;
+                $JD->namaexternal = $data['namaruangan'];
+                $JD->reportdisplay = $data['namaruangan'];
+                $JD->namaruangan = $data['namaruangan'];
+                $JD->kdruangan = $idJenis;
+                $JD->objectdepartemenfk = $data['objectdepartemenfk'];
+                if(isset($data['kdinternal'])){
+                    $JD->kdinternal = $data['kdinternal'];
+                }
+                $JD->qruangan = $idJenis;
+                $JD->save();
+            }
+            if($request['method']== 'delete'){
+                $transMessage = "Hapus";
+                $JD = Ruangan::where('id',$data['id'])->where('kdprofile', $kdProfile)->delete();
+            }
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+
+        if ($transStatus == 'true') {
+            $transMessage = $transMessage ." sukses";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "as" => 'Feezy',
+            );
+
+        } else {
+            $transMessage = $transMessage ." gagal";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "e"=> $e->getLine() . " | ". $e->getMessage(),
+                "as" => 'Feezy',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
 }

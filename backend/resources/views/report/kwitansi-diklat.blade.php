@@ -93,25 +93,25 @@
     </style>
 </head>
 
-<body class="A4" style="font-family:Arial;height: auto">
-    <section class="sheet padding-15mm" style="font-family:Arial">
+<body class="A4" style="font-family:Tahoma;height: auto">
+    <section class="sheet padding-15mm" style="font-family:Tahoma">
 
         <table cellspacing="0" cellpadding="0" border="0" width="100%" >
             <tbody>
                 <tr>
                     <td width="10%" style="padding: 5px">
                         @if(stripos(\Request::url(), 'localhost') !== FALSE)
-                        <img src="{{ asset('img/logo_grhasia.png') }}" alt=""
+                        <img src="{{ asset('img/LOGO GRHASIA.png') }}" alt=""
                             style="width: 90px;">
                         @else
-                        <img src="{{ asset('service/img/logo_grhasia.png') }}" alt=""
+                        <img src="{{ asset('service/img/LOGO GRHASIA.png') }}" alt=""
                             style="width: 90px;">
                         @endif
 
                     </td>
-                    <td style="text-align: left; font-family: Arial">
+                    <td style="text-align: left; font-family: Tahoma">
 
-                        <span style="font-size: 14pt;"><b>Rumah Sakit Jiwa Grhasia</b></span><br>
+                        <span style="font-size: 14pt; "><b>Rumah Sakit Jiwa Grhasia</b></span><br>
                         
                         <span color="#000000" style="font-size: 10pt">
                             Jl. Kaliurang KM 17 Yogyakarta
@@ -127,7 +127,7 @@
                     
                 </tr>
                 <tr>
-                    <th colspan="2">PERINCIAN BIAYA PELAYANAN</th>
+                    <th colspan="2" style="font-family: Tahoma">PERINCIAN BIAYA DIKLAT</th>
                 </tr>
             </tbody>
         </table>
@@ -139,19 +139,19 @@
                     <td>
                         <table>
                             <tr>
-                                <td>No. Kwitansi</td>
+                                <td style="font-family: Tahoma">No. Kwitansi</td>
                                 <td> : </td>
-                                <td>{{$d->nosbm}}</td>
+                                <td style="font-family: Tahoma">{{$d->nosbm}}</td>
                             </tr>
                             <tr>
-                                <td>Nama Institusi</td>
+                                <td style="font-family: Tahoma">Nama Institusi</td>
                                 <td> : </td>
-                                <td>{{$d->namapasien}}</td>
+                                <td style="font-family: Tahoma">{{$d->namapasien}}</td>
                             </tr>
                             <tr>
-                                <td>Tanggal Kegiatan</td>
+                                <td style="font-family: Tahoma">Tanggal Kegiatan</td>
                                 <td> : </td>
-                                <td>{{\Carbon\Carbon::parse($d->tanggalmulai)->format('Y-m-d')}} S/D {{\Carbon\Carbon::parse($d->tanggalselesai)->format('Y-m-d')}}</td>
+                                <td style="font-family: Tahoma">{{\Carbon\Carbon::parse($d->tanggalmulai)->format('d-m-Y')}} S/D {{\Carbon\Carbon::parse($d->tanggalselesai)->format('d-m-Y')}}</td>
                             </tr>
                         </table>
                     </td>
@@ -160,36 +160,36 @@
         {{-- <hr style="border:1px solid #000;margin-bottom:0px"> --}}
         <table  width="100%" style="border-bottom: 1pt solid black;border-top: 1pt solid black;">
             <tr>
-                <th>Tanggal</th>
-                <th>Kegiatan</th>
-                <th>Qty</th>
-                <th>Tarif</th>
-                <th>Total</th>
+                <th style="font-family: Tahoma">Tanggal</th>
+                <th style="font-family: Tahoma">Kegiatan</th>
+                <th style="font-family: Tahoma">Jumlah</th>
+                <th style="font-family: Tahoma">Tarif</th>
+                <th style="font-family: Tahoma">Total</th>
             </tr>
             <tr style="text-align: center;">
-                <td>{{$d->tglregistrasi}}</td>
-                <td>{{$d->namaproduk}}</td>
-                <td>{{$d->jumlah}}</td>
-                <td>Rp. {{number_format($d->hargasatuan,2)}}</td>
-                <td>Rp. {{number_format($d->total, 2)}}</td>
+                <td style="font-family: Tahoma">{{\Carbon\Carbon::parse($d->tglregistrasi)->format('d-m-Y')}}</td>
+                <td style="font-family: Tahoma">{{$d->namaproduk}}</td>
+                <td style="font-family: Tahoma">{{$d->jumlah}}</td>
+                <td style="font-family: Tahoma">Rp. {{number_format($d->hargasatuan,2)}}</td>
+                <td style="font-family: Tahoma">Rp. {{number_format($d->total, 2)}}</td>
             </tr>
             
         </table>
         <table width="100%" >
             <tr style="text-align: right;">
-                <td>Total Transaksi</td>
-                <td width="100px">Rp. {{number_format($d->total, 2)}}</td>
+                <td style="font-family: Tahoma">Total Transaksi</td>
+                <td style="font-family: Tahoma" width="100px">Rp. {{number_format($d->total, 2)}}</td>
             </tr>
         </table>
         <table style="text-align: center">
             <tr>
-                <td style="height: 20px">Sleman, {{\Carbon\Carbon::now()->format('Y-m-d')}}</td>
+                <td style="font-family: Tahoma" style="height: 20px">Sleman, {{\Carbon\Carbon::now()->format('d-m-Y')}}</td>
             </tr>
             <tr>
                 <td style="height: 80px"></td>
             </tr>
             <tr>
-                <td>{{$d->namalengkap}}</td>
+                <td style="font-family: Tahoma">{{$d->namalengkap}}</td>
             </tr>
         </table>
         @endforeach
