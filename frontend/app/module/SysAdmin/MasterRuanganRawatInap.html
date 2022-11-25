@@ -9,21 +9,34 @@
 </style>
 <div class="grid_12">
     <div class="grid_12 headerBox">
-        <h1 style="color: white;"><b>Master Ruangan Rawat Inap</b></h1>
+        <h1 style="color: white;"><b>Master Data Ruangan</b></h1>
     </div>
 </div>
 <div class="grid_12">
     <div ng-cloak>
         <md-content>
             <md-tabs md-dynamic-height md-border-bottom>
-                <md-tab label="ruangan">
+                <md-tab label="ruangan" ng-click="getRuangan('ruangan')">
                     <md-content class="md-padding">
                         <div class="grid_12">
+                            <div class="grid_2">
+                                <div class="grid_12">
+                                    <label c-label item="item">Status Enabled</label>
+                                </div>
+                                <div class="grid_12">
+                                    <input style="width: 100%; " kendo-combo-box k-ng-model="item.Status"
+                                        k-data-text-field=" 'status' " k-filter=" 'contains' "
+                                        k-data-value-field=" 'id' " k-auto-bind="false " k-data-source="listStatus" />
+                                </div>
+                            </div>
+                            <div class="grid_1">
+                                <button class="c-button" style="margin-top: 22px" ng-click="cariFilter()">Cari</button>
+                            </div>
                         </div>
                         <div class="grid_12">
                             <div class="grid_12 borderBox">
                                 <kendo-grid options="columnRuangan" k-data-source="dataRuangan" k-sortable="'true'"
-                                    k-ng-model="current" ng-click="klik(current)">
+                                    k-ng-model="dataRuanganSelected" ng-click="klikDataRuangan(dataRuanganSelected)">
                                 </kendo-grid>
                             </div>
                         </div>
@@ -86,7 +99,7 @@
                         </div>
                     </md-content>
                 </md-tab>
-                <md-tab label="kamar">
+                <md-tab label="kamar" ng-click="getRuangan('kamar')">
                     <md-content class="md-padding">
                         <div class="grid_12">
                         </div>
@@ -99,7 +112,7 @@
                         </div>
                     </md-content>
                 </md-tab>
-                <md-tab label="tempat tidur">
+                <md-tab label="tempat tidur" ng-click="getRuangan('tempat tidur')">
                     <md-content class="md-padding">
                         <div class="grid_12">
                         </div>
@@ -112,7 +125,7 @@
                         </div>
                     </md-content>
                 </md-tab>
-                <md-tab label="riwayat kamar">
+                <md-tab label="riwayat kamar" ng-click="getRuangan('riwayat kamar')">
                     <md-content class="md-padding">
                         <div class="grid_12">
                         </div>

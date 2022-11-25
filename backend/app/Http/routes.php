@@ -2658,7 +2658,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
               Route::get('sysadmin/settingdatafixed/get-data-from-table', 'SysAdmin\Master\SettingDataFixedController@getDataFromTable');
               Route::get('sysadmin/settingdatafixed/get-report-display', 'SysAdmin\Master\SettingDataFixedController@getReportDisplayTable');
               Route::get('sysadmin/settingdatafixed/get/{namaField}', 'SysAdmin\Master\SettingDataFixedController@getSettingDataFixedGeneric');
-            // });
+              Route::post('sysadmin/master/save-data-ruangan','SysAdmin\Master\MasterController@saveMasterRuangan');
+              // });
             // Route::group(['prefix' => 'general'], function () {
                 // GET //
                 Route::get('sysadmin/general/identifikasi-sep', 'SysAdmin\GeneralController@IdentifikasiSEP');
