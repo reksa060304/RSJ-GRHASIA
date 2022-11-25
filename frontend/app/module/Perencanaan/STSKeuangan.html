@@ -77,7 +77,7 @@
                 </a>
             </legend>
             <div class="grid_12" id="contentPencarian">
-                <div class="grid_4" style="margin-top: 15px;">
+                <div class="grid_12" style="margin-top: 15px;">
                     <div class="grid_12">
                         <!-- AwalPeriode -->
                         <div class="grid_12">
@@ -85,7 +85,7 @@
                         </div>
                         <div class="grid_12">
                             <!-- AwalPeriode -->
-                            <div class="grid_5">
+                            <div class="grid_2">
                                 <div class="grid_12">
                                     <div class="grid_12">
                                         <input style="width: 100%" k-ng-model="item.tglawal" kendo-datepicker placeholer="yyyy-mm-dd"
@@ -93,11 +93,37 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="grid_5">
+                            <div class="grid_2">
                                 <div class="grid_12">
                                     <div class="grid_12">
                                         <input style="width: 100%" k-ng-model="item.tglakhir" kendo-datepicker placeholer="yyyy-mm-dd"
                                         k-format="'yyyy-MM-dd'" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="grid_2" style="margin-top: -15px;">
+                                <div class="grid_12">
+                                    <label c-label item="item" c-label-text="Sub Kegiatan"></label>
+                                </div>
+                                <div class="grid_12">
+                                    <div class="grid_12">
+                                        <input kendo-combo-box k-ng-model="item.subkegiatan"
+                                        k-data-text-field="'keterangan'" k-data-value-field="'id'"
+                                        k-filter="'contains'" k-auto-bind="false" 
+                                        k-data-source="listKegiatan"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="grid_2" style="margin-top: -15px;">
+                                <div class="grid_12">
+                                    <label c-label item="item" c-label-text="Sub Sub Kegiatan"></label>
+                                </div>
+                                <div class="grid_12">
+                                    <div class="grid_12">
+                                        <input kendo-combo-box k-ng-model="item.subsubkegiatan"
+                                        k-data-text-field="'keterangansubsubkegiatan'" k-data-value-field="'idsubsubkegiatan'"
+                                        k-filter="'contains'" k-auto-bind="false" 
+                                        k-data-source="listSubSubKegiatan"/>
                                     </div>
                                 </div>
                             </div>

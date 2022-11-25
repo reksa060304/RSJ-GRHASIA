@@ -4556,9 +4556,193 @@ class ReportController extends ApiController{
             ) as y group by idjenisanggaran, bold, nourut, kode, keterangan, jumlahanggaran, tglrealisasi order by nourut
         ) as a"));
 
+        $penerimaan = DB::select(DB::raw("select 'false' padding, text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
+        from(
+            select 'Transfer Bendahara Penerima' as text, 'LLLLL' kode, 6 div, 0 subtotal, 
+            case when extract(month from tglspp) = '10' then sum(nilaispp) else 0 end as totalbulanlalu,
+            case when extract(month from tglspp) = '11' then sum(nilaispp) else 0 end as totalbulanini
+                from spp_t
+            where kdprofile = 30 and statusenabled = true
+            and extract(month from tglspp) in('10', '11')
+            group by extract(month from tglspp)
+        
+            union all
+        
+            select 'Transfer Bendahara Penerima' as text, 'LLLLL' kode, 6 div, 0 subtotal, 
+            case when extract(month from tglspm) = '10' then sum(nilaispm) else 0 end as totalbulanlalu,
+            case when extract(month from tglspm) = '11' then sum(nilaispm) else 0 end as totalbulanini
+                from spm_t
+            where kdprofile = 30 and statusenabled = true
+            and extract(month from tglspm) in('10', '11')
+            group by extract(month from tglspm)
+        ) as x
+        group by text, kode, div, subtotal
+        
+        union all
+        
+        select 'false' padding, text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
+        from(
+            select 'Jasa Giro' as text, 'MMMMM' kode, 7 div, 0 subtotal, 
+            case when extract(month from tglpemasukan) = '10' then sum(jumlahpemasukan) else 0 end as totalbulanlalu,
+            case when extract(month from tglpemasukan) = '11' then sum(jumlahpemasukan) else 0 end as totalbulanini
+                from jasagiro_t
+            where kdprofile = 30 and statusenabled = true
+            and extract(month from tglpemasukan) in('10', '11')
+            group by uraianjasagiro, nojasagiro, extract(month from tglpemasukan)
+        ) as x
+        group by text, kode, div, subtotal
+
+		union all
+
+		select 'false' padding, text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
+		from(
+			select 'STS' as text, 'MMMMM' kode, 18 div, 0 subtotal, 
+			case when extract(month from tglsts) = '10' then sum(nilaists::float8) else 0 end as totalbulanlalu,
+			case when extract(month from tglsts) = '11' then sum(nilaists::float8) else 0 end as totalbulanini
+				from stskeuangan_t
+			where kdprofile = 30 and statusenabled = true
+			and extract(month from tglsts) in('10', '11')
+			group by uraiansts, extract(month from tglsts)
+		) as x
+		group by text, kode, div, subtotal
+        
+        union all
+        
+        select 'false' padding, text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
+        from(
+            select 'Potongan Pajak' as text, 'OOOOO' kode, 8 div, 0 subtotal, 
+            case when extract(month from tglpph) = '10' then sum(ppn+pph) else 0 end as totalbulanlalu,
+            case when extract(month from tglpph) = '11' then sum(ppn+pph) else 0 end as totalbulanini
+                from penyetoranpajak_t pp
+            where kdprofile = 30 and statusenabled = true
+            and extract(month from tglpph) in('10', '11')
+            group by uraianpajak, extract(month from tglpph)
+        ) as x
+        group by text, kode, div, subtotal
+        
+        union all
+        
+        select 'true' padding, text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
+        from(
+            select 'PPN' as text, 'OOOOO' kode, 9 div, 0 subtotal, 
+            case when extract(month from tglpph) = '10' then sum(ppn) else 0 end as totalbulanlalu,
+            case when extract(month from tglpph) = '11' then sum(ppn) else 0 end as totalbulanini
+                from penyetoranpajak_t pp
+            where kdprofile = 30 and statusenabled = true
+            and extract(month from tglpph) in('10', '11')
+            group by extract(month from tglpph)
+        ) as x
+        group by text, kode, div, subtotal
+        
+        union all
+        
+        select 'true' padding, jp.jenispajak as text, 'OOOOO' kode, 9 div, 0 subtotal, 
+        case when extract(month from tglpph) = '10' then sum(pmp.pph) else 0 end as totalbulanlalu,
+        case when extract(month from tglpph) = '11' then sum(pmp.pph) else 0 end as totalbulanini
+            from pemungutanpajak_t pmp
+        inner join jenispajak_m jp on jp.id = pmp.objectjenispphfk
+        where pmp.kdprofile = 30 and pmp.statusenabled = true
+        and extract(month from pmp.tglpph) in('10', '11')
+        group by jp.jenispajak, extract(month from pmp.tglpph)"));
+
+        $pengeluaran = DB::select(DB::raw("select 'false' padding, text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
+        from(
+            select 'SPJ' as text, 'RRRRR' kode, 10 div, 0 subtotal, 
+            case when extract(month from tglrealisasi) = '10' then sum(totalbelanja) else 0 end as totalbulanlalu,
+            case when extract(month from tglrealisasi) = '11' then sum(totalbelanja) else 0 end as totalbulanini
+                from strukrealisasi_t
+            where kdprofile = 30 and statusenabled = true
+            and extract(month from tglrealisasi) in('10', '11')
+            and status = 'Sudah Diverifikasi'
+            group by extract(month from tglrealisasi)
+        ) as x
+        group by text, kode, div, subtotal
+        
+        union all
+        
+        select 'false' padding, text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
+        from(
+            select 'Jasa Giro' as text, 'SSSSS' kode, 11 div, 0 subtotal, 
+            case when extract(month from tglpemasukan) = '10' then sum(jumlahpemasukan) else 0 end as totalbulanlalu,
+            case when extract(month from tglpemasukan) = '11' then sum(jumlahpemasukan) else 0 end as totalbulanini
+                from jasagiro_t
+            where kdprofile = 30 and statusenabled = true
+            and extract(month from tglpemasukan) in('10', '11')
+            group by uraianjasagiro, nojasagiro, extract(month from tglpemasukan)
+        ) as x
+        group by text, kode, div, subtotal
+
+		union all
+
+		select 'false' padding, text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
+		from(
+			select 'STS' as text, 'TTTTT' kode, 12 div, 0 subtotal, 
+			case when extract(month from tglsts) = '10' then sum(nilaists::float8) else 0 end as totalbulanlalu,
+			case when extract(month from tglsts) = '11' then sum(nilaists::float8) else 0 end as totalbulanini
+				from stskeuangan_t
+			where kdprofile = 30 and statusenabled = true
+			and extract(month from tglsts) in('10', '11')
+			group by uraiansts, extract(month from tglsts)
+		) as x
+		group by text, kode, div, subtotal
+        
+        union all
+        
+        select 'false' padding, text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
+        from(
+            select 'Penyetoran Pajak' as text, 'UUUUU' kode, 13 div, 0 subtotal, 
+            case when extract(month from tglpph) = '10' then sum(ppn+pph) else 0 end as totalbulanlalu,
+            case when extract(month from tglpph) = '11' then sum(ppn+pph) else 0 end as totalbulanini
+                from penyetoranpajak_t pp
+            where kdprofile = 30 and statusenabled = true
+            and extract(month from tglpph) in('10', '11')
+            group by uraianpajak, extract(month from tglpph)
+        ) as x
+        group by text, kode, div, subtotal
+        
+        union all
+        
+        select 'true' padding, text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
+        from(
+            select 'PPN' as text, 'VVVVV' kode, 14 div, 0 subtotal, 
+            case when extract(month from tglpph) = '10' then sum(ppn) else 0 end as totalbulanlalu,
+            case when extract(month from tglpph) = '11' then sum(ppn) else 0 end as totalbulanini
+                from penyetoranpajak_t pp
+            where kdprofile = 30 and statusenabled = true
+            and extract(month from tglpph) in('10', '11')
+            group by extract(month from tglpph)
+        ) as x
+        group by text, kode, div, subtotal
+        
+        union all
+        
+        select 'true' padding, jp.jenispajak as text, 'WWWWW' kode, 15 div, 0 subtotal, 
+        case when extract(month from tglpph) = '10' then sum(pmp.pph) else 0 end as totalbulanlalu,
+        case when extract(month from tglpph) = '11' then sum(pmp.pph) else 0 end as totalbulanini
+            from pemungutanpajak_t pmp
+        inner join jenispajak_m jp on jp.id = pmp.objectjenispphfk
+        where pmp.kdprofile = 30 and pmp.statusenabled = true
+        and extract(month from pmp.tglpph) in('10', '11')
+        group by jp.jenispajak, extract(month from pmp.tglpph)"));
+
+        $iuran = DB::select(DB::raw("select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
+        from(
+            select rd.uraian as text, 'RRRRR' kode, 10 div, 0 subtotal, 
+            case when extract(month from sr.tglrealisasi) = '10' then sum(rd.subtotal) else 0 end as totalbulanlalu,
+            case when extract(month from sr.tglrealisasi) = '11' then sum(rd.subtotal) else 0 end as totalbulanini
+                from strukrealisasi_t sr
+						inner join realisasidetail_t rd on rd.strukrealisasifk =sr.norec
+            where sr.kdprofile = 30 and sr.statusenabled = true
+						and rd.kdprofile = 30 and rd.statusenabled = true
+            and extract(month from sr.tglrealisasi) in('10', '11')
+            and sr.status = 'Sudah Diverifikasi'
+            group by rd.uraian, extract(month from sr.tglrealisasi)
+        ) as x
+        group by text, kode, div, subtotal"));
+
         $pageWidth = 950;
         
-        return view('report.keuangan.pertanggungjawabanbaru',compact('data', 'pageWidth', 'total'));
+        return view('report.keuangan.pertanggungjawabanbaru',compact('data', 'pageWidth', 'total', 'penerimaan', 'pengeluaran', 'iuran'));
     }
 
     public function CetakLO(Request $request){
@@ -6640,19 +6824,19 @@ class ReportController extends ApiController{
         ) as x
         group by text, kode, div, subtotal
 
-				union all
+		union all
 
-						select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
-						from(
-							select 'STS' as text, 'MMMMM' kode, 18 div, 0 subtotal, 
-							case when extract(month from tglsts) = '10' then sum(nilaists::float8) else 0 end as totalbulanlalu,
-							case when extract(month from tglsts) = '11' then sum(nilaists::float8) else 0 end as totalbulanini
-								from stskeuangan_t
-							where kdprofile = 30 and statusenabled = true
-							and extract(month from tglsts) in('10', '11')
-							group by uraiansts, extract(month from tglsts)
-						) as x
-						group by text, kode, div, subtotal
+		select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
+		from(
+			select 'STS' as text, 'MMMMM' kode, 18 div, 0 subtotal, 
+			case when extract(month from tglsts) = '10' then sum(nilaists::float8) else 0 end as totalbulanlalu,
+			case when extract(month from tglsts) = '11' then sum(nilaists::float8) else 0 end as totalbulanini
+				from stskeuangan_t
+			where kdprofile = 30 and statusenabled = true
+			and extract(month from tglsts) in('10', '11')
+			group by uraiansts, extract(month from tglsts)
+		) as x
+		group by text, kode, div, subtotal
         
         union all
         
@@ -6796,19 +6980,19 @@ class ReportController extends ApiController{
         ) as x
         group by text, kode, div, subtotal
 
-				union all
+		union all
 
-						select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
-						from(
-							select 'STS' as text, 'TTTTT' kode, 12 div, 0 subtotal, 
-							case when extract(month from tglsts) = '10' then sum(nilaists::float8) else 0 end as totalbulanlalu,
-							case when extract(month from tglsts) = '11' then sum(nilaists::float8) else 0 end as totalbulanini
-								from stskeuangan_t
-							where kdprofile = 30 and statusenabled = true
-							and extract(month from tglsts) in('10', '11')
-							group by uraiansts, extract(month from tglsts)
-						) as x
-						group by text, kode, div, subtotal
+		select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
+		from(
+			select 'STS' as text, 'TTTTT' kode, 12 div, 0 subtotal, 
+			case when extract(month from tglsts) = '10' then sum(nilaists::float8) else 0 end as totalbulanlalu,
+			case when extract(month from tglsts) = '11' then sum(nilaists::float8) else 0 end as totalbulanini
+				from stskeuangan_t
+			where kdprofile = 30 and statusenabled = true
+			and extract(month from tglsts) in('10', '11')
+			group by uraiansts, extract(month from tglsts)
+		) as x
+		group by text, kode, div, subtotal
         
         union all
         
