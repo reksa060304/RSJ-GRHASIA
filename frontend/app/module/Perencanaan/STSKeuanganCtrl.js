@@ -20,6 +20,20 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }
 
             medifirstService.get("perencanaan/get-data-combo").then(function (e) {
+                $scope.listKegiatan = e.data.kegiatancombo
+            });
+
+            $scope.$watch('item.subkegiatan', function (newValue, oldValue) {
+                if (newValue != oldValue) {
+                    medifirstService.get("perencanaan/get-data-combo").then(function (e) {
+                        medifirstService.get("perencanaan/get-data-combo?tahunawal="+moment(e.data.setting[0].tahunanggaran).format('YYYY')+"&tahap="+e.data.setting[0].objecttahapaktivfk+"&subkegiatan="+$scope.item.subkegiatan.id).then(function (e) {
+                            $scope.listSubSubKegiatan = e.data.kegiatansubsub
+                        });
+                    })
+                }
+            });
+
+            medifirstService.get("perencanaan/get-data-combo").then(function (e) {
                 $scope.listAsalProduk = e.data.asalproduk
                 $scope.listSubKegiatanPanjarSPJ = e.data.kegiatancombo
             });
@@ -47,8 +61,21 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                 var awal = moment($scope.item.tglawal).format('YYYY-MM-DD');
 				var akhir = moment($scope.item.tglakhir).format('YYYY-MM-DD');
+
+                var idsubsubkegiatan = ""
+                if ($scope.item.subsubkegiatan != undefined){
+                    idsubsubkegiatan = $scope.item.subsubkegiatan.idsubsubkegiatan
+                }
+
+                var idsubkegiatan = ""
+                if ($scope.item.subkegiatan != undefined){
+                    idsubkegiatan = $scope.item.subkegiatan.id
+                }
                 // var tgl = moment($scope.tanggal).format('DD/MM/YYYY');
-                medifirstService.get("perencanaan/get-sts-keuangan?awal="+awal+"&akhir="+akhir).then(function (e) {
+                medifirstService.get("perencanaan/get-sts-keuangan?awal="+awal
+                +"&akhir="+akhir
+                +"&idsubkegiatan="+idsubkegiatan
+                +"&idsubsubkegiatan="+idsubsubkegiatan).then(function (e) {
                         $scope.isRouteLoading = false;
                         
                         $scope.dataGrid = new kendo.data.DataSource({

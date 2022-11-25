@@ -7097,6 +7097,16 @@ order by kodemataanggaran"));
             $qnorec = "and sr.objectbkufk = '".$request['norec']."'";
         }
 
+        $qsubkegiatan = "";
+        if(isset($request['idsubkegiatan']) && $request['idsubkegiatan'] != '' && $request['idsubkegiatan'] != "undefined"){
+            $qsubkegiatan = "and sr.objectsubkegiatanfk = '".$request['idsubkegiatan']."'";
+        }
+
+        $qsubsubkegiatan = "";
+        if(isset($request['idsubsubkegiatan']) && $request['idsubsubkegiatan'] != '' && $request['idsubsubkegiatan'] != "undefined"){
+            $qsubsubkegiatan = "and sr.objectsubsubkegiatanfk = '".$request['idsubsubkegiatan']."'";
+        }
+
         $data = DB::select(DB::raw("
         select  sr.nosts, sr.objectbkufk, sr.norec, sr.uraiansts, sr.tglsts, sr.nilaists, ma.id idmataanggaran, ma.kodemataanggaran, ma.namamataanggaran,
                 ka.id idsubsubkegiatan, ka.keterangan keterangansubsubkegiatan, dp0.id idsubkegiatan, dp0.keterangan keterangansubkegiatan, 
@@ -7111,6 +7121,8 @@ order by kodemataanggaran"));
                 $tgl
                 $qkey
                 $qnorec
+                $qsubkegiatan
+                $qsubsubkegiatan
                 and ka.kdprofile = 30 and ka.statusenabled=true
                 and dp0.kdprofile = 30 and dp0.statusenabled=true
             ")

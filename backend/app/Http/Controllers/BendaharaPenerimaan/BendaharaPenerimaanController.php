@@ -2718,7 +2718,7 @@ class BendaharaPenerimaanController extends ApiController {
 
         // konten STS Detail
 
-        $data = DB::select(DB::raw("select distinct sbm.norec norecsbm, pp.norec, sc.tglclosing, ru.namaruangan, ru.id idruangan, pr.namaproduk, pr.id idproduk, pp.isobat,
+        $data = DB::select(DB::raw("select distinct 0 objectkelompoktransaksifk, sbm.norec norecsbm, pp.norec, sc.tglclosing, ru.namaruangan, ru.id idruangan, pr.namaproduk, pr.id idproduk, pp.isobat,
         (((CASE WHEN pp.hargajual IS NULL THEN 0 ELSE pp.hargajual END - CASE WHEN pp.hargadiscount IS NULL THEN
         0 ELSE pp.hargadiscount END) * pp.jumlah) + CASE WHEN pp.jasa IS NULL THEN 0 ELSE pp.jasa END ) AS totaldibayarclosing,
         ru.objectdepartemenfk, sbmcr.objectcarabayarfk, sbm.totaldibayar as totaldibayarsbm, sc.noclosing, sc.tglclosing,
@@ -2751,7 +2751,7 @@ class BendaharaPenerimaanController extends ApiController {
         
         union all
         
-        select distinct sbm.norec norecsbm, sp.norec, sc.tglclosing, ru.namaruangan, ru.id idruangan, pr.namaproduk, pr.id idproduk, pp.isobat,
+        select distinct sp.objectkelompoktransaksifk, sbm.norec norecsbm, sp.norec, sc.tglclosing, ru.namaruangan, ru.id idruangan, pr.namaproduk, pr.id idproduk, pp.isobat,
         (spd.qtyproduk * spd.hargasatuan * spd.qtyoranglast)::float4 as totaldibayarclosing,
         ru.objectdepartemenfk, sbmcr.objectcarabayarfk, sbm.totaldibayar as totaldibayarsbm, sc.noclosing, sc.tglclosing,
         sck.totaldibayar as totaldibayarclosing,sck.carabayarfk, cb.carabayar, djp.detailjenisproduk, jpr.id as jenisproduk
@@ -3112,9 +3112,15 @@ class BendaharaPenerimaanController extends ApiController {
                 $cekjumlah = $konten->namaproduk;
             }
 
-            else if($konten->idproduk == 5008631 || $konten->idproduk == 5008632 || $konten->idproduk == 5008633){
+            else if($konten->idproduk == 5008631 || $konten->idproduk == 5008632 || $konten->idproduk == 5008633 || $konten->objectkelompoktransaksifk == 307){
                 $parkir += $konten->totaldibayarclosing;
                 $volparkir++;
+                $cekjumlah = $konten->namaproduk;
+            }
+
+            else if($konten->objectkelompoktransaksifk == 306){
+                $hasilketrampilan += $konten->totaldibayarclosing;
+                $volhasilketrampilan++;
                 $cekjumlah = $konten->namaproduk;
             }
 
