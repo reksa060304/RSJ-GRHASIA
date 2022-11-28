@@ -251,6 +251,116 @@ class LaporanRekamMedisController extends   ApiController
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
 
+    public function getMasterKonten(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        $data10 = DB::select(DB::raw("select * from kelompoklaporan_m where kdprofile = 30 and statusenabled = true order by id desc"));
+
+        $result = array(
+            'data' => $data10,
+            'message' => 'er@epic',
+
+        );
+
+        return $this->respond($result);
+    }
+
+    public function SaveMasterKonten(Request $request) {
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        try{ 
+                    if($request['id'] == ''){
+                        $newID = KelompokLaporan::max('id');
+
+                        $MA = \DB::table('kelompoklaporan_m')->insert([
+                            'id'=>$newID + 1,
+                            'kdprofile'=>$idProfile,
+                            'statusenabled'=>true,
+                            'kodeexternal'=>$newID + 1,
+                            'namaexternal'=>$request['kontenlaporan'],
+                            'norec'=>$newID + 1,
+                            'reportdisplay'=>$request['kontenlaporan'],
+                            'kdkelompoklaporan'=>$newID + 1,
+                            'kelompoklaporan'=>$request['kontenlaporan'],
+                            'init'=>$request['no'],
+                        ]);
+
+                    } else{
+                        $MA = KelompokLaporan::where('id', '=', $request['id'])->first();
+                        $MA->kelompoklaporan = $request['kontenlaporan'];
+                        $MA->init = $request['no'];
+                        $MA->save();
+                    }
+                    
+                    
+
+           $transStatus = 'true';
+       } catch (\Exception $e) {
+            $transStatus = 'false';
+       }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'result' => $MA,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'line'=> $e->getLine(),
+                'message'=> $e->getMessage(),
+                'as' => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function DeleteMasterKonten(Request $request) {
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        try{  
+            $MA = KelompokLaporan::where('id', '=', $request['id'])->first();
+            $MA->statusenabled = false;
+            $MA->save();
+
+           $transStatus = 'true';
+       } catch (\Exception $e) {
+            $transStatus = 'false';
+       }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'result' => $MA,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'line'=> $e->getLine(),
+                'message'=> $e->getMessage(),
+                'as' => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
     public function getDataRL31RawatInap(Request $request){
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;

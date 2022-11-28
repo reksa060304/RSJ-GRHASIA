@@ -1,0 +1,120 @@
+<style>
+    .k-grid .k-grid-header .k-header .k-link {
+        height: auto;
+    }
+
+    .k-grid .k-grid-header .k-header {
+        white-space: normal;
+    }
+
+    .k-grid .k-grid-header .k-header {
+        text-align: center;
+    }
+
+    .k-window-content .k-content {
+        overflow: none
+    }
+
+    legend {
+        cursor: pointer;
+        padding: 10px;
+    }
+
+    .effect-shadow {
+        -webkit-box-shadow: 2px 2px 5px #b6b6b6;
+        -moz-box-shadow: 2px 2px 5px #b6b6b6;
+        box-shadow: 2px 2px 5px #b6b6b6;
+    }
+
+    .warnaa {
+        color: black
+    }
+
+    .align-right{
+        text-align: right;
+    }
+
+    hr {
+        border: 1px solid black;
+        margin-top: 0px;
+        margin-bottom: 0px;
+        display: inline-block;
+        width: 100%;
+    }
+
+    h1 {
+        color: black;
+        display: block;
+        font-size: 14px;
+        margin-block-start: 0px;
+        margin-block-end: 0;
+        margin-inline-start: 0px;
+        margin-inline-end: 0px;
+        font-weight: bold;
+    }
+
+    h2 {
+        color: black;
+        display: block;
+        font-size: 14px;
+        margin-block-start: 0px;
+        margin-block-end: 0;
+        margin-inline-start: 0px;
+        margin-inline-end: 0px;
+        font-weight: bold;
+    }
+</style>
+<div class="grid_12">
+    <div class="panel panel-default container_12">
+        <div class="panel-heading" c-translate>Konten Laporan</div>
+    </div>
+    <div class="panel panel-default panel-white" ng-hide="isMasuk">
+        
+        <!-- Tabel Hasil Pencarian -->
+        <div class="grid_12" style="margin-top:50px;">
+            <div class="grid_12 borderBox">
+                <kendo-grid id="grid" data-source="dataGrid" options="columnGrid" k-pageable="'true'"
+                    k-sortable="'true'" k-groupable="'false'" k-resizable="'true'" k-selectable="'row'"
+                    k-ng-model="dataSelected" ng-click="klikGrid(dataSelected)" style="min-height: 0px; max-height: 1500px;">
+                </kendo-grid>
+            </div>
+            <div class="grid_2">
+                <button class="btnTemplate1" ng-click="TambahJasgir()">Tambah</button>
+            </div>
+            <div class="grid_2">
+                <button class="btnTemplate1" ng-click="EditJasgir()">Edit</button>
+            </div>
+            <div class="grid_2">
+                <button class="btnTemplate1" ng-click="HapusJasgir()">Hapus</button>
+            </div>
+        </div>
+
+
+        <div class="grid_12" kendo-window="popupTambahJasgir" k-title="'Konten Laporan'" k-visible="false" width="500" style="overflow-x: hidden;">
+            
+            <div class="grid_12">
+                    <div class="grid_12" style="text-align: left; margin-top: 10px;">
+                        <label c-label item="item" c-label-text="Konten Laporan"></label>
+                    </div>
+                    <div class="grid_12" style="margin-top: 10px;">
+                        <input c-text-box type="input" class="k-textbox" ng-model="item.kontenlaporan"/>
+                    </div>
+            </div>
+            <div class="grid_12">
+                <div class="grid_12" style="text-align: left; margin-top: 10px;">
+                    <label c-label item="item" c-label-text="No"></label>
+                </div>
+                <div class="grid_12" style="margin-top: 10px;">
+                    <input c-text-box type="input" class="k-textbox" ng-model="item.no"/>
+                </div>
+        </div>
+            
+            <div class="grid_12" style="margin-top: 10px;">
+                <div class="grid_8" ></div>
+                <div class="grid_4" >
+                        <button class="btnTemplate1" ng-click="SaveJasgir()">Simpan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

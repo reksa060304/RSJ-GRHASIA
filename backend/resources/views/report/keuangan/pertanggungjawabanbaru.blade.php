@@ -48,7 +48,7 @@
             </tr>
             <tr align="center">
                 <td>
-                    <b style="font-size: 22px;">LAPORAN PERTANGGUNGJAWABAN BENDAHARA PENGELUARAN <br> SPJ - ADMINISTRATIF <br> Bulan : November
+                    <b style="font-size: 22px;">LAPORAN PERTANGGUNGJAWABAN BENDAHARA PENGELUARAN <br> SPJ - ADMINISTRATIF <br> Bulan : {{$periode}}
                     </b>
                 </td>
             </tr>
@@ -97,7 +97,7 @@
                     <p style="text-align: left; font-size: 20px; margin-top:15px;font-weight:bold;">Tahun Anggaran</p>
                 </td>
                 <td colspan="14" align="left">
-                    <p style="text-align: left; font-size: 20px; margin-top:15px;">: 2022</p>
+                    <p style="text-align: left; font-size: 20px; margin-top:15px;">: {{$tahun}}</p>
                 </td>
             </tr>
         </tbody>
@@ -282,7 +282,7 @@
                 </tr>
                 <tr style="border: 1px solid black;">
                     <td colspan = "2" align="left" width="50" style="padding: 10px; padding-left: 30px; font-size: 15px; "><b>LS</b></td>
-                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>{{ number_format($total[0]->jumlahanggaran,3,',','.') }}</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
                     <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b>{{ number_format($total[0]->jumlahspjsdbulanlalugaji,3,',','.') }}</b></td>
                     <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>{{ number_format($total[0]->jumlahspjbulaninigaji,3,',','.') }}</b></td>
                     <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>{{ number_format($total[0]->totalsemuabulangaji,3,',','.') }}</b></td>
@@ -424,7 +424,7 @@
                 @endforeach
                 <tr style="border: 1px solid black;">
                     <td colspan = "2" align="left" width="50" style="padding: 10px; font-size: 15px; "><b>Jumlah Penerimaan (SP2D Bruto) :</b></td>
-                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>{{ number_format($total[0]->jumlahanggaran,3,',','.') }}</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
                     <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b>{{ number_format($total[0]->jumlahspjsdbulanlalugaji,3,',','.') }}</b></td>
                     <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>{{ number_format($total[0]->jumlahspjbulaninigaji,3,',','.') }}</b></td>
                     <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>{{ number_format($total[0]->totalsemuabulangaji,3,',','.') }}</b></td>
@@ -514,7 +514,7 @@
                 </tr>
                 <tr style="border: 1px solid black;">
                     <td colspan = "2" align="left" width="50" style="padding: 10px; padding-left: 30px; font-size: 15px; "><b>LS</b></td>
-                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>{{ number_format($total[0]->jumlahanggaran,3,',','.') }}</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
                     <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b>{{ number_format($total[0]->jumlahspjsdbulanlalugaji,3,',','.') }}</b></td>
                     <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>{{ number_format($total[0]->jumlahspjbulaninigaji,3,',','.') }}</b></td>
                     <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>{{ number_format($total[0]->totalsemuabulangaji,3,',','.') }}</b></td>
@@ -596,7 +596,7 @@
                 @endforeach
                 <tr style="border: 1px solid black;">
                     <td colspan = "2" align="left" width="50" style="padding: 10px; font-size: 15px; "><b>Jumlah Pengeluaran (SPJ Netto + Potongan/Pajak - Pengembalian)</b></td>
-                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>{{ number_format($total[0]->jumlahanggaran,3,',','.') }}</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
                     <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b>{{ number_format($total[0]->jumlahspjsdbulanlalugaji,3,',','.') }}</b></td>
                     <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>{{ number_format($total[0]->jumlahspjbulaninigaji,3,',','.') }}</b></td>
                     <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>{{ number_format($total[0]->totalsemuabulangaji,3,',','.') }}</b></td>

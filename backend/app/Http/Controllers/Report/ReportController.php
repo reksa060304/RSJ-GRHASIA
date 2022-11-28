@@ -2830,8 +2830,8 @@ class ReportController extends ApiController{
             select kode div, kode, keterangan, jumlahanggaran, sum(jumlahbulanlalu) jumlahbulanlalu, sum(jumlahbulanini) jumlahbulanini
             from(
                 select ka.kode, ka.keterangan, sum(kb.subtotal) jumlahanggaran,
-                case when x.bulan = '10' then x.totalbelanja else 0 end as jumlahbulanlalu,
-                case when x.bulan = '11' then x.totalbelanja else 0 end as jumlahbulanini
+                case when x.bulan = '$bulanlalu' then x.totalbelanja else 0 end as jumlahbulanlalu,
+                case when x.bulan = '$bulan' then x.totalbelanja else 0 end as jumlahbulanini
                 from mataanggaran_m ma
                 inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
                 INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
@@ -2851,7 +2851,7 @@ class ReportController extends ApiController{
                 where ma.kdprofile = 30 and ma.statusenabled = true
                 and kb.kdprofile = 30 and kb.statusenabled = true
                 and ka.kdprofile = 30 and ka.statusenabled = true
-                and kb.objectasalprodukfk = 15
+                --and kb.objectasalprodukfk = 15
                 and ka.tahun = '$tahunjudul'
                 $subsubkegiatan
                 $mataanggaran
@@ -2868,8 +2868,8 @@ class ReportController extends ApiController{
             select kode div, kode, keterangan, jumlahanggaran, sum(jumlahbulanlalu) jumlahbulanlalu, sum(jumlahbulanini) jumlahbulanini
             from(
                 select dp0.kode, dp0.keterangan, sum(kb.subtotal) jumlahanggaran,
-                case when x.bulan = '10' then x.totalbelanja else 0 end as jumlahbulanlalu,
-                case when x.bulan = '11' then x.totalbelanja else 0 end as jumlahbulanini
+                case when x.bulan = '$bulanlalu' then x.totalbelanja else 0 end as jumlahbulanlalu,
+                case when x.bulan = '$bulan' then x.totalbelanja else 0 end as jumlahbulanini
                 from mataanggaran_m ma
                 inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
                 INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
@@ -2891,7 +2891,7 @@ class ReportController extends ApiController{
                 and kb.kdprofile = 30 and kb.statusenabled = true
                 and ka.kdprofile = 30 and ka.statusenabled = true
                 and dp0.kdprofile = 30 and dp0.statusenabled = true
-                and kb.objectasalprodukfk = 15
+                --and kb.objectasalprodukfk = 15
                 and ka.tahun = '$tahunjudul'
                 $subsubkegiatan
                 $mataanggaran
@@ -2909,8 +2909,8 @@ class ReportController extends ApiController{
             from(
                 select ka.kode || '.' ||  ma1.kodemataanggaran kode,
                 ma1.namamataanggaran keterangan, sum(kb.subtotal) jumlahanggaran,
-                case when x.bulan = '10' then x.totalbelanja else 0 end as jumlahbulanlalu,
-                case when x.bulan = '11' then x.totalbelanja else 0 end as jumlahbulanini
+                case when x.bulan = '$bulanlalu' then x.totalbelanja else 0 end as jumlahbulanlalu,
+                case when x.bulan = '$bulan' then x.totalbelanja else 0 end as jumlahbulanini
                 from mataanggaran_m ma
                 inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
                 INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
@@ -2950,7 +2950,7 @@ class ReportController extends ApiController{
                 and kb.kdprofile = 30 and kb.statusenabled = true
                 and ka.kdprofile = 30 and ka.statusenabled = true
                 and dp0.kdprofile = 30 and dp0.statusenabled = true
-                and kb.objectasalprodukfk = 15
+                --and kb.objectasalprodukfk = 15
                 and ka.tahun = '$tahunjudul'
                 $subsubkegiatan
                 $mataanggaran
@@ -2969,8 +2969,8 @@ class ReportController extends ApiController{
             from(
                 select ka.kode || '.' ||  ma2.kodemataanggaran div, ka.kode || '.' ||  right(ma2.kodemataanggaran, 1) kode,
                 ma2.namamataanggaran keterangan, sum(kb.subtotal) jumlahanggaran,
-                case when x.bulan = '10' then x.totalbelanja else 0 end as jumlahbulanlalu,
-                case when x.bulan = '11' then x.totalbelanja else 0 end as jumlahbulanini
+                case when x.bulan = '$bulanlalu' then x.totalbelanja else 0 end as jumlahbulanlalu,
+                case when x.bulan = '$bulan' then x.totalbelanja else 0 end as jumlahbulanini
                 from mataanggaran_m ma
                 inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
                 INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
@@ -3010,7 +3010,7 @@ class ReportController extends ApiController{
                 and kb.kdprofile = 30 and kb.statusenabled = true
                 and ka.kdprofile = 30 and ka.statusenabled = true
                 and dp0.kdprofile = 30 and dp0.statusenabled = true
-                and kb.objectasalprodukfk = 15
+                --and kb.objectasalprodukfk = 15
                 and ka.tahun = '$tahunjudul'
                 $subsubkegiatan
                 $mataanggaran
@@ -3029,8 +3029,8 @@ class ReportController extends ApiController{
             from(
                 select ka.kode || '.' ||  ma3.kodemataanggaran div, ka.kode || '.' ||  right(ma3.kodemataanggaran, 1) kode,
                 ma3.namamataanggaran keterangan, sum(kb.subtotal) jumlahanggaran,
-                case when x.bulan = '10' then x.totalbelanja else 0 end as jumlahbulanlalu,
-                case when x.bulan = '11' then x.totalbelanja else 0 end as jumlahbulanini
+                case when x.bulan = '$bulanlalu' then x.totalbelanja else 0 end as jumlahbulanlalu,
+                case when x.bulan = '$bulan' then x.totalbelanja else 0 end as jumlahbulanini
                 from mataanggaran_m ma
                 inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
                 INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
@@ -3070,7 +3070,7 @@ class ReportController extends ApiController{
                 and kb.kdprofile = 30 and kb.statusenabled = true
                 and ka.kdprofile = 30 and ka.statusenabled = true
                 and dp0.kdprofile = 30 and dp0.statusenabled = true
-                and kb.objectasalprodukfk = 15
+                --and kb.objectasalprodukfk = 15
                 and ka.tahun = '$tahunjudul'
                 $subsubkegiatan
                 $mataanggaran
@@ -3095,8 +3095,8 @@ class ReportController extends ApiController{
                     when ma4.kodemataanggaran ilike 'II.%' and length(ma4.kodemataanggaran) = 9 then ka.kode || '.' || right(ma4.kodemataanggaran, 4)
                 end as kode,
                 ma4.namamataanggaran keterangan, sum(kb.subtotal) jumlahanggaran,
-                case when x.bulan = '10' then x.totalbelanja else 0 end as jumlahbulanlalu,
-                case when x.bulan = '11' then x.totalbelanja else 0 end as jumlahbulanini
+                case when x.bulan = '$bulanlalu' then x.totalbelanja else 0 end as jumlahbulanlalu,
+                case when x.bulan = '$bulan' then x.totalbelanja else 0 end as jumlahbulanini
                 from mataanggaran_m ma
                 inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
                 INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
@@ -3136,7 +3136,7 @@ class ReportController extends ApiController{
                 and kb.kdprofile = 30 and kb.statusenabled = true
                 and ka.kdprofile = 30 and ka.statusenabled = true
                 and dp0.kdprofile = 30 and dp0.statusenabled = true
-                and kb.objectasalprodukfk = 15
+                --and kb.objectasalprodukfk = 15
                 and ka.tahun = '$tahunjudul'
                 $subsubkegiatan
                 $mataanggaran
@@ -4047,46 +4047,47 @@ class ReportController extends ApiController{
     }
 
     public function CetakPertanggungjawabanBaru(Request $request){
-        // $tahun = $request['tahun'];
-        // $bulan = $request['bulan'];
+        $tahun = $request['tahun'];
+        $bulan = $request['bulan'];
+        //$tanggalcetak = $this->tanggal_indonesia(date('Y-m-d',strtotime($request['tglcetak'])));
 
-        // $periode = '';
-        // if($bulan == '01'){
-        //     $periode = 'JANUARI';
-        // }
-        // else if($bulan == '02'){
-        //     $periode = 'FEBRUARI';
-        // }
-        // else if($bulan == '03'){
-        //     $periode = 'MARET';
-        // }
-        // else if($bulan == '04'){
-        //     $periode = 'APRIL';
-        // }
-        // else if($bulan == '05'){
-        //     $periode = 'MEI';
-        // }
-        // else if($bulan == '06'){
-        //     $periode = 'JUNI';
-        // }
-        // else if($bulan == '07'){
-        //     $periode = 'JULI';
-        // }
-        // else if($bulan == '08'){
-        //     $periode = 'AGUSTUS';
-        // }
-        // else if($bulan == '09'){
-        //     $periode = 'SEPTEMBER';
-        // }
-        // else if($bulan == '10'){
-        //     $periode = 'OKTOBER';
-        // }
-        // else if($bulan == '11'){
-        //     $periode = 'NOVEMBER';
-        // }
-        // else if($bulan == '12'){
-        //     $periode = 'DESEMBER';
-        // }
+        $periode = '';
+        if($bulan == '01'){
+            $periode = 'JANUARI';
+        }
+        else if($bulan == '02'){
+            $periode = 'FEBRUARI';
+        }
+        else if($bulan == '03'){
+            $periode = 'MARET';
+        }
+        else if($bulan == '04'){
+            $periode = 'APRIL';
+        }
+        else if($bulan == '05'){
+            $periode = 'MEI';
+        }
+        else if($bulan == '06'){
+            $periode = 'JUNI';
+        }
+        else if($bulan == '07'){
+            $periode = 'JULI';
+        }
+        else if($bulan == '08'){
+            $periode = 'AGUSTUS';
+        }
+        else if($bulan == '09'){
+            $periode = 'SEPTEMBER';
+        }
+        else if($bulan == '10'){
+            $periode = 'OKTOBER';
+        }
+        else if($bulan == '11'){
+            $periode = 'NOVEMBER';
+        }
+        else if($bulan == '12'){
+            $periode = 'DESEMBER';
+        }
 
         $data = DB::select(DB::raw("select bold, nourut, kode, keterangan, coalesce(sum(jumlahanggaran), 0) jumlahanggaran,
         coalesce(sum(jumlahspjsdbulanlalugaji),0) jumlahspjsdbulanlalugaji,
@@ -4097,12 +4098,12 @@ class ReportController extends ApiController{
         coalesce(sum(totalsemuabulanbarangjasa),0) totalsemuabulanbarangjasa
         from(
             select 'iya' as bold, nourut, kode, keterangan, jumlahanggaran,
-            case when tglrealisasi < '11' and idjenisanggaran = 3 then sum(totalbelanja) end as jumlahspjsdbulanlalugaji,
-            case when tglrealisasi = '11' and idjenisanggaran = 3 then sum(totalbelanja) end as jumlahspjbulaninigaji,
-            case when tglrealisasi <= '11' and idjenisanggaran = 3 then sum(totalbelanja) end as totalsemuabulangaji,
-            case when tglrealisasi < '11' and idjenisanggaran = 4 then sum(totalbelanja) end as jumlahspjsdbulanlalubarangjasa,
-            case when tglrealisasi = '11' and idjenisanggaran = 4 then sum(totalbelanja) end as jumlahspjbulaninibarangjasa,
-            case when tglrealisasi <= '11' and idjenisanggaran = 4 then sum(totalbelanja) end as totalsemuabulanbarangjasa
+            case when tglrealisasi < '$bulan' and idjenisanggaran = 3 then sum(totalbelanja) end as jumlahspjsdbulanlalugaji,
+            case when tglrealisasi = '$bulan' and idjenisanggaran = 3 then sum(totalbelanja) end as jumlahspjbulaninigaji,
+            case when tglrealisasi <= '$bulan' and idjenisanggaran = 3 then sum(totalbelanja) end as totalsemuabulangaji,
+            case when tglrealisasi < '$bulan' and idjenisanggaran = 4 then sum(totalbelanja) end as jumlahspjsdbulanlalubarangjasa,
+            case when tglrealisasi = '$bulan' and idjenisanggaran = 4 then sum(totalbelanja) end as jumlahspjbulaninibarangjasa,
+            case when tglrealisasi <= '$bulan' and idjenisanggaran = 4 then sum(totalbelanja) end as totalsemuabulanbarangjasa
             from(
                 select ja.id idjenisanggaran, TO_CHAR(x.tglrealisasi, 'MM') tglrealisasi, RANK ( ) OVER ( order by ka.kode ) AS nourut, ka.kode,
                 ka.keterangan, sum(kb.subtotal) jumlahanggaran, x.totalbelanja
@@ -4127,7 +4128,7 @@ class ReportController extends ApiController{
                     inner join strukrealisasi_t sr on ma.id=sr.objectmataanggaranfk
                     where sr.kdprofile = 30 and sr.statusenabled = true
                     and sr.status = 'Sudah Diverifikasi'
-                    and extract(year from sr.tglrealisasi) = '2022'
+                    and extract(year from sr.tglrealisasi) = '$tahun'
                     and TO_CHAR(sr.tglrealisasi, 'YYYY-MM') in(
                         SELECT TO_CHAR(months, 'YYYY-MM') AS dateMonth
                         FROM generate_series(
@@ -4155,12 +4156,12 @@ class ReportController extends ApiController{
         coalesce(sum(totalsemuabulanbarangjasa),0) totalsemuabulanbarangjasa
         from(
             select bold, nourut, kode, keterangan, jumlahanggaran,
-            case when tglrealisasi < '11' and idjenisanggaran = 3 then sum(totalbelanja) end as jumlahspjsdbulanlalugaji,
-            case when tglrealisasi = '11' and idjenisanggaran = 3 then sum(totalbelanja) end as jumlahspjbulaninigaji,
-            case when tglrealisasi <= '11' and idjenisanggaran = 3 then sum(totalbelanja) end as totalsemuabulangaji,
-            case when tglrealisasi < '11' and idjenisanggaran = 4 then sum(totalbelanja) end as jumlahspjsdbulanlalubarangjasa,
-            case when tglrealisasi = '11' and idjenisanggaran = 4 then sum(totalbelanja) end as jumlahspjbulaninibarangjasa,
-            case when tglrealisasi <= '11' and idjenisanggaran = 4 then sum(totalbelanja) end as totalsemuabulanbarangjasa
+            case when tglrealisasi < '$bulan' and idjenisanggaran = 3 then sum(totalbelanja) end as jumlahspjsdbulanlalugaji,
+            case when tglrealisasi = '$bulan' and idjenisanggaran = 3 then sum(totalbelanja) end as jumlahspjbulaninigaji,
+            case when tglrealisasi <= '$bulan' and idjenisanggaran = 3 then sum(totalbelanja) end as totalsemuabulangaji,
+            case when tglrealisasi < '$bulan' and idjenisanggaran = 4 then sum(totalbelanja) end as jumlahspjsdbulanlalubarangjasa,
+            case when tglrealisasi = '$bulan' and idjenisanggaran = 4 then sum(totalbelanja) end as jumlahspjbulaninibarangjasa,
+            case when tglrealisasi <= '$bulan' and idjenisanggaran = 4 then sum(totalbelanja) end as totalsemuabulanbarangjasa
             from(
                 select ja.id idjenisanggaran, TO_CHAR(x.tglrealisasi, 'MM') tglrealisasi, 'tidak' as bold, RANK ( ) OVER ( order by ka.kode ) AS nourut, map3.kode || '.' || map2.kode || '.' || map1.kode || '.' || map.kode kode,
                 map.mataanggaranpermen keterangan, sum(kb.subtotal) jumlahanggaran, x.totalbelanja
@@ -4185,7 +4186,7 @@ class ReportController extends ApiController{
                     inner join strukrealisasi_t sr on ma.id=sr.objectmataanggaranfk
                     where sr.kdprofile = 30 and sr.statusenabled = true
                     and sr.status = 'Sudah Diverifikasi'
-                    and extract(year from sr.tglrealisasi) = '2022'
+                    and extract(year from sr.tglrealisasi) = '$tahun'
                     and TO_CHAR(sr.tglrealisasi, 'YYYY-MM') in(
                         SELECT TO_CHAR(months, 'YYYY-MM') AS dateMonth
                         FROM generate_series(
@@ -4214,12 +4215,12 @@ class ReportController extends ApiController{
         coalesce(sum(totalsemuabulanbarangjasa),0) totalsemuabulanbarangjasa
         from(
             select bold, nourut, kode, keterangan, jumlahanggaran,
-            case when tglrealisasi < '11' and idjenisanggaran = 3 then sum(totalbelanja) end as jumlahspjsdbulanlalugaji,
-            case when tglrealisasi = '11' and idjenisanggaran = 3 then sum(totalbelanja) end as jumlahspjbulaninigaji,
-            case when tglrealisasi <= '11' and idjenisanggaran = 3 then sum(totalbelanja) end as totalsemuabulangaji,
-            case when tglrealisasi < '11' and idjenisanggaran = 4 then sum(totalbelanja) end as jumlahspjsdbulanlalubarangjasa,
-            case when tglrealisasi = '11' and idjenisanggaran = 4 then sum(totalbelanja) end as jumlahspjbulaninibarangjasa,
-            case when tglrealisasi <= '11' and idjenisanggaran = 4 then sum(totalbelanja) end as totalsemuabulanbarangjasa
+            case when tglrealisasi < '$bulan' and idjenisanggaran = 3 then sum(totalbelanja) end as jumlahspjsdbulanlalugaji,
+            case when tglrealisasi = '$bulan' and idjenisanggaran = 3 then sum(totalbelanja) end as jumlahspjbulaninigaji,
+            case when tglrealisasi <= '$bulan' and idjenisanggaran = 3 then sum(totalbelanja) end as totalsemuabulangaji,
+            case when tglrealisasi < '$bulan' and idjenisanggaran = 4 then sum(totalbelanja) end as jumlahspjsdbulanlalubarangjasa,
+            case when tglrealisasi = '$bulan' and idjenisanggaran = 4 then sum(totalbelanja) end as jumlahspjbulaninibarangjasa,
+            case when tglrealisasi <= '$bulan' and idjenisanggaran = 4 then sum(totalbelanja) end as totalsemuabulanbarangjasa
             from(
                 select ja.id idjenisanggaran, TO_CHAR(x.tglrealisasi, 'MM') tglrealisasi, 'tidak' as bold, RANK ( ) OVER ( order by ka.kode ) AS nourut, map3.kode || '.' || map2.kode || '.' || map1.kode kode,
                 map1.mataanggaranpermen keterangan, sum(kb.subtotal) jumlahanggaran, x.totalbelanja
@@ -4244,7 +4245,7 @@ class ReportController extends ApiController{
                     inner join strukrealisasi_t sr on ma.id=sr.objectmataanggaranfk
                     where sr.kdprofile = 30 and sr.statusenabled = true
                     and sr.status = 'Sudah Diverifikasi'
-                    and extract(year from sr.tglrealisasi) = '2022'
+                    and extract(year from sr.tglrealisasi) = '$tahun'
                     and TO_CHAR(sr.tglrealisasi, 'YYYY-MM') in(
                         SELECT TO_CHAR(months, 'YYYY-MM') AS dateMonth
                         FROM generate_series(
@@ -4273,12 +4274,12 @@ class ReportController extends ApiController{
         coalesce(sum(totalsemuabulanbarangjasa),0) totalsemuabulanbarangjasa
         from(
             select bold, nourut, kode, keterangan, jumlahanggaran,
-            case when tglrealisasi < '11' and idjenisanggaran = 3 then sum(totalbelanja) end as jumlahspjsdbulanlalugaji,
-            case when tglrealisasi = '11' and idjenisanggaran = 3 then sum(totalbelanja) end as jumlahspjbulaninigaji,
-            case when tglrealisasi <= '11' and idjenisanggaran = 3 then sum(totalbelanja) end as totalsemuabulangaji,
-            case when tglrealisasi < '11' and idjenisanggaran = 4 then sum(totalbelanja) end as jumlahspjsdbulanlalubarangjasa,
-            case when tglrealisasi = '11' and idjenisanggaran = 4 then sum(totalbelanja) end as jumlahspjbulaninibarangjasa,
-            case when tglrealisasi <= '11' and idjenisanggaran = 4 then sum(totalbelanja) end as totalsemuabulanbarangjasa
+            case when tglrealisasi < '$bulan' and idjenisanggaran = 3 then sum(totalbelanja) end as jumlahspjsdbulanlalugaji,
+            case when tglrealisasi = '$bulan' and idjenisanggaran = 3 then sum(totalbelanja) end as jumlahspjbulaninigaji,
+            case when tglrealisasi <= '$bulan' and idjenisanggaran = 3 then sum(totalbelanja) end as totalsemuabulangaji,
+            case when tglrealisasi < '$bulan' and idjenisanggaran = 4 then sum(totalbelanja) end as jumlahspjsdbulanlalubarangjasa,
+            case when tglrealisasi = '$bulan' and idjenisanggaran = 4 then sum(totalbelanja) end as jumlahspjbulaninibarangjasa,
+            case when tglrealisasi <= '$bulan' and idjenisanggaran = 4 then sum(totalbelanja) end as totalsemuabulanbarangjasa
             from(
                 select ja.id idjenisanggaran, TO_CHAR(x.tglrealisasi, 'MM') tglrealisasi, 'tidak' as bold, RANK ( ) OVER ( order by ka.kode ) AS nourut, map3.kode || '.' || map2.kode kode,
                 map2.mataanggaranpermen keterangan, sum(kb.subtotal) jumlahanggaran, x.totalbelanja
@@ -4303,7 +4304,7 @@ class ReportController extends ApiController{
                     inner join strukrealisasi_t sr on ma.id=sr.objectmataanggaranfk
                     where sr.kdprofile = 30 and sr.statusenabled = true
                     and sr.status = 'Sudah Diverifikasi'
-                    and extract(year from sr.tglrealisasi) = '2022'
+                    and extract(year from sr.tglrealisasi) = '$tahun'
                     and TO_CHAR(sr.tglrealisasi, 'YYYY-MM') in(
                         SELECT TO_CHAR(months, 'YYYY-MM') AS dateMonth
                         FROM generate_series(
@@ -4332,12 +4333,12 @@ class ReportController extends ApiController{
         coalesce(sum(totalsemuabulanbarangjasa),0) totalsemuabulanbarangjasa
         from(
             select bold, nourut, kode, keterangan, jumlahanggaran,
-            case when tglrealisasi < '11' and idjenisanggaran = 3 then sum(totalbelanja) end as jumlahspjsdbulanlalugaji,
-            case when tglrealisasi = '11' and idjenisanggaran = 3 then sum(totalbelanja) end as jumlahspjbulaninigaji,
-            case when tglrealisasi <= '11' and idjenisanggaran = 3 then sum(totalbelanja) end as totalsemuabulangaji,
-            case when tglrealisasi < '11' and idjenisanggaran = 4 then sum(totalbelanja) end as jumlahspjsdbulanlalubarangjasa,
-            case when tglrealisasi = '11' and idjenisanggaran = 4 then sum(totalbelanja) end as jumlahspjbulaninibarangjasa,
-            case when tglrealisasi <= '11' and idjenisanggaran = 4 then sum(totalbelanja) end as totalsemuabulanbarangjasa
+            case when tglrealisasi < '$bulan' and idjenisanggaran = 3 then sum(totalbelanja) end as jumlahspjsdbulanlalugaji,
+            case when tglrealisasi = '$bulan' and idjenisanggaran = 3 then sum(totalbelanja) end as jumlahspjbulaninigaji,
+            case when tglrealisasi <= '$bulan' and idjenisanggaran = 3 then sum(totalbelanja) end as totalsemuabulangaji,
+            case when tglrealisasi < '$bulan' and idjenisanggaran = 4 then sum(totalbelanja) end as jumlahspjsdbulanlalubarangjasa,
+            case when tglrealisasi = '$bulan' and idjenisanggaran = 4 then sum(totalbelanja) end as jumlahspjbulaninibarangjasa,
+            case when tglrealisasi <= '$bulan' and idjenisanggaran = 4 then sum(totalbelanja) end as totalsemuabulanbarangjasa
             from(
                 select ja.id idjenisanggaran, TO_CHAR(x.tglrealisasi, 'MM') tglrealisasi, 'tidak' as bold, RANK ( ) OVER ( order by ka.kode ) AS nourut, map3.kode,
                 map3.mataanggaranpermen keterangan, sum(kb.subtotal) jumlahanggaran, x.totalbelanja
@@ -4362,7 +4363,7 @@ class ReportController extends ApiController{
                     inner join strukrealisasi_t sr on ma.id=sr.objectmataanggaranfk
                     where sr.kdprofile = 30 and sr.statusenabled = true
                     and sr.status = 'Sudah Diverifikasi'
-                    and extract(year from sr.tglrealisasi) = '2022'
+                    and extract(year from sr.tglrealisasi) = '$tahun'
                     and TO_CHAR(sr.tglrealisasi, 'YYYY-MM') in(
                         SELECT TO_CHAR(months, 'YYYY-MM') AS dateMonth
                         FROM generate_series(
@@ -4391,12 +4392,12 @@ class ReportController extends ApiController{
         coalesce(sum(totalsemuabulanbarangjasa),0) totalsemuabulanbarangjasa
         from(
             select 'iya' as bold, nourut, kode, keterangan, jumlahanggaran,
-            case when tglrealisasi < '11' and idjenisanggaran = 3 then sum(totalbelanja) end as jumlahspjsdbulanlalugaji,
-            case when tglrealisasi = '11' and idjenisanggaran = 3 then sum(totalbelanja) end as jumlahspjbulaninigaji,
-            case when tglrealisasi <= '11' and idjenisanggaran = 3 then sum(totalbelanja) end as totalsemuabulangaji,
-            case when tglrealisasi < '11' and idjenisanggaran = 4 then sum(totalbelanja) end as jumlahspjsdbulanlalubarangjasa,
-            case when tglrealisasi = '11' and idjenisanggaran = 4 then sum(totalbelanja) end as jumlahspjbulaninibarangjasa,
-            case when tglrealisasi <= '11' and idjenisanggaran = 4 then sum(totalbelanja) end as totalsemuabulanbarangjasa
+            case when tglrealisasi < '$bulan' and idjenisanggaran = 3 then sum(totalbelanja) end as jumlahspjsdbulanlalugaji,
+            case when tglrealisasi = '$bulan' and idjenisanggaran = 3 then sum(totalbelanja) end as jumlahspjbulaninigaji,
+            case when tglrealisasi <= '$bulan' and idjenisanggaran = 3 then sum(totalbelanja) end as totalsemuabulangaji,
+            case when tglrealisasi < '$bulan' and idjenisanggaran = 4 then sum(totalbelanja) end as jumlahspjsdbulanlalubarangjasa,
+            case when tglrealisasi = '$bulan' and idjenisanggaran = 4 then sum(totalbelanja) end as jumlahspjbulaninibarangjasa,
+            case when tglrealisasi <= '$bulan' and idjenisanggaran = 4 then sum(totalbelanja) end as totalsemuabulanbarangjasa
             from(
                 select ja.id idjenisanggaran, TO_CHAR(x.tglrealisasi, 'MM') tglrealisasi, RANK ( ) OVER ( order by dp0.kode ) AS nourut, dp0.kode,
                 dp0.keterangan, sum(kb.subtotal) jumlahanggaran, x.totalbelanja
@@ -4422,7 +4423,7 @@ class ReportController extends ApiController{
                     inner join strukrealisasi_t sr on ma.id=sr.objectmataanggaranfk
                     where sr.kdprofile = 30 and sr.statusenabled = true
                     and sr.status = 'Sudah Diverifikasi'
-                    and extract(year from sr.tglrealisasi) = '2022'
+                    and extract(year from sr.tglrealisasi) = '$tahun'
                     and TO_CHAR(sr.tglrealisasi, 'YYYY-MM') in(
                         SELECT TO_CHAR(months, 'YYYY-MM') AS dateMonth
                         FROM generate_series(
@@ -4450,12 +4451,12 @@ class ReportController extends ApiController{
         coalesce(sum(totalsemuabulanbarangjasa),0) totalsemuabulanbarangjasa
         from(
             select 'iya' as bold, nourut, kode, keterangan, jumlahanggaran,
-            case when tglrealisasi < '11' and idjenisanggaran = 3 then sum(totalbelanja) end as jumlahspjsdbulanlalugaji,
-            case when tglrealisasi = '11' and idjenisanggaran = 3 then sum(totalbelanja) end as jumlahspjbulaninigaji,
-            case when tglrealisasi <= '11' and idjenisanggaran = 3 then sum(totalbelanja) end as totalsemuabulangaji,
-            case when tglrealisasi < '11' and idjenisanggaran = 4 then sum(totalbelanja) end as jumlahspjsdbulanlalubarangjasa,
-            case when tglrealisasi = '11' and idjenisanggaran = 4 then sum(totalbelanja) end as jumlahspjbulaninibarangjasa,
-            case when tglrealisasi <= '11' and idjenisanggaran = 4 then sum(totalbelanja) end as totalsemuabulanbarangjasa
+            case when tglrealisasi < '$bulan' and idjenisanggaran = 3 then sum(totalbelanja) end as jumlahspjsdbulanlalugaji,
+            case when tglrealisasi = '$bulan' and idjenisanggaran = 3 then sum(totalbelanja) end as jumlahspjbulaninigaji,
+            case when tglrealisasi <= '$bulan' and idjenisanggaran = 3 then sum(totalbelanja) end as totalsemuabulangaji,
+            case when tglrealisasi < '$bulan' and idjenisanggaran = 4 then sum(totalbelanja) end as jumlahspjsdbulanlalubarangjasa,
+            case when tglrealisasi = '$bulan' and idjenisanggaran = 4 then sum(totalbelanja) end as jumlahspjbulaninibarangjasa,
+            case when tglrealisasi <= '$bulan' and idjenisanggaran = 4 then sum(totalbelanja) end as totalsemuabulanbarangjasa
             from(
                 select ja.id idjenisanggaran, TO_CHAR(x.tglrealisasi, 'MM') tglrealisasi, RANK ( ) OVER ( order by dp0.kode ) AS nourut, dp0.kode,
                 dp0.keterangan, sum(kb.subtotal) jumlahanggaran, x.totalbelanja
@@ -4481,7 +4482,7 @@ class ReportController extends ApiController{
                     inner join strukrealisasi_t sr on ma.id=sr.objectmataanggaranfk
                     where sr.kdprofile = 30 and sr.statusenabled = true
                     and sr.status = 'Sudah Diverifikasi'
-                    and extract(year from sr.tglrealisasi) = '2022'
+                    and extract(year from sr.tglrealisasi) = '$tahun'
                     and TO_CHAR(sr.tglrealisasi, 'YYYY-MM') in(
                         SELECT TO_CHAR(months, 'YYYY-MM') AS dateMonth
                         FROM generate_series(
@@ -4508,12 +4509,12 @@ class ReportController extends ApiController{
         coalesce(sum(totalsemuabulanbarangjasa),0) totalsemuabulanbarangjasa
         from(
             select 'iya' as bold, nourut, kode, keterangan, jumlahanggaran,
-            case when tglrealisasi < '11' and idjenisanggaran = 3 then sum(totalbelanja) end as jumlahspjsdbulanlalugaji,
-            case when tglrealisasi = '11' and idjenisanggaran = 3 then sum(totalbelanja) end as jumlahspjbulaninigaji,
-            case when tglrealisasi <= '11' and idjenisanggaran = 3 then sum(totalbelanja) end as totalsemuabulangaji,
-            case when tglrealisasi < '11' and idjenisanggaran = 4 then sum(totalbelanja) end as jumlahspjsdbulanlalubarangjasa,
-            case when tglrealisasi = '11' and idjenisanggaran = 4 then sum(totalbelanja) end as jumlahspjbulaninibarangjasa,
-            case when tglrealisasi <= '11' and idjenisanggaran = 4 then sum(totalbelanja) end as totalsemuabulanbarangjasa
+            case when tglrealisasi < '$bulan' and idjenisanggaran = 3 then sum(totalbelanja) end as jumlahspjsdbulanlalugaji,
+            case when tglrealisasi = '$bulan' and idjenisanggaran = 3 then sum(totalbelanja) end as jumlahspjbulaninigaji,
+            case when tglrealisasi <= '$bulan' and idjenisanggaran = 3 then sum(totalbelanja) end as totalsemuabulangaji,
+            case when tglrealisasi < '$bulan' and idjenisanggaran = 4 then sum(totalbelanja) end as jumlahspjsdbulanlalubarangjasa,
+            case when tglrealisasi = '$bulan' and idjenisanggaran = 4 then sum(totalbelanja) end as jumlahspjbulaninibarangjasa,
+            case when tglrealisasi <= '$bulan' and idjenisanggaran = 4 then sum(totalbelanja) end as totalsemuabulanbarangjasa
             from(
                 select ja.id idjenisanggaran, TO_CHAR(x.tglrealisasi, 'MM') tglrealisasi, RANK ( ) OVER ( order by dp0.kode ) AS nourut, dp0.kode,
                 dp0.keterangan, sum(kb.subtotal) jumlahanggaran, x.totalbelanja
@@ -4539,7 +4540,7 @@ class ReportController extends ApiController{
                     inner join strukrealisasi_t sr on ma.id=sr.objectmataanggaranfk
                     where sr.kdprofile = 30 and sr.statusenabled = true
                     and sr.status = 'Sudah Diverifikasi'
-                    and extract(year from sr.tglrealisasi) = '2022'
+                    and extract(year from sr.tglrealisasi) = '$tahun'
                     and TO_CHAR(sr.tglrealisasi, 'YYYY-MM') in(
                         SELECT TO_CHAR(months, 'YYYY-MM') AS dateMonth
                         FROM generate_series(
@@ -4559,21 +4560,23 @@ class ReportController extends ApiController{
         $penerimaan = DB::select(DB::raw("select 'false' padding, text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
         from(
             select 'Transfer Bendahara Penerima' as text, 'LLLLL' kode, 6 div, 0 subtotal, 
-            case when extract(month from tglspp) = '10' then sum(nilaispp) else 0 end as totalbulanlalu,
-            case when extract(month from tglspp) = '11' then sum(nilaispp) else 0 end as totalbulanini
+            case when extract(month from tglspp) < '$bulan' then sum(nilaispp) else 0 end as totalbulanlalu,
+            case when extract(month from tglspp) = '$bulan' then sum(nilaispp) else 0 end as totalbulanini
                 from spp_t
             where kdprofile = 30 and statusenabled = true
-            and extract(month from tglspp) in('10', '11')
+            and extract(month from tglspp) <= '$bulan'
+            and extract(year from tglspp) = '$tahun'
             group by extract(month from tglspp)
         
             union all
         
             select 'Transfer Bendahara Penerima' as text, 'LLLLL' kode, 6 div, 0 subtotal, 
-            case when extract(month from tglspm) = '10' then sum(nilaispm) else 0 end as totalbulanlalu,
-            case when extract(month from tglspm) = '11' then sum(nilaispm) else 0 end as totalbulanini
+            case when extract(month from tglspm) < '$bulan' then sum(nilaispm) else 0 end as totalbulanlalu,
+            case when extract(month from tglspm) = '$bulan' then sum(nilaispm) else 0 end as totalbulanini
                 from spm_t
             where kdprofile = 30 and statusenabled = true
-            and extract(month from tglspm) in('10', '11')
+            and extract(month from tglspm) <= '$bulan'
+            and extract(year from tglspm) = '$tahun'
             group by extract(month from tglspm)
         ) as x
         group by text, kode, div, subtotal
@@ -4583,11 +4586,12 @@ class ReportController extends ApiController{
         select 'false' padding, text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
         from(
             select 'Jasa Giro' as text, 'MMMMM' kode, 7 div, 0 subtotal, 
-            case when extract(month from tglpemasukan) = '10' then sum(jumlahpemasukan) else 0 end as totalbulanlalu,
-            case when extract(month from tglpemasukan) = '11' then sum(jumlahpemasukan) else 0 end as totalbulanini
+            case when extract(month from tglpemasukan) < '$bulan' then sum(jumlahpemasukan) else 0 end as totalbulanlalu,
+            case when extract(month from tglpemasukan) = '$bulan' then sum(jumlahpemasukan) else 0 end as totalbulanini
                 from jasagiro_t
             where kdprofile = 30 and statusenabled = true
-            and extract(month from tglpemasukan) in('10', '11')
+            and extract(month from tglpemasukan) <= '$bulan'
+            and extract(year from tglpemasukan) = '$tahun'
             group by uraianjasagiro, nojasagiro, extract(month from tglpemasukan)
         ) as x
         group by text, kode, div, subtotal
@@ -4597,11 +4601,12 @@ class ReportController extends ApiController{
 		select 'false' padding, text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
 		from(
 			select 'STS' as text, 'MMMMM' kode, 18 div, 0 subtotal, 
-			case when extract(month from tglsts) = '10' then sum(nilaists::float8) else 0 end as totalbulanlalu,
-			case when extract(month from tglsts) = '11' then sum(nilaists::float8) else 0 end as totalbulanini
+			case when extract(month from tglsts) < '$bulan' then sum(nilaists::float8) else 0 end as totalbulanlalu,
+			case when extract(month from tglsts) = '$bulan' then sum(nilaists::float8) else 0 end as totalbulanini
 				from stskeuangan_t
 			where kdprofile = 30 and statusenabled = true
-			and extract(month from tglsts) in('10', '11')
+			and extract(month from tglsts) <= '$bulan'
+            and extract(year from tglsts) = '$tahun'
 			group by uraiansts, extract(month from tglsts)
 		) as x
 		group by text, kode, div, subtotal
@@ -4611,11 +4616,12 @@ class ReportController extends ApiController{
         select 'false' padding, text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
         from(
             select 'Potongan Pajak' as text, 'OOOOO' kode, 8 div, 0 subtotal, 
-            case when extract(month from tglpph) = '10' then sum(ppn+pph) else 0 end as totalbulanlalu,
-            case when extract(month from tglpph) = '11' then sum(ppn+pph) else 0 end as totalbulanini
+            case when extract(month from tglpph) < '$bulan' then sum(ppn+pph) else 0 end as totalbulanlalu,
+            case when extract(month from tglpph) = '$bulan' then sum(ppn+pph) else 0 end as totalbulanini
                 from penyetoranpajak_t pp
             where kdprofile = 30 and statusenabled = true
-            and extract(month from tglpph) in('10', '11')
+            and extract(month from tglpph) <= '$bulan'
+            and extract(year from tglpph) = '$tahun'
             group by uraianpajak, extract(month from tglpph)
         ) as x
         group by text, kode, div, subtotal
@@ -4625,11 +4631,12 @@ class ReportController extends ApiController{
         select 'true' padding, text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
         from(
             select 'PPN' as text, 'OOOOO' kode, 9 div, 0 subtotal, 
-            case when extract(month from tglpph) = '10' then sum(ppn) else 0 end as totalbulanlalu,
-            case when extract(month from tglpph) = '11' then sum(ppn) else 0 end as totalbulanini
+            case when extract(month from tglpph) < '$bulan' then sum(ppn) else 0 end as totalbulanlalu,
+            case when extract(month from tglpph) = '$bulan' then sum(ppn) else 0 end as totalbulanini
                 from penyetoranpajak_t pp
             where kdprofile = 30 and statusenabled = true
-            and extract(month from tglpph) in('10', '11')
+            and extract(month from tglpph) <= '$bulan'
+            and extract(year from tglpph) = '$tahun'
             group by extract(month from tglpph)
         ) as x
         group by text, kode, div, subtotal
@@ -4637,22 +4644,24 @@ class ReportController extends ApiController{
         union all
         
         select 'true' padding, jp.jenispajak as text, 'OOOOO' kode, 9 div, 0 subtotal, 
-        case when extract(month from tglpph) = '10' then sum(pmp.pph) else 0 end as totalbulanlalu,
-        case when extract(month from tglpph) = '11' then sum(pmp.pph) else 0 end as totalbulanini
+        case when extract(month from tglpph) < '$bulan' then sum(pmp.pph) else 0 end as totalbulanlalu,
+        case when extract(month from tglpph) = '$bulan' then sum(pmp.pph) else 0 end as totalbulanini
             from pemungutanpajak_t pmp
         inner join jenispajak_m jp on jp.id = pmp.objectjenispphfk
         where pmp.kdprofile = 30 and pmp.statusenabled = true
-        and extract(month from pmp.tglpph) in('10', '11')
+        and extract(month from pmp.tglpph) <= '$bulan'
+        and extract(year from pmp.tglpph) = '$tahun'
         group by jp.jenispajak, extract(month from pmp.tglpph)"));
 
         $pengeluaran = DB::select(DB::raw("select 'false' padding, text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
         from(
             select 'SPJ' as text, 'RRRRR' kode, 10 div, 0 subtotal, 
-            case when extract(month from tglrealisasi) = '10' then sum(totalbelanja) else 0 end as totalbulanlalu,
-            case when extract(month from tglrealisasi) = '11' then sum(totalbelanja) else 0 end as totalbulanini
+            case when extract(month from tglrealisasi) < '$bulan' then sum(totalbelanja) else 0 end as totalbulanlalu,
+            case when extract(month from tglrealisasi) = '$bulan' then sum(totalbelanja) else 0 end as totalbulanini
                 from strukrealisasi_t
             where kdprofile = 30 and statusenabled = true
-            and extract(month from tglrealisasi) in('10', '11')
+            and extract(month from tglrealisasi) <= '$bulan'
+            and extract(year from tglrealisasi) = '$tahun'
             and status = 'Sudah Diverifikasi'
             group by extract(month from tglrealisasi)
         ) as x
@@ -4663,11 +4672,12 @@ class ReportController extends ApiController{
         select 'false' padding, text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
         from(
             select 'Jasa Giro' as text, 'SSSSS' kode, 11 div, 0 subtotal, 
-            case when extract(month from tglpemasukan) = '10' then sum(jumlahpemasukan) else 0 end as totalbulanlalu,
-            case when extract(month from tglpemasukan) = '11' then sum(jumlahpemasukan) else 0 end as totalbulanini
+            case when extract(month from tglpemasukan) < '$bulan' then sum(jumlahpemasukan) else 0 end as totalbulanlalu,
+            case when extract(month from tglpemasukan) = '$bulan' then sum(jumlahpemasukan) else 0 end as totalbulanini
                 from jasagiro_t
             where kdprofile = 30 and statusenabled = true
-            and extract(month from tglpemasukan) in('10', '11')
+            and extract(month from tglpemasukan) <= '$bulan'
+            and extract(year from tglpemasukan) = '$tahun'
             group by uraianjasagiro, nojasagiro, extract(month from tglpemasukan)
         ) as x
         group by text, kode, div, subtotal
@@ -4677,11 +4687,12 @@ class ReportController extends ApiController{
 		select 'false' padding, text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
 		from(
 			select 'STS' as text, 'TTTTT' kode, 12 div, 0 subtotal, 
-			case when extract(month from tglsts) = '10' then sum(nilaists::float8) else 0 end as totalbulanlalu,
-			case when extract(month from tglsts) = '11' then sum(nilaists::float8) else 0 end as totalbulanini
+			case when extract(month from tglsts) < '$bulan' then sum(nilaists::float8) else 0 end as totalbulanlalu,
+			case when extract(month from tglsts) = '$bulan' then sum(nilaists::float8) else 0 end as totalbulanini
 				from stskeuangan_t
 			where kdprofile = 30 and statusenabled = true
-			and extract(month from tglsts) in('10', '11')
+			and extract(month from tglsts) <= '$bulan'
+            and extract(year from tglsts) = '$tahun'
 			group by uraiansts, extract(month from tglsts)
 		) as x
 		group by text, kode, div, subtotal
@@ -4691,11 +4702,12 @@ class ReportController extends ApiController{
         select 'false' padding, text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
         from(
             select 'Penyetoran Pajak' as text, 'UUUUU' kode, 13 div, 0 subtotal, 
-            case when extract(month from tglpph) = '10' then sum(ppn+pph) else 0 end as totalbulanlalu,
-            case when extract(month from tglpph) = '11' then sum(ppn+pph) else 0 end as totalbulanini
+            case when extract(month from tglpph) < '$bulan' then sum(ppn+pph) else 0 end as totalbulanlalu,
+            case when extract(month from tglpph) = '$bulan' then sum(ppn+pph) else 0 end as totalbulanini
                 from penyetoranpajak_t pp
             where kdprofile = 30 and statusenabled = true
-            and extract(month from tglpph) in('10', '11')
+            and extract(month from tglpph) <= '$bulan'
+            and extract(year from tglpph) = '$tahun'
             group by uraianpajak, extract(month from tglpph)
         ) as x
         group by text, kode, div, subtotal
@@ -4705,11 +4717,12 @@ class ReportController extends ApiController{
         select 'true' padding, text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
         from(
             select 'PPN' as text, 'VVVVV' kode, 14 div, 0 subtotal, 
-            case when extract(month from tglpph) = '10' then sum(ppn) else 0 end as totalbulanlalu,
-            case when extract(month from tglpph) = '11' then sum(ppn) else 0 end as totalbulanini
+            case when extract(month from tglpph) < '$bulan' then sum(ppn) else 0 end as totalbulanlalu,
+            case when extract(month from tglpph) = '$bulan' then sum(ppn) else 0 end as totalbulanini
                 from penyetoranpajak_t pp
             where kdprofile = 30 and statusenabled = true
-            and extract(month from tglpph) in('10', '11')
+            and extract(month from tglpph) <= '$bulan'
+            and extract(year from tglpph) = '$tahun'
             group by extract(month from tglpph)
         ) as x
         group by text, kode, div, subtotal
@@ -4717,32 +4730,39 @@ class ReportController extends ApiController{
         union all
         
         select 'true' padding, jp.jenispajak as text, 'WWWWW' kode, 15 div, 0 subtotal, 
-        case when extract(month from tglpph) = '10' then sum(pmp.pph) else 0 end as totalbulanlalu,
-        case when extract(month from tglpph) = '11' then sum(pmp.pph) else 0 end as totalbulanini
+        case when extract(month from tglpph) < '$bulan' then sum(pmp.pph) else 0 end as totalbulanlalu,
+        case when extract(month from tglpph) = '$bulan' then sum(pmp.pph) else 0 end as totalbulanini
             from pemungutanpajak_t pmp
         inner join jenispajak_m jp on jp.id = pmp.objectjenispphfk
         where pmp.kdprofile = 30 and pmp.statusenabled = true
-        and extract(month from pmp.tglpph) in('10', '11')
+        and extract(month from pmp.tglpph) <= '$bulan'
+        and extract(year from pmp.tglpph) = '$tahun'
         group by jp.jenispajak, extract(month from pmp.tglpph)"));
 
         $iuran = DB::select(DB::raw("select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
         from(
             select rd.uraian as text, 'RRRRR' kode, 10 div, 0 subtotal, 
-            case when extract(month from sr.tglrealisasi) = '10' then sum(rd.subtotal) else 0 end as totalbulanlalu,
-            case when extract(month from sr.tglrealisasi) = '11' then sum(rd.subtotal) else 0 end as totalbulanini
+            case when extract(month from sr.tglrealisasi) < '$bulan' then sum(rd.subtotal) else 0 end as totalbulanlalu,
+            case when extract(month from sr.tglrealisasi) = '$bulan' then sum(rd.subtotal) else 0 end as totalbulanini
                 from strukrealisasi_t sr
-						inner join realisasidetail_t rd on rd.strukrealisasifk =sr.norec
+			inner join realisasidetail_t rd on rd.strukrealisasifk =sr.norec
+            inner JOIN kegiatananggaran_m ka on ka.id=sr.objectkegiatanfk
+            inner join kegiatananggaran_m as dp0 on ka.kode ilike dp0.kode || '%' and dp0.div = 3
             where sr.kdprofile = 30 and sr.statusenabled = true
-						and rd.kdprofile = 30 and rd.statusenabled = true
-            and extract(month from sr.tglrealisasi) in('10', '11')
+			and rd.kdprofile = 30 and rd.statusenabled = true
+            and ka.kdprofile = 30 and ka.statusenabled = true
+            and dp0.kdprofile = 30 and dp0.statusenabled = true
+            and extract(month from sr.tglrealisasi) <= '$bulan'
+            and extract(year from sr.tglrealisasi) = '$tahun'
             and sr.status = 'Sudah Diverifikasi'
+            and dp0.keterangan = 'Penyediaan Gaji dan Tunjangan ASN'
             group by rd.uraian, extract(month from sr.tglrealisasi)
         ) as x
         group by text, kode, div, subtotal"));
 
         $pageWidth = 950;
         
-        return view('report.keuangan.pertanggungjawabanbaru',compact('data', 'pageWidth', 'total', 'penerimaan', 'pengeluaran', 'iuran'));
+        return view('report.keuangan.pertanggungjawabanbaru',compact('data', 'pageWidth', 'total', 'penerimaan', 'pengeluaran', 'iuran', 'tahun', 'periode'));
     }
 
     public function CetakLO(Request $request){
@@ -6541,566 +6561,1431 @@ class ReportController extends ApiController{
     public function CetakFungsional(Request $request){
         // $tahunjudul = $request['tahunpanjar'];
         $tanggalcetak = $this->tanggal_indonesia(date('Y-m-d',strtotime($request['tglcetak'])));
+        $tanggaljudul = $this->tanggal_indonesia(date('Y-m-d',strtotime($request['tglbku'])));
+        $bllalu = date('Y-m',strtotime($request['tglbku']));
+        $tahun = date('Y',strtotime($request['tglbku']));
+        $bulan = date('m',strtotime($request['tglbku']));
+        $tglbku = $request['tglbku'];
         // $bulan = $request['bulanpanjar'];
+        $blalu = DB::select(DB::raw("SELECT extract('month' from(date '$bllalu-01' - interval '1 month')) as bulan;"));
 
-        // $qtahun  = '';
-        // if (isset($request['tahunpanjar']) && $request['tahunpanjar'] != "" && $request['tahunpanjar'] != "undefined") {
-        //     $qtahun =  " and extract(year from tglbku) between '01' and '" . $request['tahunpanjar']."'";
-        // }
+        $bulanlalu = $blalu[0]->bulan;
+
+        $qasalproduk  = '';
+        if (isset($request['asalproduk']) && $request['asalproduk'] != "" && $request['asalproduk'] != "undefined") {
+            $qasalproduk =  " and ap.id = " . $request['asalproduk'];
+        }
 
         // $qbulan  = '';
         // if (isset($request['bulanpanjar']) && $request['bulanpanjar'] != "" && $request['bulanpanjar'] != "undefined") {
         //     $qbulan =  " and extract(month from tglbku) between '01' and  '" . $request['bulanpanjar']."'";
         // }
-
-        $data = DB::select(DB::raw("select text, kode, div, sum(subtotal) subtotal, sum(totalbulanlalu) totalbulanlalu, 
+        
+        if($request['jenisrekening'] == 1){
+            $data = DB::select(DB::raw("select text, kode, div, sum(subtotal) subtotal, sum(totalbulanlalu) totalbulanlalu, 
         sum(totalbulanini) totalbulanini
         from(
-            select text, kode, div, sum(subtotal) subtotal,
-            case when bulan = '10' then sum(totalbelanja) else 0 end as totalbulanlalu,
-            case when bulan = '11' then sum(totalbelanja) else 0 end as totalbulanini
-            from(
-                select kmsss.keterangan as text, kmsss.kode, kmsss.div, sum(kb.subtotal) subtotal, sr.totalbelanja, sr.norec,
-                    extract(month from sr.tglrealisasi) bulan
-                    from kegiatananggaran_m km
-                inner join kegiatananggaran_m kms on km.kode ilike  kms.kode || '%' and kms.div = 3
-                inner join kegiatananggaran_m kmss on km.kode ilike  kmss.kode || '%' and kmss.div = 2
-                inner join kegiatananggaran_m kmsss on km.kode ilike  kmsss.kode || '%' and kmsss.div = 1
-                inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
-                inner join asalproduk_m ap on ap.id = kb.objectasalprodukfk
-                left join strukrealisasi_t sr on km.id = sr.objectkegiatanfk
-                and sr.kdprofile = 30 and sr.statusenabled = true
-                and sr.status = 'Sudah Diverifikasi'
-                and extract(month from sr.tglrealisasi) in('10', '11')
-                where km.kdprofile = 30 and km.statusenabled = true
-                and kms.kdprofile = 30 and kms.statusenabled = true
-                and kmss.kdprofile = 30 and kmss.statusenabled = true
-                and kmsss.kdprofile = 30 and kmsss.statusenabled = true
-                and ap.kdprofile = 30 and ap.statusenabled = true
-                and kb.kdprofile = 30 and kb.statusenabled = true
-                and km.tahun = '2022'
-                group by kmsss.keterangan, kmsss.kode, kmsss.div, sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi)
-            ) as a group by text, kode, div, bulan
-        
-            union all
-            
-            select text, kode, div, sum(subtotal) subtotal,
-            case when bulan = '10' then sum(totalbelanja) else 0 end as totalbulanlalu,
-            case when bulan = '11' then sum(totalbelanja) else 0 end as totalbulanini
-            from(
-                select kmss.keterangan as text, kmss.kode, kmss.div, sum(kb.subtotal) subtotal, sr.totalbelanja, sr.norec,
-                    extract(month from sr.tglrealisasi) bulan
-                    from kegiatananggaran_m km
-                inner join kegiatananggaran_m kms on km.kode ilike  kms.kode || '%' and kms.div = 3
-                inner join kegiatananggaran_m kmss on km.kode ilike  kmss.kode || '%' and kmss.div = 2
-                inner join kegiatananggaran_m kmsss on km.kode ilike  kmsss.kode || '%' and kmsss.div = 1
-                inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
-                inner join asalproduk_m ap on ap.id = kb.objectasalprodukfk
-                left join strukrealisasi_t sr on km.id = sr.objectkegiatanfk
-                and sr.kdprofile = 30 and sr.statusenabled = true
-                and sr.status = 'Sudah Diverifikasi'
-                and extract(month from sr.tglrealisasi) in('10', '11')
-                where km.kdprofile = 30 and km.statusenabled = true
-                and kms.kdprofile = 30 and kms.statusenabled = true
-                and kmss.kdprofile = 30 and kmss.statusenabled = true
-                and kmsss.kdprofile = 30 and kmsss.statusenabled = true
-                and ap.kdprofile = 30 and ap.statusenabled = true
-                and kb.kdprofile = 30 and kb.statusenabled = true
-                and km.tahun = '2022'
-                group by kmss.keterangan, kmss.kode, kmss.div, sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi)
-            ) as b group by text, kode, div, bulan
-        
-            union all
-            
-            select text, kode, div, sum(subtotal) subtotal,
-            case when bulan = '10' then sum(totalbelanja) else 0 end as totalbulanlalu,
-            case when bulan = '11' then sum(totalbelanja) else 0 end as totalbulanini
-            from(
-                select kms.keterangan as text, kms.kode, kms.div, sum(kb.subtotal) subtotal, sr.totalbelanja, sr.norec,
-                    extract(month from sr.tglrealisasi) bulan
-                    from kegiatananggaran_m km
-                inner join kegiatananggaran_m kms on km.kode ilike  kms.kode || '%' and kms.div = 3
-                inner join kegiatananggaran_m kmss on km.kode ilike  kmss.kode || '%' and kmss.div = 2
-                inner join kegiatananggaran_m kmsss on km.kode ilike  kmsss.kode || '%' and kmsss.div = 1
-                inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
-                inner join asalproduk_m ap on ap.id = kb.objectasalprodukfk
-                left join strukrealisasi_t sr on km.id = sr.objectkegiatanfk
-                and sr.kdprofile = 30 and sr.statusenabled = true
-                and sr.status = 'Sudah Diverifikasi'
-                and extract(month from sr.tglrealisasi) in('10', '11')
-                where km.kdprofile = 30 and km.statusenabled = true
-                and kms.kdprofile = 30 and kms.statusenabled = true
-                and kmss.kdprofile = 30 and kmss.statusenabled = true
-                and kmsss.kdprofile = 30 and kmsss.statusenabled = true
-                and ap.kdprofile = 30 and ap.statusenabled = true
-                and kb.kdprofile = 30 and kb.statusenabled = true
-                and km.tahun = '2022'
-                group by kms.keterangan, kms.kode, kms.div, sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi)
-            ) as c group by text, kode, div, bulan
-        
-            union all
-            
-            select text, kode, div, sum(subtotal) subtotal,
-            case when bulan = '10' then sum(totalbelanja) else 0 end as totalbulanlalu,
-            case when bulan = '11' then sum(totalbelanja) else 0 end as totalbulanini
-            from(
-                select km.keterangan as text, km.kode, km.div, sum(kb.subtotal) subtotal, sr.totalbelanja, sr.norec,
-                extract(month from sr.tglrealisasi) bulan
-                    from kegiatananggaran_m km
-                inner join kegiatananggaran_m kms on km.kode ilike  kms.kode || '%' and kms.div = 3
-                inner join kegiatananggaran_m kmss on km.kode ilike  kmss.kode || '%' and kmss.div = 2
-                inner join kegiatananggaran_m kmsss on km.kode ilike  kmsss.kode || '%' and kmsss.div = 1
-                inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
-                inner join asalproduk_m ap on ap.id = kb.objectasalprodukfk
-                left join strukrealisasi_t sr on km.id = sr.objectkegiatanfk
-                and sr.kdprofile = 30 and sr.statusenabled = true
-                and sr.status = 'Sudah Diverifikasi'
-                and extract(month from sr.tglrealisasi) in('10', '11')
-                where km.kdprofile = 30 and km.statusenabled = true
-                and kms.kdprofile = 30 and kms.statusenabled = true
-                and kmss.kdprofile = 30 and kmss.statusenabled = true
-                and kmsss.kdprofile = 30 and kmsss.statusenabled = true
-                and ap.kdprofile = 30 and ap.statusenabled = true
-                and kb.kdprofile = 30 and kb.statusenabled = true
-                and km.tahun = '2022'
-                group by km.keterangan, km.kode, km.div, sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi)
-            ) as d group by text, kode, div, bulan
-        ) as x
-        group by text, kode, div
-        
-        union all
-        
-        select text, kode, div, sum(subtotal) subtotal, sum(totalbulanlalu) totalbulanlalu, 
-        sum(totalbulanini) totalbulanini
-        from(
-                    select text, kode, 5 div, sum(subtotal) subtotal, 
-                    case when bulan = '10' then sum(totalbelanja) else 0 end as totalbulanlalu,
-                    case when bulan = '11' then sum(totalbelanja) else 0 end as totalbulanini
+                    select text, kode, div, sum(subtotal) subtotal,
+                    case when bulan = '$bulanlalu' then sum(totalbelanja) else 0 end as totalbulanlalu,
+                    case when bulan = '$bulan' then sum(totalbelanja) else 0 end as totalbulanini
                     from(
-                        select mat.kodemataanggaran kode, mat.namamataanggaran as text, sum(kb.subtotal) subtotal,
-                        sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi) bulan
-                        from kegiatananggaran_m km
+                        select kmsss.keterangan as text, kmsss.kode, kmsss.div, sum(kb.subtotal) subtotal, sr.totalbelanja, sr.norec,
+                            extract(month from sr.tglrealisasi) bulan
+                            from kegiatananggaran_m km
+                        inner join kegiatananggaran_m kms on km.kode ilike  kms.kode || '%' and kms.div = 3
+                        inner join kegiatananggaran_m kmss on km.kode ilike  kmss.kode || '%' and kmss.div = 2
+                        inner join kegiatananggaran_m kmsss on km.kode ilike  kmsss.kode || '%' and kmsss.div = 1
                         inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
-                        inner join mataanggaran_m ma on ma.id = kb.objectmataanggaranfk
-                        inner join mataanggaran_m mat on ma.kodemataanggaran ilike mat.kodemataanggaran || '.%'
-                        and mat.kodemataanggaran in('I', 'II', 'III')
+                        inner join asalproduk_m ap on ap.id = kb.objectasalprodukfk
                         left join strukrealisasi_t sr on km.id = sr.objectkegiatanfk
                         and sr.kdprofile = 30 and sr.statusenabled = true
                         and sr.status = 'Sudah Diverifikasi'
-                        and extract(month from sr.tglrealisasi) in('10', '11')
+                        and extract(month from sr.tglrealisasi) in('$bulanlalu', '$bulan')
                         where km.kdprofile = 30 and km.statusenabled = true
-                        and km.tahun = '2022'
-                        and ma.kdprofile = 30 and ma.statusenabled = true
-                        and mat.kdprofile = 30 and mat.statusenabled = true
+                        and kms.kdprofile = 30 and kms.statusenabled = true
+                        and kmss.kdprofile = 30 and kmss.statusenabled = true
+                        and kmsss.kdprofile = 30 and kmsss.statusenabled = true
+                        and ap.kdprofile = 30 and ap.statusenabled = true
                         and kb.kdprofile = 30 and kb.statusenabled = true
-                        group by mat.kodemataanggaran, mat.namamataanggaran, sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi)
-                    ) as a
-                    group by kode, text, bulan
-        
+                        and km.tahun = '$tahun'
+                                        $qasalproduk
+                        group by kmsss.keterangan, kmsss.kode, kmsss.div, sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi)
+                    ) as a group by text, kode, div, bulan
+                
                     union all
                     
-                    select text, kode, 5 div, sum(subtotal) subtotal, 
-                    case when bulan = '10' then sum(totalbelanja) else 0 end as totalbulanlalu,
-                    case when bulan = '11' then sum(totalbelanja) else 0 end as totalbulanini
+                    select text, kode, div, sum(subtotal) subtotal,
+                    case when bulan = '$bulanlalu' then sum(totalbelanja) else 0 end as totalbulanlalu,
+                    case when bulan = '$bulan' then sum(totalbelanja) else 0 end as totalbulanini
                     from(
-                        select mat.kodemataanggaran kode, mat.namamataanggaran as text, sum(kb.subtotal) subtotal,
-                        sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi) bulan
-                        from kegiatananggaran_m km
+                        select kmss.keterangan as text, kmss.kode, kmss.div, sum(kb.subtotal) subtotal, sr.totalbelanja, sr.norec,
+                            extract(month from sr.tglrealisasi) bulan
+                            from kegiatananggaran_m km
+                        inner join kegiatananggaran_m kms on km.kode ilike  kms.kode || '%' and kms.div = 3
+                        inner join kegiatananggaran_m kmss on km.kode ilike  kmss.kode || '%' and kmss.div = 2
+                        inner join kegiatananggaran_m kmsss on km.kode ilike  kmsss.kode || '%' and kmsss.div = 1
                         inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
-                        inner join mataanggaran_m ma on ma.id = kb.objectmataanggaranfk
-                        inner join mataanggaran_m mat on ma.kodemataanggaran ilike mat.kodemataanggaran || '%'
-                        and 
-                        case 
-                            when mat.kodemataanggaran ilike 'I.%' then char_length(mat.kodemataanggaran) = 3
-                        end
+                        inner join asalproduk_m ap on ap.id = kb.objectasalprodukfk
                         left join strukrealisasi_t sr on km.id = sr.objectkegiatanfk
                         and sr.kdprofile = 30 and sr.statusenabled = true
                         and sr.status = 'Sudah Diverifikasi'
-                        and extract(month from sr.tglrealisasi) in('10', '11')
+                        and extract(month from sr.tglrealisasi) in('$bulanlalu', '$bulan')
                         where km.kdprofile = 30 and km.statusenabled = true
-                        and km.tahun = '2022'
-                        and ma.kdprofile = 30 and ma.statusenabled = true
-                        and mat.kdprofile = 30 and mat.statusenabled = true
+                        and kms.kdprofile = 30 and kms.statusenabled = true
+                        and kmss.kdprofile = 30 and kmss.statusenabled = true
+                        and kmsss.kdprofile = 30 and kmsss.statusenabled = true
+                        and ap.kdprofile = 30 and ap.statusenabled = true
                         and kb.kdprofile = 30 and kb.statusenabled = true
-                        group by mat.kodemataanggaran, mat.namamataanggaran, sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi)
-                    ) as b 
-                    group by kode, text, bulan
-        
+                        and km.tahun = '$tahun'
+                                        $qasalproduk
+                        group by kmss.keterangan, kmss.kode, kmss.div, sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi)
+                    ) as b group by text, kode, div, bulan
+                
                     union all
                     
-                    select text, kode, 5 div, sum(subtotal) subtotal, 
-                    case when bulan = '10' then sum(totalbelanja) else 0 end as totalbulanlalu,
-                    case when bulan = '11' then sum(totalbelanja) else 0 end as totalbulanini
+                    select text, kode, div, sum(subtotal) subtotal,
+                    case when bulan = '$bulanlalu' then sum(totalbelanja) else 0 end as totalbulanlalu,
+                    case when bulan = '$bulan' then sum(totalbelanja) else 0 end as totalbulanini
                     from(
-                        select mat.kodemataanggaran kode, mat.namamataanggaran as text, sum(kb.subtotal) subtotal,
-                        sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi) bulan
-                        from kegiatananggaran_m km
+                        select kms.keterangan as text, kms.kode, kms.div, sum(kb.subtotal) subtotal, sr.totalbelanja, sr.norec,
+                            extract(month from sr.tglrealisasi) bulan
+                            from kegiatananggaran_m km
+                        inner join kegiatananggaran_m kms on km.kode ilike  kms.kode || '%' and kms.div = 3
+                        inner join kegiatananggaran_m kmss on km.kode ilike  kmss.kode || '%' and kmss.div = 2
+                        inner join kegiatananggaran_m kmsss on km.kode ilike  kmsss.kode || '%' and kmsss.div = 1
                         inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
-                        inner join mataanggaran_m ma on ma.id = kb.objectmataanggaranfk
-                        inner join mataanggaran_m mat on ma.kodemataanggaran ilike mat.kodemataanggaran || '%'
-                        and 
-                        case 
-                            when mat.kodemataanggaran ilike 'I.%' then char_length(mat.kodemataanggaran) = 5
-                            when mat.kodemataanggaran ilike 'II.%' then char_length(mat.kodemataanggaran) = 4
-                            when mat.kodemataanggaran ilike 'III.%' then char_length(mat.kodemataanggaran) = 5
-                        end
+                        inner join asalproduk_m ap on ap.id = kb.objectasalprodukfk
                         left join strukrealisasi_t sr on km.id = sr.objectkegiatanfk
                         and sr.kdprofile = 30 and sr.statusenabled = true
                         and sr.status = 'Sudah Diverifikasi'
-                        and extract(month from sr.tglrealisasi) in('10', '11')
+                        and extract(month from sr.tglrealisasi) in('$bulanlalu', '$bulan')
                         where km.kdprofile = 30 and km.statusenabled = true
-                        and km.tahun = '2022'
-                        and ma.kdprofile = 30 and ma.statusenabled = true
-                        and mat.kdprofile = 30 and mat.statusenabled = true
+                        and kms.kdprofile = 30 and kms.statusenabled = true
+                        and kmss.kdprofile = 30 and kmss.statusenabled = true
+                        and kmsss.kdprofile = 30 and kmsss.statusenabled = true
+                        and ap.kdprofile = 30 and ap.statusenabled = true
                         and kb.kdprofile = 30 and kb.statusenabled = true
-                        group by mat.kodemataanggaran, mat.namamataanggaran, sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi)
-                    ) as c 
-                    group by kode, text, bulan
-        
+                        and km.tahun = '$tahun'
+                                        $qasalproduk
+                        group by kms.keterangan, kms.kode, kms.div, sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi)
+                    ) as c group by text, kode, div, bulan
+                
                     union all
                     
-                    select text, kode, 5 div, sum(subtotal) subtotal, 
-                    case when bulan = '10' then sum(totalbelanja) else 0 end as totalbulanlalu,
-                    case when bulan = '11' then sum(totalbelanja) else 0 end as totalbulanini
+                    select text, kode, div, sum(subtotal) subtotal,
+                    case when bulan = '$bulanlalu' then sum(totalbelanja) else 0 end as totalbulanlalu,
+                    case when bulan = '$bulan' then sum(totalbelanja) else 0 end as totalbulanini
                     from(
-                        select ma.kodemataanggaran kode, ma.namamataanggaran as text, sum(kb.subtotal) subtotal, 
-                        sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi) bulan
-                        from kegiatananggaran_m km
+                        select km.keterangan as text, km.kode, km.div, sum(kb.subtotal) subtotal, sr.totalbelanja, sr.norec,
+                        extract(month from sr.tglrealisasi) bulan
+                            from kegiatananggaran_m km
+                        inner join kegiatananggaran_m kms on km.kode ilike  kms.kode || '%' and kms.div = 3
+                        inner join kegiatananggaran_m kmss on km.kode ilike  kmss.kode || '%' and kmss.div = 2
+                        inner join kegiatananggaran_m kmsss on km.kode ilike  kmsss.kode || '%' and kmsss.div = 1
                         inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
-                        inner join mataanggaran_m ma on ma.id = kb.objectmataanggaranfk
+                        inner join asalproduk_m ap on ap.id = kb.objectasalprodukfk
                         left join strukrealisasi_t sr on km.id = sr.objectkegiatanfk
                         and sr.kdprofile = 30 and sr.statusenabled = true
                         and sr.status = 'Sudah Diverifikasi'
-                        and extract(month from sr.tglrealisasi) in('10', '11')
+                        and extract(month from sr.tglrealisasi) in('$bulanlalu', '$bulan')
                         where km.kdprofile = 30 and km.statusenabled = true
-                        and km.tahun = '2022'
-                        and ma.kdprofile = 30 and ma.statusenabled = true
+                        and kms.kdprofile = 30 and kms.statusenabled = true
+                        and kmss.kdprofile = 30 and kmss.statusenabled = true
+                        and kmsss.kdprofile = 30 and kmsss.statusenabled = true
+                        and ap.kdprofile = 30 and ap.statusenabled = true
                         and kb.kdprofile = 30 and kb.statusenabled = true
-                        group by ma.kodemataanggaran, ma.namamataanggaran, sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi)
-                    ) as d 
-                    group by kode, text, bulan
-        ) as x
-        group by text, kode, div
-        
-        union all
-        
-        select 'PENERIMAAN:' as text, 'KKKKK' kode, 6 div, 0 subtotal, 0 totalbulanlalu, 0 totalbulanini
-        
-        union all 
-        
-        select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
-        from(
-            select 'Transfer Bendahara Penerima' as text, 'LLLLL' kode, 6 div, 0 subtotal, 
-            case when extract(month from tglspp) = '10' then sum(nilaispp) else 0 end as totalbulanlalu,
-            case when extract(month from tglspp) = '11' then sum(nilaispp) else 0 end as totalbulanini
-                from spp_t
-            where kdprofile = 30 and statusenabled = true
-            and extract(month from tglspp) in('10', '11')
-            group by extract(month from tglspp)
-        
-            union all
-        
-            select 'Transfer Bendahara Penerima' as text, 'LLLLL' kode, 6 div, 0 subtotal, 
-            case when extract(month from tglspm) = '10' then sum(nilaispm) else 0 end as totalbulanlalu,
-            case when extract(month from tglspm) = '11' then sum(nilaispm) else 0 end as totalbulanini
-                from spm_t
-            where kdprofile = 30 and statusenabled = true
-            and extract(month from tglspm) in('10', '11')
-            group by extract(month from tglspm)
-        ) as x
-        group by text, kode, div, subtotal
-        
-        union all
-        
-        select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
-        from(
-            select 'Jasa Giro' as text, 'MMMMM' kode, 7 div, 0 subtotal, 
-            case when extract(month from tglpemasukan) = '10' then sum(jumlahpemasukan) else 0 end as totalbulanlalu,
-            case when extract(month from tglpemasukan) = '11' then sum(jumlahpemasukan) else 0 end as totalbulanini
-                from jasagiro_t
-            where kdprofile = 30 and statusenabled = true
-            and extract(month from tglpemasukan) in('10', '11')
-            group by uraianjasagiro, nojasagiro, extract(month from tglpemasukan)
-        ) as x
-        group by text, kode, div, subtotal
-
-		union all
-
-		select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
-		from(
-			select 'STS' as text, 'MMMMM' kode, 18 div, 0 subtotal, 
-			case when extract(month from tglsts) = '10' then sum(nilaists::float8) else 0 end as totalbulanlalu,
-			case when extract(month from tglsts) = '11' then sum(nilaists::float8) else 0 end as totalbulanini
-				from stskeuangan_t
-			where kdprofile = 30 and statusenabled = true
-			and extract(month from tglsts) in('10', '11')
-			group by uraiansts, extract(month from tglsts)
-		) as x
-		group by text, kode, div, subtotal
-        
-        union all
-        
-        select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
-        from(
-            select 'Potongan Pajak' as text, 'OOOOO' kode, 8 div, 0 subtotal, 
-            case when extract(month from tglpph) = '10' then sum(ppn+pph) else 0 end as totalbulanlalu,
-            case when extract(month from tglpph) = '11' then sum(ppn+pph) else 0 end as totalbulanini
-                from penyetoranpajak_t pp
-            where kdprofile = 30 and statusenabled = true
-            and extract(month from tglpph) in('10', '11')
-            group by uraianpajak, extract(month from tglpph)
-        ) as x
-        group by text, kode, div, subtotal
-        
-        union all
-        
-        select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
-        from(
-            select 'PPN' as text, 'OOOOO' kode, 9 div, 0 subtotal, 
-            case when extract(month from tglpph) = '10' then sum(ppn) else 0 end as totalbulanlalu,
-            case when extract(month from tglpph) = '11' then sum(ppn) else 0 end as totalbulanini
-                from penyetoranpajak_t pp
-            where kdprofile = 30 and statusenabled = true
-            and extract(month from tglpph) in('10', '11')
-            group by extract(month from tglpph)
-        ) as x
-        group by text, kode, div, subtotal
-        
-        union all
-        
-        select jp.jenispajak as text, 'OOOOO' kode, 9 div, 0 subtotal, 
-        case when extract(month from tglpph) = '10' then sum(pmp.pph) else 0 end as totalbulanlalu,
-        case when extract(month from tglpph) = '11' then sum(pmp.pph) else 0 end as totalbulanini
-            from pemungutanpajak_t pmp
-        inner join jenispajak_m jp on jp.id = pmp.objectjenispphfk
-        where pmp.kdprofile = 30 and pmp.statusenabled = true
-        and extract(month from pmp.tglpph) in('10', '11')
-        group by jp.jenispajak, extract(month from pmp.tglpph)
-        
-        union all
-        
-        select 'JUMLAH PENERIMAAN:' as text, 'PPPPP' kode, 9 div, 0 subtotal,
-        sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
-        from(
-            select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
-            from(
-                select 'Transfer Bendahara Penerima' as text, 'LLLLL' kode, 6 div, 0 subtotal, 
-                case when extract(month from tglspp) = '10' then sum(nilaispp) else 0 end as totalbulanlalu,
-                case when extract(month from tglspp) = '11' then sum(nilaispp) else 0 end as totalbulanini
-                    from spp_t
-                where kdprofile = 30 and statusenabled = true
-                and extract(month from tglspp) in('10', '11')
-                group by extract(month from tglspp)
-        
+                        and km.tahun = '$tahun'
+                                        $qasalproduk
+                        group by km.keterangan, km.kode, km.div, sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi)
+                    ) as d group by text, kode, div, bulan
+                ) as x
+                group by text, kode, div
+                
                 union all
+                
+                select text, kode, div, sum(subtotal) subtotal, sum(totalbulanlalu) totalbulanlalu, 
+                sum(totalbulanini) totalbulanini
+                from(
+                            select text, kode, 5 div, sum(subtotal) subtotal, 
+                            case when bulan = '$bulanlalu' then sum(totalbelanja) else 0 end as totalbulanlalu,
+                            case when bulan = '$bulan' then sum(totalbelanja) else 0 end as totalbulanini
+                            from(
+                                select mat.kodemataanggaran kode, mat.namamataanggaran as text, sum(kb.subtotal) subtotal,
+                                sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi) bulan
+                                from kegiatananggaran_m km
+                                inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
+                                inner join mataanggaran_m ma on ma.id = kb.objectmataanggaranfk
+                                inner join mataanggaran_m mat on ma.kodemataanggaran ilike mat.kodemataanggaran || '.%'
+                                and mat.kodemataanggaran in('I', 'II', 'III')
+                                                        inner join asalproduk_m ap on ap.id = kb.objectasalprodukfk
+                                left join strukrealisasi_t sr on km.id = sr.objectkegiatanfk
+                                and sr.kdprofile = 30 and sr.statusenabled = true
+                                and sr.status = 'Sudah Diverifikasi'
+                                and extract(month from sr.tglrealisasi) in('$bulanlalu', '$bulan')
+                                where km.kdprofile = 30 and km.statusenabled = true
+                                and km.tahun = '$tahun'
+                                                        $qasalproduk
+                                and ma.kdprofile = 30 and ma.statusenabled = true
+                                and mat.kdprofile = 30 and mat.statusenabled = true
+                                and kb.kdprofile = 30 and kb.statusenabled = true
+                                group by mat.kodemataanggaran, mat.namamataanggaran, sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi)
+                            ) as a
+                            group by kode, text, bulan
+                
+                            union all
+                            
+                            select text, kode, 5 div, sum(subtotal) subtotal, 
+                            case when bulan = '$bulanlalu' then sum(totalbelanja) else 0 end as totalbulanlalu,
+                            case when bulan = '$bulan' then sum(totalbelanja) else 0 end as totalbulanini
+                            from(
+                                select mat.kodemataanggaran kode, mat.namamataanggaran as text, sum(kb.subtotal) subtotal,
+                                sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi) bulan
+                                from kegiatananggaran_m km
+                                inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
+                                inner join mataanggaran_m ma on ma.id = kb.objectmataanggaranfk
+                                inner join mataanggaran_m mat on ma.kodemataanggaran ilike mat.kodemataanggaran || '%'
+                                and 
+                                case 
+                                    when mat.kodemataanggaran ilike 'I.%' then char_length(mat.kodemataanggaran) = 3
+                                end
+                                                        inner join asalproduk_m ap on ap.id = kb.objectasalprodukfk
+                                left join strukrealisasi_t sr on km.id = sr.objectkegiatanfk
+                                and sr.kdprofile = 30 and sr.statusenabled = true
+                                and sr.status = 'Sudah Diverifikasi'
+                                and extract(month from sr.tglrealisasi) in('$bulanlalu', '$bulan')
+                                where km.kdprofile = 30 and km.statusenabled = true
+                                and km.tahun = '$tahun'
+                                and ma.kdprofile = 30 and ma.statusenabled = true
+                                and mat.kdprofile = 30 and mat.statusenabled = true
+                                and kb.kdprofile = 30 and kb.statusenabled = true
+                                                        $qasalproduk
+                                group by mat.kodemataanggaran, mat.namamataanggaran, sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi)
+                            ) as b 
+                            group by kode, text, bulan
+                
+                            union all
+                            
+                            select text, kode, 5 div, sum(subtotal) subtotal, 
+                            case when bulan = '$bulanlalu' then sum(totalbelanja) else 0 end as totalbulanlalu,
+                            case when bulan = '$bulan' then sum(totalbelanja) else 0 end as totalbulanini
+                            from(
+                                select mat.kodemataanggaran kode, mat.namamataanggaran as text, sum(kb.subtotal) subtotal,
+                                sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi) bulan
+                                from kegiatananggaran_m km
+                                inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
+                                inner join mataanggaran_m ma on ma.id = kb.objectmataanggaranfk
+                                inner join mataanggaran_m mat on ma.kodemataanggaran ilike mat.kodemataanggaran || '%'
+                                and 
+                                case 
+                                    when mat.kodemataanggaran ilike 'I.%' then char_length(mat.kodemataanggaran) = 5
+                                    when mat.kodemataanggaran ilike 'II.%' then char_length(mat.kodemataanggaran) = 4
+                                    when mat.kodemataanggaran ilike 'III.%' then char_length(mat.kodemataanggaran) = 5
+                                end
+                                                        inner join asalproduk_m ap on ap.id = kb.objectasalprodukfk
+                                left join strukrealisasi_t sr on km.id = sr.objectkegiatanfk
+                                and sr.kdprofile = 30 and sr.statusenabled = true
+                                and sr.status = 'Sudah Diverifikasi'
+                                and extract(month from sr.tglrealisasi) in('$bulanlalu', '$bulan')
+                                where km.kdprofile = 30 and km.statusenabled = true
+                                and km.tahun = '$tahun'
+                                and ma.kdprofile = 30 and ma.statusenabled = true
+                                and mat.kdprofile = 30 and mat.statusenabled = true
+                                and kb.kdprofile = 30 and kb.statusenabled = true
+                                                        $qasalproduk
+                                group by mat.kodemataanggaran, mat.namamataanggaran, sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi)
+                            ) as c 
+                            group by kode, text, bulan
+                
+                            union all
+                            
+                            select text, kode, 5 div, sum(subtotal) subtotal, 
+                            case when bulan = '$bulanlalu' then sum(totalbelanja) else 0 end as totalbulanlalu,
+                            case when bulan = '$bulan' then sum(totalbelanja) else 0 end as totalbulanini
+                            from(
+                                select ma.kodemataanggaran kode, ma.namamataanggaran as text, sum(kb.subtotal) subtotal, 
+                                sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi) bulan
+                                from kegiatananggaran_m km
+                                inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
+                                inner join mataanggaran_m ma on ma.id = kb.objectmataanggaranfk
+                                                        inner join asalproduk_m ap on ap.id = kb.objectasalprodukfk
+                                left join strukrealisasi_t sr on km.id = sr.objectkegiatanfk
+                                and sr.kdprofile = 30 and sr.statusenabled = true
+                                and sr.status = 'Sudah Diverifikasi'
+                                and extract(month from sr.tglrealisasi) in('$bulanlalu', '$bulan')
+                                where km.kdprofile = 30 and km.statusenabled = true
+                                and km.tahun = '$tahun'
+                                and ma.kdprofile = 30 and ma.statusenabled = true
+                                and kb.kdprofile = 30 and kb.statusenabled = true
+                                                        $qasalproduk
+                                group by ma.kodemataanggaran, ma.namamataanggaran, sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi)
+                            ) as d 
+                            group by kode, text, bulan
+                ) as x
+                group by text, kode, div
+                
+                union all
+                
+                select 'PENERIMAAN:' as text, 'KKKKK' kode, 6 div, 0 subtotal, 0 totalbulanlalu, 0 totalbulanini
+                
+                union all 
+                
+                select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
+                from(
+                    select 'Transfer Bendahara Penerima' as text, 'LLLLL' kode, 6 div, 0 subtotal, 
+                    case when extract(month from spp.tglspp) = '$bulanlalu' then sum(spp.nilaispp) else 0 end as totalbulanlalu,
+                    case when extract(month from spp.tglspp) = '$bulan' then sum(spp.nilaispp) else 0 end as totalbulanini
+                        from spp_t spp
+                                inner join asalproduk_m ap on ap.id = spp.objectasalprodukfk
+                    where spp.kdprofile = 30 and spp.statusenabled = true
+                                and ap.kdprofile = 30 and ap.statusenabled = true
+                    and extract(month from spp.tglspp) in('$bulanlalu', '$bulan')
+                                $qasalproduk
+                    group by extract(month from spp.tglspp)
+                
+                    union all
+                
+                    select 'Transfer Bendahara Penerima' as text, 'LLLLL' kode, 6 div, 0 subtotal, 
+                    case when extract(month from bku.tglbku) = '$bulanlalu' then sum(spm.nilaispm) else 0 end as totalbulanlalu,
+                    case when extract(month from bku.tglbku) = '$bulan' then sum(spm.nilaispm) else 0 end as totalbulanini
+                        from spm_t spm
+                                inner join asalproduk_m ap on ap.id = spm.objectasalprodukfk
+                                inner join bukukasumum_t bku on bku.norec = spm.objectbkufk
+                    where spm.kdprofile = 30 and spm.statusenabled = true
+                                and bku.kdprofile = 30 and bku.statusenabled = true
+                    and bku.tglbku::date between '$tahun-$bulanlalu-01' and '$tglbku'
+                                $qasalproduk
+                    group by extract(month from bku.tglbku)
+                ) as x
+                group by text, kode, div, subtotal
+                
+                union all
+                
+                select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
+                from(
+                    select 'Jasa Giro' as text, 'MMMMM' kode, 7 div, 0 subtotal, 
+                    case when extract(month from bku.tglbku) = '$bulanlalu' then sum(jg.jumlahpemasukan) else 0 end as totalbulanlalu,
+                    case when extract(month from bku.tglbku) = '$bulan' then sum(jg.jumlahpemasukan) else 0 end as totalbulanini
+                        from jasagiro_t jg
+                                inner join bukukasumum_t bku on bku.norec = jg.objectbkufk
+                    where jg.kdprofile = 30 and jg.statusenabled = true
+                    and bku.tglbku::date between '$tahun-$bulanlalu-01' and '$tglbku'
+                                and bku.kdprofile = 30 and bku.statusenabled = true
+                    group by jg.uraianjasagiro, jg.nojasagiro, extract(month from bku.tglbku)
+                ) as x
+                group by text, kode, div, subtotal
         
-                select 'Transfer Bendahara Penerima' as text, 'LLLLL' kode, 6 div, 0 subtotal, 
-                case when extract(month from tglspm) = '10' then sum(nilaispm) else 0 end as totalbulanlalu,
-                case when extract(month from tglspm) = '11' then sum(nilaispm) else 0 end as totalbulanini
-                    from spm_t
-                where kdprofile = 30 and statusenabled = true
-                and extract(month from tglspm) in('10', '11')
-                group by extract(month from tglspm)
-            ) as x
-            group by text, kode, div, subtotal
+                        union all
         
-            union all
+                        select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
+                        from(
+                            select 'STS' as text, 'MMMMM' kode, 18 div, 0 subtotal, 
+                            case when extract(month from bku.tglbku) = '$bulanlalu' then sum(sts.nilaists::float8) else 0 end as totalbulanlalu,
+                            case when extract(month from bku.tglbku) = '$bulan' then sum(sts.nilaists::float8) else 0 end as totalbulanini
+                                from stskeuangan_t sts
+                            inner join asalproduk_m ap on ap.id = sts.objectsumberdanafk
+                            inner join bukukasumum_t bku on bku.norec = sts.objectbkufk
+                            where sts.kdprofile = 30 and sts.statusenabled = true
+                            and bku.tglbku::date between '$tahun-$bulanlalu-01' and '$tglbku'
+                            and bku.kdprofile = 30 and bku.statusenabled = true
+                            $qasalproduk
+                            group by sts.uraiansts, extract(month from bku.tglbku)
+                        ) as x
+                        group by text, kode, div, subtotal
+                
+                union all
+                
+                select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
+                from(
+                    select 'Potongan Pajak' as text, 'OOOOO' kode, 8 div, 0 subtotal, 
+                    case when extract(month from bku.tglbku) = '$bulanlalu' then sum(pp.ppn+pp.pph) else 0 end as totalbulanlalu,
+                    case when extract(month from bku.tglbku) = '$bulan' then sum(pp.ppn+pp.pph) else 0 end as totalbulanini
+                        from penyetoranpajak_t pp
+                                inner join bukukasumum_t bku on bku.norec = pp.objectbkufk
+                    where pp.kdprofile = 30 and pp.statusenabled = true
+                    and bku.tglbku::date between '$tahun-$bulanlalu-01' and '$tglbku'
+                                and bku.kdprofile = 30 and bku.statusenabled = true
+                    group by pp.uraianpajak, extract(month from bku.tglbku)
+                ) as x
+                group by text, kode, div, subtotal
+                
+                union all
+                
+                select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
+                from(
+                    select 'PPN' as text, 'OOOOO' kode, 9 div, 0 subtotal, 
+                    case when extract(month from bku.tglbku) = '$bulanlalu' then sum(pp.ppn) else 0 end as totalbulanlalu,
+                    case when extract(month from bku.tglbku) = '$bulan' then sum(pp.ppn) else 0 end as totalbulanini
+                        from penyetoranpajak_t pp
+                                inner join bukukasumum_t bku on bku.norec = pp.objectbkufk
+                    where pp.kdprofile = 30 and pp.statusenabled = true
+                    and bku.tglbku::date between '$tahun-$bulanlalu-01' and '$tglbku'
+                                and bku.kdprofile = 30 and bku.statusenabled = true
+                    group by extract(month from bku.tglbku)
+                ) as x
+                group by text, kode, div, subtotal
+                
+                union all
+                
+                select jp.jenispajak as text, 'OOOOO' kode, 9 div, 0 subtotal, 
+                case when extract(month from bku.tglbku) = '$bulanlalu' then sum(pmp.pph) else 0 end as totalbulanlalu,
+                case when extract(month from bku.tglbku) = '$bulan' then sum(pmp.pph) else 0 end as totalbulanini
+                    from pemungutanpajak_t pmp
+                inner join jenispajak_m jp on jp.id = pmp.objectjenispphfk
+                        inner join bukukasumum_t bku on bku.norec = pmp.objectbkufk
+                where pmp.kdprofile = 30 and pmp.statusenabled = true
+                and bku.tglbku::date between '$tahun-$bulanlalu-01' and '$tglbku'
+                        and bku.kdprofile = 30 and bku.statusenabled = true
+                group by jp.jenispajak, extract(month from bku.tglbku)
+                
+                union all
+                
+                select 'JUMLAH PENERIMAAN:' as text, 'PPPPP' kode, 9 div, 0 subtotal,
+                sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
+                from(
+                    select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
+                                from(
+                                        select 'Transfer Bendahara Penerima' as text, 'LLLLL' kode, 6 div, 0 subtotal, 
+                                        case when extract(month from spp.tglspp) = '$bulanlalu' then sum(spp.nilaispp) else 0 end as totalbulanlalu,
+                                        case when extract(month from spp.tglspp) = '$bulan' then sum(spp.nilaispp) else 0 end as totalbulanini
+                                                from spp_t spp
+                                        inner join asalproduk_m ap on ap.id = spp.objectasalprodukfk
+                                        where spp.kdprofile = 30 and spp.statusenabled = true
+                                        and ap.kdprofile = 30 and ap.statusenabled = true
+                                        and extract(month from spp.tglspp) in('$bulanlalu', '$bulan')
+                                        $qasalproduk
+                                        group by extract(month from spp.tglspp)
+                                
+                                        union all
+                                
+                                        select 'Transfer Bendahara Penerima' as text, 'LLLLL' kode, 6 div, 0 subtotal, 
+                                        case when extract(month from bku.tglbku) = '$bulanlalu' then sum(spm.nilaispm) else 0 end as totalbulanlalu,
+                                        case when extract(month from bku.tglbku) = '$bulan' then sum(spm.nilaispm) else 0 end as totalbulanini
+                                                from spm_t spm
+                                        inner join asalproduk_m ap on ap.id = spm.objectasalprodukfk
+                                        inner join bukukasumum_t bku on bku.norec = spm.objectbkufk
+                                        where spm.kdprofile = 30 and spm.statusenabled = true
+                                        and bku.kdprofile = 30 and bku.statusenabled = true
+                                        and bku.tglbku::date between '$tahun-$bulanlalu-01' and '$tglbku'
+                                        $qasalproduk
+                                        group by extract(month from bku.tglbku)
+                                ) as x
+                                group by text, kode, div, subtotal
+                                
+                                union all
+                                
+                                select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
+                                from(
+                                        select 'Jasa Giro' as text, 'MMMMM' kode, 7 div, 0 subtotal, 
+                                        case when extract(month from bku.tglbku) = '$bulanlalu' then sum(jg.jumlahpemasukan) else 0 end as totalbulanlalu,
+                                        case when extract(month from bku.tglbku) = '$bulan' then sum(jg.jumlahpemasukan) else 0 end as totalbulanini
+                                                from jasagiro_t jg
+                                        inner join bukukasumum_t bku on bku.norec = jg.objectbkufk
+                                        where jg.kdprofile = 30 and jg.statusenabled = true
+                                        and bku.tglbku::date between '$tahun-$bulanlalu-01' and '$tglbku'
+                                        and bku.kdprofile = 30 and bku.statusenabled = true
+                                        group by jg.uraianjasagiro, jg.nojasagiro, extract(month from bku.tglbku)
+                                ) as x
+                                group by text, kode, div, subtotal
         
-            select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
-            from(
-                select 'Jasa Giro' as text, 'MMMMM' kode, 7 div, 0 subtotal, 
-                case when extract(month from tglpemasukan) = '10' then sum(jumlahpemasukan) else 0 end as totalbulanlalu,
-                case when extract(month from tglpemasukan) = '11' then sum(jumlahpemasukan) else 0 end as totalbulanini
-                    from jasagiro_t
-                where kdprofile = 30 and statusenabled = true
-                and extract(month from tglpemasukan) in('10', '11')
-                group by uraianjasagiro, nojasagiro, extract(month from tglpemasukan)
-            ) as x
-            group by text, kode, div, subtotal
+                                union all
         
-            union all
+                                select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
+                                from(
+                                    select 'STS' as text, 'MMMMM' kode, 18 div, 0 subtotal, 
+                                    case when extract(month from bku.tglbku) = '$bulanlalu' then sum(sts.nilaists::float8) else 0 end as totalbulanlalu,
+                                    case when extract(month from bku.tglbku) = '$bulan' then sum(sts.nilaists::float8) else 0 end as totalbulanini
+                                        from stskeuangan_t sts
+                                    inner join asalproduk_m ap on ap.id = sts.objectsumberdanafk
+                                    inner join bukukasumum_t bku on bku.norec = sts.objectbkufk
+                                    where sts.kdprofile = 30 and sts.statusenabled = true
+                                    and bku.tglbku::date between '$tahun-$bulanlalu-01' and '$tglbku'
+                                    and bku.kdprofile = 30 and bku.statusenabled = true
+                                    $qasalproduk
+                                    group by sts.uraiansts, extract(month from bku.tglbku)
+                                ) as x
+                                group by text, kode, div, subtotal
+                                
+                                union all
+                                
+                                select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
+                                from(
+                                        select 'Potongan Pajak' as text, 'OOOOO' kode, 8 div, 0 subtotal, 
+                                        case when extract(month from bku.tglbku) = '$bulanlalu' then sum(pp.ppn+pp.pph) else 0 end as totalbulanlalu,
+                                        case when extract(month from bku.tglbku) = '$bulan' then sum(pp.ppn+pp.pph) else 0 end as totalbulanini
+                                                from penyetoranpajak_t pp
+                                        inner join bukukasumum_t bku on bku.norec = pp.objectbkufk
+                                        where pp.kdprofile = 30 and pp.statusenabled = true
+                                        and bku.tglbku::date between '$tahun-$bulanlalu-01' and '$tglbku'
+                                        and bku.kdprofile = 30 and bku.statusenabled = true
+                                        group by pp.uraianpajak, extract(month from bku.tglbku)
+                                ) as x
+                                group by text, kode, div, subtotal
+                                
+                                union all
+                                
+                                select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
+                                from(
+                                        select 'PPN' as text, 'OOOOO' kode, 9 div, 0 subtotal, 
+                                        case when extract(month from bku.tglbku) = '$bulanlalu' then sum(pp.ppn) else 0 end as totalbulanlalu,
+                                        case when extract(month from bku.tglbku) = '$bulan' then sum(pp.ppn) else 0 end as totalbulanini
+                                                from penyetoranpajak_t pp
+                                        inner join bukukasumum_t bku on bku.norec = pp.objectbkufk
+                                        where pp.kdprofile = 30 and pp.statusenabled = true
+                                        and bku.tglbku::date between '$tahun-$bulanlalu-01' and '$tglbku'
+                                        and bku.kdprofile = 30 and bku.statusenabled = true
+                                        group by extract(month from bku.tglbku)
+                                ) as x
+                                group by text, kode, div, subtotal
+                                
+                                union all
+                                
+                                select jp.jenispajak as text, 'OOOOO' kode, 9 div, 0 subtotal, 
+                                case when extract(month from bku.tglbku) = '$bulanlalu' then sum(pmp.pph) else 0 end as totalbulanlalu,
+                                case when extract(month from bku.tglbku) = '$bulan' then sum(pmp.pph) else 0 end as totalbulanini
+                                        from pemungutanpajak_t pmp
+                                inner join jenispajak_m jp on jp.id = pmp.objectjenispphfk
+                                inner join bukukasumum_t bku on bku.norec = pmp.objectbkufk
+                                where pmp.kdprofile = 30 and pmp.statusenabled = true
+                                and bku.tglbku::date between '$tahun-$bulanlalu-01' and '$tglbku'
+                                and bku.kdprofile = 30 and bku.statusenabled = true
+                                group by jp.jenispajak, extract(month from bku.tglbku)
+                ) as y
+                
+                union all 
+                
+                select 'PENGELUARAN:' as text, 'QQQQQ' kode, 9 div, 0 subtotal, 0 totalbulanlalu, 0 totalbulanini
+                
+                union all 
+                        
+                        select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
+                from(
+                            select text, kode, div, subtotal,
+                            case when tglrealisasi = '$bulanlalu' then sum(totalbelanja) else 0 end as totalbulanlalu,
+                            case when tglrealisasi = '$bulan' then sum(totalbelanja) else 0 end as totalbulanini
+                            from(
+                                    select 'SPJ' as text, 'RRRRR' kode, 10 div, 0 subtotal, extract(month from bku.tglbku) tglrealisasi, sr.totalbelanja, sr.norec
+                                            from kegiatananggaran_m km
+                                    inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
+                                    inner join asalproduk_m ap on ap.id = kb.objectasalprodukfk
+                                    inner join strukrealisasi_t sr on km.id = sr.objectkegiatanfk
+                                    inner join bukukasumum_t bku on bku.norec = sr.objectbkufk
+                                    where sr.kdprofile = 30 and sr.statusenabled = true
+                                    and km.kdprofile = 30 and km.statusenabled = true
+                                    and kb.kdprofile = 30 and kb.statusenabled = true
+                                    and bku.kdprofile = 30 and bku.statusenabled = true
+                                    and sr.status = 'Sudah Diverifikasi'
+                                    and bku.tglbku::date between '$tahun-$bulanlalu-01' and '$tglbku'
+                                    $qasalproduk
+                                    group by extract(month from bku.tglbku), sr.totalbelanja, sr.norec
+                            ) as x
+                            group by tglrealisasi, text, kode, div, subtotal
+                        ) as x
+                group by text, kode, div, subtotal
+                
+                union all
+                
+                select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
+                from(
+                    select 'Jasa Giro' as text, 'SSSSS' kode, 11 div, 0 subtotal, 
+                    case when extract(month from bku.tglbku) = '$bulanlalu' then sum(jg.jumlahpemasukan) else 0 end as totalbulanlalu,
+                    case when extract(month from bku.tglbku) = '$bulan' then sum(jg.jumlahpemasukan) else 0 end as totalbulanini
+                        from jasagiro_t jg
+                                inner join bukukasumum_t bku on bku.norec = jg.objectbkufk
+                    where jg.kdprofile = 30 and jg.statusenabled = true
+                    and bku.tglbku::date between '$tahun-$bulanlalu-01' and '$tglbku'
+                                and bku.kdprofile = 30 and bku.statusenabled = true
+                    group by jg.uraianjasagiro, jg.nojasagiro, extract(month from bku.tglbku)
+                ) as x
+                group by text, kode, div, subtotal
         
-            select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
-            from(
-                select 'Potongan Pajak' as text, 'OOOOO' kode, 8 div, 0 subtotal, 
-                case when extract(month from tglpph) = '10' then sum(ppn+pph) else 0 end as totalbulanlalu,
-                case when extract(month from tglpph) = '11' then sum(ppn+pph) else 0 end as totalbulanini
-                    from penyetoranpajak_t pp
-                where kdprofile = 30 and statusenabled = true
-                and extract(month from tglpph) in('10', '11')
-                group by uraianpajak, extract(month from tglpph)
-            ) as x
-            group by text, kode, div, subtotal
-
-						union all
-
-						select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
-						from(
-							select 'STS' as text, 'MMMMM' kode, 18 div, 0 subtotal, 
-							case when extract(month from tglsts) = '10' then sum(nilaists::float8) else 0 end as totalbulanlalu,
-							case when extract(month from tglsts) = '11' then sum(nilaists::float8) else 0 end as totalbulanini
-								from stskeuangan_t
-							where kdprofile = 30 and statusenabled = true
-							and extract(month from tglsts) in('10', '11')
-							group by uraiansts, extract(month from tglsts)
-						) as x
-						group by text, kode, div, subtotal
-        ) as y
+                        union all
         
-        union all 
+                        select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
+                        from(
+                            select 'STS' as text, 'TTTTT' kode, 12 div, 0 subtotal, 
+                            case when extract(month from bku.tglbku) = '$bulanlalu' then sum(sts.nilaists::float8) else 0 end as totalbulanlalu,
+                            case when extract(month from bku.tglbku) = '$bulan' then sum(sts.nilaists::float8) else 0 end as totalbulanini
+                                from stskeuangan_t sts
+                            inner join asalproduk_m ap on ap.id = sts.objectsumberdanafk
+                            inner join bukukasumum_t bku on bku.norec = sts.objectbkufk
+                            where sts.kdprofile = 30 and sts.statusenabled = true
+                            and bku.tglbku::date between '$tahun-$bulanlalu-01' and '$tglbku'
+                            and bku.kdprofile = 30 and bku.statusenabled = true
+                            $qasalproduk
+                            group by sts.uraiansts, extract(month from bku.tglbku)
+                        ) as x
+                        group by text, kode, div, subtotal
+                
+                union all
+                
+                select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
+                from(
+                    select 'Penyetoran Pajak' as text, 'UUUUU' kode, 13 div, 0 subtotal, 
+                    case when extract(month from bku.tglbku) = '$bulanlalu' then sum(pp.ppn+pp.pph) else 0 end as totalbulanlalu,
+                    case when extract(month from bku.tglbku) = '$bulan' then sum(pp.ppn+pp.pph) else 0 end as totalbulanini
+                        from penyetoranpajak_t pp
+                                inner join bukukasumum_t bku on bku.norec = pp.objectbkufk
+                    where pp.kdprofile = 30 and pp.statusenabled = true
+                    and bku.tglbku::date between '$tahun-$bulanlalu-01' and '$tglbku'
+                                and bku.kdprofile = 30 and bku.statusenabled = true
+                    group by pp.uraianpajak, extract(month from bku.tglbku)
+                ) as x
+                group by text, kode, div, subtotal
+                
+                union all
+                
+                select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
+                from(
+                    select 'PPN' as text, 'VVVVV' kode, 14 div, 0 subtotal, 
+                    case when extract(month from bku.tglbku) = '$bulanlalu' then sum(pp.ppn) else 0 end as totalbulanlalu,
+                    case when extract(month from bku.tglbku) = '$bulan' then sum(pp.ppn) else 0 end as totalbulanini
+                        from penyetoranpajak_t pp
+                                inner join bukukasumum_t bku on bku.norec = pp.objectbkufk
+                    where pp.kdprofile = 30 and pp.statusenabled = true
+                    and bku.tglbku::date between '$tahun-$bulanlalu-01' and '$tglbku'
+                                and bku.kdprofile = 30 and bku.statusenabled = true
+                    group by extract(month from bku.tglbku)
+                ) as x
+                group by text, kode, div, subtotal
+                
+                union all
+                
+                select jp.jenispajak as text, 'WWWWW' kode, 15 div, 0 subtotal, 
+                case when extract(month from bku.tglbku) = '$bulanlalu' then sum(pmp.pph) else 0 end as totalbulanlalu,
+                case when extract(month from bku.tglbku) = '$bulan' then sum(pmp.pph) else 0 end as totalbulanini
+                    from pemungutanpajak_t pmp
+                inner join jenispajak_m jp on jp.id = pmp.objectjenispphfk
+                        inner join bukukasumum_t bku on bku.norec = pmp.objectbkufk
+                where pmp.kdprofile = 30 and pmp.statusenabled = true
+                and bku.tglbku::date between '$tahun-$bulanlalu-01' and '$tglbku'
+                        and bku.kdprofile = 30 and bku.statusenabled = true
+                group by jp.jenispajak, extract(month from bku.tglbku)
+                
+                union all
+                
+                select 'JUMLAH PENGELUARAN:' as text, 'XXXXX' kode, 16 div, 0 subtotal,
+                sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
+                from(
+                    select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
+                                from(
+                                    select text, kode, div, subtotal,
+                                    case when tglrealisasi = '$bulanlalu' then sum(totalbelanja) else 0 end as totalbulanlalu,
+                                    case when tglrealisasi = '$bulan' then sum(totalbelanja) else 0 end as totalbulanini
+                                    from(
+                                            select 'SPJ' as text, 'RRRRR' kode, 10 div, 0 subtotal, extract(month from bku.tglbku) tglrealisasi, sr.totalbelanja, sr.norec
+                                                    from kegiatananggaran_m km
+                                            inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
+                                            inner join asalproduk_m ap on ap.id = kb.objectasalprodukfk
+                                            inner join strukrealisasi_t sr on km.id = sr.objectkegiatanfk
+                                            inner join bukukasumum_t bku on bku.norec = sr.objectbkufk
+                                            where sr.kdprofile = 30 and sr.statusenabled = true
+                                            and km.kdprofile = 30 and km.statusenabled = true
+                                            and kb.kdprofile = 30 and kb.statusenabled = true
+                                            and bku.kdprofile = 30 and bku.statusenabled = true
+                                            and sr.status = 'Sudah Diverifikasi'
+                                            and bku.tglbku::date between '$tahun-$bulanlalu-01' and '$tglbku'
+                                            $qasalproduk
+                                            group by extract(month from bku.tglbku), sr.totalbelanja, sr.norec
+                                    ) as x
+                                    group by tglrealisasi, text, kode, div, subtotal
+                                ) as x
+                                group by text, kode, div, subtotal
+                                
+                                union all
+                                
+                                select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
+                                from(
+                                        select 'Jasa Giro' as text, 'SSSSS' kode, 11 div, 0 subtotal, 
+                                        case when extract(month from bku.tglbku) = '$bulanlalu' then sum(jg.jumlahpemasukan) else 0 end as totalbulanlalu,
+                                        case when extract(month from bku.tglbku) = '$bulan' then sum(jg.jumlahpemasukan) else 0 end as totalbulanini
+                                                from jasagiro_t jg
+                                        inner join bukukasumum_t bku on bku.norec = jg.objectbkufk
+                                        where jg.kdprofile = 30 and jg.statusenabled = true
+                                        and bku.tglbku::date between '$tahun-$bulanlalu-01' and '$tglbku'
+                                        and bku.kdprofile = 30 and bku.statusenabled = true
+                                        group by jg.uraianjasagiro, jg.nojasagiro, extract(month from bku.tglbku)
+                                ) as x
+                                group by text, kode, div, subtotal
         
-        select 'PENGELUARAN:' as text, 'QQQQQ' kode, 9 div, 0 subtotal, 0 totalbulanlalu, 0 totalbulanini
+                                union all
         
-        union all 
-        
-        select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
+                                select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
+                                from(
+                                    select 'STS' as text, 'TTTTT' kode, 12 div, 0 subtotal, 
+                                    case when extract(month from bku.tglbku) = '$bulanlalu' then sum(sts.nilaists::float8) else 0 end as totalbulanlalu,
+                                    case when extract(month from bku.tglbku) = '$bulan' then sum(sts.nilaists::float8) else 0 end as totalbulanini
+                                        from stskeuangan_t sts
+                                    inner join asalproduk_m ap on ap.id = sts.objectsumberdanafk
+                                    inner join bukukasumum_t bku on bku.norec = sts.objectbkufk
+                                    where sts.kdprofile = 30 and sts.statusenabled = true
+                                    and bku.tglbku::date between '$tahun-$bulanlalu-01' and '$tglbku'
+                                    and bku.kdprofile = 30 and bku.statusenabled = true
+                                    $qasalproduk
+                                    group by sts.uraiansts, extract(month from bku.tglbku)
+                                ) as x
+                                group by text, kode, div, subtotal
+                                
+                                union all
+                                
+                                select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
+                                from(
+                                        select 'Penyetoran Pajak' as text, 'UUUUU' kode, 13 div, 0 subtotal, 
+                                        case when extract(month from bku.tglbku) = '$bulanlalu' then sum(pp.ppn+pp.pph) else 0 end as totalbulanlalu,
+                                        case when extract(month from bku.tglbku) = '$bulan' then sum(pp.ppn+pp.pph) else 0 end as totalbulanini
+                                                from penyetoranpajak_t pp
+                                        inner join bukukasumum_t bku on bku.norec = pp.objectbkufk
+                                        where pp.kdprofile = 30 and pp.statusenabled = true
+                                        and bku.tglbku::date between '$tahun-$bulanlalu-01' and '$tglbku'
+                                        and bku.kdprofile = 30 and bku.statusenabled = true
+                                        group by pp.uraianpajak, extract(month from bku.tglbku)
+                                ) as x
+                                group by text, kode, div, subtotal
+                                
+                                union all
+                                
+                                select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
+                                from(
+                                        select 'PPN' as text, 'VVVVV' kode, 14 div, 0 subtotal, 
+                                        case when extract(month from bku.tglbku) = '$bulanlalu' then sum(pp.ppn) else 0 end as totalbulanlalu,
+                                        case when extract(month from bku.tglbku) = '$bulan' then sum(pp.ppn) else 0 end as totalbulanini
+                                                from penyetoranpajak_t pp
+                                        inner join bukukasumum_t bku on bku.norec = pp.objectbkufk
+                                        where pp.kdprofile = 30 and pp.statusenabled = true
+                                        and bku.tglbku::date between '$tahun-$bulanlalu-01' and '$tglbku'
+                                        and bku.kdprofile = 30 and bku.statusenabled = true
+                                        group by extract(month from bku.tglbku)
+                                ) as x
+                                group by text, kode, div, subtotal
+                                
+                                union all
+                                
+                                select jp.jenispajak as text, 'WWWWW' kode, 15 div, 0 subtotal, 
+                                case when extract(month from bku.tglbku) = '$bulanlalu' then sum(pmp.pph) else 0 end as totalbulanlalu,
+                                case when extract(month from bku.tglbku) = '$bulan' then sum(pmp.pph) else 0 end as totalbulanini
+                                        from pemungutanpajak_t pmp
+                                inner join jenispajak_m jp on jp.id = pmp.objectjenispphfk
+                                inner join bukukasumum_t bku on bku.norec = pmp.objectbkufk
+                                where pmp.kdprofile = 30 and pmp.statusenabled = true
+                                and bku.tglbku::date between '$tahun-$bulanlalu-01' and '$tglbku'
+                                and bku.kdprofile = 30 and bku.statusenabled = true
+                                group by jp.jenispajak, extract(month from bku.tglbku)
+                ) as y
+                
+                order by kode, div"));
+        } else{
+            $data = DB::select(DB::raw("select text, kode, div, sum(subtotal) subtotal, sum(totalbulanlalu) totalbulanlalu, 
+        sum(totalbulanini) totalbulanini
         from(
-            select 'SPJ' as text, 'RRRRR' kode, 10 div, 0 subtotal, 
-            case when extract(month from tglrealisasi) = '10' then sum(totalbelanja) else 0 end as totalbulanlalu,
-            case when extract(month from tglrealisasi) = '11' then sum(totalbelanja) else 0 end as totalbulanini
-                from strukrealisasi_t
-            where kdprofile = 30 and statusenabled = true
-            and extract(month from tglrealisasi) in('10', '11')
-            and status = 'Sudah Diverifikasi'
-            group by extract(month from tglrealisasi)
-        ) as x
-        group by text, kode, div, subtotal
+                    select text, kode, div, sum(subtotal) subtotal,
+                    case when bulan = '$bulanlalu' then sum(totalbelanja) else 0 end as totalbulanlalu,
+                    case when bulan = '$bulan' then sum(totalbelanja) else 0 end as totalbulanini
+                    from(
+                        select kmsss.keterangan as text, kmsss.kode, kmsss.div, sum(kb.subtotal) subtotal, sr.totalbelanja, sr.norec,
+                            extract(month from sr.tglrealisasi) bulan
+                            from kegiatananggaran_m km
+                        inner join kegiatananggaran_m kms on km.kode ilike  kms.kode || '%' and kms.div = 3
+                        inner join kegiatananggaran_m kmss on km.kode ilike  kmss.kode || '%' and kmss.div = 2
+                        inner join kegiatananggaran_m kmsss on km.kode ilike  kmsss.kode || '%' and kmsss.div = 1
+                        inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
+                        inner join asalproduk_m ap on ap.id = kb.objectasalprodukfk
+                        left join strukrealisasi_t sr on km.id = sr.objectkegiatanfk
+                        and sr.kdprofile = 30 and sr.statusenabled = true
+                        and sr.status = 'Sudah Diverifikasi'
+                        and extract(month from sr.tglrealisasi) in('$bulanlalu', '$bulan')
+                        where km.kdprofile = 30 and km.statusenabled = true
+                        and kms.kdprofile = 30 and kms.statusenabled = true
+                        and kmss.kdprofile = 30 and kmss.statusenabled = true
+                        and kmsss.kdprofile = 30 and kmsss.statusenabled = true
+                        and ap.kdprofile = 30 and ap.statusenabled = true
+                        and kb.kdprofile = 30 and kb.statusenabled = true
+                        and km.tahun = '$tahun'
+                                        $qasalproduk
+                        group by kmsss.keterangan, kmsss.kode, kmsss.div, sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi)
+                    ) as a group by text, kode, div, bulan
+                
+                    union all
+                    
+                    select text, kode, div, sum(subtotal) subtotal,
+                    case when bulan = '$bulanlalu' then sum(totalbelanja) else 0 end as totalbulanlalu,
+                    case when bulan = '$bulan' then sum(totalbelanja) else 0 end as totalbulanini
+                    from(
+                        select kmss.keterangan as text, kmss.kode, kmss.div, sum(kb.subtotal) subtotal, sr.totalbelanja, sr.norec,
+                            extract(month from sr.tglrealisasi) bulan
+                            from kegiatananggaran_m km
+                        inner join kegiatananggaran_m kms on km.kode ilike  kms.kode || '%' and kms.div = 3
+                        inner join kegiatananggaran_m kmss on km.kode ilike  kmss.kode || '%' and kmss.div = 2
+                        inner join kegiatananggaran_m kmsss on km.kode ilike  kmsss.kode || '%' and kmsss.div = 1
+                        inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
+                        inner join asalproduk_m ap on ap.id = kb.objectasalprodukfk
+                        left join strukrealisasi_t sr on km.id = sr.objectkegiatanfk
+                        and sr.kdprofile = 30 and sr.statusenabled = true
+                        and sr.status = 'Sudah Diverifikasi'
+                        and extract(month from sr.tglrealisasi) in('$bulanlalu', '$bulan')
+                        where km.kdprofile = 30 and km.statusenabled = true
+                        and kms.kdprofile = 30 and kms.statusenabled = true
+                        and kmss.kdprofile = 30 and kmss.statusenabled = true
+                        and kmsss.kdprofile = 30 and kmsss.statusenabled = true
+                        and ap.kdprofile = 30 and ap.statusenabled = true
+                        and kb.kdprofile = 30 and kb.statusenabled = true
+                        and km.tahun = '$tahun'
+                                        $qasalproduk
+                        group by kmss.keterangan, kmss.kode, kmss.div, sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi)
+                    ) as b group by text, kode, div, bulan
+                
+                    union all
+                    
+                    select text, kode, div, sum(subtotal) subtotal,
+                    case when bulan = '$bulanlalu' then sum(totalbelanja) else 0 end as totalbulanlalu,
+                    case when bulan = '$bulan' then sum(totalbelanja) else 0 end as totalbulanini
+                    from(
+                        select kms.keterangan as text, kms.kode, kms.div, sum(kb.subtotal) subtotal, sr.totalbelanja, sr.norec,
+                            extract(month from sr.tglrealisasi) bulan
+                            from kegiatananggaran_m km
+                        inner join kegiatananggaran_m kms on km.kode ilike  kms.kode || '%' and kms.div = 3
+                        inner join kegiatananggaran_m kmss on km.kode ilike  kmss.kode || '%' and kmss.div = 2
+                        inner join kegiatananggaran_m kmsss on km.kode ilike  kmsss.kode || '%' and kmsss.div = 1
+                        inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
+                        inner join asalproduk_m ap on ap.id = kb.objectasalprodukfk
+                        left join strukrealisasi_t sr on km.id = sr.objectkegiatanfk
+                        and sr.kdprofile = 30 and sr.statusenabled = true
+                        and sr.status = 'Sudah Diverifikasi'
+                        and extract(month from sr.tglrealisasi) in('$bulanlalu', '$bulan')
+                        where km.kdprofile = 30 and km.statusenabled = true
+                        and kms.kdprofile = 30 and kms.statusenabled = true
+                        and kmss.kdprofile = 30 and kmss.statusenabled = true
+                        and kmsss.kdprofile = 30 and kmsss.statusenabled = true
+                        and ap.kdprofile = 30 and ap.statusenabled = true
+                        and kb.kdprofile = 30 and kb.statusenabled = true
+                        and km.tahun = '$tahun'
+                                        $qasalproduk
+                        group by kms.keterangan, kms.kode, kms.div, sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi)
+                    ) as c group by text, kode, div, bulan
+                
+                    union all
+                    
+                    select text, kode, div, sum(subtotal) subtotal,
+                    case when bulan = '$bulanlalu' then sum(totalbelanja) else 0 end as totalbulanlalu,
+                    case when bulan = '$bulan' then sum(totalbelanja) else 0 end as totalbulanini
+                    from(
+                        select km.keterangan as text, km.kode, km.div, sum(kb.subtotal) subtotal, sr.totalbelanja, sr.norec,
+                        extract(month from sr.tglrealisasi) bulan
+                            from kegiatananggaran_m km
+                        inner join kegiatananggaran_m kms on km.kode ilike  kms.kode || '%' and kms.div = 3
+                        inner join kegiatananggaran_m kmss on km.kode ilike  kmss.kode || '%' and kmss.div = 2
+                        inner join kegiatananggaran_m kmsss on km.kode ilike  kmsss.kode || '%' and kmsss.div = 1
+                        inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
+                        inner join asalproduk_m ap on ap.id = kb.objectasalprodukfk
+                        left join strukrealisasi_t sr on km.id = sr.objectkegiatanfk
+                        and sr.kdprofile = 30 and sr.statusenabled = true
+                        and sr.status = 'Sudah Diverifikasi'
+                        and extract(month from sr.tglrealisasi) in('$bulanlalu', '$bulan')
+                        where km.kdprofile = 30 and km.statusenabled = true
+                        and kms.kdprofile = 30 and kms.statusenabled = true
+                        and kmss.kdprofile = 30 and kmss.statusenabled = true
+                        and kmsss.kdprofile = 30 and kmsss.statusenabled = true
+                        and ap.kdprofile = 30 and ap.statusenabled = true
+                        and kb.kdprofile = 30 and kb.statusenabled = true
+                        and km.tahun = '$tahun'
+                                        $qasalproduk
+                        group by km.keterangan, km.kode, km.div, sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi)
+                    ) as d group by text, kode, div, bulan
+                ) as x
+                group by text, kode, div
+                
+                union all
+                
+                select text, kode, div, sum(subtotal) subtotal, sum(totalbulanlalu) totalbulanlalu, 
+                sum(totalbulanini) totalbulanini
+                from(
+                            select text, kode, 5 div, sum(subtotal) subtotal, 
+                            case when bulan = '$bulanlalu' then sum(totalbelanja) else 0 end as totalbulanlalu,
+                            case when bulan = '$bulan' then sum(totalbelanja) else 0 end as totalbulanini
+                            from(
+                                select map3.kode, map3.mataanggaranpermen as text, sum(kb.subtotal) subtotal,
+                                sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi) bulan
+                                from kegiatananggaran_m km
+                                inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
+                                inner join mataanggaran_m ma on ma.id = kb.objectmataanggaranfk
+                                inner join mataanggaranpermen_m map on map.id = ma.mataanggaranpermenfk
+                                inner join mataanggaranpermen_m map1 on map1.id = map.mataanggaranpermenfk and map1.div = 4
+                                inner join mataanggaranpermen_m map2 on map2.id = map1.mataanggaranpermenfk and map2.div = 3
+                                inner join mataanggaranpermen_m map3 on map3.id = map2.mataanggaranpermenfk and map3.div = 2
+                                inner join asalproduk_m ap on ap.id = kb.objectasalprodukfk
+                                left join strukrealisasi_t sr on km.id = sr.objectkegiatanfk
+                                and sr.kdprofile = 30 and sr.statusenabled = true
+                                and sr.status = 'Sudah Diverifikasi'
+                                and extract(month from sr.tglrealisasi) in('$bulanlalu', '$bulan')
+                                where km.kdprofile = 30 and km.statusenabled = true
+                                and km.tahun = '$tahun'
+                                $qasalproduk
+                                and ma.kdprofile = 30 and ma.statusenabled = true
+                                and map.kdprofile = 30 and map.statusenabled = true
+                                and map1.kdprofile = 30 and map1.statusenabled = true
+                                and map2.kdprofile = 30 and map2.statusenabled = true
+                                and map3.kdprofile = 30 and map3.statusenabled = true
+                                and kb.kdprofile = 30 and kb.statusenabled = true
+                                group by map3.kode, map3.mataanggaranpermen, sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi)
+                            ) as a
+                            group by kode, text, bulan
+                
+                            union all
+                            
+                            select text, kode, 5 div, sum(subtotal) subtotal, 
+                            case when bulan = '$bulanlalu' then sum(totalbelanja) else 0 end as totalbulanlalu,
+                            case when bulan = '$bulan' then sum(totalbelanja) else 0 end as totalbulanini
+                            from(
+                                select map2.kode, map2.mataanggaranpermen as text, sum(kb.subtotal) subtotal,
+                                sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi) bulan
+                                from kegiatananggaran_m km
+                                inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
+                                inner join mataanggaran_m ma on ma.id = kb.objectmataanggaranfk
+                                inner join mataanggaranpermen_m map on map.id = ma.mataanggaranpermenfk
+                                inner join mataanggaranpermen_m map1 on map1.id = map.mataanggaranpermenfk and map1.div = 4
+                                inner join mataanggaranpermen_m map2 on map2.id = map1.mataanggaranpermenfk and map2.div = 3
+                                inner join mataanggaranpermen_m map3 on map3.id = map2.mataanggaranpermenfk and map3.div = 2
+                                inner join asalproduk_m ap on ap.id = kb.objectasalprodukfk
+                                left join strukrealisasi_t sr on km.id = sr.objectkegiatanfk
+                                and sr.kdprofile = 30 and sr.statusenabled = true
+                                and sr.status = 'Sudah Diverifikasi'
+                                and extract(month from sr.tglrealisasi) in('$bulanlalu', '$bulan')
+                                where km.kdprofile = 30 and km.statusenabled = true
+                                and km.tahun = '$tahun'
+                                and ma.kdprofile = 30 and ma.statusenabled = true
+                                and map.kdprofile = 30 and map.statusenabled = true
+                                and map1.kdprofile = 30 and map1.statusenabled = true
+                                and map2.kdprofile = 30 and map2.statusenabled = true
+                                and map3.kdprofile = 30 and map3.statusenabled = true
+                                and kb.kdprofile = 30 and kb.statusenabled = true
+                                $qasalproduk
+                                group by map2.kode, map2.mataanggaranpermen, sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi)
+                            ) as b 
+                            group by kode, text, bulan
+                
+                            union all
+                            
+                            select text, kode, 5 div, sum(subtotal) subtotal, 
+                            case when bulan = '$bulanlalu' then sum(totalbelanja) else 0 end as totalbulanlalu,
+                            case when bulan = '$bulan' then sum(totalbelanja) else 0 end as totalbulanini
+                            from(
+                                select map1.kode, map1.mataanggaranpermen as text, sum(kb.subtotal) subtotal,
+                                sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi) bulan
+                                from kegiatananggaran_m km
+                                inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
+                                inner join mataanggaran_m ma on ma.id = kb.objectmataanggaranfk
+                                inner join mataanggaranpermen_m map on map.id = ma.mataanggaranpermenfk
+                                inner join mataanggaranpermen_m map1 on map1.id = map.mataanggaranpermenfk and map1.div = 4
+                                inner join mataanggaranpermen_m map2 on map2.id = map1.mataanggaranpermenfk and map2.div = 3
+                                inner join mataanggaranpermen_m map3 on map3.id = map2.mataanggaranpermenfk and map3.div = 2
+                                inner join asalproduk_m ap on ap.id = kb.objectasalprodukfk
+                                left join strukrealisasi_t sr on km.id = sr.objectkegiatanfk
+                                and sr.kdprofile = 30 and sr.statusenabled = true
+                                and sr.status = 'Sudah Diverifikasi'
+                                and extract(month from sr.tglrealisasi) in('$bulanlalu', '$bulan')
+                                where km.kdprofile = 30 and km.statusenabled = true
+                                and km.tahun = '$tahun'
+                                and ma.kdprofile = 30 and ma.statusenabled = true
+                                and map.kdprofile = 30 and map.statusenabled = true
+                                and map1.kdprofile = 30 and map1.statusenabled = true
+                                and map2.kdprofile = 30 and map2.statusenabled = true
+                                and map3.kdprofile = 30 and map3.statusenabled = true
+                                and kb.kdprofile = 30 and kb.statusenabled = true
+                                $qasalproduk
+                                group by map1.kode, map1.mataanggaranpermen, sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi)
+                            ) as c 
+                            group by kode, text, bulan
+                
+                            union all
+                            
+                            select text, kode, 5 div, sum(subtotal) subtotal, 
+                            case when bulan = '$bulanlalu' then sum(totalbelanja) else 0 end as totalbulanlalu,
+                            case when bulan = '$bulan' then sum(totalbelanja) else 0 end as totalbulanini
+                            from(
+                                select map.kode, map.mataanggaranpermen as text, sum(kb.subtotal) subtotal, 
+                                sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi) bulan
+                                from kegiatananggaran_m km
+                                inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
+                                inner join mataanggaran_m ma on ma.id = kb.objectmataanggaranfk
+                                inner join mataanggaranpermen_m map on map.id = ma.mataanggaranpermenfk
+                                inner join mataanggaranpermen_m map1 on map1.id = map.mataanggaranpermenfk and map1.div = 4
+                                inner join mataanggaranpermen_m map2 on map2.id = map1.mataanggaranpermenfk and map2.div = 3
+                                inner join mataanggaranpermen_m map3 on map3.id = map2.mataanggaranpermenfk and map3.div = 2
+                                inner join asalproduk_m ap on ap.id = kb.objectasalprodukfk
+                                left join strukrealisasi_t sr on km.id = sr.objectkegiatanfk
+                                and sr.kdprofile = 30 and sr.statusenabled = true
+                                and sr.status = 'Sudah Diverifikasi'
+                                and extract(month from sr.tglrealisasi) in('$bulanlalu', '$bulan')
+                                where km.kdprofile = 30 and km.statusenabled = true
+                                and km.tahun = '$tahun'
+                                and ma.kdprofile = 30 and ma.statusenabled = true
+                                and map.kdprofile = 30 and map.statusenabled = true
+                                and map1.kdprofile = 30 and map1.statusenabled = true
+                                and map2.kdprofile = 30 and map2.statusenabled = true
+                                and map3.kdprofile = 30 and map3.statusenabled = true
+                                and kb.kdprofile = 30 and kb.statusenabled = true
+                                $qasalproduk
+                                group by map.kode, map.mataanggaranpermen, sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi)
+                            ) as d 
+                            group by kode, text, bulan
+                ) as x
+                group by text, kode, div
+                
+                union all
+                
+                select 'PENERIMAAN:' as text, 'KKKKK' kode, 6 div, 0 subtotal, 0 totalbulanlalu, 0 totalbulanini
+                
+                union all 
+                
+                select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
+                from(
+                    select 'Transfer Bendahara Penerima' as text, 'LLLLL' kode, 6 div, 0 subtotal, 
+                    case when extract(month from spp.tglspp) = '$bulanlalu' then sum(spp.nilaispp) else 0 end as totalbulanlalu,
+                    case when extract(month from spp.tglspp) = '$bulan' then sum(spp.nilaispp) else 0 end as totalbulanini
+                        from spp_t spp
+                                inner join asalproduk_m ap on ap.id = spp.objectasalprodukfk
+                    where spp.kdprofile = 30 and spp.statusenabled = true
+                                and ap.kdprofile = 30 and ap.statusenabled = true
+                    and extract(month from spp.tglspp) in('$bulanlalu', '$bulan')
+                                $qasalproduk
+                    group by extract(month from spp.tglspp)
+                
+                    union all
+                
+                    select 'Transfer Bendahara Penerima' as text, 'LLLLL' kode, 6 div, 0 subtotal, 
+                    case when extract(month from bku.tglbku) = '$bulanlalu' then sum(spm.nilaispm) else 0 end as totalbulanlalu,
+                    case when extract(month from bku.tglbku) = '$bulan' then sum(spm.nilaispm) else 0 end as totalbulanini
+                        from spm_t spm
+                                inner join asalproduk_m ap on ap.id = spm.objectasalprodukfk
+                                inner join bukukasumum_t bku on bku.norec = spm.objectbkufk
+                    where spm.kdprofile = 30 and spm.statusenabled = true
+                                and bku.kdprofile = 30 and bku.statusenabled = true
+                    and bku.tglbku::date between '$tahun-$bulanlalu-01' and '$tglbku'
+                                $qasalproduk
+                    group by extract(month from bku.tglbku)
+                ) as x
+                group by text, kode, div, subtotal
+                
+                union all
+                
+                select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
+                from(
+                    select 'Jasa Giro' as text, 'MMMMM' kode, 7 div, 0 subtotal, 
+                    case when extract(month from bku.tglbku) = '$bulanlalu' then sum(jg.jumlahpemasukan) else 0 end as totalbulanlalu,
+                    case when extract(month from bku.tglbku) = '$bulan' then sum(jg.jumlahpemasukan) else 0 end as totalbulanini
+                        from jasagiro_t jg
+                                inner join bukukasumum_t bku on bku.norec = jg.objectbkufk
+                    where jg.kdprofile = 30 and jg.statusenabled = true
+                    and bku.tglbku::date between '$tahun-$bulanlalu-01' and '$tglbku'
+                                and bku.kdprofile = 30 and bku.statusenabled = true
+                    group by jg.uraianjasagiro, jg.nojasagiro, extract(month from bku.tglbku)
+                ) as x
+                group by text, kode, div, subtotal
         
-        union all
+                        union all
         
-        select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
-        from(
-            select 'Jasa Giro' as text, 'SSSSS' kode, 11 div, 0 subtotal, 
-            case when extract(month from tglpemasukan) = '10' then sum(jumlahpemasukan) else 0 end as totalbulanlalu,
-            case when extract(month from tglpemasukan) = '11' then sum(jumlahpemasukan) else 0 end as totalbulanini
-                from jasagiro_t
-            where kdprofile = 30 and statusenabled = true
-            and extract(month from tglpemasukan) in('10', '11')
-            group by uraianjasagiro, nojasagiro, extract(month from tglpemasukan)
-        ) as x
-        group by text, kode, div, subtotal
-
-		union all
-
-		select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
-		from(
-			select 'STS' as text, 'TTTTT' kode, 12 div, 0 subtotal, 
-			case when extract(month from tglsts) = '10' then sum(nilaists::float8) else 0 end as totalbulanlalu,
-			case when extract(month from tglsts) = '11' then sum(nilaists::float8) else 0 end as totalbulanini
-				from stskeuangan_t
-			where kdprofile = 30 and statusenabled = true
-			and extract(month from tglsts) in('10', '11')
-			group by uraiansts, extract(month from tglsts)
-		) as x
-		group by text, kode, div, subtotal
+                        select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
+                        from(
+                            select 'STS' as text, 'MMMMM' kode, 18 div, 0 subtotal, 
+                            case when extract(month from bku.tglbku) = '$bulanlalu' then sum(sts.nilaists::float8) else 0 end as totalbulanlalu,
+                            case when extract(month from bku.tglbku) = '$bulan' then sum(sts.nilaists::float8) else 0 end as totalbulanini
+                                from stskeuangan_t sts
+                            inner join asalproduk_m ap on ap.id = sts.objectsumberdanafk
+                            inner join bukukasumum_t bku on bku.norec = sts.objectbkufk
+                            where sts.kdprofile = 30 and sts.statusenabled = true
+                            and bku.tglbku::date between '$tahun-$bulanlalu-01' and '$tglbku'
+                            and bku.kdprofile = 30 and bku.statusenabled = true
+                            $qasalproduk
+                            group by sts.uraiansts, extract(month from bku.tglbku)
+                        ) as x
+                        group by text, kode, div, subtotal
+                
+                union all
+                
+                select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
+                from(
+                    select 'Potongan Pajak' as text, 'OOOOO' kode, 8 div, 0 subtotal, 
+                    case when extract(month from bku.tglbku) = '$bulanlalu' then sum(pp.ppn+pp.pph) else 0 end as totalbulanlalu,
+                    case when extract(month from bku.tglbku) = '$bulan' then sum(pp.ppn+pp.pph) else 0 end as totalbulanini
+                        from penyetoranpajak_t pp
+                                inner join bukukasumum_t bku on bku.norec = pp.objectbkufk
+                    where pp.kdprofile = 30 and pp.statusenabled = true
+                    and bku.tglbku::date between '$tahun-$bulanlalu-01' and '$tglbku'
+                                and bku.kdprofile = 30 and bku.statusenabled = true
+                    group by pp.uraianpajak, extract(month from bku.tglbku)
+                ) as x
+                group by text, kode, div, subtotal
+                
+                union all
+                
+                select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
+                from(
+                    select 'PPN' as text, 'OOOOO' kode, 9 div, 0 subtotal, 
+                    case when extract(month from bku.tglbku) = '$bulanlalu' then sum(pp.ppn) else 0 end as totalbulanlalu,
+                    case when extract(month from bku.tglbku) = '$bulan' then sum(pp.ppn) else 0 end as totalbulanini
+                        from penyetoranpajak_t pp
+                                inner join bukukasumum_t bku on bku.norec = pp.objectbkufk
+                    where pp.kdprofile = 30 and pp.statusenabled = true
+                    and bku.tglbku::date between '$tahun-$bulanlalu-01' and '$tglbku'
+                                and bku.kdprofile = 30 and bku.statusenabled = true
+                    group by extract(month from bku.tglbku)
+                ) as x
+                group by text, kode, div, subtotal
+                
+                union all
+                
+                select jp.jenispajak as text, 'OOOOO' kode, 9 div, 0 subtotal, 
+                case when extract(month from bku.tglbku) = '$bulanlalu' then sum(pmp.pph) else 0 end as totalbulanlalu,
+                case when extract(month from bku.tglbku) = '$bulan' then sum(pmp.pph) else 0 end as totalbulanini
+                    from pemungutanpajak_t pmp
+                inner join jenispajak_m jp on jp.id = pmp.objectjenispphfk
+                        inner join bukukasumum_t bku on bku.norec = pmp.objectbkufk
+                where pmp.kdprofile = 30 and pmp.statusenabled = true
+                and bku.tglbku::date between '$tahun-$bulanlalu-01' and '$tglbku'
+                        and bku.kdprofile = 30 and bku.statusenabled = true
+                group by jp.jenispajak, extract(month from bku.tglbku)
+                
+                union all
+                
+                select 'JUMLAH PENERIMAAN:' as text, 'PPPPP' kode, 9 div, 0 subtotal,
+                sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
+                from(
+                    select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
+                                from(
+                                        select 'Transfer Bendahara Penerima' as text, 'LLLLL' kode, 6 div, 0 subtotal, 
+                                        case when extract(month from spp.tglspp) = '$bulanlalu' then sum(spp.nilaispp) else 0 end as totalbulanlalu,
+                                        case when extract(month from spp.tglspp) = '$bulan' then sum(spp.nilaispp) else 0 end as totalbulanini
+                                                from spp_t spp
+                                        inner join asalproduk_m ap on ap.id = spp.objectasalprodukfk
+                                        where spp.kdprofile = 30 and spp.statusenabled = true
+                                        and ap.kdprofile = 30 and ap.statusenabled = true
+                                        and extract(month from spp.tglspp) in('$bulanlalu', '$bulan')
+                                        $qasalproduk
+                                        group by extract(month from spp.tglspp)
+                                
+                                        union all
+                                
+                                        select 'Transfer Bendahara Penerima' as text, 'LLLLL' kode, 6 div, 0 subtotal, 
+                                        case when extract(month from bku.tglbku) = '$bulanlalu' then sum(spm.nilaispm) else 0 end as totalbulanlalu,
+                                        case when extract(month from bku.tglbku) = '$bulan' then sum(spm.nilaispm) else 0 end as totalbulanini
+                                                from spm_t spm
+                                        inner join asalproduk_m ap on ap.id = spm.objectasalprodukfk
+                                        inner join bukukasumum_t bku on bku.norec = spm.objectbkufk
+                                        where spm.kdprofile = 30 and spm.statusenabled = true
+                                        and bku.kdprofile = 30 and bku.statusenabled = true
+                                        and bku.tglbku::date between '$tahun-$bulanlalu-01' and '$tglbku'
+                                        $qasalproduk
+                                        group by extract(month from bku.tglbku)
+                                ) as x
+                                group by text, kode, div, subtotal
+                                
+                                union all
+                                
+                                select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
+                                from(
+                                        select 'Jasa Giro' as text, 'MMMMM' kode, 7 div, 0 subtotal, 
+                                        case when extract(month from bku.tglbku) = '$bulanlalu' then sum(jg.jumlahpemasukan) else 0 end as totalbulanlalu,
+                                        case when extract(month from bku.tglbku) = '$bulan' then sum(jg.jumlahpemasukan) else 0 end as totalbulanini
+                                                from jasagiro_t jg
+                                        inner join bukukasumum_t bku on bku.norec = jg.objectbkufk
+                                        where jg.kdprofile = 30 and jg.statusenabled = true
+                                        and bku.tglbku::date between '$tahun-$bulanlalu-01' and '$tglbku'
+                                        and bku.kdprofile = 30 and bku.statusenabled = true
+                                        group by jg.uraianjasagiro, jg.nojasagiro, extract(month from bku.tglbku)
+                                ) as x
+                                group by text, kode, div, subtotal
         
-        union all
+                                union all
         
-        select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
-        from(
-            select 'Penyetoran Pajak' as text, 'UUUUU' kode, 13 div, 0 subtotal, 
-            case when extract(month from tglpph) = '10' then sum(ppn+pph) else 0 end as totalbulanlalu,
-            case when extract(month from tglpph) = '11' then sum(ppn+pph) else 0 end as totalbulanini
-                from penyetoranpajak_t pp
-            where kdprofile = 30 and statusenabled = true
-            and extract(month from tglpph) in('10', '11')
-            group by uraianpajak, extract(month from tglpph)
-        ) as x
-        group by text, kode, div, subtotal
+                                select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
+                                from(
+                                    select 'STS' as text, 'MMMMM' kode, 18 div, 0 subtotal, 
+                                    case when extract(month from bku.tglbku) = '$bulanlalu' then sum(sts.nilaists::float8) else 0 end as totalbulanlalu,
+                                    case when extract(month from bku.tglbku) = '$bulan' then sum(sts.nilaists::float8) else 0 end as totalbulanini
+                                        from stskeuangan_t sts
+                                    inner join asalproduk_m ap on ap.id = sts.objectsumberdanafk
+                                    inner join bukukasumum_t bku on bku.norec = sts.objectbkufk
+                                    where sts.kdprofile = 30 and sts.statusenabled = true
+                                    and bku.tglbku::date between '$tahun-$bulanlalu-01' and '$tglbku'
+                                    and bku.kdprofile = 30 and bku.statusenabled = true
+                                    $qasalproduk
+                                    group by sts.uraiansts, extract(month from bku.tglbku)
+                                ) as x
+                                group by text, kode, div, subtotal
+                                
+                                union all
+                                
+                                select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
+                                from(
+                                        select 'Potongan Pajak' as text, 'OOOOO' kode, 8 div, 0 subtotal, 
+                                        case when extract(month from bku.tglbku) = '$bulanlalu' then sum(pp.ppn+pp.pph) else 0 end as totalbulanlalu,
+                                        case when extract(month from bku.tglbku) = '$bulan' then sum(pp.ppn+pp.pph) else 0 end as totalbulanini
+                                                from penyetoranpajak_t pp
+                                        inner join bukukasumum_t bku on bku.norec = pp.objectbkufk
+                                        where pp.kdprofile = 30 and pp.statusenabled = true
+                                        and bku.tglbku::date between '$tahun-$bulanlalu-01' and '$tglbku'
+                                        and bku.kdprofile = 30 and bku.statusenabled = true
+                                        group by pp.uraianpajak, extract(month from bku.tglbku)
+                                ) as x
+                                group by text, kode, div, subtotal
+                                
+                                union all
+                                
+                                select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
+                                from(
+                                        select 'PPN' as text, 'OOOOO' kode, 9 div, 0 subtotal, 
+                                        case when extract(month from bku.tglbku) = '$bulanlalu' then sum(pp.ppn) else 0 end as totalbulanlalu,
+                                        case when extract(month from bku.tglbku) = '$bulan' then sum(pp.ppn) else 0 end as totalbulanini
+                                                from penyetoranpajak_t pp
+                                        inner join bukukasumum_t bku on bku.norec = pp.objectbkufk
+                                        where pp.kdprofile = 30 and pp.statusenabled = true
+                                        and bku.tglbku::date between '$tahun-$bulanlalu-01' and '$tglbku'
+                                        and bku.kdprofile = 30 and bku.statusenabled = true
+                                        group by extract(month from bku.tglbku)
+                                ) as x
+                                group by text, kode, div, subtotal
+                                
+                                union all
+                                
+                                select jp.jenispajak as text, 'OOOOO' kode, 9 div, 0 subtotal, 
+                                case when extract(month from bku.tglbku) = '$bulanlalu' then sum(pmp.pph) else 0 end as totalbulanlalu,
+                                case when extract(month from bku.tglbku) = '$bulan' then sum(pmp.pph) else 0 end as totalbulanini
+                                        from pemungutanpajak_t pmp
+                                inner join jenispajak_m jp on jp.id = pmp.objectjenispphfk
+                                inner join bukukasumum_t bku on bku.norec = pmp.objectbkufk
+                                where pmp.kdprofile = 30 and pmp.statusenabled = true
+                                and bku.tglbku::date between '$tahun-$bulanlalu-01' and '$tglbku'
+                                and bku.kdprofile = 30 and bku.statusenabled = true
+                                group by jp.jenispajak, extract(month from bku.tglbku)
+                ) as y
+                
+                union all 
+                
+                select 'PENGELUARAN:' as text, 'QQQQQ' kode, 9 div, 0 subtotal, 0 totalbulanlalu, 0 totalbulanini
+                
+                union all 
+                        
+                        select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
+                from(
+                            select text, kode, div, subtotal,
+                            case when tglrealisasi = '$bulanlalu' then sum(totalbelanja) else 0 end as totalbulanlalu,
+                            case when tglrealisasi = '$bulan' then sum(totalbelanja) else 0 end as totalbulanini
+                            from(
+                                    select 'SPJ' as text, 'RRRRR' kode, 10 div, 0 subtotal, extract(month from bku.tglbku) tglrealisasi, sr.totalbelanja, sr.norec
+                                            from kegiatananggaran_m km
+                                    inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
+                                    inner join asalproduk_m ap on ap.id = kb.objectasalprodukfk
+                                    inner join strukrealisasi_t sr on km.id = sr.objectkegiatanfk
+                                    inner join bukukasumum_t bku on bku.norec = sr.objectbkufk
+                                    where sr.kdprofile = 30 and sr.statusenabled = true
+                                    and km.kdprofile = 30 and km.statusenabled = true
+                                    and kb.kdprofile = 30 and kb.statusenabled = true
+                                    and bku.kdprofile = 30 and bku.statusenabled = true
+                                    and sr.status = 'Sudah Diverifikasi'
+                                    and bku.tglbku::date between '$tahun-$bulanlalu-01' and '$tglbku'
+                                    $qasalproduk
+                                    group by extract(month from bku.tglbku), sr.totalbelanja, sr.norec
+                            ) as x
+                            group by tglrealisasi, text, kode, div, subtotal
+                        ) as x
+                group by text, kode, div, subtotal
+                
+                union all
+                
+                select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
+                from(
+                    select 'Jasa Giro' as text, 'SSSSS' kode, 11 div, 0 subtotal, 
+                    case when extract(month from bku.tglbku) = '$bulanlalu' then sum(jg.jumlahpemasukan) else 0 end as totalbulanlalu,
+                    case when extract(month from bku.tglbku) = '$bulan' then sum(jg.jumlahpemasukan) else 0 end as totalbulanini
+                        from jasagiro_t jg
+                                inner join bukukasumum_t bku on bku.norec = jg.objectbkufk
+                    where jg.kdprofile = 30 and jg.statusenabled = true
+                    and bku.tglbku::date between '$tahun-$bulanlalu-01' and '$tglbku'
+                                and bku.kdprofile = 30 and bku.statusenabled = true
+                    group by jg.uraianjasagiro, jg.nojasagiro, extract(month from bku.tglbku)
+                ) as x
+                group by text, kode, div, subtotal
         
-        union all
+                        union all
         
-        select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
-        from(
-            select 'PPN' as text, 'VVVVV' kode, 14 div, 0 subtotal, 
-            case when extract(month from tglpph) = '10' then sum(ppn) else 0 end as totalbulanlalu,
-            case when extract(month from tglpph) = '11' then sum(ppn) else 0 end as totalbulanini
-                from penyetoranpajak_t pp
-            where kdprofile = 30 and statusenabled = true
-            and extract(month from tglpph) in('10', '11')
-            group by extract(month from tglpph)
-        ) as x
-        group by text, kode, div, subtotal
+                        select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
+                        from(
+                            select 'STS' as text, 'TTTTT' kode, 12 div, 0 subtotal, 
+                            case when extract(month from bku.tglbku) = '$bulanlalu' then sum(sts.nilaists::float8) else 0 end as totalbulanlalu,
+                            case when extract(month from bku.tglbku) = '$bulan' then sum(sts.nilaists::float8) else 0 end as totalbulanini
+                                from stskeuangan_t sts
+                            inner join asalproduk_m ap on ap.id = sts.objectsumberdanafk
+                            inner join bukukasumum_t bku on bku.norec = sts.objectbkufk
+                            where sts.kdprofile = 30 and sts.statusenabled = true
+                            and bku.tglbku::date between '$tahun-$bulanlalu-01' and '$tglbku'
+                            and bku.kdprofile = 30 and bku.statusenabled = true
+                            $qasalproduk
+                            group by sts.uraiansts, extract(month from bku.tglbku)
+                        ) as x
+                        group by text, kode, div, subtotal
+                
+                union all
+                
+                select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
+                from(
+                    select 'Penyetoran Pajak' as text, 'UUUUU' kode, 13 div, 0 subtotal, 
+                    case when extract(month from bku.tglbku) = '$bulanlalu' then sum(pp.ppn+pp.pph) else 0 end as totalbulanlalu,
+                    case when extract(month from bku.tglbku) = '$bulan' then sum(pp.ppn+pp.pph) else 0 end as totalbulanini
+                        from penyetoranpajak_t pp
+                                inner join bukukasumum_t bku on bku.norec = pp.objectbkufk
+                    where pp.kdprofile = 30 and pp.statusenabled = true
+                    and bku.tglbku::date between '$tahun-$bulanlalu-01' and '$tglbku'
+                                and bku.kdprofile = 30 and bku.statusenabled = true
+                    group by pp.uraianpajak, extract(month from bku.tglbku)
+                ) as x
+                group by text, kode, div, subtotal
+                
+                union all
+                
+                select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
+                from(
+                    select 'PPN' as text, 'VVVVV' kode, 14 div, 0 subtotal, 
+                    case when extract(month from bku.tglbku) = '$bulanlalu' then sum(pp.ppn) else 0 end as totalbulanlalu,
+                    case when extract(month from bku.tglbku) = '$bulan' then sum(pp.ppn) else 0 end as totalbulanini
+                        from penyetoranpajak_t pp
+                                inner join bukukasumum_t bku on bku.norec = pp.objectbkufk
+                    where pp.kdprofile = 30 and pp.statusenabled = true
+                    and bku.tglbku::date between '$tahun-$bulanlalu-01' and '$tglbku'
+                                and bku.kdprofile = 30 and bku.statusenabled = true
+                    group by extract(month from bku.tglbku)
+                ) as x
+                group by text, kode, div, subtotal
+                
+                union all
+                
+                select jp.jenispajak as text, 'WWWWW' kode, 15 div, 0 subtotal, 
+                case when extract(month from bku.tglbku) = '$bulanlalu' then sum(pmp.pph) else 0 end as totalbulanlalu,
+                case when extract(month from bku.tglbku) = '$bulan' then sum(pmp.pph) else 0 end as totalbulanini
+                    from pemungutanpajak_t pmp
+                inner join jenispajak_m jp on jp.id = pmp.objectjenispphfk
+                        inner join bukukasumum_t bku on bku.norec = pmp.objectbkufk
+                where pmp.kdprofile = 30 and pmp.statusenabled = true
+                and bku.tglbku::date between '$tahun-$bulanlalu-01' and '$tglbku'
+                        and bku.kdprofile = 30 and bku.statusenabled = true
+                group by jp.jenispajak, extract(month from bku.tglbku)
+                
+                union all
+                
+                select 'JUMLAH PENGELUARAN:' as text, 'XXXXX' kode, 16 div, 0 subtotal,
+                sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
+                from(
+                    select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
+                                from(
+                                    select text, kode, div, subtotal,
+                                    case when tglrealisasi = '$bulanlalu' then sum(totalbelanja) else 0 end as totalbulanlalu,
+                                    case when tglrealisasi = '$bulan' then sum(totalbelanja) else 0 end as totalbulanini
+                                    from(
+                                            select 'SPJ' as text, 'RRRRR' kode, 10 div, 0 subtotal, extract(month from bku.tglbku) tglrealisasi, sr.totalbelanja, sr.norec
+                                                    from kegiatananggaran_m km
+                                            inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
+                                            inner join asalproduk_m ap on ap.id = kb.objectasalprodukfk
+                                            inner join strukrealisasi_t sr on km.id = sr.objectkegiatanfk
+                                            inner join bukukasumum_t bku on bku.norec = sr.objectbkufk
+                                            where sr.kdprofile = 30 and sr.statusenabled = true
+                                            and km.kdprofile = 30 and km.statusenabled = true
+                                            and kb.kdprofile = 30 and kb.statusenabled = true
+                                            and bku.kdprofile = 30 and bku.statusenabled = true
+                                            and sr.status = 'Sudah Diverifikasi'
+                                            and bku.tglbku::date between '$tahun-$bulanlalu-01' and '$tglbku'
+                                            $qasalproduk
+                                            group by extract(month from bku.tglbku), sr.totalbelanja, sr.norec
+                                    ) as x
+                                    group by tglrealisasi, text, kode, div, subtotal
+                                ) as x
+                                group by text, kode, div, subtotal
+                                
+                                union all
+                                
+                                select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
+                                from(
+                                        select 'Jasa Giro' as text, 'SSSSS' kode, 11 div, 0 subtotal, 
+                                        case when extract(month from bku.tglbku) = '$bulanlalu' then sum(jg.jumlahpemasukan) else 0 end as totalbulanlalu,
+                                        case when extract(month from bku.tglbku) = '$bulan' then sum(jg.jumlahpemasukan) else 0 end as totalbulanini
+                                                from jasagiro_t jg
+                                        inner join bukukasumum_t bku on bku.norec = jg.objectbkufk
+                                        where jg.kdprofile = 30 and jg.statusenabled = true
+                                        and bku.tglbku::date between '$tahun-$bulanlalu-01' and '$tglbku'
+                                        and bku.kdprofile = 30 and bku.statusenabled = true
+                                        group by jg.uraianjasagiro, jg.nojasagiro, extract(month from bku.tglbku)
+                                ) as x
+                                group by text, kode, div, subtotal
         
-        union all
+                                union all
         
-        select jp.jenispajak as text, 'WWWWW' kode, 15 div, 0 subtotal, 
-        case when extract(month from tglpph) = '10' then sum(pmp.pph) else 0 end as totalbulanlalu,
-        case when extract(month from tglpph) = '11' then sum(pmp.pph) else 0 end as totalbulanini
-            from pemungutanpajak_t pmp
-        inner join jenispajak_m jp on jp.id = pmp.objectjenispphfk
-        where pmp.kdprofile = 30 and pmp.statusenabled = true
-        and extract(month from pmp.tglpph) in('10', '11')
-        group by jp.jenispajak, extract(month from pmp.tglpph)
+                                select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
+                                from(
+                                    select 'STS' as text, 'TTTTT' kode, 12 div, 0 subtotal, 
+                                    case when extract(month from bku.tglbku) = '$bulanlalu' then sum(sts.nilaists::float8) else 0 end as totalbulanlalu,
+                                    case when extract(month from bku.tglbku) = '$bulan' then sum(sts.nilaists::float8) else 0 end as totalbulanini
+                                        from stskeuangan_t sts
+                                    inner join asalproduk_m ap on ap.id = sts.objectsumberdanafk
+                                    inner join bukukasumum_t bku on bku.norec = sts.objectbkufk
+                                    where sts.kdprofile = 30 and sts.statusenabled = true
+                                    and bku.tglbku::date between '$tahun-$bulanlalu-01' and '$tglbku'
+                                    and bku.kdprofile = 30 and bku.statusenabled = true
+                                    $qasalproduk
+                                    group by sts.uraiansts, extract(month from bku.tglbku)
+                                ) as x
+                                group by text, kode, div, subtotal
+                                
+                                union all
+                                
+                                select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
+                                from(
+                                        select 'Penyetoran Pajak' as text, 'UUUUU' kode, 13 div, 0 subtotal, 
+                                        case when extract(month from bku.tglbku) = '$bulanlalu' then sum(pp.ppn+pp.pph) else 0 end as totalbulanlalu,
+                                        case when extract(month from bku.tglbku) = '$bulan' then sum(pp.ppn+pp.pph) else 0 end as totalbulanini
+                                                from penyetoranpajak_t pp
+                                        inner join bukukasumum_t bku on bku.norec = pp.objectbkufk
+                                        where pp.kdprofile = 30 and pp.statusenabled = true
+                                        and bku.tglbku::date between '$tahun-$bulanlalu-01' and '$tglbku'
+                                        and bku.kdprofile = 30 and bku.statusenabled = true
+                                        group by pp.uraianpajak, extract(month from bku.tglbku)
+                                ) as x
+                                group by text, kode, div, subtotal
+                                
+                                union all
+                                
+                                select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
+                                from(
+                                        select 'PPN' as text, 'VVVVV' kode, 14 div, 0 subtotal, 
+                                        case when extract(month from bku.tglbku) = '$bulanlalu' then sum(pp.ppn) else 0 end as totalbulanlalu,
+                                        case when extract(month from bku.tglbku) = '$bulan' then sum(pp.ppn) else 0 end as totalbulanini
+                                                from penyetoranpajak_t pp
+                                        inner join bukukasumum_t bku on bku.norec = pp.objectbkufk
+                                        where pp.kdprofile = 30 and pp.statusenabled = true
+                                        and bku.tglbku::date between '$tahun-$bulanlalu-01' and '$tglbku'
+                                        and bku.kdprofile = 30 and bku.statusenabled = true
+                                        group by extract(month from bku.tglbku)
+                                ) as x
+                                group by text, kode, div, subtotal
+                                
+                                union all
+                                
+                                select jp.jenispajak as text, 'WWWWW' kode, 15 div, 0 subtotal, 
+                                case when extract(month from bku.tglbku) = '$bulanlalu' then sum(pmp.pph) else 0 end as totalbulanlalu,
+                                case when extract(month from bku.tglbku) = '$bulan' then sum(pmp.pph) else 0 end as totalbulanini
+                                        from pemungutanpajak_t pmp
+                                inner join jenispajak_m jp on jp.id = pmp.objectjenispphfk
+                                inner join bukukasumum_t bku on bku.norec = pmp.objectbkufk
+                                where pmp.kdprofile = 30 and pmp.statusenabled = true
+                                and bku.tglbku::date between '$tahun-$bulanlalu-01' and '$tglbku'
+                                and bku.kdprofile = 30 and bku.statusenabled = true
+                                group by jp.jenispajak, extract(month from bku.tglbku)
+                ) as y
+                
+                order by kode, div"));
+        }
         
-        union all
-        
-        select 'JUMLAH PENGELUARAN:' as text, 'XXXXX' kode, 16 div, 0 subtotal,
-        sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
-        from(
-            select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
-            from(
-                select 'SPJ' as text, 'RRRRR' kode, 10 div, 0 subtotal, 
-                case when extract(month from tglrealisasi) = '10' then sum(totalbelanja) else 0 end as totalbulanlalu,
-                case when extract(month from tglrealisasi) = '11' then sum(totalbelanja) else 0 end as totalbulanini
-                    from strukrealisasi_t
-                where kdprofile = 30 and statusenabled = true
-                and extract(month from tglrealisasi) in('10', '11')
-                and status = 'Sudah Diverifikasi'
-                group by extract(month from tglrealisasi)
-            ) as x
-            group by text, kode, div, subtotal
-        
-            union all
-        
-            select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
-            from(
-                select 'Jasa Giro' as text, 'YYYYY' kode, 17 div, 0 subtotal, 
-                case when extract(month from tglpemasukan) = '10' then sum(jumlahpemasukan) else 0 end as totalbulanlalu,
-                case when extract(month from tglpemasukan) = '11' then sum(jumlahpemasukan) else 0 end as totalbulanini
-                    from jasagiro_t
-                where kdprofile = 30 and statusenabled = true
-                and extract(month from tglpemasukan) in('10', '11')
-                group by uraianjasagiro, nojasagiro, extract(month from tglpemasukan)
-            ) as x
-            group by text, kode, div, subtotal
-
-						union all
-
-						select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
-						from(
-							select 'STS' as text, 'ZZZZZ' kode, 18 div, 0 subtotal, 
-							case when extract(month from tglsts) = '10' then sum(nilaists::float8) else 0 end as totalbulanlalu,
-							case when extract(month from tglsts) = '11' then sum(nilaists::float8) else 0 end as totalbulanini
-								from stskeuangan_t
-							where kdprofile = 30 and statusenabled = true
-							and extract(month from tglsts) in('10', '11')
-							group by uraiansts, extract(month from tglsts)
-						) as x
-						group by text, kode, div, subtotal
-        
-            union all
-        
-            select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
-            from(
-                select 'Penyetoran Pajak' as text, 'ZZZZZZ' kode, 13 div, 0 subtotal, 
-                case when extract(month from tglpph) = '10' then sum(ppn+pph) else 0 end as totalbulanlalu,
-                case when extract(month from tglpph) = '11' then sum(ppn+pph) else 0 end as totalbulanini
-                    from penyetoranpajak_t pp
-                where kdprofile = 30 and statusenabled = true
-                and extract(month from tglpph) in('10', '11')
-                group by uraianpajak, extract(month from tglpph)
-            ) as x
-            group by text, kode, div, subtotal
-        ) as y
-        
-        order by kode, div"));
 
         //var_dump($data);
 
         $pageWidth = 950;
         
-        return view('report.keuangan.cetakfungsional',compact('data', 'pageWidth', 'tanggalcetak'));
+        return view('report.keuangan.cetakfungsional',compact('data', 'pageWidth', 'tanggalcetak', 'tahun', 'tanggaljudul'));
     }
 
     public function CetakPerJenisAnggaranSebelumSesudah(Request $request){

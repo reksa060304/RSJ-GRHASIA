@@ -169,6 +169,10 @@
             "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/MapLaporanRLCtrl"
         },
         {
+            "nameDep": "MasterKontenCtrl",
+            "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/MasterKontenCtrl"
+        },
+        {
             "nameDep": "RL12IndikatorPelayananRsCtrl",
             "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/RL12IndikatorPelayananRsCtrl"
         },
