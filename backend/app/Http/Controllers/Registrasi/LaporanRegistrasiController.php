@@ -223,7 +223,13 @@ class LaporanRegistrasiController extends  App\Http\Controllers\ApiController
 
         
         //$produk = $produk->get();
-
+        $jeniskelamin = \DB::table('jeniskelamin_m')
+        ->where('statusenabled', true)
+        ->where('kdprofile', $idProfile)
+        ->get();
+        $pendidikan = \DB::table('pendidikan_m')->where('statusenabled', true)->where('kdprofile', $idProfile)->get();
+        $kecamatan = \DB::table('kecamatan_m')->where('statusenabled', true)->where('kdprofile', $idProfile)->get();
+        $kabupaten = \DB::table('kotakabupaten_m')->where('statusenabled', true)->where('kdprofile', $idProfile)->get();
         $result = array(
             'departemen' => $dataDepartemen,
             'ruangan' => $dataRuangan,
@@ -244,6 +250,10 @@ class LaporanRegistrasiController extends  App\Http\Controllers\ApiController
             'user' => $dataPegawaiLogin,
             'produk' => $produk,
             'produkobat' => $produkobat,
+            'jeniskelamin' => $jeniskelamin,
+            'pendidikan' => $pendidikan,
+            'kecamatan' => $kecamatan,
+            'kabupaten' => $kabupaten,
             'message' => 'as@egieramdan',
         );
 
@@ -410,14 +420,14 @@ class LaporanRegistrasiController extends  App\Http\Controllers\ApiController
         
         // "));
         $data = \DB::select(DB::raw("SELECT case when x.norec_apr is null then 'Onsite' else 'Reservasi Online' end as registrasi,
-        x.statuskeluar, x.namadokter, x.norec, x.namakecamatan, x.namakotakabupaten, x. nocm, x.noregistrasi, x.statuspasien, x.tglregistrasi1, x.tglpulang1, x.jamregistrasi, x.tgllahir, x.lamadirawat, x.namapasien, x.alamatlengkap, x.datadiy, x.dataluardiy, x.statusperkawinan,	 x. tglregistrasi, x.jk, x.alamatrmh, x.penanggungjawab, x.ruangandaftar, x.namakelas, x.kelompokpasien, x.namarekanan, x.agama, x.pendidikan, x.pekerjaan, string_agg(x.kodesekunder, ' ')as kodesekunder, string_agg(x.kodeprimer, ' ')as kodeprimer, string_agg(x.diagnosaprimer, ' ')as diagnosaprimer, string_agg(x.pegawaiprimer, ' ')as pegawaiprimer, string_agg(x.kasus, ' ')as kasus FROM (
+        x.statuskeluar, x.namadokter,  x.namakecamatan, x.namakotakabupaten, x. nocm, x.noregistrasi, x.statuspasien, x.tglregistrasi1, x.tglpulang1, x.jamregistrasi, x.tgllahir, x.lamadirawat, x.namapasien, x.alamatlengkap, x.datadiy, x.dataluardiy, x.statusperkawinan,	 x. tglregistrasi, x.jk, x.alamatrmh, x.penanggungjawab, x.ruangandaftar, x.namakelas, x.kelompokpasien, x.namarekanan, x.agama, x.pendidikan, x.pekerjaan, string_agg(x.kodesekunder, ' ')as kodesekunder, string_agg(x.kodeprimer, ' ')as kodeprimer, string_agg(x.diagnosaprimer, ' ')as diagnosaprimer, string_agg(x.pegawaiprimer, ' ')as pegawaiprimer, string_agg(x.kasus, ' ')as kasus FROM (
         SELECT distinct ru.objectdepartemenfk, apr.norec as norec_apr,
         case 
         when pd.tglpulang is not null and ru.objectdepartemenfk = 16 and pd.objectstatuskeluarfk is not null then sk.statuskeluar
         when pd.tglpulang is not null and ru.objectdepartemenfk = 16 and pd.objectstatuskeluarfk is null then 'Pindah'
         else ''
         end as statuskeluar, alm.namakecamatan, alm.namakotakabupaten
-        , pg.namalengkap as namadokter, apd.norec, pm.nocm, pd.noregistrasi, pd.statuspasien, to_char(pd.tglregistrasi,'DD-MM-YYYY') as tglregistrasi1,to_char(pd.tglpulang,'DD-MM-YYYY') as tglpulang1,to_char(pd.tglregistrasi,'HH24:MI') as jamregistrasi, pm.tgllahir::date,case when pd.tglpulang::date - pd.tglregistrasi::date >1 then
+        , pg.namalengkap as namadokter,  pm.nocm, pd.noregistrasi, pd.statuspasien, to_char(pd.tglregistrasi,'DD-MM-YYYY') as tglregistrasi1,to_char(pd.tglpulang,'DD-MM-YYYY') as tglpulang1,to_char(pd.tglregistrasi,'HH24:MI') as jamregistrasi, pm.tgllahir::date,case when pd.tglpulang::date - pd.tglregistrasi::date >1 then
         pd.tglpulang::date - pd.tglregistrasi::date when pd.tglpulang::date - pd.tglregistrasi::date = 0 and ru.objectdepartemenfk = 16 then
         1 else 0 end as lamadirawat,pm.namapasien,alm.alamatlengkap, case when kab.objectpropinsifk = 14 then alm.namakotakabupaten else '' end as datadiy, case when kab.objectpropinsifk != 14 then alm.namakotakabupaten ||',' || prop.namapropinsi else '' end as dataluardiy, sp.statusperkawinan,
         pd.tglregistrasi,jk.reportdisplay as jk,pm.alamatrmh, pm.penanggungjawab, ru.namaruangan as ruangandaftar,kl.namakelas,klp.kelompokpasien,rk.namarekanan,ag.agama,pend.pendidikan, peker.pekerjaan,
@@ -460,13 +470,14 @@ class LaporanRegistrasiController extends  App\Http\Controllers\ApiController
         GROUP BY apr.norec, sk.statuskeluar, pd.objectstatuskeluarfk, pg.namalengkap, pm.nocm, pd.noregistrasi, pd.statuspasien, pm.tgllahir, pm.namapasien,alm.alamatlengkap, kab.objectpropinsifk,
         alm.namakotakabupaten, prop.namapropinsi, sp.statusperkawinan, pd.tglregistrasi,jk.reportdisplay,pm.alamatrmh, pm.penanggungjawab,
         ru.namaruangan ,kl.namakelas,klp.kelompokpasien,rk.namarekanan,ag.agama,pend.pendidikan, peker.pekerjaan,pd.tglpulang,ru.objectdepartemenfk,
-        dt.iskasusbaru, dt.iskasuslama, apd.norec, alm.namakecamatan, alm.namakotakabupaten
+        dt.iskasusbaru, dt.iskasuslama,  alm.namakecamatan, alm.namakotakabupaten
         
         ORDER BY pd.tglregistrasi
         )as x
-        group by x.norec_apr, x.namakecamatan, x.namakotakabupaten, x.statuskeluar, x.norec, x. nocm, x.noregistrasi, x.statuspasien, x.tglregistrasi1, x.tglpulang1, x.jamregistrasi, 
+        group by x.norec_apr, x.namakecamatan, x.namakotakabupaten, x.statuskeluar,x. nocm, x.noregistrasi, x.statuspasien, x.tglregistrasi1, x.tglpulang1, x.jamregistrasi, 
         x.tgllahir, x.lamadirawat, x.namapasien, x.alamatlengkap, x.datadiy, x.dataluardiy, x.statusperkawinan,	 
         x.tglregistrasi, x.jk, x.alamatrmh, x.penanggungjawab, x.ruangandaftar, x.namakelas, x.kelompokpasien, x.namarekanan, x.agama, x.pendidikan, x.pekerjaan,x.namadokter
+        order by x.tglregistrasi asc, x.noregistrasi asc
         "));
         return $this->respond($data);
     }
@@ -3732,24 +3743,101 @@ select '-' as smf,* from  (
                 }
             }    
         }
-        $data = \DB::select(DB::raw("SELECT
-            x.tahun, SUM ( x.jumlahpasien ) as jumlahpasien
-        FROM (
-            SELECT date_part( 'year', pd.tglregistrasi ) AS tahun,COUNT ( pd.norec ) AS jumlahpasien,pd.objectruanganlastfk FROM pasiendaftar_t pd 
-            WHERE
-                pd.kdprofile = 30 AND pd.statusenabled = TRUE 
-                $jenisLaporan 
-            GROUP BY pd.norec, pd.objectruanganlastfk ) AS x 
+        $data = \DB::select(DB::raw("
+        WITH jumlahpasien AS (
+        SELECT DISTINCT
+            date_part( 'year', pd.tglpulang :: DATE ) tahun,
+            ps.nocm,
+            ps.namapasien,
+            de.namadepartemen,
+            pd.objectruanganlastfk
+        FROM
+            pasiendaftar_t pd
+            INNER JOIN pasien_m ps ON ps.ID = pd.nocmfk
+            INNER JOIN ruangan_m ru ON ru.ID = pd.objectruanganlastfk
+            INNER JOIN departemen_m de ON de.ID = ru.objectdepartemenfk 
+        WHERE
+            pd.kdprofile = 30
+            and pd.statusenabled = true
+            and pd.tglpulang is not null
+            $jenisLaporan 
+        ORDER BY
+            ps.nocm ASC 
+        ) SELECT
+            x.tahun,
+            COUNT ( x.nocm ) as jumlahpasien 
+        FROM
+            jumlahpasien x 
             $jenisPasien
-            -- WHERE x.objectruanganlastfk in(804,805,806)
         GROUP BY
-            x.tahun
-            order by x.tahun asc
-        "));
+            x.tahun 
+        ORDER BY
+            x.tahun ASC"));
+        // $data = \DB::select(DB::raw("SELECT
+        //     x.tahun, SUM ( x.jumlahpasien ) as jumlahpasien
+        // FROM (
+        //     SELECT date_part( 'year', pd.tglregistrasi ) AS tahun,COUNT ( pd.norec ) AS jumlahpasien,pd.objectruanganlastfk FROM pasiendaftar_t pd 
+        //     WHERE
+        //         pd.kdprofile = 30 AND pd.statusenabled = TRUE 
+        //         $jenisLaporan 
+        //     GROUP BY pd.norec, pd.objectruanganlastfk ) AS x 
+        //     $jenisPasien
+        //     -- WHERE x.objectruanganlastfk in(804,805,806)
+        // GROUP BY
+        //     x.tahun
+        //     order by x.tahun asc
+        // "));
         $result = array(
             'data'=> $data,
             'as'=> 'Fizi'
         );
+        return $this->respond($result);
+    }
+    public function getLaporanTindakanPPA(Request $request)
+    {
+        $tempdokter ='';
+        if(isset($request['dokter'])){
+            $tempdokter = 'and ppg.objectpegawaifk = '. $request['dokter'];
+        }
+        $tempdepartemen ='';
+        if(isset($request['idDept']) && $request['idDept'] == 1){
+            $tempdepartemen = 'and ru.objectdepartemenfk <> 16';
+        } else if(isset($request['idDept']) && $request['idDept'] == 2){
+            $tempdepartemen = 'and ru.objectdepartemenfk = 16';
+        }
+        $tempakomodasi ='';
+        if(isset($request['akomodasi']) && $request['akomodasi'] == 1){
+            $tempakomodasi = '';
+        } else if(isset($request['akomodasi']) && $request['akomodasi'] == 2){
+            $tempakomodasi = "and pr.namaproduk ilike '%akomodasi%'";
+        }
+        else if(isset($request['akomodasi']) && $request['akomodasi'] == 3){
+            $tempakomodasi = "and pr.namaproduk not ilike '%akomodasi%'";
+        }
+        $data = \DB::select(DB::raw("select x.tglpelayanan, x.nocm, x.namaproduk, string_agg(x.jasasarana::text, '')::text as sarana,string_agg(x.jasapelayanan::text, '')::text as pelayanan
+            FROM (SELECT distinct pp.norec, pp.tglpelayanan::date, ps.nocm, pr.namaproduk, 
+            case when ppd.komponenhargafk = '93' then ppd.harganetto end as jasasarana,
+            case when ppd.komponenhargafk = '94' then ppd.harganetto end as jasapelayanan
+            FROM pelayananpasien_t pp 
+            inner join pelayananpasienpetugas_t ppg on ppg.pelayananpasien = pp.norec
+            inner join pelayananpasiendetail_t ppd on ppd.pelayananpasien = pp.norec
+            inner join produk_m pr on pr.id = ppd.produkfk
+            inner join antrianpasiendiperiksa_t apd on apd.norec = pp.noregistrasifk 
+            inner join pasiendaftar_t pd on pd.norec = apd.noregistrasifk
+            inner join pasien_m ps on ps.id = pd.nocmfk
+            inner join ruangan_m ru on ru.id = apd.objectruanganfk
+            where pp.tglpelayanan::date between '$request[tglAwal]' and '$request[tglAkhir]' 
+            $tempdokter
+            $tempdepartemen
+            $tempakomodasi
+            and pp.isobat is null)as x
+            GROUP BY x.tglpelayanan,x.nocm, x.namaproduk, x.norec
+            ORDER BY x.tglpelayanan asc, x.nocm asc"));
+        $result = array(
+            "data"=> $data,
+            "as"=> "Feezy"
+        );
+
         return $this->respond($result);
     }
 }

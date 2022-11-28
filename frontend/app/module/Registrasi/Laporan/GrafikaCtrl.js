@@ -159,7 +159,7 @@ define(['initialize'], function (initialize) {
                 var ruangan = '';
                 var jenislaporan = '';
                 if ($scope.item.tglawal != undefined && $scope.item.tglakhir != undefined) {
-                    tanggalawal = 'tglawal=' + moment($scope.item.tglawal).format('YYYY-MM-DD 00:00');
+                    tanggalawal = '&tglawal=' + moment($scope.item.tglawal).format('YYYY-MM-DD 00:00');
                     tanggalakhir = '&tglakhir=' + moment($scope.item.tglakhir).format('YYYY-MM-DD 23:59');
                 }
                 tahun = 'tahun=' + moment($scope.now).format('YYYY');
@@ -190,7 +190,7 @@ define(['initialize'], function (initialize) {
                     function createChart() {
                         $("#chart").kendoChart({
                             title: {
-                                text: "GRAFIK FLUKTUASI DATA KUNJUNGAN RAWAT JALAN",
+                                text: "GRAFIK FLUKTUASI DATA KUNJUNGAN " + $scope.item.jenislaporan.departemen.toUpperCase(),
                                 font: "bold 20px 'Arial'",
                             },
                             valueAxes: [{

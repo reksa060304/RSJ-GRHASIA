@@ -49,7 +49,10 @@ define(['initialize'], function (initialize) {
                 
             }
                medifirstService.get("registrasi/laporan/get-data-combo-laporan").then(function (dat) {
-
+                $scope.listJenisKelamin = dat.data.jeniskelamin
+                $scope.listPendidikan = dat.data.pendidikan
+                $scope.listKabupaten = dat.data.kabupaten
+                $scope.listKecamatan = dat.data.kecamatan
                    // $scope.listPegawai = dat.data.dokter;
                    $scope.listDepartement = dat.data.departemen;
                    // $scope.listPegawaiKasir = dat.data.kasir;
@@ -142,15 +145,6 @@ define(['initialize'], function (initialize) {
                     messageContainer.error("Input Tanggal dulu!")
                         break;
                 }
-                
-                // if($scope.item.tglawal == undefined && $scope.item.tglakhir == undefined){
-                //     messageContainer.error("Pilih tanggal dulu!")
-                    
-                // } 
-                // if($scope.item.tglawalmasuk == undefined && $scope.item.tglakhirmasuk == undefined){
-                //     messageContainer.error("Pilih tanggal dulu!")
-                    
-                // }
                 var tempDepartemenId = "";              
                 if ($scope.item.departement != undefined) {
                     tempDepartemenId = "&idDept=" + $scope.item.departement.id;
@@ -179,6 +173,22 @@ define(['initialize'], function (initialize) {
                 if ($scope.item.kodeawal != undefined) {
                     tempkodeawal = "&kodeawal=" + $scope.item.kodeawal;
                 }
+                var tempjeniskelamin = "";
+                if ($scope.item.jeniskelamin != undefined) {
+                    tempjeniskelamin = "&jeniskelamin=" + $scope.item.jeniskelamin.id;
+                }
+                var temppendidikan = "";
+                if ($scope.item.pendidikan != undefined) {
+                    temppendidikan = "&pendidikan=" + $scope.item.pendidikan.id;
+                }
+                var tempkabupaten = "";
+                if ($scope.item.kabupaten != undefined) {
+                    tempkabupaten = "&kabupaten=" + $scope.item.kabupaten.id;
+                }
+                var tempkecamatan = "";
+                if ($scope.item.kecamatan != undefined) {
+                    tempkecamatan = "&kecamatan=" + $scope.item.kecamatan.id;
+                }
                 var chacePeriode = {
                     0: '',
                     1: '',
@@ -197,7 +207,7 @@ define(['initialize'], function (initialize) {
                     tglAwalmasuk +
                     tglAkhirmasuk +
                 tempDepartemenId + tempRuanganId +
-                tempJenisDiagnosa + tempDiagnosa + 
+                tempJenisDiagnosa + tempDiagnosa + temppendidikan +tempkecamatan+tempkabupaten+
                 tempstatusPasien).then(function (data) {
                     var data2 = data.data.data;
                     var data3 = data.data.data2;
@@ -258,8 +268,8 @@ define(['initialize'], function (initialize) {
                     tempDepartemenId +
                     tempRuanganId +
                     tempJenisDiagnosa +
-                    tempDiagnosa +
-                    tempstatusPasien  
+                    tempDiagnosa + 
+                    tempstatusPasien + tempjeniskelamin + temppendidikan + tempkecamatan + tempkabupaten
                 ).then(function (data) {
 
                     $scope.isRouteLoading = false;
@@ -291,12 +301,11 @@ define(['initialize'], function (initialize) {
                 
                 medifirstService.get("tatarekening/get-data-diagnosa-pasien?"
                     + tglAwal
-                    + tglAkhir
+                    +tglAkhir
                     +tglAwalmasuk
                     +tglAkhirmasuk
-                    +tempDepartemenId + tempRuanganId + tempJenisDiagnosa + tempDiagnosa + tempstatusPasien + tempkodeawal+dep).then(function (data) {
-                        
-
+                    +tempDepartemenId + tempRuanganId + tempJenisDiagnosa + tempDiagnosa + tempstatusPasien + tempkodeawal + dep 
+                    + tempjeniskelamin + temppendidikan + tempkecamatan + tempkabupaten).then(function (data) {
                     $scope.isRouteLoading = false;                                    
                     var datas = data.data.data;
                     // var counts = data.data.count
@@ -306,22 +315,11 @@ define(['initialize'], function (initialize) {
                         var bln = umur.month,
                             thn = umur.year,
                             day = umur.day                       
-                         datas[i].umur = thn + 'thn ' + bln + 'bln ' + day + 'hr '                        
+                        datas[i].umur = thn + 'thn ' + bln + 'bln ' + day + 'hr '                        
                     }
-                    // for (let i = 0; i < data.data.count.length; i++) {
-                    //      $scope.a = data.data.count[i].a;
-                    //      $scope.b = data.data.count[i].b;
-                    //         $scope.c = data.data.count[i].c;
-                    //         $scope.d = data.data.count[i].d;
-                    //         $scope.e = data.data.count[i].e;
-                    //         $scope.f = data.data.count[i].f;
-                    // }
-                    
-                    
                     $scope.sourceLaporan = new kendo.data.DataSource({                            
                         data: data.data.data,
-                        group: $scope.group,
-                        pageSize: 100,                       
+                        pageSize: 50,                       
                         total: datas.length,
                         serverPaging: false,
                         schema: {
@@ -391,6 +389,7 @@ define(['initialize'], function (initialize) {
                 resizable: true,
                 pageable: true,
                 groupable: true,
+                scrollable: true,
                 // dataBound: function (e) {
                 //     $('.k-pager-wrap').append('<span style="padding-left: 50px; color:red; font-weight:bold;"> Hello world </span>');
                 // },
@@ -446,13 +445,13 @@ define(['initialize'], function (initialize) {
                     {
                         field: "jeniskelamin",
                         title: "JK",
-                        width: "40px",
+                        width: "60px",
 
                     },  
                     {
                         field: "umurs",
                         title: "Umur",
-                        width: "35px",
+                        width: "60px",
                     },
                     {
                         field: "pendidikan",

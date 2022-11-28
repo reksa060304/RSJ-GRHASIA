@@ -80,14 +80,25 @@
             k-filter=" 'contains' " k-data-value-field=" 'id' " k-auto-bind="false " k-data-source="listDokter " />
     </div>     -->
     <div class="grid_2" style="margin-top:5px">
-        <label c-label c-label-text="Kelompok" real></label>
+        <label c-label c-label-text="Kelompok Pasien" real></label>
         <input style="width: 100%; " kendo-combo-box k-ng-model="item.kelompokpasien" k-data-text-field=" 'kelompokpasien' "
             k-filter=" 'contains' " k-data-value-field=" 'id' " k-auto-bind="false " k-data-source="listKelompokPasien " />
+    </div>
+    <div class="grid_1" style="margin-top:5px">
+        <label c-label c-label-text="Jenis Ranap" real></label>
+        <input style="width: 100%; " kendo-combo-box k-ng-model="item.jenispasien"
+            k-data-text-field=" 'jenispasien' " k-filter=" 'contains' " k-data-value-field=" 'id' "
+            k-auto-bind="false " k-data-source="listJenisPasien" />
+    </div>
+    <div class="grid_1" style="margin-top:5px">
+        <label c-label c-label-text="Cara Keluar" real></label>
+        <input style="width: 100%; " kendo-combo-box k-ng-model="item.carakeluar" k-data-text-field=" 'statuskeluar' "
+            k-filter=" 'contains' " k-data-value-field=" 'id' " k-auto-bind="false " k-data-source="listCaraKeluar" />
     </div>
 
 
 
-    <div class="grid_4" style="margin-top:5px">
+    <div class="grid_3" style="margin-top:5px">
         <div class="grid_12">
             <label c-label item="item" c-label-text="Periode Registrasi"></label>
         </div>

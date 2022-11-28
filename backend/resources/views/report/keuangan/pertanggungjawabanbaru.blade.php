@@ -190,6 +190,482 @@
                     <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>{{ number_format($total[0]->totalsemuabulangaji + $total[0]->totalsemuabulanbarangjasa,3,',','.') }}</b></td>
                     <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>{{ number_format($total[0]->jumlahanggaran - $total[0]->totalsemuabulangaji - $total[0]->totalsemuabulanbarangjasa,3,',','.') }}</b></td>
                 </tr>
+                <tr style="border: 1px solid black;">
+                    <td colspan="2" align="right" height="40" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" height="40" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" height="40" width="50" style="padding: 10px;  font-size: 15px;"><b></b></td>
+                    <td align="right" height="40" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" height="40" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" height="40" width="50" style="padding: 10px;  font-size: 15px;"><b></b></td>
+                    <td align="right" height="40" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" height="40" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" height="40" width="50" style="padding: 10px;  font-size: 15px;"><b></b></td>
+                    <td align="right" height="40" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" height="40" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" height="40" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" height="40" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                </tr>
+                <tr style="border: 1px solid black;">
+                    <td colspan="2" align="left" width="50" style="padding: 10px;  font-size: 15px;"><b>Penerimaan:</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                </tr>
+                <tr style="border: 1px solid black;">
+                    <td colspan="2" align="left" width="50" style="padding: 10px;  font-size: 15px;"><b>-SP2D:</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                </tr>
+                <tr style="border: 1px solid black;">
+                    <td colspan="2" align="left" width="50" style="padding: 10px; padding-left: 30px; font-size: 15px;"><b>UP</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b>0</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>0</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>0</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>0</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                </tr>
+                <tr style="border: 1px solid black;">
+                    <td colspan="2" align="left" width="50" style="padding: 10px; padding-left: 30px; font-size: 15px;"><b>GU</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b>0</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>0</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>0</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>0</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                </tr>
+                <tr style="border: 1px solid black;">
+                    <td colspan="2" align="left" width="50" style="padding: 10px; padding-left: 30px; font-size: 15px;"><b>TU</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b>0</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>0</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>0</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>0</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                </tr>
+                <tr style="border: 1px solid black;">
+                    <td colspan = "2" align="left" width="50" style="padding: 10px; padding-left: 30px; font-size: 15px; "><b>LS</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>{{ number_format($total[0]->jumlahanggaran,3,',','.') }}</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b>{{ number_format($total[0]->jumlahspjsdbulanlalugaji,3,',','.') }}</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>{{ number_format($total[0]->jumlahspjbulaninigaji,3,',','.') }}</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>{{ number_format($total[0]->totalsemuabulangaji,3,',','.') }}</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b>{{ number_format($total[0]->jumlahspjsdbulanlalubarangjasa,3,',','.') }}</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>{{ number_format($total[0]->jumlahspjbulaninibarangjasa,3,',','.') }}</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>{{ number_format($total[0]->totalsemuabulanbarangjasa,3,',','.') }}</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>{{ number_format($total[0]->totalsemuabulangaji + $total[0]->totalsemuabulanbarangjasa,3,',','.') }}</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                </tr>
+                <tr style="border: 1px solid black;">
+                    <td colspan="2" align="left" width="50" style="padding: 10px;  font-size: 15px;"><b>-Pelimpahan SP2D:</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                </tr>
+                <tr style="border: 1px solid black;">
+                    <td colspan="2" align="left" width="50" style="padding: 10px; padding-left: 30px; font-size: 15px;"><b>Pelimpahan UP</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b>0</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>0</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>0</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>0</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                </tr>
+                <tr style="border: 1px solid black;">
+                    <td colspan="2" align="left" width="50" style="padding: 10px; padding-left: 30px; font-size: 15px;"><b>Pelimpahan GU</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b>0</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>0</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>0</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>0</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                </tr>
+                <tr style="border: 1px solid black;">
+                    <td colspan="2" align="left" width="50" style="padding: 10px; padding-left: 30px; font-size: 15px;"><b>Pelimpahan TU</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b>0</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>0</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>0</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>0</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                </tr>
+                <tr style="border: 1px solid black;">
+                    <td colspan="2" align="left" width="50" style="padding: 10px;  font-size: 15px;"><b>-Potongan:</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                </tr>
+                @foreach($iuran as $pm)
+                    <tr style="border: 1px solid black;">
+                        <td colspan="2" align="left" width="50" style="padding: 10px; padding-left: 30px; font-size: 15px;">{{$pm->text}}</td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b></b></td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b></b></td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px;">{{ number_format($pm->totalbulanlalu,3,',','.') }}</td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px; ">{{ number_format($pm->totalbulanini,3,',','.') }}</td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px; ">{{ number_format($pm->totalbulanlalu + $pm->totalbulanini,3,',','.') }}</td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px; ">{{ number_format($pm->totalbulanlalu + $pm->totalbulanini,3,',','.') }}</td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    </tr>
+                @endforeach
+                @foreach($penerimaan as $pm)
+                @if($pm->padding == 'false')
+                    <tr style="border: 1px solid black;">
+                        <td colspan="2" align="left" width="50" style="padding: 10px; font-size: 15px;"><b>{{$pm->text}}</b></td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b></b></td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b></b></td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b>{{ number_format($pm->totalbulanlalu,3,',','.') }}</b></td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>{{ number_format($pm->totalbulanini,3,',','.') }}</b></td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>{{ number_format($pm->totalbulanlalu + $pm->totalbulanini,3,',','.') }}</b></td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>{{ number_format($pm->totalbulanlalu + $pm->totalbulanini,3,',','.') }}</b></td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    </tr>
+                @else
+                    <tr style="border: 1px solid black;">
+                        <td colspan="2" align="left" width="50" style="padding: 10px; padding-left: 30px; font-size: 15px;">{{$pm->text}}</td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b></b></td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b></b></td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px;">{{ number_format($pm->totalbulanlalu,3,',','.') }}</td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px; ">{{ number_format($pm->totalbulanini,3,',','.') }}</td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px; ">{{ number_format($pm->totalbulanlalu + $pm->totalbulanini,3,',','.') }}</td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px; ">{{ number_format($pm->totalbulanlalu + $pm->totalbulanini,3,',','.') }}</td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    </tr>
+                @endif
+                @endforeach
+                <tr style="border: 1px solid black;">
+                    <td colspan = "2" align="left" width="50" style="padding: 10px; font-size: 15px; "><b>Jumlah Penerimaan (SP2D Bruto) :</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>{{ number_format($total[0]->jumlahanggaran,3,',','.') }}</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b>{{ number_format($total[0]->jumlahspjsdbulanlalugaji,3,',','.') }}</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>{{ number_format($total[0]->jumlahspjbulaninigaji,3,',','.') }}</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>{{ number_format($total[0]->totalsemuabulangaji,3,',','.') }}</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b>{{ number_format($total[0]->jumlahspjsdbulanlalubarangjasa,3,',','.') }}</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>{{ number_format($total[0]->jumlahspjbulaninibarangjasa,3,',','.') }}</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>{{ number_format($total[0]->totalsemuabulanbarangjasa,3,',','.') }}</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b>{{ number_format(0,0,',','.') }}</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>{{ number_format(0,0,',','.') }}</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>{{ number_format(0,0,',','.') }}</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>{{ number_format($total[0]->totalsemuabulangaji + $total[0]->totalsemuabulanbarangjasa,3,',','.') }}</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>{{ number_format($total[0]->jumlahanggaran - $total[0]->totalsemuabulangaji - $total[0]->totalsemuabulanbarangjasa,3,',','.') }}</b></td>
+                </tr>
+                <tr style="border: 1px solid black;">
+                    <td colspan="2" align="right" height="40" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" height="40" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" height="40" width="50" style="padding: 10px;  font-size: 15px;"><b></b></td>
+                    <td align="right" height="40" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" height="40" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" height="40" width="50" style="padding: 10px;  font-size: 15px;"><b></b></td>
+                    <td align="right" height="40" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" height="40" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" height="40" width="50" style="padding: 10px;  font-size: 15px;"><b></b></td>
+                    <td align="right" height="40" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" height="40" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" height="40" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" height="40" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                </tr>
+                <tr style="border: 1px solid black;">
+                    <td colspan="2" align="left" width="50" style="padding: 10px;  font-size: 15px;"><b>Pegeluaran:</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                </tr>
+                <tr style="border: 1px solid black;">
+                    <td colspan="2" align="left" width="50" style="padding: 10px;  font-size: 15px;"><b>-SP2D:</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                </tr>
+                <tr style="border: 1px solid black;">
+                    <td colspan="2" align="left" width="50" style="padding: 10px; padding-left: 30px; font-size: 15px;"><b>UP/GU</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b>0</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>0</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>0</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>0</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                </tr>
+                <tr style="border: 1px solid black;">
+                    <td colspan="2" align="left" width="50" style="padding: 10px; padding-left: 30px; font-size: 15px;"><b>TU</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b>0</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>0</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>0</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>0</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                </tr>
+                <tr style="border: 1px solid black;">
+                    <td colspan = "2" align="left" width="50" style="padding: 10px; padding-left: 30px; font-size: 15px; "><b>LS</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>{{ number_format($total[0]->jumlahanggaran,3,',','.') }}</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b>{{ number_format($total[0]->jumlahspjsdbulanlalugaji,3,',','.') }}</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>{{ number_format($total[0]->jumlahspjbulaninigaji,3,',','.') }}</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>{{ number_format($total[0]->totalsemuabulangaji,3,',','.') }}</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b>{{ number_format($total[0]->jumlahspjsdbulanlalubarangjasa,3,',','.') }}</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>{{ number_format($total[0]->jumlahspjbulaninibarangjasa,3,',','.') }}</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>{{ number_format($total[0]->totalsemuabulanbarangjasa,3,',','.') }}</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>{{ number_format($total[0]->totalsemuabulangaji + $total[0]->totalsemuabulanbarangjasa,3,',','.') }}</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                </tr>
+                <tr style="border: 1px solid black;">
+                    <td colspan="2" align="left" width="50" style="padding: 10px;  font-size: 15px;"><b>-Potongan:</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                </tr>
+                @foreach($iuran as $pm)
+                    <tr style="border: 1px solid black;">
+                        <td colspan="2" align="left" width="50" style="padding: 10px; padding-left: 30px; font-size: 15px;">{{$pm->text}}</td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b></b></td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b></b></td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px;">{{ number_format($pm->totalbulanlalu,3,',','.') }}</td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px; ">{{ number_format($pm->totalbulanini,3,',','.') }}</td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px; ">{{ number_format($pm->totalbulanlalu + $pm->totalbulanini,3,',','.') }}</td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px; ">{{ number_format($pm->totalbulanlalu + $pm->totalbulanini,3,',','.') }}</td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    </tr>
+                @endforeach
+                @foreach($pengeluaran as $pm)
+                @if($pm->padding == 'false')
+                    <tr style="border: 1px solid black;">
+                        <td colspan="2" align="left" width="50" style="padding: 10px; font-size: 15px;"><b>{{$pm->text}}</b></td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b></b></td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b></b></td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b>{{ number_format($pm->totalbulanlalu,3,',','.') }}</b></td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>{{ number_format($pm->totalbulanini,3,',','.') }}</b></td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>{{ number_format($pm->totalbulanlalu + $pm->totalbulanini,3,',','.') }}</b></td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>{{ number_format($pm->totalbulanlalu + $pm->totalbulanini,3,',','.') }}</b></td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    </tr>
+                @else
+                    <tr style="border: 1px solid black;">
+                        <td colspan="2" align="left" width="50" style="padding: 10px; padding-left: 30px; font-size: 15px;">{{$pm->text}}</td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b></b></td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b></b></td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px;">{{ number_format($pm->totalbulanlalu,3,',','.') }}</td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px; ">{{ number_format($pm->totalbulanini,3,',','.') }}</td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px; ">{{ number_format($pm->totalbulanlalu + $pm->totalbulanini,3,',','.') }}</td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px; ">{{ number_format($pm->totalbulanlalu + $pm->totalbulanini,3,',','.') }}</td>
+                        <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    </tr>
+                @endif
+                @endforeach
+                <tr style="border: 1px solid black;">
+                    <td colspan = "2" align="left" width="50" style="padding: 10px; font-size: 15px; "><b>Jumlah Pengeluaran (SPJ Netto + Potongan/Pajak - Pengembalian)</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>{{ number_format($total[0]->jumlahanggaran,3,',','.') }}</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b>{{ number_format($total[0]->jumlahspjsdbulanlalugaji,3,',','.') }}</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>{{ number_format($total[0]->jumlahspjbulaninigaji,3,',','.') }}</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>{{ number_format($total[0]->totalsemuabulangaji,3,',','.') }}</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b>{{ number_format($total[0]->jumlahspjsdbulanlalubarangjasa,3,',','.') }}</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>{{ number_format($total[0]->jumlahspjbulaninibarangjasa,3,',','.') }}</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>{{ number_format($total[0]->totalsemuabulanbarangjasa,3,',','.') }}</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b>{{ number_format(0,0,',','.') }}</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>{{ number_format(0,0,',','.') }}</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>{{ number_format(0,0,',','.') }}</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>{{ number_format($total[0]->totalsemuabulangaji + $total[0]->totalsemuabulanbarangjasa,3,',','.') }}</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>{{ number_format($total[0]->jumlahanggaran - $total[0]->totalsemuabulangaji - $total[0]->totalsemuabulanbarangjasa,3,',','.') }}</b></td>
+                </tr>
+                <tr style="border: 1px solid black;">
+                    <td colspan="2" align="right" height="40" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" height="40" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" height="40" width="50" style="padding: 10px;  font-size: 15px;"><b></b></td>
+                    <td align="right" height="40" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" height="40" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" height="40" width="50" style="padding: 10px;  font-size: 15px;"><b></b></td>
+                    <td align="right" height="40" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" height="40" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" height="40" width="50" style="padding: 10px;  font-size: 15px;"><b></b></td>
+                    <td align="right" height="40" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" height="40" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" height="40" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" height="40" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                </tr>
+                <tr style="border: 1px solid black;">
+                    <td colspan="2" align="left" width="50" style="padding: 10px; padding-left: 30px; font-size: 15px;"><b>Saldo Kas</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b></b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b>0</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>0</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>0</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b>0</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>0</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>0</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px;"><b>0</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>0</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>0</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>0</b></td>
+                    <td align="right" width="50" style="padding: 10px;  font-size: 15px; "><b>0</b></td>
+                </tr>
+        </table>
+        <table width="{{$pageWidth}}" bgcolor="#FFFFFF" style="margin-top: 50px;">
+                <tr>
+                    <td align="center" style="padding: 10px; font-size: 15px; "></td>
+                    <td align="center" width="350" style="padding: 10px; font-size: 15px; "></td>
+                    <td align="center" style="padding: 10px; font-size: 15px; "></td>
+                    <td align="center" style="padding: 10px; font-size: 15px;  "></td>
+                    <td align="center" width="350" style="padding: 10px; font-size: 15px; font-weight: bold;">Bendahara Pengeluaran Pembantu</td>
+                </tr>
+        </table>
+        <table width="{{$pageWidth}}" bgcolor="#FFFFFF" style="margin-top: 150px;">
+                <tr>
+                    <td align="center" style="padding: 10px; font-size: 15px; "></td>
+                    <td align="center" width="350" style="padding: 10px; font-size: 15px; "></td>
+                    <td align="center" style="padding: 10px; font-size: 15px; "></td>
+                    <td align="center" style="padding: 10px; font-size: 15px; "></td>
+                    <td align="center" width="350" style="padding: 10px; font-size: 15px;  font-weight: bold;">Paula Sofyanita, SE.</td>
+                </tr>
+        </table>
+        <table width="{{$pageWidth}}" bgcolor="#FFFFFF" style="margin-top: -20px;">
+                <tr>
+                    <td align="center" style="padding: 10px; font-size: 15px; "></td>
+                    <td align="center" width="350" style="padding: 10px; font-size: 15px; "></td>
+                    <td align="center" style="padding: 10px; font-size: 15px; "></td>
+                    <td align="center" style="padding: 10px; font-size: 15px; "></td>
+                    <td align="center" width="350" style="padding: 10px; font-size: 15px;  font-weight: bold;">NIP. 19910622 201502 2 002</td>
+                </tr>
         </table>
 </div>
 <script>

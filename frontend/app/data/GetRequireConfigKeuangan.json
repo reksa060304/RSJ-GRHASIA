@@ -421,6 +421,10 @@
             "urlDep": "module/BendaharaPenerimaan/STSBulananKlaimCtrl"
         },
         {
+            "nameDep": "STSRingkasCtrl",
+            "urlDep": "module/BendaharaPenerimaan/STSRingkasCtrl"
+        },
+        {
 
             "nameDep": "RealisasiPerTriwulanCtrl",
             "urlDep": "module/BendaharaPenerimaan/RealisasiPerTriwulanCtrl"
@@ -429,6 +433,11 @@
 
             "nameDep": "RekapitulasiPendapatanCtrl",
             "urlDep": "module/BendaharaPenerimaan/RekapitulasiPendapatanCtrl"
+        },
+        {
+
+            "nameDep": "RincianObyekPenerimaanCtrl",
+            "urlDep": "module/BendaharaPenerimaan/RincianObyekPenerimaanCtrl"
         },
         {
             "nameDep": "RemunTagihanDiklatCtrl",

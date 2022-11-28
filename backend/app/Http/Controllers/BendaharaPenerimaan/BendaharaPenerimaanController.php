@@ -2718,7 +2718,7 @@ class BendaharaPenerimaanController extends ApiController {
 
         // konten STS Detail
 
-        $data = DB::select(DB::raw("select distinct sbm.norec norecsbm, pp.norec, sc.tglclosing, ru.namaruangan, ru.id idruangan, pr.namaproduk, pr.id idproduk, pp.isobat,
+        $data = DB::select(DB::raw("select distinct 0 objectkelompoktransaksifk, sbm.norec norecsbm, pp.norec, sc.tglclosing, ru.namaruangan, ru.id idruangan, pr.namaproduk, pr.id idproduk, pp.isobat,
         (((CASE WHEN pp.hargajual IS NULL THEN 0 ELSE pp.hargajual END - CASE WHEN pp.hargadiscount IS NULL THEN
         0 ELSE pp.hargadiscount END) * pp.jumlah) + CASE WHEN pp.jasa IS NULL THEN 0 ELSE pp.jasa END ) AS totaldibayarclosing,
         ru.objectdepartemenfk, sbmcr.objectcarabayarfk, sbm.totaldibayar as totaldibayarsbm, sc.noclosing, sc.tglclosing,
@@ -2751,7 +2751,7 @@ class BendaharaPenerimaanController extends ApiController {
         
         union all
         
-        select distinct sbm.norec norecsbm, sp.norec, sc.tglclosing, ru.namaruangan, ru.id idruangan, pr.namaproduk, pr.id idproduk, pp.isobat,
+        select distinct sp.objectkelompoktransaksifk, sbm.norec norecsbm, sp.norec, sc.tglclosing, ru.namaruangan, ru.id idruangan, pr.namaproduk, pr.id idproduk, pp.isobat,
         (spd.qtyproduk * spd.hargasatuan * spd.qtyoranglast)::float4 as totaldibayarclosing,
         ru.objectdepartemenfk, sbmcr.objectcarabayarfk, sbm.totaldibayar as totaldibayarsbm, sc.noclosing, sc.tglclosing,
         sck.totaldibayar as totaldibayarclosing,sck.carabayarfk, cb.carabayar, djp.detailjenisproduk, jpr.id as jenisproduk
@@ -3076,7 +3076,13 @@ class BendaharaPenerimaanController extends ApiController {
                 $cekjumlah = $konten->namaproduk;
             }
 
-            else if($konten->idproduk == 5008612){
+            else if($konten->idproduk == 1002122273 || $konten->idproduk == 1002122274){
+                $jumlahsewagedunggrhasiainn += $konten->totaldibayarclosing;
+                $voljumlahsewagedunggrhasiainn++;
+                $cekjumlah = $konten->namaproduk;
+            }
+
+            else if($konten->idproduk == 5008612 || $konten->idproduk == 1002122275 || $konten->idproduk == 1002122276 || $konten->idproduk == 1002122277){
                 $jumlahsewalapangan += $konten->totaldibayarclosing;
                 $voljumlahsewalapangan++;
                 $cekjumlah = $konten->namaproduk;
@@ -3106,9 +3112,15 @@ class BendaharaPenerimaanController extends ApiController {
                 $cekjumlah = $konten->namaproduk;
             }
 
-            else if($konten->idproduk == 5008631 || $konten->idproduk == 5008632 || $konten->idproduk == 5008633){
+            else if($konten->idproduk == 5008631 || $konten->idproduk == 5008632 || $konten->idproduk == 5008633 || $konten->objectkelompoktransaksifk == 307){
                 $parkir += $konten->totaldibayarclosing;
                 $volparkir++;
+                $cekjumlah = $konten->namaproduk;
+            }
+
+            else if($konten->objectkelompoktransaksifk == 306){
+                $hasilketrampilan += $konten->totaldibayarclosing;
+                $volhasilketrampilan++;
                 $cekjumlah = $konten->namaproduk;
             }
 
@@ -7952,7 +7964,7 @@ class BendaharaPenerimaanController extends ApiController {
             }
 
             foreach($target as $tg){
-                if($tg->uraianpendapatan == $main){
+                if($tg->uraianpendapatan == $main->uraianpendapatan){
                     $jumlahtarget += $tg->jumlahpendapatan;
                 }
             }
@@ -7980,6 +7992,247 @@ class BendaharaPenerimaanController extends ApiController {
 
         
 
+
+        $result = array(
+            'detail' => $data,
+        );
+        
+        return $this->setStatusCode(201)->respond($result, 'tes msg');
+    }
+
+    public function getSTSRingkas(Request $request) {
+        ini_set('max_execution_time', 600);
+        $tahun = $request['tahun'];
+
+        $detail = DB::select(DB::raw("select x.nourut, x.date, x.kdrekening, x.nomer, x.uraian, sum(x.vol) as totalvol, sum(x.kolom1) as totalkolom1, sum(x.kolom2) as totalkolom2,
+        (
+            case 
+            when sum(x.kolom1) is null and sum(x.kolom2) is null then sum(x.kolom1)
+            when sum(x.kolom1) is null and sum(x.kolom2) is not null then sum(x.kolom2)
+            when sum(x.kolom1) is not null and sum(x.kolom2) is null then sum(x.kolom1)
+            else 0 
+            end
+        ) as totalfix
+        from(	
+				select to_char(sts.tglpenerimaan, 'MM') as date, stsd.nourut, stsd.kdrekening, stsd.nomer, stsd.uraian, stsd.vol, stsd.kolom1, stsd.kolom2
+                from surattandasetoran_t sts
+                inner join surattandasetorandetail_t stsd on stsd.objectstsfk = sts.nosts
+                left join ststosck_t as ssc on sts.norec = ssc.objectstsfk
+                left join strukclosingkasir_t as sck on ssc.objectsckfk = sck.norec
+                left join strukclosing_t as sc on sc.norec = sck.noclosingfk
+                left join strukbuktipenerimaan_t AS sbm on sbm.noclosingfk = sc.norec
+                left join strukbuktipenerimaancarabayar_t as sbmcr ON sbmcr.nosbmfk = sbm.norec
+                left JOIN carabayar_m as cb ON cb.id = sbmcr.objectcarabayarfk
+                where sts.statusenabled = true
+                and stsd.statusenabled = true and stsd.kdprofile = 30
+                and sc.noclosing not in (
+                    select sc.noclosing from strukclosing_t sc
+                    inner join strukhistori_t sh on sh.noclosing = sc.norec
+                    where sh.statusenabled = false
+                )
+                and date_part('year', sts.tglpenerimaan::timestamp ) = '$tahun'
+                group by to_char(sts.tglpenerimaan, 'MM'), stsd.nourut, stsd.kdrekening, stsd.nomer, stsd.uraian, stsd.vol, stsd.kolom1, stsd.kolom2
+        ) as x
+        group by x.nourut, x.date, x.kdrekening, x.nomer, x.uraian
+
+        union all
+
+		select x.nourut, x.date, x.kdrekening, x.nomer, x.uraian, sum(x.vol) as totalvol, sum(x.kolom1) as totalkolom1, sum(x.kolom2) as totalkolom2,
+        (
+            case 
+            when sum(x.kolom1) is null and sum(x.kolom2) is null then sum(x.kolom1)
+            when sum(x.kolom1) is null and sum(x.kolom2) is not null then sum(x.kolom2)
+            when sum(x.kolom1) is not null and sum(x.kolom2) is null then sum(x.kolom1)
+            else 0 
+            end
+        ) as totalfix
+        from(	
+				select to_char(sts.tglpenerimaan, 'MM') as date, stsd.nourut, stsd.kdrekening, stsd.nomer, stsd.uraian, stsd.vol, stsd.kolom1, stsd.kolom2
+                from surattandasetoran_t sts
+                inner join surattandasetorandetail_t stsd on stsd.objectstsfk = sts.nosts
+                where sts.statusenabled = true
+                and stsd.statusenabled = true and stsd.kdprofile = 30
+				and sts.kdprofile = 30
+				and sts.ismanual = true
+                and date_part('year', sts.tglpenerimaan::timestamp ) = '$tahun'
+                group by to_char(sts.tglpenerimaan, 'MM'), stsd.nourut, stsd.kdrekening, stsd.nomer, stsd.uraian, stsd.vol, stsd.kolom1, stsd.kolom2
+        ) as x
+        group by x.nourut, x.date, x.kdrekening, x.nomer, x.uraian
+        
+        union all
+
+        select x.nourut, x.date, x.kdrekening, x.nomer, x.uraian, sum(x.vol) as totalvol, sum(x.kolom1) as totalkolom1, sum(x.kolom2) as totalkolom2,
+        (
+            case 
+            when sum(x.kolom1) is null and sum(x.kolom2) is null then sum(x.kolom1)
+            when sum(x.kolom1) is null and sum(x.kolom2) is not null then sum(x.kolom2)
+            when sum(x.kolom1) is not null and sum(x.kolom2) is null then sum(x.kolom1)
+            else 0 
+            end
+        ) as totalfix
+        from(	
+				select to_char(sts.tglpenerimaan, 'MM') as date, stsd.nourut, stsd.kdrekening, stsd.nomer, stsd.uraian, stsd.vol, stsd.kolom1, stsd.kolom2
+                from surattandasetoran_t sts
+                inner join surattandasetorandetail_t stsd on stsd.objectstsfk = sts.nosts
+				inner join ststorekapklaim_t str on sts.norec = str.objectstsfk
+				inner join rekapklaimbpjs_t rkb on str.objectrekapklaimfk = rkb.norec
+                where sts.statusenabled = true
+                and stsd.statusenabled = true 
+                and stsd.kdprofile = 30
+                and str.statusenabled = true 
+                and str.kdprofile = 30
+                and rkb.statusenabled = true 
+                and rkb.kdprofile = 30
+				and sts.kdprofile = 30
+                and date_part('year', sts.tglpenerimaan::timestamp ) = '$tahun'
+                group by to_char(sts.tglpenerimaan, 'MM'), stsd.nourut, stsd.kdrekening, stsd.nomer, stsd.uraian, stsd.vol, stsd.kolom1, stsd.kolom2
+        ) as x
+        group by x.nourut, x.date, x.kdrekening, x.nomer, x.uraian
+        order by date, nourut"));
+
+        $mainuraian = array('Pendapatan Layanan', 'Pendapatan Non Layanan');
+        
+        $jumlahjanuari = 0;
+        $jumlahfebruari = 0;
+        $jumlahmaret = 0;
+        $jumlahapril = 0;
+        $jumlahmei = 0;
+        $jumlahjuni = 0;
+        $jumlahjuli = 0;
+        $jumlahagustus = 0;
+        $jumlahseptember = 0;
+        $jumlahoktober = 0;
+        $jumlahnovember = 0;
+        $jumlahdesember = 0;
+        $jumlahrealisasi = 0;
+        $data = [];
+
+        foreach($mainuraian as $main){
+            $jumlahjanuari = 0;
+            $jumlahfebruari = 0;
+            $jumlahmaret = 0;
+            $jumlahapril = 0;
+            $jumlahmei = 0;
+            $jumlahjuni = 0;
+            $jumlahjuli = 0;
+            $jumlahagustus = 0;
+            $jumlahseptember = 0;
+            $jumlahoktober = 0;
+            $jumlahnovember = 0;
+            $jumlahdesember = 0;
+            $jumlahrealisasi = 0;
+            $uraian = $main;
+
+            foreach($detail as $row){
+                if($row->date == '01' && $main == 'Pendapatan Layanan' && ($row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA' || $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA (NAPZA)' || $row->uraian == 'PERIKSA DOKTER UMUM' || $row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'PERIKSA DOKTER PENYAKIT DALAM' || $row->uraian == 'PERIKSA DOKTER ANAK' || $row->uraian == 'PERIKSA DOKTER SYARAF' || $row->uraian == 'PERIKSA DOKTER IGD' || $row->uraian == 'DIPAM/PENDAFTARAN' || $row->uraian == 'TINDAKAN MEDIK POLIKLINIK' || $row->uraian == 'TINDAKAN MEDIK IGD' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI' || $row->uraian == 'OBAT-OBATAN' || $row->uraian == 'SURAT KETERANGAN (KIR)' || $row->uraian == 'PSIKOLOGI' || $row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI' || $row->uraian == 'PENUNJANG' || $row->uraian == 'PERIKSA DOKTER FISIK DAN REHABILITASI (ELEKTROMEDIK)' || $row->uraian == 'PENUNJANG' || $row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI' || $row->uraian == 'RAWAT INAP BPJS' || $row->uraian == 'RAWAT INAP IPWL' || $row->uraian == 'RAWAT INAP Jamkesda Jamkesos' || $row->uraian == 'Klaim Covid')){
+                    $jumlahjanuari += $row->totalfix;
+                }
+                else if($row->date == '01' && $main == 'Pendapatan Non Layanan' && $row->uraian == 'LAIN-LAIN PENDAPATAN BLUD YANG SAH'){
+                    $jumlahjanuari += $row->totalfix;
+                } 
+
+                if($row->date == '02' && $main == 'Pendapatan Layanan' && ($row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA' || $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA (NAPZA)' || $row->uraian == 'PERIKSA DOKTER UMUM' || $row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'PERIKSA DOKTER PENYAKIT DALAM' || $row->uraian == 'PERIKSA DOKTER ANAK' || $row->uraian == 'PERIKSA DOKTER SYARAF' || $row->uraian == 'PERIKSA DOKTER IGD' || $row->uraian == 'DIPAM/PENDAFTARAN' || $row->uraian == 'TINDAKAN MEDIK POLIKLINIK' || $row->uraian == 'TINDAKAN MEDIK IGD' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI' || $row->uraian == 'OBAT-OBATAN' || $row->uraian == 'SURAT KETERANGAN (KIR)' || $row->uraian == 'PSIKOLOGI' || $row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI' || $row->uraian == 'PENUNJANG' || $row->uraian == 'PERIKSA DOKTER FISIK DAN REHABILITASI (ELEKTROMEDIK)' || $row->uraian == 'PENUNJANG' || $row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI' || $row->uraian == 'RAWAT INAP BPJS' || $row->uraian == 'RAWAT INAP IPWL' || $row->uraian == 'RAWAT INAP Jamkesda Jamkesos' || $row->uraian == 'Klaim Covid')){
+                    $jumlahfebruari += $row->totalfix;
+                }
+                else if($row->date == '02' && $main == 'Pendapatan Non Layanan' && $row->uraian == 'LAIN-LAIN PENDAPATAN BLUD YANG SAH'){
+                    $jumlahfebruari += $row->totalfix;
+                } 
+
+                if($row->date == '03' && $main == 'Pendapatan Layanan' && ($row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA' || $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA (NAPZA)' || $row->uraian == 'PERIKSA DOKTER UMUM' || $row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'PERIKSA DOKTER PENYAKIT DALAM' || $row->uraian == 'PERIKSA DOKTER ANAK' || $row->uraian == 'PERIKSA DOKTER SYARAF' || $row->uraian == 'PERIKSA DOKTER IGD' || $row->uraian == 'DIPAM/PENDAFTARAN' || $row->uraian == 'TINDAKAN MEDIK POLIKLINIK' || $row->uraian == 'TINDAKAN MEDIK IGD' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI' || $row->uraian == 'OBAT-OBATAN' || $row->uraian == 'SURAT KETERANGAN (KIR)' || $row->uraian == 'PSIKOLOGI' || $row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI' || $row->uraian == 'PENUNJANG' || $row->uraian == 'PERIKSA DOKTER FISIK DAN REHABILITASI (ELEKTROMEDIK)' || $row->uraian == 'PENUNJANG' || $row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI' || $row->uraian == 'RAWAT INAP BPJS' || $row->uraian == 'RAWAT INAP IPWL' || $row->uraian == 'RAWAT INAP Jamkesda Jamkesos' || $row->uraian == 'Klaim Covid')){
+                    $jumlahmaret += $row->totalfix;
+                }
+                else if($row->date == '03' && $main == 'Pendapatan Non Layanan' && $row->uraian == 'LAIN-LAIN PENDAPATAN BLUD YANG SAH'){
+                    $jumlahmaret += $row->totalfix;
+                } 
+
+                if($row->date == '04' && $main == 'Pendapatan Layanan' && ($row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA' || $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA (NAPZA)' || $row->uraian == 'PERIKSA DOKTER UMUM' || $row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'PERIKSA DOKTER PENYAKIT DALAM' || $row->uraian == 'PERIKSA DOKTER ANAK' || $row->uraian == 'PERIKSA DOKTER SYARAF' || $row->uraian == 'PERIKSA DOKTER IGD' || $row->uraian == 'DIPAM/PENDAFTARAN' || $row->uraian == 'TINDAKAN MEDIK POLIKLINIK' || $row->uraian == 'TINDAKAN MEDIK IGD' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI' || $row->uraian == 'OBAT-OBATAN' || $row->uraian == 'SURAT KETERANGAN (KIR)' || $row->uraian == 'PSIKOLOGI' || $row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI' || $row->uraian == 'PENUNJANG' || $row->uraian == 'PERIKSA DOKTER FISIK DAN REHABILITASI (ELEKTROMEDIK)' || $row->uraian == 'PENUNJANG' || $row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI' || $row->uraian == 'RAWAT INAP BPJS' || $row->uraian == 'RAWAT INAP IPWL' || $row->uraian == 'RAWAT INAP Jamkesda Jamkesos' || $row->uraian == 'Klaim Covid')){
+                    $jumlahapril += $row->totalfix;
+                }
+                else if($row->date == '04' && $main == 'Pendapatan Non Layanan' && $row->uraian == 'LAIN-LAIN PENDAPATAN BLUD YANG SAH'){
+                    $jumlahapril += $row->totalfix;
+                } 
+
+                if($row->date == '05' && $main == 'Pendapatan Layanan' && ($row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA' || $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA (NAPZA)' || $row->uraian == 'PERIKSA DOKTER UMUM' || $row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'PERIKSA DOKTER PENYAKIT DALAM' || $row->uraian == 'PERIKSA DOKTER ANAK' || $row->uraian == 'PERIKSA DOKTER SYARAF' || $row->uraian == 'PERIKSA DOKTER IGD' || $row->uraian == 'DIPAM/PENDAFTARAN' || $row->uraian == 'TINDAKAN MEDIK POLIKLINIK' || $row->uraian == 'TINDAKAN MEDIK IGD' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI' || $row->uraian == 'OBAT-OBATAN' || $row->uraian == 'SURAT KETERANGAN (KIR)' || $row->uraian == 'PSIKOLOGI' || $row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI' || $row->uraian == 'PENUNJANG' || $row->uraian == 'PERIKSA DOKTER FISIK DAN REHABILITASI (ELEKTROMEDIK)' || $row->uraian == 'PENUNJANG' || $row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI' || $row->uraian == 'RAWAT INAP BPJS' || $row->uraian == 'RAWAT INAP IPWL' || $row->uraian == 'RAWAT INAP Jamkesda Jamkesos' || $row->uraian == 'Klaim Covid')){
+                    $jumlahmei += $row->totalfix;
+                }
+                else if($row->date == '05' && $main == 'Pendapatan Non Layanan' && $row->uraian == 'LAIN-LAIN PENDAPATAN BLUD YANG SAH'){
+                    $jumlahmei += $row->totalfix;
+                } 
+
+                if($row->date == '06' && $main == 'Pendapatan Layanan' && ($row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA' || $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA (NAPZA)' || $row->uraian == 'PERIKSA DOKTER UMUM' || $row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'PERIKSA DOKTER PENYAKIT DALAM' || $row->uraian == 'PERIKSA DOKTER ANAK' || $row->uraian == 'PERIKSA DOKTER SYARAF' || $row->uraian == 'PERIKSA DOKTER IGD' || $row->uraian == 'DIPAM/PENDAFTARAN' || $row->uraian == 'TINDAKAN MEDIK POLIKLINIK' || $row->uraian == 'TINDAKAN MEDIK IGD' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI' || $row->uraian == 'OBAT-OBATAN' || $row->uraian == 'SURAT KETERANGAN (KIR)' || $row->uraian == 'PSIKOLOGI' || $row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI' || $row->uraian == 'PENUNJANG' || $row->uraian == 'PERIKSA DOKTER FISIK DAN REHABILITASI (ELEKTROMEDIK)' || $row->uraian == 'PENUNJANG' || $row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI' || $row->uraian == 'RAWAT INAP BPJS' || $row->uraian == 'RAWAT INAP IPWL' || $row->uraian == 'RAWAT INAP Jamkesda Jamkesos' || $row->uraian == 'Klaim Covid')){
+                    $jumlahjuni += $row->totalfix;
+                }
+                else if($row->date == '06' && $main == 'Pendapatan Non Layanan' && $row->uraian == 'LAIN-LAIN PENDAPATAN BLUD YANG SAH'){
+                    $jumlahjuni += $row->totalfix;
+                } 
+
+                if($row->date == '07' && $main == 'Pendapatan Layanan' && ($row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA' || $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA (NAPZA)' || $row->uraian == 'PERIKSA DOKTER UMUM' || $row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'PERIKSA DOKTER PENYAKIT DALAM' || $row->uraian == 'PERIKSA DOKTER ANAK' || $row->uraian == 'PERIKSA DOKTER SYARAF' || $row->uraian == 'PERIKSA DOKTER IGD' || $row->uraian == 'DIPAM/PENDAFTARAN' || $row->uraian == 'TINDAKAN MEDIK POLIKLINIK' || $row->uraian == 'TINDAKAN MEDIK IGD' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI' || $row->uraian == 'OBAT-OBATAN' || $row->uraian == 'SURAT KETERANGAN (KIR)' || $row->uraian == 'PSIKOLOGI' || $row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI' || $row->uraian == 'PENUNJANG' || $row->uraian == 'PERIKSA DOKTER FISIK DAN REHABILITASI (ELEKTROMEDIK)' || $row->uraian == 'PENUNJANG' || $row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI' || $row->uraian == 'RAWAT INAP BPJS' || $row->uraian == 'RAWAT INAP IPWL' || $row->uraian == 'RAWAT INAP Jamkesda Jamkesos' || $row->uraian == 'Klaim Covid')){
+                    $jumlahjuli += $row->totalfix;
+                }
+                else if($row->date == '07' && $main == 'Pendapatan Non Layanan' && $row->uraian == 'LAIN-LAIN PENDAPATAN BLUD YANG SAH'){
+                    $jumlahjuli += $row->totalfix;
+                } 
+
+                if($row->date == '08' && $main == 'Pendapatan Layanan' && ($row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA' || $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA (NAPZA)' || $row->uraian == 'PERIKSA DOKTER UMUM' || $row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'PERIKSA DOKTER PENYAKIT DALAM' || $row->uraian == 'PERIKSA DOKTER ANAK' || $row->uraian == 'PERIKSA DOKTER SYARAF' || $row->uraian == 'PERIKSA DOKTER IGD' || $row->uraian == 'DIPAM/PENDAFTARAN' || $row->uraian == 'TINDAKAN MEDIK POLIKLINIK' || $row->uraian == 'TINDAKAN MEDIK IGD' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI' || $row->uraian == 'OBAT-OBATAN' || $row->uraian == 'SURAT KETERANGAN (KIR)' || $row->uraian == 'PSIKOLOGI' || $row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI' || $row->uraian == 'PENUNJANG' || $row->uraian == 'PERIKSA DOKTER FISIK DAN REHABILITASI (ELEKTROMEDIK)' || $row->uraian == 'PENUNJANG' || $row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI' || $row->uraian == 'RAWAT INAP BPJS' || $row->uraian == 'RAWAT INAP IPWL' || $row->uraian == 'RAWAT INAP Jamkesda Jamkesos' || $row->uraian == 'Klaim Covid')){
+                    $jumlahagustus += $row->totalfix;
+                }
+                else if($row->date == '08' && $main == 'Pendapatan Non Layanan' && $row->uraian == 'LAIN-LAIN PENDAPATAN BLUD YANG SAH'){
+                    $jumlahagustus += $row->totalfix;
+                } 
+
+                if($row->date == '09' && $main == 'Pendapatan Layanan' && ($row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA' || $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA (NAPZA)' || $row->uraian == 'PERIKSA DOKTER UMUM' || $row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'PERIKSA DOKTER PENYAKIT DALAM' || $row->uraian == 'PERIKSA DOKTER ANAK' || $row->uraian == 'PERIKSA DOKTER SYARAF' || $row->uraian == 'PERIKSA DOKTER IGD' || $row->uraian == 'DIPAM/PENDAFTARAN' || $row->uraian == 'TINDAKAN MEDIK POLIKLINIK' || $row->uraian == 'TINDAKAN MEDIK IGD' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI' || $row->uraian == 'OBAT-OBATAN' || $row->uraian == 'SURAT KETERANGAN (KIR)' || $row->uraian == 'PSIKOLOGI' || $row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI' || $row->uraian == 'PENUNJANG' || $row->uraian == 'PERIKSA DOKTER FISIK DAN REHABILITASI (ELEKTROMEDIK)' || $row->uraian == 'PENUNJANG' || $row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI' || $row->uraian == 'RAWAT INAP BPJS' || $row->uraian == 'RAWAT INAP IPWL' || $row->uraian == 'RAWAT INAP Jamkesda Jamkesos' || $row->uraian == 'Klaim Covid')){
+                    $jumlahseptember += $row->totalfix;
+                }
+                else if($row->date == '09' && $main == 'Pendapatan Non Layanan' && $row->uraian == 'LAIN-LAIN PENDAPATAN BLUD YANG SAH'){
+                    $jumlahseptember += $row->totalfix;
+                } 
+
+                if($row->date == '10' && $main == 'Pendapatan Layanan' && ($row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA' || $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA (NAPZA)' || $row->uraian == 'PERIKSA DOKTER UMUM' || $row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'PERIKSA DOKTER PENYAKIT DALAM' || $row->uraian == 'PERIKSA DOKTER ANAK' || $row->uraian == 'PERIKSA DOKTER SYARAF' || $row->uraian == 'PERIKSA DOKTER IGD' || $row->uraian == 'DIPAM/PENDAFTARAN' || $row->uraian == 'TINDAKAN MEDIK POLIKLINIK' || $row->uraian == 'TINDAKAN MEDIK IGD' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI' || $row->uraian == 'OBAT-OBATAN' || $row->uraian == 'SURAT KETERANGAN (KIR)' || $row->uraian == 'PSIKOLOGI' || $row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI' || $row->uraian == 'PENUNJANG' || $row->uraian == 'PERIKSA DOKTER FISIK DAN REHABILITASI (ELEKTROMEDIK)' || $row->uraian == 'PENUNJANG' || $row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI' || $row->uraian == 'RAWAT INAP BPJS' || $row->uraian == 'RAWAT INAP IPWL' || $row->uraian == 'RAWAT INAP Jamkesda Jamkesos' || $row->uraian == 'Klaim Covid')){
+                    $jumlahoktober += $row->totalfix;
+                }
+                else if($row->date == '10' && $main == 'Pendapatan Non Layanan' && $row->uraian == 'LAIN-LAIN PENDAPATAN BLUD YANG SAH'){
+                    $jumlahoktober += $row->totalfix;
+                } 
+
+                if($row->date == '11' && $main == 'Pendapatan Layanan' && ($row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA' || $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA (NAPZA)' || $row->uraian == 'PERIKSA DOKTER UMUM' || $row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'PERIKSA DOKTER PENYAKIT DALAM' || $row->uraian == 'PERIKSA DOKTER ANAK' || $row->uraian == 'PERIKSA DOKTER SYARAF' || $row->uraian == 'PERIKSA DOKTER IGD' || $row->uraian == 'DIPAM/PENDAFTARAN' || $row->uraian == 'TINDAKAN MEDIK POLIKLINIK' || $row->uraian == 'TINDAKAN MEDIK IGD' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI' || $row->uraian == 'OBAT-OBATAN' || $row->uraian == 'SURAT KETERANGAN (KIR)' || $row->uraian == 'PSIKOLOGI' || $row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI' || $row->uraian == 'PENUNJANG' || $row->uraian == 'PERIKSA DOKTER FISIK DAN REHABILITASI (ELEKTROMEDIK)' || $row->uraian == 'PENUNJANG' || $row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI' || $row->uraian == 'RAWAT INAP BPJS' || $row->uraian == 'RAWAT INAP IPWL' || $row->uraian == 'RAWAT INAP Jamkesda Jamkesos' || $row->uraian == 'Klaim Covid')){
+                    $jumlahnovember += $row->totalfix;
+                }
+                else if($row->date == '11' && $main == 'Pendapatan Non Layanan' && $row->uraian == 'LAIN-LAIN PENDAPATAN BLUD YANG SAH'){
+                    $jumlahnovember += $row->totalfix;
+                } 
+
+                if($row->date == '12' && $main == 'Pendapatan Layanan' && ($row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA' || $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA (NAPZA)' || $row->uraian == 'PERIKSA DOKTER UMUM' || $row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'PERIKSA DOKTER PENYAKIT DALAM' || $row->uraian == 'PERIKSA DOKTER ANAK' || $row->uraian == 'PERIKSA DOKTER SYARAF' || $row->uraian == 'PERIKSA DOKTER IGD' || $row->uraian == 'DIPAM/PENDAFTARAN' || $row->uraian == 'TINDAKAN MEDIK POLIKLINIK' || $row->uraian == 'TINDAKAN MEDIK IGD' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI' || $row->uraian == 'OBAT-OBATAN' || $row->uraian == 'SURAT KETERANGAN (KIR)' || $row->uraian == 'PSIKOLOGI' || $row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI' || $row->uraian == 'PENUNJANG' || $row->uraian == 'PERIKSA DOKTER FISIK DAN REHABILITASI (ELEKTROMEDIK)' || $row->uraian == 'PENUNJANG' || $row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI' || $row->uraian == 'RAWAT INAP BPJS' || $row->uraian == 'RAWAT INAP IPWL' || $row->uraian == 'RAWAT INAP Jamkesda Jamkesos' || $row->uraian == 'Klaim Covid')){
+                    $jumlahdesember += $row->totalfix;
+                }
+                else if($row->date == '12' && $main == 'Pendapatan Non Layanan' && $row->uraian == 'LAIN-LAIN PENDAPATAN BLUD YANG SAH'){
+                    $jumlahdesember += $row->totalfix;
+                } 
+
+                if($main == 'Pendapatan Layanan' && ($row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA' || $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA (NAPZA)' || $row->uraian == 'PERIKSA DOKTER UMUM' || $row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'PERIKSA DOKTER PENYAKIT DALAM' || $row->uraian == 'PERIKSA DOKTER ANAK' || $row->uraian == 'PERIKSA DOKTER SYARAF' || $row->uraian == 'PERIKSA DOKTER IGD' || $row->uraian == 'DIPAM/PENDAFTARAN' || $row->uraian == 'TINDAKAN MEDIK POLIKLINIK' || $row->uraian == 'TINDAKAN MEDIK IGD' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI' || $row->uraian == 'OBAT-OBATAN' || $row->uraian == 'SURAT KETERANGAN (KIR)' || $row->uraian == 'PSIKOLOGI' || $row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI' || $row->uraian == 'PENUNJANG' || $row->uraian == 'PERIKSA DOKTER FISIK DAN REHABILITASI (ELEKTROMEDIK)' || $row->uraian == 'PENUNJANG' || $row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI' || $row->uraian == 'RAWAT INAP BPJS' || $row->uraian == 'RAWAT INAP IPWL' || $row->uraian == 'RAWAT INAP Jamkesda Jamkesos' || $row->uraian == 'Klaim Covid')){
+                    $jumlahrealisasi += $row->totalfix;
+                }
+                else if($main == 'Pendapatan Non Layanan' && $row->uraian == 'LAIN-LAIN PENDAPATAN BLUD YANG SAH'){
+                    $jumlahrealisasi += $row->totalfix;
+                } 
+            }
+
+            $data[] =array(
+                'mainuraian' =>   $uraian,
+                'jumlahjanuari' =>   $jumlahjanuari,
+                'jumlahfebruari' =>   $jumlahfebruari,
+                'jumlahmaret' =>   $jumlahmaret,
+                'jumlahapril' =>   $jumlahapril,
+                'jumlahmei' =>   $jumlahmei,
+                'jumlahjuni' =>   $jumlahjuni,
+                'jumlahjuli' =>   $jumlahjuli,
+                'jumlahagustus' =>   $jumlahagustus,
+                'jumlahseptember' =>   $jumlahseptember,
+                'jumlahoktober' =>   $jumlahoktober,
+                'jumlahnovember' =>   $jumlahnovember,
+                'jumlahdesember' =>   $jumlahdesember,
+                'jumlahrealisasi' =>   $jumlahrealisasi,
+            );
+        }
 
         $result = array(
             'detail' => $data,
@@ -8338,7 +8591,7 @@ class BendaharaPenerimaanController extends ApiController {
             }
 
             foreach($target as $tg){
-                if($tg->uraianpendapatan == $main){
+                if($tg->uraianpendapatan == $main->uraianpendapatan){
                     $jumlahtarget += $tg->jumlahpendapatan;
                 }
             }
@@ -8463,6 +8716,123 @@ class BendaharaPenerimaanController extends ApiController {
 
         $result = array(
             'detail' => $data,
+        );
+        
+        return $this->setStatusCode(201)->respond($result, 'tes msg');
+    }
+
+    public function getPerincianObyekPenerimaan(Request $request) {
+        ini_set('max_execution_time', 600);
+        $tahun = $request['tahun'];
+        $bulan = $request['bulan'];
+
+        $data = DB::select(DB::raw("select '' nobku, x.nosts, x.nourut, x.date, x.kdrekening, x.nomer, x.uraian, sum(x.vol) as totalvol, sum(x.kolom1) as totalkolom1, sum(x.kolom2) as totalkolom2,
+        (
+            case 
+            when sum(x.kolom1) is null and sum(x.kolom2) is null then sum(x.kolom1)
+            when sum(x.kolom1) is null and sum(x.kolom2) is not null then sum(x.kolom2)
+            when sum(x.kolom1) is not null and sum(x.kolom2) is null then sum(x.kolom1)
+            else 0 
+            end
+        ) as totalfix
+        from(	
+				select sts.nosts, sts.tglpenerimaan::date as date, stsd.nourut, stsd.kdrekening, stsd.nomer, stsd.uraian, stsd.vol, stsd.kolom1, stsd.kolom2
+                from surattandasetoran_t sts
+                inner join surattandasetorandetail_t stsd on stsd.objectstsfk = sts.nosts
+                left join ststosck_t as ssc on sts.norec = ssc.objectstsfk
+                left join strukclosingkasir_t as sck on ssc.objectsckfk = sck.norec
+                left join strukclosing_t as sc on sc.norec = sck.noclosingfk
+                left join strukbuktipenerimaan_t AS sbm on sbm.noclosingfk = sc.norec
+                left join strukbuktipenerimaancarabayar_t as sbmcr ON sbmcr.nosbmfk = sbm.norec
+                left JOIN carabayar_m as cb ON cb.id = sbmcr.objectcarabayarfk
+                where sts.statusenabled = true
+                and stsd.statusenabled = true and stsd.kdprofile = 30
+				and stsd.uraian = 'JUMLAH'
+                and sc.noclosing not in (
+                    select sc.noclosing from strukclosing_t sc
+                    inner join strukhistori_t sh on sh.noclosing = sc.norec
+                    where sh.statusenabled = false
+                )
+                and date_part('month', sts.tglpenerimaan::timestamp ) = '$bulan'
+                and date_part('year', sts.tglpenerimaan::timestamp ) = '$tahun'
+                group by sts.nosts, sts.tglpenerimaan::date, stsd.nourut, stsd.kdrekening, stsd.nomer, stsd.uraian, stsd.vol, stsd.kolom1, stsd.kolom2
+        ) as x
+        group by x.nosts, x.nourut, x.date, x.kdrekening, x.nomer, x.uraian
+
+        union all
+
+		select '' nobku, x.nosts, x.nourut, x.date, x.kdrekening, x.nomer, x.uraian, sum(x.vol) as totalvol, sum(x.kolom1) as totalkolom1, sum(x.kolom2) as totalkolom2,
+        (
+            case 
+            when sum(x.kolom1) is null and sum(x.kolom2) is null then sum(x.kolom1)
+            when sum(x.kolom1) is null and sum(x.kolom2) is not null then sum(x.kolom2)
+            when sum(x.kolom1) is not null and sum(x.kolom2) is null then sum(x.kolom1)
+            else 0 
+            end
+        ) as totalfix
+        from(	
+				select sts.nosts, sts.tglpenerimaan::date as date, stsd.nourut, stsd.kdrekening, stsd.nomer, stsd.uraian, stsd.vol, stsd.kolom1, stsd.kolom2
+                from surattandasetoran_t sts
+                inner join surattandasetorandetail_t stsd on stsd.objectstsfk = sts.nosts
+                where sts.statusenabled = true
+                and stsd.statusenabled = true and stsd.kdprofile = 30
+				and sts.kdprofile = 30
+				and sts.ismanual = true
+				and stsd.uraian = 'JUMLAH'
+                and date_part('month', sts.tglpenerimaan::timestamp ) = '$bulan'
+                and date_part('year', sts.tglpenerimaan::timestamp ) = '$tahun'
+                group by sts.nosts, sts.tglpenerimaan::date, stsd.nourut, stsd.kdrekening, stsd.nomer, stsd.uraian, stsd.vol, stsd.kolom1, stsd.kolom2
+        ) as x
+        group by x.nosts, x.nourut, x.date, x.kdrekening, x.nomer, x.uraian
+        
+        union all
+
+        select '' nobku, x.nosts, x.nourut, x.date, x.kdrekening, x.nomer, x.uraian, sum(x.vol) as totalvol, sum(x.kolom1) as totalkolom1, sum(x.kolom2) as totalkolom2,
+        (
+            case 
+            when sum(x.kolom1) is null and sum(x.kolom2) is null then sum(x.kolom1)
+            when sum(x.kolom1) is null and sum(x.kolom2) is not null then sum(x.kolom2)
+            when sum(x.kolom1) is not null and sum(x.kolom2) is null then sum(x.kolom1)
+            else 0 
+            end
+        ) as totalfix
+        from(	
+				select sts.nosts, sts.tglpenerimaan::date as date, stsd.nourut, stsd.kdrekening, stsd.nomer, stsd.uraian, stsd.vol, stsd.kolom1, stsd.kolom2
+                from surattandasetoran_t sts
+                inner join surattandasetorandetail_t stsd on stsd.objectstsfk = sts.nosts
+				inner join ststorekapklaim_t str on sts.norec = str.objectstsfk
+				inner join rekapklaimbpjs_t rkb on str.objectrekapklaimfk = rkb.norec
+                where sts.statusenabled = true
+                and stsd.statusenabled = true 
+                and stsd.kdprofile = 30
+                and str.statusenabled = true 
+                and str.kdprofile = 30
+                and rkb.statusenabled = true 
+                and rkb.kdprofile = 30
+				and sts.kdprofile = 30
+				and stsd.uraian = 'JUMLAH'
+                and date_part('month', sts.tglpenerimaan::timestamp ) = '$bulan'
+                and date_part('year', sts.tglpenerimaan::timestamp ) = '$tahun'
+                group by sts.nosts, sts.tglpenerimaan::date, stsd.nourut, stsd.kdrekening, stsd.nomer, stsd.uraian, stsd.vol, stsd.kolom1, stsd.kolom2
+        ) as x
+        group by x.nosts, x.nourut, x.date, x.kdrekening, x.nomer, x.uraian
+        order by date, nourut"));
+
+        $target = DB::select(DB::raw("select rp.norec,rp.isperubahan, rp.jumlahpendapatan,rp.tahun, rp.tglinput, rp.keterangan, rp.objectasalprodukfk, rp.objecturaianpendapatanfk,up.uraianpendapatan,ap.namaexternal, rp.uraianpendapatan as uraian
+        from rincianpendapatan_t as rp
+        inner join asalproduk_m as ap on ap.id = rp.objectasalprodukfk
+        inner join uraianpendapatan_m as up on up.id = rp.objecturaianpendapatanfk
+        where rp.kdprofile = 30
+        and rp.statusenabled = true
+        and up.kdprofile = 30
+        and up.statusenabled = true
+        and rp.tahun = '$tahun'
+        and up.uraianpendapatan = 'PENDAPATAN USAHA BLUD'
+        order by up.nourut"));
+
+        $result = array(
+            'detail' => $data,
+            'target' => $target,
         );
         
         return $this->setStatusCode(201)->respond($result, 'tes msg');

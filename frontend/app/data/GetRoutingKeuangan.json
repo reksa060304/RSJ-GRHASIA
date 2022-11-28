@@ -2080,6 +2080,26 @@
     ]
   },
   {
+    "name": "STSRingkas",
+    "url": "/U1RTUmluZ2thcw==",
+    "templateurl": "module/BendaharaPenerimaan/STSRingkas.html",
+    "controller": "STSRingkasCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
     "name": "RealisasiPerTriwulan",
     "url": "/UmVhbGlzYXNpUGVuZXJpbWFhblBlclRyaXd1bGFu",
     "templateurl": "module/BendaharaPenerimaan/RealisasiPerTriwulan.html",
@@ -2104,6 +2124,26 @@
     "url": "/UmVrYXBpdHVsYXNpUGVuZGFwYXRhbg==",
     "templateurl": "module/BendaharaPenerimaan/RekapitulasiPendapatan.html",
     "controller": "RekapitulasiPendapatanCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "RincianObyekPenerimaan",
+    "url": "/UGVyaW5jaWFuT2J5ZWtQZW5lcmltYWFu",
+    "templateurl": "module/BendaharaPenerimaan/RincianObyekPenerimaan.html",
+    "controller": "RincianObyekPenerimaanCtrl",
     "deps": [
       {
         "module": "Services",

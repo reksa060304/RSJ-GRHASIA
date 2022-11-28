@@ -22,6 +22,19 @@ define(['initialize'], function (initialize) {
             if (kelompokUserLogin == 'radiologi' || kelompokUserLogin == 'laborat') {
                 $scope.isPenunjang = true
             }
+            $scope.listJenisPasien = [{
+                    id: 1,
+                    jenispasien: 'Jiwa'
+                },
+                {
+                    id: 2,
+                    jenispasien: 'Non Jiwa'
+                },
+                {
+                    id: 3,
+                    jenispasien: 'Napza'
+                }
+            ]
             loadCombo()
 
             function loadCombo() {
@@ -53,6 +66,7 @@ define(['initialize'], function (initialize) {
                 medifirstService.get("sysadmin/general/get-combo-address")
                     .then(function (data) {
                         $scope.listKotaKabupaten = data.data.kotakabupaten
+                        $scope.listCaraKeluar = data.data.carakeluar
                     })
             }
             loadFirst()
@@ -125,14 +139,21 @@ define(['initialize'], function (initialize) {
                 if ($scope.item.kelompokpasien != undefined) {
                     kelompokpasien = "&kelompokpasien=" + $scope.item.kelompokpasien.id
                 }
-
+                var carakeluar = ""
+                if ($scope.item.carakeluar != undefined) {
+                    carakeluar = "&carakeluar=" + $scope.item.carakeluar.id
+                }
+                var jenisranap = ""
+                if ($scope.item.jenispasien != undefined) {
+                    jenisranap = "&jenisranap=" + $scope.item.jenispasien.id
+                }
                 medifirstService.get("registrasi/laporan/get-data-lap-pengunjung-pemeriksaan?" +
                         "tglAwal=" + tglAwal +
                         "&tglAkhir=" + tglAkhir + kelompokpasien +
                         rm +
                         pasien +
                         namaruangan +
-                        departemen)
+                        departemen+carakeluar + jenisranap)
                     .then(function (data) {
                         $scope.isRouteLoading = false;
                         for (var i = 0; i < data.data.data.length; i++) {
@@ -186,9 +207,12 @@ define(['initialize'], function (initialize) {
                             serverPaging: false,
                             schema: {
                                 model: {
-                                    fields: {}
+                                    fields: {
+                                        
+                                    }
                                 }
                             }
+                            
 
                         });
                     });

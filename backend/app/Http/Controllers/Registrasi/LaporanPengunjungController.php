@@ -7060,7 +7060,7 @@ class LaporanPengunjungController extends ApiController
         //laporan kunjungan v2
         $v2 = DB::select(DB::raw(
         "
-        SELECT
+        SELECT distinct
         ps.nocm,
         ps.namapasien,
         ru.namaruangan,
@@ -7079,7 +7079,7 @@ class LaporanPengunjungController extends ApiController
         left JOIN alamat_m al on ps.id = al.nocmfk
         left join kotakabupaten_m kk on kk.id= al.objectkotakabupatenfk
         left join asalrujukan_m aj on aj.id = apd.objectasalrujukanfk
-        WHERE pd.tglregistrasi BETWEEN '$tglAwal' and '$tglAkhir'
+        WHERE apd.tglkeluar::date BETWEEN '$tglAwal' and '$tglAkhir'
         and apd.kdprofile = $kdProfile
         and pd.kdprofile = $kdProfile
         and apd.statusenabled = true
@@ -7090,7 +7090,23 @@ class LaporanPengunjungController extends ApiController
         and ru.objectdepartemenfk <> 16
         "
         ));
+        $carakeluar = '';
+        if (isset($request['carakeluar']) && $request['carakeluar'] != "" && $request['carakeluar'] != "undefined") {
+            if ($request['carakeluar'] == 2) {
+                $carakeluar = 'and sk.id is null';
+            }else{
+                $carakeluar = 'and sk.id = '. $request['carakeluar'];
 
+            }
+        }
+        $jenisPasien = '';
+        if($request['jenisranap'] == 1){
+                $jenisPasien = "and pd.objectruanganlastfk NOT IN (800, 799)";
+            } elseif($request['jenisranap'] == 2){
+                $jenisPasien = "and pd.objectruanganlastfk IN (800)";
+            } else if($request['jenisranap'] == 3){
+                $jenisPasien = "and pd.objectruanganlastfk IN (799)";
+            }
         $ranap= DB::select(DB::raw("
         SELECT distinct
         apd.norec,
@@ -7128,7 +7144,7 @@ class LaporanPengunjungController extends ApiController
         antrianpasiendiperiksa_t apd
         inner join pasiendaftar_t pd on pd.norec = apd.noregistrasifk
         INNER JOIN pasien_m ps on ps.id = pd.nocmfk
-        INNER JOIN alamat_m al on ps.id=al.nocmfk
+        left JOIN alamat_m al on ps.id=al.nocmfk
         INNER JOIN ruangan_m ru on ru.id = apd.objectruanganfk
         left JOIN statuskeluar_m sk on sk.kdstatuskeluar = pd.objectstatuskeluarfk
         inner join kelompokpasien_m kep on kep.id= pd.objectkelompokpasienlastfk
@@ -7143,6 +7159,8 @@ class LaporanPengunjungController extends ApiController
         and apd.kdprofile = $kdProfile
         $paramRuangan
         $paramkp
+        $carakeluar
+        $jenisPasien
         "));
         $result = array(
             'data'=> $data,

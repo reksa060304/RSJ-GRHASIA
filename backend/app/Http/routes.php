@@ -148,7 +148,9 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('bendaharapenerimaan/get-sts-bulanan', 'BendaharaPenerimaan\BendaharaPenerimaanController@getSTSBulanan');
           Route::get('bendaharapenerimaan/get-sts-per-triwulan', 'BendaharaPenerimaan\BendaharaPenerimaanController@getSTSTriwulan');
           Route::get('bendaharapenerimaan/get-rekapitulasi-pendapatan', 'BendaharaPenerimaan\BendaharaPenerimaanController@getRekapPendapatan');
+          Route::get('bendaharapenerimaan/get-perincian-obyek-penerimaan', 'BendaharaPenerimaan\BendaharaPenerimaanController@getPerincianObyekPenerimaan');
           Route::get('bendaharapenerimaan/get-sts-bulanan-klaim', 'BendaharaPenerimaan\BendaharaPenerimaanController@getSTSBulananKlaim');
+          Route::get('bendaharapenerimaan/get-sts-ringkas', 'BendaharaPenerimaan\BendaharaPenerimaanController@getSTSRingkas');
           Route::get('bendaharapenerimaan/get-sts-pertanggal', 'BendaharaPenerimaan\BendaharaPenerimaanController@getSTSPertanggal');
           Route::get('bendaharapenerimaan/get-deatil-sts-pertanggal', 'BendaharaPenerimaan\BendaharaPenerimaanController@getDetailSTSPertanggal');
           Route::get('bendaharapenerimaan/get-sts-popup', 'BendaharaPenerimaan\BendaharaPenerimaanController@getSTSPopup');
@@ -2088,7 +2090,6 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
               Route::get('registrasi/get-datacombo-sensus', 'SensusHarianRawatJalanController@getDataCombo');
               Route::get('registrasi/get-data-grafik','Registrasi\SensusHarianRawatJalanController@GrafikRajal');
               Route::get('registrasi/laporan/get-data-lap-jumlah-pasien-cara-v2', 'Registrasi\RegistrasiController@getLaporanJumlahPasienDanCaraBayarv2'); 
-
               
               Route::get('registrasi/laporan/get-combo-box-laporan-summary','Registrasi\RegistrasiController@getDataComboSummary');
               Route::get('registrasi/laporan/get-data-lap-summary-hambatan-komunikasi','Registrasi\RegistrasiController@getLaporanSummaryHambatanKomunikasi');
@@ -2130,7 +2131,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
 
               Route::get('registrasi/laporan/get-kinerja-pelayanan-ranap','Registrasi\LaporanRegistrasiController@getKinerjaPelayananRanap');
               Route::get('registrasi/laporan/get-kinerja-pelayanan-ranap-tahunan','Registrasi\LaporanRegistrasiController@getKinerjaPelayananRanapTahunan');
-            // });
+              Route::get('registrasi/laporan/get-laporan-tindakan-ppa' ,'Registrasi\LaporanRegistrasiController@getLaporanTindakanPPA');
+              // });
 
               Route::post('registrasi/hapus-sep', 'Registrasi\RegistrasiController@updateNoseppa');
               Route::post('registrasi/save-skrining-awal-pasien','Registrasi\RegistrasiController@saveSkringAwalPasien');
@@ -2656,7 +2658,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
               Route::get('sysadmin/settingdatafixed/get-data-from-table', 'SysAdmin\Master\SettingDataFixedController@getDataFromTable');
               Route::get('sysadmin/settingdatafixed/get-report-display', 'SysAdmin\Master\SettingDataFixedController@getReportDisplayTable');
               Route::get('sysadmin/settingdatafixed/get/{namaField}', 'SysAdmin\Master\SettingDataFixedController@getSettingDataFixedGeneric');
-            // });
+              Route::post('sysadmin/master/save-data-ruangan','SysAdmin\Master\MasterController@saveMasterRuangan');
+              // });
             // Route::group(['prefix' => 'general'], function () {
                 // GET //
                 Route::get('sysadmin/general/identifikasi-sep', 'SysAdmin\GeneralController@IdentifikasiSEP');
@@ -2790,7 +2793,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
                 // GET //
                 Route::get('sysadmin/master/replace-isi-table', 'SysAdmin\Master\MasterController@replaceTableField');
                 Route::get('sysadmin/master/get-data-produk', 'SysAdmin\Master\MasterController@getListProduk');
-                Route::get('sysadmin/master/get-data-ruangan', 'SysAdmin\Master\MasterController@getListRuangan');
+                Route::get('sysadmin/master/get-data-ruangan', 'SysAdmin\Master\MasterController@getLoadRuanganDll');
+                Route::get('sysadmin/master/get-combo-master','SysAdmin\Master\MasterController@getComboMaster');
                 Route::get('sysadmin/master/get-produkbyid', 'SysAdmin\Master\MasterController@getProdukbyId');
                 Route::get('sysadmin/master/get-jenis-produk', 'SysAdmin\Master\MasterController@getjenisproduk');
                 Route::get('sysadmin/master/get-detail-jenis-produk', 'SysAdmin\Master\MasterController@getDetailjenisprodukbyIdjenisproduk');
