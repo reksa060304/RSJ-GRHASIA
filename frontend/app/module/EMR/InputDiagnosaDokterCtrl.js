@@ -722,6 +722,7 @@ define(['initialize'], function (initialize) {
             }
             $scope.saveDiagnosaKeperawatan = function(){
                 var norec = '-'
+                console.log($scope.dataDiagnosaKeperawatanSelected);
                 if ($scope.dataDiagnosaKeperawatanSelected != undefined){
                     norec = $scope.dataDiagnosaKeperawatanSelected.norec
                 }
@@ -769,7 +770,7 @@ define(['initialize'], function (initialize) {
                 // return
                 medifirstService.post('emr/hapus-diagnosa-keperawatan', objSave).then(function (e) {
                     $scope.item.diagnosakeperawatan = undefined
-                    $scope.dataDiagnosaKeperawatanSelected.norec = undefined
+                    $scope.dataDiagnosaKeperawatanSelected = undefined
                     loadDiagnosa()
                 })
             }
