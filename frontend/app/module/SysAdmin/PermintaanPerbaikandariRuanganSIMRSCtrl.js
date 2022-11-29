@@ -51,13 +51,13 @@ define(['initialize'], function (initialize) {
                 var chacePeriode = cacheHelper.get('PermintaanPerbaikandariRuanganCtrl');
                 if (chacePeriode != undefined) {
                     $scope.item.tglInputAwal = new moment($scope.now).format('YYYY-MM-DD HH:mm:ss');
-                    $scope.item.tglAwal = new moment($scope.now).format('YYYY-MM-DD HH:mm:ss');
+                    $scope.item.tglAwal = new moment($scope.now).format('YYYY-MM-DD 00:00:00');
                     $scope.item.tglAkhir = new moment($scope.now).format('YYYY-MM-DD 23:59:59');
                     init();
                 }
                 else {
                     $scope.item.tglInputAwal = new moment($scope.now).format('YYYY-MM-DD HH:mm:ss');
-                    $scope.item.tglAwal = new moment($scope.now).format('YYYY-MM-DD HH:mm:ss');
+                    $scope.item.tglAwal = new moment($scope.now).format('YYYY-MM-DD 00:00:00');
                     $scope.item.tglAkhir = new moment($scope.now).format('YYYY-MM-DD 23:59:59');
                     init();
                 }

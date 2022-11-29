@@ -736,30 +736,41 @@ class SanitasiController extends ApiController
             $newCOA->pelapor = $request['namalengkap'];
             $newCOA->save();
 
-            $norecHead2 = $newCOA->norec;
-            $ruanganHead2 = $newCOA->objectruanganfk;
-            $ruangtujuanHead2 = $newCOA->objectruangantujuanfk;
-            $rincianHead2 = $newCOA->rincianexecuteplanning_askep;
 
-            $pelapor = StrukPlanning::where('norec',$norecHead2)->first();
-            $ruangan = \DB::table('ruangan_m')->where('id',$ruanganHead2)->first();
-            $ruanganTujuan = \DB::table('ruangan_m')->where('id',$ruangtujuanHead2)->first();
-            // $jenislayann =  DB::table('jenispekerjaan_m')->where('id',$request['jenisKerusakan'])->first();
-            $secret_token = "5564727540:AAFx0KWtUooqNFh_J_fwToEMP8MRIF_FW2g";
-            $telegram_id = '-1001687511947';//'-498979335';
-            $url = "https://api.telegram.org/bot" . $secret_token . "/sendMessage?parse_mode=html&chat_id=" . $telegram_id;
-            $url = $url . "&text=" . urlencode("✅ Laporan Baru: <b>Permohonan Perbaikan Rumah Tangga </b> \n\n Ruangan / area: <b>".$ruangan->namaruangan.
-                    "</b>  \n Pelapor: <b>".$pelapor->pelapor."</b>  \n Laporan Kerusakan: <b>".$rincianHead2.
-                    "</b>");
-            // return $url;
-            $ch = curl_init();
-            $optArray = array(
-                CURLOPT_URL => $url,
-                CURLOPT_RETURNTRANSFER => true
-            );
-            curl_setopt_array($ch, $optArray);
-            $result = curl_exec($ch);
-            curl_close($ch);
+            $tele= false;
+                $cobainnn= '';
+                $isAktif = \DB::table('settingdatafixed_m')
+                ->where('namafield', 'TelegramPerbaikanRT')->where('statusenabled', true)->get();
+                
+                if (count($isAktif) > 0) {
+                    $cobainnn = "Aktif";
+                
+                    $norecHead2 = $newCOA->norec;
+                    $ruanganHead2 = $newCOA->objectruanganfk;
+                    $ruangtujuanHead2 = $newCOA->objectruangantujuanfk;
+                    $rincianHead2 = $newCOA->rincianexecuteplanning_askep;
+
+                    $pelapor = StrukPlanning::where('norec',$norecHead2)->first();
+                    $ruangan = \DB::table('ruangan_m')->where('id',$ruanganHead2)->first();
+                    $ruanganTujuan = \DB::table('ruangan_m')->where('id',$ruangtujuanHead2)->first();
+                    // $jenislayann =  DB::table('jenispekerjaan_m')->where('id',$request['jenisKerusakan'])->first();
+                    $secret_token = "5564727540:AAFx0KWtUooqNFh_J_fwToEMP8MRIF_FW2g";
+                    $telegram_id = '-1001687511947';//'-498979335';
+                    $url = "https://api.telegram.org/bot" . $secret_token . "/sendMessage?parse_mode=html&chat_id=" . $telegram_id;
+                    $url = $url . "&text=" . urlencode("✅ Laporan Baru: <b>Permohonan Perbaikan Rumah Tangga </b> \n\n Ruangan / area: <b>".$ruangan->namaruangan.
+                            "</b>  \n Pelapor: <b>".$pelapor->pelapor."</b>  \n Laporan Kerusakan: <b>".$rincianHead2.
+                            "</b>");
+                    // return $url;
+                    $ch = curl_init();
+                    $optArray = array(
+                        CURLOPT_URL => $url,
+                        CURLOPT_RETURNTRANSFER => true
+                    );
+                    curl_setopt_array($ch, $optArray);
+                    $result = curl_exec($ch);
+                    curl_close($ch);
+                }
+            
 
             $transStatus = 'true';
         } catch (\Exception $e) {
@@ -773,7 +784,7 @@ class SanitasiController extends ApiController
             DB::commit();
             $result = array(
                 "status" => 201,
-//                "data" => $newPJT,
+               "data" => $cobainnn,
                 "as" => 'as@epic',
             );
         } else {
