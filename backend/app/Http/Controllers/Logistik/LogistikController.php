@@ -14645,16 +14645,20 @@ class LogistikController extends ApiController{
             $searchnoorder = "and so.noorder = '".$noorder."'";
         }
 
-        $data = \DB::select(DB::raw("select tglkirim, nokirim, namaproduk, jumlahorder, sum(jumlahkirim) jumlahkirim
+        $data = \DB::select(DB::raw("select ruanganorder, ruangankirim, tglorder, tglkirim, nokirim, namaproduk, satuanstandar, jumlahorder, sum(jumlahkirim) jumlahkirim
         from(
-        select skm.tglkirim, skm.nokirim, pr.namaproduk,
+        select so.tglorder, skm.tglkirim, skm.nokirim, pr.namaproduk, ss.satuanstandar, 
+				ruorder.namaruangan ruanganorder, rukirim.namaruangan ruangankirim,
         case when so.norec is null then 0 else op.qtyproduk end as jumlahorder,
         krp.qtyproduk jumlahkirim
         from strukkirim_t skm
         inner join kirimproduk_t krp on krp.nokirimfk = skm.norec
         inner join produk_m pr on pr.id = krp.objectprodukfk
+        inner join satuanstandar_m ss on ss.id =pr.objectsatuanstandarfk
         left join strukorder_t so on so.norec = skm.noorderfk
         left join orderpelayanan_t op on so.norec = op.strukorderfk and op.objectprodukfk = krp.objectprodukfk
+		inner join ruangan_m ruorder on ruorder.id = so.objectruanganfk
+		inner join ruangan_m rukirim on rukirim.id = so.objectruangantujuanfk
         where skm.statusenabled = true and skm.kdprofile = 30
         and krp.statusenabled = true and krp.kdprofile = 30
         and skm.tglkirim::date between '$tglAwal' and '$tglAkhir' 
@@ -14662,9 +14666,9 @@ class LogistikController extends ApiController{
         and so.tglorder::date between '$tglAwal' and '$tglAkhir' and so.noorder ilike 'OTRF%'
         and op.statusenabled = true and op.kdprofile = 30
         $searchnoorder
-        group by skm.tglkirim, skm.nokirim, pr.namaproduk, so.norec, op.qtyproduk, krp.qtyproduk
+        group by ruorder.namaruangan, rukirim.namaruangan, so.tglorder, skm.tglkirim, skm.nokirim, pr.namaproduk, ss.satuanstandar, so.norec, op.qtyproduk, krp.qtyproduk
         order by skm.nokirim
-        ) as x group by tglkirim, nokirim, namaproduk, jumlahorder;
+        ) as x group by ruanganorder, ruangankirim, tglorder, tglkirim, nokirim, namaproduk, satuanstandar, jumlahorder
         "));
         
         $result = array(

@@ -35,7 +35,7 @@
         <div class="grid_12 headerBox">
             <p>List Laporan</p>
         </div>
-        <div class="grid_12 borderBox containerBorderBox" style="overflow-y: scroll; height:390px;">
+        <div class="grid_12 borderBox containerBorderBox" style="overflow-y: scroll; height:450px;">
             <div class="grid_12">
                 <div class="grid_10">
                     <div class="grid_12">
@@ -64,7 +64,7 @@
         <div class="grid_12 headerBox">
             <p>List Mapping</p>
         </div>
-        <div class="grid_12 borderBox containerBorderBox" style="overflow-y: scroll; height:390px;">
+        <div class="grid_12 borderBox containerBorderBox" style="overflow-y: scroll; height:450px;">
             <div class="grid_3">
                 <div class="grid_12">
                     <label c-label item="item" c-label-text="Produk"></label>
@@ -99,6 +99,20 @@
                     <input style="width: 100%;" kendo-combo-box k-ng-model="item.kelompok"
                         k-data-text-field="'kelompoklaporan'" k-data-value-field="'id'" k-filter="'contains'"
                         k-auto-bind="false" k-data-source="listKelompok" />
+                </div>
+                <div class="grid_12">
+                    <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.norec"
+                        ng-show="disabled" />
+                </div>
+            </div>
+            <div class="grid_3">
+                <div class="grid_12">
+                    <label c-label item="item" c-label-text="Ruangan"></label>
+                </div>
+                <div class="grid_12">
+                    <input style="width: 100%;" kendo-combo-box k-ng-model="item.ruangan"
+                        k-data-text-field="'namaruangan'" k-data-value-field="'id'" k-filter="'contains'"
+                        k-auto-bind="false" k-data-source="listRuangan" />
                 </div>
                 <div class="grid_12">
                     <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.norec"

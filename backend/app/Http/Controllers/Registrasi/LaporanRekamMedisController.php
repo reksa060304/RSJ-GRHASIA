@@ -33,21 +33,24 @@ class LaporanRekamMedisController extends   ApiController
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
         $data = \DB::table('mapproduktolaporanrl_m as mptlr')
-            ->join('produk_m as pro','pro.id','=','mptlr.produkfk')
             ->join('jenislaporan_m as jl','jl.id','=','mptlr.objectjenislaporanfk')
             ->join('kelompoklaporan_m as kl','kl.id','=','mptlr.objectkontenlaporanfk')
+            ->leftJoin('produk_m as pro','pro.id','=','mptlr.produkfk')
+            ->leftJoin('ruangan_m as ru','ru.id','=','mptlr.ruanganfk')
             ->select('mptlr.norec','pro.id as idproduk','pro.namaproduk','jl.id','jl.jenislaporan',
-                'kl.id as idkelompoklaporan','kl.kelompoklaporan')
+                'kl.id as idkelompoklaporan','kl.kelompoklaporan', 'ru.id as idruangan', 'ru.namaruangan')
             ->where('mptlr.kdprofile', $idProfile)
             ->where('mptlr.statusenabled',true)
-            ->orderBy('jl.id','asc');
+            ->orderBy('jl.id','asc')
+            ->orderBy('kl.nourut','asc');
 
         if(isset($request['idKonten']) && $request['idKonten'] != "" && $request['idKonten'] != "undefined") {
             $data = $data->where('kl.id','=', $request['idKonten']);
         }
-//         if(isset($request['idMap']) && $request['idMap'] != "" && $request['idMap'] != "undefined") {
-//            $data = $data->where('mptlr.norec','=', $request['idMap']);
-//         }
+
+        if(isset($request['idJenisLaporan']) && $request['idJenisLaporan'] != "" && $request['idJenisLaporan'] != "undefined") {
+            $data = $data->where('jl.id','=', $request['idJenisLaporan']);
+        }
 
         $data = $data->get();
         return $this->respond($data);
@@ -117,11 +120,10 @@ class LaporanRekamMedisController extends   ApiController
             ->where('jl.statusenabled',true)
             ->get();
 
-        $dataKelompokLaporan = \DB::table('kelompoklaporan_m as kl')
-            ->select('kl.id','kl.kelompoklaporan')
-            ->where('kl.kdprofile', $idProfile)
-            ->where('kl.statusenabled',true)
-            ->get();
+        $dataKelompokLaporan = DB::select(DB::raw("select kl.id, kl.id || ' - ' || kl.kelompoklaporan kelompoklaporan
+        from kelompoklaporan_m as kl
+        where kl.kdprofile = 30
+        and kl.statusenabled = true"));
 
         $dataPegawaiUser = DB::select(DB::raw("select pg.id,pg.namalengkap from loginuser_s as lu
                 INNER JOIN pegawai_m as pg on lu.objectpegawaifk=pg.id
@@ -154,6 +156,32 @@ class LaporanRekamMedisController extends   ApiController
         if ($request['mapping']['norec'] != ''){
             try{
                 $data1 = MapProdukToLaporanRl::where('norec', $request['mapping']['norec'])->where('kdprofile', $idProfile)->delete();
+                $transStatus = 'true';
+            }
+            catch(\Exception $e){
+                $transStatus= false;
+            }
+        }
+        if ($transStatus='true')
+        {    DB::commit();
+            $transMessage = "Data Terhapus";
+        }
+        else{
+            DB::rollBack();
+            $transMessage = "Data Gagal Dihapus";
+        }
+        return $this->setStatusCode(201)->respond([], $transMessage);
+    }
+    public function deleteMapKontenToLaporanRL(Request $request) {
+        $dataLogin = $request->all();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        DB::beginTransaction();
+        if ($request['data']['norec'] != ''){
+            try{
+                $data1 = MapProdukToLaporanRl::where('norec', $request['data']['norec'])->where('statusenabled', true)->first();
+                $data1->statusenabled = false;
+                $data1->save();
                 $transStatus = 'true';
             }
             catch(\Exception $e){
@@ -211,6 +239,18 @@ class LaporanRekamMedisController extends   ApiController
         $req = $request;
         try {
 //        return $this->respond($req);
+        $cek = MapProdukToLaporanRl::where('objectjenislaporanfk',$request['objectjenislaporanfk'])
+        ->where('objectkontenlaporanfk',$request['objectkelompokkontenfk'])
+        ->whereNull('produkfk')
+        ->whereNull('ruanganfk')
+        ->where('statusenabled',true)
+        ->first();
+
+        if(!empty($cek)){
+            $cek->statusenabled = false;
+            $cek->save();
+        }
+        
         if ($request['norec'] == '') {
             $newMap = new MapProdukToLaporanRl();
             $norecMap = $newMap->generateNewId();
@@ -223,6 +263,53 @@ class LaporanRekamMedisController extends   ApiController
         $newMap->objectjenislaporanfk = $request['objectjenislaporanfk'];
         $newMap->objectkontenlaporanfk = $request['objectkelompokkontenfk'];
         $newMap->produkfk = $request['produkfk'];
+        $newMap->ruanganfk = $request['ruanganfk'];
+
+          $newMap->save();
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan Mapping Berhasil";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMessage,
+                "map" => $newMap,
+                "as" => 'as@epic',
+            );
+        } else {
+            $transMessage = "Simpan Mapping Gagal!!";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message"  => $transMessage,
+                "map" => $newMap,
+                "as" => 'as@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function SaveMappingRltoKonten(Request $request) {
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $req = $request;
+        try {
+//        return $this->respond($req);
+        if ($request['norec'] == '') {
+            $newMap = new MapProdukToLaporanRl();
+            $norecMap = $newMap->generateNewId();
+            $newMap->norec = $norecMap;
+            $newMap->kdprofile = $idProfile;
+            $newMap->statusenabled = true;
+        }else{
+            $newMap = MapProdukToLaporanRl::where('norec',$request['norec'])->first();
+        }
+        $newMap->objectjenislaporanfk = $request['objectjenislaporanfk'];
+        $newMap->objectkontenlaporanfk = $request['objectkelompokkontenfk'];
 
           $newMap->save();
             $transStatus = 'true';
@@ -255,7 +342,7 @@ class LaporanRekamMedisController extends   ApiController
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
 
-        $data10 = DB::select(DB::raw("select * from kelompoklaporan_m where kdprofile = 30 and statusenabled = true order by id desc"));
+        $data10 = DB::select(DB::raw("select * from kelompoklaporan_m where kdprofile = 30 and statusenabled = true order by nourut, id desc"));
 
         $result = array(
             'data' => $data10,
@@ -286,12 +373,14 @@ class LaporanRekamMedisController extends   ApiController
                             'kdkelompoklaporan'=>$newID + 1,
                             'kelompoklaporan'=>$request['kontenlaporan'],
                             'init'=>$request['no'],
+                            'nourut'=>$request['nourut'],
                         ]);
 
                     } else{
                         $MA = KelompokLaporan::where('id', '=', $request['id'])->first();
                         $MA->kelompoklaporan = $request['kontenlaporan'];
                         $MA->init = $request['no'];
+                        $MA->nourut = $request['nourut'];
                         $MA->save();
                     }
                     
@@ -4191,11 +4280,23 @@ class LaporanRekamMedisController extends   ApiController
         $tglAwal = $request['tglAwal']; 
         $tglAkhir = $request['tglAkhir']; 
 
-        $main = array("RADIODIAGNOSTIK", "Foto tanpa bahan kontras", "Foto dengan bahan kontras", "Foto dengan rol film", "Flouroskopi",
-        "Foto Gigi :", "C.T. Scan :", "Lymphografi", "Angiograpi", "Lain-Lain", "RADIOTHERAPI", "Jumlah Kegiatan Radiotherapi", "Lain-Lain",
-        "KEDOKTERAN NUKLIR", "Jumlah Kegiatan Diagnostik", "Jumlah Kegiatan Therapi", "Lain-Lain", "IMAGING/PENCITRAAN USG", "USG", "MRI", "Lain-lain", "TOTAL");
+        $main = DB::select(DB::raw("select mptlr.norec, pro.id as idproduk, pro.namaproduk, jl.id, jl.jenislaporan,
+        kl.id as idkelompoklaporan, kl.kelompoklaporan, ru.id as idruangan, ru.namaruangan, kl.init
+        from mapproduktolaporanrl_m as mptlr
+        inner join jenislaporan_m as jl on jl.id = mptlr.objectjenislaporanfk
+        inner join kelompoklaporan_m as kl on kl.id = mptlr.objectkontenlaporanfk
+        left join produk_m as pro on pro.id = mptlr.produkfk
+        left join ruangan_m as ru on ru.id = mptlr.ruanganfk
+        where mptlr.kdprofile = 30
+        and mptlr.statusenabled = true
+        and kl.kdprofile = 30
+        and kl.statusenabled = true
+        and jl.kdprofile = 30
+        and jl.statusenabled = true
+        and jl.id = 11
+        order by jl.id asc, kl.nourut asc"));
 
-        $data10 = DB::select(DB::raw("SELECT ru.namaruangan, pr.namaproduk, sum(ppd.jumlah) as jumlah
+        $data10 = DB::select(DB::raw("SELECT ru.id idruangan, ru.namaruangan, pr.namaproduk, pr.id idproduk, sum(ppd.jumlah) as jumlah
             FROM
             pasiendaftar_t pd
             INNER JOIN antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
@@ -4212,20 +4313,21 @@ class LaporanRekamMedisController extends   ApiController
             and pp.isobat is null
             and ru.id = 576
             and pr.id not in (5008635, 5008644)
-        group by ru.namaruangan, pr.namaproduk"));
+        group by ru.id, ru.namaruangan, pr.namaproduk, pr.id"));
 
         $jumlah = 0;
         foreach($main as $row){
             $jumlah = 0;
-            
-            if($row == 'Foto tanpa bahan kontras'){
-                foreach($data10 as $data){
+
+            foreach($data10 as $data){
+                if($row->idruangan == $data->idruangan || $row->idproduk == $data->idproduk){
                     $jumlah += $data->jumlah;
                 }
             }
 
             $datas[] = array(
-                'namaruangan' => $row,
+                'namaruangan' => $row->kelompoklaporan,
+                'no' => $row->init,
                 'jumlahtotal' => $jumlah,
             );
         }

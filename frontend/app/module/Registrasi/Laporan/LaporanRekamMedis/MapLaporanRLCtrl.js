@@ -21,6 +21,10 @@ define(['initialize'], function (initialize) {
                     $scope.listdataruangan = dat.data.ruanganall
                     // $scope.listproduk = dat.data.produk
                 });
+
+                medifirstService.get("registrasi/laporan/get-data-combo-laporan", true).then(function (data) {
+                    $scope.listRuangan = data.data.ruangan;
+                });
             }
 
             function loadProduk() {
@@ -61,11 +65,6 @@ define(['initialize'], function (initialize) {
             }
 
             $scope.Simpan = function () {
-
-                if ($scope.item.Produk == undefined) {
-                    alert("Pilih Produk terlebih dahulu!!")
-                    return
-                }
                 if ($scope.item.kelompok == undefined) {
                     alert("Pilih Konten terlebih dahulu!!")
                     return
@@ -81,10 +80,21 @@ define(['initialize'], function (initialize) {
                     norec = $scope.item.norec
                 }
 
+                var idruangan = null;
+                if ($scope.item.ruangan != undefined) {
+                    idruangan = $scope.item.ruangan.id
+                }
+
+                var idproduk = null;
+                if ($scope.item.Produk != undefined) {
+                    idproduk = $scope.item.Produk.idproduk
+                }
+
                 var mappingproduktolaporanrl = {
                     norec: norec,
-                    produkfk: $scope.item.Produk.idproduk,
+                    produkfk: idproduk,
                     objectjenislaporanfk: jenislaporan,
+                    ruanganfk: idruangan,
                     objectkelompokkontenfk: $scope.item.kelompok.id,
                 }
                 // var objSave =
@@ -206,6 +216,16 @@ define(['initialize'], function (initialize) {
                 {
                     "field": "namaproduk",
                     "title": "Nama Produk",
+                    "width": "100px",
+                },
+                {
+                    "field": "idruangan",
+                    "title": "Kode Ruangan",
+                    "width": "100px",
+                },
+                {
+                    "field": "namaruangan",
+                    "title": "Nama Ruangan",
                     "width": "100px",
                 }
             ];

@@ -50,6 +50,7 @@ define(['initialize'], function (initialize) {
                 $scope.norecjasgir = ''
                 $scope.item.uraianpendapatan = ''
                 $scope.item.no = ''
+                $scope.item.nourut = 0
                 $scope.popupTambahJasgir.center().open()
             }
 
@@ -57,6 +58,7 @@ define(['initialize'], function (initialize) {
                 $scope.norecjasgir = $scope.dataSelected.id
                 $scope.item.kontenlaporan = $scope.dataSelected.kelompoklaporan
                 $scope.item.no = $scope.dataSelected.init
+                $scope.item.nourut = $scope.dataSelected.nourut
                 $scope.popupTambahJasgir.center().open()
             }
 
@@ -69,6 +71,7 @@ define(['initialize'], function (initialize) {
                     "id": $scope.norecjasgir,
                     "kontenlaporan": $scope.item.kontenlaporan,
                     "no": $scope.item.no,
+                    "nourut": $scope.item.nourut,
                 }
                 console.log(objSave);
                 // return
@@ -137,6 +140,12 @@ define(['initialize'], function (initialize) {
                         
                         "field": "kelompoklaporan",
                         "title": "Konten",
+                        "width": "100px",
+                    },
+                    {
+                        
+                        "field": "nourut",
+                        "title": "No Urut",
                         "width": "100px",
                     },
                 ]
