@@ -203,8 +203,33 @@ define(['initialize'], function (initialize) {
             $scope.formatTanggal = function (tanggal) {
                 return moment(tanggal).format('DD-MMM-YYYY');
             }
+            $scope.mainGridOptions = {
+                toolbar: [
+                    "excel",
+                ],
+                excel: {
+                    fileName: "DaftarMutasiBarangKadaluarsa.xlsx",
+                    allPages: true,
+                },
+                excelExport: function (e) {
+                    var sheet = e.workbook.sheets[0];
+                    sheet.frozenRows = 2;
+                    sheet.mergedCells = ["A1:I1"];
+                    sheet.name = "Sheet";
 
-            $scope.columnGrid = [
+                    var myHeaders = [{
+                        value: "Daftar Mutasi Barang Kadaluarsa",
+                        fontSize: 20,
+                        textAlign: "center",
+                        background: "#ffffff",
+                        // color:"#ffffff"
+                    }];
+
+                    sheet.rows.splice(0, 0, { cells: myHeaders, type: "header", height: 70 });
+                },
+                scrollable: true,
+                columns: [
+           
                 {
                     "field": "no",
                     "title": "No",
@@ -251,7 +276,8 @@ define(['initialize'], function (initialize) {
                     "title": "Keterangan",
                     "width": "100px",
                 }
-            ];
+            ]
+        }
 
             $scope.data2 = function (dataItem) {
                 return {

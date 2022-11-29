@@ -854,6 +854,46 @@
     ]
   },
   {
+    "name": "MasterKonten",
+    "url": "/TWFzdGVyS29udGVuTGFwb3JhblJM",
+    "templateurl": "module/Registrasi/Laporan/LaporanRekamMedis/MasterKonten.html",
+    "controller": "MasterKontenCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "MapRLtoKonten",
+    "url": "/TWFwTGFwb3JhblJMdG9Lb250ZW4=",
+    "templateurl": "module/Registrasi/Laporan/LaporanRekamMedis/MapRLtoKonten.html",
+    "controller": "MapRLtoKontenCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
     "name": "RL12IndikatorPelayananRs",
     "url": "/RL12IndikatorPelayananRs",
     "templateurl": "module/Registrasi/Laporan/LaporanRekamMedis/RL12IndikatorPelayananRs.html",

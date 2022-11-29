@@ -377,38 +377,38 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
             $scope.CetakLPJBaru = function(){
 
-                // if ($scope.item.tahunsp == undefined){
-                //     toastr.warning('Tahun harus diisi', 'Informasi');
-                //     return
-                // }
+                if ($scope.item.tahunlpjbaru == undefined){
+                    toastr.warning('Tahun harus diisi', 'Informasi');
+                    return
+                }
 
-                // if ($scope.item.bulansp == undefined){
-                //     toastr.warning('Bulan harus diisi', 'Informasi');
-                //     return
-                // }
+                if ($scope.item.bulanlpjbaru == undefined){
+                    toastr.warning('Bulan harus diisi', 'Informasi');
+                    return
+                }
 
-                // if ($scope.item.tglcetaksp == undefined){
+                // if ($scope.item.tglcetaklpjbaru == undefined){
                 //     toastr.warning('Tgl cetak harus diisi', 'Informasi');
                 //     return
                 // }
 
-                // var tahunsp = ""
-                // if ($scope.item.tahunsp != undefined){
-                //     tahunsp = moment($scope.item.tahunsp).format('YYYY')
+                var tahunlpjbaru = ""
+                if ($scope.item.tahunlpjbaru != undefined){
+                    tahunlpjbaru = moment($scope.item.tahunlpjbaru).format('YYYY')
+                }
+
+                var bulanlpjbaru = ""
+                if ($scope.item.bulanlpjbaru != undefined){
+                    bulanlpjbaru = moment($scope.item.bulanlpjbaru).format('MM')
+                }
+
+                // var tglcetaklpjbaru = ""
+                // if ($scope.item.tglcetaklpjbaru != undefined){
+                //     tglcetaklpjbaru = moment($scope.item.tglcetaklpjbaru).format('YYYY-MM-DD')
                 // }
 
-                // var bulansp = ""
-                // if ($scope.item.bulansp != undefined){
-                //     bulansp = moment($scope.item.bulansp).format('MM')
-                // }
 
-                // var tglcetaksp = ""
-                // if ($scope.item.tglcetaksp != undefined){
-                //     tglcetaksp = moment($scope.item.tglcetaksp).format('YYYY-MM-DD')
-                // }
-
-
-                window.open(baseTransaksi + "report/get-cetak-lpj-baru", '_blank');
+                window.open(baseTransaksi + "report/get-cetak-lpj-baru?tahun=" + tahunlpjbaru + "&bulan=" + bulanlpjbaru, '_blank');
             }
 
             $scope.CetakBukuPanjar = function(){
@@ -458,7 +458,17 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     tglbkufungsional = moment($scope.item.tglbkufungsional).format('YYYY-MM-DD')
                 }
 
-                window.open(baseTransaksi + "report/get-cetak-fungsional?tglcetak=" + tglcetakfungsional + "&tglbku=" + tglbkufungsional, '_blank');
+                var asalprodukfungsional = ""
+                if ($scope.item.asalprodukfungsional != undefined){
+                    asalprodukfungsional = $scope.item.asalprodukfungsional.id
+                }
+
+                var jenisrekeningfungsional = ""
+                if ($scope.item.jenisrekeningfungsional != undefined){
+                    jenisrekeningfungsional = $scope.item.jenisrekeningfungsional.id
+                }
+
+                window.open(baseTransaksi + "report/get-cetak-fungsional?tglcetak=" + tglcetakfungsional + "&tglbku=" + tglbkufungsional + "&asalproduk=" + asalprodukfungsional + "&jenisrekening=" + jenisrekeningfungsional, '_blank');
             }
 
             $scope.CetakRO = function(){

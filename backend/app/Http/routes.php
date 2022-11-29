@@ -2041,8 +2041,13 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
               Route::get('registrasi/laporan/get-produk-mapping-rl', 'Registrasi\LaporanRekamMedisController@getProdukMapLaporanRL');
               Route::get('registrasi/laporan/get-mapping-rl', 'Registrasi\LaporanRekamMedisController@getMapLaporanRL');
               Route::post('registrasi/laporan/save-mapping-rl', 'Registrasi\LaporanRekamMedisController@SaveMappingRl');
+              Route::post('registrasi/laporan/save-mapping-rl-to-konten', 'Registrasi\LaporanRekamMedisController@SaveMappingRltoKonten');
+              Route::post('registrasi/laporan/save-master-konten', 'Registrasi\LaporanRekamMedisController@SaveMasterKonten');
+              Route::post('registrasi/laporan/delete-master-konten', 'Registrasi\LaporanRekamMedisController@DeleteMasterKonten');
               Route::post('registrasi/laporan/delete-mapping-rl', 'Registrasi\LaporanRekamMedisController@deleteMapProdukToLaporanRL');
+              Route::post('registrasi/laporan/delete-mapping-rl-to-konten', 'Registrasi\LaporanRekamMedisController@deleteMapKontenToLaporanRL');
               Route::get('registrasi/laporan/get-combo-mapping-rl', 'Registrasi\LaporanRekamMedisController@getComboMappingRL');
+              Route::get('registrasi/laporan/get-master-konten', 'Registrasi\LaporanRekamMedisController@getMasterKonten');
 
               Route::get('registrasi/laporan/get-laporan-pasien-rujukan-perbulan','Registrasi\LaporanRekamMedisController@getRujukanPerbulan');
               Route::get('registrasi/laporan/get-laporan-rl12', 'Registrasi\LaporanRekamMedisController@getDataRL31RawatInap');

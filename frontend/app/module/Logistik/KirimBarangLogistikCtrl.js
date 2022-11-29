@@ -548,8 +548,32 @@ define(['initialize'], function (initialize) {
             $scope.batal = function () {
                 Kosongkan()
             }
+            $scope.mainGridOptions = {
+                toolbar: [
+                    "excel",
+                ],
+                excel: {
+                    fileName: "KirimBarang.xlsx",
+                    allPages: true,
+                },
+                excelExport: function (e) {
+                    var sheet = e.workbook.sheets[0];
+                    sheet.frozenRows = 2;
+                    sheet.mergedCells = ["A1:F1"];
+                    sheet.name = "Sheet";
 
-            $scope.columnGrid = [
+                    var myHeaders = [{
+                        value: "Daftar Kirim Barang",
+                        fontSize: 20,
+                        textAlign: "center",
+                        background: "#ffffff",
+                        // color:"#ffffff"
+                    }];
+
+                    sheet.rows.splice(0, 0, { cells: myHeaders, type: "header", height: 70 });
+                },
+                scrollable: true,
+                columns: [
                 {
                     "field": "no",
                     "title": "No",
@@ -580,7 +604,8 @@ define(['initialize'], function (initialize) {
                     "title": "Qty",
                     "width": "70px",
                 }
-            ];
+            ]
+        }
 
             $scope.formatRupiah = function (value, currency) {
                 return currency + " " + parseFloat(value).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");

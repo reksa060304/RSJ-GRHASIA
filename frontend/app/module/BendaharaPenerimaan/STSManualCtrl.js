@@ -182,8 +182,8 @@ define(['initialize'], function (initialize) {
 
             $scope.simpanSTS = function () {
 
-                var toltal = parseInt($scope.item.jumlahlain) + parseInt($scope.item.jumlahranap) 
-                medifirstService.get("sysadmin/general/get-terbilang/" + toltal).then(
+                var toltal = parseFloat($scope.item.jumlahlain) + parseFloat($scope.item.jumlahranap) 
+                medifirstService.get("sysadmin/general/get-terbilang-tidak-bulat/" + toltal).then(
 					function (dat) {
 						$scope.item.terbilang = dat.data.terbilang;
 
@@ -227,174 +227,174 @@ define(['initialize'], function (initialize) {
 
             $scope.$watch('item.kendaraan', function (newValue, oldValue) {
                 if (newValue != oldValue) {
-                    $scope.item.jumlahlain = parseInt($scope.item.kendaraan) + parseInt($scope.item.akreditasi) + parseInt($scope.item.dendabpjs) +
-                    parseInt($scope.item.jasabank) + parseInt($scope.item.lainlain) + parseInt($scope.item.liquidgas) + parseInt($scope.item.saldoslipa) + parseInt($scope.item.klaimbpjs) + 
-                    parseInt($scope.item.girobtn) + parseInt($scope.item.saldosutera)
+                    $scope.item.jumlahlain = parseFloat($scope.item.kendaraan) + parseFloat($scope.item.akreditasi) + parseFloat($scope.item.dendabpjs) +
+                    parseFloat($scope.item.jasabank) + parseFloat($scope.item.lainlain) + parseFloat($scope.item.liquidgas) + parseFloat($scope.item.saldoslipa) + parseFloat($scope.item.klaimbpjs) + 
+                    parseFloat($scope.item.girobtn) + parseFloat($scope.item.saldosutera)
                 }
             });
 
             $scope.$watch('item.akreditasi', function (newValue, oldValue) {
                 if (newValue != oldValue) {
-                    $scope.item.jumlahlain = parseInt($scope.item.kendaraan) + parseInt($scope.item.akreditasi) + parseInt($scope.item.dendabpjs) +
-                    parseInt($scope.item.jasabank) + parseInt($scope.item.lainlain) + parseInt($scope.item.liquidgas) + parseInt($scope.item.saldoslipa) + parseInt($scope.item.klaimbpjs) + 
-                    parseInt($scope.item.girobtn) + parseInt($scope.item.saldosutera)
+                    $scope.item.jumlahlain = parseFloat($scope.item.kendaraan) + parseFloat($scope.item.akreditasi) + parseFloat($scope.item.dendabpjs) +
+                    parseFloat($scope.item.jasabank) + parseFloat($scope.item.lainlain) + parseFloat($scope.item.liquidgas) + parseFloat($scope.item.saldoslipa) + parseFloat($scope.item.klaimbpjs) + 
+                    parseFloat($scope.item.girobtn) + parseFloat($scope.item.saldosutera)
                 }
             });
 
             $scope.$watch('item.dendabpjs', function (newValue, oldValue) {
                 if (newValue != oldValue) {
-                    $scope.item.jumlahlain = parseInt($scope.item.kendaraan) + parseInt($scope.item.akreditasi) + parseInt($scope.item.dendabpjs) +
-                    parseInt($scope.item.jasabank) + parseInt($scope.item.lainlain) + parseInt($scope.item.liquidgas) + parseInt($scope.item.saldoslipa) + parseInt($scope.item.klaimbpjs) + 
-                    parseInt($scope.item.girobtn) + parseInt($scope.item.saldosutera)
+                    $scope.item.jumlahlain = parseFloat($scope.item.kendaraan) + parseFloat($scope.item.akreditasi) + parseFloat($scope.item.dendabpjs) +
+                    parseFloat($scope.item.jasabank) + parseFloat($scope.item.lainlain) + parseFloat($scope.item.liquidgas) + parseFloat($scope.item.saldoslipa) + parseFloat($scope.item.klaimbpjs) + 
+                    parseFloat($scope.item.girobtn) + parseFloat($scope.item.saldosutera)
                 }
             });
 
             $scope.$watch('item.jasabank', function (newValue, oldValue) {
                 if (newValue != oldValue) {
-                    $scope.item.jumlahlain = parseInt($scope.item.kendaraan) + parseInt($scope.item.akreditasi) + parseInt($scope.item.dendabpjs) +
-                    parseInt($scope.item.jasabank) + parseInt($scope.item.lainlain) + parseInt($scope.item.liquidgas) + parseInt($scope.item.saldoslipa) + parseInt($scope.item.klaimbpjs) + 
-                    parseInt($scope.item.girobtn) + parseInt($scope.item.saldosutera)
+                    $scope.item.jumlahlain = parseFloat($scope.item.kendaraan) + parseFloat($scope.item.akreditasi) + parseFloat($scope.item.dendabpjs) +
+                    parseFloat($scope.item.jasabank) + parseFloat($scope.item.lainlain) + parseFloat($scope.item.liquidgas) + parseFloat($scope.item.saldoslipa) + parseFloat($scope.item.klaimbpjs) + 
+                    parseFloat($scope.item.girobtn) + parseFloat($scope.item.saldosutera)
                 }
             });
 
             $scope.$watch('item.lainlain', function (newValue, oldValue) {
                 if (newValue != oldValue) {
-                    $scope.item.jumlahlain = parseInt($scope.item.kendaraan) + parseInt($scope.item.akreditasi) + parseInt($scope.item.dendabpjs) +
-                    parseInt($scope.item.jasabank) + parseInt($scope.item.lainlain) + parseInt($scope.item.liquidgas) + parseInt($scope.item.saldoslipa) + parseInt($scope.item.klaimbpjs) + 
-                    parseInt($scope.item.girobtn) + parseInt($scope.item.saldosutera)
+                    $scope.item.jumlahlain = parseFloat($scope.item.kendaraan) + parseFloat($scope.item.akreditasi) + parseFloat($scope.item.dendabpjs) +
+                    parseFloat($scope.item.jasabank) + parseFloat($scope.item.lainlain) + parseFloat($scope.item.liquidgas) + parseFloat($scope.item.saldoslipa) + parseFloat($scope.item.klaimbpjs) + 
+                    parseFloat($scope.item.girobtn) + parseFloat($scope.item.saldosutera)
                 }
             });
 
             $scope.$watch('item.liquidgas', function (newValue, oldValue) {
                 if (newValue != oldValue) {
-                    $scope.item.jumlahlain = parseInt($scope.item.kendaraan) + parseInt($scope.item.akreditasi) + parseInt($scope.item.dendabpjs) +
-                    parseInt($scope.item.jasabank) + parseInt($scope.item.lainlain) + parseInt($scope.item.liquidgas) + parseInt($scope.item.saldoslipa) + parseInt($scope.item.klaimbpjs) + 
-                    parseInt($scope.item.girobtn) + parseInt($scope.item.saldosutera)
+                    $scope.item.jumlahlain = parseFloat($scope.item.kendaraan) + parseFloat($scope.item.akreditasi) + parseFloat($scope.item.dendabpjs) +
+                    parseFloat($scope.item.jasabank) + parseFloat($scope.item.lainlain) + parseFloat($scope.item.liquidgas) + parseFloat($scope.item.saldoslipa) + parseFloat($scope.item.klaimbpjs) + 
+                    parseFloat($scope.item.girobtn) + parseFloat($scope.item.saldosutera)
                 }
             });
 
             $scope.$watch('item.saldoslipa', function (newValue, oldValue) {
                 if (newValue != oldValue) {
-                    $scope.item.jumlahlain = parseInt($scope.item.kendaraan) + parseInt($scope.item.akreditasi) + parseInt($scope.item.dendabpjs) +
-                    parseInt($scope.item.jasabank) + parseInt($scope.item.lainlain) + parseInt($scope.item.liquidgas) + parseInt($scope.item.saldoslipa) + parseInt($scope.item.klaimbpjs) + 
-                    parseInt($scope.item.girobtn) + parseInt($scope.item.saldosutera)
+                    $scope.item.jumlahlain = parseFloat($scope.item.kendaraan) + parseFloat($scope.item.akreditasi) + parseFloat($scope.item.dendabpjs) +
+                    parseFloat($scope.item.jasabank) + parseFloat($scope.item.lainlain) + parseFloat($scope.item.liquidgas) + parseFloat($scope.item.saldoslipa) + parseFloat($scope.item.klaimbpjs) + 
+                    parseFloat($scope.item.girobtn) + parseFloat($scope.item.saldosutera)
                 }
             });
 
             $scope.$watch('item.klaimbpjs', function (newValue, oldValue) {
                 if (newValue != oldValue) {
-                    $scope.item.jumlahlain = parseInt($scope.item.kendaraan) + parseInt($scope.item.akreditasi) + parseInt($scope.item.dendabpjs) +
-                    parseInt($scope.item.jasabank) + parseInt($scope.item.lainlain) + parseInt($scope.item.liquidgas) + parseInt($scope.item.saldoslipa) + parseInt($scope.item.klaimbpjs) + 
-                    parseInt($scope.item.girobtn) + parseInt($scope.item.saldosutera)
+                    $scope.item.jumlahlain = parseFloat($scope.item.kendaraan) + parseFloat($scope.item.akreditasi) + parseFloat($scope.item.dendabpjs) +
+                    parseFloat($scope.item.jasabank) + parseFloat($scope.item.lainlain) + parseFloat($scope.item.liquidgas) + parseFloat($scope.item.saldoslipa) + parseFloat($scope.item.klaimbpjs) + 
+                    parseFloat($scope.item.girobtn) + parseFloat($scope.item.saldosutera)
                 }
             });
 
             $scope.$watch('item.girobtn', function (newValue, oldValue) {
                 if (newValue != oldValue) {
-                    $scope.item.jumlahlain = parseInt($scope.item.kendaraan) + parseInt($scope.item.akreditasi) + parseInt($scope.item.dendabpjs) +
-                    parseInt($scope.item.jasabank) + parseInt($scope.item.lainlain) + parseInt($scope.item.liquidgas) + parseInt($scope.item.saldoslipa) + parseInt($scope.item.klaimbpjs) + 
-                    parseInt($scope.item.girobtn) + parseInt($scope.item.saldosutera)
+                    $scope.item.jumlahlain = parseFloat($scope.item.kendaraan) + parseFloat($scope.item.akreditasi) + parseFloat($scope.item.dendabpjs) +
+                    parseFloat($scope.item.jasabank) + parseFloat($scope.item.lainlain) + parseFloat($scope.item.liquidgas) + parseFloat($scope.item.saldoslipa) + parseFloat($scope.item.klaimbpjs) + 
+                    parseFloat($scope.item.girobtn) + parseFloat($scope.item.saldosutera)
                 }
             });
 
             $scope.$watch('item.saldosutera', function (newValue, oldValue) {
                 if (newValue != oldValue) {
-                    $scope.item.jumlahlain = parseInt($scope.item.kendaraan) + parseInt($scope.item.akreditasi) + parseInt($scope.item.dendabpjs) +
-                    parseInt($scope.item.jasabank) + parseInt($scope.item.lainlain) + parseInt($scope.item.liquidgas) + parseInt($scope.item.saldoslipa) + parseInt($scope.item.klaimbpjs) + 
-                    parseInt($scope.item.girobtn) + parseInt($scope.item.saldosutera)
+                    $scope.item.jumlahlain = parseFloat($scope.item.kendaraan) + parseFloat($scope.item.akreditasi) + parseFloat($scope.item.dendabpjs) +
+                    parseFloat($scope.item.jasabank) + parseFloat($scope.item.lainlain) + parseFloat($scope.item.liquidgas) + parseFloat($scope.item.saldoslipa) + parseFloat($scope.item.klaimbpjs) + 
+                    parseFloat($scope.item.girobtn) + parseFloat($scope.item.saldosutera)
                 }
             });
 
             $scope.$watch('item.klaimcovid', function (newValue, oldValue) {
                 if (newValue != oldValue) {
-                    $scope.item.jumlahranap = parseInt($scope.item.klaimcovid)
+                    $scope.item.jumlahranap = parseFloat($scope.item.klaimcovid)
                 }
             });
 
 
             $scope.$watch('item.volkendaraan', function (newValue, oldValue) {
                 if (newValue != oldValue) {
-                    $scope.item.voljumlahlain = parseInt($scope.item.volkendaraan) + parseInt($scope.item.volakreditasi) + parseInt($scope.item.voldendabpjs) +
-                    parseInt($scope.item.voljasabank) + parseInt($scope.item.vollainlain) + parseInt($scope.item.volliquidgas) + parseInt($scope.item.volsaldoslipa) + parseInt($scope.item.volklaimbpjs) + 
-                    parseInt($scope.item.volgirobtn) + parseInt($scope.item.volsaldosutera)
+                    $scope.item.voljumlahlain = parseFloat($scope.item.volkendaraan) + parseFloat($scope.item.volakreditasi) + parseFloat($scope.item.voldendabpjs) +
+                    parseFloat($scope.item.voljasabank) + parseFloat($scope.item.vollainlain) + parseFloat($scope.item.volliquidgas) + parseFloat($scope.item.volsaldoslipa) + parseFloat($scope.item.volklaimbpjs) + 
+                    parseFloat($scope.item.volgirobtn) + parseFloat($scope.item.volsaldosutera)
                 }
             });
 
             $scope.$watch('item.volakreditasi', function (newValue, oldValue) {
                 if (newValue != oldValue) {
-                    $scope.item.voljumlahlain = parseInt($scope.item.volkendaraan) + parseInt($scope.item.volakreditasi) + parseInt($scope.item.voldendabpjs) +
-                    parseInt($scope.item.voljasabank) + parseInt($scope.item.vollainlain) + parseInt($scope.item.volliquidgas) + parseInt($scope.item.volsaldoslipa) + parseInt($scope.item.volklaimbpjs) + 
-                    parseInt($scope.item.volgirobtn) + parseInt($scope.item.volsaldosutera)
+                    $scope.item.voljumlahlain = parseFloat($scope.item.volkendaraan) + parseFloat($scope.item.volakreditasi) + parseFloat($scope.item.voldendabpjs) +
+                    parseFloat($scope.item.voljasabank) + parseFloat($scope.item.vollainlain) + parseFloat($scope.item.volliquidgas) + parseFloat($scope.item.volsaldoslipa) + parseFloat($scope.item.volklaimbpjs) + 
+                    parseFloat($scope.item.volgirobtn) + parseFloat($scope.item.volsaldosutera)
                 }
             });
 
             $scope.$watch('item.voldendabpjs', function (newValue, oldValue) {
                 if (newValue != oldValue) {
-                    $scope.item.voljumlahlain = parseInt($scope.item.volkendaraan) + parseInt($scope.item.volakreditasi) + parseInt($scope.item.voldendabpjs) +
-                    parseInt($scope.item.voljasabank) + parseInt($scope.item.vollainlain) + parseInt($scope.item.volliquidgas) + parseInt($scope.item.volsaldoslipa) + parseInt($scope.item.volklaimbpjs) + 
-                    parseInt($scope.item.volgirobtn) + parseInt($scope.item.volsaldosutera)
+                    $scope.item.voljumlahlain = parseFloat($scope.item.volkendaraan) + parseFloat($scope.item.volakreditasi) + parseFloat($scope.item.voldendabpjs) +
+                    parseFloat($scope.item.voljasabank) + parseFloat($scope.item.vollainlain) + parseFloat($scope.item.volliquidgas) + parseFloat($scope.item.volsaldoslipa) + parseFloat($scope.item.volklaimbpjs) + 
+                    parseFloat($scope.item.volgirobtn) + parseFloat($scope.item.volsaldosutera)
                 }
             });
 
             $scope.$watch('item.voljasabank', function (newValue, oldValue) {
                 if (newValue != oldValue) {
-                    $scope.item.voljumlahlain = parseInt($scope.item.volkendaraan) + parseInt($scope.item.volakreditasi) + parseInt($scope.item.voldendabpjs) +
-                    parseInt($scope.item.voljasabank) + parseInt($scope.item.vollainlain) + parseInt($scope.item.volliquidgas) + parseInt($scope.item.volsaldoslipa) + parseInt($scope.item.volklaimbpjs) + 
-                    parseInt($scope.item.volgirobtn) + parseInt($scope.item.volsaldosutera)
+                    $scope.item.voljumlahlain = parseFloat($scope.item.volkendaraan) + parseFloat($scope.item.volakreditasi) + parseFloat($scope.item.voldendabpjs) +
+                    parseFloat($scope.item.voljasabank) + parseFloat($scope.item.vollainlain) + parseFloat($scope.item.volliquidgas) + parseFloat($scope.item.volsaldoslipa) + parseFloat($scope.item.volklaimbpjs) + 
+                    parseFloat($scope.item.volgirobtn) + parseFloat($scope.item.volsaldosutera)
                 }
             });
 
             $scope.$watch('item.vollainlain', function (newValue, oldValue) {
                 if (newValue != oldValue) {
-                    $scope.item.voljumlahlain = parseInt($scope.item.volkendaraan) + parseInt($scope.item.volakreditasi) + parseInt($scope.item.voldendabpjs) +
-                    parseInt($scope.item.voljasabank) + parseInt($scope.item.vollainlain) + parseInt($scope.item.volliquidgas) + parseInt($scope.item.volsaldoslipa) + parseInt($scope.item.volklaimbpjs) + 
-                    parseInt($scope.item.volgirobtn) + parseInt($scope.item.volsaldosutera)
+                    $scope.item.voljumlahlain = parseFloat($scope.item.volkendaraan) + parseFloat($scope.item.volakreditasi) + parseFloat($scope.item.voldendabpjs) +
+                    parseFloat($scope.item.voljasabank) + parseFloat($scope.item.vollainlain) + parseFloat($scope.item.volliquidgas) + parseFloat($scope.item.volsaldoslipa) + parseFloat($scope.item.volklaimbpjs) + 
+                    parseFloat($scope.item.volgirobtn) + parseFloat($scope.item.volsaldosutera)
                 }
             });
 
             $scope.$watch('item.volliquidgas', function (newValue, oldValue) {
                 if (newValue != oldValue) {
-                    $scope.item.voljumlahlain = parseInt($scope.item.volkendaraan) + parseInt($scope.item.volakreditasi) + parseInt($scope.item.voldendabpjs) +
-                    parseInt($scope.item.voljasabank) + parseInt($scope.item.vollainlain) + parseInt($scope.item.volliquidgas) + parseInt($scope.item.volsaldoslipa) + parseInt($scope.item.volklaimbpjs) + 
-                    parseInt($scope.item.volgirobtn) + parseInt($scope.item.volsaldosutera)
+                    $scope.item.voljumlahlain = parseFloat($scope.item.volkendaraan) + parseFloat($scope.item.volakreditasi) + parseFloat($scope.item.voldendabpjs) +
+                    parseFloat($scope.item.voljasabank) + parseFloat($scope.item.vollainlain) + parseFloat($scope.item.volliquidgas) + parseFloat($scope.item.volsaldoslipa) + parseFloat($scope.item.volklaimbpjs) + 
+                    parseFloat($scope.item.volgirobtn) + parseFloat($scope.item.volsaldosutera)
                 }
             });
 
             $scope.$watch('item.volsaldoslipa', function (newValue, oldValue) {
                 if (newValue != oldValue) {
-                    $scope.item.voljumlahlain = parseInt($scope.item.volkendaraan) + parseInt($scope.item.volakreditasi) + parseInt($scope.item.voldendabpjs) +
-                    parseInt($scope.item.voljasabank) + parseInt($scope.item.vollainlain) + parseInt($scope.item.volliquidgas) + parseInt($scope.item.volsaldoslipa) + parseInt($scope.item.volklaimbpjs) + 
-                    parseInt($scope.item.volgirobtn) + parseInt($scope.item.volsaldosutera)
+                    $scope.item.voljumlahlain = parseFloat($scope.item.volkendaraan) + parseFloat($scope.item.volakreditasi) + parseFloat($scope.item.voldendabpjs) +
+                    parseFloat($scope.item.voljasabank) + parseFloat($scope.item.vollainlain) + parseFloat($scope.item.volliquidgas) + parseFloat($scope.item.volsaldoslipa) + parseFloat($scope.item.volklaimbpjs) + 
+                    parseFloat($scope.item.volgirobtn) + parseFloat($scope.item.volsaldosutera)
                 }
             });
 
             $scope.$watch('item.volklaimbpjs', function (newValue, oldValue) {
                 if (newValue != oldValue) {
-                    $scope.item.voljumlahlain = parseInt($scope.item.volkendaraan) + parseInt($scope.item.volakreditasi) + parseInt($scope.item.voldendabpjs) +
-                    parseInt($scope.item.voljasabank) + parseInt($scope.item.vollainlain) + parseInt($scope.item.volliquidgas) + parseInt($scope.item.volsaldoslipa) + parseInt($scope.item.volklaimbpjs) + 
-                    parseInt($scope.item.volgirobtn) + parseInt($scope.item.volsaldosutera)
+                    $scope.item.voljumlahlain = parseFloat($scope.item.volkendaraan) + parseFloat($scope.item.volakreditasi) + parseFloat($scope.item.voldendabpjs) +
+                    parseFloat($scope.item.voljasabank) + parseFloat($scope.item.vollainlain) + parseFloat($scope.item.volliquidgas) + parseFloat($scope.item.volsaldoslipa) + parseFloat($scope.item.volklaimbpjs) + 
+                    parseFloat($scope.item.volgirobtn) + parseFloat($scope.item.volsaldosutera)
                 }
             });
 
             $scope.$watch('item.volgirobtn', function (newValue, oldValue) {
                 if (newValue != oldValue) {
-                    $scope.item.voljumlahlain = parseInt($scope.item.volkendaraan) + parseInt($scope.item.volakreditasi) + parseInt($scope.item.voldendabpjs) +
-                    parseInt($scope.item.voljasabank) + parseInt($scope.item.vollainlain) + parseInt($scope.item.volliquidgas) + parseInt($scope.item.volsaldoslipa) + parseInt($scope.item.volklaimbpjs) + 
-                    parseInt($scope.item.volgirobtn) + parseInt($scope.item.volsaldosutera)
+                    $scope.item.voljumlahlain = parseFloat($scope.item.volkendaraan) + parseFloat($scope.item.volakreditasi) + parseFloat($scope.item.voldendabpjs) +
+                    parseFloat($scope.item.voljasabank) + parseFloat($scope.item.vollainlain) + parseFloat($scope.item.volliquidgas) + parseFloat($scope.item.volsaldoslipa) + parseFloat($scope.item.volklaimbpjs) + 
+                    parseFloat($scope.item.volgirobtn) + parseFloat($scope.item.volsaldosutera)
                 }
             });
 
             $scope.$watch('item.volsaldosutera', function (newValue, oldValue) {
                 if (newValue != oldValue) {
-                    $scope.item.voljumlahlain = parseInt($scope.item.volkendaraan) + parseInt($scope.item.volakreditasi) + parseInt($scope.item.voldendabpjs) +
-                    parseInt($scope.item.voljasabank) + parseInt($scope.item.vollainlain) + parseInt($scope.item.volliquidgas) + parseInt($scope.item.volsaldoslipa) + parseInt($scope.item.volklaimbpjs) + 
-                    parseInt($scope.item.volgirobtn) + parseInt($scope.item.volsaldosutera)
+                    $scope.item.voljumlahlain = parseFloat($scope.item.volkendaraan) + parseFloat($scope.item.volakreditasi) + parseFloat($scope.item.voldendabpjs) +
+                    parseFloat($scope.item.voljasabank) + parseFloat($scope.item.vollainlain) + parseFloat($scope.item.volliquidgas) + parseFloat($scope.item.volsaldoslipa) + parseFloat($scope.item.volklaimbpjs) + 
+                    parseFloat($scope.item.volgirobtn) + parseFloat($scope.item.volsaldosutera)
                 }
             });
 
             $scope.$watch('item.volklaimcovid', function (newValue, oldValue) {
                 if (newValue != oldValue) {
-                    $scope.item.voljumlahranap = parseInt($scope.item.volklaimcovid)
+                    $scope.item.voljumlahranap = parseFloat($scope.item.volklaimcovid)
                 }
             });
 

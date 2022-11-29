@@ -89,7 +89,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     
                 ],
                 excel: {
-                    fileName: "LaporanPelayananObatJKN.xlsx",
+                    fileName: "LaporanOrderKirimBarang.xlsx",
                     allPages: true,
                 },
                 excelExport: function (e) {
@@ -145,6 +145,22 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         "field": "namaproduk",
                         "title": "Nama Obat",
                     }, 
+                    {
+                        "field": "ruanganorder",
+                        "title": "Ruangan Order",
+                    }, 
+                    {
+                        "field": "ruangankirim",
+                        "title": "Ruangan Kirim",
+                    }, 
+                    {
+                        "field": "tglorder",
+                        "title": "Tgl Order",
+                    },
+                    {
+                        "field": "tglkirim",
+                        "title": "Tgl Kirim",
+                    },
                     {
                         "field": "jumlahorder",
                         "title": "Qty Order",
