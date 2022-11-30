@@ -42,6 +42,7 @@ define(['initialize'], function (initialize) {
                 medifirstService.get("logistik/get-combo-logistik", true).then(function (dat) {
                     var dataCombo = dat.data;
                     $scope.listDataJabatan = dataCombo.jabatan;
+                    $scope.listRuangan = dataCombo.ruanganall
                 });
 
                 medifirstService.getPart("logistik/get-combo-pegawai-logistik", true, true, 20).then(function (data) {
@@ -67,12 +68,16 @@ define(['initialize'], function (initialize) {
                 if ($scope.item.namaBarang != undefined) {
                     var produkfk = "&produkfk=" + $scope.item.namaBarang.id
                 }
+                var ruangpengorder = ""
+                if ($scope.item.namaRuanganCbx != undefined) {
+                    ruangpengorder = "&ruangorder=" + $scope.item.namaRuanganCbx.id
+                }
                 var tglAwal = moment($scope.item.tglAwal).format('YYYY-MM-DD HH:mm:ss');
                 var tglAkhir = moment($scope.item.tglAkhir).format('YYYY-MM-DD HH:mm:ss');
                 medifirstService.get("logistik/get-daftar-distribusi-barang?" +
                     "tglAwal=" + tglAwal +
                     "&tglAkhir=" + tglAkhir +
-                    "&nokirim=" + $scope.item.struk + rg + produkfk
+                    "&nokirim=" + $scope.item.struk + rg + produkfk+ruangpengorder
                     , true).then(function (dat) {
                         $scope.isRouteLoading = false;
                         var data2 =  dat.data.daftar

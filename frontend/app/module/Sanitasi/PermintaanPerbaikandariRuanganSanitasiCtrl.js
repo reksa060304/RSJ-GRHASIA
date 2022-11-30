@@ -32,12 +32,12 @@ define(['initialize'], function (initialize) {
             function LoadCache() {
                 var chacePeriode = cacheHelper.get('PermintaanPerbaikandariRuanganCtrl');
                 if (chacePeriode != undefined) {
-                    $scope.item.tglAwal = new moment($scope.now).format('YYYY-MM-DD HH:mm:ss');
+                    $scope.item.tglAwal = new moment($scope.now).format('YYYY-MM-DD 00:00:00');
                     $scope.item.tglAkhir = new Date(chacePeriode[1]);
                     init();
                 }
                 else {
-                    $scope.item.tglAwal = new moment($scope.now).format('YYYY-MM-DD HH:mm:ss');
+                    $scope.item.tglAwal = new moment($scope.now).format('YYYY-MM-DD 00:00:00');
                     $scope.item.tglAkhir = $scope.now;
                     init();
                 }
@@ -48,7 +48,7 @@ define(['initialize'], function (initialize) {
                 medifirstService.getPart("sysadmin/general/get-combo-pegawai", true, true, 20).then(function (data) {
                     $scope.listPelapor = data;
                 });
-                medifirstService.getPart("sysadmin/general/get-ruangan-part2", true, true, 20).then(function (data) {
+                medifirstService.get("sysadmin/general/get-ruangan-part3", true, true, 20).then(function (data) {
                     $scope.listRuangan = data;
                 });
                 medifirstService.getPart("sanitasi/get-jenis-layanan-sanitasi").then(function (data) {
@@ -105,8 +105,8 @@ define(['initialize'], function (initialize) {
                 if (tabNumber == 1) {
                     manage = 'aingmacan'
                 }
-                var tglAwal = moment($scope.item.tglAwal).format('YYYY-MM-DD HH:mm:ss');
-                var tglAkhir = moment($scope.item.tglAkhir).format('YYYY-MM-DD HH:mm:ss');
+                var tglAwal = moment($scope.item.tglAwal).format('YYYY-MM-DD 00:00:00');
+                var tglAkhir = moment($scope.item.tglAkhir).format('YYYY-MM-DD 23:59:59');
                 medifirstService.get("ipsrs/get-daftar-permohonan-rt?" +
                     "tglAwal=" + tglAwal +
                     "&tglAkhir=" + tglAkhir + desc + '&arrru=' + jenisForm +

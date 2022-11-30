@@ -2664,6 +2664,9 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
               Route::get('sysadmin/settingdatafixed/get-report-display', 'SysAdmin\Master\SettingDataFixedController@getReportDisplayTable');
               Route::get('sysadmin/settingdatafixed/get/{namaField}', 'SysAdmin\Master\SettingDataFixedController@getSettingDataFixedGeneric');
               Route::post('sysadmin/master/save-data-ruangan','SysAdmin\Master\MasterController@saveMasterRuangan');
+              Route::post('sysadmin/master/save-data-kamar','SysAdmin\Master\MasterController@saveMasterKamar');
+              Route::get('sysadmin/master/get-data-qtybed','SysAdmin\Master\MasterController@getQTYBedValidation');
+              Route::post('sysadmin/master/save-data-tempattidur','SysAdmin\Master\MasterController@saveMasterTempatTidur');
               // });
             // Route::group(['prefix' => 'general'], function () {
                 // GET //
@@ -2799,6 +2802,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
                 Route::get('sysadmin/master/replace-isi-table', 'SysAdmin\Master\MasterController@replaceTableField');
                 Route::get('sysadmin/master/get-data-produk', 'SysAdmin\Master\MasterController@getListProduk');
                 Route::get('sysadmin/master/get-data-ruangan', 'SysAdmin\Master\MasterController@getLoadRuanganDll');
+                Route::get('sysadmin/master/get-data-kamar', 'SysAdmin\Master\MasterController@getLoadKamarDll');
+                Route::get('sysadmin/master/get-data-tempattidur', 'SysAdmin\Master\MasterController@getLoadTempatTidurDll');
                 Route::get('sysadmin/master/get-combo-master','SysAdmin\Master\MasterController@getComboMaster');
                 Route::get('sysadmin/master/get-produkbyid', 'SysAdmin\Master\MasterController@getProdukbyId');
                 Route::get('sysadmin/master/get-jenis-produk', 'SysAdmin\Master\MasterController@getjenisproduk');
@@ -2863,6 +2868,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
                 Route::post('sysadmin/master/save-siklus-gizi', 'SysAdmin\Master\MasterController@saveSiklusGizi');
                 Route::post('sysadmin/master/delete-siklus-gizi', 'SysAdmin\Master\MasterController@deleteSiklusGizi');
                 Route::post('sysadmin/master/save-statusenabled-produk', 'SysAdmin\Master\MasterController@UpdateStatusEnabledProduk');
+                Route::post('sysadmin/master/save-statusenabled-ruangan', 'SysAdmin\Master\MasterController@UpdateStatusEnabledRuangan');
+                Route::post('sysadmin/master/save-statusenabled-kamar', 'SysAdmin\Master\MasterController@UpdateStatusEnabledKamar');
                 Route::post('sysadmin/master/save-data-produk', 'SysAdmin\Master\MasterController@saveDataProduk');
                 Route::post('sysadmin/master/save-kelompok-produk-bpjs', 'SysAdmin\Master\MasterController@SaveKelompokProduk');
                 Route::post('sysadmin/master/save-konversi-satuan', 'SysAdmin\Master\MasterController@SaveKonversiSatuan');

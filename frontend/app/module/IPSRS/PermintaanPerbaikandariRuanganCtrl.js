@@ -66,7 +66,7 @@ define(['initialize'], function (initialize) {
                 medifirstService.getPart("sysadmin/general/get-combo-pegawai", true, true, 20).then(function (data) {
                     $scope.listPelapor = data;
                 }); 
-                medifirstService.getPart("sysadmin/general/get-ruangan-part2", true, true, 20).then(function (data) {
+                medifirstService.get("sysadmin/general/get-ruangan-part3", true, true, 20).then(function (data) {
                     $scope.listRuangan = data;
                 });  
                 medifirstService.get('ipsrs/get-ruangan',true).then(function (dat) {

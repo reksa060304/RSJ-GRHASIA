@@ -898,6 +898,8 @@ define(['initialize'], function (initialize) {
                 }
 
                 medifirstService.post('ipsrs/save-pengerjaan-permohonan',objSave).then(function(e) {
+                    $scope.item = {}
+                    $scope.popupPengerjaan.close()
                     init();
                 })    
             }

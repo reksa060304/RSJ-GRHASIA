@@ -4696,26 +4696,34 @@ class GeneralController extends ApiController
 //                    );
 //                $i = $i+1;
 //            }
-
-            $pelapor = StrukPlanning::where('norec',$norecHead2)->first();
-            $ruangan = \DB::table('ruangan_m')->where('id',$ruanganHead2)->first();
-            $ruanganTujuan = \DB::table('ruangan_m')->where('id',$ruangtujuanHead2)->first();
-            $jenispekerjaan =  \DB::table('jenispekerjaan_m')->where('id',$jenispekerjaan)->select('reportdisplay')->first();
-            $secret_token = "5528647994:AAHqBykIdioFfxa-0oVdGQDpYs9jWDOKZWQ";
-            $telegram_id = '-1001762536697';//'-498979335';
-            $url = "https://api.telegram.org/bot" . $secret_token . "/sendMessage?parse_mode=html&chat_id=" . $telegram_id;
-            $url = $url . "&text=" . urlencode("✅ Laporan Baru: <b>Permohonan Perbaikan PDTI </b> \n\n Ruangan / area: <b>".$ruangan->namaruangan.
-                    "</b>  \n Pelapor: <b>".$pelapor->pelapor. "</b>  \n Jenis Kerusakan: <b>".$jenispekerjaan->reportdisplay."</b>  \n Laporan Kerusakan: <b>".$rincianHead2.
-                    "</b>");
-            // return $url;
-            $ch = curl_init();
-            $optArray = array(
-                CURLOPT_URL => $url,
-                CURLOPT_RETURNTRANSFER => true
-            );
-            curl_setopt_array($ch, $optArray);
-            $result = curl_exec($ch);
-            curl_close($ch);
+                
+                $tele= false;
+                $cobainnn= '';
+                $isAktif = \DB::table('settingdatafixed_m')
+                ->where('namafield', 'TelegramPerbaikanPDTI')->where('statusenabled', true)->get();
+                
+                if (count($isAktif) > 0) {
+                $cobainnn="aktif";
+                $pelapor = StrukPlanning::where('norec',$norecHead2)->first();
+                $ruangan = \DB::table('ruangan_m')->where('id',$ruanganHead2)->first();
+                $ruanganTujuan = \DB::table('ruangan_m')->where('id',$ruangtujuanHead2)->first();
+                $jenispekerjaan =  \DB::table('jenispekerjaan_m')->where('id',$jenispekerjaan)->select('reportdisplay')->first();
+                $secret_token = "5528647994:AAHqBykIdioFfxa-0oVdGQDpYs9jWDOKZWQ";
+                $telegram_id = '-1001762536697';//'-498979335';
+                $url = "https://api.telegram.org/bot" . $secret_token . "/sendMessage?parse_mode=html&chat_id=" . $telegram_id;
+                $url = $url . "&text=" . urlencode("✅ Laporan Baru: <b>Permohonan Perbaikan PDTI </b> \n\n Ruangan / area: <b>".$ruangan->namaruangan.
+                        "</b>  \n Pelapor: <b>".$pelapor->pelapor. "</b>  \n Jenis Kerusakan: <b>".$jenispekerjaan->reportdisplay."</b>  \n Laporan Kerusakan: <b>".$rincianHead2.
+                        "</b>");
+                // return $url;
+                $ch = curl_init();
+                $optArray = array(
+                    CURLOPT_URL => $url,
+                    CURLOPT_RETURNTRANSFER => true
+                );
+                curl_setopt_array($ch, $optArray);
+                $result = curl_exec($ch);
+                curl_close($ch);
+            }
 
             $transStatus = 'true';
         } catch (\Exception $e) {
@@ -4729,7 +4737,8 @@ class GeneralController extends ApiController
             DB::commit();
             $result = array(
                 "status" => 201,
-//                "data" => $newPJT,
+                // "data" => $isAktif,
+                "hehe"=> $cobainnn,
                 "as" => 'dy@epic',
             );
         } else {
@@ -4770,7 +4779,7 @@ class GeneralController extends ApiController
         }
 
         $data = DB::select(DB::raw("
-        SELECT stp.norec, rg.namaruangan, stp.tglplanning, pg.nama, stp.startdate, stp.duedate, stp.rincianexecuteplanning_askep, stp.pelapor, stp.deskripsiplanning, stp.keteranganverifikasi, sttp.namaexternal,stp.signdate, jpk.reportdisplay, stp.worklist, stp.keteranganverifikasi, pg2.nama as namainspektor, pg3.nama as namapelapor,
+        SELECT rg.reportdisplay as namaruangan, stp.norec, stp.tglplanning, pg.nama, stp.startdate, stp.duedate, stp.rincianexecuteplanning_askep, stp.pelapor, stp.deskripsiplanning, stp.keteranganverifikasi, sttp.namaexternal,stp.signdate, jpk.reportdisplay, stp.worklist, stp.keteranganverifikasi, pg2.nama as namainspektor, pg3.nama as namapelapor,
                 sttp.reportdisplay as statuspekerjaan
             FROM strukplanning_t as stp
             INNER JOIN ruangan_m as rg on rg.id = stp.objectruanganfk

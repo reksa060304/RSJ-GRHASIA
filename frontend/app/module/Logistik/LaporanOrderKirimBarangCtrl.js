@@ -14,6 +14,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             function LoadCombo(){
                 medifirstService.get("logistik/get-combo-logistik?", true).then(function (dat) {                                                   
                     $scope.listNoOrder = dat.data.noorder;
+                    $scope.listRuangOrder = dat.data.ruanganall
+                    $scope.listProduk = dat.data.produk
                 });
             }
 
@@ -24,14 +26,23 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 if($scope.item.noorder != undefined && $scope.item.noorder != ''){
                     noorder = $scope.item.noorder.noorder
                 }
-                
+                var ruangorder = ''
+                if ($scope.item.ruangorder != undefined && $scope.item.ruangorder != '') {
+                    ruangorder = $scope.item.ruangorder.id
+                }
+                var produk = ''
+                if ($scope.item.produk != undefined && $scope.item.produk != '') {
+                    produk = $scope.item.produk.id
+                }
                 var tglawal = moment($scope.item.tglAwal).format('YYYY-MM-DD HH:mm');
                 var tglakhir = moment($scope.item.tglAkhir).format('YYYY-MM-DD HH:mm');
                 console.log($scope.item.tglAkhir)
                 medifirstService.get("logistik/get-rekap-order-kirim-barang?" +
                     "tglAwal=" + tglawal +
                     "&tglAkhir=" + tglakhir +
-                    "&noorder=" + noorder
+                    "&noorder=" + noorder+
+                    "&produk=" + produk+
+                    "&ruangorder=" + ruangorder
                     , true).then(function (dat) {
                         $scope.isRouteLoading = false;
                         var datas = dat.data.data
