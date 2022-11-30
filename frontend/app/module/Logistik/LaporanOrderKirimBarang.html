@@ -45,6 +45,26 @@
                             k-data-text-field="'noorder'" k-data-value-field="'norec'" k-filter="'contains'"
                             k-auto-bind="false" k-data-source="listNoOrder" />
                     </div>
+                    <div class="grid_2">
+                        <label c-label item="item" c-label-text="Ruang Pengorder"real></label>
+                        <input style="width: 100%;" kendo-combo-box k-ng-model="item.ruangorder"
+                            k-data-text-field="'namaruangan'" k-data-value-field="'id'" k-filter="'contains'"
+                            k-auto-bind="false" k-data-source="listRuangOrder" />
+                    </div>
+                    <div class="grid_2">
+                        <label c-label item="item" c-label-text="Produk" real></label>
+                        <input style="width: 100%;" kendo-combo-box k-ng-model="item.produk"
+                            k-data-text-field="'namaproduk'" k-data-value-field="'id'" k-filter="'contains'"
+                            k-auto-bind="false" k-data-source="listProduk" />
+                    </div>
+                    
+                </div>
+                
+
+
+            </div>
+            <div class="grid_4">
+                <div class="grid_12" style="margin-top: 50px;">
                     <div class="grid_2" style="margin-top: 18px;">
                         <button class="c-button" ng-click="cariFilter()">Cari</button>
                     </div>
@@ -52,8 +72,7 @@
                         <button class="c-button" ng-click="cetakBlade()">Cetak</button>
                     </div>
                 </div>
-
-
+                
             </div>
             <div class="grid_12" style="margin-top: 20px;">
                 <div class="grid_12 borderBox">

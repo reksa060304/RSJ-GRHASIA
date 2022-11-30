@@ -8511,6 +8511,9 @@ class LogistikController extends ApiController{
         if(isset($request['produkfk']) && $request['produkfk']!="" && $request['produkfk']!="undefined"){
             $data = $data->where('kp.objectprodukfk','=', $request['produkfk']);
         }
+        if(isset($request['ruangorder'])){
+            $data = $data->where('ru.id',$request['ruangorder']);
+        }
 //        $data = $data->distinct();
         $data = $data->where('sp.statusenabled',true);
         $data = $data->where('sp.objectkelompoktransaksifk',34);
@@ -8585,6 +8588,9 @@ class LogistikController extends ApiController{
         }
         if(isset($request['produkfk']) && $request['produkfk']!="" && $request['produkfk']!="undefined"){
             $data2 = $data2->where('kp.objectprodukfk','=', $request['produkfk']);
+        }
+        if(isset($request['ruangorder'])){
+            $data2 = $data2->where('ru.id',$request['ruangorder']);
         }
 //        $data2 = $data2->distinct();
         $data2 = $data2->where('sp.statusenabled',true);
@@ -14640,9 +14646,17 @@ class LogistikController extends ApiController{
         $tglAkhir = $request['tglAkhir'];
         $noorder = $request['noorder'];
         $searchnoorder = '';
+        $searchruangorder = '';
+        $searchproduk = '';
 
         if(isset($request['noorder']) && $request['noorder'] != '' && $request['noorder'] != null){
             $searchnoorder = "and so.noorder = '".$noorder."'";
+        }
+        if(isset($request['ruangorder']) && $request['ruangorder'] != '' && $request['ruangorder'] != null){
+            $searchruangorder = "and ruorder.id = '".$request['ruangorder']."'";
+        }
+        if(isset($request['produk']) && $request['produk'] != '' && $request['produk'] != null){
+            $searchproduk = "and pr.id = '".$request['produk']."'";
         }
 
         $data = \DB::select(DB::raw("select ruanganorder, ruangankirim, tglorder, tglkirim, nokirim, namaproduk, satuanstandar, jumlahorder, sum(jumlahkirim) jumlahkirim
@@ -14666,6 +14680,8 @@ class LogistikController extends ApiController{
         and so.tglorder::date between '$tglAwal' and '$tglAkhir' and so.noorder ilike 'OTRF%'
         and op.statusenabled = true and op.kdprofile = 30
         $searchnoorder
+        $searchruangorder
+        $searchproduk
         group by ruorder.namaruangan, rukirim.namaruangan, so.tglorder, skm.tglkirim, skm.nokirim, pr.namaproduk, ss.satuanstandar, so.norec, op.qtyproduk, krp.qtyproduk
         order by skm.nokirim
         ) as x group by ruanganorder, ruangankirim, tglorder, tglkirim, nokirim, namaproduk, satuanstandar, jumlahorder
