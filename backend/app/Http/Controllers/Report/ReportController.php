@@ -2434,7 +2434,7 @@ class ReportController extends ApiController{
         $nosts = $request['nosts'];
 
         $detail = DB::select(DB::raw("select 
-        string_agg(headersts.namapasien, ',') namapasien, sts.totalsetoran, headersts.carabayarfk, sts.tglpenerimaan, stsd.kdrekening, stsd.nomer, stsd.uraian, stsd.vol, stsd.kolom1, stsd.kolom2, sts.nosts, sts.terbilang
+        string_agg(headersts.namapasien, ',') namapasien, sts.totalsetoran, headersts.carabayarfk, to_char(sts.tglpenerimaan, 'DD-MM-YYYY') tglpenerimaan, stsd.kdrekening, stsd.nomer, stsd.uraian, stsd.vol, stsd.kolom1, stsd.kolom2, sts.nosts, sts.terbilang
         from 
         surattandasetoran_t as sts 
         inner join surattandasetorandetail_t stsd on stsd.objectstsfk = sts.nosts
@@ -2450,7 +2450,7 @@ class ReportController extends ApiController{
                     where  sts.norec = ssc.objectstsfk
         ) headersts on true
         where sts.nosts = '$nosts'
-		group by stsd.nourut, sts.totalsetoran, headersts.carabayarfk, sts.tglpenerimaan, stsd.kdrekening, stsd.nomer, stsd.uraian, stsd.vol, stsd.kolom1, stsd.kolom2, sts.nosts, sts.terbilang
+		group by stsd.nourut, sts.totalsetoran, headersts.carabayarfk, to_char(sts.tglpenerimaan, 'DD-MM-YYYY'), stsd.kdrekening, stsd.nomer, stsd.uraian, stsd.vol, stsd.kolom1, stsd.kolom2, sts.nosts, sts.terbilang
         order by stsd.nourut"));
         
         $result = array(
@@ -2460,6 +2460,30 @@ class ReportController extends ApiController{
 
         $pageWidth = 900;
         return view('report.spj.cetakstspdf',compact('pageWidth', 'detail'));
+    }
+
+    public function getCetakSTSManualPdf(Request $request){
+        $nosts = $request['nosts'];
+
+        $detail = DB::select(DB::raw("select to_char(sts.tglpenerimaan, 'DD-MM-YYYY') tglpenerimaan, sts.nosts, sts.totalsetoran, sts.terbilang, sts.keterangan,
+        stsd.*
+        from surattandasetoran_t sts
+        inner join surattandasetorandetail_t stsd on sts.nosts = stsd.objectstsfk
+        where sts.kdprofile = 30
+        and sts.statusenabled = true
+        and stsd.kdprofile = 30
+        and stsd.statusenabled = true
+        and sts.ismanual = true
+        and sts.nosts = '$nosts'
+        order by nourut"));
+        
+        $result = array(
+            'data' => $detail,
+            'message' => '@epic',
+        );
+
+        $pageWidth = 900;
+        return view('report.spj.cetakstsmanualpdf',compact('pageWidth', 'detail'));
     }
 
     public function getCetakSTSKeuangan(Request $request){

@@ -1,5 +1,6 @@
-define(['initialize'], function (initialize) {
+define(['initialize', 'Configuration'], function (initialize, configuration) {
     'use strict';
+    var baseTransaksi = configuration.baseApiBackend;
     initialize.controller('STSManualCtrl', ['$scope', 'DateHelper', '$http', '$state', 'MedifirstService',
         function ($scope, dateHelper, $http, $state, medifirstService) {
             //Inisial Variable   
@@ -182,6 +183,11 @@ define(['initialize'], function (initialize) {
 
             $scope.tambahsts = function () {
                 $scope.popUpTambahSTS.center().open()
+            }
+
+            $scope.cetakpdf = function(){
+                console.log($scope.selectedData2)
+                window.open(baseTransaksi + "report/get-cetak-sts-manual-pdf?nosts="+$scope.selectedData2[0].nosts, '_blank');
             }
 
             $scope.simpanSTS = function () {
