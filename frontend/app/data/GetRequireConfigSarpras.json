@@ -89,6 +89,10 @@
             "urlDep": "module/Farmasi/MonitoringApotikOnlineCtrl"     
         },
         {
+            "nameDep": "ReferensiVclaimCtrl",
+            "urlDep": "module/Farmasi/ReferensiVclaimCtrl"     
+        },
+        {
             "nameDep": "DaftarPenangananKeluhanPelangganCtrl",
             "urlDep": "module/Humas/DaftarPenangananKeluhanPelangganCtrl"
         },

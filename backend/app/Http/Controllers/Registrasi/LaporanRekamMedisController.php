@@ -211,11 +211,7 @@ class LaporanRekamMedisController extends   ApiController
             $kdListPelayanan []=  (int)$items;
         }
         $dataProduk = \DB::table('produk_m as pro')
-            ->leftJoin('detailjenisproduk_m as djp','djp.id','=','pro.objectdetailjenisprodukfk')
-            ->leftJoin('jenisproduk_m as jp','jp.id','=','djp.objectjenisprodukfk')
-            ->leftJoin('kelompokproduk_m as kp','kp.id','=','jp.objectkelompokprodukfk')
-            ->select('pro.id as idproduk','pro.namaproduk','djp.id as iddetail','djp.detailjenisproduk',
-                'jp.id as idjenis','jp.jenisproduk','jp.objectkelompokprodukfk','kp.kelompokproduk')
+            ->select('pro.id as idproduk','pro.namaproduk')
             ->where('pro.kdprofile', $idProfile)
             ->where('pro.statusenabled',true)
             ->orderBy('pro.namaproduk');

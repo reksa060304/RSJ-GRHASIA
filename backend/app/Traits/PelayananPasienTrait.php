@@ -359,6 +359,20 @@ Trait PelayananPasienTrait
       
         return $set;
     }
+    protected function getIdConsumerApotikOnline(){
+ 
+        $set = SettingDataFixed::where('namafield', 'idConsumerApotikOnline')
+                     ->where('kdprofile',$this->getKdProfile())->first()->nilaifield;
+    
+         return $set;
+     }
+     protected function getPasswordConsumerApotikOnline(){
+          
+        $set = SettingDataFixed::where('namafield', 'PasswordConsumerApotikOnline')
+                     ->where('kdprofile',$this->getKdProfile())->first()->nilaifield;
+       
+         return $set;
+     }
     protected function getLinkAplicare(){
         $statusBridgingProduction = SettingDataFixed::where('namafield', 'isBridgingProduction')->first();
         $isTemporaryBrigding = SettingDataFixed::where('namafield', 'isTemporaryBrigding')->first();
@@ -410,5 +424,9 @@ Trait PelayananPasienTrait
             ->where('kdprofile',$this->getKdProfile())->first();
         return $set->nilaifield;
     }
-    
+    protected function userKeyApotikOnline(){
+        $set = SettingDataFixed::where('namafield', 'userkeyApotikOnline')
+            ->where('kdprofile',$this->getKdProfile())->first();
+        return $set->nilaifield;
+    }
 }

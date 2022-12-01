@@ -443,6 +443,29 @@
     ]
   },
   {
+    "name": "ApotikOnlineTools.ReferensiVclaim",
+    "url": "/ReferensiVclaim",
+    "templateurl": "module/Farmasi/ReferensiVclaim.html",
+    "controller": "ReferensiVclaimCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "BPJSToolsCtrl"
+      }
+    ]
+  },
+  {
     "name": "DaftarPenangananKeluhanPelanggan",
     "url": "/RGFmdGFyUGVuYW5nYW5hbktlbHVoYW5QZWxhbmdnYW4=",
     "templateurl": "module/Humas/DaftarPenangananKeluhanPelanggan.html",

@@ -38,6 +38,10 @@ define(['initialize'], function (initialize) {
             $scope.item.volgirobtn = 0 
             $scope.item.volsaldosutera = 0
             $scope.item.volklaimcovid = 0
+            $scope.item.voljumlahpenunjang = 0
+            $scope.item.jumlahpenunjang = 0
+            $scope.item.diklat = 0
+            $scope.item.voldiklat = 0
             $scope.item.terbilang = ''
 
             FormLoad();
@@ -194,6 +198,7 @@ define(['initialize'], function (initialize) {
                             terbilang: $scope.item.terbilang,
                             jumlahlain: $scope.item.jumlahlain,
                             jumlahranap: $scope.item.jumlahranap,
+                            jumlahpenunjang: $scope.item.jumlahpenunjang,
                             kendaraan: $scope.item.kendaraan,
                             akreditasi: $scope.item.akreditasi,
                             dendabpjs: $scope.item.dendabpjs,
@@ -205,8 +210,10 @@ define(['initialize'], function (initialize) {
                             girobtn: $scope.item.girobtn,
                             saldosutera: $scope.item.saldosutera,
                             klaimcovid: $scope.item.klaimcovid,
+                            diklat: $scope.item.diklat,
                             voljumlahlain: $scope.item.voljumlahlain,
                             voljumlahranap: $scope.item.voljumlahranap,
+                            voljumlahpenunjang: $scope.item.voljumlahpenunjang,
                             volkendaraan: $scope.item.volkendaraan,
                             volakreditasi: $scope.item.volakreditasi,
                             voldendabpjs: $scope.item.voldendabpjs,
@@ -218,6 +225,7 @@ define(['initialize'], function (initialize) {
                             volgirobtn: $scope.item.volgirobtn,
                             volsaldosutera: $scope.item.volsaldosutera,
                             volklaimcovid: $scope.item.volklaimcovid,
+                            voldiklat: $scope.item.voldiklat,
                         }
 
                         medifirstService.post('bendaharapenerimaan/save-sts-manual', objSave).then(function (dat) {});
@@ -311,6 +319,17 @@ define(['initialize'], function (initialize) {
                 }
             });
 
+            $scope.$watch('item.diklat', function (newValue, oldValue) {
+                if (newValue != oldValue) {
+                    $scope.item.jumlahpenunjang = parseFloat($scope.item.diklat)
+                }
+            });
+
+            $scope.$watch('item.voldiklat', function (newValue, oldValue) {
+                if (newValue != oldValue) {
+                    $scope.item.voljumlahpenunjang = parseFloat($scope.item.voldiklat)
+                }
+            });
 
             $scope.$watch('item.volkendaraan', function (newValue, oldValue) {
                 if (newValue != oldValue) {

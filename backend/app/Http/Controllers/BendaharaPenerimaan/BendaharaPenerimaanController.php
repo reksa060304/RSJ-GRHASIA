@@ -5132,8 +5132,8 @@ class BendaharaPenerimaanController extends ApiController {
         $STS->statusenabled = true;
         $STS->nosts = $nosts;
         $STS->tglpenerimaan = $request['tglsts'];
-        $STS->totalsetoran = $request['jumlahlain'] + $request['jumlahranap'];
-        $STS->totalsetoranpembulatan = $request['jumlahlain'] + + $request['jumlahranap'];
+        $STS->totalsetoran = $request['jumlahlain'] + $request['jumlahranap'] + $request['jumlahpenunjang'];
+        $STS->totalsetoranpembulatan = $request['jumlahlain'] + + $request['jumlahranap'] + $request['jumlahpenunjang'];
         $STS->terbilang = $request['terbilang'];
         $STS->objectpegawaifk = $iduser;
         $STS->keterangan = $request['uraian'];
@@ -5485,8 +5485,8 @@ class BendaharaPenerimaanController extends ApiController {
         $STSD->jenisdata = 'konten';
         $STSD->nomer = '02';
         $STSD->uraian = 'PENUNJANG';
-        $STSD->kolom2 = 0;
-        $STSD->vol = 0;
+        $STSD->kolom2 = $request['jumlahpenunjang'];
+        $STSD->vol = $request['voljumlahpenunjang'];
         $STSD->statusenabled = true;
         $STSD->objectstsfk = $nosts;
         $STSD->save();
@@ -5555,8 +5555,8 @@ class BendaharaPenerimaanController extends ApiController {
         $STSD->nourut = $newId;
         $STSD->jenisdata = 'konten';
         $STSD->uraian = 'DIKLAT';
-        $STSD->kolom1 = 0;
-        $STSD->vol = 0;
+        $STSD->kolom1 = $request['diklat'];
+        $STSD->vol = $request['voldiklat'];
         $STSD->statusenabled = true;
         $STSD->objectstsfk = $nosts;
         $STSD->save();
@@ -6071,7 +6071,7 @@ class BendaharaPenerimaanController extends ApiController {
         $STSD->nourut = $newId;
         $STSD->jenisdata = 'konten';
         $STSD->uraian = 'JUMLAH';
-        $STSD->kolom2 = $request['jumlahlain'] + $request['jumlahranap'];
+        $STSD->kolom2 = $request['jumlahlain'] + $request['jumlahranap'] + $request['jumlahpenunjang'];
         $STSD->statusenabled = true;
         $STSD->objectstsfk = $nosts;
         $STSD->save();

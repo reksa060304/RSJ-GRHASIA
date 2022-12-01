@@ -1,5 +1,6 @@
-define(['initialize'], function (initialize) {
+define(['initialize', 'Configuration'], function (initialize, configuration) {
     'use strict';
+    var baseTransaksi = configuration.baseApiBackend;
     initialize.controller('SuratTandaSetoranCtrl', ['$scope', 'DateHelper', '$http', '$state', 'MedifirstService',
         function ($scope, dateHelper, $http, $state, medifirstService) {
             //Inisial Variable   
@@ -233,6 +234,11 @@ define(['initialize'], function (initialize) {
                     actions.splice(actions.indexOf("Close"), 1);
                     $scope.popUpDaftarPenerimaan.setOptions({ actions: actions });
                 }
+            }
+
+            $scope.cetakpdf = function(){
+                console.log($scope.selectedData2)
+                window.open(baseTransaksi + "report/get-cetak-sts-pdf?nosts="+$scope.selectedData2[0].nosts, '_blank');
             }
 
             $scope.tutupPhoto = function () {
