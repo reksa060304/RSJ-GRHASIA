@@ -671,7 +671,6 @@ class IPSRSController extends ApiController
         DB::beginTransaction();
         $dataLogin = $request->all();
         $kdProfile = (int) $this->getDataKdProfile($request);
-        var_dump($request['strukplanning']['jeniskerusakan']);
         try {
 
             if ($request['norec'] == ''){
@@ -728,6 +727,7 @@ class IPSRSController extends ApiController
             $result = array(
                 "status" => 400,
 //                "data" => $newPJT,
+                    "e"=> $e->getLine().$e->getMessage(),
                 "as" => 'as@epic',
             );
         }
