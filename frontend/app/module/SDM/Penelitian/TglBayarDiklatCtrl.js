@@ -149,6 +149,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }
 
             $scope.setDefaultNominal = function () {
+                console.log($scope.item.jumlahBayarFix - $scope.item.totalFixBayar);
                 return $scope.item.jumlahBayarFix - $scope.item.totalFixBayar;
             }
 
@@ -186,83 +187,15 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
             var urlGetDataDetail = "";
             switch ($scope.dataParams.pageFrom) {
-                case "PembayaranTagihanLayananKasir":
-                    $scope.dataPrevPage = {
-                        noRecStrukPelayanan: $scope.dataParams.noRegistrasi,
-                        tipePembayaran: "tagihanPasien",
-                    }
-                    $scope.defaultPage = "DaftarPasienPulang";
-                    urlGetDataDetail = "kasir/get-data-pembayaran?noRecStrukPelayanan=" + $scope.dataParams.noRegistrasi + "&tipePembayaran=tagihanPasien";
-                    break;
-                case "PembayaranTagihanNonLayananKasir":
-                    $scope.dataPrevPage = {
-                        noRecStrukPelayanan: $scope.dataParams.noRegistrasi,
-                        tipePembayaran: "tagihanNonLayanan",
-                    }
-                    $scope.defaultPage = "DaftarNonLayananKasir";
-                    urlGetDataDetail = "kasir/get-data-pembayaran?noRecStrukPelayanan=" + $scope.dataParams.noRegistrasi + "&tipePembayaran=tagihanPasien";
-                    break;
-                case "InputTagihanNonLayanan":
-                    $scope.dataPrevPage = {
-                        noRecStrukPelayanan: $scope.dataParams.noRegistrasi,
-                        tipePembayaran: "tagihanNonLayanan",
-                    }
-                    $scope.defaultPage = "DaftarNonLayananKasir";
-                    urlGetDataDetail = "kasir/get-data-pembayaran?noRecStrukPelayanan=" + $scope.dataParams.noRegistrasi + "&tipePembayaran=tagihanPasien";
-                    break;
-                case "DaftarNonLayananKasir":
-                    $scope.dataPrevPage = {
-                        noRecStrukPelayanan: $scope.dataParams.noRegistrasi,
-                        tipePembayaran: "tagihanNonLayanan",
-                    }
-                    $scope.defaultPage = "DaftarNonLayananKasir";
-                    urlGetDataDetail = "kasir/get-data-pembayaran?noRecStrukPelayanan=" + $scope.dataParams.noRegistrasi + "&tipePembayaran=tagihanPasien";
-                    break;
-                case "DaftarPenjualanApotekKasir/terimaUmum":
-                    $scope.dataPrevPage = {
-                        noRecStrukPelayanan: $scope.dataParams.noRegistrasi,
-                        tipePembayaran: "tagihanNonLayanan",
-                    }
-                    $scope.defaultPage = "DaftarPenjualanApotekKasir/terimaUmum";
-                    urlGetDataDetail = "kasir/get-data-pembayaran?noRecStrukPelayanan=" + $scope.dataParams.noRegistrasi + "&tipePembayaran=tagihanPasien";
-                    break;
-
-                case "DaftarPenjualanApotekKasir/obatBebas":
-                    $scope.dataPrevPage = {
-                        noRecStrukPelayanan: $scope.dataParams.noRegistrasi,
-                        tipePembayaran: "tagihanNonLayanan",
-                    }
-                    $scope.defaultPage = "DaftarPenjualanApotekKasir/obatBebas";
-                    urlGetDataDetail = "kasir/get-data-pembayaran?noRecStrukPelayanan=" + $scope.dataParams.noRegistrasi + "&tipePembayaran=tagihanPasien";
-                    break;
-                case "PenyetoranDepositKasir":
-                    $scope.dataPrevPage = {
-                        noRegistrasi: $scope.dataParams.noRegistrasi,
-                        tipePembayaran: "depositPasien",
-                        jumlahBayar: $scope.dataParams.jumlahBayar
-                    }
-                    $scope.defaultPage = "DaftarPasienAktif";
-                    urlGetDataDetail = "kasir/get-data-pembayaran?noRegistrasi=" + $scope.dataParams.noRegistrasi + "&tipePembayaran=depositPasien&jumlahBayar=" + $scope.dataParams.jumlahBayar;
-                    break;
-                case "PenyetoranDepositKasirKembali":
-                    $scope.dataPrevPage = {
-                        noRegistrasi: $scope.dataParams.noRegistrasi,
-                        tipePembayaran: "PenyetoranDepositKasirKembali",
-                        jumlahBayar: $scope.dataParams.jumlahBayar
-                    }
-                    $scope.defaultPage = "DaftarPasienAktif";
-                    urlGetDataDetail = "kasir/get-data-pembayaran?noRegistrasi=" + $scope.dataParams.noRegistrasi + "&tipePembayaran=depositPasien&jumlahBayar=" + $scope.dataParams.jumlahBayar;
-                    break;
-                case "PembayaranPiutangKasir":
-                    $scope.dataPrevPage = {
-                        noRecStrukPelayanan: $scope.dataParams.noRegistrasi,
-                        tipePembayaran: "cicilanPasien",
-                        jumlahBayar: $scope.dataParams.jumlahBayar,
-                    }
-                    //$scope.defaultPage = "DaftarPasienPulangKasir";
-                    $scope.defaultPage = "DaftarPiutangKasir";
-                    urlGetDataDetail = "kasir/get-data-pembayaran?noRecStrukPelayanan=" + $scope.dataParams.noRegistrasi + "&tipePembayaran=cicilanPasien&jumlahBayar=" + $scope.dataParams.jumlahBayar;
-                    break;
+                case "PembayaranDiklat":
+                $scope.dataPrevPage = {
+                    noRecStrukPelayanan: $scope.dataParams.noRegistrasi,
+                    tipePembayaran: "PembayaranDiklat",
+					jumlahBayar: $scope.dataParams.jumlahBayar,
+                }
+                $scope.defaultPage = "PembayaranDiklat";
+                urlGetDataDetail = "diklat/get-data-pembayaran?noRecStrukPelayanan=" + $scope.dataParams.noRegistrasi + "&tipePembayaran=PembayaranDiklat&jumlahBayar=" + $scope.dataParams.jumlahBayar ;
+                break;
             }
 
             $q.all([
@@ -380,7 +313,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         if (virtual == true) return
 
 
-                        medifirstService.post('kasir/simpan-data-pembayaran', dataObjPost)
+                        medifirstService.post('diklat/simpan-data-pembayaran', dataObjPost)
                             .then(function (e) {
                             sendNotification(e.data.noSBM[0])
 
@@ -388,8 +321,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                     "nosbm": e.data.noSBM
                                 }
                                 $scope.item.noSbmBayar = e.data.noSBM[0]
-                                $scope.saveLogging('Pembayaran Tagihan', 'NoRegistrasi Pasien Daftar',
-                                    e.data.noReg, 'Pembayaran Tagihan No SBM - ' + $scope.item.noSbmBayar + ' pada No Registrasi ' + e.data.noReg)
+                                $scope.saveLogging('Pembayaran Tagihan', 'Tagihan Diklat',
+                                    e.data.noReg, 'Pembayaran Tagihan No SBM - ' + $scope.item.noSbmBayar)
                                 // save jurnal pembayaran 
                                 medifirstService.post('sysadmin/general/save-jurnal-pembayarantagihan', nosbm).then(function (res) {
 
@@ -698,13 +631,12 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 }
                 if ($scope.item.cetakanKasir.id == 3) {
 
-                    window.open(configuration.baseApiBackend + "report/diklat-kwitansi?norec=" + $scope.dataParams.noRegistrasi + '&strIdPegawai=' + user.namaLengkap);
+                    window.open(configuration.baseApiBackend + "report/diklat-kwitansi?norec=" + $scope.dataParams.noRegistrasi + '&strIdPegawai=' + user.namaLengkap + '&nosbm=' + $scope.item.noSbmBayar);
 
                 }
 
                 $scope.item.cetakanKasir = undefined;
                 $scope.popUpCetakanKwitansi.close();
-                $state.go("DaftarPenelitianEksternal", {});
             }
 
             $scope.Cetak = function () {

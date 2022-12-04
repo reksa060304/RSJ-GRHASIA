@@ -495,7 +495,7 @@ define(['initialize','Configuration'], function (initialize,configuration) {
 					toastr.warning('Data Belum Dipilih, Peringatan!');
 					return;
 				}
-                window.open(configuration.baseApiBackend + "report/diklat-kwitansi?norec=" + $scope.dataSbnSelected.norec_sp + '&strIdPegawai=' + $scope.dataSbnSelected.namaPenerima);
+                window.open(configuration.baseApiBackend + "report/diklat-kwitansi?norec=" + $scope.dataSbnSelected.norec_sp + '&strIdPegawai=' + medifirstService.getPegawaiLogin().namaLengkap + '&nosbm=' + $scope.dataSbnSelected.noSbm);
 			}
 
 			var HttpClient = function () {

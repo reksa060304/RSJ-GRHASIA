@@ -284,6 +284,10 @@
     {
       "nameDep": "DaftarPenerimaanKasirCtrl",
       "urlDep": "module/Kasir/DaftarPenerimaanKasirCtrl"
+    },
+    {
+      "nameDep": "PembayaranPiutangDiklatCtrl",
+      "urlDep": "module/SDM/Penelitian/PembayaranPiutangDiklatCtrl"
     }
   ]
 }

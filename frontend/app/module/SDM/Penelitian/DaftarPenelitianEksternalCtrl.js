@@ -7,9 +7,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.item = {};
             $scope.itemMa = {};
             $scope.isRouteLoading = false;
+            $scope.cetakkwd = false
             $scope.now = new Date();
             $scope.item.tahun = moment($scope.now).format('YYYY')
             $scope.item.bulan = moment($scope.now).format('MM')
+            $scope.strukpelayananpenjamin = '';
             var cachetglawal = "";
             if (cacheHelper.get('DaftarPenelitianEksternalCtrl')) {
                 $scope.item.tglawal = new moment(cacheHelper.get('DaftarPenelitianEksternalCtrl')[0]).format('YYYY-MM-DD 00:00');
@@ -174,7 +176,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.tagih = true
                 
                 
-                $scope.columnPenelitian = {
+                $scope.columnPenelitian2 = {
                     toolbar: ["excel"],
                     excel: {
                         fileName: "Data Penelitian Eksternal" + moment($scope.now).format('DD/MMM/YYYY'),
@@ -220,7 +222,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         {
                             "title": "Status Bayar",
                             "width": "50px",
-                            "template": "<span class='style-center'>#: nosbmlastfk != null || nosbklastfk != null  ? 'Lunas': 'Belum Bayar' #</span>"
+                            "template": "<span class='style-center'>#: nosbmlastfk != null ? 'Lunas': details.length > 0 && nosbmlastfk == null ? 'Belum Lunas': 'Belum Bayar' #</span>"
                         },
                         {
                             "field": "biayapenelitian",
@@ -229,11 +231,6 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             "template": "<span class='style-right'>{{formatRupiah('#: biayapenelitian #', 'Rp. ')}}</span>",
                             aggregates: ['sum'],
                             footerTemplate: "<span class='style-right'>{{formatRupiah('#: data.biayapenelitian.sum #', 'Rp. ')}}</span>",
-                        },
-                        {
-                            "field": "tglsbm",
-                            "title": "Tanggal Pembayaran",
-                            "width": "50px",
                         },
                         {
                             'command': [
@@ -531,7 +528,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }
 
             $scope.kl = function (current) {
-                toastr.info(current.norec + " Terpilih");
+                // toastr.info(current.norec + " Terpilih");
                 $scope.current = current.norec;
                 $scope.biayapenelitian = current.biayapenelitian;
                 $scope.keteranganlainnya = current.detailjenisproduk;
@@ -548,6 +545,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.count = current.count
                 $scope.tanggalmulai = current.tanggalmulai
                 $scope.noRegistrasi = current.noregistrasifk
+                $scope.strukpelayananpenjamin = current.norec_spp
                 if (medifirstService.getKelompokUser() == 'diklit') {
                     if (current.noregistrasifk != null) {
                         $scope.verif = false;
@@ -876,28 +874,113 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     toastr.error('Data Kegiatan Belum Dipilih', 'Info');
                     return;
                 }
-                if ($scope.statusBayar != null) {
-                    toastr.error("Informasi, Tagihan Sudah Lunas !")
-                    return;
-                    // var alertDialog = modelItemAkuntansi.showAlertDialog("Informasi",
-                    //     "Tagihan sudah Lunas", "Ok");
-
-                    // $mdDialog.show(alertDialog).then(function () {
-
-                    // });
-                } else {
-                    $scope.changePage2("TglPembayaranDiklat");
+                var norec = ""
+                if ($scope.strukpelayananpenjamin != null){
+                    norec = $scope.strukpelayananpenjamin
                 }
+                var totalsudahbayar = 0;
+                if ($scope.strukpelayananpenjamin != null) {
+                    norec = $scope.strukpelayananpenjamin
+                }
+                var data = {
+                    norec: norec,
+                    nostrukfk: $scope.norec_sp,
+                    totalbiaya: $scope.biayapenelitian,
+                    totalsudahpenjamin: $scope.biayapenelitian,
+                    totalsisaharusbayar: $scope.biayapenelitian,
+                    totalppenjamin: $scope.biayapenelitian,
+                    totalharusdibayar: $scope.biayapenelitian,
+                    totalsudahdibayar: totalsudahbayar,
+                    totalsisapiutang: $scope.biayapenelitian,
+                }
+                var objSave = {
+                    data: data
+                }
+                medifirstService.post('diklat/simpan-pleyanan-penjamin-diklat', objSave).then(function (data) {
+                    GetData()
+                    $scope.noRec = data.data.noRec
+                    if ($scope.statusBayar != null) {
+                        toastr.error("Informasi, Tagihan Sudah Lunas !")
+                        return;
+                        // var alertDialog = modelItemAkuntansi.showAlertDialog("Informasi",
+                        //     "Tagihan sudah Lunas", "Ok");
+
+                        // $mdDialog.show(alertDialog).then(function () {
+
+                        // });
+                    } else {
+                        $scope.changePage2("PembayaranPiutangDiklat");
+                    }
+                })
+                
             }
+            $scope.data2 = function (dataItem) {
+                for (var i = 0; i < dataItem.details.length; i++) {
+                    dataItem.details[i].no = i + 1
+                }
+                return {
+                    dataSource: new kendo.data.DataSource({
+                        data: dataItem.details,
+
+                    }),
+                    columns: [{
+                            "field": "no",
+                            "title": "No",
+                            "width": "3%",
+                        },
+                        {
+                            "field": "tglsbm",
+                            "title": "Tgl Bayar",
+                            "width": "25%",
+                            // "template": "<span class='style-center'>{{formatTanggal('#: tglpelayanan #')}}</span>"
+                        },
+
+                        {
+                            "field": "nosbm",
+                            "title": "No Sbm",
+                            "width": "40%",
+                            // "template": "<span class='style-center'>{{formatRupiah('#: hargasatuan #', 'Rp.')}}</span>"
+                        },
+                        {
+                            "field": "totaldibayar",
+                            "title": "Total dibayar",
+                            "width": "25%",
+                            "template": "<span class='style-right'>{{formatRupiah('#: totaldibayar #', 'Rp. ')}}</span>",
+                            attributes: {
+                                style: "text-align:right;"
+                            },
+                        },
+                        {
+                            'command': [
+                                {
+                                    text: "Kwitansi Diklat",
+                                    click: CetakKwD,
+                                }
+                            ],
+                            "width": 80
+                        },
+
+                    ]
+                }
+            };
             $scope.changePage2 = function (stateName) {
                 var obj = {
-                    pageFrom: "DaftarNonLayananKasir", //"PembayaranTagihanNonLayananKasir",
-                    noRegistrasi: $scope.noRegistrasi
+                    // pageFrom: "DaftarPembayaranDiklat", //"PembayaranTagihanNonLayananKasir",
+                    noRegistrasi: $scope.noRec
                 }
 
                 $state.go(stateName, {
                     dataPasien: JSON.stringify(obj)
                 });
+            }
+            function CetakKwD(e) {
+                e.preventDefault();
+                var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                if (dataItem == undefined) {
+                    toastr.warning('Data Belum Dipilih, Peringatan!');
+                    return;
+                }
+                window.open(configuration.baseApiBackend + "report/diklat-kwitansi?" + '&strIdPegawai=' + medifirstService.getPegawaiLogin().namaLengkap + '&nosbm=' + dataItem.nosbm);
             }
         }
     ]);

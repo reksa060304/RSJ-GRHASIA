@@ -390,7 +390,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     "item.email|ng-model|Email",
                 ];
                 //1948 detailjenisproduk dari diklat penelitian= 1948
-                if ($scope.djp == 1948 || $scope.djp == 1960 || $scope.djp == 1947) {
+                if ($scope.djp == 1960 || $scope.djp == 1947) {
                     if (gambar == undefined) {
                         toastr.error("Foto Wajib diisi !")
                         return;

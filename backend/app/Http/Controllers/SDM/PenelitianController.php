@@ -480,7 +480,7 @@ class PenelitianController extends ApiController {
         if (isset($request['kegiatandiklat']) && $request['kegiatandiklat'] != "") {
         $kegiatandiklat = "and sdmp.objectdetailjenisprodukfk = '$request[kegiatandiklat]'";
         }
-        $data = DB::select(DB::raw("SELECT
+        $data = DB::select(DB::raw("SELECT spp.norec as norec_spp,
             sdmp.norec,dk.diklatkategori,djp.detailjenisproduk,sdmp.objectprodukfk,sdmp.jumlahpeserta,
             sdmp.institusipendidikan,sdmp.tanggalmulai::date,sdmp.tanggalselesai::date,sdmp.biayapenelitian,
             sdmp.notelp,sdmp.hargasatuan,sdmp.qty, sp.isverifikasi,sp.nosbmlastfk,sp.nosbklastfk,
@@ -491,16 +491,28 @@ class PenelitianController extends ApiController {
                 left join diklatkategori_m dk on dk.id= sdmp.objectdiklatkategorifk
                 left join produk_m pr on pr.id= sdmp.objectprodukfk
                 left join strukpelayanan_t sp on sp.norec = sdmp.noregistrasifk
+                left join strukpelayananpenjamin_t spp on spp.nostrukfk = sp.norec
                 left join sdm_pesertadidik_t sdmpd on sdmpd.noregistrasifk = sdmp.norec
                 left join strukbuktipenerimaan_t sbm on sbm.norec = sp.nosbmlastfk
                 where sdmp.kdprofile = $kdProfile and sdmp.tanggalmulai::date between '$tglAwal'and '$tglAkhir' and sdmp.statusenabled = true
                 $user $Fakultas $statusbayar $kegiatandiklat $statusverif
-                group by sdmp.norec,dk.diklatkategori,djp.detailjenisproduk,sdmp.objectprodukfk,sdmp.jumlahpeserta,
+                group by sdmp.norec,dk.diklatkategori,djp.detailjenisproduk,sdmp.objectprodukfk,sdmp.jumlahpeserta,spp.norec,
             sdmp.institusipendidikan,sdmp.tanggalmulai::date,sdmp.tanggalselesai::date,sdmp.biayapenelitian,
             sdmp.notelp,sdmp.hargasatuan,sdmp.qty, sp.isverifikasi,sp.nosbmlastfk,sp.nosbklastfk,
             sp.norec,sdmp.noregistrasifk,sp.nostruk, sdmp.judulpeneltian, sdmp.namapengawas, sdmp.namapendamping,sbm.tglsbm
                 ")
         );
+        foreach ($data as $d) {
+            $detailss = DB::select(DB::raw("SELECT * from strukbuktipenerimaan_t sbm
+                where sbm.kdprofile = $kdProfile and sbm.nostrukfk=:norecStruk
+                order by sbm.tglsbm asc
+                "),
+                array(
+                    'norecStruk' => $d->norec_sp,
+                )
+            );
+            $d->details = $detailss;
+        }
         $IdPegawai = \DB::table('pegawai_m')->where('id', $request['modelid'])->get();
         $result = array(
         'datas'=>$data,
@@ -528,6 +540,7 @@ class PenelitianController extends ApiController {
         );
         $idlvl = $data[0]->idlevelpendidikan;
         $lvl = $data[0]->levelpendidikan;
+        
         $mahasiswaeksternal = \DB::table('sdm_pesertadidik_t as sdpd')
             ->select('sdpd.nama','jk.jeniskelamin','sdpd.nim','ru.namaruangan','pe.namalengkap')
             ->join('jeniskelamin_m as jk', 'jk.id', '=', 'sdpd.jeniskelaminfk')
