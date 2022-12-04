@@ -53,9 +53,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.clear();
 
             $scope.listStatusKlaim = [{
-                "id": 1, "nama": "Belum Verifikasi"
+                "id": 0, "nama": "Belum Verifikasi"
             }, {
-                "id": 2, "nama": "Sudah Verifikasi"
+                "id": 1, "nama": "Sudah Verifikasi"
             }];
 
             $scope.listJenisObat = [{
@@ -74,7 +74,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 var data = {
                     status: data.statusKlaim.id,
                     jenisobat: data.jenisobat.id,
-                    bulan: new moment(data.bulan).format('MM'),
+                    bulan: parseInt(new moment(data.bulan).format('MM')),
                     tahun: new moment(data.tahun).format('YYYY')
                 }
                 medifirstService.get("bridging/bpjs/get-monitoring-klaim-apotik-online?bulan="

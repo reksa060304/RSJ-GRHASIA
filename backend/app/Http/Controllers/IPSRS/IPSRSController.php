@@ -671,7 +671,6 @@ class IPSRSController extends ApiController
         DB::beginTransaction();
         $dataLogin = $request->all();
         $kdProfile = (int) $this->getDataKdProfile($request);
-        var_dump($request['strukplanning']['jeniskerusakan']);
         try {
 
             if ($request['norec'] == ''){
@@ -728,6 +727,7 @@ class IPSRSController extends ApiController
             $result = array(
                 "status" => 400,
 //                "data" => $newPJT,
+                    "e"=> $e->getLine().$e->getMessage(),
                 "as" => 'as@epic',
             );
         }
@@ -795,7 +795,14 @@ class IPSRSController extends ApiController
 
             if ($newCOA->objectkelompoktransaksifk == 151) {
                 //pdti
-                $norecHead2 = $newCOA->norec;
+                $tele= false;
+                $cobainnn= '';
+                $isAktif = \DB::table('settingdatafixed_m')
+                ->where('namafield', 'TelegramPerbaikanIPSRS')->where('statusenabled', true)->get();
+                
+                if (count($isAktif) > 0) {
+                    $cobainnn = "Aktif";
+                    $norecHead2 = $newCOA->norec;
                 $ruanganHead2 = $newCOA->objectruanganfk;
                 $ruangtujuanHead2 = $newCOA->objectruangantujuanfk;
                 $rincianHead2 = $newCOA->rincianexecuteplanning_askep;
@@ -819,9 +826,18 @@ class IPSRSController extends ApiController
                 curl_setopt_array($ch, $optArray);
                 $result = curl_exec($ch);
                 curl_close($ch);
+                }
+                
             } else if($newCOA->objectkelompoktransaksifk == 122){
                 //ipsrs
-                $norecHead2 = $newCOA->norec;
+                $tele= false;
+                $cobainnn= '';
+                $isAktif = \DB::table('settingdatafixed_m')
+                ->where('namafield', 'TelegramPerbaikanIPSRS')->where('statusenabled', true)->get();
+                
+                if (count($isAktif) > 0) {
+                    $cobainnn = "Aktif";
+                    $norecHead2 = $newCOA->norec;
                 $ruanganHead2 = $newCOA->objectruanganfk;
                 $ruangtujuanHead2 = $newCOA->objectruangantujuanfk;
                 $rincianHead2 = $newCOA->rincianexecuteplanning_askep;
@@ -846,8 +862,17 @@ class IPSRSController extends ApiController
                 curl_setopt_array($ch, $optArray);
                 $result = curl_exec($ch);
                 curl_close($ch);
+                }
+                
             } else if($newCOA->objectkelompoktransaksifk== 305){
-                $norecHead2 = $newCOA->norec;
+                $tele= false;
+                $cobainnn= '';
+                $isAktif = \DB::table('settingdatafixed_m')
+                ->where('namafield', 'TelegramPerbaikanIPSRS')->where('statusenabled', true)->get();
+                
+                if (count($isAktif) > 0) {
+                    $cobainnn = "Aktif";
+                    $norecHead2 = $newCOA->norec;
                 $ruanganHead2 = $newCOA->objectruanganfk;
                 $ruangtujuanHead2 = $newCOA->objectruangantujuanfk;
                 $rincianHead2 = $newCOA->rincianexecuteplanning_askep;
@@ -871,6 +896,8 @@ class IPSRSController extends ApiController
                 curl_setopt_array($ch, $optArray);
                 $result = curl_exec($ch);
                 curl_close($ch);
+                }
+                
             }
 
             $transStatus = 'true';

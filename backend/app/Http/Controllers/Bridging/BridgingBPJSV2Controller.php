@@ -550,7 +550,7 @@ class BridgingBPJSV2Controller extends ApiController
     public function getMonitoringKlaimApotikOnline(Request $request)
     {
         $kdProfile = $this->getDataKdProfile($request);
-        $headers = $this->getHeaderBPJSV2();
+        $headers = $this->getHeaderApotikOnline();
         $dataJsonSend = null;
         $methods = 'GET';
         //var_dump($this->getUrlBrigdingApotikOnline());
@@ -3030,6 +3030,35 @@ class BridgingBPJSV2Controller extends ApiController
             'signature' => $encodedSignature,
             'tStamp' => $tStamp,
             'user_key' =>  $this->userKeyBPJS(),
+        );
+        return $header;
+    }
+    function getHeaderApotikOnline($type = null)
+    {
+        $data = $this->getIdConsumerApotikOnline();
+
+        $secretKey = $this->getPasswordConsumerApotikOnline();
+        date_default_timezone_set('UTC');
+        $tStamp = strval(time() - strtotime('1970-01-01 00:00:00'));
+        $signature = hash_hmac('sha256', $data . "&" . $tStamp, $secretKey, true);
+
+        $encodedSignature = base64_encode($signature);
+
+        $header = array(
+            "Content-Type: Application/x-www-form-urlencoded",
+            "X-cons-id: " . (string)$data,
+            "X-signature: " . (string)$encodedSignature,
+            "X-timestamp: " . (string)$tStamp,
+            "user_key: " . $this->userKeyApotikOnline()
+            // 35f89b7e03c13f1ff62de0be77584945
+        );
+        $header['headers'] = $header;
+        $header['cons'] = array(
+            'data' => $data,
+            'secretKey' => $secretKey,
+            'signature' => $encodedSignature,
+            'tStamp' => $tStamp,
+            'user_key' =>  $this->userKeyApotikOnline(),
         );
         return $header;
     }

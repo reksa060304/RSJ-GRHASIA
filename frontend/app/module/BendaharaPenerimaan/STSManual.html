@@ -136,6 +136,35 @@
                         </div>
                         <div class="grid_12">
                             <div class="grid_4" style="text-align: left;margin-top: 15px;">
+                                PENUNJANG
+                            </div>
+                            <div class="grid_4" >
+                                <input c-text-box type="input" class="k-textbox" ng-model="item.jumlahpenunjang" disabled/>
+                            </div>
+                            <div class="grid_1" style="text-align: left;margin-top: 15px; text-align: right;">
+                                Vol
+                            </div>
+                            <div class="grid_3" >
+                                <input c-text-box type="input" class="k-textbox" ng-model="item.voljumlahpenunjang" disabled/>
+                            </div>
+                        </div>
+                        <div class="grid_12">
+                            <div class="grid_4" style="text-align: left;margin-top: 15px;">
+                                Diklat
+                            </div>
+                            <div class="grid_4" >
+                                <input c-text-box type="input" class="k-textbox" ng-model="item.diklat" ng-change="hitungJumlah"/>
+                            </div>
+                            <div class="grid_1" style="text-align: left;margin-top: 15px; text-align: right;">
+                                Vol
+                            </div>
+                            <div class="grid_3" >
+                                <input c-text-box type="input" class="k-textbox" ng-model="item.voldiklat"/>
+                            </div>
+                        </div>
+
+                        <div class="grid_12">
+                            <div class="grid_4" style="text-align: left;margin-top: 15px;">
                                 RAWAT INAP
                             </div>
                             <div class="grid_4" >
@@ -347,7 +376,10 @@
         <div class="grid_10" style="margin-top: 15px;">
             <div class="grid_8" ng-include='"../app/template/Shared/TemplateLoading"'></div>
             <div class="grid_4" style="float:right;">
-                <div class="grid_4">
+                <div class="grid_3">
+                    <button class="c-button" ng-click="cetakpdf()">Cetak PDF</button>
+                </div>
+                <div class="grid_3">
                     <button class="c-button" ng-click="tambahsts()">Tambah STS</button>
                 </div>
                 <div class="grid_3">

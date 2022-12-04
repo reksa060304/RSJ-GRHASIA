@@ -2430,6 +2430,62 @@ class ReportController extends ApiController{
         return view('report.spj.cetakrincianspp',compact('pageWidth', 'detail', 'terbilang', 'tgl', 'permen'));
     }
 
+    public function getCetakSTSPdf(Request $request){
+        $nosts = $request['nosts'];
+
+        $detail = DB::select(DB::raw("select 
+        string_agg(headersts.namapasien, ',') namapasien, sts.totalsetoran, headersts.carabayarfk, to_char(sts.tglpenerimaan, 'DD-MM-YYYY') tglpenerimaan, stsd.kdrekening, stsd.nomer, stsd.uraian, stsd.vol, stsd.kolom1, stsd.kolom2, sts.nosts, sts.terbilang
+        from 
+        surattandasetoran_t as sts 
+        inner join surattandasetorandetail_t stsd on stsd.objectstsfk = sts.nosts
+        inner join lateral(
+                    select 
+                        COALESCE(ps.namapasien ,sp.namapasien_klien) namapasien,sck.carabayarfk 
+                    from strukclosing_t sc
+                    inner join strukclosingkasir_t sck on sc.norec = sck.noclosingfk
+                    inner join ststosck_t as ssc on ssc.objectsckfk = sck.norec
+                    inner join strukbuktipenerimaan_t as sbm on sbm.noclosingfk = sc.norec
+                    inner join strukpelayanan_t as sp on sbm.nostrukfk = sp.norec				
+                    left join pasien_m as ps on ps.id = sp.nocmfk
+                    where  sts.norec = ssc.objectstsfk
+        ) headersts on true
+        where sts.nosts = '$nosts'
+		group by stsd.nourut, sts.totalsetoran, headersts.carabayarfk, to_char(sts.tglpenerimaan, 'DD-MM-YYYY'), stsd.kdrekening, stsd.nomer, stsd.uraian, stsd.vol, stsd.kolom1, stsd.kolom2, sts.nosts, sts.terbilang
+        order by stsd.nourut"));
+        
+        $result = array(
+            'data' => $detail,
+            'message' => '@epic',
+        );
+
+        $pageWidth = 900;
+        return view('report.spj.cetakstspdf',compact('pageWidth', 'detail'));
+    }
+
+    public function getCetakSTSManualPdf(Request $request){
+        $nosts = $request['nosts'];
+
+        $detail = DB::select(DB::raw("select to_char(sts.tglpenerimaan, 'DD-MM-YYYY') tglpenerimaan, sts.nosts, sts.totalsetoran, sts.terbilang, sts.keterangan,
+        stsd.*
+        from surattandasetoran_t sts
+        inner join surattandasetorandetail_t stsd on sts.nosts = stsd.objectstsfk
+        where sts.kdprofile = 30
+        and sts.statusenabled = true
+        and stsd.kdprofile = 30
+        and stsd.statusenabled = true
+        and sts.ismanual = true
+        and sts.nosts = '$nosts'
+        order by nourut"));
+        
+        $result = array(
+            'data' => $detail,
+            'message' => '@epic',
+        );
+
+        $pageWidth = 900;
+        return view('report.spj.cetakstsmanualpdf',compact('pageWidth', 'detail'));
+    }
+
     public function getCetakSTSKeuangan(Request $request){
         $tglAwal = $request['tglAwal'];
         $tglAkhir = $request['tglAkhir'];

@@ -2754,7 +2754,7 @@ class BendaharaPenerimaanController extends ApiController {
         select distinct sp.objectkelompoktransaksifk, sbm.norec norecsbm, sp.norec, sc.tglclosing, ru.namaruangan, ru.id idruangan, pr.namaproduk, pr.id idproduk, pp.isobat,
         (spd.qtyproduk * spd.hargasatuan * spd.qtyoranglast)::float4 as totaldibayarclosing,
         ru.objectdepartemenfk, sbmcr.objectcarabayarfk, sbm.totaldibayar as totaldibayarsbm, sc.noclosing, sc.tglclosing,
-        sck.totaldibayar as totaldibayarclosing,sck.carabayarfk, cb.carabayar, djp.detailjenisproduk, jpr.id as jenisproduk
+        sck.totaldibayar as totaldibayar,sck.carabayarfk, cb.carabayar, djp.detailjenisproduk, jpr.id as jenisproduk
         from strukclosingkasir_t as sck
         inner join strukclosing_t as sc on sc.norec = sck.noclosingfk
         inner join strukbuktipenerimaan_t as sbm on sbm.noclosingfk = sc.norec
@@ -2772,6 +2772,33 @@ class BendaharaPenerimaanController extends ApiController {
         left join ststosck_t as ssc on ssc.objectsckfk = sck.norec
         left join surattandasetoran_t as sts on sts.norec = ssc.objectstsfk
         where sbm.keteranganlainnya = 'Pembayaran Tagihan Non Layanan'
+        --and sts.statusenabled = true
+        and sc.noclosing IN('".implode("','",$noclosing)."')
+        
+        union all
+        
+        select distinct sp.objectkelompoktransaksifk, sbm.norec norecsbm, sp.norec, sc.tglclosing, ru.namaruangan, ru.id idruangan, pr.namaproduk, pr.id idproduk, pp.isobat,
+        sbm.totaldibayar as totaldibayarclosing,
+        ru.objectdepartemenfk, sbmcr.objectcarabayarfk, sbm.totaldibayar as totaldibayarsbm, sc.noclosing, sc.tglclosing,
+        sck.totaldibayar as totaldibayar,sck.carabayarfk, cb.carabayar, djp.detailjenisproduk, jpr.id as jenisproduk
+        from strukclosingkasir_t as sck
+        inner join strukclosing_t as sc on sc.norec = sck.noclosingfk
+        inner join strukbuktipenerimaan_t as sbm on sbm.noclosingfk = sc.norec
+        inner join strukpelayanan_t as sp on sbm.nostrukfk = sp.norec
+        inner join strukpelayanandetail_t as spd on sp.norec = spd.nostrukfk
+		inner join strukbuktipenerimaancarabayar_t sbmcr on sbmcr.nosbmfk = sbm.norec
+        inner join produk_m pr on pr.id=spd.objectprodukfk
+        inner join carabayar_m as cb on cb.id = sck.carabayarfk
+        left join detailjenisproduk_m djp on djp.id = pr.objectdetailjenisprodukfk
+        left join jenisproduk_m jpr on jpr.id = djp.objectjenisprodukfk
+        left join ruangan_m as ru on ru.id = spd.objectruanganasalfk
+        left join pasiendaftar_t as pd on sp.noregistrasifk = pd.norec
+        left join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+        left join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
+        left join ststosck_t as ssc on ssc.objectsckfk = sck.norec
+        left join surattandasetoran_t as sts on sts.norec = ssc.objectstsfk
+        where sbm.keteranganlainnya = 'Pembayaran Diklat'
+        and sck.carabayarfk = 3
         --and sts.statusenabled = true
         and sc.noclosing IN('".implode("','",$noclosing)."')"));
        
@@ -5132,8 +5159,8 @@ class BendaharaPenerimaanController extends ApiController {
         $STS->statusenabled = true;
         $STS->nosts = $nosts;
         $STS->tglpenerimaan = $request['tglsts'];
-        $STS->totalsetoran = $request['jumlahlain'] + $request['jumlahranap'];
-        $STS->totalsetoranpembulatan = $request['jumlahlain'] + + $request['jumlahranap'];
+        $STS->totalsetoran = $request['jumlahlain'] + $request['jumlahranap'] + $request['jumlahpenunjang'];
+        $STS->totalsetoranpembulatan = $request['jumlahlain'] + + $request['jumlahranap'] + $request['jumlahpenunjang'];
         $STS->terbilang = $request['terbilang'];
         $STS->objectpegawaifk = $iduser;
         $STS->keterangan = $request['uraian'];
@@ -5485,8 +5512,8 @@ class BendaharaPenerimaanController extends ApiController {
         $STSD->jenisdata = 'konten';
         $STSD->nomer = '02';
         $STSD->uraian = 'PENUNJANG';
-        $STSD->kolom2 = 0;
-        $STSD->vol = 0;
+        $STSD->kolom2 = $request['jumlahpenunjang'];
+        $STSD->vol = $request['voljumlahpenunjang'];
         $STSD->statusenabled = true;
         $STSD->objectstsfk = $nosts;
         $STSD->save();
@@ -5555,8 +5582,8 @@ class BendaharaPenerimaanController extends ApiController {
         $STSD->nourut = $newId;
         $STSD->jenisdata = 'konten';
         $STSD->uraian = 'DIKLAT';
-        $STSD->kolom1 = 0;
-        $STSD->vol = 0;
+        $STSD->kolom1 = $request['diklat'];
+        $STSD->vol = $request['voldiklat'];
         $STSD->statusenabled = true;
         $STSD->objectstsfk = $nosts;
         $STSD->save();
@@ -6071,7 +6098,7 @@ class BendaharaPenerimaanController extends ApiController {
         $STSD->nourut = $newId;
         $STSD->jenisdata = 'konten';
         $STSD->uraian = 'JUMLAH';
-        $STSD->kolom2 = $request['jumlahlain'] + $request['jumlahranap'];
+        $STSD->kolom2 = $request['jumlahlain'] + $request['jumlahranap'] + $request['jumlahpenunjang'];
         $STSD->statusenabled = true;
         $STSD->objectstsfk = $nosts;
         $STSD->save();

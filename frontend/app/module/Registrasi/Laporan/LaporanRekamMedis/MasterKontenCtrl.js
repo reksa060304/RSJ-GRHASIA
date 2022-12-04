@@ -132,6 +132,12 @@ define(['initialize'], function (initialize) {
                     },
                     {
                         
+                        "field": "id",
+                        "title": "Kode",
+                        "width": "100px",
+                    },
+                    {
+                        
                         "field": "init",
                         "title": "No Konten",
                         "width": "100px",
