@@ -507,7 +507,8 @@ define(['initialize'], function (initialize) {
                         objectpasienfk: norec_apd,
                         tglpendaftaran: $scope.item.tglRegistrasi,
                         objectdiagnosatindakanfk: $scope.item.diagnosaTindakan.id,
-                        keterangantindakan: ketTindakans
+                        keterangantindakan: ketTindakans,
+                        noregistrasi: $scope.item.noregistrasi
                     }
 
                     $scope.objSave =
@@ -600,7 +601,8 @@ define(['initialize'], function (initialize) {
                         tglinputdiagnosa: tglinput,
                         keterangan: keterangan,
                         kasusbaru: $scope.item.kasusbaru,
-                        kasuslama: $scope.item.kasuslama
+                        kasuslama: $scope.item.kasuslama,
+                        noregistrasi: $scope.item.noregistrasi
                     }
 
                     $scope.objSave =

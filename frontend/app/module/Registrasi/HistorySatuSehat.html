@@ -1,0 +1,1492 @@
+<style type="text/css">
+    .json-viewer {
+        margin-top: 26px;
+        padding: 2em 0 2em 5em;
+        background: lightgrey;
+    }
+
+    .k-grid .k-grid-header .k-header .k-link {
+        height: auto;
+    }
+
+    .k-grid .k-grid-header .k-header {
+        white-space: normal;
+    }
+
+    .k-grid .k-grid-header .k-header {
+        text-align: center;
+    }
+
+    :root {
+        --twitter: rgba(87, 185, 234, 0.514);
+        --body-color: #f9f9f9;
+        --title-grey: #a9abac;
+        --background-grey: #f0f0f0;
+        --medium-grey: #ddd;
+        --light-grey: #eee;
+        --white: #fff;
+        --border: hsl(0deg 0% 86%);
+        --placeload-nuance-from: rgb(0 0 0 / 7%);
+        --placeload-nuance-to: rgb(0 0 0 / 15%);
+        --placeload-dark-nuance-from: rgb(255 255 255 / 15%);
+        --placeload-dark-nuance-to: rgb(255 255 255 / 24%);
+        --color-orange-jmt: #ff7500;
+        --color-red-jmt: #cd001a;
+        --sidebar-h: 217;
+        --sidebar-s: 26%;
+        --sidebar-l: 27%;
+        --sidebar: hsl(var(--sidebar-h) var(--sidebar-s) var(--sidebar-l));
+        --primary-h: 153;
+        --primary-s: 48%;
+        --primary-l: 49%;
+        --primary: hsl(var(--primary-h) var(--primary-s) var(--primary-l));
+        --primary-grey-h: 0;
+        --primary-grey-s: 0%;
+        --primary-grey-l: 80%;
+        --primary-grey: hsl(var(--primary-grey-h) var(--primary-grey-s) var(--primary-grey-l));
+        --secondary-h: 222;
+        --secondary-s: 82%;
+        --secondary-l: 56%;
+        --secondary: hsl(var(--secondary-h) var(--secondary-s) var(--secondary-l));
+        --purple-h: 261;
+        --purple-s: 32%;
+        --purple-l: 55%;
+        --purple: hsl(var(--purple-h) var(--purple-s) var(--purple-l));
+        --blue-h: 198;
+        --blue-s: 100%;
+        --blue-l: 61%;
+        --blue: hsl(var(--blue-h) var(--blue-s) var(--blue-l));
+        --red-h: 345;
+        --red-s: 94%;
+        --red-l: 57%;
+        --red: hsl(var(--red-h) var(--red-s) var(--red-l));
+        --orange-h: 19;
+        --orange-s: 100%;
+        --orange-l: 75%;
+        --orange: hsl(var(--orange-h) var(--orange-s) var(--orange-l));
+        --yellow-h: 43;
+        --yellow-s: 100%;
+        --yellow-l: 72%;
+        --yellow: hsl(var(--yellow-h) var(--yellow-s) var(--yellow-l));
+        --green-h: 113;
+        --green-s: 59%;
+        --green-l: 71%;
+        --green: hsl(var(--green-h) var(--green-s) var(--green-l));
+        --pink-h: 344;
+        --pink-s: 100%;
+        --pink-l: 81%;
+        --pink: hsl(var(--pink-h) var(--pink-s) var(--pink-l));
+        --light-blue-h: 196;
+        --light-blue-s: 84%;
+        --light-blue-l: 71%;
+        --light-blue: hsl(var(--light-blue-h) var(--light-blue-s) var(--light-blue-l));
+        --lime-h: 168;
+        --lime-s: 56%;
+        --lime-l: 72%;
+        --lime: hsl(var(--lime-h) var(--lime-s) var(--lime-l));
+        --dark-h: 226;
+        --dark-s: 34%;
+        --dark-l: 24%;
+        --dark: hsl(var(--dark-h) var(--dark-s) var(--dark-l));
+        --link-h: 229;
+        --link-s: 53%;
+        --link-l: 53%;
+        --link: hsl(var(--link-h) var(--link-s) var(--link-l));
+        --info-h: 200;
+        --info-s: 97%;
+        --info-l: 45%;
+        --info: hsl(var(--info-h) var(--info-s) var(--info-l));
+        --success-h: 164;
+        --success-s: 95%;
+        --success-l: 43%;
+        --success: hsl(var(--success-h) var(--success-s) var(--success-l));
+        --warning-h: 35;
+        --warning-s: 95%;
+        --warning-l: 62%;
+        --warning: hsl(var(--warning-h) var(--warning-s) var(--warning-l));
+        --danger-h: 341;
+        --danger-s: 79%;
+        --danger-l: 53%;
+        --danger: hsl(var(--danger-h) var(--danger-s) var(--danger-l));
+        --smoke-white-h: 0;
+        --smoke-white-s: 0%;
+        --smoke-white-l: 99%;
+        --smoke-white: hsl(var(--smoke-white-h) var(--smoke-white-s) var(--smoke-white-l));
+        --placeholder-h: 0;
+        --placeholder-s: 0%;
+        --placeholder-l: 81%;
+        --placeholder: hsl(var(--placeholder-h) var(--placeholder-s) var(--placeholder-l));
+        --muted-grey-h: 0;
+        --muted-grey-s: 0%;
+        --muted-grey-l: 60%;
+        --muted-grey: hsl(var(--muted-grey-h) var(--muted-grey-s) var(--muted-grey-l));
+        --fade-grey-h: 0;
+        --fade-grey-s: 0%;
+        --fade-grey-l: 93%;
+        --fade-grey: hsl(var(--fade-grey-h) var(--fade-grey-s) var(--fade-grey-l));
+        --widget-grey-h: 228;
+        --widget-grey-s: 33%;
+        --widget-grey-l: 97%;
+        --widget-grey: hsl(var(--widget-grey-h) var(--widget-grey-s) var(--widget-grey-l));
+        --dark-dark-text-h: 240;
+        --dark-dark-text-s: 6%;
+        --dark-dark-text-l: 68%;
+        --dark-dark-text: hsl(var(--dark-dark-text-h) var(--dark-dark-text-s) var(--dark-dark-text-l));
+        --dark-text-h: 226;
+        --dark-text-s: 34%;
+        --dark-text-l: 24%;
+        --dark-text: hsl(var(--dark-text-h) var(--dark-text-s) var(--dark-text-l));
+        --light-text-h: 232;
+        --light-text-s: 14%;
+        --light-text-l: 68%;
+        --light-text: hsl(var(--light-text-h) var(--light-text-s) var(--light-text-l));
+        --dark-sidebar-h: 240;
+        --dark-sidebar-s: 4%;
+        --dark-sidebar-l: 14%;
+        --dark-sidebar: hsl(var(--dark-sidebar-h) var(--dark-sidebar-s) var(--dark-sidebar-l));
+        --landing-xxx-h: 225;
+        --landing-xxx-s: 25%;
+        --landing-xxx-l: 6%;
+        --landing-xxx: hsl(var(--landing-xxx-h) var(--landing-xxx-s) var(--landing-xxx-l));
+        --landing-yyy-h: 230;
+        --landing-yyy-s: 26%;
+        --landing-yyy-l: 13%;
+        --landing-yyy: hsl(var(--landing-yyy-h) var(--landing-yyy-s) var(--landing-yyy-l));
+        --base-shadow: rgb(0 0 0 / 12%);
+        --light-box-shadow: -1px 3px 10px 0 rgb(0 0 0 / 6%);
+        --light-box-shadow-md: -1px 3px 10px 0 rgb(0 0 0 / 12%);
+        --primary-shadow-from: hsl(var(--primary-h) var(--primary-s) var(--primary-l) / 42%);
+        --primary-shadow-to: hsl(var(--primary-h) var(--primary-s) var(--primary-l) / 20%);
+        --primary-box-shadow: 0 14px 26px -12px var(--primary-shadow-from), 0 4px 23px 0 var(--base-shadow), 0 8px 10px -5px var(--primary-shadow-to) !important;
+        --secondary-shadow-from: hsl(var(--secondary-h) var(--secondary-s) var(--secondary-l) / 42%);
+        --secondary-shadow-to: hsl(var(--secondary-h) var(--secondary-s) var(--secondary-l) / 20%);
+        --fade-grey-dark-3: hsl(var(--fade-grey-h) var(--fade-grey-s) calc(var(--fade-grey-l) - 3%));
+        --success-2: rgb(6, 214, 158);
+    }
+
+    .r-card.is-grey,
+    .s-card.is-grey,
+    .l-card.is-grey {
+        background: #fafafa;
+    }
+
+    .r-card.is-grey,
+    .s-card.is-grey,
+    .l-card.is-grey {
+        background: #fafafa;
+    }
+
+    .fa-color {
+        color: var(--dark-text);
+    }
+
+    .is-active-regis {
+        box-shadow: var(--light-box-shadow);
+        border-color: var(--fade-grey-dark-3);
+    }
+
+    .is-active-regis i {
+        color: var(--primary-x);
+    }
+
+    .is-grey {
+        background: #fafafa;
+    }
+
+    .r-card {
+        flex: 1;
+        display: inline-block;
+        width: 83%;
+        padding: 20px;
+        background-color: var(--white);
+        border-radius: 10px;
+        border: 1px solid var(--fade-grey-dark-3);
+        transition: all 0.3s;
+    }
+
+    .mt-2 {
+        margin-top: 0.5rem !important;
+    }
+
+    .mr-2 {
+
+        margin-right: 0.5rem !important;
+    }
+
+    .is-clickable {
+        cursor: pointer !important;
+        pointer-events: all !important;
+    }
+
+    .ml-2 {
+        margin-left: 0.5rem !important;
+    }
+
+
+    .is-pulled-right {
+        float: right !important;
+    }
+
+    span {
+        font-style: inherit;
+        font-weight: inherit;
+    }
+
+    .span-text-left-bar {
+        font-family: var(--font-alt);
+        font-weight: 600;
+        font-size: 0.8rem;
+    }
+
+    .is-active-regis span {
+        color: var(--primary-x);
+    }
+
+    .icon-class {
+
+        padding: 8px;
+        border-radius: 50%;
+
+        color: rgb(250, 250, 250);
+        background-color: rgba(0, 0, 0, 0.38);
+        text-align: center;
+        margin: auto;
+        background-repeat: no-repeat;
+        display: inline-block;
+        vertical-align: middle;
+        fill: currentColor;
+        height: 24px;
+        width: 24px;
+        min-height: 24px;
+        min-width: 24px;
+    }
+
+    .icon-class.md-avatar-icon {
+        margin-right: 20px;
+    }
+
+    .icon-class.md-avatar-icon:first-child {
+        margin-top: 16px;
+    }
+
+    .icon-class i {
+        font-size: 23px;
+    }
+
+    .stock-dashboard .stock-card {
+        flex: 1;
+        display: inline-block;
+        width: 83%;
+        padding: 20px;
+        background-color: var(--white);
+        border-radius: 10px;
+        border: 1px solid var(--fade-grey-dark-3);
+        transition: all 0.3s;
+    }
+
+    .stock-dashboard .stock-card .stock {
+        margin: 8px 0;
+    }
+
+    .stock-dashboard .stock .stock-logo.twitter::before {
+        background: var(--twitter);
+        box-shadow: var(--twitter-box-shadow);
+    }
+
+    .stock-dashboard .stock {
+        position: relative;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        height: 40px;
+        padding: 5px 0;
+        margin: 5px 0;
+    }
+
+    .stock-dashboard .stock-card .action-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 5px;
+    }
+
+    .stock-dashboard .stock-card .action-bar h3 {
+        font-family: var(--font-alt);
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--dark-text);
+    }
+
+    .stock-dashboard .stock .stock-logo {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        flex: 0;
+        margin-right: 10px;
+    }
+
+    .stock-dashboard .stock .stock-logo.amazon::before {
+        background: var(--amazon);
+        box-shadow: var(--amazon-box-shadow);
+    }
+
+    .stock-dashboard .stock .stock-logo::before {
+        content: "";
+        width: 36px;
+        height: 36px;
+        transform: rotate(0);
+        border-radius: 7px;
+    }
+
+    .stock-dashboard .stock-card .stock .stock-logo i {
+        font-size: 14px;
+    }
+
+    .stock-dashboard .stock .stock-logo i {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .stock-dashboard .stock .stock-info {
+        margin-left: 5px;
+        flex: 1;
+        line-height: 1.2;
+    }
+
+    .fa-inverse {
+        color: #fff;
+    }
+
+    .stock-dashboard .stock .stock-info .stock-name {
+        font-family: var(--font-alt);
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: var(--dark-text);
+    }
+
+
+    .stock-dashboard .stock .stock-value {
+        flex: 1;
+        font-weight: bold;
+        color: var(--light-text);
+        text-align: right;
+    }
+
+    .stock-value .status-icon.is-danger {
+        background: var(--danger);
+        border-color: var(--danger);
+        color: var(--white);
+    }
+
+    .stock-value .status-icon.is-danger {
+        background: var(--danger);
+        border-color: var(--danger);
+        color: var(--white);
+    }
+
+    .stock-value .status-icon.is-success {
+        background: var(--success-2);
+        border-color: var(--success-2);
+        color: var(--white);
+    }
+
+    .stock-value .status-icon {
+        height: 28px;
+        width: 28px;
+        min-width: 28px;
+        border-radius: var(--radius-rounded);
+        border: 1px solid var(--fade-grey-dark-3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        float: right;
+    }
+</style>
+
+<div class="grid_12">
+    <div class="panel panel-default panel-white">
+        <div class="panel-body">
+            <div class="grid_12">
+                <div class="grid_12">
+
+                    <div class="panel panel-default">
+                        <div class="panel-heading " style="font-size: 18px; ">
+                            <span>History SATUSEHAT</span>
+                        </div>
+                        <div class="panel-body ">
+                            <div class="grid_12 animated no-padding ">
+                                <div class="grid_12 animated fadeIn">
+                                    <div class="grid_1" style="margin-top: 15px;">
+                                        <fieldset class="effect-shadow" style="border-radius: 10px;">
+                                            <div ng-click="showPopUp()">
+                                                <img style="object-fit: cover;
+                                            object-position: center;
+                                            height: 100px;
+                                            display: block;
+                                                    max-width: 100%;
+                                            width: 120px;" src="{{image}}" alt="Photo" title="">
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                    <div class="grid_11">
+                                        <div class="grid_12">
+                                            <div class="grid_2">
+                                                <div class="grid_12">
+                                                    <label c-label item="item">IHS Number</label>
+                                                </div>
+
+                                                <div class="grid_12">
+                                                    <input c-text-box type="input" filter="" class="k-textbox"
+                                                        ng-model="header.id" ng-disabled="true" />
+                                                </div>
+
+                                            </div>
+                                            <div class="grid_3">
+                                                <div class="grid_12">
+                                                    <label c-label item="item">Name</label>
+                                                </div>
+
+                                                <div class="grid_12">
+                                                    <input c-text-box type="input" filter="" class="k-textbox"
+                                                        ng-model="header.name[0].text" ng-disabled="true" />
+                                                </div>
+                                            </div>
+                                            <div class="grid_3">
+                                                <div class="grid_12">
+                                                    <label c-label item="item">NIK</label>
+                                                </div>
+
+                                                <div class="grid_12">
+                                                    <input c-text-box type="input" filter="" class="k-textbox"
+                                                        ng-model="header.identifier[1].value" ng-disabled="true" />
+                                                </div>
+                                            </div>
+
+                                            <div class="grid_2">
+                                                <div class="grid_12">
+                                                    <label c-label item="item">Gender</label>
+                                                </div>
+
+                                                <div class="grid_12">
+                                                    <input c-text-box type="input" filter="" class="k-textbox"
+                                                        ng-model="header.gender" ng-disabled="true" />
+                                                </div>
+                                            </div>
+                                            <div class="grid_2">
+                                                <div class="grid_12">
+                                                    <label c-label item="item" c-label-text="BirthDate"></label>
+                                                </div>
+
+                                                <div class="grid_12">
+                                                    <input c-text-box type="input" filter="" class="k-textbox"
+                                                        ng-model="header.birthDate" ng-disabled="true" />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="grid_2">
+                                            <div class="grid_12">
+                                                <label c-label item="item">Telecom</label>
+                                            </div>
+
+                                            <div class="grid_12">
+                                                <input c-text-box type="input" filter="" class="k-textbox"
+                                                    ng-model="header.telecom[0].value" ng-disabled="true" />
+                                            </div>
+                                        </div>
+                                        <div class="grid_8">
+                                            <div class="grid_12">
+                                                <label c-label item="item">Address</label>
+                                            </div>
+                                            <div class="grid_12">
+                                                <input c-text-box type="input" filter="" class="k-textbox"
+                                                    ng-model="header.address[0].line[0]" ng-disabled="true" />
+                                            </div>
+                                        </div>
+                                        <div class="grid_2">
+                                            <div class="grid_12">
+                                                <label c-label item="item">City</label>
+                                            </div>
+
+                                            <div class="grid_12">
+                                                <input c-text-box type="input" filter="" class="k-textbox"
+                                                    ng-model="header.address[0].city" ng-disabled="true" />
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="grid_2">
+                                <div class="panel panel-default">
+                                    <div class="panel-heading"><span c-translate>Riwayat </span> </div>
+                                    <div class="panel-body">
+                                        <div class="animated" style="z-index:2;text-align: center;"
+                                            ng-show="isLoadingNav">
+                                            <img height="50" src="../app/stylesheets/Flat/loading-image.gif" />
+
+                                        </div>
+                                        <!-- <span ng-show="isRiwayat == false" style="text-align: center ;padding:10px">No
+                                            Record available</span> -->
+                                        <div class="border-menu" ng-show="isRiwayat" style="height: 400px">
+                                            <div class="grid_12" style="height: 350px;overflow:auto">
+                                                <div class="r-card is-clickable mt-2 is-grey "
+                                                    ng-repeat="items in sourceMenu"
+                                                    ng-class="{'is-active-regis': activeEncounter == items.id}"
+                                                    ng-click="selectNoreg(items)"><i aria-hidden="true"
+                                                        class="fa fa-medkit mr-2 fa-color"></i>
+                                                    <span
+                                                        class="span-text-left-bar">{{items.display_riwayat}}</span><span
+                                                        class="is-pulled-right ml-2 "><i aria-hidden="true"
+                                                            class="fa fa-arrow-right"></i></span>
+                                                </div>
+                                            </div>
+                                            <!-- <div id="treeview" kendo-tree-view="tree" k-data-source="treeSourceMenu"
+                                                options="mainTreeViewMenuOption" ng-model="treeView">
+                                            </div> -->
+
+                                        </div>
+                                        <div class="border-menu stock-dashboard">
+                                            <div class="stock-card h-500" style="height: 300px;overflow: auto;">
+                                                <div class="action-bar">
+                                                    <h3>Status </h3>
+                                                </div>
+                                                <div class="stock">
+                                                    <div class="stock-logo twitter"><i aria-hidden="true"
+                                                            class="fa-inverse fa fa-info"></i></div>
+                                                    <div class="stock-info">
+                                                        <div class="stock-name">Observation</div>
+                                                    </div>
+                                                    <div class="stock-value">
+                                                        <div class="status-icon is-success"
+                                                            ng-show="Observation.length > 0">
+                                                            <i aria-hidden="true" class="fa fa-check"
+                                                                ng-show="Observation.length > 0"></i>
+                                                        </div>
+                                                        <div class="status-icon is-danger"
+                                                            ng-show="Observation.length == 0">
+                                                            <i aria-hidden="true" class="fa fa-times"
+                                                                ng-show="Observation.length== 0"></i>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+
+                                                <div class="stock">
+                                                    <div class="stock-logo twitter"><i aria-hidden="true"
+                                                            class="fa-inverse fa fa-info"></i></div>
+                                                    <div class="stock-info">
+                                                        <div class="stock-name">Diagnosis</div>
+                                                    </div>
+                                                    <div class="stock-value">
+                                                        <div class="status-icon is-success"
+                                                            ng-show="Diagnosis.length > 0">
+                                                            <i aria-hidden="true" class="fa fa-check"
+                                                                ng-show="Diagnosis.length > 0"></i>
+                                                        </div>
+                                                        <div class="status-icon is-danger"
+                                                            ng-show="Diagnosis.length == 0">
+                                                            <i aria-hidden="true" class="fa fa-times"
+                                                                ng-show="Diagnosis.length== 0"></i>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="stock">
+                                                    <div class="stock-logo twitter"><i aria-hidden="true"
+                                                            class="fa-inverse fa fa-info"></i></div>
+                                                    <div class="stock-info">
+                                                        <div class="stock-name">Procedure</div>
+                                                    </div>
+                                                    <div class="stock-value">
+                                                        <div class="status-icon is-success"
+                                                            ng-show="Procedure.length > 0">
+                                                            <i aria-hidden="true" class="fa fa-check"
+                                                                ng-show="Procedure.length > 0"></i>
+                                                        </div>
+                                                        <div class="status-icon is-danger"
+                                                            ng-show="Procedure.length == 0">
+                                                            <i aria-hidden="true" class="fa fa-times"
+                                                                ng-show="Procedure.length== 0"></i>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="stock">
+                                                    <div class="stock-logo twitter"><i aria-hidden="true"
+                                                            class="fa-inverse fa fa-info"></i></div>
+                                                    <div class="stock-info">
+                                                        <div class="stock-name">Laboratorium</div>
+                                                    </div>
+                                                    <div class="stock-value">
+                                                        <div class="status-icon is-success"
+                                                            ng-show="ObservationLab.length > 0">
+                                                            <i aria-hidden="true" class="fa fa-check"
+                                                                ng-show="ObservationLab.length > 0"></i>
+                                                        </div>
+                                                        <div class="status-icon is-danger"
+                                                            ng-show="ObservationLab.length == 0">
+                                                            <i aria-hidden="true" class="fa fa-times"
+                                                                ng-show="ObservationLab.length== 0"></i>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="stock">
+                                                    <div class="stock-logo twitter"><i aria-hidden="true"
+                                                            class="fa-inverse fa fa-info"></i></div>
+                                                    <div class="stock-info">
+                                                        <div class="stock-name">Radiologi</div>
+                                                    </div>
+                                                    <div class="stock-value">
+                                                        <div class="status-icon is-danger"><i aria-hidden="true"
+                                                                class="fa fa-times"></i></div>
+                                                    </div>
+                                                </div>
+                                                <div class="stock">
+                                                    <div class="stock-logo twitter"><i aria-hidden="true"
+                                                            class="fa-inverse fa fa-info"></i></div>
+                                                    <div class="stock-info">
+                                                        <div class="stock-name">Medication</div>
+                                                    </div>
+                                                    <div class="stock-value">
+                                                        <div class="status-icon is-success"
+                                                            ng-show="MedicationDispense.length > 0">
+                                                            <i aria-hidden="true" class="fa fa-check"
+                                                                ng-show="MedicationDispense.length > 0"></i>
+                                                        </div>
+                                                        <div class="status-icon is-danger"
+                                                            ng-show="MedicationDispense.length == 0">
+                                                            <i aria-hidden="true" class="fa fa-times"
+                                                                ng-show="MedicationDispense.length== 0"></i>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+                                            </div>
+
+                                        </div>
+                                     
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="grid_10">
+                                <div class="panel panel-default">
+                                    <div class="panel-heading"><span c-translate>Detail Encounter </span></div>
+                                    <div class="panel-body">
+                                        <div class="border-menu" ng-show="encounter.id != undefined">
+                                            <md-card>
+                                                <md-card-header>
+                                                    <md-card-avatar>
+
+                                                        <div class="icon-class" style="background-color:#9fceeeab">
+                                                            <i class="fa fa-hospital-o"
+                                                                style="color: rgb(230, 41, 100);"></i>
+                                                        </div>
+                                                        <!-- <md-icon class="md-avatar-icon"
+                                                            md-svg-icon="../app/images/svg/menu.svg">
+                                                        </md-icon> -->
+                                                    </md-card-avatar>
+                                                    <md-card-header-text>
+                                                        <span
+                                                            class="md-title">{{encounter.location[0].location.display}}</span>
+                                                        <span class="md-subhead">{{encounter.provider}}</span>
+                                                    </md-card-header-text>
+                                                </md-card-header>
+
+                                                <md-card-content
+                                                    style="height: 500px; overflow-y: auto;background-color: #f6f6f6c9;">
+                                                    <div class="grid_3">
+                                                        <md-input-container>
+                                                            <label>Period Start</label>
+                                                            <input ng-model="encounter.period.start" disabled>
+                                                        </md-input-container>
+                                                    </div>
+                                                    <div class="grid_3">
+                                                        <md-input-container>
+                                                            <label>Period End</label>
+                                                            <input ng-model="encounter.period.end" disabled>
+                                                        </md-input-container>
+                                                    </div>
+                                                    <div class="grid_3">
+                                                        <md-input-container>
+                                                            <label>Status </label>
+                                                            <input ng-model="encounter.status" disabled>
+                                                        </md-input-container>
+                                                    </div>
+                                                    <div class="grid_3">
+                                                        <md-input-container>
+                                                            <label>Class </label>
+                                                            <input ng-model="encounter.class.display" disabled>
+                                                        </md-input-container>
+                                                    </div>
+                                                    <div class="grid_3">
+                                                        <md-input-container>
+                                                            <label>Practitioner </label>
+                                                            <input
+                                                                ng-model="encounter.participant[0].individual.display"
+                                                                disabled>
+                                                        </md-input-container>
+                                                    </div>
+
+                                                    <div class="grid_6">
+                                                        <md-input-container>
+                                                            <label>Diagnosis</label>
+                                                            <input ng-model="encounter.diagnosis[0].condition.display"
+                                                                disabled>
+                                                        </md-input-container>
+                                                    </div>
+                                                    <div class="grid_12">
+                                                        <div class="grid_4" ng-show="Observation.length > 0">
+                                                            <md-card>
+                                                                <md-card-title>
+                                                                    <md-card-title-text>
+                                                                        <span class="md-headline">Observation
+                                                                        </span>
+                                                                    </md-card-title-text>
+                                                                </md-card-title>
+                                                                <md-card-content>
+                                                                    <div class="grid_12">
+                                                                        <md-list class="md-dense" flex>
+                                                                            <!-- <md-subheader class="md-no-sticky">3 line item
+                                                                            (dense)</md-subheader> -->
+                                                                            <md-list-item class="md-3-line"
+                                                                                ng-repeat="item in Observation"
+                                                                                style="background: var( --success);margin-bottom:5px;border-radius: 10px;">
+                                                                                <div class="icon-class md-avatar-icon">
+                                                                                    <i class="fa fa-thermometer"></i>
+                                                                                </div>
+                                                                                <!-- <md-icon class="md-avatar-icon"
+                                                                                    md-svg-icon="../app/images/svg/menu.svg">
+                                                                                </md-icon> -->
+                                                                                <div class="md-list-item-text"
+                                                                                    layout="column">
+                                                                                    <h3>{{
+                                                                                        item.code.coding[0].display
+                                                                                        }}
+                                                                                    </h3>
+                                                                                    <h4>
+                                                                                        {{ item.valueQuantity.value
+                                                                                        }}
+                                                                                        {{ item.valueQuantity.unit
+                                                                                        }}
+                                                                                    </h4>
+                                                                                    <p>
+
+                                                                                        {{
+                                                                                        item.category[0].coding[0].display
+                                                                                        }}
+                                                                                    </p>
+                                                                                    <p>{{ item.code.coding[0].code
+                                                                                        }}
+                                                                                    </p>
+                                                                                    <p>{{ item.effectiveDateTime }}
+                                                                                    </p>
+                                                                                </div>
+                                                                            </md-list-item>
+                                                                            <md-divider></md-divider>
+                                                                        </md-list>
+                                                                    </div>
+                                                                </md-card-content>
+
+                                                            </md-card>
+                                                        </div>
+                                                        <div class="grid_4" ng-show="Diagnosis.length > 0">
+                                                            <md-card>
+                                                                <md-card-title>
+                                                                    <md-card-title-text>
+                                                                        <span class="md-headline">Diagnosis /
+                                                                            Condition</span>
+                                                                    </md-card-title-text>
+                                                                </md-card-title>
+                                                                <md-card-content>
+                                                                    <div class="grid_12">
+                                                                        <md-list class="md-dense" flex>
+                                                                            <md-list-item class="md-3-line"
+                                                                                ng-repeat="item in Diagnosis"
+                                                                                style="background: var( --col-2);margin-bottom:5px;border-radius: 10px;">
+                                                                                <div class="icon-class md-avatar-icon">
+                                                                                    <i class="fa fa-stethoscope"></i>
+                                                                                </div>
+                                                                                </md-icon>
+                                                                                <div class="md-list-item-text"
+                                                                                    layout="column">
+                                                                                    <h3>{{ item.code.coding[0].code
+                                                                                        }} -
+                                                                                        {{
+                                                                                        item.code.coding[0].display
+                                                                                        }}
+                                                                                    </h3>
+                                                                                    <h4>{{
+                                                                                        item.category.coding[0].display
+                                                                                        }}
+                                                                                    </h4>
+
+                                                                                    <p>{{
+                                                                                        item.clinicalStatus.coding[0].display
+                                                                                        }}</p>
+                                                                                </div>
+                                                                            </md-list-item>
+                                                                            <md-divider></md-divider>
+                                                                        </md-list>
+                                                                    </div>
+                                                                </md-card-content>
+                                                            </md-card>
+                                                        </div>
+                                                        <div class="grid_4" ng-show="Procedure.length > 0">
+                                                            <md-card>
+                                                                <md-card-title>
+                                                                    <md-card-title-text>
+                                                                        <span class="md-headline">Procedure </span>
+                                                                    </md-card-title-text>
+                                                                </md-card-title>
+                                                                <md-card-content>
+                                                                    <div class="grid_12">
+                                                                        <md-list class="md-dense" flex>
+                                                                            <!-- <md-subheader class="md-no-sticky">3 line item
+                                                                            (dense)</md-subheader> -->
+                                                                            <md-list-item class="md-3-line"
+                                                                                ng-repeat="item in Procedure"
+                                                                                style="background: var( --col-1);margin-bottom:5px;border-radius: 10px;">
+                                                                                <div class="icon-class md-avatar-icon">
+                                                                                    <i class="fa fa-stethoscope"></i>
+                                                                                </div>
+                                                                                </md-icon>
+                                                                                <div class="md-list-item-text"
+                                                                                    layout="column">
+                                                                                    <h3>{{ item.code.coding[0].code
+                                                                                        }} -
+                                                                                        {{
+                                                                                        item.code.coding[0].display
+                                                                                        }}
+                                                                                    </h3>
+                                                                                    <h4>{{
+                                                                                        item.category.coding[0].display
+                                                                                        }}
+                                                                                    </h4>
+
+                                                                                    <p>{{ item.status }}</p>
+                                                                                    <p>{{ item.note[0].text}}</p>
+                                                                                </div>
+                                                                            </md-list-item>
+                                                                            <md-divider></md-divider>
+                                                                        </md-list>
+                                                                    </div>
+                                                                </md-card-content>
+                                                            </md-card>
+                                                        </div>
+
+                                                        <div class="grid_4" ng-show="MedicationRequest.length > 0">
+                                                            <md-card>
+                                                                <md-card-title>
+                                                                    <md-card-title-text>
+                                                                        <span class="md-headline">Medication Request
+                                                                        </span>
+                                                                    </md-card-title-text>
+                                                                </md-card-title>
+                                                                <md-card-content>
+                                                                    <div class="grid_12">
+                                                                        <md-list class="md-dense" flex>
+                                                                            <!-- <md-subheader class="md-no-sticky">3 line item
+                                                                            (dense)</md-subheader> -->
+                                                                            <md-list-item class="md-3-line"
+                                                                                ng-repeat="item in MedicationRequest"
+                                                                                style="background: var( --danger-1);margin-bottom:5px;border-radius: 10px;">
+                                                                                <div class="icon-class md-avatar-icon">
+                                                                                    <i class="fa fa-arrow-right"></i>
+                                                                                </div>
+                                                                                <div class="md-list-item-text"
+                                                                                    layout="column">
+                                                                                    <h3>{{ item.identifier[1].value
+                                                                                        }}
+                                                                                    </h3>
+                                                                                    <h4>{{
+                                                                                        item.medicationReference.display
+                                                                                        }}</h4>
+                                                                                    <p>Qty : {{
+                                                                                        item.dispenseRequest.quantity.value}}
+                                                                                        {{
+                                                                                        item.dispenseRequest.quantity.unit
+                                                                                        }}</p>
+                                                                                    <p>Dosis : {{
+                                                                                        item.dosageInstruction[0].text
+                                                                                        }}</p>
+                                                                                    <p>Extension : {{
+                                                                                        item.extension[0].valueCodeableConcept.coding[0].display
+                                                                                        }}</p>
+                                                                                    <p>Requester: {{
+                                                                                        item.requester.display}}</p>
+                                                                                </div>
+                                                                            </md-list-item>
+                                                                            <md-divider></md-divider>
+                                                                        </md-list>
+                                                                    </div>
+                                                                </md-card-content>
+                                                            </md-card>
+                                                        </div>
+
+                                                        <div class="grid_4" ng-show="MedicationDispense.length > 0">
+                                                            <md-card>
+                                                                <md-card-title>
+                                                                    <md-card-title-text>
+                                                                        <span class="md-headline">Medication
+                                                                            Dispense
+                                                                        </span>
+                                                                    </md-card-title-text>
+                                                                </md-card-title>
+                                                                <md-card-content>
+                                                                    <div class="grid_12">
+                                                                        <md-list class="md-dense" flex>
+                                                                            <!-- <md-subheader class="md-no-sticky">3 line item
+                                                                            (dense)</md-subheader> -->
+                                                                            <md-list-item class="md-3-line"
+                                                                                ng-repeat="item in MedicationDispense"
+                                                                                style="background: var( --danger-2);margin-bottom:5px;border-radius: 10px;">
+                                                                                <div class="icon-class md-avatar-icon">
+                                                                                    <i class="fa fa-tag"></i>
+                                                                                </div>
+                                                                                <div class="md-list-item-text"
+                                                                                    layout="column">
+                                                                                    <h3>{{ item.identifier[1].value
+                                                                                        }}
+                                                                                    </h3>
+                                                                                    <h4>{{
+                                                                                        item.medicationReference.display
+                                                                                        }}</h4>
+                                                                                    <p>Qty : {{ item.quantity.value
+                                                                                        }}
+                                                                                        {{ item.quantity.code }}</p>
+                                                                                    <p>Dosis : {{
+                                                                                        item.dosageInstruction[0].text
+                                                                                        }}</p>
+                                                                                    
+                                                                                    <p>Performer: {{
+                                                                                        item.performer[0].actor.display}}
+                                                                                    </p>
+                                                                                </div>
+                                                                            </md-list-item>
+                                                                            <md-divider></md-divider>
+                                                                        </md-list>
+                                                                    </div>
+                                                                </md-card-content>
+                                                            </md-card>
+                                                        </div>
+
+                                                        <div class="grid_12" ng-show="ServiceRequestLab.length > 0">
+                                                            <md-card>
+                                                                <md-card-title>
+                                                                    <md-card-title-text>
+                                                                        <span class="md-headline">Laboratorium
+                                                                        </span>
+                                                                    </md-card-title-text>
+                                                                </md-card-title>
+                                                                <md-card-content>
+                                                                    <div class="grid_12">
+
+                                                                        <div class="grid_4"
+                                                                            ng-show="ServiceRequestLab.length > 0">
+                                                                            <md-card>
+                                                                                <md-card-title>
+                                                                                    <md-card-title-text>
+                                                                                        <span
+                                                                                            class="md-headline">Service
+                                                                                            Request
+                                                                                        </span>
+                                                                                    </md-card-title-text>
+                                                                                </md-card-title>
+                                                                                <md-card-content>
+                                                                                    <div class="grid_12">
+                                                                                        <md-list class="md-dense" flex>
+
+                                                                                            <md-list-item
+                                                                                                class="md-3-line"
+                                                                                                ng-repeat="item in ServiceRequestLab"
+                                                                                                style="background: var( --info);margin-bottom:5px;border-radius: 10px;">
+                                                                                                <div
+                                                                                                    class="icon-class md-avatar-icon">
+                                                                                                    <i
+                                                                                                        class="fa fa-repeat"></i>
+                                                                                                </div>
+                                                                                                <div class="md-list-item-text"
+                                                                                                    layout="column">
+                                                                                                    <h3>{{item.code.coding[0].display
+                                                                                                        }}
+                                                                                                    </h3>
+                                                                                                    <h4>{{
+                                                                                                        item.code.coding[0].code
+                                                                                                        }}</h4>
+                                                                                                    <p>Encounter :
+                                                                                                        {{
+                                                                                                        item.encounter.display
+                                                                                                        }}
+                                                                                                    </p>
+                                                                                                    <p>Intent : {{
+                                                                                                        item.dintent
+                                                                                                        }}</p>
+                                                                                                    <p>Requester: {{
+                                                                                                        item.requester.display}}
+                                                                                                    </p>
+                                                                                                </div>
+                                                                                            </md-list-item>
+                                                                                            <md-divider>
+                                                                                            </md-divider>
+                                                                                        </md-list>
+                                                                                    </div>
+                                                                                </md-card-content>
+                                                                            </md-card>
+                                                                        </div>
+
+
+
+                                                                        <div class="grid_4"
+                                                                            ng-show="Specimen.length > 0">
+                                                                            <md-card>
+                                                                                <md-card-title>
+                                                                                    <md-card-title-text>
+                                                                                        <span
+                                                                                            class="md-headline">Specimen
+                                                                                        </span>
+                                                                                    </md-card-title-text>
+                                                                                </md-card-title>
+                                                                                <md-card-content>
+                                                                                    <div class="grid_12">
+                                                                                        <md-list class="md-dense" flex>
+
+                                                                                            <md-list-item
+                                                                                                class="md-3-line"
+                                                                                                ng-repeat="item in Specimen"
+                                                                                                style="background: var( --col-4);margin-bottom:5px;border-radius: 10px">
+
+                                                                                                <div
+                                                                                                    class="icon-class md-avatar-icon">
+                                                                                                    <i
+                                                                                                        class="fa fa-tint"></i>
+                                                                                                </div>
+                                                                                                <div class="md-list-item-text"
+                                                                                                    layout="column">
+                                                                                                    <h3>{{
+                                                                                                        item.type.coding[0].display
+                                                                                                        }}
+                                                                                                    </h3>
+                                                                                                    <h4>{{
+                                                                                                        item.type.coding[0].code
+                                                                                                        }}</h4>
+                                                                                                    <p>Received Time
+                                                                                                        :
+                                                                                                        {{
+                                                                                                        item.receivedTime
+                                                                                                        }}</p>
+                                                                                                    <p>Status : {{
+                                                                                                        item.status
+                                                                                                        }}</p>
+                                                                                                    <p>Requester: {{
+                                                                                                        item.requester.display}}
+                                                                                                    </p>
+                                                                                                </div>
+                                                                                            </md-list-item>
+                                                                                            <md-divider>
+                                                                                            </md-divider>
+                                                                                        </md-list>
+                                                                                    </div>
+                                                                                </md-card-content>
+                                                                            </md-card>
+                                                                        </div>
+
+                                                                        <div class="grid_4"
+                                                                            ng-show="ObservationLab.length > 0">
+                                                                            <md-card>
+                                                                                <md-card-title>
+                                                                                    <md-card-title-text>
+                                                                                        <span
+                                                                                            class="md-headline">Observation
+                                                                                            Lab
+                                                                                        </span>
+                                                                                    </md-card-title-text>
+                                                                                </md-card-title>
+                                                                                <md-card-content>
+                                                                                    <div class="grid_12">
+                                                                                        <md-list class="md-dense" flex>
+
+                                                                                            <md-list-item
+                                                                                                class="md-3-line"
+                                                                                                ng-repeat="item in ObservationLab"
+                                                                                                style="background: var( --col-3);margin-bottom:5px;border-radius: 10px">
+
+                                                                                                <div
+                                                                                                    class="icon-class md-avatar-icon">
+                                                                                                    <i
+                                                                                                        class="fa fa-file-o"></i>
+                                                                                                </div>
+                                                                                                <div class="md-list-item-text"
+                                                                                                    layout="column">
+                                                                                                    <h3>{{
+                                                                                                        item.code.coding[0].display}}
+
+
+                                                                                                    </h3>
+                                                                                                    <h4> {{
+                                                                                                        item.code.coding[0].code
+                                                                                                        }}
+                                                                                                    </h4>
+
+                                                                                                    <p><b>Value : {{
+                                                                                                            item.valueQuantity.value
+
+                                                                                                            }}
+                                                                                                            {{
+                                                                                                            item.valueQuantity.unit
+
+                                                                                                            }}</b>
+                                                                                                    </p>
+                                                                                                    <p> {{
+                                                                                                        item.category[0].coding[0].display
+                                                                                                        }}
+                                                                                                    </p>
+                                                                                                    <p> {{
+                                                                                                        item.code.coding[0].system
+                                                                                                        }}</p>
+
+                                                                                                    <p>Effective
+                                                                                                        Date
+                                                                                                        Time : {{
+                                                                                                        item.effectiveDateTime}}
+                                                                                                    </p>
+                                                                                                </div>
+                                                                                            </md-list-item>
+                                                                                            <md-divider>
+                                                                                            </md-divider>
+                                                                                        </md-list>
+                                                                                    </div>
+                                                                                </md-card-content>
+                                                                            </md-card>
+                                                                        </div>
+
+
+                                                                        <div class="grid_4"
+                                                                            ng-show="DiagnosticReportLab.length > 0">
+                                                                            <md-card>
+                                                                                <md-card-title>
+                                                                                    <md-card-title-text>
+                                                                                        <span
+                                                                                            class="md-headline">Diagnostic
+                                                                                            Report
+                                                                                        </span>
+                                                                                    </md-card-title-text>
+                                                                                </md-card-title>
+                                                                                <md-card-content>
+                                                                                    <div class="grid_12">
+                                                                                        <md-list class="md-dense" flex>
+
+                                                                                            <md-list-item
+                                                                                                class="md-3-line"
+                                                                                                ng-repeat="item in DiagnosticReportLab"
+                                                                                                style="background: var( --col-2);margin-bottom:5px;border-radius: 10px">
+                                                                                                <div
+                                                                                                    class="icon-class md-avatar-icon">
+                                                                                                    <i
+                                                                                                        class="fa fa-file-o"></i>
+                                                                                                </div>
+                                                                                                <div class="md-list-item-text"
+                                                                                                    layout="column">
+                                                                                                    <h3>
+                                                                                                        {{
+                                                                                                        item.code.coding[0].display
+                                                                                                        }}
+                                                                                                    </h3>
+                                                                                                    <h4>
+                                                                                                        {{
+                                                                                                        item.code.coding[0].code}}
+                                                                                                    </h4>
+                                                                                                    <p> Issued : {{
+                                                                                                        item.issued
+                                                                                                        }}
+                                                                                                    </p>
+                                                                                                    <p>Status : {{
+                                                                                                        item.status
+                                                                                                        }}</p>
+                                                                                                    <p>Conclusion :
+                                                                                                        {{
+                                                                                                        item.conclusionCode[0]!=undefined?
+                                                                                                        item.conclusionCode[0].coding[0].display
+                                                                                                        :
+                                                                                                        item.conclusion}}
+                                                                                                    </p>
+                                                                                                </div>
+                                                                                            </md-list-item>
+                                                                                            <md-divider>
+                                                                                            </md-divider>
+                                                                                        </md-list>
+                                                                                    </div>
+                                                                                </md-card-content>
+                                                                            </md-card>
+                                                                        </div>
+
+                                                                    </div>
+
+                                                                </md-card-content>
+                                                            </md-card>
+                                                        </div>
+                                                    </div>
+                                                </md-card-content>
+                                                <md-card-actions layout="row" layout-align="start center">
+                                                    <md-button class="md-icon-button" aria-label="Detail"
+                                                        ng-click="show(itemData)">
+                                                        <md-tooltip>
+                                                            Lihat Detail
+                                                        </md-tooltip>
+                                                        <md-icon md-svg-icon="../app/images/svg/slideshow-24px.svg">
+                                                        </md-icon>
+                                                    </md-button>
+                                                    <md-button class="md-icon-button" aria-label="Edit"
+                                                        ng-click="edit(itemData)">
+                                                        <md-tooltip>
+                                                            Edit
+                                                        </md-tooltip>
+                                                        <md-icon md-svg-icon="../app/images/svg/edit-24px.svg">
+                                                        </md-icon>
+                                                    </md-button>
+                                                    <md-button class="md-icon-button" aria-label="Hapus"
+                                                        ng-click="hapus(itemData)">
+                                                        <md-tooltip>
+                                                            Hapus
+                                                        </md-tooltip>
+                                                        <md-icon md-svg-icon="../app/images/svg/delete_sweep-24px.svg">
+                                                        </md-icon>
+                                                    </md-button>
+                                                </md-card-actions>
+                                            </md-card>
+
+                                        </div>
+                                        <div class="grid_12" style="text-align: center;"
+                                            ng-show="encounter.id == undefined">
+                                            <h2 style="margin-bottom: 1rem;"> Data tidak ditemukan </h2>
+                                            <img src="../app/images/error.700bd717.svg" alt="Not Found"
+                                                class="img-fluid" style="max-width: 500px;">
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div ng-include=' "../app/template/Shared/TemplateLoading" '></div>
+
+<style>
+    .panel-default>.panel-heading {
+        position: relative;
+        z-index: 1;
+        color: white;
+        background-color: #41abf2;
+        font-size: 18px;
+    }
+
+    .k-treeview .k-in {
+        position: relative;
+    }
+
+    .k-treeview span.k-in {
+        /* background-color: #ff2359;
+    color: #ffffff; */
+        margin-left: 20px;
+    }
+
+
+    .gemblung {
+        background-color: #ff2359;
+        color: #ffffff;
+    }
+
+    .k-treeview .k-in:before {
+        /* content: "\f0ca";list */
+        color: #9e9c9cc5;
+        content: "\f0c9";
+        /*bar*/
+        /* this is your text. You can also use UTF-8 character codes as I do here */
+        font-family: FontAwesome;
+
+        margin-left: -16px;
+        cursor: pointer;
+        position: absolute;
+        top: 0;
+    }
+
+    .carousel-inner>.item>a>img,
+    .carousel-inner>.item>img,
+    .img-responsive,
+    .thumbnail a>img,
+    .thumbnail>img {
+        display: block;
+        max-width: 80%;
+        height: auto;
+    }
+
+
+    img {
+        vertical-align: middle;
+    }
+
+    img {
+        border: 0;
+    }
+
+    .k-state-selected {
+        color: #4c5356;
+        background-color: #41abf2 !important;
+    }
+
+    .k-treeview .k-state-hover,
+    .k-state-hover:hover {
+        color: #4c5356;
+        background-color: #eaeaea !important;
+
+    }
+
+    .border-menu {
+        margin-top: 5px;
+        border: 1px solid #c8c8c8;
+        background-color: #ffffff;
+        color: #333333;
+        padding: 0.571em 1em;
+        border-radius: 5px;
+    }
+
+    md-input-container {
+        margin: 0;
+        padding: 1px;
+        width: 100%;
+    }
+
+    .panel-default>.panel-heading {
+        position: relative;
+        z-index: 1;
+        color: white;
+        background-color: #41abf2;
+        font-size: 18px;
+    }
+
+    textarea[type="input"]:disabled {
+        background: #dddddd;
+    }
+
+    .k-checkbox:checked+.k-checkbox-label:before {
+        /* background-color: #fff; */
+        border-color: #3dcdbf;
+        color: white;
+        background-color: #3dcdbf;
+    }
+
+    .md-headline {
+        font-size: 17px;
+    }
+
+    md-content {
+        display: block;
+        position: relative;
+        overflow: auto;
+        -webkit-overflow-scrolling: touch;
+        background-color: white;
+    }
+
+    .btnKoneng {
+        background-color: rgb(162, 172, 33);
+        border-color: yellow;
+    }
+
+    .btnKoneng:hover {
+        background-color: yellow;
+    }
+
+    .skeleton-bulet:empty {
+        box-sizing: content-box;
+        height: 138px;
+        background-color: #ffffff;
+        border-radius: 25px 0px 0px 0px;
+        background-image: linear-gradient(100deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.5) 50%, rgba(255, 255, 255, 0) 80%), radial-gradient(circle 65px at 65px 65px, #cccccc 64px, transparent 65px);
+        background-repeat: repeat-y;
+        background-size: 50px 331px, 130px 331px;
+        background-position: 0 0, 5px 6px;
+        animation: shineFor2 1s infinite;
+    }
+
+    @keyframes shineFor2 {
+        to {
+            background-position: 100% 0, 5px 6px;
+        }
+    }
+
+    .skeleton-w2ej3qk61lo:empty {
+        box-sizing: content-box;
+        height: 150px;
+        background-color: #ffffff;
+        border-radius: 25px 0px 0px 0px;
+        background-image: linear-gradient(100deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.5) 50%, rgba(255, 255, 255, 0) 80%), linear-gradient(#cccccc 30px, transparent 0), linear-gradient(#cccccc 30px, transparent 0);
+        background-repeat: repeat-y;
+        background-size: 50px 331px, 100% 331px, 100% 331px;
+        background-position: 0 0, 0px 79px, 0px 33px;
+        animation: shineForSkeleton-w2ej3qk61lo 1s infinite;
+    }
+
+    @keyframes shineForSkeleton-w2ej3qk61lo {
+        to {
+            background-position: 100% 0, 0px 79px, 0px 33px;
+        }
+    }
+
+    .skeleton-btn:empty {
+        box-sizing: content-box;
+        height: 36px;
+        background-color: #ffffff;
+        border-radius: 10px;
+        background-image: linear-gradient(100deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.5) 50%, rgba(255, 255, 255, 0) 80%), linear-gradient(#cccccc 36px, transparent 0);
+        background-repeat: repeat-y;
+        background-size: 50px 290px, 100% 290px;
+        background-position: 0 0, 0px 0px;
+        animation: shineFor33 1s infinite;
+    }
+
+    @keyframes shineFor33 {
+        to {
+            background-position: 100% 0, 0px 0px;
+        }
+    }
+
+    .md-dense {
+        height: 300px;
+        overflow: auto;
+    }
+
+    :root {
+        --primary-x: rgb(65, 185, 131);
+        --danger: rgb(230, 41, 100);
+        --danger-1: rgba(229, 71, 121, 0.441);
+        --danger-2: rgba(229, 123, 202, 0.44);
+        --dark: rgb(40, 50, 82);
+
+        --info: rgba(87, 185, 234, 0.514);
+        --link: rgb(72, 95, 199);
+        --primary: rgba(65, 185, 131, 0.571);
+        --success: rgba(114, 231, 199, 0.435);
+        --warning: rgb(250, 173, 66);
+        --white: rgb(255, 255, 255);
+        --col-1: #e3f8fa;
+        --col-2: #fff9dd;
+        --col-3: #fac9da;
+        --col-4: rgba(147, 162, 228, 0.718);
+
+        --col-5: rgba(228, 170, 147, 0.495);
+        --col-6: rgba(233, 195, 166, 0.718);
+
+    }
+
+    .k-treeview .k-in:before {
+
+        content: "\f138";
+
+    }
+</style>

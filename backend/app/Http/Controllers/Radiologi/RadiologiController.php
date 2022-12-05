@@ -1638,6 +1638,7 @@ class RadiologiController extends ApiController
                 op.tglpelayanan,op.qtyproduk ,ru.namaruangan as ruangantujuan,ru.objectdepartemenfk,op.strukorderfk,so.objectruangantujuanfk,
                 hnp.hargasatuan ,kls.namakelas,dpm.namadepartemen,
                 pps.norec as norec_pp, so.keteranganlainnya
+                ,op.ihs_id as ihs_service_request
                 from orderpelayanan_t op
                 left join strukorder_t as so on so.norec=op.strukorderfk
                 INNER JOIN produk_m as pr on pr.id=op.objectprodukfk
@@ -1690,6 +1691,7 @@ class RadiologiController extends ApiController
                 'namakelas' => $item->namakelas,
                 'objectdepartemenfk' => $item->objectdepartemenfk,
                 'namadepartemen' => $item->namadepartemen,
+                'ihs_service_request' => $item->ihs_service_request,
                 'details' => $dataz,
             );
         }
@@ -1888,12 +1890,17 @@ class RadiologiController extends ApiController
         if ($transStatus == 'true') {
             $transMessage = "Simpan PelayananPasien Sukses";
             DB::commit();
+            $objetoRequest = new \Illuminate\Http\Request();
+            $objetoRequest ['noorder']= $request['noorder'];
+            $ihs = app('App\Http\Controllers\Bridging\IHSController')->Specimen($objetoRequest,true);
+         
             $result = array(
                 'status' => 201,
                 'message' => $transMessage,
                 'dataPP' => $PelPasien,
 //                'dataPPP' => $PelPasienPetugas,
                 'dataPPD' => $PelPasienDetail,
+                'Specimen'=> $ihs,
                 'as' => 'ramdanegie',
             );
         } else {

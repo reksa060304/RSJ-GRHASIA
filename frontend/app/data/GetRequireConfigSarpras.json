@@ -1088,6 +1088,10 @@
         {
             "nameDep": "SemuaAnggaranCtrl",
             "urlDep": "module/Perencanaan/SemuaAnggaranCtrl"
+        },
+        {
+            "nameDep": "MasterProdukApotikCtrl",
+            "urlDep": "module/Farmasi/MasterProdukApotikCtrl"
         }
     ]
 }
