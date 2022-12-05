@@ -11918,7 +11918,6 @@ public function suratBuktiPengembalian(Request $request)
             DB::raw("SELECT sbm.totaldibayar, sbm.nosbm, sdpe.institusipendidikan, sdpe.tanggalmulai, sdpe.tanggalselesai, sdpe.tglregistrasi, pr.namaproduk, sdpe.jumlahpeserta, sdpe.hargasatuan,sdpe.biayapenelitian as total FROM strukpelayanan_t sp 
             inner join sdm_penelitianeksternal_t sdpe on sdpe.noregistrasifk = sp.norec
             inner join produk_m pr on pr.id = sdpe.objectprodukfk
-            inner join strukpelayananpenjamin_t spp on spp.nostrukfk = sp.norec
             inner join strukbuktipenerimaan_t sbm on sbm.nostrukfk = sp.norec
             where sbm.nosbm ilike '$request[nosbm]'
             ")
