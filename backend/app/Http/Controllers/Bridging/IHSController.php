@@ -204,7 +204,7 @@ class IHSController extends ApiController
             $token = session("satusehat_token");
         } else {
             $datas = $this->generateToken(true);
-            dd($datas);
+            // dd($datas);
             $token = $datas->access_token;
             $expires_in = $datas->expires_in;
 
