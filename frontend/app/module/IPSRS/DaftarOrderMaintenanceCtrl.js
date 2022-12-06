@@ -63,7 +63,7 @@ define(['initialize'], function (initialize) {
                 $scope.dataLogin = medifirstService.getPegawaiLogin();
                 $scope.dataLogin2 = medifirstService.getMapLoginUserToRuangan();
                 // $scope.ad = $scope.dataLogin2[0].id;
-                medifirstService.getPart("sysadmin/general/get-combo-pegawai", true, true, 20).then(function (data) {
+                medifirstService.getPart("ipsrs/get-combo-pegawai-perbaikan", true, true, 20).then(function (data) {
                     $scope.listPegawai = data;
                     $scope.listStaff = data;
                     $scope.selectOptionsPegawai = {
@@ -86,6 +86,9 @@ define(['initialize'], function (initialize) {
                 medifirstService.getPart("ipsrs/get-status-pekerjaan").then(function (data) {
                     $scope.listStatus = data;
                 }); 
+                medifirstService.get('ipsrs/get-ruangan', true).then(function (dat) {
+                    $scope.listJenisPerbaikan = dat.data[0].ruanganipsrs;
+                })
             }
 
             $scope.newOrder = function () {
@@ -142,13 +145,20 @@ define(['initialize'], function (initialize) {
                     jeniskerusakan = "&jeniskerusakan=" + $scope.item.jenisKerusakanCari.id
                 }
                 var idRuangan= "&idRuangan=" + $scope.userLoginRuangan
-
+                var jenisperbaikan = ''
+                if ($scope.item.jenisPerbaikanCari != undefined) {
+                    jenisperbaikan = '&jenisperbaikan=' + $scope.item.jenisPerbaikanCari.id
+                }
+                var statusPengerjaan = ''
+                if ($scope.item.statusPengerjaanCari != undefined) {
+                    statusPengerjaan = '&statuspengerjaan=' + $scope.item.statusPengerjaanCari.id
+                }
                 var tglAwal = moment($scope.item.tglAwal).format('YYYY-MM-DD HH:mm:ss');
                 var tglAkhir = moment($scope.item.tglAkhir).format('YYYY-MM-DD HH:mm:ss');
                 medifirstService.get("ipsrs/get-daftar-permohonan?" +
                     "tglAwal=" + tglAwal +
                     "&tglAkhir=" + tglAkhir + jenisalat + idRuangan + jeniskerusakan +
-                    "&manage=" + manage
+                    "&manage=" + manage+jenisperbaikan+statusPengerjaan
                     , true).then(function (dat) {
                         $scope.isRouteLoading = false;
                         var data2 = dat.data.data;                       
@@ -202,12 +212,21 @@ define(['initialize'], function (initialize) {
                 if (tabNumber == 1) {
                     manage = 'aingmacan'
                 }
+                var jenisperbaikan = ''
+                console.log($scope.item.jenisPerbaikanCari);
+                if ($scope.item.jenisPerbaikanCari != undefined){
+                    jenisperbaikan = '&jenisperbaikan=' + $scope.item.jenisPerbaikanCari.id
+                }
+                var statusPengerjaan = ''
+                if ($scope.item.statusPengerjaanCari != undefined) {
+                    statusPengerjaan = '&statuspengerjaan=' + $scope.item.statusPengerjaanCari.id
+                }
                 var tglAwal = moment($scope.item.tglAwal).format('YYYY-MM-DD HH:mm:ss');
                 var tglAkhir = moment($scope.item.tglAkhir).format('YYYY-MM-DD HH:mm:ss');
                 medifirstService.get("ipsrs/get-daftar-permohonan?" +
                     "tglAwal=" + tglAwal +
                     "&tglAkhir=" + tglAkhir + desc + '&arrru=' + jenisForm +
-                    "&manage=" + manage
+                    "&manage=" + manage+jenisperbaikan+statusPengerjaan
                     , true).then(function (dat) {
                         $scope.isRouteLoading = false;
                         var data2 = dat.data.data;                       
@@ -339,7 +358,24 @@ define(['initialize'], function (initialize) {
                     ]
                 }
             };
+            var onDataBound = function (e) {
+               var kendoGrid = $("#kGrid").data("kendoGrid"); // get the grid widget
+               var rows = e.sender.element.find("tbody tr"); // get all rows
+               // iterate over the rows and if the undelying dataitem's Status field is PPT add class to the cell
+                for (var i = 0; i < rows.length; i++) {
+                    var row = rows[i];
+                    var statuspekerjaan = kendoGrid.dataItem(row).statuspekerjaan;
+                    if (statuspekerjaan != null && statuspekerjaan == 'Progress') {
+                        $(row.cells).addClass("koneng");
+                        $(row.cells[0]).removeClass("koneng")
+                    } 
+                    if (statuspekerjaan != null && statuspekerjaan == 'Selesai') {
+                        $(row.cells).addClass("green");
+                        $(row.cells[0]).removeClass("green")
+                    }
 
+                }
+            }
             $scope.optionsDaftarPermohonan = {
                 toolbar:["excel"],
                 excel: {
@@ -348,19 +384,26 @@ define(['initialize'], function (initialize) {
 
                 },
                 excelExport: function (e) {
-                    var rows = e.workbook.sheets[0].rows;
-                    var columns = e.workbook.sheets[0].columns;
-                    columns.forEach(function(column){
-                        // also delete the width if it is set
-                        delete column.width;
-                        column.autoWidth = true;
-                    });
-                    rows.unshift({
-                        cells: [{ value: "Data Permohonan cetakan "+moment($scope.now).format( 'DD/MMM/YYYY'), background: "#fffff" }]
+                    var sheet = e.workbook.sheets[0];
+                    sheet.mergedCells = ["A1:P1"];
+                    sheet.frozenRows = 2;
+                    sheet.name = "Sheet 1";
+                    var myHeaders = [{
+                        value: "Laporan Permintaan Perbaikan/Pemeliharaan Instalasi Pemeliharaan Sarana Prasarana Rumah Sakit",
+                        fontSize: 16,
+                        textAlign: "center",
+                        background: "#ffffff",
+                    }];
+                    sheet.rows.splice(0, 0, {
+                        cells: myHeaders,
+                        height: 70,
+                        fontSize: 20,
+                        textAlign: "center"
                     });
                 },
                 selectable: 'row',
                 pageable: true,
+                dataBound: onDataBound,
                 columns: [
                     {
                         "field": "no",
@@ -829,6 +872,12 @@ define(['initialize'], function (initialize) {
                     return;
                 }
 
+                // $scope.itemd.p3 = ;
+                if ($scope.dataSelected.ispihakketiga == true){
+                    $scope.item.p3 = true
+                } else if ($scope.dataSelected.ispihakketiga != true) {
+                    $scope.item.p3 = false
+                }
                 $scope.itemd.tglLapor = $scope.dataSelected.tglplanning;
                 $scope.itemd.Ruangan = $scope.dataSelected.namaruangan;
                 $scope.itemd.namaPelapor = $scope.dataSelected.pelapor;
@@ -842,6 +891,7 @@ define(['initialize'], function (initialize) {
                 $scope.item.listPegawaiMulti = $scope.dataSelected.details;
                 $scope.item.worklist = $scope.dataSelected.deskripsiplanning;
                 $scope.item.identifikasi = $scope.dataSelected.keteranganverifikasi;
+                $scope.item.catatan = $scope.dataSelected.catatan
                 $scope.popupPengerjaan.center().open();
                 console.log($scope.item.jenisKerusakan);
             }
@@ -853,10 +903,10 @@ define(['initialize'], function (initialize) {
                     return;
                 }                
 
-                if (moment($scope.item.tglMulai).format('YYYY-MM-DD HH:mm') == moment($scope.item.tglSelesai).format('YYYY-MM-DD HH:mm')) {
-                    toastr.error("Tanggal Mulai dan Tanggal Selasai Tidak Boleh Sama!")
-                    return;
-                }
+                // if (moment($scope.item.tglMulai).format('YYYY-MM-DD HH:mm') == moment($scope.item.tglSelesai).format('YYYY-MM-DD HH:mm')) {
+                //     toastr.error("Tanggal Mulai dan Tanggal Selasai Tidak Boleh Sama!")
+                //     return;
+                // }
 
                 if ($scope.item.staff == undefined) {
                     toastr.error("Petugas Penanggung Jawab Belum Diisi!")
@@ -889,16 +939,23 @@ define(['initialize'], function (initialize) {
                     'jeniskerusakan' : $scope.item.jenisKerusakan != undefined ? $scope.item.jenisKerusakan.id : null,
                     'worklist' : $scope.item.worklist != undefined ? $scope.item.worklist : null,
                     'status' : $scope.item.status != undefined ? $scope.item.status.id : null,
+                    'ispihakketiga': $scope.item.p3 != undefined && $scope.item.p3== true? true : null,
+                    'catatan': $scope.item.catatan != undefined ? $scope.item.catatan : null,
                 }
-
+                
                 var objSave = {
                     norec : $scope.dataSelected.norec,
                     strukplanning : strukplanning,
                     datapegawai : datapegawai,
                 }
 
+                console.log(objSave);
+                // return
                 medifirstService.post('ipsrs/save-pengerjaan-permohonan',objSave).then(function(e) {
                     $scope.item = {}
+                    $scope.item.listPegawaiMulti = {};
+                    $scope.item.tglAwal = moment($scope.now).format('YYYY-MM-DD 00:00:00')
+                    $scope.item.tglAkhir = moment($scope.now).format('YYYY-MM-DD 23:59:59')
                     $scope.popupPengerjaan.close()
                     init();
                 })    

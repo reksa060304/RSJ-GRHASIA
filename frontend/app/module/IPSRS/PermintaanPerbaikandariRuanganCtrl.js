@@ -135,7 +135,7 @@ define(['initialize'], function (initialize) {
                 }
 
                 var tglAwal1 = moment($scope.item.tglAwal1).format('YYYY-MM-DD HH:mm:ss');
-                var tglAkhir = moment($scope.item.tglAkhir).format('YYYY-MM-DD HH:mm:ss');
+                var tglAkhir = moment($scope.item.tglAkhir).format('YYYY-MM-DD 23:59:59');
                 medifirstService.get("ipsrs/get-daftar-permohonan?" +
                     "tglAwal=" + tglAwal1 +
                     "&tglAkhir=" + tglAkhir + desc + '&arrru=' + jenisForm +
@@ -382,6 +382,12 @@ define(['initialize'], function (initialize) {
                         ruangantujuan : $scope.item.ruangantujuan.id
                     }
                 medifirstService.post('ipsrs/save-permohonan',objSave).then(function(e) {
+                    $scope.item = {}
+                    $scope.item.tglAwal = new moment($scope.now).format('YYYY-MM-DD HH:mm');
+                    $scope.item.tglAwal1 = new moment($scope.now).format('YYYY-MM-DD 00:00');
+                    $scope.item.tglAkhir = new moment($scope.now).format('YYYY-MM-DD 23.59');
+                    $scope.myVar = 1
+                    // console.log($scope.myVar);
                     // $scope.popupSignDate.close();
                     // init2()
                 })    

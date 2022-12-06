@@ -2313,6 +2313,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('ipsrs/get-ruangan','IPSRS\IPSRSController@getComboRuanganIPSRS');
             Route::post('ipsrs/save-permohonan-pindahke','IPSRS\IPSRSController@SavePermohonanPindahKe');
             Route::get('ipsrs/get-daftar-permohonan-rt','IPSRS\IPSRSController@getDaftarRT');
+            Route::get('ipsrs/get-combo-pegawai-perbaikan','IPSRS\IPSRSController@getComboPegawai');
             Route::post('diklat/simpan-pleyanan-penjamin-diklat','SDM\PelatihanController@simpanPelayananPenjaminDiklat');
             Route::get('diklat/detail-diklat-penjamin/{norecSPP}','SDM\PelatihanController@detailPenjaminDiklat');
             Route::get('diklat/get-data-pembayaran', 'SDM\pelatihanController@pembayaranDiklat');

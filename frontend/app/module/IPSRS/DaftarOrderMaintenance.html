@@ -43,6 +43,21 @@
     .k-grid-Hapus {
         background-color: #ff2359 !important;
     }
+    .green {
+    background-color: #98FB98;
+    /*color: #000000;*/
+    color: black;
+    }
+    .koneng {
+    background-color: #fffb00;
+    /*color: #000000;*/
+    color: black;
+    }
+    .red {
+    background-color: #ff3860;
+    color: #FFFFFF;
+    /*font-weight: bold;*/
+    }
 </style>
 <div class="grid_12">
 
@@ -94,7 +109,29 @@
                                                     k-auto-bind="false" />
                                             </div>
                                         </div>
-                                        <div class="grid_3" style="margin-top: 5px;">
+                                        <div class="grid_2" style="margin-top: 5px;">
+                                            <div class="grid_12">
+                                                <label c-label item="item" c-label-text="Jenis Perbaikan"></label>
+                                            </div>
+                                            <div class="grid_12" style="margin-top: -7px;">
+                                                <input kendo-combo-box k-data-source="listJenisPerbaikan"
+                                                    k-ng-model="item.jenisPerbaikanCari"
+                                                    k-data-text-field="'namaruangan'" k-filter="'contains'"
+                                                    k-data-value-field="'id'" k-auto-bind="false" />
+                                            </div>
+                                        </div>
+                                        <div class="grid_2" style="margin-top: 5px;">
+                                            <div class="grid_12">
+                                                <label c-label item="item" c-label-text="Status Pengerjaan"></label>
+                                            </div>
+                                            <div class="grid_12" style="margin-top: -7px;">
+                                                <input kendo-combo-box k-data-source="listStatus"
+                                                    k-ng-model="item.statusPengerjaanCari"
+                                                    k-data-text-field="'statuspekerjaan'" k-filter="'contains'"
+                                                    k-data-value-field="'id'" k-auto-bind="false" />
+                                            </div>
+                                        </div>
+                                        <div class="grid_2" style="margin-top: 5px;">
                                             <div class="grid_12">
                                                 <label c-label item="item" c-label-text="Jenis Kerusakan"></label>
                                             </div>
@@ -108,6 +145,7 @@
                                                 <button class="c-button" ng-click="cariFilter2()">Cari</button>
                                             </div>
                                         </div>
+                                        
                                         <div class="grid_12">
 
                                             <div class="grid_12">
@@ -750,6 +788,24 @@
                                 <select kendo-multi-select k-options="selectOptionsPegawai" k-filter="'contains'"
                                     k-data-source="listPegawai" k-ng-model="item.listPegawaiMulti"></select>
                             </div>
+                            <div class="grid_12" style="margin-top:10px">
+                                <input type="checkbox" class="k-checkbox" ng-model="item.p3" id="item.p3">
+                                <label class="k-checkbox-label" for="item.p3"><b> &nbsp; Pihak Ketiga</b></label>
+
+                            </div>
+                            <div class="grid_12">
+                                <div class="grid_12">
+                                    <label c-label item="item" c-label-text="Catatan"></label>
+                                </div>
+                                <div class="grid_12">
+                                    <textarea required class="k-textbox" style="height: 125px;
+                                width: 100%;
+                                margin-top: 5px;
+                                margin-left: 5px;
+                                resize: none;" ng-model="item.catatan">
+                            </textarea>
+                                </div>
+                            </div>
                         </div>
                         <div class="grid_2">
                             <div class="grid_12">
@@ -761,6 +817,7 @@
                             k-auto-bind="false" />
                             </div>
                         </div>
+                        
                     </div>
                 </div>
             </div>
