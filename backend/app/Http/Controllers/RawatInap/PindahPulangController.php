@@ -301,6 +301,12 @@ class PindahPulangController extends ApiController
                     );
 
             }
+            $pasienDaftar = PasienDaftar::where('norec',$r_NewPD['norec_pd'])->first();
+            if($pasienDaftar->ihs_finished == null){
+                PasienDaftar::where('norec', $pasienDaftar->norec)->update([
+                    'ihs_finished' => $r_NewPD['tglpulang'],
+                ]);
+            }
             $transStatus = 'true';
         } catch (\Exception $e) {
             $transStatus = 'false';
@@ -311,9 +317,17 @@ class PindahPulangController extends ApiController
         if ($transStatus == 'true') {
             DB::commit();
             $transMessage = 'SUKSES';
+            $objetoRequest = new \Illuminate\Http\Request();
+            $objetoRequest ['noregistrasi']=  $r_NewPD['noregistrasi'];
+            $ihs = app('App\Http\Controllers\Bridging\IHSController')->Encounter($objetoRequest,true);
+
+            $ihs2 = app('App\Http\Controllers\Bridging\IHSController')->Condition($objetoRequest,true);
+           
             $result = array(
                 'status' => 201,
                 'message' => $transMessage,
+                'Encounter_update'=> isset($ihs)? $ihs :null,
+                'Condition_update'=> isset($ihs2)? $ihs2 :null,
 //                'dataPD' => $dataPD,
 //                'dataAPD' => $dataAPD,
 //                'dataRPP'=> $dataRPP,

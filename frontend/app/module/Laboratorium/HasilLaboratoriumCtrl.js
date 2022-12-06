@@ -377,6 +377,36 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 +'&nama='+nama,  '_blank');
 
         }
+        $scope.satusehat = function(){
+            let json = {
+                "noorder": $scope.noOrder
+            }
+            medifirstService.postNonMessage('bridging/ihs/ObservationLabBridging', json).then(function (z) {
+                if(z.data.resourceType == 'OperationOutcome' ){
+                    for (let x = 0; x < z.data.issue.length; x++) {
+                        const element = z.data.issue[x];
+                        toastr.error(element.diagnostics + ' - ' + element.expression[0])
+                    }
+                }else{
+                    toastr.success(z.data.resourceType)
+                    let json2 = {
+                        "noorder": $scope.noOrder
+                    }
+                    medifirstService.postNonMessage('bridging/ihs/DiagnosticReportBridging', json2).then(function (z) {
+                        if(z.data.resourceType == 'OperationOutcome' ){
+                            for (let x = 0; x < z.data.issue.length; x++) {
+                                const element = z.data.issue[x];
+                                toastr.error(element.diagnostics + ' - ' + element.expression[0])
+                            }
+                        }else{
+                            toastr.success(z.data.resourceType)
+                        }
+                       
+                    })
+                }
+               
+            })
+        }
 
         }
 

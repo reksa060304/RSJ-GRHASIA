@@ -571,7 +571,12 @@ define(['initialize'], function (initialize) {
                             "detailpemeriksaan": $scope.resultGrids._data[i].detailpemeriksaan,
                             "norecpelayanan" : $scope.resultGrids._data[i].norecpp,
                             "catatan" :$scope.item.catatan?$scope.item.catatan:null,
-                            "dokterfk" :$scope.item.DataPegawai?$scope.item.DataPegawai.id:null
+                            "dokterfk" :$scope.item.DataPegawai?$scope.item.DataPegawai.id:null,
+                            "loinc_name" : $scope.resultGrids._data[i].loinc_name,
+                            "loinc_id" : $scope.resultGrids._data[i].loinc_id,
+                            "nilainormal" : $scope.resultGrids._data[i].nilaitext,
+                            "satuan" : $scope.resultGrids._data[i].satuanstandar != null && $scope.resultGrids._data[i].satuanstandar != ''?$scope.resultGrids._data[i].satuanstandar != null :'-' ,
+             
                         });
                 }
 

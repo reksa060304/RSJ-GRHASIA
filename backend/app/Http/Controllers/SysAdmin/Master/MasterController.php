@@ -44,7 +44,8 @@ use App\Transaksi\OrderPelayanan;
 use DB;
 use Illuminate\Http\Request;
 use Webpatser\Uuid\Uuid;
-
+use App\Master\IHS_MapBahanZat;
+use App\Master\Pegawai;
 class MasterController extends ApiController{
     use Valet;
 
@@ -317,7 +318,7 @@ class MasterController extends ApiController{
                 'kategory.kategoryproduk','rg.name as rm_generikname','gnr.namagproduk','level.levelproduk',
                 'dp.namadepartemen','fungsi.fungsiproduk','bentuk.namabentukproduk','bhn.namabahanproduk',
                 'type.typeproduk','warna.warnaproduk','merk.merkproduk','rd.name as detailobat','golongan.golonganproduk',
-                'dg.detailgolonganproduk')
+                'dg.detailgolonganproduk','rm.name as rm_sediaan')
             ->leftJoin('rm_sediaan_m as rm','rm.id','=','p.objectsediaanfk')
             ->leftJoin('merkproduk_m as merk','merk.id','=','objectmerkprodukfk')
             ->leftJoin('rekanan_m as rk','rk.id','=','p.objectrekananfk')
@@ -348,6 +349,21 @@ class MasterController extends ApiController{
             ->get();
 
         $id_jenisproduk = $data[0]->objectjenisprodukfk;
+        $data[0]->ingredients = DB::table('ihs_map_bahanzat as mm1')
+        ->leftJoin('ihs_numerator_satuan as mm','mm.id','=','mm1.numerartorsatuanfk')
+        ->leftJoin('ihs_denom_satuan as mm3','mm3.id','=','mm1.denomsatuanfk')
+        ->leftJoin('ihs_bahanzat as bh','bh.id','=','mm1.ihs_bahanzat')
+        ->select('mm1.*','mm.nama as numerator',
+              'mm3.nama as denominator',
+              'mm1.qtynum as denominatorvalue' ,
+              'mm1.qtydenom as numeratorvalue',
+              'mm.id as numeratorfk', 
+              'mm3.id as denominatorfk',
+              'mm1.aktif as isactive',
+              'mm1.ihs_bahanzat as komposisizatfk',
+              'bh.nama as komposisizat')
+        ->where('mm1.produkfk',$data[0]->id)
+        ->get();
         if(!empty($id_jenisproduk)){
             $data_jenisproduk = DB::table('jenisproduk_m')
                 ->select('objectkelompokprodukfk')
@@ -3750,9 +3766,14 @@ class MasterController extends ApiController{
         $kdProfile = (int) $this->getDataKdProfile($request);
         $data = \DB::table('ruangan_m as kd')
             ->leftjoin ('departemen_m as kp','kp.id','=','kd.objectdepartemenfk')
-            ->select('kd.*','kp.namadepartemen')
+            ->leftjoin ('profile_m as pr','pr.id','=','kd.kdprofile')
+            ->select('kd.*','kp.namadepartemen','pr.ihs_id as ihs_profile','pr.ihs_province'
+            ,'pr.ihs_province','pr.ihs_city','pr.ihs_district','pr.ihs_village',
+            'pr.kodepos','pr.alamatlengkap','pr.alamatlengkap','pr.namakota','pr.alamatemail',
+            'pr.website','pr.alamatemail','pr.fixedphone')
             ->where('kd.kdprofile', $kdProfile)
-            ->where('kd.statusenabled', true);
+            ->where('kd.statusenabled', true)
+            ->where('kp.statusenabled', true);
 
         if(isset($request['id']) && $request['id']!="" && $request['id']!="undefined"){
             $data = $data->where('kd.id','=', $request['id']);
@@ -3766,7 +3787,7 @@ class MasterController extends ApiController{
         if(isset($request['idDept']) && $request['idDept']!="" && $request['idDept']!="undefined"){
             $data = $data->where('kd.objectdepartemenfk','=', $request['idDept']);
         }
-
+        $data = $data->orderBy('kd.namaruangan');
         $data = $data->get();
         $result = array(
             'data'=> $data,
@@ -3797,6 +3818,7 @@ class MasterController extends ApiController{
             $JD->kdruangan = $idJenis;
             $JD->objectdepartemenfk = $request['objectdepartemenfk'];
             $JD->qruangan = $idJenis;
+            $JD->ihs_id =  isset($request['ihs_id'])?$request['ihs_id']:null;
             $JD->save();
             $transStatus = 'true';
         } catch (\Exception $e) {
@@ -3860,7 +3882,11 @@ class MasterController extends ApiController{
     public function getDataMasterDepartemen(Request $request) {
         $kdProfile = (int) $this->getDataKdProfile($request);
         $data = \DB::table('departemen_m as kd')
-            ->select('kd.*')
+            ->leftjoin ('profile_m as pr','pr.id','=','kd.kdprofile')
+            ->select('kd.*','pr.ihs_id as ihs_profile','pr.ihs_province'
+            ,'pr.ihs_province','pr.ihs_city','pr.ihs_district','pr.ihs_village',
+            'pr.kodepos','pr.alamatlengkap','pr.alamatlengkap','pr.namakota','pr.alamatemail',
+            'pr.website','pr.alamatemail','pr.fixedphone')
             ->where('kd.kdprofile', $kdProfile)
             ->where('kd.statusenabled', true);
 
@@ -3873,6 +3899,7 @@ class MasterController extends ApiController{
         if(isset($request['namaDepartemen']) && $request['namaDepartemen']!="" && $request['namaDepartemen']!="undefined"){
             $data = $data->where('kd.namadepartemen','ILIKE', '%'.$request['namaDepartemen'].'%');
         }
+        $data = $data->orderBy('kd.namadepartemen');
         $data = $data->orderBy('kd.id');
         $data = $data->get();
         $result = array(
@@ -5381,5 +5408,302 @@ class MasterController extends ApiController{
             'as'=> 'Feezy'
         );
         return $this->respond($result);
+    }
+    public function getListProdukApotik(Request $request){
+        //get request
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $filter = $request->all();
+        //get data
+        $data = DB::table('produk_m as p')
+            ->select('p.id','p.kdproduk','p.kdbarcode','jp.jenisproduk','dj.detailjenisproduk','p.namaproduk','p.kekuatan','st.satuanstandar','rm.name as satuan','p.isgeneric', 'rg.name as generik', 'p.statusenabled',
+            'p.ihs_kfa_code','p.ihs_id','ihs_loinc_id')
+            ->leftJoin('rm_sediaan_m as rm','rm.id','=','p.objectsediaanfk')
+            ->leftJoin('merkproduk_m as mp','mp.id','=','objectmerkprodukfk')
+            ->leftJoin('rekanan_m as rk','rk.id','=','p.objectrekananfk')
+            ->leftJoin('satuanstandar_m as st','st.id','=','p.objectsatuanstandarfk')
+            ->leftJoin('status_barang_m as sb','sb.id','=','p.objectstatusbarangfk')
+            ->leftJoin('rm_generik_m as rg','rg.id','=','p.objectgenerikfk')
+            ->leftJoin('rm_detail_obat_m as rd','rd.id','=','p.objectdetailobatfk')
+            ->leftJoin('departemen_m as dp','dp.id','=','p.objectdepartemenfk')
+            ->leftJoin('detailjenisproduk_m as dj','dj.id','=','p.objectdetailjenisprodukfk')
+            ->leftJoin('jenisproduk_m as jp','jp.id','=','dj.objectjenisprodukfk')
+            ->where('p.kdprofile', $kdProfile);
+            
+        if(isset($filter['jenisfk']) && !empty($filter['jenisfk'])){
+            $data = $data->where('dj.objectjenisprodukfk','=', $filter['jenisfk']);
+        } else {
+            // $data = $data->where('dj.objectjenisprodukfk', 97);
+        }
+        if(isset($filter['detailfk']) && !empty($filter['detailfk'])){
+            $data = $data->where('dj.id','=', $filter['detailfk']);
+        }
+        if (isset($filter['namaproduk']) && !empty($filter['namaproduk'])) {
+            $data = $data->where('p.namaproduk','ilike', '%'.$filter['namaproduk'].'%');
+        }
+        if (isset($filter['kodeKF']) && !empty($filter['kodeKF'])) {
+            $data = $data->where('p.ihs_kfa_code','ilike', '%'.$filter['kodeKF'].'%');
+        }
+        if (isset($filter['statusfk']) && !empty($filter['statusfk'])) {
+            switch ($filter['statusfk']) {
+                case '1':
+                    $data = $data->where('p.statusenabled', true);
+                    break;
+                
+                case '2':
+                    $data = $data->where('p.statusenabled', false);
+                    break;
+            }
+        }
+
+        $data = $data->orderBy('p.kdproduk');
+        $data = $data->get();
+        return $this->respond($data);
+    }
+    public function getDataComboMasterRev(Request $request){
+        $kdProfile = (int) $this->getDataKdProfile($request);
+ 
+        // Kategory Produk //
+           
+            $generik = DB::table('rm_generik_m')
+                ->select('id','name')
+                ->where('kdprofile', $kdProfile)
+                ->where('statusenabled', true)
+                ->get();
+
+     
+            $detailjenis = \DB::table('detailjenisproduk_m')
+                ->select('id','objectjenisprodukfk as id_jenisproduk','detailjenisproduk')
+                ->where('statusenabled', true)
+                ->where('kdprofile', $kdProfile)
+                ->get();
+        // Kategory Produk //
+
+   
+   
+            $merkproduk = DB::table('merkproduk_m')
+                ->select('id','merkproduk')
+                ->where('statusenabled', true)
+                ->where('kdprofile', $kdProfile)
+                ->get();
+
+
+ 
+
+            $satuanstandar =  DB::table('satuanstandar_m')
+                ->select('id','satuanstandar')
+                ->where('statusenabled', true)
+                ->where('kdprofile', $kdProfile)
+                ->get();
+       
+     
+
+            $produsenproduk = DB::table('produsenproduk_m')
+                ->select('id','namaprodusenproduk')
+                ->where('statusenabled', true)
+                ->where('kdprofile', $kdProfile)
+                ->get();
+
+            $statusproduk = DB::table('statusproduk_m')
+                ->where('statusenabled', true)
+                ->select('id','statusproduk')
+                ->where('kdprofile', $kdProfile)
+                ->get();
+
+        
+            $rm_sediaan = DB::table('rm_sediaan_m')
+                ->select('id','name')
+                ->where('kdprofile', $kdProfile)
+                ->where('statusenabled', true)
+                ->get();
+
+        $data = array(
+            "produsenproduk" => $produsenproduk,
+            "statusproduk" => $statusproduk,
+            "rm_sediaan" => $rm_sediaan,
+            "kategori" => array(
+                "generik" => $generik,
+                "detailjenis" => $detailjenis,
+            ),
+            "spesifikasi" => array(
+				"merkproduk" => $merkproduk,
+			),
+            "satuan" => array(
+                "standar" => $satuanstandar,
+            ),
+            "ihs_kode_kf_a" =>  DB::table('ihs_kode_kf_a')->get(),
+            "ihs_kode_kf_a_brand" =>  DB::table('ihs_kode_kf_a_brand')->get(),
+            "ihs_kode_kf_a_kemasan" => DB::table('ihs_kode_kf_a_kemasan')->get(),
+            "ihs_sediaan" => DB::table('ihs_sediaan')->get(),
+            "ihs_bahanzat" => DB::table('ihs_bahanzat')->get(),
+            "ihs_denom_satuan" => DB::table('ihs_denom_satuan')->get(),
+            "ihs_numerator_satuan" => DB::table('ihs_numerator_satuan')->get(),
+            "as" => "ea@epic"
+        );
+        return $this->respond($data);
+    }
+    public function saveDataProdukApotik(Request $request){
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $data = $request->all();
+        DB::beginTransaction();
+        try {
+            $prod =  Produk::where('id',$data['id'])->where('kdprofile', $kdProfile)->first();
+            if ($data['id'] == null) {
+                $newId = Produk::max('id') + 1;
+                $prod = new Produk();
+                $prod->id = $newId;
+                $prod->kdprofile = $kdProfile;
+                $prod->norec = $prod->generateNewId();
+                $kdProdukSeq = null;
+                
+                switch ($data['objectdetailjenisprodukfk']) {
+                    case '474':
+                        // generate kdproduk jenis obat 474
+                        $kdProdukSeq = $this->generateCodeBySeqTable(new Produk, 'kdproduk', 8, '01', $kdProfile);
+                        break;
+                    case '1346':
+                        // generte kdproduk jenis alkes 1346
+                        $kdProdukSeq = $this->generateCodeBySeqTable(new Produk, 'kdproduk', 9, '02', $kdProfile);
+                        break;
+                    case '1593':
+                        // generte kdproduk jenis alkes 1593
+                        $kdProdukSeq = $this->generateCodeBySeqTable(new Produk, 'kdproduk', 9, '02', $kdProfile);
+                        break;
+                }
+                $prod->kdproduk = $kdProdukSeq;
+            }
+            $prod->statusenabled = $data['statusenabled'];
+            $prod->namaexternal = $data['namaproduk'];
+            $prod->reportdisplay = $data['namaproduk'];
+            $prod->namaproduk = $data['namaproduk'];
+            $prod->deskripsiproduk = $data['deskripsiproduk'];
+            $prod->isprodukintern = $data['keterangan'];
+            $prod->objectsatuanstandarfk = $data['objectsatuanstandarfk'];
+            $prod->objectdetailjenisprodukfk = $data['objectdetailjenisprodukfk'];
+            $prod->isgeneric = $data['isgeneric'];
+            $prod->objectgenerikfk = $data['objectgenerikfk'];
+            $prod->kekuatan = $data['kekuatan'];
+            $prod->objectsediaanfk = $data['objectsediaanfk'];
+            $prod->objectmerkprodukfk = $data['objectmerkprodukfk'];
+            $prod->objectstatusprodukfk = $data['objectstatusprodukfk'];
+            $prod->isprodukintern = $data['isarvdonasi'];
+            $prod->isprodukintern = $data['isnarkotika'];
+            $prod->isprodukintern = $data['ispsikotropika'];
+            $prod->isprodukintern = $data['isonkologi'];
+            $prod->isprodukintern = $data['isoot'];
+            $prod->isprodukintern = $data['isprekusor'];
+            $prod->isprodukintern = $data['isvaksindonasi'];
+            $prod->objectprodusenprodukfk = $data['objectprodusenprodukfk'];
+            $prod->objectrekananfk = $data['objectrekananfk'];
+            $prod->kdproduk = $data['kdproduk'];
+
+            $prod->ihs_kfa_code = isset($data['ihs_kfa_code'])?$data['ihs_kfa_code']:null;
+            $prod->ihs_kfa_code_brand = isset($data['ihs_kfa_code_brand'])?$data['ihs_kfa_code_brand']:null;
+            $prod->ihs_kfa_code_kemasan = isset($data['ihs_kfa_code_kemasan'])?$data['ihs_kfa_code_kemasan']:null;
+            $prod->ihs_sediaan = isset($data['ihs_kfa_code'])?$data['ihs_sediaan']:null;
+            $prod->ihs_sediaan = isset($data['ihs_kfa_code'])?$data['ihs_sediaan']:null;
+            $prod->ihs_loinc_id = isset($data['ihs_loinc_id'])?$data['ihs_loinc_id']:null;
+            $prod->ihs_loinc_common_name = isset($data['ihs_loinc_common_name'])?$data['ihs_loinc_common_name']:null;
+
+            $prod->save();
+            if(isset($data['ingredients'])){
+                IHS_MapBahanZat::where('produkfk', $prod->id)->delete();
+                foreach($data['ingredients'] as $item){
+                    $prod2 = new IHS_MapBahanZat();
+                    $prod2->id = IHS_MapBahanZat::max('id')+1;
+                    $prod2->norec = $prod2->generateNewId();
+                    $prod2->produkfk = $prod->id;
+                    $prod2->ihs_bahanzat = $item['komposisizatfk'];
+                    $prod2->qtynum =$item['numeratorvalue'];
+                    $prod2->qtydenom =$item['denominatorvalue'];
+                    $prod2->denomsatuanfk = $item['denominatorfk'];
+                    $prod2->numerartorsatuanfk = $item['numeratorfk'];
+                    $prod2->save();
+                }
+            }
+          
+
+            $transStatus = true;
+            $transMessage = "Simpan Berhasil";
+        } catch (\Exception $e) {
+            $transStatus = false;
+            $transMessage = "Simpan Gagal";
+        }
+
+        if ($transStatus) {
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMessage,
+                "as" => 'ea@epic',
+            );
+        } else {
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message"  => $transMessage,
+                "e"  => $e->getMessage(),
+                "as" => 'ea@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    public function getDataMasterPegawai(Request $request) {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $data = \DB::table('pegawai_m as kd')
+            ->leftjoin ('jenispegawai_m as pr','pr.id','=','kd.objectjenispegawaifk')
+            ->select('kd.id','kd.namalengkap','kd.noidentitas','kd.ihs_id','pr.jenispegawai')
+            ->where('kd.kdprofile', $kdProfile)
+            ->where('kd.statusenabled', true)
+            ->where('kd.objectjenispegawaifk', $this->settingDataFixed('kdJenisPegawaiDokter',$kdProfile));
+        if(isset($request['id_ihs']) && $request['id_ihs']!="" && $request['id_ihs']!="undefined"){
+            $data = $data->where('kd.id_ihs','=', $request['id_ihs']);
+        }
+        if(isset($request['nik']) && $request['nik']!="" && $request['nik']!="undefined"){
+            $data = $data->where('kd.noidentitas','=', $request['nik']);
+        }
+        if(isset($request['namalengkap']) && $request['namalengkap']!="" && $request['namalengkap']!="undefined"){
+            $data = $data->where('kd.namalengkap','ILIKE', '%'.$request['namalengkap'].'%');
+        }
+        $data = $data->orderBy('kd.namalengkap');
+        $data = $data->get();
+        $result = array(
+            'data'=> $data,
+            'message' => 'inhuman',
+        );
+        return $this->respond($result);
+    }
+    
+    public function saveDataMasterPegawai(Request $request) {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        DB::beginTransaction();
+        try{
+       
+            $JD = Pegawai::where('id',$request['id'])->where('kdprofile', $kdProfile)->first();
+            $JD->noidentitas =$request['noidentitas'];
+            $JD->ihs_id =  isset($request['ihs_id'])?$request['ihs_id']:null;
+            $JD->save();
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan Berhasil";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "peg" => $JD,
+                "as" => 'inhuman',
+            );
+
+        } else {
+            $transMessage = "Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "as" => 'inhuman',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
 }

@@ -894,6 +894,7 @@ class LaboratoriumController extends ApiController
                 maps.nourutdetail,maps.satuanstandarfk,ss.satuanstandar,nn.nilaitext,nn.tipedata,nn.nilaimin,nn.nilaimax,hh.hasil,
                 maps.id as map_id,hh.norec as norec_hasil,maps.nourutjenispemeriksaan,maps.nourutdetail,pp.norec as norecPP,nn.nilaimin || '-' || nn.nilaimax as nilainormalstr,
                 hh.flag,nn.id as idnn,maps2.jeniskelaminfk,hh.pegawaifk,hh.keterangan
+                ,maps.loinc_id,maps.loinc_name
                 FROM pelayananpasien_t  as pp
                 inner join produk_m as prd on prd.id = pp.produkfk
                 inner join detailjenisproduk_m as djp on djp.id = prd.objectdetailjenisprodukfk
@@ -933,7 +934,8 @@ class LaboratoriumController extends ApiController
         DB::beginTransaction();
         $norecpelayanan = '';
         $dokterfk = 0;
-        try{            
+        try{       
+            $norec = [];     
             foreach ($request['hasil'] as $key => $value) {
                 $norecpelayanan = $value['norecpelayanan'];
                 $dokterfk = $value['dokterfk'];
@@ -948,6 +950,7 @@ class LaboratoriumController extends ApiController
                     // detailpemeriksaan
                     ])->lockForUpdate()->first();
                 if(!empty($cek)){
+                   $norec[] = $cek->norec;
                    $update = HasilLaboratorium::where([
                         // 'noregistrasifk',$request['hasil'][0]['noregistrasifk']
                         // 'norecpelayanan',$value['norecpelayanan']
@@ -961,6 +964,10 @@ class LaboratoriumController extends ApiController
                                 'flag' => $value['flag'],
                                 'pegawaifk' => $value['dokterfk'],
                                 'keterangan' => $value['catatan'],
+                                'loinc_id' => isset($value['loinc_id'])?$value['loinc_id']:null,
+                                'loinc_name' => isset($value['loinc_name'])?$value['loinc_name']:null,
+                                'nilainormal' => isset($value['nilainormal'])?$value['nilainormal']:null,
+                                'satuan' => isset($value['satuan'])?$value['satuan']:null,
                             ]
                         );
                 }else
@@ -991,7 +998,13 @@ class LaboratoriumController extends ApiController
                     $h->detailpemeriksaan = $value['detailpemeriksaan'];
                     $h->norecpelayanan = $value['norecpelayanan'];
                     $h->keterangan = $value['catatan'];
+                    $h->loinc_id = isset($value['loinc_id'])?$value['loinc_id']:null;
+                    $h->loinc_name =isset($value['loinc_name'])?$value['loinc_name']:null;
+                    $h->nilainormal = isset($value['nilainormal'])?$value['nilainormal']:null;
+                    $h->satuan = isset($value['satuan'])?$value['satuan']:null;
+          
                     $h->save();
+                    $norec[] = $h->norec;
                     
                 }
                 // $newId = LoggingUser::max('id');
@@ -1027,9 +1040,26 @@ class LaboratoriumController extends ApiController
         if ($transStatus == 'true') {
             $transMessage = "Sukses";
             DB::commit();
+            $ihs = null;
+
+            foreach ($norec as $it) {
+                $objetoRequest = new \Illuminate\Http\Request();
+                $objetoRequest['norec_hasil'] = $it;
+                $ihs = app('App\Http\Controllers\Bridging\IHSController')->ObservationLab($objetoRequest, true);
+            }
+            $ihs2 = null;
+
+            $objetoRequest2 = new \Illuminate\Http\Request();
+            $objetoRequest2['norec_hasil'] = $it;
+            $objetoRequest2['norec_arr'] = $norec;
+
+            $ihs2 = app('App\Http\Controllers\Bridging\IHSController')->DiagnosticReport($objetoRequest2, true);
+          
             $result = array(
                 "status" => 201,
                 "message" => $transMessage,
+                "Observation" => $ihs,
+                "DiagnosticReport" => $ihs2,
                 "as" => 'er@epic',
             );
 

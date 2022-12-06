@@ -1038,7 +1038,8 @@ define(['initialize'], function (initialize) {
                         "qtyproduk": $scope.sourceVerif._data[i].qtyproduk,
                         "komponenharga": $scope.sourceVerif._data[i].details,
                         "tglpelayanan": $scope.sourceVerif._data[i].tglpelayanan,
-                        "nourut": $scope.sourceVerif._data[i].no // syamsu
+                        "nourut": $scope.sourceVerif._data[i].no ,// syamsu,
+                        "ihs_service_request": $scope.sourceVerif._data[i].ihs_service_request 
                     }
                     dataPost.push(datasys)
                     // }

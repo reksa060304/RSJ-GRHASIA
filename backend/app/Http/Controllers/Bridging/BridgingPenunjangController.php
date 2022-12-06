@@ -578,6 +578,7 @@ class BridgingPenunjangController extends ApiController
     public function saveBridgingVansLab(Request $request) {
         $kdProfile = (int)$this->getDataKdProfile($request);
         $noorder = $request['noorder'];
+        $op = [];
         if(isset($request['details'] )){
 
            DB::beginTransaction();
@@ -610,8 +611,9 @@ class BridgingPenunjangController extends ApiController
                     $dataOP->tglpelayanan =$struk->tglorder;// date('Y-m-d H:i:s');
                 }
                 $dataOP->objectnamapenyerahbarangfk = $struk->objectpegawaiorderfk;
-                
+                $dataOP->ihs_id =  isset($item['ihs_service_request'])?$item['ihs_service_request']:null;
                 $dataOP->save();
+                $op[]= $dataOP;
             }
                 $stt = 'true';
             } catch (\Exception $e) {
@@ -878,6 +880,7 @@ class BridgingPenunjangController extends ApiController
             $result = array(
                 "status" => 201,
                 "data" => $newBRG,
+                "op" => $op,
                 "as" => 'er@epic',
             );
         } else {

@@ -5088,6 +5088,12 @@ class TagihanController  extends ApiController
         $pasienDaftar->save();
         $strukPelayanan->save();
 
+        if($pasienDaftar->ihs_finished == null){
+            PasienDaftar::where('norec', $pasienDaftar->norec)->update([
+                'ihs_finished' => date('Y-m-d H:i:s'),
+            ]);
+        }
+
         $transStatus = true;
         } catch (\Exception $e) {
             $transStatus = false;
@@ -5097,10 +5103,19 @@ class TagihanController  extends ApiController
         if ($transStatus == 'true') {
             $transMessage = "Simpan Sukses";
             DB::commit();
+            $objetoRequest = new \Illuminate\Http\Request();
+            $objetoRequest ['noregistrasi']= $pasienDaftar->noregistrasi;
+            $ihs = null;
+            if($pasienDaftar->ihs_diagnosis != null){
+                $objetoRequest ['diagnosis']=  json_decode($pasienDaftar->ihs_diagnosis);
+            }
+            $ihs = app('App\Http\Controllers\Bridging\IHSController')->Encounter($objetoRequest,true);
+         
             $result = array(
                 'status' => 201,
                 'message' => $transMessage,
                 'result' => $strukPelayanan,
+                'Encounter_update' => $ihs,
                 'as' => 'ea@epic',
             );
         } else {
