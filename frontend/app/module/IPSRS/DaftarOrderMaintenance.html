@@ -100,7 +100,7 @@
                                         </div>
                                         <div class="grid_2" style="margin-top: 5px;">
                                             <div class="grid_12">
-                                                <label c-label item="item" c-label-text="Jenis Alat"></label>
+                                                <label c-label item="item" c-label-text="Klasifikasi Perbaikan"></label>
                                             </div>
                                             <div class="grid_12" style="margin-top: -7px;">
                                                 <input kendo-combo-box k-data-source="listJenisAlat"
@@ -702,7 +702,7 @@
                 <div class="panel-heading-white"><span class="title" c-translate>Detail Pengerjaan</span></div>
                 <div class="panel-body">
                     <div class="grid_12" style="margin-top: 5px;">
-                        <div class="grid_4">
+                        <div class="grid_3">
                             <div class="grid_12">
                                 <label c-label item="item" c-label-text="Tgl Mulai"></label>
                             </div>
@@ -711,7 +711,7 @@
                                     placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" />
                             </div>
                         </div>
-                        <div class="grid_4">
+                        <div class="grid_3">
                             <div class="grid_12">
                                 <label c-label item="item" c-label-text="Tgl Selesai"></label>
                             </div>
@@ -720,13 +720,23 @@
                                     placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" />
                             </div>
                         </div>
-                        <div class="grid_4">
+                        <div class="grid_3">
                             <div class="grid_12">
-                                <label c-label item="item" c-label-text="Jenis Alat"></label>
+                                <label c-label item="item" c-label-text="Klasifikasi Perbaikan"></label>
                             </div>
                             <div class="grid_12">
                                 <input kendo-combo-box k-data-source="listJenisAlat" k-ng-model="item.jenisAlat"
                                     k-data-text-field="'reportdisplay'" k-filter="'contains'" k-data-value-field="'id'"
+                                    k-auto-bind="false" k-on-change="getComboIsiObjekPerbaikan()"/>
+                            </div>
+                        </div>
+                        <div class="grid_3">
+                            <div class="grid_12">
+                                <label c-label item="item" c-label-text="Objek Perbaikan"></label>
+                            </div>
+                            <div class="grid_12">
+                                <input kendo-combo-box k-data-source="listObjekPerbaikan" k-ng-model="item.objekPerbaikan"
+                                    k-data-text-field="'detailjenispekerjaan'" k-filter="'contains'" k-data-value-field="'id'"
                                     k-auto-bind="false" />
                             </div>
                         </div>

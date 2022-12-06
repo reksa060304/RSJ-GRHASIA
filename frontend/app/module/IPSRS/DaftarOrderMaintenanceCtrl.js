@@ -63,9 +63,9 @@ define(['initialize'], function (initialize) {
                 $scope.dataLogin = medifirstService.getPegawaiLogin();
                 $scope.dataLogin2 = medifirstService.getMapLoginUserToRuangan();
                 // $scope.ad = $scope.dataLogin2[0].id;
-                medifirstService.getPart("ipsrs/get-combo-pegawai-perbaikan", true, true, 20).then(function (data) {
-                    $scope.listPegawai = data;
-                    $scope.listStaff = data;
+                medifirstService.get("ipsrs/get-combo-pegawai-perbaikan").then(function (data) {
+                    $scope.listPegawai = data.data.data;
+                    $scope.listStaff = data.data.data;
                     $scope.selectOptionsPegawai = {
 						placeholder: "Pilih Pegawai...",
 						dataTextField: "namalengkap",
@@ -213,7 +213,6 @@ define(['initialize'], function (initialize) {
                     manage = 'aingmacan'
                 }
                 var jenisperbaikan = ''
-                console.log($scope.item.jenisPerbaikanCari);
                 if ($scope.item.jenisPerbaikanCari != undefined){
                     jenisperbaikan = '&jenisperbaikan=' + $scope.item.jenisPerbaikanCari.id
                 }
@@ -851,7 +850,6 @@ define(['initialize'], function (initialize) {
                 $scope.item.jenisAlat = undefined;
                 $scope.item.identifikasi = undefined;
                 $scope.item.jenisKerusakan = undefined;
-                $scope.item.listPegawaiMulti = {};
                 $scope.item.worklist = undefined;
                 $scope.item.status = undefined;
                 $scope.popupPengerjaan.close();
@@ -892,10 +890,38 @@ define(['initialize'], function (initialize) {
                 $scope.item.worklist = $scope.dataSelected.deskripsiplanning;
                 $scope.item.identifikasi = $scope.dataSelected.keteranganverifikasi;
                 $scope.item.catatan = $scope.dataSelected.catatan
+                $scope.listObjekPerbaikan = $scope.dataSelected.detailjenisperbaikan
+                $scope.item.objekPerbaikan = {
+                    id: $scope.dataSelected.detailjenisperbaikan[0].id,
+                    detailjenispekerjaan: $scope.dataSelected.detailjenisperbaikan[0].detailjenispekerjaan,
+                }
                 $scope.popupPengerjaan.center().open();
-                console.log($scope.item.jenisKerusakan);
             }
-
+            function sendNotification(e) {
+                var body = {
+                    norec: e.norec,
+                    judul: 'Perbaikan IPSRS Telah Selesai',
+                    jenis: 'IPSRS Perbaikan',
+                    pesanNotifikasi: null,
+                    idRuanganAsal: 58,
+                    idRuanganTujuan: e.objectruanganfk,
+                    ruanganAsal: 'IPSRS',
+                    ruanganTujuan: $scope.dataSelected.namaruangan,
+                    kelompokUser: null, //medifirstService.getKelompokUser()
+                    idKelompokUser: null,
+                    idPegawai: medifirstService.getPegawai().id,
+                    dataArray: [],
+                    urlForm: 'PermintaanPerbaikandariRuangan',
+                    params: {
+                        noOrder: null
+                    },
+                    namaFungsiFrontEnd: null,
+                    tgl: e.duedate,
+                    tgl_string: dateHelper.getTanggalJamFormatted($scope.now),
+                }
+                console.log(body);
+                medifirstService.sendSocket("sendNotification", body);
+            }
             $scope.savePengerjaan = function(){
                 
                 if ($scope.dataSelected == undefined) {
@@ -921,14 +947,13 @@ define(['initialize'], function (initialize) {
                 if ($scope.item.listPegawaiMulti.length != 0) {
                     for (var i = $scope.item.listPegawaiMulti.length - 1; i >= 0; i--) {
                         var data = {
-                            'idpegawai' : $scope.item.listPegawaiMulti[i].id,
+                            'id' : $scope.item.listPegawaiMulti[i].id,
                             'namalengkap' : $scope.item.listPegawaiMulti[i].namalengkap,
                         }
                         datapegawai.push(data);
                     }
                 }
 
-                console.log($scope.item.jenisKerusakan);
 
                 var strukplanning = {
                     'tglmulai' : $scope.item.tglMulai != undefined ? moment($scope.item.tglMulai).format('YYYY-MM-DD HH:mm') : null,
@@ -941,6 +966,7 @@ define(['initialize'], function (initialize) {
                     'status' : $scope.item.status != undefined ? $scope.item.status.id : null,
                     'ispihakketiga': $scope.item.p3 != undefined && $scope.item.p3== true? true : null,
                     'catatan': $scope.item.catatan != undefined ? $scope.item.catatan : null,
+                    'detailjenispekerjaan': $scope.item.objekPerbaikan.id != undefined ? $scope.item.objekPerbaikan.id : null,
                 }
                 
                 var objSave = {
@@ -948,17 +974,23 @@ define(['initialize'], function (initialize) {
                     strukplanning : strukplanning,
                     datapegawai : datapegawai,
                 }
-
-                console.log(objSave);
                 // return
                 medifirstService.post('ipsrs/save-pengerjaan-permohonan',objSave).then(function(e) {
+
+                    // 1 buat selesai
+                    if (e.data.data.objectstatuspekerjaanfk == 1) {
+                        sendNotification(e.data.data)
+                    }
+                    init();
                     $scope.item = {}
                     $scope.item.listPegawaiMulti = {};
                     $scope.item.tglAwal = moment($scope.now).format('YYYY-MM-DD 00:00:00')
                     $scope.item.tglAkhir = moment($scope.now).format('YYYY-MM-DD 23:59:59')
                     $scope.popupPengerjaan.close()
-                    init();
                 })    
+            }
+            $scope.getComboIsiObjekPerbaikan = function(){
+                $scope.listObjekPerbaikan = $scope.item.jenisAlat.details
             }
 
            //** BATAS SUCI */
