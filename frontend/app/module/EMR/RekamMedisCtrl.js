@@ -56,6 +56,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             function setCache() {
                 cacheHelper.set('CacheInputDiagnosaDokter', undefined);
                 cacheHelper.set('InputResepApotikOrderRevCtrl', undefined);
+                cacheHelper.set('InputResepApotikOrderV2Ctrl', undefined);
                 cacheHelper.set('TransaksiPelayananLaboratoriumDokterRevCtrl', undefined);
                 cacheHelper.set('InputTindakanPelayananDokterRevCtrl', undefined);
                 cacheHelper.set('TransaksiPelayananRadiologiDokterRevCtrl', undefined);
@@ -103,6 +104,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 }
                 cacheHelper.set('CacheInputDiagnosaDokter', arrStr);
                 cacheHelper.set('InputResepApotikOrderRevCtrl', arrStr);
+                cacheHelper.set('InputResepApotikOrderV2Ctrl', arrStr);
                 cacheHelper.set('TransaksiPelayananLaboratoriumDokterRevCtrl', arrStr);
                 cacheHelper.set('InputTindakanPelayananDokterRevCtrl', arrStr);
                 cacheHelper.set('TransaksiPelayananRadiologiDokterRevCtrl', arrStr);
@@ -237,6 +239,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 }
                 cacheHelper.set('CacheInputDiagnosaDokter', arrStr);
                 cacheHelper.set('InputResepApotikOrderRevCtrl', arrStr);
+                cacheHelper.set('InputResepApotikOrderV2Ctrl', arrStr);
                 cacheHelper.set('TransaksiPelayananLaboratoriumDokterRevCtrl', arrStr);
                 cacheHelper.set('InputTindakanPelayananDokterRevCtrl', arrStr);
                 cacheHelper.set('TransaksiPelayananRadiologiDokterRevCtrl', arrStr);

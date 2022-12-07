@@ -17,6 +17,7 @@ define(['initialize'], function (initialize) {
 			$scope.cboRekanan = false;
 			$scope.dataLogin = medifirstService.getUserLogin();
 			$scope.pegawaiLogin = medifirstService.getPegawaiLogin();
+			$scope.item.totalklaim=0
 			var DataTotalMataAnggaran = [];
 			loadCombo();
 			loadData();
@@ -96,6 +97,7 @@ define(['initialize'], function (initialize) {
 			$scope.columnDataPasienPiutang = [
 				{
 					"field": "iscek",
+					"title": " ",
 					"template": "# if( iscek==true) {# <input type='checkbox' class='checkbox style-center' ng-checked='true' ng-click='onClickSatu($event,2)'/> # } else {# <input type='checkbox' class='checkbox style-center' ng-checked='false' ng-click='onClickSatu($event,2)'/> #} #",
 					"width": "30px"
 				},
@@ -634,11 +636,23 @@ define(['initialize'], function (initialize) {
 						row.removeClass("k-state-selected");
 					}
 				}
+
+				for (var i = 0; i < $scope.selectedData2.length; i++){
+					$scope.item.totalklaim += parseFloat($scope.selectedData2[i].totalklaim)
+				}
 				
 				console.log($scope.selectedData2)
-                $scope.item.dipilih = $scope.selectedData2.length;
+                $scope.item.datadipilih = $scope.selectedData2.length;
 				
 			}
+
+			$scope.checkboxClicked = function () {
+                for(var j = 0; j < $scope.dataGrid.options.data.length; j++){
+                    $scope.dataGrid.options.data[j].iscek = true
+                }
+
+                console.log($scope.selectedData2)
+            }
 
 			$scope.TambahTanggalBayar = function(){
 				$scope.popupTanggalBayar.center().open()

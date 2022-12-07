@@ -148,34 +148,48 @@
 			k-sortable="'true'"
 			k-ng-model="dataPasienSelected">
 		</div>
-		<div class="grid_2" ng-hide="true">
+		<div class="grid_12">
 			<div class="grid_4">
-				<p style="font-weight: bold; margin-top: 10px;">Data Dipilih</p>
+				<div class="grid_3">
+					<p style="font-weight: bold; margin-top: 10px;">Cari Data</p>
+				</div>
+				<div class="grid_9">
+					<input c-text-box type="input" class="k-textbox" ng-model="item.caridata"/>
+				</div>
 			</div>
-			<div class="grid_8">
-				<input c-text-box type="input" class="k-textbox" ng-model="item.dipilih"/>
+			<div class="grid_2">
+				<div class="grid_5">
+					<p style="font-weight: bold; margin-top: 10px;">Data Dipilih</p>
+				</div>
+				<div class="grid_7">
+					<input c-text-box type="input" class="k-textbox" ng-model="item.datadipilih"/>
+				</div>
+			</div>
+			<div class="grid_2" ng-hide="true">
+				<div class="grid_3">
+					<p style="font-weight: bold; margin-top: 10px;">Total Klaim</p>
+				</div>
+				<div class="grid_9">
+					<input c-text-box type="input" class="k-textbox" ng-model="item.totalklaim"/>
+				</div>
+			</div>
+			<div class="grid_6"></div>
+		</div>
+		<div class="grid_12" style="margin-top: -10px;">
+			<div class="grid_6"></div>
+			<div class="grid_2">
+				<button class="btnTemplate1" ng-click="TambahData()" style="height: 50px; margin-top: 0px;">Tambah</button>
+			</div>
+			<div class="grid_2">
+				<button class="btnTemplate1" ng-click="PostingIPWL()" style="height: 50px; margin-top: 0px;">Posting Total Byar = Total Klaim</button>
+			</div>
+			<div class="grid_2">
+				<input id="upload" type="file" kendo-upload k-disabled="disposting"
+					k-async="{ saveUrl: 'save', removeUrl: 'remove', autoUpload: true }" k-multiple="false"
+					k-select="onUploadExcel"/>
 			</div>
 		</div>
-		<div class="grid_4">
-			<div class="grid_3">
-				<p style="font-weight: bold; margin-top: 10px;">Cari Data</p>
-			</div>
-			<div class="grid_9">
-				<input c-text-box type="input" class="k-textbox" ng-model="item.caridata"/>
-			</div>
-		</div>
-		<div class="grid_2"></div>
-		<div class="grid_2">
-			<button class="btnTemplate1" ng-click="TambahData()">Tambah</button>
-		</div>
-		<div class="grid_2">
-			<button class="btnTemplate1" ng-click="PostingIPWL()">Posting IPWL</button>
-		</div>
-		<div class="grid_2">
-			<input id="upload" type="file" kendo-upload k-disabled="disposting"
-				k-async="{ saveUrl: 'save', removeUrl: 'remove', autoUpload: true }" k-multiple="false"
-				k-select="onUploadExcel" />
-		</div>
+		
 		<input ng-hide="true" c-text-box type="input" class="k-textbox" ng-model="item.cek"/>
 	</div>
 	<div class="clear"></div>

@@ -1,0 +1,75 @@
+<style type="text/css">
+    .json-viewer {
+        margin-top: 26px;
+        padding: 2em 0 2em 5em;
+        background: lightgrey;
+    }
+</style>
+
+<div class="grid_12">
+    <div class="panel panel-default panel-white">
+        <div class="panel-body">
+            <div class="grid_12">
+                <div class="grid_12">
+
+                    <div class="panel panel-default">
+                        <div class="panel-heading " style="font-size: 18px; "><span c-translate>SEP</span>
+                            <span class="icon fa fa-chevron-circle-down " ng-show="!isShowPotensi " style="right:10px
+                                                                                " ng-click="showPotensi() "></span>
+                            <span class="icon fa fa-chevron-circle-up " ng-show="isShowPotensi " style="right:10px
+                                                                                " ng-click="showPotensi() "></span>
+                        </div>
+                        <div class="panel-body " ng-show="isShowPotensi ">
+                            <div class="grid_12 animated no-padding ">
+                                <div ng-cloak>
+                                    <md-content>
+                                        <md-tabs md-dynamic-height md-border-bottom>
+                                            <md-tab label="SEP">
+                                                <md-content class="md-padding">
+                                                    <div class="panel panel-default container_12">
+                                                        <div class="panel-body">
+                                                            <div class="grid_12">
+                                                                <div class="grid_4">
+                                                                    <div class="grid_12">
+                                                                        <div class="grid_10">
+                                                                            <div class="grid_12">
+                                                                                <label c-label item="item" c-label-text="No SEP" real></label>
+                                                                            </div>
+                                                                            <div class="grid_12">
+                                                                                <input c-text-box type="input" class="k-textbox" ng-model="sep.no"/>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="grid_1 pull-right">
+                                                                            <em style="margin-top:10px;" ng-click='clearSEP()' id="iconButton" data-role="button" class="k-button k-button-icon" role="button"
+                                                                                aria-disabled="false" tabindex="0"><span
+                                                                                    class="k-sprite k-icon k-i-cancel">Clear</span></em>
+                                                                        </div>
+                                                                        <div class="grid_1 pull-right">
+                                                                            <button style="margin-top:10px;" class="k-button k-primary k-button-icon" ng-click="findSEP(sep)"><span
+                                                                                    class="k-sprite k-icon k-i-search">Find</span></button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="grid_8">
+                                                                    <div class="grid_12">
+                                                                        <label c-label>Results :</label>
+                                                                    </div>
+                                                                    <pre id="jsonSEP" class="json-viewer"></pre>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </md-content>
+                                            </md-tab>
+                                        </md-tabs>
+                                    </md-content>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div ng-include=' "../app/template/Shared/TemplateLoading" '></div>

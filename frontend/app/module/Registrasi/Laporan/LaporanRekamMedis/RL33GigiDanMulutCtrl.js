@@ -20,15 +20,6 @@ define(['initialize'], function (initialize) {
                 var tglAwal = moment($scope.item.tglawal).format('YYYY-MM-DD HH:mm');
                 var tglAkhir = moment($scope.item.tglakhir).format('YYYY-MM-DD HH:mm');;
 
-                // var idDiagnosaAwal = "";
-                // if ($scope.item.diagnosa1 != undefined) {
-                //     idDiagnosaAwal = "&idDiagnosaAwal=" + $scope.item.diagnosa1.kddiagnosa;
-                // }
-                // var idDiagnosaAkhir = "";
-                // if ($scope.item.diagnosa2 != undefined) {
-                //     idDiagnosaAkhir = "&idDiagnosaAkhir=" + $scope.item.diagnosa2.kddiagnosa;
-                // }
-
 
                 medifirstService.get("registrasi/laporan/get-laporan-rl33?"
                     + "tglAwal=" + tglAwal
@@ -42,11 +33,6 @@ define(['initialize'], function (initialize) {
                         } else {
                         datas.data[i].no = i + 1
                         }
-                        // var tanggal = $scope.now;
-                        // var tanggalLahir = new Date(data.data[i].tglLahir);
-                        // var umurzz = DateHelper.CountAge(tanggalLahir, tanggal);
-                        // data.data[i].umurzz =umurzz.year + ' thn ' + umurzz.month + ' bln ' + umurzz.day + ' hari'
-
                     }
                     $scope.isRouteLoading = false;
 

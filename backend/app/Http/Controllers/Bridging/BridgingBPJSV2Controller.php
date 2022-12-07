@@ -561,6 +561,83 @@ class BridgingBPJSV2Controller extends ApiController
         return $this->respond($response);
     }
 
+    public function getSEPApotikOnline(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $headers = $this->getHeaderApotikOnline();
+        $dataJsonSend = null;
+        $methods = 'GET';
+        //var_dump($this->getUrlBrigdingApotikOnline());
+        $url = $this->getUrlBrigdingApotikOnline() ."sep/". $request['nosep'];
+        //var_dump($url);
+        $response = $this->curlAPI($headers, $dataJsonSend, $url, $methods, $this->getPortBrigdingBPJS());
+        return $this->respond($response);
+    }
+
+    public function getDPHO(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $headers = $this->getHeaderApotikOnline();
+        $dataJsonSend = null;
+        $methods = 'GET';
+        
+        $url = $this->getUrlBrigdingApotikOnline() ."referensi/dpho";
+        $response = $this->curlAPI($headers, $dataJsonSend, $url, $methods, $this->getPortBrigdingBPJS());
+        return $this->respond($response);
+    }
+
+    public function getPoliApotikOnline(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $headers = $this->getHeaderApotikOnline();
+        $dataJsonSend = null;
+        $methods = 'GET';
+        
+        $url = $this->getUrlBrigdingApotikOnline() ."referensi/poli/".$request['poli'];
+        
+        $response = $this->curlAPI($headers, $dataJsonSend, $url, $methods, $this->getPortBrigdingBPJS());
+        return $this->respond($response);
+    }
+
+    public function getSettingApotikOnline(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $headers = $this->getHeaderApotikOnline();
+        $dataJsonSend = null;
+        $methods = 'GET';
+        
+        $url = $this->getUrlBrigdingApotikOnline() ."referensi/settingppk/read/".$request['kode'];
+        
+        $response = $this->curlAPI($headers, $dataJsonSend, $url, $methods, $this->getPortBrigdingBPJS());
+        return $this->respond($response);
+    }
+
+    public function getObatApotikOnline(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $headers = $this->getHeaderApotikOnline();
+        $dataJsonSend = null;
+        $methods = 'GET';
+        
+        $url = $this->getUrlBrigdingApotikOnline() ."referensi/obat/".$request['kode']."/".$request['tglresep']."/".$request['filter'];
+        
+        $response = $this->curlAPI($headers, $dataJsonSend, $url, $methods, $this->getPortBrigdingBPJS());
+        return $this->respond($response);
+    }
+
+    public function getFaskesApotikOnline(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $headers = $this->getHeaderApotikOnline();
+        $dataJsonSend = null;
+        $methods = 'GET';
+        
+        $url = $this->getUrlBrigdingApotikOnline() ."referensi/ppk/".$request['id']."/".$request['nama'];
+        
+        $response = $this->curlAPI($headers, $dataJsonSend, $url, $methods, $this->getPortBrigdingBPJS());
+        return $this->respond($response);
+    }
+
     public function getDiagnosaTindakanSaeutik(Request $request)
     {
         $req = $request->all();

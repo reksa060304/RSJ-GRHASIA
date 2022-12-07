@@ -5348,6 +5348,14 @@ class EMRController  extends ApiController
             ->orderBy('kp.satuanresep')
             ->get();
 
+        $dataSatuanStandar = \DB::table('satuanstandar_m as ss')
+            ->select('ss.id as ssid', 'ss.satuanstandar')
+            ->where('ss.qsatuanstandar', 1)
+            ->where('ss.statusenabled', true)
+            ->where('ss.kdprofile', $idProfile)
+            ->orderBy('ss.satuanstandar')
+            ->get();
+
         $result = array(
             'ruanganfarmasi' => $dataRuanganFamasi,
             'jeniskemasan' => $dataJenisKemasan,
@@ -5355,6 +5363,7 @@ class EMRController  extends ApiController
             'produkorder' => $dataProdukOrderResult,
             'ruangan' => $dataRuangan,
             'asalproduk' => $dataAsalProduk,
+            'satuanstandar' => $dataSatuanStandar,
             'signa' => $dataSigna,
             'jenisracikan' => $dataJenisRacikan,
             'tarifadminresep' => $dataTarifAdminResep,
@@ -5422,14 +5431,15 @@ class EMRController  extends ApiController
         $result = [];
         foreach ($data as $item) {
             $details = DB::select(DB::raw("
-                    SELECT so.noorder,op.rke, jk.jeniskemasan, pr.namaproduk, ss.satuanstandar, op.aturanpakai, op.jumlah, op.hargasatuan,op.keteranganpakai as keterangan,
-                           op.satuanresepfk,sn.satuanresep,op.tglkadaluarsa
+                    SELECT jr.jenisracikan satuanstandar, jr.id ssid, so.noorder,op.rke, jk.jeniskemasan, pr.namaproduk, op.aturanpakai, op.jumlah, op.hargasatuan,op.keteranganpakai as keterangan,
+                           op.satuanresepfk,sn.satuanresep,op.tglkadaluarsa, op.dosis
                     from strukorder_t as so 
                     left join orderpelayanan_t as op on op.strukorderfk = so.norec
                     left join produk_m as pr on pr.id=op.objectprodukfk
                     left join jeniskemasan_m as jk on jk.id=op.jeniskemasanfk
                     left join satuanstandar_m as ss on ss.id=op.objectsatuanstandarfk
                     left join satuanresep_m as sn on sn.id=op.satuanresepfk
+                    left join jenisracikan_m as jr on jr.id=op.jenisobatfk
                     where so.kdprofile = $idProfile and so.statusenabled = true and noorder=:noorder"),
                 array(
                     'noorder' => $item->noorder,
@@ -5757,7 +5767,11 @@ class EMRController  extends ApiController
                         $newPP->qtyprodukretur = 0;
                         $newPP->hasilkonversi = $r_PPL['nilaikonversi'];;
                         $newPP->jeniskemasanfk = $r_PPL['jeniskemasanfk'];
-                        $newPP->dosis = $r_PPL['dosis'];
+                        if($r_PPL['dosis'] == '-'){
+                            $newPP->dosis = $r_PPL['kekuatan'];
+                        } else{
+                            $newPP->dosis = $r_PPL['dosis'];
+                        }
                         $newPP->jumlahracikan = $r_PPL['jumlahxmakan'];
                         $newPP->rke = $r_PPL['rke'];
                         $newPP->satuanviewfk = $r_PPL['satuanviewfk'];
@@ -7524,7 +7538,7 @@ class EMRController  extends ApiController
                 INNER join produk_m as prd on prd.id = op.objectprodukfk
                 INNER  join pegawai_m as pg on cast(pg.id as text)= so.kddokter
                 where op.kdprofile = '21' and pg.objectjenispegawaifk =1
-                and     so.keteranganorder = 'Order Farmasi'
+                and so.keteranganorder = 'Order Farmasi'
                 and so.objectkelompoktransaksifk =4
                 and so.statusenabled=true
                 group by prd.namaproduk,prd.id 

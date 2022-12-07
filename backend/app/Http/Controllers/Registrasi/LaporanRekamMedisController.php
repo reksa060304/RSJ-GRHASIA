@@ -221,7 +221,7 @@ class LaporanRekamMedisController extends   ApiController
             $dataProduk = $dataProduk->where('pro.namaproduk','ilike','%'. $request['filter']['filters'][0]['value'].'%' );
         };
 
-        $dataProduk=$dataProduk->take(10);
+        $dataProduk=$dataProduk->take(20);
         $dataProduk=$dataProduk->get();
 //        $result = array(
 //            'data'=>$dataProduk,
@@ -3393,10 +3393,35 @@ class LaporanRekamMedisController extends   ApiController
         $tglAwal = $request['tglAwal'];
         $tglAkhir = $request['tglAkhir'];
 
-        $row_number = array(1,2,3,4,5,6,7,8,9,10,11,12,13,14);
-        $no=0;
-        $main = array('Tumpatan Gigi Tetap','Tumpatan Gigi Sulung','Pengobatan Pulpa','Pencabutan Gigi Tetap','Pencabutan Gigi Sulung','Pengobatan Periodontal'
-        ,'Pengobatan Abses','Pembersihan Karang Gigi','Prothese Lengkap','Prothese Sebagian','Prothese Cekat','Orthodonti','Jacket/Bridge','Bedah Mulut','TOTAL');
+        $main = DB::select(DB::raw("select mptlr.norec, pro.id as idproduk, pro.namaproduk, jl.id, jl.jenislaporan,
+        kl.id as idkelompoklaporan, kl.kelompoklaporan, ru.id as idruangan, ru.namaruangan, kl.init
+        from mapproduktolaporanrl_m as mptlr
+        inner join jenislaporan_m as jl on jl.id = mptlr.objectjenislaporanfk
+        inner join kelompoklaporan_m as kl on kl.id = mptlr.objectkontenlaporanfk
+        left join produk_m as pro on pro.id = mptlr.produkfk
+        left join ruangan_m as ru on ru.id = mptlr.ruanganfk
+        where mptlr.kdprofile = 30
+        and mptlr.statusenabled = true
+        and kl.kdprofile = 30
+        and kl.statusenabled = true
+        and jl.kdprofile = 30
+        and jl.statusenabled = true
+        and jl.id = 7
+        order by jl.id asc, kl.nourut asc"));
+
+        $mainaja = DB::select(DB::raw("select jl.id, jl.jenislaporan, kl.id as idkelompoklaporan, kl.kelompoklaporan, kl.init
+        from mapproduktolaporanrl_m as mptlr
+        inner join jenislaporan_m as jl on jl.id = mptlr.objectjenislaporanfk
+        inner join kelompoklaporan_m as kl on kl.id = mptlr.objectkontenlaporanfk
+        where mptlr.kdprofile = 30
+        and mptlr.statusenabled = true
+        and kl.kdprofile = 30
+        and kl.statusenabled = true
+        and jl.kdprofile = 30
+        and jl.statusenabled = true
+        and jl.id = 7
+		group by jl.id, jl.jenislaporan, kl.id, kl.kelompoklaporan, kl.init
+        order by jl.id asc, kl.nourut asc"));
              
         $data10 = DB::select(DB::raw("
         SELECT pr.id idproduk, ru.namaruangan, ru.id idruangan, pr.namaproduk, sum(ppd.jumlah) as jumlah
@@ -3422,106 +3447,50 @@ class LaporanRekamMedisController extends   ApiController
         $jumlah = 0;
         foreach($main as $row){
             $jumlah = 0;
+
             foreach($data10 as $data){
-                if($row == 'Tumpatan Gigi Tetap'
-                &&  ($data->id == 5006498 || $data->id == 5006477||$data->id==5007105 || $data->id == 5006475 ||$data->id == 5006479||$data->id == 5006476||$data->id == 5006478|| $data->id ==5006464|| $data->id==5007104)
-                ){
-                    $jumlah += $data->jumlah;
-                }
-
-                else if($row == 'Tumpatan Gigi Sulung'
-                && ( $data->id ==5006464|| $data->id==5007104||$data->id==5007105)
-                ){
-                    $jumlah += $data->jumlah;
-                }
-                
-                else if($row == 'Pengobatan Pulpa'
-                && ($data->id == 5006481 || $data->id == 5006496||$data->id==5007105 || $data->id == 5006483 ||$data->id == 5006482||$data->id == 5006480||$data->id == 5006495 ||$data->id==5006470 ||$data->id ==5006494)
-                ){
-                    $jumlah += $data->jumlah;
-                }
-
-                else if($row == 'Pencabutan Gigi Tetap'
-                && ($data->id == 5006466|| $data->id ==5006467||$data->id ==5006464)
-                ){
-                    $jumlah += $data->jumlah;
-                }
-
-                else if($row == 'Pencabutan Gigi Sulung'
-                && ($data->id == 5006465 ||$data->id==5006464)
-                ){
-                    $jumlah += $data->jumlah;
-                }
-                
-                else if($row == 'Pengobatan Periodontal'
-                && ($data->id == 5006469)
-                ){
-                    $jumlah += $data->jumlah;
-                }
-
-                else if($row == 'Pengobatan Abses'
-                && ($data->id == 5006474 ||$data->id==5006470||$data->id ==5006494)
-                ){
-                    $jumlah += $data->jumlah;
-                }
-
-                else if($row == 'Pembersihan Karang Gigi'
-                && ($data->id == 5006485)
-                ){
-                    $jumlah += $data->jumlah;
-                }
-
-                else if($row == 'Prothese Lengkap'
-                && ($data->id == 5006492 || $data->id == 5006493|| $data->id==5007104 || $data->id ==5006502)
-                ){
-                    $jumlah += $data->jumlah;
-                }
-
-                else if($row == 'Prothese Sebagian'
-                && ($data->id == 5006488|| $data->id == 5006489|| $data->id == 5006501||$data->id == 5006490||$data->id == 5006491|| $data->id==5007104 || $data->id ==5006502)
-                ){
-                    $jumlah += $data->jumlah;
-                }
-
-                else if($row == 'Prothese Cekat'
-                && ($data->id==5007104 || $data->id ==5006502)
-                ){
-                    $jumlah += $data->jumlah;
-                }
-
-                else if($row == 'Orthodonti'
-                ){
-                }
-
-                else if($row == 'Jacket/Bridge'
-                && ($data->id == 5006500|| $data->id == 5006503)
-                ){
-                    $jumlah += $data->jumlah;
-                }
-                
-                else if($row == 'Bedah Mulut'
-                && ($data->id == 5006472|| $data->id == 5006484
-                || $data->id == 5007103|| $data->id == 5006468|| $data->id == 5006473|| $data->id == 5006471 ||$data->id ==5006469|| $data->id ==5006467)
-                ){
-                    $jumlah += $data->jumlah;
-                }
-
-                else if($row == 'TOTAL'
-                ){
+                if($row->idruangan == $data->idruangan || $row->idproduk == $data->idproduk){
                     $jumlah += $data->jumlah;
                 }
             }
-
+            
             $datas[] = array(
-                'namaruangan' => $row,
+                'namaruangan' => $row->kelompoklaporan,
+                'no' => $row->init,
                 'jumlahtotal' => $jumlah,
             );
+        }
+
+        $jumlahaja = 0;
+        $jumlahtotal = 0;
+        foreach($mainaja as $mj){
+            $jumlahaja = 0;
+
+            foreach($datas as $dt){
+                if($mj->kelompoklaporan == $dt['namaruangan'] && $mj->init == $dt['no']){
+                    $jumlahaja += $dt['jumlahtotal'];
+                    $jumlahtotal += $dt['jumlahtotal'];
+                }
+            }
             
+            if($mj->init == 99 || $mj->kelompoklaporan == 'Total' || $mj->kelompoklaporan == 'TOTAL'){
+                $datasaja[] = array(
+                    'namaruangan' => $mj->kelompoklaporan,
+                    'no' => $mj->init,
+                    'jumlahtotal' => $jumlahtotal,
+                );
+            } else{
+                $datasaja[] = array(
+                    'namaruangan' => $mj->kelompoklaporan,
+                    'no' => $mj->init,
+                    'jumlahtotal' => $jumlahaja,
+                );
+            }
         }
 
         $result = array(
-            'data' => $datas,
-            'message' => 'as@cepot',
+            'data' => $datasaja,
+            'message' => 'as@vexana',
         );
         return $this->respond($result);
     }
@@ -4135,7 +4104,7 @@ class LaporanRekamMedisController extends   ApiController
             $jumlahaja = 0;
 
             foreach($datas as $dt){
-                if($mj->kelompoklaporan == $dt['namaruangan']){
+                if($mj->kelompoklaporan == $dt['namaruangan'] && $mj->init == $dt['no']){
                     $jumlahaja += $dt['jumlahtotal'];
                     $jumlahtotal += $dt['jumlahtotal'];
                 }
@@ -4243,7 +4212,7 @@ class LaporanRekamMedisController extends   ApiController
             $jumlahaja = 0;
 
             foreach($datas as $dt){
-                if($mj->kelompoklaporan == $dt['namaruangan']){
+                if($mj->kelompoklaporan == $dt['namaruangan'] && $mj->init == $dt['no']){
                     $jumlahaja += $dt['jumlahtotal'];
                     $jumlahtotal += $dt['jumlahtotal'];
                 }
@@ -4276,14 +4245,36 @@ class LaporanRekamMedisController extends   ApiController
         $idProfile = (int) $kdProfile;
         $tglAwal = $request['tglAwal']; 
         $tglAkhir = $request['tglAkhir']; 
-        $i = 0;
+        
+        $main = DB::select(DB::raw("select mptlr.norec, pro.id as idproduk, pro.namaproduk, jl.id, jl.jenislaporan,
+        kl.id as idkelompoklaporan, kl.kelompoklaporan, ru.id as idruangan, ru.namaruangan, kl.init
+        from mapproduktolaporanrl_m as mptlr
+        inner join jenislaporan_m as jl on jl.id = mptlr.objectjenislaporanfk
+        inner join kelompoklaporan_m as kl on kl.id = mptlr.objectkontenlaporanfk
+        left join produk_m as pro on pro.id = mptlr.produkfk
+        left join ruangan_m as ru on ru.id = mptlr.ruanganfk
+        where mptlr.kdprofile = 30
+        and mptlr.statusenabled = true
+        and kl.kdprofile = 30
+        and kl.statusenabled = true
+        and jl.kdprofile = 30
+        and jl.statusenabled = true
+        and jl.id = 13
+        order by jl.id asc, kl.nourut asc"));
 
-        $main = array('Medis', 'Gait Analyzer', 'EMG', 'Uro Dinamic', 'Side Back', 'E N Tree', 'Spyrometer',
-        'Staic Bike', 'Tread Mill', 'Body Platysmograf', 'lain-lain', 'Fisioterapi', 'Latihan Fisik', 'Aktinoterapi', 'Elektroterapi', 
-        'Hidroterapi', 'Traksi Lumbal & Cervical', 'Lain-lain', 'Okupasiterapi', 'Snoosien Room', 'Sensori Integrasi', 'Latihan aktivitas kehidupan sehari-hari',
-        'Proper Body Mekanik', 'Pembuatan Alat Lontar & Adaptasi Alat', 'Analisa Persiapan Kerja', 'Latihan Relaksasi', 'Analisa & Intervensi, Persepsi, Kognitif, Psikomot',
-        'Lain-lain', 'Terapi Wicara', 'Fungsi Bicara', 'Fungsi Bahasa / Laku', 'Fungsi Menelan', 'Lain-lain', 'Psikologi', 'Psikolog Anak', 'Psikolog Dewasa', 'Lain-lain', 'Sosial Medis',
-        'Evaluasi Lingkungan Rumah', 'Evaluasi Ekonomi', 'Evaluasi Pekerjaan', 'Lain-lain', 'Ortotik Prostetik', 'Pembuatan Alat Bantu', 'Pembuatan Alat Anggota Tiruan', 'Lain-Lain', 'Kunjungan Rumah', 'Total');
+        $mainaja = DB::select(DB::raw("select jl.id, jl.jenislaporan, kl.id as idkelompoklaporan, kl.kelompoklaporan, kl.init
+        from mapproduktolaporanrl_m as mptlr
+        inner join jenislaporan_m as jl on jl.id = mptlr.objectjenislaporanfk
+        inner join kelompoklaporan_m as kl on kl.id = mptlr.objectkontenlaporanfk
+        where mptlr.kdprofile = 30
+        and mptlr.statusenabled = true
+        and kl.kdprofile = 30
+        and kl.statusenabled = true
+        and jl.kdprofile = 30
+        and jl.statusenabled = true
+        and jl.id = 13
+		group by jl.id, jl.jenislaporan, kl.id, kl.kelompoklaporan, kl.init
+        order by jl.id asc, kl.nourut asc"));
 
         $data10 = DB::select(DB::raw("SELECT ru.namaruangan, pr.namaproduk, pr.id idproduk, ru.id idruangan, sum(ppd.jumlah) as jumlah
                 FROM
@@ -4306,7 +4297,7 @@ class LaporanRekamMedisController extends   ApiController
 
         union all
 
-                SELECT ru.namaruangan, pr.namaproduk, sum(ppd.jumlah) as jumlah
+                SELECT ru.namaruangan, pr.namaproduk, pr.id idproduk, ru.id idruangan, sum(ppd.jumlah) as jumlah
                 FROM
                 pasiendaftar_t pd
                 INNER JOIN antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
@@ -4323,12 +4314,12 @@ class LaporanRekamMedisController extends   ApiController
                 and pp.isobat is null
                 and ru.id = 762
                 and pr.id not in (5008635, 5008644)
-        group by ru.namaruangan, pr.namaproduk
+        group by ru.namaruangan, pr.namaproduk, pr.id, ru.id
 
         union ALL
 
 
-            SELECT ru.namaruangan, pr.namaproduk, sum(ppd.jumlah) as jumlah
+            SELECT ru.namaruangan, pr.namaproduk, pr.id idproduk, ru.id idruangan, sum(ppd.jumlah) as jumlah
                 FROM
                 pasiendaftar_t pd
                 INNER JOIN antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
@@ -4345,11 +4336,11 @@ class LaporanRekamMedisController extends   ApiController
                 and pp.isobat is null
                 and ru.id = 774
                 and pr.id not in (5008635, 5008644)
-        group by ru.namaruangan, pr.namaproduk
+        group by ru.namaruangan, pr.namaproduk, pr.id, ru.id
 
         union ALL
 
-        SELECT ru.namaruangan, pr.namaproduk, sum(ppd.jumlah) as jumlah
+        SELECT ru.namaruangan, pr.namaproduk, pr.id idproduk, ru.id idruangan, sum(ppd.jumlah) as jumlah
                 FROM
                 pasiendaftar_t pd
                 INNER JOIN antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
@@ -4366,80 +4357,55 @@ class LaporanRekamMedisController extends   ApiController
                 and pp.isobat is null
                 and ru.id = 777
                 and pr.id not in (5008635, 5008644)
-        group by ru.namaruangan, pr.namaproduk"));
+        group by ru.namaruangan, pr.namaproduk, pr.id, ru.id"));
 
         $jumlah = 0;
         foreach($main as $row){
             $jumlah = 0;
+
             foreach($data10 as $data){
-                if($row == 'lain-lain' && $i == 10 && ($data->namaproduk == 'Biaya kunjungan & konsul klinik spesialis' || $data->namaproduk == 'Casting' || $data->namaproduk == 'Dry needing' || $data->namaproduk == 'High level laser therapy' || $data->namaproduk == 'Injeksi botulinum toksin A ( tiap titik )' || $data->namaproduk == 'Injeksi guided USG' || $data->namaproduk == 'Injeksi intraartikular / joint / tendon / soft tissue' || $data->namaproduk == 'Injeksi Intramuskuler' || $data->namaproduk == 'Low level laser therapy' || $data->namaproduk == 'Spray and stretch' || $data->namaproduk == 'Uji kardiorespirasi ( 6m walk , step test )')){
-                    $jumlah += $data->jumlah;
-                }
-
-                else if($row == 'E M G' && ($data->namaproduk == 'EMG needle ( belum termasuk needle , diresepkan tersendiri )' || $data->namaproduk == 'EMG Surface / NCV test / spasmofili test')){
-                    $jumlah += $data->jumlah;
-                }
-
-                else if($row == 'Tread Mill' && $data->namaproduk == 'Treadmill testing / uji kebugaran / exercise testing'){
-                    $jumlah += $data->jumlah;
-                }
-
-                else if($row == 'Latihan Fisik' && ($data->namaproduk == 'Exercise A ( ringan ) dengan alat Shoulder wheel / finger wall' || $data->namaproduk == 'Exercise A ( ringan ) tanpa alat 15 menit' || $data->namaproduk == 'Exercise B ( sedang ) dengan alat pararel bar / static bycycle' || $data->namaproduk == 'Exercise B ( sedang ) tanpa alat 20 menit' || $data->namaproduk == 'Exercise C ( berat ) dengan alat yaitu ulley / latihan jalan menggunakan alat bantu / peralatan di tumbuh kembang anak' || $data->namaproduk == 'Exercise C ( berat ) tanpa alat 30 menit' || $data->namaproduk == 'Exercise Khusus')){
-                    $jumlah += $data->jumlah;
-                }
-
-                else if($row == 'Aktinoterapi' && ($data->namaproduk == 'Diatermi / SWD ( Soft Wafe Diathermi )' || $data->namaproduk == 'Infra Red ( IR )' || $data->namaproduk == 'MWD ( Mikowave Diathermi )' || $data->namaproduk == 'Parafin Bath')){
-                    $jumlah += $data->jumlah;
-                }
-
-                else if($row == 'Elektroterapi' && ($data->namaproduk == 'Biofeedback' || $data->namaproduk == 'Faradisasi' || $data->namaproduk == 'Interferensi' || $data->namaproduk == 'TENS ( Transcutaneus Electrial Nerve Stimulation )' || $data->namaproduk == 'US ( Ultrasound Therapy )')){
-                    $jumlah += $data->jumlah;
-                }
-
-                else if($row == 'Sensori Integrasi' && $data->namaproduk == 'Terapi sensori integrasi'){
-                    $jumlah += $data->jumlah;
-                }
-
-                else if($row == 'Latihan aktivitas kehidupan sehari-hari' && $data->namaproduk == 'Terapi Activity Daily Living ( ADL ) rawat jalan'){
-                    $jumlah += $data->jumlah;
-                }
-
-                else if($row == 'Proper Body Mekanik' && $data->namaproduk == 'Proper Body mechanic ( PBM )'){
-                    $jumlah += $data->jumlah;
-                }
-
-                else if($row == 'Analisa & Intervensi, Persepsi, Kognitif, Psikomot' && ($data->namaproduk == 'Latihan akademik / pre akademik' || $data->namaproduk == 'Latihan Koordinasi dan Motorik' || $data->namaproduk == 'Terapi perilaku / bermain / leisure')){
-                    $jumlah += $data->jumlah;
-                }
-
-                else if($row == 'Lain-lain' && $i == 27 && $data->namaproduk == 'Assesment Okupasi Terapi'){
-                    $jumlah += $data->jumlah;
-                }
-
-                else if($row == 'Fungsi Bicara' && ($data->namaproduk == 'Latihan Artikulasi' || $data->namaproduk == 'Latihan Irama Kelancaran')){
-                    $jumlah += $data->jumlah;
-                }
-
-                else if($row == 'Fungsi Bahasa / Laku' && ($data->namaproduk == 'Latihan Bahasa Ekspresif' || $data->namaproduk == 'Latihan Bahasa Reseptif')){
-                    $jumlah += $data->jumlah;
-                }
-
-                else if($row == 'Lain-lain' && $i == 32 && ($data->namaproduk == 'Assesment Terapi Wicara' || $data->namaproduk == 'Latihan Oral Motor ( Terpapar Infeksi lebih tinggi )')){
+                if($row->idruangan == $data->idruangan || $row->idproduk == $data->idproduk){
                     $jumlah += $data->jumlah;
                 }
             }
-
+            
             $datas[] = array(
-                'namaruangan' => $row,
+                'namaruangan' => $row->kelompoklaporan,
+                'no' => $row->init,
                 'jumlahtotal' => $jumlah,
             );
+        }
 
-            $i++;
+        $jumlahaja = 0;
+        $jumlahtotal = 0;
+        foreach($mainaja as $mj){
+            $jumlahaja = 0;
+
+            foreach($datas as $dt){
+                if($mj->kelompoklaporan == $dt['namaruangan'] && $mj->init == $dt['no'] && $mj->init == $dt['no']){
+                    $jumlahaja += $dt['jumlahtotal'];
+                    $jumlahtotal += $dt['jumlahtotal'];
+                }
+            }
+            
+            if($mj->init == 99 || $mj->kelompoklaporan == 'Total' || $mj->kelompoklaporan == 'TOTAL'){
+                $datasaja[] = array(
+                    'namaruangan' => $mj->kelompoklaporan,
+                    'no' => $mj->init,
+                    'jumlahtotal' => $jumlahtotal,
+                );
+            } else{
+                $datasaja[] = array(
+                    'namaruangan' => $mj->kelompoklaporan,
+                    'no' => $mj->init,
+                    'jumlahtotal' => $jumlahaja,
+                );
+            }
         }
 
         $result = array(
-            'data' => $datas,
-            'message' => 'as@cepot',
+            'data' => $datasaja,
+            'message' => 'as@vexana',
         );
         return $this->respond($result);
     }
@@ -4538,7 +4504,7 @@ class LaporanRekamMedisController extends   ApiController
             $jumlahaja = 0;
 
             foreach($datas as $dt){
-                if($mj->kelompoklaporan == $dt['namaruangan']){
+                if($mj->kelompoklaporan == $dt['namaruangan'] && $mj->init == $dt['no']){
                     $jumlahaja += $dt['jumlahtotal'];
                     $jumlahtotal += $dt['jumlahtotal'];
                 }
@@ -4571,8 +4537,35 @@ class LaporanRekamMedisController extends   ApiController
         $tglAwal = $request['tglAwal']; 
         $tglAkhir = $request['tglAkhir']; 
         
-        $main = array('Psikotes', 'Konsultasi', 'Terapi Medikamentosa', 'Elektro Medik', 'Psikoterapi', 
-        'Play Therapy', 'Rehabilitasi Medik Psikiatrik', 'TOTAL');
+        $main = DB::select(DB::raw("select mptlr.norec, pro.id as idproduk, pro.namaproduk, jl.id, jl.jenislaporan,
+        kl.id as idkelompoklaporan, kl.kelompoklaporan, ru.id as idruangan, ru.namaruangan, kl.init
+        from mapproduktolaporanrl_m as mptlr
+        inner join jenislaporan_m as jl on jl.id = mptlr.objectjenislaporanfk
+        inner join kelompoklaporan_m as kl on kl.id = mptlr.objectkontenlaporanfk
+        left join produk_m as pro on pro.id = mptlr.produkfk
+        left join ruangan_m as ru on ru.id = mptlr.ruanganfk
+        where mptlr.kdprofile = 30
+        and mptlr.statusenabled = true
+        and kl.kdprofile = 30
+        and kl.statusenabled = true
+        and jl.kdprofile = 30
+        and jl.statusenabled = true
+        and jl.id = 15
+        order by jl.id asc, kl.nourut asc"));
+
+        $mainaja = DB::select(DB::raw("select jl.id, jl.jenislaporan, kl.id as idkelompoklaporan, kl.kelompoklaporan, kl.init
+        from mapproduktolaporanrl_m as mptlr
+        inner join jenislaporan_m as jl on jl.id = mptlr.objectjenislaporanfk
+        inner join kelompoklaporan_m as kl on kl.id = mptlr.objectkontenlaporanfk
+        where mptlr.kdprofile = 30
+        and mptlr.statusenabled = true
+        and kl.kdprofile = 30
+        and kl.statusenabled = true
+        and jl.kdprofile = 30
+        and jl.statusenabled = true
+        and jl.id = 15
+		group by jl.id, jl.jenislaporan, kl.id, kl.kelompoklaporan, kl.init
+        order by jl.id asc, kl.nourut asc"));
 
         $data10 = DB::select(DB::raw("SELECT ru.namaruangan, pr.namaproduk, pr.id idproduk, ru.id idruangan, sum(ppd.jumlah) as jumlah
         FROM
@@ -4593,40 +4586,53 @@ class LaporanRekamMedisController extends   ApiController
         group by ru.namaruangan, pr.id, pr.namaproduk, ru.id;"));
 
         
+        $jumlah = 0;
         foreach($main as $row){
             $jumlah = 0;
+
             foreach($data10 as $data){
-
-                if($row == 'Psikotes' && ($data->id == 5006417 || $data->id == 5006429 || $data->id == 5006418 || $data->id == 5006430 || $data->id == 5006431 || $data->id == 5006419 || $data->id == 5006433 || $data->id == 5006445 || $data->id == 5007121 || $data->id == 5006420 || $data->id == 5006446 || $data->id == 5006421 || $data->id == 5006434 || $data->id == 5006422 || $data->id == 5006424 || $data->id == 5006435 || $data->id == 5006449 || $data->id == 5006426 || $data->id == 5006423 || $data->id == 5006436 || $data->id == 5006447 || $data->id == 5006450 || $data->id == 5006448 || $data->id == 5006428 || $data->id == 5006427 || $data->id == 5006437 || $data->id == 5006438 || $data->id == 5006439 || $data->id == 5006440 || $data->id == 5007122 || $data->id == 5006425 || $data->id == 5006441 || $data->id == 5006442 || $data->id == 5006443 || $data->id == 5006444 || $data->id == 5006417 || $data->id == 5006429 )){
-                    $jumlah += $data->jumlah;
-                }
-
-                else if($row == 'Konsultasi' && ($data->id == 5007078 || $data->id == 5006385 || $data->id == 5006384 || $data->id == 5006386 || $data->id == 5006107 || $data->id == 5007127 || $data->id == 5007128 || $data->id == 5006407 || $data->id == 5006408 || $data->id == 5006462 || $data->id == 5006405 || $data->id == 5006406 || $data->id == 5006412 || $data->id == 5006413 || $data->id == 5006414 || $data->id == 5006415 || $data->id == 5006416 )){
-                    $jumlah += $data->jumlah;
-                }
-
-                else if($row == 'Terapi Medikamentosa' && ($data->id == 5006303)){
-                    $jumlah += $data->jumlah;
-                }
-
-                else if($row == 'Psikoterapi' && ($data->id == 5006382 || $data->id == 5006383 || $data->id == 5006389 || $data->id == 5006388 || $data->id == 5006390 || $data->id == 5006391 || $data->id == 5006392 || $data->id == 5006107 || $data->id == 5006110 || $data->id == 5006109 || $data->id == 5006875 || $data->id == 5006883 || $data->id == 5006882 || $data->id == 5006876 || $data->id == 5006881 || $data->id == 5006879 || $data->id == 5006880 || $data->id == 5006878 || $data->id == 5006877 || $data->id == 5007127 || $data->id == 5007128 || $data->id == 5006405 || $data->id == 5006406 || $data->id == 5006412 || $data->id == 5006413 || $data->id == 5006414 || $data->id == 5006415 || $data->id == 5006416 )){ 
-                    $jumlah += $data->jumlah;
-                }
-
-                else if($row == 'Play Therapy' && ($data->id == 5006107 || $data->id == 5006879)){
+                if($row->idruangan == $data->idruangan || $row->idproduk == $data->idproduk){
                     $jumlah += $data->jumlah;
                 }
             }
-
+            
             $datas[] = array(
-                'namaruangan' => $row,
+                'namaruangan' => $row->kelompoklaporan,
+                'no' => $row->init,
                 'jumlahtotal' => $jumlah,
             );
         }
 
+        $jumlahaja = 0;
+        $jumlahtotal = 0;
+        foreach($mainaja as $mj){
+            $jumlahaja = 0;
+
+            foreach($datas as $dt){
+                if($mj->kelompoklaporan == $dt['namaruangan'] && $mj->init == $dt['no']){
+                    $jumlahaja += $dt['jumlahtotal'];
+                    $jumlahtotal += $dt['jumlahtotal'];
+                }
+            }
+            
+            if($mj->init == 99 || $mj->kelompoklaporan == 'Total' || $mj->kelompoklaporan == 'TOTAL'){
+                $datasaja[] = array(
+                    'namaruangan' => $mj->kelompoklaporan,
+                    'no' => $mj->init,
+                    'jumlahtotal' => $jumlahtotal,
+                );
+            } else{
+                $datasaja[] = array(
+                    'namaruangan' => $mj->kelompoklaporan,
+                    'no' => $mj->init,
+                    'jumlahtotal' => $jumlahaja,
+                );
+            }
+        }
+
         $result = array(
-            'data' => $datas,
-            'message' => 'as@cepot',
+            'data' => $datasaja,
+            'message' => 'as@vexana',
         );
         return $this->respond($result);
     }

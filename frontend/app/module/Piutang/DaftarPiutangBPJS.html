@@ -133,6 +133,15 @@
 
 	<!-- Data Pasien Pulang -->
 	<div class="grid_12">
+		<div class="grid_1" style="margin-top: 10px">
+			<input type="checkbox" class="k-checkbox" id="item.kasusbaru"
+				ng-model="item.kasusbaru"
+				ng-click="checkboxClicked()">
+			<label class="k-checkbox-label" for="item.kasusbaru">Pilih Semua</label>
+		</div>
+		<div class="grid_11" style="margin-top: 10px"></div>
+	</div>
+	<div class="grid_12">
 		<div class="grid_12 headerBox">
 			<p>Data Pasien Piutang</p>
 		</div>
@@ -164,7 +173,23 @@
 				<input c-text-box type="input" class="k-textbox" ng-model="item.caridata"/>
 			</div>
 		</div>
-		<div class="grid_6"></div>
+		<div class="grid_2">
+			<div class="grid_5">
+				<p style="font-weight: bold; margin-top: 10px;">Data Dipilih</p>
+			</div>
+			<div class="grid_7">
+				<input c-text-box type="input" class="k-textbox" ng-model="item.datadipilih"/>
+			</div>
+		</div>
+		<div class="grid_3">
+			<div class="grid_3">
+				<p style="font-weight: bold; margin-top: 10px;">Total Klaim</p>
+			</div>
+			<div class="grid_9">
+				<input c-text-box type="input" class="k-textbox" ng-model="item.totalklaim"/>
+			</div>
+		</div>
+		<div class="grid_1"></div>
 		<div class="grid_2" ng-hide="true">
 			<input id="upload" type="file" kendo-upload k-disabled="disposting"
 				k-async="{ saveUrl: 'save', removeUrl: 'remove', autoUpload: true }" k-multiple="false"

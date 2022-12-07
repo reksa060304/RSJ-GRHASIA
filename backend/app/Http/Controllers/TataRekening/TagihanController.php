@@ -14396,8 +14396,7 @@ $result = array(
         $dataLogin=$request->all();
 
         for($i = 0; $i < count($request['data']); $i++){
-
-            if($request['data'][$i]['kelompokpasien'] == 'IPWL'){
+            
                 $noregistrasi = $request['data'][$i]['noregistrasi'];
 
                 $cek = DB::select(DB::raw("
@@ -14433,7 +14432,6 @@ $result = array(
                 $STSK->tglsep = null;
                 $STSK->tglbayar = $request['tglbayar'];
                 $STSK->save();
-            }
             
         }
                 

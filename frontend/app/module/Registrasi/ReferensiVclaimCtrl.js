@@ -1,133 +1,229 @@
-define(['initialize'], function (initialize) {
+define(['initialize', 'Configuration'], function (initialize, configuration) {
   'use strict';
-  initialize.controller('ReferensiVclaimCtrl', ['$rootScope', '$scope', 'ModelItem', '$state', 'DateHelper', 'MedifirstService',
-    function ($rootScope, $scope, ModelItem, $state, DateHelper, medifirstService) {
-      $scope.item = {};
-      $scope.now = new Date();
+  initialize.controller('ReferensiVclaimCtrl', ['$scope', '$state', 'MedifirstService',
+      function ($scope, $state, medifirstService) {
+          $scope.now = new Date();
 
-
-
-      medifirstService.get("bridging/bpjs/get-ref-kelasrawat"
-      )
-        .then(function (e) {
-          if (e.data.metaData.code == 200) {
-            $scope.listKelas = e.data.response.list;
+          $scope.monthUngkul = {
+              start: "year",
+              depth: "year"
+          }
+          $scope.yearUngkul = {
+              start: "decade",
+              depth: "decade"
           }
 
-        })
+          $scope.nav = function (state) {
+              $scope.currentState = state;
+              $state.go(state, $state.params);
+              console.log($scope.currentState);
+          }
+          $scope.histori = {}
+          $scope.kunjungan = {};
+          $scope.klaim = {};
+          $scope.raharja = {}
 
-      $scope.isShowPotensi = true;
-      $scope.isShowApproval = false;
-      $scope.isShowTglPulang = false;
-      $scope.isShowIntegrasi = false;
-      $scope.showPembuatanSep = function () {
-        $scope.isShowPembuatanSep = !$scope.isShowPembuatanSep;
+          $scope.poli = {};
+
+          $scope.clearPoli = function () {
+
+              $scope.isRouteLoading = false;
+              $scope.poli = {
+                  poli : '',
+              };
+          };
+
+          $scope.setting = {};
+
+          $scope.clearSetting = function () {
+
+              $scope.isRouteLoading = false;
+              $scope.setting = {
+                  kode : '',
+              };
+          };
+
+          $scope.obat = {};
+          $scope.obat.tglresep = moment($scope.now).format('YYYY-MM-DD')
+
+          $scope.clearObat = function () {
+
+              $scope.isRouteLoading = false;
+              $scope.obat = {
+                  kode : '',
+                  tglresep : moment($scope.now).format('YYYY-MM-DD'),
+                  filter : '',
+              };
+          };
+
+          $scope.faskes = {};
+
+          $scope.clearFaskes = function () {
+
+              $scope.isRouteLoading = false;
+              $scope.faskes = {
+                  nama : '',
+                  jenisfaskes : undefined,
+              };
+          };
+
+          $scope.clear = function () {
+
+              $scope.isRouteLoading = false;
+              $scope.klaim = {
+                  bulan : moment($scope.now).format('MM'),
+          tahun : moment($scope.now).format('YYYY')
+              };
+          };
+          $scope.isShowPembuatanSep = false;
+          $scope.isShowPotensi = true;
+          $scope.isShowApproval = false;
+          $scope.isShowTglPulang = false;
+          $scope.isShowIntegrasi = false;
+          $scope.showPembuatanSep = function () {
+              $scope.isShowPembuatanSep = !$scope.isShowPembuatanSep;
+          }
+          $scope.showPotensi = function () {
+              $scope.isShowPotensi = !$scope.isShowPotensi;
+          }
+          $scope.showApproval = function () {
+              $scope.isShowApproval = !$scope.isShowApproval;
+          }
+          $scope.showTglPulang = function () {
+              $scope.isShowTglPulang = !$scope.isShowTglPulang;
+          }
+          $scope.showIntegrasi = function () {
+              $scope.isShowIntegrasi = !$scope.isShowIntegrasi;
+          }
+          $scope.clear();
+
+          $scope.listStatusKlaim = [{
+              "id": 0, "nama": "Belum Verifikasi"
+          }, {
+              "id": 1, "nama": "Sudah Verifikasi"
+          }];
+
+          $scope.listJenisObat = [{
+              "id": 1, "nama": "Obat PRB"
+          }, {
+              "id": 2, "nama": "Obat Kronis Blm Stabil"
+          }, {
+              "id": 3, "nama": "Obat Kemoterapi"
+          }
+          ];
+
+          $scope.listJenisFaskes = [{
+            "id": 1, "nama": "Faskes 1"
+          }, {
+              "id": 2, "nama": " Faskes 2/RS"
+          }
+          ];
+
+          medifirstService.get("bridging/bpjs/get-daftar-obat-dpho").then(function (e) {
+                  document.getElementById("jsonKlaim").innerHTML = JSON.stringify(e.data, undefined, 4);
+              }).then(function () {
+                  $scope.isRouteLoading = false;
+              });
+
+          medifirstService.get("bridging/bpjs/get-daftar-spesialistik").then(function (e) {
+                document.getElementById("jsonSpesialis").innerHTML = JSON.stringify(e.data, undefined, 4);
+            }).then(function () {
+                $scope.isRouteLoading = false;
+            });
+          
+          $scope.findHistori = function (data) {
+              $scope.isRouteLoading = true;
+
+              medifirstService.get("bridging/bpjs/get-monitoring-historipelayanan-peserta?noKartu="
+                  + data.noKartu
+                  + "&tglMulai="
+                  + moment(data.tglAwal).format('YYYY-MMDD')
+                  + "&tglAkhir="
+                  + moment(data.tglAkhir).format('YYYY-MMDD')
+              ).then(function (e) {
+                  document.getElementById("jsonHistori").innerHTML = JSON.stringify(e.data, undefined, 4);
+              }).then(function () {
+                  $scope.isRouteLoading = false;
+              });
+          }
+          // RAHARJA
+
+          // HISTROI
+          $scope.findRaharja = function (data) {
+              $scope.isRouteLoading = true;
+
+              medifirstService.get("bridging/bpjs/get-monitoring-klaim-jasaraharja?tglMulai="
+                  + moment(data.tglAwal).format('YYYY-MMDD')
+                  + "&tglAkhir="
+                  + moment(data.tglAkhir).format('YYYY-MMDD')
+              ).then(function (e) {
+                  document.getElementById("jsonRaharja").innerHTML = JSON.stringify(e.data, undefined, 4);
+              }).then(function () {
+                  $scope.isRouteLoading = false;
+              });
+          }
+
+          $scope.findPoli = function (data) {
+            $scope.isRouteLoading = true;
+            var data = {
+                poli: data.poli,
+            }
+            medifirstService.get("bridging/bpjs/get-poli-apotik-online?poli="
+                + data.poli
+            ).then(function (e) {
+                document.getElementById("jsonPoli").innerHTML = JSON.stringify(e.data, undefined, 4);
+            }).then(function () {
+                $scope.isRouteLoading = false;
+            });
+          }
+
+          $scope.findSetting = function (data) {
+            $scope.isRouteLoading = true;
+            var data = {
+                kode: data.kode,
+            }
+            medifirstService.get("bridging/bpjs/get-setting-apotik-online?kode="
+                + data.kode
+            ).then(function (e) {
+                document.getElementById("jsonSetting").innerHTML = JSON.stringify(e.data, undefined, 4);
+            }).then(function () {
+                $scope.isRouteLoading = false;
+            });
+          }
+
+          $scope.findFaskes = function (data) {
+            $scope.isRouteLoading = true;
+            var data = {
+                nama: data.nama,
+                id: data.jenisfaskes.id,
+            }
+            medifirstService.get("bridging/bpjs/get-faskes-apotik-online?nama="
+                + data.nama
+                + "&id=" + data.id
+            ).then(function (e) {
+                document.getElementById("jsonFaskes").innerHTML = JSON.stringify(e.data, undefined, 4);
+            }).then(function () {
+                $scope.isRouteLoading = false;
+            });
+          }
+
+          $scope.findObat = function (data) {
+            $scope.isRouteLoading = true;
+            var data = {
+                kode: data.kode.id,
+                tglresep: moment(data.tglresep).format('YYYY-MM-DD'),
+                filter: data.filter,
+            }
+            medifirstService.get("bridging/bpjs/get-obat-apotik-online?kode="
+                + data.kode
+                + "&tglresep=" + data.tglresep
+                + "&filter=" + data.filter
+            ).then(function (e) {
+                document.getElementById("jsonObat").innerHTML = JSON.stringify(e.data, undefined, 4);
+            }).then(function () {
+                $scope.isRouteLoading = false;
+            });
+          }
       }
-      $scope.showPotensi = function () {
-        $scope.isShowPotensi = !$scope.isShowPotensi;
-      }
-
-      //PART GET
-      medifirstService.getPart("bridging/bpjs/get-ref-dokter-part", true, true, 10).then(function (data) {
-        $scope.listDokter = data;
-        // document.getElementById("json").innerHTML = JSON.stringify(data, undefined, 4); 
-
-      });
-      medifirstService.getPart("bridging/bpjs/get-ref-diagnosa-part", true, true, 10).then(function (data) {
-        $scope.listDiagnosa = data;
-
-      });
-      medifirstService.getPart("bridging/bpjs/get-ref-diagnosatindakan-part", true, true, 10).then(function (data) {
-        $scope.listTindakan = data;
-
-      });
-      medifirstService.getPart("bridging/bpjs/get-poli-part", true, true, 10).then(function (data) {
-        $scope.listPoli = data;
-
-      });
-      medifirstService.getPart("bridging/bpjs/get-ref-faskes-part", true, true, 10).then(function (data) {
-        $scope.listFaskess = data;
-
-      });
-
-      // END
-
-
-      medifirstService.get("bridging/bpjs/get-ref-carakeluar"
-      )
-        .then(function (e) {
-          if (e.data.metaData.code == 200) {
-            $scope.listCaraKeluar = e.data.response.list;
-          }
-
-        })
-
-      medifirstService.get("bridging/bpjs/get-ref-pascapulang"
-      )
-        .then(function (e) {
-          if (e.data.metaData.code == 200) {
-            $scope.listPascaPulang = e.data.response.list;
-          }
-
-        })
-      medifirstService.get("bridging/bpjs/get-ref-ruangrawat"
-      )
-        .then(function (e) {
-          if (e.data.metaData.code == 200) {
-            $scope.listRuang = e.data.response.list;
-          }
-
-        })
-      medifirstService.get("bridging/bpjs/get-ref-spesialistik"
-      )
-        .then(function (e) {
-          if (e.data.metaData.code == 200) {
-            $scope.listSpesialis = e.data.response.list;
-          }
-
-        })
-
-      $scope.item.rawatInap = true;
-      if ($scope.item.rawatInap)
-        var inap = "1"
-      else
-        var inap = "2"
-      // modelItemAkuntansi.getDataDummyPHP("bpjs/get-ref-dokter-dpjp?jenisPelayanan=" + $scope.item.rawatInap == true ? "1" : "2"
-      //   + "&tglPelayanan=" + new moment($scope.now).format('YYYY-MM-DD') + "&kodeSpesialis=" + 10, true, true, 10).then(function (data) {
-      //     $scope.listDPJP = data;
-      //   });
-      medifirstService.get("bridging/bpjs/get-ref-dokter-dpjp?jenisPelayanan=" + inap
-        + "&tglPelayanan=" + new moment($scope.now).format('YYYY-MM-DD') + "&kodeSpesialis=" + 10
-      ).then(function (e) {
-        if (e.data.metaData.code == 200) {
-          $scope.listDPJP = e.data.response.list;
-        }
-      })
-      medifirstService.getPart("bridging/bpjs/get-ref-propinsi", true, true, 10).then(function (data) {
-        $scope.listPropinsi = data;
-      });
-      var kodePropinsi = "";
-      var kodeKab = "";
-      $scope.$watch('item.propinsi', function (e) {
-        if (e === undefined) return;
-        kodePropinsi = e.kode
-        medifirstService.getPart("bridging/bpjs/get-ref-kabupaten?kodePropinsi=" + kodePropinsi, true, true, 10).then(function (data) {
-          $scope.listKabupaten = data;
-          if (dataKabupaten != '')
-            $scope.model.kabupaten = dataKabupaten
-        });
-      })
-
-      $scope.$watch('item.kabupaten', function (e) {
-        if (e === undefined) return;
-        kodeKab = e.kode
-        medifirstService.getPart("bridging/bpjs/get-ref-kecamatan?kodeKabupaten=" + kodeKab, true, true, 10).then(function (data) {
-          $scope.listKecamatan = data;
-          if (dataKecamatan != '')
-            $scope.model.kecamatan = dataKecamatan
-        });
-      })
-
-    }
   ]);
 });
