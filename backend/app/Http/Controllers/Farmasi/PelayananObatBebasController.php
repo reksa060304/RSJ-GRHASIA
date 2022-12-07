@@ -601,10 +601,15 @@ class PelayananObatBebasController extends ApiController
         if ($transStatus == 'true') {
             $transMessage = "Simpan Struk Pelayanan Berhasil";
             DB::commit();
+            $objetoRequest = new \Illuminate\Http\Request();
+            $objetoRequest ['noresep'] = $SP->nostruk;
+            $ihs = app('App\Http\Controllers\Bridging\IHSController')->MedicationDispenseObatBebas($objetoRequest,true);
+         
             $result = array(
                 "status" => 201,
                 "message" => $transMessage,
                 "data" => $SP,
+                "Bundle"=>  isset($ihs) ? $ihs : null,
                 "as" => 'as@epic',
             );
         } else {

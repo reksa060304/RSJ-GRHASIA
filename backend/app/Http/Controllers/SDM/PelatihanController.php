@@ -51,6 +51,12 @@ use App\Traits\SettingDataFixedTrait;
 use App\User;
 use Webpatser\Uuid\Uuid;
 use App\Master\Pegawai;
+use App\Transaksi\StrukPelayananPenjamin;
+use App\Transaksi\StrukBuktiPenerimaan;
+use App\Transaksi\StrukPelayanan;
+use App\Transaksi\StrukBuktiPenerimaanCaraBayar;
+use App\Transaksi\SdmPenelitianEksternal;
+
 
 
 class PelatihanController extends ApiController {
@@ -3050,5 +3056,200 @@ class PelatihanController extends ApiController {
             'as'=> 'Feezy'
         );
         return $this->respond($result);
+    }
+    public function simpanPelayananPenjaminDiklat(Request $request)
+    {
+        $transMessage = "";
+        $norec_spp = '';
+        $data = $request['data'];
+        try {
+            if($data['norec']==""){
+                $sppd = new StrukPelayananPenjamin();
+                $sppd->norec = $sppd->generateNewId();
+                $sppd->kdprofile = 30;
+                $sppd->statusenabled = true;
+                $sppd->nostrukfk = $data['nostrukfk'];
+                $sppd->totalbiaya = $data['totalbiaya'];
+                $sppd->totalharusdibayar = $data['totalharusdibayar'];
+                $sppd->totalsudahppenjamin = $data['totalsudahpenjamin'];
+                $sppd->totalppenjamin = $data['totalppenjamin'];
+                $sppd->totalsisaharusdibayar = $data['totalsisaharusbayar'];
+                $sppd->totalsisapiutang = $data['totalsisapiutang'];
+                $sppd->totalsudahdibayar = $data['totalsudahdibayar'];
+                $sppd->totalsudahdibayar = $data['totalsudahdibayar'];
+                $transMessage= 'save';
+            }else{
+                $transMessage= 'load';
+                $sppd = StrukPelayananPenjamin::where('norec', $data['norec'])->first();
+            }
+            $sppd->save();
+            $norec_spp = $sppd->norec;
+            $transStatus = true;
+        } catch (\Throwable $th) {
+            $transStatus = false;
+        }
+        if ($transStatus) {
+            $transMessage = $transMessage;
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'noRec' => $norec_spp,
+                'as' => 'fizi',
+            );
+
+        } else {
+            $transMessage = 'Gagal';
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message'  => $transMessage,
+                'e'=> $th->getLine(),
+                'message'=> $th->getMessage(),
+                'as' => 'fizi',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    public function detailPenjaminDiklat($norec){
+        $spp = StrukPelayananPenjamin::where('norec', $norec)->first();
+        $sbp = StrukBuktiPenerimaan::where('nostrukfk', $spp->nostrukfk)->orderBy('nosbm')->get();
+        $sp = StrukPelayanan::where('norec', $spp->nostrukfk)->first();
+        $penelitian = \DB::table('sdm_penelitianeksternal_t as sdpe')->where('sdpe.noregistrasifk', $sp->norec)
+        ->join('detailjenisproduk_m as djp', 'djp.id','=','sdpe.objectdetailjenisprodukfk')
+        ->select('sdpe.tanggalmulai','sdpe.tanggalselesai','sdpe.institusipendidikan','djp.detailjenisproduk')
+        ->get();
+        $detailPembayaran = array();
+        foreach ($sbp as $item){
+            $detailPembayaran[] = array(
+                'noSbm' => $item->nosbm,
+                'tglPembayaran' => $item->tglsbm,
+                'jlhPembayaran' => $item->totaldibayar
+            );
+        }
+        $dibayarAwal = $spp->totalbiaya - $spp->totalppenjamin;
+        $data = array(
+            "datakampus"=> $penelitian,
+            "totalTagihan" => $spp->totalbiaya,
+            "diabyarawal"=> $dibayarAwal,
+            "diabyarawal"=> $spp,
+            "sudahDibayar" => $spp->totalsudahdibayar+$dibayarAwal,
+            "sisaPiutang" => $spp->totalbiaya - $dibayarAwal - $spp->totalsudahdibayar,
+            "detailPembayaran" => $detailPembayaran
+        );
+
+        return $this->respond($data);
+    }
+    public function pembayaranDiklat(Request $request){
+        switch ($request['tipePembayaran']) {
+            case 'PembayaranDiklat':
+                return $this->getDetailTagihanDiklat($request);
+                break;
+            default:
+                return 0;
+        }
+    }
+    protected function getDetailTagihanDiklat(Request $request){
+        $result =array(
+            "noRecStrukPelayanan"  => $request['noRecStrukPelayanan'],
+            "jumlahBayar"  => $request['jumlahBayar'],
+        );
+        return $this->respond($result, "Data Pembayaran");
+    }
+    public function simpanPembayaran(Request $request){
+        switch ($request['parameterTambahan']['tipePembayaran']) {
+            case 'PembayaranDiklat':
+                return $this->simpanTagihanDiklat($request);
+                break;
+            default:
+                return 0;
+        }
+    }
+    protected function simpanTagihanDiklat($request){
+        $kdProfile = (int)$this->getDataKdProfile($request);
+        \DB::beginTransaction();
+        $strukPelayananPenjamin = StrukPelayananPenjamin::where('norec', $request['parameterTambahan']['noRecStrukPelayanan'])
+            ->where('kdprofile', $kdProfile)
+            ->first();
+        $strukPelayanan = StrukPelayanan::where('norec', $strukPelayananPenjamin->nostrukfk)
+            ->where('kdprofile', $kdProfile)
+            ->first();
+
+        $NOSBM = array();
+        foreach($request['pembayaran'] as $pembayaran){
+            $strukBuktiPenerimanan = new StrukBuktiPenerimaan();
+            $strukBuktiPenerimanan->norec = $strukBuktiPenerimanan->generateNewId();
+            $strukBuktiPenerimanan->kdprofile= $kdProfile;
+            $strukBuktiPenerimanan->keteranganlainnya = "Pembayaran Diklat";
+            $strukBuktiPenerimanan->statusenabled= 1;
+            $strukBuktiPenerimanan->nostrukfk = $strukPelayanan->norec;
+            $strukBuktiPenerimanan->objectkelompokpasienfk = null;
+            $strukBuktiPenerimanan->objectkelompoktransaksifk = 13;
+            $strukBuktiPenerimanan->objectpegawaipenerimafk  = $this->getCurrentLoginID();
+            $strukBuktiPenerimanan->tglsbm  = $this->getDateTime();
+            $strukBuktiPenerimanan->totaldibayar  = $pembayaran['nominal'];
+            $strukBuktiPenerimanan->nosbm = $this->generateCode(new StrukBuktiPenerimaan, 'nosbm', 14, 'RV-'.$this->getDateTime()->format('ym'), $kdProfile);
+            $strukBuktiPenerimanan->ispiutang = true;
+            $NOSBM[] = $strukBuktiPenerimanan->nosbm;
+            $nostrukfkSTR = $strukPelayanan->norec ;
+            try{
+                $strukBuktiPenerimanan->save();
+                $strukPelayananPenjamin->totalsudahdibayar = $strukPelayananPenjamin->totalsudahdibayar + $pembayaran['nominal'];
+            }
+            catch(\Exception $e){
+                throw new \Exception($e->getMessage());
+                $this->transMessage = "Simpan Pembayaran Gagal {SBP}";
+            }
+
+            if($this->transStatus){
+                $SBPCB = new StrukBuktiPenerimaanCaraBayar();
+                $SBPCB->norec = $SBPCB->generateNewId();
+                $SBPCB->kdprofile=$kdProfile;
+                $SBPCB->statusenabled = 1;
+                $SBPCB->nosbmfk = $strukBuktiPenerimanan->norec;
+                $SBPCB->objectcarabayarfk = $pembayaran['caraBayar']['id'];
+
+                if(isset($pembayaran['detailBank'])){
+                    $SBPCB->objectjeniskartufk = $pembayaran['detailBank']['jenisKartu']['id'];
+                    $SBPCB->nokartuaccount = $pembayaran['detailBank']['noKartu'];
+                    $SBPCB->namabankprovider = $pembayaran['detailBank']['namaKartu'];
+                    $SBPCB->namapemilik = $pembayaran['detailBank']['namaKartu'];
+                }
+                try{
+                    $SBPCB->save();
+                }
+                catch(\Exception $e){
+                    $this->transStatus = false;
+                    $this->transMessage = "Simpan Pembayaran Gagal {SBPCB}";
+                }
+            }
+        }
+        $msgspp = '';
+        if($this->transStatus){
+            try{
+                $msgspp = "Simpan Pelayanan Penjamin Berhasil";
+                $strukPelayananPenjamin->save();
+                if($strukPelayananPenjamin->totalsudahdibayar == $strukPelayananPenjamin->totalharusdibayar){
+                    $strukPelayanan->nosbmlastfk = $strukBuktiPenerimanan->norec;
+                    $strukPelayanan->save();
+                }
+            }
+            catch(\Exception $e){
+                throw new \Exception($e->getMessage());
+                $this->transStatus = false;
+                $this->transMessage = "Simpan Pembayaran Gagal {SPP}";
+            }
+        }
+        if($this->transStatus){
+            $this->transMessage = "Simpan Pembayaran Berhasil";
+            $this->statusCode = 201;
+            DB::commit();
+        }else{
+            $this->statusCode = 400;
+            DB::rollBack();
+        }
+        return $this->respond(array('noSBM'=> $NOSBM,'msgspp'=> $msgspp), $this->transMessage);
+//        disini ngikutin pembayaran laginya..
+//        return $this->respond([], "Simpan Pembayaran Berhasil");
     }
 }

@@ -3554,6 +3554,14 @@
         {
             "nameDep": "laporanTindakanPPACtrl",
             "urlDep": "module/Registrasi/Laporan/laporanTindakanPPACtrl"
+        },
+        {
+            "nameDep": "IHS_toolsCtrl",
+            "urlDep": "module/Bridging/IHS_toolsCtrl"
+        },
+        {
+            "nameDep": "HistorySatuSehatCtrl",
+            "urlDep": "module/Registrasi/HistorySatuSehatCtrl"
         }
     ]
 }

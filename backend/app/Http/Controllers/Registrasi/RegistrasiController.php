@@ -639,12 +639,17 @@ class RegistrasiController extends ApiController
                 }
               
                 $transMessage = 'SUKSES';
+                $objetoRequest = new \Illuminate\Http\Request();
+                $objetoRequest ['noregistrasi']= $dataPD->noregistrasi;
+                $ihs = app('App\Http\Controllers\Bridging\IHSController')->Encounter($objetoRequest,true);
+        
                 $result = array(
                     'status' => 201,
                     'message'=>$transMessage,
                     'dataPD' => $dataPD,
                     'dataAPD' => $dataAPD,
                     'antrol'=>$antrol,
+                    'Encounter' => isset($ihs)? $ihs :null,
                     'as' => 'ramdanegie',
                 );
             }
@@ -1163,13 +1168,14 @@ class RegistrasiController extends ApiController
         $kdProfile = $this->getDataKdProfile($request);
         $data = \DB::table('pasien_m as ps')
             ->leftjoin('alamat_m as alm','alm.nocmfk','=','ps.id')
+            ->leftjoin('profile_m as pro','pro.id','=','ps.kdprofile')
             ->leftjoin('jeniskelamin_m as jk','jk.id','=','ps.objectjeniskelaminfk')
             ->select('ps.nocm','ps.namapasien','ps.tgldaftar', 'ps.tgllahir',
                 'jk.jeniskelamin','ps.noidentitas','alm.alamatlengkap',
                 'ps.id as nocmfk','ps.namaayah','ps.notelepon','ps.nohp','ps.tglmeninggal','ps.iskompleks','ps.nobpjs'//,
 //                'ps.foto'
                 ,
-                DB::raw('case when ps.foto is null then null else \'ada\' end as photo')
+                DB::raw('case when ps.foto is null then null else \'ada\' end as photo,ps.ihs_number,pro.ihs_id as ihs_profile')
             );
 //        if (isset($request['tglAwal']) && $request['tglAwal'] != "" && $request['tglAwal'] != "undefined") {
 //            $data = $data->where('ps.tgldaftar', '>=', $request['tglAwal']);
@@ -3665,7 +3671,9 @@ class RegistrasiController extends ApiController
             if($request['idpasien'] == '') {
                 if(isset($request['pasien']['noIdentitas']) && $request['pasien']['noIdentitas']!='-'
                     && $request['pasien']['noIdentitas']!=''){
-                    $cek = Pasien::where('noidentitas',$request['pasien']['noIdentitas'])->where('statusenabled',true)->first();
+                    $cek = Pasien::where('noidentitas',$request['pasien']['noIdentitas'])->where('statusenabled',true)
+                    ->where('statusenabled',true)
+                    ->first();
                     if(!empty($cek)){
                     $transMessage = "NIK ini sudah terdaftar sebagai ".$cek->namapasien . ' ('.$cek->nocm.')';
                         DB::rollBack();

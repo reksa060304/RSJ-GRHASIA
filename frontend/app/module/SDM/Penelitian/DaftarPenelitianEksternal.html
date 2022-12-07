@@ -80,6 +80,18 @@
 									</div>
 								</fieldset>
 								<div class="grid_12" style="margin-top: 10px;">
+									<kendo-grid k-data-source="DataPenelitian" k-selectable="'row'" k-options="columnPenelitian2"
+										k-ng-model="current" ng-click="kl(current)">
+										<div k-detail-template>
+											<kendo-tabstrip>
+												<div id="kGridDetail" kendo-grid k-options="data2(dataItem)" k-sortable="'true'"
+													k-selectable="'row'" k-ng-model="dataSelected2" ng-click="klikDetail(dataSelected2)">
+												</div>
+											</kendo-tabstrip>
+										</div>
+									</kendo-grid>
+								</div>
+								<div class="grid_12" style="margin-top: 10px;">
 									<kendo-grid k-data-source="DataPenelitian" k-selectable="'row'" k-options="columnPenelitian"
 										k-ng-model="current" ng-click="kl(current)">
 									</kendo-grid>
@@ -113,8 +125,8 @@
 											size="36" position="'right'" class="c-button primary" ng-click="verifikasi()">
 											<span class="title">Verifikasi</span>
 										</button>
-										<button ng-show="batalverif" style="width: 99.5%; font-size: 24px; padding:0px; margin:0px;"
-											item="item" size="36" position=" 'right'" class="c-button primary" ng-click="batalverifikasi()">
+										<button ng-show="batalverif" style="width: 99.5%; font-size: 24px; padding:0px; margin:0px;background-color: yellow;color: black; font-weight: bold;"
+											item="item" size="36" position=" 'right'" class="c-button" ng-click="batalverifikasi()">
 											<span class="title">Batal Verifikasi</span>
 										</button>
 									</div>
@@ -123,8 +135,9 @@
 											size="36" position="'right'" class="c-button primary" ng-click="tagihan()">
 											<span class="title">Verif Tagihan</span>
 										</button>
-										<button ng-show="unveriftagih" style="width: 99.5%; font-size: 24px; padding:0px; margin: 0px;"
-											item="item" size="36" position="'right'" class="c-button primary" ng-click="unveriftagihan()">
+										<button ng-show="unveriftagih"
+											style="width: 99.5%; font-size: 24px; padding:0px; margin: 0px;background-color: yellow;color: black; font-weight: bold;"
+											item="item" size="36" position="'right'" class="c-button" ng-click="unveriftagihan()">
 											<span class="title">Unverif Tagihan</span>
 										</button>
 									</div>

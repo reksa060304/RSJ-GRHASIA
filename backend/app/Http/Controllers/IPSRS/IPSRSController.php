@@ -33,7 +33,8 @@ class IPSRSController extends ApiController
         $ruangantj="";
         $pelapor="";
         $jeniskerusakan="";
-
+        $jenisperbaikan = "";
+        $statuspengerjaan = "";
         if ((isset($request['tglAwal']) && $request['tglAwal'] != "" && $request['tglAwal'] != "undefined") && (isset($request['tglAkhir']) && $request['tglAkhir'] != "" && $request['tglAkhir'] != "undefined"))
         {
             $tgl = "AND stp.tglplanning BETWEEN '".$request['tglAwal']."' AND '".$request['tglAkhir']."' ";
@@ -63,9 +64,16 @@ class IPSRSController extends ApiController
         {
                 $ruangantj = "AND stp.pelapor = '".$request['pelapor']."'";
         }
-
+        if (isset($request['jenisperbaikan']) )
+        {
+                $jenisperbaikan = "AND stp.objectruangantujuanfk = '".$request['jenisperbaikan']."'";
+        }
+        if (isset($request['statuspengerjaan']) )
+        {
+                $statuspengerjaan = "AND stp.objectstatuspekerjaanfk = '".$request['statuspengerjaan']."'";
+        }
         $data = DB::select(DB::raw("
-            SELECT  stp.norec, rg.namaruangan, stp.tglplanning,stp.objectpegawaipjawabfk,pg.namalengkap, stp.startdate, stp.duedate, stp.rincianexecuteplanning_askep, stp.pelapor, 
+            SELECT stp.objectdetailjenispekerjaanfk, stp.objectruanganfk,stp.catatan, stp.ispihakketiga, stp.norec, rg.namaruangan, stp.tglplanning,stp.objectpegawaipjawabfk,pg.namalengkap, stp.startdate, stp.duedate, stp.rincianexecuteplanning_askep, stp.pelapor, 
                     stp.deskripsiplanning, stp.keteranganverifikasi, sttp.namaexternal,stp.signdate, stp.worklist, stp.keteranganverifikasi, 
                     pg2.nama as namainspektor, pg3.nama as namapelapor,stp.objectstatuspekerjaanfk,sttp.reportdisplay as statuspekerjaan,stp.objectjenispekerjaanfk AS idjeniskerusakan,
                     jpk.reportdisplay as jeniskerusakan,stp.objectjenisalatfk,jpk2.reportdisplay as jenisalat,r.namaruangan as namaruangantujuan, ukp.name
@@ -89,6 +97,8 @@ class IPSRSController extends ApiController
             $ruangantj
             $pelapor
             $jeniskerusakan
+            $jenisperbaikan
+            $statuspengerjaan
             ORDER BY stp.tglplanning DESC"));
 
         foreach ($data as $item) {
@@ -98,6 +108,11 @@ class IPSRSController extends ApiController
                     where spd.kdprofile = $kdProfile and noplanningfk = :norec"),
                 array(
                     'norec' => $item->norec,
+                )
+            );
+            $detailjenisperbaikan = \DB::select(DB::raw("SELECT id, detailjenispekerjaan from detailjenispekerjaan_m djp where djp.kdprofile =  $kdProfile and djp.id = :detailjenispekerjaan"),
+                array(
+                    'detailjenispekerjaan' => $item->objectdetailjenispekerjaanfk,
                 )
             );
             $result[] = array(
@@ -124,7 +139,11 @@ class IPSRSController extends ApiController
                 'objectjenisalatfk' => $item->objectjenisalatfk,
                 'details' => $details,
                 'namaruangantujuan' => $item->namaruangantujuan,
-                'name' => $item->name
+                'name' => $item->name,
+                'ispihakketiga' => $item->ispihakketiga,
+                'catatan' => $item->catatan,
+                'objectruanganfk' => $item->objectruanganfk,
+                'detailjenisperbaikan' => $detailjenisperbaikan,
             );
         }
         if (count($data) == 0) {
@@ -191,7 +210,7 @@ class IPSRSController extends ApiController
                     $url = "https://api.telegram.org/bot" . $secret_token . "/sendMessage?parse_mode=html&chat_id=" . $telegram_id;
                     $url = $url . "&text=" . urlencode("✅ Laporan Baru: <b>Permohonan Perbaikan IPSRS </b> \n\n Ruangan / area: <b>".$ruangan->namaruangan.
                             "</b>  \n Pelapor: <b>".$pelapor->pelapor."</b>  \n Laporan Kerusakan: <b>".$rincianHead2.
-                            "</b> \n Ruangan Tujuan: <b>".$ruanganTujuan->namaruangan."</b>");
+                            "</b> \n Jenis Perbaikan: <b>".$ruanganTujuan->namaruangan."</b>");
                     // return $url;
                     $ch = curl_init();
                     $optArray = array(
@@ -584,7 +603,14 @@ class IPSRSController extends ApiController
         SELECT *
             FROM jenispekerjaan_m
 			WHERE kdprofile = $kdProfile and statusenabled = true and jenispekerjaan = 'IPSRS' AND namaexternal='Jenis Alat'"));
-
+        foreach ($data as $d) {
+            $details = \DB::select(DB::raw("SELECT id, detailjenispekerjaan from detailjenispekerjaan_m djp where djp.kdprofile =  $kdProfile and djp.objectjenispekerjaanfk = :detailjenispekerjaan"),
+                array(
+                    'detailjenispekerjaan' => $d->id,
+                )
+            );
+            $d->details = $details;
+        }
         return $this->respond($data);
 
     }
@@ -671,7 +697,6 @@ class IPSRSController extends ApiController
         DB::beginTransaction();
         $dataLogin = $request->all();
         $kdProfile = (int) $this->getDataKdProfile($request);
-        var_dump($request['strukplanning']['jeniskerusakan']);
         try {
 
             if ($request['norec'] == ''){
@@ -694,16 +719,19 @@ class IPSRSController extends ApiController
                 $newCOA->objectpegawaipjawabfk = $request['strukplanning']['penanngungjawab'];
                 $newCOA->objectjenispekerjaanfk = $request['strukplanning']['jeniskerusakan'];
                 $newCOA->objectjenisalatfk = $request['strukplanning']['jenisalat'];
+                $newCOA->ispihakketiga = $request['strukplanning']['ispihakketiga'];
+                $newCOA->catatan = $request['strukplanning']['catatan'];
+                $newCOA->objectdetailjenispekerjaanfk = $request['strukplanning']['detailjenispekerjaan'];
                 $newCOA->save();
                 $norecHead2 = $newCOA->norec;
 
             foreach ($request['datapegawai'] as $items){
                 $Spd = new StrukPlanningDetail();
-                $norecDetail = $newCOA->generateNewId();
+                $norecDetail = $Spd->generateNewId();
                 $Spd->kdprofile = $kdProfile;
                 $Spd->norec = $norecDetail;
                 $Spd->statusenabled = true;
-                $Spd->pegawaifk = $items['idpegawai'];
+                $Spd->pegawaifk = $items['id'];
                 $Spd->noplanningfk = $norecHead2;
                 $Spd->save();
             }
@@ -719,7 +747,7 @@ class IPSRSController extends ApiController
             DB::commit();
             $result = array(
                 "status" => 201,
-//                "data" => $newPJT,
+               "data" => $newCOA,
                 "as" => 'as@epic',
             );
         } else {
@@ -728,6 +756,7 @@ class IPSRSController extends ApiController
             $result = array(
                 "status" => 400,
 //                "data" => $newPJT,
+                    "e"=> $e->getLine().$e->getMessage(),
                 "as" => 'as@epic',
             );
         }
@@ -795,7 +824,14 @@ class IPSRSController extends ApiController
 
             if ($newCOA->objectkelompoktransaksifk == 151) {
                 //pdti
-                $norecHead2 = $newCOA->norec;
+                $tele= false;
+                $cobainnn= '';
+                $isAktif = \DB::table('settingdatafixed_m')
+                ->where('namafield', 'TelegramPerbaikanIPSRS')->where('statusenabled', true)->get();
+                
+                if (count($isAktif) > 0) {
+                    $cobainnn = "Aktif";
+                    $norecHead2 = $newCOA->norec;
                 $ruanganHead2 = $newCOA->objectruanganfk;
                 $ruangtujuanHead2 = $newCOA->objectruangantujuanfk;
                 $rincianHead2 = $newCOA->rincianexecuteplanning_askep;
@@ -819,9 +855,18 @@ class IPSRSController extends ApiController
                 curl_setopt_array($ch, $optArray);
                 $result = curl_exec($ch);
                 curl_close($ch);
+                }
+                
             } else if($newCOA->objectkelompoktransaksifk == 122){
                 //ipsrs
-                $norecHead2 = $newCOA->norec;
+                $tele= false;
+                $cobainnn= '';
+                $isAktif = \DB::table('settingdatafixed_m')
+                ->where('namafield', 'TelegramPerbaikanIPSRS')->where('statusenabled', true)->get();
+                
+                if (count($isAktif) > 0) {
+                    $cobainnn = "Aktif";
+                    $norecHead2 = $newCOA->norec;
                 $ruanganHead2 = $newCOA->objectruanganfk;
                 $ruangtujuanHead2 = $newCOA->objectruangantujuanfk;
                 $rincianHead2 = $newCOA->rincianexecuteplanning_askep;
@@ -846,8 +891,17 @@ class IPSRSController extends ApiController
                 curl_setopt_array($ch, $optArray);
                 $result = curl_exec($ch);
                 curl_close($ch);
+                }
+                
             } else if($newCOA->objectkelompoktransaksifk== 305){
-                $norecHead2 = $newCOA->norec;
+                $tele= false;
+                $cobainnn= '';
+                $isAktif = \DB::table('settingdatafixed_m')
+                ->where('namafield', 'TelegramPerbaikanIPSRS')->where('statusenabled', true)->get();
+                
+                if (count($isAktif) > 0) {
+                    $cobainnn = "Aktif";
+                    $norecHead2 = $newCOA->norec;
                 $ruanganHead2 = $newCOA->objectruanganfk;
                 $ruangtujuanHead2 = $newCOA->objectruangantujuanfk;
                 $rincianHead2 = $newCOA->rincianexecuteplanning_askep;
@@ -871,6 +925,8 @@ class IPSRSController extends ApiController
                 curl_setopt_array($ch, $optArray);
                 $result = curl_exec($ch);
                 curl_close($ch);
+                }
+                
             }
 
             $transStatus = 'true';
@@ -976,6 +1032,7 @@ class IPSRSController extends ApiController
                     'norec' => $item->norec,
                 )
             );
+           
             $result[] = array(
                 'norec' => $item->norec,
                 'namaruangan' => $item->namaruangan,
@@ -1015,6 +1072,18 @@ class IPSRSController extends ApiController
 
         return $this->respond($result);
 //        return $this->respond($data);
+    }
+    public function getComboPegawai(Request $request)
+    {
+        $data=\DB::select(DB::raw("SELECT DISTINCT pg.id, pg.namalengkap from pegawai_m pg 
+        inner join loginuser_s lu on lu.objectpegawaifk = pg.id
+        where lu.objectkelompokuserfk in(36,38,47) and pg.kdprofile = 30 and pg.statusenabled=true and lu.kdprofile = 30 and lu.statusenabled=true 
+        and pg.id not in(2,320263)"));
+        $result = array(
+            'data'=> $data,
+            'as'=> 'Feezy'
+        );
+        return $this->respond($result);
     }
 
 }

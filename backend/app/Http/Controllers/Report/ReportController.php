@@ -11915,95 +11915,12 @@ public function suratBuktiPengembalian(Request $request)
     public function cetakKwitansiDiklat(Request $request)
     {
         $data = \DB::select(
-            DB::raw("SELECT
-        '-' AS noregistrasi,
-        sbm.nosbm,
-    CASE
-            
-            WHEN sp.nostruk_intern IS NULL 
-            OR sp.nostruk_intern = '' 
-            OR sp.nostruk_intern = '-' THEN
-                '-' ELSE pm.nocm 
-            END AS nocm,
-            sp.namapasien_klien AS namapasien,
-            sp.tglstruk AS tglregistrasi,
-        CASE
-                
-                WHEN sp.nostruk_intern IS NULL 
-                OR sp.nostruk_intern = '' 
-                OR sp.nostruk_intern = '-' THEN
-                    '-' ELSE jk.reportdisplay 
-                END AS jk,
-            CASE
-                    
-                    WHEN sp.nostruk_intern IS NULL 
-                    OR sp.nostruk_intern = '' 
-                    OR sp.nostruk_intern = '-' THEN
-                        sp.tglfaktur ELSE pm.tgllahir 
-                    END AS tgllahir,
-                CASE
-                        
-                        WHEN sp.nostruk_intern IS NULL 
-                        OR sp.nostruk_intern = '' 
-                        OR sp.nostruk_intern = '-' THEN
-                            to_char( sp.tglfaktur, 'DD-MM-YYYY' ) ELSE to_char( pm.tgllahir, 'DD-MM-YYYY' ) 
-                        END AS tglKelahiran,
-                        ru.namaruangan AS ruanganperiksa,
-                        ru.namaruangan AS ruangakhir,
-                        pg.namalengkap AS namadokter,
-                        sp.namarekanan AS kelompokpasien,
-                        spd.objectprodukfk,
-                        pro.namaproduk,
-                        spd.qtyproduk AS jumlah,
-                    CASE
-                            
-                            WHEN spd.hargasatuan IS NULL THEN
-                            spd.hargasatuan ELSE spd.hargasatuan 
-                        END AS hargasatuan,
-                        ( CASE WHEN spd.hargadiscount IS NULL THEN 0 ELSE spd.hargadiscount END ) AS diskon,
-                        ( CASE WHEN spd.hargatambahan IS NULL THEN 0 ELSE spd.hargatambahan END ) AS jasa,
-                         
-                         sp.totalharusdibayar AS total,
-                    '-' AS namakelas,
-                    '-' AS asalrujukan,
-                    sp.tglstruk,
-                CASE
-                        
-                        WHEN sp.namarekanan IS NULL THEN
-                        '-' ELSE sp.namarekanan 
-                    END AS namapenjamin,
-                    '-' AS namakamar,
-                    spd.tglpelayanan,
-                CASE
-                        
-                        WHEN sp.nostruk_intern IS NULL 
-                        OR sp.nostruk_intern = '' 
-                        OR sp.nostruk_intern = '-' THEN
-                            sp.namatempattujuan ELSE alm.alamatlengkap 
-                        END AS alamatlengkap,
-                        '-' AS dpjp,
-                        
-                spe.tanggalmulai,
-                spe.tanggalselesai,
-                pg2.namalengkap
-                    FROM
-                        strukpelayanan_t AS sp
-                        INNER JOIN strukpelayanandetail_t AS spd ON spd.nostrukfk = sp.norec
-                        LEFT JOIN produk_m AS pro ON pro.ID = spd.objectprodukfk
-                        LEFT JOIN pasien_m AS pm ON pm.nocm = sp.nostruk_intern
-                        LEFT JOIN jeniskelamin_m AS jk ON jk.ID = pm.objectjeniskelaminfk
-                        LEFT JOIN ruangan_m AS ru ON ru.ID = sp.objectruanganfk
-                        LEFT JOIN pegawai_m AS pg ON pg.id = sp.objectpegawaipenanggungjawabfk
-                        LEFT JOIN alamat_m AS alm ON alm.nocmfk = pm.ID 
-                        left join strukbuktipenerimaan_t sbm on sbm.norec = sp.nosbmlastfk
-                        left join sdm_penelitianeksternal_t spe on spe.noregistrasifk = sp.norec
-                        left join loginuser_s lu on lu.id = sbm.objectpegawaipenerimafk
-		                left join pegawai_m pg2 on pg2.id = lu.objectpegawaifk
-                    WHERE
-                        sp.norec = '$request[norec]' 
-                -- 		AND pro.ID <> 402611 
-                ORDER BY
-	        sp.tglstruk")
+            DB::raw("SELECT sbm.totaldibayar, sbm.nosbm, sdpe.institusipendidikan, sdpe.tanggalmulai, sdpe.tanggalselesai, sdpe.tglregistrasi, pr.namaproduk, sdpe.jumlahpeserta, sdpe.hargasatuan,sdpe.biayapenelitian as total FROM strukpelayanan_t sp 
+            inner join sdm_penelitianeksternal_t sdpe on sdpe.noregistrasifk = sp.norec
+            inner join produk_m pr on pr.id = sdpe.objectprodukfk
+            inner join strukbuktipenerimaan_t sbm on sbm.nostrukfk = sp.norec
+            where sbm.nosbm ilike '$request[nosbm]'
+            ")
         );
         $pegawai = $request['strIdPegawai'];
         // dd($data);

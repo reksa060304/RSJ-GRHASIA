@@ -544,6 +544,37 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         Route::post('ocbc/v1/virtual-account/payment', 'Bridging\WSController@notifPaymentVA');
         Route::post('ocbc/v1/virtual-account/unflag', 'Bridging\WSController@unflagPaymenVA');
 
+        Route::post('bridging/ihs/tools', 'Bridging\IHSController@ihsTools');
+        Route::post('bridging/ihs/generate-token', 'Bridging\IHSController@generateToken');
+        Route::post('bridging/ihs/Organization', 'Bridging\IHSController@Organization');
+        Route::post('bridging/ihs/Location', 'Bridging\IHSController@Location');
+        Route::post('bridging/ihs/Encounter', 'Bridging\IHSController@Encounter');
+        Route::post('bridging/ihs/Condition', 'Bridging\IHSController@Condition');
+        Route::post('bridging/ihs/Practitioner', 'Bridging\IHSController@Practitioner');
+        Route::post('bridging/ihs/update-ihs-pasien', 'Bridging\IHSController@updateIHSPasien');
+        Route::post('bridging/ihs/Medication', 'Bridging\IHSController@Medication');
+        Route::post('bridging/ihs/MedicationRequest', 'Bridging\IHSController@MedicationRequest');
+        Route::post('bridging/ihs/MedicationDispense', 'Bridging\IHSController@MedicationDispense');
+        Route::post('bridging/ihs/MedicationDispenseObatBebas', 'Bridging\IHSController@MedicationDispenseObatBebas');
+        Route::post('bridging/ihs/Observation', 'Bridging\IHSController@Observation');
+        Route::post('bridging/ihs/Procedure', 'Bridging\IHSController@Procedure');
+        Route::post('bridging/ihs/Immunization', 'Bridging\IHSController@Immunization');
+        Route::post('bridging/ihs/Composition', 'Bridging\IHSController@Composition');
+        Route::post('bridging/ihs/ServiceRequest', 'Bridging\IHSController@ServiceRequest');
+        Route::post('bridging/ihs/Specimen', 'Bridging\IHSController@Specimen');
+        Route::post('bridging/ihs/ObservationLab', 'Bridging\IHSController@ObservationLab');
+        Route::post('bridging/ihs/DiagnosticReport', 'Bridging\IHSController@DiagnosticReport');
+        Route::post('bridging/ihs/ObservationLabBridging', 'Bridging\IHSController@ObservationLabBridging');
+        Route::post('bridging/ihs/DiagnosticReportBridging', 'Bridging\IHSController@DiagnosticReportBridging');
+        // Route::post('bridging/ihs/{resource}', 'Bridging\IHSController@ResourceType');
+        Route::post('bridging/ihs/Encounter-tes', 'Bridging\IHSController@Encountertes');
+        Route::get('bridging/ihs/get-list', 'Bridging\IHSController@getList');
+        Route::get('sysadmin/master/get-data-produkapotik', 'SysAdmin\Master\MasterController@getListProdukApotik');
+        Route::get('sysadmin/master/get-data-combo-master-rev', 'SysAdmin\Master\MasterController@getDataComboMasterRev');
+        Route::post('sysadmin/master/save-data-produk-apotik', 'SysAdmin\Master\MasterController@saveDataProdukApotik');
+        Route::get('sysadmin/master/get-daftar-master-pegawai', 'SysAdmin\Master\MasterController@getDataMasterPegawai');
+        Route::post('sysadmin/master/save-data-master-pegawai', 'SysAdmin\Master\MasterController@saveDataMasterPegawai');
+
         Route::group(['prefix' => 'cssd'], function () {
 
         });
@@ -2320,6 +2351,11 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('ipsrs/get-ruangan','IPSRS\IPSRSController@getComboRuanganIPSRS');
             Route::post('ipsrs/save-permohonan-pindahke','IPSRS\IPSRSController@SavePermohonanPindahKe');
             Route::get('ipsrs/get-daftar-permohonan-rt','IPSRS\IPSRSController@getDaftarRT');
+            Route::get('ipsrs/get-combo-pegawai-perbaikan','IPSRS\IPSRSController@getComboPegawai');
+            Route::post('diklat/simpan-pleyanan-penjamin-diklat','SDM\PelatihanController@simpanPelayananPenjaminDiklat');
+            Route::get('diklat/detail-diklat-penjamin/{norecSPP}','SDM\PelatihanController@detailPenjaminDiklat');
+            Route::get('diklat/get-data-pembayaran', 'SDM\pelatihanController@pembayaranDiklat');
+            Route::post('diklat/simpan-data-pembayaran', 'SDM\pelatihanController@simpanPembayaran');  //done
 
         // });
         // Route::group(['prefix' => 'sdm'], function () {

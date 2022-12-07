@@ -4837,7 +4837,7 @@ class GeneralController extends ApiController
         $data = DB::select(DB::raw("
         SELECT *
             FROM jenispekerjaan_m
-			WHERE kdprofile = $kdProfile and jenispekerjaan='SIMRS' AND namaexternal='Kegiatan SIMRS'"));
+			WHERE kdprofile = $kdProfile and jenispekerjaan='SIMRS' AND namaexternal='Kegiatan SIMRS' order by kodeexternal asc"));
 
         return $this->respond($data);
 

@@ -690,7 +690,7 @@ define(['initialize','Configuration'], function (initialize, configuration) {
 				}
 				if ($scope.item.cetakanKasir.id == 3){
 
-                	window.open(configuration.baseApiBackend + "report/diklat-kwitansi?norec=" + $scope.dataParams.noRegistrasi + '&strIdPegawai=' + user.namaLengkap);
+                	window.open(configuration.baseApiBackend + "report/diklat-kwitansi?norec=" + $scope.dataParams.noRegistrasi + '&strIdPegawai=' + user.namaLengkap + '&nosbm=' + $scope.item.noSbmBayar);
 
 				}
 				

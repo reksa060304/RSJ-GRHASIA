@@ -53,6 +53,7 @@ define(['initialize'], function (initialize) {
                 $scope.ip3rs = true
                 $scope.disip3rs = false
                 $scope.item.pelapor = {}
+                $scope.item.ruangan = {}
             }
             $scope.listPindah = [{
                 id:151,
@@ -135,7 +136,7 @@ define(['initialize'], function (initialize) {
                 }
 
                 var tglAwal1 = moment($scope.item.tglAwal1).format('YYYY-MM-DD HH:mm:ss');
-                var tglAkhir = moment($scope.item.tglAkhir).format('YYYY-MM-DD HH:mm:ss');
+                var tglAkhir = moment($scope.item.tglAkhir).format('YYYY-MM-DD 23:59:59');
                 medifirstService.get("ipsrs/get-daftar-permohonan?" +
                     "tglAwal=" + tglAwal1 +
                     "&tglAkhir=" + tglAkhir + desc + '&arrru=' + jenisForm +
@@ -381,7 +382,15 @@ define(['initialize'], function (initialize) {
                         pelapor : $scope.item.pelapor.namalengkap,
                         ruangantujuan : $scope.item.ruangantujuan.id
                     }
+                    // sendNotification()
+                    // return
                 medifirstService.post('ipsrs/save-permohonan',objSave).then(function(e) {
+                    $scope.item = {}
+                    $scope.item.tglAwal = new moment($scope.now).format('YYYY-MM-DD HH:mm');
+                    $scope.item.tglAwal1 = new moment($scope.now).format('YYYY-MM-DD 00:00');
+                    $scope.item.tglAkhir = new moment($scope.now).format('YYYY-MM-DD 23:59');
+                    $scope.myVar = 1
+                    // console.log($scope.myVar);
                     // $scope.popupSignDate.close();
                     // init2()
                 })    
@@ -408,7 +417,7 @@ define(['initialize'], function (initialize) {
                 })    
                    
             }
-
+            
             $scope.worklist = function () {               
                 $scope.popupWorkList.center().open();
                 $scope.item.idruangan =  $scope.dataSelected.idruangan

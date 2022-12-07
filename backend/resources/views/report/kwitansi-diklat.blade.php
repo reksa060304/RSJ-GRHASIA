@@ -146,7 +146,7 @@
                             <tr>
                                 <td style="font-family: Tahoma">Nama Institusi</td>
                                 <td> : </td>
-                                <td style="font-family: Tahoma">{{$d->namapasien}}</td>
+                                <td style="font-family: Tahoma">{{$d->institusipendidikan}}</td>
                             </tr>
                             <tr>
                                 <td style="font-family: Tahoma">Tanggal Kegiatan</td>
@@ -158,30 +158,31 @@
                 </tr>
         </table>
         {{-- <hr style="border:1px solid #000;margin-bottom:0px"> --}}
-        <table  width="100%" style="border-bottom: 1pt solid black;border-top: 1pt solid black;">
+        <table  width="100%" style="border-bottom: 1pt solid black;border-top: 1pt solid black; margin-top:50px">
             <tr>
-                <th style="font-family: Tahoma">Tanggal</th>
+                <th style="font-family: Tahoma">Tanggal Daftar</th>
                 <th style="font-family: Tahoma">Kegiatan</th>
-                <th style="font-family: Tahoma">Jumlah</th>
+                <th style="font-family: Tahoma">Jumlah Peserta</th>
                 <th style="font-family: Tahoma">Tarif</th>
                 <th style="font-family: Tahoma">Total</th>
             </tr>
             <tr style="text-align: center;">
                 <td style="font-family: Tahoma">{{\Carbon\Carbon::parse($d->tglregistrasi)->format('d-m-Y')}}</td>
                 <td style="font-family: Tahoma">{{$d->namaproduk}}</td>
-                <td style="font-family: Tahoma">{{$d->jumlah}}</td>
+                <td style="font-family: Tahoma">{{$d->jumlahpeserta}}</td>
                 <td style="font-family: Tahoma">Rp. {{number_format($d->hargasatuan,2)}}</td>
                 <td style="font-family: Tahoma">Rp. {{number_format($d->total, 2)}}</td>
             </tr>
             
         </table>
-        <table width="100%" >
-            <tr style="text-align: right;">
-                <td style="font-family: Tahoma">Total Transaksi</td>
-                <td style="font-family: Tahoma" width="100px">Rp. {{number_format($d->total, 2)}}</td>
+        <table width="100%" style="margin-top: 20px; font-weight: bold" >
+            <tr style="text-align: right; ">
+                <td style="font-family: Tahoma">JUMLAH BAYAR</td>
+                <td style="font-family: Tahoma">: Rp. </td>
+                <td style="font-family: Tahoma" width="100px">{{number_format($d->totaldibayar, 2)}}</td>
             </tr>
         </table>
-        <table style="text-align: center">
+        <table style="text-align: center; position:fixed; bottom: 100px">
             <tr>
                 <td style="font-family: Tahoma" style="height: 20px">Sleman, {{\Carbon\Carbon::now()->format('d-m-Y')}}</td>
             </tr>
@@ -189,7 +190,7 @@
                 <td style="height: 80px"></td>
             </tr>
             <tr>
-                <td style="font-family: Tahoma">{{$d->namalengkap}}</td>
+                <td style="font-family: Tahoma">{{$pegawai}}</td>
             </tr>
         </table>
         @endforeach
