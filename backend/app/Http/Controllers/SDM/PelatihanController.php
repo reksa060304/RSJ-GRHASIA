@@ -3145,7 +3145,7 @@ class PelatihanController extends ApiController {
             "noRecStrukPelayanan"  => $request['noRecStrukPelayanan'],
             "jumlahBayar"  => $request['jumlahBayar'],
         );
-        return $this->respond($result, "Data Pembayaran");
+        return $this->respond($result);
     }
     protected function getDetailTagihanDiklat(Request $request){
         
