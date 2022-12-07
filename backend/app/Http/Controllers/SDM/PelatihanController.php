@@ -3141,20 +3141,14 @@ class PelatihanController extends ApiController {
         return $this->respond($data);
     }
     public function pembayaranDiklat(Request $request){
-        switch ($request['tipePembayaran']) {
-            case 'PembayaranDiklat':
-                return $this->getDetailTagihanDiklat($request);
-                break;
-            default:
-                return 0;
-        }
-    }
-    protected function getDetailTagihanDiklat(Request $request){
         $result =array(
             "noRecStrukPelayanan"  => $request['noRecStrukPelayanan'],
             "jumlahBayar"  => $request['jumlahBayar'],
         );
         return $this->respond($result, "Data Pembayaran");
+    }
+    protected function getDetailTagihanDiklat(Request $request){
+        
     }
     public function simpanPembayaran(Request $request){
         switch ($request['parameterTambahan']['tipePembayaran']) {
