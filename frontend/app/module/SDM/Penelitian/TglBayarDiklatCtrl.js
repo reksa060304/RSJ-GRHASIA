@@ -194,7 +194,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 					jumlahBayar: $scope.dataParams.jumlahBayar,
                 }
                 $scope.defaultPage = "PembayaranDiklat";
-                urlGetDataDetail = "diklat/get-data-pembayaran?noRecStrukPelayanan=" + $scope.dataParams.noRegistrasi + "&tipePembayaran=PembayaranDiklat&jumlahBayar=" + $scope.dataParams.jumlahBayar ;
+                urlGetDataDetail = "diklat/diklat/get-data-pembayaran-diklat?noRecStrukPelayanan=" + $scope.dataParams.noRegistrasi + "&tipePembayaran=PembayaranDiklat&jumlahBayar=" + $scope.dataParams.jumlahBayar ;
                 break;
             }
 
