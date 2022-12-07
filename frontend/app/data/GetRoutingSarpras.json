@@ -443,9 +443,32 @@
     ]
   },
   {
+    "name": "ApotikOnlineTools.SEPApotikOnline",
+    "url": "/SEPApotikOnline",
+    "templateurl": "module/Farmasi/SEPApotikOnline.html",
+    "controller": "SEPApotikOnlineCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "BPJSToolsCtrl"
+      }
+    ]
+  },
+  {
     "name": "ApotikOnlineTools.ReferensiVclaim",
     "url": "/ReferensiVclaim",
-    "templateurl": "module/Farmasi/ReferensiVclaim.html",
+    "templateurl": "module/Registrasi/ReferensiVclaim.html",
     "controller": "ReferensiVclaimCtrl",
     "deps": [
       {

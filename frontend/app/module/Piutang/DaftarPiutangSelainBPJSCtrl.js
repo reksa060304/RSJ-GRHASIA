@@ -98,7 +98,7 @@ define(['initialize'], function (initialize) {
 			$scope.columnDataPasienPiutang = [
 				{
 					"field": "iscek",
-					"title": "",
+					"title": " ",
 					"template": "# if( iscek==true) {# <input type='checkbox' class='checkbox style-center' ng-checked='true' ng-click='onClickSatu($event,2)'/> # } else {# <input type='checkbox' class='checkbox style-center' ng-checked='false' ng-click='onClickSatu($event,2)'/> #} #",
 					"width": "30px",
 				},
@@ -553,7 +553,12 @@ define(['initialize'], function (initialize) {
 					row.removeClass("k-state-selected");
 				}
 				
+				for (var i = 0; i < $scope.selectedData2.length; i++){
+					$scope.item.totalklaim += parseFloat($scope.selectedData2[i].totalbilling)
+				}
+				
 				console.log($scope.selectedData2)
+                $scope.item.datadipilih = $scope.selectedData2.length;
 			}
 
 			$scope.TambahData = function(){

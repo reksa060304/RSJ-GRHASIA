@@ -28,67 +28,13 @@ define(['initialize'], function (initialize) {
                     + "tglAwal=" + tglAwal
                     + "&tglAkhir=" + tglAkhir).then(function (data) {
                         var data = data.data
-                        var j =0;
-                        var k =0;
-                        var l =0;
-                        var m =0;
-                        var n =0;
-                        var o =0;
-                        var p =0;
-                        var length = data.data.length - 1
-                        var tot = 0
+
                         for (var i = 0; i < data.data.length; i++) {
                             data.data[i].kdprov = '24'
                             data.data[i].kabkota = 'Kab. Sleman'
                             data.data[i].koders = '3404022'
                             data.data[i].namars = 'RSJ. Grhasia'
                             data.data[i].tahun = moment($scope.item.tglakhir).format('YYYY');
-                            tot += data.data[i].jumlahtotal
-                        }
-
-                        data.data[0].no = 1
-                        data.data[11].no = 2
-                        data.data[18].no = 3
-                        data.data[28].no = 4
-                        data.data[33].no = 5
-                        data.data[37].no = 6
-                        data.data[42].no = 7
-                        data.data[46].no = 8
-                        data.data[length].no = 99
-                        data.data[length].jumlahtotal = tot
-                        for(i = 1; i <= 10; i++){
-                            j++
-                            data.data[i].no = "1."+j
-                        }
-
-                        for(i = 12; i <= 17; i++){
-                            k++
-                            data.data[i].no = "2."+k
-                        }
-
-                        for(i = 19; i <= 27; i++){
-                            l++
-                            data.data[i].no = "3."+l
-                        }
-
-                        for(i = 29; i <= 32; i++){
-                            m++
-                            data.data[i].no = "4."+m
-                        }
-
-                        for(i = 34; i <= 36; i++){
-                            n++
-                            data.data[i].no = "5."+n
-                        }
-
-                        for(i = 38; i <= 41; i++){
-                            o++
-                            data.data[i].no = "6."+o
-                        }
-
-                        for(i = 43; i <= 45; i++){
-                            p++
-                            data.data[i].no = "7."+p
                         }
 
                         $scope.isRouteLoading = false;

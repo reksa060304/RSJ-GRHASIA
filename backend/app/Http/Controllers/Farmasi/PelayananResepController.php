@@ -112,7 +112,7 @@ class PelayananResepController extends ApiController
             ->leftJOIN('rm_sediaan_m AS rs','rs.id','=','pr.objectsediaanfk')
             ->leftJoin('satuanresep_m as sn','sn.id','=','pp.satuanresepfk')
             ->select('ps.nocm','ps.namapasien','jk.jeniskelamin','pp.tglpelayanan','pp.produkfk','pr.namaproduk',
-                'ss.satuanstandar','pp.jumlah','pp.hargasatuan','pp.hargadiscount','sp.nostruk','pd.noregistrasi',
+                'jra.jenisracikan as satuanstandar', 'jra.id as ssid','pp.jumlah','pp.hargasatuan','pp.hargadiscount','sp.nostruk','pd.noregistrasi',
                 'ks.nilaikonversi','ss2.satuanstandar as satuanstandar2','sr.noresep','sr.norec as norec_resep', 'sr.cito', 'pp.rke',
                 'jkm.jeniskemasan','jk.id as jkid','pp.jenisobatfk','jra.jenisracikan','pp.jasa','ru2.id as namaruanganasalid','ru2.id as ruangandepoid','ru2.namaruangan as ruangandepo',
                 'pp.aturanpakai','ru.namaruangan','dok.id as dokterid','dok.namalengkap as dokter','pp.ispagi','pp.issiang','pp.ismalam','pp.issore','pp.iskronis','sr.isreseppulang as reseppulang',
@@ -200,7 +200,8 @@ class PelayananResepController extends ApiController
                 'tglpelayanan' => $item->tglpelayanan,
                 'produkfk' => $item->produkfk,
                 'namaproduk' => $item->namaproduk,
-                'satuanstandar' => $ss,
+                'jenisobatfk' => $item->ssid,
+                'satuanstandar' => $item->satuanstandar,
                 'jumlah' => (float)$item->jumlah / (float)$nKonversi,
                 'hargasatuan' => $item->hargasatuan,
                 'hargadiscount' => $item->hargadiscount,
@@ -208,7 +209,7 @@ class PelayananResepController extends ApiController
                 'noregistrasi' => $item->noregistrasi,
                 'noresep' => $item->noresep,// .'/'.$item->noregistrasi,
                 'rke' => $item->rke,
-                'jeniskemasan' => $JenisKemasan,
+                'jeniskemasan' => $item->jeniskemasan,
                 'norec_resep' =>  $item->norec_resep,
                 'norec_apd' =>  $item->norec_apd,
                 'detail' => $detail,
@@ -237,7 +238,7 @@ class PelayananResepController extends ApiController
                 'cito' =>$item->cito,
                 'norec_pd' => $item->norec_pd,
                 'klid' => $item->klid,
-                'keteranganpakai' => $item->keteranganpakai,
+                'keterangan' => $item->keteranganpakai,
                 
             );
         }
@@ -1112,10 +1113,11 @@ class PelayananResepController extends ApiController
             ->leftJOIN('satuanstandar_m as ss','ss.id','=','op.objectsatuanstandarfk')
             ->leftJOIN('satuanstandar_m as ss2','ss2.id','=','op.satuanviewfk')
             ->leftJOIN('satuanresep_m as sn','sn.id','=','op.satuanresepfk')
-            ->select('so.noorder','op.hargasatuan','op.qtystokcurrent','so.objectruangantujuanfk','ru.namaruangan',
+            ->leftJOIN('jenisracikan_m as jr','jr.id','=','op.jenisobatfk')
+            ->select('jr.id as ssid', 'so.noorder','op.hargasatuan','op.qtystokcurrent','so.objectruangantujuanfk','ru.namaruangan',
                 'op.rke','op.jeniskemasanfk','jk.id as jkid','jk.jeniskemasan','op.aturanpakai','op.routefk','rt.name as namaroute',
                 'op.objectprodukfk','pr.namaproduk','op.hasilkonversi',
-                'op.objectsatuanstandarfk','ss.satuanstandar','op.satuanviewfk','ss2.satuanstandar as ssview',
+                'op.objectsatuanstandarfk','jr.jenisracikan as satuanstandar','op.satuanviewfk','ss2.satuanstandar as ssview',
                 'op.qtyproduk','op.hargadiscount','op.hasilkonversi','op.qtystokcurrent','op.dosis','op.jenisobatfk',
                 'op.hargasatuan','op.hargadiscount','pr.kekuatan','sdn.name as sediaan','op.ispagi','op.issiang','op.ismalam',
                 'op.issore','op.keteranganpakai','op.satuanresepfk','sn.satuanresep','op.tglkadaluarsa','so.isreseppulang', 'op.jumlahracikan')
@@ -1261,8 +1263,8 @@ class PelayananResepController extends ApiController
                 'produkfk' => $item->objectprodukfk,
                 'namaproduk' => $item->namaproduk,
                 'nilaikonversi' => $item->hasilkonversi,
-                'satuanstandarfk' => $item->satuanviewfk,//objectsatuanstandarfk,
-                'satuanstandar' => $item->ssview,//satuanstandar,
+                'satuanstandarfk' => $item->ssid,//objectsatuanstandarfk,
+                'satuanstandar' => $item->satuanstandar,//satuanstandar,
                 'satuanviewfk' => $item->satuanviewfk,
                 'satuanview' => $item->ssview,
                 'jmlstok' => $item->qtystokcurrent,

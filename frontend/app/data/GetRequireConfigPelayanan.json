@@ -509,6 +509,10 @@
             "urlDep": "module/EMR/InputResepApotikOrderRevCtrl"
         },
         {
+            "nameDep": "InputResepApotikOrderV2Ctrl",
+            "urlDep": "module/EMR/InputResepApotikOrderV2Ctrl"
+        },
+        {
             "nameDep": "TransaksiPelayananLaboratoriumDokterRevCtrl",
             "urlDep": "module/EMR/TransaksiPelayananLaboratoriumDokterRevCtrl"
         },

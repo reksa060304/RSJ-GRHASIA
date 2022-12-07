@@ -89,8 +89,12 @@
             "urlDep": "module/Farmasi/MonitoringApotikOnlineCtrl"     
         },
         {
+            "nameDep": "SEPApotikOnlineCtrl",
+            "urlDep": "module/Farmasi/SEPApotikOnlineCtrl"     
+        },
+        {
             "nameDep": "ReferensiVclaimCtrl",
-            "urlDep": "module/Farmasi/ReferensiVclaimCtrl"     
+            "urlDep": "module/Registrasi/ReferensiVclaimCtrl"     
         },
         {
             "nameDep": "DaftarPenangananKeluhanPelangganCtrl",

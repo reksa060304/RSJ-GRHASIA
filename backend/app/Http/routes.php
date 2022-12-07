@@ -274,6 +274,13 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
               Route::get('bridging/bpjs/get-monitoring-kunjungan', 'Bridging\BridgingBPJSV2Controller@getMonitoringKunjungan');
               Route::get('bridging/bpjs/get-monitoring-klaim', 'Bridging\BridgingBPJSV2Controller@getMonitoringKlaim');
               Route::get('bridging/bpjs/get-monitoring-klaim-apotik-online', 'Bridging\BridgingBPJSV2Controller@getMonitoringKlaimApotikOnline');
+              Route::get('bridging/bpjs/get-sep-apotik-online', 'Bridging\BridgingBPJSV2Controller@getSEPApotikOnline');
+              Route::get('bridging/bpjs/get-daftar-obat-dpho', 'Bridging\BridgingBPJSV2Controller@getDPHO');
+              Route::get('bridging/bpjs/get-daftar-spesialistik', 'Bridging\BridgingBPJSV2Controller@getSpesialistik');
+              Route::get('bridging/bpjs/get-poli-apotik-online', 'Bridging\BridgingBPJSV2Controller@getPoliApotikOnline');
+              Route::get('bridging/bpjs/get-setting-apotik-online', 'Bridging\BridgingBPJSV2Controller@getSettingApotikOnline');
+              Route::get('bridging/bpjs/get-obat-apotik-online', 'Bridging\BridgingBPJSV2Controller@getObatApotikOnline');
+              Route::get('bridging/bpjs/get-faskes-apotik-online', 'Bridging\BridgingBPJSV2Controller@getFaskesApotikOnline');
               Route::get('bridging/bpjs/monitoring/HistoriPelayanan/NoKartu/{noKartu}', 'Bridging\BridgingBPJSV2Controller@getMonitoringHistori');
               Route::get('bridging/bpjs/get-monitoring-klaim-jasaraharja', 'Bridging\BridgingBPJSV2Controller@getMonitoringJasaRaharja');
               Route::get('bridging/bpjs/get-monitoring-historipelayanan-peserta', 'Bridging\BridgingBPJSV2Controller@getHistoryPelayananPeserta');
