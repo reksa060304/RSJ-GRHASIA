@@ -2354,8 +2354,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('ipsrs/get-combo-pegawai-perbaikan','IPSRS\IPSRSController@getComboPegawai');
             Route::post('diklat/simpan-pleyanan-penjamin-diklat','SDM\PelatihanController@simpanPelayananPenjaminDiklat');
             Route::get('diklat/detail-diklat-penjamin/{norecSPP}','SDM\PelatihanController@detailPenjaminDiklat');
-            Route::get('diklat/diklat/get-data-pembayaran-diklat', 'SDM\pelatihanController@pembayaranDiklat');
-            Route::post('diklat/simpan-data-pembayaran', 'SDM\pelatihanController@simpanPembayaran');  //done
+            Route::get('diklat/diklat/get-data-pembayaran-diklat', 'SDM\PelatihanController@pembayaranDiklat');
+            Route::post('diklat/simpan-data-pembayaran', 'SDM\PelatihanController@simpanPembayaran');  //done
 
         // });
         // Route::group(['prefix' => 'sdm'], function () {

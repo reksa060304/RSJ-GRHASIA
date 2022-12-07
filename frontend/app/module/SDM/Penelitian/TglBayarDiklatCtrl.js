@@ -197,26 +197,29 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 urlGetDataDetail = "diklat/diklat/get-data-pembayaran-diklat?noRecStrukPelayanan=" + $scope.dataParams.noRegistrasi + "&tipePembayaran=PembayaranDiklat&jumlahBayar=" + $scope.dataParams.jumlahBayar ;
                 break;
             }
-            medifirstService.get(urlGetDataDetail).then(function(data){
-                console.log(data);
-                if (data.statResponse) {
-                    $scope.item = data.data;
-                    $scope.item.biayaAdministrasi = 0;
-                    $scope.item.diskon = 0;
-                    $scope.item.totalTagihan = $scope.item.jumlahBayar;
-                    $scope.item.jumlahBayarFix = ($scope.item.totalTagihan - $scope.item.diskon) + $scope.item.biayaAdministrasi;
-                    $scope.item.totalFixBayar = 0
-                    $scope.item.nominal = $scope.setDefaultNominal();
-                }
-            })
-            medifirstService.get('kasir/get-data-combo-kasir').then(function(data){
 
-                if (data.statResponse) {
-                    $scope.listJenisKartu = data.data.jeniskartu;
-                    $scope.listCaraBayar = data.data.carabayar
-                }
-                $scope.item.TglBayar = moment($scope.now).format('YYYY-MM-DD HH:mm')
-            })
+            $q.all([
+                    medifirstService.get(urlGetDataDetail),
+                    medifirstService.get('kasir/get-data-combo-kasir'),
+                ])
+                .then(function (data) {
+
+                    if (data[0].statResponse) {
+                        $scope.item = data[0].data;
+                        $scope.item.biayaAdministrasi = 0;
+                        $scope.item.diskon = 0;
+                        $scope.item.totalTagihan = $scope.item.jumlahBayar;
+                        $scope.item.jumlahBayarFix = ($scope.item.totalTagihan - $scope.item.diskon) + $scope.item.biayaAdministrasi;
+                        $scope.item.totalFixBayar = 0
+                        $scope.item.nominal = $scope.setDefaultNominal();
+                    }
+
+                    if (data[1].statResponse) {
+                        $scope.listJenisKartu = data[1].data.jeniskartu;
+                        $scope.listCaraBayar = data[1].data.carabayar
+                    }
+                    $scope.item.TglBayar = moment($scope.now).format('YYYY-MM-DD HH:mm')
+                });
 
             $scope.$watch('item.jumlahBayarFix', function (newValue, oldValue) {
                 if (newValue < 0) {
