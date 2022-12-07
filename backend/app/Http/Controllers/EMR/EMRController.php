@@ -5254,6 +5254,7 @@ class EMRController  extends ApiController
             ->select('jk.id', 'jk.jenisracikan')
             ->where('jk.kdprofile', $idProfile)
             ->where('jk.statusenabled', true)
+            ->orderBy('jk.jenisracikan')
             ->get();
         $kdjenisobat = explode (',',$this->settingDataFixed('kdJenisProdukObat',$idProfile));
         $arrkdjenisobat = [];
@@ -5775,7 +5776,11 @@ class EMRController  extends ApiController
                         $newPP->noorderfk = $norec_SR;
                         $newPP->noregistrasifk = $dataDetail->norec;
                         $newPP->objectprodukfk = $r_PPL['produkfk'];
-                        $newPP->qtyproduk = $r_PPL['jumlah'];
+                        if($r_PPL['jeniskemasan'] == 'Racikan'){
+                            $newPP->qtyproduk = ($r_PPL['dosis']/$r_PPL['kekuatan'])*$r_PPL['jumlah'];
+                        } else{
+                            $newPP->qtyproduk = $r_PPL['jumlah'];
+                        }
                         $newPP->qtystokcurrent = $r_PPL['jmlstok'];
                         $newPP->racikanke = $r_PPL['rke'];
                         $newPP->objectruanganfk = $dataDetail->objectruanganfk;
