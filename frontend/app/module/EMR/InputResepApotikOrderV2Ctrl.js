@@ -725,11 +725,11 @@ define(['initialize'], function (initialize) {
                                             data.satuanviewfk = $scope.item.jenisRacikan.id
                                             data.satuanview = $scope.item.jenisRacikan.jenisracikan
                                             data.jmlstok = $scope.item.stok
-                                            data.jumlah = qtyobat
+                                            data.jumlah = $scope.item.jumlah
                                             data.hargasatuan = $scope.item.hargaSatuan
                                             data.hargadiscount = 0
                                             data.total = $scope.item.total
-                                            data.dosis = $scope.item.jumlah
+                                            data.dosis = dosis
                                             data.jumlahxmakan = jumlahmakan
                                             data.keterangan = KetPakai,
                                             data.tglkadaluarsa = $scope.tglkadaluarsa != undefined ? $scope.tglkadaluarsa : null,
@@ -774,11 +774,11 @@ define(['initialize'], function (initialize) {
                                         satuanviewfk: $scope.item.jenisRacikan.id,
                                         satuanview: $scope.item.jenisRacikan.jenisracikan,
                                         jmlstok: $scope.item.stok,
-                                        jumlah: qtyobat,
+                                        jumlah: $scope.item.jumlah,
                                         hargasatuan: $scope.item.hargaSatuan,
                                         hargadiscount: 0,
                                         total: $scope.item.total,
-                                        dosis: $scope.item.jumlah,
+                                        dosis: dosis,
                                         jumlahxmakan: jumlahmakan,
                                         keterangan: KetPakai,
                                         tglkadaluarsa : $scope.tglkadaluarsa != undefined ? $scope.tglkadaluarsa : null,
