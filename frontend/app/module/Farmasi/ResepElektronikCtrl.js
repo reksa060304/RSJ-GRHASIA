@@ -1503,8 +1503,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             }
 
             $scope.cetakResepDokter = function(){
-                var local = JSON.parse(localStorage.getItem('profile'));
-                var profile = local.id;
+                
                 if ($scope.item.noorder == null){
                     toastr.error("PILIH NO ORDER !!")
                     return;
@@ -1531,16 +1530,27 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         toastr.error("PILIH NO ORDER !!")
                         return;
                     }else{
-                        var stt = 1
-                        window.open(config.baseApiBackend + "report/cetak-resep-dokter-rev?noorder=" + $scope.item.noorder + "&norec=" + $scope.item.norecresep 
-                        + "&nocm=" + $scope.item.nocm + '&kodeprofile=' + profile + '&qtybagi=' + stt);
-                        // // window.open(config.baseApiBackend + "report/cetak-hasil-lab-histopatologi?norec=" + $scope.dataSelected.norec_pp + '&kdprofile=' + profile
-                        //     + '&user=' + user + '&jenis=his', '_blank');
+                        $scope.popUpResepDokter.center().open()
                     }
                 } else {
                     toastr.error("Status Data Belum Diverifikasi !!")
                     return;
                 }
+            }
+            $scope.CETAKRESEPDOKTERREV = function(data){
+                var local = JSON.parse(localStorage.getItem('profile'));
+                var profile = local.id;
+                var stt = 1
+                var cetakkin = data
+                console.log(data);
+                if(data == undefined){
+                        toastr.error("Pilih yang ingin dicetak !!")
+                    return
+                }
+                window.open(config.baseApiBackend + "report/cetak-resep-dokter-rev?noorder=" + $scope.item.noorder + "&norec=" + $scope.item.norecresep +
+                    "&nocm=" + $scope.item.nocm + '&kodeprofile=' + profile + '&qtybagi=' + stt + '&cetakkin='+cetakkin);
+                // // window.open(config.baseApiBackend + "report/cetak-hasil-lab-histopatologi?norec=" + $scope.dataSelected.norec_pp + '&kdprofile=' + profile
+                //     + '&user=' + user + '&jenis=his', '_blank');
             }
             $scope.grab = {
                 lokasiPengirim :  medifirstService.getProfile().alamatlengkap,
