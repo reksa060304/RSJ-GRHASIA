@@ -5049,6 +5049,7 @@ class MasterController extends ApiController{
         ->where('kdprofile', $kdProfile)->get();
         $ruangan = \DB::table('ruangan_m')->where('kdprofile', $kdProfile)->get();
         $kamarall = \DB::table('kamar_m')->where('kdprofile', $kdProfile)->get();
+        $kelas = \DB::table('kelas_m')->where('kdprofile', $kdProfile)->where('statusenabled', true)->get();
         foreach ($ruangan as $ru) {
             $detail = [];
             foreach ($kamarall as $ka) {
@@ -5056,7 +5057,8 @@ class MasterController extends ApiController{
                     $detail[]= array(
                         'id'=> $ka->id,
                         'namakamar'=> $ka->namakamar,
-                        'qtybed'=> $ka->qtybed
+                        'qtybed'=> $ka->qtybed,
+                        
                     );
                 }
             }
@@ -5067,7 +5069,6 @@ class MasterController extends ApiController{
             );
         }
         $ruangantrue = \DB::table('ruangan_m')->where('kdprofile', $kdProfile)->where('statusenabled', true)->get();
-        $kelas = \DB::table('kelas_m')->where('kdprofile', $kdProfile)->where('statusenabled', true)->get();
         $result = array(
             'departemen'=> $departemen,
             'ruangan'=> $ruanganKelas,
@@ -5702,6 +5703,89 @@ class MasterController extends ApiController{
             $result = array(
                 "status" => 400,
                 "as" => 'inhuman',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    public function getLoadRiwayatKamarDll(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $tempkamar = '';
+        if(isset($request['kamar'])){
+            $tempkamar = "and ka.id =". $request['kamar'];
+        }
+        $tempruangan = '';
+        if(isset($request['ruangan'])){
+            $tempruangan = "and ru.id =". $request['ruangan'];
+        }
+        $riwayatkamar = \DB::select(DB::raw("SELECT ru.namaruangan, ke.namakelas, ka.namakamar, rk.statusenabled, rk.jumlah_tt, rk.jumlah_ttl, rk.jumlah_ttp, rk.tanggalawal, rk.tanggalakhir, rk.nosk, rk.keterangan, rk.tanggaldokumen FROM riwayatkamar_m rk 
+        inner join ruangan_m ru on ru.id = rk.objectruanganfk
+        inner join kelas_m ke on ke.id = rk.objectkelasfk
+        inner join kamar_m ka on ka.id = rk.objectkamarfk 
+        "));
+        $result = array(
+            'riwayatkamar'=>$riwayatkamar,
+            'as'=> 'Feezy'
+        );
+        return $this->respond($result);
+    }
+    public function saveMasterRiwayatKamar(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        DB::beginTransaction();
+        $data = $request['data'];
+        $transMessage = "";
+        try{
+            if($request['method'] == 'post'){
+                $idJenis = \DB::table('riwayatkamar_m')->max('id');
+                $idJenis= $idJenis +1;
+                if ($data['id'] == "") {
+                    $TT = \DB::table('riwayatkamar_m')->insert([
+                        'id'=>$idJenis,
+                        'kdprofile'=> $kdProfile,
+                        'statusenabled'=> true,
+                        'kodeexternal'=> 'GRH',
+                        'objectruanganfk'=> $data['objectruanganfk'],
+                        'objectkelasfk'=> $data['objectkelasfk'],
+                        'objectkamarfk'=> $data['objectkamarfk'],
+                        'jumlah_tt'=> $data['jumlah_tt'],
+                        'jumlah_ttl'=> $data['jumlah_ttl'],
+                        'jumlah_ttp'=> $data['jumlah_ttp'],
+                        'tanggalawal'=> $data['tanggalawal'],
+                        'tanggalakhir'=> $data['tanggalakhir'],
+                        'nosk'=> $data['nosk'],
+                        'keterangan'=> $data['keterangan'],
+                        'tanggaldokumen'=> $data['tanggaldokumen'],
+                    ]);
+                    $transMessage = "Tambah";
+                }else{
+                    $transMessage = "Ubah";
+                    
+                }
+            }
+            if($request['method']== 'delete'){
+                
+            }
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+
+        if ($transStatus == 'true') {
+            $transMessage = $transMessage ." sukses";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "as" => 'Feezy',
+            );
+
+        } else {
+            $transMessage = $transMessage ." gagal";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "e"=> $e->getLine() . " | ". $e->getMessage(),
+                "as" => 'Feezy',
             );
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);

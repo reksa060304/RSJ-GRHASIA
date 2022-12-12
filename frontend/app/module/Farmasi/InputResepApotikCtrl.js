@@ -614,6 +614,10 @@ define(['initialize'], function (initialize) {
                                     //data2[i].hargajual = $scope.item.hargaSatuan
                                     // data.jenisobatfk = null
                                     data2[i].kelasfk = $scope.item.kelas.id
+                                    // (parseFloat($scope.item.jumlah) / parseFloat($scope.item.dosis)) * parseFloat($scope.item.kekuatan)
+                                    $scope.rckn = (parseFloat(data2[i].jumlah) / parseFloat(data2[i].dosis)) * parseFloat(data2[i].kekuatan)
+                                    console.log(parseFloat(data2[i].jumlah), parseFloat(data2[i].dosis), parseFloat(data2[i].kekuatan));
+                                    data2[i].jumlahracikan = data2[i].jeniskemasanfk == 1 ? $scope.rckn : null
                                     //data2[i].stock = $scope.item.stok
                                     //data2[i].harganetto = $scope.item.hargaSatuan
                                     //data2[i].nostrukterimafk = noTerima
@@ -704,6 +708,7 @@ define(['initialize'], function (initialize) {
 
                                     data2[i].noregistrasifk = norec_apd//$scope.item.noRegistrasi
                                     data2[i].tglregistrasi = $scope.item.tglregistrasi
+                                    // data2[i].jumlahracikan = 
                                     // data.generik = null
                                     //data2[i].hargajual = $scope.item.hargaSatuan
                                     // data.jenisobatfk = null
@@ -1225,6 +1230,9 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                     dosis = $scope.item.dosis
                     $scope.item.jumlahxmakan = (parseFloat($scope.item.jumlah) / parseFloat($scope.item.dosis)) * parseFloat($scope.item.kekuatan)
                 } else {
+                    if ($scope.dataSelected != undefined) {
+                        dosis = $scope.dataSelected.dosis
+                    }
                     $scope.item.jumlahxmakan = $scope.item.jumlah
                 }
                 var nomor = 0
@@ -1366,7 +1374,7 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                             total: total,
                             jmldosis: String($scope.item.jumlahxmakan) + '/' + String(dosis) + '/' + String($scope.item.kekuatan),
                             jasa: tarifJasa,
-                            keterangan: KetPakai
+                            keterangan: KetPakai,
                         }
                         dataOK.push(datas)
                     }
@@ -1432,7 +1440,10 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                             data.satuanresepfk = $scope.item.satuanresep != undefined ? $scope.item.satuanresep.id : null
                             data.satuanresep = $scope.item.satuanresep != undefined ? $scope.item.satuanresep.satuanresep : null
                             data.tglkadaluarsa = $scope.tglkadaluarsa != undefined ? $scope.tglkadaluarsa : null
-
+                            data.catatandokter = $scope.item.catatanDokter
+                            if ($scope.item.jenisKemasan.jeniskemasan == 'Racikan') {
+                                data.jumlahracikan = $scope.item.jumlahxmakan
+                            }
                             data2[i] = data;
                             for (let i = 0; i < data2.length; i++) {
                                 const element = data2[i];
@@ -1507,6 +1518,8 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                         satuanresepfk: $scope.item.satuanresep != undefined ? $scope.item.satuanresep.id : null,
                         satuanresep: $scope.item.satuanresep != undefined ? $scope.item.satuanresep.satuanresep : null,
                         tglkadaluarsa: $scope.tglkadaluarsa != undefined ? $scope.tglkadaluarsa : null,
+                        catatandokter: $scope.item.catatanDokter,
+                        jumlahracikan: $scope.item.jenisKemasan.jeniskemasan == 'Racikan' ? $scope.item.jumlahxmakan : null
                     }
                     data2.push(data)
                     // $scope.dataGrid.add($scope.dataSelected)
@@ -1571,7 +1584,7 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
             $scope.TambahObat = function () {
                 $scope.tambah();
             }
-
+            
             $scope.klikGrid = function (dataSelected) {
                 if (statusTambah == false)
                     return
@@ -1586,6 +1599,9 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                 $scope.item.jenisKemasan = { id: dataSelected.jeniskemasanfk, jeniskemasan: dataSelected.jeniskemasan }
                 $scope.item.satuanresep = { id: dataSelected.satuanresepfk, satuanresep: dataSelected.satuanresep }
                 $scope.item.aturanPakai = dataSelected.aturanpakai
+                if (noOrder != 'EditResep'){
+                    $scope.item.catatanDokter = dataSelected.catatandokter
+                }
                 $scope.item.KeteranganPakai = dataSelected.keterangan
                 $scope.item.diskonTotalPersen = dataSelected.persendiscount
                 $scope.currentAturanPakai = []
@@ -1673,7 +1689,7 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                 // $scope.item.nilaiKonversi = dataSelected.nilaikonversi
                 // $scope.item.satuan = {ssid:dataSelected.satuanviewfk,satuanstandar:dataSelected.satuanview}
 
-
+                console.log(dataSelected);
                 // $scope.item.jumlah = dataSelected.jumlah
                 // $scope.item.hargaSatuan = dataSelected.hargasatuan
                 // $scope.item.hargadiskon = dataSelected.hargadiscount
@@ -2511,6 +2527,7 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
             }
 
             $scope.klikGridSsS = function (dataSelectedSsS) {
+                // bukan ini
                 $scope.isRouteLoading = true;
                 dataPaket = [];
                 if (dataSelectedSsS != undefined) {

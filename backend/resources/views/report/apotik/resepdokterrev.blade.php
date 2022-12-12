@@ -72,6 +72,7 @@
     </head>
     <body>
         <div class="ticket">
+            @if($cetakkin == 1)
             <p class="centered fs-11"><b>RESEP</b>
                 <b><br>Rumah Sakit Jiwa Grhasia</b>
                 <br>Jl. Kaliurang KM.17, Pakembinangun, Kec. Pakem, Kab. Sleman, DIY
@@ -102,9 +103,11 @@
                     <tr>
                         <th class="quantity fs-13">R/</th>
                         <th class="description fs-13">Nama Obat</th>
+                        <th class="description fs-13">Dosis</th>
                         <th class="price fs-13">Jumlah</th>
-                        <th class="price fs-13">Aturan Pakai</th>
-                        <th class="price fs-13">Keterangan</th>
+                        <th class="description fs-13">Sediaan</th>
+
+                        {{-- <th class="price fs-13">Keterangan</th> --}}
                     </tr>
                 </thead>
                 <tbody>
@@ -112,9 +115,13 @@
                         <tr>
                             <td class="price fs-13" style="text-align: center"><?= $d->rke; ?></td>
                             <td class="price fs-13" style="text-align: left"><?= $d->namaproduk; ?></td>
+                            <td class="price fs-13" style="text-align: center"><?= $d->dosis; ?></td>
                             <td class="price fs-13" style="text-align: center"><?= $d->jumlah; ?></td>
-                            <td class="description fs-13" style="text-align: center"><?= $d->aturanpakai; ?></td>
-                            <td class="description fs-13" style="text-align: center"><?= $d->keteranganpakai; ?></td>
+                            <td class="price fs-13" style="text-align: center"><?= $d->jeniskemasanfk == 1 ? $d->jenisracikan : null ?></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"></td>
+                            <td colspan="3" class="price fs-13" style="text-align: center"> <?= $d->keteranganpakai != '-' && $d->keteranganpakai != '' && $d->keteranganpakai != ' ' ? ' / '. $d->keteranganpakai : null ?></td>
                         </tr>
                     <?php } ?>
                     <tr style="height: 10px;"><td></td></tr>
@@ -175,8 +182,40 @@
                     </tr>
                 </tbody>
             </table>
-
-            <p class="fs-9" style="text-align: left; margin-top: -10px;">I. TELAAH RESEP</p>
+            <p class="centered fs-11" style="margin-top: -10px;">------Petugas Farmasi-----</p>
+            <table>
+                <thead>
+                    <tr>
+                        <td class="description fs-9" style="text-align: center; border: 1px solid black;">
+                            Penerima
+                            <br><br><br><br><br>
+                            ............
+                        </td>
+                        <td class="description fs-9" style="text-align: center; border: 1px solid black;">
+                            Penelaah Resep
+                            <br><br><br><br><br>
+                            ............
+                        </td>
+                        <td class="description fs-9" style="text-align: center; border: 1px solid black;">
+                            Peracik dan Penelaah Obat
+                            <br><br><br><br>
+                            ............
+                        </td>
+                        <td class="description fs-9" style="text-align: center; border: 1px solid black;">
+                            Penyerahan dan Informasi
+                            <br><br><br><br>
+                            ............
+                        </td>
+                    </tr>
+                    
+                </thead>
+            </table>
+            @endif
+        </div>
+        <div class="ticket">
+            @if($cetakkin == 2)
+            
+            <p class="fs-9" style="text-align: left; margin-top: 10px;">I. TELAAH RESEP</p>
             <table>
                 <thead>
                     <tr>
@@ -431,7 +470,6 @@
                     </tr>
                 </tbody>
             </table>
-
             <p class="fs-9" style="text-align: left">II. TELAAH OBAT</p>
             <table>
                 <thead>
@@ -557,35 +595,7 @@
             </table>
             <p class="fs-9" style="text-align: left">Ket: </p>
             @endif
-            
-            <p class="centered fs-11" style="margin-top: -10px;">------Petugas Farmasi-----</p>
-            <table>
-                <thead>
-                    <tr>
-                        <td class="description fs-9" style="text-align: center; border: 1px solid black;">
-                            Penerima
-                            <br><br><br><br><br>
-                            ............
-                        </td>
-                        <td class="description fs-9" style="text-align: center; border: 1px solid black;">
-                            Penelaah Resep
-                            <br><br><br><br><br>
-                            ............
-                        </td>
-                        <td class="description fs-9" style="text-align: center; border: 1px solid black;">
-                            Peracik dan Penelaah Obat
-                            <br><br><br><br>
-                            ............
-                        </td>
-                        <td class="description fs-9" style="text-align: center; border: 1px solid black;">
-                            Penyerahan dan Informasi
-                            <br><br><br><br>
-                            ............
-                        </td>
-                    </tr>
-                    
-                </thead>
-            </table>
+            @endif
         </div>
     </body>
 </html>

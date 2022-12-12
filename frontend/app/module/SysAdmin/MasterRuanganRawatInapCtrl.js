@@ -6,12 +6,14 @@ define(['initialize'], function (initialize) {
             $scope.itemRuangan = {}
             $scope.itemKamar = {}
             $scope.itemTempatTidur = {}
+            $scope.itemRiwayatKamar = {}
             $scope.now = new Date();
             $scope.item.jumlahRows = 50;
             $scope.item.jenisProdukDetail = [];
             $scope.idRuangan = "";
             $scope.idKamar = "";
             $scope.idTempatTidur = "";
+            $scope.idRiwayatKamar = "";
             loadCombo()
             loadData()
             function loadCombo(){
@@ -119,6 +121,26 @@ define(['initialize'], function (initialize) {
                             },
                         },
                         pageSize: 20,
+                    });
+                })
+                medifirstService.get('sysadmin/master/get-data-riwayatkamar?' + status + kamar + ruangan).then(function (data) {
+                    var datas = data.data
+                    for (var i = 0; i < datas.riwayatkamar.length; i++) {
+                        datas.riwayatkamar[i].no = i + 1
+                    }
+
+                    $scope.dataRiwayatKamar = new kendo.data.DataSource({
+                        data: datas.riwayatkamar,
+                        group: {
+                            field: "nosk",
+                        },
+                        schema: {
+                            model: {
+                                id: "id",
+                                fields: {}
+                            },
+                        },
+                        // pageSize: 100,
                     });
                 })
             }
@@ -562,7 +584,6 @@ define(['initialize'], function (initialize) {
             $scope.getIsiQtyBed = function(){
                 medifirstService.get('sysadmin/master/get-data-qtybed?kamar='+ $scope.itemTempatTidur.kamar.id).then(function(data){
                     var datas = data.data.data
-                    console.log(datas.length);
                 $scope.itemTempatTidur.qtybed = datas.length
                 })
             }
@@ -682,7 +703,6 @@ define(['initialize'], function (initialize) {
                 reorderable: true,
                 resizable: true,
                 pageable: true,
-                groupable: true,
                 scrollable: true,
                 selectable: "row",
                 columns: [{
@@ -696,57 +716,57 @@ define(['initialize'], function (initialize) {
                         width: "40px"
                     },
                     {
-                        field: "namakamar",
+                        field: "namaruangan",
                         title: "Ruangan",
                         width: "100px"
                     },
                     {
-                        field: "reportdisplay",
+                        field: "namakamar",
                         title: "Kamar",
                         width: "100px"
                     },
                     {
-                        field: "statusbed",
+                        field: "namakelas",
                         title: "Kelas",
                         width: "100px"
                     },
                     {
-                        field: "statusbed",
+                        field: "jumlah_tt",
                         title: "Jumlah TT",
                         width: "100px"
                     },
                     {
-                        field: "statusbed",
+                        field: "jumlah_ttl",
                         title: "Jumlah TTL",
                         width: "100px"
                     },
                     {
-                        field: "statusbed",
+                        field: "jumlah_ttp",
                         title: "Jumlah TTP",
                         width: "100px"
                     },
                     {
-                        field: "statusbed",
+                        field: "nosk",
                         title: "NO SK",
                         width: "100px"
                     },
                     {
-                        field: "statusbed",
+                        field: "keterangan",
                         title: "Keterangan",
                         width: "100px"
                     },
                     {
-                        field: "statusbed",
+                        field: "tanggaldokumen",
                         title: "Tanggal Dokumen",
                         width: "100px"
                     },
                     {
-                        field: "statusbed",
+                        field: "tanggalawal",
                         title: "Tanggal Mulai",
                         width: "100px"
                     },
                     {
-                        field: "statusbed",
+                        field: "tanggalakhir",
                         title: "Tanggal Akhir",
                         width: "100px"
                     },
@@ -770,7 +790,69 @@ define(['initialize'], function (initialize) {
                 ]
             }
 
-
+            $scope.tambahRiwayatKamar = function(){
+                $scope.popUpDataRiwayatKamar.center().open()
+            }
+            $scope.getIsiComboKamarRiwayatKamar = function(){
+                $scope.listKamarRuanganRiwayatKamar = $scope.itemRiwayatKamar.ruangan.kamar
+            }
+            $scope.getIsiJumlahTT = function(){
+                $scope.itemRiwayatKamar.jumlahtt = $scope.itemRiwayatKamar.kamar.qtybed
+            }
+            $scope.simpanDataRiwayatKamar = function(){
+                var listRawRequired = [
+                    "itemRiwayatKamar.ruangan|k-ng-model|Ruangan",
+                    "itemRiwayatKamar.kamar|k-ng-model|Kamar",
+                    "itemRiwayatKamar.kelas|k-ng-model|Kelas",
+                    "itemRiwayatKamar.tanggaldokumen|k-ng-model|Tanggal Dokumen",
+                    "itemRiwayatKamar.nosk|ng-model|NO SK",
+                    "itemRiwayatKamar.periodeAwal|k-ng-model|Tanggal Awal",
+                    // "itemRiwayatKamar.periodeAkhir|k-ng-model|Tanggal Akhir",
+                    "itemRiwayatKamar.jumlahtt|ng-model|Jumlah TT",
+                    "itemRiwayatKamar.jumlahttl|ng-model|Jumlah TTL",
+                    "itemRiwayatKamar.jumlahttp|ng-model|Jumlah TTP",
+                ];
+                var isValid = ModelItem.setValidation($scope, listRawRequired);
+                var nomorbed = 0
+                if ($scope.itemTempatTidur.qtybed != 0) {
+                    nomorbed = $scope.itemTempatTidur.qtybed
+                }
+                if (isValid.status) {
+                    var data = {
+                        id: $scope.idRiwayatKamar,
+                        objectruanganfk: $scope.itemRiwayatKamar.ruangan.id,
+                        objectkamarfk: $scope.itemRiwayatKamar.kamar.id,
+                        objectkelasfk: $scope.itemRiwayatKamar.kelas.id,
+                        tanggaldokumen: moment($scope.itemRiwayatKamar.tanggaldokumen).format('YYYY-MM-DD HH:mm:ss'),
+                        tanggalawal: moment($scope.itemRiwayatKamar.periodeAwal).format('YYYY-MM-DD HH:mm:ss'),
+                        tanggalakhir: moment($scope.itemRiwayatKamar.periodeAkhir).format('YYYY-MM-DD HH:mm:ss') != undefined ? moment($scope.itemRiwayatKamar.periodeAkhir).format('YYYY-MM-DD HH:mm:ss') : null,
+                        keterangan: $scope.itemRiwayatKamar.keterangan != undefined ? $scope.itemRiwayatKamar.keterangan : null,
+                        nosk: $scope.itemRiwayatKamar.nosk,
+                        jumlah_tt: $scope.itemRiwayatKamar.jumlahtt,
+                        jumlah_ttl: $scope.itemRiwayatKamar.jumlahttl,
+                        jumlah_ttp: $scope.itemRiwayatKamar.jumlahttp,
+                    }
+                    var objSave = {
+                        data: data,
+                        method: "post"
+                    }
+                    // return
+                    medifirstService.post('sysadmin/master/save-data-riwayatkamar', objSave).then(function () {
+                        $scope.itemRiwayatKamar = {}
+                        $scope.idTempatTidur = ""
+                        loadData()
+                        loadCombo()
+                    })
+                    $scope.popUpDataRiwayatKamar.close();
+                } else {
+                    ModelItem.showMessages(isValid.messages);
+                }
+            }
+            $scope.batalDataRiwayatKamar = function(){
+                $scope.idRiwayatKamar = ""
+                $scope.itemRiwayatKamar = {}
+                $scope.popUpDataRiwayatKamar.close()
+            }
             // END RIWAYAT KAMAR
         }
     ]);
