@@ -248,6 +248,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 							var dataCacheGajiBerkala = dataCache.datagajiberkala;
 							var dataCachegajiBerkala = dataCache.gajiBerkala
 							// Data Pegawai
+							$scope.item.nik = dataCachePegawai.noidentitas;
 							$scope.item.idPegawai = dataCachePegawai.id;
 							$scope.item.nipPns = dataCachePegawai.nippns;
 							$scope.item.namaLengkap = dataCachePegawai.namalengkap;
@@ -3533,7 +3534,11 @@ $scope.formatRupiah = function (value, currency) {
 				var id = ""
 				if ($scope.item.idPegawai != undefined) {
 					id = $scope.item.idPegawai
-				}				
+				}
+				var nik = ""
+				if ($scope.item.nik != undefined) {
+					nik = $scope.item.nik
+				}
 
 				var nipPns = "-";
 				if ($scope.item.nipPns != undefined) {
@@ -3634,6 +3639,7 @@ $scope.formatRupiah = function (value, currency) {
 						// Data Pegawai
 						id: id,
 						nippns: nipPns,
+						noidentitas: nik,
 						namalengkap: $scope.item.namaLengkap,
 						gelardepan: gelarDepan,
 						gelarbelakang: gelarBelakang,

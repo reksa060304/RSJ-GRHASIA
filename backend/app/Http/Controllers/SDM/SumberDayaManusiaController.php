@@ -889,6 +889,7 @@ class SumberDayaManusiaController extends ApiController {
             }else{
                 $dataSavePegawai = Pegawai::where('id', $dataPegawai['id'])->where('kdprofile', $kdProfile)->first();
             }
+            $dataSavePegawai->noidentitas = $dataPegawai['noidentitas'];
             $dataSavePegawai->namalengkap = $dataPegawai['namalengkap'];
             $dataSavePegawai->nama = $dataPegawai['nama'];
             $dataSavePegawai->gelardepan = $dataPegawai['gelardepan'];
