@@ -2726,6 +2726,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
                 Route::get('sysadmin/general/get-alamat-bykodepos', 'SysAdmin\GeneralController@getAlamatByKodePosGeneral');
                 Route::get('sysadmin/general/get-datacombo-ruangan', 'SysAdmin\GeneralController@getDataComboRuanganGeneral');
                 Route::get('sysadmin/general/get-datacombo-rekanan', 'SysAdmin\GeneralController@getDataComboRekananGeneral');
+                Route::get('sysadmin/general/get-datacombo-rekanan-kelompokpasien-group', 'SysAdmin\GeneralController@getDataComboKelompokPasienGroup');
                 Route::get('sysadmin/general/get-sudah-verif', 'SysAdmin\GeneralController@getVerifikasiNoregistrasiGeneral');
                 Route::get('sysadmin/general/view-bed', 'SysAdmin\GeneralController@viewBed');
                 Route::get('sysadmin/general/get-datacombo-produk', 'SysAdmin\GeneralController@getProdukPart');
@@ -2985,6 +2986,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::post('tatarekening/save-poin-remun', 'TataRekening\TagihanController@saveImportRemun');
           Route::post('tatarekening/save-piutang-bpjs', 'TataRekening\TagihanController@savePiutangBPJS');
           Route::post('tatarekening/save-piutang-bpjs-manual', 'TataRekening\TagihanController@savePiutangBPJSManual');
+          Route::post('tatarekening/save-piutang-bpjs-manual-obat', 'TataRekening\TagihanController@savePiutangBPJSObat');
           Route::post('tatarekening/save-posting-ipwl', 'TataRekening\TagihanController@savePostingIPWL');
           Route::get('tatarekening/get-detail_apd', 'TataRekening\TagihanController@getDetailpasien');
           Route::get('tatarekening/get-sisa-dana-p3', 'TataRekening\TagihanController@getSisaDanaP3');
@@ -3045,6 +3047,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::post('tatarekening/save-update-rekanan_pd', 'TataRekening\TagihanController@simpanUpdateRekananPD');
           Route::get('tatarekening/daftar-piutang-pasien', 'TataRekening\TagihanController@daftarPiutangPasien');
           Route::get('tatarekening/daftar-piutang-bpjs', 'TataRekening\TagihanController@daftarPiutangBPJS');
+          Route::get('tatarekening/daftar-rekap-piutang', 'TataRekening\TagihanController@daftarRekapPiutang');
           Route::get('tatarekening/daftar-piutang-bpjs-manual', 'TataRekening\TagihanController@daftarPiutangBPJSManual');
           Route::get('tatarekening/daftar-piutang-selain-bpjs', 'TataRekening\TagihanController@daftarPiutangSelainBPJS');
           Route::get('tatarekening/daftar-piutang-pasiencek', 'TataRekening\TagihanController@daftarPiutangPasiencek');

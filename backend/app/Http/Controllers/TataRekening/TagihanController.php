@@ -5477,15 +5477,27 @@ class TagihanController  extends ApiController
             $qkey = "and pd.noregistrasi ilike '%".$filter['key']."%'";
         }
 
-        $piutang = DB::select(DB::raw("select norecpd, tglbayar, tglsep, iscek, nosep, tglpulang, noregistrasi, namapasien, kelompokpasien, namarekanan,
+        $piutang = DB::select(DB::raw("select norecpd, namaruangan, nocm, jeniskelamin, tglbayar, tglsep, iscek, nosep, tglpulang, noregistrasi, namapasien, kelompokpasien, namarekanan,
         sum(totalbilling) totalbilling, sum(totalbayar) totalbayar, sum(totalklaim) totalklaim,
-        sum(selisih) selisih
+        sum(selisih) selisih, lamahari
         from(
-                select pd.norec norecpd, rkbpjs.tglbayar, mk.tglsep, false as iscek, pd.nostruklastfk, sp.norec, coalesce(mk.nosep,'-') nosep, pd.tglpulang, pd.noregistrasi, ps.namapasien, kp.kelompokpasien, rek.namarekanan,
+                select pd.norec norecpd, ru.namaruangan, ps.nocm, jk.jeniskelamin, rkbpjs.tglbayar, mk.tglsep, false as iscek, pd.nostruklastfk, sp.norec, coalesce(mk.nosep,'-') nosep, pd.tglpulang, pd.noregistrasi, ps.namapasien, kp.kelompokpasien, rek.namarekanan,
                 coalesce(sp.totalprekanan,0) totalbilling, 0 as totalbayar, coalesce(mk.totalsetujui,rkbpjs.totalsetujui) totalklaim, 
-                coalesce(sp.totalprekanan,0) - coalesce(mk.totalsetujui,rkbpjs.totalsetujui) as selisih
+                coalesce(sp.totalprekanan,0) - coalesce(mk.totalsetujui,rkbpjs.totalsetujui) as selisih,
+                CASE
+                    WHEN max(pd.tglpulang::date)- min(rpp.tglmasuk::date)> '0' and dept.id= '16' THEN
+                    max(pd.tglpulang::date)- min(rpp.tglmasuk::date)
+                    when max(pd.tglpulang::date)- min(rpp.tglmasuk::date) = '0' and dept.id='16' THEN
+                    '1'
+                    when dept.id != 16 then
+                    '1'
+                END  as lamahari
                 FROM pasien_m ps 
                 inner join pasiendaftar_t pd on ps.id=pd.nocmfk
+                inner join ruangan_m as ru on ru.id = pd.objectruanganlastfk
+                left join departemen_m as dept on dept.id = ru.objectdepartemenfk
+                left join registrasipelayananpasien_t as rpp on rpp.noregistrasifk = pd.norec
+                left join jeniskelamin_m jk on jk.id = ps.objectjeniskelaminfk
                 left join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
                 left join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
                 left join kelompokpasien_m as kp on kp.id = pd.objectkelompokpasienlastfk
@@ -5502,11 +5514,51 @@ class TagihanController  extends ApiController
                 and pd.nosbmlastfk is null
                 $qstatus
                 $qkey
-                group by rkbpjs.totalsetujui, mk.totalsetujui, pd.norec, rkbpjs.tglbayar, mk.tglsep, pd.nostruklastfk, sp.norec, coalesce(mk.nosep,'-'), pd.tglpulang, pd.noregistrasi, ps.namapasien, kp.kelompokpasien, rek.namarekanan,
+                group by dept.id, ru.namaruangan, rkbpjs.totalsetujui, ps.nocm, jk.jeniskelamin, mk.totalsetujui, pd.norec, rkbpjs.tglbayar, mk.tglsep, pd.nostruklastfk, sp.norec, coalesce(mk.nosep,'-'), pd.tglpulang, pd.noregistrasi, ps.namapasien, kp.kelompokpasien, rek.namarekanan,
                 sp.totalprekanan, coalesce(mk.totalsetujui,0)
                 order by pd.noregistrasi
-        ) as x group by norecpd, tglbayar, tglsep, iscek, nosep, tglpulang, noregistrasi, namapasien, kelompokpasien, namarekanan
+        ) as x group by norecpd, namaruangan, nocm, jeniskelamin, tglbayar, tglsep, iscek, nosep, tglpulang, noregistrasi, namapasien, kelompokpasien, namarekanan, lamahari
         order by noregistrasi;"));
+
+        $datadata =array(
+            'data' =>   $piutang,
+        );
+        return $this->respond($datadata);
+    }
+
+    public function daftarRekapPiutang(Request $request){
+        $filter=$request->all();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $tglAwal = $request['tglAwal'];
+        $tglAkhir = $request['tglAkhir'];
+
+        $kp = '';
+        if(isset($request['kelompokpasien']) && $request['kelompokpasien']!=""){
+            $kp = "and kp.kelompokpasien ilike '%".$request['kelompokpasien']."%'";
+        }
+
+        $piutang = DB::select(DB::raw("select tglbayar, sum(totalsetujui) totalsetujui, kelompokpasien, sum(totalrajal) totalrajal,
+        sum(totalranap) totalranap, sum(totalobat) totalobat
+        from(
+            select rkb.tglbayar::date, sum(rkb.totalsetujui) totalsetujui, 
+            case when kp.kelompokpasien ilike '%BPJS%' then 'BPJS' else kp.kelompokpasien end as kelompokpasien, 
+            case when ru.objectdepartemenfk <> 16 and rkb.isobat is null then sum(rkb.totalsetujui) else 0 end as totalrajal,
+            case when ru.objectdepartemenfk = 16 and rkb.isobat is null then sum(rkb.totalsetujui) else 0 end as totalranap,
+            case when rkb.isobat = true then sum(rkb.totalsetujui) else 0 end as totalobat
+             from
+            rekapklaimbpjs_t rkb 
+            inner join pasiendaftar_t pd on pd.norec = rkb.norecpdfk
+            inner join ruangan_m ru on ru.id = pd.objectruanganlastfk
+            inner join kelompokpasien_m kp on kp.id = pd.objectkelompokpasienlastfk
+            where rkb.statusenabled = true
+            and pd.statusenabled = true
+            and rkb.tglbayar::date between '$tglAwal' and '$tglAkhir'
+            $kp
+            group by rkb.isobat, rkb.tglbayar::date, kp.kelompokpasien, ru.objectdepartemenfk
+        ) as x
+        group by tglbayar, kelompokpasien
+        order by tglbayar"));
 
         $datadata =array(
             'data' =>   $piutang,
@@ -5550,36 +5602,54 @@ class TagihanController  extends ApiController
             $qkp = "and pd.objectkelompokpasienlastfk = ".$filter['kelompokpasienlastfk'];
         }
 
-        $piutang = DB::select(DB::raw("select norecpd, tglbayar, tglsep, iscek, nosep, tglpulang, noregistrasi, namapasien, kelompokpasien, namarekanan,
-        sum(totalbilling) totalbilling, sum(totalbayar) totalbayar, totalklaim,
-        (sum(totalbilling) - totalklaim) selisih
+        $piutang = DB::select(DB::raw("select norecpd, nocm, jeniskelamin, namaruangan, tglbayar, tglsep, iscek, nosep, tglpulang, noregistrasi, namapasien, kelompokpasien, namarekanan,
+        totalbilling, totalbayar, totalklaim, totalobat, (totalbilling - (totalklaim + totalobat)) selisih, lamahari
         from(
-                select pd.norec norecpd, rkbpjs.tglbayar, mk.tglsep, false as iscek, pd.nostruklastfk, sp.norec, coalesce(mk.nosep,'-') nosep, pd.tglpulang, pd.noregistrasi, ps.namapasien, kp.kelompokpasien, rek.namarekanan,
-                coalesce(sp.totalprekanan,0) totalbilling, 0 as totalbayar, coalesce(mk.totalsetujui,rkbpjs.totalsetujui) totalklaim, 
-                coalesce(sp.totalprekanan,0) - coalesce(mk.totalsetujui,rkbpjs.totalsetujui) as selisih
-                FROM pasien_m ps 
-                inner join pasiendaftar_t pd on ps.id=pd.nocmfk
-                left join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
-                left join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
-                left join kelompokpasien_m as kp on kp.id = pd.objectkelompokpasienlastfk
-                left JOIN strukpelayanan_t AS sp ON sp.norec = pp.strukfk
-                left join strukpelayananpenjamin_t as spp on sp.norec = spp.nostrukfk
-                left join rekanan_m as rek on rek.id = pd.objectrekananfk
-                left join pemakaianasuransi_t as pa on pa.noregistrasifk = pd.norec
-                left join monitoringklaim_t mk on mk.nosep = pa.nosep and mk.statusklaimfk = 3
-                left join rekapklaimbpjs_t rkbpjs on rkbpjs.norecpdfk = pd.norec
-                where pd.kdprofile = 30 and pd.statusenabled = true
-                and pd.tglpulang between '$tglAwal 00:00' and '$tglAkhir 23:59'
-                and kp.id not in(1, 2, 21, 22, 24, 25)
-                and pd.nostruklastfk is not null
-                and pd.nosbmlastfk is null
-                $qkey
-                $qkp
-                group by rkbpjs.totalsetujui, mk.totalsetujui, pd.norec, rkbpjs.tglbayar, mk.tglsep, pd.nostruklastfk, sp.norec, coalesce(mk.nosep,'-'), pd.tglpulang, pd.noregistrasi, ps.namapasien, kp.kelompokpasien, rek.namarekanan,
-                sp.totalprekanan, coalesce(mk.totalsetujui,0)
-                order by pd.noregistrasi
-        ) as x group by totalklaim, norecpd, tglbayar, tglsep, iscek, nosep, tglpulang, noregistrasi, namapasien, kelompokpasien, namarekanan
-        order by noregistrasi;"));
+            select norecpd, nocm, jeniskelamin, namaruangan, tglbayar, tglsep, iscek, nosep, tglpulang, noregistrasi, namapasien, kelompokpasien, namarekanan,
+            totalbilling, sum(totalbayar) totalbayar, coalesce(sum(totalklaim),0) totalklaim, coalesce(sum(totalobat),0) totalobat, lamahari
+            from(
+                    select pd.norec norecpd, ps.nocm, jk.jeniskelamin, ru.namaruangan, rkbpjs.tglbayar, mk.tglsep, false as iscek, pd.nostruklastfk, sp.norec, coalesce(mk.nosep,'-') nosep, pd.tglpulang, pd.noregistrasi, ps.namapasien, kp.kelompokpasien, rek.namarekanan,
+                    coalesce(sp.totalprekanan,0) totalbilling, 0 as totalbayar, 
+                    case when rkbpjs.isobat is null then coalesce(mk.totalsetujui,rkbpjs.totalsetujui) else 0 end as totalklaim, 
+                    case when rkbpjs.isobat = true then coalesce(mk.totalsetujui,rkbpjs.totalsetujui) else 0 end as totalobat, 
+                    CASE
+                        WHEN max(pd.tglpulang::date)- min(rpp.tglmasuk::date)> '0' and dept.id= '16' THEN
+                        max(pd.tglpulang::date)- min(rpp.tglmasuk::date)
+                        when max(pd.tglpulang::date)- min(rpp.tglmasuk::date) = '0' and dept.id='16' THEN
+                        '1'
+                        when dept.id != 16 then
+                        '1'
+                    END  as lamahari
+                    FROM pasien_m ps 
+                    inner join pasiendaftar_t pd on ps.id=pd.nocmfk
+                    inner join ruangan_m as ru on ru.id = pd.objectruanganlastfk
+                    left join departemen_m as dept on dept.id = ru.objectdepartemenfk
+                    left join registrasipelayananpasien_t as rpp on rpp.noregistrasifk = pd.norec
+                    left join jeniskelamin_m jk on jk.id = ps.objectjeniskelaminfk
+                    left join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+                    left join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
+                    left join kelompokpasien_m as kp on kp.id = pd.objectkelompokpasienlastfk
+                    left JOIN strukpelayanan_t AS sp ON sp.norec = pp.strukfk
+                    left join strukpelayananpenjamin_t as spp on sp.norec = spp.nostrukfk
+                    left join rekanan_m as rek on rek.id = pd.objectrekananfk
+                    left join pemakaianasuransi_t as pa on pa.noregistrasifk = pd.norec
+                    left join monitoringklaim_t mk on mk.nosep = pa.nosep and mk.statusklaimfk = 3
+                    left join rekapklaimbpjs_t rkbpjs on rkbpjs.norecpdfk = pd.norec
+                    where pd.kdprofile = 30 and pd.statusenabled = true
+                    and pd.tglpulang between '$tglAwal 00:00' and '$tglAkhir 23:59'
+                    and kp.id not in(1, 2, 21, 22, 24, 25)
+                    and pd.nostruklastfk is not null
+                    and pd.nosbmlastfk is null
+                    $qkey
+                    $qkp
+                    group by rkbpjs.isobat, rkbpjs.totalsetujui, ps.nocm, jk.jeniskelamin, dept.id, ru.namaruangan, mk.totalsetujui, pd.norec, rkbpjs.tglbayar, mk.tglsep, pd.nostruklastfk, sp.norec, coalesce(mk.nosep,'-'), pd.tglpulang, pd.noregistrasi, ps.namapasien, kp.kelompokpasien, rek.namarekanan,
+                    sp.totalprekanan, coalesce(mk.totalsetujui,0)
+                    order by pd.noregistrasi
+            ) as x group by totalbilling, norecpd, nocm, jeniskelamin, lamahari, namaruangan, tglbayar, tglsep, iscek, nosep, tglpulang, noregistrasi, namapasien, kelompokpasien, namarekanan
+            order by noregistrasi
+        ) as y
+        group by norecpd, nocm, jeniskelamin, namaruangan, tglbayar, tglsep, iscek, nosep, tglpulang, noregistrasi, namapasien, kelompokpasien, namarekanan,
+        totalbilling, totalbayar, totalklaim, totalobat, lamahari;"));
 
         $datadata =array(
             'data' =>   $piutang,
@@ -14280,6 +14350,7 @@ $result = array(
             foreach ($arr as $array_data){
                 $noregistrasi =  $array_data['noregistrasi'];
                 //var_dump($array_data);
+
                 $cek = DB::select(DB::raw("
                 select pd.norec, pd.tglregistrasi, sp.totalprekanan totaltarifrs
                     from pasiendaftar_t pd
@@ -14291,29 +14362,61 @@ $result = array(
                 and pd.noregistrasi = '$noregistrasi'
                 group by pd.norec, pd.tglregistrasi, sp.totalprekanan"));
 
-                $cekada = DB::select(DB::raw("select pd.norec from 
-                rekapklaimbpjs_t rkb 
-                inner join pasiendaftar_t pd on pd.norec = rkb.norecpdfk
-                where pd.statusenabled = true 
-                and pd.kdprofile = 30 
-                and pd.noregistrasi = '$noregistrasi'"));
+                if($array_data['isobat'] == "FALSE" || $array_data['isobat'] == false){
+                    $cekada = DB::select(DB::raw("select pd.norec from 
+                    rekapklaimbpjs_t rkb 
+                    inner join pasiendaftar_t pd on pd.norec = rkb.norecpdfk
+                    where pd.statusenabled = true 
+                    and pd.kdprofile = 30 
+                    and rkb.isobat is null
+                    and pd.noregistrasi = '$noregistrasi'"));
 
-                if(empty($cekada)){
-                    $STSK = new RekapKlaim();
-                    $STSK->norec  = $STSK->generateNewId();
-                    $STSK->kdprofile = $idProfile;
-                    $STSK->statusenabled = true;
-                } else{
-                    $STSK = RekapKlaim::where('norecpdfk', '=', $cekada[0]->norec)->first();
+                    if(empty($cekada)){
+                        $STSK = new RekapKlaim();
+                        $STSK->norec  = $STSK->generateNewId();
+                        $STSK->kdprofile = $idProfile;
+                        $STSK->statusenabled = true;
+                    } else{
+                        $STSK = RekapKlaim::where('norecpdfk', '=', $cekada[0]->norec)->whereNull('isobat')->first();
+                    }
+                    
+                    $STSK->nosep = $array_data['noklaim'];
+                    $STSK->totalsetujui = $array_data['totalklaim'];
+                    $STSK->totaltarifrs = $cek[0]->totaltarifrs;
+                    $STSK->norecpdfk = $cek[0]->norec;
+                    $STSK->tglsep = null;
+                    $STSK->isobat = null;
+                    $STSK->tglbayar = $array_data['tglbayar'];
+                    $STSK->save();
+                } else if($array_data['isobat'] == true || $array_data['isobat'] == "TRUE"){
+                    $cekada = DB::select(DB::raw("select pd.norec from 
+                    rekapklaimbpjs_t rkb 
+                    inner join pasiendaftar_t pd on pd.norec = rkb.norecpdfk
+                    where pd.statusenabled = true 
+                    and pd.kdprofile = 30 
+                    and rkb.isobat = true
+                    and pd.noregistrasi = '$noregistrasi'"));
+
+                    if(empty($cekada)){
+                        $STSK = new RekapKlaim();
+                        $STSK->norec  = $STSK->generateNewId();
+                        $STSK->kdprofile = $idProfile;
+                        $STSK->statusenabled = true;
+                    } else{
+                        $STSK = RekapKlaim::where('norecpdfk', '=', $cekada[0]->norec)->where('isobat', '=', true)->first();
+                    }
+                    
+                    $STSK->nosep = $array_data['noklaim'];
+                    $STSK->totalsetujui = $array_data['totalklaim'];
+                    $STSK->totaltarifrs = $cek[0]->totaltarifrs;
+                    $STSK->norecpdfk = $cek[0]->norec;
+                    $STSK->tglsep = null;
+                    $STSK->tglbayar = $array_data['tglbayar'];
+                    $STSK->isobat = true;
+                    $STSK->save();
                 }
+
                 
-                $STSK->nosep = $array_data['noklaim'];
-                $STSK->totalsetujui = $array_data['totalklaim'];
-                $STSK->totaltarifrs = $cek[0]->totaltarifrs;
-                $STSK->norecpdfk = $cek[0]->norec;
-                $STSK->tglsep = null;
-                $STSK->tglbayar = $array_data['tglbayar'];
-                $STSK->save();
                 
                 if($STSK->save()){
                     $transStatus = 'true';
@@ -14362,6 +14465,7 @@ $result = array(
         inner join pasiendaftar_t pd on pd.norec = rkb.norecpdfk
         where pd.statusenabled = true 
         and pd.kdprofile = 30 
+        and rkb.isobat is null
         and pd.noregistrasi = '$noregistrasi'"));
 
         if(empty($cekada)){
@@ -14370,7 +14474,7 @@ $result = array(
             $STSK->kdprofile = $idProfile;
             $STSK->statusenabled = true;
         } else{
-            $STSK = RekapKlaim::where('norecpdfk', '=', $cekada[0]->norec)->first();
+            $STSK = RekapKlaim::where('norecpdfk', '=', $cekada[0]->norec)->whereNull('isobat')->first();
         }
             $STSK->nosep = $request['noklaim'];
             $STSK->totalsetujui = $request['totalklaim'];
@@ -14379,7 +14483,72 @@ $result = array(
             $STSK->tglsep = null;
             $STSK->tglbayar = $request['tglbayar'];
             $STSK->save();
+                
+        if($STSK->save()){
+            $transStatus = 'true';
+        } else{
+            $transStatus = 'false';
+        }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Import Sukses";
+            $status = 201;
+        } else if ($transStatus == 'false') {
+            $transMessage = "Import Gagal";
+            $status = 400;
+        }
+
         
+        $result = array(
+            'status' => $status,
+            'message'=> $transMessage,
+            'as' => 'er@epic',
+        );
+        return $this->setStatusCode($result['status'])->respond($result, $result['message']);
+    }
+
+    public function savePiutangBPJSObat(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $dataLogin=$request->all();
+        $noregistrasi =  $request['noregistrasi'];
+
+        $cek = DB::select(DB::raw("
+        select pd.norec, pd.tglregistrasi, sp.totalprekanan totaltarifrs
+            from pasiendaftar_t pd
+        INNER JOIN antrianpasiendiperiksa_t as apd on apd.noregistrasifk=pd.norec
+        INNER JOIN pelayananpasien_t as pp on pp.noregistrasifk=apd.norec
+        INNER JOIN strukpelayanan_t as sp on sp.norec=pp.strukfk
+        where pd.statusenabled = true 
+        and pd.kdprofile = 30 
+        and pd.noregistrasi = '$noregistrasi'
+        group by pd.norec, pd.tglregistrasi, sp.totalprekanan"));
+
+        $cekada = DB::select(DB::raw("select pd.norec from 
+        rekapklaimbpjs_t rkb 
+        inner join pasiendaftar_t pd on pd.norec = rkb.norecpdfk
+        where pd.statusenabled = true 
+        and pd.kdprofile = 30 
+        and rkb.isobat = true
+        and pd.noregistrasi = '$noregistrasi'"));
+
+        if(empty($cekada)){
+            $STSK = new RekapKlaim();
+            $STSK->norec  = $STSK->generateNewId();
+            $STSK->kdprofile = $idProfile;
+            $STSK->statusenabled = true;
+        } else{
+            $STSK = RekapKlaim::where('norecpdfk', '=', $cekada[0]->norec)->where('isobat', '=', true)->first();
+        }
+            $STSK->nosep = $request['noklaim'];
+            $STSK->totalsetujui = $request['totalklaim'];
+            $STSK->totaltarifrs = $cek[0]->totaltarifrs;
+            $STSK->norecpdfk = $cek[0]->norec;
+            $STSK->tglsep = null;
+            $STSK->tglbayar = $request['tglbayar'];
+            $STSK->isobat = true;
+            $STSK->save();
                 
         if($STSK->save()){
             $transStatus = 'true';

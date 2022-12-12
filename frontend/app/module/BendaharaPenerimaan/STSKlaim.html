@@ -90,6 +90,18 @@
                                 placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" />
                         </div>
                     </div>
+                    <div class="grid_2" style="margin-top: 10px;">
+                        <div class="grid_12">
+                            <label c-label item="item" c-label-text="Kelompok Pasien" real></label>
+                        </div>
+                        <div class="clear"></div>
+        
+                        <div class="grid_12">
+                            <input style="width: 100%;" kendo-combo-box k-ng-model="item.kelompokpasien" 
+                            k-data-text-field="'kelompokpasienfix'" k-data-value-field="'kelompokpasienfix'" 
+                            k-filter="'contains'" k-auto-bind="false" k-data-source="listKelompokPasien" />
+                        </div>
+                    </div>
                     <div class="grid_2">
                         Status STS
                         <input style="width: 100%;" kendo-combo-box k-ng-model="item.statusSTS"
@@ -110,7 +122,16 @@
         </fieldset>
 
         <!-- Tabel Hasil Pencarian -->
-        <div class="grid_12" style="margin-top:50px;">
+        <div class="grid_12">
+            <div class="grid_1" style="margin-top: 50px">
+                <input type="checkbox" class="k-checkbox" id="item.kasusbaru"
+                    ng-model="item.kasusbaru"
+                    ng-click="checkboxClicked()">
+                <label class="k-checkbox-label" for="item.kasusbaru">Pilih Semua</label>
+            </div>
+            <div class="grid_11" style="margin-top: 50px"></div>
+        </div>
+        <div class="grid_12" style="margin-top:10px;">
             <div class="grid_12 borderBox">
                 <kendo-grid id="grid" data-source="dataGrid" options="columnGrid" k-pageable="'true'"
                     k-sortable="'true'" k-groupable="'true'" k-resizable="'true'" k-selectable="'row'"

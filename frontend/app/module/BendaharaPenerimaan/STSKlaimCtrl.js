@@ -54,6 +54,10 @@ define(['initialize'], function (initialize) {
                 ];
             });
 
+            medifirstService.getPart("sysadmin/general/get-datacombo-rekanan-kelompokpasien-group", true, true, 20).then(function (data) {
+                $scope.listKelompokPasien = data;
+            });
+
             function init() {
                 $scope.isRouteLoading = true;
 
@@ -67,13 +71,19 @@ define(['initialize'], function (initialize) {
                     status = $scope.item.statusSTS.id
                 }
 
+                var kelompokpasien = "";
+				if ($scope.item.kelompokpasien != undefined) {
+					kelompokpasien = $scope.item.kelompokpasien.kelompokpasienfix
+				}
+
                 var tglAwal = moment($scope.item.tglAwal).format('YYYY-MM-DD HH:mm:ss');
                 var tglAkhir = moment($scope.item.tglAkhir).format('YYYY-MM-DD HH:mm:ss');
                 // var tgl = moment($scope.tanggal).format('DD/MM/YYYY');
                 medifirstService.get("bendaharapenerimaan/get-sts-klaim?" +
                     "tglAwal=" + tglAwal +
                     "&tglAkhir=" + tglAkhir + nosts +
-                    "&status=" + status
+                    "&status=" + status +
+                    "&kelompokpasien=" + kelompokpasien
                     , true).then(function (dat) {
                         $scope.isRouteLoading = false;
                         for (var i = 0; i < dat.data.detail.length; i++) {
@@ -190,6 +200,30 @@ define(['initialize'], function (initialize) {
                 $scope.item.dipilih = $scope.selectedData2.length;
 				console.log($scope.selectedData2)
 			}
+
+            $scope.checkboxClicked = function () {
+                var tol = 0
+
+                $scope.selectedData2 = $scope.dataGrid.options.data
+                if ($scope.selectedData2.length != 0) {
+					for (var i = 0; i < $scope.selectedData2.length; i++) {
+						tol += parseFloat($scope.selectedData2[i].totalsetujui);
+					}
+                    console.log($scope.selectedData2);
+                    $scope.item.totalSetor = tol;
+				} else{
+                    $scope.item.totalSetor = tol;
+                }
+
+                medifirstService.get("sysadmin/general/get-terbilang/" + tol).then(
+					function (dat) {
+						$scope.item.terbilang = dat.data.terbilang;
+					}
+                );
+
+                $scope.item.dipilih = $scope.selectedData2.length;
+				console.log($scope.selectedData2)
+            }
 
             var objSave =
             {
