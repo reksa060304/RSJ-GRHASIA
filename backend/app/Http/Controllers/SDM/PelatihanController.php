@@ -3141,7 +3141,7 @@ class PelatihanController extends ApiController {
         return $this->respond($data);
     }
     public function pembayaranDiklat(Request $request){
-        $result =array(
+        $result = array(
             "noRecStrukPelayanan"  => $request['noRecStrukPelayanan'],
             "jumlahBayar"  => $request['jumlahBayar'],
         );

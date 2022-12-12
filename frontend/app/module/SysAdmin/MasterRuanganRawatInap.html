@@ -397,6 +397,18 @@
                                         k-auto-bind="false" k-data-source="listKamar" />
                                 </div>
                             </div>
+                            <div class="grid_2">
+                                <div class="grid_12">
+                                    <label c-label item="item">Nama Kelas</label>
+                                </div>
+                                <div class="grid_12">
+                                    <!-- <select kendo-multi-select k-options="selectOptionsRuangan" k-filter="'contains'"
+                                         k-ng-model="itemRuangan.namaRuangan"></select> -->
+                                    <input style="width: 100%;" kendo-combo-box k-ng-model="item.namaKamar"
+                                        k-data-text-field="'namakamar'" k-data-value-field="'id'" k-filter="'contains'"
+                                        k-auto-bind="false" k-data-source="listKamar" />
+                                </div>
+                            </div>
                             <div class="grid_1">
                                 <button class="c-button" style="margin-top: 22px" ng-click="cariFilter()">Cari</button>
                             </div>
@@ -414,13 +426,13 @@
                                 <button class="c-button" ng-click="editTempatTidur()">Ubah</button>
                             </div>
                             <div class="grid_2">
-                                <button class="c-button" ng-click="tambahTempatTidur()">Tambah</button>
+                                <button class="c-button" ng-click="tambahRiwayatKamar()">Tambah</button>
                             </div>
                             <div class="grid_2">
                                 <button class="c-button" ng-click="hapusTempatTidur()">Hapus</button>
                             </div>
                         </div>
-                        <div kendo-window="popUpDataRiwayatKamar" k-title="'Tempat Tidur'" k-width="850" k-height="350"
+                        <div kendo-window="popUpDataRiwayatKamar" k-title="'Riwayat Kamar'" k-width="850" k-height="350"
                             k-visible="false" k-on-open="win2visible = true" k-on-close="win2visible = false">
                             <div class="panel panel-default container_12" style="padding: 0px 10px;">
                                 <div class="grid_12">
@@ -430,9 +442,9 @@
                                         </div>
                                         <div class="grid_6">
                                             <input style="width: 100%;" kendo-combo-box
-                                                k-ng-model="itemTempatTidur.ruangan" k-data-text-field="'namaruangan'"
+                                                k-ng-model="itemRiwayatKamar.ruangan" k-data-text-field="'namaruangan'"
                                                 k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
-                                                k-data-source="listRuangan" k-on-change="getIsiComboKamar()" />
+                                                k-data-source="listRuangan" k-on-change="getIsiComboKamarRiwayatKamar()" />
                                         </div>
                                     </div>
                                     <div class="grid_12">
@@ -441,42 +453,115 @@
                                         </div>
                                         <div class="grid_6">
                                             <input style="width: 100%;" kendo-combo-box
-                                                k-ng-model="itemTempatTidur.kamar" k-data-text-field="'namakamar'"
+                                                k-ng-model="itemRiwayatKamar.kamar" k-data-text-field="'namakamar'"
                                                 k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
-                                                k-data-source="listKamarRuangan" k-on-change="getIsiQtyBed()" />
-                                        </div>
-                                        <div class="grid_12">
-                                            <label c-label item="item" real> Jumlah Bed :
-                                                {{itemTempatTidur.qtybed}}</label> </div>
-                                    </div>
-                                    <hr>
-                                    <div class="grid_3">
-                                        <div class="grid_12">
-                                            <label c-label item="item" c-label-text="Nomor Bed" real></label>
-                                        </div>
-                                        <div class="grid_12">
-                                            <input c-text-box type="string" class="k-textbox"
-                                                ng-model="itemTempatTidur.nomorBed" />
-                                        </div>
-                                    </div>
-                                    <div class="grid_3">
-                                        <div class="grid_12">
-                                            <label c-label item="item" c-label-text="Status Bed" real></label>
-                                        </div>
-                                        <div class="grid_12">
-                                            <input style="width: 100%;" kendo-combo-box
-                                                k-ng-model="itemTempatTidur.statusBed" k-data-text-field="'statusbed'"
-                                                k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
-                                                k-data-source="listStatusBed" />
+                                                k-data-source="listKamarRuanganRiwayatKamar"
+                                                k-on-change="getIsiJumlahTT()" />
                                         </div>
                                     </div>
                                     <div class="grid_12">
+                                        <div class="grid_12">
+                                            <label c-label item="item" c-label-text="Kelas" real></label>
+                                        </div>
+                                        <div class="grid_6">
+                                            <input style="width: 100%;" kendo-combo-box
+                                                k-ng-model="itemRiwayatKamar.kelas" k-data-text-field="'namakelas'"
+                                                k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
+                                                k-data-source="listKelas"   />
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <div class="grid_12">
+                                        <div class="grid_12">
+                                            <div class="grid_6">
+                                                <div class="grid_12">
+                                                    <label c-label item="item" c-label-text="Tanggal Dokumen"
+                                                        real></label>
+                                                </div>
+                                                <div class="grid_12">
+                                                    <input style="width: 100%" k-ng-model="itemRiwayatKamar.tanggaldokumen"
+                                                        kendo-datetimepicker placeholer="yyyy-MM-dd HH:mm"
+                                                        k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="grid_6">
+                                            <div class="grid_12">
+                                                <label c-label item="item" c-label-text="No SK" real></label>
+                                            </div>
+                                            <div class="grid_12">
+                                                <input c-text-box type="string" class="k-textbox"
+                                                    ng-model="itemRiwayatKamar.nosk" />
+                                            </div>
+                                        </div>
+                                        <div class="grid_6">
+                                            <div class="grid_12">
+                                                <label c-label item="item" c-label-text="Keterangan" real></label>
+                                            </div>
+                                            <div class="grid_12">
+                                                <input c-text-box type="string" class="k-textbox"
+                                                    ng-model="itemRiwayatKamar.keterangan" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="grid_6">
+                                        <div class="grid_12">
+                                            <label c-label item="item" c-label-text="Tanggal Awal" real></label>
+                                        </div>
+                                        <div class="grid_12">
+                                            <input style="width: 100%" k-ng-model="itemRiwayatKamar.periodeAwal"
+                                                kendo-datetimepicker  placeholer="yyyy-MM-dd HH:mm"
+                                                k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+                                        </div>
+                                    </div>
+                                    <div class="grid_6">
+                                        <div class="grid_12">
+                                            <label c-label item="item" c-label-text="Tanggal Akhir" real></label>
+                                        </div>
+                                        <div class="grid_12">
+                                            <input style="width: 100%" k-ng-model="itemRiwayatKamar.periodeAkhir"
+                                                kendo-datetimepicker placeholer="yyyy-MM-dd HH:mm"
+                                                k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+                                        </div>
+                                    </div>
+                                    
+                                    
+                                    <div class="grid_3">
+                                        <div class="grid_12">
+                                            <label c-label item="item" c-label-text="Jumlah TT" real></label>
+                                        </div>
+                                        <div class="grid_12">
+                                            <input c-text-box type="string" class="k-textbox"
+                                                ng-model="itemRiwayatKamar.jumlahtt" />
+                                        </div>
+                                    </div>
+                                    <div class="grid_3">
+                                        <div class="grid_12">
+                                            <label c-label item="item" c-label-text="Jumlah TTL" real></label>
+                                        </div>
+                                        <div class="grid_12">
+                                            <input c-text-box type="string" class="k-textbox"
+                                                ng-model="itemRiwayatKamar.jumlahttl" />
+                                        </div>
+                                    </div>
+                                    <div class="grid_3">
+                                        <div class="grid_12">
+                                            <label c-label item="item" c-label-text="Jumlah TTP" real></label>
+                                        </div>
+                                        <div class="grid_12">
+                                            <input c-text-box type="string" class="k-textbox"
+                                                ng-model="itemRiwayatKamar.jumlahttp" />
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="grid_12">
                                         <div class="k-edit-buttons  k-state-default pull-right" style="margin-top:10px">
                                             <button class="k-button k-button-icontext k-primary k-grid-update"
-                                                ng-click="simpanDataTempatTidur()"><span
+                                                ng-click="simpanDataRiwayatKamar()"><span
                                                     class="k-icon k-update"></span>Simpan</button>
                                             <button class="k-button  k-button-icontext"
-                                                ng-click="batalDataTempatTidur()"><span
+                                                ng-click="batalDataRiwayatKamar()"><span
                                                     class="k-icon k-cancel"></span>Batal</button>
                                         </div>
                                     </div>

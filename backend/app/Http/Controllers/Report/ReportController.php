@@ -1191,10 +1191,12 @@ class ReportController extends ApiController{
         "))->first();
         $detel = [];
         $details = \DB::select(DB::raw("
-                select pt.rke,pt.dosis, pt.jumlah , pt.aturanpakai , pm.namaproduk, pm.kekuatan, pt.keteranganpakai from pelayananpasien_t pt 
-                inner join produk_m pm on pm.id = pt.produkfk 
+                select  pt.jeniskemasanfk,  jr.jenisracikan, pt.rke,pt.dosis, pt.jumlah , pt.aturanpakai , pm.namaproduk, pm.kekuatan, pt.keteranganpakai from pelayananpasien_t pt 
+                inner join produk_m pm on pm.id = pt.produkfk
+                inner join jenisracikan_m jr on jr.id = pt.jenisobatfk 
                 where strukresepfk = '$norec'
                 and pt.isobat = true
+                order by pt.rke asc, pt.keteranganpakai asc
             "));
 //        dd($raw);
         if(!empty($raw)){
@@ -1212,12 +1214,15 @@ class ReportController extends ApiController{
                 left join ruangan_m ra on ra.id = at2.objectruanganasalfk 
                 left join kelompokpasien_m AS kp ON kp.id = pt.objectkelompokpasienlastfk
                 where s.norec = '$norec'
+
             "))->first();
             $details = \DB::select(DB::raw("
-                select pt.rke,pt.dosis, pt.jumlah , pt.aturanpakai , pm.namaproduk, pm.kekuatan, pt.keteranganpakai from pelayananpasien_t pt 
+                select pt.jeniskemasanfk, jr.jenisracikan, pt.rke,pt.dosis, pt.jumlah , pt.aturanpakai , pm.namaproduk, pm.kekuatan, pt.keteranganpakai from pelayananpasien_t pt 
                 inner join produk_m pm on pm.id = pt.produkfk 
+                inner join jenisracikan_m jr on jr.id = pt.jenisobatfk
                 where strukresepfk = '$norec'
                 and pt.isobat = true
+                order by pt.rke asc,pt.keteranganpakai asc
             "));
         }else{
             echo 'Data Tidak ada ';
@@ -1243,9 +1248,9 @@ class ReportController extends ApiController{
         //var_dump($skrining);
 
         // return $r['norec'];
-
+        $cetakkin = $r['cetakkin'];
         return view('report.apotik.resepdokterrev',
-            compact('raw', 'pageWidth','r','details','profile', 'skrining'));
+            compact('raw', 'pageWidth','r','details','profile', 'skrining','cetakkin'));
     }
 
     public function cetakAntrianKiosk(Request $request) {

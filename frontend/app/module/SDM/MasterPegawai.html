@@ -8,18 +8,29 @@
 						<div class="panel-heading-white"><span class="title" c-translate>Data Pegawai</span></div>
 						<div class="panel-body">
 							<div class="grid_12">
-								<div class="grid_4">
-									<div class="grid_12">
-										<label c-label item="item" c-label-text="Id"></label>
-									</div>
-									<div class="grid_12">
-										<input c-text-box type="input" filter="" class="k-textbox"
-											ng-model="item.idPegawai" placeholder="ID" readonly />
+								<div class="grid_12">
+									<div class="grid_4">
+										<div class="grid_12">
+											<label c-label item="item" c-label-text="Id"></label>
+										</div>
+										<div class="grid_12">
+											<input c-text-box type="input" filter="" class="k-textbox" ng-model="item.idPegawai" placeholder="ID"
+												readonly disabled />
+										</div>
 									</div>
 								</div>
 								<div class="grid_4">
 									<div class="grid_12">
-										<label><b>NIP / NIK</b></label>
+										<label><b>NIK</b></label>
+									</div>
+									<div class="grid_12">
+										<input c-text-box type="input" filter="'varchar'" class="k-textbox" ng-model="item.nik"
+											placeholder="NIK" />
+									</div>
+								</div>
+								<div class="grid_4">
+									<div class="grid_12">
+										<label><b>NIP</b></label>
 									</div>
 									<div class="grid_12">
 										<input c-text-box type="input" filter="'varchar'" class="k-textbox"
@@ -632,7 +643,7 @@
 								<div class="grid_12">
 									<div class="grid_3">
 										<div class="grid_12">
-											<label c-label item="item" c-label-text="Nip Istri/Suami"></label>
+											<label c-label item="item">NIP Suami/Istri</label>
 										</div>
 										<div class="grid_12">
 											<input c-text-box type="input" filter="'varchar'" class="k-textbox"
@@ -652,7 +663,7 @@
 									</div>
 									<div class="grid_3">
 										<div class="grid_12">
-											<label c-label item="item" c-label-text="NoSuratKuliah"></label>
+											<label c-label item="item">No. Ijazah</label>
 										</div>
 										<div class="grid_12">
 											<input c-text-box type="input" filter="'varchar'" class="k-textbox"
@@ -661,7 +672,7 @@
 									</div>
 									<div class="grid_3">
 										<div class="grid_12">
-											<label c-label item="item" c-label-text="TglSuratKuliah"></label>
+											<label c-label item="item">Tgl Ijazah</label>
 										</div>
 										<div class="grid_12">
 											<input kendo-date-picker k-ng-model="itemKeluarga.tglsuratKuliah"
@@ -801,7 +812,7 @@
 								<div class="grid_12">
 									<div class="grid_4">
 										<div class="grid_12">
-											<label c-label item="item" c-label-text="IPK"></label>
+											<label c-label item="item">IPK</label>
 										</div>
 										<div class="grid_12">
 											<input c-text-box type="input" filter="'double'" format="n0"

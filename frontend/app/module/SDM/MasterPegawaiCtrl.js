@@ -248,6 +248,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 							var dataCacheGajiBerkala = dataCache.datagajiberkala;
 							var dataCachegajiBerkala = dataCache.gajiBerkala
 							// Data Pegawai
+							$scope.item.nik = dataCachePegawai.noidentitas;
 							$scope.item.idPegawai = dataCachePegawai.id;
 							$scope.item.nipPns = dataCachePegawai.nippns;
 							$scope.item.namaLengkap = dataCachePegawai.namalengkap;
@@ -2402,8 +2403,8 @@ $scope.formatRupiah = function (value, currency) {
 					"itemKeluarga.hubunganKeluarga|ng-model|Hubungan Keluarga",
 					"itemKeluarga.tglLahir|k-ng-model|Tgl Lahir Anggota Keluarga",
 					"itemKeluarga.jenisKelaminKl|k-ng-model|Jenis Kelamin Anggota Keluarga",
-					"itemKeluarga.namaAyah|ng-model|Nama Ayah",
-					"itemKeluarga.namaIbu|ng-model|Nama Ibu",
+					//"itemKeluarga.namaAyah|ng-model|Nama Ayah",
+					//"itemKeluarga.namaIbu|ng-model|Nama Ibu",
 					"itemKeluarga.statusPerkawinanPegawaiKL|k-ng-model|Status Perkawinan Anggota Keluarga",
 					"itemKeluarga.PekerjaanKL|k-ng-model|Pekerjaan Anggota Keluarga",
 					"itemKeluarga.nipIstriSuami|ng-model|Nip Istri / Suami",
@@ -2532,7 +2533,7 @@ $scope.formatRupiah = function (value, currency) {
 					"itemPendidikan.pendidikanpegawai|k-ng-model|Pendidikan Pegawai",
 					"itemPendidikan.NamaInstitusi|ng-model|Nama Institusi",
 					"itemPendidikan.alamat|ng-model|Alamat Institusi",
-					"itemPendidikan.tglMasukPend|k-ng-model|Tgl Masuk",
+					//"itemPendidikan.tglMasukPend|k-ng-model|Tgl Masuk",
 					"itemPendidikan.tglLulus|k-ng-model|Tgl Lulus",
 					// "itemPendidikan.ipk|ng-model|IPK Kelulusan",                                                      
 				];
@@ -3533,7 +3534,11 @@ $scope.formatRupiah = function (value, currency) {
 				var id = ""
 				if ($scope.item.idPegawai != undefined) {
 					id = $scope.item.idPegawai
-				}				
+				}
+				var nik = ""
+				if ($scope.item.nik != undefined) {
+					nik = $scope.item.nik
+				}
 
 				var nipPns = "-";
 				if ($scope.item.nipPns != undefined) {
@@ -3634,6 +3639,7 @@ $scope.formatRupiah = function (value, currency) {
 						// Data Pegawai
 						id: id,
 						nippns: nipPns,
+						noidentitas: nik,
 						namalengkap: $scope.item.namaLengkap,
 						gelardepan: gelarDepan,
 						gelarbelakang: gelarBelakang,

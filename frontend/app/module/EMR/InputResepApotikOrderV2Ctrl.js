@@ -569,7 +569,6 @@ define(['initialize'], function (initialize) {
 
             $scope.tambah = function () {
 
-                console.log($scope.item.nilaiKonversi)
 
                 if(statusTambah == false){
                     return
@@ -623,7 +622,7 @@ define(['initialize'], function (initialize) {
                     return;
                 }
                 if ($scope.item.jenisRacikan == undefined || $scope.item.jenisRacikan == '') {
-                    alert("Bentuk Obat Belum diisi!!")
+                    alert("Sediaan Obat Belum diisi!!")
                     return;
                 }
                 if ($scope.item.dosis == undefined || $scope.item.dosis == '') {
@@ -785,6 +784,7 @@ define(['initialize'], function (initialize) {
                                         isoutofstok : isOutOfStok,
                                     }
                                     data2.push(data)
+                                    console.log(data2);
                                     // $scope.dataGrid.add($scope.dataSelected)
                                     $scope.dataGrid = new kendo.data.DataSource({
                                         data: data2,
@@ -884,13 +884,14 @@ define(['initialize'], function (initialize) {
 
             }
             function Kosongkan() {
+                
                 $scope.item.produk = ''
                 $scope.item.satuan = ''
                 $scope.item.nilaiKonversi = 0
                 $scope.item.stok = 0
                 $scope.item.no = undefined
                 $scope.item.dosis = undefined
-                $scope.item.jumlah = ''
+                $scope.item.jumlah = $scope.item.jenisKemasan.id == 1 ? $scope.item.jumlah : ''
                 $scope.item.total = 0
                 $scope.item.hargaSatuan = 0
                 $scope.item.satuanresep = undefined;
@@ -971,12 +972,12 @@ define(['initialize'], function (initialize) {
                 },
                 {
                     "field": "satuanstandar",
-                    "title": "Bentuk Obat",
+                    "title": "Sediaan",
                     "width": "200px",
                 },
                 {
                     "field": "dosis",
-                    "title": "Sediaan",
+                    "title": "Dosis",
                     "width": "75px",
                 },
                 {
@@ -986,7 +987,7 @@ define(['initialize'], function (initialize) {
                 },
                 {
                     "field": "aturanpakai",
-                    "title": "Dosis",
+                    "title": "Signa",
                     "width": "100px",
                 },
                 {
@@ -1084,7 +1085,7 @@ define(['initialize'], function (initialize) {
                         },
                         {
                             field: "satuanstandar",
-                            title: "Bentuk Obat",
+                            title: "Sediaan",
                             width: "100px"
                         },
                         {
@@ -1288,11 +1289,12 @@ define(['initialize'], function (initialize) {
             }
             function loadRiwayat(params) {
                 $scope.isRouteLoading = true;
-                medifirstService.get("emr/get-transaksi-pelayanan?" + params, true).then(function (dat) {
-                    let group = [];                                   
+                medifirstService.get("emr/get-transaksi-pelayanan-resep-elektronik?" + params, true).then(function (dat) {
+                    let group = [];          
                     if (dat.statResponse == true) {
                         for (var i = 0; i < dat.data.length; i++) {
                             dat.data[i].no = i + 1
+                            dat.data[i].nilaikonversi = 1
                             dat.data[i].total = parseFloat(dat.data[i].jumlah) * (parseFloat(dat.data[i].hargasatuan) - parseFloat(dat.data[i].hargadiscount))
                             dat.data[i].total = parseFloat(dat.data[i].total) + parseFloat(dat.data[i].jasa)
                             if ( dat.data[i].reseppulang == true) {
@@ -1307,6 +1309,7 @@ define(['initialize'], function (initialize) {
                                 dat.data[i].cito = '-'
                             }
                         }
+
                         var array = dat.data;
                         let sama = false
 
@@ -1347,7 +1350,6 @@ define(['initialize'], function (initialize) {
                     }
 
                     $scope.dataGridResep = group
-                    console.log(group)
                     $scope.isRouteLoading = false;
                 });
                 // $scope.riwayatForm = false
@@ -1365,7 +1367,7 @@ define(['initialize'], function (initialize) {
             }
             $scope.riwayatResep = function () {
                 $scope.isRouteLoading = true;
-                medifirstService.get("emr/get-transaksi-pelayanan?noReg=" +$scope.item.noregistrasi
+                medifirstService.get("emr/get-transaksi-pelayanan-resep-elektronik?noReg=" + $scope.item.noregistrasi
                 // nocm=" + $scope.item.noMr
                     // + "&noregistrasifk=" + norec_apd
                     , true).then(function (dat) {
@@ -1509,7 +1511,7 @@ define(['initialize'], function (initialize) {
                         },
                         {
                             field: "satuanstandar",
-                            title: "Bentuk Obat",
+                            title: "Sediaan",
                             width: "100px"
                         },
                         {
@@ -1725,6 +1727,7 @@ define(['initialize'], function (initialize) {
                 });
             }
             $scope.reOrderResep = function (){
+                console.log($scope.dataSelectedResep.details);
                 if ($scope.dataSelectedResep == undefined) {
                     toastr.error('Pilih data dulu')
                     return
@@ -1739,16 +1742,30 @@ define(['initialize'], function (initialize) {
                 }
 
                 $scope.copynoresep = $scope.dataSelectedResep.noresep
-
+                for (let j = 0; j < $scope.dataSelectedResep.details.length; j++) {
+                    $scope.isRouteLoading = true;
+                    
+                    $scope.dataSelectedResep.details[j].jumlahxmakan = null
+                    medifirstService.get("emr/get-produkdetail?" +
+                        "produkfk=" + $scope.dataSelectedResep.details[j].produkfk +
+                        "&ruanganfk=" + $scope.item.ruangan.id +
+                        "&kpid=" + $scope.item.kpid, true).then(function (dat) {
+                        $scope.isRouteLoading = false;
+                        $scope.dataSelectedResep.details[j].jmlstok = dat.data.jmlstok
+                        $scope.dataSelectedResep.details[j].ruanganfk = $scope.item.ruangan.id
+                        
+                    });
+                    medifirstService.get("emr/get-jenis-obat?jrid=" + $scope.dataSelectedResep.details[j].jenisobatfk, true).then(function (JR) {
+                        $scope.dataSelectedResep.details[j].satuanstandarfk = JR.data.data[0].id
+                        $scope.dataSelectedResep.details[j].satuanviewfk = $scope.dataSelectedResep.details[j].satuanstandarfk
+                        $scope.dataSelectedResep.details[j].satuanview = $scope.dataSelectedResep.details[j].satuanstandar
+                    });
+                }
                 medifirstService.get("farmasi/get-detail-order-resep?noresep=" + $scope.dataSelectedResep.noresep + "&kpid=" + $scope.item.kpid, true).then(function (dat) {
                     $scope.isRouteLoading = false;
                     var nama = 'Laras'
                     var jumlah = 0;
                     var no = 0;
-
-
-                    
-
                     for(var i=0; i<dat.data.data.length; i++){
 
                             if(i  == 0){
@@ -1765,18 +1782,18 @@ define(['initialize'], function (initialize) {
                                 dat.data.data[i]['jmlstok'] = jumlah;
                                 dat.data.data.splice(i-1, 1);
                             } 
+                         
                             //nama = dat.data.data[i]['namaproduk'];
-                            console.log(jumlah)
                         }
 
                     for(var x=0; x<dat.data.data.length; x++){
                         dat.data.data[x].no = x+1
                     }
 
-                      
-                    data2 = $scope.dataSelectedResep.details
-                    console.log(data2)  
+                    
 
+                    data2 = $scope.dataSelectedResep.details
+                    console.log(data2);
                     $scope.dataGrid = new kendo.data.DataSource({
                         data: data2,
                         group: $scope.group
@@ -2150,7 +2167,11 @@ define(['initialize'], function (initialize) {
            medifirstService.postNonMessage('bridging/bpjs/tools', data).then(function (e) {})
         }
         
-
+        $scope.gantiJR = function(data){
+            if(data == 2){
+                $scope.item.jumlah = ''
+            }
+        }
            //** BATAS SUCI */
         }
     ]);

@@ -781,6 +781,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('emr/get-jenis-obat', 'EMR\EMRController@getJenisObat');
           Route::post('emr/simpan-order-pelayananobatfarmasi', 'EMR\EMRController@SimpanOrderPelayananObat');
           Route::get('emr/get-transaksi-pelayanan', 'Farmasi\PelayananResepController@getTransaksiPelayananApotik');
+          Route::get('emr/get-transaksi-pelayanan-resep-elektronik', 'Farmasi\PelayananResepController@getTransaksiPelayananApotikResepElektronik');
           Route::get('emr/get-combo-penunjang', 'EMR\EMRController@getComboPenunjangOrder');
           Route::get('emr/get-riwayat-order-penunjang', 'EMR\EMRController@getRiwayatOrderPenunjang');
           Route::post('emr/save-order-pelayanan', 'EMR\EMRController@saveOrderPelayananLabRad');
@@ -2354,8 +2355,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('ipsrs/get-combo-pegawai-perbaikan','IPSRS\IPSRSController@getComboPegawai');
             Route::post('diklat/simpan-pleyanan-penjamin-diklat','SDM\PelatihanController@simpanPelayananPenjaminDiklat');
             Route::get('diklat/detail-diklat-penjamin/{norecSPP}','SDM\PelatihanController@detailPenjaminDiklat');
-            Route::get('diklat/diklat/get-data-pembayaran-diklat', 'SDM\pelatihanController@pembayaranDiklat');
-            Route::post('diklat/simpan-data-pembayaran', 'SDM\pelatihanController@simpanPembayaran');  //done
+            Route::get('diklat/diklat/get-data-pembayaran-diklat', 'SDM\PelatihanController@pembayaranDiklat');
+            Route::post('diklat/simpan-data-pembayaran', 'SDM\PelatihanController@simpanPembayaran');  //done
 
         // });
         // Route::group(['prefix' => 'sdm'], function () {
