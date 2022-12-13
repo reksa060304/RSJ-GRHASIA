@@ -17795,6 +17795,26 @@
     ]
   },
   {
+    "name": "LaporanKlaimDiagnosa",
+    "url": "/TGFwb3JhbktsYWltRGlhZ25vc2E=",
+    "templateurl": "module/TataRekening/LaporanTataRekening/LaporanKlaimDiagnosa.html",
+    "controller": "LaporanKlaimDiagnosaCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
     "name": "LaporanRekapTindakan",
     "url": "/TGFwb3JhblJla2FwVGluZGFrYW4=",
     "templateurl": "module/TataRekening/LaporanTataRekening/LaporanRekapTindakan.html",

@@ -5566,6 +5566,40 @@ class TagihanController  extends ApiController
         return $this->respond($datadata);
     }
 
+    public function daftarKlaimDiagnosa(Request $request){
+        $filter=$request->all();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $tglAwal = $request['tglAwal'];
+        $tglAkhir = $request['tglAkhir'];
+
+        $kp = '';
+        if(isset($request['kelompokpasien']) && $request['kelompokpasien']!=""){
+            $kp = "and kp.kelompokpasien ilike '%".$request['kelompokpasien']."%'";
+        }
+
+        $row = '';
+        if(isset($request['row']) && $request['row']!=""){
+            $row = "limit ".$request['row'];
+        }
+
+        $piutang = DB::select(DB::raw("select dg.kddiagnosa, dg.namadiagnosa, sum(mk.totaltarifrs) totaltarifrs, 
+        sum(mk.totalpengajuan) totalpengajuan, sum(mk.totalgrouper) totalgrouper, 
+        sum(mk.totalsetujui) totalsetujui
+        from pemakaianasuransi_t pa
+        inner join monitoringklaim_t mk on mk.nosep = pa.nosep
+        inner join diagnosa_m dg on dg.id = pa.diagnosisfk
+        where pa.tglregistrasi::date between '$tglAwal' and '$tglAkhir'
+        group by dg.kddiagnosa, dg.namadiagnosa
+        order by sum(mk.totalsetujui) desc
+        $row"));
+
+        $datadata =array(
+            'data' =>   $piutang,
+        );
+        return $this->respond($datadata);
+    }
+
     public function daftarPiutangBPJSManual(Request $request){
         $filter=$request->all();
         $kdProfile = $this->getDataKdProfile($request);

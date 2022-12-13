@@ -3049,6 +3049,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('tatarekening/daftar-piutang-pasien', 'TataRekening\TagihanController@daftarPiutangPasien');
           Route::get('tatarekening/daftar-piutang-bpjs', 'TataRekening\TagihanController@daftarPiutangBPJS');
           Route::get('tatarekening/daftar-rekap-piutang', 'TataRekening\TagihanController@daftarRekapPiutang');
+          Route::get('tatarekening/daftar-rekap-klaim-diagnosa', 'TataRekening\TagihanController@daftarKlaimDiagnosa');
           Route::get('tatarekening/daftar-piutang-bpjs-manual', 'TataRekening\TagihanController@daftarPiutangBPJSManual');
           Route::get('tatarekening/daftar-piutang-selain-bpjs', 'TataRekening\TagihanController@daftarPiutangSelainBPJS');
           Route::get('tatarekening/daftar-piutang-pasiencek', 'TataRekening\TagihanController@daftarPiutangPasiencek');

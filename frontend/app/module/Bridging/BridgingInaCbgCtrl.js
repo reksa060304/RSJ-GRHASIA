@@ -485,7 +485,12 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 							"width": "10%",
 							"template": '# if( statuskelengkapandok==true) {# Sudah Lengkap # } else {# - #} #'
 						},
-						
+						{
+							"field": "tglgrouping",
+							"title": "Tgl Grouping",
+							"width": "7%",
+							"template": "<span class='style-left'>{{formatTanggal('#: tglgrouping #')}}</span>"
+						},
 					]
 			};
 			$scope.dbklik = function (data) {
