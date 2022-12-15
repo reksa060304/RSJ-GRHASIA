@@ -188,6 +188,7 @@ class RadiologiController extends ApiController
                         'ps.objectjeniskelaminfk','ps.tgllahir','sbm.nosbm','pmi.pmi',  'ris.order_cnt as nourutrad', // syamsu tambahan
                         DB::raw("case when ris.order_key is not null then 'Sudah Dikirim' else '-' end as statusbridging,hr.norec as  hr_norec,pp.tglpanggil"))
                     ->where('pp.kdprofile',$idProfile)
+                    ->whereNull('pp.isobat')
                     ->where('ru.objectdepartemenfk', $this->settingDataFixed('KdDepartemenInstalasiRadiologi', $idProfile))
                     ->groupBy('ps.nocm', 'ps.namapasien', 'jk.jeniskelamin', 'pp.tglpelayanan', 'pp.produkfk', 'pr.namaproduk',
                         'pp.jumlah', 'pp.hargasatuan', 'pp.hargadiscount', 'sp.nostruk', 'pd.noregistrasi', 'ru.namaruangan',
@@ -224,6 +225,7 @@ class RadiologiController extends ApiController
                         ,DB::raw("case when lis.no_lab is not null then 'Sudah Dikirim' else '-' end as statusbridging,'' as hr_norec , null as nourutrad,pp.tglpanggil") // syamsu tambahan
                     )
                     ->where('pp.kdprofile',$idProfile)
+                    ->whereNull('pp.isobat')
                     ->where('ru.objectdepartemenfk', $this->settingDataFixed('KdDepartemenInstalasiLaboratorium', $idProfile))
                     ->orderBy('pp.tglpelayanan');
             }
@@ -2194,7 +2196,7 @@ class RadiologiController extends ApiController
                 LEFT JOIN pegawai_m AS pg1 ON pg1.id = ppp.objectpegawaifk
                 LEFT JOIN hasilradiologi_t AS hr ON hr.pelayananpasienfk = pp.norec AND hr.statusenabled = true
                 WHERE pd.kdprofile = $kdProfile AND pd.statusenabled = true AND apd.objectruanganfk = 576
-                      AND pro.namaproduk IS NOT NULL AND br.norec IS NULL
+                      AND pro.namaproduk IS NOT NULL AND br.norec IS NULL AND pp.isobat IS NULL
                       AND pp.tglpelayanan BETWEEN '$tglAwal' AND '$tglAkhir'
                       $ruid
                       $dokid
