@@ -564,7 +564,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         { "id": 3017335, "nama": "Pulang, konsultasi selesai", "type": "checkboxtextbox","idd":3017337},
                         { "id": 3017338, "nama": "Pulang, kontrol ulang", "type": "checkboxtextbox","idd":3017339}, 
                         { "id": 3017340, "nama": "Rujuk ke", "type": "checkboxtextbox","idd":3017341},
-                        { "id": 3017342, "nama": "", "type": "checkboxtextbox","idd":3017343},
+                        { "id": 3017342, "nama": "Lain lain", "type": "checkboxtextbox","idd":3017343},
                     ]
                 }
             ]   
