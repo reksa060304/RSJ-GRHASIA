@@ -248,29 +248,34 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 							var dataCacheGajiBerkala = dataCache.datagajiberkala;
 							var dataCachegajiBerkala = dataCache.gajiBerkala
 							// Data Pegawai
-							$scope.item.noskcpns = dataCachePegawai.noskcpns
-							$scope.item.tglskcpns = moment(dataCachePegawai.tglskcpns).format('DD-MM-YYYY');
-							$scope.item.tmtskcpns = moment(dataCachePegawai.tmtskcpns).format('DD-MM-YYYY');
-							var split = dataCachePegawai.masakerjacpns.split("-")
-							$scope.item.tahuncpns = split[0]
-							$scope.item.bulancpns = split[1]
-							$scope.item.golongancpns = {
-								id: dataCachePegawai.objectgolongancpnsfk,
-								golongan : dataCachePegawai.golongancpns,
-								level : dataCachePegawai.levelcpns
+							
+							if (dataCachePegawai.noskcpns != null) {
+								$scope.item.noskcpns = dataCachePegawai.noskcpns
+								$scope.item.tglskcpns = moment(dataCachePegawai.tglskcpns).format('DD-MM-YYYY');
+								$scope.item.tmtskcpns = moment(dataCachePegawai.tmtskcpns).format('DD-MM-YYYY');
+								var split = dataCachePegawai.masakerjacpns.split("-")
+								$scope.item.tahuncpns = split[0]
+								$scope.item.bulancpns = split[1]
+								$scope.item.golongancpns = {
+									id: dataCachePegawai.objectgolongancpnsfk,
+									golongan: dataCachePegawai.golongancpns,
+									level: dataCachePegawai.levelcpns
+								}
+								$scope.item.pendidikancpns = {
+									id: dataCachePegawai.objectpendidikancpnsfk,
+									namaexternal: dataCachePegawai.cpnspegawai
+								}
+								$scope.item.prodicpns = dataCachePegawai.prodicpns
+								$scope.item.tglijazahcpns = moment(dataCachePegawai.tglijazahcpns).format('DD-MM-YYYY');
+								$scope.item.noijazahcpns = dataCachePegawai.noijazahcpns;
+								$scope.item.jabatancpns = dataCachePegawai.jabatancpns
+								$scope.item.unitkerjacpns = dataCachePegawai.unitkerjacpns
+								$scope.item.instansicpns = dataCachePegawai.instansicpns
+								$scope.item.pejabatpenandatangancpns = dataCachePegawai.pejabatpenandatangancpns
+								$scope.item.pejabatyangmenetapkancpns = dataCachePegawai.pejabatyangmenetapkancpns
 							}
-							$scope.item.pendidikancpns = {
-								id: dataCachePegawai.objectpendidikancpnsfk,
-								namaexternal: dataCachePegawai.cpnspegawai
-							}
-							$scope.item.prodicpns = dataCachePegawai.prodicpns
-							$scope.item.tglijazahcpns = moment(dataCachePegawai.tglijazahcpns).format('DD-MM-YYYY');
-							$scope.item.noijazahcpns = dataCachePegawai.noijazahcpns;
-							$scope.item.jabatancpns = dataCachePegawai.jabatancpns
-							$scope.item.unitkerjacpns = dataCachePegawai.unitkerjacpns
-							$scope.item.instansicpns = dataCachePegawai.instansicpns
-							$scope.item.pejabatpenandatangancpns = dataCachePegawai.pejabatpenandatangancpns
-							$scope.item.pejabatyangmenetapkancpns = dataCachePegawai.pejabatyangmenetapkancpns
+							
+							
 							$scope.item.nik = dataCachePegawai.noidentitas;
 							$scope.item.idPegawai = dataCachePegawai.id;
 							$scope.item.nipPns = dataCachePegawai.nippns;
