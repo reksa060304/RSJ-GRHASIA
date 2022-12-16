@@ -1418,7 +1418,7 @@ class InaCbgController   extends ApiController
             ->leftjoin('diagnosaberatbadanbayi_t as dbb', 'dbb.noregistrasifk', '=', 'pd.norec')
             ->leftjoin('rekanan_m as rk', 'rk.id', '=', 'pd.objectrekananfk')
             ->select('pd.norec', 'pd.tglregistrasi', 'ps.nocm', 'pd.noregistrasi', 'ru.namaruangan', 'ps.namapasien', 'kp.kelompokpasien',
-                'pd.tglpulang', 'pd.statuspasien', 
+                'pd.tglpulang', 'pd.statuspasien', 'pd.tglgrouping',
                 // 'sp.nostruk', 'sbm.nosbm', 
                 'pg.id as pgid', 'pg.namalengkap as namadokter','kp.id as kpid','pas.objectasuransipasienfk',
                 // 'pgs.namalengkap as kasir',
@@ -1774,10 +1774,20 @@ class InaCbgController   extends ApiController
         DB::beginTransaction();
         try {
             foreach ($request['data'] as $key => $value) {
-               PasienDaftar::where('norec',$value['norec'])
-               ->update([
-                    'statusklaim' => $value['statusklaim']
-               ]);
+                if($value['statusklaim'] == 'new_claim'){
+                    PasienDaftar::where('norec',$value['norec'])
+                    ->update([
+                        'statusklaim' => $value['statusklaim'],
+                        'tglgrouping' => date('Y-m-d H:i:s')
+                    ]);
+                } else {
+                    PasienDaftar::where('norec',$value['norec'])
+                    ->update([
+                        'statusklaim' => $value['statusklaim'],
+                        'tglgrouping' => null
+                    ]);
+                }
+                
             }
 
             $transStatus = 'true';

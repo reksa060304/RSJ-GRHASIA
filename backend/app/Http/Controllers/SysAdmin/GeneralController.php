@@ -956,6 +956,21 @@ class GeneralController extends ApiController
         return $this->respond($dataProduk);
     }
 
+    public function getDataComboKelompokPasienGroup(Request $request) {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        
+        $dataProduk  = DB::select(DB::raw("select kelompokpasienfix from(
+            select 
+            case when kelompokpasien ilike '%BPJS%' then 'BPJS' else kelompokpasien end as kelompokpasienfix  
+            from kelompokpasien_m
+            where statusenabled = true
+            and kdprofile = 30 
+        ) as x 
+        group by kelompokpasienfix")); 
+
+        return $this->respond($dataProduk);
+    }
+
     public function hapusJurnalpembayaranTagihanNoBatch(Request $request) {
         $kdProfile = (int) $this->getDataKdProfile($request);
         DB::beginTransaction();

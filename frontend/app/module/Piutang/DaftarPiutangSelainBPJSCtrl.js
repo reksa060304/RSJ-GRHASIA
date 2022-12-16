@@ -23,6 +23,24 @@ define(['initialize'], function (initialize) {
 			loadCombo();
 			loadData();
 
+			var dataformat = [
+				{noregistrasi: 2212000832, noklaim: '-', totalklaim: 50000, tglbayar: '2022-12-10 00:00', isobat: 'FALSE'},
+				{noregistrasi: 2212000832, noklaim: '-', totalklaim: 70000, tglbayar: '2022-12-10 00:00', isobat: 'TRUE'}
+			]
+
+			$scope.dataFormat = new kendo.data.DataSource({
+				data: dataformat,
+				pageSize: 10,
+				total: dataformat.length,
+				serverPaging: false,
+				schema: {
+					model: {
+						fields: {
+						}
+					}
+				}
+			});
+
 			$scope.UbahRekanan = function () {
 				$scope.cboDefault = false;
 				$scope.cboRekanan = true;
@@ -95,84 +113,174 @@ define(['initialize'], function (initialize) {
 				return currency + " " + parseFloat(value).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
 			}
 
-			$scope.columnDataPasienPiutang = [
-				{
-					"field": "iscek",
-					"title": " ",
-					"template": "# if( iscek==true) {# <input type='checkbox' class='checkbox style-center' ng-checked='true' ng-click='onClickSatu($event,2)'/> # } else {# <input type='checkbox' class='checkbox style-center' ng-checked='false' ng-click='onClickSatu($event,2)'/> #} #",
-					"width": "30px",
-				},
-				{
-					"field": "nosep",
-					"title": "No. SEP/No. Klaim",
-					"width": "150px",
-				},
-				{
-					"field": "tglsep",
-					"title": "Tanggal SEP",
-					"width": "100px",
-				},
-				{
-					"field": "tglpulang",
-					"title": "Tanggal Pulang",
-					"width": "100px",
-				},
-				{
-					"field": "tglbayar",
-					"title": "Tanggal Bayar",
-					"width": "100px",
-				},
-				{
-					"field": "noregistrasi",
-					"title": "No. Registrasi",
-					"width": "150px",
+			$scope.columnDataPasienPiutang = {
+                toolbar: [
+                    "excel",
+                ],
+                excel: {
+                    fileName: "DaftarPiutangBPJS.xlsx",
+                    allPages: true,
+                },
+                excelExport: function (e) {
+                    var sheet = e.workbook.sheets[0];
+                    sheet.frozenRows = 2;
+                    sheet.mergedCells = ["A1:M1"];
+                    sheet.name = "Report";
 
-				},
-				{
-					"field": "namapasien",
-					"title": "Nama",
-					"width": "200px",
-				},
-				{
-					"field": "kelompokpasien",
-					"title": "Jenis Pasien",
-					"width": "120px",
-				},
-				{
-					"field": "namarekanan",
-					"title": "Penjamin",
-					"width": "170px"
-				},
-				{
-					"field": "totalbilling",
-					"title": "Total Billing",
-					"width": "120px",
-					"template": "<span class='style-right'>{{formatRupiah('#: totalbilling #', '')}}</span>",
-					attributes: { style: "text-align:right;" },
-				},
-				{
-					"field": "totalbayar",
-					"title": "Total Bayar",
-					"width": "120px",
-					"template": "<span class='style-right'>{{formatRupiah('#: totalbayar #', '')}}</span>",
-					attributes: { style: "text-align:right;" },
-				},
-				{
-					"field": "totalklaim",
-					"title": "Total Klaim",
-					"width": "120px",
-					"template": "<span class='style-right'>{{formatRupiah('#: totalklaim #', '')}}</span>",
-					attributes: { style: "text-align:right;" },
-				},
-				{
-					"field": "selisih",
-					"title": "Selisih Klaim",
-					"width": "120px",
-					"template": "<span class='style-right'>{{formatRupiah('#: selisih #', '')}}</span>",
-					attributes: { style: "text-align:right;" },
+                    var myHeaders = [{
+                        value: "Daftar Piutang BPJS",
+                        fontSize: 20,
+                        textAlign: "center",
+                        background: "#ffffff",
+                    }];
 
-				}
-			];
+                    sheet.rows.splice(0, 0, { cells: myHeaders, type: "header", height: 70 });
+                },
+                selectable: 'row',
+                pageable: true,
+                columns: [
+					{
+						"field": "iscek",
+						"title": " ",
+						"template": "# if( iscek==true) {# <input type='checkbox' class='checkbox style-center' ng-checked='true' ng-click='onClickSatu($event,2)'/> # } else {# <input type='checkbox' class='checkbox style-center' ng-checked='false' ng-click='onClickSatu($event,2)'/> #} #",
+						"width": "30px",
+					},
+					{
+						"field": "nosep",
+						"title": "No. SEP/No. Klaim",
+						"width": "150px",
+					},
+					{
+						"field": "tglsep",
+						"title": "Tanggal SEP",
+						"width": "100px",
+					},
+					{
+						"field": "tglpulang",
+						"title": "Tanggal Pulang",
+						"width": "100px",
+					},
+					{
+						"field": "tglbayar",
+						"title": "Tanggal Bayar",
+						"width": "100px",
+					},
+					{
+						"field": "noregistrasi",
+						"title": "No. Registrasi",
+						"width": "150px",
+
+					},
+					{
+						"field": "namapasien",
+						"title": "Nama",
+						"width": "200px",
+					},
+					{
+						"field": "nocm",
+						"title": "No. RM",
+						"width": "100px",
+					},
+					{
+						"field": "jeniskelamin",
+						"title": "Jenis Kelamin",
+						"width": "100px",
+					},
+					{
+						"field": "kelompokpasien",
+						"title": "Jenis Pasien",
+						"width": "120px",
+					},
+					{
+						"field": "namaruangan",
+						"title": "Ruangan",
+						"width": "120px",
+					},
+					{
+						"field": "lamahari",
+						"title": "LOS",
+						"width": "120px",
+					},
+					{
+						"field": "namarekanan",
+						"title": "Penjamin",
+						"width": "170px"
+					},
+					{
+						"field": "totalbilling",
+						"title": "Total Billing",
+						"width": "120px",
+						"template": "<span class='style-right'>{{formatRupiah('#: totalbilling #', '')}}</span>",
+						attributes: { style: "text-align:right;" },
+					},
+					{
+						"field": "totalbayar",
+						"title": "Total Bayar",
+						"width": "120px",
+						"template": "<span class='style-right'>{{formatRupiah('#: totalbayar #', '')}}</span>",
+						attributes: { style: "text-align:right;" },
+					},
+					{
+						"field": "totalklaim",
+						"title": "Total Klaim",
+						"width": "120px",
+						"template": "<span class='style-right'>{{formatRupiah('#: totalklaim #', '')}}</span>",
+						attributes: { style: "text-align:right;" },
+					},
+					{
+						"field": "totalobat",
+						"title": "Total Obat",
+						"width": "120px",
+						"template": "<span class='style-right'>{{formatRupiah('#: totalobat #', '')}}</span>",
+						attributes: { style: "text-align:right;" },
+					},
+					{
+						"field": "selisih",
+						"title": "Selisih Klaim",
+						"width": "120px",
+						"template": "<span class='style-right'>{{formatRupiah('#: selisih #', '')}}</span>",
+						attributes: { style: "text-align:right;" },
+
+					}
+				]
+			};
+
+			$scope.columnFormat = {
+                toolbar: [
+                    "excel",
+                ],
+                excel: {
+                    fileName: "FormatImportKlaim.xlsx",
+                    allPages: true,
+                },
+                columns: [
+					{
+						"field": "noregistrasi",
+						"title": "noregistrasi",
+						"width": "30px",
+					},
+					{
+						"field": "noklaim",
+						"title": "noklaim",
+						"width": "150px",
+					},
+					{
+						"field": "totalklaim",
+						"title": "totalklaim",
+						"width": "100px",
+					},
+					{
+						"field": "tglbayar",
+						"title": "tglbayar",
+						"width": "100px",
+					},
+					{
+						"field": "isobat",
+						"title": "isobat",
+						"width": "100px",
+					}
+				]
+			};
 
 			function generateFlagTemplate(field){
 				if (field== true)
@@ -561,8 +669,61 @@ define(['initialize'], function (initialize) {
                 $scope.item.datadipilih = $scope.selectedData2.length;
 			}
 
+			$scope.checkboxClicked = function () {
+				console.log($scope.item.kasusbaru)
+
+				if($scope.item.kasusbaru == true){
+					for(var j = 0; j < $scope.dataPasienPiutang.options.data.length; j++){
+						$scope.dataPasienPiutang.options.data[j].iscek = true
+					}
+	
+					$scope.dataPasienPiutang = new kendo.data.DataSource({
+						data: $scope.dataPasienPiutang.options.data,
+						pageSize: 10,
+						total: $scope.dataPasienPiutang.options.data.length,
+						serverPaging: false,
+						schema: {
+							model: {
+								fields: {
+								}
+							}
+						}
+					});
+	
+					$scope.selectedData2 = $scope.dataPasienPiutang.options.data
+					$scope.item.datadipilih = $scope.selectedData2.length;
+				} 
+				else if($scope.item.kasusbaru == false){
+					for(var j = 0; j < $scope.dataPasienPiutang.options.data.length; j++){
+						$scope.dataPasienPiutang.options.data[j].iscek = false
+					}
+	
+					$scope.dataPasienPiutang = new kendo.data.DataSource({
+						data: $scope.dataPasienPiutang.options.data,
+						pageSize: 10,
+						total: $scope.dataPasienPiutang.options.data.length,
+						serverPaging: false,
+						schema: {
+							model: {
+								fields: {
+								}
+							}
+						}
+					});
+	
+					$scope.selectedData2 = []
+					$scope.item.datadipilih = $scope.selectedData2.length;
+				}
+
+                console.log($scope.selectedData2)
+            }
+
 			$scope.TambahData = function(){
 				$scope.popupTanggalBayar.center().open()
+			};
+
+			$scope.TambahObat = function(){
+				$scope.popupTanggalBayarObat.center().open()
 			};
 
 			$scope.SimpanPopUpTanggal = function(){
@@ -593,6 +754,45 @@ define(['initialize'], function (initialize) {
                             })
                         } else{
                             medifirstService.post('tatarekening/save-piutang-bpjs-manual', objSave).then(function (e) {
+                                loadData();
+                                $scope.popupTanggalBayar.center().close()
+                            }, function (error) {
+                    
+                            })
+                        }
+                        
+                    });
+                
+            }
+
+			$scope.SimpanPopUpTanggalObat = function(){
+
+                var objSave =
+                    {
+                        tglbayar: moment($scope.item.tglBayarobat).format('YYYY-MM-DD HH:mm:ss'),
+                        noregistrasi: $scope.item.noregistrasiobat,
+                        totalklaim: $scope.item.totalobat,
+                        noklaim: $scope.item.noklaimobat,
+                    }
+
+                    medifirstService.get("tatarekening/daftar-piutang-bpjs-manual?noregistrasi="+$scope.item.noregistrasiobat, false).then(function (dat) {
+                        if(dat.data.data.length != 0){
+                            var confirm = $mdDialog.confirm()
+                            .title('Peringatan')
+                            .textContent('Data tersebut sudah diinput, yakin ingin input ulang?')
+                            .ariaLabel('Lucky day')
+                            .cancel('Tidak')
+                            .ok('OK')
+                            $mdDialog.show(confirm).then(function () {
+                                medifirstService.post('tatarekening/save-piutang-bpjs-manual-obat', objSave).then(function (e) {
+                                    loadData();
+                                    $scope.popupTanggalBayar.center().close()
+                                }, function (error) {
+                        
+                                })
+                            })
+                        } else{
+                            medifirstService.post('tatarekening/save-piutang-bpjs-manual-obat', objSave).then(function (e) {
                                 loadData();
                                 $scope.popupTanggalBayar.center().close()
                             }, function (error) {

@@ -3200,6 +3200,14 @@
             "urlDep": "module/TataRekening/LaporanTataRekening/LaporanRekapKunjunganCtrl"
         },
         {
+            "nameDep": "LaporanRekapKlaimCtrl",
+            "urlDep": "module/TataRekening/LaporanTataRekening/LaporanRekapKlaimCtrl"
+        },
+        {
+            "nameDep": "LaporanKlaimDiagnosaCtrl",
+            "urlDep": "module/TataRekening/LaporanTataRekening/LaporanKlaimDiagnosaCtrl"
+        },
+        {
             "nameDep": "LaporanRekapTindakanCtrl",
             "urlDep": "module/TataRekening/LaporanTataRekening/LaporanRekapTindakanCtrl"
         },

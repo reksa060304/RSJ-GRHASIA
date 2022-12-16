@@ -133,6 +133,15 @@
 
 	<!-- Data Pasien Pulang -->
 	<div class="grid_12">
+		<div class="grid_1" style="margin-top: 10px">
+			<input type="checkbox" class="k-checkbox" id="item.kasusbaru"
+				ng-model="item.kasusbaru"
+				ng-click="checkboxClicked()">
+			<label class="k-checkbox-label" for="item.kasusbaru">Pilih Semua</label>
+		</div>
+		<div class="grid_11" style="margin-top: 10px"></div>
+	</div>
+	<div class="grid_12">
 		<div class="grid_12 headerBox">
 			<p>Data Pasien Piutang</p>
 		</div>
@@ -143,7 +152,7 @@
 			<div id="grid" kendo-grid 
 			k-data-source="dataPasienPiutang" 
 			k-selectable="'row'" 
-			k-columns="columnDataPasienPiutang"
+			options="columnDataPasienPiutang"
 			k-pageable="'true'"
 			k-sortable="'true'"
 			k-ng-model="dataPasienSelected">
@@ -176,14 +185,17 @@
 			<div class="grid_6"></div>
 		</div>
 		<div class="grid_12" style="margin-top: -10px;">
-			<div class="grid_6"></div>
-			<div class="grid_2">
-				<button class="btnTemplate1" ng-click="TambahData()" style="height: 50px; margin-top: 0px;">Tambah</button>
+			<div class="grid_8"></div>
+			<div class="grid_1">
+				<button class="btnTemplate1" ng-click="TambahData()" style="height: 50px; margin-top: 0px;">Tambah Klaim Pelayanan</button>
 			</div>
-			<div class="grid_2">
+			<div class="grid_1">
+				<button class="btnTemplate1" ng-click="TambahObat()" style="height: 50px; margin-top: 0px;">Tambah Klaim Obat</button>
+			</div>
+			<div class="grid_1">
 				<button class="btnTemplate1" ng-click="PostingIPWL()" style="height: 50px; margin-top: 0px;">Posting Total Byar = Total Klaim</button>
 			</div>
-			<div class="grid_2">
+			<div class="grid_1">
 				<input id="upload" type="file" kendo-upload k-disabled="disposting"
 					k-async="{ saveUrl: 'save', removeUrl: 'remove', autoUpload: true }" k-multiple="false"
 					k-select="onUploadExcel"/>
@@ -192,6 +204,23 @@
 		
 		<input ng-hide="true" c-text-box type="input" class="k-textbox" ng-model="item.cek"/>
 	</div>
+	<div class="grid_12" style="margin-top: 50px;">
+		<div class="grid_12 headerBox">
+			<p>Format Import Data</p>
+		</div>
+		<div class="clear"></div>
+
+		<!-- grid table -->
+		<div class="grid_12 borderBox">
+			<div id="grid" kendo-grid 
+			k-data-source="dataFormat" 
+			k-selectable="'row'" 
+			options="columnFormat"
+			k-pageable="'true'"
+			k-sortable="'true'"
+			k-ng-model="dataPasienSelected">
+		</div>
+	</div>	
 	<div class="clear"></div>
 </div>
 
@@ -233,7 +262,7 @@
                 <input c-text-box type="input" class="k-textbox" ng-model="item.noklaim"/>
             </div>
             <div class="grid_12" style="text-align: left; margin-top: 10px;">
-                Total Klaim
+                Total Klaim Pelayanan
             </div>
             <div class="grid_12" style="margin-top: 10px;">
                 <input c-text-box type="input" class="k-textbox" ng-model="item.totalklaim"/>
@@ -251,6 +280,46 @@
 			<div class="grid_12">
 				<div class="grid_2" style="margin-left: 10px; margin-top: 20px;">
 					<button class="btnTemplate1" ng-click="SimpanPopUpTanggal()">Simpan</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div kendo-window="popupTanggalBayarObat" k-title="'Data Pasien Non BPJS dan Umum'" k-visible="false" k-width="600" k-height="400" style="overflow-y: hidden; overflow-x: hidden;">
+	<div class="panel panel-default container_12">
+		<div class="grid_12">
+            <div class="grid_12" style="text-align: left; margin-top: 10px;">
+                Nomor Registrasi
+            </div>
+            <div class="grid_12" style="margin-top: 10px;">
+                <input c-text-box type="input" class="k-textbox" ng-model="item.noregistrasiobat"/>
+            </div>
+            <div class="grid_12" style="text-align: left; margin-top: 10px;">
+                Nomor Klaim
+            </div>
+            <div class="grid_12" style="margin-top: 10px;">
+                <input c-text-box type="input" class="k-textbox" ng-model="item.noklaimobat"/>
+            </div>
+            <div class="grid_12" style="text-align: left; margin-top: 10px;">
+                Total Klaim Obat
+            </div>
+            <div class="grid_12" style="margin-top: 10px;">
+                <input c-text-box type="input" class="k-textbox" ng-model="item.totalobat"/>
+            </div>
+			<div class="grid_12">
+				<div class="grid_12" style="text-align: left; margin-top: 30px;">
+					Tanggal Bayar
+				</div>
+				<div class="grid_12" style="margin-top: 20px;">
+					<input style="width: 100%" k-ng-model="item.tglBayarobat" kendo-datetimepicker 
+                     placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'"
+                    parsedate="yyyy-MM-dd HH:mm"   />
+				</div>
+			</div>
+			<div class="grid_12">
+				<div class="grid_2" style="margin-left: 10px; margin-top: 20px;">
+					<button class="btnTemplate1" ng-click="SimpanPopUpTanggalObat()">Simpan</button>
 				</div>
 			</div>
 		</div>
