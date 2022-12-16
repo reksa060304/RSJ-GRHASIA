@@ -281,6 +281,9 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
               Route::get('bridging/bpjs/get-setting-apotik-online', 'Bridging\BridgingBPJSV2Controller@getSettingApotikOnline');
               Route::get('bridging/bpjs/get-obat-apotik-online', 'Bridging\BridgingBPJSV2Controller@getObatApotikOnline');
               Route::get('bridging/bpjs/get-faskes-apotik-online', 'Bridging\BridgingBPJSV2Controller@getFaskesApotikOnline');
+              Route::post('bridging/bpjs/save-resep-apotik-online', 'Bridging\BridgingBPJSV2Controller@insertResepApotikOnline');
+              Route::post('bridging/bpjs/save-non-racikan-apotik-online', 'Bridging\BridgingBPJSV2Controller@insertNonRacikanApotikOnline');
+              Route::post('bridging/bpjs/save-racikan-apotik-online', 'Bridging\BridgingBPJSV2Controller@insertRacikanApotikOnline');
               Route::get('bridging/bpjs/monitoring/HistoriPelayanan/NoKartu/{noKartu}', 'Bridging\BridgingBPJSV2Controller@getMonitoringHistori');
               Route::get('bridging/bpjs/get-monitoring-klaim-jasaraharja', 'Bridging\BridgingBPJSV2Controller@getMonitoringJasaRaharja');
               Route::get('bridging/bpjs/get-monitoring-historipelayanan-peserta', 'Bridging\BridgingBPJSV2Controller@getHistoryPelayananPeserta');
@@ -1579,7 +1582,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::post('perencanaan/save-spd','Perencanaan\PerencanaanController@saveSPD');
             Route::post('perencanaan/copy-permen','Perencanaan\PerencanaanController@copyPermen');
             Route::post('perencanaan/save-lpj','Perencanaan\PerencanaanController@saveLPJ');
-            Route::post('perencanaan/delete-lpj','Perencanaan\PerencanaanController@saveLPJ');
+            Route::post('perencanaan/delete-lpj','Perencanaan\PerencanaanController@deleteLPJ');
             Route::post('perencanaan/delete-jasgir','Perencanaan\PerencanaanController@deleteJasgir');
             Route::post('perencanaan/delete-sts-keuangan','Perencanaan\PerencanaanController@deleteSTSKeuangan');
             Route::post('perencanaan/delete-retur','Perencanaan\PerencanaanController@deleteRetur');

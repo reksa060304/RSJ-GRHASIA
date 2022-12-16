@@ -160,6 +160,7 @@ define(['initialize'], function (initialize) {
             }
 
             $scope.TransaksiPelayanan = function () {
+                console.log($scope.dataSelected)
                 //rpp=registrasipelayananpasien_t -> pasien ranap yg udah ada nostruklastfk (udah di bayar di kasir)
                 if ($scope.dataSelected.nostruklastfk != null && $scope.dataSelected.rpp != null) {
                     window.messageContainer.error("Pelayanan yang sudah di Verif Kasir tidak bisa di ubah!")                    
@@ -181,7 +182,13 @@ define(['initialize'], function (initialize) {
                     6: $scope.dataSelected.namakelas,
                     7: $scope.dataSelected.tglregistrasi,
                     8: $scope.dataSelected.norec,
-                    9: ''
+                    9: '',
+                    10: $scope.dataSelected.nosep,
+                    11: $scope.dataSelected.tanggalsep,
+                    12: $scope.dataSelected.kodeapotikonline,
+                    13: $scope.dataSelected.kelompokpasien,
+                    14: $scope.dataSelected.kpid,
+                    
                 }
                 cacheHelper.set('TransaksiPelayananApotikCtrl', arrStr);
                 $state.go('TransaksiPelayananApotik')

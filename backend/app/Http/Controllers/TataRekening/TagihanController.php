@@ -6769,7 +6769,7 @@ class TagihanController  extends ApiController
         $paramkabupaten = ' and alm.objectkotakabupatenfk ='. $kabupaten;
         }
         $data = DB::select(DB::raw("
-            SELECT 
+            SELECTx 
         ddp.norec,
         CASE 
         WHEN MIN ( rpp.tglmasuk :: DATE ) is null THEN

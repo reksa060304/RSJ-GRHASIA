@@ -17,6 +17,8 @@ define(['initialize'], function (initialize) {
             $scope.item.hargaNetto = 0;
             $scope.butPaket = false;
             $scope.tglkadaluarsa = undefined;
+            $scope.kdapotikonline = undefined
+            $scope.isfornas = undefined
             $scope.HargaMaster = -1;
             $scope.disTanggal = false;
             $scope.item.paketPelayanan = false
@@ -24,6 +26,7 @@ define(['initialize'], function (initialize) {
             $scope.showChkPaket = true
             $scope.showChkHibah = true
             $scope.discito = false
+            $scope.hidebpjs = true
             var statusTambah = true
             var pegawaiUser = {}
             var norec_apd = '';
@@ -274,6 +277,31 @@ define(['initialize'], function (initialize) {
                     ]
                 }
             ];
+            $scope.listJenisObat = [
+                {
+                    "id": 1,
+                    "jenisobat": "Obat PRB"
+                },
+                {
+                    "id": 2,
+                    "jenisobat": "Obat Kronis Blm Stabil"
+                },
+                {
+                    "id": 3,
+                    "jenisobat": "Obat Kemoterapi"
+                }
+            ]
+
+            $scope.listIterasi = [
+                {
+                    "id": 0,
+                    "iterasi": "Non Iterasi"
+                },
+                {
+                    "id": 1,
+                    "iterasi": "Iterasi"
+                }
+            ]
             $scope.item.chkp = 0
             $scope.item.chks = 0
             $scope.item.chksr = 0
@@ -388,6 +416,7 @@ define(['initialize'], function (initialize) {
                     $scope.item.jenisKemasan = chacePeriode2[2];
                 }
                 var chacePeriode = cacheHelper.get('InputResepApotikCtrl');
+                console.log(chacePeriode)
                 if (chacePeriode != undefined) {
                     //var arrPeriode = chacePeriode.split(':');
                     $scope.item.nocm = chacePeriode[0]
@@ -406,6 +435,11 @@ define(['initialize'], function (initialize) {
                     $scope.item.AlergiYa = chacePeriode[13]
                     norecResep = chacePeriode[14]
                     $scope.item.penulisResep = chacePeriode[15]
+                    $scope.item.nosep = chacePeriode[16]
+                    $scope.item.tanggalsep = chacePeriode[17]
+                    $scope.item.kodeapotikonline = chacePeriode[18]
+                    $scope.item.kelompokpasien = chacePeriode[19]
+                    $scope.item.kpid = chacePeriode[20]
                     if(chacePeriode[17] == '✔'){
                         $scope.item.cito = true
                     } else{
@@ -413,10 +447,17 @@ define(['initialize'], function (initialize) {
                     }
                     $scope.item.tglAwal = new Date($scope.now);
                     $scope.item.resep = '-';
+
+                    if($scope.item.kelompokpasien.match(/BPJS.*/)){
+                        $scope.hidebpjs = false
+                    } else{
+                        $scope.hidebpjs = true
+                    }
                     loadAlamat();
                 } else {
 
                 }
+                var cachePemakaianOA = cacheHelper.get('cachePemakaianOA');
                 var cachePemakaianOA = cacheHelper.get('cachePemakaianOA');
                 if (cachePemakaianOA != undefined) {
                     isPemakaianObatAlkes = true
@@ -929,6 +970,8 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                         $scope.consis = dat.data.consis;
                         if (dataProdukDetail.length > 0){
                             $scope.HargaMaster = dataProdukDetail[0].hargajual;
+                            $scope.kdapotikonline = dataProdukDetail[0].kdapotikonline;
+                            $scope.isfornas = dataProdukDetail[0].isfornas;
                             $scope.tglkadaluarsa = moment(dataProdukDetail[0].tglkadaluarsa).format('YYYY-MM-DD HH:mm');
                         }
                         //parseFloat($scope.dataSelected.jumlah) / parseFloat($scope.dataSelected.nilaikonversi)
@@ -1440,6 +1483,8 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                             data.satuanresepfk = $scope.item.satuanresep != undefined ? $scope.item.satuanresep.id : null
                             data.satuanresep = $scope.item.satuanresep != undefined ? $scope.item.satuanresep.satuanresep : null
                             data.tglkadaluarsa = $scope.tglkadaluarsa != undefined ? $scope.tglkadaluarsa : null
+                            data.kdapotikonline = $scope.kdapotikonline
+                            data.isfornas = $scope.isfornas
                             data.catatandokter = $scope.item.catatanDokter
                             if ($scope.item.jenisKemasan.jeniskemasan == 'Racikan') {
                                 data.jumlahracikan = $scope.item.jumlahxmakan
@@ -1518,6 +1563,8 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                         satuanresepfk: $scope.item.satuanresep != undefined ? $scope.item.satuanresep.id : null,
                         satuanresep: $scope.item.satuanresep != undefined ? $scope.item.satuanresep.satuanresep : null,
                         tglkadaluarsa: $scope.tglkadaluarsa != undefined ? $scope.tglkadaluarsa : null,
+                        kdapotikonline: $scope.kdapotikonline,
+                        isfornas: $scope.isfornas,
                         catatandokter: $scope.item.catatanDokter,
                         jumlahracikan: $scope.item.jenisKemasan.jeniskemasan == 'Racikan' ? $scope.item.jumlahxmakan : null
                     }
@@ -2002,6 +2049,7 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                             namapasien: $scope.item.namaPasien,
                             penulisresepfk: $scope.item.penulisResep != undefined ? $scope.item.penulisResep.id : null, //req nenden
                             ruanganfk: $scope.item.ruangan.id,
+                            jenisobatfk: $scope.item.route.id,
                             noorder: noOrder,
                             status: strStatus,
                             norecResep: norecResep,
@@ -2018,8 +2066,102 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                             pelayananpasien: data2//$scope.dataGrid._data
                         }
 
+                        console.log(objSave)
+
+                        console.log(data2)
                         $scope.tombolSimpanVis = false;
                         medifirstService.post('farmasi/save-pelayananobat', objSave).then(function (e) {
+                            var resep = e.data.noresep.noresep.slice(-5)
+                            // apotik online
+
+                            if($scope.item.kelompokpasien.match(/BPJS.*/) && $scope.item.jenisObat.id == 2){
+                                var apotikonline = {
+                                    "TGLSJP": $scope.item.tanggalsep,
+                                    "REFASALSJP": $scope.item.nosep,
+                                    "POLIRSP": $scope.item.kodeapotikonline,
+                                    "KDJNSOBAT": $scope.item.jenisObat.id,
+                                    "NORESEP": e.data.noresep.noresep.slice(-5),
+                                    "IDUSERSJP": $scope.item.nocm,
+                                    "TGLRSP": moment($scope.item.tglAwal).format('YYYY-MM-DD HH:mm:ss'),
+                                    "TGLPELRSP": moment($scope.item.tglAwal).format('YYYY-MM-DD HH:mm:ss'),
+                                    "KdDokter": $scope.item.penulisResep.id,
+                                    "iterasi": $scope.item.iterasi.id
+                                }
+    
+                                var datas ={
+                                    data: apotikonline
+                                }
+    
+                                console.log(datas)
+                                
+                                medifirstService.post('bridging/bpjs/save-resep-apotik-online', datas).then(function (e) { 
+                                    var arrnonracikan = []
+                                    var arrracikan = []
+                                    var x = 0
+                                    var no = ''
+                                    var r1 = 0
+                                    var r2 = 0
+                                    for(var i = 0; i < data2.length; i++){
+                                        console.log(data2[i].isfornas)
+                                        if(data2[i].isfornas == true){
+                                            if(data2[i].jeniskemasanfk == 2){
+                                                arrnonracikan[r1] = {
+                                                    "NOSJP": $scope.item.nosep,
+                                                    "NORESEP": resep,
+                                                    "KDOBT": data2[i].kdapotikonline, //--
+                                                    "NMOBAT": data2[i].namaproduk, //--
+                                                    "SIGNA1OBT": data2[i].aturanpakai.substring(0,1),
+                                                    "SIGNA2OBT": data2[i].aturanpakai.slice(-1),
+                                                    "JMLOBT": data2[i].jumlah,
+                                                    "JHO": data2[i].jumlah/parseInt(data2[i].aturanpakai.substring(0,1)), //--
+                                                    "CatKhsObt": data2[i].keterangan,
+                                                }
+                                                r1++
+                                            } else{
+                                                x++
+                                                if(x < 10){
+                                                    no = '0'+ x
+                                                } else{
+                                                    no = '' + x
+                                                }
+                                                arrracikan[r2] = {
+                                                    "NOSJP": $scope.item.nosep,
+                                                    "NORESEP": resep,
+                                                    "JNSROBT": "R." + no,
+                                                    "KDOBT": data2[i].kdapotikonline, //--
+                                                    "NMOBAT": data2[i].namaproduk, //--
+                                                    "SIGNA1OBT": data2[i].aturanpakai.substring(0,1),
+                                                    "SIGNA2OBT": data2[i].aturanpakai.slice(-1),
+                                                    "PERMINTAAN":data2[i].dosis,
+                                                    "JMLOBT": data2[i].jumlah,
+                                                    "JHO": 23, //--
+                                                    "CatKhsObt": data2[i].keterangan,
+                                                }
+                                                r2++
+                                            }
+                                        }
+                                    }
+    
+                                    if(arrnonracikan != []){
+                                        var arr1 ={
+                                            data: arrnonracikan
+                                        }
+                                        
+                                        medifirstService.post('bridging/bpjs/save-non-racikan-apotik-online', arr1).then(function (e) { });
+                                    }
+                                    
+                                    if(arrracikan != []){
+                                        var arr2 ={
+                                            data: arrracikan
+                                        }
+                                        
+                                        medifirstService.post('bridging/bpjs/save-racikan-apotik-online', arr2).then(function (e) { });
+                                    }
+                                });
+                            }
+
+                            // apotik online
+
                             $scope.data.noresep = e.data.noresep.norec
                             console.log($scope.data.noresep)
                             $scope.simpanSkrining()

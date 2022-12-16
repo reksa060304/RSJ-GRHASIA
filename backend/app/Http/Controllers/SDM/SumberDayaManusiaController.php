@@ -3537,7 +3537,7 @@ class SumberDayaManusiaController extends ApiController {
 									)
 								)
             ) as x
-            group by idpegawai, tahun, namalengkap, jumlahcutipertahun, id
+            group by idpegawai, tahun, namalengkap, jumlahcutipertahun
 
             union all
 
@@ -3556,7 +3556,7 @@ class SumberDayaManusiaController extends ApiController {
                     (date_part('year', pps.tglpengajuan::timestamp) = date_part('year','$tahun-01-01 00:00'::timestamp ) and sjc.id = 8)
                 )
 			) as x
-            group by idpegawai, tahun, namalengkap, jumlahcutipertahun, id
+            group by idpegawai, tahun, namalengkap, jumlahcutipertahun
         ) as b on pg.id = b.idpegawai
         where pg.id = $idpegawai"));
 

@@ -36,7 +36,7 @@
 <body style="background-color: #CCCCCC">
 <div align="center">
     <section class="page-break">
-    <table class="bayangprint" cellspacing="0" cellpadding="0" bgcolor="#FFFFFF" border="0" width="{{$pageWidth}}" height="500">
+    <table cellspacing="0" cellpadding="0" bgcolor="#FFFFFF" border="0" width="{{$pageWidth}}" height="500">
     <tbody>
         <tr>
             <td colspan="2" style="padding: 30px; text-align:left">
@@ -145,166 +145,174 @@
                 <font style="font-size: 12pt" color="#000000">Yogyakarta, &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; {{$kegiatan[0]->tahun}}</font>
             </td>
         </tr>
+        </tbody>
+    </table>
+    <table cellspacing="0" cellpadding="0" bgcolor="#FFFFFF" border="0" width="{{$pageWidth}}">
+        <tbody>
         <tr>
-            <td colspan="2" style="text-align:center; padding-left: 50px; padding-bottom: 5px; padding-top: 5px; width: 100px;">
+            <td style="text-align:center; padding-left: 50px; padding-bottom: 5px; padding-top: 5px; width: 100px;">
                 <font style="font-size: 12pt" color="#000000">Mengetahui dan Menyetujui</font>
             </td>
             <td style="width: 100px;"></td>
-            <td colspan="2" style="padding: 10px; padding-bottom: 5px; padding-top: 5px; width: 100px;" align="center">
+            <td style="padding: 10px; padding-bottom: 5px; padding-top: 5px; width: 100px;" align="center">
                 <font style="font-size: 12pt" color="#000000">Yang menerima,</font>
             </td>
         </tr>
         <tr>
-            <td  colspan="2" style="text-align:center; padding-left: 50px; padding-bottom: 80px; padding-top: 5px; width: 100px;">
+            <td  style="text-align:center; padding-left: 50px; padding-bottom: 80px; padding-top: -50px; width: 100px;">
                 <font style="font-size: 12pt" color="#000000">Direktur Selaku KPA</font>
             </td>
             <td style="text-align:center; padding-left: 50px; padding-bottom: 80px; padding-top: 5px; width: 100px;">
                 <font style="font-size: 12pt" color="#000000">Bendahara Pengeluaran</font>
             </td>
-            <td  colspan="2" style="padding: 10px; padding-bottom: 80px; padding-top: 5px; width: 100px;" align="center">
+            <td  style="padding: 10px; padding-bottom: 80px; padding-top: 5px; width: 100px;" align="center">
                 <font style="font-size: 12pt" color="#000000">Tanda Tangan</font>
             </td>
         </tr>
         <tr>
-            <td colspan="2" style="text-align:center; padding-left: 50px; padding-bottom: 5px; padding-top: 5px; width: 120px;">
+            <td style="text-align:center; padding-left: 50px; padding-bottom: 5px; padding-top: 5px; width: 120px;">
                 <font style="font-size: 12pt" color="#000000"><u>dr.  Akhmad Akhadi Stamsudhuha, M.P.H</u></font>
             </td>
             <td style="text-align:center; padding-left: 50px; padding-bottom: 5px; padding-top: 5px; width: 80px;">
                 <font style="font-size: 12pt" color="#000000"><u>{{ $spj[0]->namabendahara}}</u></font>
             </td>
-            <td colspan="2" style="padding: 10px; padding-bottom: 5px; padding-top: 5px; width: 100px;" align="center">
+            <td style="padding: 10px; padding-bottom: 5px; padding-top: 5px; width: 100px;" align="center">
                 <font style="font-size: 12pt" color="#000000"><u>{{ $spj[0]->namapenerima}}</u></font>
             </td>
         </tr>
         <tr>
-            <td  colspan="2" style="text-align:center; padding-left: 50px; padding-bottom: 5px; width: 120px;">
+            <td  style="text-align:center; padding-left: 50px; padding-bottom: 5px; width: 120px;">
                 <font style="font-size: 12pt" color="#000000">NIP. 19680714 200012 1 002</font>
             </td>
             <td style="text-align:center; padding-left: 50px; padding-bottom: 5px; width: 80px;">
                 <font style="font-size: 12pt" color="#000000">{{ $spj[0]->nipbendahara}}</font>
             </td>
-            <td  colspan="2" style="padding: 10px; padding-bottom: 5px; width: 100px;" align="center">
+            <td  style="padding: 10px; padding-bottom: 5px; width: 100px;" align="center">
                 <font style="font-size: 12pt" color="#000000"></font>
             </td>
         </tr>
+        </tbody>
+    </table>
+    <table cellspacing="0" cellpadding="0" bgcolor="#FFFFFF" border="0" width="{{$pageWidth}}">
+        <tbody>
         <tr>
-            <td colspan="2" style="text-align:center; padding-left: 50px; padding-bottom: 0px; width: 120px; border-top: 4px solid black; ">
+            <td style="text-align:center; padding-left: 50px; padding-bottom: 0px; width: 120px; border-top: 4px solid black; ">
             </td>
             <td style="text-align:center; padding-left: 50px; padding-bottom: 0px; width: 80px; border-top: 4px solid black">
             </td>
-            <td colspan="2" style="padding: 10px; padding-bottom: 0px; width: 100px; border-top: 4px solid black"" align="center">
+            <td style="padding: 10px; padding-bottom: 0px; width: 100px; border-top: 4px solid black"" align="center">
             </td>
         </tr>
         <tr>
-            <td colspan="2" style="text-align:center; padding-left: 50px; padding-bottom: 5px; padding-top: -5px; width: 120px; border-top: 2px solid black; ">
+            <td style="text-align:center; padding-left: 50px; padding-bottom: 5px; padding-top: -5px; width: 120px; border-top: 2px solid black; ">
             </td>
             <td style="text-align:center; padding-left: 50px; padding-bottom: 5px; padding-top: -5px; width: 80px; border-top: 2px solid black; border-left: 2px solid black">
             </td>
-            <td colspan="2" style="padding: 10px; padding-bottom: 5px; padding-top: -5px; width: 100px; border-top: 2px solid black; border-left: 2px solid black"" align="center">
+            <td style="padding: 10px; padding-bottom: 5px; padding-top: -5px; width: 100px; border-top: 2px solid black; border-left: 2px solid black"" align="center">
             </td>
         </tr>
         <tr>
-            <td colspan="2" style="text-align:center; padding-left: 50px; width: 120px;">
+            <td style="text-align:center; padding-left: 50px; width: 120px;">
                 <font style="font-size: 12pt" color="#000000">
                 </font>
             </td>
             <td style="text-align:center; padding-left: 0px; width: 80px; border-left: 2px solid black">
                 <font style="font-size: 12pt" color="#000000">Telah dipungut:</font>
             </td>
-            <td colspan="2" style="padding: 10px; width: padding-left: 30px; 100px; border-left: 2px solid black" align="center">
+            <td style="padding: 10px; width: padding-left: 30px; 100px; border-left: 2px solid black" align="center">
                 <font style="font-size: 12pt" csolor="#000000">Telah dibukukan:</font>
             </td>
         </tr>
         <tr>
-            <td colspan="2" style="text-align:center; padding-left: 50px; width: 120px;">
+            <td style="text-align:center; padding-left: 50px; width: 120px;">
                 <font style="font-size: 12pt" color="#000000"> Barang tersebut telah diterima dengan cukup dan baik
                 </font>
             </td>
             <td style="text-align:center; padding-left: 0px; width: 80px; border-left: 2px solid black">
                 <font style="font-size: 12pt" color="#000000">PPn&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;: {{ $spj[0]->ppn }}</font>
             </td>
-            <td colspan="2" style=" width: 100px; padding-left: 30px; border-left: 2px solid black" align="left">
+            <td style=" width: 100px; padding-left: 30px; border-left: 2px solid black" align="left">
                 <font style="font-size: 12pt" csolor="#000000">BK Tgl. ..............No...............</font>
             </td>
         </tr>
         <tr>
-            <td colspan="2" style="text-align:center; padding-left: 80px; width: 120px;">
+            <td style="text-align:center; padding-left: 80px; width: 120px;">
                 <font style="font-size: 12pt" color="#000000">
                 </font>
             </td>
             <td style="text-align:center; padding-left: 0px; width: 80px; border-left: 2px solid black">
                 <font style="font-size: 12pt" color="#000000"><u>PPh&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;: {{ $spj[0]->pph }}</u></font>
             </td>
-            <td colspan="2" style="width: 100px; padding-left: 30px; border-left: 2px solid black" align="left">
+            <td style="width: 100px; padding-left: 30px; border-left: 2px solid black" align="left">
                 <font style="font-size: 12pt" csolor="#000000">No. Rek: {{$mataanggaran[0]->kodemataanggaran}}</font>
             </td>
         </tr>
         <tr>
-            <td colspan="2" style="text-align:center; padding-left: 50px; width: 120px;">
+            <td style="text-align:center; padding-left: 50px; width: 120px;">
                 <font style="font-size: 12pt" color="#000000">
                 </font>
             </td>
             <td style="text-align:center; padding-left: 0px; width: 80px; border-left: 2px solid black">
                 <font style="font-size: 12pt;" color="#000000">PPh&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;: {{ $spj[0]->totalpp }}</font>
             </td>
-            <td colspan="2" style="width: 100px; padding-left: 30px; border-left: 2px solid black" align="left">
+            <td style="width: 100px; padding-left: 30px; border-left: 2px solid black" align="left">
                 <font style="font-size: 12pt" csolor="#000000">Kode Kegiatan: {{$kegiatan[0]->kodesub}}</font>
             </td>
         </tr>
         <tr>
-            <td colspan="2" style="text-align:center; padding-left: 50px; padding-bottom: 30px; width: 120px;">
+            <td style="text-align:center; padding-left: 50px; padding-bottom: 30px; width: 120px;">
                 <font style="font-size: 12pt" color="#000000">
                 </font>
             </td>
             <td style="text-align:center; padding-left: 0px; padding-bottom: 30px;  width: 80px; border-left: 2px solid black">
                 <font style="font-size: 12pt;" color="#000000"></font>
             </td>
-            <td colspan="2" style="width: 100px; padding-left: 30px; padding-bottom: 30px; border-left: 2px solid black" align="left">
+            <td style="width: 100px; padding-left: 30px; padding-bottom: 30px; border-left: 2px solid black" align="left">
                 <font style="font-size: 12pt" csolor="#000000">Tahun Anggaran: {{$kegiatan[0]->tahun}}</font>
             </td>
         </tr>
         <tr>
-            <td colspan="2" style="text-align:center; padding-left: 50px; padding-bottom: 50px; width: 120px;">
+            <td style="text-align:center; padding-left: 50px; padding-bottom: 50px; width: 120px;">
                 <font style="font-size: 12pt" color="#000000">
                 </font>
             </td>
             <td style="text-align:center; padding-left: 0px; padding-bottom: 50px; width: 80px; border-left: 2px solid black">
                 <font style="font-size: 12pt;" color="#000000">Paraf</font>
             </td>
-            <td colspan="2" style="width: 100px; padding-left: 30px; padding-bottom: 50px; border-left: 2px solid black" align="center">
+            <td style="width: 100px; padding-left: 30px; padding-bottom: 50px; border-left: 2px solid black" align="center">
                 <font style="font-size: 12pt" csolor="#000000">Paraf</font>
             </td>
         </tr>
         <tr>
-            <td colspan="2" style="text-align:center; padding-left: 50px; width: 120px;">
-                <font style="font-size: 12pt" color="#000000"><u>dr. Rina Sugiyanti, SpKJ</u>
+            <td style="text-align:center; padding-left: 50px; width: 120px;">
+                <font style="font-size: 12pt" color="#000000"><u>{{ $spj[0]->namapenerima}}</u>
                 </font>
             </td>
             <td style="text-align:center; padding-left: 0px; width: 80px; border-left: 2px solid black">
                 <font style="font-size: 12pt;" color="#000000">(............................)</font>
             </td>
-            <td colspan="2" style="text-align:center; padding-left: 30px; width: 100px; border-left: 2px solid black">
+            <td style="text-align:center; padding-left: 30px; width: 100px; border-left: 2px solid black">
                 <font style="font-size: 12pt" csolor="#000000">(............................)</font>
             </td>
         </tr>
         <tr>
-            <td colspan="2" style="text-align:center; padding-left: 50px; width: 120px;">
+            <td style="text-align:center; padding-left: 50px; width: 120px;">
                 <font style="font-size: 12pt" color="#000000">19841125 201001 2 016
                 </font>
             </td>
             <td style="text-align:center; padding-left: 30px; width: 80px; border-left: 2px solid black">
                 <font style="font-size: 12pt;" color="#000000"></font>
             </td>
-            <td colspan="2" style="text-align:center; padding-left: 30px; width: 100px; border-left: 2px solid black">
+            <td style="text-align:center; padding-left: 30px; width: 100px; border-left: 2px solid black">
                 <font style="font-size: 12pt" csolor="#000000"></font>
             </td>
         </tr>
         <tr>
-            <td colspan="1" style="text-align:center; padding-left: 0px; padding-top: 100px; width: 100px;">
+            <td style="text-align:center; padding-left: 0px; padding-top: 100px; width: 100px;">
                 <font style="font-size: 12pt" color="#000000"></font>
             </td>
             <td style="width: 100px; padding-top: 100px;"></td>
-            <td colspan="2" style="padding-top: 100px; width: 100px;" align="center">
+            <td style="padding-top: 100px; width: 100px;" align="center">
             </td>
         </tr>
         </tbody>
@@ -312,7 +320,7 @@
     @include('template.footerspj')
 </section>
 <section class="page-break">
-    <table class="bayangprint" cellspacing="0" cellpadding="0" bgcolor="#FFFFFF" border="0" width="{{$pageWidth}}" style="padding-left: 80px; padding-right: 80px;">
+    <table cellspacing="0" cellpadding="0" bgcolor="#FFFFFF" border="0" width="{{$pageWidth}}" style="padding-left: 80px; padding-right: 80px;">
     <tbody>
         <tr>
             <td colspan="4" style="padding-left: 120px; padding-top: 50px; padding-bottom: 0px; " align="center">
@@ -428,7 +436,7 @@
                     <font style="font-size: 12pt" csolor="#000000"></font>
                 </td>
                 <td style="text-align:center; width: 300px;padding-top: 100px; " align="right>
-                    <font style="font-size: 12pt" csolor="#000000"><u>{{$spj[0]->namapenerima}}</u></font>
+                    <font style="font-size: 12pt" csolor="#000000"><u></u></font>
                 </td>
             </tr>
         </tbody>

@@ -459,7 +459,7 @@ define(['initialize'], function (initialize) {
                         "keteranganlain": $scope.item.keterangan != undefined ? $scope.item.keteranganlain : null,
                         "tglpengajuan": moment($scope.item.tglPengajuan).format('YYYY-MM-DD HH:mm'),// DateHelper.getTanggalFormattedNew($scope.item.tglPengajuan),
                         "listtanggal": listDate,
-                        "jumlah": listDate.length
+                        "jumlah": $scope.item.jumlahHari
                     }
                     medifirstService.post('sdm/save-permohonan-cuti', dataSend).then(function (e) {
                         $scope.item = {}
