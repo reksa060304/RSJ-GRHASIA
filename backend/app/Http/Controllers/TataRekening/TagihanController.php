@@ -5583,15 +5583,24 @@ class TagihanController  extends ApiController
             $row = "limit ".$request['row'];
         }
 
-        $piutang = DB::select(DB::raw("select dg.kddiagnosa, dg.namadiagnosa, sum(mk.totaltarifrs) totaltarifrs, 
-        sum(mk.totalpengajuan) totalpengajuan, sum(mk.totalgrouper) totalgrouper, 
-        sum(mk.totalsetujui) totalsetujui
-        from pemakaianasuransi_t pa
-        inner join monitoringklaim_t mk on mk.nosep = pa.nosep
-        inner join diagnosa_m dg on dg.id = pa.diagnosisfk
-        where pa.tglregistrasi::date between '$tglAwal' and '$tglAkhir'
-        group by dg.kddiagnosa, dg.namadiagnosa
-        order by sum(mk.totalsetujui) desc
+        $piutang = DB::select(DB::raw("SELECT coalesce(di.kddiagnosa, '-') kddiagnosa, coalesce(di.namadiagnosa, '-') namadiagnosa,
+        sum(rkb.totaltarifrs) totaltarifrs, sum(rkb.totalsetujui) totalsetujui
+        FROM
+        pasiendaftar_t pd
+        INNER JOIN pasien_m ps ON ps.ID = pd.nocmfk
+        left JOIN antrianpasiendiperiksa_t apd ON pd.norec = apd.noregistrasifk
+        INNER JOIN diagnosapasien_t dp ON apd.norec = dp.noregistrasifk
+        INNER JOIN detaildiagnosapasien_t ddp ON dp.norec = ddp.objectdiagnosapasienfk
+        INNER JOIN diagnosa_m di ON di.ID = ddp.objectdiagnosafk
+        inner join rekapklaimbpjs_t rkb on rkb.norecpdfk = pd.norec
+        WHERE
+        pd.kdprofile = 30
+        and pd.statusenabled = true
+        and rkb.kdprofile = 30
+        and rkb.statusenabled = true
+        AND rkb.tglbayar::date BETWEEN '$tglAwal' AND '$tglAkhir'
+        group by coalesce(di.kddiagnosa, '-'), coalesce(di.namadiagnosa, '-')
+        order by sum(rkb.totalsetujui) desc
         $row"));
 
         $datadata =array(

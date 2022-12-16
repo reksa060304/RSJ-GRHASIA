@@ -110,13 +110,6 @@ define(['initialize'], function (initialize) {
 						"width": "100px",
                         template: "<span class='style-right'>{{formatRupiah('#: totaltarifrs #', '')}}</span>",
 					},
-					
-					{
-						"field": "totalpengajuan",
-						"title": "Total Pengajuan",
-						"width": "100px",
-                        template: "<span class='style-right'>{{formatRupiah('#: totalpengajuan #', '')}}</span>",
-					},
 					{
 						"field": "totalsetujui",
 						"title": "Total Klaim",

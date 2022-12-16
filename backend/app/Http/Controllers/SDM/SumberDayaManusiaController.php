@@ -121,7 +121,7 @@ class SumberDayaManusiaController extends ApiController {
 
         $jenisJabatan = JenisJabatan::where('statusenabled', true)->where('kdprofile', $kdProfile)->get();
         $GolonganPegawai = GolonganPegawai::where('statusenabled', true)
-                            ->select(DB::raw("id, namaexternal || '  /  ' || name as golongan"))
+                            ->select(DB::raw("id, namaexternal || ',  ' || name as golongan, level"))
                             ->where('kdprofile', $kdProfile)->orderBy('id', 'asc')
                             ->get();
         $KelompokJabatan = KelompokJabatan::where('statusenabled', true)->where('kdprofile', $kdProfile)->get();
@@ -472,7 +472,9 @@ class SumberDayaManusiaController extends ApiController {
             ->leftJoin('sdm_kedudukan_m as kdd','kdd.id','=','pg.kedudukanfk')
             ->leftJoin('kategorypegawai_m as kp','kp.id','=','pg.kategorypegawai')
             ->leftJoin('jenispegawai_m as jp','jp.id','=','pg.objectjenispegawaifk')
-            ->select(\DB::raw("pg.*,ag.agama,dkp.detailkategorypegawai,gd.golongandarah,jb.namajabatan as jbfungsional,
+            ->leftJoin('sdm_golongan_m as golcpns','golcpns.id','=','pg.objectgolongancpnsfk')
+            ->leftJoin('pendidikanpegawai_m as pddcpns','pddcpns.id','=','pg.objectpendidikancpnsfk')
+            ->select(\DB::raw("pg.*,pddcpns.pendidikanpegawai as cpnspegawai,golcpns.level as levelcpns,golcpns.namaexternal || ', ' || golcpns.name as golongancpns,ag.agama,dkp.detailkategorypegawai,gd.golongandarah,jb.namajabatan as jbfungsional,
 			                        jb1.namajabatan as jbstruktural,gp.golonganpegawai,uk.name as unitkerja,sp.statuspegawai,
 			                        kj.namakelompokjabatan,spp.statusperkawinan,ese.eselon,pend.pendidikan,jk.jeniskelamin,
 			                        gol.name as golongan,nkj.detailkelompokjabatan,nkj.grade,ks.kelompokshiftkerja,
@@ -539,12 +541,14 @@ class SumberDayaManusiaController extends ApiController {
             ->leftJoin('jabatan_m as jab','jab.id','=','rj.objectjabatanttdfk')
             ->leftJoin('pegawai_m as pg','pg.id','=','rj.objectpegawaifk')
             ->leftJoin('pegawai_m as pg1','pg1.id','=','rj.objectpegawaittdfk')
+            ->leftJoin('eselon_m as es','es.id','=','rj.eselon')
+            
             ->select(DB::raw("rj.*,jb.jenisjabatan,jab.namajabatan as namajabatanttd,
 			                  pg.namalengkap as namapegawai,pg1.namalengkap as pegawaittd,
-			                  pg1.namalengkap || ' / ' || jab.namajabatan as pegawaipenanggungjawab"))
+			                  pg1.namalengkap || ' / ' || jab.namajabatan as pegawaipenanggungjawab, es.eselon as namaeselon"))
             ->where('pg.statusenabled',true)
             ->where('rj.kdprofile', $kdProfile)
-            ->orderBy('rj.tglsk');
+            ->orderBy('rj.tglsk','desc');
         if(isset($request['idPegawai']) && $request['idPegawai']!="" && $request['idPegawai']!="undefined"){
             $dataJabatan = $dataJabatan->where('pg.id','=',$request['idPegawai']);
         }
@@ -648,7 +652,7 @@ class SumberDayaManusiaController extends ApiController {
         ->where('pg.id','=',$request['idPegawai'])
         ->get();
 
-        $dataPangkatGolongan = \DB::select(DB::raw("SELECT rg.masakerjagolongan,
+        $dataPangkatGolongan = \DB::select(DB::raw("SELECT rg.pejabatpenandatangan, rg.masakerjagolongan,
             rg.nominal,rg.objectgolonganfk,rgb.tgltmt as tglawal, rg.norec,rg.tglsk::date, rg.tgltmt::date, gol.name, gol.namaexternal,gol.namaexternal || ', ' || gol.name as golongan, rg.nosk, rg.pejabatmenetapkan
             -- rg.nosk, rg.tglsk,gol.reportdisplay, rg.tgltmt,EXTRACT(year from age(rg.tgltmt,rgb.tgltmt)), age(rg.tgltmt,rgb.tgltmt), rgb.tgltmt as tglawal,rg.nominal 
             FROM riwayatgolongan_t rg 
@@ -659,7 +663,7 @@ class SumberDayaManusiaController extends ApiController {
             select row_number()over(PARTITION by rg.objectpegawaifk ORDER BY rg.tgltmt asc)as rn, rg.* from pegawai_m as pg inner join riwayatgolongan_t as rg on rg.objectpegawaifk = pg.id 
             )as x where x.rn=1
             )as rgb on rgb.objectpegawaifk= rg.objectpegawaifk where rg.objectpegawaifk = $request[idPegawai]
-            ORDER BY rg.tgltmt asc
+            ORDER BY rg.tgltmt desc
         "));
 
         
@@ -890,6 +894,11 @@ class SumberDayaManusiaController extends ApiController {
                 $dataSavePegawai = Pegawai::where('id', $dataPegawai['id'])->where('kdprofile', $kdProfile)->first();
             }
             $dataSavePegawai->noidentitas = $dataPegawai['noidentitas'];
+            $dataSavePegawai->nokarpeg = $dataPegawai['nokarpeg'];
+            $dataSavePegawai->nobpjs = $dataPegawai['nobpjs'];
+            $dataSavePegawai->taspen = $dataPegawai['taspen'];
+            $dataSavePegawai->aktakelahiran = $dataPegawai['aktakelahiran'];
+            $dataSavePegawai->email = $dataPegawai['email'];
             $dataSavePegawai->namalengkap = $dataPegawai['namalengkap'];
             $dataSavePegawai->nama = $dataPegawai['nama'];
             $dataSavePegawai->gelardepan = $dataPegawai['gelardepan'];
@@ -6741,6 +6750,10 @@ public function daftarKenaikanGajiBerkala(Request $request){
                     $dataSaveJabatan->tunjangan = $request['tunjangan'];
                     // $dataSaveJabatan->tunjangan = $request['tunjangan'];
                     $dataSaveJabatan->ttdjabatansk = $request['ttdjabatansk'];
+                    $dataSaveJabatan->instansi = $request['instansi'];
+                    $dataSaveJabatan->tmtjabatan = $request['tmtjabatan'];
+                    $dataSaveJabatan->eselon = $request['eselon'];
+
                     // $dataSaveJabatan->objectjabatanttdfk = $request['objectjabatanttdfk'];
                     $dataSaveJabatan->save();
 
@@ -6770,6 +6783,7 @@ public function daftarKenaikanGajiBerkala(Request $request){
                 $pegawai = Pegawai::where('id', $request['objectpegawaifk'])->first();
                 $pegawai->objectjabatanfungsionalfk = $request['objectjabatanfk'];
                 $pegawai->tunjanganakhir = $request['tunjangan'];
+                $dataSaveJabatan->eselon = $request['eselon'];
                 $pegawai->save();
 
                 }
@@ -6824,13 +6838,13 @@ public function daftarKenaikanGajiBerkala(Request $request){
                 'nosk'=> $request['nosk'],
                 'nominal'=> $request['nominal'],
                 'masakerjagolongan'=> $request['masakerjagolongan'],
+                'pejabatpenandatangan'=> $request['pejabatpenandatangan'],
                 ]);
 
                 DB::table("pegawai_m")->where("id", "=", $request['objectpegawaifk'])->update([
-                    'objectgolonganfk'=> $request['objectgolonganfk'],
-                    'gajiakhir'=> $request['nominal']
+                // 'objectgolonganfk'=> $request['objectgolonganfk'],
+                'gajiakhir'=> $request['nominal']
                 ]);
-                
             }else{
                 $jns ="Ubah ";
                 \DB::table("riwayatgolongan_t")
@@ -6846,14 +6860,53 @@ public function daftarKenaikanGajiBerkala(Request $request){
                     'nosk'=> $request['nosk'],
                     'nominal'=> $request['nominal'],
                     'masakerjagolongan'=> $request['masakerjagolongan'],
+                    'pejabatpenandatangan'=> $request['pejabatpenandatangan'],
                 ]);
-
+                
                 DB::table("pegawai_m")->where("id", "=", $request['objectpegawaifk'])->update([
                     'objectgolonganfk'=> $request['objectgolonganfk'],
                     // 'gajiakhir'=> $request['nominal']
                 ]);
                 
             }
+            
+            $transStatus = true;
+            
+        } catch (\Throwable $th) {
+            $transStatus = false;
+        }
+        if ($transStatus == 'true') {
+            $transMessage = $jns . "Berhasil" ;
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                // 'message' => $TP,
+                'as' => 'asepic',
+            );
+        } else {
+            $transMessage = $jns . "Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message'  => $th->getMessage() ,
+                "e" => $th->getLine(),
+                'as' => 'asepic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    public function updateGolonganTerakhir(Request $request)
+    {
+        
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        \DB::beginTransaction();
+        $jns ="";
+        try {
+            $jns = "Update Golongan Terakhir ";
+                DB::table("pegawai_m")->where("id", "=", $request['objectpegawaifk'])->update([
+                'objectgolonganfk'=> $request['objectgolonganfk'],
+                // 'gajiakhir'=> $request['nominal']
+                ]);
             
             $transStatus = true;
             
@@ -7174,7 +7227,6 @@ public function daftarKenaikanGajiBerkala(Request $request){
                 }else{
                     $dataSaveKeluarga = KeluargaPegawai::where('id', $request['id'])->where('objectpegawaifk', $request['objectpegawaifk'])->first();
                     $jns = "Ubah ";
-
                 }
                     $dataSaveKeluarga->alamat = $request['alamat'];
                     $dataSaveKeluarga->objectjeniskelaminfk = $request['objectjeniskelaminfk'];
@@ -7197,6 +7249,11 @@ public function daftarKenaikanGajiBerkala(Request $request){
                     }
                     $dataSaveKeluarga->statustanggunganfk = $request['statustanggunganfk'];
                     $dataSaveKeluarga->objectpendidikanterakhirfk = $request['objectpendidikanterakhirfk'];
+                    $dataSaveKeluarga->kariskarsu = $request['kariskarsu'];
+                    $dataSaveKeluarga->issuamiistri = $request['issuamiistri'];
+                    $dataSaveKeluarga->isanak = $request['isanak'];
+                    $dataSaveKeluarga->isorangtua = $request['isorangtua'];
+                    $dataSaveKeluarga->tglnikah = $request['tglnikah'];
                     $dataSaveKeluarga->save();
             
             $transStatus = true;
@@ -7209,7 +7266,7 @@ public function daftarKenaikanGajiBerkala(Request $request){
             DB::commit();
             $result = array(
                 'status' => 201,
-                // 'message' => $TP,
+                'message' => $dataSaveKeluarga,
                 'as' => 'asepic',
             );
         } else {
@@ -7412,5 +7469,64 @@ public function daftarKenaikanGajiBerkala(Request $request){
         "));
 
         return $this->respond($data);
+    }
+    public function saveDataCPNS(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        \DB::beginTransaction();
+        $reqcpns = $request['data'];
+        try {
+            $cpns = Pegawai::where('id',$reqcpns['id'])->first();
+            $cpns->instansicpns = $reqcpns['instansicpns'];
+            $cpns->jabatancpns = $reqcpns['jabatancpns'];
+            $cpns->masakerjacpns = $reqcpns['masakerjacpns'];
+            $cpns->noijazahcpns = $reqcpns['noijazahcpns'];
+            $cpns->noskcpns = $reqcpns['noskcpns'];
+            $cpns->objectgolongancpnsfk = $reqcpns['objectgolongancpnsfk'];
+            $cpns->pejabatpenandatangancpns = $reqcpns['pejabatpenandatangancpns'];
+            $cpns->pejabatyangmenetapkancpns = $reqcpns['pejabatyangmenetapkancpns'];
+            $cpns->objectpendidikancpnsfk = $reqcpns['pendidikancpns'];
+            $cpns->prodicpns = $reqcpns['prodicpns'];
+            $cpns->tglijazahcpns = $reqcpns['tglijazahcpns'];
+            $cpns->tglskcpns = $reqcpns['tglskcpns'];
+            $cpns->tmtskcpns = $reqcpns['tmtskcpns'];
+            $cpns->unitkerjacpns = $reqcpns['unitkerjacpns'];
+            $cpns->save();
+            $transStatus = true;
+            
+        } catch (\Throwable $th) {
+            $transStatus = false;
+        }
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan Berhasil" ;
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                // 'message' => $TP,
+                'as' => 'asepic',
+            );
+        } else {
+            $transMessage = "Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message'  => $th->getMessage() ,
+                "e" => $th->getLine(),
+                'as' => 'asepic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    public function getThnBln(Request $request)
+    {
+        $data = \DB::select(DB::raw("select extract(year from age('$request[tgltmt]'::date, '$request[tglcpns]'::date))as thn,
+        extract(month from age('$request[tgltmt]'::date, '$request[tglcpns]'::date))as bln"));
+        return $this->respond($data);
+    }
+    public function getDataJabatan(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $tunjanganbaru = Jabatan::where('statusenabled', true)->where('kdprofile', $kdProfile)->where('objectjenisjabatanfk', $request['jabatan'])->get();
+        return $this->respond($tunjanganbaru);
     }
 }
