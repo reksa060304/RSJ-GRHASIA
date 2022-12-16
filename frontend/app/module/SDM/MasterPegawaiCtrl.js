@@ -343,16 +343,33 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 							var datasuamiistri = []
 							var dataanak = []
 							var dataortu = []
+							var nopas = 0
+							var noan = 0
+							var noor = 0
+							var tertanggung= 0
+							var real = 0
 							for (var i = 0; i < dataKeluarga.length; i++) {
 								dataKeluarga[i].no = i + 1
 								if(dataKeluarga[i].issuamiistri == true){
+									dataKeluarga[i].nopasutri = nopas + 1
 									datasuamiistri.push(dataKeluarga[i])
+									nopas++
 								}
 								if(dataKeluarga[i].isanak == true){
+									$scope.item.jumlahanakreal = real +1
+									real++
+									if (dataKeluarga[i].statustanggunganfk == 1){
+										$scope.item.jumlahanaktertanggung = tertanggung+1
+										tertanggung++
+									}
+									dataKeluarga[i].noanak = noan + 1
 									dataanak.push(dataKeluarga[i])
+									noan++
 								}
 								if (dataKeluarga[i].isorangtua == true) {
+									dataKeluarga[i].noortu = noor + 1
 									dataortu.push(dataKeluarga[i])
+									noor++
 								}
 							}
 							$scope.gridOrangTua = new kendo.data.DataSource({
@@ -384,16 +401,25 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 							var datajabatanPelaksana = []
 							var datajabatanFungsional = []
 							var datajabatanStruktual = []
+							var pel = 0
+							var fun = 0
+							var struk = 0
 							for (var i = 0; i < dataRiwayatJabatan.length; i++) {
 								dataRiwayatJabatan[i].no = i + 1;
 								if (dataRiwayatJabatan[i].objectjenisjabatanfk == 7) {
+									dataRiwayatJabatan[i].nopelaksana = pel+1
 									datajabatanPelaksana.push(dataRiwayatJabatan[i])
+									pel++
 								}
 								if (dataRiwayatJabatan[i].objectjenisjabatanfk == 6) {
+									dataRiwayatJabatan[i].nofungsional = fun +1
 									datajabatanFungsional.push(dataRiwayatJabatan[i])
+									fun++
 								}
 								if (dataRiwayatJabatan[i].objectjenisjabatanfk == 8) {
+									dataRiwayatJabatan[i].nostruktural = struk+1
 									datajabatanStruktual.push(dataRiwayatJabatan[i])
+									struk++
 								}
 							}
 							// console.log(datajabatanPelaksana);
@@ -1685,6 +1711,7 @@ $scope.formatRupiah = function (value, currency) {
 					if (e.status === 201) {
 						grid.removeRow(row);
 					}
+					init()
 				})
 			}
 
@@ -3901,7 +3928,7 @@ $scope.formatRupiah = function (value, currency) {
 						nilaijabatan: NilaiJabatan,
 						grade: Grade,
 						jenispegawai: $scope.item.JenisPegawai.id,
-						masakerjatambahan: $scope.item.masakerjatambahan
+						masakerjatambahan: $scope.item.masakerjatambahan != undefined ? $scope.item.masakerjatambahan : null
 						// Data Status Pegawai
 					}
 
@@ -4501,7 +4528,7 @@ $scope.formatRupiah = function (value, currency) {
 				resizable: true,
 				selectable: 'row',
 				columns: [{
-						"field": "no",
+						"field": "nopelaksana",
 						"title": "No",
 						"width": "5%"
 					},
@@ -4566,7 +4593,7 @@ $scope.formatRupiah = function (value, currency) {
 				resizable: true,
 				selectable: 'row',
 				columns: [{
-						"field": "no",
+						"field": "nofungsional",
 						"title": "No",
 						"width": "5%"
 					},
@@ -4620,7 +4647,7 @@ $scope.formatRupiah = function (value, currency) {
 			$scope.opsiGridRiwayatJabatanStruktural = {
 				toolbar: [{
 					name: "create",
-					text: "Buat Jabatan Pelaksana",
+					text: "Buat Jabatan Struktural",
 					template: '<button ng-click="createJabatanNew(8)" class="k-button k-button-icontext k-grid-upload" href="\\#"><span class="k-icon k-i-plus"></span>Buat Riwayat Jabatan</button>'
 				}],
 				sortable: false,
@@ -4631,7 +4658,7 @@ $scope.formatRupiah = function (value, currency) {
 				resizable: true,
 				selectable: 'row',
 				columns: [{
-						"field": "no",
+						"field": "nostruktural",
 						"title": "No",
 						"width": "5%"
 					},
@@ -4703,7 +4730,7 @@ $scope.formatRupiah = function (value, currency) {
 				resizable: true,
 				selectable: 'row',
 				columns: [{
-						"field": "no",
+						"field": "nopasutri",
 						"title": "No",
 						"width": "5%"
 					},
@@ -4786,7 +4813,7 @@ $scope.formatRupiah = function (value, currency) {
 				resizable: true,
 				selectable: 'row',
 				columns: [{
-						"field": "no",
+						"field": "noanak",
 						"title": "No",
 						"width": "5%"
 					},
@@ -4801,8 +4828,13 @@ $scope.formatRupiah = function (value, currency) {
 						"width": "20%"
 					},
 					{
-						"field": "statustanggungan",
+						"field": "hubungankeluarga",
 						"title": "Status",
+						"width": "20%"
+					},
+					{
+						"field": "statustanggungan",
+						"title": "Tertanggung",
 						"width": "20%"
 					},
 					{
@@ -4857,7 +4889,7 @@ $scope.formatRupiah = function (value, currency) {
 				resizable: true,
 				selectable: 'row',
 				columns: [{
-						"field": "no",
+						"field": "noortu",
 						"title": "No",
 						"width": "5%"
 					},
