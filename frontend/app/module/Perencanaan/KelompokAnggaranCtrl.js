@@ -99,6 +99,13 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 { id: 4, div: "Sub Sub Kegiatan" },
             ];
 
+            $scope.listStatusSPJ = [
+                { id: 0, status: "Semua" },
+                { id: 1, status: "Belum Verifikasi" },
+                { id: 2, status: "Revisi" },
+                { id: 3, status: "Sudah Verifikasi" },
+            ];
+
             $scope.listDivKonsolidasi = [
                 { id: 1, div: "Div: 1" },
                 { id: 2, div: "Div: 2" },
@@ -156,6 +163,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             function loadDataGrid() {
                 $scope.isRouteLoading = true;
 
+                $scope.item.statusspj = [{ id: 0, status: "Semua" }]
                 var idpegawai = '';
                 $scope.pegawaiLogin = medifirstService.getPegawaiLogin();
                 $scope.item.organisasi = '1.02.2.22.0.00.01.0004 - RS Jiwa GRHASIA DINKES DIY'
@@ -3025,8 +3033,13 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             function LoadSPJ(){
                 var tglawal = moment($scope.item.tglawal).format('YYYY-MM-DD');
                 var tglakhir = moment($scope.item.tglakhir).format('YYYY-MM-DD');
+
+                var stat=''
+                if($scope.item.statusspj != undefined){
+                    stat = $scope.item.statusspj.id
+                }
                 
-                medifirstService.get("perencanaan/get-spj?tglAwal="+tglawal+"&tglAkhir="+tglakhir+"&idpegawai="+$scope.idpegawailogin).then(function (e) {
+                medifirstService.get("perencanaan/get-spj?tglAwal="+tglawal+"&tglAkhir="+tglakhir+"&idpegawai="+$scope.idpegawailogin+"&status="+stat).then(function (e) {
                     DataSPJ = e.data.data
                     DataDetailSPJALL = e.data.detail
                     $scope.dataSourceSPJ = new kendo.data.DataSource({
@@ -4336,6 +4349,12 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         "field": "tglverif",
                         "title": "Tgl Verif",
                         "width": "100px",
+                        // hidden: true
+                    },
+                    {
+                        "field": "keterangan",
+                        "title": "Keterangan",
+                        "width": "200px",
                         // hidden: true
                     },
                     {

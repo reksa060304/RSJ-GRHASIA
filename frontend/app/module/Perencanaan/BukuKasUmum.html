@@ -209,10 +209,10 @@
                             k-filter="'contains'" k-auto-bind="false"
                             k-data-source="listJenisBukti"  />
                     </div>
-                    <div class="grid_12" style="text-align: left; margin-top: 10px;">
+                    <div class="grid_12" style="text-align: left; margin-top: 10px;" ng-hide="hiderekanan">
                         Nama Pihak Ketiga 
                     </div>
-                    <div class="grid_12">
+                    <div class="grid_12" ng-hide="hiderekanan">
                         <input kendo-combo-box k-ng-model="item.pihakKetiga"
                             k-data-text-field="'namarekanan'" k-data-value-field="'id'"
                             k-filter="'contains'" k-auto-bind="false"

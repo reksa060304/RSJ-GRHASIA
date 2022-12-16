@@ -483,6 +483,47 @@ class BridgingBPJSV2Controller extends ApiController
         return $this->respond($response);
     }
 
+    public function insertResepApotikOnline(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $headers = $this->getHeaderApotikOnline();
+        $dataJsonSend = json_encode($request['data']);
+        $methods = 'POST';
+        $url =  $this->getUrlBrigdingApotikOnline() . "sjpresep/v3/insert";
+        $response = $this->curlAPI($headers, $dataJsonSend, $url, $methods, $this->getPortBrigdingBPJS());
+        return $this->respond($response);
+    }
+
+    public function insertNonRacikanApotikOnline(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $headers = $this->getHeaderApotikOnline();
+
+        for($i = 0; $i < count($request['data']); $i++){
+            $dataJsonSend = json_encode($request['data'][$i]);
+            $methods = 'POST';
+            $url =  $this->getUrlBrigdingApotikOnline() . "obatnonracikan/v3/insert";
+            $response = $this->curlAPI($headers, $dataJsonSend, $url, $methods, $this->getPortBrigdingBPJS());
+        }
+        
+        return $this->respond($response);
+    }
+
+    public function insertRacikanApotikOnline(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $headers = $this->getHeaderApotikOnline();
+
+        for($i = 0; $i < count($request['data']); $i++){
+            $dataJsonSend = json_encode($request['data'][$i]);
+            $methods = 'POST';
+            $url =  $this->getUrlBrigdingApotikOnline() . "obatracikan/v3/insert";
+            $response = $this->curlAPI($headers, $dataJsonSend, $url, $methods, $this->getPortBrigdingBPJS());
+        }
+        
+        return $this->respond($response);
+    }
+
     public function updateLPK(Request $request)
     {
         $kdProfile = $this->getDataKdProfile($request);

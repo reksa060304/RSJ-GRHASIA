@@ -20,6 +20,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             LoadCache();
             function LoadCache() {
                 var chacePeriode = cacheHelper.get('TransaksiPelayananApotikCtrl');
+                console.log(chacePeriode)
                 if (chacePeriode != undefined) {
                     //var arrPeriode = chacePeriode.split(':');
                     $scope.KelompokUser = medifirstService.getKelompokUser();
@@ -35,6 +36,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     $scope.item.jenisKelamin = chacePeriode[2]
                     $scope.item.noregistrasi = chacePeriode[3]
                     $scope.item.umur = chacePeriode[4]
+                    $scope.item.nosep = chacePeriode[10]
+                    $scope.item.tanggalsep = chacePeriode[11]
+                    $scope.item.kodeapotikonline = chacePeriode[12]
+                    $scope.item.kelompokpasien = chacePeriode[13]
+                    $scope.item.kpid = chacePeriode[14]
                     $scope.listKelas = ([{ id: chacePeriode[5], namakelas: chacePeriode[6] }])
                     $scope.item.kelas = { id: chacePeriode[5], namakelas: chacePeriode[6] }
                     $scope.item.tglRegistrasi = chacePeriode[7]
@@ -691,7 +697,12 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                 12: $scope.item.beratBadan,
                                 13: $scope.item.AlergiYa,
                                 14: '',
-                                15: { id: $scope.dataSelectedPopUpAPD.pgid, namalengkap: $scope.dataSelectedPopUpAPD.namadokter }
+                                15: { id: $scope.dataSelectedPopUpAPD.pgid, namalengkap: $scope.dataSelectedPopUpAPD.namadokter },
+                                16: $scope.item.nosep,
+                                17: $scope.item.tanggalsep,
+                                18: $scope.item.kodeapotikonline,
+                                19: $scope.item.kelompokpasien,
+                                20: $scope.item.kpid,
                             }
                             cacheHelper.set('InputResepApotikCtrl', arrStr);
                             $state.go('InputResepApotik')

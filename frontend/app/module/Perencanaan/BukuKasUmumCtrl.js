@@ -20,6 +20,7 @@ define(['initialize'], function (initialize) {
             $scope.hidepengembalian =true
             $scope.selectedData2 = []; 
             $scope.norecbku = ''
+            $scope.hiderekanan = false
             FormLoad();
 
             $scope.showAndHide = function () {
@@ -146,6 +147,7 @@ define(['initialize'], function (initialize) {
                         $scope.hidepajak =true
                         $scope.hidespj =true
                         $scope.hidests =true
+                        $scope.hiderekanan = false
                         medifirstService.get("perencanaan/get-panjar-bku").then(function (e) {
                         
                             $scope.dataGridPanjar = new kendo.data.DataSource({
@@ -171,6 +173,7 @@ define(['initialize'], function (initialize) {
                         $scope.hidepajak =true
                         $scope.hidespj =true
                         $scope.hidests =true
+                        $scope.hiderekanan = true
                         medifirstService.get("perencanaan/get-spm-bku").then(function (e) {
                         
                             $scope.dataGridSPM = new kendo.data.DataSource({
@@ -196,6 +199,7 @@ define(['initialize'], function (initialize) {
                         $scope.hidepajak =true
                         $scope.hidespj =true
                         $scope.hidests =true
+                        $scope.hiderekanan = true
                         medifirstService.get("perencanaan/get-jasgir-bku").then(function (e) {
                         
                             $scope.dataGridJasaGiro = new kendo.data.DataSource({
@@ -221,6 +225,7 @@ define(['initialize'], function (initialize) {
                         $scope.hidejasgir =true
                         $scope.hidespj =true
                         $scope.hidests =true
+                        $scope.hiderekanan = false
                         medifirstService.get("perencanaan/get-pajak-bku").then(function (e) {
                         
                             $scope.dataGridPajak = new kendo.data.DataSource({
@@ -246,6 +251,7 @@ define(['initialize'], function (initialize) {
                         $scope.hidepajak =true
                         $scope.hidespj =true
                         $scope.hidests =false
+                        $scope.hiderekanan = false
                         medifirstService.get("perencanaan/get-sts-keuangan?key=bku").then(function (e) {
                         
                             $scope.dataGridSTS = new kendo.data.DataSource({
@@ -271,6 +277,7 @@ define(['initialize'], function (initialize) {
                         $scope.hidepajak =true
                         $scope.hidests =true
                         $scope.hidespj =false
+                        $scope.hiderekanan = false
                         medifirstService.get("perencanaan/get-spj-bku").then(function (e) {
                         
                             $scope.dataGridSPJ = new kendo.data.DataSource({
@@ -296,13 +303,19 @@ define(['initialize'], function (initialize) {
             
 
             $scope.SaveBKU = function () {
+
+                var rekanan = null
+                if($scope.item.pihakKetiga != undefined){
+                    rekanan = $scope.item.pihakKetiga.id
+                }
+
                 var objSave = {
                     "bku": $scope.selectedData2,
                     "tglbku": moment($scope.item.tglbku).format('YYYY-MM-DD'),
                     "jenisbukti": $scope.item.itemJenisBukti.id,
                     "asalproduk": $scope.item.sumberDana.id,
                     "uraian": $scope.item.uraianBKU,
-                    "rekananfk": $scope.item.pihakKetiga.id,
+                    "rekananfk": rekanan,
                 }
                 console.log(objSave);
                 // return

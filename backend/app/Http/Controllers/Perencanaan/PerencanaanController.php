@@ -927,10 +927,12 @@ class PerencanaanController extends ApiController {
         "));
         
         $panjar = DB::select(DB::raw("
-        select sr.norec norecspj, ma.id idmataanggaran, ma.kodemataanggaran, subkeg.id idsubkegiatan, subkeg.keterangan subkegiatan, subsubkeg.id idsubsubkegiatan, subsubkeg.keterangan subsubkegiatan, pj.norec, pj.nopanjar, pj.uraian, pj.tglpanjar, pj.jumlah, pj.jenispanjar, sr.norealisasi,
-        sum(stp.jumlahspj) as jumlahspj,
-        coalesce(pj.jumlahpengembalian, 0) jumlahpengembalian,  pj.sumberpanjar,
-        sum(pp.jumlahpengembalian) jumlahpengembalian 
+        select ma.id idmataanggaran, ma.kodemataanggaran, subkeg.id idsubkegiatan, 
+subkeg.keterangan subkegiatan, subsubkeg.id idsubsubkegiatan, subsubkeg.keterangan subsubkegiatan, 
+pj.norec, pj.nopanjar, pj.uraian, pj.tglpanjar, pj.jumlah, pj.jenispanjar, 
+string_agg(DISTINCT sr.norealisasi, ',') norealisasi,
+sum(stp.jumlahspj) as jumlahspj, coalesce(pj.jumlahpengembalian, 0) jumlahpengembalian,  
+pj.sumberpanjar, sum(pp.jumlahpengembalian) jumlahpengembalian 
         from panjar_t pj
         inner join mataanggaran_m ma on ma.id = pj.objectmataanggaranfk
         inner join kegiatananggaran_m subkeg on subkeg.id = pj.objectsubkegiatanfk
@@ -946,7 +948,9 @@ class PerencanaanController extends ApiController {
         and pp.statusenabled = true
         where pj.kdprofile = 30
         and pj.statusenabled = true
-        group by sr.norec, ma.id, ma.kodemataanggaran, subkeg.id, subkeg.keterangan, subsubkeg.id, subsubkeg.keterangan, pj.norec, pj.nopanjar, pj.uraian, pj.tglpanjar, pj.jumlah, pj.jenispanjar, sr.norealisasi,
+        group by ma.id, ma.kodemataanggaran, subkeg.id, subkeg.keterangan, 
+		subsubkeg.id, subsubkeg.keterangan, pj.norec, pj.nopanjar, pj.uraian, pj.tglpanjar, 
+		pj.jumlah, pj.jenispanjar, 
         coalesce(pj.jumlahpengembalian, 0),  pj.sumberpanjar
         order by pj.nopanjar;
         "));
@@ -4738,12 +4742,7 @@ class PerencanaanController extends ApiController {
             $KB= StrukRealisasi::where('norec',$request['norec'])
                 ->first();
             $KB->status = $request['statusverif'];
-            if($request['statusverif'] == 'Sudah Diverifikasi'){
-                $KB->tglverif = $request['tglverif'];
-            } else{
-                $KB->tglverif = null;
-            }
-            
+            $KB->tglverif = $request['tglverif'];
             $KB->objectpanjarfk = $request['norecpanjar'];
             $KB->objectcarabayarfk = $request['carabayar'];
             $KB->keterangan = $request['keterangan'];
@@ -7020,6 +7019,17 @@ order by kodemataanggaran"));
             $pegawai = "and ka.objectpptkfk = ".$request['idpegawai'];
         }
 
+        $status = '';
+        if(isset($request['status']) && $request['status'] != "undefined" && $request['status'] != '' && $request['status'] == 0){
+            $status = "";
+        } else if(isset($request['status']) && $request['status'] != "undefined" && $request['status'] != '' && $request['status'] == 1){
+            $status = "and (sr.status is null or sr.status = 'Belum Diverifikasi')";
+        } else if(isset($request['status']) && $request['status'] != "undefined" && $request['status'] != '' && $request['status'] == 2){
+            $status = "and sr.status = 'Revisi'";
+        } else if(isset($request['status']) && $request['status'] != "undefined" && $request['status'] != '' && $request['status'] == 3){
+            $status = "and sr.status = 'Sudah Diverifikasi'";
+        }
+
         $data = DB::select(DB::raw("
         select string_agg(DISTINCT rd.uraian, ',') uraian, sr.*, cbs.carabayar, sr.tglverif, sr.keterangan, sr.jumlahdibayarverif, ka.tahun,--sr.norealisasi,sr.deskripsi,sr.totalbelanja,
                 pg1.namalengkap as bendahara, pg2.namalengkap as penerima, rkn.namarekanan as pihakketiga,
@@ -7041,6 +7051,7 @@ order by kodemataanggaran"));
                 and rd.statusenabled = true
                 and rd.kdprofile = 30
                 $pegawai
+                $status
 				group by dp0.kode, dp0.keterangan, sr.norec, cbs.carabayar, sr.tglverif, sr.keterangan, sr.jumlahdibayarverif, sr.kdprofile, sr.statusenabled, sr.tglrealisasi, sr.norealisasi, sr.status, sr.totalbelanja, sr.objectcarabayarfk, sr.rekananfk, sr.deskripsi, sr.objectkegiatanfk, sr.objectmataanggaranfk, sr.bendaharafk, sr.penerimafk, sr.pph, sr.ppn, pg1.namalengkap, pg2.namalengkap, rkn.namarekanan ,
                 ka.kode || '~' || ka.keterangan, ma.kodemataanggaran || '~' || ma.namamataanggaran, ka.tahun, ma.kodemataanggaran, ma.namamataanggaran, dp0.id, ka.keterangan, ka.id
             ")
