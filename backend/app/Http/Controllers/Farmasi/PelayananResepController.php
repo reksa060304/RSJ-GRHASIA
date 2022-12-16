@@ -1667,13 +1667,14 @@ class PelayananResepController extends ApiController
                 $strMSHT ='';
                 $MetodeStokHargaNetto='Summary';
             }
-            $result = DB::select(DB::raw("select sk.norec,spd.objectprodukfk, $strMSHT as tgl,spd.objectasalprodukfk,$strHN as harganetto ,
+            $result = DB::select(DB::raw("select pr.isfornas, pr.kdapotikonline, sk.norec,spd.objectprodukfk, $strMSHT as tgl,spd.objectasalprodukfk,$strHN as harganetto ,
                       spd.hargadiscount,sum(spd.qtyproduk) as qtyproduk,spd.objectruanganfk,ap.asalproduk,spd.nostrukterimafk,spd.tglkadaluarsa
                 from stokprodukdetail_t as spd
                 inner JOIN strukpelayanan_t as sk on sk.norec=spd.nostrukterimafk
                 inner JOIN asalproduk_m as ap on ap.id=spd.objectasalprodukfk
+                inner join produk_m pr on pr.id = spd.objectprodukfk
                 where spd.kdprofile = $idProfile and spd.objectprodukfk =:produkId and spd.objectruanganfk =:ruanganid
-                group by sk.norec,spd.objectprodukfk, $strMSHT,spd.objectasalprodukfk, 
+                group by pr.isfornas, pr.kdapotikonline, sk.norec,spd.objectprodukfk, $strMSHT,spd.objectasalprodukfk, 
                         $strHN,spd.hargadiscount,
                 spd.objectruanganfk,ap.asalproduk,spd.nostrukterimafk
                 order By $strMSHT"),
@@ -1705,6 +1706,8 @@ class PelayananResepController extends ApiController
                     'nostrukterimafk' => $item->nostrukterimafk,
                     'tglkadaluarsa' => $item->tglkadaluarsa,
                     'persenup' => $persenUpHargaSatuan,
+                    'kdapotikonline' => $item->kdapotikonline,
+                    'isfornas' => $item->isfornas,
                 );
             }
         }
@@ -1758,14 +1761,15 @@ class PelayananResepController extends ApiController
                 }
             }
 
-            $result = DB::select(DB::raw("select sk.norec,spd.objectprodukfk, $strMSHT as tgl,spd.objectasalprodukfk,$hargaTertinggi as harganetto ,
+            $result = DB::select(DB::raw("select pr.isfornas, pr.kdapotikonline, sk.norec,spd.objectprodukfk, $strMSHT as tgl,spd.objectasalprodukfk,$hargaTertinggi as harganetto ,
                         $hargaTertinggi  as hargajual,spd.hargadiscount,sum(spd.qtyproduk) as qtyproduk,spd.objectruanganfk,ap.asalproduk,spd.nostrukterimafk,
                         spd.tglkadaluarsa
                 from stokprodukdetail_t as spd
                 inner JOIN strukpelayanan_t as sk on sk.norec=spd.nostrukterimafk
                 inner JOIN asalproduk_m as ap on ap.id=spd.objectasalprodukfk
+                inner join produk_m pr on pr.id = spd.objectprodukfk
                 where spd.kdprofile = $idProfile and spd.objectprodukfk =:produkId and spd.objectruanganfk =:ruanganid
-                group by sk.norec,spd.objectprodukfk, $strMSHT,spd.objectasalprodukfk, 
+                group by pr.isfornas, pr.kdapotikonline, sk.norec,spd.objectprodukfk, $strMSHT,spd.objectasalprodukfk, 
                         spd.hargadiscount,
                 spd.objectruanganfk,ap.asalproduk,spd.nostrukterimafk
                 order By $strMSHT"),
@@ -1797,6 +1801,8 @@ class PelayananResepController extends ApiController
                     'nostrukterimafk' => $item->nostrukterimafk,
                     'tglkadaluarsa' => $item->tglkadaluarsa,
                     'persenup' => $persenUpHargaSatuan,
+                    'kdapotikonline' => $item->kdapotikonline,
+                    'isfornas' => $item->isfornas,
                 );
             }
         }
@@ -1851,14 +1857,15 @@ class PelayananResepController extends ApiController
                 }
             }
             $result =[];
-            $result = DB::select(DB::raw("select sk.norec,spd.objectprodukfk, $strMSHT as tgl,spd.objectasalprodukfk,$hargaTerakhir as harganetto ,
+            $result = DB::select(DB::raw("select pr.isfornas, pr.kdapotikonline, sk.norec,spd.objectprodukfk, $strMSHT as tgl,spd.objectasalprodukfk,$hargaTerakhir as harganetto ,
                         $hargaTerakhir  as hargajual,spd.hargadiscount,spd.nostrukterimafk,
                 sum(spd.qtyproduk) as qtyproduk,spd.objectruanganfk,ap.asalproduk,spd.tglkadaluarsa
                 from stokprodukdetail_t as spd
                 inner JOIN strukpelayanan_t as sk on sk.norec=spd.nostrukterimafk
                 inner JOIN asalproduk_m as ap on ap.id=spd.objectasalprodukfk
+                inner join produk_m pr on pr.id = spd.objectprodukfk
                 where spd.kdprofile = $idProfile and spd.objectprodukfk =:produkId and spd.objectruanganfk =:ruanganid and spd.qtyproduk > 0
-                group by sk.norec,spd.objectprodukfk, $strMSHT, spd.objectasalprodukfk, 
+                group by pr.isfornas, pr.kdapotikonline, sk.norec,spd.objectprodukfk, $strMSHT, spd.objectasalprodukfk, 
                         spd.hargadiscount,
                 spd.objectruanganfk,ap.asalproduk,spd.nostrukterimafk
                 order By $strMSHT"),
@@ -1890,6 +1897,8 @@ class PelayananResepController extends ApiController
                     'nostrukterimafk' => $item->nostrukterimafk,
                     'tglkadaluarsa' => $item->tglkadaluarsa,
                     'persenup' => $persenUpHargaSatuan,
+                    'kdapotikonline' => $item->kdapotikonline,
+                    'isfornas' => $item->isfornas,
                 );
             }
         }

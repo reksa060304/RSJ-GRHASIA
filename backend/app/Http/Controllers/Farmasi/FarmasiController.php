@@ -132,8 +132,9 @@ class FarmasiController extends ApiController
             ->JOIN('kelompokpasien_m as kp','kp.id','=','pd.objectkelompokpasienlastfk')
             ->leftJoin('rekanan_m as rk','rk.id','=','pd.objectrekananfk')
             ->JOIN('kelas_m as kl','kl.id','=','pd.objectkelasfk')
-            ->leftJoin('batalregistrasi_t as br','br.pasiendaftarfk','=','pd.norec')            
-            ->select('pd.noregistrasi','ps.nocm','ps.namapasien','jk.jeniskelamin',
+            ->leftJoin('batalregistrasi_t as br','br.pasiendaftarfk','=','pd.norec')     
+            ->leftJoin('pemakaianasuransi_t as pa','pa.noregistrasifk','=','pd.norec')            
+            ->select('pd.noregistrasi','ps.nocm','ps.namapasien','jk.jeniskelamin', 'pa.nosep', 'pa.tanggalsep', 'ru.kodeapotikonline',
                 'kp.id as kpid','kp.kelompokpasien','rk.namarekanan','kl.namakelas','kl.id as klid',
                 'pd.tglregistrasi','pd.tglpulang','ps.tgllahir','rpp.noregistrasifk as rpp','pd.nostruklastfk','pd.norec as norec_pd','ru.namaruangan','dp.namadepartemen','pd.isclosing',
                 DB::raw("
@@ -174,7 +175,7 @@ class FarmasiController extends ApiController
             $data = $data->where('ps.namapasien','ilike','%'. $request['namapasien'].'%');
         }
 
-        $data = $data->groupBy('pd.noregistrasi','ps.nocm','ps.namapasien','jk.jeniskelamin',
+        $data = $data->groupBy('pd.noregistrasi','ps.nocm','ps.namapasien','jk.jeniskelamin', 'pa.nosep', 'pa.tanggalsep', 'ru.kodeapotikonline',
             'kp.id','kp.kelompokpasien','rk.namarekanan','kl.namakelas','kl.id',
             'pd.tglregistrasi','pd.tglpulang','ps.tgllahir','rpp.noregistrasifk','pd.nostruklastfk','pd.norec','ru.namaruangan','dp.namadepartemen');
 //        $data = \DB::table('antrianpasiendiperiksa_t as apd')

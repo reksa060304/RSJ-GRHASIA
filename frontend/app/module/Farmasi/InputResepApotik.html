@@ -68,6 +68,11 @@
                 <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.resep" disabled />
             </div>
         </div>
+        <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.nosep" ng-hide="true" />
+        <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.tanggalsep" ng-hide="true" />
+        <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.kodeapotikonline" ng-hide="true" />
+        <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.kelompokpasien" ng-hide="true" />
+        <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.kpid" ng-hide="true" />
         <div class="grid_7">
             <div class="grid_12">
                 <label c-label item="item" c-label-text="Ruangan"></label>
@@ -422,9 +427,30 @@
                                             <label class="k-checkbox-label" for="checkisCito" ><b>Status Cito</b></label>
                                         </div>
                                     </div>
-
                                     <div class="grid_12" style="margin-top: 5px">
                                         <div class="grid_12">
+                                            <div class="grid_2" ng-hide="hidebpjs">
+                                                <div class="grid_12">
+                                                    <label c-label item="item" c-label-text="Jenis Obat Apotik Online"></label>
+                                                </div>
+                                                <div class="grid_12">
+                                                    <input kendo-combo-box k-ng-model="item.jenisObat"
+                                                        k-data-text-field="'jenisobat'" k-data-value-field="'id'"
+                                                        k-filter="'contains'" k-auto-bind="false"
+                                                        k-data-source="listJenisObat" />
+                                                </div>
+                                            </div>
+                                            <div class="grid_2" ng-hide="hidebpjs">
+                                                <div class="grid_12">
+                                                    <label c-label item="item" c-label-text="Iterasi"></label>
+                                                </div>
+                                                <div class="grid_12">
+                                                    <input kendo-combo-box k-ng-model="item.iterasi"
+                                                        k-data-text-field="'iterasi'" k-data-value-field="'id'"
+                                                        k-filter="'contains'" k-auto-bind="false"
+                                                        k-data-source="listIterasi" />
+                                                </div>
+                                            </div>
                                             <div class="grid_2" style="margin-top: 5px;">
                                                 <label c-label item="item" c-label-text="Catatan Dokter"></label>
                                                 <div class="grid_12">

@@ -74,9 +74,9 @@
                 
                 @foreach ($data as $dt)
                 <tr>
-                    <td align="center" width="50" style="padding: 10px; font-size: 15px; ">{{ $dt->nobku }}</td>
-                    <td align="center" width="50" style="padding: 10px; font-size: 15px; ">{{ $dt->tgl }}</td>
-                    <td align="center" width="50" style="padding: 10px; font-size: 15px; ">{{ $dt->nodokumen }}</td>
+                    <td align="left" width="100" style="padding: 10px; font-size: 15px; ">{{ $dt->nobku }}</td>
+                    <td align="left" width="50" style="padding: 10px; font-size: 15px; ">{{ $dt->tgl }}</td>
+                    <td align="left" width="50" style="padding: 10px; font-size: 15px; ">{{ $dt->nodokumen }}</td>
                     <td align="left" width="200" style="padding: 10px;  font-size: 15px; ">{{ $dt->uraianbku }}</td>
                     <td align="center" width="50" style="padding: 10px; font-size: 15px; ">{{ $dt->objectmataanggaranfk }}</td>
                     <td align="right" width="50" style="padding: 10px; font-size: 15px;  ">{{ number_format($dt->penerimaan,0,',','.') }}</td>

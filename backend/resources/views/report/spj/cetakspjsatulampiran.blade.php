@@ -31,7 +31,7 @@
 <body style="background-color: #CCCCCC">
 <div align="center" >
     <section >
-    <table  class="bayangprint" cellspacing="0" cellpadding="0" bgcolor="#FFFFFF" border="0" width="{{$pageWidth}}" style="height: 700px;">
+    <table cellspacing="0" cellpadding="0" bgcolor="#FFFFFF" border="0" width="{{$pageWidth}}" style="height: 700px;">
         <tbody>
         <tr>
             <td colspan="2" style="padding: 30px; text-align:left">
@@ -295,7 +295,7 @@
         </tr>
         <tr>
             <td colspan="2" style="text-align:center; padding-left: 50px; width: 120px;">
-                <font style="font-size: 12pt" color="#000000"><u>dr. Rina Sugiyanti, SpKJ</u>
+                <font style="font-size: 12pt" color="#000000"><u>{{ $spj[0]->namapenerima}}</u>
                 </font>
             </td>
             <td style="text-align:center; padding-left: 0px; width: 80px; border-left: 2px solid black">
@@ -307,7 +307,7 @@
         </tr>
         <tr>
             <td colspan="2" style="text-align:center; padding-left: 50px; width: 120px;">
-                <font style="font-size: 12pt" color="#000000">19841125 201001 2 016
+                <font style="font-size: 12pt" color="#000000">
                 </font>
             </td>
             <td style="text-align:center; padding-left: 30px; width: 80px; border-left: 2px solid black">
