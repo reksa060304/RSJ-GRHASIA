@@ -2361,6 +2361,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         // });
         // Route::group(['prefix' => 'sdm'], function () {
             /*GET*/
+            Route::get('sdm/get-data-jabatan', 'SDM\SumberDayaManusiaController@getDataJabatan');
             Route::get('sdm/get-data-combo-sdm', 'SDM\SumberDayaManusiaController@getComboPegawaiSdm');
             Route::get('sdm/get-data-pegawai-all-sdm', 'SDM\SumberDayaManusiaController@getDaftarPegawai');
             Route::get('sdm/get-data-abk', 'SDM\SumberDayaManusiaController@getDaftarABK');
@@ -2401,6 +2402,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('sdm/get-datalaporan-diklat', 'SDM\SumberDayaManusiaController@getDataLaporanDiklat');
             Route::get('sdm/get-sisacuti', 'SDM\SumberDayaManusiaController@getSisaCuti');
             Route::get('sdm/get-data-master-pendidikan', 'SDM\SumberDayaManusiaController@getMasterPendidikanPegawai');
+            Route::get('sdm/get-thn-bln', 'SDM\SumberDayaManusiaController@getThnBln');
             //psikologi
             Route::get('psikologi/get-data-psikologi', 'RawatJalan\RawatJalanController@getComboPsikologi');
             Route::get('psikologi/get-daftar-pasien-psikologi', 'RawatJalan\RawatJalanController@getDdaftarRegistrasiPsikologi');
@@ -2415,6 +2417,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
 
             /*POST*/
             //psikologi
+            Route::post('sdm/update-pangkat-golongan-terakhir','SDM\SumberDayaManusiaController@updateGolonganTerakhir');
+            Route::post('sdm/save-data-cpns','SDM\SumberDayaManusiaController@saveDataCPNS');
             Route::post('psikologi/save-hasil-ist-detail', 'RawatJalan\RawatJalanController@saveHasilISTDetail');
             Route::post('psikologi/get-norma-ist', 'RawatJalan\RawatJalanController@getNormaIST');
             Route::post('psikologi/save-ist', 'RawatJalan\RawatJalanController@saveIST');
