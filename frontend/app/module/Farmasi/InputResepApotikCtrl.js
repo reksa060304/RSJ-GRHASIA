@@ -2051,7 +2051,7 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                             namapasien: $scope.item.namaPasien,
                             penulisresepfk: $scope.item.penulisResep != undefined ? $scope.item.penulisResep.id : null, //req nenden
                             ruanganfk: $scope.item.ruangan.id,
-                            jenisobatfk: $scope.item.route.id,
+                            jenisobatfk: $scope.item.route != undefined ? $scope.item.route.id : null,
                             noorder: noOrder,
                             status: strStatus,
                             norecResep: norecResep,
