@@ -447,12 +447,14 @@ define(['initialize'], function (initialize) {
                     }
                     $scope.item.tglAwal = new Date($scope.now);
                     $scope.item.resep = '-';
-
-                    if($scope.item.kelompokpasien.match(/BPJS.*/)){
-                        $scope.hidebpjs = false
-                    } else{
-                        $scope.hidebpjs = true
+                    if ($scope.item.kelompokpasien != undefined){
+                        if ($scope.item.kelompokpasien.match(/BPJS.*/)) {
+                            $scope.hidebpjs = false
+                        } else {
+                            $scope.hidebpjs = true
+                        }
                     }
+                    
                     loadAlamat();
                 } else {
 
