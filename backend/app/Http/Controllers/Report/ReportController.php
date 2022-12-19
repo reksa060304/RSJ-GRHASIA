@@ -11885,7 +11885,7 @@ public function suratBuktiPengembalian(Request $request)
                 $dt->tglttd=$this->tanggal_indonesia(date('Y-m-d'));
             }
         }
-    // dd($data);
+    dd($data);
         $pageWidth = 950;
         return view('report.kgb'
         , compact('data','pageWidth'));

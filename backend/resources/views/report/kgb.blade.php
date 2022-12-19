@@ -195,16 +195,28 @@
                             <td>{{$data[0]->gajiawal}}</td>
                         </tr>
                         <tr>
-                            <td>6. </td>
-                            <td>Berdasarkan SK No.</td>
+                            <td></td>
+                            <td>Berdasarkan</td>
                             <td> : </td>
-                            <td>{{$data[0]->noskcetak}}</td>
+                            <td>Surat Pemberitahuan Kenaikan Gaji Berkala</td>
                         </tr>
                         <tr>
                             <td></td>
-                            <td>Tanggal</td>
-                            <td> : </td>
-                            <td >{{$data[0]->tglsk}}</td>
+                            <td></td>
+                            <td> </td>
+                            <td>Nomor : {{$data[0]->noskcetak }}</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td> </td>
+                            <td>Tanggal : {{$data[0]->tglsk }}</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td> </td>
+                            <td>Terhitung Mulai Tanggal : {{$data[0]->tglakhir }}</td>
                         </tr>
                         <tr>
                             <td colspan="4" height="30" style="padding-left: 6%">Diberikan Kenaikan gaji Berkala sehingga memperoleh :</td>
