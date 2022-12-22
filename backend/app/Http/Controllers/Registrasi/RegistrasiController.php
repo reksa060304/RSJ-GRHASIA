@@ -3141,6 +3141,8 @@ class RegistrasiController extends ApiController
             ->leftjoin ('ruangan_m as ru','ru.id','=','apr.objectruanganfk')
             ->leftjoin ('statusperkawinan_m as st','st.id','=','apr.objectstatusperkawinanfk')
             ->leftjoin ('kelompokpasien_m as kps','kps.id','=','apr.objectkelompokpasienfk')
+            ->leftjoin ('golongandarah_m as gd','gd.id','=','apr.objectgolongandarahfk')
+            ->leftjoin ('hambatankomunikasi_m as hk','hk.id','=','apr.objecthambatankomunikasifk')
             ->select('apr.norec', 'apr.noreservasi','apr.nocmfk', 'ps.nocm','apr.namapasien','apr.alamatlengkap', 'apr.namaayah',
                 'apr.namaibu','apr.namasuamiistri','apr.noaditional','apr.noasuransilain','apr.noidentitas','apr.notelepon',
                 'apr.nobpjs','apr.tempatlahir','apr.tgllahir','apr.tanggalreservasi','apr.tipepasien',
@@ -3148,7 +3150,8 @@ class RegistrasiController extends ApiController
                 'apr.isconfirm','apr.objectjeniskelaminfk','jk.jeniskelamin','apr.objectpegawaifk','pg.namalengkap as dokter',
                 'apr.objectpekerjaanfk','pkj.pekerjaan','apr.objectpendidikanfk','pdd.pendidikan','apr.objectruanganfk','ru.namaruangan as ruangantujuan',
                 'apr.objectstatusperkawinanfk','st.statusperkawinan',
-                'apr.objectkelompokpasienfk','kps.kelompokpasien')
+                'apr.objectkelompokpasienfk','kps.kelompokpasien','gd.golongandarah','apr.objectgolongandarahfk','hk.hambatankomunikasi','apr.objecthambatankomunikasifk',
+                'apr.nikpenanggungjawab','apr.namapenanggungjawab','apr.alamatpenanggungjawab','apr.notelppenanggungjawab')
             ->where('apr.norec', $noreservasi)
             ->where('apr.kdprofile', (int)$kdProfile)
             ->first();

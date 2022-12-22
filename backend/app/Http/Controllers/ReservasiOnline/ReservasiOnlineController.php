@@ -25,6 +25,8 @@ use App\Traits\Valet;
 use DB;
 use App\Transaksi\AntrianPasienRegistrasi;
 use Webpatser\Uuid\Uuid;
+use App\Transaksi\ListNotif;
+
 
 class ReservasiOnlineController extends ApiController
 {
@@ -100,13 +102,53 @@ class ReservasiOnlineController extends ApiController
             ->whereRaw("to_char(tgllibur,'yyyy-MM-dd') >= '$now'")
             ->orderBy('tgllibur')
             ->get();
+
+        $agama = \DB::table('agama_m')
+			->select('id','agama')
+            ->where('statusenabled', true)
+            ->where('kdprofile', $kdProfile)
+            ->get();
+
+        $statusperkawinan = \DB::table('statusperkawinan_m')
+        ->select('id','statusperkawinan')
+        ->where('statusenabled', true)
+        ->where('kdprofile', $kdProfile)
+        ->get();
+
+        $golongandarah = \DB::table('golongandarah_m')
+        ->select('id','golongandarah')
+        ->where('statusenabled', true)
+        ->where('kdprofile', $kdProfile)
+        ->get();
         
+        $pendidikan = \DB::table('pendidikan_m')
+        ->select('id','pendidikan')
+        ->where('statusenabled', true)
+        ->where('kdprofile', $kdProfile)
+        ->get();
+
+        $pekerjaan = \DB::table('pekerjaan_m')
+        ->select('id','pekerjaan')
+        ->where('statusenabled', true)
+        ->where('kdprofile', $kdProfile)
+        ->get();
+        $hambatankomunikasi = \DB::table('hambatankomunikasi_m')
+        ->select('id','hambatankomunikasi')
+        ->where('statusenabled', true)
+        ->where('kdprofile', $kdProfile)
+        ->get();
         $result = array(
             'message' => 'success',
             'status' => 200,
             'ruanganrajal' => $ruanganAvailable,//$dataRuanganJalan,
             'jeniskelamin' => $jk,
             'dokter' => $dkoter,
+            'agama' => $agama,
+            'statusperkawinan' => $statusperkawinan,
+            'golongandarah' => $golongandarah,
+            'pendidikan' => $pendidikan,
+            'pekerjaan' => $pekerjaan,
+            'hambatankomunikasi' => $hambatankomunikasi,
             'kelompokpasien' => $kelompokPasien,
             'libur' => $libur,
             'maxJamReservasi' => $this->settingDataFixed('maxJamReservasi',$kdProfile),
@@ -120,9 +162,14 @@ class ReservasiOnlineController extends ApiController
 			->leftjoin ('pendidikan_m as pdd','ps.objectpendidikanfk','=','pdd.id')
 			->leftjoin ('pekerjaan_m as pk','ps.objectpekerjaanfk','=','pk.id')
 			->leftjoin ('jeniskelamin_m as jk','jk.id','=','ps.objectjeniskelaminfk')
+			->leftjoin ('agama_m as ag','ag.id','=','ps.objectagamafk')
+			->leftjoin ('statusperkawinan_m as sp','sp.id','=','ps.objectstatusperkawinanfk')
+			->leftjoin ('golongandarah_m as gd','gd.id','=','ps.objectgolongandarahfk')
+			->leftjoin ('hambatankomunikasi_m as hk','hk.id','=','ps.hambatankomunikasifk')
 			->select('ps.nocm','ps.id as nocmfk','ps.namapasien','ps.objectjeniskelaminfk','jk.jeniskelamin',
 				'alm.alamatlengkap','pdd.pendidikan','pk.pekerjaan','ps.noidentitas','ps.notelepon','ps.tempatlahir',
-                'ps.nobpjs',
+                'ps.nobpjs','ps.objectagamafk','ag.agama','ps.objectstatusperkawinanfk','sp.statusperkawinan','ps.objectgolongandarahfk','gd.golongandarah',
+                'ps.objectpendidikanfk','ps.objectpekerjaanfk','ps.hambatankomunikasifk','hk.hambatankomunikasi','ps.nik1','ps.alamatrmh', 'ps.teleponpenanggungjawab', 'ps.penanggungjawab',
 				DB::raw(" to_char ( ps.tgllahir,'yyyy-MM-dd') as tgllahir"))
             ->where('ps.statusenabled',true);
 			// ->where('ps.nocm', $nocm);
@@ -277,6 +324,13 @@ class ReservasiOnlineController extends ApiController
             $newptp->noantrian = $nontrian;
             $newptp->objectruanganfk =$request['poliKlinik']['id'];
             $newptp->objectjeniskelaminfk =$request['jenisKelamin']['id'];
+            $newptp->objectagamafk =$request['agamaPasien']['id'];
+            $newptp->objectstatusperkawinanfk =$request['statusPerkawinan']['id'];
+            $newptp->objectgolongandarahfk =$request['golonganDarah']['id'];
+            $newptp->objectpendidikanfk = $request['pendidikan']['id'];
+            $newptp->objectpekerjaanfk = $request['pekerjaan']['id'];
+            $newptp->objecthambatankomunikasifk = $request['hambatanKomunikasi']['id'];
+            $newptp->tempatlahir = $request['tempatLahir'];
             $newptp->noreservasi =substr(Uuid::generate(), 0, 7);
             $newptp->tanggalreservasi = $tglDoang .' '.$antrian['jamkosong'];// $request['tglReservasiFix'];
             $newptp->tgllahir= $request['tglLahir'];
@@ -284,6 +338,10 @@ class ReservasiOnlineController extends ApiController
             $newptp->objectpendidikanfk = 0;
             $newptp->namapasien=  $request['namaPasien'];
             $newptp->noidentitas=  $request['nik'];
+            $newptp->nikpenanggungjawab=  $request['nikPenanggungJawab'];
+            $newptp->namapenanggungjawab=  $request['namaPenanggungJawab'];
+            $newptp->notelppenanggungjawab=  $request['noTelponPenanggungJawab'];
+            $newptp->alamatpenanggungjawab=  $request['alamatLengkapPenanggungJawab'];
             $newptp->tglinput = date('Y-m-d H:i:s');
             if($request['tipePembayaran']['id'] == 2){
                 $newptp->nobpjs= $request['noKartuPeserta'];
@@ -352,6 +410,7 @@ class ReservasiOnlineController extends ApiController
                 ->first();
                 $newptp->dokter =!empty($cek)?$cek->namalengkap:'-';
             }
+            
             $transStatus = true;
          } catch (\Exception $e) {
             $transStatus = false;
@@ -378,6 +437,29 @@ class ReservasiOnlineController extends ApiController
         }
 
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    function tanggal_indonesia($tanggal){
+        $bulan = array (
+        1 =>   'Januari',
+        'Februari',
+        'Maret',
+        'April',
+        'Mei',
+        'Juni',
+        'Juli',
+        'Agustus',
+        'September',
+        'Oktober',
+        'November',
+        'Desember'
+        );
+        
+        $pecahkan = explode('-', $tanggal);
+        
+        // variabel pecahkan 0 = tanggal
+        // variabel pecahkan 1 = bulan
+        // variabel pecahkan 2 = tahun
+        return $pecahkan[2] . ' ' . $bulan[ (int)$pecahkan[1] ] . ' ' . $pecahkan[0];
     }
     public function getHistoryReservasi(Request $request)
     {        

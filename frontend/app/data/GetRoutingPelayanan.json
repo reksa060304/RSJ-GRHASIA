@@ -101,7 +101,7 @@
   },
   {
     "name": "RGFmdGFyUGFzaWVuUGVyamFuamlhbg==",
-    "url": "/RGFmdGFyUGFzaWVuUGVyamFuamlhbg==",
+    "url": "/RGFmdGFyUGFzaWVuUGVyamFuamlhbg==/:noOrder",
     "templateurl": "module/Registrasi/DaftarPasienPerjanjian.html",
     "controller": "DaftarPasienPerjanjianCtrl",
     "deps": [
