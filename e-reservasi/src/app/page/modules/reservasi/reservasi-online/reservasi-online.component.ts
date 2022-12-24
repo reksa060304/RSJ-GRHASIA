@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild, OnDestroy, Injectable } from '@angular/core';
 import { DropdownModule, SelectItem, InplaceModule, MenuItem, ConfirmationService } from 'primeng/primeng';
+import { SocketService } from "./socket.service";
 import {
   HttpClient,
   UserDto,
@@ -62,6 +63,12 @@ export class ReservasiOnlineComponent implements OnInit {
   stepsMenuItems: MenuItem[];
   activeIndex: number = 0;
   listJK: any[] = []
+  listAgama: any[] = []
+  listStatusKawin: any[] = []
+  listGolonganDarah: any[]= []
+  listPekerjaan: any[]=[]
+  listPendidikan: any[]=[]
+  listHambatanKomunikasi: any[] = []
   // listRuangan: any[] = []
   // listDokter: any = []
   listTipePembayaran: any[] = []
@@ -192,6 +199,7 @@ export class ReservasiOnlineComponent implements OnInit {
     private messageService: AlertService,
     private confirmationService: ConfirmationService,
     private fb: FormBuilder,
+    private socket: SocketService
   ) {
 
   }
@@ -251,7 +259,24 @@ export class ReservasiOnlineComponent implements OnInit {
       e.ruanganrajal.forEach(element => {
         this.listRuangan.push(element)
       });
-
+      e.agama.forEach(element => {
+        this.listAgama.push(element)
+      });
+      e.statusperkawinan.forEach(element => {
+        this.listStatusKawin.push(element)
+      });
+      e.golongandarah.forEach(element => {
+        this.listGolonganDarah.push(element)
+      });
+      e.pendidikan.forEach(element => {
+        this.listPendidikan.push(element)
+      });
+      e.pekerjaan.forEach(element => {
+        this.listPekerjaan.push(element)
+      });
+      e.hambatankomunikasi.forEach(element => {
+        this.listHambatanKomunikasi.push(element)
+      });
       // e.dokter.forEach(element => {
       //   this.listDokter.push(element)
       // });
@@ -355,6 +380,17 @@ export class ReservasiOnlineComponent implements OnInit {
       'resumeNIK': new FormControl({ value: null, disabled: true }),
       'namaPasienDukcapil': new FormControl(null),
       'alamatLengkap': new FormControl(null),
+      'tempatLahir': new FormControl(null),
+      'agamaPasien': new FormControl(null),
+      'statusPerkawinan': new FormControl(null),
+      'golonganDarah': new FormControl(null),
+      'pendidikan': new FormControl(null),
+      'pekerjaan': new FormControl(null),
+      'hambatanKomunikasi': new FormControl(null),
+      'nikPenanggungJawab': new FormControl(null),
+      'namaPenanggungJawab': new FormControl(null),
+      'noTelponPenanggungJawab': new FormControl(null),
+      'alamatLengkapPenanggungJawab': new FormControl(null),
     });
 
     this.sortOptions = [
@@ -765,6 +801,18 @@ export class ReservasiOnlineComponent implements OnInit {
     let namaPasien = this.formGroup.get('namaPasien').value
     let tglLahirLama = this.formGroup.get('tglLahirLama').value
     let nik = this.formGroup.get('nik').value
+    let tempatLahir = this.formGroup.get('tempatLahir').value
+    let agamaPasien = this.formGroup.get('agamaPasien').value
+    let statusPerkawinan = this.formGroup.get('statusPerkawinan').value
+    let golonganDarah = this.formGroup.get('golonganDarah').value
+    let pendidikan = this.formGroup.get('pendidikan').value
+    let pekerjaan = this.formGroup.get('pekerjaan').value
+    let hambatanKomunikasi = this.formGroup.get('hambatanKomunikasi').value
+    let alamatLengkap = this.formGroup.get('alamatLengkap').value
+    let nikPenanggungJawab = this.formGroup.get('nikPenanggungJawab').value
+    let namaPenanggungJawab = this.formGroup.get('namaPenanggungJawab').value
+    let noTelponPenanggungJawab = this.formGroup.get('noTelponPenanggungJawab').value
+    let alamatLengkapPenanggungJawab = this.formGroup.get('alamatLengkapPenanggungJawab').value
 
     if (valueIndex == 1) {
       if (this.isBaru) {
@@ -786,6 +834,54 @@ export class ReservasiOnlineComponent implements OnInit {
         }
         if (!noTelpon) {
           this.messageService.warn('Peringatan', 'No Telepon harus di isi !')
+          return
+        }
+        if (!tempatLahir) {
+          this.messageService.warn('Peringatan', 'Tempat Lahir harus di isi !')
+          return
+        }
+        if (!agamaPasien) {
+          this.messageService.warn('Peringatan', 'Agama harus di isi !')
+          return
+        }
+        if (!statusPerkawinan) {
+          this.messageService.warn('Peringatan', 'Status Perkawinan harus di isi !')
+          return
+        }
+        if (!golonganDarah) {
+          this.messageService.warn('Peringatan', 'Golongan Darah harus di isi !')
+          return
+        }
+        if (!pendidikan) {
+          this.messageService.warn('Peringatan', 'Pendidikan harus di isi !')
+          return
+        }
+        if (!pekerjaan) {
+          this.messageService.warn('Peringatan', 'Pekerjaan harus di isi !')
+          return
+        }
+        if (!hambatanKomunikasi) {
+          this.messageService.warn('Peringatan', 'Hambatan Komunikasi harus di isi !')
+          return
+        }
+        if (!alamatLengkap) {
+          this.messageService.warn('Peringatan', 'Alamat Lengkap harus di isi !')
+          return
+        }
+        if (!alamatLengkapPenanggungJawab) {
+          this.messageService.warn('Peringatan', 'Alamat Penanggung Jawab harus di isi !')
+          return
+        }
+        if (!nikPenanggungJawab) {
+          this.messageService.warn('Peringatan', 'NIK Penanggung Jawab harus di isi !')
+          return
+        }
+        if (!namaPenanggungJawab) {
+          this.messageService.warn('Peringatan', 'Nama Penanggung Jawab harus di isi !')
+          return
+        }
+        if (!noTelponPenanggungJawab) {
+          this.messageService.warn('Peringatan', 'No Telepon Penanggung Jawab harus di isi !')
           return
         }
         if (nik.length > 14) {
@@ -819,7 +915,6 @@ export class ReservasiOnlineComponent implements OnInit {
             if (noCM.length > 6) {
               this.formGroup.get('noCm').setValue(res.data[0].nocm)
             }
-
             this.formGroup.get('resumeNIK').setValue(res.data[0].noidentitas)
             this.formGroup.get('noTelpon').setValue(res.data[0].notelepon)
             this.formGroup.get('namaPasien').setValue(res.data[0].namapasien)
@@ -830,6 +925,18 @@ export class ReservasiOnlineComponent implements OnInit {
             let namaPasien = res.data[0].namapasien
             let subStr = namaPasien.substring(0, 5)
             this.messageService.success('Sukses', 'Nama Pasien ' + subStr + '********')
+            this.formGroup.get('agamaPasien').setValue({ id: res.data[0].objectagamafk, agama: res.data[0].agama })
+            this.formGroup.get('statusPerkawinan').setValue({ id: res.data[0].objectstatusperkawinanfk, statusperkawinan: res.data[0].statusperkawinan })
+            this.formGroup.get('golonganDarah').setValue({ id: res.data[0].objectgolongandarahfk, golongandarah: res.data[0].golongandarah })
+            this.formGroup.get('pendidikan').setValue({ id: res.data[0].objectpendidikanfk, pendidikan: res.data[0].pendidikan })
+            this.formGroup.get('pekerjaan').setValue({ id: res.data[0].objectpekerjaanfk, pekerjaan: res.data[0].pekerjaan })
+            this.formGroup.get('hambatanKomunikasi').setValue({ id: res.data[0].hambatankomunikasifk, hambatankomunikasi: res.data[0].hambatankomunikasi })
+            this.formGroup.get('nikPenanggungJawab').setValue(res.data[0].nik1)
+            this.formGroup.get('namaPenanggungJawab').setValue(res.data[0].penanggungjawab)
+            this.formGroup.get('alamatLengkapPenanggungJawab').setValue(res.data[0].alamatrmh)
+            this.formGroup.get('nikPenanggungJawab').setValue(res.data[0].nik1)
+
+
             this.noBpjs = res.data[0].nobpjs
             this.activeIndex = valueIndex
           }
@@ -1046,7 +1153,42 @@ export class ReservasiOnlineComponent implements OnInit {
 
   }
 
+
+  sendNotification(e) {
+    var body = {
+        norec: e.norec,
+        judul: 'Reservasi Baru dari ' + e.namapasien,
+        jenis: 'Reservasi Baru',
+        pesanNotifikasi: '',
+        idRuanganAsal: null,
+        idRuanganTujuan: 110,
+        ruanganAsal: null,
+        ruanganTujuan: 'Bag. Informasi & Rekam Medik',
+        kelompokUser: null, //medifirstService.getKelompokUser()
+        idKelompokUser: null,
+        // idPegawai: medifirstService.getPegawai().id,
+        dataArray: [],
+        urlForm: 'RGFmdGFyUGFzaWVuUGVyamFuamlhbg==',
+        params: {
+            noOrder: e.noreservasi
+        },
+        namaFungsiFrontEnd: null,
+        tgl: this.formGroup.get('tglReservasi').value,
+        tgl_string: this.formGroup.get('tglReservasi').value,
+    }
+    console.log(body);
+    this.sendSocket("sendNotification", body);
+  }
+  sendSocket (name, body) {
+    console.log(this.socket);
+
+    this.socket.emit('get-server-socket', {
+        "name": name,
+        "body": body
+    });
+  }
   save() {
+      // return
     if (this.isBaru) {
       this.formGroup.get('tglLahir').setValue(moment(this.formGroup.get('tglLahir').value).format('YYYY/MM/DD'))
     } else {
@@ -1065,8 +1207,10 @@ export class ReservasiOnlineComponent implements OnInit {
       accept: () => {
         this.simpanVisible = false
         this.httpService.post('medifirst2000/reservasionline/save', this.formGroup.value).subscribe(res => {
-
           var resultNoReservasi = res.data
+          console.log(res);
+        this.sendNotification(res.data)
+
           if (this.isBaru) {
             this.formHistory.get('noCm').setValue(this.formGroup.get('namaPasien').value)
           } else {

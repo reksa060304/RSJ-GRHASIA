@@ -652,7 +652,7 @@ class SumberDayaManusiaController extends ApiController {
         ->where('pg.id','=',$request['idPegawai'])
         ->get();
 
-        $dataPangkatGolongan = \DB::select(DB::raw("SELECT rg.pejabatpenandatangan, rg.masakerjagolongan,
+        $dataPangkatGolongan = \DB::select(DB::raw("SELECT gol.level, rg.pejabatpenandatangan, rg.masakerjagolongan,
             rg.nominal,rg.objectgolonganfk,rgb.tgltmt as tglawal, rg.norec,rg.tglsk::date, rg.tgltmt::date, gol.name, gol.namaexternal,gol.namaexternal || ', ' || gol.name as golongan, rg.nosk, rg.pejabatmenetapkan
             -- rg.nosk, rg.tglsk,gol.reportdisplay, rg.tgltmt,EXTRACT(year from age(rg.tgltmt,rgb.tgltmt)), age(rg.tgltmt,rgb.tgltmt), rgb.tgltmt as tglawal,rg.nominal 
             FROM riwayatgolongan_t rg 
@@ -682,7 +682,7 @@ class SumberDayaManusiaController extends ApiController {
         ->where("gb.objectpegawaifk",$request['idPegawai'])
         ->orderBy('gb.tgltmt','asc')
         ->get();
-        $gajiBerkala = \DB::select(DB::raw("SELECT gol.id, gol.namaexternal || '  /  ' || gol.name as golongan, rg.nominal FROM riwayatgolongan_t rg inner join sdm_golongan_m gol on gol.id = rg.objectgolonganfk
+        $gajiBerkala = \DB::select(DB::raw("SELECT distinct gol.id, gol.namaexternal || '  /  ' || gol.name as golongan, rg.nominal, gol.level FROM riwayatgolongan_t rg inner join sdm_golongan_m gol on gol.id = rg.objectgolonganfk
         where rg.objectpegawaifk = $request[idPegawai]
         "));
         $result = array(
@@ -6905,7 +6905,7 @@ public function daftarKenaikanGajiBerkala(Request $request){
             $jns = "Update Golongan Terakhir ";
                 DB::table("pegawai_m")->where("id", "=", $request['objectpegawaifk'])->update([
                 'objectgolonganfk'=> $request['objectgolonganfk'],
-                // 'gajiakhir'=> $request['nominal']
+                'gajiakhir'=> $request['nominal']
                 ]);
             
             $transStatus = true;

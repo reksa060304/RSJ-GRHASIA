@@ -339,7 +339,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             $scope.item.agama = { id: result.objectagamafk, agama: result.agama };
                         if (result.objectstatusperkawinanfk)
                             $scope.item.statusPerkawinan = { id: result.objectstatusperkawinanfk, statusperkawinan: result.statusperkawinan };
-                        if (result.objectpendidikanfk)
+                        if (result.objectpendidikanfk != null)
                             $scope.item.pendidikan = { id: result.objectpendidikanfk, pendidikan: result.pendidikan };
                         if (result.objectpekerjaanfk)
                             $scope.item.pekerjaan = { id: result.objectpekerjaanfk, pekerjaan: result.pekerjaan };
@@ -355,6 +355,19 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             $scope.item.noTelepon = result.notelepon;
                         if (result.nohp)
                             $scope.item.noHp = result.noaditional;
+                        if (result.objectgolongandarahfk)
+                            $scope.item.golonganDarah = { id: result.objectgolongandarahfk, golongandarah: result.golongandarah };
+                        if (result.objecthambatankomunikasifk)
+                            $scope.item.hambatan = { id: result.objecthambatankomunikasifk, hambatankomunikasi: result.hambatankomunikasi };
+                        
+                        if(result.nikpenanggungjawab){
+                            $scope.item.cekPenanggungJawab = true
+                            $scope.item.PenanggungJawab = result.namapenanggungjawab
+                            $scope.item.Nik1 = result.nikpenanggungjawab
+                            $scope.item.alamatRumah = result.alamatpenanggungjawab
+                            $scope.item.TeleponP = result.notelppenanggungjawab
+                        }
+
                         $scope.reservasi = result
                         $scope.item.noRecReservasi = result.norec
                         $scope.item.noReservasi = result.noreservasi

@@ -927,32 +927,40 @@ class PerencanaanController extends ApiController {
         "));
         
         $panjar = DB::select(DB::raw("
-        select ma.id idmataanggaran, ma.kodemataanggaran, subkeg.id idsubkegiatan, 
-subkeg.keterangan subkegiatan, subsubkeg.id idsubsubkegiatan, subsubkeg.keterangan subsubkegiatan, 
-pj.norec, pj.nopanjar, pj.uraian, pj.tglpanjar, pj.jumlah, pj.jenispanjar, 
-string_agg(DISTINCT sr.norealisasi, ',') norealisasi,
-sum(stp.jumlahspj) as jumlahspj, coalesce(pj.jumlahpengembalian, 0) jumlahpengembalian,  
-pj.sumberpanjar, sum(pp.jumlahpengembalian) jumlahpengembalian 
-        from panjar_t pj
-        inner join mataanggaran_m ma on ma.id = pj.objectmataanggaranfk
-        inner join kegiatananggaran_m subkeg on subkeg.id = pj.objectsubkegiatanfk
-        inner join kegiatananggaran_m subsubkeg on subsubkeg.id = pj.objectsubsubkegiatanfk
-        left join spjtopanjar_t stp on stp.objectpanjarfk = pj.norec
-        and stp.kdprofile = 30
-        and stp.statusenabled = true
-        left join strukrealisasi_t sr on stp.objectspjfk = sr.norec
-        and sr.kdprofile = 30
-        and sr.statusenabled = true
-        left join pengembalianpanjar_t pp on pp.objectpanjarfk = pj.norec
-        and pp.kdprofile = 30
-        and pp.statusenabled = true
-        where pj.kdprofile = 30
-        and pj.statusenabled = true
-        group by ma.id, ma.kodemataanggaran, subkeg.id, subkeg.keterangan, 
-		subsubkeg.id, subsubkeg.keterangan, pj.norec, pj.nopanjar, pj.uraian, pj.tglpanjar, 
-		pj.jumlah, pj.jenispanjar, 
-        coalesce(pj.jumlahpengembalian, 0),  pj.sumberpanjar
-        order by pj.nopanjar;
+        select idmataanggaran, kodemataanggaran, idsubkegiatan, subkegiatan, idsubsubkegiatan, subsubkegiatan,
+        norec, nopanjar, uraian, tglpanjar, jumlah, jenispanjar, norealisasi, coalesce(jumlahspj, 0) jumlahspj, sumberpanjar,
+        coalesce(sum(jumlahpengembalian), 0) jumlahpengembalian, coalesce(jumlahspj, 0) + coalesce(sum(jumlahpengembalian), 0) totalpemakaian,
+        coalesce(jumlah, 0) - (coalesce(jumlahspj, 0) + coalesce(sum(jumlahpengembalian), 0)) selisih
+        from(
+                select ma.id idmataanggaran, ma.kodemataanggaran, subkeg.id idsubkegiatan, 
+                subkeg.keterangan subkegiatan, subsubkeg.id idsubsubkegiatan, subsubkeg.keterangan subsubkegiatan, 
+                pj.norec, pj.nopanjar, pj.uraian, pj.tglpanjar, pj.jumlah, pj.jenispanjar, 
+                string_agg(DISTINCT sr.norealisasi, ',') norealisasi,
+                sum(stp.jumlahspj) as jumlahspj, pj.sumberpanjar, 
+                pp.jumlahpengembalian, pp.norec norecpengembalian
+                from panjar_t pj
+                inner join mataanggaran_m ma on ma.id = pj.objectmataanggaranfk
+                inner join kegiatananggaran_m subkeg on subkeg.id = pj.objectsubkegiatanfk
+                inner join kegiatananggaran_m subsubkeg on subsubkeg.id = pj.objectsubsubkegiatanfk
+                left join spjtopanjar_t stp on stp.objectpanjarfk = pj.norec
+                and stp.kdprofile = 30
+                and stp.statusenabled = true
+                left join strukrealisasi_t sr on stp.objectspjfk = sr.norec
+                and sr.kdprofile = 30
+                and sr.statusenabled = true
+                left join pengembalianpanjar_t pp on pp.objectpanjarfk = pj.norec
+                and pp.kdprofile = 30
+                and pp.statusenabled = true
+                where pj.kdprofile = 30
+                and pj.statusenabled = true
+                group by ma.id, ma.kodemataanggaran, subkeg.id, subkeg.keterangan, 
+                subsubkeg.id, subsubkeg.keterangan, pj.norec, pj.nopanjar, pj.uraian, pj.tglpanjar, 
+                pj.jumlah, pj.jenispanjar, pj.sumberpanjar, pp.jumlahpengembalian, pp.norec
+                order by pj.nopanjar
+        ) as x 
+        group by idmataanggaran, kodemataanggaran, idsubkegiatan, subkegiatan, idsubsubkegiatan, subsubkegiatan,
+        norec, nopanjar, uraian, tglpanjar, jumlah, jenispanjar, norealisasi, jumlahspj, sumberpanjar
+        order by nopanjar;
         "));
 
         $spp = DB::select(DB::raw("select spp.*, spd.nospd , ap.id idasalproduk, ap.asalproduk
@@ -3886,25 +3894,13 @@ pj.sumberpanjar, sum(pp.jumlahpengembalian) jumlahpengembalian
                                 $MA->penerimaan = (int)$request['bku'][$i]['pph'] + (int)$request['bku'][$i]['ppn'];
                                 $MA->pengeluaran = (int)$request['bku'][$i]['jumlahpengeluaran'];
                                 $MA->saldo = (int)$saldofix + (int)$request['bku'][$i]['pph'] + (int)$request['bku'][$i]['ppn'] - (int)$request['bku'][$i]['jumlahpengeluaran'];
-                                $MA->save();
+                                
                             } else if($request['bku'][$i]['jenis'] == 'Penyetoran'){
-                                $MA = new BKU();
-                                $norecKS = $MA->generateNewId();
-                                $MA->norec = $norecKS;
-                                $MA->kdprofile = $idProfile;
-                                $MA->statusenabled = true;
-                                $noa = $this->generateCode(new BKU, 'nobku', 5, '', $idProfile);
-                                $MA->nobku = $noa.'-B02';$MA->objectjenisbuktifk = $request['jenisbukti'];
-                                $MA->tglbku = $request['tglbku'];
-                                $MA->uraianbku = $request['uraian'];
-                                $MA->rekananfk = $request['rekananfk'];
-                                $MA->objectasalprodukfk = $request['asalproduk'];
-                                $MA->objectmataanggaranfk = $request['bku'][$i]['koderek'];
-                                $MA->penerimaan = (int)$request['bku'][$i]['jumlahpenerimaan'];
                                 $MA->pengeluaran = (int)$request['bku'][$i]['pph'] + (int)$request['bku'][$i]['ppn'];
-                                $MA->saldo = (int)$saldofix - (int)$request['bku'][$i]['pph'] - (int)$request['bku'][$i]['ppn'] + (int)$request['bku'][$i]['jumlahpenerimaan'];
-                                $MA->save();
+                                $MA->saldo = (((int)$request['bku'][$i]['pph'] + (int)$request['bku'][$i]['ppn']) - ((int)$request['bku'][$i]['pph'] + (int)$request['bku'][$i]['ppn']));
                             }
+
+                            $MA->save();
 
                             if($request['bku'][$i]['jenis'] == 'Pemungutan'){
                                 $MP = PemungutanPajak::where('norec', '=', $request['bku'][$i]['norec'])->first();
@@ -6353,12 +6349,15 @@ order by kodemataanggaran"));
 
         $panjar = '';
         $spanjar = '';
+        $npanjar = '';
         if(isset($request['panjar']) && $request['panjar'] != "undefined"){
             $panjar = "and stp.objectpanjarfk = '".$request['panjar']."'";
             $spanjar = "and objectpanjarfk = '".$request['panjar']."'";
+            $npanjar = "and norec = '".$request['panjar']."'";
         }
 
-        $sisaperpanjar = DB::select(DB::raw("select jumlahpanjar, sum(jumlahspj) jumlahspj
+        //cari total semua spj yang sudah dipakai di panjar itu
+        $sisaperpanjar = DB::select(DB::raw("select coalesce(jumlahpanjar,0) jumlahpanjar, coalesce(sum(jumlahspj),0) jumlahspj
             from spjtopanjar_t 
         where kdprofile = 30
         and statusenabled = true
@@ -6366,18 +6365,13 @@ order by kodemataanggaran"));
         $spanjar
         group by jumlahpanjar"));
 
+        //jumlah panjar keseluruhan
         $jumlah = DB::select(DB::raw("
-        select sum(pj.jumlah) jumlah 
+        select coalesce(pj.jumlah,0) jumlah 
         from panjar_t pj
-        inner join spjtopanjar_t stp on stp.objectpanjarfk = pj.norec
-        left join strukrealisasi_t sr on stp.objectspjfk = sr.norec 
-        and sr.kdprofile = 30
-        and sr.statusenabled = true
-        where stp.kdprofile = 30
-        and stp.statusenabled = true
-        and pj.kdprofile = 30
+        where pj.kdprofile = 30
         and pj.statusenabled = true
-        $spj
+        $npanjar
         "));
 
         $totalbelanja = DB::select(DB::raw("
@@ -6398,23 +6392,17 @@ order by kodemataanggaran"));
         ) as x
         "));
 
+        //jumlah pengembalian
         $pengembalian = DB::select(DB::raw("select coalesce(sum(jumlahpengembalian),0) jumlahpengembalian 
         from(
             select pp.jumlahpengembalian, pp.norec
             from panjar_t pj
-            inner join spjtopanjar_t stp on stp.objectpanjarfk = pj.norec
-            inner join strukrealisasi_t sr on stp.objectspjfk = sr.norec 
             inner join pengembalianpanjar_t pp on pp.objectpanjarfk = pj.norec
-            where stp.kdprofile = 30
-            and stp.statusenabled = true
-            and pj.kdprofile = 30
+            where pj.kdprofile = 30
             and pj.statusenabled = true
-            and sr.kdprofile = 30
-            and sr.statusenabled = true
             and pp.kdprofile = 30
             and pp.statusenabled = true
-            $spj
-            $panjar
+            $spanjar
             group by pp.jumlahpengembalian, pp.norec
         ) as x
         "));
@@ -7501,44 +7489,10 @@ order by kodemataanggaran"));
         $dataRealisasiDetail = [];
         $thn = date("Y", strtotime($request['tglrealisasi']) );
         $jumlahall = $request['totalbelanja'];
-        $jumlahsimpa = 0;
+        $jumlahsimpan = 0;
         $ceksisapanjar = 'gak ada';
 
        try{
-
-        if($request['norecpanjar'] != null){
-            for($i = 0; $i < count($request['norecpanjar']); $i++){
-                
-                if($jumlahall >= $request['norecpanjar'][$i]['jumlah']){
-                    $jumlahsimpan = $request['norecpanjar'][$i]['jumlah'];
-                    $jumlahall -= $request['norecpanjar'][$i]['jumlah'];
-                } else{
-                    $jumlahsimpan = $jumlahall;
-                }
-
-                $norecpanjar = $request['norecpanjar'][$i]['norecpanjar'];
-
-                $sisaperpanjar = DB::select(DB::raw("select jumlahpanjar, sum(jumlahspj) jumlahspj
-                    from spjtopanjar_t 
-                where kdprofile = 30
-                and statusenabled = true
-                and objectspjfk != ''
-                and objectpanjarfk = '$norecpanjar'
-                group by jumlahpanjar"));
-
-                if(!empty($sisaperpanjar)){
-                    if($jumlahsimpan > ($sisaperpanjar[0]->jumlahpanjar - $sisaperpanjar[0]->jumlahspj)){
-                        $ceksisapanjar = 'ada';
-                    }
-                }
-                
-            }
-        }
-
-        if($ceksisapanjar == 'ada'){
-            $transStatus = 'false';
-            $transMessage = "Ada spj yang melebihi sisa panjar";
-        } else{
             $KM= MataAnggaran::where('kodemataanggaran',$request['objectmataanggaranfk'])
             ->where('statusenabled',true)
                     ->first();
@@ -7558,6 +7512,8 @@ order by kodemataanggaran"));
                 $MA= StrukRealisasi::where('norec',$request['norec'])
                     ->where('kdprofile', $idProfile)
                     ->first();
+                    
+                $jumlahall = (float)$request['totalbelanja'] - (float)$MA->totalbelanja;
             }
             $MA->tglrealisasi = $request['tglrealisasi'];
             $MA->status = null;//$request['status'];
@@ -7606,57 +7562,125 @@ order by kodemataanggaran"));
             }
 
             if($request['norecpanjar'] != null){
-                for($i = 0; $i < count($request['norecpanjar']); $i++){
-                    
-                    if($jumlahall >= $request['norecpanjar'][$i]['jumlah']){
-                        $jumlahsimpan = $request['norecpanjar'][$i]['jumlah'];
-                        $jumlahall -= $request['norecpanjar'][$i]['jumlah'];
-                    } else{
-                        $jumlahsimpan = $jumlahall;
-                    }
+                if($jumlahall > 0){
+                    for($i = 0; $i < count($request['norecpanjar']); $i++){
 
-                    $norecpanjar = $request['norecpanjar'][$i]['norecpanjar'];
-
-                    $sisaperpanjar = DB::select(DB::raw("select jumlahpanjar, sum(jumlahspj) jumlahspj
+                        $npanjar = $request['norecpanjar'][$i]['norecpanjar'];
+                        //cari total semua spj yang sudah dipakai di panjar itu
+                        $sisaperpanjar = DB::select(DB::raw("select coalesce(jumlahpanjar,0) jumlahpanjar, coalesce(sum(jumlahspj),0) jumlahspj
                         from spjtopanjar_t 
-                    where kdprofile = 30
-                    and statusenabled = true
-                    and objectpanjarfk = '$norecpanjar'
-                    group by jumlahpanjar"));
-
-                    $cek = SPJtoPanjar::where('objectpanjarfk', '=', $request['norecpanjar'][$i]['norecpanjar'])
-                    ->where('objectspjfk', '=', $MA->norec)->where('statusenabled', '=', true)->first();
+                        where kdprofile = 30
+                        and statusenabled = true
+                        and objectspjfk != ''
+                        and objectpanjarfk = '$npanjar'
+                        group by jumlahpanjar"));
     
-                    if(empty($cek)){
-                        $SP = new SPJtoPanjar();
-                        $norecKS = $SP->generateNewId();
-                        $SP->norec = $norecKS;
-                        $SP->kdprofile = $idProfile;
-                        $SP->statusenabled = true;
-                        $SP->objectpanjarfk = $request['norecpanjar'][$i]['norecpanjar'];
-                        $SP->jumlahpanjar = $request['norecpanjar'][$i]['jumlah'];
-                        $SP->nourut = $request['norecpanjar'][$i]['nourut'];
-                        $SP->jumlahspj = $jumlahsimpan;
-                        $SP->objectspjfk = $MA->norec;
+                        //jumlah panjar keseluruhan
+                        $jumlah = DB::select(DB::raw("
+                        select coalesce(pj.jumlah,0) jumlah 
+                        from panjar_t pj
+                        where pj.kdprofile = 30
+                        and pj.statusenabled = true
+                        and pj.norec = '$npanjar'
+                        "));
     
-                    } else{
-                        $SP = SPJtoPanjar::where('objectpanjarfk', '=', $request['norecpanjar'][$i]['norecpanjar'])
-                        ->where('objectspjfk', '=', $MA->norec)->where('statusenabled', '=', true)->first();
-                        $SP->objectpanjarfk = $request['norecpanjar'][$i]['norecpanjar'];
-                        $SP->jumlahpanjar = $request['norecpanjar'][$i]['jumlah'];
-                        $SP->nourut = $request['norecpanjar'][$i]['nourut'];
-                        $SP->jumlahspj = $jumlahsimpan;
-                        $SP->objectspjfk = $MA->norec;
+                        //jumlah pengembalian
+                        $pengembalian = DB::select(DB::raw("select coalesce(sum(jumlahpengembalian),0) jumlahpengembalian 
+                        from(
+                            select pp.jumlahpengembalian, pp.norec
+                            from panjar_t pj
+                            inner join pengembalianpanjar_t pp on pp.objectpanjarfk = pj.norec
+                            where pj.kdprofile = 30
+                            and pj.statusenabled = true
+                            and pp.kdprofile = 30
+                            and pp.statusenabled = true
+                            and pj.norec = '$npanjar'
+                            group by pp.jumlahpengembalian, pp.norec
+                        ) as x
+                        "));
+    
+                        $jumlahspj = 0;
+                        if(isset($sisaperpanjar) && count($sisaperpanjar) != 0){
+                            $jumlahspj = $sisaperpanjar[0]->jumlahspj;
+                        }
+    
+                        $jumlahpanjar = 0;
+                        if(isset($jumlah)){
+                            $jumlahpanjar = $jumlah[0]->jumlah;
+                        }
+    
+                        $jumlahkembali = 0;
+                        if(isset($pengembalian) && count($pengembalian) != 0){
+                            $jumlahkembali = $pengembalian[0]->jumlahpengembalian;
+                        }
+    
+                        $jsisa = (float)$jumlahpanjar - (float)$jumlahspj - (float)$jumlahkembali;
                         
+                        if($jsisa > 0){
+                            if($jumlahall >= $jsisa){
+                                $jumlahsimpan = $jsisa;
+                                $jumlahall -= $jsisa;
+                            } else{
+                                $jumlahsimpan = $jumlahall;
+                            }
+        
+                            $norecpanjar = $request['norecpanjar'][$i]['norecpanjar'];
+        
+                            $sisaperpanjar = DB::select(DB::raw("select jumlahpanjar, sum(jumlahspj) jumlahspj
+                                from spjtopanjar_t 
+                            where kdprofile = 30
+                            and statusenabled = true
+                            and objectpanjarfk = '$norecpanjar'
+                            group by jumlahpanjar"));
+        
+                            $cek = SPJtoPanjar::where('objectpanjarfk', '=', $request['norecpanjar'][$i]['norecpanjar'])
+                            ->where('objectspjfk', '=', $MA->norec)->where('statusenabled', '=', true)->first();
+            
+                            if(empty($cek)){
+                                $SP = new SPJtoPanjar();
+                                $norecKS = $SP->generateNewId();
+                                $SP->norec = $norecKS;
+                                $SP->kdprofile = $idProfile;
+                                $SP->statusenabled = true;
+                                $SP->objectpanjarfk = $request['norecpanjar'][$i]['norecpanjar'];
+                                $SP->jumlahpanjar = $request['norecpanjar'][$i]['jumlah'];
+                                $SP->nourut = $request['norecpanjar'][$i]['nourut'];
+                                $SP->jumlahspj = $jumlahsimpan;
+                                $SP->objectspjfk = $MA->norec;
+            
+                            } else{
+                                $SP = SPJtoPanjar::where('objectpanjarfk', '=', $request['norecpanjar'][$i]['norecpanjar'])
+                                ->where('objectspjfk', '=', $MA->norec)->where('statusenabled', '=', true)->first();
+                                $SP->objectpanjarfk = $request['norecpanjar'][$i]['norecpanjar'];
+                                $SP->jumlahpanjar = $request['norecpanjar'][$i]['jumlah'];
+                                $SP->nourut = $request['norecpanjar'][$i]['nourut'];
+                                $SP->jumlahspj += $jumlahsimpan;
+                                $SP->objectspjfk = $MA->norec;
+                                
+                            }
+                            $SP->save();
+                        }
                     }
-                    $SP->save();
+                } else{
+                    $jumlahall = $jumlahall * (-1);
+                    for($i = count($request['norecpanjar'])-1; $i >= 0; $i--){
+                        $SP = SPJtoPanjar::where('objectpanjarfk', '=', $request['norecpanjar'][$i]['norecpanjar'])
+                            ->where('objectspjfk', '=', $MA->norec)->where('statusenabled', '=', true)->first();
+                        if($jumlahall >= $SP->jumlahspj){
+                            $SP->jumlahspj -= $SP->jumlahspj;
+                            $jumlahall -= $SP->jumlahspj;
+                        } else{
+                            $SP->jumlahspj -= $jumlahall;
+                            $jumlahall -= $jumlahall;
+                        }
+
+                        $SP->save();
+                    }
                 }
-
-                $PJ = SPJtoPanjar::where('objectspjfk', '=', '')->delete();
+                
             }
-
             $transStatus = 'true';
-        }
+            
        } catch (\Exception $e) {
             $transStatus = 'false';
             $transMessage = "Simpan Gagal";
@@ -7676,7 +7700,9 @@ order by kodemataanggaran"));
             DB::rollBack();
             $result = array(
                 'status' => 400,
-                'message'=> $transMessage,
+                'messages'=> $transMessage,
+                'line'=> $e->getLine(),
+                'message'=> $e->getMessage(),
                 'as' => '@epic',
             );
             

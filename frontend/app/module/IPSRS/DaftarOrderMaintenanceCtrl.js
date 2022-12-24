@@ -891,10 +891,13 @@ define(['initialize'], function (initialize) {
                 $scope.item.identifikasi = $scope.dataSelected.keteranganverifikasi;
                 $scope.item.catatan = $scope.dataSelected.catatan
                 $scope.listObjekPerbaikan = $scope.dataSelected.detailjenisperbaikan
-                $scope.item.objekPerbaikan = {
-                    id: $scope.dataSelected.detailjenisperbaikan[0].id,
-                    detailjenispekerjaan: $scope.dataSelected.detailjenisperbaikan[0].detailjenispekerjaan,
+                if ($scope.dataSelected.detailjenisperbaikan.length > 0){
+                    $scope.item.objekPerbaikan = {
+                        id: $scope.dataSelected.detailjenisperbaikan[0].id,
+                        detailjenispekerjaan: $scope.dataSelected.detailjenisperbaikan[0].detailjenispekerjaan,
+                    }
                 }
+                
                 $scope.popupPengerjaan.center().open();
             }
             function sendNotification(e) {

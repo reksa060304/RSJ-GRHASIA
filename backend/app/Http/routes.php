@@ -895,7 +895,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::post('cp/hapus-mapping', 'ClinicalPathway\CPController@hapusMapping');    
           Route::get('cp/get-colorchk', 'ClinicalPathway\CPController@getColorCheckBox');
           Route::get('cp/get-kegiatan-uraian', 'ClinicalPathway\CPController@getKegiatanDanUraiannya');
-
+          Route::post('sysadmin/master/save-data-riwayatkamar','SysAdmin\Master\MasterController@saveMasterRiwayatKamar');
+          Route::get('sysadmin/master/get-data-riwayatkamar', 'SysAdmin\Master\MasterController@getLoadRiwayatKamarDll');
         // Route::group(['prefix' => 'farmasi'], function () {
           Route::get('farmasi/get-daftar-order', 'Farmasi\ResepElektronikController@getDaftarOrder');
           Route::get('farmasi/get-penjagaan-order-sudah-verif', 'Farmasi\ResepElektronikController@getPenjagaanOrderSudahVerif');
