@@ -182,6 +182,16 @@ define(['initialize'], function (initialize) {
                     ]
                 }
             ]
+            $scope.listObat = [
+                {
+                    "id": 1, "nama": "Organik",
+                    "detail": [
+                        { "id": 300000093, "nama": "Obat Rutin Dikonsumsi", "satuan": "", "type": "textbox" },
+                        { "id": 300000094, "nama": "Obat yang Digunakan Sekarang", "satuan": "", "type": "textbox" },
+                        
+                    ]
+                }
+            ]
 
             $scope.listOrganik = [
                 {
