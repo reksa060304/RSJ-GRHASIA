@@ -112,6 +112,13 @@
                 </div>
                 <div class="ui-g-12 ui-md-12 ui-lg-3">
                   <mat-form-field appearance="fill">
+                    <mat-label>Tempat Lahir</mat-label>
+                    <input matInput placeholder="Tempat Lahir" formControlName="tempatLahir">
+                    <mat-icon matSuffix>add_location</mat-icon>
+                  </mat-form-field>
+                </div>
+                <div class="ui-g-12 ui-md-12 ui-lg-3">
+                  <mat-form-field appearance="fill">
                     <mat-label>Tgl Lahir</mat-label>
                     <input matInput [matDatepicker]="picker" placeholder="Tgl lahir" formControlName="tglLahir">
                     <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
@@ -144,6 +151,66 @@
                   </mat-select>
                 </mat-form-field> -->
                 </div>
+                <div class="ui-g-12 ui-md-12 ui-lg-3">
+                  <mat-form-field appearance="fill">
+                    <mat-label>Agama</mat-label>
+                    <mat-select formControlName="agamaPasien">
+                      <mat-option *ngFor="let food of listAgama" [value]="food">
+                        {{food.agama}}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+                <div class="ui-g-12 ui-md-12 ui-lg-3">
+                  <mat-form-field appearance="fill">
+                    <mat-label>Status Perkawinan</mat-label>
+                    <mat-select formControlName="statusPerkawinan">
+                      <mat-option *ngFor="let food of listStatusKawin" [value]="food">
+                        {{food.statusperkawinan}}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+                <div class="ui-g-12 ui-md-12 ui-lg-3">
+                  <mat-form-field appearance="fill">
+                    <mat-label>Golongan Darah</mat-label>
+                    <mat-select formControlName="golonganDarah">
+                      <mat-option *ngFor="let food of listGolonganDarah" [value]="food">
+                        {{food.golongandarah}}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+                <div class="ui-g-12 ui-md-12 ui-lg-3">
+                  <mat-form-field appearance="fill">
+                    <mat-label>Pendidikan</mat-label>
+                    <mat-select formControlName="pendidikan">
+                      <mat-option *ngFor="let food of listPendidikan" [value]="food">
+                        {{food.pendidikan}}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+                <div class="ui-g-12 ui-md-12 ui-lg-3">
+                  <mat-form-field appearance="fill">
+                    <mat-label>Pekerjaan</mat-label>
+                    <mat-select formControlName="pekerjaan">
+                      <mat-option *ngFor="let food of listPekerjaan" [value]="food">
+                        {{food.pekerjaan}}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+                <div class="ui-g-12 ui-md-12 ui-lg-3">
+                  <mat-form-field appearance="fill">
+                    <mat-label>Hambatan Komunikasi</mat-label>
+                    <mat-select formControlName="hambatanKomunikasi">
+                      <mat-option *ngFor="let food of listHambatanKomunikasi" [value]="food">
+                        {{food.hambatankomunikasi}}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
               </div>
               <div class="ui-g-12 ui-md-12 ui-lg-3">
                 <div class="ui-g-12 ui-md-12 ui-lg-12">
@@ -158,7 +225,8 @@
                 <div class="ui-g-12 ui-md-12 ui-lg-12">
                   <mat-form-field appearance="fill">
                     <mat-label>Alamat</mat-label>
-                    <input matInput placeholder="Desa, RT/RW, Kelurahan, Kecamatan, Kabupaten, Propinsi" formControlName="alamatLengkap">
+                    <input matInput placeholder="Desa, RT/RW, Kelurahan, Kecamatan, Kabupaten, Propinsi"
+                      formControlName="alamatLengkap">
                     <mat-icon matSuffix>home</mat-icon>
                   </mat-form-field>
                 </div>
@@ -190,6 +258,47 @@
               <div class="ui-g-12 ui-md-12 ui-lg-1">
                 <button type="button" pButton icon="fa fa-arrow-right" (click)="nextWizard(1)"
                   label="Selanjutnya"></button>
+              </div>
+            </div>
+          </p-fieldset>
+          <p-fieldset legend="Identitas Penanggung Jawab Pasien" *ngIf="isBaru" [toggleable]="true">
+            <div class="ui-g-12" *ngIf="isBaru">
+              <div class="ui-g-12 ui-md-12 ui-lg-12">
+                <div class="ui-g-12 ui-md-12 ui-lg-3"
+                  matTooltip="Pencarian NIK Dukcapil, Klik Tombol Cari untuk memproses data">
+                  <mat-form-field appearance="fill">
+                    <mat-label>NIK</mat-label>
+                    <input matInput placeholder="NIK" formControlName="nikPenanggungJawab">
+                    <mat-icon matSuffix>search</mat-icon>
+                  </mat-form-field>
+                </div>
+                <div class="ui-g-12 ui-md-12 ui-lg-3">
+                  <!-- <input type="password" id="ssn" maxlength=9 /> -->
+                  <mat-form-field appearance="fill">
+                    <mat-label>Nama Penanggung Jawab</mat-label>
+                    <input matInput placeholder="Nama Penanggung Jawab" formControlName="namaPenanggungJawab">
+                    <mat-icon matSuffix>account_circle</mat-icon>
+                  </mat-form-field>
+                </div>
+              </div>
+              <div class="ui-g-12 ui-md-12 ui-lg-3">
+                <div class="ui-g-12 ui-md-12 ui-lg-12">
+                  <mat-form-field appearance="fill">
+                    <mat-label>No Telpon</mat-label>
+                    <input matInput placeholder="No Telpon" formControlName="noTelponPenanggungJawab">
+                    <mat-icon matSuffix>phone</mat-icon>
+                  </mat-form-field>
+                </div>
+              </div>
+              <div class="ui-g-12 ui-md-12 ui-lg-6">
+                <div class="ui-g-12 ui-md-12 ui-lg-12">
+                  <mat-form-field appearance="fill">
+                    <mat-label>Alamat</mat-label>
+                    <input matInput placeholder="Desa, RT/RW, Kelurahan, Kecamatan, Kabupaten, Propinsi"
+                      formControlName="alamatLengkapPenanggungJawab">
+                    <mat-icon matSuffix>home</mat-icon>
+                  </mat-form-field>
+                </div>
               </div>
             </div>
           </p-fieldset>

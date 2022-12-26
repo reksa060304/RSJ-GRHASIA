@@ -2,6 +2,7 @@ define(['initialize'], function (initialize) {
     'use strict';
     initialize.controller('DaftarPasienPerjanjianCtrl', ['CacheHelper', '$rootScope', '$scope', '$state', 'MedifirstService','$mdDialog',
         function (cacheHelper, $rootScope, $scope, $state, medifirstService,$mdDialog) {
+            
             $scope.isRouteLoading = false;
             $scope.dataVOloaded = false;
             $rootScope.isOpen = true;
@@ -11,6 +12,15 @@ define(['initialize'], function (initialize) {
             $scope.now = new Date();
             $scope.from = $scope.now;
             $scope.until = $scope.now;
+            $scope.kodeReservasi = ''
+            var kode = ''
+            if ($state.params.noOrder != "-") {
+                kode = $state.params.noOrder
+                $scope.kodeReservasi = kode
+                var date = new Date();
+                $scope.until = new Date(date.setDate(date.getDate() + 7));
+
+            }   
             LoadCombo();
             LoadData();
 
@@ -41,7 +51,7 @@ define(['initialize'], function (initialize) {
                 }
             }
 
-            $scope.kodeReservasi = '';
+            // $scope.kodeReservasi = '';
             $scope.Column = {
                 toolbar: [
                     "excel",
