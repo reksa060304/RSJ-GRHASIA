@@ -24,7 +24,7 @@
             <div ng-cloak>
                 <md-content>
                     <md-tabs md-dynamic-height md-border-bottom>
-                        <md-tab label="Rekap Per-Sub Kegiatan(Jenis Anggaran)">
+                        <md-tab label="Rekap Per-Sub Kegiatan(Jenis Anggaran)" ng-if="jenisanggaranaja === true">
                             <md-content class="md-padding" ng-hide="false">
                                 <div class="grid_12" style="margin-top: 25px;">
                                     <div class="grid_2">
@@ -86,7 +86,7 @@
                                 </div>
                             </md-content>
                         </md-tab>
-                        <md-tab label="Rekap Per-Rekening Sumber Dana">
+                        <md-tab label="Rekap Per-Rekening Sumber Dana" ng-if="sumberdanaaja === true">
                             <md-content class="md-padding" ng-hide="false">
                                 <div class="grid_12" style="margin-top: 25px;">
                                     <div class="grid_2">
@@ -148,7 +148,7 @@
                                 </div>
                             </md-content>
                         </md-tab>
-                        <md-tab label="Rekap Per-Sub Kegiatan(Sumber Dana)">
+                        <md-tab label="Rekap Per-Sub Kegiatan(Sumber Dana)" ng-if="subkegiatanaja === true">
                             <md-content class="md-padding" ng-hide="false">
                                 <div class="grid_12" style="margin-top: 25px;">
                                     <div class="grid_2">
@@ -213,7 +213,7 @@
                                 </div>
                             </md-content>
                         </md-tab>
-                        <md-tab label="RBA Detail">
+                        <md-tab label="RBA Detail" ng-if="pptkaja === true || rbadetailaja === true">
                             <md-content class="md-padding" ng-hide="false">
                                 <div class="grid_12" style="margin-top: 25px;">
                                     <div class="grid_12">
@@ -302,7 +302,7 @@
                                 </div>
                             </md-content>
                         </md-tab>
-                        <md-tab label="Pendapatan Perubahan">
+                        <md-tab label="Pendapatan Perubahan" ng-if="pendapatanperubahanaja === true">
                             <md-content class="md-padding" ng-hide="false">
                                 <div class="grid_12" style="margin-top: 25px;">
                                     <div class="grid_12">
@@ -352,7 +352,7 @@
                                 </div>
                             </md-content>
                         </md-tab>
-                        <md-tab label="Rekap Total Anggaran">
+                        <md-tab label="Rekap Total Anggaran" ng-if="totalanggaranaja === true">
                             <md-content class="md-padding" ng-hide="false">
                                 <div class="grid_12" style="margin-top: 25px;">
                                     <div class="grid_2">
@@ -414,7 +414,7 @@
                                 </div>
                             </md-content>
                         </md-tab>
-                        <md-tab label="SPJ dan Monev">
+                        <md-tab label="SPJ dan Monev" ng-if="pptkaja === true || spjmonevaja === true">
                             <md-content class="md-padding" ng-hide="false">
                                 <div class="grid_12" style="margin-top: 25px;">
                                     <div class="grid_2">
@@ -490,7 +490,7 @@
                                 </div>
                             </md-content>
                         </md-tab>
-                        <md-tab label="KONSOLIDASI ANGGARAN KAS BELANJA KE REK PERMENDAGRI">
+                        <md-tab label="KONSOLIDASI ANGGARAN KAS BELANJA KE REK PERMENDAGRI" ng-if="konsolidasiaja === true">
                             <md-content class="md-padding" ng-hide="false">
                                 <div class="grid_12" style="margin-top: 25px;">
                                     <div class="grid_2">
@@ -540,7 +540,7 @@
                                 </div>
                             </md-content>
                         </md-tab>
-                        <md-tab label="ANGGARAN KAS DAN RENCANA JADWAL TIAP SUB KEGIATAN">
+                        <md-tab label="ANGGARAN KAS DAN RENCANA JADWAL TIAP SUB KEGIATAN" ng-if="pptkaja === true || jadwalaja === true">
                             <md-content class="md-padding" ng-hide="false">
                                 <div class="grid_12" style="margin-top: 25px;">
                                     <div class="grid_2">
@@ -603,7 +603,7 @@
                                 </div>
                             </md-content>
                         </md-tab>
-                        <md-tab label="CETAK ANGGARAN KAS">
+                        <md-tab label="CETAK ANGGARAN KAS" ng-if="cetakaja === true">
                             <md-content class="md-padding" ng-hide="false">
                                 <div class="grid_12" style="margin-top: 25px;">
                                     <div class="grid_2">

@@ -1,8 +1,8 @@
 define(['initialize', 'Configuration'], function (initialize, configuration) {
     'use strict';
     var baseTransaksi = configuration.baseApiBackend;
-    initialize.controller('LaporanKeuanganCtrl', ['CacheHelper', '$scope', 'MedifirstService', 'DateHelper',
-        function (cacheHelper, $scope, medifirstService, DateHelper) {
+    initialize.controller('LaporanKeuanganCtrl', ['CacheHelper', '$scope', '$state', 'MedifirstService', 'DateHelper',
+        function (cacheHelper, $scope, $state, medifirstService, DateHelper) {
 
             $scope.dataVOloaded = true;
             $scope.now = new Date();
@@ -15,6 +15,19 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.item.tahunbku = moment($scope.now).format('YYYY')
             $scope.item.tahunangkas = moment($scope.now).format('YYYY')
             $scope.hide = false
+            $scope.detailaja = false
+            $scope.penyerapanaja = false
+            $scope.bkuaja = false
+            $scope.bankaja = false
+            $scope.pajakaja = false
+            $scope.panjaraja = false
+            $scope.fungsionalaja = false
+            $scope.rkaja = false
+            $scope.roaja = false
+            $scope.lpjaja = false
+            $scope.kasaja = false
+            $scope.sp3bpaja = false
+            $scope.baruaja = false
 
             $scope.yearUngkul = {
                 start: "decade",
@@ -68,6 +81,33 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             medifirstService.get("perencanaan/get-data-combo").then(function (e) {
                 $scope.listTahap = e.data.tahap
                 $scope.listAsalProduk = e.data.asalproduk
+                if($state.params.parameter == '99999'){
+                    $scope.detailaja = true
+                } else if($state.params.parameter == '88888'){
+                    $scope.penyerapanaja = true
+                } else if($state.params.parameter == '77777'){
+                    $scope.bkuaja = true
+                } else if($state.params.parameter == '66666'){
+                    $scope.bankaja = true
+                } else if($state.params.parameter == '55555'){
+                    $scope.pajakaja = true
+                } else if($state.params.parameter == '44444'){
+                    $scope.panjaraja = true
+                } else if($state.params.parameter == '33333'){
+                    $scope.fungsionalaja = true
+                } else if($state.params.parameter == '22222'){
+                    $scope.rkaja = true
+                } else if($state.params.parameter == '11111'){
+                    $scope.roaja = true
+                } else if($state.params.parameter == 'AAAAA'){
+                    $scope.lpjaja = true
+                } else if($state.params.parameter == 'BBBBB'){
+                    $scope.kasaja = true
+                } else if($state.params.parameter == 'CCCCC'){
+                    $scope.baruaja = true
+                } else if($state.params.parameter == 'DDDDD'){
+                    $scope.sp3bpaja = true
+                }
             });
 
             $scope.formatTanggal = function (tanggal) {

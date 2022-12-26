@@ -135,7 +135,7 @@
             </div>
             <div class="grid_4" >
             </div>
-            <div class="grid_12" style="margin-top:10px; margin-left: 10px;">
+            <div class="grid_12" style="margin-top:10px; margin-left: 10px;" ng-hide="true">
                 <div class="grid_3" style="text-align: left; margin-top: 10px;">
                     <label c-label item="item" c-label-text="Nomor Pajak"></label>
                 </div>
@@ -162,7 +162,7 @@
             </div>
             <div class="grid_4" >
             </div>
-            <div class="grid_12" style="margin-top:10px; margin-left: 10px;">
+            <div class="grid_12" style="margin-top:10px; margin-left: 10px;" ng-hide="true">
                 <div class="grid_3" style="text-align: left; margin-top: 10px;">
                     <label c-label item="item" c-label-text="Nomor Pajak"></label>
                 </div>
@@ -222,7 +222,7 @@
         <div class="grid_12" kendo-window="popupTambahPajak" k-title="'Entry Pemungutan Pajak'" k-visible="false" width="1000" style="overflow-x: hidden;">
             
             <div class="grid_12">
-                    <div class="grid_12" style="text-align: left; margin-top: 10px;">
+                    <div class="grid_12" style="text-align: left; margin-top: 10px;" ng-hide="true">
                         <label c-label item="item" c-label-text="Nomor Pajak"></label>
                     </div>
                     <div class="grid_12" style="margin-top: 10px;">
@@ -277,6 +277,15 @@
                             <input c-text-box type="input" class="k-textbox" ng-model="item.jumlahPPh" />
                         </div>
                         <input c-text-box type="input" class="k-textbox" style="border: none;" ng-model="item.jumlahPPhDinamis" />
+                        <div class="grid_2" style="margin-top: 10px;">
+                            <button class="btnTemplate1" ng-click="TambahPPh()">Tambah</button>
+                        </div>
+                        <div class="grid_12 borderBox" style="margin-top: 90px;">
+                            <kendo-grid id="grid" data-source="dataGridPPh" options="columnGridPPh" k-pageable="'true'"
+                                k-sortable="'true'" k-groupable="'false'" k-resizable="'true'" k-selectable="'row'"
+                                k-ng-model="dataSelectedPPh" ng-click="klikPPh(dataSelectedPPh)" style="min-height: 0px; max-height: 1500px;">
+                            </kendo-grid>
+                        </div>
                     </div>
 
                     <div class="grid_12 borderBox containerBorderBox" style="overflow-y: scroll; height:260px;">
@@ -309,6 +318,15 @@
                             <input c-text-box type="input" class="k-textbox" ng-model="item.jumlahPPn" />
                         </div>
                         <input c-text-box type="input" class="k-textbox" style="border: none;" ng-model="item.jumlahPPnDinamis" />
+                        <div class="grid_2" style="margin-top: 10px;">
+                            <button class="btnTemplate1" ng-click="TambahPPN()">Tambah</button>
+                        </div>
+                        <div class="grid_12 borderBox" style="margin-top: 90px;">
+                            <kendo-grid id="grid" data-source="dataGridPPN" options="columnGridPPN" k-pageable="'true'"
+                                k-sortable="'true'" k-groupable="'false'" k-resizable="'true'" k-selectable="'row'"
+                                k-ng-model="dataSelectedPPN" ng-click="klikPPN(dataSelectedPPN)" style="min-height: 0px; max-height: 1500px;">
+                            </kendo-grid>
+                        </div>
                     </div>
 
             </div>

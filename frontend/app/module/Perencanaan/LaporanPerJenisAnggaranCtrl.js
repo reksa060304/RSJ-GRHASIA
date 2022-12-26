@@ -1,14 +1,15 @@
 define(['initialize', 'Configuration'], function (initialize, configuration) {
     'use strict';
     var baseTransaksi = configuration.baseApiBackend;
-    initialize.controller('LaporanPerJenisAnggaranCtrl', ['CacheHelper', '$scope', 'MedifirstService', 'DateHelper',
-        function (cacheHelper, $scope, medifirstService, DateHelper) {
+    initialize.controller('LaporanPerJenisAnggaranCtrl', ['$scope', '$state', 'MedifirstService', 
+        function ($scope, $state, medifirstService) {
 
             $scope.dataVOloaded = true;
             $scope.now = new Date();
             $scope.dataSelected = {};
             $scope.item = {};
             $scope.isRouteLoading = false;
+            $scope.pptkaja = false;
             $scope.item.tglawal = $scope.now;
             $scope.item.tglakhir = $scope.now;
             $scope.disterhadapdetail = FontFaceSetLoadEvent
@@ -22,6 +23,16 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.item.tglCetak8 = moment($scope.now).format('YYYY-MM-DD HH:mm');
             $scope.item.tglCetak9 = moment($scope.now).format('YYYY-MM-DD HH:mm');
             $scope.item.tglCetak10 = moment($scope.now).format('YYYY-MM-DD HH:mm');
+            $scope.jenisanggaranaja = false
+            $scope.sumberdanaaja = false
+            $scope.subkegiatanaja = false
+            $scope.rbadetailaja = false
+            $scope.pendapatanperubahanaja = false
+            $scope.totalanggaranaja = false
+            $scope.spjmonevaja = false
+            $scope.konsolidasiaja = false
+            $scope.jadwalaja = false
+            $scope.cetakaja = false
 
             $scope.yearUngkul = {
                 start: "decade",
@@ -37,6 +48,28 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 { id: 1, jenisrekening: "Tampilkan Rek RBA" },
                 { id: 2, jenisrekening: "Tampilkan Rek Permen"}
             ];
+
+            if($state.params.parameter == '99999'){
+                $scope.sumberdanaaja = true
+            } else if($state.params.parameter == '88888'){
+                $scope.subkegiatanaja = true
+            } else if($state.params.parameter == '77777'){
+                $scope.rbadetailaja = true
+            } else if($state.params.parameter == '66666'){
+                $scope.pendapatanperubahanaja = true
+            } else if($state.params.parameter == '55555'){
+                $scope.totalanggaranaja = true
+            } else if($state.params.parameter == '44444'){
+                $scope.spjmonevaja = true
+            } else if($state.params.parameter == '33333'){
+                $scope.konsolidasiaja = true
+            } else if($state.params.parameter == '22222'){
+                $scope.jadwalaja = true
+            } else if($state.params.parameter == '11111'){
+                $scope.cetakaja = true
+            } else if($state.params.parameter == '00000'){
+                $scope.jenisanggaranaja = true
+            }
 
             medifirstService.get("perencanaan/get-data-combo").then(function (e) {
                 $scope.listTahap = e.data.tahap

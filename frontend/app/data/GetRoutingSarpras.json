@@ -2249,6 +2249,26 @@
     ]
   },
   {
+    "name": "AnggaranKeuangan",
+    "url": "/U2VtdWFBbmdnYXJhbg",
+    "templateurl": "module/Perencanaan/AnggaranKeuangan.html",
+    "controller": "AnggaranKeuanganCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
     "name": "SPJ",
     "url": "/U1BKQW5nZ2FyYW4=",
     "templateurl": "module/Perencanaan/SPJ.html",
@@ -5184,12 +5204,493 @@
         "module": "MedifirstService",
         "define": "MedifirstService"
       }
-    ]  },
+    ]  
+  },
+  {
+    "name": "LaporanPenyerapanAnggaran",
+    "url": "/TGFwb3JhblBlbnllcmFwYW5BbmdnYXJhbg==",
+    "templateurl": "module/Perencanaan/LaporanPenyerapanAnggaran.html",
+    "controller": "LaporanPenyerapanAnggaranCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "LaporanPersandinganAngkas",
+    "url": "/TGFwb3JhblBlcnNhbmRpbmdhbkFuZ2thcw==",
+    "templateurl": "module/Perencanaan/LaporanPersandinganAngkas.html",
+    "controller": "LaporanPersandinganAngkasCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "LPJBK",
+    "url": "/TFBKQks=",
+    "templateurl": "module/Perencanaan/LPJBK.html",
+    "controller": "LPJBKCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "SP3BP",
+    "url": "/U1AzQlA=",
+    "templateurl": "module/Perencanaan/SP3BP.html",
+    "controller": "SP3BPCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "LPJBaru",
+    "url": "/TFBKRm9ybWF0QmFydQ==",
+    "templateurl": "module/Perencanaan/LPJBaru.html",
+    "controller": "LPJBaruCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "LaporanBukuBank",
+    "url": "/TGFwb3JhbkJ1a3VCYW5r",
+    "templateurl": "module/Perencanaan/LaporanBukuBank.html",
+    "controller": "LaporanBukuBankCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "LaporanBukuPanjar",
+    "url": "/TGFwb3JhbkJ1a3VQYW5qYXI=",
+    "templateurl": "module/Perencanaan/LaporanBukuPanjar.html",
+    "controller": "LaporanBukuPanjarCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "LaporanRO",
+    "url": "/TGFwb3JhblJP",
+    "templateurl": "module/Perencanaan/LaporanRO.html",
+    "controller": "LaporanROCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "LaporanRK",
+    "url": "/TGFwb3JhblJL",
+    "templateurl": "module/Perencanaan/LaporanRK.html",
+    "controller": "LaporanRKCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "LaporanFungsional",
+    "url": "/TGFwb3JhbkZ1bmdzaW9uYWw=",
+    "templateurl": "module/Perencanaan/LaporanFungsional.html",
+    "controller": "LaporanFungsionalCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "LaporanBKU",
+    "url": "/TGFwb3JhbkJLVQ==",
+    "templateurl": "module/Perencanaan/LaporanBKU.html",
+    "controller": "LaporanBKUCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "LaporanBukuPajak",
+    "url": "/TGFwb3JhbkJ1a3VQYWphaw==",
+    "templateurl": "module/Perencanaan/LaporanBukuPajak.html",
+    "controller": "LaporanBukuPajakCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "RegisterPenutupanKas",
+    "url": "/UmVnaXN0ZXJQZW51dHVwYW5LYXM=",
+    "templateurl": "module/Perencanaan/RegisterPenutupanKas.html",
+    "controller": "RegisterPenutupanKasCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "RekapPerJenisAnggaran",
+    "url": "/UmVrYXBQZXJKZW5pc0FuZ2dhcmFuKQ==",
+    "templateurl": "module/Perencanaan/RekapPerJenisAnggaran.html",
+    "controller": "RekapPerJenisAnggaranCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "RekapPerSumberDana",
+    "url": "/UmVrYXBQZXJTdW1iZXJEYW5h",
+    "templateurl": "module/Perencanaan/RekapPerSumberDana.html",
+    "controller": "RekapPerSumberDanaCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "RekapPerSubKegiatan",
+    "url": "/UmVrYXBQZXJSZWtlbmluZw==",
+    "templateurl": "module/Perencanaan/RekapPerSubKegiatan.html",
+    "controller": "RekapPerSubKegiatanCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "RBADetail",
+    "url": "/UkJBRGV0YWls",
+    "templateurl": "module/Perencanaan/RBADetail.html",
+    "controller": "RBADetailCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "PendapatanPerubahan",
+    "url": "/UGVuZGFwYXRhblBlcnViYWhhbg==",
+    "templateurl": "module/Perencanaan/PendapatanPerubahan.html",
+    "controller": "PendapatanPerubahanCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "RekapTotalAnggaran",
+    "url": "/UmVrYXBUb3RhbEFuZ2dhcmFu",
+    "templateurl": "module/Perencanaan/RekapTotalAnggaran.html",
+    "controller": "RekapTotalAnggaranCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "SPJdanMonev",
+    "url": "/U1BKZGFuTW9uZXY=",
+    "templateurl": "module/Perencanaan/SPJdanMonev.html",
+    "controller": "SPJdanMonevCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "KonsolidasiRekPermendagri",
+    "url": "/S29uc29saWRhc2lBbmdnYXJhbkJlbGFuamE=",
+    "templateurl": "module/Perencanaan/KonsolidasiRekPermendagri.html",
+    "controller": "KonsolidasiRekPermendagriCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "AnggaranJadwalTiapSubKegiatan",
+    "url": "/QW5nZ2FyYW5KYWR3YWxUaWFwU3ViS2VnaWF0YW4=",
+    "templateurl": "module/Perencanaan/AnggaranJadwalTiapSubKegiatan.html",
+    "controller": "AnggaranJadwalTiapSubKegiatanCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "CetakAnggaranKas",
+    "url": "/Q2V0YWtBbmdnYXJhbkthcw==",
+    "templateurl": "module/Perencanaan/CetakAnggaranKas.html",
+    "controller": "CetakAnggaranKasCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
   {
     "name": "LaporanPerJenisAnggaran",
-    "url": "/TGFwb3JhbkFuZ2dhcmFuUGVyU3ViS2VnaWF0YW4oSmVuaXNBbmdnYXJhbik=",
+    "url": "/LaporanPerJenisAnggaran/:parameter",
     "templateurl": "module/Perencanaan/LaporanPerJenisAnggaran.html",
     "controller": "LaporanPerJenisAnggaranCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "LaporanKeuangan",
+    "url": "/LaporanKeuangan/:parameter",
+    "templateurl": "module/Perencanaan/LaporanKeuangan.html",
+    "controller": "LaporanKeuanganCtrl",
     "deps": [
       {
         "module": "Services",

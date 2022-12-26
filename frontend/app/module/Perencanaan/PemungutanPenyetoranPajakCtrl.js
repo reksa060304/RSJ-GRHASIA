@@ -12,7 +12,13 @@ define(['initialize'], function (initialize) {
             $scope.item.tglawal = moment($scope.now).format('YYYY-MM-DD');
             $scope.item.tglakhir = moment($scope.now).format('YYYY-MM-DD');
             $scope.tglveriftopajak = undefined
+            $scope.dataGridPPh = []
+            $scope.dataGridPPN = []
             $scope.norecspj = ''
+            $scope.nopajakpph=''
+            $scope.nopajakppn=''
+            $scope.norecpp=''
+            $scope.norecpep=''
             FormLoad();
 
             $scope.showAndHide = function () {
@@ -48,6 +54,38 @@ define(['initialize'], function (initialize) {
                 { id: 11, bulan: "November" },
                 { id: 12, bulan: "Desember" },
             ];
+
+            $scope.dataGridPPh = new kendo.data.DataSource({
+                data:  [],
+                pageSize: 10,
+                total: 0,
+                group: $scope.group,
+                serverPaging: false,
+                schema: {
+                    model: {
+                        fields: {
+                        }
+                    }
+                },
+                aggregate: [
+                ]
+            });
+
+            $scope.dataGridPPN = new kendo.data.DataSource({
+                data:  [],
+                pageSize: 10,
+                total: 0,
+                group: $scope.group,
+                serverPaging: false,
+                schema: {
+                    model: {
+                        fields: {
+                        }
+                    }
+                },
+                aggregate: [
+                ]
+            });
 
             medifirstService.get("perencanaan/get-data-combo-pajak").then(function (e) {
                 $scope.listJenisPajak = e.data.data
@@ -144,25 +182,84 @@ define(['initialize'], function (initialize) {
                 //$scope.item.itemJenisBukti = { id: 1, jenisbukti: "UP" }
                 medifirstService.get("perencanaan/get-pajak-udah-save?norec="+$scope.norecspj).then(function (e) {
                     //console.log(e.data.data.length)
-                    if(e.data.data.length != 0){
-                        $scope.item.tglPPh = moment(e.data.data[0].tglpph).format('YYYY-MM-DD');
-                        $scope.item.tglPPn = moment(e.data.data[0].tglppn).format('YYYY-MM-DD');
-                        $scope.item.jenispajak = {id: e.data.data[0].idpajak, jenispajak: e.data.data[0].jenispajak}
-                        $scope.item.jumlahPPh = e.data.data[0].pph
-                        $scope.item.jumlahPPn = e.data.data[0].ppn
-                        $scope.item.jumlahPPhDinamis = e.data.data[0].pph
-                        $scope.item.jumlahPPnDinamis = e.data.data[0].ppn
-                        $scope.item.nopajak = e.data.data[0].nopajakpep
-                        $scope.item.uraianpajak = e.data.data[0].uraianpajak
-                        $scope.item.idbillppn = e.data.data[0].idbillppn
-                        $scope.item.ntpnppn = e.data.data[0].ntpnppn
-                        $scope.item.idbillpph = e.data.data[0].idbillpph
-                        $scope.item.ntpnpph = e.data.data[0].ntpnpph
+                    
+                    if(e.data.pph.length != 0){
+                        $scope.item.uraianpajak = e.data.pph[0].uraianpajak
+                    } else if(e.data.pph.length != 0){
+                        $scope.item.uraianpajak = e.data.ppn[0].uraianpajak
                     } else{
-                        $scope.item.tglPPh = $scope.tglveriftopajak;
-                        $scope.item.tglPPn = $scope.tglveriftopajak;
-                        $scope.item.jenispajak = {id: 20, jenispajak: 'PPh : Pajak Penghasilan'}
-                        $scope.item.nopajak = ''
+                        $scope.item.uraianpajak = ''
+                    }
+
+                    if(e.data.pph.length != 0){
+                        $scope.dataGridPPh = new kendo.data.DataSource({
+                            data:  e.data.pph,
+                            pageSize: 10,
+                            total: e.data.pph.length,
+                            group: $scope.group,
+                            serverPaging: false,
+                            schema: {
+                                model: {
+                                    fields: {
+                                    }
+                                }
+                            },
+                            aggregate: [
+                            ]
+                        });
+                    } 
+                    
+                    if(e.data.ppn.length != 0){
+                        $scope.dataGridPPN = new kendo.data.DataSource({
+                            data:  e.data.ppn,
+                            pageSize: 10,
+                            total: e.data.ppn.length,
+                            group: $scope.group,
+                            serverPaging: false,
+                            schema: {
+                                model: {
+                                    fields: {
+                                    }
+                                }
+                            },
+                            aggregate: [
+                            ]
+                        });
+                    } 
+                    
+                    if(e.data.pph.length == 0 && e.data.ppn.length == 0){
+                        $scope.item.uraianpajak = ''
+                        $scope.dataGridPPh = new kendo.data.DataSource({
+                            data:  [],
+                            pageSize: 10,
+                            total: 0,
+                            group: $scope.group,
+                            serverPaging: false,
+                            schema: {
+                                model: {
+                                    fields: {
+                                    }
+                                }
+                            },
+                            aggregate: [
+                            ]
+                        });
+
+                        $scope.dataGridPPN = new kendo.data.DataSource({
+                            data:  [],
+                            pageSize: 10,
+                            total: 0,
+                            group: $scope.group,
+                            serverPaging: false,
+                            schema: {
+                                model: {
+                                    fields: {
+                                    }
+                                }
+                            },
+                            aggregate: [
+                            ]
+                        });
                     }
                 })
                 
@@ -214,43 +311,21 @@ define(['initialize'], function (initialize) {
 
             $scope.SavePajak = function () {
 
-                var idbillppn = null;
-                if($scope.item.idbillppn != undefined){
-                    idbillppn = $scope.item.idbillppn
-                }
-
-                var ntpnppn = null;
-                if($scope.item.ntpnppn != undefined){
-                    ntpnppn = $scope.item.ntpnppn
-                }
-
-                var idbillpph = null;
-                if($scope.item.idbillpph != undefined){
-                    idbillpph = $scope.item.idbillpph
-                }
-
-                var ntpnpph = null;
-                if($scope.item.ntpnpph != undefined){
-                    ntpnpph = $scope.item.ntpnpph
-                }
-
                 var objSave = {
                     "norec": $scope.norecspj,
                     "uraianpajak": $scope.item.uraianPajak,
                     "nopajak": $scope.item.nopajak,
-                    "jenispph": $scope.item.jenispajak.id,
-                    "pph": $scope.item.jumlahPPh,
-                    "ppn": $scope.item.jumlahPPn,
-                    "idbillppn": idbillppn,
-                    "ntpnppn": ntpnppn,
-                    "idbillpph": idbillpph,
-                    "ntpnpph": ntpnpph,
-                    "tglpph": moment($scope.item.tglPPh).format('YYYY-MM-DD'),
-                    "tglppn": moment($scope.item.tglPPn).format('YYYY-MM-DD'),
+                    "pph": $scope.dataGridPPh.options.data,
+                    "ppn": $scope.dataGridPPN.options.data,
                 }
                 console.log(objSave);
                 // return
                 medifirstService.post('perencanaan/save-pajak', objSave).then(function (e) {
+                    medifirstService.get("perencanaan/get-pajak-pph-ppn?norec="+$scope.norecspj).then(function (e) {
+                        $scope.dataGridPemungutan = e.data.data
+                        $scope.dataGridPenyetoran = e.data.data
+                    });
+
                     console.log(e.data.result.nopajak)
                     $scope.item.nospjpemungutan = e.data.result.nopajak
                     $scope.item.nospjpenyetoran = e.data.results.nopajak
@@ -272,6 +347,41 @@ define(['initialize'], function (initialize) {
                     $scope.item.ntpnppn = ''
                     $scope.item.idbillpph = ''
                     $scope.item.ntpnpph = ''
+                    $scope.norecpp = ''
+                    $scope.norecpep = ''
+                    $scope.nopajakppn = ''
+
+                    $scope.dataGridPPh = new kendo.data.DataSource({
+                            data:  [],
+                            pageSize: 10,
+                            total: 0,
+                            group: $scope.group,
+                            serverPaging: false,
+                            schema: {
+                                model: {
+                                    fields: {
+                                    }
+                                }
+                            },
+                            aggregate: [
+                            ]
+                        });
+
+                        $scope.dataGridPPN = new kendo.data.DataSource({
+                            data:  [],
+                            pageSize: 10,
+                            total: 0,
+                            group: $scope.group,
+                            serverPaging: false,
+                            schema: {
+                                model: {
+                                    fields: {
+                                    }
+                                }
+                            },
+                            aggregate: [
+                            ]
+                        });
 
                     $scope.popupTambahPajak.center().close()
                 })
@@ -289,6 +399,192 @@ define(['initialize'], function (initialize) {
                     $scope.item.nospjpenyetoran = ''
                 })
 
+            }
+
+            $scope.$watch('item.idbillpph', function (newValue, oldValue) {
+                if (newValue != oldValue) {
+                    $scope.item.idbillppn = $scope.item.idbillpph
+                }
+            });
+
+            $scope.$watch('item.ntpnpph', function (newValue, oldValue) {
+                if (newValue != oldValue) {
+                    $scope.item.ntpnppn = $scope.item.ntpnpph
+                }
+            });
+
+            $scope.klikPPh = function (dataSelectedPPh) {
+                if (dataSelectedPPh != undefined) {
+                    console.log(dataSelectedPPh)
+                    $scope.item.jenispajak = {id: dataSelectedPPh.objectjenispphfk, jenispajak: dataSelectedPPh.jenispph}
+                    $scope.item.tglPPh = moment(dataSelectedPPh.tglpph).format('YYYY-MM-DD')
+                    $scope.item.idbillpph = dataSelectedPPh.idbillpph
+                    $scope.item.ntpnpph = dataSelectedPPh.ntpnpph
+                    $scope.item.jumlahPPh = dataSelectedPPh.pph
+                    $scope.norecpp = dataSelectedPPh.norecpp
+                    $scope.norecpep = dataSelectedPPh.norecpep
+                    $scope.nopajakpph = dataSelectedPPh.nopajakpph
+                }
+            }
+
+            $scope.klikPPN = function (dataSelectedPPN) {
+                if (dataSelectedPPN != undefined) {
+                    console.log(dataSelectedPPN)
+                    $scope.item.tglPPn = moment(dataSelectedPPN.tglppn).format('YYYY-MM-DD')
+                    $scope.item.idbillppn = dataSelectedPPN.idbillppn
+                    $scope.item.ntpnppn = dataSelectedPPN.ntpnppn
+                    $scope.item.jumlahPPn = dataSelectedPPN.ppn
+                    $scope.norecpp = dataSelectedPPN.norecpp
+                    $scope.norecpep = dataSelectedPPN.norecpep
+                    $scope.nopajakppn = dataSelectedPPN.nopajakppn
+                }
+            }
+
+            $scope.TambahPPh = function () {
+
+                console.log($scope.dataGridPPh);
+                console.log($scope.dataGridPPN);
+                if($scope.nopajakpph != ''){
+                    for(var i =0; i<$scope.dataGridPPh.options.data.length; i++){
+                        if($scope.dataGridPPh.options.data[i].nopajakpph == $scope.nopajakpph){
+                            $scope.dataGridPPh.options.data[i].jenispph = $scope.item.jenispajak.jenispajak
+                            $scope.dataGridPPh.options.data[i].objectjenispphfk = $scope.item.jenispajak.id
+                            $scope.dataGridPPh.options.data[i].tglpph = moment($scope.item.tglPPh).format('YYYY-MM-DD')
+                            $scope.dataGridPPh.options.data[i].idbillpph = $scope.item.idbillpph
+                            $scope.dataGridPPh.options.data[i].ntpnpph = $scope.item.ntpnpph
+                            $scope.dataGridPPh.options.data[i].pph = $scope.item.jumlahPPh
+                            $scope.dataGridPPh.options.data[i].norecpp = $scope.norecpp
+                            $scope.dataGridPPh.options.data[i].norecpep = $scope.norecpep
+                        }
+                    }
+
+                    $scope.dataGridPPh = new kendo.data.DataSource({
+                        data:  $scope.dataGridPPh.options.data,
+                        pageSize: 10,
+                        total: $scope.dataGridPPh.options.data.length,
+                        group: $scope.group,
+                        serverPaging: false,
+                        schema: {
+                            model: {
+                                fields: {
+                                }
+                            }
+                        },
+                        aggregate: [
+                        ]
+                    });
+                } else{
+                    var objSavePPh = {
+                        "jenispph": $scope.item.jenispajak.jenispajak,
+                        "objectjenispphfk": $scope.item.jenispajak.id,
+                        "tglpph": moment($scope.item.tglPPh).format('YYYY-MM-DD'),
+                        "idbillpph": $scope.item.idbillpph,
+                        "ntpnpph": $scope.item.ntpnpph,
+                        "pph": $scope.item.jumlahPPh,
+                        "norecpp": '',
+                        "norecpep": '',
+                        "nopajakpph": '',
+                    }
+                    console.log(objSavePPh);
+                    
+                    
+    
+                    $scope.dataGridPPh.options.data.push(objSavePPh)
+    
+                    $scope.dataGridPPh = new kendo.data.DataSource({
+                        data:  $scope.dataGridPPh.options.data,
+                        pageSize: 10,
+                        total: $scope.dataGridPPh.options.data.length,
+                        group: $scope.group,
+                        serverPaging: false,
+                        schema: {
+                            model: {
+                                fields: {
+                                }
+                            }
+                        },
+                        aggregate: [
+                        ]
+                    });
+                }
+                
+                $scope.norecpp = ''
+                $scope.norecpep = ''
+                $scope.nopajakpph = ''
+                
+                // return
+                
+            }
+
+            $scope.TambahPPN = function () {
+
+                if($scope.nopajakppn != ''){
+                    for(var i =0; i<$scope.dataGridPPN.options.data.length; i++){
+                        if($scope.dataGridPPN.options.data[i].nopajakppn == $scope.nopajakppn){
+                            $scope.dataGridPPN.options.data[i].tglppn = moment($scope.item.tglPPn).format('YYYY-MM-DD')
+                            $scope.dataGridPPN.options.data[i].idbillppn = $scope.item.idbillppn
+                            $scope.dataGridPPN.options.data[i].ntpnppn = $scope.item.ntpnppn
+                            $scope.dataGridPPN.options.data[i].ppn = $scope.item.jumlahPPn
+                            $scope.dataGridPPN.options.data[i].norecpp = $scope.norecpp
+                            $scope.dataGridPPN.options.data[i].norecpep = $scope.norecpep
+                        }
+                    }
+
+                    $scope.dataGridPPN = new kendo.data.DataSource({
+                        data:  $scope.dataGridPPN.options.data,
+                        pageSize: 10,
+                        total: $scope.dataGridPPN.options.data.length,
+                        group: $scope.group,
+                        serverPaging: false,
+                        schema: {
+                            model: {
+                                fields: {
+                                }
+                            }
+                        },
+                        aggregate: [
+                        ]
+                    });
+                } else{
+                    var objSavePPN = {
+                        "jenisppn": 'PPN',
+                        "tglppn": moment($scope.item.tglPPn).format('YYYY-MM-DD'),
+                        "idbillppn": $scope.item.idbillppn,
+                        "ntpnppn": $scope.item.ntpnppn,
+                        "ppn": $scope.item.jumlahPPn,
+                        "norecpp": '',
+                        "norecpep": '',
+                        "nopajakpph": '',
+                        "nopajakppn": '',
+                    }
+                    console.log(objSavePPN);
+    
+                    $scope.dataGridPPN.options.data.push(objSavePPN)
+    
+                    $scope.dataGridPPN = new kendo.data.DataSource({
+                        data:  $scope.dataGridPPN.options.data,
+                        pageSize: 10,
+                        total: $scope.dataGridPPN.options.data.length,
+                        group: $scope.group,
+                        serverPaging: false,
+                        schema: {
+                            model: {
+                                fields: {
+                                }
+                            }
+                        },
+                        aggregate: [
+                        ]
+                    });
+                }
+                
+                $scope.norecpp = ''
+                $scope.norecpep = ''
+                $scope.nopajakppn = ''
+
+                
+                // return
+                
             }
 
             $scope.ClearData = function () {
@@ -323,6 +619,94 @@ define(['initialize'], function (initialize) {
 
             $scope.group = [
             ];
+
+            $scope.columnGridPPh = {
+                sortable: true,
+                selectable: true,
+                pageable: true,
+                columns: [
+                    {
+                        
+                        "field": "nopajakpph",
+                        "title": "No PPh",
+                        "width": "100px",
+                    },
+                    {
+                        
+                        "field": "jenispph",
+                        "title": "Jenis PPh",
+                        "width": "100px",
+                    },
+                    {
+                        
+                        "field": "tglpph",
+                        "title": "Tanggal PPh",
+                        "width": "100px",
+                    },
+                    {
+                        
+                        "field": "idbillpph",
+                        "title": "Id Billing",
+                        "width": "100px",
+                    },
+                    {
+                        
+                        "field": "ntpnpph",
+                        "title": "NTPN",
+                        "width": "100px",
+                    },
+                    {
+                        
+                        "field": "pph",
+                        "title": "Jumlah PPh",
+                        "width": "100px",
+                    }
+                ]
+            };
+
+            $scope.columnGridPPN = {
+                sortable: true,
+                selectable: true,
+                pageable: true,
+                columns: [
+                    {
+                        
+                        "field": "nopajakppn",
+                        "title": "No PPN",
+                        "width": "100px",
+                    },
+                    {
+                        
+                        "field": "jenisppn",
+                        "title": "Jenis PPN",
+                        "width": "100px",
+                    },
+                    {
+                        
+                        "field": "tglppn",
+                        "title": "Tanggal PPN",
+                        "width": "100px",
+                    },
+                    {
+                        
+                        "field": "idbillppn",
+                        "title": "Id Billing",
+                        "width": "100px",
+                    },
+                    {
+                        
+                        "field": "ntpnppn",
+                        "title": "NTPN",
+                        "width": "100px",
+                    },
+                    {
+                        
+                        "field": "ppn",
+                        "title": "Jumlah PPN",
+                        "width": "100px",
+                    }
+                ]
+            };
             
 
             $scope.columnGridPemungutan = {

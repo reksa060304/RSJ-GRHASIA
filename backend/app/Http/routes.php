@@ -1581,6 +1581,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::post('perencanaan/save-spm','Perencanaan\PerencanaanController@saveSPM');
             Route::post('perencanaan/save-spd','Perencanaan\PerencanaanController@saveSPD');
             Route::post('perencanaan/copy-permen','Perencanaan\PerencanaanController@copyPermen');
+            Route::post('perencanaan/delete-spj-to-panjar','Perencanaan\PerencanaanController@deleteSPJtoPanjar');
+            Route::post('perencanaan/delete-bku','Perencanaan\PerencanaanController@deleteBKU');
             Route::post('perencanaan/save-lpj','Perencanaan\PerencanaanController@saveLPJ');
             Route::post('perencanaan/delete-lpj','Perencanaan\PerencanaanController@deleteLPJ');
             Route::post('perencanaan/delete-jasgir','Perencanaan\PerencanaanController@deleteJasgir');
@@ -1672,6 +1674,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('perencanaan/get-pajak-udah-save', 'Perencanaan\PerencanaanController@getPajakUdahSave');
             Route::get('perencanaan/get-data-spm', 'Perencanaan\PerencanaanController@getDataSPM');
             Route::get('perencanaan/get-data-rba-belum', 'Perencanaan\PerencanaanController@getRBABelum');
+            Route::get('perencanaan/get-password-rba', 'Perencanaan\PerencanaanController@getPassRBA');
 
         // });
         // Route::group(['prefix' => 'piutang'], function () {
