@@ -6211,7 +6211,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     //console.log(element)
                     if(element.strukrealisasifk == dataItem.norec){
                         for (let i = 0; i < element.data.length; i++) {
-                            element.data[i].nourut = SimpanPanjari+1
+                            element.data[i].nourut = i+1
                         }
                         newArr.push(element.data)
                     }
