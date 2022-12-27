@@ -368,6 +368,11 @@ define(['initialize'], function (initialize) {
                 medifirstService.post('sysadmin/general/save-permohonan-simrs',objSave).then(function(e) {
                     // $scope.popupSignDate.close();
                     // init2()
+                    $scope.item = {}
+                    $scope.item.tglAwal = new moment($scope.now).format('YYYY-MM-DD HH:mm');
+                    $scope.item.tglAwal1 = new moment($scope.now).format('YYYY-MM-DD 00:00');
+                    $scope.item.tglAkhir = new moment($scope.now).format('YYYY-MM-DD 23:59');
+                    $scope.myVar = 1
                 })
 
 

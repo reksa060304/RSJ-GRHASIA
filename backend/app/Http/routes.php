@@ -2137,7 +2137,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
               //sensusharianrawatjalan
               Route::get('registrasi/laporan/get-data-sensus-harian','Registrasi\SensusHarianRawatJalanController@getSensusHarianRawatJalan');
               Route::get('laporan/get-data-sensus-harian-rawat-jalan','Registrasi\SensusHarianRawatJalanController@getLaporanSensusHarianRawatJalan');
-              Route::get('registrasi/get-datacombo-sensus', 'SensusHarianRawatJalanController@getDataCombo');
+              Route::get('registrasi/get-datacombo-sensus', 'Registrasi\SensusHarianRawatJalanController@getDataCombo');
               Route::get('registrasi/get-data-grafik','Registrasi\SensusHarianRawatJalanController@GrafikRajal');
               Route::get('registrasi/laporan/get-data-lap-jumlah-pasien-cara-v2', 'Registrasi\RegistrasiController@getLaporanJumlahPasienDanCaraBayarv2'); 
               
@@ -2777,6 +2777,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
                 Route::get('sysadmin/general/get-diagnosapasienbynoreg', 'SysAdmin\GeneralController@getDiagnosaPasien');
                 Route::get('sysadmin/general/get-pasien-bynorec-general', 'SysAdmin\GeneralController@getPasienByNoreg');
                 Route::get('sysadmin/general/get-daftar-permohonan-simrs','SysAdmin\GeneralController@getDaftarPermohonanSIMRS');
+                Route::get('sysadmin/get-pihakketiga','SysAdmin\GeneralController@getPihakKetiga');
+                Route::post('sysadmin/save-pengerjaan-permohonan-simrs','IPSRS\IPSRSController@SavePengerjaanPermohonanSIMRS');
                 Route::get('sysadmin/general/get-jenis-pekerjaan-simrs','SysAdmin\GeneralController@getJenisPekerjaanSIMRS');
                 Route::get('sysadmin/general/get-status-pekerjaan-simrs','SysAdmin\GeneralController@getStatusPekerjaanSIMRS');
                 Route::get('sysadmin/general/get-combo-pegawai-simrs','SysAdmin\GeneralController@getDataPegawaiGeneralSIMRS');
