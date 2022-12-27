@@ -1022,6 +1022,115 @@
             "urlDep": "module/Perencanaan/LaporanPerJenisAnggaranCtrl"
         },
         {
+            "nameDep": "LaporanPPTKCtrl",
+            "urlDep": "module/Perencanaan/LaporanPPTKCtrl"
+        },
+        {
+            "nameDep": "LaporanPenyerapanAnggaranCtrl",
+            "urlDep": "module/Perencanaan/LaporanPenyerapanAnggaranCtrl"
+        },
+        {
+            "nameDep": "LaporanPersandinganAngkasCtrl",
+            "urlDep": "module/Perencanaan/LaporanPersandinganAngkasCtrl"
+        },
+        {
+            "nameDep": "LPJBKCtrl",
+            "urlDep": "module/Perencanaan/LPJBKCtrl"
+        },
+        {
+            "nameDep": "LaporanBukuBankCtrl",
+            "urlDep": "module/Perencanaan/LaporanBukuBankCtrl"
+        },
+        {
+            "nameDep": "LaporanBukuPanjarCtrl",
+            "urlDep": "module/Perencanaan/LaporanBukuPanjarCtrl"
+        },
+        {
+            "nameDep": "LaporanROCtrl",
+            "urlDep": "module/Perencanaan/LaporanROCtrl"
+        },
+        {
+            "nameDep": "LaporanRKCtrl",
+            "urlDep": "module/Perencanaan/LaporanRKCtrl"
+        },
+        {
+            "nameDep": "LaporanFungsionalCtrl",
+            "urlDep": "module/Perencanaan/LaporanFungsionalCtrl"
+        },
+        {
+            "nameDep": "LaporanBKUCtrl",
+            "urlDep": "module/Perencanaan/LaporanBKUCtrl"
+        },
+        {
+            "nameDep": "LaporanBukuPajakCtrl",
+            "urlDep": "module/Perencanaan/LaporanBukuPajakCtrl"
+        },
+        {
+            "nameDep": "RegisterPenutupanKasCtrl",
+            "urlDep": "module/Perencanaan/RegisterPenutupanKasCtrl"
+        },
+        {
+            "nameDep": "SP3BPCtrl",
+            "urlDep": "module/Perencanaan/SP3BPCtrl"
+        },
+        {
+            "nameDep": "LPJBaruCtrl",
+            "urlDep": "module/Perencanaan/LPJBaruCtrl"
+        },
+
+
+
+
+
+
+        {
+            "nameDep": "RekapPerJenisAnggaranCtrl",
+            "urlDep": "module/Perencanaan/RekapPerJenisAnggaranCtrl"
+        },
+        {
+            "nameDep": "RekapPerSumberDanaCtrl",
+            "urlDep": "module/Perencanaan/RekapPerSumberDanaCtrl"
+        },
+        {
+            "nameDep": "RekapPerSubKegiatanCtrl",
+            "urlDep": "module/Perencanaan/RekapPerSubKegiatanCtrl"
+        },
+        {
+            "nameDep": "RBADetailCtrl",
+            "urlDep": "module/Perencanaan/RBADetailCtrl"
+        },
+        {
+            "nameDep": "PendapatanPerubahanCtrl",
+            "urlDep": "module/Perencanaan/PendapatanPerubahanCtrl"
+        },
+        {
+            "nameDep": "RekapTotalAnggaranCtrl",
+            "urlDep": "module/Perencanaan/RekapTotalAnggaranCtrl"
+        },
+        {
+            "nameDep": "SPJdanMonevCtrl",
+            "urlDep": "module/Perencanaan/SPJdanMonevCtrl"
+        },
+        {
+            "nameDep": "KonsolidasiRekPermendagriCtrl",
+            "urlDep": "module/Perencanaan/KonsolidasiRekPermendagriCtrl"
+        },
+        {
+            "nameDep": "AnggaranJadwalTiapSubKegiatanCtrl",
+            "urlDep": "module/Perencanaan/AnggaranJadwalTiapSubKegiatanCtrl"
+        },
+        {
+            "nameDep": "CetakAnggaranKasCtrl",
+            "urlDep": "module/Perencanaan/CetakAnggaranKasCtrl"
+        },
+        
+
+
+
+
+
+
+        {
             "nameDep": "LPJCtrl",
             "urlDep": "module/Perencanaan/LPJCtrl"
         },
@@ -1092,6 +1201,10 @@
         {
             "nameDep": "SemuaAnggaranCtrl",
             "urlDep": "module/Perencanaan/SemuaAnggaranCtrl"
+        },
+        {
+            "nameDep": "AnggaranKeuanganCtrl",
+            "urlDep": "module/Perencanaan/AnggaranKeuanganCtrl"
         },
         {
             "nameDep": "MasterProdukApotikCtrl",

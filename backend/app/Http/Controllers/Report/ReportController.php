@@ -6604,7 +6604,7 @@ class ReportController extends ApiController{
         $saldoakhir = 0;
 
         foreach($data as $row){
-            $saldoakhir = $saldoakhir + $row->penerimaan - $row->pengeluaran; 
+            $saldoakhir = $saldoakhir - $row->penerimaan + $row->pengeluaran; 
             $row->saldo = $saldoakhir;
         }
 

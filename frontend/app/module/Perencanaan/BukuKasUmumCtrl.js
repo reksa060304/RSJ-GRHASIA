@@ -27,6 +27,11 @@ define(['initialize'], function (initialize) {
                 $('#contentPencarian').fadeToggle("fast", "linear");
             }
 
+            $scope.listAsalProduk = [
+                { id: 15, asalproduk: "APBD" },
+                { id: 18, asalproduk: "Jasa Layanan"}
+            ];
+
             medifirstService.getPart('perencanaan/get-datacombo-part-rekanan', true, true, 20).then(function (data) {
                 $scope.listPihakKetiga = data
             })
@@ -46,8 +51,13 @@ define(['initialize'], function (initialize) {
                     rekanan = $scope.item.namarekanan.id
                 }
 
+                var asalproduk = ''
+                if($scope.item.asalprodukbku != undefined){
+                    asalproduk = $scope.item.asalprodukbku.id
+                }
+
                 var saldo = 0
-                medifirstService.get("perencanaan/get-bku?awal="+awal+"&akhir="+akhir+"&rekanan="+rekanan).then(function (e) {
+                medifirstService.get("perencanaan/get-bku?awal="+awal+"&akhir="+akhir+"&rekanan="+rekanan+"&asalproduk="+asalproduk).then(function (e) {
                         $scope.isRouteLoading = false;
 
                         for(var i = 0; i < e.data.data.length; i++){
@@ -350,6 +360,7 @@ define(['initialize'], function (initialize) {
                     "norec": $scope.norecbku,
                     "tglbku": moment($scope.item.tglbkudetail).format('YYYY-MM-DD'),
                     "nobku": $scope.item.nobkudetail,
+                    "asalproduk": $scope.item.jenisbku,
                 }
                 console.log(objSave);
                 
@@ -389,6 +400,8 @@ define(['initialize'], function (initialize) {
                 $scope.item.uraianBKU = ''
 
 				if (checked) {
+
+
 					var result = $.grep($scope.selectedData2, function (e) {
 						return e.nospm == dataItem.nospm;
 					});
@@ -412,6 +425,8 @@ define(['initialize'], function (initialize) {
 						}
 					row.removeClass("k-state-selected");
 				}
+
+                $scope.item.sumberDana = {id: dataItem.idasalproduk, asalproduk: dataItem.asalproduk}
 
                 for (var i = 0; i < $scope.selectedData2.length; i++){
                     if(i != $scope.selectedData2.length-1){
@@ -459,6 +474,8 @@ define(['initialize'], function (initialize) {
                     $scope.item.pihakKetiga = undefined
 					row.removeClass("k-state-selected");
 				}
+
+                $scope.item.sumberDana = {id: dataItem.idasalproduk, asalproduk: dataItem.asalproduk}
 
                 for (var i = 0; i < $scope.selectedData2.length; i++){
                     if(i != $scope.selectedData2.length-1){
@@ -508,6 +525,8 @@ define(['initialize'], function (initialize) {
 					row.removeClass("k-state-selected");
 				}
 
+                $scope.item.sumberDana = {id: 18, asalproduk: 'Jasa Layanan'}
+
                 for (var i = 0; i < $scope.selectedData2.length; i++){
                     if(i != $scope.selectedData2.length-1){
                         $scope.item.uraianBKU += $scope.selectedData2[i].uraianjasagiro + ', '
@@ -554,6 +573,8 @@ define(['initialize'], function (initialize) {
 
                 console.log($scope.selectedData2);
 
+                $scope.item.sumberDana = {id: dataItem.idsumberdana, asalproduk: dataItem.asalproduk}
+
                 for (var i = 0; i < $scope.selectedData2.length; i++){
                     if(i != $scope.selectedData2.length-1){
                         $scope.item.uraianBKU += $scope.selectedData2[i].uraiansts + ', '
@@ -598,7 +619,7 @@ define(['initialize'], function (initialize) {
 					row.removeClass("k-state-selected");
 				}
 
-                
+                $scope.item.sumberDana = {id: dataItem.idasalproduk, asalproduk: dataItem.asalproduk}
                 $scope.item.uraianBKU += $scope.selectedData2[$scope.selectedData2.length - 1].uraianpajak
                     
                 console.log($scope.selectedData2)
@@ -664,6 +685,19 @@ define(['initialize'], function (initialize) {
             $scope.group = [
             ];
 
+            function DeleteBKU(e) {
+                e.preventDefault();
+                
+                var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                var objSave = {
+                    "norec": dataItem.norecbku,
+                }
+                
+                medifirstService.post('perencanaan/delete-bku', objSave).then(function (e) {
+                    init();
+                })
+            }
+
             function PilihBKU(e) {
                 e.preventDefault();
                 
@@ -680,6 +714,7 @@ define(['initialize'], function (initialize) {
                         $scope.hidests =true
                         $scope.item.nobkudetail = dataItem.nobku
                         $scope.item.tglbkudetail = dataItem.tglbku
+                        $scope.item.jenisbku = dataItem.asalproduk
                         $scope.norecbku = dataItem.norecbku
                         medifirstService.get("perencanaan/get-panjar-bku?norec="+dataItem.norecbku).then(function (e) {
                     
@@ -709,6 +744,7 @@ define(['initialize'], function (initialize) {
                         $scope.hidests =true
                         $scope.item.nobkudetail = dataItem.nobku
                         $scope.item.tglbkudetail = dataItem.tglbku
+                        $scope.item.jenisbku = dataItem.asalproduk
                         $scope.norecbku = dataItem.norecbku
                         medifirstService.get("perencanaan/get-pengembalian-bku?norec="+dataItem.norecbku).then(function (e) {
                     
@@ -740,6 +776,7 @@ define(['initialize'], function (initialize) {
                     $scope.hidests =true
                     $scope.item.nobkudetail = dataItem.nobku
                     $scope.item.tglbkudetail = dataItem.tglbku
+                    $scope.item.jenisbku = dataItem.asalproduk
                     $scope.norecbku = dataItem.norecbku
                     medifirstService.get("perencanaan/get-spm-bku?norec="+dataItem.norecbku).then(function (e) {
                     
@@ -769,6 +806,7 @@ define(['initialize'], function (initialize) {
                     $scope.hidests =true
                     $scope.item.nobkudetail = dataItem.nobku
                     $scope.item.tglbkudetail = dataItem.tglbku
+                    $scope.item.jenisbku = dataItem.asalproduk
                     $scope.norecbku = dataItem.norecbku
                     medifirstService.get("perencanaan/get-jasgir-bku?norec="+dataItem.norecbku).then(function (e) {
                     
@@ -798,6 +836,7 @@ define(['initialize'], function (initialize) {
                     $scope.hidests =false
                     $scope.item.nobkudetail = dataItem.nobku
                     $scope.item.tglbkudetail = dataItem.tglbku
+                    $scope.item.jenisbku = dataItem.asalproduk
                     $scope.norecbku = dataItem.norecbku
                     console.log(dataItem)
 
@@ -828,6 +867,7 @@ define(['initialize'], function (initialize) {
                     $scope.hidests =true
                     $scope.item.nobkudetail = dataItem.nobku
                     $scope.item.tglbkudetail = dataItem.tglbku
+                    $scope.item.jenisbku = dataItem.asalproduk
                     $scope.norecbku = dataItem.norecbku
                     medifirstService.get("perencanaan/get-pajak-bku?norec="+dataItem.norecbku).then(function (e) {
                     
@@ -858,6 +898,7 @@ define(['initialize'], function (initialize) {
                     $scope.hidests =true
                     $scope.item.nobkudetail = dataItem.nobku
                     $scope.item.tglbkudetail = dataItem.tglbku
+                    $scope.item.jenisbku = dataItem.asalproduk
                     $scope.norecbku = dataItem.norecbku
                     medifirstService.get("perencanaan/get-spj-bku?norec="+dataItem.norecbku).then(function (e) {
                     
@@ -963,6 +1004,19 @@ define(['initialize'], function (initialize) {
                         "title": "Saldo",
                         "width": "100px",
                         "template": "<span class='style-right'>{{formatRupiah('#: saldo #', 'Rp.')}}</span>",
+                    },
+                    {
+                        "command": [
+                              {
+                                 text: "Delete",
+                                 click: DeleteBKU,
+                                 imageClass: "clinic fa",
+                                 visible: function(dataItem) { return dataItem.nospp }
+                              },
+                          ],
+                             title: "",
+                             width: "60px",
+                             
                     }
                 ]
             };
@@ -1140,6 +1194,18 @@ define(['initialize'], function (initialize) {
                     },
                     {
                         
+                        "field": "untukpengeluaran",
+                        "title": "Uraian",
+                        "width": "100px",
+                    },
+                    {
+                        
+                        "field": "asalproduk",
+                        "title": "Sumber Dana",
+                        "width": "100px",
+                    },
+                    {
+                        
                         "field": "jenisbukti",
                         "title": "Jenis Bukti",
                         "width": "100px",
@@ -1255,6 +1321,12 @@ define(['initialize'], function (initialize) {
                     },
                     {
                         
+                        "field": "asalproduk",
+                        "title": "Sumber Dana",
+                        "width": "100px",
+                    },
+                    {
+                        
                         "field": "tanggal",
                         "title": "Tanggal",
                         "width": "100px",
@@ -1291,7 +1363,6 @@ define(['initialize'], function (initialize) {
                         "field": "uraianpajak",
                         "title": "Uraian",
                         "width": "100px",
-                        "hidden": true
                     }
                 ]
             };
@@ -1315,6 +1386,12 @@ define(['initialize'], function (initialize) {
                         
                         "field": "namarekanan",
                         "title": "Rekanan",
+                        "width": "100px",
+                    },
+                    {
+                        
+                        "field": "asalproduk",
+                        "title": "Sumber Dana",
                         "width": "100px",
                     },
                     {

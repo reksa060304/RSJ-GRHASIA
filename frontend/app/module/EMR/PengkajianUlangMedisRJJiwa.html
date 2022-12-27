@@ -45,7 +45,7 @@
 
 <div class="grid_12">
     <div class="panel panel-default container_12">
-            <div class="panel-heading" c-translate>Pengkajian Ulang Medis Rawat Jalan Jiwa</div>
+            <div class="panel-heading">Pengkajian Ulang Medis Rawat Jalan Jiwa CM.RM.05.02.Rev02</div>
     </div>
    
     <div class="grid_12" style="margin-top: 10px;">
@@ -220,7 +220,7 @@
                                     <div class="grid_12" ng-switch-when="humpty">
                                         <div class="grid_12">
                                             <fieldset style="margin-top: 10px;">
-                                                <div class="grid_6" style="margin-top: 30px; text-align: center; margin-bottom: 30px; border-bottom-right-radius: 1px;">
+                                                <div class="grid_12" style="margin-top: 30px; text-align: center; margin-bottom: 30px; border-bottom-right-radius: 1px;">
                                                     <div class="grid_12">
                                                         <label c-label item="item">INTEGRASI ASUHAN</label>
                                                     </div>
@@ -256,45 +256,45 @@
                                                         <div class="grid_6"></div>
                                                     </div>
                                                     <div class="grid_12">
-                                                        <div class="grid_6"><label c-label item="item">Dokter</label>
-                                                            <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[3017243]"
-                                                            k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
-                                                            k-auto-bind="false" k-data-source="listPegawai" /></div>
-                                                        <div class="grid_6 margin-top">
-
-                                                            <div class="grid_6" style="display: none"><label c-label item="item">Dokter</label>
-                                                                <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[3017243]"
+                                                    <div class="grid_4 margin-top-30  margin-bottom">
+                                                        <label c-label item="item" c-label-text="Dokter"></label>
+                                                        <input style="width: 80%;" kendo-combo-box k-ng-model="item.obj[3017243]"
                                                                 k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
-                                                                k-auto-bind="false" k-data-source="listPegawai" /></div>
-                                                        </div>
+                                                                k-auto-bind="false" k-data-source="listPegawai" />
                                                     </div>
                                                 </div>
-                                                <div class="grid_6" style="margin-top: 30px; text-align: center; margin-bottom: 30px;">
+                                        
+                                              
+                                            </fieldset>
+                                        </div>
+                                        <div class="grid_12">
+                                        <fieldset style="margin-top: 10px;">
+                                            <div class="grid_12" style="margin-top: 30px; text-align: center; margin-bottom: 30px;">
+                                                <div class="grid_12">
+                                                    <label c-label item="item">RENCANA PEMULANGAN PASIEN</label>
+                                                </div>
+                                                <div class="grid_12" style= "margin-top:15px; margin-bottom:15px" ng-repeat="list in listPemulanganPasien">
                                                     <div class="grid_12">
-                                                        <label c-label item="item">RENCANA PEMULANGAN PASIEN</label>
-                                                    </div>
-                                                    <div class="grid_12" style= "margin-top:15px; margin-bottom:15px" ng-repeat="list in listPemulanganPasien">
-                                                        <div class="grid_12">
-                                                            <div ng-repeat="jawab in list.detail">
-                                                                <div ng-switch on="jawab.type">
-                                                                    <div class="grid_6" ng-switch-when="checkboxtextbox" style="margin-top: -5px;">
-                                                                        <input type="checkbox" class="k-checkbox" id="item.obj{{jawab.id}}"
-                                                                            ng-model="item.obj[jawab.id]">
-                                                                        <label class="k-checkbox-label" for="item.obj{{jawab.id}}">
-                                                                            &nbsp;{{jawab.nama}}</label>
-                                                                        <div class="grid_12 parentKeteranganFieldTambahan">
-                                                                            <input c-text-box type="text" filter="" class="k-textbox"
-                                                                                ng-model="item.obj[jawab.idd]" />
-                                                                            <label class="keteranganFieldTambahan"
-                                                                                style="margin-top: 5px;margin-right: 30px"></label>
-                                                                        </div>
+                                                        <div ng-repeat="jawab in list.detail">
+                                                            <div ng-switch on="jawab.type">
+                                                                <div class="grid_6" ng-switch-when="checkboxtextbox" style="margin-top: -5px;">
+                                                                    <input type="checkbox" class="k-checkbox" id="item.obj{{jawab.id}}"
+                                                                        ng-model="item.obj[jawab.id]">
+                                                                    <label class="k-checkbox-label" for="item.obj{{jawab.id}}">
+                                                                        &nbsp;{{jawab.nama}}</label>
+                                                                    <div class="grid_12 parentKeteranganFieldTambahan">
+                                                                        <input c-text-box type="text" filter="" class="k-textbox"
+                                                                            ng-model="item.obj[jawab.idd]" />
+                                                                        <label class="keteranganFieldTambahan"
+                                                                            style="margin-top: 5px;margin-right: 30px"></label>
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </fieldset>
+                                            </div>
+                                        </fieldset>
                                         </div>
                                 
                                         <div class="grid_12">

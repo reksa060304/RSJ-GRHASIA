@@ -51,6 +51,19 @@ Trait Valet {
         return $prefix.(str_pad((int)$subPrefix+1, $length-$prefixLen, "0", STR_PAD_LEFT));
     }
 
+    protected function generateCodeBKU($objectModel, $atrribute, $asalproduk, $length=8, $prefix='',$idProfile){
+        $result = $objectModel->where($atrribute, 'LIKE', $prefix.'%')
+        ->where('kdprofile',$idProfile)
+        ->where('statusenabled',true)
+        ->where('objectasalprodukfk',$asalproduk)
+        ->max($atrribute);
+
+        //var_dump($result);
+        $prefixLen = strlen($prefix);
+        $subPrefix = substr(trim($result),$prefixLen);
+        return $prefix.(str_pad((int)$subPrefix+1, $length-$prefixLen, "0", STR_PAD_LEFT));
+    }
+
     protected function generateCodeDibelakang($objectModel, $atrribute, $length=8, $prefix=''){
         $result = $objectModel->where($atrribute, 'LIKE', '%'.$prefix)->max($atrribute);
         $prefixLen = strlen($prefix);
