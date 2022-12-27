@@ -77,10 +77,10 @@
                 </a>
             </legend>
             <div class="grid_12" id="contentPencarian">
-                <div class="grid_6" style="margin-top: 15px;">
+                <div class="grid_12" style="margin-top: 15px;">
                     <div class="grid_12">
                         <!-- AwalPeriode -->
-                        <div class="grid_3">
+                        <div class="grid_2">
                             <div class="grid_12">
                                 <label c-label item="item" c-label-text="Periode"></label>
                             </div>
@@ -91,7 +91,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="grid_3">
+                        <div class="grid_2">
                             <br>
                             <div class="grid_12">
                                 <div class="grid_12">
@@ -100,7 +100,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="grid_4">
+                        <div class="grid_2">
                             <div class="grid_12">
                                 <label c-label item="item" c-label-text="Nama Rekanan"></label>
                             </div>
@@ -113,7 +113,20 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="grid_2" style="margin-top: 5px;">
+                        <div class="grid_2">
+                            <div class="grid_12">
+                                <label c-label item="item" c-label-text="Jenis BKU"></label>
+                            </div>
+                            <div class="grid_12">
+                                <div class="grid_12">
+                                    <input kendo-combo-box k-ng-model="item.asalprodukbku"
+                                    k-data-text-field="'asalproduk'" k-data-value-field="'id'"
+                                    k-filter="'contains'" k-auto-bind="false"
+                                    k-data-source="listAsalProduk"  />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid_1" style="margin-top: 5px;">
                             <br>
                             <button class="c-button" ng-click="cariFilter()">Cari</button>
                         </div>
@@ -263,6 +276,12 @@
             <div class="grid_12" style="margin-top: 10px;">
                 <input style="width: 100%" k-ng-model="item.tglbkudetail" kendo-datetimepicker placeholer="yyyy-mm-dd"
                             k-format="'yyyy-MM-dd HH:mm'" />
+            </div>
+            <div class="grid_12" style="text-align: left; margin-top: 10px;">
+                Jenis BKU
+            </div>
+            <div class="grid_12" style="margin-top: 10px;">
+                <input c-text-box type="input" class="k-textbox" ng-model="item.jenisbku" disabled/>
             </div>
             <legend id="filterData">
                 <a ng-click="showAndHide()">List Jenis Bukti</a>

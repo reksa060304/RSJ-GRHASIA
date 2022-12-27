@@ -25,7 +25,17 @@ define(['initialize'], function(initialize) {
                     $scope.namaLengkap = medifirstService.getPegawaiLogin();
                 });
             }
-
+            $scope.cekOrderHariIniRanap = function (data) {
+                if (data === true) {
+                    //$scope.cekBelumVerifs = false;
+                    $scope.item.ranap = true;
+                } else if (data === false) {
+                    //$scope.cekBelumVerifs = true;
+                    $scope.item.ranap = undefined;
+                } else {
+                    return;
+                }
+            }
             $scope.cekOrderHariIni = function (data) {
                 if (data === true) {
                     //$scope.cekBelumVerifs = false;
@@ -43,13 +53,17 @@ define(['initialize'], function(initialize) {
                 if ($scope.item.rajal != undefined ) {
                     rajal = "&rajal="+$scope.item.rajal;
                 }
+                var ranap = "";
+                if ($scope.item.ranap != undefined) {
+                    ranap = "&ranap=" + $scope.item.ranap;
+                }
                 $scope.isRouteLoading = true;
                 var tglAwal = moment($scope.item.tglAwal).format('YYYY-MM-DD HH:mm:ss');
                 var tglAkhir = moment($scope.item.tglAkhir).format('YYYY-MM-DD HH:mm:ss');
                 
                 medifirstService.get("registrasi/laporan/get-data-sensus-harian?" +
                     "tglAwal=" + tglAwal +
-                    "&tglAkhir=" + tglAkhir + rajal
+                    "&tglAkhir=" + tglAkhir + rajal+ranap
                     , true).then(function (dat) {
                         var totalpasien = 0;
                         var totaljk = 0;

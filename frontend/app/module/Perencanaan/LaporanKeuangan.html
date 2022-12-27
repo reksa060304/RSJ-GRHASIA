@@ -24,7 +24,7 @@
             <div ng-cloak>
                 <md-content>
                     <md-tabs md-dynamic-height md-border-bottom>
-                        <md-tab label="LAPORAN REKAP PENYERAPAN ANGGARAN PER-REKENING">
+                        <md-tab label="LAPORAN REKAP PENYERAPAN ANGGARAN PER-REKENING" ng-if="detailaja === true">
                             <md-content class="md-padding" ng-hide="false">
                                 <div class="grid_12" style="margin-top: 25px;">
                                     <div class="grid_2">
@@ -87,7 +87,7 @@
                                 </div>
                             </md-content>
                         </md-tab>
-                        <md-tab label="LAPORAN PERSANDINGAN ANGKAS BELANJA DAN PENYERAPAN">
+                        <md-tab label="LAPORAN PERSANDINGAN ANGKAS BELANJA DAN PENYERAPAN" ng-if="penyerapanaja === true">
                             <md-content class="md-padding" ng-hide="false">
                                 <div class="grid_12" style="margin-top: 25px;">
                                     <div class="grid_2">
@@ -140,7 +140,7 @@
                                 </div>
                             </md-content>
                         </md-tab>
-                        <md-tab label="LAPORAN PERTANGGUNGJAWABAN BENDAHARA PENGELUARAN">
+                        <md-tab label="LAPORAN PERTANGGUNGJAWABAN BENDAHARA PENGELUARAN" ng-if="lpjaja === true">
                             <md-content class="md-padding" ng-hide="false">
                                 <div class="grid_12" style="margin-top: 25px;">
                                     <div class="grid_2">
@@ -175,7 +175,7 @@
                                 </div>
                             </md-content>
                         </md-tab>
-                        <md-tab label="LAPORAN BUKU BANK">
+                        <md-tab label="LAPORAN BUKU BANK" ng-if="bankaja === true">
                             <md-content class="md-padding" ng-hide="false">
                                 <div class="grid_12" style="margin-top: 25px;">
                                     <div class="grid_2" style="margin-top: 0px;">
@@ -224,7 +224,7 @@
                                 </div>
                             </md-content>
                         </md-tab>
-                        <md-tab label="LAPORAN BUKU PANJAR">
+                        <md-tab label="LAPORAN BUKU PANJAR" ng-if="panjaraja === true">
                             <md-content class="md-padding" ng-hide="false">
                                 <div class="grid_12" style="margin-top: 25px;">
                                     <div class="grid_2" style="margin-top: 0px;">
@@ -273,7 +273,7 @@
                                 </div>
                             </md-content>
                         </md-tab>
-                        <md-tab label="LAPORAN RO">
+                        <md-tab label="LAPORAN RO" ng-if="roaja === true">
                             <md-content class="md-padding" ng-hide="false">
                                 <div class="grid_12" style="margin-top: 25px;">
                                     <div class="grid_2" style="margin-top: 0px;">
@@ -361,7 +361,7 @@
                                 </div>
                             </md-content>
                         </md-tab>
-                        <md-tab label="LAPORAN RK">
+                        <md-tab label="LAPORAN RK" ng-if="rkaja === true">
                             <md-content class="md-padding" ng-hide="false">
                                 <div class="grid_12" style="margin-top: 25px;">
                                     <div class="grid_2" style="margin-top: 0px;">
@@ -436,7 +436,7 @@
                                 </div>
                             </md-content>
                         </md-tab>
-                        <md-tab label="LAPORAN FUNGSIONAL">
+                        <md-tab label="LAPORAN FUNGSIONAL" ng-if="fungsionalaja === true">
                             <md-content class="md-padding" ng-hide="false">
                                 <div class="grid_12" style="margin-top: 25px;">
                                     <div class="grid_2">
@@ -499,7 +499,7 @@
                                 </div>
                             </md-content>
                         </md-tab>
-                        <md-tab label="LAPORAN BKU">
+                        <md-tab label="LAPORAN BKU" ng-if="bkuaja === true">
                             <md-content class="md-padding" ng-hide="false">
                                 <div class="grid_12" style="margin-top: 25px;">
                                     <div class="grid_2" style="margin-top: 0px;">
@@ -548,7 +548,7 @@
                                 </div>
                             </md-content>
                         </md-tab>
-                        <md-tab label="LAPORAN BUKU PAJAK">
+                        <md-tab label="LAPORAN BUKU PAJAK" ng-if="pajakaja === true">
                             <md-content class="md-padding" ng-hide="false">
                                 <div class="grid_12" style="margin-top: 25px;">
                                     <div class="grid_2" style="margin-top: 0px;">
@@ -610,7 +610,7 @@
                                 </div>
                             </md-content>
                         </md-tab>
-                        <md-tab label="REGISTER PENUTUPAN KAS">
+                        <md-tab label="REGISTER PENUTUPAN KAS" ng-if="kasaja === true">
                             <md-content class="md-padding" ng-hide="false">
                                 <div class="grid_12" style="margin-top: 25px;">
                                     <div class="grid_2" style="margin-top: 0px;">
@@ -672,7 +672,7 @@
                                 </div>
                             </md-content>
                         </md-tab>
-                        <md-tab label="SP3BP">
+                        <md-tab label="SP3BP" ng-if="sp3bpaja === true">
                             <md-content class="md-padding" ng-hide="false">
                                 <div class="grid_12" style="margin-top: 25px;">
                                     <div class="grid_2" style="margin-top: 0px;">
@@ -721,7 +721,7 @@
                                 </div>
                             </md-content>
                         </md-tab>
-                        <md-tab label="LPJ Format Baru">
+                        <md-tab label="LPJ Format Baru" ng-if="baruaja === true">
                             <md-content class="md-padding" ng-hide="false">
                                 <div class="grid_12" style="margin-top: 25px;">
                                     <div class="grid_2" style="margin-top: 0px;" ng-hide="true">

@@ -17,22 +17,35 @@ class SensusHarianRawatJalanController extends ApiController
     public function getSensusHarianRawatJalan(Request $request)
     {
         $rajal = $request['rajal'];
+        $ranap = $request['ranap'];
         $tglAwal= $request['tglAwal'];
         $tglAkhir= $request['tglAkhir'];
         $ruangan = "";
-        if($rajal == true ){
+        $wherenya = "";
+        if($rajal == true){
             $ruangan = DB::select(DB::Raw("
             SELECT ru.id, ru.namaruangan FROM ruangan_m ru 
             where 
             ru.objectdepartemenfk in(18, 27, 3) and ru.statusenabled=true and ru.kdprofile=30 order by ru.objectdepartemenfk asc
             "));
+            $wherenya = "and ru.objectdepartemenfk not in(16,27,3)";
+        }else if($ranap == true){
+            $ruangan = DB::select(DB::Raw("
+            SELECT ru.id, ru.namaruangan FROM ruangan_m ru 
+            where 
+            ru.objectdepartemenfk in(16) and ru.statusenabled=true and ru.kdprofile=30 order by ru.objectdepartemenfk asc
+        "));
+            $wherenya = "and ru.objectdepartemenfk = 16";
 
-        }else{
+        }
+        else{
             $ruangan = DB::select(DB::Raw("
             SELECT ru.id, ru.namaruangan FROM ruangan_m ru 
             where 
             ru.id in(752,753,755,756,757,758,759,761,762,764,765,29,767,768,769,770,771,772,773,774,777,782,575,576);
         "));
+            $wherenya = "and ru.objectdepartemenfk not in(16,27,3)";
+
 
         }
         
@@ -54,7 +67,7 @@ class SensusHarianRawatJalanController extends ApiController
                     and apd.kdprofile = 30
                     and apd.statusenabled = true
                     AND apd.tglmasuk :: DATE BETWEEN periode.tglawal AND periode.tglakhir
-                    and ru.objectdepartemenfk not in(16,27,3)
+                    $wherenya
                     /*
                     16 = ranap
                     27 = 
@@ -127,7 +140,7 @@ class SensusHarianRawatJalanController extends ApiController
                 and apd.kdprofile = 30
                 and apd.statusenabled = true
                 AND apd.tglmasuk :: DATE BETWEEN periode.tglawal AND periode.tglakhir
-                and ru.objectdepartemenfk not in(16,27,3)
+                $wherenya
                 /*
                 16 = ranap
                 27 = 
@@ -193,7 +206,7 @@ class SensusHarianRawatJalanController extends ApiController
 		and apd.kdprofile = 30
 		and apd.statusenabled = true
 		AND apd.tglmasuk :: DATE BETWEEN periode.tglawal AND periode.tglakhir
-		and ru.objectdepartemenfk not in(16,27,3)
+		$wherenya
 		/*
 		16 = ranap
 		27 = 
@@ -278,7 +291,7 @@ GROUP BY pd.namaruangan, pd.id"));
                 and apd.kdprofile = 30
                 and apd.statusenabled = true
                 AND apd.tglmasuk :: DATE BETWEEN periode.tglawal AND periode.tglakhir
-                and ru.objectdepartemenfk not in(16,27,3)
+                $wherenya
                 /*
                 16 = ranap
                 27 = 
@@ -362,7 +375,7 @@ GROUP BY pd.namaruangan, pd.id"));
                     and apd.kdprofile = 30
                     and apd.statusenabled = true
                     AND apd.tglmasuk :: DATE BETWEEN periode.tglawal AND periode.tglakhir
-                    and ru.objectdepartemenfk not in(16,27,3)
+                    $wherenya
                     /*
                     16 = ranap
                     27 = 
@@ -448,7 +461,7 @@ GROUP BY pd.namaruangan, pd.id"));
                     and apd.kdprofile = 30
                     and apd.statusenabled = true
                     AND apd.tglmasuk :: DATE BETWEEN periode.tglawal AND periode.tglakhir
-                    and ru.objectdepartemenfk not in(16,27,3)
+                    $wherenya
                     /*
                     16 = ranap
                     27 = 
@@ -534,7 +547,7 @@ GROUP BY pd.namaruangan, pd.id"));
                         and apd.kdprofile = 30
                         and apd.statusenabled = true
                         AND apd.tglmasuk :: DATE BETWEEN periode.tglawal AND periode.tglakhir
-                        and ru.objectdepartemenfk not in(16,27,3)
+                        $wherenya
                         /*
                         16 = ranap
                         27 = 

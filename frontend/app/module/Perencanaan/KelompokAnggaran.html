@@ -132,7 +132,7 @@
 			<md-content>
 				<md-tabs md-dynamic-height md-border-bottom>
 					
-					<md-tab label="Setting" ng-if="spjaja === false && panjaraja === false && sppaja === false && spmaja === false && semuaanggaran === true && disidpegawai === false">
+					<md-tab label="Setting" ng-if="spjaja === false && spjajas === false && panjaraja === false && sppaja === false && spmaja === false && semuaanggaran === true && disidpegawai === false">
 						<!-- Setting keterangan blud -->
 						<md-content class="md-padding" ng-hide="false">
 
@@ -145,7 +145,7 @@
 										<div class="grid_12">
 											<div class="grid_6">
 												<div class="grid_12">
-													<label c-label item="item" c-label-text="Nama Pemda"></label>
+													<label c-label item="item" c-label-text="Nama Pemda" real></label>
 												</div>
 												<div class="grid_12">
 													<input c-text-box type="input" class="k-textbox" ng-model="item.namapemda"  />
@@ -153,7 +153,7 @@
 											</div>
 											<div class="grid_6">
 												<div class="grid_12">
-													<label c-label item="item" c-label-text="Kepala Daerah"></label>
+													<label c-label item="item" c-label-text="Kepala Daerah" real></label>
 												</div>
 												<div class="grid_12">
 													<input c-text-box type="input" class="k-textbox" ng-model="item.kepaladaerah" />
@@ -161,7 +161,7 @@
 											</div>
 											<div class="grid_6">
 												<div class="grid_12">
-													<label c-label item="item" c-label-text="Nama Kepala Daerah"></label>
+													<label c-label item="item" c-label-text="Nama Kepala Daerah" real></label>
 												</div>
 												<div class="grid_12">
 													<input c-text-box type="input" class="k-textbox" ng-model="item.namakepaladaerah" />
@@ -169,7 +169,7 @@
 											</div>
 											<div class="grid_6">
 												<div class="grid_12">
-													<label c-label item="item" c-label-text="Nama Sekda"></label>
+													<label c-label item="item" c-label-text="Nama Sekda" real></label>
 												</div>
 												<div class="grid_12">
 													<input c-text-box type="input" class="k-textbox" ng-model="item.namasekda" />
@@ -177,7 +177,7 @@
 											</div>
 											<div class="grid_6">
 												<div class="grid_12">
-													<label c-label item="item" c-label-text="NIP Sekda"></label>
+													<label c-label item="item" c-label-text="NIP Sekda" real></label>
 												</div>
 												<div class="grid_12">
 													<input c-text-box type="input" class="k-textbox" ng-model="item.nipsekda" />
@@ -185,7 +185,7 @@
 											</div>
 											<div class="grid_6">
 												<div class="grid_12">
-													<label c-label item="item" c-label-text="Nama PPKD"></label>
+													<label c-label item="item" c-label-text="Nama PPKD" real></label>
 												</div>
 												<div class="grid_12">
 													<input c-text-box type="input" class="k-textbox" ng-model="item.namappkd" />
@@ -193,7 +193,7 @@
 											</div>
 											<div class="grid_6">
 												<div class="grid_12">
-													<label c-label item="item" c-label-text="NIP PPKD"></label>
+													<label c-label item="item" c-label-text="NIP PPKD" real></label>
 												</div>
 												<div class="grid_12">
 													<input c-text-box type="input" class="k-textbox" ng-model="item.nipppkd" />
@@ -201,7 +201,7 @@
 											</div>
 											<div class="grid_12">
 												<div class="grid_12">
-													<label c-label item="item" c-label-text="Pengelola Keuangan BLUD"></label>
+													<label c-label item="item" c-label-text="Pengelola Keuangan BLUD" real></label>
 												</div>
 												<div class="grid_12">
 													<input c-text-box type="input" class="k-textbox" ng-model="item.pengelolakeuanganblud" />
@@ -209,7 +209,7 @@
 											</div>
 											<div class="grid_6">
 												<div class="grid_12">
-													<label c-label item="item" c-label-text="Nama Kepala BLUD"></label>
+													<label c-label item="item" c-label-text="Nama Kepala BLUD" real></label>
 												</div>
 												<div class="grid_12">
 													<input style="width: 100%;" kendo-combo-box k-ng-model="item.objectkepalabludfk"
@@ -219,7 +219,7 @@
 											</div>
 											<div class="grid_6">
 												<div class="grid_12">
-													<label c-label item="item" c-label-text="NIP Kepala BLUD"></label>
+													<label c-label item="item" c-label-text="NIP Kepala BLUD" real></label>
 												</div>
 												<div class="grid_12">
 													<input c-text-box type="input" class="k-textbox" ng-model="item.nipkepalablud" />
@@ -227,7 +227,7 @@
 											</div>
 											<div class="grid_12">
 												<div class="grid_12">
-													<label c-label item="item" c-label-text="Alamat"></label>
+													<label c-label item="item" c-label-text="Alamat" real></label>
 												</div>
 												<div class="grid_12">
 													<input c-text-box type="input" class="k-textbox" ng-model="item.alamat" />
@@ -235,7 +235,7 @@
 											</div>
 											<div class="grid_6">
 												<div class="grid_12">
-													<label c-label item="item" c-label-text="Kota"></label>
+													<label c-label item="item" c-label-text="Kota" real></label>
 												</div>
 												<div class="grid_12">
 													<input c-text-box type="input" class="k-textbox" ng-model="item.kota" />
@@ -243,7 +243,7 @@
 											</div>
 											<div class="grid_6">
 												<div class="grid_12">
-													<label c-label item="item" c-label-text="Telepon"></label>
+													<label c-label item="item" c-label-text="Telepon" real></label>
 												</div>
 												<div class="grid_12">
 													<input c-text-box type="input" class="k-textbox" ng-model="item.telepon" />
@@ -251,7 +251,7 @@
 											</div>
 											<div class="grid_6">
 												<div class="grid_12">
-													<label c-label item="item" c-label-text="Faximile"></label>
+													<label c-label item="item" c-label-text="Faximile" real></label>
 												</div>
 												<div class="grid_12">
 													<input c-text-box type="input" class="k-textbox" ng-model="item.faximile" />
@@ -259,7 +259,7 @@
 											</div>
 											<div class="grid_6">
 												<div class="grid_12">
-													<label c-label item="item" c-label-text="Tahun Anggaran"></label>
+													<label c-label item="item" c-label-text="Tahun Anggaran" real></label>
 												</div>
 												<div class="grid_12">
 													<input c-text-box type="input" class="k-textbox" ng-model="item.tahunanggaran" />
@@ -267,7 +267,7 @@
 											</div>
 											<div class="grid_6">
 												<div class="grid_12">
-													<label c-label item="item" c-label-text="Tahap Aktif"></label>
+													<label c-label item="item" c-label-text="Tahap Aktif" real></label>
 												</div>
 												<div class="grid_12">
 													<input style="width: 100%;" kendo-combo-box k-ng-model="item.objecttahapaktivfk"
@@ -277,7 +277,7 @@
 											</div>
 											<div class="grid_6">
 												<div class="grid_12">
-													<label c-label item="item" c-label-text="Nomor NPWP"></label>
+													<label c-label item="item" c-label-text="Nomor NPWP" real></label>
 												</div>
 												<div class="grid_12">
 													<input c-text-box type="input" class="k-textbox" ng-model="item.nomornpwp" />
@@ -309,7 +309,7 @@
 							</div>
 						</md-content>
 					</md-tab>
-					<md-tab label="Kegiatan" ng-if="spjaja === false && panjaraja === false && sppaja === false && spmaja === false && semuaanggaran === true">
+					<md-tab label="Kegiatan" ng-if="spjaja === false && panjaraja === false && sppaja === false && spmaja === false && (semuaanggaran === true || spjajas === true)">
 						<md-content class="md-padding">
 							
 							<!-- <br /> -->
@@ -375,7 +375,7 @@
 							<div class="clear"></div>
 						</md-content>
 					</md-tab>
-					<md-tab label="Mata Anggaran" ng-if="spjaja === false && panjaraja === false && sppaja === false && spmaja === false && semuaanggaran === true && disidpegawai === false">
+					<md-tab label="Mata Anggaran" ng-if="spjaja === false && spjajas === false && panjaraja === false && sppaja === false && spmaja === false && semuaanggaran === true && disidpegawai === false">
 						<md-content class="md-padding">
 							<div class="grid_12">
 								<div class="grid_2">
@@ -405,7 +405,7 @@
 							<div class="clear"></div>
 						</md-content>
 					</md-tab>
-					<md-tab label="Mata Anggaran Permen" ng-if="spjaja === false && panjaraja === false && sppaja === false && spmaja === false && semuaanggaran === true && disidpegawai === false">
+					<md-tab label="Mata Anggaran Permen" ng-if="spjaja === false && spjajas === false && panjaraja === false && sppaja === false && spmaja === false && semuaanggaran === true && disidpegawai === false">
 						<md-content class="md-padding">
 							<br />
 							<div class="grid_12">
@@ -435,7 +435,7 @@
 							</div>
 						</md-content>
 					</md-tab>
-					<md-tab label="Anggaran Kas" ng-if="spjaja === false && panjaraja === false && sppaja === false && spmaja === false && semuaanggaran === true">
+					<md-tab label="Anggaran Kas" ng-if="spjaja === false && panjaraja === false && sppaja === false && spmaja === false && (semuaanggaran === true || spjajas === true)">
 						<!-- Setting keterangan blud -->
 						<md-content class="md-padding">
 
@@ -493,7 +493,7 @@
 							</div>
 						</md-content>
 					</md-tab>
-					<md-tab label="SPJ" ng-if="spjaja === true && panjaraja === false && sppaja === false && spmaja === false && semuaanggaran === false">
+					<md-tab label="SPJ" ng-if="spjaja === true && spjajas === false && panjaraja === false && sppaja === false && spmaja === false && semuaanggaran === false">
 						<md-content class="md-padding">
 
 							<br />
@@ -530,7 +530,7 @@
 							<div class="clear"></div>
 						</md-content>
 					</md-tab>
-					<md-tab label="Panjar" ng-if="spjaja === false && panjaraja === true && sppaja === false && spmaja === false && semuaanggaran === false">
+					<md-tab label="Panjar" ng-if="spjaja === false && spjajas === false && panjaraja === true && sppaja === false && spmaja === false && semuaanggaran === false">
 						<!-- Setting keterangan blud -->
 						<md-content class="md-padding">
 							<div class="grid_12">
@@ -542,7 +542,7 @@
 							</div>
 						</md-content>
 					</md-tab>
-					<md-tab label="Surat Permintaan Pembayaran (SPP)" ng-if="spjaja === false && panjaraja === false && sppaja === true && spmaja === false && semuaanggaran === false">
+					<md-tab label="Surat Permintaan Pembayaran (SPP)" ng-if="spjaja === false && spjajas === false && panjaraja === false && sppaja === true && spmaja === false && semuaanggaran === false">
 						<!-- Setting keterangan blud -->
 						<md-content class="md-padding">
 							<div class="grid_12">
@@ -567,7 +567,7 @@
 							</div>
 						</md-content>
 					</md-tab>
-					<md-tab label="Surat Perintah Membayar (SPM)" ng-if="spjaja === false && panjaraja === false && sppaja === false && spmaja === true && semuaanggaran === false">
+					<md-tab label="Surat Perintah Membayar (SPM)" ng-if="spjaja === false && spjajas === false && panjaraja === false && sppaja === false && spmaja === true && semuaanggaran === false">
 						<!-- Setting keterangan blud -->
 						<md-content class="md-padding">
 							<div class="grid_12">
@@ -1542,6 +1542,14 @@
 						k-data-source="listAsalProduk"  />
 				</div>
 			</div>
+			<div class="grid_6">
+				<div class="grid_12">
+					<label c-label item="item" c-label-text="Password"></label>
+				</div>
+				<div class="grid_12">
+					<input c-text-box type="input" class="k-textbox" ng-model="item.password"  />
+				</div>
+			</div>
 		</div>
 		
 		<div class="grid_12">
@@ -2122,6 +2130,14 @@
 				</div>
 			</div>
 			<div class="grid_12">
+				<div class="grid_3" style="text-align: left; margin-top: 10px;" ></div>
+				<div class="grid_6" style="margin-top: 10px;">
+					<legend id="filterData">
+						<a ng-click="showAndHide()"><strong>PPh 1:</strong></a>
+					</legend>
+				</div>
+			</div>
+			<div class="grid_12">
 				<div class="grid_3" style="text-align: left; margin-top: 10px;" >
 					Jenis PPh
 				</div>
@@ -2154,6 +2170,57 @@
 				</div>
 				<div class="grid_6" >
 					<input c-text-box type="input" class="k-textbox" ng-model="item.ntpnpph" />
+				</div>
+			</div>
+			<div class="grid_12">
+				<div class="grid_3" style="text-align: left; margin-top: 10px;" ></div>
+				<div class="grid_6" style="margin-top: 10px;">
+					<legend id="filterData">
+						<a ng-click="showAndHide()"><strong>PPh 2:</strong></a>
+					</legend>
+				</div>
+			</div>
+			<div class="grid_12">
+				<div class="grid_3" style="text-align: left; margin-top: 10px;" >
+					Jenis PPh
+				</div>
+				<div class="grid_6" style="margin-top: 10px;">
+					<input kendo-combo-box k-ng-model="item.jenispajak2"
+						k-data-text-field="'jenispajak'" k-data-value-field="'id'"
+						k-filter="'contains'" k-auto-bind="false"
+						k-data-source="listJenisPajak"  />
+				</div>
+			</div>
+			<div class="grid_12">
+				<div class="grid_3" style="text-align: left;margin-top: 15px;">
+					PPh
+				</div>
+				<div class="grid_6" >
+					<input c-text-box type="input" class="k-textbox" ng-model="item.pphpanjar2" />
+				</div>
+			</div>
+			<div class="grid_12">
+				<div class="grid_3" style="text-align: left;margin-top: 15px;">
+					Id Billing
+				</div>
+				<div class="grid_6" >
+					<input c-text-box type="input" class="k-textbox" ng-model="item.idbillpph2" />
+				</div>
+			</div>
+			<div class="grid_12">
+				<div class="grid_3" style="text-align: left;margin-top: 15px;">
+					NTPN
+				</div>
+				<div class="grid_6" >
+					<input c-text-box type="input" class="k-textbox" ng-model="item.ntpnpph2" />
+				</div>
+			</div>
+			<div class="grid_12">
+				<div class="grid_3" style="text-align: left; margin-top: 10px;" ></div>
+				<div class="grid_6" style="margin-top: 10px;">
+					<legend id="filterData">
+						<a ng-click="showAndHide()"><strong>PPN:</strong></a>
+					</legend>
 				</div>
 			</div>
 			<div class="grid_12">
@@ -2856,6 +2923,15 @@
 				</div>
 				<div class="grid_12" >
 					<input c-text-box type="input" class="k-textbox" ng-model="item.subTotalSPJ"   style="text-align: right;" disabled="true"/>
+				</div>
+			</div>
+			<div class="grid_2" ng-hide="passrba">
+				<div class="grid_12" style="text-align: left;">
+					Password
+				</div>
+				<div class="grid_12" >
+					<input c-text-box type="input" class="k-textbox" ng-model="item.passwordrba"   style="text-align: right;"/>
+					<input c-text-box type="input" class="k-textbox" ng-model="item.passwordbenar"   style="text-align: right;" ng-hide="true"/>
 				</div>
 			</div>
 		</div>

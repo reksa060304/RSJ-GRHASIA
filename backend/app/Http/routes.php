@@ -1582,6 +1582,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::post('perencanaan/save-spm','Perencanaan\PerencanaanController@saveSPM');
             Route::post('perencanaan/save-spd','Perencanaan\PerencanaanController@saveSPD');
             Route::post('perencanaan/copy-permen','Perencanaan\PerencanaanController@copyPermen');
+            Route::post('perencanaan/delete-spj-to-panjar','Perencanaan\PerencanaanController@deleteSPJtoPanjar');
+            Route::post('perencanaan/delete-bku','Perencanaan\PerencanaanController@deleteBKU');
             Route::post('perencanaan/save-lpj','Perencanaan\PerencanaanController@saveLPJ');
             Route::post('perencanaan/delete-lpj','Perencanaan\PerencanaanController@deleteLPJ');
             Route::post('perencanaan/delete-jasgir','Perencanaan\PerencanaanController@deleteJasgir');
@@ -1673,6 +1675,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('perencanaan/get-pajak-udah-save', 'Perencanaan\PerencanaanController@getPajakUdahSave');
             Route::get('perencanaan/get-data-spm', 'Perencanaan\PerencanaanController@getDataSPM');
             Route::get('perencanaan/get-data-rba-belum', 'Perencanaan\PerencanaanController@getRBABelum');
+            Route::get('perencanaan/get-password-rba', 'Perencanaan\PerencanaanController@getPassRBA');
 
         // });
         // Route::group(['prefix' => 'piutang'], function () {
@@ -2137,7 +2140,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
               //sensusharianrawatjalan
               Route::get('registrasi/laporan/get-data-sensus-harian','Registrasi\SensusHarianRawatJalanController@getSensusHarianRawatJalan');
               Route::get('laporan/get-data-sensus-harian-rawat-jalan','Registrasi\SensusHarianRawatJalanController@getLaporanSensusHarianRawatJalan');
-              Route::get('registrasi/get-datacombo-sensus', 'SensusHarianRawatJalanController@getDataCombo');
+              Route::get('registrasi/get-datacombo-sensus', 'Registrasi\SensusHarianRawatJalanController@getDataCombo');
               Route::get('registrasi/get-data-grafik','Registrasi\SensusHarianRawatJalanController@GrafikRajal');
               Route::get('registrasi/laporan/get-data-lap-jumlah-pasien-cara-v2', 'Registrasi\RegistrasiController@getLaporanJumlahPasienDanCaraBayarv2'); 
               
@@ -2641,7 +2644,6 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
               Route::get('sysadmin/menu/get-daftar-user', 'SysAdmin\ModulAplikasiController@getDaftarUser');
               Route::post('sysadmin/menu/delete-new-user', 'SysAdmin\ModulAplikasiController@deleteNewUser');
               Route::get('sysadmin/menu/get-master-modul-aplikasi', 'SysAdmin\ModulAplikasiController@getMasterModulAplikasi');
-
               Route::get('sysadmin/menu/data', 'SysAdmin\HakAksesPegawaiController@getData');
               Route::post('sysadmin/menu/simpan-modul-aplikasi', 'SysAdmin\HakAksesPegawaiController@modulAplikasi');
               Route::post('sysadmin/menu/hapus-modul-aplikasi', 'SysAdmin\HakAksesPegawaiController@HapusModulAplikasi');
@@ -2722,6 +2724,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
               Route::post('sysadmin/master/save-data-kamar','SysAdmin\Master\MasterController@saveMasterKamar');
               Route::get('sysadmin/master/get-data-qtybed','SysAdmin\Master\MasterController@getQTYBedValidation');
               Route::post('sysadmin/master/save-data-tempattidur','SysAdmin\Master\MasterController@saveMasterTempatTidur');
+              Route::post('sysadmin/simpan-masterrekanan','SysAdmin\GeneralController@simpanMasterRekananPerbaikan');
               // });
             // Route::group(['prefix' => 'general'], function () {
                 // GET //
@@ -2778,6 +2781,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
                 Route::get('sysadmin/general/get-diagnosapasienbynoreg', 'SysAdmin\GeneralController@getDiagnosaPasien');
                 Route::get('sysadmin/general/get-pasien-bynorec-general', 'SysAdmin\GeneralController@getPasienByNoreg');
                 Route::get('sysadmin/general/get-daftar-permohonan-simrs','SysAdmin\GeneralController@getDaftarPermohonanSIMRS');
+                Route::get('sysadmin/get-pihakketiga','SysAdmin\GeneralController@getPihakKetiga');
+                Route::post('sysadmin/save-pengerjaan-permohonan-simrs','IPSRS\IPSRSController@SavePengerjaanPermohonanSIMRS');
                 Route::get('sysadmin/general/get-jenis-pekerjaan-simrs','SysAdmin\GeneralController@getJenisPekerjaanSIMRS');
                 Route::get('sysadmin/general/get-status-pekerjaan-simrs','SysAdmin\GeneralController@getStatusPekerjaanSIMRS');
                 Route::get('sysadmin/general/get-combo-pegawai-simrs','SysAdmin\GeneralController@getDataPegawaiGeneralSIMRS');
