@@ -380,44 +380,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.Kembali = function () {
 
                 switch ($scope.dataParams.pageFrom) {
-                    case "PembayaranTagihanLayananKasir":
-                        if ($scope.showBtnSimpan) {
-                            $scope.changePage("PembayaranTagihanLayananKasir");
-                        } else {
-                            $state.go("DaftarPasienPulang", {});
-                        }
-                        break;
-                    case "PembayaranTagihanNonLayananKasir":
-                        $scope.changePage("DaftarPenelitianEksternal");
-                        break;
-                    case "InputTagihanNonLayanan":
-                        $scope.changePage("InputTagihanNonLayanan");
-                        break;
-                    case "DaftarNonLayananKasir":
-                        $scope.changePage("DaftarPenelitianEksternal");
-                        break;
-                    case "DaftarPenjualanApotekKasir/terimaUmum":
-                        $state.go("DaftarPenjualanApotekKasir", {
-                            dataFilter: "terimaUmum"
-                        });
-                        break;
-                    case "DaftarPenjualanApotekKasir/obatBebas":
-                        $state.go("DaftarPenjualanApotekKasir", {
-                            dataFilter: "obatBebas"
-                        });
-                        break;
-                    case "PenyetoranDepositKasir":
-                        $scope.changePage("PenyetoranDepositKasir");
-                        break;
-                    case "PenyetoranDepositKasirKembali":
-                        $scope.changePage("PenyetoranDepositKasirKembali");
-                        break;
-                    case "PembayaranPiutangKasir":
-                        if ($scope.showBtnSimpan) {
-                            $scope.changePage("PembayaranPiutangKasir");
-                        } else {
-                            $state.go("DaftarPiutangKasir", {});
-                        }
+                    case "PembayaranDiklat":
+                        $state.go("DaftarPenelitianEksternal");
                         break;
                 }
             }
