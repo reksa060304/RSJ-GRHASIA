@@ -2643,7 +2643,6 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
               Route::get('sysadmin/menu/get-daftar-user', 'SysAdmin\ModulAplikasiController@getDaftarUser');
               Route::post('sysadmin/menu/delete-new-user', 'SysAdmin\ModulAplikasiController@deleteNewUser');
               Route::get('sysadmin/menu/get-master-modul-aplikasi', 'SysAdmin\ModulAplikasiController@getMasterModulAplikasi');
-
               Route::get('sysadmin/menu/data', 'SysAdmin\HakAksesPegawaiController@getData');
               Route::post('sysadmin/menu/simpan-modul-aplikasi', 'SysAdmin\HakAksesPegawaiController@modulAplikasi');
               Route::post('sysadmin/menu/hapus-modul-aplikasi', 'SysAdmin\HakAksesPegawaiController@HapusModulAplikasi');
@@ -2724,6 +2723,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
               Route::post('sysadmin/master/save-data-kamar','SysAdmin\Master\MasterController@saveMasterKamar');
               Route::get('sysadmin/master/get-data-qtybed','SysAdmin\Master\MasterController@getQTYBedValidation');
               Route::post('sysadmin/master/save-data-tempattidur','SysAdmin\Master\MasterController@saveMasterTempatTidur');
+              Route::post('sysadmin/simpan-masterrekanan','SysAdmin\GeneralController@simpanMasterRekananPerbaikan');
               // });
             // Route::group(['prefix' => 'general'], function () {
                 // GET //

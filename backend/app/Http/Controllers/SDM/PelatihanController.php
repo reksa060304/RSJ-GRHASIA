@@ -3180,7 +3180,7 @@ class PelatihanController extends ApiController {
             $strukBuktiPenerimanan->objectkelompokpasienfk = null;
             $strukBuktiPenerimanan->objectkelompoktransaksifk = 13;
             $strukBuktiPenerimanan->objectpegawaipenerimafk  = $this->getCurrentLoginID();
-            $strukBuktiPenerimanan->tglsbm  = $this->getDateTime();
+            $strukBuktiPenerimanan->tglsbm  = $request['tglsbm'];
             $strukBuktiPenerimanan->totaldibayar  = $pembayaran['nominal'];
             $strukBuktiPenerimanan->nosbm = $this->generateCode(new StrukBuktiPenerimaan, 'nosbm', 14, 'RV-'.$this->getDateTime()->format('ym'), $kdProfile);
             $strukBuktiPenerimanan->ispiutang = true;
