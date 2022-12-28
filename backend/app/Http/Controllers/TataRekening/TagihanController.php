@@ -5500,9 +5500,9 @@ class TagihanController  extends ApiController
                     '1'
                 END  as lamahari
                 FROM monitoringklaim_t mk
-								left join pemakaianasuransi_t as pa on mk.nosep = pa.nosep and mk.statusklaimfk = 3
-								left join pasiendaftar_t pd on pa.noregistrasifk = pd.norec
-								left join pasien_m ps on ps.id=pd.nocmfk
+				left join pemakaianasuransi_t as pa on mk.nosep = pa.nosep and mk.statusklaimfk = 3
+				left join pasiendaftar_t pd on pa.noregistrasifk = pd.norec
+				left join pasien_m ps on ps.id=pd.nocmfk
                 left join ruangan_m as ru on ru.id = pd.objectruanganlastfk
                 left join departemen_m as dept on dept.id = ru.objectdepartemenfk
                 left join registrasipelayananpasien_t as rpp on rpp.noregistrasifk = pd.norec
@@ -5552,11 +5552,10 @@ class TagihanController  extends ApiController
             case when rkb.isobat = true then sum(rkb.totalsetujui) else 0 end as totalobat
              from
             rekapklaimbpjs_t rkb 
-            inner join pasiendaftar_t pd on pd.norec = rkb.norecpdfk
-            inner join ruangan_m ru on ru.id = pd.objectruanganlastfk
-            inner join kelompokpasien_m kp on kp.id = pd.objectkelompokpasienlastfk
+            left join pasiendaftar_t pd on pd.norec = rkb.norecpdfk
+            left join ruangan_m ru on ru.id = pd.objectruanganlastfk
+            left join kelompokpasien_m kp on kp.id = pd.objectkelompokpasienlastfk
             where rkb.statusenabled = true
-            and pd.statusenabled = true
             and rkb.tglbayar::date between '$tglAwal' and '$tglAkhir'
             $kp
             group by rkb.isobat, rkb.tglbayar::date, kp.kelompokpasien, ru.objectdepartemenfk
