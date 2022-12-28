@@ -1085,5 +1085,110 @@ class IPSRSController extends ApiController
         );
         return $this->respond($result);
     }
+    public function SavePengerjaanPermohonanSIMRS(Request $request)
+    {
+        DB::beginTransaction();
+        $dataLogin = $request->all();
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        try {
 
+            if ($request['norec'] == ''){
+                return $this->respond("ASUP");
+                $newCOA = new StrukPlanning();
+                $norecHead = $newCOA->generateNewId();
+                $newCOA->kdprofile = $kdProfile;
+                $newCOA->norec = $norecHead;
+                $newCOA->statusenabled = true;
+            }else{
+                $newCOA = StrukPlanning::where('norec',$request['norec'])->where('kdprofile', $kdProfile)->first();
+                $Spd = StrukPlanningDetail::where('noplanningfk', $request['norec'])->delete();
+            }
+                $newCOA->startdate = $request['strukplanning']['tglmulai'];
+                $newCOA->duedate = $request['strukplanning']['tglselesai'];
+                $newCOA->objectstatuspekerjaanfk = $request['strukplanning']['status'];
+                $newCOA->deskripsiplanning = $request['strukplanning']['worklist'];
+                $newCOA->keteranganverifikasi = $request['strukplanning']['identifikasikerusakan'];
+                $newCOA->objectpegawaipjawabevaluasifk = $request['strukplanning']['penanngungjawab'];
+                $newCOA->objectpegawaipjawabfk = $request['strukplanning']['penanngungjawab'];
+                $newCOA->objectjenispekerjaanfk = $request['strukplanning']['jeniskerusakan'];
+                $newCOA->objectjenisalatfk = $request['strukplanning']['jenisalat'];
+                $newCOA->ispihakketiga = $request['strukplanning']['ispihakketiga'];
+                $newCOA->catatan = $request['strukplanning']['catatan'];
+                $newCOA->objectdetailjenispekerjaanfk = $request['strukplanning']['detailjenispekerjaan'];
+                $newCOA->objectrekananperbaikanfk = $request['strukplanning']['rekananperbaikan'];
+                $newCOA->save();
+                $norecHead2 = $newCOA->norec;
+
+            foreach ($request['datapegawai'] as $items){
+                $Spd = new StrukPlanningDetail();
+                $norecDetail = $Spd->generateNewId();
+                $Spd->kdprofile = $kdProfile;
+                $Spd->norec = $norecDetail;
+                $Spd->statusenabled = true;
+                $Spd->pegawaifk = $items['id'];
+                $Spd->noplanningfk = $norecHead2;
+                $Spd->save();
+            }
+
+
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+        $transMessage = "Simpan";
+        if ($transStatus == 'true') {
+            $transMessage = $transMessage . " Berhasil" ;
+            DB::commit();
+            $result = array(
+                "status" => 201,
+               "data" => $newCOA,
+                "as" => 'as@epic',
+            );
+        } else {
+            $transMessage = $transMessage ." Gagal!!";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+//                "data" => $newPJT,
+                    "e"=> $e->getLine().$e->getMessage(),
+                "as" => 'as@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function responseTime(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        DB::beginTransaction();
+        $dataLogin = $request->all();
+
+        try {
+            $newCOA =  StrukPlanning::where('norec',$request['norec'])->first();
+            $newCOA->tglverif = $request['tglverif'];
+            $newCOA->save();
+
+
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+        $transMessage = "";
+        if ($transStatus == 'true') {
+            $transMessage = $transMessage . " Berhasil" ;
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "as" => 'as@epic',
+            );
+        } else {
+            $transMessage = $transMessage ." Gagal!!";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "as" => 'as@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
 }
