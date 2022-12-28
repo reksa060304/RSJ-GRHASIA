@@ -6213,7 +6213,7 @@ class ReportController extends ApiController{
         }
 
         $data = DB::select(DB::raw("select * from(
-            select 0 nourut, '' objectmataanggaranfk, '' nobku, '' tgl, 'Saldo Awal Bulan' uraianbku, (saldo-penerimaan+pengeluaran) penerimaan, 0 pengeluaran, 0 saldoawal, '' nodokumen
+            select 0 pph, 0 ppn, 0 nourut, '' objectmataanggaranfk, '' nobku, '' tgl, 'Saldo Awal Bulan' uraianbku, (saldo-penerimaan+pengeluaran) penerimaan, 0 pengeluaran, 0 saldoawal, '' nodokumen
             from bukukasumum_t
             where kdprofile = 30
             and statusenabled = true
@@ -6225,7 +6225,7 @@ class ReportController extends ApiController{
             union all
             
             
-            select nourut, objectmataanggaranfk, nobku, tgl, uraianbku, penerimaan, pengeluaran, saldoawal,
+            select pph, ppn, nourut, objectmataanggaranfk, nobku, tgl, uraianbku, penerimaan, pengeluaran, saldoawal,
             case 
                 when norealisasi is not null then norealisasi
                 when nopanjar is not null then nopanjar
@@ -6239,7 +6239,7 @@ class ReportController extends ApiController{
                 select ROW_NUMBER ( ) OVER ( ORDER BY bku.tglbku ) nourut, bku.objectmataanggaranfk, bku.nobku, 
                 to_char(bku.tglbku::date, 'DD-MM-YYYY') tgl, bku.uraianbku, bku.penerimaan, 
                 bku.pengeluaran, 0 saldoawal, sr.norealisasi, pj.nopanjar, spm.nospm,
-                pp.nopajak nopemungutan, ppj.nopajak nopenyetoran, jg.nojasagiro, sk.nosts 
+                pp.nopajak nopemungutan, coalesce(pp.pph, 0) pph, coalesce(pp.ppn, 0) ppn, ppj.nopajak nopenyetoran, jg.nojasagiro, sk.nosts 
                 from bukukasumum_t bku
                 left join strukrealisasi_t sr on sr.objectbkufk = bku.norec
                 and sr.kdprofile = 30
@@ -6321,7 +6321,7 @@ class ReportController extends ApiController{
                 from strukrealisasi_t sr 
             inner join pemungutanpajak_t pp on pp.objectspjfk = sr.norec 
             inner join jenispajak_m jp on jp.id = pp.objectjenispphfk 
-            inner join rekanan_m rk on rk.id = sr.rekananfk 
+            left join rekanan_m rk on rk.id = sr.rekananfk 
             inner join kegiatananggaran_m as dp on dp.id = sr.objectkegiatanfk
             inner join keteranganbelanja_t as kb on kb.objectkegiatanfk = dp.id
             inner join asalproduk_m ap on ap.id = kb.objectasalprodukfk
@@ -6352,7 +6352,7 @@ class ReportController extends ApiController{
                 from strukrealisasi_t sr 
             inner join panjar_t pj on pj.norec = sr.objectpanjarfk 
             inner join jenispajak_m jp on jp.id = pj.objectjenispphfk 
-            inner join rekanan_m rk on rk.id = sr.rekananfk 
+            left join rekanan_m rk on rk.id = sr.rekananfk 
             inner join kegiatananggaran_m as dp on dp.id = sr.objectkegiatanfk
             inner join keteranganbelanja_t as kb on kb.objectkegiatanfk = dp.id
             inner join asalproduk_m ap on ap.id = kb.objectasalprodukfk
@@ -6973,10 +6973,14 @@ class ReportController extends ApiController{
                 group by text, kode, div, subtotal
                 
                 union all
+
+                select 'PPN:' as text, 'OOOOO' kode, 9 div, 0 subtotal, 0 totalbulanlalu, 0 totalbulanini
+
+                union all
                 
                 select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
                 from(
-                    select 'PPN' as text, 'OOOOO' kode, 9 div, 0 subtotal, 
+                    select 'PPN' as text, 'OOOOO' kode, 10 div, 0 subtotal, 
                     case when extract(month from bku.tglbku) = '$bulanlalu' then sum(pp.ppn) else 0 end as totalbulanlalu,
                     case when extract(month from bku.tglbku) = '$bulan' then sum(pp.ppn) else 0 end as totalbulanini
                         from penyetoranpajak_t pp
@@ -6989,8 +6993,12 @@ class ReportController extends ApiController{
                 group by text, kode, div, subtotal
                 
                 union all
+
+                select 'PPh:' as text, 'OOOOO' kode, 11 div, 0 subtotal, 0 totalbulanlalu, 0 totalbulanini
+
+                union all
                 
-                select jp.jenispajak as text, 'OOOOO' kode, 9 div, 0 subtotal, 
+                select jp.jenispajak as text, 'OOOOO' kode, 12 div, 0 subtotal, 
                 case when extract(month from bku.tglbku) = '$bulanlalu' then sum(pmp.pph) else 0 end as totalbulanlalu,
                 case when extract(month from bku.tglbku) = '$bulan' then sum(pmp.pph) else 0 end as totalbulanini
                     from pemungutanpajak_t pmp
@@ -7197,6 +7205,10 @@ class ReportController extends ApiController{
                 group by text, kode, div, subtotal
                 
                 union all
+
+                select 'PPN:' as text, 'UUUUU' kode, 14 div, 0 subtotal, 0 totalbulanlalu, 0 totalbulanini
+
+                union all
                 
                 select text, kode, div, subtotal, sum(totalbulanlalu) totalbulanlalu, sum(totalbulanini) totalbulanini
                 from(
@@ -7212,6 +7224,10 @@ class ReportController extends ApiController{
                 ) as x
                 group by text, kode, div, subtotal
                 
+                union all
+
+                select 'PPh:' as text, 'WWWWW' kode, 14 div, 0 subtotal, 0 totalbulanlalu, 0 totalbulanini
+
                 union all
                 
                 select jp.jenispajak as text, 'WWWWW' kode, 15 div, 0 subtotal, 
@@ -10273,7 +10289,7 @@ class ReportController extends ApiController{
 		order by kodemataanggaran, jml, hargasatuan, satuan;
         "));
 
-        $pageWidth = 1200;
+        $pageWidth = 950;
         return view('report.spj.cetakrbadetail',compact('sebelum','pageWidth', 'data', 'itahap', 'tanggalcetak'));
     }
 
@@ -10799,7 +10815,7 @@ inner join(
         $qsama
         "));
 
-        $pageWidth = 1200;
+        $pageWidth = 950;
         return view('report.spj.cetakrbadetailsebelumsesudah',compact('sebelum','pageWidth', 'data', 'tanggalcetak'));
     }
     

@@ -94,6 +94,17 @@
 
 			<div class="grid_2" ng-hide="true">
 				<div class="grid_12">
+					<label c-label item="item" c-label-text="Jenis Pelayanan"></label>
+				</div>
+				<div class="clear"></div>
+
+				<div class="grid_12" style="margin-top:5px;">
+					<input style="width: 100%;" kendo-combo-box k-ng-model="item.jenispelayanan" k-data-text-field="'nama'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listJenisPelayanan" />
+				</div>
+			</div>
+
+			<div class="grid_2" ng-hide="true">
+				<div class="grid_12">
 					<label c-label item="item" c-label-text="Kelompok Pasien"></label>
 				</div>
 				<div class="clear"></div>

@@ -2796,7 +2796,14 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
 
             $scope.SimpanVerifikasiSPJ = function(){
-                
+
+                var datasave =
+                    {
+                        norec :  $scope.norecverif,
+                        totalbelanja :  $scope.item.jumlahdibayarSPJ,
+                        norecpanjar:  $scope.selectedData2
+                    }
+
                 var objSave =
                     {
                         tglverif: $scope.item.tglVerifSPJ,
@@ -2805,15 +2812,81 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         carabayar: $scope.item.radioPencairanVerifikasi,
                         jumlahdibayarverif: $scope.item.jumlahdibayarSPJ,
                         norec: $scope.norecverif,
-                        norecpanjar: $scope.norecpanjar,
+                    }
+
+                if($scope.item.radioPencairanVerifikasi == '2'){
+                    var len = $scope.selectedData2.length - 1
+                    for (var i = 0; i < $scope.selectedData2.length; i++){
+                        console.log($scope.selectedData2[i].norecpanjar)
+                        console.log($scope.selectedData2[len].norecpanjar)
+                            if($scope.selectedData2[i].norecpanjar == $scope.selectedData2[len].norecpanjar){
+                                medifirstService.get("perencanaan/get-sisa-panjar?spj=" + $scope.norecverif + "&panjar=" + $scope.selectedData2[i].norecpanjar).then(function (e) {
+                                    var jumlahspj = 0
+                                    if(e.data.sisapanjar.length == 0){
+                                        jumlahspj = 0
+                                    }else{
+                                        jumlahspj = e.data.sisapanjar[0].jumlahspj
+                                    }
+
+                                    $scope.jumlahspjdipilih += parseFloat(jumlahspj);
+                                    $scope.jumlahpanjardipilih += parseFloat(e.data.jumlah[0].jumlah)
+                                    $scope.jumlahpengembaliandipilih += parseFloat(e.data.pengembalian[0].jumlahpengembalian)
+
+                                    
+                                        $scope.item.jumlahspjdipilih = $scope.jumlahspjdipilih
+                                        $scope.item.jumlahpanjardipilih = $scope.jumlahpanjardipilih
+                                        $scope.item.jumlahpengembaliandipilih = $scope.jumlahpengembaliandipilih
+                                        
+                                        console.log($scope.item.jumlahspjdipilih)
+                                        console.log($scope.item.jumlahpanjardipilih)
+                                        console.log($scope.item.jumlahpengembaliandipilih)
+                                        console.log($scope.totalspjawal)
+                                        console.log($scope.item.jumlahSPJ)
+                                        console.log(parseFloat($scope.item.jumlahpanjardipilih) - parseFloat($scope.item.jumlahspjdipilih) - parseFloat($scope.item.jumlahpengembaliandipilih))
+                                        if(((parseFloat($scope.item.jumlahpanjardipilih) - parseFloat($scope.item.jumlahspjdipilih) - parseFloat($scope.item.jumlahpengembaliandipilih))) >= parseFloat($scope.item.jumlahdibayarSPJ)){
+                                            medifirstService.post('perencanaan/save-realisasi-spj-verif',datasave).then(function (e) {
+                                                medifirstService.post('perencanaan/save-verif-spj', objSave).then(function (e) {
+                                                    loadDataGrid();
+                                                    $scope.popupVerifSPJ.center().close()
+                                                }, function (error) {
+                                                
+                                                })
+                                            }, function (error) {
+                                    
+                                            })
+                                        } else{
+                                            toastr.error('Ada panjar yang tidak mencukupi spj', 'Informasi');
+                                            return
+                                        }
+                                
+                                });
+                            } else{
+                                medifirstService.get("perencanaan/get-sisa-panjar?spj=" + $scope.norecverif + "&panjar=" + $scope.selectedData2[i].norecpanjar).then(function (e) {
+                                    var jumlahspj = 0
+                                    if(e.data.sisapanjar.length == 0){
+                                        jumlahspj = 0
+                                    }else{
+                                        jumlahspj = e.data.sisapanjar[0].jumlahspj
+                                    }
+
+                                    $scope.jumlahspjdipilih += parseFloat(jumlahspj);
+                                    $scope.jumlahpanjardipilih += parseFloat(e.data.jumlah[0].jumlah)
+                                    $scope.jumlahpengembaliandipilih += parseFloat(e.data.pengembalian[0].jumlahpengembalian)
+                                });
+                            }
+                            
                     }
                     
+                } else{
                     medifirstService.post('perencanaan/save-verif-spj', objSave).then(function (e) {
                         loadDataGrid();
                         $scope.popupVerifSPJ.center().close()
                     }, function (error) {
-                
+                    
                     })
+                }
+                    
+                
                 
             }
 
@@ -6239,6 +6312,29 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.item.jumlahdibayarSPJ = dataItem.totalbelanja
                 $scope.item.radioPencairanVerifikasi = dataItem.objectcarabayarfk
                 $scope.norecverif = dataItem.norec    
+
+                medifirstService.get("perencanaan/get-daftar-panjar-dipilih?norecspj="+$scope.norecverif
+                    , true).then(function (dat) {
+                        $scope.isRouteLoading = false;
+                        var datas = dat.data.data
+                        //console.log(datas)
+                        for(var i = 0; i < dat.data.data.length; i++){
+                            dat.data.data[i].no = i+1
+                        }
+                        $scope.dataSourcePanjarDipilih = new kendo.data.DataSource({
+                            data: datas,
+                            pageSize: 150,
+                            total: datas.length,
+                            serverPaging: false, 
+                            schema: {
+                                model: {
+                                    fields: {
+                                    }
+                                }
+                            },
+                        });
+                        
+                    });
                 
                 
                 $scope.subkegiatanverif = {id: dataItem.idsubkegiatan, keterangan: dataItem.keterangansubkegiatan}

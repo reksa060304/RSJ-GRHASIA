@@ -78,7 +78,11 @@
                     <td align="left" width="50" style="padding: 10px; font-size: 15px; ">{{ $dt->tgl }}</td>
                     <td align="left" width="50" style="padding: 10px; font-size: 15px; ">{{ $dt->nodokumen }}</td>
                     <td align="left" width="200" style="padding: 10px;  font-size: 15px; ">{{ $dt->uraianbku }}</td>
+                    @if(strpos($dt->nodokumen, 'PJK') !== false)
+                    <td align="center" width="50" style="padding: 10px; font-size: 15px; ">{{ $dt->objectmataanggaranfk }} <br> ({{ $dt->pph }}, {{ $dt->ppn }})</td>
+                    @else
                     <td align="center" width="50" style="padding: 10px; font-size: 15px; ">{{ $dt->objectmataanggaranfk }}</td>
+                    @endif
                     <td align="right" width="50" style="padding: 10px; font-size: 15px;  ">{{ number_format($dt->penerimaan,0,',','.') }}</td>
                     <td align="right" width="50" style="padding: 10px; font-size: 15px; ">{{ number_format($dt->pengeluaran,0,',','.') }}</td>
                     <td align="right" width="50" style="padding: 10px; font-size: 15px; ">{{ number_format($dt->saldoawal,0,',','.') }}</td>

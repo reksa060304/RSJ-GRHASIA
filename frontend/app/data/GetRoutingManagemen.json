@@ -94,5 +94,24 @@
           "define": "MedifirstService"
         }
       ]
+    },
+    {
+      "name": "LaporanBalikanDukcapil",
+      "url": "/TGFwb3JhbkJhbGlrYW5EdWtjYXBpbA==",
+      "templateurl": "module/Registrasi/Laporan/laporanBalikanDukcapil.html",
+      "controller": "LaporanBalikanDukcapilCtrl",
+      "deps": [{
+          "module": "Services",
+          "define": "Service"
+        },
+        {
+          "module": "LoginServices",
+          "define": "LoginService"
+        },
+        {
+          "module": "MedifirstService",
+          "define": "MedifirstService"
+        }
+      ]
     }
   ]

@@ -737,34 +737,34 @@ define(['initialize'], function (initialize) {
                         backgroundUrl: "#fffff"
                     }];
 
-                    sheet.rows.splice(79, 0, { cells: myHeaders, type: "header", height: 50 });
+                    sheet.rows.splice(83, 0, { cells: myHeaders, type: "header", height: 50 });
 
-                    sheet.rows.splice(80, 0, {
+                    sheet.rows.splice(84, 0, {
                         cells: [{value:"MENGETAHUI:", colSpan: 2},{value:"", colSpan: 1},{value:"TELAH DIPERIKSA",colSpan: 2},{value:"", colSpan: 1},{value:"", colSpan: 2}],
                         type: "data",
                         height: 20,
                     });
 
-                    sheet.rows.splice(81, 0, {
+                    sheet.rows.splice(85, 0, {
                         cells: [{value:"Pimpinan BLUD", colSpan: 2},{value:"", colSpan: 1},{value:"Verifikator",colSpan: 2},{value:"", colSpan: 1},{value:"Bendahara Penerima Pembantu", colSpan: 2}],
                         type: "data",
                         height: 20,
                     });
 
-                    sheet.rows.splice(82, 0, {
+                    sheet.rows.splice(86, 0, {
                         cells: [{value:"", colSpan: 2},{value:"", colSpan: 1},{value:"",colSpan: 2},{value:"", colSpan: 1},{value:"", colSpan: 2}],
                         type: "data",
                         height: 100,
                     });
 
 
-                    sheet.rows.splice(83, 0, {
+                    sheet.rows.splice(87, 0, {
                         cells: [{value:"dr. Akhmad Akhadi S, MPH", colSpan: 2},{value:"", colSpan: 1},{value:"Reny Astuti, SE",colSpan: 2},{value:"", colSpan: 1},{value:"Suri Herlina Pratiwi, S.KM, M.PH", colSpan: 2}],
                         type: "data",
                         height: 20,
                     });
 
-                    sheet.rows.splice(84, 0, {
+                    sheet.rows.splice(88, 0, {
                         cells: [{value:"NIP. 19680714 200012 1 002", colSpan: 2},{value:"", colSpan: 1},{value:"NIP. 19700404 199303 2005",colSpan: 2},{value:"", colSpan: 1},{value:"NIP. 19860422 201101 2 013", colSpan: 2}],
                         type: "data",
                         height: 20,

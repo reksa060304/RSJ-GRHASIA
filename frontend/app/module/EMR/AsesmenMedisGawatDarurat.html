@@ -171,7 +171,7 @@
 <div class="grid_12">
     <div class="grid_12">
         <div class="panel panel-default container_12">
-            <div class="panel-heading" c-translate> Asesmen Medis IGD Non Jiwa</div>
+            <div class="panel-heading"> Pengkajian Awal Medis IGD Non Jiwa (BB) CM.RM.06.02.Rev01 </div>
         </div>
         <div class="grid_12 margin-top-30">
             <label c-label item="item">Tanggal</label>
@@ -217,6 +217,17 @@
                         ng-model="item.obj[22034924]" style="height: 80px; width: 98%; " />
                 </div>
                 <div class="grid_12 margin-bottom">
+                    <label c-label item="item" class="margin-bottom">6. Riwayat Penggunaan Obat </label>
+                    <label c-label item="item" class="margin-bottom">Obat Rutin Dikonsimsi :</label>
+                    <textarea c-text-area type="input" filter="'string'" class="k-textbox"
+                        ng-model="item.obj[300000103]" style="height: 80px; width: 98%; " />
+                </div>
+                <div class="grid_12 margin-bottom">
+                    <label c-label item="item" class="margin-bottom">Obat yang Digunakan Sekarang : </label>
+                    <textarea c-text-area type="input" filter="'string'" class="k-textbox"
+                        ng-model="item.obj[300000104]" style="height: 80px; width: 98%; " />
+                </div>
+                <div class="grid_12 margin-bottom">
                     <label c-label item="item" class="margin-bottom">6. Pengaruh Faktor Psikososial Spiritual dan Ekonomi</label>
                     <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[22034830]"
                         style="height: 80px; width: 98%; " />
@@ -241,7 +252,13 @@
                         style="height: 80px; width: 98%; " />
                 </div>
                 <div class="grid_12 margin-bottom">
-                    <label c-label item="item" class="margin-bottom">D. Penatalaksanaan</label>
+                    <label c-label item="item" class="margin-bottom">D. Masalah Keperawatan</label>
+                    <textarea c-text-area type="input" filter="'string'" class="k-textbox"
+                        ng-model="item.obj[300000105]"
+                        style="height: 80px; width: 98%; " />
+                </div>
+                <div class="grid_12 margin-bottom">
+                    <label c-label item="item" class="margin-bottom">E. Penatalaksanaan</label>
                     <textarea c-text-area type="input" filter="'string'" class="k-textbox"
                         ng-model="item.obj[22034833]" style="height: 80px; width: 98%; " />
                     </div>

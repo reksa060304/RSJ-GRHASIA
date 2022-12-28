@@ -3840,4 +3840,42 @@ select '-' as smf,* from  (
 
         return $this->respond($result);
     }
+    public function getLaporanBalikanDukcapil(Request $request)
+    {
+        $tempdokter ='';
+        if(isset($request['dokter'])){
+            $tempdokter = 'and ppg.objectpegawaifk = '. $request['dokter'];
+        }
+        $tempdepartemen ='';
+        if(isset($request['idDept']) && $request['idDept'] == 1){
+            $tempdepartemen = 'and ru.objectdepartemenfk <> 16';
+        } else if(isset($request['idDept']) && $request['idDept'] == 2){
+            $tempdepartemen = 'and ru.objectdepartemenfk = 16';
+        }
+        $tempakomodasi ='';
+        if(isset($request['akomodasi']) && $request['akomodasi'] == 1){
+            $tempakomodasi = '';
+        } else if(isset($request['akomodasi']) && $request['akomodasi'] == 2){
+            $tempakomodasi = "and pr.namaproduk ilike '%akomodasi%'";
+        }
+        else if(isset($request['akomodasi']) && $request['akomodasi'] == 3){
+            $tempakomodasi = "and pr.namaproduk not ilike '%akomodasi%'";
+        }
+        $data = \DB::select(DB::raw("select
+        ps.nocm || ' ' nocm, ps.noidentitas , ' ' || gd.golongandarah namaexternal
+        from
+        pasien_m ps
+        inner join pasiendaftar_t pd on ps.id=pd.nocmfk
+        inner join golongandarah_m gd on ps.objectgolongandarahfk = gd.id
+        where pd.tglregistrasi between '$request[tglAwal]' and '$request[tglAkhir]'
+        AND ps.noidentitas <> '-' AND gd.golongandarah <> '-' AND gd.golongandarah <> '0' AND gd.golongandarah <> 'TIDAK TAHU'
+        group by ps.nocm, ps.noidentitas, gd.golongandarah
+        limit 200"));
+        $result = array(
+            "data"=> $data,
+            
+        );
+
+        return $this->respond($result);
+    }
 }

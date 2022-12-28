@@ -11,8 +11,7 @@
  
 </head>
 <style type="text/css" media="print">
-        @page {
-            size: all;   /* auto is the initial value */
+        @page (orientation: landscape){
             margin: 2cm 2cm 2cm 3cm;  /* this affects the margin in the printer settings */
         }
 </style>
@@ -85,7 +84,7 @@
         <tr >
             <td colspan="3" style="border-top: 3px solid black;">
                 <p align="center" style="margin-top: 10px; margin-bottom:10px">
-                    <font style="font-size: 12pt; " color="#000000" face="Arial">
+                    <font style="font-size: 10pt; " color="#000000" face="Arial">
                             <b>REKAP ANGGARAN TIAP SUB KEGIATAN (JENIS ANGGARAN) <br> TAHUN ANGGARAN {{ date('Y') }}</b>
                     </font>
                     <br>
@@ -95,27 +94,27 @@
         <tr >
             <td colspan="3" style="border-top: 3px solid black;">
                 <p align="left" style="margin-top: 10px; margin-bottom:10px; margin-left:10px">
-                    <font style="font-size: 12pt; " color="#000000" face="Arial">
+                    <font style="font-size: 10pt; " color="#000000" face="Arial">
                             Program &emsp;&emsp;&emsp;&emsp;&emsp;&emsp; : {{ $data[0]->kodeprogram.' - '.$data[0]->keteranganprogram }}
                     </font>
                     <br>
-                    <font style="font-size: 12pt; " color="#000000" face="Arial">
+                    <font style="font-size: 10pt; " color="#000000" face="Arial">
                             Kegiatan &emsp;&emsp;&emsp;&emsp;&emsp;&emsp; : {{ $data[0]->kodekegiatan.' - '.$data[0]->keterangankegiatan }}
                     </font>
                     <br>
-                    <font style="font-size: 12pt; " color="#000000" face="Arial">
+                    <font style="font-size: 10pt; " color="#000000" face="Arial">
                             Sub Kegiatan &emsp;&emsp;&emsp;&emsp; : {{ $data[0]->kodesubkegiatan.' - '.$data[0]->keterangansubkegiatan }}
                     </font>
                     <br>
-                    <font style="font-size: 12pt; " color="#000000" face="Arial">
+                    <font style="font-size: 10pt; " color="#000000" face="Arial">
                             Sub Sub Kegiatan &emsp;&emsp; : {{ $data[0]->kodesubsubkegiatan.' - '.$data[0]->keterangansubsubkegiatan }}
                     </font>
                     <br>
-                    <font style="font-size: 12pt; " color="#000000" face="Arial">
+                    <font style="font-size: 10pt; " color="#000000" face="Arial">
                             Waktu Pelaksanaan &emsp;&nbsp; : {{ $data[0]->tahun }}
                     </font>
                     <br>
-                    <font style="font-size: 12pt; " color="#000000" face="Arial">
+                    <font style="font-size: 10pt; " color="#000000" face="Arial">
                             Lokasi Kegiatan &emsp;&emsp;&emsp; : RS Jiwa GRHASIA DINKES DIY
                     </font>
                 </p>
@@ -412,7 +411,7 @@
                     </td>
                     <td>
                         <p align="center" style="margin-right: 30px; margin-top: 50px;">
-                            <font style="font-size: 12pt; " color="#000000" face="Arial">
+                            <font style="font-size: 10pt; " color="#000000" face="Arial">
                                     Yogyakarta, {{ $tanggalcetak }}
                             </font>
                         </p>
@@ -425,7 +424,7 @@
                     </td>
                     <td>
                         <p align="center" style="margin-right: 30px; margin-bottom:50px">
-                            <font style="font-size: 12pt; " color="#000000" face="Arial">
+                            <font style="font-size: 10pt; " color="#000000" face="Arial">
                                     Kepala BLUD RS Jiwa GRHASIA
                             </font>
                         </p>
@@ -442,7 +441,7 @@
                     </td>
                     <td>
                         <p align="center" style="margin-right: 30px; margin-top: 50px;">
-                            <font style="font-size: 12pt; " color="#000000" face="Arial">
+                            <font style="font-size: 10pt; " color="#000000" face="Arial">
                                     dr. Akhmad Akhadi Syamsudhuha, M.P.H
                             </font>
                         </p>
@@ -455,7 +454,7 @@
                     </td>
                     <td>
                         <p align="center" style="margin-right: 30px; ">
-                            <font style="font-size: 12pt; " color="#000000" face="Arial">
+                            <font style="font-size: 10pt; " color="#000000" face="Arial">
                             NIP. 19680714 200012 1 002
                             </font>
                         </p>
