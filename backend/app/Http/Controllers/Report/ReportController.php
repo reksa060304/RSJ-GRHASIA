@@ -10289,7 +10289,7 @@ class ReportController extends ApiController{
 		order by kodemataanggaran, jml, hargasatuan, satuan;
         "));
 
-        $pageWidth = 1200;
+        $pageWidth = 950;
         return view('report.spj.cetakrbadetail',compact('sebelum','pageWidth', 'data', 'itahap', 'tanggalcetak'));
     }
 
@@ -10815,7 +10815,7 @@ inner join(
         $qsama
         "));
 
-        $pageWidth = 1200;
+        $pageWidth = 950;
         return view('report.spj.cetakrbadetailsebelumsesudah',compact('sebelum','pageWidth', 'data', 'tanggalcetak'));
     }
     
