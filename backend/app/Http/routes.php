@@ -1644,6 +1644,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::post('perencanaan/save-keterangan-belanja','Perencanaan\PerencanaanController@saveKeteranganBelanja');
             Route::post('perencanaan/save-alokasi-keterangan-belanja','Perencanaan\PerencanaanController@saveAlokasiKeteranganBelanja');
             Route::post('perencanaan/save-realisasi-spj','Perencanaan\PerencanaanController@saveRealisasiSPJ');
+            Route::post('perencanaan/save-realisasi-spj-verif','Perencanaan\PerencanaanController@saveRealisasiSPJVerif');
             Route::post('perencanaan/save-panjar','Perencanaan\PerencanaanController@savePanjar');
             Route::post('perencanaan/save-spj-panjar','Perencanaan\PerencanaanController@saveSPJPanjar');
             Route::get('perencanaan/get-total-mata-anggaran', 'Perencanaan\PerencanaanController@getTotalMataAnggaran');

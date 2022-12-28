@@ -1542,7 +1542,7 @@
 						k-data-source="listAsalProduk"  />
 				</div>
 			</div>
-			<div class="grid_6">
+			<div class="grid_6" ng-hide="disidpegawai">
 				<div class="grid_12">
 					<label c-label item="item" c-label-text="Password"></label>
 				</div>
@@ -2818,9 +2818,6 @@
 			<div class="grid_12">
 				<div class="grid_3"></div>
 				<div class="grid_6">
-					<div class="grid_6" style="margin-top: -10px;" >
-						<input c-text-box type="input" class="k-textbox" ng-model="item.panjar" ng-hide="false" />
-					</div>
 					<div class="grid_2" ng-if="disidpegawai === false" style="margin-top: -10px;">
 						<button class="btnTemplate1" ng-click="TambahPanjarVerifSPJ()" ng-hide="false">Add</button>
 					</div>
