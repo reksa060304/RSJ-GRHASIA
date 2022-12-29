@@ -6308,61 +6308,90 @@ class ReportController extends ApiController{
         $data = DB::select(DB::raw("select ROW_NUMBER ( ) OVER ( ORDER BY norec ) nourut, norec, tglrealisasi, totalbelanja, namarekanan, npwp, alamatlengkap, billpph, billppn,
         idbillpph, idbillppn, ntpnpph, ntpnppn, ppn, pph21, pph22, pph23, pph26, pph4, pph
         from(
+
             select distinct sr.norec, sr.tglrealisasi::varchar, sr.totalbelanja, rk.namarekanan, rk.npwp, rk.alamatlengkap,
             'ID BILLING ' || jp.namaexternal billpph, 'ID BILLING PPN' billppn, pp.idbillpph, pp.idbillppn,
             pp.ntpnpph, pp.ntpnppn,
-            pp.ppn ppn, 
+            ppn.ppn ppn,
             case when jp.id = 15 then pp.pph else null end as pph21,
             case when jp.id = 16 then pp.pph else null end as pph22,
             case when jp.id = 17 then pp.pph else null end as pph23,
             case when jp.id = 18 then pp.pph else null end as pph26,
             case when jp.id = 19 then pp.pph else null end as pph4,
             case when jp.id = 20 then pp.pph else null end as pph
-                from strukrealisasi_t sr 
-            inner join pemungutanpajak_t pp on pp.objectspjfk = sr.norec 
-            inner join jenispajak_m jp on jp.id = pp.objectjenispphfk 
-            left join rekanan_m rk on rk.id = sr.rekananfk 
+            from strukrealisasi_t sr
+            inner join pemungutanpajak_t pp on pp.objectspjfk = sr.norec
+            left join jenispajak_m jp on jp.id = pp.objectjenispphfk
+            and jp.statusenabled = true
+            and jp.kdprofile = 30
+            left join pemungutanpajak_t ppn on pp.idbillpph = ppn.idbillppn
+            and pp.ntpnpph = ppn.ntpnppn
+            and ppn.statusenabled = true
+            and ppn.kdprofile = 30
+            left join rekanan_m rk on rk.id = sr.rekananfk
             inner join kegiatananggaran_m as dp on dp.id = sr.objectkegiatanfk
             inner join keteranganbelanja_t as kb on kb.objectkegiatanfk = dp.id
-            inner join asalproduk_m ap on ap.id = kb.objectasalprodukfk
+            inner join asalproduk_m ap on ap.id = sr.objectasalprodukfk
             inner join mataanggaran_m ma on ma.id = kb.objectmataanggaranfk
             where sr.statusenabled = true
             and sr.kdprofile = 30
-            and pp.statusenabled = true 
+            and pp.statusenabled = true
             and pp.kdprofile = 30
-            and jp.statusenabled = true 
-            and jp.kdprofile = 30
+            and pp.objectjenispphfk is not null
             and sr.status = 'Sudah Diverifikasi'
             $qbulan
             $qtahun
             $qasalproduk
-        
+            
             union all
-        
+            
             select distinct sr.norec, sr.tglrealisasi::varchar, sr.totalbelanja, rk.namarekanan, rk.npwp, rk.alamatlengkap,
             'ID BILLING ' || jp.namaexternal billpph, 'ID BILLING PPN' billppn, pj.idbillpph, pj.idbill idbillppn,
             pj.ntpnpph, pj.ntpn ntpnppn,
-            pj.ppn ppn, 
+            pj.ppn ppn,
             case when jp.id = 15 then pj.pph else null end as pph21,
             case when jp.id = 16 then pj.pph else null end as pph22,
             case when jp.id = 17 then pj.pph else null end as pph23,
             case when jp.id = 18 then pj.pph else null end as pph26,
             case when jp.id = 19 then pj.pph else null end as pph4,
             case when jp.id = 20 then pj.pph else null end as pph
-                from strukrealisasi_t sr 
-            inner join panjar_t pj on pj.norec = sr.objectpanjarfk 
-            inner join jenispajak_m jp on jp.id = pj.objectjenispphfk 
-            left join rekanan_m rk on rk.id = sr.rekananfk 
-            inner join kegiatananggaran_m as dp on dp.id = sr.objectkegiatanfk
-            inner join keteranganbelanja_t as kb on kb.objectkegiatanfk = dp.id
-            inner join asalproduk_m ap on ap.id = kb.objectasalprodukfk
-            inner join mataanggaran_m ma on ma.id = kb.objectmataanggaranfk
+            from strukrealisasi_t sr
+            inner join spjtopanjar_t spj on spj.objectspjfk = sr.norec
+            inner join panjar_t pj on pj.norec = spj.objectpanjarfk
+            inner join jenispajak_m jp on jp.id = pj.objectjenispphfk
+            left join rekanan_m rk on rk.id = sr.rekananfk
+            inner join asalproduk_m ap on ap.id = sr.objectasalprodukfk
             where sr.statusenabled = true
             and sr.kdprofile = 30
-            and pj.statusenabled = true 
+            and pj.statusenabled = true
             and pj.kdprofile = 30
-            and jp.statusenabled = true 
-            and jp.kdprofile = 30
+            and sr.status = 'Sudah Diverifikasi'
+            $qbulan
+            $qtahun
+            $qasalproduk
+            
+            union all
+            
+            select distinct sr.norec, sr.tglrealisasi::varchar, sr.totalbelanja, rk.namarekanan, rk.npwp, rk.alamatlengkap,
+            'ID BILLING ' || jp.namaexternal billpph, 'ID BILLING PPN' billppn, pj.idbillpph2, '' idbillppn,
+            pj.ntpnpph2, '' ntpnppn,
+            0 ppn,
+            case when jp.id = 15 then pj.pph2 else null end as pph21,
+            case when jp.id = 16 then pj.pph2 else null end as pph22,
+            case when jp.id = 17 then pj.pph2 else null end as pph23,
+            case when jp.id = 18 then pj.pph2 else null end as pph26,
+            case when jp.id = 19 then pj.pph2 else null end as pph4,
+            case when jp.id = 20 then pj.pph2 else null end as pph
+            from strukrealisasi_t sr
+            inner join spjtopanjar_t spj on spj.objectspjfk = sr.norec
+            inner join panjar_t pj on pj.norec = spj.objectpanjarfk
+            inner join jenispajak_m jp on jp.id = pj.objectjenispphfk2
+            left join rekanan_m rk on rk.id = sr.rekananfk
+            inner join asalproduk_m ap on ap.id = sr.objectasalprodukfk
+            where sr.statusenabled = true
+            and sr.kdprofile = 30
+            and pj.statusenabled = true
+            and pj.kdprofile = 30
             and sr.status = 'Sudah Diverifikasi'
             $qbulan
             $qtahun
@@ -6376,58 +6405,86 @@ class ReportController extends ApiController{
             select distinct sr.norec, sr.tglrealisasi::varchar, sr.totalbelanja, rk.namarekanan, rk.npwp, rk.alamatlengkap,
             'ID BILLING ' || jp.namaexternal billpph, 'ID BILLING PPN' billppn, pp.idbillpph, pp.idbillppn,
             pp.ntpnpph, pp.ntpnppn,
-            pp.ppn ppn, 
+            ppn.ppn ppn,
             case when jp.id = 15 then pp.pph else null end as pph21,
             case when jp.id = 16 then pp.pph else null end as pph22,
             case when jp.id = 17 then pp.pph else null end as pph23,
             case when jp.id = 18 then pp.pph else null end as pph26,
             case when jp.id = 19 then pp.pph else null end as pph4,
             case when jp.id = 20 then pp.pph else null end as pph
-                from strukrealisasi_t sr 
-            inner join pemungutanpajak_t pp on pp.objectspjfk = sr.norec 
-            inner join jenispajak_m jp on jp.id = pp.objectjenispphfk 
-            inner join rekanan_m rk on rk.id = sr.rekananfk 
+            from strukrealisasi_t sr
+            inner join pemungutanpajak_t pp on pp.objectspjfk = sr.norec
+            left join jenispajak_m jp on jp.id = pp.objectjenispphfk
+            and jp.statusenabled = true
+            and jp.kdprofile = 30
+            left join pemungutanpajak_t ppn on pp.idbillpph = ppn.idbillppn
+            and pp.ntpnpph = ppn.ntpnppn
+            and ppn.statusenabled = true
+            and ppn.kdprofile = 30
+            left join rekanan_m rk on rk.id = sr.rekananfk
             inner join kegiatananggaran_m as dp on dp.id = sr.objectkegiatanfk
             inner join keteranganbelanja_t as kb on kb.objectkegiatanfk = dp.id
-            inner join asalproduk_m ap on ap.id = kb.objectasalprodukfk
+            inner join asalproduk_m ap on ap.id = sr.objectasalprodukfk
             inner join mataanggaran_m ma on ma.id = kb.objectmataanggaranfk
             where sr.statusenabled = true
             and sr.kdprofile = 30
-            and pp.statusenabled = true 
+            and pp.statusenabled = true
             and pp.kdprofile = 30
-            and jp.statusenabled = true 
-            and jp.kdprofile = 30
+            and pp.objectjenispphfk is not null
             and sr.status = 'Sudah Diverifikasi'
             and extract('month' from sr.tglrealisasi) = '$bulanlalu'
             $qtahun
             $qasalproduk
-        
+            
             union all
-        
+            
             select distinct sr.norec, sr.tglrealisasi::varchar, sr.totalbelanja, rk.namarekanan, rk.npwp, rk.alamatlengkap,
             'ID BILLING ' || jp.namaexternal billpph, 'ID BILLING PPN' billppn, pj.idbillpph, pj.idbill idbillppn,
             pj.ntpnpph, pj.ntpn ntpnppn,
-            pj.ppn ppn, 
+            pj.ppn ppn,
             case when jp.id = 15 then pj.pph else null end as pph21,
             case when jp.id = 16 then pj.pph else null end as pph22,
             case when jp.id = 17 then pj.pph else null end as pph23,
             case when jp.id = 18 then pj.pph else null end as pph26,
             case when jp.id = 19 then pj.pph else null end as pph4,
             case when jp.id = 20 then pj.pph else null end as pph
-                from strukrealisasi_t sr 
-            inner join panjar_t pj on pj.norec = sr.objectpanjarfk 
-            inner join jenispajak_m jp on jp.id = pj.objectjenispphfk 
-            inner join rekanan_m rk on rk.id = sr.rekananfk 
-            inner join kegiatananggaran_m as dp on dp.id = sr.objectkegiatanfk
-            inner join keteranganbelanja_t as kb on kb.objectkegiatanfk = dp.id
-            inner join asalproduk_m ap on ap.id = kb.objectasalprodukfk
-            inner join mataanggaran_m ma on ma.id = kb.objectmataanggaranfk
+            from strukrealisasi_t sr
+            inner join spjtopanjar_t spj on spj.objectspjfk = sr.norec
+            inner join panjar_t pj on pj.norec = spj.objectpanjarfk
+            inner join jenispajak_m jp on jp.id = pj.objectjenispphfk
+            left join rekanan_m rk on rk.id = sr.rekananfk
+            inner join asalproduk_m ap on ap.id = sr.objectasalprodukfk
             where sr.statusenabled = true
             and sr.kdprofile = 30
-            and pj.statusenabled = true 
+            and pj.statusenabled = true
             and pj.kdprofile = 30
-            and jp.statusenabled = true 
-            and jp.kdprofile = 30
+            and sr.status = 'Sudah Diverifikasi'
+            and extract('month' from sr.tglrealisasi) = '$bulanlalu'
+            $qtahun
+            $qasalproduk
+            
+            union all
+            
+            select distinct sr.norec, sr.tglrealisasi::varchar, sr.totalbelanja, rk.namarekanan, rk.npwp, rk.alamatlengkap,
+            'ID BILLING ' || jp.namaexternal billpph, 'ID BILLING PPN' billppn, pj.idbillpph2, '' idbillppn,
+            pj.ntpnpph2, '' ntpnppn,
+            0 ppn,
+            case when jp.id = 15 then pj.pph2 else null end as pph21,
+            case when jp.id = 16 then pj.pph2 else null end as pph22,
+            case when jp.id = 17 then pj.pph2 else null end as pph23,
+            case when jp.id = 18 then pj.pph2 else null end as pph26,
+            case when jp.id = 19 then pj.pph2 else null end as pph4,
+            case when jp.id = 20 then pj.pph2 else null end as pph
+            from strukrealisasi_t sr
+            inner join spjtopanjar_t spj on spj.objectspjfk = sr.norec
+            inner join panjar_t pj on pj.norec = spj.objectpanjarfk
+            inner join jenispajak_m jp on jp.id = pj.objectjenispphfk2
+            left join rekanan_m rk on rk.id = sr.rekananfk
+            inner join asalproduk_m ap on ap.id = sr.objectasalprodukfk
+            where sr.statusenabled = true
+            and sr.kdprofile = 30
+            and pj.statusenabled = true
+            and pj.kdprofile = 30
             and sr.status = 'Sudah Diverifikasi'
             and extract('month' from sr.tglrealisasi) = '$bulanlalu'
             $qtahun
