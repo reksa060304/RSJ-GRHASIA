@@ -138,7 +138,7 @@ define(['initialize'], function (initialize) {
                     "&manage=" + manage
                     , true).then(function (dat) {
                         $scope.isRouteLoading = false;
-                        var data2 = dat.data;                       
+                        var data2 = dat.data.data;                       
                         for (var i = 0; i < data2.length; i++) {
                             data2[i].no = i + 1
                         }
