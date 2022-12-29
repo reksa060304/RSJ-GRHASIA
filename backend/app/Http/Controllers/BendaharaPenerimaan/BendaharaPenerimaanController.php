@@ -2552,8 +2552,8 @@ class BendaharaPenerimaanController extends ApiController {
         $status = '';
         if (isset($request['status']) && $request['status'] != "" && $request['status'] != "undefined" && $request['status']==1) {
             $status = ' and sts.nosts is not null';
-        } else{
-            $status = ' and sts.nosts is null and str.norec is null';
+        } else {
+            $status = ' and sts.norec is null and str.norec is null';
         }
 
         $kp = '';
@@ -2563,9 +2563,9 @@ class BendaharaPenerimaanController extends ApiController {
 
         $detail = DB::select(DB::raw("select rkb.*, pd.noregistrasi, kp.kelompokpasien, kp.id idkelompokpasien, sts.nosts, sts.tglpenerimaan, coalesce(sts.totalsetoran,0) totalsetoran, ru.objectdepartemenfk
         from rekapklaimbpjs_t rkb
-        inner join pasiendaftar_t pd on pd.norec = rkb.norecpdfk
-        inner join kelompokpasien_m kp on kp.id = pd.objectkelompokpasienlastfk
-        inner join ruangan_m ru on ru.id = pd.objectruanganlastfk
+        left join pasiendaftar_t pd on pd.norec = rkb.norecpdfk
+        left join kelompokpasien_m kp on kp.id = pd.objectkelompokpasienlastfk
+        left join ruangan_m ru on ru.id = pd.objectruanganlastfk
         left join ststorekapklaim_t str on str.objectrekapklaimfk = rkb.norec
         and str.statusenabled = true
         and str.kdprofile = 30
@@ -2573,12 +2573,10 @@ class BendaharaPenerimaanController extends ApiController {
         and sts.statusenabled = true
         and sts.kdprofile = 30
         where rkb.tglbayar::date between '$tglAwal' and '$tglAkhir'
-        and pd.statusenabled = true
-        and pd.kdprofile = 30
         and rkb.statusenabled = true
         and rkb.kdprofile = 30
-        $kp
         $status
+        $kp
         $nosts"));
         
 

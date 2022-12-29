@@ -3162,6 +3162,9 @@ class BridgingBPJSV2Controller extends ApiController
 
         $encodedSignature = base64_encode($signature);
 
+        // var_dump($tStamp);
+        // var_dump($encodedSignature);
+
         $header = array(
             "Content-Type: Application/x-www-form-urlencoded",
             "X-cons-id: " . (string)$data,

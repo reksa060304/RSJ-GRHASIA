@@ -24,6 +24,10 @@ use App\Transaksi\RegistrasiPelayananPasien;
 use App\Transaksi\StrukPelayanan;
 use App\Transaksi\StrukResep;
 use App\Transaksi\TempBilling;
+use App\Transaksi\SuratTandaSetoran;
+use App\Transaksi\SuratTandaSetoranDetail;
+use App\Transaksi\STStoSCK;
+use App\Transaksi\STStoRekapKlaim;
 use Illuminate\Http\Request;
 use App\Traits\PelayananPasienTrait;
 use DB;
@@ -507,6 +511,13 @@ class LoggingController extends ApiController
         foreach($dataPegawaiUser as $dat){
             $iduser = $dat->id;
         }
+
+        $nsts = SuratTandaSetoran::where('nosts', '=', $setor[0]['nosts'])->first();
+        $norecsts = $nsts->norec;
+
+        $rsts = STStoRekapKlaim::where('objectstsfk', '=', $norecsts)->first();
+        $rsts->statusenabled = false;
+        $rsts->save();
 
         for($i=0; $i<count($setor); $i++){
 
