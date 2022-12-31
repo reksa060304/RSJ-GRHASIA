@@ -5649,9 +5649,12 @@ class TagihanController  extends ApiController
         }
 
         $piutang = DB::select(DB::raw("select norecpd, nocm, jeniskelamin, namaruangan, tglbayar, tglsep, iscek, nosep, tglpulang, noregistrasi, namapasien, kelompokpasien, namarekanan,
+        totalbilling, totalbayar, sum(totalklaim) totalklaim, sum(totalobat) totalobat, ((sum(totalklaim) + sum(totalobat)) - totalbilling) selisih, lamahari
+        from(
+        select norecpd, nocm, jeniskelamin, namaruangan, tglbayar, tglsep, iscek, nosep, tglpulang, noregistrasi, namapasien, kelompokpasien, namarekanan,
         totalbilling, totalbayar, sum(totalklaim) totalklaim, totalobat, (totalbilling - (sum(totalklaim) + totalobat)) selisih, lamahari
         from(select norecpd, nocm, jeniskelamin, namaruangan, tglbayar, tglsep, iscek, nosep, tglpulang, noregistrasi, namapasien, kelompokpasien, namarekanan,
-        sum(totalbilling) totalbilling, sum(totalbayar) totalbayar, coalesce(totalklaim,0) totalklaim, coalesce(sum(totalobat),0) totalobat, lamahari
+        sum(totalbilling) totalbilling, sum(totalbayar) totalbayar, coalesce(totalklaim,0) totalklaim, coalesce(totalobat,0) totalobat, lamahari
         from(select pd.norec norecpd, ps.nocm, jk.jeniskelamin, ru.namaruangan, rkbpjs.tglbayar, mk.tglsep, false as iscek, pd.nostruklastfk, sp.norec, coalesce(mk.nosep,'-') nosep, pd.tglpulang, pd.noregistrasi, ps.namapasien, kp.kelompokpasien, rek.namarekanan,
         coalesce(sp.totalprekanan,0) totalbilling, 0 as totalbayar,
         case when (rkbpjs.isobat is null or rkbpjs.isobat = false) then coalesce(mk.totalsetujui,rkbpjs.totalsetujui) else 0 end as totalklaim,
@@ -5689,11 +5692,14 @@ class TagihanController  extends ApiController
         group by rkbpjs.isobat, rkbpjs.totalsetujui, ps.nocm, jk.jeniskelamin, dept.id, ru.namaruangan, mk.totalsetujui, pd.norec, rkbpjs.tglbayar, mk.tglsep, pd.nostruklastfk, sp.norec, coalesce(mk.nosep,'-'), pd.tglpulang, pd.noregistrasi, ps.namapasien, kp.kelompokpasien, rek.namarekanan,
         sp.totalprekanan, coalesce(mk.totalsetujui,0)
         order by pd.noregistrasi
-        ) as x group by norecpd, nocm, jeniskelamin, lamahari, namaruangan, tglbayar, tglsep, iscek, nosep, tglpulang, noregistrasi, namapasien, kelompokpasien, namarekanan, coalesce(totalklaim,0)
+        ) as x group by norecpd, nocm, jeniskelamin, lamahari, namaruangan, tglbayar, tglsep, iscek, nosep, tglpulang, noregistrasi, namapasien, kelompokpasien, namarekanan, coalesce(totalklaim,0), coalesce(totalobat,0)
         order by noregistrasi
         ) as y
         group by norecpd, nocm, jeniskelamin, namaruangan, tglbayar, tglsep, iscek, nosep, tglpulang, noregistrasi, namapasien, kelompokpasien, namarekanan,
-        totalbilling, totalbayar, totalobat, lamahari;"));
+        totalbilling, totalbayar, totalobat, lamahari
+        ) as z
+        group by norecpd, nocm, jeniskelamin, namaruangan, tglbayar, tglsep, iscek, nosep, tglpulang, noregistrasi, namapasien, kelompokpasien, namarekanan,
+        totalbilling, totalbayar, lamahari;"));
 
         $datadata =array(
             'data' =>   $piutang,
