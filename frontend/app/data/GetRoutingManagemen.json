@@ -113,5 +113,43 @@
           "define": "MedifirstService"
         }
       ]
+    },
+    {
+      "name": "LaporanPerbaikanIT",
+      "url": "/UGVyYmFpa2FuIElU",
+      "templateurl": "module/SysAdmin/LaporanSysadmin/LaporanPerbaikanIT.html",
+      "controller": "LaporanPerbaikanITCtrl",
+      "deps": [{
+          "module": "Services",
+          "define": "Service"
+        },
+        {
+          "module": "LoginServices",
+          "define": "LoginService"
+        },
+        {
+          "module": "MedifirstService",
+          "define": "MedifirstService"
+        }
+      ]
+    },
+    {
+      "name": "DashboardPerbaikanIT",
+      "url": "/DASHBOARD_IT",
+      "templateurl": "module/SysAdmin/LaporanSysadmin/DashboardPerbaikanIT.html",
+      "controller": "DashboardPerbaikanITCtrl",
+      "deps": [{
+          "module": "Services",
+          "define": "Service"
+        },
+        {
+          "module": "LoginServices",
+          "define": "LoginService"
+        },
+        {
+          "module": "MedifirstService",
+          "define": "MedifirstService"
+        }
+      ]
     }
   ]

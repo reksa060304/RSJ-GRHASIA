@@ -2342,6 +2342,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         // });
         // Route::group(['prefix' => 'ipsrs'], function () {
             Route::post('sysadmin/response-time-perbaikan','IPSRS\IPSRSController@responseTime');
+            Route::get('pdti/laporan-perbaikan-it','IPSRS\IPSRSController@getLaporanPerbaikanIT');
+            Route::get('pdti/load-data-dashboard','IPSRS\IPSRSController@getDashboardPerbaikanPDTI');
             Route::get('ipsrs/get-daftar-permohonan','IPSRS\IPSRSController@getDaftarIPSRS');
             Route::post('ipsrs/save-permohonan','IPSRS\IPSRSController@SavePermohonan');
             Route::post('ipsrs/save-alokasistaff','IPSRS\IPSRSController@SaveDataAlokasiStaff');

@@ -1079,8 +1079,10 @@ class IPSRSController extends ApiController
         inner join loginuser_s lu on lu.objectpegawaifk = pg.id
         where lu.objectkelompokuserfk in(36,38,47) and pg.kdprofile = 30 and pg.statusenabled=true and lu.kdprofile = 30 and lu.statusenabled=true 
         and pg.id not in(2,320263)"));
+        $objekperbaikan = \DB::table('detailjenispekerjaan_m')->where('statusenabled', true)->where('kdprofile', 30)->get();
         $result = array(
             'data'=> $data,
+            'objekperbaikan'=> $objekperbaikan,
             'as'=> 'Feezy'
         );
         return $this->respond($result);
@@ -1190,5 +1192,86 @@ class IPSRSController extends ApiController
             );
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    public function getLaporanPerbaikanIT(Request $request)
+    {
+        $objekperbaikan = '';
+        if(isset($request['objekperbaikan'])){
+            $objekperbaikan = ' and stp.objectdetailjenispekerjaanfk = '. $request['objekperbaikan'];
+        }
+
+        $data = \DB::select(DB::raw("SELECT ru.namaruangan,pg.namalengkap, stp.rincianexecuteplanning_askep, stp.tglplanning, stp.tglverif, stp.startdate, stp.duedate, jp.reportdisplay as jeniskerusakan, jp2.reportdisplay  as jenisalat, sp.statuspekerjaan FROM strukplanning_t stp 
+        left join ruangan_m ru on ru.id = stp.objectruanganfk
+        left join pegawai_m pg on pg.id = stp.narasumberfk
+        left join jenispekerjaan_m jp on jp.id = stp.objectjenispekerjaanfk
+        left join jenispekerjaan_m jp2 on jp2.id = stp.objectjenisalatfk
+        left join statuspekerjaan_m sp on sp.id =stp.objectstatuspekerjaanfk
+        where stp.objectkelompoktransaksifk = 151 and stp.kdprofile = 30 and stp.statusenabled = true and stp.startdate between '$request[tglAwal]' and '$request[tglAkhir]'
+        $objekperbaikan
+        order by stp.startdate asc
+        "));
+
+        return $this->respond($data);
+    }
+    public function getDashboardPerbaikanPDTI(Request $request)
+    {
+
+        $cardnull = \DB::select(DB::raw("
+        SELECT sp.id,
+        'Belum Direspon' as statuspekerjaan, count(stp.objectstatuspekerjaanfk) FROM strukplanning_t stp left join statuspekerjaan_m sp on sp.id = stp.objectstatuspekerjaanfk
+        where stp.objectkelompoktransaksifk = 151 and  stp.kdprofile= 30 and stp.statusenabled = true and sp.id is null and stp.startdate between '$request[tglawal]' and '$request[tglakhir]'
+        GROUP BY stp.objectstatuspekerjaanfk, sp.id
+        "));
+        if(count($cardnull) < 1){
+            $cardnull[0]['id'] = null;
+            $cardnull[0]['statuspekerjaan'] = 'Belum Direspon';
+            $cardnull[0]['count'] = 0;
+        }
+
+        $card3 = \DB::select(DB::raw("
+        SELECT sp.id,
+        sp.statuspekerjaan, count(stp.objectstatuspekerjaanfk) FROM strukplanning_t stp left join statuspekerjaan_m sp on sp.id = stp.objectstatuspekerjaanfk
+        where stp.objectkelompoktransaksifk = 151 and  stp.kdprofile= 30 and stp.statusenabled = true and sp.id = 3 and stp.startdate between '$request[tglawal]' and '$request[tglakhir]'
+        GROUP BY stp.objectstatuspekerjaanfk, sp.id
+        "));
+        if(count($card3) < 1){
+            $card3[0]['id'] = 3;
+            $card3[0]['statuspekerjaan'] = 'Belum Dikerjakan';
+            $card3[0]['count'] = 0;
+        }
+                
+        $card15 = \DB::select(DB::raw("
+        SELECT sp.id,
+        sp.statuspekerjaan, count(stp.objectstatuspekerjaanfk) FROM strukplanning_t stp left join statuspekerjaan_m sp on sp.id = stp.objectstatuspekerjaanfk
+        where stp.objectkelompoktransaksifk = 151 and  stp.kdprofile= 30 and stp.statusenabled = true and sp.id = 15 and stp.startdate between '$request[tglawal]' and '$request[tglakhir]'
+        GROUP BY stp.objectstatuspekerjaanfk, sp.id
+        "));
+        if(count($card15) < 1){
+            $card15[0]['id'] = 15;
+            $card15[0]['statuspekerjaan'] = 'Progress';
+            $card15[0]['count'] = 0;
+        }
+        
+        $card1 = \DB::select(DB::raw("
+        SELECT sp.id,
+        sp.statuspekerjaan, count(stp.objectstatuspekerjaanfk) FROM strukplanning_t stp left join statuspekerjaan_m sp on sp.id = stp.objectstatuspekerjaanfk
+        where stp.objectkelompoktransaksifk = 151 and  stp.kdprofile= 30 and stp.statusenabled = true and sp.id = 1 and stp.startdate between '$request[tglawal]' and '$request[tglakhir]'
+        GROUP BY stp.objectstatuspekerjaanfk, sp.id
+        "));
+        if(count($card1) < 1){
+            $card1[0]['id'] = 1;
+            $card1[0]['statuspekerjaan'] = 'Selesai';
+            $card1[0]['count'] = 0;
+        }
+        $card = array(
+            0=> $cardnull,
+            1=> $card3,
+            2=> $card15,
+            3=> $card1,
+        );
+        $result = array(
+            'card'=> $card,
+        );
+        return $this->respond($result);
     }
 }

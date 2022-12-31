@@ -6779,7 +6779,7 @@ class TagihanController  extends ApiController
         $paramkabupaten = ' and alm.objectkotakabupatenfk ='. $kabupaten;
         }
         $data = DB::select(DB::raw("
-            SELECTx 
+            SELECT
         ddp.norec,
         CASE 
         WHEN MIN ( rpp.tglmasuk :: DATE ) is null THEN
@@ -7083,7 +7083,7 @@ class TagihanController  extends ApiController
 
         $paramDiagnosa = ' ';
         if (isset($diagnosaId) && $diagnosaId != "" && $diagnosaId != "undefined") {
-            $paramDiagnosa = ' and dm.id = '.$diagnosaId;
+            $paramDiagnosa = ' and di.id = '. $diagnosaId;
         }
         $paramstatusPasien = ' ';
         if (isset($statusPasien) && $statusPasien != "" && $statusPasien != "undefined") {
