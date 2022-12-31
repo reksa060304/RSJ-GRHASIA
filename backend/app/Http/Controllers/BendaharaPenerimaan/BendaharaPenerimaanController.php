@@ -2775,7 +2775,7 @@ class BendaharaPenerimaanController extends ApiController {
         left join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
         left join ststosck_t as ssc on ssc.objectsckfk = sck.norec
         left join surattandasetoran_t as sts on sts.norec = ssc.objectstsfk
-        where sbm.keteranganlainnya = 'Pembayaran Tagihan Non Layanan'
+        where (sbm.keteranganlainnya = 'Pembayaran Tagihan Non Layanan' or sbm.keteranganlainnya = 'Pembayaran Diklat')
         --and sts.statusenabled = true
         and sc.noclosing IN('".implode("','",$noclosing)."')"));
        
