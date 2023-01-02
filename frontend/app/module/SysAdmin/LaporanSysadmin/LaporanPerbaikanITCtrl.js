@@ -222,19 +222,30 @@ define(['initialize'], function (initialize) {
                         width: "20px"
                     },
                     {
-                        field: "namaruangan",
-                        title: "Ruangan",
-                        width: "100px",
-                    },
-                    {
                         field: "namalengkap",
-                        title: "Pelapor",
+                        title: "Nama Pelapor",
                         width: "115px",
                     },
                     {
-                        field: "rincianexecuteplanning_askep",
-                        title: "Laporan Kerusakan",
+                        field: "namaruangan",
+                        title: "Lokasi",
                         width: "100px",
+                    },
+                    {
+                        field: "rincianexecuteplanning_askep",
+                        title: "Kendala",
+                        width: "100px",
+                    },
+                    {
+                        title: "Jenis Kendala",
+                        width: "100px",
+                        columns: [
+                            {
+                                field: "jenisalat",
+                                title: "Hardware/Software/Jaringan Internet/Printer",
+                                width: "220px",
+                            },
+                        ]
                     },
                     {
                         field: "tglplanning",
