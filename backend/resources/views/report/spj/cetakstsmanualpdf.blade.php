@@ -113,13 +113,13 @@
             @else
             <td style="padding: 5px;" align="center"></td>
             @endif
-            <td style="padding: 5px;" align="right">{{ number_format($dt->kolom1,0,',','.') }}</td>
+            <td style="padding: 5px;" align="right">{{ number_format($dt->kolom1,0,',','.') != 0 ? number_format($dt->kolom1,2,',','.') : number_format($dt->kolom1,0,',','.')  }}</td>
             @if($dt->kolom2 != null)
             <td style="padding: 5px;" align="center">Rp</td>
             @else
             <td style="padding: 5px;" align="center"></td>
             @endif
-            <td style="padding: 5px;" align="right">{{ number_format($dt->kolom2,0,',','.') }}</td>
+            <td style="padding: 5px;" align="right">{{ number_format($dt->kolom2,0,',','.') != 0 ? number_format($dt->kolom2,2,',','.') : number_format($dt->kolom2,0,',','.')  }}</td>
         </tr>
         @endforeach
         </tbody>
