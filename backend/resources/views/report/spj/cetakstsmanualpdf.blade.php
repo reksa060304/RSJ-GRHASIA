@@ -71,7 +71,7 @@
                 <font style="font-size: 12pt" color="#000000">Harap menerima uang sebesar:</font>
             </td>
             <td colspan="5" align="left">
-                <font style="font-size: 12pt" color="#000000">Rp. {{ number_format($detail[0]->totalsetoran,0,',','.') }}</font>
+                <font style="font-size: 12pt" color="#000000">Rp. {{ number_format($detail[0]->totalsetoran,2,',','.') }}</font>
             </td>
         </tr>
         <tr>

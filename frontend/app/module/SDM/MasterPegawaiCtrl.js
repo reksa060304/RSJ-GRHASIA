@@ -3188,11 +3188,11 @@ $scope.formatRupiah = function (value, currency) {
 					"itemGajiBerkala.gajiakhir|ng-model|gaji Pokok Baru",
 					"itemGajiBerkala.tanggalsk|k-ng-model|Tanggal SK",
 					"itemGajiBerkala.golongan|k-ng-model|Golongan",
-					"itemGajiBerkala.nosk|ng-model|NO SK",
-					"itemGajiBerkala.nosurat|ng-model|No Surat",
+					"itemGajiBerkala.nosk|ng-model|NO SK Baru",
+					// "itemGajiBerkala.nosurat|ng-model|No Surat",
 					"itemGajiBerkala.pejabatmenetapkan|ng-model|Pejabat Yang Menetapkan",
 					"itemGajiBerkala.tanggaltmt|k-ng-model|Tanggal TMT",
-					"itemGajiBerkala.noskcetak|ng-model|No SK Cetak",
+					"itemGajiBerkala.noskcetak|ng-model|No SK Lama",
 					"itemGajiBerkala.jenissk|ng-model|Jenis SK",
 					"itemGajiBerkala.masakerjagolongan|ng-model|Masa Kerja Golongan",
 					// "itemPandG.jabatanTtd|k-ng-model|Penandatangan Jabatan",
@@ -3227,6 +3227,9 @@ $scope.formatRupiah = function (value, currency) {
 								data.noskcetak= $scope.itemGajiBerkala.noskcetak,
 								data.jenissk= $scope.itemGajiBerkala.jenissk
 								data.masakerjagolongan= $scope.itemGajiBerkala.masakerjagolongan
+								data.tgltmtcetak = moment($scope.itemGajiBerkala.tanggaltmtcetak).format('YYYY-MM-DD HH:mm')
+								data.tglskbaru= moment($scope.itemGajiBerkala.tanggalskbaru).format('YYYY-MM-DD HH:mm')
+
 								$scope.gridRiwayatGajiBerkala = new kendo.data.DataSource({
 									data: dataRiwayatGajiBerkala
 								});
@@ -3251,7 +3254,9 @@ $scope.formatRupiah = function (value, currency) {
 							nosurat: $scope.itemGajiBerkala.nosurat,
 							noskcetak: $scope.itemGajiBerkala.noskcetak,
 							jenissk: $scope.itemGajiBerkala.jenissk,
-							masakerjagolongan: $scope.itemGajiBerkala.masakerjagolongan
+							masakerjagolongan: $scope.itemGajiBerkala.masakerjagolongan,
+							tgltmtcetak: moment($scope.itemGajiBerkala.tanggaltmtcetak).format('YYYY-MM-DD HH:mm'),
+							tglskbaru: moment($scope.itemGajiBerkala.tanggalskbaru).format('YYYY-MM-DD HH:mm')
 						}
 						dataRiwayatGajiBerkala.push(data)
 						$scope.gridRiwayatGajiBerkala = new kendo.data.DataSource({
@@ -4449,7 +4454,7 @@ $scope.formatRupiah = function (value, currency) {
 						$scope.itemGajiBerkala.bulanmasakerjagolongan = bln
 						$scope.itemGajiBerkala.masakerjagolongan = $scope.itemGajiBerkala.tahunmasakerjagolongan + " tahun " + $scope.itemGajiBerkala.bulanmasakerjagolongan + " bulan "
 						$scope.itemGajiBerkala.gajiakhir = data.data.gajigolongan[0].gajipokok
-						$scope.itemGajiBerkala.gajiawal = data.data.gajiawal[0].nominal
+						// $scope.itemGajiBerkala.gajiawal = data.data.gajiawal[0].nominal
 						nominal = 0
 					})
 				})
@@ -4999,6 +5004,28 @@ $scope.formatRupiah = function (value, currency) {
 				});
 			}
 			//end orang tua
+			$scope.$watch('gajilamanya', function (newValue, oldValue) {
+				if (newValue != oldValue) {
+					$scope.itemGajiBerkala = {}
+					medifirstService.get('sdm/get-gaji-pokok-lama?gaji=' + $scope.gajilamanya + '&idpegawai=' + $scope.item.idPegawai).then(function (data) {
+						var datas = data.data.data[0]
+						$scope.itemGajiBerkala.jenissk = $scope.gajilamanya
+						if($scope.gajilamanya == 'KP'){
+							$scope.itemGajiBerkala.gajiawal = datas.nominal
+							$scope.itemGajiBerkala.tanggalsk = moment(datas.tglsk).format('DD-MM-YYYY')
+							$scope.itemGajiBerkala.noskcetak = datas.nosk
+							$scope.itemGajiBerkala.tanggaltmtcetak = moment(datas.tgltmt).format('DD-MM-YYYY')
+						}else{
+							$scope.itemGajiBerkala.gajiawal = datas.gajiakhir
+							$scope.itemGajiBerkala.tanggalsk = moment(datas.tglsk).format('DD-MM-YYYY')
+							$scope.itemGajiBerkala.noskcetak = datas.nosk
+							$scope.itemGajiBerkala.tanggaltmtcetak = moment(datas.tgltmt).format('DD-MM-YYYY')
+						}
+						
+					})
+				}
+			})
+			
 			//* BATAS SUCI *//			
 		}
 	]);

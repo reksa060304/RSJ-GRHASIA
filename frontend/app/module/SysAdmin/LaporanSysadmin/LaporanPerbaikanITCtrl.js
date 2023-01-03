@@ -115,6 +115,12 @@ define(['initialize'], function (initialize) {
                         }
                         datas[i].respon = respon
                         datas[i].durasi = durasi
+                        datas[i].pegawai = datas[i].detailspegawai
+                        for (let j = 0; j < datas[i].detailspegawai.length; j++) {
+                            datas[i].namapegawai = datas[i].detailspegawai[j].join("\n")
+                            console.log(datas[i].namapegawai);
+                        }
+                        
                     }
                     $scope.sourceLaporan = new kendo.data.DataSource({
                         data: datas,
@@ -246,6 +252,13 @@ define(['initialize'], function (initialize) {
                                 width: "220px",
                             },
                         ]
+                    },
+                    {
+                        field: "pegawai",
+                        title: "Teknisi",
+                        width: "100px",
+					    "template": "# for(var i=0; i < pegawai.length;i++){# <button class=\"k-button custom-button\" style=\"margin:0 0 5px\">#= pegawai[i].namalengkap #</button> #}#",
+
                     },
                     {
                         field: "tglplanning",
