@@ -213,7 +213,7 @@ define(['initialize'], function(initialize) {
                     sheet.name = "Report";
                     if ($scope.item.ranap == true) {
                         $scope.ruanganya = "Rawat Inap"
-                    } else {ruangan="Per Poli"}
+                    } else {$scope.ruanganya="Per Poli"}
                     var myHeaders = [{
                         value: "Laporan Data Kunjungan "+$scope.ruanganya,
                         fontSize: 20,
