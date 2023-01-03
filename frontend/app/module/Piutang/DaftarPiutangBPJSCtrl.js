@@ -10,6 +10,11 @@ define(['initialize'], function (initialize) {
 				{ id: 1, namaExternal: "Klaim" },
 				{ id: 2, namaExternal: "Tidak Klaim" }
 			];
+
+			$scope.listJenisPelayanan = [
+				{ id: 1, nama: "Rawat Jalan" },
+				{ id: 2, nama: "Rawat Inap" }
+			];
 			$scope.item.status = $scope.listStatus[0];
 			$scope.item.awalPeriode = $scope.now;
 			$scope.item.akhirPeriode = $scope.now;
@@ -439,6 +444,10 @@ define(['initialize'], function (initialize) {
 				if ($scope.item.status != undefined) {
 					$status = "=" + $scope.item.status.id
 				}
+				var $jpelayanan = "";
+				if ($scope.item.jenispelayanan != undefined) {
+					$jpelayanan = "=" + $scope.item.jenispelayanan.id
+				}
 				var skey = "";
 				if ($scope.item.caridata != undefined) {
 					skey = $scope.item.item.caridata
@@ -448,6 +457,7 @@ define(['initialize'], function (initialize) {
 						+ "noReg=" + undefinedChecker($scope.item.noReg)
 						+ "&namaPasien=" + undefinedChecker($scope.item.namaPasien)
 						+ "&status" + $status
+						+ "&jpelayanan" + $jpelayanan
 						+ "&tglAwal=" + tglAwal
 						+ "&tglAkhir=" + tglAkhir
 						+ "&ruanganId=" + ruanganId

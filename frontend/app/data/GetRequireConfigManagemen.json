@@ -23,6 +23,14 @@
         {
             "nameDep": "LaporanBalikanDukcapilCtrl",
             "urlDep": "module/Registrasi/Laporan/LaporanBalikanDukcapilCtrl"
+        },
+        {
+            "nameDep": "LaporanPerbaikanITCtrl",
+            "urlDep": "module/SysAdmin/LaporanSysadmin/LaporanPerbaikanITCtrl"
+        },
+        {
+            "nameDep": "DashboardPerbaikanITCtrl",
+            "urlDep": "module/SysAdmin/LaporanSysadmin/DashboardPerbaikanITCtrl"
         }
 
     ]

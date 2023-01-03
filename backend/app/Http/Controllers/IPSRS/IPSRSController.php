@@ -1079,11 +1079,208 @@ class IPSRSController extends ApiController
         inner join loginuser_s lu on lu.objectpegawaifk = pg.id
         where lu.objectkelompokuserfk in(36,38,47) and pg.kdprofile = 30 and pg.statusenabled=true and lu.kdprofile = 30 and lu.statusenabled=true 
         and pg.id not in(2,320263)"));
+        $objekperbaikan = \DB::table('detailjenispekerjaan_m')->where('statusenabled', true)->where('kdprofile', 30)->get();
         $result = array(
             'data'=> $data,
+            'objekperbaikan'=> $objekperbaikan,
             'as'=> 'Feezy'
         );
         return $this->respond($result);
     }
+    public function SavePengerjaanPermohonanSIMRS(Request $request)
+    {
+        DB::beginTransaction();
+        $dataLogin = $request->all();
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        try {
 
+            if ($request['norec'] == ''){
+                return $this->respond("ASUP");
+                $newCOA = new StrukPlanning();
+                $norecHead = $newCOA->generateNewId();
+                $newCOA->kdprofile = $kdProfile;
+                $newCOA->norec = $norecHead;
+                $newCOA->statusenabled = true;
+            }else{
+                $newCOA = StrukPlanning::where('norec',$request['norec'])->where('kdprofile', $kdProfile)->first();
+                $Spd = StrukPlanningDetail::where('noplanningfk', $request['norec'])->delete();
+            }
+                $newCOA->startdate = $request['strukplanning']['tglmulai'];
+                $newCOA->duedate = $request['strukplanning']['tglselesai'];
+                $newCOA->objectstatuspekerjaanfk = $request['strukplanning']['status'];
+                $newCOA->deskripsiplanning = $request['strukplanning']['worklist'];
+                $newCOA->keteranganverifikasi = $request['strukplanning']['identifikasikerusakan'];
+                $newCOA->objectpegawaipjawabevaluasifk = $request['strukplanning']['penanngungjawab'];
+                $newCOA->objectpegawaipjawabfk = $request['strukplanning']['penanngungjawab'];
+                $newCOA->objectjenispekerjaanfk = $request['strukplanning']['jeniskerusakan'];
+                $newCOA->objectjenisalatfk = $request['strukplanning']['jenisalat'];
+                $newCOA->ispihakketiga = $request['strukplanning']['ispihakketiga'];
+                $newCOA->catatan = $request['strukplanning']['catatan'];
+                $newCOA->objectdetailjenispekerjaanfk = $request['strukplanning']['detailjenispekerjaan'];
+                $newCOA->objectrekananperbaikanfk = $request['strukplanning']['rekananperbaikan'];
+                $newCOA->save();
+                $norecHead2 = $newCOA->norec;
+
+            foreach ($request['datapegawai'] as $items){
+                $Spd = new StrukPlanningDetail();
+                $norecDetail = $Spd->generateNewId();
+                $Spd->kdprofile = $kdProfile;
+                $Spd->norec = $norecDetail;
+                $Spd->statusenabled = true;
+                $Spd->pegawaifk = $items['id'];
+                $Spd->noplanningfk = $norecHead2;
+                $Spd->save();
+            }
+
+
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+        $transMessage = "Simpan";
+        if ($transStatus == 'true') {
+            $transMessage = $transMessage . " Berhasil" ;
+            DB::commit();
+            $result = array(
+                "status" => 201,
+               "data" => $newCOA,
+                "as" => 'as@epic',
+            );
+        } else {
+            $transMessage = $transMessage ." Gagal!!";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+//                "data" => $newPJT,
+                    "e"=> $e->getLine().$e->getMessage(),
+                "as" => 'as@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function responseTime(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        DB::beginTransaction();
+        $dataLogin = $request->all();
+
+        try {
+            $newCOA =  StrukPlanning::where('norec',$request['norec'])->first();
+            $newCOA->tglverif = $request['tglverif'];
+            $newCOA->save();
+
+
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+        $transMessage = "";
+        if ($transStatus == 'true') {
+            $transMessage = $transMessage . " Berhasil" ;
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "as" => 'as@epic',
+            );
+        } else {
+            $transMessage = $transMessage ." Gagal!!";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "as" => 'as@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    public function getLaporanPerbaikanIT(Request $request)
+    {
+        $objekperbaikan = '';
+        if(isset($request['objekperbaikan'])){
+            $objekperbaikan = ' and stp.objectdetailjenispekerjaanfk = '. $request['objekperbaikan'];
+        }
+
+        $data = \DB::select(DB::raw("SELECT stp.norec, ru.namaruangan,pg.namalengkap, stp.rincianexecuteplanning_askep, stp.tglplanning, stp.tglverif, stp.startdate, stp.duedate, jp.reportdisplay as jeniskerusakan, jp2.reportdisplay  as jenisalat, sp.statuspekerjaan FROM strukplanning_t stp 
+        left join ruangan_m ru on ru.id = stp.objectruanganfk
+        left join pegawai_m pg on pg.id = stp.narasumberfk
+        left join jenispekerjaan_m jp on jp.id = stp.objectjenispekerjaanfk
+        left join jenispekerjaan_m jp2 on jp2.id = stp.objectjenisalatfk
+        left join statuspekerjaan_m sp on sp.id =stp.objectstatuspekerjaanfk
+        where stp.objectkelompoktransaksifk = 151 and stp.kdprofile = 30 and stp.statusenabled = true and stp.startdate between '$request[tglAwal]' and '$request[tglAkhir]'
+        $objekperbaikan
+        order by stp.startdate asc
+        "));
+        foreach ($data as $d) {
+            $details= \DB::select(DB::raw("select stpd.*, pg.namalengkap from strukplanningdetail_t stpd inner join pegawai_m pg on pg.id = stpd.pegawaifk where stpd.noplanningfk ilike '$d->norec'"));
+            $d->detailspegawai = $details;
+        }
+        return $this->respond($data);
+    }
+    public function getDashboardPerbaikanPDTI(Request $request)
+    {
+
+        // $cardnull = \DB::select(DB::raw("
+        // SELECT sp.id,
+        // 'Belum Direspon' as statuspekerjaan, count(stp.objectstatuspekerjaanfk) FROM strukplanning_t stp left join statuspekerjaan_m sp on sp.id = stp.objectstatuspekerjaanfk
+        // where stp.objectkelompoktransaksifk = 151 and  stp.kdprofile= 30 and stp.statusenabled = true and stp.tglverif is null and stp.startdate between '$request[tglawal]' and '$request[tglakhir]'
+        // GROUP BY stp.objectstatuspekerjaanfk, sp.id
+        // "));
+        // if(count($cardnull) < 1){
+        //     $cardnull[0]['id'] = null;
+        //     $cardnull[0]['statuspekerjaan'] = 'Belum Direspon';
+        //     $cardnull[0]['count'] = 0;
+        // }
+
+        $card3 = \DB::select(DB::raw("
+        SELECT sp.id,
+        sp.statuspekerjaan, count(stp.objectstatuspekerjaanfk) FROM strukplanning_t stp left join statuspekerjaan_m sp on sp.id = stp.objectstatuspekerjaanfk
+        where stp.objectkelompoktransaksifk = 151 and  stp.kdprofile= 30 and stp.statusenabled = true and sp.id = 3 and stp.startdate between '$request[tglawal]' and '$request[tglakhir]'
+        GROUP BY stp.objectstatuspekerjaanfk, sp.id
+        "));
+        if(count($card3) < 1){
+            $card3[0]['id'] = 3;
+            $card3[0]['statuspekerjaan'] = 'Belum Dikerjakan';
+            $card3[0]['count'] = 0;
+        }
+                
+        $card15 = \DB::select(DB::raw("
+        SELECT sp.id,
+        sp.statuspekerjaan, count(stp.objectstatuspekerjaanfk) FROM strukplanning_t stp left join statuspekerjaan_m sp on sp.id = stp.objectstatuspekerjaanfk
+        where stp.objectkelompoktransaksifk = 151 and  stp.kdprofile= 30 and stp.statusenabled = true and sp.id = 15 and stp.startdate between '$request[tglawal]' and '$request[tglakhir]'
+        GROUP BY stp.objectstatuspekerjaanfk, sp.id
+        "));
+        if(count($card15) < 1){
+            $card15[0]['id'] = 15;
+            $card15[0]['statuspekerjaan'] = 'Progress';
+            $card15[0]['count'] = 0;
+        }
+        
+        $card1 = \DB::select(DB::raw("
+        SELECT sp.id,
+        sp.statuspekerjaan, count(stp.objectstatuspekerjaanfk) FROM strukplanning_t stp left join statuspekerjaan_m sp on sp.id = stp.objectstatuspekerjaanfk
+        where stp.objectkelompoktransaksifk = 151 and  stp.kdprofile= 30 and stp.statusenabled = true and sp.id = 1 and stp.startdate between '$request[tglawal]' and '$request[tglakhir]'
+        GROUP BY stp.objectstatuspekerjaanfk, sp.id
+        "));
+        if(count($card1) < 1){
+            $card1[0]['id'] = 1;
+            $card1[0]['statuspekerjaan'] = 'Selesai';
+            $card1[0]['count'] = 0;
+        }
+        $card = array(
+            // 0=> $cardnull,
+            0=> $card3,
+            1=> $card15,
+            2=> $card1,
+        );
+        $pie = \DB::select(DB::raw("SELECT count(stp.objectjenisalatfk)as value, jp.reportdisplay as category FROM strukplanning_t stp
+        inner join jenispekerjaan_m jp on jp.id = stp.objectjenisalatfk
+        where stp.objectkelompoktransaksifk = 151 and stp.kdprofile= 30 and stp.statusenabled = true and stp.startdate between '$request[tglawal]' and '$request[tglakhir]'
+        GROUP BY jp.reportdisplay
+            "));
+        $result = array(
+            'card'=> $card,
+            'pie'=> $pie,
+        );
+        return $this->respond($result);
+    }
 }

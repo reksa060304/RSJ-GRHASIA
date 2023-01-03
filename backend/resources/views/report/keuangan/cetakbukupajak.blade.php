@@ -69,6 +69,7 @@
                     <td align="center" width="50" style="padding: 10px; font-weight: bold; font-size: 15px; ">No.</td>
                     <td align="center" width="200" style="padding: 10px; font-weight: bold;font-size: 15px; ">Tgl Setor</td>
                     <td align="center" width="200" style="padding: 10px; font-weight: bold; font-size: 15px; ">Uraian</td>
+                    <td align="center" width="50" style="padding: 10px; font-weight: bold; font-size: 15px; ">PPh</td>
                     <td align="center" width="50" style="padding: 10px; font-weight: bold; font-size: 15px; ">PPh21</td>
                     <td align="center" width="50" style="padding: 10px; font-weight: bold; font-size: 15px; ">PPh22</td>
                     <td align="center" width="50" style="padding: 10px; font-weight: bold;font-size: 15px;  ">PPh23</td>
@@ -79,7 +80,8 @@
 
                 <!-- APBD -->
 
-                @php 
+                @php
+                    $jumlahpph = 0; 
                     $jumlahpph21 = 0;
                     $jumlahpph22 = 0;
                     $jumlahpph23 = 0;
@@ -106,6 +108,7 @@
                     <td align="right" width="50" style="padding: 10px; font-size: 15px;  "></td>
                     <td align="right" width="50" style="padding: 10px; font-size: 15px; "></td>
                     <td align="right" width="50" style="padding: 10px; font-size: 15px; "></td>
+                    <td align="right" width="50" style="padding: 10px; font-size: 15px; "></td>
                 </tr>
                 <tr>
                     <td align="center" width="50" style="padding: 10px; font-size: 15px; "></td>
@@ -115,6 +118,7 @@
                     <td align="right" width="50" style="padding: 10px;  font-size: 15px; "></td>
                     <td align="right" width="50" style="padding: 10px; font-size: 15px; "></td>
                     <td align="right" width="50" style="padding: 10px; font-size: 15px;  "></td>
+                    <td align="right" width="50" style="padding: 10px; font-size: 15px; "></td>
                     <td align="right" width="50" style="padding: 10px; font-size: 15px; "></td>
                     <td align="right" width="50" style="padding: 10px; font-size: 15px; "></td>
                 </tr>
@@ -128,6 +132,7 @@
                     <td align="right" width="50" style="padding: 10px; font-size: 15px;  "></td>
                     <td align="right" width="50" style="padding: 10px; font-size: 15px; "></td>
                     <td align="right" width="50" style="padding: 10px; font-size: 15px; "></td>
+                    <td align="right" width="50" style="padding: 10px; font-size: 15px; "></td>
                 </tr>
                 <tr>
                     <td align="right" width="50" style="padding: 10px; font-size: 15px; "></td>
@@ -137,6 +142,7 @@
                     <td align="right" width="50" style="padding: 10px;  font-size: 15px; "></td>
                     <td align="right" width="50" style="padding: 10px; font-size: 15px; "></td>
                     <td align="right" width="50" style="padding: 10px; font-size: 15px;  "></td>
+                    <td align="right" width="50" style="padding: 10px; font-size: 15px; "></td>
                     <td align="right" width="50" style="padding: 10px; font-size: 15px; "></td>
                     <td align="right" width="50" style="padding: 10px; font-size: 15px; "></td>
                 </tr>
@@ -151,6 +157,7 @@
                     <td align="right" width="50" style="padding: 10px; font-size: 15px;  "></td>
                     <td align="right" width="50" style="padding: 10px; font-size: 15px; "></td>
                     <td align="right" width="50" style="padding: 10px; font-size: 15px; "></td>
+                    <td align="right" width="50" style="padding: 10px; font-size: 15px; "></td>
                 </tr>
                 <tr>
                     <td align="center" width="50" style="padding: 10px; font-size: 15px; "></td>
@@ -160,6 +167,7 @@
                     <td align="right" width="50" style="padding: 10px;  font-size: 15px; "></td>
                     <td align="right" width="50" style="padding: 10px; font-size: 15px; "></td>
                     <td align="right" width="50" style="padding: 10px; font-size: 15px;  "></td>
+                    <td align="right" width="50" style="padding: 10px; font-size: 15px; "></td>
                     <td align="right" width="50" style="padding: 10px; font-size: 15px; "></td>
                     <td align="right" width="50" style="padding: 10px; font-size: 15px; "></td>
                 </tr>
@@ -173,6 +181,7 @@
                     <td align="right" width="50" style="padding: 10px; font-size: 15px;  "></td>
                     <td align="right" width="50" style="padding: 10px; font-size: 15px; "></td>
                     <td align="right" width="50" style="padding: 10px; font-size: 15px; "></td>
+                    <td align="right" width="50" style="padding: 10px; font-size: 15px; "></td>
                 </tr>
                 <tr>
                     <td align="right" width="50" style="padding: 10px; font-size: 15px; "></td>
@@ -184,11 +193,13 @@
                     <td align="right" width="50" style="padding: 10px; font-size: 15px;  "></td>
                     <td align="right" width="50" style="padding: 10px; font-size: 15px; "></td>
                     <td align="right" width="50" style="padding: 10px; font-size: 15px; "></td>
+                    <td align="right" width="50" style="padding: 10px; font-size: 15px; "></td>
                 </tr>
                 @endif
                 
                 @foreach ($data as $dt)
                 @php 
+                    $jumlahpph += $dt->pph;
                     $jumlahpph21 += $dt->pph21;
                     $jumlahpph22 += $dt->pph22;
                     $jumlahpph23 += $dt->pph23;
@@ -203,6 +214,7 @@
                     @endif
                     <td align="center" width="200" style="padding: 10px; font-size: 15px; ">{{ $dt->tglrealisasi }}</td>
                     <td align="left" width="200" style="padding: 10px; font-size: 15px; ">{{ $dt->namarekanan }}</td>
+                    <td align="right" width="50" style="padding: 10px; font-size: 15px; ">{{ number_format($dt->pph,2,',','.') }}</td>
                     <td align="right" width="50" style="padding: 10px; font-size: 15px; ">{{ number_format($dt->pph21,2,',','.') }}</td>
                     <td align="right" width="50" style="padding: 10px;  font-size: 15px; ">{{ number_format($dt->pph22,2,',','.') }}</td>
                     <td align="right" width="50" style="padding: 10px; font-size: 15px; ">{{ number_format($dt->pph23,2,',','.') }}</td>
@@ -214,6 +226,7 @@
                     <td align="center" width="50" style="padding: 10px; font-size: 15px; "></td>
                     <td align="center" width="200" style="padding: 10px; font-size: 15px; ">{{ number_format($dt->totalbelanja,2,',','.') }}</td>
                     <td align="left" width="200" style="padding: 10px; font-size: 15px; ">NPWP: {{ $dt->npwp }}</td>
+                    <td align="right" width="50" style="padding: 10px; font-size: 15px; "></td>
                     <td align="right" width="50" style="padding: 10px; font-size: 15px; "></td>
                     <td align="right" width="50" style="padding: 10px;  font-size: 15px; "></td>
                     <td align="right" width="50" style="padding: 10px; font-size: 15px; "></td>
@@ -230,6 +243,7 @@
                     <td align="left" width="200" style="padding: 10px; font-size: 15px; ">-</td>
                     @endif
                     <td align="right" width="50" style="padding: 10px; font-size: 15px; "></td>
+                    <td align="right" width="50" style="padding: 10px; font-size: 15px; "></td>
                     <td align="right" width="50" style="padding: 10px;  font-size: 15px; "></td>
                     <td align="right" width="50" style="padding: 10px; font-size: 15px; "></td>
                     <td align="right" width="50" style="padding: 10px; font-size: 15px;  "></td>
@@ -240,6 +254,7 @@
                     <td align="center" width="50" style="padding: 10px; font-size: 15px; "></td>
                     <td align="center" width="200" style="padding: 10px; font-size: 15px; ">{{ $dt->billpph }}</td>
                     <td align="left" width="200" style="padding: 10px; font-size: 15px; ">{{ $dt->idbillpph }}</td>
+                    <td align="right" width="50" style="padding: 10px; font-size: 15px; "></td>
                     <td align="right" width="50" style="padding: 10px; font-size: 15px; "></td>
                     <td align="right" width="50" style="padding: 10px;  font-size: 15px; "></td>
                     <td align="right" width="50" style="padding: 10px; font-size: 15px; "></td>
@@ -252,6 +267,7 @@
                     <td align="center" width="200" style="padding: 10px; font-size: 15px; ">NTPN</td>
                     <td align="left" width="200" style="padding: 10px; font-size: 15px; ">{{ $dt->ntpnpph }}</td>
                     <td align="right" width="50" style="padding: 10px; font-size: 15px; "></td>
+                    <td align="right" width="50" style="padding: 10px; font-size: 15px; "></td>
                     <td align="right" width="50" style="padding: 10px;  font-size: 15px; "></td>
                     <td align="right" width="50" style="padding: 10px; font-size: 15px; "></td>
                     <td align="right" width="50" style="padding: 10px; font-size: 15px;  "></td>
@@ -262,6 +278,7 @@
                     <td align="center" width="50" style="padding: 10px; font-size: 15px; "></td>
                     <td align="center" width="200" style="padding: 10px; font-size: 15px; ">{{ $dt->billppn }}</td>
                     <td align="left" width="200" style="padding: 10px; font-size: 15px; ">{{ $dt->idbillppn }}</td>
+                    <td align="right" width="50" style="padding: 10px; font-size: 15px; "></td>
                     <td align="right" width="50" style="padding: 10px; font-size: 15px; "></td>
                     <td align="right" width="50" style="padding: 10px;  font-size: 15px; "></td>
                     <td align="right" width="50" style="padding: 10px; font-size: 15px; "></td>
@@ -274,6 +291,7 @@
                     <td align="center" width="200" style="padding: 10px; font-size: 15px; ">NTPN</td>
                     <td align="left" width="200" style="padding: 10px; font-size: 15px; ">{{ $dt->ntpnppn }}</td>
                     <td align="right" width="50" style="padding: 10px; font-size: 15px; "></td>
+                    <td align="right" width="50" style="padding: 10px; font-size: 15px; "></td>
                     <td align="right" width="50" style="padding: 10px;  font-size: 15px; "></td>
                     <td align="right" width="50" style="padding: 10px; font-size: 15px; "></td>
                     <td align="right" width="50" style="padding: 10px; font-size: 15px;  "></td>
@@ -283,6 +301,7 @@
                 @endforeach
                 <tr>
                     <td colspan = "3" align="center" width="200" style="padding: 10px; font-weight: bold; font-size: 15px; ">Total Bulan Sekarang</td>
+                    <td align="right" width="50" style="padding: 10px; font-weight: bold; font-size: 15px; ">{{ number_format($jumlahpph,2,',','.') }}</td>
                     <td align="right" width="50" style="padding: 10px; font-weight: bold; font-size: 15px; ">{{ number_format($jumlahpph21,2,',','.') }}</td>
                     <td align="right" width="50" style="padding: 10px;  font-weight: bold; font-size: 15px; ">{{ number_format($jumlahpph22,2,',','.') }}</td>
                     <td align="right" width="50" style="padding: 10px; font-weight: bold; font-size: 15px; ">{{ number_format($jumlahpph23,2,',','.') }}</td>
@@ -292,6 +311,7 @@
                 </tr>
                 <tr>
                     <td colspan = "3" align="center" width="200" style="padding: 10px; font-weight: bold; font-size: 15px; ">Total Bulan Lalu</td>
+                    <td align="right" width="50" style="padding: 10px; font-weight: bold; font-size: 15px; ">{{ number_format($lalu[0]->pph,2,',','.') }}</td>
                     @if($sumberdana == 15)
                     <td align="right" width="50" style="padding: 10px; font-weight: bold; font-size: 15px; ">{{ number_format($lalu[0]->pph21 + 85800863,2,',','.') }}</td>
                     @else
@@ -305,6 +325,7 @@
                 </tr>
                 <tr>
                     <td colspan = "3" align="center" width="200" style="padding: 10px; font-weight: bold; font-size: 15px; ">Total</td>
+                    <td align="right" width="50" style="padding: 10px;  font-weight: bold; font-size: 15px; ">{{ number_format($lalu[0]->pph + $jumlahpph,2,',','.') }}</td>
                     @if($sumberdana == 15)
                     <td align="right" width="50" style="padding: 10px; font-weight: bold; font-size: 15px; ">{{ number_format($lalu[0]->pph21 + 85800863 + $jumlahpph21,2,',','.') }}</td>
                     @else

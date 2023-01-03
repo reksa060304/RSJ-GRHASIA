@@ -1644,6 +1644,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::post('perencanaan/save-keterangan-belanja','Perencanaan\PerencanaanController@saveKeteranganBelanja');
             Route::post('perencanaan/save-alokasi-keterangan-belanja','Perencanaan\PerencanaanController@saveAlokasiKeteranganBelanja');
             Route::post('perencanaan/save-realisasi-spj','Perencanaan\PerencanaanController@saveRealisasiSPJ');
+            Route::post('perencanaan/save-realisasi-spj-verif','Perencanaan\PerencanaanController@saveRealisasiSPJVerif');
             Route::post('perencanaan/save-panjar','Perencanaan\PerencanaanController@savePanjar');
             Route::post('perencanaan/save-spj-panjar','Perencanaan\PerencanaanController@saveSPJPanjar');
             Route::get('perencanaan/get-total-mata-anggaran', 'Perencanaan\PerencanaanController@getTotalMataAnggaran');
@@ -2340,6 +2341,9 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
 
         // });
         // Route::group(['prefix' => 'ipsrs'], function () {
+            Route::post('sysadmin/response-time-perbaikan','IPSRS\IPSRSController@responseTime');
+            Route::get('pdti/laporan-perbaikan-it','IPSRS\IPSRSController@getLaporanPerbaikanIT');
+            Route::get('pdti/load-data-dashboard','IPSRS\IPSRSController@getDashboardPerbaikanPDTI');
             Route::get('ipsrs/get-daftar-permohonan','IPSRS\IPSRSController@getDaftarIPSRS');
             Route::post('ipsrs/save-permohonan','IPSRS\IPSRSController@SavePermohonan');
             Route::post('ipsrs/save-alokasistaff','IPSRS\IPSRSController@SaveDataAlokasiStaff');

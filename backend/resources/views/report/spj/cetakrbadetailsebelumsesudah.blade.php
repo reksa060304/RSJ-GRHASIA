@@ -11,8 +11,7 @@
  
 </head>
 <style type="text/css" media="print">
-        @page {
-            size: all;   /* auto is the initial value */
+        @page (orientation: landscape){
             margin: 2cm 2cm 2cm 3cm;  /* this affects the margin in the printer settings */
         }
 </style>
@@ -52,17 +51,17 @@
     <table width="{{$pageWidth}}" bgcolor="#FFFFFF" style="border-left: 3px solid black; border-right: 3px solid black; border-top: 3px solid black;">
         <tbody >
         <tr>
-            <td rowspan="2"  style="padding: 5px; width: 50px; border-right: 3px solid black;" align="center">
+            <td rowspan="2"  style="padding: 5px; border-right: 3px solid black;" align="center">
                     <p align="center">
                             @if(stripos(\Request::url(), 'localhost') !== FALSE)
-                            <img src="{{ asset('img/logo_grhasia.png') }}" style="width: 120px" >
+                            <img src="{{ asset('img/logo_grhasia.png') }}" style="width: 100px" >
                             @else
-                              <img src="{{ asset('service/img/logo_grhasia.png') }}" style="width: 120px" >
+                              <img src="{{ asset('service/img/logo_grhasia.png') }}" style="width: 100px" >
                             @endif
                       
                     </p>
             </td>
-            <td align="center" style="width: 300px;">
+            <td align="center" style="">
                 <b style="font-size: 25px;">
                     RENCANA BISNIS DAN ANGGARAN<br>
                     BADAN LAYANAN UMUM DAERAH
@@ -94,50 +93,87 @@
         </tr>
         <tr >
             <td colspan="3" style="border-top: 3px solid black;">
-                <p align="left" style="margin-top: 10px; margin-bottom:10px; margin-left:10px">
-                    <font style="font-size: 12pt; " color="#000000" face="Arial">
-                            Program &emsp;&emsp;&emsp;&emsp;&emsp;&emsp; : {{ $data[0]->kodeprogram.' - '.$data[0]->keteranganprogram }}
-                    </font>
-                    <br>
-                    <font style="font-size: 12pt; " color="#000000" face="Arial">
-                            Kegiatan &emsp;&emsp;&emsp;&emsp;&emsp;&emsp; : {{ $data[0]->kodekegiatan.' - '.$data[0]->keterangankegiatan }}
-                    </font>
-                    <br>
-                    <font style="font-size: 12pt; " color="#000000" face="Arial">
-                            Sub Kegiatan &emsp;&emsp;&emsp;&emsp; : {{ $data[0]->kodesubkegiatan.' - '.$data[0]->keterangansubkegiatan }}
-                    </font>
-                    <br>
-                    <font style="font-size: 12pt; " color="#000000" face="Arial">
-                            Sub Sub Kegiatan &emsp;&emsp; : {{ $data[0]->kodesubsubkegiatan.' - '.$data[0]->keterangansubsubkegiatan }}
-                    </font>
-                    <br>
-                    <font style="font-size: 12pt; " color="#000000" face="Arial">
-                            Waktu Pelaksanaan &emsp;&nbsp; : {{ $data[0]->tahun }}
-                    </font>
-                    <br>
-                    <font style="font-size: 12pt; " color="#000000" face="Arial">
-                            Lokasi Kegiatan &emsp;&emsp;&emsp; : RS Jiwa GRHASIA DINKES DIY
-                    </font>
-                </p>
+                <table width="{{$pageWidth}}" bgcolor="#FFFFFF" style="border:none">
+                    <tr>
+                        <td align="left" width="150">
+                        <font style="font-size: 12pt; " color="#000000" face="Arial">
+                            Program
+                        </font>
+                        </td>
+                        <td align="left" width="50" colspan="2">
+                        : {{ $data[0]->kodeprogram.' - '.$data[0]->keteranganprogram }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="left" width="150">
+                        <font style="font-size: 12pt; " color="#000000" face="Arial">
+                        Kegiatan
+                        </font>
+                        </td>
+                        <td align="left" width="50" colspan="2">
+                        : {{ $data[0]->kodekegiatan.' - '.$data[0]->keterangankegiatan }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="left" width="150">
+                        <font style="font-size: 12pt; " color="#000000" face="Arial">
+                        Sub Kegiatan
+                        </font>
+                        </td>
+                        <td align="left" width="50" colspan="2">
+                        : {{ $data[0]->kodesubkegiatan.' - '.$data[0]->keterangansubkegiatan }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="left" width="150">
+                        <font style="font-size: 12pt; " color="#000000" face="Arial">
+                        Sub Sub Kegiatan
+                        </font>
+                        </td>
+                        <td align="left" width="50" colspan="2">
+                        : {{ $data[0]->kodesubsubkegiatan.' - '.$data[0]->keterangansubsubkegiatan }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="left" width="150">
+                        <font style="font-size: 12pt; " color="#000000" face="Arial">
+                        Waktu Pelaksanaan
+                        </font>
+                        </td>
+                        <td align="left" width="50" colspan="2">
+                        : {{ $data[0]->tahun }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="left" width="150">
+                        <font style="font-size: 12pt; " color="#000000" face="Arial">
+                        Lokasi Kegiatan
+                        </font>
+                        </td>
+                        <td align="left" width="50" colspan="2">
+                        : RS Jiwa GRHASIA DINKES DIY
+                        </td>
+                    </tr>
+                </table>
             </td>
         </tr>
         <tr >
             <td colspan="3" style="border-top: 3px solid black;">
                 <table class="tabel" width="{{$pageWidth}}" bgcolor="#FFFFFF" style="border: 1px solid black; margin-top:10px; margin-bottom:10px;">
                     <tr>
-                        <td align="center" width="50" rowspan="2"  style="padding: 10px; font-weight: bold ">Indikator</td>
-                        <td align="center" width="50" colspan="2" style="padding: 10px; font-weight: bold ">SEBELUM PERUBAHAN</td>
-                        <td align="center" width="50" colspan="2" style="padding: 10px; font-weight: bold ">SESUDAH PERUBAHAN</td>
+                        <td align="center" rowspan="2"  style="padding: 5px; font-weight: bold ">Indikator</td>
+                        <td align="center" colspan="2" style="padding: 5px; font-weight: bold ">SEBELUM PERUBAHAN</td>
+                        <td align="center" colspan="2" style="padding: 5px; font-weight: bold ">SESUDAH PERUBAHAN</td>
                     </tr>
                     <tr>
-                        <td align="center" width="50"  style="padding: 10px; font-weight: bold ">Tolok Ukur</td>
-                        <td align="center" width="50"  style="padding: 10px; font-weight: bold ">Target Kinerja</td>
-                        <td align="center" width="50"  style="padding: 10px; font-weight: bold ">Tolok Ukur</td>
-                        <td align="center" width="50"  style="padding: 10px; font-weight: bold ">Target Kinerja</td>
+                        <td align="center" style="padding: 5px; font-weight: bold ">Tolok Ukur</td>
+                        <td align="center" style="padding: 5px; font-weight: bold ">Target Kinerja</td>
+                        <td align="center" style="padding: 5px; font-weight: bold ">Tolok Ukur</td>
+                        <td align="center" style="padding: 5px; font-weight: bold ">Target Kinerja</td>
                     </tr>
                     <tr>
-                        <td align="left" width="50"  style="padding: 10px;">Masukan</td>
-                        <td align="left" width="50"  style="padding: 10px;">Dana</td>
+                        <td align="left" style="padding: 5px;">Masukan</td>
+                        <td align="left" style="padding: 5px;">Dana</td>
                         @php
                             $jumlahtotal = 0
                         @endphp
@@ -149,31 +185,31 @@
                             @endphp
                             @endif
                         @endforeach
-                        <td align="left" width="50"  style="padding: 10px;">{{ "Rp " . number_format($jumlahtotal,2,',','.') }}</td>
-                        <td align="left" width="50"  style="padding: 10px;">Dana</td>
-                        <td align="left" width="50"  style="padding: 10px;">{{ "Rp " . number_format($jumlahtotal,2,',','.') }}</td>
+                        <td align="left" style="padding: 5px;">{{ "Rp " . number_format($jumlahtotal,2,',','.') }}</td>
+                        <td align="left" style="padding: 5px;">Dana</td>
+                        <td align="left" style="padding: 5px;">{{ "Rp " . number_format($jumlahtotal,2,',','.') }}</td>
                     </tr>
                     <tr>
-                        <td align="left" width="100"  style="padding: 10px;">Keluaran</td>
-                        <td align="left" width="50"  style="padding: 10px;">
+                        <td align="left" style="padding: 5px;">Keluaran</td>
+                        <td align="left" style="padding: 5px;">
                             <textarea name="" id="" cols="30" rows="12">{{ $data[0]->indikatorkeluaran }}</textarea>
                         </td>
-                        <td align="left" width="50"  style="padding: 10px;">
+                        <td align="left" style="padding: 5px;">
                             <textarea name="" id="" cols="30" rows="12">{{ $data[0]->targetkeluaran }}</textarea>
                         </td>
-                        <td align="left" width="50"  style="padding: 10px;">
+                        <td align="left" style="padding: 5px;">
                             <textarea name="" id="" cols="30" rows="12">{{ $data[0]->indikatorkeluaran }}</textarea>
                         </td>
-                        <td align="left" width="50"  style="padding: 10px;">
+                        <td align="left" style="padding: 5px;">
                             <textarea name="" id="" cols="30" rows="12">{{ $data[0]->targetkeluaran }}</textarea>
                         </td>
                     </tr>
                     <tr>
-                        <td align="left" width="50"  style="padding: 10px;">Hasil</td>
-                        <td align="left" width="50"  style="padding: 10px;">{{ $data[0]->indikatorhasil }}</td>
-                        <td align="left" width="50"  style="padding: 10px;">{{ $data[0]->targethasil }}</td>
-                        <td align="left" width="50"  style="padding: 10px;">{{ $data[0]->indikatorhasil }}</td>
-                        <td align="left" width="50"  style="padding: 10px;">{{ $data[0]->targethasil }}</td>
+                        <td align="left" style="padding: 5px;">Hasil</td>
+                        <td align="left" style="padding: 5px;">{{ $data[0]->indikatorhasil }}</td>
+                        <td align="left" style="padding: 5px;">{{ $data[0]->targethasil }}</td>
+                        <td align="left" style="padding: 5px;">{{ $data[0]->indikatorhasil }}</td>
+                        <td align="left" style="padding: 5px;">{{ $data[0]->targethasil }}</td>
                     </tr>
                 </table>
             </td>
@@ -182,31 +218,31 @@
     </table>
         <table class="tabel" width="{{$pageWidth}}" bgcolor="#FFFFFF" style="border: 3px solid black;">
                 <tr>
-                    <td align="center" width="50"  colspan="5" style="padding: 10px; font-weight: bold ">ANGGRAN BELANJA</td>
-                    <td align="center" width="50"  colspan="5" style="padding: 10px; font-weight: bold ">SEBELUM PERUBAHAN</td>
-                    <td align="center" width="50"  colspan="5" style="padding: 10px; font-weight: bold ">SESUDAH PERUBAHAN</td>
-                    <td align="center" width="50"  rowspan="3" style="padding: 10px; font-weight: bold ">BERTAMBAH/<br>BERKURANG</td>
-                    <td align="center" width="50"  rowspan="3" style="padding: 10px; font-weight: bold ">%</td>
+                    <td align="center" width="50"  colspan="5" style="padding: 5px; font-weight: bold ">ANGGRAN BELANJA</td>
+                    <td align="center" width="50"  colspan="5" style="padding: 5px; font-weight: bold ">SEBELUM PERUBAHAN</td>
+                    <td align="center" width="50"  colspan="5" style="padding: 5px; font-weight: bold ">SESUDAH PERUBAHAN</td>
+                    <td align="center" width="50"  rowspan="3" style="padding: 5px; font-weight: bold ">BERTAMBAH/<br>BERKURANG</td>
+                    <td align="center" width="50"  rowspan="3" style="padding: 5px; font-weight: bold ">%</td>
                 </tr>
                 <tr>
-                    <td align="center" width="50"  rowspan="2" colspan="4" style="padding: 10px; font-weight: bold ">NO. REKENING</td>
-                    <td align="center" width="50"  rowspan="2" style="padding: 10px; font-weight: bold ">KOMPONEN BIAYA</td>
-                    <td align="center" width="50"  colspan="3" style="padding: 10px; font-weight: bold ">RINCIAN BIAYA</td>
-                    <td align="center" width="50"  colspan="2" style="padding: 10px; font-weight: bold ">JUMLAH ANGGARAN</td>
-                    <td align="center" width="50"  colspan="3" style="padding: 10px; font-weight: bold ">RINCIAN BIAYA</td>
-                    <td align="center" width="50"  colspan="2" style="padding: 10px; font-weight: bold ">JUMLAH ANGGARAN</td>
+                    <td align="center" width="50"  rowspan="2" colspan="4" style="padding: 5px; font-weight: bold ">NO. REKENING</td>
+                    <td align="center" width="50"  rowspan="2" style="padding: 5px; font-weight: bold ">KOMPONEN BIAYA</td>
+                    <td align="center" width="50"  colspan="3" style="padding: 5px; font-weight: bold ">RINCIAN BIAYA</td>
+                    <td align="center" width="50"  colspan="2" style="padding: 5px; font-weight: bold ">JUMLAH ANGGARAN</td>
+                    <td align="center" width="50"  colspan="3" style="padding: 5px; font-weight: bold ">RINCIAN BIAYA</td>
+                    <td align="center" width="50"  colspan="2" style="padding: 5px; font-weight: bold ">JUMLAH ANGGARAN</td>
                 </tr>
                 <tr>
-                    <td align="center" width="50"  style="padding: 10px; font-weight: bold ">Jumlah</td>
-                    <td align="center" width="50"  style="padding: 10px; font-weight: bold ">Satuan</td>
-                    <td align="center" width="50"  style="padding: 10px; font-weight: bold ">Harga Satuan</td>
-                    <td align="center" width="50"  style="padding: 10px; font-weight: bold ">Jasa Layanan</td>
-                    <td align="center" width="50"  style="padding: 10px; font-weight: bold ">APBD</td>
-                    <td align="center" width="50"  style="padding: 10px; font-weight: bold ">Jumlah</td>
-                    <td align="center" width="50"  style="padding: 10px; font-weight: bold ">Satuan</td>
-                    <td align="center" width="50"  style="padding: 10px; font-weight: bold ">Harga Satuan</td>
-                    <td align="center" width="50"  style="padding: 10px; font-weight: bold ">Jasa Layanan</td>
-                    <td align="center" width="50"  style="padding: 10px; font-weight: bold ">APBD</td>
+                    <td align="center" width="50"  style="padding: 5px; font-weight: bold ">Jumlah</td>
+                    <td align="center" width="50"  style="padding: 5px; font-weight: bold ">Satuan</td>
+                    <td align="center" width="50"  style="padding: 5px; font-weight: bold ">Harga Satuan</td>
+                    <td align="center" width="50"  style="padding: 5px; font-weight: bold ">Jasa Layanan</td>
+                    <td align="center" width="50"  style="padding: 5px; font-weight: bold ">APBD</td>
+                    <td align="center" width="50"  style="padding: 5px; font-weight: bold ">Jumlah</td>
+                    <td align="center" width="50"  style="padding: 5px; font-weight: bold ">Satuan</td>
+                    <td align="center" width="50"  style="padding: 5px; font-weight: bold ">Harga Satuan</td>
+                    <td align="center" width="50"  style="padding: 5px; font-weight: bold ">Jasa Layanan</td>
+                    <td align="center" width="50"  style="padding: 5px; font-weight: bold ">APBD</td>
                 </tr>
                 @if($sebelum!= [])
                 @php
@@ -228,11 +264,11 @@
                         $jumlahtotalapbdsebelum += $sb->subtotalapbd;
                         $jumlahtotalapbdsesudah += $sb->subtotalapbdsetelah;
                     @endphp
-                    <td align="center" width="25"  style="padding: 10px; font-weight: bold ">{{ $sb->kodemataanggaran }}</td>
-                    <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
-                    <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
-                    <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
-                    <td align="left" width="200"  style="padding: 10px; font-weight: bold ">{{ $sb->keterangan }}</td>
+                    <td align="center" width="25"  style="padding: 5px; font-weight: bold ">{{ $sb->kodemataanggaran }}</td>
+                    <td align="center" width="25"  style="padding: 5px; font-weight: bold "></td>
+                    <td align="center" width="25"  style="padding: 5px; font-weight: bold "></td>
+                    <td align="center" width="25"  style="padding: 5px; font-weight: bold "></td>
+                    <td align="left" width="200"  style="padding: 5px; font-weight: bold ">{{ $sb->keterangan }}</td>
                     @elseif($sb->kodemataanggaran == 'III')
                     @php
                     $jumlahtotaljasalayanansebelum += $sb->subtotaljasalayanan;
@@ -240,11 +276,11 @@
                         $jumlahtotalapbdsebelum += $sb->subtotalapbd;
                         $jumlahtotalapbdsesudah += $sb->subtotalapbdsetelah;
                     @endphp
-                    <td align="center" width="25"  style="padding: 10px; font-weight: bold ">{{ $sb->kodemataanggaran }}</td>
-                    <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
-                    <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
-                    <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
-                    <td align="left" width="200"  style="padding: 10px; font-weight: bold ">{{ $sb->keterangan }}</td>
+                    <td align="center" width="25"  style="padding: 5px; font-weight: bold ">{{ $sb->kodemataanggaran }}</td>
+                    <td align="center" width="25"  style="padding: 5px; font-weight: bold "></td>
+                    <td align="center" width="25"  style="padding: 5px; font-weight: bold "></td>
+                    <td align="center" width="25"  style="padding: 5px; font-weight: bold "></td>
+                    <td align="left" width="200"  style="padding: 5px; font-weight: bold ">{{ $sb->keterangan }}</td>
                     @elseif($sb->kodemataanggaran == 'II')
                     @php
                     $jumlahtotaljasalayanansebelum += $sb->subtotaljasalayanan;
@@ -252,154 +288,154 @@
                         $jumlahtotalapbdsebelum += $sb->subtotalapbd;
                         $jumlahtotalapbdsesudah += $sb->subtotalapbdsetelah;
                     @endphp
-                    <td align="center" width="25"  style="padding: 10px; font-weight: bold ">{{ $sb->kodemataanggaran }}</td>
-                    <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
-                    <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
-                    <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
-                    <td align="left" width="200"  style="padding: 10px; font-weight: bold ">{{ $sb->keterangan }}</td>
+                    <td align="center" width="25"  style="padding: 5px; font-weight: bold ">{{ $sb->kodemataanggaran }}</td>
+                    <td align="center" width="25"  style="padding: 5px; font-weight: bold "></td>
+                    <td align="center" width="25"  style="padding: 5px; font-weight: bold "></td>
+                    <td align="center" width="25"  style="padding: 5px; font-weight: bold "></td>
+                    <td align="left" width="200"  style="padding: 5px; font-weight: bold ">{{ $sb->keterangan }}</td>
                     @elseif(strpos($sb->kodemataanggaran,'I.') !== false && strlen($sb->kodemataanggaran) == 3)
-                    <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
-                    <td align="center" width="25"  style="padding: 10px; font-weight: bold ">{{ $char[1] }}</td>
-                    <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
-                    <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
-                    <td align="left" width="200"  style="padding: 10px; font-weight: bold ">{{ $sb->keterangan }}</td>
+                    <td align="center" width="25"  style="padding: 5px; font-weight: bold "></td>
+                    <td align="center" width="25"  style="padding: 5px; font-weight: bold ">{{ $char[1] }}</td>
+                    <td align="center" width="25"  style="padding: 5px; font-weight: bold "></td>
+                    <td align="center" width="25"  style="padding: 5px; font-weight: bold "></td>
+                    <td align="left" width="200"  style="padding: 5px; font-weight: bold ">{{ $sb->keterangan }}</td>
                     @elseif(strpos($sb->kodemataanggaran,'III.') !== false && strlen($sb->kodemataanggaran) == 5)
-                    <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
-                    <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
-                    <td align="center" width="25"  style="padding: 10px; font-weight: bold ">{{ $char[1] }}</td>
-                    <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
-                    <td align="left" width="200"  style="padding: 10px; font-weight: bold ">{{ $sb->keterangan }}</td>
+                    <td align="center" width="25"  style="padding: 5px; font-weight: bold "></td>
+                    <td align="center" width="25"  style="padding: 5px; font-weight: bold "></td>
+                    <td align="center" width="25"  style="padding: 5px; font-weight: bold ">{{ $char[1] }}</td>
+                    <td align="center" width="25"  style="padding: 5px; font-weight: bold "></td>
+                    <td align="left" width="200"  style="padding: 5px; font-weight: bold ">{{ $sb->keterangan }}</td>
                     @elseif($sb->jml == 0 && strpos($sb->kodemataanggaran,'III.') !== false && strlen($sb->kodemataanggaran) == 9)
-                    <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
-                    <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
-                    <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
-                    <td align="center" width="25"  style="padding: 10px; font-weight: bold ">{{ $char[2].'.'.$char[3] }}</td>
-                    <td align="left" width="200"  style="padding: 10px;">{{ $sb->keterangan }}</td>
+                    <td align="center" width="25"  style="padding: 5px; font-weight: bold "></td>
+                    <td align="center" width="25"  style="padding: 5px; font-weight: bold "></td>
+                    <td align="center" width="25"  style="padding: 5px; font-weight: bold "></td>
+                    <td align="center" width="25"  style="padding: 5px; font-weight: bold ">{{ $char[2].'.'.$char[3] }}</td>
+                    <td align="left" width="200"  style="padding: 5px;">{{ $sb->keterangan }}</td>
                     @elseif($sb->jml != 0 && strpos($sb->kodemataanggaran,'III.') !== false && strlen($sb->kodemataanggaran) == 9)
-                    <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
-                    <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
-                    <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
-                    <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
-                    <td align="left" width="200"  style="padding: 10px;">{{ $sb->keterangan }}</td>
+                    <td align="center" width="25"  style="padding: 5px; font-weight: bold "></td>
+                    <td align="center" width="25"  style="padding: 5px; font-weight: bold "></td>
+                    <td align="center" width="25"  style="padding: 5px; font-weight: bold "></td>
+                    <td align="center" width="25"  style="padding: 5px; font-weight: bold "></td>
+                    <td align="left" width="200"  style="padding: 5px;">{{ $sb->keterangan }}</td>
                     @elseif(strpos($sb->kodemataanggaran,'II.') !== false && strlen($sb->kodemataanggaran) == 4)
-                    <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
-                    <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
-                    <td align="center" width="25"  style="padding: 10px; font-weight: bold ">{{ $char[1] }}</td>
-                    <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
-                    <td align="left" width="200"  style="padding: 10px; font-weight: bold ">{{ $sb->keterangan }}</td>
+                    <td align="center" width="25"  style="padding: 5px; font-weight: bold "></td>
+                    <td align="center" width="25"  style="padding: 5px; font-weight: bold "></td>
+                    <td align="center" width="25"  style="padding: 5px; font-weight: bold ">{{ $char[1] }}</td>
+                    <td align="center" width="25"  style="padding: 5px; font-weight: bold "></td>
+                    <td align="left" width="200"  style="padding: 5px; font-weight: bold ">{{ $sb->keterangan }}</td>
                     @elseif($sb->jml == 0 && strpos($sb->kodemataanggaran,'II.') !== false && strlen($sb->kodemataanggaran) == 8)
-                    <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
-                    <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
-                    <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
-                    <td align="center" width="25"  style="padding: 10px; font-weight: bold ">{{ $char[2].'.'.$char[3] }}</td>
-                    <td align="left" width="200"  style="padding: 10px;">{{ $sb->keterangan }}</td>
+                    <td align="center" width="25"  style="padding: 5px; font-weight: bold "></td>
+                    <td align="center" width="25"  style="padding: 5px; font-weight: bold "></td>
+                    <td align="center" width="25"  style="padding: 5px; font-weight: bold "></td>
+                    <td align="center" width="25"  style="padding: 5px; font-weight: bold ">{{ $char[2].'.'.$char[3] }}</td>
+                    <td align="left" width="200"  style="padding: 5px;">{{ $sb->keterangan }}</td>
                     @elseif($sb->jml != 0 && strpos($sb->kodemataanggaran,'II.') !== false && strlen($sb->kodemataanggaran) == 8)
-                    <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
-                    <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
-                    <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
-                    <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
-                    <td align="left" width="200"  style="padding: 10px;">{{ $sb->keterangan }}</td>
+                    <td align="center" width="25"  style="padding: 5px; font-weight: bold "></td>
+                    <td align="center" width="25"  style="padding: 5px; font-weight: bold "></td>
+                    <td align="center" width="25"  style="padding: 5px; font-weight: bold "></td>
+                    <td align="center" width="25"  style="padding: 5px; font-weight: bold "></td>
+                    <td align="left" width="200"  style="padding: 5px;">{{ $sb->keterangan }}</td>
                     @elseif((strpos($sb->kodemataanggaran,'I.A.') !== false || strpos($sb->kodemataanggaran,'I.B.') !== false) && strlen($sb->kodemataanggaran) == 5)
-                    <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
-                    <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
-                    <td align="center" width="25"  style="padding: 10px; font-weight: bold ">{{ $char[2] }}</td>
-                    <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
-                    <td align="left" width="200"  style="padding: 10px; font-weight: bold ">{{ $sb->keterangan }}</td>
+                    <td align="center" width="25"  style="padding: 5px; font-weight: bold "></td>
+                    <td align="center" width="25"  style="padding: 5px; font-weight: bold "></td>
+                    <td align="center" width="25"  style="padding: 5px; font-weight: bold ">{{ $char[2] }}</td>
+                    <td align="center" width="25"  style="padding: 5px; font-weight: bold "></td>
+                    <td align="left" width="200"  style="padding: 5px; font-weight: bold ">{{ $sb->keterangan }}</td>
                     @elseif($sb->jml == 0 && (strpos($sb->kodemataanggaran,'I.A.') !== false || strpos($sb->kodemataanggaran,'I.B.') !== false) && (strlen($sb->kodemataanggaran) == 9 || strlen($sb->kodemataanggaran) == 10))
-                    <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
-                    <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
-                    <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
-                    <td align="center" width="25"  style="padding: 10px; font-weight: bold ">{{ $char[3].'.'.$char[4] }}</td>
-                    <td align="left" width="200"  style="padding: 10px;">{{ $sb->keterangan }}</td>
+                    <td align="center" width="25"  style="padding: 5px; font-weight: bold "></td>
+                    <td align="center" width="25"  style="padding: 5px; font-weight: bold "></td>
+                    <td align="center" width="25"  style="padding: 5px; font-weight: bold "></td>
+                    <td align="center" width="25"  style="padding: 5px; font-weight: bold ">{{ $char[3].'.'.$char[4] }}</td>
+                    <td align="left" width="200"  style="padding: 5px;">{{ $sb->keterangan }}</td>
                     @elseif($sb->jml != 0 && (strpos($sb->kodemataanggaran,'I.A.') !== false || strpos($sb->kodemataanggaran,'I.B.') !== false) && (strlen($sb->kodemataanggaran) == 9 || strlen($sb->kodemataanggaran) == 10))
-                    <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
-                    <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
-                    <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
-                    <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
-                    <td align="left" width="200"  style="padding: 10px;">{{ $sb->keterangan }}</td>
+                    <td align="center" width="25"  style="padding: 5px; font-weight: bold "></td>
+                    <td align="center" width="25"  style="padding: 5px; font-weight: bold "></td>
+                    <td align="center" width="25"  style="padding: 5px; font-weight: bold "></td>
+                    <td align="center" width="25"  style="padding: 5px; font-weight: bold "></td>
+                    <td align="left" width="200"  style="padding: 5px;">{{ $sb->keterangan }}</td>
                     @else
-                    <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
-                    <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
-                    <td align="center" width="25"  style="padding: 10px; font-weight: bold "></td>
-                    <td align="center" width="25"  style="padding: 10px; font-weight: bold ">{{ $sb->kodemataanggaran }}</td>
-                    <td align="left" width="200"  style="padding: 10px; font-weight: bold ">{{ $sb->keterangan }}</td>
+                    <td align="center" width="25"  style="padding: 5px; font-weight: bold "></td>
+                    <td align="center" width="25"  style="padding: 5px; font-weight: bold "></td>
+                    <td align="center" width="25"  style="padding: 5px; font-weight: bold "></td>
+                    <td align="center" width="25"  style="padding: 5px; font-weight: bold ">{{ $sb->kodemataanggaran }}</td>
+                    <td align="left" width="200"  style="padding: 5px; font-weight: bold ">{{ $sb->keterangan }}</td>
                     @endif
                     @if($sb->jml != 0)
-                    <td align="right" width="50"  style="padding: 10px; ">{{ $sb->jml }}</td>
+                    <td align="right" width="50"  style="padding: 5px; ">{{ $sb->jml }}</td>
                     @else
-                    <td align="right" width="50"  style="padding: 10px; "></td>
+                    <td align="right" width="50"  style="padding: 5px; "></td>
                     @endif
-                    <td align="center" width="50"  style="padding: 10px; ">{{ $sb->satuan }}</td>
+                    <td align="center" width="50"  style="padding: 5px; ">{{ $sb->satuan }}</td>
                     @if($sb->hargasatuan != 0)
-                    <td align="right" width="50"  style="padding: 10px; ">{{ number_format($sb->hargasatuan,0,',','.') }}</td>
+                    <td align="right" width="50"  style="padding: 5px; ">{{ number_format($sb->hargasatuan,0,',','.') }}</td>
                     @else
-                    <td align="right" width="50"  style="padding: 10px; "></td>
+                    <td align="right" width="50"  style="padding: 5px; "></td>
                     @endif
                     @if($sb->kodemataanggaran == 'I' || $sb->kodemataanggaran == 'II' || $sb->kodemataanggaran == 'III')
-                    <td align="right" width="50"  style="padding: 10px; font-weight: bold ">{{ number_format($sb->subtotaljasalayanan,0,',','.') }}</td>
-                    <td align="right" width="50"  style="padding: 10px; font-weight: bold ">{{ number_format($sb->subtotalapbd,0,',','.') }}</td>
+                    <td align="right" width="50"  style="padding: 5px; font-weight: bold ">{{ number_format($sb->subtotaljasalayanan,0,',','.') }}</td>
+                    <td align="right" width="50"  style="padding: 5px; font-weight: bold ">{{ number_format($sb->subtotalapbd,0,',','.') }}</td>
                     @else
-                    <td align="right" width="50"  style="padding: 10px;">{{ number_format($sb->subtotaljasalayanan,0,',','.') }}</td>
-                    <td align="right" width="50"  style="padding: 10px;">{{ number_format($sb->subtotalapbd,0,',','.') }}</td>
+                    <td align="right" width="50"  style="padding: 5px;">{{ number_format($sb->subtotaljasalayanan,0,',','.') }}</td>
+                    <td align="right" width="50"  style="padding: 5px;">{{ number_format($sb->subtotalapbd,0,',','.') }}</td>
                     @endif
                     @if($sb->jml != 0)
-                    <td align="right" width="50"  style="padding: 10px; ">{{ $sb->jmlsetelah }}</td>
+                    <td align="right" width="50"  style="padding: 5px; ">{{ $sb->jmlsetelah }}</td>
                     @else
-                    <td align="right" width="50"  style="padding: 10px; "></td>
+                    <td align="right" width="50"  style="padding: 5px; "></td>
                     @endif
-                    <td align="center" width="50"  style="padding: 10px; ">{{ $sb->satuansetelah }}</td>
+                    <td align="center" width="50"  style="padding: 5px; ">{{ $sb->satuansetelah }}</td>
                     @if($sb->hargasatuan != 0)
-                    <td align="right" width="50"  style="padding: 10px; ">{{ number_format($sb->hargasatuansetelah,0,',','.') }}</td>
+                    <td align="right" width="50"  style="padding: 5px; ">{{ number_format($sb->hargasatuansetelah,0,',','.') }}</td>
                     @else
-                    <td align="right" width="50"  style="padding: 10px; "></td>
+                    <td align="right" width="50"  style="padding: 5px; "></td>
                     @endif
                     @if($sb->kodemataanggaran == 'I' || $sb->kodemataanggaran == 'II' || $sb->kodemataanggaran == 'III')
-                    <td align="right" width="50"  style="padding: 10px; font-weight: bold ">{{ number_format($sb->subtotaljasalayanansetelah,0,',','.') }}</td>
-                    <td align="right" width="50"  style="padding: 10px; font-weight: bold ">{{ number_format($sb->subtotalapbdsetelah,0,',','.') }}</td>
+                    <td align="right" width="50"  style="padding: 5px; font-weight: bold ">{{ number_format($sb->subtotaljasalayanansetelah,0,',','.') }}</td>
+                    <td align="right" width="50"  style="padding: 5px; font-weight: bold ">{{ number_format($sb->subtotalapbdsetelah,0,',','.') }}</td>
                     @else
-                    <td align="right" width="50"  style="padding: 10px;">{{ number_format($sb->subtotaljasalayanansetelah,0,',','.') }}</td>
-                    <td align="right" width="50"  style="padding: 10px;">{{ number_format($sb->subtotalapbdsetelah,0,',','.') }}</td>
+                    <td align="right" width="50"  style="padding: 5px;">{{ number_format($sb->subtotaljasalayanansetelah,0,',','.') }}</td>
+                    <td align="right" width="50"  style="padding: 5px;">{{ number_format($sb->subtotalapbdsetelah,0,',','.') }}</td>
                     @endif
                     @if($sb->kodemataanggaran == 'I' || $sb->kodemataanggaran == 'II' || $sb->kodemataanggaran == 'III')
                         @if(($sb->subtotaljasalayanansetelah + $sb->subtotalapbdsetelah) > ($sb->subtotaljasalayanan + $sb->subtotalapbd))
                         @php
                             $jumlahtotalselisih += ($sb->subtotaljasalayanan + $sb->subtotalapbd) - ($sb->subtotaljasalayanansetelah + $sb->subtotalapbdsetelah)
                         @endphp
-                        <td align="right" width="25"  style="padding: 10px; font-weight: bold ">{{ number_format(($sb->subtotaljasalayanan + $sb->subtotalapbd) - ($sb->subtotaljasalayanansetelah + $sb->subtotalapbdsetelah),0,',','.') }}</td>
-                        <td align="right" width="25"  style="padding: 10px; font-weight: bold ">{{ number_format((($sb->subtotaljasalayanan + $sb->subtotalapbd) - ($sb->subtotaljasalayanansetelah + $sb->subtotalapbdsetelah))/$sb->subtotal*100,0,',','.') }}</td>
+                        <td align="right" width="25"  style="padding: 5px; font-weight: bold ">{{ number_format(($sb->subtotaljasalayanan + $sb->subtotalapbd) - ($sb->subtotaljasalayanansetelah + $sb->subtotalapbdsetelah),0,',','.') }}</td>
+                        <td align="right" width="25"  style="padding: 5px; font-weight: bold ">{{ number_format((($sb->subtotaljasalayanan + $sb->subtotalapbd) - ($sb->subtotaljasalayanansetelah + $sb->subtotalapbdsetelah))/$sb->subtotal*100,0,',','.') }}</td>
                         @elseif(($sb->subtotaljasalayanansetelah + $sb->subtotalapbdsetelah) < ($sb->subtotaljasalayanan + $sb->subtotalapbd))
                         @php
                             $jumlahtotalselisih += ($sb->subtotaljasalayanan + $sb->subtotalapbd) - ($sb->subtotaljasalayanansetelah + $sb->subtotalapbdsetelah)
                         @endphp
-                        <td align="right" width="25"  style="padding: 10px; font-weight: bold ">{{ number_format(($sb->subtotaljasalayanan + $sb->subtotalapbd) - ($sb->subtotaljasalayanansetelah + $sb->subtotalapbdsetelah),0,',','.') }}</td>
-                        <td align="right" width="25"  style="padding: 10px; font-weight: bold ">{{ number_format((($sb->subtotaljasalayanan + $sb->subtotalapbd) - ($sb->subtotaljasalayanansetelah + $sb->subtotalapbdsetelah))/$sb->subtotal*100,0,',','.') }}</td>
+                        <td align="right" width="25"  style="padding: 5px; font-weight: bold ">{{ number_format(($sb->subtotaljasalayanan + $sb->subtotalapbd) - ($sb->subtotaljasalayanansetelah + $sb->subtotalapbdsetelah),0,',','.') }}</td>
+                        <td align="right" width="25"  style="padding: 5px; font-weight: bold ">{{ number_format((($sb->subtotaljasalayanan + $sb->subtotalapbd) - ($sb->subtotaljasalayanansetelah + $sb->subtotalapbdsetelah))/$sb->subtotal*100,0,',','.') }}</td>
                         @else
-                        <td align="right" width="25"  style="padding: 10px; font-weight: bold ">{{ number_format(0,0,',','.') }}</td>
-                        <td align="right" width="25"  style="padding: 10px; font-weight: bold ">{{ number_format(0,0,',','.') }}</td>
+                        <td align="right" width="25"  style="padding: 5px; font-weight: bold ">{{ number_format(0,0,',','.') }}</td>
+                        <td align="right" width="25"  style="padding: 5px; font-weight: bold ">{{ number_format(0,0,',','.') }}</td>
                         @endif
                     @else
                         @if(($sb->subtotaljasalayanansetelah + $sb->subtotalapbdsetelah) > ($sb->subtotaljasalayanan + $sb->subtotalapbd))
-                        <td align="right" width="25"  style="padding: 10px;">{{ number_format(($sb->subtotaljasalayanansetelah + $sb->subtotalapbdsetelah) - ($sb->subtotaljasalayanan + $sb->subtotalapbd),0,',','.') }}</td>
-                        <td align="right" width="25"  style="padding: 10px;">{{ number_format((($sb->subtotaljasalayanansetelah + $sb->subtotalapbdsetelah) - ($sb->subtotaljasalayanan + $sb->subtotalapbd))/$sb->subtotal*100,0,',','.') }}</td>
+                        <td align="right" width="25"  style="padding: 5px;">{{ number_format(($sb->subtotaljasalayanansetelah + $sb->subtotalapbdsetelah) - ($sb->subtotaljasalayanan + $sb->subtotalapbd),0,',','.') }}</td>
+                        <td align="right" width="25"  style="padding: 5px;">{{ number_format((($sb->subtotaljasalayanansetelah + $sb->subtotalapbdsetelah) - ($sb->subtotaljasalayanan + $sb->subtotalapbd))/$sb->subtotal*100,0,',','.') }}</td>
                         @elseif(($sb->subtotaljasalayanansetelah + $sb->subtotalapbdsetelah) < ($sb->subtotaljasalayanan + $sb->subtotalapbd))
-                        <td align="right" width="25"  style="padding: 10px;">{{ number_format(($sb->subtotaljasalayanan + $sb->subtotalapbd) - ($sb->subtotaljasalayanansetelah + $sb->subtotalapbdsetelah),0,',','.') }}</td>
-                        <td align="right" width="25"  style="padding: 10px;">{{ number_format((($sb->subtotaljasalayanan + $sb->subtotalapbd) - ($sb->subtotaljasalayanansetelah + $sb->subtotalapbdsetelah))/$sb->subtotal*100,0,',','.') }}</td>
+                        <td align="right" width="25"  style="padding: 5px;">{{ number_format(($sb->subtotaljasalayanan + $sb->subtotalapbd) - ($sb->subtotaljasalayanansetelah + $sb->subtotalapbdsetelah),0,',','.') }}</td>
+                        <td align="right" width="25"  style="padding: 5px;">{{ number_format((($sb->subtotaljasalayanan + $sb->subtotalapbd) - ($sb->subtotaljasalayanansetelah + $sb->subtotalapbdsetelah))/$sb->subtotal*100,0,',','.') }}</td>
                         @else
-                        <td align="right" width="25"  style="padding: 10px;">{{ number_format(0,0,',','.') }}</td>
-                        <td align="right" width="25"  style="padding: 10px;">{{ number_format(0,0,',','.') }}</td>
+                        <td align="right" width="25"  style="padding: 5px;">{{ number_format(0,0,',','.') }}</td>
+                        <td align="right" width="25"  style="padding: 5px;">{{ number_format(0,0,',','.') }}</td>
                         @endif
                     @endif
                 </tr>
                 @endforeach
                 <tr>
-                    <td align="center" width="50" colspan="8"  style="padding: 10px; font-weight: bold ">JUMLAH TOTAL</td>
-                    <td align="right" width="50"  style="padding: 10px; font-weight: bold ">{{ number_format($jumlahtotaljasalayanansebelum,0,',','.') }}</td>
-                    <td align="right" width="50"  style="padding: 10px; font-weight: bold ">{{ number_format($jumlahtotalapbdsebelum,0,',','.') }}</td>
-                    <td align="center" width="50" colspan="3"  style="padding: 10px; font-weight: bold "></td>
-                    <td align="right" width="50"  style="padding: 10px; font-weight: bold ">{{ number_format($jumlahtotaljasalayanansesudah,0,',','.') }}</td>
-                    <td align="right" width="50"  style="padding: 10px; font-weight: bold ">{{ number_format($jumlahtotalapbdsesudah,0,',','.') }}</td>
-                    <td align="right" width="50"  style="padding: 10px; font-weight: bold ">{{ number_format($jumlahtotalselisih,0,',','.') }}</td>
-                    <td align="right" width="50"  style="padding: 10px; font-weight: bold ">{{ number_format($jumlahtotalselisih/($jumlahtotaljasalayanansebelum + $jumlahtotalapbdsebelum)*100,0,',','.') }}</td>
+                    <td align="center" width="50" colspan="8"  style="padding: 5px; font-weight: bold ">JUMLAH TOTAL</td>
+                    <td align="right" width="50"  style="padding: 5px; font-weight: bold ">{{ number_format($jumlahtotaljasalayanansebelum,0,',','.') }}</td>
+                    <td align="right" width="50"  style="padding: 5px; font-weight: bold ">{{ number_format($jumlahtotalapbdsebelum,0,',','.') }}</td>
+                    <td align="center" width="50" colspan="3"  style="padding: 5px; font-weight: bold "></td>
+                    <td align="right" width="50"  style="padding: 5px; font-weight: bold ">{{ number_format($jumlahtotaljasalayanansesudah,0,',','.') }}</td>
+                    <td align="right" width="50"  style="padding: 5px; font-weight: bold ">{{ number_format($jumlahtotalapbdsesudah,0,',','.') }}</td>
+                    <td align="right" width="50"  style="padding: 5px; font-weight: bold ">{{ number_format($jumlahtotalselisih,0,',','.') }}</td>
+                    <td align="right" width="50"  style="padding: 5px; font-weight: bold ">{{ number_format($jumlahtotalselisih/($jumlahtotaljasalayanansebelum + $jumlahtotalapbdsebelum)*100,0,',','.') }}</td>
                 </tr>
                 @endif
         </table>

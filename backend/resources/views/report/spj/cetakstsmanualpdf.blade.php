@@ -71,7 +71,7 @@
                 <font style="font-size: 12pt" color="#000000">Harap menerima uang sebesar:</font>
             </td>
             <td colspan="5" align="left">
-                <font style="font-size: 12pt" color="#000000">Rp. {{ number_format($detail[0]->totalsetoran,0,',','.') }}</font>
+                <font style="font-size: 12pt" color="#000000">Rp. {{ number_format($detail[0]->totalsetoran,2,',','.') }}</font>
             </td>
         </tr>
         <tr>
@@ -113,13 +113,13 @@
             @else
             <td style="padding: 5px;" align="center"></td>
             @endif
-            <td style="padding: 5px;" align="right">{{ number_format($dt->kolom1,0,',','.') }}</td>
+            <td style="padding: 5px;" align="right">{{ number_format($dt->kolom1,0,',','.') != 0 ? number_format($dt->kolom1,2,',','.') : number_format($dt->kolom1,0,',','.')  }}</td>
             @if($dt->kolom2 != null)
             <td style="padding: 5px;" align="center">Rp</td>
             @else
             <td style="padding: 5px;" align="center"></td>
             @endif
-            <td style="padding: 5px;" align="right">{{ number_format($dt->kolom2,0,',','.') }}</td>
+            <td style="padding: 5px;" align="right">{{ number_format($dt->kolom2,0,',','.') != 0 ? number_format($dt->kolom2,2,',','.') : number_format($dt->kolom2,0,',','.')  }}</td>
         </tr>
         @endforeach
         </tbody>

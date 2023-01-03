@@ -414,6 +414,7 @@ define(['initialize'], function (initialize) {
                     $scope.item.ruangan = chacePeriode2[0];
                     $scope.item.aturanPakai = chacePeriode2[1];
                     $scope.item.jenisKemasan = chacePeriode2[2];
+                    $scope.item.route = chacePeriode2[3];
                 }
                 var chacePeriode = cacheHelper.get('InputResepApotikCtrl');
                 console.log(chacePeriode)
@@ -606,7 +607,7 @@ define(['initialize'], function (initialize) {
                     $scope.listPenulisResep = dat.data.penulisresep;
                     $scope.item.penulisResep = $scope.dpjp
                     $scope.listJenisKemasan = dat.data.jeniskemasan;
-                    $scope.listProduk = dat.data.produk;
+                    $scope.listProduk = dat.data.produkall;
                     $scope.listAsalProduk = dat.data.asalproduk;
                     $scope.listRoute = dat.data.route;
                     $scope.listAturanPakai = dat.data.signa;
@@ -1791,7 +1792,7 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                     0: $scope.item.ruangan,
                     1: '',//$scope.item.aturanPakai,
                     2: $scope.item.jenisKemasan,
-                    3: '',
+                    3: $scope.item.route,
                     4: '',
                     5: '',
                     6: '',
@@ -2259,7 +2260,7 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                             0: $scope.item.ruangan,
                             1: '',//$scope.item.aturanPakai,
                             2: $scope.item.jenisKemasan,
-                            3: '',
+                            3: $scope.item.route,
                             4: '',
                             5: '',
                             6: '',

@@ -156,8 +156,8 @@
                         @endif
                     @endif    
                 @else
-                    @if($dt->text == 'STS' || $dt->text == 'PENERIMAAN:' ||  $dt->text == 'Transfer Bendahara Penerima' || $dt->text == 'Jasa Giro' || $dt->text == 'Potongan Pajak' || $dt->text == 'JUMLAH PENERIMAAN:' || $dt->text == 'PENGELUARAN:' || $dt->text == 'SPJ' || $dt->text == 'Jasa Giro' || $dt->text == 'Penyetoran Pajak' || $dt->text == 'JUMLAH PENGELUARAN:' || $dt->text == 'SALDO KAS')
-                        @if($dt->text == 'STS' || $dt->text == 'Transfer Bendahara Penerima' || $dt->text == 'Jasa Giro' || $dt->text == 'Potongan Pajak' || $dt->text == 'SPJ' || $dt->text == 'Jasa Giro' || $dt->text == 'Penyetoran Pajak')
+                    @if($dt->text == 'STS' || $dt->text == 'PENERIMAAN:' || $dt->text == 'PPN:' || $dt->text == 'PPh:' ||  $dt->text == 'Transfer Bendahara Penerima' || $dt->text == 'Jasa Giro' || $dt->text == 'Potongan Pajak' || $dt->text == 'JUMLAH PENERIMAAN:' || $dt->text == 'PENGELUARAN:' || $dt->text == 'SPJ' || $dt->text == 'Jasa Giro' || $dt->text == 'Penyetoran Pajak' || $dt->text == 'JUMLAH PENGELUARAN:' || $dt->text == 'SALDO KAS')
+                        @if($dt->text == 'STS' || $dt->text == 'Transfer Bendahara Penerima' || $dt->text == 'Jasa Giro' || $dt->text == 'Potongan Pajak' || $dt->text == 'PPN:' || $dt->text == 'PPh:' || $dt->text == 'SPJ' || $dt->text == 'Jasa Giro' || $dt->text == 'Penyetoran Pajak')
                             <tr>
                                 <td colspan="2" align="left" width="50" style="font-weight: bold; padding: 10px; padding-left: 30px; font-size: 15px; ">{{ $dt->text }}</td>
                                 <td align="right" width="50" style="font-weight: bold; padding: 10px; padding-left: 30px; font-size: 15px;  ">{{ number_format($dt->subtotal,2,',','.') }}</td>
@@ -188,6 +188,7 @@
                             @endif
                         @endif
                     @else
+                        @if(strpos($dt->kode, 'I') !== false)
                         <tr>
                             <td align="left" width="50" style="padding: 10px; font-size: 15px; "></td>
                             <td align="left" width="50" style="padding: 10px; font-size: 15px; ">{{ $dt->kode }}. {{ $dt->text }}</td>
@@ -197,6 +198,17 @@
                             <td align="right" width="50" style="padding: 10px; font-size: 15px; ">{{ number_format($dt->totalbulanlalu + $dt->totalbulanini,2,',','.') }}</td>
                             <td align="right" width="50" style="padding: 10px; font-size: 15px; ">{{ number_format($dt->subtotal - $dt->totalbulanlalu - $dt->totalbulanini,2,',','.') }}</td>
                         </tr>
+                        @else
+                        <tr>
+                            <td align="left" width="50" style="padding: 10px; font-size: 15px; "></td>
+                            <td align="left" width="50" style="padding: 10px; font-size: 15px; ">{{ $dt->text }}</td>
+                            <td align="right" width="50" style="padding: 10px; font-size: 15px;  ">{{ number_format($dt->subtotal,2,',','.') }}</td>
+                            <td align="right" width="50" style="padding: 10px; font-size: 15px; ">{{ number_format($dt->totalbulanlalu,2,',','.') }}</td>
+                            <td align="right" width="100" style="padding: 10px; font-size: 15px; ">{{ number_format($dt->totalbulanini,2,',','.') }}</td>
+                            <td align="right" width="50" style="padding: 10px; font-size: 15px; ">{{ number_format($dt->totalbulanlalu + $dt->totalbulanini,2,',','.') }}</td>
+                            <td align="right" width="50" style="padding: 10px; font-size: 15px; ">{{ number_format($dt->subtotal - $dt->totalbulanlalu - $dt->totalbulanini,2,',','.') }}</td>
+                        </tr>
+                        @endif
                     @endif
                 @endif
                 @endforeach

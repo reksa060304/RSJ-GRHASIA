@@ -4794,7 +4794,7 @@ class GeneralController extends ApiController
         }
 
         $data = DB::select(DB::raw("
-        SELECT rp.rekananperbaikan, stp.objectrekananperbaikanfk,  stp.objectdetailjenispekerjaanfk, stp.objectruanganfk,stp.catatan, stp.ispihakketiga, stp.norec, rg.namaruangan, stp.tglplanning,stp.objectpegawaipjawabfk,pg.namalengkap, stp.startdate, stp.duedate, stp.rincianexecuteplanning_askep, stp.pelapor, 
+        SELECT stp.tglverif, rp.rekananperbaikan, stp.objectrekananperbaikanfk,  stp.objectdetailjenispekerjaanfk, stp.objectruanganfk,stp.catatan, stp.ispihakketiga, stp.norec, rg.namaruangan, stp.tglplanning,stp.objectpegawaipjawabfk,pg.namalengkap, stp.startdate, stp.duedate, stp.rincianexecuteplanning_askep, stp.pelapor, 
                     stp.deskripsiplanning, stp.keteranganverifikasi, sttp.namaexternal,stp.signdate, stp.worklist, stp.keteranganverifikasi, 
                     pg2.nama as namainspektor, pg3.nama as namapelapor,stp.objectstatuspekerjaanfk,sttp.reportdisplay as statuspekerjaan,stp.objectjenispekerjaanfk AS idjeniskerusakan,
                     jpk.reportdisplay as jeniskerusakan,stp.objectjenisalatfk,jpk2.reportdisplay as jenisalat,r.namaruangan as namaruangantujuan, ukp.name
@@ -4870,6 +4870,7 @@ class GeneralController extends ApiController
                 'detailss' => $detailss,
                 'objectrekananperbaikanfk' => $item->objectrekananperbaikanfk,
                 'rekananperbaikan' => $item->rekananperbaikan,
+                'tglverif' => $item->tglverif,
 
             );
         }

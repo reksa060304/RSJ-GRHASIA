@@ -2552,8 +2552,8 @@ class BendaharaPenerimaanController extends ApiController {
         $status = '';
         if (isset($request['status']) && $request['status'] != "" && $request['status'] != "undefined" && $request['status']==1) {
             $status = ' and sts.nosts is not null';
-        } else{
-            $status = ' and sts.nosts is null and str.norec is null';
+        } else {
+            $status = ' and sts.norec is null and str.norec is null';
         }
 
         $kp = '';
@@ -2563,9 +2563,9 @@ class BendaharaPenerimaanController extends ApiController {
 
         $detail = DB::select(DB::raw("select rkb.*, pd.noregistrasi, kp.kelompokpasien, kp.id idkelompokpasien, sts.nosts, sts.tglpenerimaan, coalesce(sts.totalsetoran,0) totalsetoran, ru.objectdepartemenfk
         from rekapklaimbpjs_t rkb
-        inner join pasiendaftar_t pd on pd.norec = rkb.norecpdfk
-        inner join kelompokpasien_m kp on kp.id = pd.objectkelompokpasienlastfk
-        inner join ruangan_m ru on ru.id = pd.objectruanganlastfk
+        left join pasiendaftar_t pd on pd.norec = rkb.norecpdfk
+        left join kelompokpasien_m kp on kp.id = pd.objectkelompokpasienlastfk
+        left join ruangan_m ru on ru.id = pd.objectruanganlastfk
         left join ststorekapklaim_t str on str.objectrekapklaimfk = rkb.norec
         and str.statusenabled = true
         and str.kdprofile = 30
@@ -2573,12 +2573,10 @@ class BendaharaPenerimaanController extends ApiController {
         and sts.statusenabled = true
         and sts.kdprofile = 30
         where rkb.tglbayar::date between '$tglAwal' and '$tglAkhir'
-        and pd.statusenabled = true
-        and pd.kdprofile = 30
         and rkb.statusenabled = true
         and rkb.kdprofile = 30
-        $kp
         $status
+        $kp
         $nosts"));
         
 
@@ -2606,7 +2604,7 @@ class BendaharaPenerimaanController extends ApiController {
                     $STSK->kdprofile = $idProfile;
                     $STSK->statusenabled = true;
                     $STSK->nosep = $klaim[$i]['nosep'];
-                    $STSK->totalsetujui = $klaim[$i]['totalklaim'];
+                    $STSK->totalsetujui= $klaim[$i]['totalklaim'];
                     $STSK->totaltarifrs = $klaim[$i]['totalbilling'];
                     $STSK->norecpdfk = $klaim[$i]['norecpd'];
                     $STSK->tglsep = $klaim[$i]['tglsep'];
@@ -2777,7 +2775,7 @@ class BendaharaPenerimaanController extends ApiController {
         left join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
         left join ststosck_t as ssc on ssc.objectsckfk = sck.norec
         left join surattandasetoran_t as sts on sts.norec = ssc.objectstsfk
-        where sbm.keteranganlainnya = 'Pembayaran Tagihan Non Layanan'
+        where (sbm.keteranganlainnya = 'Pembayaran Tagihan Non Layanan' or sbm.keteranganlainnya = 'Pembayaran Diklat')
         --and sts.statusenabled = true
         and sc.noclosing IN('".implode("','",$noclosing)."')"));
        
@@ -4107,6 +4105,7 @@ class BendaharaPenerimaanController extends ApiController {
         $jumlahjamkesdaobat = 0;
         $jumlahjamkesosobat = 0;
         $jumlahipwlobat = 0;
+        $jumlahcovid = 0;
 
         $voljumlahbpjsrajal = 0;
         $voljumlahbpjsranap = 0;
@@ -4120,6 +4119,7 @@ class BendaharaPenerimaanController extends ApiController {
         $voljumlahjamkesdaobat = 0;
         $voljumlahjamkesosobat = 0;
         $voljumlahipwlobat = 0;
+        $voljumlahcovid = 0;
         //in(1, 2, 21, 22, 24, 25)
         for($i = 0; $i < count($request['setoran']); $i++){
             if($request['setoran'][$i]['objectdepartemenfk'] != 16 && $request['setoran'][$i]['isobat'] != true && ($request['setoran'][$i]['idkelompokpasien'] == 1 || $request['setoran'][$i]['idkelompokpasien'] == 2 || $request['setoran'][$i]['idkelompokpasien'] == 21 || $request['setoran'][$i]['idkelompokpasien'] == 22 || $request['setoran'][$i]['idkelompokpasien'] == 24 || $request['setoran'][$i]['idkelompokpasien'] == 25)){
@@ -4131,7 +4131,7 @@ class BendaharaPenerimaanController extends ApiController {
                 $voljumlahbpjsranap++;
             }
             if($request['setoran'][$i]['objectdepartemenfk'] != 16 && $request['setoran'][$i]['isobat'] != true && $request['setoran'][$i]['idkelompokpasien'] == 8){
-                $jumlahjamkesdarajal += (int)$request['setoran'][$i]['totalsetujui '];
+                $jumlahjamkesdarajal += (int)$request['setoran'][$i]['totalsetujui'];
                 $voljumlahjamkesdarajal++;
             }
             if($request['setoran'][$i]['objectdepartemenfk'] == 16 && $request['setoran'][$i]['isobat'] != true && $request['setoran'][$i]['idkelompokpasien'] == 8){
@@ -4143,16 +4143,20 @@ class BendaharaPenerimaanController extends ApiController {
                 $voljumlahjamkesosrajal++;
             }
             if($request['setoran'][$i]['objectdepartemenfk'] == 16 && $request['setoran'][$i]['isobat'] != true && $request['setoran'][$i]['idkelompokpasien'] == 18){
-                $jumlahjamkesosranap += (int)$request['setoran'][$i]['totalsetujui '];
+                $jumlahjamkesosranap += (int)$request['setoran'][$i]['totalsetujui'];
                 $voljumlahjamkesosranap++;
             }
             if($request['setoran'][$i]['objectdepartemenfk'] != 16 && $request['setoran'][$i]['isobat'] != true && $request['setoran'][$i]['idkelompokpasien'] == 4){
-                $jumlahipwlrajal += (int)$request['setoran'][$i]['totalsetujui '];
+                $jumlahipwlrajal += (int)$request['setoran'][$i]['totalsetujui'];
                 $voljumlahipwlrajal++;
             }
             if($request['setoran'][$i]['objectdepartemenfk'] == 16 && $request['setoran'][$i]['isobat'] != true && $request['setoran'][$i]['idkelompokpasien'] == 4){
-                $jumlahipwlranap += (int)$request['setoran'][$i]['totalsetujui '];
+                $jumlahipwlranap += (int)$request['setoran'][$i]['totalsetujui'];
                 $voljumlahipwlranap++;
+            }
+            if($request['setoran'][$i]['idkelompokpasien'] == 16){
+                $jumlahcovid += (int)$request['setoran'][$i]['totalsetujui'];
+                $voljumlahcovid++;
             }
             
 
@@ -4161,7 +4165,7 @@ class BendaharaPenerimaanController extends ApiController {
                 $voljumlahbpjsobat++;
             }
             if($request['setoran'][$i]['isobat'] == true && $request['setoran'][$i]['idkelompokpasien'] == 8){
-                $jumlahjamkesdaobat += (int)$request['setoran'][$i]['totalsetujui '];
+                $jumlahjamkesdaobat += (int)$request['setoran'][$i]['totalsetujui'];
                 $voljumlahjamkesdaobat++;
             }
             if($request['setoran'][$i]['isobat'] == true && $request['setoran'][$i]['idkelompokpasien'] == 18){
@@ -4169,7 +4173,7 @@ class BendaharaPenerimaanController extends ApiController {
                 $voljumlahjamkesosobat++;
             }
             if($request['setoran'][$i]['isobat'] == true && $request['setoran'][$i]['idkelompokpasien'] == 4){
-                $jumlahipwlobat += (int)$request['setoran'][$i]['totalsetujui '];
+                $jumlahipwlobat += (int)$request['setoran'][$i]['totalsetujui'];
                 $voljumlahipwlobat++;
             }
         }
@@ -4946,6 +4950,20 @@ class BendaharaPenerimaanController extends ApiController {
         $STSD->kdprofile = $idProfile;
         $STSD->nourut = $newId;
         $STSD->jenisdata = 'konten';
+        $STSD->uraian = 'Klaim Covid';
+        $STSD->kolom2 = $jumlahcovid;
+        $STSD->vol = $voljumlahcovid;
+        $STSD->statusenabled = true;
+        $STSD->objectstsfk = $nosts;
+        $STSD->save();
+
+        $newId = SuratTandaSetoranDetail::max('nourut') +1 ;
+
+        $STSD = new SuratTandaSetoranDetail();
+        $STSD->norec  = $STSD->generateNewId();
+        $STSD->kdprofile = $idProfile;
+        $STSD->nourut = $newId;
+        $STSD->jenisdata = 'konten';
         $STSD->nomer = '04';
         $STSD->uraian = 'LAIN-LAIN PENDAPATAN BLUD YANG SAH';
         $STSD->statusenabled = true;
@@ -5158,7 +5176,7 @@ class BendaharaPenerimaanController extends ApiController {
         $STSD->nourut = $newId;
         $STSD->jenisdata = 'konten';
         $STSD->uraian = 'JUMLAH';
-        $STSD->kolom2 = $jumlahbpjsrajal + $jumlahbpjsranap + $jumlahjamkesdarajal + $jumlahjamkesdaranap + $jumlahjamkesosrajal + $jumlahjamkesosranap + $jumlahipwlrajal + $jumlahipwlranap + $jumlahbpjsobat + $jumlahjamkesdaobat + $jumlahjamkesosobat + $jumlahipwlobat;
+        $STSD->kolom2 = $jumlahbpjsrajal + $jumlahbpjsranap + $jumlahjamkesdarajal + $jumlahjamkesdaranap + $jumlahjamkesosrajal + $jumlahjamkesosranap + $jumlahipwlrajal + $jumlahipwlranap + $jumlahbpjsobat + $jumlahjamkesdaobat + $jumlahjamkesosobat + $jumlahipwlobat + $jumlahcovid;
         $STSD->statusenabled = true;
         $STSD->objectstsfk = $nosts;
         $STSD->save();

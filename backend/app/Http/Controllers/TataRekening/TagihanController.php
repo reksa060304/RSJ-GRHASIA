@@ -5477,9 +5477,16 @@ class TagihanController  extends ApiController
             $qkey = "and pd.noregistrasi ilike '%".$filter['key']."%'";
         }
 
-        $piutang = DB::select(DB::raw("selectx norecpd, namaruangan, nocm, jeniskelamin, tglbayar, tglsep, iscek, nosep, tglpulang, noregistrasi, namapasien, kelompokpasien, namarekanan,
-        sum(totalbilling) totalbilling, sum(totalbayar) totalbayar, sum(totalklaim) totalklaim,
-        sum(selisih) selisih, lamahari
+        $jpelayanan = '';
+        if(isset($filter['jpelayanan']) && $filter['jpelayanan']!="" && $filter['jpelayanan']==1){
+            $jpelayanan = "and ru.objectdepartemenfk <> 16";
+        } else if(isset($filter['jpelayanan']) && $filter['jpelayanan']!="" && $filter['jpelayanan']==2){
+            $jpelayanan = "and ru.objectdepartemenfk = 16";
+        }
+
+        $piutang = DB::select(DB::raw("select norecpd, namaruangan, nocm, jeniskelamin, tglbayar, tglsep, iscek, nosep, tglpulang, noregistrasi, namapasien, kelompokpasien, namarekanan,
+        sum(totalbilling) totalbilling, sum(totalbayar) totalbayar, totalklaim,
+        sum(totalbilling) - totalklaim selisih, lamahari
         from(
                 select pd.norec norecpd, ru.namaruangan, ps.nocm, jk.jeniskelamin, rkbpjs.tglbayar, mk.tglsep, false as iscek, pd.nostruklastfk, sp.norec, coalesce(mk.nosep,'-') nosep, pd.tglpulang, pd.noregistrasi, ps.namapasien, kp.kelompokpasien, rek.namarekanan,
                 coalesce(sp.totalprekanan,0) totalbilling, 0 as totalbayar, coalesce(mk.totalsetujui,rkbpjs.totalsetujui) totalklaim, 
@@ -5492,9 +5499,11 @@ class TagihanController  extends ApiController
                     when dept.id != 16 then
                     '1'
                 END  as lamahari
-                FROM pasien_m ps 
-                inner join pasiendaftar_t pd on ps.id=pd.nocmfk
-                inner join ruangan_m as ru on ru.id = pd.objectruanganlastfk
+                FROM monitoringklaim_t mk
+				left join pemakaianasuransi_t as pa on mk.nosep = pa.nosep and mk.statusklaimfk = 3
+				left join pasiendaftar_t pd on pa.noregistrasifk = pd.norec
+				left join pasien_m ps on ps.id=pd.nocmfk
+                left join ruangan_m as ru on ru.id = pd.objectruanganlastfk
                 left join departemen_m as dept on dept.id = ru.objectdepartemenfk
                 left join registrasipelayananpasien_t as rpp on rpp.noregistrasifk = pd.norec
                 left join jeniskelamin_m jk on jk.id = ps.objectjeniskelaminfk
@@ -5504,20 +5513,15 @@ class TagihanController  extends ApiController
                 left JOIN strukpelayanan_t AS sp ON sp.norec = pp.strukfk
                 left join strukpelayananpenjamin_t as spp on sp.norec = spp.nostrukfk
                 left join rekanan_m as rek on rek.id = pd.objectrekananfk
-                left join pemakaianasuransi_t as pa on pa.noregistrasifk = pd.norec
-                left join monitoringklaim_t mk on mk.nosep = pa.nosep and mk.statusklaimfk = 3
                 left join rekapklaimbpjs_t rkbpjs on rkbpjs.norecpdfk = pd.norec
-                where pd.kdprofile = 30 and pd.statusenabled = true
-                and pd.tglpulang between '$tglAwal 00:00' and '$tglAkhir 23:59'
-                and kp.id in(2, 21, 22, 24, 25)
-                and pd.nostruklastfk is not null
-                and pd.nosbmlastfk is null
+                where mk.tglpulang between '$tglAwal 00:00' and '$tglAkhir 23:59'
                 $qstatus
                 $qkey
+                $jpelayanan
                 group by dept.id, ru.namaruangan, rkbpjs.totalsetujui, ps.nocm, jk.jeniskelamin, mk.totalsetujui, pd.norec, rkbpjs.tglbayar, mk.tglsep, pd.nostruklastfk, sp.norec, coalesce(mk.nosep,'-'), pd.tglpulang, pd.noregistrasi, ps.namapasien, kp.kelompokpasien, rek.namarekanan,
                 sp.totalprekanan, coalesce(mk.totalsetujui,0)
                 order by pd.noregistrasi
-        ) as x group by norecpd, namaruangan, nocm, jeniskelamin, tglbayar, tglsep, iscek, nosep, tglpulang, noregistrasi, namapasien, kelompokpasien, namarekanan, lamahari
+        ) as x group by norecpd, namaruangan, nocm, jeniskelamin, tglbayar, totalklaim, tglsep, iscek, nosep, tglpulang, noregistrasi, namapasien, kelompokpasien, namarekanan, lamahari
         order by noregistrasi;"));
 
         $datadata =array(
@@ -5548,11 +5552,10 @@ class TagihanController  extends ApiController
             case when rkb.isobat = true then sum(rkb.totalsetujui) else 0 end as totalobat
              from
             rekapklaimbpjs_t rkb 
-            inner join pasiendaftar_t pd on pd.norec = rkb.norecpdfk
-            inner join ruangan_m ru on ru.id = pd.objectruanganlastfk
-            inner join kelompokpasien_m kp on kp.id = pd.objectkelompokpasienlastfk
+            left join pasiendaftar_t pd on pd.norec = rkb.norecpdfk
+            left join ruangan_m ru on ru.id = pd.objectruanganlastfk
+            left join kelompokpasien_m kp on kp.id = pd.objectkelompokpasienlastfk
             where rkb.statusenabled = true
-            and pd.statusenabled = true
             and rkb.tglbayar::date between '$tglAwal' and '$tglAkhir'
             $kp
             group by rkb.isobat, rkb.tglbayar::date, kp.kelompokpasien, ru.objectdepartemenfk
@@ -5646,53 +5649,57 @@ class TagihanController  extends ApiController
         }
 
         $piutang = DB::select(DB::raw("select norecpd, nocm, jeniskelamin, namaruangan, tglbayar, tglsep, iscek, nosep, tglpulang, noregistrasi, namapasien, kelompokpasien, namarekanan,
-        totalbilling, totalbayar, totalklaim, totalobat, (totalbilling - (totalklaim + totalobat)) selisih, lamahari
+        totalbilling, totalbayar, sum(totalklaim) totalklaim, sum(totalobat) totalobat, ((sum(totalklaim) + sum(totalobat)) - totalbilling) selisih, lamahari
         from(
-            select norecpd, nocm, jeniskelamin, namaruangan, tglbayar, tglsep, iscek, nosep, tglpulang, noregistrasi, namapasien, kelompokpasien, namarekanan,
-            totalbilling, sum(totalbayar) totalbayar, coalesce(sum(totalklaim),0) totalklaim, coalesce(sum(totalobat),0) totalobat, lamahari
-            from(
-                    select pd.norec norecpd, ps.nocm, jk.jeniskelamin, ru.namaruangan, rkbpjs.tglbayar, mk.tglsep, false as iscek, pd.nostruklastfk, sp.norec, coalesce(mk.nosep,'-') nosep, pd.tglpulang, pd.noregistrasi, ps.namapasien, kp.kelompokpasien, rek.namarekanan,
-                    coalesce(sp.totalprekanan,0) totalbilling, 0 as totalbayar, 
-                    case when rkbpjs.isobat is null then coalesce(mk.totalsetujui,rkbpjs.totalsetujui) else 0 end as totalklaim, 
-                    case when rkbpjs.isobat = true then coalesce(mk.totalsetujui,rkbpjs.totalsetujui) else 0 end as totalobat, 
-                    CASE
-                        WHEN max(pd.tglpulang::date)- min(rpp.tglmasuk::date)> '0' and dept.id= '16' THEN
-                        max(pd.tglpulang::date)- min(rpp.tglmasuk::date)
-                        when max(pd.tglpulang::date)- min(rpp.tglmasuk::date) = '0' and dept.id='16' THEN
-                        '1'
-                        when dept.id != 16 then
-                        '1'
-                    END  as lamahari
-                    FROM pasien_m ps 
-                    inner join pasiendaftar_t pd on ps.id=pd.nocmfk
-                    inner join ruangan_m as ru on ru.id = pd.objectruanganlastfk
-                    left join departemen_m as dept on dept.id = ru.objectdepartemenfk
-                    left join registrasipelayananpasien_t as rpp on rpp.noregistrasifk = pd.norec
-                    left join jeniskelamin_m jk on jk.id = ps.objectjeniskelaminfk
-                    left join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
-                    left join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
-                    left join kelompokpasien_m as kp on kp.id = pd.objectkelompokpasienlastfk
-                    left JOIN strukpelayanan_t AS sp ON sp.norec = pp.strukfk
-                    left join strukpelayananpenjamin_t as spp on sp.norec = spp.nostrukfk
-                    left join rekanan_m as rek on rek.id = pd.objectrekananfk
-                    left join pemakaianasuransi_t as pa on pa.noregistrasifk = pd.norec
-                    left join monitoringklaim_t mk on mk.nosep = pa.nosep and mk.statusklaimfk = 3
-                    left join rekapklaimbpjs_t rkbpjs on rkbpjs.norecpdfk = pd.norec
-                    where pd.kdprofile = 30 and pd.statusenabled = true
-                    and pd.tglpulang between '$tglAwal 00:00' and '$tglAkhir 23:59'
-                    and kp.id not in(1, 2, 21, 22, 24, 25)
-                    and pd.nostruklastfk is not null
-                    and pd.nosbmlastfk is null
-                    $qkey
-                    $qkp
-                    group by rkbpjs.isobat, rkbpjs.totalsetujui, ps.nocm, jk.jeniskelamin, dept.id, ru.namaruangan, mk.totalsetujui, pd.norec, rkbpjs.tglbayar, mk.tglsep, pd.nostruklastfk, sp.norec, coalesce(mk.nosep,'-'), pd.tglpulang, pd.noregistrasi, ps.namapasien, kp.kelompokpasien, rek.namarekanan,
-                    sp.totalprekanan, coalesce(mk.totalsetujui,0)
-                    order by pd.noregistrasi
-            ) as x group by totalbilling, norecpd, nocm, jeniskelamin, lamahari, namaruangan, tglbayar, tglsep, iscek, nosep, tglpulang, noregistrasi, namapasien, kelompokpasien, namarekanan
-            order by noregistrasi
+        select norecpd, nocm, jeniskelamin, namaruangan, tglbayar, tglsep, iscek, nosep, tglpulang, noregistrasi, namapasien, kelompokpasien, namarekanan,
+        totalbilling, totalbayar, sum(totalklaim) totalklaim, totalobat, (totalbilling - (sum(totalklaim) + totalobat)) selisih, lamahari
+        from(select norecpd, nocm, jeniskelamin, namaruangan, tglbayar, tglsep, iscek, nosep, tglpulang, noregistrasi, namapasien, kelompokpasien, namarekanan,
+        sum(totalbilling) totalbilling, sum(totalbayar) totalbayar, coalesce(totalklaim,0) totalklaim, coalesce(totalobat,0) totalobat, lamahari
+        from(select pd.norec norecpd, ps.nocm, jk.jeniskelamin, ru.namaruangan, rkbpjs.tglbayar, mk.tglsep, false as iscek, pd.nostruklastfk, sp.norec, coalesce(mk.nosep,'-') nosep, pd.tglpulang, pd.noregistrasi, ps.namapasien, kp.kelompokpasien, rek.namarekanan,
+        coalesce(sp.totalprekanan,0) totalbilling, 0 as totalbayar,
+        case when (rkbpjs.isobat is null or rkbpjs.isobat = false) then coalesce(mk.totalsetujui,rkbpjs.totalsetujui) else 0 end as totalklaim,
+        case when rkbpjs.isobat = true then coalesce(mk.totalsetujui,rkbpjs.totalsetujui) else 0 end as totalobat,
+        CASE
+        WHEN max(pd.tglpulang::date)- min(rpp.tglmasuk::date)> '0' and dept.id= '16' THEN
+        max(pd.tglpulang::date)- min(rpp.tglmasuk::date)
+        when max(pd.tglpulang::date)- min(rpp.tglmasuk::date) = '0' and dept.id='16' THEN
+        '1'
+        when dept.id != 16 then
+        '1'
+        END as lamahari
+        FROM pasien_m ps
+        inner join pasiendaftar_t pd on ps.id=pd.nocmfk
+        inner join ruangan_m as ru on ru.id = pd.objectruanganlastfk
+        left join departemen_m as dept on dept.id = ru.objectdepartemenfk
+        left join registrasipelayananpasien_t as rpp on rpp.noregistrasifk = pd.norec
+        left join jeniskelamin_m jk on jk.id = ps.objectjeniskelaminfk
+        left join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+        left join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
+        left join kelompokpasien_m as kp on kp.id = pd.objectkelompokpasienlastfk
+        left JOIN strukpelayanan_t AS sp ON sp.norec = pp.strukfk
+        left join strukpelayananpenjamin_t as spp on sp.norec = spp.nostrukfk
+        left join rekanan_m as rek on rek.id = pd.objectrekananfk
+        left join pemakaianasuransi_t as pa on pa.noregistrasifk = pd.norec
+        left join monitoringklaim_t mk on mk.nosep = pa.nosep and mk.statusklaimfk = 3
+        left join rekapklaimbpjs_t rkbpjs on rkbpjs.norecpdfk = pd.norec
+        where pd.kdprofile = 30 and pd.statusenabled = true
+        and pd.tglpulang between '$tglAwal 00:00' and '$tglAkhir 23:59'
+        and kp.id not in(1, 2, 21, 22, 24, 25)
+        and pd.nostruklastfk is not null
+        and pd.nosbmlastfk is null
+        $qkey
+        $qkp
+        group by rkbpjs.isobat, rkbpjs.totalsetujui, ps.nocm, jk.jeniskelamin, dept.id, ru.namaruangan, mk.totalsetujui, pd.norec, rkbpjs.tglbayar, mk.tglsep, pd.nostruklastfk, sp.norec, coalesce(mk.nosep,'-'), pd.tglpulang, pd.noregistrasi, ps.namapasien, kp.kelompokpasien, rek.namarekanan,
+        sp.totalprekanan, coalesce(mk.totalsetujui,0)
+        order by pd.noregistrasi
+        ) as x group by norecpd, nocm, jeniskelamin, lamahari, namaruangan, tglbayar, tglsep, iscek, nosep, tglpulang, noregistrasi, namapasien, kelompokpasien, namarekanan, coalesce(totalklaim,0), coalesce(totalobat,0)
+        order by noregistrasi
         ) as y
         group by norecpd, nocm, jeniskelamin, namaruangan, tglbayar, tglsep, iscek, nosep, tglpulang, noregistrasi, namapasien, kelompokpasien, namarekanan,
-        totalbilling, totalbayar, totalklaim, totalobat, lamahari;"));
+        totalbilling, totalbayar, totalobat, lamahari
+        ) as z
+        group by norecpd, nocm, jeniskelamin, namaruangan, tglbayar, tglsep, iscek, nosep, tglpulang, noregistrasi, namapasien, kelompokpasien, namarekanan,
+        totalbilling, totalbayar, lamahari;"));
 
         $datadata =array(
             'data' =>   $piutang,
@@ -6778,7 +6785,7 @@ class TagihanController  extends ApiController
         $paramkabupaten = ' and alm.objectkotakabupatenfk ='. $kabupaten;
         }
         $data = DB::select(DB::raw("
-            SELECTx 
+            SELECT
         ddp.norec,
         CASE 
         WHEN MIN ( rpp.tglmasuk :: DATE ) is null THEN
@@ -7082,7 +7089,7 @@ class TagihanController  extends ApiController
 
         $paramDiagnosa = ' ';
         if (isset($diagnosaId) && $diagnosaId != "" && $diagnosaId != "undefined") {
-            $paramDiagnosa = ' and dm.id = '.$diagnosaId;
+            $paramDiagnosa = ' and di.id = '. $diagnosaId;
         }
         $paramstatusPasien = ' ';
         if (isset($statusPasien) && $statusPasien != "" && $statusPasien != "undefined") {

@@ -852,6 +852,7 @@ define(['initialize'], function (initialize) {
                 $scope.item.jenisKerusakan = undefined;
                 $scope.item.worklist = undefined;
                 $scope.item.status = undefined;
+                    $scope.item.listPegawaiMulti = {};
                 $scope.popupPengerjaan.close();
             }
 
