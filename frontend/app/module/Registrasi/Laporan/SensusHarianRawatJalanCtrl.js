@@ -195,14 +195,15 @@ define(['initialize'], function(initialize) {
                     anHttpRequest.send( null );
                 }
             }
-
+            $scope.ruanganya =""
             $scope.columnGrid = {
                 toolbar: [
                     "excel",
 
                 ],
                 excel: {
-                    fileName: "RekapDataKunjunganRawatJalan.xlsx",
+
+                    fileName: "LaporanDatakunjungan"+$scope.ruanganya+".xlsx",
                     allPages: true,
                 },
                 excelExport: function (e) {
@@ -210,12 +211,22 @@ define(['initialize'], function(initialize) {
                    sheet.mergedCells = ["A1:AI1"];
                     sheet.frozenRows = 3;
                     sheet.name = "Report";
+                    if ($scope.item.ranap == true) {
+                        $scope.ruanganya = "Rawat Inap"
+                    } else {$scope.ruanganya="Per Poli"}
                     var myHeaders = [{
-                        value: "Rekap Data Kunjungan Rawat Jalan",
+                        value: "Laporan Data Kunjungan "+$scope.ruanganya,
                         fontSize: 20,
                         textAlign: "center",
                         background: "#ffffff",
                     }];
+                    // var myHeaders2 = [{
+                    //     value: "RSJ. GRHASIA",
+                    //     fontSize: 17,
+                    //     textAlign: "center",
+                    //     background: "#ffffff",
+                    //     // color:"#ffffff"
+                    // }];
                     var total = {
                         value: "Total", 
                         
@@ -284,11 +295,17 @@ define(['initialize'], function(initialize) {
                         colSpan: 5,
                         verticalAlign: "top"
                     };
+                    // sheet.rows.splice(1, 0, {
+                    //     cells: myHeaders2,
+                    //     type: "header",
+                    //     height: 30
+                    // });
                     sheet.rows.splice(0, 0, { cells: myHeaders, type: "header", height: 60 });
                     sheet.rows.splice(100, 0, {
                         cells: [total, ttlpasien, ttljk,ttlumur,ttlagama,ttlamat,ttlpendidikan,ttlpekerjaan],
                         type: "data",
                     });
+
                     sheet.rows.splice(106, 0, {
                         cells: [{value:" "},{value:"Keterangan : ", colSpan: 2, verticalAlign:"top", },{value:"Agama :",colSpan: 2, verticalAlign:"top", },ketagama,{value: "Alamat : ",colSpan: 2, verticalAlign:"top", },ketalamat,{value:"Pendidikan :",colSpan: 2, verticalAlign:"top", },ketpendidikan,{value:"Pekerjaan",colSpan: 2, verticalAlign:"top"},ketpekerjaan],
                         type: "data",
@@ -308,7 +325,7 @@ define(['initialize'], function(initialize) {
                     // },
                     {
                         "field": "ruangan",
-                        "title": "POLIKLINIK",
+                        "title": "RUANGAN",
                         "width": "100px",
                         footerTemplate: "Sub Total",
                     },
