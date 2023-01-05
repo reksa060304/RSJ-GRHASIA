@@ -11845,103 +11845,18 @@ public function suratBuktiPengembalian(Request $request)
     {
         $kdProfile = (int) $request['kdprofile'];
         if (isset($request['rgb'])) {
-            $data = \DB::select(DB::raw("SELECT
-            fix.* 
-            FROM
-            (
-            SELECT ROW_NUMBER
-                ( ) OVER ( PARTITION BY rg.objectpegawaifk ORDER BY rg.tgltmt DESC ) AS rn2,
-                rg.objectpegawaifk,
-                pg.namalengkap,
-                pg.nippns,
-            -- 		rg.tgltmt,
-            -- 		rg.objectgolonganfk,
-                gol.namaexternal as pangkat,
-                gol.NAME as golongan,
-                rg.gajiawal,
-                rg.gajiakhir,
-                rg.masakerjagolongan,
-                rg.noskcetak, rg.nosurat,rg.tglsk,
-                rg.tgltmt as tglakhir,
-								rg.norec,
-                extract(year from age(rg.tgltmt, rgb.tgltmt))as thn,
-                extract(month from age(rg.tgltmt, rgb.tgltmt))as bln
-            FROM
-                riwayatgajiberkala_t rg
-                INNER JOIN sdm_golongan_m AS gol ON gol.id = rg.objectgolonganfk
-                INNER JOIN pegawai_m pg ON pg.ID = rg.objectpegawaifk
-                INNER JOIN (
-                SELECT
-                    x.objectpegawaifk,
-                    x.tgltmt 
-                FROM
-                    (
-                    SELECT
-                        row_number ( ) OVER ( PARTITION BY rg.objectpegawaifk ORDER BY rg.tgltmt ASC ) AS rn,
-                        rg.* 
-                    FROM
-                        pegawai_m AS pg
-                        INNER JOIN riwayatgolongan_t AS rg ON rg.objectpegawaifk = pg.id 
-                    ) AS x 
-                WHERE
-                    x.rn = 1 
-                ) AS rgb ON rgb.objectpegawaifk = rg.objectpegawaifk 
-            ORDER BY
-                rg.tgltmt ASC 
-            ) AS fix 
-            WHERE
-            fix.rn2 = 1 
-            AND fix.norec ='b66c84a0-0e5a-11ed-a1ba-4f36dd9f'
+            $data = \DB::select(DB::raw("
+            SELECT rgb.nosk, pg.namalengkap, pg.nippns, gol.namaexternal || ' / ' || gol.reportdisplay as panggol,gol.reportdisplay as golongan, 'Rumah Sakit Jiwa Grhasia Dinkes DIY' as instansi, rgb.gajiawal, rgb.noskcetak as sklama, rgb.tglsk as tglsklama, rgb.tgltmtcetak as tmtlama, rgb.gajiakhir, rgb.masakerjagolongan, rgb.tgltmt as tmtbaru FROM riwayatgajiberkala_t rgb 
+            inner join pegawai_m pg on pg.id= rgb.objectpegawaifk
+            inner join sdm_golongan_m gol  on gol.id = rgb.objectgolonganfk
+            where rgb.norec ilike '$request[norec]'
             "));
         }else{
-            $data = \DB::select(DB::raw("SELECT
-            fix.* 
-            FROM
-            (
-            SELECT ROW_NUMBER
-                ( ) OVER ( PARTITION BY rg.objectpegawaifk ORDER BY rg.tgltmt DESC ) AS rn2,
-                rg.objectpegawaifk,
-                pg.namalengkap,
-                pg.nippns,
-            -- 		rg.tgltmt,
-            -- 		rg.objectgolonganfk,
-                gol.namaexternal as pangkat,
-                gol.NAME as golongan,
-                rg.gajiawal,
-                rg.gajiakhir,
-                rg.masakerjagolongan,
-                rg.noskcetak, 
-                rg.nosurat,
-                rg.tglsk,
-                rg.tgltmt as tglakhir,
-                extract(year from age(rg.tgltmt, rgb.tgltmt))as thn,
-                extract(month from age(rg.tgltmt, rgb.tgltmt))as bln
-            FROM
-                riwayatgajiberkala_t rg
-                INNER JOIN sdm_golongan_m AS gol ON gol.id = rg.objectgolonganfk
-                INNER JOIN pegawai_m pg ON pg.ID = rg.objectpegawaifk
-                INNER JOIN (
-                SELECT
-                    x.objectpegawaifk,
-                    x.tgltmt 
-                FROM
-                    (
-                    SELECT
-                        row_number ( ) OVER ( PARTITION BY rg.objectpegawaifk ORDER BY rg.tgltmt ASC ) AS rn,
-                        rg.* 
-                    FROM
-                        pegawai_m AS pg
-                        INNER JOIN riwayatgolongan_t AS rg ON rg.objectpegawaifk = pg.id 
-                    ) AS x 
-                WHERE
-                    x.rn = 1 
-                ) AS rgb ON rgb.objectpegawaifk = rg.objectpegawaifk 
-            ORDER BY
-                rg.tgltmt ASC 
-            ) AS fix 
-            WHERE
-            fix.rn2 = 1 
-            AND fix.objectpegawaifk = $request[id_pegawai]"));
+            $data = \DB::select(DB::raw("
+            SELECT rgb.nosk, pg.namalengkap, pg.nippns, gol.namaexternal || ' / ' || gol.reportdisplay as panggol,gol.reportdisplay as golongan, 'Rumah Sakit Jiwa Grhasia Dinkes DIY' as instansi, rgb.gajiawal, rgb.noskcetak as sklama, rgb.tglsk as tglsklama, rgb.tgltmtcetak as tmtlama, rgb.gajiakhir, rgb.masakerjagolongan, rgb.tgltmt as tmtbaru FROM riwayatgajiberkala_t rgb 
+            inner join pegawai_m pg on pg.id= rgb.objectpegawaifk
+            inner join sdm_golongan_m gol  on gol.id = rgb.objectgolonganfk
+            where rgb.norec ilike '$request[id_pegawai]'"));
         }
         
         $detail = [];
@@ -11952,13 +11867,13 @@ public function suratBuktiPengembalian(Request $request)
                 $dt->gajiawal = $this->rupiah($dt->gajiawal);
                 $dt->gajiakhir = $this->rupiah($dt->gajiakhir);
             }
-            if(isset($dt->tglsk) && isset($dt->tglakhir)){
-                $dt->tglsk=$this->tanggal_indonesia(date('Y-m-d',strtotime($dt->tglsk)));
-                $dt->tglakhir=$this->tanggal_indonesia(date('Y-m-d',strtotime($dt->tglakhir)));
+            if(isset($dt->tglsklama) && isset($dt->tmtbaru)){
+                $dt->tglsklama=$this->tanggal_indonesia(date('Y-m-d',strtotime($dt->tglsklama)));
+                $dt->tmtbaru=$this->tanggal_indonesia(date('Y-m-d',strtotime($dt->tmtbaru)));
+                $dt->tmtlama=$this->tanggal_indonesia(date('Y-m-d',strtotime($dt->tmtlama)));
                 $dt->tglttd=$this->tanggal_indonesia(date('Y-m-d'));
             }
         }
-    dd($data);
         $pageWidth = 950;
         return view('report.kgb'
         , compact('data','pageWidth'));

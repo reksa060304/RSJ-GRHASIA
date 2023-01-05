@@ -678,9 +678,9 @@ class SumberDayaManusiaController extends ApiController {
         $dataRiwayatGajiBerkala = \DB::table("riwayatgajiberkala_t as gb")
         // ->leftjoin("riwayatgolongan_t as rg","rg.objectpegawaifk","=","gb.id") 
         ->join("sdm_golongan_m as gol","gol.id","=","gb.objectgolonganfk")
-        ->select(DB::raw("gb.masakerjagolongan,gb.jenissk, gb.nosurat, gb.noskcetak, gb.objectgolonganfk,gb.norec,gb.tglsk::date,gb.gajiawal, gb.gajiakhir, gb.tgltmt::date, gol.name, gol.namaexternal,gol.namaexternal || ', ' || gol.name as golongan, gb.nosk, gb.pejabatmenetapkan"))
+        ->select(DB::raw("gb.tgltmtcetak, gb.tglskbaru,gb.masakerjagolongan,gb.jenissk, gb.nosurat, gb.noskcetak, gb.objectgolonganfk,gb.norec,gb.tglsk::date,gb.gajiawal, gb.gajiakhir, gb.tgltmt::date, gol.name, gol.namaexternal,gol.namaexternal || ', ' || gol.name as golongan, gb.nosk, gb.pejabatmenetapkan"))
         ->where("gb.objectpegawaifk",$request['idPegawai'])
-        ->orderBy('gb.tgltmt','asc')
+        ->orderBy('gb.tgltmt','desc')
         ->get();
         $gajiBerkala = \DB::select(DB::raw("SELECT distinct gol.id, gol.namaexternal || '  /  ' || gol.name as golongan, rg.nominal, gol.level FROM riwayatgolongan_t rg inner join sdm_golongan_m gol on gol.id = rg.objectgolonganfk
         where rg.objectpegawaifk = $request[idPegawai]
@@ -6185,17 +6185,19 @@ public function daftarKenaikanGajiBerkala(Request $request){
 
         $data = \DB::select(DB::raw("
             SELECT fix.* FROM (
-            SELECT pg.id as id_pegawai, row_number()over(partition by rg.objectpegawaifk ORDER BY rg.tgltmt desc)as rn2, pg.namalengkap, pg.nippns, rg.tgltmt, rg.objectgolonganfk, 
+            SELECT rg.norec as norec_kgb, gol2.level as levelcpns, gol.level, pg.tmtskcpns, pg.id as id_pegawai, row_number()over(partition by rg.objectpegawaifk ORDER BY rg.tgltmt desc)as rn2, pg.namalengkap, pg.nippns, rg.tgltmt, rg.objectgolonganfk, 
             gol.namaexternal as pangkat, gol.name as golongan, rg.gajiakhir, split_part(rg.masakerjagolongan, ' ', '1')::integer +2  as mkg,rg.masakerjagolongan FROM riwayatgajiberkala_t rg
             inner join sdm_golongan_m as gol on gol.id = rg.objectgolonganfk 
             inner join pegawai_m pg on pg.id = rg.objectpegawaifk
+            inner join sdm_golongan_m as gol2 on gol2.id = pg.objectgolongancpnsfk
             inner join (
             select x.objectpegawaifk, x.tgltmt from(
             select row_number()over(PARTITION by rg.objectpegawaifk ORDER BY rg.tgltmt asc)as rn, rg.* from pegawai_m as pg inner join riwayatgolongan_t as rg on rg.objectpegawaifk = pg.id 
             )as x where x.rn=1
             )as rgb on rgb.objectpegawaifk= rg.objectpegawaifk 
+            where rg.kdprofile = 30 and rg.statusenabled = true
             ORDER BY rg.tgltmt asc
-            )as fix where fix.rn2 = 1
+            )as fix where fix.rn2 = 1 
         "));
         // var_dump($data);
         $data2 = '';
@@ -6221,10 +6223,10 @@ public function daftarKenaikanGajiBerkala(Request $request){
             $golongan = '';
             $gajiakhir = '';
             $gajibaru = '';
-        $mkg = '';
+            $mkg = '';
             $idpegawai = "";
             $objectgolonganfk = '';
-        $masakerjagolongan= "";
+            $masakerjagolongan= "";
 
             $gajigolongan = \DB::table("gajigolongan_m as gg")
             ->where("gg.golonganfk",$dt->objectgolonganfk)
@@ -6242,6 +6244,11 @@ public function daftarKenaikanGajiBerkala(Request $request){
             $gajiakhir = $dt->gajiakhir;
             $objectgolonganfk = $dt->objectgolonganfk;
             $masakerjagolongan = $dt->masakerjagolongan;
+            $tmtskcpns = $dt->tmtskcpns;
+            $level = $dt->level;
+            $levelcpns = $dt->levelcpns;
+            $norec_kgb = $dt->norec_kgb;
+           
             // $data3 = $dt->mkg;
             $mkg = $dt->mkg;
             $idpegawai = $dt->id_pegawai;
@@ -6258,8 +6265,12 @@ public function daftarKenaikanGajiBerkala(Request $request){
             'golongan' => $golongan,
             'gajiakhir' => $gajiakhir,
             'gajibaru' => $gajibaru,
+            'tmtskcpns' => $tmtskcpns,
             'objectgolonganfk'=> $objectgolonganfk,
             'masakerjagolongan'=> $masakerjagolongan,
+            'level'=> $level,
+            'levelcpns'=> $levelcpns,
+            'norec_kgb'=> $norec_kgb,
             // 'data'=> $data,
             'mkg'=> $mkg,
         );
@@ -6955,7 +6966,9 @@ public function daftarKenaikanGajiBerkala(Request $request){
                 'objectgolonganfk'=>$request['objectgolonganfk'],
                 'nosurat'=>$request['nosurat'],
                 'noskcetak'=>$request['noskcetak'],
+                'tgltmtcetak'=>$request['tgltmtcetak'],
                 'jenissk'=>$request['jenissk'],
+                'tglskbaru'=>$request['tglskbaru'],
                 'masakerjagolongan'=>$request['masakerjagolongan'],
                 ]);
                 $getgol = \DB::table("pegawai_m")->where("id", "=", $request['objectpegawaifk'])->get();
@@ -6983,7 +6996,9 @@ public function daftarKenaikanGajiBerkala(Request $request){
                     'nosk'=> $request['nosk'],
                     'nosurat'=>$request['nosurat'],
                     'noskcetak'=>$request['noskcetak'],
+                    'tgltmtcetak'=>$request['tgltmtcetak'],
                     'jenissk'=>$request['jenissk'],
+                    'tglskbaru'=>$request['tglskbaru'],
                     'masakerjagolongan'=>$request['masakerjagolongan'],
                 ]);
 
@@ -7528,5 +7543,22 @@ public function daftarKenaikanGajiBerkala(Request $request){
         $kdProfile = (int) $this->getDataKdProfile($request);
         $tunjanganbaru = Jabatan::where('statusenabled', true)->where('kdprofile', $kdProfile)->where('objectjenisjabatanfk', $request['jabatan'])->get();
         return $this->respond($tunjanganbaru);
+    }
+    public function getGajiPokokLama(Request $request)
+    {
+        if($request['gaji']== 'KP'){
+            $data = \DB::select(DB::raw("
+            SELECT * FROM (select ROW_NUMBER()over(partition by rgb.kdprofile ORDER BY rgb.tgltmt desc)as nomor,
+             * from riwayatgolongan_t rgb where rgb.kdprofile=30 and rgb.statusenabled = true and rgb.objectpegawaifk = $request[idpegawai])as x where x.nomor = 1"));
+        }else{
+            $data = \DB::select(DB::raw("
+            SELECT * FROM (select ROW_NUMBER()over(partition by rgb.kdprofile ORDER BY rgb.tgltmt desc)as nomor, 
+            * from riwayatgajiberkala_t rgb where rgb.kdprofile= 30 and rgb.statusenabled = true and rgb.objectpegawaifk = $request[idpegawai])as x where x.nomor = 1
+            "));
+        }
+        $result = array(
+            'data'=> $data
+        );
+        return $this->respond($result);
     }
 }

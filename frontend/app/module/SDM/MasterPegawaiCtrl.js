@@ -1111,10 +1111,10 @@ $scope.formatRupiah = function (value, currency) {
 						// "template": "<span class='style-left'>{{formatTanggal('#: tglsk #')}}</span>"
 					},
 					{
-						"field": "tglsk",
+						"field": "tglskbaru",
 						"title": "Tanggal SK",
 						"width": "50px",
-						"template": "<span class='style-left'>{{formatTanggal('#: tglsk #')}}</span>"
+						"template": "<span class='style-left'>{{formatTanggal('#: tglskbaru #')}}</span>"
 					},
 					{
 						"field": "golongan",
@@ -2003,6 +2003,9 @@ $scope.formatRupiah = function (value, currency) {
 				$scope.itemGajiBerkala.gajiawal = dataItem.gajiawal;
 				$scope.itemGajiBerkala.gajiakhir = dataItem.gajiakhir;
 				$scope.itemGajiBerkala.masakerjagolongan = dataItem.masakerjagolongan;
+				$scope.itemGajiBerkala.tanggaltmtcetak = moment(dataItem.tgltmtcetak).format('YYYY-MM-DD HH:mm');
+				$scope.itemGajiBerkala.tanggalskbaru = moment(dataItem.tglskbaru).format('YYYY-MM-DD HH:mm');
+
 				$scope.popUpRiwayatGajiBerkala.center().open();
 				$scope.getDataGolongan()
 			}
@@ -3222,13 +3225,13 @@ $scope.formatRupiah = function (value, currency) {
 								data.objectgolonganfk = $scope.itemGajiBerkala.golongan.id;
 								data.golongan = $scope.itemGajiBerkala.golongan.golongan;
 								data.nosk = $scope.itemGajiBerkala.nosk
-								dataRiwayatGajiBerkala[i] = data;
 								data.objectpegawaifk = $scope.item.idPegawai
 								data.noskcetak= $scope.itemGajiBerkala.noskcetak,
 								data.jenissk= $scope.itemGajiBerkala.jenissk
 								data.masakerjagolongan= $scope.itemGajiBerkala.masakerjagolongan
 								data.tgltmtcetak = moment($scope.itemGajiBerkala.tanggaltmtcetak).format('YYYY-MM-DD HH:mm')
 								data.tglskbaru= moment($scope.itemGajiBerkala.tanggalskbaru).format('YYYY-MM-DD HH:mm')
+								dataRiwayatGajiBerkala[i] = data;
 
 								$scope.gridRiwayatGajiBerkala = new kendo.data.DataSource({
 									data: dataRiwayatGajiBerkala
@@ -5012,14 +5015,14 @@ $scope.formatRupiah = function (value, currency) {
 						$scope.itemGajiBerkala.jenissk = $scope.gajilamanya
 						if($scope.gajilamanya == 'KP'){
 							$scope.itemGajiBerkala.gajiawal = datas.nominal
-							$scope.itemGajiBerkala.tanggalsk = moment(datas.tglsk).format('DD-MM-YYYY')
+							$scope.itemGajiBerkala.tanggalsk = moment(datas.tglskbaru).format('YYYY-MM-DD')
 							$scope.itemGajiBerkala.noskcetak = datas.nosk
-							$scope.itemGajiBerkala.tanggaltmtcetak = moment(datas.tgltmt).format('DD-MM-YYYY')
+							$scope.itemGajiBerkala.tanggaltmtcetak = moment(datas.tgltmt).format('YYYY-MM-DD')
 						}else{
 							$scope.itemGajiBerkala.gajiawal = datas.gajiakhir
-							$scope.itemGajiBerkala.tanggalsk = moment(datas.tglsk).format('DD-MM-YYYY')
+							$scope.itemGajiBerkala.tanggalsk = moment(datas.tglskbaru).format('YYYY-MM-DD')
 							$scope.itemGajiBerkala.noskcetak = datas.nosk
-							$scope.itemGajiBerkala.tanggaltmtcetak = moment(datas.tgltmt).format('DD-MM-YYYY')
+							$scope.itemGajiBerkala.tanggaltmtcetak = moment(datas.tgltmt).format('YYYY-MM-DD')
 						}
 						
 					})
