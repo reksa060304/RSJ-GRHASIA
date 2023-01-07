@@ -3056,7 +3056,7 @@ $scope.formatRupiah = function (value, currency) {
 					"itemPandG.pejabatmenetapkan|ng-model|Pejabat Yang Menetapkan",
 					"itemPandG.tanggaltmt|k-ng-model|Tanggal TMT",
 					"itemPandG.nominal|ng-model|Nominal",
-					"itemPandG.masakerjagolongan|ng-model|Masa Kerja Golongan",
+					// "itemPandG.masakerjagolongan|ng-model|Masa Kerja Golongan",
 					// "itemPandG.jabatanTtd|k-ng-model|Penandatangan Jabatan",
 				];
 
@@ -3085,7 +3085,7 @@ $scope.formatRupiah = function (value, currency) {
 								data.nosk = $scope.itemPandG.nosk
 								data.nominal = $scope.itemPandG.nominal
 								data.objectpegawaifk = $scope.item.idPegawai;
-								data.masakerjagolongan = $scope.itemPandG.masakerjagolongan
+								data.masakerjagolongan = $scope.itemPandG.tahunmasakerjagolongan + ' tahun ' + $scope.itemPandG.bulanmasakerjagolongan + ' bulan'
 								data.pejabatpenandatangan = $scope.itemPandG.pejabatpenandatangan
 
 								dataRiwayatPangkatGolongan[i] = data;
@@ -3112,7 +3112,7 @@ $scope.formatRupiah = function (value, currency) {
 							nosk: $scope.itemPandG.nosk,
 							nominal: $scope.itemPandG.nominal,
 							objectpegawaifk: $scope.item.idPegawai,
-							masakerjagolongan: $scope.itemPandG.masakerjagolongan,
+							masakerjagolongan: $scope.itemPandG.tahunmasakerjagolongan + ' tahun ' + $scope.itemPandG.bulanmasakerjagolongan + ' bulan',
 						}
 						dataRiwayatPangkatGolongan.push(data)
 						$scope.gridRiwayatPangkatGolongan = new kendo.data.DataSource({
@@ -4447,7 +4447,7 @@ $scope.formatRupiah = function (value, currency) {
 						if ($scope.itemGajiBerkala.golongan.level == 2) {
 							pindah += 6
 						}
-						if ($scope.itemGajiBerkala.golongan.level == 3 || $scope.itemGajiBerkala.golongan.level == 4) {
+						if ($scope.itemGajiBerkala.golongan.level == 3) {
 							pindah += 5
 						}
 					}

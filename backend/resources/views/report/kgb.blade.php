@@ -219,29 +219,29 @@
                             <td>Terhitung Mulai Tanggal : {{$data[0]->tmtlama }}</td>
                         </tr>
                         <tr>
-                            <td colspan="4" height="30" style="padding-left: 6%">Diberikan Kenaikan gaji Berkala sehingga memperoleh :</td>
+                            <td colspan="4" height="30" style="padding-left: 6%">Diberikan Kenaikan Gaji Berkala sehingga memperoleh :</td>
                         </tr>
                         <tr>
-                            <td>7. </td>
+                            <td>1. </td>
                             <td>Gaji Pokok Baru</td>
                             <td> : </td>
                             <td>{{$data[0]->gajiakhir}}</td>
                         </tr>
                         <tr>
-                            <td>8. </td>
+                            <td>2. </td>
                             <td>Berdasarkan Masa Kerja</td>
                             <td> : </td>
                             <td>{{explode(" ",$data[0]->masakerjagolongan)[0]}} Th {{sprintf("%02d", explode(" ",$data[0]->masakerjagolongan)[2])}} Bln</td>
                             {{-- <td>{{$data[0]->thn}} Thn {{$data[0]->bln}} Bln</td> --}}
                         </tr>
                         <tr>
-                            <td>9. </td>
+                            <td>3. </td>
                             <td>Dalam Golongan Ruang</td>
                             <td> : </td>
                             <td>{{$data[0]->golongan}}</td>
                         </tr>
                         <tr>
-                            <td>10. </td>
+                            <td>4. </td>
                             <td>Terhitung Mulai Tanggal</td>
                             <td> : </td>
                             <td>{{$data[0]->tmtbaru}}</td>

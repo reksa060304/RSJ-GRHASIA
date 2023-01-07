@@ -682,7 +682,7 @@ class SumberDayaManusiaController extends ApiController {
         ->where("gb.objectpegawaifk",$request['idPegawai'])
         ->orderBy('gb.tgltmt','desc')
         ->get();
-        $gajiBerkala = \DB::select(DB::raw("SELECT distinct gol.id, gol.namaexternal || '  /  ' || gol.name as golongan, rg.nominal, gol.level FROM riwayatgolongan_t rg inner join sdm_golongan_m gol on gol.id = rg.objectgolonganfk
+        $gajiBerkala = \DB::select(DB::raw("SELECT distinct gol.id, gol.namaexternal || ' ,  ' || gol.name as golongan, rg.nominal, gol.level FROM riwayatgolongan_t rg inner join sdm_golongan_m gol on gol.id = rg.objectgolonganfk
         where rg.objectpegawaifk = $request[idPegawai]
         "));
         $result = array(
