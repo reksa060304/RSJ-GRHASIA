@@ -4944,7 +4944,7 @@ $scope.formatRupiah = function (value, currency) {
 				$scope.ListHubunganKeluarga = [
 					{
 						id: 3,
-						hubungankeluarga: 'Anak'
+						hubungankeluarga: 'Anak Kandung'
 					},
 					{
 						id: 8,
