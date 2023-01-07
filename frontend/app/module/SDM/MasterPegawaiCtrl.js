@@ -1959,6 +1959,9 @@ $scope.formatRupiah = function (value, currency) {
 					return;
 				};
 				$scope.itemPandG.masakerjagolongan = dataItem.masakerjagolongan
+				var split = $scope.itemPandG.masakerjagolongan.split(" ")
+				$scope.itemPandG.tahunmasakerjagolongan = split[0]
+				$scope.itemPandG.bulanmasakerjagolongan = split[2]
 				$scope.item.nomorId = dataItem.no;
 				$scope.item.norecPG = dataItem.norec;
 				$scope.itemPandG.golongan = {
@@ -1974,7 +1977,7 @@ $scope.formatRupiah = function (value, currency) {
 				$scope.itemPandG.nominal = dataItem.nominal;
 				$scope.itemPandG.pejabatpenandatangan = dataItem.pejabatpenandatangan
 				$scope.popUpRiwayatPangkatGolongan.center().open();
-				$scope.panggoltmt()
+				// $scope.panggoltmt()
 			}
 
 			function EditGajiBerkala(e) {
@@ -4854,6 +4857,16 @@ $scope.formatRupiah = function (value, currency) {
 			$scope.createIstriSuamiNew = function () {
 				$scope.item.id = "";
 				$scope.item.no = undefined;
+				$scope.ListHubunganKeluarga = [
+					{
+						id: 2,
+						hubungankeluarga: 'Istri'
+					}, 
+					{
+						id: 5,
+						hubungankeluarga: 'Suami'
+					}
+				]
 				$scope.popUpDataKeluargaSuamiIstri.center().open()
 				var actions = $scope.popUpDataKeluargaSuamiIstri.options.actions;
 				actions.splice(actions.indexOf("Close"), 1);
@@ -4928,6 +4941,20 @@ $scope.formatRupiah = function (value, currency) {
 			$scope.createAnakNew = function(){
 				$scope.item.id = "";
 				$scope.item.no = undefined;
+				$scope.ListHubunganKeluarga = [
+					{
+						id: 3,
+						hubungankeluarga: 'Anak'
+					},
+					{
+						id: 8,
+						hubungankeluarga: 'Anak Tiri'
+					},
+					{
+						id: 9,
+						hubungankeluarga: 'Anak Angkat'
+					}
+				]
 				$scope.popUpDataKeluargaAnak.center().open()
 				var actions = $scope.popUpDataKeluargaAnak.options.actions;
 				actions.splice(actions.indexOf("Close"), 1);
@@ -4999,6 +5026,15 @@ $scope.formatRupiah = function (value, currency) {
 			$scope.createOrangTuaNew = function () {
 				$scope.item.id = "";
 				$scope.item.no = undefined;
+				$scope.ListHubunganKeluarga = [{
+						id: 1,
+						hubungankeluarga: 'Ayah'
+					},
+					{
+						id: 6,
+						hubungankeluarga: 'Ibu'
+					}
+				]
 				$scope.popUpDataKeluargaOrangTua.center().open()
 				var actions = $scope.popUpDataKeluargaOrangTua.options.actions;
 				actions.splice(actions.indexOf("Close"), 1);
