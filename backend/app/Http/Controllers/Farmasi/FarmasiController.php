@@ -748,7 +748,7 @@ class FarmasiController extends ApiController
             ->where('jp.id',97)
             ->where('sr.statusenabled', true)
             ->where('pd.statusenabled', true)
-            ->where('pp.jumlah', '!=', 0)
+            // ->where('pp.jumlah', '!=', 0)
             ->orderBy('pp.tglpelayanan','pp.rke');
         if(isset($request['nocm']) && $request['nocm']!="" && $request['nocm']!="undefined"){
             $data = $data->where('ps.nocm','=', $request['nocm']);

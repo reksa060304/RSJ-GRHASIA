@@ -607,7 +607,7 @@ define(['initialize'], function (initialize) {
                     $scope.listPenulisResep = dat.data.penulisresep;
                     $scope.item.penulisResep = $scope.dpjp
                     $scope.listJenisKemasan = dat.data.jeniskemasan;
-                    $scope.listProduk = dat.data.produk;
+                    $scope.listProduk = dat.data.produkall;
                     $scope.listAsalProduk = dat.data.asalproduk;
                     $scope.listRoute = dat.data.route;
                     $scope.listAturanPakai = dat.data.signa;

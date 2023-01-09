@@ -2461,6 +2461,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::post('sdm/save-riwayat-jabatan','SDM\SumberDayaManusiaController@saveRiwayatJabatan');
             Route::post('sdm/save-riwayat-pangkat-golongan','SDM\SumberDayaManusiaController@saveRiwayatPangkatGolongan');
             Route::post('sdm/save-riwayat-gaji-berkala','SDM\SumberDayaManusiaController@saveRiwayatGajiBerkala');
+            Route::get('sdm/get-gaji-pokok-lama','SDM\SumberDayaManusiaController@getGajiPokokLama');
             Route::post('sdm/save-riwayat-hukuman-disiplin','SDM\SumberDayaManusiaController@saveRiwayatHukumanDisiplin');
             Route::post('sdm/save-riwayat-cuti','SDM\SumberDayaManusiaController@saveRiwayatCuti');
             Route::post('sdm/save-riwayat-datakeluarga', 'SDM\SumberDayaManusiaController@saveRiwayatDataKeluarga');

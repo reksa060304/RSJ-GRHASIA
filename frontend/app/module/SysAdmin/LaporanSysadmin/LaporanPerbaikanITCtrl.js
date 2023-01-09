@@ -115,6 +115,12 @@ define(['initialize'], function (initialize) {
                         }
                         datas[i].respon = respon
                         datas[i].durasi = durasi
+                        datas[i].pegawai = datas[i].detailspegawai
+                        for (let j = 0; j < datas[i].detailspegawai.length; j++) {
+                            datas[i].namapegawai = datas[i].detailspegawai[j].join("\n")
+                            console.log(datas[i].namapegawai);
+                        }
+                        
                     }
                     $scope.sourceLaporan = new kendo.data.DataSource({
                         data: datas,
@@ -222,19 +228,37 @@ define(['initialize'], function (initialize) {
                         width: "20px"
                     },
                     {
-                        field: "namaruangan",
-                        title: "Ruangan",
-                        width: "100px",
-                    },
-                    {
                         field: "namalengkap",
-                        title: "Pelapor",
+                        title: "Nama Pelapor",
                         width: "115px",
                     },
                     {
-                        field: "rincianexecuteplanning_askep",
-                        title: "Laporan Kerusakan",
+                        field: "namaruangan",
+                        title: "Lokasi",
                         width: "100px",
+                    },
+                    {
+                        field: "rincianexecuteplanning_askep",
+                        title: "Kendala",
+                        width: "100px",
+                    },
+                    {
+                        title: "Jenis Kendala",
+                        width: "100px",
+                        columns: [
+                            {
+                                field: "jenisalat",
+                                title: "Hardware/Software/Jaringan Internet/Printer",
+                                width: "220px",
+                            },
+                        ]
+                    },
+                    {
+                        field: "pegawai",
+                        title: "Teknisi",
+                        width: "100px",
+					    "template": "# for(var i=0; i < pegawai.length;i++){# <button class=\"k-button custom-button\" style=\"margin:0 0 5px\">#= pegawai[i].namalengkap #</button> #}#",
+
                     },
                     {
                         field: "tglplanning",

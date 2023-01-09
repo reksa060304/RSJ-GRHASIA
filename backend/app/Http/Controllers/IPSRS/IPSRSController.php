@@ -1200,7 +1200,7 @@ class IPSRSController extends ApiController
             $objekperbaikan = ' and stp.objectdetailjenispekerjaanfk = '. $request['objekperbaikan'];
         }
 
-        $data = \DB::select(DB::raw("SELECT ru.namaruangan,pg.namalengkap, stp.rincianexecuteplanning_askep, stp.tglplanning, stp.tglverif, stp.startdate, stp.duedate, jp.reportdisplay as jeniskerusakan, jp2.reportdisplay  as jenisalat, sp.statuspekerjaan FROM strukplanning_t stp 
+        $data = \DB::select(DB::raw("SELECT stp.norec, ru.namaruangan,pg.namalengkap, stp.rincianexecuteplanning_askep, stp.tglplanning, stp.tglverif, stp.startdate, stp.duedate, jp.reportdisplay as jeniskerusakan, jp2.reportdisplay  as jenisalat, sp.statuspekerjaan FROM strukplanning_t stp 
         left join ruangan_m ru on ru.id = stp.objectruanganfk
         left join pegawai_m pg on pg.id = stp.narasumberfk
         left join jenispekerjaan_m jp on jp.id = stp.objectjenispekerjaanfk
@@ -1210,23 +1210,26 @@ class IPSRSController extends ApiController
         $objekperbaikan
         order by stp.startdate asc
         "));
-
+        foreach ($data as $d) {
+            $details= \DB::select(DB::raw("select stpd.*, pg.namalengkap from strukplanningdetail_t stpd inner join pegawai_m pg on pg.id = stpd.pegawaifk where stpd.noplanningfk ilike '$d->norec'"));
+            $d->detailspegawai = $details;
+        }
         return $this->respond($data);
     }
     public function getDashboardPerbaikanPDTI(Request $request)
     {
 
-        $cardnull = \DB::select(DB::raw("
-        SELECT sp.id,
-        'Belum Direspon' as statuspekerjaan, count(stp.objectstatuspekerjaanfk) FROM strukplanning_t stp left join statuspekerjaan_m sp on sp.id = stp.objectstatuspekerjaanfk
-        where stp.objectkelompoktransaksifk = 151 and  stp.kdprofile= 30 and stp.statusenabled = true and sp.id is null and stp.startdate between '$request[tglawal]' and '$request[tglakhir]'
-        GROUP BY stp.objectstatuspekerjaanfk, sp.id
-        "));
-        if(count($cardnull) < 1){
-            $cardnull[0]['id'] = null;
-            $cardnull[0]['statuspekerjaan'] = 'Belum Direspon';
-            $cardnull[0]['count'] = 0;
-        }
+        // $cardnull = \DB::select(DB::raw("
+        // SELECT sp.id,
+        // 'Belum Direspon' as statuspekerjaan, count(stp.objectstatuspekerjaanfk) FROM strukplanning_t stp left join statuspekerjaan_m sp on sp.id = stp.objectstatuspekerjaanfk
+        // where stp.objectkelompoktransaksifk = 151 and  stp.kdprofile= 30 and stp.statusenabled = true and stp.tglverif is null and stp.startdate between '$request[tglawal]' and '$request[tglakhir]'
+        // GROUP BY stp.objectstatuspekerjaanfk, sp.id
+        // "));
+        // if(count($cardnull) < 1){
+        //     $cardnull[0]['id'] = null;
+        //     $cardnull[0]['statuspekerjaan'] = 'Belum Direspon';
+        //     $cardnull[0]['count'] = 0;
+        // }
 
         $card3 = \DB::select(DB::raw("
         SELECT sp.id,
@@ -1264,13 +1267,19 @@ class IPSRSController extends ApiController
             $card1[0]['count'] = 0;
         }
         $card = array(
-            0=> $cardnull,
-            1=> $card3,
-            2=> $card15,
-            3=> $card1,
+            // 0=> $cardnull,
+            0=> $card3,
+            1=> $card15,
+            2=> $card1,
         );
+        $pie = \DB::select(DB::raw("SELECT count(stp.objectjenisalatfk)as value, jp.reportdisplay as category FROM strukplanning_t stp
+        inner join jenispekerjaan_m jp on jp.id = stp.objectjenisalatfk
+        where stp.objectkelompoktransaksifk = 151 and stp.kdprofile= 30 and stp.statusenabled = true and stp.startdate between '$request[tglawal]' and '$request[tglakhir]'
+        GROUP BY jp.reportdisplay
+            "));
         $result = array(
             'card'=> $card,
+            'pie'=> $pie,
         );
         return $this->respond($result);
     }

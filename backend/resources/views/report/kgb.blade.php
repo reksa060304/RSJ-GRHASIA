@@ -142,7 +142,7 @@
                 <td style="text-align: center; font-family: Arial; font-size: 12pt">
                     <b><u>SURAT PEMBERITAHUAN KENAIKAN GAJI BERKALA</u></b>
                     <br>
-                    NOMOR : {{$data[0]->nosurat}}
+                    NOMOR : {{$data[0]->nosk}}
                     
                 </td>
                 
@@ -163,7 +163,7 @@
             </tr>
             <tr>
                 <td >
-                    <table style="font-family: Arial; padding-left: 15%">
+                    <table style="font-family: Arial; padding-left: 15%;line-height: 12px">
                         <tr>
                             <td >1. </td>
                             <td>N a m a</td>
@@ -180,7 +180,7 @@
                             <td>3. </td>
                             <td>Pangkat/Golongan</td>
                             <td> : </td>
-                            <td>{{$data[0]->pangkat }} / {{$data[0]->golongan}}</td>
+                            <td>{{$data[0]->panggol}}</td>
                         </tr>
                         <tr>
                             <td>4. </td>
@@ -204,47 +204,47 @@
                             <td></td>
                             <td></td>
                             <td> </td>
-                            <td>Nomor : {{$data[0]->noskcetak }}</td>
+                            <td>Nomor : {{$data[0]->sklama }}</td>
                         </tr>
                         <tr>
                             <td></td>
                             <td></td>
                             <td> </td>
-                            <td>Tanggal : {{$data[0]->tglsk }}</td>
+                            <td>Tanggal : {{$data[0]->tglsklama }}</td>
                         </tr>
                         <tr>
                             <td></td>
                             <td></td>
                             <td> </td>
-                            <td>Terhitung Mulai Tanggal : {{$data[0]->tglakhir }}</td>
+                            <td>Terhitung Mulai Tanggal : {{$data[0]->tmtlama }}</td>
                         </tr>
                         <tr>
-                            <td colspan="4" height="30" style="padding-left: 6%">Diberikan Kenaikan gaji Berkala sehingga memperoleh :</td>
+                            <td colspan="4" height="30" style="padding-left: 6%">Diberikan Kenaikan Gaji Berkala sehingga memperoleh :</td>
                         </tr>
                         <tr>
-                            <td>7. </td>
+                            <td>1. </td>
                             <td>Gaji Pokok Baru</td>
                             <td> : </td>
                             <td>{{$data[0]->gajiakhir}}</td>
                         </tr>
                         <tr>
-                            <td>8. </td>
+                            <td>2. </td>
                             <td>Berdasarkan Masa Kerja</td>
                             <td> : </td>
-                            <td>{{$data[0]->masakerjagolongan}}</td>
+                            <td>{{explode(" ",$data[0]->masakerjagolongan)[0]}} Th {{sprintf("%02d", explode(" ",$data[0]->masakerjagolongan)[2])}} Bln</td>
                             {{-- <td>{{$data[0]->thn}} Thn {{$data[0]->bln}} Bln</td> --}}
                         </tr>
                         <tr>
-                            <td>9. </td>
+                            <td>3. </td>
                             <td>Dalam Golongan Ruang</td>
                             <td> : </td>
                             <td>{{$data[0]->golongan}}</td>
                         </tr>
                         <tr>
-                            <td>10. </td>
+                            <td>4. </td>
                             <td>Terhitung Mulai Tanggal</td>
                             <td> : </td>
-                            <td>{{$data[0]->tglakhir}}</td>
+                            <td>{{$data[0]->tmtbaru}}</td>
                         </tr>
                         
                     </table>
@@ -276,28 +276,28 @@
             </tr>
             <tr>
                 <td>
-                    <table style="font-family: Arial; ">
+                    <table style="font-family: Arial; line-height: 10px">
                         <tr>
                             <td colspan="2">Tembusan disampaikan kepada Yth.:</td>
                         </tr>
                         <tr>
-                            <td style="padding-left: 50px" >1. </td>
+                            <td style="padding-left: 20px" >1. </td>
                             <td>Kepala Dinas Kesehatan DIY</td>
                         </tr>
                         <tr>
-                            <td style="padding-left: 50px" >2. </td>
+                            <td style="padding-left: 20px" >2. </td>
                             <td>Kepala Badan Kepegawaian Daerah DIYKepala Badan Kepegawaian Daerah DIY</td>
                         </tr>
                         <tr>
-                            <td style="padding-left: 50px" >3. </td>
+                            <td style="padding-left: 20px" >3. </td>
                             <td>Inspektur DIY</td>
                         </tr>
                         <tr>
-                            <td style="padding-left: 50px" >4. </td>
+                            <td style="padding-left: 20px" >4. </td>
                             <td>Ka. Kantor Cabang PT.TASPEN (PERSERO) Yogyakarta</td>
                         </tr>
                         <tr>
-                            <td style="padding-left: 50px" >5. </td>
+                            <td style="padding-left: 20px" >5. </td>
                             <td>Pertinggal</td>
                         </tr>
                     </table>

@@ -145,7 +145,7 @@
                         </fieldset>
                     </div>
                     <div class="grid_12">
-                        <div class="grid_3" ng-repeat="card in card">
+                        <div class="grid_4" ng-repeat="card in card">
                             <div class="card" ng-repeat="card in card"
                                 style="background-color: {{ card.color }}">
                                 <div class="k-card-header" style="background-color: {{ card.colorhead }}">
@@ -156,6 +156,23 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    <div class="grid_12">
+                        <fieldset class="effect-shadow" style=" border-radius: 4px">
+                            <legend>
+                                <h2>Jenis Perbaikan PDTI</h2>
+                            </legend>
+                            <div class="box-col">
+                                <div class="box-col">
+                                    <!-- <button class='export-pdf k-button'>Export as PDF</button> -->
+                                    <button class='export-img k-button'>Export as Image</button>
+                                </div>
+                            </div>
+                            <div class="demo-section wide">
+                                <div id="chart">
+                                </div>
+                            </div>
+                        </fieldset>
                     </div>
                 </div>
 

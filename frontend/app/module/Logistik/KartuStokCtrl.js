@@ -34,7 +34,7 @@ define(['initialize'], function (initialize) {
                 // });
 
                 medifirstService.get("farmasi/get-datacombo", true).then(function (dat) {
-                    $scope.listNamaBarang = dat.data.produk;
+                    $scope.listNamaBarang = dat.data.produkall;
                 });
 
                 medifirstService.get('logistik/get-combo-logistik-mini').then(function (data) {
