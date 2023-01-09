@@ -925,6 +925,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::post('farmasi/save-stock-merger', 'Farmasi\PelayananResepController@StokMerger');
           Route::get('farmasi/get-jenis-obat', 'Farmasi\PelayananResepController@getJenisObat');
           Route::get('farmasi/get-penjagaan-closing-kasir', 'Farmasi\PelayananResepController@getPenjagaanClosingKasir');
+          Route::get('farmasi/get-penjagaan-udah-bayar', 'Farmasi\PelayananResepController@getPenjagaanUdahBayar');
           Route::get('tatarekening/get-penjagaan-verif-piutang', 'Farmasi\PelayananResepController@getPenjagaanVerifPiutang');
           Route::get('farmasi/get-penjagaan-verif-kasir', 'Farmasi\PelayananResepController@getPenjagaanVerifKasir');
           Route::post('farmasi/save-pelayananobat', 'Farmasi\PelayananResepController@SimpanPelayananObat');
