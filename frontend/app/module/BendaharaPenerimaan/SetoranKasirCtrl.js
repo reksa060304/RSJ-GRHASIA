@@ -376,6 +376,12 @@ define(['initialize'], function (initialize) {
 						"width": "100px"
 					},
 					{
+						"field": "kelompokpasien",
+						"title": "Kelompok Pasien",
+						"template": "<span class='style-left'>#: kelompokpasien #</span>",
+						"width": "100px"
+					},
+					{
 						"field": "tglSbm",
 						"title": "Tanggal",
 						"template": "<span class='style-center'>#: tglSbm #</span>",

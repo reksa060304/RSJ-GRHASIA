@@ -6029,6 +6029,20 @@ class PelayananResepController extends ApiController
         return $this->respond($data);
     }
 
+    public function getPenjagaanUdahBayar(Request $request)
+    {
+        
+        $noregistrasi = $request['noregistrasi'];
+
+        $dataz = DB::select(DB::raw("select nosbmlastfk 
+        from pasiendaftar_t 
+        where noregistrasi = '$noregistrasi'"));
+
+        
+        $data['detail']  =$dataz;
+        return $this->respond($data);
+    }
+
     public function getPenjagaanVerifKasir(Request $request)
     {
         

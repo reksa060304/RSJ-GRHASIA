@@ -1025,7 +1025,7 @@ class TagihanController  extends ApiController
             }
         }
 
-        $dataTotalBill = DB::select(DB::raw("select sum(((case when pp.hargajual is null then 0 else pp.hargajual  end - case when pp.hargadiscount is null then 0 else pp.hargadiscount end) * pp.jumlah) + case when pp.jasa is null then 0 else pp.jasa end) as total
+        $dataTotalBill = DB::select(DB::raw("select sum(((case when pp.hargajual is null then 0 else pp.hargajual::float8  end - case when pp.hargadiscount is null then 0 else pp.hargadiscount::float8 end) * pp.jumlah) + case when pp.jasa is null then 0 else pp.jasa::float8 end) as total
                 from pasiendaftar_t as pd
                 INNER JOIN antrianpasiendiperiksa_t as apd on apd.noregistrasifk=pd.norec
                 INNER JOIN pelayananpasien_t as pp on pp.noregistrasifk=apd.norec

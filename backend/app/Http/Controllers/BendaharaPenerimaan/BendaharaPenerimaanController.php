@@ -138,10 +138,11 @@ class BendaharaPenerimaanController extends ApiController {
             ->leftjoin('pasien_m as ps', 'ps.id', '=', 'sp.nocmfk')
             ->leftjoin('strukbuktipenerimaancarabayar_t as sbmcr', 'sbmcr.nosbmfk', '=', 'sbm.norec')
             ->leftjoin('carabayar_m as cb', 'cb.id', '=', 'sbmcr.objectcarabayarfk')
+            ->leftjoin('kelompokpasien_m as kp', 'kp.id', '=', 'pd.objectkelompokpasienlastfk')
             ->leftjoin('kelompoktransaksi_m as kt', 'kt.id', '=', 'sbm.objectkelompoktransaksifk')
             ->leftjoin('strukclosing_t as sc', 'sc.norec', '=', 'sbm.noclosingfk')
             ->leftjoin('strukverifikasi_t as sv', 'sv.norec', '=', 'sbm.noverifikasifk')
-            ->select('sbm.norec as noRec','cb.carabayar as caraBayar','sbmcr.objectcarabayarfk as idCaraBayar','sbm.objectkelompoktransaksifk as idKelTransaksi',
+            ->select('sbm.norec as noRec', 'kp.kelompokpasien', 'cb.carabayar as caraBayar','sbmcr.objectcarabayarfk as idCaraBayar','sbm.objectkelompoktransaksifk as idKelTransaksi',
                 'kt.kelompoktransaksi as kelTransaksi','sbm.keteranganlainnya as keterangan','p.id as idPegawai','p.namalengkap as namaPenerima',
                 'sc.noclosing as noClosing','sbm.nosbm as noSbm','sv.noverifikasi as noVerifikasi','sc.tglclosing as tglClosing',
                 'sbm.tglsbm as tglSbm','sv.tglverifikasi as tglVerif','sbm.totaldibayar as totalPenerimaan','pd.noregistrasi','ps.namapasien',
@@ -241,6 +242,7 @@ class BendaharaPenerimaanController extends ApiController {
                 'caraBayar' => $item->caraBayar,
                 'idCaraBayar' => $item->idCaraBayar,
                 'idKelTransaksi' => $item->idKelTransaksi,
+                'kelompokpasien' => $item->kelompokpasien,
                 'kelTransaksi' => $item->kelTransaksi,
                 'keterangan' => $item->keterangan,
                 'idPegawai' => $item->idPegawai,
@@ -2723,8 +2725,8 @@ class BendaharaPenerimaanController extends ApiController {
         // konten STS Detail
 
         $data = DB::select(DB::raw("select distinct 0 objectkelompoktransaksifk, sbm.norec norecsbm, pp.norec, sc.tglclosing, ru.namaruangan, ru.id idruangan, pr.namaproduk, pr.id idproduk, pp.isobat,
-        (((CASE WHEN pp.hargajual IS NULL THEN 0 ELSE pp.hargajual END - CASE WHEN pp.hargadiscount IS NULL THEN
-        0 ELSE pp.hargadiscount END) * pp.jumlah) + CASE WHEN pp.jasa IS NULL THEN 0 ELSE pp.jasa END ) AS totaldibayarclosing,
+        (((CASE WHEN pp.hargajual IS NULL THEN 0 ELSE pp.hargajual::float8 END - CASE WHEN pp.hargadiscount IS NULL THEN
+        0 ELSE pp.hargadiscount::float8 END) * pp.jumlah) + CASE WHEN pp.jasa IS NULL THEN 0 ELSE pp.jasa::float8 END ) AS totaldibayarclosing,
         ru.objectdepartemenfk, sbmcr.objectcarabayarfk, sbm.totaldibayar as totaldibayarsbm, sc.noclosing, sc.tglclosing,
         sck.totaldibayar as totaldibayar,sck.carabayarfk, cb.carabayar, djp.detailjenisproduk, jpr.id as jenisproduk
         
