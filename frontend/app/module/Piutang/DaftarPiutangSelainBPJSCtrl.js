@@ -737,7 +737,7 @@ define(['initialize'], function (initialize) {
                     }
 
                     medifirstService.get("tatarekening/daftar-piutang-bpjs-manual?noregistrasi="+$scope.item.noregistrasi, false).then(function (dat) {
-                        if(dat.data.data.length != 0){
+                        if(dat.data.data.length != 0 && dat.data.data[0].objectkelompokpasienlastfk != 4){
                             var confirm = $mdDialog.confirm()
                             .title('Peringatan')
                             .textContent('Data tersebut sudah diinput, yakin ingin input ulang?')
@@ -776,7 +776,7 @@ define(['initialize'], function (initialize) {
                     }
 
                     medifirstService.get("tatarekening/daftar-piutang-bpjs-manual?noregistrasi="+$scope.item.noregistrasiobat, false).then(function (dat) {
-                        if(dat.data.data.length != 0){
+                        if(dat.data.data.length != 0 && dat.data.data[0].objectkelompokpasienlastfk != 4){
                             var confirm = $mdDialog.confirm()
                             .title('Peringatan')
                             .textContent('Data tersebut sudah diinput, yakin ingin input ulang?')
