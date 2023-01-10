@@ -427,13 +427,13 @@ class LaboratoriumController extends ApiController
         $dataProduk = \DB::table('produk_m as pr')
             ->leftJOIN('detailjenisproduk_m as djp','djp.id','=','pr.objectdetailjenisprodukfk')
             ->leftJOIN('jenisproduk_m as jp','jp.id','=','djp.objectjenisprodukfk')
-            ->select('pr.id','pr.namaproduk')
+            ->select('pr.id','pr.namaproduk', DB::raw("pr.id || '-' || pr.namaproduk as text"))
             ->where('pr.kdprofile', $kdProfile)
             ->where('pr.statusenabled',true)
 //            ->where('pr.kodeexternal','<>','BTN 2 TN')
             ->whereIn('djp.objectjenisprodukfk',[1549,1548])
-            ->groupBy('pr.id','pr.namaproduk')
-            ->orderBy('pr.namaproduk')
+            ->groupBy('pr.id','pr.namaproduk', DB::raw("pr.id || '-' || pr.namaproduk"))
+            ->orderBy('pr.id')
             ->get();
 
         $result =  array(
