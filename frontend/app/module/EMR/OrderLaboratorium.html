@@ -156,7 +156,7 @@
                                     </div>
                                     <div class="grid_6">
                                         <div class="grid_12">
-                                            <label c-label item="item">Ruangan Asal</label>
+                                            <label c-label item="item">Poliklinik / Wisma</label>
                                         </div>
                                         <div class="grid_12">
                                             <input c-text-box type="input" filter="" class="k-textbox"
@@ -165,7 +165,7 @@
                                     </div>
                                     <div class="grid_12">
                                         <div class="grid_12">
-                                            <label c-label item="item">Ruangan Tujuan</label>
+                                            <label c-label item="item">Tujuan</label>
                                         </div>
                                         <div class="grid_12">
                                             <input kendo-combo-box k-ng-model="item.ruangantujuan"
@@ -177,7 +177,15 @@
                                         </div>
                                     </div>
 
-
+                                    <div class="grid_12" style="margin-top: 10px;">
+                                        <div class="grid_12">
+                                            <label c-label item="item">Diagnosa Klinis</label>
+                                        </div>
+                                        <div class="grid_12" style="margin-top: 5px;">
+                                            <textarea class="k-textbox" type="input" ng-model="item.diagnosaklinis"
+                                                maxlength="8000"></textarea>
+                                        </div>
+                                    </div>
                                     <div class="grid_12" style="margin-top: 10px;">
                                         <div class="grid_12">
                                             <label c-label item="item">Keterangan</label>
@@ -191,7 +199,7 @@
                                     <div class="grid_3" style="margin-top: 15px;">
                                         <input type="checkbox" class="k-checkbox" id="iscito" ng-model="item.iscito"
                                             ng-click="cekCito(item.iscito)">
-                                        <label class="k-checkbox-label" for="iscito"><b>Status Cito</b></label>
+                                        <label class="k-checkbox-label" for="iscito"><b>Cito</b></label>
                                     </div>
 
                                     <div class="grid_4" style="margin-top: 15px;">
