@@ -1285,8 +1285,13 @@ class RadiologiController extends ApiController
                     'so.keteranganlainnya','so.cito','pd.isclosing as closing',
 //                    (DB::raw("case when pp.ono is null then 'MASUK' else
 //                                    'SELESAI' end as status")))
-                    (DB::raw("case when so.statusorder is null then 'MASUK' else
-                                    'SELESAI' end as status")))
+                    (DB::raw("case 
+                    when so.statusorder is null and so.isverifikasidokter is null and so.objectruangantujuanfk = 575 then 'MASUK'
+                    when so.statusorder is not null and so.isverifikasidokter is null and so.objectruangantujuanfk = 575 then 'PROSES' 
+                    when so.statusorder is not null and so.isverifikasidokter is not null and so.objectruangantujuanfk = 575 then 'SELESAI'
+                    when so.statusorder is null and so.objectruangantujuanfk = 576 then 'MASUK' 
+                    when so.statusorder is not null and so.objectruangantujuanfk = 576 then 'SELESAI' 
+                    end as status")))
                 ->where('so.kdprofile', $idProfile)
                 ->where('ru2.objectdepartemenfk',$this->settingDataFixed('KdDepartemenInstalasiLaboratorium', $idProfile))
                 ->where('so.statusenabled',true) ;
@@ -1736,6 +1741,32 @@ class RadiologiController extends ApiController
             'userlogin' => $userlogin,
             // 'jeniskelamin' => $jeniskelamin,
             'message' => 'faz@epic',
+        );
+        return $this->respond($result);
+    }
+
+    public function cekinputhasil(Request $request)
+    {
+        
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $norec = $request['norec'];
+        
+        $data = DB::select(DB::raw("select hh.*
+        from strukorder_t as so
+        inner join orderpelayanan_t op on so.norec=op.strukorderfk
+        inner join pelayananpasien_t as pp on pp.strukorderfk=so.norec
+        and op.objectprodukfk =pp.produkfk
+        inner join produk_m as prd on prd.id = pp.produkfk
+        inner join maphasillab_m  as maps on maps.produkfk = prd.id
+        inner join maphasillabdetail_m  as maps2 on maps2.maphasilfk = maps.id
+        inner join hasillaboratorium_t  as hh on hh.norecpelayanan  = pp.norec 
+        and pp.noregistrasifk=hh.noregistrasifk
+        and maps.detailpemeriksaan =hh.detailpemeriksaan  
+        where so.norec = '$norec'"));
+        $result = array(
+            'data' => $data,
+            'message' => 'vexana@epic',
         );
         return $this->respond($result);
     }
@@ -2439,6 +2470,39 @@ class RadiologiController extends ApiController
             //         ]);
 
             $list = HasilRadiologiListGambar::where('norec', $request['norec_gambar'])->update(['keterangan' => $request['keterangan']]);
+            
+            if ($list) {
+                $transStatus = true;
+            }
+        } 
+        catch (Exception $e) {
+            return $e;
+        }
+
+        if (!$transStatus) {
+            DB::rollBack();
+            $result = array(
+                "code" => 500,
+                "status" => false,
+                "messages" => "Gagal Simpan!"
+            );
+        }
+        else {
+            DB::commit();
+            $result = array(
+                "code" => 200,
+                "status" => true,
+                "messages" => "Berhasil Simpan!"
+            );
+        }
+        return response()->json( $result, $result['code'] );
+    }
+
+    public function saveVerifDokter(Request $request) {
+        DB::beginTransaction();
+        $transStatus = false;
+        try {
+            $list = StrukOrder::where('norec', $request['norec_so'])->update(['isverifikasidokter' => true]);
             
             if ($list) {
                 $transStatus = true;
