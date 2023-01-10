@@ -78,11 +78,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 			$scope.ListPenyelenggara = [
 				{
 					"id": 1,
-					"penyelenggara": "INTERNAL"
+					"penyelenggara": "Internal"
 				},
 				{
 					"id": 2,
-					"penyelenggara": "EKSTERNAL"
+					"penyelenggara": "Eksternal"
 				},
 			]
 			function ClearAll() {
@@ -1227,8 +1227,8 @@ $scope.formatRupiah = function (value, currency) {
 			$scope.opsiGridHukumanDisiplin = {
 				toolbar: [{
 					name: "create",
-					text: "Add Hukuman Disiplin",
-					template: '<button ng-click="createHukumanDisiplin()" class="k-button k-button-icontext k-grid-upload" href="\\#"><span class="k-icon k-i-plus"></span>Add Hukuman Disiplin</button>'
+					text: "Tambah Hukuman Disiplin",
+					template: '<button ng-click="createHukumanDisiplin()" class="k-button k-button-icontext k-grid-upload" href="\\#"><span class="k-icon k-i-plus"></span>Tambah Hukuman Disiplin</button>'
 				}],
 				sortable: false,
 				reorderable: true,
@@ -1766,7 +1766,7 @@ $scope.formatRupiah = function (value, currency) {
 					return;
 				};
 				var idpenyelenggara = 1
-				if(dataItem.penyelenggara != 'INTERNAL'){
+				if(dataItem.penyelenggara != 'Internal'){
 					idpenyelenggara = 2
 					$scope.itemPelatihan.namaPelatihan = dataItem.namapelatihan;
 					$scope.namapelatihan = true
