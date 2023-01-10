@@ -169,27 +169,46 @@ define(['initialize'], function(initialize) {
                 });
 
             }
-                console.log($scope.now);
-
+            $scope.item.biaya = 0
             $scope.GetBiaya = function(){
-                    $scope.item.biaya = 0
+                if ($scope.item.jumlahpeserta > 5 && $scope.item.levelpendidikan.id == 40410021) {
+                    toastr.error('Jumlah Peserta Maksimal 5')
+                    $scope.item.jumlahpeserta = 0
+                }
+                if ($scope.item.jumlahpeserta > 10 && $scope.item.levelpendidikan.id == 40410022) {
+                    toastr.error('Jumlah Peserta Maksimal 10')
+                    $scope.item.jumlahpeserta = 0
+                }
                 if ($scope.item.jumlahpeserta > 0 && $scope.item.jumlahpeserta < 6 && $scope.item.levelpendidikan.id == 40410021) {
+                    $scope.item.biaya = 0
                     $scope.item.biaya = $scope.item.hargasatuan * $scope.item.qty;
-                    console.log('pppppp');
-                } else if ($scope.item.jumlahpeserta >= 6 && $scope.item.jumlahpeserta <= 10 && $scope.item.levelpendidikan.id == 40410022) {
+                }
+                
+                if ($scope.item.jumlahpeserta >= 6 && $scope.item.jumlahpeserta <= 10 && $scope.item.levelpendidikan.id == 40410022) {
                     // console.log(false);
+                     $scope.item.biaya = 0
+
                     $scope.item.biaya = ($scope.item.jumlahpeserta * $scope.item.hargasatuan) * $scope.item.qty;
                     // $scope.item.biaya = $scope.harganetto * $scope.item.qty;
-                    
-                } else if ($scope.item.jumlahpeserta > 10 && $scope.item.levelpendidikan.id == 40410023) {
+                } 
+                if ($scope.item.jumlahpeserta > 10 && $scope.item.levelpendidikan.id == 40410023) {
+                    $scope.item.biaya = 0
                     $scope.item.biaya = ($scope.item.jumlahpeserta * $scope.item.hargasatuan) * $scope.item.qty;
                 }
 
                 if ($scope.item.layanan.id == 1950 && $scope.item.jumlahpeserta <= 25) {
+                $scope.item.biaya = 0
                     $scope.item.biaya = (25 * $scope.item.qty) * $scope.item.hargasatuan;
-                } else if ($scope.item.layanan.id == 1950 && $scope.item.jumlahpeserta > 25) {
-                    $scope.item.biaya = $scope.item.jumlahpeserta * $scope.harganetto * $scope.item.qty;
+                } 
+                if ($scope.item.layanan.id == 1950 && $scope.item.jumlahpeserta > 25) {
+                    $scope.item.biaya = 0
+                    $scope.item.biaya = $scope.item.jumlahpeserta * $scope.item.hargasatuan * $scope.item.qty;
                 }
+                if ($scope.item.layanan.id != 1950 && $scope.item.layanan.id != 1952) {
+                    $scope.item.biaya = 0
+                    $scope.item.biaya = $scope.item.jumlahpeserta * $scope.item.hargasatuan * $scope.item.qty
+                }
+                
                 // if (($scope.item.levelpendidikan.id !== 40400030) && ($scope.item.layanan.id !== 1950)) {
                 //     $scope.item.biaya = $scope.item.jumlahpeserta*$scope.harganetto * $scope.item.qty;
                 // }
@@ -295,6 +314,10 @@ define(['initialize'], function(initialize) {
 			$scope.Save = function(){
                 if ($scope.item.biaya == undefined) {
                     toastr.error("Tunggu Hingga Total Biaya Muncul")
+                    return
+                }
+                if ($scope.item.biaya == 0) {
+                    toastr.error("Biaya Tidak Boleh 0")
                     return
                 }
                 var listRawRequired = [
