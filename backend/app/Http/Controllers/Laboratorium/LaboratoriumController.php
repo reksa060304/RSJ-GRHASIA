@@ -618,7 +618,6 @@ class LaboratoriumController extends ApiController
         if(isset($request['idUmur']) && $request['idUmur']!='undefined' && $request['idUmur']!=''&& $request['idUmur']!='-'){
             $jenis = $jenis->where('djp.kelompokumurfk','=',$request['idUmur']);
         }
-        $jenis=  $jenis->limit(50);
         $jenis=  $jenis->get();
         $result =  array(
             'data' => $jenis,
