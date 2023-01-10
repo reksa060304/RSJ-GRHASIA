@@ -103,7 +103,7 @@ class SumberDayaManusiaController extends ApiController {
             if($request['jabatan'] == 6){
                 $tunjanganbaru = Jabatan::where('statusenabled', true)->where('kdprofile', $kdProfile)->where('objectjenisjabatanfk', 6)->get();
             } else if($request['jabatan'] == 7){
-                $tunjanganbaru = GolonganPegawai::where('statusenabled', true)->where('kdprofile', $kdProfile)->get();
+                $tunjanganbaru = GolonganPegawai::where('statusenabled', true)->where('kdprofile', $kdProfile)->orderBy('id','desc') ->get();
             } else if($request['jabatan'] == 8){
                 $tunjanganbaru = Eselon::where('statusenabled', true)->where('kdprofile', $kdProfile)->get();
             }
