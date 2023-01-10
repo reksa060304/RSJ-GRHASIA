@@ -154,11 +154,20 @@
                 </div>
 
                 <div class="grid_12" style="margin-left: 5px">
-                    <div class="grid_6">
+                    <div class="grid_6" ng-if="iddepartemen == 575">
+                        <span id="square" class="red">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                        <span>Masuk {{totalMasuk}}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <span id="square" class="koneng">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                        <span>Proses
+                            {{totalCheck}}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <span id="square" class="green">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                        <span>Selesai {{totalSelesai}}</span>
+                    </div>
+                    <div class="grid_6" ng-if="iddepartemen != 575">
                         <span id="square" class="grey">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
                         <span>Masuk {{totalMasuk}}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                         <span id="square" class="red">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                        <span>Sample Checkin
+                        <span>Sample Checkin 
                             {{totalCheck}}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                         <span id="square" class="green">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
                         <span>Selesai {{totalSelesai}}</span>
@@ -180,12 +189,12 @@
                     <div class="grid_2">
                         <input type="checkbox" class="k-checkbox" id="isSudahVerifikasi" ng-model="item.sudahVerifikasi"
                             value="true" ng-click="ceksudahVerifikasi(item.sudahVerifikasi)">
-                        <label class="k-checkbox-label" for="isSudahVerifikasi"><b>Sudah Verifikasi</b></label>
+                        <label class="k-checkbox-label" for="isSudahVerifikasi"><b>Sudah Verifikasi Order</b></label>
                     </div>
                     <div class="grid_2">
                         <input type="checkbox" class="k-checkbox" id="isBelumVerifikasi" ng-model="item.belumVerifikasi"
                             value="true" ng-click="cekbelumVerifikasi(item.belumVerifikasi)">
-                        <label class="k-checkbox-label" for="isBelumVerifikasi"><b>Belum Verifikasi</b></label>
+                        <label class="k-checkbox-label" for="isBelumVerifikasi"><b>Belum Verifikasi Order</b></label>
                     </div>
                     <div class="grid_2">
                         <input type="checkbox" class="k-checkbox" id="isOrderHariIni" ng-model="item.orderHariIni"
@@ -307,7 +316,7 @@
         </div>
         <!-- NamaKegiatan -->
         <div class="grid_12">
-            <div class="grid_6">
+            <div class="grid_4">
                 <div class="grid_3">
                     <div class="grid_12">
                         <label c-label item="item">No Registrasi</label>
@@ -359,17 +368,17 @@
                     </div>
                 </div>
             </div>
-            <div class="grid_6">
+            <div class="grid_8">
                 <div class="grid_2" style="margin-top: 13px">
                     <button class="btnTemplate1" ng-click="cetakBuktiLayanan()"><i class="fa fa-print"></i>Bukti
                         Layanan</button>
                     <!-- <button class="c-button" ng-click="cetakBuktiLayanan()">Bukti Layanan</button> -->
                 </div>
-                <div class="grid_2" style="margin-top: 13px">
+                <div class="grid_1" style="margin-top: 13px">
                     <button class="btnTemplate1" ng-click="verifikasi()"><i class="fa fa-edit"></i>Verifikasi</button>
                     <!-- <button class="c-button" ng-click="verifikasi()">Verifikasi</button> -->
                 </div>
-                <div class="grid_2" style="margin-top: 13px">
+                <div class="grid_1" style="margin-top: 13px">
                     <button class="btnTemplate1 " ng-disabled="true" ng-click="hapusOrder()"><i
                             class="fa fa-trash"></i>Hapus</button>
                 </div>
@@ -390,6 +399,10 @@
                 <div class="grid_2" style="margin-top: 13px">
                     <button class="btnTemplate1" ng-click="detailVerif()"><i class="fa fa-th-list"></i>Detal
                         Verif</button>
+                </div>
+                <div class="grid_2" style="margin-top: 13px" ng-if="iddepartemen == 575 && kelUser == 'dokter'">
+                    <button class="btnTemplate1" ng-click="verifikasiDokter()"><i class="fa fa-th-edit"></i>Verif Dokter
+                    Laboratorium</button>
                 </div>
 
             </div>

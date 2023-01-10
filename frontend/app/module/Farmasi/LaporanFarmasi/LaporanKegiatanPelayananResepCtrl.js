@@ -52,7 +52,7 @@ define(['initialize'], function (initialize) {
                         //console.log(datas[i].jumlahtotalobatjadifebruary);
 
                         if(datas.length === 0 || datas.length === 1 || datas.length === 2 || datas.length === 3 || datas.length === 4 || datas.length === 5 || datas.length === 6 || datas.length === 7 || datas.length === 8 || datas.length === 9 || datas.length === 10 || datas.length === 11 || datas.length === 12 || datas.length === 13 || datas.length === 14 || datas.length === 15 || datas.length === 16){
-                            datas.length = 17;
+                            datas.length = 21;
                         }
 
                         for(i=lengthawal; i<datas.length; i++){
@@ -261,6 +261,59 @@ define(['initialize'], function (initialize) {
                             datas[i].jumlahtotalrekonnovember = 0;
                             datas[i].jumlahtotalrekonoctober = 0;
                             datas[i].jumlahtotalrekonseptember = 0;
+
+                            datas[i].jumlahtotalrekonobatjanuary = 0;
+                            datas[i].jumlahtotalrekonobatfebruary = 0;
+                            datas[i].jumlahtotalrekonobatmarch = 0;
+                            datas[i].jumlahtotalrekonobatapril = 0;
+                            datas[i].jumlahtotalrekonobatmay = 0;
+                            datas[i].jumlahtotalrekonobatjune = 0;
+                            datas[i].jumlahtotalrekonobatjuly = 0;
+                            datas[i].jumlahtotalrekonobataugust = 0;
+                            datas[i].jumlahtotalrekonobatseptember = 0;
+                            datas[i].jumlahtotalrekonobatoctober = 0;
+                            datas[i].jumlahtotalrekonobatnovember = 0;
+                            datas[i].jumlahtotalrekonobatdecember = 0;
+
+                            datas[i].jumlahtotalkonsulonlinejanuary = 0;
+                            datas[i].jumlahtotalkonsulonlinefebruary = 0;
+                            datas[i].jumlahtotalkonsulonlinemarch = 0;
+                            datas[i].jumlahtotalkonsulonlineapril = 0;
+                            datas[i].jumlahtotalkonsulonlinemay = 0;
+                            datas[i].jumlahtotalkonsulonlinejune = 0;
+                            datas[i].jumlahtotalkonsulonlinejuly = 0;
+                            datas[i].jumlahtotalkonsulonlineaugust = 0;
+                            datas[i].jumlahtotalkonsulonlineseptember = 0;
+                            datas[i].jumlahtotalkonsulonlineoctober = 0;
+                            datas[i].jumlahtotalkonsulonlinenovember = 0;
+                            datas[i].jumlahtotalkonsulonlinedecember = 0;
+
+                            datas[i].jumlahtotalperbekalanjanuary = 0;
+                            datas[i].jumlahtotalperbekalanfebruary = 0;
+                            datas[i].jumlahtotalperbekalanmarch = 0;
+                            datas[i].jumlahtotalperbekalanapril = 0;
+                            datas[i].jumlahtotalperbekalanmay = 0;
+                            datas[i].jumlahtotalperbekalanjune = 0;
+                            datas[i].jumlahtotalperbekalanjuly = 0;
+                            datas[i].jumlahtotalperbekalanaugust = 0;
+                            datas[i].jumlahtotalperbekalanseptember = 0;
+                            datas[i].jumlahtotalperbekalanoctober = 0;
+                            datas[i].jumlahtotalperbekalannovember = 0;
+                            datas[i].jumlahtotalperbekalandecember = 0;
+
+                            datas[i].jumlahtotaluddjanuary = 0;
+                            datas[i].jumlahtotaluddfebruary = 0;
+                            datas[i].jumlahtotaluddmarch = 0;
+                            datas[i].jumlahtotaluddapril = 0;
+                            datas[i].jumlahtotaluddmay = 0;
+                            datas[i].jumlahtotaluddjune = 0;
+                            datas[i].jumlahtotaluddjuly = 0;
+                            datas[i].jumlahtotaluddaugust = 0;
+                            datas[i].jumlahtotaluddseptember = 0;
+                            datas[i].jumlahtotaluddoctober = 0;
+                            datas[i].jumlahtotaluddnovember = 0;
+                            datas[i].jumlahtotaludddecember = 0;
+
                             datas[i].totalresep = 0;
                             datas[i].totalrke = 0;
                             datas[i].totalobatjadi = 0;
@@ -278,26 +331,36 @@ define(['initialize'], function (initialize) {
                             datas[i].totalinjeksi = 0;
                             datas[i].totalinfus = 0;
                             datas[i].totalrekon = 0;
+
+                            datas[i].totalrekonobat = 0;
+                            datas[i].totalkonsulonline = 0;
+                            datas[i].totalperbekalan = 0;
+                            datas[i].totaludd = 0;
                         }
                         
                         for (var i = 0; i < datas.length; i++) {
                             datas[0].kategori = 'R/';
                             datas[1].kategori = 'Lembar';
                             datas[2].kategori = 'Pelayanan Resep Obat Jadi / Alkes';
-                            datas[3].kategori = 'Pelayanan Resep Obat di kapsul < 30 Kapsul';
-                            datas[4].kategori = 'Pelayanan Resep Obat di kapsul > 30 Kapsul';
+                            datas[3].kategori = 'Pelayanan Resep Obat Dikapsul < 30 kapsul';
+                            datas[4].kategori = 'Pelayanan Resep Obat Dikapsul > 30 kapsul';
                             datas[5].kategori = 'Pelayanan Resep Obat Racik < 30 Bungkus';
                             datas[6].kategori = 'Pelayanan Resep Obat Racik > 30 Bungkus';
                             datas[7].kategori = 'Pelayanan Resep Racik Salep';
                             datas[8].kategori = 'Pelayanan Resep Racik Sirup';
                             datas[9].kategori = 'Konseling / Konsultasi Obat';
-                            datas[10].kategori = 'Petunjuk Informasi Obat';
+                            datas[10].kategori = 'Pelayanan Informasi Obat';
                             datas[11].kategori = 'Visite Apoteker';
                             datas[12].kategori = 'Pemantauan Terapi Obat';
                             datas[13].kategori = 'Embalace';
                             datas[14].kategori = 'Pelayanan Steril (Injeksi)';
                             datas[15].kategori = 'Pelayanan Steril (Infus)';
                             datas[16].kategori = 'Pelayanan Rekonstitusi Injeksi';
+
+                            datas[17].kategori = 'Rekonsiliasi Obat';
+                            datas[18].kategori = 'Konsultasi Online Apoteker';
+                            datas[19].kategori = 'Pelayanan Perbekalan Farmasi';
+                            datas[20].kategori = 'Pelayanan Obat Unit Dose Dispending/ UDD';
                             datas[i].no = i+1;
                             if(datas[i].jumlahtotalrkejanuary != 0){
                                 datas[0].jumlahtotalrkejanuaryfix = datas[i].jumlahtotalrkejanuary;
@@ -924,11 +987,165 @@ define(['initialize'], function (initialize) {
                             if(datas[i].jumlahtotalrekondecember != 0){
                                 datas[16].jumlahtotalrkedecemberfix = datas[i].jumlahtotalrekondecember;
                             }
+
+
+
+                            if(datas[i].jumlahtotalrekonobatjanuary != 0){
+                                datas[17].jumlahtotalrkejanuaryfix = datas[i].jumlahtotalrekonobatjanuary;
+                            }
+                            if(datas[i].jumlahtotalrekonobatfebruary != 0){
+                                datas[17].jumlahtotalrkefebruaryfix = datas[i].jumlahtotalrekonobatfebruary;
+                            }
+                            if(datas[i].jumlahtotalrekonobatmarch != 0){
+                                datas[17].jumlahtotalrkemarchfix = datas[i].jumlahtotalrekonobatmarch;
+                            }
+                            if(datas[i].jumlahtotalrekonobatapril != 0){
+                                datas[17].jumlahtotalrkeaprilfix = datas[i].jumlahtotalrekonobatapril;
+                            }
+                            if(datas[i].jumlahtotalrekonobatmay != 0){
+                                datas[17].jumlahtotalrkemayfix = datas[i].jumlahtotalrekonobatmay;
+                            }
+                            if(datas[i].jumlahtotalrekonobatjune != 0){
+                                datas[17].jumlahtotalrkejunefix = datas[i].jumlahtotalrekonobatjune;
+                            }
+                            if(datas[i].jumlahtotalrekonobatjuly != 0){
+                                datas[17].jumlahtotalrkejulyfix = datas[i].jumlahtotalrekonobatjuly;
+                            }
+                            if(datas[i].jumlahtotalrekonobataugust != 0){
+                                datas[17].jumlahtotalrkeaugustfix = datas[i].jumlahtotalrekonobataugust;
+                            }
+                            if(datas[i].jumlahtotalrekonobatseptember != 0){
+                                datas[17].jumlahtotalrkeseptemberfix = datas[i].jumlahtotalrekonobatseptember;
+                            }
+                            if(datas[i].jumlahtotalrekonobatoctober != 0){
+                                datas[17].jumlahtotalrkeoctoberfix = datas[i].jumlahtotalrekonobatoctober;
+                            }
+                            if(datas[i].jumlahtotalrekonobatnovember != 0){
+                                datas[17].jumlahtotalrkenovemberfix = datas[i].jumlahtotalrekonobatnovember;
+                            }
+                            if(datas[i].jumlahtotalrekonobatdecember != 0){
+                                datas[17].jumlahtotalrkedecemberfix = datas[i].jumlahtotalrekonobatdecember;
+                            }
+
+
+
+                            if(datas[i].jumlahtotalkonsulonlinejanuary != 0){
+                                datas[18].jumlahtotalrkejanuaryfix = datas[i].jumlahtotalkonsulonlinejanuary;
+                            }
+                            if(datas[i].jumlahtotalkonsulonlinefebruary != 0){
+                                datas[18].jumlahtotalrkefebruaryfix = datas[i].jumlahtotalkonsulonlinefebruary;
+                            }
+                            if(datas[i].jumlahtotalkonsulonlinemarch != 0){
+                                datas[18].jumlahtotalrkemarchfix = datas[i].jumlahtotalkonsulonlinemarch;
+                            }
+                            if(datas[i].jumlahtotalkonsulonlineapril != 0){
+                                datas[18].jumlahtotalrkeaprilfix = datas[i].jumlahtotalkonsulonlineapril;
+                            }
+                            if(datas[i].jumlahtotalkonsulonlinemay != 0){
+                                datas[18].jumlahtotalrkemayfix = datas[i].jumlahtotalkonsulonlinemay;
+                            }
+                            if(datas[i].jumlahtotalkonsulonlinejune != 0){
+                                datas[18].jumlahtotalrkejunefix = datas[i].jumlahtotalkonsulonlinejune;
+                            }
+                            if(datas[i].jumlahtotalkonsulonlinejuly != 0){
+                                datas[18].jumlahtotalrkejulyfix = datas[i].jumlahtotalkonsulonlinejuly;
+                            }
+                            if(datas[i].jumlahtotalkonsulonlineaugust != 0){
+                                datas[18].jumlahtotalrkeaugustfix = datas[i].jumlahtotalkonsulonlineaugust;
+                            }
+                            if(datas[i].jumlahtotalkonsulonlineseptember != 0){
+                                datas[18].jumlahtotalrkeseptemberfix = datas[i].jumlahtotalkonsulonlineseptember;
+                            }
+                            if(datas[i].jumlahtotalkonsulonlineoctober != 0){
+                                datas[18].jumlahtotalrkeoctoberfix = datas[i].jumlahtotalkonsulonlineoctober;
+                            }
+                            if(datas[i].jumlahtotalkonsulonlinenovember != 0){
+                                datas[18].jumlahtotalrkenovemberfix = datas[i].jumlahtotalkonsulonlinenovember;
+                            }
+                            if(datas[i].jumlahtotalkonsulonlinedecember != 0){
+                                datas[18].jumlahtotalrkedecemberfix = datas[i].jumlahtotalkonsulonlinedecember;
+                            }
+
+
+                            if(datas[i].jumlahtotalperbekalanjanuary != 0){
+                                datas[19].jumlahtotalrkejanuaryfix = datas[i].jumlahtotalperbekalanjanuary;
+                            }
+                            if(datas[i].jumlahtotalperbekalanfebruary != 0){
+                                datas[19].jumlahtotalrkefebruaryfix = datas[i].jumlahtotalperbekalanfebruary;
+                            }
+                            if(datas[i].jumlahtotalperbekalanmarch != 0){
+                                datas[19].jumlahtotalrkemarchfix = datas[i].jumlahtotalperbekalanmarch;
+                            }
+                            if(datas[i].jumlahtotalperbekalanapril != 0){
+                                datas[19].jumlahtotalrkeaprilfix = datas[i].jumlahtotalperbekalanapril;
+                            }
+                            if(datas[i].jumlahtotalperbekalanmay != 0){
+                                datas[19].jumlahtotalrkemayfix = datas[i].jumlahtotalperbekalanmay;
+                            }
+                            if(datas[i].jumlahtotalperbekalanjune != 0){
+                                datas[19].jumlahtotalrkejunefix = datas[i].jumlahtotalperbekalanjune;
+                            }
+                            if(datas[i].jumlahtotalperbekalanjuly != 0){
+                                datas[19].jumlahtotalrkejulyfix = datas[i].jumlahtotalperbekalanjuly;
+                            }
+                            if(datas[i].jumlahtotalperbekalanaugust != 0){
+                                datas[19].jumlahtotalrkeaugustfix = datas[i].jumlahtotalperbekalanaugust;
+                            }
+                            if(datas[i].jumlahtotalperbekalanseptember != 0){
+                                datas[19].jumlahtotalrkeseptemberfix = datas[i].jumlahtotalperbekalanseptember;
+                            }
+                            if(datas[i].jumlahtotalperbekalanoctober != 0){
+                                datas[19].jumlahtotalrkeoctoberfix = datas[i].jumlahtotalperbekalanoctober;
+                            }
+                            if(datas[i].jumlahtotalperbekalannovember != 0){
+                                datas[19].jumlahtotalrkenovemberfix = datas[i].jumlahtotalperbekalannovember;
+                            }
+                            if(datas[i].jumlahtotalperbekalandecember != 0){
+                                datas[19].jumlahtotalrkedecemberfix = datas[i].jumlahtotalperbekalandecember;
+                            }
+
+
+                            if(datas[i].jumlahtotaluddjanuary != 0){
+                                datas[20].jumlahtotalrkejanuaryfix = datas[i].jumlahtotaluddjanuary;
+                            }
+                            if(datas[i].jumlahtotaluddfebruary != 0){
+                                datas[20].jumlahtotalrkefebruaryfix = datas[i].jumlahtotaluddfebruary;
+                            }
+                            if(datas[i].jumlahtotaluddmarch != 0){
+                                datas[20].jumlahtotalrkemarchfix = datas[i].jumlahtotaluddmarch;
+                            }
+                            if(datas[i].jumlahtotaluddapril != 0){
+                                datas[20].jumlahtotalrkeaprilfix = datas[i].jumlahtotaluddapril;
+                            }
+                            if(datas[i].jumlahtotaluddmay != 0){
+                                datas[20].jumlahtotalrkemayfix = datas[i].jumlahtotaluddmay;
+                            }
+                            if(datas[i].jumlahtotaluddjune != 0){
+                                datas[20].jumlahtotalrkejunefix = datas[i].jumlahtotaluddjune;
+                            }
+                            if(datas[i].jumlahtotaluddjuly != 0){
+                                datas[20].jumlahtotalrkejulyfix = datas[i].jumlahtotaluddjuly;
+                            }
+                            if(datas[i].jumlahtotaluddaugust != 0){
+                                datas[20].jumlahtotalrkeaugustfix = datas[i].jumlahtotaluddaugust;
+                            }
+                            if(datas[i].jumlahtotaluddseptember != 0){
+                                datas[20].jumlahtotalrkeseptemberfix = datas[i].jumlahtotaluddseptember;
+                            }
+                            if(datas[i].jumlahtotaluddoctober != 0){
+                                datas[20].jumlahtotalrkeoctoberfix = datas[i].jumlahtotaluddoctober;
+                            }
+                            if(datas[i].jumlahtotaluddnovember != 0){
+                                datas[20].jumlahtotalrkenovemberfix = datas[i].jumlahtotaluddnovember;
+                            }
+                            if(datas[i].jumlahtotaludddecember != 0){
+                                datas[20].jumlahtotalrkedecemberfix = datas[i].jumlahtotaludddecember;
+                            }
                         }
 
                         // console.log(datas);
 
-                        if(lengthawal < 17){
+                        if(lengthawal < 21){
                             datas[0].total = datas[lengthawal-1].totalrke;
                             datas[1].total = datas[lengthawal-1].totalresep;
                             datas[2].total = datas[0].totalobatjadi;
@@ -946,6 +1163,10 @@ define(['initialize'], function (initialize) {
                             datas[14].total = datas[0].totalinjeksi;
                             datas[15].total = datas[0].totalinfus;
                             datas[16].total = datas[0].totalrekon;
+                            datas[17].total = datas[0].totalrekonobat;
+                            datas[18].total = datas[0].totalkonsulonline;
+                            datas[19].total = datas[0].totalperbekalan;
+                            datas[20].total = datas[0].totaludd;
                         } else{
                             datas[0].total = datas[datas.length-1].totalrke;
                             datas[1].total = datas[datas.length-1].totalresep;
@@ -964,9 +1185,13 @@ define(['initialize'], function (initialize) {
                             datas[14].total = datas[0].totalinjeksi;
                             datas[15].total = datas[0].totalinfus;
                             datas[16].total = datas[0].totalrekon;
+                            datas[17].total = datas[0].totalrekonobat;
+                            datas[18].total = datas[0].totalkonsulonline;
+                            datas[19].total = datas[0].totalperbekalan;
+                            datas[20].total = datas[0].totaludd;
                         }
 
-                        datas.length = 17;
+                        datas.length = 21;
                         
                         // console.log(datas.length);
 

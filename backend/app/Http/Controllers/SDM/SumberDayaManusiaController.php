@@ -121,7 +121,7 @@ class SumberDayaManusiaController extends ApiController {
 
         $jenisJabatan = JenisJabatan::where('statusenabled', true)->where('kdprofile', $kdProfile)->get();
         $GolonganPegawai = GolonganPegawai::where('statusenabled', true)
-                            ->select(DB::raw("id, namaexternal || ',  ' || name as golongan, level"))
+                            ->select(DB::raw("id, name || ',  ' || namaexternal as golongan, level"))
                             ->where('kdprofile', $kdProfile)->orderBy('id', 'asc')
                             ->get();
         $KelompokJabatan = KelompokJabatan::where('statusenabled', true)->where('kdprofile', $kdProfile)->get();
@@ -682,7 +682,7 @@ class SumberDayaManusiaController extends ApiController {
         ->where("gb.objectpegawaifk",$request['idPegawai'])
         ->orderBy('gb.tgltmt','desc')
         ->get();
-        $gajiBerkala = \DB::select(DB::raw("SELECT distinct gol.id, gol.namaexternal || '  /  ' || gol.name as golongan, rg.nominal, gol.level FROM riwayatgolongan_t rg inner join sdm_golongan_m gol on gol.id = rg.objectgolonganfk
+        $gajiBerkala = \DB::select(DB::raw("SELECT distinct gol.id, gol.name || ',  ' || gol.namaexternal as golongan, rg.nominal, gol.level FROM riwayatgolongan_t rg inner join sdm_golongan_m gol on gol.id = rg.objectgolonganfk
         where rg.objectpegawaifk = $request[idPegawai]
         "));
         $result = array(

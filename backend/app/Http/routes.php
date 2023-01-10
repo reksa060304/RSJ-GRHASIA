@@ -925,6 +925,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::post('farmasi/save-stock-merger', 'Farmasi\PelayananResepController@StokMerger');
           Route::get('farmasi/get-jenis-obat', 'Farmasi\PelayananResepController@getJenisObat');
           Route::get('farmasi/get-penjagaan-closing-kasir', 'Farmasi\PelayananResepController@getPenjagaanClosingKasir');
+          Route::get('farmasi/get-penjagaan-udah-bayar', 'Farmasi\PelayananResepController@getPenjagaanUdahBayar');
           Route::get('tatarekening/get-penjagaan-verif-piutang', 'Farmasi\PelayananResepController@getPenjagaanVerifPiutang');
           Route::get('farmasi/get-penjagaan-verif-kasir', 'Farmasi\PelayananResepController@getPenjagaanVerifKasir');
           Route::post('farmasi/save-pelayananobat', 'Farmasi\PelayananResepController@SimpanPelayananObat');
@@ -1776,6 +1777,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::post('radiologi/save-pelayanan-pasien', 'Radiologi\RadiologiController@savePelayananPasien');
           Route::post('radiologi/delete-order-pelayanan', 'Radiologi\RadiologiController@deleteOrderPelayanan');
           Route::get('radiologi/cekstatusorder','Radiologi\RadiologiController@cekstatusorder');
+          Route::get('radiologi/get-sudah-input-hasil','Radiologi\RadiologiController@cekinputhasil');
           Route::post('radiologi/delete-order-penunjang', 'Radiologi\RadiologiController@hapusOrderPenunjang');
           Route::post('radiologi/save-hasil-radiologi', 'Radiologi\RadiologiController@saveHasilRadiologi');
           Route::get('radiologi/get-hasil-radiologi', 'Radiologi\RadiologiController@getHasilRadiologi');
@@ -1783,6 +1785,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('radiologi/get-norec-hasil-radiologi', 'Radiologi\RadiologiController@getNoRecRadiologi');
           Route::get('radiologi/get-ekspertise', 'Radiologi\RadiologiController@getEkspertise');
           Route::post('radiologi/save-ekspertise', 'Radiologi\RadiologiController@saveEkspertise');
+          Route::post('radiologi/save-verif-dokter', 'Radiologi\RadiologiController@saveVerifDokter');
           Route::post('radiologi/save-ekspertise-pacs', 'Radiologi\RadiologiController@saveEkspertisePACS');
           Route::post('radiologi/save-dicom', 'Radiologi\RadiologiController@saveDicomView');
           Route::get('radiologi/get-list-hasil-radiologi', 'Radiologi\RadiologiController@getListHasilRadiologi');

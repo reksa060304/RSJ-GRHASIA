@@ -16,10 +16,12 @@ define(['initialize'], function (initialize) {
             $scope.item.orderHariIni = true;
             $scope.cekOderHariInis = true;
             $scope.popUp = {}
+            $scope.iddepartemen = 0
             var data2 =[]
             $scope.ruanganIdElektromedik = ''
             var idJenisPelayanan =''
             var kelompokUser=medifirstService.getKelompokUser()
+            $scope.kelUser=medifirstService.getKelompokUser()
             if(kelompokUser =='elektromedik'){
                 medifirstService.get('sysadmin/general/settingdatafixed/get/kdRuanganElektromedik').then(function(e) {
                     $scope.ruanganIdElektromedik = e.data
@@ -227,6 +229,7 @@ define(['initialize'], function (initialize) {
                     // +ruanganTujuanId
                     , true).then(function (dat) {
                         $scope.isRouteLoading = false;
+                        $scope.iddepartemen = dat.data.dataruangan[0].id
                         for (var i = 0; i < dat.data.data.length; i++) {
                             dat.data.data[i].no = i + 1
                             var tanggal = $scope.now;
@@ -318,7 +321,10 @@ define(['initialize'], function (initialize) {
           
 
             $scope.editOrder = function () {
-                if ($scope.dataSelected.status == 'SELESAI') {
+                if ($scope.iddepartemen != 575 && $scope.dataSelected.status == 'SELESAI') {
+                    toastr.error('Data Sudah Di Verifikasi');
+                    return
+                } else if ($scope.iddepartemen == 575 && $scope.dataSelected.status == 'PROSES') {
                     toastr.error('Data Sudah Di Verifikasi');
                     return
                 }
@@ -517,7 +523,11 @@ define(['initialize'], function (initialize) {
                         toastr.error('Periksa Setting Data Fixed VANS LAB ')
                         return
                     }
-                    if($scope.dataSelected.status!='SELESAI')
+                    if($scope.iddepartemen != 575 && $scope.dataSelected.status!='SELESAI')
+                    {
+                        toastr.error('Belum Di verifikasi ')
+                        return
+                    } else if($scope.iddepartemen == 575 && $scope.dataSelected.status!='PROSES')
                     {
                         toastr.error('Belum Di verifikasi ')
                         return
@@ -559,6 +569,37 @@ define(['initialize'], function (initialize) {
 
             }
 
+            $scope.verifikasiDokter = function () {
+                $scope.isSearchingHarga = false;
+                $scope.produkcarisebelumnya='';
+                // isCheckAll = false
+                if ($scope.dataSelected == undefined) {
+                    toastr.error('Pilih data dulu');
+                    return
+                }
+                if($scope.dataSelected.status !='PROSES'){
+                    toastr.error('Input Hasil Terlebih Dahulu Sebelum Verif Dokter');
+                    return
+                }
+
+                console.log($scope.dataSelected)
+
+                medifirstService.get('radiologi/get-sudah-input-hasil?norec='+$scope.dataSelected.norec_so).then(function(e) {
+                    if(e.data.data.length != 0){
+                        medifirstService.post('radiologi/save-verif-dokter',$scope.dataSelected)
+                        .then(function (e) {
+                            init()
+                        });
+                    } else{
+                        toastr.error('Input Hasil Terlebih Dahulu Sebelum Verif Dokter');
+                        return
+                    }
+                    
+                  })
+                
+                
+            }
+
             $scope.verifikasi = function () {
                 $scope.isSearchingHarga = false;
                 $scope.produkcarisebelumnya='';
@@ -567,10 +608,15 @@ define(['initialize'], function (initialize) {
                     toastr.error('Pilih data dulu');
                     return
                 }
-                if($scope.dataSelected.status =='SELESAI'){
-                    toastr.error('Sudah di verifikasi');
+
+                if ($scope.iddepartemen != 575 && $scope.dataSelected.status == 'SELESAI') {
+                    toastr.error('Sudah Di Verifikasi');
+                    return
+                } else if ($scope.iddepartemen == 575 && $scope.dataSelected.status == 'PROSES') {
+                    toastr.error('Sudah Di Verifikasi');
                     return
                 }
+                
                 medifirstService.get('radiologi/cekstatusorder?norec_so='+$scope.dataSelected.norec_so).then(function(e){
                     // console.log(e.data.cekstatus);
                     $scope.cekstatusya= e.data.cekstatus[0].statusorder
@@ -1201,12 +1247,22 @@ define(['initialize'], function (initialize) {
                 }
             }
             var onDataBound = function () {
-                $('td').each(function () {
-                  if ($(this).text() == 'MASUK') {$(this).addClass('grey')}
-                  if ($(this).text() == 'SELESAI') {$(this).addClass('green')}
-                  if ($(this).text() == 'SAMPLE CHECKIN') {$(this).addClass('red')}
-                  if ($(this).text() == '✔') {$(this).addClass('koneng')}
-                })
+                if($scope.iddepartemen == 575){
+                    $('td').each(function () {
+                        if ($(this).text() == 'MASUK') {$(this).addClass('red')}
+                        if ($(this).text() == 'PROSES') {$(this).addClass('koneng')}
+                        if ($(this).text() == 'SELESAI') {$(this).addClass('green')}
+                        if ($(this).text() == '✔') {$(this).addClass('koneng')}
+                      })
+                } else{
+                    $('td').each(function () {
+                        if ($(this).text() == 'MASUK') {$(this).addClass('grey')}
+                        if ($(this).text() == 'SELESAI') {$(this).addClass('green')}
+                        if ($(this).text() == 'SAMPLE CHECKIN') {$(this).addClass('red')}
+                        if ($(this).text() == '✔') {$(this).addClass('koneng')}
+                      })
+                }
+                
               }
             // var onDataBound = function (e) {
             //     var kendoGrid = $("#kGrid").data("kendoGrid"); // get the grid widget
@@ -1331,7 +1387,11 @@ define(['initialize'], function (initialize) {
             }
             $scope.hapusOrder = function(){
                 if( $scope.dataSelected == undefined)return
-                if ($scope.dataSelected.status == 'SELESAI') {
+
+                if ($scope.iddepartemen != 575 && $scope.dataSelected.status == 'SELESAI') {
+                    toastr.error('Data Sudah Di Verifikasi');
+                    return
+                } else if ($scope.iddepartemen == 575 && $scope.dataSelected.status == 'PROSES') {
                     toastr.error('Data Sudah Di Verifikasi');
                     return
                 }
@@ -1450,7 +1510,10 @@ define(['initialize'], function (initialize) {
                     toastr.error('Pilih data dulu');
                     return
                 }
-                if($scope.dataSelected.status !='SELESAI'){
+                if ($scope.iddepartemen != 575 && $scope.dataSelected.status != 'SELESAI') {
+                    toastr.error('Belum di verifikasi');
+                    return
+                } else if ($scope.iddepartemen == 575 && $scope.dataSelected.status != 'PROSES') {
                     toastr.error('Belum di verifikasi');
                     return
                 }

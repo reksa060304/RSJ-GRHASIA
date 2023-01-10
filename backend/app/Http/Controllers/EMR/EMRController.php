@@ -6082,6 +6082,11 @@ class EMRController  extends ApiController
 //        $data = $data->distinct();
         $data = $data->get();
 
+        $ruanganlab = \DB::select(DB::raw("select pd.noregistrasi, apd.norec as norec_apd from antrianpasiendiperiksa_t apd 
+        inner join pasiendaftar_t pd on pd.norec = apd.noregistrasifk 
+        inner join pasien_m ps on ps.id = pd.nocmfk
+        where apd.objectruanganfk = 575
+        $noreg $nocm"));
         $details2 = DB::select(DB::raw("
                 select so.tglorder,so.noorder,
                 pr.id,pr.namaproduk,op.qtyproduk,so.norec
@@ -6115,10 +6120,23 @@ class EMRController  extends ApiController
         } catch (\Exception $e) {
               $status = false;
         }
-   
+        $pp = [];
         foreach ($data as $item) {
             $noorder = $item->noorder;
             $item->details = [];
+            $item->norec_apdlab = '';
+            $item->detailslab = [];
+            foreach ($ruanganlab as $rl) {
+                if($rl->noregistrasi == $item->noregistrasi){
+                    $item->norec_apdlab = $rl->norec_apd;
+                    
+                    $pp = DB::select(DB::raw("SELECT pr.namaproduk, pp.norec as norec_pp, pp.strukorderfk as norec_so, pp.produkfk as idpr
+                    FROM pelayananpasien_t pp
+                    inner join produk_m pr on pr.id = pp.produkfk
+                    where pp.noregistrasifk ilike '$item->norec_apdlab'"));
+                    $item->detailslab = $pp;
+                }
+            }
             foreach($details2 as $dss){
                 if($item->norec == $dss->norec){
                      $item->details[] = array(
@@ -6278,6 +6296,9 @@ class EMRController  extends ApiController
                 }
                 if(isset( $request['keterangan'])){
                       $dataSO->keteranganlainnya = $request['keterangan'];
+                }
+                if(isset( $request['diagnosaklinis'])){
+                      $dataSO->diagnosaklinis = $request['diagnosaklinis'];
                 }
                 $dataSO->tglorder = $request['tanggal'];
                 $dataSO->totalbeamaterai = 0;

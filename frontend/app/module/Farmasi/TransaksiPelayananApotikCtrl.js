@@ -895,67 +895,85 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }
 
             $scope.EditResep = function () {
-                // * Validasi Untuk Sekali Bayar
-                // if ($scope.dataSelected.nostruk != undefined) {
-                //     window.messageContainer.error('Data Sudah Diclosing, Hubungi Tatarekening!!!!')
-                //     return;
-                // }
-                // * Validasi Untuk Sekali Bayar
+                medifirstService.get("farmasi/get-penjagaan-udah-bayar?noregistrasi=" + $scope.item.noregistrasi ).then(function (e) {
+                    
 
-                // if (statusPosting == true) {
-                //     window.messageContainer.error('Data Sudah di Posting, Hubungi Bagian Akuntansi.')
-                //     return;
-                // }
+                    if(e.data.detail[0].nosbmlastfk == null){
+                        var cek = 123;
+                    } else{
+                        var cek = 234;
+                    }
 
-                // medifirstService.getDataTableTransaksi("tatarekening/get-sudah-verif?noregistrasi="+
-                //     $scope.dataSelected.noregistrasi, true).then(function(dat){
+                    console.log(cek);
 
-                 // ** VALIDASI CLOSING STOK 
-                 if (statusPosting == true) {
-                    window.messageContainer.error('Data Stok Sudah Diclosing Tidak Bisa Ubah Resep!')
-                    return;
-                }
-                if ($scope.dataSelected.nostruk != undefined) {
-                    window.messageContainer.error('Sudah verifikasi Kasir tidak dapat di Ubah Resep!')
-                    $scope.isRouteLoading = false;
-                    return;
-                }
-                // **  VALIDASI CLOSING STOK 
-                medifirstService.get("sysadmin/general/get-status-close/" + $scope.item.noregistrasi, false).then(function (rese) {
-                    if (rese.data.status == true) {
-                        toastr.error('Pemeriksaan sudah ditutup tanggal ' + moment(new Date(rese.data.tglclosing)).format('DD-MMM-YYYY HH:mm'), 'Peringatan!')
-                        $scope.isSelesaiPeriksa = true
+                    if(cek == 234){
+                            
+                        messageContainer.error("Data yang sudah dibayar tidak bisa diubah obat");
+                    } else if (cek == 123){
+                        // * Validasi Untuk Sekali Bayar
+                        // if ($scope.dataSelected.nostruk != undefined) {
+                        //     window.messageContainer.error('Data Sudah Diclosing, Hubungi Tatarekening!!!!')
+                        //     return;
+                        // }
+                        // * Validasi Untuk Sekali Bayar
+
+                        // if (statusPosting == true) {
+                        //     window.messageContainer.error('Data Sudah di Posting, Hubungi Bagian Akuntansi.')
+                        //     return;
+                        // }
+
+                        // medifirstService.getDataTableTransaksi("tatarekening/get-sudah-verif?noregistrasi="+
+                        //     $scope.dataSelected.noregistrasi, true).then(function(dat){
+
+                        // ** VALIDASI CLOSING STOK 
+                        if (statusPosting == true) {
+                            window.messageContainer.error('Data Stok Sudah Diclosing Tidak Bisa Ubah Resep!')
+                            return;
+                        }
+                        if ($scope.dataSelected.nostruk != undefined) {
+                            window.messageContainer.error('Sudah verifikasi Kasir tidak dapat di Ubah Resep!')
+                            $scope.isRouteLoading = false;
+                            return;
+                        }
+                        // **  VALIDASI CLOSING STOK 
+                        medifirstService.get("sysadmin/general/get-status-close/" + $scope.item.noregistrasi, false).then(function (rese) {
+                            if (rese.data.status == true) {
+                                toastr.error('Pemeriksaan sudah ditutup tanggal ' + moment(new Date(rese.data.tglclosing)).format('DD-MMM-YYYY HH:mm'), 'Peringatan!')
+                                $scope.isSelesaiPeriksa = true
+                            }
+                        });
+
+                        if ($scope.dataSelected.nostruk != undefined) {
+                            window.messageContainer.error('Sudah verifikasi Kasir Tidak Bisa mengubah Obat!')
+                            return;
+                        } 
+                        // else {
+                            var arrStr = {
+                                0: $scope.item.noMr,
+                                1: $scope.item.namaPasien,
+                                2: $scope.item.jenisKelamin,
+                                3: $scope.dataSelected.noregistrasi,
+                                4: $scope.item.umur,
+                                5: $scope.item.kelas.id,
+                                6: $scope.item.kelas.namakelas,
+                                7: $scope.item.tglRegistrasi,
+                                8: norec_apd,
+                                9: 'EditResep',
+                                10: $scope.item.jenisPenjamin,
+                                11: $scope.item.kelompokPasien,
+                                12: $scope.item.beratBadan,
+                                13: $scope.item.AlergiYa,
+                                14: $scope.dataSelected.norec_resep,
+                                15: $scope.item.dokterdpjp
+                            }
+                            cacheHelper.set('InputResepApotikCtrl', arrStr);
+                            $state.go('InputResepApotik')
+                        // }
+                        // });
+                        //debugger;
                     }
                 });
-
-                if ($scope.dataSelected.nostruk != undefined) {
-                    window.messageContainer.error('Sudah verifikasi Kasir Tidak Bisa mengubah Obat!')
-                    return;
-                } 
-                // else {
-                    var arrStr = {
-                        0: $scope.item.noMr,
-                        1: $scope.item.namaPasien,
-                        2: $scope.item.jenisKelamin,
-                        3: $scope.dataSelected.noregistrasi,
-                        4: $scope.item.umur,
-                        5: $scope.item.kelas.id,
-                        6: $scope.item.kelas.namakelas,
-                        7: $scope.item.tglRegistrasi,
-                        8: norec_apd,
-                        9: 'EditResep',
-                        10: $scope.item.jenisPenjamin,
-                        11: $scope.item.kelompokPasien,
-                        12: $scope.item.beratBadan,
-                        13: $scope.item.AlergiYa,
-                        14: $scope.dataSelected.norec_resep,
-                        15: $scope.item.dokterdpjp
-                    }
-                    cacheHelper.set('InputResepApotikCtrl', arrStr);
-                    $state.go('InputResepApotik')
-                // }
-                // });
-                //debugger;
+                
 
             }
             

@@ -30,6 +30,7 @@ define(['initialize'], function (initialize) {
             function LoadCacheHelper() {
                 // debugger;
                 var chacePeriode = cacheHelper.get('TransaksiPelayananLaboratoriumDokterRevCtrl');
+                console.log(chacePeriode);
                 if (chacePeriode != undefined) {
                     //var arrPeriode = chacePeriode.split(':');
                     $scope.item.noMr = chacePeriode[0]
@@ -198,13 +199,56 @@ define(['initialize'], function (initialize) {
                 }
             }
             $scope.LihatHasil = function (data) {
-                debugger;
+                // debugger;
                 if ($scope.dataSelectedRiwayat == undefined) {
                     toastr.error('Pilih data dulu');
                     return
                 }
                 cacheHelper.set('hideHasilLab', undefined);
+                var daftarCetak = [];
+                console.log($scope.dataSelectedRiwayat);
+                    if ($scope.dataSelectedRiwayat.details != undefined) {
+                        for (let j = 0; j < $scope.dataSelectedRiwayat.detailslab.length; j++) {
+                            console.log($scope.dataSelectedRiwayat.detailslab[j].norec_pp);
+                            daftarCetak.push({
+                                "norec_pp": $scope.dataSelectedRiwayat.detailslab[j].norec_pp,
+                                // "tglPelayanan": $scope.dataGridRiwayat._data[i].tglpelayanan,
+                                // "dokterid": $scope.dataGridRiwayat._data[i].dokterid,
+                                // "dokter": $scope.dataGridRiwayat._data[i].dokter,
+                            })
+                        }
+                    }
+                    // daftarCetak.push({
+                    //     "norec_pp": $scope.dataGridRiwayat._data[i].norec_pp,
+                    //     "tglPelayanan": $scope.dataGridRiwayat._data[i].tglpelayanan,
+                    //     "dokterid": $scope.dataGridRiwayat._data[i].dokterid,
+                    //     "dokter": $scope.dataGridRiwayat._data[i].dokter,
+                    // })
+                    // if ($scope.dataGridRiwayat._data[i].statCheckbox) {
+                    //     // daftarCetak.push($scope.dataGridRiwayat._data[i].norec_pp)
+                    //     /*
+                    //     dokter: "dr. DEA NOVIANA PRAMANTIK, Sp.PK(K)."
+                    //     dokterid: 2668
+                    //     */
+                        
+                    // }
+                var dataCetakFix = '';
+                var result = ''
+                for (let i = 0; i < daftarCetak.length; i++) {
+                    const element = daftarCetak[i];
+                    if (daftarCetak.length == 1) {
+                        dataCetakFix = "'" + element.norec_pp + "'"
+                    } else if (daftarCetak.length == i + 1) {
+                        dataCetakFix = dataCetakFix + "" + "'" + element.norec_pp + "'" + ""
+                    } else {
+                        dataCetakFix = dataCetakFix + "" + "'" + element.norec_pp + "'" + ","
+                    }
 
+                }
+                if (daftarCetak.length == 0) {
+                    toastr.warning('Data Tidak Ada', 'Peringatan')
+                    return
+                }
                 if (norec_apd != null) {
                     var arrStr = {
                         0: $scope.item.noMr,
@@ -222,13 +266,16 @@ define(['initialize'], function (initialize) {
                         12: $scope.item.namaRuangan,
                         13: $scope.tgllahirpasien,
                         14: $scope.jeniskelaminfk,
-                        15: [],
-                        16: $scope.dataSelectedRiwayat.norec
+                        15: dataCetakFix,
+                        16: $scope.dataSelectedRiwayat.norec,
                         // 16: $scope.dataGrid._data[i].tglpelayanan ,
                     }
+                    console.log(dataCetakFix);
                     cacheHelper.set('hideHasilLab', true);
                     cacheHelper.set('chaceHasilLab2', arrStr);
+                    // medifirstService.get('get/orderlab-ruangan?noreg='+ $scope.item.noregistrasi).then(function(data){
 
+                    // })
                     // $state.go('HasilLaboratoriumRev', {
                     //     norecPd: norec_pd,
                     //     norecApd: norec_apd,
@@ -237,7 +284,7 @@ define(['initialize'], function (initialize) {
 
                     // })
                     // window.open("/app/#/SGFzaWxMYWJvcmF0b3JpdW0=/"+ $scope.dataSelectedRiwayat.noorder)
-                    window.open("/app/#/SGFzaWxMYWJvcmF0b3JpdW1SZXY=/"+ norec_pd+"/"+norec_apd)
+                    window.open("/app/#/SGFzaWxMYWJvcmF0b3JpdW1SZXY=/" + norec_pd + "/" + $scope.dataSelectedRiwayat.norec_apdlab)
                     // $state.go('HasilLaboratorium', {
                     //     noOrder: $scope.dataSelectedRiwayat.noorder,
                     //     // norecApd: norec_apd,
@@ -636,6 +683,7 @@ define(['initialize'], function (initialize) {
                             departemenfk: 3,
                             pegawaiorderfk: $scope.PegawaiLogin2.id,
                             keterangan: $scope.item.keterangan != undefined ? $scope.item.keterangan : null,
+                            diagnosaklinis: $scope.item.diagnosaklinis != undefined ? $scope.item.diagnosaklinis : null,
                             iscito: $scope.item.iscito != undefined && $scope.item.iscito == true ? $scope.item.iscito : false,
                             details: data2,
                         }

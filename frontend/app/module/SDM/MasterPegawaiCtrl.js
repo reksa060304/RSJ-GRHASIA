@@ -1766,7 +1766,7 @@ $scope.formatRupiah = function (value, currency) {
 					return;
 				};
 				var idpenyelenggara = 1
-				if(dataItem.penyelenggara != 'INTERNAL'){
+				if(dataItem.penyelenggara != 'Internal'){
 					idpenyelenggara = 2
 					$scope.itemPelatihan.namaPelatihan = dataItem.namapelatihan;
 					$scope.namapelatihan = true
@@ -1959,6 +1959,9 @@ $scope.formatRupiah = function (value, currency) {
 					return;
 				};
 				$scope.itemPandG.masakerjagolongan = dataItem.masakerjagolongan
+				var split = $scope.itemPandG.masakerjagolongan.split(" ")
+				$scope.itemPandG.tahunmasakerjagolongan = split[0]
+				$scope.itemPandG.bulanmasakerjagolongan = split[2]
 				$scope.item.nomorId = dataItem.no;
 				$scope.item.norecPG = dataItem.norec;
 				$scope.itemPandG.golongan = {
@@ -1974,7 +1977,7 @@ $scope.formatRupiah = function (value, currency) {
 				$scope.itemPandG.nominal = dataItem.nominal;
 				$scope.itemPandG.pejabatpenandatangan = dataItem.pejabatpenandatangan
 				$scope.popUpRiwayatPangkatGolongan.center().open();
-				$scope.panggoltmt()
+				// $scope.panggoltmt()
 			}
 
 			function EditGajiBerkala(e) {
@@ -3056,7 +3059,7 @@ $scope.formatRupiah = function (value, currency) {
 					"itemPandG.pejabatmenetapkan|ng-model|Pejabat Yang Menetapkan",
 					"itemPandG.tanggaltmt|k-ng-model|Tanggal TMT",
 					"itemPandG.nominal|ng-model|Nominal",
-					"itemPandG.masakerjagolongan|ng-model|Masa Kerja Golongan",
+					// "itemPandG.masakerjagolongan|ng-model|Masa Kerja Golongan",
 					// "itemPandG.jabatanTtd|k-ng-model|Penandatangan Jabatan",
 				];
 
@@ -3085,7 +3088,7 @@ $scope.formatRupiah = function (value, currency) {
 								data.nosk = $scope.itemPandG.nosk
 								data.nominal = $scope.itemPandG.nominal
 								data.objectpegawaifk = $scope.item.idPegawai;
-								data.masakerjagolongan = $scope.itemPandG.masakerjagolongan
+								data.masakerjagolongan = $scope.itemPandG.tahunmasakerjagolongan + ' tahun ' + $scope.itemPandG.bulanmasakerjagolongan + ' bulan'
 								data.pejabatpenandatangan = $scope.itemPandG.pejabatpenandatangan
 
 								dataRiwayatPangkatGolongan[i] = data;
@@ -3112,7 +3115,7 @@ $scope.formatRupiah = function (value, currency) {
 							nosk: $scope.itemPandG.nosk,
 							nominal: $scope.itemPandG.nominal,
 							objectpegawaifk: $scope.item.idPegawai,
-							masakerjagolongan: $scope.itemPandG.masakerjagolongan,
+							masakerjagolongan: $scope.itemPandG.tahunmasakerjagolongan + ' tahun ' + $scope.itemPandG.bulanmasakerjagolongan + ' bulan',
 						}
 						dataRiwayatPangkatGolongan.push(data)
 						$scope.gridRiwayatPangkatGolongan = new kendo.data.DataSource({
@@ -4447,7 +4450,7 @@ $scope.formatRupiah = function (value, currency) {
 						if ($scope.itemGajiBerkala.golongan.level == 2) {
 							pindah += 6
 						}
-						if ($scope.itemGajiBerkala.golongan.level == 3 || $scope.itemGajiBerkala.golongan.level == 4) {
+						if ($scope.itemGajiBerkala.golongan.level == 3) {
 							pindah += 5
 						}
 					}
@@ -4854,6 +4857,16 @@ $scope.formatRupiah = function (value, currency) {
 			$scope.createIstriSuamiNew = function () {
 				$scope.item.id = "";
 				$scope.item.no = undefined;
+				$scope.ListHubunganKeluarga = [
+					{
+						id: 2,
+						hubungankeluarga: 'Istri'
+					}, 
+					{
+						id: 5,
+						hubungankeluarga: 'Suami'
+					}
+				]
 				$scope.popUpDataKeluargaSuamiIstri.center().open()
 				var actions = $scope.popUpDataKeluargaSuamiIstri.options.actions;
 				actions.splice(actions.indexOf("Close"), 1);
@@ -4928,6 +4941,20 @@ $scope.formatRupiah = function (value, currency) {
 			$scope.createAnakNew = function(){
 				$scope.item.id = "";
 				$scope.item.no = undefined;
+				$scope.ListHubunganKeluarga = [
+					{
+						id: 3,
+						hubungankeluarga: 'Anak Kandung'
+					},
+					{
+						id: 8,
+						hubungankeluarga: 'Anak Tiri'
+					},
+					{
+						id: 9,
+						hubungankeluarga: 'Anak Angkat'
+					}
+				]
 				$scope.popUpDataKeluargaAnak.center().open()
 				var actions = $scope.popUpDataKeluargaAnak.options.actions;
 				actions.splice(actions.indexOf("Close"), 1);
@@ -4999,6 +5026,15 @@ $scope.formatRupiah = function (value, currency) {
 			$scope.createOrangTuaNew = function () {
 				$scope.item.id = "";
 				$scope.item.no = undefined;
+				$scope.ListHubunganKeluarga = [{
+						id: 1,
+						hubungankeluarga: 'Ayah'
+					},
+					{
+						id: 6,
+						hubungankeluarga: 'Ibu'
+					}
+				]
 				$scope.popUpDataKeluargaOrangTua.center().open()
 				var actions = $scope.popUpDataKeluargaOrangTua.options.actions;
 				actions.splice(actions.indexOf("Close"), 1);
