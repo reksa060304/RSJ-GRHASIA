@@ -1,5 +1,6 @@
-define(['initialize'], function (initialize) {
+define(['initialize', 'Configuration'], function (initialize, configuration) {
     'use strict';
+    var baseTransaksi = configuration.baseApiBackend;
     initialize.controller('STSKlaimCtrl', ['$scope', 'DateHelper', '$http', '$state', 'MedifirstService',
         function ($scope, dateHelper, $http, $state, medifirstService) {
             //Inisial Variable   
@@ -117,6 +118,11 @@ define(['initialize'], function (initialize) {
                 $scope.item.tglAwal = moment($scope.now).format('YYYY-MM-DD 00:00');
                 $scope.item.tglAkhir = moment($scope.now).format('YYYY-MM-DD 23:59');
                 $scope.item.namaProduk = undefined;
+            }
+
+            $scope.cetakpdf = function(){
+                console.log($scope.selectedData2)
+                window.open(baseTransaksi + "report/get-cetak-sts-klaim-pdf?nosts="+$scope.selectedData2[0].nosts, '_blank');
             }
 
             $scope.cariFilter = function () {

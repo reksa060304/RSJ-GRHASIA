@@ -2491,6 +2491,29 @@ class ReportController extends ApiController{
         return view('report.spj.cetakstsmanualpdf',compact('pageWidth', 'detail'));
     }
 
+    public function getCetakSTSKlaimPdf(Request $request){
+        $nosts = $request['nosts'];
+
+        $detail = DB::select(DB::raw("select to_char(sts.tglpenerimaan, 'DD-MM-YYYY') tglpenerimaan, sts.nosts, sts.totalsetoran, sts.terbilang, sts.keterangan,
+        stsd.*
+        from surattandasetoran_t sts
+        inner join surattandasetorandetail_t stsd on sts.nosts = stsd.objectstsfk
+        where sts.kdprofile = 30
+        and sts.statusenabled = true
+        and stsd.kdprofile = 30
+        and stsd.statusenabled = true
+        and sts.nosts = '$nosts'
+        order by nourut"));
+        
+        $result = array(
+            'data' => $detail,
+            'message' => '@epic',
+        );
+
+        $pageWidth = 900;
+        return view('report.spj.cetakstsmanualpdf',compact('pageWidth', 'detail'));
+    }
+
     public function getCetakSTSKeuangan(Request $request){
         $tglAwal = $request['tglAwal'];
         $tglAkhir = $request['tglAkhir'];
