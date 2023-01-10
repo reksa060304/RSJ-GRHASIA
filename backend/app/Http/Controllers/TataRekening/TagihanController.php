@@ -14399,10 +14399,11 @@ $result = array(
         
             foreach ($arr as $array_data){
                 $noregistrasi =  $array_data['noregistrasi'];
+                $tglbayar =  $array_data['tglbayar'];
                 //var_dump($array_data);
 
                 $cek = DB::select(DB::raw("
-                select pd.norec, pd.tglregistrasi, sp.totalprekanan totaltarifrs
+                select pd.norec, pd.tglregistrasi, sp.totalprekanan totaltarifrs, pd.objectkelompokpasienlastfk
                     from pasiendaftar_t pd
                 INNER JOIN antrianpasiendiperiksa_t as apd on apd.noregistrasifk=pd.norec
                 INNER JOIN pelayananpasien_t as pp on pp.noregistrasifk=apd.norec
@@ -14410,16 +14411,27 @@ $result = array(
                 where pd.statusenabled = true 
                 and pd.kdprofile = 30 
                 and pd.noregistrasi = '$noregistrasi'
-                group by pd.norec, pd.tglregistrasi, sp.totalprekanan"));
+                group by pd.norec, pd.tglregistrasi, sp.totalprekanan, pd.objectkelompokpasienlastfk"));
 
                 if($array_data['isobat'] == "FALSE" || $array_data['isobat'] == false){
-                    $cekada = DB::select(DB::raw("select pd.norec from 
-                    rekapklaimbpjs_t rkb 
-                    inner join pasiendaftar_t pd on pd.norec = rkb.norecpdfk
-                    where pd.statusenabled = true 
-                    and pd.kdprofile = 30 
-                    and rkb.isobat is null
-                    and pd.noregistrasi = '$noregistrasi'"));
+                    if($cek[0]->objectkelompokpasienlastfk != 4){
+                        $cekada = DB::select(DB::raw("select pd.norec from 
+                        rekapklaimbpjs_t rkb 
+                        inner join pasiendaftar_t pd on pd.norec = rkb.norecpdfk
+                        where pd.statusenabled = true 
+                        and pd.kdprofile = 30 
+                        and rkb.isobat is null
+                        and pd.noregistrasi = '$noregistrasi'"));
+                    } else{
+                        $cekada = DB::select(DB::raw("select pd.norec from 
+                        rekapklaimbpjs_t rkb 
+                        inner join pasiendaftar_t pd on pd.norec = rkb.norecpdfk
+                        where pd.statusenabled = true 
+                        and pd.kdprofile = 30 
+                        and rkb.isobat is null
+                        and pd.noregistrasi = '$noregistrasi'
+                        and rkb.tglbayar::date = '$tglbayar'::date"));
+                    }
 
                     if(empty($cekada)){
                         $STSK = new RekapKlaim();
@@ -14439,13 +14451,24 @@ $result = array(
                     $STSK->tglbayar = $array_data['tglbayar'];
                     $STSK->save();
                 } else if($array_data['isobat'] == true || $array_data['isobat'] == "TRUE"){
-                    $cekada = DB::select(DB::raw("select pd.norec from 
-                    rekapklaimbpjs_t rkb 
-                    inner join pasiendaftar_t pd on pd.norec = rkb.norecpdfk
-                    where pd.statusenabled = true 
-                    and pd.kdprofile = 30 
-                    and rkb.isobat = true
-                    and pd.noregistrasi = '$noregistrasi'"));
+                    if($cek[0]->objectkelompokpasienlastfk != 4){
+                        $cekada = DB::select(DB::raw("select pd.norec from 
+                        rekapklaimbpjs_t rkb 
+                        inner join pasiendaftar_t pd on pd.norec = rkb.norecpdfk
+                        where pd.statusenabled = true 
+                        and pd.kdprofile = 30 
+                        and pd.noregistrasi = '$noregistrasi'
+                        and rkb.isobat = true"));
+                    } else{
+                        $cekada = DB::select(DB::raw("select pd.norec from 
+                        rekapklaimbpjs_t rkb 
+                        inner join pasiendaftar_t pd on pd.norec = rkb.norecpdfk
+                        where pd.statusenabled = true 
+                        and pd.kdprofile = 30 
+                        and pd.noregistrasi = '$noregistrasi'
+                        and rkb.tglbayar::date = '$tglbayar'::date
+                        and rkb.isobat = true"));
+                    }
 
                     if(empty($cekada)){
                         $STSK = new RekapKlaim();
@@ -14518,8 +14541,7 @@ $result = array(
             where pd.statusenabled = true 
             and pd.kdprofile = 30 
             and rkb.isobat is null
-            and pd.noregistrasi = '$noregistrasi'
-            and rkb.tglbayar::date"));
+            and pd.noregistrasi = '$noregistrasi'"));
         } else{
             $cekada = DB::select(DB::raw("select pd.norec from 
             rekapklaimbpjs_t rkb 
@@ -14577,6 +14599,7 @@ $result = array(
         $idProfile = (int) $kdProfile;
         $dataLogin=$request->all();
         $noregistrasi =  $request['noregistrasi'];
+        $tglbayar = $request['tglbayar'];
 
         $cek = DB::select(DB::raw("
         select pd.norec, pd.tglregistrasi, sp.totalprekanan totaltarifrs, pd.objectkelompokpasienlastfk
@@ -14595,18 +14618,17 @@ $result = array(
             inner join pasiendaftar_t pd on pd.norec = rkb.norecpdfk
             where pd.statusenabled = true 
             and pd.kdprofile = 30 
-            and rkb.isobat is null
             and pd.noregistrasi = '$noregistrasi'
-            and rkb.tglbayar::date"));
+            and rkb.isobat = true"));
         } else{
             $cekada = DB::select(DB::raw("select pd.norec from 
             rekapklaimbpjs_t rkb 
             inner join pasiendaftar_t pd on pd.norec = rkb.norecpdfk
             where pd.statusenabled = true 
             and pd.kdprofile = 30 
-            and rkb.isobat is null
             and pd.noregistrasi = '$noregistrasi'
-            and rkb.tglbayar::date = '$tglbayar'::date"));
+            and rkb.tglbayar::date = '$tglbayar'::date
+            and rkb.isobat = true"));
         }
 
         if(empty($cekada)){
@@ -14654,13 +14676,14 @@ $result = array(
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
         $dataLogin=$request->all();
+        $tglbayar = $request['tglbayar'];
 
         for($i = 0; $i < count($request['data']); $i++){
             
                 $noregistrasi = $request['data'][$i]['noregistrasi'];
 
                 $cek = DB::select(DB::raw("
-                select pd.norec, pd.tglregistrasi, sp.totalprekanan totaltarifrs
+                select pd.norec, pd.tglregistrasi, sp.totalprekanan totaltarifrs, pd.objectkelompokpasienlastfk
                     from pasiendaftar_t pd
                 INNER JOIN antrianpasiendiperiksa_t as apd on apd.noregistrasifk=pd.norec
                 INNER JOIN pelayananpasien_t as pp on pp.noregistrasifk=apd.norec
@@ -14668,14 +14691,26 @@ $result = array(
                 where pd.statusenabled = true 
                 and pd.kdprofile = 30 
                 and pd.noregistrasi = '$noregistrasi'
-                group by pd.norec, pd.tglregistrasi, sp.totalprekanan"));
+                group by pd.norec, pd.tglregistrasi, sp.totalprekanan, pd.objectkelompokpasienlastfk"));
 
-                $cekada = DB::select(DB::raw("select pd.norec from 
-                rekapklaimbpjs_t rkb 
-                inner join pasiendaftar_t pd on pd.norec = rkb.norecpdfk
-                where pd.statusenabled = true 
-                and pd.kdprofile = 30 
-                and pd.noregistrasi = '$noregistrasi'"));
+                if($cek[0]->objectkelompokpasienlastfk != 4){
+                    $cekada = DB::select(DB::raw("select pd.norec from 
+                    rekapklaimbpjs_t rkb 
+                    inner join pasiendaftar_t pd on pd.norec = rkb.norecpdfk
+                    where pd.statusenabled = true 
+                    and pd.kdprofile = 30 
+                    and rkb.isobat is null
+                    and pd.noregistrasi = '$noregistrasi'"));
+                } else{
+                    $cekada = DB::select(DB::raw("select pd.norec from 
+                    rekapklaimbpjs_t rkb 
+                    inner join pasiendaftar_t pd on pd.norec = rkb.norecpdfk
+                    where pd.statusenabled = true 
+                    and pd.kdprofile = 30 
+                    and rkb.isobat is null
+                    and pd.noregistrasi = '$noregistrasi'
+                    and rkb.tglbayar::date = '$tglbayar'::date"));
+                }
 
                 if(empty($cekada)){
                     $STSK = new RekapKlaim();
