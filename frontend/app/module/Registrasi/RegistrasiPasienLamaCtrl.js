@@ -250,6 +250,13 @@ define(['initialize'], function (initialize) {
                         "template": '# if( iskompleks==1 ) {# ✔ # } else {#  #} #'
 
                     },
+                    {
+                        "field": "sidik_jari",
+                        "title": "Sidik Jari",
+                        "width": "50px",
+                       // "template": '# if( iskompleks==1 ) {# ✔ # } else {#  #} #'
+
+                    },
                 ]
             };
 
