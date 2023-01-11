@@ -415,6 +415,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     $scope.item.DokterPengirim = result.dokterpengirim;
                     $scope.item.alamatDokterPengirim = result.alamatdokterpengirim;
                     $scope.item.alergi = result.alergi
+                    $scope.item.sidik_jari = result.sidik_jari
                     if (result.pekerjaanpenangggungjawab) {
                         $scope.item.pekerjaanP = { id: result.idpek, pekerjaan: result.pekerjaanpenangggungjawab };
                     }
@@ -834,6 +835,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                         }
                                         var postJson = {
                                             'alergi': $scope.item.alergi != undefined ? $scope.item.alergi : null,
+                                            'sidik_jari': $scope.item.sidik_jari != undefined ? $scope.item.sidik_jari : null,
                                             'isbayi': $scope.isBayi,
                                             'isEditPasien': $scope.isEditPasien,
                                             'istriageigd': $scope.isTriage,
@@ -986,6 +988,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         }else{
                             var postJson = {
                                 'alergi': $scope.item.alergi != undefined ? $scope.item.alergi : null,
+                                'sidik_jari': $scope.item.sidik_jari != undefined ? $scope.item.sidik_jari : null,
                                 'isbayi': $scope.isBayi,
                                 'isEditPasien': $scope.isEditPasien,
                                 'istriageigd': $scope.isTriage,
