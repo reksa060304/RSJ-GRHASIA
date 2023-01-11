@@ -68,7 +68,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
       $scope.isLoadOtomatisProduk=false;
       function loadOtomatisProduk(){
         console.log($scope.item.pasien.kdinternal)
-        if($scope.item.pasien.kdinternal  == "JIW" && $scope.pegawaiLogin.jenisPegawai.jenispegawai == "DOKTER"){
+        if(($scope.item.pasien.kdinternal  == "JIW") && ($scope.pegawaiLogin.jenisPegawai.jenispegawai == "DOKTER" || $scope.pegawaiLogin.jenisPegawai.jenispegawai == "Dokter")){
           $scope.isLoadOtomatisProduk = true;
           
           $scope.item.namaProduk={
@@ -88,7 +88,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
           
           $scope.getHargaTindakan();
           //$scope.tambahTindakans();//MASUKIN DI HARGA KOMPONEN
-        }else if($scope.ruanganfk  == 768 && $scope.pegawaiLogin.jenisPegawai.jenispegawai == "DOKTER"){
+        }else if($scope.ruanganfk  == 768 && ($scope.pegawaiLogin.jenisPegawai.jenispegawai == "DOKTER" || $scope.pegawaiLogin.jenisPegawai.jenispegawai == "Dokter")){
           $scope.isLoadOtomatisProduk = true;
           
           $scope.item.namaProduk={
@@ -108,7 +108,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
           
           $scope.getHargaTindakan();
           //$scope.tambahTindakans();//MASUKIN DI HARGA KOMPONEN
-        }else if($scope.ruanganfk  == 770 && $scope.pegawaiLogin.jenisPegawai.jenispegawai == "DOKTER"){
+        }else if($scope.ruanganfk  == 770 && ($scope.pegawaiLogin.jenisPegawai.jenispegawai == "DOKTER" || $scope.pegawaiLogin.jenisPegawai.jenispegawai == "Dokter")){
           $scope.isLoadOtomatisProduk = true;
           
           $scope.item.namaProduk={
@@ -128,7 +128,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
           
           $scope.getHargaTindakan();
           //$scope.tambahTindakans();//MASUKIN DI HARGA KOMPONEN
-        }else if($scope.departemenfk  == 16 && $scope.pegawaiLogin.jenisPegawai.jenispegawai == "DOKTER"){
+        }else if($scope.departemenfk  == 16 && ($scope.pegawaiLogin.jenisPegawai.jenispegawai == "DOKTER" || $scope.pegawaiLogin.jenisPegawai.jenispegawai == "Dokter")){
           $scope.isLoadOtomatisProduk = true;
           
           $scope.item.namaProduk={
@@ -361,7 +361,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
           // if (cookie[1] == 'dokter')
           $scope.selectedPegawai = [({ id: $scope.pegawaiLogin.id, namalengkap: $scope.pegawaiLogin.namaLengkap })]
            console.log($scope.pegawaiLogin)
-          if($scope.item.pasien.kdinternal  == "JIW" && $scope.pegawaiLogin.jenisPegawai.jenispegawai == "DOKTER"){
+          if(($scope.item.pasien.kdinternal  == "JIW") && ($scope.pegawaiLogin.jenisPegawai.jenispegawai == "DOKTER" || $scope.pegawaiLogin.jenisPegawai.jenispegawai == "Dokter")){
             let params = $scope.item.pasien.noregistrasi;    
             if($scope.item.pasien.noreservasi != undefined && $scope.item.pasien.noreservasi != '' && $scope.item.pasien.noreservasi !='Kios-K'){
                 params = $scope.item.pasien.noreservasi;
@@ -371,7 +371,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             loadOtomatisProduk();
           }
 
-          if($scope.ruanganfk  == 768 && $scope.pegawaiLogin.jenisPegawai.jenispegawai == "DOKTER"){
+          if($scope.ruanganfk  == 768 && ($scope.pegawaiLogin.jenisPegawai.jenispegawai == "DOKTER" || $scope.pegawaiLogin.jenisPegawai.jenispegawai == "Dokter")){
             let params = $scope.item.pasien.noregistrasi;    
             if($scope.item.pasien.noreservasi != undefined && $scope.item.pasien.noreservasi != '' && $scope.item.pasien.noreservasi !='Kios-K'){
                 params = $scope.item.pasien.noreservasi;
@@ -381,7 +381,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             loadOtomatisProduk();
           }
 
-          if($scope.ruanganfk  == 770 && $scope.pegawaiLogin.jenisPegawai.jenispegawai == "DOKTER"){
+          if($scope.ruanganfk  == 770 && ($scope.pegawaiLogin.jenisPegawai.jenispegawai == "DOKTER" || $scope.pegawaiLogin.jenisPegawai.jenispegawai == "Dokter")){
             let params = $scope.item.pasien.noregistrasi;    
             if($scope.item.pasien.noreservasi != undefined && $scope.item.pasien.noreservasi != '' && $scope.item.pasien.noreservasi !='Kios-K'){
                 params = $scope.item.pasien.noreservasi;
@@ -392,7 +392,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
           }
 
           medifirstService.get("emr/get-kode-eksternal-pegawai?id=" + $scope.pegawaiLogin.id, true ).then(function (e) {
-            if($scope.departemenfk  == 16 && $scope.pegawaiLogin.jenisPegawai.jenispegawai == "DOKTER" && e.data.data[0].kodeexternal == "JIWA"){
+            console.log($scope.departemenfk)
+            console.log(e.data.data[0].kodeexternal)
+            if($scope.departemenfk  == 16 && ($scope.pegawaiLogin.jenisPegawai.jenispegawai == "DOKTER" || $scope.pegawaiLogin.jenisPegawai.jenispegawai == "Dokter") && e.data.data[0].kodeexternal == "JIWA"){
               let params = $scope.item.pasien.noregistrasi;    
               if($scope.item.pasien.noreservasi != undefined && $scope.item.pasien.noreservasi != '' && $scope.item.pasien.noreservasi !='Kios-K'){
                   params = $scope.item.pasien.noreservasi;
