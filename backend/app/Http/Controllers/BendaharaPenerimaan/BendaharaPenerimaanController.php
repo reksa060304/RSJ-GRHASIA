@@ -2724,7 +2724,7 @@ class BendaharaPenerimaanController extends ApiController {
 
         // konten STS Detail
 
-        $data = DB::select(DB::raw("select distinct 0 objectkelompoktransaksifk, sbm.norec norecsbm, pp.norec, sc.tglclosing, ru.namaruangan, ru.id idruangan, pr.namaproduk, pr.id idproduk, pp.isobat,
+        $data = DB::select(DB::raw("select distinct kp.id idkelompokpasien, 0 objectkelompoktransaksifk, sbm.norec norecsbm, pp.norec, sc.tglclosing, ru.namaruangan, ru.id idruangan, pr.namaproduk, pr.id idproduk, pp.isobat,
         (((CASE WHEN pp.hargajual IS NULL THEN 0 ELSE pp.hargajual::float8 END - CASE WHEN pp.hargadiscount IS NULL THEN
         0 ELSE pp.hargadiscount::float8 END) * pp.jumlah) + CASE WHEN pp.jasa IS NULL THEN 0 ELSE pp.jasa::float8 END ) AS totaldibayarclosing,
         ru.objectdepartemenfk, sbmcr.objectcarabayarfk, sbm.totaldibayar as totaldibayarsbm, sc.noclosing, sc.tglclosing,
@@ -2757,7 +2757,7 @@ class BendaharaPenerimaanController extends ApiController {
         
         union all
         
-        select distinct sp.objectkelompoktransaksifk, sbm.norec norecsbm, sp.norec, sc.tglclosing, ru.namaruangan, ru.id idruangan, pr.namaproduk, pr.id idproduk, pp.isobat,
+        select distinct 0 idkelompokpasien, sp.objectkelompoktransaksifk, sbm.norec norecsbm, sp.norec, sc.tglclosing, ru.namaruangan, ru.id idruangan, pr.namaproduk, pr.id idproduk, pp.isobat,
         (spd.qtyproduk * spd.hargasatuan * spd.qtyoranglast)::float4 as totaldibayarclosing,
         ru.objectdepartemenfk, sbmcr.objectcarabayarfk, sbm.totaldibayar as totaldibayarsbm, sc.noclosing, sc.tglclosing,
         sck.totaldibayar as totaldibayar,sck.carabayarfk, cb.carabayar, djp.detailjenisproduk, jpr.id as jenisproduk
@@ -2839,6 +2839,12 @@ class BendaharaPenerimaanController extends ApiController {
         $parkir = 0;
         $lainlain = 0;
         $grandtotal = 0;
+        $jumlahcostsharingbpjsrajal = 0;
+        $jumlahcostsharingjamkesdarajal = 0;
+        $jumlahcostsharingjamkesosrajal = 0;
+        $jumlahcostsharingbpjsranap = 0;
+        $jumlahcostsharingjamkesdaranap = 0;
+        $jumlahcostsharingjamkesosranap = 0;
 
         $voljumlahpoliklinik = 0;
         $voljumlahperiksajiwa = 0;
@@ -2898,11 +2904,53 @@ class BendaharaPenerimaanController extends ApiController {
         $volparkir = 0;
         $vollainlain = 0;
         $cekjumlah = '';
+        $voljumlahcostsharingbpjsrajal = 0;
+        $voljumlahcostsharingjamkesdarajal = 0;
+        $voljumlahcostsharingjamkesosrajal = 0;
+        $voljumlahcostsharingbpjsranap = 0;
+        $voljumlahcostsharingjamkesdaranap = 0;
+        $voljumlahcostsharingjamkesosranap = 0;
 
         foreach($data as $konten){
             $cekjumlah = '';
             $cekharga = 0;
-            if($konten->idruangan == 752 && $konten->idproduk == 5006382){
+            if($konten->idkelompokpasien != 0 && $konten->idkelompokpasien != 1 && $konten->idkelompokpasien != 12 && $konten->idkelompokpasien != 18 && $konten->idkelompokpasien != 8 && $konten->objectdepartemenfk != 16 && $konten->totaldibayarclosing != $konten->totaldibayarsbm){
+                $jumlahcostsharingbpjsrajal += $konten->totaldibayarsbm;
+                $voljumlahcostsharingbpjsrajal++;
+                $cekjumlah = $konten->namaproduk;
+            }
+
+            else if($konten->idkelompokpasien != 0 && $konten->idkelompokpasien != 1 && $konten->idkelompokpasien != 12 && $konten->idkelompokpasien != 18 && $konten->idkelompokpasien != 8 && $konten->objectdepartemenfk == 16 && $konten->totaldibayarclosing != $konten->totaldibayarsbm){
+                $jumlahcostsharingbpjsranap += $konten->totaldibayarsbm;
+                $voljumlahcostsharingbpjsranap++;
+                $cekjumlah = $konten->namaproduk;
+            }
+
+            else if($konten->idkelompokpasien != 0 && $konten->idkelompokpasien != 1 && $konten->idkelompokpasien != 12 && $konten->idkelompokpasien == 18 && $konten->objectdepartemenfk != 16 && $konten->totaldibayarclosing != $konten->totaldibayarsbm){
+                $jumlahcostsharingjamkesosrajal += $konten->totaldibayarsbm;
+                $voljumlahcostsharingjamkesosrajal++;
+                $cekjumlah = $konten->namaproduk;
+            }
+
+            else if($konten->idkelompokpasien != 0 && $konten->idkelompokpasien != 1 && $konten->idkelompokpasien != 12 && $konten->idkelompokpasien == 18 && $konten->objectdepartemenfk == 16 && $konten->totaldibayarclosing != $konten->totaldibayarsbm){
+                $jumlahcostsharingjamkesosranap += $konten->totaldibayarsbm;
+                $voljumlahcostsharingjamkesosranap++;
+                $cekjumlah = $konten->namaproduk;
+            }
+
+            else if($konten->idkelompokpasien != 0 && $konten->idkelompokpasien != 1 && $konten->idkelompokpasien != 12 && $konten->idkelompokpasien == 8 && $konten->objectdepartemenfk != 16 && $konten->totaldibayarclosing != $konten->totaldibayarsbm){
+                $jumlahcostsharingjamkesdarajal += $konten->totaldibayarsbm;
+                $voljumlahcostsharingjamkesdarajal++;
+                $cekjumlah = $konten->namaproduk;
+            }
+
+            else if($konten->idkelompokpasien != 0 && $konten->idkelompokpasien != 1 && $konten->idkelompokpasien != 12 && $konten->idkelompokpasien == 8 && $konten->objectdepartemenfk == 16 && $konten->totaldibayarclosing != $konten->totaldibayarsbm){
+                $jumlahcostsharingjamkesdaranap += $konten->totaldibayarsbm;
+                $voljumlahcostsharingjamkesdaranap++;
+                $cekjumlah = $konten->namaproduk;
+            }
+
+            else if($konten->idruangan == 752 && $konten->idproduk == 5006382){
                 $jumlahperiksajiwa += $konten->totaldibayarclosing;
                 $voljumlahperiksajiwa++;
                 $cekjumlah = $konten->namaproduk;
@@ -3172,16 +3220,16 @@ class BendaharaPenerimaanController extends ApiController {
         
         $jumlahperiksaigd = $jumlahperiksaigdjiwa + $jumlahperiksaigdnonjiwa;
         $voljumlahperiksaigd = $voljumlahperiksaigdjiwa + $voljumlahperiksaigdnonjiwa;
-        $jumlahpoliklinik = $jumlahperiksajiwa + $jumlahperiksaumum + $jumlahperiksanapza + $jumlahperiksagigi + $jumlahperiksadalam + $jumlahperiksaanak + $jumlahperiksasyaraf + $jumlahperiksaigd + $jumlahperiksaelektromedik;
-        $voljumlahpoliklinik = $voljumlahperiksajiwa + $voljumlahperiksaumum + $voljumlahperiksanapza + $voljumlahperiksagigi + $voljumlahperiksadalam + $voljumlahperiksaanak + $voljumlahperiksasyaraf + $voljumlahperiksaigd;
+        $jumlahpoliklinik = $jumlahperiksajiwa + $jumlahperiksaumum + $jumlahperiksanapza + $jumlahperiksagigi + $jumlahperiksadalam + $jumlahperiksaanak + $jumlahperiksasyaraf + $jumlahperiksaigd + $jumlahperiksaelektromedik + $jumlahcostsharingbpjsrajal + $jumlahcostsharingjamkesdarajal + $jumlahcostsharingjamkesosrajal;
+        $voljumlahpoliklinik = $voljumlahperiksajiwa + $voljumlahperiksaumum + $voljumlahperiksanapza + $voljumlahperiksagigi + $voljumlahperiksadalam + $voljumlahperiksaanak + $voljumlahperiksasyaraf + $voljumlahperiksaigd + $voljumlahperiksaelektromedik + $voljumlahcostsharingbpjsrajal + $voljumlahcostsharingjamkesdarajal + $voljumlahcostsharingjamkesosrajal;
         $jumlahobatobatrajal = $jumlahobatrajal;
         $voljumlahobatobatrajal = $voljumlahobatrajal;
         $jumlahobatobatranap = $jumlahobatranap;
         $voljumlahobatobatranap = $voljumlahobatranap;
         $jumlahpenunjang = $jumlahlaboratorium + $jumlahelektromedik + $jumlahfisioterapi + $jumlahradiologi + $jumlahdiklat;
         $voljumlahpenunjang = $voljumlahlaboratorium + $voljumlahelektromedik + $voljumlahfisioterapi + $voljumlahradiologi + $voljumlahdiklat;
-        $jumlahperawatanpasienranap = $jumlahkelassatu + $jumlahkelasdua + $jumlahkelastiga + $jumlahkelasvip + $jumlahkelasuppi;
-        $voljumlahperawatanpasienranap = $voljumlahkelassatu + $voljumlahkelasdua + $voljumlahkelastiga + $voljumlahkelasvip + $voljumlahkelasuppi;
+        $jumlahperawatanpasienranap = $jumlahkelassatu + $jumlahkelasdua + $jumlahkelastiga + $jumlahkelasvip + $jumlahkelasuppi + $jumlahcostsharingbpjsranap + $jumlahcostsharingjamkesdaranap + $jumlahcostsharingjamkesosranap;
+        $voljumlahperawatanpasienranap = $voljumlahkelassatu + $voljumlahkelasdua + $voljumlahkelastiga + $voljumlahkelasvip + $voljumlahkelasuppi + $voljumlahcostsharingbpjsranap + $voljumlahcostsharingjamkesdaranap + $voljumlahcostsharingjamkesosranap;
         $jumlahlainlain = $jumlahlegalisir + $jumlahsewagedungterapi + $jumlahsewalapangan + $jumlahsewagedungdiklat + $jumlahsewagedunggrhasiainn + $jumlahsewatanah + $jumlahsewakalandra + $jumlahsewatempatfotocopy + $jumlahsewamanekin + $jumlahsewaambulan + $jumlahsewabus + $hasilketrampilan + $parkir + $lainlain;
         $voljumlahlainlain = $voljumlahlegalisir + $voljumlahsewagedungterapi + $voljumlahsewalapangan + $voljumlahsewagedungdiklat + $voljumlahsewagedunggrhasiainn + $voljumlahsewatanah + $voljumlahsewakalandra + $voljumlahsewatempatfotocopy + $voljumlahsewamanekin + $voljumlahsewaambulan + $voljumlahsewabus + $volhasilketrampilan + $volparkir + $vollainlain;
 
@@ -3390,6 +3438,48 @@ class BendaharaPenerimaanController extends ApiController {
         $STSD->uraian = 'PERIKSA DOKTER IGD NON JIWA';
         $STSD->kolom1 = $jumlahperiksaigdnonjiwa;
         $STSD->vol = $voljumlahperiksaigdnonjiwa;
+        $STSD->statusenabled = true;
+        $STSD->objectstsfk = $nosts;
+        $STSD->save();
+
+        $newId = SuratTandaSetoranDetail::max('nourut') +1 ;
+
+        $STSD = new SuratTandaSetoranDetail();
+        $STSD->norec  = $STSD->generateNewId();
+        $STSD->kdprofile = $idProfile;
+        $STSD->nourut = $newId;
+        $STSD->jenisdata = 'subkonten';
+        $STSD->uraian = 'COST SHARING BPJS';
+        $STSD->kolom1 = $jumlahcostsharingbpjsrajal;
+        $STSD->vol = $voljumlahcostsharingbpjsrajal;
+        $STSD->statusenabled = true;
+        $STSD->objectstsfk = $nosts;
+        $STSD->save();
+
+        $newId = SuratTandaSetoranDetail::max('nourut') +1 ;
+
+        $STSD = new SuratTandaSetoranDetail();
+        $STSD->norec  = $STSD->generateNewId();
+        $STSD->kdprofile = $idProfile;
+        $STSD->nourut = $newId;
+        $STSD->jenisdata = 'subkonten';
+        $STSD->uraian = 'COST SHARING JAMKESDA BANTUL';
+        $STSD->kolom1 = $jumlahcostsharingjamkesdarajal;
+        $STSD->vol = $voljumlahcostsharingjamkesdarajal;
+        $STSD->statusenabled = true;
+        $STSD->objectstsfk = $nosts;
+        $STSD->save();
+
+        $newId = SuratTandaSetoranDetail::max('nourut') +1 ;
+
+        $STSD = new SuratTandaSetoranDetail();
+        $STSD->norec  = $STSD->generateNewId();
+        $STSD->kdprofile = $idProfile;
+        $STSD->nourut = $newId;
+        $STSD->jenisdata = 'subkonten';
+        $STSD->uraian = 'COST SHARING JAMKESOS';
+        $STSD->kolom1 = $jumlahcostsharingjamkesosrajal;
+        $STSD->vol = $voljumlahcostsharingjamkesosrajal;
         $STSD->statusenabled = true;
         $STSD->objectstsfk = $nosts;
         $STSD->save();
@@ -3696,6 +3786,48 @@ class BendaharaPenerimaanController extends ApiController {
         $STSD->uraian = 'Kelas III';
         $STSD->kolom1 = $jumlahkelastiga;
         $STSD->vol = $voljumlahkelastiga;
+        $STSD->statusenabled = true;
+        $STSD->objectstsfk = $nosts;
+        $STSD->save();
+
+        $newId = SuratTandaSetoranDetail::max('nourut') +1 ;
+
+        $STSD = new SuratTandaSetoranDetail();
+        $STSD->norec  = $STSD->generateNewId();
+        $STSD->kdprofile = $idProfile;
+        $STSD->nourut = $newId;
+        $STSD->jenisdata = 'subkonten';
+        $STSD->uraian = 'Cost Sharing BPJS';
+        $STSD->kolom1 = $jumlahcostsharingbpjsranap;
+        $STSD->vol = $voljumlahcostsharingbpjsranap;
+        $STSD->statusenabled = true;
+        $STSD->objectstsfk = $nosts;
+        $STSD->save();
+
+        $newId = SuratTandaSetoranDetail::max('nourut') +1 ;
+
+        $STSD = new SuratTandaSetoranDetail();
+        $STSD->norec  = $STSD->generateNewId();
+        $STSD->kdprofile = $idProfile;
+        $STSD->nourut = $newId;
+        $STSD->jenisdata = 'subkonten';
+        $STSD->uraian = 'Cost Sharing Jamkesda Bantul';
+        $STSD->kolom1 = $jumlahcostsharingjamkesdaranap;
+        $STSD->vol = $voljumlahcostsharingjamkesdaranap;
+        $STSD->statusenabled = true;
+        $STSD->objectstsfk = $nosts;
+        $STSD->save();
+
+        $newId = SuratTandaSetoranDetail::max('nourut') +1 ;
+
+        $STSD = new SuratTandaSetoranDetail();
+        $STSD->norec  = $STSD->generateNewId();
+        $STSD->kdprofile = $idProfile;
+        $STSD->nourut = $newId;
+        $STSD->jenisdata = 'subkonten';
+        $STSD->uraian = 'Cost Sharing Jamkesos';
+        $STSD->kolom1 = $jumlahcostsharingjamkesosranap;
+        $STSD->vol = $voljumlahcostsharingjamkesosranap;
         $STSD->statusenabled = true;
         $STSD->objectstsfk = $nosts;
         $STSD->save();
