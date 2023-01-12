@@ -829,51 +829,62 @@
                     plotBackgroundColor: null,
                     plotBorderWidth: null,
                     plotShadow: false,
-                    type: 'pie'
+                    type: 'column'
                 },
                 title: {
                     text: '',
                 },
+                xAxis: {
+                    categories: ["Jumlah "],
+                    labels: {
+                        align: 'center',
+                        style: {
+                            fontSize: '13px',
+                            fontFamily: 'Verdana, sans-serif'
+                        }
+                    }
+                },
+                yAxis: {
+                    title: {
+                        text: 'Pendidikan'
+                    }
+                },
                 tooltip: {
-                    formatter: function (e) {
+                    formatter: function () {
                         let point = this.point,
-                            s = this.percentage.toFixed(2) + ' %';//this.key + ': ' + Highcharts.numberFormat(this.y, 0, '.', ',') + ' <br/>';
+                            s = this.x + ':' + Highcharts.numberFormat(this.y, 0, '.', ',') + ' Pegawai <br/>';
                         return s;
 
                     }
                 },
                 plotOptions: {
-                    pie: {
-                        allowPointSelect: true,
+                    column: {
+                        // url:"#",
                         cursor: 'pointer',
+
                         dataLabels: {
                             enabled: true,
-                            color: '#000000',
-                            connectorColor: '#000000',
+                            color: this.colors[1],
+
                             formatter: function () {
-                                return this.key + ': ' + Highcharts.numberFormat(this.y, 0, '.', ',') + ' <br/>';// this.percentage.toFixed(2) + ' %';
+                                return Highcharts.numberFormat(this.y, 0, '.', ',') + ' Pegawai';
                             }
                         },
                         showInLegend: true
-                    },
-
+                    }
+                },
+                series: seriesKatPegawai,
+                exporting: {
+                    enabled: false
                 },
                 credits: {
-                    text: 'Total : ' + totalAll
-                    // enabled: false
+                    enabled: false
                 },
                 legend: {
                     enabled: true,
                     borderRadius: 5,
                     borderWidth: 1
                 },
-                series: [{
-                    type: 'pie',
-                    name: 'Total',
-                    // colorByPoint: true,
-                    data: seriesKatPegawai
-
-                }]
             })
         }
         function detailPegawai(namess) {
