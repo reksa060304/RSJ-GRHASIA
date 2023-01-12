@@ -97,7 +97,7 @@
                                 </div>
                             </div>
                             <div class="col-md-12 col-lg-4" style="cursor: pointer" onclick="detailPegawai('Non Aktif')">
-                                <div class="card bg-c-blue order-card">
+                                <div class="card bg-c-yellow order-card">
                                     <div class="card-block">
                                         <h6>NON AKTIF</h6>
                                         <h2>{{ $res['pegawai']['nonaktif']}}</h2>
@@ -107,12 +107,102 @@
                                 </div>
                             </div>
                             <div class="col-md-12 col-lg-4" >
-                                <div class="card bg-c-green order-card">
+                                <div class="card bg-c-yellow order-card">
                                     <div class="card-block">
                                         <h6>TOTAL PEGAWAI</h6>
                                         <h2>{{$res['pegawai']['aktif']+ $res['pegawai']['nonaktif']}}</h2>
                                         <p class="m-b-0"> <i class="feather icon-arrow-up"></i></p>
                                         <i class="card-icon feather icon-users"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-lg-3"  style="cursor: pointer">
+                                <div class="card bg-c-blue order-card">
+                                    <div class="card-block">
+                                        <h6>JUMLAH PNS</h6>
+                                        <h2>{{$res['pegawai']['pns']}}</h2>
+                                        <p class="m-b-0"> <i class="feather icon-arrow-up"></i></p>
+                                        <i class="card-icon feather icon-filter"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-lg-2"  style="cursor: pointer">
+                                <div class="card bg-c-blue order-card">
+                                    <div class="card-block">
+                                        <h6>PNS PEREMPUAN</h6>
+                                        <h2>{{$res['pegawai']['pnsp']}}</h2>
+                                        <p class="m-b-0"> <i class="feather icon-arrow-up"></i></p>
+                                        <i class="card-icon feather icon-filter"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-lg-2"  style="cursor: pointer">
+                                <div class="card bg-c-blue order-card">
+                                    <div class="card-block">
+                                        <h6>PNS LAKI-LAKI</h6>
+                                        <h2>{{$res['pegawai']['pnsl']}}</h2>
+                                        <p class="m-b-0"> <i class="feather icon-arrow-up"></i></p>
+                                        <i class="card-icon feather icon-filter"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-lg-2"  style="cursor: pointer">
+                                <div class="card bg-c-green order-card">
+                                    <div class="card-block">
+                                        <h6>TENAGA BANTU</h6>
+                                        <h2>{{$res['pegawai']['naban']}}</h2>
+                                        <p class="m-b-0"> <i class="feather icon-arrow-up"></i></p>
+                                        <i class="card-icon feather icon-filter"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-lg-3"  style="cursor: pointer">
+                                <div class="card bg-c-green order-card">
+                                    <div class="card-block">
+                                        <h6>P3K</h6>
+                                        <h2>{{$res['pegawai']['p3k']}}</h2>
+                                        <p class="m-b-0"> <i class="feather icon-arrow-up"></i></p>
+                                        <i class="card-icon feather icon-filter"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-lg-3"  style="cursor: pointer">
+                                <div class="card bg-danger order-card">
+                                    <div class="card-block">
+                                        <h6>JABATAN FUNGSIONAL LAKI-LAKI</h6>
+                                        <h2>{{$res['pegawai']['jfl']}}</h2>
+                                        <p class="m-b-0"> <i class="feather icon-arrow-up"></i></p>
+                                        <i class="card-icon feather icon-filter"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-lg-3"  style="cursor: pointer">
+                                <div class="card bg-danger order-card">
+                                    <div class="card-block">
+                                        <h6>JABATAN FUNGSIONAL PEREMPUAN</h6>
+                                        <h2>{{$res['pegawai']['jfp']}}</h2>
+                                        <p class="m-b-0"> <i class="feather icon-arrow-up"></i></p>
+                                        <i class="card-icon feather icon-filter"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-lg-3"  style="cursor: pointer">
+                                <div class="card bg-c-kuning order-card">
+                                    <div class="card-block">
+                                        <h6>CPNS LAKI-LAKI</h6>
+                                        <h2>{{$res['pegawai']['cpnsl']}}</h2>
+                                        <p class="m-b-0"> <i class="feather icon-arrow-up"></i></p>
+                                        <i class="card-icon feather icon-filter"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-lg-3"  style="cursor: pointer">
+                                <div class="card bg-c-kuning order-card">
+                                    <div class="card-block">
+                                        <h6>CPNS PEREMPUAN</h6>
+                                        <h2>{{$res['pegawai']['cpnsp']}}</h2>
+                                        <p class="m-b-0"> <i class="feather icon-arrow-up"></i></p>
+                                        <i class="card-icon feather icon-filter"></i>
                                     </div>
                                 </div>
                             </div>
@@ -173,6 +263,30 @@
                                         </div>
                                         <div class="panel-body">
                                             <div id="chartUsia"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-md-12">
+                                <div class="card">
+                                    <div class="panel panel-aqua">
+                                        <div class="panel-heading bg-aqua">
+                                            Golongan
+                                        </div>
+                                        <div class="panel-body">
+                                            <div id="chartGol"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-md-12">
+                                <div class="card">
+                                    <div class="panel panel-aqua">
+                                        <div class="panel-heading bg-aqua">
+                                            Eselon
+                                        </div>
+                                        <div class="panel-body">
+                                            <div id="chartEse"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -418,6 +532,8 @@
         setChartKel()
         setChartUsia()
         setChartPdd()
+        setChartGol()
+        setChartEse()
         function setChartJenis(){
             let jumlahKatPegawai = @json($res['pegawai']['jenispegawai']);
             let seriesKatPegawai = []
@@ -802,37 +918,27 @@
             })
         }
         function setChartPdd(){
-            let jumlahKatPegawai = @json($res['pegawai']['pendidikan']);
-            let seriesKatPegawai = []
-            let slice = true
-            let totalAll = 0
-            for (let z in jumlahKatPegawai) {
-                if (jumlahKatPegawai[z].pendidikan == null)
-                    jumlahKatPegawai[z].pendidikan = '-'
-                totalAll = totalAll + parseFloat(jumlahKatPegawai[z].total)
+            let jumlahUsia = @json($res['pegawai']['pendidikan']);
+            let seriesUsia = []
+            for (let z in jumlahUsia) {
                 let datana = [];
                 datana.push({
-                    y: parseFloat(jumlahKatPegawai[z].total),
+                    y: parseFloat(jumlahUsia[z].total),
                     color: this.colors[z],
-                    drilldown: jumlahKatPegawai[z].pendidikan
                 });
-                seriesKatPegawai.push({
-                    name: jumlahKatPegawai[z].pendidikan,
-                    y: parseFloat(jumlahKatPegawai[z].total),
-                    sliced: slice,
-                    selected: slice
+
+                seriesUsia.push({
+                    name: jumlahUsia[z].pendidikan,
+                    data: datana
                 });
-                slice = false;
             }
             Highcharts.chart('chartPdd', {
                 chart: {
-                    plotBackgroundColor: null,
-                    plotBorderWidth: null,
-                    plotShadow: false,
-                    type: 'column'
+                    type: 'column',
                 },
+
                 title: {
-                    text: '',
+                    text: ''
                 },
                 xAxis: {
                     categories: ["Jumlah "],
@@ -847,14 +953,6 @@
                 yAxis: {
                     title: {
                         text: 'Pendidikan'
-                    }
-                },
-                tooltip: {
-                    formatter: function () {
-                        let point = this.point,
-                            s = this.x + ':' + Highcharts.numberFormat(this.y, 0, '.', ',') + ' Pegawai <br/>';
-                        return s;
-
                     }
                 },
                 plotOptions: {
@@ -873,7 +971,15 @@
                         showInLegend: true
                     }
                 },
-                series: seriesKatPegawai,
+                tooltip: {
+                    formatter: function () {
+                        let point = this.point,
+                            s = this.x + ':' + Highcharts.numberFormat(this.y, 0, '.', ',') + ' Pegawai <br/>';
+                        return s;
+
+                    }
+                },
+                series: seriesUsia,
                 exporting: {
                     enabled: false
                 },
@@ -885,8 +991,166 @@
                     borderRadius: 5,
                     borderWidth: 1
                 },
+
             })
         }
+
+        function setChartGol(){
+            let jumlahUsia = @json($res['pegawai']['golongan']);
+            let seriesUsia = []
+            for (let z in jumlahUsia) {
+                let datana = [];
+                datana.push({
+                    y: parseFloat(jumlahUsia[z].total),
+                    color: this.colors[z],
+                });
+
+                seriesUsia.push({
+                    name: jumlahUsia[z].text,
+                    data: datana
+                });
+            }
+            Highcharts.chart('chartGol', {
+                chart: {
+                    type: 'column',
+                },
+
+                title: {
+                    text: ''
+                },
+                xAxis: {
+                    categories: ["Jumlah "],
+                    labels: {
+                        align: 'center',
+                        style: {
+                            fontSize: '13px',
+                            fontFamily: 'Verdana, sans-serif'
+                        }
+                    }
+                },
+                yAxis: {
+                    title: {
+                        text: 'Golongan'
+                    }
+                },
+                plotOptions: {
+                    column: {
+                        // url:"#",
+                        cursor: 'pointer',
+
+                        dataLabels: {
+                            enabled: true,
+                            color: this.colors[1],
+
+                            formatter: function () {
+                                return Highcharts.numberFormat(this.y, 0, '.', ',') + ' Pegawai';
+                            }
+                        },
+                        showInLegend: true
+                    }
+                },
+                tooltip: {
+                    formatter: function () {
+                        let point = this.point,
+                            s = this.x + ':' + Highcharts.numberFormat(this.y, 0, '.', ',') + ' Pegawai <br/>';
+                        return s;
+
+                    }
+                },
+                series: seriesUsia,
+                exporting: {
+                    enabled: false
+                },
+                credits: {
+                    enabled: false
+                },
+                legend: {
+                    enabled: true,
+                    borderRadius: 5,
+                    borderWidth: 1
+                },
+
+            })
+        }
+
+        function setChartEse(){
+            let jumlahUsia = @json($res['pegawai']['eselon']);
+            let seriesUsia = []
+            for (let z in jumlahUsia) {
+                let datana = [];
+                datana.push({
+                    y: parseFloat(jumlahUsia[z].total),
+                    color: this.colors[z],
+                });
+
+                seriesUsia.push({
+                    name: jumlahUsia[z].text,
+                    data: datana
+                });
+            }
+            Highcharts.chart('chartEse', {
+                chart: {
+                    type: 'column',
+                },
+
+                title: {
+                    text: ''
+                },
+                xAxis: {
+                    categories: ["Jumlah "],
+                    labels: {
+                        align: 'center',
+                        style: {
+                            fontSize: '13px',
+                            fontFamily: 'Verdana, sans-serif'
+                        }
+                    }
+                },
+                yAxis: {
+                    title: {
+                        text: 'Golongan'
+                    }
+                },
+                plotOptions: {
+                    column: {
+                        // url:"#",
+                        cursor: 'pointer',
+
+                        dataLabels: {
+                            enabled: true,
+                            color: this.colors[1],
+
+                            formatter: function () {
+                                return Highcharts.numberFormat(this.y, 0, '.', ',') + ' Pegawai';
+                            }
+                        },
+                        showInLegend: true
+                    }
+                },
+                tooltip: {
+                    formatter: function () {
+                        let point = this.point,
+                            s = this.x + ':' + Highcharts.numberFormat(this.y, 0, '.', ',') + ' Pegawai <br/>';
+                        return s;
+
+                    }
+                },
+                series: seriesUsia,
+                exporting: {
+                    enabled: false
+                },
+                credits: {
+                    enabled: false
+                },
+                legend: {
+                    enabled: true,
+                    borderRadius: 5,
+                    borderWidth: 1
+                },
+
+            })
+        }
+        
         function detailPegawai(namess) {
             $.ajax({
                 type    : 'GET',
