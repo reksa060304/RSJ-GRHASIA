@@ -288,6 +288,14 @@
     {
       "nameDep": "PembayaranPiutangDiklatCtrl",
       "urlDep": "module/SDM/Penelitian/PembayaranPiutangDiklatCtrl"
+    },
+    {
+      "nameDep": "HomeSDMCtrl",
+      "urlDep": "module/SDM/HomeSDMCtrl"
+    },
+    {
+      "nameDep": "LaporanDaftarPegawaiNominatifCtrl",
+      "urlDep": "module/SDM/LaporanDaftarPegawaiNominatifCtrl"
     }
   ]
 }

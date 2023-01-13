@@ -7561,4 +7561,137 @@ public function daftarKenaikanGajiBerkala(Request $request){
         );
         return $this->respond($result);
     }
+
+    public function HomeDashboard(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        
+        $jumlahpns = \DB::select("SELECT count(pg.id)as jumlahpns FROM pegawai_m pg 
+        where pg.kdprofile = $kdProfile and pg.statusenabled = true and pg.usereksternal is null and pg.namalengkap <>'-' and pg.id != 320263 and pg.kategorypegawai = 1 and pg.ispensiun is null");
+        $jumlahpnslaki = \DB::select("SELECT count(pg.id)as jumlahpns FROM pegawai_m pg 
+        where pg.kdprofile = $kdProfile and pg.statusenabled = true and pg.usereksternal is null and pg.namalengkap <>'-' and pg.id != 320263 
+        and pg.kategorypegawai = 1 and pg.ispensiun is null and pg.objectjeniskelaminfk = 1");
+        $jumlahpnsperempuan = \DB::select("SELECT count(pg.id)as jumlahpns FROM pegawai_m pg 
+        where pg.kdprofile = $kdProfile and pg.statusenabled = true and pg.usereksternal is null and pg.namalengkap <>'-' and pg.id != 320263 
+        and pg.kategorypegawai = 1 and pg.ispensiun is null and pg.objectjeniskelaminfk = 2");
+        
+        $jumlahp3k = \DB::select("SELECT count(pg.id)as jumlahp3k FROM pegawai_m pg 
+        where pg.kdprofile = $kdProfile and pg.statusenabled = true and pg.usereksternal is null and pg.namalengkap <>'-' and pg.id != 320263 
+        and pg.kategorypegawai = 23 and pg.ispensiun is null");
+        $jumlahp3klaki = \DB::select("SELECT count(pg.id)as jumlahp3k FROM pegawai_m pg 
+        where pg.kdprofile = $kdProfile and pg.statusenabled = true and pg.usereksternal is null and pg.namalengkap <>'-' and pg.id != 320263 
+        and pg.kategorypegawai = 23 and pg.ispensiun is null and pg.objectjeniskelaminfk = 1");
+        $jumlahp3kperempuan = \DB::select("SELECT count(pg.id)as jumlahp3k FROM pegawai_m pg 
+        where pg.kdprofile = $kdProfile and pg.statusenabled = true and pg.usereksternal is null and pg.namalengkap <>'-' and pg.id != 320263 
+        and pg.kategorypegawai = 23 and pg.ispensiun is null and pg.objectjeniskelaminfk = 2");
+        
+        $jumlahnaban = \DB::select("SELECT count(pg.id)as jumlahnaban FROM pegawai_m pg 
+        where pg.kdprofile = $kdProfile and pg.statusenabled = true and pg.usereksternal is null and pg.namalengkap <>'-' and pg.id != 320263 
+        and pg.kategorypegawai = 22 and pg.ispensiun is null");
+        $jumlahnabanlaki = \DB::select("SELECT count(pg.id)as jumlahnaban FROM pegawai_m pg 
+        where pg.kdprofile = $kdProfile and pg.statusenabled = true and pg.usereksternal is null and pg.namalengkap <>'-' and pg.id != 320263 
+        and pg.kategorypegawai = 22 and pg.ispensiun is null and pg.objectjeniskelaminfk = 1");
+        $jumlahnabanperempuan = \DB::select("SELECT count(pg.id)as jumlahnaban FROM pegawai_m pg 
+        where pg.kdprofile = $kdProfile and pg.statusenabled = true and pg.usereksternal is null and pg.namalengkap <>'-' and pg.id != 320263 
+        and pg.kategorypegawai = 22 and pg.ispensiun is null and pg.objectjeniskelaminfk = 2");
+        
+        $jumlahblud = \DB::select("SELECT count(pg.id)as jumlahblud FROM pegawai_m pg 
+        where pg.kdprofile = $kdProfile and pg.statusenabled = true and pg.usereksternal is null and pg.namalengkap <>'-' and pg.id != 320263 
+        and pg.kategorypegawai = 20 and pg.ispensiun is null");
+        $jumlahbludlaki = \DB::select("SELECT count(pg.id)as jumlahblud FROM pegawai_m pg 
+        where pg.kdprofile = $kdProfile and pg.statusenabled = true and pg.usereksternal is null and pg.namalengkap <>'-' and pg.id != 320263 
+        and pg.kategorypegawai = 20 and pg.ispensiun is null and pg.objectjeniskelaminfk = 1");
+        $jumlahbludperempuan = \DB::select("SELECT count(pg.id)as jumlahblud FROM pegawai_m pg 
+        where pg.kdprofile = $kdProfile and pg.statusenabled = true and pg.usereksternal is null and pg.namalengkap <>'-' and pg.id != 320263 
+        and pg.kategorypegawai = 20 and pg.ispensiun is null and pg.objectjeniskelaminfk = 2");
+        
+        $jumlahos = \DB::select("SELECT count(pg.id)as jumlahos FROM pegawai_m pg 
+        where pg.kdprofile = $kdProfile and pg.statusenabled = true and pg.usereksternal is null and pg.namalengkap <>'-' and pg.id != 320263 
+        and pg.kategorypegawai = 11 and pg.ispensiun is null");
+        $jumlahoslaki = \DB::select("SELECT count(pg.id)as jumlahos FROM pegawai_m pg 
+        where pg.kdprofile = $kdProfile and pg.statusenabled = true and pg.usereksternal is null and pg.namalengkap <>'-' and pg.id != 320263 
+        and pg.kategorypegawai = 11 and pg.ispensiun is null and pg.objectjeniskelaminfk = 1");
+        $jumlahosperempuan = \DB::select("SELECT count(pg.id)as jumlahos FROM pegawai_m pg 
+        where pg.kdprofile = $kdProfile and pg.statusenabled = true and pg.usereksternal is null and pg.namalengkap <>'-' and pg.id != 320263 
+        and pg.kategorypegawai = 11 and pg.ispensiun is null and pg.objectjeniskelaminfk = 2");
+        
+        $penjagaankgb = \DB::select(DB::raw("SELECT count(y.hari) FROM (SELECT (x.y*12 )+ x.m as hari, x.y, x.m,x.tgltmt FROM (select rg.tgltmt, extract(year from age(CURRENT_DATE,rg.tgltmt ))as y, extract(month from age(CURRENT_DATE,rg.tgltmt ))as m  from riwayatgajiberkala_t rg )as x 
+        where (x.y*12 )+ x.m between 21 and 23)as y"));
+
+        $penjagaankgbd = \DB::select(DB::raw("SELECT * FROM (select pg.namalengkap, pg.nippns, pg.tgllahir::date,sdmg.namaexternal||', '||sdmg.name as golongan, rg.gajiakhir, rg.tgltmt,(rg.tgltmt + interval '2 year')::date as tmtberikutnya, extract(year from age(CURRENT_DATE,rg.tgltmt ))as y, extract(month from age(CURRENT_DATE,rg.tgltmt ))as m  from riwayatgajiberkala_t rg inner join pegawai_m pg on  pg.id = rg.objectpegawaifk inner join sdm_golongan_m sdmg on sdmg.id = rg.objectgolonganfk
+        )as x where (x.y*12 )+ x.m between 21 and 23 ORDER BY x.tmtberikutnya desc"));
+
+        $penjagaanstrd = \DB::select(DB::raw("SELECT * FROM (SELECT pg.tgllahir::date, gol.namaexternal ||', '||gol.name as golongan, pg.namalengkap, pg.nippns, extract(year from age(mbs.berakhirstr::date,CURRENT_DATE))as y, extract(month from age(mbs.berakhirstr::date,CURRENT_DATE))as m , mbs.berakhirstr::date 
+        FROM masaberlakusipstr_t mbs inner join pegawai_m pg on pg.id = mbs.pegawaifk left join sdm_golongan_m gol on gol.id = pg.objectgolonganfk)as x where (x.y*12)+x.m between 1 and 6"));
+        
+        $penjagaanpensiun = \DB::select(DB::raw("SELECT * FROM (SELECT
+            gol.namaexternal || ', ' || gol.NAME AS golongan,
+            pg.namalengkap,
+            pg.nippns,
+            EXTRACT ( YEAR FROM age( CURRENT_DATE, pg.tgllahir :: DATE ) ) AS y,
+            EXTRACT ( MONTH FROM age(CURRENT_DATE, pg.tgllahir :: DATE ) ) AS M,
+            pg.tgllahir,
+            pg.pensiun,
+            pg.tglpensiun
+        FROM
+            pegawai_m pg
+            LEFT JOIN sdm_golongan_m gol ON gol.ID = pg.objectgolonganfk 
+        WHERE
+            pg.kdprofile = 30 
+            AND pg.statusenabled = TRUE 
+            AND pg.usereksternal IS NULL 
+            AND pg.namalengkap <> '-' 
+            AND pg.ID != 320263)as x where   x.y - 1= x.pensiun - 1 and x.pensiun >= x.y"));
+
+        $result = array(
+            'jumlahpns'=> $jumlahpns,
+            'jumlahpnslaki'=> $jumlahpnslaki,
+            'jumlahpnsperempuan'=> $jumlahpnsperempuan,
+
+            'jumlahp3k'=> $jumlahp3k,
+            'jumlahp3klaki'=> $jumlahp3klaki,
+            'jumlahp3kperempuan'=> $jumlahp3kperempuan,
+
+            'jumlahnaban'=> $jumlahnaban,
+            'jumlahnabanlaki'=> $jumlahnabanlaki,
+            'jumlahnabanperempuan'=> $jumlahnabanperempuan,
+
+            'jumlahblud'=> $jumlahblud,
+            'jumlahbludlaki'=> $jumlahbludlaki,
+            'jumlahbludperempuan'=> $jumlahbludperempuan,
+
+            'jumlahos'=> $jumlahos,
+            'jumlahoslaki'=> $jumlahoslaki,
+            'jumlahosperempuan'=> $jumlahosperempuan,
+            'penjagaankgb'=> $penjagaankgb,
+            'penjagaankgbd'=> $penjagaankgbd,
+            'penjagaanstrd'=> $penjagaanstrd,
+            'penjagaanpensiun'=> $penjagaanpensiun,
+            
+            'as'=> 'Fizi'
+        );
+
+        return $this->respond($result);
+    }
+    public function getLaporanNominatif(Request $request)
+    {
+        $data = \DB::select(DB::raw("SELECT pg.nippns, pg.namalengkap, pg.tempatlahir ||', '|| pg.tgllahir::date as ttl, jk.jeniskelamin,es.eselon, gol.golongan,gol.tgltmt::date, jab.namajabatan, jab.tmtjabatan::date, '' as masakerjagolongan, sp.statuspegawai as kedudukan, kp.kategorypegawai, str.nostr,str.terbitstr::date || ' s.d. ' ||  str.berakhirstr::date as masaberlakustr, str.nosip, str.terbitsip::date as tanggalsip, rip.pendidikanpegawai  FROM pegawai_m pg 
+        left join jeniskelamin_m jk on jk.id = pg.objectjeniskelaminfk
+        left join eselon_m es on es.id = pg.objecteselonfk
+        left join (SELECT * FROM (SELECT ROW_NUMBER()OVER(PARTITION by rg.objectpegawaifk ORDER BY rg.tgltmt desc)as nomor, rg.objectpegawaifk, gol.namaexternal ||', '||gol.reportdisplay as golongan, rg.tgltmt FROM riwayatgolongan_t rg inner join sdm_golongan_m gol on gol.id = rg.objectgolonganfk where rg.kdprofile = 30 and rg.statusenabled = true) as x where x.nomor =1)as gol on gol.objectpegawaifk = pg.id
+        left join(SELECT * FROM (SELECT ROW_NUMBER()OVER(partition by rj.objectpegawaifk ORDER BY rj.tmtjabatan desc)as nomor, rj.objectpegawaifk, jb.namajabatan, rj.tmtjabatan FROM riwayatjabatan_t rj
+        left join jabatan_m jb on jb.id = rj.objectjabatanfk where rj.kdprofile = 30 and rj.statusenabled = true)as x where x.nomor =1 )as jab on jab.objectpegawaifk = pg.id
+        left join statuspegawai_m sp on sp.id = pg.objectstatuspegawaifk
+        left join kategorypegawai_m kp on kp.id = pg.kategorypegawai
+        left join(SELECT * FROM (SELECT ROW_NUMBER()OVER(PARTITION BY rp.objectpegawaifk ORDER BY rp.tgllulus desc)as nomor, rp.objectpegawaifk,pp.pendidikanpegawai,rp.tgllulus FROM riwayatpendidikan_t rp
+        left join pendidikanpegawai_m pp on pp.id = rp.objectpendidikanpegawaifk where rp.kdprofile = 30 and rp.statusenabled = true) as x where x.nomor=1)as rip on rip.objectpegawaifk = pg.id
+        left join (SELECT  ROW_NUMBER()OVER(partition by str.pegawaifk ORDER BY str.berakhirstr desc)as nomor,  str.pegawaifk, str.nostr, str.terbitstr, str.berakhirstr, str.nosip, str.terbitsip, str.berakhirsip FROM masaberlakusipstr_t str where str.kdprofile = 30 and str.statusenabled = true)as str on str.pegawaifk = pg.id
+        where pg.kdprofile = 30 and pg.statusenabled = true and pg.usereksternal is null and pg.namalengkap <> '-' AND pg.ID != 320263"));
+
+        $result = array(
+            'data'=> $data,
+            'as'=> 'Fizi'
+        );
+        return $this->respond($result);
+    }
 }

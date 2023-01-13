@@ -64,9 +64,9 @@
                 <tr>
                     <td style="text-align: center;">
                         @if (stripos(\Request::url(), 'localhost') !== FALSE)
-                            <img src="{{ asset('img/logo_grhasia.png') }}" style="width: 70px; padding: 3px">
+                            <img src="{{ asset('img/LOGO GRHASIA.png') }}" style="width: 70px; padding: 3px">
                         @else
-                            <img src="{{ asset('service/img/logo_grhasia.png') }}" style="width: 70px; padding: 3px">
+                            <img src="{{ asset('service/img/LOGO GRHASIA.png') }}" style="width: 70px; padding: 3px">
                         @endif
                     </td>
                     <td>
