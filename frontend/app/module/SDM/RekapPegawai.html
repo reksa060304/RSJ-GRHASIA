@@ -21,22 +21,30 @@
             <div class="grid_8">
                    
                 <div class="grid_3">
-                    <label c-label item="item" c-label-text="Kategori Pegawai"></label>
-                    <input style="width: 100%;" kendo-combo-box k-ng-model="item.kategory"
+                    <label c-label item="item">Status Pegawai</label>
+                    <select kendo-multi-select k-options="selectOptionsKategory" k-filter="'contains'"
+                        k-data-source="listKategory" k-ng-model="item.kategory"></select>
+
+                    <!-- <input style="width: 100%;" kendo-combo-box k-ng-model="item.kategory"
                         k-data-text-field="'kategorypegawai'" k-data-value-field="'id'" k-filter="'contains'"
-                        k-auto-bind="false" k-data-source="listKategory" />
+                        k-auto-bind="false" k-data-source="listKategory" /> -->
                 </div>
                 <div class="grid_3">
-                    <label c-label item="item" c-label-text="Jenis Pegawai"></label>
-                    <input ng-disabled="isDisable" style="width: 100%;" kendo-combo-box k-ng-model="item.jenis"
+                    <label c-label item="item">Jenis Pegawai</label>
+                    <!-- <input ng-disabled="isDisable" style="width: 100%;" kendo-combo-box k-ng-model="item.jenis"
                         k-data-text-field="'jenispegawai'" k-data-value-field="'id'" k-filter="'contains'"
-                        k-auto-bind="false" k-data-source="listJenisPegawai" />
+                        k-auto-bind="false" k-data-source="listJenisPegawai" /> -->
+                    <select kendo-multi-select k-options="selectOptionsJenis" k-filter="'contains'"
+                        k-data-source="listJenisPegawai" k-ng-model="item.jenis"></select>
                 </div>
                 <div class="grid_3">
-                    <label c-label item="item" c-label-text="Status Pegawai"></label>
-                    <input style="width: 100%;" kendo-combo-box k-ng-model="item.status"
+                    <label c-label item="item">Kedudukan Pegawai</label>
+                    <!-- <input style="width: 100%;" kendo-combo-box k-ng-model="item.status"
                         k-data-text-field="'statuspegawai'" k-data-value-field="'id'" k-filter="'contains'"
-                        k-auto-bind="false" k-data-source="listStatus" />
+                        k-auto-bind="false" k-data-source="listStatus" /> -->
+
+                    <select kendo-multi-select k-options="selectOptionsStatus" k-filter="'contains'"
+                        k-data-source="listStatus" k-ng-model="item.status"></select>
                 </div>
                 <div class="grid_3">
                         <label c-label item="item" c-label-text="Kategory Laporan"></label>

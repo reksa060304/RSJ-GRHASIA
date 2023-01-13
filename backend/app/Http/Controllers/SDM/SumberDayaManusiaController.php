@@ -3150,14 +3150,26 @@ class SumberDayaManusiaController extends ApiController {
         $paramjenisPegId = '';
         $paramstatusPegId = '';
         
-        if(isset($request['kategId']) && $request['kategId']!=''){
-            $paramkategId = ' and pg.kategorypegawai ='.$request['kategId'];
+        // if(isset($request['kategId']) && $request['kategId']!=''){
+        //     $paramkategId = ' and pg.kategorypegawai ='.$request['kategId'];
+        // }
+        // if(isset($request['statusPegId']) && $request['statusPegId']!=''){
+        //     $paramstatusPegId = ' and pg.objectstatuspegawaifk ='.$request['statusPegId'];
+        // }
+        // if(isset($request['jenisPegId']) && $request['jenisPegId']!=''){
+        //     $paramjenisPegId = ' and pg.objectjenispegawaifk ='.$request['jenisPegId'];
+        // }
+        $kateg = "";
+        if(isset($request['jenisKategId'])){
+            $kateg=" and pg.kategorypegawai in($request[jenisKategId])";
         }
-        if(isset($request['statusPegId']) && $request['statusPegId']!=''){
-            $paramstatusPegId = ' and pg.objectstatuspegawaifk ='.$request['statusPegId'];
+        $Peg = "";
+        if(isset($request['jenisPegId'])){
+            $Peg=" and pg.objectstatuspegawaifk in($request[jenisPegId])";
         }
-        if(isset($request['jenisPegId']) && $request['jenisPegId']!=''){
-            $paramjenisPegId = ' and pg.objectjenispegawaifk ='.$request['jenisPegId'];
+        $status = "";
+        if(isset($request['statusPegId'])){
+            $status=" and pg.kategorypegawai in($request[statusPegId])";
         }
 
         $data = DB::select(DB::raw("
@@ -3167,10 +3179,8 @@ class SumberDayaManusiaController extends ApiController {
                 select jp.jeniskelamin as tipe ,pg.namalengkap ,pg.id
                 from pegawai_m  as pg
                 left JOIN jeniskelamin_m as jp on jp.id =pg.objectjeniskelaminfk
-                where pg.kdprofile = $kdProfile and pg.statusenabled=true
-                $paramkategId
-                $paramstatusPegId 
-                $paramjenisPegId 
+                where pg.kdprofile = $kdProfile and pg.statusenabled=true and pg.usereksternal is null and pg.namalengkap <> '-' AND pg.ID != 320263
+                $kateg $Peg $status
                 )as x GROUP BY x.tipe
 
                 union all
@@ -3179,10 +3189,8 @@ class SumberDayaManusiaController extends ApiController {
                 select jp.jenispegawai as tipe ,pg.namalengkap ,pg.id
                 from pegawai_m  as pg
                 left JOIN jenispegawai_m as jp on jp.id =pg.objectjenispegawaifk
-                where pg.kdprofile = $kdProfile and pg.statusenabled=true
-                 $paramkategId
-                $paramstatusPegId 
-                $paramjenisPegId 
+                where pg.kdprofile = $kdProfile and pg.statusenabled=true and pg.usereksternal is null and pg.namalengkap <> '-' AND pg.ID != 320263
+                $kateg $Peg $status
                 )as x GROUP BY x.tipe
 
                 union all 
@@ -3191,10 +3199,8 @@ class SumberDayaManusiaController extends ApiController {
                 select case when jp.agama is null then '-' else jp.agama end as tipe ,pg.namalengkap ,pg.id
                 from pegawai_m  as pg
                 left JOIN agama_m as jp on jp.id =pg.objectagamafk
-                where pg.statusenabled=true
-                 $paramkategId
-                $paramstatusPegId 
-                $paramjenisPegId 
+                where pg.statusenabled=true and pg.usereksternal is null and pg.namalengkap <> '-' AND pg.ID != 320263
+                $kateg $Peg $status
                 )as x GROUP BY x.tipe
 
                 union all 
@@ -3203,10 +3209,8 @@ class SumberDayaManusiaController extends ApiController {
                 select case when jp.pendidikan is null then '-' else jp.pendidikan end as tipe ,pg.namalengkap ,pg.id
                 from pegawai_m  as pg
                 left JOIN pendidikan_m as jp on jp.id =pg.objectpendidikanterakhirfk
-                where pg.kdprofile = $kdProfile and pg.statusenabled=true
-                 $paramkategId
-                $paramstatusPegId 
-                $paramjenisPegId 
+                where pg.kdprofile = $kdProfile and pg.statusenabled=true and pg.usereksternal is null and pg.namalengkap <> '-' AND pg.ID != 320263
+                $kateg $Peg $status
                 )as x GROUP BY x.tipe
                 union all 
 
@@ -3223,10 +3227,8 @@ class SumberDayaManusiaController extends ApiController {
                 --CONVERT(int,ROUND(DATEDIFF(hour,pg.tgllahir,GETDATE())/8766.0,0)) AS umur
                 date_part('year',age(pg.tgllahir))  AS umur
                 from pegawai_m  as pg
-                where pg.kdprofile = $kdProfile and pg.statusenabled=true
-                 $paramkategId
-                $paramstatusPegId 
-                $paramjenisPegId 
+                where pg.kdprofile = $kdProfile and pg.statusenabled=true and pg.usereksternal is null and pg.namalengkap <> '-' AND pg.ID != 320263
+                $kateg $Peg $status
                 ) as x
                 ) as z
                 GROUP BY z.tipe
