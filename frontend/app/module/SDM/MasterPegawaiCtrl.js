@@ -269,6 +269,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 								$scope.item.tglijazahcpns = moment(dataCachePegawai.tglijazahcpns).format('YYYY-MM-DD');
 								$scope.item.noijazahcpns = dataCachePegawai.noijazahcpns;
 								$scope.item.jabatancpns = dataCachePegawai.jabatancpns
+								$scope.item.jabatan = dataCachePegawai.jabatan
 								$scope.item.unitkerjacpns = dataCachePegawai.unitkerjacpns
 								$scope.item.instansicpns = dataCachePegawai.instansicpns
 								$scope.item.pejabatpenandatangancpns = dataCachePegawai.pejabatpenandatangancpns
@@ -338,6 +339,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 							$scope.item.kedudukan = { id: dataCachePegawai.kedudukanfk, name: dataCachePegawai.kedudukan };
 							$scope.item.golonganPegawai = { id: dataCachePegawai.objectgolonganfk, name: dataCachePegawai.golongan };
 							$scope.item.jabatanFungsional = { id: dataCachePegawai.objectjabatanfungsionalfk, namajabatan: dataCachePegawai.jbfungsional };
+							$scope.item.jabatan = { id: dataCachePegawai.objectjabataninternalfk, namajabatan: dataCachePegawai.namajabatan };
 							$scope.item.detailKelompokJabatan = { id: dataCachePegawai.objectkelompokjabatanfk, detailkelompokjabatan: dataCachePegawai.detailkelompokjabatan };
 							if (dataCachePegawai.grade)
 								$scope.item.grade = parseFloat(dataCachePegawai.grade);
@@ -3897,6 +3899,10 @@ $scope.formatRupiah = function (value, currency) {
 				if ($scope.item.idFinger != undefined) {
 					idFinger = $scope.item.idFinger;
 				}
+				var jabatan = null;
+				if ($scope.item.jabatan != undefined) {
+					jabatan = $scope.item.jabatan;
+				}
 				$scope.item.masakerjatambahan = $scope.item.masakerjatambahantahun + "-" + $scope.item.masakerjatambahanbulan
 				var isValid = ModelItem.setValidation($scope, listRawRequired);
 				if (isValid.status) {
@@ -3916,6 +3922,7 @@ $scope.formatRupiah = function (value, currency) {
 						nobpjs: nobpjs,
 						email: email,
 						aktakelahiran: aktakelahiran,
+						jabatanhehe: jabatan,
 						namalengkap: $scope.item.namaLengkap,
 						gelardepan: gelarDepan,
 						gelarbelakang: gelarBelakang,
