@@ -1558,6 +1558,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('report/get-cetak-rincian-spp', 'Report\ReportController@getCetakRincianSPP');
             Route::get('report/get-cetak-sts-pdf', 'Report\ReportController@getCetakSTSPdf');
             Route::get('report/get-cetak-sts-manual-pdf', 'Report\ReportController@getCetakSTSManualPdf');
+            Route::get('report/get-cetak-sts-klaim-pdf', 'Report\ReportController@getCetakSTSKlaimPdf');
             Route::get('report/get-cetak-sts-keuangan', 'Report\ReportController@getCetakSTSKeuangan');
             Route::get('perencanaan/get-datacombo-part-rekanan', 'Perencanaan\PerencanaanController@getDataComboRekananPart');
             Route::get('perencanaan/get-datacombo-part-rekanan-semua', 'Perencanaan\PerencanaanController@getDataComboRekananPartSemua');
@@ -2953,6 +2954,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
                 // Route::post('sysadmin/master/save-harganettoprodukbykelas', 'SysAdmin\Master\MasterController@saveharganettoprodukbykelas_kelasD');
                 Route::post('sysadmin/master/save-harganettoprodukbykelas', 'SysAdmin\Master\MasterController@saveharganettoprodukbykelasM_D');
                 Route::post('sysadmin/master/mapping-ruangan-to-produk-disable','SysAdmin\Master\MasterController@tombolDisable');
+                Route::post('sysadmin/master/mapping-ruangan-to-produk-hide','SysAdmin\Master\MasterController@tombolHide');
                 Route::post('sysadmin/master/delete-mapping-ruangan-to-produk','SysAdmin\Master\MasterController@DeleteMappingProdukToRuangan');
 
                 Route::post('sysadmin/master/save-data-mapproduktoruangan', 'SysAdmin\Master\MasterController@addProdukToRuangan');

@@ -7,6 +7,7 @@ define(['initialize'], function (initialize) {
             $scope.now = new Date();
             $scope.chkBool = true;
             $scope.showIdMenu = true
+            $scope.dislab = false
             DataCombo()
             $scope.null = function () {
                 $scope.item = {};
@@ -14,6 +15,9 @@ define(['initialize'], function (initialize) {
 
             function DataCombo() {
                 $scope.isRouteLoading = true;
+                $scope.pegawaiLogin = medifirstService.getPegawaiLogin();
+                $scope.kelUser=medifirstService.getKelompokUser()
+                console.log($scope.kelUser)
                 medifirstService.get("sysadmin/master/get-data-combo-master", true).then(function (dat) {
                     $scope.listDepartement = dat.data.departemen;
                 });
@@ -23,6 +27,14 @@ define(['initialize'], function (initialize) {
                 });                       
 
                 $scope.isRouteLoading = false;
+
+                if($scope.kelUser == "dokter" || $scope.kelUser == "laborat"){
+                    $scope.item.departemen = { id: 3, departemen: 'Instalasi Laboratorium' }
+                    $scope.item.ruangan = { id: 575, ruangan: 'LABORATORIUM PATOLOGI KLINIK' }
+                    $scope.dislab = true
+                } else{
+                    $scope.dislab = false
+                }
             }
 
             function LoadData() {
@@ -160,6 +172,13 @@ define(['initialize'], function (initialize) {
 
                 },
                 {
+                    "field": "ishide",
+                    "title": "<center style='font-size: 14px; font-weight: bold'>Hidden</center>",
+                    "width": "100px",
+                    "template": '# if( ishide==true) {# Hide # } else {# Unhide #} #'
+
+                },
+                {
                     "field": "namaproduk",
                     "title": "<center style='font-size: 14px; font-weight: bold'>Nama Produk</center>",
                     "width": "350px"
@@ -172,6 +191,48 @@ define(['initialize'], function (initialize) {
 
                 }
             ];
+
+            $scope.hideData = function () {
+                var data = [];
+                for (var i = 0; i < $scope.dataSource._data.length; i++) {
+                    if ($scope.dataSource._data[i].statCheckbox) {
+                        data.push({
+                            "id": $scope.dataSource._data[i].id,
+                            "ishide": true,
+                        })
+                    }
+                }
+
+                var data = {
+                    "data": data,
+                }
+
+                medifirstService.post('sysadmin/master/mapping-ruangan-to-produk-hide', data).then(function (e) {
+                    LoadData();
+                })
+
+            }
+
+            $scope.unhideData = function () {
+                var data = [];
+                for (var i = 0; i < $scope.dataSource._data.length; i++) {
+                    if ($scope.dataSource._data[i].statCheckbox) {
+                        data.push({
+                            "id": $scope.dataSource._data[i].id,
+                            "ishide": null,
+                        })
+                    }
+                }
+
+                var data = {
+                    "data": data,
+                }
+
+                medifirstService.post('sysadmin/master/mapping-ruangan-to-produk-hide', data).then(function (e) {
+                    LoadData();
+                })
+
+            }
 
             $scope.enableData = function () {
                 var data = [];

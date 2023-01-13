@@ -857,13 +857,14 @@ class KasirController extends ApiController{
             ->leftjoin('strukbuktipenerimaancarabayar_t as sbmcr', 'sbmcr.nosbmfk', '=', 'sbm.norec')
             ->leftjoin('carabayar_m as cb', 'cb.id', '=', 'sbmcr.objectcarabayarfk')
             ->leftjoin('kelompoktransaksi_m as kt', 'kt.id', '=', 'sbm.objectkelompoktransaksifk')
+            ->leftjoin('kelompokpasien_m as kp', 'kp.id', '=', 'pd.objectkelompokpasienlastfk')
             ->leftjoin('strukclosing_t as sc', 'sc.norec', '=', 'sbm.noclosingfk')
             ->leftjoin('strukverifikasi_t as sv', 'sv.norec', '=', 'sbm.noverifikasifk')
             ->select('sbm.norec as noRec','cb.carabayar as caraBayar','sbmcr.objectcarabayarfk as idCaraBayar','sbm.objectkelompoktransaksifk as idKelTransaksi',
                               'kt.kelompoktransaksi as kelTransaksi','sbm.keteranganlainnya as keterangan','p.id as idPegawai','p.namalengkap as namaPenerima',
                               'sc.noclosing as noClosing','sbm.nosbm as noSbm','sv.noverifikasi as noVerifikasi','sc.tglclosing as tglClosing',
                               'sbm.tglsbm as tglSbm','sv.tglverifikasi as tglVerif','pd.noregistrasi','ps.namapasien',
-                              'sp.norec as norec_sp','ru.id as ruid','ru.namaruangan','sp.namapasien_klien','ps.nocm','sbm.totaldibayar AS totalPenerimaan'
+                              'sp.norec as norec_sp','ru.id as ruid','ru.namaruangan','sp.namapasien_klien','ps.nocm','kp.kelompokpasien','sbm.totaldibayar AS totalPenerimaan'
 //                    ,\DB::raw("")
             )
             ->where('sbm.statusenabled',true)
@@ -919,6 +920,9 @@ class KasirController extends ApiController{
         }
         if(isset($request['diklat']) && $request['diklat']== true){
             $data = $data->where('sp.objectkelompoktransaksifk', 13);
+        }
+        if(isset($request['cost']) && $request['cost']== true){
+            $data = $data->whereNotIn('pd.objectkelompokpasienlastfk', [1, 12]);
         }
 
 //        $data = $data->take($request['jmlRows']);

@@ -1172,7 +1172,7 @@ class RegistrasiController extends ApiController
             ->leftjoin('jeniskelamin_m as jk','jk.id','=','ps.objectjeniskelaminfk')
             ->select('ps.nocm','ps.namapasien','ps.tgldaftar', 'ps.tgllahir',
                 'jk.jeniskelamin','ps.noidentitas','alm.alamatlengkap',
-                'ps.id as nocmfk','ps.namaayah','ps.notelepon','ps.nohp','ps.tglmeninggal','ps.iskompleks','ps.nobpjs'//,
+                'ps.id as nocmfk','ps.namaayah','ps.notelepon','ps.nohp','ps.tglmeninggal','ps.iskompleks','ps.nobpjs','ps.sidik_jari'//,
 //                'ps.foto'
                 ,
                 DB::raw('case when ps.foto is null then null else \'ada\' end as photo,ps.ihs_number,pro.ihs_id as ihs_profile')
@@ -1239,6 +1239,7 @@ class RegistrasiController extends ApiController
 //                'foto'=> $item->foto,
 //                'photo'=> $item->photo,
                 'iskompleks'=> $item->iskompleks,
+                'sidik_jari'=> $item->sidik_jari,
             );
         }
         $result = array(
@@ -2991,7 +2992,7 @@ class RegistrasiController extends ApiController
                     'ps.objectgolongandarahfk','gol.golongandarah','ps.objectsukufk','sk.suku','ps.bahasa','ps.teleponpenanggungjawab',
                     'ps.dokterpengirim','ps.alamatdokterpengirim','jk1.id as jkidpenanggungjawab','ps.jeniskelaminpenanggungjawab','ps.umurpenanggungjawab','ps.hambatankomunikasifk','ps.bahasafk','ham.hambatankomunikasi','bh.bahasa',
                     'ps.penanggungjawab2','ps.hubungankeluargapj2','ps.pekerjaanpenangggungjawab2','ps.alamatrmh2','ps.bahasa2',
-                    'ps.teleponpenanggungjawab2','ps.jeniskelaminpenanggungjawab2','ps.umurpenanggungjawab2','jk2.id as idjk2','pk2.id as idpek2','ps.nik1','ps.nik2','ps.alergi')
+                    'ps.teleponpenanggungjawab2','ps.jeniskelaminpenanggungjawab2','ps.umurpenanggungjawab2','jk2.id as idjk2','pk2.id as idpek2','ps.nik1','ps.nik2','ps.alergi','ps.sidik_jari')
             ->where('ps.kdprofile', (int)$kdProfile);
 
         if(isset($request['noCm'] ) && $request['noCm']!= '' && $request['noCm']!= 'undefined'){
@@ -3008,7 +3009,7 @@ class RegistrasiController extends ApiController
 //            $foto = null;
 //            if($data->foto != null){
 ////                $foto = "data:image/jpeg;base64," . base64_encode($data->foto);
-//                $details = DB::select(DB::raw("SELECT encode(foto, 'base64') AS data FROM pasien_m WHERE id=:id"),
+//                $details = DB::select(DB::raw("SELECT ps.sidik_jari encode(foto, 'base64') AS data FROM pasien_m WHERE id=:id"),
 //                    array(
 //                        'id' => $request['idPasien'],
 //                    )
@@ -3079,6 +3080,7 @@ class RegistrasiController extends ApiController
                 'nik1' => $data->nik1,
                 'nik2' => $data->nik2,
                 'alergi' => $data->alergi,
+                'sidik_jari' => $data->sidik_jari,
             );
 //        }
         $result = array(
@@ -3796,6 +3798,7 @@ class RegistrasiController extends ApiController
             $dataPS->objectnegarafk = $request['negara']?$request['negara']['id']:0;
             $dataPS->namaayah = $request['namaAyah'];
             $dataPS->alergi = $request['alergi'] ? $request['alergi'] : null;
+            $dataPS->sidik_jari = $request['sidik_jari'] ? $request['sidik_jari'] : null;
             if (isset($request['pasien']['namaSuamiIstri'])){
                 $dataPS->namasuamiistri = $request['pasien']['namaSuamiIstri'];
             }

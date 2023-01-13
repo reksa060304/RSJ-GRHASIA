@@ -38,7 +38,7 @@
 				<input style="width: 100%;" kendo-combo-box k-ng-model="item.departemen"
 					k-data-text-field="'departemen'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
 					k-data-source="listDepartement" k-on-change="RuanganToDepartement()"
-					ng-click="RuanganToDepartement()" for="RuanganToDepartement" />
+					ng-click="RuanganToDepartement()" for="RuanganToDepartement" ng-disabled="dislab"/>
 			</div>
 		</div>
 		<div class="grid_3">
@@ -48,7 +48,7 @@
 			<div class="grid_12">
 				<input style="width: 100%;" kendo-combo-box k-ng-model="item.ruangan" k-data-text-field="'ruangan'"
 					k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listruangan"
-					k-on-change="ruangan()" />
+					k-on-change="ruangan()" ng-disabled="dislab"/>
 			</div>
 		</div>
 		<div class="grid_3">
@@ -85,17 +85,22 @@
 	</div>
 	<div class="grid_12">
 		<div class="grid_12" style="float:right;">
-			<div class="grid_4"></div>
 			<div class="grid_2" style="margin-top: 5px">
+				<button class="c-button" ng-click="hideData()">Hide Form Order</button>
+			</div>
+			<div class="grid_2" style="margin-top: 5px">
+				<button class="c-button" ng-click="unhideData()">Unhide Form Order</button>
+			</div>
+			<div class="grid_2" style="margin-top: 5px" ng-if="kelUser != 'dokter' && kelUser != 'laborat'">
 				<button class="c-button" ng-click="enableData()">Enable</button>
 			</div>
-			<div class="grid_2" style="margin-top: 5px">
+			<div class="grid_2" style="margin-top: 5px" ng-if="kelUser != 'dokter' && kelUser != 'laborat'">
 				<button class="c-button" ng-click="disableData()">Disable</button>
 			</div>
-			<div class="grid_2" style="margin-top: 5px">
+			<div class="grid_2" style="margin-top: 5px" ng-if="kelUser != 'dokter' && kelUser != 'laborat'">
 				<button class="c-button" ng-click="delete()">Hapus</button>
 			</div>
-			<div class="grid_2" style="margin-top: 5px">
+			<div class="grid_2" style="margin-top: 5px" ng-if="kelUser != 'dokter' && kelUser != 'laborat'">
 				<button class="c-button" ng-click="NewMapping()">Mapping Baru</button>
 			</div>
 		</div>

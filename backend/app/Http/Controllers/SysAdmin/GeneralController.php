@@ -5455,6 +5455,8 @@ class GeneralController extends ApiController
             ->where('mpr.objectruanganfk',$request['idRuangan'])
             ->where('mpr.statusenabled',true)
             ->where('prd.statusenabled',true)
+            ->whereNull('mpr.ishide')
+            ->orWhere('mpr.ishide', false)
             ->orderBy('prd.namaproduk', 'ASC')
             ->distinct()->get();
         foreach ($detail as $key => $value) {

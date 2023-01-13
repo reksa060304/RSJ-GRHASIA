@@ -515,9 +515,9 @@ class LoggingController extends ApiController
         $nsts = SuratTandaSetoran::where('nosts', '=', $setor[0]['nosts'])->first();
         $norecsts = $nsts->norec;
 
-        $rsts = STStoRekapKlaim::where('objectstsfk', '=', $norecsts)->first();
-        $rsts->statusenabled = false;
-        $rsts->save();
+        $updatersts = DB::statement("update ststorekapklaim_t 
+            set statusenabled = false
+            where objectstsfk = '" . $norecsts. "'");
 
         for($i=0; $i<count($setor); $i++){
 
