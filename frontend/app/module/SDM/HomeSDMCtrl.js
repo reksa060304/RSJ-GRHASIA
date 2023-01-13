@@ -34,6 +34,9 @@ define(['initialize'], function (initialize) {
                 $scope.jumlahosperempuan = datas.jumlahosperempuan[0].jumlahos
 
                 $scope.penjagaankgb = datas.penjagaankgb[0].count
+                if ($scope.penjagaankgb > 0){
+                    toastr.warning('Kenaikan Gaji Berkala ' + $scope.penjagaankgb)
+                }
                 for (let i = 0; i < datas.penjagaankgbd.length; i++) {
                     datas.penjagaankgbd[i].no = i + 1
                 }
@@ -50,6 +53,9 @@ define(['initialize'], function (initialize) {
                 });
 
                 $scope.penjagaanstr = datas.penjagaanstrd.length
+                if ($scope.penjagaanstr>0) {
+                    toastr.warning('Surat Tanda Registrasi ' + $scope.penjagaanstr)
+                }
                 for (let i = 0; i < datas.penjagaanstrd.length; i++) {
                     datas.penjagaanstrd[i].no = i + 1
                 }
@@ -66,6 +72,9 @@ define(['initialize'], function (initialize) {
                 });
 
                 $scope.penjagaanpensiun = datas.penjagaanpensiun.length
+                if ($scope.penjagaanpensiun>0) {
+                    toastr.warning('Pegawai Pensiun ' + $scope.penjagaanpensiun)
+                }
                 for (let i = 0; i < datas.penjagaanpensiun.length; i++) {
                     datas.penjagaanpensiun[i].no = i + 1
                 }
