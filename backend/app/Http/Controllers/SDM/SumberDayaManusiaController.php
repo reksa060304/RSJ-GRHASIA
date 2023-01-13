@@ -7675,6 +7675,19 @@ public function daftarKenaikanGajiBerkala(Request $request){
     }
     public function getLaporanNominatif(Request $request)
     {
+        $kateg = "";
+        if(isset($request['jenisKategId'])){
+            $kateg=" and kp.id in($request[jenisKategId])";
+        }
+        $Peg = "";
+        if(isset($request['jenisPegId'])){
+            $Peg=" and jep.id in($request[jenisPegId])";
+        }
+        $status = "";
+        if(isset($request['statusPegId'])){
+            $status=" and sp.id in($request[statusPegId])";
+        }
+
         $data = \DB::select(DB::raw("SELECT pg.nippns, pg.namalengkap, pg.tempatlahir ||', '|| pg.tgllahir::date as ttl, jk.jeniskelamin,es.eselon, gol.golongan,gol.tgltmt::date, jab.namajabatan, jab.tmtjabatan::date, '' as masakerjagolongan, sp.statuspegawai as kedudukan, kp.kategorypegawai, str.nostr,str.terbitstr::date || ' s.d. ' ||  str.berakhirstr::date as masaberlakustr, str.nosip, str.terbitsip::date as tanggalsip, rip.pendidikanpegawai  FROM pegawai_m pg 
         left join jeniskelamin_m jk on jk.id = pg.objectjeniskelaminfk
         left join eselon_m es on es.id = pg.objecteselonfk
@@ -7685,8 +7698,9 @@ public function daftarKenaikanGajiBerkala(Request $request){
         left join kategorypegawai_m kp on kp.id = pg.kategorypegawai
         left join(SELECT * FROM (SELECT ROW_NUMBER()OVER(PARTITION BY rp.objectpegawaifk ORDER BY rp.tgllulus desc)as nomor, rp.objectpegawaifk,pp.pendidikanpegawai,rp.tgllulus FROM riwayatpendidikan_t rp
         left join pendidikanpegawai_m pp on pp.id = rp.objectpendidikanpegawaifk where rp.kdprofile = 30 and rp.statusenabled = true) as x where x.nomor=1)as rip on rip.objectpegawaifk = pg.id
+        left join jenispegawai_m jep on jep.id = pg.objectjenispegawaifk
         left join (SELECT  ROW_NUMBER()OVER(partition by str.pegawaifk ORDER BY str.berakhirstr desc)as nomor,  str.pegawaifk, str.nostr, str.terbitstr, str.berakhirstr, str.nosip, str.terbitsip, str.berakhirsip FROM masaberlakusipstr_t str where str.kdprofile = 30 and str.statusenabled = true)as str on str.pegawaifk = pg.id
-        where pg.kdprofile = 30 and pg.statusenabled = true and pg.usereksternal is null and pg.namalengkap <> '-' AND pg.ID != 320263"));
+        where pg.kdprofile = 30 and pg.statusenabled = true and pg.usereksternal is null and pg.namalengkap <> '-' AND pg.ID != 320263 $kateg $Peg $status"));
 
         $result = array(
             'data'=> $data,

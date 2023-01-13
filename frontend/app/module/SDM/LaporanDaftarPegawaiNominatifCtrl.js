@@ -8,6 +8,9 @@ define(['initialize'], function (initialize) {
             $scope.dataSelected = {};
             $scope.item = {};
             $scope.isRouteLoading = false;
+            $scope.item.kategory = []
+            $scope.item.jenis = []
+            $scope.item.status = []
             FormLoad();
             var HttpClient = function () {
                 this.get = function (aUrl, aCallback) {
@@ -21,7 +24,7 @@ define(['initialize'], function (initialize) {
                     anHttpRequest.send(null);
                 }
             }
-
+            
             function FormLoad() {
 
                 $scope.tglPelayanan = $scope.item.pelayanan;
@@ -44,6 +47,37 @@ define(['initialize'], function (initialize) {
                     $scope.listStatus = dataCombo.statuspegawai;
                     $scope.listJenisPegawai = dataCombo.jenispegawai;
                     $scope.listKategory = dataCombo.kategorypegawai;
+                    $scope.selectOptionsKategory = {
+                        placeholder: "Pilih Status Pegawai...",
+                        dataTextField: "kategorypegawai",
+                        dataValueField: "id",
+                        // dataSource:{
+                        //     data: $scope.listRuangan
+                        // },
+                        autoBind: true,
+
+                    };
+                    $scope.selectOptionsJenis = {
+                        placeholder: "Pilih Jenis Pegawai...",
+                        dataTextField: "jenispegawai",
+                        dataValueField: "id",
+                        // dataSource:{
+                        //     data: $scope.listRuangan
+                        // },
+                        autoBind: true,
+
+                    };
+
+                    $scope.selectOptionsStatus = {
+                        placeholder: "Pilih Kedudukan Pegawai...",
+                        dataTextField: "statuspegawai",
+                        dataValueField: "id",
+                        // dataSource:{
+                        //     data: $scope.listRuangan
+                        // },
+                        autoBind: true,
+
+                    };
                 });
             }
 
@@ -64,24 +98,44 @@ define(['initialize'], function (initialize) {
                 //debugger;
 
                 var kateg = "";
-                if ($scope.item.kategory != undefined) {
-                    kateg = "kategId=" + $scope.item.kategory.id;
+
+                if ($scope.item.kategory.length != 0) {
+                    var a = ""
+                    var b = ""
+                    for (var i = $scope.item.kategory.length - 1; i >= 0; i--) {
+                        var c = $scope.item.kategory[i].id
+                        b = "," + c
+                        a = a + b
+                    }
+                    kateg = "jenisKategId="+a.slice(1, a.length)
                 }
                 var jenis = "";
-                if ($scope.item.jenis != undefined) {
-                    jenis = "&jenisPegId=" + $scope.item.jenis.id;
+                if ($scope.item.jenis.length != 0) {
+                    var a = ""
+                    var b = ""
+                    for (var i = $scope.item.jenis.length - 1; i >= 0; i--) {
+                        var c = $scope.item.jenis[i].id
+                        b = "," + c
+                        a = a + b
+                    }
+                    jenis = "&jenisPegId=" + a.slice(1, a.length)
                 }
 
                 var status = "";
-                if ($scope.item.status != undefined) {
-                    status = "&statusPegId=" + $scope.item.status.id;
+                if ($scope.item.status.length != 0) {
+                    var a = ""
+                    var b = ""
+                    for (var i = $scope.item.status.length - 1; i >= 0; i--) {
+                        var c = $scope.item.status[i].id
+                        b = "," + c
+                        a = a + b
+                    }
+                    status = "&statusPegId=" + a.slice(1, a.length)
                 }
 
 
 
-                medifirstService.get("sdm/get-pegawai-nominatif?"
-
-                    +
+                medifirstService.get("sdm/get-pegawai-nominatif?"+
                     kateg +
                     jenis +
                     status).then(function (data) {
