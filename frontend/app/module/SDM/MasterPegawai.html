@@ -55,7 +55,7 @@
 								
 								<div class="grid_4">
 									<div class="grid_12">
-										<label c-label item="item" c-label-text="NamaPegawai"></label>
+										<label c-label item="item">Nama Pegawai</label>
 									</div>
 									<div class="grid_12">
 										<input c-text-box type="input" filter="'varchar'" class="k-textbox"
@@ -83,7 +83,7 @@
 							<div class="grid_12">
 								<div class="grid_6">
 									<div class="grid_12">
-										<label c-label item="item" c-label-text="Tempat Tanggal Lahir"></label>
+										<label c-label item="item" >Tempat Tanggal Lahir</label>
 									</div>
 									<div class="grid_12">
 										<div class="grid_6">
@@ -98,7 +98,7 @@
 								</div>
 								<div class="grid_6">
 									<div class="grid_12">
-										<label c-label item="item" c-label-text="UnitKerja"></label>
+										<label c-label item="item">Unit Kerja</label>
 									</div>
 									<div class="grid_12">
 										<div class="grid_12" style="margin-top: 5px;">
@@ -113,7 +113,7 @@
 							<div class="grid_12">
 								<div class="grid_4">
 									<div class="grid_12">
-										<label c-label item="item" c-label-text="JenisKelamin"></label>
+										<label c-label item="item">Jenis Kelamin</label>
 									</div>
 									<div class="grid_12">
 										<input style="width: 100%;" kendo-combo-box k-ng-model="item.jenisKelamin"
@@ -124,7 +124,7 @@
 								</div>
 								<div class="grid_4">
 									<div class="grid_12">
-										<label c-label item="item" c-label-text="Pendidikan Terakhir"></label>
+										<label c-label item="item">Pendidikan Terakhir</label>
 									</div>
 									<div class="grid_12">
 										<input kendo-combo-box k-ng-model="item.pendidikan"
@@ -134,7 +134,7 @@
 								</div>
 								<div class="grid_4">
 									<div class="grid_12">
-										<label c-label item="item" c-label-text="Pendidikan Pegawai"></label>
+										<label c-label item="item" > Pendidikan Pegawai</label>
 									</div>
 									<div class="grid_12">
 										<input kendo-combo-box k-ng-model="item.pendidikanpegawai"
@@ -157,7 +157,7 @@
 								</div>
 								<div class="grid_4">
 									<div class="grid_12">
-										<label c-label item="item" c-label-text="Tanggal Meninggal"></label>
+										<label c-label item="item">Tanggal Meninggal</label>
 									</div>
 									<div class="grid_12">
 										<input kendo-date-picker k-ng-model="item.tglMeninggal" k-format="'dd-MM-yyyy'"
@@ -166,7 +166,7 @@
 								</div>
 								<div class="grid_4">
 									<div class="grid_12">
-										<label c-label item="item" c-label-text="Status Kawin"></label>
+										<label c-label item="item" >Status Kawin</label>
 									</div>
 									<div class="grid_12">
 										<input style="width: 100%;" kendo-combo-box k-ng-model="item.statusPerkawinanPegawai"
@@ -206,6 +206,16 @@
 									<div class="grid_12">
 										<input c-text-box type="input" filter="'varchar'" class="k-textbox"
 											ng-model="item.masakerjakeseluruhan" ng-disabled="true" />
+									</div>
+								</div>
+								<div class="grid_4">
+									<div class="grid_12">
+										<label c-label item="item">Jabatan</label>
+									</div>
+									<div class="grid_12">
+										<input style="width: 100%;" kendo-combo-box k-ng-model="item.jabatan"
+											k-data-text-field="'namajabatan'" k-data-value-field="'id'" k-filter="'contains'"
+											k-auto-bind="false" k-data-source="ListJabatanFungsional" />
 									</div>
 								</div>
 								<!-- <div class="grid_4">
@@ -312,7 +322,7 @@
 							<div class="panel-body">
 								<div class="grid_6">
 									<div class="grid_12">
-										<label c-label item="item" c-label-text="NoRekening"></label>
+										<label c-label item="item" >No Rekening</label>
 									</div>
 									<div class="grid_12">
 										<input c-text-box type="input" placeholder="No Rekening" filter="'varchar'"
@@ -321,7 +331,7 @@
 								</div>
 								<div class="grid_6">
 									<div class="grid_12">
-										<label c-label item="item" c-label-text="NamaRekening"></label>
+										<label c-label item="item" c-label-text="Nama Rekening" real></label>
 									</div>
 									<div class="grid_12">
 										<input c-text-box type="input" placeholder="Nama Pemilik Rekening"
@@ -330,7 +340,7 @@
 								</div>
 								<div class="grid_12">
 									<div class="grid_12">
-										<label c-label item="item" c-label-text="NamaBank"></label>
+										<label c-label item="item" c-label-text="Nama Bank"real></label>
 									</div>
 									<div class="grid_12">
 										<input c-text-box type="input" placeholder="Nama Bank Rekening"
@@ -348,7 +358,7 @@
 							<div class="panel-body">
 								<div class="grid_6">
 									<div class="grid_12">
-										<label c-label item="item" c-label-text="NoRekening"></label>
+										<label c-label item="item" c-label-text="No Rekening"real></label>
 									</div>
 									<div class="grid_12">
 										<input c-text-box type="input" placeholder="No Rekening" filter="'varchar'"
@@ -357,7 +367,7 @@
 								</div>
 								<div class="grid_6">
 									<div class="grid_12">
-										<label c-label item="item" c-label-text="NamaRekening"></label>
+										<label c-label item="item" c-label-text="Nama Rekening"real></label>
 									</div>
 									<div class="grid_12">
 										<input c-text-box type="input" placeholder="Nama Pemilik Rekening"
@@ -367,7 +377,7 @@
 								</div>
 								<div class="grid_12">
 									<div class="grid_12">
-										<label c-label item="item" c-label-text="NamaBank"></label>
+										<label c-label item="item" c-label-text="Nama Bank"real></label>
 									</div>
 									<div class="grid_12">
 										<input c-text-box type="input" placeholder="Nama Bank Rekening"
@@ -393,7 +403,7 @@
 									</div>
 									<div class="grid_4">
 										<div class="grid_12">
-											<label c-label item="item" c-label-text="KodePos"></label>
+											<label c-label item="item" c-label-text="Kode Pos"real></label>
 										</div>
 										<div class="grid_12">
 											<input c-text-box type="input" placeholder="Kode Pos" filter="'varchar'"
@@ -642,7 +652,7 @@
 											</div>
 											<div class="grid_4">
 												<div class="grid_12">
-													<label c-label item="item">Tgl. SK CPNS</label>
+													<label c-label item="item">Tanggal SK CPNS</label>
 												</div>
 												<div class="grid_12">
 													<input kendo-date-picker k-ng-model="item.tglskcpns" k-format="'yyyy-MM-dd'"
@@ -920,7 +930,7 @@
 					<md-content class="md-padding">
 						<md-content>
 							<md-tabs md-dynamic-height md-border-bottom>
-								<md-tab label="Riwayat Jabatan Pelaksana" ng-disabled='nondiklat'>
+								<md-tab label="Riwayat Jabatan Administrasi" ng-disabled='nondiklat'>
 									<md-content class="md-padding">
 										<div class="grid_12">
 											<kendo-grid k-data-source="gridRiwayatJabatanPelaksana" k-pageable="true" k-ng-model="dataRiwayatJabatanPelaksana"

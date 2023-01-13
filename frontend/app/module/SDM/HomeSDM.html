@@ -1,0 +1,368 @@
+<style type="text/css">
+    .small-box {
+        border-radius: 0.25rem;
+        box-shadow: 0 0 1px rgba(0, 0, 0, 0.125), 0 1px 3px rgba(0, 0, 0, 0.2);
+        display: block;
+        margin-bottom: 20px;
+        position: relative;
+    }
+    .small-box > .inner {
+    padding: 10px;
+    }
+    .bg-info {
+        background-color: #20b2aa;
+    }
+    .bg-perempuan {
+    background-color: #ffb6c1 !important;
+    }
+    .bg-laki {
+    background-color: #0a88ba !important;
+    }
+    .bg-p3k {
+    background-color: #24d409 !important;
+    }
+    .small-box .icon {
+    color: rgba(0, 0, 0, 0.15);
+    z-index: 0;
+    }
+    .small-box > .small-box-footer {
+    background-color: rgba(0, 0, 0, 0.1);
+    color: rgba(255, 255, 255, 0.8);
+    display: block;
+    padding: 3px 0;
+    position: relative;
+    text-align: center;
+    text-decoration: none;
+    z-index: 10;
+    }
+
+    .small-box > .small-box-footer:hover {
+    background-color: rgba(0, 0, 0, 0.15);
+    color: #fff;
+    }
+    .small-box h3 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin: 0 0 10px;
+    padding: 0;
+    white-space: nowrap;
+    /* color: white; */
+    text-align: left;
+    }
+    .small-box h4 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin: 0 0 10px;
+    padding: 0;
+    white-space: nowrap;
+    /* color: white; */
+    text-align: left;
+    }
+    .small-box p {
+    font-size: 1rem;
+    font-weight: bold;
+    /* color: #fff; */
+    }
+    
+    .small-box .icon > i {
+    font-size: 90px;
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    transition: -webkit-transform 0.3s linear;
+    transition: transform 0.3s linear;
+    transition: transform 0.3s linear, -webkit-transform 0.3s linear;
+    }
+    .small-box .icon {
+    color: rgba(0, 0, 0, 0.15);
+    z-index: 0;
+    }
+    .small-box .icon > i.fa, .small-box .icon > i.fas, .small-box .icon > i.far, .small-box .icon > i.fab, .small-box
+    .icon > i.fal, .small-box .icon > i.fad, .small-box .icon > i.ion {
+    font-size: 80px;
+    top: 20px;
+    }
+    .info-box {
+    box-shadow: 0 0 1px rgba(0, 0, 0, 0.125), 0 1px 3px rgba(0, 0, 0, 0.2);
+    border-radius: 0.25rem;
+    background-color: #fff;
+    display: -ms-flexbox;
+    display: flex;
+    margin-bottom: 1rem;
+    min-height: 80px;
+    padding: .5rem;
+    position: relative;
+    width: 100%;
+    }
+    
+    #table{
+        font-size: 1.5rem;
+        font-weight: bold;
+    }
+    kendo-grid {
+        /* font-size: 1rem; */
+        font-weight: normal;
+    }
+</style>
+
+<div class="panel panel-default container_12">
+    <div class="panel-heading" c-translate>Dashboard</div>
+
+    <div class="grid_12">
+        <div class="grid_4">
+            <div class="small-box bg-info" style="background-color: #08ba58 !important">
+                <div class="inner">
+                    <h3 style="color: #0d4d4a;">PNS</h3>
+                    <p style="color: #0d4d4a;">
+                    <table id="table">
+                        <tr>
+                            <td id="table"><i class="fa fa-venus" style="color: #0d4d4a;"></i></td>
+                            <td id="table" style="color: #0d4d4a;"> : </td>
+                            <td id="table" style="color: #0d4d4a;">{{jumlahpnsperempuan}}</td>
+                        </tr>
+                        <tr>
+                            <td id="table"><i class="fa fa-mars" style="color: #0d4d4a;"></i></td>
+                            <td id="table" style="color: #0d4d4a;"> : </td>
+                            <td id="table" style="color: #0d4d4a;">{{jumlahpnslaki}}</td>
+                        </tr>
+                        <tr>
+                            <td id="table" width="50" style="color: #0d4d4a;">Total</td>
+                            <td id="table" width="20" style="color: #0d4d4a;"> : </td>
+                            <td id="table" style="color: #0d4d4a;">{{jumlahpns}}</td>
+                        </tr>
+                    </table>
+                </p>
+                    
+                </div>
+                <div class="icon">
+                    <i class="fa fa-users" style="color: #10736e;"></i>
+                </div>
+                <a class="small-box-footer" style="color: #0d4d4a; font-weight: bold;">Jumlah PNS RS Jiwa Grhasia <i
+                        class="fa fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        <div class="grid_4">
+            <div class="small-box bg-info" style="background-color: #fad98a !important">
+                <div class="inner">
+                    <h3 style="color: #0d4d4a;">P3K</h3>
+                    <p style="color: #0d4d4a;">
+                        <table id="table">
+                            <tr>
+                                <td id="table"><i class="fa fa-venus" style="color: #0d4d4a;"></i></td>
+                                <td id="table" style="color: #0d4d4a;"> : </td>
+                                <td id="table" style="color: #0d4d4a;">{{jumlahp3kperempuan}}</td>
+                            </tr>
+                            <tr>
+                                <td id="table"><i class="fa fa-mars" style="color: #0d4d4a;"></i></td>
+                                <td id="table" style="color: #0d4d4a;"> : </td>
+                                <td id="table" style="color: #0d4d4a;">{{jumlahp3klaki}}</td>
+                            </tr>
+                            <tr>
+                                <td id="table" width="50" style="color: #0d4d4a;">Total</td>
+                                <td id="table" width="20" style="color: #0d4d4a;"> : </td>
+                                <td id="table" style="color: #0d4d4a;">{{jumlahp3k}}</td>
+                            </tr>
+                        </table>
+                    </p>
+
+                </div>
+                <div class="icon">
+                    <i class="fa fa-user-o" style="color: #10736e;"></i>
+                </div>
+                <a class="small-box-footer" style="color: #0d4d4a; font-weight: bold;">Jumlah P3K RS Jiwa
+                    Grhasia <i class="fa fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        <div class="grid_4">
+            <div class="small-box bg-info" style="background-color: #fa9dff !important">
+                <div class="inner">
+                    <h3 style="color: #0d4d4a;">NABAN</h3>
+                    <p style="color: #0d4d4a;">
+                        <table id="table">
+                            <tr>
+                                <td id="table"><i class="fa fa-venus" style="color: #0d4d4a;"></i></td>
+                                <td id="table" style="color: #0d4d4a;"> : </td>
+                                <td id="table" style="color: #0d4d4a;">{{jumlahnabanperempuan}}</td>
+                            </tr>
+                            <tr>
+                                <td id="table"><i class="fa fa-mars" style="color: #0d4d4a;"></i></td>
+                                <td id="table" style="color: #0d4d4a;"> : </td>
+                                <td id="table" style="color: #0d4d4a;">{{jumlahnabanlaki}}</td>
+                            </tr>
+                            <tr>
+                                <td id="table" width="50" style="color: #0d4d4a;">Total</td>
+                                <td id="table" width="20" style="color: #0d4d4a;"> : </td>
+                                <td id="table" style="color: #0d4d4a;">{{jumlahnaban}}</td>
+                            </tr>
+                        </table>
+                    </p>
+
+                </div>
+                <div class="icon">
+                    <i class="fa fa-user-plus" style="color: #10736e;"></i>
+                </div>
+                <a class="small-box-footer" style="color: #0d4d4a; font-weight: bold;">Jumlah Tenaga Bantu RS Jiwa
+                    Grhasia <i class="fa fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        <div class="grid_6">
+            <div class="small-box bg-info" style="background-color: #e7f21a !important">
+                <div class="inner">
+                    <h3 style="color: #0d4d4a;">BLUD</h3>
+                    <p style="color: #0d4d4a;">
+                        <table id="table">
+                            <tr>
+                                <td id="table"><i class="fa fa-venus" style="color: #0d4d4a;"></i></td>
+                                <td id="table" style="color: #0d4d4a;"> : </td>
+                                <td id="table" style="color: #0d4d4a;">{{jumlahbludperempuan}}</td>
+                            </tr>
+                            <tr>
+                                <td id="table"><i class="fa fa-mars" style="color: #0d4d4a;"></i></td>
+                                <td id="table" style="color: #0d4d4a;"> : </td>
+                                <td id="table" style="color: #0d4d4a;">{{jumlahbludlaki}}</td>
+                            </tr>
+                            <tr>
+                                <td id="table" width="50" style="color: #0d4d4a;">Total</td>
+                                <td id="table" width="20" style="color: #0d4d4a;"> : </td>
+                                <td id="table" style="color: #0d4d4a;">{{jumlahblud}}</td>
+                            </tr>
+                        </table>
+                    </p>
+
+                </div>
+                <div class="icon">
+                    <i class="fa fa-user-circle-o" style="color: #10736e;"></i>
+                </div>
+                <a class="small-box-footer" style="color: #0d4d4a; font-weight: bold;">Jumlah BLUD RS
+                    Jiwa
+                    Grhasia <i class="fa fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        <div class="grid_6">
+            <div class="small-box bg-info" style="background-color: #29e6dd !important">
+                <div class="inner">
+                    <h4 style="color: #0d4d4a;">OUTSOURCING</h4>
+                    <p style="color: #0d4d4a;">
+                        <table id="table">
+                            <tr>
+                                <td id="table"><i class="fa fa-venus" style="color: #0d4d4a;"></i></td>
+                                <td id="table" style="color: #0d4d4a;"> : </td>
+                                <td id="table" style="color: #0d4d4a;">{{jumlahosperempuan}}</td>
+                            </tr>
+                            <tr>
+                                <td id="table"><i class="fa fa-mars" style="color: #0d4d4a;"></i></td>
+                                <td id="table" style="color: #0d4d4a;"> : </td>
+                                <td id="table" style="color: #0d4d4a;">{{jumlahoslaki}}</td>
+                            </tr>
+                            <tr>
+                                <td id="table" width="50" style="color: #0d4d4a;">Total</td>
+                                <td id="table" width="20" style="color: #0d4d4a;"> : </td>
+                                <td id="table" style="color: #0d4d4a;">{{jumlahos}}</td>
+                            </tr>
+                        </table>
+                    </p>
+
+                </div>
+                <div class="icon">
+                    <i class="fa fa-handshake-o" style="color: #10736e;"></i>
+                </div>
+                <a class="small-box-footer" style="color: #0d4d4a; font-weight: bold;">Jumlah Outsourcing RS
+                    Jiwa
+                    Grhasia <i class="fa fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+    </div>
+
+    
+</div>
+<div class="panel panel-default container_12">
+    <div class="panel-heading" c-translate>Penjagaan</div>
+
+    <div class="grid_12">
+        <div class="grid_4">
+            <div class="small-box bg-info" style="background-color: #fea9be !important">
+                <div class="inner">
+                    <!-- <h4 style="color: #0d4d4a;">PENJAGAAN KGB</h4> -->
+                    <h3 style="color: #0d4d4a;">{{penjagaankgb}}</h3>
+                    <p style="color: #0d4d4a;">
+                        Kenaikan Gaji Berkala
+                    </p>
+
+                </div>
+                <div class="icon">
+                    <i class="fa fa-money" style="color: #10736e;"></i>
+                </div>
+                <a ng-click="penjagaan('KGB')" class="small-box-footer"
+                    style="color: #0d4d4a; font-weight: bold;">Kenaikan Gaji Berkala <i
+                        class="fa fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        <div class="grid_4">
+            <div class="small-box bg-info" style="background-color: #8fff76 !important">
+                <div class="inner">
+                    <!-- <h4 style="color: #0d4d4a;">PENJAGAAN KGB</h4> -->
+                    <h3 style="color: #0d4d4a;">{{penjagaanstr}}</h3>
+                    <p style="color: #0d4d4a;">
+                        Surat Tanda Registrasi
+                    </p>
+
+                </div>
+                <div class="icon">
+                    <i class="fa fa-address-book" style="color: #10736e;"></i>
+                </div>
+                <a ng-click="penjagaan('STR')" class="small-box-footer" style="color: #0d4d4a; font-weight: bold;">Surat
+                    Tanda Registrasi <i class="fa fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        <div class="grid_4">
+            <div class="small-box bg-info" style="background-color: #ffc23e !important">
+                <div class="inner">
+                    <!-- <h4 style="color: #0d4d4a;">PENJAGAAN KGB</h4> -->
+                    <h3 style="color: #0d4d4a;">{{penjagaanpensiun}}</h3>
+                    <p style="color: #0d4d4a;">
+                        Pegawai Pensiun
+                    </p>
+
+                </div>
+                <div class="icon">
+                    <i class="fa fa-user" style="color: #10736e;"></i>
+                </div>
+                <a ng-click="penjagaan('Pensiun')" class="small-box-footer"
+                    style="color: #0d4d4a; font-weight: bold;">Pegawai Pensiun <i
+                        class="fa fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+    </div>
+    <div class="grid_12">
+        <div class="grid_12" style="margin-top:10px" ng-show="KGB">
+            <div class="grid_12 headerBox">
+                <p>Detail Kenaikan Gaji Berkala</p>
+            </div>
+            <div class="grid_12 borderBox">
+                <kendo-grid k-data-source="sourceKGB" k-selectable="'row'" k-groupable="'false'" k-options="columnKGB"
+                    k-ng-model="dataPasienSelected" ng-click="click(dataPasienSelected)">
+                </kendo-grid>
+            </div>
+        </div>
+        <div class="grid_12" style="margin-top:10px" ng-show="STR">
+            <div class="grid_12 headerBox">
+                <p>Detail Surat Tanda Registrasi</p>
+            </div>
+            <div class="grid_12 borderBox">
+                <kendo-grid k-data-source="sourceSTR" k-selectable="'row'" k-groupable="'false'" k-options="columnSTR"
+                    k-ng-model="dataPasienSelected" ng-click="click(dataPasienSelected)">
+                </kendo-grid>
+            </div>
+        </div>
+        <div class="grid_12" style="margin-top:10px" ng-show="Pensiun">
+            <div class="grid_12 headerBox">
+                <p>Detail Pegawai Pensiun</p>
+            </div>
+            <div class="grid_12 borderBox">
+                <kendo-grid k-data-source="sourcePensiun" k-selectable="'row'" k-groupable="'false'"
+                    k-options="columnPensiun" k-ng-model="dataPasienSelected" ng-click="click(dataPasienSelected)">
+                </kendo-grid>
+            </div>
+        </div>
+    </div>
+</div>

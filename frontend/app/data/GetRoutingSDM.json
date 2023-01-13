@@ -1409,5 +1409,43 @@
         "define": "MedifirstService"
       }
     ]
+  },
+  {
+    "name": "HomeSDM",
+    "url": "/SG9tZVNETQ",
+    "templateurl": "module/SDM/HomeSDM.html",
+    "controller": "HomeSDMCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "LaporanDaftarPegawaiNominatif",
+    "url": "/LaporanDaftarPegawaiNominatif",
+    "templateurl": "module/SDM/LaporanDaftarPegawaiNominatif.html",
+    "controller": "LaporanDaftarPegawaiNominatifCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
   }
 ]

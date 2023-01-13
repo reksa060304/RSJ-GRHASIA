@@ -1170,6 +1170,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('kasir/detail-piutang-pasien/{norecSPP}', 'Kasir\KasirController@detailPiutangPasien');
             Route::get('kasir/data-laporan-rekap-pendapatan', 'Kasir\KasirController@getDataLaporanRekapPendapatanRuangan');
             Route::get('sdm/diklat/get-data-detail-diklat', 'Kasir\KasirController@getDataLaporanRekapPendapatanRuangan');
+            Route::get('sdm/home-dashboard','SDM\SumberDayaManusiaController@HomeDashboard');
+            Route::get('sdm/get-pegawai-nominatif','SDM\SumberDayaManusiaController@getLaporanNominatif');
             Route::get('tatarekening/get-daftar-remun-diklat', 'Kasir\KasirController@DaftarRemunDiklat');
             Route::get('diklat/get-laporan-pengguna-total','SDM\SumberDayaManusiaController@LaporanPenggunaTotal');
             Route::get('diklat/get-laporan-pengguna-total-tw','SDM\SumberDayaManusiaController@LaporanPenggunaTotalTW');
