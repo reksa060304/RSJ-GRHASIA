@@ -2436,11 +2436,11 @@ class BendaharaPenerimaanController extends ApiController {
         if (isset($request['status']) && $request['status'] != "" && $request['status'] != "undefined" && $request['status']==1) {
             $status = ' and nosts is not null';
         } else{
-            $status = ' and nosts is null';
+            $status = ' and nosts is null and statusenabled is null';
         }
 
         if (isset($request['status']) && $request['status'] != "" && $request['status'] != "undefined" && $request['status']==2) {
-            $status = ' and nosts is null';
+            $status = ' and nosts is null and statusenabled is null';
         }
 
         if(isset($request['idCaraBayar']) && $request['idCaraBayar'] != "" && $request['idCaraBayar'] != "undefined") {
@@ -2485,7 +2485,7 @@ class BendaharaPenerimaanController extends ApiController {
         // }, $nobatal);
 
         $detail = DB::select(DB::raw("select * from(
-        select distinct cb.id idcarabayar, sc.noclosing as nopenerimaan, sc.tglclosing as tglpenerimaan, sck.totaldibayar as totalpenerimaan, sts.nosts, cb.carabayar, sc.objectpegawaidiclosefk as pegawai, sc.norec as scfk, sck.norec as sckfk 
+        select distinct ssc.statusenabled, cb.id idcarabayar, sc.noclosing as nopenerimaan, sc.tglclosing as tglpenerimaan, sck.totaldibayar as totalpenerimaan, sts.nosts, cb.carabayar, sc.objectpegawaidiclosefk as pegawai, sc.norec as scfk, sck.norec as sckfk 
         from strukclosing_t sc
         inner join strukclosingkasir_t sck on sck.noclosingfk = sc.norec
         inner join strukbuktipenerimaan_t sbm on sbm.noclosingfk = sc.norec
