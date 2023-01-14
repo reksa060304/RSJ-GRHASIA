@@ -96,7 +96,7 @@ class SumberDayaManusiaController extends ApiController {
         $Ruangan = Ruangan::where('statusenabled',true)->where('kdprofile', $kdProfile)->get();
         $StatusPegawai = StatusPegawai::where('statusenabled',true)->where('kdprofile', $kdProfile)->get();
         $KategoryPegawai = KategoryPegawai::where('statusenabled',true)->where('kdprofile', $kdProfile)->get();
-        $jabatan = Jabatan::where('statusenabled', true)->where('kdprofile', $kdProfile)->get();
+        $jabatan = Jabatan::where('statusenabled', true)->where('kdprofile', $kdProfile)->whereIn('objectjenisjabatanfk',[6,7,8])->get();
         $jabatanbaru = Jabatan::where('statusenabled', true)->where('objectjenisjabatanfk', $request['jabatan'])->where('kdprofile', $kdProfile)->get();
 
         if(isset($request['jabatan']) && $request['jabatan']!="" && $request['jabatan']!="undefined"){
@@ -456,6 +456,7 @@ class SumberDayaManusiaController extends ApiController {
             ->leftJoin('detailkategorypegawai_m as dkp','dkp.id','=','pg.objectdetailkategorypegawaifk ')
             ->leftJoin('golongandarah_m as gd','gd.id','=', 'pg.objectgolongandarahfk')
             ->leftJoin('jabatan_m as jb','jb.id','=','pg.objectjabatanfungsionalfk')
+            ->leftJoin('jabatan_m as jbhehe','jbhehe.id','=','pg.objectjabataninternalfk')
             ->leftJoin('jabatan_m as jb1','jb1.id', '=', 'pg.objectjabatanstrukturalfk')
             ->leftJoin('golonganpegawai_m as gp','gp.id','=', 'pg.objectgolonganpegawaifk')
             ->leftJoin('unitkerjapegawai_m as uk','uk.id','=','pg.objectunitkerjapegawaifk')
@@ -478,7 +479,7 @@ class SumberDayaManusiaController extends ApiController {
 			                        jb1.namajabatan as jbstruktural,gp.golonganpegawai,uk.name as unitkerja,sp.statuspegawai,
 			                        kj.namakelompokjabatan,spp.statusperkawinan,ese.eselon,pend.pendidikan,jk.jeniskelamin,
 			                        gol.name as golongan,nkj.detailkelompokjabatan,nkj.grade,ks.kelompokshiftkerja,
-			                        kp.kategorypegawai as namakategorypegawai,kdd.name as kedudukan,pg.objectjenispegawaifk,jp.jenispegawai, pendpg.pendidikanpegawai, pg.objectpendidikanpegawaifk"))
+			                        kp.kategorypegawai as namakategorypegawai,kdd.name as kedudukan,pg.objectjenispegawaifk,jp.jenispegawai, pendpg.pendidikanpegawai, pg.objectpendidikanpegawaifk, jbhehe.namajabatan"))
             ->where('pg.kdprofile', $kdProfile)
             ->where('pg.statusenabled',true)
             ->orderBy('pg.namalengkap');
@@ -928,6 +929,7 @@ class SumberDayaManusiaController extends ApiController {
             $dataSavePegawai->kedudukanfk=  $dataPegawai['kedudukan'];
             // $dataSavePegawai->objectgolonganfk=  $dataRiwayatPangkatGolongan[$nomor]['objectgolonganfk'];
             $dataSavePegawai->objectjabatanfungsionalfk= $dataPegawai['jabatan'];
+            $dataSavePegawai->objectjabataninternalfk= $dataPegawai['jabatanhehe'];
             $dataSavePegawai->objectpendidikanterakhirfk=  $dataPegawai['pendidikan'];
             
             $dataSavePegawai->objectkelompokjabatanfk=  $dataPegawai['kelompokjabatan'];

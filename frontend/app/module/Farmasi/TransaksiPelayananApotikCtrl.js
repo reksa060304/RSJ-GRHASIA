@@ -1804,7 +1804,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             "width": "40px",
                         },
                         {
-                            "field": "keteranganpakai",
+                            "field": "keterangan",
                             "title": "Keterangan",
                             "width": "400px",
                         },
