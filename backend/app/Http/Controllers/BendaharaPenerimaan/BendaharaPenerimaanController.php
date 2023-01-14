@@ -2958,30 +2958,6 @@ class BendaharaPenerimaanController extends ApiController {
                 $cekjumlah = $konten->namaproduk;
             }
 
-            else if(($konten->idkelompokpasien == 1 || $konten->idkelompokpasien == 12) && $konten->objectdepartemenfk != 16 && $konten->objectcarabayarfk == 1 && $konten->totaldibayarclosing != $konten->totaldibayarsbm){
-                $jumlahtunairajal += $konten->totaldibayarsbm;
-                $voljumlahtunairajal++;
-                $cekjumlah = $konten->namaproduk;
-            }
-
-            else if(($konten->idkelompokpasien == 1 || $konten->idkelompokpasien == 12) && $konten->objectdepartemenfk == 16 && $konten->objectcarabayarfk == 1 && $konten->totaldibayarclosing != $konten->totaldibayarsbm){
-                $jumlahtunairanap += $konten->totaldibayarsbm;
-                $voljumlahtunairanap++;
-                $cekjumlah = $konten->namaproduk;
-            }
-
-            else if(($konten->idkelompokpasien == 1 || $konten->idkelompokpasien == 12) && $konten->objectdepartemenfk != 16 && $konten->objectcarabayarfk == 3 && $konten->totaldibayarclosing != $konten->totaldibayarsbm){
-                $jumlahtransferrajal += $konten->totaldibayarsbm;
-                $voljumlahtransferrajal++;
-                $cekjumlah = $konten->namaproduk;
-            }
-
-            else if(($konten->idkelompokpasien == 1 || $konten->idkelompokpasien == 12) && $konten->objectdepartemenfk == 16 && $konten->objectcarabayarfk == 3 && $konten->totaldibayarclosing != $konten->totaldibayarsbm){
-                $jumlahtransferranap += $konten->totaldibayarsbm;
-                $voljumlahtransferranap++;
-                $cekjumlah = $konten->namaproduk;
-            }
-
             else if($konten->idruangan == 752 && $konten->idproduk == 5006382){
                 $jumlahperiksajiwa += $konten->totaldibayarclosing;
                 $voljumlahperiksajiwa++;
