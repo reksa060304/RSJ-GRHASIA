@@ -900,7 +900,7 @@ define(['initialize'], function (initialize) {
                 // $scope.item.chks = 0
                 // $scope.item.chksr = 0
                 // $scope.item.chkm = 0
-                $scope.item.KeteranganPakai = undefined;
+                $scope.item.KeteranganPakai = $scope.item.jenisKemasan.id == 1 ? $scope.item.KeteranganPakai : '';
                 // $scope.listDataSigna = [
                 //     {
                 //         "id": 1,
@@ -2170,6 +2170,7 @@ define(['initialize'], function (initialize) {
         $scope.gantiJR = function(data){
             if(data == 2){
                 $scope.item.jumlah = ''
+                $scope.item.KeteranganPakai = ''
             }
         }
            //** BATAS SUCI */
