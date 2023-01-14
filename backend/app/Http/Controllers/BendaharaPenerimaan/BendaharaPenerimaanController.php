@@ -2436,11 +2436,11 @@ class BendaharaPenerimaanController extends ApiController {
         if (isset($request['status']) && $request['status'] != "" && $request['status'] != "undefined" && $request['status']==1) {
             $status = ' and nosts is not null';
         } else{
-            $status = ' and nosts is null and statusenabled is null';
+            $status = ' and nosts is null';
         }
 
         if (isset($request['status']) && $request['status'] != "" && $request['status'] != "undefined" && $request['status']==2) {
-            $status = ' and nosts is null and statusenabled is null';
+            $status = ' and nosts is null';
         }
 
         if(isset($request['idCaraBayar']) && $request['idCaraBayar'] != "" && $request['idCaraBayar'] != "undefined") {
