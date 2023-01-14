@@ -2493,6 +2493,7 @@ class BendaharaPenerimaanController extends ApiController {
         left join strukbuktipenerimaancarabayar_t sbmcr on sbmcr.nosbmfk = sbm.norec
         left join carabayar_m cb on cb.id = sbmcr.objectcarabayarfk
         left join ststosck_t ssc on ssc.objectsckfk = sck.norec 
+        and ssc.statusenabled = true
         left join surattandasetoran_t sts on sts.norec = ssc.objectstsfk and sts.statusenabled = true
         where sc.tglclosing::date between '$tglAwal' and '$tglAkhir'
         and sh.statusenabled <> false
