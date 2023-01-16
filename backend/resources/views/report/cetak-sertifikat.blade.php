@@ -50,7 +50,12 @@
                             <br>
                             <br>
                             <br>
-                            <img src="{{ asset('service/img/logo_grhasia.png') }}" style="width: 110px" border="0">
+                            @if (stripos(\Request::url(), 'localhost') !== FALSE)
+                                <img src="{{ asset('img/LOGO GRHASIA.png') }}" style="width: 110px" border="0">
+                            @else
+                                <img src="{{ asset('service/img/LOGO GRHASIA.png') }}" style="width: 110px" border="0">
+                            @endif
+                            {{-- <img src="{{ asset('service/img/LOGO GRHASIA.png') }}" style="width: 110px" border="0"> --}}
                             <p align="center" style="font-size:25px;font-weight: bold; margin: 0px 0px 0px 0px">RSJ GRHASIA</p>
                             <p align="center" style="font-size:13px;font-weight: bolder; margin: 0px 0px 0px 0px">Daerah Istimewa Yogyakarta</p>
                             <br>

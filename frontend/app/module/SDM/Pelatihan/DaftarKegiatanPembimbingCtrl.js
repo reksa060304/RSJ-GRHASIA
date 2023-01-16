@@ -131,7 +131,7 @@ define(['initialize'], function (initialize) {
                     },
                     {
                         "field": "namalengkap",
-                        "title": "Dokter",
+                        "title": "Pembimbing",
                         "width": "150px",
                         // "template": '# if( namadokter==null) {# - # } else {# #= namadokter # #} #'
                     },
