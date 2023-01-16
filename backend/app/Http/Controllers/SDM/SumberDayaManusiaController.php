@@ -2607,16 +2607,17 @@ class SumberDayaManusiaController extends ApiController {
             $TP->nim = $request['nim'];
             $TP->nomorhp = $request['nomorhp'];
             $TP->email = $request['email'];
+            $TP->image = $request['image'];
+            $TP->save();
 
             $uploadimage = $request->file('image');
             if($request['image']!='noimage'){
+                $TPimg = PesertaDidik::where('norec', $TP->norec)->first();
                 $extensionimage = $uploadimage->getClientOriginalExtension();
-                $filenameImage = 'DIKLAT-'.$request['nama'] .'-'.$request['noregistrasifk'].'-'. $request['email'].'.'.$extensionimage;
-                $TP->image = $filenameImage;
+                $filenameImage = 'DIKLAT-'.$request['nama'] .'_'.$TP->norec.'.'.$extensionimage;
+                $TPimg->image = $filenameImage;
+                $TPimg->save();
             }
-            
-            $TP->save();
-
             //## Logging User
             $newId = LoggingUser::max('id');
             $newId = $newId +1;
@@ -2764,7 +2765,7 @@ class SumberDayaManusiaController extends ApiController {
             $uploadimage = $request->file('image');
             if($request['image']!='noimage'){
                 $extensionimage = $uploadimage->getClientOriginalExtension();
-                $filenameImage = 'DIKLAT-'.$request['nama'] .'-'.$request['noregistrasifk'].'-'. $request['email'].'.'.$extensionimage;
+                $filenameImage = 'DIKLAT-'.$request['nama'] .'-'.$request['norec'].'.'.$extensionimage;
                 
                 $TP->image = $filenameImage;
             }else{

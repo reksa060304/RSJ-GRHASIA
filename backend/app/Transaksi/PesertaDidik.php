@@ -13,5 +13,6 @@ class PesertaDidik extends Transaksi
     protected $table = 'sdm_pesertadidik_t';
     protected $fillable = [];
     public $timestamps = false;
+    public $incrementing = false;
     protected $primaryKey = 'norec';
 }

@@ -400,6 +400,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         toastr.error("Foto menggunakan Format jpg atau png!")
                         return;
                     }
+                    if (gambar.size > 1124000) {
+                        toastr.error("Maksimal Foto 1 MB !")
+                        return;
+                    }
                 }
                 
                 var isValid = ModelItem.setValidation($scope, listRawRequired);
@@ -587,15 +591,19 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }
 
             $scope.updated = function () {
-                
-                if ($scope.djp == 1948 || $scope.djp == 1960 || $scope.djp == 1947) {
+                var gambar = document.querySelectorAll('[type=file]')[0].files[0]
+                if ($scope.djp == 1960 || $scope.djp == 1947) {
                     if (gambar == undefined) {
                         toastr.error("Foto Wajib diisi !")
                         return;
 
                     }
-                    if (gambar.type != 'image/png' && gambar.type != 'image/jpeg') {
+                    if (gambar.type != 'image/png' && gambar.type !== 'image/jpeg') {
                         toastr.error("Foto menggunakan Format jpg atau png!")
+                        return;
+                    }
+                    if (gambar.size > 1124000) {
+                        toastr.error("Maksimal Foto 1 MB !")
                         return;
                     }
                 }
