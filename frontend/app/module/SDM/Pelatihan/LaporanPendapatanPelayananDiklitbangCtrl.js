@@ -53,7 +53,7 @@ define(['initialize'], function (initialize) {
                     var datas = data.data;
                     for (var i = 0; i < datas.length; i++) {
                         datas[i].no = i + 1;
-                                                
+                        datas[i].sd = 's.d.'
                     }
                     $scope.dataLaporan = new kendo.data.DataSource({                            
                         data: data.data,
@@ -63,14 +63,12 @@ define(['initialize'], function (initialize) {
                         schema: {
                             model: { 
                                 fields: {
-                                    totalharusdibayar: {type: "number"},
-                                    jasa: {type: "number"},
+                                    totaldibayar: {type: "number"},
                                 }                               
                             }
                         },
                         aggregate: [
-                            {field: "totalharusdibayar", aggregate:"sum"},
-                            {field: "jasa", aggregate:"sum"},
+                            {field: "totaldibayar", aggregate:"sum"},
                         ]
                     });
                 })
@@ -126,37 +124,59 @@ define(['initialize'], function (initialize) {
 
                     { "field": "no", "title": "No", "width": "45px",footerTemplate: "Total" },
                     {
-                        "field": "tglstruk",
+                        "field": "tglsbm",
                         "title": "Tanggal",
                         "width": "105px",
-                        "template": "<span class='style-left'>{{formatTanggal('#: tglstruk #')}}</span>",
+                        "template": "<span class='style-left'>{{formatTanggal('#: tglsbm #')}}</span>",
                         
                     },
+                    
+
                     {
-                        "field": "namapasien_klien",
+                        "field": "nosbm",
+                        "title": "No SBM",
+                        "width": "150px"
+                    },
+                    {
+                        "field": "institusipendidikan",
                         "title": "Pelayanan Diklat",
                         "width": "150px"                    
                     },
                     {
-                        "field": "totalharusdibayar",
-                        "title": "Jumlah",
-                        "width": "150px",
-                        "template": "<span class='style-right'>{{formatRupiah('#: totalharusdibayar #', 'Rp.')}}</span>",
-                         aggregates: ["sum"],
-                        footerTemplate: "#: data.totalharusdibayar.sum #",
-                        footerTemplate: "<span class='style-right'>{{formatRupiah('#: data.totalharusdibayar.sum #', 'Rp.')}}</span>",
-                        footerAttributes: { style: "text-align: right;" }
+                        // "field": "tglsbm",
+                        "title": "Periode",
+                        "width": "105px",
+                        "columns": [{
+                                "field": "tanggalmulai",
+                                "title": "Mulai",
+                                "width": "105px",
+                                "template": "<span class='style-left'>{{formatTanggal('#: tanggalmulai #')}}</span>",
+                            },
+                            {
+                                "field": "sd",
+                                "title": "s.d.",
+                                "width": "30px"
+                            },
+                            {
+                                "field": "tanggalselesai",
+                                "title": "Mulai",
+                                "width": "105px",
+                                "template": "<span class='style-left'>{{formatTanggal('#: tanggalselesai #')}}</span>",
+                            },
+                        ]
+
                     },
                     {
-                        "field": "jasa",
-                        "title": "Jasa Pelayanan",
+                        "field": "totaldibayar",
+                        "title": "Jumlah",
                         "width": "150px",
-                        "template": "<span class='style-right'>{{formatRupiah('#: jasa #', 'Rp.')}}</span>",
-                        aggregates: ["sum"],
-                        footerTemplate: "#: data.jasa.sum #",
-                        footerTemplate: "<span class='style-right'>{{formatRupiah('#: data.jasa.sum #', 'Rp.')}}</span>",
+                        "template": "<span class='style-right'>{{formatRupiah('#: totaldibayar #', 'Rp.')}}</span>",
+                         aggregates: ["sum"],
+                        footerTemplate: "#: data.totaldibayar.sum #",
+                        footerTemplate: "<span class='style-right'>{{formatRupiah('#: data.totaldibayar.sum #', 'Rp.')}}</span>",
                         footerAttributes: { style: "text-align: right;" }
-                    }                  
+                    },
+                    
                 ] 
             }
 ////////////////////////////////////////////////////////    END     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
