@@ -261,14 +261,83 @@
                                     style="padding: 10px;">
                                     <b>{{list.detailjenisproduk}}</b>
                                     <div class="grid_12" style="padding-top: 5px;">
-                                        <div ng-repeat="jawab in list.details | orderBy:'namaproduk'">
-                                            <div class="grid_4">
-                                                <md-checkbox ng-model="item.layanan[jawab.id]"
-                                                    aria-label="{{jawab.namaproduk}}"  ng-click="getTotal(jawab,bool)">
-                                                    {{jawab.namaproduk}}
-                                                </md-checkbox>
+                                        <div class="grid_4">
+                                            <div class="grid_12" ng-repeat="jawab in list.details | orderBy:'namaproduk'" ng-init="listIndex = $index">
+                                                <div class="grid_12" ng-if="listIndex < 16">
+                                                    <div class="grid_12" style="margin-top: 5px;">
+                                                        <md-checkbox ng-model="item.layanan[jawab.id]"
+                                                            aria-label="{{jawab.namaproduk}}"  ng-click="getTotal(jawab,bool)">
+                                                            {{jawab.namaproduk}}
+                                                        </md-checkbox>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
+                                        <div class="grid_4">
+                                            <div class="grid_12" ng-repeat="jawab in list.details | orderBy:'namaproduk'" ng-init="listIndex = $index">
+                                                <div class="grid_12" ng-if="listIndex >= 16 && listIndex < 32">
+                                                    <div class="grid_12" style="margin-top: 5px;">
+                                                        <md-checkbox ng-model="item.layanan[jawab.id]"
+                                                            aria-label="{{jawab.namaproduk}}"  ng-click="getTotal(jawab,bool)">
+                                                            {{jawab.namaproduk}}
+                                                        </md-checkbox>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="grid_4">
+                                            <div class="grid_12" ng-repeat="jawab in list.details | orderBy:'namaproduk'" ng-init="listIndex = $index">
+                                                <div class="grid_12" ng-if="listIndex >= 32 && listIndex < 48">
+                                                    <div class="grid_12" style="margin-top: 5px;">
+                                                        <md-checkbox ng-model="item.layanan[jawab.id]"
+                                                            aria-label="{{jawab.namaproduk}}"  ng-click="getTotal(jawab,bool)">
+                                                            {{jawab.namaproduk}}
+                                                        </md-checkbox>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- <div ng-repeat="jawab in list.details | orderBy:'namaproduk'" ng-init="listIndex = $index"> -->
+                                            
+                                            <!-- <div class="grid_12">
+                                                <div class="grid_12">
+                                                    <div class="grid_12" ng-if="listIndex < 7">
+                                                        <div class="grid_4">
+                                                            <md-checkbox ng-model="item.layanan[jawab.id]"
+                                                                aria-label="{{jawab.namaproduk}}"  ng-click="getTotal(jawab,bool)">
+                                                                {{jawab.namaproduk}}
+                                                            </md-checkbox>
+                                                        </div>
+                                                        <div class="grid_4"></div>
+                                                        <div class="grid_4"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="grid_12">
+                                                    <div class="grid_12" ng-if="listIndex >= 7 && listIndex < 14">
+                                                        <div class="grid_4"></div>
+                                                        <div class="grid_4">
+                                                            <md-checkbox ng-model="item.layanan[jawab.id]"
+                                                                aria-label="{{jawab.namaproduk}}"  ng-click="getTotal(jawab,bool)">
+                                                                {{jawab.namaproduk}}
+                                                            </md-checkbox>
+                                                        </div>
+                                                        <div class="grid_4"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="grid_12">
+                                                    <div class="grid_12" ng-if="listIndex >= 14 && listIndex < 21">
+                                                        <div class="grid_4"></div>
+                                                        <div class="grid_4"></div>
+                                                        <div class="grid_4">
+                                                            <md-checkbox ng-model="item.layanan[jawab.id]"
+                                                                aria-label="{{jawab.namaproduk}}"  ng-click="getTotal(jawab,bool)">
+                                                                {{jawab.namaproduk}}
+                                                            </md-checkbox>
+                                                        </div>
+                                                    </div>
+                                                </div> 
+                                            </div>-->
+                                        <!-- </div> -->
                                     </div>
                                 </div>
                             </div>
