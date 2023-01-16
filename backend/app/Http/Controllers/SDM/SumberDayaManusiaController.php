@@ -487,6 +487,9 @@ class SumberDayaManusiaController extends ApiController {
         if(isset($request['idPegawai']) && $request['idPegawai']!="" && $request['idPegawai']!="undefined"){
             $data = $data->where('pg.id','=',$request['idPegawai']);
         }
+        if(isset($request['ispensiun']) && $request['ispensiun']!="" && $request['ispensiun']!="undefined"){
+            $data = $data->where('pg.ispensiun','=',$request['ispensiun']);
+        }
         $data = $data->get();
 
         $dataKeluarga=\DB::table('keluargapegawai_m as kp')
@@ -2608,7 +2611,7 @@ class SumberDayaManusiaController extends ApiController {
             $uploadimage = $request->file('image');
             if($request['image']!='noimage'){
                 $extensionimage = $uploadimage->getClientOriginalExtension();
-                $filenameImage = 'DIKLAT-'.$request['nama'] .'-'.$request['nim'].'-'. $request['email'].'.'.$extensionimage;
+                $filenameImage = 'DIKLAT-'.$request['nama'] .'-'.$request['noregistrasifk'].'-'. $request['email'].'.'.$extensionimage;
                 $TP->image = $filenameImage;
             }
             
@@ -2761,7 +2764,7 @@ class SumberDayaManusiaController extends ApiController {
             $uploadimage = $request->file('image');
             if($request['image']!='noimage'){
                 $extensionimage = $uploadimage->getClientOriginalExtension();
-                $filenameImage = 'DIKLAT-'.$request['nama'] .'-'.$request['nim'].'-'. $request['email'].'.'.$extensionimage;
+                $filenameImage = 'DIKLAT-'.$request['nama'] .'-'.$request['noregistrasifk'].'-'. $request['email'].'.'.$extensionimage;
                 
                 $TP->image = $filenameImage;
             }else{
