@@ -1465,7 +1465,6 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
               $scope.hapusAll();
               $scope.hideSimpan = false
               if ($scope.hideEMR != true) {
-                window.history.back()
               }
 
             }, function (error) {

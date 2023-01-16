@@ -2725,7 +2725,7 @@ class BendaharaPenerimaanController extends ApiController {
 
         // konten STS Detail
 
-        $data = DB::select(DB::raw("select distinct kp.id idkelompokpasien, 0 objectkelompoktransaksifk, sbm.norec norecsbm, pp.norec, sc.tglclosing, ru.namaruangan, ru.id idruangan, pr.namaproduk, pr.id idproduk, pp.isobat,
+        $data = DB::select(DB::raw("select distinct cb2.id idcarabayar2, kp.id idkelompokpasien, 0 objectkelompoktransaksifk, sbm.norec norecsbm, pp.norec, sc.tglclosing, ru.namaruangan, ru.id idruangan, pr.namaproduk, pr.id idproduk, pp.isobat,
         (((CASE WHEN pp.hargajual IS NULL THEN 0 ELSE pp.hargajual::float8 END - CASE WHEN pp.hargadiscount IS NULL THEN
         0 ELSE pp.hargadiscount::float8 END) * pp.jumlah) + CASE WHEN pp.jasa IS NULL THEN 0 ELSE pp.jasa::float8 END ) AS totaldibayarclosing,
         ru.objectdepartemenfk, sbmcr.objectcarabayarfk, sbm.totaldibayar as totaldibayarsbm, sc.noclosing, sc.tglclosing,
@@ -2740,6 +2740,9 @@ class BendaharaPenerimaanController extends ApiController {
                         LEFT JOIN strukbuktipenerimaan_t AS sbm ON sbm.nostrukfk = sp.norec AND sbm.statusenabled = true  
                         LEFT JOIN strukbuktipenerimaancarabayar_t as sbmcr ON sbmcr.nosbmfk = sbm.norec
                         LEFT JOIN carabayar_m as cb ON cb.id = sbmcr.objectcarabayarfk
+                        LEFT JOIN strukbuktipenerimaan_t AS sbm2 ON sbm2.nostrukfk = sp.norec AND sbm2.statusenabled = true and sbm2.norec <> sbm.norec 
+                        LEFT JOIN strukbuktipenerimaancarabayar_t as sbmcr2 ON sbmcr2.nosbmfk = sbm2.norec
+                        LEFT JOIN carabayar_m as cb2 ON cb2.id = sbmcr2.objectcarabayarfk and cb2.id <> cb.id
                         LEFT JOIN loginuser_s AS lu ON lu.id = sbm.objectpegawaipenerimafk  
                         LEFT JOIN pegawai_m AS pg ON pg.id = lu.objectpegawaifk  
                         LEFT JOIN pegawai_m AS pgdpjp ON pgdpjp.id = pd.objectpegawaifk
@@ -2758,7 +2761,7 @@ class BendaharaPenerimaanController extends ApiController {
         
         union all
         
-        select distinct 0 idkelompokpasien, sp.objectkelompoktransaksifk, sbm.norec norecsbm, sp.norec, sc.tglclosing, ru.namaruangan, ru.id idruangan, pr.namaproduk, pr.id idproduk, pp.isobat,
+        select distinct 0 idcarabayar2, 0 idkelompokpasien, sp.objectkelompoktransaksifk, sbm.norec norecsbm, sp.norec, sc.tglclosing, ru.namaruangan, ru.id idruangan, pr.namaproduk, pr.id idproduk, pp.isobat,
         (spd.qtyproduk * spd.hargasatuan * spd.qtyoranglast)::float4 as totaldibayarclosing,
         ru.objectdepartemenfk, sbmcr.objectcarabayarfk, sbm.totaldibayar as totaldibayarsbm, sc.noclosing, sc.tglclosing,
         sck.totaldibayar as totaldibayar,sck.carabayarfk, cb.carabayar, djp.detailjenisproduk, jpr.id as jenisproduk
@@ -2956,6 +2959,30 @@ class BendaharaPenerimaanController extends ApiController {
             else if($konten->idkelompokpasien != 0 && $konten->idkelompokpasien != 1 && $konten->idkelompokpasien != 12 && $konten->idkelompokpasien == 8 && $konten->objectdepartemenfk == 16 && $konten->totaldibayarclosing != $konten->totaldibayarsbm){
                 $jumlahcostsharingjamkesdaranap += $konten->totaldibayarsbm;
                 $voljumlahcostsharingjamkesdaranap++;
+                $cekjumlah = $konten->namaproduk;
+            }
+
+            else if(($konten->idkelompokpasien == 1 || $konten->idkelompokpasien == 12) && $konten->objectdepartemenfk != 16 && $konten->objectcarabayarfk == 1 && $konten->idcarabayar2 != null){
+                $jumlahtunairajal = $konten->totaldibayarsbm;
+                $voljumlahtunairajal++;
+                $cekjumlah = $konten->namaproduk;
+            }
+
+            else if(($konten->idkelompokpasien == 1 || $konten->idkelompokpasien == 12) && $konten->objectdepartemenfk == 16 && $konten->objectcarabayarfk == 1 && $konten->idcarabayar2 != null){
+                $jumlahtunairanap = $konten->totaldibayarsbm;
+                $voljumlahtunairanap++;
+                $cekjumlah = $konten->namaproduk;
+            }
+
+            else if(($konten->idkelompokpasien == 1 || $konten->idkelompokpasien == 12) && $konten->objectdepartemenfk != 16 && $konten->objectcarabayarfk == 3 && $konten->idcarabayar2 != null){
+                $jumlahtransferrajal = $konten->totaldibayarsbm;
+                $voljumlahtransferrajal++;
+                $cekjumlah = $konten->namaproduk;
+            }
+
+            else if(($konten->idkelompokpasien == 1 || $konten->idkelompokpasien == 12) && $konten->objectdepartemenfk == 16 && $konten->objectcarabayarfk == 3 && $konten->idcarabayar2 != null){
+                $jumlahtransferranap = $konten->totaldibayarsbm;
+                $voljumlahtransferranap++;
                 $cekjumlah = $konten->namaproduk;
             }
 
