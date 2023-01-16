@@ -953,9 +953,15 @@ class ReportController extends ApiController{
              CASE WHEN hpl.morfologi IS NULL THEN  '' ELSE hpl.morfologi END AS morfologi,
              CASE WHEN hpl.diagnosapb IS NULL THEN  '' ELSE  hpl.diagnosapb  END AS diagnosapb,
              CASE WHEN hpl.keteranganpb IS NULL THEN ''  ELSE hpl.keteranganpb END AS keteranganpb,
+             CASE WHEN hpl.eritrosit IS NULL THEN ''   ELSE  hpl.eritrosit END AS eritrosit,
+             CASE WHEN hpl.lekosit IS NULL THEN ''   ELSE  hpl.lekosit END AS lekosit,
+             CASE WHEN hpl.trombosit IS NULL THEN ''   ELSE  hpl.trombosit END AS trombosit,
+             CASE WHEN hpl.kesan IS NULL THEN ''   ELSE  hpl.kesan END AS kesan,
+             CASE WHEN hpl.kesimpulanmdt IS NULL THEN ''   ELSE  hpl.kesimpulanmdt END AS kesimpulanmdt,
+             CASE WHEN hpl.saran IS NULL THEN ''   ELSE  hpl.saran END AS saran,
              CASE WHEN pg1.namalengkap IS NULL THEN '' ELSE  pg1.namalengkap   END AS namapenanggungjawab,
              CASE WHEN pg1.nippns IS NULL THEN ''ELSE  pg1.nippns END AS nippns,hpl.nomorpa,
-             ru.namaruangan as asal,pg1.nosip,
+             ru.namaruangan as asal,pg1.nosip, pm.tgllahir, so.noorder,
               CASE
                     WHEN alm.alamatlengkap IS NULL THEN
                         '-'

@@ -331,6 +331,12 @@ class LaboratoriumController extends ApiController
             $dataSO->mikroskopik = $request['mikroskopik'];
             $dataSO->kesimpulan = $request['kesimpulan'];
             $dataSO->anjuran = $request['anjuran'];
+            $dataSO->eritrosit = $request['eritrosit'];
+            $dataSO->lekosit = $request['lekosit'];
+            $dataSO->trombosit = $request['trombosit'];
+            $dataSO->kesan = $request['kesan'];
+            $dataSO->kesimpulanmdt = $request['kesimpulanmdt'];
+            $dataSO->saran = $request['saran'];
             $dataSO->jaringanasal = $request['jaringanasal'];
             $dataSO->save();
 

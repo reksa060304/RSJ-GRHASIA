@@ -46,28 +46,36 @@
                                             <table cellspacing="0" cellpadding="0" border="0" width="100%">
                                                 <tbody>
                                                 <tr>
-                                                    <td width="105">
-                                                    <p align="left">
-                                                        <img src="{{ asset('service/img/logo_rsud.png') }}"
-                                                             style="width: 80px" border="0"/>
-                                                    </p>
-                                                 </td>
-                                                <td align="center" >
-                                                    <div style="margin-left: -80px">
-                                                    <b>
-                                                        <font style="font-size: 14pt" color="#000000">LABORATORIUM PATOLOGI ANATOMIK</font>
-                                                        <br>
-                                                    </b>
-                                                        <font style="font-size: 12pt" color="#000000">Rumah Sakit Umum Daerah Cibinong</font>
-                                                        <br>
-                                                    <font size="3" color="#000000">
-                                                        Jln. KSR Dadi Kusmayadi No. 27, Cibinong - 16914
-                                                        <br>
-                                                        Telp. (021) 8753487 - Fax. (021) 87906194
-                                                       <font>
-                                                    </div>
-                                                </td>
-                                </tr>
+                                                    <td align="right">
+                                                        <p >
+                                                        @if(stripos(\Request::url(), 'localhost') !== FALSE)
+                                                        <img src="{{ asset('img/LOGO GRHASIA.png') }}"
+                                                                style="width: 100px; margin-left: 180px;" border="0"/>
+                                                        @else
+                                                        <img src="{{ asset('service/img/LOGO GRHASIA.png') }}"
+                                                                style="width: 100px; margin-left: 180px;" border="0"/>
+                                                        @endif
+                                                            
+                                                        </p>
+                                                    </td>
+                                                    <td align="center" >
+                                                        <div style="margin-left: -180px;">
+                                                        <b>
+                                                            <font style="font-size: 14pt" color="#000000">INSTALASI LABORATORIUM</font>
+                                                            <br>
+                                                        </b>
+                                                            <font style="font-size: 12pt; font-weight: bold;" color="#000000">RS JIWA GRAHASIA DIY <br> Pemba Daerah Istimewa Yogyakarta</font>
+                                                            <br>
+                                                        <font size="3" color="#000000">
+                                                            Jln. Kaliurang KM. 17
+                                                            <br>
+                                                            Telp.895297, 895143, 895142
+                                                            <br>
+                                                            YOGYAKARTA
+                                                        <font>
+                                                        </div>
+                                                    </td>
+                                                </tr>
                                 <tr>
                                 <td width="105">&nbsp;</td>
                                 <td>&nbsp;</td>
@@ -86,9 +94,15 @@
 
         <td style="border-top:1px solid #000;border-bottom:1px solid #000;border-width: medium">
             <font style="font-size: 11pt"  color="#000000">
+                    @if($r['jenis'] !='mdt')
                     <span style="font-weight: 700;font-size: 12pt">
                         HASIL PEMERIKSAAN {{ $r['jenis'] =='his'? 'HISTOPATOLOGI' : 'SITOLOGI' }}
                     </span>
+                    @else
+                    <span style="font-weight: 700;font-size: 12pt">
+                        HASIL PEMERIKSAAN
+                    </span>
+                    @endif
             </font>
         </td>
 
@@ -101,66 +115,51 @@
             <table cellspacing="0" cellpadding="0" border="0" width="100%">
                 <tbody valign="top">
                 <p style="text-align: left;font-weight: bold"> DATA REGISTRASI</p>
+                @if($r['jenis'] =='mdt')
                 <tr>
+                    <td height="25" width="15%">
+                        <font style="font-size: 12pt" >Nama</font>
+                    </td>
+                    <td>:</td>
+                    <td height="25"><font style="font-size: 12pt" >{{   $raw->namapasien  }}</font></td>
+
+                    <td height="25" width="92">
+                        <font style="font-size: 12pt" >Tanggal</font>
+                    </td>
+                    <td>:</td>
+                    <td height="25" width="401"><font style="font-size: 12pt" >{{ date('Y-m-d H:m', strtotime($raw->tgljawab))  }} </font></td>
+
+                </tr>
+                <tr>
+                    <td height="25" width="16%">
+                        <font style="font-size: 12pt" >Tanggal lahir</font>
+                    </td>
+                    <td>:</td>
+                    <td height="25"><font style="font-size: 12pt" >{{ $raw->tgllahir  }}  </font></td>
+
                     <td height="25"  width="15%">
-                        <font style="font-size: 10pt" >No. Rekam Medik</font>
+                        <font style="font-size: 12pt" >No RM</font>
                     </td>
                     <td >:</td>
-                    <td height="25"  width="30%"><font style="font-size: 10pt" > {{ $raw->nocm }}</font></td>
-                    <td height="25" width="16%">
-                        <font style="font-size: 10pt" >No. PA</font>
-                    </td>
-                    <td>:</td>
-                    <td height="25"><font style="font-size: 10pt" >{{ $raw->nomorpa  }}  </font></td>
-
+                    <td height="25"  width="30%"><font style="font-size: 12pt" > {{ $raw->nocm }}</font></td>
                 </tr>
                 <tr>
-                    <td height="25" width="82">
-                        <font style="font-size: 10pt" >Tanggal Terima</font>
-                    </td>
-                    <td>:</td>
-                    <td height="25" width="401"><font style="font-size: 10pt" >{{   $raw->tglterima }} </font></td>
-
-
-                    <td height="25" width="15%">
-                        <font style="font-size: 10pt" >Nama Pasien</font>
-                    </td>
-                    <td>:</td>
-                    <td height="25"><font style="font-size: 10pt" >{{   $raw->namapasien  }}</font></td>
-
-                </tr>
-                <tr>
-                    <td height="25" width="92">
-                        <font style="font-size: 10pt" >Tanggal Jawab</font>
-                    </td>
-                    <td>:</td>
-                    <td height="25" width="401"><font style="font-size: 10pt" >{{ $raw->tgljawab  }} </font></td>
-
                     <td height="25" width="105">
-                        <font style="font-size: 10pt" >Jenis Kelamin / Umur</font>
+                        <font style="font-size: 12pt" >Alamat</font>
                     </td>
                     <td>:</td>
-                    <td height="25"><font style="font-size: 10pt" >{{  $raw->umur }} </font></td>
+                    <td height="25"><font style="font-size: 12pt" >{{  $raw->alamatlengkap }} </font></td>
 
-                </tr>
-                <tr>
                     <td height="25" width="82">
-                        <font style="font-size: 10pt" >Pembayaran</font>
+                        <font style="font-size: 12pt" >No Lab</font>
                     </td>
                     <td>:</td>
-                    <td height="25" width="401"><font style="font-size: 10pt" >{{ $raw->kelompokpasien   }} </font></td>
-
-                    <td height="25" width="105">
-                        <font style="font-size: 10pt" >Alamat</font>
-                    </td>
-                    <td>:</td>
-                    <td height="25"><font style="font-size: 10pt" >{{  $raw->alamatlengkap }} </font></td>
-
+                    <td height="25" width="401"><font style="font-size: 12pt" >{{ $raw->noorder   }} </font></td>
                 </tr>
 
                 <tr>
                     <td height="25" width="92">
-                        <font style="font-size: 10pt" >Dokter Pengirim</font>
+                        <font style="font-size: 12pt" >Pengirim</font>
                     </td>
                     <td>:</td>
                     @php 
@@ -171,44 +170,168 @@
                             $dokterPengirim = $raw->dokterluar;
                         }
                     @endphp
-                    <td height="25" width="401"><font style="font-size: 10pt" >{{ $dokterPengirim }} </font></td>
-                    <td height="25" width="105">
-                        <font style="font-size: 10pt" >Ruangan</font>
+                    <td height="25" width="401"><font style="font-size: 12pt" >{{ $dokterPengirim }} </font></td>
+                </tr>
+                @else
+                <tr>
+                    <td height="25"  width="15%">
+                        <font style="font-size: 12pt" >No. Rekam Medik</font>
+                    </td>
+                    <td >:</td>
+                    <td height="25"  width="30%"><font style="font-size: 12pt" > {{ $raw->nocm }}</font></td>
+                    <td height="25" width="16%">
+                        <font style="font-size: 12pt" >No. PA</font>
                     </td>
                     <td>:</td>
-                    <td height="25"><font style="font-size: 10pt" > {{ $raw->asal }}</font></td>
+                    <td height="25"><font style="font-size: 12pt" >{{ $raw->nomorpa  }}  </font></td>
 
                 </tr>
-{{--                <tr>--}}
-{{--                    <td height="25" width="92">--}}
-{{--                        <font style="font-size: 10pt" >Asal Rujukan</font>--}}
-{{--                    </td>--}}
-{{--                    <td>:</td>--}}
-{{--                    <td height="25" width="401"><font style="font-size: 10pt" >{{ $raw->asalrujukan }} </font></td>--}}
-
-
-{{--                </tr>--}}
+                
                 <tr>
                     <td height="25" width="92">
-                        <font style="font-size: 10pt" >Topografi</font>
+                        <font style="font-size: 12pt" >Tanggal Jawab</font>
                     </td>
                     <td>:</td>
-                    <td height="25" width="401"><font style="font-size: 10pt" >{{  $raw->topografi   }} </font></td>
+                    <td height="25" width="401"><font style="font-size: 12pt" >{{ $raw->tgljawab  }} </font></td>
+
                     <td height="25" width="105">
-                        <font style="font-size: 10pt" >Morfologi</font>
+                        <font style="font-size: 12pt" >Jenis Kelamin / Umur</font>
                     </td>
                     <td>:</td>
-                    <td height="25"><font style="font-size: 10pt" >{{ $raw->morfologi  }}  </font></td>
+                    <td height="25"><font style="font-size: 12pt" >{{  $raw->umur }} </font></td>
+
                 </tr>
+                <tr>
+                    <td height="25" width="82">
+                        <font style="font-size: 12pt" >Pembayaran</font>
+                    </td>
+                    <td>:</td>
+                    <td height="25" width="401"><font style="font-size: 12pt" >{{ $raw->kelompokpasien   }} </font></td>
+
+                    <td height="25" width="105">
+                        <font style="font-size: 12pt" >Alamat</font>
+                    </td>
+                    <td>:</td>
+                    <td height="25"><font style="font-size: 12pt" >{{  $raw->alamatlengkap }} </font></td>
+
+                </tr>
+
+                <tr>
+                    <td height="25" width="92">
+                        <font style="font-size: 12pt" >Dokter Pengirim</font>
+                    </td>
+                    <td>:</td>
+                    @php 
+                        if (empty($raw->dokterluar)) {
+                            $dokterPengirim = $raw->namadokterpengirim;
+                        }
+                        else {
+                            $dokterPengirim = $raw->dokterluar;
+                        }
+                    @endphp
+                    <td height="25" width="401"><font style="font-size: 12pt" >{{ $dokterPengirim }} </font></td>
+                    <td height="25" width="105">
+                        <font style="font-size: 12pt" >Ruangan</font>
+                    </td>
+                    <td>:</td>
+                    <td height="25"><font style="font-size: 12pt" > {{ $raw->asal }}</font></td>
+
+                </tr>
+                <tr>
+                    <td height="25" width="92">
+                        <font style="font-size: 12pt" >Topografi</font>
+                    </td>
+                    <td>:</td>
+                    <td height="25" width="401"><font style="font-size: 12pt" >{{  $raw->topografi   }} </font></td>
+                    <td height="25" width="105">
+                        <font style="font-size: 12pt" >Morfologi</font>
+                    </td>
+                    <td>:</td>
+                    <td height="25"><font style="font-size: 12pt" >{{ $raw->morfologi  }}  </font></td>
+                </tr>
+                @endif
                 </tbody>
             </table>
         </td>
     </tr>
 
+    @if($r['jenis'] =='mdt')
+    
     <tr>
         <td>
             <table cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-top: 20px">
-                <tbody valign="top" style="font-size: 10pt">
+            <p style="text-align: left;font-weight: bold; margin-top: 30px;"> GAMBARAN DARAH TEPI</p>
+                <tbody valign="top" style="font-size: 12pt">
+                <tr>
+                    <td height="25" width="25%">
+                       Eritrosit
+                    </td>
+                    <td>:</td>
+                    <td height="55">
+                        {{ $raw->eritrosit  }}
+                    </td>
+                </tr>
+                <tr>
+                    <td height="25" width="25%">
+                       Lekosit
+                    </td>
+                    <td>:</td>
+                    <td height="55">
+                        {{ $raw->lekosit  }}
+                    </td>
+                </tr>
+                <tr>
+                    <td height="25" width="25%">
+                       Trombosit
+                    </td>
+                    <td>:</td>
+                    <td height="55">
+                        {{ $raw->trombosit  }}
+                    </td>
+                </tr>
+                <tr>
+                    <td height="25" width="25%">
+                       Kesan
+                    </td>
+                    <td>:</td>
+                    <td height="55">
+                        {{ $raw->kesan  }}
+                    </td>
+                </tr>
+                <tr>
+                    <td height="25" width="25%">
+                       Kesimpulan
+                    </td>
+                    <td>:</td>
+                    <td height="55">
+                        {{ $raw->kesimpulanmdt  }}
+                    </td>
+                </tr>
+                <tr>
+                    <td height="25" width="25%">
+                       Saran
+                    </td>
+                    <td>:</td>
+                    <td height="85">
+                        {{ $raw->saran  }}
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+
+    </tr>
+    <tr>
+        <td height="25" width="75%" style="font-size: 12pt; text-align: left;">
+        <u>Catatan :</u><br>
+        <p style="margin-left: 30px;">Jika sekiranya ada keraguan tentang hasil pemeriksaan, diharapkan segera menghubungi laboratorium klinik RSJ. Grhasia</p>
+        </td>
+    </tr>
+    @else
+    <tr>
+        <td>
+            <table cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-top: 20px">
+                <tbody valign="top" style="font-size: 12pt">
                 <tr>
                     <td height="25" width="25%">
                        <b> DIAGNOSIS KLINIK</b>
@@ -286,30 +409,31 @@
         </td>
 
     </tr>
+    @endif
     <tr>
         <td bordercolor="#808080" height="13"></td>
     </tr>
     <tr >
         <td>
-            <table style="margin-top:15px;">
+            <table style="margin-top:75px;">
                 <tr>
                     <td width="500"></td>
                 </tr>
                 <tr>
                     <td ></td>
                     <td style="text-align: center">
-                        <font style="font-size: 10pt" >Cibinong, {{ App\Traits\Valet::getDateIndo(date('Y-m-d'))   }}</font>
+                        <font style="font-size: 12pt" >Pemeriksa</font>
                         <br>
-{{--                        <font style="font-size: 10pt;" ></font>--}}
+{{--                        <font style="font-size: 12pt;" ></font>--}}
                     </td>
                 </tr>
                 <tr>
-                    <td height="150"></td>
+                    <td height="200"></td>
                     <td style="text-align: center">
-                        <font  style="font-size: 10pt">
+                        <font  style="font-size: 12pt">
                             <u>{{  $raw->namapenanggungjawab }}</u>
                             <br>
-                              {{ $raw->nosip != null? '('.$raw->nosip.')' :'-' }}
+                              {{ $raw->nosip != null? '('.$raw->nosip.')' :'NIP. 19811106 200604 2 013' }}
                         </font>
                     </td>
                 </tr>
