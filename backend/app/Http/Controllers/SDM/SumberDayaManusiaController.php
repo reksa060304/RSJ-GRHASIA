@@ -487,6 +487,9 @@ class SumberDayaManusiaController extends ApiController {
         if(isset($request['idPegawai']) && $request['idPegawai']!="" && $request['idPegawai']!="undefined"){
             $data = $data->where('pg.id','=',$request['idPegawai']);
         }
+        if(isset($request['ispensiun']) && $request['ispensiun']!="" && $request['ispensiun']!="undefined"){
+            $data = $data->where('pg.ispensiun','=',$request['ispensiun']);
+        }
         $data = $data->get();
 
         $dataKeluarga=\DB::table('keluargapegawai_m as kp')
@@ -2604,16 +2607,17 @@ class SumberDayaManusiaController extends ApiController {
             $TP->nim = $request['nim'];
             $TP->nomorhp = $request['nomorhp'];
             $TP->email = $request['email'];
+            $TP->image = $request['image'];
+            $TP->save();
 
             $uploadimage = $request->file('image');
             if($request['image']!='noimage'){
+                $TPimg = PesertaDidik::where('norec', $TP->norec)->first();
                 $extensionimage = $uploadimage->getClientOriginalExtension();
-                $filenameImage = 'DIKLAT-'.$request['nama'] .'-'.$request['nim'].'-'. $request['email'].'.'.$extensionimage;
-                $TP->image = $filenameImage;
+                $filenameImage = 'DIKLAT-'.$request['nama'] .'_'.$TP->norec.'.'.$extensionimage;
+                $TPimg->image = $filenameImage;
+                $TPimg->save();
             }
-            
-            $TP->save();
-
             //## Logging User
             $newId = LoggingUser::max('id');
             $newId = $newId +1;
@@ -2761,7 +2765,7 @@ class SumberDayaManusiaController extends ApiController {
             $uploadimage = $request->file('image');
             if($request['image']!='noimage'){
                 $extensionimage = $uploadimage->getClientOriginalExtension();
-                $filenameImage = 'DIKLAT-'.$request['nama'] .'-'.$request['nim'].'-'. $request['email'].'.'.$extensionimage;
+                $filenameImage = 'DIKLAT-'.$request['nama'] .'-'.$request['norec'].'.'.$extensionimage;
                 
                 $TP->image = $filenameImage;
             }else{
