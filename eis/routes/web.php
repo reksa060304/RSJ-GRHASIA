@@ -89,6 +89,7 @@ Route::group(["middleware" => "login_check"], function () {
     Route::get('/get-detail-kunjungan-pasien','MainController@getDetailKun');
     Route::get('/get-detail-pendapatan','MainController@getDetailPendapatan');
     Route::get('/get-detail-pegawai','MainController@getDetailPegawai');
+    Route::get('/get-detail-pegawai-pns','MainController@getDetailPegawaiPNS');
     Route::get('/get-detail-kamar','MainController@getPasienMasihDirawat');
     Route::get('/get-detail-layanan','MainController@getDetailLayanan');
     Route::get('/get-detail-layanan-eresep','MainController@getDetailLayananRESEP');
