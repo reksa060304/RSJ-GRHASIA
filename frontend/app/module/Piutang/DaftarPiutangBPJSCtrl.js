@@ -502,10 +502,12 @@ define(['initialize'], function (initialize) {
                     for (let index = 0; index < DataTotalMataAnggaran.length; index++) {
                         let element = DataTotalMataAnggaran[index];
 						console.log(element)
-                        let namasearch = element.noregistrasi.toLowerCase()
-                        if (namasearch.match(newValue.toLowerCase())) {
-                            data.push(element)
-                        }
+						if(element.noregistrasi != null){
+							let namasearch = element.noregistrasi.toLowerCase()
+							if (namasearch.match(newValue.toLowerCase())) {
+								data.push(element)
+							}
+						}
                     }
                     $scope.dataPasienPiutang = new kendo.data.DataSource({
                         data: data,

@@ -12,7 +12,8 @@
 </head>
 <style type="text/css" media="print">
         @page (orientation: landscape){
-            margin: 2cm 2cm 2cm 3cm;  /* this affects the margin in the printer settings */
+            margin: 3cm 3cm 4cm 4cm;  /* this affects the margin in the printer settings */
+            size: 8.5in 14in;
         }
 </style>
 <style>
@@ -54,9 +55,9 @@
             <td rowspan="2"  style="padding: 5px; width: 50px; border-right: 3px solid black;" align="center">
                     <p align="center">
                             @if(stripos(\Request::url(), 'localhost') !== FALSE)
-                            <img src="{{ asset('img/logo_grhasia.png') }}" style="width: 120px" >
+                            <img src="{{ asset('img/LOGO GRHASIA.png') }}" style="width: 120px" >
                             @else
-                              <img src="{{ asset('service/img/logo_grhasia.png') }}" style="width: 120px" >
+                              <img src="{{ asset('service/img/LOGO GRHASIA.png') }}" style="width: 120px" >
                             @endif
                       
                     </p>
@@ -220,9 +221,9 @@
                     <tr>
                         <td align="left" width="100"  style="padding: 10px;">Keluaran</td>
                         <td align="left" width="50"  style="padding: 10px;">
-                            <textarea name="" id="" cols="60" rows="7">{{ $data[0]->indikatorkeluaran }}</textarea>
+                            <textarea name="" id="" cols="60" rows="7" style="font-size: 11pt;">{{ $data[0]->indikatorkeluaran }}</textarea>
                         </td>
-                        <td align="left" width="50"  style="padding: 10px;">
+                        <td align="left" width="50"  style="padding: 10px; font-size: 11pt;">
                             <textarea name="" id="" cols="60" rows="7">{{ $data[0]->targetkeluaran }}</textarea>
                         </td>
                     </tr>
