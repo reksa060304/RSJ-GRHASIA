@@ -2833,7 +2833,7 @@ class BendaharaPenerimaanController extends ApiController {
         $jumlahsewalapangan = 0;
         $jumlahsewagedungdiklat = 0;
         $jumlahsewagedunggrhasiainn = 0;
-        $jumlahsewatanah = 0;
+        $jumlahsewatanah = 0; //belum
         $jumlahsewakalandra = 0;
         $jumlahsewatempatfotocopy = 0;
         $jumlahsewamanekin = 0;
@@ -2983,6 +2983,12 @@ class BendaharaPenerimaanController extends ApiController {
             else if(($konten->idkelompokpasien == 1 || $konten->idkelompokpasien == 12) && $konten->objectdepartemenfk == 16 && $konten->objectcarabayarfk == 3 && $konten->idcarabayar2 != null){
                 $jumlahtransferranap = $konten->totaldibayarsbm;
                 $voljumlahtransferranap++;
+                $cekjumlah = $konten->namaproduk;
+            }
+
+            else if($konten->objectkelompoktransaksifk == 143){
+                $jumlahsewakalandra += $konten->totaldibayarclosing;
+                $voljumlahsewakalandra++;
                 $cekjumlah = $konten->namaproduk;
             }
 
