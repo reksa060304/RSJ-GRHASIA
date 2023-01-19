@@ -46,6 +46,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 			var objUpload = [];
 			var dataRiwayatPelatihan = [];
 			var jenisCache = "";
+			var pensiunCache = "";
 			var penyelenggara = "";
 			$scope.loginDisabled = false;
 			FormLoad();
@@ -57,12 +58,12 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 			// LoadCache();
 			$scope.clickpenyelenggara = function () {
 				if($scope.itemPelatihan.penyelenggara.id == 1){
-					console.log('internal');
+					// console.log('internal');
 					$scope.namapelatihan = false;
 					$scope.namapelatihancbx = true;
 					// penyelenggara = $scope.itemPelatihan.namaPelatihan2.namapelatihan
 				}else{
-					console.log('eksternal');
+					// console.log('eksternal');
 					// penyelenggara = $scope.itemPelatihan.namaPelatihan
 					$scope.namapelatihan = true;
 					$scope.namapelatihancbx = false;
@@ -71,7 +72,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 			}
 			console.log(medifirstService.getKelompokUser());
 			if (medifirstService.getKelompokUser() == 'diklit') {
-				console.log('okray');
+				// console.log('okray');
 				$scope.nondiklat = true
 			}
 			
@@ -216,6 +217,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 				if (chacePeriode != undefined) {
 					$scope.item.idPegawai = chacePeriode[0];
 					jenisCache = chacePeriode[1];
+					pensiunCache = chacePeriode[2];
 					$scope.itemLogin.kataKunciPass = undefined;
 					$scope.itemLogin.kataKunciConfirm = undefined;
 					$scope.item.PasswordDefault = undefined;
@@ -229,7 +231,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 				$scope.isRouteLoading = false;
 				if (jenisCache != '') {
 					if (jenisCache == 'EditPegawai') {
-						medifirstService.get("sdm/get-data-detail-pegawai?idPegawai=" + $scope.item.idPegawai, true).then(function (dat) {
+						var pensiun = ''
+						if (pensiunCache!= ''){
+							pensiun = "&ispensiun=" + true
+						}
+						medifirstService.get("sdm/get-data-detail-pegawai?idPegawai=" + $scope.item.idPegawai+pensiun, true).then(function (dat) {
 							$scope.ShowLogin = false;
 							var dataCache = dat.data;
 							var dataCachePegawai = dataCache.datapegawai[0];
@@ -339,7 +345,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 							$scope.item.kedudukan = { id: dataCachePegawai.kedudukanfk, name: dataCachePegawai.kedudukan };
 							$scope.item.golonganPegawai = { id: dataCachePegawai.objectgolonganfk, name: dataCachePegawai.golongan };
 							$scope.item.jabatanFungsional = { id: dataCachePegawai.objectjabatanfungsionalfk, namajabatan: dataCachePegawai.jbfungsional };
-							$scope.item.jabatan = { id: dataCachePegawai.objectjabataninternalfk, namajabatan: dataCachePegawai.namajabatan };
+							$scope.item.jabatanhehe = { id: dataCachePegawai.objectjabataninternalfk, namajabatan: dataCachePegawai.namajabatan };
 							$scope.item.detailKelompokJabatan = { id: dataCachePegawai.objectkelompokjabatanfk, detailkelompokjabatan: dataCachePegawai.detailkelompokjabatan };
 							if (dataCachePegawai.grade)
 								$scope.item.grade = parseFloat(dataCachePegawai.grade);
@@ -350,7 +356,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 							if (dataCachePegawai.nilaijabatan)
 								$scope.item.nilaiJabatan = parseFloat(dataCachePegawai.nilaijabatan);
 							// End Data Status Kepegawaian
-
+							console.log($scope.item.jabatanhehe);
 							// Data Keluarga
 							dataKeluarga = dataCacheKeluarga;
 							var datasuamiistri = []
@@ -2395,6 +2401,27 @@ $scope.formatRupiah = function (value, currency) {
 				$scope.popUpRiwayatJabatan.setOptions({ actions: actions });
 			}
 			$scope.createPangkatGolongan = function () {
+				if ($scope.item.kategoryPegawai != undefined && $scope.item.kategoryPegawai.id == 23){
+					var data = []
+					var listpangkatgolongan = ''
+					// var 
+					console.log($scope.ListGolonganPegawai);
+					for (let i = 0; i < $scope.ListGolonganPegawai.length; i++) {
+						if ($scope.ListGolonganPegawai[i].ispppk == true){
+							data.push($scope.ListGolonganPegawai[i])
+						}
+					}
+					$scope.ListGolonganPegawaiData = data
+				} else{
+					var data = []
+					for (let i = 0; i < $scope.ListGolonganPegawai.length; i++) {
+						if ($scope.ListGolonganPegawai[i].ispppk == null) {
+							data.push($scope.ListGolonganPegawai[i])
+						}
+					}
+					$scope.ListGolonganPegawaiData = data
+				}
+
 				$scope.item.norecPG = "";
 				$scope.item.nomorId = undefined;
 				$scope.popUpRiwayatPangkatGolongan.center().open();
@@ -3899,9 +3926,9 @@ $scope.formatRupiah = function (value, currency) {
 				if ($scope.item.idFinger != undefined) {
 					idFinger = $scope.item.idFinger;
 				}
-				var jabatan = null;
-				if ($scope.item.jabatan != undefined) {
-					jabatan = $scope.item.jabatan;
+				var jabatanhehe = null;
+				if ($scope.item.jabatanhehe != undefined) {
+					jabatanhehe = $scope.item.jabatanhehe.id;
 				}
 				$scope.item.masakerjatambahan = $scope.item.masakerjatambahantahun + "-" + $scope.item.masakerjatambahanbulan
 				var isValid = ModelItem.setValidation($scope, listRawRequired);
@@ -3911,7 +3938,7 @@ $scope.formatRupiah = function (value, currency) {
 					// 	toastr.error('Kelompok User Tidak Boleh Kosong')
 					// 	return;
 					// }
-
+					console.log($scope.item.kedudukan);
 					dataPegawai = {
 						// Data Pegawai
 						id: id,
@@ -3922,7 +3949,7 @@ $scope.formatRupiah = function (value, currency) {
 						nobpjs: nobpjs,
 						email: email,
 						aktakelahiran: aktakelahiran,
-						jabatanhehe: jabatan,
+						jabatanhehe: jabatanhehe,
 						namalengkap: $scope.item.namaLengkap,
 						gelardepan: gelarDepan,
 						gelarbelakang: gelarBelakang,
@@ -4862,6 +4889,7 @@ $scope.formatRupiah = function (value, currency) {
 				]
 			}
 			$scope.createIstriSuamiNew = function () {
+				$scope.datakeluarga = 'issuamiistri'
 				$scope.item.id = "";
 				$scope.item.no = undefined;
 				$scope.ListHubunganKeluarga = [
@@ -4946,6 +4974,7 @@ $scope.formatRupiah = function (value, currency) {
 				]
 			}
 			$scope.createAnakNew = function(){
+				$scope.datakeluarga= 'isanak';
 				$scope.item.id = "";
 				$scope.item.no = undefined;
 				$scope.ListHubunganKeluarga = [
@@ -5070,6 +5099,26 @@ $scope.formatRupiah = function (value, currency) {
 						
 					})
 				}
+			})
+			$scope.$watch('tunjangan', function (newValue, oldValue) {
+				var tunjangan = 0
+				if($scope.datakeluarga == 'isanak'){
+					tunjangan = (2/100)
+				} 
+				if ($scope.datakeluarga == 'issuamiistri'){
+					tunjangan = (10 / 100)
+				}
+				medifirstService.get('sdm/get-gaji-pokok-lama?gaji=' + $scope.tunjangan + '&idpegawai=' + $scope.item.idPegawai).then(function (data) {
+					var datas = data.data.data[0]
+					if ($scope.tunjangan == 'KP') {
+						$scope.itemKeluarga.Tunjangan = datas.nominal * tunjangan
+						$scope.pangkat = datas.nominal
+					} else {
+						$scope.itemKeluarga.Tunjangan = datas.gajiakhir * tunjangan
+						$scope.berkala = datas.gajiakhir
+					}
+
+				})
 			})
 			
 			//* BATAS SUCI *//			

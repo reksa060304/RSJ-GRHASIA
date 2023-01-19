@@ -296,6 +296,14 @@
     {
       "nameDep": "LaporanDaftarPegawaiNominatifCtrl",
       "urlDep": "module/SDM/LaporanDaftarPegawaiNominatifCtrl"
+    },
+    {
+      "nameDep": "MasterKenaikanGajiBerkalaCtrl",
+      "urlDep": "module/SDM/MasterKenaikanGajiBerkalaCtrl"
+    },
+    {
+      "nameDep": "LaporanPasienJKNCtrl",
+      "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/LaporanPasienJKNCtrl"
     }
   ]
 }

@@ -842,9 +842,11 @@ class IHSController extends ApiController
                                 array(
                                     0 =>
                                     array(
-                                        'system' => 'http://terminology.hl7.org/CodeSystem/v3-ParticipationType',
-                                        'code' => 'ATND',
-                                        'display' => 'attender',
+                                           'system' => 'http://terminology.hl7.org/CodeSystem/participant-type',
+                                        // 'code' => 'ATND',
+                                        // 'display' => 'attender',
+                                        'code' => 'translator',
+                                        'display' => 'Translator',
                                     ),
                                 ),
                             ),

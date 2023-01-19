@@ -1,10 +1,10 @@
 define(['initialize'], function (initialize) {
     'use strict';
     initialize.controller('LaporanDaftarPegawaiNominatifCtrl', ['CacheHelper', '$scope', 'MedifirstService', 'DateHelper',
-        function (cacheHelper, $scope, medifirstService, DateHelper) {
+        function (cacheHelper, $scope, medifirstService, dateHelper) {
             //Inisial Variable             
             $scope.dataVOloaded = true;
-            $scope.now = new Date();
+            $scope.now = moment(new Date()).format('YYYY-MM-DD');
             $scope.dataSelected = {};
             $scope.item = {};
             $scope.isRouteLoading = false;
@@ -30,7 +30,7 @@ define(['initialize'], function (initialize) {
                 $scope.tglPelayanan = $scope.item.pelayanan;
                 $scope.dokter = $scope.item.namaPegawai;
                 $scope.date = new Date();
-                var tanggals = DateHelper.getDateTimeFormatted3($scope.date);
+                var tanggals = dateHelper.getDateTimeFormatted3($scope.date);
 
                 //Tanggal Default
                 $scope.item.tglawal = tanggals + " 00:00";
@@ -148,12 +148,24 @@ define(['initialize'], function (initialize) {
                     //             datas.splice(i, 1)
                     //     }
                     // }
+                    var bulan = 0
+                    var tahun = 0
                         for (let i = 0; i < datas.length; i++) {
                             datas[i].no = i + 1
+                            if (datas[i].cutibulan == null){
+                                datas[i].cutibulan = 0
+                            }
+                            datas[i].mkg = dateHelper.CountAge(new Date(datas[i].tglskcpns), new Date($scope.now))
+                            datas[i].bln = (datas[i].mkg.year * 12) + datas[i].mkg.month - parseInt(datas[i].cutibulan)
+                            // console.log((datas[i].mkg.year * 12), datas[i].mkg.month, parseInt(datas[i].cutibulan), datas[i].bln);
+                            datas[i].tahun = Math.round(datas[i].bln / 12)
+                            datas[i].bulan = datas[i].bln - (datas[i].tahun * 12)
+                            console.log(datas[i].tahun);
+                            datas[i].masakerja = datas[i].tahun + " Thn " + datas[i].bulan + " Bln"
                         }
                     $scope.sourceLaporan = new kendo.data.DataSource({
                         data: datas,
-                        // pageSize: 20,
+                        pageSize: 50,
                         group: $scope.group,
                         total: data.length,
                         serverPaging: false,
@@ -331,7 +343,7 @@ define(['initialize'], function (initialize) {
                     {
                         "field": "masakerja",
                         "title": "MASA KERJA",
-                        "width": "50px",
+                        "width": "70px",
                     },
                     {
                         "field": "kategorypegawai",

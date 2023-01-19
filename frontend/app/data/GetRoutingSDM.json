@@ -1447,5 +1447,43 @@
         "define": "MedifirstService"
       }
     ]
+  },
+  {
+    "name": "MasterKenaikanGajiBerkala",
+    "url": "/MasterKenaikanGajiBerkala",
+    "templateurl": "module/SDM/MasterKenaikanGajiBerkala.html",
+    "controller": "MasterKenaikanGajiBerkalaCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  }, 
+  {
+    "name": "LaporanPasienJKN",
+    "url": "/LaporanPasienJKN",
+    "templateurl": "module/Registrasi/Laporan/LaporanRekamMedis/LaporanPasienJKN.html",
+    "controller": "LaporanPasienJKNCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
   }
 ]

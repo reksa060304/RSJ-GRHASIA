@@ -222,7 +222,7 @@ define(['initialize'], function (initialize) {
             //         field: "kategory",
             //         aggregate: "count"
             //     }]
-            $scope.listKatLaporan = [{ nama: 'Jenis Kelamin' }, { nama: 'Jenis Kepegawaian' }, { nama: 'Agama' }, { nama: 'Pendidikan' }, { nama: 'Jenis Usia' }]
+            $scope.listKatLaporan = [{ nama: 'Jenis Kelamin' }, { nama: 'Jenis Kepegawaian' }, { nama: 'Agama' }, { nama: 'Pendidikan' }, { nama: 'Jenis Usia' },{ nama: 'Golongan' }]
             $scope.columnLaporan = {
                 toolbar: [
                     "excel",
@@ -276,7 +276,14 @@ define(['initialize'], function (initialize) {
 
                 ]
             };
-
+            $scope.click = function(data){
+                console.log(data);
+                $scope.item.kat = data.kategory
+                $scope.item.tipe = data.tipe
+                medifirstService.get('sdm/kat-tipe?kat=' + $scope.item.kat + '&tipe=' + $scope.item.tipe).then(function(data){
+                    console.log(data);
+                })
+            }
             ///////////////////////////////////////////////////////////////////////
         }
     ]);
