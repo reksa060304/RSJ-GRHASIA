@@ -106,7 +106,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-12 col-lg-4" >
+                            <div class="col-md-12 col-lg-4">
                                 <div class="card bg-c-yellow order-card">
                                     <div class="card-block">
                                         <h6>TOTAL PEGAWAI</h6>
@@ -116,7 +116,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-12 col-lg-3"  style="cursor: pointer">
+                            <div class="col-md-12 col-lg-3"  style="cursor: pointer" onclick="detailPegawaiPNS('PNS')">
                                 <div class="card bg-c-blue order-card">
                                     <div class="card-block">
                                         <h6>JUMLAH PNS</h6>
@@ -126,7 +126,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-12 col-lg-2"  style="cursor: pointer">
+                            <div class="col-md-12 col-lg-2"  style="cursor: pointer" onclick="detailPegawaiPNS('PNS Perempuan')">
                                 <div class="card bg-c-blue order-card">
                                     <div class="card-block">
                                         <h6>PNS PEREMPUAN</h6>
@@ -136,7 +136,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-12 col-lg-2"  style="cursor: pointer">
+                            <div class="col-md-12 col-lg-2"  style="cursor: pointer" onclick="detailPegawaiPNS('PNS Laki-Laki')">
                                 <div class="card bg-c-blue order-card">
                                     <div class="card-block">
                                         <h6>PNS LAKI-LAKI</h6>
@@ -146,7 +146,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-12 col-lg-2"  style="cursor: pointer">
+                            <div class="col-md-12 col-lg-2"  style="cursor: pointer" onclick="detailPegawaiPNS('Tenaga Bantu')">
                                 <div class="card bg-c-green order-card">
                                     <div class="card-block">
                                         <h6>TENAGA BANTU</h6>
@@ -156,7 +156,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-12 col-lg-3"  style="cursor: pointer">
+                            <div class="col-md-12 col-lg-3"  style="cursor: pointer" onclick="detailPegawaiPNS('P3K')">
                                 <div class="card bg-c-green order-card">
                                     <div class="card-block">
                                         <h6>P3K</h6>
@@ -166,7 +166,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-12 col-lg-3"  style="cursor: pointer">
+                            <div class="col-md-12 col-lg-3"  style="cursor: pointer" onclick="detailPegawaiPNS('Jabatan Fungsional Laki-Laki')">
                                 <div class="card bg-danger order-card">
                                     <div class="card-block">
                                         <h6>JABATAN FUNGSIONAL LAKI-LAKI</h6>
@@ -176,7 +176,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-12 col-lg-3"  style="cursor: pointer">
+                            <div class="col-md-12 col-lg-3"  style="cursor: pointer" onclick="detailPegawaiPNS('Jabatan Fungsional Perempuan')">
                                 <div class="card bg-danger order-card">
                                     <div class="card-block">
                                         <h6>JABATAN FUNGSIONAL PEREMPUAN</h6>
@@ -186,7 +186,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-12 col-lg-3"  style="cursor: pointer">
+                            <div class="col-md-12 col-lg-3"  style="cursor: pointer" onclick="detailPegawaiPNS('CPNS Laki-Laki')">
                                 <div class="card bg-c-kuning order-card">
                                     <div class="card-block">
                                         <h6>CPNS LAKI-LAKI</h6>
@@ -196,7 +196,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-12 col-lg-3"  style="cursor: pointer">
+                            <div class="col-md-12 col-lg-3"  style="cursor: pointer" onclick="detailPegawaiPNS('CPNS Perempuan')">
                                 <div class="card bg-c-kuning order-card">
                                     <div class="card-block">
                                         <h6>CPNS PEREMPUAN</h6>
@@ -1155,6 +1155,19 @@
             $.ajax({
                 type    : 'GET',
                 url     : APP_URL+'/get-detail-pegawai',
+                data    : {jenis:namess},
+                success : function(respond){
+                    document.getElementById("titleModalKun").innerHTML =   namess
+                    $('#modalKunjungan').modal("show");
+                    $("#load_kunjungan").html(respond);
+                }
+            })
+        }
+
+        function detailPegawaiPNS(namess) {
+            $.ajax({
+                type    : 'GET',
+                url     : APP_URL+'/get-detail-pegawai-pns',
                 data    : {jenis:namess},
                 success : function(respond){
                     document.getElementById("titleModalKun").innerHTML =   namess

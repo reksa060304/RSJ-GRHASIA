@@ -822,7 +822,7 @@ class MainController extends ApiController
                     $cpnsl = 0;
                     $cpnsp = 0;
                     foreach ($res['pegawai']['statuspegawai'] as $s){
-                        if($s->statuspegawai == 'PNS'){
+                        if($s->statuspegawai == 'Aktif'){
                             $aktif =$aktif + (float)$s->total;
                         }else{
                             $nonaktif =$nonaktif + (float)$s->total;
@@ -1315,6 +1315,127 @@ class MainController extends ApiController
 
 
     }
+
+    public function getDetailPegawaiPNS(Request $r){
+        $idProfile = (int) session("kdProfile");
+        if($r['jenis'] =='PNS'){
+            $data =DB::select(DB::raw("select pg.nip, jp.kategorypegawai,pg.namalengkap, jk.jeniskelamin,
+            gol.namaexternal || ', ' || gol.NAME AS golongan, jb.namajabatan as jbfungsional,
+            jb1.namajabatan as jbstruktural
+                    from pegawai_m  as pg
+            left JOIN kategorypegawai_m as jp on jp.id =pg.kategorypegawai
+            left JOIN jeniskelamin_m as jk on jk.id =pg.objectjeniskelaminfk
+            LEFT JOIN sdm_golongan_m gol ON gol.ID = pg.objectgolonganfk 
+            left join jabatan_m as jb on jb.id = pg.objectjabatanfungsionalfk
+            left join jabatan_m as jb1 on jb1.id = pg.objectjabatanstrukturalfk
+            where pg.kdprofile = 30 and pg.statusenabled=true
+            and jp.kategorypegawai = 'PNS'"));
+        }else if($r['jenis'] =='PNS Perempuan'){
+            $data =DB::select(DB::raw("select pg.nip, jp.kategorypegawai,pg.namalengkap, jk.jeniskelamin,
+            gol.namaexternal || ', ' || gol.NAME AS golongan, jb.namajabatan as jbfungsional,
+            jb1.namajabatan as jbstruktural
+                    from pegawai_m  as pg
+            left JOIN kategorypegawai_m as jp on jp.id =pg.kategorypegawai
+            left JOIN jeniskelamin_m as jk on jk.id =pg.objectjeniskelaminfk
+            LEFT JOIN sdm_golongan_m gol ON gol.ID = pg.objectgolonganfk 
+            left join jabatan_m as jb on jb.id = pg.objectjabatanfungsionalfk
+            left join jabatan_m as jb1 on jb1.id = pg.objectjabatanstrukturalfk
+            where pg.kdprofile = 30 and pg.statusenabled=true
+            and jp.kategorypegawai = 'PNS'
+            and jk.id = 2"));
+        }else if($r['jenis'] =='PNS Laki-Laki'){
+            $data =DB::select(DB::raw("select pg.nip, jp.kategorypegawai,pg.namalengkap, jk.jeniskelamin,
+            gol.namaexternal || ', ' || gol.NAME AS golongan, jb.namajabatan as jbfungsional,
+            jb1.namajabatan as jbstruktural
+                    from pegawai_m  as pg
+            left JOIN kategorypegawai_m as jp on jp.id =pg.kategorypegawai
+            left JOIN jeniskelamin_m as jk on jk.id =pg.objectjeniskelaminfk
+            LEFT JOIN sdm_golongan_m gol ON gol.ID = pg.objectgolonganfk 
+            left join jabatan_m as jb on jb.id = pg.objectjabatanfungsionalfk
+            left join jabatan_m as jb1 on jb1.id = pg.objectjabatanstrukturalfk
+            where pg.kdprofile = 30 and pg.statusenabled=true
+            and jp.kategorypegawai = 'PNS'
+            and jk.id = 1"));
+        } else if($r['jenis'] =='Tenaga Bantu'){
+            $data =DB::select(DB::raw("select pg.nip, jp.kategorypegawai,pg.namalengkap, jk.jeniskelamin,
+            gol.namaexternal || ', ' || gol.NAME AS golongan, jb.namajabatan as jbfungsional,
+            jb1.namajabatan as jbstruktural
+                    from pegawai_m  as pg
+            left JOIN kategorypegawai_m as jp on jp.id =pg.kategorypegawai
+            left JOIN jeniskelamin_m as jk on jk.id =pg.objectjeniskelaminfk
+            LEFT JOIN sdm_golongan_m gol ON gol.ID = pg.objectgolonganfk 
+            left join jabatan_m as jb on jb.id = pg.objectjabatanfungsionalfk
+            left join jabatan_m as jb1 on jb1.id = pg.objectjabatanstrukturalfk
+            where pg.kdprofile = 30 and pg.statusenabled=true
+            and jp.kategorypegawai = 'Tenaga Bantu (NABAN)'"));
+        } else if($r['jenis'] =='P3K'){
+            $data =DB::select(DB::raw("select pg.nip, jp.kategorypegawai,pg.namalengkap, jk.jeniskelamin,
+            gol.namaexternal || ', ' || gol.NAME AS golongan, jb.namajabatan as jbfungsional,
+            jb1.namajabatan as jbstruktural
+                    from pegawai_m  as pg
+            left JOIN kategorypegawai_m as jp on jp.id =pg.kategorypegawai
+            left JOIN jeniskelamin_m as jk on jk.id =pg.objectjeniskelaminfk
+            LEFT JOIN sdm_golongan_m gol ON gol.ID = pg.objectgolonganfk 
+            left join jabatan_m as jb on jb.id = pg.objectjabatanfungsionalfk
+            left join jabatan_m as jb1 on jb1.id = pg.objectjabatanstrukturalfk
+            where pg.kdprofile = 30 and pg.statusenabled=true
+            and jp.kategorypegawai = 'PPPK '"));
+        } else if($r['jenis'] =='Jabatan Fungsional Laki-Laki'){
+            $data =DB::select(DB::raw("select pg.nip, jp.kategorypegawai,pg.namalengkap, jk.jeniskelamin,
+            gol.namaexternal || ', ' || gol.NAME AS golongan, jb.namajabatan as jbfungsional,
+            jb1.namajabatan as jbstruktural
+                    from pegawai_m  as pg
+            left JOIN kategorypegawai_m as jp on jp.id =pg.kategorypegawai
+            left JOIN jeniskelamin_m as jk on jk.id =pg.objectjeniskelaminfk
+            LEFT JOIN sdm_golongan_m gol ON gol.ID = pg.objectgolonganfk 
+            inner join jabatan_m as jb on jb.id = pg.objectjabatanfungsionalfk
+            left join jabatan_m as jb1 on jb1.id = pg.objectjabatanstrukturalfk
+            where pg.kdprofile = 30 and pg.statusenabled=true
+            and jk.id = 1"));
+        } else if($r['jenis'] =='Jabatan Fungsional Perempuan'){
+            $data =DB::select(DB::raw("select pg.nip, jp.kategorypegawai,pg.namalengkap, jk.jeniskelamin,
+            gol.namaexternal || ', ' || gol.NAME AS golongan, jb.namajabatan as jbfungsional,
+            jb1.namajabatan as jbstruktural
+                    from pegawai_m  as pg
+            left JOIN kategorypegawai_m as jp on jp.id =pg.kategorypegawai
+            left JOIN jeniskelamin_m as jk on jk.id =pg.objectjeniskelaminfk
+            LEFT JOIN sdm_golongan_m gol ON gol.ID = pg.objectgolonganfk 
+            inner join jabatan_m as jb on jb.id = pg.objectjabatanfungsionalfk
+            left join jabatan_m as jb1 on jb1.id = pg.objectjabatanstrukturalfk
+            where pg.kdprofile = 30 and pg.statusenabled=true
+            and jk.id = 2"));
+        }else if($r['jenis'] =='CPNS Perempuan'){
+            $data =DB::select(DB::raw("select pg.nip, jp.kategorypegawai,pg.namalengkap, jk.jeniskelamin,
+            gol.namaexternal || ', ' || gol.NAME AS golongan, jb.namajabatan as jbfungsional,
+            jb1.namajabatan as jbstruktural
+                    from pegawai_m  as pg
+            left JOIN kategorypegawai_m as jp on jp.id =pg.kategorypegawai
+            left JOIN jeniskelamin_m as jk on jk.id =pg.objectjeniskelaminfk
+            LEFT JOIN sdm_golongan_m gol ON gol.ID = pg.objectgolonganfk 
+            left join jabatan_m as jb on jb.id = pg.objectjabatanfungsionalfk
+            left join jabatan_m as jb1 on jb1.id = pg.objectjabatanstrukturalfk
+            where pg.kdprofile = 30 and pg.statusenabled=true
+            and jp.kategorypegawai = 'CPNS'
+            and jk.id = 2"));
+        }else if($r['jenis'] =='CPNS Laki-Laki'){
+            $data =DB::select(DB::raw("select pg.nip, jp.kategorypegawai,pg.namalengkap, jk.jeniskelamin,
+            gol.namaexternal || ', ' || gol.NAME AS golongan, jb.namajabatan as jbfungsional,
+            jb1.namajabatan as jbstruktural
+                    from pegawai_m  as pg
+            left JOIN kategorypegawai_m as jp on jp.id =pg.kategorypegawai
+            left JOIN jeniskelamin_m as jk on jk.id =pg.objectjeniskelaminfk
+            LEFT JOIN sdm_golongan_m gol ON gol.ID = pg.objectgolonganfk 
+            left join jabatan_m as jb on jb.id = pg.objectjabatanfungsionalfk
+            left join jabatan_m as jb1 on jb1.id = pg.objectjabatanstrukturalfk
+            where pg.kdprofile = 30 and pg.statusenabled=true
+            and jp.kategorypegawai = 'CPNS'
+            and jk.id = 1"));
+        }
+        return view('module.shared.detail-pegawai-pns',compact('data'));
+
+
+    }
+
     public static function getLaporanLayanan()
     {
 
