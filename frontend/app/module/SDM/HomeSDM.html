@@ -137,7 +137,7 @@
                 <div class="icon">
                     <i class="fa fa-users" style="color: #10736e;"></i>
                 </div>
-                <a class="small-box-footer" style="color: #0d4d4a; font-weight: bold;">Jumlah PNS RS Jiwa Grhasia <i
+                <a ng-click="DataDetail('pns')" class="small-box-footer" style="color: #0d4d4a; font-weight: bold;">Jumlah PNS RS Jiwa Grhasia <i
                         class="fa fa-arrow-circle-right"></i></a>
             </div>
         </div>
@@ -169,7 +169,8 @@
                 <div class="icon">
                     <i class="fa fa-user-o" style="color: #10736e;"></i>
                 </div>
-                <a class="small-box-footer" style="color: #0d4d4a; font-weight: bold;">Jumlah P3K RS Jiwa
+                <a ng-click="DataDetail('p3k')" class="small-box-footer"
+                    style="color: #0d4d4a; font-weight: bold;">Jumlah P3K RS Jiwa
                     Grhasia <i class="fa fa-arrow-circle-right"></i></a>
             </div>
         </div>
@@ -201,7 +202,8 @@
                 <div class="icon">
                     <i class="fa fa-user-plus" style="color: #10736e;"></i>
                 </div>
-                <a class="small-box-footer" style="color: #0d4d4a; font-weight: bold;">Jumlah Tenaga Bantu RS Jiwa
+                <a ng-click="DataDetail('naban')" class="small-box-footer"
+                    style="color: #0d4d4a; font-weight: bold;">Jumlah Tenaga Bantu RS Jiwa
                     Grhasia <i class="fa fa-arrow-circle-right"></i></a>
             </div>
         </div>
@@ -233,7 +235,8 @@
                 <div class="icon">
                     <i class="fa fa-user-circle-o" style="color: #10736e;"></i>
                 </div>
-                <a class="small-box-footer" style="color: #0d4d4a; font-weight: bold;">Jumlah BLUD RS
+                <a ng-click="DataDetail('blud')"  class="small-box-footer"
+                    style="color: #0d4d4a; font-weight: bold;">Jumlah BLUD RS
                     Jiwa
                     Grhasia <i class="fa fa-arrow-circle-right"></i></a>
             </div>
@@ -241,7 +244,7 @@
         <div class="grid_6">
             <div class="small-box bg-info" style="background-color: #29e6dd !important">
                 <div class="inner">
-                    <h4 style="color: #0d4d4a;">OUTSOURCING</h4>
+                    <h3 style="color: #0d4d4a;">OUTSOURCING</h3>
                     <p style="color: #0d4d4a;">
                         <table id="table">
                             <tr>
@@ -266,13 +269,23 @@
                 <div class="icon">
                     <i class="fa fa-handshake-o" style="color: #10736e;"></i>
                 </div>
-                <a class="small-box-footer" style="color: #0d4d4a; font-weight: bold;">Jumlah Outsourcing RS
+                <a ng-click="DataDetail('os')" class="small-box-footer"
+                    style="color: #0d4d4a; font-weight: bold;">Jumlah Outsourcing RS
                     Jiwa
                     Grhasia <i class="fa fa-arrow-circle-right"></i></a>
             </div>
         </div>
     </div>
-
+    <div class="grid_12" style="margin-top:10px; margin-bottom: 20px;" ng-show="dataaaaaaa">
+        <div class="grid_12 headerBox">
+            <p>Detail Pegawai</p>
+        </div>
+        <div class="grid_12 borderBox">
+            <kendo-grid k-data-source="sourceDetail" k-selectable="'row'" k-groupable="'false'" k-options="columnDetail"
+                k-ng-model="dataPasienSelected" ng-click="click(dataPasienSelected)">
+            </kendo-grid>
+        </div>
+    </div>
     
 </div>
 <div class="panel panel-default container_12">
@@ -364,5 +377,6 @@
                 </kendo-grid>
             </div>
         </div>
+        
     </div>
 </div>
