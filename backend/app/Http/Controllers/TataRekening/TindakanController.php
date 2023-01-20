@@ -1222,6 +1222,7 @@ class TindakanController extends ApiController
 //            ->where('hnp.statusenabled',true)
 //            ->where('sk.statusenabled',true)
             ->where('mpr.statusenabled',true)
+            ->whereNull('mpr.ispemeriksaanluar')
        
             // ->where('sk.statusenabled',true)
             ->where('prd.statusenabled',true)
