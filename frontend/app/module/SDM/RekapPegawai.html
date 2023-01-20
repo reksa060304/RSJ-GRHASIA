@@ -76,15 +76,21 @@
 <div class="grid_12" style="margin-top:60px" ng-show="isLoadingData">
     <div ng-include='"../app/template/Shared/TemplateLoading"'></div>
 </div>
+<div kendo-window="popUpDetail" k-title="'Data Keluarga Pegawai'" k-width="850" k-height="350"
+    k-visible="false" k-on-open="win2visible = true" k-on-close="win2visible = false">
+    <div class="panel panel-default container_12" style="padding: 0px 10px;">
+        <div class="grid_12">
+            <div class="grid_12" style="margin-top:10px">
+                <div class="grid_12 headerBox">
+                    <p>Detail</p>
+                </div>
+                <div class="grid_12 borderBox">
+                    <kendo-grid k-data-source="sourceLaporanDetail" k-selectable="'row'" k-groupable="'false'"
+                        k-options="columnLaporanDetail" k-ng-model="dataPasienSelectedd" ng-click="clickd(dataPasienSelected)"
+                        class="max-height">
+                    </kendo-grid>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<!-- <div class="clear"></div>
-<div class="grid_12"> -->
-<!-- <div class="grid_12" style="float:right">
-		<div class="grid_3 " style="margin-top: 25px ">
-			<button class="c-button" ng-show="!isLoading" item="item" is-validate ng-click="CetakPasienDaftar()">
-				<span class="title">Cetak Pasien Daftar</span>
-			</button>
-		</div>
-	</div> -->
-<!-- </div>
-<br/> -->

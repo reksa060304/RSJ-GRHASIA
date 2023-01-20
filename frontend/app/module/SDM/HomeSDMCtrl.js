@@ -13,6 +13,7 @@ define(['initialize'], function (initialize) {
         function loadData(){
             medifirstService.get('sdm/home-dashboard').then(function(data){
                 var datas = data.data
+                $scope.dataDetail = datas
                 $scope.jumlahpns = datas.jumlahpns[0].jumlahpns
                 $scope.jumlahpnslaki = datas.jumlahpnslaki[0].jumlahpns
                 $scope.jumlahpnsperempuan = datas.jumlahpnsperempuan[0].jumlahpns
@@ -268,5 +269,118 @@ define(['initialize'], function (initialize) {
 
             ]
         };
+        $scope.columnDetail = {
+
+            // toolbar: ["excel"],
+            // excel: {
+            //     fileName: "InformasiJabatanStrukturalPegawai" + moment($scope.now).format('DD/MMM/YYYY'),
+            //     allPages: true,
+            // },
+            selectable: 'row',
+            pageable: true,
+            columns: [{
+                    "field": "no",
+                    "title": "No",
+                    "width": "30px",
+                },
+                {
+                    "field": "nippns",
+                    "title": "NIP",
+                    "width": "120px"
+                },
+                {
+                    "field": "namalengkap",
+                    "title": "Nama",
+                    "width": "100px"
+                },
+                {
+                    "field": "jeniskelamin",
+                    "title": "Jenis Kelamin",
+                    "width": "80px"
+                },
+                {
+                    "field": "golongan",
+                    "title": "Pangkat & Golongan",
+                    "width": "100px"
+                },
+                {
+                    "field": "namajabatan",
+                    "title": "Pangkat & Golongan",
+                    "width": "100px"
+                },
+                
+
+
+            ]
+        };
+        $scope.dataaaaaaa = false
+        $scope.DataDetail = function (data) {
+            $scope.dataaaaaaa = true
+            if(data == 'pns'){
+                $scope.sourceDetail = new kendo.data.DataSource({
+                    data: $scope.dataDetail.dataPNS,
+                    pageSize: 10,
+                    total: $scope.dataDetail.dataPNS.length,
+                    serverPaging: false,
+                    schema: {
+                        model: {
+                            fields: {}
+                        }
+                    }
+                });
+            }
+            if (data == 'p3k') {
+                $scope.sourceDetail = new kendo.data.DataSource({
+                    data: $scope.dataDetail.dataP3K,
+                    pageSize: 10,
+                    total: $scope.dataDetail.dataP3K.length,
+                    serverPaging: false,
+                    schema: {
+                        model: {
+                            fields: {}
+                        }
+                    }
+                });
+            }
+            if (data == 'naban') {
+                $scope.sourceDetail = new kendo.data.DataSource({
+                    data: $scope.dataDetail.dataNABAN,
+                    pageSize: 10,
+                    total: $scope.dataDetail.dataNABAN.length,
+                    serverPaging: false,
+                    schema: {
+                        model: {
+                            fields: {}
+                        }
+                    }
+                });
+            }
+            if (data == 'blud') {
+                $scope.sourceDetail = new kendo.data.DataSource({
+                    data: $scope.dataDetail.dataBLUD,
+                    pageSize: 10,
+                    total: $scope.dataDetail.dataBLUD.length,
+                    serverPaging: false,
+                    schema: {
+                        model: {
+                            fields: {}
+                        }
+                    }
+                });
+            }
+            if (data == 'os') {
+                $scope.sourceDetail = new kendo.data.DataSource({
+                    data: $scope.dataDetail.dataOS,
+                    pageSize: 10,
+                    total: $scope.dataDetail.dataOS.length,
+                    serverPaging: false,
+                    schema: {
+                        model: {
+                            fields: {}
+                        }
+                    }
+                });
+            }
+        }
     }])
 });

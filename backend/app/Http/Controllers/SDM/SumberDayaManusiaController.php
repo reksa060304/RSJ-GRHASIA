@@ -3110,7 +3110,7 @@ class SumberDayaManusiaController extends ApiController {
                 union all 
 
                 select 'Agama' as kategory  ,x.tipe ,count ( x.id) as total from (
-                select case when jp.agama is null then '-' else jp.agama end as tipe ,pg.namalengkap ,pg.id
+                select case when jp.id is null then '-' else jp.agama end as tipe ,pg.namalengkap ,pg.id
                 from pegawai_m  as pg
                 left JOIN agama_m as jp on jp.id =pg.objectagamafk
                 where pg.statusenabled=true and pg.usereksternal is null and pg.namalengkap <> '-' AND pg.ID != 320263
@@ -7502,6 +7502,7 @@ public function daftarKenaikanGajiBerkala(Request $request){
         where pg.kdprofile = $kdProfile and pg.statusenabled = true and pg.usereksternal is null and pg.namalengkap <>'-' and pg.id != 320263 
         and pg.kategorypegawai = 1 and pg.ispensiun is null and pg.objectjeniskelaminfk = 2");
         
+        
         $jumlahp3k = \DB::select("SELECT count(pg.id)as jumlahp3k FROM pegawai_m pg 
         where pg.kdprofile = $kdProfile and pg.statusenabled = true and pg.usereksternal is null and pg.namalengkap <>'-' and pg.id != 320263 
         and pg.kategorypegawai = 23 and pg.ispensiun is null");
@@ -7570,6 +7571,38 @@ public function daftarKenaikanGajiBerkala(Request $request){
             AND pg.namalengkap <> '-' 
             AND pg.ID != 320263)as x where   x.y - 1= x.pensiun - 1 and x.pensiun >= x.y"));
 
+
+
+        $dataPNS = \DB::select(DB::raw("SELECT pg.nippns, pg.namalengkap,jk.jeniskelamin, gol.namaexternal ||', '|| gol.name as golongan, jb.namajabatan FROM pegawai_m pg 
+        left join jeniskelamin_m jk on jk.id = pg.objectjeniskelaminfk
+        left join sdm_golongan_m gol on gol.id = pg.objectgolonganfk
+        left join jabatan_m jb on jb.id = pg.objectjabataninternalfk
+        where pg.kdprofile = $kdProfile and pg.statusenabled = true and pg.usereksternal is null and pg.namalengkap <>'-' and pg.id != 320263 and pg.kategorypegawai = 1 and pg.ispensiun is null"));
+        $dataP3K = \DB::select(DB::raw("SELECT pg.nippns, pg.namalengkap,jk.jeniskelamin, gol.namaexternal ||', '|| gol.name as golongan, jb.namajabatan FROM pegawai_m pg 
+        left join jeniskelamin_m jk on jk.id = pg.objectjeniskelaminfk
+        left join sdm_golongan_m gol on gol.id = pg.objectgolonganfk
+        left join jabatan_m jb on jb.id = pg.objectjabataninternalfk
+        where pg.kdprofile = $kdProfile and pg.statusenabled = true and pg.usereksternal is null and pg.namalengkap <>'-' and pg.id != 320263 and pg.kategorypegawai = 23 and pg.ispensiun is null"));
+        
+        $dataNABAN = \DB::select(DB::raw("SELECT pg.nippns, pg.namalengkap,jk.jeniskelamin, gol.namaexternal ||', '|| gol.name as golongan, jb.namajabatan FROM pegawai_m pg 
+        left join jeniskelamin_m jk on jk.id = pg.objectjeniskelaminfk
+        left join sdm_golongan_m gol on gol.id = pg.objectgolonganfk
+        left join jabatan_m jb on jb.id = pg.objectjabataninternalfk
+        where pg.kdprofile = $kdProfile and pg.statusenabled = true and pg.usereksternal is null and pg.namalengkap <>'-' and pg.id != 320263 and pg.kategorypegawai = 22 and pg.ispensiun is null"));
+
+        $dataBLUD = \DB::select(DB::raw("SELECT pg.nippns, pg.namalengkap,jk.jeniskelamin, gol.namaexternal ||', '|| gol.name as golongan, jb.namajabatan FROM pegawai_m pg 
+        left join jeniskelamin_m jk on jk.id = pg.objectjeniskelaminfk
+        left join sdm_golongan_m gol on gol.id = pg.objectgolonganfk
+        left join jabatan_m jb on jb.id = pg.objectjabataninternalfk
+        where pg.kdprofile = $kdProfile and pg.statusenabled = true and pg.usereksternal is null and pg.namalengkap <>'-' and pg.id != 320263 and pg.kategorypegawai = 20 and pg.ispensiun is null"));
+
+        $dataOS = \DB::select(DB::raw("SELECT pg.nippns, pg.namalengkap,jk.jeniskelamin, gol.namaexternal ||', '|| gol.name as golongan, jb.namajabatan FROM pegawai_m pg 
+        left join jeniskelamin_m jk on jk.id = pg.objectjeniskelaminfk
+        left join sdm_golongan_m gol on gol.id = pg.objectgolonganfk
+        left join jabatan_m jb on jb.id = pg.objectjabataninternalfk
+        where pg.kdprofile = $kdProfile and pg.statusenabled = true and pg.usereksternal is null and pg.namalengkap <>'-' and pg.id != 320263 and pg.kategorypegawai = 11 and pg.ispensiun is null"));
+
+
         $result = array(
             'jumlahpns'=> $jumlahpns,
             'jumlahpnslaki'=> $jumlahpnslaki,
@@ -7594,7 +7627,11 @@ public function daftarKenaikanGajiBerkala(Request $request){
             'penjagaankgbd'=> $penjagaankgbd,
             'penjagaanstrd'=> $penjagaanstrd,
             'penjagaanpensiun'=> $penjagaanpensiun,
-            
+            'dataPNS'=> $dataPNS,
+            'dataP3K'=> $dataP3K,
+            'dataNABAN'=> $dataNABAN,
+            'dataBLUD'=> $dataBLUD,
+            'dataOS'=> $dataOS,
             'as'=> 'Fizi'
         );
 
@@ -7694,9 +7731,57 @@ public function daftarKenaikanGajiBerkala(Request $request){
     }
     public function KatTipe(Request $request)
     {
-        $data =  \DB::select(DB::raw("select case when gol.namaexternal is null then gol.name else gol.namaexternal ||', ' ||gol.name end as golongan,gg.mkg, gg.gajipokok from gajigolongan_m gg inner join sdm_golongan_m gol on gol.id = golonganfk where gg.kdprofile = 30 and gg.statusenabled = true"));
+        $id = '';
+        $data_id = '';
+        if($request['kat'] == 'Agama'){
+            $id = \DB::select(DB::raw("select id from agama_m where agama ilike '$request[tipe]'"));
+            $data_id = 'and pg.objectagamafk = '.$id[0]->id;
+        }
+        if($request['kat'] == 'Jenis Kepegawaian'){
+            $id = \DB::select(DB::raw("select id from jenispegawai_m where jenispegawai ilike '$request[tipe]'"));
+            $data_id = 'and pg.objectjenispegawaifk = '.$id[0]->id;
+        }
+        if($request['kat'] == 'Jenis Kelamin'){
+            $id = \DB::select(DB::raw("select id from jeniskelamin_m where jeniskelamin ilike '$request[tipe]'"));
+            $data_id = 'and pg.objectjeniskelaminfk = '.$id[0]->id;
+        }
+        if($request['kat'] == 'Pendidikan'){
+            $id = \DB::select(DB::raw("select id from pendidikan_m where pendidikan ilike '$request[tipe]'"));
+            $data_id = 'and pg.objectpendidikanterakhirfk = '.$id[0]->id;
+        }
+        if($request['kat'] == 'Golongan'){
+            $id = \DB::select(DB::raw("select id from sdm_golongan_m where name ilike '$request[tipe]'"));
+            $data_id = 'and pg.objectgolonganfk = '.$id[0]->id;
+        }
+        if($request['kat'] == 'Jenis Usia'){
+            if($request['tipe'] == '-'){
+                $data_id = "and pg.tgllahir is null";
+            }
+            if($request['tipe'] == '31 s/d 40 Tahun'){
+                $data_id = "and date_part('year',age(pg.tgllahir)) >= 31 and date_part('year',age(pg.tgllahir)) <=40 ";
+            }
+            if($request['tipe'] == '41 s/d 50 Tahun'){
+                $data_id = "and date_part('year',age(pg.tgllahir)) >= 41 and date_part('year',age(pg.tgllahir)) <=50 ";
+            }
+            if($request['tipe'] == '21 s/d 30 Tahun'){
+                $data_id = "and date_part('year',age(pg.tgllahir)) >= 21 and date_part('year',age(pg.tgllahir)) <=30 ";
+            }
+            if($request['tipe'] == 'diatas 51 Tahun'){
+                $data_id = "and date_part('year',age(pg.tgllahir)) >= 51 ";
+            }
+            
+        }
+        $data =  \DB::select(DB::raw("SELECT pg.nippns, pg.namalengkap,gol.namaexternal||', '||gol.name as golongan, jab.namajabatan  
+        FROM pegawai_m pg 
+        left join sdm_golongan_m gol on gol.id = pg.objectgolonganfk 
+        left join jabatan_m jab on jab.id = pg.objectjabataninternalfk 
+        where pg.kdprofile = 30 and pg.statusenabled = true and pg.usereksternal is null and pg.namalengkap <> '-' AND pg.ID != 320263
+        $data_id
+        "));
+        
         $result = array(
             'data'=> $data,
+            // 'id'=> $id,
             'as'=> 'Fizi'
         );
         return $this->respond($result);

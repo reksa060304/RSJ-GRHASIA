@@ -281,9 +281,80 @@ define(['initialize'], function (initialize) {
                 $scope.item.kat = data.kategory
                 $scope.item.tipe = data.tipe
                 medifirstService.get('sdm/kat-tipe?kat=' + $scope.item.kat + '&tipe=' + $scope.item.tipe).then(function(data){
-                    console.log(data);
+                    $scope.popUpDetail.center().open()
+                    var datas = data.data.data
+                    for (let i = 0; i < datas.length; i++) {
+                        datas[i].no = i+1
+                    }
+                    $scope.sourceLaporanDetail = new kendo.data.DataSource({
+                    data: datas,
+                    pageSize: 25,
+                    total: datas.length,
+                    serverPaging: false,
+                    selectable: true,
+                    refresh: true,
+                    });
                 })
             }
+            $scope.columnLaporanDetail = {
+                toolbar: [
+                    "excel",
+
+                ],
+                excel: {
+                    fileName: "Rekap Pegawai.xlsx",
+                    allPages: true,
+                },
+                excelExport: function (e) {
+                    var sheet = e.workbook.sheets[0];
+                    sheet.frozenRows = 2;
+                    sheet.mergedCells = ["A1:K1"];
+                    sheet.name = "Rekapitulasi Pegawai";
+
+                    var myHeaders = [{
+                        value: "Rekapitulasi Pegawai",
+                        fontSize: 20,
+                        textAlign: "center",
+                        background: "#ffffff",
+                        // color:"#ffffff"
+                    }];
+
+                    sheet.rows.splice(0, 0, {
+                        cells: myHeaders,
+                        type: "header",
+                        height: 70
+                    });
+                },
+                selectable: 'row',
+                pageable: true,
+                columns: [
+                    {
+                        "field": "no",
+                        "title": "NO",
+                        "width": "30px",
+                    },
+                    {
+                        "field": "nippns",
+                        "title": "NIP",
+                        "width": "30px",
+                    },
+                    {
+                        "field": "namalengkap",
+                        "title": "NAMA",
+                        "width": "30px",
+                    },
+                    {
+                        "field": "golongan",
+                        "title": "GOLONGAN",
+                        "width": "30px",
+                    },
+                    {
+                        "field": "namajabatan",
+                        "title": "JABATAN",
+                        "width": "30px",
+                    },
+                ]
+            };
             ///////////////////////////////////////////////////////////////////////
         }
     ]);
