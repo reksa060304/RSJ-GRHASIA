@@ -2772,6 +2772,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
                 Route::get('sysadmin/general/get-komponenharga','SysAdmin\GeneralController@getKomponenHarga');
                 Route::get('sysadmin/general/get-komponenharga-paket','SysAdmin\GeneralController@getKomponenHargaPaket');
                 Route::get('sysadmin/general/get-tindakan-with-details','SysAdmin\GeneralController@getTindakanWithDetail');
+                Route::get('sysadmin/general/get-tindakan-with-details-luar','SysAdmin\GeneralController@getTindakanWithDetailLuar');
 
                 Route::get('sysadmin/general/get-acc-number-radiologi', 'SysAdmin\GeneralController@getAccNumberRadiologi');
                 Route::get('sysadmin/general/get-produk', 'SysAdmin\GeneralController@getDataProduk');

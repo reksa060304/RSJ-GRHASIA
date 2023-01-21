@@ -981,6 +981,7 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                 if ($scope.item.produk == "") {
                     return
                 }
+                dataProdukDetail = [];
                 $scope.listSatuan = $scope.item.produk.konversisatuan
                 if ($scope.listSatuan.length == 0) {
                     $scope.listSatuan = ([{ ssid: $scope.item.produk.ssid, satuanstandar: $scope.item.produk.satuanstandar }])
