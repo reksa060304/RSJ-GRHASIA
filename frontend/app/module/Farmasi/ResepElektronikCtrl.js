@@ -590,11 +590,11 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                                 strukresep: strukresep
                             }
                             medifirstService.post('farmasi/save-status-resepelektonik', objSave).then(function (e) {
-                                let params = $scope.item.noregistrasi    
-                                if($scope.item.noreservasi != undefined && $scope.item.noreservasi != '' && $scope.item.noreservasi !='Kios-K'){
+                                let params = $scope.item.noregistrasi
+                                if ($scope.item.noreservasi != undefined && $scope.item.noreservasi != '' && $scope.item.noreservasi != 'Kios-K') {
                                     params = $scope.item.noreservasi
                                 }
-                                saveAntrol(params,5)
+                                saveAntrol(params, 6, $scope.item.norec) //waktu layan faarmasi
                                 medifirstService.postLogging('Rubah Status Produksi Order Resep Elektronik', 'No Order Struk Order',
                                     $scope.item.noorder, 'Rubah Status Produksi Order Resep Elektronik No Order: ' + $scope.item.noorder + '/ Noregistrasi : ' + $scope.item.noregistrasi).then(function (res) {
                                         $scope.refresh();
@@ -700,11 +700,12 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                                         $scope.refresh();
                                     })
                             });
-                            let params = $scope.item.noregistrasi    
-                            if($scope.item.noreservasi != undefined && $scope.item.noreservasi != '' && $scope.item.noreservasi !='Kios-K'){
-                                params = $scope.item.noreservasi
-                            } 
-                            saveAntrol(params,7)
+                            // let params = $scope.item.noregistrasi
+                            // if ($scope.item.noreservasi != undefined && $scope.item.noreservasi != '' && $scope.item.noreservasi != 'Kios-K') {
+                            //     params = $scope.item.noreservasi
+                            // }
+                            // saveAntrol(params, 7, $scope.item.norec)
+                            
                         } else {
                             if ($scope.item.statusorder == 'Menunggu') {
                                 toastr.error("Status Data Belum Diverifikasi !!")
@@ -973,11 +974,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                             cacheHelper.set('InputResepApotikCtrl', arrStr);
                             $state.go('InputResepApotik')
 
-                            let params = $scope.item.noregistrasi    
-                            if($scope.item.noreservasi != undefined && $scope.item.noreservasi != '' && $scope.item.noreservasi !='Kios-K'){
-                                params = $scope.item.noreservasi
-                            } 
-                            saveAntrol(params,6)
+                            
                         } else {
                             alert('Sudah di verifikasi!!')
                         }
@@ -996,7 +993,11 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                                 // do something with response
                             });
                             // if ( $scope.item.statusorder == 'Selesai') {
-                            
+                            let params = $scope.item.noregistrasi
+                            if ($scope.item.noreservasi != undefined && $scope.item.noreservasi != '' && $scope.item.noreservasi != 'Kios-K') {
+                                params = $scope.item.noreservasi
+                            }
+                            saveAntrol(params, 7, $scope.item.norec) //waktu penyerahan obat faarmasi
                             $scope.popup.center().open();
                             //$state.go('ResepElektronikAmbilObat', { noOrder: $scope.item.strukOrder.noOrder, noAntrianPasien: $scope.item.strukOrder.noRegistrasi.noRec });
                             // $state.go('ResepElektronikAmbilObat', { noOrder: $scope.item.noorder, noAntrianPasien: $scope.item.norec_apd });
@@ -1846,19 +1847,78 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 }
                 $scope.popupGrab.close()
             }
-            function saveAntrol(param,waktu){
+            function saveAntrol(param, waktu, norec_pd) {
                 var data = {
-                   "url": "antrean/updatewaktu",
-                   "jenis": "antrean",
-                   "method": "POST",
-                   "data":                                                 
-                   {
-                      "kodebooking": param,
-                      "taskid": waktu,//Waktu akhir farmasi/mulai buat obat
-                      "waktu": new Date().getTime()  
-                   }
-               }
-               medifirstService.postNonMessage('bridging/bpjs/tools', data).then(function (e) {})
+                    "url": "antrean/updatewaktu",
+                    "jenis": "antrean",
+                    "method": "POST",
+                    "data": {
+                        "kodebooking": param,
+                        "taskid": waktu, //Waktu akhir farmasi/mulai buat obat
+                        "waktu": new Date().getTime()
+                    }
+                }
+                saveMonitoringTaksId(norec_pd, waktu, new Date().getTime(), false)
+                medifirstService.postNonMessage('bridging/bpjs/tools', data).then(function (e) {
+                    if (e.data.metaData.code == 200) {
+                        saveMonitoringTaksId(norec_pd, waktu, new Date().getTime(), true)
+                    } else {
+                        repeatSendTaskId(norec_pd, waktu)
+                    }
+                })
+            }
+
+            function saveMonitoringTaksId(noregistrasifk, taskid, waktu, statuskirim) {
+                var json = {
+                    "noregistrasifk": noregistrasifk,
+                    "taskid": taskid,
+                    "waktu": waktu,
+                    "statuskirim": statuskirim
+                }
+                medifirstService.postNonMessage('rawatjalan/save-monitoring-taskid', json).then(function (e) {})
+            }
+
+            function repeatSendTaskId(norec_pd, taskid) {
+                medifirstService.get('registrasi/get-data-antrean?norec_pd=' + norec_pd).then(function (e) {
+                    var data = {
+                        "url": "antrean/add",
+                        "jenis": "antrean",
+                        "method": "POST",
+                        "data": e.data
+                    }
+                    medifirstService.postNonMessage('bridging/bpjs/tools', data).then(function (x) {
+                        // simpan log
+                        medifirstService.postLogging('Antrol Task ID', 'norec Pasien Daftar',
+                            e.data.kodebooking, 'Tambah Antrean Kode ' + e.data.kodebooking + ' | ' +
+                            JSON.stringify(data) + ' | ' + JSON.stringify(x.data))
+
+                        // mengabil data catatan task id dari 1 - 4
+                        medifirstService.get('rawatjalan/get-monitoring-taskid?taskid=' + taskid + '&norec_pd=' + norec_pd).then(function (res) {
+                            updateWaktuId(res, e.data.kodebooking, norec_pd)
+                        })
+                    })
+                })
+            }
+
+            async function updateWaktuId(res, kodebooking, norec_pd) {
+                for (let i = 0; i < res.data.length; i++) {
+                    const element = res.data[i];
+                    var data = {
+                        "url": "antrean/updatewaktu",
+                        "jenis": "antrean",
+                        "method": "POST",
+                        "data": {
+                            "kodebooking": kodebooking,
+                            "taskid": element.taskid,
+                            "waktu": parseInt(element.waktu)
+                        }
+                    }
+                    await medifirstService.postNonMessage('bridging/bpjs/tools', data).then(async function (e) {
+                        if (e.data.metaData.code == 200) {
+                            await saveMonitoringTaksId(norec_pd, element.taskid, parseInt(element.waktu), true);
+                        }
+                    })
+                }
             }
             
             

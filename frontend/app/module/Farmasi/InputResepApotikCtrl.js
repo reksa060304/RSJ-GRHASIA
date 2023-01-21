@@ -513,33 +513,78 @@ define(['initialize'], function (initialize) {
                     init();
                 })
             }
-            function saveAntrol(param){
+            function saveAntrol(param, task, norec_pd) {
                 var data = {
-                   "url": "antrean/updatewaktu",
-                   "jenis": "antrean",
-                   "method": "POST",
-                   "data":                                                 
-                   {
-                      "kodebooking": param,
-                      "taskid": 5,//Waktu mulai farmasi
-                      "waktu": new Date().getTime() - 900000 
-                   }
-               }
-               medifirstService.postNonMessage('bridging/bpjs/tools', data).then(function (e) {})
+                    "url": "antrean/updatewaktu",
+                    "jenis": "antrean",
+                    "method": "POST",
+                    "data": {
+                        "kodebooking": param,
+                        "taskid": task, //Waktu mulai farmasi
+                        "waktu": new Date().getTime()
+                    }
+                }
+                saveMonitoringTaksId(norec_pd, task, new Date().getTime(), false)
+                medifirstService.postNonMessage('bridging/bpjs/tools', data).then(function (e) {
+                    if (e.data.metaData.code == 200) {
+                        saveMonitoringTaksId(norec_pd, task, new Date().getTime(), true)
+                    } else {
+                        repeatSendTaskId(norec_pd, task)
+                    }
+                })
             }
-            function saveAntrol2(param,waktu){
-                var data = {
-                   "url": "antrean/updatewaktu",
-                   "jenis": "antrean",
-                   "method": "POST",
-                   "data":                                                 
-                   {
-                      "kodebooking": param,
-                      "taskid": waktu,//Waktu akhir farmasi/mulai buat obat
-                      "waktu": new Date().getTime()  
-                   }
-               }
-               medifirstService.postNonMessage('bridging/bpjs/tools', data).then(function (e) {})
+
+            function saveMonitoringTaksId(noregistrasifk, taskid, waktu, statuskirim) {
+                var json = {
+                    "noregistrasifk": noregistrasifk,
+                    "taskid": taskid,
+                    "waktu": waktu,
+                    "statuskirim": statuskirim
+                }
+                medifirstService.postNonMessage('rawatjalan/save-monitoring-taskid', json).then(function (e) {})
+            }
+
+            function repeatSendTaskId(norec_pd, taskid) {
+                medifirstService.get('registrasi/get-data-antrean?norec_pd=' + norec_pd).then(function (e) {
+                    var data = {
+                        "url": "antrean/add",
+                        "jenis": "antrean",
+                        "method": "POST",
+                        "data": e.data
+                    }
+                    medifirstService.postNonMessage('bridging/bpjs/tools', data).then(function (x) {
+                        // simpan log
+                        medifirstService.postLogging('Antrol Task ID', 'norec Pasien Daftar',
+                            e.data.kodebooking, 'Tambah Antrean Kode ' + e.data.kodebooking + ' | ' +
+                            JSON.stringify(data) + ' | ' + JSON.stringify(x.data))
+
+                        // mengabil data catatan task id dari 1 - 4
+                        medifirstService.get('rawatjalan/get-monitoring-taskid?taskid=' + taskid + '&norec_pd=' + norec_pd).then(function (res) {
+                            updateWaktuId(res, e.data.kodebooking, norec_pd)
+                        })
+                    })
+                })
+            }
+
+            async function updateWaktuId(res, kodebooking, norec_pd) {
+                for (let i = 0; i < res.data.length; i++) {
+                    const element = res.data[i];
+                    var data = {
+                        "url": "antrean/updatewaktu",
+                        "jenis": "antrean",
+                        "method": "POST",
+                        "data": {
+                            "kodebooking": kodebooking,
+                            "taskid": element.taskid,
+                            "waktu": parseInt(element.waktu)
+                        }
+                    }
+                    await medifirstService.postNonMessage('bridging/bpjs/tools', data).then(async function (e) {
+                        if (e.data.metaData.code == 200) {
+                            await saveMonitoringTaksId(norec_pd, element.taskid, parseInt(element.waktu), true);
+                        }
+                    })
+                }
             }
 
             function loadDefaultSkrining() {
@@ -2183,13 +2228,6 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                                 }
                                 medifirstService.post('farmasi/save-pelayanan-obat-kronis', objSaveKronis).then(function (e) { });
                             }
-                            let params = $scope.item.noRegistrasi;    
-                            if($scope.item.noreservasi != undefined && $scope.item.noreservasi != '' && $scope.item.noreservasi !='Kios-K'){
-                                params = $scope.item.noreservasi;
-                            } 
-                            //saveAntrol(params)
-                            saveAntrol(params);
-                            saveAntrol2(params,6);
 
 
                             // //Bridging Consis
@@ -2249,6 +2287,11 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
 
                             //     })
                             // }
+                            let params = $scope.item.noRegistrasi
+                            if ($scope.item.noreservasi != undefined && $scope.item.noreservasi != '' && $scope.item.noreservasi != 'Kios-K') {
+                                params = $scope.item.noreservasi
+                            }
+                            saveAntrol(params, 5, $scope.item.norec_pd) //waktu mulai farmasi
                             $scope.isRouteLoading = false;
                             $scope.tombolSimpanVis = true;
                             window.history.back();

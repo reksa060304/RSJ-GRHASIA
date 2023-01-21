@@ -1244,11 +1244,11 @@ define(['initialize'], function (initialize) {
                     if ($scope.item.noRuang != undefined)
                         cacheHelper.set('noRuangInputResep', $scope.item.noRuang)
 
-                    let params = $scope.item.noregistrasi    
-                    if($scope.item.noreservasi != undefined && $scope.item.noreservasi != '' && $scope.item.noreservasi !='Kios-K'){
+                    let params = $scope.item.noregistrasi
+                    if ($scope.item.noreservasi != undefined && $scope.item.noreservasi != '' && $scope.item.noreservasi != 'Kios-K') {
                         params = $scope.item.noreservasi
-                    } 
-                    saveAntrol(params)  
+                    }
+                    saveAntrol(params, norec_pd)
                 })
             }
 
@@ -2152,21 +2152,78 @@ define(['initialize'], function (initialize) {
             racikan = ''
             // statusTambah = false
         }
-        function saveAntrol(param){
+        function saveAntrol(param, norec_pd) {
             var data = {
-               "url": "antrean/updatewaktu",
-               "jenis": "antrean",
-               "method": "POST",
-               "data":                                                 
-               {
-                  "kodebooking": param,
-                  "taskid": 5,//Waktu mulai farmasi
-                  "waktu": new Date().getTime()  
-               }
-           }
-           medifirstService.postNonMessage('bridging/bpjs/tools', data).then(function (e) {})
+                "url": "antrean/updatewaktu",
+                "jenis": "antrean",
+                "method": "POST",
+                "data": {
+                    "kodebooking": param,
+                    "taskid": 5, //Waktu mulai farmasi
+                    "waktu": new Date().getTime()
+                }
+            }
+            saveMonitoringTaksId(norec_pd, 5, new Date().getTime(), false)
+            medifirstService.postNonMessage('bridging/bpjs/tools', data).then(function (e) {
+                if (e.data.metaData.code == 200) {
+                    saveMonitoringTaksId(norec_pd, 5, new Date().getTime(), true)
+                } else {
+                    repeatSendTaskId(norec_pd, 5)
+                }
+            })
         }
         
+        function saveMonitoringTaksId(noregistrasifk, taskid, waktu, statuskirim) {
+            var json = {
+                "noregistrasifk": noregistrasifk,
+                "taskid": taskid,
+                "waktu": waktu,
+                "statuskirim": statuskirim
+            }
+            medifirstService.postNonMessage('rawatjalan/save-monitoring-taskid', json).then(function (e) {})
+        }
+
+        function repeatSendTaskId(norec_pd, taskid) {
+            medifirstService.get('registrasi/get-data-antrean?norec_pd=' + norec_pd).then(function (e) {
+                var data = {
+                    "url": "antrean/add",
+                    "jenis": "antrean",
+                    "method": "POST",
+                    "data": e.data
+                }
+                medifirstService.postNonMessage('bridging/bpjs/tools', data).then(function (x) {
+                    // simpan log
+                    medifirstService.postLogging('Antrol Task ID', 'norec Pasien Daftar',
+                        e.data.kodebooking, 'Tambah Antrean Kode ' + e.data.kodebooking + ' | ' +
+                        JSON.stringify(data) + ' | ' + JSON.stringify(x.data))
+
+                    // mengabil data catatan task id dari 1 - 4
+                    medifirstService.get('rawatjalan/get-monitoring-taskid?taskid=' + taskid + '&norec_pd=' + norec_pd).then(function (res) {
+                        updateWaktuId(res, e.data.kodebooking, norec_pd)
+                    })
+                })
+            })
+        }
+        async function updateWaktuId(res, kodebooking, norec_pd) {
+            for (let i = 0; i < res.data.length; i++) {
+                const element = res.data[i];
+                var data = {
+                    "url": "antrean/updatewaktu",
+                    "jenis": "antrean",
+                    "method": "POST",
+                    "data": {
+                        "kodebooking": kodebooking,
+                        "taskid": element.taskid,
+                        "waktu": parseInt(element.waktu)
+                    }
+                }
+                await medifirstService.postNonMessage('bridging/bpjs/tools', data).then(async function (e) {
+                    if (e.data.metaData.code == 200) {
+                        await saveMonitoringTaksId(norec_pd, element.taskid, parseInt(element.waktu), true);
+                    }
+                })
+            }
+        }
         $scope.gantiJR = function(data){
             if(data == 2){
                 $scope.item.jumlah = ''
