@@ -2761,7 +2761,7 @@ class BendaharaPenerimaanController extends ApiController {
         
         union all
         
-        select distinct 0 idcarabayar2, 0 idkelompokpasien, sp.objectkelompoktransaksifk, sbm.norec norecsbm, sp.norec, sc.tglclosing, ru.namaruangan, ru.id idruangan, pr.namaproduk, pr.id idproduk, pp.isobat,
+        select distinct cb2.id idcarabayar2, 0 idkelompokpasien, sp.objectkelompoktransaksifk, sbm.norec norecsbm, sp.norec, sc.tglclosing, ru.namaruangan, ru.id idruangan, pr.namaproduk, pr.id idproduk, pp.isobat,
         (spd.qtyproduk * spd.hargasatuan * spd.qtyoranglast)::float4 as totaldibayarclosing,
         ru.objectdepartemenfk, sbmcr.objectcarabayarfk, sbm.totaldibayar as totaldibayarsbm, sc.noclosing, sc.tglclosing,
         sck.totaldibayar as totaldibayar,sck.carabayarfk, cb.carabayar, djp.detailjenisproduk, jpr.id as jenisproduk
@@ -2770,9 +2770,12 @@ class BendaharaPenerimaanController extends ApiController {
         inner join strukbuktipenerimaan_t as sbm on sbm.noclosingfk = sc.norec
         inner join strukpelayanan_t as sp on sbm.nostrukfk = sp.norec
         inner join strukpelayanandetail_t as spd on sp.norec = spd.nostrukfk
-				inner join strukbuktipenerimaancarabayar_t sbmcr on sbmcr.nosbmfk = sbm.norec
+		inner join strukbuktipenerimaancarabayar_t sbmcr on sbmcr.nosbmfk = sbm.norec
         inner join produk_m pr on pr.id=spd.objectprodukfk
         inner join carabayar_m as cb on cb.id = sck.carabayarfk
+        LEFT JOIN strukbuktipenerimaan_t AS sbm2 ON sbm2.nostrukfk = sp.norec AND sbm2.statusenabled = true and sbm2.norec <> sbm.norec 
+		LEFT JOIN strukbuktipenerimaancarabayar_t as sbmcr2 ON sbmcr2.nosbmfk = sbm2.norec
+		LEFT JOIN carabayar_m as cb2 ON cb2.id = sbmcr2.objectcarabayarfk 
         left join detailjenisproduk_m djp on djp.id = pr.objectdetailjenisprodukfk
         left join jenisproduk_m jpr on jpr.id = djp.objectjenisprodukfk
         left join ruangan_m as ru on ru.id = spd.objectruanganasalfk
@@ -3220,8 +3223,14 @@ class BendaharaPenerimaanController extends ApiController {
                 $cekjumlah = $konten->namaproduk;
             }
 
-            else if($konten->jenisproduk == 27688){
+            else if($konten->jenisproduk == 27688 && $konten->idcarabayar2 == null){
                 $jumlahdiklat += $konten->totaldibayarclosing;
+                $voljumlahdiklat++;
+                $cekjumlah = $konten->namaproduk;
+            }
+
+            else if($konten->jenisproduk == 27688 && $konten->idcarabayar2 != null){
+                $jumlahdiklat += $konten->totaldibayarsbm;
                 $voljumlahdiklat++;
                 $cekjumlah = $konten->namaproduk;
             }
