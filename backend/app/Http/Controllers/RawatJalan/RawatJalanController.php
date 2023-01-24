@@ -57,6 +57,7 @@ use App\Transaksi\PostingJurnalTransaksi;
 use App\Transaksi\LogAcc;
 use App\Traits\SettingDataFixedTrait;
 use Carbon\Carbon;
+use App\Transaksi\MonitoringTaskId;
 
 class RawatJalanController extends ApiController
 {
@@ -3045,5 +3046,177 @@ $ruangdokter = \DB::table('ruangan_m as ru')
             );
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    public function saveMonitoringTaksId(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $deptJalan = explode(',', $this->settingDataFixed('kdDepartemenRawatJalanFix', $idProfile));
+        $kdDepartemenRawatJalan = [];
+        foreach ($deptJalan as $item) {
+            $kdDepartemenRawatJalan[] =  (int)$item;
+        }
+        DB::beginTransaction();
+        try {
+
+            // Cek Pasien Rawat Jalan
+            $data = DB::table("pasiendaftar_t as pd")
+                ->join('ruangan_m as rm', 'rm.id', '=', 'pd.objectruanganlastfk')
+                ->where('pd.kdprofile', $idProfile)
+                ->where('pd.statusenabled', true)
+                ->where('pd.norec', $request['noregistrasifk'])
+                ->wherein('rm.objectdepartemenfk', $kdDepartemenRawatJalan)
+                ->first();
+
+            if (!empty($data)) {
+                $monitoring = MonitoringTaskId::where('noregistrasifk', $request['noregistrasifk'])
+                    ->where('taskid', $request['taskid'])
+                    ->where('kdprofile', $idProfile)
+                    ->where('statusenabled', true)
+                    ->first();
+
+                if (empty($monitoring)) {
+                    // insert data monitoring task id
+                    $monitoring = new MonitoringTaskId();
+                    $monitoring->norec = $monitoring->generateNewId();
+                    $monitoring->kdprofile = $idProfile;
+                    $monitoring->statusenabled = true;
+                    $monitoring->noregistrasifk = $request['noregistrasifk'];
+                    $monitoring->taskid = $request['taskid'];
+                    $monitoring->waktu = $request['waktu'];
+                    $monitoring->statuskirim = $request['statuskirim'];
+                    $monitoring->save();
+                } else {
+                    // update data monitoring task id jika status kirim true
+                    if ($request['statuskirim']) {
+                        $monitoring->statuskirim = $request['statuskirim'];
+                        $monitoring->save();
+                    }
+                }
+            }
+
+            $transStatus = true;
+            $transMessage = "Simpan Berhasil";
+        } catch (\Exception $e) {
+            $transStatus = false;
+            $transMessage = "Simpan Gagal";
+        }
+
+        if ($transStatus) {
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMessage,
+                "as" => 'hs@epic'
+            );
+        } else {
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message" => $transMessage,
+                "as" => 'hs@epic',
+                'e'=> $e->getLine(). $e->getMessage()
+            );
+        }
+
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    public function getMonitoringTaksId(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        $data = MonitoringTaskId::where('noregistrasifk', $request['norec_pd'])
+            ->where('kdprofile', '=', $idProfile)
+            ->where('statusenabled', true)
+            ->where('taskid', '<=', $request['taskid'])
+            ->orderBy('taskid', 'asc')
+            ->get();
+
+        return $data;
+    }
+    public function getInformasiMonitoringTaksId(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $tglawal = $request['tglAwal'];
+        $tglakhir = $request['tglAkhir'];
+
+        $nocm = "";
+        if(isset($request['norm']) && $request['norm'] != '' && $request['norm'] != null) {
+            $nocm = " and ps.nocm = '". $request['norm'] ."'";
+        }
+        $nama = "";
+        if(isset($request['nama']) && $request['nama'] != '' && $request['nama'] != null) {
+            $nama = " and ps.namapasien ilike '%". $request['nama'] ."%'";
+        }
+        $ruangId = "";
+        if(isset($request['ruangId']) && $request['ruangId'] != '' && $request['ruangId'] != null) {
+            $ruangId = " and rm.id = '". $request['ruangId'] ."'";
+        }
+        $kdBooking = "";
+        if(isset($request['kdBooking']) && $request['kdBooking'] != '' && $request['kdBooking'] != null) {
+            $kdBooking = " and sx.noregistrasi = '". $request['kdBooking'] ."'";
+        }
+
+        $data = collect(DB::select("
+            WITH sumber AS (
+                select * from (
+                    select
+                    ps.nocm as norm,
+                    case when pd.ismobilejkn = true then pd.statusschedule else pd.noregistrasi end as noregistrasi,
+                    mt.noregistrasifk,
+                    pd.tglregistrasi,
+                    ps.namapasien,
+                    rm.namaruangan,
+                    mt.taskid,
+                    mt.waktu,
+                    mt.statuskirim,
+                    row_number() over(PARTITION BY mt.noregistrasifk,mt.taskid ORDER BY taskid) as nomor
+                    from monitoringtaskid_t mt
+                    inner join pasiendaftar_t pd on pd.norec = mt.noregistrasifk
+                    inner join ruangan_m rm on rm.id = pd.objectruanganasalfk
+                    inner join pasien_m ps on ps.id = pd.nocmfk
+                    where pd.statusenabled = true
+                    and rm.objectdepartemenfk = 18
+                    and pd.tglregistrasi between '$tglawal' and '$tglakhir'
+                    $nocm
+                    $nama
+                    $ruangId
+                ) x
+                where x.nomor = 1
+            )
+            select sx.norm, sx.noregistrasi, sx.tglregistrasi, sx.namapasien, sx.namaruangan, sx.noregistrasifk,
+            (select sz.waktu from sumber sz where sz.noregistrasi = sx.noregistrasi and sz.taskid = 1) as taksid_1,
+            (select sz.statuskirim from sumber sz where sz.noregistrasi = sx.noregistrasi and sz.taskid = 1) as status_1,
+            (select sz.waktu from sumber sz where sz.noregistrasi = sx.noregistrasi and sz.taskid = 2) as taksid_2,
+            (select sz.statuskirim from sumber sz where sz.noregistrasi = sx.noregistrasi and sz.taskid = 2) as status_2,
+            (select sz.waktu from sumber sz where sz.noregistrasi = sx.noregistrasi and sz.taskid = 3) as taksid_3,
+            (select sz.statuskirim from sumber sz where sz.noregistrasi = sx.noregistrasi and sz.taskid = 3) as status_3,
+            (select sz.waktu from sumber sz where sz.noregistrasi = sx.noregistrasi and sz.taskid = 4) as taksid_4,
+            (select sz.statuskirim from sumber sz where sz.noregistrasi = sx.noregistrasi and sz.taskid = 4) as status_4,
+            (select sz.waktu from sumber sz where sz.noregistrasi = sx.noregistrasi and sz.taskid = 5) as taksid_5,
+            (select sz.statuskirim from sumber sz where sz.noregistrasi = sx.noregistrasi and sz.taskid = 5) as status_5,
+            (select sz.waktu from sumber sz where sz.noregistrasi = sx.noregistrasi and sz.taskid = 6) as taksid_6,
+            (select sz.statuskirim from sumber sz where sz.noregistrasi = sx.noregistrasi and sz.taskid = 6) as status_6,
+            (select sz.waktu from sumber sz where sz.noregistrasi = sx.noregistrasi and sz.taskid = 7) as taksid_7,
+            (select sz.statuskirim from sumber sz where sz.noregistrasi = sx.noregistrasi and sz.taskid = 7) as status_7
+            from sumber sx
+            where 1=1
+            $kdBooking
+            GROUP BY sx.norm, sx.noregistrasi, sx.tglregistrasi, sx.namapasien, sx.namaruangan, sx.noregistrasifk
+            ORDER BY sx.noregistrasi
+        "));
+
+        foreach($data as $item) {
+            $item->taksid_1 = $item->taksid_1 == null ? "-" : date('Y-m-d H:i', $item->taksid_1 / 1000);
+            $item->taksid_2 = $item->taksid_2 == null ? "-" : date('Y-m-d H:i', $item->taksid_2 / 1000);
+            $item->taksid_3 = $item->taksid_3 == null ? "-" : date('Y-m-d H:i', $item->taksid_3 / 1000);
+            $item->taksid_4 = $item->taksid_4 == null ? "-" : date('Y-m-d H:i', $item->taksid_4 / 1000);
+            $item->taksid_5 = $item->taksid_5 == null ? "-" : date('Y-m-d H:i', $item->taksid_5 / 1000);
+            $item->taksid_6 = $item->taksid_6 == null ? "-" : date('Y-m-d H:i', $item->taksid_6 / 1000);
+            $item->taksid_7 = $item->taksid_7 == null ? "-" : date('Y-m-d H:i', $item->taksid_7 / 1000);
+        }
+
+        return $this->respond($data);
     }
 }

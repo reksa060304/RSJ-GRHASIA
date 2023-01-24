@@ -183,7 +183,7 @@
 <div class="grid_12">
     <div class="grid_12">
         <div class="panel panel-default container_12">
-            <div class="panel-heading" c-translate> Asesmen Pasien / Klien Fisioterapi</div>
+            <div class="panel-heading"> Asesmen Pasien / Klien Fisioterapi CM.RM.06.03.Rev02</div>
         </div>
         <div class="grid_12 margin-top-30">
             <div class="grid_6">
@@ -195,19 +195,19 @@
                 <label c-label item="item"> A. Anamnese </label>
             </div>
             <div class="grid_12 margin-top-30">
-                <label c-label item="item" class="margin-bottom">1. Keluhan Utama</label>
+                <label c-label item="item" class="margin-bottom">1. Keluhan Saat Ini</label>
                 <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[30006222]"
-                    style="height: 30px; width: 90%; "/>
+                    style="height: 60px; width: 90%; "/>
             </div>
             <div class="grid_12 margin-top-30">
                 <label c-label item="item" class="margin-bottom">2. Riwayat Penyakit Sekarang</label>
                 <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[30006223]"
-                    style="height: 30px; width: 90%; "/>
+                    style="height: 60px; width: 90%; "/>
             </div>
             <div class="grid_12 margin-top-30">
-                <label c-label item="item" class="margin-bottom">3. Riwayat Penyakit terdahulu dan Penyerta</label>
+                <label c-label item="item" class="margin-bottom">3. Riwayat Penyakit Dahulu dan Penyerta</label>
                 <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[30006224]"
-                    style="height: 30px; width: 90%; "/>
+                    style="height: 60px; width: 90%; "/>
             </div>
         </div>
        
@@ -246,102 +246,55 @@
                 <div class="grid_12">
                     <label c-label item="item">Skor Nyeri :</label>
                 </div>
-                <div class="grid_12" style="padding: 10pt 5pt">
-                    <div class="grid_12" style="padding: 5pt">
-                        <div class="grid_9" style="margin-top: 10px;">
-                            <div class="grid_2" style="text-align: center; vertical-align: middle;">
-                                <img class="normalTidakNormal" style="cursor: pointer;"
-                                    src="stylesheets/skalanyeri/1.png"
-                                    ng-model="item.obj[300000360]" ng-click="getSkalaNyeri(list, opsi)"
-                                    ng-class="{'activeBtn': activeStatus == 0}">
-                                <div class="grid_12">
-                                    <label for="0"><b>0</b></label>
-                                </div>
-                                <div class="grid_12">
-                                    <label for="Tidak Sakit"><b>Tidak Nyeri</b></label>
-                                </div>
-                            </div>
-                            <div class="grid_2" style="text-align: center; vertical-align: middle;">
-                                <img class="normalTidakNormal" style="cursor: pointer;"
-                                    src="stylesheets/skalanyeri/2.png"
-                                    ng-model="item.obj[30006229]" ng-click="getSkalaNyeri(list, opsi)"
-                                    ng-class="{'activeBtn': activeStatus == 2}">
-                                <div class="grid_12">
-                                    <label for="2"><b>1 &emsp; 2 &emsp; 3</b></label>
-                                </div>
-                                <div class="grid_12">
-                                    <label for="Sedikit Sakit"><b>Sedikit Nyeri</b></label>
-                                </div>
-                            </div>
-                            <div class="grid_2" style="text-align: center; vertical-align: middle;">
-                                <img class="normalTidakNormal" style="cursor: pointer;"
-                                    src="stylesheets/skalanyeri/3.png"
-                                    ng-model="item.obj[30006230]" ng-click="getSkalaNyeri(list, opsi)"
-                                    ng-class="{'activeBtn': activeStatus == 4}">
-                                <div class="grid_12">
-                                    <label for="4"><b>4</b></label>
-                                </div>
-                                <div class="grid_12">
-                                    <label for="Agak Mengganggu"><b>Agak Mengganggu</b></label>
-                                </div>
-                            </div>
-                            <div class="grid_2" style="text-align: center; vertical-align: middle;">
-                                <img class="normalTidakNormal" style="cursor: pointer;"
-                                    src="stylesheets/skalanyeri/4.png"
-                                    ng-model="item.obj[30006231]" ng-click="getSkalaNyeri(list, opsi)"
-                                    ng-class="{'activeBtn': activeStatus == 6}">
-                                <div class="grid_12">
-                                    <label for="6"><b>5 &emsp; 6 &emsp; 7</b></label>
-                                </div>
-                                <div class="grid_12">
-                                    <label for="Menunggu Aktifitas"><b>Mengganggu Aktifitas</b></label>
-                                </div>
-                            </div>
-                            <div class="grid_2" style="text-align: center; vertical-align: middle;">
-                                <img class="normalTidakNormal" style="cursor: pointer;"
-                                    src="stylesheets/skalanyeri/5.png"
-                                    ng-model="item.obj[30006232]" ng-click="getSkalaNyeri(list, opsi)"
-                                    ng-class="{'activeBtn': activeStatus == 8}">
-                                <div class="grid_12">
-                                    <label for="8"><b>8</b></label>
-                                </div>
-                                <div class="grid_12">
-                                    <label for="Sangat Mengganggu"><b>Sangat Mengganggu</b></label>
-                                </div>
-                            </div>
-                            <div class="grid_2" style="text-align: center; vertical-align: middle;">
-                                <img class="normalTidakNormal" style="cursor: pointer;"
-                                    src="stylesheets/skalanyeri/6.png"
-                                    ng-model="item.obj[30006233]" ng-click="getSkalaNyeri(list, opsi)"
-                                    ng-class="{'activeBtn': activeStatus == 10}">
-                                <div class="grid_12">
-                                    <label for="10"><b>9 &emsp; 10</b></label>
-                                </div>
-                                <div class="grid_12">
-                                    <label for="Tak Tertahankan"><b>Tak Tertahankan</b></label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="grid_3" style="padding: 5pt 10pt">
-                            <div class="grid_12" ng-repeat="list in listScoreGambar | orderBy:'id'" style="padding: 5pt">
-                                <div ng-repeat="jawab in list.detail | orderBy:'id'">
-                                    <div ng-switch on="jawab.type">
-                                        <div class="grid_12" style="margin-bottom: 10px" ng-switch-when="checkbox">
-                                            <input type="checkbox" class="k-checkbox" id="item.obj{{jawab.id}}"
-                                                ng-model="item.obj[jawab.id]">
-                                            <label class="k-checkbox-label" for="item.obj{{jawab.id}}">
-                                                &nbsp;{{jawab.nama}}</label>
+                <div class="grid_12">
+                        <div class="grid_8" style="margin-top: 40px;">
+                            <div ng-repeat="list in listNyeriAnak | orderBy:'id'">
+                                <div ng-repeat="opsi in list.detail | orderBy:'id'"
+                                    ng-init="listIndex = $index + 1">
+                                    <div class="grid_2" style="text-align: center; vertical-align: middle;">
+                                        <img class="normalTidakNormal" style="cursor: pointer;"
+                                            src="stylesheets/skalanyeri/{{listIndex}}.png"
+                                            ng-model="item.obj[5052]" ng-click="getSkalaNyeri(list, opsi)"
+                                            ng-class="{'activeBtn': activeStatus == opsi.descNilai}">
+                                        <div class="grid_12">
+                                            <label for="{{opsi.descNilai}}"><b>{{opsi.nama1}}</b></label>
+                                        </div>
+                                        <div class="grid_12">
+                                            <label for="{{opsi.nama}}"><b>{{opsi.nama}}</b></label>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        
+                       <div class="grid_4" ng-repeat="list in listSkorWong | orderBy:'id'" style="padding: 5pt 10pt">
+                            <b>{{list.nama}}</b>
+                            <div class="grid_12" style="padding: 5pt">
+                                <div ng-repeat="jawab in list.detail | orderBy:'id'">
+                                        <div ng-switch on="jawab.type">
+                                    <div class="grid_12"  ng-switch-when="checkbox"  > 
+                                            <input type="checkbox" class="k-checkbox" id="item.obj{{jawab.id}}"
+                                            ng-model="item.obj[jawab.id]">
+                                        <label class="k-checkbox-label" for="item.obj{{jawab.id}}">
+                                            &nbsp;{{jawab.nama}}</label>
+                                         
+                                    </div>
+                                    <div class="grid_8"> 
+                                            <label class="k-label" >
+                                                    &nbsp;{{jawab.ket}}</label>
+                                    </div>
+                                    <div class="grid_3" ng-switch-when="textbox" style="margin-top: -15px;margin-left:-10px" >
+                                         <input class="k-textbox" ng-model="item.obj[jawab.id]" type="text">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </div>
-                <div class="grid_6 margin-top-30 text-center margin-bottom border-left">
+            </div>
+            <div class = "grid_1"></div>
+                <div class="grid_8 text-center">
                    
-                    <div class="grid_12 margin-top margin-bottom">
+                    <div class="grid_12 margin-bottom">
+
                         
                         <div class="grid_9">
                             <label c-label item="item" class="margin-bottom margin-top">Kemampuan Fungsional</label>
@@ -616,7 +569,9 @@
                                         ng-model="item.obj[jawab.id]">
                                     <label class="k-checkbox-label" for="item.obj{{jawab.id}}">
                                         &nbsp;{{jawab.nama}}</label>
-                                
+                                </div>
+                                <div class="grid_12" style="margin-top: 10px; margin-bottom: 10px;"ng-switch-when="label">
+                                    <label>{{jawab.nama}}</label>
                                 </div>
                             </div>
                         </div>
@@ -720,39 +675,99 @@
         <div class="grid_12 margin-top-30">
             <label c-label item="item" class="margin-bottom">C. Diagnosis Fisioterapi :</label>
             <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[30006265]"
-                style="height: 30px; width: 90%; "/>
+                style="height: 60px; width: 90%; "/>
         </div>
         <div class="grid_12 margin-top-30">
             <label c-label item="item" class="margin-bottom">D. Program / Rencana Terapi :</label>
             <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[30006266]"
-                style="height: 30px; width: 90%; "/>
+                style="height: 60px; width: 90%; "/>
         </div>
         <div class="grid_12">
             <fieldset style="margin-top: 10px;">
                 <div class="grid_12 margin-top-30 text-center margin-bottom">
                     <label c-label item="item">E. Intervensi</label>
                 </div>
-                <div class="grid_6 margin-top-30">
-                    <label c-label item="item">Tanggal dan Jam</label>
-                    <input style="width: 90%" k-ng-model="item.obj[30006267]" kendo-datetimepicker
-                        placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
-                </div>
-                <div class="grid_12 margin-top-30">
-                    <label c-label item="item" class="margin-bottom">Interverensi</label>
-                    <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[30006268]"
-                        style="height: 30px; width: 90%; "/>
-                </div>
-                <div class="grid_12 margin-top-30">
-                    <label c-label item="item" class="margin-bottom">Tempat / Area yang diterapi</label>
-                    <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[30006269]"
-                        style="height: 30px; width: 90%; "/>
+                <div class="grid_12">
+                    <table style="border: 0px">
+                       <tr>
+                        <td>
+                            <label c-label item="item" style="text-align: center;"> Tanggal</label> 
+                        </td>
+                        <td>
+                            <label c-label item="item" style="text-align: center;"> Intervensi</label> 
+                        </td>
+                        <td>
+                            <label c-label item="item" style="text-align: center;"> Tempat / Area Intervensi</label> 
+                        </td>
+                       </tr>
+                        <tr>
+                            <td>
+                                <div class="grid_9" style="text-align: center;">
+                                    <input style="width: 100%" k-ng-model="item.obj[30006267]" kendo-datepicker
+                                        placeholer="dd-MM-yyyy" k-format="'dd-MM-yyyy'" parsedate="dd-MM-yyyy" />
+                                </div>
+                            </td>
+                            <td>
+                                <div class="grid_12">
+                                    <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[30006268]"
+                                        style="height: 60px; width: 90%; "/>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="grid_12">
+                                    <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[30006269]"
+                                        style="height: 60px; width: 90%; "/>
+                                </div> 
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="grid_9" style="text-align: center;">
+                                    <input style="width: 100%" k-ng-model="item.obj[300000119]" kendo-datepicker
+                                        placeholer="dd-MM-yyyy" k-format="'dd-MM-yyyy'" parsedate="dd-MM-yyyy" />
+                                </div>
+                            </td>
+                            <td>
+                                <div class="grid_12">
+                                    <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[300000120]"
+                                        style="height: 60px; width: 90%; "/>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="grid_12">
+                                    <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[300000121]"
+                                        style="height: 60px; width: 90%; "/>
+                                </div> 
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="grid_9" style="text-align: center;">
+                                    <input style="width: 100%" k-ng-model="item.obj[300000122]" kendo-datepicker
+                                        placeholer="dd-MM-yyyy" k-format="'dd-MM-yyyy'" parsedate="dd-MM-yyyy" />
+                                </div>
+                            </td>
+                            <td>
+                                <div class="grid_12">
+                                    <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[300000123]"
+                                        style="height: 60px; width: 90%; "/>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="grid_12">
+                                    <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[300000124]"
+                                        style="height: 60px; width: 90%; "/>
+                                </div> 
+                            </td>
+                        </tr>
+                    </table>
                 </div>
             </fieldset>
         </div>
         <div class="grid_12 margin-top-30">
             <label c-label item="item" class="margin-bottom">F. Evaluasi :</label>
             <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[30006270]"
-                style="height: 30px; width: 90%; "/>
+                style="height: 60px; width: 90%; "/>
         </div>
 
         <div class="grid_6 margin-top-30">
@@ -763,7 +778,7 @@
         
         <div class="grid_12" style="margin-top:10px">
             <div class="grid_12">
-                <label c-label item="item" c-label-text="Fisioterapi"></label>
+                <label c-label item="item" c-label-text="Fisioterapis"></label>
             </div>
             <div class="grid_6">
                 <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[30006372]"

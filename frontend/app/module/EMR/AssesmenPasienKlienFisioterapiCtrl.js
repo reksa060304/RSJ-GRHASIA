@@ -197,6 +197,12 @@ define(['initialize'], function (initialize) {
                     "detail": [
                         { "id": 30006251, "nama": "Tidak Ada Risiko Jatuh, bila tidak ditemukan salah satu dari point a / b", "satuan": "", "type": "checkbox" },
                         { "id": 30006252, "nama": "Ada Risiko Jatuh, bila tidak ditemukan salah satu dari point a / b", "satuan": "", "type": "checkbox" },
+                        { "id": 300000114, "nama": "Risiko Jatuh Tinggi, bila ditemukan 1 dan 2", "satuan": "", "type": "checkbox" },
+                        { "id": 300000115, "nama": "Tidak dapat dilakukan pengkajian Risiko Jatuh", "satuan": "", "type": "checkbox" },
+                        { "id": 3, "nama": "Tindakan :", "satuan": "", "type": "label" },
+                        { "id": 300000116, "nama": "Edukasi", "satuan": "", "type": "checkbox" },
+                        { "id": 300000117, "nama": "Pemberian Tanda Risiko Jatuh", "satuan": "", "type": "checkbox" },
+                        { "id": 300000118, "nama": "Pemberian Tempat Duduk Prioritas", "satuan": "", "type": "checkbox" },
                     ]
                 }
             ] 
@@ -235,7 +241,30 @@ define(['initialize'], function (initialize) {
                     ]
                 }
             ]
-
+            $scope.listNyeriAnak = [
+                {
+                    "id": 10, "nama": "Hurts", "detail": [
+                    { "id": 30006229, "nama": "Tidak Nyeri","nama1": "0", "descNilai": 0 },
+                    { "id": 30006230, "nama": "Sedikit Nyeri", "nama1": "1 2 3", "descNilai": 2 }, 
+                    { "id": 30006231, "nama": "Agak mengganggu", "nama1": "4", "descNilai": 4 },
+                    { "id": 30006232, "nama": "Mengganggu Aktivitas","nama1": "5 6 7",  "descNilai": 6}, 
+                    { "id": 30006233, "nama": "Sangat mengganggu", "nama1": "8", "descNilai": 8 },
+                    { "id": 30006234, "nama": "Tak tertahankan", "nama1": "9 10",  "descNilai": 10 }
+                ]
+                }
+            ]
+    
+            $scope.listSkorWong = [{
+                "id": 9, "nama": "Score ",
+                "detail": [
+                    { "id": 300000108, "nama": "0 = Tidak Ada Nyeri", "type": "checkbox"},
+                    { "id": 300000109, "nama": "1 - 2 - 3 = Sedikit Nyeri", "type": "checkbox"},
+                    { "id": 300000110, "nama": "4 = Agak mengganggu", "type": "checkbox" },
+                    { "id": 300000111, "nama": "5 - 6 - 7 = Mengganggu aktivitas", "type": "checkbox"},
+                    { "id": 300000112, "nama": "8 = Sangat mengganggu", "type": "checkbox"},
+                    { "id": 300000113, "nama": "9 - 10 = Tak Tertahankan", "type": "checkbox", },
+                ]
+            }]
            
 
             var chacePeriode = cacheHelper.get('cacheRekamMedis');
@@ -659,53 +688,53 @@ define(['initialize'], function (initialize) {
                 $scope.activeStatus = stat.descNilai
                 var nilai = stat.descNilai
                 if (nilai >= 0 && nilai <= 1) {
-                    $scope.item.obj[116125] = true
-                    $scope.item.obj[116126] = false
-                    $scope.item.obj[116127] = false
-                    $scope.item.obj[116128] = false
-                    $scope.item.obj[116129] = false
-                    $scope.item.obj[116130] = false
+                    $scope.item.obj[300000108] = true
+                    $scope.item.obj[300000109] = false
+                    $scope.item.obj[300000110] = false
+                    $scope.item.obj[300000111] = false
+                    $scope.item.obj[300000112] = false
+                    $scope.item.obj[300000113] = false
                 }
                 if (nilai >= 2 && nilai <= 3) {
-                    $scope.item.obj[116125] = false
-                    $scope.item.obj[116126] = true
-                    $scope.item.obj[116127] = false
-                    $scope.item.obj[116128] = false
-                    $scope.item.obj[116129] = false
-                    $scope.item.obj[116130] = false
+                    $scope.item.obj[300000108] = false
+                    $scope.item.obj[300000109] = true
+                    $scope.item.obj[300000110] = false
+                    $scope.item.obj[300000111] = false
+                    $scope.item.obj[300000112] = false
+                    $scope.item.obj[300000113] = false
                 }
                 if (nilai >= 4 && nilai <= 5) {
-                    $scope.item.obj[116125] = false
-                    $scope.item.obj[116126] = false
-                    $scope.item.obj[116127] = true
-                    $scope.item.obj[116128] = false
-                    $scope.item.obj[116129] = false
-                    $scope.item.obj[116130] = false
+                    $scope.item.obj[300000108] = false
+                    $scope.item.obj[300000109] = false
+                    $scope.item.obj[300000110] = true
+                    $scope.item.obj[300000111] = false
+                    $scope.item.obj[300000112] = false
+                    $scope.item.obj[300000113] = false
                 }
                 if (nilai >= 6 && nilai <= 7) {
-                    $scope.item.obj[116125] = false
-                    $scope.item.obj[116126] = false
-                    $scope.item.obj[116127] = false
-                    $scope.item.obj[116128] = true
-                    $scope.item.obj[116129] = false
-                    $scope.item.obj[116130] = false
+                    $scope.item.obj[300000108] = false
+                    $scope.item.obj[300000109] = false
+                    $scope.item.obj[300000110] = false
+                    $scope.item.obj[300000111] = true
+                    $scope.item.obj[300000112] = false
+                    $scope.item.obj[300000113] = false
                 }
                 if (nilai >= 8 && nilai <= 9) {
-                    $scope.item.obj[116125] = false
-                    $scope.item.obj[116126] = false
-                    $scope.item.obj[116127] = false
-                    $scope.item.obj[116128] = false
-                    $scope.item.obj[116129] = true
-                    $scope.item.obj[116130] = false
+                    $scope.item.obj[300000108] = false
+                    $scope.item.obj[300000109] = false
+                    $scope.item.obj[300000110] = false
+                    $scope.item.obj[300000111] = false
+                    $scope.item.obj[300000112] = true
+                    $scope.item.obj[300000113] = false
                 }
 
                 if (nilai == 10) {
-                    $scope.item.obj[116125] = false
-                    $scope.item.obj[116126] = false
-                    $scope.item.obj[116127] = false
-                    $scope.item.obj[116128] = false
-                    $scope.item.obj[116129] = false
-                    $scope.item.obj[116130] = true
+                    $scope.item.obj[300000108] = false
+                    $scope.item.obj[300000109] = false
+                    $scope.item.obj[300000110] = false
+                    $scope.item.obj[300000111] = false
+                    $scope.item.obj[300000112] = false
+                    $scope.item.obj[300000113] = true
                 }
 
             }

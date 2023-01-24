@@ -2056,4 +2056,21 @@ class LoggingController extends ApiController
         }
         return $this->respond($result);
     }
+    public function getLogAntrean(Request $request) {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $data = DB::select(DB::raw("
+            select lg.*
+            from logginguser_t as lg
+            where lg.kdprofile = $kdProfile
+            and ltrim(rtrim(lg.noreff)) = '". $request['noreff'] . "'
+            and lg.jenislog ilike '%Antrol Task ID%'
+            order by lg.tanggal desc")
+        );
+
+        $result = array(
+            'data' => $data,
+            'message' => 'hs@epic',
+        );
+        return $this->respond($result);
+    }
 }
