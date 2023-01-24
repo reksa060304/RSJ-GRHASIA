@@ -18772,10 +18772,10 @@
     ]
   },
   {
-    "name": "RekamMedis.AsesmenMedis.AsesmenAwalKeperawatanJiwaRawatJalan",
-    "url": "/AsesmenAwalKeperawatanJiwaRawatJalan",
-    "templateurl": "module/EMR/AsesmenAwalKeperawatanJiwaRawatJalan.html",
-    "controller": "AsesmenAwalKeperawatanJiwaRawatJalanCtrl",
+    "name": "RekamMedis.AsesmenMedis.PengkajianAwalKeperawatanJiwaRawatJalan",
+    "url": "/PengkajianAwalKeperawatanJiwaRawatJalan",
+    "templateurl": "module/EMR/PengkajianAwalKeperawatanJiwaRawatJalan.html",
+    "controller": "PengkajianAwalKeperawatanJiwaRawatJalanCtrl",
     "deps": [{
         "module": "Services",
         "define": "Service"
