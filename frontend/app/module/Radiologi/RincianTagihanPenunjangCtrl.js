@@ -1271,7 +1271,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 $scope.itemPA.namaPelayanan = $scope.dataSelected.namaproduk
                 $scope.itemPA.dokters = $scope.dataSelected.dokter
                 $scope.itemPA.tglInput = new Date()
-                $scope.findBy = 1
+                $scope.findBy = 2
                 medifirstService.get('laboratorium/get-hasil-lab-pa?norec_pp=' + $scope.dataSelected.norec_pp + '&idproduk=' + $scope.dataSelected.produkfk).then(function (e) {
                     if (e.data.length > 0) {
                         let res = e.data[0]
@@ -1280,10 +1280,6 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         $scope.itemPA.tglInput = new Date(res.tanggal)
                         $scope.itemPA.dokter = { id: res.pegawaifk, namalengkap: res.namalengkap }
                         // $scope.itemPA.keterangan=res.keterangan.replace(/~/g,"\n")
-                        if (res.jenis != null && res.jenis == 'sitologi')
-                            $scope.findBy = 1
-                        else
-                            $scope.findBy = 0
                         if (res.dokterpengirimfk)
                             $scope.itemPA.dokterPengirim1 = { id: res.dokterpengirimfk, namalengkap: res.namadokterpengirim }
                         if (res.dokterluar)
@@ -1302,6 +1298,18 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                             $scope.itemPA.kesimpulan = res.kesimpulan.replace(/~/g, "\n")
                         if (res.anjuran)
                             $scope.itemPA.anjuran = res.anjuran.replace(/~/g, "\n")
+                        if (res.eritrosit)
+                            $scope.itemPA.eritrosit = res.eritrosit.replace(/~/g, "\n")
+                        if (res.lekosit)
+                            $scope.itemPA.lekosit = res.lekosit.replace(/~/g, "\n")
+                        if (res.trombosit)
+                            $scope.itemPA.trombosit = res.trombosit.replace(/~/g, "\n")
+                        if (res.kesan)
+                            $scope.itemPA.kesan = res.kesan.replace(/~/g, "\n")
+                        if (res.kesimpulanmdt)
+                            $scope.itemPA.kesimpulanmdt = res.kesimpulanmdt.replace(/~/g, "\n")
+                        if (res.saran)
+                            $scope.itemPA.saran = res.saran.replace(/~/g, "\n")
 
                     }
                     $scope.popUpPA.center().open();
@@ -1313,17 +1321,12 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             $scope.batalPA = function () {
                 $scope.norecPA = ''
                 $scope.itemPA = {}
-                $scope.findBy = 1
+                $scope.findBy = 2
                 $scope.itemPA.tglInput = new Date()
                 $scope.popUpPA.close();
             }
 
             $scope.saveLabPa = function () {
-                // if ($scope.itemdok.NoPa == undefined) {
-                //     window.messageContainer.error("Nomor Pa Tidak Boleh Kosong!");
-                //     return;
-                // }
-
                 if ($scope.itemPA.tglInput == undefined) {
                     window.messageContainer.error("Tanggal Tidak Boleh Kosong!");
                     return;
@@ -1333,14 +1336,22 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     return;
                 }
 
+                var jn = ''
+                if($scope.findBy == 1){
+                    jn = 'sitologi'
+                } else if($scope.findBy == 0){
+                    jn = 'pa'
+                } else if($scope.findBy == 2){
+                    jn = 'mdt'
+                }
+
                 var objSave = {
                     noregistrasi: $scope.item.noregistrasi,
                     tglinput: moment($scope.itemPA.tglInput).format('YYYY-MM-DD HH:mm'),
                     dokterid: $scope.itemPA.dokter.id,
                     nomor: $scope.itemdok.NoPa,
-                    // keterangan: $scope.itemPA.keterangan.replace(/\n/ig,'~'),
                     pelayananpasienfk: $scope.dataSelected.norec_pp,
-                    jenis: $scope.findBy == 1 ? 'sitologi' : 'pa',
+                    jenis: jn,
                     isDokterLuar: $scope.itemPA.dokterLuar,
                     dokterpengirim1: $scope.itemPA.dokterPengirim1 != undefined ? $scope.itemPA.dokterPengirim1.id : null,
                     dokterpengirim2: $scope.itemPA.dokterPengirim2 != undefined ? $scope.itemPA.dokterPengirim2 : null,
@@ -1354,6 +1365,12 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     mikroskopik: $scope.itemPA.mikroskopik != undefined ? $scope.itemPA.mikroskopik.replace(/\n/ig, '~') : null,
                     kesimpulan: $scope.itemPA.kesimpulan != undefined ? $scope.itemPA.kesimpulan.replace(/\n/ig, '~') : null,
                     anjuran: $scope.itemPA.anjuran != undefined ? $scope.itemPA.anjuran.replace(/\n/ig, '~') : null,
+                    eritrosit: $scope.itemPA.eritrosit != undefined ? $scope.itemPA.eritrosit.replace(/\n/ig, '~') : null,
+                    lekosit: $scope.itemPA.lekosit != undefined ? $scope.itemPA.lekosit.replace(/\n/ig, '~') : null,
+                    trombosit: $scope.itemPA.trombosit != undefined ? $scope.itemPA.trombosit.replace(/\n/ig, '~') : null,
+                    kesan: $scope.itemPA.kesan != undefined ? $scope.itemPA.kesan.replace(/\n/ig, '~') : null,
+                    kesimpulanmdt: $scope.itemPA.kesimpulanmdt != undefined ? $scope.itemPA.kesimpulanmdt.replace(/\n/ig, '~') : null,
+                    saran: $scope.itemPA.saran != undefined ? $scope.itemPA.saran.replace(/\n/ig, '~') : null,
                     jaringanasal: $scope.itemPA.jaringanAsal != undefined ? $scope.itemPA.jaringanAsal : null,
                     norec_pd: norec_pd,
                     norec: $scope.norecPA
@@ -1538,9 +1555,12 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 if ($scope.findBy == 0) {
                     window.open(config.baseApiBackend + "report/cetak-hasil-lab-histopatologi?norec=" + $scope.dataSelected.norec_pp + '&kdprofile=' + profile
                         + '&user=' + user + '&jenis=his', '_blank');
-                } else {
+                } else if ($scope.findBy == 1) {
                     window.open(config.baseApiBackend + "report/cetak-hasil-lab-histopatologi?norec=" + $scope.dataSelected.norec_pp + '&kdprofile=' + profile
                         + '&user=' + user + '&jenis=sitologi', '_blank');
+                } else if ($scope.findBy == 2) {
+                    window.open(config.baseApiBackend + "report/cetak-hasil-lab-histopatologi?norec=" + $scope.dataSelected.norec_pp + '&kdprofile=' + profile
+                        + '&user=' + user + '&jenis=mdt', '_blank');
                 }
 
 

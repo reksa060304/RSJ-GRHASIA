@@ -96,7 +96,7 @@ class SumberDayaManusiaController extends ApiController {
         $Ruangan = Ruangan::where('statusenabled',true)->where('kdprofile', $kdProfile)->get();
         $StatusPegawai = StatusPegawai::where('statusenabled',true)->where('kdprofile', $kdProfile)->get();
         $KategoryPegawai = KategoryPegawai::where('statusenabled',true)->where('kdprofile', $kdProfile)->get();
-        $jabatan = Jabatan::where('statusenabled', true)->where('kdprofile', $kdProfile)->get();
+        $jabatan = Jabatan::where('statusenabled', true)->where('kdprofile', $kdProfile)->whereIn('objectjenisjabatanfk',[6,7,8])->get();
         $jabatanbaru = Jabatan::where('statusenabled', true)->where('objectjenisjabatanfk', $request['jabatan'])->where('kdprofile', $kdProfile)->get();
 
         if(isset($request['jabatan']) && $request['jabatan']!="" && $request['jabatan']!="undefined"){
@@ -121,9 +121,8 @@ class SumberDayaManusiaController extends ApiController {
 
         $jenisJabatan = JenisJabatan::where('statusenabled', true)->where('kdprofile', $kdProfile)->get();
         $GolonganPegawai = GolonganPegawai::where('statusenabled', true)
-                            ->select(DB::raw("id, name || ',  ' || namaexternal as golongan, level"))
-                            ->where('kdprofile', $kdProfile)->orderBy('id', 'asc')
-                            ->get();
+                            ->select(DB::raw("ispppk, id, case when namaexternal is null then name else namaexternal || ',  ' || name end as golongan, level"))
+                            ->where('kdprofile', $kdProfile)->orderBy('id', 'asc')->get();
         $KelompokJabatan = KelompokJabatan::where('statusenabled', true)->where('kdprofile', $kdProfile)->get();
         $Pendidikan = Pendidikan::where('statusenabled', true)->where('kdprofile', $kdProfile)->get();
         $Eselon = Eselon::where('statusenabled', true)->where('kdprofile', $kdProfile)->get();
@@ -451,11 +450,16 @@ class SumberDayaManusiaController extends ApiController {
 
     public function getDetailPegawai (Request $request) {
         $kdProfile = (int) $this->getDataKdProfile($request);
+        $statusenabled = true;
+        if(isset($request['ispensiun'])){
+            $statusenabled = false;
+        }
         $data = \DB::table('pegawai_m as pg')
             ->leftJoin('agama_m as ag','ag.id','=','pg.objectagamafk')
             ->leftJoin('detailkategorypegawai_m as dkp','dkp.id','=','pg.objectdetailkategorypegawaifk ')
             ->leftJoin('golongandarah_m as gd','gd.id','=', 'pg.objectgolongandarahfk')
             ->leftJoin('jabatan_m as jb','jb.id','=','pg.objectjabatanfungsionalfk')
+            ->leftJoin('jabatan_m as jbhehe','jbhehe.id','=','pg.objectjabataninternalfk')
             ->leftJoin('jabatan_m as jb1','jb1.id', '=', 'pg.objectjabatanstrukturalfk')
             ->leftJoin('golonganpegawai_m as gp','gp.id','=', 'pg.objectgolonganpegawaifk')
             ->leftJoin('unitkerjapegawai_m as uk','uk.id','=','pg.objectunitkerjapegawaifk')
@@ -478,13 +482,17 @@ class SumberDayaManusiaController extends ApiController {
 			                        jb1.namajabatan as jbstruktural,gp.golonganpegawai,uk.name as unitkerja,sp.statuspegawai,
 			                        kj.namakelompokjabatan,spp.statusperkawinan,ese.eselon,pend.pendidikan,jk.jeniskelamin,
 			                        gol.name as golongan,nkj.detailkelompokjabatan,nkj.grade,ks.kelompokshiftkerja,
-			                        kp.kategorypegawai as namakategorypegawai,kdd.name as kedudukan,pg.objectjenispegawaifk,jp.jenispegawai, pendpg.pendidikanpegawai, pg.objectpendidikanpegawaifk"))
+			                        kp.kategorypegawai as namakategorypegawai,kdd.name as kedudukan,pg.objectjenispegawaifk,jp.jenispegawai, pendpg.pendidikanpegawai, pg.objectpendidikanpegawaifk, jbhehe.namajabatan"))
             ->where('pg.kdprofile', $kdProfile)
-            ->where('pg.statusenabled',true)
+            ->where('pg.statusenabled',$statusenabled)
             ->orderBy('pg.namalengkap');
 
         if(isset($request['idPegawai']) && $request['idPegawai']!="" && $request['idPegawai']!="undefined"){
             $data = $data->where('pg.id','=',$request['idPegawai']);
+        }
+        if(isset($request['ispensiun']) && $request['ispensiun']!="" && $request['ispensiun']!="undefined"){
+            $data = $data->where('pg.ispensiun','=',$request['ispensiun']);
+            // $data = $data->where('pg.statusenabled', $request['ispensiun']);
         }
         $data = $data->get();
 
@@ -682,7 +690,7 @@ class SumberDayaManusiaController extends ApiController {
         ->where("gb.objectpegawaifk",$request['idPegawai'])
         ->orderBy('gb.tgltmt','desc')
         ->get();
-        $gajiBerkala = \DB::select(DB::raw("SELECT distinct gol.id, gol.name || ',  ' || gol.namaexternal as golongan, rg.nominal, gol.level FROM riwayatgolongan_t rg inner join sdm_golongan_m gol on gol.id = rg.objectgolonganfk
+        $gajiBerkala = \DB::select(DB::raw("SELECT distinct gol.id, case when gol.ispppk = true then gol.name else gol.namaexternal || ',  ' ||  gol.name end as golongan, rg.nominal, gol.level FROM riwayatgolongan_t rg inner join sdm_golongan_m gol on gol.id = rg.objectgolonganfk
         where rg.objectpegawaifk = $request[idPegawai]
         "));
         $result = array(
@@ -893,7 +901,7 @@ class SumberDayaManusiaController extends ApiController {
             }else{
                 $dataSavePegawai = Pegawai::where('id', $dataPegawai['id'])->where('kdprofile', $kdProfile)->first();
             }
-            $dataSavePegawai->noidentitas = $dataPegawai['noidentitas'];
+                        $dataSavePegawai->noidentitas = $dataPegawai['noidentitas'];
             $dataSavePegawai->nokarpeg = $dataPegawai['nokarpeg'];
             $dataSavePegawai->nobpjs = $dataPegawai['nobpjs'];
             $dataSavePegawai->taspen = $dataPegawai['taspen'];
@@ -928,6 +936,7 @@ class SumberDayaManusiaController extends ApiController {
             $dataSavePegawai->kedudukanfk=  $dataPegawai['kedudukan'];
             // $dataSavePegawai->objectgolonganfk=  $dataRiwayatPangkatGolongan[$nomor]['objectgolonganfk'];
             $dataSavePegawai->objectjabatanfungsionalfk= $dataPegawai['jabatan'];
+            $dataSavePegawai->objectjabataninternalfk= $dataPegawai['jabatanhehe'];
             $dataSavePegawai->objectpendidikanterakhirfk=  $dataPegawai['pendidikan'];
             
             $dataSavePegawai->objectkelompokjabatanfk=  $dataPegawai['kelompokjabatan'];
@@ -955,139 +964,139 @@ class SumberDayaManusiaController extends ApiController {
                 $IdPegawais = $idPegawai;
             }
 
-            if ($dataKeluargaPegawai != ""){
+            // if ($dataKeluargaPegawai != ""){
 
-                $dataSaveKeluarga = KeluargaPegawai::where('objectpegawaifk',$IdPegawais)
-                    ->where('kdprofile', $kdProfile)
-                    ->delete();
+            //     $dataSaveKeluarga = KeluargaPegawai::where('objectpegawaifk',$IdPegawais)
+            //         ->where('kdprofile', $kdProfile)
+            //         ->delete();
 
-                foreach ($dataKeluargaPegawai as $item){
+            //     foreach ($dataKeluargaPegawai as $item){
 
-                    $idKeluarga = KeluargaPegawai::max('id') + 1;
-                    $dataSaveKeluarga = new KeluargaPegawai();
-                    $dataSaveKeluarga->id = $idKeluarga;
-                    $dataSaveKeluarga->kdprofile = $kdProfile;
-                    $dataSaveKeluarga->statusenabled=true;
-                    $dataSaveKeluarga->norec = $dataSaveKeluarga->generateNewId();
-                    $dataSaveKeluarga->objectpegawaifk = $IdPegawais;
+            //         $idKeluarga = KeluargaPegawai::max('id') + 1;
+            //         $dataSaveKeluarga = new KeluargaPegawai();
+            //         $dataSaveKeluarga->id = $idKeluarga;
+            //         $dataSaveKeluarga->kdprofile = $kdProfile;
+            //         $dataSaveKeluarga->statusenabled=true;
+            //         $dataSaveKeluarga->norec = $dataSaveKeluarga->generateNewId();
+            //         $dataSaveKeluarga->objectpegawaifk = $IdPegawais;
 
-                    $dataSaveKeluarga->alamat = $item['alamat'];
-                    $dataSaveKeluarga->objectjeniskelaminfk = $item['objectjeniskelaminfk'];
-                    $dataSaveKeluarga->keterangan = $item['keterangan'];
-                    $dataSaveKeluarga->namaayah = $item['namaayah'];
-                    $dataSaveKeluarga->namaibu = $item['namaibu'];
-                    $dataSaveKeluarga->namalengkap = $item['namalengkap'];
-                    $dataSaveKeluarga->nipistrisuami = $item['nipistrisuami'];
-                    $dataSaveKeluarga->nosuratkuliah = $item['nosuratkuliah'];
-                    $dataSaveKeluarga->objectkdhubunganfk = $item['objectkdhubunganfk'];
-                    $dataSaveKeluarga->objectpekerjaanfk = $item['objectpekerjaanfk'];
-                    $dataSaveKeluarga->objectstatusperkawinanpegawaifk = $item['objectstatusperkawinanpegawaifk'];
-                    $dataSaveKeluarga->statustanggungan = $item['statustanggungan'];
-                    $dataSaveKeluarga->tgllahir = $item['tgllahir'];
-                    if (isset($item['tglsuratkuliah']) && $item['tglsuratkuliah'] != 'Invalid date'){
-                        $dataSaveKeluarga->tglsuratkuliah = $item['tglsuratkuliah'];
-                    }
-                    $dataSaveKeluarga->statustanggunganfk = $item['statustanggunganfk'];
-                    $dataSaveKeluarga->objectpendidikanterakhirfk = $item['objectpendidikanterakhirfk'];
-                    $dataSaveKeluarga->save();
-                }
-            }
+            //         $dataSaveKeluarga->alamat = $item['alamat'];
+            //         $dataSaveKeluarga->objectjeniskelaminfk = $item['objectjeniskelaminfk'];
+            //         $dataSaveKeluarga->keterangan = $item['keterangan'];
+            //         $dataSaveKeluarga->namaayah = $item['namaayah'];
+            //         $dataSaveKeluarga->namaibu = $item['namaibu'];
+            //         $dataSaveKeluarga->namalengkap = $item['namalengkap'];
+            //         $dataSaveKeluarga->nipistrisuami = $item['nipistrisuami'];
+            //         $dataSaveKeluarga->nosuratkuliah = $item['nosuratkuliah'];
+            //         $dataSaveKeluarga->objectkdhubunganfk = $item['objectkdhubunganfk'];
+            //         $dataSaveKeluarga->objectpekerjaanfk = $item['objectpekerjaanfk'];
+            //         $dataSaveKeluarga->objectstatusperkawinanpegawaifk = $item['objectstatusperkawinanpegawaifk'];
+            //         $dataSaveKeluarga->statustanggungan = $item['statustanggungan'];
+            //         $dataSaveKeluarga->tgllahir = $item['tgllahir'];
+            //         if (isset($item['tglsuratkuliah']) && $item['tglsuratkuliah'] != 'Invalid date'){
+            //             $dataSaveKeluarga->tglsuratkuliah = $item['tglsuratkuliah'];
+            //         }
+            //         $dataSaveKeluarga->statustanggunganfk = $item['statustanggunganfk'];
+            //         $dataSaveKeluarga->objectpendidikanterakhirfk = $item['objectpendidikanterakhirfk'];
+            //         $dataSaveKeluarga->save();
+            //     }
+            // }
 
-            if ($dataRiwayatPendidikan != ""){
-                foreach ($dataRiwayatPendidikan as $items){
-                    if ($items['norec'] == ""){
-                        $dataSavePendidikan = new RiwayatPendidikan();
-                        $dataSavePendidikan->kdprofile = $kdProfile;
-                        $dataSavePendidikan->statusenabled=true;
-                        $dataSavePendidikan->norec = $dataSavePendidikan->generateNewId();
-                        $dataSavePendidikan->objectpegawaifk = $IdPegawais;
-                    }else{
-                        $dataSavePendidikan = RiwayatPendidikan::where('norec', $items['norec'])
-                            ->where('kdprofile', $kdProfile)
-                            ->where('objectpegawaifk',$IdPegawais)
-                            ->first();
-                    }
-                    $dataSavePendidikan->namatempatpendidikan = $items['namatempatpendidikan'];
-                    $dataSavePendidikan->alamattempatpendidikan = $items['alamattempatpendidikan'];
-                    $dataSavePegawai->objectpendidikanpegawaifk =$items['objectpendidikanpegawaifk'];
-                    $dataSavePendidikan->objectpendidikanpegawaifk =$items['objectpendidikanpegawaifk'];
-                    $dataSavePendidikan->jurusan = $items['jurusan'];
-                    $dataSavePendidikan->tglmasuk = $items['tglmasuk'];
-                    $dataSavePendidikan->tgllulus = $items['tgllulus'];
-                    $dataSavePendidikan->nilaiipk = $items['nilaiipk'];
-                    $dataSavePendidikan->noijazah = $items['noijazah'];
-                    if (isset($items['tglijazah'])){
-                        $dataSavePendidikan->tglijazah = $items['tglijazah'];
-                    }
-                    $dataSavePendidikan->save();
-                    $dataSavePegawai->save();
-                }
-            }
+            // if ($dataRiwayatPendidikan != ""){
+            //     foreach ($dataRiwayatPendidikan as $items){
+            //         if ($items['norec'] == ""){
+            //             $dataSavePendidikan = new RiwayatPendidikan();
+            //             $dataSavePendidikan->kdprofile = $kdProfile;
+            //             $dataSavePendidikan->statusenabled=true;
+            //             $dataSavePendidikan->norec = $dataSavePendidikan->generateNewId();
+            //             $dataSavePendidikan->objectpegawaifk = $IdPegawais;
+            //         }else{
+            //             $dataSavePendidikan = RiwayatPendidikan::where('norec', $items['norec'])
+            //                 ->where('kdprofile', $kdProfile)
+            //                 ->where('objectpegawaifk',$IdPegawais)
+            //                 ->first();
+            //         }
+            //         $dataSavePendidikan->namatempatpendidikan = $items['namatempatpendidikan'];
+            //         $dataSavePendidikan->alamattempatpendidikan = $items['alamattempatpendidikan'];
+            //         $dataSavePegawai->objectpendidikanpegawaifk =$items['objectpendidikanpegawaifk'];
+            //         $dataSavePendidikan->objectpendidikanpegawaifk =$items['objectpendidikanpegawaifk'];
+            //         $dataSavePendidikan->jurusan = $items['jurusan'];
+            //         $dataSavePendidikan->tglmasuk = $items['tglmasuk'];
+            //         $dataSavePendidikan->tgllulus = $items['tgllulus'];
+            //         $dataSavePendidikan->nilaiipk = $items['nilaiipk'];
+            //         $dataSavePendidikan->noijazah = $items['noijazah'];
+            //         if (isset($items['tglijazah'])){
+            //             $dataSavePendidikan->tglijazah = $items['tglijazah'];
+            //         }
+            //         $dataSavePendidikan->save();
+            //         $dataSavePegawai->save();
+            //     }
+            // }
 
-            if ($dataRiwayatPelatihan != ""){
-                foreach ($dataRiwayatPelatihan as $itempend){
-                    if ($itempend['norec'] == ""){
-                        $dataSavePelatihan = new RiwayatPelatihan();
-                        $dataSavePelatihan->kdprofile = $kdProfile;
-                        $dataSavePelatihan->statusenabled=true;
-                        $dataSavePelatihan->norec = $dataSavePelatihan->generateNewId();
-                        $dataSavePelatihan->objectpegawaifk = $IdPegawais;
-                    }else{
-                        $dataSavePelatihan = RiwayatPelatihan::where('norec', $itempend['norec'])
-                            ->where('kdprofile', $kdProfile)
-                            ->where('objectpegawaifk',$IdPegawais)
-                            ->first();
-                    }
-                    $dataSavePelatihan->instansipenyelenggara = $itempend['instansipenyelenggara'];
-                    $dataSavePelatihan->namapelatihan = $itempend['namapelatihan'];
-                    $dataSavePelatihan->lokasipelatihan =$itempend['lokasipelatihan'];
-                    $dataSavePelatihan->tglmulai = $itempend['tglmulai'];
-                    $dataSavePelatihan->tglakhir = $itempend['tglakhir'];
-                    $dataSavePelatihan->durasi = $itempend['durasi'];
-                    $dataSavePelatihan->unitpenginputfk = $itempend['unitpenginputfk'];
-                    $dataSavePelatihan->jenispelatihanfk = $itempend['jenispelatihanfk'];
-                    $dataSavePelatihan->penyelenggara = $itempend['penyelenggara'];
-                    $dataSavePelatihan->biayadiklat = $itempend['biayadiklat'];
-                    $dataSavePelatihan->biayasppd = $itempend['biayasppd'];
-                    $dataSavePelatihan->sumberdanafk = $itempend['sumberdanafk'];
+            // if ($dataRiwayatPelatihan != ""){
+            //     foreach ($dataRiwayatPelatihan as $itempend){
+            //         if ($itempend['norec'] == ""){
+            //             $dataSavePelatihan = new RiwayatPelatihan();
+            //             $dataSavePelatihan->kdprofile = $kdProfile;
+            //             $dataSavePelatihan->statusenabled=true;
+            //             $dataSavePelatihan->norec = $dataSavePelatihan->generateNewId();
+            //             $dataSavePelatihan->objectpegawaifk = $IdPegawais;
+            //         }else{
+            //             $dataSavePelatihan = RiwayatPelatihan::where('norec', $itempend['norec'])
+            //                 ->where('kdprofile', $kdProfile)
+            //                 ->where('objectpegawaifk',$IdPegawais)
+            //                 ->first();
+            //         }
+            //         $dataSavePelatihan->instansipenyelenggara = $itempend['instansipenyelenggara'];
+            //         $dataSavePelatihan->namapelatihan = $itempend['namapelatihan'];
+            //         $dataSavePelatihan->lokasipelatihan =$itempend['lokasipelatihan'];
+            //         $dataSavePelatihan->tglmulai = $itempend['tglmulai'];
+            //         $dataSavePelatihan->tglakhir = $itempend['tglakhir'];
+            //         $dataSavePelatihan->durasi = $itempend['durasi'];
+            //         $dataSavePelatihan->unitpenginputfk = $itempend['unitpenginputfk'];
+            //         $dataSavePelatihan->jenispelatihanfk = $itempend['jenispelatihanfk'];
+            //         $dataSavePelatihan->penyelenggara = $itempend['penyelenggara'];
+            //         $dataSavePelatihan->biayadiklat = $itempend['biayadiklat'];
+            //         $dataSavePelatihan->biayasppd = $itempend['biayasppd'];
+            //         $dataSavePelatihan->sumberdanafk = $itempend['sumberdanafk'];
 
-                    if (isset($itempend['nosertifikat'])){
-                        $dataSavePelatihan->nosertifikat = $itempend['nosertifikat'];
-                    }
-                    if (isset($itempend['keterangan'])){
-                        $dataSavePelatihan->keterangan = $itempend['keterangan'];
-                    }
-                    $dataSavePelatihan->save();
-                }
-            }
+            //         if (isset($itempend['nosertifikat'])){
+            //             $dataSavePelatihan->nosertifikat = $itempend['nosertifikat'];
+            //         }
+            //         if (isset($itempend['keterangan'])){
+            //             $dataSavePelatihan->keterangan = $itempend['keterangan'];
+            //         }
+            //         $dataSavePelatihan->save();
+            //     }
+            // }
 
-            if ($dataRIwayatJabatan != ""){
-                foreach ($dataRIwayatJabatan as $hideung){
-                    if ($hideung['norec'] == ""){
-                        $dataSaveJabatan = new RiwayatJabatan();
-                        $dataSaveJabatan->kdprofile = $kdProfile;
-                        $dataSaveJabatan->statusenabled=true;
-                        $dataSaveJabatan->norec = $dataSaveJabatan->generateNewId();
-                        $dataSaveJabatan->objectpegawaifk = $IdPegawais;
-                    }else{
-                        $dataSaveJabatan = RiwayatJabatan::where('norec', $hideung['norec'])
-                            ->where('kdprofile', $kdProfile)
-                            ->where('objectpegawaifk',$IdPegawais)
-                            ->first();
-                    }
-                    $dataSaveJabatan->objectjenisjabatanfk = $hideung['objectjenisjabatanfk'];
-                    $dataSaveJabatan->objectjabatanfk = $hideung['objectjabatanfk'];
-                    $dataSaveJabatan->namajabatan =$hideung['namajabatan'];
-                    $dataSaveJabatan->nosk = $hideung['nosk'];
-                    $dataSaveJabatan->tglsk = $hideung['tglsk'];
-                    $dataSaveJabatan->ttdsk = $hideung['ttdsk'];
-                    $dataSaveJabatan->tunjangan = $hideung['tunjangan'];
-                    // $dataSaveJabatan->tunjangan = $hideung['tunjangan'];
-                    $dataSaveJabatan->ttdjabatansk = $hideung['ttdjabatansk'];
-                    // $dataSaveJabatan->objectjabatanttdfk = $hideung['objectjabatanttdfk'];
-                    $dataSaveJabatan->save();
-                }
-            }
+            // if ($dataRIwayatJabatan != ""){
+            //     foreach ($dataRIwayatJabatan as $hideung){
+            //         if ($hideung['norec'] == ""){
+            //             $dataSaveJabatan = new RiwayatJabatan();
+            //             $dataSaveJabatan->kdprofile = $kdProfile;
+            //             $dataSaveJabatan->statusenabled=true;
+            //             $dataSaveJabatan->norec = $dataSaveJabatan->generateNewId();
+            //             $dataSaveJabatan->objectpegawaifk = $IdPegawais;
+            //         }else{
+            //             $dataSaveJabatan = RiwayatJabatan::where('norec', $hideung['norec'])
+            //                 ->where('kdprofile', $kdProfile)
+            //                 ->where('objectpegawaifk',$IdPegawais)
+            //                 ->first();
+            //         }
+            //         $dataSaveJabatan->objectjenisjabatanfk = $hideung['objectjenisjabatanfk'];
+            //         $dataSaveJabatan->objectjabatanfk = $hideung['objectjabatanfk'];
+            //         $dataSaveJabatan->namajabatan =$hideung['namajabatan'];
+            //         $dataSaveJabatan->nosk = $hideung['nosk'];
+            //         $dataSaveJabatan->tglsk = $hideung['tglsk'];
+            //         $dataSaveJabatan->ttdsk = $hideung['ttdsk'];
+            //         $dataSaveJabatan->tunjangan = $hideung['tunjangan'];
+            //         // $dataSaveJabatan->tunjangan = $hideung['tunjangan'];
+            //         $dataSaveJabatan->ttdjabatansk = $hideung['ttdjabatansk'];
+            //         // $dataSaveJabatan->objectjabatanttdfk = $hideung['objectjabatanttdfk'];
+            //         $dataSaveJabatan->save();
+            //     }
+            // }
 
             if ($dataSip != ""){
                 foreach ($dataSip as $hideungs){
@@ -1155,189 +1164,119 @@ class SumberDayaManusiaController extends ApiController {
                 }
             }
 
-            if ($dataKomponenGajiAdd != ""){
-                foreach ($dataKomponenGajiAdd as $hideungadd){
-                    if ($hideungadd['norec'] == ""){
-                        $dataKomponenGajiAdd = new KomponenGajiPegawai();
-                        $dataKomponenGajiAdd->kdprofile = $kdProfile;
-                        $dataKomponenGajiAdd->statusenabled=true;
-                        $dataKomponenGajiAdd->norec = $dataKomponenGajiAdd->generateNewId();
-                        $dataKomponenGajiAdd->objectpegawaifk = $IdPegawais;
-                    }else{
-                        $dataKomponenGajiAdd = KomponenGajiPegawai::where('norec', $hideungadd['norec'])
-                            ->where('kdprofile', $kdProfile)
-                            ->where('objectpegawaifk',$IdPegawais)
-                            ->first();
-                    }
-                    $dataKomponenGajiAdd->isaktif = $hideungadd['isaktif'];
-                    $dataKomponenGajiAdd->tglaktif = $hideungadd['tglaktif'];
-                    $dataKomponenGajiAdd->objectkomponengajifk = $hideungadd['idkomponengaji'];
-                    $dataKomponenGajiAdd->save();
-                }
-            }
+            // if ($dataKomponenGajiAdd != ""){
+            //     foreach ($dataKomponenGajiAdd as $hideungadd){
+            //         if ($hideungadd['norec'] == ""){
+            //             $dataKomponenGajiAdd = new KomponenGajiPegawai();
+            //             $dataKomponenGajiAdd->kdprofile = $kdProfile;
+            //             $dataKomponenGajiAdd->statusenabled=true;
+            //             $dataKomponenGajiAdd->norec = $dataKomponenGajiAdd->generateNewId();
+            //             $dataKomponenGajiAdd->objectpegawaifk = $IdPegawais;
+            //         }else{
+            //             $dataKomponenGajiAdd = KomponenGajiPegawai::where('norec', $hideungadd['norec'])
+            //                 ->where('kdprofile', $kdProfile)
+            //                 ->where('objectpegawaifk',$IdPegawais)
+            //                 ->first();
+            //         }
+            //         $dataKomponenGajiAdd->isaktif = $hideungadd['isaktif'];
+            //         $dataKomponenGajiAdd->tglaktif = $hideungadd['tglaktif'];
+            //         $dataKomponenGajiAdd->objectkomponengajifk = $hideungadd['idkomponengaji'];
+            //         $dataKomponenGajiAdd->save();
+            //     }
+            // }
 
-            if ($dataKomponenGajiDel != ""){
-                foreach ($dataKomponenGajiDel as $hideungdel){
-                    if ($hideungdel['norec'] == ""){
-                        $dataKomponenGajiDel = new KomponenGajiPegawai();
-                        $dataKomponenGajiDel->kdprofile = $kdProfile;
-                        $dataKomponenGajiDel->statusenabled=true;
-                        $dataKomponenGajiDel->norec = $dataKomponenGajiDel->generateNewId();
-                        $dataKomponenGajiDel->objectpegawaifk = $IdPegawais;
-                    }else{
-                        $dataKomponenGajiDel = KomponenGajiPegawai::where('norec', $hideungdel['norec'])
-                            ->where('kdprofile', $kdProfile)
-                            ->where('objectpegawaifk',$IdPegawais)
-                            ->first();
-                    }
-                    $dataKomponenGajiDel->isaktif = $hideungdel['isaktif'];
-                    $dataKomponenGajiDel->tglaktif = $hideungdel['tglaktif'];
-                    $dataKomponenGajiDel->objectkomponengajifk = $hideungdel['idkomponengaji'];
-                    $dataKomponenGajiDel->save();
-                }
-            }
-            if ($dataHukumanDisiplin != "") {
-                foreach ($dataHukumanDisiplin as $hudis) {
-                    if ($hudis['norec'] == "") {
-                        $dahudis = \DB::table('sdm_hukumandisiplin_t')
-                        ->insert([
-                            'norec' => substr(Uuid::generate(), 0, 32),
-                            'kdprofile'=> $kdProfile,
-                            'statusenabled'=> true,
-                            'objectjenishukumanfk'=> $hudis['objectjenishukumanfk'],
-                            'tgldari'=>$hudis['tgldari'],
-                            'tglsampai'=>$hudis['tglsampai'],
-                            'pejabatmenetapkan'=> $hudis['pejabatmenetapkan'],
-                            'objectpegawaifk'=> $IdPegawais,
-                            'tglsk'=> $hudis['tglsk'],
-                            'nosk'=> $hudis['nosk'],
-                        ]);
-                    } else {
-                        $dahudis = \DB::table('sdm_hukumandisiplin_t')
-                        ->where('norec', $hudis['norec'])
-                        ->where('kdprofile', $kdProfile)
-                        ->where('objectpegawaifk', $IdPegawais)
-                        ->update([
-                            'statusenabled'=> true,
-                            'objectjenishukumanfk'=> $hudis['objectjenishukumanfk'],
-                            'tgldari'=>$hudis['tgldari'],
-                            'tglsampai'=>$hudis['tglsampai'],
-                            'pejabatmenetapkan'=> $hudis['pejabatmenetapkan'],
-                            'tglsk'=> $hudis['tglsk'],
-                            'nosk'=> $hudis['nosk'],
-                        ]);
-                    }
+            // if ($dataKomponenGajiDel != ""){
+            //     foreach ($dataKomponenGajiDel as $hideungdel){
+            //         if ($hideungdel['norec'] == ""){
+            //             $dataKomponenGajiDel = new KomponenGajiPegawai();
+            //             $dataKomponenGajiDel->kdprofile = $kdProfile;
+            //             $dataKomponenGajiDel->statusenabled=true;
+            //             $dataKomponenGajiDel->norec = $dataKomponenGajiDel->generateNewId();
+            //             $dataKomponenGajiDel->objectpegawaifk = $IdPegawais;
+            //         }else{
+            //             $dataKomponenGajiDel = KomponenGajiPegawai::where('norec', $hideungdel['norec'])
+            //                 ->where('kdprofile', $kdProfile)
+            //                 ->where('objectpegawaifk',$IdPegawais)
+            //                 ->first();
+            //         }
+            //         $dataKomponenGajiDel->isaktif = $hideungdel['isaktif'];
+            //         $dataKomponenGajiDel->tglaktif = $hideungdel['tglaktif'];
+            //         $dataKomponenGajiDel->objectkomponengajifk = $hideungdel['idkomponengaji'];
+            //         $dataKomponenGajiDel->save();
+            //     }
+            // }
+            // if ($dataHukumanDisiplin != "") {
+            //     foreach ($dataHukumanDisiplin as $hudis) {
+            //         if ($hudis['norec'] == "") {
+            //             $dahudis = \DB::table('sdm_hukumandisiplin_t')
+            //             ->insert([
+            //                 'norec' => substr(Uuid::generate(), 0, 32),
+            //                 'kdprofile'=> $kdProfile,
+            //                 'statusenabled'=> true,
+            //                 'objectjenishukumanfk'=> $hudis['objectjenishukumanfk'],
+            //                 'tgldari'=>$hudis['tgldari'],
+            //                 'tglsampai'=>$hudis['tglsampai'],
+            //                 'pejabatmenetapkan'=> $hudis['pejabatmenetapkan'],
+            //                 'objectpegawaifk'=> $IdPegawais,
+            //                 'tglsk'=> $hudis['tglsk'],
+            //                 'nosk'=> $hudis['nosk'],
+            //             ]);
+            //         } else {
+            //             $dahudis = \DB::table('sdm_hukumandisiplin_t')
+            //             ->where('norec', $hudis['norec'])
+            //             ->where('kdprofile', $kdProfile)
+            //             ->where('objectpegawaifk', $IdPegawais)
+            //             ->update([
+            //                 'statusenabled'=> true,
+            //                 'objectjenishukumanfk'=> $hudis['objectjenishukumanfk'],
+            //                 'tgldari'=>$hudis['tgldari'],
+            //                 'tglsampai'=>$hudis['tglsampai'],
+            //                 'pejabatmenetapkan'=> $hudis['pejabatmenetapkan'],
+            //                 'tglsk'=> $hudis['tglsk'],
+            //                 'nosk'=> $hudis['nosk'],
+            //             ]);
+            //         }
                     
-                }
-            }
+            //     }
+            // }
 
-            if ($dataRiwayatPangkatGolongan != "") {
-                foreach ($dataRiwayatPangkatGolongan as $rpg) {
-                    
-                    if ($rpg['norec'] == "") {
-                       
-                        \DB::table("riwayatgolongan_t")->insert([
-                        'norec' => substr(Uuid::generate(), 0, 32),
-                        'kdprofile'=> $kdProfile,
-                        'statusenabled'=> true,
-                        'objectpegawaifk'=> $IdPegawais,
-                        'objectgolonganfk'=> $rpg['objectgolonganfk'],
-                        'tglsk'=>$rpg['tglsk'],
-                        'tgltmt'=>$rpg['tgltmt'],
-                        'pejabatmenetapkan'=> $rpg['pejabatmenetapkan'] ,
-                        'nosk'=> $rpg['nosk'],
-                        'nominal'=> $rpg['nominal'],
-                        ]);
-                    }else{
-                        \DB::table("riwayatgolongan_t")
-                        ->where('norec', $rpg['norec'])
-                        ->where('kdprofile', $kdProfile)
-                        ->where('objectpegawaifk', $IdPegawais)
-                        ->update([
-                            // 'statusenabled'=> true,
-                            'objectgolonganfk'=> $rpg['objectgolonganfk'],
-                            'tglsk'=>$rpg['tglsk'],
-                            'tgltmt'=>$rpg['tgltmt'],
-                            'pejabatmenetapkan'=> $rpg['pejabatmenetapkan'] ,
-                            'nosk'=> $rpg['nosk'],
-                            'nominal'=> $rpg['nominal'],
-                        ]);
-                    }
-                }
-                # code...
-            }
-            if ($dataRiwayatcuti != "") {
-                foreach ($dataRiwayatcuti as $ct) {
-                    if ($ct['norec'] == "") {
-                        \DB::table("riwayatcuti_t")
-                        ->insert([
-                            'norec' => substr(Uuid::generate(), 0, 32),
-                            'kdprofile'=> $kdProfile,
-                            'statusenabled'=> true,
-                            'objectpegawaifk'=> $IdPegawais,
-                            'tgldari'=>$ct['tgldari'],
-                            'tglsampai'=>$ct['tglsampai'],
-                            'tglsk'=> $ct['tglsk'],
-                            'nosk'=> $ct['nosk'],
-                            'pejabatmenetapkan'=> $ct['pejabatmenetapkan'],
-                        ]);
+            // if ($dataRiwayatcuti != "") {
+            //     foreach ($dataRiwayatcuti as $ct) {
+            //         if ($ct['norec'] == "") {
+            //             \DB::table("riwayatcuti_t")
+            //             ->insert([
+            //                 'norec' => substr(Uuid::generate(), 0, 32),
+            //                 'kdprofile'=> $kdProfile,
+            //                 'statusenabled'=> true,
+            //                 'objectpegawaifk'=> $IdPegawais,
+            //                 'tgldari'=>$ct['tgldari'],
+            //                 'tglsampai'=>$ct['tglsampai'],
+            //                 'tglsk'=> $ct['tglsk'],
+            //                 'nosk'=> $ct['nosk'],
+            //                 'pejabatmenetapkan'=> $ct['pejabatmenetapkan'],
+            //             ]);
                         
-                    } else {
-                        \DB::table("riwayatcuti_t")
-                        ->where('norec', $ct['norec'])
-                        ->where('kdprofile', $kdProfile)
-                        ->where('objectpegawaifk', $IdPegawais)
-                        ->update([
-                            'kdprofile'=> $kdProfile,
-                            'statusenabled'=> true,
-                            'objectpegawaifk'=> $IdPegawais,
-                            'tgldari'=>$ct['tgldari'],
-                            'tglsampai'=>$ct['tglsampai'],
-                            'tglsk'=> $ct['tglsk'],
-                            'nosk'=> $ct['nosk'],
-                            'pejabatmenetapkan'=> $ct['pejabatmenetapkan'],
-                        ]);
-                    }
+            //         } else {
+            //             \DB::table("riwayatcuti_t")
+            //             ->where('norec', $ct['norec'])
+            //             ->where('kdprofile', $kdProfile)
+            //             ->where('objectpegawaifk', $IdPegawais)
+            //             ->update([
+            //                 'kdprofile'=> $kdProfile,
+            //                 'statusenabled'=> true,
+            //                 'objectpegawaifk'=> $IdPegawais,
+            //                 'tgldari'=>$ct['tgldari'],
+            //                 'tglsampai'=>$ct['tglsampai'],
+            //                 'tglsk'=> $ct['tglsk'],
+            //                 'nosk'=> $ct['nosk'],
+            //                 'pejabatmenetapkan'=> $ct['pejabatmenetapkan'],
+            //             ]);
+            //         }
                     
-                }
-            }
+            //     }
+            // }
 
-            if ($dataRiwayatGajiBerkala != "") {
-                foreach ($dataRiwayatGajiBerkala as $gb) {
-                    
-                    if ($gb['norec'] == "") {
-                        \DB::table("riwayatgajiberkala_t")->insert([
-                        'norec' => substr(Uuid::generate(), 0, 32),
-                        'kdprofile'=> $kdProfile,
-                        'statusenabled'=> true,
-                        'objectpegawaifk'=> $IdPegawais,
-                        'gajiawal'=> $gb['gajiawal'],
-                        'gajiakhir'=> $gb['gajiakhir'],
-                        'tglsk'=>$gb['tglsk'],
-                        'tgltmt'=>$gb['tgltmt'],
-                        'pejabatmenetapkan'=> $gb['pejabatmenetapkan'] ,
-                        'nosk'=> $gb['nosk'],
-                        'objectgolonganfk'=>$gb['objectgolonganfk'],
-                        ]);
-                    }else{
-                        \DB::table("riwayatgajiberkala_t")
-                        ->where('norec', $gb['norec'])
-                        ->where('kdprofile', $kdProfile)
-                        ->where('objectpegawaifk', $IdPegawais)
-                        ->update([
-                            // 'statusenabled'=> true,
-                            'gajiawal'=> $gb['gajiawal'],
-                            'gajiakhir'=> $gb['gajiakhir'],
-                            'tglsk'=>$gb['tglsk'],
-                            'tgltmt'=>$gb['tgltmt'],
-                            'pejabatmenetapkan'=> $gb['pejabatmenetapkan'] ,
-                            'nosk'=> $gb['nosk'],
-                            'objectgolonganfk'=>$gb['objectgolonganfk'],
-                        ]);
-                    }
-                }
-                # code...
-            }
+            
 
             //## Logging User
 //                if ($dataPegawai['id'] == ""){
@@ -1384,21 +1323,6 @@ class SumberDayaManusiaController extends ApiController {
             $result = array(
                 "status" => 201,
                 "message" => $transMessage,
-                "idpegawai" => $IdPegawais,
-                "datapegawai" => $dataSavePegawai,
-                "datakeluarga" => $dataKeluargaPegawai,
-                "datapendidian" => $dataRiwayatPendidikan,
-                "datapelatihan" => $dataRiwayatPelatihan,
-                "datajabatan" => $dataRIwayatJabatan,
-                'datasip' => $dataSip,
-                'datastr' => $dataStr,
-                'datatelp' =>$dataTelp,
-                'datakomponenadd' => $dataKomponenGajiAdd,
-                'datakomponendel' => $dataKomponenGajiDel,                
-                'hukumandisiplin' => $dataHukumanDisiplin,
-                'riwayatpangkatgolongan' => $dataRiwayatPangkatGolongan,
-                'datariwayatcuti' => $dataRiwayatcuti,
-                'datariwayatgajiberkala' => $dataRiwayatGajiBerkala,
                 "as" => 'ea@epic',
             );
         } else {
@@ -1408,18 +1332,7 @@ class SumberDayaManusiaController extends ApiController {
                 "status" => 400,
                 "message"  => $transMessage,
                 "error" => $e->getMessage().' '.$e->getLine(),
-                "datapegawai" => $dataSavePegawai,
-                "datakeluarga" => $dataKeluargaPegawai,
-                "datapendidian" => $dataRiwayatPendidikan,
-                "datapelatihan" => $dataRiwayatPelatihan,
-                "datajabatan" => $dataRIwayatJabatan,
-                'datasip' => $dataSip,
-                'datastr' => $dataStr,
-                'datakomponenadd' => $dataKomponenGajiAdd,
-                'datakomponendel' => $dataKomponenGajiDel,                
-                'hukumandisiplin' => $dataHukumanDisiplin,
-                'riwayatpangkatgolongan' => $dataRiwayatPangkatGolongan,
-                'datariwayatgajiberkala' => $dataRiwayatGajiBerkala,
+                'p'=>$dataSavePegawai,
                 "as" => 'ea@epic',
             );
         }
@@ -2602,16 +2515,17 @@ class SumberDayaManusiaController extends ApiController {
             $TP->nim = $request['nim'];
             $TP->nomorhp = $request['nomorhp'];
             $TP->email = $request['email'];
+            $TP->image = $request['image'];
+            $TP->save();
 
             $uploadimage = $request->file('image');
             if($request['image']!='noimage'){
+                $TPimg = PesertaDidik::where('norec', $TP->norec)->first();
                 $extensionimage = $uploadimage->getClientOriginalExtension();
-                $filenameImage = 'DIKLAT-'.$request['nama'] .'-'.$request['nim'].'-'. $request['email'].'.'.$extensionimage;
-                $TP->image = $filenameImage;
+                $filenameImage = 'DIKLAT-'.$request['nama'] .'_'.$TP->norec.'.'.$extensionimage;
+                $TPimg->image = $filenameImage;
+                $TPimg->save();
             }
-            
-            $TP->save();
-
             //## Logging User
             $newId = LoggingUser::max('id');
             $newId = $newId +1;
@@ -2759,7 +2673,7 @@ class SumberDayaManusiaController extends ApiController {
             $uploadimage = $request->file('image');
             if($request['image']!='noimage'){
                 $extensionimage = $uploadimage->getClientOriginalExtension();
-                $filenameImage = 'DIKLAT-'.$request['nama'] .'-'.$request['nim'].'-'. $request['email'].'.'.$extensionimage;
+                $filenameImage = 'DIKLAT-'.$request['nama'] .'-'.$request['norec'].'.'.$extensionimage;
                 
                 $TP->image = $filenameImage;
             }else{
@@ -3150,14 +3064,26 @@ class SumberDayaManusiaController extends ApiController {
         $paramjenisPegId = '';
         $paramstatusPegId = '';
         
-        if(isset($request['kategId']) && $request['kategId']!=''){
-            $paramkategId = ' and pg.kategorypegawai ='.$request['kategId'];
+        // if(isset($request['kategId']) && $request['kategId']!=''){
+        //     $paramkategId = ' and pg.kategorypegawai ='.$request['kategId'];
+        // }
+        // if(isset($request['statusPegId']) && $request['statusPegId']!=''){
+        //     $paramstatusPegId = ' and pg.objectstatuspegawaifk ='.$request['statusPegId'];
+        // }
+        // if(isset($request['jenisPegId']) && $request['jenisPegId']!=''){
+        //     $paramjenisPegId = ' and pg.objectjenispegawaifk ='.$request['jenisPegId'];
+        // }
+        $kateg = "";
+        if(isset($request['jenisKategId'])){
+            $kateg=" and pg.kategorypegawai in($request[jenisKategId])";
         }
-        if(isset($request['statusPegId']) && $request['statusPegId']!=''){
-            $paramstatusPegId = ' and pg.objectstatuspegawaifk ='.$request['statusPegId'];
+        $Peg = "";
+        if(isset($request['jenisPegId'])){
+            $Peg=" and pg.objectstatuspegawaifk in($request[jenisPegId])";
         }
-        if(isset($request['jenisPegId']) && $request['jenisPegId']!=''){
-            $paramjenisPegId = ' and pg.objectjenispegawaifk ='.$request['jenisPegId'];
+        $status = "";
+        if(isset($request['statusPegId'])){
+            $status=" and pg.kategorypegawai in($request[statusPegId])";
         }
 
         $data = DB::select(DB::raw("
@@ -3167,10 +3093,8 @@ class SumberDayaManusiaController extends ApiController {
                 select jp.jeniskelamin as tipe ,pg.namalengkap ,pg.id
                 from pegawai_m  as pg
                 left JOIN jeniskelamin_m as jp on jp.id =pg.objectjeniskelaminfk
-                where pg.kdprofile = $kdProfile and pg.statusenabled=true
-                $paramkategId
-                $paramstatusPegId 
-                $paramjenisPegId 
+                where pg.kdprofile = $kdProfile and pg.statusenabled=true and pg.usereksternal is null and pg.namalengkap <> '-' AND pg.ID != 320263
+                $kateg $Peg $status
                 )as x GROUP BY x.tipe
 
                 union all
@@ -3179,22 +3103,18 @@ class SumberDayaManusiaController extends ApiController {
                 select jp.jenispegawai as tipe ,pg.namalengkap ,pg.id
                 from pegawai_m  as pg
                 left JOIN jenispegawai_m as jp on jp.id =pg.objectjenispegawaifk
-                where pg.kdprofile = $kdProfile and pg.statusenabled=true
-                 $paramkategId
-                $paramstatusPegId 
-                $paramjenisPegId 
+                where pg.kdprofile = $kdProfile and pg.statusenabled=true and pg.usereksternal is null and pg.namalengkap <> '-' AND pg.ID != 320263
+                $kateg $Peg $status
                 )as x GROUP BY x.tipe
 
                 union all 
 
                 select 'Agama' as kategory  ,x.tipe ,count ( x.id) as total from (
-                select case when jp.agama is null then '-' else jp.agama end as tipe ,pg.namalengkap ,pg.id
+                select case when jp.id is null then '-' else jp.agama end as tipe ,pg.namalengkap ,pg.id
                 from pegawai_m  as pg
                 left JOIN agama_m as jp on jp.id =pg.objectagamafk
-                where pg.statusenabled=true
-                 $paramkategId
-                $paramstatusPegId 
-                $paramjenisPegId 
+                where pg.statusenabled=true and pg.usereksternal is null and pg.namalengkap <> '-' AND pg.ID != 320263
+                $kateg $Peg $status
                 )as x GROUP BY x.tipe
 
                 union all 
@@ -3203,11 +3123,20 @@ class SumberDayaManusiaController extends ApiController {
                 select case when jp.pendidikan is null then '-' else jp.pendidikan end as tipe ,pg.namalengkap ,pg.id
                 from pegawai_m  as pg
                 left JOIN pendidikan_m as jp on jp.id =pg.objectpendidikanterakhirfk
-                where pg.kdprofile = $kdProfile and pg.statusenabled=true
-                 $paramkategId
-                $paramstatusPegId 
-                $paramjenisPegId 
+                where pg.kdprofile = $kdProfile and pg.statusenabled=true and pg.usereksternal is null and pg.namalengkap <> '-' AND pg.ID != 320263
+                $kateg $Peg $status
                 )as x GROUP BY x.tipe
+                union all 
+
+                select 'Golongan' as kategory  ,x.tipe ,count ( x.id) as total from (
+                select case when gol.name is null then '-' else gol.name end as tipe ,pg.namalengkap ,pg.id
+                from pegawai_m  as pg
+                left JOIN sdm_golongan_m as gol on gol.id =pg.objectgolonganfk
+                where pg.kdprofile = $kdProfile and pg.statusenabled=true and pg.usereksternal is null and pg.namalengkap <> '-' AND pg.ID != 320263
+                $kateg $Peg $status
+                order by gol.id asc
+                )as x  GROUP BY x.tipe 
+
                 union all 
 
 
@@ -3223,10 +3152,8 @@ class SumberDayaManusiaController extends ApiController {
                 --CONVERT(int,ROUND(DATEDIFF(hour,pg.tgllahir,GETDATE())/8766.0,0)) AS umur
                 date_part('year',age(pg.tgllahir))  AS umur
                 from pegawai_m  as pg
-                where pg.kdprofile = $kdProfile and pg.statusenabled=true
-                 $paramkategId
-                $paramstatusPegId 
-                $paramjenisPegId 
+                where pg.kdprofile = $kdProfile and pg.statusenabled=true and pg.usereksternal is null and pg.namalengkap <> '-' AND pg.ID != 320263
+                $kateg $Peg $status
                 ) as x
                 ) as z
                 GROUP BY z.tipe
@@ -7558,6 +7485,304 @@ public function daftarKenaikanGajiBerkala(Request $request){
         }
         $result = array(
             'data'=> $data
+        );
+        return $this->respond($result);
+    }
+
+    public function HomeDashboard(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        
+        $jumlahpns = \DB::select("SELECT count(pg.id)as jumlahpns FROM pegawai_m pg 
+        where pg.kdprofile = $kdProfile and pg.statusenabled = true and pg.usereksternal is null and pg.namalengkap <>'-' and pg.id != 320263 and pg.kategorypegawai = 1 and pg.ispensiun is null");
+        $jumlahpnslaki = \DB::select("SELECT count(pg.id)as jumlahpns FROM pegawai_m pg 
+        where pg.kdprofile = $kdProfile and pg.statusenabled = true and pg.usereksternal is null and pg.namalengkap <>'-' and pg.id != 320263 
+        and pg.kategorypegawai = 1 and pg.ispensiun is null and pg.objectjeniskelaminfk = 1");
+        $jumlahpnsperempuan = \DB::select("SELECT count(pg.id)as jumlahpns FROM pegawai_m pg 
+        where pg.kdprofile = $kdProfile and pg.statusenabled = true and pg.usereksternal is null and pg.namalengkap <>'-' and pg.id != 320263 
+        and pg.kategorypegawai = 1 and pg.ispensiun is null and pg.objectjeniskelaminfk = 2");
+        
+        
+        $jumlahp3k = \DB::select("SELECT count(pg.id)as jumlahp3k FROM pegawai_m pg 
+        where pg.kdprofile = $kdProfile and pg.statusenabled = true and pg.usereksternal is null and pg.namalengkap <>'-' and pg.id != 320263 
+        and pg.kategorypegawai = 23 and pg.ispensiun is null");
+        $jumlahp3klaki = \DB::select("SELECT count(pg.id)as jumlahp3k FROM pegawai_m pg 
+        where pg.kdprofile = $kdProfile and pg.statusenabled = true and pg.usereksternal is null and pg.namalengkap <>'-' and pg.id != 320263 
+        and pg.kategorypegawai = 23 and pg.ispensiun is null and pg.objectjeniskelaminfk = 1");
+        $jumlahp3kperempuan = \DB::select("SELECT count(pg.id)as jumlahp3k FROM pegawai_m pg 
+        where pg.kdprofile = $kdProfile and pg.statusenabled = true and pg.usereksternal is null and pg.namalengkap <>'-' and pg.id != 320263 
+        and pg.kategorypegawai = 23 and pg.ispensiun is null and pg.objectjeniskelaminfk = 2");
+        
+        $jumlahnaban = \DB::select("SELECT count(pg.id)as jumlahnaban FROM pegawai_m pg 
+        where pg.kdprofile = $kdProfile and pg.statusenabled = true and pg.usereksternal is null and pg.namalengkap <>'-' and pg.id != 320263 
+        and pg.kategorypegawai = 22 and pg.ispensiun is null");
+        $jumlahnabanlaki = \DB::select("SELECT count(pg.id)as jumlahnaban FROM pegawai_m pg 
+        where pg.kdprofile = $kdProfile and pg.statusenabled = true and pg.usereksternal is null and pg.namalengkap <>'-' and pg.id != 320263 
+        and pg.kategorypegawai = 22 and pg.ispensiun is null and pg.objectjeniskelaminfk = 1");
+        $jumlahnabanperempuan = \DB::select("SELECT count(pg.id)as jumlahnaban FROM pegawai_m pg 
+        where pg.kdprofile = $kdProfile and pg.statusenabled = true and pg.usereksternal is null and pg.namalengkap <>'-' and pg.id != 320263 
+        and pg.kategorypegawai = 22 and pg.ispensiun is null and pg.objectjeniskelaminfk = 2");
+        
+        $jumlahblud = \DB::select("SELECT count(pg.id)as jumlahblud FROM pegawai_m pg 
+        where pg.kdprofile = $kdProfile and pg.statusenabled = true and pg.usereksternal is null and pg.namalengkap <>'-' and pg.id != 320263 
+        and pg.kategorypegawai = 20 and pg.ispensiun is null");
+        $jumlahbludlaki = \DB::select("SELECT count(pg.id)as jumlahblud FROM pegawai_m pg 
+        where pg.kdprofile = $kdProfile and pg.statusenabled = true and pg.usereksternal is null and pg.namalengkap <>'-' and pg.id != 320263 
+        and pg.kategorypegawai = 20 and pg.ispensiun is null and pg.objectjeniskelaminfk = 1");
+        $jumlahbludperempuan = \DB::select("SELECT count(pg.id)as jumlahblud FROM pegawai_m pg 
+        where pg.kdprofile = $kdProfile and pg.statusenabled = true and pg.usereksternal is null and pg.namalengkap <>'-' and pg.id != 320263 
+        and pg.kategorypegawai = 20 and pg.ispensiun is null and pg.objectjeniskelaminfk = 2");
+        
+        $jumlahos = \DB::select("SELECT count(pg.id)as jumlahos FROM pegawai_m pg 
+        where pg.kdprofile = $kdProfile and pg.statusenabled = true and pg.usereksternal is null and pg.namalengkap <>'-' and pg.id != 320263 
+        and pg.kategorypegawai = 11 and pg.ispensiun is null");
+        $jumlahoslaki = \DB::select("SELECT count(pg.id)as jumlahos FROM pegawai_m pg 
+        where pg.kdprofile = $kdProfile and pg.statusenabled = true and pg.usereksternal is null and pg.namalengkap <>'-' and pg.id != 320263 
+        and pg.kategorypegawai = 11 and pg.ispensiun is null and pg.objectjeniskelaminfk = 1");
+        $jumlahosperempuan = \DB::select("SELECT count(pg.id)as jumlahos FROM pegawai_m pg 
+        where pg.kdprofile = $kdProfile and pg.statusenabled = true and pg.usereksternal is null and pg.namalengkap <>'-' and pg.id != 320263 
+        and pg.kategorypegawai = 11 and pg.ispensiun is null and pg.objectjeniskelaminfk = 2");
+        
+        $penjagaankgb = \DB::select(DB::raw("SELECT count(y.hari) FROM (SELECT (x.y*12 )+ x.m as hari, x.y, x.m,x.tgltmt FROM (select rg.tgltmt, extract(year from age(CURRENT_DATE,rg.tgltmt ))as y, extract(month from age(CURRENT_DATE,rg.tgltmt ))as m  from riwayatgajiberkala_t rg )as x 
+        where (x.y*12 )+ x.m between 21 and 23)as y"));
+
+        $penjagaankgbd = \DB::select(DB::raw("SELECT * FROM (select pg.namalengkap, pg.nippns, pg.tgllahir::date,sdmg.namaexternal||', '||sdmg.name as golongan, rg.gajiakhir, rg.tgltmt,(rg.tgltmt + interval '2 year')::date as tmtberikutnya, extract(year from age(CURRENT_DATE,rg.tgltmt ))as y, extract(month from age(CURRENT_DATE,rg.tgltmt ))as m  from riwayatgajiberkala_t rg inner join pegawai_m pg on  pg.id = rg.objectpegawaifk inner join sdm_golongan_m sdmg on sdmg.id = rg.objectgolonganfk
+        )as x where (x.y*12 )+ x.m between 21 and 23 ORDER BY x.tmtberikutnya desc"));
+
+        $penjagaanstrd = \DB::select(DB::raw("SELECT * FROM (SELECT pg.tgllahir::date, gol.namaexternal ||', '||gol.name as golongan, pg.namalengkap, pg.nippns, extract(year from age(mbs.berakhirstr::date,CURRENT_DATE))as y, extract(month from age(mbs.berakhirstr::date,CURRENT_DATE))as m , mbs.berakhirstr::date 
+        FROM masaberlakusipstr_t mbs inner join pegawai_m pg on pg.id = mbs.pegawaifk left join sdm_golongan_m gol on gol.id = pg.objectgolonganfk)as x where (x.y*12)+x.m between 1 and 6"));
+        
+        $penjagaanpensiun = \DB::select(DB::raw("SELECT * FROM (SELECT
+            gol.namaexternal || ', ' || gol.NAME AS golongan,
+            pg.namalengkap,
+            pg.nippns,
+            EXTRACT ( YEAR FROM age( CURRENT_DATE, pg.tgllahir :: DATE ) ) AS y,
+            EXTRACT ( MONTH FROM age(CURRENT_DATE, pg.tgllahir :: DATE ) ) AS M,
+            pg.tgllahir,
+            pg.pensiun,
+            pg.tglpensiun
+        FROM
+            pegawai_m pg
+            LEFT JOIN sdm_golongan_m gol ON gol.ID = pg.objectgolonganfk 
+        WHERE
+            pg.kdprofile = 30 
+            AND pg.statusenabled = TRUE 
+            AND pg.usereksternal IS NULL 
+            AND pg.namalengkap <> '-' 
+            AND pg.ID != 320263)as x where   x.y - 1= x.pensiun - 1 and x.pensiun >= x.y"));
+
+
+
+        $dataPNS = \DB::select(DB::raw("SELECT pg.nippns, pg.namalengkap,jk.jeniskelamin, gol.namaexternal ||', '|| gol.name as golongan, jb.namajabatan FROM pegawai_m pg 
+        left join jeniskelamin_m jk on jk.id = pg.objectjeniskelaminfk
+        left join sdm_golongan_m gol on gol.id = pg.objectgolonganfk
+        left join jabatan_m jb on jb.id = pg.objectjabataninternalfk
+        where pg.kdprofile = $kdProfile and pg.statusenabled = true and pg.usereksternal is null and pg.namalengkap <>'-' and pg.id != 320263 and pg.kategorypegawai = 1 and pg.ispensiun is null"));
+        $dataP3K = \DB::select(DB::raw("SELECT pg.nippns, pg.namalengkap,jk.jeniskelamin, gol.namaexternal ||', '|| gol.name as golongan, jb.namajabatan FROM pegawai_m pg 
+        left join jeniskelamin_m jk on jk.id = pg.objectjeniskelaminfk
+        left join sdm_golongan_m gol on gol.id = pg.objectgolonganfk
+        left join jabatan_m jb on jb.id = pg.objectjabataninternalfk
+        where pg.kdprofile = $kdProfile and pg.statusenabled = true and pg.usereksternal is null and pg.namalengkap <>'-' and pg.id != 320263 and pg.kategorypegawai = 23 and pg.ispensiun is null"));
+        
+        $dataNABAN = \DB::select(DB::raw("SELECT pg.nippns, pg.namalengkap,jk.jeniskelamin, gol.namaexternal ||', '|| gol.name as golongan, jb.namajabatan FROM pegawai_m pg 
+        left join jeniskelamin_m jk on jk.id = pg.objectjeniskelaminfk
+        left join sdm_golongan_m gol on gol.id = pg.objectgolonganfk
+        left join jabatan_m jb on jb.id = pg.objectjabataninternalfk
+        where pg.kdprofile = $kdProfile and pg.statusenabled = true and pg.usereksternal is null and pg.namalengkap <>'-' and pg.id != 320263 and pg.kategorypegawai = 22 and pg.ispensiun is null"));
+
+        $dataBLUD = \DB::select(DB::raw("SELECT pg.nippns, pg.namalengkap,jk.jeniskelamin, gol.namaexternal ||', '|| gol.name as golongan, jb.namajabatan FROM pegawai_m pg 
+        left join jeniskelamin_m jk on jk.id = pg.objectjeniskelaminfk
+        left join sdm_golongan_m gol on gol.id = pg.objectgolonganfk
+        left join jabatan_m jb on jb.id = pg.objectjabataninternalfk
+        where pg.kdprofile = $kdProfile and pg.statusenabled = true and pg.usereksternal is null and pg.namalengkap <>'-' and pg.id != 320263 and pg.kategorypegawai = 20 and pg.ispensiun is null"));
+
+        $dataOS = \DB::select(DB::raw("SELECT pg.nippns, pg.namalengkap,jk.jeniskelamin, gol.namaexternal ||', '|| gol.name as golongan, jb.namajabatan FROM pegawai_m pg 
+        left join jeniskelamin_m jk on jk.id = pg.objectjeniskelaminfk
+        left join sdm_golongan_m gol on gol.id = pg.objectgolonganfk
+        left join jabatan_m jb on jb.id = pg.objectjabataninternalfk
+        where pg.kdprofile = $kdProfile and pg.statusenabled = true and pg.usereksternal is null and pg.namalengkap <>'-' and pg.id != 320263 and pg.kategorypegawai = 11 and pg.ispensiun is null"));
+
+
+        $result = array(
+            'jumlahpns'=> $jumlahpns,
+            'jumlahpnslaki'=> $jumlahpnslaki,
+            'jumlahpnsperempuan'=> $jumlahpnsperempuan,
+
+            'jumlahp3k'=> $jumlahp3k,
+            'jumlahp3klaki'=> $jumlahp3klaki,
+            'jumlahp3kperempuan'=> $jumlahp3kperempuan,
+
+            'jumlahnaban'=> $jumlahnaban,
+            'jumlahnabanlaki'=> $jumlahnabanlaki,
+            'jumlahnabanperempuan'=> $jumlahnabanperempuan,
+
+            'jumlahblud'=> $jumlahblud,
+            'jumlahbludlaki'=> $jumlahbludlaki,
+            'jumlahbludperempuan'=> $jumlahbludperempuan,
+
+            'jumlahos'=> $jumlahos,
+            'jumlahoslaki'=> $jumlahoslaki,
+            'jumlahosperempuan'=> $jumlahosperempuan,
+            'penjagaankgb'=> $penjagaankgb,
+            'penjagaankgbd'=> $penjagaankgbd,
+            'penjagaanstrd'=> $penjagaanstrd,
+            'penjagaanpensiun'=> $penjagaanpensiun,
+            'dataPNS'=> $dataPNS,
+            'dataP3K'=> $dataP3K,
+            'dataNABAN'=> $dataNABAN,
+            'dataBLUD'=> $dataBLUD,
+            'dataOS'=> $dataOS,
+            'as'=> 'Fizi'
+        );
+
+        return $this->respond($result);
+    }
+    public function getLaporanNominatif(Request $request)
+    {
+        $kateg = "";
+        if(isset($request['jenisKategId'])){
+            $kateg=" and kp.id in($request[jenisKategId])";
+        }
+        $Peg = "";
+        if(isset($request['jenisPegId'])){
+            $Peg=" and jep.id in($request[jenisPegId])";
+        }
+        $status = "";
+        if(isset($request['statusPegId'])){
+            $status=" and sp.id in($request[statusPegId])";
+        }
+
+        $data = \DB::select(DB::raw("SELECT cuti.cutibulan, pg.tglskcpns::date, pg.id, pg.nippns, pg.namalengkap, pg.tempatlahir ||', '|| pg.tgllahir::date as ttl, jk.jeniskelamin,es.eselon, gol.golongan,gol.tgltmt::date, jab.namajabatan, jab.tmtjabatan::date, '' as masakerjagolongan, sp.statuspegawai as kedudukan, kp.kategorypegawai, str.nostr,str.terbitstr::date || ' s.d. ' ||  str.berakhirstr::date as masaberlakustr, str.nosip, str.terbitsip::date as tanggalsip, rip.pendidikanpegawai  FROM pegawai_m pg 
+        left join jeniskelamin_m jk on jk.id = pg.objectjeniskelaminfk
+        left join eselon_m es on es.id = pg.objecteselonfk
+        left join (SELECT * FROM (SELECT ROW_NUMBER()OVER(PARTITION by rg.objectpegawaifk ORDER BY rg.tgltmt desc)as nomor, rg.objectpegawaifk, gol.namaexternal ||', '||gol.reportdisplay as golongan, rg.tgltmt FROM riwayatgolongan_t rg inner join sdm_golongan_m gol on gol.id = rg.objectgolonganfk where rg.kdprofile = 30 and rg.statusenabled = true) as x where x.nomor =1)as gol on gol.objectpegawaifk = pg.id
+        left join(SELECT * FROM (SELECT ROW_NUMBER()OVER(partition by rj.objectpegawaifk ORDER BY rj.tmtjabatan desc)as nomor, rj.objectpegawaifk, jb.namajabatan, rj.tmtjabatan FROM riwayatjabatan_t rj
+        left join jabatan_m jb on jb.id = rj.objectjabatanfk where rj.kdprofile = 30 and rj.statusenabled = true)as x where x.nomor =1 )as jab on jab.objectpegawaifk = pg.id
+        left join statuspegawai_m sp on sp.id = pg.objectstatuspegawaifk
+        left join kategorypegawai_m kp on kp.id = pg.kategorypegawai
+        left join(SELECT * FROM (SELECT ROW_NUMBER()OVER(PARTITION BY rp.objectpegawaifk ORDER BY rp.tgllulus desc)as nomor, rp.objectpegawaifk,pp.pendidikanpegawai,rp.tgllulus FROM riwayatpendidikan_t rp
+        left join pendidikanpegawai_m pp on pp.id = rp.objectpendidikanpegawaifk where rp.kdprofile = 30 and rp.statusenabled = true) as x where x.nomor=1)as rip on rip.objectpegawaifk = pg.id
+        left join jenispegawai_m jep on jep.id = pg.objectjenispegawaifk
+        left join (SELECT  ROW_NUMBER()OVER(partition by str.pegawaifk ORDER BY str.berakhirstr desc)as nomor,  str.pegawaifk, str.nostr, str.terbitstr, str.berakhirstr, str.nosip, str.terbitsip, str.berakhirsip FROM masaberlakusipstr_t str where str.kdprofile = 30 and str.statusenabled = true)as str on str.pegawaifk = pg.id
+        left join (SELECT x.objectpegawaifk, (sum(x.y)* 12)+ sum(x.m)as cutibulan  FROM (SELECT rc.objectpegawaifk, EXTRACT(year from age(rc.tglsampai::date, rc.tgldari::date))as y,EXTRACT(month from age(rc.tglsampai::date, rc.tgldari::date))as m FROM riwayatcuti_t rc )as x GROUP BY x.objectpegawaifk) as cuti on cuti.objectpegawaifk = pg.id
+        where pg.kdprofile = 30 and pg.statusenabled = true and pg.usereksternal is null and pg.namalengkap <> '-' AND pg.ID != 320263 $kateg $Peg $status"));
+
+        // $cuti = \DB::select(DB::raw("SELECT rc.objectpegawaifk, ROW_NUMBER()OVER(partition by rc.objectpegawaifk ORDER BY rc.tgldari desc)as nomor, rc.tgldari, rc.tglsampai, EXTRACT(year from age(rc.tglsampai::date, rc.tgldari::date))as y,EXTRACT(month from age(rc.tglsampai::date, rc.tgldari::date))as m FROM riwayatcuti_t rc"));
+        
+        $result = array(
+            'data'=> $data,
+            // 'cuti'=> $cuti,
+            'as'=> 'Fizi'
+        );
+        return $this->respond($result);
+    }
+    public function MasterKenaikanGajiBerkala(Request $request)
+    {
+        $data =  \DB::select(DB::raw("select case when gol.namaexternal is null then gol.name else gol.namaexternal ||', ' ||gol.name end as golongan,gg.mkg, gg.gajipokok from gajigolongan_m gg inner join sdm_golongan_m gol on gol.id = golonganfk where gg.kdprofile = 30 and gg.statusenabled = true"));
+        $result = array(
+            'data'=> $data,
+            'as'=> 'Fizi'
+        );
+        return $this->respond($result);
+    }
+    public function saveMasterGajiPokok(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        \DB::beginTransaction();
+        $data = $request['data'];
+        $idMax = \DB::table("gajigolongan_m")->max('id');
+        try {
+            if($data['id']== ""){
+                \DB::table("gajigolongan_m")->insert([
+                    'id'=> $idMax+1,
+                    'kdprofile'=> $kdProfile,
+                    'statusenabled'=> true,
+                    'kodeexternal'=> $data['mkg'],
+                    'namaexternal'=> $data['mkg'],
+                    'golonganfk'=> $data['golonganfk'],
+                    'mkg'=> $data['mkg'],
+                    'gajipokok'=> $data['gajipokok'],
+                ]);
+            }
+            $transStatus = true;
+            
+        } catch (\Throwable $th) {
+            $transStatus = false;
+        }
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan Berhasil" ;
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                // 'message' => $TP,
+                'as' => 'asepic',
+            );
+        } else {
+            $transMessage = "Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message'  => $th->getMessage() ,
+                "e" => $th->getLine(),
+                'as' => 'asepic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    public function KatTipe(Request $request)
+    {
+        $id = '';
+        $data_id = '';
+        if($request['kat'] == 'Agama'){
+            $id = \DB::select(DB::raw("select id from agama_m where agama ilike '$request[tipe]'"));
+            $data_id = 'and pg.objectagamafk = '.$id[0]->id;
+        }
+        if($request['kat'] == 'Jenis Kepegawaian'){
+            $id = \DB::select(DB::raw("select id from jenispegawai_m where jenispegawai ilike '$request[tipe]'"));
+            $data_id = 'and pg.objectjenispegawaifk = '.$id[0]->id;
+        }
+        if($request['kat'] == 'Jenis Kelamin'){
+            $id = \DB::select(DB::raw("select id from jeniskelamin_m where jeniskelamin ilike '$request[tipe]'"));
+            $data_id = 'and pg.objectjeniskelaminfk = '.$id[0]->id;
+        }
+        if($request['kat'] == 'Pendidikan'){
+            $id = \DB::select(DB::raw("select id from pendidikan_m where pendidikan ilike '$request[tipe]'"));
+            $data_id = 'and pg.objectpendidikanterakhirfk = '.$id[0]->id;
+        }
+        if($request['kat'] == 'Golongan'){
+            $id = \DB::select(DB::raw("select id from sdm_golongan_m where name ilike '$request[tipe]'"));
+            $data_id = 'and pg.objectgolonganfk = '.$id[0]->id;
+        }
+        if($request['kat'] == 'Jenis Usia'){
+            if($request['tipe'] == '-'){
+                $data_id = "and pg.tgllahir is null";
+            }
+            if($request['tipe'] == '31 s/d 40 Tahun'){
+                $data_id = "and date_part('year',age(pg.tgllahir)) >= 31 and date_part('year',age(pg.tgllahir)) <=40 ";
+            }
+            if($request['tipe'] == '41 s/d 50 Tahun'){
+                $data_id = "and date_part('year',age(pg.tgllahir)) >= 41 and date_part('year',age(pg.tgllahir)) <=50 ";
+            }
+            if($request['tipe'] == '21 s/d 30 Tahun'){
+                $data_id = "and date_part('year',age(pg.tgllahir)) >= 21 and date_part('year',age(pg.tgllahir)) <=30 ";
+            }
+            if($request['tipe'] == 'diatas 51 Tahun'){
+                $data_id = "and date_part('year',age(pg.tgllahir)) >= 51 ";
+            }
+            
+        }
+        $data =  \DB::select(DB::raw("SELECT pg.nippns, pg.namalengkap,gol.namaexternal||', '||gol.name as golongan, jab.namajabatan  
+        FROM pegawai_m pg 
+        left join sdm_golongan_m gol on gol.id = pg.objectgolonganfk 
+        left join jabatan_m jab on jab.id = pg.objectjabataninternalfk 
+        where pg.kdprofile = 30 and pg.statusenabled = true and pg.usereksternal is null and pg.namalengkap <> '-' AND pg.ID != 320263
+        $data_id
+        "));
+        
+        $result = array(
+            'data'=> $data,
+            // 'id'=> $id,
+            'as'=> 'Fizi'
         );
         return $this->respond($result);
     }

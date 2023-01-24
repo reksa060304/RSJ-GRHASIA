@@ -2188,7 +2188,7 @@ class MasterController extends ApiController{
             ->JOIN('produk_m as pr','pr.id','=','mp.objectprodukfk')
             ->JOIN('ruangan_m as ru','ru.id','=','mp.objectruanganfk')
             ->join ('departemen_m as dpt','dpt.id','=','ru.objectdepartemenfk')
-            ->select('mp.id','mp.norec','mp.kodeexternal','pr.id as idproduk','pr.namaproduk','ru.id as ruanganid','ru.namaruangan','mp.statusenabled','dpt.namadepartemen')
+            ->select('mp.id','mp.norec','mp.kodeexternal','pr.id as idproduk','pr.namaproduk','ru.id as ruanganid','ru.namaruangan','mp.statusenabled','dpt.namadepartemen','mp.ishide')
             ->where('mp.kdprofile', $kdProfile);
 
         if(isset($request['deptId']) && $request['deptId']!="" && $request['deptId']!="undefined"){
@@ -2259,6 +2259,47 @@ class MasterController extends ApiController{
             foreach ($data as $item) {
                 $disableProduk = MapRuanganToProduk::where('id', $item['id'])->where('kdprofile', $kdProfile)->first();
                 $disableProduk->statusenabled = $item['statusenabled'];
+                $disableProduk->save();
+            }
+
+            #endregion savePegawaiFormPensiun
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+            $transMessage = "Simpan Gagal";
+        }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan Berhasil";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMessage,
+                "dataproduk" => $disableProduk,
+                "as" => 'ridwan',
+            );
+        } else {
+            $transMessage = "Simpan Gagal!!";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message"  => $transMessage,
+                "dataproduk" => $disableProduk,
+                "as" => 'ridwan',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function tombolHide (Request $request) {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $data=$request['data'];
+        \Illuminate\Support\Facades\DB::beginTransaction();
+        try{
+            #region savePegawaiFormPensiun
+            foreach ($data as $item) {
+                $disableProduk = MapRuanganToProduk::where('id', $item['id'])->where('kdprofile', $kdProfile)->first();
+                $disableProduk->ishide = $item['ishide'];
                 $disableProduk->save();
             }
 

@@ -1465,7 +1465,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
               $scope.hapusAll();
               $scope.hideSimpan = false
               if ($scope.hideEMR != true) {
-                window.history.back()
+                if($scope.pegawaiLogin.jenisPegawai.jenispegawai == "Apoteker"){
+                  window.history.back()
+                }
               }
 
             }, function (error) {

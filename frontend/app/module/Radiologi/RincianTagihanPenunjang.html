@@ -627,18 +627,21 @@
                             ng-model="itemPA.jaringanAsal" />
                     </div>
                 </div>
-                <div class="grid_4">
+                <div class="grid_8">
                     <div class="grid_12">
                         <label c-label style="padding:5px;font-size:14px; font-weight:600">Jenis</label>
                     </div>
                     <div class="grid_12">
                         <md-radio-group ng-model="findBy" layout="row" layout-sm="row" layout-align="left left"
                             layout-wrap>
-                            <div class="grid_6">
+                            <div class="grid_4">
                                 <md-radio-button value="0" class="md-primary">HISTOPATOLOGI</md-radio-button>
                             </div>
-                            <div class="grid_6">
+                            <div class="grid_4">
                                 <md-radio-button value="1" class="md-primary">SITOLOGI</md-radio-button>
+                            </div>
+                            <div class="grid_4">
+                                <md-radio-button value="2" class="md-primary">MDT</md-radio-button>
                             </div>
                         </md-radio-group>
                     </div>
@@ -687,52 +690,119 @@
                     </div>
                 </div>
             </div>
-            <div class="grid_12" style="margin-top: 5px">
-                <label c-label item="item">Makroskopik</label>
+            <div class="grid_12" ng-show="findBy == 0 || findBy == 1">
+                <div class="grid_12" style="margin-top: 5px">
+                    <label c-label item="item">Makroskopik</label>
+                </div>
+                <div class="clear"></div>
+                <div class="grid_12">
+                    <textarea placeholder="Isi Makroskopik" class="k-textbox" ng-model="itemPA.makroskopik"
+                        maxlength="12000" style="height: 80px; width: 100%;"></textarea>
+    
+                    <span class="max-length"> 12000/{{itemPA.makroskopik ? itemPA.makroskopik.length : 0}}</span>
+                    <!--        <textarea class="k-textbox" style="height: 80px; width: 100%;" ng-model="itemPA.makroskopik"></textarea> -->
+                </div>
+                <div class="grid_12" style="margin-top: 5px">
+                    <label c-label item="item">Mikroskopik</label>
+                </div>
+                <div class="clear"></div>
+                <div class="grid_12">
+                    <textarea placeholder="Isi Mikroskopik" class="k-textbox" ng-model="itemPA.mikroskopik"
+                        maxlength="12000" style="height: 80px; width: 100%;"></textarea>
+    
+                    <span class="max-length"> 12000/{{itemPA.mikroskopik ? itemPA.mikroskopik.length : 0}}</span>
+                    <!--    <textarea class="k-textbox" style="height: 80px; width: 100%;" ng-model="itemPA.mikroskopik"></textarea> -->
+                </div>
+                <div class="grid_12" style="margin-top: 5px">
+                    <label c-label item="item">Kesimpulan</label>
+                </div>
+                <div class="clear"></div>
+                <div class="grid_12">
+                    <textarea placeholder="Isi Kesimpulan" class="k-textbox" ng-model="itemPA.kesimpulan" maxlength="12000"
+                        style="height: 80px; width: 100%;"></textarea>
+    
+                    <span class="max-length"> 12000/{{itemPA.kesimpulan ? itemPA.kesimpulan.length : 0}}</span>
+                    <!-- <textarea class="k-textbox" style="height: 80px; width: 100%;" ng-model="itemPA.kesimpulan"></textarea>
+     -->
+                </div>
+                <div class="grid_12" style="margin-top: 5px">
+                    <label c-label item="item">Anjuran</label>
+                </div>
+                <div class="clear"></div>
+                <div class="grid_12">
+                    <textarea placeholder="Isi Anjuran" class="k-textbox" ng-model="itemPA.anjuran" maxlength="12000"
+                        style="height: 80px; width: 100%;"></textarea>
+    
+                    <span class="max-length"> 12000/{{itemPA.anjuran ? itemPA.anjuran.length : 0}}</span>
+                    <!-- <textarea class="k-textbox" style="height: 80px; width: 100%;" ng-model="itemPA.anjuran"></textarea> -->
+                </div>
             </div>
-            <div class="clear"></div>
-            <div class="grid_12">
-                <textarea placeholder="Isi Makroskopik" class="k-textbox" ng-model="itemPA.makroskopik"
-                    maxlength="12000" style="height: 80px; width: 100%;"></textarea>
 
-                <span class="max-length"> 12000/{{itemPA.makroskopik ? itemPA.makroskopik.length : 0}}</span>
-                <!--        <textarea class="k-textbox" style="height: 80px; width: 100%;" ng-model="itemPA.makroskopik"></textarea> -->
+            <div class="grid_12" ng-show="findBy == 2">
+                <div class="grid_12" style="margin-top: 25px">
+                    <label c-label item="item" real>GAMBARAN DARAH TEPI</label>
+                </div>
+                <div class="grid_12" style="margin-top: 15px">
+                    <label c-label item="item">Eritrosit</label>
+                </div>
+                <div class="clear"></div>
+                <div class="grid_12">
+                    <textarea placeholder="Isi Eritrosit" class="k-textbox" ng-model="itemPA.eritrosit"
+                        maxlength="12000" style="height: 80px; width: 100%;"></textarea>
+    
+                    <span class="max-length"> 12000/{{itemPA.eritrosit ? itemPA.eritrosit.length : 0}}</span>
+                </div>
+                <div class="grid_12" style="margin-top: 5px">
+                    <label c-label item="item">Lekosit</label>
+                </div>
+                <div class="clear"></div>
+                <div class="grid_12">
+                    <textarea placeholder="Isi Lekosit" class="k-textbox" ng-model="itemPA.lekosit"
+                        maxlength="12000" style="height: 80px; width: 100%;"></textarea>
+    
+                    <span class="max-length"> 12000/{{itemPA.lekosit ? itemPA.lekosit.length : 0}}</span>
+                </div>
+                <div class="grid_12" style="margin-top: 5px">
+                    <label c-label item="item">Trombosit</label>
+                </div>
+                <div class="clear"></div>
+                <div class="grid_12">
+                    <textarea placeholder="Isi Trombosit" class="k-textbox" ng-model="itemPA.trombosit" maxlength="12000"
+                        style="height: 80px; width: 100%;"></textarea>
+    
+                    <span class="max-length"> 12000/{{itemPA.trombosit ? itemPA.trombosit.length : 0}}</span>
+                </div>
+                <div class="grid_12" style="margin-top: 5px">
+                    <label c-label item="item">Kesan</label>
+                </div>
+                <div class="clear"></div>
+                <div class="grid_12">
+                    <textarea placeholder="Isi Kesan" class="k-textbox" ng-model="itemPA.kesan" maxlength="12000"
+                        style="height: 80px; width: 100%;"></textarea>
+    
+                    <span class="max-length"> 12000/{{itemPA.kesan ? itemPA.kesan.length : 0}}</span>
+                </div>
+                <div class="grid_12" style="margin-top: 5px">
+                    <label c-label item="item">Kesimpulan</label>
+                </div>
+                <div class="clear"></div>
+                <div class="grid_12">
+                    <textarea placeholder="Isi Kesimpulan" class="k-textbox" ng-model="itemPA.kesimpulanmdt" maxlength="12000"
+                        style="height: 80px; width: 100%;"></textarea>
+    
+                    <span class="max-length"> 12000/{{itemPA.kesimpulanmdt ? itemPA.kesimpulanmdt.length : 0}}</span>
+                </div>
+                <div class="grid_12" style="margin-top: 5px">
+                    <label c-label item="item">Saran</label>
+                </div>
+                <div class="clear"></div>
+                <div class="grid_12">
+                    <textarea placeholder="Isi Saran" class="k-textbox" ng-model="itemPA.saran" maxlength="12000"
+                        style="height: 80px; width: 100%;"></textarea>
+    
+                    <span class="max-length"> 12000/{{itemPA.saran ? itemPA.saran.length : 0}}</span>
+                </div>
             </div>
-            <div class="grid_12" style="margin-top: 5px">
-                <label c-label item="item">Mikroskopik</label>
-            </div>
-            <div class="clear"></div>
-            <div class="grid_12">
-                <textarea placeholder="Isi Mikroskopik" class="k-textbox" ng-model="itemPA.mikroskopik"
-                    maxlength="12000" style="height: 80px; width: 100%;"></textarea>
-
-                <span class="max-length"> 12000/{{itemPA.mikroskopik ? itemPA.mikroskopik.length : 0}}</span>
-                <!--    <textarea class="k-textbox" style="height: 80px; width: 100%;" ng-model="itemPA.mikroskopik"></textarea> -->
-            </div>
-            <div class="grid_12" style="margin-top: 5px">
-                <label c-label item="item">Kesimpulan</label>
-            </div>
-            <div class="clear"></div>
-            <div class="grid_12">
-                <textarea placeholder="Isi Kesimpulan" class="k-textbox" ng-model="itemPA.kesimpulan" maxlength="12000"
-                    style="height: 80px; width: 100%;"></textarea>
-
-                <span class="max-length"> 12000/{{itemPA.kesimpulan ? itemPA.kesimpulan.length : 0}}</span>
-                <!-- <textarea class="k-textbox" style="height: 80px; width: 100%;" ng-model="itemPA.kesimpulan"></textarea>
- -->
-            </div>
-            <div class="grid_12" style="margin-top: 5px">
-                <label c-label item="item">Anjuran</label>
-            </div>
-            <div class="clear"></div>
-            <div class="grid_12">
-                <textarea placeholder="Isi Anjuran" class="k-textbox" ng-model="itemPA.anjuran" maxlength="12000"
-                    style="height: 80px; width: 100%;"></textarea>
-
-                <span class="max-length"> 12000/{{itemPA.anjuran ? itemPA.anjuran.length : 0}}</span>
-                <!-- <textarea class="k-textbox" style="height: 80px; width: 100%;" ng-model="itemPA.anjuran"></textarea> -->
-            </div>
-
         </fieldset>
 
         <div class="k-edit-buttons  k-state-default pull-right" style="margin-top:10px">

@@ -386,7 +386,7 @@ class LogistikController extends ApiController{
             ->JOIN('jenisproduk_m as jp','jp.id','=','djp.objectjenisprodukfk')
             ->JOIN('asalproduk_m as ap','ap.id','=','spd.objectasalprodukfk')
             ->JOIN('satuanstandar_m as ss','ss.id','=','pr.objectsatuanstandarfk')
-            ->select(DB::raw("sp.nostruk as noterima,spd.objectprodukfk,pr.kdproduk as kdsirs,pr.namaproduk,ap.asalproduk,CAST(spd.qtyproduk AS FLOAT),
+            ->select(DB::raw("sp.tglstruk, sp.nostruk as noterima,spd.objectprodukfk,pr.kdproduk as kdsirs,pr.namaproduk,ap.asalproduk,CAST(spd.qtyproduk AS FLOAT),
                               ss.satuanstandar,spd.tglkadaluarsa,spd.nobatch,CAST(spd.harganetto1 AS FLOAT),spd.norec as norec_spd,
                               spd.nostrukterimafk"))
             ->where('pr.statusenabled', true)
@@ -420,11 +420,13 @@ class LogistikController extends ApiController{
                 $data = $data->whereRaw = (" pr.kdproduk ilike '".$request['KdSirs1']."%'");
             }
         }
+        $data = $data->orderBy('sp.tglstruk', 'desc');
         //20211230 permintaan user grhasia
         //$data = $data->where('spd.qtyproduk','>', 0);
         if(isset($request['jmlRows']) && $request['jmlRows']!="" && $request['jmlRows']!="undefined"){
             $data=$data->take($request['jmlRows']);
         }
+        
         $data = $data->get();
         $data2=[];
 
@@ -451,6 +453,7 @@ class LogistikController extends ApiController{
                 'noBatch' => $item->nobatch,
                 'harga' => $item->harganetto1,
                 'norec_spd' => $item->norec_spd,
+                'tglstruk' => $item->tglstruk,
                 'nostrukterimafk' => $item->nostrukterimafk,
             );
         }

@@ -414,6 +414,14 @@ class RegistrasiController extends ApiController
                 if(isset($r_NewPD['statusschedule'])){
                     $dataPD->statusschedule = $r_NewPD['statusschedule'];
                 }
+                if(isset($r_NewPD['isjknloket'])){
+                    $dataPD->ismobilejkn = $r_NewPD['isjknloket'];
+                    $dataPD->ischeckin = true;
+                }
+                if(isset($r_NewPD['isjkn'])){
+                    $dataPD->ismobilejkn = $r_NewPD['isjkn'];
+                    $dataPD->ischeckin = false;
+                }
                 $dataPD->tglregistrasi =  $r_NewPD['tglregistrasi'];
 //                $dataPD->objectruanganasalfk = $r_NewPD['objectruanganfk'];
                 //region Dibuang Sayang
@@ -675,6 +683,7 @@ class RegistrasiController extends ApiController
                     'status' => 400,
                     'message'=>$transMessage,
                     'dataPD' => $dataPD,
+                    'e'=>$e->getLine() . $e->getMessage(),
                     'as' => 'ramdanegie',
                 );
             }
@@ -12956,6 +12965,65 @@ GROUP BY y.KET
             'as'=> 'Feezy'
         );
         return $this->respond($result);
+    }
+    public function getDataAntrean(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int)$kdProfile;
+        $norec_pd = $request['norec_pd'];
+
+        $data = collect(DB::select("
+            select case when pd.ismobilejkn = true then pd.statusschedule else pd.noregistrasi end as kodebooking
+            ,case when pd.objectkelompokpasienlastfk = 2 then 'JKN' else 'NON JKN' end as jenispasien
+            ,case when pd.objectkelompokpasienlastfk = 2 then ps.nobpjs else '' end as nomorkartu
+            ,ps.noidentitas as nik
+            ,case when ps.notelepon is null then '-' else ps.notelepon end as nohp
+            ,rm.kdinternal as kodepoli
+            ,rm.namaruangan as namapoli
+            ,case when pd.statuspasien = 'BARU' then 1 else 0 end as pasienbaru
+            ,ps.nocm as norm
+            ,to_char(pd.tglregistrasi, 'yyyy-MM-dd') as tanggalperiksa
+            ,pg.kddokterbpjs as kodedokter
+            ,pg.namalengkap as namadokter
+            ,'08:00-16:00' as jampraktek
+            ,1 as jeniskunjungan
+            ,case when pd.objectkelompokpasienlastfk = 2 then substring(ps.nobpjs || ps.nocm, 1, 19) else '' end as nomorreferensi
+            ,rm.prefixnoantrian as nomorantrean
+            ,apd.noantrian as angkaantrean
+            from pasiendaftar_t pd
+            inner join antrianpasiendiperiksa_t apd on apd.noregistrasifk = pd.norec
+            inner join pasien_m ps on ps.id = pd.nocmfk
+            inner join ruangan_m rm on rm.id = pd.objectruanganlastfk
+            left join pegawai_m pg on pg.id = pd.objectpegawaifk
+            where pd.norec = '$norec_pd'
+        "))->first();
+        return $this->respond($data);
+
+        $result = array (
+            'kodebooking' => $data->kodebooking,
+            'jenispasien' => $data->jenispasien,
+            'nomorkartu' => $data->nomorkartu,
+            'nik' => $data->nik,
+            'nohp' => $data->nohp,
+            'kodepoli' => $data->kodepoli,
+            'namapoli' => $data->namapoli,
+            'pasienbaru' => $data->pasienbaru,
+            'norm' => $data->norm,
+            'tanggalperiksa' => $data->tanggalperiksa,
+            'kodedokter' => $data->kodedokter,
+            'namadokter' => $data->namadokter,
+            'jampraktek' => $data->jampraktek,
+            'jeniskunjungan' => $data->jeniskunjungan,
+            'nomorreferensi' => $data->nomorreferensi,
+            'nomorantrean' => $data->nomorantrean ."-". str_pad((int)$data->angkaantrean, 4, "0", STR_PAD_LEFT),
+            'angkaantrean' => $data->angkaantrean,
+            'estimasidilayani' => strtotime(date('Y-m-d H:i:s')) * 1000,
+            'sisakuotajkn' => 0,
+            'kuotajkn' => 0,
+            'sisakuotanonjkn' => 0,
+            'kuotanonjkn' => 0,
+            'keterangan' => ""
+        );
     }
     
 }

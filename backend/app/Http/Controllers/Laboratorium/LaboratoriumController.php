@@ -331,6 +331,12 @@ class LaboratoriumController extends ApiController
             $dataSO->mikroskopik = $request['mikroskopik'];
             $dataSO->kesimpulan = $request['kesimpulan'];
             $dataSO->anjuran = $request['anjuran'];
+            $dataSO->eritrosit = $request['eritrosit'];
+            $dataSO->lekosit = $request['lekosit'];
+            $dataSO->trombosit = $request['trombosit'];
+            $dataSO->kesan = $request['kesan'];
+            $dataSO->kesimpulanmdt = $request['kesimpulanmdt'];
+            $dataSO->saran = $request['saran'];
             $dataSO->jaringanasal = $request['jaringanasal'];
             $dataSO->save();
 
@@ -694,8 +700,7 @@ class LaboratoriumController extends ApiController
         if(isset($request['nama']) && $request['nama']!='undefined' && $request['nama']!=''){
             $jenis = $jenis->where('prd.namaproduk','ilike','%'.$request['nama'].'%');
         }
-
-        $jenis=  $jenis->limit(50);
+        
         $jenis=  $jenis->get();
 
         foreach ($jenis as $key => $value) {

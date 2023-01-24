@@ -953,9 +953,15 @@ class ReportController extends ApiController{
              CASE WHEN hpl.morfologi IS NULL THEN  '' ELSE hpl.morfologi END AS morfologi,
              CASE WHEN hpl.diagnosapb IS NULL THEN  '' ELSE  hpl.diagnosapb  END AS diagnosapb,
              CASE WHEN hpl.keteranganpb IS NULL THEN ''  ELSE hpl.keteranganpb END AS keteranganpb,
+             CASE WHEN hpl.eritrosit IS NULL THEN ''   ELSE  hpl.eritrosit END AS eritrosit,
+             CASE WHEN hpl.lekosit IS NULL THEN ''   ELSE  hpl.lekosit END AS lekosit,
+             CASE WHEN hpl.trombosit IS NULL THEN ''   ELSE  hpl.trombosit END AS trombosit,
+             CASE WHEN hpl.kesan IS NULL THEN ''   ELSE  hpl.kesan END AS kesan,
+             CASE WHEN hpl.kesimpulanmdt IS NULL THEN ''   ELSE  hpl.kesimpulanmdt END AS kesimpulanmdt,
+             CASE WHEN hpl.saran IS NULL THEN ''   ELSE  hpl.saran END AS saran,
              CASE WHEN pg1.namalengkap IS NULL THEN '' ELSE  pg1.namalengkap   END AS namapenanggungjawab,
              CASE WHEN pg1.nippns IS NULL THEN ''ELSE  pg1.nippns END AS nippns,hpl.nomorpa,
-             ru.namaruangan as asal,pg1.nosip,
+             ru.namaruangan as asal,pg1.nosip, pm.tgllahir, so.noorder,
               CASE
                     WHEN alm.alamatlengkap IS NULL THEN
                         '-'
@@ -11973,82 +11979,123 @@ public function suratBuktiPengembalian(Request $request)
     
     public function cetakUDD(Request $request)
     {
-        //variable
-        $tgl = '';
-        $waktu= '';
-        $tempWaktu = '';
-
-        //setting waktu
-        if(isset($request['waktusiang'])){
-            $waktu = 'SIANG';
-            $tempWaktu = 'and pp.issiang = true';
-        }
-        if(isset($request['waktupagi'])){
-            $waktu = 'PAGI';
-            $tempWaktu = 'and pp.ispagi = true';
-        }
-        if(isset($request['waktumalam'])){
-            $waktu = 'MALAM';
-            $tempWaktu = 'and pp.ismalam = true';
-        }
-        //setting tgl
-        if(isset($request['tglmalam'])){
-            $tgl = explode(",",$request['tglmalam']);
-        }
-        if(isset($request['tglpagi'])){
-            $tgl = explode(",",$request['tglpagi']);
-        }
-        if(isset($request['tglsiang'])){
-            $tgl = explode(",",$request['tglsiang']);
-        }
-        
-        //nocm
-        $nocm = explode(",",$request['nocm']);
-        $noresep = explode(",",$request['noorder']);
-        $norec_apd= explode(",",$request['norec_apd']);
-        $dataAll = [];
-        $tglmain = '';
-        $date = '';
-        $detail = [];
         $result = [];
-        $namapasien= '';        
-        $tgllahir= '';
-        $i=0;
-        foreach ($nocm as $cm) {
+        if(isset($request['pasien1'])){
+            $tempWaktu = '';
+            $waktu = '';
+            $pasien1 = explode(",",$request['pasien1']);
             $pasien = \DB::select(DB::raw("SELECT ps.namapasien, ps.tgllahir::date 
-            FROM pasien_m ps where ps.statusenabled=true and ps.kdprofile = $request[kodeprofile] and ps.nocm = '$cm'"));
-            foreach ($pasien as $ps) {
-                $namapasien = $ps->namapasien;
-                $tgllahir = $ps->tgllahir;
+            FROM pasien_m ps where ps.statusenabled=true and ps.kdprofile = $request[kodeprofile] and ps.nocm = '$pasien1[1]'"));
+            $date = DB::select(DB::raw("SELECT generate_series('$pasien1[4]'::date, '$pasien1[4]'::date+6, '1 day'::interval)::date as tglcetak"));
+            if($pasien1[3] == 1){
+                $waktu = 'PAGI';
+                $tempWaktu = 'and pp.ispagi = true';
             }
-            $detail = [];
-            $date = DB::select(DB::raw("SELECT generate_series('$tgl[$i]'::date, '$tgl[$i]'::date+6, '1 day'::interval)::date as tglcetak"));
-            $eresep = '';
-            $norec='';
-            // var_dump($date);
-            foreach ($date as $d) {
-                $tglpelayanan = $d->tglcetak;
-                $data = \DB::select(DB::raw("SELECT 
+            if($pasien1[3] == 2){
+                $waktu = 'SIANG';
+                $tempWaktu = 'and pp.issiang = true';
+            }
+            if($pasien1[3] == 4){
+                $waktu = 'MALAM';
+                $tempWaktu = 'and pp.ismalam = true';
+            }
+            $data = \DB::select(DB::raw("SELECT 
                 case 
                 when pp.satuanviewfk = 335 then 'tab' 
                 when pp.satuanviewfk = 345 then 'kaps' 
                 end as satuan, pr.namaproduk,split_part(pp.aturanpakai, 'x', 2) as aturan FROM pelayananpasien_t pp
                 inner join strukresep_t sr on sr.norec = pp.strukresepfk
                 inner join produk_m pr on pr.id = pp.produkfk
-                where pp.isobat = true and pp.noregistrasifk ilike '$norec_apd[$i]' and sr.noresep ilike '$noresep[$i]' $tempWaktu "));
-                $detailobat = $data; 
-                $detail[]= array(
-                'namapasien'=> $namapasien,
-                'tgllahir'=> $tgllahir,
-                'tglpelayanan'=> $tglpelayanan,
-                'detailobat'=> $detailobat,
-                'waktu'=> $waktu
-                );
+                where pp.isobat = true and pp.noregistrasifk ilike '$pasien1[0]' and sr.noresep ilike '$pasien1[2]' $tempWaktu "));
+            foreach ($date as $d) {
+                // $d->pasien = $pasien;
+                $d->details = $data;
+                $d->waktu = $waktu;
             }
-            $result[]= $detail;
-            $i++;
-
+            $result1 = array(
+                'pasien'=> $pasien,
+                'data'=> $date
+            );
+            array_push($result, $result1);
         }
+        if(isset($request['pasien2'])){
+            $tempWaktu = '';
+            $waktu = '';
+            $pasien2 = explode(",",$request['pasien2']);
+            $pasien = \DB::select(DB::raw("SELECT ps.namapasien, ps.tgllahir::date 
+            FROM pasien_m ps where ps.statusenabled=true and ps.kdprofile = $request[kodeprofile] and ps.nocm = '$pasien2[1]'"));
+            $date = DB::select(DB::raw("SELECT generate_series('$pasien2[4]'::date, '$pasien2[4]'::date+6, '1 day'::interval)::date as tglcetak"));
+            if($pasien2[3] == 1){
+                $waktu = 'PAGI';
+                $tempWaktu = 'and pp.ispagi = true';
+            }
+            if($pasien2[3] == 2){
+                $waktu = 'SIANG';
+                $tempWaktu = 'and pp.issiang = true';
+            }
+            if($pasien2[3] == 4){
+                $waktu = 'MALAM';
+                $tempWaktu = 'and pp.ismalam = true';
+            }
+            $data = \DB::select(DB::raw("SELECT 
+                case 
+                when pp.satuanviewfk = 335 then 'tab' 
+                when pp.satuanviewfk = 345 then 'kaps' 
+                end as satuan, pr.namaproduk,split_part(pp.aturanpakai, 'x', 2) as aturan FROM pelayananpasien_t pp
+                inner join strukresep_t sr on sr.norec = pp.strukresepfk
+                inner join produk_m pr on pr.id = pp.produkfk
+                where pp.isobat = true and pp.noregistrasifk ilike '$pasien2[0]' and sr.noresep ilike '$pasien2[2]' $tempWaktu "));
+            foreach ($date as $d) {
+                // $d->pasien = $pasien;
+                $d->details = $data;
+                $d->waktu = $waktu;
+            }
+            $result2 = array(
+                'pasien'=> $pasien,
+                'data'=> $date
+            );
+            array_push($result, $result2);
+        }
+
+        if(isset($request['pasien3'])){
+            $tempWaktu = '';
+            $waktu = '';
+            $pasien3 = explode(",",$request['pasien3']);
+            $pasien = \DB::select(DB::raw("SELECT ps.namapasien, ps.tgllahir::date 
+            FROM pasien_m ps where ps.statusenabled=true and ps.kdprofile = $request[kodeprofile] and ps.nocm = '$pasien3[1]'"));
+            $date = DB::select(DB::raw("SELECT generate_series('$pasien3[4]'::date, '$pasien3[4]'::date+6, '1 day'::interval)::date as tglcetak"));
+            if($pasien3[3] == 1){
+                $waktu = 'PAGI';
+                $tempWaktu = 'and pp.ispagi = true';
+            }
+            if($pasien3[3] == 2){
+                $waktu = 'SIANG';
+                $tempWaktu = 'and pp.issiang = true';
+            }
+            if($pasien3[3] == 4){
+                $waktu = 'MALAM';
+                $tempWaktu = 'and pp.ismalam = true';
+            }
+            $data = \DB::select(DB::raw("SELECT 
+                case 
+                when pp.satuanviewfk = 335 then 'tab' 
+                when pp.satuanviewfk = 345 then 'kaps' 
+                end as satuan, pr.namaproduk,split_part(pp.aturanpakai, 'x', 2) as aturan FROM pelayananpasien_t pp
+                inner join strukresep_t sr on sr.norec = pp.strukresepfk
+                inner join produk_m pr on pr.id = pp.produkfk
+                where pp.isobat = true and pp.noregistrasifk ilike '$pasien3[0]' and sr.noresep ilike '$pasien3[2]' $tempWaktu "));
+            foreach ($date as $d) {
+                // $d->pasien = $pasien;
+                $d->details = $data;
+                $d->waktu = $waktu;
+            }
+            $result3 = array(
+                'pasien'=> $pasien,
+                'data'=> $date
+            );
+            array_push($result, $result3);
+        }
+        
         // dd($result);
         return view("report.apotik.cetak-udd", compact('result'));
         

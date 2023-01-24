@@ -413,6 +413,11 @@ define(['initialize'], function (initialize) {
                     window.messageContainer.error("Pilih Dahulu Pasien!")
                     return
                 }
+                let params = $scope.dataPasienSelected.noregistrasi
+                if ($scope.dataPasienSelected.noreservasi != undefined && $scope.dataPasienSelected.noreservasi != '' && $scope.dataPasienSelected.noreservasi != 'Kios-K') {
+                    params = $scope.dataPasienSelected.noreservasi
+                }
+                saveAntrol(params, $scope.dataPasienSelected.norec_pd)
                 // debugger;
                 var arrStr = {
                     0: $scope.dataPasienSelected.nocm,
@@ -1495,6 +1500,12 @@ define(['initialize'], function (initialize) {
             //         })
             // }
             $scope.simpanPanggil = function () {
+                let params = $scope.dataPasienSelected.noregistrasi
+                if ($scope.dataPasienSelected.noreservasi != undefined && $scope.dataPasienSelected.noreservasi != '' && $scope.dataPasienSelected.noreservasi != 'Kios-K') {
+                    params = $scope.dataPasienSelected.noreservasi
+                }
+                saveAntrol(params, $scope.dataPasienSelected.norec_pd)
+
                 var data = {
                     0: $scope.item.pilihRuangan.id,
                     1: $scope.item.pilihRuangan.namaruangan
@@ -1506,7 +1517,7 @@ define(['initialize'], function (initialize) {
                     "norec_apd": $scope.dataPasienSelected.norec_apd,
                     "kelompokUser": cookie[1]
                 }
-                console.log(data);
+                // console.log(data);
                 socket.emit('call-antrian-poli', {
                     namapasien: $scope.dataPasienSelected.namapasien,
                     namaruangan: $scope.item.pilihRuangan.namaruangan,
@@ -1727,7 +1738,77 @@ define(['initialize'], function (initialize) {
                     noOrder: 'InputInsidenInternal'
                 });
             }
-        }
+            function saveAntrol(param, norec_pd) {
+                var data = {
+                    "url": "antrean/updatewaktu",
+                    "jenis": "antrean",
+                    "method": "POST",
+                    "data": {
+                        "kodebooking": param,
+                        "taskid": 4, //Waktu layan poli
+                        "waktu": new Date().getTime()
+                    }
+                }
+                saveMonitoringTaksId(norec_pd, 4, new Date().getTime(), false)
+                medifirstService.postNonMessage('bridging/bpjs/tools', data).then(function (e) {
+                    if (e.data.metaData.code == 200) {
+                        saveMonitoringTaksId(norec_pd, 4, new Date().getTime(), true)
+                    } else {
+                        repeatSendTaskId(norec_pd, 4)
+                    }
+                })
+            }
+            function saveMonitoringTaksId(noregistrasifk, taskid, waktu, statuskirim) {
+                var json = {
+                    "noregistrasifk": noregistrasifk,
+                    "taskid": taskid,
+                    "waktu": waktu,
+                    "statuskirim": statuskirim
+                }
+                medifirstService.postNonMessage('rawatjalan/save-monitoring-taskid', json).then(function (e) {})
+            }
 
+            function repeatSendTaskId(norec_pd, taskid) {
+                medifirstService.get('registrasi/get-data-antrean?norec_pd=' + norec_pd).then(function (e) {
+                    var data = {
+                        "url": "antrean/add",
+                        "jenis": "antrean",
+                        "method": "POST",
+                        "data": e.data
+                    }
+                    medifirstService.postNonMessage('bridging/bpjs/tools', data).then(function (x) {
+                        // simpan log
+                        medifirstService.postLogging('Antrol Task ID', 'norec Pasien Daftar',
+                            e.data.kodebooking, 'Tambah Antrean Kode ' + e.data.kodebooking + ' | ' +
+                            JSON.stringify(data) + ' | ' + JSON.stringify(x.data))
+
+                        // mengabil data catatan task id dari 1 - 4
+                        medifirstService.get('rawatjalan/get-monitoring-taskid?taskid=' + taskid + '&norec_pd=' + norec_pd).then(function (res) {
+                            updateWaktuId(res, e.data.kodebooking, norec_pd)
+                        })
+                    })
+                })
+            }
+            async function updateWaktuId(res, kodebooking, norec_pd) {
+                for (let i = 0; i < res.data.length; i++) {
+                    const element = res.data[i];
+                    var data = {
+                        "url": "antrean/updatewaktu",
+                        "jenis": "antrean",
+                        "method": "POST",
+                        "data": {
+                            "kodebooking": kodebooking,
+                            "taskid": element.taskid,
+                            "waktu": parseInt(element.waktu)
+                        }
+                    }
+                    await medifirstService.postNonMessage('bridging/bpjs/tools', data).then(async function (e) {
+                        if (e.data.metaData.code == 200) {
+                            await saveMonitoringTaksId(norec_pd, element.taskid, parseInt(element.waktu), true);
+                        }
+                    })
+                }
+            }
+        }
     ]);
 });

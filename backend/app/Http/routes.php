@@ -18,6 +18,8 @@
 | and give it the controller to call when that URI is requested.
 |
 */
+// api buat my jkn v2
+  Route::get('/', 'ReservasiOnline\MyJKNV2Controller@jalurMasuk');
 
 //yang pasti
 
@@ -1170,6 +1172,11 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('kasir/detail-piutang-pasien/{norecSPP}', 'Kasir\KasirController@detailPiutangPasien');
             Route::get('kasir/data-laporan-rekap-pendapatan', 'Kasir\KasirController@getDataLaporanRekapPendapatanRuangan');
             Route::get('sdm/diklat/get-data-detail-diklat', 'Kasir\KasirController@getDataLaporanRekapPendapatanRuangan');
+            Route::get('sdm/home-dashboard','SDM\SumberDayaManusiaController@HomeDashboard');
+            Route::get('sdm/get-pegawai-nominatif','SDM\SumberDayaManusiaController@getLaporanNominatif');
+            Route::get('sdm/master-kenaikan-gajiberkala','SDM\SumberDayaManusiaController@MasterKenaikanGajiBerkala');
+            Route::post('sdm/save-master-kenaikan-gaji','SDM\SumberDayaManusiaController@saveMasterGajiPokok');
+            Route::get('sdm/kat-tipe','SDM\SumberDayaManusiaController@KatTipe');
             Route::get('tatarekening/get-daftar-remun-diklat', 'Kasir\KasirController@DaftarRemunDiklat');
             Route::get('diklat/get-laporan-pengguna-total','SDM\SumberDayaManusiaController@LaporanPenggunaTotal');
             Route::get('diklat/get-laporan-pengguna-total-tw','SDM\SumberDayaManusiaController@LaporanPenggunaTotalTW');
@@ -1861,6 +1868,13 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::post('rawatjalan/save-update-dokter-antrian', 'RawatJalan\RawatJalanController@updateDokterAntrian');
           Route::post('rawatjalan/save-pasien-jatuh', 'RawatJalan\RawatJalanController@saveIndikatorPasienJatuh');
           Route::post('rawatjalan/save-panggil', 'RawatJalan\RawatJalanController@savePanggilDokter');
+          Route::post('rawatjalan/save-monitoring-taskid', 'RawatJalan\RawatJalanController@saveMonitoringTaksId');
+          Route::get('registrasi/get-data-antrean', 'Registrasi\RegistrasiController@getDataAntrean');
+          Route::get('rawatjalan/get-monitoring-taskid', 'RawatJalan\RawatJalanController@getMonitoringTaksId');
+          Route::get('rawatjalan/get-informasi-monitoring-taskid', 'RawatJalan\RawatJalanController@getInformasiMonitoringTaksId');
+          Route::get('sysadmin/logging/get-log-antrean', 'SysAdmin\LoggingController@getLogAntrean');
+          Route::post('jkn/save-checkin','ReservasiOnline\MyJKNV2Controller@saveCheckInAntrean_fix');
+          
           Route::post('rawatjalan/save-daftar-surat', 'RawatJalan\RawatJalanController@saveDaftarSurat');
           Route::get('rawatjalan/get-detail-pasien-surat', 'RawatJalan\RawatJalanController@getDetailpasienSurat');
           Route::get('rawatjalan/get-daftar-surat', 'RawatJalan\RawatJalanController@getDaftarSurat');
@@ -2758,6 +2772,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
                 Route::get('sysadmin/general/get-komponenharga','SysAdmin\GeneralController@getKomponenHarga');
                 Route::get('sysadmin/general/get-komponenharga-paket','SysAdmin\GeneralController@getKomponenHargaPaket');
                 Route::get('sysadmin/general/get-tindakan-with-details','SysAdmin\GeneralController@getTindakanWithDetail');
+                Route::get('sysadmin/general/get-tindakan-with-details-luar','SysAdmin\GeneralController@getTindakanWithDetailLuar');
 
                 Route::get('sysadmin/general/get-acc-number-radiologi', 'SysAdmin\GeneralController@getAccNumberRadiologi');
                 Route::get('sysadmin/general/get-produk', 'SysAdmin\GeneralController@getDataProduk');
@@ -2952,6 +2967,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
                 // Route::post('sysadmin/master/save-harganettoprodukbykelas', 'SysAdmin\Master\MasterController@saveharganettoprodukbykelas_kelasD');
                 Route::post('sysadmin/master/save-harganettoprodukbykelas', 'SysAdmin\Master\MasterController@saveharganettoprodukbykelasM_D');
                 Route::post('sysadmin/master/mapping-ruangan-to-produk-disable','SysAdmin\Master\MasterController@tombolDisable');
+                Route::post('sysadmin/master/mapping-ruangan-to-produk-hide','SysAdmin\Master\MasterController@tombolHide');
                 Route::post('sysadmin/master/delete-mapping-ruangan-to-produk','SysAdmin\Master\MasterController@DeleteMappingProdukToRuangan');
 
                 Route::post('sysadmin/master/save-data-mapproduktoruangan', 'SysAdmin\Master\MasterController@addProdukToRuangan');
@@ -3224,16 +3240,25 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         Route::get('get-token', 'Auth\LoginController@getTokens');
         Route::post('get-no-antrean','ReservasiOnline\ReservasiOnlineController@GetNoAntrianMobileJKN');
         Route::post('get-rekap-antrean','ReservasiOnline\ReservasiOnlineController@GetRekapMobileJKN');
-        Route::post('get-kode-booking-operasi','ReservasiOnline\ReservasiOnlineController@getKodeBokingOperasi');
-        Route::post('get-jadwal-operasi','ReservasiOnline\ReservasiOnlineController@getJadwalOperasi');
-        Route::post('save-pasien-baru','ReservasiOnline\ReservasiOnlineController@savePasienBaru');
-  //        Route::post('get-token', 'Auth\LoginController@getTokens');
-        Route::post('get-status-antrean','ReservasiOnline\ReservasiOnlineController@GetStatusAntrianMobileJKN');
-        Route::post('get-antrean','ReservasiOnline\ReservasiOnlineController@GetAntrean');
-        Route::post('get-sisa-antrean','ReservasiOnline\ReservasiOnlineController@GetSisaAntrean');
-        Route::post('save-batal-antrean','ReservasiOnline\ReservasiOnlineController@saveBatalAntrean');
-        Route::post('save-checkin','ReservasiOnline\ReservasiOnlineController@saveCheckInAntrean');
-        //** END BPJS V.2.0 */
+  //       Route::post('get-kode-booking-operasi','ReservasiOnline\ReservasiOnlineController@getKodeBokingOperasi');
+  //       Route::post('get-jadwal-operasi','ReservasiOnline\ReservasiOnlineController@getJadwalOperasi');
+  //       Route::post('save-pasien-baru','ReservasiOnline\ReservasiOnlineController@savePasienBaru');
+  // //        Route::post('get-token', 'Auth\LoginController@getTokens');
+  //       Route::post('get-status-antrean','ReservasiOnline\ReservasiOnlineController@GetStatusAntrianMobileJKN');
+  //       Route::post('get-antrean','ReservasiOnline\ReservasiOnlineController@GetAntrean');
+  //       Route::post('get-sisa-antrean','ReservasiOnline\ReservasiOnlineController@GetSisaAntrean');
+  //       Route::post('save-batal-antrean','ReservasiOnline\ReservasiOnlineController@saveBatalAntrean');
+  //       Route::post('save-checkin','ReservasiOnline\ReservasiOnlineController@saveCheckInAntrean');
+        Route::post('get-kode-booking-operasi','ReservasiOnline\MyJKNV2Controller@getKodeBokingOperasi_fix');
+        Route::post('get-jadwal-operasi','ReservasiOnline\MyJKNV2Controller@getJadwalOperasi_fix');
+        //** BPJS V.2.0 */
+        Route::post('get-status-antrean','ReservasiOnline\MyJKNV2Controller@GetStatusAntrian_fix');
+        Route::post('get-antrean','ReservasiOnline\MyJKNV2Controller@GetAntrean_fix');
+        Route::post('get-sisa-antrean','ReservasiOnline\MyJKNV2Controller@GetSisaAntrean_fix');
+        Route::post('save-batal-antrean','ReservasiOnline\MyJKNV2Controller@saveBatalAntrean_fix');
+        Route::post('save-checkin','ReservasiOnline\MyJKNV2Controller@saveCheckInAntrean_fix');
+        Route::post('save-pasien-baru','ReservasiOnline\MyJKNV2Controller@savePasienBaru_fix');
+  //** END BPJS V.2.0 */
 //        Route::post('get-token', 'Auth\LoginController@getTokens');
     });
     

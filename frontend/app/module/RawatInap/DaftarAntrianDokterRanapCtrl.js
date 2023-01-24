@@ -92,7 +92,7 @@ define(['initialize'], function (initialize) {
                     $scope.GridPasien = new kendo.data.DataSource({
                         data: datas,
                         group: $scope.group,
-                        pageSize: 10,
+                        pageSize: 15,
                         total: data.length,
                         serverPaging: false,
                         schema: {

@@ -1,7 +1,7 @@
 define(['initialize'], function(initialize) {
     'use strict';
-    initialize.controller('DaftarPegawaiPensiunMeninggalCtrl', ['$scope', 'MedifirstService', 'DateHelper','$timeout', 
-        function($scope, medifirstService, dateHelper, $timeout) {
+    initialize.controller('DaftarPegawaiPensiunMeninggalCtrl', ['$scope', 'MedifirstService', 'DateHelper','$timeout','CacheHelper','$state',
+        function ($scope, medifirstService, dateHelper, $timeout, cacheHelper, $state) {
             $scope.showTombol = true;
             $scope.loadInit = function() {
                 $scope.item = {};
@@ -366,6 +366,26 @@ define(['initialize'], function(initialize) {
                 $scope.item = {};
                 $scope.itemPensiun = {};
                 $scope.popUpPensiun.close();
+            }
+            $scope.klik = function (data) {
+                $scope.dataItem = data;
+            }
+            $scope.ubah = function () {
+                if ($scope.dataItem) {
+                    var chacePeriode = {
+                        0: $scope.dataItem.id,
+                        1: 'EditPegawai',
+                        2: 'PegawaiPensiun',
+                        3: '',
+                        4: '',
+                        5: '',
+                        6: ''
+                    }
+                    cacheHelper.set('MasterPegawaiCtrl', chacePeriode);
+                    $state.go('MasterPegawai')
+                } else {
+                    messageContainer.error('Pegawai belum di pilih')
+                };
             }
             // * BATAS SUCI *//
         }

@@ -115,11 +115,15 @@ define(['initialize'], function (initialize) {
                         }
                         datas[i].respon = respon
                         datas[i].durasi = durasi
-                        datas[i].pegawai = datas[i].detailspegawai
+                        datas[i].namapegawai = []
+                        console.log(datas[i].detailspegawai);
                         for (let j = 0; j < datas[i].detailspegawai.length; j++) {
-                            datas[i].namapegawai = datas[i].detailspegawai[j].join("\n")
-                            console.log(datas[i].namapegawai);
+                            datas[i].namapegawai.push(datas[i].detailspegawai[j].namalengkap)
                         }
+                        var kkk = datas[i].namapegawai.join("\n")
+                        console.log(kkk);
+                        datas[i].pegawai = kkk
+
                         
                     }
                     $scope.sourceLaporan = new kendo.data.DataSource({
@@ -175,7 +179,7 @@ define(['initialize'], function (initialize) {
                 excelExport: function (e) {
                     var sheet = e.workbook.sheets[0];
                     sheet.frozenRows = 3;
-                    sheet.mergedCells = ["A1:M1", "A2:M2", "A3:M3"];
+                    sheet.mergedCells = ["A1:O1", "A2:O2", "A3:O3"];
                     sheet.name = "sheet 1";
                     var myHeaders = [{
                         value: "Laporan Perbaikan IT",
@@ -257,7 +261,7 @@ define(['initialize'], function (initialize) {
                         field: "pegawai",
                         title: "Teknisi",
                         width: "100px",
-					    "template": "# for(var i=0; i < pegawai.length;i++){# <button class=\"k-button custom-button\" style=\"margin:0 0 5px\">#= pegawai[i].namalengkap #</button> #}#",
+					    // "template": "# for(var i=0; i < pegawai.length;i++){# <button class=\"k-button custom-button\" style=\"margin:0 0 5px\">#= pegawai[i].namalengkap #</button> #}#",
 
                     },
                     {

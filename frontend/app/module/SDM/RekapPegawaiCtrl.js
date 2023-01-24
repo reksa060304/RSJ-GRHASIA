@@ -8,6 +8,9 @@ define(['initialize'], function (initialize) {
             $scope.dataSelected = {};
             $scope.item = {};
             $scope.isRouteLoading = false;
+            $scope.item.kategory = []
+            $scope.item.jenis = []
+            $scope.item.status = []
             FormLoad();
             var HttpClient = function () {
                 this.get = function (aUrl, aCallback) {
@@ -44,6 +47,37 @@ define(['initialize'], function (initialize) {
                     $scope.listStatus = dataCombo.statuspegawai;
                     $scope.listJenisPegawai = dataCombo.jenispegawai;
                     $scope.listKategory = dataCombo.kategorypegawai;
+                    $scope.selectOptionsKategory = {
+                        placeholder: "Pilih Status Pegawai...",
+                        dataTextField: "kategorypegawai",
+                        dataValueField: "id",
+                        // dataSource:{
+                        //     data: $scope.listRuangan
+                        // },
+                        autoBind: true,
+
+                    };
+                    $scope.selectOptionsJenis = {
+                        placeholder: "Pilih Jenis Pegawai...",
+                        dataTextField: "jenispegawai",
+                        dataValueField: "id",
+                        // dataSource:{
+                        //     data: $scope.listRuangan
+                        // },
+                        autoBind: true,
+
+                    };
+
+                    $scope.selectOptionsStatus = {
+                        placeholder: "Pilih Kedudukan Pegawai...",
+                        dataTextField: "statuspegawai",
+                        dataValueField: "id",
+                        // dataSource:{
+                        //     data: $scope.listRuangan
+                        // },
+                        autoBind: true,
+
+                    };
                 });
             }
 
@@ -64,17 +98,39 @@ define(['initialize'], function (initialize) {
                 //debugger;
 
                 var kateg = "";
-                if ($scope.item.kategory != undefined) {
-                    kateg = "kategId=" + $scope.item.kategory.id;
+
+                if ($scope.item.kategory.length != 0) {
+                    var a = ""
+                    var b = ""
+                    for (var i = $scope.item.kategory.length - 1; i >= 0; i--) {
+                        var c = $scope.item.kategory[i].id
+                        b = "," + c
+                        a = a + b
+                    }
+                    kateg = "jenisKategId=" + a.slice(1, a.length)
                 }
                 var jenis = "";
-                if ($scope.item.jenis != undefined) {
-                    jenis = "&jenisPegId=" + $scope.item.jenis.id;
+                if ($scope.item.jenis.length != 0) {
+                    var a = ""
+                    var b = ""
+                    for (var i = $scope.item.jenis.length - 1; i >= 0; i--) {
+                        var c = $scope.item.jenis[i].id
+                        b = "," + c
+                        a = a + b
+                    }
+                    jenis = "&jenisPegId=" + a.slice(1, a.length)
                 }
 
                 var status = "";
-                if ($scope.item.status != undefined) {
-                    status = "&statusPegId=" + $scope.item.status.id;
+                if ($scope.item.status.length != 0) {
+                    var a = ""
+                    var b = ""
+                    for (var i = $scope.item.status.length - 1; i >= 0; i--) {
+                        var c = $scope.item.status[i].id
+                        b = "," + c
+                        a = a + b
+                    }
+                    status = "&statusPegId=" + a.slice(1, a.length)
                 }
 
 
@@ -166,7 +222,7 @@ define(['initialize'], function (initialize) {
             //         field: "kategory",
             //         aggregate: "count"
             //     }]
-            $scope.listKatLaporan = [{ nama: 'Jenis Kelamin' }, { nama: 'Jenis Kepegawaian' }, { nama: 'Agama' }, { nama: 'Pendidikan' }, { nama: 'Jenis Usia' }]
+            $scope.listKatLaporan = [{ nama: 'Jenis Kelamin' }, { nama: 'Jenis Kepegawaian' }, { nama: 'Agama' }, { nama: 'Pendidikan' }, { nama: 'Jenis Usia' },{ nama: 'Golongan' }]
             $scope.columnLaporan = {
                 toolbar: [
                     "excel",
@@ -220,7 +276,85 @@ define(['initialize'], function (initialize) {
 
                 ]
             };
+            $scope.click = function(data){
+                console.log(data);
+                $scope.item.kat = data.kategory
+                $scope.item.tipe = data.tipe
+                medifirstService.get('sdm/kat-tipe?kat=' + $scope.item.kat + '&tipe=' + $scope.item.tipe).then(function(data){
+                    $scope.popUpDetail.center().open()
+                    var datas = data.data.data
+                    for (let i = 0; i < datas.length; i++) {
+                        datas[i].no = i+1
+                    }
+                    $scope.sourceLaporanDetail = new kendo.data.DataSource({
+                    data: datas,
+                    pageSize: 25,
+                    total: datas.length,
+                    serverPaging: false,
+                    selectable: true,
+                    refresh: true,
+                    });
+                })
+            }
+            $scope.columnLaporanDetail = {
+                toolbar: [
+                    "excel",
 
+                ],
+                excel: {
+                    fileName: "Rekap Pegawai.xlsx",
+                    allPages: true,
+                },
+                excelExport: function (e) {
+                    var sheet = e.workbook.sheets[0];
+                    sheet.frozenRows = 2;
+                    sheet.mergedCells = ["A1:K1"];
+                    sheet.name = "Rekapitulasi Pegawai";
+
+                    var myHeaders = [{
+                        value: "Rekapitulasi Pegawai",
+                        fontSize: 20,
+                        textAlign: "center",
+                        background: "#ffffff",
+                        // color:"#ffffff"
+                    }];
+
+                    sheet.rows.splice(0, 0, {
+                        cells: myHeaders,
+                        type: "header",
+                        height: 70
+                    });
+                },
+                selectable: 'row',
+                pageable: true,
+                columns: [
+                    {
+                        "field": "no",
+                        "title": "NO",
+                        "width": "30px",
+                    },
+                    {
+                        "field": "nippns",
+                        "title": "NIP",
+                        "width": "30px",
+                    },
+                    {
+                        "field": "namalengkap",
+                        "title": "NAMA",
+                        "width": "30px",
+                    },
+                    {
+                        "field": "golongan",
+                        "title": "GOLONGAN",
+                        "width": "30px",
+                    },
+                    {
+                        "field": "namajabatan",
+                        "title": "JABATAN",
+                        "width": "30px",
+                    },
+                ]
+            };
             ///////////////////////////////////////////////////////////////////////
         }
     ]);

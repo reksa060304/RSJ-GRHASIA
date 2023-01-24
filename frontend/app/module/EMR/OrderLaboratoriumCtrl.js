@@ -18,7 +18,10 @@ define(['initialize'], function (initialize) {
             $scope.header.DataNoregis = true
             $scope.jeniskelaminfk = undefined;
             $scope.tgllahirpasien = undefined;
+            $scope.pemeriksaandalam = false
+            $scope.pemeriksaanluar = true
             var produkDef = []
+            var produkDefLuar = []
             $scope.pilihLayanan = 0
 
             var detail = ''
@@ -86,10 +89,13 @@ define(['initialize'], function (initialize) {
             // var namaRuangan = ''
             // var namaRuanganFk = ''
             $scope.listProdukCek = []
+            $scope.listProdukLuar = []
             $scope.getProduk = function (ruangan) {
                 $scope.listProdukCek = []
+                $scope.listProdukLuar = []
                 $scope.item.layanan = []
                 produkDef = []
+                produkDefLuar = []
                 medifirstService.get("sysadmin/general/get-tindakan-with-details?idRuangan="
                     + ruangan.id
                     + "&idKelas="
@@ -101,6 +107,24 @@ define(['initialize'], function (initialize) {
                     .then(function (x) {
                         $scope.listProdukCek = x.data.details
                         produkDef = x.data.details
+                        // $scope.listLayanan = x;
+                        // $scope.item.layanan = '';
+                        // $scope.item.hargaTindakan = '';
+                        //    $scope.isRouteLoading = false;
+
+                    })
+
+                medifirstService.get("sysadmin/general/get-tindakan-with-details-luar?idRuangan="
+                    + ruangan.id
+                    + "&idKelas="
+                    + $scope.item.idKelas
+
+                    + "&idJenisPelayanan="
+                    + jenisPelayananId
+                    + "&isLabRad=true")
+                    .then(function (x) {
+                        $scope.listProdukLuar = x.data.details
+                        produkDefLuar = x.data.details
                         // $scope.listLayanan = x;
                         // $scope.item.layanan = '';
                         // $scope.item.hargaTindakan = '';
@@ -960,6 +984,18 @@ define(['initialize'], function (initialize) {
                 }
             })
 
+            $scope.$watch('item.pemeriksaanKeluar', function (newVal, oldVal) {
+                if (newVal !== oldVal) {
+                    if($scope.item.pemeriksaanKeluar == true){
+                        $scope.pemeriksaandalam = true
+                        $scope.pemeriksaanluar = false
+                    } else{
+                        $scope.pemeriksaandalam = false
+                        $scope.pemeriksaanluar = true
+                    }
+                }
+            })
+
             // $scope.$watch('item.layanan', function (newVal, oldVal) {
             //     var arrobj = Object.keys(newVal)
             //     for (let x = 0; x < arrobj.length; x++) {
@@ -969,6 +1005,68 @@ define(['initialize'], function (initialize) {
             //         }
             //     }
             // })
+            $scope.$watch('item.filterLayananLuar', function (newVal, oldVal) {
+                if (newVal !== oldVal) {
+                    if (newVal == "") {
+                        $scope.listProdukLuar = produkDefLuar
+                        return
+                    }
+                    if (newVal == undefined) return
+
+                    $scope.listTempProduk = []
+                    var name = newVal.toLowerCase()
+                    for (var i = produkDefLuar.length - 1; i >= 0; i--) {
+                        const elem = produkDefLuar[i]
+                        $scope.listTempProduk.push({
+                            id: elem.id,
+                            detailjenisproduk: elem.detailjenisproduk,
+                            details: []
+                        })
+                        for (var x = elem.details.length - 1; x >= 0; x--) {
+                            const element = elem.details[x];
+                            var arr = element.namaproduk.toLowerCase()
+                            if ((arr.indexOf(name) > -1)) {
+                                for (let y = 0; y < $scope.listTempProduk.length; y++) {
+                                    const element2 = $scope.listTempProduk[y];
+                                    if (element2.id == elem.id)
+                                        element2.details.push(element)
+                                }
+                            }
+                            // if ($scope.item.layanan != undefined) {
+                            //     var arrobj = Object.keys($scope.item.layanan)
+                            //     for (let x = 0; x < arrobj.length; x++) {
+                            //         const element3 = arrobj[x];
+                            //         for (let y = 0; y < $scope.listTempProduk.length; y++) {
+                            //             const element2 = $scope.listTempProduk[y];
+                            //             if ($scope.item.layanan[element3] == true && element.id != element3) {
+                            //                 element2.details.push(element)
+                            //             }
+                            //         }
+                            //     }
+                            // }
+                        }
+
+                    }
+                    $scope.listProdukLuar = []
+                    $scope.listProdukLuar = $scope.listTempProduk
+                    if ($scope.item.layanan != undefined && $scope.item.layanan != '') {
+                        for (let i = 0; i < $scope.listProdukLuar.length; i++) {
+                            const element1 = $scope.listProdukLuar[i];
+                            var arrobj = Object.keys($scope.item.layanan)
+                            for (let x = 0; x < element1.details.length; x++) {
+                                const element2 = element1.details[x];
+                                for (let x = 0; x < arrobj.length; x++) {
+                                    const element3 = arrobj[x];
+                                    if (element2.id == element3) {
+                                        $scope.item.layanan[element3] = true
+                                        // element.isChecked = true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            })
             $scope.$watch('item.filterLayanan', function (newVal, oldVal) {
                 if (newVal !== oldVal) {
                     if (newVal == "") {
@@ -1038,6 +1136,28 @@ define(['initialize'], function (initialize) {
                 if ($scope.item.layanan != undefined) {
                     for (let i = 0; i < $scope.listProdukCek.length; i++) {
                         const element1 = $scope.listProdukCek[i];
+                        var arrobj = Object.keys($scope.item.layanan)
+                        for (let x = 0; x < element1.details.length; x++) {
+                            const element2 = element1.details[x];
+                            for (let x = 0; x < arrobj.length; x++) {
+                                const element3 = arrobj[x];
+                                if (element2.id == element3) {
+                                    $scope.item.layanan[element3] = true
+                                    // element.isChecked = true
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            $scope.resetFilterLuar = function () {
+                delete $scope.item.filterLayananLuar
+                $scope.listProdukLuar = []
+                $scope.listProdukLuar = produkDefLuar
+                if ($scope.item.layanan != undefined) {
+                    for (let i = 0; i < $scope.listProdukLuar.length; i++) {
+                        const element1 = $scope.listProdukLuar[i];
                         var arrobj = Object.keys($scope.item.layanan)
                         for (let x = 0; x < element1.details.length; x++) {
                             const element2 = element1.details[x];

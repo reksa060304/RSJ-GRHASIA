@@ -288,6 +288,22 @@
     {
       "nameDep": "PembayaranPiutangDiklatCtrl",
       "urlDep": "module/SDM/Penelitian/PembayaranPiutangDiklatCtrl"
+    },
+    {
+      "nameDep": "HomeSDMCtrl",
+      "urlDep": "module/SDM/HomeSDMCtrl"
+    },
+    {
+      "nameDep": "LaporanDaftarPegawaiNominatifCtrl",
+      "urlDep": "module/SDM/LaporanDaftarPegawaiNominatifCtrl"
+    },
+    {
+      "nameDep": "MasterKenaikanGajiBerkalaCtrl",
+      "urlDep": "module/SDM/MasterKenaikanGajiBerkalaCtrl"
+    },
+    {
+      "nameDep": "LaporanPasienJKNCtrl",
+      "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/LaporanPasienJKNCtrl"
     }
   ]
 }

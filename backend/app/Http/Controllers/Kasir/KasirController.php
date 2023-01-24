@@ -857,13 +857,14 @@ class KasirController extends ApiController{
             ->leftjoin('strukbuktipenerimaancarabayar_t as sbmcr', 'sbmcr.nosbmfk', '=', 'sbm.norec')
             ->leftjoin('carabayar_m as cb', 'cb.id', '=', 'sbmcr.objectcarabayarfk')
             ->leftjoin('kelompoktransaksi_m as kt', 'kt.id', '=', 'sbm.objectkelompoktransaksifk')
+            ->leftjoin('kelompokpasien_m as kp', 'kp.id', '=', 'pd.objectkelompokpasienlastfk')
             ->leftjoin('strukclosing_t as sc', 'sc.norec', '=', 'sbm.noclosingfk')
             ->leftjoin('strukverifikasi_t as sv', 'sv.norec', '=', 'sbm.noverifikasifk')
             ->select('sbm.norec as noRec','cb.carabayar as caraBayar','sbmcr.objectcarabayarfk as idCaraBayar','sbm.objectkelompoktransaksifk as idKelTransaksi',
                               'kt.kelompoktransaksi as kelTransaksi','sbm.keteranganlainnya as keterangan','p.id as idPegawai','p.namalengkap as namaPenerima',
                               'sc.noclosing as noClosing','sbm.nosbm as noSbm','sv.noverifikasi as noVerifikasi','sc.tglclosing as tglClosing',
                               'sbm.tglsbm as tglSbm','sv.tglverifikasi as tglVerif','pd.noregistrasi','ps.namapasien',
-                              'sp.norec as norec_sp','ru.id as ruid','ru.namaruangan','sp.namapasien_klien','ps.nocm','sbm.totaldibayar AS totalPenerimaan'
+                              'sp.norec as norec_sp','ru.id as ruid','ru.namaruangan','sp.namapasien_klien','ps.nocm','kp.kelompokpasien','sbm.totaldibayar AS totalPenerimaan'
 //                    ,\DB::raw("")
             )
             ->where('sbm.statusenabled',true)
@@ -919,6 +920,9 @@ class KasirController extends ApiController{
         }
         if(isset($request['diklat']) && $request['diklat']== true){
             $data = $data->where('sp.objectkelompoktransaksifk', 13);
+        }
+        if(isset($request['cost']) && $request['cost']== true){
+            $data = $data->whereNotIn('pd.objectkelompokpasienlastfk', [1, 12]);
         }
 
 //        $data = $data->take($request['jmlRows']);
@@ -4590,26 +4594,14 @@ case when pjd.hargasatuand = 0 then pjd.hargasatuank else pjd.hargasatuand end
    $kdProfile = (int) $this->getDataKdProfile($request);
 
         $data = \DB::select(DB::raw("
-            select sp.norec, 
-                sp.tglstruk, 
-                sp.namapasien_klien, 
-                kt.reportdisplay as jenistagihan, 
-                sp.totalharusdibayar, 
-                keteranganlainnya, 
-                sp.nosbklastfk, 
-                sp.nosbmlastfk, 
-                kt.id as jenisTagihanId,
-                sp.totalharusdibayar * 39/100 as jasa 
-                from strukpelayanan_t as sp 
-                inner join kelompoktransaksi_m as kt on sp.objectkelompoktransaksifk = kt.id 
-                where sp.totalharusdibayar is not null 
-                and sp.objectkelompoktransaksifk in (2, 3, 4, 5, 6, 10, 13, 16, 34, 8, 9, 20, 21, 23, 24, 26, 62, 70, 71) 
-                and sp.tglstruk >= '$tglAwal' 
-                and sp.tglstruk <= '$tglAkhir' 
-                and kt.id = 13 and sp.nosbmlastfk is not null 
-                and sp.statusenabled = true
-                and sp.kdprofile    =$kdProfile
-                ORDER BY sp.tglstruk DESC
+            SELECT sbm.tglsbm, sbm.nosbm, sbm.totaldibayar, pe.institusipendidikan, cb.carabayar, pe.jumlahpeserta, pe.tanggalmulai, pe.tanggalselesai, pr.namaproduk FROM strukbuktipenerimaan_t sbm 
+            inner join strukpelayanan_t sp on sp.norec = sbm.nostrukfk 
+            inner join sdm_penelitianeksternal_t pe on pe.noregistrasifk = sp.norec
+            inner join strukbuktipenerimaancarabayar_t sbmcr on sbmcr.nosbmfk = sbm.norec
+            inner join carabayar_m cb on cb.id = sbmcr.objectcarabayarfk
+            inner join produk_m pr on pr.id = pe.objectprodukfk
+            where sbm.tglsbm::date between '$tglAwal' and '$tglAkhir' and sbm.kdprofile = $kdProfile and sbm.statusenabled = true
+            ORDER BY sbm.tglsbm asc
 
          "));
 

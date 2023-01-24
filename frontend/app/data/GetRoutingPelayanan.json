@@ -19755,6 +19755,26 @@
         "define": "RekamMedisCtrl"
       }
     ]
+  },
+  {
+    "name": "InformasiWaktuPelayananRawatJalan",
+    "url": "/SW5mb3JtYXNpV2FrdHVQZWxheWFuYW5SYXdhdEphbGFu",
+    "templateurl": "module/RawatJalan/InformasiWaktuPelayananRawatJalan.html",
+    "controller": "InformasiWaktuPelayananRawatJalanCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
   }
 ]
 

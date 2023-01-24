@@ -61,6 +61,10 @@ define(['initialize','Configuration'], function (initialize,configuration) {
 				if($scope.item.cbxDiklat == true){
 					diklat = '&diklat=' + $scope.item.cbxDiklat
 				}
+				var cost = ''
+				if($scope.item.cbxCost == true){
+					cost = '&cost=' + $scope.item.cbxCost
+				}
 				$q.all([
 					medifirstService.get("kasir/data-daftar-sbm?"
 						+ "dateStartTglSbm=" + tglAwal
@@ -73,7 +77,7 @@ define(['initialize','Configuration'], function (initialize,configuration) {
 						+ "&nocm=" + $scope.item.norm
 						+ "&nama=" + $scope.item.nama
 						+ "&desk=" + $scope.item.desk
-						+ "&KasirArr=" + listKasir+diklat
+						+ "&KasirArr=" + listKasir+diklat+cost
 					)
 				]).then(function (data) {
 					var cash = 0;
@@ -269,6 +273,12 @@ define(['initialize','Configuration'], function (initialize,configuration) {
 						"field": "namaruangan",
 						"title": "Nama Ruangan",
 						"template": "<span class='style-left'>#: namaruangan #</span>",
+						"width": "100px"
+					},
+					{
+						"field": "kelompokpasien",
+						"title": "Kelompok Pasien",
+						"template": "<span class='style-left'>#: kelompokpasien #</span>",
 						"width": "100px"
 					},
 					{

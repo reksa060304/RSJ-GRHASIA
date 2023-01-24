@@ -1,0 +1,394 @@
+define(['initialize'], function (initialize) {
+    'use strict';
+    initialize.controller('LaporanDaftarPegawaiNominatifCtrl', ['CacheHelper', '$scope', 'MedifirstService', 'DateHelper',
+        function (cacheHelper, $scope, medifirstService, dateHelper) {
+            //Inisial Variable             
+            $scope.dataVOloaded = true;
+            $scope.now = moment(new Date()).format('YYYY-MM-DD');
+            $scope.dataSelected = {};
+            $scope.item = {};
+            $scope.isRouteLoading = false;
+            $scope.item.kategory = []
+            $scope.item.jenis = []
+            $scope.item.status = []
+            FormLoad();
+            var HttpClient = function () {
+                this.get = function (aUrl, aCallback) {
+                    var anHttpRequest = new XMLHttpRequest();
+                    anHttpRequest.onreadystatechange = function () {
+                        if (anHttpRequest.readyState == 4 && anHttpRequest.status == 200)
+                            aCallback(anHttpRequest.responseText);
+                    }
+
+                    anHttpRequest.open("GET", aUrl, true);
+                    anHttpRequest.send(null);
+                }
+            }
+            
+            function FormLoad() {
+
+                $scope.tglPelayanan = $scope.item.pelayanan;
+                $scope.dokter = $scope.item.namaPegawai;
+                $scope.date = new Date();
+                var tanggals = dateHelper.getDateTimeFormatted3($scope.date);
+
+                //Tanggal Default
+                $scope.item.tglawal = tanggals + " 00:00";
+                $scope.item.tglakhir = tanggals + " 23:59";
+
+                // Tanggal Inputan
+                $scope.tglawal = $scope.item.tglawal;
+                $scope.tglakhir = $scope.item.tglakhir;
+                $scope.pegawai = medifirstService.getPegawai();
+
+                medifirstService.get("sdm/get-data-combo-sdm?", true).then(function (dat) {
+                    var dataCombo = dat.data
+                    // var dataLogin = dat.datalogin[0];
+                    $scope.listStatus = dataCombo.statuspegawai;
+                    $scope.listJenisPegawai = dataCombo.jenispegawai;
+                    $scope.listKategory = dataCombo.kategorypegawai;
+                    $scope.selectOptionsKategory = {
+                        placeholder: "Pilih Status Pegawai...",
+                        dataTextField: "kategorypegawai",
+                        dataValueField: "id",
+                        // dataSource:{
+                        //     data: $scope.listRuangan
+                        // },
+                        autoBind: true,
+
+                    };
+                    $scope.selectOptionsJenis = {
+                        placeholder: "Pilih Jenis Pegawai...",
+                        dataTextField: "jenispegawai",
+                        dataValueField: "id",
+                        // dataSource:{
+                        //     data: $scope.listRuangan
+                        // },
+                        autoBind: true,
+
+                    };
+
+                    $scope.selectOptionsStatus = {
+                        placeholder: "Pilih Kedudukan Pegawai...",
+                        dataTextField: "statuspegawai",
+                        dataValueField: "id",
+                        // dataSource:{
+                        //     data: $scope.listRuangan
+                        // },
+                        autoBind: true,
+
+                    };
+                });
+            }
+
+            $scope.getIsiComboRuangan = function () {
+                $scope.listRuangan = $scope.item.departement.ruangan
+            }
+
+            $scope.Search = function () {
+                $scope.isLoadingData = true;
+                LoadData();
+            }
+
+            function LoadData() {
+
+                $scope.isRouteLoading = true;
+                var tglAwal = moment($scope.item.tglawal).format('YYYY-MM-DD HH:mm');
+                var tglAkhir = moment($scope.item.tglakhir).format('YYYY-MM-DD HH:mm');
+                //debugger;
+
+                var kateg = "";
+
+                if ($scope.item.kategory.length != 0) {
+                    var a = ""
+                    var b = ""
+                    for (var i = $scope.item.kategory.length - 1; i >= 0; i--) {
+                        var c = $scope.item.kategory[i].id
+                        b = "," + c
+                        a = a + b
+                    }
+                    kateg = "jenisKategId="+a.slice(1, a.length)
+                }
+                var jenis = "";
+                if ($scope.item.jenis.length != 0) {
+                    var a = ""
+                    var b = ""
+                    for (var i = $scope.item.jenis.length - 1; i >= 0; i--) {
+                        var c = $scope.item.jenis[i].id
+                        b = "," + c
+                        a = a + b
+                    }
+                    jenis = "&jenisPegId=" + a.slice(1, a.length)
+                }
+
+                var status = "";
+                if ($scope.item.status.length != 0) {
+                    var a = ""
+                    var b = ""
+                    for (var i = $scope.item.status.length - 1; i >= 0; i--) {
+                        var c = $scope.item.status[i].id
+                        b = "," + c
+                        a = a + b
+                    }
+                    status = "&statusPegId=" + a.slice(1, a.length)
+                }
+
+
+
+                medifirstService.get("sdm/get-pegawai-nominatif?"+
+                    kateg +
+                    jenis +
+                    status).then(function (data) {
+                    $scope.isLoadingData = false;
+                    var datas = data.data.data
+                    // if ($scope.item.kategoryLap != undefined) {
+                    //     for (let i = datas.length - 1; i >= 0; i--) {
+                    //         const element = datas[i];
+                    //         if ($scope.item.kategoryLap.nama != element.kategory)
+                    //             datas.splice(i, 1)
+                    //     }
+                    // }
+                    var bulan = 0
+                    var tahun = 0
+                        for (let i = 0; i < datas.length; i++) {
+                            datas[i].no = i + 1
+                            if (datas[i].cutibulan == null){
+                                datas[i].cutibulan = 0
+                            }
+                            datas[i].mkg = dateHelper.CountAge(new Date(datas[i].tglskcpns), new Date($scope.now))
+                            datas[i].bln = (datas[i].mkg.year * 12) + datas[i].mkg.month - parseInt(datas[i].cutibulan)
+                            // console.log((datas[i].mkg.year * 12), datas[i].mkg.month, parseInt(datas[i].cutibulan), datas[i].bln);
+                            datas[i].tahun = Math.round(datas[i].bln / 12)
+                            datas[i].bulan = datas[i].bln - (datas[i].tahun * 12)
+                            console.log(datas[i].tahun);
+                            datas[i].masakerja = datas[i].tahun + " Thn " + datas[i].bulan + " Bln"
+                        }
+                    $scope.sourceLaporan = new kendo.data.DataSource({
+                        data: datas,
+                        pageSize: 50,
+                        group: $scope.group,
+                        total: data.length,
+                        serverPaging: false,
+                        schema: {
+                            model: {
+                                fields: {
+                                    tipe: {
+                                        type: "string"
+                                    },
+                                    kategory: {
+                                        type: "string"
+                                    },
+                                    total: {
+                                        type: "number"
+                                    },
+
+                                }
+                            }
+                        },
+                        selectable: true,
+                        refresh: true,
+                        // groupable:true,
+                        // group: [{
+                        //     field: "kategory",
+                        //     aggregates: [{
+                        //             field: 'total',
+                        //             aggregate: 'sum'
+                        //         },
+                        //         // { field: "jumlah", aggregate: 'sum' },
+                        //         // { field: 'harga', aggregate: 'sum' },
+                        //     ]
+                        // }, ],
+                        // aggregate: [{
+                        //         field: 'total',
+                        //         aggregate: 'sum'
+                        //     },
+
+                        // ]
+
+                    });
+
+
+                })
+            }
+
+            $scope.Perbaharui = function () {
+                $scope.ClearSearch();
+            }
+
+            $scope.ClearSearch = function () {
+                $scope.item = {};
+                $scope.item.tglawal = $scope.now;
+                $scope.item.tglakhir = $scope.now;
+                $scope.Search();
+            }
+
+            $scope.formatTanggal = function (tanggal) {
+                return moment(tanggal).format('DD-MMM-YYYY');
+            }
+
+            $scope.formatJam = function (tanggal) {
+                return moment(tanggal).format('HH:mm');
+            }
+            // $scope.group = {
+            //     field: "kategory",
+            //     aggregates: [
+
+            //         {
+            //             field: "kategory",
+            //             aggregate: "count"
+            //         }]
+            // };
+            // $scope.aggregate = [
+
+            //     {
+            //         field: "kategory",
+            //         aggregate: "count"
+            //     }]
+            // $scope.listKatLaporan = [{
+            //     nama: 'Jenis Kelamin'
+            // }, {
+            //     nama: 'Jenis Kepegawaian'
+            // }, {
+            //     nama: 'Agama'
+            // }, {
+            //     nama: 'Pendidikan'
+            // }, {
+            //     nama: 'Jenis Usia'
+            // }]
+            $scope.columnLaporan = {
+                toolbar: [
+                    "excel",
+
+                ],
+                excel: {
+                    fileName: "LaporanDaftarPegawaiNominatif.xlsx",
+                    allPages: true,
+                },
+                excelExport: function (e) {
+                    var sheet = e.workbook.sheets[0];
+                    sheet.frozenRows = 2;
+                    sheet.mergedCells = ["A1:Q1"];
+                    sheet.name = "Laporan Daftar Pegawai Nominatif";
+
+                    var myHeaders = [{
+                        value: "Laporan Daftar Pegawai Nominatif",
+                        fontSize: 20,
+                        textAlign: "center",
+                        background: "#ffffff",
+                        // color:"#ffffff"
+                    }];
+
+                    sheet.rows.splice(0, 0, {
+                        cells: myHeaders,
+                        type: "header",
+                        height: 70
+                    });
+                },
+                selectable: 'row',
+                scrollable: true,
+                pageable: true,
+                resizable: true,
+                columns: [
+
+                    {
+                        "field": "no",
+                        "title": "NO",
+                        "width": "30px",
+                    },
+                    {
+                        "field": "nippns",
+                        "title": "NIP",
+                        "width": "135px",
+                    },
+                    {
+                        "field": "namalengkap",
+                        "title": "NAMA",
+                        "width": "300px",
+                    },
+                    {
+                        "field": "ttl",
+                        "title": "TEMPAT TANGGAL LAHIR",
+                        "width": "150px",
+                    },
+                    {
+                        "field": "jeniskelamin",
+                        "title": "JENIS KELAMIN",
+                        "width": "100px",
+                    },
+                    {
+                        "field": "eselon",
+                        "title": "ESELON",
+                        "width": "50px",
+                    },
+                    {
+                        "field": "golongan",
+                        "title": "GOLONGAN",
+                        "width": "180px",
+                    },
+                    {
+                        "field": "tgltmt",
+                        "title": "TMT GOLONGAN",
+                        "width": "110px",
+                    },
+                    {
+                        "field": "namajabatan",
+                        "title": "JABATAN",
+                        "width": "250px",
+                    },
+                    {
+                        "field": "pendidikanpegawai",
+                        "title": "PENDIDIKAN",
+                        "width": "230px",
+                    },
+                    {
+                        "field": "masakerja",
+                        "title": "MASA KERJA",
+                        "width": "70px",
+                    },
+                    {
+                        "field": "kategorypegawai",
+                        "title": "STATUS PEGAWAI",
+                        "width": "150px",
+                    },
+                    {
+                        "field": "kedudukan",
+                        "title": "KEDUDUKAN",
+                        "width": "85px",
+                    },
+                    {
+                        "field": "nostr",
+                        "title": "NO STR",
+                        "width": "150px",
+                    },
+                    {
+                        "field": "masaberlakustr",
+                        "title": "MASA BERLAKU STR",
+                        "width": "170px",
+                    },
+                    {
+                        "field": "nosip",
+                        "title": "NO SIP",
+                        "width": "150px",
+                    },
+                    {
+                        "field": "tanggalsip",
+                        "title": "TANGGAL SIP",
+                        "width": "100px",
+                    },
+
+                    // {
+                    //     width: '10%',
+                    //     hidden: true,
+                    //     field: "kategory",
+                    //     title: "Kategory",
+                    //     aggregates: ["count"],
+                    //     // groupHeaderTemplate: " #= value # (Jumlah: #= count#)"
+                    // },
+
+                ]
+            };
+
+            ///////////////////////////////////////////////////////////////////////
+        }
+    ]);
+});
