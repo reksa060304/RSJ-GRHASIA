@@ -2796,7 +2796,7 @@ class ReportController extends ApiController{
         ) as z"));
         
 
-        $pageWidth = 1200;
+        $pageWidth = 900;
         //return $this->respond($result);
         return view('report.spj.cetakjenisanggaran',compact('data', 'pageWidth', 'jumlah', 'tahap', 'tanggalcetak'));
     }

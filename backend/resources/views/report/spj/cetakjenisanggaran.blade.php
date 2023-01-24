@@ -10,21 +10,31 @@
         @endif
  
 </head>
-<style type="text/css" media="print">
-    @page {
-        size: landscape;   /* auto is the initial value */
-        margin: 2cm 2cm 2cm 3cm;  /* this affects the margin in the printer settings */
-    }
-</style>
 <style>
+    @page {
+        margin:15mm 15mm 20mm 20mm;
+    }
 
-    .borderss {
-        border-bottom: 1px solid black;
+    @page :first {
+        margin:15mm 15mm 20mm 20mm;
+    }
+
+    @media print {
+    body {
+        margin:0;
+    }
     }
 
     body {
         font-family: Arial;
     }
+
+    table{
+		font-family:'Arial';
+		margin:0;
+		padding:.1cm 0;
+		font-size:11pt ;
+	}	
 
     .tabel tr td{
         border: 1px solid black;
@@ -35,48 +45,44 @@
         border-collapse: collapse;
 
     }
-
-    /* table, tr, td{
-        border: 1px solid black;
-    } */
 </style>
-<body style="background-color: #CCCCCC;">
-<div align="center" >
-    <table class="bayangprint" bgcolor="#FFFFFF" width="{{$pageWidth}}" style="border-left: 1px solid black; border-right: 1px solid black; border-top: 1px solid black;">
+<body style="width:19.5cm;">
+<div>
+    <table cellpadding="0" cellspacing="0" width="100%"  border="0" class="tabel">
         <tbody >
         <tr>
-            <td rowspan="2"  style="padding: 5px; width: 50px; border-right: 1px solid black;" align="center">
-                    <p align="center">
+            <td rowspan="2" align="center" style="padding: 10px;">
+                    <p>
                             @if(stripos(\Request::url(), 'localhost') !== FALSE)
-                            <img src="{{ asset('img/logo_grhasia.png') }}" style="width: 120px" >
+                            <img src="{{ asset('img/LOGO GRHASIA.png') }}" style="width: 100px" >
                             @else
-                              <img src="{{ asset('service/img/logo_grhasia.png') }}" style="width: 120px" >
+                              <img src="{{ asset('service/img/LOGO GRHASIA.png') }}" style="width: 100px" >
                             @endif
                       
                     </p>
             </td>
-            <td align="center" style="width: 200px;">
-                <b style="font-size: 25px;">
+            <td align="center" style="padding: 3px;">
+                <b style="font-size: 23px;">
                     RENCANA BISNIS DAN ANGGARAN<br>
                     BADAN LAYANAN UMUM DAERAH
                 </b>
             </td>
-            <td rowspan="2"  align="center" style="width: 150px; border-left: 1px solid black;">
-                <b style="font-size: 25px;">
+            <td rowspan="2"  align="center" style="padding: 3px;">
+                <b style="font-size: 23px;">
                     RBA
                 </b><br>
                 {{substr($tahap[0]->tahap, 0, -3)}}
             </td>
         </tr>
         <tr align="center">
-            <td style="border-top: 1px solid black;">
+            <td>
                 <b>RS Jiwa GRHASIA<br>TAHUN 2022</b>
             </td>
         </tr>
         <tr >
-            <td colspan="3" style="border-top: 1px solid black;">
+            <td colspan="3">
                 <p align="center" style="margin-top: 10px; margin-bottom:10px">
-                    <font style="font-size: 12pt; " color="#000000" face="Arial">
+                    <font style="font-size: 12pt; " color="#000000">
                             <b>REKAP ANGGARAN TIAP SUB KEGIATAN (JENIS ANGGARAN) <br> TAHUN ANGGARAN {{ date('Y') }}</b>
                     </font>
                     <br>
@@ -85,50 +91,50 @@
         </tr>
         </tbody>
     </table>
-        <table width="{{$pageWidth}}" bgcolor="#FFFFFF" class="tabel">
+        <table cellpadding="0" cellspacing="0" width="100%"  border="0" class="tabel">
                 <tr">
-                    <td width="20" style="padding: 10px; font-weight: bold ">NO</td>
-                    <td width="150" style="padding: 10px; font-weight: bold; ">NAMA SUB KEGIATAN</td>
-                    <td width="50" style="padding: 10px; font-weight: bold;  ">PEGAWAI</td>
-                    <td width="50" style="padding: 10px; font-weight: bold;  ">BARANG JASA</td>
-                    <td width="50" style="padding: 10px; font-weight: bold ; ">MODAL</td>
-                    <td width="50" style="padding: 10px; font-weight: bold;  ">SUB TOTAL</td>
+                    <td style="padding: 10px; font-weight: bold ">NO</td>
+                    <td style="padding: 10px; font-weight: bold; ">NAMA SUB KEGIATAN</td>
+                    <td style="padding: 10px; font-weight: bold;  ">PEGAWAI</td>
+                    <td style="padding: 10px; font-weight: bold;  ">BARANG JASA</td>
+                    <td style="padding: 10px; font-weight: bold ; ">MODAL</td>
+                    <td style="padding: 10px; font-weight: bold;  ">SUB TOTAL</td>
                 </tr>
                 @foreach ($data as $dt)
                 <tr>
                     @if($dt->div == 2)
-                    <td width="20" style="padding: 10px; "><b>{{ substr($dt->kode, -4) }}</b></td>
+                    <td style="padding: 10px; "><b>{{ substr($dt->kode, -4) }}</b></td>
                     @elseif($dt->div == 3)
-                    <td width="20" style="padding: 10px; ">{{ substr($dt->kode, -2) }}</td>
+                    <td style="padding: 10px; ">{{ substr($dt->kode, -2) }}</td>
                     @endif
                     @if($dt->div == 2)
-                    <td width="150" style="padding: 10px; "><b>{{$dt->kegiatan}}</b></td>
+                    <td style="padding: 10px; "><b>{{$dt->kegiatan}}</b></td>
                     @elseif($dt->div == 3)
-                    <td width="150" style="padding: 10px; ">{{$dt->kegiatan}}</td>
+                    <td style="padding: 10px; ">{{$dt->kegiatan}}</td>
                     @endif
-                    <td width="50" style="padding: 10px;">{{ number_format($dt->jumlahpegawai,0,',','.') }}</td>
-                    <td width="50" style="padding: 10px;">{{ number_format($dt->jumlahbarangjasa,0,',','.') }}</td>
-                    <td width="50" style="padding: 10px;">{{ number_format($dt->jumlahmodal,0,',','.') }}</td>
-                    <td width="50" style="padding: 10px;">{{ number_format($dt->total,0,',','.') }}</td>
+                    <td align="right" style="padding: 10px;">{{ number_format($dt->jumlahpegawai,0,',','.') }}</td>
+                    <td align="right" style="padding: 10px;">{{ number_format($dt->jumlahbarangjasa,0,',','.') }}</td>
+                    <td align="right" style="padding: 10px;">{{ number_format($dt->jumlahmodal,0,',','.') }}</td>
+                    <td align="right" style="padding: 10px;">{{ number_format($dt->total,0,',','.') }}</td>
                 </tr>
                 @endforeach
                 <tr>
-                    <td colspan="2" width="20" style="padding: 10px; font-weight: bold; text-align: center; ">JUMLAH TOTAL</td>
-                    <td width="50" style="padding: 10px; font-weight: bold;  ">{{ number_format($jumlah[0]->jumlahpegawai,0,',','.') }}</td>
-                    <td width="50" style="padding: 10px; font-weight: bold;  ">{{ number_format($jumlah[0]->jumlahbarangjasa,0,',','.') }}</td>
-                    <td width="50" style="padding: 10px; font-weight: bold ; ">{{ number_format($jumlah[0]->jumlahmodal,0,',','.') }}</td>
-                    <td width="50" style="padding: 10px; font-weight: bold;  ">{{ number_format($jumlah[0]->total,0,',','.') }}</td>
+                    <td colspan="2" style="padding: 10px; font-weight: bold; text-align: center; ">JUMLAH TOTAL</td>
+                    <td align="right" style="padding: 10px; font-weight: bold;  ">{{ number_format($jumlah[0]->jumlahpegawai,0,',','.') }}</td>
+                    <td align="right" style="padding: 10px; font-weight: bold;  ">{{ number_format($jumlah[0]->jumlahbarangjasa,0,',','.') }}</td>
+                    <td align="right" style="padding: 10px; font-weight: bold ; ">{{ number_format($jumlah[0]->jumlahmodal,0,',','.') }}</td>
+                    <td align="right" style="padding: 10px; font-weight: bold;  ">{{ number_format($jumlah[0]->total,0,',','.') }}</td>
                 </tr>
         </table>
-        <table width="{{$pageWidth}}" bgcolor="#FFFFFF">
+        <table cellpadding="0" cellspacing="0" width="100%"  border="0">
             <thead>
                 <tr>
-                    <td width="300">
-                    </td>
-                    <td width="300">
+                    <td width="500">
                     </td>
                     <td>
-                        <p align="center" style="margin-right: 30px; margin-top: 50px;">
+                    </td>
+                    <td>
+                        <p align="center" style="margin-top: 50px;">
                             <font style="font-size: 12pt; " color="#000000" face="Arial">
                                     Yogyakarta, {{ $tanggalcetak }}
                             </font>
@@ -136,12 +142,12 @@
                     </td>
                 </tr>
                 <tr>
-                    <td width="300">
-                    </td>
-                    <td width="300">
+                    <td width="500">
                     </td>
                     <td>
-                        <p align="center" style="margin-right: 30px; margin-bottom:50px">
+                    </td>
+                    <td>
+                        <p align="center" style="margin-bottom:50px">
                             <font style="font-size: 12pt; " color="#000000" face="Arial">
                                     Kepala BLUD RS Jiwa GRHASIA
                             </font>
@@ -153,12 +159,12 @@
                 <tr></tr>
                 <tr></tr>
                 <tr>
-                    <td width="300">
-                    </td>
-                    <td width="300">
+                    <td width="500">
                     </td>
                     <td>
-                        <p align="center" style="margin-right: 30px; margin-top: 50px;">
+                    </td>
+                    <td>
+                        <p align="center" style="margin-top: 50px;">
                             <font style="font-size: 12pt; " color="#000000" face="Arial">
                                     dr. Akhmad Akhadi Syamsudhuha, M.P.H
                             </font>
@@ -166,12 +172,12 @@
                     </td>
                 </tr>
                 <tr>
-                    <td width="300">
-                    </td>
-                    <td width="300">
+                    <td width="500">
                     </td>
                     <td>
-                        <p align="center" style="margin-right: 30px; ">
+                    </td>
+                    <td>
+                        <p align="center">
                             <font style="font-size: 12pt; " color="#000000" face="Arial">
                             NIP. 19680714 200012 1 002
                             </font>
