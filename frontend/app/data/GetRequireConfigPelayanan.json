@@ -3385,8 +3385,8 @@
             "urlDep":"module/EMR/AsesmenKeperawatanIGDNonJiwaCtrl"
         },
         {
-            "nameDep": "AsesmenAwalKeperawatanJiwaRawatJalanCtrl",
-            "urlDep": "module/EMR/AsesmenAwalKeperawatanJiwaRawatJalanCtrl"
+            "nameDep": "PengkajianAwalKeperawatanJiwaRawatJalanCtrl",
+            "urlDep": "module/EMR/PengkajianAwalKeperawatanJiwaRawatJalanCtrl"
         },
         {
             "nameDep": "AsesmenAwalKeperawatanNonJiwaRawatJalanCtrl",
