@@ -40,6 +40,26 @@
     ]
   },
   {
+    "name": "PasienTanpaPelayanan",
+    "url": "/UGFzaWVuMjRKYW1UYW5wYVBlbGF5YW5hbg==",
+    "templateurl": "module/Registrasi/PasienTanpaPelayanan.html",
+    "controller": "PasienTanpaPelayananCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
     "name": "UmVnaXN0cmFzaVJ1YW5nYW4=",
     "url": "/UmVnaXN0cmFzaVJ1YW5nYW4=/:noCm",
     "templateurl": "module/Registrasi/RegistrasiRuangan.html",

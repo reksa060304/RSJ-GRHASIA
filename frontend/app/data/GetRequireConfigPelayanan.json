@@ -9,6 +9,10 @@
             "urlDep": "module/Registrasi/RegistrasiPasienLamaCtrl"
         },
         {
+            "nameDep": "PasienTanpaPelayananCtrl",
+            "urlDep": "module/Registrasi/PasienTanpaPelayananCtrl"
+        },
+        {
             "nameDep": "RegistrasiRuanganCtrl",
             "urlDep": "module/Registrasi/RegistrasiRuanganCtrl"
         },
