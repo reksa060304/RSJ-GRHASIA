@@ -222,6 +222,14 @@ define(['initialize'], function (initialize) {
           "width": "120px",
           "template": "<span class='style-center'>#: status #</span>"
         },
+        {
+          "field": "totaldibayar",
+          "title": "Total Tagihan",
+          "width": "120px",
+          "template": "<span class='style-right'>{{formatRupiah('#: totaldibayar #', 'Rp.')}}</span>",
+          aggregates: ["sum"],
+          footerTemplate: "#: data.totaldibayar.sum #"
+        },
         // {
         //   "field": "noverif",
         //   "title": "Verif Piutang",
@@ -478,9 +486,13 @@ define(['initialize'], function (initialize) {
               schema: {
                 model: {
                   fields: {
+                    totaldibayar: { type: "number" },
                   }
                 }
-              }
+              },
+              aggregate: [
+                { field: 'totaldibayar', aggregate: 'sum' },
+              ]
             });
           });
 
