@@ -4289,6 +4289,15 @@ class BendaharaPenerimaanController extends ApiController {
     public function saveSTSKlaim(Request $request) {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
+        $transfer = 0;
+        $admin = 0;
+
+        if(isset($request['biayatransfer'])){
+            $transfer = $request['biayatransfer'];
+        }  
+        if(isset($request['biayaadmin'])){
+            $admin = $request['biayaadmin'];
+        }
 
         DB::beginTransaction();
         try{
@@ -5416,8 +5425,52 @@ class BendaharaPenerimaanController extends ApiController {
         $STSD->kdprofile = $idProfile;
         $STSD->nourut = $newId;
         $STSD->jenisdata = 'konten';
-        $STSD->uraian = 'JUMLAH';
+        $STSD->uraian = 'JUMLAH KLAIM';
         $STSD->kolom2 = $jumlahbpjsrajal + $jumlahbpjsranap + $jumlahjamkesdarajal + $jumlahjamkesdaranap + $jumlahjamkesosrajal + $jumlahjamkesosranap + $jumlahipwlrajal + $jumlahipwlranap + $jumlahbpjsobat + $jumlahjamkesdaobat + $jumlahjamkesosobat + $jumlahipwlobat + $jumlahcovid;
+        $STSD->statusenabled = true;
+        $STSD->objectstsfk = $nosts;
+        $STSD->save();
+
+        if(isset($request['biayatransfer'])){
+            $newId = SuratTandaSetoranDetail::max('nourut') +1 ;
+
+            $STSD = new SuratTandaSetoranDetail();
+            $STSD->norec  = $STSD->generateNewId();
+            $STSD->kdprofile = $idProfile;
+            $STSD->nourut = $newId;
+            $STSD->jenisdata = 'konten';
+            $STSD->uraian = 'BIAYA TRANSFER';
+            $STSD->kolom2 = $request['biayatransfer'];
+            $STSD->statusenabled = true;
+            $STSD->objectstsfk = $nosts;
+            $STSD->save();
+        } 
+
+        
+        if(isset($request['biayaadmin'])){
+            $newId = SuratTandaSetoranDetail::max('nourut') +1 ;
+
+            $STSD = new SuratTandaSetoranDetail();
+            $STSD->norec  = $STSD->generateNewId();
+            $STSD->kdprofile = $idProfile;
+            $STSD->nourut = $newId;
+            $STSD->jenisdata = 'konten';
+            $STSD->uraian = 'BIAYA ADMINISTRASI BANK';
+            $STSD->kolom2 = $request['biayaadmin'];
+            $STSD->statusenabled = true;
+            $STSD->objectstsfk = $nosts;
+            $STSD->save();
+        }
+
+        $newId = SuratTandaSetoranDetail::max('nourut') +1 ;
+
+        $STSD = new SuratTandaSetoranDetail();
+        $STSD->norec  = $STSD->generateNewId();
+        $STSD->kdprofile = $idProfile;
+        $STSD->nourut = $newId;
+        $STSD->jenisdata = 'konten';
+        $STSD->uraian = 'JUMLAH NETTO';
+        $STSD->kolom2 = $jumlahbpjsrajal + $jumlahbpjsranap + $jumlahjamkesdarajal + $jumlahjamkesdaranap + $jumlahjamkesosrajal + $jumlahjamkesosranap + $jumlahipwlrajal + $jumlahipwlranap + $jumlahbpjsobat + $jumlahjamkesdaobat + $jumlahjamkesosobat + $jumlahipwlobat + $jumlahcovid - $transfer - $admin;
         $STSD->statusenabled = true;
         $STSD->objectstsfk = $nosts;
         $STSD->save();

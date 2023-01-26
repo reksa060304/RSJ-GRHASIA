@@ -250,6 +250,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     terbilang: $scope.item.terbilang,
                     totalsetor: $scope.item.totalSetor,
                     uraian: $scope.item.uraian,
+                    biayatransfer: $scope.item.biayatransfer,
+                    biayaadmin: $scope.item.biayaadmin,
                     tglsts: moment($scope.item.tanggalSTS).format('YYYY-MM-DD HH:mm'),
                     setoran: $scope.selectedData2,
                 }
