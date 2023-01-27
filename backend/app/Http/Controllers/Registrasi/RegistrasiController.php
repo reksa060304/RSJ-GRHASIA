@@ -13022,7 +13022,7 @@ GROUP BY y.KET
             left join pegawai_m pg on pg.id = pd.objectpegawaifk
             where pd.norec = '$norec_pd'
         "))->first();
-        return $this->respond($data);
+  
 
         $result = array (
             'kodebooking' => $data->kodebooking,
@@ -13049,6 +13049,7 @@ GROUP BY y.KET
             'kuotanonjkn' => 0,
             'keterangan' => ""
         );
+        return $this->respond($result);
     }
     
 }
