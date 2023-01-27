@@ -167,7 +167,7 @@ define(['initialize'], function (initialize) {
                 },
                 {
                     "id": 2,
-                    "nama": "B. Sebab Dibawa Kerumah Sakit",
+                    "nama": "B. Keluhan Utama / Keluhan Saat Ini ",
                     "detail": [{
                             "id": 120007,
                             "nama": "",
@@ -256,7 +256,23 @@ define(['initialize'], function (initialize) {
                 },
                 {
                     "id": 6,
-                    "nama": "F. Faktor Psikologis (Stresor Psikososial Ekonomi) Yang Mendahului (satu tahun terakhir) : ",
+                    "nama": "F. Riwayat Penggunaan Obat",
+                    "detail": [{
+                        "id": 120296,
+                        "nama": "Obat yang rutin dikonsumsi :",
+                        "type": "textbox12"
+                    },
+                    {
+                        "id": 120297,
+                        "nama": "Obat yang digunakan sekarang :",
+                        "type": "textbox12"
+                    },
+                  
+                ]
+                },
+                {
+                    "id": 7,
+                    "nama": "G. Faktor Psikologis (Stresor Psikososial Ekonomi) Yang Mendahului (satu tahun terakhir) : ",
                     "detail": [{
                         "id": 120021,
                         "nama": "Tidak Ada",
@@ -280,8 +296,8 @@ define(['initialize'], function (initialize) {
                 ]
                 },
                 {
-                    "id": 7,
-                    "nama": "G. Faktor Organis Yang Mendahului / Kapan : ",
+                    "id": 8,
+                    "nama": "H. Faktor Organis Yang Mendahului / Kapan : ",
                     "detail": [{
                         "id": 120025,
                         "nama": "Tidak Ada",
@@ -345,8 +361,8 @@ define(['initialize'], function (initialize) {
                     ]
                 },
                 {
-                    "id": 8,
-                    "nama": "H. Riwayat Penyakit Fisik : ",
+                    "id": 9,
+                    "nama": "I. Riwayat Penyakit Fisik : ",
                     "detail": [{
                         "id": 120036,
                         "nama": "",
@@ -354,8 +370,8 @@ define(['initialize'], function (initialize) {
                     }]
                 },
                 {
-                    "id": 9,
-                    "nama": "I. Riwayat Alergi : ",
+                    "id": 10,
+                    "nama": "J. Riwayat Alergi : ",
                     "detail": [{
                         "id": 120037,
                         "nama": "",
@@ -363,8 +379,8 @@ define(['initialize'], function (initialize) {
                     }]
                 },
                 {
-                    "id": 10,
-                    "nama": "J. Kepribadian Sebelum Sakit : ",
+                    "id": 11,
+                    "nama": "K. Kepribadian Sebelum Sakit : ",
                     "detail": [{
                         "id": 120038,
                         "nama": "",
@@ -372,8 +388,8 @@ define(['initialize'], function (initialize) {
                     }]
                 },
                 {
-                    "id": 11,
-                    "nama": "K. Riwayat Gangguan Jiwa Dalam Keluarga : ",
+                    "id": 12,
+                    "nama": "L. Riwayat Gangguan Jiwa Dalam Keluarga : ",
                     "detail": [{
                         "id": 120039,
                         "nama": "Ada, Hubungan Keluarga",
@@ -398,8 +414,8 @@ define(['initialize'], function (initialize) {
                 ]
                 },
                 {
-                    "id": 12,
-                    "nama": "L. Silsilah Keluarga : ",
+                    "id": 13,
+                    "nama": "M. Silsilah Keluarga : ",
                     "detail": [{
                         "id": 120043,
                         "nama": "",
@@ -630,8 +646,13 @@ define(['initialize'], function (initialize) {
                         {
                             "id": 120084,
                             "nama": "Kegemaran",
-                            "type ": "textbox12"
-                        }
+                            "type": "textbox12"
+                        },
+                        // {
+                        //     "id": 120084,
+                        //     "nama": "Kegemaran",
+                        //     "type ": "textbox6"
+                        // },
                 ]
                 },
                 {
@@ -1162,13 +1183,46 @@ define(['initialize'], function (initialize) {
                     ]
                 },
             ]
+            $scope.listMasalahKeperawatan = [{
+                "id": 1,
+                "nama": "",
+                "detail": [
+                    { "id": 120304, "nama": " ", "type": "textareabold" },
+                    
+                ]
+            },
+        ]
+        $scope.listPenatalaksanaan = [{
+            "id": 1,
+            "nama": "",
+            "detail": [
+                { "id": 120268, "nama": " ", "type": "textareabold" },
+                
+            ]
+        },
+    ]
+    $scope.listAsuhan = [
+        {
+            "id": 3,
+            "nama": "INTEGRASI ASUHAN",
+            "detail6": [
+                { "id": 120283, "nama": "Dokter :", "type": "checkboxtextbox3" },
+                //12084
+                { "id": 120285, "nama": "Perawat :", "type": "checkboxtextbox4" },
+                //120286
+                { "id": 120287, "nama": "PPA lain : ", "type": "checkboxtextbox5" },
+                // 120288
+                { "id": 120289, "nama": "Catatan / Notasi DPJP", "type": "textbox12" },
+                { "id": 120290, "nama": "Paraf DPJP : ", "type": "combobox6right" },
+            ]
+        },
+    ]
 
-            $scope.listPenatalaksanaan = [{
+            $scope.listPenatalaksanaan2 = [{
                     "id": 1,
-                    "nama": "",
+                    "nama": "Prioritas Pelayanan :",
                     "detail": [
-                        { "id": 120268, "nama": "", "type": "textarea12" },
-                        { "id": 120269, "nama": "Prioritas Pelayanan : ", "type": "label0" },
+                        { "id": 120269, "nama": " ", "type": "label0" },
                         { "id": 120270, "nama": "Preventif", "type": "checkbox3" },
                         { "id": 120271, "nama": "Kuratif", "type": "checkbox3" },
                         { "id": 120272, "nama": "Rehabilitatif", "type": "checkbox3" },
@@ -1177,15 +1231,30 @@ define(['initialize'], function (initialize) {
                 },
                 {
                     "id": 2,
-                    "nama": "Rencana Pemulangan : ",
+                    "nama": "Penjelasan hasil pengkajian, pemeriksaan fisik dan penunjang, diagnosis, rencana asuhan dan terapi, dijelaskan kepada : ",
                     "detail": [
-                        { "id": 120274, "nama": "Rencana Pemulangan", "type": "label0" },
+                        { "id": 120298, "nama": "Pasien", "type": "checkbox12" },
+                        { "id": 120299, "nama": "Keluarga pasien,", "type": "checkbox12" },
+                        { "id": 120300, "nama": "Nama : ", "type": "textbox12" },
+                        { "id": 120301, "nama": "Hubungan dengan Pasien :", "type": "textbox12" },
+                        { "id": 120302, "nama": "Lainnya :", "type": "textbox12" },
+
+                        //120282
+
+                    ]
+                },
+                
+                {
+                    "id": 3,
+                    "nama": "RENCANA PEMULANGAN PASIEN : ",
+                    "detail": [
                         { "id": 120275, "nama": "1. Estimasi lama perawatan : ", "type": "textbox6", "satuan": " hari" },
-                        { "id": 120276, "nama": "1. Kebutuhan pendampingan selama dirumah : ", "type": "label0" },
+                        { "id": 120276, "nama": "2. Kebutuhan pendampingan selama dirumah : ", "type": "label0" },
                         { "id": 120277, "nama": "Keluarga", "type": "checkbox12" },
                         { "id": 120278, "nama": "Dokter", "type": "checkbox12" },
-                        { "id": 120279, "nama": "Tenaga Kesehatan lainnya : ", "type": "checkboxtextbox1" },
-                        { "id": 120281, "nama": "lainnya : ", "type": "checkboxtextbox2" },
+                        { "id": 120279, "nama": "Tenaga Kesehatan lainnya : ", "type": "textbox12" },
+                        { "id": 120280, "nama": "Lainnya : ", "type": "textbox12" },
+                       
                         //120282
 
                     ]
@@ -1195,20 +1264,7 @@ define(['initialize'], function (initialize) {
             ]
 
             $scope.listakhir = [
-                {
-                    "id": 3,
-                    "nama": "INTEGRASI ASUHAN",
-                    "detail6": [
-                        { "id": 120283, "nama": "Dokter :", "type": "checkboxtextbox3" },
-                        //12084
-                        { "id": 120285, "nama": "Perawat :", "type": "checkboxtextbox4" },
-                        //120286
-                        { "id": 120287, "nama": "PPA lain : ", "type": "checkboxtextbox5" },
-                        // 120288
-                        { "id": 120289, "nama": "Catatan / Notasi DPJP", "type": "textbox12" },
-                        { "id": 120290, "nama": "Paraf DPJP : ", "type": "combobox6right" },
-                    ]
-                },
+                
                 {
                     "id": 4,
                     "nama": "",

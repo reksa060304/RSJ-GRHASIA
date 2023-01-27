@@ -84,7 +84,7 @@
 <div class="grid_12">
     <div class="grid_12">
         <div class="panel panel-default container_12">
-            <div class="panel-heading" c-translate> Pengkajian Awal Rawat Jalan NAPZA</div>
+            <div class="panel-heading">Pengkajian Medis Psikiatri Rawat Jalan NAPZA 1-3 (BB) 22.01Rev02</div>
         </div>
         <div style="margin-top:10px">
             <div class="grid_12" style="margin-top: 10px;">
@@ -1117,38 +1117,50 @@
                                                             </td>
                                                          
                                                             <td class="grid_6">
+                                                                <div class="grid_12"> <label c-label item="item" class="margin-bottom"  style="margin-top: 5px";><u>INTEGRASI ASUHAN</u></label></div>
                                                             <div class="grid_12">
                                                                 <label c-label item="item" class="margin-bottom">Dokter </label>
-                                                                <div class="grid_12">
-                                                                    <input style="width: 200px;" kendo-combo-box k-ng-model="item.obj[3017578]"
-                                                                        k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
-                                                                        k-auto-bind="false" k-data-source="listPegawai" />
+                                                                <div class="grid_11">
+                                                                    <input c-text-box type="text" filter="" class="k-textbox"
+                                                                        ng-model="item.obj[3017578]" />
+                                                                    <label class="keteranganFieldTambahan"
+                                                                        style="margin-top: 5px;margin-right: 20px"></label>
                                                                 </div>
+                                                            </div>
+                                                            <div class="grid_12">
                                                                 <label c-label item="item" class="margin-bottom">Perawat </label>
-                                                                <div class="grid_12">
-                                                                    <input style="width: 200px;" kendo-combo-box k-ng-model="item.obj[3017580]"
-                                                                        k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
-                                                                        k-auto-bind="false" k-data-source="listPegawai" />
+                                                                <div class="grid_11">
+                                                                    <input c-text-box type="text" filter="" class="k-textbox"
+                                                                        ng-model="item.obj[3017580]" />
+                                                                    <label class="keteranganFieldTambahan"
+                                                                        style="margin-top: 5px;margin-right: 20px"></label>
                                                                 </div>
+                                                            </div>
+                                                            <div class="grid_12">
                                                                 <label c-label item="item" class="margin-bottom">PPA Lain </label>
-                                                                <div class="grid_12">
-                                                                    <input style="width: 200px;" kendo-combo-box k-ng-model="item.obj[3017582]"
-                                                                        k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
-                                                                        k-auto-bind="false" k-data-source="listPegawai" />
+                                                                <div class="grid_11">
+                                                                    <input c-text-box type="text" filter="" class="k-textbox"
+                                                                        ng-model="item.obj[3017582]" />
+                                                                    <label class="keteranganFieldTambahan"
+                                                                        style="margin-top: 5px;margin-right: 20px"></label>
                                                                 </div>
+                                                             </div>
+                                                             <div class="grid_12">
                                                                 <label c-label item="item" class="margin-bottom">Catatan DPJP : </label>
                                                                 <div class="grid_12 margin-top-20 margin-bottom-20">
                                                                     <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3017583]"
                                                                             k-data-source=""
                                                                             style="height: 80px; width: 90%; "/>
                                                                     </div>
+                                                                </div>
 
-
+                                                                <div class="grid_12">
                                                                 <label c-label item="item" class="margin-bottom">Paraf DPJP </label>
                                                                 <div class="grid_12">
                                                                     <input style="width: 200px;" kendo-combo-box k-ng-model="item.obj[3017584]"
                                                                         k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
                                                                         k-auto-bind="false" k-data-source="listPegawai" />
+                                                                </div>
                                                                 </div>
 
                                                             </div>
