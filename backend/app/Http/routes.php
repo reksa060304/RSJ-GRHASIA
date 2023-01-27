@@ -19,7 +19,7 @@
 |
 */
 // api buat my jkn v2
-  Route::get('/', 'ReservasiOnline\MyJKNV2Controller@jalurMasuk');
+  // Route::get('/', 'ReservasiOnline\MyJKNV2Controller@jalurMasuk');
 
 //yang pasti
 

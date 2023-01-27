@@ -107,7 +107,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }
 
             $scope.formatTanggal = function (tanggal) {
-                return moment(tanggal).format('YYYY-MM-DD');
+                return moment(tanggal).format('DD-MM-YYYY');
             }
 
             var HttpClient = function () {
@@ -290,7 +290,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
             $scope.simpan = function () {
                 $scope.selectedData2[0].terbilang =  $scope.item.terbilang;
-                $scope.selectedData2[0].tanggalSTS =  $scope.item.tanggalSTS;
+                $scope.selectedData2[0].tanggalSTS =  moment($scope.item.tanggalSTS).format('YYYY-MM-DD HH:mm:ss');
                 var cektunai = 789;
                 var cektransfer = 456;
                 var ceksudahsts = 1213;
@@ -446,6 +446,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         "field": "tglpenerimaan",
                         "title": "Tanggal Penerimaan",
                         "width": "100px",
+                        "template": "<span class='style-right'>{{formatTanggal('#: tglpenerimaan #', '')}}</span>",
                     },
                     {
                         

@@ -14853,24 +14853,23 @@ $result = array(
         $data= \DB::table('pasiendaftar_t as pd')
             ->join('pasien_m as p', 'p.id', '=', 'pd.nocmfk')
             ->join('ruangan_m as ru', 'ru.id', '=', 'pd.objectruanganlastfk')
+            ->join('antrianpasiendiperiksa_t as apd', 'pd.norec', '=', 'apd.noregistrasifk')
+            ->leftJoin('pelayananpasien_t as pp', 'apd.norec', '=', 'pp.noregistrasifk')
+            ->leftJoin('strukpelayanan_t as sp', 'sp.norec', '=', 'pp.strukfk')
+            ->leftJoin('strukbuktipenerimaan_t as sbm', 'sbm.norec', '=', 'sp.nosbmlastfk')
             ->leftJoin('kelompokpasien_m as kp', 'kp.id', '=', 'pd.objectkelompokpasienlastfk')
             ->leftJoin('departemen_m as dept', 'dept.id', '=', 'ru.objectdepartemenfk')
-            // ->join('antrianpasiendiperiksa_t as apd', 'pd.norec', '=', 'apd.noregistrasifk')
-            // ->join('pelayananpasien_t as pp', 'apd.norec', '=', 'pp.noregistrasifk')
-            // ->leftjoin('strukpelayanan_t as sp', 'sp.norec', '=', 'pp.strukfk')
             // ->leftjoin('strukpelayananpenjamin_t as spp', 'spp.nostrukfk', '=', 'sp.norec')
-            ->select('pd.norec AS norec_pd','pd.tglregistrasi', 'p.nocm', 'pd.noregistrasi', 'ru.namaruangan', 'p.namapasien', 'kp.kelompokpasien',
-                'pd.tglpulang', 'pd.statuspasien','pd.nostruklastfk', 'pd.nosbmlastfk','pd.tglmeninggal','p.nosuratkematian',
-                // 'spp.noverifikasi',
-                'dept.id as deptid',
-                'pd.tglclosing','pd.objectruanganlastfk','pd.objectkelasfk')
+            ->select(DB::raw("distinct coalesce(sbm.totaldibayar,0) totaldibayar, pd.norec as norec_pd, pd.tglregistrasi, p.nocm, pd.noregistrasi, 
+            ru.namaruangan, p.namapasien, kp.kelompokpasien, pd.tglpulang, pd.statuspasien, 
+            pd.nostruklastfk, pd.nosbmlastfk, pd.tglmeninggal, p.nosuratkematian, 
+            dept.id as deptid, pd.tglclosing, pd.objectruanganlastfk, pd.objectkelasfk"))
 //            ->whereNull('pd.nostruklastfk')
 //            ->whereNull('pd.nosbmlastfk')
             ->where('pd.statusenabled',true)
             ->whereNotNull('pd.tglpulang')
             ->whereNotNull('pd.nostruklastfk')
             ->whereNotNull('pd.nosbmlastfk')
-            ->where('kp.id',1)
         ;
 
         $filter = $request->all();
@@ -14985,6 +14984,7 @@ $result = array(
                 'noRegistrasi'  => $pasienD->noregistrasi,
                 'namaRuangan'  => $pasienD->namaruangan,
                 'namaPasien'  => $pasienD->namapasien,
+                'totaldibayar'  => $pasienD->totaldibayar,
                 'jenisAsuransi'  => $pasienD->kelompokpasien,
                 'tanggalPulang' => $pasienD->tglpulang,
                 'tglmeninggal' =>  $pasienD->tglmeninggal,

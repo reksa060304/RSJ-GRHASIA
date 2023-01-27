@@ -1278,8 +1278,27 @@ class RegistrasiController extends ApiController
 
     public function getPasienBatalRegistrasi(Request $request) {
         $kdProfile = $this->getDataKdProfile($request);
-        $data = DB::select(DB::raw("select j.jumlahpelayanan, pd.tglregistrasi, pd.norec, pd.noregistrasi, ru.namaruangan, pr.namaproduk
+        $tglAwal = $request['tglAwal'];
+        $tglAkhir = $request['tglAkhir'];
+
+        $noreg = '';
+        if(isset($request['noReg']) && $request['noReg'] != ''){
+            $noreg = "and pd.noregistrasi = '".$request['noReg']."'";
+        }
+
+        $nocm = '';
+        if(isset($request['noCm']) && $request['noCm'] != ''){
+            $nocm = "and ps.nocm = '".$request['noCm']."'";
+        }
+
+        $namapasien = '';
+        if(isset($request['namaPasien']) && $request['namaPasien'] != ''){
+            $namapasien = "and ps.namapasien = '".$request['namaPasien']."'";
+        }
+
+        $data = DB::select(DB::raw("select ps.namapasien, j.jumlahpelayanan, pd.tglregistrasi, ps.nocm, pd.norec, pd.noregistrasi, ru.namaruangan, pr.namaproduk, pp.harganetto * pp.jumlah as biaya
         from pasiendaftar_t as pd
+		inner join pasien_m as ps on ps.id = pd.nocmfk
         inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
         inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
         inner JOIN ruangan_m AS ru ON ru.id = apd.objectruanganfk
@@ -1296,7 +1315,7 @@ class RegistrasiController extends ApiController
                 where pd.kdprofile = 30
                 and pd.statusenabled = true
                 and ru.objectdepartemenfk = 18
-                and pd.tglregistrasi::date between '2021-12-17' and to_date(TO_CHAR(now(), 'YYYY-MM-DD'), 'YYYY-MM-DD') - INTERVAL '1 DAY'
+                and pd.tglregistrasi::date between '$tglAwal' and to_date('$tglAkhir', 'YYYY-MM-DD') - INTERVAL '1 DAY'
                 group by pd.tglregistrasi, pd.norec, pd.noregistrasi, ru.namaruangan, pr.namaproduk
             ) as i group by tglregistrasi, noregistrasi, norec
         ) as j on j.norec = pd.norec
@@ -1307,8 +1326,12 @@ class RegistrasiController extends ApiController
         and ru.objectdepartemenfk = 18
         and j.jumlahpelayanan = 1
         and pr.id in(5008644, 5008635, 5008645, 5008636)
-        and pd.tglregistrasi::date between '2021-12-17' and to_date(TO_CHAR(now(), 'YYYY-MM-DD'), 'YYYY-MM-DD') - INTERVAL '1 DAY'
-        group by j.jumlahpelayanan, pd.tglregistrasi, pd.norec, pd.noregistrasi, ru.namaruangan, pr.namaproduk")); 
+        and pd.tglregistrasi::date between '$tglAwal' and to_date('$tglAkhir', 'YYYY-MM-DD') - INTERVAL '1 DAY'
+        $noreg
+        $nocm
+        $namapasien
+        group by ps.namapasien, j.jumlahpelayanan, pd.tglregistrasi, ps.nocm, pd.norec, pd.noregistrasi, ru.namaruangan, pr.namaproduk, pp.harganetto * pp.jumlah
+        order by pd.tglregistrasi::date asc")); 
 
         $result = array(
             'data'=> $data,
