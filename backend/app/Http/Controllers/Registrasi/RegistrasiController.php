@@ -624,6 +624,7 @@ class RegistrasiController extends ApiController
         }
         else if ($transStatus == 'true') {
             if (isset($r_NewPD['isjkn']) && $r_NewPD['isjkn'] == true){
+                $saveAdminstrasi = $this->saveAdministrasi($request); 
                 $data = DB::table('antrianpasienregistrasi_t')
                     ->where('kdprofile', $kdProfile)
                     ->where('statusenabled', true)
