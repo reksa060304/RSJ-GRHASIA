@@ -104,7 +104,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 var tanggal = new moment($scope.now).format('YYYY-MM-DD')
                 // var waktu = $scope.waktu.id
                 var json ={
-                    "url": "dashboard/waktutunggu/tanggal/"+tanggal+"/waktu/server",
+                    "url": "dashboard/waktutunggu/tanggal/"+tanggal+"/waktu/rs",
                     "jenis": "antrean",
                     "method": "GET",
                     "data": null
@@ -263,7 +263,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 // var waktu2 = $scope.waktuPerBulan.id
 
                   var json ={
-                    "url": "dashboard/waktutunggu/bulan/"+bulan+"/tahun/"+tahun+"/waktu/server",
+                    "url": "dashboard/waktutunggu/bulan/"+bulan+"/tahun/"+tahun+"/waktu/rs",
                     "jenis": "antrean",
                     "method": "GET",
                     "data": null
