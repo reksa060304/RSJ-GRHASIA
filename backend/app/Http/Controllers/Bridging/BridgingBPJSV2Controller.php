@@ -2623,7 +2623,7 @@ class BridgingBPJSV2Controller extends ApiController
 
             $x = \LZCompressor\LZString::decompressFromEncodedURIComponent($output);
             $result = json_decode($x);
-            if ($metadata->code != 200) {
+            if ($metadata->code != 200 && $metadata->code != 1) {
                 $result = null;
             }     
              $data2 = array(

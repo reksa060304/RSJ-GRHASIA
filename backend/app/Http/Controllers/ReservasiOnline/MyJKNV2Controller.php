@@ -418,6 +418,7 @@ class MyJKNV2Controller extends ApiController
             $result = array(
                 "metadata" => array(
                     "message" => $transMessage,
+                    // "e" => $e->getMessage(). ' '.$e->getLine(),
                     "code" => 201
                 )
             );

@@ -636,6 +636,7 @@ class RegistrasiController extends ApiController
                 $result = array(
                     "metadata" => array(
                         "code" => "200",
+                        'dataAPD' => $dataAPD,
                         "message" => $transMessage)
                 );
                 return $this->setStatusCode(200)->respond($result, $transMessage);
