@@ -10,21 +10,32 @@
         @endif
  
 </head>
-<style type="text/css" media="print">
-        @page {
-            size: landscape;   /* auto is the initial value */
-            margin: 2cm 2cm 2cm 3cm;  /* this affects the margin in the printer settings */
-        }
-</style>
 <style>
+    @page {
+        margin:15mm 15mm 20mm 20mm;
+    }
 
-    .borderss {
-        border-bottom: 1px solid black;
+    @page :first {
+        margin:15mm 15mm 20mm 20mm;
+    }
+
+    @media print {
+    body {
+        margin:0;
+        width:31cm;
+    }
     }
 
     body {
         font-family: Arial;
     }
+
+    table{
+		font-family:'Arial';
+		margin:0;
+		padding:.1cm 0;
+		font-size:11pt ;
+	}	
 
     .tabel tr td{
         border: 1px solid black;
@@ -35,29 +46,18 @@
         border-collapse: collapse;
 
     }
-
-    textarea {
-        border: none;
-        outline: none;
-        resize: none;
-        font-family: Arial;
-    }
-
-    /* table, tr, td{
-        border: 1px solid black;
-    } */
 </style>
-<body style="background-color: #CCCCCC;">
-<div align="center" >
-    <table width="{{$pageWidth}}" bgcolor="#FFFFFF" style="border-left: 3px solid black; border-top: 3px solid black;">
+<body style="width:19.5cm;">
+<div>
+<table cellpadding="0" cellspacing="0" width="100%"  border="0" class="tabel">
         <tbody >
         <tr>
             <td rowspan="2"  style="padding: 5px; width: 50px; border-right: 3px solid black;" align="center">
                     <p align="center">
                             @if(stripos(\Request::url(), 'localhost') !== FALSE)
-                            <img src="{{ asset('img/logo_grhasia.png') }}" style="width: 120px" >
+                            <img src="{{ asset('img/LOGO GRHASIA.png') }}" style="width: 120px" >
                             @else
-                              <img src="{{ asset('service/img/logo_grhasia.png') }}" style="width: 120px" >
+                              <img src="{{ asset('service/img/LOGO GRHASIA.png') }}" style="width: 120px" >
                             @endif
                       
                     </p>
@@ -112,18 +112,18 @@
         </tr>
         </tbody>
     </table>
-        <table class="tabel" width="{{$pageWidth}}" bgcolor="#FFFFFF" style="border: 3px solid black;">
+    <table cellpadding="0" cellspacing="0" width="100%"  border="0" class="tabel">
                 <tr>
-                    <td align="center" width="50" style="padding: 10px; font-weight: bold ">No.</td>
-                    <td align="center" width="50" style="padding: 10px; font-weight: bold ">Uraian Pendapatan</td>
-                    <td align="center" width="50" style="padding: 10px; font-weight: bold ">Jumlah</td>
-                    <td align="center" width="50" style="padding: 10px; font-weight: bold ">Keterangan</td>
+                    <td align="center" width="50" style="padding: 5px; font-weight: bold ">No.</td>
+                    <td align="center" width="50" style="padding: 5px; font-weight: bold ">Uraian Pendapatan</td>
+                    <td align="center" width="50" style="padding: 5px; font-weight: bold ">Jumlah</td>
+                    <td align="center" width="50" style="padding: 5px; font-weight: bold ">Keterangan</td>
                 </tr>
                 <tr>
-                    <td align="center" width="50" style="padding: 10px; font-weight: bold ">1</td>
-                    <td align="center" width="50" style="padding: 10px; font-weight: bold ">2</td>
-                    <td align="center" width="50" style="padding: 10px; font-weight: bold ">3</td>
-                    <td align="center" width="50" style="padding: 10px; font-weight: bold ">4</td>
+                    <td align="center" width="50" style="padding: 5px; font-weight: bold ">1</td>
+                    <td align="center" width="50" style="padding: 5px; font-weight: bold ">2</td>
+                    <td align="center" width="50" style="padding: 5px; font-weight: bold ">3</td>
+                    <td align="center" width="50" style="padding: 5px; font-weight: bold ">4</td>
                 </tr>
                 @php
                     $no = 0;
@@ -136,33 +136,33 @@
                         $no++;
                         $total += $dt->jumlah;
                     @endphp
-                            <td align="center" width="50" style="padding: 10px; font-weight: bold ">{{ $no }}</td>
-                            <td align="left" width="50" style="padding: 10px; font-weight: bold ">{{ $dt->namaexternal }}</td>
-                            <td align="right" width="50" style="padding: 10px; font-weight: bold ">{{ number_format($dt->jumlah,0,',','.') }}</td>
-                            <td align="left" width="50" style="padding: 10px; font-weight: bold ">{{ $dt->keterangan }}</td>
+                            <td align="center" width="50" style="padding: 5px; font-weight: bold ">{{ $no }}</td>
+                            <td align="left" width="50" style="padding: 5px; font-weight: bold ">{{ $dt->namaexternal }}</td>
+                            <td align="right" width="50" style="padding: 5px; font-weight: bold ">{{ number_format($dt->jumlah,0,',','.') }}</td>
+                            <td align="left" width="50" style="padding: 5px; font-weight: bold ">{{ $dt->keterangan }}</td>
                     @else
-                    <td align="center" width="50" style="padding: 10px;"></td>
-                    <td align="left" width="50" style="padding: 10px;">{{ $dt->namaexternal }}</td>
-                    <td align="right" width="50" style="padding: 10px;">{{ number_format($dt->jumlah,0,',','.') }}</td>
-                    <td align="left" width="50" style="padding: 10px;">{{ $dt->keterangan }}</td>
+                    <td align="center" width="50" style="padding: 5px;"></td>
+                    <td align="left" width="50" style="padding: 5px;">{{ $dt->namaexternal }}</td>
+                    <td align="right" width="50" style="padding: 5px;">{{ number_format($dt->jumlah,0,',','.') }}</td>
+                    <td align="left" width="50" style="padding: 5px;">{{ $dt->keterangan }}</td>
                     @endif
                 </tr>
                 @endforeach
                 <tr>
-                    <td align="center" width="50" colspan="2" style="padding: 10px; font-weight: bold ">JUMLAH TOTAL PENDAPATAN</td>
-                    <td align="right" width="50" style="padding: 10px; font-weight: bold ">{{ number_format($total,0,',','.') }}</td>
-                    <td align="left" width="50" style="padding: 10px; font-weight: bold "></td>
+                    <td align="center" width="50" colspan="2" style="padding: 5px; font-weight: bold ">JUMLAH TOTAL PENDAPATAN</td>
+                    <td align="right" width="50" style="padding: 5px; font-weight: bold ">{{ number_format($total,0,',','.') }}</td>
+                    <td align="left" width="50" style="padding: 5px; font-weight: bold "></td>
                 </tr>
         </table>
-        <table width="{{$pageWidth}}" bgcolor="#FFFFFF">
+        <table cellpadding="0" cellspacing="0" width="100%"  border="0">
             <thead>
                 <tr>
-                    <td width="300">
-                    </td>
-                    <td width="300">
+                    <td width="400">
                     </td>
                     <td>
-                        <p align="center" style="margin-right: 30px; margin-top: 50px;">
+                    </td>
+                    <td>
+                        <p align="center" style="margin-top: 50px;">
                             <font style="font-size: 12pt; " color="#000000" face="Arial">
                                     Yogyakarta, {{ $tanggalcetak }}
                             </font>
@@ -170,12 +170,12 @@
                     </td>
                 </tr>
                 <tr>
-                    <td width="300">
-                    </td>
-                    <td width="300">
+                    <td width="400">
                     </td>
                     <td>
-                        <p align="center" style="margin-right: 30px; margin-bottom:50px">
+                    </td>
+                    <td>
+                        <p align="center" style="margin-bottom:50px">
                             <font style="font-size: 12pt; " color="#000000" face="Arial">
                                     Kepala BLUD RS Jiwa GRHASIA
                             </font>
@@ -187,25 +187,25 @@
                 <tr></tr>
                 <tr></tr>
                 <tr>
-                    <td width="300">
-                    </td>
-                    <td width="300">
+                    <td width="400">
                     </td>
                     <td>
-                        <p align="center" style="margin-right: 30px; margin-top: 50px;">
+                    </td>
+                    <td>
+                        <p align="center" style="margin-top: 50px;">
                             <font style="font-size: 12pt; " color="#000000" face="Arial">
-                                    dr. Akhmad Akhadi Syamsudhuha, M.P.H
+                                   <u>dr. Akhmad Akhadi Syamsudhuha, M.P.H</u>
                             </font>
                         </p>
                     </td>
                 </tr>
                 <tr>
-                    <td width="300">
-                    </td>
-                    <td width="300">
+                    <td width="400">
                     </td>
                     <td>
-                        <p align="center" style="margin-right: 30px; ">
+                    </td>
+                    <td>
+                        <p align="center">
                             <font style="font-size: 12pt; " color="#000000" face="Arial">
                             NIP. 19680714 200012 1 002
                             </font>

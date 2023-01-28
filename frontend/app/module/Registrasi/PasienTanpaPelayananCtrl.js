@@ -70,6 +70,9 @@ define(['initialize'], function (initialize) {
                     field: "biaya",
                     title: "Biaya",
                 }, {
+                    field: "kelompokpasien",
+                    title: "Kelompok Pasien",
+                }, {
                     field: "nocm",
                     title: "No RM"
                 }, {
@@ -88,5 +91,9 @@ define(['initialize'], function (initialize) {
             }
         }
     ]);
+
+    $scope.simpan = function () {
+        
+    }
 
 });

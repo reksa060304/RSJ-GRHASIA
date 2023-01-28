@@ -1296,13 +1296,14 @@ class RegistrasiController extends ApiController
             $namapasien = "and ps.namapasien = '".$request['namaPasien']."'";
         }
 
-        $data = DB::select(DB::raw("select ps.namapasien, j.jumlahpelayanan, pd.tglregistrasi, ps.nocm, pd.norec, pd.noregistrasi, ru.namaruangan, pr.namaproduk, pp.harganetto * pp.jumlah as biaya
+        $data = DB::select(DB::raw("select pp.norec norecpp, kp.kelompokpasien, ps.namapasien, j.jumlahpelayanan, pd.tglregistrasi, ps.nocm, pd.norec, pd.noregistrasi, ru.namaruangan, pr.namaproduk, pp.harganetto * pp.jumlah as biaya
         from pasiendaftar_t as pd
 		inner join pasien_m as ps on ps.id = pd.nocmfk
         inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
         inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
         inner JOIN ruangan_m AS ru ON ru.id = apd.objectruanganfk
         inner join produk_m pr on pr.id = pp.produkfk
+        inner join kelompokpasien_m as kp on kp.id = pd.objectkelompokpasienlastfk
         inner join(
             select count(nourut) jumlahpelayanan, tglregistrasi, noregistrasi, norec
             from(
@@ -1330,7 +1331,7 @@ class RegistrasiController extends ApiController
         $noreg
         $nocm
         $namapasien
-        group by ps.namapasien, j.jumlahpelayanan, pd.tglregistrasi, ps.nocm, pd.norec, pd.noregistrasi, ru.namaruangan, pr.namaproduk, pp.harganetto * pp.jumlah
+        group by pp.norec, kp.kelompokpasien, ps.namapasien, j.jumlahpelayanan, pd.tglregistrasi, ps.nocm, pd.norec, pd.noregistrasi, ru.namaruangan, pr.namaproduk, pp.harganetto * pp.jumlah
         order by pd.tglregistrasi::date asc")); 
 
         $result = array(

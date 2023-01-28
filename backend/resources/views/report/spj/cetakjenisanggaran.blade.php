@@ -22,6 +22,7 @@
     @media print {
     body {
         margin:0;
+        width:31cm;
     }
     }
 
@@ -129,7 +130,7 @@
         <table cellpadding="0" cellspacing="0" width="100%"  border="0">
             <thead>
                 <tr>
-                    <td width="500">
+                    <td width="400">
                     </td>
                     <td>
                     </td>
@@ -142,7 +143,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td width="500">
+                    <td width="400">
                     </td>
                     <td>
                     </td>
@@ -159,20 +160,20 @@
                 <tr></tr>
                 <tr></tr>
                 <tr>
-                    <td width="500">
+                    <td width="400">
                     </td>
                     <td>
                     </td>
                     <td>
                         <p align="center" style="margin-top: 50px;">
                             <font style="font-size: 12pt; " color="#000000" face="Arial">
-                                    dr. Akhmad Akhadi Syamsudhuha, M.P.H
+                                   <u>dr. Akhmad Akhadi Syamsudhuha, M.P.H</u>
                             </font>
                         </p>
                     </td>
                 </tr>
                 <tr>
-                    <td width="500">
+                    <td width="400">
                     </td>
                     <td>
                     </td>
