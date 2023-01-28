@@ -4376,7 +4376,7 @@ class BendaharaPenerimaanController extends ApiController {
                 $jumlahbpjsrajal += (int)$request['setoran'][$i]['totalsetujui'];
                 $voljumlahbpjsrajal++;
             }
-            if($request['setoran'][$i]['objectdepartemenfk'] == 16 && $request['setoran'][$i]['isobat'] != true && ($request['setoran'][$i]['idkelompokpasien'] == 1 || $request['setoran'][$i]['idkelompokpasien'] == 2 || $request['setoran'][$i]['idkelompokpasien'] == 21 || $request['setoran'][$i]['idkelompokpasien'] == 22 || $request['setoran'][$i]['idkelompokpasien'] == 24 || $request['setoran'][$i]['idkelompokpasien'] == 25)){
+            if($request['setoran'][$i]['objectdepartemenfk'] == 16 && $request['setoran'][$i]['isobat'] != true && ($request['setoran'][$i]['idkelompokpasien'] == 1 || $request['setoran'][$i]['idkelompokpasien'] == 2 || $request['setoran'][$i]['idkelompokpasien'] == 21 || $request['setoran'][$i]['idkelompokpasien'] == 22 || $request['setoran'][$i]['idkelompokpasien'] == 24 || $request['setoran'][$i]['idkelompokpasien'] == 25 || $request['setoran'][$i]['idkelompokpasien'] == null)){
                 $jumlahbpjsranap += (int)$request['setoran'][$i]['totalsetujui'];
                 $voljumlahbpjsranap++;
             }

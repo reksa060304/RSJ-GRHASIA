@@ -12,17 +12,16 @@
 </head>
 <style>
     @page {
-        margin:15mm 15mm 20mm 20mm;
+        margin:20mm 15mm 15mm 20mm;
     }
 
     @page :first {
-        margin:15mm 15mm 20mm 20mm;
+        margin:20mm 15mm 15mm 20mm;
     }
 
     @media print {
     body {
-        margin:0;
-        width:31cm;
+        margin: 0; 
     }
     }
 
