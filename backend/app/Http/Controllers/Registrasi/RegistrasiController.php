@@ -624,6 +624,7 @@ class RegistrasiController extends ApiController
         }
         else if ($transStatus == 'true') {
             if (isset($r_NewPD['isjkn']) && $r_NewPD['isjkn'] == true){
+                $saveAdminstrasi = $this->saveAdministrasi($request); 
                 $data = DB::table('antrianpasienregistrasi_t')
                     ->where('kdprofile', $kdProfile)
                     ->where('statusenabled', true)
@@ -636,6 +637,7 @@ class RegistrasiController extends ApiController
                 $result = array(
                     "metadata" => array(
                         "code" => "200",
+                        'dataAPD' => $dataAPD,
                         "message" => $transMessage)
                 );
                 return $this->setStatusCode(200)->respond($result, $transMessage);
@@ -13021,7 +13023,7 @@ GROUP BY y.KET
             left join pegawai_m pg on pg.id = pd.objectpegawaifk
             where pd.norec = '$norec_pd'
         "))->first();
-        return $this->respond($data);
+  
 
         $result = array (
             'kodebooking' => $data->kodebooking,
@@ -13048,6 +13050,7 @@ GROUP BY y.KET
             'kuotanonjkn' => 0,
             'keterangan' => ""
         );
+        return $this->respond($result);
     }
     
 }

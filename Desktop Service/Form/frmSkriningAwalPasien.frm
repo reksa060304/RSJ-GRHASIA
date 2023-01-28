@@ -168,7 +168,9 @@ Dim JamRegis As String
 
     strSQL = " SELECT sap.*,pd.noregistrasi,pm.nocm,pm.noidentitas,pm.namapasien, " & _
              " to_char(pm.tgllahir, 'DD/MM/YYYY') AS tgllahir,to_char(pd.tglregistrasi,'DD/MM/YYYY HH24:MI:SS') AS tglregistrasi, " & _
-             " jk.jeniskelamin,alm.alamatlengkap,ru.namaruangan,pg.namalengkap " & _
+             " jk.jeniskelamin,ru.namaruangan,pg.namalengkap, " & _
+             " case when alm.alamatlengkap ilike '%kec.%' or alm.alamatlengkap ilike '%kab.%' or alm.alamatlengkap ilike '%kel.%'  then alm.alamatlengkap " & _
+             "else alm.alamatlengkap ||' - Kel. '|| alm.namadesakelurahan || ' - Kec. '|| alm.namakecamatan || ' - '|| alm.namakotakabupaten end as alamatlengkap" & _
              " FROM pasiendaftar_t AS pd " & _
              " INNER JOIN skriningawalpasien_t AS sap ON sap.norec_pd = pd.norec " & _
              " INNER JOIN pasien_m AS pm ON pm.id = pd.nocmfk " & _
@@ -192,13 +194,13 @@ Dim JamRegis As String
 '        .txtNamaRs.SetText UCase(strNamaLengkapRs)
 '        .txtAlamatRs.SetText stralmtLengkapRs
         If Not RS2.EOF Then
-             .txtNorm.SetText IIf(IsNull(RS2("nocm")), "", RS2("nocm"))
+             .txtNoRm.SetText IIf(IsNull(RS2("nocm")), "", RS2("nocm"))
              .txtNoRM1.SetText IIf(IsNull(RS2("nocm")), "", RS2("nocm"))
              .txtNamaPasien.SetText IIf(IsNull(RS2("namapasien")), "", RS2("namapasien"))
              .txtNamaPasien1.SetText IIf(IsNull(RS2("namapasien")), "", RS2("namapasien"))
              .txtJenisKelamin.SetText IIf(IsNull(RS2("jeniskelamin")), "", RS2("jeniskelamin"))
              .txtJenisKelamin1.SetText IIf(IsNull(RS2("jeniskelamin")), "", RS2("jeniskelamin"))
-             .txtTglLahir.SetText IIf(IsNull(RS2("tgllahir")), "", RS2("tgllahir"))
+             .txttgllahir.SetText IIf(IsNull(RS2("tgllahir")), "", RS2("tgllahir"))
              .txtTglLahir1.SetText IIf(IsNull(RS2("tgllahir")), "", RS2("tgllahir"))
              .txtAlamatPasien.SetText IIf(IsNull(RS2("alamatlengkap")), "", RS2("alamatlengkap"))
              .txtKeteranganKhusus.SetText IIf(IsNull(RS2("keterangankhusus")), "", RS2("keterangankhusus"))
