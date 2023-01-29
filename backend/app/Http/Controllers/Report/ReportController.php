@@ -12351,4 +12351,174 @@ public function suratBuktiPengembalian(Request $request)
         $pageWidth = 1300;
         return view("report.EMR.persetujuan-umum", compact('data','pageWidth'));
     }
+    public function cetakSEPV2(Request $request) {
+        $kdProfile = (int)$request['kdprofile'];
+        $noregistrasi = $request['noregistrasi'];
+        $tglAyeuna = date('Y-m-d H:i:s');
+
+        $profile = collect(DB::select("
+            select * from profile_m where id = $kdProfile limit 1
+        "))->first();
+        $datas = collect(DB::select("
+            SELECT pd.norec AS norec_pd
+            ,pa.nosep
+            ,pa.tanggalsep
+            ,pa.tglcreate
+            ,pa.nokepesertaan || ' ( MR : ' || pi.nocm || ' )' as nokepesertaan
+            ,pa.nokepesertaan as nobpjs
+            ,pi.nocm
+            ,pd.noregistrasi
+            ,apdp.noantrian
+            ,pa.norujukan
+            ,ap.namapeserta
+            ,ap.tgllahir
+            ,jk.jeniskelamin
+            ,pa.ppkrujukan
+            ,rp.kdinternal AS namapolibpjs
+            ,ap.jenispeserta
+            ,ap.kdprovider
+            ,ap.nmprovider
+            ,pa.catatan
+            ,kls.namakelas AS haknamakelas
+	        ,ap.notelpmobile
+	        ,pa.penjaminlaka
+            ,pa.prolanisprb
+            ,pa.namadjpjpmelayanni
+            ,rp.objectdepartemenfk
+            ,CASE WHEN rp.objectdepartemenfk = 18 THEN
+            CASE WHEN pa.polirujukankode IS NULL THEN rp.namaruangan ELSE pa.polirujukannama END
+            ELSE '-' END AS namaruangan
+            ,CASE WHEN rp.objectdepartemenfk = 16 THEN 'R. Inap' ELSE'R. Jalan' END AS jenisrawat
+            ,CASE WHEN pa.statuskunjungan = 1 THEN 'Konsultasi dokter (pertama)'
+            WHEN pa.statuskunjungan = 2 THEN  'Kunjungan rujukan internal'
+            WHEN pa.statuskunjungan = 3 THEN 'Kunjungan Kontrol (ulangan)'
+            ELSE '' END AS kunjungan
+            ,CASE WHEN pa.flagprocedure = '0' THEN 'Prosedur tidak berkelanjutan'
+            WHEN pa.flagprocedure = '1' THEN 'Prosedur dan terapi berkelanjutan'
+            END AS procedures
+            ,CASE WHEN dg.kddiagnosa IS NULL THEN '-' ELSE dg.kddiagnosa END || '-' || ( CASE WHEN dg.namadiagnosa IS NULL THEN '-' ELSE dg.namadiagnosa END ) AS namadiagnosa
+            ,CASE WHEN pa.cob = TRUE THEN 'Ya' ELSE '' END AS cob
+            ,CASE WHEN rp.objectdepartemenfk = 16 THEN true ELSE false END AS isSPRI
+            ,CASE WHEN rp.objectdepartemenfk = 16 THEN kls.namakelas ELSE '-' END AS namakelas
+            ,CASE WHEN pa.penjaminlaka = '1' THEN 'Jasa Raharja PT' 
+            WHEN pa.penjaminlaka = '2' THEN 'BPJS Ketenagakerjaan'
+            WHEN pa.penjaminlaka = '3' THEN 'TASPEN PT'
+            WHEN pa.penjaminlaka = '4' THEN 'ASABRI PT'
+            ELSE '-' END AS penjaminlakalantas,
+            CASE WHEN rp.objectdepartemenfk = 18 THEN pa.polirujukannama ELSE '-' END AS polirujukannama
+            FROM pemakaianasuransi_t AS pa
+            LEFT JOIN asuransipasien_m AS ap ON pa.objectasuransipasienfk = ap.id
+            LEFT JOIN pasiendaftar_t AS pd ON pd.norec = pa.noregistrasifk
+            LEFT JOIN antrianpasiendiperiksa_t AS apdp ON apdp.noregistrasifk = pd.norec
+            LEFT JOIN pasien_m AS pi ON pi.id = pd.nocmfk
+            LEFT JOIN jeniskelamin_m AS jk ON jk.id = pi.objectjeniskelaminfk
+            LEFT JOIN ruangan_m AS rp ON rp.id = pd.objectruanganlastfk
+            LEFT JOIN diagnosa_m AS dg ON pa.diagnosisfk = dg.id
+            LEFT JOIN kelas_m AS kls ON kls.id = ap.objectkelasdijaminfk
+            WHERE pd.noregistrasi = '". $noregistrasi ."'
+            AND pa.nosep IS NOT NULL
+        "))->first();
+        if(empty($datas)) {
+            echo '
+                <script language="javascript">
+                    window.alert("Data tidak ada.");
+                    window.close()
+                </script>
+            ';
+            die;
+        }
+
+        $suratJaminan = collect(DB::select("
+            SELECT
+            CASE WHEN ru.objectdepartemenfk = 18 THEN 'RAWAT JALAN'
+            WHEN ru.objectdepartemenfk = 24 THEN 'GAWAT DARURAT'
+            WHEN ru.objectdepartemenfk = 16 THEN 'RAWAT INAP' 
+            ELSE dp.namadepartemen END AS instalasi
+            ,pm.nocm
+            ,pd.noregistrasi
+            ,ru.namaruangan
+            ,pm.namapasien
+            ,pm.nobpjs || ' ( MR : ' || pm.nocm || ' )' as nobpjs
+            ,pg.namalengkap AS dokter
+            ,to_char(pd.tglregistrasi, 'DD/MM/YYYY' ) AS tglmasuk 
+            FROM pasiendaftar_t AS pd
+            LEFT JOIN ruangan_m AS ru ON ru.id = pd.objectruanganlastfk
+            LEFT JOIN pegawai_m AS pg ON pg.id = pd.objectpegawaifk
+		    INNER JOIN pasien_m AS pm ON pm.id = pd.nocmfk
+            LEFT JOIN alamat_m AS alm ON alm.nocmfk = pm.id
+            LEFT JOIN departemen_m AS dp ON dp.id = ru.objectdepartemenfk
+            LEFT JOIN kelompokpasien_m AS kp ON kp.id = pd.objectkelompokpasienlastfk
+		    LEFT JOIN rekanan_m AS rkn ON rkn.id = pd.objectrekananfk
+            WHERE pd.noregistrasi = '". $noregistrasi ."'
+        "))->first();
+        $spri = collect(DB::select("
+            SELECT to_char(tglrencanakontrol, 'dd Month yyyy') as tglrencana
+            ,to_char(tglterbitkontrol, 'dd Month yyyy') as tglterbit
+            ,* 
+            FROM bpjsrencanakontrol_t 
+            WHERE statusenabled = true and norec_pd = '". $datas->norec_pd ."'
+        "))->first();
+
+        // isi tanda tangan
+        // $tulisanheader = "Dikeluarkan di RSUD H.A SULTHAN DG. RADJA, Kabupaten/Kota Bulukumba /r";
+        $tulisanheader = "Dikeluarkan di RS JIWA GRHASIA. Jalan Kaliurang KM. 17, Pakem Sleman, Daerah Istimewa Yogyakarta, <br/>";
+        $tulisanheader .= "Ditandatangani secara elektronik oleh /r";
+        $tulisanfooter = "ID ". $datas->nobpjs ."/r";
+        $tulisanfooter .= date_format(date_create($datas->tglcreate), 'Y-m-d');
+
+        $ttdpasien = $tulisanheader . $datas->namapeserta . "/r" . $tulisanfooter;
+        $ttddokter = $tulisanheader . $suratJaminan->dokter . "/r" . $tulisanfooter;
+        $ttdrumahsakit = $tulisanheader . "RSUD H.A SULTHAN DG. RADJA /r" . $tulisanfooter;
+        $pageWidth = 819;
+        $dataReport = array(
+            'namaprofile' => $profile->namalengkap,
+            'alamat' => $profile->alamatlengkap,
+            'tglAyeuna' => $tglAyeuna,
+            'data' => $datas,
+            'suratJaminan' => $suratJaminan,
+            'spri' => $spri,
+            'ttdpasien' => $ttdpasien,
+            'ttddokter' => $ttddokter,
+            'ttdrumahsakit' => $ttdrumahsakit,
+        );
+
+        return view('report.pendaftaran.sepV2',
+            compact('dataReport', 'pageWidth','profile'));
+    }
+    public function ttdDigital($noregistrasi, $type)
+    {
+        $data = collect(DB::select("
+            SELECT pd.norec as norec_pd
+            ,pm.namapasien
+            ,pm.nobpjs
+            ,pg.namalengkap AS dokter
+            ,to_char(pd.tglregistrasi, 'YYYY-MM-DD') AS tglmasuk
+            FROM pasiendaftar_t AS pd
+            LEFT JOIN pegawai_m AS pg ON pg.id = pd.objectpegawaifk
+		    INNER JOIN pasien_m AS pm ON pm.id = pd.nocmfk
+            WHERE pd.noregistrasi = '". $noregistrasi ."'
+        "))->first();
+        $spri = collect(DB::select("SELECT * FROM bpjsrencanakontrol_t 
+        WHERE statusenabled = true and norec_pd = '". $data->norec_pd ."'"))->first();
+
+        $tulisanheader = "Dikeluarkan di RS JIWA GRHASIA. Jalan Kaliurang KM. 17, Pakem Sleman, Daerah Istimewa Yogyakarta, <br/>";
+        $tulisanheader .= "Ditandatangani secara elektronik oleh <br/>";
+        $tulisanfooter = "ID ". $data->nobpjs ."<br/>". $data->tglmasuk;
+        $ttddigital = "";
+        switch ($type) {
+            case 'pasien':
+                $ttddigital = $tulisanheader . $data->namapasien . "<br/>" . $tulisanfooter;
+                break;
+            case 'dokter':
+                $ttddigital = $tulisanheader . $data->dokter . "<br/>" . $tulisanfooter;
+                break;
+            case 'rs':
+                $ttddigital = $tulisanheader . "RS JIWA GRHASIA<br/>" . $tulisanfooter;
+                break;
+            case 'spri':
+                $ttddigital = $tulisanheader . $spri->namadokter . "<br/>" . $tulisanfooter;
+                break;
+        }
+        return $ttddigital;
+    }
 }
