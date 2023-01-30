@@ -242,21 +242,40 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                 var total = 0
                 for(var i = 0; i < $scope.selectedData2.length; i++){
-                    total += $scope.selectedData2[i].totalsetujui
+                    total += parseFloat($scope.selectedData2[i].totalsetujui)
                 }
 
-                var objSave =
-                {
-                    terbilang: $scope.item.terbilang,
-                    totalsetor: $scope.item.totalSetor,
-                    uraian: $scope.item.uraian,
-                    biayatransfer: $scope.item.biayatransfer,
-                    biayaadmin: $scope.item.biayaadmin,
-                    tglsts: moment($scope.item.tanggalSTS).format('YYYY-MM-DD HH:mm'),
-                    setoran: $scope.selectedData2,
+                var transfer = 0
+                if($scope.item.biayatransfer != undefined){
+                    transfer += $scope.item.biayatransfer
                 }
 
-                medifirstService.post('bendaharapenerimaan/save-sts-klaim', objSave).then(function (dat) {});
+                var admin = 0
+                if($scope.item.biayaadmin != undefined){
+                    admin += $scope.item.biayaadmin
+                }
+
+                var terbilang = (parseFloat(total) - parseFloat(transfer) - parseFloat(admin))
+
+                medifirstService.get("sysadmin/general/get-terbilang/" + terbilang).then(
+					function (dat) {
+						$scope.item.terbilang = dat.data.terbilang;
+                        var objSave =
+                        {
+                            terbilang: dat.data.terbilang,
+                            totalsetor: $scope.item.totalSetor,
+                            uraian: $scope.item.uraian,
+                            biayatransfer: $scope.item.biayatransfer,
+                            biayaadmin: $scope.item.biayaadmin,
+                            tglsts: moment($scope.item.tanggalSTS).format('YYYY-MM-DD HH:mm'),
+                            setoran: $scope.selectedData2,
+                        }
+
+                        medifirstService.post('bendaharapenerimaan/save-sts-klaim', objSave).then(function (dat) {});
+					}
+                );
+
+                
             }
 
             $scope.$watch('item.kendaraan', function (newValue, oldValue) {

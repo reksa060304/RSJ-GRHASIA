@@ -5,11 +5,21 @@ define(['initialize'], function (initialize) {
             $scope.title = "Pasien 24 Jam Tanpa Pelayanan Selain Registrasi";
             $scope.dataVOloaded = false;
             $scope.isRouteLoading = false;
+            $scope.hidebp = true
             $scope.now = new Date();
             $scope.item = {
                 from: $scope.now,
                 until: $scope.now
             };
+
+            $scope.pegawaiLogin = medifirstService.getPegawaiLogin();
+            if($scope.pegawaiLogin.jenisPegawai.jenispegawai == "Rekam Medis"){
+                $scope.hidebp = false
+            } else{
+                $scope.hidebp = true
+            }
+
+            console.log($scope.pegawaiLogin)
 
             $scope.batalregistrasi = function () {
                 console.log($scope.dataPasienBatal)
