@@ -4325,8 +4325,8 @@ class BendaharaPenerimaanController extends ApiController {
         $STS->statusenabled = true;
         $STS->nosts = $nosts;
         $STS->tglpenerimaan = $request['tglsts'];
-        $STS->totalsetoran = $request['totalsetor'];
-        $STS->totalsetoranpembulatan = $request['totalsetor'];
+        $STS->totalsetoran = $request['totalsetor'] - $transfer - $admin;
+        $STS->totalsetoranpembulatan = $request['totalsetor'] - $transfer - $admin;
         $STS->terbilang = $request['terbilang'];
         $STS->objectpegawaifk = $iduser;
         $STS->keterangan = $request['uraian'];
@@ -4372,14 +4372,19 @@ class BendaharaPenerimaanController extends ApiController {
         $voljumlahcovid = 0;
         //in(1, 2, 21, 22, 24, 25)
         for($i = 0; $i < count($request['setoran']); $i++){
+            if($request['setoran'][$i]['isobat'] != true && ($request['setoran'][$i]['idkelompokpasien'] == null)){
+                $jumlahbpjsranap += (int)$request['setoran'][$i]['totalsetujui'];
+                $voljumlahbpjsranap++;
+            }
             if($request['setoran'][$i]['objectdepartemenfk'] != 16 && $request['setoran'][$i]['isobat'] != true && ($request['setoran'][$i]['idkelompokpasien'] == 1 || $request['setoran'][$i]['idkelompokpasien'] == 2 || $request['setoran'][$i]['idkelompokpasien'] == 21 || $request['setoran'][$i]['idkelompokpasien'] == 22 || $request['setoran'][$i]['idkelompokpasien'] == 24 || $request['setoran'][$i]['idkelompokpasien'] == 25)){
                 $jumlahbpjsrajal += (int)$request['setoran'][$i]['totalsetujui'];
                 $voljumlahbpjsrajal++;
             }
-            if($request['setoran'][$i]['objectdepartemenfk'] == 16 && $request['setoran'][$i]['isobat'] != true && ($request['setoran'][$i]['idkelompokpasien'] == 1 || $request['setoran'][$i]['idkelompokpasien'] == 2 || $request['setoran'][$i]['idkelompokpasien'] == 21 || $request['setoran'][$i]['idkelompokpasien'] == 22 || $request['setoran'][$i]['idkelompokpasien'] == 24 || $request['setoran'][$i]['idkelompokpasien'] == 25 || $request['setoran'][$i]['idkelompokpasien'] == null)){
+            if($request['setoran'][$i]['objectdepartemenfk'] == 16 && $request['setoran'][$i]['isobat'] != true && ($request['setoran'][$i]['idkelompokpasien'] == 1 || $request['setoran'][$i]['idkelompokpasien'] == 2 || $request['setoran'][$i]['idkelompokpasien'] == 21 || $request['setoran'][$i]['idkelompokpasien'] == 22 || $request['setoran'][$i]['idkelompokpasien'] == 24 || $request['setoran'][$i]['idkelompokpasien'] == 25)){
                 $jumlahbpjsranap += (int)$request['setoran'][$i]['totalsetujui'];
                 $voljumlahbpjsranap++;
             }
+            
             if($request['setoran'][$i]['objectdepartemenfk'] != 16 && $request['setoran'][$i]['isobat'] != true && $request['setoran'][$i]['idkelompokpasien'] == 8){
                 $jumlahjamkesdarajal += (int)$request['setoran'][$i]['totalsetujui'];
                 $voljumlahjamkesdarajal++;

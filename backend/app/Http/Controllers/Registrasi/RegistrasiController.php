@@ -1298,7 +1298,9 @@ class RegistrasiController extends ApiController
             $namapasien = "and ps.namapasien = '".$request['namaPasien']."'";
         }
 
-        $data = DB::select(DB::raw("select pp.norec norecpp, kp.kelompokpasien, ps.namapasien, j.jumlahpelayanan, pd.tglregistrasi, ps.nocm, pd.norec, pd.noregistrasi, ru.namaruangan, pr.namaproduk, pp.harganetto * pp.jumlah as biaya
+        $data = DB::select(DB::raw("select apd.norec norecapd, pp.norec norecpp, kp.kelompokpasien, ps.namapasien, pd.tglregistrasi, ps.nocm, pd.norec, pd.noregistrasi, ru.namaruangan, pr.namaproduk, 
+        case when pp.statusenabled = false then 0 else j.jumlahpelayanan end as jumlahpelayanan,
+        case when pp.statusenabled = false then 0 else pp.harganetto * pp.jumlah end as biaya
         from pasiendaftar_t as pd
 		inner join pasien_m as ps on ps.id = pd.nocmfk
         inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
@@ -1316,7 +1318,6 @@ class RegistrasiController extends ApiController
                 inner JOIN ruangan_m AS ru ON ru.id = apd.objectruanganfk
                 inner join produk_m pr on pr.id = pp.produkfk
                 where pd.kdprofile = 30
-                and pd.statusenabled = true
                 and ru.objectdepartemenfk = 18
                 and pd.tglregistrasi::date between '$tglAwal' and to_date('$tglAkhir', 'YYYY-MM-DD') - INTERVAL '1 DAY'
                 group by pd.tglregistrasi, pd.norec, pd.noregistrasi, ru.namaruangan, pr.namaproduk
@@ -1324,8 +1325,6 @@ class RegistrasiController extends ApiController
         ) as j on j.norec = pd.norec
         left join batalregistrasi_t br on br.pasiendaftarfk = pd.norec
         where pd.kdprofile = 30
-        and pd.statusenabled = true
-        and br.norec is null
         and ru.objectdepartemenfk = 18
         and j.jumlahpelayanan = 1
         and pr.id in(5008644, 5008635, 5008645, 5008636)
@@ -1333,7 +1332,7 @@ class RegistrasiController extends ApiController
         $noreg
         $nocm
         $namapasien
-        group by pp.norec, kp.kelompokpasien, ps.namapasien, j.jumlahpelayanan, pd.tglregistrasi, ps.nocm, pd.norec, pd.noregistrasi, ru.namaruangan, pr.namaproduk, pp.harganetto * pp.jumlah
+        group by apd.norec, pp.norec, kp.kelompokpasien, ps.namapasien, j.jumlahpelayanan, pd.tglregistrasi, ps.nocm, pd.norec, pd.noregistrasi, ru.namaruangan, pr.namaproduk, pp.harganetto * pp.jumlah
         order by pd.tglregistrasi::date asc")); 
 
         $result = array(
@@ -1341,6 +1340,51 @@ class RegistrasiController extends ApiController
             'message' => 'larasatizka',
         );
         return $this->respond($result);
+    }
+
+    public function savePasienBatalRegistrasi(Request $request) {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        DB::beginTransaction();
+        try{
+            for($x = 0; $x < count($request['data']); $x++){
+                $PP = PelayananPasien::where('norec', '=', $request['data'][$x]['norecpp'])->first();
+                $PP->statusenabled = false;
+                $PP->save();
+                $PPD = PelayananPasienDetail::where('pelayananpasien', '=', $request['data'][$x]['norecpp'])->first();
+                $PPD->statusenabled = false;
+                $PPD->save();
+                $PD = PasienDaftar::where('norec', '=', $request['data'][$x]['norec'])->first();
+                $PD->statusenabled = false;
+                $PD->save();
+            }
+
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+             $transStatus = 'false';
+        }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan Sukses";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'result' => $PD,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'line'=> $e->getLine(),
+                'message'=> $e->getMessage(),
+                'as' => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
 
     public function getAntrianPasien(Request $request){

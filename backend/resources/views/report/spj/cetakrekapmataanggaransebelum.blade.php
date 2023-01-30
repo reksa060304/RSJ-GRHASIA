@@ -76,7 +76,7 @@
         </tr>
         <tr align="center">
             <td>
-                <b>RS Jiwa GRHASIA<br>TAHUN 2022</b>
+                <b>RS Jiwa GRHASIA<br>TAHUN {{ date('Y') }}</b>
             </td>
         </tr>
         <tr >
@@ -98,8 +98,8 @@
                     <td align="center" colspan="2" style="padding: 10px; font-weight: bold ; ">JUMLAH ANGGARAN</td>
                 </tr>
                 <tr>
-                    <td  style="padding: 10px; font-weight: bold; ">Pelayanan</td>
-                    <td  style="padding: 10px; font-weight: bold; ">APBD</td>
+                    <td  align="center" style="padding: 10px; font-weight: bold; ">Pelayanan</td>
+                    <td  align="center" style="padding: 10px; font-weight: bold; ">APBD</td>
                 </tr>
                 @php
                 $totalpelayanan = 0;

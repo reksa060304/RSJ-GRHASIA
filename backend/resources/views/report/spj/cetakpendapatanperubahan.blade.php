@@ -52,12 +52,12 @@
 <table cellpadding="0" cellspacing="0" width="100%"  border="0" class="tabel">
         <tbody >
         <tr>
-            <td rowspan="2"  style="padding: 5px; width: 50px; border-right: 3px solid black;" align="center">
+            <td rowspan="2"  style="padding: 15px; width: 50px;" align="center">
                     <p align="center">
                             @if(stripos(\Request::url(), 'localhost') !== FALSE)
-                            <img src="{{ asset('img/LOGO GRHASIA.png') }}" style="width: 120px" >
+                            <img src="{{ asset('img/LOGO GRHASIA.png') }}" style="width: 100px" >
                             @else
-                              <img src="{{ asset('service/img/LOGO GRHASIA.png') }}" style="width: 120px" >
+                              <img src="{{ asset('service/img/LOGO GRHASIA.png') }}" style="width: 100px" >
                             @endif
                       
                     </p>
@@ -67,7 +67,7 @@
                     BADAN LAYANAN UMUM DAERAH
                 </b>
             </td>
-            <td rowspan="2"  align="center" style="width: 150px; border-left: 3px solid black; border-right: 3px solid black;">
+            <td rowspan="2"  align="center" style="width: 150px;">
                 <b style="font-size: 25px;">
                     
                 </b><br>
@@ -75,12 +75,12 @@
             </td>
         </tr>
         <tr align="center">
-            <td style="border-top: 3px solid black;">
+            <td>
                 <b>RS Jiwa GRHASIA</b>
             </td>
         </tr>
         <tr >
-        <td colspan="3" style="border-top: 3px solid black; border-right: 3px solid black;">
+        <td colspan="3">
                 <p align="left" style="margin-top: 10px; margin-bottom:10px; margin-left:10px">
                     <font style="font-size: 12pt; " color="#000000" face="Arial">
                             Urusan Pemerintahan &emsp;&emsp; : 
@@ -101,7 +101,7 @@
             </td>
         </tr>
         <tr >
-            <td colspan="3" style="border-top: 3px solid black; border-right: 3px solid black;">
+            <td colspan="3">
                 <p align="center" style="margin-top: 10px; margin-bottom:10px">
                     <font style="font-size: 12pt; " color="#000000" face="Arial">
                             <b>PENDAPATAN OPERASIONAL BLUD TAHUN ANGGARAN</b>

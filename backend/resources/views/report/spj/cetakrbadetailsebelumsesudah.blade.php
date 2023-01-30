@@ -10,23 +10,35 @@
         @endif
  
 </head>
-<style type="text/css" media="print">
-        @page (orientation: landscape){
-            margin: 2cm 2cm 2cm 3cm;  /* this affects the margin in the printer settings */
-        }
-</style>
 <style>
+    @page {
+        margin:15mm 15mm 20mm 20mm;
+    }
 
-    .borderss {
-        border-bottom: 1px solid black;
+    @page :first {
+        margin:15mm 15mm 20mm 20mm;
+    }
+
+    @media print {
+    body {
+        margin:0;
+    }
     }
 
     body {
         font-family: Arial;
     }
 
+    table{
+		font-family:'Arial';
+		margin:0;
+		padding:.1cm 0;
+		font-size:11pt ;
+	}	
+
     .tabel tr td{
         border: 1px solid black;
+        page-break-inside: avoid;
     }
 
     .tabel {
@@ -35,54 +47,71 @@
 
     }
 
+    .tabels tr td{
+        border: 0.5px solid black;
+        page-break-inside: avoid;
+    }
+
+    .tabels {
+        width: 100%;
+        border-collapse: collapse;
+
+    }
+
+    .tabelss {
+        width: 100%;
+        border-collapse: collapse;
+        border: 1px solid black;
+    }
+
+    .tabelss tr td{
+        page-break-inside: avoid;
+    }
+
     textarea {
         border: none;
         outline: none;
         resize: none;
         font-family: Arial;
     }
-
-    /* table, tr, td{
-        border: 1px solid black;
-    } */
 </style>
-<body style="background-color: #CCCCCC;">
-<div align="center" >
-    <table width="{{$pageWidth}}" bgcolor="#FFFFFF" style="border-left: 3px solid black; border-right: 3px solid black; border-top: 3px solid black;">
+<body style="width:27cm;">
+<div>
+<table cellpadding="0" cellspacing="0"  border="0" class="tabel">
         <tbody >
         <tr>
-            <td rowspan="2"  style="padding: 5px; border-right: 3px solid black;" align="center">
+            <td rowspan="2"  style="padding: 10px; width: 50px;" align="center">
                     <p align="center">
                             @if(stripos(\Request::url(), 'localhost') !== FALSE)
-                            <img src="{{ asset('img/logo_grhasia.png') }}" style="width: 100px" >
+                            <img src="{{ asset('img/LOGO GRHASIA.png') }}" style="width: 120px" >
                             @else
-                              <img src="{{ asset('service/img/logo_grhasia.png') }}" style="width: 100px" >
+                              <img src="{{ asset('service/img/LOGO GRHASIA.png') }}" style="width: 120px" >
                             @endif
                       
                     </p>
             </td>
-            <td align="center" style="">
+            <td align="center" style="width: 300px;">
                 <b style="font-size: 25px;">
                     RENCANA BISNIS DAN ANGGARAN<br>
                     BADAN LAYANAN UMUM DAERAH
                 </b>
             </td>
-            <td rowspan="2"  align="center" style="width: 150px; border-left: 3px solid black;">
+            <td rowspan="2"  align="center" style="width: 150px;">
                 <b style="font-size: 25px;">
                     RBA
                 </b><br>
                 @if($sebelum != [])
-                {{substr($sebelum[0]->tahap, 0, -3)}}
+                {{substr($itahap[0]->tahap, 0, -3)}}
                 @endif
             </td>
         </tr>
         <tr align="center">
-            <td style="border-top: 3px solid black;">
-                <b>RS Jiwa GRHASIA<br>TAHUN 2022</b>
+            <td>
+                <b>RS Jiwa GRHASIA<br>TAHUN {{ date('Y') }}</b>
             </td>
         </tr>
         <tr >
-            <td colspan="3" style="border-top: 3px solid black;">
+            <td colspan="3">
                 <p align="center" style="margin-top: 10px; margin-bottom:10px">
                     <font style="font-size: 12pt; " color="#000000" face="Arial">
                             <b>REKAP ANGGARAN TIAP SUB KEGIATAN (JENIS ANGGARAN) <br> TAHUN ANGGARAN {{ date('Y') }}</b>
@@ -91,89 +120,130 @@
                 </p>
             </td>
         </tr>
-        <tr >
-            <td colspan="3" style="border-top: 3px solid black;">
-                <table width="{{$pageWidth}}" bgcolor="#FFFFFF" style="border:none">
-                    <tr>
-                        <td align="left" width="150">
-                        <font style="font-size: 12pt; " color="#000000" face="Arial">
-                            Program
-                        </font>
-                        </td>
-                        <td align="left" width="50" colspan="2">
-                        : {{ $data[0]->kodeprogram.' - '.$data[0]->keteranganprogram }}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td align="left" width="150">
-                        <font style="font-size: 12pt; " color="#000000" face="Arial">
-                        Kegiatan
-                        </font>
-                        </td>
-                        <td align="left" width="50" colspan="2">
-                        : {{ $data[0]->kodekegiatan.' - '.$data[0]->keterangankegiatan }}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td align="left" width="150">
-                        <font style="font-size: 12pt; " color="#000000" face="Arial">
-                        Sub Kegiatan
-                        </font>
-                        </td>
-                        <td align="left" width="50" colspan="2">
-                        : {{ $data[0]->kodesubkegiatan.' - '.$data[0]->keterangansubkegiatan }}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td align="left" width="150">
-                        <font style="font-size: 12pt; " color="#000000" face="Arial">
-                        Sub Sub Kegiatan
-                        </font>
-                        </td>
-                        <td align="left" width="50" colspan="2">
-                        : {{ $data[0]->kodesubsubkegiatan.' - '.$data[0]->keterangansubsubkegiatan }}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td align="left" width="150">
-                        <font style="font-size: 12pt; " color="#000000" face="Arial">
-                        Waktu Pelaksanaan
-                        </font>
-                        </td>
-                        <td align="left" width="50" colspan="2">
-                        : {{ $data[0]->tahun }}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td align="left" width="150">
-                        <font style="font-size: 12pt; " color="#000000" face="Arial">
-                        Lokasi Kegiatan
-                        </font>
-                        </td>
-                        <td align="left" width="50" colspan="2">
-                        : RS Jiwa GRHASIA DINKES DIY
-                        </td>
-                    </tr>
-                </table>
+        </tbody>
+    </table>
+    <table cellpadding="0" cellspacing="0" width="100%"  border="0" class="tabelss">
+    <tbody>
+        <tr>
+            <td colspan="3" style="padding-top: 15px;">
+                <tr style="margin-top: -10px;">
+                    <td>
+                        <p align="left" style="margin-left:10px">
+                                <font style="font-size: 12pt; " color="#000000" face="Arial">
+                                        Program 
+                                </font>
+                        </p>
+                    </td>
+                    <td>
+                        <p align="left" style="margin-left:10px">
+                                <font style="font-size: 12pt; " color="#000000" face="Arial">
+                                        : {{ $data[0]->kodeprogram.' - '.$data[0]->keteranganprogram }}
+                                </font>
+                        </p>
+                    </td>
+                </tr>
+                <tr style="margin-top: -10px;">
+                    <td>
+                        <p align="left" style="margin-left:10px">
+                                <font style="font-size: 12pt; " color="#000000" face="Arial">
+                                        Kegiatan 
+                                </font>
+                        </p>
+                    </td>
+                    <td>
+                        <p align="left" style="margin-left:10px">
+                                <font style="font-size: 12pt; " color="#000000" face="Arial">
+                                        : {{ $data[0]->kodekegiatan.' - '.$data[0]->keterangankegiatan }}
+                                </font>
+                        </p>
+                    </td>
+                </tr>
+                <tr style="margin-top: -10px;">
+                    <td>
+                        <p align="left" style="margin-left:10px">
+                                <font style="font-size: 12pt; " color="#000000" face="Arial">
+                                       Sub Kegiatan 
+                                </font>
+                        </p>
+                    </td>
+                    <td>
+                        <p align="left" style="margin-left:10px">
+                                <font style="font-size: 12pt; " color="#000000" face="Arial">
+                                        : {{ $data[0]->kodesubkegiatan.' - '.$data[0]->keterangansubkegiatan }}
+                                </font>
+                        </p>
+                    </td>
+                </tr>
+                <tr style="margin-top: -10px;">
+                    <td>
+                        <p align="left" style="margin-left:10px">
+                                <font style="font-size: 12pt; " color="#000000" face="Arial">
+                                       Sub Sub Kegiatan 
+                                </font>
+                        </p>
+                    </td>
+                    <td>
+                        <p align="left" style="margin-left:10px">
+                                <font style="font-size: 12pt; " color="#000000" face="Arial">
+                                        : {{ $data[0]->kodesubsubkegiatan.' - '.$data[0]->keterangansubsubkegiatan }}
+                                </font>
+                        </p>
+                    </td>
+                </tr>
+                <tr style="margin-top: -10px;">
+                    <td>
+                        <p align="left" style="margin-left:10px">
+                                <font style="font-size: 12pt; " color="#000000" face="Arial">
+                                       Waktu Pelaksanaan
+                                </font>
+                        </p>
+                    </td>
+                    <td>
+                        <p align="left" style="margin-left:10px">
+                                <font style="font-size: 12pt; " color="#000000" face="Arial">
+                                        : {{ $data[0]->tahun }}
+                                </font>
+                        </p>
+                    </td>
+                </tr>
+                <tr style="margin-top: -10px;">
+                    <td>
+                        <p align="left" style="margin-left:10px">
+                                <font style="font-size: 12pt; " color="#000000" face="Arial">
+                                Lokasi Kegiatan
+                                </font>
+                        </p>
+                    </td>
+                    <td>
+                        <p align="left" style="margin-left:10px">
+                                <font style="font-size: 12pt; " color="#000000" face="Arial">
+                                : RS Jiwa GRHASIA DINKES DIY
+                                </font>
+                        </p>
+                    </td>
+                </tr>
+                <tr style="margin-top: -10px;">
+                    <td height="15"></td>
+                </tr>
             </td>
         </tr>
-        <tr >
-            <td colspan="3" style="border-top: 3px solid black;">
-                <table class="tabel" width="{{$pageWidth}}" bgcolor="#FFFFFF" style="border: 1px solid black; margin-top:10px; margin-bottom:10px;">
+        </tbody>
+        </table>
+        <table cellpadding="0" cellspacing="0" width="100%"  border="0" class="tabels">
                     <tr>
-                        <td align="center" rowspan="2"  style="padding: 5px; font-weight: bold ">Indikator</td>
-                        <td align="center" colspan="2" style="padding: 5px; font-weight: bold ">SEBELUM PERUBAHAN</td>
-                        <td align="center" colspan="2" style="padding: 5px; font-weight: bold ">SESUDAH PERUBAHAN</td>
+                        <td align="center" rowspan="2"  style="padding: 2px; font-weight: bold ">Indikator</td>
+                        <td align="center" colspan="2" style="padding: 2px; font-weight: bold ">SEBELUM PERUBAHAN</td>
+                        <td align="center" colspan="2" style="padding: 2px; font-weight: bold ">SESUDAH PERUBAHAN</td>
                     </tr>
                     <tr>
-                        <td align="center" style="padding: 5px; font-weight: bold ">Tolok Ukur</td>
-                        <td align="center" style="padding: 5px; font-weight: bold ">Target Kinerja</td>
-                        <td align="center" style="padding: 5px; font-weight: bold ">Tolok Ukur</td>
-                        <td align="center" style="padding: 5px; font-weight: bold ">Target Kinerja</td>
+                        <td align="center" style="padding: 2px; font-weight: bold ">Tolok Ukur</td>
+                        <td align="center" style="padding: 2px; font-weight: bold ">Target Kinerja</td>
+                        <td align="center" style="padding: 2px; font-weight: bold ">Tolok Ukur</td>
+                        <td align="center" style="padding: 2px; font-weight: bold ">Target Kinerja</td>
                     </tr>
                     <tr>
-                        <td align="left" style="padding: 5px;">Masukan</td>
-                        <td align="left" style="padding: 5px;">Dana</td>
+                        <td align="left" style="padding: 2px;">Masukan</td>
+                        <td align="left" style="padding: 2px;">Dana</td>
                         @php
                             $jumlahtotal = 0
                         @endphp
@@ -185,38 +255,34 @@
                             @endphp
                             @endif
                         @endforeach
-                        <td align="left" style="padding: 5px;">{{ "Rp " . number_format($jumlahtotal,2,',','.') }}</td>
-                        <td align="left" style="padding: 5px;">Dana</td>
-                        <td align="left" style="padding: 5px;">{{ "Rp " . number_format($jumlahtotal,2,',','.') }}</td>
+                        <td align="left" style="padding: 2px;">{{ "Rp " . number_format($jumlahtotal,2,',','.') }}</td>
+                        <td align="left" style="padding: 2px;">Dana</td>
+                        <td align="left" style="padding: 2px;">{{ "Rp " . number_format($jumlahtotal,2,',','.') }}</td>
                     </tr>
                     <tr>
-                        <td align="left" style="padding: 5px;">Keluaran</td>
-                        <td align="left" style="padding: 5px;">
+                        <td align="left" style="padding: 2px;">Keluaran</td>
+                        <td align="left" style="padding: 2px;">
                             <textarea name="" id="" cols="30" rows="12">{{ $data[0]->indikatorkeluaran }}</textarea>
                         </td>
-                        <td align="left" style="padding: 5px;">
+                        <td align="left" style="padding: 2px;">
                             <textarea name="" id="" cols="30" rows="12">{{ $data[0]->targetkeluaran }}</textarea>
                         </td>
-                        <td align="left" style="padding: 5px;">
+                        <td align="left" style="padding: 2px;">
                             <textarea name="" id="" cols="30" rows="12">{{ $data[0]->indikatorkeluaran }}</textarea>
                         </td>
-                        <td align="left" style="padding: 5px;">
+                        <td align="left" style="padding: 2px;">
                             <textarea name="" id="" cols="30" rows="12">{{ $data[0]->targetkeluaran }}</textarea>
                         </td>
                     </tr>
                     <tr>
-                        <td align="left" style="padding: 5px;">Hasil</td>
-                        <td align="left" style="padding: 5px;">{{ $data[0]->indikatorhasil }}</td>
-                        <td align="left" style="padding: 5px;">{{ $data[0]->targethasil }}</td>
-                        <td align="left" style="padding: 5px;">{{ $data[0]->indikatorhasil }}</td>
-                        <td align="left" style="padding: 5px;">{{ $data[0]->targethasil }}</td>
+                        <td align="left" style="padding: 2px;">Hasil</td>
+                        <td align="left" style="padding: 2px;">{{ $data[0]->indikatorhasil }}</td>
+                        <td align="left" style="padding: 2px;">{{ $data[0]->targethasil }}</td>
+                        <td align="left" style="padding: 2px;">{{ $data[0]->indikatorhasil }}</td>
+                        <td align="left" style="padding: 2px;">{{ $data[0]->targethasil }}</td>
                     </tr>
-                </table>
-            </td>
-        </tr>
-        </tbody>
     </table>
-        <table class="tabel" width="{{$pageWidth}}" bgcolor="#FFFFFF" style="border: 3px solid black;">
+    <table cellpadding="0" cellspacing="0"  border="0" class="tabel">
                 <tr>
                     <td align="center" width="50"  colspan="5" style="padding: 5px; font-weight: bold ">ANGGRAN BELANJA</td>
                     <td align="center" width="50"  colspan="5" style="padding: 5px; font-weight: bold ">SEBELUM PERUBAHAN</td>
@@ -439,15 +505,15 @@
                 </tr>
                 @endif
         </table>
-        <table width="{{$pageWidth}}" bgcolor="#FFFFFF">
+        <table cellpadding="0" cellspacing="0" width="100%"  border="0">
             <thead>
                 <tr>
-                    <td width="300">
-                    </td>
-                    <td width="300">
+                    <td width="700">
                     </td>
                     <td>
-                        <p align="center" style="margin-right: 30px; margin-top: 50px;">
+                    </td>
+                    <td>
+                        <p align="center" style="margin-top: 50px;">
                             <font style="font-size: 12pt; " color="#000000" face="Arial">
                                     Yogyakarta, {{ $tanggalcetak }}
                             </font>
@@ -455,12 +521,12 @@
                     </td>
                 </tr>
                 <tr>
-                    <td width="300">
-                    </td>
-                    <td width="300">
+                    <td width="700">
                     </td>
                     <td>
-                        <p align="center" style="margin-right: 30px; margin-bottom:50px">
+                    </td>
+                    <td>
+                        <p align="center" style="margin-bottom:50px">
                             <font style="font-size: 12pt; " color="#000000" face="Arial">
                                     Kepala BLUD RS Jiwa GRHASIA
                             </font>
@@ -472,25 +538,25 @@
                 <tr></tr>
                 <tr></tr>
                 <tr>
-                    <td width="300">
-                    </td>
-                    <td width="300">
+                    <td width="700">
                     </td>
                     <td>
-                        <p align="center" style="margin-right: 30px; margin-top: 50px;">
+                    </td>
+                    <td>
+                        <p align="center" style="margin-top: 50px;">
                             <font style="font-size: 12pt; " color="#000000" face="Arial">
-                                    dr. Akhmad Akhadi Syamsudhuha, M.P.H
+                                   <u>dr. Akhmad Akhadi Syamsudhuha, M.P.H</u>
                             </font>
                         </p>
                     </td>
                 </tr>
                 <tr>
-                    <td width="300">
-                    </td>
-                    <td width="300">
+                    <td width="700">
                     </td>
                     <td>
-                        <p align="center" style="margin-right: 30px; ">
+                    </td>
+                    <td>
+                        <p align="center">
                             <font style="font-size: 12pt; " color="#000000" face="Arial">
                             NIP. 19680714 200012 1 002
                             </font>

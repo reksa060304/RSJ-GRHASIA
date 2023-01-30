@@ -77,7 +77,7 @@
         </tr>
         <tr align="center">
             <td>
-                <b>RS Jiwa GRHASIA<br>TAHUN 2022</b>
+                <b>RS Jiwa GRHASIA<br>TAHUN {{ date('Y') }}</b>
             </td>
         </tr>
         <tr >
@@ -94,11 +94,11 @@
     </table>
     <table cellpadding="0" cellspacing="0" width="100%"  border="0" class="tabel">
                 <tr>
-                    <td width="10" style="padding: 10px; font-weight: bold ">NO</td>
-                    <td width="150" style="padding: 10px; font-weight: bold; ">NAMA SUB KEGIATAN</td>
-                    <td width="50" style="padding: 10px; font-weight: bold;  ">JASA LAYANAN</td>
-                    <td width="50" style="padding: 10px; font-weight: bold;  ">APBD</td>
-                    <td width="50" style="padding: 10px; font-weight: bold;  ">SUB TOTAL</td>
+                    <td align="center" width="10" style="padding: 10px; font-weight: bold ">NO</td>
+                    <td align="center" width="150" style="padding: 10px; font-weight: bold; ">NAMA SUB KEGIATAN</td>
+                    <td align="center" width="50" style="padding: 10px; font-weight: bold;  ">JASA LAYANAN</td>
+                    <td align="center" width="50" style="padding: 10px; font-weight: bold;  ">APBD</td>
+                    <td align="center" width="50" style="padding: 10px; font-weight: bold;  ">SUB TOTAL</td>
                 </tr>
                 @foreach ($data as $dt)
                 <tr>
@@ -112,9 +112,9 @@
                     @elseif($dt->div == 3)
                     <td width="150" style="padding: 10px;">{{$dt->kegiatan}}</td>
                     @endif
-                    <td width="50" style="padding: 10px; ">{{ number_format($dt->jasalayanan,0,',','.') }}</td>
-                    <td width="50" style="padding: 10px; ">{{ number_format($dt->apbd,0,',','.') }}</td>
-                    <td width="50" style="padding: 10px; ">{{ number_format($dt->total,0,',','.') }}</td>
+                    <td align="right" width="50" style="padding: 10px; ">{{ number_format($dt->jasalayanan,0,',','.') }}</td>
+                    <td align="right" width="50" style="padding: 10px; ">{{ number_format($dt->apbd,0,',','.') }}</td>
+                    <td align="right" width="50" style="padding: 10px; ">{{ number_format($dt->total,0,',','.') }}</td>
                 </tr>
                 @endforeach
                 {{-- <tr>

@@ -77,7 +77,7 @@
         </tr>
         <tr align="center">
             <td>
-                <b>RS Jiwa GRHASIA<br>TAHUN 2022</b>
+                <b>RS Jiwa GRHASIA<br>TAHUN {{ date('Y') }}</b>
             </td>
         </tr>
         <tr >

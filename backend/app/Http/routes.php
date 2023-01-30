@@ -1913,6 +1913,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('registrasi/get-pasien', 'Registrasi\RegistrasiController@getDaftarPasien');
             Route::get('registrasi/get-tglpulang-pasien', 'Registrasi\RegistrasiController@cekTglPulangPasien');
             Route::get('registrasi/get-pasien-batal-registrasi', 'Registrasi\RegistrasiController@getPasienBatalRegistrasi');
+            Route::post('registrasi/save-pasien-batal-registrasi', 'Registrasi\RegistrasiController@savePasienBatalRegistrasi');
             Route::get('registrasi/get-apd', 'Registrasi\RegistrasiController@getAntrianPasien');
             Route::get('registrasi/get-history-pemakaianasuransi2', 'Registrasi\RegistrasiController@getHistoryPemakaianAsuransi2');
             Route::get('registrasi/cek-pasien-daftar-duakali', 'Registrasi\RegistrasiController@cekPasienDaftarDuaKali');

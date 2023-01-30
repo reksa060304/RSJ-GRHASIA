@@ -20,14 +20,8 @@
     }
 
     @media print {
-    @page { 
-        size: landscape;
-    }
     body {
         margin:0;
-        width: 210mm;
-        height: 297mm;
-        min-height: 297mm;
     }
     }
 
@@ -45,20 +39,49 @@
     .tabel tr td{
         border: 1px solid black;
         page-break-inside: avoid;
+        word-wrap: break-word;
     }
 
     .tabel {
         width: 100%;
         border-collapse: collapse;
+        table-layout:fixed;
+    }
+
+    .tabels tr td{
+        border: 0.5px solid black;
+        page-break-inside: avoid;
+    }
+
+    .tabels {
+        width: 100%;
+        border-collapse: collapse;
 
     }
+
+    .tabelss {
+        width: 100%;
+        border-collapse: collapse;
+        border: 1px solid black;
+    }
+
+    .tabelss tr td{
+        page-break-inside: avoid;
+    }
+
+    textarea {
+        border: none;
+        outline: none;
+        resize: none;
+        font-family: Arial;
+    }
 </style>
-<body style="width:35cm;">
+<body style="width:27cm;">
 <div>
 <table cellpadding="0" cellspacing="0" width="100%"  border="0" class="tabel">
         <tbody >
         <tr>
-            <td rowspan="2" align="center" style="padding: 5px;">
+            <td rowspan="2" align="center" style="padding: 15px;">
                     <p>
                             @if(stripos(\Request::url(), 'localhost') !== FALSE)
                             <img src="{{ asset('img/LOGO GRHASIA.png') }}" style="width: 100px" >
@@ -68,7 +91,7 @@
                       
                     </p>
             </td>
-            <td align="center" style="padding: 3px;">
+            <td align="center" style="padding: 3px;" width="700">
                 <b style="font-size: 23px;">
                     RENCANA BISNIS DAN ANGGARAN<br>
                     BADAN LAYANAN UMUM DAERAH
@@ -100,20 +123,20 @@
     </table>
     <table cellpadding="0" cellspacing="0" width="100%"  border="0" class="tabel">
                 <tr>
-                    <td align="center"width="20" rowspan="2" colspan="2" style="padding: 10px; font-weight: bold ">NO</td>
-                    <td width="200" rowspan="2" style="padding: 10px; font-weight: bold; ">ALOKASI BIAYA/PENGELUARAN</td>
-                    <td width="50" colspan="2" style="padding: 10px; text-align: center; font-weight: bold;  ">ANGGARAN SEBELUM PERUBAHAN</td>
-                    <td width="50" colspan="2" style="padding: 10px; text-align: center; font-weight: bold;">SETELAH PERUBAHAN</td>
-                    <td width="50" colspan="2" style="padding: 10px; text-align: center; font-weight: bold;">JUMLAH BERTAMBAH / BERKURANG</td>
+                    <td align="center" width="5" rowspan="2" colspan="2" style="padding: 10px; font-weight: bold ">NO</td>
+                    <td align="center" width="50" rowspan="2" style="padding: 10px; font-weight: bold; ">ALOKASI BIAYA/PENGELUARAN</td>
+                    <td align="center" width="50" colspan="2" style="padding: 10px; text-align: center; font-weight: bold;  ">ANGGARAN SEBELUM PERUBAHAN</td>
+                    <td align="center" width="50" colspan="2" style="padding: 10px; text-align: center; font-weight: bold;">SETELAH PERUBAHAN</td>
+                    <td align="center" width="50" colspan="2" style="padding: 10px; text-align: center; font-weight: bold;">JUMLAH BERTAMBAH / BERKURANG</td>
                     {{-- <td width="20" style="padding: 10px; font-weight: bold ; ">BERTAMBAH / (BERKURANG)</td> --}}
                 </tr>
                 <tr>
-                    <td width="200" style="padding: 10px; font-weight: bold; ">APBD</td>
-                    <td width="200" style="padding: 10px; font-weight: bold; ">Jasa Layanan</td>
-                    <td width="200" style="padding: 10px; font-weight: bold; ">APBD</td>
-                    <td width="200" style="padding: 10px; font-weight: bold; ">Jasa Layanan</td>
-                    <td width="200" style="padding: 10px; font-weight: bold; ">APBD</td>
-                    <td width="200" style="padding: 10px; font-weight: bold; ">Jasa Layanan</td>
+                    <td align="center" width="50" style="padding: 10px; font-weight: bold; ">APBD</td>
+                    <td align="center" width="50" style="padding: 10px; font-weight: bold; ">Jasa Layanan</td>
+                    <td align="center" width="50" style="padding: 10px; font-weight: bold; ">APBD</td>
+                    <td align="center" width="50" style="padding: 10px; font-weight: bold; ">Jasa Layanan</td>
+                    <td align="center" width="50" style="padding: 10px; font-weight: bold; ">APBD</td>
+                    <td align="center" width="50" style="padding: 10px; font-weight: bold; ">Jasa Layanan</td>
                 </tr>
                 @php
                 $totaljasalayanansebelum = 0;
@@ -124,9 +147,9 @@
                 $totalapbdberkurang = 0;
                 @endphp
                 <tr>
-                    <td width="10" style="padding: 10px; font-weight: bold;  ">I</td>
-                    <td width="10" style="padding: 10px; font-weight: bold;  "></td>
-                    <td width="200" style="padding: 10px; font-weight: bold;">BIAYA OPERASIONAL</td>
+                    <td width="5" style="padding: 10px; font-weight: bold;  ">I</td>
+                    <td width="5" style="padding: 10px; font-weight: bold;  "></td>
+                    <td width="20" style="padding: 10px; font-weight: bold;">BIAYA OPERASIONAL</td>
                     <td width="50" style="padding: 10px; text-align: left; font-weight: bold; text-align: right;">{{ number_format($jumlah[0]->subtotalapbd,0,',','.') }}</td>
                     <td width="50" style="padding: 10px; text-align: left; font-weight: bold; text-align: right;">{{ number_format($jumlah[0]->subtotaljasalayanan,0,',','.') }}</td>
                     <td width="50" style="padding: 10px; text-align: left; font-weight: bold; text-align: right;">{{ number_format($jumlah[0]->subtotalapbdsetelah,0,',','.') }}</td>
@@ -186,12 +209,12 @@
                     <td width="10" style="padding: 10px;  "></td>
                     @endif                    
                     @if(strlen($sb->kodemataanggaran) > 3)
-                    <td width="200" style="padding: 10px;">{{substr($sb->kodemataanggaran, -1)}}. {{$sb->namamataanggaran}}</td>
+                    <td width="50" style="padding: 10px;">{{substr($sb->kodemataanggaran, -1)}}. {{$sb->namamataanggaran}}</td>
                     @else
                         @if($sb->kodemataanggaran == 'II' || $sb->kodemataanggaran == 'III')
-                            <td width="200" style="padding: 10px; font-weight: bold">{{$sb->namamataanggaran}}</td>
+                            <td width="20" style="padding: 10px; font-weight: bold">{{$sb->namamataanggaran}}</td>
                         @else 
-                            <td width="200" style="padding: 10px;">{{$sb->namamataanggaran}}</td>
+                            <td width="20" style="padding: 10px;">{{$sb->namamataanggaran}}</td>
                         @endif
                     @endif
                     @if($sb->kodemataanggaran == 'II' || $sb->kodemataanggaran == 'III')
@@ -288,7 +311,7 @@
         <table cellpadding="0" cellspacing="0" width="100%"  border="0">
             <thead>
                 <tr>
-                    <td width="1000">
+                    <td width="700">
                     </td>
                     <td>
                     </td>
@@ -301,7 +324,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td width="1000">
+                    <td width="700">
                     </td>
                     <td>
                     </td>
@@ -318,7 +341,7 @@
                 <tr></tr>
                 <tr></tr>
                 <tr>
-                    <td width="1000">
+                    <td width="700">
                     </td>
                     <td>
                     </td>
@@ -331,7 +354,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td width="1000">
+                    <td width="700">
                     </td>
                     <td>
                     </td>
