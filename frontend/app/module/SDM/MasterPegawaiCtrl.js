@@ -3229,7 +3229,7 @@ $scope.formatRupiah = function (value, currency) {
 					"itemGajiBerkala.tanggaltmt|k-ng-model|Tanggal TMT",
 					"itemGajiBerkala.noskcetak|ng-model|No SK Lama",
 					"itemGajiBerkala.jenissk|ng-model|Jenis SK",
-					"itemGajiBerkala.masakerjagolongan|ng-model|Masa Kerja Golongan",
+					// "itemGajiBerkala.masakerjagolongan|ng-model|Masa Kerja Golongan",
 					// "itemPandG.jabatanTtd|k-ng-model|Penandatangan Jabatan",
 				];
 
@@ -3260,7 +3260,7 @@ $scope.formatRupiah = function (value, currency) {
 								data.objectpegawaifk = $scope.item.idPegawai
 								data.noskcetak= $scope.itemGajiBerkala.noskcetak,
 								data.jenissk= $scope.itemGajiBerkala.jenissk
-								data.masakerjagolongan= $scope.itemGajiBerkala.masakerjagolongan
+								data.masakerjagolongan = $scope.itemGajiBerkala.tahunmasakerjagolongan + " tahun " + $scope.itemGajiBerkala.bulanmasakerjagolongan + " bulan"
 								data.tgltmtcetak = moment($scope.itemGajiBerkala.tanggaltmtcetak).format('YYYY-MM-DD HH:mm')
 								data.tglskbaru= moment($scope.itemGajiBerkala.tanggalskbaru).format('YYYY-MM-DD HH:mm')
 								dataRiwayatGajiBerkala[i] = data;
@@ -3289,7 +3289,7 @@ $scope.formatRupiah = function (value, currency) {
 							nosurat: $scope.itemGajiBerkala.nosurat,
 							noskcetak: $scope.itemGajiBerkala.noskcetak,
 							jenissk: $scope.itemGajiBerkala.jenissk,
-							masakerjagolongan: $scope.itemGajiBerkala.masakerjagolongan,
+							masakerjagolongan: $scope.itemGajiBerkala.tahunmasakerjagolongan + " tahun " + $scope.itemGajiBerkala.bulanmasakerjagolongan + " bulan",
 							tgltmtcetak: moment($scope.itemGajiBerkala.tanggaltmtcetak).format('YYYY-MM-DD HH:mm'),
 							tglskbaru: moment($scope.itemGajiBerkala.tanggalskbaru).format('YYYY-MM-DD HH:mm')
 						}
