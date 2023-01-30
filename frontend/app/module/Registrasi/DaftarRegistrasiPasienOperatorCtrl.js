@@ -260,6 +260,20 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 					"template": '# if( isdiagnosis==true) {# ✔ # } else {# - #} #'
 				},
 				{
+					"field": "ismobilejkn",
+					"title": "Mobile JKN",
+					"width": "80px",
+					"template": '# if( ismobilejkn==true) {# ✔ # } else {# - #} #'
+				}, {
+					"field": "statusjkn",
+					"title": "Status JKN",
+					"width": "80px"
+				}, {
+					"field": "statusschedule",
+					"title": "No Reservasi",
+					"width": "80px"
+				},
+				{
 					hidden: true,
 					"field": "ppkrujukan",
 					"title": "PPK",
