@@ -10,66 +10,59 @@
         @endif
  
 </head>
-<style type="text/css" media="print">
-    @page {
-        size: landscape;   /* auto is the initial value */
-        margin: 2cm 2cm 2cm 3cm;  /* this affects the margin in the printer settings */
-    }
-</style>
 <style>
+    @page {
+        margin:15mm 15mm 20mm 20mm;
+    }
 
-    .borderss {
-        border-bottom: 1px solid black;
+    @page :first {
+        margin:15mm 15mm 20mm 20mm;
+    }
+
+    @media print {
+    body {
+        margin:0;
+        width:31cm;
+    }
     }
 
     body {
         font-family: Arial;
     }
 
+    table{
+		font-family:'Arial';
+		margin:0;
+		padding:.1cm 0;
+		font-size:11pt ;
+	}	
+
     .tabel tr td{
         border: 1px solid black;
-        
-    }
-
-    .tabel td{
-        width: 50px;
-        word-break: break-all;
+        page-break-inside: avoid;
     }
 
     .tabel {
         width: 100%;
         border-collapse: collapse;
-    }
 
-    div.outer {
-        position: relative;
     }
-    div.inner {
-        overflow: hidden;
-        white-space: nowrap;
-        position: absolute;
-        width: 100%;
-    }
-
-    /* table, tr, td{
-        border: 1px solid black;
-    } */
 </style>
-<body style="background-color: #CCCCCC;">
-    <table class="bayangprint" bgcolor="#FFFFFF" width="{{$pageWidth}}" style="border-left: 1px solid black; border-right: 1px solid black; border-top: 1px solid black;">
-        <tbody >
+<body style="width:25cm;">
+<div>
+<table cellpadding="0" cellspacing="0"  border="0" class="tabel">
         <tr>
-            <td align="center" rowspan="2" width="15%"  style="padding: 5px; border-right: 1px solid black;" align="center">
+            <td align="center" rowspan="2" style="padding: 30px 30px 30px 40px;" align="center">
                     <p align="center">
                             @if(stripos(\Request::url(), 'localhost') !== FALSE)
-                            <img src="{{ asset('img/logo_grhasia.png') }}" style="width: 120px" >
+                            <img src="{{ asset('img/LOGO GRHASIA.png') }}" style="width: 100px" >
                             @else
-                              <img src="{{ asset('service/img/logo_grhasia.png') }}" style="width: 120px" >
+                              <img src="{{ asset('service/img/LOGO GRHASIA.png') }}" style="width: 100px" >
                             @endif
                       
                     </p>
             </td>
-            <td align="center" width="85%">
+            <td align="center">
                 <b style="font-size: 25px;">
                 KONSOLIDASI RBA-BLUD KE REKENING SIPD PERMENDAGRI
                 </b>
@@ -83,9 +76,8 @@
                 </b>
             </td>
         </tr>
-        </tbody>
     </table>
-        <table width="{{$pageWidth}}" bgcolor="#FFFFFF" class="tabel">
+    <table cellpadding="0" cellspacing="0" width="100%"  border="0" class="tabel">
                 <tr>
                     <td align="center" style="padding: 10px; font-weight: bold ">Kode Rekening</td>
                     <td align="center" style="padding: 10px; font-weight: bold; ">Nama Rekening</td>
@@ -169,6 +161,7 @@
                     <td align="center" style="padding: 10px;">{{ number_format($totaldes,0,',','.') }}</td>
                 </tr>
         </table>
+</div>
 <script>
     window.print()
 </script>

@@ -1,17 +1,45 @@
-
 define(['initialize'], function (initialize) {
-
     'use strict';
-    initialize.controller('PasienTanpaPelayananCtrl', ['MedifirstService', '$scope',
-        function (medifirstService, $scope) {
+    initialize.controller('PasienTanpaPelayananCtrl', ['CacheHelper', '$mdDialog', '$state', '$scope', 'MedifirstService',
+      function (cacheHelper, $mdDialog, $state, $scope, medifirstService) {
             $scope.title = "Pasien 24 Jam Tanpa Pelayanan Selain Registrasi";
             $scope.dataVOloaded = false;
             $scope.isRouteLoading = false;
+            $scope.hidebp = true
             $scope.now = new Date();
             $scope.item = {
                 from: $scope.now,
                 until: $scope.now
             };
+
+            $scope.pegawaiLogin = medifirstService.getPegawaiLogin();
+            if($scope.pegawaiLogin.jenisPegawai.jenispegawai == "Rekam Medis"){
+                $scope.hidebp = false
+            } else{
+                $scope.hidebp = true
+            }
+
+            console.log($scope.pegawaiLogin)
+
+            $scope.batalregistrasi = function () {
+                console.log($scope.dataPasienBatal)
+                console.log($scope.dataPasienBatal.options.data)
+        
+                if ($scope.dataPasienBatal == []) {
+                    toastr.error('Data Kosong ')
+                    return
+                }
+
+                var objSave = {
+                    data: $scope.dataPasienBatal.options.data
+                }
+
+                medifirstService.post('registrasi/save-pasien-batal-registrasi', objSave).then(function (e) { 
+                    $scope.findData()
+                })
+                
+            }
+
             $scope.findData = function () {
                 $scope.isRouteLoading = true;
                 var tglAwal = moment($scope.item.from).format('YYYY-MM-DD');
@@ -69,6 +97,9 @@ define(['initialize'], function (initialize) {
                 }, {
                     field: "biaya",
                     title: "Biaya",
+                }, {
+                    field: "kelompokpasien",
+                    title: "Kelompok Pasien",
                 }, {
                     field: "nocm",
                     title: "No RM"

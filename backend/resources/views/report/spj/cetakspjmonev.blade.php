@@ -10,34 +10,46 @@
         @endif
  
 </head>
-<style type="text/css" media="print">
-    @page {
-            size: landscape;   /* auto is the initial value */
-            margin: 2cm 2cm 2cm 3cm;  /* this affects the margin in the printer settings */
-        }
-</style>
 <style>
+    @page {
+        margin:15mm 15mm 20mm 20mm;
+    }
 
-    .borderss {
-        border-bottom: 1px solid black;
+    @page :first {
+        margin:15mm 15mm 20mm 20mm;
+    }
+
+    @media print {
+    body {
+        margin:0;
+    }
     }
 
     body {
         font-family: Arial;
     }
 
+    table{
+		font-family:'Arial';
+		margin:0;
+		padding:.1cm 0;
+		font-size:11pt ;
+	}	
+
     .tabel tr td{
         border: 1px solid black;
+        page-break-inside: avoid;
     }
 
     .tabel {
         width: 100%;
         border-collapse: collapse;
+
     }
 </style>
-<body style="background-color: #CCCCCC;">
-<div align="center" >
-    <table bgcolor="#FFFFFF" width="{{$pageWidth}}" >
+<body style="width:19.5cm;">
+<div>
+<table cellpadding="0" cellspacing="0" width="100%"  border="0">
         <tbody >
             <tr>
                 <td align="center" style="width: 200px;">
@@ -53,10 +65,63 @@
             </tr>
         </tbody>
     </table>
-    <p style="text-align: left; margin-top: 50px; font-size: 17px;">Tahun anggaran: {{ $tahun }}</p>
-    <p style="text-align: left; margin-top: 10px; font-size: 17px;">Sub Kegiatan: {{ $subkegiatan[0]->kode.' - '.$subkegiatan[0]->keterangan }}</p>
-    <p style="text-align: left; margin-top: 10px; margin-bottom: 50px; font-size: 17px;">Sub Sub Kegiatan: {{ $subsubkegiatan[0]->kode.' - '.$subsubkegiatan[0]->keterangan }}</p>
-        <table width="{{$pageWidth}}" bgcolor="#FFFFFF" class="tabel">
+    <table cellpadding="0" cellspacing="0" width="100%"  border="0">
+        <tbody>
+        <tr >
+            <td colspan="3">
+                <tr>
+                    <td>
+                        <p align="left" style="margin-top:20px">
+                                <font style="font-size: 12pt; " color="#000000" face="Arial">
+                                Tahun anggaran 
+                                </font>
+                        </p>
+                    </td>
+                    <td>
+                        <p align="left" style="margin-top:20px">
+                                <font style="font-size: 12pt; " color="#000000" face="Arial">
+                                : {{ $tahun }}
+                                </font>
+                        </p>
+                    </td>
+                </tr>
+                <tr style="margin-top: -10px;">
+                    <td>
+                        <p align="left" style="margin-top:5px">
+                                <font style="font-size: 12pt; " color="#000000" face="Arial">
+                                Sub Kegiatan
+                                </font>
+                        </p>
+                    </td>
+                    <td>
+                        <p align="left" style="margin-top:5px">
+                                <font style="font-size: 12pt; " color="#000000" face="Arial">
+                                : {{ $subkegiatan[0]->kode.' - '.$subkegiatan[0]->keterangan }}
+                                </font>
+                        </p>
+                    </td>
+                </tr>
+                <tr style="margin-top: -10px;">
+                    <td>
+                        <p align="left" style="margin-top:5px">
+                                <font style="font-size: 12pt; " color="#000000" face="Arial">
+                                Sub Sub Kegiatan
+                                </font>
+                        </p>
+                    </td>
+                    <td>
+                        <p align="left" style="margin-top:5px">
+                                <font style="font-size: 12pt; " color="#000000" face="Arial">
+                                : {{ $subsubkegiatan[0]->kode.' - '.$subsubkegiatan[0]->keterangan }}
+                                </font>
+                        </p>
+                    </td>
+                </tr>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <table cellpadding="0" cellspacing="0" width="100%"  border="0" class="tabel" style="margin-top: 30px;">
                 <tr>
                     <td align="center" width="50" rowspan="2" style="padding: 10px; font-weight: bold;font-size: 15px; ">NO. REK</td>
                     <td align="center" width="150" rowspan="2" style="padding: 10px; font-weight: bold;font-size: 15px; ">NAMA REKENING</td>

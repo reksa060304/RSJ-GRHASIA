@@ -4325,8 +4325,8 @@ class BendaharaPenerimaanController extends ApiController {
         $STS->statusenabled = true;
         $STS->nosts = $nosts;
         $STS->tglpenerimaan = $request['tglsts'];
-        $STS->totalsetoran = $request['totalsetor'];
-        $STS->totalsetoranpembulatan = $request['totalsetor'];
+        $STS->totalsetoran = $request['totalsetor'] - $transfer - $admin;
+        $STS->totalsetoranpembulatan = $request['totalsetor'] - $transfer - $admin;
         $STS->terbilang = $request['terbilang'];
         $STS->objectpegawaifk = $iduser;
         $STS->keterangan = $request['uraian'];
@@ -4372,6 +4372,10 @@ class BendaharaPenerimaanController extends ApiController {
         $voljumlahcovid = 0;
         //in(1, 2, 21, 22, 24, 25)
         for($i = 0; $i < count($request['setoran']); $i++){
+            if($request['setoran'][$i]['isobat'] != true && ($request['setoran'][$i]['idkelompokpasien'] == null)){
+                $jumlahbpjsranap += (int)$request['setoran'][$i]['totalsetujui'];
+                $voljumlahbpjsranap++;
+            }
             if($request['setoran'][$i]['objectdepartemenfk'] != 16 && $request['setoran'][$i]['isobat'] != true && ($request['setoran'][$i]['idkelompokpasien'] == 1 || $request['setoran'][$i]['idkelompokpasien'] == 2 || $request['setoran'][$i]['idkelompokpasien'] == 21 || $request['setoran'][$i]['idkelompokpasien'] == 22 || $request['setoran'][$i]['idkelompokpasien'] == 24 || $request['setoran'][$i]['idkelompokpasien'] == 25)){
                 $jumlahbpjsrajal += (int)$request['setoran'][$i]['totalsetujui'];
                 $voljumlahbpjsrajal++;
@@ -4380,6 +4384,7 @@ class BendaharaPenerimaanController extends ApiController {
                 $jumlahbpjsranap += (int)$request['setoran'][$i]['totalsetujui'];
                 $voljumlahbpjsranap++;
             }
+            
             if($request['setoran'][$i]['objectdepartemenfk'] != 16 && $request['setoran'][$i]['isobat'] != true && $request['setoran'][$i]['idkelompokpasien'] == 8){
                 $jumlahjamkesdarajal += (int)$request['setoran'][$i]['totalsetujui'];
                 $voljumlahjamkesdarajal++;
@@ -9189,7 +9194,29 @@ class BendaharaPenerimaanController extends ApiController {
         sum(jumlahsewalapangan) jumlahsewalapangan, sum(jumlahgedungdiklat) jumlahgedungdiklat, sum(jumlahgrhasiainn) jumlahgrhasiainn,
         sum(jumlahpertanian) jumlahpertanian, sum(jumlahkalandra) jumlahkalandra, sum(jumlahsewatempatfc) jumlahsewatempatfc, sum(jumlahmanekin) jumlahmanekin,
         sum(jumlahsewaambulan) jumlahsewaambulan, sum(jumlahsewabus) jumlahsewabus, sum(jumlahketerampilan) jumlahketerampilan, sum(jumlahparkir) jumlahparkir,
-        sum(jumlahlainlain) jumlahlainlain, sum(jumlahtotal) jumlahtotal
+        sum(jumlahlainlain) jumlahlainlain, sum(jumlahtotal) jumlahtotal,
+
+        sum(jumlahklaimcovid) jumlahklaimcovid,
+        sum(jumlahjasabank) jumlahjasabank,
+        sum(jumlahrajalbpjs) jumlahrajalbpjs,
+        sum(jumlahrajaljamkesda) jumlahrajaljamkesda,
+        sum(jumlahrajaljamkesos) jumlahrajaljamkesos,
+        sum(jumlahrajalipwl) jumlahrajalipwl,
+        sum(jumlahobatbpjs) jumlahobatbpjs,
+        sum(jumlahobatjamkesda) jumlahobatjamkesda,
+        sum(jumlahobatjamkesos) jumlahobatjamkesos,
+        sum(jumlahobatipwl) jumlahobatipwl,
+        sum(jumlahranapbpjs) jumlahranapbpjs,
+        sum(jumlahranapjamkesda) jumlahranapjamkesda,
+        sum(jumlahranapjamkesos) jumlahranapjamkesos,
+        sum(jumlahranapipwl) jumlahranapipwl,
+        sum(jumlahcsbpjs) jumlahcsbpjs,
+        sum(jumlahcsjamkesda) jumlahcsjamkesda,
+        sum(jumlahcsjamkesos) jumlahcsjamkesos,
+        sum(jumlahklaim) jumlahklaim,
+        sum(jumlahadmin) jumlahadmin,
+        sum(jumlahtransfer) jumlahtransfer,
+        sum(jumlahnetto) jumlahnetto
         from(
         select x.tanggal,
         case when x.uraian = 'PERIKSA DOKTER SPESIALIS JIWA' then sum(x.totalfix) else 0 end as jumlahjiwa,
@@ -9238,7 +9265,29 @@ class BendaharaPenerimaanController extends ApiController {
         case when x.uraian = 'HASIL KETRAMPILAN PASIEN' then sum(x.totalfix) else 0 end as jumlahketerampilan,
         case when x.uraian = 'PARKIR' then sum(x.totalfix) else 0 end as jumlahparkir,
         case when x.uraian = 'LAIN-LAIN' then sum(x.totalfix) else 0 end as jumlahlainlain,
-        case when x.uraian = 'JUMLAH' then sum(x.totalfix) else 0 end as jumlahtotal
+        case when x.uraian = 'JUMLAH' then sum(x.totalfix) else 0 end as jumlahtotal,
+
+        case when x.uraian = 'Klaim Covid' then sum(x.totalfix) else 0 end as jumlahklaimcovid,
+        case when x.uraian = 'Jasa Bank' then sum(x.totalfix) else 0 end as jumlahjasabank,
+        case when x.uraian = 'RAWAT JALAN BPJS' then sum(x.totalfix) else 0 end as jumlahrajalbpjs,
+        case when x.uraian = 'RAWAT JALAN Jamkesda' then sum(x.totalfix) else 0 end as jumlahrajaljamkesda,
+        case when x.uraian = 'RAWAT JALAN Jamkesos' then sum(x.totalfix) else 0 end as jumlahrajaljamkesos,
+        case when x.uraian = 'RAWAT JALAN IPWL' then sum(x.totalfix) else 0 end as jumlahrajalipwl,
+        case when x.uraian = 'OBAT-OBATAN BPJS' then sum(x.totalfix) else 0 end as jumlahobatbpjs,
+        case when x.uraian = 'OBAT-OBATAN Jamkesda' then sum(x.totalfix) else 0 end as jumlahobatjamkesda,
+        case when x.uraian = 'OBAT-OBATAN Jamkesos' then sum(x.totalfix) else 0 end as jumlahobatjamkesos,
+        case when x.uraian = 'OBAT-OBATAN IPWL' then sum(x.totalfix) else 0 end as jumlahobatipwl,
+        case when x.uraian = 'RAWAT INAP BPJS' then sum(x.totalfix) else 0 end as jumlahranapbpjs,
+        case when x.uraian = 'RAWAT INAP Jamkesda' then sum(x.totalfix) else 0 end as jumlahranapjamkesda,
+        case when x.uraian = 'RAWAT INAP Jamkesos' then sum(x.totalfix) else 0 end as jumlahranapjamkesos,
+        case when x.uraian = 'RAWAT INAP IPWL' then sum(x.totalfix) else 0 end as jumlahranapipwl,
+        case when x.uraian = 'COST SHARING BPJS' then sum(x.totalfix) else 0 end as jumlahcsbpjs,
+        case when x.uraian = 'COST SHARING JAMKESDA BANTUL' then sum(x.totalfix) else 0 end as jumlahcsjamkesda,
+        case when x.uraian = 'COST SHARING JAMKESOS' then sum(x.totalfix) else 0 end as jumlahcsjamkesos,
+        case when x.uraian = 'JUMLAH KLAIM' then sum(x.totalfix) else 0 end as jumlahklaim,
+        case when x.uraian = 'BIAYA ADMINISTRASI BANK' then sum(x.totalfix) else 0 end as jumlahadmin,
+        case when x.uraian = 'BIAYA TRANSFER' then sum(x.totalfix) else 0 end as jumlahtransfer,
+        case when x.uraian = 'JUMLAH NETTO' then sum(x.totalfix) else 0 end as jumlahnetto
         from(
             select i.tglpenerimaan::date as tanggal, i.kdrekening, i.nomer, i.uraian, sum(i.vol) as totalvol, sum(i.kolom1) as totalkolom1, sum(i.kolom2) as totalkolom2,
             (
@@ -9251,7 +9300,7 @@ class BendaharaPenerimaanController extends ApiController {
             ) as totalfix
                 from(
                     select sts.tglpenerimaan, stsd.kdrekening, stsd.nomer, stsd.uraian, stsd.vol, stsd.norec,
-                    stsd.kolom1, stsd.kolom2
+                    stsd.kolom1, stsd.kolom2, stsd.nourut, sts.ismanual
                     from surattandasetoran_t sts
                     inner join surattandasetorandetail_t stsd on stsd.objectstsfk = sts.nosts
                     left join ststosck_t as ssc on sts.norec = ssc.objectstsfk
@@ -9273,8 +9322,38 @@ class BendaharaPenerimaanController extends ApiController {
                     $bayar
                     $nosts
                     group by sts.tglpenerimaan, stsd.kdrekening, stsd.nomer, stsd.uraian, stsd.vol, stsd.norec,
-                    stsd.kolom1, stsd.kolom2
-                    order by min(stsd.nourut)
+                    stsd.kolom1, stsd.kolom2, stsd.nourut, sts.ismanual
+
+					union all
+
+					select sts.tglpenerimaan, stsd.kdrekening, stsd.nomer, stsd.uraian, stsd.vol, stsd.norec,
+                    stsd.kolom1, stsd.kolom2, stsd.nourut, sts.ismanual
+					from surattandasetoran_t sts
+					inner join surattandasetorandetail_t stsd on stsd.objectstsfk = sts.nosts
+					where sts.kdprofile = 30
+					and sts.statusenabled = true
+					and sts.ismanual = true
+					and extract(year from sts.tglpenerimaan::date ) = ".$tahunx."
+                    and extract(month from sts.tglpenerimaan::date ) = ".$bulanx."
+                    $nosts
+
+					union all
+										
+					select sts.tglpenerimaan, stsd.kdrekening, stsd.nomer, stsd.uraian, stsd.vol, stsd.norec,
+                    stsd.kolom1, stsd.kolom2, stsd.nourut, sts.ismanual
+					from surattandasetoran_t sts
+					inner join surattandasetorandetail_t stsd on stsd.objectstsfk = sts.nosts
+					inner join ststorekapklaim_t str on sts.norec = str.objectstsfk
+					inner join rekapklaimbpjs_t rkb on str.objectrekapklaimfk = rkb.norec
+					where sts.kdprofile = 30
+					and sts.statusenabled = true
+					and str.kdprofile = 30
+					and str.statusenabled = true
+					and extract(year from sts.tglpenerimaan::date ) = ".$tahunx."
+                    and extract(month from sts.tglpenerimaan::date ) = ".$bulanx."
+                    $nosts
+					group by sts.tglpenerimaan, stsd.kdrekening, stsd.nomer, stsd.uraian, stsd.vol, stsd.norec,
+                    stsd.kolom1, stsd.kolom2, stsd.nourut, sts.ismanual
                 ) as i group by i.tglpenerimaan, i.kdrekening, i.nomer, i.uraian
             ) as x group by x.tanggal, x.uraian
         ) as y group by extract(day from tanggal) order by tanggal"));
@@ -9307,7 +9386,29 @@ class BendaharaPenerimaanController extends ApiController {
         sum(jumlahsewalapangan) jumlahsewalapangan, sum(jumlahgedungdiklat) jumlahgedungdiklat, sum(jumlahgrhasiainn) jumlahgrhasiainn,
         sum(jumlahpertanian) jumlahpertanian, sum(jumlahkalandra) jumlahkalandra, sum(jumlahsewatempatfc) jumlahsewatempatfc, sum(jumlahmanekin) jumlahmanekin,
         sum(jumlahsewaambulan) jumlahsewaambulan, sum(jumlahsewabus) jumlahsewabus, sum(jumlahketerampilan) jumlahketerampilan, sum(jumlahparkir) jumlahparkir,
-        sum(jumlahlainlain) jumlahlainlain, sum(jumlahtotal) jumlahtotal
+        sum(jumlahlainlain) jumlahlainlain, sum(jumlahtotal) jumlahtotal,
+
+        sum(jumlahklaimcovid) jumlahklaimcovid,
+        sum(jumlahjasabank) jumlahjasabank,
+        sum(jumlahrajalbpjs) jumlahrajalbpjs,
+        sum(jumlahrajaljamkesda) jumlahrajaljamkesda,
+        sum(jumlahrajaljamkesos) jumlahrajaljamkesos,
+        sum(jumlahrajalipwl) jumlahrajalipwl,
+        sum(jumlahobatbpjs) jumlahobatbpjs,
+        sum(jumlahobatjamkesda) jumlahobatjamkesda,
+        sum(jumlahobatjamkesos) jumlahobatjamkesos,
+        sum(jumlahobatipwl) jumlahobatipwl,
+        sum(jumlahranapbpjs) jumlahranapbpjs,
+        sum(jumlahranapjamkesda) jumlahranapjamkesda,
+        sum(jumlahranapjamkesos) jumlahranapjamkesos,
+        sum(jumlahranapipwl) jumlahranapipwl,
+        sum(jumlahcsbpjs) jumlahcsbpjs,
+        sum(jumlahcsjamkesda) jumlahcsjamkesda,
+        sum(jumlahcsjamkesos) jumlahcsjamkesos,
+        sum(jumlahklaim) jumlahklaim,
+        sum(jumlahadmin) jumlahadmin,
+        sum(jumlahtransfer) jumlahtransfer,
+        sum(jumlahnetto) jumlahnetto
         from(
         select x.nosts,
         case when x.uraian = 'PERIKSA DOKTER SPESIALIS JIWA' then sum(x.totalfix) else 0 end as jumlahjiwa,
@@ -9356,7 +9457,29 @@ class BendaharaPenerimaanController extends ApiController {
         case when x.uraian = 'HASIL KETRAMPILAN PASIEN' then sum(x.totalfix) else 0 end as jumlahketerampilan,
         case when x.uraian = 'PARKIR' then sum(x.totalfix) else 0 end as jumlahparkir,
         case when x.uraian = 'LAIN-LAIN' then sum(x.totalfix) else 0 end as jumlahlainlain,
-        case when x.uraian = 'JUMLAH' then sum(x.totalfix) else 0 end as jumlahtotal
+        case when x.uraian = 'JUMLAH' then sum(x.totalfix) else 0 end as jumlahtotal,
+
+        case when x.uraian = 'Klaim Covid' then sum(x.totalfix) else 0 end as jumlahklaimcovid,
+        case when x.uraian = 'Jasa Bank' then sum(x.totalfix) else 0 end as jumlahjasabank,
+        case when x.uraian = 'RAWAT JALAN BPJS' then sum(x.totalfix) else 0 end as jumlahrajalbpjs,
+        case when x.uraian = 'RAWAT JALAN Jamkesda' then sum(x.totalfix) else 0 end as jumlahrajaljamkesda,
+        case when x.uraian = 'RAWAT JALAN Jamkesos' then sum(x.totalfix) else 0 end as jumlahrajaljamkesos,
+        case when x.uraian = 'RAWAT JALAN IPWL' then sum(x.totalfix) else 0 end as jumlahrajalipwl,
+        case when x.uraian = 'OBAT-OBATAN BPJS' then sum(x.totalfix) else 0 end as jumlahobatbpjs,
+        case when x.uraian = 'OBAT-OBATAN Jamkesda' then sum(x.totalfix) else 0 end as jumlahobatjamkesda,
+        case when x.uraian = 'OBAT-OBATAN Jamkesos' then sum(x.totalfix) else 0 end as jumlahobatjamkesos,
+        case when x.uraian = 'OBAT-OBATAN IPWL' then sum(x.totalfix) else 0 end as jumlahobatipwl,
+        case when x.uraian = 'RAWAT INAP BPJS' then sum(x.totalfix) else 0 end as jumlahranapbpjs,
+        case when x.uraian = 'RAWAT INAP Jamkesda' then sum(x.totalfix) else 0 end as jumlahranapjamkesda,
+        case when x.uraian = 'RAWAT INAP Jamkesos' then sum(x.totalfix) else 0 end as jumlahranapjamkesos,
+        case when x.uraian = 'RAWAT INAP IPWL' then sum(x.totalfix) else 0 end as jumlahranapipwl,
+        case when x.uraian = 'COST SHARING BPJS' then sum(x.totalfix) else 0 end as jumlahcsbpjs,
+        case when x.uraian = 'COST SHARING JAMKESDA BANTUL' then sum(x.totalfix) else 0 end as jumlahcsjamkesda,
+        case when x.uraian = 'COST SHARING JAMKESOS' then sum(x.totalfix) else 0 end as jumlahcsjamkesos,
+        case when x.uraian = 'JUMLAH KLAIM' then sum(x.totalfix) else 0 end as jumlahklaim,
+        case when x.uraian = 'BIAYA ADMINISTRASI BANK' then sum(x.totalfix) else 0 end as jumlahadmin,
+        case when x.uraian = 'BIAYA TRANSFER' then sum(x.totalfix) else 0 end as jumlahtransfer,
+        case when x.uraian = 'JUMLAH NETTO' then sum(x.totalfix) else 0 end as jumlahnetto
         from(
             select i.nosts, i.kdrekening, i.nomer, i.uraian, sum(i.vol) as totalvol, sum(i.kolom1) as totalkolom1, sum(i.kolom2) as totalkolom2,
             (
@@ -9368,8 +9491,8 @@ class BendaharaPenerimaanController extends ApiController {
             end
             ) as totalfix
                 from(
-                    select sts.nosts, stsd.kdrekening, stsd.nomer, stsd.uraian, stsd.vol, stsd.norec,
-                    stsd.kolom1, stsd.kolom2
+                    select sts.tglpenerimaan, stsd.kdrekening, stsd.nomer, stsd.uraian, stsd.vol, stsd.norec,
+                    stsd.kolom1, stsd.kolom2, stsd.nourut, sts.ismanual, sts.nosts
                     from surattandasetoran_t sts
                     inner join surattandasetorandetail_t stsd on stsd.objectstsfk = sts.nosts
                     left join ststosck_t as ssc on sts.norec = ssc.objectstsfk
@@ -9384,14 +9507,44 @@ class BendaharaPenerimaanController extends ApiController {
                             inner join strukhistori_t sh on sh.noclosing = sc.norec
                             where sh.statusenabled = false
                             )
-                    and extract(year from sts.tglpenerimaan::date ) = '$tahunx'
-                    and extract(month from sts.tglpenerimaan::date ) = '$bulanx'
-					and extract(day from sts.tglpenerimaan::date ) = '$tglx'
+                    and extract(year from sts.tglpenerimaan::date ) = ".$tahunx."
+                    and extract(month from sts.tglpenerimaan::date ) = ".$bulanx."
+                    and extract(day from sts.tglpenerimaan::date ) = '$tglx'
                     and sts.statusenabled = true and sts.kdprofile = 30
                     and stsd.statusenabled = true and stsd.kdprofile = 30
-                    group by sts.nosts, stsd.kdrekening, stsd.nomer, stsd.uraian, stsd.vol, stsd.norec,
-                    stsd.kolom1, stsd.kolom2
-                    order by min(stsd.nourut)
+                    group by sts.tglpenerimaan, stsd.kdrekening, stsd.nomer, stsd.uraian, stsd.vol, stsd.norec,
+                    stsd.kolom1, stsd.kolom2, stsd.nourut, sts.ismanual, sts.nosts
+
+					union all
+
+					select sts.tglpenerimaan, stsd.kdrekening, stsd.nomer, stsd.uraian, stsd.vol, stsd.norec,
+                    stsd.kolom1, stsd.kolom2, stsd.nourut, sts.ismanual, sts.nosts
+					from surattandasetoran_t sts
+					inner join surattandasetorandetail_t stsd on stsd.objectstsfk = sts.nosts
+					where sts.kdprofile = 30
+					and sts.statusenabled = true
+					and sts.ismanual = true
+					and extract(year from sts.tglpenerimaan::date ) = ".$tahunx."
+                    and extract(month from sts.tglpenerimaan::date ) = ".$bulanx."
+                    and extract(day from sts.tglpenerimaan::date ) = '$tglx'
+
+					union all
+										
+					select sts.tglpenerimaan, stsd.kdrekening, stsd.nomer, stsd.uraian, stsd.vol, stsd.norec,
+                    stsd.kolom1, stsd.kolom2, stsd.nourut, sts.ismanual, sts.nosts
+					from surattandasetoran_t sts
+					inner join surattandasetorandetail_t stsd on stsd.objectstsfk = sts.nosts
+					inner join ststorekapklaim_t str on sts.norec = str.objectstsfk
+					inner join rekapklaimbpjs_t rkb on str.objectrekapklaimfk = rkb.norec
+					where sts.kdprofile = 30
+					and sts.statusenabled = true
+					and str.kdprofile = 30
+					and str.statusenabled = true
+					and extract(year from sts.tglpenerimaan::date ) = ".$tahunx."
+                    and extract(month from sts.tglpenerimaan::date ) = ".$bulanx."
+                    and extract(day from sts.tglpenerimaan::date ) = '$tglx'
+					group by sts.tglpenerimaan, stsd.kdrekening, stsd.nomer, stsd.uraian, stsd.vol, stsd.norec,
+                    stsd.kolom1, stsd.kolom2, stsd.nourut, sts.ismanual, sts.nosts
                 ) as i group by i.nosts, i.kdrekening, i.nomer, i.uraian
             ) as x group by x.nosts, x.uraian
         ) as y group by nosts order by nosts"));

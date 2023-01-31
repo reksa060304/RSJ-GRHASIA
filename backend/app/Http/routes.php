@@ -1913,6 +1913,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('registrasi/get-pasien', 'Registrasi\RegistrasiController@getDaftarPasien');
             Route::get('registrasi/get-tglpulang-pasien', 'Registrasi\RegistrasiController@cekTglPulangPasien');
             Route::get('registrasi/get-pasien-batal-registrasi', 'Registrasi\RegistrasiController@getPasienBatalRegistrasi');
+            Route::post('registrasi/save-pasien-batal-registrasi', 'Registrasi\RegistrasiController@savePasienBatalRegistrasi');
             Route::get('registrasi/get-apd', 'Registrasi\RegistrasiController@getAntrianPasien');
             Route::get('registrasi/get-history-pemakaianasuransi2', 'Registrasi\RegistrasiController@getHistoryPemakaianAsuransi2');
             Route::get('registrasi/cek-pasien-daftar-duakali', 'Registrasi\RegistrasiController@cekPasienDaftarDuaKali');
@@ -1985,6 +1986,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::post('registrasi/update-data-emrpasien-pd', 'Registrasi\RegistrasiController@updatePdInEmrPasien');
             Route::get('registrasi/get-data-pasien-reservasi', 'Registrasi\RegistrasiController@getPasienPerjanjian');
             Route::get('registrasi/get-combo-perjanjian', 'Registrasi\RegistrasiController@getComboPasienPerjanjian');
+            Route::get('report/cetak-sep-new','Report\ReportController@cetakSEPV2');
+            Route::get('report/ttd-digital/{noregistrasi}/{type}','Report\ReportController@ttdDigital');
 
 
             Route::get('registrasi/daftar-antrian-pasien/get-combo', 'Registrasi\RegistrasiController@getComboAntrianPasienOperator');

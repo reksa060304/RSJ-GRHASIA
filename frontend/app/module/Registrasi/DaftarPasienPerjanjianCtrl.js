@@ -126,6 +126,23 @@ define(['initialize'], function (initialize) {
                         width: 200
                     },
                     {
+                        field: "ismobilejkn",
+                        title: "Mobile JKN",
+                        width: 100
+                    }, 
+                    {
+                        field: "nomorantrean",
+                        title: "No Antrean",
+                        field: "ischeckin",
+                        title: "Checkin",
+                        width: 100
+                    }, 
+                    {
+                        field: "nomorantrean",
+                        title: "No Antrean",
+                        width: 100
+                    },
+                    {
                         field: "tglinput",
                         title: "Tanggal Input",
                         width: 120,

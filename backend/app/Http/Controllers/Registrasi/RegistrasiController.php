@@ -624,6 +624,7 @@ class RegistrasiController extends ApiController
         }
         else if ($transStatus == 'true') {
             if (isset($r_NewPD['isjkn']) && $r_NewPD['isjkn'] == true){
+                $saveAdminstrasi = $this->saveAdministrasi($request); 
                 $data = DB::table('antrianpasienregistrasi_t')
                     ->where('kdprofile', $kdProfile)
                     ->where('statusenabled', true)
@@ -636,6 +637,7 @@ class RegistrasiController extends ApiController
                 $result = array(
                     "metadata" => array(
                         "code" => "200",
+                        'dataAPD' => $dataAPD,
                         "message" => $transMessage)
                 );
                 return $this->setStatusCode(200)->respond($result, $transMessage);
@@ -1296,13 +1298,16 @@ class RegistrasiController extends ApiController
             $namapasien = "and ps.namapasien = '".$request['namaPasien']."'";
         }
 
-        $data = DB::select(DB::raw("select ps.namapasien, j.jumlahpelayanan, pd.tglregistrasi, ps.nocm, pd.norec, pd.noregistrasi, ru.namaruangan, pr.namaproduk, pp.harganetto * pp.jumlah as biaya
+        $data = DB::select(DB::raw("select apd.norec norecapd, pp.norec norecpp, kp.kelompokpasien, ps.namapasien, pd.tglregistrasi, ps.nocm, pd.norec, pd.noregistrasi, ru.namaruangan, pr.namaproduk, 
+        case when pp.statusenabled = false then 0 else j.jumlahpelayanan end as jumlahpelayanan,
+        case when pp.statusenabled = false then 0 else pp.harganetto * pp.jumlah end as biaya
         from pasiendaftar_t as pd
 		inner join pasien_m as ps on ps.id = pd.nocmfk
         inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
         inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
         inner JOIN ruangan_m AS ru ON ru.id = apd.objectruanganfk
         inner join produk_m pr on pr.id = pp.produkfk
+        inner join kelompokpasien_m as kp on kp.id = pd.objectkelompokpasienlastfk
         inner join(
             select count(nourut) jumlahpelayanan, tglregistrasi, noregistrasi, norec
             from(
@@ -1313,7 +1318,6 @@ class RegistrasiController extends ApiController
                 inner JOIN ruangan_m AS ru ON ru.id = apd.objectruanganfk
                 inner join produk_m pr on pr.id = pp.produkfk
                 where pd.kdprofile = 30
-                and pd.statusenabled = true
                 and ru.objectdepartemenfk = 18
                 and pd.tglregistrasi::date between '$tglAwal' and to_date('$tglAkhir', 'YYYY-MM-DD') - INTERVAL '1 DAY'
                 group by pd.tglregistrasi, pd.norec, pd.noregistrasi, ru.namaruangan, pr.namaproduk
@@ -1321,8 +1325,6 @@ class RegistrasiController extends ApiController
         ) as j on j.norec = pd.norec
         left join batalregistrasi_t br on br.pasiendaftarfk = pd.norec
         where pd.kdprofile = 30
-        and pd.statusenabled = true
-        and br.norec is null
         and ru.objectdepartemenfk = 18
         and j.jumlahpelayanan = 1
         and pr.id in(5008644, 5008635, 5008645, 5008636)
@@ -1330,7 +1332,7 @@ class RegistrasiController extends ApiController
         $noreg
         $nocm
         $namapasien
-        group by ps.namapasien, j.jumlahpelayanan, pd.tglregistrasi, ps.nocm, pd.norec, pd.noregistrasi, ru.namaruangan, pr.namaproduk, pp.harganetto * pp.jumlah
+        group by apd.norec, pp.norec, kp.kelompokpasien, ps.namapasien, j.jumlahpelayanan, pd.tglregistrasi, ps.nocm, pd.norec, pd.noregistrasi, ru.namaruangan, pr.namaproduk, pp.harganetto * pp.jumlah
         order by pd.tglregistrasi::date asc")); 
 
         $result = array(
@@ -1338,6 +1340,51 @@ class RegistrasiController extends ApiController
             'message' => 'larasatizka',
         );
         return $this->respond($result);
+    }
+
+    public function savePasienBatalRegistrasi(Request $request) {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        DB::beginTransaction();
+        try{
+            for($x = 0; $x < count($request['data']); $x++){
+                $PP = PelayananPasien::where('norec', '=', $request['data'][$x]['norecpp'])->first();
+                $PP->statusenabled = false;
+                $PP->save();
+                $PPD = PelayananPasienDetail::where('pelayananpasien', '=', $request['data'][$x]['norecpp'])->first();
+                $PPD->statusenabled = false;
+                $PPD->save();
+                $PD = PasienDaftar::where('norec', '=', $request['data'][$x]['norec'])->first();
+                $PD->statusenabled = false;
+                $PD->save();
+            }
+
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+             $transStatus = 'false';
+        }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan Sukses";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'result' => $PD,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'line'=> $e->getLine(),
+                'message'=> $e->getMessage(),
+                'as' => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
 
     public function getAntrianPasien(Request $request){
@@ -6397,6 +6444,8 @@ class RegistrasiController extends ApiController
     public function getPasienPerjanjian(Request $request){
         $kdProfile = $this->getDataKdProfile($request);
         $data = \DB::table('antrianpasienregistrasi_t as apr')
+            ->leftJoin('pasiendaftar_t as pd','pd.statusschedule','=','apr.noreservasi')
+            ->leftJoin('antrianpasiendiperiksa_t as apd','apd.noregistrasifk','=','pd.norec')
             ->leftJoin('pasien_m as pm','pm.id','=','apr.nocmfk')
             ->leftJoin('ruangan_m as ru','ru.id','=','apr.objectruanganfk')
             ->leftJoin('pegawai_m as pg','pg.id','=','apr.objectpegawaifk')
@@ -6406,7 +6455,7 @@ class RegistrasiController extends ApiController
                 'apr.notelepon','pm.namapasien','apr.namapasien','apr.objectkelompokpasienfk','kps.kelompokpasien',
                 'apr.tglinput','apr.nocmfk',
                 DB::raw('(case when pm.namapasien is null then apr.namapasien else pm.namapasien end) as namapasien,
-                (case when apr.isconfirm=\'true\' then \'Confirm\' else \'Reservasi\' end) as status,apr.jamreservasi')
+                (case when apr.isconfirm=\'true\' then \'Confirm\' else \'Reservasi\' end) as status,apr.jamreservasi,apr.ismobilejkn,apd.noantrian,apr.jenis')
             )
             ->where('apr.noreservasi','<>','-')
             ->where('apr.statusenabled',true)
@@ -6839,7 +6888,11 @@ class RegistrasiController extends ApiController
                 'pa.nosep as nosep', 'br.norec as norec_br', 'pd.nostruklastfk','klstg.namakelas as kelasditanggung','kls.namakelas',
                 'ps.tgllahir','ru.objectdepartemenfk', 'pd.objectkelasfk','dept.id as deptid','pa.ppkrujukan','ddt.objectdiagnosafk',
                 'jpl.jenispelayanan','pa.objectdiagnosafk as iddiagnosabpjs','ps.nobpjs','jks.jeniskelamin',
-                'ps.nohp','pa.statuskunjungan','pa.flagprocedure','pa.poliasalkode','pa.tglcreate','asu.nmprovider',DB::raw('coalesce(it.qtytracer,0) as qtytracer'))
+                'ps.nohp','pa.statuskunjungan','pa.flagprocedure','pa.poliasalkode','pa.tglcreate','asu.nmprovider',DB::raw('coalesce(it.qtytracer,0) as qtytracer'),
+                DB::raw("pd.ismobilejkn,
+                case when pd.ismobilejkn = true then 
+                (case when pd.ischeckin = true  then 'Sudah Checkin' else 'Belum Checkin' end) else '-' end as statusjkn,
+                case when pd.ismobilejkn = true then pd.statusschedule else '-' end as statusschedule"))
             ->whereNull('br.norec')
             ->where('pd.statusenabled', true)
             ->where('pd.kdprofile', (int)$kdProfile);
@@ -13020,7 +13073,7 @@ GROUP BY y.KET
             left join pegawai_m pg on pg.id = pd.objectpegawaifk
             where pd.norec = '$norec_pd'
         "))->first();
-        return $this->respond($data);
+  
 
         $result = array (
             'kodebooking' => $data->kodebooking,
@@ -13047,6 +13100,7 @@ GROUP BY y.KET
             'kuotanonjkn' => 0,
             'keterangan' => ""
         );
+        return $this->respond($result);
     }
     
 }
