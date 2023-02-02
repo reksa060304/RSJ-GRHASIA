@@ -94,6 +94,18 @@
             
             <div class="grid_12">
                     <div class="grid_12" style="text-align: left; margin-top: 10px;">
+                        <label c-label item="item" c-label-text="Kode Rekening"></label>
+                    </div>
+                    <div class="grid_12" style="margin-top: 10px;">
+                        <input c-text-box type="input" class="k-textbox" ng-model="item.kdrekening"/>
+                    </div>
+                    <div class="grid_12" style="text-align: left; margin-top: 10px;">
+                        <label c-label item="item" c-label-text="No Uraian"></label>
+                    </div>
+                    <div class="grid_12" style="margin-top: 10px;">
+                        <input c-text-box type="input" class="k-textbox" ng-model="item.nouraian"/>
+                    </div>
+                    <div class="grid_12" style="text-align: left; margin-top: 10px;">
                         <label c-label item="item" c-label-text="Uraian Pendapatan"></label>
                     </div>
                     <div class="grid_12" style="margin-top: 10px;">
@@ -104,6 +116,13 @@
                     </div>
                     <div class="grid_12" style="margin-top: 10px;">
                         <input c-text-box type="input" class="k-textbox" ng-model="item.nourut"/>
+                    </div>
+                    <div class="grid_12" style="text-align: left; margin-top: 10px;">
+                        <label c-label item="item" c-label-text="Tahun"></label>
+                    </div>
+                    <div class="grid_12" style="margin-top: 10px;">
+                        <input style="width: 100%" k-options="yearUngkul" k-ng-model="item.tahun" kendo-date-picker
+                         placeholer="YYYY" k-format="'yyyy'" />
                     </div>
             </div>
             

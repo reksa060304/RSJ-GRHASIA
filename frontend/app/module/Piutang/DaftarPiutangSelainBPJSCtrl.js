@@ -556,7 +556,10 @@ define(['initialize'], function (initialize) {
                         let element = DataTotalMataAnggaran[index];
 						console.log(element)
                         let namasearch = element.noregistrasi.toLowerCase()
+						let nocm = element.nocm.toLowerCase()
                         if (namasearch.match(newValue.toLowerCase())) {
+                            data.push(element)
+                        } else if (nocm.match(newValue.toLowerCase())) {
                             data.push(element)
                         }
                     }

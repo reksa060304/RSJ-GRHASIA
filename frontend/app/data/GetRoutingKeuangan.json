@@ -1980,6 +1980,26 @@
     ]
   },
   {
+    "name": "SuratTandaSetoranV2",
+    "url": "/U3VyYXRUYW5kYVNldG9yYW5WMg==",
+    "templateurl": "module/BendaharaPenerimaan/SuratTandaSetoranV2.html",
+    "controller": "SuratTandaSetoranV2Ctrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
     "name": "CetakanBP",
     "url": "/Q2V0YWthbkJlbmRhaGFyYVBlbmVyaW1hYW4=",
     "templateurl": "module/BendaharaPenerimaan/CetakanBP.html",
@@ -2183,6 +2203,26 @@
     "url": "/U1RTUGVydGFuZ2dhbA==",
     "templateurl": "module/BendaharaPenerimaan/STSPertanggal.html",
     "controller": "STSPertanggalCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "MapSTStoRuangan",
+    "url": "/TWFwcGluZ1VyYWlhblNUU2tlUnVhbmdhbg==",
+    "templateurl": "module/BendaharaPenerimaan/MapSTStoRuangan.html",
+    "controller": "MapSTStoRuanganCtrl",
     "deps": [
       {
         "module": "Services",

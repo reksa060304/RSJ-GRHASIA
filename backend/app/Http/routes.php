@@ -171,6 +171,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::post('bendaharapenerimaan/save-lampiran-beritaacara', 'BendaharaPenerimaan\BendaharaPenerimaanController@saveTempLampiranBA');
           Route::post('bendaharapenerimaan/hapus-bku', 'BendaharaPenerimaan\BendaharaPenerimaanController@hapusBKU');
           Route::post('bendaharapenerimaan/save-sts', 'BendaharaPenerimaan\BendaharaPenerimaanController@saveSTS');
+          Route::post('bendaharapenerimaan/save-sts-v2', 'BendaharaPenerimaan\BendaharaPenerimaanController@saveSTSV2');
           Route::post('bendaharapenerimaan/save-sts-manual', 'BendaharaPenerimaan\BendaharaPenerimaanController@saveSTSManual');
           Route::post('bendaharapenerimaan/save-sts-klaim', 'BendaharaPenerimaan\BendaharaPenerimaanController@saveSTSKlaim');
           Route::post('tatarekening/save-rekap-klaim', 'BendaharaPenerimaan\BendaharaPenerimaanController@saveKlaim');
@@ -2110,13 +2111,17 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
 
               Route::get('registrasi/laporan/get-produk-mapping-rl', 'Registrasi\LaporanRekamMedisController@getProdukMapLaporanRL');
               Route::get('registrasi/laporan/get-mapping-rl', 'Registrasi\LaporanRekamMedisController@getMapLaporanRL');
+              Route::get('registrasi/laporan/get-mapping-sts', 'Registrasi\LaporanRekamMedisController@getMapLaporanSTS');
               Route::post('registrasi/laporan/save-mapping-rl', 'Registrasi\LaporanRekamMedisController@SaveMappingRl');
               Route::post('registrasi/laporan/save-mapping-rl-to-konten', 'Registrasi\LaporanRekamMedisController@SaveMappingRltoKonten');
+              Route::post('registrasi/laporan/save-mapping-sts-to-ruangan', 'Registrasi\LaporanRekamMedisController@SaveMappingSTStoRuangan');
               Route::post('registrasi/laporan/save-master-konten', 'Registrasi\LaporanRekamMedisController@SaveMasterKonten');
               Route::post('registrasi/laporan/delete-master-konten', 'Registrasi\LaporanRekamMedisController@DeleteMasterKonten');
               Route::post('registrasi/laporan/delete-mapping-rl', 'Registrasi\LaporanRekamMedisController@deleteMapProdukToLaporanRL');
               Route::post('registrasi/laporan/delete-mapping-rl-to-konten', 'Registrasi\LaporanRekamMedisController@deleteMapKontenToLaporanRL');
+              Route::post('registrasi/laporan/delete-mapping-sts-to-ruangan', 'Registrasi\LaporanRekamMedisController@deleteMapSTSToRuangan');
               Route::get('registrasi/laporan/get-combo-mapping-rl', 'Registrasi\LaporanRekamMedisController@getComboMappingRL');
+              Route::get('registrasi/laporan/get-combo-mapping-sts', 'Registrasi\LaporanRekamMedisController@getComboMappingSTS');
               Route::get('registrasi/laporan/get-master-konten', 'Registrasi\LaporanRekamMedisController@getMasterKonten');
 
               Route::get('registrasi/laporan/get-laporan-pasien-rujukan-perbulan','Registrasi\LaporanRekamMedisController@getRujukanPerbulan');

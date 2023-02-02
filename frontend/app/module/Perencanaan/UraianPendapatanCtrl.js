@@ -12,6 +12,11 @@ define(['initialize'], function (initialize) {
             $scope.norecjasgir = ''
             FormLoad();
 
+            $scope.yearUngkul = {
+                start: "decade",
+                depth: "decade"
+            }
+
             $scope.showAndHide = function () {
                 $('#contentPencarian').fadeToggle("fast", "linear");
             }
@@ -50,6 +55,9 @@ define(['initialize'], function (initialize) {
                 $scope.norecjasgir = ''
                 $scope.item.uraianpendapatan = ''
                 $scope.item.nourut = 0
+                $scope.item.tahun = ''
+                $scope.item.nouraian = ''
+                $scope.item.kdrekening = ''
                 $scope.popupTambahJasgir.center().open()
             }
 
@@ -57,6 +65,9 @@ define(['initialize'], function (initialize) {
                 $scope.norecjasgir = $scope.dataSelected.id
                 $scope.item.uraianpendapatan = $scope.dataSelected.uraianpendapatan
                 $scope.item.nourut = $scope.dataSelected.nourut
+                $scope.item.tahun = $scope.dataSelected.tahun
+                $scope.item.nouraian = $scope.dataSelected.nouraian
+                $scope.item.kdrekening = $scope.dataSelected.kdrekening
                 $scope.popupTambahJasgir.center().open()
             }
 
@@ -68,7 +79,10 @@ define(['initialize'], function (initialize) {
                 var objSave = {
                     "id": $scope.norecjasgir,
                     "uraianpendapatan": $scope.item.uraianpendapatan,
+                    "nouraian": $scope.item.nouraian,
+                    "kdrekening": $scope.item.kdrekening,
                     "nourut": $scope.item.nourut,
+                    "tahun": moment($scope.item.tahun).format('YYYY'),
                 }
                 console.log(objSave);
                 // return
@@ -124,7 +138,19 @@ define(['initialize'], function (initialize) {
                     {
                         
                         "field": "no",
-                        "title": "Nomor",
+                        "title": "Id",
+                        "width": "100px",
+                    },
+                    {
+                        
+                        "field": "kdrekening",
+                        "title": "Kode Rekening",
+                        "width": "100px",
+                    },
+                    {
+                        
+                        "field": "nouraian",
+                        "title": "Nomer",
                         "width": "100px",
                     },
                     {
@@ -137,6 +163,12 @@ define(['initialize'], function (initialize) {
                         
                         "field": "nourut",
                         "title": "No Urut",
+                        "width": "100px",
+                    },
+                    {
+                        
+                        "field": "tahun",
+                        "title": "Tahun",
                         "width": "100px",
                     },
                 ]

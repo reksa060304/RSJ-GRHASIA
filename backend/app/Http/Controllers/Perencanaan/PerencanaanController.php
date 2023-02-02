@@ -3918,6 +3918,9 @@ class PerencanaanController extends ApiController {
                             'reportdisplay'=>null,
                             'uraianpendapatan'=>$request['uraianpendapatan'],
                             'nourut'=>$request['nourut'],
+                            'tahun'=>$request['tahun'],
+                            'nouraian'=>$request['nouraian'],
+                            'kdrekening'=>$request['kdrekening'],
                         ]);
 
                     } else{
@@ -3926,6 +3929,9 @@ class PerencanaanController extends ApiController {
                         $MA->reportdisplay = null;
                         $MA->uraianpendapatan = $request['uraianpendapatan'];
                         $MA->nourut = $request['nourut'];
+                        $MA->tahun = $request['tahun'];
+                        $MA->nouraian = $request['nouraian'];
+                        $MA->kdrekening = $request['kdrekening'];
                         $MA->save();
                     }
                     

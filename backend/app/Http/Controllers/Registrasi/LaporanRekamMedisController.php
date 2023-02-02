@@ -16,6 +16,7 @@ use App\Master\CaraBayar;
 use App\Master\JenisLaporan;
 use App\Master\KelompokLaporan;
 use App\Master\MapProdukToLaporanRl;
+use App\Master\MapSTSToRuangan;
 use App\Master\Ruangan;
 use App\Master\Pegawai;
 use Carbon\Carbon;
@@ -54,6 +55,27 @@ class LaporanRekamMedisController extends   ApiController
 
         if(isset($request['idLap']) && $request['idLap'] != "" && $request['idLap'] != "undefined") {
             $data = $data->where('jl.id','=', $request['idLap']);
+        }
+
+        $data = $data->get();
+        return $this->respond($data);
+    }
+    public function getMapLaporanSTS(Request $request) {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $data = \DB::table('mapststoruangan_m as mptlr')
+            ->join('uraianpendapatan_m as up','up.id','=','mptlr.objecturaianpendapatanfk')
+            ->leftJoin('produk_m as pro','pro.id','=','mptlr.produkfk')
+            ->leftJoin('ruangan_m as ru','ru.id','=','mptlr.ruanganfk')
+            ->leftJoin('departemen_m as dp','dp.id','=','mptlr.departemenfk')
+            ->select('mptlr.norec','pro.id as idproduk','pro.namaproduk','up.id','up.uraianpendapatan', 
+            'ru.id as idruangan', 'ru.namaruangan', 'dp.id as iddepartemen', 'dp.namadepartemen')
+            ->where('mptlr.kdprofile', $idProfile)
+            ->where('mptlr.statusenabled',true)
+            ->orderBy('up.nourut','asc');
+
+        if(isset($request['idUraian']) && $request['idUraian'] != "" && $request['idUraian'] != "undefined") {
+            $data = $data->where('up.id','=', $request['idUraian']);
         }
 
         $data = $data->get();
@@ -152,6 +174,91 @@ class LaporanRekamMedisController extends   ApiController
 
         return $this->respond($result);
     }
+    public function getComboMappingSTS(Request $request) {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $dataLogin = $request->all();
+        $tahun = date('Y');
+        $kdJeniPegawaiDokter = (int) $this->settingDataFixed('KdJenisPegawaiDokter',$idProfile);
+        $kdDeptRanapAll = explode(',',$this->settingDataFixed('KdDepartemenRIAll',$idProfile));
+        $kdDepartemenRanapAll = [];
+        foreach ($kdDeptRanapAll as $items){
+            $kdDepartemenRanapAll []=  (int)$items;
+        }
+        $dataPenulis = Pegawai::where('statusenabled',true)
+            ->where('objectjenispegawaifk',$kdJeniPegawaiDokter)
+            ->where('kdprofile', $idProfile)
+            ->get();
+
+        foreach ($dataPenulis as $item){
+            $dataPenulis2[]=array(
+                'id' => $item->id,
+                'namalengkap' => $item->namalengkap,
+            );
+        }
+
+        $dataRuangan = \DB::table('maploginusertoruangan_s as mlu')
+            ->JOIN('ruangan_m as ru','ru.id','=','mlu.objectruanganfk')
+            ->select('ru.id','ru.namaruangan')
+            ->where('mlu.kdprofile', $idProfile)
+            ->where('mlu.objectloginuserfk',$dataLogin['userData']['id'])
+            ->get();
+
+        $dataRuanganall = \DB::table('ruangan_m as ru')
+            ->select('ru.id','ru.namaruangan')
+            ->where('ru.kdprofile', $idProfile)
+            ->where('ru.statusenabled',true)
+            ->orderBy('ru.namaruangan')
+            ->get();
+
+        $dataRuanganPelayanan = \DB::table('ruangan_m as ru')
+            ->select('ru.id','ru.namaruangan')
+            ->where('ru.kdprofile', $idProfile)
+            ->where('ru.objectdepartemenfk',16)
+            ->where('ru.statusenabled',true)
+            ->orderBy('ru.namaruangan')
+            ->get();
+        
+        $dataRuanganRajal = \DB::table('ruangan_m as ru')
+            ->select('ru.id','ru.namaruangan')
+            ->where('ru.kdprofile', $idProfile)
+            ->whereIn('ru.objectdepartemenfk',[18,24])
+            ->where('ru.statusenabled',true)
+            ->orderBy('ru.namaruangan')
+            ->get();
+
+
+        $dataCaraBayar = \DB::table('carabayar_m as cb')
+            ->select('cb.id','cb.carabayar')
+            ->where('cb.kdprofile', $idProfile)
+            ->where('cb.statusenabled',true)
+            ->get();
+
+        $uraianPendapatan = DB::select(DB::raw("select *
+        from uraianpendapatan_m
+        where kdprofile = 30
+        and statusenabled = true
+        and tahun = '$tahun'"));
+
+        $dataPegawaiUser = DB::select(DB::raw("select pg.id,pg.namalengkap from loginuser_s as lu
+                INNER JOIN pegawai_m as pg on lu.objectpegawaifk=pg.id
+                where lu.kdprofile = $idProfile and lu.id=:idLoginUser"),
+            array(
+                'idLoginUser' => $dataLogin['userData']['id'],
+            )
+        );
+
+        $result = array(
+            'ruanganranap' =>   $dataRuanganPelayanan,
+            'ruanganrajal' => $dataRuanganRajal,
+            'ruanganall' => $dataRuanganall,
+            'uraianpendapatan' => $uraianPendapatan,
+            'detaillogin' => $dataPegawaiUser,
+            'message' => 'as@cepot',
+        );
+
+        return $this->respond($result);
+    }
     public function deleteMapProdukToLaporanRL(Request $request) {
         $dataLogin = $request->all();
         $kdProfile = $this->getDataKdProfile($request);
@@ -199,6 +306,32 @@ class LaporanRekamMedisController extends   ApiController
         else{
             DB::rollBack();
             $transMessage = "Data Gagal Dihapus";
+        }
+        return $this->setStatusCode(201)->respond([], $transMessage);
+    }
+    public function deleteMapSTSToRuangan(Request $request) {
+        $dataLogin = $request->all();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        DB::beginTransaction();
+        if ($request['data']['norec'] != ''){
+            try{
+                $data1 = MapSTSToRuangan::where('norec', $request['data']['norec'])->where('statusenabled', true)->first();
+                $data1->statusenabled = false;
+                $data1->save();
+                $transStatus = 'true';
+            }
+            catch(\Exception $e){
+                $transStatus= false;
+            }
+        }
+        if ($transStatus='true')
+        {    DB::commit();
+            $transMessage = "Mapping Terhapus";
+        }
+        else{
+            DB::rollBack();
+            $transMessage = "Mapping Gagal Dihapus";
         }
         return $this->setStatusCode(201)->respond([], $transMessage);
     }
@@ -332,6 +465,95 @@ class LaporanRekamMedisController extends   ApiController
                 "message"  => $transMessage,
                 "map" => $newMap,
                 "as" => 'as@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function SaveMappingSTStoRuangan(Request $request) {
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $req = $request;
+        $ruangan = $request['ruanganfk'];
+        try {
+
+            if(isset($request['ruanganfk']) && $request['ruanganfk'] != null){
+                $produk = DB::select(DB::raw("select * from mapruangantoproduk_m where objectruanganfk = $ruangan 
+                and statusenabled = true 
+                and kdprofile = 30
+                and objectprodukfk not in (5008635,5008645,5008637,5008647,5008649,12122241,5008636,5008644,10013621,4040398,4040406,10012775,10012776,10012777,10013016,10013043,10013620)"));
+
+                foreach($produk as $pr){
+                    $newMap = new MapSTSToRuangan();
+                    $norecMap = $newMap->generateNewId();
+                    $newMap->norec = $norecMap;
+                    $newMap->kdprofile = $idProfile;
+                    $newMap->statusenabled = true;
+                    $newMap->objecturaianpendapatanfk = $request['objecturaianpendapatanfk'];
+                    $newMap->produkfk = $pr->objectprodukfk;
+                    $newMap->ruanganfk = $request['ruanganfk'];
+                    $newMap->departemenfk = $request['departemenfk'];
+                    $newMap->save();
+                }
+            
+            } else if(isset($request['jenisprodukfk']) && $request['jenisprodukfk'] != null){
+                $produk = DB::select(DB::raw("select * from produk_m where statusenabled = true
+                and kdprofile = 30
+                and kekuatan is not null
+                and kekuatan <> ''
+                and objectdetailjenisprodukfk in (1556,1346,1365,1444,1450,522,1598,474,1597,2033,1474,1847,1356)"));
+
+                foreach($produk as $pr){
+                    $newMap = new MapSTSToRuangan();
+                    $norecMap = $newMap->generateNewId();
+                    $newMap->norec = $norecMap;
+                    $newMap->kdprofile = $idProfile;
+                    $newMap->statusenabled = true;
+                    $newMap->objecturaianpendapatanfk = $request['objecturaianpendapatanfk'];
+                    $newMap->produkfk = $pr->id;
+                    $newMap->ruanganfk = $request['ruanganfk'];
+                    $newMap->departemenfk = $request['departemenfk'];
+                    $newMap->save();
+                }
+            
+            } else{
+                $newMap = new MapSTSToRuangan();
+                $norecMap = $newMap->generateNewId();
+                $newMap->norec = $norecMap;
+                $newMap->kdprofile = $idProfile;
+                $newMap->statusenabled = true;
+                $newMap->objecturaianpendapatanfk = $request['objecturaianpendapatanfk'];
+                $newMap->produkfk = $konten->objectprodukfk;
+                $newMap->ruanganfk = $request['ruanganfk'];
+                $newMap->departemenfk = $request['departemenfk'];
+                $newMap->save();
+            }
+
+            
+
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan Mapping Berhasil";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMessage,
+                "map" => $newMap,
+                "as" => 'as@epic',
+            );
+        } else {
+            $transMessage = "Simpan Mapping Gagal!!";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "map" => $newMap,
+                'line'=> $e->getLine(),
+                'message'=> $e->getMessage(),
+                "as" => 'as@vexana',
             );
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);

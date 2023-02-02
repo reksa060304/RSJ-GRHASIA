@@ -2564,6 +2564,11 @@ class BendaharaPenerimaanController extends ApiController {
             $kp = "and kp.kelompokpasien ilike '%".$request['kelompokpasien']."%'";
         }
 
+        $ko = '';
+        if(isset($request['klaimobat']) && $request['klaimobat']!="" && $request['klaimobat'] == true){
+            $ko = "and rkb.isobat = true";
+        }
+
         $detail = DB::select(DB::raw("select rkb.*, pd.noregistrasi, kp.kelompokpasien, kp.id idkelompokpasien, sts.nosts, sts.tglpenerimaan, coalesce(sts.totalsetoran,0) totalsetoran, ru.objectdepartemenfk
         from rekapklaimbpjs_t rkb
         left join pasiendaftar_t pd on pd.norec = rkb.norecpdfk
@@ -2580,6 +2585,7 @@ class BendaharaPenerimaanController extends ApiController {
         and rkb.kdprofile = 30
         $status
         $kp
+        $ko
         $nosts"));
         
 
@@ -4286,6 +4292,283 @@ class BendaharaPenerimaanController extends ApiController {
         // return $this->setStatusCode($result['status'])->respond($result, $transMsg);
     }
 
+    public function saveSTSV2(Request $request) {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $produk = [];
+        $dataLogin = $request->all();
+        $iduser = '';
+        $setor = $request['setoran'];
+        $tahun = date('Y');
+        $dataPegawaiUser = DB::select(DB::raw("select pg.id,pg.namalengkap from loginuser_s as lu
+                INNER JOIN pegawai_m as pg on lu.objectpegawaifk=pg.id
+                where pg.kdprofile = $idProfile and lu.id=:idLoginUser"),
+            array(
+                'idLoginUser' => $dataLogin['userData']['id'],
+            )
+        );
+
+        foreach($dataPegawaiUser as $dat){
+            $iduser = $dat->id;
+        }
+        
+        
+
+        $noclosing = [];
+        $totalpenerimaan = 0;
+        for($i=0; $i<count($setor); $i++){
+            $noclosing[$i] = $setor[$i]['nopenerimaan'];
+            $totalpenerimaan += $setor[$i]['totalpenerimaan'];
+        }
+
+        $total_penerimaan =0;
+
+        $totalpenerimaan = ceil($totalpenerimaan);
+
+        if (substr($totalpenerimaan,-3)>499){
+            $total_penerimaan=round($totalpenerimaan,-3);
+        } else {
+            $total_penerimaan=round($totalpenerimaan,-3)+500;
+        }
+
+        $nosts = $this->generateCode(new SuratTandaSetoran, 'nosts', 11, date('ymd',strtotime($setor[0]['tanggalSTS'])),$idProfile);
+
+        $STS = new SuratTandaSetoran();
+        $STS->norec  = $STS->generateNewId();
+        $STS->kdprofile = $idProfile;
+        $STS->statusenabled = true;
+        $STS->nosts = $nosts;
+        $STS->tglpenerimaan = $setor[0]['tanggalSTS'];
+        $STS->totalsetoran = $totalpenerimaan;
+        $STS->totalsetoranpembulatan = $total_penerimaan;
+        $STS->terbilang = $setor[0]['terbilang'];
+        $STS->objectpegawaifk = $iduser;
+        $STS->ismanual = null;
+        $STS->save();
+
+        // var_dump($noclosing);
+
+        for($i=0; $i<count($setor); $i++){
+
+            $STSK = new STStoSCK();
+            $STSK->norec  = $STSK->generateNewId();
+            $STSK->kdprofile = $idProfile;
+            $STSK->statusenabled = true;
+            $STSK->objectstsfk = $STS->norec;
+            $STSK->objectscfk = $setor[$i]['scfk'];
+            $STSK->objectsckfk = $setor[$i]['sckfk'];
+            $STSK->save();
+            
+            if($STSK->save() && $STS->save()){
+                $transMsg = 'Simpan STS Berhasil';
+            }else{
+                $transMsg = 'Simpan STS Gagal';
+            }     
+        }
+
+        // konten STS Detail
+
+        $data = DB::select(DB::raw("select distinct cb2.id idcarabayar2, kp.id idkelompokpasien, 0 objectkelompoktransaksifk, sbm.norec norecsbm, pp.norec, sc.tglclosing, ru.namaruangan, ru.id idruangan, pr.namaproduk, pr.id idproduk, pp.isobat,
+        (((CASE WHEN pp.hargajual IS NULL THEN 0 ELSE pp.hargajual::float8 END - CASE WHEN pp.hargadiscount IS NULL THEN
+        0 ELSE pp.hargadiscount::float8 END) * pp.jumlah) + CASE WHEN pp.jasa IS NULL THEN 0 ELSE pp.jasa::float8 END ) AS totaldibayarclosing,
+        ru.objectdepartemenfk, sbmcr.objectcarabayarfk, sbm.totaldibayar as totaldibayarsbm, sc.noclosing, sc.tglclosing,
+        sck.totaldibayar as totaldibayar,sck.carabayarfk, cb.carabayar, djp.detailjenisproduk, jpr.id as jenisproduk
+        
+        FROM   pasien_m ps 
+                        inner join pasiendaftar_t pd on ps.id=pd.nocmfk
+                        inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+                        inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
+                        inner JOIN ruangan_m AS ru ON ru.id = apd.objectruanganfk  
+                        left JOIN strukpelayanan_t AS sp ON sp.norec = pp.strukfk  
+                        LEFT JOIN strukbuktipenerimaan_t AS sbm ON sbm.nostrukfk = sp.norec AND sbm.statusenabled = true  
+                        LEFT JOIN strukbuktipenerimaancarabayar_t as sbmcr ON sbmcr.nosbmfk = sbm.norec
+                        LEFT JOIN carabayar_m as cb ON cb.id = sbmcr.objectcarabayarfk
+                        LEFT JOIN strukbuktipenerimaan_t AS sbm2 ON sbm2.nostrukfk = sp.norec AND sbm2.statusenabled = true and sbm2.norec <> sbm.norec 
+                        LEFT JOIN strukbuktipenerimaancarabayar_t as sbmcr2 ON sbmcr2.nosbmfk = sbm2.norec
+                        LEFT JOIN carabayar_m as cb2 ON cb2.id = sbmcr2.objectcarabayarfk and cb2.id <> cb.id
+                        LEFT JOIN loginuser_s AS lu ON lu.id = sbm.objectpegawaipenerimafk  
+                        LEFT JOIN pegawai_m AS pg ON pg.id = lu.objectpegawaifk  
+                        LEFT JOIN pegawai_m AS pgdpjp ON pgdpjp.id = pd.objectpegawaifk
+                        LEFT JOIN produk_m AS pr ON pr.id = pp.produkfk  
+                        LEFT JOIN kelompokpasien_m AS kp ON kp.id = pd.objectkelompokpasienlastfk
+                        inner join strukclosing_t as sc on sbm.noclosingfk = sc.norec
+                        inner join strukclosingkasir_t as sck on sc.norec = sck.noclosingfk
+                        left join detailjenisproduk_m djp on djp.id = pr.objectdetailjenisprodukfk
+                        left join jenisproduk_m jpr on jpr.id = djp.objectjenisprodukfk
+                        left join ststosck_t as ssc on ssc.objectsckfk = sck.norec
+                        left join surattandasetoran_t as sts on sts.norec = ssc.objectstsfk
+        where pd.statusenabled = true
+        --and sts.statusenabled = true
+        and pd.kdprofile = 30
+        and sc.noclosing IN('".implode("','",$noclosing)."')
+        
+        union all
+        
+        select distinct cb2.id idcarabayar2, 0 idkelompokpasien, sp.objectkelompoktransaksifk, sbm.norec norecsbm, sp.norec, sc.tglclosing, ru.namaruangan, ru.id idruangan, pr.namaproduk, pr.id idproduk, pp.isobat,
+        (spd.qtyproduk * spd.hargasatuan * spd.qtyoranglast)::float4 as totaldibayarclosing,
+        ru.objectdepartemenfk, sbmcr.objectcarabayarfk, sbm.totaldibayar as totaldibayarsbm, sc.noclosing, sc.tglclosing,
+        sck.totaldibayar as totaldibayar,sck.carabayarfk, cb.carabayar, djp.detailjenisproduk, jpr.id as jenisproduk
+        from strukclosingkasir_t as sck
+        inner join strukclosing_t as sc on sc.norec = sck.noclosingfk
+        inner join strukbuktipenerimaan_t as sbm on sbm.noclosingfk = sc.norec
+        inner join strukpelayanan_t as sp on sbm.nostrukfk = sp.norec
+        inner join strukpelayanandetail_t as spd on sp.norec = spd.nostrukfk
+		inner join strukbuktipenerimaancarabayar_t sbmcr on sbmcr.nosbmfk = sbm.norec
+        inner join produk_m pr on pr.id=spd.objectprodukfk
+        inner join carabayar_m as cb on cb.id = sck.carabayarfk
+        LEFT JOIN strukbuktipenerimaan_t AS sbm2 ON sbm2.nostrukfk = sp.norec AND sbm2.statusenabled = true and sbm2.norec <> sbm.norec 
+		LEFT JOIN strukbuktipenerimaancarabayar_t as sbmcr2 ON sbmcr2.nosbmfk = sbm2.norec
+		LEFT JOIN carabayar_m as cb2 ON cb2.id = sbmcr2.objectcarabayarfk 
+        left join detailjenisproduk_m djp on djp.id = pr.objectdetailjenisprodukfk
+        left join jenisproduk_m jpr on jpr.id = djp.objectjenisprodukfk
+        left join ruangan_m as ru on ru.id = spd.objectruanganasalfk
+        left join pasiendaftar_t as pd on sp.noregistrasifk = pd.norec
+        left join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+        left join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
+        left join ststosck_t as ssc on ssc.objectsckfk = sck.norec
+        left join surattandasetoran_t as sts on sts.norec = ssc.objectstsfk
+        where (sbm.keteranganlainnya = 'Pembayaran Tagihan Non Layanan' or sbm.keteranganlainnya = 'Pembayaran Diklat')
+        --and sts.statusenabled = true
+        and sc.noclosing IN('".implode("','",$noclosing)."')"));
+
+        $main = DB::select(DB::raw("select mptlr.norec, pro.id as idproduk, pro.namaproduk, up.id, up.uraianpendapatan,
+        up.nourut, ru.id as idruangan, ru.namaruangan, dp.id iddepartemen, dp.namadepartemen
+        from mapststoruangan_m as mptlr
+        inner join uraianpendapatan_m as up on up.id = mptlr.objecturaianpendapatanfk
+        left join produk_m as pro on pro.id = mptlr.produkfk
+        left join ruangan_m as ru on ru.id = mptlr.ruanganfk
+        left join departemen_m as dp on dp.id = mptlr.departemenfk
+        where mptlr.kdprofile = 30
+        and mptlr.statusenabled = true
+        and up.kdprofile = 30
+        and up.statusenabled = true
+        and up.tahun = '$tahun'
+        order by up.nourut asc, up.id asc"));
+
+        $mainaja = DB::select(DB::raw("select up.id, up.uraianpendapatan, up.nourut
+        from mapststoruangan_m as mptlr
+        inner join uraianpendapatan_m as up on up.id = mptlr.objecturaianpendapatanfk
+        where mptlr.kdprofile = 30
+        and mptlr.statusenabled = true
+        and up.kdprofile = 30
+        and up.statusenabled = true
+        and up.tahun = '$tahun'
+		group by up.id, up.uraianpendapatan, up.nourut
+        order by up.nourut asc, up.id asc"));
+
+        $uraianaja = DB::select(DB::raw("select *
+        from uraianpendapatan_m as up
+        where up.kdprofile = 30
+        and up.statusenabled = true
+        and up.tahun = '$tahun'
+        order by up.nourut asc, up.id asc"));
+       
+        $jumlah = 0;
+        $vol = 0;
+        $uraian = '';
+
+        foreach($data as $konten){
+            $cekjumlah = '';
+
+            foreach($main as $row){
+                $jumlah = 0;
+                $vol = 0;
+                $uraian = '';
+                
+                if($row->idproduk == $konten->idproduk && $row->iddepartemen == $konten->objectdepartemenfk){
+                    $jumlah += $konten->totaldibayarclosing;
+                    $vol++;
+                    $cekjumlah = $konten->namaproduk;
+                    $uraian = $row->uraianpendapatan;
+                }
+                else if($row->idproduk == $konten->idproduk && $row->idruangan == $konten->idruangan){
+                    $jumlah += $konten->totaldibayarclosing;
+                    $vol++;
+                    $cekjumlah = $konten->namaproduk;
+                    $uraian = $row->uraianpendapatan;
+                }
+                else if($row->idproduk == $konten->idproduk && $row->idruangan == null){
+                    $jumlah += $konten->totaldibayarclosing;
+                    $vol++;
+                    $cekjumlah = $konten->namaproduk;
+                    $uraian = $row->uraianpendapatan;
+                }
+
+                $datas[] = array(
+                    'uraian' => $uraian,
+                    'vol' => $vol,
+                    'jumlah' => $jumlah,
+                );
+                
+            }
+
+        }
+
+        $uraianfix = '';
+        $volfix = 0;
+        $jumlahfix = 0;
+        foreach($mainaja as $mj){
+            $uraianfix = '';
+            $volfix = 0;
+            $jumlahfix = 0;
+
+            foreach($datas as $dt){
+                if($mj->uraianpendapatan == $dt['uraian']){
+                    $uraianfix = $mj->uraianpendapatan;
+                    $volfix += $dt['vol'];
+                    $jumlahfix += $dt['jumlah'];
+                }
+            }
+
+            $datasaja[] = array(
+                'uraianfix' => $uraianfix,
+                'volfix' => $volfix,
+                'jumlahfix' => $jumlahfix,
+            );
+        }
+
+        $jl = 0;
+        $vl = 0;
+        foreach($uraianaja as $ua){
+            $jl = 0;
+            $vl = 0;
+            foreach($datasaja as $da){
+                if($da['uraianfix'] == $ua->uraianpendapatan){
+                    $jl = $da['jumlahfix'];
+                    $vl = $da['volfix'];
+                }
+            } 
+
+            $newId = SuratTandaSetoranDetail::max('nourut') +1 ;
+
+            $STSD = new SuratTandaSetoranDetail();
+            $STSD->norec  = $STSD->generateNewId();
+            $STSD->kdprofile = $idProfile;
+            $STSD->nourut = $newId;
+            $STSD->kdrekening = $ua->kdrekening;
+            $STSD->nomer = $ua->nouraian;
+            $STSD->jenisdata = 'konten';
+            $STSD->uraian = $ua->uraianpendapatan;
+            $STSD->kolom2 = $jl;
+            $STSD->vol = $vl;
+            $STSD->statusenabled = true;
+            $STSD->objectstsfk = $nosts;
+            $STSD->save();
+        }        
+        
+        
+
+        if($STSD->save()){
+            $transMsg = 'Simpan STS Berhasil';
+        }
+
+        $result = array(
+            'data' => $datasaja,
+        );
+        
+        return $this->setStatusCode(201)->respond($datasaja, 'Simpan STS Berhasil');
+    }
+
     public function saveSTSKlaim(Request $request) {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
@@ -4415,7 +4698,7 @@ class BendaharaPenerimaanController extends ApiController {
             }
             
 
-            if($request['setoran'][$i]['isobat'] == true && ($request['setoran'][$i]['idkelompokpasien'] == 1 || $request['setoran'][$i]['idkelompokpasien'] == 2 || $request['setoran'][$i]['idkelompokpasien'] == 21 || $request['setoran'][$i]['idkelompokpasien'] == 22 || $request['setoran'][$i]['idkelompokpasien'] == 24 || $request['setoran'][$i]['idkelompokpasien'] == 25)){
+            if($request['setoran'][$i]['isobat'] == true && ($request['setoran'][$i]['idkelompokpasien'] == 1 || $request['setoran'][$i]['idkelompokpasien'] == 2 || $request['setoran'][$i]['idkelompokpasien'] == 21 || $request['setoran'][$i]['idkelompokpasien'] == 22 || $request['setoran'][$i]['idkelompokpasien'] == 24 || $request['setoran'][$i]['idkelompokpasien'] == 25 || $request['setoran'][$i]['idkelompokpasien'] == null) && $request['setoran'][$i]['nosep'] != '-' && $request['setoran'][$i]['nosep'] != null){
                 $jumlahbpjsobat += (int)$request['setoran'][$i]['totalsetujui'];
                 $voljumlahbpjsobat++;
             }

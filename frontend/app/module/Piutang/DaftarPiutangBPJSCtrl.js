@@ -27,6 +27,24 @@ define(['initialize'], function (initialize) {
 			loadCombo();
 			loadData();
 
+			var dataformat = [
+				{noregistrasi: 2209002265, noklaim: '1202R0030922V001056', totalklaim: 333333, tglbayar: '2022-02-02 00:00', isobat: 'TRUE'},
+				{noregistrasi: 2210000149, noklaim: '1202R0031122V000021', totalklaim: 444444, tglbayar: '2022-02-02 00:00', isobat: 'TRUE'}
+			]
+
+			$scope.dataFormat = new kendo.data.DataSource({
+				data: dataformat,
+				pageSize: 10,
+				total: dataformat.length,
+				serverPaging: false,
+				schema: {
+					model: {
+						fields: {
+						}
+					}
+				}
+			});
+
 			$scope.UbahRekanan = function () {
 				$scope.cboDefault = false;
 				$scope.cboRekanan = true;
@@ -53,6 +71,10 @@ define(['initialize'], function (initialize) {
 				$scope.cboRekanan = false
 				$scope.cboDefault = true
 			}
+
+			$scope.TambahObat = function(){
+				$scope.popupTanggalBayarObat.center().open()
+			};
 
 			$scope.tagihan = function () {
 				if ($scope.dataPasienSelected.noRegistrasi != undefined) {
@@ -85,6 +107,104 @@ define(['initialize'], function (initialize) {
 					$scope.listRekanan = data;
 				});
 			}
+
+			$scope.SimpanPopUpTanggalObat = function(){
+
+                var objSave =
+                    {
+                        tglbayar: moment($scope.item.tglBayarobat).format('YYYY-MM-DD HH:mm:ss'),
+                        noregistrasi: $scope.item.noregistrasiobat,
+                        totalklaim: $scope.item.totalobat,
+                        noklaim: $scope.item.noklaimobat,
+                    }
+
+                    medifirstService.get("tatarekening/daftar-piutang-bpjs-manual?noregistrasi="+$scope.item.noregistrasiobat, false).then(function (dat) {
+                        if(dat.data.data.length != 0 && dat.data.data[0].objectkelompokpasienlastfk != 4){
+                            var confirm = $mdDialog.confirm()
+                            .title('Peringatan')
+                            .textContent('Data tersebut sudah diinput, yakin ingin input ulang?')
+                            .ariaLabel('Lucky day')
+                            .cancel('Tidak')
+                            .ok('OK')
+                            $mdDialog.show(confirm).then(function () {
+                                medifirstService.post('tatarekening/save-piutang-bpjs-manual-obat', objSave).then(function (e) {
+                                    loadData();
+                                    $scope.popupTanggalBayar.center().close()
+                                }, function (error) {
+                        
+                                })
+                            })
+                        } else{
+                            medifirstService.post('tatarekening/save-piutang-bpjs-manual-obat', objSave).then(function (e) {
+                                loadData();
+                                $scope.popupTanggalBayar.center().close()
+                            }, function (error) {
+                    
+                            })
+                        }
+                        
+                    });
+                
+            }
+
+			$("#upload").kendoUpload({
+                localization: {
+                    "select": "Import"
+                },
+
+                select: function (e) {
+                    var ALLOWED_EXTENSIONS = [".xlsx"];
+                    var extension = e.files[0].extension.toLowerCase();
+                    if (ALLOWED_EXTENSIONS.indexOf(extension) == -1) {
+                        toastr.error('Mohon Pilih File Excel (.xls)')
+                        e.preventDefault();
+                        // return
+                    }
+                    var file = e.files[0];
+                    var stringFile = e.files[0].name
+                    var strFile = stringFile.split('.')
+                    var nmFileArr = strFile[0].split('_')
+
+                    for (var i = 0; i < e.files.length; i++) {
+                        var file = e.files[i].rawFile;
+
+                        if (file) {
+                            var reader = new FileReader();
+                            reader.onload = function (e) {
+                                var data = e.target.result;
+                                var workbook = XLSX.read(data, {
+                                    type: 'binary'
+                                });
+
+                                workbook.SheetNames.forEach(function (sheetName) {
+									
+                                    var XL_row_object = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]);
+                                    var json_object = JSON.stringify(XL_row_object);
+                                    console.log(XL_row_object);
+                                    var objSave =
+                                    {
+                                        data: XL_row_object,
+										pegawai: $scope.pegawaiLogin.namaLengkap,
+										userloginfk: $scope.dataLogin.id,
+                                    }
+
+									medifirstService.post('tatarekening/save-piutang-bpjs', objSave).then(function (data) {
+										loadData()
+									})
+                                })
+
+                            };
+
+                            reader.onerror = function (ex) {
+                                console.log(ex);
+                            };
+
+                            reader.readAsBinaryString(file);
+                        }
+                    }
+                },
+
+            });
 
 			$scope.getIsiComboRuangan = function () {
 				$scope.listRuangan = $scope.item.instalasi.ruangan
@@ -214,12 +334,56 @@ define(['initialize'], function (initialize) {
 						attributes: { style: "text-align:right;" },
 					},
 					{
+						"field": "totalklaimobat",
+						"title": "Total Klaim Obat",
+						"width": "120px",
+						"template": "<span class='style-right'>{{formatRupiah('#: totalklaimobat #', '')}}</span>",
+						attributes: { style: "text-align:right;" },
+					},
+					{
 						"field": "selisih",
 						"title": "Selisih Klaim",
 						"width": "120px",
 						"template": "<span class='style-right'>{{formatRupiah('#: selisih #', '')}}</span>",
 						attributes: { style: "text-align:right;" },
 
+					}
+				]
+			};
+
+			$scope.columnFormat = {
+                toolbar: [
+                    "excel",
+                ],
+                excel: {
+                    fileName: "FormatImportKlaimObatBPJS.xlsx",
+                    allPages: true,
+                },
+                columns: [
+					{
+						"field": "noregistrasi",
+						"title": "noregistrasi",
+						"width": "30px",
+					},
+					{
+						"field": "noklaim",
+						"title": "noklaim",
+						"width": "150px",
+					},
+					{
+						"field": "totalklaim",
+						"title": "totalklaim",
+						"width": "100px",
+					},
+					{
+						"field": "tglbayar",
+						"title": "tglbayar",
+						"width": "100px",
+					},
+					{
+						"field": "isobat",
+						"title": "isobat",
+						"width": "100px",
 					}
 				]
 			};
@@ -504,7 +668,13 @@ define(['initialize'], function (initialize) {
 						console.log(element)
 						if(element.noregistrasi != null){
 							let namasearch = element.noregistrasi.toLowerCase()
+							let nocm = element.nocm.toLowerCase()
+							let nosep = element.nosep.toLowerCase()
 							if (namasearch.match(newValue.toLowerCase())) {
+								data.push(element)
+							} else if (nocm.match(newValue.toLowerCase())) {
+								data.push(element)
+							} else if (nosep.match(newValue.toLowerCase())) {
 								data.push(element)
 							}
 						}

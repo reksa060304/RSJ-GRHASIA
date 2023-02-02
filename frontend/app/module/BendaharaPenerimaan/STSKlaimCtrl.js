@@ -77,6 +77,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 					kelompokpasien = $scope.item.kelompokpasien.kelompokpasienfix
 				}
 
+                var klaimobat = "";
+				if ($scope.item.klaimobat != undefined && $scope.item.klaimobat == true) {
+					klaimobat = $scope.item.klaimobat
+				}
+
                 var tglAwal = moment($scope.item.tglAwal).format('YYYY-MM-DD HH:mm:ss');
                 var tglAkhir = moment($scope.item.tglAkhir).format('YYYY-MM-DD HH:mm:ss');
                 // var tgl = moment($scope.tanggal).format('DD/MM/YYYY');
@@ -84,7 +89,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     "tglAwal=" + tglAwal +
                     "&tglAkhir=" + tglAkhir + nosts +
                     "&status=" + status +
-                    "&kelompokpasien=" + kelompokpasien
+                    "&kelompokpasien=" + kelompokpasien + 
+                    "&klaimobat=" + klaimobat
                     , true).then(function (dat) {
                         $scope.isRouteLoading = false;
                         for (var i = 0; i < dat.data.detail.length; i++) {

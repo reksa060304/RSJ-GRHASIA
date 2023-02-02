@@ -401,6 +401,10 @@
             "urlDep": "module/BendaharaPenerimaan/SuratTandaSetoranCtrl"
         },
         {
+            "nameDep": "SuratTandaSetoranV2Ctrl",
+            "urlDep": "module/BendaharaPenerimaan/SuratTandaSetoranV2Ctrl"
+        },
+        {
             "nameDep": "CetakanBPCtrl",
             "urlDep": "module/BendaharaPenerimaan/CetakanBPCtrl"
         },
@@ -446,6 +450,10 @@
         {
             "nameDep": "STSPertanggalCtrl",
             "urlDep": "module/BendaharaPenerimaan/STSPertanggalCtrl"
+        }, 
+        {
+            "nameDep": "MapSTStoRuanganCtrl",
+            "urlDep": "module/BendaharaPenerimaan/MapSTStoRuanganCtrl"
         }, 
         {
             "nameDep": "RincianPendapatanCtrl",
