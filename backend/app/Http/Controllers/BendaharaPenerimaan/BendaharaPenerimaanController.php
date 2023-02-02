@@ -4462,6 +4462,96 @@ class BendaharaPenerimaanController extends ApiController {
         and up.statusenabled = true
         and up.tahun = '$tahun'
         order by up.nourut asc, up.id asc"));
+
+        $jumlahcostsharingbpjsrajal = 0;
+        $jumlahcostsharingjamkesdarajal = 0;
+        $jumlahcostsharingjamkesosrajal = 0;
+        $jumlahcostsharingbpjsranap = 0;
+        $jumlahcostsharingjamkesdaranap = 0;
+        $jumlahcostsharingjamkesosranap = 0;
+        $jumlahtransferrajal = 0;
+        $jumlahtransferranap = 0;
+        $jumlahtunairajal = 0;
+        $jumlahtunairanap = 0;
+
+        $voljumlahcostsharingbpjsrajal = 0;
+        $voljumlahcostsharingjamkesdarajal = 0;
+        $voljumlahcostsharingjamkesosrajal = 0;
+        $voljumlahcostsharingbpjsranap = 0;
+        $voljumlahcostsharingjamkesdaranap = 0;
+        $voljumlahcostsharingjamkesosranap = 0;
+        $voljumlahtransferrajal = 0;
+        $voljumlahtransferranap = 0;
+        $voljumlahtunairajal = 0;
+        $voljumlahtunairanap = 0;
+
+
+        //tetep gabisa pakai mapping
+        foreach($data as $konten){
+            $cekjumlah = '';
+            $cekharga = 0;
+            if($konten->idkelompokpasien != 0 && $konten->idkelompokpasien != 1 && $konten->idkelompokpasien != 12 && $konten->idkelompokpasien != 18 && $konten->idkelompokpasien != 8 && $konten->objectdepartemenfk != 16 && $konten->totaldibayarclosing != $konten->totaldibayarsbm){
+                $jumlahcostsharingbpjsrajal += $konten->totaldibayarsbm;
+                $voljumlahcostsharingbpjsrajal++;
+                $cekjumlah = $konten->namaproduk;
+            }
+
+            else if($konten->idkelompokpasien != 0 && $konten->idkelompokpasien != 1 && $konten->idkelompokpasien != 12 && $konten->idkelompokpasien != 18 && $konten->idkelompokpasien != 8 && $konten->objectdepartemenfk == 16 && $konten->totaldibayarclosing != $konten->totaldibayarsbm){
+                $jumlahcostsharingbpjsranap += $konten->totaldibayarsbm;
+                $voljumlahcostsharingbpjsranap++;
+                $cekjumlah = $konten->namaproduk;
+            }
+
+            else if($konten->idkelompokpasien != 0 && $konten->idkelompokpasien != 1 && $konten->idkelompokpasien != 12 && $konten->idkelompokpasien == 18 && $konten->objectdepartemenfk != 16 && $konten->totaldibayarclosing != $konten->totaldibayarsbm){
+                $jumlahcostsharingjamkesosrajal += $konten->totaldibayarsbm;
+                $voljumlahcostsharingjamkesosrajal++;
+                $cekjumlah = $konten->namaproduk;
+            }
+
+            else if($konten->idkelompokpasien != 0 && $konten->idkelompokpasien != 1 && $konten->idkelompokpasien != 12 && $konten->idkelompokpasien == 18 && $konten->objectdepartemenfk == 16 && $konten->totaldibayarclosing != $konten->totaldibayarsbm){
+                $jumlahcostsharingjamkesosranap += $konten->totaldibayarsbm;
+                $voljumlahcostsharingjamkesosranap++;
+                $cekjumlah = $konten->namaproduk;
+            }
+
+            else if($konten->idkelompokpasien != 0 && $konten->idkelompokpasien != 1 && $konten->idkelompokpasien != 12 && $konten->idkelompokpasien == 8 && $konten->objectdepartemenfk != 16 && $konten->totaldibayarclosing != $konten->totaldibayarsbm){
+                $jumlahcostsharingjamkesdarajal += $konten->totaldibayarsbm;
+                $voljumlahcostsharingjamkesdarajal++;
+                $cekjumlah = $konten->namaproduk;
+            }
+
+            else if($konten->idkelompokpasien != 0 && $konten->idkelompokpasien != 1 && $konten->idkelompokpasien != 12 && $konten->idkelompokpasien == 8 && $konten->objectdepartemenfk == 16 && $konten->totaldibayarclosing != $konten->totaldibayarsbm){
+                $jumlahcostsharingjamkesdaranap += $konten->totaldibayarsbm;
+                $voljumlahcostsharingjamkesdaranap++;
+                $cekjumlah = $konten->namaproduk;
+            }
+
+            else if(($konten->idkelompokpasien == 1 || $konten->idkelompokpasien == 12) && $konten->objectdepartemenfk != 16 && $konten->objectcarabayarfk == 1 && $konten->idcarabayar2 != null){
+                $jumlahtunairajal = $konten->totaldibayarsbm;
+                $voljumlahtunairajal++;
+                $cekjumlah = $konten->namaproduk;
+            }
+
+            else if(($konten->idkelompokpasien == 1 || $konten->idkelompokpasien == 12) && $konten->objectdepartemenfk == 16 && $konten->objectcarabayarfk == 1 && $konten->idcarabayar2 != null){
+                $jumlahtunairanap = $konten->totaldibayarsbm;
+                $voljumlahtunairanap++;
+                $cekjumlah = $konten->namaproduk;
+            }
+
+            else if(($konten->idkelompokpasien == 1 || $konten->idkelompokpasien == 12) && $konten->objectdepartemenfk != 16 && $konten->objectcarabayarfk == 3 && $konten->idcarabayar2 != null){
+                $jumlahtransferrajal = $konten->totaldibayarsbm;
+                $voljumlahtransferrajal++;
+                $cekjumlah = $konten->namaproduk;
+            }
+
+            else if(($konten->idkelompokpasien == 1 || $konten->idkelompokpasien == 12) && $konten->objectdepartemenfk == 16 && $konten->objectcarabayarfk == 3 && $konten->idcarabayar2 != null){
+                $jumlahtransferranap = $konten->totaldibayarsbm;
+                $voljumlahtransferranap++;
+                $cekjumlah = $konten->namaproduk;
+            }
+        }
+
+        //bisa pakai mapping
        
         $jumlah = 0;
         $vol = 0;
@@ -4549,8 +4639,40 @@ class BendaharaPenerimaanController extends ApiController {
             $STSD->nomer = $ua->nouraian;
             $STSD->jenisdata = 'konten';
             $STSD->uraian = $ua->uraianpendapatan;
-            $STSD->kolom2 = $jl;
-            $STSD->vol = $vl;
+            if($ua->uraianpendapatan == 'Cost Sharing BPJS Rajal'){
+                $STSD->kolom2 = $jumlahcostsharingbpjsrajal;
+                $STSD->vol = $voljumlahcostsharingbpjsrajal;
+            } else if($ua->uraianpendapatan == 'Cost Sharing Jamkesda Bantul Rajal'){
+                $STSD->kolom2 = $jumlahcostsharingjamkesdarajal;
+                $STSD->vol = $voljumlahcostsharingjamkesdarajal;
+            } else if($ua->uraianpendapatan == 'Cost Sharing Jamkesos Rajal'){
+                $STSD->kolom2 = $jumlahcostsharingjamkesosrajal;
+                $STSD->vol = $voljumlahcostsharingjamkesosrajal;
+            } else if($ua->uraianpendapatan == 'Pembayaran Tunai Pasien Rajal'){
+                $STSD->kolom2 = $jumlahtunairajal;
+                $STSD->vol = $voljumlahtunairajal;
+            } else if($ua->uraianpendapatan == 'Pembayaran Transfer Pasien Rajal'){
+                $STSD->kolom2 = $jumlahtransferrajal;
+                $STSD->vol = $voljumlahtransferrajal;
+            } else if($ua->uraianpendapatan == 'Cost Sharing BPJS Ranap'){
+                $STSD->kolom2 = $jumlahcostsharingbpjsranap;
+                $STSD->vol = $voljumlahcostsharingbpjsranap;
+            } else if($ua->uraianpendapatan == 'Cost Sharing Jamkesda Bantul Ranap'){
+                $STSD->kolom2 = $jumlahcostsharingjamkesdaranap;
+                $STSD->vol = $voljumlahcostsharingjamkesdaranap;
+            } else if($ua->uraianpendapatan == 'Cost Sharing Jamkesos Ranap'){
+                $STSD->kolom2 = $jumlahcostsharingjamkesosranap;
+                $STSD->vol = $voljumlahcostsharingjamkesosranap;
+            } else if($ua->uraianpendapatan == 'Pembayaran Tunai Pasien Ranap'){
+                $STSD->kolom2 = $jumlahtunairanap;
+                $STSD->vol = $voljumlahtunairanap;
+            } else if($ua->uraianpendapatan == 'Pembayaran Transfer Pasien Ranap'){
+                $STSD->kolom2 = $jumlahtransferranap;
+                $STSD->vol = $voljumlahtransferranap;
+            } else{
+                $STSD->kolom2 = $jl;
+                $STSD->vol = $vl;
+            }
             $STSD->statusenabled = true;
             $STSD->objectstsfk = $nosts;
             $STSD->save();

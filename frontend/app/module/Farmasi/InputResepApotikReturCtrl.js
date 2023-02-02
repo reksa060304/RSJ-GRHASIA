@@ -28,6 +28,7 @@ define(['initialize'], function(initialize) {
             var racikan = 0
             var strStatus = 0
             var tarifJasa = 0
+            $scope.dissimpan = false
             $scope.item.hargaNetto = 0
             // $scope.item.tglAwal = $scope.now;
             // $scope.item.tglAkhir = $scope.now;
@@ -847,6 +848,9 @@ define(['initialize'], function(initialize) {
             }
 
             $scope.simpan = function(){
+
+                $scope.dissimpan = true
+
                 if ($scope.item.penulisResep == undefined) {
                     alert("Pilih Penulis Resep terlebih dahulu!!")
                     return
@@ -875,6 +879,7 @@ define(['initialize'], function(initialize) {
                         strukresep:strukresep,
                         pelayananpasien:data2//$scope.dataGrid._data
                     }
+                
                 
                 medifirstService.post('farmasi/save-pelayananobat',objSave).then(function(e) {
                     $scope.item.resep = e.data.noresep.norec
@@ -907,6 +912,7 @@ define(['initialize'], function(initialize) {
 
                     //     })
                     // }
+                    $scope.dissimpan = false
                     window.history.back();
                 })
                 
