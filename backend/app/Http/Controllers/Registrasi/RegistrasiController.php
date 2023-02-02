@@ -6444,6 +6444,8 @@ class RegistrasiController extends ApiController
     public function getPasienPerjanjian(Request $request){
         $kdProfile = $this->getDataKdProfile($request);
         $data = \DB::table('antrianpasienregistrasi_t as apr')
+            ->leftJoin('pasiendaftar_t as pd','pd.statusschedule','=','apr.noreservasi')
+            ->leftJoin('antrianpasiendiperiksa_t as apd','apd.noregistrasifk','=','pd.norec')
             ->leftJoin('pasien_m as pm','pm.id','=','apr.nocmfk')
             ->leftJoin('ruangan_m as ru','ru.id','=','apr.objectruanganfk')
             ->leftJoin('pegawai_m as pg','pg.id','=','apr.objectpegawaifk')
@@ -6453,7 +6455,7 @@ class RegistrasiController extends ApiController
                 'apr.notelepon','pm.namapasien','apr.namapasien','apr.objectkelompokpasienfk','kps.kelompokpasien',
                 'apr.tglinput','apr.nocmfk',
                 DB::raw('(case when pm.namapasien is null then apr.namapasien else pm.namapasien end) as namapasien,
-                (case when apr.isconfirm=\'true\' then \'Confirm\' else \'Reservasi\' end) as status,apr.jamreservasi')
+                (case when apr.isconfirm=\'true\' then \'Confirm\' else \'Reservasi\' end) as status,apr.jamreservasi,apr.ismobilejkn,apd.noantrian,apr.jenis')
             )
             ->where('apr.noreservasi','<>','-')
             ->where('apr.statusenabled',true)
@@ -6886,7 +6888,11 @@ class RegistrasiController extends ApiController
                 'pa.nosep as nosep', 'br.norec as norec_br', 'pd.nostruklastfk','klstg.namakelas as kelasditanggung','kls.namakelas',
                 'ps.tgllahir','ru.objectdepartemenfk', 'pd.objectkelasfk','dept.id as deptid','pa.ppkrujukan','ddt.objectdiagnosafk',
                 'jpl.jenispelayanan','pa.objectdiagnosafk as iddiagnosabpjs','ps.nobpjs','jks.jeniskelamin',
-                'ps.nohp','pa.statuskunjungan','pa.flagprocedure','pa.poliasalkode','pa.tglcreate','asu.nmprovider',DB::raw('coalesce(it.qtytracer,0) as qtytracer'))
+                'ps.nohp','pa.statuskunjungan','pa.flagprocedure','pa.poliasalkode','pa.tglcreate','asu.nmprovider',DB::raw('coalesce(it.qtytracer,0) as qtytracer'),
+                DB::raw("pd.ismobilejkn,
+                case when pd.ismobilejkn = true then 
+                (case when pd.ischeckin = true  then 'Sudah Checkin' else 'Belum Checkin' end) else '-' end as statusjkn,
+                case when pd.ismobilejkn = true then pd.statusschedule else '-' end as statusschedule"))
             ->whereNull('br.norec')
             ->where('pd.statusenabled', true)
             ->where('pd.kdprofile', (int)$kdProfile);
