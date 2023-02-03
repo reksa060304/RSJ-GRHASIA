@@ -78,8 +78,12 @@ define(['initialize'], function(initialize) {
                     "field": "tglkadaluarsa",
                     "title": "Tgl Kadaluarsa",
                     "width" : "80px",
+                },
+                {
+                    "field": "keteranganlainnya",
+                    "title": "Keterangan",
+                    "width" : "80px",
                 }
-           
             ]
              };
 

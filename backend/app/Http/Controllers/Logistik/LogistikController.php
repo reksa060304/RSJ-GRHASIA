@@ -11350,7 +11350,7 @@ class LogistikController extends ApiController{
         }
         $tglAyeuna = date('Y-m-d H:i:s');
         $data = \DB::select(DB::raw("select * from
-                        (select pr.id,pr.kdproduk as kdsirs,pr.namaproduk,SUM(spd.qtyproduk) as qtyproduk,spd.tglkadaluarsa			
+                        (select pr.id,pr.kdproduk as kdsirs,pr.namaproduk,SUM(spd.qtyproduk) as qtyproduk,spd.tglkadaluarsa, spd.keteranganlainnya			
                         from stokprodukkadaluarsa_t as spd
                         INNER JOIN produk_m as pr on pr.id = spd.objectprodukfk
                         INNER JOIN detailjenisproduk_m as djp on djp.id = pr.objectdetailjenisprodukfk
@@ -11360,7 +11360,7 @@ class LogistikController extends ApiController{
                         where spd.kdprofile = $idProfile and pr.statusenabled=true and spd.tglkadaluarsa between '$tglkadaluarsa' and '$tglkadaluarsaakhir' 
                         $dataRuangan
                         $kdproduk
-                        GROUP BY pr.id,pr.kdproduk,pr.namaproduk,spd.tglkadaluarsa	) as x
+                        GROUP BY pr.id,pr.kdproduk,pr.namaproduk,spd.tglkadaluarsa, spd.keteranganlainnya	) as x
                         where x.qtyproduk > 0
                         order by x.namaproduk asc"));
 

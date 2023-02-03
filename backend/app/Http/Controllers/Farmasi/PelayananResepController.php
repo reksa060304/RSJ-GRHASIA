@@ -2030,6 +2030,18 @@ class PelayananResepController extends ApiController
     public function SimpanPelayananObat(Request $request) {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
+        $cekprodukfk = $request['pelayananpasien'][0]['produkfk'];
+        $ceknoregistrasifk = $request['pelayananpasien'][0]['noregistrasifk'];
+        $ceknostrukterimafk = $request['pelayananpasien'][0]['nostrukterimafk'];
+
+        $cek = DB::select(DB::raw("
+                    select jumlah from pelayananpasien_t 
+                    where kdprofile = $idProfile 
+                    and noregistrasifk='$ceknoregistrasifk'
+                    and strukterimafk='$ceknostrukterimafk' 
+                    and produkfk=$cekprodukfk                                 
+                    "));
+            //var_dump($cek);
 
         //TODO : SAVE INPUT RESEP OBAT
         if (isset($request['strukresep']['isobatalkes']) && $request['strukresep']['isobatalkes'] == true){
@@ -2047,11 +2059,27 @@ class PelayananResepController extends ApiController
             );
             return $this->setStatusCode($result['status'])->respond($result, $transMessage);
         }
+
+        if(count($cek) != 0){
+            if($cek[0]->jumlah < $request['pelayananpasien'][0]['jmlretur']){
+                $transMessage = "Jumlah Retur Melebihi Jumlah Qty";
+                DB::rollBack();
+                $result = array(
+                    "status" => 400,
+                    "message"  => $transMessage,
+                    "as" => 'as@epic',
+                );
+                return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+            }
+        }
         //## StrukResep
+
         DB::beginTransaction();
 //        ini_set('max_execution_time', 1000); //6 minutes
         
         try {
+
+            
 
             $racikanORnonracikan = 'N';
             //region @SIMPAN PELAYANAN OBAT IEU
