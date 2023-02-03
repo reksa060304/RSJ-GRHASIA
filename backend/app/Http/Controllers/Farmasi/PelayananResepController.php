@@ -2034,15 +2034,6 @@ class PelayananResepController extends ApiController
         $ceknoregistrasifk = $request['pelayananpasien'][0]['noregistrasifk'];
         $ceknostrukterimafk = $request['pelayananpasien'][0]['nostrukterimafk'];
 
-        $cek = DB::select(DB::raw("
-                    select jumlah from pelayananpasien_t 
-                    where kdprofile = $idProfile 
-                    and noregistrasifk='$ceknoregistrasifk'
-                    and strukterimafk='$ceknostrukterimafk' 
-                    and produkfk=$cekprodukfk                                 
-                    "));
-            //var_dump($cek);
-
         //TODO : SAVE INPUT RESEP OBAT
         if (isset($request['strukresep']['isobatalkes']) && $request['strukresep']['isobatalkes'] == true){
             $noResep = $this->generateCodeBySeqTable(new StrukResep, 'noresep', 12, 'OA/' . $this->getDateTime()->format('ym') . '/', $idProfile);
@@ -2058,19 +2049,6 @@ class PelayananResepController extends ApiController
                 "as" => 'as@epic',
             );
             return $this->setStatusCode($result['status'])->respond($result, $transMessage);
-        }
-
-        if(count($cek) != 0){
-            if($cek[0]->jumlah < $request['pelayananpasien'][0]['jmlretur']){
-                $transMessage = "Jumlah Retur Melebihi Jumlah Qty";
-                DB::rollBack();
-                $result = array(
-                    "status" => 400,
-                    "message"  => $transMessage,
-                    "as" => 'as@epic',
-                );
-                return $this->setStatusCode($result['status'])->respond($result, $transMessage);
-            }
         }
         //## StrukResep
 
