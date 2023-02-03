@@ -20,6 +20,7 @@ define(['initialize'], function(initialize) {
                 }               
                 $scope.item.jmlRows = 10
                 $scope.item.tanggal = moment($scope.now).format('YYYY-MM-DD HH:mm')
+                $scope.item.tanggalakhir = moment($scope.now).format('YYYY-MM-DD HH:mm')
                 $scope.listRuangan = medifirstService.getMapLoginUserToRuangan();
                 $scope.item.ruangan = {id:$scope.listRuangan[0].id,namaruangan:$scope.listRuangan[0].namaruangan}
                 loadgrid();
@@ -115,7 +116,8 @@ define(['initialize'], function(initialize) {
           
             function loadgrid(){
                 $scope.isRouteLoading=true;
-                var tglKadaluarsa = moment($scope.item.tanggal).format('YYYY-MM-DD 00:00:00');             
+                var tglKadaluarsa = moment($scope.item.tanggal).format('YYYY-MM-DD 00:00:00');
+                var tglKadaluarsaAkhir = moment($scope.item.tanggalakhir).format('YYYY-MM-DD 23:59:59');             
                 var ruanganid = "";
                 if ($scope.item.ruangan != undefined) {
                     ruanganid = $scope.item.ruangan.id
@@ -128,6 +130,7 @@ define(['initialize'], function(initialize) {
 
                 medifirstService.get('logistik/get-daftar-barang-kadaluarsa?'
                     +'tglkadaluarsa='+tglKadaluarsa
+                    +'&tglkadaluarsaakhir='+tglKadaluarsaAkhir
                     +'&idruangan='+ruanganid
                     + kdproduk
                   ).then(function(data){

@@ -11339,6 +11339,7 @@ class LogistikController extends ApiController{
         $idProfile = (int) $kdProfile;
         $dataLogin=$request->all();
         $tglkadaluarsa=$request['tglkadaluarsa'];
+        $tglkadaluarsaakhir=$request['tglkadaluarsaakhir'];
         $dataRuangan='';
         if(isset($request['idruangan']) && $request['idruangan']!="" && $request['idruangan']!="undefined"){
             $dataRuangan = ' and ru.id = '. $request['idruangan'];
@@ -11356,7 +11357,7 @@ class LogistikController extends ApiController{
                         INNER JOIN jenisproduk_m as jp on jp.id = djp.objectjenisprodukfk
                         INNER JOIN satuanstandar_m as sa on sa.id = pr.objectsatuanstandarfk
                         INNER JOIN ruangan_m as ru on ru.id = spd.objectruanganfk
-                        where spd.kdprofile = $idProfile and pr.statusenabled=true and spd.tglkadaluarsa >= '$tglkadaluarsa' 
+                        where spd.kdprofile = $idProfile and pr.statusenabled=true and spd.tglkadaluarsa between '$tglkadaluarsa' and '$tglkadaluarsaakhir' 
                         $dataRuangan
                         $kdproduk
                         GROUP BY pr.id,pr.kdproduk,pr.namaproduk,spd.tglkadaluarsa	) as x
