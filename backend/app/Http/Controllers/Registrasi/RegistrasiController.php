@@ -3733,7 +3733,7 @@ class RegistrasiController extends ApiController
                     'namakecamatan' => $item->namakecamatan,
                     'namakotakabupaten' => $item->namakotakabupaten,
                     'namapropinsi' => $item->namapropinsi,
-                    'desa' => $item->namadesakelurahan .', '. $item->namakecamatan .',  '. $item->namakotakabupaten .', '.
+                    'desa' => $item->namadesakelurahan .','. $item->namakecamatan .','. $item->namakotakabupaten .','.
                         $item->namapropinsi ,
                     'objectkecamatanfk' => $item->objectkecamatanfk,
                     'objectkotakabupatenfk' => $item->objectkotakabupatenfk,
