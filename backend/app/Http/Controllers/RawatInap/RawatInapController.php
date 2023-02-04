@@ -2037,4 +2037,82 @@ class RawatInapController extends ApiController
         );
         return $this->respond($result);
     }
+    public function updateRuangan(Request $request){
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $rpp="data";
+        try {
+            $antrians = AntrianPasienDiperiksa::where('noregistrasifk',$request['norec_pd'])
+                ->where('objectruanganfk',$request['ruanganlastfk'])
+                ->whereNull('tglkeluar')
+                ->where('kdprofile', (int)$kdProfile)
+                ->first();
+            $rpp = RegistrasiPelayananPasien::where('noregistrasifk',$request['norec_pd'])
+                ->where('objectruanganfk',$request['ruanganlastfk'])
+                ->whereNull('tglkeluar')
+                ->where('kdprofile', (int)$kdProfile)
+                ->first();
+
+//			if(!empty($antrians)){
+            AntrianPasienDiperiksa::where('norec',$antrians->norec)->where('kdprofile', (int)$kdProfile)
+                ->update(
+                    [
+                        'objectruanganfk' => $request['objectruanganfk'] ,
+                        'objectkamarfk' => $request['objectkamarfk'] ,
+                        'nobed' => $request['nobed'] ,
+                    ]
+                );
+            PasienDaftar::where('norec',$request['norec_pd'])->where('kdprofile', (int)$kdProfile)
+                ->update(
+                    [
+                        'objectruanganlastfk' => $request['objectruanganfk'] ,
+                    ]
+                );
+//			}
+//			if(!empty($rpp)){
+            RegistrasiPelayananPasien::where('norec',$rpp->norec)->where('kdprofile', (int)$kdProfile)
+                ->update(
+                    [
+                        'objectruanganfk' => $request['objectruanganfk'] ,
+                        'objectkamarfk' => $request['objectkamarfk'] ,
+                        'nobed' => $request['nobed'] ,
+                    ]
+                );
+//			}
+
+
+            //update statusbed jadi Isi
+            TempatTidur::where('id',$request['nobed'])->where('kdprofile', (int)$kdProfile)->update(['objectstatusbedfk'=>1]);
+
+            if(isset($request['nobedasal']) && $request['nobedasal'] !='null' && $request['nobedasal'] != $request['nobed'] ){
+                //update statusbed jadi Kosong
+                TempatTidur::where('id',$request['nobedasal'])->where('kdprofile', (int)$kdProfile)->update(['objectstatusbedfk'=>2]);
+            }
+
+            $transStatus = 'true';
+        }catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+
+
+        if ($transStatus == 'true') {
+            $transMessage = "Update Kamar Berhasil";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMessage,
+            );
+        } else {
+            $transMessage = "Update Kamar Gagal";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                'e'=> $e->getLine(),
+                'msg'=> $e->getMessage(),
+                'rpp'=> $rpp,
+                "message"  => $transMessage,
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
 }
