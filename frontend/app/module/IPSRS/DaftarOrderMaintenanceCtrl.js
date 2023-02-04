@@ -58,6 +58,9 @@ define(['initialize'], function (initialize) {
             }
            
             function loadCombo() {
+                medifirstService.get('ipsrs/get-detail-jenisperbaikan').then(function (data) {
+                    $scope.listObjekPerbaikan = data.data.data
+                })
                 $scope.item.tglMulai = new Date(moment($scope.now).format('YYYY-MM-DD HH:mm'));
                 $scope.item.tglSelesai = new Date(moment($scope.now).format('YYYY-MM-DD HH:mm'));
                 $scope.dataLogin = medifirstService.getPegawaiLogin();
@@ -79,6 +82,11 @@ define(['initialize'], function (initialize) {
                 
                medifirstService.getPart("ipsrs/get-jenis-alat").then(function (data) {
                     $scope.listJenisAlat = data;
+                    console.log($scope.listJenisAlat);
+                    for (let i = 0; i < $scope.listJenisAlat.length; i++) {
+                        // const element = array[i];
+
+                    }
                 });
                 medifirstService.getPart("ipsrs/get-jenis-pekerjaan").then(function (data) {
                     $scope.listJenisKerusakan = data;
@@ -88,6 +96,7 @@ define(['initialize'], function (initialize) {
                 }); 
                 medifirstService.get('ipsrs/get-ruangan', true).then(function (dat) {
                     $scope.listJenisPerbaikan = dat.data[0].ruanganipsrs;
+                    $scope.listRuangan = dat.data[0].ruangan
                 })
             }
 
@@ -890,8 +899,11 @@ define(['initialize'], function (initialize) {
                 $scope.item.listPegawaiMulti = $scope.dataSelected.details;
                 $scope.item.worklist = $scope.dataSelected.deskripsiplanning;
                 $scope.item.identifikasi = $scope.dataSelected.keteranganverifikasi;
-                $scope.item.catatan = $scope.dataSelected.catatan
-                $scope.listObjekPerbaikan = $scope.dataSelected.detailjenisperbaikan
+                $scope.item.merk = $scope.dataSelected.merk
+                // $scope.item.ruanganLokasi = {
+                //     id: $scope.dataSelected.objectruanganfk, namaruangan: $scope.dataSelected.namaruangan
+                // }
+                // $scope.listObjekPerbaikan = $scope.dataSelected.detailjenisperbaikan
                 if ($scope.dataSelected.detailjenisperbaikan.length > 0){
                     $scope.item.objekPerbaikan = {
                         id: $scope.dataSelected.detailjenisperbaikan[0].id,
@@ -971,6 +983,7 @@ define(['initialize'], function (initialize) {
                     'ispihakketiga': $scope.item.p3 != undefined && $scope.item.p3== true? true : null,
                     'catatan': $scope.item.catatan != undefined ? $scope.item.catatan : null,
                     'detailjenispekerjaan': $scope.item.objekPerbaikan.id != undefined ? $scope.item.objekPerbaikan.id : null,
+                    'merk': $scope.item.merk != undefined ? $scope.item.merk : null,
                 }
                 
                 var objSave = {
@@ -985,7 +998,7 @@ define(['initialize'], function (initialize) {
                     if (e.data.data.objectstatuspekerjaanfk == 1) {
                         sendNotification(e.data.data)
                     }
-                    init();
+                    init2();
                     $scope.item = {}
                     $scope.item.listPegawaiMulti = {};
                     $scope.item.tglAwal = moment($scope.now).format('YYYY-MM-DD 00:00:00')
@@ -994,7 +1007,8 @@ define(['initialize'], function (initialize) {
                 })    
             }
             $scope.getComboIsiObjekPerbaikan = function(){
-                $scope.listObjekPerbaikan = $scope.item.jenisAlat.details
+                
+                // $scope.listObjekPerbaikan = $scope.item.jenisAlat.details
             }
 
            //** BATAS SUCI */

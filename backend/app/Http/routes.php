@@ -1831,7 +1831,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('rawatinap/get-nobedbykamar', 'RawatInap\PindahPulangController@getNoBedByKamar');
            Route::get('rawatinap/get-nosep-by-norec-pd', 'Bridging\BridgingBPJSV2Controller@getNoSEPByNorecPd2');
           Route::get('rawatinap/get-nosep-by-norec-pd/{norec_pd}', 'Bridging\BridgingBPJSV2Controller@getNoSEPByNorecPd');
-
+          
           Route::post('rawatinap/save-akomodasi-tea', 'RawatInap\RawatInapController@saveAkomodasiOtomatis');
           Route::get('rawatinap/get-kamar-ruangan-ibu', 'RawatInap\RawatInapController@getKamarIbuLast');
           Route::post('rawatinap/save-pulang-pasien', 'RawatInap\PindahPulangController@savePulangPasien');
@@ -2371,6 +2371,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('pdti/laporan-perbaikan-it','IPSRS\IPSRSController@getLaporanPerbaikanIT');
             Route::get('pdti/load-data-dashboard','IPSRS\IPSRSController@getDashboardPerbaikanPDTI');
             Route::get('ipsrs/get-daftar-permohonan','IPSRS\IPSRSController@getDaftarIPSRS');
+            Route::get('ipsrs/get-detail-jenisperbaikan','IPSRS\IPSRSController@getDetailJenisPekerjaan');
+            Route::post('rawatinap/update-ruangan', 'RawatInap\RawatInapController@updateRuangan');
             Route::post('ipsrs/save-permohonan','IPSRS\IPSRSController@SavePermohonan');
             Route::post('ipsrs/save-alokasistaff','IPSRS\IPSRSController@SaveDataAlokasiStaff');
             Route::post('ipsrs/save-worklist','IPSRS\IPSRSController@SaveDataWorkList');
