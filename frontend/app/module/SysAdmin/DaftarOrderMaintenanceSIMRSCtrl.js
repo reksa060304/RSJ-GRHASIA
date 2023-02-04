@@ -62,19 +62,9 @@ define(['initialize'], function (initialize) {
            
             function loadCombo() {
                 $scope.dataLogin = medifirstService.getPegawaiLogin();
-                medifirstService.get("sysadmin/general/get-combo-pegawai").then(function (data) {
-                    $scope.listPegawai = data.data;
-                    $scope.listStaff = data.data;
-                    $scope.selectOptionsPegawai = {
-                        placeholder: "Pilih Pegawai...",
-                        dataTextField: "namalengkap",
-                        dataValueField: "id",
-                        // dataSource:{
-                        //     data: $scope.listRuangan
-                        // },
-                        autoBind: false,
-                    };
-                });  
+                // medifirstService.get("sysadmin/general/get-combo-pegawai").then(function (data) {
+                    
+                // });  
                 
                medifirstService.getPart("sysadmin/general/get-jenis-pekerjaan-simrs").then(function (data) {
                     $scope.listJenisAlat = data;
@@ -85,6 +75,21 @@ define(['initialize'], function (initialize) {
                 medifirstService.getPart("ipsrs/get-status-pekerjaan").then(function (data) {
                     $scope.listStatus = data;
                 });
+                medifirstService.get('pdti/get-combo').then(function(data){
+                    $scope.listPegawai = data.data.pegawai;
+                    $scope.listStaff = data.data.pegawai;
+                    $scope.listRuangan = data.data.ruangan;
+                    $scope.listBarang = data.data.barangperbaikan
+                    $scope.selectOptionsPegawai = {
+                        placeholder: "Pilih Pegawai...",
+                        dataTextField: "namalengkap",
+                        dataValueField: "id",
+                        // dataSource:{
+                        //     data: $scope.listRuangan
+                        // },
+                        autoBind: false,
+                    };
+                })
             }
 
             $scope.newOrder = function () {
@@ -238,9 +243,9 @@ define(['initialize'], function (initialize) {
                 cacheHelper.set('DaftarRuanganSanitasiCtrl', chacePeriode);
             }
 
-            $scope.getRuangan = function () {
-                $scope.listRuangan = $scope.item.instalasi.ruangan;
-            }
+            // $scope.getRuangan = function () {
+            //     $scope.listRuangan = $scope.item.instalasi.ruangan;
+            // }
             $scope.cariFilter2 = function () {
                 tabNumber = 1
                 init2();
@@ -773,6 +778,12 @@ define(['initialize'], function (initialize) {
                 $scope.item.worklist = $scope.dataSelected.deskripsiplanning;
                 $scope.item.identifikasi = $scope.dataSelected.keteranganverifikasi;
                 $scope.item.catatan = $scope.dataSelected.catatan
+                if ($scope.dataSelected.ruanganperbaikan.length > 0) {
+                    $scope.itemd.ruanganLokasi = $scope.dataSelected.ruanganperbaikan[0]
+                }
+                if ($scope.dataSelected.barangperbaikan.length > 0) {
+                    $scope.itemd.namabarang = $scope.dataSelected.barangperbaikan[0]
+                }
                 if ($scope.dataSelected.detailjenisperbaikan.length > 0) {
                     $scope.item.objekPerbaikan = {
                         id: $scope.dataSelected.detailjenisperbaikan[0].id,
@@ -854,6 +865,8 @@ define(['initialize'], function (initialize) {
                     'catatan': $scope.item.catatan != undefined ? $scope.item.catatan : null,
                     'detailjenispekerjaan': $scope.item.objekPerbaikan.id != undefined ? $scope.item.objekPerbaikan.id : null,
                     'rekananperbaikan': $scope.item.pihakKetiga != undefined ? $scope.item.pihakKetiga.id : null,
+                    'objectruanganperbaikanfk': $scope.itemd.ruanganLokasi != undefined ? $scope.itemd.ruanganLokasi.id : null,
+                    'objectbarangperbaikanfk': $scope.itemd.namabarang != undefined ? $scope.itemd.namabarang.id : null,
                 }
 
                 var objSave = {

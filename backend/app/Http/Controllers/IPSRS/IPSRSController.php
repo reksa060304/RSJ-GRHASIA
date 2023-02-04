@@ -1123,6 +1123,8 @@ class IPSRSController extends ApiController
                 $newCOA->catatan = $request['strukplanning']['catatan'];
                 $newCOA->objectdetailjenispekerjaanfk = $request['strukplanning']['detailjenispekerjaan'];
                 $newCOA->objectrekananperbaikanfk = $request['strukplanning']['rekananperbaikan'];
+                $newCOA->objectruanganperbaikanfk = $request['strukplanning']['objectruanganperbaikanfk'];
+                $newCOA->objectbarangperbaikanfk = $request['strukplanning']['objectbarangperbaikanfk'];
                 $newCOA->save();
                 $norecHead2 = $newCOA->norec;
 
@@ -1296,6 +1298,23 @@ class IPSRSController extends ApiController
         $result = array(
             'data'=> $data,
         );
+        return $this->respond($result);
+    }
+    public function getComboPDTI(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $barangperbaikan = \DB::table('barangperbaikan_m')->where('kdprofile', $kdProfile)->where('statusenabled', true)->get();
+        $pegawai =\DB::select(DB::raw("SELECT DISTINCT pg.id, pg.namalengkap from pegawai_m pg 
+        inner join loginuser_s lu on lu.objectpegawaifk = pg.id
+        where lu.objectkelompokuserfk in(47) and pg.kdprofile = 30 and pg.statusenabled=true and lu.kdprofile = 30 and lu.statusenabled=true 
+        and pg.id not in(2,320263)"));
+        $ruangan = Ruangan::where('statusenabled', true)->where('kdprofile', $kdProfile)->where('isperbaikan', true)->get();
+        $result = array(
+            'ruangan' => $ruangan,
+            'pegawai' => $pegawai,
+            'barangperbaikan' => $barangperbaikan,
+        );
+
         return $this->respond($result);
     }
 }
