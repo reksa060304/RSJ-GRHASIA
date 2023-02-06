@@ -1025,7 +1025,10 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           // Route::get('gizi/get-laporan-permintaan-makanpasien','Gizi\LaporanGiziController@LaporanPermintaanMakanGizi');
           //laporangizi v2
           Route::get('gizi/get-laporan-permintaan-makanpasien','RawatJalan\RawatJalanController@LaporanPermintaanMakanGizi');
-        // });
+          Route::get('gizi/get-laporan-permintaan-makanpasien-bangsal','RawatJalan\RawatJalanController@LaporanPermintaanMakanGiziBangsal');
+          Route::get('gizi/get-laporan-permintaan-makanpasien-waktu','RawatJalan\RawatJalanController@LaporanPermintaanMakanGiziWaktu');
+          
+          // });
         //E-OFFICE//
         Route::post('eoffice/save-surat', 'EOffice\EOfficeController@simpanSurat');
         Route::post('eoffice/save-disposisi', 'EOffice\EOfficeController@simpanDisposisi');

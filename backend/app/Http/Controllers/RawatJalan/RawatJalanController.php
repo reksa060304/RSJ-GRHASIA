@@ -3367,19 +3367,20 @@ $ruangdokter = \DB::table('ruangan_m as ru')
         $tglmain = \DB::select(DB::raw("SELECT GENERATE_SERIES(date_part('day', '$request[tahun]-$request[bulan]-01'::date)::integer ,date_part('day', '$request[tahun]-$request[bulan]-01'::date + '1 month'::interval - '1 day'::interval)::integer) tglmenu"));
         $kdProfile = (int) $this->getDataKdProfile($request);
         // $main = \DB::select(DB::raw("select id, jenisdiet from jenisdiet_m where statusenabled = true and kdprofile = $kdProfile "));
-        $data = \DB::select(DB::raw("SELECT x.tglmenu, 
-            CASE WHEN x.reportdisplay = 'vip' THEN count(x.arrjenisdiet)else 0 END as vip,
-            CASE WHEN x.reportdisplay = 'kelas_3' THEN count(x.arrjenisdiet)else 0 END as kelas_3,
-            CASE WHEN x.reportdisplay = 'kelas_2' THEN	count(x.arrjenisdiet)else 0 END as kelas_2,
-            CASE WHEN x.reportdisplay = 'kelas_1' THEN count(x.arrjenisdiet)else 0 END as kelas_1,
-            CASE WHEN x.reportdisplay = 'Non Kelas' AND x.idr = 802 THEN count(x.arrjenisdiet)else 0 END as arimbi,
-            CASE WHEN x.reportdisplay = 'Non Kelas' AND x.idr = 792 THEN count(x.arrjenisdiet)else 0 END as bima,
-            CASE WHEN x.reportdisplay = 'Non Kelas' AND x.idr = 796 THEN count(x.arrjenisdiet)else 0 END as drupadi,
-            CASE WHEN x.reportdisplay = 'Non Kelas' AND x.idr = 800 THEN count(x.arrjenisdiet)else 0 END as kresna,
-            CASE WHEN x.reportdisplay = 'Non Kelas' AND x.idr = 805 THEN count(x.arrjenisdiet)else 0 END as yudistira
-            FROM (SELECT date_part('day', rog.tglmenu)tglmenu, unnest(string_to_array(rog.arrjenisdiet, ','))arrjenisdiet, ke.reportdisplay, ru.id idr FROM riwayatordergizi_t rog 
-            inner join kelas_m ke on ke.id = rog.objectkelasfk
-            inner join ruangan_m ru on ru.id = rog.objectruanganfk where date_part('month', rog.tglmenu) = $request[bulan] and date_part('year', rog.tglmenu) = $request[tahun])as x
+        $data = \DB::select(DB::raw("SELECT x.tglmenu,
+        CASE WHEN x.reportdisplay = 'vip' THEN count(x.arrjenisdiet)else 0 END as vip,
+        CASE WHEN x.reportdisplay = 'kelas_3' THEN count(x.arrjenisdiet)else 0 END as kelas_3,
+        CASE WHEN x.reportdisplay = 'kelas_2' THEN count(x.arrjenisdiet)else 0 END as kelas_2,
+        CASE WHEN x.reportdisplay = 'kelas_1' THEN count(x.arrjenisdiet)else 0 END as kelas_1,
+        CASE WHEN x.reportdisplay = 'Non Kelas' AND x.idr = 802 THEN count(x.arrjenisdiet)else 0 END as arimbi,
+        CASE WHEN x.reportdisplay = 'Non Kelas' AND x.idr = 792 THEN count(x.arrjenisdiet)else 0 END as bima,
+        CASE WHEN x.reportdisplay = 'Non Kelas' AND x.idr = 796 THEN count(x.arrjenisdiet)else 0 END as drupadi,
+        CASE WHEN x.reportdisplay = 'Non Kelas' AND x.idr = 800 THEN count(x.arrjenisdiet)else 0 END as kresna,
+        CASE WHEN x.reportdisplay = 'Non Kelas' AND x.idr = 805 THEN count(x.arrjenisdiet)else 0 END as yudistira
+        FROM (SELECT date_part('day', so.tglorder)tglmenu, unnest(string_to_array(op.arrjenisdiet, ','))arrjenisdiet, ke.reportdisplay, ru.id idr FROM orderpelayanan_t op inner join kelas_m ke on ke.id = op.objectkelasfk
+        inner join strukorder_t so on so.norec =op.strukorderfk
+        inner join ruangan_m ru on ru.id = op.objectruanganfk where op.keteranganlainnya_quo ilike 'Order Gizi'
+            and date_part('month', so.tglorder) = $request[bulan] and date_part('year', so.tglorder) = $request[tahun])as x
             GROUP BY x.tglmenu, x.reportdisplay, x.idr
         "));
         $tgl = '';
@@ -3452,60 +3453,61 @@ $ruangdokter = \DB::table('ruangan_m as ru')
         $main = \DB::select(DB::raw("select id, jenisdiet from jenisdiet_m where statusenabled = true and kdprofile = $kdProfile "));
         $data = DB::select(DB::raw("SELECT date_part('day', x.tglmenu::date), jd.jenisdiet,jd.id,
             /*pagi*/
-            count(x.arr)filter(where jw.id in(0,3) and ke.reportdisplay ilike 'vip') as vip1,
-            count(x.arr)filter(where jw.id in(0,3) and ke.reportdisplay ilike 'kelas_3') as k31,
-            count(x.arr)filter(where jw.id in(0,3) and ke.reportdisplay ilike 'kelas_2') as k21,
-            count(x.arr)filter(where jw.id in(0,3) and ke.reportdisplay ilike 'kelas_1') as k11,
-            count(x.arr)filter(where jw.id in(0,3) and ke.reportdisplay ilike 'Non Kelas' and ru.id =802 ) as arimbi1,
-            count(x.arr)filter(where jw.id in(0,3) and ke.reportdisplay ilike 'Non Kelas' and ru.id =792 ) as bima1,
-            count(x.arr)filter(where jw.id in(0,3) and ke.reportdisplay ilike 'Non Kelas' and ru.id =796 ) as drupadi1,
-            count(x.arr)filter(where jw.id in(0,3) and ke.reportdisplay ilike 'Non Kelas' and ru.id =800 ) as kresna1,
-            count(x.arr)filter(where jw.id in(0,3) and ke.reportdisplay ilike 'Non Kelas' and ru.id =805 ) as yudistira1,
-            count(x.arr)filter(where jw.id in(0,3)) as jumlah1,
+            count(x.arr)filter(where jw.id in(0,3,6) and ke.reportdisplay ilike 'vip') as vip1,
+            count(x.arr)filter(where jw.id in(0,3,6) and ke.reportdisplay ilike 'kelas_3') as k31,
+            count(x.arr)filter(where jw.id in(0,3,6) and ke.reportdisplay ilike 'kelas_2') as k21,
+            count(x.arr)filter(where jw.id in(0,3,6) and ke.reportdisplay ilike 'kelas_1') as k11,
+            count(x.arr)filter(where jw.id in(0,3,6) and ke.reportdisplay ilike 'Non Kelas' and ru.id =802 ) as arimbi1,
+            count(x.arr)filter(where jw.id in(0,3,6) and ke.reportdisplay ilike 'Non Kelas' and ru.id =792 ) as bima1,
+            count(x.arr)filter(where jw.id in(0,3,6) and ke.reportdisplay ilike 'Non Kelas' and ru.id =796 ) as drupadi1,
+            count(x.arr)filter(where jw.id in(0,3,6) and ke.reportdisplay ilike 'Non Kelas' and ru.id =800 ) as kresna1,
+            count(x.arr)filter(where jw.id in(0,3,6) and ke.reportdisplay ilike 'Non Kelas' and ru.id =805 ) as yudistira1,
+            count(x.arr)filter(where jw.id in(0,3,6)) as jumlah1,
 
             /*siang*/
-            count(x.arr)filter(where jw.id in(1,4) and ke.reportdisplay ilike 'vip') as vip2,
-            count(x.arr)filter(where jw.id in(1,4) and ke.reportdisplay ilike 'kelas_3') as k32,
-            count(x.arr)filter(where jw.id in(1,4) and ke.reportdisplay ilike 'kelas_2') as k22,
-            count(x.arr)filter(where jw.id in(1,4) and ke.reportdisplay ilike 'kelas_1') as k12,
-            count(x.arr)filter(where jw.id in(1,4) and ke.reportdisplay ilike 'Non Kelas' and ru.id =802 ) as arimbi2,
-            count(x.arr)filter(where jw.id in(1,4) and ke.reportdisplay ilike 'Non Kelas' and ru.id =792 ) as bima2,
-            count(x.arr)filter(where jw.id in(1,4) and ke.reportdisplay ilike 'Non Kelas' and ru.id =796 ) as drupadi2,
-            count(x.arr)filter(where jw.id in(1,4) and ke.reportdisplay ilike 'Non Kelas' and ru.id =800 ) as kresna2,
-            count(x.arr)filter(where jw.id in(1,4) and ke.reportdisplay ilike 'Non Kelas' and ru.id =805 ) as yudistira2,
-            count(x.arr)filter(where jw.id in(1,4)) as jumlah2,
+            count(x.arr)filter(where jw.id in(1,4,6) and ke.reportdisplay ilike 'vip') as vip2,
+            count(x.arr)filter(where jw.id in(1,4,6) and ke.reportdisplay ilike 'kelas_3') as k32,
+            count(x.arr)filter(where jw.id in(1,4,6) and ke.reportdisplay ilike 'kelas_2') as k22,
+            count(x.arr)filter(where jw.id in(1,4,6) and ke.reportdisplay ilike 'kelas_1') as k12,
+            count(x.arr)filter(where jw.id in(1,4,6) and ke.reportdisplay ilike 'Non Kelas' and ru.id =802 ) as arimbi2,
+            count(x.arr)filter(where jw.id in(1,4,6) and ke.reportdisplay ilike 'Non Kelas' and ru.id =792 ) as bima2,
+            count(x.arr)filter(where jw.id in(1,4,6) and ke.reportdisplay ilike 'Non Kelas' and ru.id =796 ) as drupadi2,
+            count(x.arr)filter(where jw.id in(1,4,6) and ke.reportdisplay ilike 'Non Kelas' and ru.id =800 ) as kresna2,
+            count(x.arr)filter(where jw.id in(1,4,6) and ke.reportdisplay ilike 'Non Kelas' and ru.id =805 ) as yudistira2,
+            count(x.arr)filter(where jw.id in(1,4,6)) as jumlah2,
 
             /*sore*/
-            count(x.arr)filter(where jw.id in(2,5) and ke.reportdisplay ilike 'vip') as vip3,
-            count(x.arr)filter(where jw.id in(2,5) and ke.reportdisplay ilike 'kelas_3') as k33,
-            count(x.arr)filter(where jw.id in(2,5) and ke.reportdisplay ilike 'kelas_2') as k23,
-            count(x.arr)filter(where jw.id in(2,5) and ke.reportdisplay ilike 'kelas_1') as k13,
-            count(x.arr)filter(where jw.id in(2,5) and ke.reportdisplay ilike 'Non Kelas' and ru.id =802 ) as arimbi3,
-            count(x.arr)filter(where jw.id in(2,5) and ke.reportdisplay ilike 'Non Kelas' and ru.id =792 ) as bima3,
-            count(x.arr)filter(where jw.id in(2,5) and ke.reportdisplay ilike 'Non Kelas' and ru.id =796 ) as drupadi3,
-            count(x.arr)filter(where jw.id in(2,5) and ke.reportdisplay ilike 'Non Kelas' and ru.id =800 ) as kresna3,
-            count(x.arr)filter(where jw.id in(2,5) and ke.reportdisplay ilike 'Non Kelas' and ru.id =805 ) as yudistira3,
-            count(x.arr)filter(where jw.id in(2,5)) as jumlah3,
+            count(x.arr)filter(where jw.id in(2,5,6) and ke.reportdisplay ilike 'vip') as vip3,
+            count(x.arr)filter(where jw.id in(2,5,6) and ke.reportdisplay ilike 'kelas_3') as k33,
+            count(x.arr)filter(where jw.id in(2,5,6) and ke.reportdisplay ilike 'kelas_2') as k23,
+            count(x.arr)filter(where jw.id in(2,5,6) and ke.reportdisplay ilike 'kelas_1') as k13,
+            count(x.arr)filter(where jw.id in(2,5,6) and ke.reportdisplay ilike 'Non Kelas' and ru.id =802 ) as arimbi3,
+            count(x.arr)filter(where jw.id in(2,5,6) and ke.reportdisplay ilike 'Non Kelas' and ru.id =792 ) as bima3,
+            count(x.arr)filter(where jw.id in(2,5,6) and ke.reportdisplay ilike 'Non Kelas' and ru.id =796 ) as drupadi3,
+            count(x.arr)filter(where jw.id in(2,5,6) and ke.reportdisplay ilike 'Non Kelas' and ru.id =800 ) as kresna3,
+            count(x.arr)filter(where jw.id in(2,5,6) and ke.reportdisplay ilike 'Non Kelas' and ru.id =805 ) as yudistira3,
+            count(x.arr)filter(where jw.id in(2,5,6)) as jumlah3
 
-            /*hari*/
-            count(x.arr)filter(where   ke.reportdisplay ilike 'vip') as vip4,
-            count(x.arr)filter(where   ke.reportdisplay ilike 'kelas_3') as k34,
-            count(x.arr)filter(where   ke.reportdisplay ilike 'kelas_2') as k24,
-            count(x.arr)filter(where   ke.reportdisplay ilike 'kelas_1') as k14,
-            count(x.arr)filter(where   ke.reportdisplay ilike 'Non Kelas' and ru.id =802 ) as arimbi4,
-            count(x.arr)filter(where   ke.reportdisplay ilike 'Non Kelas' and ru.id =792 ) as bima4,
-            count(x.arr)filter(where   ke.reportdisplay ilike 'Non Kelas' and ru.id =796 ) as drupadi4,
-            count(x.arr)filter(where   ke.reportdisplay ilike 'Non Kelas' and ru.id =800 ) as kresna4,
-            count(x.arr)filter(where   ke.reportdisplay ilike 'Non Kelas' and ru.id =805 ) as yudistira4,
-            count(x.arr)as jumlah4
+            -- /*hari*/
+            -- count(x.arr)filter(where   ke.reportdisplay ilike 'vip') as vip4,
+            -- count(x.arr)filter(where   ke.reportdisplay ilike 'kelas_3') as k34,
+            -- count(x.arr)filter(where   ke.reportdisplay ilike 'kelas_2') as k24,
+            -- count(x.arr)filter(where   ke.reportdisplay ilike 'kelas_1') as k14,
+            -- count(x.arr)filter(where   ke.reportdisplay ilike 'Non Kelas' and ru.id =802 ) as arimbi4,
+            -- count(x.arr)filter(where   ke.reportdisplay ilike 'Non Kelas' and ru.id =792 ) as bima4,
+            -- count(x.arr)filter(where   ke.reportdisplay ilike 'Non Kelas' and ru.id =796 ) as drupadi4,
+            -- count(x.arr)filter(where   ke.reportdisplay ilike 'Non Kelas' and ru.id =800 ) as kresna4,
+            -- count(x.arr)filter(where   ke.reportdisplay ilike 'Non Kelas' and ru.id =805 ) as yudistira4,
+            -- count(x.arr)as jumlah4
             from (
-            select rog.tglmenu,unnest(string_to_array(rog.arrjenisdiet, ','))arr, rog.objectjeniswaktufk, rog.objectkelasfk, rog.objectruanganfk FROM riwayatordergizi_t rog
+            select so.tglorder as tglmenu,unnest(string_to_array(op.arrjenisdiet, ','))arr, op.objectjeniswaktufk, op.objectkelasfk, op.objectruanganfk FROM orderpelayanan_t op 
+                inner join strukorder_t so on so.norec = op.strukorderfk where op.keteranganlainnya_quo ilike 'Order Gizi'
             )as x
             inner join jenisdiet_m jd on jd.id = x.arr::integer
             inner join jeniswaktu_m jw on jw.id = x.objectjeniswaktufk
             inner join kelas_m ke on ke.id = x.objectkelasfk
             inner join ruangan_m ru on ru.id = x.objectruanganfk
-            where x.tglmenu = '$request[periode]'::date
+            where x.tglmenu::date = '$request[periode]'
             GROUP BY jd.jenisdiet, ke.reportdisplay, x.tglmenu,jd.id;
         "));
         $jenisdiet = ''; $vip1=0; $vip2=0; $vip3=0;$vip4 = 0; $k31 = 0; $k32=0;$k33=0;$k34=0; $k21=0;$k22=0;$k23=0;$k24=0; $k11=0;$k12=0;$k13=0;$k14=0; 
@@ -3520,16 +3522,26 @@ $ruangdokter = \DB::table('ruangan_m as ru')
             $jenisdiet = $m->jenisdiet; 
             foreach ($data as $d) {
                 if($d->id == $m->id){
-                    $vip1=$d->vip1; $vip2=$d->vip2; $vip3=$d->vip3;$vip4 = $d->vip4; 
-                    $k31 = $d->k31; $k32=$d->k32;$k33=$d->k33;$k34=$d->k34; 
-                    $k21=$d->k21;$k22=$d->k22;$k23=$d->k23;$k24=$d->k24; 
-                    $k11=$d->k11;$k12=$d->k12;$k13=$d->k13;$k14=$d->k14; 
-                    $arimbi1=$d->arimbi1;$arimbi2=$d->arimbi2;$arimbi3=$d->arimbi3;$arimbi4=$d->arimbi4;
-                    $bima1=$d->bima1;$bima2=$d->bima2;$bima3=$d->bima3;$bima4=$d->bima4; 
-                    $drupadi1=$d->drupadi1;$drupadi2=$d->drupadi2;$drupadi3=$d->drupadi3;$drupadi4=$d->drupadi4; 
-                    $kresna1=$d->kresna1;$kresna2=$d->kresna2;$kresna3=$d->kresna3;$kresna4=$d->kresna4; 
-                    $yudistira1=$d->yudistira1;$yudistira2=$d->yudistira2;$yudistira3=$d->yudistira3;$yudistira4=$d->yudistira4;
-                    $jumlah1=$d->jumlah1;$jumlah2=$d->jumlah2;$jumlah3=$d->jumlah3;$jumlah4=$d->jumlah4; 
+                    $vip4 = $d->vip1+ $d->vip2+$d->vip3;
+                    $k34 = $d->k31+ $d->k32+$d->k33;
+                    $k24 = $d->k21+ $d->k22+$d->k23;
+                    $k14 = $d->k11+ $d->k12+$d->k13;
+                    $arimbi4 = $d->arimbi1+ $d->arimbi2+$d->arimbi3;
+                    $bima4 = $d->bima1+ $d->bima2+$d->bima3;
+                    $drupadi4 = $d->drupadi1+ $d->drupadi2+$d->drupadi3;
+                    $kresna4 = $d->kresna1+ $d->kresna2+$d->kresna3;
+                    $yudistira4 = $d->yudistira1+ $d->yudistira2+$d->yudistira3;
+                    $jumlah4 = $d->jumlah1+ $d->jumlah2+$d->jumlah3;
+                    $vip1=$d->vip1; $vip2=$d->vip2; $vip3=$d->vip3;
+                    $k31 = $d->k31; $k32=$d->k32;$k33=$d->k33;
+                    $k21=$d->k21;$k22=$d->k22;$k23=$d->k23; 
+                    $k11=$d->k11;$k12=$d->k12;$k13=$d->k13; 
+                    $arimbi1=$d->arimbi1;$arimbi2=$d->arimbi2;$arimbi3=$d->arimbi3;
+                    $bima1=$d->bima1;$bima2=$d->bima2;$bima3=$d->bima3; 
+                    $drupadi1=$d->drupadi1;$drupadi2=$d->drupadi2;$drupadi3=$d->drupadi3; 
+                    $kresna1=$d->kresna1;$kresna2=$d->kresna2;$kresna3=$d->kresna3;
+                    $yudistira1=$d->yudistira1;$yudistira2=$d->yudistira2;$yudistira3=$d->yudistira3;
+                    $jumlah1=$d->jumlah1;$jumlah2=$d->jumlah2;$jumlah3=$d->jumlah3;
                 }
             }
             $detail[]=array(
