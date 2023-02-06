@@ -13,6 +13,9 @@ use App\Traits\Valet;
 use App\Transaksi\StrukPlanningDetail;
 use Illuminate\Http\Request;
 use App\Transaksi\StrukPlanning;
+use App\Master\Ruangan;
+
+
 use DB;
 
 class IPSRSController extends ApiController
@@ -73,7 +76,7 @@ class IPSRSController extends ApiController
                 $statuspengerjaan = "AND stp.objectstatuspekerjaanfk = '".$request['statuspengerjaan']."'";
         }
         $data = DB::select(DB::raw("
-            SELECT stp.objectdetailjenispekerjaanfk, stp.objectruanganfk,stp.catatan, stp.ispihakketiga, stp.norec, rg.namaruangan, stp.tglplanning,stp.objectpegawaipjawabfk,pg.namalengkap, stp.startdate, stp.duedate, stp.rincianexecuteplanning_askep, stp.pelapor, 
+            SELECT stp.merk, stp.objectdetailjenispekerjaanfk, stp.objectruanganfk,stp.catatan, stp.ispihakketiga, stp.norec, rg.namaruangan, stp.tglplanning,stp.objectpegawaipjawabfk,pg.namalengkap, stp.startdate, stp.duedate, stp.rincianexecuteplanning_askep, stp.pelapor, 
                     stp.deskripsiplanning, stp.keteranganverifikasi, sttp.namaexternal,stp.signdate, stp.worklist, stp.keteranganverifikasi, 
                     pg2.nama as namainspektor, pg3.nama as namapelapor,stp.objectstatuspekerjaanfk,sttp.reportdisplay as statuspekerjaan,stp.objectjenispekerjaanfk AS idjeniskerusakan,
                     jpk.reportdisplay as jeniskerusakan,stp.objectjenisalatfk,jpk2.reportdisplay as jenisalat,r.namaruangan as namaruangantujuan, ukp.name
@@ -698,7 +701,7 @@ class IPSRSController extends ApiController
         $dataLogin = $request->all();
         $kdProfile = (int) $this->getDataKdProfile($request);
         try {
-
+            $newCOA = '';
             if ($request['norec'] == ''){
                 return $this->respond("ASUP");
                 $newCOA = new StrukPlanning();
@@ -722,6 +725,7 @@ class IPSRSController extends ApiController
                 $newCOA->ispihakketiga = $request['strukplanning']['ispihakketiga'];
                 $newCOA->catatan = $request['strukplanning']['catatan'];
                 $newCOA->objectdetailjenispekerjaanfk = $request['strukplanning']['detailjenispekerjaan'];
+                $newCOA->merk = $request['strukplanning']['merk'];
                 $newCOA->save();
                 $norecHead2 = $newCOA->norec;
 
@@ -755,7 +759,7 @@ class IPSRSController extends ApiController
             DB::rollBack();
             $result = array(
                 "status" => 400,
-//                "data" => $newPJT,
+            //    "data" => $newCOA,
                     "e"=> $e->getLine().$e->getMessage(),
                 "as" => 'as@epic',
             );
@@ -802,9 +806,10 @@ class IPSRSController extends ApiController
                 ->where('rm.kdprofile',$kdProfile)
                 ->whereIn('rm.id',[850,851,852,602])
                 ->get();
-        
+        $ruangan = Ruangan::where('statusenabled', true)->where('kdprofile', $kdProfile)->where('isperbaikan', true)->get();
         $result[] = array(
             'ruanganipsrs' => $data,
+            'ruangan' => $ruangan,
         );
 
         return $this->respond($result);
@@ -1118,6 +1123,8 @@ class IPSRSController extends ApiController
                 $newCOA->catatan = $request['strukplanning']['catatan'];
                 $newCOA->objectdetailjenispekerjaanfk = $request['strukplanning']['detailjenispekerjaan'];
                 $newCOA->objectrekananperbaikanfk = $request['strukplanning']['rekananperbaikan'];
+                $newCOA->objectruanganperbaikanfk = $request['strukplanning']['objectruanganperbaikanfk'];
+                $newCOA->objectbarangperbaikanfk = $request['strukplanning']['objectbarangperbaikanfk'];
                 $newCOA->save();
                 $norecHead2 = $newCOA->norec;
 
@@ -1281,6 +1288,33 @@ class IPSRSController extends ApiController
             'card'=> $card,
             'pie'=> $pie,
         );
+        return $this->respond($result);
+    }
+
+    public function getDetailJenisPekerjaan(Request $request)
+    {
+        $data = DB::select(DB::raw("select * from detailjenispekerjaan_m where objectjenispekerjaanfk is null AND kodeexternal ilike 'IPSRS' and kdprofile = 30 and statusenabled = true"));
+
+        $result = array(
+            'data'=> $data,
+        );
+        return $this->respond($result);
+    }
+    public function getComboPDTI(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $barangperbaikan = \DB::table('barangperbaikan_m')->where('kdprofile', $kdProfile)->where('statusenabled', true)->get();
+        $pegawai =\DB::select(DB::raw("SELECT DISTINCT pg.id, pg.namalengkap from pegawai_m pg 
+        inner join loginuser_s lu on lu.objectpegawaifk = pg.id
+        where lu.objectkelompokuserfk in(47) and pg.kdprofile = 30 and pg.statusenabled=true and lu.kdprofile = 30 and lu.statusenabled=true 
+        and pg.id not in(2,320263)"));
+        $ruangan = Ruangan::where('statusenabled', true)->where('kdprofile', $kdProfile)->where('isperbaikan', true)->get();
+        $result = array(
+            'ruangan' => $ruangan,
+            'pegawai' => $pegawai,
+            'barangperbaikan' => $barangperbaikan,
+        );
+
         return $this->respond($result);
     }
 }

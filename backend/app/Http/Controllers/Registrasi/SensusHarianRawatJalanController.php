@@ -22,19 +22,32 @@ class SensusHarianRawatJalanController extends ApiController
         $tglAkhir= $request['tglAkhir'];
         $ruangan = "";
         $wherenya = "";
+        $lab= '';
         if($rajal == true){
             $ruangan = DB::select(DB::Raw("
             SELECT ru.id, ru.namaruangan FROM ruangan_m ru 
             where 
-            ru.objectdepartemenfk in(18, 27, 3) and ru.statusenabled=true and ru.kdprofile=30 order by ru.objectdepartemenfk asc
+            ru.objectdepartemenfk in(3,6,18,27) and ru.statusenabled=true and ru.kdprofile = 30 order by ru.objectdepartemenfk asc
             "));
-            $wherenya = "and ru.objectdepartemenfk not in(16,27,3)";
+            $wherenya = "and ru.objectdepartemenfk in(3,6,18,27)";
+            $lab = "union all
+            SELECT apd2.statuskunjungan, ru.id as id_ruangan, ru.namaruangan FROM antrianpasiendiperiksa_t as apd 
+            inner join pasiendaftar_t pd on pd.norec = apd.noregistrasifk
+            inner join ruangan_m ru on ru.id = apd.objectruanganfk
+            inner join (select ru.namaruangan, ru.id, apd.norec as norec_apd, case when ROW_NUMBER()OVER(PARTITION BY ps.nocm  order by apd.tglmasuk asc)> 1 then 'LAMA' else 'BARU' end as statuskunjungan, ru.id as id_ruangan, pd.noregistrasi,ps.nocm, apd.tglmasuk FROM antrianpasiendiperiksa_t apd
+            inner join pasiendaftar_t pd on pd.norec = apd.noregistrasifk
+            inner join pasien_m ps on ps.id = pd.nocmfk
+            inner join ruangan_m ru on ru.id = apd.objectruanganfk
+            where apd.kdprofile = 30 and apd.statusenabled = true and apd.objectruanganfk in(575, 576) and pd.kdprofile=30 and pd.statusenabled = true 
+            ORDER BY ps.nocm asc, apd.tglmasuk asc)as apd2 on apd.norec = apd2.norec_apd
+            where apd.kdprofile = 30 and apd.statusenabled = true and apd2.id in(575, 576) and apd.tglmasuk::date
+            BETWEEN '$tglAwal' and '$tglAkhir' and pd.kdprofile=30 and pd.statusenabled= true ";
         }else if($ranap == true){
             $ruangan = DB::select(DB::Raw("
-            SELECT ru.id, ru.namaruangan FROM ruangan_m ru 
-            where 
-            ru.objectdepartemenfk in(16) and ru.statusenabled=true and ru.kdprofile=30 order by ru.objectdepartemenfk asc
-        "));
+                SELECT ru.id, ru.namaruangan FROM ruangan_m ru 
+                where ru.objectdepartemenfk in(16) and ru.statusenabled=true 
+                and ru.kdprofile=30 order by ru.objectdepartemenfk asc
+            "));
             $wherenya = "and ru.objectdepartemenfk = 16";
 
         }
@@ -46,574 +59,121 @@ class SensusHarianRawatJalanController extends ApiController
         "));
             $wherenya = "and ru.objectdepartemenfk not in(16,27,3)";
 
-
         }
         
 
-        $statuspasien= DB::select(DB::raw("/*status pasien*/
-            WITH periode as (
-                select '$tglAwal'::date as tglawal, '$tglAkhir'::date as tglakhir
-            ),
-            pasiendaftarnonlabrad AS ( 
-	            SELECT 
-		            pd.tglregistrasi, ru.id,pd.norec, pd.nocmfk, pd.statuspasien, apd.tglmasuk::date,apd.objectruanganfk,ru.namaruangan,ru.objectdepartemenfk
-                FROM pasiendaftar_t pd
-                    inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
-                    INNER JOIN ruangan_m ru ON ru.ID = apd.objectruanganfk
-                    inner join periode on true
-                WHERE 
-                    pd.kdprofile = 30
-                    and pd.statusenabled = TRUE 
-                    and apd.kdprofile = 30
-                    and apd.statusenabled = true
-                    AND apd.tglmasuk :: DATE BETWEEN periode.tglawal AND periode.tglakhir
-                    $wherenya
-                    /*
-                    16 = ranap
-                    27 = 
-                    3 =
-                    */
-                group by pd.tglregistrasi, pd.norec, pd.nocmfk, pd.statuspasien, apd.tglmasuk::date,apd.objectruanganfk,ru.id,ru.objectdepartemenfk
-            ),
-            pasiendaftarlabrad AS ( 
-                SELECT 
-                    pd.tglregistrasi,ru.id, pd.norec, pd.nocmfk, pd.statuspasien, pp.tglpelayanan,apd.objectruanganfk,ru.namaruangan,ru.objectdepartemenfk
-                FROM pasiendaftar_t pd
-                    inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
-                    INNER JOIN ruangan_m ru ON ru.ID = apd.objectruanganfk
-                    inner join pelayananpasien_t pp on apd.norec = pp.noregistrasifk
-                    inner join periode on true
-                WHERE 
-                    pd.kdprofile = 30
-                    and pd.statusenabled = TRUE 
-                    and apd.kdprofile = 30
-                    and apd.statusenabled = true
-                    AND apd.tglmasuk :: DATE BETWEEN periode.tglawal AND periode.tglakhir
-                    and ru.objectdepartemenfk in(27,3)
-                    /*
-                    16 = ranap
-                    27 = lab
-                    3 = radiologi
-                    */
-                group by ru.id,pd.tglregistrasi, pd.norec, pd.nocmfk, pd.statuspasien,pp.norec, pp.tglpelayanan,apd.objectruanganfk,ru.objectdepartemenfk
-                
-            )
-
-            SELECT
-                pd.id,pd.namaruangan, 
-                count(pd.statuspasien) filter(where pd.statuspasien ilike 'LAMA') as LAMA,
-                count(pd.statuspasien) filter(where pd.statuspasien ilike 'BARU') as BARU
-            FROM
-                pasiendaftarnonlabrad pd
-                INNER JOIN pasien_m ps ON ps.ID = pd.nocmfk
-                inner join departemen_m dpm on dpm.id = pd.objectdepartemenfk
-            GROUP BY pd.namaruangan, pd.id
-
-            union ALL
-
-            SELECT
-                pd.id, pd.namaruangan, 
-                count(*) filter(where pd.statuspasien ilike 'LAMA') LAMA,
-                count(pd.statuspasien) filter(where pd.statuspasien ilike 'BARU') BARU
-            FROM
-                pasiendaftarlabrad pd
-                INNER JOIN pasien_m ps ON ps.ID = pd.nocmfk
-                inner join departemen_m dpm on dpm.id = pd.objectdepartemenfk
-            GROUP BY pd.namaruangan, pd.id"));
+        $statuspasien= DB::select(DB::raw("SELECT y.id_ruangan, y.namaruangan, string_agg(y.statuspasienbaru::text, '')::text as statuspasienbaru,string_agg(y.statuspasienlama::text, '')::text as statuspasienlama FROM (SELECT x.id_ruangan, x.namaruangan,
+            case when x.statuskunjungan = 'BARU' then count(x.statuskunjungan)end as statuspasienbaru,
+            case when x.statuskunjungan = 'LAMA' then count(x.statuskunjungan)end as statuspasienlama
+            FROM (SELECT apd.statuskunjungan, ru.id as id_ruangan, ru.namaruangan FROM antrianpasiendiperiksa_t apd
+            inner join pasiendaftar_t pd on pd.norec = apd.noregistrasifk
+            inner join ruangan_m ru on ru.id = apd.objectruanganfk
+            where apd.kdprofile = 30 and apd.statusenabled = true $wherenya and apd.objectruanganfk not in(575,576) and apd.tglmasuk::date
+            BETWEEN '$tglAwal' and '$tglAkhir' and pd.kdprofile=30 and pd.statusenabled = true 
+            $lab
+            )as x
+            GROUP BY x.statuskunjungan, x.namaruangan,x.id_ruangan)as y
+        group by y.id_ruangan, y.namaruangan"));
 
         $jeniskelamin = DB::select(DB::raw("
-            with periode as
-            (
-                select '$tglAwal'::date tglawal, '$tglAkhir'::date tglakhir
-            ),
-            pasiendaftarnonlabrad AS ( 
-                SELECT 
-                ru.id, pd.tglregistrasi, pd.norec, pd.nocmfk, pd.statuspasien, 
-                apd.tglmasuk::date,apd.objectruanganfk,ru.namaruangan,ru.objectdepartemenfk
-            FROM pasiendaftar_t pd
-                inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
-                INNER JOIN ruangan_m ru ON ru.ID = apd.objectruanganfk
-                inner join periode on true
-            WHERE 
-                pd.kdprofile = 30
-                and pd.statusenabled = TRUE 
-                and apd.kdprofile = 30
-                and apd.statusenabled = true
-                AND apd.tglmasuk :: DATE BETWEEN periode.tglawal AND periode.tglakhir
-                $wherenya
-                /*
-                16 = ranap
-                27 = 
-                3 =
-                */
-            group by ru.id, pd.tglregistrasi, pd.norec, pd.nocmfk, pd.statuspasien, apd.tglmasuk::date,apd.objectruanganfk,ru.namaruangan,ru.objectdepartemenfk
-        ),
-        pasiendaftarlabrad AS ( 
-            SELECT 
-                ru.id, pd.tglregistrasi, pd.norec, pd.nocmfk, ps.objectjeniskelaminfk, pp.tglpelayanan,apd.objectruanganfk,ru.namaruangan,ru.objectdepartemenfk
-            FROM pasiendaftar_t pd
-            INNER JOIN pasien_m ps on ps.id=pd.nocmfk
-            inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
-            INNER JOIN ruangan_m ru ON ru.ID = apd.objectruanganfk
-            inner join pelayananpasien_t pp on apd.norec = pp.noregistrasifk
-            inner join periode on true
-            WHERE 
-                pd.kdprofile = 30
-                and pd.statusenabled = TRUE 
-                and apd.kdprofile = 30
-                and apd.statusenabled = true
-                AND apd.tglmasuk :: DATE BETWEEN periode.tglawal AND periode.tglakhir
-                and ru.objectdepartemenfk in(27,3)
-                /*
-                16 = ranap
-                27 = lab
-                3 = radiologi
-                */
-            group by ru.id , pd.tglregistrasi, pd.norec, pd.nocmfk, ps.objectjeniskelaminfk,pp.norec, pp.tglpelayanan,apd.objectruanganfk,ru.namaruangan,ru.objectdepartemenfk
-        )  	
-        SELECT
-            pd.id,pd.namaruangan as ruangan, count(ps.objectjeniskelaminfk) filter(where ps.objectjeniskelaminfk =1) lk,count(ps.objectjeniskelaminfk) filter(where ps.objectjeniskelaminfk = 2) pr
-        FROM
-            pasiendaftarnonlabrad pd
-            INNER JOIN pasien_m ps ON ps.ID = pd.nocmfk
-            inner join departemen_m dpm on dpm.id = pd.objectdepartemenfk
-        GROUP BY pd.namaruangan, pd.id
+        SELECT y.id_ruangan, y.namaruangan, string_agg(y.jklk::text, '')::text as jklk,string_agg(y.jkpr::text, '')::text as jkpr FROM (SELECT x.id_ruangan, x.namaruangan,
+        case when x.objectjeniskelaminfk = 1 then count(x.objectjeniskelaminfk)end as jklk,
+        case when x.objectjeniskelaminfk = 2 then count(x.objectjeniskelaminfk)end as jkpr
+        FROM (SELECT ps.objectjeniskelaminfk, ru.id as id_ruangan, ru.namaruangan FROM antrianpasiendiperiksa_t apd
+        inner join pasiendaftar_t pd on pd.norec = apd.noregistrasifk
+        inner join pasien_m ps on ps.id = pd.nocmfk
+        inner join ruangan_m ru on ru.id = apd.objectruanganfk
+        where apd.kdprofile = 30 and apd.statusenabled = true $wherenya and apd.tglmasuk::date
+        BETWEEN '$tglAwal' and '$tglAkhir' and pd.kdprofile=30 and pd.statusenabled = true)as x
+        GROUP BY x.objectjeniskelaminfk, x.namaruangan,x.id_ruangan) as y
+        group by y.id_ruangan, y.namaruangan
+        "));
+        $umur = DB::select(DB::raw("SELECT y.id_ruangan, y.namaruangan, sum(y.umursd4) umursd4,sum(y.umursd14) umursd14,sum(y.umursd24) umursd24,sum(y.umursd44) umursd44,sum(y.umursd64) umursd64,sum(y.umurlebih64) umurlebih64 FROM (SELECT x.id_ruangan, x.namaruangan,
+        case when x.tgllahir between 0 and 4 then count(x.tgllahir)end as umursd4,
+        case when x.tgllahir between 5 and 14 then count(x.tgllahir)end as umursd14,
+        case when x.tgllahir between 15 and 24 then count(x.tgllahir)end as umursd24,
+        case when x.tgllahir between 25 and 44 then count(x.tgllahir)end as umursd44,
+        case when x.tgllahir between 45 and 64 then count(x.tgllahir)end as umursd64,
+        case when x.tgllahir > 64 then count(x.tgllahir)end as umurlebih64
+        FROM (SELECT EXTRACT(year from age(apd.tglmasuk::date,ps.tgllahir::date))as tgllahir, ru.id as id_ruangan, ru.namaruangan FROM antrianpasiendiperiksa_t apd
+        inner join pasiendaftar_t pd on pd.norec = apd.noregistrasifk
+        inner join pasien_m ps on ps.id = pd.nocmfk
+        inner join ruangan_m ru on ru.id = apd.objectruanganfk
+        where apd.kdprofile = 30 and apd.statusenabled = true $wherenya and apd.tglmasuk::date
+        BETWEEN '$tglAwal' and '$tglAkhir' and pd.kdprofile=30 and pd.statusenabled = true)as x
+        GROUP BY x.tgllahir, x.namaruangan,x.id_ruangan) as y
+        group by y.id_ruangan, y.namaruangan
+        "));
 
-        union ALL
+        $agama = DB::select(DB::raw("SELECT y.id_ruangan, y.namaruangan, SUM(y.islam)as islam,SUM(y.protestan)as protestan,SUM(y.katholik)as katholik,SUM(y.hindu)as hindu,SUM(y.budha)as budha,SUM(y.jmllainnya)as jmllainnya FROM (SELECT x.id_ruangan, x.namaruangan,
+            case when x.kodeexternal ='I' then count(x.kodeexternal)end as islam,
+            case when x.kodeexternal ='P' then count(x.kodeexternal)end as protestan,
+            case when x.kodeexternal ='K' then count(x.kodeexternal)end as katholik,
+            case when x.kodeexternal ='H' then count(x.kodeexternal)end as hindu,
+            case when x.kodeexternal ='B' then count(x.kodeexternal)end as budha,
+            case when x.kodeexternal not in('I','P','K','H','B') then count(x.kodeexternal)end as jmllainnya
+            FROM (SELECT ag.kodeexternal, ru.id as id_ruangan, ru.namaruangan FROM antrianpasiendiperiksa_t apd
+            inner join pasiendaftar_t pd on pd.norec = apd.noregistrasifk
+            inner join pasien_m ps on ps.id = pd.nocmfk
+            left join agama_m ag on ag.id = ps.objectagamafk
+            inner join ruangan_m ru on ru.id = apd.objectruanganfk
+            where apd.kdprofile = 30 and apd.statusenabled = true $wherenya and apd.tglmasuk::date
+            BETWEEN '$tglAwal' and '$tglAkhir' and pd.kdprofile=30 and pd.statusenabled = true)as x
+            GROUP BY x.kodeexternal, x.namaruangan,x.id_ruangan) as y
+            group by y.id_ruangan, y.namaruangan
+        "));
+        $alamat = DB::select(DB::raw("SELECT y.id_ruangan, y.namaruangan, SUM(y.yogyakarta)as yogyakarta,SUM(y.bantul)as bantul,SUM(y.kulonprogo)as kulonprogo,SUM(y.gunungkidul)as gunungkidul,SUM(y.luardiy)as luardiy,SUM(y.sleman)as sleman FROM (SELECT x.id_ruangan, x.namaruangan,
+            case when x.objectkotakabupatenfk= 227 then count(x.objectkotakabupatenfk)end as yogyakarta,
+            case when x.objectkotakabupatenfk=224 then count(x.objectkotakabupatenfk)end as bantul,
+            case when x.objectkotakabupatenfk = 223 then count(x.objectkotakabupatenfk)end as kulonprogo,
+            case when x.objectkotakabupatenfk = 225 then count(x.objectkotakabupatenfk)end as gunungkidul,
+            case when x.objectkotakabupatenfk = 226 then count(x.objectkotakabupatenfk)end as sleman,
+            case when x.objectkotakabupatenfk not in (226,225,223,224,227) then count(x.objectkotakabupatenfk)end as luardiy
+            FROM (SELECT alm.objectkotakabupatenfk, ru.id as id_ruangan, ru.namaruangan FROM antrianpasiendiperiksa_t apd
+            inner join pasiendaftar_t pd on pd.norec = apd.noregistrasifk
+            inner join pasien_m ps on ps.id = pd.nocmfk
+            inner join alamat_m alm on alm.nocmfk = ps.id
+            inner join ruangan_m ru on ru.id = apd.objectruanganfk
+            where apd.kdprofile = 30 and apd.statusenabled = true $wherenya and apd.tglmasuk::date
+            BETWEEN '$tglAwal' and '$tglAkhir' and pd.kdprofile=30 and pd.statusenabled = true )as x
+            GROUP BY x.objectkotakabupatenfk, x.namaruangan,x.id_ruangan) as y
+            group by y.id_ruangan, y.namaruangan"));
+        
+        $pendidikan = DB::select(DB::raw("SELECT y.id_ruangan, y.namaruangan,sum(y.tstk)as tstk,
+        sum(y.sd)as sd,sum(y.sltp)as sltp,sum(y.slta)as slta,sum(y.d1s3)as d1s3 
+        FROM (SELECT x.id_ruangan, x.namaruangan,
+        case when x.objectpendidikanfk in (0,1,17)then count(x.objectpendidikanfk)end as tstk,
+        case when x.objectpendidikanfk= 2 then count(x.objectpendidikanfk)end as sd,
+        case when x.objectpendidikanfk = 3 then count(x.objectpendidikanfk)end as sltp,
+        case when x.objectpendidikanfk = 4 then count(x.objectpendidikanfk)end as slta,
+        case when x.objectpendidikanfk in (5,6,7,8,9,10,11,24,19) then count(x.objectpendidikanfk)end as d1s3
+        FROM (SELECT ps.objectpendidikanfk, ru.id as id_ruangan, ru.namaruangan FROM antrianpasiendiperiksa_t apd
+        inner join pasiendaftar_t pd on pd.norec = apd.noregistrasifk
+        inner join pasien_m ps on ps.id = pd.nocmfk
+        inner join ruangan_m ru on ru.id = apd.objectruanganfk
+        where apd.kdprofile = 30 and apd.statusenabled = true $wherenya and apd.tglmasuk::date
+        BETWEEN '$tglAwal' and '$tglAkhir' and pd.kdprofile=30 and pd.statusenabled = true )as x
+        GROUP BY x.objectpendidikanfk, x.namaruangan,x.id_ruangan) as y
+        group by y.id_ruangan, y.namaruangan"));
 
-        SELECT
-            pd.id,pd.namaruangan as ruangan, count(ps.objectjeniskelaminfk) filter(where ps.objectjeniskelaminfk =1) LK,count(ps.objectjeniskelaminfk) filter(where ps.objectjeniskelaminfk =2) PR
-        FROM
-            pasiendaftarlabrad pd
-            INNER JOIN pasien_m ps ON ps.ID = pd.nocmfk
-            inner join departemen_m dpm on dpm.id = pd.objectdepartemenfk
-        GROUP BY pd.namaruangan,pd.id"));
+        $pekerjaan = DB::select(DB::raw("SELECT y.id_ruangan, y.namaruangan,sum(y.tani)as tani,sum(y.buruh)as buruh ,sum(y.pns)as pns ,sum(y.tnipolri)as tnipolri ,sum(y.swasta)as swasta ,sum(y.tidakbekerja)as tidakbekerja ,sum(y.pelajarmahasiswa)as pelajarmahasiswa  FROM (SELECT x.id_ruangan, x.namaruangan,
+        case when x.objectpekerjaanfk = 11 then count(x.objectpekerjaanfk)end as tani,
+        case when x.objectpekerjaanfk= 15 then count(x.objectpekerjaanfk)end as buruh,
+        case when x.objectpekerjaanfk = 16 then count(x.objectpekerjaanfk)end as pns,
+        case when x.objectpekerjaanfk in(25,28,18,6)then count(x.objectpekerjaanfk)end as tnipolri,
+        case when x.objectpekerjaanfk =17 then count(x.objectpekerjaanfk)end as swasta,
+        case when x.objectpekerjaanfk =1 then count(x.objectpekerjaanfk)end as tidakbekerja,
+        case when x.objectpekerjaanfk in(3,26)then count(x.objectpekerjaanfk)end as pelajarmahasiswa
+        FROM (SELECT ps.objectpekerjaanfk, ru.id as id_ruangan, ru.namaruangan FROM antrianpasiendiperiksa_t apd
+        inner join pasiendaftar_t pd on pd.norec = apd.noregistrasifk
+        inner join pasien_m ps on ps.id = pd.nocmfk
+        inner join ruangan_m ru on ru.id = apd.objectruanganfk
+        where apd.kdprofile = 30 and apd.statusenabled = true $wherenya and apd.tglmasuk::date
+        BETWEEN '$tglAwal' and '$tglAkhir' and pd.kdprofile=30 and pd.statusenabled = true )as x
+        GROUP BY x.objectpekerjaanfk, x.namaruangan,x.id_ruangan) as y
+        group by y.id_ruangan, y.namaruangan
 
-        $umur = DB::select(DB::raw("with periode as
-        (
-            select '$tglAwal'::date tglawal, '$tglAkhir'::date tglakhir
-        ),pasiendaftarnonlabrad AS ( 
-	SELECT 
-		ru.id,pd.tglregistrasi, pd.norec, pd.nocmfk, ps.tgllahir, apd.tglmasuk::date,apd.objectruanganfk,ru.namaruangan,ru.objectdepartemenfk
-	FROM pasiendaftar_t pd
-	inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
-	INNER JOIN ruangan_m ru ON ru.ID = apd.objectruanganfk
-	inner join pasien_m ps on ps.id=pd.nocmfk
-	inner join periode on true
-	WHERE 
-		pd.kdprofile = 30
-		and pd.statusenabled = TRUE 
-		and apd.kdprofile = 30
-		and apd.statusenabled = true
-		AND apd.tglmasuk :: DATE BETWEEN periode.tglawal AND periode.tglakhir
-		$wherenya
-		/*
-		16 = ranap
-		27 = 
-		3 =
-		*/
-	group by ru.id, pd.tglregistrasi, pd.norec, pd.nocmfk, ps.tgllahir, apd.tglmasuk::date,apd.objectruanganfk,ru.namaruangan,ru.objectdepartemenfk
-),
-pasiendaftarlabrad AS ( 
-	SELECT 
-		ru.id,pd.tglregistrasi, pd.norec, pd.nocmfk, ps.objectjeniskelaminfk, pp.tglpelayanan,apd.objectruanganfk,ru.namaruangan,ru.objectdepartemenfk
-	FROM pasiendaftar_t pd
-	INNER JOIN pasien_m ps on ps.id=pd.nocmfk
-	inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
-	INNER JOIN ruangan_m ru ON ru.ID = apd.objectruanganfk
-	inner join pelayananpasien_t pp on apd.norec = pp.noregistrasifk
-	inner join periode on true
-	WHERE 
-		pd.kdprofile = 30
-		and pd.statusenabled = TRUE 
-		and apd.kdprofile = 30
-		and apd.statusenabled = true
-		AND apd.tglmasuk :: DATE BETWEEN periode.tglawal AND periode.tglakhir
-		and ru.objectdepartemenfk in(27,3)
-		/*
-		16 = ranap
-		27 = lab
-		3 = radiologi
-		*/
-	group by ru.id, pd.tglregistrasi, pd.norec, pd.nocmfk, ps.objectjeniskelaminfk,pp.norec, pp.tglpelayanan,apd.objectruanganfk,ru.namaruangan,ru.objectdepartemenfk
-)  	
-SELECT
-pd.id,
-	pd.namaruangan,
-	count(DATE_PART('year', periode.tglawal) - DATE_PART('year', ps.tgllahir::date)) filter(where DATE_PART('year', periode.tglawal) - DATE_PART('year', ps.tgllahir::date) BETWEEN 0 and 4) u0sampai4,
-	count(DATE_PART('year', periode.tglawal) - DATE_PART('year', ps.tgllahir::date)) filter(where DATE_PART('year', periode.tglawal) - DATE_PART('year', ps.tgllahir::date) BETWEEN 5 AND 14) u5sampai14,
-	count(DATE_PART('year', periode.tglawal) - DATE_PART('year', ps.tgllahir::date)) filter(where DATE_PART('year', periode.tglawal) - DATE_PART('year', ps.tgllahir::date) BETWEEN 15 AND 24) u15sampai24,
-	count(DATE_PART('year', periode.tglawal) - DATE_PART('year', ps.tgllahir::date)) filter(where DATE_PART('year', periode.tglawal) - DATE_PART('year', ps.tgllahir::date) BETWEEN 25 AND 44) u25sampai44,
-	count(DATE_PART('year', periode.tglawal) - DATE_PART('year', ps.tgllahir::date)) filter(where DATE_PART('year', periode.tglawal) - DATE_PART('year', ps.tgllahir::date) BETWEEN 45 AND 64) u45sampai64,
-	count(DATE_PART('year', periode.tglawal) - DATE_PART('year', ps.tgllahir::date)) filter(where DATE_PART('year', periode.tglawal) - DATE_PART('year', ps.tgllahir::date) > 64) lebih64
-FROM
-	pasiendaftarnonlabrad pd
-	INNER JOIN pasien_m ps ON ps.ID = pd.nocmfk
-	inner join departemen_m dpm on dpm.id = pd.objectdepartemenfk
-	inner join periode on true
-GROUP BY pd.namaruangan, pd.id
-
-union ALL
-
-SELECT
-pd.id,
-	pd.namaruangan,
-	count(DATE_PART('year', periode.tglawal) - DATE_PART('year', ps.tgllahir::date)) filter(where DATE_PART('year', periode.tglawal) - DATE_PART('year', ps.tgllahir::date) BETWEEN 0 and 4) u0sampai4,
-	count(DATE_PART('year', periode.tglawal) - DATE_PART('year', ps.tgllahir::date)) filter(where DATE_PART('year', periode.tglawal) - DATE_PART('year', ps.tgllahir::date) BETWEEN 5 AND 14) u5sampai14,
-	count(DATE_PART('year', periode.tglawal) - DATE_PART('year', ps.tgllahir::date)) filter(where DATE_PART('year', periode.tglawal) - DATE_PART('year', ps.tgllahir::date) BETWEEN 15 AND 24) u15sampai24,
-	count(DATE_PART('year', periode.tglawal) - DATE_PART('year', ps.tgllahir::date)) filter(where DATE_PART('year', periode.tglawal) - DATE_PART('year', ps.tgllahir::date) BETWEEN 25 AND 44) u25sampai44,
-	count(DATE_PART('year', periode.tglawal) - DATE_PART('year', ps.tgllahir::date)) filter(where DATE_PART('year', periode.tglawal) - DATE_PART('year', ps.tgllahir::date) BETWEEN 45 AND 64) u45sampai64,
-	count(DATE_PART('year', periode.tglawal) - DATE_PART('year', ps.tgllahir::date)) filter(where DATE_PART('year', periode.tglawal) - DATE_PART('year', ps.tgllahir::date) > 64) lebih64
-
-FROM
-	pasiendaftarlabrad pd
-	INNER JOIN pasien_m ps ON ps.ID = pd.nocmfk
-	inner join departemen_m dpm on dpm.id = pd.objectdepartemenfk
-	inner join periode on true
-GROUP BY pd.namaruangan, pd.id"));
-
-
-        $agama = DB::select(DB::raw("with periode as
-                (
-                    select '$tglAwal'::date tglawal, '$tglAkhir'::date tglakhir
-                ),
-
-        pasiendaftarnonlabrad AS ( 
-            SELECT 
-                ru.id, pd.tglregistrasi, pd.norec, pd.nocmfk, apd.tglmasuk::date,apd.objectruanganfk,ru.namaruangan,ru.objectdepartemenfk
-            FROM pasiendaftar_t pd
-            inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
-            INNER JOIN ruangan_m ru ON ru.ID = apd.objectruanganfk
-            inner join periode on true
-            WHERE 
-                pd.kdprofile = 30
-                and pd.statusenabled = TRUE 
-                and apd.kdprofile = 30
-                and apd.statusenabled = true
-                AND apd.tglmasuk :: DATE BETWEEN periode.tglawal AND periode.tglakhir
-                $wherenya
-                /*
-                16 = ranap
-                27 = 
-                3 =
-                */
-            group by ru.id, pd.tglregistrasi, pd.norec, pd.nocmfk, apd.tglmasuk::date,apd.objectruanganfk,ru.namaruangan,ru.objectdepartemenfk
-        ),
-        pasiendaftarlabrad AS ( 
-            SELECT 
-                ru.id, pd.tglregistrasi, pd.norec, pd.nocmfk, pp.tglpelayanan,apd.objectruanganfk,ru.namaruangan,ru.objectdepartemenfk
-            FROM pasiendaftar_t pd
-            inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
-            INNER JOIN ruangan_m ru ON ru.ID = apd.objectruanganfk
-            inner join pelayananpasien_t pp on apd.norec = pp.noregistrasifk
-            inner join periode on true
-            WHERE 
-                pd.kdprofile = 30
-                and pd.statusenabled = TRUE 
-                and apd.kdprofile = 30
-                and apd.statusenabled = true
-                AND apd.tglmasuk :: DATE BETWEEN periode.tglawal AND periode.tglakhir
-                and ru.objectdepartemenfk in(27,3)
-                /*
-                16 = ranap
-                27 = lab
-                3 = radiologi
-                */
-            group by ru.id, pd.tglregistrasi, pd.norec, pd.nocmfk,pp.norec, pp.tglpelayanan,apd.objectruanganfk,ru.namaruangan,ru.objectdepartemenfk
-        ) 
-        SELECT
-            pd.id,
-            pd.namaruangan, 
-            COUNT ( ps.objectagamafk ) filter (where ps.objectagamafk = 1 ) islam,
-            COUNT ( ps.objectagamafk ) filter (where ps.objectagamafk = 2 ) kristen,
-            COUNT ( ps.objectagamafk ) filter (where ps.objectagamafk = 3 ) katholik,
-            COUNT ( ps.objectagamafk ) filter (where ps.objectagamafk = 4 ) hindu,
-            COUNT ( ps.objectagamafk ) filter (where ps.objectagamafk = 5 ) budha,
-            COUNT ( ps.objectagamafk ) filter (where ps.objectagamafk not in(1,2,3,4,5) ) lainnya
-            
-        FROM
-            pasiendaftarnonlabrad pd
-            INNER JOIN pasien_m ps ON ps.ID = pd.nocmfk
-            inner join departemen_m dpm on dpm.id = pd.objectdepartemenfk
-        GROUP BY pd.id, pd.namaruangan
-
-        union ALL
-
-        SELECT
-            pd.id,
-            pd.namaruangan, 
-            COUNT ( ps.objectagamafk ) filter (where ps.objectagamafk = 1 ) islam,
-            COUNT ( ps.objectagamafk ) filter (where ps.objectagamafk = 2 ) kristen,
-            COUNT ( ps.objectagamafk ) filter (where ps.objectagamafk = 3 ) katholik,
-            COUNT ( ps.objectagamafk ) filter (where ps.objectagamafk = 4 ) hindu,
-            COUNT ( ps.objectagamafk ) filter (where ps.objectagamafk = 5 ) budha,
-            COUNT ( ps.objectagamafk ) filter (where ps.objectagamafk not in(1,2,3,4,5) ) lainnya
-        FROM
-            pasiendaftarlabrad pd
-            INNER JOIN pasien_m ps ON ps.ID = pd.nocmfk
-            inner join departemen_m dpm on dpm.id = pd.objectdepartemenfk
-        GROUP BY pd.id, pd.namaruangan"));
-
-
-        $alamat = DB::select(DB::raw("WITH periode as
-                (
-                    select '$tglAwal'::date tglawal, '$tglAkhir'::date tglakhir
-                ),
-                pasiendaftarnonlabrad AS ( 
-                SELECT 
-                    ru.id, pd.tglregistrasi, pd.norec, pd.nocmfk, al.objectkotakabupatenfk, apd.tglmasuk::date,apd.objectruanganfk,ru.namaruangan,ru.objectdepartemenfk
-                FROM pasiendaftar_t pd
-                inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
-                INNER JOIN ruangan_m ru ON ru.ID = apd.objectruanganfk
-                INNER JOIN pasien_m ps on ps.id= pd.nocmfk
-                LEFT JOIN alamat_m al ON ps.ID = al.nocmfk
-                LEFT JOIN kotakabupaten_m ko ON ko.ID = al.objectkotakabupatenfk	
-                inner join periode on true
-                WHERE 
-                    pd.kdprofile = 30
-                    and pd.statusenabled = TRUE 
-                    and apd.kdprofile = 30
-                    and apd.statusenabled = true
-                    AND apd.tglmasuk :: DATE BETWEEN periode.tglawal AND periode.tglakhir
-                    $wherenya
-                    /*
-                    16 = ranap
-                    27 = 
-                    3 =
-                    */
-                group by ru.id,pd.tglregistrasi, pd.norec, pd.nocmfk, apd.tglmasuk::date,apd.objectruanganfk,ru.namaruangan,ru.objectdepartemenfk,al.objectkotakabupatenfk
-            ),
-            pasiendaftarlabrad AS ( 
-                SELECT 
-                    ru.id,pd.tglregistrasi, pd.norec, pd.nocmfk, al.objectkotakabupatenfk, pp.tglpelayanan,apd.objectruanganfk,ru.namaruangan,ru.objectdepartemenfk
-                FROM pasiendaftar_t pd
-                inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
-                INNER JOIN ruangan_m ru ON ru.ID = apd.objectruanganfk
-                INNER JOIN pasien_m ps on ps.id= pd.nocmfk
-                inner join pelayananpasien_t pp on apd.norec = pp.noregistrasifk
-                LEFT JOIN alamat_m al ON ps.ID = al.nocmfk
-                LEFT JOIN kotakabupaten_m ko ON ko.ID = al.objectkotakabupatenfk	
-                inner join periode on true
-                WHERE 
-                    pd.kdprofile = 30
-                    and pd.statusenabled = TRUE 
-                    and apd.kdprofile = 30
-                    and apd.statusenabled = true
-                    AND apd.tglmasuk :: DATE BETWEEN periode.tglawal AND periode.tglakhir
-                    and ru.objectdepartemenfk in(27,3)
-                    /*
-                    16 = ranap
-                    27 = lab
-                    3 = radiologi
-                    */
-                group by ru.id, pd.tglregistrasi, pd.norec, al.objectkotakabupatenfk, pd.nocmfk, pp.norec, pp.tglpelayanan,apd.objectruanganfk,ru.namaruangan,ru.objectdepartemenfk
-            ) 
-            SELECT
-            pd.id,
-                pd.namaruangan,
-                COUNT ( pd.objectkotakabupatenfk) filter (where pd.objectkotakabupatenfk = 227 ) yogyakarta,
-                COUNT ( pd.objectkotakabupatenfk) filter (where pd.objectkotakabupatenfk = 224 ) bantul,
-                COUNT ( pd.objectkotakabupatenfk) filter (where pd.objectkotakabupatenfk = 223 ) kulonprogo,
-                COUNT ( pd.objectkotakabupatenfk) filter (where pd.objectkotakabupatenfk = 225 ) gunungkidul,
-                COUNT ( pd.objectkotakabupatenfk) filter (where pd.objectkotakabupatenfk = 226 ) sleman,
-                COUNT ( pd.objectkotakabupatenfk) filter (where pd.objectkotakabupatenfk not in(227,224,223,225,226) ) luardiy
-            FROM
-                pasiendaftarnonlabrad pd
-                INNER JOIN pasien_m ps ON ps.ID = pd.nocmfk
-                inner join departemen_m dpm on dpm.id = pd.objectdepartemenfk
-            GROUP BY pd.namaruangan, pd.id
-
-            union ALL
-
-            SELECT
-            pd.id,
-                pd.namaruangan,
-                COUNT ( pd.objectkotakabupatenfk) filter (where pd.objectkotakabupatenfk = 227 ) yogyakarta,
-                COUNT ( pd.objectkotakabupatenfk) filter (where pd.objectkotakabupatenfk = 224 ) bantul,
-                COUNT ( pd.objectkotakabupatenfk) filter (where pd.objectkotakabupatenfk = 223 ) kulonprogo,
-                COUNT ( pd.objectkotakabupatenfk) filter (where pd.objectkotakabupatenfk = 225 ) gunungkidul,
-                COUNT ( pd.objectkotakabupatenfk) filter (where pd.objectkotakabupatenfk = 226 ) sleman,
-                COUNT ( pd.objectkotakabupatenfk) filter (where pd.objectkotakabupatenfk not in(227,224,223,225,226) ) luardiy
-            FROM
-                pasiendaftarlabrad pd
-                INNER JOIN pasien_m ps ON ps.ID = pd.nocmfk
-                inner join departemen_m dpm on dpm.id = pd.objectdepartemenfk
-            GROUP BY pd.id,pd.namaruangan"));
-
-
-            $pendidikan = DB::select(DB::raw("WITH periode AS (
-                select '$tglAwal'::date tglawal, '$tglAkhir'::date tglakhir
-                        ),
-                        pasiendaftarnonlabrad AS ( 
-                SELECT 
-                    ru.id,pd.tglregistrasi, pd.norec, pd.nocmfk, ps.objectpendidikanfk, apd.tglmasuk::date,apd.objectruanganfk,ru.namaruangan,ru.objectdepartemenfk
-                FROM pasiendaftar_t pd
-                inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
-                INNER JOIN ruangan_m ru ON ru.ID = apd.objectruanganfk
-                INNER JOIN pasien_m ps on ps.id= pd.nocmfk
-                
-                LEFT JOIN pendidikan_m pdk ON pdk.ID = ps.objectpendidikanfk
-                
-                inner join periode on true
-                WHERE 
-                    pd.kdprofile = 30
-                    and pd.statusenabled = TRUE 
-                    and apd.kdprofile = 30
-                    and apd.statusenabled = true
-                    AND apd.tglmasuk :: DATE BETWEEN periode.tglawal AND periode.tglakhir
-                    $wherenya
-                    /*
-                    16 = ranap
-                    27 = 
-                    3 =
-                    */
-                group by ru.id, pd.tglregistrasi, pd.norec, pd.nocmfk, apd.tglmasuk::date,apd.objectruanganfk,ru.namaruangan,ru.objectdepartemenfk,ps.objectpendidikanfk
-            ),
-            pasiendaftarlabrad AS ( 
-                SELECT 
-                    ru.id, pd.tglregistrasi, pd.norec, pd.nocmfk, ps.objectpendidikanfk, pp.tglpelayanan,apd.objectruanganfk,ru.namaruangan,ru.objectdepartemenfk
-                FROM pasiendaftar_t pd
-                inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
-                INNER JOIN ruangan_m ru ON ru.ID = apd.objectruanganfk
-                INNER JOIN pasien_m ps on ps.id= pd.nocmfk
-                inner join pelayananpasien_t pp on apd.norec = pp.noregistrasifk
-
-                LEFT JOIN pendidikan_m pdk ON pdk.ID = ps.objectpendidikanfk
-                
-                inner join periode on true
-                WHERE 
-                    pd.kdprofile = 30
-                    and pd.statusenabled = TRUE 
-                    and apd.kdprofile = 30
-                    and apd.statusenabled = true
-                    AND apd.tglmasuk :: DATE BETWEEN periode.tglawal AND periode.tglakhir
-                    and ru.objectdepartemenfk in(27,3)
-                    /*
-                    16 = ranap
-                    27 = lab
-                    3 = radiologi
-                    */
-                group by ru.id, pd.tglregistrasi, pd.norec, ps.objectpendidikanfk, pd.nocmfk, pp.norec, pp.tglpelayanan,apd.objectruanganfk,ru.namaruangan,ru.objectdepartemenfk
-            ) 
-            SELECT
-            pd.id,
-                pd.namaruangan,
-                COUNT ( pd.objectpendidikanfk ) filter (where pd.objectpendidikanfk BETWEEN 0 and 1 ) tstk,
-                COUNT ( pd.objectpendidikanfk ) filter (where pd.objectpendidikanfk = 2 ) sd,
-                COUNT ( pd.objectpendidikanfk ) filter (where pd.objectpendidikanfk = 3 ) sltp,
-                COUNT ( pd.objectpendidikanfk ) filter (where pd.objectpendidikanfk = 4) slta,
-                COUNT ( pd.objectpendidikanfk ) filter (where pd.objectpendidikanfk BETWEEN 5 and 11 ) d1sds3
-                
-            FROM
-                pasiendaftarnonlabrad pd
-                INNER JOIN pasien_m ps ON ps.ID = pd.nocmfk
-                inner join departemen_m dpm on dpm.id = pd.objectdepartemenfk
-            GROUP BY pd.namaruangan, pd.id
-
-            union ALL
-
-            SELECT
-            pd.id,
-                pd.namaruangan,
-                COUNT ( pd.objectpendidikanfk ) filter (where pd.objectpendidikanfk BETWEEN 0 and 1 ) tstk,
-                COUNT ( pd.objectpendidikanfk ) filter (where pd.objectpendidikanfk = 2 ) sd,
-                COUNT ( pd.objectpendidikanfk ) filter (where pd.objectpendidikanfk = 3 ) sltp,
-                COUNT ( pd.objectpendidikanfk ) filter (where pd.objectpendidikanfk = 4) slta,
-                COUNT ( pd.objectpendidikanfk ) filter (where pd.objectpendidikanfk BETWEEN 5 and 11 ) d1sds3
-                
-            FROM
-                pasiendaftarlabrad pd
-                INNER JOIN pasien_m ps ON ps.ID = pd.nocmfk
-                inner join departemen_m dpm on dpm.id = pd.objectdepartemenfk
-            GROUP BY pd.namaruangan,pd.id
-                        "));
-
-                $pekerjaan = DB::select(DB::raw("WITH periode AS (
-                select '$tglAwal'::date tglawal, '$tglAkhir'::date tglakhir
-                        ),
-                        pasiendaftarnonlabrad AS ( 
-                    SELECT 
-                        ru.id, pd.tglregistrasi, pd.norec, pd.nocmfk, ps.objectpekerjaanfk, apd.tglmasuk::date,apd.objectruanganfk,ru.namaruangan,ru.objectdepartemenfk
-                    FROM pasiendaftar_t pd
-                    inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
-                    INNER JOIN ruangan_m ru ON ru.ID = apd.objectruanganfk
-                    INNER JOIN pasien_m ps on ps.id= pd.nocmfk
-                    
-                    
-                    inner join periode on true
-                    WHERE 
-                        pd.kdprofile = 30
-                        and pd.statusenabled = TRUE 
-                        and apd.kdprofile = 30
-                        and apd.statusenabled = true
-                        AND apd.tglmasuk :: DATE BETWEEN periode.tglawal AND periode.tglakhir
-                        $wherenya
-                        /*
-                        16 = ranap
-                        27 = 
-                        3 =
-                        */
-                    group by ru.id, pd.tglregistrasi, pd.norec, pd.nocmfk, apd.tglmasuk::date,apd.objectruanganfk,ru.namaruangan,ru.objectdepartemenfk,ps.objectpekerjaanfk
-                ),
-                pasiendaftarlabrad AS ( 
-                    SELECT 
-                        ru.id,pd.tglregistrasi, pd.norec, pd.nocmfk, ps.objectpekerjaanfk, pp.tglpelayanan,apd.objectruanganfk,ru.namaruangan,ru.objectdepartemenfk
-                    FROM pasiendaftar_t pd
-                    inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
-                    INNER JOIN ruangan_m ru ON ru.ID = apd.objectruanganfk
-                    INNER JOIN pasien_m ps on ps.id= pd.nocmfk
-                    inner join pelayananpasien_t pp on apd.norec = pp.noregistrasifk
-                    
-                    inner join periode on true
-                    WHERE 
-                        pd.kdprofile = 30
-                        and pd.statusenabled = TRUE 
-                        and apd.kdprofile = 30
-                        and apd.statusenabled = true
-                        AND apd.tglmasuk :: DATE BETWEEN periode.tglawal AND periode.tglakhir
-                        and ru.objectdepartemenfk in(27,3)
-                        /*
-                        16 = ranap
-                        27 = lab
-                        3 = radiologi
-                        */
-                    group by ru.id,pd.tglregistrasi, pd.norec, ps.objectpekerjaanfk, pd.nocmfk, pp.norec, pp.tglpelayanan,apd.objectruanganfk,ru.namaruangan,ru.objectdepartemenfk
-                ) 
-                SELECT
-                pd.id,
-                    pd.namaruangan,
-                    COUNT ( pd.objectpekerjaanfk ) filter (where pd.objectpekerjaanfk = 11 ) tani,
-                    COUNT ( pd.objectpekerjaanfk ) filter (where pd.objectpekerjaanfk = 15 ) buruh,
-                    COUNT ( pd.objectpekerjaanfk ) filter (where pd.objectpekerjaanfk = 16 ) pns,
-                    COUNT ( pd.objectpekerjaanfk ) filter (where pd.objectpekerjaanfk in(28,25)) abripolri,
-                    COUNT ( pd.objectpekerjaanfk ) filter (where pd.objectpekerjaanfk = 4 ) swasta,
-                    COUNT ( pd.objectpekerjaanfk ) filter (where pd.objectpekerjaanfk = 1 ) takbekerja,
-                    COUNT ( pd.objectpekerjaanfk ) filter (where pd.objectpekerjaanfk in(20,26,3) ) pelajarmahasiswa
-                    
-                FROM
-                    pasiendaftarnonlabrad pd
-                    INNER JOIN pasien_m ps ON ps.ID = pd.nocmfk
-                    inner join departemen_m dpm on dpm.id = pd.objectdepartemenfk
-                GROUP BY pd.id,pd.namaruangan
-
-                union ALL
-                -- 
-                SELECT
-                pd.id,
-                    pd.namaruangan,
-                    COUNT ( pd.objectpekerjaanfk ) filter (where pd.objectpekerjaanfk = 11 ) tani,
-                    COUNT ( pd.objectpekerjaanfk ) filter (where pd.objectpekerjaanfk = 15 ) buruh,
-                    COUNT ( pd.objectpekerjaanfk ) filter (where pd.objectpekerjaanfk = 16 ) pns,
-                    COUNT ( pd.objectpekerjaanfk ) filter (where pd.objectpekerjaanfk in(28,25)) abripolri,
-                    COUNT ( pd.objectpekerjaanfk ) filter (where pd.objectpekerjaanfk = 4 ) swasta,
-                    COUNT ( pd.objectpekerjaanfk ) filter (where pd.objectpekerjaanfk = 1 ) takbekerja,
-                    COUNT ( pd.objectpekerjaanfk ) filter (where pd.objectpekerjaanfk in(20,26,3) ) pelajarmahasiswa
-                    
-                FROM
-                    pasiendaftarlabrad pd
-                    INNER JOIN pasien_m ps ON ps.ID = pd.nocmfk
-                    inner join departemen_m dpm on dpm.id = pd.objectdepartemenfk
-                GROUP BY pd.id, pd.namaruangan"));
+        "));
         $jmlpasienbaru = 0;
         $jmlpasienlama = 0;
         $jmlpasienlk = 0;
@@ -660,11 +220,6 @@ GROUP BY pd.namaruangan, pd.id"));
         $totalalamat = 0;
         $totalpendidikan = 0;
         $totalpekerjaan = 0;
-
-
-
-
-
 
         $detail = [];
         //var_dump($ruangan);
@@ -715,19 +270,19 @@ GROUP BY pd.namaruangan, pd.id"));
             
             
             foreach ($statuspasien as $sttspasien) {
-                if ($ru->id == $sttspasien->id) {
-                    $jmlpasienbaru = $sttspasien->baru;
-                    $jmlpasienlama = $sttspasien->lama;
+                if ($ru->id == $sttspasien->id_ruangan) {
+                    $jmlpasienbaru = $sttspasien->statuspasienbaru;
+                    $jmlpasienlama = $sttspasien->statuspasienlama;
                     break;
-                } else {
+                }else{
                     $jmlpasienbaru = 0;
                     $jmlpasienlama = 0;
                 }
             }
             foreach ($jeniskelamin as $jk) {
-                if ($ru->id == $jk->id) {
-                    $jmlpasienlk = $jk->lk;
-                    $jmlpasienpr = $jk->pr;
+                if ($ru->id == $jk->id_ruangan) {
+                    $jmlpasienlk = $jk->jklk;
+                    $jmlpasienpr = $jk->jkpr;
                     break;
                 } else {
                     $jmlpasienlk = 0;
@@ -735,13 +290,13 @@ GROUP BY pd.namaruangan, pd.id"));
                 }
             }
             foreach ($umur as $um) {
-                if ($ru->id == $um->id) {
-                    $jmlpasien0sampai4 = $um->u0sampai4;
-                    $jmlpasien5sampai14 = $um->u5sampai14;
-                    $jmlpasien15sampai24 = $um->u15sampai24;
-                    $jmlpasien25sampai44 = $um->u25sampai44;
-                    $jmlpasien45sampai64 = $um->u45sampai64;
-                    $jmlpasienlebih64 = $um->lebih64;
+                if ($ru->id == $um->id_ruangan) {
+                    $jmlpasien0sampai4 = $um->umursd4;
+                    $jmlpasien5sampai14 = $um->umursd14;
+                    $jmlpasien15sampai24 = $um->umursd24;
+                    $jmlpasien25sampai44 = $um->umursd44;
+                    $jmlpasien45sampai64 = $um->umursd64;
+                    $jmlpasienlebih64 = $um->umurlebih64;
                     break;
                 } else {
                     $jmlpasien0sampai4 = 0;
@@ -754,13 +309,13 @@ GROUP BY pd.namaruangan, pd.id"));
             }
             
             foreach ($agama as $ag) {
-                if ($ru->id == $ag->id) {
+                if ($ru->id == $ag->id_ruangan) {
                     $jmlislam = $ag->islam;
-                    $jmlkristen = $ag->kristen;
+                    $jmlkristen = $ag->protestan;
                     $jmlkatholik = $ag->katholik;
                     $jmlhindu = $ag->hindu;
                     $jmlbudha = $ag->budha;
-                    $jmllainnya = $ag->lainnya;
+                    $jmllainnya = $ag->jmllainnya;
                     break;
                 } else {
                     $jmlislam = 0;
@@ -773,7 +328,7 @@ GROUP BY pd.namaruangan, pd.id"));
             }
 
             foreach ($alamat as $al) {
-                if ($ru->id == $al->id) {
+                if ($ru->id == $al->id_ruangan) {
                 $jmlyogyakarta = $al->yogyakarta;
                 $jmlbantul = $al->bantul;
                 $jmlkulonprogo = $al->kulonprogo;
@@ -792,12 +347,12 @@ GROUP BY pd.namaruangan, pd.id"));
             }
 
             foreach ($pendidikan as $pd) {
-                if ($ru->id == $pd->id) {
+                if ($ru->id == $pd->id_ruangan) {
                     $jmltstk = $pd->tstk;
                     $jmlsd = $pd->sd;
                     $jmlsltp = $pd->sltp;
                     $jmlslta = $pd->slta;
-                    $jmld1sds3 = $pd->d1sds3;
+                    $jmld1sds3 = $pd->d1s3;
                     break;
                 } else {
                     $jmltstk = 0;
@@ -809,13 +364,13 @@ GROUP BY pd.namaruangan, pd.id"));
             }
 
             foreach ($pekerjaan as $pk) {
-                if ($ru->id == $pk->id) {
+                if ($ru->id == $pk->id_ruangan) {
                     $jmltani=$pk->tani;
                     $jmlburuh=$pk->buruh;
                     $jmlpns=$pk->pns;
-                    $jmlabripolri=$pk->abripolri;
+                    $jmlabripolri=$pk->tnipolri;
                     $jmlswasta=$pk->swasta;
-                    $jmltakbekerja=$pk->takbekerja;
+                    $jmltakbekerja=$pk->tidakbekerja;
                     $jmlpelajarmahasiswa=$pk->pelajarmahasiswa;
                     break;
                 } else {

@@ -533,7 +533,7 @@
         </div>
     </div>
 </div>
-<div kendo-window="popupPengerjaan" k-title="'Pengerjaan Permohonan IPSRS'" k-width="950" k-height="600"
+<div kendo-window="popupPengerjaan" k-title="'Pengerjaan Permohonan IPSRS'" k-width="1100" k-height="600"
     k-visible="false" k-on-open="win2visible = true" k-on-close="win2visible = false">
     <div class="panel panel-default container_12">
         <div class="grid_12" style="margin-top: 10px;">
@@ -589,27 +589,27 @@
             <div class="panel-heading-white"><span class="title" c-translate>Detail Pengerjaan</span></div>
             <div class="panel-body">
                 <div class="grid_12" style="margin-top: 5px;">
-                    <div class="grid_3">
+                    <div class="grid_2">
                         <div class="grid_12">
-                            <label c-label item="item" c-label-text="Tgl Mulai"></label>
+                            <label c-label item="item" >Tanggal Mulai</label>
                         </div>
                         <div class="grid_12">
                             <input style="width: 100%" k-ng-model="item.tglMulai" kendo-datetimepicker
                                 placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" />
                         </div>
                     </div>
-                    <div class="grid_3">
+                    <div class="grid_2">
                         <div class="grid_12">
-                            <label c-label item="item" c-label-text="Tgl Selesai"></label>
+                            <label c-label item="item" >Tanggal Selesai</label>
                         </div>
                         <div class="grid_12">
                             <input style="width: 100%" k-ng-model="item.tglSelesai" kendo-datetimepicker
                                 placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" />
                         </div>
                     </div>
-                    <div class="grid_3">
+                    <div class="grid_2">
                         <div class="grid_12">
-                            <label c-label item="item" c-label-text="Klasifikasi Perbaikan"></label>
+                            <label c-label item="item" >Klasifikasi Perbaikan</label>
                         </div>
                         <div class="grid_12">
                             <input kendo-combo-box k-data-source="listJenisAlat" k-ng-model="item.jenisAlat"
@@ -617,14 +617,34 @@
                                 k-auto-bind="false" k-on-change="getComboIsiObjekPerbaikan()" />
                         </div>
                     </div>
-                    <div class="grid_3">
+                    <div class="grid_2">
                         <div class="grid_12">
-                            <label c-label item="item" c-label-text="Objek Perbaikan"></label>
+                            <label c-label item="item">Objek Perbaikan</label>
                         </div>
                         <div class="grid_12">
                             <input kendo-combo-box k-data-source="listObjekPerbaikan" k-ng-model="item.objekPerbaikan"
                                 k-data-text-field="'detailjenispekerjaan'" k-filter="'contains'"
                                 k-data-value-field="'id'" k-auto-bind="false" />
+                        </div>
+                    </div>
+                    <div class="grid_2">
+                        <div class="grid_12">
+                            <label c-label item="item">Lokasi PC</label>
+                        </div>
+                        <div class="grid_12">
+                            <input kendo-combo-box k-data-source="listRuangan"
+                                k-ng-model="itemd.ruanganLokasi" k-data-text-field="'namaruangan'"
+                                k-filter="'contains'" k-data-value-field="'id'" k-auto-bind="false" />
+                        </div>
+                    </div>
+                    <div class="grid_2">
+                        <div class="grid_12">
+                            <label c-label item="item">Kode PC</label>
+                        </div>
+                        <div class="grid_12">
+                            <input kendo-combo-box k-data-source="listBarang" k-ng-model="itemd.namabarang"
+                                k-data-text-field="'barangperbaikan'" k-filter="'contains'" k-data-value-field="'id'"
+                                k-auto-bind="false" />
                         </div>
                     </div>
                 </div>
@@ -644,7 +664,7 @@
                     </div>
                     <div class="grid_2">
                         <div class="grid_12">
-                            <label c-label item="item" c-label-text="Jenis Kerusakan"></label>
+                            <label c-label item="item" >Jenis Kerusakan</label>
                         </div>
                         <div class="grid_12">
                             <input kendo-combo-box k-data-source="listJenisKerusakan" k-ng-model="item.jenisKerusakan"
@@ -655,7 +675,7 @@
                     
                     <div class="grid_4">
                         <div class="grid_12">
-                            <label c-label item="item" c-label-text="Penanggung Jawab"></label>
+                            <label c-label item="item">Penanggung Jawab</label>
                         </div>
                         <div class="grid_12">
                             <input kendo-combo-box k-data-source="listStaff" k-ng-model="item.staff"
@@ -667,7 +687,7 @@
                 <div class="grid_12" style="margin-top: 10px;">
                     <div class="grid_6">
                         <div class="grid_12">
-                            <label c-label item="item" c-label-text="WorkList"></label>
+                            <label c-label item="item">Work List</label>
                         </div>
                         <div class="grid_12">
                             <textarea required class="k-textbox" style="    height: 200px;
@@ -680,7 +700,7 @@
                     </div>
                     <div class="grid_4">
                         <div class="grid_12">
-                            <label c-label item="item" c-label-text="Staff Pelaksana"></label>
+                            <label c-label item="item">Staff Pelaksana</label>
                         </div>
                         <div class="grid_12">
                             <select kendo-multi-select k-options="selectOptionsPegawai" k-filter="'contains'"
@@ -707,7 +727,7 @@
                     </div>
                     <div class="grid_2">
                         <div class="grid_12">
-                            <label c-label item="item" c-label-text="Status Pengerjaan"></label>
+                            <label c-label item="item">Status Pengerjaan</label>
                         </div>
                         <div class="grid_12">
                             <input kendo-combo-box k-data-source="listStatus" k-ng-model="item.status"

@@ -1021,7 +1021,10 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('gizi/get-laporan-asuhan-gizi','RawatInap\RawatInapController@getLaporanAsuhanGizi');
           Route::get('gizi/get-laporan-cppt-gizi','RawatInap\RawatInapController@getLaporancpptGizi');
           Route::post('gizi/save-label', 'Gizi\GiziController@saveLabelGizi');
-          Route::get('gizi/get-laporan-permintaan-makanpasien','Gizi\GiziController@LaporanPermintaanMakanGizi');
+          //laporan gizi
+          // Route::get('gizi/get-laporan-permintaan-makanpasien','Gizi\LaporanGiziController@LaporanPermintaanMakanGizi');
+          //laporangizi v2
+          Route::get('gizi/get-laporan-permintaan-makanpasien','RawatJalan\RawatJalanController@LaporanPermintaanMakanGizi');
         // });
         //E-OFFICE//
         Route::post('eoffice/save-surat', 'EOffice\EOfficeController@simpanSurat');
@@ -1831,7 +1834,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('rawatinap/get-nobedbykamar', 'RawatInap\PindahPulangController@getNoBedByKamar');
            Route::get('rawatinap/get-nosep-by-norec-pd', 'Bridging\BridgingBPJSV2Controller@getNoSEPByNorecPd2');
           Route::get('rawatinap/get-nosep-by-norec-pd/{norec_pd}', 'Bridging\BridgingBPJSV2Controller@getNoSEPByNorecPd');
-
+          
           Route::post('rawatinap/save-akomodasi-tea', 'RawatInap\RawatInapController@saveAkomodasiOtomatis');
           Route::get('rawatinap/get-kamar-ruangan-ibu', 'RawatInap\RawatInapController@getKamarIbuLast');
           Route::post('rawatinap/save-pulang-pasien', 'RawatInap\PindahPulangController@savePulangPasien');
@@ -2370,7 +2373,10 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::post('sysadmin/response-time-perbaikan','IPSRS\IPSRSController@responseTime');
             Route::get('pdti/laporan-perbaikan-it','IPSRS\IPSRSController@getLaporanPerbaikanIT');
             Route::get('pdti/load-data-dashboard','IPSRS\IPSRSController@getDashboardPerbaikanPDTI');
+            Route::get('pdti/get-combo','IPSRS\IPSRSController@getComboPDTI');
             Route::get('ipsrs/get-daftar-permohonan','IPSRS\IPSRSController@getDaftarIPSRS');
+            Route::get('ipsrs/get-detail-jenisperbaikan','IPSRS\IPSRSController@getDetailJenisPekerjaan');
+            Route::post('rawatinap/update-ruangan', 'RawatInap\RawatInapController@updateRuangan');
             Route::post('ipsrs/save-permohonan','IPSRS\IPSRSController@SavePermohonan');
             Route::post('ipsrs/save-alokasistaff','IPSRS\IPSRSController@SaveDataAlokasiStaff');
             Route::post('ipsrs/save-worklist','IPSRS\IPSRSController@SaveDataWorkList');

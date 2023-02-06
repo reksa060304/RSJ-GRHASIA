@@ -6928,6 +6928,7 @@ class LaporanPengunjungController extends ApiController
     }
 
     public function getLaporanPengunjungPemeriksaan(Request $request) {
+        ini_set('max_execution_set',60000);
         $kdProfile = (int) $this->getDataKdProfile($request);
         $data = \DB::table('antrianpasiendiperiksa_t as apd')
             ->join('pelayananpasien_t as pp','apd.norec','=','pp.noregistrasifk')
@@ -6951,10 +6952,10 @@ class LaporanPengunjungController extends ApiController
             ->leftJoin('loginuser_s AS lu','lu.id','=','lg.objectloginuserfk')
             ->leftJoin('pegawai_m AS pg1','pg1.id','=','lu.objectpegawaifk')
             ->leftJoin('kelompokpasien_m as klp','klp.id','=','pd.objectkelompokpasienlastfk')            
-            ->select('pd.norec','pd.noregistrasi','pd.tglregistrasi As tglregistrasiLama',DB::raw('pp.tglpelayanan::date'),DB::raw('min(pp.tglpelayanan) As tglregistrasi'),'ps.nocm','ps.namapasien','ps.nohp','ps.tgllahir','jk.jeniskelamin','ag.agama','pdd.pendidikan','pkr.pekerjaan','alm.alamatlengkap',
+            ->select('pd.noregistrasi','pd.tglregistrasi As tglregistrasiLama',DB::raw('pp.tglpelayanan::date'),DB::raw('min(pp.tglpelayanan) As tglregistrasi'),'ps.nocm','ps.namapasien','ps.nohp','ps.tgllahir','jk.jeniskelamin','ag.agama','pdd.pendidikan','pkr.pekerjaan','alm.alamatlengkap',
                         'dsk.namadesakelurahan','alm.kecamatan','kkb.namakotakabupaten','sp.statusperkawinan','pd.statuspasien','rg.namaruangan','pg.namalengkap','ps.tgldaftar',
                         'klp.kelompokpasien','pd.statuspasien','apd.noantrian','pg1.namalengkap AS user','apd.objectruanganfk','jk.reportdisplay')
-            ->groupBy('pd.norec','pd.noregistrasi','pd.tglregistrasi',DB::raw('pp.tglpelayanan::date'),'ps.nocm','ps.namapasien','ps.nohp','ps.tgllahir','jk.jeniskelamin','ag.agama','pdd.pendidikan','pkr.pekerjaan','alm.alamatlengkap',
+            ->groupBy('pd.noregistrasi','pd.tglregistrasi',DB::raw('pp.tglpelayanan::date'),'ps.nocm','ps.namapasien','ps.nohp','ps.tgllahir','jk.jeniskelamin','ag.agama','pdd.pendidikan','pkr.pekerjaan','alm.alamatlengkap',
                       'dsk.namadesakelurahan','alm.kecamatan','kkb.namakotakabupaten','sp.statusperkawinan','pd.statuspasien','rg.namaruangan','pg.namalengkap','ps.tgldaftar',
                       'klp.kelompokpasien','pd.statuspasien','apd.noantrian','pg1.namalengkap','apd.objectruanganfk','jk.reportdisplay')
             ->where('pd.statusenabled', true)
@@ -7079,7 +7080,7 @@ class LaporanPengunjungController extends ApiController
         left JOIN alamat_m al on ps.id = al.nocmfk
         left join kotakabupaten_m kk on kk.id= al.objectkotakabupatenfk
         left join asalrujukan_m aj on aj.id = apd.objectasalrujukanfk
-        WHERE apd.tglkeluar::date BETWEEN '$tglAwal' and '$tglAkhir'
+        WHERE apd.tglmasuk::date BETWEEN '$tglAwal' and '$tglAkhir'
         and apd.kdprofile = $kdProfile
         and pd.kdprofile = $kdProfile
         and apd.statusenabled = true
@@ -7154,7 +7155,7 @@ class LaporanPengunjungController extends ApiController
         where ru.objectdepartemenfk = 16
         and pd.statusenabled=true
         and apd.statusenabled=true
-        and apd.tglkeluar::date BETWEEN '$tglAwal' and '$tglAkhir'
+        and apd.tglmasuk::date BETWEEN '$tglAwal' and '$tglAkhir'
         and pd.kdprofile = $kdProfile
         and apd.kdprofile = $kdProfile
         $paramRuangan

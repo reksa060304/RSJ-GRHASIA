@@ -178,6 +178,13 @@
 				</button>
 			</div>
 			<div class="grid_2">
+				<button class="btnTemplate1 " ng-click="terimaRuangan()"><i class="fa fa-arrow-left"></i>Masuk Ruangan</button>
+				<!-- <c-button click='terimaKamar' style="width: 100%; padding:0px;margin:0px;" class="success" item="item"
+					position="'right'" is-validate>
+					<span class="title">Masuk Kamar</span>
+				</c-button> -->
+			</div>
+			<div class="grid_2">
 					<button class="btnTemplate1 " ng-click="terimaKamar()"><i class="fa fa-arrow-left"></i>Masuk Kamar</button>
 				<!-- <c-button click='terimaKamar' style="width: 100%; padding:0px;margin:0px;" class="success" item="item"
 					position="'right'" is-validate>
@@ -239,6 +246,29 @@
 
 	<div class="k-edit-buttons  k-state-default pull-right" style="margin-top:10px">
 		<button class="k-button k-button-icontext k-primary k-grid-update" ng-click="simpanKamar()"><span
+				class="k-icon k-update"></span>Simpan</button>
+		<button class="k-button  k-button-icontext" ng-click="tutup()"><span
+				class="k-icon k-cancel"></span>Batal</button>
+	</div>
+</div>
+
+<div kendo-window="winDialog2" k-title="'Masuk Ruangan'" k-width="400" k-visible="false" k-on-open="win2visible = true"
+	k-on-close="win2visible = false">
+	<label c-label item="item" c-label-text="Bangsal"></label>
+	<input style="width: 100%;" kendo-combo-box k-ng-model="item.masukRuangan" k-data-text-field="'namaruangan'"
+		k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listRuangan" />
+	</br>
+	<label c-label item="item" c-label-text="Kamar"></label>
+	<input style="width: 100%;" kendo-combo-box k-ng-model="item.kamar" k-data-text-field="'namakamar'"
+		k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listKamar" />
+	</br>
+	<label c-label item="item" c-label-text="Nomor Tempat Tidur" style="margin-top:1.5em"></label>
+	<input style="width: 100%;" kendo-combo-box k-ng-model="item.nomorTempatTidur" k-data-text-field="'reportdisplay'"
+		k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listNoBed" />
+	</br>
+
+	<div class="k-edit-buttons  k-state-default pull-right" style="margin-top:10px">
+		<button class="k-button k-button-icontext k-primary k-grid-update" ng-click="simpanRuangan()"><span
 				class="k-icon k-update"></span>Simpan</button>
 		<button class="k-button  k-button-icontext" ng-click="tutup()"><span
 				class="k-icon k-cancel"></span>Batal</button>

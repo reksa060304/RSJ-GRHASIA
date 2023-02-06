@@ -307,6 +307,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 })
             }
             $scope.SimpanRegistrasi = function () {
+                $scope.isSimpan = true
                 if ($scope.item.kelas == undefined) {
                     toastr.error('Kelas harus di isi')
                     return
@@ -443,15 +444,15 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             if(cek > 0){
                                 messageContainer.error("Pasien dengan nocm " + nocm + " masih aktif dirawat di " + ruangan);
                             } else{
-                                $scope.isSimpan = true;
-                                console.log(tmpData);
+                                // $scope.isSimpan = true;
+                                // console.log(tmpData);
                                 medifirstService.post('registrasi/simpan-mutasi-pasien', tmpData).then(function (e) {
                                     $scope.resultAPD = e.data.data;
                                     responData = e.data;
                                     $scope.resultPD = e.data.data;
                                     $scope.model.noRegistrasi = e.data.data.noregistrasi;
                                     $scope.model.norec_apd = e.data.data.norec;
-            
+                                    $scope.isSimpan = false
             
                                     //##log Pasien Daftar
                                     // medifirstService.get("sysadmin/logging/save-log-pendaftaran-pasien?norec_pd="

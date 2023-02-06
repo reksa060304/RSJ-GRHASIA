@@ -725,7 +725,47 @@ define(['initialize'], function (initialize) {
 					// })
 				});
 			}
+			$scope.terimaRuangan = function () {
+				if ($scope.dataPasienSelected == undefined) {
+					toastr.error('Pilih data dulu')
+					return
+				}
+				
+				$scope.listNoBed = []
+				$scope.listKamar = []
+				delete $scope.item.masukRuangan
+				delete $scope.item.kamar
+				delete $scope.item.nomorTempatTidur
+				// getKamar($scope.dataPasienSelected.objectruanganlastfk, $scope.dataPasienSelected.objectkelasfk)
 
+				// $scope.item.kamar = {id:$scope.dataPasienSelected.objectkamarfk,namakamar: $scope.dataPasienSelected.namakamar  }
+				// $scope.item.nomorTempatTidur = {id:$scope.dataPasienSelected.nobed,reportdisplay: $scope.dataPasienSelected.namabed  }
+				$scope.winDialog2.center().open()
+			}
+			$scope.$watch('item.masukRuangan', function (e) {
+				if (e === undefined) return;
+				getKamar($scope.item.masukRuangan.id, $scope.dataPasienSelected.objectkelasfk)
+			});
+			$scope.simpanRuangan = function () {
+				var json = {
+					'norec_pd': $scope.dataPasienSelected.norec_pd,
+					'ruanganlastfk': $scope.dataPasienSelected.objectruanganlastfk,
+					'objectkamarfk': $scope.item.kamar.id,
+					'nobed': $scope.item.nomorTempatTidur.id,
+					'nobedasal': $scope.dataPasienSelected.nobed,
+					'objectruanganfk': $scope.item.masukRuangan.id
+
+				}
+				medifirstService.post("rawatinap/update-ruangan", json)
+					.then(function (b) {
+						delete $scope.item.kamar
+						delete $scope.item.nomorTempatTidur
+
+						loadData()
+						$scope.winDialog2.close()
+
+					});
+			}
 			////////////////////// -TAMAT- /////////////////////////
 		}
 	]);

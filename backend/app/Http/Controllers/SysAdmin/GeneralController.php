@@ -4794,7 +4794,7 @@ class GeneralController extends ApiController
         }
 
         $data = DB::select(DB::raw("
-        SELECT stp.tglverif, rp.rekananperbaikan, stp.objectrekananperbaikanfk,  stp.objectdetailjenispekerjaanfk, stp.objectruanganfk,stp.catatan, stp.ispihakketiga, stp.norec, rg.namaruangan, stp.tglplanning,stp.objectpegawaipjawabfk,pg.namalengkap, stp.startdate, stp.duedate, stp.rincianexecuteplanning_askep, stp.pelapor, 
+        SELECT stp.objectruanganperbaikanfk, stp.objectbarangperbaikanfk, stp.tglverif, rp.rekananperbaikan, stp.objectrekananperbaikanfk,  stp.objectdetailjenispekerjaanfk, stp.objectruanganfk,stp.catatan, stp.ispihakketiga, stp.norec, rg.namaruangan, stp.tglplanning,stp.objectpegawaipjawabfk,pg.namalengkap, stp.startdate, stp.duedate, stp.rincianexecuteplanning_askep, stp.pelapor, 
                     stp.deskripsiplanning, stp.keteranganverifikasi, sttp.namaexternal,stp.signdate, stp.worklist, stp.keteranganverifikasi, 
                     pg2.nama as namainspektor, pg3.nama as namapelapor,stp.objectstatuspekerjaanfk,sttp.reportdisplay as statuspekerjaan,stp.objectjenispekerjaanfk AS idjeniskerusakan,
                     jpk.reportdisplay as jeniskerusakan,stp.objectjenisalatfk,jpk2.reportdisplay as jenisalat,r.namaruangan as namaruangantujuan, ukp.name
@@ -4838,6 +4838,22 @@ class GeneralController extends ApiController
                     'detailjenispekerjaan' => $item->objectdetailjenispekerjaanfk,
                 )
             );
+            $ruanganperbaikan = [];
+            if($item->objectruanganperbaikanfk != null){
+                $ruanganperbaikan = \DB::select(DB::raw("SELECT id, namaruangan from ruangan_m djp where djp.kdprofile =  $kdProfile and djp.id = :detailjenispekerjaan"),
+                array(
+                    'detailjenispekerjaan' => $item->objectruanganfk,
+                )
+            );
+            }
+            $barangperbaikan = [];
+            if($item->objectbarangperbaikanfk != null){
+                $barangperbaikan = \DB::select(DB::raw("SELECT id, barangperbaikan from barangperbaikan_m djp where djp.kdprofile =  $kdProfile and djp.id = :detailjenispekerjaan"),
+                array(
+                    'detailjenispekerjaan' => $item->objectbarangperbaikanfk,
+                )
+            );
+            }
             $result[] = array(
                 'norec' => $item->norec,
                 'namaruangan' => $item->namaruangan,
@@ -4867,6 +4883,8 @@ class GeneralController extends ApiController
                 'catatan' => $item->catatan,
                 'objectruanganfk' => $item->objectruanganfk,
                 'detailjenisperbaikan' => $detailjenisperbaikan,
+                'ruanganperbaikan' => $ruanganperbaikan,
+                'barangperbaikan' => $barangperbaikan,
                 'detailss' => $detailss,
                 'objectrekananperbaikanfk' => $item->objectrekananperbaikanfk,
                 'rekananperbaikan' => $item->rekananperbaikan,
@@ -5681,13 +5699,19 @@ class GeneralController extends ApiController
             }
             if( $request['method'] == 'delete'){
                   $method="delete";
-                $cek = ListNotif::where('norec',$request['norec'])->update(['statusenabled' => false]);
+                $cek = ListNotif::where('norec_trans',$request['norec_trans'])->update(['statusenabled' => false]);
               
             }
             if( $request['method'] =='get'){
                   $method="get";
-
-                $cek =  ListNotif::where('statusenabled',true)->orderBy('tgl','desc')->limit(10)->get();
+                  $map=[];
+                  $hasilmap = '';
+                for ($i=0; $i < count($request['mapLogin']); $i++) { 
+                    array_push($map, $request['mapLogin'][$i]['id']);
+                }
+                $cek =  ListNotif::where('statusenabled',true)->select('norec_trans','judul','jenis','keterangan','ruanganasalfk','ruangantujuanfk','ruanganasal',
+                'ruangantujuan','kelompokuser','kelompokuserfk','urlform','pegawaifk','tgl','tgl_string','params')
+                ->whereIn('ruangantujuanfk', $map)->orderBy('tgl','desc')->limit(10)->distinct()->get();
          
             }
            

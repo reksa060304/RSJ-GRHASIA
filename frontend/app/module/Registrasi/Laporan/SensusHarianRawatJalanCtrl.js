@@ -18,12 +18,12 @@ define(['initialize'], function(initialize) {
             }
 
             function LoadCombo(){
-                medifirstService.get("registrasi/get-datacombo-sensus?", true).then(function (dat) {                                                   
-                    $scope.listRuangan = dat.data.ruanganfarmasi;
-                    $scope.listDataDokter = dat.data.dokter; 
-                    $scope.listKelompokPasien = dat.data.kelompokpasien;                    
-                    $scope.namaLengkap = medifirstService.getPegawaiLogin();
-                });
+                // medifirstService.get("registrasi/get-datacombo-sensus?", true).then(function (dat) {                                                   
+                //     $scope.listRuangan = dat.data.ruanganfarmasi;
+                //     $scope.listDataDokter = dat.data.dokter; 
+                //     $scope.listKelompokPasien = dat.data.kelompokpasien;                    
+                //     $scope.namaLengkap = medifirstService.getPegawaiLogin();
+                // });
             }
             $scope.cekOrderHariIniRanap = function (data) {
                 if (data === true) {
@@ -97,7 +97,42 @@ define(['initialize'], function(initialize) {
                             schema: {
                                 model: {
                                     fields: {
-
+                                        jmlpasienlama: { type: "number" },
+                                        jmlpasienbaru: { type: "number" },
+                                        jmlpasienlk: { type: "number" },
+                                        jmlpasienpr: { type: "number" },
+                                        jmlpasien0sampai4: { type: "number" },
+                                        jmlpasien5sampai14: { type: "number" },
+                                        jmlpasien15sampai24: { type: "number" },
+                                        jmlpasien25sampai44: { type: "number" },
+                                        jmlpasien45sampai64: { type: "number" },
+                                        jmlpasienlebih64: { type: "number" },
+                                        jmlislam: { type: "number" },
+                                        jmlkristen: { type: "number" },
+                                        jmlhindu: { type: "number" },
+                                        jmlbudha: { type: "number" },
+                                        jmlkatholik: { type: "number" },
+                                        jmllainnya: { type: "number" },
+                                        jmlyogyakarta: { type: "number" },
+                                        jmlbantul: { type: "number" },
+                                        jmlsleman: { type: "number" },
+                                        jmlkulonprogo: { type: "number" },
+                                        jmlgunungkidul: { type: "number" },
+                                        jmlluardiy: { type: "number" },
+                                        jmltstk: { type: "number" },
+                                        jmlsd: { type: "number" },
+                                        jmlsltp: { type: "number" },
+                                        jmlslta: { type: "number" },
+                                        jmld1sds3: { type: "number" },
+                                        jmlburuh: { type: "number" },
+                                        jmlpns: { type: "number" },
+                                        jmlswasta: { type: "number" },
+                                        jmlabripolri: { type: "number" },
+                                        jmlpelajarmahasiswa: { type: "number" },
+                                        jmltakbekerja: { type: "number" },
+                                        // jmlsltp: { type: "number" },
+                                        // jmlsltp: { type: "number" },
+                                        // jmlsltp: { type: "number" },
 
                                     }
                                 }
@@ -139,13 +174,13 @@ define(['initialize'], function(initialize) {
                                     { field: "jmlabripolri", aggregate: "sum" },
                                     { field: "jmlpelajarmahasiswa", aggregate: "sum" },
                                     { field: "jmltakbekerja", aggregate: "sum" },
-                                    // { field: "totalpasien", aggregate: "sum" },
-                                    // { field: "totaljk", aggregate: "sum" },
-                                    // { field: "totalumur", aggregate: "sum" },
-                                    // { field: "totalpendidikan", aggregate: "sum" },
-                                    // { field: "totalpekerjaan", aggregate: "sum" },
-                                    // { field: "totalagama", aggregate: "sum" },
-                                    // { field: "totalalamat", aggregate: "sum" },
+                                    { field: "totalpasien", aggregate: "sum" },
+                                    { field: "totaljk", aggregate: "sum" },
+                                    { field: "totalumur", aggregate: "sum" },
+                                    { field: "totalpendidikan", aggregate: "sum" },
+                                    { field: "totalpekerjaan", aggregate: "sum" },
+                                    { field: "totalagama", aggregate: "sum" },
+                                    { field: "totalalamat", aggregate: "sum" },
                                 ]
                         });                        
                     });
@@ -651,330 +686,6 @@ define(['initialize'], function(initialize) {
                             },
                         ]
                     },
-
-
-
-                    // {
-                    //     "title": "Umur",
-                    //     "width": "80px",
-                    //     columns: [
-                    //         {
-                    //             "field": 'u1',
-                    //             "title": "0-4",
-                    //             "width": "40px",
-                    //             aggregates: ["sum"],
-                    //             template: "#: u1  #",
-                    //             groupFooterTemplate: "#: data.u1.sum  #",
-                    //             footerTemplate: "#: data.u1.sum  #",
-                    //         },
-                    //         {
-                    //             "field": 'u2',
-                    //             "title": "5-14",
-                    //             "width": "40px",
-                    //             aggregates: ["sum"],
-                    //             template: "#: u2  #",
-                    //             groupFooterTemplate: "#: data.u2.sum  #",
-                    //             footerTemplate: "#: data.u2.sum  #",
-                    //         },
-                    //         {
-                    //             "field": 'u3',
-                    //             "title": "15-24",
-                    //             "width": "40px",
-                    //             aggregates: ["sum"],
-                    //             template: "#: u3  #",
-                    //             groupFooterTemplate: "#: data.u3.sum  #",
-                    //             footerTemplate: "#: data.u3.sum  #",
-                    //         },
-                    //         {
-                    //             "field": 'u4',
-                    //             "title": "25-44",
-                    //             "width": "40px",
-                    //             aggregates: ["sum"],
-                    //             template: "#: u4  #",
-                    //             groupFooterTemplate: "#: data.u4.sum  #",
-                    //             footerTemplate: "#: data.u4.sum  #",
-                    //         },
-                    //         {
-                    //             "field": 'u5',
-                    //             "title": "45-64",
-                    //             "width": "40px",
-                    //             aggregates: ["sum"],
-                    //             template: "#: u5  #",
-                    //             groupFooterTemplate: "#: data.u5.sum  #",
-                    //             footerTemplate: "#: data.u5.sum  #",
-                    //         },
-                    //         {
-                    //             "field": 'u6',
-                    //             "title": ">64th",
-                    //             "width": "40px",
-                    //             aggregates: ["sum"],
-                    //             template: "#: u6  #",
-                    //             groupFooterTemplate: "#: data.u6.sum  #",
-                    //             footerTemplate: "#: data.u6.sum  #",
-                    //         }
-                    //     ]
-                    // },
-                    // {
-                    //     "title": "Agama",
-                    //     "width": "80px",
-                    //     columns: [{
-                    //             "field": 'islam',
-                    //             "title": "1",
-                    //             "width": "40px",
-                    //             aggregates: ["sum"],
-                    //             template: "#: islam  #",
-                    //             groupFooterTemplate: "#: data.islam.sum  #",
-                    //             footerTemplate: "#: data.islam.sum  #",
-                    //         },
-                    //         {
-                    //             "field": 'kristen',
-                    //             "title": "2",
-                    //             "width": "40px",
-                    //             aggregates: ["sum"],
-                    //             template: "#: kristen  #",
-                    //             groupFooterTemplate: "#: data.kristen.sum  #",
-                    //             footerTemplate: "#: data.kristen.sum  #",
-                    //         },
-                    //         {
-                    //             "field": 'katholik',
-                    //             "title": "3",
-                    //             "width": "40px",
-                    //             aggregates: ["sum"],
-                    //             template: "#: katholik  #",
-                    //             groupFooterTemplate: "#: data.katholik.sum  #",
-                    //             footerTemplate: "#: data.katholik.sum  #",
-                    //         },
-                    //         {
-                    //             "field": 'hindu',
-                    //             "title": "4",
-                    //             "width": "40px",
-                    //             aggregates: ["sum"],
-                    //             template: "#: hindu  #",
-                    //             groupFooterTemplate: "#: data.hindu.sum  #",
-                    //             footerTemplate: "#: data.hindu.sum  #",
-                    //         },
-                    //         {
-                    //             "field": 'budha',
-                    //             "title": "5",
-                    //             "width": "40px",
-                    //             aggregates: ["sum"],
-                    //             template: "#: budha  #",
-                    //             groupFooterTemplate: "#: data.budha.sum  #",
-                    //             footerTemplate: "#: data.budha.sum  #",
-                    //         },
-                    //         {
-                    //             "field": 'lainnya',
-                    //             "title": "6",
-                    //             "width": "40px",
-                    //             aggregates: ["sum"],
-                    //             template: "#: lainnya  #",
-                    //             groupFooterTemplate: "#: data.lainnya.sum  #",
-                    //             footerTemplate: "#: data.lainnya.sum  #",
-                    //         }
-                    //     ]
-                    // },
-                    // {
-                    //     "title": "Alamat",
-                    //     "width": "80px",
-                    //     columns: [{
-                    //             "field": 'yogyakarta',
-                    //             "title": "1",
-                    //             "width": "40px",
-                    //             aggregates: ["sum"],
-                    //             template: "#: yogyakarta  #",
-                    //             groupFooterTemplate: "#: data.yogyakarta.sum  #",
-                    //             footerTemplate: "#: data.yogyakarta.sum  #",
-                    //         },
-                    //         {
-                    //             "field": 'bantul',
-                    //             "title": "2",
-                    //             "width": "40px",
-                    //             aggregates: ["sum"],
-                    //             template: "#: bantul  #",
-                    //             groupFooterTemplate: "#: data.bantul.sum  #",
-                    //             footerTemplate: "#: data.bantul.sum  #",
-                    //         },
-                    //         {
-                    //             "field": 'kulonprogo',
-                    //             "title": "3",
-                    //             "width": "40px",
-                    //             aggregates: ["sum"],
-                    //             template: "#: kulonprogo  #",
-                    //             groupFooterTemplate: "#: data.kulonprogo.sum  #",
-                    //             footerTemplate: "#: data.kulonprogo.sum  #",
-                    //         },
-                    //         {
-                    //             "field": 'gunungkidul',
-                    //             "title": "4",
-                    //             "width": "40px",
-                    //             aggregates: ["sum"],
-                    //             template: "#: gunungkidul  #",
-                    //             groupFooterTemplate: "#: data.gunungkidul.sum  #",
-                    //             footerTemplate: "#: data.gunungkidul.sum  #",
-                    //         },
-                    //         {
-                    //             "field": 'sleman',
-                    //             "title": "5",
-                    //             "width": "40px",
-                    //             aggregates: ["sum"],
-                    //             template: "#: sleman  #",
-                    //             groupFooterTemplate: "#: data.sleman.sum  #",
-                    //             footerTemplate: "#: data.sleman.sum  #",
-                    //         },
-                    //         {
-                    //             "field": 'luardiy',
-                    //             "title": "6",
-                    //             "width": "40px",
-                    //             aggregates: ["sum"],
-                    //             template: "#: luardiy  #",
-                    //             groupFooterTemplate: "#: data.luardiy.sum  #",
-                    //             footerTemplate: "#: data.luardiy.sum  #",
-                    //         }
-                    //     ]
-                    // },
-                    // {
-                    //     "title": "Pendidikan",
-                    //     "width": "80px",
-                    //     columns: [{
-                    //             "field": 'tstk',
-                    //             "title": "1",
-                    //             "width": "40px",
-                    //             aggregates: ["sum"],
-                    //             template: "#: tstk  #",
-                    //             groupFooterTemplate: "#: data.tstk.sum  #",
-                    //             footerTemplate: "#: data.tstk.sum  #",
-                    //         },
-                    //         {
-                    //             "field": 'sd',
-                    //             "title": "2",
-                    //             "width": "40px",
-                    //             aggregates: ["sum"],
-                    //             template: "#: sd  #",
-                    //             groupFooterTemplate: "#: data.sd.sum  #",
-                    //             footerTemplate: "#: data.sd.sum  #",
-                    //         },
-                    //         {
-                    //             "field": 'sltp',
-                    //             "title": "3",
-                    //             "width": "40px",
-                    //             aggregates: ["sum"],
-                    //             template: "#: sltp  #",
-                    //             groupFooterTemplate: "#: data.sltp.sum  #",
-                    //             footerTemplate: "#: data.sltp.sum  #",
-                    //         },
-                    //         {
-                    //             "field": 'slta',
-                    //             "title": "4",
-                    //             "width": "40px",
-                    //             aggregates: ["sum"],
-                    //             template: "#: slta  #",
-                    //             groupFooterTemplate: "#: data.slta.sum  #",
-                    //             footerTemplate: "#: data.slta.sum  #",
-                    //         },
-                    //         {
-                    //             "field": 'd1sds3',
-                    //             "title": "5",
-                    //             "width": "40px",
-                    //             aggregates: ["sum"],
-                    //             template: "#: d1sds3  #",
-                    //             groupFooterTemplate: "#: data.d1sds3.sum  #",
-                    //             footerTemplate: "#: data.d1sds3.sum  #",
-                    //         },
-                    //         {
-                    //             "field": 'pdlainnya',
-                    //             "title": "6",
-                    //             "width": "40px",
-                    //             aggregates: ["sum"],
-                    //             template: "#: pdlainnya  #",
-                    //             groupFooterTemplate: "#: data.pdlainnya.sum  #",
-                    //             footerTemplate: "#: data.pdlainnya.sum  #",
-                    //         }
-                    //     ]
-                    // },
-                    // {
-                    //     "title": "Pekerjaan",
-                    //     "width": "80px",
-                    //     columns: [{
-                    //             "field": 'tani',
-                    //             "title": "1",
-                    //             "width": "40px",
-                    //             aggregates: ["sum"],
-                    //             template: "#: tani  #",
-                    //             groupFooterTemplate: "#: data.tani.sum  #",
-                    //             footerTemplate: "#: data.tani.sum  #",
-                    //         },
-                    //         {
-                    //             "field": 'buruh',
-                    //             "title": "2",
-                    //             "width": "40px",
-                    //             aggregates: ["sum"],
-                    //             template: "#: buruh  #",
-                    //             groupFooterTemplate: "#: data.buruh.sum  #",
-                    //             footerTemplate: "#: data.buruh.sum  #",
-                    //         },
-                    //         {
-                    //             "field": 'pns',
-                    //             "title": "3",
-                    //             "width": "40px",
-                    //             aggregates: ["sum"],
-                    //             template: "#: pns  #",
-                    //             groupFooterTemplate: "#: data.pns.sum  #",
-                    //             footerTemplate: "#: data.pns.sum  #",
-                    //         },
-                    //         {
-                    //             "field": 'abripolri',
-                    //             "title": "4",
-                    //             "width": "40px",
-                    //             aggregates: ["sum"],
-                    //             template: "#: abripolri  #",
-                    //             groupFooterTemplate: "#: data.abripolri.sum  #",
-                    //             footerTemplate: "#: data.abripolri.sum  #",
-                    //         },
-                    //         {
-                    //             "field": 'swasta',
-                    //             "title": "5",
-                    //             "width": "40px",
-                    //             aggregates: ["sum"],
-                    //             template: "#: swasta  #",
-                    //             groupFooterTemplate: "#: data.swasta.sum  #",
-                    //             footerTemplate: "#: data.swasta.sum  #",
-                    //         },
-                    //         {
-                    //             "field": 'takbekerja',
-                    //             "title": "6",
-                    //             "width": "40px",
-                    //             aggregates: ["sum"],
-                    //             template: "#: takbekerja  #",
-                    //             groupFooterTemplate: "#: data.takbekerja.sum  #",
-                    //             footerTemplate: "#: data.takbekerja.sum  #",
-                    //         },
-                    //         {
-                    //             "field": 'pelajarmahasiswa',
-                    //             "title": "7",
-                    //             "width": "40px",
-                    //             aggregates: ["sum"],
-                    //             template: "#: pelajarmahasiswa  #",
-                    //             groupFooterTemplate: "#: data.pelajarmahasiswa.sum  #",
-                    //             footerTemplate: "#: data.pelajarmahasiswa.sum  #",
-                    //         },
-                    //         {
-                    //             "field": 'pklainnya',
-                    //             "title": "8",
-                    //             "width": "40px",
-                    //             aggregates: ["sum"],
-                    //             template: "#: pklainnya  #",
-                    //             groupFooterTemplate: "#: data.pklainnya.sum  #",
-                    //             footerTemplate: "#: data.pklainnya.sum  #",
-                    //         }
-                    //     ]
-                    // },
-                    // {
-                    //     hidden: true,
-                    //     field: "ruangan",
-                    //     title: "Kelompok Pasien",
-                    //     aggregates: ["count"],
-                    //     groupHeaderTemplate: " #= value # "
-                    // }
                 ]                   
             };
 //////////////////////////////////////////////////////////////          END             /////////////////////////////////////////////////////////////////////////////////////       
