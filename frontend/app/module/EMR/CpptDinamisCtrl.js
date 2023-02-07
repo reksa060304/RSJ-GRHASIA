@@ -269,12 +269,14 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         {
                             "field": "dokter",
                             "title": "Verif DPJP",
-                            "width": "100px"
+                            "width": "100px",
+                            "hidden": true
                         },
                         {
                             "field": "notifikasi",
                             "title": "Notifikasi",
-                            "width": "100px"
+                            "width": "100px",
+                            "hidden": true
                         },
                         {
                             "field": "namaruangan",

@@ -1346,6 +1346,7 @@ $ruangdokter = \DB::table('ruangan_m as ru')
             ->leftjoin('jeniskelamin_m as jk','jk.id','=','ps.objectjeniskelaminfk')
             ->join('kelas_m as kls','kls.id','=','pd.objectkelasfk')
             ->join('ruangan_m as ru','ru.id','=','apd.objectruanganfk')
+            ->leftJoin('ruangan_m as ruasal', 'ruasal.id', '=', 'so.objectruanganfk')
             // ->leftJoin('departemen_m as dept','dept.id','=','ru.objectdepartemenfk')
             ->leftJoin('pegawai_m as pg','pg.id','=','apd.objectpegawaifk')
             ->leftJoin('pegawai_m as pg2','pg2.id','=','apd.residencefk')
@@ -1362,7 +1363,8 @@ $ruangdokter = \DB::table('ruangan_m as ru')
                 'kp.kelompokpasien','rek.namarekanan','apd.objectpegawaifk','pg.namalengkap as namadokter','pd.norec as norec_pd','apd.norec as norec_apd','apd.objectasalrujukanfk',
                 'apd.tgldipanggildokter','apd.statuspasien as statuspanggil','pd.statuspasien','apd.tgldipanggildokter','apd.tgldipanggilsuster','apr.noreservasi','apd.noantrian',
                 'apr.tanggalreservasi',  'alm.alamatlengkap','klstg.namakelas as kelasdijamin',
-                'ru.ipaddress','ps.iskompleks','apd.residencefk','pg2.namalengkap as residence'
+                'ru.ipaddress','ps.iskompleks','apd.residencefk','pg2.namalengkap as residence', 'ruasal.id as idruanganasal'
+                , 'ruasal.namaruangan as namaruanganasal', 'so.norec as norec_so', 'so.keteranganorder', 'so.keteranganlainnya'
                 ,DB::raw('case when apd.ispelayananpasien is null then \'false\' else \'true\' end as statuslayanan'))
             ->where('apd.kdprofile', $idProfile)
             ->where('pd.statusenabled',true)

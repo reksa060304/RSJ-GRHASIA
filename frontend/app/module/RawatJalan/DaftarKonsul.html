@@ -24,6 +24,9 @@
 .notif-badge{display:inline-block;min-width:10px;padding:3px 7px;font-size:12px;
             font-weight:700;line-height:1;color:#fff;text-align:center;white-space:nowrap;vertical-align:middle;background-color:#f50909;border-radius:10px}
 
+textarea[type="input"]:disabled {
+    background: #dddddd;
+}
 </style>
 <div>
     <div class="panel panel-default container_12" ng-hide="klikDiagnosa">
@@ -320,6 +323,79 @@ k-on-open="win2visible = true" k-on-close="win2visible = false">
     <!--    <div class="clear">
 <button class="k-button" ng-click="simpanDokter(item, items.pilihDokter)" style="float:right;margin-top:4%">Simpan</button> -->
 </div>
+</div>
+
+<div kendo-window="popUpJawab" k-title="'Jawab Konsultasi'" k-width="800"  k-visible="false"
+    k-on-open="win2visible = true" k-on-close="win2visible = false">
+    <div class="panel panel-default container_12" style="padding: 0px 10px;">
+        <fieldset>
+            <legend>Konsultasi</legend>
+            <div class="grid_12">
+                <div class="grid_4">
+                    <div class="grid_12">
+                        <label c-label item="item">Ruangan Asal</label>
+                    </div>
+                    <div class="clear"></div>
+                    <div class="grid_12">
+                        <input c-text-box type="input" filter="'char'" class="k-textbox"
+                        ng-model="item.ruanganAsalJawab" disabled />
+                    </div>
+                </div>
+                <div class="grid_4">
+                    <div class="grid_12">
+                        <label c-label item="item">Ruangan Tujuan</label>
+                    </div>
+                    <div class="clear"></div>
+                    <div class="grid_12">
+                        <input c-text-box type="input" filter="'char'" class="k-textbox"
+                        ng-model="item.ruanganTujuanJawab" disabled />
+                    </div>
+                </div>
+                <div class="grid_4">
+                    <div class="grid_12">
+                        <label c-label item="item">Dokter</label>
+                    </div>
+
+                    <div class="grid_12">
+                        <input c-text-box type="input" filter="'char'" class="k-textbox"
+                        ng-model="item.dokterJawab" disabled />
+                    </div>
+
+                </div>
+            </div>
+            <div class="grid_12">
+                <div class="grid_12">
+                    <label c-label item="item">Keterangan</label>
+                </div>
+                <div class="clear"></div>
+                <div class="grid_12">
+                    <textarea  type="input" class="k-textbox" style="height: 200px; width: 100%; resize: none;"
+                        ng-model="item.keteranganJawab" disabled></textarea>
+                    <!-- <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.keterangan" /> -->
+                </div>
+                <div class="grid_12">
+                    <label c-label item="item">Jawaban</label>
+                </div>
+                <div class="clear"></div>
+                <div class="grid_12">
+                    <textarea class="k-textbox" style="height: 76px; width: 100%; resize: none;"
+                        ng-model="item.jawaban"></textarea>
+                    <!-- <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.keterangan" /> -->
+                </div>
+            </div>
+     
+
+
+        </fieldset>
+
+        <div class="k-edit-buttons  k-state-default pull-right" style="margin-top:10px">
+            <button class="k-button k-button-icontext k-primary k-grid-update" ng-click="SaveJawab()"><span
+                    class="k-icon k-update"></span>Simpan</button>
+            <button class="k-button  k-button-icontext" ng-click="batal()"><span
+                    class="k-icon k-cancel"></span>Batal</button>
+        </div>
+
+    </div>
 </div>
 <style>
     .k-window-content .k-content {

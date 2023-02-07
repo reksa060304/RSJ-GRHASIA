@@ -347,8 +347,52 @@ define(['initialize'], function(initialize) {
                         title: "Nama Ruangan",
                         aggregates: ["count"],
                         groupHeaderTemplate: "Ruangan #= value # (Jumlah: #= count#)"
+                    },
+                    { 
+                        command: [
+                            { imageClass: "k-icon k-edit", text: "Jawab", click: jawab }
+                        ], 
+                        title: "&nbsp;", 
+                        width: 100 
                     }
                 ]
+            }
+
+            function jawab(e) {
+                e.preventDefault();
+                var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                console.log(dataItem)
+                $scope.item.norec = dataItem.norec_so
+                $scope.item.ruanganAsalJawab = dataItem.namaruanganasal
+                $scope.item.ruanganTujuanJawab =  dataItem.objectruanganfk
+                $scope.item.dokterJawab  =dataItem.namadokter 
+                $scope.item.keteranganJawab  = dataItem.keteranganorder
+                if(dataItem.keteranganlainnya != null)
+                $scope.item.jawaban  = dataItem.keteranganlainnya
+                $scope.popUpJawab.center().open()
+                
+
+            }
+
+            $scope.SaveJawab = function(){
+                if ($scope.item.jawaban == undefined) {
+                    toastr.error("Jawaban Belum di isi!")
+                    return
+                }
+             
+                var objSave = {
+                    norec_so: $scope.item.norec,
+                    jawaban : $scope.item.jawaban
+                }
+                medifirstService.post( 'emr/update-jawaban-konsultasi',objSave).then(function (e) {
+                    loadData()
+                    $scope.popUpJawab.close()
+                    
+                });
+            }
+
+            $scope.batal = function () {
+                $scope.popUp.close()
             }
             // $scope.ColumnPasien = [
             //     {

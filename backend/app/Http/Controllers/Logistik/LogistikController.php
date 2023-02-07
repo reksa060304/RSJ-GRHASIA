@@ -5756,6 +5756,7 @@ class LogistikController extends ApiController{
             ->LEFTJOIN('rekanan_m as rkn', 'rkn.id', '=', 'sp.objectrekananfk')
             ->LEFTJOIN('pegawai_m as pg', 'pg.id', '=', 'sp.objectpegawaipenerimafk')
             ->LEFTJOIN('ruangan_m as ru', 'ru.id', '=', 'sp.objectruanganfk')
+            ->LEFTJOIN('maploginusertoruangan_s as mlu', 'ru.id', '=', 'mlu.objectruanganfk')
             ->LEFTJOIN('produk_m as pr', 'pr.id', '=', 'spd.objectprodukfk')
             ->LEFTJOIN('satuanstandar_m as ss', 'ss.id', '=', 'spd.objectsatuanstandarfk')
             ->LEFTJOIN('asalproduk_m as asp', 'asp.id', '=', 'spd.objectasalprodukfk')
@@ -5780,6 +5781,7 @@ class LogistikController extends ApiController{
                                 ) AS harganetto,sp.totalharusdibayar,
                                 row_number() over (partition by sp.norec order by sp.tglfaktur asc) as row_number")
             )
+            ->where('mlu.objectloginuserfk', $dataLogin['userData']['id'])
             ->where('sp.kdprofile', $idProfile);
 
         if (isset($request['tglAwal']) && $request['tglAwal'] != "" && $request['tglAwal'] != "undefined") {
