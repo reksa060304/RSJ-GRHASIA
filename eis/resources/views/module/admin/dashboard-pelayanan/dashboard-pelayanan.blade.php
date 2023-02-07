@@ -812,6 +812,35 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="col-lg-6 col-md-12">
+                                            <div class="card">
+                                                <div class="panel panel-purple">
+                                                    <div class="panel-heading bg-purple">
+                                                        Jumlah Pasien Berdasarkan Cara Daftar
+                                                    </div>
+                                                    <div class="panel-body">
+                                                        <div class="tab-content card-block">
+                                                            <div class="tab-pane active" id="all_caradaftar" role="tabpanel">
+                                                                <div id="chartCaraDaftar"></div>
+                                                            </div>
+                                                            <div class="tab-pane" id="all_grafik" role="tabpanel">
+                                                                <div id="chartCaraDaftarPie"></div>
+                                                            </div>
+                                                        </div>
+                                                        <ul class="nav nav-tabs tabs" role="tablist">
+                                                            <li class="nav-item">
+                                                                <a class="nav-link active" data-toggle="tab"
+                                                                href="#all_caradaftar" role="tab">Pie Chart</a>
+                                                            </li>
+                                                            <li class="nav-item">
+                                                                <a class="nav-link" data-toggle="tab" href="#all_grafik" role="tab">
+                                                                    Grafik Chart</a>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
 
                             
                         <div class="modal fade" id="modalERESEP" tabindex="-1" role="dialog">
@@ -885,6 +914,7 @@
         setChartTrend()
         setChartPenjadwalan()
         setChartPerjenis()
+        setChartPerCaraDaftar()
         setChartJenisPel()
         setChartPerujuk()
         setChartPerujukPasien()
@@ -1771,6 +1801,144 @@
                     ]
                 })
         }
+
+        function setChartPerCaraDaftar(){
+                this.datachartPerCaraDaftar =  @json($res['jumlahpasien_percaradaftar']);
+
+                let dataz = [];
+                let slice = true;
+                let jmlPasien = 0;
+                for (let i in this.datachartPerCaraDaftar.dataAll) {
+                    dataz.push({
+                        name: this.datachartPerCaraDaftar.dataAll[i].uraian,
+                        y: parseFloat(this.datachartPerCaraDaftar.dataAll[i].jumlah),
+                        sliced: slice,
+                        selected: slice
+                    });
+                    slice = false;
+                    jmlPasien = jmlPasien + parseFloat(this.datachartPerCaraDaftar.dataAll[i].jumlah)
+                }
+                
+                
+                Highcharts.chart('chartCaraDaftar', {
+                    chart: {
+                        plotBackgroundColor: null,
+                        plotBorderWidth: null,
+                        plotShadow: false,
+                        type: 'pie'
+                    },
+                    title: {
+                        text: '',
+
+                    },
+                    plotOptions: {
+                        pie: {
+                            allowPointSelect: true,
+                            cursor: 'pointer',
+                            dataLabels: {
+                                enabled: true,
+                                color: '#000000',
+                                connectorColor: '#000000',
+                                formatter: function () {
+                                    return this.percentage.toFixed(2) + ' %';
+                                }
+                            },
+                            showInLegend: true
+                        },
+
+                    },
+                    credits: {
+                        text: 'Total Pasien ' + jmlPasien,
+                    },
+                    legend: {
+                        enabled: true,
+                        borderRadius: 5,
+                        borderWidth: 1
+                    },
+                    series: [{
+                        type: 'pie',
+                        name: 'Persentase Jumlah Pasien Per Cara Daftar',
+                        data: dataz
+
+                    }]
+                })
+
+                this.datachartPerCaraDaftarPie =  @json($res['jumlahpasien_percaradaftar']);
+
+                let categories = [];
+                let loopIndex = 0;
+                let series = [];
+                
+                for (let i in this.datachartPerCaraDaftarPie.dataAll) {
+                    categories.push(this.datachartPerCaraDaftarPie.dataAll[i].uraian);
+                    let dataz2 = [];
+                    dataz2.push({
+                        y: parseFloat(this.datachartPerCaraDaftarPie.dataAll[i].jumlah),
+                        color: colors()[i]
+                    });
+                    if (loopIndex < 10)
+                        series.push({
+                            name: this.datachartPerCaraDaftarPie.dataAll[i].uraian,
+                            data: dataz2
+                        });
+                    loopIndex++;
+
+                }
+
+                Highcharts.chart('chartCaraDaftarPie', {
+                    chart: {
+                        type: 'column'
+                    },
+                    title: {
+                        text: ''
+                    },
+                    xAxis: {
+                        categories: categories,
+                        labels: {
+                            align: 'center',
+                            style: {
+                                fontSize: '13px',
+                                fontFamily: 'Verdana, sans-serif'
+                            }
+                        }
+                    },
+                    yAxis: {
+                        title: {
+                            text: 'Jumlah Pasien'
+                        }
+                    },
+                    credits: {
+                        enabled: false
+                    },
+                    plotOptions: {
+                        column: {
+                            cursor: 'pointer',
+
+                            dataLabels: {
+                                enabled: true,
+                                color: this.colors[1],
+                                style: {
+                                    fontWeight: 'none'
+                                },
+                                formatter: function () {
+                                    return Highcharts.numberFormat(this.y, 0, '.', ',') + ' Pasien';
+                                }
+                            },
+                            showInLegend: true
+                        }
+                    },
+
+                    series: series,
+                    legend: {
+                        borderRadius: 5,
+                        borderWidth: 1,
+                        layout: 'vertical',
+                        align: 'right',
+                        verticalAlign: 'middle'
+                    },
+                })
+        }
+
         function setChartJenisPel(){
             this.dataJenisPelayanan =  @json($res['jenis_pel']);
             let categories = [];

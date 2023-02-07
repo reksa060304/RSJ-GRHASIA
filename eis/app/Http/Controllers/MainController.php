@@ -706,6 +706,7 @@ class MainController extends ApiController
                     $res['jenis_penjadwalan'] = $this->getPasienPerjenisPenjadwalan($tglawal,$tglakhir,$kdProfile);
                     $res['info_kedatangan'] = $this->getInfoKunjunganRawatJalanPerhari($tglawal,$tglakhir,$kdProfile);
                     $res['kunjungan_perjenispasien'] = $this->getKunjunganRSPerJenisPasien($tglawal,$tglakhir,$kdProfile);
+                    $res['jumlahpasien_percaradaftar'] = $this->getJumlahPasienPerCaraDaftar($tglawal,$tglakhir,$kdProfile);
                     $res['tt_usia'] = $this->getTempatTidurTerpakai($tglawal,$tglakhir,$kdProfile);
 
 
@@ -4115,6 +4116,54 @@ AND sp.statusenabled <> false
             'dataAll' => $dataALL,
             'data' => $data10,
             'message' => 'ramdanegie',
+        );
+        return $result;
+    }
+    public function getJumlahPasienPerCaraDaftar($tglAwal, $tglAkhir,$kdProfile){
+
+        $idProfile = (int) $kdProfile;
+        $tglAwal = $tglAwal .' 00:00' ;
+        $tglAkhir = $tglAkhir.' 23:59' ;
+        $dataALL = DB::select(DB::raw("select 'JKN Mobile' as uraian, count(pd.noregistrasi) as jumlah
+        from
+            pasien_m ps 
+        inner join pasiendaftar_t pd on ps.id=pd.nocmfk
+        left join antrianpasienregistrasi_t as apr on pd.statusschedule = apr.noreservasi
+        where pd.statusenabled = true
+        and pd.kdprofile = $idProfile
+        and pd.tglregistrasi BETWEEN '$tglAwal'AND '$tglAkhir'
+        and pd.ismobilejkn = true
+        and apr.norec is not null
+        
+        union all
+        
+        select 'E-Reservasi' as uraian, count(pd.noregistrasi) as jumlah
+        from
+            pasien_m ps 
+        inner join pasiendaftar_t pd on ps.id=pd.nocmfk
+        left join antrianpasienregistrasi_t as apr on pd.statusschedule = apr.noreservasi
+        where pd.statusenabled = true
+        and pd.kdprofile = $idProfile
+        and pd.tglregistrasi BETWEEN '$tglAwal'AND '$tglAkhir'
+        and (pd.ismobilejkn is null or pd.ismobilejkn = false)
+        and apr.norec is not null
+        
+        union all
+        
+        select 'Pendaftaran Langsung' as uraian, count(pd.noregistrasi) as jumlah
+        from
+            pasien_m ps 
+        inner join pasiendaftar_t pd on ps.id=pd.nocmfk
+        left join antrianpasienregistrasi_t as apr on pd.statusschedule = apr.noreservasi
+        where pd.statusenabled = true
+        and pd.kdprofile = $idProfile
+        and pd.tglregistrasi BETWEEN '$tglAwal'AND '$tglAkhir'
+        and (pd.ismobilejkn is null or pd.ismobilejkn = false)
+        and apr.norec is null;"));
+
+        $result = array(
+            'dataAll' => $dataALL,
+            'message' => 'vexana',
         );
         return $result;
     }
