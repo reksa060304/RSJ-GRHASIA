@@ -103,7 +103,7 @@ define(['initialize'], function (initialize) {
             $scope.columnGrid = {
                 toolbar: ["excel"],
                 excel: {
-                    fileName: "Data Laporan Detail Tindakan Layanan" + moment($scope.item.tglawal).format('DD/MMM/YYYY') + "-" +
+                    fileName: "Data Permintaan Makan Pasien Rekap Bangsal" + moment($scope.item.tglawal).format('DD/MMM/YYYY') + "-" +
                         moment($scope.item.tglakhir).format('DD/MMM/YYYY') + ".xlsx",
                     allPages: true,
                 },

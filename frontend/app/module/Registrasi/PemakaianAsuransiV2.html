@@ -4,7 +4,10 @@
         color: red;
     }
 </style>
+<script src="../app/javascripts/jquery.qr-code.js" type="text/javascript"></script>
+
 <div class="grid_12">
+
     <c-form item='item'>
         <div ng-include='"../app/template/Shared/HeaderDataPasien"'></div>
         <div class="grid_12">
@@ -585,23 +588,34 @@
                     <button ng-show="!isLoading" kendo-button style="width: 100%" class="primary" is-back><i
                             class="fa fa-arrow-left"></i>Kembali</button>
                 </div>
-                <div class="grid_2" style="float:right">
-                    <button ng-show="!isLoading" kendo-button style="width: 100%" class="cancel"
-                        ng-click="DeleteSep()"><i class="fa fa-trash"></i>Hapus SEP</button>
-                </div>
+                
 
                 <div class="grid_2" style="float:right">
                     <button ng-show="!isLoading" kendo-button style="width: 100%" class="success"
                         ng-click="cetakSEP()"><i class="fa fa-print"></i>Cetak SEP</button>
                 </div>
+    <div style="text-align: center" id="qrSEP" ng-hide="true"></div>
 
+                <!-- <div class="grid_2" style="float:right">
+                    <button ng-show="!isLoading" kendo-button style="width: 100%" class="success"
+                        ng-click="cetakSEPL3()"><i class="fa fa-print"></i>Cetak SEP Blade</button>
+                </div> -->
+                <div class="grid_2" style="float:right">
+                    <button ng-show="!isLoading" kendo-button style="width: 100%" class="success"
+                        ng-click="cetakSEP2()"><i class="fa fa-print"></i>Cetak SEP V2</button>
+                </div>
                 <div class="grid_2" style="float:right">
                     <button ng-show="!isLoading" kendo-button style="width: 100%" class="primary"
                         ng-click="popRujukan()"><i class="fa fa-stethoscope"></i>Rujukan</button>
                 </div>
+                <div class="grid_2" style="float:right">
+                    <button ng-show="!isLoading" kendo-button style="width: 100%" class="cancel"
+                        ng-click="DeleteSep()"><i class="fa fa-trash"></i>Hapus SEP</button>
+                </div>
                 <div class="grid_2" >
 					<button class="btnTemplate1" style="margin-left: 0; margin-top: 0px;" ng-click="DaftarRuangan()"><i class="fa fa-files-o"></i>Konsul</button>
 				</div>
+                
 
 
                 <!-- <div ng-include='"../app/template/Shared/TemplateButtonRegistrasiNew " ' style="margin-top:30px"
