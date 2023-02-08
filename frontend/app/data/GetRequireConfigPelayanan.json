@@ -3582,6 +3582,16 @@
         {
             "nameDep": "InformasiWaktuPelayananRawatJalanCtrl",
             "urlDep": "module/RawatJalan/InformasiWaktuPelayananRawatJalanCtrl"
+        },
+        {
+            "nameDep": "PengkajianKepIGDPerImplementasiCtrl",
+            "urlDep": "module/EMR/PengkajianKepIGDPerImplementasiCtrl"
+        },
+        {
+            "nameDep": "PengkajianAwalKeperawatanRJNonJiwadanIEKCtrl",
+            "urlDep": "module/EMR/PengkajianAwalKeperawatanRJNonJiwadanIEKCtrl"
         }
+
+
     ]
 }
