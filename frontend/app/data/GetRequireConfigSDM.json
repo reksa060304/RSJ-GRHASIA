@@ -304,6 +304,10 @@
     {
       "nameDep": "LaporanPasienJKNCtrl",
       "urlDep": "module/Registrasi/Laporan/LaporanRekamMedis/LaporanPasienJKNCtrl"
+    }, 
+    {
+      "nameDep": "RekonsiliasiObatCtrl",
+      "urlDep": "module/EMR/RekonsiliasiObatCtrl"
     }
   ]
 }
