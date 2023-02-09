@@ -19841,6 +19841,50 @@
         "define": "MedifirstService"
       }
     ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.PengkajianKepIGDPerImplementasi",
+    "url": "/PengkajianKepIGDPerImplementasi",
+    "templateurl": "module/EMR/PengkajianKepIGDPerImplementasi.html",
+    "controller": "PengkajianKepIGDPerImplementasiCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.PengkajianAwalKeperawatanRJNonJiwadanIEK",
+    "url": "/PengkajianAwalKeperawatanRJNonJiwadanIEK",
+    "templateurl": "module/EMR/PengkajianAwalKeperawatanRJNonJiwadanIEK.html",
+    "controller": "PengkajianAwalKeperawatanRJNonJiwadanIEKCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
   }
 ]
 

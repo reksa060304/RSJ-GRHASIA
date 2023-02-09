@@ -1485,5 +1485,24 @@
         "define": "MedifirstService"
       }
     ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.RekonsiliasiObat",
+    "url": "/RekonsiliasiObat",
+    "templateurl": "module/EMR/RekonsiliasiObat.html",
+    "controller": "RekonsiliasiObatCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
   }
 ]
