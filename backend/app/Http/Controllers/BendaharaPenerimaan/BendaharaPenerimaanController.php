@@ -2731,7 +2731,7 @@ class BendaharaPenerimaanController extends ApiController {
 
         // konten STS Detail
 
-        $data = DB::select(DB::raw("select distinct cb2.id idcarabayar2, kp.id idkelompokpasien, 0 objectkelompoktransaksifk, sbm.norec norecsbm, pp.norec, sc.tglclosing, ru.namaruangan, ru.id idruangan, pr.namaproduk, pr.id idproduk, pp.isobat,
+        $data = DB::select(DB::raw("select distinct ru2.objectdepartemenfk objectdepartemenfk2, cb2.id idcarabayar2, kp.id idkelompokpasien, 0 objectkelompoktransaksifk, sbm.norec norecsbm, pp.norec, sc.tglclosing, ru.namaruangan, ru.id idruangan, pr.namaproduk, pr.id idproduk, pp.isobat,
         (((CASE WHEN pp.hargajual IS NULL THEN 0 ELSE pp.hargajual::float8 END - CASE WHEN pp.hargadiscount IS NULL THEN
         0 ELSE pp.hargadiscount::float8 END) * pp.jumlah) + CASE WHEN pp.jasa IS NULL THEN 0 ELSE pp.jasa::float8 END ) AS totaldibayarclosing,
         ru.objectdepartemenfk, sbmcr.objectcarabayarfk, sbm.totaldibayar as totaldibayarsbm, sc.noclosing, sc.tglclosing,
@@ -2742,6 +2742,7 @@ class BendaharaPenerimaanController extends ApiController {
                         inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
                         inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
                         inner JOIN ruangan_m AS ru ON ru.id = apd.objectruanganfk  
+                        inner JOIN ruangan_m AS ru2 ON ru2.id = pd.objectruanganlastfk
                         left JOIN strukpelayanan_t AS sp ON sp.norec = pp.strukfk  
                         LEFT JOIN strukbuktipenerimaan_t AS sbm ON sbm.nostrukfk = sp.norec AND sbm.statusenabled = true  
                         LEFT JOIN strukbuktipenerimaancarabayar_t as sbmcr ON sbmcr.nosbmfk = sbm.norec
@@ -2767,7 +2768,7 @@ class BendaharaPenerimaanController extends ApiController {
         
         union all
         
-        select distinct cb2.id idcarabayar2, 0 idkelompokpasien, sp.objectkelompoktransaksifk, sbm.norec norecsbm, sp.norec, sc.tglclosing, ru.namaruangan, ru.id idruangan, pr.namaproduk, pr.id idproduk, pp.isobat,
+        select distinct 0 objectdepartemenfk2, cb2.id idcarabayar2, 0 idkelompokpasien, sp.objectkelompoktransaksifk, sbm.norec norecsbm, sp.norec, sc.tglclosing, ru.namaruangan, ru.id idruangan, pr.namaproduk, pr.id idproduk, pp.isobat,
         (spd.qtyproduk * spd.hargasatuan * spd.qtyoranglast)::float4 as totaldibayarclosing,
         ru.objectdepartemenfk, sbmcr.objectcarabayarfk, sbm.totaldibayar as totaldibayarsbm, sc.noclosing, sc.tglclosing,
         sck.totaldibayar as totaldibayar,sck.carabayarfk, cb.carabayar, djp.detailjenisproduk, jpr.id as jenisproduk
@@ -2935,38 +2936,38 @@ class BendaharaPenerimaanController extends ApiController {
         foreach($data as $konten){
             $cekjumlah = '';
             $cekharga = 0;
-            if($konten->idkelompokpasien != 0 && $konten->idkelompokpasien != 1 && $konten->idkelompokpasien != 12 && $konten->idkelompokpasien != 18 && $konten->idkelompokpasien != 8 && $konten->objectdepartemenfk != 16 && $konten->totaldibayarclosing != $konten->totaldibayarsbm){
-                $jumlahcostsharingbpjsrajal += $konten->totaldibayarsbm;
+            if($konten->idkelompokpasien != 0 && $konten->idkelompokpasien != 1 && $konten->idkelompokpasien != 12 && $konten->idkelompokpasien != 18 && $konten->idkelompokpasien != 8 && $konten->objectdepartemenfk2 != 0 && $konten->objectdepartemenfk2 != 16 && $konten->totaldibayarclosing != $konten->totaldibayarsbm){
+                $jumlahcostsharingbpjsrajal = $konten->totaldibayarsbm;
                 $voljumlahcostsharingbpjsrajal++;
                 $cekjumlah = $konten->namaproduk;
             }
 
-            else if($konten->idkelompokpasien != 0 && $konten->idkelompokpasien != 1 && $konten->idkelompokpasien != 12 && $konten->idkelompokpasien != 18 && $konten->idkelompokpasien != 8 && $konten->objectdepartemenfk == 16 && $konten->totaldibayarclosing != $konten->totaldibayarsbm){
-                $jumlahcostsharingbpjsranap += $konten->totaldibayarsbm;
+            else if($konten->idkelompokpasien != 0 && $konten->idkelompokpasien != 1 && $konten->idkelompokpasien != 12 && $konten->idkelompokpasien != 18 && $konten->idkelompokpasien != 8 && $konten->objectdepartemenfk2 != 0 && $konten->objectdepartemenfk2 == 16 && $konten->totaldibayarclosing != $konten->totaldibayarsbm){
+                $jumlahcostsharingbpjsranap = $konten->totaldibayarsbm;
                 $voljumlahcostsharingbpjsranap++;
                 $cekjumlah = $konten->namaproduk;
             }
 
-            else if($konten->idkelompokpasien != 0 && $konten->idkelompokpasien != 1 && $konten->idkelompokpasien != 12 && $konten->idkelompokpasien == 18 && $konten->objectdepartemenfk != 16 && $konten->totaldibayarclosing != $konten->totaldibayarsbm){
-                $jumlahcostsharingjamkesosrajal += $konten->totaldibayarsbm;
+            else if($konten->idkelompokpasien != 0 && $konten->idkelompokpasien != 1 && $konten->idkelompokpasien != 12 && $konten->idkelompokpasien == 18 && $konten->objectdepartemenfk2 != 0 && $konten->objectdepartemenfk2 != 16 && $konten->totaldibayarclosing != $konten->totaldibayarsbm){
+                $jumlahcostsharingjamkesosrajal = $konten->totaldibayarsbm;
                 $voljumlahcostsharingjamkesosrajal++;
                 $cekjumlah = $konten->namaproduk;
             }
 
-            else if($konten->idkelompokpasien != 0 && $konten->idkelompokpasien != 1 && $konten->idkelompokpasien != 12 && $konten->idkelompokpasien == 18 && $konten->objectdepartemenfk == 16 && $konten->totaldibayarclosing != $konten->totaldibayarsbm){
-                $jumlahcostsharingjamkesosranap += $konten->totaldibayarsbm;
+            else if($konten->idkelompokpasien != 0 && $konten->idkelompokpasien != 1 && $konten->idkelompokpasien != 12 && $konten->idkelompokpasien == 18 && $konten->objectdepartemenfk2 != 0 && $konten->objectdepartemenfk2 == 16 && $konten->totaldibayarclosing != $konten->totaldibayarsbm){
+                $jumlahcostsharingjamkesosranap = $konten->totaldibayarsbm;
                 $voljumlahcostsharingjamkesosranap++;
                 $cekjumlah = $konten->namaproduk;
             }
 
-            else if($konten->idkelompokpasien != 0 && $konten->idkelompokpasien != 1 && $konten->idkelompokpasien != 12 && $konten->idkelompokpasien == 8 && $konten->objectdepartemenfk != 16 && $konten->totaldibayarclosing != $konten->totaldibayarsbm){
-                $jumlahcostsharingjamkesdarajal += $konten->totaldibayarsbm;
+            else if($konten->idkelompokpasien != 0 && $konten->idkelompokpasien != 1 && $konten->idkelompokpasien != 12 && $konten->idkelompokpasien == 8 && $konten->objectdepartemenfk2 != 0 && $konten->objectdepartemenfk2 != 16 && $konten->totaldibayarclosing != $konten->totaldibayarsbm){
+                $jumlahcostsharingjamkesdarajal = $konten->totaldibayarsbm;
                 $voljumlahcostsharingjamkesdarajal++;
                 $cekjumlah = $konten->namaproduk;
             }
 
-            else if($konten->idkelompokpasien != 0 && $konten->idkelompokpasien != 1 && $konten->idkelompokpasien != 12 && $konten->idkelompokpasien == 8 && $konten->objectdepartemenfk == 16 && $konten->totaldibayarclosing != $konten->totaldibayarsbm){
-                $jumlahcostsharingjamkesdaranap += $konten->totaldibayarsbm;
+            else if($konten->idkelompokpasien != 0 && $konten->idkelompokpasien != 1 && $konten->idkelompokpasien != 12 && $konten->idkelompokpasien == 8 && $konten->objectdepartemenfk2 != 0 && $konten->objectdepartemenfk2 == 16 && $konten->totaldibayarclosing != $konten->totaldibayarsbm){
+                $jumlahcostsharingjamkesdaranap = $konten->totaldibayarsbm;
                 $voljumlahcostsharingjamkesdaranap++;
                 $cekjumlah = $konten->namaproduk;
             }
