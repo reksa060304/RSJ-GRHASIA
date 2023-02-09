@@ -570,7 +570,20 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             $scope.updateProduksi = function () {
                     
 
+                medifirstService.get("farmasi/get-penjagaan-closing-kasir?noregistrasi=" + $scope.item.noregistrasi ).then(function (e) {
                     
+
+                    if(e.data.detail[0].tglclosing == null){
+                        var cek = 123;
+                    } else{
+                        var cek = 234;
+                    }
+          
+                    console.log(cek);
+          
+                    if(cek == 234){
+                        messageContainer.error("Data yang sudah diclosing tidak bisa diubah status");
+                    } else if (cek == 123){
                         if ($scope.item.statusorder != 'Menunggu') {
                             //managePasien.updateStatusOrder($scope.item.strukOrder.noOrder, 1).then(function(e) {
                             //
@@ -605,6 +618,8 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                             toastr.error("Status Data Belum Diverifikasi !!")
                             return;
                         }
+                    }
+                });
                 //if ($scope.item.statusorder == 'Verifikasi') {
                 
             }
@@ -612,7 +627,20 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             $scope.updatePackaging = function () {
                     
 
+                medifirstService.get("farmasi/get-penjagaan-closing-kasir?noregistrasi=" + $scope.item.noregistrasi ).then(function (e) {
                     
+
+                    if(e.data.detail[0].tglclosing == null){
+                        var cek = 123;
+                    } else{
+                        var cek = 234;
+                    }
+          
+                    console.log(cek);
+          
+                    if(cek == 234){
+                        messageContainer.error("Data yang sudah diclosing tidak bisa diubah status");
+                    } else if (cek == 123){
                         if ($scope.item.statusorder != 'Menunggu') {
                             //managePasien.updateStatusOrder($scope.item.strukOrder.noOrder, 2).then(function(e) {
                             // managePasien.updateStatusOrder($scope.item.noorder, 2).then(function(e) {
@@ -648,13 +676,28 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                                 return;
                             }
                         }
+                    }
+                });
                 //if ($scope.item.statusorder == 'Verifikasi' || $scope.item.statusorder == 'Produksi') {
                 
             }
             $scope.updateDone = function () {
                     
 
+                medifirstService.get("farmasi/get-penjagaan-closing-kasir?noregistrasi=" + $scope.item.noregistrasi ).then(function (e) {
                     
+
+                    if(e.data.detail[0].tglclosing == null){
+                        var cek = 123;
+                    } else{
+                        var cek = 234;
+                    }
+          
+                    console.log(cek);
+          
+                    if(cek == 234){
+                        messageContainer.error("Data yang sudah diclosing tidak bisa diubah status");
+                    } else if (cek == 123){
                         if ($scope.item.statusorder != 'Menunggu') {
                             //managePasien.updateStatusOrder($scope.item.strukOrder.noOrder, 3).then(function(e) {
                             // managePasien.updateStatusOrder($scope.item.noorder, 3).then(function(e) {
@@ -715,6 +758,8 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                                 return;
                             }
                         }
+                    }
+                });
                 //if ($scope.item.statusorder == 'Verifikasi' || $scope.item.statusorder == 'Packaging') {
                 
             }
@@ -1029,12 +1074,28 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                             namapengambil: nm,
                             strukresep: strukresep
                         }
-                        medifirstService.post('farmasi/save-status-resepelektonik', objSave).then(function (e) {
-                            medifirstService.postLogging('Rubah Status Sudah Di Ambil Order Resep Elektronik', 'No Order Struk Order',
-                                $scope.item.noorder, 'Rubah Status Sudah Di Ambil Order Resep Elektronik No Order: ' + $scope.item.noorder + '/ Noregistrasi : ' + $scope.item.noregistrasi).then(function (res) {
-                                    $scope.refresh();
-                                    $scope.popup.close()
-                                })
+                        medifirstService.get("farmasi/get-penjagaan-closing-kasir?noregistrasi=" + $scope.item.noregistrasi ).then(function (e) {
+                    
+
+                            if(e.data.detail[0].tglclosing == null){
+                                var cek = 123;
+                            } else{
+                                var cek = 234;
+                            }
+                  
+                            console.log(cek);
+                  
+                            if(cek == 234){
+                                messageContainer.error("Data yang sudah diclosing tidak bisa diubah status");
+                            } else if (cek == 123){
+                                medifirstService.post('farmasi/save-status-resepelektonik', objSave).then(function (e) {
+                                    medifirstService.postLogging('Rubah Status Sudah Di Ambil Order Resep Elektronik', 'No Order Struk Order',
+                                        $scope.item.noorder, 'Rubah Status Sudah Di Ambil Order Resep Elektronik No Order: ' + $scope.item.noorder + '/ Noregistrasi : ' + $scope.item.noregistrasi).then(function (res) {
+                                            $scope.refresh();
+                                            $scope.popup.close()
+                                        })
+                                });
+                            }
                         });
                 
             }
