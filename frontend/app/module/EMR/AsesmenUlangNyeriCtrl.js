@@ -2,6 +2,7 @@ define(['initialize'], function (initialize) {
     'use strict';
     initialize.controller('AsesmenUlangNyeriCtrl', ['$q', '$rootScope', '$scope', 'ModelItem', '$state', 'CacheHelper', 'DateHelper', 'MedifirstService',
         function ($q, $rootScope, $scope, ModelItem, $state, cacheHelper, dateHelper, medifirstService) {
+            var paramsIndex = $state.params.index ? parseInt($state.params.index) : null;
 
             $scope.myVar = true
             $scope.noCM = $state.params.noCM;
@@ -365,6 +366,33 @@ define(['initialize'], function (initialize) {
                             }
                         }
                     }
+                    $scope.listPerencanaan1 = [
+                        {
+                            "id": 1, "nama": "Perencanaan1",
+                            "detail": [
+                                { "id": 3018436, "nama": "Bersihan jalan meningkat", "satuan": "", "type": "datetime" },
+                                { "id": 3018437, "nama": "Ventilasi adekuat", "satuan": "", "type": "datetime" },
+                                { "id": 3018438, "nama": "Curah jantung meningkat", "satuan": "", "type": "checkbox" },
+                                { "id": 3018439, "nama": "Kadar glukosa darah dalam rentang normal", "satuan": "", "type": "checkbox" },
+                                { "id": 3018440, "nama": "Perfusi perifer meningkat", "satuan": "", "type": "checkbox" },
+                                { "id": 3018441, "nama": "Nausea menurun", "satuan": "", "type": "checkbox" },
+                                { "id": 3018442, "nama": "Status nutrisi membaik", "satuan": "", "type": "checkbox" },
+                                { "id": 3018443, "nama": "Defekasi normal", "satuan": "", "type": "checkbox" },
+                                { "id": 3018444, "nama": "Integritas kulit", "satuan": "", "type": "checkbox" },
+                                { "id": 3018445, "nama": "Status cairan membaik ", "satuan": "", "type": "checkbox" },
+                                { "id": 3018446, "nama": "Suhu dalam rentang normal ", "satuan": "", "type": "checkbox" },
+                                { "id": 3018447, "nama": "Keseimbangan cairan meningkat", "satuan": "", "type": "checkbox" },
+                                { "id": 3018448, "nama": "Tingkat nyeri menurun", "satuan": "", "type": "checkbox" },
+                                { "id": 3018449, "nama": "Kontinensia urine / vekal membaik", "satuan": "", "type": "checkbox" },
+                                { "id": 3018450, "nama": "Tidak terjadi cidera", "satuan": "", "type": "checkbox" },
+                                { "id": 3018451, "nama": "Lainnya", "satuan": "", "type": "textbox" },
+                                { "id": 3018452, "nama": "", "satuan": "", "type": "textbox" },
+                                { "id": 3018453, "nama": "", "satuan": "", "type": "textbox" },
+                                { "id": 3018454, "nama": "", "satuan": "", "type": "textbox" },
+                                
+                            ]
+                        }
+                    ]
                     $scope.listData4 = arrayShiftJaga4
                     console.log($scope.listData4)
 
@@ -519,7 +547,7 @@ define(['initialize'], function (initialize) {
                 //     }
                 // })
                 for (var i = 0; i <= dataLoad.length - 1; i++) {
-                    if (parseFloat($scope.cc.emrfk) == dataLoad[i].emrfk) {
+                    if (parseFloat($scope.cc.emrfk) == dataLoad[i].emrfk && paramsIndex == dataLoad[i].index) {
 
                         if (dataLoad[i].type == "textbox") {
                             $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
@@ -615,6 +643,7 @@ define(['initialize'], function (initialize) {
                     arrSave.push({ id: arrobj[i], values: $scope.item.obj[parseInt(arrobj[i])] })
                 }
                 $scope.cc.jenisemr = 'asesmen'
+                $scope.cc.index = $state.params.index
                 var jsonSave = {
                     head: $scope.cc,
                     data: arrSave

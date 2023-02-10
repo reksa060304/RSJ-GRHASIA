@@ -54,15 +54,197 @@
             <fieldset style="margin-top: 30px; ">
                 <div class="grid_12">
                     <table style="border: 0px">
-                        <tr>
-                            <th colspan="18"><b>Skala yang digunakan NUMERIC / WONG BAKER / NIPS / FLACC PAIN SCALE</b></th>
-                            
-                        </tr>
-                           <tr style="border: 0px" ng-repeat="list in listData3 | orderBy:'nourut'">
-                            <td style="width: 10px;">{{list.namaexternal}}</td>
+                        
+                        <fieldset>     
+                            <LEGEND><label c-label item="item" class="margin-bottom text-center">Skala yang digunakan NUMERIC / WONG BAKER / NIPS / FLACC PAIN SCALE</label></LEGEND>
+                            <div class="grid_12">
+                                <table>
+                                    <tr>
+                                        <td>Tanggal</td>
+                                        <td>
+                                            <div class="grid_12">
+            
+                                                <input style="width: 100%" k-ng-model="item.obj[1901300501]" kendo-datetimepicker
+                                                placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd'" parsedate="yyyy-MM-dd" />
+                                                <label c-label item="item" class="margin-bottom"><br></label>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="grid_12">
+            
+                                                <input style="width: 100%" k-ng-model="item.obj[1901300502]" kendo-datetimepicker
+                                                placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd'" parsedate="yyyy-MM-dd" />
+                                                <label c-label item="item" class="margin-bottom"><br></label>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="grid_12">
+            
+                                                <input style="width: 100%" k-ng-model="item.obj[1901300503]" kendo-datetimepicker
+                                                placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd'" parsedate="yyyy-MM-dd" />
+                                                <label c-label item="item" class="margin-bottom"><br></label>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="grid_12">
+            
+                                                <input style="width: 100%" k-ng-model="item.obj[1901300504]" kendo-datetimepicker
+                                                placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd'" parsedate="yyyy-MM-dd" />
+                                                <label c-label item="item" class="margin-bottom"><br></label>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="grid_12">
+            
+                                                <input style="width: 100%" k-ng-model="item.obj[1901300505]" kendo-datetimepicker
+                                                placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd'" parsedate="yyyy-MM-dd" />
+                                                <label c-label item="item" class="margin-bottom"><br></label>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="grid_12">
+            
+                                                <input style="width: 100%" k-ng-model="item.obj[1901300506]" kendo-datetimepicker
+                                                placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd'" parsedate="yyyy-MM-dd" />
+                                                <label c-label item="item" class="margin-bottom"><br></label>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Pukul</td>
+                                        <td>
+                                            <div class="grid_12">
+                                                <input style="width: 100%" k-ng-model="item.obj[1901300507]" kendo-timepicker
+                                                placeholer="HH:mm" k-format="'HH:mm'" parsedate="HH:mm" />
+                                                <label c-label item="item" class="margin-bottom"><br></label>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="grid_12">
+                                                <input style="width: 100%" k-ng-model="item.obj[1901300508]" kendo-timepicker
+                                                placeholer="HH:mm" k-format="'HH:mm'" parsedate="HH:mm" />
+                                                <label c-label item="item" class="margin-bottom"><br></label>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="grid_12">
+                                                <input style="width: 100%" k-ng-model="item.obj[1901300509]" kendo-timepicker
+                                                placeholer="HH:mm" k-format="'HH:mm'" parsedate="HH:mm" />
+                                                <label c-label item="item" class="margin-bottom"><br></label>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="grid_12">
+                                                <input style="width: 100%" k-ng-model="item.obj[1901300510]" kendo-timepicker
+                                                placeholer="HH:mm" k-format="'HH:mm'" parsedate="HH:mm" />
+                                                <label c-label item="item" class="margin-bottom"><br></label>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="grid_12">
+                                                <input style="width: 100%" k-ng-model="item.obj[1901300511]" kendo-timepicker
+                                                placeholer="HH:mm" k-format="'HH:mm'" parsedate="HH:mm" />
+                                                <label c-label item="item" class="margin-bottom"><br></label>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="grid_12">
+                                                <input style="width: 100%" k-ng-model="item.obj[1901300512]" kendo-timepicker
+                                                placeholer="HH:mm" k-format="'HH:mm'" parsedate="HH:mm" />
+                                                <label c-label item="item" class="margin-bottom"><br></label>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Skor Nyeri</td>
+                                        <td>
+                                            <div class="grid_12 margin-top-20 margin-bottom">
+                                            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901300513]"
+                                                    k-data-source=""
+                                                    style="height: 30px; width: 100%; "/>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="grid_12 margin-top-20 margin-bottom">
+                                                <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901300514]"
+                                                        k-data-source=""
+                                                        style="height: 30px; width: 100%; "/>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="grid_12 margin-top-20 margin-bottom">
+                                                <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901300515]"
+                                                        k-data-source=""
+                                                        style="height: 30px; width: 100%; "/>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="grid_12 margin-top-20 margin-bottom">
+                                                <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901300516]"
+                                                        k-data-source=""
+                                                        style="height: 30px; width: 100%; "/>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="grid_12 margin-top-20 margin-bottom">
+                                                <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901300517]"
+                                                        k-data-source=""
+                                                        style="height: 30px; width: 100%; "/>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="grid_12 margin-top-20 margin-bottom">
+                                                <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901300518]"
+                                                        k-data-source=""
+                                                        style="height: 30px; width: 100%; "/>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </table>
+                                </div>
+                                
+                        </fieldset>
+                    </div>
+                   <!--      <td style="vertical-align: top;">
+                            <div class="grid_12" ng-repeat="list in listPerencanaan1">
+                                <div class="grid_12" style="padding: 5pt">
+                                    <div ng-repeat="jawab in list.detail">
+                                        <div ng-switch on="jawab.type">
+                                            <div class="grid_12" ng-switch-when="checkbox" style="margin-top: 10px;">
+                                                <input type="checkbox" class="k-checkbox" id="item.obj{{jawab.id}}"
+                                                    ng-model="item.obj[jawab.id]">
+                                                <label class="k-checkbox-label" for="item.obj{{jawab.id}}">
+                                                    &nbsp;{{jawab.nama}}</label>
+                                            </div>
+                                            <div class="grid_12" ng-switch-when="textbox" style="margin-top: 5px;">
+                                                <div class="grid_12">
+                                                    <label>{{jawab.nama}}</label>
+                                                </div>
+                                                <div class="grid_12 parentKeteranganFieldTambahan">
+                                                    <input c-text-box type="text" filter="" class="k-textbox"
+                                                        ng-model="item.obj[jawab.id]" style="width: 90%;" />
+                                                    <label class="keteranganFieldTambahan"
+                                                        style="margin-top: 5px;margin-right: 30px">{{jawab.satuan}}</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                          
+                        </td> 
+                           <tr style="border: 0px" ng-repeat="list in listPerencanaan1 | orderBy:'no'">
+                            <td style="width: 10px;">{{list.nama}}</td>
                             <td style="text-align: center" ng-repeat="jawab in list.details">
                                 <div class="grid_12">
-
+                                    <div class="grid_4" ng-switch on="jawab.type">
+                                        <div class="grid_12" ng-switch-when="datetime">
+                                            <label>{{jawab.caption}}</label>
+                                        </div>
+                                        <div class="grid_12">
+                                            <input style="width: 100%" k-ng-model="item.obj[jawab.id]" kendo-datetimepicker placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+                                        </div>
+                                    </div>
                                 <div ng-switch on="jawab.type">
                                         <div ng-switch-when="textbox">
                                             <textarea style="width: 50px;height: 50px" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
@@ -79,9 +261,9 @@
                         </table>
                         
                 </div>  
+-->
 
-
-                <div class="grid_12" style="margin-top: 20px;">
+              <!--  <div class="grid_12" style="margin-top: 20px;">
                     <table style="border: 0px">
                            <tr style="border: 0px" ng-repeat="list in listData4 | orderBy:'nourut'" >
                             <td style="width: 10px;">{{list.namaexternal}}</td>
@@ -254,7 +436,7 @@
                            </tr> 
                         </table>
                         
-                </div>  
+                </div>  -->
                 <div class="grid_12" style="margin-top: 20px;">
                     <div class="grid_12 margin-bottom">
                         <label c-label item="item" class="margin-bottom" style="font-weight: bold;">* coret yang tidak digunakan</label>
