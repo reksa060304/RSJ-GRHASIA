@@ -71,7 +71,13 @@
     <div class="panel panel-default panel-white" ng-hide="isMasuk">
         
         <!-- Tabel Hasil Pencarian -->
-        <div class="grid_12" style="margin-top:50px;">
+        <div class="grid_12" style="margin-top: 10px;">
+            <div class="grid_2">
+                <input style="width: 100%" k-options="yearUngkul" k-ng-model="item.tahuncari" kendo-date-picker
+                placeholer="YYYY" k-format="'yyyy'" />
+            </div>
+        </div>
+        <div class="grid_12" style="margin-top:5px;">
             <div class="grid_12 borderBox">
                 <kendo-grid id="grid" data-source="dataGrid" options="columnGrid" k-pageable="'true'"
                     k-sortable="'true'" k-groupable="'false'" k-resizable="'true'" k-selectable="'row'"
@@ -86,6 +92,9 @@
             </div>
             <div class="grid_2">
                 <button class="btnTemplate1" ng-click="HapusJasgir()">Hapus</button>
+            </div>
+            <div class="grid_2">
+                <button class="btnTemplate1" ng-click="CopyPendapatan()">Copy Uraian Pendapatan</button>
             </div>
         </div>
 
@@ -133,5 +142,30 @@
                 </div>
             </div>
         </div>
+
+        <div class="grid_12" kendo-window="popupCopyUraian" k-title="'Copy Uraian Pendapatan'" k-visible="false" width="500" style="overflow-x: hidden;">
+            
+            <div class="grid_12">
+                    <div class="grid_6" style="text-align: left; margin-top: 10px;">
+                        <label c-label item="item" c-label-text="Tahun Yang Dicopy"></label>
+                        <input style="width: 100%" k-options="yearUngkul" k-ng-model="item.tahundari" kendo-date-picker
+                         placeholer="YYYY" k-format="'yyyy'" />
+                    </div>
+                    <div class="grid_6" style="margin-top: 10px;">
+                        <label c-label item="item" c-label-text="Dicopy Ke Tahun"></label>
+                        <input style="width: 100%" k-options="yearUngkul" k-ng-model="item.tahunke" kendo-date-picker
+                         placeholer="YYYY" k-format="'yyyy'" />
+                    </div>
+            </div>
+            
+            <div class="grid_12" style="margin-top: 10px;">
+                <div class="grid_8" ></div>
+                <div class="grid_4" >
+                        <button class="btnTemplate1" ng-click="SaveCopyPendapatan()">Simpan</button>
+                </div>
+            </div>
+        </div>
+
+
     </div>
 </div>

@@ -1617,6 +1617,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::post('perencanaan/save-sumber-pendapatan','Perencanaan\PerencanaanController@saveSumberPendapatan');
             Route::post('perencanaan/delete-sumber-pendapatan','Perencanaan\PerencanaanController@deleteSumberPendapatan');
             Route::post('perencanaan/save-uraian-pendapatan','Perencanaan\PerencanaanController@saveUraianPendapatan');
+            Route::post('perencanaan/save-uraian-pendapatan-copy','Perencanaan\PerencanaanController@saveUraianPendapatanCopy');
             Route::post('perencanaan/delete-uraian-pendapatan','Perencanaan\PerencanaanController@deleteUraianPendapatan');
             Route::post('perencanaan/save-bku','Perencanaan\PerencanaanController@saveBKU');
             Route::post('perencanaan/save-bku-detail','Perencanaan\PerencanaanController@saveBKUDetail');
@@ -2121,6 +2122,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
               Route::post('registrasi/laporan/save-mapping-rl', 'Registrasi\LaporanRekamMedisController@SaveMappingRl');
               Route::post('registrasi/laporan/save-mapping-rl-to-konten', 'Registrasi\LaporanRekamMedisController@SaveMappingRltoKonten');
               Route::post('registrasi/laporan/save-mapping-sts-to-ruangan', 'Registrasi\LaporanRekamMedisController@SaveMappingSTStoRuangan');
+              Route::post('registrasi/laporan/save-mapping-sts-to-ruangan-copy', 'Registrasi\LaporanRekamMedisController@SaveMappingSTStoRuanganCopy');
               Route::post('registrasi/laporan/save-master-konten', 'Registrasi\LaporanRekamMedisController@SaveMasterKonten');
               Route::post('registrasi/laporan/delete-master-konten', 'Registrasi\LaporanRekamMedisController@DeleteMasterKonten');
               Route::post('registrasi/laporan/delete-mapping-rl', 'Registrasi\LaporanRekamMedisController@deleteMapProdukToLaporanRL');
@@ -2324,6 +2326,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('reservasionline/get-bank-account','ReservasiOnline\ReservasiOnlineController@getNomorRekening');
           Route::post('reservasionline/save','ReservasiOnline\ReservasiOnlineController@saveReservasi');
           Route::post('reservasionline/delete','ReservasiOnline\ReservasiOnlineController@deleteReservasi');
+          Route::post('reservasionline/delete-slotting','ReservasiOnline\ReservasiOnlineController@deleteSlotting2');
           Route::get('reservasionline/cek-reservasi-satu','ReservasiOnline\ReservasiOnlineController@cekReservasiDipoliYangSama');
           Route::get('reservasionline/get-slotting-by-ruangan-new/{kode}/{tgl}','ReservasiOnline\ReservasiOnlineController@getSlottingByRuanganNew');
           Route::get('reservasionline/get-slot-available','ReservasiOnline\ReservasiOnlineController@getDaftarSlottingAktif');

@@ -9,17 +9,25 @@ define(['initialize'], function (initialize) {
             $scope.dataSelected = {};
             $scope.norec = ''
             $scope.hidedepar = true
+            $scope.item.tahuncari = moment($scope.now).format('YYYY');
 
             loadCombo()
             loadProduk()
+
+            $scope.yearUngkul = {
+                start: "decade",
+                depth: "decade"
+            }
 
             $scope.listJenisProduk = [
                 { id: 1, jenisproduk: "Obat" },
             ];
 
             function loadCombo() {
-
-                medifirstService.get("registrasi/laporan/get-combo-mapping-sts", true).then(function (dat) {
+                if ($scope.item.tahuncari != undefined) {
+                    var tahun = "tahun=" + moment($scope.item.tahuncari).format('YYYY')
+                }
+                medifirstService.get("registrasi/laporan/get-combo-mapping-sts?" +tahun, true).then(function (dat) {
                     $scope.listUraianPendapatan = dat.data.uraianpendapatan
                     $scope.listdataruangan = dat.data.ruanganall
                 });
@@ -55,8 +63,11 @@ define(['initialize'], function (initialize) {
                     if ($scope.item.uraianpendapatan != undefined) {
                         var idUraian = "idUraian=" + $scope.item.uraianpendapatan.id
                     }
+                    if ($scope.item.tahuncari != undefined) {
+                        var tahun = "&tahun=" + moment($scope.item.tahuncari).format('YYYY')
+                    }
                     medifirstService.get("registrasi/laporan/get-mapping-sts?"
-                        + idUraian, true).then(function (dat) {
+                        + idUraian +tahun, true).then(function (dat) {
                             for (var i = 0; i < dat.data.length; i++) {
                                 dat.data[i].no = i + 1
                             }
@@ -64,6 +75,38 @@ define(['initialize'], function (initialize) {
     
                         });
                 })
+            }
+
+            $scope.CopyMappingan = function () {
+                $scope.popupCopyUraian.center().open()
+            }
+
+            $scope.SaveCopyPendapatan = function () {
+                var objSave = {
+                    "tahundari": moment($scope.item.tahundari).format('YYYY'),
+                    "tahunke": moment($scope.item.tahunke).format('YYYY'),
+                }
+                console.log(objSave);
+                // return
+                medifirstService.post('registrasi/laporan/save-mapping-sts-to-ruangan-copy', objSave).then(function (e) {
+                    $scope.popupCopyUraian.center().close()
+                    if ($scope.item.uraianpendapatan != undefined) {
+                        var idUraian = "idUraian=" + $scope.item.uraianpendapatan.id
+                    }
+                    if ($scope.item.tahuncari != undefined) {
+                        var tahun = "&tahun=" + moment($scope.item.tahuncari).format('YYYY')
+                    }
+                    medifirstService.get("registrasi/laporan/get-mapping-sts?"
+                        + idUraian + tahun, true).then(function (dat) {
+                            for (var i = 0; i < dat.data.length; i++) {
+                                dat.data[i].no = i + 1
+    
+                            }
+                            $scope.dataGrid = dat.data;
+    
+                        });
+                })
+
             }
 
             $scope.Simpan = function () {
@@ -105,8 +148,11 @@ define(['initialize'], function (initialize) {
                     if ($scope.item.uraianpendapatan != undefined) {
                         var idUraian = "idUraian=" + $scope.item.uraianpendapatan.id
                     }
+                    if ($scope.item.tahuncari != undefined) {
+                        var tahun = "&tahun=" + moment($scope.item.tahuncari).format('YYYY')
+                    }
                     medifirstService.get("registrasi/laporan/get-mapping-sts?"
-                        + idUraian, true).then(function (dat) {
+                        + idUraian + tahun, true).then(function (dat) {
                             for (var i = 0; i < dat.data.length; i++) {
                                 dat.data[i].no = i + 1
     
@@ -118,13 +164,27 @@ define(['initialize'], function (initialize) {
 
             }
 
+            $scope.$watch('item.tahuncari', function (newValue, oldValue) {
+                if (newValue != oldValue) {
+                    if ($scope.item.tahuncari != undefined) {
+                        var tahun = "tahun=" + moment($scope.item.tahuncari).format('YYYY')
+                    }
+                    medifirstService.get("registrasi/laporan/get-combo-mapping-sts?"+tahun, true).then(function (dat) {
+                        $scope.listUraianPendapatan = dat.data.uraianpendapatan
+                    });
+                }
+            });
+
             $scope.$watch('item.uraianpendapatan', function (newValue, oldValue) {
                 if (newValue != oldValue) {
                     if ($scope.item.uraianpendapatan != undefined) {
                         var idUraian = "idUraian=" + $scope.item.uraianpendapatan.id
                     }
+                    if ($scope.item.tahuncari != undefined) {
+                        var tahun = "&tahun=" + moment($scope.item.tahuncari).format('YYYY')
+                    }
                     medifirstService.get("registrasi/laporan/get-mapping-sts?"
-                        + idUraian, true).then(function (dat) {
+                        + idUraian + tahun, true).then(function (dat) {
                             for (var i = 0; i < dat.data.length; i++) {
                                 dat.data[i].no = i + 1
     
@@ -150,6 +210,11 @@ define(['initialize'], function (initialize) {
                     "field": "no",
                     "title": "No",
                     "width": "20px",
+                },
+                {
+                    "field": "tahun",
+                    "title": "Tahun",
+                    "width": "100px",
                 },
                 {
                     "field": "uraianpendapatan",

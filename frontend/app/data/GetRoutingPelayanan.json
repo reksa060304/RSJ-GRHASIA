@@ -2886,6 +2886,29 @@
     ]
   },
   {
+    "name": "RekamMedis.Genogram",
+    "url": "/Genogram",
+    "templateurl": "module/EMR/Genogram.html",
+    "controller": "GenogramCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  },
+  {
     "name": "RekamMedis.TransaksiPelayananLaboratoriumDokterRev",
     "url": "/TransaksiPelayananLaboratoriumDokterRev",
     "templateurl": "module/EMR/TransaksiPelayananLaboratoriumDokterRev.html",
