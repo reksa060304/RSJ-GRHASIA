@@ -517,6 +517,10 @@
             "urlDep": "module/EMR/InputResepApotikOrderV2Ctrl"
         },
         {
+            "nameDep": "GenogramCtrl",
+            "urlDep": "module/EMR/GenogramCtrl"
+        },
+        {
             "nameDep": "TransaksiPelayananLaboratoriumDokterRevCtrl",
             "urlDep": "module/EMR/TransaksiPelayananLaboratoriumDokterRevCtrl"
         },

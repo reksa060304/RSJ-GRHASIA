@@ -69,13 +69,17 @@ class LaporanRekamMedisController extends   ApiController
             ->leftJoin('ruangan_m as ru','ru.id','=','mptlr.ruanganfk')
             ->leftJoin('departemen_m as dp','dp.id','=','mptlr.departemenfk')
             ->select('mptlr.norec','pro.id as idproduk','pro.namaproduk','up.id','up.uraianpendapatan', 
-            'ru.id as idruangan', 'ru.namaruangan', 'dp.id as iddepartemen', 'dp.namadepartemen')
+            'ru.id as idruangan', 'ru.namaruangan', 'dp.id as iddepartemen', 'dp.namadepartemen', 'up.tahun')
             ->where('mptlr.kdprofile', $idProfile)
             ->where('mptlr.statusenabled',true)
             ->orderBy('up.nourut','asc');
 
         if(isset($request['idUraian']) && $request['idUraian'] != "" && $request['idUraian'] != "undefined") {
             $data = $data->where('up.id','=', $request['idUraian']);
+        }
+
+        if(isset($request['tahun']) && $request['tahun'] != "" && $request['tahun'] != "undefined") {
+            $data = $data->where('up.tahun','=', $request['tahun']);
         }
 
         $data = $data->get();
@@ -179,6 +183,9 @@ class LaporanRekamMedisController extends   ApiController
         $idProfile = (int) $kdProfile;
         $dataLogin = $request->all();
         $tahun = date('Y');
+        if(isset($request['tahun']) && $request['tahun'] != ''){
+            $tahun = $request['tahun'];
+        }
         $kdJeniPegawaiDokter = (int) $this->settingDataFixed('KdJenisPegawaiDokter',$idProfile);
         $kdDeptRanapAll = explode(',',$this->settingDataFixed('KdDepartemenRIAll',$idProfile));
         $kdDepartemenRanapAll = [];
@@ -547,6 +554,69 @@ class LaporanRekamMedisController extends   ApiController
             );
         } else {
             $transMessage = "Simpan Mapping Gagal!!";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "map" => $newMap,
+                'line'=> $e->getLine(),
+                'message'=> $e->getMessage(),
+                "as" => 'as@vexana',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function SaveMappingSTStoRuanganCopy(Request $request) {
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $req = $request;
+        $tahundari = $request['tahundari'];
+        $tahunke = $request['tahunke'];
+        try {
+
+            $data = DB::select(DB::raw("select up.id, up.uraianpendapatan, up2.id as id2, up2.uraianpendapatan as uraianpendapatan2,
+            mm.*
+                from mapststoruangan_m mm
+            inner join uraianpendapatan_m up on up.id = mm.objecturaianpendapatanfk
+            inner join uraianpendapatan_m up2 on up2.uraianpendapatan = up.uraianpendapatan
+            where up.tahun = '$tahundari' 
+            and up.kdprofile = $idProfile 
+            and up.statusenabled = true
+            and mm.kdprofile = $idProfile 
+            and mm.statusenabled = true
+            and up2.tahun = '$tahunke' 
+            and up2.kdprofile = $idProfile 
+            and up2.statusenabled = true"));
+
+            foreach($data as $dt){
+                $newMap = new MapSTSToRuangan();
+                $norecMap = $newMap->generateNewId();
+                $newMap->norec = $norecMap;
+                $newMap->kdprofile = $idProfile;
+                $newMap->statusenabled = true;
+                $newMap->objecturaianpendapatanfk = $dt->id2;
+                $newMap->produkfk = $dt->produkfk;
+                $newMap->ruanganfk = $dt->ruanganfk;
+                $newMap->departemenfk = $dt->departemenfk;
+                $newMap->save();
+            }
+
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan Copy Mapping Berhasil";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMessage,
+                "map" => $newMap,
+                "as" => 'as@epic',
+            );
+        } else {
+            $transMessage = "Simpan Copy Mapping Gagal!!";
             DB::rollBack();
             $result = array(
                 "status" => 400,

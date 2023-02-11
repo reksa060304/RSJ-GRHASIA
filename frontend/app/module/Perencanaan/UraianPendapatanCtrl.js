@@ -10,6 +10,7 @@ define(['initialize'], function (initialize) {
             $scope.dataSelected = {};
             $scope.item.jmlRows = 50;
             $scope.norecjasgir = ''
+            $scope.item.tahuncari = moment($scope.now).format('YYYY');
             FormLoad();
 
             $scope.yearUngkul = {
@@ -23,8 +24,12 @@ define(['initialize'], function (initialize) {
 
             function init() {
                 $scope.isRouteLoading = true;
-                // var tgl = moment($scope.tanggal).format('DD/MM/YYYY');
-                medifirstService.get("anggaran/load-combo-rincian-pendapatan").then(function (e) {
+                var tahun = ''
+                if($scope.item.tahuncari != undefined){
+                    tahun = moment($scope.item.tahuncari).format('YYYY');
+                }
+                
+                medifirstService.get("anggaran/load-combo-rincian-pendapatan?tahun="+tahun).then(function (e) {
                         $scope.isRouteLoading = false;
 
                         var datas = e.data.uraianpendapatan
@@ -50,6 +55,12 @@ define(['initialize'], function (initialize) {
                     });
             }
 
+            $scope.$watch('item.tahuncari', function (newValue, oldValue) {
+                if (newValue != oldValue) {
+                    init()
+                }
+            })
+
 
             $scope.TambahJasgir = function(){
                 $scope.norecjasgir = ''
@@ -73,6 +84,24 @@ define(['initialize'], function (initialize) {
 
             function FormLoad() {
                 init()
+            }
+
+            $scope.CopyPendapatan = function () {
+                $scope.popupCopyUraian.center().open()
+            }
+
+            $scope.SaveCopyPendapatan = function () {
+                var objSave = {
+                    "tahundari": moment($scope.item.tahundari).format('YYYY'),
+                    "tahunke": moment($scope.item.tahunke).format('YYYY'),
+                }
+                console.log(objSave);
+                // return
+                medifirstService.post('perencanaan/save-uraian-pendapatan-copy', objSave).then(function (e) {
+                    $scope.popupCopyUraian.center().close()
+                    init();
+                })
+
             }
 
             $scope.SaveJasgir = function () {

@@ -13,6 +13,11 @@ define(['initialize'], function (initialize) {
             $scope.item.jmlRows = 50;
             FormLoad();
 
+            $scope.yearUngkul = {
+                start: "decade",
+                depth: "decade"
+            }
+
             $scope.showAndHide = function () {
                 $('#contentPencarian').fadeToggle("fast", "linear");
             }
