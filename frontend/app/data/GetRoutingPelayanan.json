@@ -17629,8 +17629,8 @@
   ]
 },
 {
-  "name": "RekamMedis.AsesmenMedis.AsesmenRisikoPerilakuKekerasan",
-  "url": "/AsesmenRisikoPerilakuKekerasan",
+  "name": "RekamMedis.AsesmenMedis.MenuIndex.AsesmenRisikoPerilakuKekerasan",
+  "url": "/AsesmenRisikoPerilakuKekerasan/:index/:idEMR",
   "templateurl": "module/EMR/AsesmenRisikoPerilakuKekerasan.html",
   "controller": "AsesmenRisikoPerilakuKekerasanCtrl",
   "deps": [{
@@ -17651,8 +17651,8 @@
 ]
 }, 
 {
-"name": "RekamMedis.AsesmenMedis.AsesmenRisikoBunuhDiriG",
-"url": "/AsesmenRisikoBunuhDiriG",
+"name": "RekamMedis.AsesmenMedis.MenuIndex.AsesmenRisikoBunuhDiriG",
+"url": "/AsesmenRisikoBunuhDiriG/:index/:idEMR",
 "templateurl": "module/EMR/AsesmenRisikoBunuhDiriG.html",
 "controller": "AsesmenRisikoBunuhDiriGCtrl",
 "deps": [{
@@ -18511,8 +18511,8 @@
     ]
   },
             {
-              "name": "RekamMedis.AsesmenMedis.AsesmenUlangNyeri",
-              "url": "/AsesmenUlangNyeri",
+              "name": "RekamMedis.AsesmenMedis.MenuIndex.AsesmenUlangNyeri",
+              "url": "/AsesmenUlangNyeri/:index/:idEMR",
               "templateurl": "module/EMR/AsesmenUlangNyeri.html",
               "controller": "AsesmenUlangNyeriCtrl",
               "deps": [{
