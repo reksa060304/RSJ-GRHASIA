@@ -8359,7 +8359,7 @@ public function loadComboRincian(Request $request)
         ->join('asalproduk_m as ap','ap.id','=','rp.objectasalprodukfk')
         ->join('uraianpendapatan_m as up','up.id','=','rp.objecturaianpendapatanfk')
         ->select('rp.norec','rp.isperubahan', 'rp.jumlahpendapatan','rp.tahun', 'rp.tglinput', 'rp.keterangan', 'rp.objectasalprodukfk', 'rp.objecturaianpendapatanfk','up.uraianpendapatan','ap.namaexternal', 'rp.uraianpendapatan as uraian')
-        ->where('rp.kdprofile', 30)->where('rp.statusenabled', true);
+        ->where('rp.kdprofile', 30)->where('rp.statusenabled', true)->get();
 
         if(isset($request['tahun']) && $request['tahun'] != ''){
             $uraianpendapatan = $uraianpendapatan->where('tahun', $request['tahun']);

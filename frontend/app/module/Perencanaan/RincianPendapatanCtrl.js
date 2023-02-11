@@ -191,6 +191,26 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.popupTambahRincianPendapatan.close()
                 $scope.itemRincian = {}
             }
+            $scope.$watch('item.tahun', function (newValue, oldValue) {
+                if (newValue != oldValue) {
+                    if ($scope.item.tahun != undefined) {
+                        var tahun = "tahun=" + moment($scope.item.tahun).format('YYYY')
+                    }
+                    medifirstService.get("registrasi/laporan/get-combo-mapping-sts?"+tahun, true).then(function (dat) {
+                        $scope.listUraianPendapatan = dat.data.uraianpendapatan
+                    });
+                }
+            });
+            $scope.$watch('itemRincian.tahun', function (newValue, oldValue) {
+                if (newValue != oldValue) {
+                    if ($scope.itemRincian.tahun != undefined) {
+                        var tahun = "tahun=" + moment($scope.itemRincian.tahun).format('YYYY')
+                    }
+                    medifirstService.get("registrasi/laporan/get-combo-mapping-sts?"+tahun, true).then(function (dat) {
+                        $scope.listUraianPendapatan = dat.data.uraianpendapatan
+                    });
+                }
+            });
             var timeoutPromise;
             $scope.$watch('item.sumberPendapatan', function (newVal, oldVal) {
                 if (!newVal) return;
