@@ -6623,6 +6623,8 @@ class PelayananResepController extends ApiController
                     ->on('ks.satuanstandar_tujuan', '=', 'pp.satuanviewfk');
             })
             ->leftJOIN('strukresep_t as sr','sr.norec','=','pp.strukresepfk')
+            ->leftJOIN('strukorder_t as so','so.norec','=','sr.orderfk')
+            ->leftJOIN('orderpelayanan_t as op','op.strukorderfk','=','so.norec')
             ->leftJOIN('ruangan_m as ru2','ru2.id','=','sr.ruanganfk') /* ruangan depo*/ 
             ->leftJOIN('pegawai_m as dok','dok.id','=','sr.penulisresepfk')
             ->leftJOIN('rm_sediaan_m AS rs','rs.id','=','pr.objectsediaanfk')
@@ -6633,7 +6635,7 @@ class PelayananResepController extends ApiController
                 'jkm.jeniskemasan','jk.id as jkid','pp.jenisobatfk','jra.jenisracikan','pp.jasa','ru2.id as namaruanganasalid','ru2.id as ruangandepoid','ru2.namaruangan as ruangandepo',
                 'pp.aturanpakai','ru.namaruangan','dok.id as dokterid','dok.namalengkap as dokter','pp.ispagi','pp.issiang','pp.ismalam','pp.issore','pp.iskronis','sr.isreseppulang as reseppulang',
                 DB::raw("pr.kekuatan as kekuatan,
-                               sn.satuanresep,pp.satuanresepfk,pp.tglkadaluarsa,pp.dosis,djp.detailjenisproduk,jp.jenisproduk,apd.norec norec_apd,pd.norec norec_pd,apd.objectkelasfk klid,pp.keteranganpakai"))
+                               sn.satuanresep,pp.satuanresepfk,pp.tglkadaluarsa,pp.dosis,djp.detailjenisproduk,jp.jenisproduk,apd.norec norec_apd,pd.norec norec_pd,apd.objectkelasfk klid,op.keteranganpakai"))
             ->where('pp.kdprofile', $idProfile)
             ->where('jp.id',97)
             ->where('sr.statusenabled', true)

@@ -1516,7 +1516,7 @@ define(['initialize'], function (initialize) {
                         },
                         {
                             field: "dosis",
-                            title: "Sediaan",
+                            title: "Dosis",
                             width: "100px"
                         },
                         {
@@ -1526,11 +1526,11 @@ define(['initialize'], function (initialize) {
                         },
                         {
                             field: "aturanpakai",
-                            title: "Dosis",
+                            title: "Signa",
                             width: "100px"
                         },
                         {
-                            field: "keteranganpakai",
+                            field: "keterangan",
                             title: "Keterangan",
                             width: "100px"
                         },
@@ -1707,7 +1707,8 @@ define(['initialize'], function (initialize) {
                         data2[i].tglregistrasi = $scope.item.tglregistrasi
 
                         data2[i].kelasfk = $scope.item.kelas.id
-
+                        data2[i].keterangan = data2[i].catatandokter
+                        data2[i].jumlahxmakan = null
                     }
 
                     $scope.dataGrid = new kendo.data.DataSource({

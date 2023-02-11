@@ -7892,7 +7892,7 @@ class BendaharaPenerimaanController extends ApiController {
         group by x.nourut, x.date, x.kdrekening, x.nomer, x.uraian
         order by date, nourut"));
 
-        $target = DB::select(DB::raw("select rp.norec,rp.isperubahan, rp.jumlahpendapatan,rp.tahun, rp.tglinput, rp.keterangan, rp.objectasalprodukfk, rp.objecturaianpendapatanfk,up.uraianpendapatan,ap.namaexternal, rp.uraianpendapatan as uraian
+        $target = DB::select(DB::raw("select up.kdrekening, rp.norec,rp.isperubahan, rp.jumlahpendapatan,rp.tahun, rp.tglinput, rp.keterangan, rp.objectasalprodukfk, rp.objecturaianpendapatanfk,up.uraianpendapatan,ap.namaexternal, rp.uraianpendapatan as uraian
         from rincianpendapatan_t as rp
         inner join asalproduk_m as ap on ap.id = rp.objectasalprodukfk
         inner join uraianpendapatan_m as up on up.id = rp.objecturaianpendapatanfk
@@ -7935,6 +7935,7 @@ class BendaharaPenerimaanController extends ApiController {
             $jumlahrealisasi = 0;
             $jumlahtarget = 0;
             $uraian = $main->uraianpendapatan;
+            $kdrekening = $main->kdrekening;
             foreach($detail as $row){
                 if($row->date == '01' && $main->uraianpendapatan == 'Klinik Gigi' && ($row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI')){
                     $jumlahjanuari += $row->totalfix;
@@ -7960,7 +7961,7 @@ class BendaharaPenerimaanController extends ApiController {
                 else if($row->date == '01' && $main->uraianpendapatan == 'ELEKTROMEDIK' && ($row->uraian == 'PERIKSA DOKTER FISIK DAN REHABILITASI (ELEKTROMEDIK)' || $row->uraian == 'ELEKTROMEDIK')){
                     $jumlahjanuari += $row->totalfix;
                 }
-                else if($row->date == '01' && $main->uraianpendapatan == 'PENDAPATAN USAHA BLUD' && ($row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA' || $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA (NAPZA)' || $row->uraian == 'PERIKSA DOKTER UMUM' || $row->uraian == 'PERIKSA DOKTER GIGI' || $row->uraian == 'PERIKSA DOKTER PENYAKIT DALAM' || $row->uraian == 'PERIKSA DOKTER ANAK' || $row->uraian == 'PERIKSA DOKTER SYARAF' || $row->uraian == 'PERIKSA DOKTER IGD' || $row->uraian == 'DIPAM/PENDAFTARAN' || $row->uraian == 'TINDAKAN MEDIK POLIKLINIK' || $row->uraian == 'TINDAKAN MEDIK IGD' || $row->uraian == 'TINDAKAN MEDIK PASIEN GIGI' || $row->uraian == 'OBAT-OBATAN' || $row->uraian == 'SURAT KETERANGAN (KIR)' || $row->uraian == 'PSIKOLOGI' || $row->uraian == 'PERAWATAN PASIEN' || $row->uraian == 'OBAT-OBATAN RANAP' || $row->uraian == 'TINDAKAN MEDIK RANAP' || $row->uraian == 'VISITE DOKTER' || $row->uraian == 'REHABILITASI MENTAL' || $row->uraian == 'PERAWATAN JENAZAH' || $row->uraian == 'KONSULTASI GIZI' || $row->uraian == 'PENUNJANG' || $row->uraian == 'PERIKSA DOKTER FISIK DAN REHABILITASI (ELEKTROMEDIK)' || $row->uraian == 'SEWA TEMPAT FOTOCOPY' || $row->uraian == 'SEWA AMBULAN/MOBIL JENAZAH' || $row->uraian == 'SEWA BUS' || $row->uraian == 'LEGALISIR' || $row->uraian == 'SEWA GEDUNG TERAPI' || $row->uraian == 'SEWA LAPANGAN SEPAK BOLA' || $row->uraian == 'SEWA GEDUNG DIKLAT' || $row->uraian == 'SEWA GEDUNG GRHASIA INN' || $row->uraian == 'SEWA TANAH PERTANIAN' || $row->uraian == 'SEWA KALANDRA' || $row->uraian == 'SEWA MANEKIN' || $row->uraian == 'HASIL KETRAMPILAN PASIEN' || $row->uraian == 'PARKIR' || $row->uraian == 'LAIN-LAIN' || $row->uraian == 'RAWAT INAP BPJS' || $row->uraian == 'RAWAT INAP IPWL' || $row->uraian == 'RAWAT INAP Jamkesda' || $row->uraian == 'RAWAT INAP Jamkesos' || $row->uraian == 'Klaim Covid' || $row->uraian == 'RAWAT JALAN BPJS' || $row->uraian == 'RAWAT JALAN IPWL' || $row->uraian == 'RAWAT JALAN Jamkesda' || $row->uraian == 'RAWAT JALAN Jamkesos' || $row->uraian == 'OBAT-OBATAN BPJS' || $row->uraian == 'OBAT-OBATAN Jamkesda' || $row->uraian == 'OBAT-OBATAN Jamkesos' || $row->uraian == 'OBAT-OBATAN IPWL')){
+                else if($row->date == '01' && $main->uraianpendapatan == 'Pendapatan Usaha BLUD' && ($row->uraian == 'JUMLAH' || $row->uraian == 'JUMLAH NETTO')){
                     $jumlahjanuari += $row->totalfix;
                 }
                 else if($row->date == '01' && $main->uraianpendapatan == 'Klinik Jiwa Umum' && $row->uraian == 'PERIKSA DOKTER SPESIALIS JIWA'){
@@ -8699,6 +8700,7 @@ class BendaharaPenerimaanController extends ApiController {
 
             $data[] =array(
                 'mainuraian' =>   $uraian,
+                'kdrekening' =>   $kdrekening,
                 'jumlahjanuari' =>   $jumlahjanuari,
                 'jumlahfebruari' =>   $jumlahfebruari,
                 'jumlahmaret' =>   $jumlahmaret,
