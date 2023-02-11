@@ -39,7 +39,7 @@ define(['kendo.menu'], function (kendoMenu) {
                             if ($scope.listNotif.length == 0) {
                                 $scope.listNotif.push(objectData)
                             } else {
-                                if (!$scope.listNotif.some(x => x.norec === objectData.norec)) {
+                                if (!$scope.listNotif.some(x => x.norec_trans === objectData.norec_trans)) {
                                     $scope.listNotif.push(objectData);
                                 }
                             }
@@ -100,7 +100,7 @@ define(['kendo.menu'], function (kendoMenu) {
         function loadNotif() {
             $scope.listNotif = []
             $scope.jmlNotif = 0
-            MenuService.postNonMessage('sysadmin/store-notif', { method: 'get' }).then(function (e) {
+            MenuService.postNonMessage('sysadmin/store-notif', { method: 'get', mapLogin: $scope.mapLogin  }).then(function (e) {
                 if (e.data.data.length > 0) {
                     for (let x = 0; x < e.data.data.length; x++) {
                         const element = e.data.data[x];
@@ -109,7 +109,7 @@ define(['kendo.menu'], function (kendoMenu) {
                                 const element2 = $scope.mapLogin[z];
                                 if (element2.id == element.ruangantujuanfk) {
                                     $scope.listNotif.push({
-                                        norec: element.norec,
+                                        norec_trans: element.norec_trans,
                                         judul: element.judul,
                                         jenis: element.jenis,
                                         pesanNotifikasi: element.keterangan,
@@ -448,9 +448,9 @@ define(['kendo.menu'], function (kendoMenu) {
                 }
 
             }
-            MenuService.postNonMessage('sysadmin/store-notif', { method: 'delete', norec: data.norec }).then(function (e) {
+            MenuService.postNonMessage('sysadmin/store-notif', { method: 'delete', norec_trans: data.norec_trans }).then(function (e) {
                 for (var i = $scope.listNotif.length - 1; i >= 0; i--) {
-                    if ($scope.listNotif[i].norec === data.norec) {
+                    if ($scope.listNotif[i].norec_trans === data.norec_trans) {
                         $scope.listNotif.splice(i, 1);
                     }
                 }

@@ -398,8 +398,10 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             // Route::group(['prefix' => 'farmasi'], function () {
                 Route::post('bridging/farmasi/save-consis-d','Bridging\BridgingFarmasiController@SimpanBridgingConsisD');
             // });
-
-            // Route::group(['prefix' => 'sisrute'], function () {
+                Route::post('farmasi/save-rekonsiliasi-obat', 'EMR\EMRController@saveRekonsiliasiObat');
+                Route::get('emr/get-rekonsiliasi-obat','EMR\EMRController@getRekonsiliasiObat');
+                Route::post('farmasi/delete-rekonsiliasi-obat', 'EMR\EMRController@deleteRekonsiliasiObat');
+                // Route::group(['prefix' => 'sisrute'], function () {
               Route::get('bridging/sisrute/referensi/faskes','Bridging\BridgingSisruteController@getFaskes');
               Route::get('bridging/sisrute/referensi/faskes-paging','Bridging\BridgingSisruteController@getFaskesPaging');
               Route::get('bridging/sisrute/referensi/alasanrujukan','Bridging\BridgingSisruteController@getAlasanRujukan');
