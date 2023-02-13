@@ -24,6 +24,11 @@ define(['initialize'], function (initialize) {
                 }
             }
 
+            $scope.listDepartemen = [
+                { id: 1, names: "Rawat Jalan" },
+                { id: 2, names: "Rawat Inap"}
+            ];
+
             function loadCombo() {
                 medifirstService.get("farmasi/get-datacombo_dp", true).then(function (dat) {
                     $scope.listRuanganDepo = dat.data.ruanganfarmasi;
@@ -42,6 +47,11 @@ define(['initialize'], function (initialize) {
                     var jeniskemasan = "&jeniskemasan=" + $scope.item.jenisKemasan.id
                 }
 
+                var departemen = ""
+                if ($scope.item.departemen != undefined) {
+                    var departemen = "&departemen=" + $scope.item.departemen.id
+                }
+
                 var farmasi = ""
                 if ($scope.item.ruanganDepo != undefined) {
                     var farmasi = "&IdFarmasi=" + $scope.item.ruanganDepo.id
@@ -52,7 +62,7 @@ define(['initialize'], function (initialize) {
                 
                 medifirstService.get("farmasi/get-laporan-penyerahan-obat?" +
                     "tglAwal=" + tglAwal +
-                    "&tglAkhir=" + tglAkhir + farmasi + jeniskemasan
+                    "&tglAkhir=" + tglAkhir + farmasi + jeniskemasan + departemen
                     , true).then(function (dat) {
                         $scope.isRouteLoading = false;
                         for (var i = 0; i < dat.data.daftar.length; i++) {

@@ -268,19 +268,51 @@
                         <td align="left" style="padding: 5px;">{{ $data[0]->targethasil }}</td>
                     </tr>
     </table>
+    @php
+        $jumlahtotaljasalayanan = 0;
+        $jumlahtotalapbd = 0;
+    @endphp
+    @foreach($sebelum as $sb)
+    @if($sb->kodemataanggaran == 'I')
+    @php
+    $jumlahtotaljasalayanan+=$sb->subtotaljasalayanan;
+    $jumlahtotalapbd+=$sb->subtotalapbd;
+    @endphp
+    @elseif($sb->kodemataanggaran == 'III')
+    @php
+    $jumlahtotaljasalayanan+=$sb->subtotaljasalayanan;
+    $jumlahtotalapbd+=$sb->subtotalapbd;
+    @endphp
+    @elseif($sb->kodemataanggaran == 'II')
+    @php
+    $jumlahtotaljasalayanan+=$sb->subtotaljasalayanan;
+    $jumlahtotalapbd+=$sb->subtotalapbd;
+    @endphp
+    @endif
+    @endforeach
     <table cellpadding="0" cellspacing="0"  border="0" class="tabel">
                 <tr>
                     <td align="center" rowspan="2" colspan="4" style="padding: 10px; font-weight: bold ">NO. REKENING</td>
                     <td align="center" rowspan="2" style="padding: 10px; font-weight: bold ">KOMPONEN BIAYA</td>
                     <td align="center" colspan="3" style="padding: 10px; font-weight: bold ">RINCIAN BIAYA</td>
+                    @if($jumlahtotaljasalayanan != 0 && $jumlahtotalapbd != 0)
                     <td align="center" colspan="2" style="padding: 10px; font-weight: bold ">JUMLAH ANGGARAN</td>
+                    @elseif($jumlahtotaljasalayanan != 0 || $jumlahtotalapbd != 0)
+                    <td align="center" style="padding: 10px; font-weight: bold ">JUMLAH ANGGARAN</td>
+                    @endif
                 </tr>
                 <tr>
                     <td align="center" style="padding: 10px; font-weight: bold ">Jumlah</td>
                     <td align="center" style="padding: 10px; font-weight: bold ">Satuan</td>
                     <td align="center" style="padding: 10px; font-weight: bold ">Harga Satuan</td>
+                    @if($jumlahtotaljasalayanan != 0 && $jumlahtotalapbd == 0)
+                    <td align="center" style="padding: 10px; font-weight: bold ">Jasa Layanan</td>
+                    @elseif($jumlahtotaljasalayanan == 0 && $jumlahtotalapbd != 0)
+                    <td align="center" style="padding: 10px; font-weight: bold ">APBD</td>
+                    @elseif($jumlahtotaljasalayanan != 0 && $jumlahtotalapbd != 0)
                     <td align="center" style="padding: 10px; font-weight: bold ">Jasa Layanan</td>
                     <td align="center" style="padding: 10px; font-weight: bold ">APBD</td>
+                    @endif
                 </tr>
                 @php
                     $jumlahtotaljasalayanan = 0;
@@ -400,18 +432,36 @@
                     <td align="right" style="padding: 10px; "></td>
                     @endif
                     @if($sb->kodemataanggaran == 'I' || $sb->kodemataanggaran == 'II' || $sb->kodemataanggaran == 'III')
-                    <td align="right" style="padding: 10px; font-weight: bold ">{{ number_format($sb->subtotaljasalayanan,0,',','.') }}</td>
-                    <td align="right" style="padding: 10px; font-weight: bold ">{{ number_format($sb->subtotalapbd,0,',','.') }}</td>
+                        @if($jumlahtotaljasalayanan != 0 && $jumlahtotalapbd == 0)
+                        <td align="right" style="padding: 10px; font-weight: bold ">{{ number_format($sb->subtotaljasalayanan,0,',','.') }}</td>
+                        @elseif($jumlahtotaljasalayanan == 0 && $jumlahtotalapbd != 0)
+                        <td align="right" style="padding: 10px; font-weight: bold ">{{ number_format($sb->subtotalapbd,0,',','.') }}</td>
+                        @elseif($jumlahtotaljasalayanan != 0 && $jumlahtotalapbd != 0)
+                        <td align="right" style="padding: 10px; font-weight: bold ">{{ number_format($sb->subtotaljasalayanan,0,',','.') }}</td>
+                        <td align="right" style="padding: 10px; font-weight: bold ">{{ number_format($sb->subtotalapbd,0,',','.') }}</td>
+                        @endif
                     @else
-                    <td align="right" style="padding: 10px;">{{ number_format($sb->subtotaljasalayanan,0,',','.') }}</td>
-                    <td align="right" style="padding: 10px;">{{ number_format($sb->subtotalapbd,0,',','.') }}</td>
+                        @if($jumlahtotaljasalayanan != 0 && $jumlahtotalapbd == 0)
+                        <td align="right" style="padding: 10px;">{{ number_format($sb->subtotaljasalayanan,0,',','.') }}</td>
+                        @elseif($jumlahtotaljasalayanan == 0 && $jumlahtotalapbd != 0)
+                        <td align="right" style="padding: 10px;">{{ number_format($sb->subtotalapbd,0,',','.') }}</td>
+                        @elseif($jumlahtotaljasalayanan != 0 && $jumlahtotalapbd != 0)
+                        <td align="right" style="padding: 10px;">{{ number_format($sb->subtotaljasalayanan,0,',','.') }}</td>
+                        <td align="right" style="padding: 10px;">{{ number_format($sb->subtotalapbd,0,',','.') }}</td>
+                        @endif
                     @endif
                 </tr>
                 @endforeach
                 <tr>
                     <td align="center" colspan="8"  style="padding: 10px; font-weight: bold ">JUMLAH TOTAL</td>
+                    @if($jumlahtotaljasalayanan != 0 && $jumlahtotalapbd == 0)
+                    <td align="right" style="padding: 10px; font-weight: bold ">{{ number_format($jumlahtotaljasalayanan,0,',','.') }}</td>
+                    @elseif($jumlahtotaljasalayanan == 0 && $jumlahtotalapbd != 0)
+                    <td align="right" style="padding: 10px; font-weight: bold ">{{ number_format($jumlahtotalapbd,0,',','.') }}</td>
+                    @elseif($jumlahtotaljasalayanan != 0 && $jumlahtotalapbd != 0)
                     <td align="right" style="padding: 10px; font-weight: bold ">{{ number_format($jumlahtotaljasalayanan,0,',','.') }}</td>
                     <td align="right" style="padding: 10px; font-weight: bold ">{{ number_format($jumlahtotalapbd,0,',','.') }}</td>
+                    @endif
                 </tr>
         </table>
         <table cellpadding="0" cellspacing="0" width="100%"  border="0">

@@ -1174,6 +1174,16 @@ class PelayananObatBebasController extends ApiController
 
         }
 
+        if(isset($request['departemen']) && $request['departemen']!="" && $request['departemen']!="undefined"){
+            if($request['departemen'] == 1){
+                $data = $data->where('ru2.objectdepartemenfk', '!=', 16);
+            }
+            else{
+                $data = $data->where('ru2.objectdepartemenfk', '=', 16);
+            }
+
+        }
+
         if(isset($request['IdFarmasi']) && $request['IdFarmasi']!="" && $request['IdFarmasi']!="undefined"){
             $data = $data->where('sr.ruanganfk', $request['IdFarmasi']);
         }

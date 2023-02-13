@@ -10179,7 +10179,7 @@ class ReportController extends ApiController{
         dp.indikatormasuk, dp.indikatorkeluaran, dp.indikatorhasil, dp.targetmasuk, dp.targetkeluaran, dp.targethasil"));     
 
         $sebelum = DB::select(DB::raw("
-        select 
+        select
         case 
             when kodemataanggaran = 'A' then 'I.A'
             when kodemataanggaran = 'B' then 'I.B'

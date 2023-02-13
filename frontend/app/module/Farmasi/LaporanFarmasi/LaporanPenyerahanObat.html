@@ -23,9 +23,20 @@
             <h1 style="color: white;"><b>Laporan Penyerahan Obat</b></h1>
         </div>
         <div class="grid_12">
-            <div class="grid_6">
-                <div class="grid_9"></div>
-                <div class="grid_3">
+            <div class="grid_2"></div>
+            <div class="grid_2">
+                <div class="grid_12">
+                    <div class="grid_12">
+                        <label c-label item="item" c-label-text="Departemen"></label>
+                    </div>
+                    <div class="clear"></div>
+                    <div class="grid_12">
+                        <input style="width: 100%;" kendo-combo-box k-ng-model="item.departemen" k-data-text-field="'names'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listDepartemen" />
+                    </div>
+                </div> 
+            </div>
+            <div class="grid_2">
+                <div class="grid_12">
                     <div class="grid_12">
                         <label c-label item="item" c-label-text="Jenis Kemasan"></label>
                     </div>
