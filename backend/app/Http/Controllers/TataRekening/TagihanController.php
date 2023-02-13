@@ -5490,9 +5490,9 @@ class TagihanController  extends ApiController
         totalbilling - sum(totalklaim) - sum(totalklaimobat) selisih, lamahari
         from(
                 select norecpd, namaruangan, nocm, jeniskelamin, tglbayar, tglsep, iscek, nosep, tglpulang, noregistrasi, namapasien, kelompokpasien, namarekanan,
-                sum(totalbilling) totalbilling, sum(totalbayar) totalbayar, sum(coalesce(totalklaim,0)) as totalklaim,
-                sum(coalesce(totalklaimobat,0)) as totalklaimobat,
-                sum(totalbilling) - sum(coalesce(totalklaim,0)) - sum(coalesce(totalklaimobat,0)) selisih, lamahari
+                sum(totalbilling) totalbilling, sum(totalbayar) totalbayar, coalesce(totalklaim,0) as totalklaim,
+                coalesce(totalklaimobat,0) as totalklaimobat,
+                sum(totalbilling) - coalesce(totalklaim,0) - coalesce(totalklaimobat,0) selisih, lamahari
                 from(
                         select pd.norec norecpd, ru.namaruangan, ps.nocm, jk.jeniskelamin, rkbpjs.tglbayar, mk.tglsep, false as iscek, pd.nostruklastfk, sp.norec, coalesce(mk.nosep,'-') nosep, pd.tglpulang, pd.noregistrasi, ps.namapasien, kp.kelompokpasien, rek.namarekanan,
                         coalesce(sp.totalprekanan,0) totalbilling, 0 as totalbayar, 
@@ -5529,7 +5529,7 @@ class TagihanController  extends ApiController
                         group by rkbpjs.isobat, dept.id, ru.namaruangan, rkbpjs.totalsetujui, ps.nocm, jk.jeniskelamin, mk.totalsetujui, pd.norec, rkbpjs.tglbayar, mk.tglsep, pd.nostruklastfk, sp.norec, coalesce(mk.nosep,'-'), pd.tglpulang, pd.noregistrasi, ps.namapasien, kp.kelompokpasien, rek.namarekanan,
                         sp.totalprekanan, coalesce(mk.totalsetujui,0)
                         order by pd.noregistrasi
-                ) as x group by norecpd, namaruangan, nocm, jeniskelamin, tglbayar, totalklaim, tglsep, iscek, nosep, tglpulang, noregistrasi, namapasien, kelompokpasien, namarekanan, lamahari
+                ) as x group by norecpd, namaruangan, nocm, jeniskelamin, tglbayar, totalklaim, tglsep, iscek, nosep, tglpulang, noregistrasi, namapasien, kelompokpasien, namarekanan, lamahari, totalklaimobat
                 order by noregistrasi
         ) as y group by norecpd, namaruangan, nocm, jeniskelamin, tglbayar, tglsep, iscek, nosep, tglpulang, noregistrasi, namapasien, kelompokpasien, namarekanan, lamahari, totalbilling, totalbayar
         order by noregistrasi;"));
