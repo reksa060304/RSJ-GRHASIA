@@ -3553,6 +3553,41 @@ AND sp.statusenabled <> false
         );
         return $data;
     }
+    public static function getPendapatanPerKelompokPasien($tglAwal,$tglAkhir,$kdProfile){
+
+        $idProfile = (int) $kdProfile;
+        $tglAwal =$tglAwal.' 00:00'; //Carbon::now()->startOfMonth()->subMonth(1);
+        $tglAkhir = $tglAkhir.' 23:59';
+        
+        $data = DB::select(DB::raw("select idkelompokpasien, kelompokpasien, sum(totalfix) totalfix
+        from(
+                select rkb.norec, coalesce(rkb.tglbayar, sbm.tglsbm) tanggal, kp.id idkelompokpasien, kp.kelompokpasien, sbm.norec norecsbm,
+                case 
+                    when sbm.norec is not null then sum((((CASE WHEN pp.hargajual IS NULL THEN	0 ELSE pp.hargajual END - CASE WHEN pp.hargadiscount IS NULL THEN
+                0 ELSE pp.hargadiscount END) * pp.jumlah) + CASE WHEN pp.jasa IS NULL THEN	0 ELSE	pp.jasa	END	)) 
+                    when sbm.norec is null and kp.id <> 1 and kp.id <> 12 then coalesce(rkb.totalsetujui, 0)
+                end AS totalfix
+                    from
+                pasiendaftar_t pd
+                left join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+                left join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
+                left join kelompokpasien_m kp on kp.id = pd.objectkelompokpasienlastfk
+                left JOIN strukpelayanan_t AS sp ON sp.norec = pp.strukfk  
+                left JOIN strukbuktipenerimaan_t AS sbm ON sbm.nostrukfk = sp.norec
+                and sbm.tglsbm between '$tglAwal' and '$tglAkhir'
+                left join rekapklaimbpjs_t rkb on rkb.norecpdfk = pd.norec
+                and rkb.tglbayar between '$tglAwal' and '$tglAkhir'
+                where pd.kdprofile = 30 and pd.statusenabled = true
+                group by rkb.norec, kp.id, kp.kelompokpasien, sbm.norec, rkb.tglbayar, sbm.tglsbm
+                order by kp.id
+        ) as x group by idkelompokpasien, kelompokpasien"));
+
+        $result = array(
+            'result' => $data,
+            'message' => 'ramdanegie',
+        );
+        return $data;
+    }
     public static function getPendapatanPotensial($tglAwal,$tglAkhir,$kdProfile){
 
         $idProfile = (int) $kdProfile;

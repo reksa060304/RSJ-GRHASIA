@@ -1145,6 +1145,7 @@ class PelayananObatBebasController extends ApiController
             ->LEFTJOIN('jeniskelamin_m as jk', 'jk.id', '=', 'pm.objectjeniskelaminfk')
             ->LEFTJOIN('alamat_m as alm', 'alm.nocmfk', '=', 'pm.id')
             ->LEFTJOIN( 'ruangan_m as ru', 'ru.id', '=', 'sr.ruanganfk')
+            ->LEFTJOIN( 'ruangan_m as ru2', 'ru2.id', '=', 'apd.objectruanganfk')
             ->where('sr.kdprofile', $kdProfile)
             ->WHEREBETWEEN('sr.tglresep', [$tglAwal, $tglAkhir])
             ->WHERENOTNULL('aa.noantri')
@@ -1160,6 +1161,7 @@ class PelayananObatBebasController extends ApiController
                 'so.namapengambilorder',
                 'so.tglambilorder',
                 'ru.namaruangan as namaruanganapotik',
+                'ru2.namaruangan',
                 'so.keterangankeperluan');
 
         if(isset($request['jeniskemasan']) && $request['jeniskemasan']!="" && $request['jeniskemasan']!="undefined"){

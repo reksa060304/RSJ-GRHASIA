@@ -151,6 +151,21 @@
                             </div>
                             <div class="col-lg-12 col-md-12">
                                 <div class="card">
+                                    <div class="panel panel-purple">
+                                        <div class="panel-heading bg-purple">
+                                            Jumlah Pendapatan Per Kelompok Pasien
+                                        </div>
+                                        <div class="panel-body">
+                                            @php
+                                                $res['pendapatanperkelompokpasien'] = App\Http\Controllers\MainController::getPendapatanPerKelompokPasien(request()->get("tglawal"),request()->get("tglakhir"),session('kdProfile'));
+                                            @endphp
+                                            <div id="chartPendapatanPerKelompokPasien"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-12 col-md-12">
+                                <div class="card">
                                     <div class="panel panel-warning">
                                         <div class="panel-heading  bg-green">
                                             Rincian Jumlah Obat Per DPJP
@@ -454,6 +469,7 @@
         setChartTren()
         setChartPendapatanAkrual()
         setChartPendapatanPotensial()
+        setChartPendapatanPerKelompokPasien()
         function setChartPendapatan() {
             this.dataChartPendapatan =  @json($res['pendapatan']);
             let array = this.dataChartPendapatan.data
@@ -975,6 +991,91 @@
 
             }
             Highcharts.chart('chartPendapatanPotensial', {
+                chart: {
+                    type: 'column',
+                },
+
+                title: {
+                    text: ''
+                },
+                xAxis: {
+                    categories: ["Total : Rp. " + formatRupiah(jumlah,'')],
+                    labels: {
+                        align: 'center',
+                        style: {
+                            fontSize: '13px',
+                            fontFamily: 'Verdana, sans-serif',
+                            fontWeight: 'bold'
+                        }
+                    }
+                },
+                yAxis: {
+                    title: {
+                        text: 'Jumlah Pendapatan'
+                    }
+                },
+                plotOptions: {
+                    column: {
+                        // url:"#",
+                        cursor: 'pointer',
+
+                        dataLabels: {
+                            enabled: true,
+                            color: this.colors[1],
+
+                            formatter: function () {
+                                return 'Rp. ' + formatRupiah(this.y, '');
+                            }
+                        },
+                        showInLegend: true
+                    }
+                },
+                tooltip: {
+                    formatter: function (e) {
+                        let point = this.point,
+                            s = this.series.name + ': Rp. ' + formatRupiah(this.y, '') + ' <br/>';
+                        return s;
+
+                    }
+
+                },
+                series: series,
+                exporting: {
+                    enabled: false
+                },
+                credits: {
+                    enabled: false
+                },
+                legend: {
+                    enabled: true,
+                    borderRadius: 5,
+                    borderWidth: 1
+                },
+
+            })
+        }
+        function setChartPendapatanPerKelompokPasien(){
+            this.datapendapatanperkelompokpasien  =@json($res['pendapatanperkelompokpasien']);
+            let categories = []
+            let series = [];
+            let jumlah = 0;
+            for (let i in this.datapendapatanperkelompokpasien) {
+                categories.push(this.datapendapatanperkelompokpasien[i].kelompokpasien);
+                let dataz2 = [];
+                dataz2.push({
+                    y: parseFloat(this.datapendapatanperkelompokpasien[i].totalfix),
+                    color: this.colors[i]
+                });
+                jumlah = jumlah + parseFloat(this.datapendapatanperkelompokpasien[i].totalfix);
+                // if (loopIndex > 0)
+                series.push({
+                    name: this.datapendapatanperkelompokpasien[i].kelompokpasien,
+                    data: dataz2
+                });
+                // loopIndex++;
+
+            }
+            Highcharts.chart('chartPendapatanPerKelompokPasien', {
                 chart: {
                     type: 'column',
                 },

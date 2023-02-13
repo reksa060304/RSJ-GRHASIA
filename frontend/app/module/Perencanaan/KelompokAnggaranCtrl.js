@@ -5288,7 +5288,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 }
                 medifirstService.get("perencanaan/get-keterangan-belanja?objectkegiatanfk=" + $scope.item.id+"&idmataanggaran="+$scope.rcn.idmataanggaran).then(function (e) {
                     DataKeteranganBelanja = e.data.data
-                    $scope.item.noUrutKT = DataKeteranganBelanja.length + 1
+                    $scope.item.noUrutKT = DataKeteranganBelanja[DataKeteranganBelanja.length-1].nourut + 1
                 })
                 
                 $scope.item.keteranganKT = ''

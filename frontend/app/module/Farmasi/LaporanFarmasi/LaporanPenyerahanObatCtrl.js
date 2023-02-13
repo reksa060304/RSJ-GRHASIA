@@ -155,6 +155,11 @@ define(['initialize'], function (initialize) {
                         "width": "150px",
                     },
                     {
+                        "field": "namaruangan",
+                        "title": "Ruangan",
+                        "width": "150px",
+                    },
+                    {
                         "field": "namaruanganapotik",
                         "title": "Apotik",
                         "width": "50px",
