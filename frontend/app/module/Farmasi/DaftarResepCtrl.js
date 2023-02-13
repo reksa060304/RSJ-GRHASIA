@@ -1,4 +1,4 @@
-define(['initialize'], function (initialize) {
+define(['initialize','Configuration'], function (initialize, config) {
     'use strict';
     initialize.controller('DaftarResepCtrl', ['SaveToWindow', '$rootScope', '$scope', 'ModelItem', '$state', 'CacheHelper', 'DateHelper', '$mdDialog', 'CetakHelper', 'MedifirstService', '$q',
         function (saveToWindow, $rootScope, $scope, ModelItem, $state, cacheHelper, dateHelper, $mdDialog, cetakHelper, medifirstService, $q) {
@@ -869,7 +869,21 @@ define(['initialize'], function (initialize) {
                 }
 
             }
-
+            $scope.HargaResep = function(){
+                var local = JSON.parse(localStorage.getItem('profile'));
+                var profile = local.id;
+                var stt = 1
+                // var cetakkin = data
+                // console.log(data);
+                if ($scope.dataSelected == undefined) {
+                    toastr.error("Pilih data yang ingin dicetak !!")
+                    return
+                }
+                window.open(config.baseApiBackend + "report/cetak-resep-dokter-harga?noorder=" + $scope.dataSelected.noresep + "&norec=" + $scope.dataSelected.norec +
+                    "&nocm=" + $scope.dataSelected.nocm + '&kodeprofile=' + profile);
+                // // window.open(config.baseApiBackend + "report/cetak-hasil-lab-histopatologi?norec=" + $scope.dataSelected.norec_pp + '&kdprofile=' + profile
+                //     + '&user=' + user + '&jenis=his', '_blank');
+            }
             //***********************************
 
         }
