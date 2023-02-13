@@ -1,0 +1,161 @@
+
+<style>
+    .k-icon-32 {
+        font-size: 32px;
+        /* Sets icon size to 32px */
+    }
+
+    .k-icon-48 {
+        font-size: 48px;
+        /* Sets icon size to 48px */
+    }
+
+    .k-icon-64 {
+        font-size: 200px;
+        /* Sets icon size to 64px */
+    }
+
+    .card {
+        width: 300px;
+        height: 200px;
+    }
+
+    .card .k-card {
+        border-radius: 4px;
+    }
+
+    .card .k-card-header {
+        font-size: 50px;
+        font-weight: bold;
+        padding: 15px;
+    }
+
+
+    .card .k-card-body p {
+        font-size: 50px;
+        text-align: center;
+        font-weight: bold;
+    }
+
+    .k-grid .k-grid-header .k-header .k-link {
+        height: auto;
+    }
+
+    .k-grid .k-grid-header .k-header {
+        white-space: normal;
+    }
+
+    .k-grid .k-grid-header .k-header {
+        text-align: center;
+    }
+
+    .k-window-content .k-content {
+        overflow: none
+    }
+
+    legend {
+        cursor: pointer;
+        padding: 10px;
+    }
+
+    .effect-shadow {
+        -webkit-box-shadow: 2px 2px 5px #b6b6b6;
+        -moz-box-shadow: 2px 2px 5px #b6b6b6;
+        box-shadow: 2px 2px 5px #b6b6b6;
+    }
+
+    .warnaa {
+        color: black
+    }
+
+    hr {
+        border: 1px solid black;
+        margin-top: 0px;
+        margin-bottom: 0px;
+        display: inline-block;
+        width: 100%;
+    }
+
+    h1 {
+        color: black;
+        display: block;
+        font-size: 14px;
+        margin-block-start: 0px;
+        margin-block-end: 0;
+        margin-inline-start: 0px;
+        margin-inline-end: 0px;
+        font-weight: bold;
+    }
+
+    h2 {
+        color: black;
+        display: block;
+        font-size: 14px;
+        margin-block-start: 0px;
+        margin-block-end: 0;
+        margin-inline-start: 0px;
+        margin-inline-end: 0px;
+        font-weight: bold;
+    }
+</style>
+<div class="grid_12">
+    <div class="panel panel-default container_12">
+        <div class="panel-heading">Laporan Rekap Cara Daftar Pasien</div>
+        <div class="panel-body">
+            <div class="panel panel-default panel-white">
+                <div class="grid_12">
+                    <!-- <div class="grid_5"></div> -->
+                    <div class="grid_12">
+                        <fieldset class="effect-shadow" style=" border-radius: 4px">
+                            <legend id="filterData">
+                                <a ng-click="showAndHide()">
+                                    <h2><span class="fa fa-plus warnaa">
+                                        </span> &nbsp;Pencarian</h2>
+                                </a>
+                            </legend>
+                            <div class="grid_12" id="contentPencarian">
+                                <div class="grid_11">
+                                    <div class="grid_3">
+                                        <label c-label item="item" c-label-text="Tanggal awal"></label>
+                                        <input style="width: 100%" k-ng-model="item.tglawal" kendo-datetimepicker
+                                            placeholer="yyyy-mm-dd" k-format="'yyyy-MM-dd'" />
+                                    </div>
+                                    <div class="grid_3">
+                                        <label c-label item="item" c-label-text="Tanggal Akhir"></label>
+                                        <input style="width: 100%" k-ng-model="item.tglakhir" kendo-datetimepicker
+                                            placeholer="yyyy-mm-dd" k-format="'yyyy-MM-dd'" />
+                                    </div>
+                                    <label c-label c-label-text=""></label>
+                                    <em style="margin-top:10px;" ng-click='SearchData()' id="iconButton"
+                                        data-role="button" class="k-button k-button-icon k-primary" role="button"
+                                        aria-disabled="false" tabindex="0"><span
+                                            class="k-sprite k-icon k-i-search">Refresh</span></em>
+                                    <em style="margin-top:10px;" ng-click='ClearData()' id="iconButton"
+                                        data-role="button" class="k-button k-button-icon k-primary" role="button"
+                                        aria-disabled="false" tabindex="0"><span
+                                            class="k-sprite k-icon k-i-cancel">Reset</span></em>
+                                </div>
+                                <div class="grid_1" style="margin-top: 10px;">
+
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+                <div class="grid_12">
+                    <div class="grid_12" style="margin-top: 10px;">
+                        <kendo-grid k-data-source="dataTindakan" k-selectable="'row'" k-options="columnTindakan"
+                            k-ng-model="dataPasienSelected" ng-click="click(dataPasienSelected)">
+                        </kendo-grid>
+                    </div>
+                </div>
+
+
+
+                <div class="grid_12" style="margin-top:60px">
+                    <div ng-include='"../app/template/Shared/TemplateLoading"'></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -2094,6 +2094,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::post('registrasi/orderlabel/save-update-order-label', 'Registrasi\OrderLabelController@simpanUpdatePenerimaLabel');
             // });
             // Route::group(['prefix' => 'laporan'], function () {
+              Route::get('laporan/get-data-cara-daftar','Registrasi\LaporanRegistrasiController@getDataCaraDaftar');
               Route::get('laporan/get-data-jumlah-pasien','Registrasi\LaporanRegistrasiController@LaporanJumlahPasien');
               Route::get('registrasi/laporan/get-data-combo-laporan','Registrasi\LaporanRegistrasiController@getDataCombo');
               Route::get('registrasi/laporan/get-laporan-pasien-daftar','Registrasi\LaporanRegistrasiController@getDataLaporanPasienDaftar');

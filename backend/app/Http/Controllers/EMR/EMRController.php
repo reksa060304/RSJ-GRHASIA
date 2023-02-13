@@ -10941,4 +10941,208 @@ class EMRController  extends ApiController
 
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
+    public function saveRekonsiliasiObat(Request $request){
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $data = $request['dataalergi'];
+        $data1 = $request['datapo'];
+        $data2 = $request['dataro'];
+        DB::beginTransaction();
+        try {
+            foreach($data as $data){
+                if($data['norec'] == ''){
+                    $reaksialergi = \DB::table('reaksialergi_t')->insert([
+                        'norec'=>substr(Uuid::generate(), 0, 32),
+                        'kdprofile'=> $kdProfile,
+                        'statusenabled'=> true,
+                        'tglinput'=> date('Y-m-d H:i:s'),
+                        'noregistrasi'=> $request['noregistrasi'],
+                        'objectprodukfk'=> $data['objectprodukfk'],
+                        'noemr'=> $request['noemr'],
+                        'reaksialergi'=> $data['reaksialergi'],
+                    ]);
+                }else{
+                    $reaksialergi = \DB::table('reaksialergi_t')->where('norec', $data['norec'])->update([
+                        'noregistrasi'=> $request['noregistrasi'],
+                        'objectprodukfk'=> $data['objectprodukfk'],
+                        'noemr'=> $request['noemr'],
+                        'reaksialergi'=> $data['reaksialergi'],
+                    ]);
+                }
+            }
+            
+            foreach($data1 as $data1){
+                if($data1['norec'] == ''){
+                    $penggunaanobat = \DB::table('riwayatpenggunaanobat_t')->insert([
+                        'norec'=>substr(Uuid::generate(), 0, 32),
+                        'kdprofile'=> $kdProfile,
+                        'statusenabled'=> true,
+                        'tglinput'=> date('Y-m-d H:i:s'),
+                        'noregistrasi'=> $request['noregistrasi'],
+                        'noemr'=> $request['noemr'],
+                        'objectprodukfk'=> $data1['objectprodukfk'],
+                        'isresep'=> $data1['resep'] == "✓" ? true : null,
+                        'tanggalmulai'=> $data1['mulai'],
+                        'tanggalstop'=> $data1['stop'],
+                        'dosis'=> $data1['dosispo'],
+                        'rute'=> $data1['rutepo'],
+                        'frekuensi'=> $data1['frekuensipo'],
+                        'indikasi'=> $data1['indikasipo'],
+                        'statusobat'=> $data1['statusobat'],
+                        'perubahanaturan'=> $data1['aturanpakai'],
+                    ]);
+                }else{
+                    $penggunaanobat = \DB::table('riwayatpenggunaanobat_t')->where('norec', $data['norec'])->update([
+                        'noregistrasi'=> $request['noregistrasi'],
+                        'noemr'=> $request['noemr'],
+                        'objectprodukfk'=> $data1['objectprodukfk'],
+                        'isresep'=> $data1['resep'] == "✓" ? true : null,
+                        'tanggalmulai'=> $data1['tanggalmulai'],
+                        'tanggalstop'=> $data1['tanggalstop'],
+                        'dosis'=> $data1['dosis'],
+                        'rute'=> $data1['rute'],
+                        'frekuensi'=> $data1['frekuensi'],
+                        'indikasi'=> $data1['indikasi'],
+                        'statusobat'=> $data1['statusobat'],
+                        'perubahanaturan'=> $data1['perubahanaturan'],
+                    ]);
+                }
+            }
+            foreach($data2 as $data2){
+                if($data2['norec'] == ''){
+                    $rekonsiliasiobat = \DB::table('riwayatrekonsiliasiobat_t')->insert([
+                        'norec'=>substr(Uuid::generate(), 0, 32),
+                        'kdprofile'=> $kdProfile,
+                        'statusenabled'=> true,
+                        'tglinput'=> date('Y-m-d H:i:s'),
+                        'noregistrasi'=> $request['noregistrasi'],
+                        'noemr'=> $request['noemr'],
+                        'tanggal'=> $data2['tanggal'],
+                        'objectruanganfk'=> $data2['objectruanganfk'],
+                        'objectprodukfk'=> $data2['objectprodukfk'],
+                        'dosis'=> $data2['dosis'],
+                        'frekuensi'=> $data2['frekuensi'],
+                        'waktupemberian'=> $data2['waktupemberian'],
+                        'carapemberian'=> $data2['carapemberian'],
+                        'islanjutaturansama'=> $data2['islanjutaturansama']== "✓" ? true : null,
+                        'lanjutaturanperubahan'=> $data2['lanjutaturanperubahan'],
+                        'isstop'=> $data2['isstop'] == "✓" ? true : null,
+                        'objectpegawaifk'=> $data2['objectpegawaifk'],
+                    ]);
+                }else{
+                    $rekonsiliasiobat = \DB::table('riwayatrekonsiliasiobat_t')->where('norec', $data['norec'])->update([
+                        'noregistrasi'=> $request['noregistrasi'],
+                        'noemr'=> $request['noemr'],
+                        'objectprodukfk'=> $data1['objectprodukfk'],
+                        'tanggal'=> $data2['tanggal'],
+                        'objectruanganfk'=> $data2['objectruanganfk'],
+                        'objectprodukfk'=> $data2['objectprodukfk'],
+                        'dosis'=> $data2['dosis'],
+                        'frekuensi'=> $data2['frekuensi'],
+                        'waktupemberian'=> $data2['waktupemberian'],
+                        'carapemberian'=> $data2['carapemberian'],
+                        'islanjutaturansama'=> $data2['islanjutaturansama'],
+                        'lanjutaturanperubahan'=> $data2['lanjutaturanperubahan'],
+                        'isstop'=> $data2['isstop'],
+                        'objectpegawaifk'=> $data2['objectpegawaifk'],
+                    ]);
+                }
+            }
+            $transStatus=true;
+        } catch (\Throwable $th) {
+            $transStatus=false;
+        }
+        $transMessage = 'Simpan Rekonsiliasi Obat ';
+        if ($transStatus == 'true') {
+
+            $transMessage = $transMessage . "Sukses";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "as" => 'as@epic',
+            );
+
+        } else {
+            $transMessage = $transMessage . " Gagal!!";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "e" => $th->getMessage().' '.$th->getLine(),
+                "as" => 'as@epic',
+            );
+        }
+
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    public function getRekonsiliasiObat(Request $request){
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $reaksialergi = \DB::table('reaksialergi_t as ra')
+        ->join('produk_m as pr','pr.id','=','ra.objectprodukfk')->select(DB::raw("pr.namaproduk, ra.norec, ra.reaksialergi,ra.objectprodukfk"))
+        ->where('ra.kdprofile', $kdProfile)->where('ra.statusenabled', true)
+        ->where('ra.noemr', $request['noemr'])->where('ra.noregistrasi', $request['noregistrasi'])->get();
+        
+        $penggunaanobat = \DB::table('riwayatpenggunaanobat_t as ra')
+        ->join('produk_m as pr','pr.id','=','ra.objectprodukfk')->select(DB::raw("pr.namaproduk, ra.*"))
+        ->where('ra.kdprofile', $kdProfile)->where('ra.statusenabled', true)
+        ->where('ra.noemr', $request['noemr'])->where('ra.noregistrasi', $request['noregistrasi'])->get();
+        
+        $rekonsiliasiobat = \DB::table('riwayatrekonsiliasiobat_t as ra')
+        ->join('produk_m as pr','pr.id','=','ra.objectprodukfk')
+        ->join('pegawai_m as pg','pg.id','=','ra.objectpegawaifk')
+        ->join('ruangan_m as ru','ru.id','=','ra.objectruanganfk')
+        ->select(DB::raw("pr.namaproduk,ru.namaruangan,pg.namalengkap, ra.*"))
+        ->where('ra.kdprofile', $kdProfile)->where('ra.statusenabled', true)
+        ->where('ra.noemr', $request['noemr'])->where('ra.noregistrasi', $request['noregistrasi'])->get();
+        
+        $result = array(
+            'reaksialergi' => $reaksialergi,
+            'penggunaanobat' => $penggunaanobat,
+            'rekonsiliasiobat' => $rekonsiliasiobat,
+            'message' => 'as@epic',
+        );
+        return $this->respond($result);
+    }
+    public function deleteRekonsiliasiObat(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $data = $request['dataalergi'];
+        $data1 = $request['datapo'];
+        $data2 = $request['dataro'];
+        DB::beginTransaction();
+        try {
+            if($request['case'] == 'Alergi'){
+                $delete = \DB::table('reaksialergi_t')->where('norec', $request['norec'])->delete();
+            }
+            if($request['case'] == 'PO'){
+                $delete = \DB::table('riwayatpenggunaanobat_t')->where('norec', $request['norec'])->delete();
+            }
+            if($request['case'] == 'RO'){
+                $delete = \DB::table('riwayatrekonsiliasiobat_t')->where('norec', $request['norec'])->delete();
+            }
+            $transStatus=true;
+        } catch (\Throwable $th) {
+            $transStatus=false;
+        }
+        $transMessage = 'Delete Rekonsiliasi Obat ';
+        if ($transStatus == 'true') {
+
+            $transMessage = $transMessage . "Sukses";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "as" => 'as@epic',
+            );
+
+        } else {
+            $transMessage = $transMessage . " Gagal!!";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "e" => $th->getMessage().' '.$th->getLine(),
+                "as" => 'as@epic',
+            );
+        }
+
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+        
+    }
 }

@@ -31,6 +31,10 @@
         {
             "nameDep": "DashboardPerbaikanITCtrl",
             "urlDep": "module/SysAdmin/LaporanSysadmin/DashboardPerbaikanITCtrl"
+        },
+        {
+            "nameDep": "CaraDaftarPasienCtrl",
+            "urlDep": "module/SysAdmin/LaporanSysadmin/CaraDaftarPasienCtrl"
         }
 
     ]
