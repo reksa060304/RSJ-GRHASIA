@@ -3878,4 +3878,54 @@ select '-' as smf,* from  (
 
         return $this->respond($result);
     }
+    public function getDataCaraDaftar(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $tglAwal = $request['tglAwal'];
+        $tglAkhir = $request['tglAkhir'];
+        $data = \DB::select(DB::raw("
+        select 'JKN Mobile' as uraian, count(pd.noregistrasi) as jumlah
+        from
+            pasien_m ps 
+        inner join pasiendaftar_t pd on ps.id=pd.nocmfk
+        left join antrianpasienregistrasi_t as apr on pd.statusschedule = apr.noreservasi
+        where pd.statusenabled = true
+        and pd.kdprofile = $idProfile
+        and pd.tglregistrasi::date BETWEEN '$tglAwal'AND '$tglAkhir'
+        and pd.ismobilejkn = true
+        and apr.norec is not null
+        
+        union all
+        
+        select 'E-Reservasi' as uraian, count(pd.noregistrasi) as jumlah
+        from
+            pasien_m ps 
+        inner join pasiendaftar_t pd on ps.id=pd.nocmfk
+        left join antrianpasienregistrasi_t as apr on pd.statusschedule = apr.noreservasi
+        where pd.statusenabled = true
+        and pd.kdprofile = $idProfile
+        and pd.tglregistrasi::date BETWEEN '$tglAwal'AND '$tglAkhir'
+        and (pd.ismobilejkn is null or pd.ismobilejkn = false)
+        and apr.norec is not null
+        
+        union all
+        
+        select 'Pendaftaran Langsung' as uraian, count(pd.noregistrasi) as jumlah
+        from
+            pasien_m ps 
+        inner join pasiendaftar_t pd on ps.id=pd.nocmfk
+        left join antrianpasienregistrasi_t as apr on pd.statusschedule = apr.noreservasi
+        where pd.statusenabled = true
+        and pd.kdprofile = $idProfile
+        and pd.tglregistrasi::date BETWEEN '$tglAwal'AND '$tglAkhir'
+        and (pd.ismobilejkn is null or pd.ismobilejkn = false)
+        and apr.norec is null
+        "));
+        $result = array(
+            "data"=> $data,
+            
+        );
+
+        return $this->respond($result);
+    }
 }
