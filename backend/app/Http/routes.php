@@ -1266,6 +1266,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('report/cetak-hasil-lab-histopatologi','Report\ReportController@cetakHispatologi');
           Route::get('report/cetak-resep-dokter','Report\ReportController@cetakResepDokter');
           Route::get('report/cetak-resep-dokter-rev','Report\ReportController@cetakResepDokterRev');
+          Route::get('report/cetak-resep-dokter-harga','Report\ReportController@cetakResepDokterHarga');
           Route::get('report/get-cetak-suratketerangandokter','Report\ReportController@CetakSKDokter');
           Route::get('report/get-cetak-per-jenis-anggaran','Report\ReportController@CetakPerJenisAnggaran');
           Route::get('report/get-cetak-per-jenis-anggaran-sebelum-sesudah','Report\ReportController@CetakPerJenisAnggaranSebelumSesudah');
@@ -2094,6 +2095,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::post('registrasi/orderlabel/save-update-order-label', 'Registrasi\OrderLabelController@simpanUpdatePenerimaLabel');
             // });
             // Route::group(['prefix' => 'laporan'], function () {
+              Route::get('laporan/get-data-cara-daftar','Registrasi\LaporanRegistrasiController@getDataCaraDaftar');
               Route::get('laporan/get-data-jumlah-pasien','Registrasi\LaporanRegistrasiController@LaporanJumlahPasien');
               Route::get('registrasi/laporan/get-data-combo-laporan','Registrasi\LaporanRegistrasiController@getDataCombo');
               Route::get('registrasi/laporan/get-laporan-pasien-daftar','Registrasi\LaporanRegistrasiController@getDataLaporanPasienDaftar');

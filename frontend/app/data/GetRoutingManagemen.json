@@ -151,5 +151,24 @@
           "define": "MedifirstService"
         }
       ]
+    },
+    {
+      "name": "CaraDaftarPasien",
+      "url": "/CaraDaftarPasien",
+      "templateurl": "module/SysAdmin/LaporanSysadmin/CaraDaftarPasien.html",
+      "controller": "CaraDaftarPasienCtrl",
+      "deps": [{
+          "module": "Services",
+          "define": "Service"
+        },
+        {
+          "module": "LoginServices",
+          "define": "LoginService"
+        },
+        {
+          "module": "MedifirstService",
+          "define": "MedifirstService"
+        }
+      ]
     }
   ]
