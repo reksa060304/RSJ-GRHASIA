@@ -844,7 +844,7 @@ class ResepElektronikController extends ApiController
         if(isset($request['noregistrasi']) && $request['noregistrasi']!="" && $request['noregistrasi']!="undefined"){
             $data = $data->where('pd.noregistrasi',$request['noregistrasi']);
         }
-        if(isset($request['norec_apd']) && $request['norec_apd']!="" && $request['norec_apd']!="undefined"){
+        if(isset($request['norec_apd']) && $request['norec_apd']!="" && $request['norec_apd']!="undefined" && $request['norec_apd']!= "null"){
             $data = $data->where('apd.norec',$request['norec_apd']);
         }
         $data = $data->where('pd.statusenabled',true);
