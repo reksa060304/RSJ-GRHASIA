@@ -19,6 +19,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             // $scope.item.tglAkhir = $scope.now;
             LoadCache();
             function LoadCache() {
+                
                 var chacePeriode = cacheHelper.get('TransaksiPelayananApotikCtrl');
                 console.log(chacePeriode)
                 if (chacePeriode != undefined) {
@@ -62,7 +63,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         }
                     });
                     init()
-                    
+                    medifirstService.get("farmasi/get-alamat?noregistrasi=" + $scope.item.noregistrasi).then(function (e) {
+                        $scope.item.AlergiYa = e.data.alergi
+                    })
                 } else {
 
                 }
