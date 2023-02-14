@@ -474,6 +474,7 @@ define(['initialize'], function (initialize) {
                         $scope.item.jenisPenjamin = e.data.kelompokpasien
                     $scope.item.alamatPasien = e.data.alamatlengkap
                     $scope.item.tglLahir = e.data.tgllahir;
+                    $scope.item.AlergiYa = e.data.alergi;
                     $scope.item.RuangInput = e.data.ruanginput;
                     $scope.item.RuangRawat = e.data.ruangrawat;
                     $scope.item.Ruangrawat = e.data.ruangrawat;
