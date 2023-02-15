@@ -1679,26 +1679,58 @@ class MainController extends ApiController
 
         $idProfile = (int)$kdProfile;
 
-        $results = DB::select(DB::raw("select a.kategorifk, b.subkategorifk, ppg.pendidikanpegawai, ppg.id, abt.kebutuhanl, abt.kekuranganl, abt.kebutuhanp, abt.kekuranganp
-        from pendidikanpegawai_m ppg
-        inner join abkpegawai_t abt on abt.objectpendidikanpegawaifk = ppg.id
-        left join (
-            select distinct on(kategorifk) nourut, kategorifk
-            from pendidikanpegawai_m
-            where kdprofile = 30
-            and statusenabled = true
-            order by kategorifk asc, nourut asc
-        ) as a on a.nourut = ppg.nourut
-        left join (
-            select distinct on(subkategorifk) nourut, subkategorifk
-            from pendidikanpegawai_m
-            where kdprofile = 30
-            and statusenabled = true
-            order by subkategorifk asc, nourut asc
-        ) as b on b.nourut = ppg.nourut
-        where ppg.kdprofile = 30
-        and ppg.statusenabled = true
-        order by ppg.nourut asc"));
+        $results = DB::select(DB::raw("select nourut, kategorifk, subkategorifk, pendidikanpegawai, id, kebutuhanl, kebutuhanp,
+        case when kekuranganl < 0 then '+' || (kekuranganl*(-1))::varchar else kekuranganl::varchar end as kekuranganl, 
+        case when kekuranganp < 0 then '+' || (kekuranganp*(-1))::varchar else kekuranganp::varchar end as kekuranganp
+        from(
+                select nourut, kategorifk, subkategorifk, pendidikanpegawai, id, kebutuhanl, kebutuhanp,
+                sum(kekuranganl) as kekuranganl, sum(kekuranganp) as kekuranganp
+                from(
+                        select ppg.nourut, a.kategorifk, b.subkategorifk, ppg.pendidikanpegawai, ppg.id, 
+                        abt.kebutuhanl, abt.kebutuhanp, abt.kebutuhanl - coalesce(c.jumlahexistingl,0) kekuranganl, 
+                        abt.kebutuhanp - coalesce(c.jumlahexistingp,0) kekuranganp
+                from pendidikanpegawai_m ppg
+                inner join abkpegawai_t abt on abt.objectpendidikanpegawaifk = ppg.id
+                left join (
+                    select distinct on(kategorifk) nourut, kategorifk
+                    from pendidikanpegawai_m
+                    where kdprofile = 30
+                    and statusenabled = true
+                    order by kategorifk asc, nourut asc
+                ) as a on a.nourut = ppg.nourut
+                left join (
+                    select distinct on(subkategorifk) nourut, subkategorifk
+                    from pendidikanpegawai_m
+                    where kdprofile = 30
+                    and statusenabled = true
+                    order by subkategorifk asc, nourut asc
+                ) as b on b.nourut = ppg.nourut
+                        left join(
+                                select ppg.id, ppg.pendidikanpegawai, 
+                                case when jk.id = 1 then count(pg.id) else 0 end as jumlahexistingl,
+                                case when jk.id = 2 then count(pg.id) else 0 end as jumlahexistingp
+                                from pendidikanpegawai_m ppg
+                                inner join abkpegawai_t abt on abt.objectpendidikanpegawaifk = ppg.id
+                                left join pegawai_m pg on pg.objectpendidikanpegawaifk = ppg.id
+                                left join jeniskelamin_m jk on jk.id = pg.objectjeniskelaminfk
+                                where ppg.kdprofile = 30
+                                and ppg.statusenabled = true
+                                and pg.kdprofile = 30
+                                and pg.statusenabled = true
+                                and abt.kdprofile = 30
+                                and abt.statusenabled = true
+                                and jk.kdprofile = 30
+                                and jk.statusenabled = true
+                                group by ppg.id, ppg.pendidikanpegawai, jk.id
+                        ) as c on c.id = ppg.id
+                where ppg.kdprofile = 30
+                and ppg.statusenabled = true
+                order by ppg.nourut asc
+                ) as x 
+                group by nourut, kategorifk, subkategorifk, pendidikanpegawai, id, kebutuhanl, kebutuhanp
+                order by nourut asc
+        ) as y
+        order by nourut asc;"));
         
         return $results;
     }
