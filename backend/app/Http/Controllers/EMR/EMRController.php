@@ -5458,10 +5458,12 @@ class EMRController  extends ApiController
         $result = [];
         foreach ($data as $item) {
             $details = DB::select(DB::raw("
-                    SELECT jr.jenisracikan satuanstandar, jr.id ssid, so.noorder,op.rke, jk.jeniskemasan, pr.namaproduk, op.aturanpakai, op.jumlah, op.hargasatuan,op.keteranganpakai as keterangan,
+                    SELECT pp.satuandosis, jr.jenisracikan satuanstandar, jr.id ssid, so.noorder,op.rke, jk.jeniskemasan, pr.namaproduk, op.aturanpakai, op.jumlah, op.hargasatuan,op.keteranganpakai as keterangan,
                            op.satuanresepfk,sn.satuanresep,op.tglkadaluarsa, op.dosis
                     from strukorder_t as so 
                     left join orderpelayanan_t as op on op.strukorderfk = so.norec
+                    left join strukresep_t sr on sr.orderfk = so.norec
+                    left join pelayananpasien_t pp on pp.strukresepfk = sr.norec
                     left join produk_m as pr on pr.id=op.objectprodukfk
                     left join jeniskemasan_m as jk on jk.id=op.jeniskemasanfk
                     left join satuanstandar_m as ss on ss.id=op.objectsatuanstandarfk
@@ -5769,6 +5771,7 @@ class EMRController  extends ApiController
         
                         //            $newPP->objectasalprodukfk = $r_PPL['asalprodukfk'];
                         $newPP->aturanpakai = $r_PPL['aturanpakai'];
+                        $newPP->satuandosis = $r_PPL['satuandosis'];
                         $newPP->isreadystok = 1;
                         $newPP->kddokter = $r_SR['penulisresepfk'];;
                         $newPP->objectkelasfk = $dataDetail->objectkelasfk;;

@@ -669,7 +669,7 @@ class RawatInapController extends ApiController
 				pd.objectkelasfk, apd.objectkamarfk,
 				kmr.namakamar,apd.nobed,
 				tt.reportdisplay as namabed,
-				EXTRACT(day from age(current_date, to_date(to_char(pd.tglregistrasi,'YYYY-MM-DD'),'YYYY-MM-DD'))) || ' Hari' as lamarawat,
+				current_date - pd.tglregistrasi::date  || ' Hari' as lamarawat,
 				--,
 			row_number() over (partition by pd.noregistrasi order by apd.tglmasuk desc) as rownum 
 			FROM
