@@ -501,6 +501,47 @@ define(['initialize','Configuration'], function (initialize,configuration) {
 
 
             }
+            $scope.listNilai = [  
+                {
+                    "id" : 2, "nama": "",
+                    "detail": [
+                        {"id": 3004619, "nama": "Pasien Vegetarian","type": "checkbox"},
+                        {"id": 3004620, "nama": "Pasien tidak bisa makan makanan tertentu","type": "checkbox"},
+                        {"id": 3004621, "nama": "","type": "textbox"},
+                        {"id": 3004622, "nama": "Pasien menolak dilakukan transfusi darah","type": "checkbox"},
+                        {"id": 3004623, "nama": "Pasien menolak dilakukan asuhan oleh laki-laki / perempuan","type": "checkbox"},
+                        {"id": 3004624, "nama": "Tidak Ada Nilai dan Keyakinan Khusus","type": "checkbox"},
+                    ]
+                }
+            ]
+            $scope.listPrivasi = [  
+                {
+                    "id" : 2, "nama": "",
+                    "detail": [
+                        {"id": 3004625, "nama": "Pasien tidak mau diketahui keberadaannya di rumah sakit","type": "checkbox"},
+                        {"id": 3004626, "nama": "Pasien tidak mau dikunjungi","type": "checkbox"},
+                        {"id": 3004627, "nama": "Pasien tidak mengijinkan penjelasan kondisi kesehatannya kepada keluarga / orang lain tanpa ijin","type": "checkbox"},
+                        {"id": 3004628, "nama": "Pasien hanya mengijinkan penjelasan kondisi kesehatannya kepada:","type": "checkbox"},
+                        {"id": 3004629, "nama": "1. ","type": "textbox"},
+                        {"id": 3004630, "nama": "(hubungan dengan pasien)","type": "textbox"},
+                        {"id": 3004631, "nama": "2. ","type": "textbox"},
+                        {"id": 3004632, "nama": "(hubungan dengan pasien)","type": "textbox"},
+                        {"id": 3004633, "nama": "Tidak Ada Permintaan Privasi","type": "checkbox"},
+                        
+                    ]
+                }
+            ]
+            $scope.listHambatan = [  
+                {
+                    "id" : 2, "nama": "",
+                    "detail": [
+                        {"id": 3004634, "nama": "Akses pelayanan dalam kondisi tertentu (ketergantungan dengan alat bantu)","type": "checkbox"},
+                        {"id": 3004635, "nama": "Penyandang disabilitas","type": "checkbox"},
+                        {"id": 3004636, "nama": "Pasien memerlukan Penterjemah Bahasa","type": "checkbox"},
+                        {"id": 3004637, "nama": "Tidak Ada Hambatan","type": "checkbox"},
+                    ]
+                }
+            ]
             $scope.$watch('item.obj[14432]', function (nilai) {
 
                 if (nilai == undefined) return

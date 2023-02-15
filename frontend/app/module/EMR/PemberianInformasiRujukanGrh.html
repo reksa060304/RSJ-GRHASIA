@@ -1,0 +1,531 @@
+<style type="text/css">
+    .tg {
+        border-collapse: collapse;
+        border-spacing: 0;
+        border-color: #aabcfe;
+    }
+
+    .tg td {
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        padding: 10px 5px;
+        border-style: solid;
+        border-width: 1px;
+        overflow: hidden;
+        word-break: normal;
+        border-color: #aabcfe;
+        color: #669;
+        background-color: #e8edff;
+    }
+
+    .tg th {
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        font-weight: normal;
+        padding: 10px 5px;
+        border-style: solid;
+        border-width: 1px;
+        overflow: hidden;
+        word-break: normal;
+        border-color: #aabcfe;
+        color: #039;
+        background-color: #b9c9fe;
+    }
+
+    .tg .tg-yw4l {
+        vertical-align: top
+    }
+
+
+    .rowstyle {
+        border-bottom: 1px dashed lightblue
+    }
+
+    .footer {
+        text-align: center;
+        font-size: 120%;
+        font-weight: 700;
+        margin-bottom: 20px
+    }
+
+    table,
+    th,
+    td {
+        border: 1px solid #929191;
+        border-collapse: collapse;
+        padding: 5px;
+    }
+
+    th,
+    td {
+        padding: 5px;
+        text-align: left;
+    }
+
+    /* table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 40px;
+
+    }
+
+    td,
+    th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+    }
+
+    tr:nth-child(even) {
+        background-color: #dddddd;
+    } */
+</style>
+
+<div class="grid_12">
+    <div class="grid_12">
+        <div class="panel panel-default container_12">
+            <div class="panel-heading"> Persetujuan Rujukan CM.RM.66.Rev01</div>
+        </div>
+        <div style="margin-top:10px">
+
+
+
+            <div class="grid_12" style="margin-top: 20px">
+                <table style="width:100%;color: #4c5356;">
+                    <tr>
+                        <td colspan="4" style="text-align: center" bgcolor="#EAEAEA"><div text-align: center;"> PEMBERIAN INFORMASI </div></td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" style="text-align: center" bgcolor="#EAEAEA"><div text-align: center;"> PERSETUJUAN RUJUKAN </div></td>
+                    </tr>
+                                <tr>
+                                    <td colspan="2">Dokter Pelaksana Tindakan</td>
+                                    <td colspan="2">
+                                        <div class="grid_12">
+                                            <input style="width: 50%;" kendo-combo-box k-ng-model="item.obj[3018600]"
+                                                k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                                                k-auto-bind="false" k-data-source="listPegawai" />
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">Penerima Informasi /
+                                        Penerima Persetujuan*</td>
+                                    <td colspan="2">
+                                        <div class="grid_12 margin-bottom">
+                                            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3018601]"
+                                                    style="height: 30px; width: 90%; "/>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="center" bgcolor="#EAEAEA" style="width:5%"><div style="text-align: center;"> NO </div></td>
+                                    <td align="center" bgcolor="#EAEAEA" style="width:40%"><div style="text-align: center;">JENIS INFORMASI </div></td>
+                                    <td align="center" bgcolor="#EAEAEA" style="width:35%"><div style="text-align: center;">ISI INFORMASI </div></td>
+                                    <td align="center" bgcolor="#EAEAEA" style="width:20%"><divstyle="text-align: center;">Tanda ( √ )</div></td>
+                                </tr>
+                                <tr>
+                                    <td>1. </td>
+                                    <td>Diagnosis </td>
+                                    <td>
+                                        <div class="grid_12 margin-bottom">
+                                            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3018602]"
+                                                    style="height: 30px; width: 90%; "/>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="grid_12" style="text-align: center;">
+                                            <input type="checkbox" class="k-checkbox" id="item.obj3018603"
+                                                ng-model="item.obj[3018603]">
+                                            <label class="k-checkbox-label" for="item.obj3018603">
+                                                &nbsp;</label>
+                                        </div>
+                                    </td>
+                                </tr>
+                                 <tr>
+                                     <td>2. </td>
+                                      <td>Terapi dan/atau Tindakan
+                                        medis yang diperlukan :</td>
+                                     <td>
+                                        <div class="grid_12 margin-bottom">
+                                             <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3018604]"
+                                            style="height: 30px; width: 90%; "/>
+                                     </div>
+                                     </td>
+                                    <td>
+                                         <div class="grid_12" style="text-align: center;">
+                                    <input type="checkbox" class="k-checkbox" id="item.obj3018605"
+                                        ng-model="item.obj[3018605]">
+                                    <label class="k-checkbox-label" for="item.obj3018605">
+                                        &nbsp;</label>
+                                     </div>
+                                      </td>
+                                </tr>
+                                <tr>
+                                    <td>3. </td>
+                                     <td>Prosedur tindakan yang
+                                        akan dilakukan</td>
+                                    <td>
+                                        <div class="grid_12 margin-bottom">
+                                            <div class="grid_12">
+                                                <label>Pada pasien ini akan dilakukan prosedur tindakan berupa :
+                                                    RUJUKAN Ke</label>
+                                            </div>
+                                            <div class="grid_12">
+                                            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3018606]"
+                                           style="height: 30px; width: 90%; "/>
+                                            </div>
+                                         </div>
+                                    </td>
+                                   <td>
+                                        <div class="grid_12" style="text-align: center;">
+                                   <input type="checkbox" class="k-checkbox" id="item.obj3018607"
+                                       ng-model="item.obj[3018607]">
+                                   <label class="k-checkbox-label" for="item.obj3018607">
+                                       &nbsp;</label>
+                                    </div>
+                                     </td>
+                                 </tr>
+
+                                     <tr>
+                                       <td>4. </td>
+                                        <td>Alasan dilakukan Rujukan </td>
+                                      <td>
+                                        <div class="grid_12 margin-bottom">
+                                            <div class="grid_12">
+                                                <label>Alasan dirujuk</label>
+                                            </div>
+                                            <div class="grid_12" style="text-align: left;">
+                                                <input type="checkbox" class="k-checkbox" id="item.obj3018608"
+                                              ng-model="item.obj[3018608]">
+                                                <label class="k-checkbox-label" for="item.obj3018608">Kondisi Pasien tidak mampu ditangani oleh RSJ Grhasia.
+                                              &nbsp;</label>
+                                            </div>
+                                            <div class="grid_12" style="text-align: left;">
+                                                <input type="checkbox" class="k-checkbox" id="item.obj3018609"
+                                                 ng-model="item.obj[3018609]">
+                                                  <label class="k-checkbox-label" for="item.obj3018609">Tidak ada tempat tidur yang dituju di RSJ Grhasia
+                                                 &nbsp;</label>
+                                            </div>
+                                        </div>
+                                       </td>
+                                     <td>
+                                    <div class="grid_12" style="text-align: center;">
+                                     <input type="checkbox" class="k-checkbox" id="item.obj3018610"
+                                   ng-model="item.obj[3018610]">
+                                     <label class="k-checkbox-label" for="item.obj3018610">
+                                   &nbsp;</label>
+                                       </div>
+                                   </td>
+                                 </tr>
+                                <tr>
+                                        <td>5. </td>
+                                        <td>Tujuan Dilakukan Rujukan</td>
+                                        <td>
+                                            <div class="grid_12 margin-bottom">
+                                                <div class="grid_12">
+                                                    <label>Pasien mendapatkan penanganan yang sesuai kebutuhannya</label>
+                                                </div>
+                                               
+                                         </td>
+                                         <td>
+                                        <div class="grid_12" style="text-align: center;">
+                                        <input type="checkbox" class="k-checkbox" id="item.obj3018611"
+                                          ng-model="item.obj[3018611]">
+                                            <label class="k-checkbox-label" for="item.obj3018611">
+                                         &nbsp;</label>
+                                         </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>6. </td>
+                                         <td>Risiko yang timbul bila
+                                            tidak dilakukan Rujukan</td>
+                                         <td>
+                                            <div class="grid_12 margin-bottom">
+                                                <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3018612]"
+                                               style="height: 90px; width: 90%; "/>
+                                        </div>
+                                         </td>
+                                        <td>
+                                        <div class="grid_12" style="text-align: center;">
+                                        <input type="checkbox" class="k-checkbox" id="item.obj3018613"
+                                       ng-model="item.obj[3018613]">
+                                        <label class="k-checkbox-label" for="item.obj3018613">
+                                        &nbsp;</label>
+                                        </div>
+                                       </td>
+                                     </tr>
+                                     <tr>
+                                        <td>7. </td>
+                                         <td>Transportasi yang di
+                                            pergunakan</td>
+                                         <td>
+                                            <div class="grid_12 margin-bottom">
+                                                <div class="grid_12" style="text-align: left;">
+                                                    <input type="checkbox" class="k-checkbox" id="item.obj3018614"
+                                                  ng-model="item.obj[3018614]">
+                                                    <label class="k-checkbox-label" for="item.obj3018614">Ambulance
+                                                  &nbsp;</label>
+                                                </div>
+                                                <div class="grid_12" style="text-align: left;">
+                                                    <input type="checkbox" class="k-checkbox" id="item.obj3018615"
+                                                     ng-model="item.obj[3018615]">
+                                                      <label class="k-checkbox-label" for="item.obj3018615">Kendaraan Pribadi
+                                                     &nbsp;</label>
+                                                </div>
+                                            </div>
+                                         </td>
+                                        <td>
+                                        <div class="grid_12" style="text-align: center;">
+                                        <input type="checkbox" class="k-checkbox" id="item.obj3018616"
+                                       ng-model="item.obj[3018616]">
+                                        <label class="k-checkbox-label" for="item.obj3018616">
+                                        &nbsp;</label>
+                                        </div>
+                                       </td>
+                                     </tr>
+                                     <tr>
+                                        <td>8. </td>
+                                         <td>Risiko atau penyulit yang
+                                            mungkin timbul selama
+                                            perjalanan</td>
+                                         <td>
+                                            <div class="grid_12 margin-bottom">
+                                                <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3018617]"
+                                               style="height: 30px; width: 90%; "/>
+                                        </div>
+                                         </td>
+                                        <td>
+                                        <div class="grid_12" style="text-align: center;">
+                                        <input type="checkbox" class="k-checkbox" id="item.obj3018618"
+                                       ng-model="item.obj[3018618]">
+                                        <label class="k-checkbox-label" for="item.obj3018618">
+                                        &nbsp;</label>
+                                        </div>
+                                       </td>
+                                     </tr>
+                                    <tr>
+                                        <tr>
+                                            <td colspan="3">Dengan ini menyatakan bahwa saya telah menerangkan hal-hal diatas secara benar,
+                                                jelas dan memberikan kesempatan untuk bertanya dan /atau berdiskusi. </td>
+                                            <td><div class="grid_12">
+                                                <label c-label item="item" c-label-text="Nama & Tandatangan Dokter"></label>
+                                            </div>
+                                            <div class="grid_12">
+                                                <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[3018619]"
+                                                    k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                                                    k-auto-bind="false" k-data-source="listPegawai" />
+                                            </div></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="3">Dengan ini menyatakan bahwa saya telah menerima informasi dari sebagaimana di atas
+                                            yang saya beri tanda ( √ ) di kolom kanannya dan telah memahaminya. </td>
+                                        <td><div class="grid_12">
+                                            <label c-label item="item" c-label-text="Nama & Tandatangan Pasien/Wali Pasien"></label>
+                                        </div>
+                                        <div class="grid_12">
+                                            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3018620]"
+                                            style="height: 30px; width: 90%; "/>
+                                </div>
+                                        </div>
+                                    </td>
+                                    <tr>
+                                        <td colspan="4">
+                                            (*) Bila pasien tidak kompeten atau tidak mau menerima informasi, maka penerima informasi adalah wali,
+                                            keluarga terdekat atau penanggung jawab pasien.
+                                        </td>
+
+                                    </tr>
+                                </tr>
+                             </table>
+
+            </div>
+            <div class="grid_12">
+            <fieldset style="margin-top:10px;border-radius: 10px;height: px;">
+                <div class="grid_12" style="background-color: #EAEAEA; text-align: center;" >
+                    <label c-label item="item" > PERSETUJUAN TINDAKAN MEDIS</label>
+                </div>
+                <div style="padding: 20px;">
+                    <div class="grid_12" style="margin-top:10px">
+                        <div class="grid_12">
+                            Yang bertanda tangan di bawah ini, saya,
+                        </div>
+                       <div class="grid_2">
+                        Nama : 
+                       </div>
+                       <div class="grid_10">
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3018621]"
+                        style="height: 30px; width: 90%; "/>
+                     </div>
+                     <div class="grid_2" >
+                        Umur : 
+                       </div>
+                       <div class="grid_10">
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3018622]"
+                        style="height: 30px; width: 30%; " />
+                     </div>
+                     <div class="grid_2" >
+                        Jenis Kelamin : 
+                       </div>
+                       <div class="grid_10" style="text-align: left;">
+                        <input type="checkbox" class="k-checkbox" id="item.obj3018623"
+                            ng-model="item.obj[3018623]">
+                        <label class="k-checkbox-label" for="item.obj3018623">
+                            &nbsp;Laki laki</label>
+                    </div>
+                    <div class="grid_2"></div>
+                    <div class="grid_10" style="text-align: left;">
+                        <input type="checkbox" class="k-checkbox" id="item.obj3018624"
+                            ng-model="item.obj[3018624]">
+                        <label class="k-checkbox-label" for="item.obj3018624">
+                            &nbsp;Perempuan</label>
+                    </div>
+                    <div class="grid_2" >
+                        Alamat : 
+                       </div>
+                       <div class="grid_10">
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3018625]"
+                        style="height: 30px; width: 90%; " />
+                     </div>
+                     <div class="grid_12" >
+                        Menyatakan:
+                       </div>
+                     <div class="grid_12" style="margin-top: 20px; margin-bottom: 20px;">
+                       1. Saya memahami perlunya dan manfaat tindakan medis tersebut sebagaimana telah dijelaskan seperti
+                       di atas kepada saya, termasuk risiko dan komplikasi yang mungkin timbul.
+                    </div>
+                    <div class="grid_7" >
+                        2. Saya SETUJU dilakukannya prosedur tindakan berupa RUJUKAN 
+                    </div>
+                     <div class="grid_12">
+                        Terhadap diri saya/ pihak yang saya wakili. Bernama :
+                       </div>
+                       <div class="grid_12">
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3018626]"
+                        style="height: 30px; width: 90%; "/>
+                     </div>
+                     <div class="grid_2" >
+                        Umur : 
+                       </div>
+                       <div class="grid_10">
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3018627]"
+                        style="height: 30px; width: 30%; " />
+                     </div>
+                     <div class="grid_2" >
+                        Jenis Kelamin : 
+                       </div>
+                       <div class="grid_10" style="text-align: left;">
+                        <input type="checkbox" class="k-checkbox" id="item.obj3018628"
+                            ng-model="item.obj[3018628]">
+                        <label class="k-checkbox-label" for="item.obj3018628">
+                            &nbsp;Laki laki</label>
+                    </div>
+                    <div class="grid_2"></div>
+                    <div class="grid_10" style="text-align: left;">
+                        <input type="checkbox" class="k-checkbox" id="item.obj3018629"
+                            ng-model="item.obj[3018629]">
+                        <label class="k-checkbox-label" for="item.obj3018629">
+                            &nbsp;Perempuan</label>
+                    </div>
+                    <div class="grid_2" >
+                        Alamat : 
+                       </div>
+                       <div class="grid_10">
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3018630]"
+                        style="height: 30px; width: 90%; " />
+                     </div>
+                     <div class="grid_12" style="margin-top: 20px; margin-bottom: 20px;">
+                        3. Saya juga menyadari bahwa oleh karena ilmu kedokteran bukanlah ilmu pasti, maka keberhasilan
+                        tindakan kedokteran bukanlah keniscayaan, melainkan sangat tergantung kepada izin Tuhan Yang
+                        Maha Esa.
+                     </div>
+                    <div class="grid_12" style="margin-top: 20px; margin-bottom: 10px;">
+                       Yogyakarta, 
+                    </div>
+                    <div class="grid_3">
+                        <label c-label item="item" c-label-text="">Tanggal</label>
+                        <input style="width: 100%" k-ng-model="item.obj[3018631]" kendo-datetimepicker
+                            placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm"  style="height: 30px; width: 30%; "/>
+                    </div>
+                
+                </div>
+            </fieldset>
+        </div>
+     
+
+
+        <div class="grid_3"> 
+            <fieldset style="border-radius: 10px;height: 220px;">
+            <div>
+                <div class="grid_12" style="margin-top:10px">
+                    <div class="grid_12">
+                        <label c-label item="item">Yang Menyatakan</label>
+                    </div>
+                    <div class="grid_11">
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3018632]"
+                        style="height: 30px; width: 100%; " />
+                     </div>
+                </div>
+            </div>
+         </fieldset>
+        </div>
+        <div class="grid_3"> 
+            <fieldset style="border-radius: 10px;height: 220px;">
+            <div>
+                <div class="grid_12" style="margin-top:10px">
+                    <div class="grid_12">
+                        <label c-label item="item">Dokter</label>
+                    </div>
+                    <div class="grid_12">
+                        <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[3018633]"
+                            k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                            k-auto-bind="false" k-data-source="listPegawai" />
+                    </div>
+                </div>
+            </div>
+         </fieldset>
+        </div>
+        <div class="grid_3"> 
+                <fieldset style="border-radius: 10px;height: 220px;">
+                <div>
+                    <div class="grid_12" style="margin-top:10px">
+                        <div class="grid_12">
+                            <label c-label item="item">Saksi 1</label>
+                        </div>
+                        <div class="grid_11">
+                            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3018634]"
+                            style="height: 30px; width: 100%; " />
+                         </div>
+                    </div>
+                </div>
+             </fieldset>
+            </div>
+            <div class="grid_3"> 
+                <fieldset style="border-radius: 10px;height: 220px;">
+                <div>
+                    <div class="grid_12" style="margin-top:10px">
+                        <div class="grid_12">
+                            <label c-label item="item">Saksi 2</label>
+                        </div>
+                        <div class="grid_11">
+                            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3018635]"
+                            style="height: 30px; width: 100%; " />
+                         </div>
+                    </div>
+                </div>
+             </fieldset>
+            </div>
+          
+
+
+        </div>
+    </div>
+</div>
+
+
+<br />
+<div class="grid_12">
+    <div ng-include='"../app/module/EMR/TemplateButtonDinamis" '></div>
+
+</div>
