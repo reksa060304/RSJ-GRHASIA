@@ -30,5 +30,11 @@
         "name": "Sensus Ranap",
         "url": "dashboard-ranap",
         "icon": "ti-user"
+    },
+
+    {
+        "name": "Anggaran Belanja",
+        "url": "dashboard-anggaran",
+        "icon": "ti-stats-up"
     }
 ]

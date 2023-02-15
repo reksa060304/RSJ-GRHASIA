@@ -107,18 +107,6 @@
                             </div>
                         </div>
                         <div class="row" style="margin-top:10px ">
-                            <!-- <div class="col-lg-12 col-xl-12">
-                                <div class="card">
-                                    <div class="panel panel-warning">
-                                        <div class="panel-heading bg-warning">
-                                            Pendapatan Rumah Sakit
-                                        </div>
-                                        <div class="panel-body">
-                                            <div id="chartPendapatan"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div> -->
                             <div class="col-lg-12 col-md-12">
                                 <div class="card">
                                     <div class="panel panel-primary">
@@ -184,7 +172,9 @@
                                                                 <th style="color:black;width: 10%">NO </th>
                                                                 <th style="color:black">DOKTER </th>
                                                                 <th style="color:black">KELOMPOK PASIEN</th>
-                                                                <th style="color:black;width: 10%">JUMLAH</th>
+                                                                <th style="color:black">NAMA OBAT</th>
+                                                                <th style="color:black;width: 10%">JUMLAH OBAT</th>
+                                                                <th style="color:black;">TOTAL HARGA</th>
                                                             </tr>
                                                             </thead>
                                                             <tbody>
@@ -195,7 +185,61 @@
                                                                     <td >{{ $i +1 }}</td>
                                                                     <td >{{ $d->namalengkap }}</td>
                                                                     <td >{{ $d->kelompokpasien }}</td>
+                                                                    <td >{{ $d->namaproduk }}</td>
                                                                     <td >{{ $d->jumlahobat }}</td>
+                                                                    <td style="text-align: right;">{{ number_format($d->harga,2,',','.') }}</td>
+                                                                </tr>
+                                                            @empty
+                                                                <tr>
+                                                                    <td colspan="3" style="text-align: center">Data Tidak ada</td>
+                                                                </tr>
+                                                            @endforelse
+
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-12 col-md-12">
+                                <div class="card">
+                                    <div class="panel panel-warning">
+                                        <div class="panel-heading bg-purple">
+                                            Rincian Jumlah Obat Per DPJP Pasien Umum dan Karyawan
+                                        </div>
+                                        @php  
+                                            $array = App\Http\Controllers\MainController::getLaporanLayananDPJPPasienUmum(request()->get("tglawal"),request()->get("tglakhir"),session('kdProfile'));
+                                        @endphp
+                                        <div class="panel-body" >
+                                            <div class="row" style="padding:10px 20px;">
+                                                <div class="col-md-12">
+                                                    <div class="table-responsive" >
+                                                        <table class="table table-striped table-sm table-styling"
+                                                               style="width:100%">
+                                                            <thead class="table-default">
+                                                            <tr>
+                                                                <th style="color:black;width: 10%">NO </th>
+                                                                <th style="color:black">DOKTER </th>
+                                                                <th style="color:black">KELOMPOK PASIEN</th>
+                                                                <th style="color:black">NAMA OBAT</th>
+                                                                <th style="color:black;width: 10%">JUMLAH OBAT</th>
+                                                                <th style="color:black;">TOTAL HARGA</th>
+                                                            </tr>
+                                                            </thead>
+                                                            <tbody>
+
+                                                            @forelse($array as $i => $d)
+
+                                                                <tr>
+                                                                    <td >{{ $i +1 }}</td>
+                                                                    <td >{{ $d->namalengkap }}</td>
+                                                                    <td >{{ $d->kelompokpasien }}</td>
+                                                                    <td >{{ $d->namaproduk }}</td>
+                                                                    <td >{{ $d->jumlahobat }}</td>
+                                                                    <td style="text-align: right;">{{ number_format($d->harga,2,',','.') }}</td>
                                                                 </tr>
                                                             @empty
                                                                 <tr>

@@ -736,7 +736,7 @@ sb.id,
                 }
                 return redirect()->route("show_page", ["role" => session("role"), "pages" => $this->formAwal]);
             } else {
-                toastr()->error('Incorrect username or password.', 'Error !');
+                toastr()->error('Akses Tidak Tersedia Untuk Akun Tersebut', 'Error !');
                 return redirect()->route("login",['username' =>   $r->username]);
             }
         } catch (\Exception $e) {
@@ -747,7 +747,7 @@ sb.id,
     {
         $user = \DB::table('loginuser_s')
             ->where('namauser', $data["username"])
-            ->where('namauser', '!=', 'G2471')
+            ->where('iseis', '=', true)
             ->where('passcode', $this->encryptSHA1($data['password']))
             ->first();
 //            dd($user);

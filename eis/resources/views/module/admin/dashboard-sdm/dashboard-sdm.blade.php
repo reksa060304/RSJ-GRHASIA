@@ -291,6 +291,52 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="col-lg-12 col-md-12">
+                                <div class="card">
+                                    <div class="panel panel-warning">
+                                        <div class="panel-heading  bg-warning">
+                                            Data Rekap Kenaikan Pangkat Terakhir
+                                        </div>
+                                        <div class="panel-body" style="height: 480px;overflow-x: auto;">
+                                            <div class="row" style="padding:10px;">
+                                                <div class="col-md-12">
+                                                    <div class="table-responsive" >
+                                                <table class="table  table-striped table-sm table-styling" id="t_Kedatangan"
+                                                       style="width:100%">
+                                                    <thead>
+                                                    <tr class="table-inverse">
+                                                        <th>NIP</th>
+                                                        <th>Nama Pegawai</th>
+                                                        <th>Pangkat dan Golongan</th>
+                                                        <th>TMT (Terhitung Mulai Tanggal)</th>
+                                                        <th>No SK (Surat Keputusan)</th>
+                                                        <th>Masa Kerja Golongan</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    @forelse($res['info_pangkatgolongan'] as $i => $d)
+                                                        <tr>
+                                                            <td>{{ $d->nip }}</td>
+                                                            <td>{{ $d->namalengkap }}</td>
+                                                            <td>{{ $d->golongan }}</td>
+                                                            <td>{{ $d->rn }}</td>
+                                                            <td>{{ $d->nosk }}</td>
+                                                            <td>{{ $d->masakerjagolongan }}</td>
+                                                        </tr>
+                                                    @empty
+                                                        <tr>
+                                                            <td colspan="6" style="text-align: center">Data Tidak ada</td>
+                                                        </tr>
+                                                    @endforelse
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="col-lg-6 col-md-12">
                                 <div class="card">
                                     <div class="panel panel-warning">

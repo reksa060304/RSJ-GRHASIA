@@ -705,6 +705,7 @@ class MainController extends ApiController
                     $res['trend_kunjungan'] = $this->getTrendKunjunganPasienRajal($tglawal,$tglakhir,$kdProfile);
                     $res['jenis_penjadwalan'] = $this->getPasienPerjenisPenjadwalan($tglawal,$tglakhir,$kdProfile);
                     $res['info_kedatangan'] = $this->getInfoKunjunganRawatJalanPerhari($tglawal,$tglakhir,$kdProfile);
+                    
                     $res['kunjungan_perjenispasien'] = $this->getKunjunganRSPerJenisPasien($tglawal,$tglakhir,$kdProfile);
                     $res['jumlahpasien_percaradaftar'] = $this->getJumlahPasienPerCaraDaftar($tglawal,$tglakhir,$kdProfile);
                     $res['tt_usia'] = $this->getTempatTidurTerpakai($tglawal,$tglakhir,$kdProfile);
@@ -774,6 +775,22 @@ class MainController extends ApiController
     //                    dd($res);
                     array_push($compact,'res','r');
                     break;
+
+                case 'dashboard-anggaran':
+                    
+                    $tahun = date('Y');
+
+                    if (!isset($r->tahun) ){
+                        return redirect()->route("show_page",
+                            ["role" => session("role"),
+                                "pages" => $r->pages,
+                                "tahun" =>  $tahun]);
+                    } else {
+                        $tahun = $r->tahun;
+                    }
+//                    dd($res);
+                    array_push($compact,'res','r');
+                    break;
                     
                 case 'dashboard-persediaan':
                     $tglawal = date('Y-m-d');
@@ -811,6 +828,7 @@ class MainController extends ApiController
                     }
 
                     $res['pegawai']= $this->getCountPegawai($r);
+                    $res['info_pangkatgolongan'] = $this->getInfoPangkatGolongan($tglawal,$tglakhir,$kdProfile);
                     $aktif = 0;
                     $nonaktif = 0;
                     $pns = 0;
@@ -1691,23 +1709,65 @@ class MainController extends ApiController
         $tglAwal = $tglAwal.' 00:00';
         $tglAkhir =  $tglAkhir.' 23:59';
 
-        $results = DB::select(DB::raw("select pg.namalengkap, kp.kelompokpasien, sum(pp.qtydetailresep) as jumlahobat
-        from
-            pasien_m ps
-        inner join pasiendaftar_t pd on ps.id=pd.nocmfk
-        inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
-        inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
-        inner join kelompokpasien_m kp on kp.id = pd.objectkelompokpasienlastfk 
-        left join pegawai_m pg on pg.id = pd.objectpegawaifk
-        inner join jenispegawai_m jp on jp.id = pg.objectjenispegawaifk
-        where pd.kdprofile = $idProfile
-        and pd.statusenabled = true
-        and pp.tglpelayanan::date between '$tglAwal' and '$tglAkhir'
-        and pp.isobat = true
-        and jp.jenispegawai = 'DOKTER'
-        and pg.namalengkap <> '-' 
-        and pg.namalengkap is not null
-        group by pg.namalengkap, kp.kelompokpasien
+        $results = DB::select(DB::raw("
+            select pg.namalengkap, kp.kelompokpasien, sr.norec, pr.namaproduk, pp.jumlah jumlahobat,
+            (((CASE WHEN pp.hargajual IS NULL THEN 0 ELSE pp.hargajual::float8 END - CASE WHEN pp.hargadiscount IS NULL THEN
+            0 ELSE pp.hargadiscount::float8 END) * pp.jumlah) + CASE WHEN pp.jasa IS NULL THEN 0 ELSE pp.jasa::float8 END ) AS harga 
+            from
+                pasien_m ps
+            inner join pasiendaftar_t pd on ps.id=pd.nocmfk
+            inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+            inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
+            inner join kelompokpasien_m kp on kp.id = pd.objectkelompokpasienlastfk 
+            left join pegawai_m pg on pg.id = pd.objectpegawaifk
+            inner join jenispegawai_m jp on jp.id = pg.objectjenispegawaifk
+            inner join strukresep_t sr on pp.strukresepfk = sr.norec
+            inner JOIN produk_m AS pr ON pr.id = pp.produkfk 
+            where pd.kdprofile = $idProfile
+            and pd.statusenabled = true
+            and sr.statusenabled = true
+            and pp.tglpelayanan::date between '$tglAwal' and '$tglAkhir'
+            and pp.isobat = true
+            and jp.jenispegawai = 'Dokter'
+            and pg.namalengkap <> '-' 
+            and pg.namalengkap is not null
+            and kp.id <> 1
+            and kp.id <> 12
+            --group by pg.namalengkap, kp.kelompokpasien, sr.norec
+        "));
+        return $results;
+    }
+    public static function getLaporanLayananDPJPPasienUmum($tglAwal,$tglAkhir,$kdProfile)
+    {
+
+        $idProfile = (int) $kdProfile;
+        $tglAwal = $tglAwal.' 00:00';
+        $tglAkhir =  $tglAkhir.' 23:59';
+
+        $results = DB::select(DB::raw("
+            select pg.namalengkap, kp.kelompokpasien, sr.norec, pr.namaproduk, pp.jumlah jumlahobat,
+            (((CASE WHEN pp.hargajual IS NULL THEN 0 ELSE pp.hargajual::float8 END - CASE WHEN pp.hargadiscount IS NULL THEN
+            0 ELSE pp.hargadiscount::float8 END) * pp.jumlah) + CASE WHEN pp.jasa IS NULL THEN 0 ELSE pp.jasa::float8 END ) AS harga 
+            from
+                pasien_m ps
+            inner join pasiendaftar_t pd on ps.id=pd.nocmfk
+            inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+            inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
+            inner join kelompokpasien_m kp on kp.id = pd.objectkelompokpasienlastfk 
+            left join pegawai_m pg on pg.id = pd.objectpegawaifk
+            inner join jenispegawai_m jp on jp.id = pg.objectjenispegawaifk
+            inner join strukresep_t sr on pp.strukresepfk = sr.norec
+            inner JOIN produk_m AS pr ON pr.id = pp.produkfk 
+            where pd.kdprofile = $idProfile
+            and pd.statusenabled = true
+            and sr.statusenabled = true
+            and pp.tglpelayanan::date between '$tglAwal' and '$tglAkhir'
+            and pp.isobat = true
+            and jp.jenispegawai = 'Dokter'
+            and pg.namalengkap <> '-' 
+            and pg.namalengkap is not null
+            and (kp.id = 1 or kp.id = 12)
+            --group by pg.namalengkap, kp.kelompokpasien, sr.norec
         "));
         return $results;
     }
@@ -2815,6 +2875,52 @@ AND sp.statusenabled <> false
 
         return $arrM;
     }
+
+    public static function getDataDeviasi($tahun)
+    {
+        $kdProfile = session("kdProfile");
+        $y =date('Y');
+        if(isset($tahun)){
+            $y=$tahun;
+        }
+        // return $arrM ;
+        $data =  DB::select(DB::raw("select tahun, tahap, id, kodeanggaran, keterangan,  
+        sum(coalesce(subtotal,0)) subtotal, sum(coalesce(jumlahrealisasi,0)) jumlahrealisasi,
+        sum(coalesce(subtotal,0)) - sum(coalesce(jumlahrealisasi,0)) deviasi
+        from(
+                select tahun, tahap, id, kodeanggaran, keterangan, keteranganbelanja,
+                keteranganbelanja, subtotal, sum(coalesce(totalbelanja,0)) jumlahrealisasi
+                from(
+                        select km.tahun, ta.tahap, km.id, km.kode as kodeanggaran, km.keterangan, 
+                        kb.keteranganbelanja, kb.subtotal, sr.totalbelanja, sr.norealisasi
+                                from kegiatananggaran_m km
+                        inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
+                        inner join tahapanggaran_m ta on ta.id = kb.objecttahapfk and kb.objectkegiatanfk = km.id
+                        left join strukrealisasi_t sr on sr.objectkegiatanfk = km.id
+                        and sr.kdprofile = 30 and sr.statusenabled = true
+                        where km.kdprofile = 30 and km.statusenabled = true
+                        and kb.kdprofile = 30 and kb.statusenabled = true
+                        and ta.kdprofile = 30 and ta.statusenabled = true
+                        and km.tahun = '$y'
+                        group by km.tahun, ta.tahap, km.id, km.kode, km.keterangan, 
+                        kb.keteranganbelanja, kb.subtotal, sr.totalbelanja, sr.norealisasi
+                        order by km.keterangan asc
+                ) as x
+                group by tahun, tahap, id, kodeanggaran, keterangan, keteranganbelanja, subtotal
+                order by keterangan asc
+        ) as y 
+        group by tahun, tahap, id, kodeanggaran, keterangan
+        order by tahap, keterangan"));
+
+
+        $result = array(
+            'data' => $data,
+            'as' => 'as@vexana',
+        );
+
+        return $data;
+    }
+
     public static function getKetersediaanTempatTidurPerkelas($tglAwal, $tglAkhir,$kdProfile){
 
         $idProfile = (int) $kdProfile;
@@ -3806,6 +3912,39 @@ AND sp.statusenabled <> false
         );
         return $result;
     }
+    public static function getTopTenAsalPerujukIGD($tglAwal,$tglAkhir,$kdProfile){
+
+        $idProfile = (int) $kdProfile;
+        $IdBPJS=2;
+        $tglAwal =$tglAwal.' 00:00'; //Carbon::now()->startOfMonth()->subMonth(1);
+        $tglAkhir = $tglAkhir.' 23:59';
+        $bulan = Carbon::now()->format('F');
+        $data = DB::select(DB::raw("select aj.asalrujukan, count(apd.objectasalrujukanfk) as jumlah
+		from pasiendaftar_t pd
+        inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+        inner join asalrujukan_m aj on aj.id = apd.objectasalrujukanfk
+        inner join ruangan_m ru on ru.id = pd.objectruanganasalfk
+        where apd.tglmasuk between '$tglAwal' and '$tglAkhir'
+        and pd.statusenabled = true and pd.kdprofile = $idProfile
+        and ru.objectdepartemenfk = 24
+        group by aj.asalrujukan
+        order by jumlah desc"));
+        if (count($data) > 0){
+            $result = $data ;
+        }else{
+            $result []= array(
+                'jumlah' => 0,
+                'asalrujukan' => null,
+            );
+        }
+
+        $results = array(
+            'result' => $result,
+            'month' => $bulan,
+            'message' => 'ramdanegie',
+        );
+        return $result;
+    }
     public static function getDemografiRujukan($tglAwal,$tglAkhir,$kdProfile){
 
         $idProfile = (int) $kdProfile;
@@ -4357,6 +4496,31 @@ count(case when x.departemen = 'rahab_medik' then 1 end) AS rehab_medik
         // dd($data10);
         return $data10;
     }
+
+    public function getInfoPangkatGolongan($tglAwal, $tglAkhir,$kdProfile){
+        $idProfile = (int) $kdProfile;
+        $tglAwal = $tglAwal .' 00:00' ;
+        $tglAkhir = $tglAkhir.' 23:59' ;
+        $data = DB::select(DB::raw("SELECT rgb.rn, rgb.nip, rgb.namalengkap, gol.namaexternal,gol.namaexternal || ', ' || gol.name as golongan,
+        gol.level, rg.pejabatpenandatangan, rg.masakerjagolongan, rg.nominal,rg.objectgolonganfk,
+        rgb.rn as tglawal, rg.norec,rg.tglsk::date, rg.tgltmt::date, gol.name, rg.nosk, rg.pejabatmenetapkan 
+                FROM riwayatgolongan_t rg 
+        inner join sdm_golongan_m as gol on gol.id = rg.objectgolonganfk 
+        inner join (
+                select max(x.tgltmt) rn, x.objectpegawaifk, x.namalengkap, x.nip from(
+                        select row_number()over(PARTITION by rg.objectpegawaifk ORDER BY rg.tgltmt asc)as rn, rg.*, pg.namalengkap, pg.nip
+                            from pegawai_m as pg 
+                        inner join riwayatgolongan_t as rg on rg.objectpegawaifk = pg.id 
+                        order by pg.namalengkap asc, rg.tgltmt desc
+                )as x 
+                group by x.objectpegawaifk, x.namalengkap, x.nip
+                order by x.namalengkap
+        )as rgb on rgb.objectpegawaifk= rg.objectpegawaifk and rgb.rn = rg.tgltmt::date
+        ORDER BY rgb.namalengkap asc, rg.tgltmt desc"));
+        // dd($data10);
+        return $data;
+    }
+
     public function listGambar(){
         return ['images/icon-pasien.png', 'images/icon-pasien-emergency.png',
             'images/icon-pasien-rawat-inap.png', 'images/icon-radiologi.png', 'images/icon-laboratorium.png',

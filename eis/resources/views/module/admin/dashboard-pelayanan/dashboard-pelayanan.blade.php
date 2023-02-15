@@ -437,6 +437,21 @@
                                 <div class="card">
                                     <div class="panel panel-info">
                                         <div class="panel-heading bg-info">
+                                            Asal Perujuk Pasien Instalasi Gawat Darurat
+                                        </div>
+                                        <div class="panel-body">
+                                            @php
+                                                $res['perujukigd'] = App\Http\Controllers\MainController::getTopTenAsalPerujukIGD(request()->get("tglawal"),request()->get("tglakhir"),session('kdProfile'));
+                                            @endphp
+                                            <div id="chart10PerujukIGD"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-md-12">
+                                <div class="card">
+                                    <div class="panel panel-info">
+                                        <div class="panel-heading bg-info">
                                             Informasi Kedatangan Menurut Jenis Pelayanan
                                         </div>
                                         <div class="panel-body">
@@ -918,6 +933,7 @@
         setChartJenisPel()
         setChartPerujuk()
         setChartPerujukPasien()
+        setChartPerujukPasienIGD()
         setChartRanap()
         setChartDiag()
         setChartDiagRujukan()
@@ -2071,6 +2087,96 @@
                 yAxis: {
                     title: {
                         text: 'Kunjungan Pasien'
+                    }
+                },
+                plotOptions: {
+                    column: {
+                        // url:"#",
+                        cursor: 'pointer',
+
+                        dataLabels: {
+                            enabled: true,
+                            color: this.colors[1],
+
+                            formatter: function () {
+                                return Highcharts.numberFormat(this.y, 0, '.', ',') + ' Pasien';
+                            }
+                        },
+                        showInLegend: true
+                    }
+                },
+                tooltip: {
+                    formatter: function () {
+                        let point = this.point,
+                            s = this.x + ':' + Highcharts.numberFormat(this.y, 0, '.', ',') + ' Pasien <br/>';
+                        return s;
+
+                    }
+                    // headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                    // pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                    //     '<td style="padding:0"><b>{point.y:.1f} </b></td></tr>',
+                    // footerFormat: '</table>',
+                    // shared: true,
+                    // useHTML: true
+                },
+                series: series,
+                exporting: {
+                    enabled: false
+                },
+                credits: {
+                    enabled: false
+                },
+                legend: {
+                    enabled: true,
+                    borderRadius: 5,
+                    borderWidth: 1
+                },
+
+            })
+        }
+        function setChartPerujukPasienIGD(){
+            this.data10Perujuk = @json($res['perujukigd']);
+
+            let pie1 = 2;
+            let series = [];
+            let categories = [];
+            let loopIndex = 0;
+            for (let i in this.data10Perujuk) {
+                categories.push(this.data10Perujuk[i].asalrujukan);
+                let dataz2 = [];
+                dataz2.push({
+                    y: parseFloat(this.data10Perujuk[i].jumlah),
+                    color: colors()[i]
+                });
+                if (loopIndex < 10)
+                    series.push({
+                        name: this.data10Perujuk[i].asalrujukan,
+                        data: dataz2
+                    });
+                loopIndex++;
+
+            }
+            Highcharts.chart('chart10PerujukIGD', {
+                chart: {
+                    type: 'column',
+                },
+
+                title: {
+                    text: ''
+                },
+                xAxis: {
+                    categories: ["Jumlah "],
+                    labels: {
+                        align: 'center',
+                        style: {
+                            fontSize: '13px',
+                            fontFamily: 'Verdana, sans-serif'
+                        }
+                    }
+                },
+                yAxis: {
+                    title: {
+                        text: 'Asal Rujukan Pasien'
                     }
                 },
                 plotOptions: {
