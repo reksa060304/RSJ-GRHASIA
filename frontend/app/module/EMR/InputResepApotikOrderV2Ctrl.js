@@ -24,6 +24,7 @@ define(['initialize'], function (initialize) {
             $scope.tglkadaluarsa = undefined;
             $scope.item.jumlah = ''
             $scope.item.dosis = undefined;
+            $scope.item.satuannya = undefined;
             var statusTambah = true
             var norec_apd = '';
             var norec_pd = '';
@@ -633,10 +634,11 @@ define(['initialize'], function (initialize) {
                     alert("Keterangan Belum diisi!!")
                     return;
                 }
-                if ($scope.item.alergi == undefined || $scope.item.alergi == '') {
-                    alert("Alergi Belum diisi!!")
+                if ($scope.item.satuannya == undefined || $scope.item.satuannya == '') {
+                    alert("Satuan Dosis Belum diisi!!")
                     return;
                 }
+
                 let isOutOfStok = false
                 // if ($scope.item.stok < $scope.item.jumlah) {
                 //     // alert("Stok tidak cukup!!")
@@ -673,6 +675,7 @@ define(['initialize'], function (initialize) {
                     jRacikan = $scope.item.jenisRacikan.id
                     namajRacikan = $scope.item.jenisRacikan.jenisracikan
                 }
+                
                 var nomor = 0
                 if ($scope.dataGrid == undefined) {
                     nomor = 1
@@ -733,6 +736,7 @@ define(['initialize'], function (initialize) {
                                             data.keterangan = KetPakai,
                                             data.tglkadaluarsa = $scope.tglkadaluarsa != undefined ? $scope.tglkadaluarsa : null,
                                             data.isoutofstok = isOutOfStok,
+                                            data.satuandosis = $scope.item.satuannya,
                                             data2[i] = data;
                                             $scope.dataGrid = new kendo.data.DataSource({
                                                 data: data2,
@@ -782,6 +786,7 @@ define(['initialize'], function (initialize) {
                                         keterangan: KetPakai,
                                         tglkadaluarsa : $scope.tglkadaluarsa != undefined ? $scope.tglkadaluarsa : null,
                                         isoutofstok : isOutOfStok,
+                                        satuandosis : $scope.item.satuannya
                                     }
                                     data2.push(data)
                                     console.log(data2);
@@ -831,6 +836,7 @@ define(['initialize'], function (initialize) {
                 $scope.item.aturanPakai = { id: dataSelected.aturanpakaifk, name: dataSelected.aturanpakai }
                 $scope.item.aturanpakaitxt = dataSelected.aturanpakai
                 $scope.item.KeteranganPakai = dataSelected.keterangan
+                $scope.item.satuannya = dataSelected.satuandosis
                 $scope.currentAturanPakai = []
 
                 $scope.item.chkp = 0
@@ -896,6 +902,7 @@ define(['initialize'], function (initialize) {
                 $scope.item.hargaSatuan = 0
                 $scope.item.satuanresep = undefined;
                 $scope.item.kekuatan = ''
+                $scope.item.satuannya = undefined
                 // $scope.item.chkp = 0
                 // $scope.item.chks = 0
                 // $scope.item.chksr = 0
@@ -979,6 +986,11 @@ define(['initialize'], function (initialize) {
                     "field": "dosis",
                     "title": "Dosis",
                     "width": "75px",
+                },
+                {
+                    "field": "satuandosis",
+                    "title": "Satuan",
+                    "width": "100px"
                 },
                 {
                     "field": "jumlah",
@@ -1517,6 +1529,11 @@ define(['initialize'], function (initialize) {
                         {
                             field: "dosis",
                             title: "Dosis",
+                            width: "100px"
+                        },
+                        {
+                            field: "satuandosis",
+                            title: "Satuan",
                             width: "100px"
                         },
                         {

@@ -97,33 +97,24 @@
             <tbody>
                 <tr>
                     <td width="10%" style="padding: 5px">
-                        @if(stripos(\Request::url(), 'localhost') !== FALSE)
-                        <img src="{{ asset('img/WhatsApp Image 2022-06-10 at 10.59.25.jpeg') }}" alt=""
+                        <img src="data:image/jpeg;base64,{{$profile[0]->logopemerintahan}}" alt=""
                             style="width: 90px;">
-                        @else
-                        <img src="{{ asset('service/img/WhatsApp Image 2022-06-10 at 10.59.25.jpeg') }}" alt=""
-                            style="width: 90px;">
-                        @endif
 
                     </td>
                     <td style="text-align: center; font-family: Arial">
 
-                        <span style="font-size: 12pt">PEMERINTAH DAERAH DAERAH ISTIMEWA YOGYAKARTA</span></br>
-                        <span style="font-size: 16pt;">DINAS KESEHATAN</span><br>
-                        <span style="font-size: 14pt;">RUMAH SAKIT JIWA GRHASIA</span><br>
-                        @if(stripos(\Request::url(), 'localhost') !== FALSE)
-                        <img src="{{ asset('img/Aksara Jawa_Surat.png') }}" alt="" style="width: 170px;">
-                        @else
-                        <img src="{{ asset('service/img/Aksara Jawa_Surat.png') }}" alt="" style="width: 170px;">
-                        @endif <br>
+                        <span style="font-size: 12pt">{{strtoupper($profile[0]->baris1)}}</span><br>
+                        <span style="font-size: 16pt;">{{strtoupper($profile[0]->baris2)}}</span><br>
+                        <span style="font-size: 14pt;">{{strtoupper($profile[0]->namalengkap)}}</span><br>
+                        <img src="data:image/jpeg;base64,{{$profile[0]->gambarlogo}}" alt="" style="width: 170px;"><br>
                         <span color="#000000" style="font-size: 10pt">
                             Jl. Kaliurang KM 17 Yogyakarta
-                            Telepon (0274) 895143, 895297
-                            Facsimile (0274) 895142
+                            Telepon {{$profile[0]->fixedphone}}, 895297
+                            Facsimile {{$profile[0]->faksimile}}
                             <br>Website :
-                            grhasia.jogjaprov.go.id Email :
-                            grhasiamentalhospital@jogjaprov.go.id <br>
-                            Kode Pos 55582
+                            {{-- {{ $profile[0]['website']}} --}}
+                            {{$profile[0]->alamatemail}}<br>
+                            Kode Pos {{$profile[0]->kodepos}}
                         </span>
                     </td>
                     

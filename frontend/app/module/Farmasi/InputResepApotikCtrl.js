@@ -474,6 +474,7 @@ define(['initialize'], function (initialize) {
                         $scope.item.jenisPenjamin = e.data.kelompokpasien
                     $scope.item.alamatPasien = e.data.alamatlengkap
                     $scope.item.tglLahir = e.data.tgllahir;
+                    $scope.item.AlergiYa = e.data.alergi;
                     $scope.item.RuangInput = e.data.ruanginput;
                     $scope.item.RuangRawat = e.data.ruangrawat;
                     $scope.item.Ruangrawat = e.data.ruangrawat;
@@ -1317,6 +1318,10 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                 if ($scope.item.jenisRacikan != undefined) {
                     jRacikan = $scope.item.jenisRacikan.id
                 }
+                var satuannya = null
+                if ($scope.item.satuannya != undefined) {
+                    satuannya = $scope.item.satuannya
+                }
                 var dosis = 1;
                 if ($scope.item.jenisKemasan.jeniskemasan == 'Racikan') {
                     dosis = $scope.item.dosis
@@ -1414,6 +1419,7 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                                 datas.jmldosis = String($scope.item.jumlahxmakan) + '/' + String(dosis) + '/' + String($scope.item.kekuatan)
                                 datas.jasa = tarifJasa
                                 datas.keterangan = KetPakai
+                                datas.satuandosis = satuannya
 
                                 dataOK[i] = datas;
                             }
@@ -1467,6 +1473,7 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                             jmldosis: String($scope.item.jumlahxmakan) + '/' + String(dosis) + '/' + String($scope.item.kekuatan),
                             jasa: tarifJasa,
                             keterangan: KetPakai,
+                            satuandosis: satuannya
                         }
                         dataOK.push(datas)
                     }
@@ -1535,6 +1542,7 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                             data.kdapotikonline = $scope.kdapotikonline
                             data.isfornas = $scope.isfornas
                             data.catatandokter = $scope.item.catatanDokter
+                            data.satuandosis = satuannya
                             if ($scope.item.jenisKemasan.jeniskemasan == 'Racikan') {
                                 data.jumlahracikan = $scope.item.jumlahxmakan
                             }
@@ -1616,6 +1624,7 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                         isfornas: $scope.isfornas,
                         catatandokter: $scope.item.catatanDokter,
                         jumlahracikan: $scope.item.jenisKemasan.jeniskemasan == 'Racikan' ? $scope.item.jumlahxmakan : null
+                        ,satuandosis: satuannya
                     }
                     data2.push(data)
                     // $scope.dataGrid.add($scope.dataSelected)
@@ -1698,6 +1707,7 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                 if (noOrder != 'EditResep'){
                     $scope.item.catatanDokter = dataSelected.catatandokter
                 }
+                $scope.item.satuannya = dataSelected.satuandosis
                 $scope.item.KeteranganPakai = dataSelected.keterangan
                 $scope.item.diskonTotalPersen = dataSelected.persendiscount
                 $scope.currentAturanPakai = []
@@ -1814,6 +1824,8 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                 $scope.item.KeteranganPakai = undefined
                 $scope.tglkadaluarsa = undefined;
                 $scope.item.diskonTotalPersen = 0
+                $scope.item.satuannya = undefined
+                $scope.item.dosis = undefined
                 // $scope.listDataSigna = [
                 //     {
                 //         "id": 1,
@@ -1884,6 +1896,11 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                     "field": "dosis",
                     "title": "Dosis",
                     "width": "70px",
+                },
+                {
+                    "field": "satuandosis",
+                    "title": " ",
+                    "width": "40px",
                 },
                 {
                     "field": "aturanpakai",

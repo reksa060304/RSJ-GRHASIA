@@ -1116,7 +1116,7 @@ class PelayananResepController extends ApiController
             ->leftJOIN('satuanstandar_m as ss2','ss2.id','=','op.satuanviewfk')
             ->leftJOIN('satuanresep_m as sn','sn.id','=','op.satuanresepfk')
             ->leftJOIN('jenisracikan_m as jr','jr.id','=','op.jenisobatfk')
-            ->select('jr.id as ssid', 'so.noorder','op.hargasatuan','op.qtystokcurrent','so.objectruangantujuanfk','ru.namaruangan',
+            ->select('op.satuandosis','jr.id as ssid', 'so.noorder','op.hargasatuan','op.qtystokcurrent','so.objectruangantujuanfk','ru.namaruangan',
                 'op.rke','op.jeniskemasanfk','jk.id as jkid','jk.jeniskemasan','op.aturanpakai','op.routefk','rt.name as namaroute',
                 'op.objectprodukfk','pr.namaproduk','op.hasilkonversi',
                 'op.objectsatuanstandarfk','jr.jenisracikan as satuanstandar','op.satuanviewfk','ss2.satuanstandar as ssview',
@@ -1300,6 +1300,7 @@ class PelayananResepController extends ApiController
                 "satuanresep"=>$item->satuanresep,
                 "tglkadaluarsa"=>$item->tglkadaluarsa,
                 "isreseppulang" => $item->isreseppulang,
+                "satuandosis" => $item->satuandosis,
             );
         }
 
@@ -2375,6 +2376,7 @@ class PelayananResepController extends ApiController
                 $newPP->issiang = $r_PPL['issiang'];
                 $newPP->ismalam = $r_PPL['ismalam'];
                 $newPP->issore = $r_PPL['issore'];
+                $newPP->satuandosis = $r_PPL['satuandosis'];
                 $newPP->keteranganpakai = $r_PPL['keterangan'];
                 if (isset($r_PPL['iskronis'])){
                     $newPP->iskronis = $r_PPL['iskronis'];
@@ -6629,7 +6631,7 @@ class PelayananResepController extends ApiController
             ->leftJOIN('pegawai_m as dok','dok.id','=','sr.penulisresepfk')
             ->leftJOIN('rm_sediaan_m AS rs','rs.id','=','pr.objectsediaanfk')
             ->leftJoin('satuanresep_m as sn','sn.id','=','pp.satuanresepfk')
-            ->select('pp.jeniskemasanfk','ps.nocm','ps.namapasien','jk.jeniskelamin','pp.tglpelayanan','pp.produkfk','pr.namaproduk',
+            ->select('pp.satuandosis','pp.jeniskemasanfk','ps.nocm','ps.namapasien','jk.jeniskelamin','pp.tglpelayanan','pp.produkfk','pr.namaproduk',
                 'jra.jenisracikan as satuanstandar', 'jra.id as ssid','pp.jumlah','pp.hargasatuan','pp.hargadiscount','sp.nostruk','pd.noregistrasi',
                 'ks.nilaikonversi','ss2.satuanstandar as satuanstandar2','sr.noresep','sr.norec as norec_resep', 'sr.cito', 'pp.rke',
                 'jkm.jeniskemasan','jk.id as jkid','pp.jenisobatfk','jra.jenisracikan','pp.jasa','ru2.id as namaruanganasalid','ru2.id as ruangandepoid','ru2.namaruangan as ruangandepo',
@@ -6739,7 +6741,7 @@ class PelayananResepController extends ApiController
                 'klid' => $item->klid,
                 'keterangan' => $item->keteranganpakai,
                 'jeniskemasanfk' => $item->jeniskemasanfk,
-                
+                'satuandosis' => $item->satuandosis,
             );
         }
         return $this->respond($result);

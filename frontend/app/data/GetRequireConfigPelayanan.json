@@ -3594,8 +3594,10 @@
         {
             "nameDep": "PengkajianAwalKeperawatanRJNonJiwadanIEKCtrl",
             "urlDep": "module/EMR/PengkajianAwalKeperawatanRJNonJiwadanIEKCtrl"
+        },
+        {
+            "nameDep": "PemberianInformasiRujukanGrhCtrl",
+            "urlDep": "module/EMR/PemberianInformasiRujukanGrhCtrl"
         }
-
-
     ]
 }
