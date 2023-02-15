@@ -25,6 +25,7 @@ define(['initialize'], function (initialize) {
             $scope.item.jumlah = ''
             $scope.item.dosis = undefined;
             $scope.item.satuannya = undefined;
+            $scope.stokproduk = 0
             var statusTambah = true
             var norec_apd = '';
             var norec_pd = '';
@@ -258,6 +259,7 @@ define(['initialize'], function (initialize) {
                 medifirstService.get("emr/get-info-stok?produkfk=" + $scope.item.produk.id, true)
                     .then(function (e) {
                         $scope.item.namaProduks = $scope.item.produk.namaproduk;
+                        $scope.stokproduk = e.data.infostok[0].qtyproduk
                         for (var i = 0; i < e.data.infostok.length; i++) {
                             e.data.infostok[i].no = i + 1
                         }
@@ -600,6 +602,13 @@ define(['initialize'], function (initialize) {
                 console.log($scope.item.dosis)
                 if ($scope.item.jumlah == NaN || $scope.item.jumlah == undefined || $scope.item.jumlah == '') {
                     alert("Jumlah harus di isi!")
+                    return;
+                }
+
+                console.log($scope.stokproduk)
+                console.log(parseFloat($scope.item.jumlah))
+                if(parseFloat($scope.item.jumlah) > $scope.stokproduk){
+                    alert("Jumlah obat melebihi stok yang tersisa, stok tersisa: " + $scope.stokproduk)
                     return;
                 }
                 // if ($scope.item.stok == 0) {

@@ -5540,7 +5540,7 @@ class EMRController  extends ApiController
                     group by sk.norec,spd.objectprodukfk, sk.tglstruk,spd.objectasalprodukfk, 
                             spd.harganetto2,spd.hargadiscount,ru.namaruangan,
                     spd.objectruanganfk
-                    order By sk.tglstruk"),
+                    order By spd.objectruanganfk desc"),
             array(
                 'produkId' => $request['produkfk'],
 //                'ruanganid' => $request['ruanganfk'],
