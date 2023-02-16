@@ -11872,7 +11872,9 @@ public function suratBuktiPengembalian(Request $request)
 
     public function cetakKGB(Request $request)
     {
-        $kdProfile = (int) $request['kdprofile'];
+        // $kdProfile = (int) $request['kdprofile'];
+        $kdProfile = 30;
+        $profile = DB::select("select*from profile_m where kdprofile = $kdProfile and statusenabled = true");
         if (isset($request['rgb'])) {
             $data = \DB::select(DB::raw("
             SELECT rgb.nosk, pg.namalengkap, pg.nippns, gol.namaexternal || ' / ' || gol.reportdisplay as panggol,gol.reportdisplay as golongan, 'Rumah Sakit Jiwa Grhasia Dinkes DIY' as instansi, rgb.gajiawal, rgb.noskcetak as sklama, rgb.tglsk as tglsklama, rgb.tgltmtcetak as tmtlama, rgb.gajiakhir, rgb.masakerjagolongan, rgb.tgltmt as tmtbaru FROM riwayatgajiberkala_t rgb 
@@ -11904,8 +11906,9 @@ public function suratBuktiPengembalian(Request $request)
             }
         }
         $pageWidth = 950;
+        // dd($profile);
         return view('report.kgb'
-        , compact('data','pageWidth'));
+        , compact('data','pageWidth', 'profile'));
     }
 
     function rupiah($angka){
