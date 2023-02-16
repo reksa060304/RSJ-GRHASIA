@@ -2180,6 +2180,26 @@
     ]
   },
   {
+    "name": "PengelompokkanTarif",
+    "url": "/TGFwb3JhblBlbmdlbG9tcG9ra2FuUGVuZGFwYXRhblBlclRhcmlm",
+    "templateurl": "module/BendaharaPenerimaan/PengelompokkanTarif.html",
+    "controller": "PengelompokkanTarifCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
     "name": "RemunTagihanDIklat",
     "url": "/PostingRemunDiklat",
     "templateurl": "module/SDM/Penelitian/RemunTagihanDiklat.html",

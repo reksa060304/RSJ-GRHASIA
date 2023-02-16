@@ -444,6 +444,11 @@
             "urlDep": "module/BendaharaPenerimaan/RincianObyekPenerimaanCtrl"
         },
         {
+
+            "nameDep": "PengelompokkanTarifCtrl",
+            "urlDep": "module/BendaharaPenerimaan/PengelompokkanTarifCtrl"
+        },
+        {
             "nameDep": "RemunTagihanDiklatCtrl",
             "urlDep": "module/SDM/Penelitian/RemunTagihanDiklatCtrl"
         },

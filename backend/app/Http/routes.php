@@ -151,6 +151,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('bendaharapenerimaan/get-sts-per-triwulan', 'BendaharaPenerimaan\BendaharaPenerimaanController@getSTSTriwulan');
           Route::get('bendaharapenerimaan/get-rekapitulasi-pendapatan', 'BendaharaPenerimaan\BendaharaPenerimaanController@getRekapPendapatan');
           Route::get('bendaharapenerimaan/get-perincian-obyek-penerimaan', 'BendaharaPenerimaan\BendaharaPenerimaanController@getPerincianObyekPenerimaan');
+          Route::get('bendaharapenerimaan/get-pengelompokkan-tarif', 'BendaharaPenerimaan\BendaharaPenerimaanController@getPengelompokkanTarif');
           Route::get('bendaharapenerimaan/get-sts-bulanan-klaim', 'BendaharaPenerimaan\BendaharaPenerimaanController@getSTSBulananKlaim');
           Route::get('bendaharapenerimaan/get-sts-ringkas', 'BendaharaPenerimaan\BendaharaPenerimaanController@getSTSRingkas');
           Route::get('bendaharapenerimaan/get-sts-pertanggal', 'BendaharaPenerimaan\BendaharaPenerimaanController@getSTSPertanggal');

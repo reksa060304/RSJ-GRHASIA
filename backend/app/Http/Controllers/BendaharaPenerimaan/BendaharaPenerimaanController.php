@@ -9567,6 +9567,70 @@ class BendaharaPenerimaanController extends ApiController {
         
         return $this->setStatusCode(201)->respond($result, 'tes msg');
     }
+
+    public function getPengelompokkanTarif(Request $request) {
+        ini_set('max_execution_time', 600);
+        $tglAwal = $request['tglAwal'];
+        $tglAkhir = $request['tglAkhir'];
+
+        $data = DB::select(DB::raw("select namaproduk, tarif, sum(pendapatan) pendapatan
+        from(
+                        select sts.nosts, pp.norec, pr.namaproduk, pp.hargajual tarif,
+                (((CASE WHEN pp.hargajual IS NULL THEN 0 ELSE pp.hargajual::float8 END - CASE WHEN pp.hargadiscount IS NULL THEN
+                0 ELSE pp.hargadiscount::float8 END) * pp.jumlah) + CASE WHEN pp.jasa IS NULL THEN 0 ELSE pp.jasa::float8 END ) AS pendapatan
+                FROM   pasien_m ps 
+                                inner join pasiendaftar_t pd on ps.id=pd.nocmfk
+                                inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+                                inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
+                                inner JOIN ruangan_m AS ru ON ru.id = apd.objectruanganfk  
+                                left JOIN strukpelayanan_t AS sp ON sp.norec = pp.strukfk  
+                                LEFT JOIN strukbuktipenerimaan_t AS sbm ON sbm.nostrukfk = sp.norec AND sbm.statusenabled = true  
+                                LEFT JOIN strukbuktipenerimaancarabayar_t as sbmcr ON sbmcr.nosbmfk = sbm.norec
+                                LEFT JOIN carabayar_m as cb ON cb.id = sbmcr.objectcarabayarfk
+                                LEFT JOIN produk_m AS pr ON pr.id = pp.produkfk  
+                                inner join strukclosing_t as sc on sbm.noclosingfk = sc.norec
+                                inner join strukclosingkasir_t as sck on sc.norec = sck.noclosingfk
+                                left join ststosck_t as ssc on ssc.objectsckfk = sck.norec
+                                left join surattandasetoran_t as sts on sts.norec = ssc.objectstsfk
+                where pd.statusenabled = true
+                        and sts.statusenabled = true
+                and pd.kdprofile = 30
+                and sts.tglpenerimaan between '$tglAwal' and '$tglAkhir'
+                        and (pd.objectkelompokpasienlastfk = 1 or pd.objectkelompokpasienlastfk = 12)
+                        group by sts.nosts, pp.norec, pr.namaproduk, pp.hargajual, pp.hargadiscount, pp.jumlah, pp.jasa
+                
+                union all
+                
+                select sts.nosts, spd.norec, pr.namaproduk, spd.hargasatuan tarif, 
+                case when cb2.id is null then (spd.qtyproduk * spd.hargasatuan * spd.qtyoranglast)::float4
+                        else sbm.totaldibayar end as pendapatan
+                from strukclosingkasir_t as sck
+                inner join strukclosing_t as sc on sc.norec = sck.noclosingfk
+                inner join strukbuktipenerimaan_t as sbm on sbm.noclosingfk = sc.norec
+                inner join strukpelayanan_t as sp on sbm.nostrukfk = sp.norec
+                inner join strukpelayanandetail_t as spd on sp.norec = spd.nostrukfk
+                        inner join strukbuktipenerimaancarabayar_t sbmcr on sbmcr.nosbmfk = sbm.norec
+                inner join produk_m pr on pr.id=spd.objectprodukfk
+                inner join carabayar_m as cb on cb.id = sck.carabayarfk
+                left join ststosck_t as ssc on ssc.objectsckfk = sck.norec
+                left join surattandasetoran_t as sts on sts.norec = ssc.objectstsfk
+                        LEFT JOIN strukbuktipenerimaan_t AS sbm2 ON sbm2.nostrukfk = sp.norec AND sbm2.statusenabled = true and sbm2.norec <> sbm.norec 
+                        LEFT JOIN strukbuktipenerimaancarabayar_t as sbmcr2 ON sbmcr2.nosbmfk = sbm2.norec
+                        LEFT JOIN carabayar_m as cb2 ON cb2.id = sbmcr2.objectcarabayarfk 
+                where (sbm.keteranganlainnya = 'Pembayaran Tagihan Non Layanan' or sbm.keteranganlainnya = 'Pembayaran Diklat')
+                and sts.tglpenerimaan between '$tglAwal' and '$tglAkhir'
+                        and sts.statusenabled = true
+                        group by cb2.id, sbm.totaldibayar, sts.nosts, spd.norec, pr.namaproduk, spd.hargasatuan, spd.qtyproduk, spd.qtyoranglast
+        ) as x 
+        group by namaproduk, tarif;"));
+
+        $result = array(
+            'detail' => $data,
+            'as' => 'as@vexana',
+        );
+        
+        return $this->setStatusCode(201)->respond($result, 'tes msg');
+    }
         
 
     public function getSTSPertanggal(Request $request) {
