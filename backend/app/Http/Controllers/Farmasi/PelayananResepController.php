@@ -2376,7 +2376,9 @@ class PelayananResepController extends ApiController
                 $newPP->issiang = $r_PPL['issiang'];
                 $newPP->ismalam = $r_PPL['ismalam'];
                 $newPP->issore = $r_PPL['issore'];
+                if(isset($r_PPL['satuandosis']) && $r_PPL['satuandosis']!= "undefined" && $r_PPL['satuandosis'] != "null"){
                 $newPP->satuandosis = $r_PPL['satuandosis'];
+                }
                 $newPP->keteranganpakai = $r_PPL['keterangan'];
                 if (isset($r_PPL['iskronis'])){
                     $newPP->iskronis = $r_PPL['iskronis'];
