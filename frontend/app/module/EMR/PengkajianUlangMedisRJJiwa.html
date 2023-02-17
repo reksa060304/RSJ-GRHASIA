@@ -312,7 +312,8 @@
                                                 </div>
                                                 <div class="grid_4 margin-top-30 text-center margin-bottom">
                                                     <label c-label item="item" c-label-text="Selesai Pemeriksaan Pukul"></label>
-                                                    <input  k-ng-model="item.obj[3017254]"  kendo-timepicker k-max="now" placeholer="HH:mm" k-format="'HH:mm'" ng-value="{{data2.datevalue}}"/>
+                                                    <input style="width: 100%" k-ng-model="item.obj[3017254]" kendo-datetimepicker
+                                                    placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
                                                 </div>
                                             </fieldset>
                                         </div>

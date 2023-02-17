@@ -17,6 +17,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             $scope.skorNutrisiAnak = 0
             $scope.skorNutrisiDewasa = 0
             $scope.totalGziDewasa = 0
+            $scope.now = new Date();
             $scope.cc = {}
             var nomorEMR = '-'
             var noregEMR = ''
@@ -1126,6 +1127,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 $scope.item.obj[31300216] = { value: $scope.cc.iddpjp , text:  $scope.cc.dokterdpjp }
                 // $scope.item.obj[13305] = { value: $scope.cc.objectruanganfk , text:  $scope.cc.namaruangan }
                 // $scope.item.obj[13306] = { value: $scope.cc.objectkelasfk , text:  $scope.cc.namakelas }
+                $scope.item.obj[3017344] = moment($scope.now).format('YYYY-MM-DD HH:mm')
                 dataLoad = dat.data.data                                      
 
                 for (var i = 0; i <= dataLoad.length - 1; i++) {
