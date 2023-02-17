@@ -92,7 +92,7 @@
                 <fieldset>     
                     <LEGEND><b>I. ANAMNESIS</b></LEGEND>
                     <div class="grid_12">
-                      A. KELUHAN UTAMA
+                      A. KELUHAN UTAMA / KELUHAN SAAT INI
                         <div class="grid_12 margin-top-20 margin-bottom">
                             <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3017400]"
                                     k-data-source=""
@@ -527,9 +527,61 @@
                             </table>
                             </div>
                         </fieldset>
+
+                        <fieldset>     
+                            <LEGEND><b>F. RIWAYAT PENGGUNAAN OBAT</b></LEGEND>
+                            <div class="grid_12">
+                                <table style="border: 0px">
+                                    <tr>
+                                        <div class="grid_12 margin-bottom margin-top">
+                                            <div class="grid_12 margin-bottom" ng-repeat="list in listPenggunaanObat">
+                                                <div class="grid_12">
+                                                    <div ng-repeat="jawab in list.detail">
+                                                        <div ng-switch on="jawab.type">
+                                                            <div class="grid_12" ng-switch-when="checkbox" style="margin-top: -5px;">
+                                                                <input type="checkbox" class="k-checkbox" id="item.obj{{jawab.id}}"
+                                                                    ng-model="item.obj[jawab.id]">
+                                                                <label  c-label item="item" style="margin-top: 13px;"class="k-checkbox-label" for="item.obj{{jawab.id}}">
+                                                                    &nbsp;{{jawab.nama}}</label>
+                                                            
+                                                            </div>
+                                                            <div class="grid_12" ng-switch-when="textbox2" style="margin-top: -5px;">
+                                                                <input type="checkbox" class="k-checkbox" id="item.obj{{jawab.id}}"
+                                                                    ng-model="item.obj[jawab.id]">
+                                                                <label  c-label item="item" style="margin-top: 13px;" class="k-checkbox-label" for="item.obj{{jawab.id}}">
+                                                                    &nbsp;{{jawab.nama}}</label>
+                                                               
+                                                                <div class="grid_2 parentKeteranganFieldTambahan">
+                                                                    <input c-text-box type="text" filter="" class="k-textbox"
+                                                                        ng-model="item.obj[jawab.idd]" />
+                                                                    <label class="keteranganFieldTambahan"
+                                                                        style="margin-top: 5px;margin-right: 20px">{{jawab.satuan}}</label>
+                                                            </div>
+                                                            </div>
+                                                            <div class="grid_10" ng-switch-when="textbox" style="margin-top: 5px;">
+                                                                <div class="grid_12">
+                                                                    <label c-label item="item" style="margin-top: 0px;">{{jawab.nama}}</label>
+                                                                </div>
+                                                                <div class="grid_12 parentKeteranganFieldTambahan">
+                                                                    <input c-text-box type="text" filter="" class="k-textbox"
+                                                                        ng-model="item.obj[jawab.id]" style="width: 90%;" />
+                                                                    <label class="keteranganFieldTambahan"
+                                                                        style="margin-top: 5px;margin-right: 30px">{{jawab.satuan}}</label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </tr>
+                                   
+                                </table>
+                            </div>
+                            </fieldset>
                         
                         <fieldset>     
-                            <LEGEND><b>F. RIWAYAT KASUS HUKUM</b></LEGEND>
+                            <LEGEND><b>G. RIWAYAT KASUS HUKUM</b></LEGEND>
                             <div class="grid_12">
                                 <table style="border: 0px">
                                     <tr>
@@ -580,7 +632,7 @@
                             </div>
                             </fieldset>
                             <fieldset>     
-                                <LEGEND><b>G. RIWAYAT PRIBADI</b></LEGEND>
+                                <LEGEND><b>H. RIWAYAT PRIBADI</b></LEGEND>
                                 <div class="grid_12">
                                     <table style="border: 0px">
                                         <tr><label c-label item="item" style="margin-top: 5px;">1. Diagram Keluarga</label> <br>
@@ -1010,7 +1062,21 @@
                                                     </div>
                                             </fieldset>
                                             <fieldset>     
-                                                <LEGEND><b>B. PENATALAKSANAAN </b></LEGEND>
+                                                <LEGEND><b>IV. MASALAH KEPERAWATAN</b></LEGEND>
+                                                <div class="grid_12">
+                                                    <table style="border: 0px">
+                                                        <tr><label c-label item="item" style="margin-top: 5px;"></label> <br>
+                                                            <div class="grid_12 margin-top-20 margin-bottom">
+                                                            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3017593]"
+                                                                    k-data-source=""
+                                                                    style="height: 60px; width: 90%; "/>
+                                                            </div>
+                                                        </tr>
+                                                    </table>
+                                                    </div>
+                                                </fieldset>
+                                            <fieldset>     
+                                                <LEGEND><b>V. PENATALAKSANAAN </b></LEGEND>
                                                 <div class="grid_12">
                                                     <table style="border: 0px">
                                                         <tr>
