@@ -14674,7 +14674,7 @@ $result = array(
             $STSK->totalsetujui = $request['totalklaim'];
             $STSK->totaltarifrs = $cek[0]->totaltarifrs;
             $STSK->norecpdfk = $cek[0]->norec;
-            if(isset($sep)){
+            if(!empty($sep)){
                 $STSK->tglsep = $sep[0]->tglsep;
             } else{
                 $STSK->tglsep = null;

@@ -59,6 +59,7 @@ define(['initialize'], function (initialize) {
 						"objectkelompokpasienlastfk": $scope.item.kelompokPasien.id
 					}
 					medifirstService.post('tatarekening/save-update-rekanan_pd', updateDokter).then(function (e) {
+						$scope.isRouteLoading = false;
 						$scope.SearchData();
 						$scope.batalRekanan();
 					})
@@ -128,7 +129,8 @@ define(['initialize'], function (initialize) {
                             .ok('OK')
                             $mdDialog.show(confirm).then(function () {
                                 medifirstService.post('tatarekening/save-piutang-bpjs-manual-obat', objSave).then(function (e) {
-                                    loadData();
+                                    $scope.isRouteLoading = false;
+									loadData();
                                     $scope.popupTanggalBayar.center().close()
                                 }, function (error) {
                         
@@ -136,7 +138,8 @@ define(['initialize'], function (initialize) {
                             })
                         } else{
                             medifirstService.post('tatarekening/save-piutang-bpjs-manual-obat', objSave).then(function (e) {
-                                loadData();
+                                $scope.isRouteLoading = false;
+								loadData();
                                 $scope.popupTanggalBayar.center().close()
                             }, function (error) {
                     
@@ -953,7 +956,8 @@ define(['initialize'], function (initialize) {
                         tglbayar: moment($scope.item.tglBayar).format('YYYY-MM-DD HH:mm:ss'),
                     }
                     medifirstService.post('tatarekening/save-rekap-klaim', objSave).then(function (e) {
-                        loadData();
+                        $scope.isRouteLoading = false;
+						loadData();
                     }, function (error) {
             
                     })
