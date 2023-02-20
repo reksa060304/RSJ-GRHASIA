@@ -3478,7 +3478,6 @@ select '-' as smf,* from  (
                     where rum.objectdepartemenfk = 16
                     and pdt.statusenabled = TRUE
                     and pdt.kdprofile = 30
-                    $paramRuanganApdt
                     and pdt.tglpulang::date between '$arrmin[0]' and '$arrmax[0]'
 
                     group by pdt.norec
@@ -3486,11 +3485,14 @@ select '-' as smf,* from  (
                 
                 select pd.tglpulang::date as tanggalpulang, cte.tglmasuk as tanggalmasuk,
                 case when pd.tglpulang::date-cte.tglmasuk::date = 0 then 1 else  (pd.tglpulang::date-cte.tglmasuk) end as lamadirawat
-                            FROM pasiendaftar_t as pd
-                            INNER JOIN cte on cte.norec = pd.norec
-                            WHERE pd.kdprofile = 30 and pd.tglpulang is not null and cast(pd.tglpulang as date) between '$arrmin[0]' and '$arrmax[0]'
-                                        group by pd.tglpulang::date, pd.noregistrasi, cte.tglmasuk 
-                                        order by pd.tglpulang::date) as x group by x.tanggalpulang) as y"));
+                    FROM pasiendaftar_t as pd
+                INNER JOIN cte on cte.norec = pd.norec
+                WHERE pd.kdprofile = 30 
+                and pd.tglpulang is not null 
+                $paramRuanganSatu
+                and cast(pd.tglpulang as date) between '$arrmin[0]' and '$arrmax[0]'
+                group by pd.tglpulang::date, pd.noregistrasi, cte.tglmasuk 
+                order by pd.tglpulang::date) as x group by x.tanggalpulang) as y"));
 
             $ruangan = DB::select(DB::raw("select namaruangan as ruangan from ruangan_m where id = $ruanganId"));
 

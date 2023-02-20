@@ -21,6 +21,8 @@ define(['initialize'], function (initialize) {
             var pegawaiInputDetail= ''
             $scope.item.kasusbaru = true
             $scope.item.kasuslama = false
+            $scope.now = new Date();
+            
 
             medifirstService.getPart('emr/get-datacombo-part-pegawai', true, true, 20).then(function (data) {
                 $scope.listPegawai = data
@@ -294,6 +296,11 @@ define(['initialize'], function (initialize) {
             medifirstService.get("emr/get-emr-transaksi-detail?noemr=" + nomorEMR + "&emrfk=" + $scope.cc.emrfk, true).then(function (dat) {
                 $scope.item.obj = []
                 $scope.item.obj2 = []
+
+                $scope.item.obj[3000573] = moment($scope.now).format('YYYY-MM-DD HH:mm:ss');
+                $scope.item.obj[3000582] = moment($scope.now).format('YYYY-MM-DD HH:mm:ss');
+                $scope.item.obj[3000585] = moment($scope.now).format('YYYY-MM-DD HH:mm:ss');
+                $scope.item.obj[3000594] = moment($scope.now).format('YYYY-MM-DD HH:mm:ss');
                 $scope.item.obj[116062]=$scope.now
                 $scope.item.obj[116068]={text:$scope.cc.namaruangan,value: $scope.cc.objectruanganfk}
 
