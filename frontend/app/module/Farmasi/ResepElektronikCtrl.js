@@ -957,6 +957,18 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         }
                 
             }
+            $scope.preview = function (){
+                console.log($scope.item)
+                if ($scope.item == undefined) {
+                    toastr.error('Pilih data dulu')
+                    return
+                }
+
+                window.open(config.baseApiBackend + "report/cetak-detail-order?noorder=" + $scope.item.noorder);
+
+                medifirstService.get("farmasi/get-detail-order?noorder=" + $scope.item.noorder, true).then(function (dat) {
+                });
+            }
             $scope.ambilObat = function () {
                         if ($scope.item.statusorder == 'Selesai') {
                             // noresep

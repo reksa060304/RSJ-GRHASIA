@@ -465,21 +465,34 @@
                             </div>
                             <div class="col-lg-6 col-md-12">
                                 <div class="card">
-                                    <div class="panel panel-success">
-                                        <div class="panel-heading bg-success">
-                                            10 Besar Diagnosa
+                                    <div class="panel panel-primary">
+                                        <div class="panel-heading bg-primary">
+                                            Sebaran Pasien Rawat Inap
                                         </div>
                                         <div class="panel-body">
                                             @php
-                                                $res['toptendiag'] = App\Http\Controllers\MainController::getTopTenDiagnosa(request()->get("tglawal"),request()->get("tglakhir"),session('kdProfile'));
+                                                $res['ranap'] = App\Http\Controllers\MainController::getKunjunganRuanganRawatInap(request()->get("tglawal"),request()->get("tglakhir"),session('kdProfile'));
                                             @endphp
-                                            <div id="chart10Diagnosa"></div>
+                                            <div id="chartKunjunganRanap"></div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            
-                            
+                            <div class="col-lg-6 col-md-12">
+                                <div class="card">
+                                    <div class="panel panel-primary">
+                                        <div class="panel-heading bg-primary">
+                                            Pengunjung Pasien Rawat Jalan
+                                        </div>
+                                        <div class="panel-body">
+                                            @php
+                                                $res['rajal'] = App\Http\Controllers\MainController::getKunjunganRuanganRawatJalan(request()->get("tglawal"),request()->get("tglakhir"),session('kdProfile'));
+                                            @endphp
+                                            <div id="chartKunjunganRajal"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="col-lg-12 col-md-12">
                                 <div class="card">
                                     <div class="panel panel-pink">
@@ -494,7 +507,7 @@
                                                             <select id="comboDiagnosa" class="form-control cbo-custom" name="diagnosa">
                                                                 <option value="">-- Filter Diagnosa --</option>
                                                                 @php
-
+                                                                    $res['toptendiag'] = App\Http\Controllers\MainController::getTopTenDiagnosa(request()->get("tglawal"),request()->get("tglakhir"),session('kdProfile'));
                                                                 @endphp
                                                                 @foreach($res['toptendiag'] as $k)
                                                                     <option {!! $res['toptendiag'][0]['kd'] == $k['kd'] ? 'selected' : '' !!}
@@ -541,15 +554,15 @@
 
                             <div class="col-lg-6 col-md-12">
                                 <div class="card">
-                                    <div class="panel panel-primary">
-                                        <div class="panel-heading bg-primary">
-                                            Sebaran Pasien Rawat Inap
+                                    <div class="panel panel-success">
+                                        <div class="panel-heading bg-success">
+                                            10 Besar Diagnosa
                                         </div>
                                         <div class="panel-body">
                                             @php
-                                                $res['ranap'] = App\Http\Controllers\MainController::getKunjunganRuanganRawatInap(request()->get("tglawal"),request()->get("tglakhir"),session('kdProfile'));
+                                                $res['toptendiag'] = App\Http\Controllers\MainController::getTopTenDiagnosa(request()->get("tglawal"),request()->get("tglakhir"),session('kdProfile'));
                                             @endphp
-                                            <div id="chartKunjunganRanap"></div>
+                                            <div id="chart10Diagnosa"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -935,6 +948,7 @@
         setChartPerujukPasien()
         setChartPerujukPasienIGD()
         setChartRanap()
+        setChartRajal()
         setChartDiag()
         setChartDiagRujukan()
         getKecamatan(33)
@@ -2337,6 +2351,91 @@
 
             }
             Highcharts.chart('chartKunjunganRanap', {
+                chart: {
+                    type: 'column',
+                },
+
+                title: {
+                    text: ''
+                },
+                xAxis: {
+                    categories: ["Jumlah " + jumlah],
+                    labels: {
+                        align: 'center',
+                        style: {
+                            fontSize: '13px',
+                            fontFamily: 'Verdana, sans-serif'
+                        }
+                    }
+                },
+                yAxis: {
+                    title: {
+                        text: 'Jumlah Pasien'
+                    }
+                },
+                plotOptions: {
+                    column: {
+                        // url:"#",
+                        cursor: 'pointer',
+
+                        dataLabels: {
+                            enabled: true,
+                            color: this.colors[1],
+
+                            formatter: function () {
+                                return Highcharts.numberFormat(this.y, 0, '.', ',') + ' Pasien';
+                            }
+                        },
+                        showInLegend: true
+                    }
+                },
+                tooltip: {
+                    formatter: function () {
+                        let point = this.point,
+                            s = this.x + ':' + Highcharts.numberFormat(this.y, 0, '.', ',') + '<br/>';
+                        return s;
+
+                    }
+
+                },
+                series: series,
+                exporting: {
+                    enabled: false
+                },
+                credits: {
+                    enabled: false
+                },
+                legend: {
+                    enabled: true,
+                    borderRadius: 5,
+                    borderWidth: 1
+                },
+
+            })
+        }
+        function setChartRajal(){
+            this.dataKunjunganRanap  =@json($res['rajal']);
+
+            let series = [];
+            let jumlah = 0;
+            let categories =[]
+            for (let i in this.dataKunjunganRanap) {
+                categories.push(this.dataKunjunganRanap[i].namaruangan);
+                let dataz2 = [];
+                dataz2.push({
+                    y: parseFloat(this.dataKunjunganRanap[i].jumlah),
+                    color: this.colors[i]
+                });
+                jumlah = jumlah + parseFloat(this.dataKunjunganRanap[i].jumlah);
+                // if (loopIndex > 0)
+                series.push({
+                    name: this.dataKunjunganRanap[i].namaruangan,
+                    data: dataz2
+                });
+                // loopIndex++;
+
+            }
+            Highcharts.chart('chartKunjunganRajal', {
                 chart: {
                     type: 'column',
                 },

@@ -3646,6 +3646,33 @@ AND sp.statusenabled <> false
         );
         return $data;
     }
+    public static function getKunjunganRuanganRawatJalan($tglAwal,$tglAkhir,$kdProfile){
+
+        $idProfile = (int) $kdProfile;
+        $depInap = 16;
+        $tglAwal =$tglAwal.' 00:00'; //Carbon::now()->startOfMonth()->subMonth(1);
+        $tglAkhir = $tglAkhir.' 23:59';
+        $bulan = Carbon::now()->format('F');
+        $idDepRanap = (int) static::settingDataFixed2('idDepRawatInap', $idProfile);
+        
+        $data = DB::select(DB::raw("
+            select count(pd.noregistrasi) as jumlah, ru.namaruangan 
+            FROM pasiendaftar_t as pd 
+            INNER JOIN ruangan_m as ru on ru.id = pd.objectruanganasalfk 
+            where pd.kdprofile = $idProfile
+            and pd.statusenabled = true 
+            and ru.objectdepartemenfk <> 16 
+            and pd.tglregistrasi::date between '$tglAwal' and '$tglAkhir' 
+            group by ru.namaruangan "));
+
+        $result = array(
+            'result' => $data,
+            'month' => $bulan,
+            'jml' => count($data),
+            'message' => 'ramdanegie',
+        );
+        return $data;
+    }
     public static function getPendapatanAkrual($tglAwal,$tglAkhir,$kdProfile){
 
         $idProfile = (int) $kdProfile;

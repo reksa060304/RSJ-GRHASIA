@@ -1266,6 +1266,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('report/diklat-invoice', 'Report\ReportController@invoiceDiklat');
           Route::get('report/cetak-hasil-lab-histopatologi','Report\ReportController@cetakHispatologi');
           Route::get('report/cetak-resep-dokter','Report\ReportController@cetakResepDokter');
+          Route::get('report/cetak-detail-order','Report\ReportController@cetakDetailOrder');
           Route::get('report/cetak-resep-dokter-rev','Report\ReportController@cetakResepDokterRev');
           Route::get('report/cetak-resep-dokter-harga','Report\ReportController@cetakResepDokterHarga');
           Route::get('report/get-cetak-suratketerangandokter','Report\ReportController@CetakSKDokter');

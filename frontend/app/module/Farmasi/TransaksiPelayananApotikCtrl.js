@@ -898,21 +898,6 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }
 
             $scope.EditResep = function () {
-                medifirstService.get("farmasi/get-penjagaan-udah-bayar?noregistrasi=" + $scope.item.noregistrasi ).then(function (e) {
-                    
-
-                    if(e.data.detail[0].nosbmlastfk == null){
-                        var cek = 123;
-                    } else{
-                        var cek = 234;
-                    }
-
-                    console.log(cek);
-
-                    if(cek == 234){
-                            
-                        messageContainer.error("Data yang sudah dibayar tidak bisa diubah obat");
-                    } else if (cek == 123){
                         // * Validasi Untuk Sekali Bayar
                         // if ($scope.dataSelected.nostruk != undefined) {
                         //     window.messageContainer.error('Data Sudah Diclosing, Hubungi Tatarekening!!!!')
@@ -933,11 +918,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             window.messageContainer.error('Data Stok Sudah Diclosing Tidak Bisa Ubah Resep!')
                             return;
                         }
-                        if ($scope.dataSelected.nostruk != undefined) {
-                            window.messageContainer.error('Sudah verifikasi Kasir tidak dapat di Ubah Resep!')
-                            $scope.isRouteLoading = false;
-                            return;
-                        }
+                        
                         // **  VALIDASI CLOSING STOK 
                         medifirstService.get("sysadmin/general/get-status-close/" + $scope.item.noregistrasi, false).then(function (rese) {
                             if (rese.data.status == true) {
@@ -945,11 +926,6 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                 $scope.isSelesaiPeriksa = true
                             }
                         });
-
-                        if ($scope.dataSelected.nostruk != undefined) {
-                            window.messageContainer.error('Sudah verifikasi Kasir Tidak Bisa mengubah Obat!')
-                            return;
-                        } 
                         // else {
                             var arrStr = {
                                 0: $scope.item.noMr,
@@ -974,8 +950,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         // }
                         // });
                         //debugger;
-                    }
-                });
+                    
                 
 
             }

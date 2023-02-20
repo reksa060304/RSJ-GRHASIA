@@ -1,4 +1,4 @@
-define(['initialize'], function (initialize) {
+define(['initialize', 'Configuration'], function (initialize, config) {
     'use strict';
     initialize.controller('InputResepApotikOrderV2Ctrl', ['$q', '$rootScope', '$scope', 'MedifirstService', '$state', 'CacheHelper', '$mdDialog','DateHelper',
         function ($q, $rootScope, $scope, medifirstService, $state, cacheHelper, $mdDialog, dateHelper) {
@@ -256,6 +256,19 @@ define(['initialize'], function (initialize) {
            
             $scope.getSatuan = function () {
                 if($scope.item.produk.id == undefined)return
+
+                if($scope.item.alergi != undefined){
+                    let kodeArr = $scope.item.alergi.split(",");
+
+                    for(var i = 0; i < kodeArr.length; i++){
+                        console.log(kodeArr[i].toLowerCase().replace(/\/r/g,''))
+                        if($scope.item.produk.namaproduk.toLowerCase().match(kodeArr[i].toLowerCase().replace(' ',''))){
+                            toastr.error('Pasien Alergi Terhadap Obat Tersebut', 'Peringatan')
+                            return
+                        }
+                    }
+                }
+
                 medifirstService.get("emr/get-info-stok?produkfk=" + $scope.item.produk.id, true)
                     .then(function (e) {
                         $scope.item.namaProduks = $scope.item.produk.namaproduk;
@@ -572,6 +585,24 @@ define(['initialize'], function (initialize) {
 
             $scope.tambah = function () {
 
+                if($scope.item.alergi != undefined){
+                    let kodeArr = $scope.item.alergi.split(",");
+
+                    for(var i = 0; i < kodeArr.length; i++){
+                        console.log(kodeArr[i].toLowerCase().replace(/\/r/g,''))
+                        if($scope.item.produk.namaproduk.toLowerCase().match(kodeArr[i].toLowerCase().replace(' ',''))){
+                            toastr.error('Pasien Alergi Terhadap Obat Tersebut', 'Peringatan')
+                            return
+                        }
+                    }
+                }
+
+                if($scope.item.alergi != undefined){
+                    if($scope.item.produk.namaproduk.toLowerCase().match($scope.item.alergi.toLowerCase())){
+                        toastr.error('Pasien Alergi Terhadap Obat Tersebut', 'Peringatan')
+                        return
+                    }
+                }
 
                 if(statusTambah == false){
                     return
@@ -607,7 +638,7 @@ define(['initialize'], function (initialize) {
 
                 console.log($scope.stokproduk)
                 console.log(parseFloat($scope.item.jumlah))
-                if(parseFloat($scope.item.jumlah) > $scope.stokproduk){
+                if(parseFloat($scope.item.jumlah) > $scope.stokproduk && $scope.item.jenisKemasan.id == 2){
                     alert("Jumlah obat melebihi stok yang tersisa, stok tersisa: " + $scope.stokproduk)
                     return;
                 }
@@ -1676,11 +1707,13 @@ define(['initialize'], function (initialize) {
                                 data2[i].tglregistrasi = $scope.item.tglregistrasi
         
                                 data2[i].kelasfk = $scope.item.kelas.id
-        
+                                data2[i].keterangan = data2[i].catatandokter
+                                data2[i].jumlahxmakan = null
                             }
         
                             $scope.dataGrid = new kendo.data.DataSource({
-                                data: data2
+                                data: data2,
+                                group: $scope.group
                             });
         
         
@@ -1694,6 +1727,19 @@ define(['initialize'], function (initialize) {
                             $scope.inputObatOrder = true;
                         });
                     }
+                });
+            }
+
+            $scope.preview = function (){
+                console.log($scope.dataSelectedRiwayat)
+                if ($scope.dataSelectedRiwayat == undefined) {
+                    toastr.error('Pilih data dulu')
+                    return
+                }
+
+                window.open(config.baseApiBackend + "report/cetak-detail-order?noorder=" + $scope.dataSelectedRiwayat.noorder);
+
+                medifirstService.get("farmasi/get-detail-order?noorder=" + $scope.dataSelectedRiwayat.noorder, true).then(function (dat) {
                 });
             }
 

@@ -59,6 +59,7 @@ define(['initialize'], function (initialize) {
                 $scope.discito = false
             }
             console.log(chacePeriode)
+            
             // $scope.item.tglAwal = $scope.now;
             // $scope.item.tglAkhir = $scope.now;
             //* SKRINING */
@@ -66,9 +67,11 @@ define(['initialize'], function (initialize) {
             $scope.currentAturanPakai = [];
             $scope.listDataPenulis1 = [
                 {skrining: "a. Nama, tanggal lahir, jenis kelamin, dan identitas", id:1,
-                masalah: [{ name: "Ya", id: 1 },
-                { name: "Tidak", id: 2 }]},
+                masalah: [{ name: "Ya", id: 1},
+                { name: "Tidak", id: 2}]},
             ];
+
+            
             $scope.listDataPenulis2 = [
                 {skrining: "b. Identitas dokter penulis resep dan paraf/keabsahan dokter", id:2,
                 masalah: [{ name: "Ya", id: 1 },
@@ -389,6 +392,10 @@ define(['initialize'], function (initialize) {
                 //         max: new Date($scope.now)
                 //     };
                 // })
+
+                console.log($scope.data.Penulis1)
+                
+
                 $scope.pegawaiLogin = medifirstService.getPegawaiLogin();
                 if($scope.pegawaiLogin.jenisPegawai.jenispegawai =="Apoteker"){
                     $scope.item.ruangan = { id: 94, namaruangan: 'FARMASI' };
@@ -599,12 +606,12 @@ define(['initialize'], function (initialize) {
                 $scope.data.Tanggal3 = 1;
                 $scope.data.Tanggal4 = 1;
                 $scope.data.klinis1 = 1;
-                $scope.data.klinis2 = 1;
-                $scope.data.klinis3 = 1;
-                $scope.data.klinis4 = 1;
-                $scope.data.klinis5 = 1;
-                $scope.data.klinis6 = 1;
-                $scope.data.klinis7 = 1;
+                $scope.data.klinis2 = 2;
+                $scope.data.klinis3 = 2;
+                $scope.data.klinis4 = 2;
+                $scope.data.klinis5 = 2;
+                $scope.data.klinis6 = 2;
+                $scope.data.klinis7 = 2;
                 $scope.data.datapasienrm = 1;
                 $scope.data.DataRuang = 1;
                 $scope.data.DataStatus = 1;
@@ -1039,7 +1046,7 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                             $scope.item.dosis = $scope.dataSelected.dosis
                             $scope.item.jumlahxmakan = (parseFloat($scope.item.jumlah) / parseFloat($scope.item.dosis)) * parseFloat($scope.item.kekuatan)
                             $scope.item.nilaiKonversi = $scope.dataSelected.nilaikonversi
-                            $scope.item.satuan = { ssid: $scope.dataSelected.satuanviewfk, satuanstandar: $scope.dataSelected.satuanview }
+                            //$scope.item.satuan = { ssid: $scope.dataSelected.satuanviewfk, satuanstandar: $scope.dataSelected.satuanview }
                             $scope.HargaMaster = $scope.dataSelected.hargasatuan
                             $scope.item.hargaSatuan = $scope.dataSelected.hargasatuan
                             $scope.item.hargadiskon = $scope.dataSelected.hargadiscount

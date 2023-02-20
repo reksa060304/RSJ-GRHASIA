@@ -54,8 +54,8 @@
             }
 
             .ticket {
-                width: 360px;
-                max-width: 360px;
+                width: 380px;
+                max-width: 380px;
             }
 
             @media print {
@@ -73,7 +73,7 @@
     <body>
         <div class="ticket">
             @if($cetakkin == 1)
-            <p class="centered fs-11"><b>RESEP</b>
+            <p class="centered fs-11" style="margin-top: 30px;"><b>RESEP</b>
                 <b><br>Rumah Sakit Jiwa Grhasia</b>
                 <br>Jl. Kaliurang KM.17, Pakembinangun, Kec. Pakem, Kab. Sleman, DIY
             </p>
@@ -105,7 +105,7 @@
                         <th class="description fs-13">Nama Obat</th>
                         <th class="description fs-13">Dosis</th>
                         <th class="price fs-13">Jumlah</th>
-                        <th class="description fs-13">Sediaan</th>
+                        <th class="description fs-13">Signa</th>
 
                         {{-- <th class="price fs-13">Keterangan</th> --}}
                     </tr>
@@ -115,9 +115,9 @@
                         <tr>
                             <td class="price fs-13" style="text-align: center"><?= $d->rke; ?></td>
                             <td class="price fs-13" style="text-align: left"><?= $d->namaproduk; ?></td>
-                            <td class="price fs-13" style="text-align: center"><?= $d->dosis; ?></td>
+                            <td class="price fs-13" style="text-align: center"><?= $d->dosis; ?> <?= $d->satuandosis; ?></td>
                             <td class="price fs-13" style="text-align: center"><?= $d->jumlah; ?></td>
-                            <td class="price fs-13" style="text-align: center"><?= $d->jeniskemasanfk == 1 ? $d->jenisracikan : null ?></td>
+                            <td class="price fs-13" style="text-align: center"><?= $d->catatandokter ?></td>
                         </tr>
                         <tr>
                             <td colspan="2"></td>
@@ -127,7 +127,7 @@
                     <tr style="height: 10px;"><td></td></tr>
                 </tbody>
             </table>
-            <table>
+            <table style="margin-left: 20px;">
                 <tbody>
                     <tr>
                         <td class="price fs-9"><strong>Status Pembiayaan</strong></td>
@@ -183,7 +183,7 @@
                 </tbody>
             </table>
             <p class="centered fs-11" style="margin-top: -10px;">------Petugas Farmasi-----</p>
-            <table>
+            <table style="margin-left: 20px;">
                 <thead>
                     <tr>
                         <td class="description fs-9" style="text-align: center; border: 1px solid black;">
@@ -215,8 +215,8 @@
         <div class="ticket">
             @if($cetakkin == 2)
             
-            <p class="fs-9" style="text-align: left; margin-top: 10px;">I. TELAAH RESEP</p>
-            <table>
+            <p class="fs-9" style="text-align: left; margin-top: 30px; margin-left: 20px">I. TELAAH RESEP</p>
+            <table style="margin-left: 20px;">
                 <thead>
                     <tr>
                         <th class="quantity fs-9" style="border: 1px solid black;">No.</th>
@@ -470,8 +470,8 @@
                     </tr>
                 </tbody>
             </table>
-            <p class="fs-9" style="text-align: left">II. TELAAH OBAT</p>
-            <table>
+            <p class="fs-9" style="text-align: left; margin-left: 20px">II. TELAAH OBAT</p>
+            <table style="margin-left: 20px;">
                 <thead>
                     <tr>
                         <th class="quantity fs-9" style="border: 1px solid black;">No.</th>
@@ -555,12 +555,13 @@
                 </tbody>
             </table>
             @if($skrining->ketskrining != null)
-            <p class="fs-9" style="text-align: left">Ket: {{$skrining->ketskrining}}</p><br>
+            <p class="fs-9" style="text-align: left; margin-left: 20px">Ket: {{$skrining->ketskrining}}</p><br>
             @else
-            <p class="fs-9" style="text-align: left">Ket: </p><br>
+            <p class="fs-9" style="text-align: left; margin-left: 20px">Ket: </p><br>
             @endif
             @elseif($skrining == null)
-            <tbody>
+            <table style="margin-left: 20px">
+                <tbody>
                     <tr>
                         <td class="price fs-9" style="text-align: center; border: 1px solid black;">1.</td>
                         <td class="price fs-9" style="text-align: left; border: 1px solid black;">Obat Sesuai</td>
@@ -593,7 +594,7 @@
                     </tr>
                 </tbody>
             </table>
-            <p class="fs-9" style="text-align: left">Ket: </p>
+            <p class="fs-9" style="text-align: left; margin-left: 20px">Ket: </p>
             @endif
             @endif
         </div>

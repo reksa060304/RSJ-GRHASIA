@@ -211,7 +211,7 @@
             <span class="title"><label c-label c-label-text='CetakLabelResep' font-size="13"></label></span>
         </c-button>
     </div>
-    <div class="grid_2">
+    <div class="grid_2" ng-hide="true">
         <c-button style="width: 100%; padding:0px; margin:0px;" item="item" position="'right'" click="cetakResepDokter">
             <span class="title"><label c-label c-label-text='Cetak Resep Dokter' font-size="13"></label></span>
         </c-button>
@@ -242,6 +242,9 @@
     </div>
     <div class="grid_2" style="margin-top: 5px">
         <button class="c-button" ng-click="showPop()">Tindakan</button>
+    </div>
+    <div class="grid_2" style="margin-top: 5px">
+        <button class="c-button" ng-click="preview()">Preview Order</button>
     </div>
     <!-- <div class="grid_2">
         <c-button style="width: 100%; padding:0px, margin:0px;" item="item" position="'right'" click="detailVerif">
