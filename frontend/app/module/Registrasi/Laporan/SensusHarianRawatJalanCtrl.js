@@ -48,6 +48,7 @@ define(['initialize'], function(initialize) {
                 }
             }
             function init() {
+                $scope.isRouteLoading = true
                 console.log($scope.item.rajal);
                 var rajal = "";
                 if ($scope.item.rajal != undefined ) {
@@ -65,6 +66,7 @@ define(['initialize'], function(initialize) {
                     "tglAwal=" + tglAwal +
                     "&tglAkhir=" + tglAkhir + rajal+ranap
                     , true).then(function (dat) {
+                $scope.isRouteLoading = false
                         var totalpasien = 0;
                         var totaljk = 0;
                         var totalumur = 0;

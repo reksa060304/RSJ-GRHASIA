@@ -23,13 +23,14 @@ class SensusHarianRawatJalanController extends ApiController
         $ruangan = "";
         $wherenya = "";
         $lab= '';
+        $labjk= '';
         if($rajal == true){
             $ruangan = DB::select(DB::Raw("
             SELECT ru.id, ru.namaruangan FROM ruangan_m ru 
             where 
-            ru.objectdepartemenfk in(3,6,18,27) and ru.statusenabled=true and ru.kdprofile = 30 order by ru.objectdepartemenfk asc
+            ru.objectdepartemenfk in(3,6,18,24,27) and ru.id not in(51,211,183) and ru.statusenabled=true and ru.kdprofile = 30 order by ru.objectdepartemenfk asc
             "));
-            $wherenya = "and ru.objectdepartemenfk in(3,6,18,27)";
+            $wherenya = "and ru.objectdepartemenfk in(3,6,18,24,27)";
             $lab = "union all
             SELECT apd2.statuskunjungan, ru.id as id_ruangan, ru.namaruangan FROM antrianpasiendiperiksa_t as apd 
             inner join pasiendaftar_t pd on pd.norec = apd.noregistrasifk
@@ -57,17 +58,34 @@ class SensusHarianRawatJalanController extends ApiController
             where 
             ru.id in(752,753,755,756,757,758,759,761,762,764,765,29,767,768,769,770,771,772,773,774,777,782,575,576);
         "));
-            $wherenya = "and ru.objectdepartemenfk not in(16,27,3)";
-
+            $wherenya = "and ru.objectdepartemenfk in(3,6,18,24,27) and ru.id not in(51,211,183) ";
+            $lab = "union all
+            SELECT apd2.statuskunjungan, ru.id as id_ruangan, ru.namaruangan FROM antrianpasiendiperiksa_t as apd 
+            inner join pasiendaftar_t pd on pd.norec = apd.noregistrasifk
+            inner join ruangan_m ru on ru.id = apd.objectruanganfk
+            inner join (select ru.namaruangan, ru.id, apd.norec as norec_apd, case when ROW_NUMBER()OVER(PARTITION BY ps.nocm  order by apd.tglmasuk asc)> 1 then 'LAMA' else 'BARU' end as statuskunjungan, ru.id as id_ruangan, pd.noregistrasi,ps.nocm, apd.tglmasuk FROM antrianpasiendiperiksa_t apd
+            inner join pasiendaftar_t pd on pd.norec = apd.noregistrasifk
+            inner join pasien_m ps on ps.id = pd.nocmfk
+            inner join ruangan_m ru on ru.id = apd.objectruanganfk
+            where apd.kdprofile = 30 and apd.statusenabled = true and apd.objectruanganfk in(575, 576) and pd.kdprofile=30 and pd.statusenabled = true 
+            ORDER BY ps.nocm asc, apd.tglmasuk asc)as apd2 on apd.norec = apd2.norec_apd
+            where apd.kdprofile = 30 and apd.statusenabled = true and apd2.id in(575, 576) and apd.tglmasuk::date
+            BETWEEN '$tglAwal' and '$tglAkhir' and pd.kdprofile=30 and pd.statusenabled= true ";
         }
         
 
         $statuspasien= DB::select(DB::raw("SELECT y.id_ruangan, y.namaruangan, string_agg(y.statuspasienbaru::text, '')::text as statuspasienbaru,string_agg(y.statuspasienlama::text, '')::text as statuspasienlama FROM (SELECT x.id_ruangan, x.namaruangan,
             case when x.statuskunjungan = 'BARU' then count(x.statuskunjungan)end as statuspasienbaru,
             case when x.statuskunjungan = 'LAMA' then count(x.statuskunjungan)end as statuspasienlama
-            FROM (SELECT apd.statuskunjungan, ru.id as id_ruangan, ru.namaruangan FROM antrianpasiendiperiksa_t apd
+            FROM (SELECT apd2.statuskunjungan, ru.id as id_ruangan, ru.namaruangan FROM antrianpasiendiperiksa_t as apd
             inner join pasiendaftar_t pd on pd.norec = apd.noregistrasifk
             inner join ruangan_m ru on ru.id = apd.objectruanganfk
+            inner join (select ru.namaruangan, ru.id, apd.norec as norec_apd, case when ROW_NUMBER()OVER(PARTITION BY ps.nocm order by apd.tglmasuk asc)> 1 then 'LAMA' else 'BARU' end as statuskunjungan, ru.id as id_ruangan, pd.noregistrasi,ps.nocm, apd.tglmasuk FROM antrianpasiendiperiksa_t apd
+            inner join pasiendaftar_t pd on pd.norec = apd.noregistrasifk
+            inner join pasien_m ps on ps.id = pd.nocmfk
+            inner join ruangan_m ru on ru.id = apd.objectruanganfk
+            where apd.kdprofile = 30 and apd.statusenabled = true and pd.kdprofile=30 and pd.statusenabled = true
+            ORDER BY ps.nocm asc, apd.tglmasuk asc)as apd2 on apd.norec = apd2.norec_apd
             where apd.kdprofile = 30 and apd.statusenabled = true $wherenya and apd.objectruanganfk not in(575,576) and apd.tglmasuk::date
             BETWEEN '$tglAwal' and '$tglAkhir' and pd.kdprofile=30 and pd.statusenabled = true 
             $lab
@@ -75,8 +93,7 @@ class SensusHarianRawatJalanController extends ApiController
             GROUP BY x.statuskunjungan, x.namaruangan,x.id_ruangan)as y
         group by y.id_ruangan, y.namaruangan"));
 
-        $jeniskelamin = DB::select(DB::raw("
-        SELECT y.id_ruangan, y.namaruangan, string_agg(y.jklk::text, '')::text as jklk,string_agg(y.jkpr::text, '')::text as jkpr FROM (SELECT x.id_ruangan, x.namaruangan,
+        $jeniskelamin = DB::select(DB::raw("SELECT y.id_ruangan, y.namaruangan, string_agg(y.jklk::text, '')::text as jklk,string_agg(y.jkpr::text, '')::text as jkpr FROM (SELECT x.id_ruangan, x.namaruangan,
         case when x.objectjeniskelaminfk = 1 then count(x.objectjeniskelaminfk)end as jklk,
         case when x.objectjeniskelaminfk = 2 then count(x.objectjeniskelaminfk)end as jkpr
         FROM (SELECT ps.objectjeniskelaminfk, ru.id as id_ruangan, ru.namaruangan FROM antrianpasiendiperiksa_t apd
@@ -84,7 +101,8 @@ class SensusHarianRawatJalanController extends ApiController
         inner join pasien_m ps on ps.id = pd.nocmfk
         inner join ruangan_m ru on ru.id = apd.objectruanganfk
         where apd.kdprofile = 30 and apd.statusenabled = true $wherenya and apd.tglmasuk::date
-        BETWEEN '$tglAwal' and '$tglAkhir' and pd.kdprofile=30 and pd.statusenabled = true)as x
+        BETWEEN '$tglAwal' and '$tglAkhir' and pd.kdprofile=30 and pd.statusenabled = true
+        )as x
         GROUP BY x.objectjeniskelaminfk, x.namaruangan,x.id_ruangan) as y
         group by y.id_ruangan, y.namaruangan
         "));
