@@ -153,7 +153,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }
             $scope.simpanRincian = function(){
                 console.log($scope.dataSelected)
-                var tahun = moment($scope.itemRincian.tahun).format('YYYY');
+                var tahun = $scope.itemRincian.tahun;
                 var perubahan = "";
                 if ($scope.itemRincian.perubahan == true) {
                     perubahan = true
@@ -357,14 +357,15 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 					alert("Data Belum Dipilih!")
 					return;
 				};
-                console.log(dataItem)
+                console.log(dataItem.tahun)
+                console.log(moment(dataItem.tahun).format('YYYY'))
 
                 $scope.itemRincian.tglinput = moment(dataItem.tglinput).format('YYYY-MM-DD')
                 $scope.itemRincian.tahun = dataItem.tahun
                 $scope.itemRincian.sumberPendapatan = {id:dataItem.objectasalprodukfk,namaexternal:dataItem.namaexternal}
                 $scope.itemRincian.uraianpendapatans = {id:dataItem.objecturaianpendapatanfk,uraianpendapatan:dataItem.uraianpendapatan}
                 $scope.itemRincian.uraianPendapatan = dataItem.uraian
-                $scope.itemRincian.jumlahPendapatan = parseInt(dataItem.jumlahpendapatan)
+                $scope.itemRincian.jumlahPendapatan = parseFloat(dataItem.jumlahpendapatan)
                 $scope.itemRincian.keterangan = dataItem.keterangan
                 $scope.itemRincian.norec = dataItem.norec
                 if(dataItem.isperubahan == true){

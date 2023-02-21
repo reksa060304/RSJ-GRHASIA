@@ -134,6 +134,11 @@
                             <td colspan="1"></td>
                             <td colspan="4" class="price fs-13" style="text-align: center; border-top: 1px solid black;"> <?= $orderPelayanan[$i]['catatandokter'] != '-' && $orderPelayanan[$i]['catatandokter'] != '' && $orderPelayanan[$i]['catatandokter'] != ' ' ? ' / '. $orderPelayanan[$i]['catatandokter'] : null ?></td>
                         </tr>
+                        @elseif($orderPelayanan[$i]['jeniskemasan'] == 'Racikan' && $orderPelayanan[$i]['rke'] != $orderPelayanan[$i+1]['rke'])
+                        <tr style="">
+                            <td colspan="1"></td>
+                            <td colspan="4" class="price fs-13" style="text-align: center; border-top: 1px solid black;"> <?= $orderPelayanan[$i]['catatandokter'] != '-' && $orderPelayanan[$i]['catatandokter'] != '' && $orderPelayanan[$i]['catatandokter'] != ' ' ? ' / '. $orderPelayanan[$i]['catatandokter'] : null ?></td>
+                        </tr>
                         @endif
                         @php
                             $rke = $orderPelayanan[$i]['rke']

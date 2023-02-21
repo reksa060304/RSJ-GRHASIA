@@ -107,11 +107,17 @@
                     <td style="padding: 10px; "><b>{{ substr($dt->kode, -4) }}</b></td>
                     @elseif($dt->div == 3)
                     <td style="padding: 10px; ">{{ substr($dt->kode, -2) }}</td>
+                    @elseif($dt->div == 4)
+                    <td style="padding: 10px; "></td>
                     @endif
                     @if($dt->div == 2)
                     <td style="padding: 10px; "><b>{{$dt->kegiatan}}</b></td>
                     @elseif($dt->div == 3)
                     <td style="padding: 10px; ">{{$dt->kegiatan}}</td>
+                    @elseif($dt->div == 4 && strlen($dt->kode) == 17)
+                    <td style="padding: 10px; ">{{ substr($dt->kode, -1) }}. {{$dt->kegiatan}}</td>
+                    @elseif($dt->div == 4 && strlen($dt->kode) == 18)
+                    <td style="padding: 10px; ">{{ substr($dt->kode, -2) }}. {{$dt->kegiatan}}</td>
                     @endif
                     <td align="right" style="padding: 10px;">{{ number_format($dt->jumlahpegawai,0,',','.') }}</td>
                     <td align="right" style="padding: 10px;">{{ number_format($dt->jumlahbarangjasa,0,',','.') }}</td>
