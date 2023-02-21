@@ -51,15 +51,19 @@
             <fieldset>
                 <div class="grid_12">
                     <div class="grid_6">
-                        <label c-label item="item" class="margin-bottom">Tanggal Masuk RS </label>
+                        <label c-label item="item" class="margin-bottom">Tanggal Masuk RS</label>
                         <input style="width: 100%" k-ng-model="item.obj[100500]" kendo-datetimepicker
-                            placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd'" parsedate="yyyy-MM-dd" />
+                            placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
                         <label c-label item="item" class="margin-bottom"><br></label>
                     </div>
+                    <div class="grid_6">
+                        <label c-label item="item">DPJP</label>
+                        <input c-text-box type="input" class="k-textbox" ng-model="item.obj[100508]" />
+                    </div>
                 </div>
-                <div class="grid_12">
+                <div class="grid_12" style="margin-bottom: 10px;">
                     <b>
-                        <div class="grid_12 ">
+                        <div class="grid_12">
                             <input type="checkbox" class="k-checkbox" id="item.obj100501" ng-model="item.obj[100501]">
                             <label class="k-checkbox-label" for="item.obj100501">
                                 Tidak Ada Riwayat Alergi</label>
@@ -74,41 +78,40 @@
                     </kendo-grid>
                 </div>
             </fieldset>
-            <fieldset style="margin-top: 20px;">
+            <fieldset style="margin-top: 20px;" >
                 <legend>Riwayat Penggunaan Obat</legend>
-                <div class="grid_12 borderBox margin-top-20">
+                <div class="grid_12 borderBox margin-top-20" style="margin-top: 20px;">
                     <kendo-grid id="kGrid" data-source="dataSourcePOGrid" options="columnPOGrid"
                         k-selectable="'row'" k-sortable="'true'" k-resizable="'true'" k-ng-model="dataSelected"
                         ng-click="klikGrid(dataSelected)">
                     </kendo-grid>
                 </div>
-                <div class="grid_12 margin-top-20">
-                    <div class="grid_12">
+                <div class="grid_12 margin-top-20" >
+                    <div class="grid_12" style="margin-top: 20px;">
                         <label style="font-weight: bold;">Sumber Informasi Obat</label>
                     </div>
-                    <div class="grid_12 ">
+                    <div class="grid_12 " style="margin-top: 20px;">
                         <input type="checkbox" class="k-checkbox" id="item.obj100502" ng-model="item.obj[100502]">
                         <label class="k-checkbox-label" for="item.obj100502">
                             RM Pasien</label>
                     </div>
-                    <div class="grid_12 ">
+                    <div class="grid_12 " style="margin-top: 20px;">
                         <input type="checkbox" class="k-checkbox" id="item.obj100503" ng-model="item.obj[100503]">
                         <label class="k-checkbox-label" for="item.obj100503">
                             Pasien / keluarga pasien, Nama</label>
                         <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.obj[100504]" />
                     </div>
-                    <div class="grid_12 ">
+                    <div class="grid_12 " style="margin-top: 20px;">
                         <input type="checkbox" class="k-checkbox" id="item.obj100505" ng-model="item.obj[100505]">
                         <label class="k-checkbox-label" for="item.obj100505">
                             Lainnya, sebutkan : </label>
-                        <textarea c-text-area type="input" filter="'string'" class="k-textbox"
-                            ng-model="item.obj[100506]" k-data-source="" style="height: 100px; width: 100%; " />
+                        <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.obj[100506]" />
                     </div>
-                    <div class="grid_12">
+                    <div class="grid_12" style="margin-top: 20px;">
                         <div class="grid_12">
                             <label c-label item="item">Apoteker</label>
                         </div>
-                        <div class="grid_12">
+                        <div class="grid_12" style="margin-top: 20px;">
                             <input style="width: 300px;" kendo-combo-box k-ng-model="item.obj[100507]"
                                 k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
                                 k-auto-bind="false" k-data-source="listPegawai" />
@@ -140,14 +143,12 @@
     <div class="panel panel-default container_12" style="padding: 0px 10px;">
         <div class="grid_12" style="margin-top: 10px;">
             <div class="grid_12">
-                <div class="grid_12 margin-top-20 margin-bottom">
+                <div class="grid_12 margin-top-20 margin-bottom-20">
                     <div class="grid_12">
                         <label c-label item="item">Nama obat/suplemen/herbal/tradisional</label>
                     </div>
-                    <div class="grid_12">
-                        <input style="width: 300px;" kendo-combo-box k-ng-model="itemd.obat"
-                            k-data-text-field="'namaproduk'" k-data-value-field="'id'" k-filter="'contains'"
-                            k-auto-bind="false" k-data-source="listProdukOrder" />
+                    <div class="grid_12" style="margin-bottom: 10px;">
+                        <input c-text-box type="input" class="k-textbox" ng-model="itemd.obat" />
                     </div>
                 </div>
                 <div class="grid_12">
@@ -177,22 +178,34 @@
     </div>
 </div>
 
-<div kendo-window="popUpLembarPenggunaanObat" k-title="'Penggunaan Obat'" k-width="650" k-height="550"
+<div kendo-window="popUpLembarPenggunaanObat" k-title="'Penggunaan Obat'" k-width="750" k-height="550"
     k-visible="false" k-on-open="win2visible = true" k-on-close="win2visible = false">
     <div class="panel panel-default container_12" style="padding: 0px 10px;">
         <div class="grid_12" style="margin-top: 10px;">
             <div class="grid_12">
-                <div class="grid_12 margin-top-20 margin-bottom">
+                <div class="grid_12" style="margin-bottom: 10px;">
+                    <input type="checkbox" class="k-checkbox" id="itemd.rslain" ng-model="itemd.rslain">
+                    <label class="k-checkbox-label" for="itemd.rslain">
+                        Obat lain</label>
+                </div>
+                <div class="grid_6" style="margin-bottom: 10px;">
                     <div class="grid_12">
                         <label c-label item="item">Nama obat/suplemen/herbal/tradisional</label>
-                    </div>
-                    <div class="grid_12">
                         <input style="width: 300px;" kendo-combo-box k-ng-model="itemd.obatPO"
                             k-data-text-field="'namaproduk'" k-data-value-field="'id'" k-filter="'contains'"
                             k-auto-bind="false" k-data-source="listProdukOrder" />
                     </div>
                 </div>
-                <div class="grid_12">
+                
+                <div class="grid_6" ng-hide="rslain" style="margin-bottom: 10px;">
+                    <div class="grid_12">
+                        <label c-label item="item" class="margin-bottom">Nama obat/suplemen/herbal/tradisional</label>
+                    </div>
+                    <div class="grid_12">
+                        <input c-text-box type="input" filter="" class="k-textbox" ng-model="itemd.obatlain" />
+                    </div>
+                </div>
+                <div class="grid_12" style="margin-bottom: 10px;">
                     <div class="grid_12">
                         <label c-label item="item">Jenis Obat</label>
                     </div>
@@ -207,7 +220,7 @@
                                 Tanpa</label>
                         </div>
                 </div>
-                <div class="grid_12">
+                <div class="grid_12" style="margin-bottom: 10px;">
                     <div class="grid_12">
                         <label c-label item="item" class="margin-bottom">Tanggal</label>
                         
@@ -223,16 +236,8 @@
                             placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd'" parsedate="yyyy-MM-dd" />
                     </div>
                 </div>
-                <div class="grid_12">
-                    <div class="grid_12">
-                        <label c-label item="item" class="margin-bottom">Dosis</label>
-                    </div>
-                    <div class="grid_12">
-                        <input c-text-box type="input" filter="" class="k-textbox" ng-model="itemd.dosisPO"
-                            />
-                    </div>
-                </div>
-                <div class="grid_12">
+                
+                <div class="grid_12" style="margin-bottom: 10px;">
                     <div class="grid_12">
                         <label c-label item="item" class="margin-bottom">Rute</label>
                     </div>
@@ -241,16 +246,16 @@
                             />
                     </div>
                 </div>
-                <div class="grid_12">
+                <div class="grid_12" style="margin-bottom: 10px;">
                     <div class="grid_12">
-                        <label c-label item="item" class="margin-bottom">Frekuensi</label>
+                        <label c-label item="item" class="margin-bottom">Aturan Pakai</label>
                     </div>
                     <div class="grid_12">
                         <input c-text-box type="input" filter="" class="k-textbox" ng-model="itemd.frekuensiPO"
                             />
                     </div>
                 </div>
-                <div class="grid_12">
+                <div class="grid_12" style="margin-bottom: 10px;">
                     <div class="grid_12">
                         <label c-label item="item" class="margin-bottom">Indikasi</label>
                     </div>
@@ -259,7 +264,7 @@
                             />
                     </div>
                 </div>
-                <div class="grid_12">
+                <div class="grid_12" style="margin-bottom: 10px;">
                     <div class="grid_12">
                         <label c-label item="item">Status Obat Saat Admisi</label>
                     </div>
@@ -280,7 +285,7 @@
                     </div>
 
                 </div>
-                <div class="grid_12">
+                <div class="grid_12" style="margin-bottom: 10px;">
                     <div class="grid_12">
                         <div class="grid_12">
                             <label c-label item="item">Perubahan Aturan Pakai</label>
@@ -307,11 +312,11 @@
     </div>
 </div>
 
-<div kendo-window="popUpLembarRekonsiliasiObat" k-title="'Rekonsiliasi Obat'" k-width="650" k-height="550" k-visible="false"
+<div kendo-window="popUpLembarRekonsiliasiObat" k-title="'Rekonsiliasi Obat'" k-width="850" k-height="550" k-visible="false"
     k-on-open="win2visible = true" k-on-close="win2visible = false">
     <div class="panel panel-default container_12" style="padding: 0px 10px;">
         <div class="grid_12" style="margin-top: 10px;">
-            <div class="grid_12">
+            <div class="grid_12" style="margin-bottom: 20px;">
                 <div class="grid_12">
                     <div class="grid_12">
                         <label c-label item="item" class="margin-bottom">Tanggal</label>
@@ -321,7 +326,7 @@
                             placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd'" parsedate="yyyy-MM-dd" />
                     </div>
                 </div>
-                <div class="grid_12">
+                <div class="grid_12" style="margin-bottom: 20px;">
                     <div class="grid_12">
                         <label c-label item="item">Unit</label>
                     </div>
@@ -331,7 +336,12 @@
                             k-auto-bind="false" k-data-source="listRuangan" />
                     </div>
                 </div>
-                <div class="grid_12 margin-top-20 margin-bottom">
+                <div class="grid_12 margin-top-20 margin-bottom" style="margin-bottom: 20px;">
+                    <input type="checkbox" class="k-checkbox" id="itemd.rslain" ng-model="itemd.rslain">
+                    <label class="k-checkbox-label" for="itemd.rslain">
+                        Obat lain</label>
+                </div>
+                <div class="grid_6 margin-top-20 margin-bottom" style="margin-bottom: 20px;">
                     <div class="grid_12">
                         <label c-label item="item">Nama obat/suplemen/herbal/tradisional</label>
                     </div>
@@ -341,23 +351,31 @@
                             k-auto-bind="false" k-data-source="listProdukOrder" />
                     </div>
                 </div>
-                <div class="grid_12">
+                <div class="grid_6 margin-top-20 margin-bottom" ng-hide="rslain" style="margin-bottom: 20px;">
+                    <div class="grid_12">
+                        <label c-label item="item" class="margin-bottom">Nama obat/suplemen/herbal/tradisional</label>
+                    </div>
+                    <div class="grid_12">
+                        <input c-text-box type="input" filter="" class="k-textbox" ng-model="itemd.dosisRO" />
+                    </div>
+                </div>
+                <!-- <div class="grid_12">
                     <div class="grid_12">
                         <label c-label item="item" class="margin-bottom">Dosis</label>
                     </div>
                     <div class="grid_12">
                         <input c-text-box type="input" filter="" class="k-textbox" ng-model="itemd.dosisRO" />
                     </div>
-                </div>
-                <div class="grid_12">
+                </div> -->
+                <div class="grid_12" style="margin-bottom: 20px;">
                     <div class="grid_12">
-                        <label c-label item="item" class="margin-bottom">Frekuensi</label>
+                        <label c-label item="item" class="margin-bottom">Rute</label>
                     </div>
                     <div class="grid_12">
-                        <input c-text-box type="input" filter="" class="k-textbox" ng-model="itemd.frekuensiRO" />
+                        <input c-text-box type="input" filter="" class="k-textbox" ng-model="itemd.rute" />
                     </div>
                 </div>
-                <div class="grid_12">
+                <!-- <div class="grid_12">
                     <div class="grid_12">
                         <label c-label item="item" class="margin-bottom">Waktu Pemberian</label>
                     </div>
@@ -365,38 +383,49 @@
                         <input style="width: 100%" k-ng-model="itemd.waktupemberian" kendo-timepicker
                             placeholer="HH:mm" k-format="'HH:mm'" parsedate="HH:mm" />
                     </div>
-                </div>
-                <div class="grid_12">
+                </div> -->
+                <div class="grid_12" style="margin-bottom: 20px;">
                     <div class="grid_12">
-                        <label c-label item="item" class="margin-bottom">Cara Pemberian</label>
+                        <label c-label item="item" class="margin-bottom">Aturan Pakai</label>
                     </div>
                     <div class="grid_12">
-                        <input c-text-box type="input" filter="" class="k-textbox" ng-model="itemd.carapemberian" />
+                        <input c-text-box type="input" filter="" class="k-textbox" ng-model="itemd.aturanpakai" />
                     </div>
                 </div>
-                <div class="grid_12">
-                    <div class="grid_6">
-                        <input type="checkbox" class="k-checkbox" id="itemd.lanjutaturansama"
-                            ng-model="itemd.lanjutaturansama">
-                        <label class="k-checkbox-label" for="itemd.lanjutaturansama">
-                            Lanjut Aturan Pakai sama</label>
+                <div class="grid_12" style="margin-bottom: 20px;">
+                    <div class="grid_12">
+                        <label c-label item="item">Status Obat Saat Admisi</label>
                     </div>
+                    <div class="grid_2">
+                        <input type="checkbox" class="k-checkbox" id="itemd.LPO" ng-model="itemd.LPO">
+                        <label class="k-checkbox-label" for="itemd.LPO">
+                            &nbsp;&nbsp;&nbsp;L</label>
+                    </div>
+                    <div class="grid_2">
+                        <input type="checkbox" class="k-checkbox" id="itemd.TPO" ng-model="itemd.TPO">
+                        <label class="k-checkbox-label" for="itemd.TPO">
+                            &nbsp;&nbsp;&nbsp;T</label>
+                    </div>
+                    <div class="grid_2">
+                        <input type="checkbox" class="k-checkbox" id="itemd.HPO" ng-model="itemd.HPO">
+                        <label class="k-checkbox-label" for="itemd.HPO">
+                            &nbsp;&nbsp;&nbsp;H</label>
+                    </div>
+
+                </div>
+                <div class="grid_12" style="margin-bottom: 20px;">
                     <div class="grid_12">
                         <div class="grid_12">
-                            <label c-label item="item" class="margin-bottom">Lanjut Aturan Pakai Perubahan</label>
-                        </div>
-                        <div class="grid_12">
-                            <input c-text-box type="input" filter="" class="k-textbox"
-                                ng-model="itemd.lanjutaturanperubahan" />
+                            <label c-label item="item">Perubahan Aturan Pakai</label>
                         </div>
                     </div>
-                    <div class="grid_6">
-                        <input type="checkbox" class="k-checkbox" id="itemd.stopaturan" ng-model="itemd.stopaturan">
-                        <label class="k-checkbox-label" for="itemd.stopaturan">
-                            Stop</label>
-                    </div>
+                    <div class="grid_12 margin-top-20 margin-bottom">
+                        <label c-label item="item" class="margin-bottom"></label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox"
+                            ng-model="itemd.perubahanaturanpakai" k-data-source="" style="height: 100px; width: 100%; " />
+                        </div>
                 </div>
-                <div class="grid_12">
+                <div class="grid_12" style="margin-bottom: 20px;">
                     <div class="grid_12">
                         <label c-label item="item">Apoteker</label>
                     </div>
@@ -406,7 +435,7 @@
                             k-auto-bind="false" k-data-source="listPegawai" />
                     </div>
                 </div>
-                <div class="grid_12 margin-top-20 margin-bottom">
+                <div class="grid_12 margin-top-20 margin-bottom" style="margin-bottom: 20px;">
                     <div class="grid_12">
                         <div class="grid_2" style="margin-top: 22px; margin-left: 10px;" ng-show='tombolSimpanVis'>
                             <button class="btnTemplate1" ng-click="SaveRO()"><i class="fa fa-save"></i>Tambah</button>

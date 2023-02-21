@@ -10949,8 +10949,10 @@ class EMRController  extends ApiController
         $data = $request['dataalergi'];
         $data1 = $request['datapo'];
         $data2 = $request['dataro'];
+        $a ="";
         DB::beginTransaction();
         try {
+            $penggunaanobat = "";
             foreach($data as $data){
                 if($data['norec'] == ''){
                     $reaksialergi = \DB::table('reaksialergi_t')->insert([
@@ -10972,7 +10974,6 @@ class EMRController  extends ApiController
                     ]);
                 }
             }
-            
             foreach($data1 as $data1){
                 if($data1['norec'] == ''){
                     $penggunaanobat = \DB::table('riwayatpenggunaanobat_t')->insert([
@@ -10984,14 +10985,14 @@ class EMRController  extends ApiController
                         'noemr'=> $request['noemr'],
                         'objectprodukfk'=> $data1['objectprodukfk'],
                         'isresep'=> $data1['resep'] == "✓" ? true : null,
-                        'tanggalmulai'=> $data1['mulai'],
-                        'tanggalstop'=> $data1['stop'],
-                        'dosis'=> $data1['dosispo'],
-                        'rute'=> $data1['rutepo'],
-                        'frekuensi'=> $data1['frekuensipo'],
-                        'indikasi'=> $data1['indikasipo'],
+                        'tanggalmulai'=> $data1['tanggalmulai'],
+                        'tanggalstop'=> $data1['tanggalstop'],
+                        'dosis'=> $data1['dosis'],
+                        'rute'=> $data1['rute'],
+                        'frekuensi'=> $data1['frekuensi'],
+                        'indikasi'=> $data1['indikasi'],
                         'statusobat'=> $data1['statusobat'],
-                        'perubahanaturan'=> $data1['aturanpakai'],
+                        'perubahanaturan'=> $data1['perubahanaturan'],
                     ]);
                 }else{
                     $penggunaanobat = \DB::table('riwayatpenggunaanobat_t')->where('norec', $data['norec'])->update([
@@ -11008,6 +11009,8 @@ class EMRController  extends ApiController
                         'statusobat'=> $data1['statusobat'],
                         'perubahanaturan'=> $data1['perubahanaturan'],
                     ]);
+            $a= $penggunaanobat;
+
                 }
             }
             foreach($data2 as $data2){
@@ -11022,14 +11025,12 @@ class EMRController  extends ApiController
                         'tanggal'=> $data2['tanggal'],
                         'objectruanganfk'=> $data2['objectruanganfk'],
                         'objectprodukfk'=> $data2['objectprodukfk'],
-                        'dosis'=> $data2['dosis'],
-                        'frekuensi'=> $data2['frekuensi'],
-                        'waktupemberian'=> $data2['waktupemberian'],
-                        'carapemberian'=> $data2['carapemberian'],
-                        'islanjutaturansama'=> $data2['islanjutaturansama']== "✓" ? true : null,
-                        'lanjutaturanperubahan'=> $data2['lanjutaturanperubahan'],
-                        'isstop'=> $data2['isstop'] == "✓" ? true : null,
+                        'obatlain'=> $data2['obatlain'],
+                        'aturanpakai'=> $data2['aturanpakai'],
+                        'perubahanaturanpakai'=> $data2['perubahanaturanpakai'],
                         'objectpegawaifk'=> $data2['objectpegawaifk'],
+                        'rute'=> $data2['rute'],
+                        'statusobat'=> $data2['statusobat'],
                     ]);
                 }else{
                     $rekonsiliasiobat = \DB::table('riwayatrekonsiliasiobat_t')->where('norec', $data['norec'])->update([
@@ -11061,6 +11062,7 @@ class EMRController  extends ApiController
             DB::commit();
             $result = array(
                 "status" => 201,
+                "P"=> $a,
                 "as" => 'as@epic',
             );
 
@@ -11078,23 +11080,28 @@ class EMRController  extends ApiController
     }
     public function getRekonsiliasiObat(Request $request){
         $kdProfile = (int) $this->getDataKdProfile($request);
-        $reaksialergi = \DB::table('reaksialergi_t as ra')
-        ->join('produk_m as pr','pr.id','=','ra.objectprodukfk')->select(DB::raw("pr.namaproduk, ra.norec, ra.reaksialergi,ra.objectprodukfk"))
+        $reaksialergi = \DB::table('reaksialergi_t as ra')->select(DB::raw("ra.norec, ra.reaksialergi,ra.objectprodukfk"))
         ->where('ra.kdprofile', $kdProfile)->where('ra.statusenabled', true)
-        ->where('ra.noemr', $request['noemr'])->where('ra.noregistrasi', $request['noregistrasi'])->get();
+        ->where('ra.noemr', $request['noemr'])
+        // ->where('ra.noregistrasi', $request['noregistrasi'])
+        ->get();
         
         $penggunaanobat = \DB::table('riwayatpenggunaanobat_t as ra')
-        ->join('produk_m as pr','pr.id','=','ra.objectprodukfk')->select(DB::raw("pr.namaproduk, ra.*"))
+        ->leftjoin('produk_m as pr','pr.id','=','ra.objectprodukfk')->select(DB::raw("pr.namaproduk, ra.*"))
         ->where('ra.kdprofile', $kdProfile)->where('ra.statusenabled', true)
-        ->where('ra.noemr', $request['noemr'])->where('ra.noregistrasi', $request['noregistrasi'])->get();
+        ->where('ra.noemr', $request['noemr'])
+        // ->where('ra.noregistrasi', $request['noregistrasi'])
+        ->get();
         
         $rekonsiliasiobat = \DB::table('riwayatrekonsiliasiobat_t as ra')
-        ->join('produk_m as pr','pr.id','=','ra.objectprodukfk')
+        ->leftjoin('produk_m as pr','pr.id','=','ra.objectprodukfk')
         ->join('pegawai_m as pg','pg.id','=','ra.objectpegawaifk')
         ->join('ruangan_m as ru','ru.id','=','ra.objectruanganfk')
         ->select(DB::raw("pr.namaproduk,ru.namaruangan,pg.namalengkap, ra.*"))
         ->where('ra.kdprofile', $kdProfile)->where('ra.statusenabled', true)
-        ->where('ra.noemr', $request['noemr'])->where('ra.noregistrasi', $request['noregistrasi'])->get();
+        ->where('ra.noemr', $request['noemr'])
+        // ->where('ra.noregistrasi', $request['noregistrasi'])
+        ->get();
         
         $result = array(
             'reaksialergi' => $reaksialergi,
