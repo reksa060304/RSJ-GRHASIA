@@ -132,10 +132,17 @@ define(['initialize'], function (initialize) {
                 }
             }
             var chekedd = false
-
+            medifirstService.get("farmasi/get-alergi?nocm=" + $scope.header.nocm, true).then(function (dat) {
+                $scope.itemd.reaksialergi = dat.data[0].data[0].alergi
+            })
             medifirstService.get("emr/get-emr-transaksi-detail?noemr=" + nomorEMR + "&emrfk=" + $scope.cc.emrfk, true).then(function (dat) {
                 $scope.item.obj = []
                 $scope.item.obj2 = []
+                $scope.item.obj[100500] = moment($scope.header.tglregistrasi).format('YYYY-MM-DD HH:mm')
+                $scope.itemd.tanggalmulai = moment($scope.now).format('YYYY-MM-DD')
+                $scope.itemd.tanggalstop = moment($scope.now).format('YYYY-MM-DD')
+                $scope.itemd.tanggalRO = moment($scope.now).format('YYYY-MM-DD')
+                
                 medifirstService.get('emr/get-rekonsiliasi-obat?noemr=' + nomorEMR + "&noregistrasi="+$scope.cc.noregistrasi).then(function (data) {
                     dataAlergi = data.data.reaksialergi
                     for (let i = 0; i < dataAlergi.length; i++) {
@@ -619,7 +626,7 @@ define(['initialize'], function (initialize) {
                         "width": "30px",
                     },
                     {
-                        "field": "namaproduk",
+                        "field": "objectprodukfk",
                         "title": "Nama obat/suplemen/herbal/tradisional",
                         "width": "80px",
                     },
@@ -660,6 +667,11 @@ define(['initialize'], function (initialize) {
                         "width": "120px",
                     },
                     {
+                        "field": "dosis",
+                        "title": "Obat Lain",
+                        "width": "70px",
+                    },
+                    {
                         "title": "Jenis Obat",
                         "width": "120px",
                         "columns": [
@@ -690,11 +702,7 @@ define(['initialize'], function (initialize) {
                             },
                         ]
                     },
-                    {
-                        "field": "dosis",
-                        "title": "Dosis",
-                        "width": "70px",
-                    },
+                    
                     {
                         "field": "rute",
                         "title": "Rute",
@@ -702,7 +710,7 @@ define(['initialize'], function (initialize) {
                     },
                     {
                         "field": "frekuensi",
-                        "title": "Frekuensi",
+                        "title": "Aturan Pakai",
                         "width": "70px",
                     },
                     {
@@ -742,7 +750,7 @@ define(['initialize'], function (initialize) {
                 columns: [{
                         "field": "tanggal",
                         "title": "Tanggal",
-                        "width": "30px",
+                        "width": "50px",
                     },
                     {
                         "field": "namaruangan",
@@ -755,41 +763,26 @@ define(['initialize'], function (initialize) {
                         "width": "80px",
                     },
                     {
-                        "field": "dosis",
-                        "title": "Dosis",
+                        "field": "rute",
+                        "title": "Rute",
                         "width": "30px",
                     }, 
                     {
-                        "field": "frekuensi",
-                        "title": "Frekuensi",
-                        "width": "30px",
-                    },
-                    {
-                        "field": "waktupemberian",
-                        "title": "Waktu Pemberian",
-                        "width": "30px",
-                    },
-                    {
-                        "field": "carapemberian",
-                        "title": "Cara Pemberian",
+                        "field": "aturanpakai",
+                        "title": "Aturan Pakai",
                         "width": "30px",
                     },
                     {
                         "title": "Tindak Lanjut oleh DPJP",
                         "width": "120px",
                         "columns": [{
-                                "field": "islanjutaturansama",
-                                "title": "lanjut aturan pakai sama",
+                                "field": "statusobat",
+                                "title": "Status Obat",
                                 "width": "40px",
                             },
                             {
-                                "field": "lanjutaturanperubahan",
-                                "title": "lanjut aturan pakai perubahan",
-                                "width": "40px",
-                            },
-                            {
-                                "field": "isstop",
-                                "title": "Stop",
+                                "field": "perubahanaturanpakai",
+                                "title": "Perubahan Aturan Pakai",
                                 "width": "40px",
                             },
                         ]
@@ -797,7 +790,7 @@ define(['initialize'], function (initialize) {
                     {
                         "field": "namalengkap",
                         "title": "Tanda Tangan Apoteker",
-                        "width": "30px",
+                        "width": "80px",
                     },
                     
                     {
@@ -806,8 +799,8 @@ define(['initialize'], function (initialize) {
                             click: hapusRO,
                             imageClass: "k-icon k-i-delete"
                         }, ],
-                        title: "",
-                        width: "150px",
+                        title: "#",
+                        width: "50px",
                     }
                 ]
             }
@@ -903,8 +896,8 @@ define(['initialize'], function (initialize) {
                     data = {
                         norec: "",
                         nomorAlergi: nomorAlergi,
-                        namaproduk: $scope.itemd.obat.namaproduk,
-                        objectprodukfk: $scope.itemd.obat.id,
+                        namaproduk: $scope.itemd.obat,
+                        objectprodukfk: $scope.itemd.obat,
                         reaksialergi: $scope.itemd.reaksialergi
                     }
                     dataAlergi.push(data)
@@ -926,16 +919,26 @@ define(['initialize'], function (initialize) {
                 if ($scope.norecPO != undefined) {
 
                 } else {
+                    var namaproduk = ""
+                    var objectprodukfk = null
+                    if ($scope.itemd.obatPO != undefined){
+                        namaproduk = $scope.itemd.obatPO.namaproduk
+                        objectprodukfk = $scope.itemd.obatPO.id
+                    }
+                    var dosis = ""
+                    if ($scope.itemd.dosisPO != undefined){
+                        dosis = $scope.itemd.dosisPO
+                    }
                     data = {
                         norec: "",
                         nomorPO: nomorPO,
-                        namaproduk: $scope.itemd.obatPO.namaproduk,
-                        objectprodukfk: $scope.itemd.obatPO.id,
+                        namaproduk: namaproduk,
+                        objectprodukfk: objectprodukfk,
                         resep: $scope.itemd.resep == true ? "✓": "",
                         tanpa: $scope.itemd.tanpa == true ? "✓": "",
                         tanggalmulai: moment($scope.itemd.tangalmulai).format("YYYY-MM-DD"),
                         tanggalstop: moment($scope.itemd.tangalstop).format("YYYY-MM-DD"),
-                        dosis: $scope.itemd.dosisPO,
+                        dosis: dosis,
                         rute: $scope.itemd.rutePO,
                         frekuensi: $scope.itemd.frekuensiPO,
                         indikasi: $scope.itemd.indikasiPO,
@@ -947,7 +950,6 @@ define(['initialize'], function (initialize) {
                         data: dataPO,
                     });
                     $scope.itemd = {}
-                    console.log(dataPO);
                 }
             }
             $scope.createDataPO = function(){
@@ -966,20 +968,28 @@ define(['initialize'], function (initialize) {
                 if ($scope.norecRO != undefined) {
 
                 } else {
+                    var obatlain = ""
+                    var objectprodukfk = null
+                    var namaobat = ""
+                    if($scope.itemd.obatlain != undefined){
+                        obatlain = $scope.itemd.obatlain
+                    }
+                    if($scope.itemd.obatRO != undefined){
+                        namaobat = $scope.itemd.obatRO.namaproduk
+                        objectprodukfk = $scope.itemd.obatRO.id
+                    }
                     data = {
                         norec: "",
                         tanggal: moment($scope.itemd.tanggalRO).format('YYYY-MM-DD'),
                         namaruangan: $scope.itemd.namaruangan.namaruangan,
                         objectruanganfk: $scope.itemd.namaruangan.id,
-                        namaproduk: $scope.itemd.obatRO.namaproduk,
-                        objectprodukfk: $scope.itemd.obatRO.id,
-                        dosis: $scope.itemd.dosisRO,
-                        frekuensi: $scope.itemd.frekuensiRO,
-                        waktupemberian: moment($scope.itemd.waktupemberian).format('HH:mm'),
-                        carapemberian: $scope.itemd.carapemberian,
-                        islanjutaturansama: $scope.itemd.lanjutaturansama == true ? "✓" : null,
-                        lanjutaturanperubahan: $scope.itemd.lanjutaturanperubahan,
-                        isstop: $scope.itemd.stopaturan == true ? "✓" : null,
+                        namaproduk: namaobat,
+                        objectprodukfk: objectprodukfk,
+                        rute: $scope.itemd.rute,
+                        obatlain: obatlain,
+                        aturanpakai: $scope.itemd.aturanpakai,
+                        statusobat: $scope.itemd.LPO == true ? "L" : $scope.itemd.TPO == true ? "T" : $scope.itemd.HPO == true ? "H" : "",
+                        perubahanaturanpakai: $scope.itemd.perubahanaturanpakai,
                         namalengkap: $scope.itemd.apotekerRO.text,
                         objectpegawaifk: $scope.itemd.apotekerRO.value
                     }
@@ -987,7 +997,14 @@ define(['initialize'], function (initialize) {
                     $scope.dataSourceROGrid = new kendo.data.DataSource({
                         data: dataRO,
                     });
-                    $scope.itemd = {}
+                    $scope.itemd.obatRO = undefined
+                    $scope.itemd.rute = undefined
+                    $scope.itemd.aturanpakai = undefined
+                    $scope.itemd.LPO = undefined
+                    $scope.itemd.TPO = undefined
+                    $scope.itemd.HPO = undefined
+                    $scope.itemd.perubahanaturanpakai = undefined
+                    $scope.itemd.apotekerRO = undefined
                 }
             }
             $scope.Batal = function(){
@@ -996,6 +1013,13 @@ define(['initialize'], function (initialize) {
                 $scope.popUpLembarRekon.close()
                 $scope.popUpLembarRekonsiliasiObat.close()
             }
+            $scope.$watch('itemd.rslain', function (newValue, oldValue) {
+                if ($scope.itemd.rslain == true) {
+                    $scope.rslain = false
+                } else if ($scope.itemd.rslain != true) {
+                    $scope.rslain = true
+                }
+            })
         }
     ]);
 });
