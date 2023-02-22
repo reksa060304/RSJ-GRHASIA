@@ -96,7 +96,7 @@ h3{
                                  k-data-source="listJenisPelaksana" k-on-change='init()' /> 
                                 <!-- ng-disabled="item.paramedis == true" -->
                             </div>
-                            <div class="grid_5" style="margin-bottom:5px">
+                            <div class="grid_3" style="margin-bottom:5px">
                                 <label c-label item="item">Petugas Pelaksana</label>
                                 <select 
                                 kendo-multi-select
@@ -117,9 +117,13 @@ h3{
                             <!-- <label ng-click="tambah()"><img src="stylesheets/Addd.png" width="25" alt="Picture"  ></label> -->
                         <!-- </div>  -->
                         <div class="grid_2"  style="margin-top:20px;" ng-show="showLab" >
-                            <input type="checkbox" class="k-checkbox" id="pemeriksaanKeluar" ng-model="item.pemeriksaanKeluar" ng-click="cekpemeriksaanKeluar(item.pemeriksaanKeluar)">
-                            <label class="k-checkbox-label" for="pemeriksaanKeluar"><b>Pemeriksaan Luar</b></label>
+                            <input type="checkbox" class="k-checkbox" id="pemeriksaanKeluarPramita" ng-model="item.pemeriksaanKeluarPramita" ng-click="cekpemeriksaanKeluarPramita(item.pemeriksaanKeluarPramita)">
+                            <label class="k-checkbox-label" for="pemeriksaanKeluarPramita"><b>Pemeriksaan Luar Pramita</b></label>
                       </div>
+                      <div class="grid_2"  style="margin-top:20px;" ng-show="showLab" >
+                        <input type="checkbox" class="k-checkbox" id="pemeriksaanKeluarParahita" ng-model="item.pemeriksaanKeluarParahita" ng-click="cekpemeriksaanKeluarParahita(item.pemeriksaanKeluarParahita)">
+                        <label class="k-checkbox-label" for="pemeriksaanKeluarParahita"><b>Pemeriksaan Luar Parahita</b></label>
+                    </div>
                        <div class="grid_2"  style="margin-top: 20px">
                                 <input type="checkbox" class="k-checkbox" id="isParamedis" ng-model="item.paramedis" value="true" ng-click="cekParamedis(item.paramedis)">
                                 <label class="k-checkbox-label" for="isParamedis"><b>Dilakukan oleh Paramedis</b></label>

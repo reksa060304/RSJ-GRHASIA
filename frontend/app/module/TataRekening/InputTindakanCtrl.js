@@ -35,11 +35,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
           cacheHelper.set('norec_resep_qwertyuio',undefined) 
       }
 
-      var cookie = document.cookie.split(';');
-      cookie = cookie[0].split('=');
-      if (cookie[1] === 'laborat') {
-        $scope.showLab = true
-      }
+      
       // $scope.listKomponen =[];
       var data2 = [];
       $scope.item.pasien = {
@@ -214,6 +210,17 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.isRouteLoading = false;
             $scope.item.pasien = e.data[0];
 
+            console.log(e.data[0].objectruanganfk)
+
+            var cookie = document.cookie.split(';');
+            cookie = cookie[0].split('=');
+            console.log(cookie)
+            if (cookie[1] === 'laborat' || e.data[0].objectruanganfk == 575) {
+              $scope.showLab = true
+            } else{
+              $scope.showLab = false
+            }
+
 
             //  ** cek status closing
             medifirstService.get("sysadmin/general/get-status-close/" + $scope.item.pasien.noregistrasi, false).then(function (rese) {
@@ -235,7 +242,67 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.listProduk = x;
               })
           });
+
+          
       }
+
+      $scope.$watch('item.pemeriksaanKeluarPramita', function (newVal, oldVal) {
+				if (newVal  !== oldVal) {
+					if($scope.item.pemeriksaanKeluarPramita == true){
+            medifirstService.getDataDummyPHPV2("tatarekening/tindakan/get-tindakan?idRuangan="
+              + $scope.item.pasien.objectruanganfk
+              + "&idKelas="
+              + $scope.item.pasien.objectkelasfk
+              + "&idJenisPelayanan="
+              + $scope.item.pasien.objectjenispelayananfk
+              + "&pemeriksaanluar=1"
+              , true, 10, 10)
+              .then(function (x) {
+                $scope.listProduk = x;
+              })
+          } else{
+            medifirstService.getDataDummyPHPV2("tatarekening/tindakan/get-tindakan?idRuangan="
+              + $scope.item.pasien.objectruanganfk
+              + "&idKelas="
+              + $scope.item.pasien.objectkelasfk
+              + "&idJenisPelayanan="
+              + $scope.item.pasien.objectjenispelayananfk
+              , true, 10, 10)
+              .then(function (x) {
+                $scope.listProduk = x;
+              })
+          }
+				}
+			})
+
+      $scope.$watch('item.pemeriksaanKeluarParahita', function (newVal, oldVal) {
+				if (newVal  !== oldVal) {
+					if($scope.item.pemeriksaanKeluarPramita == true){
+            medifirstService.getDataDummyPHPV2("tatarekening/tindakan/get-tindakan?idRuangan="
+              + $scope.item.pasien.objectruanganfk
+              + "&idKelas="
+              + $scope.item.pasien.objectkelasfk
+              + "&idJenisPelayanan="
+              + $scope.item.pasien.objectjenispelayananfk
+              + "&pemeriksaanluar=2"
+              , true, 10, 10)
+              .then(function (x) {
+                $scope.listProduk = x;
+              })
+          } else{
+            medifirstService.getDataDummyPHPV2("tatarekening/tindakan/get-tindakan?idRuangan="
+              + $scope.item.pasien.objectruanganfk
+              + "&idKelas="
+              + $scope.item.pasien.objectkelasfk
+              + "&idJenisPelayanan="
+              + $scope.item.pasien.objectjenispelayananfk
+              , true, 10, 10)
+              .then(function (x) {
+                $scope.listProduk = x;
+              })
+          }
+				}
+			})
 
 
       $scope.getHargaTindakan = function () {

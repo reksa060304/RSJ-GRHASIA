@@ -2950,7 +2950,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         data: objSave
                     }
                 medifirstService.post('perencanaan/save-alokasi-keterangan-belanja',datasave).then(function (e) {
-                    LoadTotalKeterangan();
+                    //LoadTotalKeterangan();
+                    $scope.findData();
     
                         var idpegawai = ''
                         $scope.pegawaiLogin = medifirstService.getPegawaiLogin();
@@ -2966,8 +2967,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             let selisih = 0
                             selisih = $scope.totalanggaranperalokasi - e.data.alokasimataanggaran[0].totalbulanan
                             $scope.item.selisihanggaran = formatRupiah(selisih, "Rp. ")
+                            
                         })
-                    //$scope.popupAlokasiKeteranganBelanja.center().close()
+                    $scope.popupAlokasiKeteranganBelanja.center().close()
                 }, function (error) {
 
                 })
@@ -3978,6 +3980,37 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                 })
             }
+            
+            var onDataBoundAngkas = function (e) {
+                var kendoGrid = $("#kGridAngkas").data("kendoGrid");
+                var rows = e.sender.element.find("tbody tr"); // get all rows
+                for (let i = 0; i < rows.length; i++) {
+                    // const element = rows[i];
+                    var row = rows[i];
+                    var subtotal = kendoGrid.dataItem(row).subtotal;
+                    var totalbulanan = kendoGrid.dataItem(row).totalbulanan;
+                    //console.log(status);
+                    if (subtotal !=  totalbulanan) {
+                        $(row.cells[1]).addClass("koneng");
+                        $(row.cells[2]).addClass("koneng");
+                        $(row.cells[3]).addClass("koneng");
+                        $(row.cells[4]).addClass("koneng");
+                        $(row.cells[5]).addClass("koneng");
+                        $(row.cells[6]).addClass("koneng");
+                        $(row.cells[7]).addClass("koneng");
+                        $(row.cells[8]).addClass("koneng");
+                        $(row.cells[9]).addClass("koneng");
+                        $(row.cells[10]).addClass("koneng");
+                        $(row.cells[11]).addClass("koneng");
+                        $(row.cells[12]).addClass("koneng");
+                        $(row.cells[13]).addClass("koneng");
+                        $(row.cells[14]).addClass("koneng");
+                        $(row.cells[15]).addClass("koneng");
+                        $(row.cells[16]).addClass("koneng");
+                    }
+                }
+            }
+
             $scope.columnMataAnggaran = {
                 toolbar:[
                     {
@@ -4225,7 +4258,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 ],
                 selectable: 'row',
                 scrollable: true,
-
+                dataBound: onDataBoundAngkas,
                 pageable: true,
                 groupable: true,  
                 columns:[
