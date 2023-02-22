@@ -216,10 +216,11 @@ define(['initialize'], function (initialize) {
                 {
                     "id" : 1, "nama": "",
                     "detail": [
-                        {"id": 3012710, "nama": "1 )  TD :","satuan": "","type": "textbox"},
-                        {"id": 3012711, "nama": "3 )  Rontgen :","satuan": "","type": "textbox"},
-                        {"id": 3012712, "nama": "2 ) Suhu :","satuan": "","type": "textbox"},
-                        {"id": 3012713, "nama": "4 ) Lain-lain","satuan": "","type": "textbox"},
+                        {"id": 3012710, "nama": "1 )  TD :","satuan": "mmHg","type": "textbox"},
+                        {"id": 3012711, "nama": "4 )  Rontgen :","satuan": "","type": "textbox"},
+                        {"id": 3012712, "nama": "2 ) Suhu :","satuan": "°C","type": "textbox"},
+                        {"id": 3012713, "nama": "5 )  Lain-lain :","satuan": "","type": "textbox"},
+                        {"id": 3012734, "nama": "3)  Saturasi","satuan": "%","type": "textbox"},
                     ]
                 },
             ]

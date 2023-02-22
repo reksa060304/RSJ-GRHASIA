@@ -19907,6 +19907,50 @@
         "define": "RekamMedisCtrl"
       }
     ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.AssesmenTerapiWicara",
+    "url": "/AssesmenTerapiWicara",
+    "templateurl": "module/EMR/AssesmenTerapiWicara.html",
+    "controller": "AssesmenTerapiWicaraCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.PengkajianOkupasiTerapi",
+    "url": "/PengkajianOkupasiTerapi",
+    "templateurl": "module/EMR/PengkajianOkupasiTerapi.html",
+    "controller": "PengkajianOkupasiTerapiCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
   }
 ]
 
