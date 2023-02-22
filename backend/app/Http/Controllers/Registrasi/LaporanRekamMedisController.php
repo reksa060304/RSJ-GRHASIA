@@ -3076,8 +3076,7 @@ class LaporanRekamMedisController extends   ApiController
             INNER JOIN ruangan_m as ru on ru.id = apd.objectruanganfk and ru.objectdepartemenfk IN (16)
             LEFT JOIN ruangan_m as ru1 on ru1.id = apd.objectruanganasalfk and ru1.objectdepartemenfk NOT IN (16)
             where pd.kdprofile = 30 
-            and pd.statusenabled = true
-            and cast(apd.tglmasuk as date) = '$tglAwal-01-01'::date - INTERVAL '1 DAY' and pd.tglpulang::date >= '$tglAwal-01-01'::date 
+            and pd.statusenabled = true and pd.tglpulang::date > '$tglAwal-01-01'::date - INTERVAL '1 DAY'
             group by apd.tglmasuk::date, jks.id, jks.jeniskasus
             ) as x
 
@@ -3091,7 +3090,7 @@ class LaporanRekamMedisController extends   ApiController
             inner JOIN ruangan_m as ru1 on ru1.id = apd.objectruanganasalfk and ru1.objectdepartemenfk IN (16)
             where pd.kdprofile = 30 
             and pd.statusenabled = true
-            and cast(apd.tglmasuk as date) = '$tglAwal-01-01'::date - INTERVAL '1 DAY' and pd.tglpulang::date >= '$tglAwal-01-01'::date
+            and  pd.tglpulang::date > '$tglAwal-01-01'::date - INTERVAL '1 DAY'
             group by apd.tglmasuk::date, jks.id, jks.jeniskasus
             ) as x
             ) as y 

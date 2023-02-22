@@ -3598,6 +3598,14 @@
         {
             "nameDep": "PemberianInformasiRujukanGrhCtrl",
             "urlDep": "module/EMR/PemberianInformasiRujukanGrhCtrl"
+        },
+        {
+            "nameDep": "AssesmenTerapiWicaraCtrl",
+            "urlDep": "module/EMR/AssesmenTerapiWicaraCtrl"
+        },
+        {
+            "nameDep": "PengkajianOkupasiTerapiCtrl",
+            "urlDep": "module/EMR/PengkajianOkupasiTerapiCtrl"
         }
     ]
 }

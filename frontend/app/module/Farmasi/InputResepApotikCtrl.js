@@ -2746,6 +2746,8 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
 
             $scope.klikGridSsS = function (dataSelectedSsS) {
                 // bukan ini
+                    return
+
                 $scope.isRouteLoading = true;
                 dataPaket = [];
                 if (dataSelectedSsS != undefined) {
