@@ -412,7 +412,7 @@ define(['initialize'], function (initialize) {
                         { "id": 3010554, "nama": "Lemah", "satuan": "", "type": "checkbox" },
                         { "id": 3010555, "nama": "Nyeri pada otot sendi/tulang", "satuan": "", "type": "checkbox" },
                         { "id": 3010556, "nama": "Mual Muntah", "satuan": "", "type": "checkbox" },
-                        { "id": 3010557, "nama": "Imsomnia", "satuan": "", "type": "checkbox" },
+                        { "id": 3010557, "nama": "Insomnia", "satuan": "", "type": "checkbox" },
                         { "id": 3010558, "nama": "Diare", "satuan": "", "type": "checkbox" },
                         { "id": 3010559, "nama": "Jalan sempoyongan", "satuan": "", "type": "checkbox" },
                         { "id": 3010560, "nama": "Konstipasi", "satuan": "", "type": "checkbox" },

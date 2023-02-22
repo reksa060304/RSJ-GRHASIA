@@ -177,7 +177,7 @@ define(['initialize'], function (initialize) {
                 },
                 {
                     "id": 3,
-                    "nama": "C. Perubahan Tingkah Laku / Peningkatan gejala Sejak : ",
+                    "nama": "C. Awal Perubahan Tingkah Laku / Peningkatan Gejala Sejak : ",
                     "detail": [{
                             "id": 120008,
                             "nama": "",

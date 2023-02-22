@@ -272,6 +272,7 @@ define(['initialize'], function (initialize) {
                 $scope.item.obj = []
                 $scope.item.obj2 = []
                 $scope.item.obj[116062]=$scope.now
+                $scope.item.obj[1901300425]=$scope.now
                 $scope.item.obj[116068]={text:$scope.cc.namaruangan,value: $scope.cc.objectruanganfk}
 
                 $scope.item.obj[116201] = true

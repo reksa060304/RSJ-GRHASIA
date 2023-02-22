@@ -188,7 +188,7 @@
                     <label c-label item="item" class="margin-bottom">A. ANAMNESIS</label>
                 </div>
                 <div class="grid_12 margin-top-20 margin-bottom">
-                    <label c-label item="item" class="margin-bottom">1. Keluhan Utama</label>
+                    <label c-label item="item" class="margin-bottom">1. Keluhan Utama / Keluhan Saat Ini</label>
                     <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901300348]"
                             style="height: 55px; width: 98%; "/>
                 </div>
@@ -1045,7 +1045,7 @@
                 </div>
                 <div class="grid_4 margin-top-30 text-center margin-bottom">
                     <label c-label item="item" c-label-text="Selesai Pemeriksaan Pukul"></label>
-                    <input  k-ng-model="item.obj[1901300425]"  kendo-timepicker k-max="now" placeholer="HH:mm" k-format="'HH:mm'" ng-value="{{data2.datevalue}}"/>
+                    <input  k-ng-model="item.obj[1901300425]"  kendo-datetimepicker k-max="now" placeholer="yyyy-mm-dd HH:mm" k-format="'yyyy-mm-dd HH:mm'" ng-value="{{data2.datevalue}}"/>
                 </div>
             </fieldset>
         </div>

@@ -2100,6 +2100,26 @@
     ]
   },
   {
+    "name": "DetailLaporanFungsional",
+    "url": "/RGV0YWlsTGFwb3JhbkZ1bmdzaW9uYWw=",
+    "templateurl": "module/BendaharaPenerimaan/DetailLaporanFungsional.html",
+    "controller": "DetailLaporanFungsionalCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
     "name": "STSRingkas",
     "url": "/U1RTUmluZ2thcw==",
     "templateurl": "module/BendaharaPenerimaan/STSRingkas.html",
