@@ -20,30 +20,27 @@ define(['initialize'], function (initialize) {
                 medifirstService.get('pdti/load-data-dashboard?tglawal='+ moment($scope.item.tglawal).format('YYYY-MM-DD 00:00')+'&tglakhir='+ moment($scope.item.tglakhir).format('YYYY-MM-DD 23:59')).then(function(data){
                     $scope.card = data.data.card
                     $scope.pie = data.data.pie
+                    $scope.series = data.data.series
+                    $scope.belumdikerjakan = 0
+                    $scope.progress = 0
+                    $scope.selesai = 0
+                    $scope.usulanpenghapusan = 0
                     for (let i = 0; i < $scope.card.length; i++) {
-                        console.log($scope.card[i][0].id);
-                        // if($scope.card[i][0].id == null){
-                        //     $scope.card[i][0].color = '#ffffff'
-                        //     $scope.card[i][0].colorhead = '#e2e2e2'
-                        // }
-                        if ($scope.card[i][0].id == 3) {
-                            $scope.card[i][0].color = '#ff0000'
-                            $scope.card[i][0].colorhead = '#cb0000'
-
+                        if($scope.card[i].id == 3){
+                            $scope.belumdikerjakan += 1 
                         }
-                        if ($scope.card[i][0].id == 15) {
-                            $scope.card[i][0].color = '#fffc00'
-                            $scope.card[i][0].colorhead = '#ccca00'
-
+                        if ($scope.card[i].id == 15) {
+                            $scope.progress += 1
                         }
-                        if ($scope.card[i][0].id == 1) {
-                            $scope.card[i][0].color = '#01ff00'
-                            $scope.card[i][0].colorhead = '#01bd00'
+                        if ($scope.card[i].id == 1) {
+                            $scope.selesai += 1
+                        }
+                        if ($scope.card[i].jenispekerjaan == 10) {
+                            $scope.usulanpenghapusan += 1
 
                         }
                     }
                     $("#chart").kendoChart({
-                        
                         legend: {
                             visible: false
                         },
@@ -54,7 +51,7 @@ define(['initialize'], function (initialize) {
                             labels: {
                                 visible: true,
                                 background: "transparent",
-                                template: "#= category #: \n #= value#%"
+                                template: "#= category #: \n #= value #"
                             }
                         },
                         series: [{
@@ -64,8 +61,40 @@ define(['initialize'], function (initialize) {
                         }],
                         tooltip: {
                             visible: true,
-                            format: "{0}%"
+                            // format: "{0}%"
                         }
+                    });
+                    $("#bar").kendoChart({
+                        
+                        legend: {
+                            visible: false
+                        },
+                        seriesDefaults: {
+                            type: "column"
+                        },
+                        series: $scope.series,
+                        seriesColors: ["#cd1533", "#d43851", "#dc5c71", "#e47f8f", "#eba1ad",
+                            "#009bd7", "#26aadd", "#4db9e3", "#73c8e9", "#99d7ef"
+                        ],
+                        valueAxis: {
+                            labels: {
+                                template: "#= kendo.format('{0:N0}', value) #"
+                            },
+                            line: {
+                                visible: false
+                            }
+                        },
+                        categoryAxis: {
+                            categories: ["januari", "Februari","Maret", "April", "Mei", "Juni","Juli","Agustus","September","Oktober","November","Desember"],
+                            majorGridLines: {
+                                visible: false
+                            }
+                        },
+                        tooltip: {
+                            visible: true,
+                            template: "#= series.name # : #= value#"
+                        },
+                       
                     });
                 })
             }
@@ -100,6 +129,80 @@ define(['initialize'], function (initialize) {
                     });
                 });
             });
+            $(".export-imgs").on('click', function () {
+                var chart = $("#bar").getKendoChart();
+                chart.exportImage().done(function (data) {
+                    kendo.saveAs({
+                        dataURI: data,
+                        fileName: "bar.png",
+                        // proxyURL: "https://demos.telerik.com/kendo-ui/service/export"
+                    });
+                });
+            });
+            $scope.DataDetail = function(data){
+                var datas = []
+                if(data == 1){
+                    for (let i = 0; i < $scope.card.length; i++) {
+                        if ($scope.card[i].statuspekerjaan == 'Belum Dikerjakan') {
+                            datas.push($scope.card[i])
+                            
+                        }
+                    }
+                }
+                if (data == 2) {
+                    for (let i = 0; i < $scope.card.length; i++) {
+                        if ($scope.card[i].statuspekerjaan == 'Progress') {
+                            datas.push($scope.card[i])
+
+                        }
+                    }
+                }
+
+                if (data == 3) {
+                    for (let i = 0; i < $scope.card.length; i++) {
+                        if ($scope.card[i].statuspekerjaan == 'Selesai') {
+                            datas.push($scope.card[i])
+
+                        }
+                    }
+                }
+
+                if (data == 4) {
+                    for (let i = 0; i < $scope.card.length; i++) {
+                        if ($scope.card[i].jenispekerjaan == 10) {
+                            datas.push($scope.card[i])
+                        }
+                    }
+                }
+
+                $scope.dataSource = new kendo.data.DataSource({
+                    data: datas
+                })
+                console.log(datas);
+                $scope.popUpDetail.center().open()
+            }
+            $scope.columnGridSsS = [
+                {
+                    "field": "namalengkap",
+                    "title": "Pengorder Perbaikan",
+                    "width": "40%"
+                },
+                {
+                    "field": "namaruangan",
+                    "title": "Ruangan",
+                    "width": "40%"
+                },
+                {
+                    "field": "jeniskerusakan",
+                    "title": "Jenis Kerusakan",
+                    "width": "40%"
+                },
+                {
+                    "field": "klasifikasiperbaikan",
+                    "title": "Klasifikasi Perbaikan",
+                    "width": "40%"
+                }
+            ]
             ////////////////////////////////////////////////////////    END     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         }
     ]);

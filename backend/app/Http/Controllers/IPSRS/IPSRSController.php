@@ -1226,67 +1226,114 @@ class IPSRSController extends ApiController
     public function getDashboardPerbaikanPDTI(Request $request)
     {
 
-        // $cardnull = \DB::select(DB::raw("
-        // SELECT sp.id,
-        // 'Belum Direspon' as statuspekerjaan, count(stp.objectstatuspekerjaanfk) FROM strukplanning_t stp left join statuspekerjaan_m sp on sp.id = stp.objectstatuspekerjaanfk
-        // where stp.objectkelompoktransaksifk = 151 and  stp.kdprofile= 30 and stp.statusenabled = true and stp.tglverif is null and stp.startdate between '$request[tglawal]' and '$request[tglakhir]'
-        // GROUP BY stp.objectstatuspekerjaanfk, sp.id
-        // "));
-        // if(count($cardnull) < 1){
-        //     $cardnull[0]['id'] = null;
-        //     $cardnull[0]['statuspekerjaan'] = 'Belum Direspon';
-        //     $cardnull[0]['count'] = 0;
-        // }
+        $card = \DB::select(DB::raw("SELECT sp.id,
+        sp.statuspekerjaan, jk.id as jenispekerjaan, pg.namalengkap, ru.namaruangan, jp.reportdisplay jeniskerusakan, jp1.reportdisplay as klasifikasiperbaikan FROM strukplanning_t stp
+        left join statuspekerjaan_m sp on sp.id = stp.objectstatuspekerjaanfk
+        left join jenispekerjaan_m jk on jk.id = stp.objectjenispekerjaanfk
+        left join pegawai_m pg on pg.id = stp.narasumberfk
+        left join ruangan_m ru on ru.id = stp.objectruanganfk
+        left join jenispekerjaan_m jp on jp.id = stp.objectjenispekerjaanfk
+        left join jenispekerjaan_m jp1 on jp1.id = stp.objectjenisalatfk
+        where stp.objectkelompoktransaksifk = 151 and stp.kdprofile= 30 and stp.statusenabled = true and stp.startdate between '$request[tglawal]' and '$request[tglakhir]'
+        "));
 
-        $card3 = \DB::select(DB::raw("
-        SELECT sp.id,
-        sp.statuspekerjaan, count(stp.objectstatuspekerjaanfk) FROM strukplanning_t stp left join statuspekerjaan_m sp on sp.id = stp.objectstatuspekerjaanfk
-        where stp.objectkelompoktransaksifk = 151 and  stp.kdprofile= 30 and stp.statusenabled = true and sp.id = 3 and stp.startdate between '$request[tglawal]' and '$request[tglakhir]'
-        GROUP BY stp.objectstatuspekerjaanfk, sp.id
-        "));
-        if(count($card3) < 1){
-            $card3[0]['id'] = 3;
-            $card3[0]['statuspekerjaan'] = 'Belum Dikerjakan';
-            $card3[0]['count'] = 0;
-        }
-                
-        $card15 = \DB::select(DB::raw("
-        SELECT sp.id,
-        sp.statuspekerjaan, count(stp.objectstatuspekerjaanfk) FROM strukplanning_t stp left join statuspekerjaan_m sp on sp.id = stp.objectstatuspekerjaanfk
-        where stp.objectkelompoktransaksifk = 151 and  stp.kdprofile= 30 and stp.statusenabled = true and sp.id = 15 and stp.startdate between '$request[tglawal]' and '$request[tglakhir]'
-        GROUP BY stp.objectstatuspekerjaanfk, sp.id
-        "));
-        if(count($card15) < 1){
-            $card15[0]['id'] = 15;
-            $card15[0]['statuspekerjaan'] = 'Progress';
-            $card15[0]['count'] = 0;
-        }
-        
-        $card1 = \DB::select(DB::raw("
-        SELECT sp.id,
-        sp.statuspekerjaan, count(stp.objectstatuspekerjaanfk) FROM strukplanning_t stp left join statuspekerjaan_m sp on sp.id = stp.objectstatuspekerjaanfk
-        where stp.objectkelompoktransaksifk = 151 and  stp.kdprofile= 30 and stp.statusenabled = true and sp.id = 1 and stp.startdate between '$request[tglawal]' and '$request[tglakhir]'
-        GROUP BY stp.objectstatuspekerjaanfk, sp.id
-        "));
-        if(count($card1) < 1){
-            $card1[0]['id'] = 1;
-            $card1[0]['statuspekerjaan'] = 'Selesai';
-            $card1[0]['count'] = 0;
-        }
-        $card = array(
-            // 0=> $cardnull,
-            0=> $card3,
-            1=> $card15,
-            2=> $card1,
-        );
         $pie = \DB::select(DB::raw("SELECT count(stp.objectjenisalatfk)as value, jp.reportdisplay as category FROM strukplanning_t stp
         inner join jenispekerjaan_m jp on jp.id = stp.objectjenisalatfk
         where stp.objectkelompoktransaksifk = 151 and stp.kdprofile= 30 and stp.statusenabled = true and stp.startdate between '$request[tglawal]' and '$request[tglakhir]'
         GROUP BY jp.reportdisplay
             "));
+
+        $bar = DB::select(DB::raw("
+        SELECT djp.id, date_part('month', stp.startdate::date)as bulan, djp.detailjenispekerjaan, count(stp.norec)as count FROM strukplanning_t stp 
+        left join detailjenispekerjaan_m djp on djp.id = stp.objectdetailjenispekerjaanfk
+        where date_part('year', stp.startdate) = date_part('year', '$request[tglawal]'::date)
+
+        GROUP BY date_part('month', stp.startdate::date), djp.detailjenispekerjaan,djp.id
+        order by djp.id asc
+        "));
+        $jan = 0;
+        $feb = 0;
+        $mar = 0;
+        $apr = 0;
+        $mei = 0;
+        $jun = 0;
+        $jul = 0;
+        $ags = 0;
+        $sep = 0;
+        $okt = 0;
+        $nov = 0;
+        $des = 0;
+        $data = [];
+        $detail = [];
+        $series = [];
+        $djp = \DB::select(DB::raw("select * from detailjenispekerjaan_m where kdprofile = 30 and statusenabled = true order by id asc"));
+        foreach ($bar as $b ) {
+            $data = [];
+            $jan = 0;
+            $feb = 0;
+            $mar = 0;
+            $apr = 0;
+            $mei = 0;
+            $jun = 0;
+            $jul = 0;
+            $ags = 0;
+            $sep = 0;
+            $okt = 0;
+            $nov = 0;
+            $des = 0;
+            foreach ($djp as $d) {
+                if($d->id == $b->id){
+                    if($b->bulan == 1){
+                        $jan = $b->count;
+                    }
+                    if($b->bulan == 2){
+                        $feb = $b->count;
+                    }
+                    if($b->bulan == 3){
+                        $mar = $b->count;
+                    }
+                    if($b->bulan == 4){
+                        $apr = $b->count;
+                    }
+                    if($b->bulan == 5){
+                        $mei = $b->count;
+                    }
+                    if($b->bulan == 6){
+                        $jun = $b->count;
+                    }
+                    if($b->bulan == 7){
+                        $jul = $b->count;
+                    }
+                    if($b->bulan == 8){
+                        $ags = $b->count;
+                    }
+                    if($b->bulan == 9){
+                        $sep = $b->count;
+                    }
+                    if($b->bulan == 10){
+                        $okt = $b->count;
+                    }
+                    if($b->bulan == 11){
+                        $nov = $b->count;
+                    }
+                    if($b->bulan == 12){
+                        $des = $b->count;
+                    }
+                    $data = [$jan, $feb,$mar,$apr,$mei,$jun, $jul, $ags, $sep, $okt, $nov, $des];
+                    $series[] = array(
+                        'name'=> $b->detailjenispekerjaan,
+                        'stack'=> 1,
+                        'data'=> $data
+                    );
+                    $data = [];
+                }
+            }
+        }
+        
         $result = array(
             'card'=> $card,
             'pie'=> $pie,
+            'series'=> $series
         );
         return $this->respond($result);
     }

@@ -5,7 +5,102 @@
 <script src="https://kendo.cdn.telerik.com/2022.3.1118/js/jquery.min.js"></script>
 <script src="https://kendo.cdn.telerik.com/2022.3.1118/js/kendo.all.min.js"></script>
 <style>
-    
+    .small-box {
+    border-radius: 1rem;
+    box-shadow: 0 0 1px rgba(0, 0, 0, 0.125), 0 1px 3px rgba(0, 0, 0, 0.2);
+    display: block;
+    margin-bottom: 20px;
+    position: relative;
+    }
+    .small-box > .inner {
+    padding: 12px;
+    height: 120px;
+    }
+    .bg-info {
+    background-color: #20b2aa;
+    }
+    .bg-perempuan {
+    background-color: #ffb6c1 !important;
+    }
+    .bg-laki {
+    background-color: #0a88ba !important;
+    }
+    .bg-p3k {
+    background-color: #24d409 !important;
+    }
+    .small-box .icon {
+    color: rgba(0, 0, 0, 0.15);
+    z-index: 0;
+    }
+    .small-box > .small-box-footer {
+    background-color: rgba(0, 0, 0, 0.1);
+    color: rgba(255, 255, 255, 0.8);
+    display: block;
+    padding: 3px 0;
+    position: relative;
+    text-align: center;
+    text-decoration: none;
+    z-index: 10;
+    }
+
+    .small-box > .small-box-footer:hover {
+    background-color: rgba(0, 0, 0, 0.15);
+    color: #fff;
+    }
+    .small-box h3 {
+    font-size: 2.0rem;
+    font-weight: 700;
+    margin: 0 0 10px;
+    padding: 0;
+    white-space: nowrap;
+    /* color: white; */
+    text-align: left;
+    }
+    .small-box h4 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin: 0 0 10px;
+    padding: 0;
+    white-space: nowrap;
+    /* color: white; */
+    text-align: left;
+    }
+    .small-box p {
+    font-size: 1rem;
+    font-weight: bold;
+    /* color: #fff; */
+    }
+
+    .small-box .icon > i {
+    font-size: 90px;
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    transition: -webkit-transform 0.3s linear;
+    transition: transform 0.3s linear;
+    transition: transform 0.3s linear, -webkit-transform 0.3s linear;
+    }
+    .small-box .icon {
+    color: rgba(0, 0, 0, 0.15);
+    z-index: 0;
+    }
+    .small-box .icon > i.fa, .small-box .icon > i.fas, .small-box .icon > i.far, .small-box .icon > i.fab, .small-box
+    .icon > i.fal, .small-box .icon > i.fad, .small-box .icon > i.ion {
+    font-size: 80px;
+    top: 50px;
+    }
+    .info-box {
+    box-shadow: 0 0 1px rgba(0, 0, 0, 0.125), 0 1px 3px rgba(0, 0, 0, 0.2);
+    border-radius: 0.25rem;
+    background-color: #fff;
+    display: -ms-flexbox;
+    display: flex;
+    margin-bottom: 1rem;
+    min-height: 80px;
+    padding: .5rem;
+    position: relative;
+    width: 100%;
+    }
     .k-icon-32 {
     font-size: 32px; /* Sets icon size to 32px */
     }
@@ -145,7 +240,75 @@
                         </fieldset>
                     </div>
                     <div class="grid_12">
-                        <div class="grid_4" ng-repeat="card in card">
+                        <div class="grid_3">
+                            <div class="small-box bg-info" style="background-color: #ff0000 !important">
+                                <div class="inner">
+                                    <h4 style="color: #ffffff;">Belum dikerjakan</h4>
+                                    <p style="color: #ffffff;font-size:50px">
+                                        {{belumdikerjakan}}
+                                    </p>
+
+                                </div>
+                                <div class="icon">
+                                    <i class="fa fa-exclamation-circle" style="color: #ffffff; font-size: 80px;"></i>
+                                </div>
+                                <a ng-click="DataDetail(1)" class="small-box-footer"
+                                    style="color: #ffffff; font-weight: bold;">Detail <i
+                                        class="fa fa-arrow-circle-right"></i></a>
+                            </div>
+                        </div>
+                        <div class="grid_3">
+                            <div class="small-box bg-info" style="background-color: #ffee00 !important">
+                                <div class="inner">
+                                    <h4 style="color: #000000;">Proses</h4>
+                                    <p style="color: #000000;font-size:50px">
+                                        {{progress}}
+                                    </p>
+
+                                </div>
+                                <div class="icon">
+                                    <i class="fa fa-gears" style="color: #000000; font-size: 80px;"></i>
+                                </div>
+                                <a ng-click="DataDetail(2)"  class="small-box-footer"
+                                    style="color: #000000; font-weight: bold;">Detail <i
+                                        class="fa fa-arrow-circle-right"></i></a>
+                            </div>
+                        </div>
+                        <div class="grid_3">
+                            <div class="small-box bg-info" style="background-color: #18cf00 !important">
+                                <div class="inner">
+                                    <h4 style="color: #000000;">Selesai</h4>
+                                    <p style="color: #000000;font-size:50px">
+                                        {{selesai}}
+                                    </p>
+
+                                </div>
+                                <div class="icon">
+                                    <i class="fa fa-check-circle" style="color: #000000; font-size: 80px;"></i>
+                                </div>
+                                <a ng-click="DataDetail(3)" class="small-box-footer"
+                                    style="color: #000000; font-weight: bold;">Detail <i
+                                        class="fa fa-arrow-circle-right"></i></a>
+                            </div>
+                        </div>
+                        <div class="grid_3">
+                            <div class="small-box bg-info" style="background-color: #00b7ff !important">
+                                <div class="inner">
+                                    <h4 style="color: #000000;">Usulan Penghapusan</h4>
+                                    <p style="color: #000000;font-size:50px">
+                                        {{usulanpenghapusan}}
+                                    </p>
+
+                                </div>
+                                <div class="icon">
+                                    <i class="fa fa-trash" style="color: #000000; font-size: 80px;"></i>
+                                </div>
+                                <a ng-click="DataDetail(4)" class="small-box-footer"
+                                    style="color: #000000; font-weight: bold;">Detail <i
+                                        class="fa fa-arrow-circle-right"></i></a>
+                            </div>
+                        </div>
+                        <!-- <div class="grid_4" ng-repeat="card in card">
                             <div class="card" ng-repeat="card in card"
                                 style="background-color: {{ card.color }}">
                                 <div class="k-card-header" style="background-color: {{ card.colorhead }}">
@@ -155,9 +318,9 @@
                                     <p>{{card.count}}</p>
                                 </div>
                             </div>
-                        </div>
+                        </div> -->
                     </div>
-                    <div class="grid_12">
+                    <div class="grid_4">
                         <fieldset class="effect-shadow" style=" border-radius: 4px">
                             <legend>
                                 <h2>Jenis Perbaikan PDTI</h2>
@@ -169,7 +332,24 @@
                                 </div>
                             </div>
                             <div class="demo-section wide">
-                                <div id="chart">
+                                <div id="chart" class="grid_12">
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                    <div class="grid_8">
+                        <fieldset class="effect-shadow" style=" border-radius: 4px">
+                            <legend>
+                                <h2>Objek Perbaikan PDTI</h2>
+                            </legend>
+                            <div class="box-col">
+                                <div class="box-col">
+                                    <!-- <button class='export-pdf k-button'>Export as PDF</button> -->
+                                    <button class='export-imgs k-button'>Export as Image</button>
+                                </div>
+                            </div>
+                            <div class="demo-section wide">
+                                <div id="bar" class="grid_12">
                                 </div>
                             </div>
                         </fieldset>
@@ -183,5 +363,11 @@
                 </div>
             </div>
         </div>
+    </div>
+</div>
+<div kendo-window="popUpDetail" k-title="'Detail Riwayat Perbaikan '" k-width="800" k-visible="false" k-on-open="win2visible = true"
+    k-on-close="win2visible = false">
+    <div id="kGrid" kendo-grid k-data-source="dataSource" k-selectable="'row'" k-columns="columnGridSsS"
+        k-pageable="'true'" k-sortable="'true'" k-ng-model="dataSelectedSsS" ng-click="klikGridSsS(dataSelectedSsS)">
     </div>
 </div>
