@@ -18,7 +18,7 @@
         },
         {
             "nameDep": "MasterRuanganRawatInapCtrl",
-            "urlDep": "module/sysAdmin/MasterRuanganRawatInapCtrl"
+            "urlDep": "module/SysAdmin/MasterRuanganRawatInapCtrl"
         },
         {
             "nameDep": "LaporanBalikanDukcapilCtrl",
