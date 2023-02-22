@@ -1273,7 +1273,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('report/get-cetak-per-jenis-anggaran','Report\ReportController@CetakPerJenisAnggaran');
           Route::get('report/get-cetak-per-jenis-anggaran-sebelum-sesudah','Report\ReportController@CetakPerJenisAnggaranSebelumSesudah');
           Route::get('report/get-cetak-rekap-mata-anggaran','Report\ReportController@CetakRekapMataAnggaran');
-          Route::get('report/get-cetak-rekap-mata-anggaran-sebelum','Report\ReportController@CetakRekapMataAnggaranSebelum');
+          Route::get('report/get-cetak-rekap-mata-anggaran-sebelum','Report\ReportController@
+          ');
           Route::get('report/get-cetak-rekap-total-anggaran','Report\ReportController@CetakRekapTotalAnggaran');
           Route::get('report/get-cetak-rekap-total-anggaran-sebelum-sesudah','Report\ReportController@CetakRekapTotalAnggaranSebelumSesudah');
           Route::get('report/get-cetak-rba-detail','Report\ReportController@CetakRBADetail');

@@ -5726,7 +5726,13 @@ class PerencanaanController extends ApiController {
                 $dataKeteranganBelanja = DB::select(DB::raw("
                 select kb.*,ma.kodemataanggaran || ' ' || ma.namamataanggaran as mataanggaran,
                 ka.kode || ' ' || ka.keterangan as kegiatan,ap.asalproduk,
-                ma.kodemataanggaran , ma.namamataanggaran,ka.kode , ka.keterangan,ka.tahun,ta.tahap,
+                ma.kodemataanggaran  
+                , split_part(ma.kodemataanggaran, '.', 1) as subkodepertama
+                , split_part(ma.kodemataanggaran, '.', 2) as subkodekedua
+                , case when split_part(ma.kodemataanggaran, '.', 3) = '' then '0' else split_part(ma.kodemataanggaran, '.', 3)::int4 end as subkodeketiga
+                , case when split_part(ma.kodemataanggaran, '.', 4) = '' then '0' else split_part(ma.kodemataanggaran, '.', 4)::int4 end as subkodekeempat
+                , case when split_part(ma.kodemataanggaran, '.', 5) = '' then '0' else split_part(ma.kodemataanggaran, '.', 5)::int4 end as subkodekelima, 
+                ma.namamataanggaran,ka.kode , ka.keterangan,ka.tahun,ta.tahap,
                 dp0.kode kodesubkegiatan, dp0.keterangan keterangansubkegiatan,
                 dp3.kode kodekegiatan, dp3.keterangan keterangankegiatan,
                 dp1.kode kodeurusan, dp1.keterangan keteranganurusan 
@@ -5754,7 +5760,8 @@ class PerencanaanController extends ApiController {
                 ma.kodemataanggaran , ma.namamataanggaran,ka.kode , ka.keterangan,ka.tahun,ta.tahap,
                 dp0.kode, dp0.keterangan,
                 dp3.kode, dp3.keterangan,
-                dp1.kode, dp1.keterangan"
+                dp1.kode, dp1.keterangan
+                order by subkodepertama asc, subkodekedua asc, subkodeketiga asc, subkodekeempat asc, subkodekelima asc"
                 )
                 );
             } else{
@@ -5765,6 +5772,11 @@ class PerencanaanController extends ApiController {
                 dp0.kode kodesubkegiatan, dp0.keterangan keterangansubkegiatan,
                 dp3.kode kodekegiatan, dp3.keterangan keterangankegiatan,
                 dp1.kode kodeurusan, dp1.keterangan keteranganurusan
+                , split_part(ma.kodemataanggaran, '.', 1) as subkodepertama
+                , split_part(ma.kodemataanggaran, '.', 2) as subkodekedua
+                , case when split_part(ma.kodemataanggaran, '.', 3) = '' then '0' else split_part(ma.kodemataanggaran, '.', 3)::int4 end as subkodeketiga
+                , case when split_part(ma.kodemataanggaran, '.', 4) = '' then '0' else split_part(ma.kodemataanggaran, '.', 4)::int4 end as subkodekeempat
+                , case when split_part(ma.kodemataanggaran, '.', 5) = '' then '0' else split_part(ma.kodemataanggaran, '.', 5)::int4 end as subkodekelima
                 --,1 as jan,1 as feb,1 as mar, 1 as apr,
                 --1 as mei,1 as juni, 1 as juli,1 as agst,1 as sep,1 as okt, 1 as nov,1 as des
                 from keteranganbelanja_t kb
@@ -5788,7 +5800,8 @@ class PerencanaanController extends ApiController {
                 ma.kodemataanggaran , ma.namamataanggaran,ka.kode , ka.keterangan,ka.tahun,ta.tahap,
                 dp0.kode, dp0.keterangan,
                 dp3.kode, dp3.keterangan,
-                dp1.kode, dp1.keterangan"
+                dp1.kode, dp1.keterangan
+                order by subkodepertama asc, subkodekedua asc, subkodeketiga asc, subkodekeempat asc, subkodekelima asc"
                 )
                 );
             }
@@ -5800,6 +5813,11 @@ class PerencanaanController extends ApiController {
                 dp0.kode kodesubkegiatan, dp0.keterangan keterangansubkegiatan,
                 dp3.kode kodekegiatan, dp3.keterangan keterangankegiatan,
                 dp1.kode kodeurusan, dp1.keterangan keteranganurusan
+                , split_part(ma.kodemataanggaran, '.', 1) as subkodepertama
+                , split_part(ma.kodemataanggaran, '.', 2) as subkodekedua
+                , case when split_part(ma.kodemataanggaran, '.', 3) = '' then '0' else split_part(ma.kodemataanggaran, '.', 3)::int4 end as subkodeketiga
+                , case when split_part(ma.kodemataanggaran, '.', 4) = '' then '0' else split_part(ma.kodemataanggaran, '.', 4)::int4 end as subkodekeempat
+                , case when split_part(ma.kodemataanggaran, '.', 5) = '' then '0' else split_part(ma.kodemataanggaran, '.', 5)::int4 end as subkodekelima
                 --,1 as jan,1 as feb,1 as mar, 1 as apr,
                 --1 as mei,1 as juni, 1 as juli,1 as agst,1 as sep,1 as okt, 1 as nov,1 as des
                 from keteranganbelanja_t kb
@@ -5823,7 +5841,8 @@ class PerencanaanController extends ApiController {
                 ma.kodemataanggaran , ma.namamataanggaran,ka.kode , ka.keterangan,ka.tahun,ta.tahap,
                 dp0.kode, dp0.keterangan,
                 dp3.kode, dp3.keterangan,
-                dp1.kode, dp1.keterangan"
+                dp1.kode, dp1.keterangan
+                order by subkodepertama asc, subkodekedua asc, subkodeketiga asc, subkodekeempat asc, subkodekelima asc"
             )
             );
         }
@@ -5846,11 +5865,13 @@ class PerencanaanController extends ApiController {
         sum(okt::float8) okt, sum(nov::float8) nov, sum(des::float8) des,
         coalesce(sum(jan::float8) + sum(feb::float8) + sum(mar::float8) +
         sum(apr::float8) + sum(mei::float8) + sum(jun::float8) + sum(jul::float8) + sum(agt::float8) +
-        sum(sep::float8) + sum(okt::float8) + sum(nov::float8) + sum(des::float8), 0) totalbulanan
-from(
-				select norec, kodesubkegiatan, keterangansubkegiatan, kode, keterangan, tahun, tahap, kegiatan, kodemataanggaran, namamataanggaran, mataanggaran, subtotal, sum(jan::float8) jan, sum(feb::float8) feb, sum(mar::float8) mar,
+        sum(sep::float8) + sum(okt::float8) + sum(nov::float8) + sum(des::float8), 0) totalbulanan,
+        subkodepertama, subkodekedua, subkodeketiga, subkodekeempat, subkodekelima
+        from(
+		select norec, kodesubkegiatan, keterangansubkegiatan, kode, keterangan, tahun, tahap, kegiatan, kodemataanggaran, namamataanggaran, mataanggaran, subtotal, sum(jan::float8) jan, sum(feb::float8) feb, sum(mar::float8) mar,
         sum(apr::float8) apr, sum(mei::float8) mei, sum(jun::float8) jun, sum(jul::float8) jul, sum(agt::float8) agt, sum(sep::float8) sep,
-        sum(okt::float8) okt, sum(nov::float8) nov, sum(des::float8) des
+        sum(okt::float8) okt, sum(nov::float8) nov, sum(des::float8) des,
+        subkodepertama, subkodekedua, subkodeketiga, subkodekeempat, subkodekelima
         from(
             select kb.norec, dp0.kode kodesubkegiatan, dp0.keterangan keterangansubkegiatan, ka.kode, ka.keterangan, ka.tahun, ta.tahap, kb.subtotal, ka.kode || ' ' || ka.keterangan as kegiatan, ma.kodemataanggaran, ma.namamataanggaran,
             ma.kodemataanggaran || ' - ' || ma.namamataanggaran mataanggaran, 
@@ -5866,6 +5887,11 @@ from(
             case when ap.bulanint = 10 then coalesce(ap.nilai, '0') end as okt,
             case when ap.bulanint = 11 then coalesce(ap.nilai, '0') end as nov,
             case when ap.bulanint = 12 then coalesce(ap.nilai, '0') end as des
+            , split_part(ma.kodemataanggaran, '.', 1) as subkodepertama
+            , split_part(ma.kodemataanggaran, '.', 2) as subkodekedua
+            , case when split_part(ma.kodemataanggaran, '.', 3) = '' then '0' else split_part(ma.kodemataanggaran, '.', 3)::int4 end as subkodeketiga
+            , case when split_part(ma.kodemataanggaran, '.', 4) = '' then '0' else split_part(ma.kodemataanggaran, '.', 4)::int4 end as subkodekeempat
+            , case when split_part(ma.kodemataanggaran, '.', 5) = '' then '0' else split_part(ma.kodemataanggaran, '.', 5)::int4 end as subkodekelima
             from keteranganbelanja_t as kb 
             left join alokasiketeranganbelanja_t as ap on ap.keteranganbelanjafk = kb.norec
             and ap.statusenabled = true
@@ -5887,9 +5913,12 @@ from(
             $smataanggaran
             group by kb.norec, dp0.kode, dp0.keterangan, ka.kode, ka.keterangan, ka.tahun, ta.tahap, kb.subtotal, ka.kode || ' ' || ka.keterangan, ap.nilai, ap.bulanint, ma.kodemataanggaran, ma.namamataanggaran,
             ma.kodemataanggaran || ' - ' || ma.namamataanggaran
-        ) as x group by norec, kodesubkegiatan, keterangansubkegiatan, kode, keterangan, tahun, tahap, subtotal, kegiatan, kodemataanggaran, namamataanggaran, mataanggaran
-) as y group by kodesubkegiatan, keterangansubkegiatan, kode, keterangan, tahun, tahap, kegiatan, kodemataanggaran, namamataanggaran, mataanggaran
-order by kodemataanggaran"));
+            order by subkodepertama asc, subkodekedua asc, subkodeketiga asc, subkodekeempat asc, subkodekelima asc
+        ) as x group by norec, kodesubkegiatan, keterangansubkegiatan, kode, keterangan, tahun, tahap, subtotal, kegiatan, kodemataanggaran, namamataanggaran, mataanggaran, subkodepertama, subkodekedua, subkodeketiga, subkodekeempat, subkodekelima
+        order by subkodepertama asc, subkodekedua asc, subkodeketiga asc, subkodekeempat asc, subkodekelima asc
+) as y group by kodesubkegiatan, keterangansubkegiatan, kode, keterangan, tahun, tahap, kegiatan, kodemataanggaran, namamataanggaran, mataanggaran, subkodepertama, subkodekedua, subkodeketiga, subkodekeempat, subkodekelima
+order by subkodepertama asc, subkodekedua asc, subkodeketiga asc, subkodekeempat asc, subkodekelima asc
+"));
 
         $detailalokasimataanggaran = DB::select(DB::raw("select norec, keteranganbelanja, kodesubkegiatan, keterangansubkegiatan, kode, keterangan, tahun, tahap, kegiatan, kodemataanggaran, namamataanggaran, mataanggaran, subtotal, sum(jan::float8) jan, sum(feb::float8) feb, sum(mar::float8) mar,
         sum(apr::float8) apr, sum(mei::float8) mei, sum(jun::float8) jun, sum(jul::float8) jul, sum(agt::float8) agt, sum(sep::float8) sep,

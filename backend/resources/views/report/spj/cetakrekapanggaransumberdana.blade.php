@@ -106,11 +106,15 @@
                     <td width="20" style="padding: 10px;"><b>{{ substr($dt->kode, -4) }}</b></td>
                     @elseif($dt->div == 3)
                     <td width="20" style="padding: 10px;">{{ substr($dt->kode, -2) }}</td>
+                    @elseif($dt->div == 4)
+                    <td width="20" style="padding: 10px;"></td>
                     @endif
                     @if($dt->div == 2)
                     <td width="150" style="padding: 10px;"><b>{{$dt->kegiatan}}</b></td>
                     @elseif($dt->div == 3)
                     <td width="150" style="padding: 10px;">{{$dt->kegiatan}}</td>
+                    @elseif($dt->div == 4)
+                    <td width="150" style="padding: 10px;">{{$dt->kode2}}. {{$dt->kegiatan}}</td>
                     @endif
                     <td align="right" width="50" style="padding: 10px; ">{{ number_format($dt->jasalayanan,0,',','.') }}</td>
                     <td align="right" width="50" style="padding: 10px; ">{{ number_format($dt->apbd,0,',','.') }}</td>

@@ -1222,7 +1222,7 @@ class TindakanController extends ApiController
 //            ->where('hnp.statusenabled',true)
 //            ->where('sk.statusenabled',true)
             ->where('mpr.statusenabled',true)
-            ->whereNull('mpr.ispemeriksaanluar')
+            
        
             // ->where('sk.statusenabled',true)
             ->where('prd.statusenabled',true)
@@ -1237,6 +1237,14 @@ class TindakanController extends ApiController
             $req['filter']['filters'][0]['value']!="undefined"){
             $data = $data
                 ->where('prd.namaproduk','ilike','%'.$req['filter']['filters'][0]['value'].'%' );
+        }
+        
+        if(isset($request['pemeriksaanluar']) && $request['pemeriksaanluar'] !="undefined" && $request['pemeriksaanluar'] == "1"){
+            $data = $data->where('mpr.ispemeriksaanluar', true)->where('mpr.ispramita', true);
+        } else if(isset($request['pemeriksaanluar']) && $request['pemeriksaanluar'] !="undefined" && $request['pemeriksaanluar'] == "2"){
+            $data = $data->where('mpr.ispemeriksaanluar', true)->where('mpr.isparahita', true);
+        } else{
+            $data = $data->whereNull('mpr.ispemeriksaanluar');
         }
         if($request['idRuangan'] == 94){
         $data = $data->orderBy('prd.reportdisplay','ASC');
