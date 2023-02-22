@@ -79,7 +79,7 @@
     {
       "name": "MasterRuanganRawatInap",
       "url": "/UlVBTkdBTg==",
-      "templateurl": "module/sysAdmin/MasterRuanganRawatInap.html",
+      "templateurl": "module/SysAdmin/MasterRuanganRawatInap.html",
       "controller": "MasterRuanganRawatInapCtrl",
       "deps": [{
           "module": "Services",
