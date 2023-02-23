@@ -45,7 +45,7 @@
 
 <div class="grid_12">
     <div class="panel panel-default container_12">
-            <div class="panel-heading" c-translate>Pengkajian Awal Keperawatan Rawat Inap dengan Komorbid 1-2 (BB) </div>
+            <div class="panel-heading" c-translate>Pengkajian Awal Keperawatan Rawat Inap dengan Komorbid</div>
     </div>
    
     <div class="grid_12" style="margin-top: 10px;">
@@ -87,7 +87,19 @@
                                             ng-model="item.obj[jawab.id]" placeholder="{{jawab.satuan}}"/>
                                         </div>
                                     </div>
-
+                                    <div class="grid_4" ng-switch-when="checkboxtextbox">
+                                            <div class="grid_1">
+                                                <input type="checkbox" class="k-checkbox" id="item.obj2{{jawab.id}}"
+                                                    ng-model="item.obj2[jawab.id]" ng-checked="{{jawab.value}}">
+                                                <label class="k-checkbox-label"
+                                                    for="item.obj2{{jawab.id}}">{{jawab.caption}}</label>
+                                            </div>
+                                            <div class="grid_10"
+                                                style="margin-top: -5px;margin-bottom: -5px;margin-left: 20px">
+                                                <input class="k-textbox" ng-model="item.obj[jawab.id]" type="text"
+                                                    placeholder="{{jawab.satuan}}" ng-value="{{jawab.value}}">
+                                            </div>
+                                    </div>
                                     <div class="grid_12" ng-switch-when="combobox">
                                         <div class="grid_12">
                                             <label>{{jawab.caption}}</label>

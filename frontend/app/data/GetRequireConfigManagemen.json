@@ -35,6 +35,10 @@
         {
             "nameDep": "CaraDaftarPasienCtrl",
             "urlDep": "module/SysAdmin/LaporanSysadmin/CaraDaftarPasienCtrl"
+        },
+        {
+            "nameDep": "LaporanBorLosToiCtrl",
+            "urlDep": "module/SysAdmin/LaporanSysadmin/LaporanBorLosToiCtrl"
         }
 
     ]
