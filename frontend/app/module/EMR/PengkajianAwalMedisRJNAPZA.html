@@ -538,6 +538,16 @@
                                                 <div class="grid_12">
                                                     <div ng-repeat="jawab in list.detail">
                                                         <div ng-switch on="jawab.type">
+                                                            <div class="grid_12" ng-switch-when="textarea">
+                                                                 <div class="grid_12">
+                                                                     <label c-label item="item"
+                                                                         style="margin-top: 0px;">{{jawab.nama}}</label>
+                                                                 </div>
+                                                                <textarea c-text-area type="input" filter="'string'"
+                                                                    class="k-textbox" ng-model="item.obj[jawab.id]"
+                                                                    k-data-source=""
+                                                                    style="height: 80px; width: 100%; " />
+                                                            </div>
                                                             <div class="grid_12" ng-switch-when="checkbox" style="margin-top: -5px;">
                                                                 <input type="checkbox" class="k-checkbox" id="item.obj{{jawab.id}}"
                                                                     ng-model="item.obj[jawab.id]">
