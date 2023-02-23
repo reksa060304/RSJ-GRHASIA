@@ -732,8 +732,8 @@
                                                     k-data-source=""
                                                     style="height: 40px; width: 90%; "/>
                                             </div>
-                                            <div class="grid_12 margin-top-20 margin-bottom"><label c-label item="item" style="margin-top: 5px;">7. Riwayat Pendidikan Terakhir</label> <br></div>
-                                            <div class="grid_6" ng-repeat="list in listPendidikan | orderBy:'id'" style="padding: 5pt 5pt">
+                                            <div class="grid_12 margin-top-20 margin-bottom" ng-hide="true"><label c-label item="item" style="margin-top: 5px;">7. Riwayat Pendidikan Terakhir</label> <br></div>
+                                            <div class="grid_6" ng-hide="true" ng-repeat="list in listPendidikan | orderBy:'id'" style="padding: 5pt 5pt">
                                                 <b>{{list.nama}}</b>
                                                 <div class="grid_12" style="padding: 5pt">
                                                     <div ng-repeat="jawab in list.detail | orderBy:'id'">
@@ -774,7 +774,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="grid_12 margin-top-20 margin-bottom">  <label c-label item="item" style="margin-top: 5px;">8. Riwayat Pekerjaan</label> <br></div>
+                                            <div class="grid_12 margin-top-20 margin-bottom">  <label c-label item="item" style="margin-top: 5px;">7. Riwayat Pekerjaan</label> <br></div>
                                             <div class="grid_12 margin-top-20 margin-bottom">
                                             <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3013259]"
                                                     k-data-source=""
