@@ -190,6 +190,7 @@ define(['initialize'], function (initialize) {
                         value: $scope.cc.iddpjp,
                         text: $scope.cc.dokterdpjp
                     }
+                    $scope.item.obj[3012857] = moment($scope.now).format('YYYY-MM-DD HH:mm')
                     dataLoad = dat.data.data
                     for (var i = 0; i <= dataLoad.length - 1; i++) {
                         if (parseFloat($scope.cc.emrfk) == dataLoad[i].emrfk&& paramsIndex == dataLoad[i].index) {

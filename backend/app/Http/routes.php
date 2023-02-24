@@ -2387,6 +2387,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::post('sysadmin/response-time-perbaikan','IPSRS\IPSRSController@responseTime');
             Route::get('pdti/laporan-perbaikan-it','IPSRS\IPSRSController@getLaporanPerbaikanIT');
             Route::get('pdti/load-data-dashboard','IPSRS\IPSRSController@getDashboardPerbaikanPDTI');
+            Route::get('pdti/dashboard-ranap','Registrasi\LaporanRegistrasiController@getBorLosToi');
             Route::get('pdti/get-combo','IPSRS\IPSRSController@getComboPDTI');
             Route::get('ipsrs/get-daftar-permohonan','IPSRS\IPSRSController@getDaftarIPSRS');
             Route::get('ipsrs/get-detail-jenisperbaikan','IPSRS\IPSRSController@getDetailJenisPekerjaan');

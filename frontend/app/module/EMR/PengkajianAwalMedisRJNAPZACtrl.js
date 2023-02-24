@@ -122,8 +122,8 @@ define(['initialize'], function (initialize) {
                 {
                     "id" : 1, "nama": "",
                     "detail": [
-                        {"id": 3017591, "nama": "- Obat yang rutin dikonsumsi :","type": "textbox"},
-                        {"id": 3017592, "nama": "- Obat yang digunakan sekarang :","type": "textbox"},
+                        {"id": 3017591, "nama": "- Obat yang rutin dikonsumsi :","type": "textarea"},
+                        {"id": 3017592, "nama": "- Obat yang digunakan sekarang :","type": "textarea"},
                     ]
                 },
                
@@ -596,11 +596,13 @@ define(['initialize'], function (initialize) {
                 medifirstService.get("emr/get-emr-transaksi-detail?noemr=" + nomorEMR + "&emrfk=" + $scope.cc.emrfk, true).then(function (dat) {
                     $scope.item.obj = []
                     $scope.item.obj2 = []
+
                     $scope.item.obj[9085] = $scope.now
                     $scope.item.obj[9086] = {
                         value: $scope.cc.iddpjp,
                         text: $scope.cc.dokterdpjp
                     }
+                    $scope.item.obj[3017585] = moment($scope.now).format('YYYY-MM-DD')
                     dataLoad = dat.data.data
                     for (var i = 0; i <= dataLoad.length - 1; i++) {
                         if (parseFloat($scope.cc.emrfk) == dataLoad[i].emrfk) {

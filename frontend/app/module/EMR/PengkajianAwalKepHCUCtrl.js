@@ -300,7 +300,168 @@ define(['initialize'], function (initialize) {
                 },
             
         ]
+        $scope.listNyeriAnak = [
+            {
+                "id": 10, "nama": "Hurts", "detail": [
+                { "id": 3019366, "nama": "Tidak Nyeri","nama1": "0", "descNilai": 0 },
+                { "id": 3019367, "nama": "Sedikit Nyeri", "nama1": "1 2 3", "descNilai": 2 }, 
+                { "id": 3019368, "nama": "Agak mengganggu", "nama1": "4", "descNilai": 4 },
+                { "id": 3019369, "nama": "Mengganggu Aktivitas","nama1": "5 6 7",  "descNilai": 6}, 
+                { "id": 3019370, "nama": "Sangat mengganggu", "nama1": "8", "descNilai": 8 },
+                { "id": 3019371, "nama": "Tak tertahankan", "nama1": "9 10",  "descNilai": 10 }
+            ]
+            }
+        ]
+        $scope.listSkorNyeri = [
+            {
+                "id": 2, "nama": "2. Skrining Nyeri",
+                "detail": [
+                    { "id": 3019352, "nama": "Tidak Ada", "satuan": "mmHg", "type": "checkbox" },
+                    { "id": 3019353, "nama": "Ada, Skor Nyeri : ", "satuan": "x/mnt", "type": "checkbox" },
+                ]
+            }
+        ]
+        $scope.listSkorWong = [{
+            "id": 9, "nama": "Score ",
+            "detail": [
+                { "id": 3019360, "nama": "0 = Tidak Ada Nyeri", "type": "checkbox"},
+                { "id": 3019361, "nama": "1 - 2 - 3 = Sedikit Nyeri", "type": "checkbox"},
+                { "id": 3019362, "nama": "4 = Agak mengganggu", "type": "checkbox" },
+                { "id": 3019363, "nama": "5 - 6 - 7 = Mengganggu aktivitas", "type": "checkbox"},
+                { "id": 3019364, "nama": "8 = Sangat mengganggu", "type": "checkbox"},
+                { "id": 3019365, "nama": "9 - 10 = Tak Tertahankan", "type": "checkbox", },
+            ]
+        }]
+        
+        $scope.listRisikoJatuh = [
+            {
+                "id": 1, "nama": "Risiko Jatuh",
+                "detail": [
+                    { "id": 3019307, "nama": "Tidak Ada Risiko Jatuh, bila tidak ditemukan salah satu dari point a / b", "satuan": "", "type": "checkbox" },
+                    { "id": 3019308, "nama": "Ada Risiko Jatuh, bila tidak ditemukan salah satu dari point a / b", "satuan": "", "type": "checkbox" },
+                    { "id": 3019309, "nama": "Risiko Jatuh Tinggi, bila ditemukan 1 dan 2", "satuan": "", "type": "checkbox" },
+                    { "id": 3019310, "nama": "Tidak dapat dilakukan pengkajian Risiko Jatuh", "satuan": "", "type": "checkbox" },
+                    { "id": 3019311, "nama": "Tindakan :", "satuan": "", "type": "label" },
+                    { "id": 3019312, "nama": "Edukasi", "satuan": "", "type": "checkbox" },
+                    { "id": 3019313, "nama": "Pemberian Tanda Risiko Jatuh", "satuan": "", "type": "checkbox" },
+                    { "id": 3019314, "nama": "Pemberian Tempat Duduk Prioritas", "satuan": "", "type": "checkbox" },
+                ]
+            }
+        ] 
+        $scope.listNutrisionalAnak = [
+            {
+                "id": 1 , "nama":" A. Dijawab oleh Tenaga Kesehatan",
+                "detail": [
+                    { "id": 1, "nama": "", "type": "label" },
+                ]
+            },  
+            {
+                "id": 1,  "no": 1, "nama":" Apakah ada penyakit yang mendasari dengan risiko malnutrisi atau apakah ada pembedahan besar ?",
+                "detail": [
+                    { "id": 3019316, "nama": "a. Tidak ", "descNilai" : "0", "type": "checkbox" },
+                    { "id": 3019317, "nama": "b. Ya", "descNilai" : "2", "type": "checkbox" },
+                ]
+            },
+            {
+                "id": 2,  "no": 2, "nama":" Apakah pasien dalam kondisi status gizi buruk berdasarkan pemeriksaan klinis secara subyektif ?",
+                "detail": [
+                    { "id": 3019318, "nama": "a. Tidak ", "descNilai" : "0", "type": "checkbox" },
+                    { "id": 3019319, "nama": "b. Ya", "descNilai" : "1", "type": "checkbox" },
+                ]
+            },
+            {
+                "id": 1 , "nama":" B. Dijawab oleh Pengasuh Anak",
+                 
+                "detail": [
+                    { "id": 1, "nama": "", "type": "label" },
+                ]
+            },  
+            {
+                "id": 1 ,"no": "1", "nama":" Apakah hal-hal dibawah ini ditemukan pada anak ?",
+                 
+                "detail": [
+                    { "id": 1, "nama": "", "type": "label" },
+                ]
+            },  
+            {
+                "id": 1 , "nama":"a. Diare berlebihan >5 kali/hari dan atau muntah >3 kali/har",
+                "detail": [
+                    { "id": 1, "nama": "","type": "label" },
+                ]
+            }, 
+            {
+                "id": 1 , "nama":"b. Penurunan asupan makanan selama beberapa hari terakhir",
+                "detail": [
+                    { "id": 3019320, "nama": "a. Tidak ", "descNilai" : "0", "type": "checkbox" },
+                    { "id": 3019321, "nama": "b. Ya", "descNilai" : "1", "type": "checkbox" },
+                ]
+            }, 
+            {
+                "id": 1 ,"nama":"c. Intervensi gizi yang sudah ada sebelumnya",
+                "detail": [
+                    { "id": 1, "nama": "", "type": "label" },
+                ]
+            },
+            {
+                "id": 1 , "nama":"d. Ketidakcukupan asupan gizi karena sakit",
+                "detail": [
+                    { "id": 1, "nama": "","type": "label" },
+                ]
+            },  
+            {
+                "id": 2,  "no": 2, "nama":" Apakah ada penurunan berat badan atau tidak adanya penambahan berat badan ( untuk bayi <1 tahun ) selama beberapa minggu / bulan terakhir ?",
+                "detail": [
+                    { "id": 3019322, "nama": "a. Tidak ", "descNilai" : "0", "type": "checkbox" },
+                    { "id": 3019323, "nama": "b. Ya", "descNilai" : "1", "type": "checkbox" },
+                ]
+            }
+        ]
+        $scope.listNutrisionalDewasa = [
+            {
+                "id": 1, "no": 1, "nama": "Apakah anda kehilangan berat badan (BB) secara tidak sengaja ?",
+                "detail": [
+                    { "id": 3019333, "nama": "a. Tidak", "descNilai" : "0", "type": "checkbox" },
+                    { "id": 3019334, "nama": "b. Ragu", "descNilai" : "2", "type": "checkbox" },
+                    { "nama": "Jika Ya, berapa banyak atau berapa Kg anda kehilangan BB ?", "type": "label" },
+                    { "id": 3019335, "nama": "c. Ya, 1-5 Kg", "descNilai" : "1", "type": "checkbox" },
+                    { "id": 3019336, "nama": "6-10 Kg", "descNilai" : "2", "type": "checkbox" },
+                    { "id": 3019337, "nama": "11-15 Kg", "descNilai" : "3", "type": "checkbox" },
+                    { "id": 3019338, "nama": "> 15 Kg", "descNilai" : "4", "type": "checkbox" },
+                    { "id": 3019339, "nama": "Ragu", "descNilai" : "2", "type": "checkbox" },
+                ]
+            },
+            {
+                "id": 1, "no": 2, "nama": "Apakah anda mengalami penurunan asupan makan karena penurunan nafsu makan atau karena tidak mampu mengunyah atau menelan ?",
+                "detail": [
+                    { "id": 3019340, "nama": "Tidak", "descNilai" : "0", "type": "checkbox" },
+                    { "id": 3019341, "nama": "Ragu-ragu", "descNilai" : "2", "type": "checkbox" },
+                ]
+            },
+        ]
+        
+        $scope.listDiagnosaKhusus = [
+            {
+                "id": 1, "nama": "Skrining Nyeri",
+                "detail": [
+                    { "id": 3019343, "nama": "Ya", "satuan": "", "type": "checkbox" },
+                    { "id": 3019344, "nama": "Tidak", "satuan": "", "type": "checkbox" },
+                ]
+            }
+        ]
 
+        $scope.listSkriningGiziDewasa = [
+            {
+                "id": 1, "nama": "Skrining Gizi Dewasa",
+                "detail": [
+                    { "id": 3019345, "nama": "DM", "satuan": "", "type": "checkbox" },
+                    { "id": 3019346, "nama": "Hipertensi", "satuan": "", "type": "checkbox" },
+                    { "id": 3019347, "nama": "Geriatri", "satuan": "", "type": "checkbox" },
+                    { "id": 3019348, "nama": "Infeksi TB", "satuan": "", "type": "checkbox" },
+                    { "id": 3019349, "nama": "Infeksi Hepatitis", "satuan": "", "type": "checkbox" },
+                    { "id": 3019350, "nama": "Lain-lain, Sebutkan", "satuan": "", "type": "textbox2", "idd":  "3019351"},
+                ]
+            }
+        ]
           
            
             var chacePeriode = cacheHelper.get('cacheRekamMedis');
@@ -486,53 +647,53 @@ define(['initialize'], function (initialize) {
                 $scope.activeStatus = stat.descNilai
                 var nilai = stat.descNilai
                 if (nilai >= 0 && nilai <= 1) {
-                    $scope.item.obj[3000848] = true
-                    $scope.item.obj[3000849] = false
-                    $scope.item.obj[3000850] = false
-                    $scope.item.obj[3000851] = false
-                    $scope.item.obj[3000852] = false
-                    $scope.item.obj[3000853] = false
+                    $scope.item.obj[3019360] = true
+                    $scope.item.obj[3019361] = false
+                    $scope.item.obj[3019362] = false
+                    $scope.item.obj[3019363] = false
+                    $scope.item.obj[3019364] = false
+                    $scope.item.obj[3019365] = false
                 }
                 if (nilai >= 2 && nilai <= 3) {
-                    $scope.item.obj[3000848] = false
-                    $scope.item.obj[3000849] = true
-                    $scope.item.obj[3000850] = false
-                    $scope.item.obj[3000851] = false
-                    $scope.item.obj[3000852] = false
-                    $scope.item.obj[3000853] = false
+                    $scope.item.obj[3019360] = false
+                    $scope.item.obj[3019361] = true
+                    $scope.item.obj[3019362] = false
+                    $scope.item.obj[3019363] = false
+                    $scope.item.obj[3019364] = false
+                    $scope.item.obj[3019365] = false
                 }
                 if (nilai >= 4 && nilai <= 5) {
-                    $scope.item.obj[3000848] = false
-                    $scope.item.obj[3000849] = false
-                    $scope.item.obj[3000850] = true
-                    $scope.item.obj[3000851] = false
-                    $scope.item.obj[3000852] = false
-                    $scope.item.obj[3000853] = false
+                    $scope.item.obj[3019360] = false
+                    $scope.item.obj[3019361] = false
+                    $scope.item.obj[3019362] = true
+                    $scope.item.obj[3019363] = false
+                    $scope.item.obj[3019364] = false
+                    $scope.item.obj[3019365] = false
                 }
                 if (nilai >= 6 && nilai <= 7) {
-                    $scope.item.obj[3000848] = false
-                    $scope.item.obj[3000849] = false
-                    $scope.item.obj[3000850] = false
-                    $scope.item.obj[3000851] = true
-                    $scope.item.obj[3000852] = false
-                    $scope.item.obj[3000853] = false
+                    $scope.item.obj[3019360] = false
+                    $scope.item.obj[3019361] = false
+                    $scope.item.obj[3019362] = false
+                    $scope.item.obj[3019363] = true
+                    $scope.item.obj[3019364] = false
+                    $scope.item.obj[3019365] = false
                 }
                 if (nilai >= 8 && nilai <= 9) {
-                    $scope.item.obj[3000848] = false
-                    $scope.item.obj[3000849] = false
-                    $scope.item.obj[3000850] = false
-                    $scope.item.obj[3000851] = false
-                    $scope.item.obj[3000852] = true
-                    $scope.item.obj[3000853] = false
+                    $scope.item.obj[3019360] = false
+                    $scope.item.obj[3019361] = false
+                    $scope.item.obj[3019362] = false
+                    $scope.item.obj[3019363] = false
+                    $scope.item.obj[3019364] = true
+                    $scope.item.obj[3019365] = false
                 }
 
                 if (nilai == 10) {
-                    $scope.item.obj[3000848] = false
-                    $scope.item.obj[3000849] = false
-                    $scope.item.obj[3000850] = false
-                    $scope.item.obj[3000851] = false
-                    $scope.item.obj[3000852] = false
-                    $scope.item.obj[3000853] = true
+                    $scope.item.obj[3019360] = false
+                    $scope.item.obj[3019361] = false
+                    $scope.item.obj[3019362] = false
+                    $scope.item.obj[3019363] = false
+                    $scope.item.obj[3019364] = false
+                    $scope.item.obj[3019365] = true
                 }
 
             }
@@ -907,7 +1068,7 @@ define(['initialize'], function (initialize) {
                     } else {
                     }
                 }
-                $scope.item.obj[3001016] = $scope.skorNutrisiDewasa
+                $scope.item.obj[3019342] = $scope.skorNutrisiDewasa
             }
 
             $scope.skorNutrisiAnak = 0
@@ -926,7 +1087,7 @@ define(['initialize'], function (initialize) {
                     } else {
                     }
                 }
-                $scope.item.obj[3001005] = $scope.skorNutrisiAnak
+                $scope.item.obj[3019330] = $scope.skorNutrisiAnak
             }
 
 

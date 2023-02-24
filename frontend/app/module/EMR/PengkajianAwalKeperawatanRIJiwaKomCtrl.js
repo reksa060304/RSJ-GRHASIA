@@ -1406,6 +1406,62 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             }
             $scope.totalSkorAses =0
             //skor morse
+            $scope.$watch('item.obj[3015040]', function (nilai) {
+                console.log(nilai);
+
+                if (nilai != undefined && nilai != null && nilai != "") {
+                    $scope.item.obj2[3015040]=true
+                } else{
+                    $scope.item.obj2[3015040] = false
+                }
+            })
+            $scope.$watch('item.obj[3015043]', function (nilai) {
+                if (nilai != undefined && nilai != null && nilai != "") {
+                    $scope.item.obj2[3015043] = true
+                } else {
+                    $scope.item.obj2[3015043] = false
+                }
+            })
+
+            $scope.$watch('item.obj[3015046]', function (nilai) {
+                if (nilai != undefined && nilai != null && nilai != "") {
+                    $scope.item.obj2[3015046] = true
+                } else {
+                    $scope.item.obj2[3015046] = false
+                }
+            })
+
+            $scope.$watch('item.obj[3015064]', function (nilai) {
+                if (nilai != undefined && nilai != null && nilai != "") {
+                    $scope.item.obj2[3015064] = true
+                } else {
+                    $scope.item.obj2[3015064] = false
+                }
+            })
+
+            $scope.$watch('item.obj[3015067]', function (nilai) {
+                if (nilai != undefined && nilai != null && nilai != "") {
+                    $scope.item.obj2[3015067] = true
+                } else {
+                    $scope.item.obj2[3015067] = false
+                }
+            })
+
+            $scope.$watch('item.obj[3015070]', function (nilai) {
+                if (nilai != undefined && nilai != null && nilai != "") {
+                    $scope.item.obj2[3015070] = true
+                } else {
+                    $scope.item.obj2[3015070] = false
+                }
+            })
+
+            $scope.$watch('item.obj[3015073]', function (nilai) {
+                if (nilai != undefined && nilai != null && nilai != "") {
+                    $scope.item.obj2[3015073] = true
+                } else {
+                    $scope.item.obj2[3015073] = false
+                }
+            })
             $scope.$watch('item.obj[33100323]', function (nilai) {
 
                 if (nilai == undefined) return
