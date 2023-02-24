@@ -3606,6 +3606,10 @@
         {
             "nameDep": "PengkajianOkupasiTerapiCtrl",
             "urlDep": "module/EMR/PengkajianOkupasiTerapiCtrl"
+        },
+        {
+            "nameDep": "PengkajianGiziRawatJalanCtrl",
+            "urlDep": "module/EMR/PengkajianGiziRawatJalanCtrl"
         }
     ]
 }

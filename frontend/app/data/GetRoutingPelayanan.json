@@ -19951,6 +19951,50 @@
         "define": "RekamMedisCtrl"
       }
     ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.PengkajianGiziRawatJalan",
+    "url": "/PengkajianGiziRawatJalan",
+    "templateurl": "module/EMR/PengkajianGiziRawatJalan.html",
+    "controller": "PengkajianGiziRawatJalanCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.PengkajianGiziRawatJalan",
+    "url": "/PengkajianGiziRawatJalan",
+    "templateurl": "module/EMR/PengkajianGiziRawatJalan.html",
+    "controller": "PengkajianGiziRawatJalanCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
   }
 ]
 
