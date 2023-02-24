@@ -276,7 +276,12 @@ define(['initialize'], function (initialize) {
             $scope.getNilaiKonversi = function () {
                 $scope.item.nilaiKonversi = $scope.item.satuan.nilaikonversi
             }
-
+            $scope.$watch('item.ruanganTujuan', function(newValue, oldValue) {
+                medifirstService.get("logistik/get-combo-logistik?ruangantujuan="+ $scope.item.ruanganTujuan.id).then(function (dat) {
+                    var dataCombo = dat.data;
+                    $scope.listProduk = dataCombo.produk2;
+                });
+            })
             $scope.$watch('item.nilaiKonversi', function (newValue, oldValue) {
                 if (newValue != oldValue) {
                     if ($scope.item.stok > 0) {
