@@ -155,7 +155,7 @@ class LogistikController extends ApiController{
 
         $dataJabatan = \DB::table('jabatan_m as kp')
             ->select('kp.id','kp.namajabatan')
-            ->where('kp.statusenabled',true)
+            ->where('kp.statusenabled',true)->whereIn('objectjenisjabatanfk',[6,7,8])
             ->orderBy('kp.namajabatan')
             ->get();
 
