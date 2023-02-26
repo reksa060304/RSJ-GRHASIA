@@ -342,8 +342,20 @@ define(['initialize'], function (initialize) {
                     // jenisKerusakan: $scope.item.jenisKerusakan.id
                 }
                 medifirstService.post('sanitasi/save-permohonan-sanitasi', objSave).then(function (e) {
+                    $scope.item = {}
+                    $scope.item.tglAwal = new moment($scope.now).format('YYYY-MM-DD HH:mm');
+                    $scope.item.tglAwal1 = new moment($scope.now).format('YYYY-MM-DD 00:00');
+                    $scope.item.tglAkhir = new moment($scope.now).format('YYYY-MM-DD 23:59');
+                    $scope.myVar = 1
+                    // console.log($scope.myVar);
                     // $scope.popupSignDate.close();
                     // init2()
+                    $scope.item.tglInputAwal = new moment($scope.now).format('YYYY-MM-DD HH:mm:ss');
+                    $scope.item.pelapor = {
+                        id: medifirstService.getPegawaiLogin().id,
+                        namalengkap: medifirstService.getPegawaiLogin().namaLengkap
+                    }
+                    init()
                 })
 
 
