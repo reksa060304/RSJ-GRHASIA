@@ -20,7 +20,6 @@ define(['initialize','Configuration'], function (initialize, configuration) {
             loadData()
             function loadData(){
                 var cacheNomorEMR = cacheHelper.get('cacheNomorEMR');
-                console.log(cacheNomorEMR);
                 var cacheNoREC = cacheHelper.get('cacheNOREC_EMR');
                 if (cacheNoREC != undefined) {
                     norecEMR = cacheNomorEMR[1]
@@ -70,6 +69,7 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                 })
             }
             $scope.Batal = function(){
+                $scope.item = {}
                 $scope.popUpLembarCakem.close()
             }
             $scope.createData = function () {
@@ -80,6 +80,7 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                     text: medifirstService.getPegawaiLogin().namaLengkap,
                     value: medifirstService.getPegawaiLogin().id
                 }
+                console.log($scope.item.pegawai);
                 if (dataCakem.length > 0) {
                     $scope.item.evaluasi = dataCakem[dataCakem.length - 1].evaluasi
                 }
@@ -173,7 +174,8 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                 };
                 console.log(dataItem);
                 $scope.item.norec = dataItem.norec_ec
-                $scope.item.jam = moment(dataItem.jam).format('HH:mm')
+                console.log(dataItem.jam);
+                $scope.item.jam = dataItem.jam
                 $scope.item.tanggal = moment(dataItem.tanggal).format('YYYY-MM-DD')
                 $scope.item.pelaksanaan = dataItem.pelaksanaan
                 $scope.item.evaluasi = dataItem.evaluasi
@@ -185,6 +187,7 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                 //     toastr.error('Tidak bisa diubah')
                 //     return
                 // }
+                console.log($scope.item.jam);
 
                 $scope.popUpLembarCakem.center().open()
             }
