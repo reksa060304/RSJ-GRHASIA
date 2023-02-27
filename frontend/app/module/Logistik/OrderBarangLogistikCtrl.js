@@ -146,13 +146,20 @@ define(['initialize'], function (initialize) {
                     var dataCombo = dat.data;
                     $scope.listDataJabatan = dataCombo.jabatan;
                     // $scope.listPenulisResep = dat.data.penulisresep;
-                    $scope.listRuangan = medifirstService.getMapLoginUserToRuangan();
+                    console.log(medifirstService.getMapLoginUserToRuangan());
+                    $scope.listRuangan = dataCombo.ruanganall;
                     $scope.listJenisKirim = [{ id: 1, jenis: 'Amprahan' }, { id: 2, jenis: 'Transfer' }]
                     $scope.listAsalProduk = dataCombo.asalproduk;
                     $scope.listProduk = dataCombo.produk;
                     $scope.listRuanganTujuan = dataCombo.ruanganall;
                     pegawaiUser = dataCombo.detaillogin[0];
-                    $scope.item.ruangan = { id: $scope.listRuangan[0].id, namaruangan: $scope.listRuangan[0].namaruangan }
+                    if (medifirstService.getMapLoginUserToRuangan()[0] != undefined) {
+                        $scope.item.ruangan = {
+                            id: medifirstService.getMapLoginUserToRuangan()[0].id,
+                            namaruangan: medifirstService.getMapLoginUserToRuangan()[0].namaruangan
+                        }
+                    }
+                    // $scope.item.ruangan = { id: $scope.listRuangan[0].id, namaruangan: $scope.listRuangan[0].namaruangan }
                     $scope.item.jenisKirim = { id: 2, jenis: 'Transfer' }
                 });
 
@@ -276,7 +283,12 @@ define(['initialize'], function (initialize) {
             $scope.getNilaiKonversi = function () {
                 $scope.item.nilaiKonversi = $scope.item.satuan.nilaikonversi
             }
-
+            $scope.$watch('item.ruanganTujuan', function(newValue, oldValue) {
+                medifirstService.get("logistik/get-combo-logistik?ruangantujuan="+ $scope.item.ruanganTujuan.id).then(function (dat) {
+                    var dataCombo = dat.data;
+                    $scope.listProduk = dataCombo.produk2;
+                });
+            })
             $scope.$watch('item.nilaiKonversi', function (newValue, oldValue) {
                 if (newValue != oldValue) {
                     if ($scope.item.stok > 0) {
@@ -806,7 +818,19 @@ define(['initialize'], function (initialize) {
                     $scope.isAdd = true;
                 }
             }
-
+            // $scope.KlikGrids = function(dataSelected){
+            //     console.log(dataSelected);
+            //     $scope.item.produk = {
+            //         id: dataSelected.produkfk,
+            //         namaproduk: dataSelected.namaproduk
+            //     }
+            //     $scope.item.satuan = {
+            //         ssid: dataSelected.satuanstandarfk, satuanstandar: dataSelected.satuanstandar
+            //     }
+            //     $scope.item.nilaiKonversi = dataSelected.nilaikonversi
+            //     $scope.item.stok = dataSelected.jmlstok
+            //     $scope.item.jumlah = dataSelected.jumlah
+            // }
             //** BATAS */           
         }
     ]);

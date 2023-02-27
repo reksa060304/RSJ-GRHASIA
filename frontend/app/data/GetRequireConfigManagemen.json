@@ -39,6 +39,10 @@
         {
             "nameDep": "LaporanBorLosToiCtrl",
             "urlDep": "module/SysAdmin/LaporanSysadmin/LaporanBorLosToiCtrl"
+        },
+        {
+            "nameDep": "PengkajianGeriatriKomprehensifCtrl",
+            "urlDep": "module/EMR/PengkajianGeriatriKomprehensifCtrl"
         }
 
     ]

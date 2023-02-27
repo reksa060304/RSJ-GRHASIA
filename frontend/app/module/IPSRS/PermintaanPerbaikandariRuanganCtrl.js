@@ -393,6 +393,12 @@ define(['initialize'], function (initialize) {
                     // console.log($scope.myVar);
                     // $scope.popupSignDate.close();
                     // init2()
+                    $scope.item.tglInputAwal = new moment($scope.now).format('YYYY-MM-DD HH:mm:ss');
+                    $scope.item.pelapor = {
+                        id: medifirstService.getPegawaiLogin().id,
+                        namalengkap: medifirstService.getPegawaiLogin().namaLengkap
+                    }
+                    init()
                 })    
                    
             }
