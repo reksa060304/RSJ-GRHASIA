@@ -277,7 +277,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
       $scope.$watch('item.pemeriksaanKeluarParahita', function (newVal, oldVal) {
 				if (newVal  !== oldVal) {
-					if($scope.item.pemeriksaanKeluarPramita == true){
+					if($scope.item.pemeriksaanKeluarParahita == true){
             medifirstService.getDataDummyPHPV2("tatarekening/tindakan/get-tindakan?idRuangan="
               + $scope.item.pasien.objectruanganfk
               + "&idKelas="
