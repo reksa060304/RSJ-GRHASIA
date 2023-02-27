@@ -3031,6 +3031,10 @@
             "urlDep": "module/EMR/SuratKesediaanPemeriksaanNAPZACtrl"
         },
         {
+            "nameDep": "PersetujuanTindakanKedokteranCtrl",
+            "urlDep": "module/EMR/PersetujuanTindakanKedokteranCtrl"
+        },
+        {
             "nameDep": "SuratRehabNAPZACtrl",
             "urlDep": "module/EMR/SuratRehabNAPZACtrl"
         },
