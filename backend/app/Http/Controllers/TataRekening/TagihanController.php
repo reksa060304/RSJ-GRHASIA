@@ -14401,6 +14401,7 @@ $result = array(
 
     public function savePiutangBPJS(Request $request)
     {
+        ini_set('max_execution_time', 600);
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
         $dataLogin=$request->all();
@@ -14417,7 +14418,7 @@ $result = array(
                     from pasiendaftar_t pd
                 INNER JOIN antrianpasiendiperiksa_t as apd on apd.noregistrasifk=pd.norec
                 INNER JOIN pelayananpasien_t as pp on pp.noregistrasifk=apd.norec
-                INNER JOIN strukpelayanan_t as sp on sp.norec=pp.strukfk
+                left JOIN strukpelayanan_t as sp on sp.norec=pp.strukfk
                 where pd.statusenabled = true 
                 and pd.kdprofile = 30 
                 and pd.noregistrasi = '$noregistrasi'
@@ -14502,7 +14503,7 @@ $result = array(
                     $STSK->totalsetujui = $array_data['totalklaim'];
                     $STSK->totaltarifrs = $cek[0]->totaltarifrs;
                     $STSK->norecpdfk = $cek[0]->norec;
-                    if(isset($sep)){
+                    if(!empty($sep)){
                         $STSK->tglsep = $sep[0]->tglsep;
                     } else{
                         $STSK->tglsep = null;
