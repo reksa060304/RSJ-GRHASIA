@@ -7078,9 +7078,10 @@ class LogistikController extends ApiController{
         $data = $data->distinct();
         $data = $data->where('sp.statusenabled',true);
         $data = $data->where('sp.objectkelompoktransaksifk',34);
+        
         // if($strRuangan != ""){
         //     $data = $data->whereIn('sp.objectruanganfk',$strRuangan);
-
+		//$data = $data->wherein('sp.objectruanganfk',$strRuangan);
         // }
         $data = $data->orderBy('sp.noorder');
         $data = $data->get();
@@ -8796,6 +8797,8 @@ class LogistikController extends ApiController{
 //                        ->where('qtyproduk','>',0)
                         ->first();
 
+                    
+
                     \DB::table('stokprodukdetail_t')
                         ->where('kdprofile', $kdProfile)
                         ->where('norec', $kurang->norec)
@@ -8867,9 +8870,8 @@ class LogistikController extends ApiController{
                 "data" => $dataSK,
                 "datalogin" => $dataLogin['userData'],
                 "message"  => $transMessage,
-                "b"=> $getDetails,
-                "e"=> $e->getMessage() . " / ".$e->getLine()
-            );
+				'line'=> $e->getLine(),
+                'messages'=> $e->getMessage(),            );
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
