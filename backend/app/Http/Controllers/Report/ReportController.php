@@ -1203,11 +1203,10 @@ class ReportController extends ApiController{
                 inner join produk_m pm on pm.id = pt.produkfk
                 inner join jenisracikan_m jr on jr.id = pt.jenisobatfk 
                 inner join strukresep_t as sr on sr.norec = pt.strukresepfk
-                left join strukorder_t as so on so.norec = sr.orderfk and sr.statusenabled = true
-                left join orderpelayanan_t as op on op.strukorderfk = so.norec and op.objectprodukfk = pm.id and op.rke = pt.rke
+                inner join strukorder_t as so on so.norec = sr.orderfk
+                inner join orderpelayanan_t as op on op.strukorderfk = so.norec and op.objectprodukfk = pm.id
                 where strukresepfk = '$norec'
                 and pt.isobat = true
-                and sr.statusenabled = true
                 order by pt.rke asc, pt.keteranganpakai asc
             "));
 //        dd($raw);
@@ -1235,11 +1234,10 @@ class ReportController extends ApiController{
                 inner join produk_m pm on pm.id = pt.produkfk 
                 inner join jenisracikan_m jr on jr.id = pt.jenisobatfk
                 inner join strukresep_t as sr on sr.norec = pt.strukresepfk
-                left join strukorder_t as so on so.norec = sr.orderfk and sr.statusenabled = true
-                left join orderpelayanan_t as op on op.strukorderfk = so.norec and op.objectprodukfk = pm.id and op.rke = pt.rke
+                inner join strukorder_t as so on so.norec = sr.orderfk
+                inner join orderpelayanan_t as op on op.strukorderfk = so.norec and op.objectprodukfk = pm.id
                 where strukresepfk = '$norec'
                 and pt.isobat = true
-                and sr.statusenabled = true
                 order by pt.rke asc,pt.keteranganpakai asc
             "));
         }else{

@@ -7074,11 +7074,15 @@ class LogistikController extends ApiController{
         if(isset($request['norecOrder']) && $request['norecOrder']!="" && $request['norecOrder']!="undefined"){
             $data = $data->where('sp.norec','=', $request['norecOrder']);
         }
-
+        $data = $data->where('pg.id', $dataPegawaiUser[0]->id);
         $data = $data->distinct();
         $data = $data->where('sp.statusenabled',true);
         $data = $data->where('sp.objectkelompoktransaksifk',34);
-        $data = $data->wherein('sp.objectruanganfk',$strRuangan);
+        
+        // if($strRuangan != ""){
+        //     $data = $data->whereIn('sp.objectruanganfk',$strRuangan);
+		//$data = $data->wherein('sp.objectruanganfk',$strRuangan);
+        // }
         $data = $data->orderBy('sp.noorder');
         $data = $data->get();
 
@@ -8714,6 +8718,8 @@ class LogistikController extends ApiController{
         $idProfile = (int) $kdProfile;
         \DB::beginTransaction();
         $dataLogin = $request->all();
+        $getDetails = "";
+        $kurang = "";
         try {
             if($request['strukkirim']['noorderfk'] != ''){
                 $dataAing = StrukOrder::where('norec',$request['strukkirim']['noorderfk'])
@@ -8785,7 +8791,7 @@ class LogistikController extends ApiController{
                         "))->first();
                     $saldoAwalPenerima = (float)$dataSaldoAwalT->qty - (float)$item->qtyproduk;
 
-                    $kurang = StokProdukDetail::where('nostrukterimafk', $item->nostrukterimafk)
+                    $kurang = StokProdukDetail::where('nostrukterimafk',$item->nostrukterimafk)
                         ->where('objectruanganfk', $request['strukkirim']['obejectruangantujuan'])
                         ->where('objectprodukfk', $item->objectprodukfk)
 //                        ->where('qtyproduk','>',0)
@@ -8864,9 +8870,8 @@ class LogistikController extends ApiController{
                 "data" => $dataSK,
                 "datalogin" => $dataLogin['userData'],
                 "message"  => $transMessage,
-                'line'=> $e->getLine(),
-                'messages'=> $e->getMessage(),
-            );
+				'line'=> $e->getLine(),
+                'messages'=> $e->getMessage(),            );
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
