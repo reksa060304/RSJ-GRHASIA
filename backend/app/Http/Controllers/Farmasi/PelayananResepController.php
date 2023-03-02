@@ -5182,7 +5182,7 @@ class PelayananResepController extends ApiController
                     $totalvisite+=$jumlahtotalvisitejanuary;
                 }
                 if ($layanan->bulan == 'February' && $layanan->namaproduk == 'Visite Apoteker'){
-                    $jumlahtotavisitefebruary = $layanan->jumlah;
+                    $jumlahtotalvisitefebruary = $layanan->jumlah;
                     $totalvisite+=$jumlahtotalvisitefebruary;
                 }
                 if ($layanan->bulan == 'March' && $layanan->namaproduk == 'Visite Apoteker'){
