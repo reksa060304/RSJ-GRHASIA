@@ -4103,7 +4103,7 @@ class PelayananResepController extends ApiController
         inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
         inner join produk_m pr on pr.id=pp.produkfk
         inner join ruangan_m ru on ru.id = apd.objectruanganfk
-		inner join ruangan_m ruasal on ruasal.id = apd.objectruanganasalfk
+		left join ruangan_m ruasal on ruasal.id = apd.objectruanganasalfk
         left join strukresep_t sr on sr.norec = pp.strukresepfk
         left join antrianpasiendiperiksa_t apdsr on apdsr.norec=sr.pasienfk
         left join ruangan_m ruresep on ruresep.id = sr.ruanganfk
