@@ -7078,7 +7078,10 @@ class LogistikController extends ApiController{
         $data = $data->distinct();
         $data = $data->where('sp.statusenabled',true);
         $data = $data->where('sp.objectkelompoktransaksifk',34);
-        $data = $data->wherein('sp.objectruanganfk',$strRuangan);
+        // if($strRuangan != ""){
+        //     $data = $data->wherein('sp.objectruanganfk',$strRuangan);
+
+        // }
         $data = $data->orderBy('sp.noorder');
         $data = $data->get();
 
@@ -8714,6 +8717,8 @@ class LogistikController extends ApiController{
         $idProfile = (int) $kdProfile;
         \DB::beginTransaction();
         $dataLogin = $request->all();
+        $getDetails = "";
+        $kurang = "";
         try {
             if($request['strukkirim']['noorderfk'] != ''){
                 $dataAing = StrukOrder::where('norec',$request['strukkirim']['noorderfk'])
@@ -8785,7 +8790,7 @@ class LogistikController extends ApiController{
                         "))->first();
                     $saldoAwalPenerima = (float)$dataSaldoAwalT->qty - (float)$item->qtyproduk;
 
-                    $kurang = StokProdukDetail::where('nostrukterimafk', $item->nostrukterimafk)
+                    $kurang = StokProdukDetail::where('nostrukterimafk',$item->nostrukterimafk)
                         ->where('objectruanganfk', $request['strukkirim']['obejectruangantujuan'])
                         ->where('objectprodukfk', $item->objectprodukfk)
 //                        ->where('qtyproduk','>',0)
@@ -8862,6 +8867,8 @@ class LogistikController extends ApiController{
                 "data" => $dataSK,
                 "datalogin" => $dataLogin['userData'],
                 "message"  => $transMessage,
+                "b"=> $getDetails,
+                "e"=> $e->getMessage() . " / ".$e->getLine()
             );
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
