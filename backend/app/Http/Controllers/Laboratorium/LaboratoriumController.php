@@ -894,7 +894,7 @@ class LaboratoriumController extends ApiController
             $getPD = collect(DB::select("SELECT * FROM antrianpasiendiperiksa_t WHERE noregistrasifk = '$getAntrian->noregistrasifk' AND objectruanganfk = 575 "))->first();
             $paramsPro = " AND pp.noregistrasifk = '" . $getPD->norec ."'";
         }
-        $data = DB::select(DB::raw("SELECT pp.noregistrasifk as norec_apd,djp.detailjenisproduk,pp.produkfk,prd.namaproduk  ,maps.detailpemeriksaan,maps.memohasil,
+        $data = DB::select(DB::raw("SELECTx pp.noregistrasifk as norec_apd,djp.detailjenisproduk,pp.produkfk,prd.namaproduk  ,maps.detailpemeriksaan,maps.memohasil,
                 maps.nourutdetail,maps.satuanstandarfk,ss.satuanstandar,nn.nilaitext,nn.tipedata,nn.nilaimin,nn.nilaimax,hh.hasil,
                 maps.id as map_id,hh.norec as norec_hasil,maps.nourutjenispemeriksaan,maps.nourutdetail,pp.norec as norecPP,nn.nilaimin || '-' || nn.nilaimax as nilainormalstr,
                 hh.flag,nn.id as idnn,maps2.jeniskelaminfk,hh.pegawaifk,hh.keterangan

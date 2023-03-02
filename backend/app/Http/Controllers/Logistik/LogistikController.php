@@ -8791,6 +8791,8 @@ class LogistikController extends ApiController{
 //                        ->where('qtyproduk','>',0)
                         ->first();
 
+                    
+
                     \DB::table('stokprodukdetail_t')
                         ->where('kdprofile', $kdProfile)
                         ->where('norec', $kurang->norec)
@@ -8862,6 +8864,8 @@ class LogistikController extends ApiController{
                 "data" => $dataSK,
                 "datalogin" => $dataLogin['userData'],
                 "message"  => $transMessage,
+                'line'=> $e->getLine(),
+                'messages'=> $e->getMessage(),
             );
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
