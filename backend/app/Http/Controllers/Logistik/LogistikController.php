@@ -7074,12 +7074,12 @@ class LogistikController extends ApiController{
         if(isset($request['norecOrder']) && $request['norecOrder']!="" && $request['norecOrder']!="undefined"){
             $data = $data->where('sp.norec','=', $request['norecOrder']);
         }
-
+        $data = $data->where('pg.id', $dataPegawaiUser[0]->id);
         $data = $data->distinct();
         $data = $data->where('sp.statusenabled',true);
         $data = $data->where('sp.objectkelompoktransaksifk',34);
         // if($strRuangan != ""){
-        //     $data = $data->wherein('sp.objectruanganfk',$strRuangan);
+        //     $data = $data->whereIn('sp.objectruanganfk',$strRuangan);
 
         // }
         $data = $data->orderBy('sp.noorder');
