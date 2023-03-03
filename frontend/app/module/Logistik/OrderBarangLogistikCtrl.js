@@ -818,19 +818,19 @@ define(['initialize'], function (initialize) {
                     $scope.isAdd = true;
                 }
             }
-            // $scope.KlikGrids = function(dataSelected){
-            //     console.log(dataSelected);
-            //     $scope.item.produk = {
-            //         id: dataSelected.produkfk,
-            //         namaproduk: dataSelected.namaproduk
-            //     }
-            //     $scope.item.satuan = {
-            //         ssid: dataSelected.satuanstandarfk, satuanstandar: dataSelected.satuanstandar
-            //     }
-            //     $scope.item.nilaiKonversi = dataSelected.nilaikonversi
-            //     $scope.item.stok = dataSelected.jmlstok
-            //     $scope.item.jumlah = dataSelected.jumlah
-            // }
+            $scope.KlikGrids = function(dataSelected){
+                $scope.item.no = dataSelected.no
+                $scope.item.produk = {
+                    id: dataSelected.produkfk,
+                    namaproduk: dataSelected.namaproduk
+                }
+                $scope.item.satuan = {
+                    ssid: dataSelected.satuanstandarfk, satuanstandar: dataSelected.satuanstandar
+                }
+                $scope.item.nilaiKonversi = dataSelected.nilaikonversi
+                $scope.item.stok = dataSelected.jmlstok
+                $scope.item.jumlah = dataSelected.jumlah
+            }
             //** BATAS */           
         }
     ]);
