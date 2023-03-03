@@ -1,7 +1,7 @@
 define(['initialize','Configuration'], function (initialize, configuration) {
     'use strict';
-    initialize.controller('CatatanPerkembanganBaruCtrl', ['$q', '$rootScope', '$scope', 'ModelItem', '$state', 'CacheHelper', 'DateHelper', 'MedifirstService',
-        function ($q, $rootScope, $scope, ModelItem, $state, cacheHelper, dateHelper, medifirstService) {
+    initialize.controller('CatatanPerkembanganBaruCtrl', ['$q', '$rootScope', '$scope', 'ModelItem', '$state', 'CacheHelper', 'DateHelper', 'MedifirstService', '$mdDialog',
+        function ($q, $rootScope, $scope, ModelItem, $state, cacheHelper, dateHelper, medifirstService, $mdDialog) {
             $scope.tombolSimpanVis = true
             $scope.show = true;
             $scope.item = {}
@@ -80,7 +80,6 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                     text: medifirstService.getPegawaiLogin().namaLengkap,
                     value: medifirstService.getPegawaiLogin().id
                 }
-                console.log($scope.item.pegawai);
                 if (dataCakem.length > 0) {
                     $scope.item.evaluasi = dataCakem[dataCakem.length - 1].evaluasi
                 }
@@ -172,13 +171,20 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                     alert("Data Belum Dipilih!")
                     return;
                 };
-                console.log(dataItem);
+                if (dataItem.objectpegawaifk != medifirstService.getPegawaiLogin().id){
+                    alert("Tidak bisa diRubah!")
+                    return;
+                }
                 $scope.item.norec = dataItem.norec_ec
-                console.log(dataItem.jam);
-                $scope.item.jam = dataItem.jam
+                $scope.item.jam = new Date(moment(dataItem.tanggal).format('YYYY-MM-DD') + ' '+dataItem.jam)
+                console.log($scope.item.jam);
                 $scope.item.tanggal = moment(dataItem.tanggal).format('YYYY-MM-DD')
                 $scope.item.pelaksanaan = dataItem.pelaksanaan
                 $scope.item.evaluasi = dataItem.evaluasi
+                $scope.listPegawai.add({
+                    text: dataItem.namalengkap,
+                    value: dataItem.objectpegawaifk
+                })
                 $scope.item.pegawai = {
                     text: dataItem.namalengkap,
                     value: dataItem.objectpegawaifk
@@ -187,7 +193,6 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                 //     toastr.error('Tidak bisa diubah')
                 //     return
                 // }
-                console.log($scope.item.jam);
 
                 $scope.popUpLembarCakem.center().open()
             }
@@ -198,13 +203,26 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                     alert("Data Belum Dipilih!")
                     return;
                 };
-                var jsonSave = {
-                    'norec': dataItem.norec_ec
+                if (dataItem.objectpegawaifk != medifirstService.getPegawaiLogin().id) {
+                    alert("Tidak bisa dihapus!")
+                    return;
                 }
-                medifirstService.post('emr/hapus-emr-cakem', jsonSave).then(function (e) {
-                    $scope.item.norec = undefined
-                    loadData()
+                var confirm = $mdDialog.confirm()
+                    .title('Peringatan')
+                    .htmlContent('Apakah Anda yakin ingin menghapus Catatan Perkembangan tersebut?')
+                    .ariaLabel('Lucky day')
+                    .cancel('Tidak')
+                    .ok('Ya')
+                $mdDialog.show(confirm).then(function () {
+                    var jsonSave = {
+                        'norec': dataItem.norec_ec
+                    }
+                    medifirstService.post('emr/hapus-emr-cakem', jsonSave).then(function (e) {
+                        $scope.item.norec = undefined
+                        loadData()
+                    })
                 })
+                
             }
             console.log($scope.cc.norec_emr);
             $scope.Save = function () {
@@ -218,7 +236,7 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                 }
                 var jam = ''
                 if ($scope.item.jam != undefined) {
-                    jam = moment($scope.item.jam).format('HH:mm')
+                    jam = moment($scope.item.jam).format('HH:mm:ss')
                 }
                 var pelaksanaan= ''
                 if ($scope.item.pelaksanaan != undefined) {
@@ -274,7 +292,7 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                 if (cacheNomorEMR[0] == '-') {
                     return
                 }
-
+                
                 var local = JSON.parse(localStorage.getItem('profile'))
                 var nama = medifirstService.getPegawaiLogin().namaLengkap
 
