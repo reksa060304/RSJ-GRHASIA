@@ -6356,6 +6356,21 @@ class PelayananResepController extends ApiController
         return $this->respond($data);
     }
 
+    public function getPenjagaanVerifEresep(Request $request)
+    {
+        
+        $noorder = $request['noorder'];
+
+        $dataz = DB::select(DB::raw("select sr.tglresep 
+        from strukorder_t as so 
+        left join strukresep_t as sr on so.norec = sr.orderfk
+        where so.noorder = '$noorder'"));
+
+        
+        $data['detail']  =$dataz;
+        return $this->respond($data);
+    }
+
     public function getPenjagaanUdahBayar(Request $request)
     {
         
