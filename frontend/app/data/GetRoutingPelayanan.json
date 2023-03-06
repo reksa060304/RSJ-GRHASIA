@@ -18512,8 +18512,8 @@
     
    },
   {
-    "name": "RekamMedis.AsesmenMedis.TerapiHarianPasienRawatInap",
-    "url": "/TerapiHarianPasienRawatInap",
+    "name": "RekamMedis.AsesmenMedis.MenuIndex.TerapiHarianPasienRawatInap",
+    "url": "/TerapiHarianPasienRawatInap/:index/:idEMR",
     "templateurl": "module/EMR/TerapiHarianPasienRawatInap.html",
     "controller": "TerapiHarianPasienRawatInapCtrl",
     "deps": [{
