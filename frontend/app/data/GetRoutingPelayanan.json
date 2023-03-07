@@ -16909,6 +16909,29 @@
     ]
   },
   {
+    "name": "RekamMedis.AsesmenMedis.PersetujuanTindakanKedokteran",
+    "url": "/PersetujuanTindakanKedokteran",
+    "templateurl": "module/EMR/PersetujuanTindakanKedokteran.html",
+    "controller": "PersetujuanTindakanKedokteranCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  },
+  {
     "name": "RekamMedis.AsesmenMedis.SuratRehabNAPZA",
     "url": "/SuratRehabNAPZA",
     "templateurl": "module/EMR/SuratRehabNAPZA.html",
@@ -18489,8 +18512,8 @@
     
    },
   {
-    "name": "RekamMedis.AsesmenMedis.TerapiHarianPasienRawatInap",
-    "url": "/TerapiHarianPasienRawatInap",
+    "name": "RekamMedis.AsesmenMedis.MenuIndex.TerapiHarianPasienRawatInap",
+    "url": "/TerapiHarianPasienRawatInap/:index/:idEMR",
     "templateurl": "module/EMR/TerapiHarianPasienRawatInap.html",
     "controller": "TerapiHarianPasienRawatInapCtrl",
     "deps": [{

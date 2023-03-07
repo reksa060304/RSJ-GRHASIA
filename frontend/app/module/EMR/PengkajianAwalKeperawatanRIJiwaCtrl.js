@@ -679,6 +679,19 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 }
             ]
 
+            $scope.listKeluhanNyeri = [
+                {
+                    "id": 1, "nama": "Keluhan Nyeri",
+                    "detail": [
+                        { "id": 3014903, "nama": "Tidak ada", "satuan": "", "type": "checkbox" },
+                        { "id": 3014904, "nama": "Ada", "satuan": "", "type": "checkbox" },
+                        { "id": 3014904, "nama": "Lokasi", "satuan": "", "type": "textbox" },
+                        { "id": 3014904, "nama": "Durasi", "satuan": "", "type": "textkbox2" },
+                        { "id": 3014904, "nama": "Frekuensi", "satuan": "", "type": "textkbox3" },
+                    ]
+                }
+            ]
+
             $scope.listSkriningGiziDewasa = [
                 {
                     "id": 1, "nama": "Skrining Gizi Dewasa",

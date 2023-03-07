@@ -1,0 +1,613 @@
+<style type="text/css">
+    .tg {
+        border-collapse: collapse;
+        border-spacing: 0;
+        border-color: #aabcfe;
+    }
+
+    .tg td {
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        padding: 10px 5px;
+        border-style: solid;
+        border-width: 1px;
+        overflow: hidden;
+        word-break: normal;
+        border-color: #aabcfe;
+        color: #669;
+        background-color: #e8edff;
+    }
+
+    .tg th {
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        font-weight: normal;
+        padding: 10px 5px;
+        border-style: solid;
+        border-width: 1px;
+        overflow: hidden;
+        word-break: normal;
+        border-color: #aabcfe;
+        color: #039;
+        background-color: #b9c9fe;
+    }
+
+    .tg .tg-yw4l {
+        vertical-align: top
+    }
+
+
+    .rowstyle {
+        border-bottom: 1px dashed lightblue
+    }
+
+    .footer {
+        text-align: center;
+        font-size: 120%;
+        font-weight: 700;
+        margin-bottom: 20px
+    }
+
+    table,
+    th,
+    td {
+        border: 1px solid #777777;
+        border-collapse: collapse;
+    }
+
+    th,
+    td {
+        padding: 5px;
+        text-align: left;
+    }
+
+    /* table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 40px;
+
+    }
+
+    td,
+    th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+    }
+
+    tr:nth-child(even) {
+        background-color: #dddddd;
+    } */
+    .dot1 {
+        vertical-align: top;
+        height: 50px;
+        width: 50px;
+        background-color: red;
+        border-radius: 50%;
+        display: inline-block;
+    }
+
+    .dot2 {
+        vertical-align: top;
+        height: 50px;
+        width: 50px;
+        background-color: yellow;
+        border-radius: 50%;
+        display: inline-block;
+    }
+
+    .dot3 {
+        vertical-align: top;
+        height: 50px;
+        width: 50px;
+        background-color: green;
+        border-radius: 50%;
+        display: inline-block;
+    }
+
+    .dot4 {
+        vertical-align: top;
+        height: 50px;
+        width: 50px;
+        background-color: black;
+        border-radius: 50%;
+        display: inline-block;
+    }
+  
+       .activeDot:before {
+        content: '\f00c';
+    font-family: 'FontAwesome';
+    display: inline-block;
+    vertical-align: top;
+    line-height: 1em;
+    /* width: 1em; */
+    /* height: 1em; */
+    font-size: 25px;
+    /* margin-right: 0.3em; */
+    text-align: center;
+    color: #ffffff;
+    margin-top: 12px;
+    }
+    .my-disable{
+        pointer-events:none;
+
+    }
+
+    .margin-top{
+        margin-top: 20px;
+    }
+
+    .margin-top-10{
+        margin-top: 10px;
+    }
+
+    .margin-top-30{
+        margin-top: 30px;
+    }
+
+    .text-center{
+        text-align: center;
+    }
+
+    .margin-bottom{
+        margin-bottom: 10px;
+    }
+
+    .text-center{
+        text-align: center;
+    }
+
+    .border-left{
+        border-left: 1px solid black;
+    }
+
+    .border-right{
+        border-right: 1px solid rgba(54, 53, 53, 0.438);
+    }
+</style>
+
+ <!-- ng-class="{'my-disable':true}" -->
+<!-- <div class="grid_12"  disable-contents="allDisabled" id="form"> -->
+<div class="grid_12">
+    <div class="grid_12">
+        <div class="panel panel-default container_12">
+            <div class="panel-heading">RM.78.01.Rev01 Persetujuan Umum Untuk Tindakan Kedokteran</div>
+        </div>
+        
+        <div class="grid_12">
+            <fieldset style="margin-top: 50px;">
+                <div class="grid_12 margin-top-30 text-center">
+                    <label c-label item="item" font size=""> <u><h1>PERSETUJUAN UMUM UNTUK TINDAKAN KEDOKTERAN</h1></u></label>
+                </div>
+                <div class="grid_12">
+                    <div class="grid_12 margin-top-10 text-center margin-bottom" hide="true">
+                        <label c-label item="item" class="margin-bottom">Nomor :</label>
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901308800]"
+                            style="height: 30px; width: 30%; "/>
+                    </div>
+                </div>
+                <div class="grid_12 margin-bottom" style="margin-top: 30px;">
+                    <div class="grid_3"><label c-label item="item" class="margin-bottom">Nama (lengkap) :</label></div>
+                    <div class="grid_9">
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901308800]"
+                            k-data-source=""
+                            style="height: 30px; width: 100%; "/>
+                    </div>
+                </div>
+                <div class="grid_12 margin-bottom">
+                    <div class="grid_3"><label c-label item="item" class="margin-bottom">Nama Penerima Informasi :</label></div>
+                    <div class="grid_5">
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901308810]"
+                            k-data-source=""
+                            style="height: 30px; width: 100%; "/>
+                    </div>
+                    <div class="grid_1"><label c-label item="item" class="margin-bottom">NIK :</label></div>
+                    <div class="grid_3">
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901308820]"
+                            k-data-source=""
+                            style="height: 30px; width: 100%; "/>
+                    </div>
+                </div>
+                <div class="grid_12 margin-bottom">
+                    <div class="grid_3"><label c-label item="item" class="margin-bottom">Alamat :</label></div>
+                    <div class="grid_9">
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901308830]"
+                            k-data-source=""
+                            style="height: 60px; width: 100%; "/>
+                    </div>
+                </div>
+                <div class="grid_12 margin-bottom">
+                    <div class="grid_3"><label c-label item="item" class="margin-bottom">Hubungan Dengan Pasien :</label></div>
+                    <div class="grid_5">
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901308840]"
+                            k-data-source=""
+                            style="height: 30px; width: 100%; "/>
+                    </div>
+                    <div class="grid_2">
+                        <input type="checkbox" class="k-checkbox" id="item.obj1901308850"
+                            ng-model="item.obj[1901308850]">
+                        <label class="k-checkbox-label" for="item.obj1901308850">
+                            &nbsp;<b>Laki = Laki</b></label>
+                    </div>
+                    <div class="grid_2">
+                        <input type="checkbox" class="k-checkbox" id="item.obj1901308860"
+                            ng-model="item.obj[1901308860]">
+                        <label class="k-checkbox-label" for="item.obj1901308860">
+                            &nbsp;<b>Perempuan</b></label>
+                    </div>
+                </div>
+        
+                <div class="grid_12" style="margin-top: 50px;">
+                    <label item="item" class="margin-bottom" style="color: #000000; font-weight: bold">1. PERSETUJUAN ASUHAN KESEHATAN</u></b> </label>
+                </div>
+                <div class="grid_12 margin-top-20 margin-bottom" style="margin-left: 10px; text-align: justify">
+                    <div class="grid_11">
+                        <label item="item" class="margin-bottom" style="color: #000000; font-weight: normal;">
+                            Saya menyadari bahwa tindakan kedokteran adalah berisiko, meliputi tindakan medis berupa preventif, diagnostik, terapeutik atau rehabilitatif yang dilakukan
+                            oleh dokter atau dokter gigi terhadap Pasien. <br>
+                            Saya menyetujui segala pelayanan medis di RS Jiwa Grhasia sebagaimana sesuai dengan keadaan medis saya selama mendapatkan pelayanan medis
+                            di RS Jiwa Grhasia. <br>
+                            Saya dengan ini memberikan persetujuan (kecuali yang membutuhkan persetujuan khusus/tertulis) dengan tidak dapat ditarik kembali kepada RS Jiwa
+                            Grhasia, dalam memberikan pelayanan medis, pemeriksaan fisik, yang dapat dilakukan oleh dokter atau perawat dan melakukan prosedur diagnostik atau
+                            terapi dan tatalaksana sesuai pertimbangan dokter yang diperlukan atau disarankan pada pelayanan medis untuk saya. Hal ini mencakup seluruh
+                            pemeriksaan dan prosedur diagnostik rutin, termasuk namun tidak terbatas pada x-ray, pemberian dan atau tindakan kedokteran serta penyuntikan
+                            (intramuskular, intravena dan prosedur invasif lainnya) produk farmasi dan obat-obatan, pemasangan alat medis dan pengambilan darah untuk pemeriksaan
+                            laboratorium atau pemeriksaan patologi yang dibutuhkan untuk pelayanan medis saya. <br>
+                            Saya mempercayakan kepada semua tenaga kesehatan rumah sakit untuk memberikan perawatan, diagnostik dan terapi kepada saya sebagai pasien rawat
+                            inap atau rawat jalan atau Instalasi Gawat Darurat (IGD), termasuk semua pemeriksaan penunjang, yang dibutuhkan untuk pengobatan dan tindakan yang
+                            diperlukan.
+                        </label>
+                    </div>
+                </div>
+
+                <div class="grid_12">
+                    <label item="item" class="margin-bottom" style="color: #000000; font-weight: bold">2. KEJADIAN TIDAK TERDUGA / DIHARAPKAN</u></b> </label>
+                </div>
+                <div class="grid_12 margin-top-20 margin-bottom" style="margin-left: 10px; text-align: justify">
+                    <div class="grid_11">
+                        <label item="item" class="margin-bottom" style="color: #000000; font-weight: normal;">
+                            Saya mengerti dan menyadari bahwa dalam tindakan kedokteran dapat terjadi adanya kejadian tidak terduga/diharapkan (unanticipated outcome) yang dapat
+                            merupakan efek samping dari tindakan kedokteran yang tidak dapat diduga sebelumnya (termasuk antara lain, namun tidak terbatas pada Steven Johnson
+                            Syndrome dan syok anafilaktik).<br>
+                            Saya mengerti bahwa hasil asuhan dan pengobatan termasuk kejadian yang tidak terduga/diharapkan akan diberitahukan kepada saya dan keluarga oleh
+                            Dokter Penanggung Jawab Pasien (DPJP).
+                        </label>
+                    </div>
+                </div>
+
+                <div class="grid_12">
+                    <label item="item" class="margin-bottom" style="color: #000000; font-weight: bold">3. PENETAPAN PIHAK YANG DIIJINKAN</u></b> </label>
+                </div>
+                <div class="grid_12 margin-top-20 margin-bottom" style="margin-left: 10px; text-align: justify">
+                    <div class="grid_11">
+                        <label item="item" class="margin-bottom" style="color: #000000; font-weight: normal;">
+                            Saya telah mendapat ijin dari pasien/penanggung jawab pasien untuk berpartisipasi dalam pengambilan keputusan terkait perawatan di RS Jiwa Grhasia.
+                        </label>
+                    </div>
+                </div>    
+                
+                <div class="grid_12">
+                    <label item="item" class="margin-bottom" style="color: #000000; font-weight: bold">4. RUMAH SAKIT LAYANAN PENDIDIKAN</u></b> </label>
+                </div>
+                <div class="grid_12 margin-top-20 margin-bottom" style="margin-left: 10px; text-align: justify">
+                    <div class="grid_11">
+                        <label item="item" class="margin-bottom" style="color: #000000; font-weight: normal;">
+                            Saya mengetahui bahwa Rumah Sakit Jiwa Grhasia merupakan Rumah Sakit yang digunakan untuk pendidikan dan praktik klinik mahasiswa kedokteran
+                            dan profesi kesehatan lainnya. Untuk itu, saya menyetujui mereka berpartisipasi dalam proses perawatan pasien sepanjang dibawah supervisi Penanggung
+                            Jawab Pasien yaitu dokter, perawat dan tenaga kesehatan lain. Hal ini dikecualikan bagi pasien kelas VIP.
+                        </label>
+                    </div>
+                </div> 
+                
+                <div class="grid_12" style="margin-top: 50px; text-align: center;">
+                    <label item="item" class="margin-bottom" style="color: #000000; font-weight: bold">TATA TERTIB DAN PERATURAN RUMAH SAKIT</u></b> </label>
+                </div>
+
+                <div class="grid_12 margin-top-20" style="text-align: justify; margin-top: 5px;">
+                    <label item="item" style="color: #000000; font-weight: normal">1. HAK, KEWAJIBAN, DAN TANGGUNG JAWAB SEBAGAI PASIEN. Dengan menandatangani dokumen ini saya, pasien atau penanggung</u></b> </label>
+                </div>
+                <div class="grid_12" style="margin-left: 10px; text-align: justify">
+                    <div class="grid_11">
+                        <label item="item" style="color: #000000; font-weight: normal;">
+                            jawab, wali ataupun keluarga yang menandatangani dokumen ini untuk dan atas nama saya menyatakan bahwa telah memperoleh dan telah menerima semua
+                            informasi mengenai hak-hak, kewajiban dan tanggung jawab Pasien pada saat proses pendaftaran Pasien dan selama mendapatkan pelayanan medis
+                            di RS Jiwa Grhasia, antara lain, hak-hak dan kewajiban Pasien sebagaimana terdapat pada halaman belakang persetujuan umum ini.
+                        </label>
+                    </div>
+                </div> 
+
+                <div class="grid_12 margin-top-20" style="text-align: justify; margin-top: 20px;">
+                    <label item="item" style="color: #000000; font-weight: normal">2. AKSES INFORMASI KESEHATAN. Saya dengan ini memberikan persetujuan kepada RS Jiwa Grhasia untuk memberikan informasi</u></b> </label>
+                </div>
+                <div class="grid_12" style="margin-left: 10px; text-align: justify">
+                    <div class="grid_11">
+                        <label item="item" style="color: #000000; font-weight: normal;">
+                            tentang hal-hal yang berkaitan dengan kesehatan saya kepada penanggung jawab, keluarga atau pihak yang menjamin biaya perawatan saya di RS Jiwa Grhasia, kepada
+                            (tulis nama, minimal 2) :
+                        </label>
+                    </div>
+                </div> 
+                
+                <div class="grid_12 margin-bottom" style="margin-left: 10px; text-align: justify">
+                    <div class="grid_11">
+                        <div class="grid_6">
+                            a. <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901308870]"
+                            k-data-source=""
+                            style="height: 30px; width: 100%; "/>
+                        </div>
+                        <div class="grid_6">
+                            b. <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901308880]"
+                            k-data-source=""
+                            style="height: 30px; width: 100%; "/>
+                        </div>
+                        <div class="grid_6">
+                            c. <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901308890]"
+                            k-data-source=""
+                            style="height: 30px; width: 100%; "/>
+                        </div>
+                        <div class="grid_6">
+                            d. <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901308900]"
+                            k-data-source=""
+                            style="height: 30px; width: 100%; "/>
+                        </div>
+                    </div>
+                </div> 
+
+                <div class="grid_12 margin-top-20" style="text-align: justify; margin-top: 20px;">
+                    <label item="item" style="color: #000000; font-weight: normal">3. RAHASIA KEDOKTERAN. Saya setuju RS Jiwa Grhasia menjamin rahasia kedokteran saya dan hanya menggunakannya untuk</u></b> </label>
+                </div>
+                <div class="grid_12" style="margin-left: 10px; text-align: justify">
+                    <div class="grid_11">
+                        <label item="item" style="color: #000000; font-weight: normal;">
+                            kepentingan perawatan atau pengobatan, penagihan asuransi, pendidikan maupun penelitian, kecuali saya mengungkapkan sendiri atau orang lain / pihak lain yang saya beri kuasa
+                            untuk itu.
+                        </label>
+                    </div>
+                </div> 
+
+                <div class="grid_12 margin-top-20" style="text-align: justify; margin-top: 20px;">
+                    <label item="item" style="color: #000000; font-weight: normal">4. PRIVASI. Apabila saya memerlukan hal-hal yang menyangkut privasi saya sebagai pasien, saya menyampaikan kepada staf RS Jiwa</u></b> </label>
+                </div>
+                <div class="grid_12" style="margin-left: 10px; text-align: justify">
+                    <div class="grid_11">
+                        <label item="item" style="color: #000000; font-weight: normal;">
+                            Grhasia.
+                        </label>
+                    </div>
+                </div> 
+
+                <div class="grid_12 margin-top-20" style="text-align: justify; margin-top: 20px;">
+                    <label item="item" style="color: #000000; font-weight: normal">5. BARANG PRIBADI. Saya menyatakan bahwa RS Jiwa Grhasia telah menyarankan untuk tidak membawa barang-barang</u></b> </label>
+                </div>
+                <div class="grid_12" style="margin-left: 10px; text-align: justify">
+                    <div class="grid_11">
+                        <label item="item" style="color: #000000; font-weight: normal;">
+                            berharga (seperti perhiasan, elektronik, dll.). Dalam hal barang-barang berharga tersebut tetap dibawa ke lingkungan RS Jiwa Grhasia oleh saya atau pihak manapun, maka RS Jiwa
+                            Grhasia tidak akan bertanggung jawab atas kehilangan, kerusakan atau pencurian atas barang berharga tersebut.
+                        </label>
+                    </div>
+                </div> 
+
+                <div class="grid_12 margin-top-20" style="text-align: justify; margin-top: 20px;">
+                    <label item="item" style="color: #000000; font-weight: normal">6. PENGAJUAN KELUHAN. Saya dengan ini menyatakan bahwa saya telah menerima informasi dan telah mengerti tata cara</u></b> </label>
+                </div>
+                <div class="grid_12" style="margin-left: 10px; text-align: justify">
+                    <div class="grid_11">
+                        <label item="item" style="color: #000000; font-weight: normal;">
+                            pengajuan dan tindak lanjut bila ada keluhan saya sebagai pasien terkait pelayanan yang diberikan. Saya setuju untuk mengikuti tata cara pengajuan keluhan sesuai dengan prosedur yang
+                            ada. RS Jiwa Grhasia tidak wajib menindak-lanjuti keluhan saya apabila tidak diajukan sesuai dengan prosedur yang berlaku dan tidak wajib untuk
+                            bertanggung jawab atas setiap kerugian dalam bentuk apapun yang timbul dari atau sehubungan dengan keluhan yang tidak diajukan sesuai prosedur.
+                        </label>
+                    </div>
+                </div> 
+
+                <div class="grid_12 margin-top-20" style="text-align: justify; margin-top: 20px;">
+                    <label item="item" style="color: #000000; font-weight: normal">7. KEWAJIBAN PEMBAYARAN. Dengan ini saya atau penanggung jawab, wali ataupun keluarga saya menyatakan setuju bahwa sesuai</u></b> </label>
+                </div>
+                <div class="grid_12" style="margin-left: 10px; text-align: justify">
+                    <div class="grid_11">
+                        <label item="item" style="color: #000000; font-weight: normal;">
+                            dengan pertimbangan pelayanan yang diberikan kepada saya, maka saya wajib untuk melakukan pembayaran atas seluruh biaya pelayanan, yang akan ditentukan
+                            berdasarkan acuan biaya dan ketentuan yang ditetapkan oleh RS Jiwa Grhasia.<br>
+                            Apabila asuransi kesehatan swasta atau program pemerintah menanggung pembiayaan atas pelayanan kesehatan terhadap saya, saya dengan ini
+                            memberikan kewenangan kepada RS Jiwa Grhasia tanpa dapat dicabut kembali untuk memberi tagihan kepada asuransi terkait atas seluruh pelayanan
+                            dan tindakan kedokteran yang telah dilakukan. Tanggungan asuransi dari saya mungkin akan menyatakan bahwa sebagian pembayaran tetap menjadi
+                            tanggung jawab pribadi dari saya atau tidak ditanggung oleh asuransi tersebut, oleh karenanya RS Jiwa Grhasia berhak untuk memberi tagihan atas biaya
+                            tagihan yang tidak ditanggung tersebut dan dengan ini saya atau penanggung jawab, wali ataupun keluarga saya setuju untuk bertanggung jawab
+                            membayar biaya tagihan tersebut.<br>
+                            Saya dengan ini juga memberikan persetujuan kepada RS Jiwa Grhasia untuk dapat memberikan rahasia kedokteran atas Rekam Medis saya kepada
+                            perusahaan asuransi terkait sesuai dengan keperluan penagihan tersebut.<br>
+                            Apabila di kemudian hari saya tidak lagi ditanggung oleh asuransi, maka saya atau penanggung jawab, wali ataupun keluarga saya dengan ini setuju untuk
+                            secara pribadi bertanggung jawab dalam membayar seluruh biaya pelayanan dan tindakan kedokteran dari RS Jiwa Grhasia.
+                        </label>
+                    </div>
+                </div> 
+                <div class="grid_12" style="text-align: left;">
+                    <label item="item" class="margin-bottom" style="color: #000000; font-weight: bold">SAYA TELAH DIJELASKAN, MEMBACA, MEMAHAMI, dan SEPENUHNYA SETUJU terhadap pernyataan tersebut di atas</u></b> </label>
+                </div>
+
+                <div class="grid_12" style="margin-top: 50px;">
+                    <div class="grid_9"></div>
+                    <div class="grid_3">
+                        <label c-label item="item">Yogyakarta, </label>
+                        <input style="width: 100%" k-ng-model="item.obj[1901308910]" kendo-datetimepicker
+                            placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+                    </div>
+                </div>
+
+                <div class="grid_12">
+                    <div class="grid_3">
+                        <label c-label item="item">Yang menjelaskan</label>
+                    </div>
+                    <div class="grid_6"></div>
+                    <div class="grid_3">
+                        <label c-label item="item">Pasien / Penanggung Jawab</label>
+                    </div>
+                </div>
+                
+                <div class="grid_12 margin-top-20 margin-bottom">
+                    <div class="grid_3">
+                        <input style="width: 80%;" kendo-combo-box k-ng-model="item.obj[1901308920]"
+                            k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                            k-auto-bind="false" k-data-source="listPegawai" />
+                    </div>
+                    <div class="grid_6"></div>
+                    <div class="grid_3">
+                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[1901308930]"
+                            k-data-source=""
+                            style="height: 30px; width: 100%; " />
+                    </div>
+                </div>
+
+                <div class="grid_12" style="margin-top: 50px; text-align: center;">
+                    <label item="item" class="margin-bottom" style="color: #000000; font-weight: bold">HAK PASIEN / KELUARGA</u></b> </label>
+                </div>
+                <div class="grid_11 margin-top-20" style="text-align: justify; margin-top: 5px; margin-left: 10px; margin-top: 5px;">
+                    <label item="item" style="color: #000000; font-weight: normal">(sesuai pasal 32 UU No.44 tahun 2009 tentang Rumah Sakit)</u></b> </label>
+                </div>
+                <div class="grid_11 margin-top-20" style="text-align: justify; margin-top: 5px; margin-left: 10px; margin-top: 5px;">
+                    <label item="item" style="color: #000000; font-weight: normal">1. Memperoleh informasi mengenai tata tertib dan peraturan yang berlaku di Rumah Sakit.</u></b> </label>
+                </div>
+                <div class="grid_11 margin-top-20" style="text-align: justify; margin-top: 5px; margin-left: 10px; margin-top: 5px;">
+                    <label item="item" style="color: #000000; font-weight: normal">2. Memperoleh informasi tentang hak dan kewajiban pasien.</u></b> </label>
+                </div>
+                <div class="grid_11 margin-top-20" style="text-align: justify; margin-top: 5px; margin-left: 10px; margin-top: 5px;">
+                    <label item="item" style="color: #000000; font-weight: normal">3. Memperoleh layanan yang manusiawi, adil, jujur, dan tanpa diskriminasi.</u></b> </label>
+                </div>
+                <div class="grid_11 margin-top-20" style="text-align: justify; margin-top: 5px; margin-left: 10px; margin-top: 5px;">
+                    <label item="item" style="color: #000000; font-weight: normal">4. Memperoleh layanan kesehatan yang bermutu sesuai dengan standar profesi dan standar prosedur operasional.</u></b> </label>
+                </div>
+                <div class="grid_11 margin-top-20" style="text-align: justify; margin-top: 5px; margin-left: 10px; margin-top: 5px;">
+                    <label item="item" style="color: #000000; font-weight: normal">5. Memperoleh layanan yang efektif dan efisien sehingga pasien terhindar dari kerugian fisik dan materi.</u></b> </label>
+                </div>
+                <div class="grid_11 margin-top-20" style="text-align: justify; margin-top: 5px; margin-left: 10px; margin-top: 5px;">
+                    <label item="item" style="color: #000000; font-weight: normal">6. Mengajukan pengaduan atas kualitas pelayanan yang didapatkan.</u></b> </label>
+                </div>
+                <div class="grid_11 margin-top-20" style="text-align: justify; margin-top: 5px; margin-left: 10px; margin-top: 5px;">
+                    <label item="item" style="color: #000000; font-weight: normal">7. Memilih dokter dan kelas perawatan sesuai dengan keinginannya dan peraturan yang berlaku di Rumah Sakit.</u></b> </label>
+                </div>
+                <div class="grid_11 margin-top-20" style="text-align: justify; margin-top: 5px; margin-left: 10px; margin-top: 5px;">
+                    <label item="item" style="color: #000000; font-weight: normal">8. Meminta konsultasi tentang penyakit yang dideritanya kepada dokter lain yang mempunyai Surat Ijin Praktek (SIP)
+                        baik di dalam maupun di luar Rumah Sakit.</u></b> </label>
+                </div>
+                <div class="grid_11 margin-top-20" style="text-align: justify; margin-top: 5px; margin-left: 10px; margin-top: 5px;">
+                    <label item="item" style="color: #000000; font-weight: normal">9. Mendapatkan privasi dan kerahasiaan penyakit yang diderita termasuk data-data medisnya.</u></b> </label>
+                </div>
+                <div class="grid_11 margin-top-20" style="text-align: justify; margin-top: 5px; margin-left: 10px; margin-top: 5px;">
+                    <label item="item" style="color: #000000; font-weight: normal">10. Mendapat informasi yang meliputi diagnosis dan tata cara tindakan medis, tujuan tindakan medis, alternatif tindakan,
+                        risiko dan komplikasi yang mungkin terjadi, dan prognosis terhadap tindakan yang dilakukan serta perkiraan biaya pengobatan.</u></b> </label>
+                </div>
+                <div class="grid_11 margin-top-20" style="text-align: justify; margin-top: 5px; margin-left: 10px; margin-top: 5px;">
+                    <label item="item" style="color: #000000; font-weight: normal">11. Memberikan persetujuan atau menolak atas tindakan yang akan dilakukan oleh tenaga kesehatan terhadap yang dideritanya.</u></b> </label>
+                </div>
+                <div class="grid_11 margin-top-20" style="text-align: justify; margin-top: 5px; margin-left: 10px; margin-top: 5px;">
+                    <label item="item" style="color: #000000; font-weight: normal">12. Didampingi keluarganya dalam keadaan kritis.</u></b> </label>
+                </div>
+                <div class="grid_11 margin-top-20" style="text-align: justify; margin-top: 5px; margin-left: 10px; margin-top: 5px;">
+                    <label item="item" style="color: #000000; font-weight: normal">13. Menjalankan ibadah sesuai agama atau kepercayaan yang dianutnya selama itu tidak mengganggu pasien lainnya.</u></b> </label>
+                </div>
+                <div class="grid_11 margin-top-20" style="text-align: justify; margin-top: 5px; margin-left: 10px; margin-top: 5px;">
+                    <label item="item" style="color: #000000; font-weight: normal">14. Memperoleh keamanan dan keselamatan dirinya selama dalam perawatan di Rumah Sakit.</u></b> </label>
+                </div>
+                <div class="grid_11 margin-top-20" style="text-align: justify; margin-top: 5px; margin-left: 10px; margin-top: 5px;">
+                    <label item="item" style="color: #000000; font-weight: normal">15. Mengajukan usul, saran perbaikan atas perlakuan Rumah Sakit terhadap dirinya.</u></b> </label>
+                </div>
+                <div class="grid_11 margin-top-20" style="text-align: justify; margin-top: 5px; margin-left: 10px; margin-top: 5px;">
+                    <label item="item" style="color: #000000; font-weight: normal">16. Menolak bimbingan rohani yang tidak sesuai dengan agama dan kepercayaan yang dianutnya.</u></b> </label>
+                </div>
+                <div class="grid_11 margin-top-20" style="text-align: justify; margin-top: 5px; margin-left: 10px; margin-top: 5px;">
+                    <label item="item" style="color: #000000; font-weight: normal">17. Menggugat atau menuntut Rumah Sakit apabila Rumah Sakit diduga memberikan pelayanan yang tidak sesuai
+                        dengan standar baik secara perdata maupun pidana, dan.</u></b> </label>
+                </div>
+                <div class="grid_11 margin-top-20" style="text-align: justify; margin-top: 5px; margin-left: 10px; margin-top: 5px;">
+                    <label item="item" style="color: #000000; font-weight: normal">18. Mengeluhkan pelayanan Rumah Sakit yang tidak sesuai dengan standar pelayanan melalui media cetak dan
+                        elektronik sesuai dengan ketentuan peraturan perundang-undangan.</u></b> </label>
+                </div>
+
+                <div class="grid_12" style="margin-top: 50px; text-align: center;">
+                    <label item="item" class="margin-bottom" style="color: #000000; font-weight: bold">KEWAJIBAN PASIEN / KELUARGA</u></b> </label>
+                </div>
+                <div class="grid_11 margin-top-20" style="text-align: justify; margin-top: 5px; margin-left: 10px; margin-top: 5px;">
+                    <label item="item" style="color: #000000; font-weight: normal">(sesuai Pasal 26 Peraturan Menteri Kesehatan RI No 4 tahun 2018 tentang Kewajiban Rumah Sakit dan Kewajiban
+                        Pasien)</u></b> </label>
+                </div>
+                <div class="grid_11 margin-top-20" style="text-align: justify; margin-top: 15px; margin-left: 10px; margin-top: 5px;">
+                    <label item="item" style="color: #000000; font-weight: normal">Dalam menerima pelayanan dari Rumah Sakit, Pasien mempunyai kewajiban :</u></b> </label>
+                </div>
+                <div class="grid_11 margin-top-20" style="text-align: justify; margin-top: 5px; margin-left: 10px; margin-top: 5px;">
+                    <label item="item" style="color: #000000; font-weight: normal">1. Mematuhi peraturan yang berlaku di Rumah Sakit Jiwa Grhasia;</u></b> </label>
+                </div>
+                <div class="grid_11 margin-top-20" style="text-align: justify; margin-top: 5px; margin-left: 10px; margin-top: 5px;">
+                    <label item="item" style="color: #000000; font-weight: normal">2. Menggunakan fasilitas rumah sakit secara bertanggungjawab;</u></b> </label>
+                </div>
+                <div class="grid_11 margin-top-20" style="text-align: justify; margin-top: 5px; margin-left: 10px; margin-top: 5px;">
+                    <label item="item" style="color: #000000; font-weight: normal">3. Menghormati hak-hak pasien lain, pengunjung dan hak tenaga kesehatan serta petugas lainnya yang bekerja di rumah sakit</u></b> </label>
+                </div>
+                <div class="grid_11 margin-top-20" style="text-align: justify; margin-top: 5px; margin-left: 10px; margin-top: 5px;">
+                    <label item="item" style="color: #000000; font-weight: normal">4. Memberikan informasi yang jujur, lengkap, dan akurat sesuai kemampuan dan pengetahuannya tentang masalah kesehatannya</u></b> </label>
+                </div>
+                <div class="grid_11 margin-top-20" style="text-align: justify; margin-top: 5px; margin-left: 10px; margin-top: 5px;">
+                    <label item="item" style="color: #000000; font-weight: normal">5. Memberikan informasi mengenai kemampuan finansial dan jaminan kesehatan yang dimilikinya</u></b> </label>
+                </div>
+                <div class="grid_11 margin-top-20" style="text-align: justify; margin-top: 5px; margin-left: 10px; margin-top: 5px;">
+                    <label item="item" style="color: #000000; font-weight: normal">6. Mematuhi rencana terapi yang direkomendasikan oleh Tenaga Kesehatan di rumah sakit dan disetujui oleh
+                        yang bersangkkutan setelah mendapatkan penjelasan sesuai ketentuan peraturan perundang-undangan;</u></b> </label>
+                </div>
+                <div class="grid_11 margin-top-20" style="text-align: justify; margin-top: 5px; margin-left: 10px; margin-top: 5px;">
+                    <label item="item" style="color: #000000; font-weight: normal">7. Menerima segala konsekuensi atas keputusan pribadinya untuk menolak rencana terapi yang direkomendasikan
+                        oleh Tenaga Kesehatan dan/atau tidak mematuhi petunjuk yang diberikan oleh Tenaga Kesehatan dalam rangka
+                        penyembuhan penyakit atau masalah kesehatannya; dan</u></b> </label>
+                </div>
+                <div class="grid_11 margin-top-20" style="text-align: justify; margin-top: 5px; margin-left: 10px; margin-top: 5px;">
+                    <label item="item" style="color: #000000; font-weight: normal">8. Memberikan imbalan jasa atas pelayanan yang diterima</u></b> </label>
+                </div>
+
+                <div class="grid_12" style="margin-top: 50px; text-align: center;">
+                    <label item="item" class="margin-bottom" style="color: #000000; font-weight: bold">TANGGUNG JAWAB PASIEN / KELUARGA</u></b> </label>
+                </div>
+                <div class="grid_11 margin-top-20" style="text-align: justify; margin-top: 15px; margin-left: 10px; margin-top: 5px;">
+                    <label item="item" style="color: #000000; font-weight: normal">Dalam menerima pelayanan dari Rumah Sakit, Pasien mempunyai tanggung jawab :</u></b> </label>
+                </div>
+                <div class="grid_11 margin-top-20" style="text-align: justify; margin-top: 5px; margin-left: 10px; margin-top: 5px;">
+                    <label item="item" style="color: #000000; font-weight: normal">1. Mengajukan pertanyaan dan berpartisipasi aktif dalam diskusi dan keputusan mengenai perawatan kesehatan pasien.</u></b> </label>
+                </div>
+                <div class="grid_11 margin-top-20" style="text-align: justify; margin-top: 5px; margin-left: 10px; margin-top: 5px;">
+                    <label item="item" style="color: #000000; font-weight: normal">2. Memberikan informasi yang lengkap dan akurat tentang kesehatan dan riwayat kesehatan pasien, termasuk
+                        kondisi sekarang, penyakit masa lalu, riwayat rawat inap dan pengobatan.</u></b> </label>
+                </div>
+                <div class="grid_11 margin-top-20" style="text-align: justify; margin-top: 5px; margin-left: 10px; margin-top: 5px;">
+                    <label item="item" style="color: #000000; font-weight: normal">3. Mendiskusikan masalah perawatan kesehatan, kekhawatiran, dan kebutuhan pribadi pasien dengan penyedia
+                        layanan kesehatan secara jujur dan beri tahu penyedia layanan kesehatan tentang setiap perubahan yang terjadi pada kesehatan pasien.</u></b> </label>
+                </div>
+                <div class="grid_11 margin-top-20" style="text-align: justify; margin-top: 5px; margin-left: 10px; margin-top: 5px;">
+                    <label item="item" style="color: #000000; font-weight: normal">4. Bekerja sama dengan semua petugas kesehatan yang terlibat dalam perawatan pasien dan berperilaku sopan
+                    dan saling menghormati.</u></b> </label>
+                </div>
+                <div class="grid_11 margin-top-20" style="text-align: justify; margin-top: 5px; margin-left: 10px; margin-top: 5px;">
+                    <label item="item" style="color: #000000; font-weight: normal">5. Menghormati hak penyedia layanan kesehatan dan untuk bertukar informasi dengan cara yang baik dan tidak
+                        melakukan kekerasan, secara fisik maupun verbal saat dalam perawatan.</u></b> </label>
+                </div>
+                <div class="grid_11 margin-top-20" style="text-align: justify; margin-top: 5px; margin-left: 10px; margin-top: 5px;">
+                    <label item="item" style="color: #000000; font-weight: normal">6. Mengikuti instruksi asuhan kesehatan atau beri tahu staf kami jika pasien tidak dapat atau tidak bersedia
+                    mengikuti rencana asuhan.</u></b> </label>
+                </div>
+                <div class="grid_11 margin-top-20" style="text-align: justify; margin-top: 5px; margin-left: 10px; margin-top: 5px;">
+                    <label item="item" style="color: #000000; font-weight: normal">7. Menerima konsekuensi karena menolak rencana asuhan atau tidak mengikuti rencana asuhan.
+                        menghormati hak dan privasi semua profesional pemberi asuhan, karyawan rumah sakit, dan pasien lain.</u></b> </label>
+                </div>
+                <div class="grid_11 margin-top-20" style="text-align: justify; margin-top: 5px; margin-left: 10px; margin-top: 5px;">
+                    <label item="item" style="color: #000000; font-weight: normal">8. Memberitahu staf rumah sakit bila merubah keputusan persetujan atas rencana asuhan yang telah disetujui.</u></b> </label>
+                </div>
+
+
+            </fieldset>
+        </div>
+    </div>
+</div>
+
+<br />
+<br />
+<div class="grid_12">
+    <div ng-include='"../app/module/EMR/TemplateButtonDinamis" '></div>
+
+</div>

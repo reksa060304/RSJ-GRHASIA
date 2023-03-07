@@ -4103,7 +4103,7 @@ class PelayananResepController extends ApiController
         inner join pelayananpasien_t pp on apd.norec=pp.noregistrasifk
         inner join produk_m pr on pr.id=pp.produkfk
         inner join ruangan_m ru on ru.id = apd.objectruanganfk
-		inner join ruangan_m ruasal on ruasal.id = apd.objectruanganasalfk
+		left join ruangan_m ruasal on ruasal.id = apd.objectruanganasalfk
         left join strukresep_t sr on sr.norec = pp.strukresepfk
         left join antrianpasiendiperiksa_t apdsr on apdsr.norec=sr.pasienfk
         left join ruangan_m ruresep on ruresep.id = sr.ruanganfk
@@ -5182,7 +5182,7 @@ class PelayananResepController extends ApiController
                     $totalvisite+=$jumlahtotalvisitejanuary;
                 }
                 if ($layanan->bulan == 'February' && $layanan->namaproduk == 'Visite Apoteker'){
-                    $jumlahtotavisitefebruary = $layanan->jumlah;
+                    $jumlahtotalvisitefebruary = $layanan->jumlah;
                     $totalvisite+=$jumlahtotalvisitefebruary;
                 }
                 if ($layanan->bulan == 'March' && $layanan->namaproduk == 'Visite Apoteker'){
@@ -6350,6 +6350,21 @@ class PelayananResepController extends ApiController
         $dataz = DB::select(DB::raw("select tglclosing 
         from pasiendaftar_t 
         where noregistrasi = '$noregistrasi'"));
+
+        
+        $data['detail']  =$dataz;
+        return $this->respond($data);
+    }
+
+    public function getPenjagaanVerifEresep(Request $request)
+    {
+        
+        $noorder = $request['noorder'];
+
+        $dataz = DB::select(DB::raw("select sr.tglresep 
+        from strukorder_t as so 
+        left join strukresep_t as sr on so.norec = sr.orderfk
+        where so.noorder = '$noorder'"));
 
         
         $data['detail']  =$dataz;

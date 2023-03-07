@@ -929,29 +929,42 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             $scope.verifikasi = function () {
                         // debugger;
                         if ($scope.item.statusorder == 'Menunggu') {
-                            //$state.go('ResepElektronikVerifikasi', { noOrder: $scope.item.strukOrder.noOrder, noAntrianPasien: $scope.item.strukOrder.noRegistrasi.noRec });
-                            var arrStr = {
-                                0: $scope.item.nocm,
-                                1: $scope.item.namapasien,
-                                2: $scope.item.jeniskelamin,
-                                3: $scope.item.noregistrasi,
-                                4: $scope.item.umur,
-                                5: $scope.item.klid,
-                                6: $scope.item.namakelas,
-                                7: $scope.item.tglregistrasi,
-                                8: $scope.item.norec_apd,
-                                9: $scope.item.noorder,
-                                10: $scope.item.jenisPenjamin,
-                                11: $scope.item.kelompokPasien,
-                                12: $scope.item.beratBadan,
-                                13: $scope.item.AlergiYa,
-                                14: '',
-                                17: $scope.item.cito,
-                            }
-                            cacheHelper.set('InputResepApotikCtrl', arrStr);
-                            $state.go('InputResepApotik')
+                            medifirstService.get("farmasi/get-penjagaan-verif-eresep?noorder=" + $scope.item.noorder ).then(function (e) {
+                    
 
-                            
+                                if(e.data.detail[0].tglresep == null){
+                                    var cek = 123;
+                                } else{
+                                    var cek = 234;
+                                }
+            
+                                console.log(cek);
+            
+                                if(cek == 234){
+                                    messageContainer.error("Data yang sudah diverif tidak bisa diverif ulang");
+                                } else if (cek == 123){
+                                    var arrStr = {
+                                        0: $scope.item.nocm,
+                                        1: $scope.item.namapasien,
+                                        2: $scope.item.jeniskelamin,
+                                        3: $scope.item.noregistrasi,
+                                        4: $scope.item.umur,
+                                        5: $scope.item.klid,
+                                        6: $scope.item.namakelas,
+                                        7: $scope.item.tglregistrasi,
+                                        8: $scope.item.norec_apd,
+                                        9: $scope.item.noorder,
+                                        10: $scope.item.jenisPenjamin,
+                                        11: $scope.item.kelompokPasien,
+                                        12: $scope.item.beratBadan,
+                                        13: $scope.item.AlergiYa,
+                                        14: '',
+                                        17: $scope.item.cito,
+                                    }
+                                    cacheHelper.set('InputResepApotikCtrl', arrStr);
+                                    $state.go('InputResepApotik')
+                                }
+                            });
                         } else {
                             alert('Sudah di verifikasi!!')
                         }

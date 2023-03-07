@@ -789,7 +789,7 @@ class MainController extends ApiController
                         $tahun = $r->tahun;
                     }
 //                    dd($res);
-                    array_push($compact,'res','r');
+                    array_push($compact,'r');
                     break;
                     
                 case 'dashboard-persediaan':

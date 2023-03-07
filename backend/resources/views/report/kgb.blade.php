@@ -110,8 +110,9 @@
                         <span color="#000000" style="font-size: 10pt">
                             Jl. Kaliurang KM 17 Yogyakarta
                             Telepon {{$profile[0]->fixedphone}}, 895297
-                            Facsimile {{$profile[0]->faksimile}}
-                            <br>Website :
+                            Faksimile: {{$profile[0]->faksimile}}
+                            <br>Laman: {{ $profile[0]->website}} ,
+                            Surel:
                             {{-- {{ $profile[0]['website']}} --}}
                             {{$profile[0]->alamatemail}}<br>
                             Kode Pos {{$profile[0]->kodepos}}

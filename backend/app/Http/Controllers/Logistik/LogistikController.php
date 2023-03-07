@@ -155,7 +155,7 @@ class LogistikController extends ApiController{
 
         $dataJabatan = \DB::table('jabatan_m as kp')
             ->select('kp.id','kp.namajabatan')
-            ->where('kp.statusenabled',true)
+            ->where('kp.statusenabled',true)->whereIn('objectjenisjabatanfk',[6,7,8])
             ->orderBy('kp.namajabatan')
             ->get();
 
@@ -240,7 +240,63 @@ class LogistikController extends ApiController{
                 'konversisatuan' => $satuanKonversi,
             );
         }
+        $dataProdukResult2 = [];
+        if(isset($request['ruangantujuan'])){
+            $dataProduk2 = DB::select(DB::raw("select pr.id,pr.kdproduk as kdsirs,pr.namaproduk,ss.id as ssid,ss.satuanstandar, pr.namaexternal
+            from produk_m as pr
+            inner join detailjenisproduk_m as djp on djp.id = pr.objectdetailjenisprodukfk
+            inner join jenisproduk_m as jp on jp.id = djp.objectjenisprodukfk
+            left join satuanstandar_m as ss on ss.id = pr.objectsatuanstandarfk
+            inner join stokprodukdetail_t as spd on spd.objectprodukfk = pr.id
+            where pr.statusenabled = true
+            and pr.kdprofile = $idProfile
+            and spd.qtyproduk > 0
+            and spd.objectruanganfk in(
+                SELECT ru.id
+                FROM maploginusertoruangan_s AS mlur
+                INNER JOIN loginuser_s lu on lu.id = mlur.objectloginuserfk
+                INNER JOIN ruangan_m ru on ru.id = mlur.objectruanganfk
+                where lu.kdprofile = $idProfile 
+                and ru.statusenabled = true 
+                and ru.id=$request[ruangantujuan]
+                GROUP BY ru.id,ru.namaruangan
+            ) 
+            group by pr.id,pr.kdproduk,pr.namaproduk,ss.id,ss.satuanstandar, pr.namaexternal
+            order by pr.namaproduk"));
+            $dataKonversiProduk2 = \DB::table('konversisatuan_t as ks')
+                ->JOIN('satuanstandar_m as ss','ss.id','=','ks.satuanstandar_asal')
+                ->JOIN('satuanstandar_m as ss2','ss2.id','=','ks.satuanstandar_tujuan')
+                ->select('ks.objekprodukfk','ks.satuanstandar_asal','ss.satuanstandar','ks.satuanstandar_tujuan','ss2.satuanstandar as satuanstandar2',
+                    'ks.nilaikonversi')
+                ->where('ks.kdprofile', $idProfile)
+                ->where('ks.statusenabled',true)
+                ->get();
+            $dataProdukResult2=[];
+            foreach ($dataProduk2 as $item){
+                $satuanKonversi2=[];
+                foreach ($dataKonversiProduk2  as $item2){
+                    if ($item->id == $item2->objekprodukfk){
+                        $satuanKonversi2[] =array(
+                            'ssid' =>   $item2->satuanstandar_tujuan,
+                            'satuanstandar' =>   $item2->satuanstandar2,
+                            'nilaikonversi' =>   $item2->nilaikonversi,
+                        );
+                    }
+                }
 
+                $dataProdukResult2[]=array(
+                    'id' =>   $item->id,
+                    'namaproduk' =>   $item->namaproduk,
+                    'namaexternal' =>   $item->namaexternal,
+                    'kdsirs' => $item->kdsirs,
+                    'kdproduk' => $item->kdsirs,
+                    'ssid' =>   $item->ssid,
+                    'satuanstandar' =>   $item->satuanstandar,
+                    'konversisatuan' => $satuanKonversi2,
+                );
+            }
+        }
+        
         $dataTipeProduk = \DB::table('typeproduk_m as tp')
             ->where('tp.statusenabled', true)
             ->orderBy('tp.typeproduk')
@@ -349,6 +405,7 @@ class LogistikController extends ApiController{
             'detaillogin' => $dataPegawaiUser,
             'kodeusulan' => $noOrder,
             'produk' => $dataProdukResult,
+            'produk2' => $dataProdukResult2,
             'tipeproduk' => $dataTipeProduk,
             'satuan' => $dataSatuan,
             'jenisproduk' => $dataJenisProduk,
@@ -7017,11 +7074,15 @@ class LogistikController extends ApiController{
         if(isset($request['norecOrder']) && $request['norecOrder']!="" && $request['norecOrder']!="undefined"){
             $data = $data->where('sp.norec','=', $request['norecOrder']);
         }
-
+        $data = $data->where('pg.id', $dataPegawaiUser[0]->id);
         $data = $data->distinct();
         $data = $data->where('sp.statusenabled',true);
         $data = $data->where('sp.objectkelompoktransaksifk',34);
-        $data = $data->wherein('sp.objectruanganfk',$strRuangan);
+        
+        // if($strRuangan != ""){
+        //     $data = $data->whereIn('sp.objectruanganfk',$strRuangan);
+		//$data = $data->wherein('sp.objectruanganfk',$strRuangan);
+        // }
         $data = $data->orderBy('sp.noorder');
         $data = $data->get();
 
@@ -8657,6 +8718,8 @@ class LogistikController extends ApiController{
         $idProfile = (int) $kdProfile;
         \DB::beginTransaction();
         $dataLogin = $request->all();
+        $getDetails = "";
+        $kurang = "";
         try {
             if($request['strukkirim']['noorderfk'] != ''){
                 $dataAing = StrukOrder::where('norec',$request['strukkirim']['noorderfk'])
@@ -8728,11 +8791,13 @@ class LogistikController extends ApiController{
                         "))->first();
                     $saldoAwalPenerima = (float)$dataSaldoAwalT->qty - (float)$item->qtyproduk;
 
-                    $kurang = StokProdukDetail::where('nostrukterimafk', $item->nostrukterimafk)
+                    $kurang = StokProdukDetail::where('nostrukterimafk',$item->nostrukterimafk)
                         ->where('objectruanganfk', $request['strukkirim']['obejectruangantujuan'])
                         ->where('objectprodukfk', $item->objectprodukfk)
 //                        ->where('qtyproduk','>',0)
                         ->first();
+
+                    
 
                     \DB::table('stokprodukdetail_t')
                         ->where('kdprofile', $kdProfile)
@@ -8805,7 +8870,8 @@ class LogistikController extends ApiController{
                 "data" => $dataSK,
                 "datalogin" => $dataLogin['userData'],
                 "message"  => $transMessage,
-            );
+				'line'=> $e->getLine(),
+                'messages'=> $e->getMessage(),            );
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }

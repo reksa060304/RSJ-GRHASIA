@@ -9750,7 +9750,7 @@ class RegistrasiController extends ApiController
                 inner join jenisdiagnosa_m jd on jd.id = ddp.objectjenisdiagnosafk
                 left join kelompokpasien_m kp on kp.id = pd.objectkelompokpasienlastfk
                 where pd.kdprofile = $idProfile and pd.statusenabled = true and dm.kddiagnosa <> '-'  and
-                pd.tglregistrasi BETWEEN '$tglAwal' AND '$tglAkhir' 
+                pd.tglregistrasi BETWEEN '$tglAwal' AND '$tglAkhir' and jd.id between 7 and 12
                 $deptId
                 $carabayarId
                 $ruanganId
