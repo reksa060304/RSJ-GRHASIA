@@ -3614,6 +3614,14 @@
         {
             "nameDep": "PengkajianGiziRawatJalanCtrl",
             "urlDep": "module/EMR/PengkajianGiziRawatJalanCtrl"
+        },
+        {
+            "nameDep": "PerencanaanImplementasiEvaluasiKeperawatanNonJiwaCtrl",
+            "urlDep": "module/EMR/PerencanaanImplementasiEvaluasiKeperawatanNonJiwaCtrl"
+        },
+        {
+            "nameDep": "PengkajianAwalKepNAPZACtrl",
+            "urlDep": "module/EMR/PengkajianAwalKepNAPZACtrl"
         }
     ]
 }

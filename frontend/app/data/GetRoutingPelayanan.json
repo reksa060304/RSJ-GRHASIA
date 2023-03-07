@@ -20018,6 +20018,50 @@
         "define": "RekamMedisCtrl"
       }
     ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.PerencanaanImplementasiEvaluasiKeperawatanNonJiwa",
+    "url": "/PerencanaanImplementasiEvaluasiKeperawatanNonJiwa",
+    "templateurl": "module/EMR/PerencanaanImplementasiEvaluasiKeperawatanNonJiwa.html",
+    "controller": "PerencanaanImplementasiEvaluasiKeperawatanNonJiwaCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.PengkajianAwalKepNAPZA",
+    "url": "/PengkajianAwalKepNAPZA",
+    "templateurl": "module/EMR/PengkajianAwalKepNAPZA.html",
+    "controller": "PengkajianAwalKepNAPZACtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
   }
 ]
 
