@@ -5087,14 +5087,14 @@ $scope.formatRupiah = function (value, currency) {
 						$scope.itemGajiBerkala.jenissk = $scope.gajilamanya
 						if($scope.gajilamanya == 'KP'){
 							$scope.itemGajiBerkala.gajiawal = datas.nominal
-							$scope.itemGajiBerkala.tanggalsk = moment(datas.tglskbaru).format('YYYY-MM-DD')
+							$scope.itemGajiBerkala.tanggalsk = new Date(moment(datas.tglsk).format('YYYY-MM-DD'))
 							$scope.itemGajiBerkala.noskcetak = datas.nosk
-							$scope.itemGajiBerkala.tanggaltmtcetak = moment(datas.tgltmt).format('YYYY-MM-DD')
+							$scope.itemGajiBerkala.tanggaltmtcetak = new Date(moment(datas.tgltmt).format('YYYY-MM-DD'))
 						}else{
 							$scope.itemGajiBerkala.gajiawal = datas.gajiakhir
-							$scope.itemGajiBerkala.tanggalsk = moment(datas.tglskbaru).format('YYYY-MM-DD')
+							$scope.itemGajiBerkala.tanggalsk = new Date(moment(datas.tglskbaru).format('YYYY-MM-DD'))
 							$scope.itemGajiBerkala.noskcetak = datas.nosk
-							$scope.itemGajiBerkala.tanggaltmtcetak = moment(datas.tgltmt).format('YYYY-MM-DD')
+							$scope.itemGajiBerkala.tanggaltmtcetak = new Date(moment(datas.tgltmt).format('YYYY-MM-DD'))
 						}
 						
 					})
