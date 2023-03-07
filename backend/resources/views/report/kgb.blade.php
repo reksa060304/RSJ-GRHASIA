@@ -98,7 +98,7 @@
                 <tr>
                     <td width="10%" style="padding: 5px">
                         <img src="data:image/jpeg;base64,{{$profile[0]->logopemerintahan}}" alt=""
-                            style="width: 90px;">
+                            style="width: 95px; margin-bottom:20px">
 
                     </td>
                     <td style="text-align: center; font-family: Arial">
@@ -255,10 +255,10 @@
                             <td>Yogyakarta, {{$data[0]->tglttd}}</td>
                         </tr>
                         <tr>
-                            <td style="padding-bottom: 90px">Direktur</td>
+                            <td style="padding-bottom: 90px">DIREKTUR,</td>
                         </tr>
                         <tr>
-                            <td><b><u>dr. Akhmad Akhadi S., M.P.H.</u></b></td>
+                            <td><b><u>dr. AKHMAD AKHADI S., M.P.H.</u></b></td>
                         </tr>
                         <tr>
                             <td><b>NIP. 19680714 200012 1 002</b></td>
@@ -278,7 +278,7 @@
                         </tr>
                         <tr>
                             <td style="padding-left: 20px" >2. </td>
-                            <td>Kepala Badan Kepegawaian Daerah DIYKepala Badan Kepegawaian Daerah DIY</td>
+                            <td>Kepala Badan Kepegawaian Daerah DIY</td>
                         </tr>
                         <tr>
                             <td style="padding-left: 20px" >3. </td>
