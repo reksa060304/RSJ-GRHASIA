@@ -928,6 +928,11 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             $scope.Simpan = function () {
                 $scope.savebtn = true
                 $scope.isRouteLoading = true
+                if ($scope.item.keterangan == undefined){
+                    toastr.error('Keterangan di isi dengan catatan klinis')
+                    $scope.isRouteLoading = false
+                    return
+                }
                 medifirstService.get("farmasi/get-penjagaan-closing-kasir?noregistrasi=" + $scope.item.noregistrasi ).then(function (e) {
                     // 
                     if(e.data.detail[0].tglclosing == null){
