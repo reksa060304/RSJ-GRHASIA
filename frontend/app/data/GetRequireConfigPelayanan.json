@@ -3622,6 +3622,14 @@
         {
             "nameDep": "PengkajianAwalKepNAPZACtrl",
             "urlDep": "module/EMR/PengkajianAwalKepNAPZACtrl"
+        },
+        {
+            "nameDep": "PengkajianGiziRawatInapCtrl",
+            "urlDep": "module/EMR/PengkajianGiziRawatInapCtrl"
+        },
+        {
+            "nameDep": "RencanaAsuhanGiziRawatInapCtrl",
+            "urlDep": "module/EMR/RencanaAsuhanGiziRawatInapCtrl"
         }
     ]
 }

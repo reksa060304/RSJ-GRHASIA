@@ -20062,6 +20062,50 @@
         "define": "RekamMedisCtrl"
       }
     ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.PengkajianGiziRawatInap",
+    "url": "/PengkajianGiziRawatInap",
+    "templateurl": "module/EMR/PengkajianGiziRawatInap.html",
+    "controller": "PengkajianGiziRawatInapCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.RencanaAsuhanGiziRawatInap",
+    "url": "/RencanaAsuhanGiziRawatInap",
+    "templateurl": "module/EMR/RencanaAsuhanGiziRawatInap.html",
+    "controller": "RencanaAsuhanGiziRawatInapCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
   }
 ]
 

@@ -260,12 +260,12 @@ define(['initialize'], function (initialize) {
                     "detail": [{
                         "id": 120296,
                         "nama": "Obat yang rutin dikonsumsi :",
-                        "type": "textbox12"
+                        "type": "textarea13"
                     },
                     {
                         "id": 120297,
                         "nama": "Obat yang digunakan sekarang :",
-                        "type": "textbox12"
+                        "type": "textarea13"
                     },
                   
                 ]
@@ -1029,7 +1029,7 @@ define(['initialize'], function (initialize) {
                         {"id": 120180, "nama": "lain - lain : ", "type": "textbox6"},
                         {"id": 120181, "nama": "Progresi Pikir Kualitatif : ", "type": "label0"},
                         {"id": 120182, "nama": "Tidak ada kelainan", "type": "checkbox3"},
-                        {"id": 120183, "nama": "neologisme", "type": "checkbox3"},
+                        {"id": 120183, "nama": "Neologisme", "type": "checkbox3"},
                         {"id": 120184, "nama": "Sirkumstansial", "type": "checkbox3"},
                         {"id": 120233, "nama": "Gagap", "type": "checkbox3"},
                         {"id": 120234, "nama": "Perseverasi", "type": "checkbox3"},
