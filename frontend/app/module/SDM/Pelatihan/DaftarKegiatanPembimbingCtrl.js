@@ -98,7 +98,7 @@ define(['initialize'], function (initialize) {
 
                 ],
                 excel: {
-                    fileName: "DaftarRegistrasiPasien.xlsx",
+                    fileName: "DaftarKegiatanPembimbing.xlsx",
                     allPages: true,
                 },
                 excelExport: function (e) {
@@ -108,7 +108,7 @@ define(['initialize'], function (initialize) {
                     sheet.name = "Orders";
 
                     var myHeaders = [{
-                        value: "Daftar Registrasi Pasien",
+                        value: "Daftar Kegiatan Pembimbing",
                         fontSize: 20,
                         textAlign: "center",
                         background: "#ffffff",

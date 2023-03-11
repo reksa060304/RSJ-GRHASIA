@@ -84,15 +84,16 @@
 										k-ng-model="current" ng-click="kl(current)">
 										<div k-detail-template>
 											<kendo-tabstrip>
-												<div id="kGridDetail" kendo-grid k-options="data2(dataItem)" k-sortable="'true'"
-													k-selectable="'row'" k-ng-model="dataSelected2" ng-click="klikDetail(dataSelected2)">
+												<div id="kGridDetail" kendo-grid k-options="data2(dataItem)" k-selectable="'row'" k-sortable="'true'"
+													k-resizable="'true'" k-ng-model="dataSelected2" ng-click="klikDetail(dataSelected2)">
 												</div>
 											</kendo-tabstrip>
 										</div>
 									</kendo-grid>
 								</div>
 								<div class="grid_12" style="margin-top: 10px;">
-									<kendo-grid k-data-source="DataPenelitian" k-selectable="'row'" k-options="columnPenelitian"
+									<kendo-grid k-data-source="DataPenelitian" k-selectable="'row'" k-sortable="'true'" k-resizable="'true'"
+										k-options="columnPenelitian"
 										k-ng-model="current" ng-click="kl(current)">
 									</kendo-grid>
 								</div>

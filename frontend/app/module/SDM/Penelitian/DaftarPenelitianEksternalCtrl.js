@@ -13,13 +13,13 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.item.bulan = moment($scope.now).format('MM')
             $scope.strukpelayananpenjamin = '';
             var cachetglawal = "";
-            if (cacheHelper.get('DaftarPenelitianEksternalCtrl')) {
-                $scope.item.tglawal = new moment(cacheHelper.get('DaftarPenelitianEksternalCtrl')[0]).format('YYYY-MM-DD 00:00');
-                $scope.item.tglakhir = new moment(cacheHelper.get('DaftarPenelitianEksternalCtrl')[1]).format('YYYY-MM-DD 23:59');
-            }else{
-                $scope.item.tglawal = new moment($scope.now).format('YYYY-MM-DD 00:00');
-                $scope.item.tglakhir = new moment($scope.now).format('YYYY-MM-DD 23:59');
-            }
+            // if (cacheHelper.get('DaftarPenelitianEksternalCtrl')) {
+            //     $scope.item.tglawal = new moment(cacheHelper.get('DaftarPenelitianEksternalCtrl')[0]).format('YYYY-MM-DD 00:00');
+            //     $scope.item.tglakhir = new moment(cacheHelper.get('DaftarPenelitianEksternalCtrl')[1]).format('YYYY-MM-DD 23:59');
+            // }else{
+            //     $scope.item.tglawal = new moment($scope.now).format('YYYY-MM-DD 00:00');
+            //     $scope.item.tglakhir = new moment($scope.now).format('YYYY-MM-DD 23:59');
+            // }
             $scope.monthUngkul = {
                 start: "year",
                 depth: "year"
@@ -65,6 +65,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     $scope.dataDetailMahasiswaGrid = new kendo.data.DataSource({
                         data: data.data.data,
                         total: data.data.data.length,
+                        serverPaging: false,
+
                     })
                 })
             }
@@ -114,11 +116,14 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.columnPenelitian = {
                     toolbar: ["excel"],
                     excel: {
-                        fileName: "Data Penelitian Eksternal" + moment($scope.now).format('DD/MMM/YYYY'),
+                        fileName: "Data Kegiatan Diklat Eksternal" + moment($scope.now).format('DD/MMM/YYYY'),
                         allPages: true,
                     },
                     selectable: 'row',
                     pageable: true,
+                    sortable: true,
+                    resizable: true,
+                    groupable: true,
                     columns: [{
                             "field": "no",
                             "title": "No",
@@ -184,6 +189,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     },
                     selectable: 'row',
                     pageable: true,
+                    sortable: true,
+                    resizable: true,
+                    groupable: true,
                     columns: [{
                             "field": "no",
                             "title": "No",
@@ -394,8 +402,12 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }
             function GetData() {
                 $scope.isRouteLoading = true;
-                var tglAwal = "&tglawal="+ moment($scope.item.tglawal).format('YYYY-MM-DD HH:mm');
-                var tglAkhir = "&tglakhir="+ moment($scope.item.tglakhir).format('YYYY-MM-DD HH:mm');
+                var tglAwal="";
+                var tglAkhir = "";
+                if ($scope.item.tglawal != undefined && $scope.item.tglakhir != undefined) {
+                    tglAwal = "&tglawal=" + moment($scope.item.tglawal).format('YYYY-MM-DD HH:mm');
+                    tglAkhir = "&tglakhir=" + moment($scope.item.tglakhir).format('YYYY-MM-DD HH:mm');
+                }
                 var NamaPeneliti = "";
                 // if ($scope.item.NamaPeneliti !== undefined) {
                 //     NamaPeneliti = "&NamaPeneliti=" + $scope.item.NamaPeneliti
@@ -454,9 +466,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                 aggregate: "sum"
                             }],
                             pageSize: 20,
-                            serverPaging: true,
-                            serverFiltering: true,
-                            serverSorting: true
+                            serverPaging: false,
                         });
 
                         var chacePeriode = {
@@ -510,7 +520,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         },
 
                         pageSize: 20,
-                        serverPaging: true,
+                        serverPaging: false,
                         serverFiltering: true,
                         serverSorting: true
                     });

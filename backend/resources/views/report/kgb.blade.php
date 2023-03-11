@@ -85,7 +85,7 @@
         }
         #dt td{
             font-family: Arial;
-            font-size: 10pt;
+            font-size: 11pt;
         }
     </style>
 </head>
@@ -106,10 +106,10 @@
                         <span style="font-size: 12pt">{{strtoupper($profile[0]->baris1)}}</span><br>
                         <span style="font-size: 16pt;">{{strtoupper($profile[0]->baris2)}}</span><br>
                         <span style="font-size: 14pt;">{{strtoupper($profile[0]->namalengkap)}}</span><br>
-                        <img src="data:image/jpeg;base64,{{$profile[0]->gambarlogo}}" alt="" style="width: 170px;"><br>
-                        <span color="#000000" style="font-size: 10pt">
-                            Jl. Kaliurang KM 17 Yogyakarta
-                            Telepon {{$profile[0]->fixedphone}}, 895297
+                        <img src="data:image/jpeg;base64,{{$profile[0]->gambarlogo}}" alt="" style="width: 250px;"><br>
+                        <span color="#000000" style="font-size: 11pt">
+                            Jalan Kaliurang KM 17 Yogyakarta
+                            Telepon {{$profile[0]->fixedphone}}
                             Faksimile: {{$profile[0]->faksimile}}
                             <br>Laman: {{ $profile[0]->website}} ,
                             Surel:
@@ -132,7 +132,7 @@
         <table id="dt" cellspacing="0" cellpadding="0" border="0" width="100%">
             <tr>
                 <td style="text-align: center; font-family: Arial; font-size: 12pt">
-                    <b><u>SURAT PEMBERITAHUAN KENAIKAN GAJI BERKALA</u></b>
+                    <b><u>SURAT PEMBERITAHUAN </u></b>
                     <br>
                     NOMOR : {{$data[0]->nosk}}
                     
@@ -140,7 +140,7 @@
                 
             </tr>
             <tr>
-                <td style="padding-left: 50%; padding-top: 25px; font-family: Arial">
+                <td style="padding-left: 50%; padding-top: 25px; font-family: Arial; font-size: 11pt">
                     K e p a d a : <br>
                     Yth. Kepala Badan Pengelola Keuangan dan Aset <br>
                     c.q. Kepala Bidang Pengelolaan Kas Daerah DIY <br><br>
@@ -154,96 +154,96 @@
                 </td>
             </tr>
             <tr>
-                <td >
+                <td style="font-size: 11pt">
                     <table style="font-family: Arial; padding-left: 15%;line-height: 12px">
                         <tr>
-                            <td >1. </td>
-                            <td>N a m a</td>
-                            <td> : </td>
-                            <td>{{$data[0]->namalengkap}}</td>
+                            <td style="font-size: 11pt" >1. </td>
+                            <td style="font-size: 11pt" >N a m a</td>
+                            <td style="font-size: 11pt"> : </td>
+                            <td style="font-size: 11pt">{{$data[0]->namalengkap}}</td>
                         </tr>
                         <tr>
-                            <td>2. </td>
-                            <td>NIP</td>
-                            <td> : </td>
-                            <td>{{$data[0]->nippns}}</td>
+                            <td style="font-size: 11pt">2. </td>
+                            <td style="font-size: 11pt">NIP</td>
+                            <td style="font-size: 11pt"> : </td>
+                            <td style="font-size: 11pt">{{$data[0]->nippns}}</td>
                         </tr>
                         <tr>
-                            <td>3. </td>
-                            <td>Pangkat/Golongan</td>
-                            <td> : </td>
-                            <td>{{$data[0]->panggol}}</td>
+                            <td style="font-size: 11pt">3. </td>
+                            <td style="font-size: 11pt">Pangkat/Golongan</td>
+                            <td style="font-size: 11pt"> : </td>
+                            <td style="font-size: 11pt">{{$data[0]->panggol}}</td>
                         </tr>
                         <tr>
-                            <td>4. </td>
-                            <td>instansi</td>
-                            <td> : </td>
-                            <td>Rumah Sakit Jiwa Grhasia Dinkes DIY</td>
+                            <td style="font-size: 11pt">4. </td>
+                            <td style="font-size: 11pt">instansi</td>
+                            <td style="font-size: 11pt"> : </td>
+                            <td style="font-size: 11pt">Rumah Sakit Jiwa Grhasia Dinkes DIY</td>
                         </tr>
                         <tr>
-                            <td>5. </td>
-                            <td>Gaji Pokok Lama</td>
-                            <td> : </td>
-                            <td>{{$data[0]->gajiawal}}</td>
+                            <td style="font-size: 11pt">5. </td>
+                            <td style="font-size: 11pt">Gaji Pokok Lama</td>
+                            <td style="font-size: 11pt"> : </td>
+                            <td style="font-size: 11pt">{{$data[0]->gajiawal}}</td>
                         </tr>
                         <tr>
-                            <td></td>
-                            <td>Berdasarkan</td>
-                            <td> : </td>
-                            <td>Surat Pemberitahuan Kenaikan Gaji Berkala</td>
+                            <td style="font-size: 11pt"></td>
+                            <td style="font-size: 11pt">Berdasarkan</td>
+                            <td style="font-size: 11pt"> : </td>
+                            <td style="font-size: 11pt">Surat Pemberitahuan {{ $data[0]->jenissk == 'KGB' ? 'Kenaikan Gaji Berkala' : 'SK Kenaikan Pangkat'}}</td>
                         </tr>
                         <tr>
-                            <td></td>
-                            <td></td>
-                            <td> </td>
-                            <td>Nomor : {{$data[0]->sklama }}</td>
+                            <td style="font-size: 11pt"></td>
+                            <td style="font-size: 11pt"></td>
+                            <td style="font-size: 11pt"> </td>
+                            <td style="font-size: 11pt">Nomor : {{$data[0]->sklama }}</td>
                         </tr>
                         <tr>
-                            <td></td>
-                            <td></td>
-                            <td> </td>
-                            <td>Tanggal : {{$data[0]->tglsklama }}</td>
+                            <td style="font-size: 11pt"></td>
+                            <td style="font-size: 11pt"></td>
+                            <td style="font-size: 11pt"> </td>
+                            <td style="font-size: 11pt">Tanggal : {{$data[0]->tglsklama }}</td>
                         </tr>
                         <tr>
-                            <td></td>
-                            <td></td>
-                            <td> </td>
-                            <td>Terhitung Mulai Tanggal : {{$data[0]->tmtlama }}</td>
+                            <td style="font-size: 11pt"></td>
+                            <td style="font-size: 11pt"></td>
+                            <td style="font-size: 11pt"> </td>
+                            <td style="font-size: 11pt">Terhitung Mulai Tanggal : {{$data[0]->tmtlama }}</td>
                         </tr>
                         <tr>
-                            <td colspan="4" height="30" style="padding-left: 6%">Diberikan Kenaikan Gaji Berkala sehingga memperoleh :</td>
+                            <td style="font-size: 11pt" colspan="4" height="30" style="padding-left: 6%">Diberikan Kenaikan Gaji Berkala sehingga memperoleh :</td>
                         </tr>
                         <tr>
-                            <td>1. </td>
-                            <td>Gaji Pokok Baru</td>
-                            <td> : </td>
-                            <td>{{$data[0]->gajiakhir}}</td>
+                            <td style="font-size: 11pt">1. </td>
+                            <td style="font-size: 11pt">Gaji Pokok Baru</td>
+                            <td style="font-size: 11pt"> : </td>
+                            <td style="font-size: 11pt">{{$data[0]->gajiakhir}}</td>
                         </tr>
                         <tr>
-                            <td>2. </td>
-                            <td>Berdasarkan Masa Kerja</td>
-                            <td> : </td>
-                            <td>{{explode(" ",$data[0]->masakerjagolongan)[0]}} Th {{sprintf("%02d", explode(" ",$data[0]->masakerjagolongan)[2])}} Bln</td>
-                            {{-- <td>{{$data[0]->thn}} Thn {{$data[0]->bln}} Bln</td> --}}
+                            <td style="font-size: 11pt">2. </td>
+                            <td style="font-size: 11pt">Berdasarkan Masa Kerja</td>
+                            <td style="font-size: 11pt"> : </td>
+                            <td style="font-size: 11pt">{{explode(" ",$data[0]->masakerjagolongan)[0]}} Th {{sprintf("%02d", explode(" ",$data[0]->masakerjagolongan)[2])}} Bln</td>
+                            {{-- <td style="font-size: 11pt">{{$data[0]->thn}} Thn {{$data[0]->bln}} Bln</td> --}}
                         </tr>
                         <tr>
-                            <td>3. </td>
-                            <td>Dalam Golongan Ruang</td>
-                            <td> : </td>
-                            <td>{{$data[0]->golongan}}</td>
+                            <td style="font-size: 11pt">3. </td>
+                            <td style="font-size: 11pt">Dalam Golongan Ruang</td>
+                            <td style="font-size: 11pt"> : </td>
+                            <td style="font-size: 11pt">{{$data[0]->golongan}}</td>
                         </tr>
                         <tr>
-                            <td>4. </td>
-                            <td>Terhitung Mulai Tanggal</td>
-                            <td> : </td>
-                            <td>{{$data[0]->tmtbaru}}</td>
+                            <td style="font-size: 11pt">4. </td>
+                            <td style="font-size: 11pt">Terhitung Mulai Tanggal</td>
+                            <td style="font-size: 11pt"> : </td>
+                            <td style="font-size: 11pt">{{$data[0]->tmtbaru}}</td>
                         </tr>
                         
                     </table>
                 </td>
             </tr>
             <tr>
-                <td height="70" style="padding-left: 5%;" colspan="4">
+                <td height="70" style="padding-left: 5%;font-size: 11pt" colspan="4">
                     Diharap agar sesuai dengan Peraturan Pemerintah Nomor : 15 Tahun 2019. Pegawai tersebut
                     dapat dibayarkan penghasilannya berdasarkan gaji pokok yang baru.
                 </td>
@@ -252,16 +252,16 @@
                 <td>
                     <table style="text-align:center;font-family: Arial; padding-left: 60%">
                         <tr>
-                            <td>Yogyakarta, {{$data[0]->tglttd}}</td>
+                            <td style="font-size: 11pt">Yogyakarta, {{$data[0]->tglttd}}</td>
                         </tr>
                         <tr>
-                            <td style="padding-bottom: 90px">DIREKTUR,</td>
+                            <td style="padding-bottom: 90px;font-size: 11pt" >DIREKTUR,</td>
                         </tr>
                         <tr>
-                            <td><b><u>dr. AKHMAD AKHADI S., M.P.H.</u></b></td>
+                            <td style="font-size: 11pt"><b><u>dr. AKHMAD AKHADI S., M.P.H.</u></b></td>
                         </tr>
                         <tr>
-                            <td><b>NIP. 19680714 200012 1 002</b></td>
+                            <td style="font-size: 11pt"><b>NIP. 19680714 200012 1 002</b></td>
                         </tr>
                     </table>
                 </td>
@@ -270,27 +270,27 @@
                 <td>
                     <table style="font-family: Arial; line-height: 10px">
                         <tr>
-                            <td colspan="2">Tembusan disampaikan kepada Yth.:</td>
+                            <td colspan="2" style="font-size: 11pt">Tembusan disampaikan kepada Yth.:</td>
                         </tr>
                         <tr>
-                            <td style="padding-left: 20px" >1. </td>
-                            <td>Kepala Dinas Kesehatan DIY</td>
+                            <td style="padding-left: 20px; font-size: 11pt" >1. </td>
+                            <td style="font-size: 11pt">Kepala Dinas Kesehatan DIY</td>
                         </tr>
                         <tr>
-                            <td style="padding-left: 20px" >2. </td>
-                            <td>Kepala Badan Kepegawaian Daerah DIY</td>
+                            <td style="padding-left: 20px; font-size: 11pt" >2. </td>
+                            <td style="font-size: 11pt">Kepala Badan Kepegawaian Daerah DIY</td>
                         </tr>
                         <tr>
-                            <td style="padding-left: 20px" >3. </td>
-                            <td>Inspektur DIY</td>
+                            <td style="padding-left: 20px; font-size: 11pt" >3. </td>
+                            <td style="font-size: 11pt">Inspektur DIY</td>
                         </tr>
                         <tr>
-                            <td style="padding-left: 20px" >4. </td>
-                            <td>Ka. Kantor Cabang PT.TASPEN (PERSERO) Yogyakarta</td>
+                            <td style="padding-left: 20px; font-size: 11pt" >4. </td>
+                            <td style="font-size: 11pt">Ka. Kantor Cabang PT.TASPEN (PERSERO) Yogyakarta</td>
                         </tr>
                         <tr>
-                            <td style="padding-left: 20px" >5. </td>
-                            <td>Pertinggal</td>
+                            <td style="padding-left: 20px; font-size: 11pt" >5. </td>
+                            <td style="font-size: 11pt">Pertinggal</td>
                         </tr>
                     </table>
                 </td>
