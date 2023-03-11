@@ -1,0 +1,282 @@
+<style type="text/css">
+    .tg {
+        border-collapse: collapse;
+        border-spacing: 0;
+        border-color: #aabcfe;
+    }
+
+    .tg td {
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        padding: 10px 5px;
+        border-style: solid;
+        border-width: 1px;
+        overflow: hidden;
+        word-break: normal;
+        border-color: #aabcfe;
+        color: #669;
+        background-color: #e8edff;
+    }
+
+    .tg th {
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        font-weight: normal;
+        padding: 10px 5px;
+        border-style: solid;
+        border-width: 1px;
+        overflow: hidden;
+        word-break: normal;
+        border-color: #aabcfe;
+        color: #039;
+        background-color: #b9c9fe;
+    }
+
+    .tg .tg-yw4l {
+        vertical-align: top
+    }
+
+
+    .rowstyle {
+        border-bottom: 1px dashed lightblue
+    }
+
+    .footer {
+        text-align: center;
+        font-size: 120%;
+        font-weight: 700;
+        margin-bottom: 20px
+    }
+
+    table,
+    th,
+    td {
+        border: 1px solid #929191;
+        border-collapse: collapse;
+        padding: 5px;
+    }
+
+    th,
+    td {
+        padding: 5px;
+        text-align: left;
+    }
+
+    /* table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 40px;
+
+    }
+
+    td,
+    th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+    }
+
+    tr:nth-child(even) {
+        background-color: #dddddd;
+    } */
+</style>
+
+<div class="grid_12">
+    <div class="grid_12">
+        <div class="panel panel-default container_12">
+            <div class="panel-heading" c-translate> Rencan Asuhan Gizi Rawat Inap</div>
+        </div>
+        <div style="margin-top:10px">
+            <div class="grid_12" style="margin-top: 20px">
+                <table style="width:100%;color: #4c5356;">
+                    <tr>
+                        <td style="background-color: #c7c6c6;">
+                            <div class="grid_12" style="text-align: center;">
+                                <b>MASALAH</b>
+                            </div>
+                        </td>
+                        <td style="background-color: #c7c6c6;">
+                            <div class="grid_12" style="text-align: center">
+                                <b>DIAGNOSA GIZI</b>
+                            </div>
+                        </td>
+                        <td style="background-color: #c7c6c6;">
+                            <div class="grid_12" style="text-align: center">
+                                <b>INTERVENSI GIZI</b>
+                            </div>
+                        </td>
+                        <td style="background-color: #c7c6c6;">
+                            <div class="grid_12" style="text-align: center">
+                                <b>MONITORING EVALUASI</b>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="vertical-align: top;">
+                                    <div class="grid_12" ng-repeat="list in listMasalah | orderBy:'id'" style="padding: 5pt 10pt">
+                                        <b>{{list.nama}}</b>
+                                        <div class="grid_12" style="padding: 5pt">
+                                            <div ng-repeat="jawab in list.detail | orderBy:'id'">
+                                                <div ng-switch on="jawab.type">
+                                                    <div class="grid_4" ng-switch-when="textbox">
+                                                        <div>
+                                                            <label c-label item="item">{{jawab.nama}}</label>
+                                                        </div>
+                                                        <div class="parentKeteranganFieldTambahan">
+                                                            <input class="k-textbox" style="width: 205px;" ng-model="item.obj[jawab.id]" type="text">
+                                                            <label class="keteranganFieldTambahan"
+                                                                    style="margin-top: 5px;margin-right: 87px">{{jawab.satuan}}</label>
+                                                        </div>
+                                                    </div>  
+                                                    <div class="grid_12" ng-switch-when="textarea">
+                                                        <div>
+                                                            <label c-label item="item">{{jawab.nama}}</label>
+                                                        </div>
+                                                        <div>
+                                                            <textarea style="width: 90%;height: 90px" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                            ng-model="item.obj[jawab.id]" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="grid_12" ng-switch-when="checkbox" style="margin-top: 10px; margin-bottom: 10px; margin-left: -30px;">
+                                            <div class="grid_12">
+                                                <input type="checkbox" class="k-checkbox" id="item.obj{{jawab.id}}"
+                                                    ng-model="item.obj[jawab.id]">
+                                                <label c-label item="item" style="margin-top: 4px;margin-left: 14px;" class="k-checkbox-label" for="item.obj{{jawab.id}}">
+                                                    &nbsp;{{jawab.nama}}</label>
+                                            </div>
+                                        </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                          
+                        </td>
+                      
+                        <td style="vertical-align: top;">
+                            <div class="grid_12" ng-repeat="list in listDiagnosaGizi | orderBy:'id'" style="padding: 5pt 10pt">
+                                <b>{{list.nama}}</b>
+                                <div class="grid_12" style="padding: 5pt">
+                                    <div ng-repeat="jawab in list.detail | orderBy:'id'">
+                                        <div ng-switch on="jawab.type">
+                                            <div class="grid_4" ng-switch-when="textbox">
+                                                <div>
+                                                    <label c-label item="item">{{jawab.nama}}</label>
+                                                </div>
+                                                <div class="parentKeteranganFieldTambahan">
+                                                    <input class="k-textbox" style="width: 205px;" ng-model="item.obj[jawab.id]" type="text">
+                                                    <label class="keteranganFieldTambahan"
+                                                            style="margin-top: 5px;margin-right: 87px">{{jawab.satuan}}</label>
+                                                </div>
+                                            </div>  
+                                            <div class="grid_12" ng-switch-when="textarea">
+                                                <div>
+                                                    <label c-label item="item">{{jawab.nama}}</label>
+                                                </div>
+                                                <div>
+                                                    <textarea style="width: 90%;height: 60px" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.obj[jawab.id]" />
+                                                </div>
+                                            </div>
+                                            <div class="grid_12" ng-switch-when="checkbox" style="margin-top: 10px; margin-bottom: 10px; margin-left: -30px;">
+                                    <div class="grid_12">
+                                        <input type="checkbox" class="k-checkbox" id="item.obj{{jawab.id}}"
+                                            ng-model="item.obj[jawab.id]">
+                                        <label c-label item="item" style="margin-top: 4px;margin-left: 14px;" class="k-checkbox-label" for="item.obj{{jawab.id}}">
+                                            &nbsp;{{jawab.nama}}</label>
+                                    </div>
+                                </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </td>
+                        <td style="vertical-align: top;">
+                            <div class="grid_12" ng-repeat=" list in listIntervensiGizi | orderBy:'id'" style="padding: 5pt 10pt">
+                                <b>{{list.nama}}</b>
+                                <div class="grid_12">
+                                    <div ng-repeat="jawab in list.detail | orderBy:'id'">
+                                        <div ng-switch on="jawab.type">
+                                            <div class="grid_10" ng-switch-when="textbox">
+                                                <div>
+                                                    <label c-label item="item">{{jawab.nama}}</label>
+                                                </div>
+                                                <div class="parentKeteranganFieldTambahan">
+                                                    <input class="k-textbox" ng-model="item.obj[jawab.id]" type="text">
+                                                    <label class="keteranganFieldTambahan"
+                                                            style="margin-top: 5px;margin-right: 87px">{{jawab.satuan}}</label>
+                                                </div>
+                                            </div>  
+                                            <div class="grid_6" ng-switch-when="textbox2">
+                                                <div>
+                                                    <label c-label item="item">{{jawab.nama}}</label>
+                                                </div>
+                                                <div class="parentKeteranganFieldTambahan">
+                                                    <input class="k-textbox"  ng-model="item.obj[jawab.id]" type="text">
+                                                    <label class="keteranganFieldTambahan"
+                                                            style="margin-top: 5px;margin-right: 30px">{{jawab.satuan}}</label>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="grid_12" ng-switch-when="textarea2">
+                                                <div>
+                                                    <label c-label item="item">{{jawab.nama}}</label>
+                                                </div>
+                                                <div>
+                                                    <textarea style="width: 90%;height: 30px" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                    ng-model="item.obj[jawab.id]" />
+                                                </div>
+                                            </div> 
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td style="vertical-align: top;">
+
+                            
+                            <label c-label item="item">
+                                
+                                <textarea style="width: 80%;height: 300px" c-text-area type="input"
+                                            filter="'string'" class="k-textbox" 
+                                            ng-model="item.obj[3019845]" />
+                            </label>
+ 
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="grid_8"></div>
+<div class="grid_4">
+    <fieldset style="margin-top:10px;border-radius: 10px;height: 220px;">
+        <div style="padding: 20px;">
+            <div class="grid_8">
+                <div class="grid_12">
+                    <label c-label item="item">Tanggal</label>
+                </div>
+                <div class="grid_12">
+                    <input style="width: 80%" k-ng-model="item.obj[3019846]" kendo-datepicker
+                        placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd'" parsedate="yyyy-MM-dd" />
+                </div>
+            </div>
+            <div class="grid_12" style="margin-top:10px">
+                <div class="grid_12">
+                    <label c-label item="item">Ahli Gizi</label>
+                </div>
+                <div class="grid_12">
+                    <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[3019847]"
+                        k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                        k-auto-bind="false" k-data-source="listPegawai" />
+
+                </div>
+            </div>
+        </div>
+    </fieldset>
+</div>
+</div>
+<br />
+<div class="grid_12">
+    <div ng-include='"../app/module/EMR/TemplateButtonDinamis" '></div>
+
+</div>
+
+
