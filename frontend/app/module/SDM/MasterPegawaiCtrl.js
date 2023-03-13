@@ -720,6 +720,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 						// } 
 						// else{
 							$scope.ListTunjangan = dat.data.tunjanganbaru;
+							$scope.itemJabatan.nominaltunjangan = 185000
 						// }
 					})
 				}
