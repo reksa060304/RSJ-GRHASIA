@@ -190,7 +190,17 @@
                             <td style="font-size: 11pt"></td>
                             <td style="font-size: 11pt">Berdasarkan</td>
                             <td style="font-size: 11pt"> : </td>
-                            <td style="font-size: 11pt">Surat Pemberitahuan {{ $data[0]->jenissk == 'KGB' ? 'Kenaikan Gaji Berkala' : 'SK Kenaikan Pangkat'}}</td>
+                            <td style="font-size: 11pt">Surat Pemberitahuan 
+                                {{-- {{var_dump($data[0]->jenissk)}} --}}
+                                @if ($data[0]->jenissk == 'KGB')
+                                    Kenaikan Gaji Berkala
+                                @elseif($data[0]->jenissk == 'KP')
+                                    SK Kenaikan Pangkat
+                                @endif
+                                
+                                {{-- {{ $data[0]->jenissk == 'KGB' ? 'Kenaikan Gaji Berkala' : $data[0]->jenissk == 'KP' ? 'SK Kenaikan Pangkat': ''}} --}}
+                            
+                            </td>
                         </tr>
                         <tr>
                             <td style="font-size: 11pt"></td>
