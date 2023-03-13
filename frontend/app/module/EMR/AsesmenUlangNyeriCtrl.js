@@ -3,6 +3,7 @@ define(['initialize'], function (initialize) {
     initialize.controller('AsesmenUlangNyeriCtrl', ['$q', '$rootScope', '$scope', 'ModelItem', '$state', 'CacheHelper', 'DateHelper', 'MedifirstService',
         function ($q, $rootScope, $scope, ModelItem, $state, cacheHelper, dateHelper, medifirstService) {
             var paramsIndex = $state.params.index ? parseInt($state.params.index) : null;
+
             $scope.myVar = true
             $scope.noCM = $state.params.noCM;
             $scope.tombolSimpanVis = true
@@ -15,7 +16,7 @@ define(['initialize'], function (initialize) {
             var nomorEMR = '-'
             $scope.cc.emrfk = 3000444
             var dataLoad = []
-            var pegawaiInputDetail= ''
+            var pegawaiInputDetail = ''
             $scope.item.kasusbaru = true
             $scope.item.kasuslama = false
             $scope.listData3 = []
@@ -27,24 +28,24 @@ define(['initialize'], function (initialize) {
             $scope.listData9 = []
             $scope.listData10 = []
 
-             medifirstService.get("emr/get-rekam-medis-dynamic?emrid=" + 3000444).then(function (e) {
+            medifirstService.get("emr/get-rekam-medis-dynamic?emrid=" + 3000444).then(function (e) {
 
                 var datas = e.data.kolom4
 
                 var detail = []
-                var arrayShiftJaga3= []
-                var arrayShiftJaga4= []
-                var arrayShiftJaga5= []
-                var arrayShiftJaga6= []
-                var arrayShiftJaga7= []
-                var arrayShiftJaga8= []
-                var arrayShiftJaga9= []
-                var arrayShiftJaga10= []
+                var arrayShiftJaga3 = []
+                var arrayShiftJaga4 = []
+                var arrayShiftJaga5 = []
+                var arrayShiftJaga6 = []
+                var arrayShiftJaga7 = []
+                var arrayShiftJaga8 = []
+                var arrayShiftJaga9 = []
+                var arrayShiftJaga10 = []
                 var sama = false
                 for (let i = 0; i < datas.length; i++) {
                     const element = datas[i];
                     sama = false
-                    
+
                     if (element.kodeexternal == 'ketiga') {
                         for (let z = 0; z < arrayShiftJaga3.length; z++) {
                             const element2 = arrayShiftJaga3[z];
@@ -79,11 +80,11 @@ define(['initialize'], function (initialize) {
                     }
 
 
-                    
 
 
 
-                    
+
+
                     if (element.kodeexternal == 'keempat') {
                         for (let z = 0; z < arrayShiftJaga4.length; z++) {
                             const element2 = arrayShiftJaga4[z];
@@ -117,7 +118,7 @@ define(['initialize'], function (initialize) {
                         }
                     }
 
-                    
+
 
                     if (element.kodeexternal == 'kelima') {
                         for (let z = 0; z < arrayShiftJaga5.length; z++) {
@@ -152,7 +153,7 @@ define(['initialize'], function (initialize) {
                         }
                     }
 
-                    
+
 
 
                     if (element.kodeexternal == 'keenam') {
@@ -188,7 +189,7 @@ define(['initialize'], function (initialize) {
                         }
                     }
 
-                    
+
 
                     if (element.kodeexternal == 'ketujuh') {
                         for (let z = 0; z < arrayShiftJaga7.length; z++) {
@@ -223,7 +224,7 @@ define(['initialize'], function (initialize) {
                         }
                     }
 
-                    
+
                     $scope.listData7 = arrayShiftJaga7
 
                     if (element.kodeexternal == 'kedelapan') {
@@ -259,7 +260,7 @@ define(['initialize'], function (initialize) {
                         }
                     }
 
-                    
+
 
                     if (element.kodeexternal == 'kesembilan') {
                         for (let z = 0; z < arrayShiftJaga9.length; z++) {
@@ -294,7 +295,7 @@ define(['initialize'], function (initialize) {
                         }
                     }
 
-                    
+
 
                     if (element.kodeexternal == 'kesepuluh') {
                         for (let z = 0; z < arrayShiftJaga10.length; z++) {
@@ -329,160 +330,253 @@ define(['initialize'], function (initialize) {
                         }
                     }
 
-                    
 
-                    
+
+
 
                 }
 
                 var gejalaKosongKeun3 = []
-                    for (let k = 0; k < arrayShiftJaga3.length; k++) {
-                        const element = arrayShiftJaga3[k];
-                        for (let l = 0; l < datas.length; l++) {
-                            const element2 = datas[l];
-                            if (element2.namaexternal == element.namaexternal) {
-                                gejalaKosongKeun3.push(element2)
-                                element.details = gejalaKosongKeun3
-                            } else {
-                                gejalaKosongKeun3 = []
-                            }
+                for (let k = 0; k < arrayShiftJaga3.length; k++) {
+                    const element = arrayShiftJaga3[k];
+                    for (let l = 0; l < datas.length; l++) {
+                        const element2 = datas[l];
+                        if (element2.namaexternal == element.namaexternal) {
+                            gejalaKosongKeun3.push(element2)
+                            element.details = gejalaKosongKeun3
+                        } else {
+                            gejalaKosongKeun3 = []
                         }
                     }
-                    $scope.listData3 = arrayShiftJaga3
+                }
+                $scope.listData3 = arrayShiftJaga3
 
-                    console.log($scope.listData3)
+                console.log($scope.listData3)
 
-                    var gejalaKosongKeun4 = []
-                    for (let k = 0; k < arrayShiftJaga4.length; k++) {
-                        const element = arrayShiftJaga4[k];
-                        for (let l = 0; l < datas.length; l++) {
-                            const element2 = datas[l];
-                            if (element2.namaexternal == element.namaexternal) {
-                                gejalaKosongKeun4.push(element2)
-                                element.details = gejalaKosongKeun4
-                            } else {
-                                gejalaKosongKeun4 = []
-                            }
+                var gejalaKosongKeun4 = []
+                for (let k = 0; k < arrayShiftJaga4.length; k++) {
+                    const element = arrayShiftJaga4[k];
+                    for (let l = 0; l < datas.length; l++) {
+                        const element2 = datas[l];
+                        if (element2.namaexternal == element.namaexternal) {
+                            gejalaKosongKeun4.push(element2)
+                            element.details = gejalaKosongKeun4
+                        } else {
+                            gejalaKosongKeun4 = []
                         }
                     }
-                    $scope.listPerencanaan1 = [
+                }
+                $scope.listPerencanaan1 = [{
+                    "id": 1,
+                    "nama": "Perencanaan1",
+                    "detail": [{
+                            "id": 3018436,
+                            "nama": "Bersihan jalan meningkat",
+                            "satuan": "",
+                            "type": "datetime"
+                        },
                         {
-                            "id": 1, "nama": "Perencanaan1",
-                            "detail": [
-                                { "id": 3018436, "nama": "Bersihan jalan meningkat", "satuan": "", "type": "datetime" },
-                                { "id": 3018437, "nama": "Ventilasi adekuat", "satuan": "", "type": "datetime" },
-                                { "id": 3018438, "nama": "Curah jantung meningkat", "satuan": "", "type": "checkbox" },
-                                { "id": 3018439, "nama": "Kadar glukosa darah dalam rentang normal", "satuan": "", "type": "checkbox" },
-                                { "id": 3018440, "nama": "Perfusi perifer meningkat", "satuan": "", "type": "checkbox" },
-                                { "id": 3018441, "nama": "Nausea menurun", "satuan": "", "type": "checkbox" },
-                                { "id": 3018442, "nama": "Status nutrisi membaik", "satuan": "", "type": "checkbox" },
-                                { "id": 3018443, "nama": "Defekasi normal", "satuan": "", "type": "checkbox" },
-                                { "id": 3018444, "nama": "Integritas kulit", "satuan": "", "type": "checkbox" },
-                                { "id": 3018445, "nama": "Status cairan membaik ", "satuan": "", "type": "checkbox" },
-                                { "id": 3018446, "nama": "Suhu dalam rentang normal ", "satuan": "", "type": "checkbox" },
-                                { "id": 3018447, "nama": "Keseimbangan cairan meningkat", "satuan": "", "type": "checkbox" },
-                                { "id": 3018448, "nama": "Tingkat nyeri menurun", "satuan": "", "type": "checkbox" },
-                                { "id": 3018449, "nama": "Kontinensia urine / vekal membaik", "satuan": "", "type": "checkbox" },
-                                { "id": 3018450, "nama": "Tidak terjadi cidera", "satuan": "", "type": "checkbox" },
-                                { "id": 3018451, "nama": "Lainnya", "satuan": "", "type": "textbox" },
-                                { "id": 3018452, "nama": "", "satuan": "", "type": "textbox" },
-                                { "id": 3018453, "nama": "", "satuan": "", "type": "textbox" },
-                                { "id": 3018454, "nama": "", "satuan": "", "type": "textbox" },
-                                
-                            ]
-                        }
+                            "id": 3018437,
+                            "nama": "Ventilasi adekuat",
+                            "satuan": "",
+                            "type": "datetime"
+                        },
+                        {
+                            "id": 3018438,
+                            "nama": "Curah jantung meningkat",
+                            "satuan": "",
+                            "type": "checkbox"
+                        },
+                        {
+                            "id": 3018439,
+                            "nama": "Kadar glukosa darah dalam rentang normal",
+                            "satuan": "",
+                            "type": "checkbox"
+                        },
+                        {
+                            "id": 3018440,
+                            "nama": "Perfusi perifer meningkat",
+                            "satuan": "",
+                            "type": "checkbox"
+                        },
+                        {
+                            "id": 3018441,
+                            "nama": "Nausea menurun",
+                            "satuan": "",
+                            "type": "checkbox"
+                        },
+                        {
+                            "id": 3018442,
+                            "nama": "Status nutrisi membaik",
+                            "satuan": "",
+                            "type": "checkbox"
+                        },
+                        {
+                            "id": 3018443,
+                            "nama": "Defekasi normal",
+                            "satuan": "",
+                            "type": "checkbox"
+                        },
+                        {
+                            "id": 3018444,
+                            "nama": "Integritas kulit",
+                            "satuan": "",
+                            "type": "checkbox"
+                        },
+                        {
+                            "id": 3018445,
+                            "nama": "Status cairan membaik ",
+                            "satuan": "",
+                            "type": "checkbox"
+                        },
+                        {
+                            "id": 3018446,
+                            "nama": "Suhu dalam rentang normal ",
+                            "satuan": "",
+                            "type": "checkbox"
+                        },
+                        {
+                            "id": 3018447,
+                            "nama": "Keseimbangan cairan meningkat",
+                            "satuan": "",
+                            "type": "checkbox"
+                        },
+                        {
+                            "id": 3018448,
+                            "nama": "Tingkat nyeri menurun",
+                            "satuan": "",
+                            "type": "checkbox"
+                        },
+                        {
+                            "id": 3018449,
+                            "nama": "Kontinensia urine / vekal membaik",
+                            "satuan": "",
+                            "type": "checkbox"
+                        },
+                        {
+                            "id": 3018450,
+                            "nama": "Tidak terjadi cidera",
+                            "satuan": "",
+                            "type": "checkbox"
+                        },
+                        {
+                            "id": 3018451,
+                            "nama": "Lainnya",
+                            "satuan": "",
+                            "type": "textbox"
+                        },
+                        {
+                            "id": 3018452,
+                            "nama": "",
+                            "satuan": "",
+                            "type": "textbox"
+                        },
+                        {
+                            "id": 3018453,
+                            "nama": "",
+                            "satuan": "",
+                            "type": "textbox"
+                        },
+                        {
+                            "id": 3018454,
+                            "nama": "",
+                            "satuan": "",
+                            "type": "textbox"
+                        },
+
                     ]
-                    $scope.listData4 = arrayShiftJaga4
-                    console.log($scope.listData4)
+                }]
+                $scope.listData4 = arrayShiftJaga4
+                console.log($scope.listData4)
 
-                    var gejalaKosongKeun5 = []
-                    for (let k = 0; k < arrayShiftJaga5.length; k++) {
-                        const element = arrayShiftJaga5[k];
-                        for (let l = 0; l < datas.length; l++) {
-                            const element2 = datas[l];
-                            if (element2.namaexternal == element.namaexternal) {
-                                gejalaKosongKeun5.push(element2)
-                                element.details = gejalaKosongKeun5
-                            } else {
-                                gejalaKosongKeun5 = []
-                            }
+                var gejalaKosongKeun5 = []
+                for (let k = 0; k < arrayShiftJaga5.length; k++) {
+                    const element = arrayShiftJaga5[k];
+                    for (let l = 0; l < datas.length; l++) {
+                        const element2 = datas[l];
+                        if (element2.namaexternal == element.namaexternal) {
+                            gejalaKosongKeun5.push(element2)
+                            element.details = gejalaKosongKeun5
+                        } else {
+                            gejalaKosongKeun5 = []
                         }
                     }
-                    $scope.listData5 = arrayShiftJaga5
+                }
+                $scope.listData5 = arrayShiftJaga5
 
-                    var gejalaKosongKeun6 = []
-                    for (let k = 0; k < arrayShiftJaga6.length; k++) {
-                        const element = arrayShiftJaga6[k];
-                        for (let l = 0; l < datas.length; l++) {
-                            const element2 = datas[l];
-                            if (element2.namaexternal == element.namaexternal) {
-                                gejalaKosongKeun6.push(element2)
-                                element.details = gejalaKosongKeun6
-                            } else {
-                                gejalaKosongKeun6 = []
-                            }
+                var gejalaKosongKeun6 = []
+                for (let k = 0; k < arrayShiftJaga6.length; k++) {
+                    const element = arrayShiftJaga6[k];
+                    for (let l = 0; l < datas.length; l++) {
+                        const element2 = datas[l];
+                        if (element2.namaexternal == element.namaexternal) {
+                            gejalaKosongKeun6.push(element2)
+                            element.details = gejalaKosongKeun6
+                        } else {
+                            gejalaKosongKeun6 = []
                         }
                     }
-                    $scope.listData6 = arrayShiftJaga6
+                }
+                $scope.listData6 = arrayShiftJaga6
 
-                    var gejalaKosongKeun7 = []
-                    for (let k = 0; k < arrayShiftJaga7.length; k++) {
-                        const element = arrayShiftJaga7[k];
-                        for (let l = 0; l < datas.length; l++) {
-                            const element2 = datas[l];
-                            if (element2.namaexternal == element.namaexternal) {
-                                gejalaKosongKeun7.push(element2)
-                                element.details = gejalaKosongKeun7
-                            } else {
-                                gejalaKosongKeun7 = []
-                            }
+                var gejalaKosongKeun7 = []
+                for (let k = 0; k < arrayShiftJaga7.length; k++) {
+                    const element = arrayShiftJaga7[k];
+                    for (let l = 0; l < datas.length; l++) {
+                        const element2 = datas[l];
+                        if (element2.namaexternal == element.namaexternal) {
+                            gejalaKosongKeun7.push(element2)
+                            element.details = gejalaKosongKeun7
+                        } else {
+                            gejalaKosongKeun7 = []
                         }
                     }
+                }
 
-                    var gejalaKosongKeun8 = []
-                    for (let k = 0; k < arrayShiftJaga8.length; k++) {
-                        const element = arrayShiftJaga8[k];
-                        for (let l = 0; l < datas.length; l++) {
-                            const element2 = datas[l];
-                            if (element2.namaexternal == element.namaexternal) {
-                                gejalaKosongKeun8.push(element2)
-                                element.details = gejalaKosongKeun8
-                            } else {
-                                gejalaKosongKeun8 = []
-                            }
+                var gejalaKosongKeun8 = []
+                for (let k = 0; k < arrayShiftJaga8.length; k++) {
+                    const element = arrayShiftJaga8[k];
+                    for (let l = 0; l < datas.length; l++) {
+                        const element2 = datas[l];
+                        if (element2.namaexternal == element.namaexternal) {
+                            gejalaKosongKeun8.push(element2)
+                            element.details = gejalaKosongKeun8
+                        } else {
+                            gejalaKosongKeun8 = []
                         }
                     }
-                    $scope.listData8 = arrayShiftJaga8
+                }
+                $scope.listData8 = arrayShiftJaga8
 
-                    var gejalaKosongKeun9 = []
-                    for (let k = 0; k < arrayShiftJaga9.length; k++) {
-                        const element = arrayShiftJaga9[k];
-                        for (let l = 0; l < datas.length; l++) {
-                            const element2 = datas[l];
-                            if (element2.namaexternal == element.namaexternal) {
-                                gejalaKosongKeun9.push(element2)
-                                element.details = gejalaKosongKeun9
-                            } else {
-                                gejalaKosongKeun9 = []
-                            }
+                var gejalaKosongKeun9 = []
+                for (let k = 0; k < arrayShiftJaga9.length; k++) {
+                    const element = arrayShiftJaga9[k];
+                    for (let l = 0; l < datas.length; l++) {
+                        const element2 = datas[l];
+                        if (element2.namaexternal == element.namaexternal) {
+                            gejalaKosongKeun9.push(element2)
+                            element.details = gejalaKosongKeun9
+                        } else {
+                            gejalaKosongKeun9 = []
                         }
                     }
-                    $scope.listData9 = arrayShiftJaga9
+                }
+                $scope.listData9 = arrayShiftJaga9
 
-                    var gejalaKosongKeun10 = []
-                    for (let k = 0; k < arrayShiftJaga10.length; k++) {
-                        const element = arrayShiftJaga10[k];
-                        for (let l = 0; l < datas.length; l++) {
-                            const element2 = datas[l];
-                            if (element2.namaexternal == element.namaexternal) {
-                                gejalaKosongKeun10.push(element2)
-                                element.details = gejalaKosongKeun10
-                            } else {
-                                gejalaKosongKeun10 = []
-                            }
+                var gejalaKosongKeun10 = []
+                for (let k = 0; k < arrayShiftJaga10.length; k++) {
+                    const element = arrayShiftJaga10[k];
+                    for (let l = 0; l < datas.length; l++) {
+                        const element2 = datas[l];
+                        if (element2.namaexternal == element.namaexternal) {
+                            gejalaKosongKeun10.push(element2)
+                            element.details = gejalaKosongKeun10
+                        } else {
+                            gejalaKosongKeun10 = []
                         }
                     }
-                    $scope.listData10 = arrayShiftJaga10
+                }
+                $scope.listData10 = arrayShiftJaga10
             })
 
             var cacheNomorEMR = cacheHelper.get('cacheNomorEMR');
@@ -523,7 +617,7 @@ define(['initialize'], function (initialize) {
             medifirstService.get("emr/get-emr-transaksi-detail?noemr=" + nomorEMR + "&emrfk=" + 3000444, true).then(function (dat) {
                 $scope.item.obj = []
                 $scope.item.obj2 = []
-                
+
 
                 // $scope.item.obj[111056]=$scope.now
                 // $scope.item.obj[14563]={ value: $scope.cc.iddpjp, text: $scope.cc.dokterdpjp }
@@ -550,17 +644,17 @@ define(['initialize'], function (initialize) {
 
                         if (dataLoad[i].type == "textbox") {
                             $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
-                            if(dataLoad[i].emrdfk == 115952)
+                            if (dataLoad[i].emrdfk == 115952)
                                 $scope.totalSkor4 = parseFloat(dataLoad[i].value)
-                              if(dataLoad[i].emrdfk == 21020955)
+                            if (dataLoad[i].emrdfk == 21020955)
                                 $scope.totalSkor5 = parseFloat(dataLoad[i].value)
-                              if(dataLoad[i].emrdfk == 21030925)
+                            if (dataLoad[i].emrdfk == 21030925)
                                 $scope.skorNutrisi = parseFloat(dataLoad[i].value)
-                                if(dataLoad[i].emrdfk == 21031111)
+                            if (dataLoad[i].emrdfk == 21031111)
                                 $scope.SkorNutrisi2 = parseFloat(dataLoad[i].value)
-                                if(dataLoad[i].emrdfk == 21031128)
+                            if (dataLoad[i].emrdfk == 21031128)
                                 $scope.SkorNutrisi3 = parseFloat(dataLoad[i].value)
-                               
+
                         }
                         if (dataLoad[i].type == "checkbox") {
                             chekedd = false
@@ -602,10 +696,13 @@ define(['initialize'], function (initialize) {
                         }
                         if (dataLoad[i].type == "combobox") {
                             var str = dataLoad[i].value
-                            if(str != undefined){
+                            if (str != undefined) {
                                 var res = str.split("~");
                                 // $scope.item.objcbo[dataLoad[i].emrdfk]= {value:res[0],text:res[1]}
-                                $scope.item.obj[dataLoad[i].emrdfk] = { value: res[0], text: res[1] }        
+                                $scope.item.obj[dataLoad[i].emrdfk] = {
+                                    value: res[0],
+                                    text: res[1]
+                                }
                             }
 
                         }
@@ -623,10 +720,10 @@ define(['initialize'], function (initialize) {
 
             })
 
-            
 
 
-            
+
+
             $scope.kembali = function () {
                 $rootScope.showRiwayat()
             }
@@ -638,8 +735,11 @@ define(['initialize'], function (initialize) {
                 for (var i = arrobj.length - 1; i >= 0; i--) {
                     if ($scope.item.obj[parseInt(arrobj[i])] instanceof Date)
                         $scope.item.obj[parseInt(arrobj[i])] = moment($scope.item.obj[parseInt(arrobj[i])]).format('YYYY-MM-DD HH:mm')
-                     // $scope.item.obj[parseInt(arrobj[i])] = moment($scope.item.obj[parseInt(arrobj[i])]).format('HH:mm')
-                    arrSave.push({ id: arrobj[i], values: $scope.item.obj[parseInt(arrobj[i])] })
+                    // $scope.item.obj[parseInt(arrobj[i])] = moment($scope.item.obj[parseInt(arrobj[i])]).format('HH:mm')
+                    arrSave.push({
+                        id: arrobj[i],
+                        values: $scope.item.obj[parseInt(arrobj[i])]
+                    })
                 }
                 $scope.cc.jenisemr = 'asesmen'
                 $scope.cc.index = $state.params.index
@@ -652,10 +752,9 @@ define(['initialize'], function (initialize) {
                     //     namaEMR : $scope.cc.emrfk,
                     //     nomorEMR : e.data.data.noemr 
                     // });
-                    medifirstService.postLogging('EMR', 'norec emrpasien_t', e.data.data.norec,  
-                    'AsesmenUlangNyeriCtrl ' + ' dengan No EMR - ' +e.data.data.noemr +  ' pada No Registrasi ' 
-                    + $scope.cc.noregistrasi).then(function (res) {
-                    })
+                    medifirstService.postLogging('EMR', 'norec emrpasien_t', e.data.data.norec,
+                        'AsesmenUlangNyeriCtrl ' + ' dengan No EMR - ' + e.data.data.noemr + ' pada No Registrasi ' +
+                        $scope.cc.noregistrasi).then(function (res) {})
 
                     var arrStr = {
                         0: e.data.data.noemr
