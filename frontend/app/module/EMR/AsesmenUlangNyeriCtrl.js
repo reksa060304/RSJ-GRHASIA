@@ -3,7 +3,6 @@ define(['initialize'], function (initialize) {
     initialize.controller('AsesmenUlangNyeriCtrl', ['$q', '$rootScope', '$scope', 'ModelItem', '$state', 'CacheHelper', 'DateHelper', 'MedifirstService',
         function ($q, $rootScope, $scope, ModelItem, $state, cacheHelper, dateHelper, medifirstService) {
             var paramsIndex = $state.params.index ? parseInt($state.params.index) : null;
-
             $scope.myVar = true
             $scope.noCM = $state.params.noCM;
             $scope.tombolSimpanVis = true

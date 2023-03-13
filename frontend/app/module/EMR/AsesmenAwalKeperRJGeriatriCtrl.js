@@ -1869,10 +1869,7 @@ define(['initialize'], function (initialize) {
 
                 })
                 
-            $scope.SkorNorton[22035532] = 0;
-            $scope.SkorNorton[22035538] = 0;
-            $scope.SkorNorton[22035544] = 0;
-            $scope.SkorNorton[22035550] = 0;
+            $scope.SkorNorton= 0;
             $scope.getSkorNorton = function (jawab) {
                 var arrobj = Object.keys($scope.item.obj);
                 var arrSave = []
@@ -1880,26 +1877,23 @@ define(['initialize'], function (initialize) {
                 for (var i = arrobj.length - 1; i >= 0; i--) {
                     if (arrobj[i] == jawab.id) {
                         if ($scope.item.obj[parseFloat(arrobj[i])] == true) {
-                            $scope.SkorNorton[jawab.target] = $scope.SkorNorton[jawab.target] + parseFloat(jawab.descNilai)
+                            $scope.SkorNorton = $scope.SkorNorton + parseFloat(jawab.reportdisplay)
                             break
                         } else {
-                            $scope.SkorNorton[jawab.target] = $scope.SkorNorton[jawab.target] - parseFloat(jawab.descNilai)
+                            $scope.SkorNorton = $scope.SkorNorton - parseFloat(jawab.reportdisplay)
                             break
                         }
                     } else {
                     }
                 }
 
-                $scope.item.obj[jawab.target] = $scope.SkorNorton[jawab.target]
-                setSkorNorton()
+                $scope.item.obj[310155] = $scope.SkorNorton
+                // setSkorNorton()
             }
 
             function setSkorNorton()
             {
-                var nilai1 = $scope.SkorNorton[22035532]
-                var nilai2 = $scope.SkorNorton[22035538]
-                var nilai3 = $scope.SkorNorton[22035544]
-                var nilai4 = $scope.SkorNorton[22035550]
+                
             
                 var total = nilai1 + nilai2 + nilai3 + nilai4
                 $scope.item.obj[22035551] = total;
