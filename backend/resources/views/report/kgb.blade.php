@@ -98,7 +98,7 @@
                 <tr>
                     <td width="10%" style="padding: 5px">
                         <img src="data:image/jpeg;base64,{{$profile[0]->logopemerintahan}}" alt=""
-                            style="width: 95px; margin-bottom:20px">
+                            style="width: 95px; margin-bottom:35px">
 
                     </td>
                     <td style="text-align: center; font-family: Arial">
@@ -132,7 +132,7 @@
         <table id="dt" cellspacing="0" cellpadding="0" border="0" width="100%">
             <tr>
                 <td style="text-align: center; font-family: Arial; font-size: 12pt">
-                    <b><u>SURAT PEMBERITAHUAN </u></b>
+                    <b><u>SURAT PEMBERITAHUAN KENAIKAN GAJI BERKALA</u></b>
                     <br>
                     NOMOR : {{$data[0]->nosk}}
                     
@@ -176,7 +176,7 @@
                         </tr>
                         <tr>
                             <td style="font-size: 11pt">4. </td>
-                            <td style="font-size: 11pt">instansi</td>
+                            <td style="font-size: 11pt">Instansi</td>
                             <td style="font-size: 11pt"> : </td>
                             <td style="font-size: 11pt">Rumah Sakit Jiwa Grhasia Dinkes DIY</td>
                         </tr>
@@ -190,12 +190,12 @@
                             <td style="font-size: 11pt"></td>
                             <td style="font-size: 11pt">Berdasarkan</td>
                             <td style="font-size: 11pt"> : </td>
-                            <td style="font-size: 11pt">Surat Pemberitahuan 
+                            <td style="font-size: 11pt"> 
                                 {{-- {{var_dump($data[0]->jenissk)}} --}}
                                 @if ($data[0]->jenissk == 'KGB')
-                                    Kenaikan Gaji Berkala
+                                    Surat Pemberitahuan Kenaikan Gaji Berkala
                                 @elseif($data[0]->jenissk == 'KP')
-                                    SK Kenaikan Pangkat
+                                    Surat Keputusan Kenaikan Pangkat
                                 @endif
                                 
                                 {{-- {{ $data[0]->jenissk == 'KGB' ? 'Kenaikan Gaji Berkala' : $data[0]->jenissk == 'KP' ? 'SK Kenaikan Pangkat': ''}} --}}
@@ -268,7 +268,8 @@
                             <td style="padding-bottom: 90px;font-size: 11pt" >DIREKTUR,</td>
                         </tr>
                         <tr>
-                            <td style="font-size: 11pt"><b><u>dr. AKHMAD AKHADI S., M.P.H.</u></b></td>
+                            <td style="font-size: 11pt"><b>dr. AKHMAD AKHADI S., M.P.H. <br>
+                            <hr style="margin: 0;" color="black"></b></td>
                         </tr>
                         <tr>
                             <td style="font-size: 11pt"><b>NIP. 19680714 200012 1 002</b></td>
