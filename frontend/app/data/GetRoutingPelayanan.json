@@ -16979,7 +16979,7 @@
   },
   {
     "name": "RekamMedis.AsesmenMedis.MenuIndex.CatatanKonselingNAPZA",
-    "url": "/CatatanKonselingNAPZA",
+    "url": "/CatatanKonselingNAPZA/:index/:idEMR",
     "templateurl": "module/EMR/CatatanKonselingNAPZA.html",
     "controller": "CatatanKonselingNAPZACtrl",
     "deps": [
