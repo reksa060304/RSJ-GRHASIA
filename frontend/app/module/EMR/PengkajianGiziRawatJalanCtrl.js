@@ -263,8 +263,8 @@ define(['initialize'], function (initialize) {
                     {
                         "id" : 1, "nama": "Pola Makan",
                         "detail": [
-                            {"id": 3019127, "nama": "","type": "checkbox"},
-                            {"id": 3019128, "nama": "","type": "checkbox"},
+                            {"id": 3019127, "nama": "Teratur","type": "checkbox"},
+                            {"id": 3019128, "nama": "Tidak Teratur","type": "checkbox"},
                         ]
                     },
             ]
