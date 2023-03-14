@@ -3630,6 +3630,10 @@
         {
             "nameDep": "RencanaAsuhanGiziRawatInapCtrl",
             "urlDep": "module/EMR/RencanaAsuhanGiziRawatInapCtrl"
+        },
+        {
+            "nameDep": "PengkajianAwalKeperawatanRJJiwaCtrl",
+            "urlDep": "module/EMR/PengkajianAwalKeperawatanRJJiwaCtrl"
         }
     ]
 }

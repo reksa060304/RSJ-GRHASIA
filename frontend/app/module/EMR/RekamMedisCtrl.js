@@ -139,7 +139,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     $scope.mainTreeViewMenuOption = {
                         dataBound: function (e) {
                             $('span.k-in').each(function () {
-                                if ($(this).text() == 'Catatan Klinik') { $(this).addClass('gemblung') }
+                                if ($(this).text() == 'Catatan Klinik (CPPT)') { $(this).addClass('gemblung') }
                                 if ($(this).text() == 'Vital Sign') { $(this).addClass('gemblung') }
                                 if ($(this).text() == 'Resep Elektronik') { $(this).addClass('gemblung') }
 
