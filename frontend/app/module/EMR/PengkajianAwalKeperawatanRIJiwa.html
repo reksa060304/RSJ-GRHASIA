@@ -191,59 +191,7 @@
                                         <!-- start -->
                                         <div class="grid_12">
                                             <fieldset style="margin-top: 10px; ">
-                                                <div>
-                                                <div class="grid_12" style= "margin-bottom: 5px; margin-top: 5px;"ng-switch-when="label2">
-                                                    <label>Keluhan Nyeri : </label>
-                                                </div>
-                                                <div class="grid_5" ng-repeat="list in listKeluhanNyeri | orderBy:'id'" style="padding: 5pt 10pt">
-                                                    <b>{{list.nama}}</b>
-                                                    <div class="grid_12" style="padding: 5pt">
-                                                        <div ng-repeat="jawab in list.detail | orderBy:'id'">
-                                                                <div ng-switch on="jawab.type">
-                                                            <div class="grid_4"  ng-switch-when="checkbox"  > 
-                                                                    <input type="checkbox" class="k-checkbox" id="item.obj{{jawab.id}}"
-                                                                    ng-model="item.obj[jawab.id]">
-                                                                <label class="k-checkbox-label" for="item.obj{{jawab.id}}">
-                                                                    &nbsp;{{jawab.nama}}</label>
-                                                                 
-                                                            </div>
-                                                            <div class="grid_4" ng-switch-when="textbox" style="margin-top: 5px;">
-                                                                <div class="grid_12">
-                                                                    <label>{{jawab.nama}}</label>
-                                                                </div>
-                                                                <div class="grid_12 parentKeteranganFieldTambahan">
-                                                                    <input c-text-box type="text" filter="" class="k-textbox"
-                                                                        ng-model="item.obj[jawab.id]" style="width: 90%;" />
-                                                                    <label class="keteranganFieldTambahan"
-                                                                        style="margin-top: 5px;margin-right: 30px">{{jawab.satuan}}</label>
-                                                                </div>
-                                                            </div>
-                                                            <div class="grid_4" ng-switch-when="textbox2" style="margin-top: 5px;">
-                                                                <div class="grid_12">
-                                                                    <label>{{jawab.nama}}</label>
-                                                                </div>
-                                                                <div class="grid_12 parentKeteranganFieldTambahan">
-                                                                    <input c-text-box type="text" filter="" class="k-textbox"
-                                                                        ng-model="item.obj[jawab.id]" style="width: 90%;" />
-                                                                    <label class="keteranganFieldTambahan"
-                                                                        style="margin-top: 5px;margin-right: 30px">{{jawab.satuan}}</label>
-                                                                </div>
-                                                            </div>
-                                                            <div class="grid_4" ng-switch-when="textbox3" style="margin-top: 5px;">
-                                                                <div class="grid_12">
-                                                                    <label>{{jawab.nama}}</label>
-                                                                </div>
-                                                                <div class="grid_12 parentKeteranganFieldTambahan">
-                                                                    <input c-text-box type="text" filter="" class="k-textbox"
-                                                                        ng-model="item.obj[jawab.id]" style="width: 90%;" />
-                                                                    <label class="keteranganFieldTambahan"
-                                                                        style="margin-top: 5px;margin-right: 30px">{{jawab.satuan}}</label>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    </div>
-                                                </div>
+                                              
                                                     <legend><b>NUMERIC</b></legend>
                                                     <div class="grid_7" style="margin-top: 40px;">
                                                         <input kendo-slider="" k-min="0" k-max="10" ng-model="item.obj[3015538]" />
