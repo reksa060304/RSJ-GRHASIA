@@ -259,6 +259,15 @@
                                                 &nbsp;{{jawab.nama}}</label>
 
                                         </div>
+                                        <div class="grid_12" ng-switch-when="textarea">
+                                            <div>
+                                                <label>{{jawab.nama}}</label>
+                                            </div>
+                                            <div>
+                                                <textarea style="width: 90%;height: 40px" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
+                                                ng-model="item.obj[jawab.id]" />
+                                            </div>
+                                        </div>
                                         
                                         <!-- <div class="grid_6" ng-switch-when="checkboxtextbox2" style="margin-top: 5px; margin-left: -78px;">
                                             <div class="grid_6">
