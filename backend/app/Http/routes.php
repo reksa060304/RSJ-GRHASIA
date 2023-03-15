@@ -1799,6 +1799,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('radiologi/get-diagnosapasienbynoreg', 'Radiologi\RadiologiController@getDiagnosaRad');
           Route::get('radiologi/get-order-pelayanan', 'Radiologi\RadiologiController@getOrderPelayanan');
           Route::post('radiologi/save-pelayanan-pasien', 'Radiologi\RadiologiController@savePelayananPasien');
+          Route::post('radiologi/save-tolak-verif', 'Radiologi\RadiologiController@saveTolakOrder');
           Route::post('radiologi/delete-order-pelayanan', 'Radiologi\RadiologiController@deleteOrderPelayanan');
           Route::get('radiologi/cekstatusorder','Radiologi\RadiologiController@cekstatusorder');
           Route::get('radiologi/get-sudah-input-hasil','Radiologi\RadiologiController@cekinputhasil');
