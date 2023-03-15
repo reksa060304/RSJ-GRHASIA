@@ -6718,7 +6718,7 @@ class RegistrasiController extends ApiController
     public function getDiagnosaPasienByNoreg(Request $request){
         $kdProfile = $this->getDataKdProfile($request);
         $data = \DB::table('pasiendaftar_t as pd')
-            ->select('dg.id', 'pd.noregistrasi', 'pd.tglregistrasi', 'apd.objectruanganfk', 'ru.namaruangan', 'apd.norec as norec_apd',
+            ->select('ddp.objectpegawaifk','pg.namalengkap','dg.id', 'pd.noregistrasi', 'pd.tglregistrasi', 'apd.objectruanganfk', 'ru.namaruangan', 'apd.norec as norec_apd',
                 'ddp.objectdiagnosafk', 'dg.kddiagnosa', 'dg.namadiagnosa', 'ddp.objectjenisdiagnosafk',
                 'jd.jenisdiagnosa', 'dp.norec as norec_diagnosapasien', 'ddp.norec as norec_detaildpasien',
                 'dp.ketdiagnosis', 'ddp.keterangan','ddp.tglinputdiagnosa')
@@ -6727,6 +6727,7 @@ class RegistrasiController extends ApiController
             ->join('diagnosapasien_t as dp', 'dp.noregistrasifk', '=', 'apd.norec')
             ->join('detaildiagnosapasien_t as ddp', 'ddp.objectdiagnosapasienfk', '=', 'dp.norec')
             ->leftJoin('diagnosa_m as dg', 'dg.id', '=', 'ddp.objectdiagnosafk')
+            ->leftJoin('pegawai_m as pg', 'pg.id','=','ddp.objectpegawaifk')
             ->leftJoin('jenisdiagnosa_m as jd', 'jd.id', '=', 'ddp.objectjenisdiagnosafk')
             ->where('pd.kdprofile', (int)$kdProfile);
 
@@ -7131,7 +7132,12 @@ class RegistrasiController extends ApiController
             ->where('jp.kdprofile', $kdProfile)
             ->orderBy('jp.jenispelayanan')
             ->get();
-
+            $produkradiologi = DB::table('mapruangantoproduk_m as mpr')
+                ->join('produk_m as pr','pr.id','=','mpr.objectprodukfk')
+                ->select('pr.namaproduk','pr.id')
+                ->where('mpr.kdprofile', 30)->where('mpr.statusenabled', true)
+                ->where('pr.kdprofile', 30)->where('pr.statusenabled', true)
+                ->where('mpr.objectruanganfk', 576)->get();
 
         $result = array(
             'departemen' => $dataDepartemen,
@@ -7152,6 +7158,7 @@ class RegistrasiController extends ApiController
             'pegawaiLogin' => $dataPegawai->namalengkap,
             'jeniskelamin' => $dataJenisKelamin,
             'jenispelayanan' => $jenisPelayanan,
+            'produkradiologi' => $produkradiologi,
             'message' => 'as@epic',
         );
 
