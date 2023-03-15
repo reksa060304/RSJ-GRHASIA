@@ -1207,7 +1207,7 @@ define(['initialize'], function (initialize) {
                         "field": "jumlahgizi",
                         "title": "Konsul Gizi",
                         "width": "100px",
-                        "template": "<span class='style-right'>{{formatRupiah('#: jumlahpsikolog #', 'Rp.')}}</span>",
+                        "template": "<span class='style-right'>{{formatRupiah('#: jumlahgizi #', 'Rp.')}}</span>",
                     },
                     {
                         
