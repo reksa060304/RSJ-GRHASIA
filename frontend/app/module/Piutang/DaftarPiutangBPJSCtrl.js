@@ -617,7 +617,7 @@ define(['initialize'], function (initialize) {
 				}
 				var skey = "";
 				if ($scope.item.caridata != undefined) {
-					skey = $scope.item.item.caridata
+					skey = $scope.item.caridata
 				}
 				$q.all([
 					medifirstService.get("tatarekening/daftar-piutang-bpjs?"
@@ -635,6 +635,7 @@ define(['initialize'], function (initialize) {
 					//modelItemAkuntansi.getDataGeneric("departemen"), //Ambil data departemen
 				]).then(function (e) {
 					$scope.isRouteLoading = false;
+
 					var dataPasien = e[0].data.data;
 					console.log(e[0].data.data)
 						for (var i = 0; i < dataPasien.length; i++) {
