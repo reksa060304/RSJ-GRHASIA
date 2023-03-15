@@ -2395,51 +2395,123 @@ class ReportController extends ApiController{
     
     public function CetakSKDokter(Request $request)
     {   
-        // $norec = $request['emr'];
-        $noemr = $request['noemr'];
+        $norec = $request['emr'];
         $kdProfile = (int) $request['kdprofile'];
-        $emrfk = $request['emfk'];
-        $data = \DB::select(DB::raw(
-            "SELECT string_agg(x.tgl, '' )tgl, string_agg(x.nocm, ' ' )nocm, string_agg(x.nomor, ' ' )nomor, 
-            string_agg(x.nama, ' ')nama, string_agg(x.tgllahir, ' ')tgllahir, string_agg(x.pekerjaan, ' ' )pekerjaan, 
-            string_agg(x.alamat, ' ' )alamat, string_agg(x.jeniskelamin, ' ' )jeniskelamin, string_agg(x.tb, ' ')tb,string_agg(x.td, ' ')td,
-            string_agg(x.bb, ' ')bb, string_agg(x.nadi, ' ')nadi, string_agg(x.keperluan, ' ')keperluan, string_agg(x.dokter, ' ')dokter, 
-            string_agg(x.kondisi, ' ')kondisi 
-            FROM (SELECT
-            CASE WHEN ed.ID = 3003991 THEN epd.VALUE END AS tgl,
-            CASE WHEN ed.ID = 3003990 THEN epd.VALUE END AS nocm,
-            CASE WHEN ed.ID = 3003992 THEN epd.VALUE END AS nomor,
-            CASE WHEN ed.ID = 3003982 THEN epd.VALUE END AS nama,
-            CASE WHEN ed.ID = 3003983 THEN epd.VALUE END AS tgllahir,
-            CASE WHEN ed.ID = 3003984 THEN epd.VALUE END AS jeniskelamin,
-            CASE WHEN ed.ID = 3003985 THEN epd.VALUE END AS pekerjaan,
-            CASE WHEN ed.ID = 3003986 THEN epd.VALUE END AS alamat,
-            CASE WHEN ed.ID = 3003993 THEN epd.VALUE END AS tb,
-            CASE WHEN ed.ID = 3003994 THEN epd.VALUE END AS td,
-            CASE WHEN ed.ID = 3003995 THEN epd.VALUE END AS bb,
-            CASE WHEN ed.ID = 3003996 THEN epd.VALUE END AS nadi,
-            CASE WHEN ed.ID = 3003997 THEN epd.VALUE END AS keperluan,
-            CASE WHEN ed.ID = 3003998 THEN epd.VALUE END AS dokter,
-            CASE WHEN ed.ID = 3003999 THEN epd.VALUE END AS kondisi
-            FROM emrpasien_t ep
-                    INNER JOIN emrpasiend_t epd ON ep.noemr = epd.emrpasienfk
-                    INNER JOIN emrd_t ed ON ed.ID = epd.emrdfk 
-                WHERE ep.kdprofile = $kdProfile AND ep.statusenabled = TRUE 
-                    AND ep.noemr ILIKE'$noemr' 
-                    AND ed.statusenabled = TRUE 
-		AND ep.emrfk = $emrfk 
-		AND ed.emrfk = $emrfk
-        ORDER BY
-        ed.ID ASC)as x"
+        $data = DB::select(DB::raw("
+        SELECT
+            epd.emrdfk,
+            ep.noemr,
+            ed.TYPE,
+            pa.namapasien,
+            pa.tgllahir,
+            pa.nohp,
+            pa.nocm,
+            ep.jeniskelamin,
+            ep.umur,
+            al.alamatlengkap,
+            ep.noregistrasifk as noregistrasi ,
+            epd.value,ep.namaruangan,pg.namalengkap as namadokter
+            --case when ed.TYPE = 'datetime' then TO_CHAR(TO_TIMESTAMP(epd.value, 'YYYY-MM-DD HH24:MI:SS'),'YYYY-MM-DD HH24:MI:SS') else epd.value end as value
+        FROM
+            emrpasien_t AS ep
+            INNER JOIN emrpasiend_t AS epd ON ep.noemr = epd.emrpasienfk
+            INNER JOIN emrd_t AS ed ON epd.emrdfk = ed.ID
+                INNER JOIN antrianpasiendiperiksa_t AS pd ON pd.norec = ep.norec_apd
+            left JOIN pegawai_m AS pg ON pg.id = pd.objectpegawaifk
+            left JOIN pasien_m as pa on ep.nocm =  pa.nocm
+            left JOIN alamat_m as al on pa.id = al.nocmfk
+        WHERE
+            ep.norec = '$norec'
+                AND ep.kdprofile = '$kdProfile' 
+            AND epd.statusenabled = TRUE 
+            and epd.emrfk = $request[emrfk]
+            ORDER BY
+            ed.nourut
+            "
         ));
         foreach ($data as $z){
-            if (isset($z->tgllahir) ||isset($z->tgl)){
-                $z->tgllahir=$this->tanggal_indonesia(date('Y-m-d',strtotime($z->tgllahir)));
-                $z->tgl=$this->tanggal_indonesia(date('Y-m-d',strtotime($z->tgl)));
+            if ($z->type=="datetime"){
+                $z->value=date('Y-m-d H:i:s',strtotime($z->value));
             }
+//            $z->value = nl2br( $z->value);
+        }
+        // foreach ($data as $z){
+        //     if (isset($z->tgllahir) ||isset($z->tgl)){
+        //         $z->tgllahir=$this->tanggal_indonesia(date('Y-m-d',strtotime($z->tgllahir)));
+        //         $z->tgl=$this->tanggal_indonesia(date('Y-m-d',strtotime($z->tgl)));
+        //     }
             
+        // }
+        $res['profile'] = Profile::where('id',$request['kdprofile'])->first();
+        $res['d'] = $data;
+        // return view('report.cppt-ranap-dom',compact('res','pageWidth', 'data'));
+        // dd($res);
+        $item =[];   
+        $item2= [];      
+        foreach( $res['d'] as $items){
+                if($items->type  ==  "textbox" ||$items->type  ==  "textarea"  ){
+                    $item[$items->emrdfk] =  $items->value;
+                }
+                if($items->type  ==  "datetime"){
+                    $item[$items->emrdfk] = $this->tanggal_indonesia(date('Y-m-d',strtotime( $items->value))) ;
+                }
+                if($items->type  ==  "time"){
+                    $item[$items->emrdfk] = date('H:i',strtotime( $items->value));
+                }
+                if($items->type  ==  "date"){
+                    $item[$items->emrdfk] = date('Y-m-d',strtotime( $items->value));
+                }
+                if($items->type  ==  "checkboxtextbox"){
+                    $item[$items->emrdfk] =  $items->value;
+                    $item2[$items->emrdfk] =  true;
+                }
+                if($items->type == "checkbox") {
+                    $chekedd = false;
+                    if ($items->value == '1') {
+                        $chekedd = true;
+                    }
+                    $item[$items->emrdfk] = $chekedd;
+                }
+                if($items->type == "combobox") {
+                    $arr = explode('~',$items->value );
+                    $item[$items->emrdfk] = $arr[1];
+                }
         }
         $pageWidth = 950;
+        $peg = null;    
+        if(isset($request['isttd']) && $request['isttd'] == true){
+            $peg = DB::table('pegawai_m')->where('id',$request['pegawaittd'])->first();
+            
+        }
+        // var_dump($data);
+        $pdf = PDF::loadView(
+            'report.EMR.suratketerangandokter-dom',
+            array(
+                'res' => $res,
+                'pageWidth' => $pageWidth,
+                'data' => $data,
+                'item'=> $item,
+                'peg'=> $peg
+            )
+        );
+        if(isset($request['isttd']) && $request['isttd'] == true){
+            $objetoRequest = new \Illuminate\Http\Request();
+            $objetoRequest ['emrfk'] = $request['emrfk'];
+            $objetoRequest ['norec_emr'] = $request['emr'];
+            $objetoRequest ['pegawaittd'] = $request['pegawaittd'];
+            $objetoRequest ['nocm'] = $request['nocm'];
+            $objetoRequest ['noregistrasi'] = $request['noregistrasi'];
+            $objetoRequest ['norec_pd'] = $request['norec_pd'];
+            $bsre = app('App\Http\Controllers\Bridging\BridgingBSREController')->pengajuanTTE($objetoRequest,true);
+            if($bsre['status'] == 201){
+                $content = $pdf->download()->getOriginalContent();
+                \Storage::disk('local')->put( 'TTD_BSRE/' . $bsre['dokumen']->id . '/file' . '.pdf' , $content);
+            }
+          
+            return $bsre;
+        }
+
+        return $pdf->stream();
         return view('report.EMR.suratketerangandokter',compact('data','pageWidth'));
     }
 

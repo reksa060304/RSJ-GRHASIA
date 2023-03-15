@@ -264,13 +264,13 @@
                 </div>
                 <div class="grid_12">
                     <div class="grid_12 margin-top-10 text-center margin-bottom">
-                        <label c-label item="item" class="margin-bottom">Nomor :</label>
+                        <label c-label item="item" class="margin-bottom">Nomor : 449 / </label>
                         <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3003992]"
                             style="height: 30px; width: 30%; "/>
                     </div>
                     <div class="grid_12">
-                        <label c-label item="item" class="margin-bottom">Yang bertandatangan dibawah ini, telah melakukan pemeriksaan NAPZA pada tanggal : </label>
-                        <input style="width: 20%" k-ng-model="item.obj[3003991]" kendo-datetimepicker
+                        <label c-label item="item" class="margin-bottom">Yang bertandatangan dibawah ini, telah melakukan pemeriksaan Kesehatan pada tanggal : </label>
+                        <input style="width: 20%" k-ng-model="item.obj[3003987]" kendo-datetimepicker
                         placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
                         <label c-label item="item" class="margin-bottom"><br>terhadap</label>
                     </div>
@@ -368,8 +368,21 @@
 <br />
 <br />
 <div class="grid_12">
+    <div class="grid_2" style="margin-top: 22px" ng-show="isTTD_E">
+        <button class="btnTemplate1 success" ng-click="ttdElek()"><i class="fa fa-key"></i>TTD Elektronik</button>
+    </div>
     <div ng-include='"../app/module/EMR/TemplateButtonDinamis" '>
         
     </div>
-
+    
+</div>
+<div kendo-window="winDialog" k-title="'Pilih Pegawai'" k-width="400" k-height="120" k-visible="false"
+    k-on-open="win2visible = true" k-on-close="win2visible = false">
+    <label c-label item="item " c-label-text="pegawaiPenandaTangan "></label>
+    <input style="width: 100%; " kendo-combo-box k-ng-model="item.pegawai" k-data-text-field="'text'"
+        k-filter=" 'contains' " k-data-value-field=" 'value' " k-auto-bind="false " k-data-source="listPegawai" />
+    <div class="clear">
+        <button class="k-button" ng-click="savePengajuanTTE(item.pegawai)"
+            style="float:right;margin-top:4%">Simpan</button>
+    </div>
 </div>
