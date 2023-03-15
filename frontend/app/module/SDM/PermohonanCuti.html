@@ -228,17 +228,43 @@
 				</div>
 
 			</div>
-			<div class="grid_12" >
+			
+			<div class="grid_12">
 				<div class="grid_3">
-					<label c-label item="item" style="margin-top: 10px">Jumlah</label>
+					<label c-label item="item" style="margin-top: 10px">Sisa Cuti Tahun Kemarin</label>
+				</div>
+				<div class="grid_9">
+					<input c-text-box type="input" filter="" class="k-textbox" ng-model="item.sisacutitahunkemarin" disabled="true">
+				</div>
+			</div>
+			<div class="grid_12">
+				<div class="grid_3">
+					<label c-label item="item" style="margin-top: 10px">Jumlah Cuti Tahun Ini</label>
+				</div>
+				<div class="grid_9">
+					<input c-text-box type="input" filter="" class="k-textbox" ng-model="item.sisacutitahunini"
+						disabled="true">
+				</div>
+			</div>
+			<div class="grid_12">
+				<div class="grid_3">
+					<label c-label item="item" style="margin-top: 10px">Jumlah Cuti Tahun Berjalan</label>
+				</div>
+				<div class="grid_9">
+					<input c-text-box type="input" filter="" class="k-textbox" ng-model="item.totalCutiTahun" disabled="true" />
+				</div>
+			</div>
+			<div class="grid_12">
+				<div class="grid_3">
+					<label c-label item="item" style="margin-top: 10px">Jumlah Cuti Yang Diajukan</label>
 				</div>
 				<div class="grid_9">
 					<input c-text-box type="input" filter="" class="k-textbox" ng-model="item.jumlahHari">
 				</div>
 			</div>
-			<div class="grid_12" ng-hide="hidesisacuti">
+			<div class="grid_12">
 				<div class="grid_3">
-					<label c-label item="item" style="margin-top: 10px">Sisa Cuti</label>
+					<label c-label item="item" style="margin-top: 10px">Sisa Cuti Tahun Berjalan</label>
 				</div>
 				<div class="grid_9">
 					<input c-text-box type="input" filter="" class="k-textbox" ng-model="item.totalSisaCuti" disabled="true" />
