@@ -25,7 +25,8 @@ define(['initialize'], function (initialize) {
             }
             $scope.listInstalasi = [
                 {text:'Rawat Jalan', 'value': '1'},
-                {text:'Rawat Inap', 'value': '2'}
+                {text:'Rawat Inap', 'value': '2'},
+                {text:'IGD', 'value': '3'},
             ]
             var kelompokUserLogin = ModelItem.getStatusUser()
             if (kelompokUserLogin == 'radiologi' || kelompokUserLogin == 'laborat') {
