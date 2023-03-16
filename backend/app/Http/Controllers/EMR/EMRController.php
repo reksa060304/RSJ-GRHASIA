@@ -4849,7 +4849,7 @@ class EMRController  extends ApiController
         $dataLogin = $request->all();
         $jd = \DB::table('jenisdiagnosa_m as lu')
             ->select('lu.id', 'lu.jenisdiagnosa as jenisDiagnosa')
-            ->where('lu.statusenabled', true)
+            ->where('lu.statusenabled', true)->whereIn('lu.id', [1,2])
             ->get();
 
             $dp = \DB::table('diagnosakep_m')->where('kdprofile', 30)->where('statusenabled', true)->get();
@@ -6565,7 +6565,7 @@ class EMRController  extends ApiController
             ->LEFTJOIN('ruangan_m as ru2', 'ru2.id', '=', 'so.objectruangantujuanfk')
             ->LEFTJOIN('pegawai_m as p', 'p.id', '=', 'so.objectpegawaiorderfk')
 //            ->LEFTJOIN('ris_order as pp','pp.order_no','=','so.noorder')
-            ->select('so.norec', 'so.tglorder', 'so.noorder', 'ru.namaruangan as namaruanganasal', 'ru2.namaruangan as namaruangantujuan', 'p.namalengkap as dokter', 'so.statusorder',
+            ->select('so.keterangantolak','so.norec', 'so.tglorder', 'so.noorder', 'ru.namaruangan as namaruanganasal', 'ru2.namaruangan as namaruangantujuan', 'p.namalengkap as dokter', 'so.statusorder',
                 'pd.noregistrasi', 'so.objectruangantujuanfk', 'so.statusorder','so.keteranganlainnya','so.cito'
 //                DB::raw('case when pp.order_no is null then \'PENDING\' else \'SELESAI DIPERIKSA\' end as statusorder')
             )
@@ -6643,9 +6643,13 @@ class EMRController  extends ApiController
 
             $item->risorder = [];
             $item->statusorder  = 'Belum diproses';
+            if($item->keterangantolak != null){
+                $item->statusorder = 'Order ditolak';
+                    // break;
+            }
             foreach($risorder as $dss2){
-           
-                if($item->noorder == $dss2->order_no){
+                
+                 if($item->noorder == $dss2->order_no){
                        
                      $item->statusorder = 'Sudah diproses';
                      $item->risorder[] =$dss2;
@@ -6715,6 +6719,7 @@ class EMRController  extends ApiController
         $result = array(
             'daftar' => $data,//$results,
             'message' => 'er@epic',
+            'e'=> $risorder
         );
 
         return $this->respond($result);

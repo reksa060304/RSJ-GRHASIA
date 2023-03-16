@@ -41,10 +41,7 @@ class BridgingDukcapilController extends ApiController
             $data=\DB::select(DB::raw(
                 "SELECT dkm.diagnosakeperawatan as masalahkeperawatan, count(dkt.norec) as jumlah from diagnosakep_t dkt
                 INNER JOIN diagnosakep_m dkm on dkm.id = dkt.objectdiagnosakepfk
-                inner join antrianpasiendiperiksa_t apd on apd.norec = dkt.norec_apd
-                inner join ruangan_m ru on ru.id = apd.objectruanganfk
                 where dkt.statusenabled=true and dkt.kdprofile=30 and dkt.tglinput BETWEEN '$request[tglAwal]' and '$tglAkhir'
-                and ru.objectdepartemenfk <> 24
                 group by dkm.diagnosakeperawatan
                 ORDER by count(dkt.norec) desc;"
             ));
