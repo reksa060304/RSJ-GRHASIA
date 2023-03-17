@@ -165,7 +165,7 @@ define(['initialize'], function (initialize) {
                     "id": 2, "nama": "2. Skrining Nyeri",
                     "detail": [
                         { "id": 300000156, "nama": "Tidak Ada", "satuan": "mmHg", "type": "checkbox" },
-                        { "id": 300000156, "nama": "Ada, Skor Nyeri : ", "satuan": "x/mnt", "type": "checkbox" },
+                        { "id": 300000157, "nama": "Ada, Skor Nyeri : ", "satuan": "x/mnt", "type": "checkbox" },
                     ]
                 }
             ]
