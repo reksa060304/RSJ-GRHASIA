@@ -16,6 +16,7 @@
         text-align: left;
         width: 100%;
     }
+    
 </style>
 <div class="grid_12">
     <div class="grid_12 headerBox">
@@ -115,7 +116,7 @@
             </div>
 
             <div class="grid_12">
-                <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.namarekanan" />
+                <input c-text-box type="input" class="k-textbox" ng-model="item.namarekanan" auto-bind="false" />
             </div>
         </div>
         <div class="grid_2" style="margin-top: 22px">
@@ -141,6 +142,10 @@
         </div>
         <div class="grid_2" style="margin-top: 5px">
             <button class="c-button" ng-click="gunakanSemuaStok()" style="background-color: red;" ng-hide="hidesmeuastok">Gunakan Semua Stok</button>
+        </div>
+        <div class="grid_2" style="margin-top: 5px">
+            <button class="c-button" ng-click="verifSPJ(dataSelected)" style="background-color: green;"
+                ng-hide="hidesmeuastok">Verifikasi SPJ</button>
         </div>
     </div>
     <div class="grid_12" style="margin-top:60px">

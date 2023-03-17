@@ -75,18 +75,18 @@ class LogistikController extends ApiController{
             ->where('lu.id',$request['userData']['id'])
             ->get();
 
-        $dataRuangan = DB::select(DB::raw("
-            SELECT ru.id,ru.namaruangan 
-            FROM maploginusertoruangan_s AS mlur
-            INNER JOIN loginuser_s lu on lu.id = mlur.objectloginuserfk
-            INNER JOIN ruangan_m ru on ru.id = mlur.objectruanganfk
-            where lu.kdprofile = $idProfile 
-            and ru.statusenabled = true 
-            and lu.id=:idLoginUser
-            GROUP BY ru.id,ru.namaruangan"),
-            array(
-                'idLoginUser' => $request['userData']['id'],
-            )
+        $dataRuangan = DB::select(DB::raw("SELECT ru.id,ru.namaruangan 
+            FROM ruangan_m ru 
+            where ru.statusenabled = true 
+            and ru.kdprofile = $idProfile
+            -- and lu.id=:idLoginUser
+            and ru.objectdepartemenfk in (14,6,41)
+            and ru.id not in(51,784,574,50,94,211,303)
+            GROUP BY ru.id,ru.namaruangan")
+            // ,
+            // array(
+            //     'idLoginUser' => $request['userData']['id'],
+            // )
         );
 
         $dataNoOrder = DB::select(DB::raw("select norec, noorder from strukorder_t 
@@ -5568,7 +5568,7 @@ class LogistikController extends ApiController{
             ->select(DB::raw("
                 sp.tglstruk, sp.nostruk, rkn.namarekanan, pg.namalengkap, pg.id idpenerima, sp.nokontrak,
                 ru.namaruangan, ru.id objectruanganfk, sp.norec, sp.nofaktur, sp.tglfaktur, CAST(sp.totalharusdibayar AS FLOAT), sbk.nosbk,
-                sp.nosppb, sp.noorderfk, sp.qtyproduk
+                sp.nosppb, sp.noorderfk, sp.qtyproduk, sp.isverifspj
             ")
 //                'spd.hargasatuan','spd.hargadiscount','spd.qtyproduk','spd.hargatambahan' ,
 //                'pr.namaproduk as namaprodukstandar',
@@ -5649,6 +5649,7 @@ class LogistikController extends ApiController{
                 'nokontrak' => $item->nokontrak,
                 'noorderfk' => $item->noorderfk,
                 'jmlitem' => $item->qtyproduk,
+                'isverifspj' => $item->isverifspj,
                 'details' => $details,
             );
         }
@@ -13950,15 +13951,15 @@ class LogistikController extends ApiController{
         $kdProfile = (int) $this->getDataKdProfile($request);
         $tglAyeuna = date('Y-m-d H:i:s');
         \DB::beginTransaction();
-        // try {
+        try {
 
              $data = new RiwayatPerubahanHarga();
              foreach ($request['details'] AS $item){
                  if ((float)$item['hargabaru'] != 0 || $item['hargabaru'] != null){
                      $strukPelayananDetail = StrukPelayananDetail::where('nostrukfk', $request['struk']['nostruk'])
-                                             ->where('kdprofile', $kdProfile)
-                                             ->where('objectprodukfk', $item['produkfk'])
-                                             ->first();
+                        ->where('kdprofile', $kdProfile)
+                        ->where('objectprodukfk', $item['produkfk'])
+                        ->first();
 
                      $data->kdprofile = $kdProfile;
                      $data->statusenabled = true;
@@ -13994,13 +13995,17 @@ class LogistikController extends ApiController{
                              'harganetto1' => $harganetto1,
                              'harganetto2' => $harganetto2
                          ]);
+                         $SP = StrukPelayanan::where('norec', $request['struk']['nostruk'])->first();
+                         $SP->totalharusdibayar = $request['struk']['totalharusdibayar'];
+                         $SP->totalhargasatuan = $request['struk']['totalhargasatuan'];
+                         $SP->save();
                  }
              }
 
-        //     $transStatus = 'true';
-        // } catch (\Exception $e) {
+            $transStatus = 'true';
+        } catch (\Exception $e) {
             $transStatus = 'false';
-        // }
+        }
 
         if ($transStatus == 'true') {
             $transMessage = "Ubah Harga Penerimaan Berhasil";
@@ -14017,6 +14022,7 @@ class LogistikController extends ApiController{
             $result = array(
                 "status" => 400,
                 "message" => $transMessage,
+                "e" => $e->getMessage() . ' / '. $e->getLine(),
                 "as" => 'ea@epic',
             );
         }
@@ -14826,5 +14832,39 @@ class LogistikController extends ApiController{
         );
 
         return $this->respond($result);
+    }
+    public function verifSPJ(Request $request){
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        // $tglAyeuna = date('Y-m-d H:i:s');
+        \DB::beginTransaction();
+        try {
+            $SP = StrukPelayanan::where('norec', $request['norec'])->first();
+            $SP->isverifspj = true;
+            $SP->save();
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Verifikasi SPJ Berhasil";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMessage,
+                // "data" => $data,
+                "as" => 'ea@epic',
+            );
+        } else {
+            $transMessage = "Verifikasi SPJ Gagal !";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message" => $transMessage,
+                "e" => $e->getMessage() . ' / '. $e->getLine(),
+                "as" => 'ea@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
 }
