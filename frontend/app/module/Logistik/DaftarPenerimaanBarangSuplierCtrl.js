@@ -15,6 +15,7 @@ define(['initialize'], function (initialize) {
             LoadCache();
             ComboLoad();
             function LoadCache() {
+                // $scope.item.namarekanan = undefined
                 var chacePeriode = cacheHelper.get('DaftarPenerimaanBarangSuplierCtrl');
                 if (chacePeriode != undefined) {
                     $scope.item.tglAwal = new Date(chacePeriode[0]);
@@ -176,7 +177,7 @@ define(['initialize'], function (initialize) {
                     noSppb = "&noSppb=" + $scope.item.noSppb
                 }
                 $scope.pegawaiLogin = medifirstService.getPegawaiLogin();
-                console.log($scope.pegawaiLogin)
+                // console.log($scope.pegawaiLogin)
                 var tglAwal = moment($scope.item.tglAwal).format('YYYY-MM-DD HH:mm:ss');
                 var tglAkhir = moment($scope.item.tglAkhir).format('YYYY-MM-DD HH:mm:ss');
                 medifirstService.get("logistik/get-daftar-penerimaan?" +
@@ -459,6 +460,13 @@ define(['initialize'], function (initialize) {
                     "title": "Total Tagihan",
                     "width": "100px",
                     "template": "<span class='style-right'>{{formatRupiah('#: totalharusdibayar #', '')}}</span>"
+                },
+                {
+                    "field": "isverifspj",
+                    "title": "Verifikasi SPJ",
+                    "width": "100px",
+                    "template": "#if (isverifspj) {# #= 'Sudah Diverifikasi' # #} else {# - #} #",
+
                 }
             ]
         }
@@ -848,6 +856,21 @@ define(['initialize'], function (initialize) {
                 }
                 cacheHelper.set('UbahHargaPenerimaanBarangSuplierCtrl', chacePeriode);
                 $state.go('UbahHargaPenerimaanBarangSuplier')
+            }
+            $scope.verifSPJ = function(e){
+                // console.log(e);
+                $scope.isRouteLoading = true
+                if(e == undefined){
+                    toastr.error('Pilih data dulu')
+                    return
+                }
+                var objSave = {
+                    norec: e.norec 
+                }
+                medifirstService.post('logistik/save-verif-spj', objSave).then(function(e){
+                init();
+                $scope.isRouteLoading = false
+                })
             }
 
             //***********************************
