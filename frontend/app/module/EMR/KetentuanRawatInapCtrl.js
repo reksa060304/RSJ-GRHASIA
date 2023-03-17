@@ -10,6 +10,7 @@ define(['initialize','Configuration'], function (initialize,configuration) {
             $scope.totalSkor = 0
             $scope.totalSkor2 = 0
             $scope.totalSkor4 = 0
+            $scope.now = new Date()
             $scope.cc = {}
             var nomorEMR = '-'
             var peagawaiLogin = medifirstService.getPegawaiLogin()
@@ -132,7 +133,12 @@ define(['initialize','Configuration'], function (initialize,configuration) {
             medifirstService.get("emr/get-emr-transaksi-detail?noemr=" + nomorEMR + "&emrfk=" + $scope.cc.emrfk, true).then(function (dat) {
                 $scope.item.obj = []
                 $scope.item.obj2 = []
+                $scope.item.obj[3004617] = moment($scope.now).format('YYYY-MM-DD HH:mm')
 
+                $scope.item.obj[3004616] = {
+                value: medifirstService.getPegawaiLogin().id,
+                text: medifirstService.getPegawaiLogin().namaLengkap
+            }
                
                 $scope.item.obj[3004451]=$scope.cc.namapasien
                 $scope.item.obj[3004452]=$scope.cc.nocm

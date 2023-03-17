@@ -84,7 +84,7 @@
 <div class="grid_12">
     <div class="grid_12">
         <div class="panel panel-default container_12">
-            <div class="panel-heading">  Pengkajian Medis Psikiatri Rawat Inap NAPZA 1-3 (BB) 22.01.Rev02</div>
+            <div class="panel-heading">  Pengkajian Medis Psikiatri Rawat Inap NAPZA</div>
         </div>
         <div style="margin-top:10px">
             <div class="grid_12" style="margin-top: 10px;">
@@ -527,9 +527,33 @@
                             </table>
                             </div>
                         </fieldset>
+                        <fieldset>     
+                            <LEGEND><b>F. RIWAYAT PENGGUNAAN OBAT</b></LEGEND>
+                            <div class="grid_12">
+                                <table style="border: 0px">
+                                    <tr>
+                                        <div class="grid_12 margin-bottom margin-top">
+                                            <label c-label item="item" style="margin-top: 5px;">Obat yang rutin dikonsumsi :</label> <br>
+                                            <div class="grid_12 margin-top-20 margin-bottom-20">
+                                            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3013273]"
+                                                    k-data-source=""
+                                                    style="height: 40px; width: 90%; "/>
+                                            </div>
+                                            <label c-label item="item" style="margin-top: 5px;">Obat yang digunakan sekarang :</label> <br>
+                                            <div class="grid_12 margin-top-20 margin-bottom-20">
+                                            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3013274]"
+                                                    k-data-source=""
+                                                    style="height: 40px; width: 90%; "/>
+                                            </div>
+                                        </div>
+                                    </tr>
+                                   
+                                </table>
+                            </div>
+                            </fieldset>
                         
                         <fieldset>     
-                            <LEGEND><b>F. RIWAYAT KASUS HUKUM</b></LEGEND>
+                            <LEGEND><b>G. RIWAYAT KASUS HUKUM</b></LEGEND>
                             <div class="grid_12">
                                 <table style="border: 0px">
                                     <tr>
@@ -580,7 +604,7 @@
                             </div>
                             </fieldset>
                             <fieldset>     
-                                <LEGEND><b>G. RIWAYAT PRIBADI</b></LEGEND>
+                                <LEGEND><b>H. RIWAYAT PRIBADI</b></LEGEND>
                                 <div class="grid_12">
                                     <table style="border: 0px">
                                         <tr><label c-label item="item" style="margin-top: 5px;">1. Diagram Keluarga</label> <br>
@@ -787,7 +811,6 @@
                                                     style="height: 40px; width: 90%; "/>
                                             </div>
                                         </tr>
-                                       
                                     </table>
                                     </div>
                                 </fieldset>
@@ -910,7 +933,6 @@
                                             <div class="grid_12">
                                                 <table style="border: 0px">
                                                 <tr>
-                                                    <div class="grid_12 margin-top-20 margin-bottom"><label c-label item="item" style="margin-top: 5px;">7. Riwayat Pendidikan Terakhir</label> <br></div>
                                                     <div class="grid_6" ng-repeat="list in listPenunjang | orderBy:'id'" style="padding: 5pt 5pt">
                                                         <b>{{list.nama}}</b>
                                                         <div class="grid_12" style="padding: 5pt">
@@ -1189,7 +1211,7 @@
                                                         </div>
                                                         <div class="grid_12">
                                                             <label c-label item="item" class="margin-bottom">Tanggal </label>
-                                                            <input style="width: 100%" k-ng-model="item.obj[3013312]" kendo-datetimepicker
+                                                            <input style="width: 100%" k-ng-model="item.obj[3013312]" kendo-datepicker
                                                             placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd'" parsedate="yyyy-MM-dd" />
                                                             <label c-label item="item" class="margin-bottom"><br></label>
                                                         </div>
@@ -1197,7 +1219,7 @@
                                                             <label c-label item="item">Selesai pemeriksaan Pukul :  </label>
                                                         </div>
                                                         <div class="grid_12">
-                                                            <input style="width: 100%" k-ng-model="item.obj[3013313]" kendo-datetimepicker
+                                                            <input style="width: 100%" k-ng-model="item.obj[3013313]" kendo-timepicker
                                                                 placeholer="HH:mm" k-format="'HH:mm'"
                                                                 parsedate="HH:mm" />
                         

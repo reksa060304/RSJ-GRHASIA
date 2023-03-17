@@ -19,6 +19,7 @@ define(['initialize'], function (initialize) {
             var pegawaiInputDetail = ''
             $scope.item.kasusbaru = true
             $scope.item.kasuslama = false
+            $scope.now = new Date()
             // $scope.item.obj[120001] = new Date()
             medifirstService.getPart('emr/get-datacombo-part-pegawai', true, true, 20).then(function (data) {
                 $scope.listPegawai = data
@@ -1031,24 +1032,24 @@ define(['initialize'], function (initialize) {
                         {"id": 120182, "nama": "Tidak ada kelainan", "type": "checkbox3"},
                         {"id": 120183, "nama": "Neologisme", "type": "checkbox3"},
                         {"id": 120184, "nama": "Sirkumstansial", "type": "checkbox3"},
-                        {"id": 120233, "nama": "Gagap", "type": "checkbox3"},
-                        {"id": 120234, "nama": "Perseverasi", "type": "checkbox3"},
-                        {"id": 120185, "nama": "inkoherensi", "type": "checkbox3"},
-                        {"id": 120186, "nama": "Tangensial", "type": "checkbox3"},
-                        {"id": 120187, "nama": "Verbegerasi", "type": "checkbox3"},
-                        {"id": 120188, "nama": "Asosiasi longgar", "type": "checkbox3"},
-                        {"id": 120189, "nama": "Flight of ideas", "type": "checkbox3"},
-                        {"id": 120190, "nama": "Ekolali", "type": "checkbox3"},
-                        {"id": 120191, "nama": "Irelevansi", "type": "checkbox3"},
-                        {"id": 120192, "nama": "Flight into mysticsm", "type": "checkbox3"},
-                        {"id": 120193, "nama": "Lain - lain :", "type": "textbox6"},
-                        {"id": 120194, "nama": "Progresi Pikir Kuantitatif : ", "type": "label0"},
-                        {"id": 120195, "nama": "Tidak ada kelainan", "type": "checkbox3"},
-                        {"id": 120196, "nama": "Logore", "type": "checkbox3"},
-                        {"id": 120197, "nama": "Reming", "type": "checkbox3"},
-                        {"id": 120198, "nama": "Bloking", "type": "checkbox3"},
-                        {"id": 120199, "nama": "Mutisme", "type": "checkbox3"},
-                        {"id": 120200, "nama": "Lain-lain : ", "type": "textbox6"},
+                        {"id": 120185, "nama": "Gagap", "type": "checkbox3"},
+                        {"id": 120186, "nama": "Perseverasi", "type": "checkbox3"},
+                        {"id": 120187, "nama": "inkoherensi", "type": "checkbox3"},
+                        {"id": 120188, "nama": "Tangensial", "type": "checkbox3"},
+                        {"id": 120189, "nama": "Verbegerasi", "type": "checkbox3"},
+                        {"id": 120190, "nama": "Asosiasi longgar", "type": "checkbox3"},
+                        {"id": 120191, "nama": "Flight of ideas", "type": "checkbox3"},
+                        {"id": 120192, "nama": "Ekolali", "type": "checkbox3"},
+                        {"id": 120193, "nama": "Irelevansi", "type": "checkbox3"},
+                        {"id": 120194, "nama": "Flight into mysticsm", "type": "checkbox3"},
+                        {"id": 120195, "nama": "Lain - lain :", "type": "textbox6"},
+                        {"id": 120196, "nama": "Progresi Pikir Kuantitatif : ", "type": "label0"},
+                        {"id": 120197, "nama": "Tidak ada kelainan", "type": "checkbox3"},
+                        {"id": 120198, "nama": "Logore", "type": "checkbox3"},
+                        {"id": 120199, "nama": "Reming", "type": "checkbox3"},
+                        {"id": 120200, "nama": "Bloking", "type": "checkbox3"},
+                        {"id": 120233, "nama": "Mutisme", "type": "checkbox3"},
+                        {"id": 120234, "nama": "Lain-lain : ", "type": "textbox6"},
                         
                     ]
                 },
@@ -1343,6 +1344,13 @@ define(['initialize'], function (initialize) {
                             $scope.item.obj[116216] = true
                             $scope.item.obj[116219] = true
                             $scope.item.obj[116222] = true
+                            $scope.item.obj[120001] = moment($scope.now).format('YYYY-MM-DD HH:mm')
+                            $scope.item.obj[120291] = moment($scope.now).format('HH:mm')
+
+                    $scope.item.obj[120293] = {
+                    value: medifirstService.getPegawaiLogin().id,
+                    text: medifirstService.getPegawaiLogin().namaLengkap
+                }
 
                             dataLoad = dat.data.data
 

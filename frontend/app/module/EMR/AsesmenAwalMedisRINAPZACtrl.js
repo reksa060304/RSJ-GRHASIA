@@ -590,6 +590,12 @@ define(['initialize'], function (initialize) {
                         value: $scope.cc.iddpjp,
                         text: $scope.cc.dokterdpjp
                     }
+                    $scope.item.obj[3013312] = moment($scope.now).format('YYYY-MM-DD')
+                    $scope.item.obj[3013313] = moment($scope.now).format('HH:mm')
+                    $scope.item.obj[3013316] = {
+                        value: medifirstService.getPegawaiLogin().id,
+                        text: medifirstService.getPegawaiLogin().namaLengkap
+                    }
                     dataLoad = dat.data.data
                     for (var i = 0; i <= dataLoad.length - 1; i++) {
                         if (parseFloat($scope.cc.emrfk) == dataLoad[i].emrfk) {
