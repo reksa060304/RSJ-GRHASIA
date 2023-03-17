@@ -18,11 +18,15 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.isCetakV = true;
             $scope.cc = {}
             var nomorEMR = '-'
+            var norecEMR = ''
+
             $scope.cc.emrfk = 3000426
             var dataLoad = []
             var pegawaiInputDetail= ''
             $scope.item.kasusbaru = true
             $scope.item.kasuslama = false
+            $scope.isTTD_E = true
+
 
             medifirstService.getPart('emr/get-datacombo-part-pegawai', true, true, 20).then(function (data) {
                 $scope.listPegawai = data
@@ -140,8 +144,16 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 }
                 $scope.listData2 = arrayShiftJaga2
             })
-
             var cacheNomorEMR = cacheHelper.get('cacheNomorEMR');
+            var cacheNoREC = cacheHelper.get('cacheNOREC_EMR');
+            if (cacheNoREC != undefined) {
+                norecEMR = cacheNomorEMR[1]
+            }
+            if (cacheNomorEMR != undefined) {
+                nomorEMR = cacheNomorEMR[0]
+                norecEMR = cacheNomorEMR[1]
+                $scope.cc.norec_emr = nomorEMR
+            }
             if (cacheNomorEMR != undefined) {
                 nomorEMR = cacheNomorEMR[0]
                 $scope.cc.norec_emr = nomorEMR
@@ -943,14 +955,79 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }
 
             $scope.cetakBlade = function () {
-                if (nomorEMR == '-') return
-
+                if (norecEMR == '') {
+                    toastr.error('Dokumen belum pernah di isi')
+                    return
+                }
+                // if ($scope.item.obj[3003998] != undefined) {
+                //     $scope.listPegawai.add($scope.item.obj[3003998])
+                //     $scope.item.pegawai = $scope.item.obj[3003998]
+                // }
+                // if (pegawai == undefined) {
+                //     return
+                // }
                 var local = JSON.parse(localStorage.getItem('profile'))
                 var nama = medifirstService.getPegawaiLogin().namaLengkap
 
-                window.open(configuration.baseApiBackend + 'report/get-cetak-suratketerangandokter?noemr=' + nomorEMR + '&emfk=' + $scope.cc.emrfk +
+                window.open(configuration.baseApiBackend + 'report/get-cetak-suratketerangandokter?nocm=' + $scope.cc.nocm +
+                    '&norec_apd=' + $scope.cc.norec +
+                    '&emr=' + norecEMR +
+                    '&emrfk=' + $scope.cc.emrfk +
                     '&kdprofile=' + local.id +
-                    '&nama=' + nama, '_blank');
+                    '&nama=' + nama +
+                    // '&isttd=true' +
+                    // '&pegawaittd=' + pegawai.value +
+                    '&noregistrasi=' + $scope.cc.noregistrasi +
+                    '&norec_pd=' + $scope.cc.norec_pd, '_blank');
+            }
+            $scope.ttdElek = function () {
+                if (norecEMR == '') {
+                    toastr.error('Dokumen belum pernah di isi')
+                    return
+                }
+
+                // var confirm = $mdDialog.confirm()
+                //   .title('Info')
+                //   .textContent('Yakin mau tanda tangani dokumen ini ? ')
+                //   .ariaLabel('Lucky day')
+                //   .cancel('Tidak')
+                //   .ok('Ya')
+                // $mdDialog.show(confirm).then(function () {
+
+                if ($scope.item.obj[3003998] != undefined) {
+                    $scope.listPegawai.add($scope.item.obj[3003998])
+                    $scope.item.pegawai = $scope.item.obj[3003998]
+                }
+                $scope.winDialog.center().open()
+                // })
+            }
+            $scope.savePengajuanTTE = function (pegawai) {
+                if (pegawai == undefined) {
+                    return
+                }
+                var local = JSON.parse(localStorage.getItem('profile'))
+                var nama = medifirstService.getPegawaiLogin().namaLengkap
+                $scope.isRouteLoading = true
+                medifirstService.get('report/get-cetak-suratketerangandokter?nocm=' + $scope.cc.nocm +
+                    '&norec_apd=' + $scope.cc.norec +
+                    '&emr=' + norecEMR +
+                    '&emrfk=' + $scope.cc.emrfk +
+                    '&kdprofile=' + local.id +
+                    '&nama=' + nama +
+                    '&isttd=true' +
+                    '&pegawaittd=' + pegawai.value +
+                    '&noregistrasi=' + $scope.cc.noregistrasi +
+                    '&norec_pd=' + $scope.cc.norec_pd
+                ).then(function (e) {
+                    if (e.data.status == 201) {
+                        toastr.success(e.data.message)
+                        $scope.winDialog.close()
+                    } else {
+                        toastr.error(e.data.message)
+                    }
+                    $scope.isRouteLoading = false
+
+                })
             }
         }
         

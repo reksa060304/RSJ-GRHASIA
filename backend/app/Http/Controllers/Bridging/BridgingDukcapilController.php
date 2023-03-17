@@ -42,11 +42,10 @@ class BridgingDukcapilController extends ApiController
                 "SELECT dkm.diagnosakeperawatan as masalahkeperawatan, count(dkt.norec) as jumlah from diagnosakep_t dkt
                 INNER JOIN diagnosakep_m dkm on dkm.id = dkt.objectdiagnosakepfk
                 where dkt.statusenabled=true and dkt.kdprofile=30 and dkt.tglinput BETWEEN '$request[tglAwal]' and '$tglAkhir'
-                
                 group by dkm.diagnosakeperawatan
                 ORDER by count(dkt.norec) desc;"
             ));
-        }else{
+        }else if($request['instalasi'] == '2'){
             $data = \DB::select(DB::raw(
                 "SELECT ed.caption as masalahkeperawatan, count(emrpd.value) as jumlah FROM emrpasiend_t emrpd
                 inner join emrd_t ed on ed.id = emrpd.emrdfk 
@@ -55,6 +54,17 @@ class BridgingDukcapilController extends ApiController
                 emrpd.tgl between '$request[tglAwal]' and '$tglAkhir' and emrpd.emrdfk in(3015887,3015884,3015881,3015878,3015875,3015872,3015869,3015866,3015863,3015860,3015857,3015854,3015851,3015848,3015845,3015842,3015839,3015836,3015833,3015830,3015827,3015824,3015821,3015818,3015815,3015812,3015809,3015806,3015803,3015800,3015797,3015794,3015791,3015788,3015785,3015782,3015779,3015776,3015773,3015770,3015767,3015764,3015761,3015758,3015755,3015752,3015749,3015746,3015743,3015740,3015737,3015734,3015731,3015728,3015725,3015722,3015719,3015716)
                 group by ed.caption
                 ORDER BY count(emrpd.value) desc"
+            ));
+        } else if($request['instalasi']=='3'){
+            $data=\DB::select(DB::raw(
+                "SELECT dkm.diagnosakeperawatan as masalahkeperawatan, count(dkt.norec) as jumlah from diagnosakep_t dkt
+                INNER JOIN diagnosakep_m dkm on dkm.id = dkt.objectdiagnosakepfk
+                inner join antrianpasiendiperiksa_t apd on apd.norec = dkt.norec_apd
+                inner join ruangan_m ru on ru.id = apd.objectruanganfk
+                where dkt.statusenabled=true and dkt.kdprofile=30 and dkt.tglinput BETWEEN '$request[tglAwal]' and '$tglAkhir'
+                and ru.objectdepartemenfk = 24
+                group by dkm.diagnosakeperawatan
+                ORDER by count(dkt.norec) desc;"
             ));
         }
         
