@@ -2767,7 +2767,7 @@ class ReportController extends ApiController{
                     left join pasien_m as ps on ps.id = sp.nocmfk
                     where  sts.norec = ssc.objectstsfk
         ) headersts on true
-        where sts.nosts = '$nosts'
+        where sts.nosts = '$nosts' and stsd.statusenabled = true
 		group by stsd.nourut, sts.totalsetoran, headersts.carabayarfk, to_char(sts.tglpenerimaan, 'DD-MM-YYYY'), stsd.kdrekening, stsd.nomer, stsd.uraian, stsd.vol, stsd.kolom1, stsd.kolom2, sts.nosts, sts.terbilang
         order by stsd.nourut"));
         

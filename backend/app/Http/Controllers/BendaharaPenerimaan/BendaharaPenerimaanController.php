@@ -6836,7 +6836,7 @@ class BendaharaPenerimaanController extends ApiController {
         $idProfile = (int) $kdProfile;
         $nosts= $request['nostsdetail'];
 
-        $detail = DB::select(DB::raw("select 
+        $detail = DB::select(DB::raw("elect 
         string_agg(headersts.namapasien, ',') namapasien,headersts.carabayarfk, sts.tglpenerimaan, stsd.kdrekening, stsd.nomer, stsd.uraian, stsd.vol, stsd.kolom1, stsd.kolom2, sts.nosts, sts.terbilang
         from 
         surattandasetoran_t as sts 
@@ -6852,7 +6852,7 @@ class BendaharaPenerimaanController extends ApiController {
                     left join pasien_m as ps on ps.id = sp.nocmfk
                     where  sts.norec = ssc.objectstsfk
         ) headersts on true
-        where sts.nosts = '$nosts'
+        where sts.nosts = '$nosts' and stsd.statusenabled = true
 		group by stsd.nourut, headersts.carabayarfk, sts.tglpenerimaan, stsd.kdrekening, stsd.nomer, stsd.uraian, stsd.vol, stsd.kolom1, stsd.kolom2, sts.nosts, sts.terbilang
         order by stsd.nourut"));
         
