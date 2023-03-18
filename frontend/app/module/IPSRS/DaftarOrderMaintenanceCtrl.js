@@ -59,7 +59,7 @@ define(['initialize'], function (initialize) {
            
             function loadCombo() {
                 medifirstService.get('ipsrs/get-detail-jenisperbaikan').then(function (data) {
-                    $scope.listObjekPerbaikan = data.data.data
+                    // $scope.listObjekPerbaikan = data.data.data
                 })
                 $scope.item.tglMulai = new Date(moment($scope.now).format('YYYY-MM-DD HH:mm'));
                 $scope.item.tglSelesai = new Date(moment($scope.now).format('YYYY-MM-DD HH:mm'));
@@ -82,11 +82,7 @@ define(['initialize'], function (initialize) {
                 
                medifirstService.getPart("ipsrs/get-jenis-alat").then(function (data) {
                     $scope.listJenisAlat = data;
-                    console.log($scope.listJenisAlat);
-                    for (let i = 0; i < $scope.listJenisAlat.length; i++) {
-                        // const element = array[i];
-
-                    }
+                    
                 });
                 medifirstService.getPart("ipsrs/get-jenis-pekerjaan").then(function (data) {
                     $scope.listJenisKerusakan = data;
@@ -1008,7 +1004,7 @@ define(['initialize'], function (initialize) {
             }
             $scope.getComboIsiObjekPerbaikan = function(){
                 
-                // $scope.listObjekPerbaikan = $scope.item.jenisAlat.details
+                $scope.listObjekPerbaikan = $scope.item.jenisAlat.details
             }
 
            //** BATAS SUCI */
