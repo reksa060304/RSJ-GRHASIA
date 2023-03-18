@@ -6836,7 +6836,7 @@ class BendaharaPenerimaanController extends ApiController {
         $idProfile = (int) $kdProfile;
         $nosts= $request['nostsdetail'];
 
-        $detail = DB::select(DB::raw("elect 
+        $detail = DB::select(DB::raw("select 
         string_agg(headersts.namapasien, ',') namapasien,headersts.carabayarfk, sts.tglpenerimaan, stsd.kdrekening, stsd.nomer, stsd.uraian, stsd.vol, stsd.kolom1, stsd.kolom2, sts.nosts, sts.terbilang
         from 
         surattandasetoran_t as sts 
