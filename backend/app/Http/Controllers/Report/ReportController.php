@@ -2197,6 +2197,10 @@ class ReportController extends ApiController{
         $pageWidth = 500;
         $res['profile'] = Profile::where('id',$request['kdprofile'])->first();
         $res['d'] = $data;
+        $res['pegawai']= array(
+            'id'=> $request['id_nama'],
+            'pegawai'=> $request['nama']
+        );
 //        dd( $res['d'] );
 
         return view('report.catatanklinik',compact('res','pageWidth'));

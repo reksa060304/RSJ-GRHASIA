@@ -72,7 +72,7 @@
         <td bordercolor="#808080" height="13">
             <font style="font-size: 11pt" face="Arial" color="#000000">
                     <span style="font-weight: 700;font-size: 11pt">
-                             HASIL RESUME MEDIS INI DITULISKAN DI ANTA MEDIKA. PADA TANGGAL {{  $raw->tglresume }}.
+                             HASIL RESUME MEDIS INI DITULISKAN DI RUMAH SAKIT JIWA GRHASIA. PADA TANGGAL {{  $raw->tglresume }}.
                     </span>
             </font>
         </td>
