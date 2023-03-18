@@ -39,6 +39,8 @@ use App\Master\Pasien;
 use App\Traits\Valet;
 use phpDocumentor\Reflection\Types\Null_;
 use Webpatser\Uuid\Uuid;
+use App\Transaksi\StrukOrderBatalVerif;
+use App\Transaksi\StrukOrderBatalVerifDetail;
 
 use Exception;
 
@@ -1405,11 +1407,15 @@ class RadiologiController extends ApiController
                 if (isset($request['isNotVerif']) && $request['isNotVerif'] != "" && $request['isNotVerif'] != "undefined") {
                     if ($request['isNotVerif'] == true) {
                         $data = $data->whereNull('pp.order_no');
+                        $data = $data->whereNull('so.keterangantolak');
+
                     }
                 }
                 if (isset($request['isVerif']) && $request['isVerif'] != "" && $request['isVerif'] != "undefined") {
                     if ($request['isVerif'] == true) {
                         $data = $data->whereNotNull('pp.order_no');
+                        $data = $data->whereNull('so.keterangantolak');
+
                     }
                 }
             }
@@ -2149,6 +2155,7 @@ class RadiologiController extends ApiController
         $tglAwal = $request['tglAwal'];
         $tglAkhir = $request['tglAkhir'];
         $paramKlp = '';
+        $paramPr = '';
         $paramDk = '';
         $idDokter = '';
         $dokid = '';
@@ -2184,6 +2191,22 @@ class RadiologiController extends ApiController
                 $d = $d + 1;
             }
             $paramKlp = " AND klp.id IN ($str)";
+        }
+
+        if (isset($request['PrArr']) && $request['PrArr']!="" && $request['PrArr']!="undefined"){
+            $arrayProduk = explode(',',$request['PrArr']) ;
+            $ids = [];
+            $str = '';
+            $d=0;
+            foreach ( $arrayProduk as $item){
+                if ($str == ''){
+                    $str = $item;
+                }else{
+                    $str = $str . ',' . $item;
+                }
+                $d = $d + 1;
+            }
+            $paramPr = " AND pro.id IN ($str)";
         }
 
         if (isset($request['dkArr']) && $request['dkArr']!="" && $request['dkArr']!="undefined"){
@@ -2233,6 +2256,7 @@ class RadiologiController extends ApiController
                       $dokid
                       $paramKlp
                       $paramDk
+                      $paramPr
         "));
 
 //        $dataPetugas = DB::select(DB::raw("
@@ -2948,5 +2972,91 @@ class RadiologiController extends ApiController
         );
         return $this->respond($dataTea);
     }
+    public function saveTolakOrder(Request $request) {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        DB::beginTransaction();
+        try{
+            StrukOrder::where('norec', $request['norec_so'])
+                ->where('kdprofile', $idProfile)
+                ->update([
+                    'keterangantolak'=> $request['keterangantolak']
+                ]
+            );
+            $pd=PasienDaftar::where('norec', $request['norec_pd'])->select('nocmfk')->get();
+            foreach ($pd as $p) {
+                $sob = new StrukOrderBatalVerif();
+                $sob->norec = $sob->generateNewId();
+                $sob->kdprofile = $idProfile;
+                $sob->statusenabled = 1;
+                $sob->nocmfk = $p->nocmfk;
+                $sob->keteranganorder = 'Tolak Order Radiologi';
+                $sob->noorder = $request['noorder'];
+                $sob->objectpegawaibatalfk = $request['iddokterorder'];
+                $sob->objectruanganfk = $request['objectruanganfk'];
+                $sob->objectruangantujuanfk = $request['objectruangantujuanfk'];
+                $sob->tglorder = $request['tglorder'];
+                $sob->norecorderfk = $request['norec_so'];
+                $sob->tglbatalverifikasi = date('Y-m-d H:i:s');
+                $sob->isdelivered = 1;
+                $sob->qtyjenisproduk = 0;
+                $sob->totalbeamaterai = 0;
+                $sob->totalbiayakirim = 0;
+                $sob->totalbiayatambahan = 0;
+                $sob->totaldiscount = 0;
+                $sob->totalhargasatuan = 0;
+                $sob->totalharusdibayar = 0;
+                $sob->totalpph = 0;
+                $sob->totalppn = 0;
+                // $sob->totalharusdibayar = 0;
+                // $sob->totalharusdibayar = 0;
+                $sob->qtyproduk = count($request['details']);
+                $sob->save();
+                
+                foreach ($request['details'] as $d) {
+                    $sobd = new StrukOrderBatalVerifDetail();
+                    $sobd->norec = $sobd->generateNewId();
+                    $sobd->kdprofile = $idProfile;
+                    $sobd->statusenabled = 1;
+                    $sobd->hargasatuan = $d['hargasatuan'];
+                    $sobd->objectkelasfk = $request['objectkelasfk'];
+                    $sobd->nocmfk = $p->nocmfk;
+                    $sobd->strukorderfk = $request['norec_so'];
+                    $sobd->objectprodukfk = $d['produkid'];
+                    $sobd->qtyproduk = $d['qtyproduk'];
+                    $sobd->objectruanganfk = $request['objectruanganfk'];
+                    $sobd->objectruangantujuanfk = $request['objectruangantujuanfk'];
+                    $sobd->tglpelayanan = $d['tglpelayanan'];
+                    $sobd->strukbatalfk = $sob->norec;
+                    $sobd->iscito = $request['iscito'] == "✔" ? 1 : 0;
+                    $sobd->qtyprodukretur = 0;
+                    $sobd->save();
+                }
+            }
+            
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
 
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan Tolak Order Sukses";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'as' => 'ramdanegie',
+            );
+        } else {
+            $transMessage = "Simpan Tolak Order Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message'  => $transMessage,
+                'e'=> $e->getLine() . ' / '.$e->getMessage(),
+                'as' => 'ramdanegie',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
 }

@@ -400,6 +400,9 @@
                     <button class="btnTemplate1" ng-click="detailVerif()"><i class="fa fa-th-list"></i>Detal
                         Verif</button>
                 </div>
+                <div class="grid_2" style="margin-top: 13px" ng-if="iddepartemen != 575">
+                    <button class="btnTemplate1" ng-click="TolakOrder()"><i class="fa fa-th-edit"></i>Tolak Order</button>
+                </div>
                 <div class="grid_2" style="margin-top: 13px" ng-if="iddepartemen == 575 && kelUser == 'dokter'">
                     <button class="btnTemplate1" ng-click="verifikasiDokter()"><i class="fa fa-th-edit"></i>Verif Dokter
                     Laboratorium</button>
@@ -666,7 +669,127 @@
         </div>
     </div>
 
+<div kendo-window="popUpTolakOrder" k-title="'Detail Order'" k-visible="false" k-width="900"
+    k-on-close="win2visible = false">
+    <!-- <fieldset> -->
+    <!-- <legend>Verifikasi</legend> -->
+    <div class="panel panel-default container_12">
 
+        <div class="grid_4">
+            <div class="grid_12">
+                <label c-label item="item" c-label-text="No Order"></label>
+            </div>
+            <div class="clear"></div>
+
+            <div class="grid_12">
+                <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.noOrder" ng-disabled="true" />
+            </div>
+        </div>
+        <div class="grid_4">
+            <div class="grid_12">
+                <label c-label item="item">No RM</label>
+            </div>
+            <div class="clear"></div>
+
+            <div class="grid_12">
+                <input c-text-box type="input" filter="" class="k-textbox" ng-model="headerVerif.nocm"
+                    ng-disabled="true" />
+            </div>
+        </div>
+        <div class="grid_4">
+            <div class="grid_12">
+                <label c-label item="item" c-label-text="Nama Pasien"></label>
+            </div>
+            <div class="clear"></div>
+
+            <div class="grid_12">
+                <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.namaPasiens"
+                    ng-disabled="true" />
+            </div>
+        </div>
+        <div class="grid_4">
+            <div class="grid_12">
+                <label c-label item="item">Kelompok Pasien </label>
+            </div>
+            <div class="clear"></div>
+
+            <div class="grid_12">
+                <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.kelompokpasiens"
+                    ng-disabled="true" />
+                <!-- <textarea style="width: 99%; height: 50px;" ng-model="headerVerif.diagnosa" disabled></textarea> -->
+            </div>
+        </div>
+        <div class="grid_8">
+            <div class="grid_12">
+                <label c-label item="item">Diagnosa </label>
+            </div>
+            <div class="clear"></div>
+
+            <div class="grid_12">
+                <input c-text-box type="input" filter="" class="k-textbox" ng-model="headerVerif.diagnosa"
+                    ng-disabled="true" />
+                <!-- <textarea style="width: 99%; height: 50px;" ng-model="headerVerif.diagnosa" disabled></textarea> -->
+            </div>
+        </div>
+
+        <div class="grid_12 headerBox" style="margin-top:10px;">
+            <p>Rincian Layanan</p>
+        </div>
+        
+        <div class="grid_12 " style="margin-top:10px">
+            <div id="kGrids" kendo-grid k-data-source="sourceVerif" k-selectable="'row'" k-columns="columnVerif"
+                k-pageable="'true'" k-sortable="'true'" k-ng-model="dataSelectedVerif"
+                ng-click="klikVerif(dataSelectedVerif)">
+            </div>
+        </div>
+        <div class="grid_3">
+            <div class="grid_12">
+                <label c-label item="item" c-label-text="Dokter Tolak Order"></label>
+            </div>
+            <div class="clear"></div>
+
+            <div class="grid_12">
+                <input style="width: 100%;" kendo-combo-box k-ng-model="item.dokterOrder"
+                    k-data-text-field="'namalengkap'" k-data-value-field="'id'" k-filter="'contains'"
+                    k-auto-bind="false" k-data-source="listDokter" />
+            </div>
+        </div>
+
+        <div class="grid_6">
+
+            <div class="pull-right" style="margin-top:4%">
+                <button class="k-button" ng-click="simpanTolakOrder()" ng-disabled='btnSimpanVis'>Tolak Order</button>
+                <button class="k-button" ng-click="batalTolakOrder()">Tutup</button>
+            </div>
+        </div>
+        <div class="grid_12">
+            <div class="grid_6">
+                <label c-label item="item " c-label-text="Keterangan Tolak"></label>
+            </div>
+            <div class="grid_6">
+                <label c-label item="item " c-label-text="Keterangan Order"></label>
+            </div>
+            <div class="grid_6">
+                <textarea class="k-textbox" ng-model="item.catatanTolak" maxlength="8000" ng-disabled="isVerif"
+                    style="height: 50px; width: 100%;margin-top:5px;"></textarea>
+                <p class="length-textarea">
+                    8000/{{item.catatanTolak ? item.catatanTolak.length : 0}}
+                </p>
+            </div>
+            <div class="grid_6">
+                <textarea class="k-textbox" ng-model="item.keteranganLab" maxlength="8000" ng-disabled="isVerif"
+                    style="height: 50px; width: 100%;margin-top:5px;"></textarea>
+                <p class="length-textarea">
+                    8000/{{item.keteranganLab ? item.keteranganLab.length : 0}}
+                </p>
+            </div>
+        </div>
+
+
+    </div>
+
+    <!-- </fieldset> -->
+</div>
     <!-- </c-panel>
 </div> -->
     <!-- </div>
