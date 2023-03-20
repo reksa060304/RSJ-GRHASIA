@@ -1347,11 +1347,11 @@ define(['initialize'], function (initialize) {
                             $scope.item.obj[120001] = moment($scope.now).format('YYYY-MM-DD HH:mm')
                             $scope.item.obj[120291] = moment($scope.now).format('HH:mm')
 
-                    $scope.item.obj[120293] = {
-                    value: medifirstService.getPegawaiLogin().id,
-                    text: medifirstService.getPegawaiLogin().namaLengkap
-                }
-
+                            $scope.item.obj[120293] = {
+                                value: medifirstService.getPegawaiLogin().id,
+                                text: medifirstService.getPegawaiLogin().namaLengkap
+                            }
+                            
                             dataLoad = dat.data.data
 
                             for (var i = 0; i <= dataLoad.length - 1; i++) {
@@ -1369,7 +1369,19 @@ define(['initialize'], function (initialize) {
                                             $scope.skorNutrisi = parseFloat(dataLoad[i].value)
 
                                     }
+                                    if (dataLoad[i].type == "textbox6") {
+                                        $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
+                                    }
                                     if (dataLoad[i].type == "checkbox") {
+                                        chekedd = false
+                                        if (dataLoad[i].value == '1') {
+                                            chekedd = true
+                                        }
+                                        $scope.item.obj[dataLoad[i].emrdfk] = chekedd
+
+                                    }
+                                    
+                                    if (dataLoad[i].type == "checkbox12") {
                                         chekedd = false
                                         if (dataLoad[i].value == '1') {
                                             chekedd = true
@@ -1419,39 +1431,82 @@ define(['initialize'], function (initialize) {
                     } else {
                         medifirstService.get("emr/get-emr-otomatis?noemr=" + nomorEMR + "&emrfk=3000412" + "&emrid=" + $scope.cc.emrfk).then(function (data) {
                             var datas = data.data.data
-                            console.log(datas);
                             $scope.isRouteLoading = false
+                            $scope.item.obj = []
+                            $scope.item.obj2 = []
+                            $scope.item.obj[116062] = $scope.now
+                            $scope.item.obj[116068] = {
+                                text: $scope.cc.namaruangan,
+                                value: $scope.cc.objectruanganfk
+                            }
+
+                            $scope.item.obj[116201] = true
+                            $scope.item.obj[116204] = true
+                            $scope.item.obj[116207] = true
+                            $scope.item.obj[116210] = true
+                            $scope.item.obj[116213] = true
+                            $scope.item.obj[116216] = true
+                            $scope.item.obj[116219] = true
+                            $scope.item.obj[116222] = true
+                            $scope.item.obj[120001] = moment($scope.now).format('YYYY-MM-DD HH:mm')
+                            $scope.item.obj[120291] = moment($scope.now).format('HH:mm')
+
+                            $scope.item.obj[120293] = {
+                                value: medifirstService.getPegawaiLogin().id,
+                                text: medifirstService.getPegawaiLogin().namaLengkap
+                            }
                             for (let i = 0; i < datas.length; i++) {
-                                if (datas[i].id == 3002093 && datas[i].value == 2) {
-                                    $scope.item.obj[120253] = true
-                                } else if (datas[i].id == 3002093 && datas[i].value == 1) {
-                                    $scope.item.obj[120252] = true
+                                if (datas[i].type == "textarea") {
+                                    $scope.item.obj[datas[i].id] = datas[i].value
                                 }
-
-                                if (datas[i].id == 3002058 && datas[i].value == 1) {
-                                    $scope.item.obj[120246] = true
-                                } else if (datas[i].id == 3002058 && datas[i].value == 2) {
-                                    $scope.item.obj[120247] = true
-                                } else if (datas[i].id == 3002058 && datas[i].value == 3) {
-                                    $scope.item.obj[120248] = true
-                                } else if (datas[i].id == 3002058 && datas[i].value == 4) {
-                                    $scope.item.obj[120249] = true
-                                } else if (datas[i].id == 3002058 && datas[i].value == 5) {
-                                    $scope.item.obj[120250] = true
-                                } else if (datas[i].id == 3002058 && datas[i].value == 6) {
-                                    $scope.item.obj[120251] = true
-                                }
-
-                                if (datas[i].id2 != 0) {
-                                    $scope.item.obj[datas[i].id2] = datas[i].value
-
+                                if (datas[i].type == "combobox") {
+                                    var str = datas[i].value
+                                    if (str != undefined) {
+                                        var res = str.split("~");
+                                        $scope.item.obj[datas[i].id] = {
+                                            value: res[0],
+                                            text: res[1]
+                                        }
+                                    }
                                 }
                                 if (datas[i].type == "checkbox") {
                                     if (datas[i].value == "1") {
-                                        $scope.item.obj[datas[i].id2] = true
+                                        $scope.item.obj[datas[i].id] = true
                                         console.log(datas[i].type);
                                     }
                                 }
+                                if (datas[i].type == "radio") {
+                                        // $scope.item.obj[datas[i].id] = true
+
+                                    if (datas[i].value == "1" && datas[i].id == 120246) {
+                                        $scope.item.obj[120246] = true
+                                    }
+                                    if (datas[i].value == "2" && datas[i].id == 120247) {
+                                        $scope.item.obj[120247] = true
+                                    }
+                                    if (datas[i].value == "3") {
+                                        $scope.item.obj[120248] = true
+                                    }
+                                    if (datas[i].value == "4") {
+                                        $scope.item.obj[120249] = true
+                                    }
+                                    if (datas[i].value == "5") {
+                                        $scope.item.obj[120250] = true
+                                    }
+                                    if (datas[i].value == "6") {
+                                        $scope.item.obj[120251] = true
+                                    }
+                                    if (datas[i].value == "1" && datas[i].id == 120252) {
+                                        $scope.item.obj[120252] = true
+                                    }
+                                    if (datas[i].value == "2" && datas[i].id == 120253) {
+                                        $scope.item.obj[120253] = true
+                                    }
+                                }
+                                if (datas[i].type == "textbox") {
+                                    $scope.item.obj[datas[i].id] = datas[i].value
+                                }
+
                             }
 
                         })
