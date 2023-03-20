@@ -370,10 +370,10 @@ input, button, select, optgroup, textarea {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;">
-                            <img src="{!! asset('images/logo_only.png') !!}" style="object-fit: cover; height: 100%;margin-left: 20px">
+                            <img src="{!! asset('images/grhasia-bg-white.png') !!}" style="object-fit: cover; height: 100%;margin-left: 20px">
 
                             <span style="font-size: 18px; margin-left: 20px;font-weight: bold;padding-top: 10px;">
-                             
+
                              <div class="white--text" style="line-height: 1; align-self: center;color: #fff!important; caret-color: #fff!important;">
                                 <div style="font-size: 1.5rem;">{!! $configData['namaProfile']  !!}</div> <div style="font-weight: 300;">{!! $configData['project'] !!}</div>
                             </div>
