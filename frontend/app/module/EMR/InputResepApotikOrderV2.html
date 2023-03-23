@@ -98,7 +98,9 @@
                     </div>
                 </div>
             </div>
-
+            <div class="grid_12" style="margin-top:60px">
+                <div ng-include='"../app/template/Shared/TemplateLoading"'></div>
+            </div>
             <div class="grid_12">
                 <div class="grid_12 headerBox">
                     <p>Daftar Resep Pasien</p>
@@ -188,7 +190,7 @@
                                 <label c-label item="item" c-label-text="Jumlah"></label>
                             </div>
                             <div class="grid_12">
-                                <input c-text-box type="input" filter="" class="k-textbox"
+                                <input c-text-box type="input" class="k-textbox"
                                     ng-model="item.jumlahxmakan" />
                             </div>
                         </div>
@@ -538,9 +540,7 @@
 
         </div>
 
-        <div class="grid_12" style="margin-top:60px">
-            <div ng-include='"../app/template/Shared/TemplateLoading"'></div>
-        </div>
+        
     </div>
 
     <div class="grid_12" ng-show="riwayatForm" style="margin-top: -40px;">
