@@ -34,11 +34,21 @@
                     <input c-text-box type="input" filter="'char'" class="k-textbox" ng-model="item.namaPasien"
                         ng-keypress="($event.which == 13)? SearchEnter():item.namaPasien" />
                 </div>
-                <div class="grid_2" style="margin-top:5px">
+                <!-- <div class="grid_2" style="margin-top:5px">
                     <label c-label c-label-text="namaRuangan" real></label>
                     <input style="width: 100%;" kendo-combo-box k-ng-model="item.ruangan"
                         k-data-text-field="'namaruangan'" k-data-value-field="'id'" k-filter="'contains'"
                         k-auto-bind="false" k-data-source="listRuangan" />
+                    <input style="width: 100%;" kendo-combo-box k-ng-model="item.Ruangan" k-data-text-field="'namaRuangan'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="ruangans"/>
+                </div> -->
+                <div class="grid_2" style="margin-top:5px">
+                    <label c-label c-label-text="namaRuangan" real></label>
+                    <!-- <input style="width: 100%;" kendo-combo-box k-ng-model="item.ruangan" k-data-text-field="'namaruangan'" 
+                        k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listRuangan" /> -->
+                    <select ng-show="listRuangan.length" kendo-multi-select k-options="selectOptionsRuangan"
+                        k-filter="'contains'" k-data-source="listRuangan" k-ng-model="item.ruanganMulti"></select>
+
+
                     <!--<input style="width: 100%;" kendo-combo-box k-ng-model="item.Ruangan" k-data-text-field="'namaRuangan'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="ruangans"/>-->
                 </div>
                 <div class="grid_1" style="margin-top: 20px;

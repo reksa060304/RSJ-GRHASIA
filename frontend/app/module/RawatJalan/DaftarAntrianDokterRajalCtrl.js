@@ -6,6 +6,8 @@ define(['initialize'], function (initialize) {
             $scope.now = new Date();
             $scope.item = {};
             $scope.item.isDokter = false
+            $scope.item.ruanganMulti = []
+
             // $scope.dataPasienSelected = {};
             // $scope.item.periodeAwal =  new Date();
             $scope.item.periodeAwal = dateHelper.setJamAwal(new Date());
@@ -49,11 +51,36 @@ define(['initialize'], function (initialize) {
                 var chacePeriode = cacheHelper.get('DaftarAntrianDokterRajalCtrl');
                 if (chacePeriode != undefined) {
                     //debugger;
-                    var arrPeriode = chacePeriode.split('~');
-                    $scope.item.periodeAwal = new Date(arrPeriode[0]);
-                    $scope.item.periodeAkhir = new Date(arrPeriode[1]);
-                    $scope.item.periodeAkhir = new Date(arrPeriode[1]);
-                    $scope.item.ruangan = { id: arrPeriode[2], namaruangan: arrPeriode[3] }
+                    // var arrPeriode = chacePeriode.split('~');
+                    // $scope.item.periodeAwal = new Date(arrPeriode[0]);
+                    // $scope.item.periodeAkhir = new Date(arrPeriode[1]);
+                    // $scope.item.periodeAkhir = new Date(arrPeriode[1]);
+                    // $scope.item.ruangan = { id: arrPeriode[2], namaruangan: arrPeriode[3] }
+                    // if (arrPeriode[4].length > 0) {
+                    //     for (var i = 0; i < arrPeriode[4].length; i++) {
+                    //         $scope.item.ruanganMulti[i] = {
+                    //             id: arrPeriode[4][i].id,
+                    //             namaruangan: arrPeriode[4][i].namaruangan
+                    //         }
+                    //     }
+                    //     // $scope.item.ruanganMulti = chacePeriode[4]
+                    // }
+                    $scope.item.periodeAwal = new Date(chacePeriode[0]);
+                    $scope.item.periodeAkhir = new Date(chacePeriode[1]);
+                    if (chacePeriode[2] != null && chacePeriode[3] != null)
+                        $scope.item.ruangan = {
+                            id: chacePeriode[2],
+                            namaruangan: chacePeriode[3]
+                        }
+                    if (chacePeriode[4].length > 0) {
+                        for (var i = 0; i < chacePeriode[4].length; i++) {
+                            $scope.item.ruanganMulti[i] = {
+                                id: chacePeriode[4][i].id,
+                                namaruangan: chacePeriode[4][i].namaruangan
+                            }
+                        }
+                        // $scope.item.ruanganMulti = chacePeriode[4]
+                    }
                     // $scope.item.tglpulang = new Date(arrPeriode[2]);                
                 } else {
                     $scope.item.periodeAwal = dateHelper.setJamAwal(new Date());
@@ -63,6 +90,16 @@ define(['initialize'], function (initialize) {
                 medifirstService.get("rawatjalan/get-data-combo-dokter", false).then(function (data) {
                     $scope.listRuangan = data.data.ruanganRajal;
                     $scope.listPilihRuang = data.data.ruangdokter;
+                    $scope.selectOptionsRuangan = {
+                        placeholder: "Pilih Ruangan...",
+                        dataTextField: "namaruangan",
+                        dataValueField: "id",
+                        // dataSource:{
+                        //     data: $scope.listRuangan
+                        // },
+                        autoBind: true,
+
+                    };
                 });
 
                 medifirstService.getPart("sysadmin/general/get-dokter-general", true, 10).then(function (e) {
@@ -99,7 +136,19 @@ define(['initialize'], function (initialize) {
                 if ($scope.item.ruangan != undefined) {
                     var ruangId = "&ruangId=" + $scope.item.ruangan.id
                 }
+                var listRuangan = ""
 
+                if ($scope.item.ruanganMulti.length != 0) {
+                    var a = ""
+                    var b = ""
+                    for (var i = $scope.item.ruanganMulti.length - 1; i >= 0; i--) {
+
+                        var c = $scope.item.ruanganMulti[i].id
+                        b = "," + c
+                        a = a + b
+                    }
+                    listRuangan = a.slice(1, a.length)
+                } 
                 $q.all([
                     medifirstService.get("rawatjalan/get-daftar-antrian-rajal?" +
                         "&tglAwal=" + tglAwal +
@@ -107,7 +156,8 @@ define(['initialize'], function (initialize) {
                         "&norm=" + nocm +
                         "&noreg=" + noRegistrasi +
                         "&nama=" + nama
-                        + dokId + ruangId),
+                        + dokId + ruangId+
+                        "&ruanganArr=" + listRuangan),
                 ]).then(function (data) {
                     $scope.isRouteLoading = false;
                     var datas = data[0].data;
@@ -166,7 +216,14 @@ define(['initialize'], function (initialize) {
                             }
                         }
                     });
-                    var chacePeriode = tglAwal + "~" + tglAkhir + "~" + $scope.item.ruangan.id + "~" + $scope.item.ruangan.namaruangan;
+                    var chacePeriode = {
+                        0: tglAwal,
+                        1: tglAkhir,
+                        2: $scope.item.ruangan != undefined ? $scope.item.ruangan.id : null,
+                        3: $scope.item.ruangan != undefined ? $scope.item.ruangan.namaruangan : null,
+                        4: $scope.item.ruanganMulti,
+                    }
+                    // var chacePeriode = tglAwal + "~" + tglAkhir + "~" + $scope.item.ruangan.id + "~" + $scope.item.ruangan.namaruangan + '~' + listRuangan;
                     cacheHelper.set('DaftarAntrianDokterRajalCtrl', chacePeriode);
                 });
             }
