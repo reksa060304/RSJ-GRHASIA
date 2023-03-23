@@ -479,16 +479,27 @@
             <!-- <div class="grid_7">
                 <img src="../app/images/markingsite.png"  style="width: 100%;" alt="User Image">
             </div> -->
-            <link rel="stylesheet" type="text/css" href="../app/stylesheets/markingsite/annocan.css"/><!-- notice: css is compiled from less -->
+            <!-- <link rel="stylesheet" type="text/css" href="../app/stylesheets/markingsite/annocan.css"/> -->
+            <!-- notice: css is compiled from less -->
         
-            <div class="grid_12">
+            <!-- <div class="grid_12">
                 <div id="annocanvas01" style="float:left;">
                     <canvas id="annocanvas01_canvas" width="960" height="854" class="canvas_canvas">
                         Sorry. Canvas is not supported by your browser...
                     </canvas>
                 </div>
+            </div> -->
+            <div class="grid_12">
+                <!-- <div class="grid_12" style="width: 160px; height: 160px; border-style: solid; margin: auto; float: none;"> -->
+                <div class="grid_7" style="text-align: center;width: 400px;background:url(../app/images/markingsite.png);z-index: 9999;background-position: center;background-repeat: no-repeat;background-size: cover;">
+                    <div id="iframe">
+                      <canvas id="sign_1" width="400px" height="400px"></canvas>
+                    </div>
+                </div>
+                <div class="grid_12" style="text-align:center">
+                    <button class="k-button batal red" style="margin-top: 10px" ng-click="batalTTd('sign_1')">Hapus</button>
+                </div>
             </div>
-       
               <!--   <script src="./app/stylesheets/markingsite/dummy_image.js" type="text/javascript"></script> -->
             <div class="grid_12">
                 <div class="grid_8"></div>
