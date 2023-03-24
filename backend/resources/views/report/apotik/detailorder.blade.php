@@ -93,20 +93,24 @@
                 </thead>
                 <tbody>
                     @php
-                        $rke = 0
+                        $rke = 0;
                     @endphp
                     <?php for ($i = 0; $i < count($orderPelayanan); $i++){ ?>
                         <tr>
-                            @if($orderPelayanan[$i]['rke'] != $rke)
+
+                            @if((int)$orderPelayanan[$i]['rke'] != $rke)
                                 <td class="price fs-13" style="text-align: center; margin-top: 10px;"><?= $orderPelayanan[$i]['rke']; ?></td>
                                 <td class="fs-13" style="text-align: left; margin-top: 10px; width: 300px; max-width: 300px;"><?= $orderPelayanan[$i]['namaproduk']; ?></td>
                                 <td class="price fs-13" style="text-align: center; margin-top: 10px;"><?= $orderPelayanan[$i]['dosis']; ?> <?= $orderPelayanan[$i]['satuandosis']; ?></td>
                                 @if($orderPelayanan[$i]['jumlahracikan'] != null)
+
                                 <td class="price fs-13" style="text-align: center; margin-top: 10px;"><?= $orderPelayanan[$i]['jumlahracikan']; ?> <?= $orderPelayanan[$i]['satuanstandar']; ?></td>
                                 @else
+
                                 <td class="price fs-13" style="text-align: center; margin-top: 10px;"><?= $orderPelayanan[$i]['jumlahobat']; ?> <?= $orderPelayanan[$i]['satuanstandar']; ?></td>
                                 @endif
                             @else
+
                                 <td class="price fs-13" style="text-align: center"></td>
                                 <td class="fs-13" style="text-align: left; width: 300px; max-width: 300px;"><?= $orderPelayanan[$i]['namaproduk']; ?></td>
                                 <td class="price fs-13" style="text-align: center"><?= $orderPelayanan[$i]['dosis']; ?> <?= $orderPelayanan[$i]['satuandosis']; ?></td>
@@ -116,8 +120,6 @@
                                 <td class="price fs-13" style="text-align: center"><?= $orderPelayanan[$i]['jumlahobat']; ?> <?= $orderPelayanan[$i]['satuanstandar']; ?></td>
                                 @endif
                             @endif
-                            
-                            
                         </tr>
                         @if($orderPelayanan[$i]['jeniskemasan'] == 'Non Racikan')
                         <tr style="">
@@ -134,7 +136,7 @@
                             <td colspan="1"></td>
                             <td colspan="4" class="price fs-13" style="text-align: center; border-top: 1px solid black;"> <?= $orderPelayanan[$i]['catatandokter'] != '-' && $orderPelayanan[$i]['catatandokter'] != '' && $orderPelayanan[$i]['catatandokter'] != ' ' ? ' / '. $orderPelayanan[$i]['catatandokter'] : null ?></td>
                         </tr>
-                        @elseif($orderPelayanan[$i]['jeniskemasan'] == 'Racikan' && $orderPelayanan[$i]['rke'] != $orderPelayanan[$i+1]['rke'])
+                        @elseif($orderPelayanan[$i]['jeniskemasan'] == 'Racikan' && $orderPelayanan[$i]['rke'] != $rke)
                         <tr style="">
                             <td colspan="1"></td>
                             <td colspan="4" class="price fs-13" style="text-align: center; border-top: 1px solid black;"> <?= $orderPelayanan[$i]['catatandokter'] != '-' && $orderPelayanan[$i]['catatandokter'] != '' && $orderPelayanan[$i]['catatandokter'] != ' ' ? ' / '. $orderPelayanan[$i]['catatandokter'] : null ?></td>
