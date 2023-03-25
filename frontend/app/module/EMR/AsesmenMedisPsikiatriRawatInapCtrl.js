@@ -1168,6 +1168,10 @@ define(['initialize'], function (initialize) {
                         { "id": 120260, "nama": "PANSS-EC", "type": "checkbox3" },
                         { "id": 120261, "nama": "HRSD", "type": "checkbox3" },
                         { "id": 120262, "nama": "HRSA", "type": "checkbox3" },
+                        { "id": 120305, "nama": "", "type": "textbox3" },
+                        { "id": 120306, "nama": "", "type": "textbox3" },
+                        { "id": 120307, "nama": "", "type": "textbox3" },
+                        { "id": 120308, "nama": "", "type": "textbox3" },
                     ]
                 },
             ]
@@ -1347,7 +1351,7 @@ define(['initialize'], function (initialize) {
                             $scope.item.obj[120001] = moment($scope.now).format('YYYY-MM-DD HH:mm')
                             $scope.item.obj[120291] = moment($scope.now).format('HH:mm')
 
-                            $scope.item.obj[120293] = {
+                            $scope.item.obj[120295] = {
                                 value: medifirstService.getPegawaiLogin().id,
                                 text: medifirstService.getPegawaiLogin().namaLengkap
                             }
@@ -1451,10 +1455,11 @@ define(['initialize'], function (initialize) {
                             $scope.item.obj[120001] = moment($scope.now).format('YYYY-MM-DD HH:mm')
                             $scope.item.obj[120291] = moment($scope.now).format('HH:mm')
 
-                            $scope.item.obj[120293] = {
+                            $scope.item.obj[120295] = {
                                 value: medifirstService.getPegawaiLogin().id,
                                 text: medifirstService.getPegawaiLogin().namaLengkap
                             }
+                            
                             for (let i = 0; i < datas.length; i++) {
                                 if (datas[i].type == "textarea") {
                                     $scope.item.obj[datas[i].id] = datas[i].value
