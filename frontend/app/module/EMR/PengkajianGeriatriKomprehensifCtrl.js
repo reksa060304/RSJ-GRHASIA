@@ -28,6 +28,7 @@ define(['initialize'], function (initialize) {
             $scope.listPerubahanDiet = []
             $scope.listKarbohidrat = []
             $scope.listLemak = []
+            $scope.now = new Date()
 
             medifirstService.getPart('emr/get-datacombo-part-pegawai', true, true, 20).then(function (data) {
                 $scope.listPegawai = data
@@ -777,13 +778,15 @@ define(['initialize'], function (initialize) {
                     "detail":[
                         {
                             "id": 310191,
-                            "nama": "Ya",
-                            "descNilai": "0"
+                            "nama": "YA",
+                            "descNilai": "0",
+                            "style":""
                         },
                         {
                             "id": 310192,
-                            "nama": "Tidak",
-                            "descNilai": "1"
+                            "nama": "TIDAK",
+                            "descNilai": "1",
+                            "style":"font-weight:bold"
                         }
                     ]
                 },
@@ -792,13 +795,15 @@ define(['initialize'], function (initialize) {
                     "nama": "Apakah anda sudah meninggalkan banyak kegiatan dan minat/kesenangan anda ?",
                     "detail": [{
                             "id": 310193,
-                            "nama": "Ya",
-                            "descNilai": "1"
+                            "nama": "YA",
+                            "descNilai": "1",
+                            "style":"font-weight:bold"
                         },
                         {
                             "id": 310194,
-                            "nama": "Tidak",
-                            "descNilai": "0"
+                            "nama": "TIDAK",
+                            "descNilai": "0",
+                            "style":""
                         }
                     ]
                 },
@@ -807,13 +812,15 @@ define(['initialize'], function (initialize) {
                     "nama": "Apakah anda merasa kehidupan anda hampa ?",
                     "detail": [{
                             "id": 310195,
-                            "nama": "Ya",
-                            "descNilai": "1"
+                            "nama": "YA",
+                            "descNilai": "1",
+                            "style":"font-weight:bold"
                         },
                         {
                             "id": 310196,
-                            "nama": "Tidak",
-                            "descNilai": "0"
+                            "nama": "TIDAK",
+                            "descNilai": "0",
+                            "style":""
                         }
                     ]
                 },
@@ -822,13 +829,15 @@ define(['initialize'], function (initialize) {
                     "nama": "Apakah anda sering merasa bosan ?",
                     "detail": [{
                             "id": 310197,
-                            "nama": "Ya",
-                            "descNilai": "1"
+                            "nama": "YA",
+                            "descNilai": "1",
+                            "style":"font-weight:bold"
                         },
                         {
                             "id": 310198,
-                            "nama": "Tidak",
-                            "descNilai": "0"
+                            "nama": "TIDAK",
+                            "descNilai": "0",
+                            "style":""
                         }
                     ]
                 },
@@ -837,13 +846,15 @@ define(['initialize'], function (initialize) {
                     "nama": "Apakah anda mempunyai semangat baik setiap saat ?",
                     "detail": [{
                             "id": 310199,
-                            "nama": "Ya",
-                            "descNilai": "0"
+                            "nama": "YA",
+                            "descNilai": "0",
+                            "style":""
                         },
                         {
                             "id": 310200,
-                            "nama": "Tidak",
-                            "descNilai": "1"
+                            "nama": "TIDAK",
+                            "descNilai": "1",
+                            "style":"font-weight:bold"
                         }
                     ]
                 },
@@ -852,13 +863,15 @@ define(['initialize'], function (initialize) {
                     "nama": "Apakah anda takut sesuatu yang buruk akan terjadi pada anda ?",
                     "detail": [{
                             "id": 310201,
-                            "nama": "Ya",
-                            "descNilai": "1"
+                            "nama": "YA",
+                            "descNilai": "1",
+                            "style":"font-weight:bold"
                         },
                         {
                             "id": 310202,
-                            "nama": "Tidak",
-                            "descNilai": "0"
+                            "nama": "TIDAK",
+                            "descNilai": "0",
+                            "style":""
                         }
                     ]
                 },
@@ -867,13 +880,15 @@ define(['initialize'], function (initialize) {
                     "nama": "Apakah anda merasa bahagia pada sebagian besar hidup anda ?",
                     "detail": [{
                             "id": 310203,
-                            "nama": "Ya",
-                            "descNilai": "0"
+                            "nama": "YA",
+                            "descNilai": "0",
+                            "style":""
                         },
                         {
                             "id": 310204,
-                            "nama": "Tidak",
-                            "descNilai": "1"
+                            "nama": "TIDAK",
+                            "descNilai": "1",
+                            "style":"font-weight:bold"
                         }
                     ]
                 },
@@ -882,13 +897,15 @@ define(['initialize'], function (initialize) {
                     "nama": "Apakah anda sering merasa tidak berdaya ?",
                     "detail": [{
                             "id": 310205,
-                            "nama": "Ya",
-                            "descNilai": "1"
+                            "nama": "YA",
+                            "descNilai": "1",
+                            "style":"font-weight:bold"
                         },
                         {
                             "id": 310206,
-                            "nama": "Tidak",
-                            "descNilai": "0"
+                            "nama": "TIDAK",
+                            "descNilai": "0",
+                            "style":""
                         }
                     ]
                 },
@@ -897,13 +914,15 @@ define(['initialize'], function (initialize) {
                     "nama": "Apakah anda kebih senang tinggal di rumah daripada pergi ke luar dan mengerjakan sesuatu hal yang baru ? ",
                     "detail": [{
                             "id": 310207,
-                            "nama": "Ya",
-                            "descNilai": "1"
+                            "nama": "YA",
+                            "descNilai": "1",
+                            "style":"font-weight:bold"
                         },
                         {
                             "id": 310208,
-                            "nama": "Tidak",
-                            "descNilai": "0"
+                            "nama": "TIDAK",
+                            "descNilai": "0",
+                            "style":""
                         }
                     ]
                 },
@@ -912,13 +931,15 @@ define(['initialize'], function (initialize) {
                     "nama": "Apakah anda merasa mempunyai banyak masalah dengan daya ingat anda dibandingkan kebanyakan orang ? ",
                     "detail": [{
                             "id": 310209,
-                            "nama": "Ya",
-                            "descNilai": "1"
+                            "nama": "YA",
+                            "descNilai": "1",
+                            "style":"font-weight:bold"
                         },
                         {
                             "id": 310210,
-                            "nama": "Tidak",
-                            "descNilai": "0"
+                            "nama": "TIDAK",
+                            "descNilai": "0",
+                            "style":""
                         }
                     ]
                 },
@@ -927,13 +948,15 @@ define(['initialize'], function (initialize) {
                     "nama": "Apakah anda pikir hidup anda sekarang ini menyenangkan ?",
                     "detail": [{
                             "id": 310211,
-                            "nama": "Ya",
-                            "descNilai": "0"
+                            "nama": "YA",
+                            "descNilai": "0",
+                            "style":""
                         },
                         {
                             "id": 310212,
-                            "nama": "Tidak",
-                            "descNilai": "1"
+                            "nama": "TIDAK",
+                            "descNilai": "1",
+                            "style":"font-weight:bold"
                         }
                     ]
                 },
@@ -942,13 +965,15 @@ define(['initialize'], function (initialize) {
                     "nama": "Apakah anda merasa tidak berharga seperti perasaan anda saat kini ?",
                     "detail": [{
                             "id": 310213,
-                            "nama": "Ya",
-                            "descNilai": "1"
+                            "nama": "YA",
+                            "descNilai": "1",
+                            "style":"font-weight:bold"
                         },
                         {
                             "id": 310214,
-                            "nama": "Tidak",
-                            "descNilai": "0"
+                            "nama": "TIDAK",
+                            "descNilai": "0",
+                            "style":""
                         }
                     ]
                 },
@@ -957,13 +982,15 @@ define(['initialize'], function (initialize) {
                     "nama": "Apakah anda merasa penuh semangat ?",
                     "detail": [{
                             "id": 310215,
-                            "nama": "Ya",
-                            "descNilai": "0"
+                            "nama": "YA",
+                            "descNilai": "0",
+                            "style":""
                         },
                         {
                             "id": 310216,
-                            "nama": "Tidak",
-                            "descNilai": "1"
+                            "nama": "TIDAK",
+                            "descNilai": "1",
+                            "style":"font-weight:bold"
                         }
                     ]
                 },
@@ -972,13 +999,15 @@ define(['initialize'], function (initialize) {
                     "nama": "Apakah anda merasa bahwa keadaan anda tidak ada harapan ?",
                     "detail": [{
                             "id": 310217,
-                            "nama": "Ya",
-                            "descNilai": "1"
+                            "nama": "YA",
+                            "descNilai": "1",
+                            "style":"font-weight:bold"
                         },
                         {
                             "id": 310218,
-                            "nama": "Tidak",
-                            "descNilai": "0"
+                            "nama": "TIDAK",
+                            "descNilai": "0",
+                            "style":""
                         }
                     ]
                 },
@@ -987,22 +1016,420 @@ define(['initialize'], function (initialize) {
                     "nama": "Apakah anda pikir bahwa orang lain lebih baik keadaannya dari anda ?",
                     "detail": [{
                             "id": 310219,
-                            "nama": "Ya",
-                            "descNilai": "1"
+                            "nama": "YA",
+                            "descNilai": "1",
+                            "style":"font-weight:bold"
                         },
                         {
                             "id": 310220,
-                            "nama": "Tidak",
-                            "descNilai": "0"
+                            "nama": "TIDAK",
+                            "descNilai": "0",
+                            "style":""
                         }
                     ]
                 }
             ]
+
+
+$scope.listeuroqol = [
+                {
+                    "id": 1,
+                    "nama": "1. MOBILITAS",
+                    "detail": [{
+                            "id": 1,
+                            "nama": "Saya tidak mempunyai masalah untuk berjalan",
+                            "detail": [{
+                                id: 310224,
+                            }]
+                        },
+                        {
+                            "id": 2,
+                            "nama": "Saya ada masalah untuk berjalan",
+                            "detail": [{
+                                id: 310225,
+                            }]
+                        },
+                        {
+                            "id": 3,
+                            "nama": "Saya hanya mampu berbaring",
+                            "detail": [{
+                                id: 310226,
+                            }]
+                        },
+                    ]
+                },
+                {
+                    "id": 2,
+                    "nama": "2. PERAWATAN DIRI SENDIRI",
+                    "detail": [{
+                            "id": 1,
+                            "nama": "Saya tidak mempunyai kesulitan dalam perawatan diri sendiri",
+                            "detail": [{
+                                id: 310228,
+                            }]
+                        },
+                        {
+                            "id": 2,
+                            "nama": "Saya mengalami kesulitan untuk membasuh badan, mandi atau berpakaian",
+                            "detail": [{
+                                id: 310229,
+                            }]
+                        },
+                        {
+                            "id": 3,
+                            "nama": "Saya tidak mampu membasuh badan, mandi atau berpakaian sendiri",
+                            "detail": [{
+                                id: 310230,
+                            }]
+                        },
+                    ]
+                },
+                {
+                    "id": 3,
+                    "nama": "3. AKTIVITAS SEHARI-HARI (misalnya pekerjaan rumah tangga, aktivitas keluarga, bersantai)",
+                    "detail": [{
+                        "id": 1,
+                        "nama": "Saya tak mempunyai kesulitan dalam melaksanakan kegiatan sehari-hari",
+                        "max": 5,
+                        "detail": [{
+                            id: 310232,
+                        }]
+                    },
+                    {
+                        "id": 2,
+                        "nama": "Saya mempunyai keterbatasan dalam melaksanakan kegiatan sehari-hari",
+                        "detail": [{
+                            id: 310233,
+                        }]
+                    },
+                    {
+                        "id": 3,
+                        "nama": "Saya tak mampu melaksanakan kegiatan sehari-hari",
+                        "detail": [{
+                            id: 310234,
+                        }]
+                    },
+                 ]
+                },
+                {
+                    "id": 4,
+                    "nama": "4. RASA NYERI / TAK NYAMAN",
+                    "detail": [{
+                        "id": 1,
+                        "nama": "Saya tidak mempunyai keluhan rasa nyeri atau rasa tak nyaman",
+                        "max": 3,
+                        "detail": [{
+                            id: 310236,
+                        }]
+                    },
+                    {
+                        "id": 2,
+                        "nama": "Saya suka merasakan agak nyeri atau agak kurang nyaman",
+                        "detail": [{
+                            id: 310237,
+                        }]
+                    },
+                    {
+                        "id": 3,
+                        "nama": "Saya menderita karena keluhan rasa nyeri atau tidak nyaman",
+                        "detail": [{
+                            id: 310238,
+                        }]
+                    }, ]
+                },
+                {
+                    "id": 5,
+                    "nama": "5. RASA CEMAS / DEPRESI",
+                    "detail": [{
+                        "id": 1,
+                        "nama": "Saya tidak merasa cemas/gelisah atau depresi (jiwa tertekan)",
+                        "max": 2,
+                        "detail": [{
+                            id: 310240,
+                        }]
+                    }, {
+                        "id": 2,
+                        "nama": "Saya suka merasa agak cemas atau depresi",
+                        "max": 1,
+                        "detail": [{
+                            id: 310241,
+                        }]
+                    },
+                    {
+                        "id": 3,
+                        "nama": "Saya merasa sangat cemas atau sangat depresi",
+                        "max": 3,
+                        "detail": [{
+                            id: 310242,
+                        }]
+                    },
+                ]
+                },
+            ]
+            $scope.listgds = [
+                {
+                    "id": 1,
+                    "nama": "Apakah anda pada dasarnya puas dengan kehidupan anda ?",
+                    "detail":[
+                        {
+                            "id": 310191,
+                            "nama": "YA",
+                            "descNilai": "0",
+                            "style":""
+                        },
+                        {
+                            "id": 310192,
+                            "nama": "TIDAK",
+                            "descNilai": "1",
+                            "style":"font-weight:bold"
+                        }
+                    ]
+                },
+                {
+                    "id": 2,
+                    "nama": "Apakah anda sudah meninggalkan banyak kegiatan dan minat/kesenangan anda ?",
+                    "detail": [{
+                            "id": 310193,
+                            "nama": "YA",
+                            "descNilai": "1",
+                            "style":"font-weight:bold"
+                        },
+                        {
+                            "id": 310194,
+                            "nama": "TIDAK",
+                            "descNilai": "0",
+                            "style":""
+                        }
+                    ]
+                },
+                {
+                    "id": 3,
+                    "nama": "Apakah anda merasa kehidupan anda hampa ?",
+                    "detail": [{
+                            "id": 310195,
+                            "nama": "YA",
+                            "descNilai": "1",
+                            "style":"font-weight:bold"
+                        },
+                        {
+                            "id": 310196,
+                            "nama": "TIDAK",
+                            "descNilai": "0",
+                            "style":""
+                        }
+                    ]
+                },
+                {
+                    "id": 4,
+                    "nama": "Apakah anda sering merasa bosan ?",
+                    "detail": [{
+                            "id": 310197,
+                            "nama": "YA",
+                            "descNilai": "1",
+                            "style":"font-weight:bold"
+                        },
+                        {
+                            "id": 310198,
+                            "nama": "TIDAK",
+                            "descNilai": "0",
+                            "style":""
+                        }
+                    ]
+                },
+                {
+                    "id": 5,
+                    "nama": "Apakah anda mempunyai semangat baik setiap saat ?",
+                    "detail": [{
+                            "id": 310199,
+                            "nama": "YA",
+                            "descNilai": "0",
+                            "style":""
+                        },
+                        {
+                            "id": 310200,
+                            "nama": "TIDAK",
+                            "descNilai": "1",
+                            "style":"font-weight:bold"
+                        }
+                    ]
+                },
+                {
+                    "id": 6,
+                    "nama": "Apakah anda takut sesuatu yang buruk akan terjadi pada anda ?",
+                    "detail": [{
+                            "id": 310201,
+                            "nama": "YA",
+                            "descNilai": "1",
+                            "style":"font-weight:bold"
+                        },
+                        {
+                            "id": 310202,
+                            "nama": "TIDAK",
+                            "descNilai": "0",
+                            "style":""
+                        }
+                    ]
+                },
+                {
+                    "id": 7,
+                    "nama": "Apakah anda merasa bahagia pada sebagian besar hidup anda ?",
+                    "detail": [{
+                            "id": 310203,
+                            "nama": "YA",
+                            "descNilai": "0",
+                            "style":""
+                        },
+                        {
+                            "id": 310204,
+                            "nama": "TIDAK",
+                            "descNilai": "1",
+                            "style":"font-weight:bold"
+                        }
+                    ]
+                },
+                {
+                    "id": 8,
+                    "nama": "Apakah anda sering merasa tidak berdaya ?",
+                    "detail": [{
+                            "id": 310205,
+                            "nama": "YA",
+                            "descNilai": "1",
+                            "style":"font-weight:bold"
+                        },
+                        {
+                            "id": 310206,
+                            "nama": "TIDAK",
+                            "descNilai": "0",
+                            "style":""
+                        }
+                    ]
+                },
+                {
+                    "id": 9,
+                    "nama": "Apakah anda kebih senang tinggal di rumah daripada pergi ke luar dan mengerjakan sesuatu hal yang baru ? ",
+                    "detail": [{
+                            "id": 310207,
+                            "nama": "YA",
+                            "descNilai": "1",
+                            "style":"font-weight:bold"
+                        },
+                        {
+                            "id": 310208,
+                            "nama": "TIDAK",
+                            "descNilai": "0",
+                            "style":""
+                        }
+                    ]
+                },
+                {
+                    "id": 10,
+                    "nama": "Apakah anda merasa mempunyai banyak masalah dengan daya ingat anda dibandingkan kebanyakan orang ? ",
+                    "detail": [{
+                            "id": 310209,
+                            "nama": "YA",
+                            "descNilai": "1",
+                            "style":"font-weight:bold"
+                        },
+                        {
+                            "id": 310210,
+                            "nama": "TIDAK",
+                            "descNilai": "0",
+                            "style":""
+                        }
+                    ]
+                },
+                {
+                    "id": 11,
+                    "nama": "Apakah anda pikir hidup anda sekarang ini menyenangkan ?",
+                    "detail": [{
+                            "id": 310211,
+                            "nama": "YA",
+                            "descNilai": "0",
+                            "style":""
+                        },
+                        {
+                            "id": 310212,
+                            "nama": "TIDAK",
+                            "descNilai": "1",
+                            "style":"font-weight:bold"
+                        }
+                    ]
+                },
+                {
+                    "id": 12,
+                    "nama": "Apakah anda merasa tidak berharga seperti perasaan anda saat kini ?",
+                    "detail": [{
+                            "id": 310213,
+                            "nama": "YA",
+                            "descNilai": "1",
+                            "style":"font-weight:bold"
+                        },
+                        {
+                            "id": 310214,
+                            "nama": "TIDAK",
+                            "descNilai": "0",
+                            "style":""
+                        }
+                    ]
+                },
+                {
+                    "id": 13,
+                    "nama": "Apakah anda merasa penuh semangat ?",
+                    "detail": [{
+                            "id": 310215,
+                            "nama": "YA",
+                            "descNilai": "0",
+                            "style":""
+                        },
+                        {
+                            "id": 310216,
+                            "nama": "TIDAK",
+                            "descNilai": "1",
+                            "style":"font-weight:bold"
+                        }
+                    ]
+                },
+                {
+                    "id": 14,
+                    "nama": "Apakah anda merasa bahwa keadaan anda tidak ada harapan ?",
+                    "detail": [{
+                            "id": 310217,
+                            "nama": "YA",
+                            "descNilai": "1",
+                            "style":"font-weight:bold"
+                        },
+                        {
+                            "id": 310218,
+                            "nama": "TIDAK",
+                            "descNilai": "0",
+                            "style":""
+                        }
+                    ]
+                },
+                {
+                    "id": 15,
+                    "nama": "Apakah anda pikir bahwa orang lain lebih baik keadaannya dari anda ?",
+                    "detail": [{
+                            "id": 310219,
+                            "nama": "YA",
+                            "descNilai": "1",
+                            "style":"font-weight:bold"
+                        },
+                        {
+                            "id": 310220,
+                            "nama": "TIDAK",
+                            "descNilai": "0",
+                            "style":""
+                        }
+                    ]
+                }
+            ]
+
             $scope.SkorNorton = 0;
             $scope.getSkorNorton = function (jawab) {
                 var arrobj = Object.keys($scope.item.obj);
                 var arrSave = []
-
+console.log(jawab)
                 for (var i = arrobj.length - 1; i >= 0; i--) {
                     if (arrobj[i] == jawab.id) {
                         if ($scope.item.obj[parseFloat(arrobj[i])] == true) {
@@ -1039,16 +1466,57 @@ define(['initialize'], function (initialize) {
                 // setSkorNorton()
             }
             $scope.SkorMMSE = 0;
-            $scope.getSkorMMSE = function (jawabss,jawab) {
-                
-                $scope.SkorMMSE = parseFloat($scope.item.obj[310172]) + parseFloat($scope.item.obj[310173]) +
-                    parseFloat($scope.item.obj[310174]) + parseFloat($scope.item.obj[310175]) + parseFloat($scope.item.obj[310176]) + parseFloat($scope.item.obj[310177]) +
-                    parseFloat($scope.item.obj[310178]) + parseFloat($scope.item.obj[310179]) + parseFloat($scope.item.obj[310180]) +
-                    parseFloat($scope.item.obj[310181]) + parseFloat($scope.item.obj[310182])
+            $scope.getSkorMMSE = function (jawabss,jawab)
+{
+    //jumlah1
+    let tgl1 = parseInt($scope.item.obj[310172]) || 0;
+    let tgl2 = parseInt($scope.item.obj[310173]) || 0;
+    let tgl3 = parseInt($scope.item.obj[310174]) || 0;
+    let tgl4 = parseInt($scope.item.obj[310175]) || 0;
+    let tgl5 = parseInt($scope.item.obj[310176]) || 0;
+    let tgl6 = parseInt($scope.item.obj[310177]) || 0;
+    let tgl7 = parseInt($scope.item.obj[310178]) || 0;
+    let tgl8 = parseInt($scope.item.obj[310179]) || 0;
+    let tgl9 = parseInt($scope.item.obj[310180]) || 0;
+    let tgl10 = parseInt($scope.item.obj[310181]) || 0;
+    let tgl11 = parseInt($scope.item.obj[310182]) || 0;
+    let jumlah1 =  tgl1+tgl2+tgl3+tgl4+tgl5+tgl6+tgl7+tgl8+tgl9+tgl10+tgl11;
+    $scope.item.obj[310183] = jumlah1;
+}
 
-                $scope.item.obj[310183] = $scope.SkorMMSE
-                // setSkorNorton()
-            }
+// $scope.SkorEuroqol = 0;
+// $scope.getSkorEuroqol = function (jawabss,jawab)
+// {
+// //jumlah1
+// let tgl1 = parseInt($scope.item.obj[310224]) || 0;
+// let tgl2 = parseInt($scope.item.obj[310225]) || 0;
+// let tgl3 = parseInt($scope.item.obj[310226]) || 0;
+// let tgl4 = parseInt($scope.item.obj[310228]) || 0;
+// let tgl5 = parseInt($scope.item.obj[310229]) || 0;
+// let tgl6 = parseInt($scope.item.obj[310230]) || 0;
+// let tgl7 = parseInt($scope.item.obj[310232]) || 0;
+// let tgl8 = parseInt($scope.item.obj[310233]) || 0;
+// let tgl9 = parseInt($scope.item.obj[310234]) || 0;
+// let tgl10 = parseInt($scope.item.obj[310236]) || 0;
+// let tgl11 = parseInt($scope.item.obj[310237]) || 0;
+// let tgl12 = parseInt($scope.item.obj[310238]) || 0;
+// let tgl13 = parseInt($scope.item.obj[310240]) || 0;
+// let tgl14 = parseInt($scope.item.obj[310241]) || 0;
+// let tgl15 = parseInt($scope.item.obj[310242]) || 0;
+// let jumlah2 =  tgl1+tgl2+tgl3+tgl4+tgl5+tgl6+tgl7+tgl8+tgl9+tgl10+tgl11+tgl12+tgl13+tgl14+tgl15;
+// $scope.item.obj[310243] = jumlah2;
+// }
+//             // $scope.SkorMMSE = 0;
+            // $scope.getSkorMMSE = function (jawabss,jawab) {
+                
+            //     $scope.SkorMMSE = parseFloat($scope.item.obj[310172]) + parseFloat($scope.item.obj[310173]) +
+            //         parseFloat($scope.item.obj[310174]) + parseFloat($scope.item.obj[310175]) + parseFloat($scope.item.obj[310176]) + parseFloat($scope.item.obj[310177]) +
+            //         parseFloat($scope.item.obj[310178]) + parseFloat($scope.item.obj[310179]) + parseFloat($scope.item.obj[310180]) +
+            //         parseFloat($scope.item.obj[310181]) + parseFloat($scope.item.obj[310182])
+
+            //     $scope.item.obj[310183] = $scope.SkorMMSE
+            //     // setSkorNorton()
+            // }
             $scope.skorNutrisi = 0;
             $scope.getSkorNutrisi = function (jawab) {
                 var arrobj = Object.keys($scope.item.obj);
@@ -1425,7 +1893,35 @@ define(['initialize'], function (initialize) {
                 }
                 
             ]
-            
+            $scope.listPenata = [{
+                "id": 1, "nama": "Score ",
+                "detail": [
+                    { "id": 310276, "nama": "", "type": "textarea2"},
+                    { "id": 310277, "nama": "", "type": "textarea2"},
+                ]
+            }]
+
+            $scope.listIntegrasiAsuhan = [
+                {
+                    "id": 1, "nama": "Integrasi Asuhan",
+                    "detail": [
+                        { "id": 310279, "nama": "Dokter", "type": "checkboxtextbox","idd":310280},
+                        { "id": 310281, "nama": "Perawat", "type": "checkboxtextbox","idd":310282}, 
+                        { "id": 310283, "nama": "PPA lain", "type": "checkboxtextbox","idd":310284},
+                    ]
+                }
+            ]
+            $scope.listPemulanganPasien = [
+                {
+                    "id": 1, "nama": "Rencana Pemulangan Pasien",
+                    "detail": [
+                        { "id": 310287, "nama": "Pulang, konsultasi selesai", "type": "checkboxtextbox","idd":310288},
+                        { "id": 310289, "nama": "Pulang, kontrol ulang", "type": "checkboxtextbox","idd":310290}, 
+                        { "id": 310291, "nama": "Rujuk ke", "type": "checkboxtextbox","idd":310292},
+                        { "id": 310293, "nama": "", "type": "checkboxtextbox","idd":310294},
+                    ]
+                }
+            ]   
             var cacheNomorEMR = cacheHelper.get('cacheNomorEMR');
             if (cacheNomorEMR != undefined) {
                 nomorEMR = cacheNomorEMR[0]
@@ -1498,6 +1994,16 @@ define(['initialize'], function (initialize) {
                 $scope.item.obj[116219] = true
                 $scope.item.obj[116222] = true
 
+                $scope.item.obj[310297] = moment($scope.now).format('YYYY-MM-DD HH:mm')
+                $scope.item.obj[310296] = {
+                    value: medifirstService.getPegawaiLogin().id,
+                    text: medifirstService.getPegawaiLogin().namaLengkap
+                }
+                $scope.item.obj[310286] = {
+                    value: medifirstService.getPegawaiLogin().id,
+                    text: medifirstService.getPegawaiLogin().namaLengkap
+                }
+
                 // $scope.item.obj[111056]=$scope.now
                 // $scope.item.obj[14563]={ value: $scope.cc.iddpjp, text: $scope.cc.dokterdpjp }
                 dataLoad = dat.data.data
@@ -1522,6 +2028,16 @@ define(['initialize'], function (initialize) {
                     if (parseFloat($scope.cc.emrfk) == dataLoad[i].emrfk) {
 
                         if (dataLoad[i].type == "textbox") {
+                            $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
+                            if (dataLoad[i].emrdfk == 21030370)
+                                $scope.totalSkor = parseFloat(dataLoad[i].value)
+                            if (dataLoad[i].emrdfk == 21030335)
+                                $scope.totalSkor5 = parseFloat(dataLoad[i].value)
+                            if (dataLoad[i].emrdfk == 20816)
+                                $scope.skorNutrisi = parseFloat(dataLoad[i].value)
+
+                        }
+                        if (dataLoad[i].type == "textbox3") {
                             $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
                             if (dataLoad[i].emrdfk == 21030370)
                                 $scope.totalSkor = parseFloat(dataLoad[i].value)
@@ -1580,11 +2096,23 @@ define(['initialize'], function (initialize) {
                             $scope.item.obj[dataLoad[i].emrdfk] = new Date(dataLoad[i].value)
                         }
 
-                        // if (dataLoad[i].type == "checkboxtextbox") {
-                        //     $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
-                        //     $scope.item.obj2[dataLoad[i].emrdfk] = true
-                        // }
+                         if (dataLoad[i].type == "checkboxtextbox") {
+                            $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
+                           $scope.item.obj2[dataLoad[i].emrdfk] = true
+                         }
                         if (dataLoad[i].type == "textarea") {
+                            $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
+                        }
+                        if (dataLoad[i].type == "radio") {
+                            $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
+                        }
+                        if (dataLoad[i].type == "textarea2") {
+                            $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
+                        }
+                        if (dataLoad[i].type == "textbox") {
+                            $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
+                        }
+                        if (dataLoad[i].type == "textarea3") {
                             $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
                         }
                         if (dataLoad[i].type == "combobox") {
