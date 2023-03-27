@@ -28,7 +28,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             $scope.showbtnadd[22034963] = true
             $scope.showbtnremove[22034963] = false
             var emrcppt = [443, 444, 445, 446, 447, 448, 94, 210222];
-
+            var norecEMR = ''
             $scope.listDataCppt = [
                 {
                     "id": 22034963, "nama": "Baris satu",
@@ -118,10 +118,15 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             function LoadCache() {
                 // nomorEMR = '-'
                 var chacePeriode = cacheHelper.get('cacheNomorEMR');
+                var cacheNoREC = cacheHelper.get('cacheNOREC_EMR');
+                if (cacheNoREC != undefined) {
+                    norecEMR = chacePeriode[1]
+                }
                 if (chacePeriode != undefined) {
                     nomorEMR = chacePeriode[0]
                     $scope.cc.norec_emr = nomorEMR
                     $scope.cc.tanggalEmrl = chacePeriode[2]
+                    norecEMR = chacePeriode[1]
                 }
             }
 
@@ -175,6 +180,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
           
                 var norecEMR = e.norec
                 var nama = medifirstService.getPegawaiLogin().namaLengkap
+                var id_nama = medifirstService.getPegawaiLogin().id
                 if (norecEMR == '') return
                
             
@@ -189,7 +195,8 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     + $scope.cc.nocm + '&norec_apd='+ $scope.cc.norec+'&emr=' + norecEMR
                     + '&emrfk='+  e.emrid
                     +'&kdprofile='+ profile
-                    +'&nama='+ nama,  '_blank');
+                    +'&nama=' + nama + '&id=' + id_nama,
+                    +  '_blank');
                 }
                
             
@@ -245,7 +252,17 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         "field": "tglregistrasi",
                         "title": "Tanggal Registrasi",
                         "width": "10%",
-                    }
+                    },
+                    // {
+                    //     "field": "noemr",
+                    //     "title": "TTD Elektronik",
+                    //     "width": "10%",
+                    //     "template": "<em class=\"k-button k-button-icon  k-secondary\" style=\"margin: 3px;padding-left: .4em;padding-right: .4em; margin-left: -3px;\" ng-click=\"ttdElek(dataItem)\"> <span class=\"k-sprite fa fa-print\" title=\"Cetak\" style=\"float: left;margin-top: 0.3em;padding-bottom: 2px;\"></span></em> "
+                    //         ,
+                    //     attributes: {
+                    //         style: "text-align: center;"
+                    //     }
+                    // },
                 ]
             }
             $scope.selectGrid = function(data){
@@ -740,8 +757,58 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         $scope.item.obj[22035008] = { value: pegawai.id, text: pegawai.namaLengkap }
                     }
                 }
-            })
+            }) 
+            $scope.norecSaveTTE = ''
+            $scope.ttdElek = function (e) {
+                var norecEMR = e.norec
+                $scope.norecSaveTTE = e.norec
+                $scope.emridSaveTTE = e.emrid
+                if (norecEMR == '') {
+                    toastr.error('Dokumen belum pernah di isi')
+                    return
+                }
+
+                $scope.item.pegawai = {
+                    text: medifirstService.getPegawaiLogin().namaLengkap,
+                    value: medifirstService.getPegawaiLogin().id
+                }
+                $scope.winDialog.center().open()
+                // })
+            }
+            $scope.savePengajuanTTE = function (pegawai) {
+                if (pegawai == undefined) {
+                    toastr.error('Pegawai penanda tangan tidak boleh kosong')
+                    return
+                }
+                var local = JSON.parse(localStorage.getItem('profile'))
+                var nama = medifirstService.getPegawaiLogin().namaLengkap
+                $scope.isRouteLoading = true
+                if ($scope.emridSaveTTE == 210222) {
+                    medifirstService.get('report/cetak-catatan-klinik?nocm=' + $scope.cc.nocm +
+                        '&norec_apd=' + $scope.cc.norec +
+                        '&emr=' + $scope.norecSaveTTE +
+                        '&emrfk=' + $scope.emridSaveTTE +
+                        '&kdprofile=' + local.id +
+                        '&nama=' + nama +
+                        '&isttd=true' +
+                        '&pegawaittd=' + pegawai.value +
+                        '&noregistrasi=' + $scope.cc.noregistrasi +
+                        '&norec_pd=' + $scope.cc.norec_pd
+                    ).then(function (e) {
+                        if (e.data.status == 201) {
+                            toastr.success(e.data.message)
+                            $scope.winDialog.close()
+                        } else {
+                            toastr.error(e.data.message)
+                        }
+                        $scope.isRouteLoading = false
+
+                    })
+                }
+                
+            }
             // End Isian Review otomasi terisi tgl/jam, nama
         }
+        
     ]);
 });

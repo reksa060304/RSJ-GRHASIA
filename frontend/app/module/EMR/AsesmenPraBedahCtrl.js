@@ -18,37 +18,39 @@ define(['initialize'], function (initialize) {
             var pegawaiInputDetail= ''
             $scope.item.kasusbaru = true
             $scope.item.kasuslama = false
-            var r2;
-            initDrawstuff()
+            var imgDefault ='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAKAAAACgCAYAAACLz2ctAAAAAXNSR0IArs4c6QAAAsxJREFUeF7t0jENAAAMw7CVP+nByOMSqBR5ZwqEBRZ+u1bgAIQgLQBgmt85gAykBQBM8zsHkIG0AIBpfucAMpAWADDN7xxABtICAKb5nQPIQFoAwDS/cwAZSAsAmOZ3DiADaQEA0/zOAWQgLQBgmt85gAykBQBM8zsHkIG0AIBpfucAMpAWADDN7xxABtICAKb5nQPIQFoAwDS/cwAZSAsAmOZ3DiADaQEA0/zOAWQgLQBgmt85gAykBQBM8zsHkIG0AIBpfucAMpAWADDN7xxABtICAKb5nQPIQFoAwDS/cwAZSAsAmOZ3DiADaQEA0/zOAWQgLQBgmt85gAykBQBM8zsHkIG0AIBpfucAMpAWADDN7xxABtICAKb5nQPIQFoAwDS/cwAZSAsAmOZ3DiADaQEA0/zOAWQgLQBgmt85gAykBQBM8zsHkIG0AIBpfucAMpAWADDN7xxABtICAKb5nQPIQFoAwDS/cwAZSAsAmOZ3DiADaQEA0/zOAWQgLQBgmt85gAykBQBM8zsHkIG0AIBpfucAMpAWADDN7xxABtICAKb5nQPIQFoAwDS/cwAZSAsAmOZ3DiADaQEA0/zOAWQgLQBgmt85gAykBQBM8zsHkIG0AIBpfucAMpAWADDN7xxABtICAKb5nQPIQFoAwDS/cwAZSAsAmOZ3DiADaQEA0/zOAWQgLQBgmt85gAykBQBM8zsHkIG0AIBpfucAMpAWADDN7xxABtICAKb5nQPIQFoAwDS/cwAZSAsAmOZ3DiADaQEA0/zOAWQgLQBgmt85gAykBQBM8zsHkIG0AIBpfucAMpAWADDN7xxABtICAKb5nQPIQFoAwDS/cwAZSAsAmOZ3DiADaQEA0/zOAWQgLQBgmt85gAykBQBM8zsHkIG0AIBpfucAMpAWADDN7xxABtICAKb5nQPIQFoAwDS/cwAZSAsAmOZ3/pJhAKGjqUGRAAAAAElFTkSuQmCC'
+            markignSite();
+            // var r2;
+            // initDrawstuff()
            
-            function initDrawstuff() {
-                // debugger
-                var bkg = new Image();
-                bkg.src = "../app/images/1608368309.jpg"; //temporary changed to load base64 directly to avoid security errors when running locally
-                // bkg.src = getDummy(); //base64 content loaded from dummy_image.js
-                bkg.addEventListener('load', function(){
+        //    function initDrawstuff() {
+        //         // debugger
+        //         var bkg = new Image();
+        //         bkg.src = "../app/images/1608368309.jpg"; //temporary changed to load base64 directly to avoid security errors when running locally
+        //         // bkg.src = getDummy(); //base64 content loaded from dummy_image.js
+        //         bkg.addEventListener('load', function(){
       
-                  r2= new RoCanvas;
-                  r2.RO("annocanvas01_canvas", {
-                      "toolbar": {
-                        colors: ["#FFF","#000","#FF0000","#00FF00","#0000FF","#FFFF00","#00FFFF"],
-                        custom_color: false,
-                          //tools: ['ellipse', 'path', 'circle', 'rectangle', 'arrow', 'textbox'],
-                          sizes: [3,6,10],		
-                          clearButton : {"text":"Nulstil"},	
-                          saveButton: null
-                      },
-                      "settings": {
-                          color: 'blue',
-                          lineWidth : "6",
-                tool: 'arrow'
-                      }, 
-                      "backgroundImage" : bkg,
-              "cssScale" : 2.0
-                  });
-              });
+        //           r2= new RoCanvas;
+        //           r2.RO("annocanvas01_canvas", {
+        //               "toolbar": {
+        //                 colors: ["#FFF","#000","#FF0000","#00FF00","#0000FF","#FFFF00","#00FFFF"],
+        //                 custom_color: false,
+        //                   //tools: ['ellipse', 'path', 'circle', 'rectangle', 'arrow', 'textbox'],
+        //                   sizes: [3,6,10],		
+        //                   clearButton : {"text":"Nulstil"},	
+        //                   saveButton: null
+        //               },
+        //               "settings": {
+        //                   color: 'blue',
+        //                   lineWidth : "6",
+        //         tool: 'arrow'
+        //               }, 
+        //               "backgroundImage" : bkg,
+        //       "cssScale" : 2.0
+        //           });
+        //       });
                  
-          }
+        //   }
       
           function testSave(instance)
           {		
@@ -1881,6 +1883,25 @@ define(['initialize'], function (initialize) {
                 // }
 
             })
+            medifirstService.get("emr/get-emr-transaksi-detail-img?noemr=" + nomorEMR + "&emrfk=" + $scope.cc.emrfk, true).then(function (dat) {                   
+                var dataImg = dat.data.data
+                for (var i = 0; i <= dataImg.length - 1; i++) {
+                        if (parseFloat($scope.cc.emrfk) == dataImg[i].emrfk) {
+                            if(dataImg[i].emrdfk== 1){
+                                var sigCanvas = document.getElementById('sign_1');
+                                var context = sigCanvas.getContext("2d");
+                                context.clearRect(0, 0, sigCanvas.width, sigCanvas.height);
+                                var imagess =  dataImg[i].image
+                                var background = new Image();
+                                background.src = imagess
+                                background.onload = function() {
+                                    context.drawImage(background, 0, 0, 400, 400);
+                                }
+                            }
+                        } 
+                    }
+                                         
+            })
             $scope.$watch('item.obj[116131]', function (nilai) {
 
                 if (nilai == undefined) return
@@ -2368,6 +2389,13 @@ define(['initialize'], function (initialize) {
             $scope.Save = function () {
                 var arrobj = Object.keys($scope.item.obj)
                 var arrSave = []
+                var arrSaveImg = []
+                var sigCanvas = document.getElementById("sign_1");
+                    var context = sigCanvas.getContext("2d");
+                    const dataURL = sigCanvas.toDataURL();
+                    if(imgDefault!=dataURL){
+                       arrSaveImg.push({ id: 1, values:dataURL }) 
+                    }
                 for (var i = arrobj.length - 1; i >= 0; i--) {
                     if ($scope.item.obj[parseInt(arrobj[i])] instanceof Date)
                         $scope.item.obj[parseInt(arrobj[i])] = moment($scope.item.obj[parseInt(arrobj[i])]).format('YYYY-MM-DD HH:mm')
@@ -2376,7 +2404,8 @@ define(['initialize'], function (initialize) {
                 $scope.cc.jenisemr = 'bedah'
                 var jsonSave = {
                     head: $scope.cc,
-                    data: arrSave
+                    data: arrSave,
+                    dataimg: arrSaveImg
                 }
                 medifirstService.post('emr/save-emr-dinamis', jsonSave).then(function (e) {
                     afterSave(e)
@@ -2395,6 +2424,190 @@ define(['initialize'], function (initialize) {
                 }
                 cacheHelper.set('cacheNomorEMR', arrStr);
             }
+
+            $(".export-svg").click(function() {
+                var sigCanvas = document.getElementById("canvas_sign");
+                var context = sigCanvas.getContext("2d");
+                const dataURL = sigCanvas.toDataURL();
+                
+         });
+         $scope.wakom = function(sigm){
+                  var xhr = new XMLHttpRequest();
+                  xhr.onreadystatechange = function(){
+                     if (this.readyState == 4 && this.status == 200){
+
+                         var sigCanvas = document.getElementById(sigm);
+                         var context = sigCanvas.getContext("2d");
+                         context.clearRect(0, 0, sigCanvas.width, sigCanvas.height);
+                          var imagess =  'data:image/png;base64,'+ JSON.parse(this.response).data
+                          var background = new Image();
+                          background.src = imagess
+                           // Make sure the image is loaded first otherwise nothing will draw.
+                          background.onload = function() {
+                             context.drawImage(background, 0, 0, 160, 160);
+                          }
+                         // console.log(this.response, typeof this.response);
+                         // surface.clear();
+                         // var imagess =  'data:image/png;base64,'+ JSON.parse(this.response).data
+
+                         // var rect = new geom.Rect(
+                         //     [10, 10],  // Position of the top left corner
+                         //     [130, 130] // Size of the rectangle
+                         // );
+                         // var image = new draw.Image(imagess, rect);
+
+
+                         // surface.draw(image);
+                     }
+                  }
+                
+                  xhr.open('GET', 'http://127.0.0.1:8123/api/signature?noreg=1289172812&why=RSJP PARAMARTA&who='+ $scope.cc.namapasien ,true);
+                  xhr.send(null);
+                    
+
+               }
+             $scope.batalTTd = function (canvas) {
+                  
+                   delete $scope.item.tdd1;
+                   delete $scope.item.tdd2;
+                   var sigCanvas = document.getElementById(canvas);
+                   var context = sigCanvas.getContext("2d");
+                   context.clearRect(0, 0, sigCanvas.width, sigCanvas.height);
+              
+               }
+
+              function getPosition(mouseEvent, sigCanvas) {
+                     var rect = sigCanvas.getBoundingClientRect();
+                     return {
+                       X: mouseEvent.clientX - rect.left,
+                       Y: mouseEvent.clientY - rect.top
+                     };
+              }
+
+              
+              function markignSite() {
+               // get references to the canvas element as well as the 2D drawing context
+               var sigCanvas = document.getElementById("sign_1");
+               var context = sigCanvas.getContext("2d");
+               context.strokeStyle = "red";
+               context.lineJoin = "round";
+               context.lineWidth = 2;
+
+               // Add background image to canvas - remove for blank white canvas
+               // var background = new Image();
+              
+               // background.onload = function() {
+               //   context.drawImage(background, 0, 0);
+               // }
+
+               // This will be defined on a TOUCH device such as iPad or Android, etc.
+               var is_touch_device = 'ontouchstart' in document.documentElement;
+
+               if (is_touch_device) {
+                 // create a drawer which tracks touch movements
+                 var drawer = {
+                   isDrawing: false,
+                   touchstart: function(coors) {
+                     context.beginPath();
+                     context.moveTo(coors.x, coors.y);
+                     this.isDrawing = true;
+                   },
+                   touchmove: function(coors) {
+                     if (this.isDrawing) {
+                       context.lineTo(coors.x, coors.y);
+                       context.stroke();
+                     }
+                   },
+                   touchend: function(coors) {
+                     if (this.isDrawing) {
+                       this.touchmove(coors);
+                       this.isDrawing = false;
+                     }
+                   }
+                 };
+
+                 // create a function to pass touch events and coordinates to drawer
+                 function draw(event) {
+
+                   // get the touch coordinates.  Using the first touch in case of multi-touch
+                   var coors = {
+                     x: event.targetTouches[0].pageX,
+                     y: event.targetTouches[0].pageY
+                   };
+
+                   // Now we need to get the offset of the canvas location
+                   var obj = sigCanvas;
+
+                   if (obj.offsetParent) {
+                     // Every time we find a new object, we add its offsetLeft and offsetTop to curleft and curtop.
+                     do {
+                       coors.x -= obj.offsetLeft;
+                       coors.y -= obj.offsetTop;
+                     }
+                     // The while loop can be "while (obj = obj.offsetParent)" only, which does return null
+                     // when null is passed back, but that creates a warning in some editors (i.e. VS2010).
+                     while ((obj = obj.offsetParent) != null);
+                   }
+
+                   // pass the coordinates to the appropriate handler
+                   drawer[event.type](coors);
+                 }
+
+                 // attach the touchstart, touchmove, touchend event listeners.
+                 sigCanvas.addEventListener('touchstart', draw, false);
+                 sigCanvas.addEventListener('touchmove', draw, false);
+                 sigCanvas.addEventListener('touchend', draw, false);
+
+                 // prevent elastic scrolling
+                 sigCanvas.addEventListener('touchmove', function(event) {
+                   event.preventDefault();
+                 }, false);
+               } else {
+
+                 // start drawing when the mousedown event fires, and attach handlers to
+                 // draw a line to wherever the mouse moves to
+                 $("#sign_1").mousedown(function(mouseEvent) {
+                   var position = getPosition(mouseEvent, sigCanvas);
+                   context.moveTo(position.X, position.Y);
+                   context.beginPath();
+
+                   // attach event handlers
+                   $(this).mousemove(function(mouseEvent) {
+                     drawLine(mouseEvent, sigCanvas, context);
+                   }).mouseup(function(mouseEvent) {
+                     finishDrawing(mouseEvent, sigCanvas, context);
+                   }).mouseout(function(mouseEvent) {
+                     finishDrawing(mouseEvent, sigCanvas, context);
+                   });
+                 });
+
+               }
+             }
+
+             // draws a line to the x and y coordinates of the mouse event inside
+             // the specified element using the specified context
+             function drawLine(mouseEvent, sigCanvas, context) {
+
+               var position = getPosition(mouseEvent, sigCanvas);
+
+               context.lineTo(position.X, position.Y);
+               context.stroke();
+             }
+
+             // draws a line from the last coordiantes in the path to the finishing
+             // coordinates and unbind any event handlers which need to be preceded
+             // by the mouse down event
+             function finishDrawing(mouseEvent, sigCanvas, context) {
+               // draw the line to the finishing coordinates
+               drawLine(mouseEvent, sigCanvas, context);
+
+               context.closePath();
+
+               // unbind any events which could draw
+               $(sigCanvas).unbind("mousemove")
+                 .unbind("mouseup")
+                 .unbind("mouseout");
+                }
 
         }
     ]);

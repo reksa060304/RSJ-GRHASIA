@@ -163,6 +163,18 @@ class PenelitianController extends ApiController {
                 left join strukpelayanan_t sp on sp.norec = sdmp.noregistrasifk
                 where sdmp.kdprofile = $kdProfile and sdmp.norec ilike'$bwtnorec' and sdmp.noregistrasifk is not null
             "));
+            $institusi = \DB::table("pegawai_m as pg")->where("pg.usereksternal", true)
+            // ->join('loginuser_s as lu', 'pg.id','=','lu.objectpegawaifk')
+            ->select('pg.namalengkap','pg.id')
+            ->where("pg.statusenabled", true)
+            ->where("pg.namalengkap","<>", "-")
+            ->where("pg.namalengkap","<>", "Dokter Luar Rumah Sakit")
+            ->where("pg.kdprofile", $kdProfile)
+            ->get();
+            $institusiuser = DB::select(DB::raw("SELECT pg.namalengkap,string_agg(lu.namauser, ', ') as namauser FROM pegawai_m pg
+            inner join loginuser_s lu on lu.objectpegawaifk = pg.id and pg.namalengkap<>'-'
+            where pg.usereksternal = true and pg.statusenabled = true 
+            GROUP BY pg.namalengkap"));
         $result = array(
             'sp' => $norec_sp,
             'norec' => $norec,
@@ -182,7 +194,8 @@ class PenelitianController extends ApiController {
             'dataruangan' => $dataRuangan,
             // 'jurusanpeminatan' => $JurusanPeminatan,
             // 'fakultas' => $Fakultas,
-            // 'institusi' => $Institusi,
+            'institusi' => $institusi,
+            'institusiuser' => $institusiuser,
             'message' => 'ea@epic',
         );
 
@@ -480,6 +493,10 @@ class PenelitianController extends ApiController {
         if (isset($request['kegiatandiklat']) && $request['kegiatandiklat'] != "") {
         $kegiatandiklat = "and sdmp.objectdetailjenisprodukfk = '$request[kegiatandiklat]'";
         }
+        $tgl = '';
+        if(isset($request['tglawal']) && isset($request['tglakhir'])){
+            $tgl = "and sdmp.tanggalmulai::date between '$tglAwal'and '$tglAkhir' ";
+        }
         $data = DB::select(DB::raw("SELECT spp.norec as norec_spp,
             sdmp.norec,dk.diklatkategori,djp.detailjenisproduk,sdmp.objectprodukfk,sdmp.jumlahpeserta,
             sdmp.institusipendidikan,sdmp.tanggalmulai::date,sdmp.tanggalselesai::date,sdmp.biayapenelitian,
@@ -494,12 +511,13 @@ class PenelitianController extends ApiController {
                 left join strukpelayananpenjamin_t spp on spp.nostrukfk = sp.norec
                 left join sdm_pesertadidik_t sdmpd on sdmpd.noregistrasifk = sdmp.norec
                 left join strukbuktipenerimaan_t sbm on sbm.norec = sp.nosbmlastfk
-                where sdmp.kdprofile = $kdProfile and sdmp.tanggalmulai::date between '$tglAwal'and '$tglAkhir' and sdmp.statusenabled = true
-                $user $Fakultas $statusbayar $kegiatandiklat $statusverif
+                where sdmp.kdprofile = $kdProfile and sdmp.statusenabled = true
+                $user $Fakultas $statusbayar $kegiatandiklat $statusverif $tgl
                 group by sdmp.norec,dk.diklatkategori,djp.detailjenisproduk,sdmp.objectprodukfk,sdmp.jumlahpeserta,spp.norec,
             sdmp.institusipendidikan,sdmp.tanggalmulai::date,sdmp.tanggalselesai::date,sdmp.biayapenelitian,
             sdmp.notelp,sdmp.hargasatuan,sdmp.qty, sp.isverifikasi,sp.nosbmlastfk,sp.nosbklastfk,
             sp.norec,sdmp.noregistrasifk,sp.nostruk, sdmp.judulpeneltian, sdmp.namapengawas, sdmp.namapendamping,sbm.tglsbm
+                order by sdmp.tanggalmulai desc limit 1000
                 ")
         );
         foreach ($data as $d) {

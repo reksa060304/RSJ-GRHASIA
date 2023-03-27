@@ -2041,6 +2041,8 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
             $scope.simpan = function () {
                 // $scope.simpanSkrining()
                 // return
+                // $scope.savebtn = true
+                $scope.tombolSimpanVis = false;
                 medifirstService.get("farmasi/get-penjagaan-closing-kasir?noregistrasi=" + $scope.item.noRegistrasi ).then(function (e) {
                     
 
@@ -2234,7 +2236,7 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                                         });
                                     }
                                 }
-                                
+                            // $scope.savebtn = false
                             }
 
 

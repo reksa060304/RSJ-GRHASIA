@@ -343,6 +343,11 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     "title": "Cito",
                     "template": '# if( cito==true) {# ✔ # } else {# ✘ #} #',
                     "width": "70px",
+                },
+                {
+                    "field": "keterangantolak",
+                    "title": "Keterangan Tolak Order",
+                    "width": "70px",
                 }
             ];
             $scope.detailGridOptions = function (dataItem) {

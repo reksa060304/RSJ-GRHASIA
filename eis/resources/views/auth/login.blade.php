@@ -72,13 +72,13 @@ $configData = \App\Helpers\Helper::applClasses();
                     </div>
                 </div>
             </div>
-            <div class="card text-white  py-5 d-md-down-none" style="width:44%;background-color: var(--v-primary-base);">
+            <div class="card text-white  py-5 d-md-down-none" style="width:44%;background-color: #abb9c9">
                 <div class="card-body ">
-                    <div class="login-bg-logo"><img src="{{ asset('images/logo_only.png')}}"></div>
+                    <div class="login-bg-logo"><img src="{{ asset('images/grhasia-bg-white.png')}}"></div>
                     <div style="margin-top: -20px">
                         <!-- <div style="margin-top: 15px"> -->
-                        <h1 style="color:white">Executive Information System </h1>
-                      
+                        <h1 style="color:rgb(56, 56, 56)">Executive Information System </h1>
+
                     </div>
                 </div>
             </div>

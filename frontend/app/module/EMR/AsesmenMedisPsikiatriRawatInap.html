@@ -1087,14 +1087,15 @@
                     </div>
                 </div>
             </fieldset>
-            <fieldset style="margin-top: 10px">
+            <fieldset style="margin-top: 10px;">
                 <legend><b>PENATALAKSANAAN</b></legend>
+
                 <div class="grid_12" ng-repeat="list in listPenatalaksanaan | orderBy:'id'" style="padding: 5pt 10pt">
                     <b>{{list.nama}}</b>
                     <div class="grid_12" style="padding: 5pt">
                         <div ng-repeat="jawab in list.detail | orderBy:'id'">
                             <div ng-switch on="jawab.type">
-                                
+
                                 <div class="grid_12" ng-switch-when="textbox12">
                                     <div>
                                         <label>{{jawab.nama}}</label>
@@ -1175,6 +1176,9 @@
                         </div>
                     </div>
                 </div>
+            </fieldset>
+            <fieldset style="margin-top: 10px">
+                
                 <div class="grid_6" ng-repeat="list in listAsuhan | orderBy:'id'" style="padding: 5pt 10pt">
                     <b>{{list.nama}}</b>
                     <div class="grid_12" style="padding: 5pt">

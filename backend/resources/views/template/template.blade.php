@@ -60,9 +60,9 @@
                                                             <td width="105">
                     <p align="left">
                             @if(stripos(\Request::url(), 'localhost') !== FALSE)
-                            <img src="{{ asset('img/logo_grhasia.png') }}" style="width: 80px" border="0">
+                            <img src="{{ asset('img/logo_grhasia_com.png') }}" style="width: 80px" border="0">
                             @else
-                              <img src="{{ asset('service/img/logo_grhasia.png') }}" style="width: 80px" border="0">
+                              <img src="{{ asset('service/img/logo_grhasia_com.png') }}" style="width: 80px" border="0">
                             @endif
                       
                     </p>

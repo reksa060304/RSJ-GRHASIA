@@ -1204,7 +1204,7 @@ class ReportController extends ApiController{
                 inner join jenisracikan_m jr on jr.id = pt.jenisobatfk 
                 inner join strukresep_t as sr on sr.norec = pt.strukresepfk
                 inner join strukorder_t as so on so.norec = sr.orderfk
-                inner join orderpelayanan_t as op on op.strukorderfk = so.norec and op.objectprodukfk = pm.id and op.rke = pt.rke
+                left join orderpelayanan_t as op on op.strukorderfk = so.norec and op.objectprodukfk = pm.id
                 where strukresepfk = '$norec'
                 and pt.isobat = true
                 order by pt.rke asc, pt.keteranganpakai asc
@@ -2197,6 +2197,10 @@ class ReportController extends ApiController{
         $pageWidth = 500;
         $res['profile'] = Profile::where('id',$request['kdprofile'])->first();
         $res['d'] = $data;
+        $res['pegawai']= array(
+            'id'=> $request['id_nama'],
+            'pegawai'=> $request['nama']
+        );
 //        dd( $res['d'] );
 
         return view('report.catatanklinik',compact('res','pageWidth'));
@@ -2763,7 +2767,7 @@ class ReportController extends ApiController{
                     left join pasien_m as ps on ps.id = sp.nocmfk
                     where  sts.norec = ssc.objectstsfk
         ) headersts on true
-        where sts.nosts = '$nosts'
+        where sts.nosts = '$nosts' and stsd.statusenabled = true
 		group by stsd.nourut, sts.totalsetoran, headersts.carabayarfk, to_char(sts.tglpenerimaan, 'DD-MM-YYYY'), stsd.kdrekening, stsd.nomer, stsd.uraian, stsd.vol, stsd.kolom1, stsd.kolom2, sts.nosts, sts.terbilang
         order by stsd.nourut"));
         

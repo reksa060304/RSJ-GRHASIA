@@ -75,18 +75,18 @@ class LogistikController extends ApiController{
             ->where('lu.id',$request['userData']['id'])
             ->get();
 
-        $dataRuangan = DB::select(DB::raw("SELECT ru.id,ru.namaruangan 
-            FROM ruangan_m ru 
-            where ru.statusenabled = true 
-            and ru.kdprofile = $idProfile
-            -- and lu.id=:idLoginUser
-            and ru.objectdepartemenfk in (14,6,41)
-            and ru.id not in(51,784,574,50,94,211,303)
-            GROUP BY ru.id,ru.namaruangan")
-            // ,
-            // array(
-            //     'idLoginUser' => $request['userData']['id'],
-            // )
+        $dataRuangan = DB::select(DB::raw("
+            SELECT ru.id,ru.namaruangan 
+            FROM maploginusertoruangan_s AS mlur
+            INNER JOIN loginuser_s lu on lu.id = mlur.objectloginuserfk
+            INNER JOIN ruangan_m ru on ru.id = mlur.objectruanganfk
+            where lu.kdprofile = $idProfile 
+            and ru.statusenabled = true 
+            and lu.id=:idLoginUser
+            GROUP BY ru.id,ru.namaruangan"),
+            array(
+                'idLoginUser' => $request['userData']['id'],
+            )
         );
 
         $dataNoOrder = DB::select(DB::raw("select norec, noorder from strukorder_t 

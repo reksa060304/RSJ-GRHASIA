@@ -22,7 +22,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             $scope.norecOrder = ''
             $scope.showNonRacikan = false
             $scope.tglkadaluarsa = undefined;
-            $scope.item.jumlah = ''
+            $scope.item.jumlah = null
             $scope.item.dosis = undefined;
             $scope.item.satuannya = undefined;
             $scope.stokproduk = 0
@@ -327,7 +327,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                             $scope.tglkadaluarsa = moment(dataProdukDetail[0].tglkadaluarsa).format('YYYY-MM-DD HH:mm');
                         // $scope.item.dosis =$scope.dataSelected.dosis
                         // $scope.item.jumlahxmakan =parseFloat($scope.dataSelected.jumlah) / parseFloat($scope.item.dosis)
-                        if ($scope.dataSelected != undefined ){                        
+                        if ($scope.dataSelected != undefined ){      
                             $scope.item.nilaiKonversi = $scope.dataSelected.nilaikonversi
                             // $scope.item.satuan = {ssid:$scope.dataSelected.satuanstandarfk,satuanstandar:$scope.dataSelected.satuanstandar}
                             $scope.item.stok = $scope.dataSelected.jmlstok //* $scope.item.nilaiKonversi 
@@ -361,7 +361,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             $scope.$watch('item.rke', function (newValue, oldValue) {
                 if (newValue != oldValue) {
                     if($scope.rke != $scope.item.rke){
-                        $scope.item.jumlahxmakan = ''
+                        $scope.item.jumlahxmakan = null
                     }
                 }
             });
@@ -701,10 +701,8 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 if ($scope.item.jumlahxmakan != undefined) {
                     jumlahmakan = $scope.item.jumlahxmakan;
                 } else {
-                    jumlahmakan =null;
+                    jumlahmakan = null;
                 } 
-
-                console.log(jumlahmakan)
 
                 
 
@@ -937,7 +935,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 $scope.item.stok = 0
                 $scope.item.no = undefined
                 $scope.item.dosis = undefined
-                $scope.item.jumlah = $scope.item.jenisKemasan.id == 1 ? $scope.item.jumlah : ''
+                $scope.item.jumlah = $scope.item.jenisKemasan.id == 1 ? $scope.item.jumlah : null
                 $scope.item.total = 0
                 $scope.item.hargaSatuan = 0
                 $scope.item.satuanresep = undefined;
@@ -1218,6 +1216,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 medifirstService.sendSocket("sendNotification", body);
             }
             $scope.simpan = function () {
+                $scope.isRouteLoading = true
                 if (data2.length == 0) {
                     alert("Pilih Produk terlebih dahulu!!")
                     return
@@ -1271,7 +1270,6 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 
                 
                 // $scope.hideSimpan =true
-                
                 medifirstService.post('emr/simpan-order-pelayananobatfarmasi',{data: objSaves}).then(function (e) {
                     sendNotification(e.data)
                     $scope.item.resep == undefined
@@ -1290,6 +1288,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     // $scope.item.resep = e.data.noresep.noorder
                     //  $scope.hideSimpan =false
                     $scope.copynoresep = ''
+                    $scope.isRouteLoading= false
                     init();
                     $scope.batal();
                     $scope.disabledRuangan = false
@@ -2299,7 +2298,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
         }
         $scope.gantiJR = function(data){
             if(data == 2){
-                $scope.item.jumlah = ''
+                $scope.item.jumlah = null
                 $scope.item.KeteranganPakai = ''
             }
         }
