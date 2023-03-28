@@ -5565,7 +5565,7 @@ class LogistikController extends ApiController{
             ->LEFTJOIN('strukbuktipengeluaran_t as sbk', 'sbk.norec', '=', 'sp.nosbklastfk')
 //            ->LEFTJOIN('produk_m as pr','pr.id','=','spd.objectprodukfk')
 //            ->LEFTJOIN('jeniskemasan_m as jkm','jkm.id','=','spd.objectjeniskemasanfk')
-            ->select(DB::raw("
+            ->select(DB::raw("sp.tglverifspj, sp.nospj,
                 sp.tglstruk, sp.nostruk, rkn.namarekanan, pg.namalengkap, pg.id idpenerima, sp.nokontrak,
                 ru.namaruangan, ru.id objectruanganfk, sp.norec, sp.nofaktur, sp.tglfaktur, CAST(sp.totalharusdibayar AS FLOAT), sbk.nosbk,
                 sp.nosppb, sp.noorderfk, sp.qtyproduk, sp.isverifspj
@@ -5650,6 +5650,8 @@ class LogistikController extends ApiController{
                 'noorderfk' => $item->noorderfk,
                 'jmlitem' => $item->qtyproduk,
                 'isverifspj' => $item->isverifspj,
+                'tglverifspj' => $item->tglverifspj,
+                'nospj' => $item->nospj,
                 'details' => $details,
             );
         }
@@ -14836,11 +14838,16 @@ class LogistikController extends ApiController{
     public function verifSPJ(Request $request){
         $kdProfile = (int) $this->getDataKdProfile($request);
         // $tglAyeuna = date('Y-m-d H:i:s');
+        $data = $request['data'];
         \DB::beginTransaction();
         try {
-            $SP = StrukPelayanan::where('norec', $request['norec'])->first();
-            $SP->isverifspj = true;
-            $SP->save();
+            foreach ($data as $d) {
+                $SP = StrukPelayanan::where('norec', $d['norec'])->first();
+                $SP->isverifspj = true;
+                $SP->tglverifspj = $request['tglverif'];
+                $SP->nospj = $request['nospj'];
+                $SP->save();
+            }
             $transStatus = 'true';
         } catch (\Exception $e) {
             $transStatus = 'false';

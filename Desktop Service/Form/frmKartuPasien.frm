@@ -280,7 +280,7 @@ Dim strPrinter As String
 Dim prn As Printer
 Dim strPT As String
 strPT = App.Path & "\other\KIB CETAK.jpg"
-Image1.Picture = LoadPicture(strPT, vbLPLarge, vbLPColor)
+'Image1.Picture = LoadPicture(strPT, vbLPLarge, vbLPColor)
 
 
 'UrlFile = App.Path & "\other\KartuFix.jpeg"
@@ -345,28 +345,36 @@ strSQL = "SELECT ps.namapasien  ||  ' ( '  ||   jk.reportdisplay  ||  ' ) ' as n
 '        Picture2.ScaleLeft, Picture2.ScaleTop, Picture2.ScaleWidth, Picture2.ScaleHeight, _
 '        Picture3.ScaleLeft, Picture3.ScaleTop, Picture3.ScaleWidth, Picture3.ScaleHeight
 '      Picture2.Picture = Picture2.Image
-     Printer.PaintPicture Image1.Picture, 0, 0
+'     Printer.PaintPicture Image1.Picture, 0, 0
      Printer.FontName = "Tahoma"
      Printer.fontSize = 6
      Printer.Print ""
      Printer.Print ""
      Printer.Print "       "
      Printer.Print ""
-     Printer.FontBold = True
-     Printer.Print "       " & rs!noCm
-     Printer.fontSize = 8
      Printer.Print ""
-     Printer.Print "    " & rs!namapasien
+     Printer.FontBold = True
+     Printer.CurrentX = 4850 - Printer.TextWidth(rs!noCm)
+     Printer.Print rs!noCm
+     Printer.Print ""
+'     Printer.Print "                                                                                                              " & rs!noCm
+     Printer.CurrentX = 4850 - Printer.TextWidth(rs!namapasien)
+     Printer.Print rs!namapasien
      Printer.fontSize = 6
      Printer.FontBold = False
      Printer.FontItalic = True
      Printer.Print ""
-     Printer.Print "     " & ayah2
+'     Printer.Print "                                                                       " & ayah2
+     Printer.CurrentX = 4850 - Printer.TextWidth(ayah2)
+     Printer.Print ayah2
      Printer.Print ""
-     Printer.Print "     " & alamat
+'     Printer.Print "    " &
+     Printer.CurrentX = 4850 - Printer.TextWidth(alamat)
+     Printer.Print alamat
+     Printer.Print ""
      Printer.Print ""
      Call make128(rs!noCm)
-     Printer.PaintPicture Picture1.Image, 65, 1850
+     Printer.PaintPicture Picture1.Image, 2565, 1850
      Printer.FontBold = True
      Printer.FontName = "Tahoma"
      Printer.fontSize = 17
