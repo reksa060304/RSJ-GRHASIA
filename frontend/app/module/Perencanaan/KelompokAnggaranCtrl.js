@@ -7061,7 +7061,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     $scope.item.dasarPengeluaran = dataItem.dasarpengeluaran
                     $scope.item.radioStatusSPP = dataItem.status
                     $scope.item.nospd = dataItem.nospd
-                    $scope.item.tglSPP = dataItem.tglspp
+                    $scope.item.tglSPP = new Date(dataItem.tglspp)
 
                     if(dataItem.bulan == "Januari"){
                         $scope.item.itemBulan = { id: 1, bulan: "Januari" }    

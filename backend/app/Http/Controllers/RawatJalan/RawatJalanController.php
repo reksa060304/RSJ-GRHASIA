@@ -172,8 +172,15 @@ class RawatJalanController extends ApiController
 //            ->where('dm.statusenabled', true)
 //            ->orderBy('dm.id')
 //            ->get();
+        $deptJalan = explode(',',$this->settingDataFixed('PemanggilAntrianByDepartementDokter',$idProfile));
+        $PemanggilAntrianByDepartement = [];
+        foreach ($deptJalan as $item) {
+            $PemanggilAntrianByDepartement[] =  (int)$item;
+        }
 $ruangdokter = \DB::table('ruangan_m as ru')
-        ->where('ru.objectdepartemenfk', 65)
+        ->whereIn('ru.objectdepartemenfk', $PemanggilAntrianByDepartement)
+        ->where('ru.statusenabled', true)
+        ->where('ru.kdprofile', $idProfile)
         ->orderBy('ru.id')
         ->get();
         $result = array(
@@ -355,8 +362,15 @@ $ruangdokter = \DB::table('ruangan_m as ru')
             ->where('jk.statusenabled', true)
             ->orderBy('jk.jeniskelamin')
             ->get();
+        $deptJalan = explode(',',$this->settingDataFixed('PemanggilAntrianByDepartement',$idProfile));
+        $PemanggilAntrianByDepartement = [];
+        foreach ($deptJalan as $item) {
+            $PemanggilAntrianByDepartement[] =  (int)$item;
+        }
         $ruangperawat = \DB::table('ruangan_m as ru')
-        ->where('ru.objectdepartemenfk', 64)
+        ->whereIn('ru.objectdepartemenfk',$PemanggilAntrianByDepartement )
+        ->where('ru.statusenabled', true)
+        ->where('ru.kdprofile', $idProfile)
         ->orderBy('ru.id')
         ->get();
         $result = array(
@@ -372,7 +386,7 @@ $ruangdokter = \DB::table('ruangan_m as ru')
             'pembatalan' => $pembatalan,
             'jenisdiagnosa' => $jenisDiagnosa,
 //            'diagnosa' => $Diagnosa,
-//            'kddiagnosa' => $kdeDiagnosa,
+        //    'kddiagnosa' => $kdeDiagnosa,
             'kelompokkerjahead' => $KelompokKerjaHead,
             'kelompokkerja' => $KelompokKerja,
             'pegawaiLogin' => $dataPegawai->namalengkap,

@@ -4849,7 +4849,7 @@ class EMRController  extends ApiController
         $dataLogin = $request->all();
         $jd = \DB::table('jenisdiagnosa_m as lu')
             ->select('lu.id', 'lu.jenisdiagnosa as jenisDiagnosa')
-            ->where('lu.statusenabled', true)->whereIn('lu.id', [1,2])
+            ->where('lu.statusenabled', true)->whereIn('lu.id', [7])
             ->get();
 
             $dp = \DB::table('diagnosakep_m')->where('kdprofile', 30)->where('statusenabled', true)->get();
