@@ -1,7 +1,7 @@
 define(['initialize'], function (initialize) {
     'use strict';
-    initialize.controller('UraianPendapatanCtrl', ['$scope', 'DateHelper', '$http', '$state', 'MedifirstService',
-        function ($scope, dateHelper, $http, $state, medifirstService) {
+    initialize.controller('UraianPendapatanCtrl', ['$scope', 'DateHelper', '$http', '$state', 'MedifirstService', '$mdDialog',
+        function ($scope, dateHelper, $http, $state, medifirstService, $mdDialog) {
             //Inisial Variable   
             $scope.isRouteLoading = false;
             $scope.item = {};
@@ -123,14 +123,24 @@ define(['initialize'], function (initialize) {
             }
 
             $scope.HapusJasgir = function () {
-                var objSave = {
-                    "id": $scope.dataSelected.id,
-                }
-                console.log(objSave);
-                // return
-                medifirstService.post('perencanaan/delete-uraian-pendapatan', objSave).then(function (e) {
-                    init();
+                var confirm = $mdDialog.confirm()
+                    .title('Informasi')
+                    .htmlContent("Apakah anda ingin menghapus item ini?")
+                    .ariaLabel('Lucky day')
+                    .cancel('Batal')
+                    .ok('Ok');
+
+                $mdDialog.show(confirm).then(function () {
+                    var objSave = {
+                        "id": $scope.dataSelected.id,
+                    }
+                    console.log(objSave);
+                    // return
+                    medifirstService.post('perencanaan/delete-uraian-pendapatan', objSave).then(function (e) {
+                        init();
+                    })
                 })
+                
 
             }
 
