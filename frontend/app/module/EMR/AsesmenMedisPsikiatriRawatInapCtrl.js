@@ -1076,7 +1076,7 @@ define(['initialize'], function (initialize) {
                         {"id": 120211, "nama": "Menyempit", "type": "checkbox3"},
                         {"id": 120212, "nama": "Elasi", "type": "checkbox3"},
                         {"id": 120213, "nama": "Susah", "type": "checkbox3"},
-                        {"id": 120214, "nama": "Tumpul", "type": "checkbox3"},
+                        // {"id": 120214, "nama": "Tumpul", "type": "checkbox3"},
                         {"id": 120215, "nama": "Ekstase", "type": "checkbox3"},
                         {"id": 120216, "nama": "Inappropriate", "type": "checkbox3"},
                         {"id": 120217, "nama": "Datar", "type": "checkbox3"},
