@@ -546,6 +546,29 @@
 						<!-- Setting keterangan blud -->
 						<md-content class="md-padding">
 							<div class="grid_12">
+								<div class="grid_6" style="text-align: left;">
+									Tanggal SPP
+								</div>
+								<div class="grid_6" style="text-align: left;">
+									Tahun
+								</div>
+								<div class="grid_3" style="margin-top: -10px;">
+									<input style="width: 100%" k-ng-model="item.tglSPPawalSearch" kendo-datepicker placeholer="yyyy-MM-dd"
+										k-format="'yyyy-MM-dd'" />
+								</div>
+								<div class="grid_3" style="margin-top: -10px;">
+									<input style="width: 100%" k-ng-model="item.tglSPPakhirSearch" kendo-datepicker placeholer="yyyy-MM-dd"
+										k-format="'yyyy-MM-dd'" />
+								</div>
+								<div class="grid_3" style="margin-top: -10px;">
+									<input style="width: 100%;" k-options="yearUngkul" k-ng-model="item.tahunawal" kendo-date-picker
+										placeholer="YYYY" k-format="'yyyy'" />
+								</div>
+								<div class="grid_3">
+									<button class="btnTemplate1" ng-click="searchSPP()">Cari</button>
+								</div>
+							</div>
+							<div class="grid_12">
 								<div class="grid_12 borderBox">
 									<kendo-grid id="kGrids" k-data-source="dataSourceSPP" k-selectable="'row'"  class="max-height"
 										k-options="columnSPP" k-ng-model="dataSPPSelected" ng-click="klikSPPSPM(dataSPPSelected)">

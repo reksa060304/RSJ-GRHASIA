@@ -962,12 +962,21 @@ class PerencanaanController extends ApiController {
         norec, nopanjar, uraian, tglpanjar, jumlah, jenispanjar, norealisasi, jumlahspj, sumberpanjar
         order by nopanjar;
         "));
+            $tglsppdate = "";
+            $thnspp = "";
+        if(isset($request['tglsppawal']) && isset($request['tglsppakhir'])){
+            $tglsppdate = " and spp.tglspp between '$request[tglsppawal]' and '$request[tglsppakhir]'";
 
+        }
+        if(isset($request['tahun'])){
+            $thnspp= " and date_part('year', spp.tglspp)=". $request['tahun'];
+        }
         $spp = DB::select(DB::raw("select spp.*, spd.nospd , ap.id idasalproduk, ap.asalproduk
         from spp_t spp 
         left join spd_t spd on spd.norec = spp.objectspdfk and spd.statusenabled = true 
         left join asalproduk_m ap on ap.id = spp.objectasalprodukfk and ap.statusenabled = true 
-        where spp.statusenabled = true"));
+        where spp.statusenabled = true $thnspp $tglsppdate"));
+
         $spd = DB::select(DB::raw("select spd.*, spp.nospp, ap.id idasalproduk, ap.asalproduk  from spd_t spd 
         left join spp_t spp on spp.objectspdfk = spd.norec and spp.statusenabled = true 
         left join asalproduk_m ap on ap.id = spd.objectasalprodukfk and ap.statusenabled = true 
