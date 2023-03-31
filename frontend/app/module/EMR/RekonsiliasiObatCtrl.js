@@ -1108,8 +1108,8 @@ define(['initialize'], function (initialize) {
                     objectprodukfk = $scope.itemd.obatRO.id
                 }
                 var rute = null
-                if ($scope.itemd.ruteRO!= undefined){
-                    rute = $scope.itemd.ruteRO
+                if ($scope.itemd.rute!= undefined){
+                    rute = $scope.itemd.rute
                 }
                 var aturanpakai = null
                 if ($scope.itemd.aturanpakai != undefined) {
