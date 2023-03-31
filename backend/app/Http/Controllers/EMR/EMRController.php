@@ -10988,29 +10988,31 @@ class EMRController  extends ApiController
                         'isresep'=> $data1['resep'] == "✓" ? true : null,
                         'tanggalmulai'=> $data1['tanggalmulai'],
                         'tanggalstop'=> $data1['tanggalstop'],
-                        'dosis'=> $data1['dosis'],
+                        // 'dosis'=> $data1['dosis'],
                         'rute'=> $data1['rute'],
                         'frekuensi'=> $data1['frekuensi'],
                         'indikasi'=> $data1['indikasi'],
                         'statusobat'=> $data1['statusobat'],
                         'perubahanaturan'=> $data1['perubahanaturan'],
+                        'obatlain'=> $data1['obatlain'],
                     ]);
                 }else{
-                    $penggunaanobat = \DB::table('riwayatpenggunaanobat_t')->where('norec', $data['norec'])->update([
+                    $penggunaanobat = \DB::table('riwayatpenggunaanobat_t')->where('norec', $data1['norec'])->update([
                         'noregistrasi'=> $request['noregistrasi'],
                         'noemr'=> $request['noemr'],
                         'objectprodukfk'=> $data1['objectprodukfk'],
                         'isresep'=> $data1['resep'] == "✓" ? true : null,
                         'tanggalmulai'=> $data1['tanggalmulai'],
                         'tanggalstop'=> $data1['tanggalstop'],
-                        'dosis'=> $data1['dosis'],
+                        // 'dosis'=> $data1['dosis'],
                         'rute'=> $data1['rute'],
                         'frekuensi'=> $data1['frekuensi'],
                         'indikasi'=> $data1['indikasi'],
                         'statusobat'=> $data1['statusobat'],
                         'perubahanaturan'=> $data1['perubahanaturan'],
+                        'obatlain'=> $data1['obatlain'],
                     ]);
-            $a= $penggunaanobat;
+            $a = $penggunaanobat;
 
                 }
             }
@@ -11034,20 +11036,20 @@ class EMRController  extends ApiController
                         'statusobat'=> $data2['statusobat'],
                     ]);
                 }else{
-                    $rekonsiliasiobat = \DB::table('riwayatrekonsiliasiobat_t')->where('norec', $data['norec'])->update([
+                    $rekonsiliasiobat = \DB::table('riwayatrekonsiliasiobat_t')->where('norec', $data2['norec'])->update([
                         'noregistrasi'=> $request['noregistrasi'],
                         'noemr'=> $request['noemr'],
-                        'objectprodukfk'=> $data1['objectprodukfk'],
+                        'objectprodukfk'=> $data2['objectprodukfk'],
                         'tanggal'=> $data2['tanggal'],
                         'objectruanganfk'=> $data2['objectruanganfk'],
                         'objectprodukfk'=> $data2['objectprodukfk'],
-                        'dosis'=> $data2['dosis'],
-                        'frekuensi'=> $data2['frekuensi'],
-                        'waktupemberian'=> $data2['waktupemberian'],
-                        'carapemberian'=> $data2['carapemberian'],
-                        'islanjutaturansama'=> $data2['islanjutaturansama'],
-                        'lanjutaturanperubahan'=> $data2['lanjutaturanperubahan'],
-                        'isstop'=> $data2['isstop'],
+                        'obatlain'=> $data2['obatlain'],
+                        // 'frekuensi'=> $data2['frekuensi'],
+                        // 'waktupemberian'=> $data2['waktupemberian'],
+                        // 'carapemberian'=> $data2['carapemberian'],
+                        // 'islanjutaturansama'=> $data2['islanjutaturansama'],
+                        // 'lanjutaturanperubahan'=> $data2['lanjutaturanperubahan'],
+                        // 'isstop'=> $data2['isstop'],
                         'objectpegawaifk'=> $data2['objectpegawaifk'],
                     ]);
                 }
