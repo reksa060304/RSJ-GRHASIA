@@ -10989,7 +10989,7 @@ class EMRController  extends ApiController
                         'tanggalmulai'=> $data1['tanggalmulai'],
                         'tanggalstop'=> $data1['tanggalstop'],
                         // 'dosis'=> $data1['dosis'],
-                        'rute'=> $data1['rute'],
+                        'rute'=> isset($data1['rute'])? $data1['rute'] : null,
                         'frekuensi'=> $data1['frekuensi'],
                         'indikasi'=> $data1['indikasi'],
                         'statusobat'=> $data1['statusobat'],
