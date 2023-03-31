@@ -1277,7 +1277,7 @@ define(['initialize'], function (initialize) {
                         { "id": 120291, "nama": "Selesai pemeriksaan, Pukul : ", "type": "time" },
                         { "id": 120292, "nama": "Penanggung Jawab Pasien ", "type": "label06" },
                         { "id": 120293, "nama": "Dokter Pemeriksa/DPJP", "type": "label06" },
-                        { "id": 120294, "nama": "", "type": "combobox" },
+                        { "id": 120294, "nama": "", "type": "textbox6" },
                         { "id": 120295, "nama": "", "type": "combobox" },
                     ]
                 },
@@ -1406,7 +1406,8 @@ define(['initialize'], function (initialize) {
                                         $scope.item.obj[dataLoad[i].emrdfk] = new Date(dataLoad[i].value)
                                     }
                                     if (dataLoad[i].type == "time") {
-                                        $scope.item.obj[dataLoad[i].emrdfk] = new Date(dataLoad[i].value)
+                                        $scope.item.obj[dataLoad[i].emrdfk] = new Date(moment($scope.now).format('YYYY-MM-DD') + ' ' + dataLoad[i].value)
+                                        console.log($scope.item.obj[dataLoad[i].emrdfk]);
                                     }
                                     if (dataLoad[i].type == "date") {
                                         $scope.item.obj[dataLoad[i].emrdfk] = new Date(dataLoad[i].value)
