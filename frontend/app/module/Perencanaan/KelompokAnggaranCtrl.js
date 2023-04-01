@@ -900,22 +900,47 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }
             $scope.bagiarataAlokasiDetail = function() {
                 let totalAnggaran = parseFloat($scope.item.alokasiSubtotal)
-                let blnrata = totalAnggaran/12
+                
 
-                blnrata = blnrata.toFixed(2)
+                if(totalAnggaran % 12 == 0){
+                    let blnrata = totalAnggaran/12
 
-                $scope.item.bln1 = blnrata
-                $scope.item.bln2 = blnrata
-                $scope.item.bln3 = blnrata
-                $scope.item.bln4 = blnrata
-                $scope.item.bln5 = blnrata
-                $scope.item.bln6 = blnrata
-                $scope.item.bln7 = blnrata
-                $scope.item.bln8 = blnrata
-                $scope.item.bln9 = blnrata
-                $scope.item.bln10 = blnrata
-                $scope.item.bln11 = blnrata
-                $scope.item.bln12 = blnrata
+                    blnrata = blnrata.toFixed(2)
+
+                    $scope.item.bln1 = blnrata
+                    $scope.item.bln2 = blnrata
+                    $scope.item.bln3 = blnrata
+                    $scope.item.bln4 = blnrata
+                    $scope.item.bln5 = blnrata
+                    $scope.item.bln6 = blnrata
+                    $scope.item.bln7 = blnrata
+                    $scope.item.bln8 = blnrata
+                    $scope.item.bln9 = blnrata
+                    $scope.item.bln10 = blnrata
+                    $scope.item.bln11 = blnrata
+                    $scope.item.bln12 = blnrata
+
+                } else{
+
+                    let blnrata = totalAnggaran/12
+
+                    blnrata = Math.floor(blnrata)
+
+                    $scope.item.bln1 = blnrata
+                    $scope.item.bln2 = blnrata
+                    $scope.item.bln3 = blnrata
+                    $scope.item.bln4 = blnrata
+                    $scope.item.bln5 = blnrata
+                    $scope.item.bln6 = blnrata
+                    $scope.item.bln7 = blnrata
+                    $scope.item.bln8 = blnrata
+                    $scope.item.bln9 = blnrata
+                    $scope.item.bln10 = blnrata
+                    $scope.item.bln11 = blnrata
+                    $scope.item.bln12 = (totalAnggaran - (11*blnrata)).toFixed(0)
+                }
+
+                
             }
             $scope.SimpanPopUpDetailAlokasi = function() {
                 // $scope.dataSourceAlokasiAnggaran = $scope.listKeteranganBelanja
@@ -1564,6 +1589,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 {
                     "field": "jumlah",
                     "title": "Jumlah",
+                    "template": "<span class='style-right'>{{formatRupiah2('#: jumlah #', '')}}</span>",
                 },
                 {
                     "field": "jenispanjar",
@@ -1572,6 +1598,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 {
                     "field": "jumlahpengembalian",
                     "title": "Jml Pengembalian",
+                    "template": "<span class='style-right'>{{formatRupiah2('#: jumlahpengembalian #', '')}}</span>",
                 },
                 {
                     "field": "sumberpanjar",
@@ -1789,10 +1816,13 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 {
                     "field": "jumlah",
                     "title": "Jumlah",
+                    "template": "<span class='style-right'>{{formatRupiah2('#: jumlah #', '')}}</span>",
+                    
                 },
                 {
                     "field": "jumlahpengembalian",
                     "title": "Jml Pengembalian",
+                    "template": "<span class='style-right'>{{formatRupiah2('#: jumlahpengembalian #', '')}}</span>",
                 },
                 {
                     "field": "norealisasi",
@@ -1801,6 +1831,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 {
                     "field": "jumlahspj",
                     "title": "Jml SPJ",
+                    "template": "<span class='style-right'>{{formatRupiah2('#: jumlahspj #', '')}}</span>",
                 },
                 {
                     "field": "sumberpanjar",
@@ -1809,10 +1840,12 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 {
                     "field": "totalpemakaian",
                     "title": "Total Pemakaian",
+                    "template": "<span class='style-right'>{{formatRupiah2('#: totalpemakaian #', '')}}</span>",
                 },
                 {
                     "field": "selisih",
                     "title": "Selisih",
+                    "template": "<span class='style-right'>{{formatRupiah2('#: selisih #', '')}}</span>",
                 },
                 {
                     "field": "idmataanggaran",
@@ -3216,19 +3249,57 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 let datdatdatdad = []
                 for (let index = 0; index < dataAlokasi2222.length; index++) {
                     let element = dataAlokasi2222[index];
-                    SubTotal = parseFloat(element.subtotal) / 12
-                    dataAlokasi2222[index].jan = SubTotal
-                    dataAlokasi2222[index].feb = SubTotal
-                    dataAlokasi2222[index].mar = SubTotal
-                    dataAlokasi2222[index].apr = SubTotal
-                    dataAlokasi2222[index].mei = SubTotal
-                    dataAlokasi2222[index].jun = SubTotal
-                    dataAlokasi2222[index].jul = SubTotal
-                    dataAlokasi2222[index].agt = SubTotal
-                    dataAlokasi2222[index].sep = SubTotal
-                    dataAlokasi2222[index].okt = SubTotal
-                    dataAlokasi2222[index].nov = SubTotal
-                    dataAlokasi2222[index].des = SubTotal
+                    // SubTotal = parseFloat(element.subtotal) / 12
+                    // dataAlokasi2222[index].jan = SubTotal
+                    // dataAlokasi2222[index].feb = SubTotal
+                    // dataAlokasi2222[index].mar = SubTotal
+                    // dataAlokasi2222[index].apr = SubTotal
+                    // dataAlokasi2222[index].mei = SubTotal
+                    // dataAlokasi2222[index].jun = SubTotal
+                    // dataAlokasi2222[index].jul = SubTotal
+                    // dataAlokasi2222[index].agt = SubTotal
+                    // dataAlokasi2222[index].sep = SubTotal
+                    // dataAlokasi2222[index].okt = SubTotal
+                    // dataAlokasi2222[index].nov = SubTotal
+                    // dataAlokasi2222[index].des = SubTotal
+
+                    if(parseFloat(element.subtotal) % 12 == 0){
+                        let blnrata = parseFloat(element.subtotal)/12
+    
+                        blnrata = blnrata.toFixed(2)
+    
+                        dataAlokasi2222[index].jan = blnrata
+                        dataAlokasi2222[index].feb = blnrata
+                        dataAlokasi2222[index].mar = blnrata
+                        dataAlokasi2222[index].apr = blnrata
+                        dataAlokasi2222[index].mei = blnrata
+                        dataAlokasi2222[index].jun = blnrata
+                        dataAlokasi2222[index].jul = blnrata
+                        dataAlokasi2222[index].agt = blnrata
+                        dataAlokasi2222[index].sep = blnrata
+                        dataAlokasi2222[index].okt = blnrata
+                        dataAlokasi2222[index].nov = blnrata
+                        dataAlokasi2222[index].des = blnrata
+    
+                    } else{
+    
+                        let blnrata = parseFloat(element.subtotal)/12
+    
+                        blnrata = Math.floor(blnrata)
+    
+                        dataAlokasi2222[index].jan = blnrata
+                        dataAlokasi2222[index].feb = blnrata
+                        dataAlokasi2222[index].mar = blnrata
+                        dataAlokasi2222[index].apr = blnrata
+                        dataAlokasi2222[index].mei = blnrata
+                        dataAlokasi2222[index].jun = blnrata
+                        dataAlokasi2222[index].jul = blnrata
+                        dataAlokasi2222[index].agt = blnrata
+                        dataAlokasi2222[index].sep = blnrata
+                        dataAlokasi2222[index].okt = blnrata
+                        dataAlokasi2222[index].nov = blnrata
+                        dataAlokasi2222[index].des = (parseFloat(element.subtotal) - (11*blnrata)).toFixed(0)
+                    }
                 }
                 $scope.dataSourceAlokasiAnggaran = new kendo.data.DataSource({
                     data:  dataAlokasi2222

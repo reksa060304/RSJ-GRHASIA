@@ -2891,7 +2891,7 @@ class PerencanaanController extends ApiController {
                     $MA->save();
 
            
-                    $transStatus = 'true';
+           $transStatus = 'true';
        } catch (\Exception $e) {
             $transStatus = 'false';
        }
@@ -6093,7 +6093,7 @@ order by subkodepertama asc, subkodekedua asc, subkodeketiga asc, subkodekeempat
         $data = DB::select(DB::raw("
                 select pj.pph, pj.pph2, pj.ppn, jp.id idpajak, jp.jenispajak, ma.kodemataanggaran kodemataanggaran, ma.namamataanggaran namamataanggaran, kasub.id idsubkegiatan, 
                 kasubsub.id idsubsubkegiatan, kasub.keterangan keterangansubkegiatan, kasubsub.keterangan keterangansubsubkegiatan, 
-                pj.norec, pj.nopanjar, pj.uraian, pj.tglpanjar, pj.jumlah, pj.jenispanjar, pj.jumlahpengembalian, pj.sumberpanjar,
+                pj.norec, pj.nopanjar, pj.uraian, pj.tglpanjar, pj.jumlah, pj.jenispanjar, coalesce(pj.jumlahpengembalian, 0) jumlahpengembalian, pj.sumberpanjar,
                 pj.idbill, pj.ntpn, pj.idbillpph, pj.ntpnpph, pj.idbillpph2, pj.ntpnpph2, jp2.id idpajak2, jp2.jenispajak jenispajak2
                 from panjar_t pj
                 inner join kegiatananggaran_m kasub on kasub.id = pj.objectsubkegiatanfk
@@ -7401,6 +7401,7 @@ order by subkodepertama asc, subkodekedua asc, subkodeketiga asc, subkodekeempat
                 $status
 				group by dp0.kode, dp0.keterangan, sr.norec, cbs.carabayar, sr.tglverif, sr.keterangan, sr.jumlahdibayarverif, sr.kdprofile, sr.statusenabled, sr.tglrealisasi, sr.norealisasi, sr.status, sr.totalbelanja, sr.objectcarabayarfk, sr.rekananfk, sr.deskripsi, sr.objectkegiatanfk, sr.objectmataanggaranfk, sr.bendaharafk, sr.penerimafk, sr.pph, sr.ppn, pg1.namalengkap, pg2.namalengkap, rkn.namarekanan ,
                 ka.kode || '~' || ka.keterangan, ma.kodemataanggaran || '~' || ma.namamataanggaran, ka.tahun, ma.kodemataanggaran, ma.namamataanggaran, dp0.id, ka.keterangan, ka.id, ap.id, ap.asalproduk
+                order by sr.norealisasi
             ")
         );
         $result = [];
@@ -8412,8 +8413,7 @@ order by subkodepertama asc, subkodekedua asc, subkodeketiga asc, subkodekeempat
     
 public function loadComboRincian(Request $request)
     {
-        $sumberpendapatan = \DB::table('asalproduk_m')->where('kdprofile', 30)->where('statusenabled', true)->where('isanggaran', null)->orderBy('id','asc')->get();
-        $uraianpendapatan = \DB::table('uraianpendapatan_m')->where('kdprofile', 30)->where('statusenabled', true);
+        $sumberpendapatan = \DB::table('asalproduk_m')->where('kdprofile', 30)->where('statusenabled', true)->where('isanggaran', null)->orderBy('id', 'asc')->get();        $uraianpendapatan = \DB::table('uraianpendapatan_m')->where('kdprofile', 30)->where('statusenabled', true);
         $rincianpendapatan = \DB::table('rincianpendapatan_t as rp')
         ->join('asalproduk_m as ap','ap.id','=','rp.objectasalprodukfk')
         ->join('uraianpendapatan_m as up','up.id','=','rp.objecturaianpendapatanfk')
