@@ -16979,7 +16979,7 @@
   },
   {
     "name": "RekamMedis.AsesmenMedis.MenuIndex.CatatanKonselingNAPZA",
-    "url": "/CatatanKonselingNAPZA",
+    "url": "/CatatanKonselingNAPZA/:index/:idEMR",
     "templateurl": "module/EMR/CatatanKonselingNAPZA.html",
     "controller": "CatatanKonselingNAPZACtrl",
     "deps": [
@@ -18512,8 +18512,8 @@
     
    },
   {
-    "name": "RekamMedis.AsesmenMedis.TerapiHarianPasienRawatInap",
-    "url": "/TerapiHarianPasienRawatInap",
+    "name": "RekamMedis.AsesmenMedis.MenuIndex.TerapiHarianPasienRawatInap",
+    "url": "/TerapiHarianPasienRawatInap/:index/:idEMR",
     "templateurl": "module/EMR/TerapiHarianPasienRawatInap.html",
     "controller": "TerapiHarianPasienRawatInapCtrl",
     "deps": [{
@@ -20002,6 +20002,138 @@
     "url": "/PengkajianGiziRawatJalan",
     "templateurl": "module/EMR/PengkajianGiziRawatJalan.html",
     "controller": "PengkajianGiziRawatJalanCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.PerencanaanImplementasiEvaluasiKeperawatanNonJiwa",
+    "url": "/PerencanaanImplementasiEvaluasiKeperawatanNonJiwa",
+    "templateurl": "module/EMR/PerencanaanImplementasiEvaluasiKeperawatanNonJiwa.html",
+    "controller": "PerencanaanImplementasiEvaluasiKeperawatanNonJiwaCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.PengkajianAwalKepNAPZA",
+    "url": "/PengkajianAwalKepNAPZA",
+    "templateurl": "module/EMR/PengkajianAwalKepNAPZA.html",
+    "controller": "PengkajianAwalKepNAPZACtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.PengkajianGiziRawatInap",
+    "url": "/PengkajianGiziRawatInap",
+    "templateurl": "module/EMR/PengkajianGiziRawatInap.html",
+    "controller": "PengkajianGiziRawatInapCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.RencanaAsuhanGiziRawatInap",
+    "url": "/RencanaAsuhanGiziRawatInap",
+    "templateurl": "module/EMR/RencanaAsuhanGiziRawatInap.html",
+    "controller": "RencanaAsuhanGiziRawatInapCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.PengkajianAwalKeperawatanRJJiwa",
+    "url": "/PengkajianAwalKeperawatanRJJiwa",
+    "templateurl": "module/EMR/PengkajianAwalKeperawatanRJJiwa.html",
+    "controller": "PengkajianAwalKeperawatanRJJiwaCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.PengkajianAwalMedisIGDJiwaGrh",
+    "url": "/PengkajianAwalMedisIGDJiwaGrh",
+    "templateurl": "module/EMR/PengkajianAwalMedisIGDJiwaGrh.html",
+    "controller": "PengkajianAwalMedisIGDJiwaGrhCtrl",
     "deps": [{
         "module": "Services",
         "define": "Service"

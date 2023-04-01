@@ -18,6 +18,26 @@
                             placeholer="yyyy-mm-dd" k-format="'yyyy-MM-dd HH:mm'" />
                     </div>
                 </div>
+                <div class="grid_2">
+                    <div class="grid_12" style="margin-top: 6px;">
+                        <label c-label>Institusi</label>
+                        <div class="grid_12">
+                            <input style="width: 100%;" kendo-combo-box k-ng-model="item.institusi"
+                                k-data-text-field="'namalengkap'" k-data-value-field="'namauser'" k-filter="'contains'"
+                                k-auto-bind="false" k-data-source="listInstitusi" />
+                        </div>
+                    </div>
+                </div>
+                <div class="grid_2">
+                    <div class="grid_12" style="margin-top: 6px;">
+                        <label c-label>Jenis Pendidikan</label>
+                        <div class="grid_12">
+                            <input style="width: 100%;" kendo-combo-box k-ng-model="item.jenispendidikan"
+                                k-data-text-field="'diklatkategori'" k-data-value-field="'id'" k-filter="'contains'"
+                                k-auto-bind="false" k-data-source="listJenisPendidikan" />
+                        </div>
+                    </div>
+                </div>
                 <div class="grid_2 k-edit-buttons  k-state-default " style="margin-top:27px">
                     <button class="k-button k-button-icontext k-primary k-grid-update" ng-click="SearchData()"
                         style="width:100px"><span class="k-sprite k-icon k-i-search"></span>Cari </button>

@@ -1491,6 +1491,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::post('logistik/save-perbaiki-kartu-stok', 'Logistik\LogistikController@savePerbaikiKartuStok');
             Route::post('logistik/save-data-sppb', 'Logistik\LogistikController@SaveSPPB');
             Route::post('logistik/save-data-penerimaan', 'Logistik\LogistikController@saveTerimaBarangSuplier');
+            Route::post('logistik/save-verif-spj', 'Logistik\LogistikController@verifSPJ');
             Route::post('logistik/save-ubah-status-spk', 'Logistik\LogistikController@UpdateStatusUPK');
             Route::post('logistik/delete-data-spk', 'Logistik\LogistikController@DeleteSPK');
             Route::post('logistik/save-data-spk', 'Logistik\LogistikController@SaveSPK');
@@ -1799,6 +1800,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('radiologi/get-diagnosapasienbynoreg', 'Radiologi\RadiologiController@getDiagnosaRad');
           Route::get('radiologi/get-order-pelayanan', 'Radiologi\RadiologiController@getOrderPelayanan');
           Route::post('radiologi/save-pelayanan-pasien', 'Radiologi\RadiologiController@savePelayananPasien');
+          Route::post('radiologi/save-tolak-verif', 'Radiologi\RadiologiController@saveTolakOrder');
           Route::post('radiologi/delete-order-pelayanan', 'Radiologi\RadiologiController@deleteOrderPelayanan');
           Route::get('radiologi/cekstatusorder','Radiologi\RadiologiController@cekstatusorder');
           Route::get('radiologi/get-sudah-input-hasil','Radiologi\RadiologiController@cekinputhasil');
@@ -2604,6 +2606,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
               Route::get('sdm/pendidikan/get-detail-pdruangan', 'SDM\PelatihanController@getDetailPDRuangan');
               Route::post('sdm/pendidikan/update-pesertadidik', 'SDM\SumberDayaManusiaController@updatePesertaDidik');
               Route::post('sdm/pendidikan/save-pdruangan', 'SDM\SumberDayaManusiaController@savePesertaDidikRuangan');
+              Route::post('sdm/pendidikan/save-pdruangan-group', 'SDM\SumberDayaManusiaController@savePesertaDidikRuanganGroup');
+              Route::get('diklat/get-pe-eks', 'SDM\SumberDayaManusiaController@getPeEks');
               Route::post('sdm/penelitian/verif-kegiatan-penelitian-eksternal','SDM\PenelitianController@verifKegiatanPenelitianExternal');
               Route::post('sdm/penelitian/verif-tagihan-kegiatan-penelitian-eksternal','SDM\PenelitianController@verifTagihanKegiatanPenelitianExternal');
               

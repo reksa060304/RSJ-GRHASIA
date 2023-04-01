@@ -44,6 +44,56 @@ Trait Valet {
 
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
+    protected function generateCodeBySeqTableSPP($objectModel, $atrribute, $length=8, $prefix='',$idProfile, $thn, $tgl){
+        DB::beginTransaction();
+        try {
+            $result = DB::table('seqnumberkeu_t')->where('seqnumber', 'LIKE', $prefix.'%')
+                ->where('seqname',$atrribute)
+                ->where('kdprofile',$idProfile)
+                ->where('tgljamseq','>=',$thn. '-01-01')
+                ->where('tgljamseq','<=',$thn. '-12-31')
+                ->max('seqnumber');
+                    $prefixLen = strlen($prefix);
+                    $subPrefix = substr(trim($result),$prefixLen);
+                    $SN = $prefix.(str_pad((int)$subPrefix+1, $length-$prefixLen, "0", STR_PAD_LEFT));
+            // $result = DB::select(DB::raw("select max(seqnumber) from seqnumberkeu_t where kdprofile = $idProfile and seqname ilike '$atrribute'
+            // and tgljamseq::date between '$thn-01-01'::date and '$thn-12-31'::date and seqnumber ilike '$prefix%'"));
+            
+            // foreach ($result as $result) {
+            
+            // }
+                
+            DB::table('seqnumberkeu_t')->insert(
+                [
+                    'kdprofile'=> $idProfile,
+                    'seqnumber'=> $SN,
+                    'tgljamseq'=> $tgl,
+                    'seqname'=> $atrribute,
+                    // 'norec'=> substr(\Webpatser\Uuid\Uuid::generate(), 0, 32),
+                ]
+            );
+            
+            // $newSN->kdprofile = $idProfile;
+            // $newSN->seqnumber = $SN;
+            // $newSN->tgljamseq = $tgl;
+            // $newSN->seqname = $atrribute;
+            // $newSN->save();
+
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+
+        if ($transStatus == 'true') {
+            DB::commit();
+            return $SN;
+        } else {
+            DB::rollBack();
+            return '';
+        }
+
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
     protected function generateCode($objectModel, $atrribute, $length=8, $prefix='',$idProfile){
         $result = $objectModel->where($atrribute, 'LIKE', $prefix.'%')->where('kdprofile',$idProfile)->max($atrribute);
         $prefixLen = strlen($prefix);

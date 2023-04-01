@@ -191,6 +191,17 @@
                                             ng-model="item.obj[jawab.id]" />
                                     </div>
                                 </div>
+                                <div class="grid_12" ng-switch-when="textarea13">
+                                    <div>
+                                        <label>{{jawab.nama}}</label>
+                                    </div>
+                                    <div>
+                                        <textarea style="width: 740px;height: 50px" c-text-area
+                                            type="input"
+                                            filter="'string'" class="k-textbox" style="{{data.style}}"
+                                            ng-model="item.obj[jawab.id]" />
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -202,7 +213,7 @@
                 <div class="grid_12" ng-repeat="list in listRiwayatPribadi | orderBy:'id'" style="padding: 5pt 10pt">
                     <b>{{list.nama}}</b>
                     <div class="grid_12" style="padding: 5pt">
-                        <div ng-repeat="jawab in list.detail | orderBy:'id'">
+                        <div ng-repeat="jawab in list.detail | orderBy:'no'">
                             <div ng-switch on="jawab.type">
                                 <!-- label -->
                                 <div class="grid_12" ng-switch-when="label">
@@ -1076,14 +1087,15 @@
                     </div>
                 </div>
             </fieldset>
-            <fieldset style="margin-top: 10px">
+            <fieldset style="margin-top: 10px;">
                 <legend><b>PENATALAKSANAAN</b></legend>
+
                 <div class="grid_12" ng-repeat="list in listPenatalaksanaan | orderBy:'id'" style="padding: 5pt 10pt">
                     <b>{{list.nama}}</b>
                     <div class="grid_12" style="padding: 5pt">
                         <div ng-repeat="jawab in list.detail | orderBy:'id'">
                             <div ng-switch on="jawab.type">
-                                
+
                                 <div class="grid_12" ng-switch-when="textbox12">
                                     <div>
                                         <label>{{jawab.nama}}</label>
@@ -1164,6 +1176,9 @@
                         </div>
                     </div>
                 </div>
+            </fieldset>
+            <fieldset style="margin-top: 10px">
+                
                 <div class="grid_6" ng-repeat="list in listAsuhan | orderBy:'id'" style="padding: 5pt 10pt">
                     <b>{{list.nama}}</b>
                     <div class="grid_12" style="padding: 5pt">
@@ -1774,11 +1789,9 @@
                                     <div>
                                         <label>{{jawab.nama}}</label>
                                     </div>
-                                    <div class="grid_6 parentKeteranganFieldTambahan">
-                                        <input class="k-textbox" style="width: 70%" ng-model="item.obj[jawab.id]"
+                                    <div class="grid_12" style="margin-top: 20px;margin-bottom: 5px;">
+                                        <input class="k-textbox" style="width: 100%" ng-model="item.obj[jawab.id]"
                                             type="text" placeholder="{{jawab.placeholder}}">
-                                        <label class="keteranganFieldTambahan"
-                                            style="margin-top: 5px;margin-right: 30px">{{jawab.satuan}}</label>
                                     </div>
                                 </div>
                                 <div class="grid_4" ng-switch-when="textbox4">
@@ -1786,7 +1799,7 @@
                                         <label>{{jawab.nama}}</label>
                                     </div>
                                     <div>
-                                        <input class="k-textbox" style="width: 70%" ng-model="item.obj[jawab.id]"
+                                        <input class="k-textbox" style="width: 100%" ng-model="item.obj[jawab.id]"
                                             type="text" placeholder="{{jawab.placeholder}}">
                                     </div>
                                 </div>
@@ -1829,17 +1842,16 @@
                                         </div>
                                         <div class="grid_12 padDatePicker"
                                             style="margin-top: -15px;margin-bottom: 60px;margin-left: 20px">
+
                                             <input k-ng-model="item.obj[jawab.id]" kendo-timepicker placeholer="HH:mm"
-                                                k-format="'HH:mm'" ng-value="{{data2.datevalue}}" />
+                                                k-format="'HH:mm'" />
+
                                         </div>
                                     </div>
                                 </div>
-                                <div ng-switch-when="combobox" style="margin-top:20%">
+                                <div ng-switch-when="combobox">
                                     <div class="grid_6">
-                                        <div class="grid_12">
-                                            <p>{{jawab.nama}}</p>
-                                        </div>
-                                        <div class="grid_12" style="margin-top: 20px;margin-bottom: 5px;">
+                                        <div class="grid_12" style="margin-top: 20px;margin-bottom: 5px;" >
                                             <!-- <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[data.id]" /> -->
                                             <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[jawab.id]"
                                                 k-data-text-field="'text'" k-data-value-field="'value'"
@@ -1853,7 +1865,7 @@
                                         <div class="grid_12">
                                             <p>{{jawab.nama}}</p>
                                         </div>
-                                        <div class="grid_12" style="margin-top: 2px;margin-bottom: 5px;">
+                                        <div class="grid_12" style="margin-top: px;margin-bottom: px;">
                                             <!-- <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[data.id]" /> -->
                                             <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[jawab.id]"
                                                 k-data-text-field="'text'" k-data-value-field="'value'"

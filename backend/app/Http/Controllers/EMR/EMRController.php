@@ -4849,7 +4849,7 @@ class EMRController  extends ApiController
         $dataLogin = $request->all();
         $jd = \DB::table('jenisdiagnosa_m as lu')
             ->select('lu.id', 'lu.jenisdiagnosa as jenisDiagnosa')
-            ->where('lu.statusenabled', true)
+            ->where('lu.statusenabled', true)->whereIn('lu.id', [7])
             ->get();
 
             $dp = \DB::table('diagnosakep_m')->where('kdprofile', 30)->where('statusenabled', true)->get();
@@ -6565,7 +6565,7 @@ class EMRController  extends ApiController
             ->LEFTJOIN('ruangan_m as ru2', 'ru2.id', '=', 'so.objectruangantujuanfk')
             ->LEFTJOIN('pegawai_m as p', 'p.id', '=', 'so.objectpegawaiorderfk')
 //            ->LEFTJOIN('ris_order as pp','pp.order_no','=','so.noorder')
-            ->select('so.norec', 'so.tglorder', 'so.noorder', 'ru.namaruangan as namaruanganasal', 'ru2.namaruangan as namaruangantujuan', 'p.namalengkap as dokter', 'so.statusorder',
+            ->select('so.keterangantolak','so.norec', 'so.tglorder', 'so.noorder', 'ru.namaruangan as namaruanganasal', 'ru2.namaruangan as namaruangantujuan', 'p.namalengkap as dokter', 'so.statusorder',
                 'pd.noregistrasi', 'so.objectruangantujuanfk', 'so.statusorder','so.keteranganlainnya','so.cito'
 //                DB::raw('case when pp.order_no is null then \'PENDING\' else \'SELESAI DIPERIKSA\' end as statusorder')
             )
@@ -6643,9 +6643,13 @@ class EMRController  extends ApiController
 
             $item->risorder = [];
             $item->statusorder  = 'Belum diproses';
+            if($item->keterangantolak != null){
+                $item->statusorder = 'Order ditolak';
+                    // break;
+            }
             foreach($risorder as $dss2){
-           
-                if($item->noorder == $dss2->order_no){
+                
+                 if($item->noorder == $dss2->order_no){
                        
                      $item->statusorder = 'Sudah diproses';
                      $item->risorder[] =$dss2;
@@ -6715,6 +6719,7 @@ class EMRController  extends ApiController
         $result = array(
             'daftar' => $data,//$results,
             'message' => 'er@epic',
+            'e'=> $risorder
         );
 
         return $this->respond($result);
@@ -10473,7 +10478,7 @@ class EMRController  extends ApiController
         $main = \DB::select(DB::raw("SELECT id, type from emrd_t where emrfk = $emrfk and statusenabled = true and kdprofile = $kdProfile order by id
         "));
 
-        $sec = \DB::select(DB::raw("SELECT id,id2, type from emrd_t where emrfk = $request[emrid] and statusenabled = true and kdprofile = $kdProfile order by id
+        $sec = \DB::select(DB::raw("SELECT id,id2, type from emrd_t where emrfk = $request[emrid] and statusenabled = true and kdprofile = $kdProfile and id2 is not null order by id
         "));
 
         $data = \DB::select(DB::raw("SELECT emd.id,empd.emrdfk, empd.value, emd.type FROM emrpasiend_t empd 
@@ -10484,34 +10489,30 @@ class EMRController  extends ApiController
         $id=0;
         $value="";
         $id2=0;
-        foreach ($main as $m) {
+        
+        foreach ($data as $dt) {
             $id=0;
             $id2=0;
             $value="";
-            foreach ($data as $dt) {
-                if($m->id == $dt->id){
-                    $value = $dt->value;
+            foreach ($sec as $s) {
+                if($dt->id == $s->id2){
+                    // $id2 = $s->id2;
+                    // $value= $dt->value;
+                    $detail[]= array(
+                    "id"=> $s->id,
+                    "value"=> $dt->value,
+                    "type"=> $dt->type,
+                    "id2"=>$s->id2,
                     
+                    );
                 }
             }
-            foreach($sec as $s){
-                if($m->id == $s->id2){
-                    $id2= $s->id;
-                }
-            }
-            $detail[]= array(
-                "id"=> $m->id,
-                "value"=>$value,
-                "type"=> $m->type,
-                "id2"=>$id2,
-                
-            );
             
         }
         $result = array(
                 'data'=> $detail,
-                // "sec"=> $sec,
-                // 'data2'=> $data,
+                "sec"=> $sec,
+                'data2'=> $data,
                 'as'=> 'Fizi@Epic'
             );
         return $this->respond($result);
@@ -10987,29 +10988,31 @@ class EMRController  extends ApiController
                         'isresep'=> $data1['resep'] == "✓" ? true : null,
                         'tanggalmulai'=> $data1['tanggalmulai'],
                         'tanggalstop'=> $data1['tanggalstop'],
-                        'dosis'=> $data1['dosis'],
-                        'rute'=> $data1['rute'],
+                        // 'dosis'=> $data1['dosis'],
+                        'rute'=> isset($data1['rute'])? $data1['rute'] : null,
                         'frekuensi'=> $data1['frekuensi'],
                         'indikasi'=> $data1['indikasi'],
                         'statusobat'=> $data1['statusobat'],
                         'perubahanaturan'=> $data1['perubahanaturan'],
+                        'obatlain'=> $data1['obatlain'],
                     ]);
                 }else{
-                    $penggunaanobat = \DB::table('riwayatpenggunaanobat_t')->where('norec', $data['norec'])->update([
+                    $penggunaanobat = \DB::table('riwayatpenggunaanobat_t')->where('norec', $data1['norec'])->update([
                         'noregistrasi'=> $request['noregistrasi'],
                         'noemr'=> $request['noemr'],
                         'objectprodukfk'=> $data1['objectprodukfk'],
                         'isresep'=> $data1['resep'] == "✓" ? true : null,
                         'tanggalmulai'=> $data1['tanggalmulai'],
                         'tanggalstop'=> $data1['tanggalstop'],
-                        'dosis'=> $data1['dosis'],
+                        // 'dosis'=> $data1['dosis'],
                         'rute'=> $data1['rute'],
                         'frekuensi'=> $data1['frekuensi'],
                         'indikasi'=> $data1['indikasi'],
                         'statusobat'=> $data1['statusobat'],
                         'perubahanaturan'=> $data1['perubahanaturan'],
+                        'obatlain'=> $data1['obatlain'],
                     ]);
-            $a= $penggunaanobat;
+            $a = $penggunaanobat;
 
                 }
             }
@@ -11033,20 +11036,20 @@ class EMRController  extends ApiController
                         'statusobat'=> $data2['statusobat'],
                     ]);
                 }else{
-                    $rekonsiliasiobat = \DB::table('riwayatrekonsiliasiobat_t')->where('norec', $data['norec'])->update([
+                    $rekonsiliasiobat = \DB::table('riwayatrekonsiliasiobat_t')->where('norec', $data2['norec'])->update([
                         'noregistrasi'=> $request['noregistrasi'],
                         'noemr'=> $request['noemr'],
-                        'objectprodukfk'=> $data1['objectprodukfk'],
+                        'objectprodukfk'=> $data2['objectprodukfk'],
                         'tanggal'=> $data2['tanggal'],
                         'objectruanganfk'=> $data2['objectruanganfk'],
                         'objectprodukfk'=> $data2['objectprodukfk'],
-                        'dosis'=> $data2['dosis'],
-                        'frekuensi'=> $data2['frekuensi'],
-                        'waktupemberian'=> $data2['waktupemberian'],
-                        'carapemberian'=> $data2['carapemberian'],
-                        'islanjutaturansama'=> $data2['islanjutaturansama'],
-                        'lanjutaturanperubahan'=> $data2['lanjutaturanperubahan'],
-                        'isstop'=> $data2['isstop'],
+                        'obatlain'=> $data2['obatlain'],
+                        // 'frekuensi'=> $data2['frekuensi'],
+                        // 'waktupemberian'=> $data2['waktupemberian'],
+                        // 'carapemberian'=> $data2['carapemberian'],
+                        // 'islanjutaturansama'=> $data2['islanjutaturansama'],
+                        // 'lanjutaturanperubahan'=> $data2['lanjutaturanperubahan'],
+                        // 'isstop'=> $data2['isstop'],
                         'objectpegawaifk'=> $data2['objectpegawaifk'],
                     ]);
                 }

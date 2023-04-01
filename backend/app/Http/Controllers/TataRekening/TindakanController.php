@@ -1554,9 +1554,9 @@ class TindakanController extends ApiController
         if(isset($request['idDept']) && $request['idDept'] != "" && $request['idDept'] != "undefined") {
             $deptId = ' AND ru.objectdepartemenfk = ' . $request['idDept'];
         }
-        $idKelPasien='';
-        if(isset($request['kelompokPasien']) && $request['kelompokPasien'] != "" && $request['kelompokPasien'] != "undefined") {
-            $idKelPasien = ' AND pd.objectkelompokpasienlastfk = ' . $request['kelompokPasien'];
+        $dokter='';
+        if(isset($request['dokter']) && $request['dokter'] != "" && $request['dokter'] != "undefined") {
+            $dokter = ' AND ppp.objectpegawaifk = ' . $request['dokter'];
         }
         $namaproduk = '';
         if (isset($request['namaproduk']) && $request['namaproduk'] != "" && $request['namaproduk'] != "undefined") {
@@ -1583,6 +1583,7 @@ class TindakanController extends ApiController
             $ArrTindakan
             $deptId
             $ruId
+            $dokter
             ORDER BY pd.tglregistrasi asc, ps.nocm asc
         "));
 

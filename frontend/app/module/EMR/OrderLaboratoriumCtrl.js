@@ -155,7 +155,6 @@ define(['initialize'], function (initialize) {
             //     }
 
             // })
-
             function init() {
                 $scope.isRouteLoading = true;
                 medifirstService.get("sysadmin/general/get-tgl-posting", true).then(function (dat) {
@@ -717,7 +716,7 @@ define(['initialize'], function (initialize) {
                         $scope.isRouteLoading = true
                         medifirstService.post('emr/save-order-pelayanan', objSave).then(function (e) {
                             console.log(e.data);
-                            // sendNotification(e.data)
+                            sendNotification(e.data)
                             $scope.item.layanan = []
                             // $scope.isSimpan = false
                             $scope.savebtn = false

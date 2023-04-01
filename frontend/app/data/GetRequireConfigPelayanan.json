@@ -3614,6 +3614,30 @@
         {
             "nameDep": "PengkajianGiziRawatJalanCtrl",
             "urlDep": "module/EMR/PengkajianGiziRawatJalanCtrl"
+        },
+        {
+            "nameDep": "PerencanaanImplementasiEvaluasiKeperawatanNonJiwaCtrl",
+            "urlDep": "module/EMR/PerencanaanImplementasiEvaluasiKeperawatanNonJiwaCtrl"
+        },
+        {
+            "nameDep": "PengkajianAwalKepNAPZACtrl",
+            "urlDep": "module/EMR/PengkajianAwalKepNAPZACtrl"
+        },
+        {
+            "nameDep": "PengkajianGiziRawatInapCtrl",
+            "urlDep": "module/EMR/PengkajianGiziRawatInapCtrl"
+        },
+        {
+            "nameDep": "RencanaAsuhanGiziRawatInapCtrl",
+            "urlDep": "module/EMR/RencanaAsuhanGiziRawatInapCtrl"
+        },
+        {
+            "nameDep": "PengkajianAwalKeperawatanRJJiwaCtrl",
+            "urlDep": "module/EMR/PengkajianAwalKeperawatanRJJiwaCtrl"
+        },
+        {
+            "nameDep": "PengkajianAwalMedisIGDJiwaGrhCtrl",
+            "urlDep": "module/EMR/PengkajianAwalMedisIGDJiwaGrhCtrl"
         }
     ]
 }

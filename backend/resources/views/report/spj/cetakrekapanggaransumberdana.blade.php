@@ -116,9 +116,9 @@
                     @elseif($dt->div == 4)
                     <td width="150" style="padding: 10px;">{{$dt->kode2}}. {{$dt->kegiatan}}</td>
                     @endif
-                    <td align="right" width="50" style="padding: 10px; ">{{ number_format($dt->jasalayanan,0,',','.') }}</td>
-                    <td align="right" width="50" style="padding: 10px; ">{{ number_format($dt->apbd,0,',','.') }}</td>
-                    <td align="right" width="50" style="padding: 10px; ">{{ number_format($dt->total,0,',','.') }}</td>
+                    <td align="right" width="50" style="padding: 10px; ">{{ number_format($dt->jasalayanan,0,',','.') == 0 ? "" : number_format($dt->jasalayanan,0,',','.')}}</td>
+                    <td align="right" width="50" style="padding: 10px; ">{{ number_format($dt->apbd,0,',','.')== 0 ? "" : number_format($dt->apbd,0,',','.')}}</td>
+                    <td align="right" width="50" style="padding: 10px; ">{{ number_format($dt->total,0,',','.') == 0 ? "": number_format($dt->total,0,',','.')  }}</td>
                 </tr>
                 @endforeach
                 {{-- <tr>

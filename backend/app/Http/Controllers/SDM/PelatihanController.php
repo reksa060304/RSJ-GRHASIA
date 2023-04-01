@@ -2979,7 +2979,29 @@ class PelatihanController extends ApiController {
     {
         $tglAwal = $request['tglAwal'];
         $tglAkhir = $request['tglAkhir'];
-        $data=\DB::select(DB::raw("SELECT djp.detailjenisproduk as kegiatan, dk.diklatkategori as jeniskegiatan, split_part(pr.namaproduk, '  -  ', 2) as jenjangpendidikan,spe.institusipendidikan, 
+        $jenispendidikan = "";
+        if(isset($request['jenispendidikan'])){
+            $jenispendidikan = "and dk.id = " . $request['jenispendidikan'];
+        }
+        $institusi = "";
+        
+        if(isset($request['institusi'])){
+            $arr="";
+            $data = "";
+            $a = explode(", ",$request['institusi']);
+            for ($i=0; $i < count($a); $i++) { 
+                if ($i < count($a)-1) {
+                    $data = $data . "'".$a[$i]."'".",";
+                } else {
+                    $data = $data . "'".$a[$i]."'";
+                }
+            }
+
+            // array_push($data, $a);
+            // var_dump($data);
+            $institusi = "and spe.namauser in (" . $data . ")";
+        }
+        $data=\DB::select(DB::raw("SELECT spe.namauser, djp.detailjenisproduk as kegiatan, dk.diklatkategori as jeniskegiatan, split_part(pr.namaproduk, '  -  ', 2) as jenjangpendidikan,spe.institusipendidikan, 
             spe.tanggalmulai::date, spe.tanggalselesai::date, spe.jumlahpeserta, spe.qty, spe.satuan, spe.hargasatuan, spe.biayapenelitian
             FROM sdm_penelitianeksternal_t spe
             inner join produk_m pr on pr.id = spe.objectprodukfk
@@ -2987,6 +3009,7 @@ class PelatihanController extends ApiController {
             inner join diklatkategori_m dk on dk.id = spe.objectdiklatkategorifk
             inner join strukpelayanan_t sp on sp.norec = spe.noregistrasifk
             where sp.nosbmlastfk is null and spe.tanggalmulai::date between '$tglAwal' and '$tglAkhir'
+            $jenispendidikan $institusi
             order by spe.tanggalmulai asc
         "));
         $result = array(

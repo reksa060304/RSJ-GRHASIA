@@ -29,6 +29,8 @@ define(['initialize'], function (initialize) {
                     var dat = datas.data;
                     $scope.listDataInstitusiPendidikan = dat.institusi;
                     $scope.listDataFakultas = dat.fakultas;
+                    $scope.listInstitusi = dat.institusiuser
+                    $scope.listJenisPendidikan = dat.jenisdiklat
                 });
             }
 
@@ -36,22 +38,22 @@ define(['initialize'], function (initialize) {
                 $scope.isRouteLoading = true;
                 var tglAwal = moment($scope.item.tglawal).format('YYYY-MM-DD HH:mm');
                 var tglAkhir = moment($scope.item.tglakhir).format('YYYY-MM-DD HH:mm');
-                var NamaPeneliti = "";
-                if ($scope.item.NamaPeneliti !== undefined) {
-                    NamaPeneliti = "&NamaPeneliti=" + $scope.item.NamaPeneliti
+                var institusi = [];
+                if ($scope.item.institusi != undefined) {
+                    institusi = "&institusi=" + $scope.item.institusi.namauser
                 }
                 var JudulPenelitian = "";
-                if ($scope.item.JudulPenelitian !== undefined) {
-                    JudulPenelitian = "&JudulPenelitians=" + $scope.item.JudulPenelitian;
-                }
-                var UnitKerja = "";
-                if ($scope.item.UnitKerja !== undefined) {
-                    UnitKerja = "&UnitKerja=" + $scope.item.UnitKerja;
+                // if ($scope.item.JudulPenelitian !== undefined) {
+                //     JudulPenelitian = "&JudulPenelitians=" + $scope.item.JudulPenelitian;
+                // }
+                var jenispendidikan = "";
+                if ($scope.item.jenispendidikan != undefined) {
+                    jenispendidikan = "&jenispendidikan=" + $scope.item.jenispendidikan.id;
                 }
                 medifirstService.get("sdm/penelitian/get-data-piutang-institusi?" +
                     "tglAwal=" + tglAwal +
                     "&tglAkhir=" + tglAkhir +
-                    NamaPeneliti + JudulPenelitian + UnitKerja, true).then(function (dat) {
+                    institusi + JudulPenelitian + jenispendidikan, true).then(function (dat) {
                     $scope.isRouteLoading = false;
                     var datas = dat.data.data;
                     for (var i = 0; i < datas.length; i++) {
@@ -90,11 +92,11 @@ define(['initialize'], function (initialize) {
                 $scope.item = {};
             }
 
-            $scope.kl = function (current) {
-                toastr.info(current.namalengkap + " Terpilih");
-                $scope.current = current;
-                console.log(JSON.stringify($scope.current));
-            }
+            // $scope.kl = function (current) {
+            //     toastr.info(current.namalengkap + " Terpilih");
+            //     $scope.current = current;
+            //     console.log(JSON.stringify($scope.current));
+            // }
 
             $scope.Ubah = function (current) {
 

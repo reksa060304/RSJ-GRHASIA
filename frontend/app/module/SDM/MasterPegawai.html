@@ -234,24 +234,24 @@
 					</div>
 					<div class="grid_12" style="margin-top: 16px">
 						<div class="panel panel-default panel-white">
-							<div class="panel-heading-white"><span class="title" c-translate>No Telphone/HP</span></div>
+							<div class="panel-heading-white"><span class="title" c-translate>No Telepon/HP</span></div>
 								<div class="panel-body">
 									<div class="grid_12">
 										<div class="grid_6">
 											<div class="grid_12">
-												<label c-label item="item">No Telp/HP 1</label>
+												<label c-label item="item">No Telepon/HP 1</label>
 											</div>
 											<div class="grid_12">
-												<input c-text-box type="input" placeholder="No Telp/HP 1" filter="'varchar'"
+												<input c-text-box type="input" placeholder="No Telepon/HP 1" filter="'varchar'"
 													class="k-textbox" ng-model="item.nomor1" />
 											</div>
 										</div>
 										<div class="grid_6">
 											<div class="grid_12">
-												<label c-label item="item">No Telp/ HP 2</label>
+												<label c-label item="item">No Telepon/ HP 2</label>
 											</div>
 											<div class="grid_12">
-												<input c-text-box type="input" placeholder="No Telp/HP 2" filter="'varchar'"
+												<input c-text-box type="input" placeholder="No Telepon/HP 2" filter="'varchar'"
 													class="k-textbox" ng-model="item.nomor2" />
 											</div>
 										</div>
@@ -1056,7 +1056,7 @@
 									</div>
 									<div class="grid_4">
 										<div class="grid_12">
-											<label c-label> Tanda Tangan SK</label>
+											<label c-label> Pejabat Yang Menentapkan</label>
 										</div>
 										<div class="grid_12">
 											<div class="grid_12">
@@ -1066,7 +1066,7 @@
 									</div>
 									<div class="grid_4">
 										<div class="grid_12">
-											<label c-label> Jabatan Tanda Tangan SK</label>
+											<label c-label> Pejabat Penandatanganan SK</label>
 										</div>
 										<div class="grid_12">
 											<div class="grid_12">
@@ -1810,7 +1810,7 @@
 											<div class="clear"></div>
 											<div class="grid_12">
 												<input style="width: 100%" kendo-date-picker k-ng-model="itemGajiBerkala.tanggalsk"
-													k-format="'yyyy-MM-dd'" />
+													placeholer="dd-MM-yyyy" k-format="'dd-MM-yyyy'" parsedate="dd-MM-yyyy" />
 											</div>
 										</div>
 										<div class="grid_4">
@@ -1820,7 +1820,7 @@
 											<div class="clear"></div>
 											<div class="grid_12">
 												<input style="width: 100%" kendo-date-picker k-ng-model="itemGajiBerkala.tanggaltmtcetak"
-													k-format="'yyyy-MM-dd'" />
+													placeholer="dd-MM-yyyy" k-format="'dd-MM-yyyy'" parsedate="dd-MM-yyyy"/>
 											</div>
 										</div>
 										<div class="grid_4">
@@ -1868,7 +1868,7 @@
 												<div class="clear"></div>
 												<div class="grid_12">
 													<input style="width: 100%" kendo-date-picker k-ng-model="itemGajiBerkala.tanggalskbaru"
-														k-format="'yyyy-MM-dd'"/>
+														placeholer="dd-MM-yyyy" k-format="'dd-MM-yyyy'" parsedate="dd-MM-yyyy"/>
 												</div>
 											</div>
 											
@@ -1883,7 +1883,7 @@
 												<div class="clear"></div>
 												<div class="grid_12">
 													<input style="width: 100%" kendo-date-picker k-ng-model="itemGajiBerkala.tanggaltmt"
-														k-format="'yyyy-MM-dd'" k-on-change="getDataGolongan()" />
+														placeholer="dd-MM-yyyy" k-format="'dd-MM-yyyy'" parsedate="dd-MM-yyyy" k-on-change="getDataGolongan()" />
 												</div>
 											</div>
 											<div class="grid_4">

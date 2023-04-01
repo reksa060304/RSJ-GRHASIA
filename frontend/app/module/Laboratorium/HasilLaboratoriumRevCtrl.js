@@ -134,7 +134,13 @@ define(['initialize'], function (initialize) {
 
                         sheet.rows.splice(0, 0, { cells: myHeaders, type: "header", height: 50 });
                     },
-                    columns: [{
+                    columns: [
+                        {
+                            field: "tglpelayanan",
+                            title: "Tanggal",
+                            width: "20%"
+                        }, 
+                        {
                         field: "namaproduk",
                         title: "Nama Pemeriksaan",
                         width: "20%"

@@ -139,10 +139,9 @@ define(['initialize'], function (initialize) {
                 $scope.item.obj = []
                 $scope.item.obj2 = []
                 $scope.item.obj[100500] = moment($scope.header.tglregistrasi).format('YYYY-MM-DD HH:mm')
-                $scope.itemd.tanggalmulai = moment($scope.now).format('YYYY-MM-DD')
-                $scope.itemd.tanggalstop = moment($scope.now).format('YYYY-MM-DD')
-                $scope.itemd.tanggalRO = moment($scope.now).format('YYYY-MM-DD')
-                
+                // $scope.itemd.tanggalmulai = moment($scope.now).format('YYYY-MM-DD')
+                // $scope.itemd.tanggalstop = moment($scope.now).format('YYYY-MM-DD')
+                // 
                 medifirstService.get('emr/get-rekonsiliasi-obat?noemr=' + nomorEMR + "&noregistrasi="+$scope.cc.noregistrasi).then(function (data) {
                     dataAlergi = data.data.reaksialergi
                     for (let i = 0; i < dataAlergi.length; i++) {
@@ -667,7 +666,7 @@ define(['initialize'], function (initialize) {
                         "width": "120px",
                     },
                     {
-                        "field": "dosis",
+                        "field": "obatlain",
                         "title": "Obat Lain",
                         "width": "70px",
                     },
@@ -729,7 +728,13 @@ define(['initialize'], function (initialize) {
                         "width": "120px",
                     },
                     {
-                        "command": [{
+                        "command": [
+                            {
+                                text: "Ubah",
+                                click: editPO,
+                                imageClass: "k-icon k-i-delete"
+                            },
+                            {
                             text: "Hapus",
                             click: hapusPO,
                             imageClass: "k-icon k-i-delete"
@@ -756,10 +761,15 @@ define(['initialize'], function (initialize) {
                         "field": "namaruangan",
                         "title": "Unit",
                         "width": "80px",
-                    },
+                    }, 
                     {
                         "field": "namaproduk",
                         "title": "Nama obat/suplemen/herbal/tradisional",
+                        "width": "80px",
+                    },
+                    {
+                        "field": "obatlain",
+                        "title": "Obat Lain",
                         "width": "80px",
                     },
                     {
@@ -794,7 +804,13 @@ define(['initialize'], function (initialize) {
                     },
                     
                     {
-                        "command": [{
+                        "command": [
+                            {
+                                text: "Ubah",
+                                click: editRO,
+                                imageClass: "k-icon k-i-delete"
+                            }, 
+                            {
                             text: "Hapus",
                             click: hapusRO,
                             imageClass: "k-icon k-i-delete"
@@ -830,6 +846,41 @@ define(['initialize'], function (initialize) {
                     }
                 })
             }
+            function editPO(e) {
+                e.preventDefault();
+                var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                if (dataItem == undefined) {
+                    alert("Data Belum Dipilih!")
+                    return;
+                };
+                console.log(dataItem);
+                $scope.itemd.obatPO = {
+                    id: dataItem.objectprodukfk,
+                    namaproduk: dataItem.namaproduk
+                }
+                $scope.itemd.obatlain = dataItem.obatlain
+                if (dataItem.obatlain != null){
+                    $scope.itemd.rslain = true
+                }
+                $scope.norecPO = dataItem.norec
+                $scope.nomorPO = dataItem.nomorPO
+                $scope.itemd.resep = dataItem.resep == "✓" ? true : null;
+                $scope.itemd.tanpa = dataItem.resep == "✓" ? null : true;
+                $scope.itemd.tanggalmulai = new Date(dataItem.tanggalmulai)
+                $scope.itemd.tanggalstop = new Date(dataItem.tanggalstop)
+                $scope.itemd.rutePO = dataItem.rute
+                $scope.itemd.frekuensiPO = dataItem.frekuensi
+                $scope.itemd.indikasiPO = dataItem.indikasi
+                if (dataItem.statusobat == "L"){
+                    $scope.itemd.LPO = true
+                } else if (dataItem.statusobat == "H"){
+                    $scope.itemd.HPO = true
+                }else{
+                    $scope.itemd.TPO = true
+                }
+                $scope.itemd.aturanpakai = dataItem.perubahanaturan
+                $scope.popUpLembarPenggunaanObat.center().open()
+            }
             function hapusPO(e) {
                 e.preventDefault();
                 var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
@@ -855,6 +906,47 @@ define(['initialize'], function (initialize) {
                         grid.removeRow(row);
                     }
                 })
+            }
+            function editRO(e) {
+                e.preventDefault();
+                var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                if (dataItem == undefined) {
+                    alert("Data Belum Dipilih!")
+                    return;
+                };
+                console.log(dataItem);
+
+                $scope.itemd.tanggalRO = new Date(dataItem.tanggal)
+                $scope.itemd.namaruangan = {
+                    id: dataItem.objectruanganfk,
+                    namaruangan: dataItem.namaruangan
+                }
+
+                $scope.itemd.obatRO = {
+                    id: dataItem.objectprodukfk,
+                    namaproduk: dataItem.namaproduk
+                }
+                $scope.itemd.dosisRO = dataItem.obatlain
+                if (dataItem.obatlain != null) {
+                    $scope.itemd.obatlain = true
+                }
+                $scope.norecRO = dataItem.norec
+                // $scope.nomorRO = dataItem.nomorRO
+                $scope.itemd.rute = dataItem.rute;
+                $scope.itemd.aturanpakai = dataItem.aturanpakai;
+                if (dataItem.statusobat == "L") {
+                    $scope.itemd.LPO = true
+                } else if (dataItem.statusobat == "H") {
+                    $scope.itemd.HPO = true
+                } else {
+                    $scope.itemd.TPO = true
+                }
+                $scope.itemd.perubahanaturanpakai = dataItem.perubahanaturanpakai
+                $scope.itemd.apotekerRO = {
+                    value: dataItem.objectpegawaifk,
+                    text: dataItem.namalengkap
+                }
+                $scope.popUpLembarRekonsiliasiObat.center().open()
             }
             function hapusRO(e) {
                 e.preventDefault();
@@ -911,73 +1003,151 @@ define(['initialize'], function (initialize) {
             $scope.SavePO = function () {
                 var data = {}
                 var nomorPO = 0
+                var namaproduk = ""
+                var objectprodukfk = null
+                if ($scope.itemd.obatPO != undefined) {
+                    namaproduk = $scope.itemd.obatPO.namaproduk
+                    objectprodukfk = $scope.itemd.obatPO.id
+                }
+                var obatlain = ""
+                if ($scope.itemd.obatlain != undefined) {
+                    obatlain = $scope.itemd.obatlain
+                }
+                var dosis = ""
+                if ($scope.itemd.dosisPO != undefined) {
+                    dosis = $scope.itemd.dosisPO
+                }
+                var tglawal = null
+                if ($scope.itemd.tanggalmulai != undefined) {
+                    tglawal = moment($scope.itemd.tanggalmulai).format("YYYY-MM-DD")
+                }
+                var tglstop = null
+                if ($scope.itemd.tanggalstop != undefined) {
+                    tglstop = moment($scope.itemd.tanggalstop).format("YYYY-MM-DD")
+                }
                 if ($scope.dataSourcePOGrid == undefined) {
                     nomorPO = 1
                 } else {
                     nomorPO = dataPO.length + 1
                 }
                 if ($scope.norecPO != undefined) {
-
+                    for (var i = dataPO.length - 1; i >= 0; i--) {
+                        if (dataPO[i].no == $scope.item.no) {
+                            data.nomorPO = $scope.nomorPO
+                            data.norec = $scope.norecPO
+                            data.namaproduk = namaproduk
+                            data.obatlain= obatlain
+                            data.objectprodukfk= objectprodukfk
+                            data.resep= $scope.itemd.resep == true ? "✓" : ""
+                            data.tanpa= $scope.itemd.tanpa == true ? "✓" : ""
+                            data.tanggalmulai= tglawal
+                            data.tanggalstop= tglstop
+                            data.rute= $scope.itemd.rutePO
+                            data.frekuensi= $scope.itemd.frekuensiPO != undefined ? $scope.itemd.frekuensiPO : null
+                            data.indikasi= $scope.itemd.indikasiPO != undefined ? $scope.itemd.indikasiPO : null
+                            data.statusobat= $scope.itemd.LPO == true ? "L" : $scope.itemd.TPO == true ? "T" : $scope.itemd.HPO == true ? "H" : ""
+                            data.perubahanaturan= $scope.itemd.aturanpakai != undefined ? $scope.itemd.aturanpakai : null
+                            dataPO[i] = data;
+                            $scope.dataSourcePOGrid = new kendo.data.DataSource({
+                                data: dataPO,
+                            });
+                            console.log(dataPO);
+                            $scope.itemd = {}
+                        }
+                    }
                 } else {
-                    var namaproduk = ""
-                    var objectprodukfk = null
-                    if ($scope.itemd.obatPO != undefined){
-                        namaproduk = $scope.itemd.obatPO.namaproduk
-                        objectprodukfk = $scope.itemd.obatPO.id
-                    }
-                    var dosis = ""
-                    if ($scope.itemd.dosisPO != undefined){
-                        dosis = $scope.itemd.dosisPO
-                    }
+                    
                     data = {
                         norec: "",
                         nomorPO: nomorPO,
                         namaproduk: namaproduk,
+                        obatlain: obatlain,
                         objectprodukfk: objectprodukfk,
                         resep: $scope.itemd.resep == true ? "✓": "",
                         tanpa: $scope.itemd.tanpa == true ? "✓": "",
-                        tanggalmulai: moment($scope.itemd.tangalmulai).format("YYYY-MM-DD"),
-                        tanggalstop: moment($scope.itemd.tangalstop).format("YYYY-MM-DD"),
-                        dosis: dosis,
+                        tanggalmulai: tglawal,
+                        tanggalstop: tglstop,
+                        // dosis: dosis,
                         rute: $scope.itemd.rutePO,
-                        frekuensi: $scope.itemd.frekuensiPO,
-                        indikasi: $scope.itemd.indikasiPO,
+                        frekuensi: $scope.itemd.frekuensiPO != undefined ? $scope.itemd.frekuensiPO : null,
+                        indikasi: $scope.itemd.indikasiPO != undefined ? $scope.itemd.indikasiPO : null,
                         statusobat: $scope.itemd.LPO == true ? "L" : $scope.itemd.TPO == true ? "T" : $scope.itemd.HPO == true ? "H": "",
-                        perubahanaturan: $scope.itemd.aturanpakai
+                        perubahanaturan: $scope.itemd.aturanpakai != undefined ? $scope.itemd.aturanpakai : null
                     }
                     dataPO.push(data)
                     $scope.dataSourcePOGrid = new kendo.data.DataSource({
                         data: dataPO,
                     });
+                    console.log(dataPO);
                     $scope.itemd = {}
                 }
             }
             $scope.createDataPO = function(){
+                $scope.itemd.tanggalmulai = new Date()
+                $scope.itemd.tanggalstop = new Date()
                 $scope.item.norecPO = undefined;
                 $scope.noPO = undefined
                 $scope.popUpLembarPenggunaanObat.center().open()
             }
 
             $scope.createDataRO = function () {
+                $scope.itemd.tanggalRO = new Date()
                 $scope.item.norecRO = undefined;
                 $scope.noRO = undefined
                 $scope.popUpLembarRekonsiliasiObat.center().open()
             }
             $scope.SaveRO = function () {
+                var obatlain = ""
+                var objectprodukfk = null
+                var namaobat = ""
+                if ($scope.itemd.dosisRO != undefined) {
+                    obatlain = $scope.itemd.dosisRO
+                }
+                if ($scope.itemd.obatRO != undefined) {
+                    namaobat = $scope.itemd.obatRO.namaproduk
+                    objectprodukfk = $scope.itemd.obatRO.id
+                }
+                var rute = null
+                if ($scope.itemd.rute!= undefined){
+                    rute = $scope.itemd.rute
+                }
+                var aturanpakai = null
+                if ($scope.itemd.aturanpakai != undefined) {
+                    aturanpakai = $scope.itemd.aturanpakai
+                }
+                var perubahanaturanpakai = null
+                if ($scope.itemd.perubahanaturanpakai != undefined) {
+                    perubahanaturanpakai = $scope.itemd.perubahanaturanpakai
+                }
                 var data = {}
                 if ($scope.norecRO != undefined) {
+                    for (var i = dataRO.length - 1; i >= 0; i--) {
+                        if (dataRO[i].norec == $scope.norecRO) {
+                            data.norec = $scope.norecRO
+                            data.tanggal = moment($scope.itemd.tanggalRO).format('YYYY-MM-DD')
+                            data.namaruangan = $scope.itemd.namaruangan.namaruangan
+                            data.objectruanganfk = $scope.itemd.namaruangan.id
 
+                            data.namaproduk = namaobat
+                            data.obatlain = obatlain
+                            data.objectprodukfk = objectprodukfk
+                            
+                            data.rute = rute
+                            data.aturanpakai = aturanpakai
+                            data.perubahanaturanpakai = perubahanaturanpakai
+                            data.objectpegawaifk = $scope.itemd.apotekerRO.value
+                            data.namalengkap = $scope.itemd.apotekerRO.text
+                            data.statusobat = $scope.itemd.LPO == true ? "L" : $scope.itemd.TPO == true ? "T" : $scope.itemd.HPO == true ? "H" : ""
+                            dataRO[i] = data;
+                            $scope.dataSourceROGrid = new kendo.data.DataSource({
+                                data: dataRO,
+                            });
+                            console.log(dataRO);
+                            $scope.itemd = {}
+                        }
+                    }
                 } else {
-                    var obatlain = ""
-                    var objectprodukfk = null
-                    var namaobat = ""
-                    if($scope.itemd.obatlain != undefined){
-                        obatlain = $scope.itemd.obatlain
-                    }
-                    if($scope.itemd.obatRO != undefined){
-                        namaobat = $scope.itemd.obatRO.namaproduk
-                        objectprodukfk = $scope.itemd.obatRO.id
-                    }
+                    
                     data = {
                         norec: "",
                         tanggal: moment($scope.itemd.tanggalRO).format('YYYY-MM-DD'),
@@ -985,11 +1155,11 @@ define(['initialize'], function (initialize) {
                         objectruanganfk: $scope.itemd.namaruangan.id,
                         namaproduk: namaobat,
                         objectprodukfk: objectprodukfk,
-                        rute: $scope.itemd.rute,
+                        rute: rute,
                         obatlain: obatlain,
-                        aturanpakai: $scope.itemd.aturanpakai,
+                        aturanpakai: aturanpakai,
                         statusobat: $scope.itemd.LPO == true ? "L" : $scope.itemd.TPO == true ? "T" : $scope.itemd.HPO == true ? "H" : "",
-                        perubahanaturanpakai: $scope.itemd.perubahanaturanpakai,
+                        perubahanaturanpakai: perubahanaturanpakai,
                         namalengkap: $scope.itemd.apotekerRO.text,
                         objectpegawaifk: $scope.itemd.apotekerRO.value
                     }

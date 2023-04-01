@@ -33,6 +33,7 @@ use App\Transaksi\Pengembalian;
 use App\Transaksi\BKU;
 use Illuminate\Http\Request;
 use DB;
+use App\Transaksi\SeqNumber;
 
 use App\Transaksi\StrukOrder;
 use App\Transaksi\OrderPelayanan;
@@ -925,7 +926,15 @@ class PerencanaanController extends ApiController {
             and map4.div = 4
             order by replace(map2.kode, '.', '' )::int4, replace(map3.kode, '.', '' )::int4, replace(map4.kode, '.', '' )::int4
         "));
-        
+        $tglpanjardate = "";
+        $thnpanjar = "";
+        if(isset($request['tglsppawal']) && isset($request['tglsppakhir'])){
+            $tglpanjardate = " and pj.tglpanjar::date between '$request[tglsppawal]' and '$request[tglsppakhir]'";
+
+        }
+        if(isset($request['tahun'])){
+            $thnpanjar= " and date_part('year', pj.tglpanjar)=". $request['tahun'];
+        }
         $panjar = DB::select(DB::raw("
         select idmataanggaran, kodemataanggaran, idsubkegiatan, subkegiatan, idsubsubkegiatan, subsubkegiatan,
         norec, nopanjar, uraian, tglpanjar, jumlah, jenispanjar, norealisasi, coalesce(jumlahspj, 0) jumlahspj, sumberpanjar,
@@ -952,6 +961,8 @@ class PerencanaanController extends ApiController {
                 and pp.kdprofile = 30
                 and pp.statusenabled = true
                 where pj.kdprofile = 30
+                $thnpanjar
+                $tglpanjardate
                 and pj.statusenabled = true
                 group by ma.id, ma.kodemataanggaran, subkeg.id, subkeg.keterangan, 
                 subsubkeg.id, subsubkeg.keterangan, pj.norec, pj.nopanjar, pj.uraian, pj.tglpanjar, 
@@ -962,12 +973,21 @@ class PerencanaanController extends ApiController {
         norec, nopanjar, uraian, tglpanjar, jumlah, jenispanjar, norealisasi, jumlahspj, sumberpanjar
         order by nopanjar;
         "));
+        $tglsppdate = "";
+        $thnspp = "";
+        if(isset($request['tglsppawal']) && isset($request['tglsppakhir'])){
+            $tglsppdate = " and spp.tglspp between '$request[tglsppawal]' and '$request[tglsppakhir]'";
 
+        }
+        if(isset($request['tahun'])){
+            $thnspp= " and date_part('year', spp.tglspp)=". $request['tahun'];
+        }
         $spp = DB::select(DB::raw("select spp.*, spd.nospd , ap.id idasalproduk, ap.asalproduk
         from spp_t spp 
         left join spd_t spd on spd.norec = spp.objectspdfk and spd.statusenabled = true 
         left join asalproduk_m ap on ap.id = spp.objectasalprodukfk and ap.statusenabled = true 
-        where spp.statusenabled = true"));
+        where spp.statusenabled = true $thnspp $tglsppdate"));
+
         $spd = DB::select(DB::raw("select spd.*, spp.nospp, ap.id idasalproduk, ap.asalproduk  from spd_t spd 
         left join spp_t spp on spp.objectspdfk = spd.norec and spp.statusenabled = true 
         left join asalproduk_m ap on ap.id = spd.objectasalprodukfk and ap.statusenabled = true 
@@ -976,13 +996,21 @@ class PerencanaanController extends ApiController {
         from spd_t spd
         left join spp_t spp on spd.norec = spp.objectspdfk 
         where spp.norec is null"));
+        $tglspmdate = "";
+        $thnspm = "";
+        if(isset($request['tglsppawal']) && isset($request['tglsppakhir'])){
+            $tglspmdate = " and spp.tglspp::date between '$request[tglsppawal]' and '$request[tglsppakhir]'";
 
+        }
+        if(isset($request['tahun'])){
+            $thnspm= " and date_part('year', spp.tglspp)=". $request['tahun'];
+        }
         $carispm = DB::select(DB::raw("select spm.*, spp.nospp, spp.tglspp, ap.id idasalproduk, ap.asalproduk
         from spm_t spm
         left join spp_t spp on spp.norec = spm.objectsppfk
         left join asalproduk_m ap on ap.id = spm.objectasalprodukfk and ap.statusenabled = true 
         and spp.statusenabled = true
-        where spm.statusenabled = true"));
+        where spm.statusenabled = true $tglspmdate $thnspm"));
 
         $dataAsalProduk = \DB::table('asalproduk_m as ap')
             ->select('ap.id','ap.asalproduk')
@@ -2825,17 +2853,17 @@ class PerencanaanController extends ApiController {
         $idProfile = (int) $kdProfile;
 
         $thn = date("Y", strtotime($request['tglspp']) );
-
+        $tgl = $request['tglspp'];
         try{
+
                 if($request['norec'] == ''){
                     $SP = SPD::where('nospd', '=', $request['nospd'])->first();        
-            
                     $MA = new SPP();
                     $norecKS = $MA->generateNewId();
                     $MA->norec = $norecKS;
                     $MA->kdprofile = $idProfile;
                     $MA->statusenabled = true;
-                    $nos = $this->generateCodeBySeqTable(new SPP, 'nospp', 6, '/',$kdProfile);
+                    $nos = $this->generateCodeBySeqTableSPP(new SPP, 'nospp', 6, '/',$kdProfile, $thn, $tgl);
                     $noSPP = '04.00/02.0'.$nos.'/LS/1.02.2.22.0.00.01.0004/M/1/'.$thn;
                     $MA->nospp = $noSPP;
                     
@@ -2862,6 +2890,7 @@ class PerencanaanController extends ApiController {
 
                     $MA->save();
 
+           
            $transStatus = 'true';
        } catch (\Exception $e) {
             $transStatus = 'false';
@@ -2874,6 +2903,7 @@ class PerencanaanController extends ApiController {
                 'status' => 201,
                 'message' => $transMessage,
                 'result' => $MA,
+                'resultq' => $nos,
                 'as' => '@epic',
             );
         } else {
@@ -4671,7 +4701,7 @@ class PerencanaanController extends ApiController {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
         $thn = date("Y", strtotime($request['tglspm']) );
-
+        $tgl = $request['tglspm'];
         try{
                 if($request['norec'] == ''){
                     $SP = SPP::where('nospp', '=', $request['nospp'])->first();        
@@ -4688,7 +4718,7 @@ class PerencanaanController extends ApiController {
                 }
 
                     $noa = $this->generateCode(new SPM, 'noreg', 5, '', $kdProfile);
-                    $nos = $this->generateCodeBySeqTable(new SPM, 'nospm', 5, '',$kdProfile);
+                    $nos = $this->generateCodeBySeqTableSPP(new SPM, 'nospm', 5, '',$kdProfile, $thn, $tgl);
                     $noSPM = '04.00/03.0/'.$nos.'/LS/1.02.2.22.0.00.01.0004/M/1/'.$thn;
                     $MA->nospm = $noSPM;
                     $MA->jenisbukti = $request['jenisbukti'];
@@ -8383,8 +8413,7 @@ order by subkodepertama asc, subkodekedua asc, subkodeketiga asc, subkodekeempat
     
 public function loadComboRincian(Request $request)
     {
-        $sumberpendapatan = \DB::table('asalproduk_m')->where('kdprofile', 30)->where('statusenabled', true)->where('isanggaran', null)->orderBy('id', 'asc')->get();
-        $uraianpendapatan = \DB::table('uraianpendapatan_m')->where('kdprofile', 30)->where('statusenabled', true);
+        $sumberpendapatan = \DB::table('asalproduk_m')->where('kdprofile', 30)->where('statusenabled', true)->where('isanggaran', null)->orderBy('id', 'asc')->get();        $uraianpendapatan = \DB::table('uraianpendapatan_m')->where('kdprofile', 30)->where('statusenabled', true);
         $rincianpendapatan = \DB::table('rincianpendapatan_t as rp')
         ->join('asalproduk_m as ap','ap.id','=','rp.objectasalprodukfk')
         ->join('uraianpendapatan_m as up','up.id','=','rp.objecturaianpendapatanfk')

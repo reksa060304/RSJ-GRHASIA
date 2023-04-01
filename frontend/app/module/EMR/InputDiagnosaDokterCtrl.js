@@ -56,7 +56,10 @@ define(['initialize'], function (initialize) {
                     $scope.listJenisDiagnosa = data.data.jenisdiagnosa;
                     $scope.listDiagnosaKeperawatan = data.data.diagnosakeperawatan
                 });
-                $scope.item.jenisDiagnosis = {id: 1, jenisDiagnosa: "Primary / utama"}
+                $scope.item.jenisDiagnosis = {
+                    "id": 7,
+                    "jenisDiagnosa": "Primary / utama Statistik"
+                }
 
                 //   ModelItem.getDataDummyGeneric("JenisDiagnosa", true, true, 10).then(function (data) {
                 //     $scope.listJenisDiagnosa = data;

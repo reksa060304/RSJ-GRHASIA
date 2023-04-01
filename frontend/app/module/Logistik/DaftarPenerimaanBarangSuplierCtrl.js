@@ -15,6 +15,7 @@ define(['initialize'], function (initialize) {
             LoadCache();
             ComboLoad();
             function LoadCache() {
+                // $scope.item.namarekanan = undefined
                 var chacePeriode = cacheHelper.get('DaftarPenerimaanBarangSuplierCtrl');
                 if (chacePeriode != undefined) {
                     $scope.item.tglAwal = new Date(chacePeriode[0]);
@@ -176,7 +177,7 @@ define(['initialize'], function (initialize) {
                     noSppb = "&noSppb=" + $scope.item.noSppb
                 }
                 $scope.pegawaiLogin = medifirstService.getPegawaiLogin();
-                console.log($scope.pegawaiLogin)
+                // console.log($scope.pegawaiLogin)
                 var tglAwal = moment($scope.item.tglAwal).format('YYYY-MM-DD HH:mm:ss');
                 var tglAkhir = moment($scope.item.tglAkhir).format('YYYY-MM-DD HH:mm:ss');
                 medifirstService.get("logistik/get-daftar-penerimaan?" +
@@ -192,10 +193,13 @@ define(['initialize'], function (initialize) {
                         var data2 = dat.data.daftar;
                         for (var i = 0; i < data2.length; i++) {
                             data2[i].no = i + 1
+                            data2[i].statCheckbox2 = false;
+
                             for (let e = 0; e < data2[i].details.length; e++) {
                                 data2[i].details[e].no = e + 1;
                             }
                         }
+                        console.log(data2);
                         $scope.dataGrid = new kendo.data.DataSource({
                             data: data2,
                             group: $scope.group,
@@ -395,6 +399,67 @@ define(['initialize'], function (initialize) {
             $scope.formatTanggal = function (tanggal) {
                 return moment(tanggal).format('DD-MMM-YYYY');
             }
+            $scope.selectedData2 = [];
+            $scope.selectRow2 = function (e) {
+                var element = $(e.currentTarget);
+                var checked = element.is(':checked'),
+                    row = element.closest('tr'),
+                    grid = $("#kGrid").data("kendoGrid"),
+                    // grid = $("#grid").data("kendoGrid"),
+                    dataItem = grid.dataItem(row);
+                    console.log(checked);
+                if (checked) {
+                    $scope.selectedData2.push(dataItem);
+                    
+                    row.addClass("k-state-selected");
+                } else {
+                    dataItem.statCheckbox2 = true;
+                    for (var i = 0; i < $scope.selectedData2.length; i++)
+                        if ($scope.selectedData2[i].norec == dataItem.norec) {
+                            $scope.selectedData2.splice(i, 1);
+                            break;
+                        }
+                    row.removeClass("k-state-selected");
+                }
+                console.log($scope.selectedData2);
+            }
+			var isCheckAll = false
+            $scope.selectUnselectAllRow2 = function () {
+                var tempData = $scope.mainGridOptions.columns;
+                if (isCheckAll) {
+                    isCheckAll = false;
+                    for (var i = 0; i < tempData.length; i++) {
+                        tempData[i].statCheckbox2 = false;
+                        $scope.selectedData2 = []
+                    }
+                } else {
+                    isCheckAll = true;
+                    for (var i = 0; i < tempData.length; i++) {
+                        tempData[i].statCheckbox2 = true;
+                        $scope.selectedData2.push(tempData[i])
+                    }
+                }
+                console.log(tempData);
+
+                console.log($scope.selectedData2)
+                reloaddataSourceGrid(tempData);
+            }
+            function reloaddataSourceGrid(ds) {
+
+                var newDs = new kendo.data.DataSource({
+                    data: ds,
+                    pageSize: 20,
+                    total: ds.length,
+                    serverPaging: true,
+
+                });
+
+                var grid = $('#kGrid').data("kendoGrid");
+
+                grid.setDataSource(newDs);
+                grid.refresh();
+
+            }
             $scope.mainGridOptions = {
                 toolbar: [
                     "excel",
@@ -421,6 +486,15 @@ define(['initialize'], function (initialize) {
                 },
                 scrollable: true,
                 columns: [
+                    {
+                        "title": "#",
+                        template: "# if (statCheckbox2) { #" +
+                            "<input type='checkbox' class='checkbox' ng-click='selectRow2($event)' checked />" +
+                            "# } else { #" +
+                            "<input type='checkbox' class='checkbox' ng-click='selectRow2($event)' />" +
+                            "# } #",
+                        width: "30px"
+                    },
                 {
                     "field": "no",
                     "title": "No",
@@ -459,7 +533,28 @@ define(['initialize'], function (initialize) {
                     "title": "Total Tagihan",
                     "width": "100px",
                     "template": "<span class='style-right'>{{formatRupiah('#: totalharusdibayar #', '')}}</span>"
-                }
+                },
+                {
+                    "field": "isverifspj",
+                    "title": "Verifikasi SPJ",
+                    "width": "100px",
+                    "template": "#if (isverifspj) {# #= 'Sudah Diverifikasi' # #} else {# - #} #",
+
+                },
+                {
+                    "field": "tglverifspj",
+                    "title": "Tanggal Verifikasi",
+                    "width": "100px",
+                    "template": "<span class='style-right'>{{formatTanggal('#: tglverifspj #', '')}}</span>",
+
+                    // "template": "#if (isverifspj) {# #= 'Sudah Diverifikasi' # #} else {# - #} #",
+
+                },
+                {
+                    "field": "nospj",
+                    "title": "NO SPJ",
+                    "width": "120px",
+                },
             ]
         }
 
@@ -772,11 +867,11 @@ define(['initialize'], function (initialize) {
                 if (dataSelected != undefined) {
                     $scope.dataSelected = dataSelected
                 }
-                var bulanclosing = moment(dataSelected.tglstruk).format('MM.YYYY');
-                medifirstService.get("logistik/cek-closing-persediaan?bulan=" + bulanclosing
-                    + "&ruanganfk=" + dataSelected.objectruanganfk).then(function (dat) {
-                        statusClosingStok = dat.data;
-                    })
+                // var bulanclosing = moment(dataSelected.tglstruk).format('MM.YYYY');
+                // medifirstService.get("logistik/cek-closing-persediaan?bulan=" + bulanclosing
+                //     + "&ruanganfk=" + dataSelected.objectruanganfk).then(function (dat) {
+                //         statusClosingStok = dat.data;
+                //     })
             }
 
             $scope.ubahHarga = function () {
@@ -849,7 +944,35 @@ define(['initialize'], function (initialize) {
                 cacheHelper.set('UbahHargaPenerimaanBarangSuplierCtrl', chacePeriode);
                 $state.go('UbahHargaPenerimaanBarangSuplier')
             }
+            $scope.verifSPJ = function(){
+                console.log($scope.selectedData2);
+                
+                // return
+                if ($scope.selectedData2 == "") {
+                    toastr.error('Checklist data dulu')
+                    return
+                }
+                
+                $scope.popUpVerif.center().open()
 
+                // $scope.isRouteLoading = true
+                
+            }
+            $scope.SimpanVerif = function(){
+                $scope.isRouteLoading = true
+                var objSave = {
+                    data: $scope.selectedData2,
+                    tglverif: moment($scope.item.tglverif).format('YYYY-MM-DD HH:mm'),
+                    nospj: $scope.item.nospj
+                }
+                medifirstService.post('logistik/save-verif-spj', objSave).then(function (e) {
+                    init();
+                    $scope.isRouteLoading = false
+                })
+            }
+            $scope.batalVerif = function(){
+                $scope.popUpVerif.close()
+            }
             //***********************************
         }
     ]);

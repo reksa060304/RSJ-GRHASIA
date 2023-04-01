@@ -1,0 +1,1015 @@
+<style type="text/css">
+    fieldset {
+        border-radius: 5px;
+        border: 1px solid #228be6;
+    }
+
+    .k-slider-horizontal {
+        display: inline-block;
+        float: left;
+        width: 450px;
+        height: 26px;
+    }
+    md-radio-group {
+    display: flex;
+    flex-direction: row;
+    }
+    .k-slider {
+
+        margin-left: 3%;
+        margin-right: 3%;
+        margin-top: 1%;
+        margin-bottom: 5%;
+        display: inline-block;
+    }
+
+    .activeBtn {
+        background-color: #10c4b2;
+        color: #ffffff;
+    }
+
+    table,
+    th,
+    td {
+        border: 1px solid #929191;
+        border-collapse: collapse;
+        padding: 5px;
+    }
+
+    th,
+    td {
+        padding: 5px;
+        text-align: left;
+    }
+</style>
+
+<div class="grid_12" disable-contents="allDisabled">
+    <div class="grid_12">
+        <div class="panel panel-default container_12">
+            <div class="panel-heading">Pengkajian Geriatri Komprehensif</div>
+        </div>
+
+        <div class="grid_12">
+            <div style="border: 0px" ng-repeat="list in listData1 | orderBy:'nourut'" ng-init="jawabIndex = $index">
+                <div class="grid_12">
+                    <div style="border: 0px" ng-repeat="jawab in list.details">
+                        <div ng-switch on="jawab.type">
+                            <div  ng-switch-when="label">
+                                <div class="grid_12">
+                                    <p style="{{jawab.style}}">
+                                        &nbsp;{{jawab.caption}}</p>
+                                </div>
+                                
+                            </div>
+                            <div class="grid_12" ng-switch-when="textarea">
+                                <div class="grid_12">
+                                    <p style="{{jawab.style}}">{{jawab.caption}}</p>
+                                </div>
+                                <div class="grid_8" >
+                                    <textarea c-text-area type="input" class="k-textbox"
+                                        style="margin-top: -10px;margin-bottom: 5px;margin-left: 25px; height: 100px;"
+                                        ng-model="item.obj[jawab.id]" />
+                                    </div>
+                            </div>
+                            <div class="grid_12" ng-switch-when="textarea2">
+                                <div class="grid_12">
+                                    <label>{{jawab.caption}}</label>
+                                </div>
+                                <div class="grid_8">
+                                    <textarea style="width: 100%" cols="6" rows="3" c-text-area type="input" filter="'string'" class="k-textbox" 
+                                    ng-model="item.obj[jawab.id]" placeholder="{{jawab.satuan}}"/>
+                                </div>
+                            </div>
+                            <div class="grid_12" ng-switch-when="textarea3">
+                                <div class="grid_12">
+                                    <label><b>{{jawab.caption}}</b></label>
+                                </div>
+                                <div class="grid_8">
+                                    <textarea style="width: 100%" cols="6" rows="5" c-text-area type="input" filter="'string'" class="k-textbox" 
+                                    ng-model="item.obj[jawab.id]" placeholder="{{jawab.satuan}}"/>
+                                </div>
+                            </div>
+                            <div ng-switch-when="checkbox">
+                                <div class="grid_3">
+                                    <input type="checkbox" class="k-checkbox" id="item.obj{{jawab.id}}"
+                                        ng-model="item.obj[jawab.id]">
+                                    <label class="k-checkbox-label" for="item.obj{{jawab.id}}">
+                                        &nbsp;{{jawab.caption}}</label>
+                                </div>
+                            </div>
+                          
+                            <div ng-switch-when="checkbox12">
+                                <div class="grid_12">
+                                    <input type="checkbox" class="k-checkbox" id="item.obj{{jawab.id}}"
+                                        ng-model="item.obj[jawab.id]">
+                                    <label class="k-checkbox-label" for="item.obj{{jawab.id}}">
+                                        &nbsp;{{jawab.caption}}</label>
+                                </div>
+                            </div>
+                            <div ng-switch-when="radio">
+                                <div class="grid_12">
+                                    {{jawab.caption}}
+                                </div>
+                                <div class="grid_10" style="margin-left: 5px;margin-top: 15px;margin-bottom: 5px">
+                                    <md-radio-group ng-model="item.obj[jawab.id]">
+                                        <div  class="grid_12"
+                                            ng-repeat="itemss in listRadio | orderBy:'id'">
+                                            <md-radio-button value="{{itemss.value}}" class="md-primary">{{itemss.name}}
+                                            </md-radio-button>
+                                        </div>
+                                    </md-radio-group>
+                                </div>
+                            </div>
+                            <div ng-switch-when="textbox">
+                                <div class="grid_12" style="{{jawab.style}}">
+                                    <div class="grid_12">
+                                        <p>{{jawab.caption}}</p>
+                                    </div>
+                                    <div class="grid_8" style="margin-top: -15px;margin-bottom: -5px;margin-left: 20px">
+                                        <input class="k-textbox" ng-model="item.obj[jawab.id]" type="text"
+                                            placeholder="{{jawab.satuan}}" ng-value="{{jawab.value}}">
+                                    </div>
+                                    <p>{{jawab.satuan}}</p>
+                                    <div class="grid_4">
+                                    </div>
+                                </div>
+                            </div>
+                            <div ng-switch-when="textbox3">
+                                <div class="grid_12" style="{{jawab.style}}">
+                                    <div class="grid_12">
+                                        <p>{{jawab.caption}}</p>
+                                    </div>
+                                    <div class="grid_3" style="margin-top: -15px;margin-bottom: -5px;margin-left: 20px">
+                                        <input class="k-textbox" ng-model="item.obj[jawab.id]" type="text"
+                                            placeholder="{{jawab.satuan}}" ng-value="{{jawab.value}}">
+                                    </div>
+                                    <p>{{jawab.satuan}}</p>
+                                </div>
+                            </div>
+                            <div ng-switch-when="checkboxtextbox">
+                                <div class="grid_5">
+                                    <input type="checkbox" class="k-checkbox" id="item.obj2{{jawab.id}}"
+                                        ng-model="item.obj2[jawab.id]" ng-checked="{{jawab.value}}">
+                                    <label class="k-checkbox-label"
+                                        for="item.obj2{{jawab.id}}">{{jawab.caption}}</label>
+                                </div>
+                                <div class="grid_7" style="margin-top: -5px;margin-bottom: -5px;margin-left: 20px">
+                                    <input class="k-textbox" ng-model="item.obj[jawab.id]" type="text"
+                                        placeholder="{{jawab.satuan}}" ng-value="{{jawab.value}}">
+                                </div>
+                            </div>
+                            <div class="grid_12" ng-switch-when="labelb">
+                                <p style="{{jawab.style}}">{{jawab.caption}}</p>
+                            </div>
+                            <div class="grid_12" style= "margin-bottom: 5px; margin-top: 5px;"ng-switch-when="label2">
+                                <label>{{jawab.caption}}</label>
+                            </div>
+                            <div class="grid_12" ng-switch-when="labelbarthel">
+                                <label class="k-label" style="{{jawab.style}}">
+                                    &nbsp;{{jawab.caption}}</label>
+                                <div class="grid_12">
+                                    <div class="grid_12" style="border-bottom:1px solid blue;font-weight: bold;">
+                                        <div class="grid_1">No</div>
+                                        <div class="grid_3">Fungsi</div>
+                                        <div class="grid_1">Skor</div>
+                                        <div class="grid_4">Keterangan</div>
+                                        <div class="grid_1">Hasil</div>
+                                    </div>
+                                    <div ng-repeat="tanya in listBarthel | orderBy:'id'">
+                                        <div class="grid_1">
+                                            <label>
+                                                <b>{{tanya.id}}</b>
+                                            </label>
+                                        </div>
+                                        <div class="grid_3">
+                                            <label>
+                                                <b>{{tanya.nama}}</b>
+                                            </label>
+                                        </div>
+                                        <div class="grid_8">
+                                            <div class="grid_12" ng-repeat="jawab in tanya.detail | orderBy:'id'"
+                                                ng-init="jawabIndex = $index">
+                                                <div ng-switch on="jawab.ket">
+                                                    <div class="grid_1">{{jawab.descNilai}}</div>
+                                                    <div class="grid_6">{{jawab.nama}}</div>
+                                                    <div class="grid_4">
+                                                        <div class="grid_6"
+                                                            ng-repeat="jawabss in jawab.detail | orderBy:'id'">
+                                                            <input type="checkbox" class="k-checkbox"
+                                                                id="item.obj{{jawabss.id}}"
+                                                                ng-model="item.obj[jawabss.id]"
+                                                                ng-click="getSkorAsesmen(jawabss,jawab)">
+                                                            <label class="k-checkbox-label"
+                                                                for="item.obj{{jawabss.id}}">
+                                                                &nbsp;</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="grid_12">
+                                        <div class="grid_9">
+                                        </div>
+                                        <div class="grid_3">
+                                            <div class="grid_12 ">
+                                                <label c-label item="item">TOTAL SCORE</label></div>
+                                            <div class="grid_12 ">
+                                                <input c-text-box type="text" filter="" class="k-textbox"
+                                                    ng-model="item.obj[310065]" disabled />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="grid_12">
+                                        <fieldset>
+                                            <label class="k-label">Keterangan Skor Barthel Indeks : </label>
+                                            <p>20 &nbsp;&nbsp;&nbsp;&nbsp; : Mandiri</p>
+                                            <p>12-19 &nbsp;&nbsp;&nbsp; : Ketergantungan ringan</p>
+                                            <p>9-11 &nbsp;&nbsp;&nbsp;&nbsp; : Ketergantungan sedang</p>
+                                            <p>5-8 &nbsp;&nbsp;&nbsp;&nbsp; : Ketergantungan berat</p>
+                                            <p>0-4 &nbsp;&nbsp;&nbsp;&nbsp; : Ketergantungan total</p>
+                                            <p>Skor <= 11 lapor DPJP untuk penanganan lebih lanjut</p>
+                                        </fieldset>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="grid_12" ng-switch-when="labellawton">
+                                <label class="k-label" style="{{jawab.style}}">
+                                    &nbsp;{{jawab.caption}}</label>
+                                <div class="grid_12">
+                                    <div class="grid_12" style="border-bottom:1px solid blue;font-weight: bold;">
+                                        <div class="grid_6"></div>
+                                        <div class="grid_3">Skor</div>
+                                        <div class="grid_2">Hasil</div>
+                                    </div>
+                                    <div ng-repeat="tanya in listLawton | orderBy:'id'">
+                                        <div class="grid_12">
+                                            <label>
+                                                <b>{{tanya.nama}}</b>
+                                            </label>
+                                            <div ng-repeat="jawab in tanya.detail | orderBy:'id'"
+                                                ng-init="jawabIndex = $index">
+                                                <div ng-switch on="jawab.ket">
+                                                    <div class="grid_6" style="margin-left:20px">{{jawab.nama}}</div>
+                                                    <div class="grid_3">{{jawab.descNilai}}</div>
+                                                    <div class="grid_2">
+                                                        <div class="grid_12"
+                                                            ng-repeat="jawabss in jawab.detail | orderBy:'id'">
+                                                            <input type="checkbox" class="k-checkbox"
+                                                                id="item.obj{{jawabss.id}}"
+                                                                ng-model="item.obj[jawabss.id]"
+                                                                ng-click="getSkorAsesmenLawton(jawabss,jawab)">
+                                                            <label class="k-checkbox-label"
+                                                                for="item.obj{{jawabss.id}}">
+                                                                &nbsp;</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="grid_5">
+                                            
+                                        </div>
+                                    </div>
+                                    <div class="grid_12">
+                                        <div class="grid_9">
+                                        </div>
+                                        <div class="grid_3">
+                                            <div class="grid_12 ">
+                                                <label c-label item="item">TOTAL SCORE</label></div>
+                                            <div class="grid_12 ">
+                                                <input c-text-box type="text" filter="" class="k-textbox"
+                                                    ng-model="item.obj[310094]" disabled />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="grid_12">
+                                        <fieldset>
+                                             <label class="k-label">Skor IADL </label>
+                                             <p>Dikerjakan oleh orang lain &nbsp;&nbsp;&nbsp;&nbsp; : 0</p>
+                                             <p>Perlu bantuan sepanjang waktu &nbsp;&nbsp;&nbsp; : 1</p>
+                                             <p>Perlu bantuan sesekali &nbsp;&nbsp;&nbsp;&nbsp; : 2</p>
+                                             <p>Independen / mandiri &nbsp;&nbsp;&nbsp;&nbsp; : 3 - 8</p>
+                                        </fieldset>
+                                    </div> 
+                                </div> 
+                            </div>
+                            <div class="grid_12" ng-switch-when="baker">
+                                <!-- start -->
+                                <div class="grid_12">
+                                    <fieldset style="margin-top: 10px; ">
+                                        <legend><b>WONG BAKER FACES</b></legend>
+                                        <div class="grid_7" style="margin-top: 40px;">
+                                            <div ng-repeat="list in listNyeriAnak | orderBy:'id'">
+                                                <div ng-repeat="opsi in list.detail | orderBy:'id'"
+                                                    ng-init="listIndex = $index + 1">
+                                                    <div class="grid_2"
+                                                        style="text-align: center; vertical-align: middle;">
+                                                        <img class="normalTidakNormal" style="cursor: pointer;"
+                                                            src="stylesheets/skalanyeri/{{listIndex}}.png"
+                                                            ng-model="item.obj[5052]"
+                                                            ng-click="getSkalaNyeri(list, opsi)"
+                                                            ng-class="{'activeBtn': activeStatus == opsi.descNilai}">
+                                                        <div class="grid_12">
+                                                            <label
+                                                                for="{{opsi.descNilai}}"><b>{{opsi.nama1}}</b></label>
+                                                        </div>
+                                                        <div class="grid_12">
+                                                            <label for="{{opsi.nama}}"><b>{{opsi.nama}}</b></label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="grid_5" ng-repeat="list in listSkorWong | orderBy:'id'"
+                                            style="padding: 5pt 10pt">
+                                            <b>{{list.nama}}</b>
+                                            <div class="grid_12" style="padding: 5pt">
+                                                <div ng-repeat="jawab in list.detail | orderBy:'id'">
+                                                    <div ng-switch on="jawab.type">
+                                                        <div class="grid_12" ng-switch-when="checkbox">
+                                                            <input type="checkbox" class="k-checkbox"
+                                                                id="item.obj{{jawab.id}}" ng-model="item.obj[jawab.id]">
+                                                            <label class="k-checkbox-label" for="item.obj{{jawab.id}}">
+                                                                &nbsp;{{jawab.nama}}</label>
+
+                                                        </div>
+                                                        <div class="grid_8">
+                                                            <label class="k-label">
+                                                                &nbsp;{{jawab.ket}}</label>
+                                                        </div>
+                                                        <div class="grid_3" ng-switch-when="textbox"
+                                                            style="margin-top: -15px;margin-left:-10px">
+                                                            <input class="k-textbox" ng-model="item.obj[jawab.id]"
+                                                                type="text">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </fieldset>
+                                </div>
+                                <!-- end -->
+                            </div>
+                            <div class="grid_12" ng-switch-when="numeric">
+                                <!-- start -->
+                                <div class="grid_12">
+                                    <fieldset style="margin-top: 10px; ">
+                                        <legend><b>NUMERIC</b></legend>
+                                        <div class="grid_7" style="margin-top: 40px;">
+                                            <input kendo-slider="" k-min="0" k-max="10" ng-model="item.obj[3016561]" />
+                                        </div>
+                                        <div class="grid_5" ng-repeat="list in listSkorNRC | orderBy:'id'"
+                                            >
+                                            <b>{{list.nama}}</b>
+                                            <div class="grid_12">
+                                                <div ng-repeat="jawab in list.detail | orderBy:'id'">
+                                                    <div ng-switch on="jawab.type">
+                                                        <div class="grid_12">
+                                                            <div class="grid_3" ng-switch-when="checkbox">
+                                                                <input type="checkbox" class="k-checkbox"
+                                                                    id="item.obj{{jawab.id}}"
+                                                                    ng-model="item.obj[jawab.id]">
+                                                                <label class="k-checkbox-label"
+                                                                    for="item.obj{{jawab.id}}">
+                                                                    &nbsp;{{jawab.nama}}</label>
+                                                            </div>
+                                                            <div class="grid_8">
+                                                                <label class="k-label">
+                                                                    &nbsp;{{jawab.ket}}</label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </fieldset>
+                                </div>
+                                <!-- end -->
+                            </div>
+                            <div class="grid_12" ng-switch-when="skriningrisiko">
+                                <fieldset style="margin-top: 10px;">
+                                    <div class="grid_12 margin-top-30 text-center margin-bottom">
+                                        <label c-label item="item" style="{{jawab.style}}">{{jawab.caption}}</label>
+                                    </div>
+                                    
+                                    <table>
+                                        <tr>
+                                            <th style="width: 30px">No</th>
+                                            <th>Penilaian</th>
+                                            <th style="width: 200px">Ya</th>
+                                            <th style="width: 200px">Tidak</th>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <label c-label item="item">1</label>
+                                            </td>
+                                            <td>
+                                                <label c-label item="item">
+                                                    Cara berjalan pasien (salah satu / lebih) <br>
+                                                </label>
+                                            </td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <label c-label item="item"></label>
+                                            </td>
+                                            <td>
+                                                <label c-label item="item">
+                                                    a. Tidak seimbang / sempoyongan / limbung<br>
+                                                </label>
+                                            </td>
+                                            <td>
+                                                <input type="checkbox" class="k-checkbox" id="item.obj{{310120}}"
+                                                    ng-model="item.obj[310120]">
+                                                <label class="k-checkbox-label" for="item.obj{{310120}}">&nbsp;</label>
+                                            </td>
+                                            <td>
+                                                <input type="checkbox" class="k-checkbox" id="item.obj{{310121}}"
+                                                    ng-model="item.obj[310121]">
+                                                <label class="k-checkbox-label" for="item.obj{{310121}}">&nbsp;</label>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <label c-label item="item"></label>
+                                            </td>
+                                            <td>
+                                                <label c-label item="item">
+                                                    b. Jalan dengan alat bantu (kruk, tripot, kursi roda, orang
+                                                    lain))<br>
+                                                </label>
+                                            </td>
+                                            <td>
+                                                <input type="checkbox" class="k-checkbox" id="item.obj{{310122}}"
+                                                    ng-model="item.obj[310122]">
+                                                <label class="k-checkbox-label" for="item.obj{{310122}}">&nbsp;</label>
+                                            </td>
+                                            <td>
+                                                <input type="checkbox" class="k-checkbox" id="item.obj{{310123}}"
+                                                    ng-model="item.obj[310123]">
+                                                <label class="k-checkbox-label" for="item.obj{{310123}}">&nbsp;</label>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <label c-label item="item">2</label>
+                                            </td>
+                                            <td>
+                                                <label c-label item="item">
+                                                    Ada keterbatasan gerak
+                                                </label>
+                                            </td>
+                                            <td>
+                                                <input type="checkbox" class="k-checkbox" id="item.obj{{310124}}"
+                                                    ng-model="item.obj[310124]">
+                                                <label class="k-checkbox-label" for="item.obj{{310124}}">&nbsp;</label>
+                                            </td>
+                                            <td>
+                                                <input type="checkbox" class="k-checkbox" id="item.obj{{310125}}"
+                                                    ng-model="item.obj[310125]">
+                                                <label class="k-checkbox-label" for="item.obj{{310125}}">&nbsp;</label>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <div class="grid_12 margin-top-30 margin-bottom"
+                                        ng-repeat="list in listRisikoJatuh">
+                                        <div class="grid_12">
+                                            <div ng-repeat="jawab in list.detail">
+                                                <div ng-switch on="jawab.type">
+                                                    <div class="grid_12 margin-bottom" ng-switch-when="checkbox"
+                                                        style="margin-top: -5px;">
+                                                        <input type="checkbox" class="k-checkbox"
+                                                            id="item.obj{{jawab.id}}" ng-model="item.obj[jawab.id]">
+                                                        <label class="k-checkbox-label" for="item.obj{{jawab.id}}">
+                                                            &nbsp;{{jawab.nama}}</label>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </fieldset>
+
+                            </div>
+                            <div ng-switch-when="norton">
+                                <div class="grid_12">
+                                    <fieldset style="margin-top: 10px">
+                                        <legend><b>{{jawab.caption}}</b></legend>
+                                        <div class="grid_12">
+                                            <table>
+                                                <tr>
+                                                    <th style="text-align: center;">Penilaian</th>
+                                                    <th style="text-align: center;">4</th>
+                                                    <th style="text-align: center;">3</th>
+                                                    <th style="text-align: center;">2</th>
+                                                    <th style="text-align: center;">1</th>
+                                                    
+                                                </tr>
+                                                <tr ng-repeat="list in listNorton">
+                                                    <td ng-repeat="jawab in list.details">
+                                                        <div ng-switch on="jawab.type">
+                                                            <div ng-switch-when="label">
+                                                                <label c-label item="item">{{jawab.caption}}</label>
+                                                            </div>
+                                                            <div ng-switch-when="checkbox">
+                                                                <input type="checkbox" class="k-checkbox"
+                                                                    id="item.obj{{jawab.id}}"
+                                                                    ng-model="item.obj[jawab.id]"
+                                                                    ng-click="getSkorNorton(jawab)">
+                                                                <label class="k-checkbox-label"
+                                                                    for="item.obj{{jawab.id}}">
+                                                                    &nbsp;{{jawab.caption}}</label>
+                                                            </div>
+                                                            <div ng-switch-when="textbox">
+                                                                <input c-text-box type="text" filter=""
+                                                                    class="k-textbox" ng-model="item.obj[jawab.id]"
+                                                                    readonly />
+                                                                <label class="keteranganFieldTambahan"
+                                                                    style="margin-top: 5px;margin-right: 30px"></label>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="4"><label c-label item="item">Total Skor</label></td>
+                                                    <td colspan="8">
+                                                        <input c-text-box type="text" filter="" class="k-textbox"
+                                                            ng-model="item.obj[310155]" readonly />
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                        
+                                        <div class="grid_12">
+                                            <fieldset style="margin-top: 10px">
+                                                <div class="grid_12" style="padding: 5pt 10pt">
+                                                    <b>Keterangan Skor :</b>
+                                                    <div class="grid_12" style="padding: 5pt">
+                                                        <div class="grid_6">
+                                                            <div class="grid_2"><label>> 18</label></div>
+                                                            <div class="grid_10"><label>: risiko rendah</label></div>
+                                                        </div>
+                                                        <div class="grid_6">
+                                                            <div class="grid_2"><label>14 - 18</label></div>
+                                                            <div class="grid_10"><label>: risiko menengah</label></div>
+                                                        </div>
+                                                        <div class="grid_6">
+                                                            <div class="grid_2"><label>10 - < 14</label></div>
+                                                            <div class="grid_10"><label>: risiko menengah</label></div>
+                                                        </div>
+                                                        <div class="grid_6">
+                                                            <div class="grid_2"><label> < 10</label></div>
+                                                            <div class="grid_10"><label>: risiko sangat tinggi</label></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                    </fieldset>
+                                </div>
+                            </div>
+                            <div ng-switch-when="nutrisional">
+                                <div class="grid_12">
+                                    <fieldset style="margin-top: 10px">
+                                        <legend><b>{{jawab.caption}}</b></legend>
+                                        <div class="grid_12">
+                                            <div class="grid_12"
+                                                style="border-bottom:1px solid blue;font-weight: bold;">
+                                                <div class="grid_1">NO</div>
+                                                <div class="grid_8">VARIABLE</div>
+                                                <div class="grid_3">SKOR</div>
+                                            </div>
+                                            <div class="grid_12" ng-repeat="list in listNutrisional">
+                                                <div class="grid_1">
+                                                    <label c-label item="item">{{list.no}}</label>
+                                                </div>
+                                                <div class="grid_8">
+                                                    <label c-label item="item">{{list.nama}}</label>
+                                                </div>
+                                                <div class="grid_3">
+                                                    <div ng-repeat="jawab in list.detail">
+                                                        <div ng-switch on="jawab.type">
+                                                            <div class="grid_12" ng-switch-when="checkbox">
+                                                                <div class="grid_10"> <input type="checkbox"
+                                                                        class="k-checkbox" id="item.obj{{jawab.id}}"
+                                                                        ng-model="item.obj[jawab.id]"
+                                                                        ng-click="getSkorNutrisi(jawab)">
+                                                                    <label class="k-checkbox-label"
+                                                                        for="item.obj{{jawab.id}}">
+                                                                        &nbsp;{{jawab.nama}}</label></div>
+                                                            </div>
+                                                            <div class="grid_12" ng-switch-when="label">
+                                                                <label>{{jawab.nama}}</label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="grid_12">
+                                            <div class="grid_9">
+                                            </div>
+                                            <div class="grid_3">
+                                                <div class="grid_12 ">
+                                                    <label c-label item="item">TOTAL SKOR</label>
+                                                </div>
+                                                <div class="grid_12 ">
+                                                    <input c-text-box type="text" filter="" class="k-textbox"
+                                                        ng-model="item.obj[310166]" readonly />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </fieldset>
+                                </div>
+                            </div>
+                            <div class="grid_12" ng-switch-when="mmse">
+                                <label class="k-label" style="{{jawab.style}}">
+                                    &nbsp;{{jawab.caption}}</label>
+                                <div class="grid_12">
+                                    <div class="grid_12" style="border-bottom:1px solid blue;font-weight: bold;">
+                                        <div class="grid_1" style="text-align: center;">BUTIR</div>
+                                        <div class="grid_7" style="text-align: center;">TES</div>
+                                        <div class="grid_2" style="text-align: center;">NILAI MAKS</div>
+                                        <div class="grid_2" style="text-align: center;">NILAI</div>
+                                    </div>
+                                    <div ng-repeat="tanya in listmmse | orderBy:'id'">
+                                        <div class="grid_12">
+                                            <div class="grid_1"></div>
+                                            <div class="grid_11">
+                                                <label>
+                                                    <b>{{tanya.nama}}</b>
+                                                </label>
+                                            </div>
+                                            <div ng-repeat="jawab in tanya.detail | orderBy:'id'"
+                                                ng-init="jawabIndex = $index">
+                                                <div class="grid_1" style="text-align: center;">{{jawab.id}}</div>
+                                                <div class="grid_7">{{jawab.nama}}</div>
+                                                <div class="grid_2" style="text-align: center;">{{jawab.max}}</div>
+                                                <div class="grid_2">
+                                                    <div class="grid_12"
+                                                        ng-repeat="jawabss in jawab.detail | orderBy:'id'">
+                                                    <input min="0" id="nourut" c-text-box type="text"
+                                                        class="k-textbox" ng-change="getSkorMMSE(jawabss,jawab)"
+                                                        ng-model="item.obj[jawabss.id]" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                        </div>
+                                        
+                                    </div>
+                                    <div class="grid_12">
+                                        <img src="data:image/jpeg;base64,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"
+                                            alt="">
+                                    </div>
+                                    <div class="grid_12">
+                                        <div class="grid_9">
+                                        </div>
+                                        <div class="grid_3">
+                                            <div class="grid_12 ">
+                                                <label c-label item="item">TOTAL SCORE</label></div>
+                                            <div class="grid_12 ">
+                                                <input c-text-box type="text" filter="" class="k-textbox"
+                                                    ng-model="item.obj[310183]" disabled />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                            <div ng-switch-when="gds">
+                                <div class="grid_12">
+                                    <fieldset style="margin-top: 10px;">
+                                        <legend><label class="k-label" style="{{jawab.style}}">
+                                                &nbsp;{{jawab.caption}}</label></legend>
+                                        <div class="grid_12" style="margin-top: 20px">
+                                            <table style="width:100%;color: #4c5356;">
+                                                <tr style="text-align: center;">
+                                                    <th>No</th>
+                                                    <th style="text-align: center;">Pernyataan</th>
+                                                    <th style="text-align: center;">Ya</th>
+                                                    <th style="text-align: center;">Tidak</th>
+
+
+                                                    <!-- <th style="width:40px;font-weight: bold;text-align: center">SKOR</th>
+                                <th style="font-weight: bold;text-align: center">PARAMETER</th> -->
+                                                </tr>
+
+                                                <tr ng-repeat="list in listgds| orderBy:'id'"
+                                                    ng-init="jawabIndex = $index">
+                                                    <td>{{list.id}}</td>
+                                                    <td>{{list.nama}}</td>
+                                                    <td style="text-align: center;" ng-repeat="jawab in list.detail">
+                                                        <div class="grid_12">
+                                                            <div ng-switch on="jawabIndex">
+
+                                                                <div ng-switch-default>
+                                                                    <input type="checkbox" class="k-checkbox"
+                                                                        id="item.obj{{jawab.id}}"
+                                                                        ng-model="item.obj[jawab.id]"
+                                                                        ng-click="getSkorGDS(jawab)">
+                                                                    <label class="k-checkbox-label"
+                                                                        for="item.obj{{jawab.id}}" style="{{jawab.style}}">
+                                                                        &nbsp;{{jawab.nama}}</label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="2">
+                                                        <div class="grid_12">
+                                                            <label c-label item="item">TOTAL SCORE</label></div>
+                                                    </td>
+                                                    <td colspan="2">
+                                                        <div class="grid_12">
+                                                            <input c-text-box type="text" filter="" class="k-textbox"
+                                                                ng-model="item.obj[310221]"  />
+                                                        </div>
+                                                    </td>
+                                                </tr>
+
+
+                                            </table>
+
+                                        </div>
+                                    </fieldset>
+                                </div>
+                            </div>
+
+
+                            <div ng-switch-when="penata">
+                                <div class="grid_12">
+                                    <fieldset style="margin-top: 10px;">
+                                        <legend><label class="k-label" style="{{jawab.style}}">
+                                                &nbsp;{{jawab.caption}}</label></legend>
+                                        <div class="grid_12" style="margin-top: 20px">
+                                            <table style="width:100%;color: #4c5356;">
+                                                <tr style="text-align: center;">
+                                                    <th style="text-align: center;">Medis</th>
+                                                    <th style="text-align: center;">Keperawatan</th>
+
+
+                                                    <!-- <th style="width:40px;font-weight: bold;text-align: center">SKOR</th>
+                                <th style="font-weight: bold;text-align: center">PARAMETER</th> -->
+                                                </tr>
+
+                                                <tr ng-repeat="list in listPenata| orderBy:'id'"
+                                                    ng-init="jawabIndex = $index">
+                                                    <td style="text-align: center;" ng-repeat="jawab in list.detail">
+                                                        <div ng-switch on="jawab.type">
+                                                        <div class="grid_12" ng-switch-when="textarea2">
+                                                           
+                                                            <div class="grid_12">
+                                                                <textarea style="width: 100%" cols="6" rows="8" c-text-area type="input" filter="'string'" class="k-textbox" 
+                                                                ng-model="item.obj[jawab.id]" placeholder="{{jawab.satuan}}"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    </td>
+                                                </tr>
+
+
+                                            </table>
+
+                                        </div>
+                                    </fieldset>
+                                </div>
+                            </div>
+
+
+                            <div class="grid_12" ng-switch-when="integrasi">
+                                <div class="grid_12">
+                                    <fieldset style="margin-top: 10px;">
+                                        <div class="grid_12" style="margin-top: 30px; text-align: center; margin-bottom: 30px; border-bottom-right-radius: 1px;">
+                                            <div class="grid_12">
+                                                <label c-label item="item">INTEGRASI ASUHAN</label>
+                                            </div>
+                                            <div class="grid_12" style= "margin-bottom: 15px; margin-top: 15px;" ng-repeat="list in listIntegrasiAsuhan">
+                                                <div class="grid_12">
+                                                    <div ng-repeat="jawab in list.detail">
+                                                        <div ng-switch on="jawab.type">
+                                                            <div class="grid_4" ng-switch-when="checkboxtextbox" style="margin-top: -5px;">
+                                                                <input type="checkbox" class="k-checkbox" id="item.obj{{jawab.id}}"
+                                                                    ng-model="item.obj[jawab.id]">
+                                                                <label class="k-checkbox-label" for="item.obj{{jawab.id}}">
+                                                                    &nbsp;{{jawab.nama}}</label>
+                                                                <div class="grid_12">
+                                                                    <label c-label item="item" c-label-text=""></label>
+                                                                </div>
+                                                                <div class="grid_12 parentKeteranganFieldTambahan">
+                                                                    <input c-text-box type="text" filter="" class="k-textbox"
+                                                                        ng-model="item.obj[jawab.idd]" />
+                                                                    <label class="keteranganFieldTambahan"
+                                                                        style="margin-top: 5px;margin-right: 30px"></label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="grid_12 margin-bottom margin-top">
+                                                <label c-label item="item" class="margin-bottom">Catatan / Notasi DPJP:</label>
+                                                <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[310285]"
+                                                        style="height: 55px; width: 98%; "/>
+                                            </div>
+                                            <div class="grid_12 margin-top">
+                                                <div class="grid_6"></div>
+                                            </div>
+                                            <div class="grid_12">
+                                            <div class="grid_4 margin-top-30  margin-bottom">
+                                                <label c-label item="item" c-label-text="Dokter"></label>
+                                                <input style="width: 80%;" kendo-combo-box k-ng-model="item.obj[310286]"
+                                                        k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                                                        k-auto-bind="false" k-data-source="listPegawai" />
+                                            </div>
+                                        </div>
+                                
+                                      
+                                    </fieldset>
+                                </div>
+                                <div class="grid_12">
+                                <fieldset style="margin-top: 10px;">
+                                    <div class="grid_12" style="margin-top: 30px; text-align: center; margin-bottom: 30px;">
+                                        <div class="grid_12">
+                                            <label c-label item="item">RENCANA PEMULANGAN PASIEN</label>
+                                        </div>
+                                        <div class="grid_12" style= "margin-top:15px; margin-bottom:15px" ng-repeat="list in listPemulanganPasien">
+                                            <div class="grid_12">
+                                                <div ng-repeat="jawab in list.detail">
+                                                    <div ng-switch on="jawab.type">
+                                                        <div class="grid_6" ng-switch-when="checkboxtextbox" style="margin-top: -5px;">
+                                                            <input type="checkbox" class="k-checkbox" id="item.obj{{jawab.id}}"
+                                                                ng-model="item.obj[jawab.id]">
+                                                            <label class="k-checkbox-label" for="item.obj{{jawab.id}}">
+                                                                &nbsp;{{jawab.nama}}</label>
+                                                            <div class="grid_12 parentKeteranganFieldTambahan">
+                                                                <input c-text-box type="text" filter="" class="k-textbox"
+                                                                    ng-model="item.obj[jawab.idd]" />
+                                                                <label class="keteranganFieldTambahan"
+                                                                    style="margin-top: 5px;margin-right: 30px"></label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                                </div>
+                        
+                                <div class="grid_12">
+                                    <fieldset style="margin-top: 10px;">
+                                        <div class="grid_4 margin-top-30 text-center margin-bottom">
+                                            <label c-label item="item" class="margin-bottom">Penanggung Jawab Pasien</label>
+                                            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[310295]"
+                                                style="height: 30px; width: 98%; "/>
+                                        </div>
+                                        <div class="grid_4 margin-top-30 text-center margin-bottom">
+                                            <label c-label item="item" c-label-text="Dokter Pemeriksa/DPJP"></label>
+                                            <input style="width: 80%;" kendo-combo-box k-ng-model="item.obj[310296]"
+                                                    k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                                                    k-auto-bind="false" k-data-source="listPegawai" />
+                                        </div>
+                                        <div class="grid_4 margin-top-30 text-center margin-bottom">
+                                            <label c-label item="item" c-label-text="Selesai Pemeriksaan Pukul"></label>
+                                            <input style="width: 100%" k-ng-model="item.obj[310297]" kendo-datetimepicker
+                                            placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+                                        </div>
+                                    </fieldset>
+                                </div>
+                            </div>
+                            <div class="grid_12" ng-switch-when="euroqol">
+                                <label class="k-label" style="{{jawab.style}}">
+                                    &nbsp;{{jawab.caption}}</label>
+                                <div class="grid_12">
+                                    <div class="grid_12" style="border-bottom:1px solid blue;font-weight: bold;">
+                                        <div class="grid_3" style="text-align: center;">DIMENSI</div>
+                                        <div class="grid_5" style="text-align: left;"></div>
+                                        <div class="grid_2" style="text-align: left;"></div>
+                                        <div class="grid_2" style="text-align: left;"></div>
+                                    </div>
+                                    <div ng-repeat="tanya in listeuroqol | orderBy:'id'">
+                                        <div class="grid_12">
+                                            <div class="grid_1"></div>
+                                            <div class="grid_11">
+                                                <label>
+                                                    <b>{{tanya.nama}}</b>
+                                                </label>
+                                            </div>
+                                            <div style="text-align: left;" ng-repeat="jawab in tanya.detail | orderBy:'id'"
+                                                ng-init="jawabIndex = $index">
+                                                <div class="grid_8" style="text-align: left;">{{jawab.nama}}</div>
+                                                <div class="grid_2">
+                                                    <div class="grid_12"
+                                            ng-repeat="jawabss in jawab.detail | orderBy:'id'">
+                                            <input type="checkbox" class="k-checkbox"
+                                                id="item.obj{{jawabss.id}}"
+                                                ng-model="item.obj[jawabss.id]"
+                                                ng-click="getSkorAsesmenLawton(jawabss,jawab)">
+                                            <label class="k-checkbox-label"
+                                                for="item.obj{{jawabss.id}}">
+                                                &nbsp;</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        </div>
+                                        
+                                    </div>
+                                    <div class="grid_12">
+                                        <div class="grid_12">
+                                        <div class="grid_3 ">
+                                            <label c-label item="item">kondisi kesehatan saat ini </label>
+                                            <input c-text-box type="text" filter="" class="k-textbox"
+                                                ng-model="item.obj[310243]" disabled />
+                                        </div>
+                                        <div class="grid_12"><label c-label item="item">* Beri tanda centang/checklist sesuai kondisi</label>
+                                        </div>
+                                            <div class="grid_12">
+                                                <label c-label item="item">** Tuliskan angka kondisi kesehatan saat ini menurut pasien (Skala 0 sampai 100)</label>
+                                            </div>
+                                           
+                                        </div>
+                        
+                                    </div>
+                                </div>
+                                </div>
+                            </div>
+                    
+                           
+                            
+                            <div class="grid_12" ng-switch-when="euol">
+                                <label class="k-label" style="{{jawab.style}}">
+                                    &nbsp;{{jawab.caption}}</label>
+                                <div class="grid_12">
+                                    <div class="grid_12" style="border-bottom:1px solid blue;font-weight: bold;">
+                                        <div class="grid_6"></div>
+                                        <div class="grid_3">Skor</div>
+                                        <div class="grid_2">Hasil</div>
+                                    </div>
+                                    <div ng-repeat="tanya in listEuroqol | orderBy:'id'">
+                                        <div class="grid_12">
+                                            <label>
+                                                <b>{{tanya.nama}}</b>
+                                            </label>
+                                            <div ng-repeat="jawab in tanya.detail | orderBy:'id'"
+                                                ng-init="jawabIndex = $index">
+                                                <div ng-switch on="jawab.ket">
+                                                    <div class="grid_6" style="margin-left:20px">{{jawab.nama}}</div>
+                                                    <div class="grid_3">{{jawab.descNilai}}</div>
+                                                    <div class="grid_2">
+                                                        <div class="grid_12"
+                                                            ng-repeat="jawabss in jawab.detail | orderBy:'id'">
+                                                            <input type="checkbox" class="k-checkbox"
+                                                                id="item.obj{{jawabss.id}}"
+                                                                ng-model="item.obj[jawabss.id]"
+                                                                ng-click="getSkorAsesmenLawton(jawabss,jawab)">
+                                                            <label class="k-checkbox-label"
+                                                                for="item.obj{{jawabss.id}}">
+                                                                &nbsp;</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="grid_5">
+
+                                        </div>
+                                    </div>
+                                    <div class="grid_12">
+                                        <div class="grid_9">
+                                        </div>
+                                        <div class="grid_3">
+                                            <div class="grid_12 ">
+                                                <label c-label item="item">TOTAL SCORE</label></div>
+                                            <div class="grid_12 ">
+                                                <input c-text-box type="text" filter="" class="k-textbox"
+                                                    ng-model="item.obj[310094]" disabled />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="grid_12">
+                                        <fieldset>
+                                            <label class="k-label">Skor IADL </label>
+                                            <p>Dikerjakan oleh orang lain &nbsp;&nbsp;&nbsp;&nbsp; : 0</p>
+                                            <p>Perlu bantuan sepanjang waktu &nbsp;&nbsp;&nbsp; : 1</p>
+                                            <p>Perlu bantuan sesekali &nbsp;&nbsp;&nbsp;&nbsp; : 2</p>
+                                            <p>Independen / mandiri &nbsp;&nbsp;&nbsp;&nbsp; : 3 - 8</p>
+                                        </fieldset>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div> 
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="grid_12">
+        <div ng-include='"../app/module/EMR/TemplateButtonDinamis" '></div>
+    </div>
+</div>

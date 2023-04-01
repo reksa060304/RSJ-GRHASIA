@@ -28,6 +28,12 @@
                                         <input style="width: 100%" k-ng-model="item.tglakhir" kendo-datetimepicker
                                             placeholer="yyyy-mm-dd" k-format="'yyyy-MM-dd'" />
                                     </div>
+                                    <div class="grid_2" style="margin-top: 2px;">
+                                        <label c-label item="item" c-label-text="Ruangan"></label>
+                                        <input style="width: 100%;" kendo-combo-box k-ng-model="item.ruangan"
+                                            k-data-text-field="'namaruangan'" k-data-value-field="'id'"
+                                            k-filter="'contains'" k-auto-bind="false" k-data-source="listRuangan" />
+                                    </div>
                                     <label c-label c-label-text=""></label>
                                     <em style="margin-top:10px;" ng-click='SearchData()' id="iconButton"
                                         data-role="button" class="k-button k-button-icon k-primary" role="button"
@@ -44,7 +50,48 @@
                             </div>
                         </fieldset>
                     </div>
-                    
+                    <div class="grid_12" style="margin-top: 40px; margin-bottom: -10px;">
+                        <div class="grid_2">
+                            <label c-label item="item" c-label-text="Jumlah Tempat Tidur"></label>
+                            <input c-text-box type="input" style="text-align: right" filter="" class="k-textbox"
+                                ng-model="item.ttlTempatTidur" disabled />
+                        </div>
+                        <div class="grid_1">
+                            <label c-label item="item" c-label-text="BOR"></label>
+                            <input c-text-box type="input" style="text-align: right" filter="" class="k-textbox"
+                                ng-model="item.bortt" disabled />
+                        </div>
+                        <div class="grid_1">
+                            <label c-label item="item" c-label-text="AVLOS"></label>
+                            <input c-text-box type="input" style="text-align: right" filter="" class="k-textbox"
+                                ng-model="item.los" disabled />
+                        </div>
+                        <div class="grid_1">
+                            <label c-label item="item" c-label-text="LOS"></label>
+                            <input c-text-box type="input" style="text-align: right" filter="" class="k-textbox"
+                                ng-model="item.losaja" disabled />
+                        </div>
+                        <div class="grid_1">
+                            <label c-label item="item" c-label-text="TOI"></label>
+                            <input c-text-box type="input" style="text-align: right" filter="" class="k-textbox"
+                                ng-model="item.toi" disabled />
+                        </div>
+                        <div class="grid_1">
+                            <label c-label item="item" c-label-text="BTO"></label>
+                            <input c-text-box type="input" style="text-align: right" filter="" class="k-textbox"
+                                ng-model="item.bto" disabled />
+                        </div>
+                        <div class="grid_1">
+                            <label c-label item="item" c-label-text="NDR"></label>
+                            <input c-text-box type="input" style="text-align: right" filter="" class="k-textbox"
+                                ng-model="item.ndr" disabled />
+                        </div>
+                        <div class="grid_1">
+                            <label c-label item="item" c-label-text="GDR"></label>
+                            <input c-text-box type="input" style="text-align: right" filter="" class="k-textbox"
+                                ng-model="item.gdr" disabled />
+                        </div>
+                    </div>
                 </div>
 
                 <div class="grid_12" style="margin-top:60px">
@@ -52,11 +99,5 @@
                 </div>
             </div>
         </div>
-    </div>
-</div>
-<div kendo-window="popUpDetail" k-title="'Detail Riwayat Perbaikan '" k-width="800" k-visible="false"
-    k-on-open="win2visible = true" k-on-close="win2visible = false">
-    <div id="kGrid" kendo-grid k-data-source="dataSource" k-selectable="'row'" k-columns="columnGridSsS"
-        k-pageable="'true'" k-sortable="'true'" k-ng-model="dataSelectedSsS" ng-click="klikGridSsS(dataSelectedSsS)">
     </div>
 </div>

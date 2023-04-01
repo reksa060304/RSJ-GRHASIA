@@ -710,17 +710,18 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 				if (newValue != oldValue) {
 					medifirstService.get("sdm/get-data-combo-sdm?jabatan=" + $scope.itemJabatan.jenisJabatan.id + "&idpegawai=" + $scope.item.idPegawai).then(function (dat) {
 						
-						if($scope.itemJabatan.jenisJabatan.id == 7 && dat.data.validasi == null){
-							toastr.warning("Data Golongan Masih Kosong");
-							return;
-						} 
+						// if($scope.itemJabatan.jenisJabatan.id == 7 && dat.data.validasi == null){
+						// 	toastr.warning("Data Golongan Masih Kosong");
+						// 	return;
+						// } 
 						// else if($scope.itemJabatan.jenisJabatan.id == 8){
 						// 	toastr.warning("Data Eselon Masih Kosong");
 						// 	return;
 						// } 
-						else{
+						// else{
 							$scope.ListTunjangan = dat.data.tunjanganbaru;
-						}
+							$scope.itemJabatan.nominaltunjangan = 185000
+						// }
 					})
 				}
 			});
@@ -5087,14 +5088,14 @@ $scope.formatRupiah = function (value, currency) {
 						$scope.itemGajiBerkala.jenissk = $scope.gajilamanya
 						if($scope.gajilamanya == 'KP'){
 							$scope.itemGajiBerkala.gajiawal = datas.nominal
-							$scope.itemGajiBerkala.tanggalsk = moment(datas.tglskbaru).format('YYYY-MM-DD')
+							$scope.itemGajiBerkala.tanggalsk = new Date(moment(datas.tglsk).format('YYYY-MM-DD'))
 							$scope.itemGajiBerkala.noskcetak = datas.nosk
-							$scope.itemGajiBerkala.tanggaltmtcetak = moment(datas.tgltmt).format('YYYY-MM-DD')
+							$scope.itemGajiBerkala.tanggaltmtcetak = new Date(moment(datas.tgltmt).format('YYYY-MM-DD'))
 						}else{
 							$scope.itemGajiBerkala.gajiawal = datas.gajiakhir
-							$scope.itemGajiBerkala.tanggalsk = moment(datas.tglskbaru).format('YYYY-MM-DD')
+							$scope.itemGajiBerkala.tanggalsk = new Date(moment(datas.tglskbaru).format('YYYY-MM-DD'))
 							$scope.itemGajiBerkala.noskcetak = datas.nosk
-							$scope.itemGajiBerkala.tanggaltmtcetak = moment(datas.tgltmt).format('YYYY-MM-DD')
+							$scope.itemGajiBerkala.tanggaltmtcetak = new Date(moment(datas.tgltmt).format('YYYY-MM-DD'))
 						}
 						
 					})

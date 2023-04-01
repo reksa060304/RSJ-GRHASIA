@@ -1551,6 +1551,176 @@ define(['initialize'], function (initialize) {
                 })
                 
             }
+            $scope.TolakOrder = function(){
+                $scope.isSearchingHarga = false;
+                $scope.produkcarisebelumnya = '';
+                // isCheckAll = false
+                if ($scope.dataSelected == undefined) {
+                    toastr.error('Pilih data dulu');
+                    return
+                }
+
+                if ($scope.iddepartemen != 575 && $scope.dataSelected.status == 'SELESAI') {
+                    toastr.error('Sudah Di Verifikasi');
+                    return
+                } else if ($scope.iddepartemen == 575 && $scope.dataSelected.status == 'PROSES') {
+                    toastr.error('Sudah Di Verifikasi');
+                    return
+                }
+
+                medifirstService.get('radiologi/cekstatusorder?norec_so=' + $scope.dataSelected.norec_so).then(function (e) {
+                    // console.log(e.data.cekstatus);
+                    $scope.cekstatusya = e.data.cekstatus[0].statusorder
+                    $scope.ceknorecso = e.data.cekstatus[0].norec
+                    $scope.userlogins = e.data.userlogin[0].namalengkap
+
+                })
+
+                // if ($scope.dataSelected.nostruk != null) {
+                //     toastr.error('Data Sudah DiClosing Hubungi Tata Rekening');
+                //     return
+                // }
+                // if ($scope.dataSelected.status == 'SELESAI DIPERIKSA') {
+                //     toastr.error('Data Sudah Di Verifikasi');
+                //     return
+                // }
+                delete $scope.item.dokterVerif
+                $scope.btnSimpanVis = false
+                $scope.headerVerif = $scope.dataSelected;
+                $scope.item.noOrder = $scope.dataSelected.noorder;
+                $scope.item.namaPasiens = $scope.dataSelected.namapasien;
+                $scope.item.kelompokpasiens = $scope.dataSelected.kelompokpasien;
+                $scope.popUp.namaruangan = $scope.dataSelected.ruangantujuan
+
+                
+                loadDiagnosa($scope.dataSelected.noregistrasi)
+                idJenisPelayanan = ''
+                loadjenisPelayanan($scope.dataSelected.norec_pd, $scope.dataSelected.objectruangantujuanfk)
+                $scope.popUpTolakOrder.center().open();
+                var actions = $scope.popUpTolakOrder.options.actions;
+                // Remove "Close" button
+                actions.splice(actions.indexOf("Close"), 1);
+                // Set the new options
+                $scope.popUpTolakOrder.setOptions({
+                    actions: actions
+                });
+
+                loadDataVerif();
+
+            }
+            $scope.simpanTolakOrder = function () {
+                if ($scope.item.catatanTolak == undefined) {
+                    window.messageContainer.error("Keterangan tolak order harus diisi!");
+                    return
+                }
+                if ($scope.dataSelected.closing == true) {
+                    window.messageContainer.error("Pelayanan sudah diClosing oleh Kasir!. Silahkan Hubungi Kasir!");
+                    return
+                }
+                if ($scope.dataSelected.norec_so == $scope.ceknorecso && $scope.cekstatusya == 1) {
+                    // $scope.cekstatusya
+                    // $scope.ceknorecso
+
+                    // $scope.userlogins
+                    window.messageContainer.error("Pasien sudah diverifikasi oleh " + $scope.userlogins + " Mohon Untuk direfresh");
+                    return
+                }
+
+                // $scope.cekstatusya= e.data.cekstatus
+
+
+
+
+                var dataPost = [];
+                for (var i = 0; i < $scope.sourceVerif._data.length; i++) {
+                    // if($scope.sourceVerif._data[i].statCheckbox){
+                    var datasys = {
+                        "produkid": $scope.sourceVerif._data[i].prid,
+                        "hargasatuan": $scope.sourceVerif._data[i].hargasatuan,
+                        "qtyproduk": $scope.sourceVerif._data[i].qtyproduk,
+                        "komponenharga": $scope.sourceVerif._data[i].details,
+                        "tglpelayanan": $scope.sourceVerif._data[i].tglpelayanan,
+                        "nourut": $scope.sourceVerif._data[i].no, // syamsu,
+                        "ihs_service_request": $scope.sourceVerif._data[i].ihs_service_request
+                    }
+                    dataPost.push(datasys)
+                    // }
+                }
+                var norec_pp = ''
+                if ($scope.sourceVerif._data[0].norec_pp != null) {
+                    norec_pp = $scope.sourceVerif._data[0].norec_pp
+                }
+
+                var itemsave = {
+                    "norec_pp": norec_pp,
+                    "noorder": $scope.item.noOrder,
+                    "norec_so": $scope.dataSelected.norec_so,
+                    "objectkelasfk": $scope.dataSelected.objectkelasfk,
+                    "norec_pd": $scope.dataSelected.norec_pd,
+                    "objectruangantujuanfk": $scope.dataSelected.objectruangantujuanfk,
+                    "objectruanganfk": $scope.dataSelected.objectruanganfk,
+                    "objectpegawaiorderfk": $scope.dataSelected.objectpegawaiorderfk,
+                    // "iddokterverif": $scope.item.dokterVerif.id,
+                    // "namadokterverif": $scope.item.dokterVerif.namalengkap,
+                    "iddokterorder": $scope.item.dokterOrder.id,
+                    "namadokterorder": $scope.item.dokterOrder.namalengkap,
+                    "details": dataPost,
+                    "keterangantolak": $scope.item.catatanTolak != undefined ? $scope.item.catatanTolak : null,
+                    "noorder": $scope.dataSelected.noorder, // syamsu,
+                    "tglorder": $scope.dataSelected.tglorder, // syamsu,
+                    "iscito": $scope.dataSelected.cito, // syamsu,
+
+                }
+
+
+
+                if (dataPost.length > 0) {
+
+                    $scope.btnSimpanVis = true;
+                    var departemen = $scope.sourceVerif._data[0].objectdepartemenfk;
+                    var ruangan = $scope.sourceVerif._data[0].idruangan;
+                    // if (ruangan == 575) {
+                    //     /*lab */
+                    //     // medifirstService.post('bridging/penunjang/save-bridging-sysmex', itemsave).then(function (e) {
+                    //     medifirstService.post('bridging/penunjang/save-bridging-vans-lab', jsonVansLab).then(function (e) {
+                    //         medifirstService.post('radiologi/save-pelayanan-pasien', itemsave)
+                    //             .then(function (e) {
+                    //                 medifirstService.postLogging('Verifikasi Order Lab', 'Norec strukorder_t', e.data.dataPP.strukorderfk,
+                    //                     'Verif Lab No Order - ' + $scope.item.noOrder + ' dengan No Registrasi ' + $scope.dataSelected.noregistrasi).then(function (res) {})
+                    //                 init()
+                    //             });
+                    //     });
+
+                    // } else 
+                    if (departemen == 27 && $scope.dataSelected.objectruangantujuanfk != $scope.ruanganIdElektromedik) {
+                        medifirstService.post('radiologi/save-tolak-verif', itemsave)
+                            .then(function (e) {
+                                $scope.item.catatanTolak = undefined
+                                $scope.popUpTolakOrder.close()
+                                init()
+                                medifirstService.postLogging('Tolak Order Rad', 'Norec strukorder_t', e.data.dataPP.strukorderfk,
+                                    'Verif Rad No Order - ' + $scope.item.noOrder + ' dengan No Registrasi ' + $scope.dataSelected.noregistrasi).then(function (res) {})
+                                    
+                                
+                            });
+                    } 
+                    // else {
+                    //     medifirstService.post('radiologi/save-pelayanan-pasien', itemsave)
+                    //         .then(function (e) {
+                    //             medifirstService.postLogging('Verifikasi Order Lab', 'Norec strukorder_t', e.data.dataPP.strukorderfk,
+                    //                 'Verif Lab No Order - ' + $scope.item.noOrder + ' dengan No Registrasi ' + $scope.dataSelected.noregistrasi).then(function (res) {})
+                    //             init()
+                    //         });
+                    // }
+
+
+                } else {
+                    toastr.error('Belum ada data yang dipilih');
+                }
+            }
+            $scope.batalTolakOrder = function () {
+                $scope.popUpTolakOrder.close();
+            }
             //********************************  $scope.cekBelumVerifs=true;***
 
         }

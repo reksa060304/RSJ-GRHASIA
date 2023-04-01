@@ -3002,7 +3002,7 @@ class BendaharaPenerimaanController extends ApiController {
                 $cekjumlah = $konten->namaproduk;
             }
 
-            else if($konten->idruangan == 752 && $konten->idproduk == 5006382){
+            else if(($konten->idruangan == 752 || $konten->idruangan == 785 || $konten->idruangan == 890) && ($konten->idproduk == 5006382 || $konten->idproduk == 5006383)){
                 $jumlahperiksajiwa += $konten->totaldibayarclosing;
                 $voljumlahperiksajiwa++;
                 $cekjumlah = $konten->namaproduk;
@@ -6852,7 +6852,7 @@ class BendaharaPenerimaanController extends ApiController {
                     left join pasien_m as ps on ps.id = sp.nocmfk
                     where  sts.norec = ssc.objectstsfk
         ) headersts on true
-        where sts.nosts = '$nosts'
+        where sts.nosts = '$nosts' and stsd.statusenabled = true
 		group by stsd.nourut, headersts.carabayarfk, sts.tglpenerimaan, stsd.kdrekening, stsd.nomer, stsd.uraian, stsd.vol, stsd.kolom1, stsd.kolom2, sts.nosts, sts.terbilang
         order by stsd.nourut"));
         
@@ -10809,7 +10809,8 @@ class BendaharaPenerimaanController extends ApiController {
         sum(jumlahklaim) jumlahklaim,
         sum(jumlahadmin) jumlahadmin,
         sum(jumlahtransfer) jumlahtransfer,
-        sum(jumlahnetto) jumlahnetto
+        sum(jumlahnetto) jumlahnetto,
+        sum(jumlahgizi) jumlahgizi
         from(
         select x.nosts,
         case when x.uraian = 'PERIKSA DOKTER SPESIALIS JIWA' then sum(x.totalfix) else 0 end as jumlahjiwa,

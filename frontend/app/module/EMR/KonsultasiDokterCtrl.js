@@ -41,7 +41,7 @@ define(['initialize'], function (initialize) {
                     { field: "tglorder", title: "Tanggal", width: 120 },
                     { field: "ruanganasal", title: "Ruangan Asal", width: 120 },
                     { field: "ruangantujuan", title: "Ruangan Tujuan", width: 150 },
-                    { field: "namalengkap", title: "Dokter", width: 120 },
+                    { field: "namalengkap", title: "PPA", width: 120 },
                     { field: "keteranganorder", title: "Keterangan", width: 120 },
                     { field: "keteranganlainnya", title: "Jawaban", width: 200 },
                     { command: [

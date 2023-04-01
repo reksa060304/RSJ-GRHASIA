@@ -28,6 +28,7 @@ define(['initialize'], function (initialize) {
             $scope.listPerubahanDiet = []
             $scope.listKarbohidrat = []
             $scope.listLemak = []
+            $scope.now = new Date()
 
             medifirstService.getPart('emr/get-datacombo-part-pegawai', true, true, 20).then(function (data) {
                 $scope.listPegawai = data
@@ -262,8 +263,8 @@ define(['initialize'], function (initialize) {
                     {
                         "id" : 1, "nama": "Pola Makan",
                         "detail": [
-                            {"id": 3019127, "nama": "","type": "checkbox"},
-                            {"id": 3019128, "nama": "","type": "checkbox"},
+                            {"id": 3019127, "nama": "Teratur","type": "checkbox"},
+                            {"id": 3019128, "nama": "Tidak Teratur","type": "checkbox"},
                         ]
                     },
             ]
@@ -860,6 +861,11 @@ define(['initialize'], function (initialize) {
                 $scope.item.obj[116216] = true
                 $scope.item.obj[116219] = true
                 $scope.item.obj[116222] = true
+                $scope.item.obj[3019138] = moment($scope.now).format('YYYY-MM-DD HH:mm')
+                $scope.item.obj[3019139] = {
+                    value: medifirstService.getPegawaiLogin().id,
+                    text: medifirstService.getPegawaiLogin().namaLengkap
+                }
 
                 // $scope.item.obj[111056]=$scope.now
                 // $scope.item.obj[14563]={ value: $scope.cc.iddpjp, text: $scope.cc.dokterdpjp }

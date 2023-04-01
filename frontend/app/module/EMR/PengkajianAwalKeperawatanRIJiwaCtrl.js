@@ -17,6 +17,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             $scope.skorNutrisiAnak = 0
             $scope.skorNutrisiDewasa = 0
             $scope.totalGziDewasa = 0
+            $scope.now = new Date()
             $scope.cc = {}
             var nomorEMR = '-'
             var noregEMR = ''
@@ -679,6 +680,19 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 }
             ]
 
+            $scope.listKeluhanNyeri = [
+                {
+                    "id": 1, "nama": "Keluhan Nyeri",
+                    "detail": [
+                        { "id": 3014903, "nama": "Tidak ada", "satuan": "", "type": "checkbox" },
+                        { "id": 3014904, "nama": "Ada", "satuan": "", "type": "checkbox" },
+                        { "id": 3014904, "nama": "Lokasi", "satuan": "", "type": "textbox" },
+                        { "id": 3014904, "nama": "Durasi", "satuan": "", "type": "textkbox2" },
+                        { "id": 3014904, "nama": "Frekuensi", "satuan": "", "type": "textkbox3" },
+                    ]
+                }
+            ]
+
             $scope.listSkriningGiziDewasa = [
                 {
                     "id": 1, "nama": "Skrining Gizi Dewasa",
@@ -1104,6 +1118,12 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 $scope.item.obj = []
                 $scope.item.obj2 = []
                 $scope.item.obj[31300216] = { value: $scope.cc.iddpjp , text:  $scope.cc.dokterdpjp }
+                $scope.item.obj[3015904] = moment($scope.now).format('YYYY-MM-DD HH:mm')
+                $scope.item.obj[3015905] = {
+                    value: medifirstService.getPegawaiLogin().id,
+                    text: medifirstService.getPegawaiLogin().namaLengkap
+                }
+
                 // $scope.item.obj[13305] = { value: $scope.cc.objectruanganfk , text:  $scope.cc.namaruangan }
                 // $scope.item.obj[13306] = { value: $scope.cc.objectkelasfk , text:  $scope.cc.namakelas }
                 dataLoad = dat.data.data                                      

@@ -16,6 +16,7 @@
         text-align: left;
         width: 100%;
     }
+    
 </style>
 <div class="grid_12">
     <div class="grid_12 headerBox">
@@ -115,7 +116,7 @@
             </div>
 
             <div class="grid_12">
-                <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.namarekanan" />
+                <input c-text-box type="input" class="k-textbox" ng-model="item.namarekanan" auto-bind="false" />
             </div>
         </div>
         <div class="grid_2" style="margin-top: 22px">
@@ -141,6 +142,10 @@
         </div>
         <div class="grid_2" style="margin-top: 5px">
             <button class="c-button" ng-click="gunakanSemuaStok()" style="background-color: red;" ng-hide="hidesmeuastok">Gunakan Semua Stok</button>
+        </div>
+        <div class="grid_2" style="margin-top: 5px">
+            <button class="c-button" ng-click="verifSPJ(dataSelected)" style="background-color: green;"
+                ng-hide="hidesmeuastok">Verifikasi SPJ</button>
         </div>
     </div>
     <div class="grid_12" style="margin-top:60px">
@@ -469,5 +474,38 @@
             &nbsp;
             <input type="button" class="confirm_yes k-button" value="Ya" style="width: 70px"
                 ng-click="LanjutKeUbahHarga()" />
+        </div>
+    </div>
+    <div kendo-window="popUpVerif" k-title="'Verifikasi SPJ'" k-width="300" k-visible="false"
+        k-on-open="win2visible = true" k-on-close="win2visible = false">
+        <div class="panel panel-default container_12" style="padding: 0px 10px;">
+            <div class="grid_12">
+                <div class="grid_12 padDatePicker">
+                    <div class="grid_12" style="margin-top: 10px">
+                        <label c-label item="item" c-label-text="Tanggal SPJ" real></label>
+                    </div>
+                    <div class="grid_12">
+                        <input style="width: 100%" k-ng-model="item.tglSpj" kendo-datetimepicker
+                            placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" />
+                    </div>
+                </div>
+            </div>
+            <div class="grid_12">
+                <div class="grid_12" style="margin-top: 10px">
+                    <label c-label item="item" c-label-text="No SPJ" real></label>
+                </div>
+                <div class="clear"></div>
+                <div class="grid_12">
+                    <input c-text-box type="text" filter="" class="k-textbox" ng-model="item.nospj" />
+                </div>
+            </div>
+        <div class="clear"></div>
+        <!-- kata kunci confirm -->
+        <div class="dialog_buttons pull-right" style="margin-top:5%">
+            <input type="button" class="confirm_no k-button" value="Tidak" style="width: 70px"
+                ng-click="batalVerif()" />
+            &nbsp;
+            <input type="button" class="confirm_yes k-button" value="Simpan" style="width: 70px"
+                ng-click="SimpanVerif()" />
         </div>
     </div>

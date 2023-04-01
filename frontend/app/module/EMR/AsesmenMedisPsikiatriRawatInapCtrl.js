@@ -19,6 +19,7 @@ define(['initialize'], function (initialize) {
             var pegawaiInputDetail = ''
             $scope.item.kasusbaru = true
             $scope.item.kasuslama = false
+            $scope.now = new Date()
             // $scope.item.obj[120001] = new Date()
             medifirstService.getPart('emr/get-datacombo-part-pegawai', true, true, 20).then(function (data) {
                 $scope.listPegawai = data
@@ -260,12 +261,12 @@ define(['initialize'], function (initialize) {
                     "detail": [{
                         "id": 120296,
                         "nama": "Obat yang rutin dikonsumsi :",
-                        "type": "textbox12"
+                        "type": "textarea13"
                     },
                     {
                         "id": 120297,
                         "nama": "Obat yang digunakan sekarang :",
-                        "type": "textbox12"
+                        "type": "textarea13"
                     },
                   
                 ]
@@ -424,412 +425,529 @@ define(['initialize'], function (initialize) {
                 },
             ]
             $scope.listRiwayatPribadi = [{
-                    "id": 1,
-                    "nama": "A. Riwayat Kelahiran : ",
-                    "detail": [{
-                            "id": 120044,
-                            "nama": "a. Umur ibu waktu melahirkan : ",
-                            "type": "textbox12"
-                        },
-                        {
-                            "id": 120045,
-                            "nama": "b. Kesehatan jiwa ibu waktu hamil : ",
-                            "type": "label0"
-                        },
-                        {
-                            "id": 120046,
-                            "nama": "Sehat",
-                            "type": "checkbox6"
-                        },
-                        {
-                            "id": 120047,
-                            "nama": "Tidak ",
-                            "type": "checkbox6"
-                        },
-                        {
-                            "id": 120048,
-                            "nama": "c. Kesehatan fisik ibu waktu hamil : ",
-                            "type": "label0"
-                        },
-                        {
-                            "id": 120049,
-                            "nama": "Sehat ",
-                            "type": "checkbox6"
-                        },
-                        {
-                            "id": 120050,
-                            "nama": "Tidak ",
-                            "type": "checkbox6"
-                        },
-                        {
-                            "id": 120051,
-                            "nama": "d. Kehamilan dikehendaki : ",
-                            "type": "label0"
-                        },
-                        {
-                            "id": 120052,
-                            "nama": "ya ",
-                            "type": "checkbox6"
-                        },
-                        {
-                            "id": 120053,
-                            "nama": "tidak ",
-                            "type": "checkbox6"
-                        },
-                        {
-                            "id": 120054,
-                            "nama": "e. Persalinan :  ",
-                            "type": "label0"
-                        },
-                        {
-                            "id": 120055,
-                            "nama": "normal ",
-                            "type": "checkbox6"
-                        },
-                        {
-                            "id": 120056,
-                            "nama": "tidak ",
-                            "type": "checkbox6"
-                        },
-                        {
-                            "id": 120057,
-                            "nama": "f. Berat badan waktu lahir : ",
-                            "type": "textbox6",
-                            "satuan": "gram"
-                        },
-                        
-                    ]
-                },
-                {
-                    "id": 2,
-                    "nama": "B. Latar Belakang Perkembangan Mental : ",
-                    "detail": [{
-                        "id": 120058,
-                        "nama": "Dibesarkan dalam lingkungan : ",
+                "id": 1,
+                "nama": "A. Riwayat Kelahiran : ",
+                "detail": [{
+                        "id": 120044,
+                        "no": 1,
+                        "nama": "a. Umur ibu waktu melahirkan : ",
+                        "type": "textbox12"
+                    },
+                    {
+                        "no": 2,
+                        "id": 120045,
+                        "nama": "b. Kesehatan jiwa ibu waktu hamil : ",
                         "type": "label0"
                     },
                     {
-                        "id": 120059,
-                        "nama": "a. Orang tua kandung sejak umur",
-                        "type": "textbox6"
+                        "id": 120046,
+                        "nama": "Sehat",
+                        "type": "checkbox6",
+                        "no": 3,
                     },
                     {
-                        "id": 120060,
-                        "nama": "sampai umur",
-                        "type": "textbox6"
+                        "id": 120047,
+                        "nama": "Tidak ",
+                        "type": "checkbox6",
+                        "no": 4,
                     },
                     {
-                        "id": 120061,
-                        "nama": "b. ",
-                        "type": "textbox4"
+                        "id": 120048,
+                        "nama": "c. Kesehatan fisik ibu waktu hamil : ",
+                        "type": "label0",
+                        "no": 5,
                     },
                     {
-                        "id": 120062,
-                        "nama": "sejak umur",
-                        "type": "textbox4"
+                        "id": 120049,
+                        "nama": "Sehat ",
+                        "type": "checkbox6",
+                        "no": 6,
                     },
                     {
-                        "id": 120063,
-                        "nama": "sampai umur",
-                        "type": "textbox4"
+                        "id": 120050,
+                        "nama": "Tidak ",
+                        "type": "checkbox6",
+                        "no": 7
                     },
                     {
-                        "id": 120064,
-                        "nama": "Cara mengasuh anak : ",
-                        "type": "label0"
+                        "id": 120051,
+                        "nama": "d. Kehamilan dikehendaki : ",
+                        "type": "label0",
+                        "no": 8
                     },
                     {
-                        "id": 120065,
-                        "nama": "Otoriter",
-                        "type": "checkbox3"
+                        "id": 120052,
+                        "nama": "ya ",
+                        "type": "checkbox6",
+                        "no": 9
                     },
                     {
-                        "id": 120066,
-                        "nama": "Demokratis",
-                        "type": "checkbox3"
+                        "id": 120053,
+                        "nama": "tidak ",
+                        "type": "checkbox6",
+                        "no": 10
                     },
                     {
-                        "id": 120067,
-                        "nama": "Dimanja",
-                        "type": "checkbox3"
+                        "id": 120054,
+                        "nama": "e. Persalinan :  ",
+                        "type": "label0",
+                        "no": 11
                     },
                     {
-                        "id": 120068,
-                        "nama": "Kurang Diperhatikan",
-                        "type": "checkbox3"
+                        "id": 120055,
+                        "nama": "normal ",
+                        "type": "checkbox6",
+                        "no": 12
                     },
+                    {
+                        "id": 120056,
+                        "nama": "tidak ",
+                        "type": "checkbox6",
+                        "no": 13
+                    },
+                    {
+                        "id": 120057,
+                        "nama": "f. Berat badan waktu lahir : ",
+                        "type": "textbox6",
+                        "satuan": "gram",
+                        "no": 14
+                    },
+                    
                 ]
+            },
+            {
+                "id": 2,
+                "nama": "B. Latar Belakang Perkembangan Mental : ",
+                "detail": [{
+                    "id": 120058,
+                    "nama": "Dibesarkan dalam lingkungan : ",
+                    "type": "label0",
+                    "no": 1
                 },
                 {
-                    "id": 3,
-                    "nama": "C. Riwayat Perkembangan awal : ",
-                    "detail": [{
-                        "id": 120069,
-                        "nama": "Tidak Ada Kelainan",
-                        "type": "checkbox12"
-                    },
-                    {
-                        "id": 120070,
-                        "nama": "Lain-lain",
-                        "type": "checkbox12"
-                    },
-                    {
-                        "id": 120071,
-                        "nama": "",
-                        "type": "textbox12"
-                    },
-                ]
+                    "id": 120059,
+                    "nama": "a. Orang tua kandung sejak umur",
+                    "type": "textbox6",
+                    "no": 2
                 },
                 {
-                    "id": 4,
-                    "nama": "D. Riwayat Pendidikan Terakhir : ",
-                    "detail": [{
-                            "id": 120072,
-                            "nama": "SD, Lulus",
-                            "type": "checkbox6"
-                        },
-                        {
-                            "id": 120073,
-                            "nama": "SD, Tidak",
-                            "type": "checkbox6"
-                        },
-                        {
-                            "id": 120074,
-                            "nama": "SLTP, Lulus",
-                            "type": "checkbox6"
-                        },
-                        {
-                            "id": 120075,
-                            "nama": "SLTP, Tidak",
-                            "type": "checkbox6"
-                        },
-                        {
-                            "id": 120076,
-                            "nama": "SLTA, Lulus",
-                            "type": "checkbox6"
-                        }, 
-                        {
-                            "id": 120077,
-                            "nama": "SLTA, Tidak",
-                            "type": "checkbox6"
-                        },
-                        {
-                            "id": 120078,
-                            "nama": "Perguruan Tinggi, Lulus",
-                            "type": "checkbox6"
-                        }, 
-                        {
-                            "id": 120079,
-                            "nama": "Perguruan Tinggi, Tidak",
-                            "type": "checkbox6"
-                        },
-                        {
-                            "id": 120080,
-                            "nama": "Kecerdasan",
-                            "type": "label0"
-                        },
-                        {
-                            "id": 120081,
-                            "nama": "Tinggi",
-                            "type": "checkbox4"
-                        },
-                        {
-                            "id": 120082,
-                            "nama": "Cukup",
-                            "type": "checkbox4"
-                        },
-                        {
-                            "id": 120083,
-                            "nama": "Kurang",
-                            "type": "checkbox4"
-                        },
-                        {
-                            "id": 120084,
-                            "nama": "Kegemaran",
-                            "type": "textbox12"
-                        },
-                        // {
-                        //     "id": 120084,
-                        //     "nama": "Kegemaran",
-                        //     "type ": "textbox6"
-                        // },
-                ]
+                    "id": 120060,
+                    "nama": "sampai umur",
+                    "type": "textbox6",
+                    "no": 3
                 },
                 {
-                    "id": 5,
-                    "nama": "E. Riwayat Pekerjaan : ",
-                    "detail": [{
-                            "id": 120085,
-                            "nama": "",
-                            "type": "textarea12"
-                        }
-                    ]
+                    "id": 120061,
+                    "nama": "b. ",
+                    "type": "textbox4",
+                    "no": 4
                 },
                 {
-                    "id": 6,
-                    "nama": "F. Sikap Dan Kegiatan Dalam Bidang Modal Spiritual : ",
-                    "detail": [{
-                        "id": 120086,
-                        "nama": "Kegiatan ibadah : ",
-                        "type": "textbox12"
-                    },
-                    {
-                        "id": 120087,
-                        "nama": "Nilai - nilai yang bertentangan dengan kebutuhan kesehatan : ",
-                        "type": "textbox12"
-                    },
-                    {
-                        "id": 120088,
-                        "nama": "Meminta pelayanan kerohanian (lakukan kolaborasi dengan petugas kerohanian) : ",
-                        "type": "label0"
-                    },
-                    {
-                        "id": 120089,
-                        "nama": "Tidak",
-                        "type": "checkbox6"
-                    },
-                    {
-                        "id": 120090,
-                        "nama": "Ya",
-                        "type": "checkbox6"
-                    },
-                ]
+                    "id": 120062,
+                    "nama": "sejak umur",
+                    "type": "textbox4",
+                    "no": 5
                 },
                 {
-                    "id": 7,
-                    "nama": "G. Riwayat Perkawinan : ",
-                    "detail": [{
-                        "id": 120091,
-                        "nama": "",
-                        "type": "textarea12"
-                    }]
+                    "id": 120063,
+                    "nama": "sampai umur",
+                    "type": "textbox4",
+                    "no": 6
                 },
                 {
-                    "id": 8,
-                    "nama": "H. Kehidupan emosional : ",
-                    "detail": [{
-                        "id": 120092,
-                        "nama": "Mantap(stable)",
-                        "type": "checkbox3"
-                    },
-                    {
-                        "id": 120093,
-                        "nama": "Cemas",
-                        "type": "checkbox3"
-                    },
-                    {
-                        "id": 120094,
-                        "nama": "Gembira",
-                        "type": "checkbox3"
-                    },
-                    {
-                        "id": 120095,
-                        "nama": "Sikap Terbuka",
-                        "type": "checkbox3"
-                    },
-                    {
-                        "id": 120096,
-                        "nama": "Optimis",
-                        "type": "checkbox3"
-                    },
-                    {
-                        "id": 120097,
-                        "nama": "Mudah tersinggung",
-                        "type": "checkbox3"
-                    },
-                    {
-                        "id": 120098,
-                        "nama": "Sedih",
-                        "type": "checkbox3"
-                    },
-                    {
-                        "id": 120099,
-                        "nama": "Pesimis",
-                        "type": "checkbox3"
-                    },
-                    {
-                        "id": 120100,
-                        "nama": "Tegang",
-                        "type": "checkbox3"
-                    },
-                    {
-                        "id": 120101,
-                        "nama": "Apatik",
-                        "type": "checkbox3"
-                    },
-                    {
-                        "id": 120102,
-                        "nama": "Lain-lain : ",
-                        "type": "textbox6"
-                    }
-                ]
+                    "id": 120310,
+                    "nama": "c. ",
+                    "type": "textbox4",
+                    "no": 7
+                }, {
+                    "id": 120311,
+                    "nama": "sejak umur",
+                    "type": "textbox4",
+                    "no": 8
+                }, {
+                    "id": 120312,
+                    "nama": "sampai umur",
+                    "type": "textbox4",
+                    "no": 9
                 },
                 {
-                    "id": 9,
-                    "nama": "I. Hubungan Sosial : ",
-                    "detail": [{
-                        "id": 120103,
-                        "nama": "Dengan keluarga : ",
-                        "type": "textbox12"  
-                    },
-                    {
-                        "id": 120104,
-                        "nama": "Dengan Tetangga : ",
-                        "type": "textbox12"
-                    },
-                    {
-                        "id": 120105,
-                        "nama": "Dengan Teman : ",
-                        "type": "textbox12"
-                    },
-                    {
-                        "id": 120106,
-                        "nama": "Dalam Pekerjaan : ",
-                        "type": "textbox12"
-                    },
-                    {
-                        "id": 120107,
-                        "nama": "Sikap Keluarga terhadap penderita : ",
-                        "type": "textbox12"
-                    },
-                ]
+                    "id": 120313,
+                    "nama": "d. ",
+                    "type": "textbox4",
+                    "no": 10
+                }, {
+                    "id": 120314,
+                    "nama": "sejak umur",
+                    "type": "textbox4",
+                    "no": 11
+                }, {
+                    "id": 120315,
+                    "nama": "sampai umur",
+                    "type": "textbox4",
+                    "no": 12
                 },
                 {
-                    "id": 10,
-                    "nama": "J. Kebiasaan : ",
-                    "detail": [{
-                        "id": 120108,
-                        "nama": "Merokok",
-                        "type": "checkbox12"  
-                    },
-                    {
-                        "id": 120109,
-                        "nama": "Minuman Keras",
-                        "type": "checkbox12"
-                    },
-                    {
-                        "id": 120110,
-                        "nama": "Obat-obatan",
-                        "type": "checkbox12"
-                    },
-                ]
+                    "id": 120316,
+                    "nama": "e. ",
+                    "type": "textbox4",
+                    "no": 13
+                }, {
+                    "id": 120317,
+                    "nama": "sejak umur",
+                    "type": "textbox4",
+                    "no": 14
+                }, {
+                    "id": 120318,
+                    "nama": "sampai umur",
+                    "type": "textbox4",
+                    "no": 15
                 },
                 {
-                    "id": 11,
-                    "nama": "K. Lain - lain : ",
-                    "detail": [{
-                            "id": 120111,
-                            "nama": "Pengalaman Militer : ",
-                            "type": "textbox12"
-                        },
-                        {
-                            "id": 120112,
-                            "nama": "Urusan dengan Polisi : ",
-                            "type": "textbox12"
-                        },
-                    ]
+                    "id": 120064,
+                    "nama": "Cara mengasuh anak : ",
+                    "type": "label0",
+                    "no": 16
+                },
+                {
+                    "id": 120065,
+                    "nama": "Otoriter",
+                    "type": "checkbox3",
+                    "no": 17
+                },
+                {
+                    "id": 120066,
+                    "nama": "Demokratis",
+                    "type": "checkbox3",
+                    "no": 18
+                },
+                {
+                    "id": 120067,
+                    "nama": "Dimanja",
+                    "type": "checkbox3",
+                    "no": 19
+                },
+                {
+                    "id": 120068,
+                    "nama": "Kurang Diperhatikan",
+                    "type": "checkbox3",
+                    "no": 20
                 },
             ]
+            },
+            {
+                "id": 3,
+                "nama": "C. Riwayat Perkembangan awal : ",
+                "detail": [{
+                    "id": 120069,
+                    "nama": "Tidak Ada Kelainan",
+                    "type": "checkbox12",
+                    "no": 21
+                },
+                {
+                    "id": 120070,
+                    "nama": "Lain-lain",
+                    "type": "checkbox12",
+                    "no": 22
+                },
+                {
+                    "id": 120071,
+                    "nama": "",
+                    "type": "textbox12",
+                    "no": 23
+                },
+            ]
+            },
+            {
+                "id": 4,
+                "nama": "D. Riwayat Pendidikan Terakhir : ",
+                "detail": [{
+                        "id": 120072,
+                        "nama": "SD, Lulus",
+                        "type": "checkbox6",
+                        "no": 24
+                    },
+                    {
+                        "id": 120073,
+                        "nama": "SD, Tidak",
+                        "type": "checkbox6",
+                        "no": 25
+                    },
+                    {
+                        "id": 120074,
+                        "nama": "SLTP, Lulus",
+                        "type": "checkbox6",
+                        "no": 26
+                    },
+                    {
+                        "id": 120075,
+                        "nama": "SLTP, Tidak",
+                        "type": "checkbox6",
+                        "no": 27
+                    },
+                    {
+                        "id": 120076,
+                        "nama": "SLTA, Lulus",
+                        "type": "checkbox6",
+                        "no": 28
+                    }, 
+                    {
+                        "id": 120077,
+                        "nama": "SLTA, Tidak",
+                        "type": "checkbox6",
+                        "no": 29
+                    },
+                    {
+                        "id": 120078,
+                        "nama": "Perguruan Tinggi, Lulus",
+                        "type": "checkbox6",
+                        "no": 30
+                    }, 
+                    {
+                        "id": 120079,
+                        "nama": "Perguruan Tinggi, Tidak",
+                        "type": "checkbox6",
+                        "no": 31
+                    },
+                    {
+                        "id": 120080,
+                        "nama": "Kecerdasan",
+                        "type": "label0",
+                        "no": 32
+                    },
+                    {
+                        "id": 120081,
+                        "nama": "Tinggi",
+                        "type": "checkbox4",
+                        "no": 33
+                    },
+                    {
+                        "id": 120082,
+                        "nama": "Cukup",
+                        "type": "checkbox4",
+                        "no": 34
+                    },
+                    {
+                        "id": 120083,
+                        "nama": "Kurang",
+                        "type": "checkbox4",
+                        "no": 35
+                    },
+                    {
+                        "id": 120084,
+                        "nama": "Kegemaran",
+                        "type": "textbox12",
+                        "no": 36
+                    },
+                    // {
+                    //     "id": 120084,
+                    //     "nama": "Kegemaran",
+                    //     "type ": "textbox6"
+                    // },
+            ]
+            },
+            {
+                "id": 5,
+                "nama": "E. Riwayat Pekerjaan : ",
+                "detail": [{
+                        "id": 120085,
+                        "nama": "",
+                        "type": "textarea12",
+                        "no": 37
+                    }
+                ]
+            },
+            {
+                "id": 6,
+                "nama": "F. Sikap Dan Kegiatan Dalam Bidang Modal Spiritual : ",
+                "detail": [{
+                    "id": 120086,
+                    "nama": "Kegiatan ibadah : ",
+                    "type": "textbox12",
+                    "no": 38
+                },
+                {
+                    "id": 120087,
+                    "nama": "Nilai - nilai yang bertentangan dengan kebutuhan kesehatan : ",
+                    "type": "textbox12",
+                    "no": 39
+                },
+                {
+                    "id": 120088,
+                    "nama": "Meminta pelayanan kerohanian (lakukan kolaborasi dengan petugas kerohanian) : ",
+                    "type": "label0",
+                    "no": 40
+                },
+                {
+                    "id": 120089,
+                    "nama": "Tidak",
+                    "type": "checkbox6",
+                    "no": 41
+                },
+                {
+                    "id": 120090,
+                    "nama": "Ya",
+                    "type": "checkbox6",
+                    "no": 42
+                },
+            ]
+            },
+            {
+                "id": 7,
+                "nama": "G. Riwayat Perkawinan : ",
+                "detail": [{
+                    "id": 120091,
+                    "nama": "",
+                    "type": "textarea12",
+                    "no": 43
+                }]
+            },
+            {
+                "id": 8,
+                "nama": "H. Kehidupan emosional : ",
+                "detail": [{
+                    "id": 120092,
+                    "nama": "Mantap(stable)",
+                    "type": "checkbox3",
+                    "no": 44
+                },
+                {
+                    "id": 120093,
+                    "nama": "Cemas",
+                    "type": "checkbox3",
+                    "no": 45
+                },
+                {
+                    "id": 120094,
+                    "nama": "Gembira",
+                    "type": "checkbox3",
+                    "no": 46
+                },
+                {
+                    "id": 120095,
+                    "nama": "Sikap Terbuka",
+                    "type": "checkbox3",
+                    "no": 47
+                },
+                {
+                    "id": 120096,
+                    "nama": "Optimis",
+                    "type": "checkbox3",
+                    "no": 48
+                },
+                {
+                    "id": 120097,
+                    "nama": "Mudah tersinggung",
+                    "type": "checkbox3",
+                    "no": 49
+                },
+                {
+                    "id": 120098,
+                    "nama": "Sedih",
+                    "type": "checkbox3",
+                    "no": 50
+                },
+                {
+                    "id": 120099,
+                    "nama": "Pesimis",
+                    "type": "checkbox3",
+                    "no": 51
+                },
+                {
+                    "id": 120100,
+                    "nama": "Tegang",
+                    "type": "checkbox3",
+                    "no": 52
+                },
+                {
+                    "id": 120101,
+                    "nama": "Apatik",
+                    "type": "checkbox3",
+                    "no": 53
+                },
+                {
+                    "id": 120102,
+                    "nama": "Lain-lain : ",
+                    "type": "textbox6",
+                    "no": 54
+                }
+            ]
+            },
+            {
+                "id": 9,
+                "nama": "I. Hubungan Sosial : ",
+                "detail": [{
+                    "id": 120103,
+                    "nama": "Dengan keluarga : ",
+                    "type": "textbox12"  ,
+                    "no": 55
+                },
+                {
+                    "id": 120104,
+                    "nama": "Dengan Tetangga : ",
+                    "type": "textbox12",
+                    "no": 56
+                },
+                {
+                    "id": 120105,
+                    "nama": "Dengan Teman : ",
+                    "type": "textbox12",
+                    "no": 57
+                },
+                {
+                    "id": 120106,
+                    "nama": "Dalam Pekerjaan : ",
+                    "type": "textbox12",
+                    "no": 58
+                },
+                {
+                    "id": 120107,
+                    "nama": "Sikap Keluarga terhadap penderita : ",
+                    "type": "textbox12",
+                    "no": 59
+                },
+            ]
+            },
+            {
+                "id": 10,
+                "nama": "J. Kebiasaan : ",
+                "detail": [{
+                    "id": 120108,
+                    "nama": "Merokok",
+                    "type": "checkbox12",
+                    "no": 60
+                },
+                {
+                    "id": 120109,
+                    "nama": "Minuman Keras",
+                    "type": "checkbox12",
+                    "no": 61
+                },
+                {
+                    "id": 120110,
+                    "nama": "Obat-obatan",
+                    "type": "checkbox12",
+                    "no": 62
+                },
+            ]
+            },
+            {
+                "id": 11,
+                "nama": "K. Lain - lain : ",
+                "detail": [{
+                        "id": 120111,
+                        "nama": "Pengalaman Militer : ",
+                        "type": "textbox12",
+                        "no": 63
+                    },
+                    {
+                        "id": 120112,
+                        "nama": "Urusan dengan Polisi : ",
+                        "type": "textbox12",
+                        "no": 64
+                    },
+                ]
+            },
+        ]
 
             $scope.listPemeriksaanFisik = [{
                     "id": 1,
@@ -852,6 +970,11 @@ define(['initialize'], function (initialize) {
                         {
                             "id": 120116,
                             "nama": "Respirasi :  ",
+                            "type": "textbox3"
+                        },
+                        {
+                            "id": 120309,
+                            "nama": "Saturasi :  ",
                             "type": "textbox3"
                         },
 
@@ -1029,26 +1152,26 @@ define(['initialize'], function (initialize) {
                         {"id": 120180, "nama": "lain - lain : ", "type": "textbox6"},
                         {"id": 120181, "nama": "Progresi Pikir Kualitatif : ", "type": "label0"},
                         {"id": 120182, "nama": "Tidak ada kelainan", "type": "checkbox3"},
-                        {"id": 120183, "nama": "neologisme", "type": "checkbox3"},
+                        {"id": 120183, "nama": "Neologisme", "type": "checkbox3"},
                         {"id": 120184, "nama": "Sirkumstansial", "type": "checkbox3"},
-                        {"id": 120233, "nama": "Gagap", "type": "checkbox3"},
-                        {"id": 120234, "nama": "Perseverasi", "type": "checkbox3"},
-                        {"id": 120185, "nama": "inkoherensi", "type": "checkbox3"},
-                        {"id": 120186, "nama": "Tangensial", "type": "checkbox3"},
-                        {"id": 120187, "nama": "Verbegerasi", "type": "checkbox3"},
-                        {"id": 120188, "nama": "Asosiasi longgar", "type": "checkbox3"},
-                        {"id": 120189, "nama": "Flight of ideas", "type": "checkbox3"},
-                        {"id": 120190, "nama": "Ekolali", "type": "checkbox3"},
-                        {"id": 120191, "nama": "Irelevansi", "type": "checkbox3"},
-                        {"id": 120192, "nama": "Flight into mysticsm", "type": "checkbox3"},
-                        {"id": 120193, "nama": "Lain - lain :", "type": "textbox6"},
-                        {"id": 120194, "nama": "Progresi Pikir Kuantitatif : ", "type": "label0"},
-                        {"id": 120195, "nama": "Tidak ada kelainan", "type": "checkbox3"},
-                        {"id": 120196, "nama": "Logore", "type": "checkbox3"},
-                        {"id": 120197, "nama": "Reming", "type": "checkbox3"},
-                        {"id": 120198, "nama": "Bloking", "type": "checkbox3"},
-                        {"id": 120199, "nama": "Mutisme", "type": "checkbox3"},
-                        {"id": 120200, "nama": "Lain-lain : ", "type": "textbox6"},
+                        {"id": 120185, "nama": "Gagap", "type": "checkbox3"},
+                        {"id": 120186, "nama": "Perseverasi", "type": "checkbox3"},
+                        {"id": 120187, "nama": "inkoherensi", "type": "checkbox3"},
+                        {"id": 120188, "nama": "Tangensial", "type": "checkbox3"},
+                        {"id": 120189, "nama": "Verbegerasi", "type": "checkbox3"},
+                        {"id": 120190, "nama": "Asosiasi longgar", "type": "checkbox3"},
+                        {"id": 120191, "nama": "Flight of ideas", "type": "checkbox3"},
+                        {"id": 120192, "nama": "Ekolali", "type": "checkbox3"},
+                        {"id": 120193, "nama": "Irelevansi", "type": "checkbox3"},
+                        {"id": 120194, "nama": "Flight into mysticsm", "type": "checkbox3"},
+                        {"id": 120195, "nama": "Lain - lain :", "type": "textbox6"},
+                        {"id": 120196, "nama": "Progresi Pikir Kuantitatif : ", "type": "label0"},
+                        {"id": 120197, "nama": "Tidak ada kelainan", "type": "checkbox3"},
+                        {"id": 120198, "nama": "Logore", "type": "checkbox3"},
+                        {"id": 120199, "nama": "Reming", "type": "checkbox3"},
+                        {"id": 120200, "nama": "Bloking", "type": "checkbox3"},
+                        {"id": 120233, "nama": "Mutisme", "type": "checkbox3"},
+                        {"id": 120234, "nama": "Lain-lain : ", "type": "textbox6"},
                         
                     ]
                 },
@@ -1098,7 +1221,7 @@ define(['initialize'], function (initialize) {
                         {"id": 120228, "nama": "Halusinasi pembauan", "type": "checkbox3"},
                         {"id": 120229, "nama": "Halusinasi sexual", "type": "checkbox3"},
                         {"id": 120230, "nama": "ilusi", "type": "checkbox3"},
-                        {"id": 120231, "nama": "Tumpul", "type": "checkbox3"},
+                        // {"id": 120231, "nama": "Tumpul", "type": "checkbox3"},
                         {"id": 120232, "nama": "Lain-lain : ", "type": "textbox6"},
                         // 120234
                     ]
@@ -1121,7 +1244,7 @@ define(['initialize'], function (initialize) {
                 },
                 {
                     "id": 11,
-                    "nama": "K. Gangguan Jiwa : ",
+                    "nama": "K. Hubungan Jiwa : ",
                     "detail": [
                         {"id": 120239, "nama": "Sukar", "type": "checkbox6"},
                         {"id": 120240, "nama": "Mudah", "type": "checkbox6"},
@@ -1167,6 +1290,10 @@ define(['initialize'], function (initialize) {
                         { "id": 120260, "nama": "PANSS-EC", "type": "checkbox3" },
                         { "id": 120261, "nama": "HRSD", "type": "checkbox3" },
                         { "id": 120262, "nama": "HRSA", "type": "checkbox3" },
+                        { "id": 120305, "nama": "", "type": "textbox3" },
+                        { "id": 120306, "nama": "", "type": "textbox3" },
+                        { "id": 120307, "nama": "", "type": "textbox3" },
+                        { "id": 120308, "nama": "", "type": "textbox3" },
                     ]
                 },
             ]
@@ -1272,7 +1399,7 @@ define(['initialize'], function (initialize) {
                         { "id": 120291, "nama": "Selesai pemeriksaan, Pukul : ", "type": "time" },
                         { "id": 120292, "nama": "Penanggung Jawab Pasien ", "type": "label06" },
                         { "id": 120293, "nama": "Dokter Pemeriksa/DPJP", "type": "label06" },
-                        { "id": 120294, "nama": "", "type": "combobox" },
+                        { "id": 120294, "nama": "", "type": "textbox6" },
                         { "id": 120295, "nama": "", "type": "combobox" },
                     ]
                 },
@@ -1343,7 +1470,14 @@ define(['initialize'], function (initialize) {
                             $scope.item.obj[116216] = true
                             $scope.item.obj[116219] = true
                             $scope.item.obj[116222] = true
+                            $scope.item.obj[120001] = moment($scope.now).format('YYYY-MM-DD HH:mm')
+                            $scope.item.obj[120291] = new Date($scope.now)
 
+                            $scope.item.obj[120295] = {
+                                value: medifirstService.getPegawaiLogin().id,
+                                text: medifirstService.getPegawaiLogin().namaLengkap
+                            }
+                            
                             dataLoad = dat.data.data
 
                             for (var i = 0; i <= dataLoad.length - 1; i++) {
@@ -1361,7 +1495,19 @@ define(['initialize'], function (initialize) {
                                             $scope.skorNutrisi = parseFloat(dataLoad[i].value)
 
                                     }
+                                    if (dataLoad[i].type == "textbox6") {
+                                        $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
+                                    }
                                     if (dataLoad[i].type == "checkbox") {
+                                        chekedd = false
+                                        if (dataLoad[i].value == '1') {
+                                            chekedd = true
+                                        }
+                                        $scope.item.obj[dataLoad[i].emrdfk] = chekedd
+
+                                    }
+                                    
+                                    if (dataLoad[i].type == "checkbox12") {
                                         chekedd = false
                                         if (dataLoad[i].value == '1') {
                                             chekedd = true
@@ -1382,7 +1528,8 @@ define(['initialize'], function (initialize) {
                                         $scope.item.obj[dataLoad[i].emrdfk] = new Date(dataLoad[i].value)
                                     }
                                     if (dataLoad[i].type == "time") {
-                                        $scope.item.obj[dataLoad[i].emrdfk] = new Date(dataLoad[i].value)
+                                        $scope.item.obj[dataLoad[i].emrdfk] = new Date(moment($scope.now).format('YYYY-MM-DD') + ' ' + dataLoad[i].value)
+                                        console.log($scope.item.obj[dataLoad[i].emrdfk]);
                                     }
                                     if (dataLoad[i].type == "date") {
                                         $scope.item.obj[dataLoad[i].emrdfk] = new Date(dataLoad[i].value)
@@ -1409,41 +1556,85 @@ define(['initialize'], function (initialize) {
                             }
                         })
                     } else {
-                        medifirstService.get("emr/get-emr-otomatis?noemr=" + nomorEMR + "&emrfk=3000412" + "&emrid=" + $scope.cc.emrfk).then(function (data) {
+                        medifirstService.get("emr/get-emr-otomatis?noemr=" + nomorEMR + "&emrfk=3000922" + "&emrid=" + $scope.cc.emrfk).then(function (data) {
                             var datas = data.data.data
-                            console.log(datas);
                             $scope.isRouteLoading = false
+                            $scope.item.obj = []
+                            $scope.item.obj2 = []
+                            $scope.item.obj[116062] = $scope.now
+                            $scope.item.obj[116068] = {
+                                text: $scope.cc.namaruangan,
+                                value: $scope.cc.objectruanganfk
+                            }
+
+                            $scope.item.obj[116201] = true
+                            $scope.item.obj[116204] = true
+                            $scope.item.obj[116207] = true
+                            $scope.item.obj[116210] = true
+                            $scope.item.obj[116213] = true
+                            $scope.item.obj[116216] = true
+                            $scope.item.obj[116219] = true
+                            $scope.item.obj[116222] = true
+                            $scope.item.obj[120001] = moment($scope.now).format('YYYY-MM-DD HH:mm')
+                            $scope.item.obj[120291] = new Date($scope.now)
+
+                            $scope.item.obj[120295] = {
+                                value: medifirstService.getPegawaiLogin().id,
+                                text: medifirstService.getPegawaiLogin().namaLengkap
+                            }
+                            
                             for (let i = 0; i < datas.length; i++) {
-                                if (datas[i].id == 3002093 && datas[i].value == 2) {
-                                    $scope.item.obj[120253] = true
-                                } else if (datas[i].id == 3002093 && datas[i].value == 1) {
-                                    $scope.item.obj[120252] = true
+                                if (datas[i].type == "textarea") {
+                                    $scope.item.obj[datas[i].id] = datas[i].value
                                 }
-
-                                if (datas[i].id == 3002058 && datas[i].value == 1) {
-                                    $scope.item.obj[120246] = true
-                                } else if (datas[i].id == 3002058 && datas[i].value == 2) {
-                                    $scope.item.obj[120247] = true
-                                } else if (datas[i].id == 3002058 && datas[i].value == 3) {
-                                    $scope.item.obj[120248] = true
-                                } else if (datas[i].id == 3002058 && datas[i].value == 4) {
-                                    $scope.item.obj[120249] = true
-                                } else if (datas[i].id == 3002058 && datas[i].value == 5) {
-                                    $scope.item.obj[120250] = true
-                                } else if (datas[i].id == 3002058 && datas[i].value == 6) {
-                                    $scope.item.obj[120251] = true
-                                }
-
-                                if (datas[i].id2 != 0) {
-                                    $scope.item.obj[datas[i].id2] = datas[i].value
-
+                                if (datas[i].type == "combobox") {
+                                    var str = datas[i].value
+                                    if (str != undefined) {
+                                        var res = str.split("~");
+                                        $scope.item.obj[datas[i].id] = {
+                                            value: res[0],
+                                            text: res[1]
+                                        }
+                                    }
                                 }
                                 if (datas[i].type == "checkbox") {
                                     if (datas[i].value == "1") {
-                                        $scope.item.obj[datas[i].id2] = true
+                                        $scope.item.obj[datas[i].id] = true
                                         console.log(datas[i].type);
                                     }
                                 }
+                                if (datas[i].type == "radio") {
+                                        // $scope.item.obj[datas[i].id] = true
+
+                                    if (datas[i].value == "1" && datas[i].id == 120246) {
+                                        $scope.item.obj[120246] = true
+                                    }
+                                    if (datas[i].value == "2" && datas[i].id == 120247) {
+                                        $scope.item.obj[120247] = true
+                                    }
+                                    if (datas[i].value == "3") {
+                                        $scope.item.obj[120248] = true
+                                    }
+                                    if (datas[i].value == "4") {
+                                        $scope.item.obj[120249] = true
+                                    }
+                                    if (datas[i].value == "5") {
+                                        $scope.item.obj[120250] = true
+                                    }
+                                    if (datas[i].value == "6") {
+                                        $scope.item.obj[120251] = true
+                                    }
+                                    if (datas[i].value == "1" && datas[i].id == 120252) {
+                                        $scope.item.obj[120252] = true
+                                    }
+                                    if (datas[i].value == "2" && datas[i].id == 120253) {
+                                        $scope.item.obj[120253] = true
+                                    }
+                                }
+                                if (datas[i].type == "textbox") {
+                                    $scope.item.obj[datas[i].id] = datas[i].value
+                                }
+
                             }
 
                         })

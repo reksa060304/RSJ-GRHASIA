@@ -414,7 +414,7 @@ define(['initialize'], function (initialize) {
                 return dateArray;
             }
             $scope.Simpan = function () {
-                if($scope.item.jumlahHari > $scope.item.totalSisaCuti){
+                if ($scope.item.jumlahHari > $scope.item.totalCutiTahun) {
                     toastr.error('Jumlah Hari Cuti Melebihi Sisa Cuti Yang Ada')
                     return
                 }
@@ -563,11 +563,17 @@ define(['initialize'], function (initialize) {
                     if($scope.item.statusPegawai.id == 8 || $scope.item.statusPegawai.id == 1){
                         var idPegawai = 'idPegawai=' + $scope.item.namaPegawai.id
                         var tglpengajuan = '&tglpengajuan=' + moment($scope.item.tglPengajuan).format('YYYY')
-
+                        if ($scope.item.namaPegawai.kategorypegawai == null) {
+                            toastr.error("Status Pegawai Kosong. Isi terlebih dahulu!");
+                            return
+                        }
                         medifirstService.get('sdm/get-total-sisa-cuti?' + idPegawai + tglpengajuan)
                         .then(function (e) {
                             //console.log(e.data)
-                            $scope.item.totalSisaCuti = e.data.data[0].sisacutikeseluruhan
+                            $scope.item.totalsisacutitahunini = e.data.data[0].totalcutitahunini
+                            $scope.item.sisacutitahunkemarin = e.data.data[0].sisacutitahunsebelumnya
+                            $scope.item.totalCutiTahun = e.data.data[0].sisacutitahunsekarang + e.data.data[0].sisacutitahunsebelumnya
+                            $scope.item.sisacutitahunini = e.data.data[0].sisacutitahunsekarang
                             $scope.hidesisacuti = false
                         });
                     } else{
@@ -587,6 +593,8 @@ define(['initialize'], function (initialize) {
                     medifirstService.get('sdm/get-jumlah-cuti?' + tglAwal + tglAkhir)
                     .then(function (e) {
                         $scope.item.jumlahHari = e.data.data[0].jumlahhari
+                        $scope.item.totalSisaCuti = $scope.item.totalCutiTahun - $scope.item.totalsisacutitahunini - $scope.item.jumlahHari
+                        console.log($scope.item.totalCutiTahun , $scope.item.totalsisacutitahunini , $scope.item.jumlahHari);
                     });
                 }
             });
@@ -599,6 +607,7 @@ define(['initialize'], function (initialize) {
                     medifirstService.get('sdm/get-jumlah-cuti?' + tglAwal + tglAkhir)
                     .then(function (e) {
                         $scope.item.jumlahHari = e.data.data[0].jumlahhari
+
                     });
                 }
             });
@@ -608,11 +617,10 @@ define(['initialize'], function (initialize) {
                     if($scope.item.statusPegawai.id == 8 || $scope.item.statusPegawai.id == 1){
                         var idPegawai = 'idPegawai=' + $scope.item.namaPegawai.id
                         var tglpengajuan = '&tglpengajuan=' + moment($scope.item.tglPengajuan).format('YYYY')
-
+                        
                         medifirstService.get('sdm/get-total-sisa-cuti?' + idPegawai + tglpengajuan)
                         .then(function (e) {
                             //console.log(e.data)
-                            $scope.item.totalSisaCuti = e.data.data[0].sisacutikeseluruhan
                             $scope.hidesisacuti = false
                         });
                     }
@@ -625,11 +633,11 @@ define(['initialize'], function (initialize) {
                     if($scope.item.statusPegawai.id == 8 || $scope.item.statusPegawai.id == 1){
                         var idPegawai = 'idPegawai=' + $scope.item.namaPegawai.id
                         var tglpengajuan = '&tglpengajuan=' + moment($scope.item.tglPengajuan).format('YYYY')
-
+                        
                         medifirstService.get('sdm/get-total-sisa-cuti?' + idPegawai + tglpengajuan)
                         .then(function (e) {
                             //console.log(e.data)
-                            $scope.item.totalSisaCuti = e.data.data[0].sisacutikeseluruhan
+                            $scope.item.totalsisacutitahunini = e.data.data[0].totalcutitahunini
                             $scope.hidesisacuti = false
                         });
                     }

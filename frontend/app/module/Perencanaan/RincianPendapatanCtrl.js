@@ -384,14 +384,26 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 e.preventDefault();
                 var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
                 console.log(dataItem.norec);
-                var objSave = {
-                    'norec': dataItem.norec
-                }
-                medifirstService.post('anggaran/hapus-rincian-pendapatan', objSave ).then(function(){
-                    LoadCombo()
-                    $scope.dataSelected = {}
-                    // console.log(norec);
+                var confirm = $mdDialog.confirm()
+                    .title('Informasi')
+                    .htmlContent("Apakah anda ingin menghapus item ini?")
+                    .ariaLabel('Lucky day')
+                    .cancel('Batal')
+                    .ok('Ok');
+
+                $mdDialog.show(confirm).then(function () {
+                    
+                    var objSave = {
+                        'norec': dataItem.norec
+                    }
+                    medifirstService.post('anggaran/hapus-rincian-pendapatan', objSave).then(function () {
+                        LoadCombo()
+                        $scope.dataSelected = {}
+                        // console.log(norec);
+                    })
+
                 })
+                
             }
             // BATASSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
         }

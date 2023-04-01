@@ -100,9 +100,9 @@
                     <tr>
                         <td width="10%" style="padding: 5px">
                             @if(stripos(\Request::url(), 'localhost') !== FALSE)
-                               <img src="{{ asset('img/logo_only.png') }}" alt="" style="width: 90px;">
+                               <img src="{{ asset('img/logo_grhasia_com.png') }}" alt="" style="width: 90px;">
                             @else
-                              <img src="{{ asset('service/img/logo_only.png') }}" alt="" style="width: 90px;">
+                              <img src="{{ asset('service/img/logo_grhasia_com.png') }}" alt="" style="width: 90px;">
                             @endif
                         </td>
                         <td style="text-align: left">
@@ -251,7 +251,7 @@
                         </td>
                         <td style="text-align: center">&nbsp;</td>
                         <td style="text-align: center"><span style="font-weight: bold;color: #ccc">Ditandatangani secara elektronik</span>
-                            <br>{!! $res['d'][0]->namadokter !!}
+                            <br>{!! $res['pegawai']['pegawai'] !!}
                         </td>
                     </tr>
 
