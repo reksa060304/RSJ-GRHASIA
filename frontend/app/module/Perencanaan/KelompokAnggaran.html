@@ -534,6 +534,29 @@
 						<!-- Setting keterangan blud -->
 						<md-content class="md-padding">
 							<div class="grid_12">
+								<div class="grid_6" style="text-align: left;">
+									Tanggal Panjar
+								</div>
+								<div class="grid_6" style="text-align: left;">
+									Tahun
+								</div>
+								<div class="grid_3" style="margin-top: -10px;">
+									<input style="width: 100%" k-ng-model="item.tglSPPawalSearch" kendo-datepicker placeholer="yyyy-MM-dd"
+										k-format="'yyyy-MM-dd'" />
+								</div>
+								<div class="grid_3" style="margin-top: -10px;">
+									<input style="width: 100%" k-ng-model="item.tglSPPakhirSearch" kendo-datepicker placeholer="yyyy-MM-dd"
+										k-format="'yyyy-MM-dd'" />
+								</div>
+								<div class="grid_3" style="margin-top: -10px;">
+									<input style="width: 100%;" k-options="yearUngkul" k-ng-model="item.tahunawal" kendo-date-picker
+										placeholer="YYYY" k-format="'yyyy'" />
+								</div>
+								<div class="grid_3">
+									<button class="btnTemplate1" ng-click="searchPanjar()">Cari</button>
+								</div>
+							</div>
+							<div class="grid_12">
 								<div class="grid_12 borderBox">
 									<kendo-grid id="kGrids" k-data-source="dataSourcePanjarPengembalian" k-selectable="'row'"  class="max-height"
 										k-options="columnPanjarPengembalian" k-ng-model="dataPanjarSelected" ng-click="klikPanjar(dataPanjarSelected)">
@@ -593,6 +616,29 @@
 					<md-tab label="Surat Perintah Membayar (SPM)" ng-if="spjaja === false && spjajas === false && panjaraja === false && sppaja === false && spmaja === true && semuaanggaran === false">
 						<!-- Setting keterangan blud -->
 						<md-content class="md-padding">
+							<div class="grid_12">
+								<div class="grid_6" style="text-align: left;">
+									Tanggal SPM
+								</div>
+								<div class="grid_6" style="text-align: left;">
+									Tahun
+								</div>
+								<div class="grid_3" style="margin-top: -10px;">
+									<input style="width: 100%" k-ng-model="item.tglSPPawalSearch" kendo-datepicker placeholer="yyyy-MM-dd"
+										k-format="'yyyy-MM-dd'" />
+								</div>
+								<div class="grid_3" style="margin-top: -10px;">
+									<input style="width: 100%" k-ng-model="item.tglSPPakhirSearch" kendo-datepicker placeholer="yyyy-MM-dd"
+										k-format="'yyyy-MM-dd'" />
+								</div>
+								<div class="grid_3" style="margin-top: -10px;">
+									<input style="width: 100%;" k-options="yearUngkul" k-ng-model="item.tahunawal" kendo-date-picker
+										placeholer="YYYY" k-format="'yyyy'" />
+								</div>
+								<div class="grid_3">
+									<button class="btnTemplate1" ng-click="searchSPM()">Cari</button>
+								</div>
+							</div>
 							<div class="grid_12">
 								<div class="grid_12 borderBox">
 									<kendo-grid id="kGrids" k-data-source="dataSourceCariSPM" k-selectable="'row'"  class="max-height"
@@ -2964,7 +3010,10 @@
 		</div>
 	</div>
 </div>
+<div class="grid_12">
 <div ng-include='"../app/template/Shared/TemplateLoading"'></div>
+
+</div>
 <script id="status-template" type="text/kendo-templ">
     # if (nospp == null) { #
         <button class="btnTemplate1" ng-click="PilihSPD()" style="width: 50px;">Pilih</button>

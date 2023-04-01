@@ -69,8 +69,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.item.tglakhir = moment($scope.now).format('YYYY-MM-DD');
             $scope.item.tglVerifSPJ = moment($scope.now).format('YYYY-MM-DD');
             $scope.item.tglPanjar = moment($scope.now).format('YYYY-MM-DD');
-            // $scope.item.tglSPPawalSearch = moment($scope.now).format('YYYY-01-01')
-            // $scope.item.tglSPPakhirSearch = moment($scope.now).format('YYYY-MM-DD')
+            $scope.item.tglSPPawalSearch = moment($scope.now).format('YYYY-01-01')
+            $scope.item.tglSPPakhirSearch = moment($scope.now).format('YYYY-MM-DD')
             $scope.totalketerangan = 0;
             $scope.totalrealisasidetail = 0;
             $scope.totalpanjar = 0;
@@ -149,9 +149,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 //$scope.listSubSubKegiatan = e.data.kegiatansubsub
                 $scope.listKegiatanCombo = e.data.kegiatancombo
                 $scope.listKegiatanComboakhir = e.data.kegiatancombo
-                $scope.dataSourcePanjarPengembalian = e.data.panjar
+                // $scope.dataSourcePanjarPengembalian = e.data.panjar
                 // $scope.dataSourceSPP = e.data.spp
-                $scope.dataSourceCariSPM = e.data.carispm
+                // $scope.dataSourceCariSPM = e.data.carispm
                 $scope.dataSourceSPD = e.data.spd
                 $scope.listKonsolidasi5 = e.data.konsolidasi5
                 $scope.listKonsolidasi4 = e.data.konsolidasi4
@@ -235,6 +235,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 medifirstService.get("perencanaan/get-data-combo?tahun="+thn+"&idpegawai=" + idpegawai+tglsppawal+tglsppakhir).then(function (e) {
                     $scope.isRouteLoading = false
                     $scope.dataSourceSPP = e.data.spp
+                    $scope.dataSourceCariSPM = e.data.carispm
+                    $scope.dataSourcePanjarPengembalian = e.data.panjar
+
                     $scope.dataSourceSetting = e.data.setting
                     $scope.listSubSubKegiatanAngkas = e.data.subsubkegiatanangkas
                     // $scope.dataSourceDetailMT = e.data.mataanggaran
@@ -287,7 +290,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         div = $scope.item.searchdivkeg.id
                     }
                     
-                    medifirstService.get("perencanaan/get-data-combo?tahun="+moment($scope.item.tahun).format('YYYY')+"&idpegawai=" + idpegawai + "&tahapaktif=" + $scope.item.searchtahapkeg.id + "&div=" + div).then(function (e) {
+                    medifirstService.get("perencanaan/get-data-combo?tahun="+moment($scope.item.tahun).format('YYYY')+"&idpegawai=" + idpegawai + "&tahapaktif=" + $scope.item.searchtahapkeg.id + "&div=" + div+"&lockdiv=true").then(function (e) {
                         DataKegiatan = e.data.kegiatan
                         $scope.dataSourceKegiatan = e.data.kegiatan
                     })
@@ -2551,10 +2554,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         dasarpengeluaran: $scope.item.dasarPengeluaran,
                         statusspp: $scope.item.radioStatusSPP,
                         nospd: $scope.item.nospd,
-                        tglspp: $scope.item.tglSPP,
+                        tglspp: moment($scope.item.tglSPP).format('YYYY-MM-DD HH:mm'),
                         bulan: $scope.item.itemBulan.bulan,
                         pengeluaran: $scope.item.untukPengeluaran,
-                        tglsah: $scope.item.tglSah,
+                        tglsah: moment($scope.item.tglSah).format('YYYY-MM-DD HH:mm'),
                         nilaispp: $scope.item.nilaispp,
                         objectasalprodukfk: $scope.item.sumberDanaSPP.id,
                     }
@@ -7214,6 +7217,14 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 })
             }
             $scope.searchSPP = function(){
+                $scope.isRouteLoading = true;
+                loadDataGrid()
+            }
+            $scope.searchSPM = function(){
+                $scope.isRouteLoading = true;
+                loadDataGrid()
+            }
+            $scope.searchPanjar = function(){
                 $scope.isRouteLoading = true;
                 loadDataGrid()
             }
