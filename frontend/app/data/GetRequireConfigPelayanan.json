@@ -3634,6 +3634,10 @@
         {
             "nameDep": "PengkajianAwalKeperawatanRJJiwaCtrl",
             "urlDep": "module/EMR/PengkajianAwalKeperawatanRJJiwaCtrl"
+        },
+        {
+            "nameDep": "PengkajianAwalMedisIGDJiwaGrhCtrl",
+            "urlDep": "module/EMR/PengkajianAwalMedisIGDJiwaGrhCtrl"
         }
     ]
 }

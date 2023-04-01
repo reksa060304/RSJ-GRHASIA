@@ -20128,6 +20128,28 @@
         "define": "RekamMedisCtrl"
       }
     ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.PengkajianAwalMedisIGDJiwaGrh",
+    "url": "/PengkajianAwalMedisIGDJiwaGrh",
+    "templateurl": "module/EMR/PengkajianAwalMedisIGDJiwaGrh.html",
+    "controller": "PengkajianAwalMedisIGDJiwaGrhCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
   }
 ]
 
