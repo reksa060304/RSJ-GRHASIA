@@ -89,7 +89,7 @@ Trait Valet {
             return $SN;
         } else {
             DB::rollBack();
-            return $e->getLine() . $e->getMessage();
+            return '';
         }
 
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
