@@ -199,10 +199,10 @@
                 <font style="font-size: 12pt" color="#000000">NIP. 19680714 200012 1 002</font>
             </td>
             <td style="text-align:center; padding-left: 50px; padding-bottom: 5px; width: 80px;">
-                <font style="font-size: 12pt" color="#000000">{{ $spj[0]->nipbendahara}}</font>
+                <font style="font-size: 12pt" color="#000000">NIP. {{ $spj[0]->nipbendahara}}</font>
             </td>
             <td  colspan="2" style="padding: 10px; padding-bottom: 5px; width: 100px;" align="center">
-                <font style="font-size: 12pt" color="#000000"></font>
+                <font style="font-size: 12pt" color="#000000">NIP. {{ $spj[0]->nippenerima}}</font>
             </td>
         </tr>
         <tr>
@@ -295,7 +295,7 @@
         </tr>
         <tr>
             <td colspan="2" style="text-align:center; padding-left: 50px; width: 120px;">
-                <font style="font-size: 12pt" color="#000000"><u>{{ $spj[0]->namapenerima}}</u>
+                <font style="font-size: 12pt" color="#000000"><u>{{ $spj[0]->namarekanan}}</u>
                 </font>
             </td>
             <td style="text-align:center; padding-left: 0px; width: 80px; border-left: 2px solid black">

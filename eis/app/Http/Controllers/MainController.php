@@ -3365,16 +3365,16 @@ AND sp.statusenabled <> false
                     $bor = $jumlahhariperawatantt/$jumlahttkalihari*100;
                     $alos = 0;
                     $toi = 0;
-                    $bto = $jumlahpulang/$jumlahgrandtotaltt;
+                    $bto = $jumlahpulangsementara/$jumlahgrandtotaltt;
                     $ndr = 0;
                     $gdr = 0;
                 } else{
                     $bor = $jumlahhariperawatantt/$jumlahttkalihari*100;
                     $alos = $jumlahharidirawat/$jumlahpulangsementara;
-                    $toi = ($jumlahttkalihari - $jumlahhariperawatantt)/$jumlahpulang;
-                    $bto = $jumlahpulang/$jumlahgrandtotaltt;
-                    $ndr = $jumlahpasienmeninggallebihdari/$jumlahpulang*1000;
-                    $gdr = $jumlahpasienmeninggal/$jumlahpulang*1000;
+                    $toi = ($jumlahttkalihari - $jumlahhariperawatantt)/$jumlahpulangsementara;
+                    $bto = $jumlahpulangsementara/$jumlahgrandtotaltt;
+                    $ndr = $jumlahpasienmeninggallebihdari/$jumlahpulangsementara*1000;
+                    $gdr = $jumlahpasienmeninggal/$jumlahpulangsementara*1000;
                 }
             
             
@@ -3382,7 +3382,7 @@ AND sp.statusenabled <> false
             $data10[] = array(
                 'lamarawat'=>(int)$jumlahharidirawat,
                 'hariperawatan' => $jumlahhariperawatantt,
-                'pasienpulang' => $jumlahpulang,
+                'pasienpulang' => $jumlahpulangsementara,
                 'meninggal' => $jumlahpasienmeninggal,
                 'matilebih48' =>  $jumlahpasienmeninggallebihdari,
                 'tahun' => date('Y'),

@@ -2535,18 +2535,20 @@ class ReportController extends ApiController{
         where sr.norec = '$norec'
         group by ma.namamataanggaran, ma.kodemataanggaran, map3.kode || '.' || map2.kode || '.' || map1.kode || '.' || map.kode;"));
 
-        $spj = DB::select(DB::raw("select 
-        sr.norealisasi, sr.pph, sr.ppn, sr.pph+sr.ppn as totalpp, pgb.namalengkap as namabendahara, pgb.nip_pns as nipbendahara, pgp.namalengkap as namapenerima
+        $spj = DB::select(DB::raw("select rk.namarekanan,
+        sr.norealisasi, sr.pph, sr.ppn, sr.pph+sr.ppn as totalpp, pgb.namalengkap as namabendahara, pgb.nip_pns as nipbendahara, pgp.namalengkap as namapenerima,
+        pgp.nip_pns as nippenerima
         from strukrealisasi_t sr
         inner join realisasidetail_t rd on rd.strukrealisasifk =sr.norec
         inner join keteranganbelanja_t kb on kb.norec = rd.keteranganbelanjafk
         inner join kegiatananggaran_m km on km.id = kb.objectkegiatanfk
         left join pegawai_m pgb on pgb.id = sr.bendaharafk 
         left join pegawai_m pgp on pgp.id = sr.penerimafk 
+        left join rekanan_m rk on rk.id = sr.rekananfk 
         left join kegiatananggaran_m kg on km.kode ilike '%' || kg.kode || '%' and kg.div = 3
         inner join mataanggaran_m ma on ma.id = sr.objectmataanggaranfk
         where sr.norec = '$norec'
-        group by sr.norealisasi, sr.pph, sr.ppn, pgb.namalengkap, pgp.namalengkap, pgb.nip_pns"));
+        group by pgp.nip_pns, rk.namarekanan, sr.norealisasi, sr.pph, sr.ppn, pgb.namalengkap, pgp.namalengkap, pgb.nip_pns"));
 
         $detail = DB::select(DB::raw("select row_number() over(order by rd.norec) as nomor, rd.norec, rd.uraian, rd.jml, rd.satuan, rd.harga, rd.subtotal
         from strukrealisasi_t sr
