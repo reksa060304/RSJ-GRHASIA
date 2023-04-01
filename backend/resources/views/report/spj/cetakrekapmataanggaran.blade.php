@@ -113,7 +113,7 @@
             <td colspan="3">
                 <p align="center" style="margin-top: 10px; margin-bottom:10px">
                     <font style="font-size: 12pt; " color="#000000">
-                            <b>REKAP ANGGARAN PER-REKENING (JENIS ANGGARAN) <br> TAHUN ANGGARAN {{ date('Y') }}</b>
+                            <b>REKAP PER-REKENING (JENIS ANGGARAN) <br> TAHUN ANGGARAN {{ date('Y') }}</b>
                     </font>
                     <br>
                 </p>

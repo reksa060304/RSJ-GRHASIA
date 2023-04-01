@@ -1471,7 +1471,7 @@ define(['initialize'], function (initialize) {
                             $scope.item.obj[116219] = true
                             $scope.item.obj[116222] = true
                             $scope.item.obj[120001] = moment($scope.now).format('YYYY-MM-DD HH:mm')
-                            $scope.item.obj[120291] = moment($scope.now).format('HH:mm')
+                            $scope.item.obj[120291] = new Date($scope.now)
 
                             $scope.item.obj[120295] = {
                                 value: medifirstService.getPegawaiLogin().id,
@@ -1528,7 +1528,8 @@ define(['initialize'], function (initialize) {
                                         $scope.item.obj[dataLoad[i].emrdfk] = new Date(dataLoad[i].value)
                                     }
                                     if (dataLoad[i].type == "time") {
-                                        $scope.item.obj[dataLoad[i].emrdfk] = new Date(dataLoad[i].value)
+                                        $scope.item.obj[dataLoad[i].emrdfk] = new Date(moment($scope.now).format('YYYY-MM-DD') + ' ' + dataLoad[i].value)
+                                        console.log($scope.item.obj[dataLoad[i].emrdfk]);
                                     }
                                     if (dataLoad[i].type == "date") {
                                         $scope.item.obj[dataLoad[i].emrdfk] = new Date(dataLoad[i].value)
@@ -1575,7 +1576,7 @@ define(['initialize'], function (initialize) {
                             $scope.item.obj[116219] = true
                             $scope.item.obj[116222] = true
                             $scope.item.obj[120001] = moment($scope.now).format('YYYY-MM-DD HH:mm')
-                            $scope.item.obj[120291] = moment($scope.now).format('HH:mm')
+                            $scope.item.obj[120291] = new Date($scope.now)
 
                             $scope.item.obj[120295] = {
                                 value: medifirstService.getPegawaiLogin().id,

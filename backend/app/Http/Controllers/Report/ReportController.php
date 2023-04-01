@@ -1204,7 +1204,7 @@ class ReportController extends ApiController{
                 inner join jenisracikan_m jr on jr.id = pt.jenisobatfk 
                 inner join strukresep_t as sr on sr.norec = pt.strukresepfk
                 inner join strukorder_t as so on so.norec = sr.orderfk
-                left join orderpelayanan_t as op on op.strukorderfk = so.norec and op.objectprodukfk = pm.id
+                left join orderpelayanan_t as op on op.strukorderfk = so.norec and op.objectprodukfk = pm.id and op.rke = pt.rke
                 where strukresepfk = '$norec'
                 and pt.isobat = true
                 order by pt.rke asc, pt.keteranganpakai asc
@@ -1235,7 +1235,7 @@ class ReportController extends ApiController{
                 inner join jenisracikan_m jr on jr.id = pt.jenisobatfk
                 inner join strukresep_t as sr on sr.norec = pt.strukresepfk
                 inner join strukorder_t as so on so.norec = sr.orderfk
-                inner join orderpelayanan_t as op on op.strukorderfk = so.norec and op.objectprodukfk = pm.id and op.rke = pt.rke
+                left join orderpelayanan_t as op on op.strukorderfk = so.norec and op.objectprodukfk = pm.id and op.rke = pt.rke
                 where strukresepfk = '$norec'
                 and pt.isobat = true
                 order by pt.rke asc,pt.keteranganpakai asc

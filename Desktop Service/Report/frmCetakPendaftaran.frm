@@ -2954,7 +2954,7 @@ boolGelangPasienBayi = False
             .txtNamaRs.SetText strNamaLengkapRs
             .txtAlamatRs.SetText strAlamatRS & ", " & strKodePos & ", " & strNoTlpn & ", " & strNoFax
             .txtWebEmail.SetText strEmail & ", " & strWebSite
-            .udtgl.SetUnboundFieldSource ("{ado.tglregistrasi}")
+            .udtgl.SetUnboundFieldSource ("{ado.tglpelayanan}")
             .usNoregistrasi.SetUnboundFieldSource ("{ado.noregistrasi}")
             .usNoCm.SetUnboundFieldSource ("{ado.nocm}")
             .usnmpasien.SetUnboundFieldSource ("{ado.namapasien}")

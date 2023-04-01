@@ -3,7 +3,7 @@ define(['initialize'], function (initialize) {
     initialize.controller('AsesmenMedisIGDJiwaCtrl', ['$q', '$rootScope', '$scope', 'ModelItem', '$state', 'CacheHelper', 'DateHelper', 'MedifirstService',
         function ($q, $rootScope, $scope, ModelItem, $state, cacheHelper, dateHelper, medifirstService) {
 
-
+            $scope.now = new Date()
             $scope.myVar = true
             $scope.noCM = $state.params.noCM;
             $scope.tombolSimpanVis = true
@@ -332,8 +332,8 @@ define(['initialize'], function (initialize) {
             medifirstService.get("emr/get-emr-transaksi-detail?noemr=" + nomorEMR + "&emrfk=" + $scope.cc.emrfk, true).then(function (dat) {
                 $scope.item.obj = []
                 $scope.item.obj2 = []
-                $scope.item.obj[116062]=$scope.now
-                $scope.item.obj[3002092]=$scope.now
+                $scope.item.obj[116062]= $scope.now
+                $scope.item.obj[3002092] = $scope.now
                 $scope.item.obj[116068]={text:$scope.cc.namaruangan,value: $scope.cc.objectruanganfk}
 
                 $scope.item.obj[116201] = true
