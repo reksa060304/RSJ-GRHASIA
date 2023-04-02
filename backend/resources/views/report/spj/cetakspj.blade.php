@@ -82,8 +82,12 @@
             </td>
         </tr>
         <tr>
-            <td colspan="5" style="text-align:left; padding-left: 50px; padding-bottom: 10px; padding-top: 10px; ">
-                <font style="font-size: 12pt" color="#000000">{{$keterangan[0]->keteranganbelanja}} ({{$kegiatan[0]->kodesub}}) pada sub kegiatan {{ $kegiatan[0]->ktsub }} sub sub kegiatan {{ $kegiatan[0]->ktsubsub }} dengan rincian biaya terlampir.</font>
+            <td colspan="5" style="text-align:justify; padding-left: 50px; padding-bottom: 10px; padding-top: 10px; padding-right: 40px;">
+                <font style="font-size: 12pt" color="#000000">{{$keterangan[0]->keteranganbelanja}} ({{$kegiatan[0]->kodesub}}) pada sub kegiatan {{ $kegiatan[0]->ktsub }} sub sub kegiatan {{ $kegiatan[0]->ktsubsub }} 
+                @if( $spj[0]->deskripsi != null)
+                berdasar {{$spj[0]->deskripsi}} 
+                @endif
+                dengan rincian biaya terlampir.</font>
             </td>
         </tr>
         </tbody>
@@ -185,10 +189,10 @@
                 <font style="font-size: 12pt" color="#000000">NIP. 19680714 200012 1 002</font>
             </td>
             <td style="text-align:center; padding-left: 50px; padding-bottom: 5px; width: 80px;">
-                <font style="font-size: 12pt" color="#000000">{{ $spj[0]->nipbendahara}}</font>
+                <font style="font-size: 12pt" color="#000000">NIP. {{ $spj[0]->nipbendahara}}</font>
             </td>
             <td  style="padding: 10px; padding-bottom: 5px; width: 100px;" align="center">
-                <font style="font-size: 12pt" color="#000000"></font>
+                <font style="font-size: 12pt" color="#000000">NIP. {{ $spj[0]->nippenerima}}</font>
             </td>
         </tr>
         </tbody>
@@ -365,10 +369,16 @@
         </tr>
         </tbody>
         <tbody style="padding-left: 50px; padding-right: 50px;">
+        @php
+        $nomor = 0
+        @endphp
             @foreach($detail as $dt)
+            @php
+            $nomor++
+            @endphp
         <tr style="border: 1px solid black" >
             <td style="padding: 10px;  border: 1px solid black; width: 50px; height: 20px;" align="center">
-                NO.
+                {{$nomor}}.
             </td>
             <td style="padding: 10px; border: 1px solid black; width: 50px; height: 20px; " align="center">
                 {{$dt->uraian}}

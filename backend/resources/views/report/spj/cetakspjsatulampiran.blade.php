@@ -77,8 +77,12 @@
             </td>
         </tr>
         <tr>
-            <td colspan="5" style="text-align:left; padding-left: 50px; padding-bottom: 10px; padding-top: 10px; ">
-                <font style="font-size: 12pt" color="#000000">{{$keterangan[0]->keteranganbelanja}} ({{$mataanggaran[0]->kodemataanggaran}}) pada sub kegiatan {{ $kegiatan[0]->ktsub }} sub sub kegiatan {{ $kegiatan[0]->ktsubsub }} dengan rincian biaya terlampir.</font>
+            <td colspan="5" style="text-align:justify; padding-left: 50px; padding-bottom: 10px; padding-top: 10px; padding-right: 40px;">
+                <font style="font-size: 12pt" color="#000000">{{$keterangan[0]->keteranganbelanja}} ({{$mataanggaran[0]->kodemataanggaran}}) pada sub kegiatan {{ $kegiatan[0]->ktsub }} sub sub kegiatan {{ $kegiatan[0]->ktsubsub }}
+                @if( $spj[0]->deskripsi != null)
+                berdasar {{$spj[0]->deskripsi}} 
+                @endif
+                dengan rincian biaya terlampir.</font>
             </td>
         </tr>
         </tbody>

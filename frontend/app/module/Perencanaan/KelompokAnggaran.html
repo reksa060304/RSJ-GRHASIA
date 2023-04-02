@@ -371,8 +371,19 @@
 									</kendo-grid>
 								</div>
 							</div>
-
+							
 							<div class="clear"></div>
+							<div class="grid_12">
+								<div class="grid_2">
+									<button class="btnTemplate1" ng-click="SettingTahap()" ng-hide="disidpegawai">Transfer / Copy Anggaran Belanja</button>
+								</div>
+								<div class="grid_2">
+									<button class="btnTemplate1" ng-click="PemindahanKeterangan()" ng-hide="disidpegawai">Pemindahan Rincian Belanja</button>
+								</div>
+								<div class="grid_2" ng-hide="true">
+									<button class="btnTemplate1" ng-click="EntryAngkas()">Entry Angkas</button>
+								</div>
+							</div>
 						</md-content>
 					</md-tab>
 					<md-tab label="Mata Anggaran" ng-if="spjaja === false && spjajas === false && panjaraja === false && sppaja === false && spmaja === false && semuaanggaran === true && disidpegawai === false">
@@ -476,19 +487,6 @@
 									<kendo-grid id="kGridAngkas" k-data-source="dataSourceKeteranganBelanja" k-selectable="'row'"  class="max-height"
 										k-options="columnKeteranganBelanja" k-ng-model="dataKeteranganBelanjaSelected" ng-click="klikKeteranganBelanja(dataKeteranganBelanjaSelected)">
 									</kendo-grid>
-								</div>
-							</div>
-
-							<div class="clear"></div>
-							<div class="grid_12">
-								<div class="grid_2">
-									<button class="btnTemplate1" ng-click="SettingTahap()" ng-hide="disidpegawai">Transfer / Copy Anggaran Belanja</button>
-								</div>
-								<div class="grid_2">
-									<button class="btnTemplate1" ng-click="PemindahanKeterangan()" ng-hide="disidpegawai">Pemindahan Rincian Belanja</button>
-								</div>
-								<div class="grid_2" ng-hide="true">
-									<button class="btnTemplate1" ng-click="EntryAngkas()">Entry Angkas</button>
 								</div>
 							</div>
 						</md-content>

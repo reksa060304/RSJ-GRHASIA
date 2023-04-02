@@ -1,8 +1,8 @@
 define(['initialize', 'Configuration'], function (initialize, configuration) {
     'use strict';
     var baseTransaksi = configuration.baseApiBackend;
-    initialize.controller('KelompokAnggaranCtrl', ['$scope', '$state', '$mdDialog','MedifirstService',
-        function ($scope, $state, $mdDialog, medifirstService) {
+    initialize.controller('KelompokAnggaranCtrl', ['$scope', 'CacheHelper', '$state', '$mdDialog','MedifirstService',
+        function ($scope, cacheHelper, $state, $mdDialog, medifirstService) {
             $scope.dataVOloaded = true;
             $scope.isRouteLoading = false;
             $scope.now = new Date();
@@ -2835,6 +2835,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                     }
                                 },
                             });
+
+                            loadDataGrid()
                             
                         });
                     }, function (error) {
@@ -3226,6 +3228,17 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     })
             }
             function LoadSPJ(){
+
+                // var chace = cacheHelper.get('KelompokAnggaranCtrl');
+                // console.log(chace)
+                // if (chace != undefined) {
+                //     var tglawal = moment(chace[0]).format('YYYY-MM-DD');
+                //     var tglakhir = moment(chace[1]).format('YYYY-MM-DD');
+                // } else{
+                //     var tglawal = moment($scope.item.tglawal).format('YYYY-MM-DD');
+                //     var tglakhir = moment($scope.item.tglakhir).format('YYYY-MM-DD');
+                // }
+
                 var tglawal = moment($scope.item.tglawal).format('YYYY-MM-DD');
                 var tglakhir = moment($scope.item.tglakhir).format('YYYY-MM-DD');
 
@@ -4529,9 +4542,20 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                     click: editDetailSPJ,
                                     imageClass: "clinic fa"
                                 },
+                                {
+                                    text: "Cetak SPJ",
+                                    click: cetakSPJ,
+                                    imageClass: "clinic fa"
+                                },
+                                {
+                                    text: "Cetak SPJ dan Lampiran",
+                                    click: cetakSPJPlusLampiran,
+                                    imageClass: "clinic fa"
+                                },
+                                
                             ],
                                 title: "",
-                                width: "100px",
+                                width: "230px",
                     },
                     {
                         "command": [
@@ -6197,6 +6221,16 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                                                     medifirstService.post('perencanaan/save-realisasi-spj',datasave).then(function (e) {
                                                                         loadDataGrid();
                                                                         $scope.popupTambahSPJ.center().close()
+                                                                        // $state.go("SPJ", {
+                                                    
+                                                                        // })
+
+                                                                        window.location.reload();
+                                                                        // var chacePeriode = {
+                                                                        //     0: moment($scope.item.tglawal).format('YYYY-MM-DD'),
+                                                                        //     1: moment($scope.item.tglakhir).format('YYYY-MM-DD'),
+                                                                        //   }
+                                                                        //   cacheHelper.set('KelompokAnggaranCtrl', chacePeriode);
                                                                     }, function (error) {
                                                     
                                                                     })
@@ -6247,6 +6281,15 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                             medifirstService.post('perencanaan/save-realisasi-spj',datasave).then(function (e) {
                                                 loadDataGrid();
                                                 $scope.popupTambahSPJ.center().close()
+                                                // $state.go("SPJ", {
+                                                    
+                                                // })
+                                                window.location.reload();
+                                                // var chacePeriode = {
+                                                //     0: moment($scope.item.tglawal).format('YYYY-MM-DD'),
+                                                //     1: moment($scope.item.tglakhir).format('YYYY-MM-DD'),
+                                                //   }
+                                                //   cacheHelper.set('KelompokAnggaranCtrl', chacePeriode);
                                             }, function (error) {
                             
                                             })
@@ -6261,6 +6304,36 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }
 
             $scope.lanjutsimpanspj = function() {
+                
+            }
+
+            function cetakSPJ(e) {
+                e.preventDefault();
+                var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                console.log(dataItem)
+
+                medifirstService.get("sysadmin/general/get-terbilang-tidak-bulat/" + dataItem.totalbelanja).then(
+                    function (dat) {
+                        //console.log(dat.data.terbilang)
+                        window.open(baseTransaksi + "report/get-cetak-spj-satu-lampiran?norec="+dataItem.norec+"&terbilang="+dat.data.terbilang+"&sumberdana="+dataItem.idasalproduk, '_blank');
+                    }
+                );
+
+                
+            }
+
+            function cetakSPJPlusLampiran(e) {
+                e.preventDefault();
+                var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                console.log(dataItem)
+
+                medifirstService.get("sysadmin/general/get-terbilang-tidak-bulat/" + dataItem.totalbelanja).then(
+                    function (dat) {
+                        //console.log(dat.data.terbilang)
+                        window.open(baseTransaksi + "report/get-cetak-spj?norec="+dataItem.norec+"&terbilang="+dat.data.terbilang+"&sumberdana="+dataItem.idasalproduk, '_blank');
+                    }
+                );
+
                 
             }
 
