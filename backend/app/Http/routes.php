@@ -1548,6 +1548,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         });
         // Route::group(['prefix' => 'perencanaan'], function () {
 
+            Route::get('registrasi/get-pd', 'SysAdmin\GeneralController@getNoreg');
             Route::get('perencanaan/get-data-combo', 'Perencanaan\PerencanaanController@getDataCombo');
             Route::get('perencanaan/get-data-combo-pajak', 'Perencanaan\PerencanaanController@getDataComboPajak');
             Route::get('perencanaan/get-data-combo-item-rincian', 'Perencanaan\PerencanaanController@getDataComboItemRincian');
