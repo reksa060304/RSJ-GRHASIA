@@ -9111,7 +9111,7 @@ class EMRController  extends ApiController
 
                 //LOAD DATA EMR PEMBANDING
                 $EMRPASIENDETAIL = EMRPasienD::where('emrpasienfk', $noemr)
-                    ->select('emrdfk','value')
+                    ->select('emrdfk','value','index')
                     ->where('emrfk', $head['emrfk'])
                     ->where('index', $idx)
                     ->where('kdprofile',$kdProfile)
@@ -9145,16 +9145,16 @@ class EMRController  extends ApiController
             }
 
             //VALIDASI JIKA NOREGISTRASI BEDA //
-            if((!empty($EMR) && isset($head['noregistrasi']) )&& trim($EMR->noregistrasifk) != $head['noregistrasi']){
-                $transMessage = "Kesalahan loading data..!";
-                DB::rollBack();
-                $result = array(
-                    "status" => 400,
-                    "message" => $transMessage,
-                    "as" => 'as@epic',
-                );
-                return $this->setStatusCode($result['status'])->respond($result, $transMessage);
-            }
+            // if((!empty($EMR) && isset($head['noregistrasi']) )&& trim($EMR->noregistrasifk) != $head['noregistrasi']){
+            //     $transMessage = "Kesalahan loading data..!";
+            //     DB::rollBack();
+            //     $result = array(
+            //         "status" => 400,
+            //         "message" => $transMessage,
+            //         "as" => 'as@epic',
+            //     );
+            //     return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+            // }
 
 
             $EMR->noemr = $noemr;
