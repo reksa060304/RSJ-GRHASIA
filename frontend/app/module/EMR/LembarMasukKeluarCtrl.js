@@ -25,6 +25,9 @@ define(['initialize'], function (initialize) {
             medifirstService.getPart('emr/get-datacombo-part-pegawai', true, true, 20).then(function (data) {
                 $scope.listPegawai = data
             })
+            medifirstService.getPart("emr/get-combo-icd10", true, true, 10).then(function (data) {
+                $scope.listDiagnosa = data;
+            });
 
             medifirstService.get("emr/get-rekam-medis-dynamic?emrid=" + 3000434).then(function (e) {
 
