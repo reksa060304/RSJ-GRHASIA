@@ -43,6 +43,10 @@
         {
             "nameDep": "PengkajianGeriatriKomprehensifCtrl",
             "urlDep": "module/EMR/PengkajianGeriatriKomprehensifCtrl"
+        },
+        {
+            "nameDep": "AspekPenilaianMahasiswaCtrl",
+            "urlDep": "module/SDM/Penelitian/AspekPenilaianMahasiswaCtrl"
         }
 
     ]

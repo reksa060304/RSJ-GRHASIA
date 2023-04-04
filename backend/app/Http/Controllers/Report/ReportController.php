@@ -2429,7 +2429,7 @@ class ReportController extends ApiController{
                 AND ep.kdprofile = '$kdProfile' 
             AND epd.statusenabled = TRUE 
             and epd.emrfk = $request[emrfk]
-            ORDER BY
+        ORDER BY
             ed.nourut
             "
         ));
@@ -2455,7 +2455,7 @@ class ReportController extends ApiController{
         foreach( $res['d'] as $items){
                 if($items->type  ==  "textbox" ||$items->type  ==  "textarea"  ){
                     $item[$items->emrdfk] =  $items->value;
-                }
+        }
                 if($items->type  ==  "datetime"){
                     $item[$items->emrdfk] = $this->tanggal_indonesia(date('Y-m-d',strtotime( $items->value))) ;
                 }
@@ -2573,7 +2573,7 @@ class ReportController extends ApiController{
         }
 
         $kegiatan = DB::select(DB::raw("
-            select km.keterangan ktsubsub, km.kode kodesubsub, km.tahun, km.div divsubsub, pg.namalengkap, pg.nip_pns, kg.keterangan ktsub, kg.kode kodesub, kg.div divsub
+            select km.keterangan ktsubsub, km.kode kodesubsub, km.tahun, km.div divsubsub, pg.namalengkap, pg.nippns, kg.keterangan ktsub, kg.kode kodesub, kg.div divsub
             from strukrealisasi_t sr
             inner join realisasidetail_t rd on rd.strukrealisasifk =sr.norec
             inner join keteranganbelanja_t kb on kb.norec = rd.keteranganbelanjafk
@@ -2582,7 +2582,7 @@ class ReportController extends ApiController{
             left join kegiatananggaran_m kg on km.kode ilike '%' || kg.kode || '%' and kg.div = 3
             left join pegawai_m pg on pg.id = km.objectpptkfk
             where sr.norec = '$norec'
-            group by km.keterangan, km.kode, km.tahun, km.div, kg.keterangan, kg.kode, kg.div, pg.namalengkap, pg.nip_pns;
+            group by km.keterangan, km.kode, km.tahun, km.div, kg.keterangan, kg.kode, kg.div, pg.namalengkap, pg.nippns;
             ")
         );
 
@@ -2611,19 +2611,20 @@ class ReportController extends ApiController{
         where sr.norec = '$norec'
         group by ma.namamataanggaran, ma.kodemataanggaran, map3.kode || '.' || map2.kode || '.' || map1.kode || '.' || map.kode;"));
 
-        $spj = DB::select(DB::raw("select 
-        sr.norealisasi, sr.pph, sr.ppn, sr.pph+sr.ppn as totalpp, pgb.namalengkap as namabendahara, pgb.nip_pns as nipbendahara, pgp.namalengkap as namapenerima
+        $spj = DB::select(DB::raw("select rk.namarekanan,
+        sr.norealisasi, sr.pph, sr.ppn, sr.pph+sr.ppn as totalpp, pgb.namalengkap as namabendahara, pgb.nip_pns as nipbendahara, pgp.namalengkap as namapenerima,
+        pgp.nip_pns as nippenerima, sr.deskripsi        
         from strukrealisasi_t sr
         inner join realisasidetail_t rd on rd.strukrealisasifk =sr.norec
         inner join keteranganbelanja_t kb on kb.norec = rd.keteranganbelanjafk
         inner join kegiatananggaran_m km on km.id = kb.objectkegiatanfk
         left join pegawai_m pgb on pgb.id = sr.bendaharafk 
         left join pegawai_m pgp on pgp.id = sr.penerimafk 
+        left join rekanan_m rk on rk.id = sr.rekananfk 
         left join kegiatananggaran_m kg on km.kode ilike '%' || kg.kode || '%' and kg.div = 3
         inner join mataanggaran_m ma on ma.id = sr.objectmataanggaranfk
         where sr.norec = '$norec'
-        group by sr.norealisasi, sr.pph, sr.ppn, pgb.namalengkap, pgp.namalengkap, pgb.nip_pns"));
-
+        group by pgp.nip_pns, rk.namarekanan, sr.norealisasi, sr.pph, sr.ppn, pgb.namalengkap, pgp.namalengkap, pgb.nip_pns, sr.deskripsi "));
         $detail = DB::select(DB::raw("select row_number() over(order by rd.norec) as nomor, rd.norec, rd.uraian, rd.jml, rd.satuan, rd.harga, rd.subtotal
         from strukrealisasi_t sr
         inner join realisasidetail_t rd on rd.strukrealisasifk =sr.norec
@@ -2926,7 +2927,7 @@ class ReportController extends ApiController{
         }
 
         $kegiatan = DB::select(DB::raw("
-            select km.keterangan ktsubsub, km.kode kodesubsub, km.tahun, km.div divsubsub, kg.keterangan ktsub, kg.kode kodesub, kg.div divsub, pg.namalengkap, pg.nip_pns
+            select km.keterangan ktsubsub, km.kode kodesubsub, km.tahun, km.div divsubsub, kg.keterangan ktsub, kg.kode kodesub, kg.div divsub, pg.namalengkap, pg.nippns
             from strukrealisasi_t sr
             inner join realisasidetail_t rd on rd.strukrealisasifk =sr.norec
             inner join keteranganbelanja_t kb on kb.norec = rd.keteranganbelanjafk
@@ -2935,7 +2936,7 @@ class ReportController extends ApiController{
             left join kegiatananggaran_m kg on km.kode ilike kg.kode || '%' and kg.div = 3
             left join pegawai_m pg on pg.id = km.objectpptkfk
             where sr.norec = '$norec'
-            group by km.keterangan, km.kode, km.tahun, km.div, kg.keterangan, kg.kode, kg.div, pg.namalengkap, pg.nip_pns;
+            group by km.keterangan, km.kode, km.tahun, km.div, kg.keterangan, kg.kode, kg.div, pg.namalengkap, pg.nippns;
             ")
         );
 
@@ -2959,18 +2960,20 @@ class ReportController extends ApiController{
         where sr.norec = '$norec'
         group by ma.namamataanggaran, ma.kodemataanggaran;"));
 
-        $spj = DB::select(DB::raw("select 
-        sr.norealisasi, sr.pph, sr.ppn, sr.pph+sr.ppn as totalpp, pgb.namalengkap as namabendahara, pgb.nip_pns as nipbendahara, pgp.namalengkap as namapenerima
+        $spj = DB::select(DB::raw("select rk.namarekanan,
+        sr.norealisasi, sr.pph, sr.ppn, sr.pph+sr.ppn as totalpp, pgb.namalengkap as namabendahara, pgb.nip_pns as nipbendahara, pgp.namalengkap as namapenerima,
+        pgp.nip_pns as nippenerima, sr.deskripsi 
         from strukrealisasi_t sr
         inner join realisasidetail_t rd on rd.strukrealisasifk =sr.norec
         inner join keteranganbelanja_t kb on kb.norec = rd.keteranganbelanjafk
         inner join kegiatananggaran_m km on km.id = kb.objectkegiatanfk
+        left join rekanan_m rk on rk.id = sr.rekananfk 
         left join pegawai_m pgb on pgb.id = sr.bendaharafk 
         left join pegawai_m pgp on pgp.id = sr.penerimafk 
         left join kegiatananggaran_m kg on km.kode ilike kg.kode || '%' and kg.div = 3
         inner join mataanggaran_m ma on ma.id = sr.objectmataanggaranfk
         where sr.norec = '$norec'
-        group by sr.norealisasi, sr.pph, sr.ppn, pgb.namalengkap, pgp.namalengkap, pgb.nip_pns"));
+        group by pgp.nip_pns, rk.namarekanan, sr.norealisasi, sr.pph, sr.ppn, pgb.namalengkap, pgp.namalengkap, pgb.nip_pns, sr.deskripsi"));
 
         $detail = DB::select(DB::raw("select row_number() over(order by rd.norec) as nomor, rd.norec, rd.uraian, rd.jml, rd.satuan, rd.harga, rd.subtotal
         from strukrealisasi_t sr

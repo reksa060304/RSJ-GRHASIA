@@ -371,8 +371,19 @@
 									</kendo-grid>
 								</div>
 							</div>
-
+							
 							<div class="clear"></div>
+							<div class="grid_12">
+								<div class="grid_2">
+									<button class="btnTemplate1" ng-click="SettingTahap()" ng-hide="disidpegawai">Transfer / Copy Anggaran Belanja</button>
+								</div>
+								<div class="grid_2">
+									<button class="btnTemplate1" ng-click="PemindahanKeterangan()" ng-hide="disidpegawai">Pemindahan Rincian Belanja</button>
+								</div>
+								<div class="grid_2" ng-hide="true">
+									<button class="btnTemplate1" ng-click="EntryAngkas()">Entry Angkas</button>
+								</div>
+							</div>
 						</md-content>
 					</md-tab>
 					<md-tab label="Mata Anggaran" ng-if="spjaja === false && spjajas === false && panjaraja === false && sppaja === false && spmaja === false && semuaanggaran === true && disidpegawai === false">
@@ -478,19 +489,6 @@
 									</kendo-grid>
 								</div>
 							</div>
-
-							<div class="clear"></div>
-							<div class="grid_12">
-								<div class="grid_2">
-									<button class="btnTemplate1" ng-click="SettingTahap()" ng-hide="disidpegawai">Transfer / Copy Anggaran Belanja</button>
-								</div>
-								<div class="grid_2">
-									<button class="btnTemplate1" ng-click="PemindahanKeterangan()" ng-hide="disidpegawai">Pemindahan Rincian Belanja</button>
-								</div>
-								<div class="grid_2" ng-hide="true">
-									<button class="btnTemplate1" ng-click="EntryAngkas()">Entry Angkas</button>
-								</div>
-							</div>
 						</md-content>
 					</md-tab>
 					<md-tab label="SPJ" ng-if="spjaja === true && spjajas === false && panjaraja === false && sppaja === false && spmaja === false && semuaanggaran === false">
@@ -533,6 +531,29 @@
 					<md-tab label="Panjar" ng-if="spjaja === false && spjajas === false && panjaraja === true && sppaja === false && spmaja === false && semuaanggaran === false">
 						<!-- Setting keterangan blud -->
 						<md-content class="md-padding">
+							<div class="grid_12">
+								<div class="grid_6" style="text-align: left;">
+									Tanggal Panjar
+								</div>
+								<div class="grid_6" style="text-align: left;">
+									Tahun
+								</div>
+								<div class="grid_3" style="margin-top: -10px;">
+									<input style="width: 100%" k-ng-model="item.tglSPPawalSearch" kendo-datepicker placeholer="yyyy-MM-dd"
+										k-format="'yyyy-MM-dd'" />
+								</div>
+								<div class="grid_3" style="margin-top: -10px;">
+									<input style="width: 100%" k-ng-model="item.tglSPPakhirSearch" kendo-datepicker placeholer="yyyy-MM-dd"
+										k-format="'yyyy-MM-dd'" />
+								</div>
+								<div class="grid_3" style="margin-top: -10px;">
+									<input style="width: 100%;" k-options="yearUngkul" k-ng-model="item.tahunawal" kendo-date-picker
+										placeholer="YYYY" k-format="'yyyy'" />
+								</div>
+								<div class="grid_3">
+									<button class="btnTemplate1" ng-click="searchPanjar()">Cari</button>
+								</div>
+							</div>
 							<div class="grid_12">
 								<div class="grid_12 borderBox">
 									<kendo-grid id="kGrids" k-data-source="dataSourcePanjarPengembalian" k-selectable="'row'"  class="max-height"
@@ -593,6 +614,29 @@
 					<md-tab label="Surat Perintah Membayar (SPM)" ng-if="spjaja === false && spjajas === false && panjaraja === false && sppaja === false && spmaja === true && semuaanggaran === false">
 						<!-- Setting keterangan blud -->
 						<md-content class="md-padding">
+							<div class="grid_12">
+								<div class="grid_6" style="text-align: left;">
+									Tanggal SPM
+								</div>
+								<div class="grid_6" style="text-align: left;">
+									Tahun
+								</div>
+								<div class="grid_3" style="margin-top: -10px;">
+									<input style="width: 100%" k-ng-model="item.tglSPPawalSearch" kendo-datepicker placeholer="yyyy-MM-dd"
+										k-format="'yyyy-MM-dd'" />
+								</div>
+								<div class="grid_3" style="margin-top: -10px;">
+									<input style="width: 100%" k-ng-model="item.tglSPPakhirSearch" kendo-datepicker placeholer="yyyy-MM-dd"
+										k-format="'yyyy-MM-dd'" />
+								</div>
+								<div class="grid_3" style="margin-top: -10px;">
+									<input style="width: 100%;" k-options="yearUngkul" k-ng-model="item.tahunawal" kendo-date-picker
+										placeholer="YYYY" k-format="'yyyy'" />
+								</div>
+								<div class="grid_3">
+									<button class="btnTemplate1" ng-click="searchSPM()">Cari</button>
+								</div>
+							</div>
 							<div class="grid_12">
 								<div class="grid_12 borderBox">
 									<kendo-grid id="kGrids" k-data-source="dataSourceCariSPM" k-selectable="'row'"  class="max-height"
@@ -2964,7 +3008,10 @@
 		</div>
 	</div>
 </div>
+<div class="grid_12">
 <div ng-include='"../app/template/Shared/TemplateLoading"'></div>
+
+</div>
 <script id="status-template" type="text/kendo-templ">
     # if (nospp == null) { #
         <button class="btnTemplate1" ng-click="PilihSPD()" style="width: 50px;">Pilih</button>

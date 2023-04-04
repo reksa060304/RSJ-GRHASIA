@@ -9,7 +9,7 @@ define(['initialize'], function (initialize) {
             $scope.date = new Date();
             $scope.dataSelected = {};
             $scope.item.jmlRows = 50;
-            $scope.item.tglawal = $scope.now;
+            $scope.item.tglawal = moment($scope.now).format('YYYY-01-01');
             $scope.item.tglakhir = $scope.now;
             $scope.norecjasgir = ''
             FormLoad();

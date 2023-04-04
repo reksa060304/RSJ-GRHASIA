@@ -9,7 +9,7 @@ define(['initialize'], function (initialize) {
             $scope.date = new Date();
             $scope.dataSelected = {};
             $scope.item.jmlRows = 15;
-            $scope.item.tglawal = moment($scope.now).format('YYYY-MM-DD');
+            $scope.item.tglawal = moment($scope.now).format('YYYY-01-01');
             $scope.item.tglakhir = moment($scope.now).format('YYYY-MM-DD');
             $scope.tglveriftopajak = undefined
             $scope.dataGridPPh = []

@@ -1,8 +1,8 @@
 define(['initialize', 'Configuration'], function (initialize, configuration) {
     'use strict';
     var baseTransaksi = configuration.baseApiBackend;
-    initialize.controller('KelompokAnggaranCtrl', ['$scope', '$state', '$mdDialog','MedifirstService',
-        function ($scope, $state, $mdDialog, medifirstService) {
+    initialize.controller('KelompokAnggaranCtrl', ['$scope', 'CacheHelper', '$state', '$mdDialog','MedifirstService',
+        function ($scope, cacheHelper, $state, $mdDialog, medifirstService) {
             $scope.dataVOloaded = true;
             $scope.isRouteLoading = false;
             $scope.now = new Date();
@@ -69,8 +69,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.item.tglakhir = moment($scope.now).format('YYYY-MM-DD');
             $scope.item.tglVerifSPJ = moment($scope.now).format('YYYY-MM-DD');
             $scope.item.tglPanjar = moment($scope.now).format('YYYY-MM-DD');
-            // $scope.item.tglSPPawalSearch = moment($scope.now).format('YYYY-01-01')
-            // $scope.item.tglSPPakhirSearch = moment($scope.now).format('YYYY-MM-DD')
+            $scope.item.tglSPPawalSearch = moment($scope.now).format('YYYY-01-01')
+            $scope.item.tglSPPakhirSearch = moment($scope.now).format('YYYY-MM-DD')
             $scope.totalketerangan = 0;
             $scope.totalrealisasidetail = 0;
             $scope.totalpanjar = 0;
@@ -149,9 +149,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 //$scope.listSubSubKegiatan = e.data.kegiatansubsub
                 $scope.listKegiatanCombo = e.data.kegiatancombo
                 $scope.listKegiatanComboakhir = e.data.kegiatancombo
-                $scope.dataSourcePanjarPengembalian = e.data.panjar
+                // $scope.dataSourcePanjarPengembalian = e.data.panjar
                 // $scope.dataSourceSPP = e.data.spp
-                $scope.dataSourceCariSPM = e.data.carispm
+                // $scope.dataSourceCariSPM = e.data.carispm
                 $scope.dataSourceSPD = e.data.spd
                 $scope.listKonsolidasi5 = e.data.konsolidasi5
                 $scope.listKonsolidasi4 = e.data.konsolidasi4
@@ -235,6 +235,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 medifirstService.get("perencanaan/get-data-combo?tahun="+thn+"&idpegawai=" + idpegawai+tglsppawal+tglsppakhir).then(function (e) {
                     $scope.isRouteLoading = false
                     $scope.dataSourceSPP = e.data.spp
+                    $scope.dataSourceCariSPM = e.data.carispm
+                    $scope.dataSourcePanjarPengembalian = e.data.panjar
+
                     $scope.dataSourceSetting = e.data.setting
                     $scope.listSubSubKegiatanAngkas = e.data.subsubkegiatanangkas
                     // $scope.dataSourceDetailMT = e.data.mataanggaran
@@ -287,7 +290,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         div = $scope.item.searchdivkeg.id
                     }
                     
-                    medifirstService.get("perencanaan/get-data-combo?tahun="+moment($scope.item.tahun).format('YYYY')+"&idpegawai=" + idpegawai + "&tahapaktif=" + $scope.item.searchtahapkeg.id + "&div=" + div).then(function (e) {
+                    medifirstService.get("perencanaan/get-data-combo?tahun="+moment($scope.item.tahun).format('YYYY')+"&idpegawai=" + idpegawai + "&tahapaktif=" + $scope.item.searchtahapkeg.id + "&div=" + div+"&lockdiv=true").then(function (e) {
                         DataKegiatan = e.data.kegiatan
                         $scope.dataSourceKegiatan = e.data.kegiatan
                     })
@@ -897,22 +900,47 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }
             $scope.bagiarataAlokasiDetail = function() {
                 let totalAnggaran = parseFloat($scope.item.alokasiSubtotal)
-                let blnrata = totalAnggaran/12
+                
 
-                blnrata = blnrata.toFixed(2)
+                if(totalAnggaran % 12 == 0){
+                    let blnrata = totalAnggaran/12
 
-                $scope.item.bln1 = blnrata
-                $scope.item.bln2 = blnrata
-                $scope.item.bln3 = blnrata
-                $scope.item.bln4 = blnrata
-                $scope.item.bln5 = blnrata
-                $scope.item.bln6 = blnrata
-                $scope.item.bln7 = blnrata
-                $scope.item.bln8 = blnrata
-                $scope.item.bln9 = blnrata
-                $scope.item.bln10 = blnrata
-                $scope.item.bln11 = blnrata
-                $scope.item.bln12 = blnrata
+                    blnrata = blnrata.toFixed(2)
+
+                    $scope.item.bln1 = blnrata
+                    $scope.item.bln2 = blnrata
+                    $scope.item.bln3 = blnrata
+                    $scope.item.bln4 = blnrata
+                    $scope.item.bln5 = blnrata
+                    $scope.item.bln6 = blnrata
+                    $scope.item.bln7 = blnrata
+                    $scope.item.bln8 = blnrata
+                    $scope.item.bln9 = blnrata
+                    $scope.item.bln10 = blnrata
+                    $scope.item.bln11 = blnrata
+                    $scope.item.bln12 = blnrata
+
+                } else{
+
+                    let blnrata = totalAnggaran/12
+
+                    blnrata = Math.floor(blnrata)
+
+                    $scope.item.bln1 = blnrata
+                    $scope.item.bln2 = blnrata
+                    $scope.item.bln3 = blnrata
+                    $scope.item.bln4 = blnrata
+                    $scope.item.bln5 = blnrata
+                    $scope.item.bln6 = blnrata
+                    $scope.item.bln7 = blnrata
+                    $scope.item.bln8 = blnrata
+                    $scope.item.bln9 = blnrata
+                    $scope.item.bln10 = blnrata
+                    $scope.item.bln11 = blnrata
+                    $scope.item.bln12 = (totalAnggaran - (11*blnrata)).toFixed(0)
+                }
+
+                
             }
             $scope.SimpanPopUpDetailAlokasi = function() {
                 // $scope.dataSourceAlokasiAnggaran = $scope.listKeteranganBelanja
@@ -1561,6 +1589,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 {
                     "field": "jumlah",
                     "title": "Jumlah",
+                    "template": "<span class='style-right'>{{formatRupiah2('#: jumlah #', '')}}</span>",
                 },
                 {
                     "field": "jenispanjar",
@@ -1569,6 +1598,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 {
                     "field": "jumlahpengembalian",
                     "title": "Jml Pengembalian",
+                    "template": "<span class='style-right'>{{formatRupiah2('#: jumlahpengembalian #', '')}}</span>",
                 },
                 {
                     "field": "sumberpanjar",
@@ -1786,10 +1816,13 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 {
                     "field": "jumlah",
                     "title": "Jumlah",
+                    "template": "<span class='style-right'>{{formatRupiah2('#: jumlah #', '')}}</span>",
+                    
                 },
                 {
                     "field": "jumlahpengembalian",
                     "title": "Jml Pengembalian",
+                    "template": "<span class='style-right'>{{formatRupiah2('#: jumlahpengembalian #', '')}}</span>",
                 },
                 {
                     "field": "norealisasi",
@@ -1798,6 +1831,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 {
                     "field": "jumlahspj",
                     "title": "Jml SPJ",
+                    "template": "<span class='style-right'>{{formatRupiah2('#: jumlahspj #', '')}}</span>",
                 },
                 {
                     "field": "sumberpanjar",
@@ -1806,10 +1840,12 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 {
                     "field": "totalpemakaian",
                     "title": "Total Pemakaian",
+                    "template": "<span class='style-right'>{{formatRupiah2('#: totalpemakaian #', '')}}</span>",
                 },
                 {
                     "field": "selisih",
                     "title": "Selisih",
+                    "template": "<span class='style-right'>{{formatRupiah2('#: selisih #', '')}}</span>",
                 },
                 {
                     "field": "idmataanggaran",
@@ -2551,10 +2587,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         dasarpengeluaran: $scope.item.dasarPengeluaran,
                         statusspp: $scope.item.radioStatusSPP,
                         nospd: $scope.item.nospd,
-                        tglspp: $scope.item.tglSPP,
+                        tglspp: moment($scope.item.tglSPP).format('YYYY-MM-DD HH:mm'),
                         bulan: $scope.item.itemBulan.bulan,
                         pengeluaran: $scope.item.untukPengeluaran,
-                        tglsah: $scope.item.tglSah,
+                        tglsah: moment($scope.item.tglSah).format('YYYY-MM-DD HH:mm'),
                         nilaispp: $scope.item.nilaispp,
                         objectasalprodukfk: $scope.item.sumberDanaSPP.id,
                     }
@@ -2799,6 +2835,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                     }
                                 },
                             });
+
+                            loadDataGrid()
                             
                         });
                     }, function (error) {
@@ -3190,6 +3228,17 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     })
             }
             function LoadSPJ(){
+
+                // var chace = cacheHelper.get('KelompokAnggaranCtrl');
+                // console.log(chace)
+                // if (chace != undefined) {
+                //     var tglawal = moment(chace[0]).format('YYYY-MM-DD');
+                //     var tglakhir = moment(chace[1]).format('YYYY-MM-DD');
+                // } else{
+                //     var tglawal = moment($scope.item.tglawal).format('YYYY-MM-DD');
+                //     var tglakhir = moment($scope.item.tglakhir).format('YYYY-MM-DD');
+                // }
+
                 var tglawal = moment($scope.item.tglawal).format('YYYY-MM-DD');
                 var tglakhir = moment($scope.item.tglakhir).format('YYYY-MM-DD');
 
@@ -3213,19 +3262,57 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 let datdatdatdad = []
                 for (let index = 0; index < dataAlokasi2222.length; index++) {
                     let element = dataAlokasi2222[index];
-                    SubTotal = parseFloat(element.subtotal) / 12
-                    dataAlokasi2222[index].jan = SubTotal
-                    dataAlokasi2222[index].feb = SubTotal
-                    dataAlokasi2222[index].mar = SubTotal
-                    dataAlokasi2222[index].apr = SubTotal
-                    dataAlokasi2222[index].mei = SubTotal
-                    dataAlokasi2222[index].jun = SubTotal
-                    dataAlokasi2222[index].jul = SubTotal
-                    dataAlokasi2222[index].agt = SubTotal
-                    dataAlokasi2222[index].sep = SubTotal
-                    dataAlokasi2222[index].okt = SubTotal
-                    dataAlokasi2222[index].nov = SubTotal
-                    dataAlokasi2222[index].des = SubTotal
+                    // SubTotal = parseFloat(element.subtotal) / 12
+                    // dataAlokasi2222[index].jan = SubTotal
+                    // dataAlokasi2222[index].feb = SubTotal
+                    // dataAlokasi2222[index].mar = SubTotal
+                    // dataAlokasi2222[index].apr = SubTotal
+                    // dataAlokasi2222[index].mei = SubTotal
+                    // dataAlokasi2222[index].jun = SubTotal
+                    // dataAlokasi2222[index].jul = SubTotal
+                    // dataAlokasi2222[index].agt = SubTotal
+                    // dataAlokasi2222[index].sep = SubTotal
+                    // dataAlokasi2222[index].okt = SubTotal
+                    // dataAlokasi2222[index].nov = SubTotal
+                    // dataAlokasi2222[index].des = SubTotal
+
+                    if(parseFloat(element.subtotal) % 12 == 0){
+                        let blnrata = parseFloat(element.subtotal)/12
+    
+                        blnrata = blnrata.toFixed(2)
+    
+                        dataAlokasi2222[index].jan = blnrata
+                        dataAlokasi2222[index].feb = blnrata
+                        dataAlokasi2222[index].mar = blnrata
+                        dataAlokasi2222[index].apr = blnrata
+                        dataAlokasi2222[index].mei = blnrata
+                        dataAlokasi2222[index].jun = blnrata
+                        dataAlokasi2222[index].jul = blnrata
+                        dataAlokasi2222[index].agt = blnrata
+                        dataAlokasi2222[index].sep = blnrata
+                        dataAlokasi2222[index].okt = blnrata
+                        dataAlokasi2222[index].nov = blnrata
+                        dataAlokasi2222[index].des = blnrata
+    
+                    } else{
+    
+                        let blnrata = parseFloat(element.subtotal)/12
+    
+                        blnrata = Math.floor(blnrata)
+    
+                        dataAlokasi2222[index].jan = blnrata
+                        dataAlokasi2222[index].feb = blnrata
+                        dataAlokasi2222[index].mar = blnrata
+                        dataAlokasi2222[index].apr = blnrata
+                        dataAlokasi2222[index].mei = blnrata
+                        dataAlokasi2222[index].jun = blnrata
+                        dataAlokasi2222[index].jul = blnrata
+                        dataAlokasi2222[index].agt = blnrata
+                        dataAlokasi2222[index].sep = blnrata
+                        dataAlokasi2222[index].okt = blnrata
+                        dataAlokasi2222[index].nov = blnrata
+                        dataAlokasi2222[index].des = (parseFloat(element.subtotal) - (11*blnrata)).toFixed(0)
+                    }
                 }
                 $scope.dataSourceAlokasiAnggaran = new kendo.data.DataSource({
                     data:  dataAlokasi2222
@@ -4455,9 +4542,20 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                     click: editDetailSPJ,
                                     imageClass: "clinic fa"
                                 },
+                                {
+                                    text: "Cetak SPJ",
+                                    click: cetakSPJ,
+                                    imageClass: "clinic fa"
+                                },
+                                {
+                                    text: "Cetak SPJ dan Lampiran",
+                                    click: cetakSPJPlusLampiran,
+                                    imageClass: "clinic fa"
+                                },
+                                
                             ],
                                 title: "",
-                                width: "100px",
+                                width: "230px",
                     },
                     {
                         "command": [
@@ -6123,6 +6221,16 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                                                     medifirstService.post('perencanaan/save-realisasi-spj',datasave).then(function (e) {
                                                                         loadDataGrid();
                                                                         $scope.popupTambahSPJ.center().close()
+                                                                        // $state.go("SPJ", {
+                                                    
+                                                                        // })
+
+                                                                        window.location.reload();
+                                                                        // var chacePeriode = {
+                                                                        //     0: moment($scope.item.tglawal).format('YYYY-MM-DD'),
+                                                                        //     1: moment($scope.item.tglakhir).format('YYYY-MM-DD'),
+                                                                        //   }
+                                                                        //   cacheHelper.set('KelompokAnggaranCtrl', chacePeriode);
                                                                     }, function (error) {
                                                     
                                                                     })
@@ -6173,6 +6281,15 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                             medifirstService.post('perencanaan/save-realisasi-spj',datasave).then(function (e) {
                                                 loadDataGrid();
                                                 $scope.popupTambahSPJ.center().close()
+                                                // $state.go("SPJ", {
+                                                    
+                                                // })
+                                                window.location.reload();
+                                                // var chacePeriode = {
+                                                //     0: moment($scope.item.tglawal).format('YYYY-MM-DD'),
+                                                //     1: moment($scope.item.tglakhir).format('YYYY-MM-DD'),
+                                                //   }
+                                                //   cacheHelper.set('KelompokAnggaranCtrl', chacePeriode);
                                             }, function (error) {
                             
                                             })
@@ -6187,6 +6304,36 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }
 
             $scope.lanjutsimpanspj = function() {
+                
+            }
+
+            function cetakSPJ(e) {
+                e.preventDefault();
+                var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                console.log(dataItem)
+
+                medifirstService.get("sysadmin/general/get-terbilang-tidak-bulat/" + dataItem.totalbelanja).then(
+                    function (dat) {
+                        //console.log(dat.data.terbilang)
+                        window.open(baseTransaksi + "report/get-cetak-spj-satu-lampiran?norec="+dataItem.norec+"&terbilang="+dat.data.terbilang+"&sumberdana="+dataItem.idasalproduk, '_blank');
+                    }
+                );
+
+                
+            }
+
+            function cetakSPJPlusLampiran(e) {
+                e.preventDefault();
+                var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                console.log(dataItem)
+
+                medifirstService.get("sysadmin/general/get-terbilang-tidak-bulat/" + dataItem.totalbelanja).then(
+                    function (dat) {
+                        //console.log(dat.data.terbilang)
+                        window.open(baseTransaksi + "report/get-cetak-spj?norec="+dataItem.norec+"&terbilang="+dat.data.terbilang+"&sumberdana="+dataItem.idasalproduk, '_blank');
+                    }
+                );
+
                 
             }
 
@@ -7214,6 +7361,14 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 })
             }
             $scope.searchSPP = function(){
+                $scope.isRouteLoading = true;
+                loadDataGrid()
+            }
+            $scope.searchSPM = function(){
+                $scope.isRouteLoading = true;
+                loadDataGrid()
+            }
+            $scope.searchPanjar = function(){
                 $scope.isRouteLoading = true;
                 loadDataGrid()
             }
