@@ -17540,8 +17540,8 @@
   ]
 },
 {
-  "name": "RekamMedis.AsesmenMedis.PenilaianRisikoJatuhPasienJiwa",
-  "url": "/PenilaianRisikoJatuhPasienJiwa",
+  "name": "RekamMedis.AsesmenMedis.MenuIndex.PenilaianRisikoJatuhPasienJiwa",
+  "url": "/PenilaianRisikoJatuhPasienJiwa/:index/:idEMR",
   "templateurl": "module/EMR/PenilaianRisikoJatuhPasienJiwa.html",
   "controller": "PenilaianRisikoJatuhPasienJiwaCtrl",
   "deps": [{
