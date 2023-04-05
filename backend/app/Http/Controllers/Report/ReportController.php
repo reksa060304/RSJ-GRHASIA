@@ -1197,17 +1197,17 @@ class ReportController extends ApiController{
         "))->first();
         $detel = [];
         $details = \DB::select(DB::raw("
-                select distinct pt.jeniskemasanfk,  jr.jenisracikan, pt.rke,pt.dosis, pt.jumlah , pt.aturanpakai , pm.namaproduk, pm.kekuatan, pt.keteranganpakai,
-                op.keteranganpakai as catatandokter, op.satuandosis 
-                from pelayananpasien_t pt 
+                SELECT x.* FROM (select distinct row_number()over(partition by pt.rke, pm.namaproduk ORDER BY pt.rke asc)as no, pt.jeniskemasanfk, jr.jenisracikan, pt.rke,pt.dosis, pt.jumlah , pt.aturanpakai , pm.namaproduk, pm.kekuatan, pt.keteranganpakai,
+                op.keteranganpakai as catatandokter, op.satuandosis
+                from pelayananpasien_t pt
                 inner join produk_m pm on pm.id = pt.produkfk
-                inner join jenisracikan_m jr on jr.id = pt.jenisobatfk 
+                inner join jenisracikan_m jr on jr.id = pt.jenisobatfk
                 inner join strukresep_t as sr on sr.norec = pt.strukresepfk
                 inner join strukorder_t as so on so.norec = sr.orderfk
-                left join orderpelayanan_t as op on op.strukorderfk = so.norec and  op.rke = pt.rke
+                left join orderpelayanan_t as op on op.strukorderfk = so.norec and op.rke = pt.rke 
                 where strukresepfk = '$norec'
                 and pt.isobat = true
-                order by pt.rke asc, pt.keteranganpakai asc
+                order by pt.rke asc, pt.keteranganpakai asc)as x where x.no = 1
             "));
 //        dd($raw);
         if(!empty($raw)){
@@ -1228,17 +1228,17 @@ class ReportController extends ApiController{
 
             "))->first();
             $details = \DB::select(DB::raw("
-                select distinct pt.jeniskemasanfk, jr.jenisracikan, pt.rke,pt.dosis, pt.jumlah , pt.aturanpakai , pm.namaproduk, pm.kekuatan, pt.keteranganpakai,
-                op.keteranganpakai as catatandokter, op.satuandosis 
-                from pelayananpasien_t pt 
-                inner join produk_m pm on pm.id = pt.produkfk 
+                SELECT x.* FROM (select distinct row_number()over(partition by pt.rke, pm.namaproduk ORDER BY pt.rke asc)as no, pt.jeniskemasanfk, jr.jenisracikan, pt.rke,pt.dosis, pt.jumlah , pt.aturanpakai , pm.namaproduk, pm.kekuatan, pt.keteranganpakai,
+                op.keteranganpakai as catatandokter, op.satuandosis
+                from pelayananpasien_t pt
+                inner join produk_m pm on pm.id = pt.produkfk
                 inner join jenisracikan_m jr on jr.id = pt.jenisobatfk
                 inner join strukresep_t as sr on sr.norec = pt.strukresepfk
                 inner join strukorder_t as so on so.norec = sr.orderfk
-                left join orderpelayanan_t as op on op.strukorderfk = so.norec and op.rke = pt.rke
+                left join orderpelayanan_t as op on op.strukorderfk = so.norec and op.rke = pt.rke 
                 where strukresepfk = '$norec'
                 and pt.isobat = true
-                order by pt.rke asc,pt.keteranganpakai asc
+                order by pt.rke asc, pt.keteranganpakai asc)as x where x.no = 1
             "));
         }else{
             echo 'Data Tidak ada ';
@@ -1259,7 +1259,7 @@ class ReportController extends ApiController{
             left join skriningfarmasi_t st on st.norec_apd = s.norec
             where s.norec = '$norec'
         "))->first();
-//        dd($raw);
+    //    dd($details);
         $pageWidth = 550;
         //var_dump($skrining);
 
