@@ -381,7 +381,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     checkPasienRanap = '&checkPasienRanap=' + $scope.checkPasienRanap
                 }
                 var checkPasienRajal = ''
-                if ($scope.checkPasienRajal != undefined) {
+                if ($scope.checkPasienRajal != undefined && $scope.checkPasienRajal != false) {
                     checkPasienRajal = '&checkPasienRajal=' + $scope.checkPasienRajal
                 }
                 // var status = ''
