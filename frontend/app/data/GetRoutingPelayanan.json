@@ -19605,8 +19605,8 @@
     ]
   },
   {
-    "name": "RekamMedis.AsesmenMedis.PengkajianAwalKeperawatanRIJiwa",
-    "url": "/PengkajianAwalKeperawatanRIJiwa",
+    "name": "RekamMedis.AsesmenMedis.MenuIndex.PengkajianAwalKeperawatanRIJiwa",
+    "url": "/PengkajianAwalKeperawatanRIJiwa/:index/:idEMR",
     "templateurl": "module/EMR/PengkajianAwalKeperawatanRIJiwa.html",
     "controller": "PengkajianAwalKeperawatanRIJiwaCtrl",
     "deps": [{
