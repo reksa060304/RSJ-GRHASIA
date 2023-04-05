@@ -1488,8 +1488,8 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                 $scope.item.obj2 = []
                 $scope.item.obj[310622] = $scope.now
                 $scope.item.obj[310623] = $scope.now
-                $scope.item.obj[310624] = $scope.now
-                $scope.item.obj[310625] = $scope.now
+                // $scope.item.obj[310624] = $scope.now
+                // $scope.item.obj[310625] = $scope.now
                 $scope.item.obj[116068] = {
                     text: $scope.cc.namaruangan,
                     value: $scope.cc.objectruanganfk
