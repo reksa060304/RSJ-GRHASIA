@@ -2785,7 +2785,7 @@ class EMRController  extends ApiController
         $req = $request->all();
         $data = \DB::table('diagnosa_m')
             ->select('id as value', 'kddiagnosa', 'namadiagnosa as text')
-            ->where('kdprofile',$idProfile)
+            // ->where('kdprofile',$idProfile)
             ->where('statusenabled', true)
             ->orderBy('kddiagnosa');
         if (isset($req['filter']['filters'][0]['value']) &&
@@ -4849,7 +4849,7 @@ class EMRController  extends ApiController
         $dataLogin = $request->all();
         $jd = \DB::table('jenisdiagnosa_m as lu')
             ->select('lu.id', 'lu.jenisdiagnosa as jenisDiagnosa')
-            ->where('lu.statusenabled', true)->whereIn('lu.id', [7])
+            ->where('lu.statusenabled', true)->whereIn('lu.id', [7,8])
             ->get();
 
             $dp = \DB::table('diagnosakep_m')->where('kdprofile', 30)->where('statusenabled', true)->get();
@@ -5266,7 +5266,7 @@ class EMRController  extends ApiController
             ->JOIN('jenisproduk_m as jp', 'jp.id', '=', 'djp.objectjenisprodukfk')
             ->leftJOIN('satuanstandar_m as ss', 'ss.id', '=', 'pr.objectsatuanstandarfk')
             ->JOIN('stokprodukdetail_t as spd', 'spd.objectprodukfk', '=', 'pr.id')
-            ->select('pr.id', 'pr.namaproduk', 'ss.id as ssid', 'ss.satuanstandar')
+            ->select('pr.id', 'pr.namaproduk', 'ss.id as ssid', 'ss.satuanstandar','pr.satuan')
             ->where('pr.kdprofile', $idProfile)
             ->where('pr.statusenabled', true)
             ->whereIn('jp.id',$arrkdjenisobat)
@@ -5281,7 +5281,7 @@ class EMRController  extends ApiController
             ->JOIN('jenisproduk_m as jp', 'jp.id', '=', 'djp.objectjenisprodukfk')
             ->leftJOIN('satuanstandar_m as ss', 'ss.id', '=', 'pr.objectsatuanstandarfk')
             ->JOIN('stokprodukdetail_t as spd', 'spd.objectprodukfk', '=', 'pr.id')
-            ->select('pr.id', 'pr.namaproduk', 'ss.id as ssid', 'ss.satuanstandar')
+            ->select('pr.id', 'pr.namaproduk', 'ss.id as ssid', 'ss.satuanstandar','pr.satuan')
             ->where('pr.kdprofile', $idProfile)
             ->where('pr.statusenabled', true)
             ->whereIn('jp.id', $arrkdjenisobat)
