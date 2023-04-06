@@ -15,7 +15,7 @@ define(['initialize','Configuration'], function (initialize, configuration) {
             medifirstService.getPart('emr/get-datacombo-part-pegawai', true, true, 20).then(function (data) {
                 $scope.listPegawai = data
             })
-
+            
             
             loadData()
             function loadData(){
@@ -135,11 +135,13 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                     "field": "pelaksanaan",
                         "title": "Pelaksanaan",
                         "width": "150px",
+                        "template": "#= pelaksanaan.replace(/\\n/g, '<br />') #"
                     },
                     {
                         "field": "evaluasi",
                         "title": "Evaluasi",
                         "width": "180px",
+                        "template": "#= evaluasi.replace(/\\n/g, '<br />') #"
                     },
                     {
                         "field": "namalengkap",

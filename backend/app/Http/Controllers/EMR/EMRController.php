@@ -10784,7 +10784,7 @@ class EMRController  extends ApiController
 
     public function getCakem(Request $request)
     {
-        $data = \DB::table('emrcakem_t as ec')->select('ec.tanggal','ec.jam','ec.pelaksanaan','ec.evaluasi','ec.objectpegawaifk', 'pg.namalengkap','ec.norec as norec_ec')->join('pegawai_m as pg','pg.id','=','ec.objectpegawaifk')->where('emrpasienfk',$request['noemr'])->orderBy('jam','asc')->get();
+        $data = \DB::table('emrcakem_t as ec')->select('ec.tanggal','ec.jam','ec.pelaksanaan','ec.evaluasi','ec.objectpegawaifk', 'pg.namalengkap','ec.norec as norec_ec')->join('pegawai_m as pg','pg.id','=','ec.objectpegawaifk')->where('emrpasienfk',$request['noemr'])->orderBy('tanggal','asc')->orderBy('jam','asc')->get();
 
         $result = array(
             'data'=> $data,
