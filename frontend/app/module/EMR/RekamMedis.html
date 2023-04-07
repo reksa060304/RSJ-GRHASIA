@@ -32,7 +32,8 @@
 
                                 <div class="grid_12">
                                     <input c-text-box type="input" filter="" class="k-textbox"
-                                        ng-model="header.noregistrasi" ng-disabled="true" />
+                                        ng-model="header.noregistrasi" ng-disabled="rekammedis" ng-keyup="$event.keyCode
+                                        == 13 ? searchnoreg() : null"/>
                                 </div>
 
                             </div>

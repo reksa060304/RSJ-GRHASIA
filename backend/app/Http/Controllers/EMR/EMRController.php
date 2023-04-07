@@ -5382,7 +5382,55 @@ class EMRController  extends ApiController
             ->where('ss.kdprofile', $idProfile)
             ->orderBy('ss.satuanstandar')
             ->get();
+            
+                $dataProdukOrderqtylebih0 = \DB::table('produk_m as pr')
+            ->JOIN('detailjenisproduk_m as djp', 'djp.id', '=', 'pr.objectdetailjenisprodukfk')
+            ->JOIN('jenisproduk_m as jp', 'jp.id', '=', 'djp.objectjenisprodukfk')
+            ->leftJOIN('satuanstandar_m as ss', 'ss.id', '=', 'pr.objectsatuanstandarfk')
+            ->JOIN('stokprodukdetail_t as spd', 'spd.objectprodukfk', '=', 'pr.id')
+            ->select('pr.id', 'pr.namaproduk', 'ss.id as ssid', 'ss.satuanstandar','pr.satuan')
+            ->where('pr.kdprofile', $idProfile)
+            ->where('spd.kdprofile', $idProfile)
+            ->where('pr.statusenabled', true)
+            ->where('spd.statusenabled', true)
+            ->where('spd.qtyproduk','>', 0)
+            ->whereIn('jp.id', $arrkdjenisobat)            
+            ->whereIn('spd.objectruanganfk', [94,59])
+            ->groupBy('pr.id', 'pr.namaproduk', 'ss.id', 'ss.satuanstandar')
+            ->havingRaw('SUM(spd.qtyproduk) > ?', [0])
 
+            ->orderBy('pr.namaproduk')
+            ->get();
+
+            $dataKonversiProduklebih = \DB::table('konversisatuan_t as ks')
+            ->JOIN('satuanstandar_m as ss', 'ss.id', '=', 'ks.satuanstandar_asal')
+            ->JOIN('satuanstandar_m as ss2', 'ss2.id', '=', 'ks.satuanstandar_tujuan')
+            ->select('ks.objekprodukfk', 'ks.satuanstandar_asal', 'ss.satuanstandar', 'ks.satuanstandar_tujuan', 'ss2.satuanstandar as satuanstandar2',
+                'ks.nilaikonversi')
+            ->where('ks.kdprofile', $idProfile)
+            ->where('ks.statusenabled', true)
+            ->get();
+            $dataProdukOrderResultqtylebih0 = [];
+        foreach ($dataProdukOrderqtylebih0 as $item) {
+            $satuanKonversiqtylebih0 = [];
+            foreach ($dataKonversiProduklebih as $item2) {
+                if ($item->id == $item2->objekprodukfk) {
+                    $satuanKonversiqtylebih0[] = array(
+                        'ssid' => $item2->satuanstandar_tujuan,
+                        'satuanstandar' => $item2->satuanstandar2,
+                        'nilaikonversi' => $item2->nilaikonversi,
+                    );
+                }
+            }
+
+            $dataProdukOrderResultqtylebih0[] = array(
+                'id' => $item->id,
+                'namaproduk' => $item->namaproduk,
+                'ssid' => $item->ssid,
+                'satuanstandar' => $item->satuanstandar,
+                'konversisatuan' => $satuanKonversiqtylebih0,
+            );
+        }
         $result = array(
             'ruanganfarmasi' => $dataRuanganFamasi,
             'jeniskemasan' => $dataJenisKemasan,
@@ -5396,6 +5444,7 @@ class EMRController  extends ApiController
             'tarifadminresep' => $dataTarifAdminResep,
             'route' => $dataRoute,
             'satuanresep'=>$dataSatuanResep,
+            'produkorderlebih' => $dataProdukOrderResultqtylebih0,
             'message' => 'as@epic',
         );
 

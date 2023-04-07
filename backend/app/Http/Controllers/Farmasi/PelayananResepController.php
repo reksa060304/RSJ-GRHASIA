@@ -1668,14 +1668,14 @@ class PelayananResepController extends ApiController
                 $strMSHT ='';
                 $MetodeStokHargaNetto='Summary';
             }
-            $result = DB::select(DB::raw("select pr.isfornas, pr.kdapotikonline, sk.norec,spd.objectprodukfk, $strMSHT as tgl,spd.objectasalprodukfk,$strHN as harganetto ,
+            $result = DB::select(DB::raw("select pr.satuan, pr.isfornas, pr.kdapotikonline, sk.norec,spd.objectprodukfk, $strMSHT as tgl,spd.objectasalprodukfk,$strHN as harganetto ,
                       spd.hargadiscount,sum(spd.qtyproduk) as qtyproduk,spd.objectruanganfk,ap.asalproduk,spd.nostrukterimafk,spd.tglkadaluarsa
                 from stokprodukdetail_t as spd
                 inner JOIN strukpelayanan_t as sk on sk.norec=spd.nostrukterimafk
                 inner JOIN asalproduk_m as ap on ap.id=spd.objectasalprodukfk
                 inner join produk_m pr on pr.id = spd.objectprodukfk
                 where spd.kdprofile = $idProfile and spd.objectprodukfk =:produkId and spd.objectruanganfk =:ruanganid
-                group by pr.isfornas, pr.kdapotikonline, sk.norec,spd.objectprodukfk, $strMSHT,spd.objectasalprodukfk, 
+                group by pr.satuan,pr.isfornas, pr.kdapotikonline, sk.norec,spd.objectprodukfk, $strMSHT,spd.objectasalprodukfk, 
                         $strHN,spd.hargadiscount,
                 spd.objectruanganfk,ap.asalproduk,spd.nostrukterimafk
                 order By $strMSHT"),
@@ -1709,6 +1709,7 @@ class PelayananResepController extends ApiController
                     'persenup' => $persenUpHargaSatuan,
                     'kdapotikonline' => $item->kdapotikonline,
                     'isfornas' => $item->isfornas,
+                    'satuan' => $item->satuan,
                 );
             }
         }
@@ -1762,7 +1763,7 @@ class PelayananResepController extends ApiController
                 }
             }
 
-            $result = DB::select(DB::raw("select pr.isfornas, pr.kdapotikonline, sk.norec,spd.objectprodukfk, $strMSHT as tgl,spd.objectasalprodukfk,$hargaTertinggi as harganetto ,
+            $result = DB::select(DB::raw("select pr.satuan, pr.isfornas, pr.kdapotikonline, sk.norec,spd.objectprodukfk, $strMSHT as tgl,spd.objectasalprodukfk,$hargaTertinggi as harganetto ,
                         $hargaTertinggi  as hargajual,spd.hargadiscount,sum(spd.qtyproduk) as qtyproduk,spd.objectruanganfk,ap.asalproduk,spd.nostrukterimafk,
                         spd.tglkadaluarsa
                 from stokprodukdetail_t as spd
@@ -1770,7 +1771,7 @@ class PelayananResepController extends ApiController
                 inner JOIN asalproduk_m as ap on ap.id=spd.objectasalprodukfk
                 inner join produk_m pr on pr.id = spd.objectprodukfk
                 where spd.kdprofile = $idProfile and spd.objectprodukfk =:produkId and spd.objectruanganfk =:ruanganid
-                group by pr.isfornas, pr.kdapotikonline, sk.norec,spd.objectprodukfk, $strMSHT,spd.objectasalprodukfk, 
+                group by pr.satuan,pr.isfornas, pr.kdapotikonline, sk.norec,spd.objectprodukfk, $strMSHT,spd.objectasalprodukfk, 
                         spd.hargadiscount,
                 spd.objectruanganfk,ap.asalproduk,spd.nostrukterimafk
                 order By $strMSHT"),
@@ -1804,6 +1805,7 @@ class PelayananResepController extends ApiController
                     'persenup' => $persenUpHargaSatuan,
                     'kdapotikonline' => $item->kdapotikonline,
                     'isfornas' => $item->isfornas,
+                    'satuan' => $item->satuan,
                 );
             }
         }
@@ -1858,21 +1860,23 @@ class PelayananResepController extends ApiController
                 }
             }
             $result =[];
-            $result = DB::select(DB::raw("select pr.isfornas, pr.kdapotikonline, sk.norec,spd.objectprodukfk, $strMSHT as tgl,spd.objectasalprodukfk,$hargaTerakhir as harganetto ,
+            $result = DB::select(DB::raw("select pr.satuan, pr.isfornas, pr.kdapotikonline, sk.norec,spd.objectprodukfk, $strMSHT as tgl,spd.objectasalprodukfk,$hargaTerakhir as harganetto ,
                         $hargaTerakhir  as hargajual,spd.hargadiscount,spd.nostrukterimafk,
                 sum(spd.qtyproduk) as qtyproduk,spd.objectruanganfk,ap.asalproduk,spd.tglkadaluarsa
                 from stokprodukdetail_t as spd
                 inner JOIN strukpelayanan_t as sk on sk.norec=spd.nostrukterimafk
                 inner JOIN asalproduk_m as ap on ap.id=spd.objectasalprodukfk
                 inner join produk_m pr on pr.id = spd.objectprodukfk
-                where spd.kdprofile = $idProfile and spd.objectprodukfk =:produkId and spd.objectruanganfk =:ruanganid and spd.qtyproduk > 0
-                group by pr.isfornas, pr.kdapotikonline, sk.norec,spd.objectprodukfk, $strMSHT, spd.objectasalprodukfk, 
+                where spd.kdprofile = $idProfile and spd.objectprodukfk =:produkId 
+                 and spd.objectruanganfk in(94,59) 
+                and spd.qtyproduk > 0
+                group by pr.satuan, pr.isfornas, pr.kdapotikonline, sk.norec,spd.objectprodukfk, $strMSHT, spd.objectasalprodukfk, 
                         spd.hargadiscount,
                 spd.objectruanganfk,ap.asalproduk,spd.nostrukterimafk
                 order By $strMSHT"),
                 array(
                     'produkId' => $request['produkfk'],
-                    'ruanganid' => $request['ruanganfk'],
+                    // 'ruanganid' => $request['ruanganfk'],
                 )
             );
             $results=[];
@@ -1900,6 +1904,7 @@ class PelayananResepController extends ApiController
                     'persenup' => $persenUpHargaSatuan,
                     'kdapotikonline' => $item->kdapotikonline,
                     'isfornas' => $item->isfornas,
+                    'satuan' => $item->satuan,
                 );
             }
         }
@@ -2594,7 +2599,7 @@ class PelayananResepController extends ApiController
             $transStatus = 'true';
         } catch (\Exception $e) {
             $transStatus = 'false';
-            $errMsg = $e->getMessage()." ".$e->getLine();
+            $errMsg = $e->getLine()." ".$e->getMessage();
         }
 
 //        $transMessage = "Kartu Stok Pasien";
@@ -6623,7 +6628,7 @@ class PelayananResepController extends ApiController
         $idProfile = (int) $kdProfile;
         $detail=$request->all();
         $result=[];
-        $data = \DB::table('pelayananpasien_t as pp')
+        $data = \DB::table('pelayananpasien_t as pp')->distinct()
             ->JOIN('antrianpasiendiperiksa_t as apd','apd.norec','=','pp.noregistrasifk')
             ->JOIN('pasiendaftar_t as pd','pd.norec','=','apd.noregistrasifk')
             ->JOIN('pasien_m as ps','ps.id','=','pd.nocmfk')
@@ -6643,17 +6648,19 @@ class PelayananResepController extends ApiController
             })
             ->leftJOIN('strukresep_t as sr','sr.norec','=','pp.strukresepfk')
             ->leftJOIN('strukorder_t as so','so.norec','=','sr.orderfk')
-            ->leftJOIN('orderpelayanan_t as op','op.strukorderfk','=','so.norec')
+            ->leftJOIN('orderpelayanan_t as op',function($j){
+                $j->on('op.strukorderfk','=','so.norec')->on('op.rke','=','pp.rke');
+            })
             ->leftJOIN('ruangan_m as ru2','ru2.id','=','sr.ruanganfk') /* ruangan depo*/ 
             ->leftJOIN('pegawai_m as dok','dok.id','=','sr.penulisresepfk')
             ->leftJOIN('rm_sediaan_m AS rs','rs.id','=','pr.objectsediaanfk')
             ->leftJoin('satuanresep_m as sn','sn.id','=','pp.satuanresepfk')
             ->select('pp.satuandosis','pp.jeniskemasanfk','ps.nocm','ps.namapasien','jk.jeniskelamin','pp.tglpelayanan','pp.produkfk','pr.namaproduk',
-                'jra.jenisracikan as satuanstandar', 'jra.id as ssid','pp.jumlah','pp.hargasatuan','pp.hargadiscount','sp.nostruk','pd.noregistrasi',
+                'jra.jenisracikan as satuanstandar', 'jra.id as ssid','pp.hargasatuan','pp.hargadiscount','sp.nostruk','pd.noregistrasi',
                 'ks.nilaikonversi','ss2.satuanstandar as satuanstandar2','sr.noresep','sr.norec as norec_resep', 'sr.cito', 'pp.rke',
                 'jkm.jeniskemasan','jk.id as jkid','pp.jenisobatfk','jra.jenisracikan','pp.jasa','ru2.id as namaruanganasalid','ru2.id as ruangandepoid','ru2.namaruangan as ruangandepo',
                 'pp.aturanpakai','ru.namaruangan','dok.id as dokterid','dok.namalengkap as dokter','pp.ispagi','pp.issiang','pp.ismalam','pp.issore','pp.iskronis','sr.isreseppulang as reseppulang',
-                DB::raw("pr.kekuatan as kekuatan,
+                DB::raw("case when jra.jenisracikan = 'Racikan' then op.jumlahracikan else pp.jumlah end AS jumlah,pr.kekuatan as kekuatan, case when pp.aturanpakai is not null then pp.aturanpakai else op.aturanpakai end as aturanpakai,
                                sn.satuanresep,pp.satuanresepfk,pp.tglkadaluarsa,pp.dosis,djp.detailjenisproduk,jp.jenisproduk,apd.norec norec_apd,pd.norec norec_pd,apd.objectkelasfk klid,op.keteranganpakai"))
             ->where('pp.kdprofile', $idProfile)
             ->where('jp.id',97)
