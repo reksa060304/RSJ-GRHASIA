@@ -4,6 +4,9 @@ define(['initialize', 'Configuration'], function (initialize, config) {
         function ($q, $rootScope, $scope, medifirstService, $state, cacheHelper, $mdDialog, dateHelper) {
             var norecAPD = $state.params.noRec;
             $scope.item = {};
+            
+            $scope.hideSimpan = false
+            $scope.isRouteLoading = false
             $scope.dataVOloaded = true;
             $scope.now = new Date();
             $scope.item.rke = 1;
@@ -310,6 +313,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 // }
                 statusTambah = false
                 $scope.isRouteLoading = false;
+                dataProdukDetail = []
                 medifirstService.get("emr/get-produkdetail?" +
                     "produkfk=" + $scope.item.produk.id +
                     // "&ruanganfk=" + $scope.item.ruangan.id + 
@@ -898,6 +902,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         $scope.item.jenisRacikan = { id: JR.data.data[0].id, jenisracikan: JR.data.data[0].jenisracikan }
                     });
                 }
+                $scope.item.jumlah = dataSelected.jumlah
                 $scope.item.jenisKemasan = { id: dataSelected.jeniskemasanfk, jeniskemasan: dataSelected.jeniskemasan }
                 $scope.item.satuanresep = { id: dataSelected.satuanresepfk, satuanresep: dataSelected.satuanresep }
                 $scope.item.satuan = { ssid: dataSelected.satuanstandarfk, satuanstandar: dataSelected.satuanstandar }
@@ -1309,6 +1314,9 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 
                 // $scope.hideSimpan =true
                 medifirstService.post('emr/simpan-order-pelayananobatfarmasi',{data: objSaves}).then(function (e) {
+                $scope.hideSimpan = false
+                $scope.isRouteLoading = false
+
                     sendNotification(e.data)
                     $scope.item.resep == undefined
                     $scope.norecOrder = ''
@@ -1322,11 +1330,17 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         'Order Resep No Order - ' + e.data.noresep.noorder + ' dengan No Registrasi ' + $scope.item.noregistrasi+ ' dari copy no resep ' + $scope.copynoresep).then(function (res) {
                         })
                     }
-                $scope.hideSimpan =false
+
+                    var objSave = {
+                        // data: data2,
+                        norec_apd: norec_apd,
+                    }
+                    medifirstService.post('emr/farmasi-save-preview', objSave).then(function () {
+                        // window.open(config.baseApiBackend + "report/cetak-preview-order?norec_apd=" + norec_apd);
+                    })
                     // $scope.item.resep = e.data.noresep.noorder
                     //  $scope.hideSimpan =false
                     $scope.copynoresep = ''
-                    $scope.isRouteLoading= false
                     init();
                     $scope.batal();
                     $scope.disabledRuangan = false
@@ -1338,7 +1352,10 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         params = $scope.item.noreservasi
                     }
                     saveAntrol(params, norec_pd)
-                })
+                }) 
+                $scope.hideSimpan = false
+                $scope.isRouteLoading = false
+                
             }
 
             $scope.riwayat = function () {
@@ -1854,7 +1871,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 $scope.copynoresep = $scope.dataSelectedResep.noresep
                 for (let j = 0; j < $scope.dataSelectedResep.details.length; j++) {
                     $scope.isRouteLoading = true;
-                    
+                    dataProdukDetail = []
                     $scope.dataSelectedResep.details[j].jumlahxmakan = null
                     medifirstService.get("emr/get-produkdetail?" +
                         "produkfk=" + $scope.dataSelectedResep.details[j].produkfk +
@@ -2132,6 +2149,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     $scope.isRouteLoading = true;
                     const element = $scope.dataSelectedSsS.details[i];
                     if (element.produkfk != undefined) {
+                        dataProdukDetail = []
                         medifirstService.get("farmasi/get-produkdetail?" +
                             "produkfk=" + element.produkfk +
                             "&ruanganfk=" + $scope.item.ruangan.id, true).then(function (dat) {
@@ -2340,6 +2358,21 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 $scope.item.jumlah = null
                 $scope.item.KeteranganPakai = ''
             }
+        }
+
+        $scope.printPreview = function(){
+            if(data2 == ""){
+                toastr.error('Isi dulu resep sebelum preview')
+                return
+            }
+            // console.log(data2)
+            var objSave = {
+                data: data2,
+                norec_apd: norec_apd,
+            }
+            medifirstService.post('emr/farmasi-save-preview', objSave).then(function(){
+                window.open(config.baseApiBackend + "report/cetak-preview-order?norec_apd=" + norec_apd);
+            })
         }
            //** BATAS SUCI */
         }

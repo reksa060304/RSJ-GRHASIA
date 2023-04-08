@@ -11207,4 +11207,59 @@ class EMRController  extends ApiController
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
         
     }
+    public function savePreview(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        DB::beginTransaction();
+        $save = '';
+        try {
+            $delete = \DB::table("temperesep_t")->where('norec_apd', $request['norec_apd'])->delete();
+            if(isset($request['data'])){
+        $data = $request['data'];
+                foreach ($data as $d) {
+                $save = \DB::table("temperesep_t")->insert(
+                    [
+                        'norec'=> substr(Uuid::generate(), 0, 32),
+                        'kdprofile'=> $kdProfile,
+                        'statusenabled'=> true,
+                        'norec_apd'=> $request['norec_apd'],
+                        'rke'=> $d['rke'],
+                        'namaproduk'=> $d['namaproduk'],
+                        'dosis'=> $d['dosis'],
+                        'jumlah'=> $d['jumlah'],
+                        'satuanstandar'=> $d['satuanstandar'],
+                        'satuandosis'=> $d['satuandosis'],
+                        'keterangan'=> $d['keterangan'],
+                        'jeniskemasan'=> $d['jeniskemasan'],
+                    ]
+                );
+            }
+            }
+            $transStatus=true;
+        } catch (\Throwable $th) {
+            $transStatus=false;
+        }
+            $transMessage = 'Cek Preview ';
+        if ($transStatus == 'true') {
+
+            $transMessage = $transMessage . "Sukses";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "data"=>$save,
+                "as" => 'as@epic',
+            );
+
+        } else {
+            $transMessage = $transMessage . " Gagal!!";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "e" => $th->getMessage().' '.$th->getLine(),
+                "as" => 'as@epic',
+            );
+        }
+
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
 }
