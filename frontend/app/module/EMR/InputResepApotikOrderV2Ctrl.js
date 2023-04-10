@@ -272,7 +272,12 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         }
                     }
                 }
-
+                for (let i = 0; i < $scope.listJenisRacikan.length; i++) {
+                    console.log($scope.item.produk.ssid, $scope.listJenisRacikan[i].objectsatuanstandarfk);
+                    if ($scope.item.produk.ssid == $scope.listJenisRacikan[i].objectsatuanstandarfk) {
+                        $scope.item.jenisRacikan = $scope.listJenisRacikan[i]
+                    }
+                }
                 medifirstService.get("emr/get-info-stok?produkfk=" + $scope.item.produk.id, true)
                     .then(function (e) {
                         $scope.item.namaProduks = $scope.item.produk.namaproduk;
@@ -410,11 +415,13 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     kodeket[1] = kodeArr[1]
 
                 }
-                // if ($scope.item.chksr == 1) {
-                //     $scope.item.chksr = kodeArr[1]
-                // }
-                if ($scope.item.chkm == 1) {
+                if ($scope.item.chksr == 1) {
+                    // $scope.item.chksr = kodeArr[1]
                     kodeket[2] = kodeArr[1]
+
+                }
+                if ($scope.item.chkm == 1) {
+                    kodeket[3] = kodeArr[1]
                 }
 
                 // $scope.item.aturanpakaitxt = jml + 'x1'
@@ -621,24 +628,24 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 
             $scope.tambah = function () {
 
-                if($scope.item.alergi != undefined){
-                    let kodeArr = $scope.item.alergi.split(",");
+                // if($scope.item.alergi != undefined){
+                //     let kodeArr = $scope.item.alergi.split(",");
 
-                    for(var i = 0; i < kodeArr.length; i++){
-                        console.log(kodeArr[i].toLowerCase().replace(/\/r/g,''))
-                        if($scope.item.produk.namaproduk.toLowerCase().match(kodeArr[i].toLowerCase().replace(' ',''))){
-                            toastr.error('Pasien Alergi Terhadap Obat Tersebut', 'Peringatan')
-                            return
-                        }
-                    }
-                }
+                //     for(var i = 0; i < kodeArr.length; i++){
+                //         console.log(kodeArr[i].toLowerCase().replace(/\/r/g,''))
+                //         if($scope.item.produk.namaproduk.toLowerCase().match(kodeArr[i].toLowerCase().replace(' ',''))){
+                //             toastr.error('Pasien Alergi Terhadap Obat Tersebut', 'Peringatan')
+                //             return
+                //         }
+                //     }
+                // }
 
-                if($scope.item.alergi != undefined){
-                    if($scope.item.produk.namaproduk.toLowerCase().match($scope.item.alergi.toLowerCase())){
-                        toastr.error('Pasien Alergi Terhadap Obat Tersebut', 'Peringatan')
-                        return
-                    }
-                }
+                // if($scope.item.alergi != undefined){
+                //     if($scope.item.produk.namaproduk.toLowerCase().match($scope.item.alergi.toLowerCase())){
+                //         toastr.error('Pasien Alergi Terhadap Obat Tersebut', 'Peringatan')
+                //         return
+                //     }
+                // }
 
                 if(statusTambah == false){
                     return
@@ -960,7 +967,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         break;
                     }
                 }
-                $scope.item.KeteranganPakai = $scope.item.chkp + "-" + $scope.item.chks + "-" + $scope.item.chkm
+                $scope.item.KeteranganPakai = $scope.item.chkp + "-" + $scope.item.chks + "-"+ $scope.item.chksr+"-" + $scope.item.chkm
                 $scope.item.produk = dataProduk//{id:dataSelected.produkfk,namaproduk:dataSelected.namaproduk}
                 GETKONVERSI()
 
@@ -2001,7 +2008,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 if (jml == 0) {
                     $scope.item.aturanpakaitxt = ''
                 }
-                $scope.item.KeteranganPakai = $scope.item.chkp + "-" + $scope.item.chks + "-" + $scope.item.chkm
+                $scope.item.KeteranganPakai = $scope.item.chkp + "-" + $scope.item.chks + "-" + $scope.item.chksr + "-" + $scope.item.chkm
             }
             $scope.hapusOrder = function () {
                 if ($scope.dataSelectedRiwayat == undefined) return
