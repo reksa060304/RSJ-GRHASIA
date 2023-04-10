@@ -1868,7 +1868,7 @@ class PelayananResepController extends ApiController
                 inner JOIN asalproduk_m as ap on ap.id=spd.objectasalprodukfk
                 inner join produk_m pr on pr.id = spd.objectprodukfk
                 where spd.kdprofile = $idProfile and spd.objectprodukfk =:produkId 
-                 and spd.objectruanganfk in(94,59) 
+                 and spd.objectruanganfk=:ruanganid
                 and spd.qtyproduk > 0
                 group by pr.satuan, pr.isfornas, pr.kdapotikonline, sk.norec,spd.objectprodukfk, $strMSHT, spd.objectasalprodukfk, 
                         spd.hargadiscount,
@@ -1876,7 +1876,7 @@ class PelayananResepController extends ApiController
                 order By $strMSHT"),
                 array(
                     'produkId' => $request['produkfk'],
-                    // 'ruanganid' => $request['ruanganfk'],
+                    'ruanganid' => $request['ruanganfk'],
                 )
             );
             $results=[];
