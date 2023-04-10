@@ -266,7 +266,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 
                     for(var i = 0; i < kodeArr.length; i++){
                         console.log(kodeArr[i].toLowerCase().replace(/\/r/g,''))
-                        if($scope.item.produk.namaproduk.toLowerCase().match(kodeArr[i].toLowerCase().replace(' ',''))){
+                        if ($scope.item.produk.namaproduk.toLowerCase().match(kodeArr[i].toLowerCase().replace(' ', '')) && $scope.item.alergi.length > 2) {
                             toastr.error('Pasien Alergi Terhadap Obat Tersebut', 'Peringatan')
                             return
                         }
@@ -627,25 +627,25 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             }
 
             $scope.tambah = function () {
+                console.log($scope.item.alergi.length);
+                if($scope.item.alergi != undefined){
+                    let kodeArr = $scope.item.alergi.split(",");
 
-                // if($scope.item.alergi != undefined){
-                //     let kodeArr = $scope.item.alergi.split(",");
+                    for(var i = 0; i < kodeArr.length; i++){
+                        console.log(kodeArr[i].toLowerCase().replace(/\/r/g,''))
+                        if ($scope.item.produk.namaproduk.toLowerCase().match(kodeArr[i].toLowerCase().replace(' ', '')) && $scope.item.alergi.length > 2) {
+                            toastr.error('Pasien Alergi Terhadap Obat Tersebut', 'Peringatan')
+                            return
+                        }
+                    }
+                }
 
-                //     for(var i = 0; i < kodeArr.length; i++){
-                //         console.log(kodeArr[i].toLowerCase().replace(/\/r/g,''))
-                //         if($scope.item.produk.namaproduk.toLowerCase().match(kodeArr[i].toLowerCase().replace(' ',''))){
-                //             toastr.error('Pasien Alergi Terhadap Obat Tersebut', 'Peringatan')
-                //             return
-                //         }
-                //     }
-                // }
-
-                // if($scope.item.alergi != undefined){
-                //     if($scope.item.produk.namaproduk.toLowerCase().match($scope.item.alergi.toLowerCase())){
-                //         toastr.error('Pasien Alergi Terhadap Obat Tersebut', 'Peringatan')
-                //         return
-                //     }
-                // }
+                if($scope.item.alergi != undefined){
+                    if ($scope.item.produk.namaproduk.toLowerCase().match($scope.item.alergi.toLowerCase()) && $scope.item.alergi.length > 2) {
+                        toastr.error('Pasien Alergi Terhadap Obat Tersebut', 'Peringatan')
+                        return
+                    }
+                }
 
                 if(statusTambah == false){
                     return
