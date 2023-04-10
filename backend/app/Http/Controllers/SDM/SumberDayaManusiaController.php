@@ -7865,4 +7865,78 @@ public function daftarKenaikanGajiBerkala(Request $request){
         );
         return $this->respond($result);
     }
+    public function savePesertaDidikRuanganGroup(Request $request){
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        DB::beginTransaction();
+        $data = explode(",", $request['data']);
+        try{
+
+            foreach ($data as $d) {
+                $PDR = \DB::table('sdm_pdruangan_t')->insert([
+                    'kdprofile' => $kdProfile,
+                    'norec' => substr(Uuid::generate(), 0, 32),
+                    'noregistrasifk' => $d,
+                    'objectruanganlastfk' => $request['objectruanganlastfk'],
+                    // 'objectruanganasalfk' => $request['objectruanganasalfk'],
+                    'objectpegawaifk' => $request['objectpegawaifk'],
+                    'statusenabled' => true,
+                    'tglmasuk' => $request['tglmasuk'],
+                    'tglkeluar' => $request['tglkeluar']
+                ]);
+
+                $PDRU = DB::table('sdm_pesertadidik_t')->where('norec', $d)->where('kdprofile', $kdProfile)->update([
+                    'objectruanganlastfk' => $request['objectruanganlastfk'],
+                    'objectpegawailastfk' => $request['objectpegawaifk'],
+                ]);
+            }
+            
+
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan Ruangan Peserta Didik";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'data' => $data,
+                'as' => 'asepic',
+            );
+        } else {
+            $transMessage = "Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message'  => $transMessage,
+                // 'data'  => $data,
+                'as' => 'asepic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+
+        // $result = array(
+        //         'status' => 400,
+        //         'message'  => $PDR,
+        //         'as' => 'asepic',
+        //     );
+        // return $this->respond($result);
+    }
+    public function getPeEks(Request $request)
+    {
+        $data = \DB::select(DB::raw("SELECT pd.nama, ru.namaruangan, pg.namalengkap, pdr.tglmasuk, pdr.tglkeluar FROM sdm_pesertadidik_t pd 
+            inner join sdm_pdruangan_t pdr on pdr.noregistrasifk = pd.norec
+            inner join pegawai_m pg on pg.id = pdr.objectpegawaifk
+            inner join ruangan_m ru on ru.id = pdr.objectruanganlastfk
+            where pd.noregistrasifk ilike '$request[norec]'
+
+        "));
+
+        $result = array(
+            'data'=> $data,
+            'as'=>'Fizi'
+        );
+        return $this->respond($result);
+    }
 }
