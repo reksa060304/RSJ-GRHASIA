@@ -5251,7 +5251,7 @@ class EMRController  extends ApiController
             ->where('jk.statusenabled', true)
             ->get();
         $dataJenisRacikan = \DB::table('jenisracikan_m as jk')
-            ->select('jk.id', 'jk.jenisracikan')
+            ->select('jk.id', 'jk.jenisracikan','jk.objectsatuanstandarfk')
             ->where('jk.kdprofile', $idProfile)
             ->where('jk.statusenabled', true)
             ->orderBy('jk.jenisracikan')
@@ -11261,5 +11261,402 @@ class EMRController  extends ApiController
         }
 
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    public function getProdukDetail(Request $request) {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        //        namafield	nilaifield	keteranganfungsi
+//        MetodeAmbilHargaNetto	0	KOSONG .: pengambilan hn1 atau hn2
+
+//        MetodeHargaNetto	2	AVG
+//        MetodeHargaNetto	3	Harga Tertinggi
+//        MetodeHargaNetto	1	Harga Netto #
+
+//        MetodeStokHargaNetto	2	LIFO
+//        MetodeStokHargaNetto	3	FEFO #
+//        MetodeStokHargaNetto	4	LEFO
+//        MetodeStokHargaNetto	1	FIFO
+//        MetodeStokHargaNetto	5	Summary
+
+//        SistemHargaNetto	7	Harga Terakhir #
+//        SistemHargaNetto	6	LEFO
+//        SistemHargaNetto	2	LIFO
+//        SistemHargaNetto	3	Harga Tertinggi
+//        SistemHargaNetto	4	AVG
+//        SistemHargaNetto	5	FEFO
+//        SistemHargaNetto	1	FIFO
+
+        //bucat : # setting yg dipakai
+
+
+//        select * from settingdatafixed_m where namafield  in ('SistemHargaNetto','MetodeHargaNetto','MetodeStokHargaNetto','MetodeAmbilHargaNetto') order by namafield;
+//        select * from jenistransaksi_m where id=5;
+//        select * from persenhargajualproduk_m where objectjenistransaksifk =5; .:25%
+//        $kdRangeDiBawah1Jt = (int) $this->settingDataFixed('kdRangeDiBawah1Jt', $idProfile);
+//        $kdRangeDiAtas1Jt = (int) $this->settingDataFixed('kdRangeDiAtas1Jt', $idProfile);
+        $jenisTransaksi = \DB::table('jenistransaksi_m as jt')
+            ->where('jt.id',5)
+            ->where('jt.statusenabled',true)
+            ->first();
+
+        if ($this->getCountArray($jenisTransaksi) == 0){
+            return $this->respond(array(
+                'Error' => 'Setting jenistransaksi_m dulu',
+                'message' => 'as@epic',
+            ));
+        }
+        $strMetodeAmbilHargaNetto = $jenisTransaksi->metodeambilharganetto;
+//        $strMetodeHargaNetto = $jenisTransaksi->metodeharganetto; //ketika penerimaan saja
+        $strMetodeStokHargaNetto = $jenisTransaksi->metodestokharganetto;
+        $strSistemHargaNetto = $jenisTransaksi->sistemharganetto;
+
+        $defaultKP = 0;
+        $defaultKP = 0;
+        if(isset($request['kpid']) && $request['kpid']!="" && $request['kpid']!="undefined"){
+            if ($request['kpid'] == 1 || $request['kpid'] == 2){
+                $defaultKP = $request['kpid'];
+            }else{
+                $defaultKP = 1;
+            }
+        }
+        $persenHargaJualProduk = \DB::table('persenhargajualproduk_m as phjp')
+            ->JOIN('range_m as rg','rg.id','=','phjp.objectrangefk')
+            ->select('rg.rangemin','rg.rangemax','phjp.persenuphargasatuan','phjp.objectrangefk','phjp.objectkelompokpasienfk')
+            ->where('phjp.objectjenistransaksifk',5)
+            ->where('phjp.statusenabled',true)
+            ->where('phjp.objectkelompokpasienfk',$defaultKP)
+            ->get();
+        if (count($persenHargaJualProduk) == 0){
+            return $this->respond(array(
+                'Error' => 'Setting persenhargajualproduk_m dulu',
+                'message' => 'as@epic',
+            ));
+        }
+
+        $strHN ='';
+        $strMSHT ='';
+        $SistemHargaNetto='';
+        $MetodeAmbilHargaNetto='';
+        $MetodeStokHargaNetto='';
+
+        // ### FIFO ### //
+        if ($strSistemHargaNetto == 1){
+            $SistemHargaNetto ='FIFO';
+
+            if ($strMetodeAmbilHargaNetto == 1) {//HN1
+                $strHN ='spd.harganetto1';
+                $MetodeAmbilHargaNetto ='HN1';
+            }
+            if ($strMetodeAmbilHargaNetto == 2) {//HN2
+                $strHN ='spd.harganetto2';
+                $MetodeAmbilHargaNetto ='HN2';
+            }
+
+            if ($strMetodeStokHargaNetto == 1){//FIFO
+                $strMSHT ='sk.tglstruk';
+                $MetodeStokHargaNetto='FIFO';
+            }
+            if ($strMetodeStokHargaNetto == 2){//LIFO
+                $strMSHT ='';
+                $MetodeStokHargaNetto='LIFO';
+            }
+            if ($strMetodeStokHargaNetto == 3){//FEFO
+                $strMSHT ='spd.tglkadaluarsa';
+                $MetodeStokHargaNetto='FEFO';
+            }
+            if ($strMetodeStokHargaNetto == 4){//LEFO
+                $strMSHT ='';
+                $MetodeStokHargaNetto='LEFO';
+            }
+            if ($strMetodeStokHargaNetto == 5){//Summary
+                $strMSHT ='';
+                $MetodeStokHargaNetto='Summary';
+            }
+            $result = DB::select(DB::raw("select pr.satuan, pr.isfornas, pr.kdapotikonline, sk.norec,spd.objectprodukfk, $strMSHT as tgl,spd.objectasalprodukfk,$strHN as harganetto ,
+                      spd.hargadiscount,sum(spd.qtyproduk) as qtyproduk,spd.objectruanganfk,ap.asalproduk,spd.nostrukterimafk,spd.tglkadaluarsa
+                from stokprodukdetail_t as spd
+                inner JOIN strukpelayanan_t as sk on sk.norec=spd.nostrukterimafk
+                inner JOIN asalproduk_m as ap on ap.id=spd.objectasalprodukfk
+                inner join produk_m pr on pr.id = spd.objectprodukfk
+                where spd.kdprofile = $idProfile and spd.objectprodukfk =:produkId and spd.objectruanganfk in(59,94)
+                group by pr.satuan,pr.isfornas, pr.kdapotikonline, sk.norec,spd.objectprodukfk, $strMSHT,spd.objectasalprodukfk, 
+                        $strHN,spd.hargadiscount,
+                spd.objectruanganfk,ap.asalproduk,spd.nostrukterimafk
+                order By $strMSHT"),
+                array(
+                    'produkId' => $request['produkfk'],
+                    // 'ruanganid' => $request['ruanganfk'],
+                )
+            );
+
+            $persenUpHargaSatuan=0;
+            foreach ($result as $item){
+                foreach ($persenHargaJualProduk as $hitem){
+                    if ((float)$hitem->rangemin < (float)$item->harganetto && (float)$hitem->rangemax > (float)$item->harganetto){
+                        $persenUpHargaSatuan = (float)$hitem->persenuphargasatuan;
+                    }
+                }
+                $results[] = array(
+                    'norec' => $item->norec,
+                    'objectprodukfk' => $item->objectprodukfk,
+                    'tgl' => $item->tgl,
+                    'objectasalprodukfk' => $item->objectasalprodukfk,
+                    'asalproduk' => $item->asalproduk,
+                    'harganetto' => $item->harganetto,
+                    'hargadiscount' => $item->hargadiscount,
+                    'hargajual' => (float)$item->harganetto + (((float)$item->harganetto * (float)$persenUpHargaSatuan)/100),
+                    'persenhargajualproduk'=>$persenUpHargaSatuan,
+                    'qtyproduk' => (float)$item->qtyproduk,
+                    'objectruanganfk' => $item->objectruanganfk,
+                    'nostrukterimafk' => $item->nostrukterimafk,
+                    'tglkadaluarsa' => $item->tglkadaluarsa,
+                    'persenup' => $persenUpHargaSatuan,
+                    'kdapotikonline' => $item->kdapotikonline,
+                    'isfornas' => $item->isfornas,
+                    'satuan' => $item->satuan,
+                );
+            }
+        }
+        // ### END-FIFO ### //
+
+        // ### Harga Tertinggi ### //
+        if ($strSistemHargaNetto == 3){
+            $SistemHargaNetto ='Harga Tertinggi';
+            if ($strMetodeAmbilHargaNetto == 1) {//HN1
+                $strHN ='spd.harganetto1';
+                $MetodeAmbilHargaNetto ='HN1';
+            }
+            if ($strMetodeAmbilHargaNetto == 2) {//HN2
+                $strHN ='spd.harganetto2';
+                $MetodeAmbilHargaNetto ='HN2';
+            }
+
+            if ($strMetodeStokHargaNetto == 1){//FIFO
+                $strMSHT ='sk.tglstruk';
+                $MetodeStokHargaNetto='FIFO';
+            }
+            if ($strMetodeStokHargaNetto == 2){//LIFO
+                $strMSHT ='';
+                $MetodeStokHargaNetto='LIFO';
+            }
+            if ($strMetodeStokHargaNetto == 3){//FEFO
+                $strMSHT ='spd.tglkadaluarsa';
+                $MetodeStokHargaNetto='FEFO';
+            }
+            if ($strMetodeStokHargaNetto == 4){//LEFO
+                $strMSHT ='';
+                $MetodeStokHargaNetto='LEFO';
+            }
+            if ($strMetodeStokHargaNetto == 5){//Summary
+                $strMSHT ='';
+                $MetodeStokHargaNetto='Summary';
+            }
+            $maxHarga = DB::select(DB::raw("select $strHN as harga
+                from stokprodukdetail_t as spd
+                inner JOIN strukpelayanan_t as sk on sk.norec=spd.nostrukterimafk
+                where spd.kdprofile = $idProfile and spd.objectprodukfk =:produkId and spd.objectruanganfk in(59,94)"),
+                array(
+                    'produkId' => $request['produkfk'],
+                    // 'ruanganid' => $request['ruanganfk'],
+                )
+            );
+            $hargaTertinggi=0;
+            foreach ($maxHarga as $item){
+                if ($hargaTertinggi < (float)$item->harga){
+                    $hargaTertinggi =(float)$item->harga;
+                }
+            }
+
+            $result = DB::select(DB::raw("select pr.satuan, pr.isfornas, pr.kdapotikonline, sk.norec,spd.objectprodukfk, $strMSHT as tgl,spd.objectasalprodukfk,$hargaTertinggi as harganetto ,
+                        $hargaTertinggi  as hargajual,spd.hargadiscount,sum(spd.qtyproduk) as qtyproduk,spd.objectruanganfk,ap.asalproduk,spd.nostrukterimafk,
+                        spd.tglkadaluarsa
+                from stokprodukdetail_t as spd
+                inner JOIN strukpelayanan_t as sk on sk.norec=spd.nostrukterimafk
+                inner JOIN asalproduk_m as ap on ap.id=spd.objectasalprodukfk
+                inner join produk_m pr on pr.id = spd.objectprodukfk
+                where spd.kdprofile = $idProfile and spd.objectprodukfk =:produkId and spd.objectruanganfk in(59,94)
+                group by pr.satuan,pr.isfornas, pr.kdapotikonline, sk.norec,spd.objectprodukfk, $strMSHT,spd.objectasalprodukfk, 
+                        spd.hargadiscount,
+                spd.objectruanganfk,ap.asalproduk,spd.nostrukterimafk
+                order By $strMSHT"),
+                array(
+                    'produkId' => $request['produkfk'],
+                    // 'ruanganid' => $request['ruanganfk'],
+                )
+            );
+
+            $persenUpHargaSatuan=0;
+            foreach ($result as $item){
+                foreach ($persenHargaJualProduk as $hitem){
+                    if ((float)$hitem->rangemin < (float)$item->harganetto && (float)$hitem->rangemax > (float)$item->harganetto){
+                        $persenUpHargaSatuan = (float)$hitem->persenuphargasatuan;
+                    }
+                }
+                $results[] = array(
+                    'norec' => $item->norec,
+                    'objectprodukfk' => $item->objectprodukfk,
+                    'tgl' => $item->tgl,
+                    'objectasalprodukfk' => $item->objectasalprodukfk,
+                    'asalproduk' => $item->asalproduk,
+                    'harganetto' => $item->harganetto,
+                    'hargadiscount' => $item->hargadiscount,
+                    'hargajual' => (float)$item->harganetto + (((float)$item->harganetto * (float)$persenUpHargaSatuan)/100),
+                    'persenhargajualproduk'=>$persenUpHargaSatuan,
+                    'qtyproduk' => (float)$item->qtyproduk,
+                    'objectruanganfk' => $item->objectruanganfk,
+                    'nostrukterimafk' => $item->nostrukterimafk,
+                    'tglkadaluarsa' => $item->tglkadaluarsa,
+                    'persenup' => $persenUpHargaSatuan,
+                    'kdapotikonline' => $item->kdapotikonline,
+                    'isfornas' => $item->isfornas,
+                    'satuan' => $item->satuan,
+                );
+            }
+        }
+        // ### END-Harga Tertinggi ### //
+
+        // ### Harga Terakhir ### //
+        if ($strSistemHargaNetto == 7){
+            $SistemHargaNetto ='Harga Terakhir';
+            if ($strMetodeAmbilHargaNetto == 1) {//HN1
+                $strHN ='spd.harganetto1';
+                $MetodeAmbilHargaNetto ='HN1';
+            }
+            if ($strMetodeAmbilHargaNetto == 2) {//HN2
+                $strHN ='spd.harganetto2';
+                $MetodeAmbilHargaNetto ='HN2';
+            }
+
+            if ($strMetodeStokHargaNetto == 1){//FIFO
+                $strMSHT ='sk.tglstruk';
+                $MetodeStokHargaNetto='FIFO';
+            }
+            if ($strMetodeStokHargaNetto == 2){//LIFO
+                $strMSHT ='sk.tglstruk desc';
+                $MetodeStokHargaNetto='LIFO';
+            }
+            if ($strMetodeStokHargaNetto == 3){//FEFO
+                $strMSHT ='spd.tglkadaluarsa';
+                $MetodeStokHargaNetto='FEFO';
+            }
+            if ($strMetodeStokHargaNetto == 4){//LEFO
+                $strMSHT ='spd.tglkadaluarsa desc';
+                $MetodeStokHargaNetto='LEFO';
+            }
+            if ($strMetodeStokHargaNetto == 5){//Summary
+                $strMSHT ='';
+                $MetodeStokHargaNetto='Summary';
+            }
+            $maxHarga = DB::select(DB::raw("select spd.tglpelayanan, $strHN as harga
+                from stokprodukdetail_t as spd
+                inner JOIN strukpelayanan_t as sk on sk.norec=spd.nostrukterimafk
+                where spd.kdprofile = $idProfile and spd.objectprodukfk =:produkId "),
+                array(
+                    'produkId' => $request['produkfk'],
+                )
+            );
+            $hargaTerakhir=0;
+            $tgl = date('2000-01-01 00:00');
+            foreach ($maxHarga as $item){
+                if ($tgl < $item->tglpelayanan){
+                    $tgl = $item->tglpelayanan;
+                    $hargaTerakhir =(float)$item->harga;
+                }
+            }
+            $result =[];
+            $result = DB::select(DB::raw("select pr.satuan, pr.isfornas, pr.kdapotikonline, sk.norec,spd.objectprodukfk, $strMSHT as tgl,spd.objectasalprodukfk,$hargaTerakhir as harganetto ,
+                        $hargaTerakhir  as hargajual,spd.hargadiscount,spd.nostrukterimafk,
+                sum(spd.qtyproduk) as qtyproduk,spd.objectruanganfk,ap.asalproduk,spd.tglkadaluarsa
+                from stokprodukdetail_t as spd
+                inner JOIN strukpelayanan_t as sk on sk.norec=spd.nostrukterimafk
+                inner JOIN asalproduk_m as ap on ap.id=spd.objectasalprodukfk
+                inner join produk_m pr on pr.id = spd.objectprodukfk
+                where spd.kdprofile = $idProfile and spd.objectprodukfk =:produkId 
+                 and spd.objectruanganfk in(59,94)
+                and spd.qtyproduk > 0
+                group by pr.satuan, pr.isfornas, pr.kdapotikonline, sk.norec,spd.objectprodukfk, $strMSHT, spd.objectasalprodukfk, 
+                        spd.hargadiscount,
+                spd.objectruanganfk,ap.asalproduk,spd.nostrukterimafk
+                order By $strMSHT"),
+                array(
+                    'produkId' => $request['produkfk'],
+                    // 'ruanganid' => $request['ruanganfk'],
+                )
+            );
+            $results=[];
+            $persenUpHargaSatuan=0;
+            foreach ($result as $item){
+                foreach ($persenHargaJualProduk as $hitem){
+                    if ((float)$hitem->rangemin < (float)$item->harganetto && (float)$hitem->rangemax > (float)$item->harganetto){
+                        $persenUpHargaSatuan = (float)$hitem->persenuphargasatuan;
+                    }
+                }
+                $results[] = array(
+                    'norec' => $item->norec,
+                    'objectprodukfk' => $item->objectprodukfk,
+                    'tgl' => $item->tgl,
+                    'objectasalprodukfk' => $item->objectasalprodukfk,
+                    'asalproduk' => $item->asalproduk,
+                    'harganetto' => (float)$item->harganetto,//$item->harganetto,
+                    'hargadiscount' => $item->hargadiscount,
+                    'hargajual' => (float)$item->harganetto + (((float)$item->harganetto * (float)$persenUpHargaSatuan)/100),
+                    'persenhargajualproduk'=>$persenUpHargaSatuan,
+                    'qtyproduk' => (float)$item->qtyproduk,
+                    'objectruanganfk' => $item->objectruanganfk,
+                    'nostrukterimafk' => $item->nostrukterimafk,
+                    'tglkadaluarsa' => $item->tglkadaluarsa,
+                    'persenup' => $persenUpHargaSatuan,
+                    'kdapotikonline' => $item->kdapotikonline,
+                    'isfornas' => $item->isfornas,
+                    'satuan' => $item->satuan,
+                );
+            }
+        }
+        // ### END-Harga Terakhir ### //
+
+        $jmlstok =0;
+        foreach ($result as $item){
+            $jmlstok = $jmlstok+$item->qtyproduk;
+        }
+
+        $cekConsis = DB::select(DB::raw("select * from his_obat_ms_t where hobatid=:produkfk;"),
+            array(
+                'produkfk' =>  $request['produkfk'],
+            )
+        );
+        $cekKekuatanSupranatural = DB::select(DB::raw("
+
+            select pr.kekuatan,sdn.name as sediaan from produk_m as pr 
+            left join rm_sediaan_m as sdn on sdn.id=pr.objectsediaanfk
+            where pr.kdprofile = $idProfile and pr.id=:produkfk;
+            
+            "),
+            array(
+                'produkfk' =>  $request['produkfk'],
+            )
+        );
+        $kekuatan =0;
+        $sediaan=0;
+        if (count($cekKekuatanSupranatural)>0){
+            $kekuatan = (float)$cekKekuatanSupranatural[0]->kekuatan;
+            $sediaan = $cekKekuatanSupranatural[0]->sediaan;
+            if ($kekuatan == null){
+                $kekuatan =0;
+            }
+        }
+
+
+        $result= array(
+            'detail' => $results,
+            'jmlstok'=> $jmlstok,
+            'kekuatan' =>$kekuatan,
+            'sediaan' => $sediaan,
+            'sistemharganetto' => $SistemHargaNetto,
+            'metodeambilharganetto' => $MetodeAmbilHargaNetto,
+            'metodestokharganetto' => $MetodeStokHargaNetto,
+            'consis' => count($cekConsis),
+            'message' => 'as@epic',
+        );
+        return $this->respond($result);
     }
 }

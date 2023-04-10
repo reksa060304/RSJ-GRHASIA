@@ -788,7 +788,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('emr/get-combo-resep-emr', 'EMR\EMRController@getDataComboResepEMR');
           Route::get('emr/get-daftar-detail-order', 'EMR\EMRController@getDaftarDetailOrder');
           Route::get('emr/get-info-stok', 'EMR\EMRController@getInformasiStok');
-          Route::get('emr/get-produkdetail', 'Farmasi\PelayananResepController@getProdukDetail');
+          Route::get('emr/get-produkdetail', 'EMR\EMRController@getProdukDetail');
           Route::get('emr/get-jenis-obat', 'EMR\EMRController@getJenisObat');
           Route::post('emr/simpan-order-pelayananobatfarmasi', 'EMR\EMRController@SimpanOrderPelayananObat');
           Route::get('emr/get-transaksi-pelayanan', 'Farmasi\PelayananResepController@getTransaksiPelayananApotik');
