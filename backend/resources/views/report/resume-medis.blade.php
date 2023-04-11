@@ -341,24 +341,24 @@
                                         </td>
 
                                         <td width="33%"></td>
-                                        <td width="33%"><b>Bandung</b>, {!! date('d-m-Y') !!} <br>
+                                        <td width="33%"><b>Sleman</b>, {!! date('d-m-Y') !!} <br>
                                             <b>Dokter Penanggung Jawab</b></td>
                                     </tr>
                                     <tr>
                                         <td>
-                                            <div style="text-align: center" id="qrPasien"></div>
+                                            {{-- <div style="text-align: center" id="qrPasien"></div> --}}
                                         </td>
                                         <td></td>
                                         <td>
-                                            <div style="text-align: center" id="qrDokter"></div>
+                                            {{-- <div style="text-align: center" id="qrDokter"></div> --}}
                                         </td>
                                     </tr>
 
                                     <tr>
-                                        <td style="text-align: center"><span style="font-weight: bold;color: #ccc">Ditandatangani secara elektronik</span>
+                                        <td style="text-align: center"><span style="font-weight: bold;color: #ccc"></span>
                                         </td>
                                         <td style="text-align: center">&nbsp;</td>
-                                        <td style="text-align: center"><span style="font-weight: bold;color: #ccc">Ditandatangani secara elektronik</span>
+                                        <td style="text-align: center"><span style="font-weight: bold;color: #ccc"></span>
                                             <br>{!! $res['d']['namadokter'] !!}
                                         </td>
                                     </tr>
