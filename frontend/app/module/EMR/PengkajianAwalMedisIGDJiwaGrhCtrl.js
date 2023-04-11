@@ -647,6 +647,12 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                         "type": "checkbox3",
                         "no": 20
                     },
+                    {
+                        "id": 310628,
+                        "nama": "Lain-lain",
+                        "type": "textbox4",
+                        "no": 21
+                    },
                 ]
                 },
                 {
@@ -959,6 +965,17 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                         "nama": "",
                         "type": "textbox12",
                         "no": 65
+                    },
+                    {
+                        "id": 310626,
+                        "nama": "Lain-lain",
+                        "type": "checkbox12",
+                        "no": 66,
+                    }, {
+                        "id": 310627,
+                        "nama": "",
+                        "type": "textbox12",
+                        "no": 67
                     },
                 ]
                 },
