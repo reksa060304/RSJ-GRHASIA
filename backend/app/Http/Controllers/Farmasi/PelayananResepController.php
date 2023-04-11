@@ -6660,7 +6660,7 @@ class PelayananResepController extends ApiController
                 'ks.nilaikonversi','ss2.satuanstandar as satuanstandar2','sr.noresep','sr.norec as norec_resep', 'sr.cito', 'pp.rke',
                 'jkm.jeniskemasan','jk.id as jkid','pp.jenisobatfk','jra.jenisracikan','pp.jasa','ru2.id as namaruanganasalid','ru2.id as ruangandepoid','ru2.namaruangan as ruangandepo',
                 'pp.aturanpakai','ru.namaruangan','dok.id as dokterid','dok.namalengkap as dokter','pp.ispagi','pp.issiang','pp.ismalam','pp.issore','pp.iskronis','sr.isreseppulang as reseppulang',
-                DB::raw("case when jra.jenisracikan = 'Racikan' then op.jumlahracikan else pp.jumlah end AS jumlah,pr.kekuatan as kekuatan, case when pp.aturanpakai is not null then pp.aturanpakai else op.aturanpakai end as aturanpakai,
+                DB::raw("case when pp.jeniskemasanfk = 1 then (pp.jumlah::float*pr.kekuatan::float)/pp.dosis::float else pp.jumlah end AS jumlah,pr.kekuatan as kekuatan, case when pp.aturanpakai is not null then pp.aturanpakai else op.aturanpakai end as aturanpakai,
                                sn.satuanresep,pp.satuanresepfk,pp.tglkadaluarsa,pp.dosis,djp.detailjenisproduk,jp.jenisproduk,apd.norec norec_apd,pd.norec norec_pd,apd.objectkelasfk klid,op.keteranganpakai"))
             ->where('pp.kdprofile', $idProfile)
             ->where('jp.id',97)

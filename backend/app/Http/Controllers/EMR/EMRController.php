@@ -5507,7 +5507,7 @@ class EMRController  extends ApiController
         $result = [];
         foreach ($data as $item) {
             $details = DB::select(DB::raw("
-                    SELECT pp.satuandosis, jr.jenisracikan satuanstandar, jr.id ssid, so.noorder,op.rke, jk.jeniskemasan, pr.namaproduk, op.aturanpakai, op.jumlah, op.hargasatuan,op.keteranganpakai as keterangan,
+                    SELECT DISTINCT pp.satuandosis, jr.jenisracikan satuanstandar, jr.id ssid, so.noorder,op.rke, jk.jeniskemasan, pr.namaproduk, op.aturanpakai, op.jumlah, op.hargasatuan,op.keteranganpakai as keterangan,
                            op.satuanresepfk,sn.satuanresep,op.tglkadaluarsa, op.dosis
                     from strukorder_t as so 
                     left join orderpelayanan_t as op on op.strukorderfk = so.norec
@@ -11656,6 +11656,230 @@ class EMRController  extends ApiController
             'metodestokharganetto' => $MetodeStokHargaNetto,
             'consis' => count($cekConsis),
             'message' => 'as@epic',
+        );
+        return $this->respond($result);
+    }
+    public function getDetailOrder(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $dataAsalProduk = \DB::table('asalproduk_m as ap')
+            ->select('ap.id','ap.asalproduk')
+            ->get();
+        $dataSigna = \DB::table('stigma as st')
+            ->select('st.id','st.name')
+            ->get();
+        $dataStruk = \DB::table('strukorder_t as so')
+            ->JOIN('pegawai_m as pg','pg.id','=','so.objectpegawaiorderfk')
+            ->JOIN('ruangan_m as ru','ru.id','=','so.objectruangantujuanfk')
+            ->select('so.noorder','pg.id as pgid','pg.namalengkap','ru.id','ru.namaruangan','so.tglorder')
+            ->where('so.kdprofile', $idProfile);
+
+        if(isset($request['noorder']) && $request['noorder']!="" && $request['noorder']!="undefined"){
+            $dataStruk = $dataStruk->where('so.noorder','=', $request['noorder']);
+        }
+        $dataStruk = $dataStruk->first();
+        $data = \DB::table('strukorder_t as so')
+            ->JOIN('orderpelayanan_t as op','op.strukorderfk','=','so.norec')
+            ->JOIN('ruangan_m as ru','ru.id','=','so.objectruangantujuanfk')
+            ->leftJOIN('jeniskemasan_m as jk','jk.id','=','op.jeniskemasanfk')
+            ->leftJOIN('routefarmasi as rt','rt.id','=','op.routefk')
+            ->JOIN('produk_m as pr','pr.id','=','op.objectprodukfk')
+            ->leftJOIN('rm_sediaan_m as sdn','sdn.id','=','pr.objectsediaanfk')
+            ->leftJOIN('satuanstandar_m as ss','ss.id','=','op.objectsatuanstandarfk')
+            ->leftJOIN('satuanstandar_m as ss2','ss2.id','=','op.satuanviewfk')
+            ->leftJOIN('satuanresep_m as sn','sn.id','=','op.satuanresepfk')
+            ->leftJOIN('jenisracikan_m as jr','jr.id','=','op.jenisobatfk')
+            ->select('op.satuandosis','jr.id as ssid', 'so.noorder','op.hargasatuan','op.qtystokcurrent','so.objectruangantujuanfk','ru.namaruangan',
+                'op.rke','op.jeniskemasanfk','jk.id as jkid','jk.jeniskemasan','op.aturanpakai','op.routefk','rt.name as namaroute',
+                'op.objectprodukfk','pr.namaproduk','op.hasilkonversi',
+                'op.objectsatuanstandarfk','jr.jenisracikan as satuanstandar','op.satuanviewfk','ss2.satuanstandar as ssview',
+                'op.qtyproduk','op.hargadiscount','op.hasilkonversi','op.qtystokcurrent','op.dosis','op.jenisobatfk',
+                'op.hargasatuan','op.hargadiscount','pr.kekuatan','sdn.name as sediaan','op.ispagi','op.issiang','op.ismalam',
+                'op.issore','op.keteranganpakai','op.keteranganpakai as catatandokter','op.satuanresepfk','sn.satuanresep','op.tglkadaluarsa','so.isreseppulang', 
+                DB::raw("
+                CASE
+                WHEN op.jumlahracikan <> NULL AND op.jeniskemasanfk = 1 THEN
+                op.jumlahracikan 
+                WHEN op.jumlahracikan is NULL 
+                AND op.jeniskemasanfk = 2 THEN
+                null ELSE op.qtyproduk::float * ( pr.kekuatan::float / op.dosis::float ) 
+                END AS jumlahracikan"))
+            ->where('so.kdprofile', $idProfile);
+
+        if(isset($request['noorder']) && $request['noorder']!="" && $request['noorder']!="undefined"){
+            $data = $data->where('so.noorder','=', $request['noorder']);
+        }
+        $data = $data->get();
+
+        $orderPelayanan=[];
+        $i = 0;
+        // $noordertapistruk = null;
+        // if(!empty($dataStruk)){
+        //     $noordertapistruk = $dataStruk->id;
+        // }
+        $dataStok = DB::select(DB::raw("select sk.norec,spd.objectprodukfk, sk.tglstruk,spd.objectasalprodukfk,
+                            spd.harganetto2 as hargajual,spd.harganetto2 as harganetto,spd.hargadiscount,
+                    sum(spd.qtyproduk) as qtyproduk,spd.objectruanganfk
+                    from stokprodukdetail_t as spd
+                    inner JOIN strukpelayanan_t as sk on sk.norec=spd.nostrukterimafk
+                    where spd.kdprofile = $idProfile and spd.objectruanganfk =:ruanganid
+                    group by sk.norec,spd.objectprodukfk, sk.tglstruk,spd.objectasalprodukfk,
+                            spd.harganetto2,spd.hargadiscount,
+                    spd.objectruanganfk
+                    order By sk.tglstruk"),
+            array(
+                'ruanganid' =>$dataStruk->id
+            )
+        );
+
+        $hargajual=0;
+        $harganetto=0;
+        $nostrukterimafk='';
+        $asalprodukfk=0;
+        $asalproduk='';
+        $jmlstok=0;
+        $hargasatuan=0;
+        $hargadiscount=0;
+        $total=0;
+        $aturanpakaifk=0;
+        $rke='0';
+        $dataTarifAdminResep = \DB::table('settingdatafixed_m as rt')
+            ->select('rt.namafield','rt.nilaifield')
+            ->where('rt.statusenabled',true)
+            ->where('rt.namafield','tarifadminresep')
+            ->orderBy('rt.id')
+            ->get();
+        foreach ($data as $item){
+            $i = $i+1;
+            $hargajual=0;
+            $harganetto=0;
+            $jmlstok=0;
+            $hargasatuan=0;
+            $hargadiscount=0;
+            $total=0;
+
+
+
+            $tarifadminjasa = $dataTarifAdminResep[0]->nilaifield;
+            $tarifjasa =0;
+            $qty20 =0;
+            if ($item->jkid == 2){
+                $tarifjasa = $tarifadminjasa;//800;
+            }
+            if ($item->jkid == 1){
+                if ($rke != $item->rke) {
+                    if ($item->qtyproduk > 20) {
+                        $qty20 = number_format($item->qtyproduk / 20, 0);
+                        if ($item->qtyproduk % 20 == 0) {
+                            $qty20 = $qty20;
+                        } else {
+                            $qty20 = $qty20 + 1;
+                        }
+
+//                        $tarifjasa = 800 * $qty20;
+                        $tarifjasa = $tarifadminjasa * $qty20;
+                    }else{
+//                        $tarifjasa = 800;
+                        $tarifjasa = $tarifadminjasa ;
+                    }
+                    $rke = $item->rke;
+                }
+            }
+            $hargajual =round($item->hargasatuan,0);
+            $hargasatuan =round($item->hargasatuan,0);
+            $harganetto =round( $item->hargadiscount,0);
+
+            foreach ($dataStok as $item2){
+                if ($item2->objectprodukfk == $item->objectprodukfk){
+                    if ($item2->qtyproduk > $item->qtyproduk*$item->hasilkonversi){
+//                        $hargajual =round($item2->hargajual+(($item2->hargajual*25)/100),0);
+//                        $harganetto =round( $item2->harganetto+(($item2->harganetto*25)/100),0);//$item2->harganetto;
+
+
+
+                        $nostrukterimafk = $item2->norec;
+                        $asalprodukfk = $item2->objectasalprodukfk;
+//                        $asalproduk = $item2->objectasalprodukfk;
+                        $jmlstok = $item2->qtyproduk;
+//                        $hargasatuan = $harganetto;//$item2->harganetto;
+                        $hargadiscount = $item2->hargadiscount;
+                        $total = (((float)ceil($item->qtyproduk) * ((float)$hargasatuan-(float)$hargadiscount))*$item->hasilkonversi) + $tarifjasa;
+                        break;
+                    }
+                }
+            }
+            foreach ($dataAsalProduk as $item3){
+                if ($asalprodukfk == $item3->id){
+                    $asalproduk = $item3->asalproduk;
+                }
+            }
+            foreach ($dataSigna as $item4){
+                if ($item->aturanpakai == $item4->id){
+                    $aturanpakaifk = $item4->id;
+                }
+            }
+            if((float)$item->dosis == 0){
+                $item->dosis = 1;
+            }
+            // return $this->respond($item->qtyproduk);
+            $orderPelayanan[] = array(
+                'no' => $i,
+                'noregistrasifk' => '',
+                'tglregistrasi' => '',
+                'generik' => null,
+                'hargajual' => $hargajual,
+                'jenisobatfk' => $item->jenisobatfk,
+                'kelasfk' => '',
+                'stock' => $jmlstok,
+                'harganetto' => $harganetto,
+                'nostrukterimafk' => $nostrukterimafk,
+                'ruanganfk' => $item->objectruangantujuanfk,
+                'rke' => $item->rke,
+                'jeniskemasanfk' => $item->jeniskemasanfk,
+                'jeniskemasan' => $item->jeniskemasan,
+                'aturanpakaifk' => $aturanpakaifk,
+                'aturanpakai' => $item->aturanpakai,
+                'routefk' => $item->routefk,
+                'route' => $item->namaroute,
+                'asalprodukfk' => $asalprodukfk,
+                'asalproduk' => $asalproduk,
+                'produkfk' => $item->objectprodukfk,
+                'namaproduk' => $item->namaproduk,
+                'nilaikonversi' => $item->hasilkonversi,
+                'satuanstandarfk' => $item->ssid,//objectsatuanstandarfk,
+                'satuanstandar' => $item->satuanstandar,//satuanstandar,
+                'satuanviewfk' => $item->satuanviewfk,
+                'satuanview' => $item->ssview,
+                'jmlstok' => $item->qtystokcurrent,
+                'jumlah' => ceil($item->qtyproduk),
+                'jumlahobat' => $item->qtyproduk,
+                'jumlahracikan' => $item->jumlahracikan,
+                'dosis' => $item->dosis,
+                'kekuatan' => $item->kekuatan,
+                'hargasatuan' => $hargasatuan,
+                'hargadiscount' => $hargadiscount,
+                'total' => $total,
+                'sediaan' => $item->sediaan,
+                'jmldosis' => (String)$item->qtyproduk/$item->dosis . '/' . (String)$item->dosis,
+//                'jmldosis' => (String)$item->qtyproduk,
+                'jasa' => $tarifjasa,
+                'ispagi' => $item->ispagi,
+                'issiang' =>  $item->issiang,
+                'ismalam' =>  $item->ismalam,
+                'issore' =>  $item->issore,
+                "catatandokter"=>$item->catatandokter,
+                "keterangan"=>null,
+                'satuanresepfk' =>  $item->satuanresepfk,
+                "satuanresep"=>$item->satuanresep,
+                "tglkadaluarsa"=>$item->tglkadaluarsa,
+                "isreseppulang" => $item->isreseppulang,
+                "satuandosis" => $item->satuandosis,
+            );
+        }
+
+        $result =array(
+            'strukorder' => $dataStruk,
+            'orderpelayanan' => $orderPelayanan,
         );
         return $this->respond($result);
     }

@@ -209,7 +209,6 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 
                 medifirstService.get("farmasi/get-alergi?nocm=" + $scope.item.noMr, true).then(function(dat){
                     $scope.item.alergi = dat.data[0].data[0].alergi
-                    console.log(dat.data[0].data[0].alergi)
                 })
                 
                 // medifirstService.get("emr/get-daftar-detail-order?" + $riwayat).then(function (e) {
@@ -265,7 +264,6 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     let kodeArr = $scope.item.alergi.split(",");
 
                     for(var i = 0; i < kodeArr.length; i++){
-                        console.log(kodeArr[i].toLowerCase().replace(/\/r/g,''))
                         if ($scope.item.produk.namaproduk.toLowerCase().match(kodeArr[i].toLowerCase().replace(' ', '')) && $scope.item.alergi.length > 2) {
                             toastr.error('Pasien Alergi Terhadap Obat Tersebut', 'Peringatan')
                             return
@@ -273,7 +271,6 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     }
                 }
                 for (let i = 0; i < $scope.listJenisRacikan.length; i++) {
-                    console.log($scope.item.produk.ssid, $scope.listJenisRacikan[i].objectsatuanstandarfk);
                     if ($scope.item.produk.ssid == $scope.listJenisRacikan[i].objectsatuanstandarfk) {
                         $scope.item.jenisRacikan = $scope.listJenisRacikan[i]
                     }
@@ -398,7 +395,6 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             });
             $scope.$watch('item.aturanpakaitxt', function (newValue, oldValue) {
                 if (newValue != oldValue) {
-                            // console.log($scope.item.aturanpakaitxt)
                             if($scope.item.jenisKemasan.jeniskemasan == 'Non Racikan'){
                                 if($scope.item.hari != undefined){
                                     $scope.item.jumlah = parseInt($scope.item.hari) * parseFloat($scope.item.dosisperhari)*parseInt($scope.item.aturanpakaitxt.slice(0, -2))
@@ -631,7 +627,6 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     let kodeArr = $scope.item.alergi.split(",");
 
                     for(var i = 0; i < kodeArr.length; i++){
-                        console.log(kodeArr[i].toLowerCase().replace(/\/r/g,''))
                         if ($scope.item.produk.namaproduk.toLowerCase().match(kodeArr[i].toLowerCase().replace(' ', '')) && $scope.item.alergi.length > 2) {
                             toastr.error('Pasien Alergi Terhadap Obat Tersebut', 'Peringatan')
                             return
@@ -672,14 +667,11 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 //     toastr.error("Data Sudah Diclosing, Hubungi Tatarekening!");
                 //     return;
                 // }
-                console.log($scope.item.dosis)
                 if ($scope.item.jumlah == NaN || $scope.item.jumlah == undefined || $scope.item.jumlah == '') {
                     alert("Jumlah harus di isi!")
                     return;
                 }
 
-                console.log($scope.stok)
-                console.log(parseFloat($scope.item.jumlah))
                 if(parseFloat($scope.item.jumlah) > $scope.stok && $scope.item.jenisKemasan.id == 2){
                     alert("Jumlah obat melebihi stok yang tersisa, stok tersisa: " + $scope.stok)
                     return;
@@ -869,7 +861,6 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                                         satuandosis : $scope.item.satuannya
                                     }
                                     data2.push(data)
-                                    console.log(data2);
                                     // $scope.dataGrid.add($scope.dataSelected)
                                     $scope.dataGrid = new kendo.data.DataSource({
                                         data: data2,
@@ -1260,7 +1251,6 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     tgl: e.noresep.tglorder,
                     tgl_string: dateHelper.getTanggalJamFormatted(e.noresep.tglorder),
                 }
-                console.log(body);
                 medifirstService.sendSocket("sendNotification", body);
             }
             $scope.simpan = function () {
@@ -1322,11 +1312,9 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 medifirstService.post('emr/simpan-order-pelayananobatfarmasi',{data: objSaves}).then(function (e) {
                 $scope.hideSimpan = false
                 $scope.isRouteLoading = false
-
                     sendNotification(e.data)
                     $scope.item.resep == undefined
                     $scope.norecOrder = ''
-                    console.log($scope.copynoresep)
                     if($scope.copynoresep == ''){
                         medifirstService.postLogging('Order Resep', 'Norec strukresep_t', e.data.noresep.norec,
                         'Order Resep No Order - ' + e.data.noresep.noorder + ' dengan No Registrasi ' + $scope.item.noregistrasi).then(function (res) {
@@ -1346,6 +1334,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     })
                     // $scope.item.resep = e.data.noresep.noorder
                     //  $scope.hideSimpan =false
+                    
                     $scope.copynoresep = ''
                     init();
                     $scope.batal();
@@ -1358,9 +1347,12 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         params = $scope.item.noreservasi
                     }
                     saveAntrol(params, norec_pd)
-                }) 
-                $scope.hideSimpan = false
-                $scope.isRouteLoading = false
+                },
+                function (err) {
+                    $scope.hideSimpan = false
+                    $scope.isRouteLoading = false
+                });
+                
                 
             }
 
@@ -1371,7 +1363,6 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             }
             function loadOrder(params){
                 medifirstService.get("emr/get-daftar-detail-order?" + params, true).then(function (e) {
-                    console.log(e.data)
                     for (var i = e.data.length - 1; i >= 0; i--) {
                         e.data[i].no = i + 1                        
                         if (e.data[i].reseppulang == 1) {
@@ -1791,7 +1782,6 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             }
 
             $scope.preview = function (){
-                console.log($scope.dataSelectedRiwayat)
                 if ($scope.dataSelectedRiwayat == undefined) {
                     toastr.error('Pilih data dulu')
                     return
@@ -1804,13 +1794,12 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             }
 
             $scope.reOrder = function (){
-                console.log($scope.dataSelectedRiwayat)
                 if ($scope.dataSelectedRiwayat == undefined) {
                     toastr.error('Pilih data dulu')
                     return
                 }
 
-                medifirstService.get("farmasi/get-detail-order?noorder=" + $scope.dataSelectedRiwayat.noorder, true).then(function (dat) {
+                medifirstService.get("emr/get-detail-order?noorder=" + $scope.dataSelectedRiwayat.noorder, true).then(function (dat) {
                     $scope.isRouteLoading = false;
                     $scope.norecOrder = ''
                     $scope.item.resep = $scope.dataSelectedRiwayat.noorder
@@ -1860,13 +1849,11 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 });
             }
             $scope.reOrderResep = function (){
-                // console.log($scope.dataSelectedResep.details);
                 if ($scope.dataSelectedResep == undefined) {
                     toastr.error('Pilih data dulu')
                     return
                 }
 
-                // console.log($scope.dataSelectedResep)
 
                 if ($scope.dataSelectedResep.cito == "✔") {
                     $scope.item.iscito = true;
@@ -1926,7 +1913,6 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     
 
                     data2 = $scope.dataSelectedResep.details
-                    console.log(data2);
                     $scope.dataGrid = new kendo.data.DataSource({
                         data: data2,
                         group: $scope.group
@@ -2371,7 +2357,6 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 toastr.error('Isi dulu resep sebelum preview')
                 return
             }
-            // console.log(data2)
             var objSave = {
                 data: data2,
                 norec_apd: norec_apd,
