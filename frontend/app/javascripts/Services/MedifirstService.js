@@ -286,6 +286,10 @@ define(['Configuration'], function (config) {
                     "name": name,
                     "body": body
                 });
+                body.method = 'save'
+                r.postNonMessage({
+                    url: baseApiBackend + 'sysadmin/store-notif'
+                }, body)
             },
             getSocket: function () {
                 return new Promise((resolve, reject) => {
