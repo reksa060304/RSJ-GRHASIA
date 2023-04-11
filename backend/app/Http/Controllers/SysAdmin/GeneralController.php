@@ -5668,9 +5668,10 @@ class GeneralController extends ApiController
     public function storeNotif(Request $request){
         $method = '';
         try {
+            $cek = null;
             if( $request['method'] =='save'){
-                $cek = ListNotif::where('norec',$request['norec'])->first();
-                if(empty($cek)){
+                // $cek = ListNotif::where('norec',$request['norec'])->first();
+                // if(empty($cek)){
                     $gl = $request['tgl'];
                     // $hari = $this->hari_ini($gl);
                     $da =  new ListNotif();
@@ -5692,9 +5693,10 @@ class GeneralController extends ApiController
                     $da->urlform = $request['urlForm'];
                     $da->params = $request['params']['noOrder'];
                     $da->save();
+                    $cek = $da;
     
                   $method="save";
-                }
+                // }
           
             }
             if( $request['method'] == 'delete'){
