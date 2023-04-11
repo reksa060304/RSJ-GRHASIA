@@ -627,7 +627,6 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             }
 
             $scope.tambah = function () {
-                console.log($scope.item.alergi.length);
                 if($scope.item.alergi != undefined){
                     let kodeArr = $scope.item.alergi.split(",");
 
