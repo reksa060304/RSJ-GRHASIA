@@ -359,7 +359,7 @@
                                         </td>
                                         <td style="text-align: center">&nbsp;</td>
                                         <td style="text-align: center"><span style="font-weight: bold;color: #ccc"></span>
-                                            <br>{!! $res['d']['namadokter'] !!}
+                                            <br><br> <br>{!! $res['d']['namadokter'] !!}
                                         </td>
                                     </tr>
 
