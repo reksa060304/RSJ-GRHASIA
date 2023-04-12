@@ -6182,15 +6182,16 @@ class EMRController  extends ApiController
                 if($rl->noregistrasi == $item->noregistrasi){
                     $item->norec_apdlab = $rl->norec_apd;
                     
-                    $pp = DB::select(DB::raw("SELECT pr.namaproduk, pp.norec as norec_pp, pp.strukorderfk as norec_so, pp.produkfk as idpr
-                    FROM pelayananpasien_t pp
-                    inner join produk_m pr on pr.id = pp.produkfk
-                    where pp.noregistrasifk ilike '$item->norec_apdlab'"));
-                    $item->detailslab = $pp;
+                    
                 }
             }
             foreach($details2 as $dss){
                 if($item->norec == $dss->norec){
+                    $pp = DB::select(DB::raw("SELECT pr.namaproduk, pp.norec as norec_pp, pp.strukorderfk as norec_so, pp.produkfk as idpr
+                    FROM pelayananpasien_t pp
+                    inner join produk_m pr on pr.id = pp.produkfk
+                    where pp.strukorderfk ilike '$item->norec'"));
+                    $item->detailslab = $pp;
                      $item->details[] = array(
                         'tglorder' => $dss->tglorder,
                         'noorder' => $dss->noorder,
