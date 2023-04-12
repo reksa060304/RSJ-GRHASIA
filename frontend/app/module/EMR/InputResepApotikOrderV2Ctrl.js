@@ -270,9 +270,11 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         }
                     }
                 }
-                for (let i = 0; i < $scope.listJenisRacikan.length; i++) {
-                    if ($scope.item.produk.ssid == $scope.listJenisRacikan[i].objectsatuanstandarfk) {
-                        $scope.item.jenisRacikan = $scope.listJenisRacikan[i]
+                if($scope.item.jenisKemasan.id == 2){
+                    for (let i = 0; i < $scope.listJenisRacikan.length; i++) {
+                        if ($scope.item.produk.ssid == $scope.listJenisRacikan[i].objectsatuanstandarfk) {
+                            $scope.item.jenisRacikan = $scope.listJenisRacikan[i]
+                        }
                     }
                 }
                 medifirstService.get("emr/get-info-stok?produkfk=" + $scope.item.produk.id, true)
