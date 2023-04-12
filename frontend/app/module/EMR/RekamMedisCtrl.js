@@ -15,7 +15,14 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.getRekamMedisCheck = function (checkNoregis) {
                 $rootScope.getRekamMedisCheck(checkNoregis);
             }
+                $scope.rekammedis = true
+            console.log(medifirstService.getKelompokUser());
+            if (medifirstService.getKelompokUser() == 'operator') {
+                $scope.rekammedis = false
+            }else{
+                $scope.rekammedis = true
 
+            }
             $scope.showNav = function () {
                 $rootScope.isShowNavEMR = !$rootScope.isShowNavEMR
             }
@@ -139,7 +146,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     $scope.mainTreeViewMenuOption = {
                         dataBound: function (e) {
                             $('span.k-in').each(function () {
-                                if ($(this).text() == 'Catatan Klinik (CPPT)') { $(this).addClass('gemblung') }
+                                if ($(this).text() == 'CPPT Rawat Jalan') { $(this).addClass('gemblung') }
                                 if ($(this).text() == 'Vital Sign') { $(this).addClass('gemblung') }
                                 if ($(this).text() == 'Resep Elektronik') { $(this).addClass('gemblung') }
 
@@ -276,6 +283,62 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 if (departemen == 18 || departemen == 28 || departemen == 24) { $scope.isRawatJalan = true }
                 if (departemen == 16 || departemen == 35) { $scope.isRawatInap = true }
 
+            }
+            $scope.searchnoreg = function(){
+                // if ($scope.dataPasienSelected == undefined) {
+                //     window.messageContainer.error("Pilih Dahulu Pasien!")
+                //     return
+                // }
+                medifirstService.get('registrasi/get-pd?noregistrasi=' + $scope.header.noregistrasi).then(function(e){
+                    medifirstService.get("registrasi/daftar-registrasi/get-apd?noregistrasi=" +
+                        $scope.header.noregistrasi +
+                        "&objectruanganlastfk=" + e.data.objectruanganlastfk
+                    ).then(function (data) {
+
+
+
+
+                        // debugger;
+                        // var arrStr = {
+                        //     0: $scope.dataPasienSelected.nocm,
+                        //     1: $scope.dataPasienSelected.namapasien,
+                        //     2: $scope.dataPasienSelected.jeniskelamin,
+                        //     3: $scope.dataPasienSelected.noregistrasi,
+                        //     4: $scope.dataPasienSelected.umur,
+                        //     5: $scope.dataPasienSelected.kelompokpasien,
+                        //     6: $scope.dataPasienSelected.tglregistrasi,
+                        //     7: data.data.ruangan[0].norec_apd,
+                        //     8: $scope.dataPasienSelected.norec,
+                        //     9: $scope.dataPasienSelected.objectkelasfk,
+                        //     10: $scope.dataPasienSelected.namakelas,
+                        //     11: $scope.dataPasienSelected.objectruanganlastfk,
+                        //     12: $scope.dataPasienSelected.namaruangan + '`'
+                        // }
+                        var arrStr = {
+                            0: $scope.header.nocm,
+                            1: $scope.header.namapasien,
+                            2: $scope.header.jeniskelamin,
+                            3: $scope.header.noregistrasi,
+                            4: $scope.header.umur,
+                            5: $scope.header.kelompokpasien,
+                            6: $scope.header.tglregistrasi,
+                            7: $scope.header.norec,
+                            8: $scope.header.norec_pd,
+                            9: $scope.header.objectkelasfk,
+                            10: $scope.header.namakelas,
+                            11: $scope.header.objectruanganfk,
+                            12: $scope.header.namaruangan,
+                            13: $scope.checkNoregis,
+                            14: moment($scope.header.tgllahir).format('DD-MM-YYYY'),
+                            15: $scope.header.alamatlengkap
+                        }
+                        cacheHelper.set('cacheRMelektronik', arrStr);
+                        $state.go('RekamMedis.VitalSign', {
+                            noRec: data.data.ruangan[0].norec_apd
+                        })
+                    })
+                })
+                
             }
 
         }

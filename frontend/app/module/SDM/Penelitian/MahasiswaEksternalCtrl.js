@@ -22,6 +22,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             var norecmhs = '';
             var gambar = ""
             var norecMs= "";
+            $scope.item.mahasiswaMulti = []
+
             // var images = ""
             loadDataCombo();
             LoadCache();
@@ -97,6 +99,17 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         // images[i] = dat.me[i].image
                         // /../../../../../backend/public/DIKLAT/FileFoto/DIKLAT-MuhamadFazriAnnafi2-1709142-fazri@gmail.com.jpg
                     }
+                    $scope.listMahasiswa = datas.data.me2
+                    $scope.selectOptionsMahasiswa = {
+                        placeholder: "Pilih Mahasiswa...",
+                        dataTextField: "nama",
+                        dataValueField: "norec_eks",
+                        // dataSource:{
+                        //     data: $scope.listRuangan
+                        // },
+                        autoBind: true,
+
+                    };
                     $scope.dataSourceGridDiagnosapasien = new kendo.data.DataSource({
                         data: datas.data.me2,
                         // group: $scope.group,
@@ -747,7 +760,18 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 });
                 
             }
+            $scope.tambahRuanganV2 = function () {
+                loadDataCombo()
+                // loadDetailRiwayat();
+                detailv2()
+                $scope.popUpTambahRuanganV2.center().open();
+                var actions = $scope.popUpTambahRuanganV2.options.actions;
+                actions.splice(actions.indexOf("Close"), 1);
+                $scope.popUpTambahRuanganV2.setOptions({
+                    actions: actions
+                });
 
+            }
             $scope.TutupPopUps = function () {
                 // $scope.itemDd.noRM = undefined;
                 // $scope.itemDd.namaPasien = undefined;
@@ -913,6 +937,151 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     window.open(configuration.baseApiBackend + "report/cetak-sertifikat?norec=" + norec + '&kdprofile=' + profile +
                         '&nama=' + nama, '_blank');
                 }
+            }
+
+            $scope.saveruanganV2 = function(){
+                    $scope.isRouteLoading = true;
+
+                var listMahasiswa = ""
+
+                if ($scope.item.mahasiswaMulti.length != 0) {
+                    var a = ""
+                    var b = ""
+                    for (var i = $scope.item.mahasiswaMulti.length - 1; i >= 0; i--) {
+
+                        var c = $scope.item.mahasiswaMulti[i].norec_eks
+                        b = "," + c
+                        a = a + b
+                    }
+                    listMahasiswa = a.slice(1, a.length)
+                }
+
+                var objSave = {
+                    data: listMahasiswa,
+                    objectruanganlastfk: $scope.item.ruangan.id,
+                    objectpegawaifk : $scope.item.pegawai.id,
+                    tglmasuk: moment($scope.item.tglmasuk).format('YYYY-MM-DD'),
+                    tglkeluar: moment($scope.item.tglkeluar).format('YYYY-MM-DD'),
+                }
+                console.log(objSave);
+                // return
+                medifirstService.post('sdm/pendidikan/save-pdruangan-group', objSave).then(function(data){
+                    $scope.isRouteLoading = false;
+                    $scope.item.ruangan = undefined
+                    $scope.item.pegawai = undefined
+                    $scope.item.tglmasuk = undefined
+                    $scope.item.tglkeluar = undefined
+                    loadDataCombo();
+                    // loadDetailRiwayat();
+                    detailv2()
+                })
+            }
+
+            function detailv2(){
+                medifirstService.get('diklat/get-pe-eks?norec=' + $state.params.norec).then(function (data) {
+                    var datas = data.data.data
+                    $scope.dataDetailV2 = new kendo.data.DataSource({
+                        data: datas,
+                        pageSize: 50,
+                        total: datas.length,
+                        serverPaging: false,
+                        group: $scope.group
+                    });
+                    $scope.group = {
+                        field: "namaruangan",
+                        aggregates: [{
+                            field: "namaruangan",
+                            aggregate: "count"
+                        }, 
+                        // {
+                        //     field: "namalengkap",
+                        //     aggregate: "count"
+                        // },
+                        // {
+                        //     field: "tglmasuk",
+                        //     aggregate: "count"
+                        // },
+                        // {
+                        //     field: "tglkeluar",
+                        //     aggregate: "count"
+                        // }
+                    ]
+                    };
+                    // $scope.aggregate = [{
+                    //     field: "namapasien",
+                    //     aggregate: "count"
+                    // }, {
+                    //     field: "ruangan.namaRuangan",
+                    //     aggregate: "count"
+                    // }]
+                })
+            }
+            $scope.TutupPopUpsV2 = function(){
+                $scope.popUpTambahRuanganV2.close();
+            }
+
+            $scope.columnDetailV2 = {
+                toolbar: ["excel", ],
+                excel: {
+                    fileName: "Laporan .xlsx",
+                    allPages: true,
+                },
+                excelExport: function (e) {
+
+                },
+                // groupable: true,
+                columns: [{
+                        field: "no",
+                        title: "No",
+                        width: "30px",
+                    },
+                    {
+                        field: "nama",
+                        title: "Mahasiswa",
+                        width: "100px",
+                    },
+                    
+                    {
+                        field: "namaruangan",
+                        title: "Ruangan",
+                        width: "100px",
+                    },
+                    
+                    {
+                        field: "namalengkap",
+                        title: "Pembimbing",
+                        width: "100px",
+                    },
+                    {
+                        field: "tglmasuk",
+                        title: "Tanggal Masuk",
+                        width: "100px",
+                    }, {
+                        field: "tglkeluar",
+                        title: "Tanggal Keluar",
+                        width: "100px",
+                    },
+                    // {
+                    //     hidden: true,
+                    //     field: "nama",
+                    //     title: "Mahasiswa",
+                    //     aggregates: ["count"],
+                    //     groupHeaderTemplate: "Mahasiswa"
+                    // },
+                    {
+                        hidden: true,
+                        field: "namaruangan",
+                        title: "Ruangan",
+                        aggregates: ["count"],
+                        groupHeaderTemplate: "Ruangan"
+                    },
+                ],
+                // groupable: true,
+                // filterable: true,
+                // columnMenu: true,
+                // reorderable: true,
+                resizable: true,
+                pageable: true,
             }
         }
     ]);

@@ -893,7 +893,14 @@ define(['initialize'], function (initialize) {
                     alert("Pilih Pasien Dahulu!!!")
                     return;
                 } else {
+                    
                     $scope.item.pilihDokter = { id: $scope.dataPasienSelected.objectpegawaifk, namalengkap: $scope.dataPasienSelected.namadokter }
+                    if ($scope.dataPasienSelected.objectpegawaifk == null) {
+                        $scope.item.pilihDokter = {
+                            id: medifirstService.getPegawaiLogin().id,
+                            namalengkap: medifirstService.getPegawaiLogin().namaLengkap
+                        }
+                    }
                     $scope.winDialogss.center().open();
                 }
             }

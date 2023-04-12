@@ -12956,4 +12956,11 @@ public function suratBuktiPengembalian(Request $request)
         return $pdf->stream();
         return view('report.EMR.suratketerangandokter',compact('data','pageWidth'));
     }
+    public function cetakPreviewOrder(Request $request)
+    {
+        $orderPelayanan = \DB::select(DB::raw("
+        select * from temperesep_t where norec_apd ilike '$request[norec_apd]' and kdprofile = 30 and statusenabled =true order by rke asc
+        "));
+        return view('report.apotik.previeworder', compact('orderPelayanan'));
+    }
 }

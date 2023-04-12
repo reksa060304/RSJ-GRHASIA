@@ -1,9 +1,9 @@
 VERSION 5.00
 Begin {BD4B4E61-F7B8-11D0-964D-00A0C9273C2A} Cr_cetakLabelKecil 
-   ClientHeight    =   9360
+   ClientHeight    =   9240
    ClientLeft      =   0
    ClientTop       =   0
-   ClientWidth     =   14580
+   ClientWidth     =   14760
    OleObjectBlob   =   "Cr_cetakLabelKecil.dsx":0000
 End
 Attribute VB_Name = "Cr_cetakLabelKecil"
@@ -12,7 +12,8 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Private Sub Section10_Format(ByVal pFormattingInfo As Object)
-    Dim ATR() As String
+    Dim ATR() As Integer
     ATR = Split(LCase(usCaraPakai.Value), "x")
-    txtAturanPakai.SetText ATR(0) & " x Sehari " & ATR(1) & " " & usss.Value '& " " & unjml.Value
+    
+    txtAturanPakai.SetText UBound(ATR(0)) & " x Sehari " & UBound(ATR(1)) & " " & usss.Value '& " " & unjml.Value
 End Sub

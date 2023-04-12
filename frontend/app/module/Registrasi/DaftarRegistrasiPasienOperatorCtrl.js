@@ -126,14 +126,14 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                   var unitDept = dataItem.get("deptid");
                   var unitPpk = dataItem.get("ppkrujukan");
                   var unitSep = dataItem.get("nosep");
-
-                  var cellSEP= row.children().eq(13);       
+				
+                  var cellSEP= row.children().eq(14);       
                   cellSEP.addClass(getNotifSEP(unitBpjs,unitSep,unitDept,unitPpk));
 
   				  var isdiag = dataItem.get("isdiagnosis");
-                  var cellDiag= row.children().eq(14);
+                  var cellDiag= row.children().eq(15);
                   cellDiag.addClass(getNotifDiag(isdiag));
-    
+					
                 }
               }
 			$scope.columnDaftarPasienPulang = {
@@ -454,14 +454,18 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 			})
 			}
 			function getNotifSEP(unitBpjs,unitSep,unitDept,unitPpk){
-                if (unitBpjs.indexOf("BPJS") > -1 && (unitSep==null || unitSep==undefined || unitSep=="")) {
-                    return "red";
-                }else if(unitBpjs.indexOf("BPJS") > -1 && unitDept=="16" && unitPpk !="1004R002"){
-                    return "koneng";
-				}
-				// else if(unitBpjs.indexOf("BPJS") > -1 &&  (unitSep!=null && unitSep!=undefined && unitSep!="") ){
+				// if (unitBpjs.indexOf("BPJS") > -1 && (unitSep != null && unitSep != undefined && unitSep != "")) {
 				// 	return "hejo";
 				// }
+                if (unitBpjs.indexOf("BPJS") > -1 && (unitSep==null || unitSep==undefined || unitSep=="-")) {
+                    return "red";
+                } else
+				if(unitBpjs.indexOf("BPJS") > -1 && unitDept=="16" && unitPpk !="1004R002"){
+                    return "koneng";
+				} else
+				if((unitSep!=null) ){
+					return "koneng";
+				}
             }
             function getNotifDiag(isdiag){
                 if (isdiag == false) {
