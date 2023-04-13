@@ -1511,7 +1511,19 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                     text: $scope.cc.namaruangan,
                     value: $scope.cc.objectruanganfk
                 }
-
+                medifirstService.get("emr/get-masalah-keperawatan?noemr=" + nomorEMR ).then(function (dat) {
+                    
+                    var a = ""
+                    var b = ""
+                    for (var i = dat.data.length - 1; i >= 0; i--) {
+    
+                        var c = dat.data[i].caption
+                        b = ", " + c
+                        a = a + b
+                    }
+                    $scope.item.obj[310603] = a.slice(1, a.length)
+                    // console.log($scope.bro);
+                })
                 $scope.item.obj[116201] = true
                 $scope.item.obj[116204] = true
                 $scope.item.obj[116207] = true
@@ -1604,6 +1616,7 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                     }
                 }
             })
+            
             
             $scope.GCSKuantitatif = function () {
                 let e = parseInt($scope.item.obj[21008563]) || 0;

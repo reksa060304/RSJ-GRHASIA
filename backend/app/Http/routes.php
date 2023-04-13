@@ -690,6 +690,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('emr/get-emr-cakem', 'EMR\EMRController@getCakem');
           Route::post('emr/hapus-emr-cakem', 'EMR\EMRController@hapusCakem');
           // Route::post('emr/save-emr-dinamis', 'EMR\EMRController@SaveTransaksiEMR');
+          Route::get('emr/get-masalah-keperawatan', 'EMR\EMRController@getEMRMasalahKeperawatan');
           Route::get('emr/get-emr-transaksi', 'EMR\EMRController@getEMRTransaksiRiwayat');
           Route::get('emr/get-emr-transaksi-detail', 'EMR\EMRController@getEMRTransaksiDetail');
           Route::get('emr/get-datacombo-part-pegawai', 'EMR\EMRController@getDataComboPegawaiPart');

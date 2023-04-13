@@ -11884,4 +11884,21 @@ class EMRController  extends ApiController
         );
         return $this->respond($result);
     }
+    public function getEMRMasalahKeperawatan(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $custid = '';
+        if (isset($request['custid']) && $request['custid'] != '') {
+            $custid = "where  customerid = '" . $request['custid'] . "'";
+        }
+        $data = DB::select(DB::raw(" 
+        SELECT ed.id, ed.caption FROM emrpasiend_t empd 
+        inner join emrd_t ed on ed.id = empd.emrdfk
+        where ed.id in ( 3017920, 3017917, 3017914, 3017911, 3017908, 3017905, 3017902, 3017899, 3017896, 3017893, 3017877, 3017874, 3017871, 3017868,3017865,3017862,3017859,3017856,
+        3017853,3017850) and emrpasienfk ilike '$request[noemr]'"
+        ));
+
+        return $this->respond($data); 
+    }
 }
