@@ -5472,9 +5472,9 @@ class EMRController  extends ApiController
                 'so.tglorder', 'pg.namalengkap', 'ru2.namaruangan',
                 'so.statusorder', 'so.namapengambilorder', 'so.noregistrasifk',
                 'pd.noregistrasi', 'kp.kelompokpasien',
-                'apd.norec as norec_apd',
                 'pd.tglregistrasi', 'ps.tgllahir', 'kl.namakelas', 'kl.id as klid', 'so.tglambilorder', 'so.norec as norec_order','so.isreseppulang','so.isambilobat','so.iskurir', 'so.cito')
-            ->where('so.kdprofile', $idProfile);
+            ->distinct()
+                ->where('so.kdprofile', $idProfile);
 
         if (isset($request['tglAwal']) && $request['tglAwal'] != "" && $request['tglAwal'] != "undefined") {
             $data = $data->where('so.tglorder', '>=', $request['tglAwal']);
@@ -5549,7 +5549,7 @@ class EMRController  extends ApiController
                 'norec_order' => $item->norec_order,
                 'norec' => $item->noregistrasifk,
                 'tglregistrasi' => $item->tglregistrasi,
-                'norec_apd' => $item->norec_apd,
+                // 'norec_apd' => $item->norec_apd,
                 'noorder' => $item->noorder,
                 'nocm' => $item->nocm,
                 'namapasien' => $item->namapasien,

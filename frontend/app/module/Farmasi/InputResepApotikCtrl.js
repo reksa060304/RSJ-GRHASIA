@@ -1013,6 +1013,7 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                 $scope.item.jumlahxmakan = 1
                 statusTambah = false
                 $scope.HargaMaster = -1;
+                dataProdukDetail = []
                 medifirstService.get("farmasi/get-produkdetail?" +
                     "produkfk=" + $scope.item.produk.id +
                     "&ruanganfk=" + $scope.item.ruangan.id +
