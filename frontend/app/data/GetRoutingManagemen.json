@@ -227,5 +227,24 @@
           "define": "MedifirstService"
         }
       ]
+    },
+    {
+      "name": "RekamMedis.AsesmenMedis.LembarSkriningKIE",
+      "url": "/LembarSkriningKIE",
+      "templateurl": "module/EMR/LembarSkriningKIE.html",
+      "controller": "LembarSkriningKIECtrl",
+      "deps": [{
+          "module": "Services",
+          "define": "Service"
+        },
+        {
+          "module": "LoginServices",
+          "define": "LoginService"
+        },
+        {
+          "module": "MedifirstService",
+          "define": "MedifirstService"
+        }
+      ]
     }
   ]

@@ -47,6 +47,10 @@
         {
             "nameDep": "AspekPenilaianMahasiswaCtrl",
             "urlDep": "module/SDM/Penelitian/AspekPenilaianMahasiswaCtrl"
+        },
+        {
+            "nameDep": "LembarSkriningKIECtrl",
+            "urlDep": "module/EMR/LembarSkriningKIECtrl"
         }
 
     ]
