@@ -11140,7 +11140,9 @@ class EMRController  extends ApiController
         ->get();
         
         $penggunaanobat = \DB::table('riwayatpenggunaanobat_t as ra')
-        ->leftjoin('produk_m as pr','pr.id','=','ra.objectprodukfk')->select(DB::raw("pr.namaproduk, ra.*"))
+        ->leftjoin('produk_m as pr','pr.id','=','ra.objectprodukfk')->select(DB::raw("ra.*, 
+        case when ra.objectprodukfk is not null then pr.namaproduk else ra.obatlain end as namaproduk
+        "))
         ->where('ra.kdprofile', $kdProfile)->where('ra.statusenabled', true)
         ->where('ra.noemr', $request['noemr'])
         // ->where('ra.noregistrasi', $request['noregistrasi'])
@@ -11150,7 +11152,7 @@ class EMRController  extends ApiController
         ->leftjoin('produk_m as pr','pr.id','=','ra.objectprodukfk')
         ->join('pegawai_m as pg','pg.id','=','ra.objectpegawaifk')
         ->join('ruangan_m as ru','ru.id','=','ra.objectruanganfk')
-        ->select(DB::raw("pr.namaproduk,ru.namaruangan,pg.namalengkap, ra.*"))
+        ->select(DB::raw("case when ra.objectprodukfk is not null then pr.namaproduk else ra.obatlain end as namaproduk,ru.namaruangan,pg.namalengkap, ra.*"))
         ->where('ra.kdprofile', $kdProfile)->where('ra.statusenabled', true)
         ->where('ra.noemr', $request['noemr'])
         // ->where('ra.noregistrasi', $request['noregistrasi'])

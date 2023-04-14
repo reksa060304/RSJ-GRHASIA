@@ -168,7 +168,7 @@ define(['initialize'], function (initialize) {
 
                     dataRO = data.data.rekonsiliasiobat
                     for (let i = 0; i < dataRO.length; i++) {
-                        dataRO[i].nomorRO = i + 1
+                        dataRO[i].nomorro = i + 1
                         if (dataRO[i].islanjutaturansama == true) {
                             dataRO[i].islanjutaturansama = "✓"
                         }
@@ -665,11 +665,11 @@ define(['initialize'], function (initialize) {
                         "title": "Nama obat/suplemen/herbal/tradisional",
                         "width": "120px",
                     },
-                    {
-                        "field": "obatlain",
-                        "title": "Obat Lain",
-                        "width": "70px",
-                    },
+                    // {
+                    //     "field": "obatlain",
+                    //     "title": "Obat Lain",
+                    //     "width": "70px",
+                    // },
                     {
                         "title": "Jenis Obat",
                         "width": "120px",
@@ -752,7 +752,13 @@ define(['initialize'], function (initialize) {
                 }],
                 selectable: "row",
                 pageable: true,
-                columns: [{
+                columns: [
+                    {
+                        "field": "nomorro",
+                        "title": "No",
+                        "width": "50px",
+                    }, 
+                    {
                         "field": "tanggal",
                         "title": "Tanggal",
                         "width": "50px",
@@ -765,11 +771,6 @@ define(['initialize'], function (initialize) {
                     {
                         "field": "namaproduk",
                         "title": "Nama obat/suplemen/herbal/tradisional",
-                        "width": "80px",
-                    },
-                    {
-                        "field": "obatlain",
-                        "title": "Obat Lain",
                         "width": "80px",
                     },
                     {
@@ -858,9 +859,10 @@ define(['initialize'], function (initialize) {
                     id: dataItem.objectprodukfk,
                     namaproduk: dataItem.namaproduk
                 }
-                $scope.itemd.obatlain = dataItem.obatlain
-                if (dataItem.obatlain != null){
+                
+                if (dataItem.obatlain != null && dataItem.obatlain != "") {
                     $scope.itemd.rslain = true
+                    $scope.itemd.obatlain = dataItem.obatlain
                 }
                 $scope.norecPO = dataItem.norec
                 $scope.nomorPO = dataItem.nomorPO
@@ -921,15 +923,19 @@ define(['initialize'], function (initialize) {
                     id: dataItem.objectruanganfk,
                     namaruangan: dataItem.namaruangan
                 }
-
+                $scope.noRO = dataItem.nomorro
                 $scope.itemd.obatRO = {
                     id: dataItem.objectprodukfk,
                     namaproduk: dataItem.namaproduk
                 }
-                $scope.itemd.dosisRO = dataItem.obatlain
-                if (dataItem.obatlain != null) {
-                    $scope.itemd.obatlain = true
+                if (dataItem.obatlain != null && dataItem.obatlain != "") {
+                    $scope.itemd.rslain = true
+                    $scope.itemd.dosisRO = dataItem.obatlain
                 }
+                // if (dataItem.obatlain != null && dataItem.obatlain != "") {
+                //     $scope.itemd.rslain = true
+                //     $scope.itemd.obatlain = dataItem.obatlain
+                // }
                 $scope.norecRO = dataItem.norec
                 // $scope.nomorRO = dataItem.nomorRO
                 $scope.itemd.rute = dataItem.rute;
@@ -1009,8 +1015,9 @@ define(['initialize'], function (initialize) {
                     namaproduk = $scope.itemd.obatPO.namaproduk
                     objectprodukfk = $scope.itemd.obatPO.id
                 }
-                var obatlain = ""
+                var obatlain= ""
                 if ($scope.itemd.obatlain != undefined) {
+                    namaproduk = $scope.itemd.obatlain
                     obatlain = $scope.itemd.obatlain
                 }
                 var dosis = ""
@@ -1030,9 +1037,9 @@ define(['initialize'], function (initialize) {
                 } else {
                     nomorPO = dataPO.length + 1
                 }
-                if ($scope.norecPO != undefined) {
+                if ($scope.nomorPO != undefined) {
                     for (var i = dataPO.length - 1; i >= 0; i--) {
-                        if (dataPO[i].no == $scope.item.no) {
+                        if (dataPO[i].nomorPO == $scope.nomorPO) {
                             data.nomorPO = $scope.nomorPO
                             data.norec = $scope.norecPO
                             data.namaproduk = namaproduk
@@ -1053,12 +1060,13 @@ define(['initialize'], function (initialize) {
                             });
                             console.log(dataPO);
                             $scope.itemd = {}
+                            $scope.norecPO = ""
                         }
                     }
                 } else {
                     
                     data = {
-                        norec: "",
+                        norec: $scope.norecPO,
                         nomorPO: nomorPO,
                         namaproduk: namaproduk,
                         obatlain: obatlain,
@@ -1080,19 +1088,20 @@ define(['initialize'], function (initialize) {
                     });
                     console.log(dataPO);
                     $scope.itemd = {}
+                    $scope.norecPO = ""
                 }
             }
             $scope.createDataPO = function(){
                 $scope.itemd.tanggalmulai = new Date()
                 $scope.itemd.tanggalstop = new Date()
-                $scope.item.norecPO = undefined;
+                $scope.norecPO = "";
                 $scope.noPO = undefined
                 $scope.popUpLembarPenggunaanObat.center().open()
             }
 
             $scope.createDataRO = function () {
                 $scope.itemd.tanggalRO = new Date()
-                $scope.item.norecRO = undefined;
+                $scope.norecRO = "";
                 $scope.noRO = undefined
                 $scope.popUpLembarRekonsiliasiObat.center().open()
             }
@@ -1102,6 +1111,7 @@ define(['initialize'], function (initialize) {
                 var namaobat = ""
                 if ($scope.itemd.dosisRO != undefined) {
                     obatlain = $scope.itemd.dosisRO
+                    namaobat = $scope.itemd.dosisRO
                 }
                 if ($scope.itemd.obatRO != undefined) {
                     namaobat = $scope.itemd.obatRO.namaproduk
@@ -1120,10 +1130,17 @@ define(['initialize'], function (initialize) {
                     perubahanaturanpakai = $scope.itemd.perubahanaturanpakai
                 }
                 var data = {}
-                if ($scope.norecRO != undefined) {
+                var nomorRO = 0;
+                if ($scope.dataSourceROGrid == undefined) {
+                    nomorRO = 1
+                } else {
+                    nomorRO = dataRO.length + 1
+                }
+                if ($scope.noRO != undefined) {
                     for (var i = dataRO.length - 1; i >= 0; i--) {
-                        if (dataRO[i].norec == $scope.norecRO) {
+                        if (dataRO[i].nomorro == $scope.noRO) {
                             data.norec = $scope.norecRO
+                            data.nomorro = nomorRO
                             data.tanggal = moment($scope.itemd.tanggalRO).format('YYYY-MM-DD')
                             data.namaruangan = $scope.itemd.namaruangan.namaruangan
                             data.objectruanganfk = $scope.itemd.namaruangan.id
@@ -1147,9 +1164,9 @@ define(['initialize'], function (initialize) {
                         }
                     }
                 } else {
-                    
                     data = {
-                        norec: "",
+                        nomorro: nomorRO,
+                        norec: $scope.norecRO,
                         tanggal: moment($scope.itemd.tanggalRO).format('YYYY-MM-DD'),
                         namaruangan: $scope.itemd.namaruangan.namaruangan,
                         objectruanganfk: $scope.itemd.namaruangan.id,
@@ -1167,6 +1184,7 @@ define(['initialize'], function (initialize) {
                     $scope.dataSourceROGrid = new kendo.data.DataSource({
                         data: dataRO,
                     });
+                    console.log(dataRO);
                     $scope.itemd.obatRO = undefined
                     $scope.itemd.rute = undefined
                     $scope.itemd.aturanpakai = undefined
@@ -1174,7 +1192,7 @@ define(['initialize'], function (initialize) {
                     $scope.itemd.TPO = undefined
                     $scope.itemd.HPO = undefined
                     $scope.itemd.perubahanaturanpakai = undefined
-                    $scope.itemd.apotekerRO = undefined
+                    // $scope.itemd.apotekerRO = undefined
                 }
             }
             $scope.Batal = function(){
