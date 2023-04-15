@@ -1771,7 +1771,49 @@ class EMRController  extends ApiController
                 }
 
                 $RekamMedis->tglresume = date('Y-m-d H:i:s');                
-                $RekamMedis->diagnosismasuk = $request['diagnosismasuk'];                
+                $RekamMedis->diagnosismasuk = $request['diagnosismasuk'];    
+                if (isset($request['tglmasuk']) && $request['tglmasuk'] != "") {                    
+                    $RekamMedis->tglmasuk = $request['tglmasuk'];
+                 }  
+                 if (isset($request['tglpulang']) && $request['tglpulang'] != "") {                    
+                    $RekamMedis->tglpulang = $request['tglpulang'];
+                 }  
+                 if (isset($request['hasilfisik']) && $request['hasilfisik'] != "") {                    
+                    $RekamMedis->hasilfisik = $request['hasilfisik'];
+                 }   
+                 if (isset($request['hasilpsikiatri']) && $request['hasilpsikiatri'] != "") {                    
+                    $RekamMedis->hasilpsikiatri = $request['hasilpsikiatri'];
+                 }  
+                 if (isset($request['hasilpenunjang']) && $request['hasilpenunjang'] != "") {                    
+                    $RekamMedis->hasilpenunjang = $request['hasilpenunjang'];
+                 }          
+                 if (isset($request['axis2']) && $request['axis2'] != "") {                    
+                    $RekamMedis->axis2 = $request['axis2'];
+                 }   
+                 if (isset($request['kelas']) && $request['kelas'] != "") {                    
+                    $RekamMedis->kelas = $request['kelas'];
+                 }   
+                 if (isset($request['wisma']) && $request['wisma'] != "") {                    
+                    $RekamMedis->wisma = $request['wisma'];
+                 }   
+                 if (isset($request['axis3']) && $request['axis3'] != "") {                    
+                    $RekamMedis->axis3 = $request['axis3'];
+                 }    
+                 if (isset($request['axis4']) && $request['axis4'] != "") {                    
+                    $RekamMedis->axis4 = $request['axis4'];
+                 }   
+                 if (isset($request['axis5']) && $request['axis5'] != "") {                    
+                    $RekamMedis->axis5 = $request['axis5'];
+                 }  
+                 if (isset($request['kontrolklinik']) && $request['kontrolklinik'] != "") {                    
+                    $RekamMedis->kontrolklinik = $request['kontrolklinik'];
+                 }  
+                 if (isset($request['kondisiwaktukeluare']) && $request['kondisiwaktukeluare'] != "") {                    
+                    $RekamMedis->kondisiwaktukeluare = $request['kondisiwaktukeluare'];
+                 }    
+                 if (isset($request['terapipulang']) && $request['terapipulang'] != "") {                    
+                    $RekamMedis->terapipulang = $request['terapipulang'];
+                 }      
                 if (isset($request['kddiagnosismasuk']) && $request['kddiagnosismasuk'] != "") {                    
                    $RekamMedis->kddiagnosismasuk = $request['kddiagnosismasuk'];
                 }                
@@ -1795,7 +1837,7 @@ class EMRController  extends ApiController
                 $RekamMedis->alasandirawat = $request['alasandirawat'];                                
                 $RekamMedis->ringkasanriwayatpenyakit = $request['ringkasanriwayatpenyakit'];            
                 $RekamMedis->pemeriksaanfisik = $request['pemeriksaanfisik'];                
-                $RekamMedis->terapi = $request['terapi'];                
+                $RekamMedis->terapi = $request['terapi'];               
                 $RekamMedis->hasilkonsultasi = $request['hasilkonsultasi'];                
                 $RekamMedis->kondisiwaktukeluar = $request['kondisiwaktukeluar'];                
                 $RekamMedis->instruksianjuran = $request['instruksianjuran'];                
@@ -1862,6 +1904,7 @@ class EMRController  extends ApiController
             $result = array(
                 'status' => 400,
                 'message' => $transMessage,
+                'e'=> $e->getLine(). $e->getMessage(),
                 'as' => 'Inhuman',
             );
         }
@@ -1875,6 +1918,9 @@ class EMRController  extends ApiController
             ->select('rm.norec', 'rm.tglresume', 'ru.namaruangan', 'pg.namalengkap as namadokter',
                 'rm.ringkasanriwayatpenyakit', 'rm.pemeriksaanfisik', 'rm.pemeriksaanpenunjang',
                 'rm.hasilkonsultasi', 'rm.terapi', 'rm.diagnosisawal', 'rm.diagnosissekunder', 'rm.tindakanprosedur',
+                'rm.tglmasuk', 'rm.tglpulang',
+                'rm.wisma','rm.kelas','rm.hasilfisik','rm.hasilpsikiatri','rm.hasilpenunjang','rm.hasilpenunjang','rm.terapipulang',
+                'rm.axis2','rm.axis3','rm.axis4','rm.axis5','rm.kontrolklinik','rm.kondisiwaktukeluare',
                 // 'rm.diagnosismasuk', 'rm.diagnosistambahan', 'rm.alasandirawat',
                 'rm.kddiagnosisawal', 'rm.diagnosismasuk', 'rm.kddiagnosismasuk', 'rm.diagnosistambahan', 'rm.kddiagnosistambahan', 'rm.kddiagnosistambahan2', 'rm.kddiagnosistambahan3', 'rm.kddiagnosistambahan4', 'rm.alasandirawat',
                 'dg1.kddiagnosa as kddiagnosa1', 'dg1.namadiagnosa as namadiagnosa1',
@@ -1933,6 +1979,20 @@ class EMRController  extends ApiController
                 'ringkasanriwayatpenyakit' => $item->ringkasanriwayatpenyakit,
                 'pemeriksaanfisik' => $item->pemeriksaanfisik,
                 'pemeriksaanpenunjang' => $item->pemeriksaanpenunjang,
+                'tglmasuk' => $item->tglmasuk,
+                'tglpulang' => $item->tglpulang,
+                'wisma' => $item->wisma,
+                'kelas' => $item->kelas,
+                'hasilfisik' => $item->hasilfisik,
+                'hasilpsikiatri' => $item->hasilpsikiatri,
+                'hasilpenunjang' => $item->hasilpenunjang,
+                'terapipulang' => $item->terapipulang,
+                'axis2' => $item->axis2,
+                'axis3' => $item->axis3,
+                'axis4' => $item->axis4,
+                'axis5' => $item->axis5,
+                'kontrolklinik' => $item->kontrolklinik,
+                'kondisiwaktukeluare' => $item->kondisiwaktukeluare,
                 'hasilkonsultasi' => $item->hasilkonsultasi,
                 'terapi' => $item->terapi,
                 'diagnosismasuk' => $item->diagnosismasuk,

@@ -1776,9 +1776,12 @@ class ReportController extends ApiController{
     {
         $res['profile'] = Profile::where('id',$r['kdprofile'])->first();
         $data = \DB::table('resumemedis_t as rm')
-            ->select('pd.tglregistrasi','pd.tglpulang','rm.norec', 'rm.tglresume', 'ru.namaruangan', 'pg.namalengkap as namadokter',
+            ->select('rm.norec', 'rm.tglresume', 'ru.namaruangan', 'pg.namalengkap as namadokter',
                 'rm.ringkasanriwayatpenyakit', 'rm.pemeriksaanfisik', 'rm.pemeriksaanpenunjang',
                 'rm.hasilkonsultasi', 'rm.terapi', 'rm.diagnosisawal', 'rm.diagnosissekunder', 'rm.tindakanprosedur',
+                'rm.tglmasuk', 'rm.tglpulang',
+                'rm.wisma','rm.kelas','rm.hasilfisik','rm.hasilpsikiatri','rm.hasilpenunjang','rm.hasilpenunjang','rm.terapipulang',
+                'rm.axis2','rm.axis3','rm.axis4','rm.axis5','rm.kontrolklinik','rm.kondisiwaktukeluare',
                 // 'rm.diagnosismasuk', 'rm.diagnosistambahan', 'rm.alasandirawat',
                 'rm.kddiagnosisawal', 'rm.diagnosismasuk', 'rm.kddiagnosismasuk', 'rm.diagnosistambahan', 'rm.kddiagnosistambahan', 'rm.kddiagnosistambahan2', 'rm.kddiagnosistambahan3', 'rm.kddiagnosistambahan4', 'rm.alasandirawat',
                 'dg1.kddiagnosa as kddiagnosa1', 'dg1.namadiagnosa as namadiagnosa1',
@@ -1834,8 +1837,6 @@ class ReportController extends ApiController{
             }
             $result= array(
                 'norec' => $item->norec,
-                'tglregistrasi' => $item->tglregistrasi,
-                'tglpulang' => $item->tglpulang,
                 'kelompokpasien' => $item->kelompokpasien,
                 'tglresume' => $item->tglresume,
                 'namaruangan' => $item->namaruangan,
@@ -1843,6 +1844,20 @@ class ReportController extends ApiController{
                 'ringkasanriwayatpenyakit' => $item->ringkasanriwayatpenyakit,
                 'pemeriksaanfisik' => $item->pemeriksaanfisik,
                 'pemeriksaanpenunjang' => $item->pemeriksaanpenunjang,
+                'tglmasuk' => $item->tglmasuk,
+                'tglpulang' => $item->tglpulang,
+                'wisma' => $item->wisma,
+                'kelas' => $item->kelas,
+                'hasilfisik' => $item->hasilfisik,
+                'hasilpsikiatri' => $item->hasilpsikiatri,
+                'hasilpenunjang' => $item->hasilpenunjang,
+                'terapipulang' => $item->terapipulang,
+                'axis2' => $item->axis2,
+                'axis3' => $item->axis3,
+                'axis4' => $item->axis4,
+                'axis5' => $item->axis5,
+                'kontrolklinik' => $item->kontrolklinik,
+                'kondisiwaktukeluare' => $item->kondisiwaktukeluare,
                 'hasilkonsultasi' => $item->hasilkonsultasi,
                 'terapi' => $item->terapi,
                 'diagnosismasuk' => $item->diagnosismasuk,
