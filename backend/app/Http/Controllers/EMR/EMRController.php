@@ -5567,18 +5567,20 @@ class EMRController  extends ApiController
         $result = [];
         foreach ($data as $item) {
             $details = DB::select(DB::raw("
-                    SELECT DISTINCT pp.satuandosis, jr.jenisracikan satuanstandar, jr.id ssid, so.noorder,op.rke, jk.jeniskemasan, pr.namaproduk, op.aturanpakai, op.jumlah, op.hargasatuan,op.keteranganpakai as keterangan,
+                    SELECT DISTINCT op.satuandosis, jr.jenisracikan satuanstandar, jr.id ssid, so.noorder,op.rke, jk.jeniskemasan, pr.namaproduk, op.aturanpakai, op.jumlah, op.hargasatuan,op.keteranganpakai as keterangan,
                            op.satuanresepfk,sn.satuanresep,op.tglkadaluarsa, op.dosis
                     from strukorder_t as so 
                     left join orderpelayanan_t as op on op.strukorderfk = so.norec
                     left join strukresep_t sr on sr.orderfk = so.norec
-                    left join pelayananpasien_t pp on pp.strukresepfk = sr.norec
+                    left join pelayananpasien_t pp on pp.strukresepfk = sr.norec and pp.rke = op.rke 
                     left join produk_m as pr on pr.id=op.objectprodukfk
                     left join jeniskemasan_m as jk on jk.id=op.jeniskemasanfk
                     left join satuanstandar_m as ss on ss.id=op.objectsatuanstandarfk
                     left join satuanresep_m as sn on sn.id=op.satuanresepfk
                     left join jenisracikan_m as jr on jr.id=op.jenisobatfk
-                    where so.kdprofile = $idProfile and so.statusenabled = true and noorder=:noorder"),
+                    where so.kdprofile = $idProfile and so.statusenabled = true and noorder=:noorder
+                    
+                    order by op.rke asc"),
                 array(
                     'noorder' => $item->noorder,
                 )
@@ -11962,5 +11964,98 @@ class EMRController  extends ApiController
         ));
 
         return $this->respond($data); 
+    }
+    public function getDataCPPTRajal(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $norecApd = $request['norec_apd'];
+
+        $diagnosaAwal = collect(DB::select("
+            SELECT dg.id,dg.kddiagnosa AS kdDiagnosa,dg.namadiagnosa AS namaDiagnosa,
+                   dg.kddiagnosa || ' - ' || dg.namadiagnosa AS kodeNama,ddp.keterangan
+            FROM antrianpasiendiperiksa_t AS apd 
+            INNER JOIN detaildiagnosapasien_t AS ddp ON ddp.noregistrasifk = apd.norec
+            LEFT JOIN jenisdiagnosa_m AS jd ON jd.id = ddp.objectjenisdiagnosafk
+            LEFT JOIN diagnosa_m AS dg ON dg.id = ddp.objectdiagnosafk
+            WHERE apd.kdprofile = $kdProfile AND apd.statusenabled = true 
+            AND apd.norec = '$norecApd' 
+            AND ddp.objectjenisdiagnosafk = 5;
+        "));
+
+        $diagnosaUtama = collect(DB::select("
+            SELECT dg.id,dg.kddiagnosa AS kdDiagnosa,dg.namadiagnosa AS namaDiagnosa,
+                   dg.kddiagnosa || ' - ' || dg.namadiagnosa AS kodeNama,ddp.keterangan
+            FROM antrianpasiendiperiksa_t AS apd 
+            INNER JOIN detaildiagnosapasien_t AS ddp ON ddp.noregistrasifk = apd.norec
+            LEFT JOIN jenisdiagnosa_m AS jd ON jd.id = ddp.objectjenisdiagnosafk
+            LEFT JOIN diagnosa_m AS dg ON dg.id = ddp.objectdiagnosafk
+            WHERE apd.kdprofile = $kdProfile AND apd.statusenabled = true 
+            AND apd.norec = '$norecApd' 
+            AND ddp.objectjenisdiagnosafk = 1;
+        "));
+
+        $dataPemeriksaan = collect(DB::select("
+            SELECT emrdp.value
+            FROM emrpasiend_t AS emrdp
+            INNER JOIN emrpasien_t AS emrp ON emrp.noemr = emrdp.emrpasienfk
+            LEFT JOIN emrd_t AS emrd ON emrd.id = emrdp.emrdfk
+            LEFT JOIN pegawai_m AS pg ON pg.id = emrdp.pegawaifk
+            WHERE emrdp.statusenabled = true
+            AND emrdp.kdprofile = $kdProfile
+            AND emrdp.value IS NOT NULL
+            AND emrdp.value != 'Invalid date'
+            AND emrp.norec_apd = '$norecApd'
+            AND emrdp.emrfk = 227
+            AND emrdp.emrdfk = 21001582
+            ORDER BY emrd.nourut ASC                                            
+        "))->first();
+
+        $resep = collect(DB::select("            
+           SELECT 
+            'R/ ' || CASE WHEN op.rke IS NULL THEN null ELSE op.rke END 
+            || ' ' || pr.namaproduk 
+            || ' ' || CASE WHEN op.dosis IS NULL THEN null ELSE op.dosis END 
+            || ' ' || CASE WHEN op.satuandosis IS NULL THEN null ELSE op.satuandosis END
+            || ' ' || CASE WHEN op.jumlah IS NULL THEN null ELSE op.jumlah END
+            || ' ' || CASE WHEN jr.jenisracikan IS NULL THEN null ELSE jr.jenisracikan END
+            || ' ' || '  /' || CASE WHEN op.keteranganpakai IS NULL THEN '' ELSE op.keteranganpakai END
+            -- || ' (' || CAST(op.jumlah AS VARCHAR) || ') ' 
+            -- 
+            AS produk
+            FROM strukorder_t AS so
+            inner join antrianpasiendiperiksa_t apd on apd.noregistrasifk = so.noregistrasifk
+            left join orderpelayanan_t as op on op.strukorderfk = so.norec
+            left join strukresep_t sr on sr.orderfk = so.norec
+            left join pelayananpasien_t pp on pp.strukresepfk = sr.norec
+            left join produk_m as pr on pr.id=op.objectprodukfk
+            left join jeniskemasan_m as jk on jk.id=op.jeniskemasanfk
+            left join satuanstandar_m as ss on ss.id=op.objectsatuanstandarfk
+            left join satuanresep_m as sn on sn.id=op.satuanresepfk
+            left join jenisracikan_m as jr on jr.id=op.jenisobatfk
+
+            WHERE so.kdprofile = $kdProfile AND apd.statusenabled = TRUE and so.statusenabled = TRUE
+            AND apd.norec = '$norecApd'
+            
+            order by op.rke asc
+        "));
+
+        $dataResep = "";
+        if (!empty($resep)){
+            foreach ($resep AS $hitem){
+                if ($dataResep == ""){
+                    $dataResep = $hitem->produk;
+                }else{
+                    $dataResep = $dataResep.'~'.$hitem->produk;
+                }
+            }
+        }
+
+        $result = array(
+            "diagnosaawal" => $diagnosaAwal,
+            "diagnosautama" => $diagnosaUtama,
+            "pemeriksaan" => $dataPemeriksaan,
+            "dataresep" => $dataResep,
+        );
+
+        return $this->respond($result);
     }
 }

@@ -6649,7 +6649,7 @@ class PelayananResepController extends ApiController
             ->leftJOIN('strukresep_t as sr','sr.norec','=','pp.strukresepfk')
             ->leftJOIN('strukorder_t as so','so.norec','=','sr.orderfk')
             ->leftJOIN('orderpelayanan_t as op',function($j){
-                $j->on('op.strukorderfk','=','so.norec')->on('op.rke','=','pp.rke');
+                $j->on('op.strukorderfk','=','so.norec')->on('op.rke','=','pp.rke')->on('pp.produkfk','=','op.objectprodukfk');
             })
             ->leftJOIN('ruangan_m as ru2','ru2.id','=','sr.ruanganfk') /* ruangan depo*/ 
             ->leftJOIN('pegawai_m as dok','dok.id','=','sr.penulisresepfk')
@@ -6659,7 +6659,7 @@ class PelayananResepController extends ApiController
                 'jra.jenisracikan as satuanstandar', 'jra.id as ssid','pp.hargasatuan','pp.hargadiscount','sp.nostruk','pd.noregistrasi',
                 'ks.nilaikonversi','ss2.satuanstandar as satuanstandar2','sr.noresep','sr.norec as norec_resep', 'sr.cito', 'pp.rke',
                 'jkm.jeniskemasan','jk.id as jkid','pp.jenisobatfk','jra.jenisracikan','pp.jasa','ru2.id as namaruanganasalid','ru2.id as ruangandepoid','ru2.namaruangan as ruangandepo',
-                'pp.aturanpakai','ru.namaruangan','dok.id as dokterid','dok.namalengkap as dokter','pp.ispagi','pp.issiang','pp.ismalam','pp.issore','pp.iskronis','sr.isreseppulang as reseppulang',
+                'ru.namaruangan','dok.id as dokterid','dok.namalengkap as dokter','pp.ispagi','pp.issiang','pp.ismalam','pp.issore','pp.iskronis','sr.isreseppulang as reseppulang',
                 DB::raw("case when pp.jeniskemasanfk = 1 then (pp.jumlah::float*pr.kekuatan::float)/pp.dosis::float else pp.jumlah end AS jumlah,pr.kekuatan as kekuatan, case when pp.aturanpakai is not null then pp.aturanpakai else op.aturanpakai end as aturanpakai,
                                sn.satuanresep,pp.satuanresepfk,pp.tglkadaluarsa,pp.dosis,djp.detailjenisproduk,jp.jenisproduk,apd.norec norec_apd,pd.norec norec_pd,apd.objectkelasfk klid,op.keteranganpakai"))
             ->where('pp.kdprofile', $idProfile)
