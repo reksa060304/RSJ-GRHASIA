@@ -3105,6 +3105,7 @@ $ruangdokter = \DB::table('ruangan_m as ru')
                 } else {
                     // update data monitoring task id jika status kirim true
                     if ($request['statuskirim']) {
+                        $monitoring->waktu = $request['waktu'];
                         $monitoring->statuskirim = $request['statuskirim'];
                         $monitoring->save();
                     }
@@ -3132,6 +3133,72 @@ $ruangdokter = \DB::table('ruangan_m as ru')
                 "message" => $transMessage,
                 "as" => 'hs@epic',
                 'e'=> $e->getLine(). $e->getMessage()
+            );
+        }
+
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    public function getComboAntrol(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        $deptJalan = explode (',',$this->settingDataFixed('kdDepartemenRawatJalanFix',$idProfile));
+        $kdDepartemenRawatJalan = [];
+        foreach ($deptJalan as $item){
+            $kdDepartemenRawatJalan []=  (int)$item;
+        }
+        $ruanganRajal = \DB::table('ruangan_m as ru')
+            ->where('ru.kdprofile',$idProfile)
+            ->where('statusenabled',true)
+            ->wherein('ru.objectdepartemenfk', $kdDepartemenRawatJalan)
+            ->orderBy('ru.namaruangan')
+            ->get();
+
+
+
+        $dataKelompok = \DB::table('kelompokpasien_m as ru')
+           ->where('ru.statusenabled', true)
+           ->orderBy('ru.kelompokpasien')
+           ->get();
+
+        $result = array(
+            'kelompokpasien' => $dataKelompok,
+            'ruanganRajal' => $ruanganRajal,
+            'message' => 'as@epic',
+        );
+        return $this->respond($result);
+    }
+    public function disabledMonitoringTaksId(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+
+        DB::beginTransaction();
+        try {
+
+
+            $monitoring = MonitoringTaksId::where('noregistrasifk', $request['noregistrasifk'])
+            ->where('kdprofile', $kdProfile)
+            ->update(['statusenabled'=> false]);
+
+            $transStatus = true;
+            $transMessage = "Simpan Berhasil";
+        } catch (\Exception $e) {
+            $transStatus = false;
+            $transMessage = "Simpan Gagal";
+        }
+
+        if ($transStatus) {
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMessage,
+                "as" => 'hs@epic'
+            );
+        } else {
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message" => $transMessage,
+                "as" => 'hs@epic'
             );
         }
 
@@ -3173,6 +3240,10 @@ $ruangdokter = \DB::table('ruangan_m as ru')
         if(isset($request['kdBooking']) && $request['kdBooking'] != '' && $request['kdBooking'] != null) {
             $kdBooking = " and sx.noregistrasi = '". $request['kdBooking'] ."'";
         }
+        $kelId = "";
+        if (isset($request['kelId']) && $request['kelId'] != '' && $request['kelId'] != null) {
+            $kelId = " and kp.id = '" . $request['kelId'] . "'";
+        }
 
         $data = collect(DB::select("
             WITH sumber AS (
@@ -3192,12 +3263,14 @@ $ruangdokter = \DB::table('ruangan_m as ru')
                     inner join pasiendaftar_t pd on pd.norec = mt.noregistrasifk
                     inner join ruangan_m rm on rm.id = pd.objectruanganasalfk
                     inner join pasien_m ps on ps.id = pd.nocmfk
+                    left join kelompokpasien_m kp on kp.id = pd.objectkelompokpasienlastfk
                     where pd.statusenabled = true
                     and rm.objectdepartemenfk = 18
                     and pd.tglregistrasi between '$tglawal' and '$tglakhir'
                     $nocm
                     $nama
                     $ruangId
+                    $kelId
                 ) x
                 where x.nomor = 1
             )
