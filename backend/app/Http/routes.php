@@ -1898,6 +1898,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('rawatjalan/get-informasi-monitoring-taskid', 'RawatJalan\RawatJalanController@getInformasiMonitoringTaksId');
           Route::get('sysadmin/logging/get-log-antrean', 'SysAdmin\LoggingController@getLogAntrean');
           Route::post('jkn/save-checkin','ReservasiOnline\MyJKNV2Controller@saveCheckInAntrean_fix');
+          Route::get('rawatjalan/get-antril-combo', 'RawatJalan\RawatJalanController@getComboAntrol');
+          Route::post('rawatjalan/disabled-monitoring-taskid', 'RawatJalan\RawatJalanController@disabledMonitoringTaksId');
           
           Route::post('rawatjalan/save-daftar-surat', 'RawatJalan\RawatJalanController@saveDaftarSurat');
           Route::get('rawatjalan/get-detail-pasien-surat', 'RawatJalan\RawatJalanController@getDetailpasienSurat');
