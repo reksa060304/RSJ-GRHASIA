@@ -12,8 +12,8 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Private Sub Section10_Format(ByVal pFormattingInfo As Object)
-    Dim ATR() As Integer
+    Dim ATR() As String
     ATR = Split(LCase(usCaraPakai.Value), "x")
     
-    txtAturanPakai.SetText UBound(ATR(0)) & " x Sehari " & UBound(ATR(1)) & " " & usss.Value '& " " & unjml.Value
+    txtAturanPakai.SetText ATR(0) & " x Sehari " & ATR(1) & " " & usss.Value '& " " & unjml.Value
 End Sub

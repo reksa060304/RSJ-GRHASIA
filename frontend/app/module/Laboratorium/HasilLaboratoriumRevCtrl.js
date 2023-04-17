@@ -12,11 +12,19 @@ define(['initialize'], function (initialize) {
            
             // $scope.shows = 0;
             $scope.item = {};
+            $scope.idnyalab = ''
+            $scope.maplogin = medifirstService.getMapLoginUserToRuangan();
+            for (let i = 0; i < $scope.maplogin.length; i++) {
+                // const element = array[i];
+                if ($scope.maplogin[i].id == 575) {
+                    $scope.idnyalab = $scope.maplogin[i].id
+                }
 
+            }
             LoadCacheHelper();
             function LoadCacheHelper() {                
                 $scope.KelompokUser = medifirstService.getKelompokUser(); 
-                if ($scope.KelompokUser != "laborat") {
+                if ($scope.KelompokUser != "laborat" && $scope.idnyalab != 575) {
                     $scope.IsSave = false;
                 } else{
                     $scope.IsSave = true;
