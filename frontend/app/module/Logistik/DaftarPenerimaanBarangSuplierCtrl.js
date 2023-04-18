@@ -30,6 +30,15 @@ define(['initialize'], function (initialize) {
             }
 
             function ComboLoad() {
+                $scope.listStatusBayar = [
+                    {id: 1,
+                        name: 'Terhutang',
+                    },
+                    {
+                        id: 2,
+                        name: 'Sudah SPJ'
+                    }
+                ]
                 medifirstService.get('logistik/get-combo-logistik-mini').then(function (dat) {
                     $scope.listDataJabatan = dat.data.jabatan;
                     $scope.passwordUbahHarga = dat.data.passwordubahharga;
@@ -176,6 +185,14 @@ define(['initialize'], function (initialize) {
                 if ($scope.item.noSppb != undefined) {
                     noSppb = "&noSppb=" + $scope.item.noSppb
                 }
+                var statusBayar = ""
+                if ($scope.item.statusBayar != undefined) {
+                    statusBayar = "&statusBayar=" + $scope.item.statusBayar.id
+                }
+                var ketterima = ""
+                if ($scope.item.ketterima != undefined) {
+                    ketterima = "&ketterima=" + $scope.item.ketterima
+                }
                 $scope.pegawaiLogin = medifirstService.getPegawaiLogin();
                 // console.log($scope.pegawaiLogin)
                 var tglAwal = moment($scope.item.tglAwal).format('YYYY-MM-DD HH:mm:ss');
@@ -187,7 +204,7 @@ define(['initialize'], function (initialize) {
                     "&nofaktur=" + $scope.item.nofaktur +
                     "&namarekanan=" + $scope.item.namarekanan
                     + produkfk
-                    + noSppb
+                    +noSppb + statusBayar + ketterima
                     , true).then(function (dat) {
                         $scope.isRouteLoading = false;
                         var data2 = dat.data.daftar;
@@ -552,7 +569,12 @@ define(['initialize'], function (initialize) {
                 },
                 {
                     "field": "nospj",
-                    "title": "NO SPJ",
+                    "title": "No SPJ",
+                    "width": "120px",
+                },
+                {
+                    "field": "keteranganambil",
+                    "title": "Ket Terima",
                     "width": "120px",
                 },
             ]
@@ -945,12 +967,17 @@ define(['initialize'], function (initialize) {
                 $state.go('UbahHargaPenerimaanBarangSuplier')
             }
             $scope.verifSPJ = function(){
-                console.log($scope.selectedData2);
                 
                 // return
                 if ($scope.selectedData2 == "") {
                     toastr.error('Checklist data dulu')
                     return
+                }
+                for (let i = 0; i < $scope.selectedData2.length; i++) {
+                    if ($scope.selectedData2[i].tglverifspj != null){
+                        toastr.error('Tanggal ada yang sudah di verif SPJ')
+                        return
+                    }
                 }
                 
                 $scope.popUpVerif.center().open()
