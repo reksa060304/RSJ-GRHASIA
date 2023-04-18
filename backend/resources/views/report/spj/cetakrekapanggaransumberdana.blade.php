@@ -121,13 +121,12 @@
                     <td align="right" width="50" style="padding: 10px; ">{{ number_format($dt->total,0,',','.') == 0 ? "": number_format($dt->total,0,',','.')  }}</td>
                 </tr>
                 @endforeach
-                {{-- <tr>
+                <tr>
                     <td colspan="2" width="20" style="padding: 10px; font-weight: bold; text-align: center;">JUMLAH TOTAL</td>
-                    <td width="50" style="padding: 10px; font-weight: bold; ">{{ number_format($jumlah[0]->jumlahpegawai,0,',','.') }}</td>
-                    <td width="50" style="padding: 10px; font-weight: bold; ">{{ number_format($jumlah[0]->jumlahbarangjasa,0,',','.') }}</td>
-                    <td width="50" style="padding: 10px; font-weight: bold ;">{{ number_format($jumlah[0]->jumlahmodal,0,',','.') }}</td>
-                    <td width="50" style="padding: 10px; font-weight: bold; ">{{ number_format($jumlah[0]->total,0,',','.') }}</td>
-                </tr> --}}
+                    <td width="50" style="padding: 10px; font-weight: bold; ">{{ number_format($grandtotal->jasapelayanan,0,',','.') }}</td>
+                    <td width="50" style="padding: 10px; font-weight: bold; ">{{ number_format($grandtotal->apbd,0,',','.') }}</td>
+                    <td width="50" style="padding: 10px; font-weight: bold ;">{{ number_format($grandtotal->total,0,',','.') }}</td>
+                </tr>
         </table>
         <table cellpadding="0" cellspacing="0" width="100%"  border="0">
             <thead>
