@@ -5568,14 +5568,14 @@ class LogistikController extends ApiController{
             ->select(DB::raw("sp.tglverifspj, sp.nospj,
                 sp.tglstruk, sp.nostruk, rkn.namarekanan, pg.namalengkap, pg.id idpenerima, sp.nokontrak,
                 ru.namaruangan, ru.id objectruanganfk, sp.norec, sp.nofaktur, sp.tglfaktur, CAST(sp.totalharusdibayar AS FLOAT), sbk.nosbk,
-                sp.nosppb, sp.noorderfk, sp.qtyproduk, sp.isverifspj
+                sp.nosppb, sp.noorderfk, sp.qtyproduk, sp.isverifspj, sp.keteranganambil
             ")
 //                'spd.hargasatuan','spd.hargadiscount','spd.qtyproduk','spd.hargatambahan' ,
 //                'pr.namaproduk as namaprodukstandar',
 //                'spd.resepke as rke','jkm.jeniskemasan'
             )
             ->where('sp.kdprofile', $idProfile)
-            ->groupBy('sp.tglstruk', 'sp.nostruk', 'rkn.namarekanan', 'pg.namalengkap', 'sp.nokontrak', 'ru.namaruangan', 'ru.id', 'pg.id', 'sp.norec', 'sp.nofaktur',
+            ->groupBy('sp.keteranganambil','sp.tglstruk', 'sp.nostruk', 'rkn.namarekanan', 'pg.namalengkap', 'sp.nokontrak', 'ru.namaruangan', 'ru.id', 'pg.id', 'sp.norec', 'sp.nofaktur',
                 'sp.tglfaktur', 'sp.totalharusdibayar', 'sbk.nosbk', 'sp.nosppb', 'sp.noorderfk', 'sp.qtyproduk');
 
         $data->whereRaw('ru.id in(SELECT ru.id
@@ -5608,6 +5608,17 @@ class LogistikController extends ApiController{
         }
         if (isset($request['noSppb']) && $request['noSppb'] != "" && $request['noSppb'] != "undefined") {
             $data = $data->where('sp.nosppb', 'ILIKE', '%' . $request['noSppb'] . '%');
+        }
+        if (isset($request['statusBayar']) && $request['statusBayar'] != "" && $request['statusBayar'] != "undefined") {
+            if($request['statusBayar'] == 1){
+                $data = $data->where('sp.isverifspj', '=',  null);
+            }else{
+                $data = $data->where('sp.isverifspj', '=',  true);
+
+            }
+        }
+        if (isset($request['ketterima']) && $request['ketterima'] != "" && $request['ketterima'] != "undefined") {
+            $data = $data->where('sp.keteranganambil', 'ILIKE', '%' . $request['ketterima'] . '%');
         }
 //        $data = $data->distinct();
         $data = $data->where('sp.statusenabled', true);
@@ -5652,6 +5663,7 @@ class LogistikController extends ApiController{
                 'isverifspj' => $item->isverifspj,
                 'tglverifspj' => $item->tglverifspj,
                 'nospj' => $item->nospj,
+                'keteranganambil' => $item->keteranganambil,
                 'details' => $details,
             );
         }
@@ -6978,6 +6990,7 @@ class LogistikController extends ApiController{
             $dataSO->totalpph = 0;
             $dataSO->totalppn = 0;
             $dataSO->save();
+            $data = $dataSO;
             $dataSO = $dataSO->norec;
 
             foreach ($request['details'] as $item) {
@@ -7011,6 +7024,7 @@ class LogistikController extends ApiController{
                 "status" => 201,
                 "message" => $transMessage,
                 "nokirim" => $dataSO,
+                "data" => $data,
                 "as" => 'as@epic',
             );
         } else {

@@ -228,6 +228,7 @@ class LaporanRegistrasiController extends  App\Http\Controllers\ApiController
         ->where('kdprofile', $idProfile)
         ->get();
         $pendidikan = \DB::table('pendidikan_m')->where('statusenabled', true)->where('kdprofile', $idProfile)->get();
+        $pekerjaan = \DB::table('pekerjaan_m')->where('statusenabled', true)->where('kdprofile', $idProfile)->get();
         $kecamatan = \DB::table('kecamatan_m')->where('statusenabled', true)->where('kdprofile', $idProfile)->get();
         $kabupaten = \DB::table('kotakabupaten_m')->where('statusenabled', true)->where('kdprofile', $idProfile)->get();
         $result = array(
@@ -252,6 +253,7 @@ class LaporanRegistrasiController extends  App\Http\Controllers\ApiController
             'produkobat' => $produkobat,
             'jeniskelamin' => $jeniskelamin,
             'pendidikan' => $pendidikan,
+            'pekerjaan' => $pekerjaan,
             'kecamatan' => $kecamatan,
             'kabupaten' => $kabupaten,
             'message' => 'as@egieramdan',
