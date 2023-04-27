@@ -4720,14 +4720,14 @@ class GeneralController extends ApiController
                 if (count($isAktif) > 0) {
                 $cobainnn="aktif";
                 $pelapor = StrukPlanning::where('norec',$norecHead2)->first();
-                $ruangan = \DB::table('ruangan_m')->where('id',$ruanganHead2)->first();
-                $ruanganTujuan = \DB::table('ruangan_m')->where('id',$ruangtujuanHead2)->first();
+                $ruangan = \DB::table('ruangan_m')->where('id',$ruanganHead2)->select('namaruangan')->first();
+                $ruanganTujuan = \DB::table('ruangan_m')->where('id',$ruangtujuanHead2)->select('namaruangan')->first();
                 $jenispekerjaan =  \DB::table('jenispekerjaan_m')->where('id',$jenispekerjaan)->select('reportdisplay')->first();
                 $secret_token = "5528647994:AAHqBykIdioFfxa-0oVdGQDpYs9jWDOKZWQ";
                 $telegram_id = '-1001762536697';//'-498979335';
                 $url = "https://api.telegram.org/bot" . $secret_token . "/sendMessage?parse_mode=html&chat_id=" . $telegram_id;
-                $url = $url . "&text=" . urlencode("✅ Laporan Baru: <b>Permohonan Perbaikan PDTI </b> \n\n Ruangan / area: <b>".$ruangan->namaruangan.
-                        "</b>  \n Pelapor: <b>".$pelapor->pelapor. "</b>  \n Jenis Kerusakan: <b>".$jenispekerjaan->reportdisplay."</b>  \n Laporan Kerusakan: <b>".$rincianHead2.
+                $url = $url . "&text=" . urlencode("✅ Laporan Baru: <b>Permohonan Perbaikan PDTI </b> \n\n Ruangan / area: <b>".$ruangan[0]->namaruangan.
+                        "</b>  \n Pelapor: <b>".$pelapor->pelapor. "</b>  \n Jenis Kerusakan: <b>".$jenispekerjaan[0]->reportdisplay."</b>  \n Laporan Kerusakan: <b>".$rincianHead2.
                         "</b>");
                 // return $url;
                 $ch = curl_init();
@@ -4741,10 +4741,11 @@ class GeneralController extends ApiController
             }
 
             $transStatus = 'true';
+            $transMessage = "";
+
         } catch (\Exception $e) {
             $transStatus = 'false';
         }
-        $transMessage = "";
 
 
         if ($transStatus == 'true') {
