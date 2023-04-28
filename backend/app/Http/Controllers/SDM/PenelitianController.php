@@ -175,6 +175,9 @@ class PenelitianController extends ApiController {
             inner join loginuser_s lu on lu.objectpegawaifk = pg.id and pg.namalengkap<>'-'
             where pg.usereksternal = true and pg.statusenabled = true 
             GROUP BY pg.namalengkap"));
+            $institusiuser2 = DB::select(DB::raw("SELECT pg.namalengkap,lu.namauser as namauser FROM pegawai_m pg
+            inner join loginuser_s lu on lu.objectpegawaifk = pg.id and pg.namalengkap<>'-'
+            where pg.usereksternal = true and pg.statusenabled = true "));
         $result = array(
             'sp' => $norec_sp,
             'norec' => $norec,
@@ -196,6 +199,7 @@ class PenelitianController extends ApiController {
             // 'fakultas' => $Fakultas,
             'institusi' => $institusi,
             'institusiuser' => $institusiuser,
+            'institusiuser2' => $institusiuser2,
             'message' => 'ea@epic',
         );
 
