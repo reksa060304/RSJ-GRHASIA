@@ -6885,7 +6885,7 @@ class RegistrasiController extends ApiController
             ->leftJOIN('jeniskelamin_m as jks', 'jks.id', '=', 'ps.objectjeniskelaminfk')
             ->leftjoin('identifikasipasien_t as it','pd.norec','=','it.noregistrasifk')
             ->distinct()
-            ->select('pd.norec', 'pd.statusenabled', 'pd.tglregistrasi', 'ps.nocm', 'pd.nocmfk', 'pd.noregistrasi', 'ru.namaruangan', 'ps.namapasien',
+            ->select('pd.norec', 'pd.statusenabled','ps.sidik_jari','pd.tglregistrasi', 'ps.nocm', 'pd.nocmfk', 'pd.noregistrasi', 'ru.namaruangan', 'ps.namapasien',
                 'kp.kelompokpasien', 'rek.namarekanan', 'pg.namalengkap as namadokter', 'pd.tglpulang', 'pd.statuspasien',
                 'pa.norec as norec_pa', 'pa.objectasuransipasienfk', 'pd.objectpegawaifk as pgid', 'pd.objectruanganlastfk',
                 'pa.nosep as nosep', 'br.norec as norec_br', 'pd.nostruklastfk','klstg.namakelas as kelasditanggung','kls.namakelas',
@@ -7005,6 +7005,7 @@ class RegistrasiController extends ApiController
         }
         return $this->respond($data2);
     }
+
     public function getDataComboOperator(Request $request){
         $kdProfile = $this->getDataKdProfile($request);
         $dataLogin = $request->all();

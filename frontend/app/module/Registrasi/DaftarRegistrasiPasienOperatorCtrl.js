@@ -285,6 +285,13 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 					"title": "DeptId",
 					"width":"150px",
 				},
+				{
+					"field": "sidik_jari",
+					"title": "Sidik Jari",
+					"width": "100px",
+				   // "template": '# if( iskompleks==1 ) {# ✔ # } else {#  #} #'
+
+				},
 				
 				// {
 				// 	"field": "statuspasien",
