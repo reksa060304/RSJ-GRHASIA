@@ -51,6 +51,10 @@
         {
             "nameDep": "LembarSkriningKIECtrl",
             "urlDep": "module/EMR/LembarSkriningKIECtrl"
+        },
+        {
+            "nameDep": "cakemGigiCtrl",
+            "urlDep": "module/EMR/cakemGigiCtrl"
         }
 
     ]

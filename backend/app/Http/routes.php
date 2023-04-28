@@ -2618,6 +2618,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
               Route::post('sdm/pendidikan/save-pdruangan', 'SDM\SumberDayaManusiaController@savePesertaDidikRuangan');
               Route::post('sdm/pendidikan/save-pdruangan-group', 'SDM\SumberDayaManusiaController@savePesertaDidikRuanganGroup');
               Route::get('diklat/get-pe-eks', 'SDM\SumberDayaManusiaController@getPeEks');
+              Route::get('diklat/aspek-penilaian-mahasiswa','SDM\SumberDayaManusiaController@aspekPenilaian');
+              Route::post('diklat/save-aspek-penilaian','SDM\SumberDayaManusiaController@saveAspekPenilaian');
               Route::post('sdm/penelitian/verif-kegiatan-penelitian-eksternal','SDM\PenelitianController@verifKegiatanPenelitianExternal');
               Route::post('sdm/penelitian/verif-tagihan-kegiatan-penelitian-eksternal','SDM\PenelitianController@verifTagihanKegiatanPenelitianExternal');
               

@@ -10,14 +10,23 @@ define(['initialize'], function(initialize) {
 			$scope.now = new Date();
 			$scope.item={};
 			$scope.currentKeterangan=[];
-            $scope.item.namainstansi = medifirstService.getPegawaiLogin().namaLengkap;
-            $scope.item.namauser = medifirstService.getUserLogin().kdUser;
+            
             $scope.Pembimbing = false
             $scope.tabletambahmahasiswa = false;
             $scope.tgl = true;
             $scope.pemb = true;
             $scope.ru = true;
             $scope.serti=false
+            
+            if (medifirstService.getKelompokUser() == 'diklit') {
+                $scope.cbxuser = true 
+                $scope.txtuser = false
+            }else{
+                $scope.cbxuser = false
+                $scope.txtuser = true
+                $scope.item.namainstansi = medifirstService.getPegawaiLogin().namaLengkap;
+                $scope.item.namauser = medifirstService.getUserLogin().kdUser;
+            }
             // $scope.penelitibtn = true
 			var noOrder='';
 			var NorecKpe='';
@@ -26,9 +35,6 @@ define(['initialize'], function(initialize) {
             
 			loadDataCombo();
 			LoadCache();
-            console.log(ModelItem.getPegawai())
-            console.log(medifirstService.getUserLogin());
-            console.log($scope.usereksternal);
 			function LoadCache(){
                 var chacePeriode = cacheHelper.get('PenelitianEksternalCtrl');
                 if(chacePeriode != undefined){
@@ -74,7 +80,6 @@ define(['initialize'], function(initialize) {
                 }
                 if (NorecKpe != '') {
                     noregistrasi = "noregistrasi=" + NorecKpe;
-                    console.log('data masuk');
                 }
                 // var modelid = '&modelid='+ModelItem.getPegawai().id;
 	            medifirstService.get("sdm/penelitian/get-data-combo-penelitian?"+ noregistrasi, true).then(function(datas){
@@ -89,13 +94,12 @@ define(['initialize'], function(initialize) {
                     $scope.ListRuangan = dat.dataruangan;
                     $scope.kendo = datas.data.me.length;
                     $scope.ListLevelPendidikan = dat.levelpendidikan;
+                    $scope.ListNamaUser = dat.institusiuser2
                     if (dat.pegawaiuser != '') {
                     $scope.item.notelp = dat.pegawaiuser[0].nomor
                     }
-                    console.log(datas.data.norec);
                     if (datas.data.norec != '') {
                         $scope.norec = datas.data.norec[0].jumlahpeserta
-                        console.log($scope.norec);
                     }
                     if (dat.sp != '') {
                         if (dat.sp != undefined) {
@@ -107,7 +111,6 @@ define(['initialize'], function(initialize) {
                     
                     
                     
-                    // console.log(dat.pegawaiuser.nomor);
                     
                     $scope.dataSourceGridDiagnosapasien = new kendo.data.DataSource({
                         data: datas.data.me,
@@ -126,17 +129,15 @@ define(['initialize'], function(initialize) {
             
             
             $scope.GetLevelPendidikan = function(){
-                console.log(noOrder);
-                console.log($scope.item.layanan.id);
+                
                 $scope.item.levelpendidikan = undefined
-                console.log($scope.item.layanan);
+                
                 $scope.item.satuan = $scope.item.layanan.namaexternal
                 if (noOrder == 'EditPenelitianEksternal') {
                     if ($scope.usereksternal != true) {
                         // $scope.item.layanan.id == 1947 || layanan praktek klinik
                         if ($scope.item.layanan.id == 1948 || $scope.item.layanan.id == 1957) {
                             $scope.pembimbing = true;
-                            // console.log('masuk tol');
                         }
                     }
                     if ($scope.item.layanan.id != null) {
@@ -152,7 +153,6 @@ define(['initialize'], function(initialize) {
                     var dat = datas.data
                     $scope.ListLevelPendidikan = dat.layanan;
                     // $scope.item.satuan = dat.detailjp[0].namaexternal;
-                    console.log($scope.ListLevelPendidikan);
                 });
             }
             $scope.GetHarga = function () {
@@ -185,7 +185,6 @@ define(['initialize'], function(initialize) {
                 }
                 
                 if ($scope.item.jumlahpeserta >= 6 && $scope.item.jumlahpeserta <= 10 && $scope.item.levelpendidikan.id == 40410022) {
-                    // console.log(false);
                      $scope.item.biaya = 0
 
                     $scope.item.biaya = ($scope.item.jumlahpeserta * $scope.item.hargasatuan) * $scope.item.qty;
@@ -230,15 +229,12 @@ define(['initialize'], function(initialize) {
                 if ($scope.item.satuan == "Orang - Hari(OH)") {
                     qty = "&qty=" + ($scope.item.qty-1)
                 } 
-                console.log(satuan);
                 medifirstService.get('diklat/get-tanggal-otomatis?tgl=' + moment($scope.now).format('YYYY-MM-DD') +satuan + qty).then(function (data) {
-                    // console.log(data);
                     var datas = data.data.nyarihari
                     var tglpertama = $scope.now
                     var tglterakhir = datas.length - 1
                     $scope.item.tanggalMulai = tglpertama
                     $scope.item.tanggalSelesai = datas[tglterakhir].hari
-                    console.log(datas);
                 })
             }
 			function init(){
@@ -280,13 +276,18 @@ define(['initialize'], function(initialize) {
                         // $scope.penelitibtn = true
                         if ($scope.usereksternal != true) {
                             if ($scope.item.layanan.id == 1948 || $scope.item.layanan.id == 1957) {
-                                // console.log('masuk tol');
                                 $scope.Pembimbing = true;
                             }
                             $scope.serti = true
                         }
                         if (medifirstService.getKelompokUser() == 'diklit') {
                             $scope.penelitibtn = false
+                            $scope.item.cbxnamauser = {
+                                namauser: datas.namauser,
+                                username: datas.namauser + ",  " + datas.institusipendidikan,
+                                namalengkap: datas.institusipendidikan
+                            }
+                            $scope.item.namainstansi = datas.institusipendidikan
                         }
                     })
                     
@@ -336,7 +337,6 @@ define(['initialize'], function(initialize) {
                     // "item.noHp|ng-model|No. HP / Ponsel",
                 ];
                 var isValid = ModelItem.setValidation($scope, listRawRequired);
-                console.log(isValid);
 
                 if(isValid.status == true){
 
@@ -377,9 +377,15 @@ define(['initialize'], function(initialize) {
                     if ($scope.item.pengesah != undefined) {
                         pengesah = $scope.item.pengesah.id
                     }
+                    var namauser = null;
+                    if ($scope.item.namauser != undefined) {
+                        namauser = $scope.item.namauser
+                    } else if ($scope.item.cbxnamauser != undefined) {
+                        namauser = $scope.item.cbxnamauser.namauser
+                    }
                     var data = {
                         "norec_kpe": norec_kpe,
-                        "namauser": $scope.item.namauser,
+                        "namauser": namauser,
                         "institusipendidikan": $scope.item.namainstansi,
                         "notelp": $scope.item.notelp,
                         "objectdiklatkategorifk": $scope.item.jenis.id,
@@ -403,7 +409,6 @@ define(['initialize'], function(initialize) {
                     var objSave = {
                         data: data,
                     }
-                    console.log(objSave);
                     // return
                     medifirstService.post('sdm/penelitian/save-kegiatan-penelitian-eksternal', objSave).then(function (e) {
                         $scope.item = {};
@@ -415,12 +420,16 @@ define(['initialize'], function(initialize) {
                 
 
 			}
+            $scope.$watch('item.cbxnamauser', function(newValue, oldValue){
+                if (newValue != oldValue) {
+                    $scope.item.namainstansi = $scope.item.cbxnamauser.namalengkap
+                }
+            })
 
             // function deleteRow(e) {
             //     e.preventDefault();
 
             //     var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
-            //     console.log(dataItem.norec_eks);
             //     var datasend = {
             //         "statusenabled": true,
             //         "norec_eks": dataItem.norec_eks,
