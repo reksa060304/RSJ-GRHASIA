@@ -10,7 +10,18 @@
                         <div class="panel-heading-white"><span class="title" c-translate></span></div>
                         <div class="panel-body">
                             <div class="grid_12">
-                                <div class="grid_3">
+                                <div class="grid_3" ng-show="cbxuser">
+                                    <div class="grid_12" style="margin: 6px 0 0 0;" >
+                                        <label c-label item="item">Nama User</label>
+                                    </div>
+                                    <div class="grid_12">
+                                        <input style="width: 100%;" kendo-combo-box k-ng-model="item.cbxnamauser"
+                                            k-data-text-field="'namauser'" k-data-value-field="'namauser'"
+                                            k-filter="'contains'" k-auto-bind="false" k-data-source="ListNamaUser"
+                                             required />
+                                    </div>
+                                </div>
+                                <div class="grid_3" ng-show="txtuser">
                                     <div class="grid_12" style="margin: 6px 0 0 0;">
                                         <label><b>Nama User</b></label>
                                     </div>
@@ -21,7 +32,7 @@
                                 </div>
                                 <div class="grid_3">
                                     <div class="grid_12" style="margin: 6px 0 0 0;">
-                                        <label c-label item="item" c-label-text="Nama Instansi"></label>
+                                        <label c-label item="item" >Nama Instansi</label>
                                     </div>
                                     <div class="grid_12">
                                         <input c-text-box type="input" filter="'varchar'" class="k-textbox"

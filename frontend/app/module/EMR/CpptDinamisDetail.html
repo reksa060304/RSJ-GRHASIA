@@ -49,19 +49,26 @@
                 <div class="panel panel-default container_12">
                         <div class="panel-heading" c-translate>CPPT</div>
                 </div>
+                <div class="grid_12">
+                    <div class="grid_2">
+                        <button class="btnTemplate1" ng-click="eResep()"><i class="fa fa-save"></i>E-Resep</button>
+                    </div>
+                </div>
                 <div class="grid_12" style="margin: 20px 0px">
                     <table style="width:100%;" class="tablecppt">
                         <tr style="background-color: #363940;color: #f3f3f4;">
-                            <td style="text-align: center;width: 13%"><b>Tanggal/Jam</b></td>
-                            <td style="text-align: center;width: 10%"><b>Profesional<br>Pemberi<br>Asuhan</b></td>
-                            <td style="text-align: center;width: 35%;border-bottom: none;" >
-                                <b>Hasil Asesmen Pasien dan Pemberian Pelayanan</b><br>
-                                <span>(Tulis dengan format SOAP/ADIME, disertai saran, tulis nama, beri paraf pada akhir catatan)</span>
+                            <td style="text-align: center;width: 13%"><b>TANGGAL DAN PUKUL</b></td>
+                            <td style="text-align: center;width: 10%"><b>PROFESIONAL<br>PEMBERI<br>ASUHAN</b></td>
+                            <td style="text-align: center;width: 35%;border-bottom: none;">
+                                <b>HASIL PEMERIKSAAN, ANALISIS, RENCANA PENATALAKSANAAN PASIEN</b><br>
+                                <span>(Dituliskan dengan format SOAP/ADIME, disertai dengan tulisan yang terukur,
+                                    evaluasi hasil tatalaksana dituliskan dalam asesmen, Harap bubuhkan stempel nama dan
+                                    paraf pada setiap akhir catatan)</span>
                             </td>
-                            <td style="text-align: center;width: 25%;border-bottom: none;" >
-                                <b>Instruksi PPA <br> Termasuk Pasca Bedah</b>
+                            <td style="text-align: center;width: 25%;border-bottom: none;">
+                                <b>INSTRUKSI PPA</b>
                             </td>
-                            <td style="text-align: center;width: 15%"><b>Review & Verifikasi DPJP</b><br>
+                            <td style="text-align: center;width: 15%"><b>REVIEW & VERIFIKASI DPJP/DOKTER</b><br>
                                 <span>(Tulis nama, beri paraf, Tgl, Jam)</span><br>
                                 <span>(DPJP harus membaca/mereview seluruh rencana asuhan)</span><br>
                             </td>
@@ -154,16 +161,16 @@
         <div ng-show="RiwayatCPPTRJBaru">
             <table style="width:100%;" class="tablecppt">
                 <tr style="background-color: #363940;color: #f3f3f4;">
-                    <td style="text-align: center;width: 13%"><b>Tanggal/Jam</b></td>
-                    <td style="text-align: center;width: 10%"><b>Profesional<br>Pemberi<br>Asuhan</b></td>
+                    <td style="text-align: center;width: 13%"><b>TANGGAL DAN PUKUL</b></td>
+                    <td style="text-align: center;width: 10%"><b>PROFESIONAL<br>PEMBERI<br>ASUHAN</b></td>
                     <td style="text-align: center;width: 35%;border-bottom: none;" >
-                        <b>Hasil Asesmen Pasien dan Pemberian Pelayanan</b><br>
-                        <span>(Tulis dengan format SOAP/ADIME, disertai saran, tulis nama, beri paraf pada akhir catatan)</span>
+                        <b>HASIL PEMERIKSAAN, ANALISIS, RENCANA PENATALAKSANAAN PASIEN</b><br>
+                        <span>(Dituliskan dengan format SOAP/ADIME, disertai dengan tulisan yang terukur, evaluasi hasil tatalaksana dituliskan dalam asesmen, Harap bubuhkan stempel nama dan paraf pada setiap akhir catatan)</span>
                     </td>
                     <td style="text-align: center;width: 25%;border-bottom: none;" >
-                        <b>Instruksi PPA <br> Termasuk Pasca Bedah</b>
+                        <b>INSTRUKSI PPA</b>
                     </td>
-                    <td style="text-align: center;width: 15%"><b>Review & Verifikasi DPJP</b><br>
+                    <td style="text-align: center;width: 15%"><b>REVIEW & VERIFIKASI DPJP/DOKTER</b><br>
                         <span>(Tulis nama, beri paraf, Tgl, Jam)</span><br>
                         <span>(DPJP harus membaca/mereview seluruh rencana asuhan)</span><br>
                     </td>
@@ -218,4 +225,13 @@
         <button class="k-button" ng-click="savePengajuanTTE(item.pegawai)"
             style="float:right;margin-top:4%">Simpan</button>
     </div>
+</div>
+<div kendo-window="winResep" k-title="'Resep Elektronik'" k-width="500" k-height="220" k-visible="false"
+    k-on-open="win2visible = true" k-on-close="win2visible = false">
+    <textarea cols="6" rows="10" c-text-area type="input" filter="'string'" class="k-textbox"
+        ng-model="item.Resep" ng-disabled="true" />
+        <button class="k-button " ng-click="selectGridsssssss(item.Resep)"
+            style="float:right;margin-top:4%"><span class="k-sprite fa fa-clipboard" title="copy"
+                style="float: left;margin-top: 0.3em;padding-bottom: 2px;"></span>Copy</button>
+        
 </div>

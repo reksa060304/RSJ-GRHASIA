@@ -62,6 +62,8 @@ class SasaranMutuController extends ApiController
                 $x->on('aa.noresep','=','sr.noresep')
                 ->on('aa.statusenabled','=',DB::raw('true'));
             })
+            ->join('antrianpasiendiperiksa_t as apd','apd.norec','=','sr.pasienfk')
+            ->join('ruangan_m as ru','ru.id','=','apd.objectruanganfk')
             //->select('sr.noresep','sr.tglresep','sr.penulisresepfk','sr.ruanganfk','sr.tglambilresep as tglambilreseplama','sr.tglselesai as tglambilresep'
             ->select('sr.noresep','sr.tglresep','sr.penulisresepfk','sr.ruanganfk','sr.tglambilresep as tglambilreseplama','sr.tglambilresep as tglambilresep'
             ,DB::raw("case when sr.tglambilresep is not null then 'Telah diserahkan oleh ' || coalesce(sr.namapemberi,'') || ' kepada ' ||  coalesce(sr.namalengkapambilresep,'') else '' end  as keterangan")
@@ -75,9 +77,11 @@ class SasaranMutuController extends ApiController
                 WHEN sr.tglresep <  '2022-10-01'::date THEN
                     div( EXTRACT ( EPOCH FROM sr.tglambilresep - sr.tglresep ) :: INT, 3600 ) || ':' || to_char( sr.tglambilresep - sr.tglresep, 'MI:SS' )
                 ELSE
-                    div( EXTRACT ( EPOCH FROM sr.tglselesai - sr.tglresep ) :: INT, 3600 ) || ':' || to_char( sr.tglselesai - sr.tglresep, 'MI:SS' )
+                    div( EXTRACT ( EPOCH FROM sr.tglselesai - sr.tglresep ) :: INT, 3600 ) || ':' || to_char( sr.tglselesai - sr.tglresep, 'MI:SS' 
+                    )
             END AS waktulayanan, case when aa.jenis = 'N' then 'Non Racikan' else 'Racikan' end jenisantrian"))
             ->where('sr.statusenabled',true)
+            ->where('ru.objectdepartemenfk', 18)
             ->orderBy('sr.tglresep');
         if(isset($filter['tglAwal']) && $filter['tglAwal']!="" && $filter['tglAwal']!="undefined"){
             $data = $data->where('sr.tglresep','>=', $filter['tglAwal']);

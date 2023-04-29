@@ -7939,4 +7939,86 @@ public function daftarKenaikanGajiBerkala(Request $request){
         );
         return $this->respond($result);
     }
+    public function aspekPenilaian(Request $request)
+    {
+        $spd = DB::select(DB::raw("
+        select norec as norec_hasil,aspekpenilaian as penilaian,penilaian as aspekpenilaian,nilai from hasilpenilaiandiklat_t where norec_peserta ilike '$request[norec_spd]'
+        "));
+        if(count($spd)>0){
+            $data = $spd;
+        }else{
+            $data =\DB::select(DB::raw("
+            SELECT null as norec_hasil, case when x.nourut = 1 then x.huruf_besar||'. '|| x.penilaian else null end as penilaian, x.huruf_kecil ||'. '||x.aspekpenilaian as aspekpenilaian, x.nilai
+            FROM (SELECT CHR(CAST(DENSE_RANK() over (ORDER BY pd.id asc ) AS INTEGER) + 64)AS huruf_besar,CHR(CAST(row_number() over (partition by pd.id ORDER BY pd.id asc ) AS INTEGER) + 96)AS huruf_kecil,row_number()over(PARTITION by pd.penilaian ORDER BY pd.id asc , apd.id asc)nourut, pd.penilaian, apd.aspekpenilaian, null as nilai FROM aspekpenilaiandiklat_m apd 
+            inner join penilaiandiklat_m pd on pd.id = apd.objectpenilaiandiklatfk
+            where apd.objectdiklatkategorifk = $request[objectdiklatkategorifk] and apd.objectdetailjenisprodukfk = $request[objectdetailjenisprodukfk] ORDER BY pd.id asc, apd.id asc)as x "));
+        
+        }
+        
+        $result = array(
+            'data'=> $data,
+            'as'=>'FIzi'
+        );
+        return $this->respond($result);
+    }
+    public function saveAspekPenilaian(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        DB::beginTransaction();
+        try {
+            $data = $request['data'];
+            foreach ($data as $d) {
+                if($d['norec_hasil']== null){
+                    DB::table('hasilpenilaiandiklat_t')->insert(
+                        [
+                        'norec'=>substr(Uuid::generate(), 0, 32),
+                        'kdprofile'=> $kdProfile,
+                        'statusenabled'=> true,
+                        'no'=> $d['no'],
+                        'aspekpenilaian'=> $d['penilaian'],
+                        'penilaian'=> $d['aspekpenilaian'],
+                        'nilai'=> $d['nilai'],
+                        'namaexternal'=>$d['aspekpenilaian'],
+                        'norec_peserta'=> $request['norec_pd']
+                        ]
+                    );
+                }else{
+                    DB::table('hasilpenilaiandiklat_t')->where('norec', $d['norec_hasil'])->update(
+                        [
+                        'no'=> $d['no'],
+                        'aspekpenilaian'=> $d['penilaian'],
+                        'penilaian'=> $d['aspekpenilaian'],
+                        'nilai'=> $d['nilai'],
+                        'namaexternal'=>$d['aspekpenilaian'],
+                        'norec_peserta'=> $request['norec_pd']
+                        ]
+                    );
+                }
+            }
+            $transStatus = true;
+        } catch (\Throwable $th) {
+            //throw $th;
+            $transStatus= false;
+        }
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan Aspek Mahasiswa";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                // 'data' => $data,
+                'as' => 'asepic',
+            );
+        } else {
+            $transMessage = "Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message'  => $transMessage,
+                // 'data'  => $data,
+                'as' => 'asepic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
 }
