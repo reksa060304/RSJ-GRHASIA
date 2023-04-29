@@ -16,6 +16,9 @@
         text-align: left;
         width: 100%;
     }
+    button:disabled {
+    background: #B5B2B1;
+    }
 </style>
 <div class="grid_12">
 
@@ -117,7 +120,8 @@
                                             </div>
 
                                             <div class="grid_1">
-                                                <button class="c-button" ng-click="simpan()">Simpan</button>
+                                                <button class="c-button" ng-click="simpan()"
+                                                    ng-disabled="btnsimpan">Simpan</button>
                                             </div>
                                             <div class="grid_1">
                                                 <button class="c-button" ng-click="batal()">Batal</button>
