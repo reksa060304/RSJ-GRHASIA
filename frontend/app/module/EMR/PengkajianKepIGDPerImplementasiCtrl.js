@@ -15,6 +15,7 @@ define(['initialize'], function (initialize) {
             $scope.totalSkor2 = 0
             $scope.totalSkor4 = 0
             $scope.cc = {}
+            $scope.isRouteLoading = false
             var nomorEMR = '-'
             $scope.cc.emrfk = 3000543
             var dataLoad = []
@@ -815,7 +816,14 @@ define(['initialize'], function (initialize) {
                 }
             }
             var chekedd = false;
-
+            loadValidasi()
+            function loadValidasi(){
+                $scope.isRouteLoading = true
+                medifirstService.get('emr/get-validasi-emr?noemr=' + nomorEMR + '&emrfk=' + $scope.cc.emrfk).then(function (data) {
+                    var datas = data.data.data;
+                    console.log(datas.length);
+                    if (datas.length > 0) {
+                    $scope.isRouteLoading = false
             medifirstService.get("emr/get-emr-transaksi-detail?noemr=" + nomorEMR + "&emrfk=" + $scope.cc.emrfk, true).then(function (dat) {
                 $scope.item.obj = []
                 $scope.item.obj2 = []
@@ -935,6 +943,92 @@ define(['initialize'], function (initialize) {
                 // }
 
             })
+        } else {
+            medifirstService.get("emr/get-emr-otomatis?noemr=" + nomorEMR + "&emrfk=3000403" + "&emrid=" + $scope.cc.emrfk).then(function (data) {
+                var datas = data.data.data
+                $scope.isRouteLoading = false
+                $scope.item.obj = []
+                $scope.item.obj2 = []
+                $scope.item.obj[116062] = $scope.now
+                $scope.item.obj[116068] = {
+                    text: $scope.cc.namaruangan,
+                    value: $scope.cc.objectruanganfk
+                }
+
+                $scope.item.obj[116201] = true
+                $scope.item.obj[116204] = true
+                $scope.item.obj[116207] = true
+                $scope.item.obj[116210] = true
+                $scope.item.obj[116213] = true
+                $scope.item.obj[116216] = true
+                $scope.item.obj[116219] = true
+                $scope.item.obj[116222] = true
+                $scope.item.obj[120001] = moment($scope.now).format('YYYY-MM-DD HH:mm')
+                $scope.item.obj[120291] = new Date($scope.now)
+
+                $scope.item.obj[120295] = {
+                    value: medifirstService.getPegawaiLogin().id,
+                    text: medifirstService.getPegawaiLogin().namaLengkap
+                }
+                
+                for (let i = 0; i < datas.length; i++) {
+                    if (datas[i].type == "textarea") {
+                        $scope.item.obj[datas[i].id] = datas[i].value
+                    }
+                    if (datas[i].type == "combobox") {
+                        var str = datas[i].value
+                        if (str != undefined) {
+                            var res = str.split("~");
+                            $scope.item.obj[datas[i].id] = {
+                                value: res[0],
+                                text: res[1]
+                            }
+                        }
+                    }
+                    if (datas[i].type == "checkbox") {
+                        if (datas[i].value == "1") {
+                            $scope.item.obj[datas[i].id] = true
+                            console.log(datas[i].type);
+                        }
+                    }
+                    if (datas[i].type == "radio") {
+                            // $scope.item.obj[datas[i].id] = true
+
+                        if (datas[i].value == "1" && datas[i].id == 120246) {
+                            $scope.item.obj[120246] = true
+                        }
+                        if (datas[i].value == "2" && datas[i].id == 120247) {
+                            $scope.item.obj[120247] = true
+                        }
+                        if (datas[i].value == "3") {
+                            $scope.item.obj[120248] = true
+                        }
+                        if (datas[i].value == "4") {
+                            $scope.item.obj[120249] = true
+                        }
+                        if (datas[i].value == "5") {
+                            $scope.item.obj[120250] = true
+                        }
+                        if (datas[i].value == "6") {
+                            $scope.item.obj[120251] = true
+                        }
+                        if (datas[i].value == "1" && datas[i].id == 120252) {
+                            $scope.item.obj[120252] = true
+                        }
+                        if (datas[i].value == "2" && datas[i].id == 120253) {
+                            $scope.item.obj[120253] = true
+                        }
+                    }
+                    if (datas[i].type == "textbox") {
+                        $scope.item.obj[datas[i].id] = datas[i].value
+                    }
+
+                }
+
+            })
+        }
+    })
+}
             $scope.$watch('item.obj[116131]', function (nilai) {
 
                 if (nilai == undefined) return
@@ -1501,7 +1595,7 @@ define(['initialize'], function (initialize) {
             }
 
             $scope.Save = function () {
-
+                $scope.isRouteLoading = true
                 var arrobj = Object.keys($scope.item.obj)
                 var arrSave = []
                 for (var i = arrobj.length - 1; i >= 0; i--) {
@@ -1524,7 +1618,7 @@ define(['initialize'], function (initialize) {
                     'PengkajianKepIGDPerImplementasiCtrl' + ' dengan No EMR - ' +e.data.data.noemr +  ' pada No Registrasi ' 
                     + $scope.cc.noregistrasi).then(function (res) {
                     })
-
+                    $scope.isRouteLoading = false
                     var arrStr = {
                         0: e.data.data.noemr
                     }

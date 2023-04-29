@@ -292,6 +292,13 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 				   // "template": '# if( iskompleks==1 ) {# ✔ # } else {#  #} #'
 
 				},
+				{
+					"field": "kdprofile",
+					"title": "EMR",
+					"width": "50px",
+				    "template": '# if( kdprofile!=null) {# ✔ # } else {#  #} #'
+
+				},
 				
 				// {
 				// 	"field": "statuspasien",
