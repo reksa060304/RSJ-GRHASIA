@@ -128,6 +128,9 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             //   $scope.listItem = e.data.kolom4
 
             medifirstService.get("emr/get-emr-transaksi-detail?noemr=" + nomorEMR + "&emrfk=" + $scope.cc.emrfk, true).then(function (dat) {
+                medifirstService.getPart('emr/get-datacombo-part-pegawai', true, true, 20).then(function (data) {
+                  $scope.listPegawai = data
+                })
                 $scope.item.obj = []
                 $scope.item.obj2 = []
                 dataLoad = dat.data.data
@@ -202,11 +205,12 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 
                         }
                         if (dataLoad[i].type == "combobox") {
+
                             var str = dataLoad[i].value
                             if(str != undefined){
                                 var res = str.split("~");
                                 // $scope.item.objcbo[dataLoad[i].emrdfk]= {value:res[0],text:res[1]}
-                                $scope.item.obj[dataLoad[i].emrdfk] = { value: res[0], text: res[1] }        
+                                $scope.item.obj[dataLoad[i].emrdfk] = { value: res[0], text: res[1] } 
                             }   
                             // var res = str.split("~");
                             // // $scope.item.objcbo[dataLoad[i].emrdfk]= {value:res[0],text:res[1]}
