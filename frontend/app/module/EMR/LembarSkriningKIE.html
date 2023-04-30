@@ -94,13 +94,13 @@
                                         </div>
                                     </div>
                                     <div class="grid_4" ng-switch-when="checkboxtextbox">
-                                            <div class="grid_4">
+                                            <div class="grid_12">
                                                 <input type="checkbox" class="k-checkbox" id="item.obj2{{jawab.id}}"
                                                     ng-model="item.obj2[jawab.id]" ng-checked="{{jawab.value}}">
                                                 <label class="k-checkbox-label"
                                                     for="item.obj2{{jawab.id}}">{{jawab.caption}}</label>
                                             </div>
-                                            <div class="grid_8"
+                                            <div class="grid_10"
                                                 style="margin-top: -5px;margin-bottom: -5px;margin-left: 20px">
                                                 <input class="k-textbox" ng-model="item.obj[jawab.id]" type="text"
                                                     placeholder="{{jawab.satuan}}" ng-value="{{jawab.value}}">
@@ -114,7 +114,7 @@
                                             <input style="width: 40%;" kendo-combo-box k-ng-model="item.obj[jawab.id]" k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'" k-auto-bind="false" k-data-source="{{jawab.cbotable}}" />
                                         </div>
                                     </div>
-                                    <div class="grid_3" ng-switch-when="textbox">
+                                    <div class="grid_4" ng-switch-when="textbox">
                                         <div class="grid_12">
                                             <label>{{jawab.caption}}</label>
                                         </div>
