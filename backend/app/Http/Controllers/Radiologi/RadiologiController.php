@@ -2226,7 +2226,7 @@ class RadiologiController extends ApiController
         }
 
         $data = DB::select(DB::raw("          
-                SELECT pp.norec,pp.tglpelayanan,ps.nocm,pd.noregistrasi,ps.namapasien,jk.jeniskelamin,
+                SELECT pp.norec,pp.tglpelayanan,ps.nocm::text,pd.noregistrasi,ps.namapasien,jk.jeniskelamin,
                        CASE WHEN ru1.namaruangan IS NOT NULL THEN ru1.namaruangan ELSE ru2.namaruangan END AS ruangan,
                        klp.kelompokpasien,pro.namaproduk,pp.jumlah,pp.hargajual,
                        CASE WHEN pg.namalengkap IS NULL THEN '-' ELSE pg.namalengkap END AS dokterdpjp,
@@ -2250,7 +2250,7 @@ class RadiologiController extends ApiController
                 LEFT JOIN pegawai_m AS pg1 ON pg1.id = ppp.objectpegawaifk
                 LEFT JOIN hasilradiologi_t AS hr ON hr.pelayananpasienfk = pp.norec AND hr.statusenabled = true
                 WHERE pd.kdprofile = $kdProfile AND pd.statusenabled = true AND apd.objectruanganfk = 576
-                      AND pro.namaproduk IS NOT NULL AND br.norec IS NULL AND pp.isobat IS NULL
+                      AND pro.namaproduk IS NOT NULL AND br.norec IS NULL AND pp.isobat IS NULL and pp.produkfk not in (5008645,5008635,5008637,5008636,12122241,5008644)
                       AND pp.tglpelayanan BETWEEN '$tglAwal' AND '$tglAkhir'
                       $ruid
                       $dokid
@@ -2289,8 +2289,8 @@ class RadiologiController extends ApiController
             'data'=> $data,
             'message' => 'ea@epic',
         );
-        // return $this->respond($result);
-        return response()->json($result, 200, [], JSON_NUMERIC_CHECK);
+        return $this->respond($result);
+        // return response()->json($result, 200, [], JSON_NUMERIC_CHECK);
     }
 
     

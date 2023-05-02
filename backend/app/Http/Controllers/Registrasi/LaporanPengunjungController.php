@@ -7092,7 +7092,7 @@ class LaporanPengunjungController extends ApiController
         
         union all
         
-        SELECT ps.nocm,
+        SELECT distinct ps.nocm,
         ps.namapasien,
         ru.namaruangan,
         -- ru2.namaruangan,
@@ -7104,18 +7104,56 @@ class LaporanPengunjungController extends ApiController
         inner join pasiendaftar_t pd on pd.norec = so.noregistrasifk
         INNER JOIN pasien_m ps on ps.id=pd.nocmfk
         inner join ruangan_m ru on ru.id = so.objectruangantujuanfk
-        inner join ruangan_m ru2 on ru2.id = pd.objectruanganlastfk
+        inner join ruangan_m ru2 on ru2.id = so.objectruanganfk
         INNER join kelompokpasien_m kep on kep.id = pd.objectkelompokpasienlastfk
         left JOIN alamat_m al on ps.id = al.nocmfk
         left join kotakabupaten_m kk on kk.id= al.objectkotakabupatenfk
+        inner join pelayananpasien_t pp on pp.strukorderfk = so.norec
         WHERE so.tglorder::date BETWEEN '$tglAwal' and '$tglAkhir'
         and pd.kdprofile = $kdProfile
         and pd.statusenabled=true
+        and so.kdprofile = 30 and so.statusenabled = true and so.statusorder = 1
         and ru2.objectdepartemenfk <> 16
         $paramRuangan
         $paramkp
         $dep
         and ru.objectdepartemenfk = 27 and so.keteranganorder ilike 'Order Radiologi' 
+        
+        union all 
+        
+        SELECT distinct 
+        ps.nocm,
+        ps.namapasien,
+        ru.namaruangan,
+        apd.tglmasuk,
+        pd.statuspasien,
+        aj.asalrujukan,
+        kep.kelompokpasien,
+        kk.namakotakabupaten
+
+        FROM
+        pasiendaftar_t pd
+        INNER JOIN antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+        inner join pelayananpasien_t pp on pp.noregistrasifk = apd.norec and pp.strukorderfk is null and pp.status <> 'admin otomatis'
+        INNER JOIN pasien_m ps on ps.id=pd.nocmfk
+        inner join ruangan_m ru on ru.id = apd.objectruanganfk
+        inner join ruangan_m ru2 on ru2.id = pd.objectruanganlastfk
+        INNER join kelompokpasien_m kep on kep.id = pd.objectkelompokpasienlastfk
+        left JOIN alamat_m al on ps.id = al.nocmfk
+        left join kotakabupaten_m kk on kk.id= al.objectkotakabupatenfk
+        left join asalrujukan_m aj on aj.id = apd.objectasalrujukanfk
+        WHERE apd.tglmasuk::date BETWEEN '$tglAwal' and '$tglAkhir'
+        and apd.kdprofile = 30
+        and pd.kdprofile = 30 
+        and apd.statusenabled = true
+        and pd.statusenabled=true
+        $paramRuangan
+        $paramkp
+        $dep
+
+        and ru.objectdepartemenfk = 27
+        and ru2.objectdepartemenfk <> 16
+        order by tglmasuk asc
         "
         ));
         $carakeluar = '';
@@ -7223,8 +7261,7 @@ class LaporanPengunjungController extends ApiController
 
         FROM strukorder_t so 
         inner join pasiendaftar_t pd on pd.norec = so.noregistrasifk
-        left join pelayananpasien_t pp on pp.strukorderfk = so.norec
-        left join pelayananpasienpetugas_t ppp on ppp.pelayananpasien = pp.norec
+        inner join pelayananpasien_t pp on pp.strukorderfk = so.norec
         INNER JOIN pasien_m ps on ps.id = pd.nocmfk
         left JOIN alamat_m al on ps.id=al.nocmfk
         left JOIN statuskeluar_m sk on sk.kdstatuskeluar = pd.objectstatuskeluarfk
@@ -7234,10 +7271,10 @@ class LaporanPengunjungController extends ApiController
         -- inner join ruangan_m ru2 on ru2.id = pd.objectruanganlastfk
         left JOIN kondisipasien_m kp on kp.id=pd.objectkondisipasienfk
         -- inner JOIN pegawai_m peg on peg.id=ppp.objectpegawaifk
-
+            
         WHERE so.tglorder::date BETWEEN '$tglAwal' and '$tglAkhir'
         and pd.kdprofile = $kdProfile
-        and pd.statusenabled=true 
+        and pd.statusenabled=true and so.statusorder = 1
         $paramRuangan
         $paramkp
         $carakeluar
@@ -7245,6 +7282,62 @@ class LaporanPengunjungController extends ApiController
         $dep
 
         and so.keteranganorder ilike 'Order Radiologi'
+        union all
+        sELECT DISTINCT 
+        ps.nocm,
+        ps.namapasien,
+        al.alamatlengkap,
+        CASE
+        WHEN ru.id not in(799,800) THEN
+        'Jiwa'
+        when ru.id = 799 then
+        'Napza'
+        when ru.id = 800 THEN
+        'Umum' end as jenisjiwa,
+        /*jenis jiwa*/
+        ru.namaruangan,
+        '' as namakelas,
+        apd.tglmasuk as tglmasuk,
+        apd.tglkeluar as tglkeluar,
+        CASE
+        WHEN apd.tglmasuk::date - apd.tglmasuk::date = 0 THEN
+        1
+        ELSE
+        apd.tglmasuk::date - apd.tglmasuk::date
+        END as lamahari,
+        '' as statuskeluar,
+        '' as kondisipasien,
+        -- peg.namalengkap,
+        kep.kelompokpasien
+        -- op.norec
+        -- op.objectprodukfk
+
+        FROM pasiendaftar_t pd 
+        inner join antrianpasiendiperiksa_t apd on apd.noregistrasifk = pd.norec
+        inner join pelayananpasien_t pp on pp.noregistrasifk = apd.norec and pp.strukorderfk is null and pp.status <> 'admin otomatis'
+        INNER JOIN pasien_m ps on ps.id = pd.nocmfk
+        left JOIN alamat_m al on ps.id=al.nocmfk
+        left JOIN statuskeluar_m sk on sk.kdstatuskeluar = pd.objectstatuskeluarfk
+        inner join kelompokpasien_m kep on kep.id= pd.objectkelompokpasienlastfk
+        inner join ruangan_m ru2 on ru2.id = pd.objectruanganlastfk and ru2.objectdepartemenfk = 16
+        inner join ruangan_m ru on ru.id = apd.objectruanganfk
+        -- inner join ruangan_m ru2 on ru2.id = pd.objectruanganlastfk
+        left JOIN kondisipasien_m kp on kp.id=pd.objectkondisipasienfk
+        -- inner JOIN pegawai_m peg on peg.id=ppp.objectpegawaifk
+
+        WHERE apd.tglmasuk::date BETWEEN '$tglAwal' and '$tglAkhir'
+        and pd.kdprofile = 30 
+        and pd.statusenabled=true
+        $paramRuangan
+        $paramkp
+        $carakeluar
+        $jenisPasien
+        $dep
+
+
+
+        and ru.objectdepartemenfk = 27
+            order by tglmasuk asc
 
         "));
         $result = array(
