@@ -201,6 +201,10 @@ define(['initialize'], function (initialize) {
                     toastr.error("Wajib isi Keterangan konsultasi!")
                     return
                 }
+                if ($scope.item.namadokter == undefined) {
+                    toastr.error("Pilih Pengonsul terlebih dahulu!")
+                    return
+                }
                 var objSave = {
                     norec_so: $scope.item.norec != undefined ? $scope.item.norec : '',
                     norec_pd: $scope.norecPd,
