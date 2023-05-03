@@ -47,8 +47,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     'umur': thn
                 }
                 $scope.header.generate = true;
-
                 $scope.header = result
+                $scope.header.tgllahirs = moment($scope.header.tgllahir).format('DD-MM-YYYY')
+
                 if (result.foto == null)
                     $scope.header.image = "../app/images/avatar.jpg"
                 else

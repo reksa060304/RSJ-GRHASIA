@@ -239,6 +239,8 @@ class EMRController  extends ApiController
             ->select('rm.id', 'rm.namalengkap')
             ->where('rm.kdprofile', $idProfile)
             ->where('rm.statusenabled', true)
+            ->whereNull('rm.usereksternal')
+            // ->where('rm.namalengkap','<>','-')
             // ->whereIn('rm.objectjenispegawaifk',[1,26])
             ->orderBy('rm.namalengkap')
             ->get();
@@ -2054,7 +2056,7 @@ class EMRController  extends ApiController
             $dataSO->noorderintern = $noOrder;
             $dataSO->noregistrasifk = $dataPD->norec;
             $dataSO->objectpegawaiorderfk = $request['pegawaifk'];
-            $dataSO->objectpetugasfk = $this->getCurrentUserID();
+            $dataSO->objectpetugasfk = $request['objectpetugasfk'];
             $dataSO->qtyjenisproduk = 0;
             $dataSO->qtyproduk = 0;
             $dataSO->objectruanganfk = $request['objectruanganasalfk'];
@@ -2133,7 +2135,7 @@ class EMRController  extends ApiController
             ->leftJoin('pegawai_m as pg', 'pg.id', '=', 'so.objectpegawaiorderfk')
             ->leftJoin('pegawai_m as pet', 'pet.id', '=', 'so.objectpetugasfk')
             ->leftJoin('antrianpasiendiperiksa_t as apd', 'apd.objectstrukorderfk', '=', 'so.norec')
-            ->select('so.norec', 'so.noorder', 'so.tglorder', 'ru.namaruangan as ruanganasal', 'pg.namalengkap',
+            ->select('so.objectpetugasfk','so.norec', 'so.noorder', 'so.tglorder', 'ru.namaruangan as ruanganasal', 'pg.namalengkap',
                 'rutuju.namaruangan as ruangantujuan', 'pet.namalengkap as pengonsul',
                 'pd.noregistrasi', 'pd.tglregistrasi', 'ps.nocm', 'so.keteranganorder', 'pd.norec as norec_pd',
                 'ps.namapasien', 'pg.id as pegawaifk', 'so.objectruangantujuanfk', 'so.objectruanganfk', 'apd.norec as norec_apd',
