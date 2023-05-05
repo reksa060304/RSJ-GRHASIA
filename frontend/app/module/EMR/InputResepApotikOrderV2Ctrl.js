@@ -836,7 +836,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                                         jeniskemasanfk: $scope.item.jenisKemasan.id,
                                         jeniskemasan: $scope.item.jenisKemasan.jeniskemasan,
                                         aturanpakaifk: 0,//$scope.item.aturanPakai.id,
-                                        aturanpakai: $scope.item.aturanpakaitxt,//aturanPakai.name,
+                                        aturanpakai: $scope.item.aturanpakaitxt != undefined ? $scope.item.aturanpakaitxt : null, //aturanPakai.name,
                                         ispagi: $scope.item.chkp,
                                         issiang: $scope.item.chks,
                                         issore: $scope.item.chksr,
