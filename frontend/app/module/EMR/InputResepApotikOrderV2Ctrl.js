@@ -690,10 +690,10 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     alert("Pilih Produk terlebih dahulu!!")
                     return;
                 }
-                if ($scope.item.aturanpakaitxt == undefined || $scope.item.aturanpakaitxt == '') {
-                    alert("Aturan Pakai Belum diisi!!")
-                    return;
-                }
+                // if ($scope.item.aturanpakaitxt == undefined || $scope.item.aturanpakaitxt == '') {
+                //     alert("Aturan Pakai Belum diisi!!")
+                //     return;
+                // }
                 if ($scope.item.rke == undefined || $scope.item.rke == '') {
                     alert("R/ Belum diisi!!")
                     return;

@@ -859,10 +859,10 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 medifirstService.get("emr/get-data-cppt-rajal?norec_apd=" + $scope.norecAPD).then(function (data) {                 
                     var datas = data.data;    
                     if (datas.dataresep == "" ) {
-                        $scope.item.Resep = "Sedang diresepkan oleh farmasi";
+                        $scope.item.Resep = "Belum buat Resep pada menu Resep Elektronik";
                     }
                     if (datas.dataresep != undefined) {
-                        var resep = datas.dataresep.replace("~","\n");
+                        var resep = datas.dataresep.replace(/~/g, "\n");
                         $scope.item.Resep = resep;
                     }
                     $scope.isRouteLoading = false

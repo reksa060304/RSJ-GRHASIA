@@ -1039,6 +1039,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 
                           let pegawai = JSON.parse(localStorage.getItem('pegawai'))
                           $scope.listPegawai.add({value: pegawai.id, text: pegawai.namaLengkap})
+                          $scope.item.obj[111439] = { value: pegawai.jenisPegawai.id, text: pegawai.jenisPegawai.jenispegawai }
                           $scope.item.obj[111441] = { value: pegawai.id, text: pegawai.namaLengkap }
 
                       }
@@ -1054,6 +1055,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 
                           let pegawai = JSON.parse(localStorage.getItem('pegawai'))
                           $scope.listPegawai.add({value: pegawai.id, text: pegawai.namaLengkap})
+                          $scope.item.obj[111449] = { value: pegawai.jenisPegawai.id, text: pegawai.jenisPegawai.jenispegawai }
                           $scope.item.obj[111451] = { value: pegawai.id, text: pegawai.namaLengkap }
 
                       }
@@ -1069,6 +1071,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 
                           let pegawai = JSON.parse(localStorage.getItem('pegawai'))
                           $scope.listPegawai.add({value: pegawai.id, text: pegawai.namaLengkap})
+                          $scope.item.obj[111459] = { value: pegawai.jenisPegawai.id, text: pegawai.jenisPegawai.jenispegawai }
                           $scope.item.obj[111461] = { value: pegawai.id, text: pegawai.namaLengkap }
 
                       }
@@ -1084,6 +1087,11 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 
                           let pegawai = JSON.parse(localStorage.getItem('pegawai'))
                           $scope.listPegawai.add({value: pegawai.id, text: pegawai.namaLengkap})
+                          $scope.item.obj[111474] = {
+                            value: pegawai.jenisPegawai.id,
+                            text: pegawai.jenisPegawai.jenispegawai
+                          }
+
                           $scope.item.obj[111476] = { value: pegawai.id, text: pegawai.namaLengkap }
 
                       }
@@ -1099,6 +1107,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 
                           let pegawai = JSON.parse(localStorage.getItem('pegawai'))
                           $scope.listPegawai.add({value: pegawai.id, text: pegawai.namaLengkap})
+                          $scope.item.obj[111484] = { value: pegawai.jenisPegawai.id, text: pegawai.jenisPegawai.jenispegawai }
                           $scope.item.obj[111486] = { value: pegawai.id, text: pegawai.namaLengkap }
 
                       }
@@ -1114,6 +1123,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 
                           let pegawai = JSON.parse(localStorage.getItem('pegawai'))
                           $scope.listPegawai.add({value: pegawai.id, text: pegawai.namaLengkap})
+                          $scope.item.obj[111494] = { value: pegawai.jenisPegawai.id, text: pegawai.jenisPegawai.jenispegawai }
                           $scope.item.obj[111496] = { value: pegawai.id, text: pegawai.namaLengkap }
 
                       }
@@ -1129,6 +1139,10 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 
                           let pegawai = JSON.parse(localStorage.getItem('pegawai'))
                           $scope.listPegawai.add({value: pegawai.id, text: pegawai.namaLengkap})
+                          $scope.item.obj[111504] = {
+                            value: pegawai.jenisPegawai.id,
+                            text: pegawai.jenisPegawai.jenispegawai
+                          }
                           $scope.item.obj[111506] = { value: pegawai.id, text: pegawai.namaLengkap }
 
                       }
@@ -1144,6 +1158,10 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 
                           let pegawai = JSON.parse(localStorage.getItem('pegawai'))
                           $scope.listPegawai.add({value: pegawai.id, text: pegawai.namaLengkap})
+                          $scope.item.obj[111514] = {
+                            value: pegawai.jenisPegawai.id,
+                            text: pegawai.jenisPegawai.jenispegawai
+                          }
                           $scope.item.obj[111516] = { value: pegawai.id, text: pegawai.namaLengkap }
 
                       }
@@ -1159,6 +1177,10 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 
                           let pegawai = JSON.parse(localStorage.getItem('pegawai'))
                           $scope.listPegawai.add({value: pegawai.id, text: pegawai.namaLengkap})
+                          $scope.item.obj[111524] = {
+                            value: pegawai.jenisPegawai.id,
+                            text: pegawai.jenisPegawai.jenispegawai
+                          }
                           $scope.item.obj[111526] = { value: pegawai.id, text: pegawai.namaLengkap }
 
                       }
@@ -1174,6 +1196,10 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 
                           let pegawai = JSON.parse(localStorage.getItem('pegawai'))
                           $scope.listPegawai.add({value: pegawai.id, text: pegawai.namaLengkap})
+                          $scope.item.obj[111534] = {
+                            value: pegawai.jenisPegawai.id,
+                            text: pegawai.jenisPegawai.jenispegawai
+                          }
                           $scope.item.obj[111536] = { value: pegawai.id, text: pegawai.namaLengkap }
 
                       }
@@ -1189,6 +1215,10 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 
                           let pegawai = JSON.parse(localStorage.getItem('pegawai'))
                           $scope.listPegawai.add({value: pegawai.id, text: pegawai.namaLengkap})
+                          $scope.item.obj[111544] = {
+                            value: pegawai.jenisPegawai.id,
+                            text: pegawai.jenisPegawai.jenispegawai
+                          }
                           $scope.item.obj[111546] = { value: pegawai.id, text: pegawai.namaLengkap }
 
                       }
@@ -1204,6 +1234,10 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 
                           let pegawai = JSON.parse(localStorage.getItem('pegawai'))
                           $scope.listPegawai.add({value: pegawai.id, text: pegawai.namaLengkap})
+                          $scope.item.obj[111554] = {
+                            value: pegawai.jenisPegawai.id,
+                            text: pegawai.jenisPegawai.jenispegawai
+                          }
                           $scope.item.obj[111556] = { value: pegawai.id, text: pegawai.namaLengkap }
 
                       }
@@ -1219,6 +1253,10 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 
                           let pegawai = JSON.parse(localStorage.getItem('pegawai'))
                           $scope.listPegawai.add({value: pegawai.id, text: pegawai.namaLengkap})
+                          $scope.item.obj[111564] = {
+                            value: pegawai.jenisPegawai.id,
+                            text: pegawai.jenisPegawai.jenispegawai
+                          }
                           $scope.item.obj[111566] = { value: pegawai.id, text: pegawai.namaLengkap }
 
                       }
@@ -1234,6 +1272,10 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 
                           let pegawai = JSON.parse(localStorage.getItem('pegawai'))
                           $scope.listPegawai.add({value: pegawai.id, text: pegawai.namaLengkap})
+                          $scope.item.obj[111574] = {
+                            value: pegawai.jenisPegawai.id,
+                            text: pegawai.jenisPegawai.jenispegawai
+                          }
                           $scope.item.obj[111576] = { value: pegawai.id, text: pegawai.namaLengkap }
 
                       }
@@ -1249,6 +1291,10 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 
                           let pegawai = JSON.parse(localStorage.getItem('pegawai'))
                           $scope.listPegawai.add({value: pegawai.id, text: pegawai.namaLengkap})
+                          $scope.item.obj[111584] = {
+                            value: pegawai.jenisPegawai.id,
+                            text: pegawai.jenisPegawai.jenispegawai
+                          }
                           $scope.item.obj[111586] = { value: pegawai.id, text: pegawai.namaLengkap }
 
                       }
@@ -1263,7 +1309,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     if(newValue!=oldValue){
                 
                       if($scope.item.obj[111355] !=null && $scope.item.obj[111356]==undefined){
-                          $scope.item.obj[111356] =$scope.now
+                          $scope.item.obj[111356] = new Date()
                           let pegawai = JSON.parse(localStorage.getItem('pegawai'))
                           $scope.listPegawai.add({value: pegawai.id, text: pegawai.namaLengkap})
                           $scope.item.obj[111357] = { value: pegawai.id, text: pegawai.namaLengkap }
@@ -1277,8 +1323,8 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             $scope.$watch('item.obj[111395]', function(newValue,oldValue){
                     if(newValue!=oldValue){
                     
-                      if($scope.item.obj[111395] !=null && $scope.item.obj[111397]==undefined){
-                        $scope.item.obj[111396] =$scope.now
+                      if($scope.item.obj[111395] !=null && $scope.item.obj[111396]==undefined){
+                        $scope.item.obj[111396] = new Date()
                         let pegawai = JSON.parse(localStorage.getItem('pegawai'))
                         $scope.listPegawai.add({value: pegawai.id, text: pegawai.namaLengkap})
                         $scope.item.obj[111397] = { value: pegawai.id, text: pegawai.namaLengkap }
@@ -1292,7 +1338,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     if(newValue!=oldValue){
                     
                       if($scope.item.obj[111435] !=null && $scope.item.obj[111436]==undefined){
-                        $scope.item.obj[111436] =$scope.now
+                        $scope.item.obj[111436] =new Date()
                         let pegawai = JSON.parse(localStorage.getItem('pegawai'))
                         $scope.listPegawai.add({value: pegawai.id, text: pegawai.namaLengkap})
                         $scope.item.obj[111437] = { value: pegawai.id, text: pegawai.namaLengkap }
@@ -1306,7 +1352,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     if(newValue!=oldValue){
                     
                       if($scope.item.obj[111480] !=null && $scope.item.obj[111481]==undefined){
-                        $scope.item.obj[111481] =$scope.now
+                        $scope.item.obj[111481] =new Date()
                         let pegawai = JSON.parse(localStorage.getItem('pegawai'))
                         $scope.listPegawai.add({value: pegawai.id, text: pegawai.namaLengkap})
                         $scope.item.obj[111482] = { value: pegawai.id, text: pegawai.namaLengkap }
@@ -1320,7 +1366,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     if(newValue!=oldValue){
                     
                       if($scope.item.obj[111520] !=null && $scope.item.obj[111521]==undefined){
-                        $scope.item.obj[111521] =$scope.now
+                        $scope.item.obj[111521] = new Date()
                         let pegawai = JSON.parse(localStorage.getItem('pegawai'))
                         $scope.listPegawai.add({value: pegawai.id, text: pegawai.namaLengkap})
                         $scope.item.obj[111522] = { value: pegawai.id, text: pegawai.namaLengkap }
@@ -1334,7 +1380,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     if(newValue!=oldValue){
                     
                       if($scope.item.obj[111560] !=null && $scope.item.obj[111561]==undefined){
-                        $scope.item.obj[111561] =$scope.now
+                        $scope.item.obj[111561] =new Date()
                         let pegawai = JSON.parse(localStorage.getItem('pegawai'))
                         $scope.listPegawai.add({value: pegawai.id, text: pegawai.namaLengkap})
                         $scope.item.obj[111562] = { value: pegawai.id, text: pegawai.namaLengkap }
@@ -1348,7 +1394,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     if(newValue!=oldValue){
                     
                       if ($scope.item.obj[21040380] != null && $scope.item.obj[21040381] == undefined) {
-                        $scope.item.obj[21040381] = $scope.now
+                        $scope.item.obj[21040381] = new Date()
                         let pegawai = JSON.parse(localStorage.getItem('pegawai'))
                         $scope.listPegawai.add({value: pegawai.id, text: pegawai.namaLengkap})
                         $scope.item.obj[21040382] = { value: pegawai.id, text: pegawai.namaLengkap }
@@ -1362,7 +1408,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     if(newValue!=oldValue){
                     
                       if ($scope.item.obj[21040383] != null && $scope.item.obj[21040384] == undefined) {
-                        $scope.item.obj[21040384] = $scope.now
+                        $scope.item.obj[21040384] = new Date()
                         let pegawai = JSON.parse(localStorage.getItem('pegawai'))
                         $scope.listPegawai.add({value: pegawai.id, text: pegawai.namaLengkap})
                         $scope.item.obj[21040385] = { value: pegawai.id, text: pegawai.namaLengkap }
@@ -1374,17 +1420,259 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 })
                 $scope.$watch('item.obj[21040386]', function(newValue,oldValue){
                     if(newValue!=oldValue){
-                    
                       if ($scope.item.obj[21040386] != null && $scope.item.obj[21040387] == undefined) {
-                        $scope.item.obj[21040387] = $scope.now
+                        $scope.item.obj[21040387] = new Date()
                         let pegawai = JSON.parse(localStorage.getItem('pegawai'))
                         $scope.listPegawai.add({value: pegawai.id, text: pegawai.namaLengkap})
                         $scope.item.obj[21040388] = { value: pegawai.id, text: pegawai.namaLengkap }
                       }
-                      
-
-                       
                     }
+                })
+
+                $scope.$watch('item.obj[21040389]', function (newValue, oldValue) {
+                  if (newValue != oldValue) {
+
+                    if ($scope.item.obj[21040389] != null && $scope.item.obj[21040390] == undefined) {
+                      $scope.item.obj[21040390] = new Date()
+                      let pegawai = JSON.parse(localStorage.getItem('pegawai'))
+                      $scope.listPegawai.add({
+                        value: pegawai.id,
+                        text: pegawai.namaLengkap
+                      })
+                      $scope.item.obj[21040391] = {
+                        value: pegawai.id,
+                        text: pegawai.namaLengkap
+                      }
+                    }
+
+
+
+                  }
+                })
+                $scope.$watch('item.obj[21040392]', function (newValue, oldValue) {
+                  if (newValue != oldValue) {
+                    if ($scope.item.obj[21040392] != null && $scope.item.obj[21040393] == undefined) {
+                      $scope.item.obj[21040393] = new Date()
+                      let pegawai = JSON.parse(localStorage.getItem('pegawai'))
+                      $scope.listPegawai.add({
+                        value: pegawai.id,
+                        text: pegawai.namaLengkap
+                      })
+                      $scope.item.obj[21040394] = {
+                        value: pegawai.id,
+                        text: pegawai.namaLengkap
+                      }
+                    }
+                  }
+                })
+                $scope.$watch('item.obj[21040395]', function (newValue, oldValue) {
+                  if (newValue != oldValue) {
+                    if ($scope.item.obj[21040395] != null && $scope.item.obj[21040396] == undefined) {
+                      $scope.item.obj[21040396] = new Date()
+                      let pegawai = JSON.parse(localStorage.getItem('pegawai'))
+                      $scope.listPegawai.add({
+                        value: pegawai.id,
+                        text: pegawai.namaLengkap
+                      })
+                      $scope.item.obj[21040397] = {
+                        value: pegawai.id,
+                        text: pegawai.namaLengkap
+                      }
+                    }
+                  }
+                })
+                $scope.$watch('item.obj[21040398]', function (newValue, oldValue) {
+                  if (newValue != oldValue) {
+                    if ($scope.item.obj[21040398] != null && $scope.item.obj[21040399] == undefined) {
+                      $scope.item.obj[21040399] = new Date()
+                      let pegawai = JSON.parse(localStorage.getItem('pegawai'))
+                      $scope.listPegawai.add({
+                        value: pegawai.id,
+                        text: pegawai.namaLengkap
+                      })
+                      $scope.item.obj[21040400] = {
+                        value: pegawai.id,
+                        text: pegawai.namaLengkap
+                      }
+                    }
+                  }
+                })
+                $scope.$watch('item.obj[21040401]', function (newValue, oldValue) {
+                  if (newValue != oldValue) {
+                    if ($scope.item.obj[21040401] != null && $scope.item.obj[21040402] == undefined) {
+                      $scope.item.obj[21040402] = new Date()
+                      let pegawai = JSON.parse(localStorage.getItem('pegawai'))
+                      $scope.listPegawai.add({
+                        value: pegawai.id,
+                        text: pegawai.namaLengkap
+                      })
+                      $scope.item.obj[21040403] = {
+                        value: pegawai.id,
+                        text: pegawai.namaLengkap
+                      }
+                    }
+                  }
+                })
+                $scope.$watch('item.obj[21040404]', function (newValue, oldValue) {
+                  if (newValue != oldValue) {
+                    if ($scope.item.obj[21040404] != null && $scope.item.obj[21040405] == undefined) {
+                      $scope.item.obj[21040405] = new Date()
+                      let pegawai = JSON.parse(localStorage.getItem('pegawai'))
+                      $scope.listPegawai.add({
+                        value: pegawai.id,
+                        text: pegawai.namaLengkap
+                      })
+                      $scope.item.obj[21040406] = {
+                        value: pegawai.id,
+                        text: pegawai.namaLengkap
+                      }
+                    }
+                  }
+                })
+                $scope.$watch('item.obj[21040407]', function (newValue, oldValue) {
+                  if (newValue != oldValue) {
+                    if ($scope.item.obj[21040407] != null && $scope.item.obj[21040408] == undefined) {
+                      $scope.item.obj[21040408] = new Date()
+                      let pegawai = JSON.parse(localStorage.getItem('pegawai'))
+                      $scope.listPegawai.add({
+                        value: pegawai.id,
+                        text: pegawai.namaLengkap
+                      })
+                      $scope.item.obj[21040409] = {
+                        value: pegawai.id,
+                        text: pegawai.namaLengkap
+                      }
+                    }
+                  }
+                })
+
+                $scope.$watch('item.obj[21040410]', function (newValue, oldValue) {
+                  if (newValue != oldValue) {
+                    if ($scope.item.obj[21040410] != null && $scope.item.obj[21040411] == undefined) {
+                      $scope.item.obj[21040411] = new Date()
+                      let pegawai = JSON.parse(localStorage.getItem('pegawai'))
+                      $scope.listPegawai.add({
+                        value: pegawai.id,
+                        text: pegawai.namaLengkap
+                      })
+                      $scope.item.obj[21040412] = {
+                        value: pegawai.id,
+                        text: pegawai.namaLengkap
+                      }
+                    }
+                  }
+                })
+                $scope.$watch('item.obj[21040413]', function (newValue, oldValue) {
+                  if (newValue != oldValue) {
+                    if ($scope.item.obj[21040413] != null && $scope.item.obj[21040414] == undefined) {
+                      $scope.item.obj[21040414] = new Date()
+                      let pegawai = JSON.parse(localStorage.getItem('pegawai'))
+                      $scope.listPegawai.add({
+                        value: pegawai.id,
+                        text: pegawai.namaLengkap
+                      })
+                      $scope.item.obj[21040415] = {
+                        value: pegawai.id,
+                        text: pegawai.namaLengkap
+                      }
+                    }
+                  }
+                })
+                $scope.$watch('item.obj[21040416]', function (newValue, oldValue) {
+                  if (newValue != oldValue) {
+                    if ($scope.item.obj[21040416] != null && $scope.item.obj[21040417] == undefined) {
+                      $scope.item.obj[21040417] = new Date()
+                      let pegawai = JSON.parse(localStorage.getItem('pegawai'))
+                      $scope.listPegawai.add({
+                        value: pegawai.id,
+                        text: pegawai.namaLengkap
+                      })
+                      $scope.item.obj[21040418] = {
+                        value: pegawai.id,
+                        text: pegawai.namaLengkap
+                      }
+                    }
+                  }
+                })
+                $scope.$watch('item.obj[21040419]', function (newValue, oldValue) {
+                  if (newValue != oldValue) {
+                    if ($scope.item.obj[21040419] != null && $scope.item.obj[21040420] == undefined) {
+                      $scope.item.obj[21040420] = new Date()
+                      let pegawai = JSON.parse(localStorage.getItem('pegawai'))
+                      $scope.listPegawai.add({
+                        value: pegawai.id,
+                        text: pegawai.namaLengkap
+                      })
+                      $scope.item.obj[21040421] = {
+                        value: pegawai.id,
+                        text: pegawai.namaLengkap
+                      }
+                    }
+                  }
+                })
+                $scope.$watch('item.obj[21040422]', function (newValue, oldValue) {
+                  if (newValue != oldValue) {
+                    if ($scope.item.obj[21040422] != null && $scope.item.obj[21040423] == undefined) {
+                      $scope.item.obj[21040423] = new Date()
+                      let pegawai = JSON.parse(localStorage.getItem('pegawai'))
+                      $scope.listPegawai.add({
+                        value: pegawai.id,
+                        text: pegawai.namaLengkap
+                      })
+                      $scope.item.obj[21040424] = {
+                        value: pegawai.id,
+                        text: pegawai.namaLengkap
+                      }
+                    }
+                  }
+                })
+                $scope.$watch('item.obj[21040425]', function (newValue, oldValue) {
+                  if (newValue != oldValue) {
+                    if ($scope.item.obj[21040425] != null && $scope.item.obj[21040426] == undefined) {
+                      $scope.item.obj[21040426] = new Date()
+                      let pegawai = JSON.parse(localStorage.getItem('pegawai'))
+                      $scope.listPegawai.add({
+                        value: pegawai.id,
+                        text: pegawai.namaLengkap
+                      })
+                      $scope.item.obj[21040427] = {
+                        value: pegawai.id,
+                        text: pegawai.namaLengkap
+                      }
+                    }
+                  }
+                })
+                $scope.$watch('item.obj[21040428]', function (newValue, oldValue) {
+                  if (newValue != oldValue) {
+                    if ($scope.item.obj[21040428] != null && $scope.item.obj[21040429] == undefined) {
+                      $scope.item.obj[21040429] = new Date()
+                      let pegawai = JSON.parse(localStorage.getItem('pegawai'))
+                      $scope.listPegawai.add({
+                        value: pegawai.id,
+                        text: pegawai.namaLengkap
+                      })
+                      $scope.item.obj[21040430] = {
+                        value: pegawai.id,
+                        text: pegawai.namaLengkap
+                      }
+                    }
+                  }
+                })
+                $scope.$watch('item.obj[21040431]', function (newValue, oldValue) {
+                  if (newValue != oldValue) {
+                    if ($scope.item.obj[21040431] != null && $scope.item.obj[21040432] == undefined) {
+                      $scope.item.obj[21040432] = new Date()
+                      let pegawai = JSON.parse(localStorage.getItem('pegawai'))
+                      $scope.listPegawai.add({
+                        value: pegawai.id,
+                        text: pegawai.namaLengkap
+                      })
+                      $scope.item.obj[21040433] = {
+                        value: pegawai.id,
+                        text: pegawai.namaLengkap
+                      }
+                    }
+                  }
                 })
             
             // $scope.$watch('item.obj[111350]', function(newValue,oldValue){

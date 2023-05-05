@@ -442,7 +442,7 @@ define(['initialize'], function (initialize) {
                     $scope.item.beratBadan = chacePeriode[12]
                     $scope.item.AlergiYa = chacePeriode[13]
                     norecResep = chacePeriode[14]
-                    $scope.item.penulisResep = chacePeriode[15]
+                    // $scope.item.penulisResep = chacePeriode[15]
                     $scope.item.nosep = chacePeriode[16]
                     $scope.item.tanggalsep = chacePeriode[17]
                     $scope.item.kodeapotikonline = chacePeriode[18]
@@ -658,7 +658,7 @@ define(['initialize'], function (initialize) {
                 medifirstService.get("farmasi/get-datacombo", true).then(function (dat) {
                     $scope.isRouteLoading = false;
                     $scope.listPenulisResep = dat.data.penulisresep;
-                    $scope.item.penulisResep = $scope.dpjp
+                    // $scope.item.penulisResep = $scope.dpjp
                     $scope.listJenisKemasan = dat.data.jeniskemasan;
                     $scope.listProduk = dat.data.produkall;
                     $scope.listAsalProduk = dat.data.asalproduk;

@@ -12012,7 +12012,7 @@ class EMRController  extends ApiController
         "))->first();
 
         $resep = collect(DB::select("            
-           SELECT 
+           SELECT DISTINCT op.rke,
             'R/ ' || CASE WHEN op.rke IS NULL THEN null ELSE op.rke END 
             || ' ' || pr.namaproduk 
             || ' ' || CASE WHEN op.dosis IS NULL THEN null ELSE op.dosis END 
