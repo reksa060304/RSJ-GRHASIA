@@ -2903,7 +2903,7 @@ class PerencanaanController extends ApiController {
                 'status' => 201,
                 'message' => $transMessage,
                 'result' => $MA,
-                'resultq' => $nos,
+                // 'resultq' => $nos,
                 'as' => '@epic',
             );
         } else {
