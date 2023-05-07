@@ -2249,6 +2249,106 @@
     ]
   },
   {
+    "name": "SettingRBA",
+    "url": "/U2V0dGluZ1JCQQ==",
+    "templateurl": "module/Perencanaan/SettingRBA.html",
+    "controller": "SettingRBACtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "MataAnggaranRBA",
+    "url": "/TWF0YUFuZ2dhcmFu",
+    "templateurl": "module/Perencanaan/MataAnggaranRBA.html",
+    "controller": "MataAnggaranRBACtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "MataAnggaranPermenRBA",
+    "url": "/TWF0YUFuZ2dhcmFuUGVybWVu",
+    "templateurl": "module/Perencanaan/MataAnggaranPermenRBA.html",
+    "controller": "MataAnggaranPermenRBACtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "EntryRBA",
+    "url": "/RW50cnlSQkE=",
+    "templateurl": "module/Perencanaan/EntryRBA.html",
+    "controller": "EntryRBACtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "EntryAnggaranKas",
+    "url": "/RW50cnlBbmdnYXJhbkthcw==",
+    "templateurl": "module/Perencanaan/EntryAnggaranKas.html",
+    "controller": "EntryAnggaranKasCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
     "name": "AnggaranKeuangan",
     "url": "/U2VtdWFBbmdnYXJhbg",
     "templateurl": "module/Perencanaan/AnggaranKeuangan.html",

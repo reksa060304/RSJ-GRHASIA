@@ -132,7 +132,7 @@
 			<md-content>
 				<md-tabs md-dynamic-height md-border-bottom>
 					
-					<md-tab label="Setting" ng-if="spjaja === false && spjajas === false && panjaraja === false && sppaja === false && spmaja === false && semuaanggaran === true && disidpegawai === false">
+					<md-tab label="Setting" ng-if="spjaja === false && spjajas === false && panjaraja === false && sppaja === false && spmaja === false && settingaja === true && disidpegawai === false">
 						<!-- Setting keterangan blud -->
 						<md-content class="md-padding" ng-hide="false">
 
@@ -309,7 +309,7 @@
 							</div>
 						</md-content>
 					</md-tab>
-					<md-tab label="Kegiatan" ng-if="spjaja === false && panjaraja === false && sppaja === false && spmaja === false && (semuaanggaran === true || spjajas === true)">
+					<md-tab label="Kegiatan" ng-if="spjaja === false && panjaraja === false && sppaja === false && spmaja === false && (rbaaja === true || spjajas === true)">
 						<md-content class="md-padding">
 							
 							<!-- <br /> -->
@@ -386,7 +386,7 @@
 							</div>
 						</md-content>
 					</md-tab>
-					<md-tab label="Mata Anggaran" ng-if="spjaja === false && spjajas === false && panjaraja === false && sppaja === false && spmaja === false && semuaanggaran === true && disidpegawai === false">
+					<md-tab label="Mata Anggaran" ng-if="spjaja === false && spjajas === false && panjaraja === false && sppaja === false && spmaja === false && mataanggaranaja === true && disidpegawai === false">
 						<md-content class="md-padding">
 							<div class="grid_12">
 								<div class="grid_2">
@@ -416,7 +416,7 @@
 							<div class="clear"></div>
 						</md-content>
 					</md-tab>
-					<md-tab label="Mata Anggaran Permen" ng-if="spjaja === false && spjajas === false && panjaraja === false && sppaja === false && spmaja === false && semuaanggaran === true && disidpegawai === false">
+					<md-tab label="Mata Anggaran Permen" ng-if="spjaja === false && spjajas === false && panjaraja === false && sppaja === false && spmaja === false && mataanggaranpermenaja === true && disidpegawai === false">
 						<md-content class="md-padding">
 							<br />
 							<div class="grid_12">
@@ -446,7 +446,7 @@
 							</div>
 						</md-content>
 					</md-tab>
-					<md-tab label="Anggaran Kas" ng-if="spjaja === false && panjaraja === false && sppaja === false && spmaja === false && (semuaanggaran === true || spjajas === true)">
+					<md-tab label="Anggaran Kas" ng-if="spjaja === false && panjaraja === false && sppaja === false && spmaja === false && (angkasaja === true || spjajas === true)">
 						<!-- Setting keterangan blud -->
 						<md-content class="md-padding">
 

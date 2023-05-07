@@ -4145,7 +4145,13 @@ class ReportController extends ApiController{
 
         $subkegiatan = DB::select(DB::raw("select * from kegiatananggaran_m where id = ".$subk));
 
-        $data = DB::select(DB::raw("select ma.kodemataanggaran, ma.namamataanggaran, sum(kb.subtotal) jumlahanggaran,
+        $data = DB::select(DB::raw("select ma.kodemataanggaran, ma.namamataanggaran
+        , split_part(ma.kodemataanggaran, '.', 1) as subkodepertama
+        , split_part(ma.kodemataanggaran, '.', 2) as subkodekedua
+        , case when split_part(ma.kodemataanggaran, '.', 3) = '' then '0' else split_part(ma.kodemataanggaran, '.', 3)::int4 end as subkodeketiga
+        , case when split_part(ma.kodemataanggaran, '.', 4) = '' then '0' else split_part(ma.kodemataanggaran, '.', 4)::int4 end as subkodekeempat
+        , case when split_part(ma.kodemataanggaran, '.', 5) = '' then '0' else split_part(ma.kodemataanggaran, '.', 5)::int4 end as subkodekelima,
+                sum(kb.subtotal) jumlahanggaran,
                 x.totalbelanja jumlahspj, y.jumlah jumlahpanjar,
                 x.totalbelanja + y.jumlah as subtotal, round(cast(((x.totalbelanja + y.jumlah)/sum(kb.subtotal))*100 as numeric), 2) as persentase,  
                 sum(kb.subtotal) - (coalesce(x.totalbelanja,0) + coalesce(y.jumlah,0)) sisaanggaran
@@ -4183,7 +4189,8 @@ class ReportController extends ApiController{
                         and ka.kdprofile = 30 and ka.statusenabled = true
                         $qsubsubkegiatan
                         $qtahunka
-                group by ma.kodemataanggaran, ma.namamataanggaran, x.totalbelanja, y.jumlah        
+                group by ma.kodemataanggaran, ma.namamataanggaran, x.totalbelanja, y.jumlah  
+                order by subkodepertama asc, subkodekedua asc, subkodeketiga asc, subkodekeempat asc, subkodekelima asc      
         "));
 
         $pageWidth = 950;
