@@ -51,9 +51,11 @@ define(['initialize'], function (initialize) {
                 ],
             };
             $scope.inputBaru = function () {
-                if (kelompokUser[1] == 'dokter') {
+                // if (kelompokUser[1] == 'dokter') {
+                //     $scope.item.namadokter = { id: $scope.pegawaiLogin.id, namalengkap: $scope.pegawaiLogin.namaLengkap }
+                // }
                     $scope.item.namadokter = { id: $scope.pegawaiLogin.id, namalengkap: $scope.pegawaiLogin.namaLengkap }
-                }
+
                 clear()
                 $scope.popUp.center().open()
             }
@@ -132,6 +134,9 @@ define(['initialize'], function (initialize) {
                 $scope.item.ruanganAsal = { id: dataItem.objectruanganfk, namaruangan: dataItem.ruanganasal }
                 $scope.item.ruanganTujuan = { id: dataItem.objectruangantujuanfk, namaruangan: dataItem.ruangantujuan }
                 $scope.item.dokter = { id: dataItem.pegawaifk, namalengkap: dataItem.namalengkap }
+                $scope.item.namadokter = {
+                    id: dataItem.objectpetugasfk, namalengkap: dataItem.pengonsul
+                }
                 $scope.item.keterangan = dataItem.keteranganorder
                 $scope.popUp.center().open()
 
@@ -153,6 +158,7 @@ define(['initialize'], function (initialize) {
                  medifirstService.get( "emr/get-combo").then(function (e) {
                     $scope.listDokter = e.data.dokter
                     $scope.listRuangan = e.data.ruangkonsulnonpenunjang; //e.data.ruangankonsul
+                    
                 })
 
                 $q.all([
@@ -191,10 +197,19 @@ define(['initialize'], function (initialize) {
                     toastr.error("Pilih Dokter terlebih dahulu!")
                     return
                 }
+                if ($scope.item.keterangan == undefined) {
+                    toastr.error("Wajib isi Keterangan konsultasi!")
+                    return
+                }
+                if ($scope.item.namadokter == undefined) {
+                    toastr.error("Pilih Pengonsul terlebih dahulu!")
+                    return
+                }
                 var objSave = {
                     norec_so: $scope.item.norec != undefined ? $scope.item.norec : '',
                     norec_pd: $scope.norecPd,
                     pegawaifk: $scope.item.dokter.id,
+                    objectpetugasfk: $scope.item.namadokter.id,
                     objectruanganasalfk: $scope.item.ruanganAsal.id,
                     objectruangantujuanfk: $scope.item.ruanganTujuan.id,
                     keterangan: $scope.item.keterangan != undefined ? $scope.item.keterangan : '',

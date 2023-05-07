@@ -4683,7 +4683,7 @@ class GeneralController extends ApiController
             $ruanganHead2 = $newCOA->objectruanganfk;
             $ruangtujuanHead2 = $newCOA->objectruangantujuanfk;
             $rincianHead2 = $newCOA->rincianexecuteplanning_askep;
-            $jenispekerjaan = $newCOA->objectjenispekerjaanfk;
+            $jenispekerjaan = $newCOA->objectjenisalatfk;
 //            $sid    = "ACc6ac08ce1cc9096e0fd57a0c38801118";
 //            $token  = "cada716b5a36721fd86832662bbd06fe";
 //            $twilio = new Client($sid, $token);
@@ -4720,14 +4720,14 @@ class GeneralController extends ApiController
                 if (count($isAktif) > 0) {
                 $cobainnn="aktif";
                 $pelapor = StrukPlanning::where('norec',$norecHead2)->first();
-                $ruangan = \DB::table('ruangan_m')->where('id',$ruanganHead2)->first();
-                $ruanganTujuan = \DB::table('ruangan_m')->where('id',$ruangtujuanHead2)->first();
-                $jenispekerjaan =  \DB::table('jenispekerjaan_m')->where('id',$jenispekerjaan)->select('reportdisplay')->first();
+                $ruangan = \DB::table('ruangan_m')->where('id',$ruanganHead2)->select('namaruangan')->first();
+                $ruanganTujuan = \DB::table('ruangan_m')->where('id',$ruangtujuanHead2)->select('namaruangan')->first();
+                $jenisPekerjaanHead =  \DB::table('jenispekerjaan_m')->where('id',$jenispekerjaan)->select('reportdisplay')->first();
                 $secret_token = "5528647994:AAHqBykIdioFfxa-0oVdGQDpYs9jWDOKZWQ";
                 $telegram_id = '-1001762536697';//'-498979335';
                 $url = "https://api.telegram.org/bot" . $secret_token . "/sendMessage?parse_mode=html&chat_id=" . $telegram_id;
                 $url = $url . "&text=" . urlencode("✅ Laporan Baru: <b>Permohonan Perbaikan PDTI </b> \n\n Ruangan / area: <b>".$ruangan->namaruangan.
-                        "</b>  \n Pelapor: <b>".$pelapor->pelapor. "</b>  \n Jenis Kerusakan: <b>".$jenispekerjaan->reportdisplay."</b>  \n Laporan Kerusakan: <b>".$rincianHead2.
+                        "</b>  \n Pelapor: <b>".$pelapor->pelapor. "</b>  \n Jenis Kerusakan: <b>".$jenisPekerjaanHead->reportdisplay."</b>  \n Laporan Kerusakan: <b>".$rincianHead2.
                         "</b>");
                 // return $url;
                 $ch = curl_init();
@@ -4741,10 +4741,13 @@ class GeneralController extends ApiController
             }
 
             $transStatus = 'true';
+            $transMessage = "Simpan Permohonan";
+
         } catch (\Exception $e) {
             $transStatus = 'false';
+            $transMessage = "Simpan Permohonan";
+
         }
-        $transMessage = "";
 
 
         if ($transStatus == 'true') {
@@ -4761,7 +4764,7 @@ class GeneralController extends ApiController
             DB::rollBack();
             $result = array(
                 "status" => 400,
-//                "data" => $newPJT,
+               "data" => $newCOA,
                 "as" => 'dy@epic',
                 'e' => $e->getLine(),
                 'message'=> $e->getMessage(),
@@ -5668,9 +5671,10 @@ class GeneralController extends ApiController
     public function storeNotif(Request $request){
         $method = '';
         try {
+            $cek = null;
             if( $request['method'] =='save'){
-                $cek = ListNotif::where('norec',$request['norec'])->first();
-                if(empty($cek)){
+                // $cek = ListNotif::where('norec',$request['norec'])->first();
+                // if(empty($cek)){
                     $gl = $request['tgl'];
                     // $hari = $this->hari_ini($gl);
                     $da =  new ListNotif();
@@ -5692,9 +5696,10 @@ class GeneralController extends ApiController
                     $da->urlform = $request['urlForm'];
                     $da->params = $request['params']['noOrder'];
                     $da->save();
+                    $cek = $da;
     
                   $method="save";
-                }
+                // }
           
             }
             if( $request['method'] == 'delete'){

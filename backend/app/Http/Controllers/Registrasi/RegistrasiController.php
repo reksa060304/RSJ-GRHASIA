@@ -716,6 +716,8 @@ class RegistrasiController extends ApiController
                 'pd.objectkelompokpasienlastfk','kps.kelompokpasien','pd.objectrekananfk','rk.namarekanan',
                 'jpl.kodeinternal as objectjenispelayananfk','jpl.jenispelayanan','pd.objectpegawaifk','pg.namalengkap as dokter','ru.objectdepartemenfk',
                 'tt.reportdisplay','apd.objectasalrujukanfk','pd.objectjeniskasusfk','jen.jeniskasus',
+                'pg.kddokterbpjs',
+                'ru.noruangan as kdruanganbpjs',
                 DB::raw('case when ru.objectdepartemenfk in (16,35,17) then \'true\'
                 when ru.objectdepartemenfk =45 then \'edelweis\' else \'false\' end as israwatinap'))
             ->where('pd.norec', $request['norecPD'])
@@ -6853,6 +6855,7 @@ class RegistrasiController extends ApiController
             //            ->leftjoin('antrianpasiendiperiksa_t as apd','apd.noregistrasifk','=','pd.norec')
             ->join('ruangan_m as ru', 'ru.id', '=', 'pd.objectruanganlastfk')
             ->leftjoin('pegawai_m as pg', 'pg.id', '=', 'pd.objectpegawaifk')
+            ->leftjoin('emrpasien_t as ept', 'ept.noregistrasifk', '=', 'pd.noregistrasi')
             ->join('kelompokpasien_m as kp', 'kp.id', '=', 'pd.objectkelompokpasienlastfk')
             ->join('kelas_m as kls', 'kls.id', '=', 'pd.objectkelasfk')
             ->join('departemen_m as dept', 'dept.id', '=', 'ru.objectdepartemenfk')
@@ -6883,7 +6886,7 @@ class RegistrasiController extends ApiController
             ->leftJOIN('jeniskelamin_m as jks', 'jks.id', '=', 'ps.objectjeniskelaminfk')
             ->leftjoin('identifikasipasien_t as it','pd.norec','=','it.noregistrasifk')
             ->distinct()
-            ->select('pd.norec', 'pd.statusenabled', 'pd.tglregistrasi', 'ps.nocm', 'pd.nocmfk', 'pd.noregistrasi', 'ru.namaruangan', 'ps.namapasien',
+            ->select('pd.norec', 'pd.statusenabled','ps.sidik_jari', 'ept.kdprofile','pd.tglregistrasi', 'ps.nocm', 'pd.nocmfk', 'pd.noregistrasi', 'ru.namaruangan', 'ps.namapasien',
                 'kp.kelompokpasien', 'rek.namarekanan', 'pg.namalengkap as namadokter', 'pd.tglpulang', 'pd.statuspasien',
                 'pa.norec as norec_pa', 'pa.objectasuransipasienfk', 'pd.objectpegawaifk as pgid', 'pd.objectruanganlastfk',
                 'pa.nosep as nosep', 'br.norec as norec_br', 'pd.nostruklastfk','klstg.namakelas as kelasditanggung','kls.namakelas',
@@ -7003,6 +7006,7 @@ class RegistrasiController extends ApiController
         }
         return $this->respond($data2);
     }
+
     public function getDataComboOperator(Request $request){
         $kdProfile = $this->getDataKdProfile($request);
         $dataLogin = $request->all();

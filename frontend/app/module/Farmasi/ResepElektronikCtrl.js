@@ -80,6 +80,13 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     }else{
                         // $(row.cells[1]).addClass("red");
                     }
+                    var cekreseppulang = kendoGrid.dataItem(row).cekreseppulang;
+                    if (cekreseppulang != null && cekreseppulang == '✔') {
+                        // $(row.cells[2]).addClass("koneng");
+                        $(row.cells[15]).addClass("hijaumuda");
+                    } else {
+                        // $(row.cells[1]).addClass("red");
+                    }
                     
                 }
             }
@@ -381,7 +388,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     checkPasienRanap = '&checkPasienRanap=' + $scope.checkPasienRanap
                 }
                 var checkPasienRajal = ''
-                if ($scope.checkPasienRajal != undefined) {
+                if ($scope.checkPasienRajal != undefined && $scope.checkPasienRajal != false) {
                     checkPasienRajal = '&checkPasienRajal=' + $scope.checkPasienRajal
                 }
                 // var status = ''
@@ -1553,6 +1560,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     "&nocm=" + $scope.item.nocm + '&kodeprofile=' + profile + '&qtybagi=' + stt + '&cetakkin='+cetakkin);
                 // // window.open(config.baseApiBackend + "report/cetak-hasil-lab-histopatologi?norec=" + $scope.dataSelected.norec_pp + '&kdprofile=' + profile
                 //     + '&user=' + user + '&jenis=his', '_blank');
+                $scope.popUpResepDokter.close()
             }
             $scope.grab = {
                 lokasiPengirim :  medifirstService.getProfile().alamatlengkap,

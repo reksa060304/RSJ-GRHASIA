@@ -347,12 +347,12 @@ strSQL = "SELECT ps.namapasien  ||  ' ( '  ||   jk.reportdisplay  ||  ' ) ' as n
 '      Picture2.Picture = Picture2.Image
 '     Printer.PaintPicture Image1.Picture, 0, 0
      Printer.FontName = "Tahoma"
-     Printer.fontSize = 6
+     Printer.fontSize = 9
      Printer.Print ""
      Printer.Print ""
      Printer.Print "       "
      Printer.Print ""
-     Printer.Print ""
+     
      Printer.FontBold = True
      Printer.CurrentX = 4750 - Printer.TextWidth(rs!noCm)
      Printer.Print rs!noCm
@@ -360,19 +360,20 @@ strSQL = "SELECT ps.namapasien  ||  ' ( '  ||   jk.reportdisplay  ||  ' ) ' as n
 '     Printer.Print "                                                                                                              " & rs!noCm
      Printer.CurrentX = 4750 - Printer.TextWidth(rs!namapasien)
      Printer.Print rs!namapasien
-     Printer.fontSize = 6
+     Printer.fontSize = 9
      Printer.FontBold = False
      Printer.FontItalic = True
-     Printer.Print ""
+'     Printer.Print ""
 '     Printer.Print "                                                                       " & ayah2
-     Printer.CurrentX = 4750 - Printer.TextWidth(ayah2)
+     Printer.CurrentX = 4930 - Printer.TextWidth(ayah2)
+     Printer.fontSize = 7
      Printer.Print ayah2
-     Printer.Print ""
+'     Printer.Print ""
 '     Printer.Print "    " &
-     Printer.CurrentX = 4750 - Printer.TextWidth(alamat)
-     Printer.Print alamat
-     Printer.Print ""
-     Printer.Print ""
+'     Printer.CurrentX = 4750 - Printer.TextWidth(alamat)
+'     Printer.Print alamat
+'     Printer.Print ""
+'     Printer.Print ""
      Call make128(rs!noCm)
      Printer.PaintPicture Picture1.Image, 2505, 1850
      Printer.FontBold = True

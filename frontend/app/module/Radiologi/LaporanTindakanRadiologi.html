@@ -87,7 +87,7 @@
         <select ng-show="listKelompokPasien.length" kendo-multi-select k-options="selectOptionsKelompokPasien"
             k-filter="'contains'" k-data-source="listKelompokPasien" k-ng-model="item.listKelompokPasienMulti"></select>
     </div>
-    <div class="grid_3" style="margin-top:5px">
+    <div class="grid_2" style="margin-top:5px">
         <div class="grid_12">
             <label c-label item="item">Dokter Dpjp</label>
         </div>
@@ -99,7 +99,7 @@
                 k-auto-bind="false" k-data-source="listDokter" />
         </div>
     </div>
-    <div class="grid_3" style="margin-top:5px">
+    <div class="grid_2" style="margin-top:5px">
         <div class="grid_12">
             <label c-label item="item">Dokter Pemeriksa</label>
         </div>
@@ -108,6 +108,20 @@
         <div class="grid_12">
             <select ng-show="listDokters.length" kendo-multi-select k-options="selectOptionsDokter"
             k-filter="'contains'" k-data-source="listDokters" k-ng-model="listDokterMulti"></select>
+            <!-- <input style="width: 100%;" kendo-combo-box k-ng-model="item.dokterPemeriksa"
+                k-data-text-field="'namalengkap'" k-data-value-field="'id'" k-filter="'contains'"
+                k-auto-bind="false" k-data-source="listDokter" /> -->
+        </div>
+    </div>
+    <div class="grid_2" style="margin-top:5px">
+        <div class="grid_12">
+            <label c-label item="item">Jenis Pemeriksaan</label>
+        </div>
+        <div class="clear"></div>
+
+        <div class="grid_12">
+            <select kendo-multi-select k-options="selectOptionsProduk"
+                k-filter="'contains'" k-data-source="listProduk" k-ng-model="item.listProdukMulti"></select>
             <!-- <input style="width: 100%;" kendo-combo-box k-ng-model="item.dokterPemeriksa"
                 k-data-text-field="'namalengkap'" k-data-value-field="'id'" k-filter="'contains'"
                 k-auto-bind="false" k-data-source="listDokter" /> -->

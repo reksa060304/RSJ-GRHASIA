@@ -1,4 +1,4 @@
-define(['initialize'], function (initialize) {
+define(['initialize','Configuration'], function (initialize, configuration) {
     'use strict';
     initialize.controller('PengkajianAwalMedisIGDJiwaGrhCtrl', ['$q', '$rootScope', '$scope', 'ModelItem', '$state', 'CacheHelper', 'DateHelper', 'MedifirstService',
         function ($q, $rootScope, $scope, ModelItem, $state, cacheHelper, dateHelper, medifirstService) {
@@ -12,8 +12,11 @@ define(['initialize'], function (initialize) {
             $scope.totalSkor2 = 0
             $scope.totalSkor4 = 0
             $scope.cc = {}
+            $scope.isCetakV = true
             $scope.isRouteLoading = false
             var nomorEMR = '-'
+            var norecEMR = ''
+
             $scope.cc.emrfk = 3000922
             var dataLoad = []
             var pegawaiInputDetail = ''
@@ -348,6 +351,16 @@ define(['initialize'], function (initialize) {
                         "type": "textbox8",
                         "placeholder": "kapan"
                     },
+                    // {
+                    //     "id": 310332,
+                    //     "nama": "Disangkal",
+                    //     "type": "checkbox3"
+                    // }, {
+                    //     "id": 310333,
+                    //     "nama": "",
+                    //     "type": "textbox8",
+                    //     "placeholder": "kapan"
+                    // },
                     {
                         "id": 310334,
                         "nama": "Lainnya",
@@ -634,6 +647,12 @@ define(['initialize'], function (initialize) {
                         "type": "checkbox3",
                         "no": 20
                     },
+                    {
+                        "id": 310628,
+                        "nama": "Lain-lain",
+                        "type": "textbox4",
+                        "no": 21
+                    },
                 ]
                 },
                 {
@@ -917,18 +936,46 @@ define(['initialize'], function (initialize) {
                         "nama": "Merokok",
                         "type": "checkbox12",
                         "no": 60
+                    }, {
+                        "id": 310619,
+                        "nama": "",
+                        "type": "textbox12",
+                        "no": 61
                     },
                     {
                         "id": 310409,
                         "nama": "Minuman Keras",
                         "type": "checkbox12",
-                        "no": 61
+                        "no": 62
+                    }, 
+                    {
+                        "id": 310620,
+                        "nama": "",
+                        "type": "textbox12",
+                        "no": 63
                     },
                     {
                         "id": 310410,
                         "nama": "Obat-obatan",
                         "type": "checkbox12",
-                        "no": 62
+                        "no": 64,
+                    },
+                    {
+                        "id": 310621,
+                        "nama": "",
+                        "type": "textbox12",
+                        "no": 65
+                    },
+                    {
+                        "id": 310626,
+                        "nama": "Lain-lain",
+                        "type": "checkbox12",
+                        "no": 66,
+                    }, {
+                        "id": 310627,
+                        "nama": "",
+                        "type": "textbox12",
+                        "no": 67
                     },
                 ]
                 },
@@ -939,13 +986,13 @@ define(['initialize'], function (initialize) {
                             "id": 310411,
                             "nama": "Pengalaman Militer : ",
                             "type": "textbox12",
-                            "no": 63
+                            "no": 66
                         },
                         {
                             "id": 310412,
                             "nama": "Urusan dengan Polisi : ",
                             "type": "textbox12",
-                            "no": 64
+                            "no": 67
                         },
                     ]
                 },
@@ -1390,7 +1437,6 @@ define(['initialize'], function (initialize) {
             ]
 
             $scope.listakhir = [
-                
                 {
                     "id": 4,
                     "nama": "",
@@ -1404,9 +1450,19 @@ define(['initialize'], function (initialize) {
                 },
                 
             ]
+
             
 
             var cacheNomorEMR = cacheHelper.get('cacheNomorEMR');
+            var cacheNoREC = cacheHelper.get('cacheNOREC_EMR');
+            if (cacheNoREC != undefined) {
+                norecEMR = cacheNomorEMR[1]
+            }
+            if (cacheNomorEMR != undefined) {
+                nomorEMR = cacheNomorEMR[0]
+                norecEMR = cacheNomorEMR[1]
+                $scope.cc.norec_emr = nomorEMR
+            }
             if (cacheNomorEMR != undefined) {
                 nomorEMR = cacheNomorEMR[0]
                 $scope.cc.norec_emr = nomorEMR
@@ -1443,16 +1499,27 @@ define(['initialize'], function (initialize) {
 
           
 
-            
+            loadValidasi()
+            function loadValidasi(){
+                
+                $scope.isRouteLoading = true
+                medifirstService.get('emr/get-validasi-emr?noemr=' + nomorEMR + '&emrfk=' + $scope.cc.emrfk).then(function (data) {
+                    var datas = data.data.data;
+                    console.log(datas.length);
+                    if (datas.length > 0) {
+                    $scope.isRouteLoading = false
             medifirstService.get("emr/get-emr-transaksi-detail?noemr=" + nomorEMR + "&emrfk=" + $scope.cc.emrfk, true).then(function (dat) {
                 $scope.item.obj = []
                 $scope.item.obj2 = []
-                $scope.item.obj[116062] = $scope.now
+                $scope.item.obj[310622] = $scope.now
+                $scope.item.obj[310623] = $scope.now
+                // $scope.item.obj[310624] = $scope.now
+                // $scope.item.obj[310625] = $scope.now
                 $scope.item.obj[116068] = {
                     text: $scope.cc.namaruangan,
                     value: $scope.cc.objectruanganfk
                 }
-
+               
                 $scope.item.obj[116201] = true
                 $scope.item.obj[116204] = true
                 $scope.item.obj[116207] = true
@@ -1468,7 +1535,18 @@ define(['initialize'], function (initialize) {
                     value: medifirstService.getPegawaiLogin().id,
                     text: medifirstService.getPegawaiLogin().namaLengkap
                 }
-                
+                medifirstService.get("emr/get-masalah-keperawatan?noemr=" + nomorEMR ).then(function (dat) {
+                    var a = ""
+                    var b = ""
+                    for (var i = dat.data.length - 1; i >= 0; i--) {
+            
+                        var c = dat.data[i].caption
+                        b = ", " + c
+                        a = a + b
+                    }
+                    $scope.item.obj[310603] = a.slice(1, a.length)
+                    // console.log($scope.bro);
+                })
                 dataLoad = dat.data.data
 
                 for (var i = 0; i <= dataLoad.length - 1; i++) {
@@ -1545,6 +1623,104 @@ define(['initialize'], function (initialize) {
                     }
                 }
             })
+        } else {
+            medifirstService.get("emr/get-emr-otomatis?noemr=" + nomorEMR + "&emrfk=3000403" + "&emrid=" + $scope.cc.emrfk).then(function (data) {
+                var datas = data.data.data
+                $scope.isRouteLoading = false
+                $scope.item.obj = []
+                $scope.item.obj2 = []
+                $scope.item.obj[116062] = $scope.now
+                $scope.item.obj[116068] = {
+                    text: $scope.cc.namaruangan,
+                    value: $scope.cc.objectruanganfk
+                }
+                medifirstService.get("emr/get-masalah-keperawatan?noemr=" + nomorEMR ).then(function (dat) {
+                    var a = ""
+                    var b = ""
+                    for (var i = dat.data.length - 1; i >= 0; i--) {
+            
+                        var c = dat.data[i].caption
+                        b = ", " + c
+                        a = a + b
+                    }
+                    $scope.item.obj[310603] = a.slice(1, a.length)
+                    // console.log($scope.bro);
+                })
+                $scope.item.obj[116201] = true
+                $scope.item.obj[116204] = true
+                $scope.item.obj[116207] = true
+                $scope.item.obj[116210] = true
+                $scope.item.obj[116213] = true
+                $scope.item.obj[116216] = true
+                $scope.item.obj[116219] = true
+                $scope.item.obj[116222] = true
+                $scope.item.obj[120001] = moment($scope.now).format('YYYY-MM-DD HH:mm')
+                $scope.item.obj[120291] = new Date($scope.now)
+
+                $scope.item.obj[120295] = {
+                    value: medifirstService.getPegawaiLogin().id,
+                    text: medifirstService.getPegawaiLogin().namaLengkap
+                }
+                
+                for (let i = 0; i < datas.length; i++) {
+                    if (datas[i].type == "textarea") {
+                        $scope.item.obj[datas[i].id] = datas[i].value
+                    }
+                    if (datas[i].type == "combobox") {
+                        var str = datas[i].value
+                        if (str != undefined) {
+                            var res = str.split("~");
+                            $scope.item.obj[datas[i].id] = {
+                                value: res[0],
+                                text: res[1]
+                            }
+                        }
+                    }
+                    if (datas[i].type == "checkbox") {
+                        if (datas[i].value == "1") {
+                            $scope.item.obj[datas[i].id] = true
+                            console.log(datas[i].type);
+                        }
+                    }
+                    if (datas[i].type == "radio") {
+                            // $scope.item.obj[datas[i].id] = true
+
+                        if (datas[i].value == "1" && datas[i].id == 120246) {
+                            $scope.item.obj[120246] = true
+                        }
+                        if (datas[i].value == "2" && datas[i].id == 120247) {
+                            $scope.item.obj[120247] = true
+                        }
+                        if (datas[i].value == "3") {
+                            $scope.item.obj[120248] = true
+                        }
+                        if (datas[i].value == "4") {
+                            $scope.item.obj[120249] = true
+                        }
+                        if (datas[i].value == "5") {
+                            $scope.item.obj[120250] = true
+                        }
+                        if (datas[i].value == "6") {
+                            $scope.item.obj[120251] = true
+                        }
+                        if (datas[i].value == "1" && datas[i].id == 120252) {
+                            $scope.item.obj[120252] = true
+                        }
+                        if (datas[i].value == "2" && datas[i].id == 120253) {
+                            $scope.item.obj[120253] = true
+                        }
+                    }
+                    if (datas[i].type == "textbox") {
+                        $scope.item.obj[datas[i].id] = datas[i].value
+                    }
+
+                }
+            })
+         }
+
+        })
+     }
+     
             
             $scope.GCSKuantitatif = function () {
                 let e = parseInt($scope.item.obj[21008563]) || 0;
@@ -2099,6 +2275,33 @@ define(['initialize'], function (initialize) {
                     }
                     cacheHelper.set('cacheNomorEMR', arrStr);
                 });
+            }
+
+            $scope.cetakBlade = function(){
+                if (norecEMR == '') {
+                    toastr.error('Dokumen belum pernah di isi')
+                    return
+                }
+                // if ($scope.item.obj[3003998] != undefined) {
+                //     $scope.listPegawai.add($scope.item.obj[3003998])
+                //     $scope.item.pegawai = $scope.item.obj[3003998]
+                // }
+                // if (pegawai == undefined) {
+                //     return
+                // }
+                var local = JSON.parse(localStorage.getItem('profile'))
+                var nama = medifirstService.getPegawaiLogin().namaLengkap
+
+                window.open(configuration.baseApiBackend + 'report/get-cetak-cmrm05?nocm=' + $scope.cc.nocm +
+                    '&norec_apd=' + $scope.cc.norec +
+                    '&emr=' + norecEMR +
+                    '&emrfk=' + $scope.cc.emrfk +
+                    '&kdprofile=' + local.id +
+                    '&nama=' + nama +
+                    // '&isttd=true' +
+                    // '&pegawaittd=' + pegawai.value +
+                    '&noregistrasi=' + $scope.cc.noregistrasi +
+                    '&norec_pd=' + $scope.cc.norec_pd, '_blank');
             }
 
         }

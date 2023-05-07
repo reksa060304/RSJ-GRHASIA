@@ -212,8 +212,8 @@
     {
       "name": "AspekPenilaianMahasiswaCtrl",
       "url": "/QXNwZWtQZW5pbGFpYW5NYWhhc2lzd2E=",
-      "templateurl": "module/SDM/Penelitian/AspekPenilaianMahasiswaCtrl.html",
-      "controller": "AspekPenilaianMahasiswaCtrlCtrl",
+      "templateurl": "module/SDM/Penelitian/AspekPenilaianMahasiswa.html",
+      "controller": "AspekPenilaianMahasiswaCtrl",
       "deps": [{
           "module": "Services",
           "define": "Service"
@@ -225,6 +225,47 @@
         {
           "module": "MedifirstService",
           "define": "MedifirstService"
+        }
+      ]
+    },
+    {
+      "name": "RekamMedis.AsesmenMedis.LembarSkriningKIE",
+      "url": "/LembarSkriningKIE",
+      "templateurl": "module/EMR/LembarSkriningKIE.html",
+      "controller": "LembarSkriningKIECtrl",
+      "deps": [{
+          "module": "Services",
+          "define": "Service"
+        },
+        {
+          "module": "LoginServices",
+          "define": "LoginService"
+        },
+        {
+          "module": "MedifirstService",
+          "define": "MedifirstService"
+        }
+      ]
+    },
+    {
+      "name": "RekamMedis.AsesmenMedis.cakemGigi",
+      "url": "/cakemGigi",
+      "templateurl": "module/EMR/cakemGigi.html",
+      "controller": "cakemGigiCtrl",
+      "deps": [{
+          "module": "Services",
+          "define": "Service"
+        },
+        {
+          "module": "LoginServices",
+          "define": "LoginService"
+        },
+        {
+          "module": "MedifirstService",
+          "define": "MedifirstService"
+        },
+        {
+          "define": "RekamMedisCtrl"
         }
       ]
     }

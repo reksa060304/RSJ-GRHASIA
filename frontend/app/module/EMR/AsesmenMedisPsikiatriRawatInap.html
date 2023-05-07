@@ -518,7 +518,7 @@
                                         <textarea style="width: 740px;height: 100px" c-text-area
                                             type="input"
                                             filter="'string'" class="k-textbox" style="{{data.style}}"
-                                            ng-model="item.obj[jawab.id]" />
+                                            ng-model="item.obj[jawab.id]" placeholder="tidak boleh diisi strip (-)"/>
                                     </div>
                                 </div>
                             </div>
@@ -1621,7 +1621,7 @@
                     </div>
                 </div>
 
-                <div class="grid_6" ng-repeat="list in listakhir | orderBy:'id'" style="padding: 5pt 10pt">
+                <div class="grid_12" ng-repeat="list in listakhir | orderBy:'id'" style="padding: 5pt 10pt">
                     <b>{{list.nama}}</b>
                     <div class="grid_12" style="padding: 5pt">
                         <div ng-repeat="jawab in list.detail6 | orderBy:'id'">
@@ -1794,12 +1794,12 @@
                                             type="text" placeholder="{{jawab.placeholder}}">
                                     </div>
                                 </div>
-                                <div class="grid_4" ng-switch-when="textbox4">
+                                <div class="grid_3" ng-switch-when="textbox3">
                                     <div>
                                         <label>{{jawab.nama}}</label>
                                     </div>
                                     <div>
-                                        <input class="k-textbox" style="width: 100%" ng-model="item.obj[jawab.id]"
+                                        <input class="k-textbox" style="width: 70%" ng-model="item.obj[jawab.id]"
                                             type="text" placeholder="{{jawab.placeholder}}">
                                     </div>
                                 </div>
@@ -1842,16 +1842,14 @@
                                         </div>
                                         <div class="grid_12 padDatePicker"
                                             style="margin-top: -15px;margin-bottom: 60px;margin-left: 20px">
-
-                                            <input k-ng-model="item.obj[jawab.id]" kendo-timepicker placeholer="HH:mm"
-                                                k-format="'HH:mm'" />
-
+                                            <input k-ng-model="item.obj[jawab.id]" kendo-datetimepicker placeholer="yyyy-MM-dd HH:mm"
+                                                k-format="'yyyy-MM-dd HH:mm'" ng-value="{{data2.datevalue}}" />
                                         </div>
                                     </div>
                                 </div>
                                 <div ng-switch-when="combobox">
                                     <div class="grid_6">
-                                        <div class="grid_12" style="margin-top: 20px;margin-bottom: 5px;" >
+                                        <div class="grid_12" style="margin-top: 20px;margin-bottom: 5px;">
                                             <!-- <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[data.id]" /> -->
                                             <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[jawab.id]"
                                                 k-data-text-field="'text'" k-data-value-field="'value'"
@@ -1865,7 +1863,7 @@
                                         <div class="grid_12">
                                             <p>{{jawab.nama}}</p>
                                         </div>
-                                        <div class="grid_12" style="margin-top: px;margin-bottom: px;">
+                                        <div class="grid_12" style="margin-top: 2px;margin-bottom: 5px;">
                                             <!-- <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[data.id]" /> -->
                                             <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[jawab.id]"
                                                 k-data-text-field="'text'" k-data-value-field="'value'"
@@ -1877,6 +1875,63 @@
                             </div>
                         </div>
                     </div>
+                </div>
+
+                <div class="grid_12">
+                    <table>
+                        <tr>
+                            <th colspan="4" style="text-align: center;">READ BACK/CABAK <br> (Catat Baca Konfirmasi Kembali)
+                            </th>
+                        </tr>
+                        <tr>
+                            <th colspan="2">
+                                PENERIMA PESAN
+                            </th>
+                            <th colspan="2">
+                                PEMBERI PESAN
+                            </th>
+                        </tr>
+                        <tr>
+                            <td>
+                                Tanggal dan Jam
+                            </td>
+                            <td>
+                                <div class="grid_12">
+                                    <input style="width: 100%" k-ng-model="item.obj[120329]" kendo-datetimepicker
+                                        placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'"
+                                        parsedate="yyyy-MM-dd HH:mm" />
+                                </div>
+                            </td>
+                            <td>
+                                Tanggal dan Jam
+                            </td>
+                            <td>
+                                <div class="grid_12">
+                                    <input style="width: 100%" k-ng-model="item.obj[120330]" kendo-datetimepicker
+                                        placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'"
+                                        parsedate="yyyy-MM-dd HH:mm" />
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Nama Terang</td>
+                            <td>
+                                <div class="grid_12" >
+                                    <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[120331]"
+                                        k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                                        k-auto-bind="false" k-data-source="listPegawai" />
+                                </div>
+                            </td>
+                            <td>Nama Terang</td>
+                            <td>
+                                <div class="grid_12">
+                                    <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[120332]"
+                                        k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                                        k-auto-bind="false" k-data-source="listPegawai" />
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
                 </div>
             </fieldset>
         </div>

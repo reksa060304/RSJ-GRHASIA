@@ -2,6 +2,7 @@ define(['initialize'], function (initialize) {
     'use strict';
     initialize.controller('PenilaianRisikoJatuhPasienJiwaCtrl', ['$q', '$rootScope', '$scope', 'ModelItem', '$state', 'CacheHelper', 'DateHelper', 'MedifirstService',
         function ($q, $rootScope, $scope, ModelItem, $state, cacheHelper, dateHelper, medifirstService) {
+            var paramsIndex = $state.params.index ? parseInt($state.params.index) : null;
 
             $scope.myVar = true
             $scope.noCM = $state.params.noCM;
@@ -854,7 +855,7 @@ define(['initialize'], function (initialize) {
                 //     }
                 // })
                 for (var i = 0; i <= dataLoad.length - 1; i++) {
-                    if (parseFloat($scope.cc.emrfk) == dataLoad[i].emrfk) {
+                    if (parseFloat($scope.cc.emrfk) == dataLoad[i].emrfk && paramsIndex == dataLoad[i].index) {
 
                         if (dataLoad[i].type == "textbox") {
                             $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
@@ -1495,6 +1496,7 @@ define(['initialize'], function (initialize) {
                     arrSave.push({ id: arrobj[i], values: $scope.item.obj[parseInt(arrobj[i])] })
                 }
                 $scope.cc.jenisemr = 'asesmen'
+                $scope.cc.index = $state.params.index
                 var jsonSave = {
                     head: $scope.cc,
                     data: arrSave

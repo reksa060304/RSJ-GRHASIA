@@ -3638,6 +3638,10 @@
         {
             "nameDep": "PengkajianAwalMedisIGDJiwaGrhCtrl",
             "urlDep": "module/EMR/PengkajianAwalMedisIGDJiwaGrhCtrl"
+        },
+        {
+            "nameDep": "MPPGrhCtrl",
+            "urlDep": "module/EMR/MPPGrhCtrl"
         }
     ]
 }

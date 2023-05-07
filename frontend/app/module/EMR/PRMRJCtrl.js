@@ -11,7 +11,7 @@ define(['initialize'], function (initialize) {
             $scope.totalSkor2 = 0
             $scope.cc = {}
             var nomorEMR = '-'
-            var emrfk_ =210051
+            var emrfk_ = 210051
             $scope.cc.emrfk = emrfk_
             var dataLoad = []
              $scope.isCetak = true

@@ -14,6 +14,8 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             $scope.RiwayatCPPTRJLama = false;
             $scope.RiwayatCPPTRJBaru = false;
             $scope.RiwayatCPPTRI = false;
+            $scope.norecAPD = $state.params.noRec
+
             var dataLoad = [];
             LoadCache();
             FormLoad();
@@ -339,6 +341,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 medifirstService.get("emr/get-emr-transaksi-detail?noemr=" + noemr + "&emrfk=" + emrcppt[iemrcppt], true).then(function (dat) {
                     $scope.item.rcppt = []
                     var dataLoadrcppt = dat.data.data
+
                     // for (let i = 0; i < dataLoadrcppt.length; i++) {
                     //     const element = dataLoadrcppt[i];
                     //     element.nourut = parseInt(element.nourut)
@@ -481,6 +484,22 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             medifirstService.get("emr/get-emr-transaksi-detail?noemr=" + nomorEMR + "&emrfk=" + $scope.cc.emrfk, true).then(function (dat) {
                 $scope.item.obj = []
                 $scope.item.obj2 = []
+                    $scope.item.obj[22034963] = "S : \n\nO : \n\nA : \n\nP : "
+
+                // console.log($scope.listDataCppt);
+                let pegawai = JSON.parse(localStorage.getItem('pegawai'))
+                for (let i = 0; i < $scope.listDataCppt.length; i++) {
+                    for (let j = 0; j < $scope.listDataCppt[i].detail.length; j++) {
+                        // console.log($scope.listDataCppt[i].detail[j].type, pegawai.jenisPegawai.jenispegawai);
+                        if ($scope.listDataCppt[i].detail[j].type == "review" && pegawai.jenisPegawai.jenispegawai == "Perawat") {
+                            $scope.item.obj2[$scope.listDataCppt[i].detail[j].id] = true
+                            $scope.item.obj2[$scope.listDataCppt[i].detail[j].id2] = true
+                            $scope.item.obj2[$scope.listDataCppt[i].detail[j].id3] = true
+                            // $scope.item.obj[$scope.listDataCppt[i].detail[j].id] = "S \n o \n"
+
+                        }
+                    }
+                }
                 dataLoad = dat.data.data
                 for (var i = 0; i <= dataLoad.length - 1; i++) {
                     if (parseFloat($scope.cc.emrfk) == dataLoad[i].emrfk) {
@@ -550,6 +569,22 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             // }
 
             $scope.addobj = function (id, nextid) {
+                // $scope.item.rcppt[nextid] = "S \n o \n"
+                    $scope.item.obj[nextid] = "S : \n\nO : \n\nA : \n\nP : "
+
+                // console.log($scope.listDataCppt);
+                for (let i = 0; i < $scope.listDataCppt.length; i++) {
+                    if ($scope.listDataCppt[i].id == nextid){
+                        for (let j = 0; j < $scope.listDataCppt[i].detail.length; j++) {
+                            if ($scope.listDataCppt[i].detail[j].type == 'tgl/jam') {
+                                $scope.item.obj[$scope.listDataCppt[i].detail[j].id] = undefined
+                                $scope.item.obj[$scope.listDataCppt[i].detail[j].id] = new Date()
+                            }
+                        }
+                    }
+                    
+                }
+                // console.log(id, nextid);
                 $scope.show.obj[nextid] = true;
                 $scope.showbtnadd[nextid] = true;
                 $scope.showbtnremove[nextid] = true;
@@ -557,6 +592,18 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 $scope.showbtnremove[id] = false;
             }
             $scope.removeobj = function (id, previd) {
+                $scope.item.obj[id] = ""
+                // console.log(id, previd);
+                for (let i = 0; i < $scope.listDataCppt.length; i++) {
+                    if ($scope.listDataCppt[i].id == id) {
+                        for (let j = 0; j < $scope.listDataCppt[i].detail.length; j++) {
+                            if ($scope.listDataCppt[i].detail[j].type == 'tgl/jam') {
+                                $scope.item.obj[$scope.listDataCppt[i].detail[j].id] = undefined
+                            }
+                        }
+                    }
+
+                }
                 $scope.show.obj[id] = false;
                 $scope.showbtnadd[id] = false
                 $scope.showbtnremove[id] = false;
@@ -632,7 +679,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             $scope.$watch('item.obj[22034963]', function(newValue,oldValue){
                 if(newValue!=oldValue){
                     if($scope.item.obj[22034963] !=null && $scope.item.obj[22034964]==undefined){
-                        $scope.item.obj[22034961] =$scope.now
+                        $scope.item.obj[22034961] =new Date()
                         let pegawai = JSON.parse(localStorage.getItem('pegawai'))
                         $scope.listPegawai.add({value: pegawai.id, text: pegawai.namaLengkap})
                         $scope.item.obj[22034962] = { value: pegawai.jenisPegawai.id, text: pegawai.jenisPegawai.jenispegawai }
@@ -643,7 +690,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             $scope.$watch('item.obj[22034971]', function(newValue,oldValue){
                 if(newValue!=oldValue){
                     if($scope.item.obj[22034971] !=null && $scope.item.obj[22034972]==undefined){
-                        $scope.item.obj[22034969] =$scope.now
+                        $scope.item.obj[22034969] =new Date()
                         let pegawai = JSON.parse(localStorage.getItem('pegawai'))
                         $scope.listPegawai.add({value: pegawai.id, text: pegawai.namaLengkap})
                         $scope.item.obj[22034970] = { value: pegawai.jenisPegawai.id, text: pegawai.jenisPegawai.jenispegawai }
@@ -654,7 +701,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             $scope.$watch('item.obj[22034979]', function(newValue,oldValue){
                 if(newValue!=oldValue){
                     if($scope.item.obj[22034979] !=null && $scope.item.obj[22034980]==undefined){
-                        $scope.item.obj[22034977] =$scope.now
+                        $scope.item.obj[22034977] =new Date()
                         let pegawai = JSON.parse(localStorage.getItem('pegawai'))
                         $scope.listPegawai.add({value: pegawai.id, text: pegawai.namaLengkap})
                         $scope.item.obj[22034978] = { value: pegawai.jenisPegawai.id, text: pegawai.jenisPegawai.jenispegawai }
@@ -665,7 +712,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             $scope.$watch('item.obj[22034987]', function(newValue,oldValue){
                 if(newValue!=oldValue){
                     if($scope.item.obj[22034987] !=null && $scope.item.obj[22034988]==undefined){
-                        $scope.item.obj[22034985] =$scope.now
+                        $scope.item.obj[22034985] =new Date()
                         let pegawai = JSON.parse(localStorage.getItem('pegawai'))
                         $scope.listPegawai.add({value: pegawai.id, text: pegawai.namaLengkap})
                         $scope.item.obj[22034986] = { value: pegawai.jenisPegawai.id, text: pegawai.jenisPegawai.jenispegawai }
@@ -676,7 +723,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             $scope.$watch('item.obj[22034995]', function(newValue,oldValue){
                 if(newValue!=oldValue){
                     if($scope.item.obj[22034995] !=null && $scope.item.obj[22034996]==undefined){
-                        $scope.item.obj[22034993] =$scope.now
+                        $scope.item.obj[22034993] =new Date()
                         let pegawai = JSON.parse(localStorage.getItem('pegawai'))
                         $scope.listPegawai.add({value: pegawai.id, text: pegawai.namaLengkap})
                         $scope.item.obj[22034994] = { value: pegawai.jenisPegawai.id, text: pegawai.jenisPegawai.jenispegawai }
@@ -687,7 +734,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             $scope.$watch('item.obj[22035003]', function(newValue,oldValue){
                 if(newValue!=oldValue){
                     if($scope.item.obj[22035003] !=null && $scope.item.obj[22035004]==undefined){
-                        $scope.item.obj[22035001] =$scope.now
+                        $scope.item.obj[22035001] = new Date()
                         let pegawai = JSON.parse(localStorage.getItem('pegawai'))
                         $scope.listPegawai.add({value: pegawai.id, text: pegawai.namaLengkap})
                         $scope.item.obj[22035002] = { value: pegawai.jenisPegawai.id, text: pegawai.jenisPegawai.jenispegawai }
@@ -701,7 +748,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             $scope.$watch('item.obj[22034966]', function(newValue,oldValue){
                 if(newValue!=oldValue){
                     if($scope.item.obj[22034966] !=null && $scope.item.obj[22034967]==undefined){
-                        $scope.item.obj[22034967] =$scope.now
+                        $scope.item.obj[22034967] = new Date()
                         let pegawai = JSON.parse(localStorage.getItem('pegawai'))
                         $scope.listPegawai.add({value: pegawai.id, text: pegawai.namaLengkap})
                         $scope.item.obj[22034968] = { value: pegawai.id, text: pegawai.namaLengkap }
@@ -711,7 +758,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             $scope.$watch('item.obj[22034974]', function(newValue,oldValue){
                 if(newValue!=oldValue){
                     if($scope.item.obj[22034974] !=null && $scope.item.obj[22034975]==undefined){
-                        $scope.item.obj[22034975] =$scope.now
+                        $scope.item.obj[22034975] = new Date()
                         let pegawai = JSON.parse(localStorage.getItem('pegawai'))
                         $scope.listPegawai.add({value: pegawai.id, text: pegawai.namaLengkap})
                         $scope.item.obj[22034976] = { value: pegawai.id, text: pegawai.namaLengkap }
@@ -721,7 +768,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             $scope.$watch('item.obj[22034982]', function(newValue,oldValue){
                 if(newValue!=oldValue){
                     if($scope.item.obj[22034982] !=null && $scope.item.obj[22034983]==undefined){
-                        $scope.item.obj[22034983] =$scope.now
+                        $scope.item.obj[22034983] = new Date()
                         let pegawai = JSON.parse(localStorage.getItem('pegawai'))
                         $scope.listPegawai.add({value: pegawai.id, text: pegawai.namaLengkap})
                         $scope.item.obj[22034984] = { value: pegawai.id, text: pegawai.namaLengkap }
@@ -731,7 +778,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             $scope.$watch('item.obj[22034990]', function(newValue,oldValue){
                 if(newValue!=oldValue){
                     if($scope.item.obj[22034990] !=null && $scope.item.obj[22034991]==undefined){
-                        $scope.item.obj[22034991] =$scope.now
+                        $scope.item.obj[22034991] = new Date()
                         let pegawai = JSON.parse(localStorage.getItem('pegawai'))
                         $scope.listPegawai.add({value: pegawai.id, text: pegawai.namaLengkap})
                         $scope.item.obj[22034992] = { value: pegawai.id, text: pegawai.namaLengkap }
@@ -741,7 +788,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             $scope.$watch('item.obj[22034998]', function(newValue,oldValue){
                 if(newValue!=oldValue){
                     if($scope.item.obj[22034998] !=null && $scope.item.obj[22034999]==undefined){
-                        $scope.item.obj[22034999] =$scope.now
+                        $scope.item.obj[22034999] = new Date()
                         let pegawai = JSON.parse(localStorage.getItem('pegawai'))
                         $scope.listPegawai.add({value: pegawai.id, text: pegawai.namaLengkap})
                         $scope.item.obj[22035000] = { value: pegawai.id, text: pegawai.namaLengkap }
@@ -751,7 +798,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             $scope.$watch('item.obj[22035006]', function(newValue,oldValue){
                 if(newValue!=oldValue){
                     if($scope.item.obj[22035006] !=null && $scope.item.obj[22035007]==undefined){
-                        $scope.item.obj[22035007] =$scope.now
+                        $scope.item.obj[22035007] = new Date()
                         let pegawai = JSON.parse(localStorage.getItem('pegawai'))
                         $scope.listPegawai.add({value: pegawai.id, text: pegawai.namaLengkap})
                         $scope.item.obj[22035008] = { value: pegawai.id, text: pegawai.namaLengkap }
@@ -807,8 +854,43 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 }
                 
             }
+            $scope.eResep = function(){
+                $scope.isRouteLoading = true
+                medifirstService.get("emr/get-data-cppt-rajal?norec_apd=" + $scope.norecAPD).then(function (data) {                 
+                    var datas = data.data;    
+                    if (datas.dataresep == "" ) {
+                        $scope.item.Resep = "Belum buat Resep pada menu Resep Elektronik";
+                    }
+                    if (datas.dataresep != undefined) {
+                        var resep = datas.dataresep.replace(/~/g, "\n");
+                        $scope.item.Resep = resep;
+                    }
+                    $scope.isRouteLoading = false
+                    $scope.winResep.center().open()
+
+                })
+                // medifirstService.get("emr/get-daftar-detail-order?noreg=" + $scope.cc.noregistrasi, true).then(function (e) {
+                // });
+
+            }
+            $scope.selectGridsssssss = function (data) {
+                // const element = document.getElementById('myButton');
+                const textToCopy = data;
+
+                const textarea = document.createElement('textarea');
+                textarea.value = textToCopy;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                toastr.success('Sudah dicopy')
+                $scope.winResep.close()
+
+            }
             // End Isian Review otomasi terisi tgl/jam, nama
         }
+
+        
         
     ]);
 });

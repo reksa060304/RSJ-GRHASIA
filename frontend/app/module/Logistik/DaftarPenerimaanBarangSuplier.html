@@ -43,7 +43,16 @@
                     k-data-source="listNamaBarang" />
             </div>
         </div>
-        <div class="grid_2"></div>
+        <div class="grid_2">
+            <div class="grid_12">
+                <label c-label class="label-aja" item="item" c-label-text="StatusBayar"></label>
+            </div>
+            <div class="grid_12">
+                <input style="width: 100%;" kendo-combo-box k-ng-model="item.statusBayar"
+                    k-data-text-field="'name'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
+                    k-data-source="listStatusBayar" />
+            </div>
+        </div>
         <div class="grid_4">
             <div class="grid_12">
                 <label c-label item="item" c-label-text="Periode Tanggal"></label>
@@ -119,33 +128,44 @@
                 <input c-text-box type="input" class="k-textbox" ng-model="item.namarekanan" auto-bind="false" />
             </div>
         </div>
-        <div class="grid_2" style="margin-top: 22px">
-            <button class="c-button" ng-click="Tambah()">Penerimaan Baru</button>
+        <div class="grid_2">
+            <div class="grid_12">
+                <label c-label item="item" c-label-text="Keterangan Terima"></label>
+            </div>
+            <div class="grid_12">
+                <input c-text-box type="input" class="k-textbox" ng-model="item.ketterima" auto-bind="false" />
+            </div>
         </div>
-        <div class="grid_2" style="margin-top: 22px">
-            <button class="c-button" ng-click="EditTerima()">Ubah Penerimaan</button>
-        </div>
-        <div class="grid_1" style="margin-top: 22px">
-            <button class="c-button" ng-click="BatalTerima()">Batal Terima</button>
-        </div>
-        <div class="grid_1" style="margin-top: 22px">
-            <button class="c-button" ng-click="CetakBukti()">Cetak Bukti</button>
-        </div>
-        <div class="grid_2" style="margin-top: 5px">
-            <button class="c-button" ng-click="RegisAset()">Registrasi Aset</button>
-        </div>
-        <div class="grid_2" style="margin-top: 5px">
-            <button class="c-button" ng-click="EditHead()">Edit Head</button>
-        </div>
-        <div class="grid_2" style="margin-top: 5px">
-            <button class="c-button" ng-click="ubahHarga()" style="background-color: red;">Ubah Harga</button>
-        </div>
-        <div class="grid_2" style="margin-top: 5px">
-            <button class="c-button" ng-click="gunakanSemuaStok()" style="background-color: red;" ng-hide="hidesmeuastok">Gunakan Semua Stok</button>
-        </div>
-        <div class="grid_2" style="margin-top: 5px">
-            <button class="c-button" ng-click="verifSPJ(dataSelected)" style="background-color: green;"
-                ng-hide="hidesmeuastok">Verifikasi SPJ</button>
+        <div class="grid_12">
+            <div class="grid_2" style="margin-top: 22px">
+                <button class="c-button" ng-click="Tambah()">Penerimaan Baru</button>
+            </div>
+            <div class="grid_2" style="margin-top: 22px">
+                <button class="c-button" ng-click="EditTerima()">Ubah Penerimaan</button>
+            </div>
+            <div class="grid_1" style="margin-top: 22px">
+                <button class="c-button" ng-click="BatalTerima()">Batal Terima</button>
+            </div>
+            <div class="grid_1" style="margin-top: 22px">
+                <button class="c-button" ng-click="CetakBukti()">Cetak Bukti</button>
+            </div>
+            <div class="grid_2" style="margin-top: 22px">
+                <button class="c-button" ng-click="RegisAset()">Registrasi Aset</button>
+            </div>
+            <div class="grid_2" style="margin-top: 22px">
+                <button class="c-button" ng-click="EditHead()">Edit Head</button>
+            </div>
+            <div class="grid_2" style="margin-top: 22px">
+                <button class="c-button" ng-click="ubahHarga()" style="background-color: red;">Ubah Harga</button>
+            </div>
+            <div class="grid_2" style="margin-top: 22px">
+                <button class="c-button" ng-click="gunakanSemuaStok()" style="background-color: red;"
+                    ng-hide="hidesmeuastok">Gunakan Semua Stok</button>
+            </div>
+            <div class="grid_2" style="margin-top: 22px">
+                <button class="c-button" ng-click="verifSPJ(dataSelected)" style="background-color: green;"
+                    ng-hide="hidesmeuastok">Verifikasi SPJ</button>
+            </div>
         </div>
     </div>
     <div class="grid_12" style="margin-top:60px">

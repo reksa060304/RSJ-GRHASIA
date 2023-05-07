@@ -401,6 +401,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
                 Route::post('bridging/farmasi/save-consis-d','Bridging\BridgingFarmasiController@SimpanBridgingConsisD');
             // });
                 Route::post('farmasi/save-rekonsiliasi-obat', 'EMR\EMRController@saveRekonsiliasiObat');
+                Route::post('emr/farmasi-save-preview', 'EMR\EMRController@savePreview');
                 Route::get('emr/get-rekonsiliasi-obat','EMR\EMRController@getRekonsiliasiObat');
                 Route::post('farmasi/delete-rekonsiliasi-obat', 'EMR\EMRController@deleteRekonsiliasiObat');
                 // Route::group(['prefix' => 'sisrute'], function () {
@@ -689,6 +690,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('emr/get-emr-cakem', 'EMR\EMRController@getCakem');
           Route::post('emr/hapus-emr-cakem', 'EMR\EMRController@hapusCakem');
           // Route::post('emr/save-emr-dinamis', 'EMR\EMRController@SaveTransaksiEMR');
+          Route::get('emr/get-masalah-keperawatan', 'EMR\EMRController@getEMRMasalahKeperawatan');
           Route::get('emr/get-emr-transaksi', 'EMR\EMRController@getEMRTransaksiRiwayat');
           Route::get('emr/get-emr-transaksi-detail', 'EMR\EMRController@getEMRTransaksiDetail');
           Route::get('emr/get-datacombo-part-pegawai', 'EMR\EMRController@getDataComboPegawaiPart');
@@ -787,7 +789,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('emr/get-combo-resep-emr', 'EMR\EMRController@getDataComboResepEMR');
           Route::get('emr/get-daftar-detail-order', 'EMR\EMRController@getDaftarDetailOrder');
           Route::get('emr/get-info-stok', 'EMR\EMRController@getInformasiStok');
-          Route::get('emr/get-produkdetail', 'Farmasi\PelayananResepController@getProdukDetail');
+          Route::get('emr/get-produkdetail', 'EMR\EMRController@getProdukDetail');
           Route::get('emr/get-jenis-obat', 'EMR\EMRController@getJenisObat');
           Route::post('emr/simpan-order-pelayananobatfarmasi', 'EMR\EMRController@SimpanOrderPelayananObat');
           Route::get('emr/get-transaksi-pelayanan', 'Farmasi\PelayananResepController@getTransaksiPelayananApotik');
@@ -859,6 +861,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('emr/riwayat-emr', 'EMR\EMRController@getRiwayatEMR');
           Route::get('emr/get-riwayatcppt-rajalranap', 'EMR\EMRController@getRiwayatCPPTRajalRanap');
           Route::get('emr/get-data-perawatan', 'EMR\EMRController@getDataPerawatan');
+          Route::get('emr/get-data-cppt-rajal', 'EMR\EMRController@getDataCPPTRajal');
 
 
           Route::post('bsre-esign/sign/pdf', 'Bridging\BridgingBSREController@signDokumen');
@@ -911,7 +914,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('farmasi/get-daftar-detail-order', 'Farmasi\ResepElektronikController@getDaftarDetailOrder');
           Route::post('farmasi/save-status-resepelektonik', 'Farmasi\ResepElektronikController@saveStatusResepElektronik');
           Route::post('farmasi/update-status-grabexpress', 'Farmasi\ResepElektronikController@updateStatusGrabExpress');
-
+          Route::post('farmasi/cek-stokproduk-farmasi','Farmasi\PelayananResepController@cekStokFarmasi');
           Route::get('farmasi/get-datacombo_dp', 'Farmasi\FarmasiController@getDataComboDaftarPasien');
           Route::get('farmasi/get-daftar-pasien-farmasi', 'Farmasi\FarmasiController@getDaftarPasien');
 
@@ -925,6 +928,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('farmasi/get-datacombo', 'Farmasi\PelayananResepController@getDataCombo');
           Route::get('farmasi/get_detail-resep', 'Farmasi\PelayananResepController@getDetailResep');
           Route::get('farmasi/get-detail-order', 'Farmasi\PelayananResepController@getDetailOrder');
+          Route::get('emr/get-detail-order', 'EMR\EMRController@getDetailOrder');
           Route::get('farmasi/get-detail-order-resep', 'Farmasi\PelayananResepController@getDetailOrderResep');
           Route::get('farmasi/get-info-stok', 'Farmasi\PelayananResepController@getInformasiStok');
           Route::get('farmasi/get-info-transfer', 'Farmasi\PelayananResepController@getInformasiTransfer');
@@ -1269,9 +1273,11 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('report/cetak-hasil-lab-histopatologi','Report\ReportController@cetakHispatologi');
           Route::get('report/cetak-resep-dokter','Report\ReportController@cetakResepDokter');
           Route::get('report/cetak-detail-order','Report\ReportController@cetakDetailOrder');
+          Route::get('report/cetak-preview-order','Report\ReportController@cetakPreviewOrder');
           Route::get('report/cetak-resep-dokter-rev','Report\ReportController@cetakResepDokterRev');
           Route::get('report/cetak-resep-dokter-harga','Report\ReportController@cetakResepDokterHarga');
           Route::get('report/get-cetak-suratketerangandokter','Report\ReportController@CetakSKDokter');
+          Route::get('report/get-cetak-cmrm05','Report\ReportController@cetakCM05');
           Route::get('report/get-cetak-per-jenis-anggaran','Report\ReportController@CetakPerJenisAnggaran');
           Route::get('report/get-cetak-per-jenis-anggaran-sebelum-sesudah','Report\ReportController@CetakPerJenisAnggaranSebelumSesudah');
           Route::get('report/get-cetak-rekap-mata-anggaran','Report\ReportController@CetakRekapMataAnggaran');
@@ -1893,6 +1899,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('rawatjalan/get-informasi-monitoring-taskid', 'RawatJalan\RawatJalanController@getInformasiMonitoringTaksId');
           Route::get('sysadmin/logging/get-log-antrean', 'SysAdmin\LoggingController@getLogAntrean');
           Route::post('jkn/save-checkin','ReservasiOnline\MyJKNV2Controller@saveCheckInAntrean_fix');
+          Route::get('rawatjalan/get-antril-combo', 'RawatJalan\RawatJalanController@getComboAntrol');
+          Route::post('rawatjalan/disabled-monitoring-taskid', 'RawatJalan\RawatJalanController@disabledMonitoringTaksId');
           
           Route::post('rawatjalan/save-daftar-surat', 'RawatJalan\RawatJalanController@saveDaftarSurat');
           Route::get('rawatjalan/get-detail-pasien-surat', 'RawatJalan\RawatJalanController@getDetailpasienSurat');
@@ -2202,6 +2210,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
               Route::get('registrasi/laporan/get-data-lap-pengunjung-tindakan','Registrasi\LaporanPengunjungController@getLaporanPengunjungTindakan');
             Route::get('registrasi/laporan/get-data-lap-kegiatan-rj','Registrasi\RegistrasiController@getLaporanKegiatanRJ');
               Route::get('registrasi/laporan/get-data-lap-pengunjung-pemeriksaan','Registrasi\LaporanPengunjungController@getLaporanPengunjungPemeriksaan');
+              
               Route::get('registrasi/laporan/get-lap-paseinrj-per-dokpemeriksa','Registrasi\LaporanPengunjungController@getLaporanPasienRJPerDokterPemeriksa');
               Route::get('registrasi/laporan/get-data-lap-pasien-dpjp','Registrasi\LaporanPengunjungController@getLaporanPasienDPJP');
               Route::get('registrasi/laporan/get-laporan-topten-diagnosa','Registrasi\RegistrasiController@getTopTenDiagnosa');
@@ -2609,6 +2618,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
               Route::post('sdm/pendidikan/save-pdruangan', 'SDM\SumberDayaManusiaController@savePesertaDidikRuangan');
               Route::post('sdm/pendidikan/save-pdruangan-group', 'SDM\SumberDayaManusiaController@savePesertaDidikRuanganGroup');
               Route::get('diklat/get-pe-eks', 'SDM\SumberDayaManusiaController@getPeEks');
+              Route::get('diklat/aspek-penilaian-mahasiswa','SDM\SumberDayaManusiaController@aspekPenilaian');
+              Route::post('diklat/save-aspek-penilaian','SDM\SumberDayaManusiaController@saveAspekPenilaian');
               Route::post('sdm/penelitian/verif-kegiatan-penelitian-eksternal','SDM\PenelitianController@verifKegiatanPenelitianExternal');
               Route::post('sdm/penelitian/verif-tagihan-kegiatan-penelitian-eksternal','SDM\PenelitianController@verifTagihanKegiatanPenelitianExternal');
               

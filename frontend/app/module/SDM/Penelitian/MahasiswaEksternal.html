@@ -107,8 +107,16 @@
                                         </div>
                                       
                                         <div class="grid_12" style="margin-top:10px">
-                                            <div class="grid_4"></div>
-                                            
+                                            <div class="grid_2"></div>
+                                            <div class="grid_2" ng-show="tmbhruangan">
+                                                <button ng-show="!isLoading" class="c-button primary"
+                                                    style="width: 99.5%; font-size: 20px; padding:0px; margin:0px; text-align: center;"
+                                                    item="item" size="20" position=" 'right'" is-validate
+                                                    ng-click="tambahRuanganV2()">
+                                                    <span class="title">Tambah Ruangan Kelompok</span>
+                                                </button>
+                                                <!-- <button class="c-button success" ng-click="tambahTindakans()">Tambah Tindakan</button> -->
+                                            </div>
                                             <div class="grid_2" ng-show="tmbhruangan">
                                                 <button ng-show="!isLoading" class="c-button primary"
                                                     style="width: 99.5%; font-size: 20px; padding:0px; margin:0px; text-align: center;"
@@ -118,6 +126,7 @@
                                                 </button>
                                                 <!-- <button class="c-button success" ng-click="tambahTindakans()">Tambah Tindakan</button> -->
                                             </div>
+
                                             <div class="grid_2">
                                                 <button ng-show="!isLoading" class="c-button cancel"
                                                     style="width: 99.5%; font-size: 20px; padding:0px; margin:0px; text-align: center;"
@@ -209,7 +218,7 @@
                     </div>
                     <div class="grid_12">
                         <input style="width: 100%;" kendo-combo-box ng-disabled="pemb" k-ng-model="item.pegawai"
-                            k-data-text-field="'nama'" k-data-value-field="'id'" k-filter="'contains'"
+                            k-data-text-field="'namalengkap'" k-data-value-field="'id'" k-filter="'contains'"
                             k-auto-bind="false" k-data-source="ListPegawai" />
                     </div>
                 </div>
@@ -239,7 +248,7 @@
                 <div class="grid_4">
                     <div class="grid_12">
                         <div class="k-edit-buttons  k-state-default" style="margin-top:10px">
-                            <button class="k-button  k-button-icontext" ng-click="saveruangan()"><span
+                            <button class="k-button  k-button-icontext" ng-click="saveruanganV2()"><span
                                     class="k-icon k-save"></span>Simpan</button>
                         </div>
                     </div>
@@ -268,6 +277,106 @@
         <div class="grid_12">
             <div class="k-edit-buttons  k-state-default pull-right" style="margin-top:10px">
                 <button class="k-button  k-button-icontext" ng-click="TutupPopUps()"><span
+                        class="k-icon k-cancel"></span>Tutup</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div kendo-window="popUpTambahRuanganV2" k-title="'Data Detail Pindah Mahasiswa'" k-width="1000" k-visible="false"
+    k-on-open="win2visible = true" k-on-close="win2visible = false">
+    <div class="panel panel-default container_12" style="padding: 0px 10px;">
+        <div class="grid_12">
+            <div class="grid_12">
+                <div class="grid_4" >
+                    <label c-label c-label-text="Nama Mahasiswa" real></label>
+                    <!-- <input style="width: 100%;" kendo-combo-box k-ng-model="item.ruangan" k-data-text-field="'namaruangan'" 
+                        k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listRuangan" /> -->
+                    <select ng-show="listMahasiswa.length" kendo-multi-select k-options="selectOptionsMahasiswa"
+                        k-filter="'contains'" k-data-source="listMahasiswa" k-ng-model="item.mahasiswaMulti"></select>
+
+
+                    <!--<input style="width: 100%;" kendo-combo-box k-ng-model="item.Ruangan" k-data-text-field="'namaRuangan'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="ruangans"/>-->
+                </div>
+                <div class="grid_4">
+                    <div class="grid_12">
+                        <label c-label item="item" c-label-text="Ruang"></label>
+                    </div>
+                    <div class="grid_12">
+                        <input style="width: 100%;" kendo-combo-box ng-disabled="ru" k-ng-model="item.ruangan"
+                            k-data-text-field="'namaruangan'" k-data-value-field="'id'" k-filter="'contains'"
+                            k-auto-bind="false" k-data-source="ListRuangan" />
+                    </div>
+                </div>
+                <div class="grid_4">
+                    <div class="grid_12">
+                        <label c-label item="item" c-label-text="Pembimbing"></label>
+                    </div>
+                    <div class="grid_12">
+                        <input style="width: 100%;" kendo-combo-box ng-disabled="pemb" k-ng-model="item.pegawai"
+                            k-data-text-field="'namalengkap'" k-data-value-field="'id'" k-filter="'contains'"
+                            k-auto-bind="false" k-data-source="ListPegawai" />
+                    </div>
+                </div>
+                
+
+            </div>
+            <div class="grid_12">
+                <div class="grid_6">
+                    <div class="grid_12">
+                        <label c-label item="item" c-label-text="Dari"></label>
+                    </div>
+                    <div class="grid_12">
+                        <!-- <input kendo-date-picker k-ng-model="item.tanggalMulai" k-format="'dd-MM-yyyy'" style="width: 100%" /> -->
+                        <input style="width: 100%" k-ng-model="item.tglmasuk" kendo-datetimepicker
+                            placeholer="yyyy-mm-dd" k-format="'yyyy-MM-dd'" />
+                    </div>
+                </div>
+                <div class="grid_6">
+                    <div class="grid_12">
+                        <label c-label item="item" c-label-text="Sampai"></label>
+                    </div>
+                    <div class="grid_12">
+                        <!-- <input kendo-date-picker k-ng-model="item.tanggalMulai" k-format="'dd-MM-yyyy'" style="width: 100%" /> -->
+                        <input style="width: 100%" k-ng-model="item.tglkeluar" kendo-datetimepicker
+                            placeholer="yyyy-mm-dd" k-format="'yyyy-MM-dd'" />
+                    </div>
+                </div>
+            </div>
+            <div class="grid_12">
+                <div class="grid_4">
+                    <div class="grid_12">
+                        <div class="k-edit-buttons  k-state-default" style="margin-top:10px">
+                            <button class="k-button  k-button-icontext" ng-click="saveruanganV2()"><span
+                                    class="k-icon k-save"></span>Simpan</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+
+        </div>
+        <!-- <div class="grid_12">
+            <div class="grid_12 headerBox">
+                <p>Detail Pergerakan Mahasiswa Pindah Ruangan</p>
+            </div>
+            <div class="clear"></div>
+            grid table
+            <div class="grid_12 borderBox">
+                <kendo-grid id="kGrid" data-source="dataDetailV2" options="columnDetailV2" k-pageable="'true'" k-groupable="'true'"
+                    k-sortable="'true'" k-resizable="'true'" k-selectable="'row'" k-ng-model="dataSelectedDetail"
+                    ng-click="klikGridDetailV2(dataSelectedDetail)"
+                    >
+                </kendo-grid>
+            </div>
+            <div class="clear"></div>
+        </div> -->
+        <div class="grid_12">
+            <div class="k-edit-buttons  k-state-default pull-right" style="margin-top:10px">
+                <button class="k-button  k-button-icontext" ng-click="TutupPopUpsV2()"><span
                         class="k-icon k-cancel"></span>Tutup</button>
             </div>
         </div>

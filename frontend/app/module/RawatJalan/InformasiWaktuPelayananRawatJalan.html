@@ -73,6 +73,12 @@
         color: #191970;
         /*font-weight: bold;*/
     }
+
+    fieldset{
+        border-radius: 24px;
+        border-color: #a49f9f87;
+        padding: 0;
+    }
 </style>
 
 <!-- <div ng-controller="DaftarPasienPulangKasirCtrl"> -->
@@ -90,7 +96,7 @@
     <div class="grid_12">
         <div class="grid_12 borderBox containerBorderBox">
             <!-- Periode Registrasi -->
-            <div class="grid_4">
+            <div class="grid_3">
                 <div class="grid_12">
                     <label c-label item="item" c-label-text="Periode Registrasi"></label>
                 </div>
@@ -122,6 +128,18 @@
                     <input style="width: 100%;" kendo-combo-box k-ng-model="item.ruangan"
                         k-data-text-field="'namaruangan'" k-data-value-field="'id'" k-filter="'contains'"
                         k-auto-bind="false" k-data-source="listRuangan" />
+                </div>
+            </div>
+
+            <div class="grid_1">
+                <div class="grid_12">
+                    <label c-label item="item" c-label-text="KelompokPasien"></label>
+                </div>
+                <div class="clear"></div>
+
+                <div class="grid_12">
+                    <input style="width: 100%;" kendo-combo-box k-ng-model="item.kelompokpasien" k-data-text-field="'kelompokpasien'" k-data-value-field="'id'" 
+                    k-filter="'contains'" k-auto-bind="false" k-data-source="listKelompokPasien" />
                 </div>
             </div>
 
@@ -211,6 +229,30 @@
     <div class="grid_1">
         <button class="btnTemplate1 error" style="margin-left: 0;" ng-click="validasiData()"><i
                 class="fa fa-edit"></i>Validasi Data</button>
+    </div>
+    <div class="grid_11">
+        
+    </div>
+    <div class="grid_2"></div>
+    <div class="grid_10">
+        <div class="grid_4">
+            <fieldset>
+                <legend>Jumlah Belum Kekirim/ Tidak Lengkap</legend>
+                <h4 style="font-size:19px"><b>{{totalBelum}}</b></h4>
+            </fieldset>
+        </div>
+        <div class="grid_4">
+            <fieldset>
+                <legend>Jumlah Antrean Total</legend>
+                <h4 style="font-size:19px"><b>{{totalAntrean}}</b></h4>
+            </fieldset>
+        </div>
+        <div class="grid_4">
+            <fieldset>
+                <legend>Jumlah Antrean Lengkap</legend>
+                <h4 style="font-size:19px"><b>{{totalLengkap}} ( <span style="font-weight:normal">Quality Rate :</span> {{isNaN(totalQuality)? 0:totalQuality}}% )</b></h4>
+            </fieldset>
+        </div>
     </div>
     <div class="grid_12" style="margin-top:60px">
         <div ng-include='"../app/template/Shared/TemplateLoading"'></div>

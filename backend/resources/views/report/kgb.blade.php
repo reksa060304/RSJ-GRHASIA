@@ -106,12 +106,12 @@
                         <span style="font-size: 12pt">{{strtoupper($profile[0]->baris1)}}</span><br>
                         <span style="font-size: 16pt;">{{strtoupper($profile[0]->baris2)}}</span><br>
                         <span style="font-size: 14pt;">{{strtoupper($profile[0]->namalengkap)}}</span><br>
-                        <img src="data:image/jpeg;base64,{{$profile[0]->gambarlogo}}" alt="" style="width: 250px;"><br>
-                        <span color="#000000" style="font-size: 11pt">
-                            Jalan Kaliurang KM 17 Yogyakarta
+                        <img src="data:image/jpeg;base64,{{$profile[0]->gambarlogo}}" alt="" style="width: 230px;"><br>
+                        <span color="#000000" style="font-size: 10pt">
+                            Jalan Kaliurang Km 17 Yogyakarta
                             Telepon {{$profile[0]->fixedphone}}
                             Faksimile: {{$profile[0]->faksimile}}
-                            <br>Laman: {{ $profile[0]->website}} ,
+                            <br>Laman: {{ $profile[0]->website}},
                             Surel:
                             {{-- {{ $profile[0]['website']}} --}}
                             {{$profile[0]->alamatemail}}<br>
@@ -265,7 +265,7 @@
                             <td style="font-size: 11pt">Yogyakarta, {{$data[0]->tglttd}}</td>
                         </tr>
                         <tr>
-                            <td style="padding-bottom: 90px;font-size: 11pt" >DIREKTUR,</td>
+                            <td style="padding-bottom: 81px;font-size: 11pt" >DIREKTUR,</td>
                         </tr>
                         <tr>
                             <td style="font-size: 11pt"><b>dr. AKHMAD AKHADI S., M.P.H. <br>
@@ -279,7 +279,7 @@
             </tr>
             <tr>
                 <td>
-                    <table style="font-family: Arial; line-height: 10px">
+                    <table style="font-family: Arial;line-height: 12px">
                         <tr>
                             <td colspan="2" style="font-size: 11pt">Tembusan disampaikan kepada Yth.:</td>
                         </tr>

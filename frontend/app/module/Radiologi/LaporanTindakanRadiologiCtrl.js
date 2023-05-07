@@ -11,6 +11,9 @@ define(['initialize'], function (initialize) {
             $scope.isRouteLoading = false;
             $scope.item.listKelompokPasienMulti = [];
             $scope.listDokterMulti = [];
+            $scope.listProdukMulti = [];
+            $scope.item.listProdukMulti = [];
+
 
             $scope.tglMeninggal = '';
             $scope.Page = {
@@ -57,6 +60,7 @@ define(['initialize'], function (initialize) {
                 medifirstService.get("registrasi/daftar-registrasi/get-data-combo-operator", false).then(function (data) {
                     $scope.listDokter = data.data.dokter;
                     $scope.listDokters = data.data.dokter;
+                    $scope.listProduk = data.data.produkradiologi;
                     $scope.selectOptionsDokter = {
                         placeholder: "Pilih Dokter Pemeriksa",
                         dataTextField: "namalengkap",
@@ -66,6 +70,16 @@ define(['initialize'], function (initialize) {
                         // },
                         autoBind: false,
     
+                    };
+                    $scope.selectOptionsProduk = {
+                        placeholder: "Pilih Jenis Pemeriksaan",
+                        dataTextField: "namaproduk",
+                        dataValueField: "id",
+                        // dataSource:{
+                        //     data: $scope.listRuangan
+                        // },
+                        autoBind: false,
+
                     };
                 });                
             }
@@ -131,9 +145,22 @@ define(['initialize'], function (initialize) {
                     listDokterPemeriksa = a.slice(1, a.length)
                 }
 
+                var listProduk = ""
+                if ($scope.item.listProdukMulti.length != 0) {
+                    var a = ""
+                    var b = ""
+                    for (var i = $scope.item.listProdukMulti.length - 1; i >= 0; i--) {
+
+                        var c = $scope.item.listProdukMulti[i].id
+                        b = "," + c
+                        a = a + b
+                    }
+                    listProduk = a.slice(1, a.length)
+                }
+
                 medifirstService.get("radiologi/get-laporan-tindakan?tglAwal=" + tglAwal + "&tglAkhir=" + tglAkhir 
                     + "&KpArr=" + listKelompokPasien
-                    + "&dkArr="+ listDokterPemeriksa + idDokter).then(function (data) {
+                    + "&dkArr="+ listDokterPemeriksa + idDokter+ "&PrArr="+listProduk).then(function (data) {
                         $scope.isRouteLoading = false;
                         for (var i = 0; i < data.data.data.length; i++) {
                             data.data.data[i].no = i+1

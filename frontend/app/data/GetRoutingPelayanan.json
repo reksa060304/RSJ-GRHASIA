@@ -17540,8 +17540,8 @@
   ]
 },
 {
-  "name": "RekamMedis.AsesmenMedis.PenilaianRisikoJatuhPasienJiwa",
-  "url": "/PenilaianRisikoJatuhPasienJiwa",
+  "name": "RekamMedis.AsesmenMedis.MenuIndex.PenilaianRisikoJatuhPasienJiwa",
+  "url": "/PenilaianRisikoJatuhPasienJiwa/:index/:idEMR",
   "templateurl": "module/EMR/PenilaianRisikoJatuhPasienJiwa.html",
   "controller": "PenilaianRisikoJatuhPasienJiwaCtrl",
   "deps": [{
@@ -19605,8 +19605,8 @@
     ]
   },
   {
-    "name": "RekamMedis.AsesmenMedis.PengkajianAwalKeperawatanRIJiwa",
-    "url": "/PengkajianAwalKeperawatanRIJiwa",
+    "name": "RekamMedis.AsesmenMedis.MenuIndex.PengkajianAwalKeperawatanRIJiwa",
+    "url": "/PengkajianAwalKeperawatanRIJiwa/:index/:idEMR",
     "templateurl": "module/EMR/PengkajianAwalKeperawatanRIJiwa.html",
     "controller": "PengkajianAwalKeperawatanRIJiwaCtrl",
     "deps": [{
@@ -20134,6 +20134,28 @@
     "url": "/PengkajianAwalMedisIGDJiwaGrh",
     "templateurl": "module/EMR/PengkajianAwalMedisIGDJiwaGrh.html",
     "controller": "PengkajianAwalMedisIGDJiwaGrhCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.MPPGrh",
+    "url": "/MPPGrh",
+    "templateurl": "module/EMR/MPPGrh.html",
+    "controller": "MPPGrhCtrl",
     "deps": [{
         "module": "Services",
         "define": "Service"

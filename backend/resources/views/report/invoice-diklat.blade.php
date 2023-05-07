@@ -233,7 +233,7 @@
                                 2. 
                             </td>
                             <td>
-                                Kirim Ke Rekening : 041 111 000043 a.n RS Grhasia Prop DIY QQ BLU dengan format: Nama - Asal Insitusi-Jenis Pembayaran Kegiatan
+                                Kirim Ke Rekening RS Jiwa Grhasia BPD DIY : 041 111 000043 An RS Grhasia Prop DIY QQ BLU dengan format: Nama - Asal Insitusi-Jenis Pembayaran Kegiatan
                             </td>
                         </tr>
                         <tr>

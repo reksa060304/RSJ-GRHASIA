@@ -749,7 +749,12 @@ $scope.GCSKuantitatif = function ()
     let tgl17 = parseInt($scope.item.obj[3003899]) || 0;
     let tgl18 = parseInt($scope.item.obj[3003903]) || 0;
     let jumlah1 =  tgl1+tgl2+tgl3+tgl4+tgl5+tgl6+tgl7+tgl8+tgl9+tgl10+tgl11+tgl12+tgl13+tgl14+tgl15+tgl16+tgl17+tgl18;
+    let sub1 = tgl1+tgl2+tgl3+tgl4+tgl5+tgl6+tgl7+tgl8+tgl9+tgl10+tgl11+tgl12+tgl13
+    let sub5 = tgl14+tgl15+tgl16+tgl17+tgl18
     $scope.item.obj[3003907] = jumlah1;
+    $scope.item.obj[3003915] = sub1
+    $scope.item.obj[3003919] = sub5
+
 
 
     //jumlah2
@@ -772,7 +777,13 @@ $scope.GCSKuantitatif = function ()
     let tgl36 = parseInt($scope.item.obj[3003900]) || 0;
     let tgl37 = parseInt($scope.item.obj[3003904]) || 0;
     let jumlah2 =  tgl20+tgl21+tgl22+tgl23+tgl24+tgl25+tgl26+tgl27+tgl28+tgl29+tgl30+tgl31+tgl32+tgl33+tgl34+tgl35+tgl36+tgl37;
+    let sub2 = tgl20+tgl21+tgl22+tgl23+tgl24+tgl25+tgl26+tgl27+tgl28+tgl29+tgl30+tgl31+tgl32
+    
     $scope.item.obj[3003908] = jumlah2;
+    $scope.item.obj[3003916] = sub2
+        let sub6 = tgl33+tgl34+tgl35+tgl36+tgl37
+    $scope.item.obj[3003920] = sub6
+
 
      //jumlah3
      let tgl40 = parseInt($scope.item.obj[3003837]) || 0;
@@ -794,7 +805,13 @@ $scope.GCSKuantitatif = function ()
      let tgl56 = parseInt($scope.item.obj[3003901]) || 0;
      let tgl57 = parseInt($scope.item.obj[3003905]) || 0;
      let jumlah3 =  tgl40+tgl41+tgl42+tgl43+tgl44+tgl45+tgl46+tgl47+tgl48+tgl49+tgl50+tgl51+tgl52+tgl53+tgl54+tgl55+tgl56+tgl57;
+    let sub3 = tgl40 + tgl41 + tgl42 + tgl43 + tgl44 + tgl45 + tgl46 + tgl47 + tgl48 + tgl49 + tgl50 + tgl51 + tgl52
+     
      $scope.item.obj[3003909] = jumlah3;
+    $scope.item.obj[3003917] = sub3
+    let sub7 = tgl53+tgl54+tgl55+tgl56+tgl57
+    $scope.item.obj[3003921] = sub7
+
 
       //jumlah4
       let tgl60 = parseInt($scope.item.obj[3003838]) || 0;
@@ -817,6 +834,11 @@ $scope.GCSKuantitatif = function ()
       let tgl77 = parseInt($scope.item.obj[3003906]) || 0;
       let jumlah4 =  tgl60+tgl61+tgl62+tgl63+tgl64+tgl65+tgl66+tgl67+tgl68+tgl69+tgl70+tgl71+tgl72+tgl73+tgl74+tgl75+tgl76+tgl77;
       $scope.item.obj[3003910] = jumlah4;
+          let sub4 = tgl60+tgl61+tgl62+tgl63+tgl64+tgl65+tgl66+tgl67+tgl68+tgl69+tgl70+tgl71+tgl72
+          $scope.item.obj[3003918] = sub4
+          let sub8 = tgl73+tgl74+tgl75+tgl76+tgl77
+    $scope.item.obj[3003922] = sub8
+
      
 }
             $scope.getSkor = function (stat) {

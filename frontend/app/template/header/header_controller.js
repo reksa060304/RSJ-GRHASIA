@@ -25,7 +25,7 @@ define(['kendo.menu'], function (kendoMenu) {
         $scope.mapLogin = mapLogin ? JSON.parse(mapLogin) : [];
         function savDB(data) {
             data.method = 'save'
-            MenuService.postNonMessage('sysadmin/store-notif', data).then(function (e) { })
+            // MenuService.postNonMessage('sysadmin/store-notif', data).then(function (e) { })
         }
 
         socket.on('set-server-socket', function (e) {
@@ -60,7 +60,7 @@ define(['kendo.menu'], function (kendoMenu) {
                             $scope.jmlNotif = $scope.listNotif.length
                             var audio = new Audio("../app/stylesheets/sound/discord-notification.mp3");//toastToneError//toastToneSuccess
                             audio.play();
-                            savDB(objectData)
+                            // savDB(objectData)
                         }
                     }
                 } 
@@ -90,7 +90,7 @@ define(['kendo.menu'], function (kendoMenu) {
                     $scope.jmlNotif = $scope.listNotif.length
                     var audio = new Audio("../app/stylesheets/sound/discord-notification.mp3");//toastToneError//toastToneSuccess
                     audio.play();
-                    savDB(objectData)
+                    // savDB(objectData)
                 }
 
 
@@ -102,6 +102,7 @@ define(['kendo.menu'], function (kendoMenu) {
             $scope.jmlNotif = 0
             MenuService.postNonMessage('sysadmin/store-notif', { method: 'get', mapLogin: $scope.mapLogin  }).then(function (e) {
                 if (e.data.data.length > 0) {
+                    e.data.data =  group(e.data.data)
                     for (let x = 0; x < e.data.data.length; x++) {
                         const element = e.data.data[x];
                         if ($scope.mapLogin.length > 0) {
@@ -136,6 +137,22 @@ define(['kendo.menu'], function (kendoMenu) {
                     $scope.jmlNotif = $scope.listNotif.length
                 }
             })
+        }
+        function group(result){
+            let sama = false
+            let arrGroup = [];
+            for (let i = 0; i < result.length; i++) {
+                sama = false
+                for (let x = 0; x < arrGroup.length; x++) {
+                    if (arrGroup[x].norec_trans == result[i].norec_trans) {
+                        sama = true;
+                    }
+                }
+                if (sama == false) {
+                    arrGroup.push(result[i])
+                }
+            }
+            return arrGroup;
         }
         $rootScope.$watch('addData', function (e) {
             $scope.messages.push(e);

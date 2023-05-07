@@ -288,6 +288,33 @@ define(['initialize'], function (initialize) {
             // $scope.ColumnPasien = [
             $scope.mainGridOptions = {
                 scrollable: true,
+                toolbar: [
+                        "excel",
+                    ],
+                    excel: {
+                        fileName: "DaftarPasienRawatjalan.xlsx",
+                        allPages: true,
+                    },
+                    excelExport: function (e) {
+                        var sheet = e.workbook.sheets[0];
+                        sheet.frozenRows = 2;
+                        sheet.mergedCells = ["A1:M1"];
+                        sheet.name = "Sheet";
+
+                        var myHeaders = [{
+                            value: "Daftar Pasien Rawat Jalan",
+                            fontSize: 20,
+                            textAlign: "center",
+                            background: "#ffffff",
+                            // color:"#ffffff"
+                        }];
+
+                        sheet.rows.splice(0, 0, {
+                            cells: myHeaders,
+                            type: "header",
+                            height: 70
+                        });
+                    },
                 dataBound: onDataBound,
                 columns: [
                     {
@@ -893,7 +920,14 @@ define(['initialize'], function (initialize) {
                     alert("Pilih Pasien Dahulu!!!")
                     return;
                 } else {
+                    
                     $scope.item.pilihDokter = { id: $scope.dataPasienSelected.objectpegawaifk, namalengkap: $scope.dataPasienSelected.namadokter }
+                    if ($scope.dataPasienSelected.objectpegawaifk == null) {
+                        $scope.item.pilihDokter = {
+                            id: medifirstService.getPegawaiLogin().id,
+                            namalengkap: medifirstService.getPegawaiLogin().namaLengkap
+                        }
+                    }
                     $scope.winDialogss.center().open();
                 }
             }

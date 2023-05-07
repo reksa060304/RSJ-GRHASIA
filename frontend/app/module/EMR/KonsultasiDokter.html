@@ -70,7 +70,7 @@
         <fieldset>
             <legend>Konsultasi</legend>
             <div class="grid_12">
-                <div class="grid_4">
+                <div class="grid_6">
                     <div class="grid_12">
                         <label c-label item="item">Ruangan Asal</label>
                     </div>
@@ -81,7 +81,20 @@
                             k-auto-bind="false" k-data-source="listRuangan" />
                     </div>
                 </div>
-                <div class="grid_4">
+                <div class="grid_6">
+                    <div class="grid_12">
+                        <label c-label item="item">Pengonsul</label>
+                    </div>
+
+                    <div class="grid_12">
+                        <input style="width: 100%;" kendo-combo-box k-ng-model="item.namadokter"
+                            k-data-text-field="'namalengkap'" k-data-value-field="'id'" k-filter="'contains'"
+                            k-auto-bind="false" k-data-source="listDokter" />
+                        <!-- <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.namadokter" /> -->
+                    </div>
+
+                </div>
+                <div class="grid_6">
                     <div class="grid_12">
                         <label c-label item="item">Ruangan Tujuan</label>
                     </div>
@@ -92,7 +105,7 @@
                             k-auto-bind="false" k-data-source="listRuangan" />
                     </div>
                 </div>
-                <div class="grid_4">
+                <div class="grid_6">
                     <div class="grid_12">
                         <label c-label item="item">PPA</label>
                     </div>

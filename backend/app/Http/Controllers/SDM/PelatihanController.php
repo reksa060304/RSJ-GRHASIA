@@ -2953,8 +2953,13 @@ class PelatihanController extends ApiController {
         if(isset($request['pendidikan'])){
             $pendidikan = "and split_part(pr.namaproduk, ' - ',2) ilike '%$request[pendidikan]%' ";
         }
-        $data = \DB::select(DB::raw("SELECT djp.id, spd.nama, spd.nim, djp.detailjenisproduk as kegiatan, 
-        spe.institusipendidikan, split_part(pr.namaproduk, ' - ',2)as pendidikan, pr.namaproduk,kp.diklatkategori  FROM sdm_pesertadidik_t spd 
+        $jenis = '';
+        if(isset($request['jenis'])){
+            $jenis = "and spe.objectdiklatkategorifk = $request[jenis] ";
+
+        }
+        $data = \DB::select(DB::raw("SELECT spd.norec as norec_spd, djp.id, spd.nama, spd.nim, djp.detailjenisproduk as kegiatan, djp.id as id_kegiatan,
+        spe.institusipendidikan, split_part(pr.namaproduk, ' - ',2)as pendidikan, pr.namaproduk,kp.diklatkategori, kp.id as id_diklatkategori  FROM sdm_pesertadidik_t spd 
         inner join sdm_penelitianeksternal_t spe on spe.norec = spd.noregistrasifk
         inner join detailjenisproduk_m djp on djp.id = spe.objectdetailjenisprodukfk
         inner join produk_m pr on pr.id = spe.objectprodukfk
@@ -2966,6 +2971,7 @@ class PelatihanController extends ApiController {
         $instansi
         $kegiatan
         $pendidikan
+        $jenis
         order by spe.institusipendidikan
         "));
         $result = array(

@@ -181,7 +181,7 @@ Dim jml As Integer
 '                     "left join kelas_m as kls on kls.id = op.objectkelasfk " & _
 '                     "where " & str
 '                     "where op.norec= '" & Noregistrasi & "'
-             strSQL = "select * from (select so.keteranganlainnya,pd.noregistrasi, sk.nokirim, sk.qtyproduk as qtykirim,(SELECT string_agg(jm.jenisdiet, ', ') as arrjenisdietket From jenisdiet_m jm WHERE jm.id::varchar IN (  select unnest(string_to_array(op.arrjenisdiet,',')))) || ' - '||coalesce(op.keteranganlainnya,'') as keteranganlainnyakirim,op.qtyprodukinuse as cc  ,op.jumlah as volume,pd.tglregistrasi, " & _
+             strSQL = "select * from (select op.keteranganlainnya,pd.noregistrasi, sk.nokirim, sk.qtyproduk as qtykirim,(SELECT string_agg(jm.jenisdiet, ', ') as arrjenisdietket From jenisdiet_m jm WHERE jm.id::varchar IN (  select unnest(string_to_array(op.arrjenisdiet,','))))  as keteranganlainnyakirim,op.qtyprodukinuse as cc  ,op.jumlah as volume,pd.tglregistrasi, " & _
                     " ps.namapasien || ' ['|| jk.reportdisplay ||']' AS namapasien, ps.nocm, ru.namaruangan AS ruanganasal, " & _
                     " jw.jeniswaktu,jd.jenisdiet,  op.qtyproduk,kls.namakelas, kd.kategorydiet,to_char(so.tglorder,'DD-MM-YYYY') AS tglorder, " & _
                     " CASE WHEN jw.jeniswaktu = 'Pagi' THEN '09:00' WHEN jw.jeniswaktu = 'Siang' THEN '14:00' WHEN jw.jeniswaktu = 'Sore' THEN '19:00' " & _
@@ -228,7 +228,7 @@ Dim jml As Integer
             adoReport.CommandType = adCmdUnknown
             .database.AddADOCommand CN_String, adoReport
             .usNamaPasien.SetUnboundFieldSource ("{ado.namapasien}")
-            .usNocm.SetUnboundFieldSource ("{ado.nocm}")
+            .usNoCm.SetUnboundFieldSource ("{ado.nocm}")
             .usTglLahir.SetUnboundFieldSource ("{ado.tgllahir}")
             .usNamaRuangan.SetUnboundFieldSource ("{ado.ruanganasal}")
             .usKelas.SetUnboundFieldSource ("{ado.namakelas}")

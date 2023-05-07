@@ -11,12 +11,18 @@ define(['initialize'], function (initialize) {
             $scope.item.periodeAwal = moment($scope.now).format('YYYY-MM-DD 00:00');
             $scope.item.periodeAkhir = moment($scope.now).format('YYYY-MM-DD 23:59');
 
+            $scope.totalAntrean = 0
+            $scope.totalLengkap = 0
+            $scope.totalQuality = 0
+            $scope.totalRata = 0
+            $scope.totalBelum = 0
             loadCombo()
             loadData()
 
             function loadCombo() {
-                medifirstService.get("rawatjalan/get-data-combo-dokter", false).then(function (data) {
+                medifirstService.get("rawatjalan/get-antril-combo", false).then(function (data) {
                     $scope.listRuangan = data.data.ruanganRajal;
+                    $scope.listKelompokPasien = data.data.kelompokpasien;
                 });
             }
 
@@ -41,15 +47,118 @@ define(['initialize'], function (initialize) {
                     var rg = "&ruangId=" + $scope.item.ruangan.id
                 }
 
+                var kelompok = ""
+                if ($scope.item.kelompokpasien != undefined) {
+                        kelompok = "&kelId=" + $scope.item.kelompokpasien.id
+                }
+
                 medifirstService.get("rawatjalan/get-informasi-monitoring-taskid?" +
                     "tglAwal=" + tglAwal +
                     "&tglAkhir=" + tglAkhir +
-                    kdBooking + rm + nm + rg
+                    kdBooking + rm + nm + rg +kelompok
                 ).then(function (data) {
+                    $scope.totalAntrean = 0
+                    $scope.totalLengkap = 0
+                    $scope.totalQuality = 0
+                    $scope.totalRata = 0
+                    $scope.totalBelum = 0
                     $scope.isRouteLoading = false;
+                    var rata1 = 0;
+                    var rata2 = 0;
+                    var rata3 = 0;
+                    var rata4 = 0;
+                    var rata5 = 0;
+                    var rata6 = 0;
+                    var rata7 = 0;
+                    var rata1_ = 0;
+                    var rata2_ = 0;
+                    var rata3_ = 0;
+                    var rata4_ = 0;
+                    var rata5_ = 0;
+                    var rata6_ = 0;
+                    var rata7_ = 0;
                     for (let i = 0; i < data.data.length; i++) {
                         data.data[i].no = i + 1;
+                        const element = data.data[i]
+                        element.jumlahdetik = 0
+                        if(element.status_1 == true || element.status_3 == true){
+                            $scope.totalAntrean = $scope.totalAntrean + 1
+                        }
+                        // else if(element.status_1 == false || element.status_1 == null){
+                        // 	$scope.totalBelum = $scope.totalBelum +1
+                        // }
+                        if((element.status_1 == true && element.status_2 == true && element.status_3 == true
+                            && element.status_4 == true && element.status_5 == true) ||
+                            ( element.status_3 == true
+                                && element.status_4 == true && element.status_5 == true)
+                            ){
+                            $scope.totalLengkap = $scope.totalLengkap + 1
+                        }else{
+                            $scope.totalBelum = $scope.totalBelum +1
+                        }
+                        // if(element.taksid_1 != '-'){
+                        // 	element.jumlahdetik =   Math.abs((new Date(element.taksid_1).getTime()/1000));
+                        // 	rata1 = rata1 + (new Date(element.taksid_1).getTime()/1000);
+                    
+                        // }
+                        
+                        // if(element.taksid_2 != '-'){
+                        // 	element.jumlahdetik =   Math.abs((new Date(element.taksid_2).getTime()/1000));
+                        // 	rata2 = rata2 + (new Date(element.taksid_2).getTime()/1000);
+                            
+                        // }
+                    
+                        // if(element.taksid_3 != '-'){
+                        // 	element.jumlahdetik =   Math.abs((new Date(element.taksid_3).getTime()/1000));
+                        // 	rata3 = rata3 + (new Date(element.taksid_3).getTime()/1000);
+                        // }
+                        
+                        // if(element.taksid_4 != '-'){
+                        // 	element.jumlahdetik =   Math.abs((new Date(element.taksid_4).getTime()/1000));
+                        // 	rata4 = rata4 + (new Date(element.taksid_4).getTime()/1000);
+                        // }
+                        
+                        // if(element.taksid_5 != '-'){
+                        // 	element.jumlahdetik =   Math.abs((new Date(element.taksid_5).getTime()/1000));
+                        // 	rata5 = rata5 + (new Date(element.taksid_5).getTime()/1000);
+                        // }
+                        
+                        // if(element.taksid_6 != '-'){
+                        // 	element.jumlahdetik =   Math.abs((new Date(element.taksid_6).getTime()/1000));
+                        // 	rata6 = rata6 + (new Date(element.taksid_6).getTime()/1000);
+                        // }
+                        
+                        // if(element.taksid_7 != '-'){
+                        // 	element.jumlahdetik =   Math.abs((new Date(element.taksid_7).getTime()/1000));
+                        // 	rata7 = rata7 + (new Date(element.taksid_7).getTime()/1000);
+                        // }
+                        // element.waktu = element.jumlahdetik 
+                        // rata1_ = rata1_ + element.waktu 
+                        
                     }
+                    $scope.totalQuality = $scope.totalLengkap / $scope.totalAntrean * 100
+                    $scope.totalQuality = $scope.totalQuality.toFixed(2)
+
+                    // // if ($scope.totalAntrean > 0) {
+                    // 	// if(rata1> 0)
+                    // 	// rata1 = rata1 /  $scope.totalAntrean;
+                    // 	// if(rata2> 0)
+                    // 	// rata2 = rata2 /  $scope.totalAntrean;
+                    // 	// if(rata3> 0)
+                    // 	// rata3 = rata3 /  $scope.totalAntrean;
+                    // 	// if(rata3> 0)
+                    // 	// rata4 = rata4 /  $scope.totalAntrean;
+                    // 	// if(rata5> 0)
+                    // 	// rata5 = rata5 /  $scope.totalAntrean;
+                    // 	// if(rata6> 0)
+                    // 	// rata6 = rata6 /  $scope.totalAntrean;
+                    // 	// if(rata7> 0)
+                    // 	// rata7 = rata7 /  $scope.totalAntrean;
+                    // 	// $scope.totalRata = (rata1+rata2+rata3+rata4+rata5+rata6+rata7)/7 ;
+                    // 	$scope.totalRata = rata1_/totalLengkap
+                    // 	$scope.totalRata = secondsToHms($scope.totalRata); 
+                    // // }
+                
                     $scope.dataDaftarPasien = new kendo.data.DataSource({
                         data: data.data,
                         pageSize: 15,
@@ -63,6 +172,37 @@ define(['initialize'], function (initialize) {
                     });
                 })
 
+            }
+            function secondsToHms(d) {
+                d = Number(d);
+                var h = Math.floor(d / 3600);
+                var m = Math.floor(d % 3600 / 60);
+                var s = Math.floor(d % 3600 % 60);
+            
+                var hDisplay = h > 0 ? h + (h == 1 ? " hour, " : " hours, ") : "";
+                var mDisplay = m > 0 ? m + (m == 1 ? " minute, " : " minutes, ") : "";
+                var sDisplay = s > 0 ? s + (s == 1 ? " second" : " seconds") : "";
+                return hDisplay + mDisplay + sDisplay;
+                }
+            function millisToMinutesAndSeconds(totalSeconds) {
+
+                // 👇️ get number of full minutes
+                var minutes = Math.floor(totalSeconds / 60);
+
+                // 👇️ get remainder of seconds
+                var seconds = totalSeconds % 60;
+
+                function padTo2Digits(num) {
+                    return num.toString().padStart(2, '0');
+                }
+
+                // ✅ format as MM:SS
+                seconds = Math.floor(seconds)
+                const result = `${padTo2Digits(minutes)}:${padTo2Digits(seconds)}`;
+                //   console.log(result); // 👉️ "09:25"
+                // var minutes = Math.floor(millis / 60000);
+                // var seconds = ((millis % 60000) / 1000).toFixed(0);
+                return result;//minutes + ":" + (seconds < 10 ? '0' : '') + seconds;
             }
 
             $scope.formatTanggal = function (tanggal) {
@@ -222,7 +362,7 @@ define(['initialize'], function (initialize) {
                     },
                     {
                         "field": "taksid_5",
-                        "title": "Waktu Tunggu Farmasi",
+                        "title": "Waktu Tunggu Farmasi/Selesai Layan Poli",
                         headerAttributes: {
                             style: "text-align : center"
                         },
@@ -327,14 +467,65 @@ define(['initialize'], function (initialize) {
                 }
                 $scope.isRouteLoading = false
             }
-
-            function repeatSendTaskId(norec_pd, taskid) {
-                medifirstService.get('registrasi/get-data-antrean?norec_pd=' + norec_pd).then(function (e) {
-                    if (e.data.nohp == null) {
-                        e.data.nohp = "000000000000"
-                    } else {
-                        e.data.nohp = e.data.nohp.trim()
+            async function repeatSendTaskId(norec_pd, taskid) {
+                await medifirstService.get('registrasi/get-data-antrean?norec_pd=' + norec_pd).then(async function (e) {
+                    // VALIDASI BARU
+                    e.data.nohp = e.data.nohp.substring(0,12)
+                    let ASALRUJUKAN = 1
+                    let jenisKunjungan = 1 // {1 (Rujukan FKTP), 2 (Rujukan Internal), 3 (Kontrol), 4 (Rujukan Antar RS)}
+                    if(e.data.jenispasien == 'JKN'){
+                        var jsonRujukan = {
+                            "url": `Rujukan/Peserta/${e.data.nomorkartu}`,
+                            "method": "GET",
+                            "data": null
+                        }
+                        let resRujukan = await medifirstService.postNonMessage('bridging/bpjs/tools', jsonRujukan)
+                        if(resRujukan.data.metaData.code == 200){
+                            ASALRUJUKAN = 1
+                            e.data.nomorreferensi = resRujukan.data.response.rujukan.noKunjungan
+                        }else{
+                            var jsonRujukan = {
+                                "url": `Rujukan/RS/Peserta/${e.data.nomorkartu}`,
+                                "method": "GET",
+                                "data": null
+                            }
+                            let resRujukan = await medifirstService.postNonMessage('bridging/bpjs/tools', jsonRujukan)
+                            if(resRujukan.data.metaData.code == 200){
+                                ASALRUJUKAN = 2
+                                e.data.nomorreferensi = resRujukan.data.response.rujukan.noKunjungan
+                            }
+                        }
                     }
+                    //cek jml sep rujukan
+
+                    var jsonJML = {
+                        "url":`Rujukan/JumlahSEP/${ASALRUJUKAN}/${e.data.nomorreferensi}`,
+                        "method": "GET",
+                        "data": null
+                    }
+                    let resJML = await medifirstService.postNonMessage('bridging/bpjs/tools', jsonJML)
+                    if(resJML.data.metaData.code == 200){
+                        if(resJML.data.response.jumlahSEP > 0){
+                        var jsonSURKON = {
+                            "url": `RencanaKontrol/ListRencanaKontrol/Bulan/${moment(new Date()).format("MM")}/Tahun/${new Date().getFullYear()}/Nokartu/${e.data.nomorkartu}/filter/2`,
+                            "method": "GET",
+                            "data": null
+                        }
+                        let resSURKON = await medifirstService.postNonMessage('bridging/bpjs/tools', jsonSURKON)
+                        if(resSURKON.data.metaData.code == 200){
+                            e.data.nomorreferensi = resSURKON.data.response.list[0].noSuratKontrol
+                            jenisKunjungan = 3
+                            if(resSURKON.data.response.list[0].terbitSEP =='Sudah'){
+                                let NGASAL =  resSURKON.data.response.list[0].noSuratKontrol.replace('K','Z')
+                                e.data.nomorreferensi = NGASAL
+                            }
+                        }else{
+                            jenisKunjungan = 2
+                            // e.data.nomorreferensi = e.data.kodebooking // pake no internal aja
+                        }
+                        }
+                    }
+                    e.data.jeniskunjungan = jenisKunjungan
                     var data = {
                         "url": "antrean/add",
                         "jenis": "antrean",
@@ -353,9 +544,9 @@ define(['initialize'], function (initialize) {
                             if (res.data.length == (taskid - 1)) {
                                 updateWaktuId(res, e.data.kodebooking, norec_pd)
                             } else if (res.data.length == 7) {
-
+                                updateWaktuId(res, e.data.kodebooking, norec_pd)
                             } else {
-                                checkTaksId(e.data.kodebooking, norec_pd)
+                                checkTaksId(e.data.kodebooking, norec_pd,e.data.estimasidilayani)
                             }
                         })
                     })
@@ -444,39 +635,19 @@ define(['initialize'], function (initialize) {
                 })
             }
             const random = (min, max) => Math.floor(Math.random() * (max - min)) + min;
-            async function checkTaksId(param, norec_pd) {
-                var taksId = [{
-                        Id: 1,
-                        waktu: random(7500000, 9300000)
-                    }, // 1 ke 2 range waktu 60 - 90 menit 
-                    {
-                        Id: 2,
-                        waktu: random(3600000, 3900000)
-                    }, // 2 ke 3 range waktu 5 - 10 menit 
-                    {
-                        Id: 3,
-                        waktu: random(3000000, 3300000)
-                    }, // 3 ke 4 range waktu 15 - 20 menit 
-                    {
-                        Id: 4,
-                        waktu: random(1320000, 2100000)
-                    }, // 4 ke 5 range waktu 7 - 20 menit
-                    {
-                        Id: 5,
-                        waktu: random(600000, 900000)
-                    }, // 5 ke 6 range waktu 10 - 15 menit
-                    {
-                        Id: 6,
-                        waktu: random(300000, 500000)
-                    }, // 
-                    {
-                        Id: 7,
-                        waktu: random(0, 0)
-                    }, // 
+            async function checkTaksId(param,norec_pd,tgl) {
+                var taksId = [
+                    { Id: 1, waktu: random(7500000, 9300000) }, // 1 ke 2 range waktu 60 - 90 menit 
+                    { Id: 2, waktu: random(3600000, 3900000) }, // 2 ke 3 range waktu 5 - 10 menit 
+                    { Id: 3, waktu: random(3000000, 3300000) }, // 3 ke 4 range waktu 15 - 20 menit 
+                    { Id: 4, waktu: random(1320000, 2100000) }, // 4 ke 5 range waktu 7 - 20 menit
+                    { Id: 5, waktu: random(600000, 900000) },  // 5 ke 6 range waktu 10 - 15 menit
+                    { Id: 6, waktu: random(300000, 500000) }, // 
+                    { Id: 7, waktu: random(0, 0) }, // 
                 ]
                 for (let i = 0; i < taksId.length; i++) {
                     var element = taksId[i]
-                    var waktuS = new Date().getTime() - element.waktu
+                    var waktuS = tgl - element.waktu // new Date(tgl).getTime() - element.waktu
                     if (param.length < 10) {
                         if (element.Id >= 3) {
                             var json = {
@@ -530,229 +701,351 @@ define(['initialize'], function (initialize) {
                 cekValidDataDiBPJS($scope.dataDaftarPasien._data)
 
             }
-            async function cekValidDataDiBPJS(dataSource) {
-                var listWaktu = [{
-                        Id: 1,
-                        waktu: random(7500000, 9300000)
-                    }, // 1 ke 2 range waktu 60 - 90 menit 
-                    {
-                        Id: 2,
-                        waktu: random(3600000, 3900000)
-                    }, // 2 ke 3 range waktu 5 - 10 menit 
-                    {
-                        Id: 3,
-                        waktu: random(3000000, 3300000)
-                    }, // 3 ke 4 range waktu 15 - 20 menit 
-                    {
-                        Id: 4,
-                        waktu: random(1320000, 2100000)
-                    }, // 4 ke 5 range waktu 7 - 20 menit
-                    {
-                        Id: 5,
-                        waktu: random(600000, 900000)
-                    }, // 5 ke 6 range waktu 10 - 15 menit
-                    {
-                        Id: 6,
-                        waktu: random(300000, 500000)
-                    }, // 
-                    {
-                        Id: 7,
-                        waktu: random(0, 0)
-                    }, // 
+            // async function cekValidDataDiBPJS(dataSource){
+                
+            // 	$scope.isRouteLoading = true
+            // 	for (let x = 0; x < dataSource.length; x++) {
+            // 		const element = dataSource[x];
+            // 		var jsontask={
+            // 			"url":"antrean/getlisttask",
+            // 			"jenis":"antrean",
+            // 			"method":"POST",
+            // 			"data":{
+            // 				"kodebooking":element.noregistrasi
+            // 			}
+            // 		}
+            // 		var response =  await medifirstService.postNonMessage('bridging/bpjs/tools', jsontask)
+            // 		if(response.data.metaData.code == 200){
+            // 			for (let xx = 0; xx < response.data.response.length; xx++) {
+            // 				const element2 = response.data.response[xx];
+            // 				var wakturs =  element2.wakturs.substr(0,16) +' '+element2.wakturs.substr(20,3)
+            // 				var taskid = element2.taskid
+            // 				if(element2.taskid ==  1  ){
+            // 					var waktu =	element.taksid_1
+            // 					if(wakturs!= moment(new Date(waktu )).format('DD-MM-YYYY HH:mm' ) + ' WIB'){
+            // 						let wak = moment(element2.wakturs.replace(' WIB',''), "DD/MM/YYYY HH:mm")._d
+            // 						console.log('waktu BPJS : ' + wak)
+            // 						console.log('waktu RS : ' + new Date(waktu ))
+            // 						console.log('waktu TASK : ' +element2.taskid)
+            // 						waktu = wak.getTime()
+                            
+            // 					}
+
+            // 					var json = {
+            // 						"noregistrasifk":element.noregistrasifk,
+            // 						"taskid": taskid,
+            // 						"waktu": waktu,
+            // 						"statuskirim": true
+            // 					}
+            // 					await medifirstService.postNonMessage('rawatjalan/save-monitoring-taskid', json)
+            // 				}
+            // 				if(element2.taskid ==  2  ){
+            // 					var waktu =	element.taksid_2
+            // 					if(wakturs!= moment(new Date(waktu )).format('DD-MM-YYYY HH:mm' ) + ' WIB'){
+            // 						let wak = moment(element2.wakturs.replace(' WIB',''), "DD/MM/YYYY HH:mm")._d
+            // 						console.log('waktu BPJS : ' + wak)
+            // 						console.log('waktu RS : ' + new Date(waktu ))
+            // 						console.log('waktu TASK : ' +element2.taskid)
+            // 						waktu = wak.getTime()
+            // 					}
+            // 					var json = {
+            // 						"noregistrasifk": element.noregistrasifk,
+            // 						"taskid": taskid,
+            // 						"waktu": waktu,
+            // 						"statuskirim": true
+            // 					}
+            // 					await medifirstService.postNonMessage('rawatjalan/save-monitoring-taskid', json)
+            // 				}
+            // 				if(element2.taskid ==  3 ){
+            // 					var waktu =	element.taksid_3
+            // 					if(wakturs!= moment(new Date(waktu )).format('DD-MM-YYYY HH:mm' ) + ' WIB'){
+            // 						let wak = moment(element2.wakturs.replace(' WIB',''), "DD/MM/YYYY HH:mm")._d
+            // 						console.log('waktu BPJS : ' + wak)
+            // 						console.log('waktu RS : ' + new Date(waktu ))
+            // 						console.log('waktu TASK : ' +element2.taskid)
+            // 						waktu = wak.getTime()
+                                    
+            // 					}
+            // 					var json = {
+            // 						"noregistrasifk": element.noregistrasifk,
+            // 						"taskid": taskid,
+            // 						"waktu": waktu,
+            // 						"statuskirim": true
+            // 					}
+            // 					await medifirstService.postNonMessage('rawatjalan/save-monitoring-taskid', json)
+                                
+            // 				}
+            // 				if(element2.taskid ==  4 ){
+            // 					var waktu =	element.taksid_4
+            // 					if(wakturs!= moment(new Date(waktu )).format('DD-MM-YYYY HH:mm' ) + ' WIB'){
+            // 						let wak = moment(element2.wakturs.replace(' WIB',''), "DD/MM/YYYY HH:mm")._d
+            // 						console.log('waktu BPJS : ' + wak)
+            // 						console.log('waktu RS : ' + new Date(waktu ))
+            // 						console.log('waktu TASK : ' +element2.taskid)
+            // 						waktu = wak.getTime()
+            // 					}
+            // 					var json = {
+            // 						"noregistrasifk": element.noregistrasifk,
+            // 						"taskid": taskid,
+            // 						"waktu": waktu,
+            // 						"statuskirim": true
+            // 					}
+            // 					await medifirstService.postNonMessage('rawatjalan/save-monitoring-taskid', json)
+            // 				}
+            // 				if(element2.taskid ==  5 ){
+            // 					var waktu =	element.taksid_5
+            // 					if(wakturs!= moment(new Date(waktu )).format('DD-MM-YYYY HH:mm' ) + ' WIB'){
+            // 						let wak = moment(element2.wakturs.replace(' WIB',''), "DD/MM/YYYY HH:mm")._d
+            // 						console.log('waktu BPJS : ' + wak)
+            // 						console.log('waktu RS : ' + new Date(waktu ))
+            // 						console.log('waktu TASK : ' +element2.taskid)
+            // 						waktu = wak.getTime()
+            // 					}
+            // 					var json = {
+            // 						"noregistrasifk": element.noregistrasifk,
+            // 						"taskid": taskid,
+            // 						"waktu": waktu,
+            // 						"statuskirim": true
+            // 					}
+            // 					await medifirstService.postNonMessage('rawatjalan/save-monitoring-taskid', json)
+
+                            
+            // 				}
+            // 				if(element2.taskid ==  6  && waktu !='-'){
+            // 					var waktu =	element.taksid_6
+            // 					if(wakturs!= moment(new Date(waktu )).format('DD-MM-YYYY HH:mm' ) + ' WIB'){
+            // 						let wak = moment(element2.wakturs.replace(' WIB',''), "DD/MM/YYYY HH:mm")._d
+            // 						console.log('waktu BPJS : ' + wak)
+            // 						console.log('waktu RS : ' + new Date(waktu ))
+            // 						console.log('waktu TASK : ' +element2.taskid)
+            // 						waktu = wak.getTime()
+            // 					}
+            // 					var json = {
+            // 						"noregistrasifk": element.noregistrasifk,
+            // 						"taskid": taskid,
+            // 						"waktu": waktu,
+            // 						"statuskirim": true
+            // 					}
+            // 					await medifirstService.postNonMessage('rawatjalan/save-monitoring-taskid', json)
+            // 				}
+            // 				if(element2.taskid ==  7  && waktu !='-'){
+            // 					var waktu =	element.taksid_7
+            // 					if(wakturs!= moment(new Date(waktu )).format('DD-MM-YYYY HH:mm' ) + ' WIB'){
+            // 						let wak = moment(element2.wakturs.replace(' WIB',''), "DD/MM/YYYY HH:mm")._d
+            // 						console.log('waktu BPJS : ' + wak)
+            // 						console.log('waktu RS : ' + new Date(waktu ))
+            // 						console.log('waktu TASK : ' +element2.taskid)
+            // 						waktu = wak.getTime()
+            // 					}
+            // 					var json = {
+            // 						"noregistrasifk": element.noregistrasifk,
+            // 						"taskid": taskid,
+            // 						"waktu": waktu,
+            // 						"statuskirim": true
+            // 					}
+            // 					await medifirstService.postNonMessage('rawatjalan/save-monitoring-taskid', json)
+            // 				}
+            // 			}
+            // 		}
+            // 	}
+            // 	await loadData()
+            // 	$scope.isRouteLoading = false
+            // }
+        
+            // $scope.validasiData = function(){
+            // 	cekValidDataDiBPJS($scope.dataDaftarPasien._data )
+                
+            // }
+            async function cekValidDataDiBPJS(dataSource){
+                var listWaktu = [
+                    { Id: 1, waktu: random(7500000, 9300000) }, // 1 ke 2 range waktu 60 - 90 menit 
+                    { Id: 2, waktu: random(3600000, 3900000) }, // 2 ke 3 range waktu 5 - 10 menit 
+                    { Id: 3, waktu: random(3000000, 3300000) }, // 3 ke 4 range waktu 15 - 20 menit 
+                    { Id: 4, waktu: random(1320000, 2100000) }, // 4 ke 5 range waktu 7 - 20 menit
+                    { Id: 5, waktu: random(600000, 900000) },  // 5 ke 6 range waktu 10 - 15 menit
+                    { Id: 6, waktu: random(300000, 500000) }, // 
+                    { Id: 7, waktu: random(0, 0) }, // 
                 ]
                 $scope.isRouteLoading = true
                 for (let x = 0; x < dataSource.length; x++) {
                     const element = dataSource[x];
-                    var jsontask = {
-                        "url": "antrean/getlisttask",
-                        "jenis": "antrean",
-                        "method": "POST",
-                        "data": {
-                            "kodebooking": element.noregistrasi
+                    var jsontask={
+                        "url":"antrean/getlisttask",
+                        "jenis":"antrean",
+                        "method":"POST",
+                        "data":{
+                            "kodebooking":element.noregistrasi
                         }
                     }
-                    var response = await medifirstService.postNonMessage('bridging/bpjs/tools', jsontask)
-                    if (response.data.metaData.code == 200) {
-                        var satu = false,
-                            dua = false,
-                            tiga = false,
-                            empat = false,
-                            lima = false,
-                            enam = false,
-                            tujuh = false
+                    var response =  await medifirstService.postNonMessage('bridging/bpjs/tools', jsontask)
+                    if(response.data.metaData.code == 200){
+                        var satu = false,dua =false ,tiga=false,empat = false,lima=false,enam=false,tujuh=false
                         for (let xx = 0; xx < response.data.response.length; xx++) {
                             const element2 = response.data.response[xx];
-                            var wakturs = element2.wakturs.substr(0, 16) + ' ' + element2.wakturs.substr(20, 3)
+                            var wakturs =  element2.wakturs.substr(0,16) +' '+element2.wakturs.substr(20,3)
                             var taskid = element2.taskid
-                            if (element2.taskid == 1) {
+                            if(element2.taskid ==  1  ){
                                 satu = true
-                                var waktu = element.taksid_1
-                                if (wakturs != moment(new Date(waktu)).format('DD-MM-YYYY HH:mm') + ' WIB') {
-                                    let wak = moment(element2.wakturs.replace(' WIB', ''), "DD/MM/YYYY HH:mm")._d
+                                var waktu =	element.taksid_1
+                                if(wakturs!= moment(new Date(waktu )).format('DD-MM-YYYY HH:mm' ) + ' WIB'){
+                                    let wak = moment(element2.wakturs.replace(' WIB',''), "DD/MM/YYYY HH:mm")._d
                                     console.log('waktu BPJS : ' + wak)
-                                    console.log('waktu RS : ' + new Date(waktu))
-                                    console.log('waktu TASK : ' + element2.taskid)
+                                    console.log('waktu RS : ' + new Date(waktu ))
+                                    console.log('waktu TASK : ' +element2.taskid)
                                     waktu = wak.getTime()
-
+                            
                                 }
 
                                 var json = {
-                                    "noregistrasifk": element.noregistrasifk,
+                                    "noregistrasifk":element.noregistrasifk,
                                     "taskid": taskid,
-                                    "waktu": waktu,
+                                    "waktu": (typeof waktu === 'string' || waktu instanceof String)? new Date(waktu).getTime() : waktu,
                                     "statuskirim": true
                                 }
                                 await medifirstService.postNonMessage('rawatjalan/save-monitoring-taskid', json)
                             }
-                            if (element2.taskid == 2) {
+                            if(element2.taskid ==  2  ){
                                 dua = true
-                                var waktu = element.taksid_2
-                                if (wakturs != moment(new Date(waktu)).format('DD-MM-YYYY HH:mm') + ' WIB') {
-                                    let wak = moment(element2.wakturs.replace(' WIB', ''), "DD/MM/YYYY HH:mm")._d
+                                var waktu =	element.taksid_2
+                                if(wakturs!= moment(new Date(waktu )).format('DD-MM-YYYY HH:mm' ) + ' WIB'){
+                                    let wak = moment(element2.wakturs.replace(' WIB',''), "DD/MM/YYYY HH:mm")._d
                                     console.log('waktu BPJS : ' + wak)
-                                    console.log('waktu RS : ' + new Date(waktu))
-                                    console.log('waktu TASK : ' + element2.taskid)
+                                    console.log('waktu RS : ' + new Date(waktu ))
+                                    console.log('waktu TASK : ' +element2.taskid)
                                     waktu = wak.getTime()
                                 }
                                 var json = {
                                     "noregistrasifk": element.noregistrasifk,
                                     "taskid": taskid,
-                                    "waktu": waktu,
+                                    "waktu": (typeof waktu === 'string' || waktu instanceof String)? new Date(waktu).getTime() : waktu,
                                     "statuskirim": true
                                 }
                                 await medifirstService.postNonMessage('rawatjalan/save-monitoring-taskid', json)
                             }
-                            if (element2.taskid == 3) {
+                            if(element2.taskid ==  3 ){
                                 tiga = true
-                                var waktu = element.taksid_3
-                                if (wakturs != moment(new Date(waktu)).format('DD-MM-YYYY HH:mm') + ' WIB') {
-                                    let wak = moment(element2.wakturs.replace(' WIB', ''), "DD/MM/YYYY HH:mm")._d
+                                var waktu =	element.taksid_3
+                                if(wakturs!= moment(new Date(waktu )).format('DD-MM-YYYY HH:mm' ) + ' WIB'){
+                                    let wak = moment(element2.wakturs.replace(' WIB',''), "DD/MM/YYYY HH:mm")._d
                                     console.log('waktu BPJS : ' + wak)
-                                    console.log('waktu RS : ' + new Date(waktu))
-                                    console.log('waktu TASK : ' + element2.taskid)
+                                    console.log('waktu RS : ' + new Date(waktu ))
+                                    console.log('waktu TASK : ' +element2.taskid)
                                     waktu = wak.getTime()
-
+                                    
                                 }
                                 var json = {
                                     "noregistrasifk": element.noregistrasifk,
                                     "taskid": taskid,
-                                    "waktu": waktu,
+                                    "waktu": (typeof waktu === 'string' || waktu instanceof String)? new Date(waktu).getTime() : waktu,
                                     "statuskirim": true
                                 }
                                 await medifirstService.postNonMessage('rawatjalan/save-monitoring-taskid', json)
-
+                                
                             }
-                            if (element2.taskid == 4) {
+                            if(element2.taskid ==  4 ){
                                 empat = true
-                                var waktu = element.taksid_4
-                                if (wakturs != moment(new Date(waktu)).format('DD-MM-YYYY HH:mm') + ' WIB') {
-                                    let wak = moment(element2.wakturs.replace(' WIB', ''), "DD/MM/YYYY HH:mm")._d
+                                var waktu =	element.taksid_4
+                                if(wakturs!= moment(new Date(waktu )).format('DD-MM-YYYY HH:mm' ) + ' WIB'){
+                                    let wak = moment(element2.wakturs.replace(' WIB',''), "DD/MM/YYYY HH:mm")._d
                                     console.log('waktu BPJS : ' + wak)
-                                    console.log('waktu RS : ' + new Date(waktu))
-                                    console.log('waktu TASK : ' + element2.taskid)
+                                    console.log('waktu RS : ' + new Date(waktu ))
+                                    console.log('waktu TASK : ' +element2.taskid)
                                     waktu = wak.getTime()
                                 }
                                 var json = {
                                     "noregistrasifk": element.noregistrasifk,
                                     "taskid": taskid,
-                                    "waktu": waktu,
+                                    "waktu": (typeof waktu === 'string' || waktu instanceof String)? new Date(waktu).getTime() : waktu,
                                     "statuskirim": true
                                 }
                                 await medifirstService.postNonMessage('rawatjalan/save-monitoring-taskid', json)
                             }
-                            if (element2.taskid == 5) {
+                            if(element2.taskid ==  5 ){
                                 lima = true
-                                var waktu = element.taksid_5
-                                if (wakturs != moment(new Date(waktu)).format('DD-MM-YYYY HH:mm') + ' WIB') {
-                                    let wak = moment(element2.wakturs.replace(' WIB', ''), "DD/MM/YYYY HH:mm")._d
+                                var waktu =	element.taksid_5
+                                if(wakturs!= moment(new Date(waktu )).format('DD-MM-YYYY HH:mm' ) + ' WIB'){
+                                    let wak = moment(element2.wakturs.replace(' WIB',''), "DD/MM/YYYY HH:mm")._d
                                     console.log('waktu BPJS : ' + wak)
-                                    console.log('waktu RS : ' + new Date(waktu))
-                                    console.log('waktu TASK : ' + element2.taskid)
+                                    console.log('waktu RS : ' + new Date(waktu ))
+                                    console.log('waktu TASK : ' +element2.taskid)
                                     waktu = wak.getTime()
                                 }
                                 var json = {
                                     "noregistrasifk": element.noregistrasifk,
                                     "taskid": taskid,
-                                    "waktu": waktu,
+                                    "waktu": (typeof waktu === 'string' || waktu instanceof String)? new Date(waktu).getTime() : waktu,
                                     "statuskirim": true
                                 }
                                 await medifirstService.postNonMessage('rawatjalan/save-monitoring-taskid', json)
 
 
                             }
-                            if (element2.taskid == 6 && waktu != '-') {
+                            if(element2.taskid ==  6  && waktu !='-'){
                                 enam = true
-                                var waktu = element.taksid_6
-                                if (wakturs != moment(new Date(waktu)).format('DD-MM-YYYY HH:mm') + ' WIB') {
-                                    let wak = moment(element2.wakturs.replace(' WIB', ''), "DD/MM/YYYY HH:mm")._d
+                                var waktu =	element.taksid_6
+                                if(wakturs!= moment(new Date(waktu )).format('DD-MM-YYYY HH:mm' ) + ' WIB'){
+                                    let wak = moment(element2.wakturs.replace(' WIB',''), "DD/MM/YYYY HH:mm")._d
                                     console.log('waktu BPJS : ' + wak)
-                                    console.log('waktu RS : ' + new Date(waktu))
-                                    console.log('waktu TASK : ' + element2.taskid)
+                                    console.log('waktu RS : ' + new Date(waktu ))
+                                    console.log('waktu TASK : ' +element2.taskid)
                                     waktu = wak.getTime()
                                 }
                                 var json = {
                                     "noregistrasifk": element.noregistrasifk,
                                     "taskid": taskid,
-                                    "waktu": waktu,
+                                    "waktu": (typeof waktu === 'string' || waktu instanceof String)? new Date(waktu).getTime() : waktu,
                                     "statuskirim": true
                                 }
                                 await medifirstService.postNonMessage('rawatjalan/save-monitoring-taskid', json)
                             }
-                            if (element2.taskid == 7 && waktu != '-') {
+                            if(element2.taskid ==  7  && waktu !='-'){
                                 tujuh = true
-                                var waktu = element.taksid_7
-                                if (wakturs != moment(new Date(waktu)).format('DD-MM-YYYY HH:mm') + ' WIB') {
-                                    let wak = moment(element2.wakturs.replace(' WIB', ''), "DD/MM/YYYY HH:mm")._d
+                                var waktu =	element.taksid_7
+                                if(wakturs!= moment(new Date(waktu )).format('DD-MM-YYYY HH:mm' ) + ' WIB'){
+                                    let wak = moment(element2.wakturs.replace(' WIB',''), "DD/MM/YYYY HH:mm")._d
                                     console.log('waktu BPJS : ' + wak)
-                                    console.log('waktu RS : ' + new Date(waktu))
-                                    console.log('waktu TASK : ' + element2.taskid)
+                                    console.log('waktu RS : ' + new Date(waktu ))
+                                    console.log('waktu TASK : ' +element2.taskid)
                                     waktu = wak.getTime()
                                 }
                                 var json = {
                                     "noregistrasifk": element.noregistrasifk,
                                     "taskid": taskid,
-                                    "waktu": waktu,
+                                    "waktu": (typeof waktu === 'string' || waktu instanceof String)? new Date(waktu).getTime() : waktu,
                                     "statuskirim": true
                                 }
                                 await medifirstService.postNonMessage('rawatjalan/save-monitoring-taskid', json)
                             }
                         }
+                        
+                        if(satu == false){await kirimTaskUlang(element.noregistrasi,1,element.noregistrasifk,(element.taksid_1!='-'?new Date(element.taksid_1).getTime(): new Date().getTime()))}
+                        if(dua == false){await kirimTaskUlang(element.noregistrasi,2,element.noregistrasifk,(element.taksid_2!='-'?new Date(element.taksid_2).getTime():
+                        
+                        new Date(element.taksid_1).setTime(new Date(element.taksid_1).getTime() + 1080000)//3mnt
+                        ))}
+                        if(tiga == false){await kirimTaskUlang(element.noregistrasi,3,element.noregistrasifk,(element.taksid_3!='-'?new Date(element.taksid_3).getTime()
+                        :new Date(element.taksid_2).setTime(new Date(element.taksid_2).getTime() + 1080000)//3mnt
+                        ))}
+                        if(empat == false){
+                            await kirimTaskUlang(element.noregistrasi,4,element.noregistrasifk,(element.taksid_4!='-'?new Date(element.taksid_4).getTime():
+                            new Date(element.taksid_3).setTime(new Date(element.taksid_3).getTime() + 1080000)//3mnt
+                            ))}
+                        if(lima == false){await kirimTaskUlang(element.noregistrasi,5,element.noregistrasifk,(element.taksid_5!='-'?new Date(element.taksid_5).getTime():
+                            new Date(element.taksid_4).setTime(new Date(element.taksid_4).getTime() + 1080000)//3mnt
+                        ))}
+                        if(enam == false){await kirimTaskUlang(element.noregistrasi,6,element.noregistrasifk,(element.taksid_6!='-'?new Date(element.taksid_6).getTime():
+                            new Date(element.taksid_5).setTime(new Date(element.taksid_5).getTime() + 1080000)//3mnt
+                        ))}
+                        if(tujuh == false){await kirimTaskUlang(element.noregistrasi,7,element.noregistrasifk,(element.taksid_7!='-'?new Date(element.taksid_7).getTime():
+                        new Date(element.taksid_6).setTime(new Date(element.taksid_6).getTime() + 1080000)//3mnt
+                        ))}
+                    
+                    }else{
 
-                        if (satu == false) {
-                            await kirimTaskUlang(element.noregistrasi, 1, element.noregistrasifk, (element.taksid_1 != '-' ? new Date(element.taksid_1).getTime() : new Date().getTime()))
+                        var jsonz = {
+                            "noregistrasifk":element.noregistrasifk,
                         }
-                        if (dua == false) {
-                            await kirimTaskUlang(element.noregistrasi, 2, element.noregistrasifk, (element.taksid_2 != '-' ? new Date(element.taksid_2).getTime() :
-
-                                new Date(element.taksid_1).setTime(new Date(element.taksid_1).getTime() + 1080000) //3mnt
-                            ))
-                        }
-                        if (tiga == false) {
-                            await kirimTaskUlang(element.noregistrasi, 3, element.noregistrasifk, (element.taksid_3 != '-' ? new Date(element.taksid_3).getTime() :
-                                new Date(element.taksid_2).setTime(new Date(element.taksid_2).getTime() + 1080000) //3mnt
-                            ))
-                        }
-                        if (empat == false) {
-                            await kirimTaskUlang(element.noregistrasi, 4, element.noregistrasifk, (element.taksid_4 != '-' ? new Date(element.taksid_4).getTime() :
-                                new Date(element.taksid_3).setTime(new Date(element.taksid_3).getTime() + 1080000) //3mnt
-                            ))
-                        }
-                        if (lima == false) {
-                            await kirimTaskUlang(element.noregistrasi, 5, element.noregistrasifk, (element.taksid_5 != '-' ? new Date(element.taksid_5).getTime() :
-                                new Date(element.taksid_4).setTime(new Date(element.taksid_4).getTime() + 1080000) //3mnt
-                            ))
-                        }
-                        if (enam == false) {
-                            await kirimTaskUlang(element.noregistrasi, 6, element.noregistrasifk, (element.taksid_6 != '-' ? new Date(element.taksid_6).getTime() :
-                                new Date(element.taksid_5).setTime(new Date(element.taksid_5).getTime() + 1080000) //3mnt
-                            ))
-                        }
-                        if (tujuh == false) {
-                            await kirimTaskUlang(element.noregistrasi, 7, element.noregistrasifk, (element.taksid_7 != '-' ? new Date(element.taksid_7).getTime() :
-                                new Date(element.taksid_6).setTime(new Date(element.taksidtaksid_6_4).getTime() + 1080000) //3mnt
-                            ))
-                        }
-
+                        // await medifirstService.postNonMessage('rawatjalan/disabled-monitoring-taskid', jsonz)
                     }
                 }
                 await loadData()

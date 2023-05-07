@@ -279,18 +279,43 @@ define(['initialize'], function (initialize) {
 
             }
             $scope.create = function () {
-                cacheHelper.set('cacheNomorEMR', undefined);
-                $scope.showRiwayatEMR = true
-                $scope.myVar = 2
-                var noemr2 = '-'
-                $state.go("RekamMedis.AsesmenMedis.AsesmenMedisDetail", {
-                    namaEMR: null,
-                    nomorEMR: noemr2
-                });
-                var arrStr = {
-                    0: noemr2
+                // console.log($scope.dataDaftar._data.length);
+                if (listData.length > 0) {
+                    var confirm = $mdDialog.confirm()
+                        .title('Peringatan')
+                        .textContent('Riwayat sudah ada, apakah anda yakin ingin buat baru ?')
+                        .ariaLabel('Lucky day')
+                        .cancel('Tidak')
+                        .ok('Ya')
+                    $mdDialog.show(confirm).then(function () {
+                        cacheHelper.set('cacheNomorEMR', undefined);
+                        $scope.showRiwayatEMR = true
+                        $scope.myVar = 2
+                        var noemr2 = '-'
+                        $state.go("RekamMedis.AsesmenMedis.AsesmenMedisDetail", {
+                            namaEMR: null,
+                            nomorEMR: noemr2
+                        });
+                        var arrStr = {
+                            0: noemr2
+                        }
+                        cacheHelper.set('cacheNomorEMR', arrStr);
+                    })
+                }else{
+                    cacheHelper.set('cacheNomorEMR', undefined);
+                    $scope.showRiwayatEMR = true
+                    $scope.myVar = 2
+                    var noemr2 = '-'
+                    $state.go("RekamMedis.AsesmenMedis.AsesmenMedisDetail", {
+                        namaEMR: null,
+                        nomorEMR: noemr2
+                    });
+                    var arrStr = {
+                        0: noemr2
+                    }
+                    cacheHelper.set('cacheNomorEMR', arrStr);
                 }
-                cacheHelper.set('cacheNomorEMR', arrStr);
+                
             }
 
 

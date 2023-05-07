@@ -371,7 +371,8 @@ define(['initialize'], function (initialize) {
             $scope.batalSD = function () {            
                 $scope.popupSignDate.close();   
             }
-            $scope.simpan = function () {        
+            $scope.simpan = function () {     
+                $scope.btnsimpan = true   
                 var objSave = 
                     {
                         norec : '',
@@ -385,6 +386,7 @@ define(['initialize'], function (initialize) {
                     // sendNotification()
                     // return
                 medifirstService.post('ipsrs/save-permohonan',objSave).then(function(e) {
+                    $scope.btnsimpan = false
                     $scope.item = {}
                     $scope.item.tglAwal = new moment($scope.now).format('YYYY-MM-DD HH:mm');
                     $scope.item.tglAwal1 = new moment($scope.now).format('YYYY-MM-DD 00:00');

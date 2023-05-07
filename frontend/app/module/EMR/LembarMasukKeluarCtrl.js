@@ -25,6 +25,13 @@ define(['initialize'], function (initialize) {
             medifirstService.getPart('emr/get-datacombo-part-pegawai', true, true, 20).then(function (data) {
                 $scope.listPegawai = data
             })
+            // medifirstService.getPart("emr/get-combo-icd10", true, true, 10).then(function (data) {
+            //     $scope.listDiagnosa = data;
+            // });
+
+            medifirstService.getPart('emr/get-datacombo-part-diagnosa', true, true, 20).then(function (data) {
+                $scope.listDiagnosa = data
+             })
 
             medifirstService.get("emr/get-rekam-medis-dynamic?emrid=" + 3000434).then(function (e) {
 
@@ -188,11 +195,19 @@ define(['initialize'], function (initialize) {
                     "id": 1, "nama": "Pendidikan",
                     "detail": [
                         { "id": 3004514, "nama": "1. Tidak Sekolah", "satuan": "", "type": "checkbox" },
-                        { "id": 3004515, "nama": "2. SD / SLB", "satuan": "", "type": "checkbox" },
-                        { "id": 3004516, "nama": "3. SLTP / MTs", "satuan": "", "type": "checkbox" },
-                        { "id": 3004517, "nama": "4. SLTA / SMK", "satuan": "", "type": "checkbox" },
-                        { "id": 3004518, "nama": "5. DI / DII / DIII / DIV", "satuan": "", "type": "checkbox" },
-                        { "id": 3004519, "nama": "6. S1 / S2 / S3", "satuan": "", "type": "checkbox" },
+                        { "id": 3004515, "nama": "2. SD", "satuan": "", "type": "checkbox" },
+                        { "id": 3004480, "nama": "3. SLB", "satuan": "", "type": "checkbox" },
+                        { "id": 3004516, "nama": "4. SLTP", "satuan": "", "type": "checkbox" },
+                        { "id": 3004481, "nama": "5. MTs", "satuan": "", "type": "checkbox" },
+                        { "id": 3004517, "nama": "6. SLTA", "satuan": "", "type": "checkbox" },
+                        { "id": 3004482, "nama": "7. SMK", "satuan": "", "type": "checkbox" },
+                        { "id": 3004518, "nama": "8. DI ", "satuan": "", "type": "checkbox" },
+                        { "id": 3004600, "nama": "9. DII", "satuan": "", "type": "checkbox" },
+                        { "id": 3004601, "nama": "10. DIII", "satuan": "", "type": "checkbox" },
+                        { "id": 3004602, "nama": "11. DIV", "satuan": "", "type": "checkbox" },
+                        { "id": 3004519, "nama": "12. S1", "satuan": "", "type": "checkbox" },
+                        { "id": 3004483, "nama": "13. S2", "satuan": "", "type": "checkbox" },
+                        { "id": 3004484, "nama": "14. S3", "satuan": "", "type": "checkbox" },
                     ]
                 }
             ] 
@@ -201,13 +216,18 @@ define(['initialize'], function (initialize) {
                 {
                     "id": 1, "nama": "Pekerjaan",
                     "detail": [
-                        { "id": 3004520, "nama": "1. TNI / POLRI", "satuan": "", "type": "checkbox" },
-                        { "id": 3004521, "nama": "2. Wiraswasta / Swasta", "satuan": "", "type": "checkbox" },
-                        { "id": 3004522, "nama": "3. Buruh / Tani", "satuan": "", "type": "checkbox" },
-                        { "id": 3004523, "nama": "4. PNS / Pensiunan", "satuan": "", "type": "checkbox" },
-                        { "id": 3004524, "nama": "5. Pelajar / Mahasiswa", "satuan": "", "type": "checkbox" },
-                        { "id": 3004525, "nama": "6. Tak Kerja", "satuan": "", "type": "checkbox" },
-                        { "id": 3004526, "nama": "7. Lain-lain, Sebutkan", "satuan": "", "type": "textbox2", "idd":  "3004527"},
+                        { "id": 3004520, "nama": "1. TNI", "satuan": "", "type": "checkbox" },
+                        { "id": 3004485, "nama": "2. POLRI", "satuan": "", "type": "checkbox" },
+                        { "id": 3004521, "nama": "3. Wiraswasta", "satuan": "", "type": "checkbox" },
+                        { "id": 3004486, "nama": "4. Swasta", "satuan": "", "type": "checkbox" },
+                        { "id": 3004522, "nama": "5. Buruh", "satuan": "", "type": "checkbox" },
+                        { "id": 3004487, "nama": "6. Tani", "satuan": "", "type": "checkbox" },
+                        { "id": 3004523, "nama": "7. PNS", "satuan": "", "type": "checkbox" },
+                        { "id": 3004488, "nama": "8. Pensiunan", "satuan": "", "type": "checkbox" },
+                        { "id": 3004524, "nama": "9. Pelajar", "satuan": "", "type": "checkbox" },
+                        { "id": 3004489, "nama": "10.  Mahasiswa", "satuan": "", "type": "checkbox" },
+                        { "id": 3004525, "nama": "11. Tak Kerja", "satuan": "", "type": "checkbox" },
+                        { "id": 3004526, "nama": "12. Lain-lain, Sebutkan", "satuan": "", "type": "textbox2", "idd":  "3004527"},
                     ]
                 }
             ] 
@@ -223,8 +243,9 @@ define(['initialize'], function (initialize) {
                         { "id": 3004531, "nama": "4. Puskesmas", "type": "checkbox" },
                         { "id": 3004532, "nama": "5. Dokter Swasta", "type": "checkbox" },
                         { "id": 3004533, "nama": "6. Dinas Sosial", "type": "checkbox" },
-                        { "id": 3004534, "nama": "7. Kejaksaan / Polisi", "type": "checkbox" },
-                        { "id": 3004535, "nama": "7. Lain-lain, Sebutkan", "satuan": "", "type": "textbox2", "idd":  "3004536"},
+                        { "id": 3004534, "nama": "7. Kejaksaan", "type": "checkbox" },
+                        { "id": 3004534, "nama": "8. Polisi", "type": "checkbox" },
+                        { "id": 3004535, "nama": "9. Lain-lain, Sebutkan", "satuan": "", "type": "textbox2", "idd":  "3004536"},
                     ]
                 },
             ]
@@ -236,10 +257,15 @@ define(['initialize'], function (initialize) {
                     "detail": [
                         { "id": 3004537, "nama": "1. Umum", "type": "checkbox" },
                         { "id": 3004538, "nama": "2. Jamkesos", "type": "checkbox" },
-                        { "id": 3004539, "nama": "3. JKD (Bantul / KP / Kodya)", "type": "checkbox" },
-                        { "id": 3004540, "nama": "4. JKN ( I / II / III PBI / III Non PBI)", "type": "checkbox" },
-                        { "id": 3004541, "nama": "5. IPWL", "type": "checkbox" },
-                        { "id": 3004542, "nama": "6. Proses", "satuan": "", "type": "textbox2", "idd":  "3004543"},
+                        { "id": 3004539, "nama": "3. JKD Bantul", "type": "checkbox" },
+                        { "id": 3004491, "nama": "4. JKD KP", "type": "checkbox" },
+                        { "id": 3004492, "nama": "5. JKD Kodya", "type": "checkbox" },
+                        { "id": 3004540, "nama": "6. JKN I ", "type": "checkbox" },
+                        { "id": 3004603, "nama": "7. JKN II", "type": "checkbox" },
+                        { "id": 3004604, "nama": "8. JKN III PBI", "type": "checkbox" },
+                        { "id": 3004605, "nama": "9. JKN III Non PBI", "type": "checkbox" },
+                        { "id": 3004541, "nama": "10. IPWL", "type": "checkbox" },
+                        { "id": 3004542, "nama": "11. Proses", "satuan": "", "type": "textbox2", "idd":  "3004543"},
                     ]
                 },
             ]
@@ -313,7 +339,7 @@ define(['initialize'], function (initialize) {
                         { "id": 3004594, "nama": "1. Sembuh", "type": "checkbox" },
                         { "id": 3004595, "nama": "2. Belum Sembuh", "type": "checkbox" },
                         { "id": 3004596, "nama": "3. Perbaikan", "type": "checkbox" },
-                        { "id": 3004597, "nama": "6. Sebutkan", "satuan": "", "type": "textbox2", "idd":  "3004598"},
+                        { "id": 3004597, "nama": "4. Sebutkan", "satuan": "", "type": "textbox2", "idd":  "3004598"},
                     ]
                 },
             ]

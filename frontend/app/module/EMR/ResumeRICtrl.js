@@ -46,10 +46,10 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             ]
             $scope.listPengobatan = [
                 {
-                    "id": 2, "nama": "XI. Pengobatan Lanjutan", "detail": [
-                        { "id": 1, "nama": "Poliklinik" },
-                        { "id": 2, "nama": "RS Lain" },
-                        { "id": 3, "nama": "Puskesmas" },
+                    "id": 2, "nama": "9. Intruksi / Foloow Up Tindak Lanjut :", "detail": [
+                        { "id": 1, "nama": "a. Minum obat sesuai aturan" },
+                        { "id": 2, "nama": "b. Kontrol Klinik " },
+                        { "id": 3, "nama": "" },
                         { "id": 4, "nama": "Dokter Luar" },
                     ]
                 }
@@ -251,7 +251,20 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     id: $scope.modelGrid.kddiagnosistambahan4[0],
                     kodeNama: $scope.modelGrid.kddiagnosistambahan4[1] + ' - ' + $scope.modelGrid.kddiagnosistambahan4[2]
                 }
-                $scope.item.tindakanProsedur = $scope.modelGrid.tindakanprosedur
+                $scope.item.tglmasuk = $scope.modelGrid.tglmasuk
+                $scope.item.tglpulang = $scope.modelGrid.tglpulang
+                $scope.item.wisma = $scope.modelGrid.wisma
+                $scope.item.kelas = $scope.modelGrid.kelas
+                $scope.item.hasilfisik = $scope.modelGrid.hasilfisik
+                $scope.item.hasilpsikiatri = $scope.modelGrid.hasilpsikiatri
+                $scope.item.hasilpenunjang = $scope.modelGrid.hasilpenunjang
+                $scope.item.terapipulang = $scope.modelGrid.terapipulang
+                $scope.item.axis2 = $scope.modelGrid.axis2
+                $scope.item.axis3 = $scope.modelGrid.axis3
+                $scope.item.axis4 = $scope.modelGrid.axis4
+                $scope.item.axis5 = $scope.modelGrid.axis5
+                $scope.item.kontrolklinik = $scope.modelGrid.kontrolklinik
+                $scope.item.kondisiwaktukeluare = $scope.modelGrid.kondisiwaktukeluare
                 $scope.item.alasanDirawat = $scope.modelGrid.alasandirawat
                 $scope.item.riwayatPenyakit = $scope.modelGrid.ringkasanriwayatpenyakit
                 $scope.item.pemeriksaanFisik = $scope.modelGrid.pemeriksaanfisik
@@ -360,25 +373,42 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             $scope.Save = function (data) {
                 var item = {
                     "norec": $scope.item.norec != undefined ? $scope.item.norec : "",
+                    "tglmasuk":$scope.item.tglmasuk != undefined ? $scope.item.tglmasuk :"",
+                    "tglpulang":$scope.item.tglpulang != undefined ? $scope.item.tglpulang :"",
+                    "wisma":$scope.item.wisma != undefined ? $scope.item.wisma :"",
+                    "kelas":$scope.item.kelas != undefined ? $scope.item.kelas :"",
+                    "alasandirawat": $scope.item.alasanDirawat != undefined ? $scope.item.alasanDirawat : "",
                     "diagnosismasuk": $scope.item.diagnosamasuktext != undefined ? $scope.item.diagnosamasuktext : "",
                     "kddiagnosismasuk": $scope.item.diagnosamasuk != undefined ? $scope.item.diagnosamasuk.id : "",
+                    "hasilfisik": $scope.item.hasilfisik != undefined ? $scope.item.hasilfisik : "",
+                    "hasilpsikiatri": $scope.item.hasilpsikiatri != undefined ? $scope.item.hasilpsikiatri : "",
+                    "hasilpenunjang": $scope.item.hasilpenunjang != undefined ? $scope.item.hasilpenunjang : "",
+                    "terapi": $scope.item.terapi != undefined ? $scope.item.terapi : null,
+                    "terapipulang": $scope.item.terapipulang != undefined ? $scope.item.terapipulang : null,
                     "diagnosisutama": $scope.item.diagnosautamatext != undefined ? $scope.item.diagnosautamatext : "",
                     "kddiagnosisutama": $scope.item.diagnosautama != undefined ? $scope.item.diagnosautama.id : "",
+                    "axis2": $scope.item.axis2 != undefined ? $scope.item.axis2 : "",
                     "kddiagnosistambahan": $scope.item.diagnosatambahan != undefined ? $scope.item.diagnosatambahan.id : null,
+                    "axis3": $scope.item.axis3 != undefined ? $scope.item.axis3 : "",
                     "kddiagnosistambahan2": $scope.item.diagnosatambahan2 != undefined ? $scope.item.diagnosatambahan2.id : null,
+                    "axis4": $scope.item.axis4 != undefined ? $scope.item.axis4 : "",
                     "kddiagnosistambahan3": $scope.item.diagnosatambahan3 != undefined ? $scope.item.diagnosatambahan3.id : null,
+                    "axis5": $scope.item.axis2 != undefined ? $scope.item.axis5 : "",
                     "kddiagnosistambahan4": $scope.item.diagnosatambahan4 != undefined ? $scope.item.diagnosatambahan4.id : null,
-                    "tindakanprosedur": $scope.item.tindakanProsedur != undefined ? $scope.item.tindakanProsedur : "",
-                    "alasandirawat": $scope.item.alasanDirawat != undefined ? $scope.item.alasanDirawat : "",
                     "ringkasanriwayatpenyakit": $scope.item.riwayatPenyakit != undefined ? $scope.item.riwayatPenyakit : "",
+                    "kontrolklinik": $scope.item.kontrolklinik != undefined ? $scope.item.kontrolklinik : "",
+                    "rumahsakittujuan": $scope.item.rumahsakittujuan != undefined ? $scope.item.rumahsakittujuan : "",
+                    "tglkontrolpoli": $scope.item.tglkontrolpoli != undefined ? moment($scope.item.tglkontrolpoli).format("YYYY-MM-DD HH:mm:ss") : null,
+                    "instruksianjuran": $scope.item.intruksi != undefined ? $scope.item.intruksi : "",
+                    "kondisiwaktukeluar": $scope.item.kondisi != undefined ? $scope.item.kondisi : "",
+                    "kondisiwaktukeluare": $scope.item.kondisie != undefined ? $scope.item.kondisie : "",
+                    
+                    "tindakanprosedur": $scope.item.tindakanProsedur != undefined ? $scope.item.tindakanProsedur : "",
                     "pemeriksaanfisik": $scope.item.pemeriksaanFisik != undefined ? $scope.item.pemeriksaanFisik : "",
-                    "terapi": $scope.item.terapi != undefined ? $scope.item.terapi : null,
                     "hasilkonsultasi": $scope.item.hasilKonsultasi != undefined ? $scope.item.hasilKonsultasi : "",
                     "kondisiwaktukeluar": $scope.item.kondisi != undefined ? $scope.item.kondisi : "",
                     "instruksianjuran": $scope.item.intruksi != undefined ? $scope.item.intruksi : "",
                     "pengobatandilanjutkan": $scope.item.pengobatan != undefined ? $scope.item.pengobatan : $scope.item.pengobatanLain,
-                    "tglkontrolpoli": $scope.item.tglkontrolpoli != undefined ? moment($scope.item.tglkontrolpoli).format("YYYY-MM-DD HH:mm:ss") : null,
-                    "rumahsakittujuan": $scope.item.rumahsakittujuan != undefined ? $scope.item.rumahsakittujuan : "",
                     "noregistrasifk": $scope.norecAPD,
                     "detail": data2
                 }

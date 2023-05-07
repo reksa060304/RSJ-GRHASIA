@@ -1197,17 +1197,17 @@ class ReportController extends ApiController{
         "))->first();
         $detel = [];
         $details = \DB::select(DB::raw("
-                select  pt.jeniskemasanfk,  jr.jenisracikan, pt.rke,pt.dosis, pt.jumlah , pt.aturanpakai , pm.namaproduk, pm.kekuatan, pt.keteranganpakai,
-                op.keteranganpakai as catatandokter, op.satuandosis 
-                from pelayananpasien_t pt 
+                SELECT x.* FROM (select distinct row_number()over(partition by pt.rke, pm.namaproduk ORDER BY pt.rke asc)as no, pt.jeniskemasanfk, jr.jenisracikan, pt.rke,pt.dosis, pt.jumlah , pt.aturanpakai , pm.namaproduk, pm.kekuatan, pt.keteranganpakai,
+                op.keteranganpakai as catatandokter, op.satuandosis
+                from pelayananpasien_t pt
                 inner join produk_m pm on pm.id = pt.produkfk
-                inner join jenisracikan_m jr on jr.id = pt.jenisobatfk 
+                inner join jenisracikan_m jr on jr.id = pt.jenisobatfk
                 inner join strukresep_t as sr on sr.norec = pt.strukresepfk
                 inner join strukorder_t as so on so.norec = sr.orderfk
-                left join orderpelayanan_t as op on op.strukorderfk = so.norec and op.objectprodukfk = pm.id and op.rke = pt.rke
+                left join orderpelayanan_t as op on op.strukorderfk = so.norec and op.rke = pt.rke 
                 where strukresepfk = '$norec'
                 and pt.isobat = true
-                order by pt.rke asc, pt.keteranganpakai asc
+                order by pt.rke asc, pt.keteranganpakai asc)as x where x.no = 1
             "));
 //        dd($raw);
         if(!empty($raw)){
@@ -1228,17 +1228,17 @@ class ReportController extends ApiController{
 
             "))->first();
             $details = \DB::select(DB::raw("
-                select pt.jeniskemasanfk, jr.jenisracikan, pt.rke,pt.dosis, pt.jumlah , pt.aturanpakai , pm.namaproduk, pm.kekuatan, pt.keteranganpakai,
-                op.keteranganpakai as catatandokter, op.satuandosis 
-                from pelayananpasien_t pt 
-                inner join produk_m pm on pm.id = pt.produkfk 
+                SELECT x.* FROM (select distinct row_number()over(partition by pt.rke, pm.namaproduk ORDER BY pt.rke asc)as no, pt.jeniskemasanfk, jr.jenisracikan, pt.rke,pt.dosis, pt.jumlah , pt.aturanpakai , pm.namaproduk, pm.kekuatan, pt.keteranganpakai,
+                op.keteranganpakai as catatandokter, op.satuandosis
+                from pelayananpasien_t pt
+                inner join produk_m pm on pm.id = pt.produkfk
                 inner join jenisracikan_m jr on jr.id = pt.jenisobatfk
                 inner join strukresep_t as sr on sr.norec = pt.strukresepfk
                 inner join strukorder_t as so on so.norec = sr.orderfk
-                left join orderpelayanan_t as op on op.strukorderfk = so.norec and op.objectprodukfk = pm.id and op.rke = pt.rke
+                left join orderpelayanan_t as op on op.strukorderfk = so.norec and op.rke = pt.rke 
                 where strukresepfk = '$norec'
                 and pt.isobat = true
-                order by pt.rke asc,pt.keteranganpakai asc
+                order by pt.rke asc, pt.keteranganpakai asc)as x where x.no = 1
             "));
         }else{
             echo 'Data Tidak ada ';
@@ -1259,7 +1259,7 @@ class ReportController extends ApiController{
             left join skriningfarmasi_t st on st.norec_apd = s.norec
             where s.norec = '$norec'
         "))->first();
-//        dd($raw);
+    //    dd($details);
         $pageWidth = 550;
         //var_dump($skrining);
 
@@ -1776,9 +1776,12 @@ class ReportController extends ApiController{
     {
         $res['profile'] = Profile::where('id',$r['kdprofile'])->first();
         $data = \DB::table('resumemedis_t as rm')
-            ->select('pd.tglregistrasi','pd.tglpulang','rm.norec', 'rm.tglresume', 'ru.namaruangan', 'pg.namalengkap as namadokter',
+            ->select('rm.norec', 'rm.tglresume', 'ru.namaruangan', 'pg.namalengkap as namadokter',
                 'rm.ringkasanriwayatpenyakit', 'rm.pemeriksaanfisik', 'rm.pemeriksaanpenunjang',
                 'rm.hasilkonsultasi', 'rm.terapi', 'rm.diagnosisawal', 'rm.diagnosissekunder', 'rm.tindakanprosedur',
+                'rm.tglmasuk', 'rm.tglpulang',
+                'rm.wisma','rm.kelas','rm.hasilfisik','rm.hasilpsikiatri','rm.hasilpenunjang','rm.hasilpenunjang','rm.terapipulang',
+                'rm.axis2','rm.axis3','rm.axis4','rm.axis5','rm.kontrolklinik','rm.kondisiwaktukeluare',
                 // 'rm.diagnosismasuk', 'rm.diagnosistambahan', 'rm.alasandirawat',
                 'rm.kddiagnosisawal', 'rm.diagnosismasuk', 'rm.kddiagnosismasuk', 'rm.diagnosistambahan', 'rm.kddiagnosistambahan', 'rm.kddiagnosistambahan2', 'rm.kddiagnosistambahan3', 'rm.kddiagnosistambahan4', 'rm.alasandirawat',
                 'dg1.kddiagnosa as kddiagnosa1', 'dg1.namadiagnosa as namadiagnosa1',
@@ -1834,8 +1837,6 @@ class ReportController extends ApiController{
             }
             $result= array(
                 'norec' => $item->norec,
-                'tglregistrasi' => $item->tglregistrasi,
-                'tglpulang' => $item->tglpulang,
                 'kelompokpasien' => $item->kelompokpasien,
                 'tglresume' => $item->tglresume,
                 'namaruangan' => $item->namaruangan,
@@ -1843,6 +1844,20 @@ class ReportController extends ApiController{
                 'ringkasanriwayatpenyakit' => $item->ringkasanriwayatpenyakit,
                 'pemeriksaanfisik' => $item->pemeriksaanfisik,
                 'pemeriksaanpenunjang' => $item->pemeriksaanpenunjang,
+                'tglmasuk' => $item->tglmasuk,
+                'tglpulang' => $item->tglpulang,
+                'wisma' => $item->wisma,
+                'kelas' => $item->kelas,
+                'hasilfisik' => $item->hasilfisik,
+                'hasilpsikiatri' => $item->hasilpsikiatri,
+                'hasilpenunjang' => $item->hasilpenunjang,
+                'terapipulang' => $item->terapipulang,
+                'axis2' => $item->axis2,
+                'axis3' => $item->axis3,
+                'axis4' => $item->axis4,
+                'axis5' => $item->axis5,
+                'kontrolklinik' => $item->kontrolklinik,
+                'kondisiwaktukeluare' => $item->kondisiwaktukeluare,
                 'hasilkonsultasi' => $item->hasilkonsultasi,
                 'terapi' => $item->terapi,
                 'diagnosismasuk' => $item->diagnosismasuk,
@@ -11843,8 +11858,226 @@ public function suratBuktiPengembalian(Request $request)
         
         ) as a order by a.kode, kode1"));
 
+        $grandtotal = collect(DB::select("
+        SELECT SUM ( xx.jasalayanan ) AS jasapelayanan, SUM ( xx.apbd ) AS apbd, SUM ( xx.total ) AS total  FROM ( SELECT A .kode, A.div,
+                    CASE WHEN A.div = 2 THEN SUBSTR( A.kode, 9, 4 )  WHEN A.div = 3 THEN SUBSTR( A.kode, 14, 2 ) WHEN A.div = 4 THEN A.kode END AS kode,
+                        A.kode1 kode2, A.kegiatan, A.jasalayanan, A.apbd, A.total  FROM ( SELECT y.kegiatan, y.kode, y.kode1, y.div, SUM ( y.apbd ) apbd,
+                            SUM ( y.jasalayanan ) jasalayanan, SUM ( y.apbd ) + SUM ( y.jasalayanan ) AS total  FROM ( SELECT x.kegiatan, x.subkegiatan,
+                                x.kode, x.kode1, x.div,
+                            CASE WHEN x.id_asalproduk = 15 THEN x.subtotal ELSE 0  END AS apbd,
+                            CASE WHEN x.id_asalproduk = 18 THEN subtotal ELSE 0  END AS jasalayanan 
+                            FROM ( SELECT kmss.keterangan kegiatan, ap.ID AS id_asalproduk, kmss.kode, 0 kode1, kmss.div, kms.keterangan subkegiatan,
+                                    SUM ( kb.subtotal ) subtotal  FROM
+                                    kegiatananggaran_m km
+                                    INNER JOIN kegiatananggaran_m kms ON km.kode ILIKE kms.kode || '%' 
+                                    AND kms.div = 3
+                                    LEFT JOIN kegiatananggaran_m kmss ON km.kode ILIKE kmss.kode || '%' 
+                                    AND kmss.div = 2
+                                    INNER JOIN keteranganbelanja_t kb ON kb.objectkegiatanfk = km.
+                                    ID INNER JOIN asalproduk_m ap ON ap.ID = kb.objectasalprodukfk 
+                                WHERE
+                                    km.kdprofile = 30  AND km.statusenabled = TRUE 
+                                    AND kms.kdprofile = 30 
+                                    AND kms.statusenabled = TRUE 
+                                    AND kmss.kdprofile = 30 
+                                    AND kmss.statusenabled = TRUE 
+                                    AND kb.kdprofile = 30 
+                                    AND kb.statusenabled = TRUE 
+                                    AND km.tahun = '$tahun' 
+                                    $qtahap
+                                GROUP BY
+                                    kms.keterangan,
+                                    kmss.keterangan,
+                                    kmss.kode,
+                                    kmss.div,
+                                    ap.ID 
+                                ) AS x 
+                            GROUP BY
+                                x.kegiatan,
+                                x.subkegiatan,
+                                x.subtotal,
+                                x.kode,
+                                x.kode1,
+                                x.div,
+                                x.id_asalproduk 
+                            ) AS y 
+                        GROUP BY
+                            kegiatan,
+                            kode,
+                            kode1,
+                            div UNION ALL
+                        SELECT
+                            y.subkegiatan AS kegiatan,
+                            y.kode,
+                            y.kode1,
+                            y.div,
+                            SUM ( y.apbd ) apbd,
+                            SUM ( y.jasalayanan ) jasalayanan,
+                            SUM ( y.apbd ) + SUM ( y.jasalayanan ) AS total 
+                        FROM
+                            (
+                            SELECT
+                                x.kegiatan,
+                                x.subkegiatan,
+                                x.kode,
+                                kode1,
+                                x.div,
+                            CASE
+                                    
+                                    WHEN x.id_asalproduk = 15 THEN
+                                    x.subtotal ELSE 0 
+                                END AS apbd,
+                            CASE
+                                    
+                                    WHEN x.id_asalproduk = 18 THEN
+                                    subtotal ELSE 0 
+                                END AS jasalayanan 
+                            FROM
+                                (
+                                SELECT
+                                    kmss.keterangan kegiatan,
+                                    kms.keterangan subkegiatan,
+                                    kms.kode,
+                                    0 kode1,
+                                    kms.div,
+                                    ap.ID AS id_asalproduk,
+                                    SUM ( kb.subtotal ) subtotal 
+                                FROM
+                                    kegiatananggaran_m km
+                                    INNER JOIN kegiatananggaran_m kms ON km.kode ILIKE kms.kode || '%' 
+                                    AND kms.div = 3
+                                    LEFT JOIN kegiatananggaran_m kmss ON km.kode ILIKE kmss.kode || '%' 
+                                    AND kmss.div = 2
+                                    INNER JOIN keteranganbelanja_t kb ON kb.objectkegiatanfk = km.
+                                    ID INNER JOIN asalproduk_m ap ON ap.ID = kb.objectasalprodukfk 
+                                WHERE
+                                    km.kdprofile = 30 
+                                    AND km.statusenabled = TRUE 
+                                    AND kms.kdprofile = 30 
+                                    AND kms.statusenabled = TRUE 
+                                    AND kmss.kdprofile = 30 
+                                    AND kmss.statusenabled = TRUE 
+                                    AND kb.kdprofile = 30 
+                                    AND kb.statusenabled = TRUE 
+                                    AND km.tahun = '$tahun' 
+                                    $qtahap
+                                GROUP BY
+                                    kms.keterangan,
+                                    kmss.keterangan,
+                                    kms.kode,
+                                    kms.div,
+                                    ap.ID 
+                                ) AS x 
+                            GROUP BY
+                                x.kegiatan,
+                                x.subkegiatan,
+                                x.subtotal,
+                                x.kode,
+                                x.kode1,
+                                x.div,
+                                x.id_asalproduk 
+                            ) AS y 
+                        GROUP BY
+                            subkegiatan,
+                            kode,
+                            kode1,
+                            div UNION ALL
+                        SELECT
+                            y.subkegiatan AS kegiatan,
+                            y.kode,
+                            y.kode1,
+                            y.div,
+                            SUM ( y.apbd ) apbd,
+                            SUM ( y.jasalayanan ) jasalayanan,
+                            SUM ( y.apbd ) + SUM ( y.jasalayanan ) AS total 
+                        FROM
+                            (
+                            SELECT
+                                x.kegiatan,
+                                x.subkegiatan,
+                                x.kode,
+                                x.kode1,
+                                x.div,
+                            CASE
+                                    
+                                    WHEN x.id_asalproduk = 15 THEN
+                                    x.subtotal ELSE 0 
+                                END AS apbd,
+                            CASE
+                                    
+                                    WHEN x.id_asalproduk = 18 THEN
+                                    subtotal ELSE 0 
+                                END AS jasalayanan 
+                            FROM
+                                (
+                                SELECT
+                                    km.keterangan kegiatan,
+                                    km.keterangan subkegiatan,
+                                CASE
+                                        
+                                        WHEN LENGTH ( km.kode ) = 17 THEN
+                                        LEFT ( km.kode, - 1 ) 
+                                        WHEN LENGTH ( km.kode ) = 18 THEN
+                                        LEFT ( km.kode, - 2 ) 
+                                    END AS kode,
+                                CASE
+                                        
+                                        WHEN LENGTH ( km.kode ) = 17 THEN
+                                        RIGHT ( km.kode, 1 ) :: INT 
+                                        WHEN LENGTH ( km.kode ) = 18 THEN
+                                        RIGHT ( km.kode, 2 ) :: INT 
+                                    END AS kode1,
+                                    km.div,
+                                    ap.ID AS id_asalproduk,
+                                    SUM ( kb.subtotal ) subtotal 
+                                FROM
+                                    kegiatananggaran_m km
+                                    INNER JOIN kegiatananggaran_m kms ON km.kode ILIKE kms.kode || '%' 
+                                    AND kms.div = 3
+                                    LEFT JOIN kegiatananggaran_m kmss ON km.kode ILIKE kmss.kode || '%' 
+                                    AND kmss.div = 2
+                                    INNER JOIN keteranganbelanja_t kb ON kb.objectkegiatanfk = km.
+                                    ID INNER JOIN asalproduk_m ap ON ap.ID = kb.objectasalprodukfk 
+                                WHERE
+                                    km.kdprofile = 30 
+                                    AND km.statusenabled = TRUE 
+                                    AND kms.kdprofile = 30 
+                                    AND kms.statusenabled = TRUE 
+                                    AND kmss.kdprofile = 30 
+                                    AND kmss.statusenabled = TRUE 
+                                    AND kb.kdprofile = 30 
+                                    AND kb.statusenabled = TRUE 
+                                    AND km.tahun = '$tahun' 
+                                    $qtahap
+                                GROUP BY
+                                    km.keterangan,
+                                    km.keterangan,
+                                    km.kode,
+                                    km.div,
+                                    ap.ID 
+                                ) AS x 
+                            GROUP BY
+                                x.kegiatan,
+                                x.subkegiatan,
+                                x.subtotal,
+                                x.kode,
+                                x.kode1,
+                                x.div,
+                                x.id_asalproduk 
+                            ) AS y 
+                        GROUP BY
+                            subkegiatan,
+                            kode,
+                            kode1,
+                            div 
+                        ) AS A 
+                    ORDER BY
+                        A.kode,
+                    kode1 
+        ) AS xx"))->first();
+
         $pageWidth = 1200;
-        return view('report.spj.cetakrekapanggaransumberdana', compact('data', 'pageWidth','tahap', 'tanggalcetak'));
+        return view('report.spj.cetakrekapanggaransumberdana', compact('data','grandtotal','pageWidth','tahap', 'tanggalcetak'));
     }
     public function CetakRekapSumberDanaAnggaran(Request $request)
     {   
@@ -12838,5 +13071,136 @@ public function suratBuktiPengembalian(Request $request)
 
         return view('report.apotik.resepdokterharga',
             compact('raw', 'pageWidth','r','details','profile', 'skrining'));
+    }
+
+    public function cetakCM05(Request $request)
+    {
+        $norec = $request['emr'];
+        $kdProfile = (int) $request['kdprofile'];
+        $data = DB::select(DB::raw("
+        SELECT
+            epd.emrdfk,
+            ep.noemr,
+            ed.TYPE,
+            pa.namapasien,
+            pa.tgllahir,
+            pa.nohp,
+            pa.nocm,
+            ep.jeniskelamin,
+            ep.umur,
+            al.alamatlengkap,
+            ep.noregistrasifk as noregistrasi ,
+            epd.value,ep.namaruangan,pg.namalengkap as namadokter
+            --case when ed.TYPE = 'datetime' then TO_CHAR(TO_TIMESTAMP(epd.value, 'YYYY-MM-DD HH24:MI:SS'),'YYYY-MM-DD HH24:MI:SS') else epd.value end as value
+        FROM
+            emrpasien_t AS ep
+            INNER JOIN emrpasiend_t AS epd ON ep.noemr = epd.emrpasienfk
+            INNER JOIN emrd_t AS ed ON epd.emrdfk = ed.ID
+                INNER JOIN antrianpasiendiperiksa_t AS pd ON pd.norec = ep.norec_apd
+            left JOIN pegawai_m AS pg ON pg.id = pd.objectpegawaifk
+            left JOIN pasien_m as pa on ep.nocm =  pa.nocm
+            left JOIN alamat_m as al on pa.id = al.nocmfk
+        WHERE
+            ep.norec = '$norec'
+                AND ep.kdprofile = '$kdProfile' 
+            AND epd.statusenabled = TRUE 
+            and epd.emrfk = $request[emrfk]
+        ORDER BY
+            ed.nourut
+            "
+        ));
+        foreach ($data as $z){
+            if ($z->type=="datetime"){
+                $z->value=date('Y-m-d H:i:s',strtotime($z->value));
+            }
+//            $z->value = nl2br( $z->value);
+        }
+        // foreach ($data as $z){
+        //     if (isset($z->tgllahir) ||isset($z->tgl)){
+        //         $z->tgllahir=$this->tanggal_indonesia(date('Y-m-d',strtotime($z->tgllahir)));
+        //         $z->tgl=$this->tanggal_indonesia(date('Y-m-d',strtotime($z->tgl)));
+        //     }
+            
+        // }
+        $res['profile'] = Profile::where('id',$request['kdprofile'])->first();
+        $res['d'] = $data;
+        // return view('report.cppt-ranap-dom',compact('res','pageWidth', 'data'));
+        // dd($res);
+        $item =[];   
+        $item2= [];      
+        foreach( $res['d'] as $items){
+                if($items->type  ==  "textbox" ||$items->type  ==  "textarea"  ){
+                    $item[$items->emrdfk] =  $items->value;
+        }
+                if($items->type  ==  "datetime"){
+                    $item[$items->emrdfk] = $this->tanggal_indonesia(date('Y-m-d',strtotime( $items->value))) ;
+                }
+                if($items->type  ==  "time"){
+                    $item[$items->emrdfk] = date('H:i',strtotime( $items->value));
+                }
+                if($items->type  ==  "date"){
+                    $item[$items->emrdfk] = date('Y-m-d',strtotime( $items->value));
+                }
+                if($items->type  ==  "checkboxtextbox"){
+                    $item[$items->emrdfk] =  $items->value;
+                    $item2[$items->emrdfk] =  true;
+                }
+                if($items->type == "checkbox") {
+                    $chekedd = false;
+                    if ($items->value == '1') {
+                        $chekedd = true;
+                    }
+                    $item[$items->emrdfk] = $chekedd;
+                }
+                if($items->type == "combobox") {
+                    $arr = explode('~',$items->value );
+                    $item[$items->emrdfk] = $arr[1];
+                }
+        }
+        $pageWidth = 950;
+        $peg = null;    
+        if(isset($request['isttd']) && $request['isttd'] == true){
+            $peg = DB::table('pegawai_m')->where('id',$request['pegawaittd'])->first();
+            
+        }
+        // dd($data, $item);
+
+        // var_dump($data);
+        $pdf = PDF::loadView(
+            'report.EMR.cmrm05-dom',
+            array(
+                'res' => $res,
+                'pageWidth' => $pageWidth,
+                'data' => $data,
+                'item'=> $item,
+                'peg'=> $peg
+            )
+        );
+        if(isset($request['isttd']) && $request['isttd'] == true){
+            $objetoRequest = new \Illuminate\Http\Request();
+            $objetoRequest ['emrfk'] = $request['emrfk'];
+            $objetoRequest ['norec_emr'] = $request['emr'];
+            $objetoRequest ['pegawaittd'] = $request['pegawaittd'];
+            $objetoRequest ['nocm'] = $request['nocm'];
+            $objetoRequest ['noregistrasi'] = $request['noregistrasi'];
+            $objetoRequest ['norec_pd'] = $request['norec_pd'];
+            $bsre = app('App\Http\Controllers\Bridging\BridgingBSREController')->pengajuanTTE($objetoRequest,true);
+            if($bsre['status'] == 201){
+                $content = $pdf->download()->getOriginalContent();
+                \Storage::disk('local')->put( 'TTD_BSRE/' . $bsre['dokumen']->id . '/file' . '.pdf' , $content);
+            }
+          
+            return $bsre;
+        }
+
+        return $pdf->stream();
+        return view('report.EMR.suratketerangandokter',compact('data','pageWidth'));
+    }
+    public function cetakPreviewOrder(Request $request)
+    {
+        $orderPelayanan = \DB::select(DB::raw("
+        select * from temperesep_t where norec_apd ilike '$request[norec_apd]' and kdprofile = 30 and statusenabled =true order by rke asc
+        "));
+        return view('report.apotik.previeworder', compact('orderPelayanan'));
     }
 }

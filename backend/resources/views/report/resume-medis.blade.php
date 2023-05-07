@@ -49,7 +49,12 @@
         .top-height {
             height: 50px;
             vertical-align: text-top;
-            width: 15%;
+            width: 25%;
+        }
+        .top-height2 {
+            height: 30px;
+            vertical-align: text-top;
+            width: 18%;
         }
 
         .text-top {
@@ -60,7 +65,7 @@
 </head>
 
 <body class="A4" style="font-family:Tahoma;height: auto">
-    <table style="margin: auto" class="sheet padding-10mm" style="font-family:Tahoma;height: auto">
+    <table style="margin: auto" class="sheet padding-5mm" style="font-family:Tahoma;height: auto">
         <thead>
         <tr>
             <th>
@@ -119,13 +124,13 @@
                     </table>
 
                     <hr style="border:2px solid #000;margin-bottom:0px">
-                    <hr style="border:0.5px solid #000;margin-top:2px">
+                
                     <table >
                         <tr>
                             <td style="width: 90%">
                                 <table>
                                     <tr>
-                                        <th style="font-size: 20px">RESUME MEDIS</th>
+                                        <th style="font-size: 20px">RINGKASAN PULANG</th>
                                     </tr>
                                 </table>
                             </td>
@@ -149,78 +154,217 @@
                 <div class="content">
                     <table>
                         <tr>
-                            <table width="100%" border="1" bordercolor="#000000" class="garis6"
+                            <table width="100%" border="0" bordercolor="#000000" 
                                    style="margin-left: 2px">
                                 <tr>
-                                    <td colspan="2" width="33%">
+                                    <td colspan="2" width="25%">
                                         <span class="bold">Tanggal Masuk</span>
                                         <br>
-                                        {!! $res['d']['tglregistrasi'] !!}
+                                        {!! $res['d']['tglmasuk'] !!}
                                     </td>
-                                    <td width="33%">
+                                    <td width="25%">
                                         <span class="bold">Tanggal Keluar/Meninggal</span>
                                         <br>
                                         {!! $res['d']['tglpulang']  != null?$res['d']['tglpulang'] :'-'!!}
                                     </td>
-                                    <td width="33%">
-                                        <span class="bold">Berat Lahir</span>
+                                    <td width="25%">
+                                        <span class="bold">Wisma</span>
                                         <br>
-                                        -
+                                        {!! $res['d']['wisma'] !!}
                                     </td>
-                                </tr>
-                                <tr>
-                                    <td colspan="2">
-                                        <span class="bold">Penanggung Pembayaran</span>
+                                    <td width="25%">
+                                        <span class="bold">Kelas</span>
                                         <br>
-                                        <span class="text-top"> {!! $res['d']['kelompokpasien'] !!}</span>
-                                    </td>
-                                    <td colspan="2">
-                                        <span class="bold">Diagnosis Masuk</span>
-                                        <br>
-                                        <span class="text-top">{!! $res['d']['diagnosismasuk'] .', '.$res['d']['kddiagnosismasuk'][2] !!}</span>
+                                        {!! $res['d']['kelas'] !!}
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="top-height">
-                                        <span class="bold">Ringkasan Riwayat Penyakit</span>
+                                        <span class="bold">1. Indikasi Dirawat</span>
                                     </td>
-                                    <td colspan="3" class="text-top">
-                                        <span>{!! $res['d']['ringkasanriwayatpenyakit']  !!}</span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="top-height">
-                                        <span class="bold">Pemeriksaan Fisik</span>
-                                    </td>
-                                    <td colspan="3" class="text-top">
-                                        <span>{!! $res['d']['pemeriksaanfisik']  !!}</span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="top-height">
-                                        <span class="bold">Pemeriksaan Penunjang / Diagnostik Terpenting</span>
-                                    </td>
-                                    <td colspan="3" class="text-top">
-                                        <span>-</span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="top-height">
-                                        <span class="bold">Alasan Rawat</span>
-                                    </td>
-                                    <td colspan="3" class="text-top">
+                                    <td colspan="4" class="text-top">
                                         <span>{!! $res['d']['alasandirawat'] !!}</span>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="top-height">
-                                        <span class="bold">Terapi/Pengobatan Selama di Rumah Sakit</span>
+                                    <span class="bold">2. Diagnosa Masuk</span>
                                     </td>
-                                    <td colspan="3" class="text-top">
-                                        <span>{!! nl2br($res['d']['terapi']) !!}</span>
+                                    <td colspan="4" class="text-top">
+                                    <span class="text-top">{!! $res['d']['diagnosismasuk'] .', '.$res['d']['kddiagnosismasuk'][2] !!}</span>
                                     </td>
                                 </tr>
                                 <tr>
+                                    <td class="top-height">
+                                    <span class="bold">3. Hasil Pemeriksaan Fisik</span>
+                                    </td>
+                                    <td colspan="4" class="text-top">
+                                    <span class="text-top">   {!! $res['d']['hasilfisik'] !!}</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="top-height">
+                                    <span class="bold">4. Hasil Pemeriksaan Psikiatri</span>
+                                    </td>
+                                    <td colspan="4" class="text-top">
+                                    <span class="text-top">   {!! $res['d']['hasilpsikiatri'] !!}</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="top-height">
+                                    <span class="bold">5. Pemeriksaan Diagnostik / Penunjang</span>
+                                    </td>
+                                    <td colspan="4" class="text-top">
+                                    <span class="text-top">   {!! $res['d']['hasilpenunjang'] !!}</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="5">
+                                    <span class="bold">6. Terapi dan Tindakan yang diberikan </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="top-height">
+                                    <span class="bold">a. Selama Dirawat</span>
+                                    </td>
+                                    <td colspan="4" class="text-top">
+                                    <span>{!! nl2br($res['d']['terapi']) !!}</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="top-height">
+                                    <span class="bold">b. Waktu Pulang</span>
+                                    </td>
+                                    <td colspan="4" class="text-top">
+                                    <span> {!! $res['d']['terapipulang'] !!}</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3" width="25%">
+                                    <span class="bold">7. Diagnosa Akhir </span>
+                                    </td>
+                                    <td colspan="2"  width="25%">
+                                    <span class="bold">Kode ICD</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3" width="5%">
+                                        <span class="bold">Axis I &nbsp;  &nbsp;    :</span>
+                                        <span>{!! $res['d']['diagnosisawal'] !!}</span>
+                                    </td>
+                                    <td colspan="2" width="10%">
+                                        <span class="bold">1.</span>
+                                        <span>{!! $res['d']['kddiagnosisawal'][2] !!}</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3" width="5%">
+                                        <span class="bold">Axis II &nbsp;  :</span>
+                                        <span>{!! $res['d']['axis2'] !!}</span>
+                                    </td>
+                                    <td colspan="2" width="10%">
+                                        <span class="bold">2.</span>
+                                        <span>{!! $res['d']['kddiagnosistambahan'][2] !!}</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3" width="5%">
+                                        <span class="bold">Axis III  :</span>
+                                        <span>{!! $res['d']['axis3'] !!}</span>
+                                    </td>
+                                    <td colspan="2" width="10%">
+                                        <span class="bold">3.</span>
+                                        <span>{!! $res['d']['kddiagnosistambahan2'][2] !!}</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3" width="5%">
+                                        <span class="bold">Axis IV &nbsp; :</span>
+                                        <span>{!! $res['d']['axis4'] !!}</span>
+                                    </td>
+                                    <td colspan="2" width="10%">
+                                        <span class="bold">4.</span>
+                                        <span>{!! $res['d']['kddiagnosistambahan3'][2] !!}</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3" width="5%">
+                                        <span class="bold">Axis V &nbsp;  &nbsp;  :</span>
+                                        <span>{!! $res['d']['axis5'] !!}</span>
+                                    </td>
+                                    <td colspan="2" width="10%">
+                                        <span class="bold">5.</span>
+                                        <span>{!! $res['d']['kddiagnosistambahan4'][2] !!}</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="top-height">
+                                        <span class="bold">8. Status / Kondisi Pasien Waktu Pulang :</span>
+                                    </td>
+                                    <td colspan="4" class="text-top">
+                                        <span>{!! $res['d']['ringkasanriwayatpenyakit']  !!}</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="5">
+                                    <span class="bold">9. Intruksi <i>Follow Up</i> / Tindaklanjut </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="5">
+                                    <span class="bold">a. Minum Obat Sesuai Aturan </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="5">
+                                        <table >
+                                            <tr width="100%">
+                                                <td class="top-height2">
+                                                <span class="bold">b. Kontrol Klinik </span>
+                                                </td>
+                                                <td  class="text-top">
+                                                <span > {!! $res['d']['kontrolklinik'] !!}</span>
+                                                </td>
+                                                <td  class="top-height2">
+                                                <span class="bold">di RS Jiwa Grhasia / </span>
+                                                </td>
+                                                <td class="text-top">
+                                                <span >   {!! $res['d']['rumahsakittujuan'] !!}</span>
+                                                </td>
+                                                <td class="top-height2">
+                                                    <span class="bold">tanggal </span>
+                                                </td>
+                                                <td class="text-top">
+                                                    <span>   {!! $res['d']['tglkontrolpoli'] !!}</span>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                
+                               
+                                <tr>
+                                    <td class="top-height">
+                                        <span class="bold">c. Edukasi Perawatan Lanjut </span>
+                                    </td>
+                                    <td colspan="4" class="text-top">
+                                        <span>{!! $res['d']['instruksianjuran'] !!}</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan= "5" class="text-top">
+                                        <span class="bold">d. </span>
+                                        <span>{!! $res['d']['kondisiwaktukeluar'] !!}</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan= "5" class="text-top">
+                                        <span class="bold">e. </span>
+                                        <span>{!! $res['d']['kondisiwaktukeluare'] !!}</span>
+                                    </td>
+                                </tr>
+                                
+                                <!-- <tr>
                                     <td class="top-height">
                                         <span class="bold">Hasil Konsultasi</span>
                                     </td>
@@ -330,8 +474,9 @@
                                         </table>
                                     </td>
 
-                                </tr>
+                                </tr> -->
                             </table>
+                            <label>Saya telah menerima informasi tersebut dan menyetujui bahwa Ringkasan Pulang ini hanya digunakan untuk kepentingan pengobatan, serta TIDAK DAPAT digunakan untuk kepentingan lainnya.</label>
                             <figure class="table">
                                 <table>
                                     <tbody>
@@ -341,30 +486,31 @@
                                         </td>
 
                                         <td width="33%"></td>
-                                        <td width="33%"><b>Bandung</b>, {!! date('d-m-Y') !!} <br>
+                                        <td width="33%"><b>Sleman</b>, {!! date('d-m-Y') !!} <br>
                                             <b>Dokter Penanggung Jawab</b></td>
                                     </tr>
                                     <tr>
                                         <td>
-                                            <div style="text-align: center" id="qrPasien"></div>
+                                            {{-- <div style="text-align: center" id="qrPasien"></div> --}}
                                         </td>
                                         <td></td>
                                         <td>
-                                            <div style="text-align: center" id="qrDokter"></div>
+                                            {{-- <div style="text-align: center" id="qrDokter"></div> --}}
                                         </td>
                                     </tr>
 
                                     <tr>
-                                        <td style="text-align: center"><span style="font-weight: bold;color: #ccc">Ditandatangani secara elektronik</span>
+                                        <td style="text-align: center"><span style="font-weight: bold;color: #ccc"></span>
                                         </td>
                                         <td style="text-align: center">&nbsp;</td>
-                                        <td style="text-align: center"><span style="font-weight: bold;color: #ccc">Ditandatangani secara elektronik</span>
-                                            <br>{!! $res['d']['namadokter'] !!}
+                                        <td style="text-align: center"><span style="font-weight: bold;color: #ccc"></span>
+                                            <br><br> <br>{!! $res['d']['namadokter'] !!}
                                         </td>
                                     </tr>
 
                                     </tbody>
                                 </table>
+                                
                             </figure>
                         </tr>
                     </table>
