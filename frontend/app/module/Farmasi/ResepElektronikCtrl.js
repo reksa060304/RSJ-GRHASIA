@@ -6,6 +6,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             $scope.dataVOloaded = true;
             $scope.item = {};
             $rootScope.isOpen = true;
+            
             $scope.listwaktuPakai = [
                 {id:1,waktupakai: 'Pagi'},
                 {id:2,waktupakai: 'Siang'},
@@ -237,6 +238,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 
             LoadCache();
             function LoadCache() {
+                
                 var chacePeriode = cacheHelper.get('ResepElektronikCtrl');
                 if (chacePeriode != undefined) {
                     //var arrPeriode = chacePeriode.split(':');
@@ -359,6 +361,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             $scope.refresh = function () {
                 $scope.isRouteLoading = true
                 // debugger;
+
                 var nocm = ''
                 if ($scope.noCm != undefined) {
                     nocm = '&nocm=' + $scope.noCm
@@ -366,6 +369,9 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 var namaPasien = ''
                 if ($scope.namaPasien != undefined) {
                     namaPasien = '&namaPasien=' + $scope.namaPasien
+                }
+                if ($state.params.noOrder != '-') {
+                    $scope.noPesanan = $state.params.noOrder
                 }
                 var noPesanan = ''
                 if ($scope.noPesanan != undefined) {
