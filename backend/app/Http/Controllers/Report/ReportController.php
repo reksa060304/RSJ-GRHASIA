@@ -1184,7 +1184,7 @@ class ReportController extends ApiController{
             "));
         $raw = collect(DB::select("
             select pm2.nocm ,to_char(pm2.tgllahir,'dd-mm-yyyy') as tgllahir,age(pm2.tgllahir) as umur ,jm.jeniskelamin ,pm2.namapasien ,pm3.namalengkap, rm.namaruangan ruanganasal, ra.namaruangan ruangantujuan, pm2.alergi, 
-            to_char(st.tglorder,'dd-mm-yyyy MM:ss') as tglorder,pm3.nosip, kp.kelompokpasien 
+            to_char(st.tglorder,'dd-mm-yyyy HH:MM:ss') as tglorder,pm3.nosip, kp.kelompokpasien 
             from strukorder_t st
             inner join pasien_m pm2 on pm2.id = st.nocmfk
             inner join jeniskelamin_m jm on jm.id = pm2.objectjeniskelaminfk
@@ -1214,7 +1214,7 @@ class ReportController extends ApiController{
             // $raw->umur = $this->getAge($raw->tgllahir ,date('Y-m-d'));
         }else if (empty($raw)){
             $raw = collect(DB::select("
-                select pm2.nocm ,to_char(pm2.tgllahir,'dd-mm-yyyy') as tgllahir,age(pm2.tgllahir) as umur ,jm.jeniskelamin ,pm2.namapasien ,pm3.namalengkap, rm.namaruangan ruangantujuan, to_char(s.tglresep ,'dd-mm-yyyy MM:ss') as tglorder,pm3.nosip, kp.kelompokpasien, ra.namaruangan ruanganasal, pm2.alergi
+                select pm2.nocm ,to_char(pm2.tgllahir,'dd-mm-yyyy') as tgllahir,age(pm2.tgllahir) as umur ,jm.jeniskelamin ,pm2.namapasien ,pm3.namalengkap, rm.namaruangan ruangantujuan, to_char(s.tglresep ,'dd-mm-yyyy HH:MM:ss') as tglorder,pm3.nosip, kp.kelompokpasien, ra.namaruangan ruanganasal, pm2.alergi
                 from strukresep_t s
                 inner join antrianpasiendiperiksa_t at2 on at2.norec = s.pasienfk 
                 inner join pasiendaftar_t pt on pt.norec = at2.noregistrasifk 
