@@ -716,16 +716,16 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 }
 
                 let isOutOfStok = false
-                // if ($scope.item.stok < $scope.item.jumlah) {
-                //     // alert("Stok tidak cukup!!")
-                //     // return;
-                //     if (confirm('Stok tidak cukup, lanjutkan ?')) {
-                //         isOutOfStok =true
+                if ($scope.item.stok < $scope.item.jumlah) {
+                    alert("Jumlah yang dimasukan melebihi stok yang tersedia!!")
+                    return;
+                    // if (confirm('Stok tidak cukup, lanjutkan ?')) {
+                    //     isOutOfStok =true
                    
-                //     } else {
-                //       return
-                //     }
-                // }
+                    // } else {
+                    //   return
+                    // }
+                }
                 var KetPakai = "";
                 if ($scope.item.KeteranganPakai) {
                     KetPakai = $scope.item.KeteranganPakai;
