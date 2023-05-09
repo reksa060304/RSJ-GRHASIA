@@ -1279,16 +1279,18 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                     "id": 9,
                     "nama": "I. Gangguan Memori : ",
                     "detail": [
-                        {"id": 120235, "nama": "Ada", "type": "textbox6"},
-                        {"id": 120236, "nama": "Tidak ada", "type": "checkbox6"},
+                        {"id": 310298, "nama": "Ada", "type": "checkbox12"},
+                        {"id": 310537, "nama": "Tidak ada", "type": "checkbox12"},
+                        {"id": 310536, "nama": "", "type": "textbox6"},
                     ]
                 },
                 {
                     "id": 10,
                     "nama": "J. Gangguan Intelegensi : ",
                     "detail": [
-                        {"id": 310535, "nama": "Ada", "type": "textbox6"},
-                        {"id": 310538, "nama": "Tidak ada", "type": "checkbox6"},
+                        {"id": 310299, "nama": "Ada", "type": "checkbox12"},
+                        {"id": 310538, "nama": "Tidak ada", "type": "checkbox12"},
+                        {"id": 310535, "nama": "", "type": "textbox6"},
                     ]
                 },
                 {
@@ -1508,6 +1510,12 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                     console.log(datas.length);
                     if (datas.length > 0) {
                     $scope.isRouteLoading = false
+
+
+             medifirstService.getPart('emr/get-datacombo-part-pegawai', true, true, 20).then(function (data) {
+                        $scope.listPegawai = data
+            })
+
             medifirstService.get("emr/get-emr-transaksi-detail?noemr=" + nomorEMR + "&emrfk=" + $scope.cc.emrfk, true).then(function (dat) {
                 $scope.item.obj = []
                 $scope.item.obj2 = []
@@ -1532,6 +1540,10 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                 $scope.item.obj[120291] = moment($scope.now).format('HH:mm')
 
                 $scope.item.obj[310595] = {
+                    value: medifirstService.getPegawaiLogin().id,
+                    text: medifirstService.getPegawaiLogin().namaLengkap
+                }
+                $scope.item.obj[310590] = {
                     value: medifirstService.getPegawaiLogin().id,
                     text: medifirstService.getPegawaiLogin().namaLengkap
                 }
@@ -1611,6 +1623,16 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                             $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
                         }
                         if (dataLoad[i].type == "combobox") {
+                            var str = dataLoad[i].value
+                            if (str != undefined) {
+                                var res = str.split("~");
+                                $scope.item.obj[dataLoad[i].emrdfk] = {
+                                    value: res[0],
+                                    text: res[1]
+                                }
+                            }
+                        }
+                        if (dataLoad[i].type == "combobox6right") {
                             var str = dataLoad[i].value
                             if (str != undefined) {
                                 var res = str.split("~");

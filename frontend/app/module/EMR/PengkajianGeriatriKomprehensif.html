@@ -820,14 +820,7 @@
                                             <div class="grid_12 margin-top">
                                                 <div class="grid_6"></div>
                                             </div>
-                                            <div class="grid_12">
-                                            <div class="grid_4 margin-top-30  margin-bottom">
-                                                <label c-label item="item" c-label-text="Dokter"></label>
-                                                <input style="width: 80%;" kendo-combo-box k-ng-model="item.obj[310286]"
-                                                        k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
-                                                        k-auto-bind="false" k-data-source="listPegawai" />
-                                            </div>
-                                        </div>
+                                            
                                 
                                       
                                     </fieldset>
@@ -864,10 +857,18 @@
                         
                                 <div class="grid_12">
                                     <fieldset style="margin-top: 10px;">
-                                        <div class="grid_4 margin-top-30 text-center margin-bottom">
-                                            <label c-label item="item" class="margin-bottom">Penanggung Jawab Pasien</label>
-                                            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[310295]"
-                                                style="height: 30px; width: 98%; "/>
+                                        <div class="grid_12">
+                                            <div class="grid_4 margin-top-30 text-center margin-bottom">
+                                                <label c-label item="item" c-label-text="Selesai Pemeriksaan Pukul"></label>
+                                                <input style="width: 100%" k-ng-model="item.obj[310297]" kendo-datetimepicker
+                                                placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+                                            </div>
+                                        </div>
+                                        <div class="grid_4 margin-top-30  margin-bottom">
+                                            <label c-label item="item" c-label-text="Perawat"></label>
+                                            <input style="width: 80%;" kendo-combo-box k-ng-model="item.obj[310286]"
+                                                    k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                                                    k-auto-bind="false" k-data-source="listPegawai" />
                                         </div>
                                         <div class="grid_4 margin-top-30 text-center margin-bottom">
                                             <label c-label item="item" c-label-text="Dokter Pemeriksa/DPJP"></label>
@@ -876,10 +877,11 @@
                                                     k-auto-bind="false" k-data-source="listPegawai" />
                                         </div>
                                         <div class="grid_4 margin-top-30 text-center margin-bottom">
-                                            <label c-label item="item" c-label-text="Selesai Pemeriksaan Pukul"></label>
-                                            <input style="width: 100%" k-ng-model="item.obj[310297]" kendo-datetimepicker
-                                            placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+                                            <label c-label item="item" class="margin-bottom">Penanggung Jawab Pasien</label>
+                                            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[310295]"
+                                                style="height: 30px; width: 98%; "/>
                                         </div>
+                                       
                                     </fieldset>
                                 </div>
                             </div>
