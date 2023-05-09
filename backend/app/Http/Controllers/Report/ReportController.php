@@ -1184,7 +1184,7 @@ class ReportController extends ApiController{
             "));
         $raw = collect(DB::select("
             select pm2.nocm ,to_char(pm2.tgllahir,'dd-mm-yyyy') as tgllahir,age(pm2.tgllahir) as umur ,jm.jeniskelamin ,pm2.namapasien ,pm3.namalengkap, rm.namaruangan ruanganasal, ra.namaruangan ruangantujuan, pm2.alergi, 
-            to_char(st.tglorder,'dd-mm-yyyy MM:ss') as tglorder,pm3.nosip, kp.kelompokpasien 
+            to_char(st.tglorder,'dd-mm-yyyy HH:MM:ss') as tglorder,pm3.nosip, kp.kelompokpasien 
             from strukorder_t st
             inner join pasien_m pm2 on pm2.id = st.nocmfk
             inner join jeniskelamin_m jm on jm.id = pm2.objectjeniskelaminfk
@@ -1214,7 +1214,7 @@ class ReportController extends ApiController{
             // $raw->umur = $this->getAge($raw->tgllahir ,date('Y-m-d'));
         }else if (empty($raw)){
             $raw = collect(DB::select("
-                select pm2.nocm ,to_char(pm2.tgllahir,'dd-mm-yyyy') as tgllahir,age(pm2.tgllahir) as umur ,jm.jeniskelamin ,pm2.namapasien ,pm3.namalengkap, rm.namaruangan ruangantujuan, to_char(s.tglresep ,'dd-mm-yyyy MM:ss') as tglorder,pm3.nosip, kp.kelompokpasien, ra.namaruangan ruanganasal, pm2.alergi
+                select pm2.nocm ,to_char(pm2.tgllahir,'dd-mm-yyyy') as tgllahir,age(pm2.tgllahir) as umur ,jm.jeniskelamin ,pm2.namapasien ,pm3.namalengkap, rm.namaruangan ruangantujuan, to_char(s.tglresep ,'dd-mm-yyyy HH:MM:ss') as tglorder,pm3.nosip, kp.kelompokpasien, ra.namaruangan ruanganasal, pm2.alergi
                 from strukresep_t s
                 inner join antrianpasiendiperiksa_t at2 on at2.norec = s.pasienfk 
                 inner join pasiendaftar_t pt on pt.norec = at2.noregistrasifk 
@@ -4160,7 +4160,13 @@ class ReportController extends ApiController{
 
         $subkegiatan = DB::select(DB::raw("select * from kegiatananggaran_m where id = ".$subk));
 
-        $data = DB::select(DB::raw("select ma.kodemataanggaran, ma.namamataanggaran, sum(kb.subtotal) jumlahanggaran,
+        $data = DB::select(DB::raw("select ma.kodemataanggaran, ma.namamataanggaran
+        , split_part(ma.kodemataanggaran, '.', 1) as subkodepertama
+        , split_part(ma.kodemataanggaran, '.', 2) as subkodekedua
+        , case when split_part(ma.kodemataanggaran, '.', 3) = '' then '0' else split_part(ma.kodemataanggaran, '.', 3)::int4 end as subkodeketiga
+        , case when split_part(ma.kodemataanggaran, '.', 4) = '' then '0' else split_part(ma.kodemataanggaran, '.', 4)::int4 end as subkodekeempat
+        , case when split_part(ma.kodemataanggaran, '.', 5) = '' then '0' else split_part(ma.kodemataanggaran, '.', 5)::int4 end as subkodekelima,
+                sum(kb.subtotal) jumlahanggaran,
                 x.totalbelanja jumlahspj, y.jumlah jumlahpanjar,
                 x.totalbelanja + y.jumlah as subtotal, round(cast(((x.totalbelanja + y.jumlah)/sum(kb.subtotal))*100 as numeric), 2) as persentase,  
                 sum(kb.subtotal) - (coalesce(x.totalbelanja,0) + coalesce(y.jumlah,0)) sisaanggaran
@@ -4198,7 +4204,8 @@ class ReportController extends ApiController{
                         and ka.kdprofile = 30 and ka.statusenabled = true
                         $qsubsubkegiatan
                         $qtahunka
-                group by ma.kodemataanggaran, ma.namamataanggaran, x.totalbelanja, y.jumlah        
+                group by ma.kodemataanggaran, ma.namamataanggaran, x.totalbelanja, y.jumlah  
+                order by subkodepertama asc, subkodekedua asc, subkodeketiga asc, subkodekeempat asc, subkodekelima asc      
         "));
 
         $pageWidth = 950;

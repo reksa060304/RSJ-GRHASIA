@@ -51,6 +51,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.semuaanggaran = false
             $scope.disidpegawai = false
             $scope.dispptkspj = false
+            $scope.settingaja = false
+            $scope.mataanggaranaja = false
+            $scope.mataanggaranpermenaja = false
+            $scope.rbaaja = false
+            $scope.angkasaja = false
             $scope.hidemap=true
 
             $scope.rcn = {};
@@ -199,6 +204,21 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     $scope.semuaanggaran = true
                 } else if($state.params.parameter == '44444'){
                     $scope.spjajas = true
+                } else if($state.params.parameter == '56565'){
+                    $scope.settingaja = true
+                    $scope.semuaanggaran = true
+                } else if($state.params.parameter == '78787'){
+                    $scope.mataanggaranaja = true
+                    $scope.semuaanggaran = true
+                } else if($state.params.parameter == '67676'){
+                    $scope.mataanggaranpermenaja = true
+                    $scope.semuaanggaran = true
+                } else if($state.params.parameter == '12121'){
+                    $scope.rbaaja = true
+                    $scope.semuaanggaran = true
+                } else if($state.params.parameter == '23232'){
+                    $scope.angkasaja = true
+                    $scope.semuaanggaran = true
                 }
                 //console.log($scope.hidespj)
                 // medifirstService.get("perencanaan/get-total-mata-anggaran").then(function (e) {
@@ -296,7 +316,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     })
 
                     var kegiatanGrid = $("#kegGrid").data("kendoGrid"); // get the grid widget
-                    if($scope.idpegawailogin != ''){
+                    console.log($scope.idpegawailogin)
+                    console.log(kegiatanGrid)
+                    if($scope.idpegawailogin != '' && kegiatanGrid != null){
                         kegiatanGrid.hideColumn(7);
                     }
                     
@@ -3045,6 +3067,21 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         $scope.semuaanggaran = true
                     } else if($state.params.parameter == '44444'){
                         $scope.spjajas = true
+                    } else if($state.params.parameter == '56565'){
+                        $scope.settingaja = true
+                        $scope.semuaanggaran = true
+                    } else if($state.params.parameter == '78787'){
+                        $scope.mataanggaranaja = true
+                        $scope.semuaanggaran = true
+                    } else if($state.params.parameter == '67676'){
+                        $scope.mataanggaranpermenaja = true
+                        $scope.semuaanggaran = true
+                    } else if($state.params.parameter == '12121'){
+                        $scope.rbaaja = true
+                        $scope.semuaanggaran = true
+                    } else if($state.params.parameter == '23232'){
+                        $scope.angkasaja = true
+                        $scope.semuaanggaran = true
                     }
 
                     medifirstService.get("perencanaan/get-total-mata-anggaran?tahun="+moment($scope.item.tahunkas).format('YYYY')+"&tahap="+$scope.item.searchtahap.id+"&idpegawai="+idpegawai).then(function (e) {
@@ -3147,6 +3184,21 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         $scope.semuaanggaran = true
                     } else if($state.params.parameter == '44444'){
                         $scope.spjajas = true
+                    } else if($state.params.parameter == '56565'){
+                        $scope.settingaja = true
+                        $scope.semuaanggaran = true
+                    } else if($state.params.parameter == '78787'){
+                        $scope.mataanggaranaja = true
+                        $scope.semuaanggaran = true
+                    } else if($state.params.parameter == '67676'){
+                        $scope.mataanggaranpermenaja = true
+                        $scope.semuaanggaran = true
+                    } else if($state.params.parameter == '12121'){
+                        $scope.rbaaja = true
+                        $scope.semuaanggaran = true
+                    } else if($state.params.parameter == '23232'){
+                        $scope.angkasaja = true
+                        $scope.semuaanggaran = true
                     }
 
                     medifirstService.get("perencanaan/get-total-mata-anggaran?tahun="+moment($scope.item.thnAnggaran).format('YYYY')+"&tahap="+$scope.item.tahapdetail.id+"&idpegawai="+idpegawai+"&cek=" + $scope.item.isCekAdaAnggaranSaja+"&noreckegiatan=" + $scope.idkegiatananggaran).then(function (e) {
@@ -6550,7 +6602,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     $scope.selectedData2 = $scope.dataSourcePanjarDipilih.options.data
                     console.log($scope.selectedData2)
                 }
-
+            
                 console.log($scope.selectedData2)
                 
                 var dataItem = this.dataItem($(e.currentTarget).closest("tr"));

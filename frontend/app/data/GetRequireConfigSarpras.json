@@ -1203,6 +1203,26 @@
             "urlDep": "module/Perencanaan/SemuaAnggaranCtrl"
         },
         {
+            "nameDep": "SettingRBACtrl",
+            "urlDep": "module/Perencanaan/SettingRBACtrl"
+        },
+        {
+            "nameDep": "MataAnggaranRBACtrl",
+            "urlDep": "module/Perencanaan/MataAnggaranRBACtrl"
+        },
+        {
+            "nameDep": "MataAnggaranPermenRBACtrl",
+            "urlDep": "module/Perencanaan/MataAnggaranPermenRBACtrl"
+        },
+        {
+            "nameDep": "EntryRBACtrl",
+            "urlDep": "module/Perencanaan/EntryRBACtrl"
+        },
+        {
+            "nameDep": "EntryAnggaranKasCtrl",
+            "urlDep": "module/Perencanaan/EntryAnggaranKasCtrl"
+        },
+        {
             "nameDep": "AnggaranKeuanganCtrl",
             "urlDep": "module/Perencanaan/AnggaranKeuanganCtrl"
         },
