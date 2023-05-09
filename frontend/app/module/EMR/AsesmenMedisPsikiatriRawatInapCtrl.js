@@ -1265,16 +1265,20 @@ define(['initialize'], function (initialize) {
                     "id": 9,
                     "nama": "I. Gangguan Memori : ",
                     "detail": [
-                        {"id": 120235, "nama": "Ada", "type": "textbox6"},
+                        {"id": 119998, "nama": "Ada", "type": "checkbox12"},
                         {"id": 120236, "nama": "Tidak ada", "type": "checkbox6"},
+                        {"id": 120235, "nama": "", "type": "textbox6"},
+                        
                     ]
                 },
                 {
                     "id": 10,
                     "nama": "J. Gangguan Intelegensi : ",
                     "detail": [
-                        {"id": 120237, "nama": "Ada", "type": "textbox6"},
+                        {"id": 119999, "nama": "Ada", "type": "checkbox12"},
                         {"id": 120238, "nama": "Tidak ada", "type": "checkbox6"},
+                        {"id": 120237, "nama": "", "type": "textbox6"},
+                        
                     ]
                 },
                 {
@@ -1488,6 +1492,9 @@ define(['initialize'], function (initialize) {
                     console.log(datas.length);
                     if (datas.length > 0) {
                     $scope.isRouteLoading = false
+                    medifirstService.getPart('emr/get-datacombo-part-pegawai', true, true, 20).then(function (data) {
+                        $scope.listPegawai = data
+            })
                         medifirstService.get("emr/get-emr-transaksi-detail?noemr=" + nomorEMR + "&emrfk=" + $scope.cc.emrfk, true).then(function (dat) {
                             $scope.item.obj = []
                             $scope.item.obj2 = []
@@ -1509,6 +1516,10 @@ define(['initialize'], function (initialize) {
                             $scope.item.obj[120291] = new Date($scope.now)
 
                             $scope.item.obj[120295] = {
+                                value: medifirstService.getPegawaiLogin().id,
+                                text: medifirstService.getPegawaiLogin().namaLengkap
+                            }
+                            $scope.item.obj[120290] = {
                                 value: medifirstService.getPegawaiLogin().id,
                                 text: medifirstService.getPegawaiLogin().namaLengkap
                             }
@@ -1587,7 +1598,18 @@ define(['initialize'], function (initialize) {
                                             }
                                         }
                                     }
+                                    if (dataLoad[i].type == "combobox6right") {
+                                        var str = dataLoad[i].value
+                                        if (str != undefined) {
+                                            var res = str.split("~");
+                                            $scope.item.obj[dataLoad[i].emrdfk] = {
+                                                value: res[0],
+                                                text: res[1]
+                                            }
+                                        }
+                                    }
                                 }
+                                
                             }
                         })
                     } else {
