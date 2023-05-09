@@ -910,6 +910,10 @@ define(['initialize'], function (initialize) {
                 })
             }
             function editRO(e) {
+                medifirstService.getPart('emr/get-datacombo-part-pegawai', true, true, 20).then(function (data) {
+                    $scope.listPegawai = data
+
+                })
                 e.preventDefault();
                 var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
                 if (dataItem == undefined) {
@@ -1140,7 +1144,7 @@ define(['initialize'], function (initialize) {
                     for (var i = dataRO.length - 1; i >= 0; i--) {
                         if (dataRO[i].nomorro == $scope.noRO) {
                             data.norec = $scope.norecRO
-                            data.nomorro = nomorRO
+                            data.nomorro = $scope.noRO
                             data.tanggal = moment($scope.itemd.tanggalRO).format('YYYY-MM-DD')
                             data.namaruangan = $scope.itemd.namaruangan.namaruangan
                             data.objectruanganfk = $scope.itemd.namaruangan.id
