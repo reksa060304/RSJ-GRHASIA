@@ -1176,14 +1176,15 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         },
                         {
                             field: "satuanstandar",
-                            title: "Dosis",
+                            title: "Sediaan",
                             width: "100px"
                         },
                         {
                             field: "dosis",
-                            title: "Sediaan",
+                            title: "Dosis",
                             width: "100px"
                         },
+                        
                         {
                             field: "jumlah",
                             title: "Jumlah",
