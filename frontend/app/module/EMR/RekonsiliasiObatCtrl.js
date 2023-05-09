@@ -413,7 +413,6 @@ define(['initialize'], function (initialize) {
 
             }
             $scope.getSkor = function (stat) {
-
                 var arrobj = Object.keys($scope.item.obj)
                 var arrSave = []
                 for (var i = arrobj.length - 1; i >= 0; i--) {
@@ -560,7 +559,7 @@ define(['initialize'], function (initialize) {
             }
 
             $scope.Save = function () {
-
+                $scope.tombolSimpanVis = false
                 var arrobj = Object.keys($scope.item.obj)
                 var arrSave = []
                 for (var i = arrobj.length - 1; i >= 0; i--) {
@@ -592,6 +591,8 @@ define(['initialize'], function (initialize) {
                     }
                     medifirstService.post('farmasi/save-rekonsiliasi-obat', objSaveRO).then(function(data){
                         console.log(data);
+                        $scope.tombolSimpanVis = true
+
                     })
 
                 });
