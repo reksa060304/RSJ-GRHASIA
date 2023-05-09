@@ -8574,4 +8574,53 @@ public function loadComboRincian(Request $request)
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
+    public function deleteKegiatanAnggaranCentang(Request $request) {
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        try{
+            foreach ($request['data'] as $req) {
+                $MA= KegiatanAnggaran::where('id',$req['id'])
+                    ->where('kdprofile', $idProfile)
+                    ->first();
+                $MA->statusenabled = false;
+                $MA->save();
+
+            
+
+                if($req['div'] == 4){
+
+                    $data = \DB::table('keteranganbelanja_t')->where('objectkegiatanfk',$req['id'])->update([
+                        'statusenabled'=> false
+                    ]);
+                }
+            }
+
+           $transStatus = 'true';
+       } catch (\Exception $e) {
+            $transStatus = 'false';
+       }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Hapus Berhasil";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'result' => $MA,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Hapus Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'line'=> $e->getLine(),
+                'message'=> $e->getMessage(),
+                'result' => $MA,
+                'as' => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
 }

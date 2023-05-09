@@ -25,6 +25,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.konsolidasi = false;
             $scope.diskonsolidasi5 = true
             var DataKegiatan= [];
+            $scope.selectedData2 = []
             var DataMataAnggaran= [];
             var DataMataAnggaranCombo= [];
             var DataTotalMataAnggaran = [];
@@ -312,6 +313,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     
                     medifirstService.get("perencanaan/get-data-combo?tahun="+moment($scope.item.tahun).format('YYYY')+"&idpegawai=" + idpegawai + "&tahapaktif=" + $scope.item.searchtahapkeg.id + "&div=" + div+"&lockdiv=true").then(function (e) {
                         DataKegiatan = e.data.kegiatan
+                        for (let i = 0; i < DataKegiatan.length; i++) {
+                            DataKegiatan[i].statCheckbox = false
+                        }
                         $scope.dataSourceKegiatan = e.data.kegiatan
                     })
 
@@ -694,6 +698,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                         medifirstService.get("perencanaan/get-data-combo?tahun="+thn+"&idpegawai=" + $scope.idpegawailogin + "&tahapaktif=" + thp + "&div=" + div).then(function (e) {
                             DataKegiatan = e.data.kegiatan
+                            for (let i = 0; i < DataKegiatan.length; i++) {
+                                DataKegiatan[i].statCheckbox = false
+                            }
                             $scope.dataSourceKegiatan = e.data.kegiatan
                         })
                     }, function (error) {
@@ -1440,12 +1447,17 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     {
                         name: "add", 
                         text: "Tambah",
-                        template: '<div class="grid_2"><button ng-hide="disidpegawai" ng-click="Tambah()" class="k-button k-button-icontext k-grid-upload" href="\\#"><span class="k-icon k-i-plus"></span>Tambah</button></div>'                    
+                        template: '<div class="grid_1"><button ng-hide="disidpegawai" ng-click="Tambah()" class="k-button k-button-icontext k-grid-upload" href="\\#"><span class="k-icon k-i-plus"></span>Tambah</button></div>'                    
+                    },
+                    {
+                        name: "add",
+                        text: "Hapus yang dicentang",
+                        template: '<div class="grid_2"><button ng-hide="disidpegawai" ng-click="hapusCentang()" class="k-button k-button-icontext k-grid-upload" href="\\#"><span class="k-icon k-i-plus"></span>Hapus yang dicentang</button></div>'
                     },
                     {
                         name: "ads", 
                         text: "asd",
-                        template: '<div class="grid_6"></div>'
+                        template: '<div class="grid_5"></div>'
                     },
                     {
                         name: "src", 
@@ -1469,6 +1481,15 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     ],
                        title: "",
                        width: "130px",
+                },
+                {
+                    "title": "#",
+                    template: "# if (statCheckbox) { #" +
+                        "<input type='checkbox' class='checkbox' ng-click='selectRow($event)' checked />" +
+                        "# } else { #" +
+                        "<input type='checkbox' class='checkbox' ng-click='selectRow($event)' />" +
+                        "# } #",
+                    width: "30px"
                 },
                 // {
                 //     "field": "id",
@@ -2538,6 +2559,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                     medifirstService.get("perencanaan/get-data-combo?tahun="+thn+"&idpegawai=" + $scope.idpegawailogin + "&tahapaktif=" + thp + "&div=" + div).then(function (e) {
                         DataKegiatan = e.data.kegiatan
+                        for (let i = 0; i < DataKegiatan.length; i++) {
+                            DataKegiatan[i].statCheckbox = false
+                        }
                         $scope.dataSourceKegiatan = e.data.kegiatan
                     })
                     $scope.item.searchdivkeg = { id: 4, div: "Sub Sub Kegiatan" }
@@ -3639,6 +3663,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                         medifirstService.get("perencanaan/get-data-combo?tahun="+thn+"&idpegawai=" + $scope.idpegawailogin + "&tahapaktif=" + thp + "&div=" + div).then(function (e) {
                             DataKegiatan = e.data.kegiatan
+                            for (let i = 0; i < DataKegiatan.length; i++) {
+                                DataKegiatan[i].statCheckbox = false
+                            }
                             $scope.dataSourceKegiatan = e.data.kegiatan
                         })
                     $scope.popupProgram.center().close()
@@ -3696,6 +3723,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                         medifirstService.get("perencanaan/get-data-combo?tahun="+thn+"&idpegawai=" + $scope.idpegawailogin + "&tahapaktif=" + thp + "&div=" + div).then(function (e) {
                             DataKegiatan = e.data.kegiatan
+                            for (let i = 0; i < DataKegiatan.length; i++) {
+                                DataKegiatan[i].statCheckbox = false
+                            }
                             $scope.dataSourceKegiatan = e.data.kegiatan
                         })
                     $scope.popupUrusan.center().close()
@@ -3734,6 +3764,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                         medifirstService.get("perencanaan/get-data-combo?tahun="+thn+"&idpegawai=" + $scope.idpegawailogin + "&tahapaktif=" + thp + "&div=" + div).then(function (e) {
                             DataKegiatan = e.data.kegiatan
+                            for (let i = 0; i < DataKegiatan.length; i++) {
+                                DataKegiatan[i].statCheckbox = false
+                            }
                             $scope.dataSourceKegiatan = e.data.kegiatan
                         })
                         $scope.popupProgram.center().close()
@@ -3775,6 +3808,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                         medifirstService.get("perencanaan/get-data-combo?tahun="+thn+"&idpegawai=" + $scope.idpegawailogin + "&tahapaktif=" + thp + "&div=" + div).then(function (e) {
                             DataKegiatan = e.data.kegiatan
+                            for (let i = 0; i < DataKegiatan.length; i++) {
+                                DataKegiatan[i].statCheckbox = false
+                            }
                             $scope.dataSourceKegiatan = e.data.kegiatan
                         })
                         $scope.popupUrusan.center().close()
@@ -3818,6 +3854,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                         medifirstService.get("perencanaan/get-data-combo?tahun="+thn+"&idpegawai=" + $scope.idpegawailogin + "&tahapaktif=" + thp + "&div=" + div).then(function (e) {
                             DataKegiatan = e.data.kegiatan
+                            for (let i = 0; i < DataKegiatan.length; i++) {
+                                DataKegiatan[i].statCheckbox = false
+                            }
                             $scope.dataSourceKegiatan = e.data.kegiatan
                         })
                         $scope.popupSubSubKegiatan.center().close()
@@ -3902,6 +3941,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                         medifirstService.get("perencanaan/get-data-combo?tahun="+thn+"&idpegawai=" + $scope.idpegawailogin + "&tahapaktif=" + thp + "&div=" + div).then(function (e) {
                             DataKegiatan = e.data.kegiatan
+                            for (let i = 0; i < DataKegiatan.length; i++) {
+                                DataKegiatan[i].statCheckbox = false
+                            }
                             $scope.dataSourceKegiatan = e.data.kegiatan
                         })
                     $scope.popupKegiatan.center().close()
@@ -3940,6 +3982,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                         medifirstService.get("perencanaan/get-data-combo?tahun="+thn+"&idpegawai=" + $scope.idpegawailogin + "&tahapaktif=" + thp + "&div=" + div).then(function (e) {
                             DataKegiatan = e.data.kegiatan
+                            for (let i = 0; i < DataKegiatan.length; i++) {
+                                DataKegiatan[i].statCheckbox = false
+                            }
                             $scope.dataSourceKegiatan = e.data.kegiatan
                         })
                         $scope.popupKegiatan.center().close()
@@ -4000,6 +4045,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                         medifirstService.get("perencanaan/get-data-combo?tahun="+thn+"&idpegawai=" + $scope.idpegawailogin + "&tahapaktif=" + thp + "&div=" + div).then(function (e) {
                             DataKegiatan = e.data.kegiatan
+                            for (let i = 0; i < DataKegiatan.length; i++) {
+                                DataKegiatan[i].statCheckbox = false
+                            }
                             $scope.dataSourceKegiatan = e.data.kegiatan
                         })
                     $scope.popupSubKegiatan.center().close()
@@ -4038,6 +4086,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                         medifirstService.get("perencanaan/get-data-combo?tahun="+thn+"&idpegawai=" + $scope.idpegawailogin + "&tahapaktif=" + thp + "&div=" + div).then(function (e) {
                             DataKegiatan = e.data.kegiatan
+                            for (let i = 0; i < DataKegiatan.length; i++) {
+                                DataKegiatan[i].statCheckbox = false
+                            }
                             $scope.dataSourceKegiatan = e.data.kegiatan
                         })
                         $scope.popupSubKegiatan.center().close()
@@ -4124,6 +4175,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                     medifirstService.get("perencanaan/get-data-combo?tahun="+thn+"&idpegawai=" + $scope.idpegawailogin + "&tahapaktif=" + thp + "&div=" + div).then(function (e) {
                         DataKegiatan = e.data.kegiatan
+                        for (let i = 0; i < DataKegiatan.length; i++) {
+                            DataKegiatan[i].statCheckbox = false
+                        }
                         $scope.dataSourceKegiatan = e.data.kegiatan
                     })
                     
@@ -5847,6 +5901,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                 medifirstService.get("perencanaan/get-data-combo?tahun="+thn+"&idpegawai=" + $scope.idpegawailogin + "&tahapaktif=" + thp + "&div=" + div).then(function (e) {
                     DataKegiatan = e.data.kegiatan
+                    for (let i = 0; i < DataKegiatan.length; i++) {
+                        DataKegiatan[i].statCheckbox = false
+                    }
                     $scope.dataSourceKegiatan = e.data.kegiatan
                 })
             }
@@ -7424,6 +7481,85 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.isRouteLoading = true;
                 loadDataGrid()
             }
+            $scope.hapusCentang = function () {
+                var confirm = $mdDialog.confirm()
+                    .title('Informasi')
+                    .htmlContent("Apakah anda yakin ingin menghapus Kegiatan yang dicentang?")
+                    .ariaLabel('Lucky day')
+                    .cancel('Batal')
+                    .ok('Ok');
+                $mdDialog.show(confirm).then(function () {
+                    var objSave = {
+                        data: $scope.selectedData2,
+                        div: $scope.item.div.id
+                    }
+                    medifirstService.post('perencanaan/delete-kegiatan-anggaran-centang', objSave).then(function (e) {
+                        var div = ''
+                        if ($scope.item.searchdivkeg != undefined) {
+                            div = $scope.item.searchdivkeg.id
+                        }
+
+                        var thn = ''
+                        if ($scope.item.tahun != undefined) {
+                            thn = moment($scope.item.tahun).format('YYYY')
+                        }
+
+                        var thp = ''
+                        if ($scope.item.searchtahapkeg != undefined) {
+                            thp = $scope.item.searchtahapkeg.id
+                        }
+
+                        medifirstService.get("perencanaan/get-data-combo?tahun=" + thn + "&idpegawai=" + $scope.idpegawailogin + "&tahapaktif=" + thp + "&div=" + div).then(function (e) {
+                            DataKegiatan = e.data.kegiatan
+                            for (let i = 0; i < DataKegiatan.length; i++) {
+                                DataKegiatan[i].statCheckbox = false
+                            }
+                            $scope.dataSourceKegiatan = e.data.kegiatan
+                        })
+                    }, function (error) {
+
+                    })
+
+                })
+                
+            }
+            $scope.selectRow = function (e) {
+                var element = $(e.currentTarget);
+                var checked = element.is(':checked'),
+                    row = element.closest('tr'),
+                    grid = $("#kegGrid").data("kendoGrid"),
+                    // grid = $("#grid").data("kendoGrid"),
+                    dataItem = grid.dataItem(row);
+                console.log(dataItem);
+                if (checked) {
+                    dataItem.statCheckbox = true;
+                    for (var i = 0; i < $scope.selectedData2.length; i++)
+                        if ($scope.selectedData2[i].kode == dataItem.kode) {
+                            $scope.selectedData2.splice(i, 1);
+                            break;
+                        }
+                    $scope.selectedData2.push(dataItem);
+                    row.addClass("k-state-selected");
+                } else {
+                    dataItem.statCheckbox = false;
+                    for (var i = 0; i < $scope.selectedData2.length; i++)
+                        if ($scope.selectedData2[i].kode == dataItem.kode) {
+                            $scope.selectedData2.splice(i, 1);
+                            break;
+                        }
+                    row.removeClass("k-state-selected");
+                }
+                console.log($scope.selectedData2);
+            }
+
+
+
+
+
+
+
+
+
 
 
 
