@@ -1853,6 +1853,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     "title": "Uraian Panjar",
                 },
                 {
+                    "field": "subsubkegiatan",
+                    "title": "Sub Sub Kegiatan",
+                },
+                {
                     "field": "tglpanjar",
                     "title": "Tanggal",
                 },
