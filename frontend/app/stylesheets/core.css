@@ -4256,7 +4256,7 @@ min-width: 20px;}
   height: 2.13em;
   color: white;
   cursor: pointer; 
-  font-family: 'Comfortaa', cursive, 'OpenSans-Regular';
+  font-family: 'Arial', cursive, 'OpenSans-Regular';
 }
   .btnTemplate1:hover {
     background-color: #3178a7;
@@ -4566,7 +4566,7 @@ h6 {
 
   
   body {
-    font-family: 'Comfortaa', cursive, 'OpenSans-Regular';
+    font-family: 'Arial', cursive, 'OpenSans-Regular';
     /* color: #777777; */
     -webkit-font-smoothing: antialiased;
     margin: 0;
@@ -4590,7 +4590,9 @@ h6 {
   .title {
     display: block;
     font-size: 24pt !important;
-    font-family: 'Comfortaa', cursive, 'OpenSans-Regular'; 
+    font-family: 'Arial',
+    cursive,
+    'OpenSans-Regular';
   }
 
 
