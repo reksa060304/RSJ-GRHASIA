@@ -11220,6 +11220,7 @@ class EMRController  extends ApiController
         ->select(DB::raw("case when ra.objectprodukfk is not null then pr.namaproduk else ra.obatlain end as namaproduk,ru.namaruangan,pg.namalengkap, ra.*"))
         ->where('ra.kdprofile', $kdProfile)->where('ra.statusenabled', true)
         ->where('ra.noemr', $request['noemr'])
+        ->orderBy('ra.tanggal','asc')
         // ->where('ra.noregistrasi', $request['noregistrasi'])
         ->get();
         
