@@ -1980,6 +1980,20 @@ console.log(jawab)
                 $scope.item.obj = []
                 $scope.item.obj2 = []
                 $scope.item.obj[116062] = $scope.now
+                let pegawai = JSON.parse(localStorage.getItem('pegawai'))
+                if(pegawai.jenisPegawai.jenispegawai == 'Dokter'){
+                    $scope.item.obj[310286] = {
+                        value: medifirstService.getPegawaiLogin().id,
+                        text: medifirstService.getPegawaiLogin().namaLengkap
+                    }
+                }
+                if(pegawai.jenisPegawai.jenispegawai == 'Perawat'){
+                    $scope.item.obj[310296] = {
+                        value: medifirstService.getPegawaiLogin().id,
+                        text: medifirstService.getPegawaiLogin().namaLengkap
+                    }
+                }
+
                 $scope.item.obj[116068] = {
                     text: $scope.cc.namaruangan,
                     value: $scope.cc.objectruanganfk
@@ -1995,14 +2009,14 @@ console.log(jawab)
                 $scope.item.obj[116222] = true
 
                 $scope.item.obj[310297] = moment($scope.now).format('YYYY-MM-DD HH:mm')
-                $scope.item.obj[310296] = {
-                    value: medifirstService.getPegawaiLogin().id,
-                    text: medifirstService.getPegawaiLogin().namaLengkap
-                }
-                $scope.item.obj[310286] = {
-                    value: medifirstService.getPegawaiLogin().id,
-                    text: medifirstService.getPegawaiLogin().namaLengkap
-                }
+                // $scope.item.obj[310296] = {
+                //     value: medifirstService.getPegawaiLogin().id,
+                //     text: medifirstService.getPegawaiLogin().namaLengkap
+                // }
+                // $scope.item.obj[310286] = {
+                //     value: medifirstService.getPegawaiLogin().id,
+                //     text: medifirstService.getPegawaiLogin().namaLengkap
+                // }
 
                 // $scope.item.obj[111056]=$scope.now
                 // $scope.item.obj[14563]={ value: $scope.cc.iddpjp, text: $scope.cc.dokterdpjp }

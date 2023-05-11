@@ -111,6 +111,16 @@
 			k-pageable="'true'"
 			k-sortable="'true'"
 			k-ng-model="dataPasienSelected">
+				<div k-detail-template>
+					<kendo-tabstrip>
+						<div>
+							<div id="kGridDetail" kendo-grid k-options="data2(dataItem)" k-sortable="'true'" k-selectable="'row'"
+								k-ng-model="dataSelectedResepDetail" ng-click="klikDetail(dataSelectedResepDetail)">
+							</div>
+						</div>
+					</kendo-tabstrip>
+				</div>
+			</div>
 		</div>
 	</div>
 	<div class="clear"></div>

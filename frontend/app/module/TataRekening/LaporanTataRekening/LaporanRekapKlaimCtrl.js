@@ -319,6 +319,124 @@ define(['initialize'], function (initialize) {
 				}
 
 			}
+			$scope.data2 = function (dataItem) {
+				// debugger
+				for (var i = 0; i < dataItem.details.length; i++) {
+					dataItem.details[i].no = i + 1
+
+				}
+				return {
+					dataSource: new kendo.data.DataSource({
+						data: dataItem.details,
+						schema: {
+							model: {
+								fields: {
+									totalsetujui: {
+										type: "number"
+									},
+									totalrajal: {
+										type: "number"
+									},
+									totalranap: {
+										type: "number"
+									},
+									totalobat: {
+										type: "number"
+									},
+								}
+							},
+							aggregate: [{
+									field: 'totalsetujui',
+									aggregate: 'sum'
+								},
+								{
+									field: 'totalrajal',
+									aggregate: 'sum'
+								},
+								{
+									field: 'totalobat',
+									aggregate: 'sum'
+								},
+								{
+									field: 'totalranap',
+									aggregate: 'sum'
+								},
+							]
+						}
+					}),
+					toolbar: [
+							"excel",
+						],
+						excel: {
+							fileName: "DetailKlaimPasien.xlsx",
+							allPages: true,
+						},
+						excelExport: function (e) {
+							var sheet = e.workbook.sheets[0];
+							sheet.frozenRows = 2;
+							sheet.mergedCells = ["A1:E1"];
+							sheet.name = "Report";
+
+							var myHeaders = [{
+								value: "Detail Klaim Pasien",
+								fontSize: 20,
+								textAlign: "center",
+								background: "#ffffff",
+							}];
+
+							sheet.rows.splice(0, 0, {
+								cells: myHeaders,
+								type: "header",
+								height: 70
+							});
+						},
+					columns: [
+						{
+							field: "no",
+							title: "No",
+							width: "100px",
+						},
+						{
+							field: "tglpulang",
+							title: "Tanggal Pulang",
+							width: "200px"
+						},
+						{
+							field: "totalsetujui",
+							title: "Klaim",
+							width: "100px",
+                        template: "<span class='style-right'>{{formatRupiah('#: totalsetujui #', '')}}</span>",
+
+						},
+						{
+							field: "kelompokpasien",
+							title: "Cara Bayar",
+							width: "100px"
+						},
+						{
+							field: "totalrajal",
+							title: "Rajal",
+							width: "100px",
+                        	template: "<span class='style-right'>{{formatRupiah('#: totalrajal #', '')}}</span>",
+
+						},
+						{
+							field: "totalranap",
+							title: "Ranap",
+							width: "100px",
+                        template: "<span class='style-right'>{{formatRupiah('#: totalranap #', '')}}</span>",
+
+						},
+						{
+							field: "totalobat",
+							title: "Obat",
+							width: "100px",
+                        template: "<span class='style-right'>{{formatRupiah('#: totalobat #', '')}}</span>",
+
+						}
+					]
+				}
+			};
 
 		}
 	]);

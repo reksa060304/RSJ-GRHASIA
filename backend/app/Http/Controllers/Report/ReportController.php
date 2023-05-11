@@ -1184,7 +1184,7 @@ class ReportController extends ApiController{
             "));
         $raw = collect(DB::select("
             select pm2.nocm ,to_char(pm2.tgllahir,'dd-mm-yyyy') as tgllahir,age(pm2.tgllahir) as umur ,jm.jeniskelamin ,pm2.namapasien ,pm3.namalengkap, rm.namaruangan ruanganasal, ra.namaruangan ruangantujuan, pm2.alergi, 
-            to_char(st.tglorder,'dd-mm-yyyy MM:ss') as tglorder,pm3.nosip, kp.kelompokpasien 
+            to_char(st.tglorder,'dd-mm-yyyy HH:MM:ss') as tglorder,pm3.nosip, kp.kelompokpasien 
             from strukorder_t st
             inner join pasien_m pm2 on pm2.id = st.nocmfk
             inner join jeniskelamin_m jm on jm.id = pm2.objectjeniskelaminfk
@@ -1214,7 +1214,7 @@ class ReportController extends ApiController{
             // $raw->umur = $this->getAge($raw->tgllahir ,date('Y-m-d'));
         }else if (empty($raw)){
             $raw = collect(DB::select("
-                select pm2.nocm ,to_char(pm2.tgllahir,'dd-mm-yyyy') as tgllahir,age(pm2.tgllahir) as umur ,jm.jeniskelamin ,pm2.namapasien ,pm3.namalengkap, rm.namaruangan ruangantujuan, to_char(s.tglresep ,'dd-mm-yyyy MM:ss') as tglorder,pm3.nosip, kp.kelompokpasien, ra.namaruangan ruanganasal, pm2.alergi
+                select pm2.nocm ,to_char(pm2.tgllahir,'dd-mm-yyyy') as tgllahir,age(pm2.tgllahir) as umur ,jm.jeniskelamin ,pm2.namapasien ,pm3.namalengkap, rm.namaruangan ruangantujuan, to_char(s.tglresep ,'dd-mm-yyyy HH:MM:ss') as tglorder,pm3.nosip, kp.kelompokpasien, ra.namaruangan ruanganasal, pm2.alergi
                 from strukresep_t s
                 inner join antrianpasiendiperiksa_t at2 on at2.norec = s.pasienfk 
                 inner join pasiendaftar_t pt on pt.norec = at2.noregistrasifk 
@@ -12998,12 +12998,13 @@ public function suratBuktiPengembalian(Request $request)
         $noorder = $r['noorder'];
         $norec = $r['norec'];
         $nocm = $r['nocm'];
+        
         $profile = \DB::select(DB::raw("
                 select * from profile_m where id = $kdProfile limit 1
             "));
         $raw = collect(DB::select("
-            select pm2.nocm ,to_char(pm2.tgllahir,'dd-mm-yyyy') as tgllahir,age(pm2.tgllahir) as umur ,jm.jeniskelamin ,pm2.namapasien ,pm3.namalengkap, rm.namaruangan ruanganasal, ra.namaruangan ruangantujuan, pm2.alergi, 
-            to_char(st.tglorder,'dd-mm-yyyy MM:ss') as tglorder,pm3.nosip, kp.kelompokpasien 
+            select pa.nosep, pm2.nocm ,to_char(pm2.tgllahir,'dd-mm-yyyy') as tgllahir,age(pm2.tgllahir) as umur ,jm.jeniskelamin ,pm2.namapasien ,pm3.namalengkap, rm.namaruangan ruanganasal, ra.namaruangan ruangantujuan, pm2.alergi, 
+            to_char(st.tglorder,'dd-mm-yyyy HH:MM:ss') as tglorder,pm3.nosip, kp.kelompokpasien 
             from strukorder_t st
             inner join pasien_m pm2 on pm2.id = st.nocmfk
             inner join jeniskelamin_m jm on jm.id = pm2.objectjeniskelaminfk
@@ -13011,26 +13012,37 @@ public function suratBuktiPengembalian(Request $request)
             inner join ruangan_m rm on rm.id = st.objectruanganfk 
             inner join ruangan_m ra on ra.id = st.objectruangantujuanfk 
             inner join pasiendaftar_t AS pd ON pd.norec = st.noregistrasifk
+            left join pemakaianasuransi_t pa on pa.noregistrasifk = pd.norec
             left join kelompokpasien_m AS kp ON kp.id = pd.objectkelompokpasienlastfk
             where st.noorder = '$noorder'
         "))->first();
         $detel = [];
         $details = \DB::select(DB::raw("
-                select (((CASE WHEN pt.hargajual IS NULL THEN	0 ELSE pt.hargajual END - CASE WHEN pt.hargadiscount IS NULL THEN
-		        0 ELSE pt.hargadiscount END) * pt.jumlah) + CASE WHEN pt.jasa IS NULL THEN	0 ELSE	pt.jasa	END	) as harga, pt.rke,pt.dosis, pt.jumlah , pt.aturanpakai , pm.namaproduk, pm.kekuatan, pt.keteranganpakai from pelayananpasien_t pt 
+                SELECT x.* FROM (select distinct row_number()over(partition by pt.rke, pm.namaproduk ORDER BY pt.rke asc)as no, pt.jeniskemasanfk, jr.jenisracikan, pt.rke,pt.dosis, pt.jumlah , pt.aturanpakai , pm.namaproduk, pm.kekuatan, pt.keteranganpakai,
+                op.keteranganpakai as catatandokter, op.satuandosis, pt.hargasatuan,(((CASE WHEN pt.hargajual IS NULL THEN	0 ELSE pt.hargajual END - CASE WHEN pt.hargadiscount IS NULL THEN
+		        0 ELSE pt.hargadiscount END) * pt.jumlah) + CASE WHEN pt.jasa IS NULL THEN	0 ELSE	pt.jasa	END	) as harga
+                from pelayananpasien_t pt
                 inner join produk_m pm on pm.id = pt.produkfk
-                where pt.strukresepfk = '$norec'
+                inner join jenisracikan_m jr on jr.id = pt.jenisobatfk
+                inner join strukresep_t as sr on sr.norec = pt.strukresepfk
+                inner join strukorder_t as so on so.norec = sr.orderfk
+                left join orderpelayanan_t as op on op.strukorderfk = so.norec and op.rke = pt.rke 
+                where strukresepfk = '$norec'
                 and pt.isobat = true
-                order by pt.rke asc, pt.keteranganpakai desc
+                order by pt.rke asc, pt.keteranganpakai asc)as x where x.no = 1
             "));
         if(!empty($raw)){
+
             // $raw->umur = $this->getAge($raw->tgllahir ,date('Y-m-d'));
         }else if (empty($raw)){
+
             $raw = collect(DB::select("
-                select pm2.nocm ,to_char(pm2.tgllahir,'dd-mm-yyyy') as tgllahir,age(pm2.tgllahir) as umur ,jm.jeniskelamin ,pm2.namapasien ,pm3.namalengkap, rm.namaruangan ruangantujuan, to_char(s.tglresep ,'dd-mm-yyyy MM:ss') as tglorder,pm3.nosip, kp.kelompokpasien, ra.namaruangan ruanganasal, pm2.alergi
+                select pa.nosep, pm2.nocm ,to_char(pm2.tgllahir,'dd-mm-yyyy') as tgllahir,age(pm2.tgllahir) as umur ,jm.jeniskelamin ,pm2.namapasien ,pm3.namalengkap, rm.namaruangan ruangantujuan, to_char(s.tglresep ,'dd-mm-yyyy HH:MM:ss') as tglorder,pm3.nosip, kp.kelompokpasien, ra.namaruangan ruanganasal, pm2.alergi
                 from strukresep_t s
                 inner join antrianpasiendiperiksa_t at2 on at2.norec = s.pasienfk 
                 inner join pasiendaftar_t pt on pt.norec = at2.noregistrasifk 
+                left join pemakaianasuransi_t pa on pa.noregistrasifk = pt.norec
+
                 inner join pasien_m pm2 on pm2.id = pt.nocmfk 
                 inner join jeniskelamin_m jm on jm.id = pm2.objectjeniskelaminfk
                 inner join pegawai_m pm3 on pm3.id = s.penulisresepfk 
@@ -13038,14 +13050,21 @@ public function suratBuktiPengembalian(Request $request)
                 left join ruangan_m ra on ra.id = at2.objectruanganasalfk 
                 left join kelompokpasien_m AS kp ON kp.id = pt.objectkelompokpasienlastfk
                 where s.norec = '$norec'
+
             "))->first();
             $details = \DB::select(DB::raw("
-                select (((CASE WHEN pt.hargajual IS NULL THEN	0 ELSE pt.hargajual END - CASE WHEN pt.hargadiscount IS NULL THEN
-		        0 ELSE pt.hargadiscount END) * pt.jumlah) + CASE WHEN pt.jasa IS NULL THEN	0 ELSE	pt.jasa	END	) as harga, pt.rke,pt.dosis, pt.jumlah , pt.aturanpakai , pm.namaproduk, pm.kekuatan, pt.keteranganpakai from pelayananpasien_t pt 
+                SELECT x.* FROM (select distinct row_number()over(partition by pt.rke, pm.namaproduk ORDER BY pt.rke asc)as no, pt.jeniskemasanfk, jr.jenisracikan, pt.rke,pt.dosis, pt.jumlah , pt.aturanpakai , pm.namaproduk, pm.kekuatan, pt.keteranganpakai,
+                op.keteranganpakai as catatandokter, op.satuandosis, pt.hargasatuan, (((CASE WHEN pt.hargajual IS NULL THEN	0 ELSE pt.hargajual END - CASE WHEN pt.hargadiscount IS NULL THEN
+		        0 ELSE pt.hargadiscount END) * pt.jumlah) + CASE WHEN pt.jasa IS NULL THEN	0 ELSE	pt.jasa	END	) as harga
+                from pelayananpasien_t pt
                 inner join produk_m pm on pm.id = pt.produkfk
-                where pt.strukresepfk = '$norec'
+                inner join jenisracikan_m jr on jr.id = pt.jenisobatfk
+                inner join strukresep_t as sr on sr.norec = pt.strukresepfk
+                inner join strukorder_t as so on so.norec = sr.orderfk
+                left join orderpelayanan_t as op on op.strukorderfk = so.norec and op.rke = pt.rke 
+                where strukresepfk = '$norec'
                 and pt.isobat = true
-                order by pt.rke asc, pt.keteranganpakai desc
+                order by pt.rke asc, pt.keteranganpakai asc)as x where x.no = 1
             "));
         }else{
             echo 'Data Tidak ada ';
@@ -13066,14 +13085,14 @@ public function suratBuktiPengembalian(Request $request)
             left join skriningfarmasi_t st on st.norec_apd = s.norec
             where s.norec = '$norec'
         "))->first();
-//        dd($raw);
+    //    dd($details);
         $pageWidth = 550;
         //var_dump($skrining);
 
         // return $r['norec'];
-
+        $cetakkin = 1;
         return view('report.apotik.resepdokterharga',
-            compact('raw', 'pageWidth','r','details','profile', 'skrining'));
+            compact('raw', 'pageWidth','r','details','profile', 'skrining','cetakkin'));
     }
 
     public function cetakCM05(Request $request)

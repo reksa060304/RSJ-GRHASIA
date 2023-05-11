@@ -221,7 +221,7 @@
   },
   {
     "name": "ResepElektronik",
-    "url": "/UmVzZXBFbGVrdHJvbmlr=",
+    "url": "/UmVzZXBFbGVrdHJvbmlr=/:noOrder",
     "templateurl": "module/Farmasi/ResepElektronik.html",
     "controller": "ResepElektronikCtrl",
     "deps": [

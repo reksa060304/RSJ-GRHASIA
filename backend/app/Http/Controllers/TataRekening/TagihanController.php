@@ -5573,6 +5573,38 @@ class TagihanController  extends ApiController
         group by tglbayar, kelompokpasien
         order by tglbayar"));
 
+        foreach ($piutang as $p) {
+            $like = '';
+            if($p->kelompokpasien == null){
+                $like = 'is null';
+            }else{
+                $like = "='$p->kelompokpasien'";
+
+            }
+                $details = DB::select(DB::raw("
+                select tglpulang, sum(totalsetujui) totalsetujui, kelompokpasien, sum(totalrajal) totalrajal,
+            sum(totalranap) totalranap, sum(totalobat) totalobat
+            from(
+                select rkb.norec,pd.tglpulang::date, sum(rkb.totalsetujui) totalsetujui, 
+                case when kp.kelompokpasien ilike '%BPJS%' then 'BPJS' else kp.kelompokpasien end as kelompokpasien, 
+                case when ru.objectdepartemenfk <> 16 and rkb.isobat is null then sum(rkb.totalsetujui) else 0 end as totalrajal,
+                case when ru.objectdepartemenfk = 16 and rkb.isobat is null then sum(rkb.totalsetujui) else 0 end as totalranap,
+                case when rkb.isobat = true then sum(rkb.totalsetujui) else 0 end as totalobat
+                from
+                rekapklaimbpjs_t rkb 
+                left join pasiendaftar_t pd on pd.norec = rkb.norecpdfk
+                left join ruangan_m ru on ru.id = pd.objectruanganlastfk
+                left join kelompokpasien_m kp on kp.id = pd.objectkelompokpasienlastfk
+                where rkb.statusenabled = true
+                and rkb.tglbayar::date = '$p->tglbayar' 
+                group by rkb.norec, rkb.isobat, pd.tglpulang::date, kp.kelompokpasien, ru.objectdepartemenfk
+            ) as x
+                    where x.kelompokpasien $like
+            group by tglpulang, kelompokpasien
+            order by tglpulang"));
+            $p->details = $details;
+        }
+        
         $datadata =array(
             'data' =>   $piutang,
         );
@@ -6734,6 +6766,7 @@ class TagihanController  extends ApiController
     $pendidikan = $request['pendidikan'];
     $kecamatan = $request['kecamatan'];
     $kabupaten = $request['kabupaten'];
+    $pekerjaan = $request['pekerjaan'];
     $pardep ="";
     if (isset($dep) && $dep != "" && $dep != "undefined") {
     $pardep = " and ru.objectdepartemenfk = '$dep'";
@@ -6794,8 +6827,14 @@ class TagihanController  extends ApiController
         if (isset($kabupaten) && $kabupaten != "" && $kabupaten != "undefined") {
         $paramkabupaten = ' and alm.objectkotakabupatenfk ='. $kabupaten;
         }
+        $parampekerjaan = ' ';
+        if (isset($pekerjaan) && $pekerjaan != "" && $pekerjaan != "undefined") {
+        $parampekerjaan = ' and ps.objectpekerjaanfk ='. $pekerjaan;
+        }
+
         $data = DB::select(DB::raw("
             SELECT
+            
         ddp.norec,
         CASE 
         WHEN MIN ( rpp.tglmasuk :: DATE ) is null THEN
@@ -6854,6 +6893,7 @@ class TagihanController  extends ApiController
                 INNER JOIN departemen_m dep ON dep.ID = ru.objectdepartemenfk
                 INNER JOIN jenisdiagnosa_m jd ON jd.ID = ddp.objectjenisdiagnosafk
                 LEFT JOIN pendidikan_m pen ON pen.ID = ps.objectpendidikanfk
+                LEFT JOIN pekerjaan_m pen ON pen.ID = ps.objectpekerjaanfk
                 LEFT JOIN alamat_m AS alm ON ps.ID = alm.nocmfk
                 left join registrasipelayananpasien_t rpp on rpp.noregistrasifk = pd.norec
             WHERE
@@ -6872,6 +6912,7 @@ class TagihanController  extends ApiController
             $parampendidikan
             $paramkecamatan
             $paramkabupaten
+            $parampekerjaan
             and pd.tglpulang is not null
 
             GROUP BY

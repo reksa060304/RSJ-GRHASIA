@@ -413,7 +413,6 @@ define(['initialize'], function (initialize) {
 
             }
             $scope.getSkor = function (stat) {
-
                 var arrobj = Object.keys($scope.item.obj)
                 var arrSave = []
                 for (var i = arrobj.length - 1; i >= 0; i--) {
@@ -560,7 +559,7 @@ define(['initialize'], function (initialize) {
             }
 
             $scope.Save = function () {
-
+                $scope.tombolSimpanVis = false
                 var arrobj = Object.keys($scope.item.obj)
                 var arrSave = []
                 for (var i = arrobj.length - 1; i >= 0; i--) {
@@ -592,6 +591,8 @@ define(['initialize'], function (initialize) {
                     }
                     medifirstService.post('farmasi/save-rekonsiliasi-obat', objSaveRO).then(function(data){
                         console.log(data);
+                        $scope.tombolSimpanVis = true
+
                     })
 
                 });
@@ -910,6 +911,10 @@ define(['initialize'], function (initialize) {
                 })
             }
             function editRO(e) {
+                medifirstService.getPart('emr/get-datacombo-part-pegawai', true, true, 20).then(function (data) {
+                    $scope.listPegawai = data
+
+                })
                 e.preventDefault();
                 var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
                 if (dataItem == undefined) {
@@ -1140,7 +1145,7 @@ define(['initialize'], function (initialize) {
                     for (var i = dataRO.length - 1; i >= 0; i--) {
                         if (dataRO[i].nomorro == $scope.noRO) {
                             data.norec = $scope.norecRO
-                            data.nomorro = nomorRO
+                            data.nomorro = $scope.noRO
                             data.tanggal = moment($scope.itemd.tanggalRO).format('YYYY-MM-DD')
                             data.namaruangan = $scope.itemd.namaruangan.namaruangan
                             data.objectruanganfk = $scope.itemd.namaruangan.id

@@ -5563,6 +5563,7 @@ class EMRController  extends ApiController
         $data = $data->where('so.keteranganorder', 'ilike', '%' . 'Order Farmasi' . '%');
         $data = $data->where('so.objectkelompoktransaksifk', 4);
         $data = $data->where('so.statusenabled', true);
+        $data = $data->orderBy('so.tglorder','desc');
         $data = $data->get();
         $status = '';
 
@@ -11219,6 +11220,7 @@ class EMRController  extends ApiController
         ->select(DB::raw("case when ra.objectprodukfk is not null then pr.namaproduk else ra.obatlain end as namaproduk,ru.namaruangan,pg.namalengkap, ra.*"))
         ->where('ra.kdprofile', $kdProfile)->where('ra.statusenabled', true)
         ->where('ra.noemr', $request['noemr'])
+        ->orderBy('ra.tanggal','asc')
         // ->where('ra.noregistrasi', $request['noregistrasi'])
         ->get();
         
@@ -12012,7 +12014,7 @@ class EMRController  extends ApiController
         "))->first();
 
         $resep = collect(DB::select("            
-           SELECT DISTINCT op.rke,
+           SELECT so.noorder,
             'R/ ' || CASE WHEN op.rke IS NULL THEN null ELSE op.rke END 
             || ' ' || pr.namaproduk 
             || ' ' || CASE WHEN op.dosis IS NULL THEN null ELSE op.dosis END 
@@ -12024,11 +12026,11 @@ class EMRController  extends ApiController
             -- 
             AS produk
             FROM strukorder_t AS so
-            inner join antrianpasiendiperiksa_t apd on apd.noregistrasifk = so.noregistrasifk
-            left join orderpelayanan_t as op on op.strukorderfk = so.norec
-            left join strukresep_t sr on sr.orderfk = so.norec
-            left join pelayananpasien_t pp on pp.strukresepfk = sr.norec
-            left join produk_m as pr on pr.id=op.objectprodukfk
+            -- inner join antrianpasiendiperiksa_t apd on apd.noregistrasifk = so.noregistrasifk
+            inner join orderpelayanan_t as op on op.strukorderfk = so.norec
+            -- left join strukresep_t sr on sr.orderfk = so.norec
+            -- left join pelayananpasien_t pp on pp.strukresepfk = sr.norec and pp.produkfk = op.objectprodukfk
+            inner join produk_m as pr on pr.id=op.objectprodukfk
             left join jeniskemasan_m as jk on jk.id=op.jeniskemasanfk
             left join satuanstandar_m as ss on ss.id=op.objectsatuanstandarfk
             left join satuanresep_m as sn on sn.id=op.satuanresepfk
@@ -12037,7 +12039,7 @@ class EMRController  extends ApiController
             WHERE so.kdprofile = $kdProfile AND apd.statusenabled = TRUE and so.statusenabled = TRUE
             AND apd.norec = '$norecApd'
             
-            order by op.rke asc
+            ORDER BY so.noorder asc, op.rke asc
         "));
 
         $dataResep = "";
