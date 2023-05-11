@@ -2732,14 +2732,8 @@ class BendaharaPenerimaanController extends ApiController {
         // konten STS Detail
 
         $data = DB::select(DB::raw("select distinct ru2.objectdepartemenfk objectdepartemenfk2, cb2.id idcarabayar2, kp.id idkelompokpasien, 0 objectkelompoktransaksifk, sbm.norec norecsbm, pp.norec, sc.tglclosing, ru.namaruangan, ru.id idruangan, pr.namaproduk, pr.id idproduk, pp.isobat,
-            round((
-                (
-                        (
-                        CASE WHEN pp.hargajual IS NULL THEN 0 ELSE pp.hargajual end - CASE WHEN pp.hargadiscount IS NULL THEN 0 ELSE pp.hargadiscount END
-                        ) * pp.jumlah
-                )
-                + CASE WHEN pp.jasa IS NULL THEN 0 ELSE pp.jasa END
-            ) )AS totaldibayarclosing,
+            (((CASE WHEN pp.hargajual IS NULL THEN 0 ELSE pp.hargajual END - CASE WHEN pp.hargadiscount IS NULL THEN
+        0 ELSE pp.hargadiscount END) * pp.jumlah) + CASE WHEN pp.jasa IS NULL THEN 0 ELSE pp.jasa END ) AS totaldibayarclosing,
         ru.objectdepartemenfk, sbmcr.objectcarabayarfk, sbm.totaldibayar as totaldibayarsbm, sc.noclosing, sc.tglclosing,
         sck.totaldibayar as totaldibayar,sck.carabayarfk, cb.carabayar, djp.detailjenisproduk, jpr.id as jenisproduk
         
