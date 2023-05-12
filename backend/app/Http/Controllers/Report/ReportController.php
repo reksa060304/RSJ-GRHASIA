@@ -4128,7 +4128,7 @@ class ReportController extends ApiController{
         ) as x group by kode, keterangan, jumlahanggaran, idap, norec
         ) as y group by kode, keterangan, nourut
 
-        order by nourut, kode;        
+        order by nourut, kode, tkode;        
         "));
 
         $pageWidth = 1200;
@@ -4178,6 +4178,7 @@ class ReportController extends ApiController{
                             from mataanggaran_m ma
                             inner join strukrealisasi_t sr on ma.id=sr.objectmataanggaranfk
                             where sr.kdprofile = 30 and sr.statusenabled = true
+                            and sr.objectcarabayarfk = 1
                             $qtahun
                             $qsubsubkegiatansr
                             group by ma.kodemataanggaran, ma.namamataanggaran
@@ -4185,13 +4186,15 @@ class ReportController extends ApiController{
                         left join (
                             select kodemataanggaran, namamataanggaran, sum(jumlah) jumlah
                             from(
-                                select ma.kodemataanggaran, ma.namamataanggaran, pj.jumlah panjar, coalesce(sum(sr.totalbelanja),0) totalbelanja,  coalesce(pj.jumlah - coalesce(sum(sr.totalbelanja),0), 0) as jumlah
-                                from mataanggaran_m ma
-                                left join panjar_t pj on ma.id=pj.objectmataanggaranfk and pj.kdprofile = 30 and pj.statusenabled = true
-                                left join strukrealisasi_t sr on sr.objectpanjarfk = pj.norec and sr.kdprofile = 30 and sr.statusenabled = true
-                                $qtahun
-                                $qsubsubkegiatansr
-                                group by ma.kodemataanggaran, ma.namamataanggaran, pj.jumlah
+                                    select ma.kodemataanggaran, ma.namamataanggaran, pj.jumlah panjar, coalesce(sum(sr.totalbelanja),0) totalbelanja, coalesce(sppj.jumlahpanjar,0) as jumlah
+                                    from mataanggaran_m ma
+                                    left join panjar_t pj on ma.id=pj.objectmataanggaranfk and pj.kdprofile = 30 and pj.statusenabled = true
+                                    left join spjtopanjar_t sppj on sppj.objectpanjarfk=pj.norec and sppj.kdprofile = 30 and sppj.statusenabled = true
+                                    left join strukrealisasi_t sr on sppj.objectspjfk = sr.norec and sr.
+                                    kdprofile = 30 and sr.statusenabled = true
+                                    $qtahun
+                                    $qsubsubkegiatansr
+                                    group by ma.kodemataanggaran, ma.namamataanggaran, sppj.jumlahpanjar, pj.jumlah
                             ) as s group by kodemataanggaran, namamataanggaran
                         ) as y on y.kodemataanggaran = ma.kodemataanggaran
                         left join mataanggaranpermen_m map on map.id = ma.mataanggaranpermenfk
