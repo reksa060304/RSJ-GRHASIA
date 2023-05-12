@@ -12026,7 +12026,7 @@ class EMRController  extends ApiController
             -- 
             AS produk
             FROM strukorder_t AS so
-            -- inner join antrianpasiendiperiksa_t apd on apd.noregistrasifk = so.noregistrasifk
+            inner join antrianpasiendiperiksa_t apd on apd.noregistrasifk = so.noregistrasifk
             inner join orderpelayanan_t as op on op.strukorderfk = so.norec
             -- left join strukresep_t sr on sr.orderfk = so.norec
             -- left join pelayananpasien_t pp on pp.strukresepfk = sr.norec and pp.produkfk = op.objectprodukfk
