@@ -12062,4 +12062,28 @@ class EMRController  extends ApiController
 
         return $this->respond($result);
     }
+    public function cekValidasiEMR(Request $request)
+    {
+        $noemr = '';
+        if(isset($request['noemr'])){
+            $noemr = "and ep.noemr ilike '$request[noemr]'";
+        }
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $data = DB::select(DB::raw("
+        SELECT epd.emrdfk, epd.value as values, ep.noemr, epd.norec, ed.type, epd.pegawaifk FROM emrpasiend_t epd 
+        inner join emrpasien_t ep on ep.noemr = epd.emrpasienfk
+        inner join emrd_t ed on ed.id = epd.emrdfk
+        where epd.statusenabled = true and epd.kdprofile = 30 and ep.statusenabled= true and ep.kdprofile= 30 and ep.noregistrasifk = '$request[noregisrasi]' and epd.emrfk = $request[emrfk] $noemr
+        "));
+        foreach ($data as $d) {
+            
+            if($d->type == "datetime"){
+                $d->values = date("Y-m-d H:i",strtotime($d->values));
+            }
+        }
+        $result = array(
+            'data'=> $data,
+        );
+        return $this->respond($result);
+    }
 }

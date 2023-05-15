@@ -504,7 +504,7 @@ define(['initialize'], function (initialize) {
 				}
 				var skey = "";
 				if ($scope.item.caridata != undefined) {
-					skey = $scope.item.item.caridata
+					skey = $scope.item.caridata
 				}
 				$q.all([
 					medifirstService.get("tatarekening/daftar-piutang-selain-bpjs?"
