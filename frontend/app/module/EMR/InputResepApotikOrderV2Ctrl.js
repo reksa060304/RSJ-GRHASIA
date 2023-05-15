@@ -1,7 +1,7 @@
 define(['initialize', 'Configuration'], function (initialize, config) {
     'use strict';
     initialize.controller('InputResepApotikOrderV2Ctrl', ['$q', '$rootScope', '$scope', 'MedifirstService', '$state', 'CacheHelper', '$mdDialog','DateHelper',
-        function ($q, $rootScope, $scope, medifirstService, $state, cacheHelper, $mdDialog, dateHelper) {
+    function ($q, $rootScope, $scope, medifirstService, $state, cacheHelper, $mdDialog, dateHelper) {
             var norecAPD = $state.params.noRec;
             $scope.item = {};
             
@@ -52,6 +52,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             $scope.item.noRuang = 0;
             $scope.copynoresep = ""
             $scope.rke = ''
+            
             $scope.listJumlah =  [
                 { "jml": 7 },
                 { "jml": 14 },
@@ -671,6 +672,10 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 // }
                 if ($scope.item.jumlah == NaN || $scope.item.jumlah == undefined || $scope.item.jumlah == '') {
                     alert("Jumlah harus di isi!")
+                    return;
+                }
+                if ($scope.item.dosis.includes(",") ) {
+                    toastr.error("Terdapat koma dalam dosis, mohon untuk diganti dengan titik!")
                     return;
                 }
 
@@ -2368,6 +2373,23 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 window.open(config.baseApiBackend + "report/cetak-preview-order?norec_apd=" + norec_apd);
             })
         }
+        
+        // $rootScope.$on('$locationChangeStart', function (event, next, current) {
+        //     if (data2.length > 0) {
+        //         var answer = confirm("Apakah Anda yakin ingin meninggalkan halaman ini tanpa menyimpan perubahan?");
+        //         if (!answer) {
+        //             event.preventDefault();
+        //         }
+        //     }
+        // });
+        // $(window).on("beforeunload", function () {
+        //     if (data2.length > 0) {
+        //         return "Anda yakin meninggalkan laman ini? Perubahan yang Anda lakukan mungkin tidak disimpan.";
+        //     }
+        // });
+        
+        
+        
            //** BATAS SUCI */
         }
     ]);
