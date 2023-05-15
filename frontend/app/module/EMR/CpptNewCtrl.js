@@ -126,132 +126,158 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             var chekedd = false
             // medifirstService.get("emr/get-rekam-medis-dynamic?emrid="+ $scope.cc.emrfk).then(function (e) {
             //   $scope.listItem = e.data.kolom4
-
-            medifirstService.get("emr/get-emr-transaksi-detail?noemr=" + nomorEMR + "&emrfk=" + $scope.cc.emrfk, true).then(function (dat) {
+            transaksiDetail()
+            function transaksiDetail(){
+              medifirstService.get("emr/get-emr-transaksi-detail?noemr=" + nomorEMR + "&emrfk=" + $scope.cc.emrfk, true).then(function (dat) {
                 medifirstService.getPart('emr/get-datacombo-part-pegawai', true, true, 20).then(function (data) {
                   $scope.listPegawai = data
                 })
                 $scope.item.obj = []
                 $scope.item.obj2 = []
                 dataLoad = dat.data.data
-                $scope.item.obj[111468]=$scope.cc.tglregistrasi
-                $scope.item.obj[111469]={ value: $scope.cc.iddpjp, text: $scope.cc.dokterdpjp }
-                $scope.item.obj[111470]={ value: $scope.cc.objectruanganfk, text: $scope.cc.namaruangan }
-                $scope.item.obj[111471]={ value: $scope.cc.objectkelasfk, text: $scope.cc.namakelas }
+                $scope.item.obj[111468] = $scope.cc.tglregistrasi
+                $scope.item.obj[111469] = {
+                  value: $scope.cc.iddpjp,
+                  text: $scope.cc.dokterdpjp
+                }
+                $scope.item.obj[111470] = {
+                  value: $scope.cc.objectruanganfk,
+                  text: $scope.cc.namaruangan
+                }
+                $scope.item.obj[111471] = {
+                  value: $scope.cc.objectkelasfk,
+                  text: $scope.cc.namakelas
+                }
                 for (let i = 0; i < dataLoad.length; i++) {
-                    const element = dataLoad[i];
-                    element.nourut = parseInt(element.nourut)
+                  const element = dataLoad[i];
+                  element.nourut = parseInt(element.nourut)
                 }
                 dataLoad.sort(function (a, b) {
-                    if (a.nourut < b.nourut) { return -1; }
-                    if (a.nourut > b.nourut) { return 1; }
-                    return 0;
+                  if (a.nourut < b.nourut) {
+                    return -1;
+                  }
+                  if (a.nourut > b.nourut) {
+                    return 1;
+                  }
+                  return 0;
                 })
                 // console.log(dataLoad)
                 for (var i = 0; i <= dataLoad.length - 1; i++) {
-                    if (parseFloat($scope.cc.emrfk) == dataLoad[i].emrfk) {
+                  if (parseFloat($scope.cc.emrfk) == dataLoad[i].emrfk) {
 
-                        if (dataLoad[i].type == "textbox") {
-                            $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
-                        }
-                        if (dataLoad[i].type == "checkbox") {
-                            chekedd = false
-                            if (dataLoad[i].value == '1') {
-                                chekedd = true
-                            }
-                            $scope.item.obj[dataLoad[i].emrdfk] = chekedd
-                            if (dataLoad[i].emrdfk >= 7590 && dataLoad[i].emrdfk <= 7593 && chekedd) {
-                                $scope.getSkalaNyeri(1, { descNilai: dataLoad[i].reportdisplay })
-                            }
-                            
+                    if (dataLoad[i].type == "textbox") {
+                      $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
+                    }
+                    if (dataLoad[i].type == "checkbox") {
+                      chekedd = false
+                      if (dataLoad[i].value == '1') {
+                        chekedd = true
+                      }
+                      $scope.item.obj[dataLoad[i].emrdfk] = chekedd
+                      if (dataLoad[i].emrdfk >= 7590 && dataLoad[i].emrdfk <= 7593 && chekedd) {
+                        $scope.getSkalaNyeri(1, {
+                          descNilai: dataLoad[i].reportdisplay
+                        })
+                      }
 
 
-                        }
-
-                        if (dataLoad[i].type == "datetime") {
-                            $scope.item.obj[dataLoad[i].emrdfk] = new Date(dataLoad[i].value)
-                        }
-                        if (dataLoad[i].type == "datetime2") {
-                            $scope.item.obj[dataLoad[i].emrdfk] = new Date(dataLoad[i].value)
-                        }
-                        if (dataLoad[i].type == "time") {
-                            $scope.item.obj[dataLoad[i].emrdfk] = new Date(dataLoad[i].value)
-                        }
-                        if (dataLoad[i].type == "date") {
-                            $scope.item.obj[dataLoad[i].emrdfk] = new Date(dataLoad[i].value)
-                        }
-
-                        if (dataLoad[i].type == "checkboxtextbox") {
-                            $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
-                            $scope.item.obj2[dataLoad[i].emrdfk] = true
-                        }
-                        if (dataLoad[i].type == "checkboxtextarea") {
-                            $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
-                            $scope.item.obj2[dataLoad[i].emrdfk] = true
-                        }
-                        if (dataLoad[i].type == "textarea") {
-                            $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
-                        }
-                        if (dataLoad[i].type == "combobox2") {
-                            var str = dataLoad[i].value
-                            if(str != undefined){
-                                var res = str.split("~");
-                                // $scope.item.objcbo[dataLoad[i].emrdfk]= {value:res[0],text:res[1]}
-                                $scope.item.obj[dataLoad[i].emrdfk] = { value: res[0], text: res[1] }        
-                            }   
-                            // var res = str.split("~");
-                            // // $scope.item.objcbo[dataLoad[i].emrdfk]= {value:res[0],text:res[1]}
-                            // $scope.item.obj[dataLoad[i].emrdfk] = { value: res[0], text: res[1] }
-
-                        }
-                        if (dataLoad[i].type == "combobox") {
-
-                            var str = dataLoad[i].value
-                            if(str != undefined){
-                                var res = str.split("~");
-                                // $scope.item.objcbo[dataLoad[i].emrdfk]= {value:res[0],text:res[1]}
-                                $scope.item.obj[dataLoad[i].emrdfk] = { value: res[0], text: res[1] } 
-                            }   
-                            // var res = str.split("~");
-                            // // $scope.item.objcbo[dataLoad[i].emrdfk]= {value:res[0],text:res[1]}
-                            // $scope.item.obj[dataLoad[i].emrdfk] = { value: res[0], text: res[1] }
-
-                        }
-                   
-                        if (dataLoad[i].type == "combobox3") {
-                            var str = dataLoad[i].value
-                            if(str != undefined){
-                                var res = str.split("~");
-                                // $scope.item.objcbo[dataLoad[i].emrdfk]= {value:res[0],text:res[1]}
-                                $scope.item.obj[dataLoad[i].emrdfk] = { value: res[0], text: res[1] }        
-                            }   
-                            // var res = str.split("~");
-                            // // $scope.item.objcbo[dataLoad[i].emrdfk]= {value:res[0],text:res[1]}
-                            // $scope.item.obj[dataLoad[i].emrdfk] = { value: res[0], text: res[1] }
-
-                        }
-                        // validasina
-                        if(pegawaiLogin.id!= dataLoad[i].pegawaifk){
-                            $scope.item.obj2[dataLoad[i].emrdfk] = true
-                        }
 
                     }
 
+                    if (dataLoad[i].type == "datetime") {
+                      $scope.item.obj[dataLoad[i].emrdfk] = new Date(dataLoad[i].value)
+                    }
+                    if (dataLoad[i].type == "datetime2") {
+                      $scope.item.obj[dataLoad[i].emrdfk] = new Date(dataLoad[i].value)
+                    }
+                    if (dataLoad[i].type == "time") {
+                      $scope.item.obj[dataLoad[i].emrdfk] = new Date(dataLoad[i].value)
+                    }
+                    if (dataLoad[i].type == "date") {
+                      $scope.item.obj[dataLoad[i].emrdfk] = new Date(dataLoad[i].value)
+                    }
+
+                    if (dataLoad[i].type == "checkboxtextbox") {
+                      $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
+                      $scope.item.obj2[dataLoad[i].emrdfk] = true
+                    }
+                    if (dataLoad[i].type == "checkboxtextarea") {
+                      $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
+                      $scope.item.obj2[dataLoad[i].emrdfk] = true
+                    }
+                    if (dataLoad[i].type == "textarea") {
+                      $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
+                    }
+                    if (dataLoad[i].type == "combobox2") {
+                      var str = dataLoad[i].value
+                      if (str != undefined) {
+                        var res = str.split("~");
+                        // $scope.item.objcbo[dataLoad[i].emrdfk]= {value:res[0],text:res[1]}
+                        $scope.item.obj[dataLoad[i].emrdfk] = {
+                          value: res[0],
+                          text: res[1]
+                        }
+                      }
+                      // var res = str.split("~");
+                      // // $scope.item.objcbo[dataLoad[i].emrdfk]= {value:res[0],text:res[1]}
+                      // $scope.item.obj[dataLoad[i].emrdfk] = { value: res[0], text: res[1] }
+
+                    }
+                    if (dataLoad[i].type == "combobox") {
+
+                      var str = dataLoad[i].value
+                      if (str != undefined) {
+                        var res = str.split("~");
+                        // $scope.item.objcbo[dataLoad[i].emrdfk]= {value:res[0],text:res[1]}
+                        $scope.item.obj[dataLoad[i].emrdfk] = {
+                          value: res[0],
+                          text: res[1]
+                        }
+                      }
+                      // var res = str.split("~");
+                      // // $scope.item.objcbo[dataLoad[i].emrdfk]= {value:res[0],text:res[1]}
+                      // $scope.item.obj[dataLoad[i].emrdfk] = { value: res[0], text: res[1] }
+
+                    }
+
+                    if (dataLoad[i].type == "combobox3") {
+                      var str = dataLoad[i].value
+                      if (str != undefined) {
+                        var res = str.split("~");
+                        // $scope.item.objcbo[dataLoad[i].emrdfk]= {value:res[0],text:res[1]}
+                        $scope.item.obj[dataLoad[i].emrdfk] = {
+                          value: res[0],
+                          text: res[1]
+                        }
+                      }
+                      // var res = str.split("~");
+                      // // $scope.item.objcbo[dataLoad[i].emrdfk]= {value:res[0],text:res[1]}
+                      // $scope.item.obj[dataLoad[i].emrdfk] = { value: res[0], text: res[1] }
+
+                    }
+                    // validasina
+                    if (pegawaiLogin.id != dataLoad[i].pegawaifk) {
+                      $scope.item.obj2[dataLoad[i].emrdfk] = true
+                    }
+
+                  }
+
                 }
-                var arrobj = Object.keys($scope.item.obj)       
+                var arrobj = Object.keys($scope.item.obj)
                 for (let l = 0; l < $scope.listItem.length; l++) {
-                  const element =  $scope.listItem[l];
+                  const element = $scope.listItem[l];
                   for (let m = 0; m < arrobj.length; m++) {
                     const element2 = arrobj[m];
-                    if(element.id ==element2 ){
+                    if (element.id == element2) {
                       element.inuse = true
                     }
                   }
-                  
-                }    
-               
+
+                }
+
                 // setTimeout(function(){medifirstService.setDisableAllInputElement()  }, 2000);
-            })
+              })
+            }
           // })
             // tanggal isian otomatis
             $scope.$watch('item.obj[111349]', function(newValue,oldValue){
@@ -1806,31 +1832,70 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 var arrobj = Object.keys($scope.item.obj)
                 var arrSave = []
                 for (var i = arrobj.length - 1; i >= 0; i--) {
-                    if ($scope.item.obj[parseInt(arrobj[i])] instanceof Date)
-                        $scope.item.obj[parseInt(arrobj[i])] = moment($scope.item.obj[parseInt(arrobj[i])]).format('YYYY-MM-DD HH:mm')
-                     // $scope.item.obj[parseInt(arrobj[i])] = moment($scope.item.obj[parseInt(arrobj[i])]).format('HH:mm')
-                    arrSave.push({ id: arrobj[i], values: $scope.item.obj[parseInt(arrobj[i])] })
+                  if ($scope.item.obj[parseInt(arrobj[i])] instanceof Date)
+                    $scope.item.obj[parseInt(arrobj[i])] = moment($scope.item.obj[parseInt(arrobj[i])]).format('YYYY-MM-DD HH:mm')
+                  // $scope.item.obj[parseInt(arrobj[i])] = moment($scope.item.obj[parseInt(arrobj[i])]).format('HH:mm')
+                  arrSave.push({
+                    id: arrobj[i],
+                    values: $scope.item.obj[parseInt(arrobj[i])]
+                  })
                 }
                 $scope.cc.jenisemr = 'asesmen'
                 var jsonSave = {
-                    head: $scope.cc,
-                    data: arrSave
+                  head: $scope.cc,
+                  data: arrSave
                 }
-                medifirstService.post('emr/save-emr-dinamis', jsonSave).then(function (e) {
-                    nomorEMR =e.data.data.noemr
+                console.log(arrSave);
+                var valnoemr = ''
+                if (nomorEMR != '-'){
+                  valnoemr = "&noemr=" + nomorEMR
+
+                }
+                medifirstService.get('cek-validasi-emr?emrfk=' + $scope.cc.emrfk + "&noregisrasi=" + $scope.cc.noregistrasi + valnoemr).then(function(data){
+                  var datas = data.data.data
+                  if(nomorEMR != '-'){
+                    for (let i = 0; i < datas.length; i++) {
+                      for (let j = 0; j < arrSave.length; j++) {
+                        // console.log(arrSave[j].values.text);
+                        if (arrSave[j].values.text != undefined) {
+                          arrSave[j].peliu = arrSave[j].values.value + "~" + arrSave[j].values.text
+                          // console.log(arrSave[j].values, datas[i].values);
+                          if (parseInt(arrSave[j].id) == datas[i].emrdfk && arrSave[j].peliu != datas[i].values && medifirstService.getPegawaiLogin().id != datas[i].pegawaifk) {
+                            toastr.error('terdapat Data pada kolom yang diisi pada ID' + datas[i].emrdfk + ', harap mengisi di kolom baru.')
+                            transaksiDetail()
+                            return
+                          }
+                        } else {
+                          if (parseInt(arrSave[j].id) == datas[i].emrdfk && arrSave[j].values != datas[i].values && medifirstService.getPegawaiLogin().id != datas[i].pegawaifk) {
+                            toastr.error('terdapat Data pada kolom yang diisi pada ID' + datas[i].emrdfk + ', harap mengisi di kolom baru.')
+                            transaksiDetail()
+                            return
+                          }
+                        }
+
+                      }
+                    }
+                  }
+                  
+                  medifirstService.post('emr/save-emr-dinamis', jsonSave).then(function (e) {
+                    nomorEMR = e.data.data.noemr
                     $rootScope.loadRiwayat()
-                    medifirstService.postLogging('EMR', 'norec emrpasien_t', e.data.data.norec,  
-                    'Cppt rawat inap new ' + ' dengan No EMR - ' +e.data.data.noemr +  ' pada No Registrasi ' 
-                    + $scope.cc.noregistrasi).then(function (res) {
-                    })
+                    medifirstService.postLogging('EMR', 'norec emrpasien_t', e.data.data.norec,
+                      'Cppt rawat inap new ' + ' dengan No EMR - ' + e.data.data.noemr + ' pada No Registrasi ' +
+                      $scope.cc.noregistrasi).then(function (res) {})
+                      transaksiDetail()
                     // var arrStr = {
                     //     0: e.data.data.noemr
                     // }
                     // cacheHelper.set('cacheNomorEMR', arrStr);
-                });
+                  });
+                })
+                // return
+                
             }
             $scope.tambah = function(){
               let details =[]
+              console.log($scope.listItem);
               for (let i = 0; i < $scope.listItem.length; i++) {
                 const element = $scope.listItem[i];
                 if(element.inuse == undefined){
