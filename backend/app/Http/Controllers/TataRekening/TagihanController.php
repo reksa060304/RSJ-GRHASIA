@@ -6859,6 +6859,7 @@ class TagihanController  extends ApiController
                 ps.namapasien,
                 ps.tgllahir,
                 pd.statuspasien,
+                pek.pekerjaan,
                 jk.jeniskelamin AS jeniskelamin,
                 ru.namaruangan,
             CASE
@@ -6893,7 +6894,7 @@ class TagihanController  extends ApiController
                 INNER JOIN departemen_m dep ON dep.ID = ru.objectdepartemenfk
                 INNER JOIN jenisdiagnosa_m jd ON jd.ID = ddp.objectjenisdiagnosafk
                 LEFT JOIN pendidikan_m pen ON pen.ID = ps.objectpendidikanfk
-                LEFT JOIN pekerjaan_m pen ON pen.ID = ps.objectpekerjaanfk
+                LEFT JOIN pekerjaan_m pek ON pek.ID = ps.objectpekerjaanfk
                 LEFT JOIN alamat_m AS alm ON ps.ID = alm.nocmfk
                 left join registrasipelayananpasien_t rpp on rpp.noregistrasifk = pd.norec
             WHERE
@@ -6934,6 +6935,7 @@ class TagihanController  extends ApiController
                 di.namadiagnosa,
                 alm.alamatlengkap,
                 apd.tglmasuk,
+                pek.pekerjaan,
                 pd.tglregistrasi
         ORDER BY
         pd.noregistrasi ASC        

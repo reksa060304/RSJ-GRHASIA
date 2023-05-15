@@ -51,6 +51,7 @@ define(['initialize'], function (initialize) {
                medifirstService.get("registrasi/laporan/get-data-combo-laporan").then(function (dat) {
                 $scope.listJenisKelamin = dat.data.jeniskelamin
                 $scope.listPendidikan = dat.data.pendidikan
+                $scope.listPekerjaan = dat.data.pekerjaan
                 $scope.listKabupaten = dat.data.kabupaten
                 $scope.listKecamatan = dat.data.kecamatan
                    // $scope.listPegawai = dat.data.dokter;
@@ -189,6 +190,10 @@ define(['initialize'], function (initialize) {
                 if ($scope.item.kecamatan != undefined) {
                     tempkecamatan = "&kecamatan=" + $scope.item.kecamatan.id;
                 }
+                var temppekerjaan = "";
+                if ($scope.item.pekerjaan != undefined) {
+                    temppekerjaan = "&pekerjaan=" + $scope.item.pekerjaan.id;
+                }
                 var chacePeriode = {
                     0: '',
                     1: '',
@@ -208,7 +213,7 @@ define(['initialize'], function (initialize) {
                     tglAkhirmasuk +
                 tempDepartemenId + tempRuanganId +
                 tempJenisDiagnosa + tempDiagnosa + temppendidikan +tempkecamatan+tempkabupaten+
-                tempstatusPasien).then(function (data) {
+                tempstatusPasien+temppekerjaan).then(function (data) {
                     var data2 = data.data.data;
                     var data3 = data.data.data2;
                     $scope.isRouteLoading = false;
@@ -268,7 +273,7 @@ define(['initialize'], function (initialize) {
                     tempDepartemenId +
                     tempRuanganId +
                     tempJenisDiagnosa +
-                    tempDiagnosa + 
+                    tempDiagnosa + temppekerjaan+
                     tempstatusPasien + tempjeniskelamin + temppendidikan + tempkecamatan + tempkabupaten
                 ).then(function (data) {
 
@@ -305,7 +310,7 @@ define(['initialize'], function (initialize) {
                     +tglAwalmasuk
                     +tglAkhirmasuk
                     +tempDepartemenId + tempRuanganId + tempJenisDiagnosa + tempDiagnosa + tempstatusPasien + tempkodeawal + dep 
-                    + tempjeniskelamin + temppendidikan + tempkecamatan + tempkabupaten).then(function (data) {
+                    +tempjeniskelamin + temppendidikan + tempkecamatan + tempkabupaten + temppekerjaan).then(function (data) {
                     $scope.isRouteLoading = false;                                    
                     var datas = data.data.data;
                     // var counts = data.data.count
@@ -456,6 +461,11 @@ define(['initialize'], function (initialize) {
                     {
                         field: "pendidikan",
                         title: "Pendidikan",
+                        width: "80px",
+                    },
+                    {
+                        field: "pekerjaan",
+                        title: "Pekerjaan",
                         width: "80px",
                     },
                     {
