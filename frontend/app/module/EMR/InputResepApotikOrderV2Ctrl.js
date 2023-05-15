@@ -674,10 +674,10 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     alert("Jumlah harus di isi!")
                     return;
                 }
-                if ($scope.item.dosis.includes(",") ) {
-                    toastr.error("Terdapat koma dalam dosis, mohon untuk diganti dengan titik!")
-                    return;
-                }
+                // if ($scope.item.dosis.includes(",") ) {
+                //     toastr.error("Terdapat koma dalam dosis, mohon untuk diganti dengan titik!")
+                //     return;
+                // }
 
                 if(parseFloat($scope.item.jumlah) > $scope.stok && $scope.item.jenisKemasan.id == 2){
                     alert("Jumlah obat melebihi stok yang tersisa, stok tersisa: " + $scope.stok)
@@ -1838,6 +1838,9 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         data2[i].kelasfk = $scope.item.kelas.id
                         data2[i].keterangan = data2[i].catatandokter
                         data2[i].jumlahxmakan = null
+                        if (data2[i].jeniskemasanfk == 1){
+                            data2[i].jumlah = data2[i].jumlahracikan
+                        }
                     }
 
                     $scope.dataGrid = new kendo.data.DataSource({
