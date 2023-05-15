@@ -19408,7 +19408,7 @@
   },
   {
     "name": "RekamMedis.AsesmenMedis.MenuIndex.FormulirTransferPasienGrh",
-    "url": "/FormulirTransferPasienGrh/:index/:idEM",
+    "url": "/FormulirTransferPasienGrh/:index/:idEMR",
     "templateurl": "module/EMR/FormulirTransferPasienGrh.html",
     "controller": "FormulirTransferPasienGrhCtrl",
     "deps": [{
@@ -20156,6 +20156,28 @@
     "url": "/MPPGrh",
     "templateurl": "module/EMR/MPPGrh.html",
     "controller": "MPPGrhCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.MenuIndex.EWSGrh",
+    "url": "/EWSGrh/:index/:idEMR",
+    "templateurl": "module/EMR/EWSGrh.html",
+    "controller": "EWSGrhCtrl",
     "deps": [{
         "module": "Services",
         "define": "Service"

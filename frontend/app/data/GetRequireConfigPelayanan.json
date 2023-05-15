@@ -3642,6 +3642,10 @@
         {
             "nameDep": "MPPGrhCtrl",
             "urlDep": "module/EMR/MPPGrhCtrl"
+        },
+        {
+            "nameDep": "EWSGrhCtrl",
+            "urlDep": "module/EMR/EWSGrhCtrl"
         }
     ]
 }
