@@ -862,6 +862,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('emr/get-riwayatcppt-rajalranap', 'EMR\EMRController@getRiwayatCPPTRajalRanap');
           Route::get('emr/get-data-perawatan', 'EMR\EMRController@getDataPerawatan');
           Route::get('emr/get-data-cppt-rajal', 'EMR\EMRController@getDataCPPTRajal');
+          Route::get('cek-validasi-emr', 'EMR\EMRController@cekValidasiEMR');
+
 
 
           Route::post('bsre-esign/sign/pdf', 'Bridging\BridgingBSREController@signDokumen');
