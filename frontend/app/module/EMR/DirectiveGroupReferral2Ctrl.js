@@ -160,7 +160,63 @@ define(['initialize'], function (initialize) {
             }
             
             
-
+            $scope.tambah = function(){
+                let details =[]
+                console.log($scope.listItem);
+                for (let i = 0; i < $scope.listItem.length; i++) {
+                  const element = $scope.listItem[i];
+                  if(element.inuse == undefined){
+                    details.push(element.id)
+                  }
+                }
+                if(details.length == 0){
+                  $rootScope.showCppt2 = true;
+                  
+                  toastr.info('Isi di Tab Berikutnya')
+                  return
+                }
+                let json = {
+                  noemr : nomorEMR,
+                  emrfk : $scope.cc.emrfk,
+                  details : details
+                }
+                medifirstService.postNonMessage("emr/get-status-dipake",json).then(function (dat) {
+                    let result = dat.data.data
+                    for (let j = 0; j < $scope.listItem.length; j++) {
+                      const element = $scope.listItem[j];
+                      for (let x = 0; x < result.length; x++) {
+                        const element2 = result[x];
+                        if(element.id ==element2.emrdfk){
+                          element.inuse =true
+                        }
+                      }
+                    }
+                    
+                    for (let j = 0; j < $scope.listItem.length; j++) {
+                      const element2 = $scope.listItem[j];
+                      if(element2.inuse == undefined){
+                        $scope.item.obj[parseInt(element2.id)] = new Date()
+                        saveTosDipake(element2.id)
+                        break
+                      }
+                    }
+                })    
+  
+                // medifirstService.get("emr/get-sttaus-transaksi-detail?noemr=" + nomorEMR + "&emrfk=" + $scope.cc.emrfk, true).then(function (dat) {
+                // })          
+              }
+              function saveTosDipake(id){
+                if(nomorEMR!='-'){
+                  let json = {
+                    noemr : nomorEMR,
+                    emrfk : $scope.cc.emrfk,
+                    id : id,
+                    value : moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+                  }
+                  medifirstService.postNonMessage("emr/save-status-dipake",json).then(function (dat) {
+                  })   
+                }
+              }
 
             $scope.cetakPdf = function () {
                 if (norecEMR == '') return
