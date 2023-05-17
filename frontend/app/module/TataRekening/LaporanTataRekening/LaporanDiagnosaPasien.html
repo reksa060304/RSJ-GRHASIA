@@ -175,21 +175,28 @@
                                 </div>
                             </div>
                             <div class="grid_6">
-                                <div class="grid_2">
+                                <div class="grid_3">
                                     <label c-label item="item" c-label-text="Pendidikan" real></label>
                                     <input ng-disabled="isDisable" style="width: 100%;" kendo-combo-box
                                         k-ng-model="item.pendidikan" k-data-text-field="'pendidikan'"
                                         k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
                                         k-data-source="listPendidikan" />
                                 </div>
-                                <div class="grid_2">
+                                <div class="grid_3">
+                                    <label c-label item="item" c-label-text="Pekerjaan" real></label>
+                                    <input ng-disabled="isDisable" style="width: 100%;" kendo-combo-box
+                                        k-ng-model="item.pekerjaan" k-data-text-field="'pekerjaan'"
+                                        k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
+                                        k-data-source="listPekerjaan" />
+                                </div>
+                                <div class="grid_3">
                                     <label c-label item="item" c-label-text="Kecamatan" real></label>
                                     <input ng-disabled="isDisable" style="width: 100%;" kendo-combo-box
                                         k-ng-model="item.kecamatan" k-data-text-field="'namakecamatan'"
                                         k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
                                         k-data-source="listKecamatan" />
                                 </div>
-                                <div class="grid_2">
+                                <div class="grid_3">
                                     <label c-label item="item" c-label-text="Kabupaten" real></label>
                                     <input ng-disabled="isDisable" style="width: 100%;" kendo-combo-box
                                         k-ng-model="item.kabupaten" k-data-text-field="'namakotakabupaten'"
