@@ -55,7 +55,7 @@ class BridgingBSREController  extends ApiController
         parent::__construct($skip_authentication = true);
     }
     protected $auth =  'c2ltcnMtZ3JoYXNpYTpTZGZoMjM0N2Q4U2Q5ZHM4Z3NoZGZqMjQ=';
-    protected $url = 'http://103.255.15.141/';
+    protected $url = 'http://172.16.16.44/';
     protected $username = 'simrs-grhasia';
     protected $password = 'Sdfh2347d8Sd9ds8gshdfj24';
     protected $passphrase = '!Bsre1221*';
