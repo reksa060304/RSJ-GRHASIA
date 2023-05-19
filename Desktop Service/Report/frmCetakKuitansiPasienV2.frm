@@ -309,10 +309,10 @@ Dim NamaKasir As String
             .txtAlamatRs.SetText strAlamatRS & ", " & strKodePos & ", " & strNoTlpn & ", " & strNoFax
             .txtNamaKota.SetText strNamaKota & ", "
 '            .txtKeterangan.SetText "Biaya Perawatan Pasien"
-            .txtRp.SetText "Rp. " & Format(jumlahDuit, "##,##0.00")
+            .txtRp.SetText "Rp. " & jumlahDuit
 '            .txtRp.SetText "Rp. " & Format(11789104, "##,##0.00")
             .txtTerbilang.SetText TerbilangDesimal(CStr(jumlahDuit))
-            .txtRuangan.SetText UCase(rs("namaruangan"))
+            .txtruangan.SetText UCase(rs("namaruangan"))
 '            .txtNoPen2.SetText RS("noregistrasi")
             .txtnocm2.SetText rs("nocm")
             .txtJnsKelamin.SetText rs("nocm")
