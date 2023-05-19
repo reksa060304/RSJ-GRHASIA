@@ -162,6 +162,46 @@ define(['initialize','Configuration'], function (initialize, configuration) {
 
 
                         }
+                        if (dataLoad[i].type == "checkbox4") {
+                            chekedd = false
+                            if (dataLoad[i].value == true) {
+                                chekedd = true
+                            }
+                            $scope.item.obj[dataLoad[i].emrdfk] = chekedd
+                            
+
+
+                        }
+                        if (dataLoad[i].type == "checkbox6") {
+                            chekedd = false
+                            if (dataLoad[i].value == true) {
+                                chekedd = true
+                            }
+                            $scope.item.obj[dataLoad[i].emrdfk] = chekedd
+                            
+
+
+                        }
+                        if (dataLoad[i].type == "checkbox123") {
+                            chekedd = false
+                            if (dataLoad[i].value == true) {
+                                chekedd = true
+                            }
+                            $scope.item.obj[dataLoad[i].emrdfk] = chekedd
+                            
+
+
+                        }
+                        if (dataLoad[i].type == "checkbox12") {
+                            chekedd = false
+                            if (dataLoad[i].value == true) {
+                                chekedd = true
+                            }
+                            $scope.item.obj[dataLoad[i].emrdfk] = chekedd
+                            
+
+
+                        }
 
                         if (dataLoad[i].type == "datetime") {
                             $scope.item.obj[dataLoad[i].emrdfk] = new Date(dataLoad[i].value)
@@ -177,6 +217,7 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                             $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
                             $scope.item.obj2[dataLoad[i].emrdfk] = true
                         }
+                        
                         if (dataLoad[i].type == "textarea") {
                             $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
                         }
