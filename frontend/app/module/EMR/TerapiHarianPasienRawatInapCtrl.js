@@ -30,6 +30,10 @@ define(['initialize'], function (initialize) {
             $scope.listData9 = []
             $scope.listDataObatTopikal1 = []
             $scope.listDataObatTopikal2 = []
+            $scope.listDataInhalasi1 = []
+            $scope.listDataInhalasi2 = []
+            $scope.listDataInhalasi3 = []
+            $scope.listDataInhalasi4 = []
             // $scope.listSkor = []
             $scope.loading = true
 
@@ -62,6 +66,10 @@ define(['initialize'], function (initialize) {
                 var arrayListDataOI2 = []
                 var arrayListDataOI3 = []
                 var arrayListDataOI4 = []
+                var arrayListDataInhalasi1 = []
+                var arrayListDataInhalasi2 = []
+                var arrayListDataInhalasi3 = []
+                var arrayListDataInhalasi4 = []
                 var sama = false
 
 
@@ -635,6 +643,138 @@ define(['initialize'], function (initialize) {
                             arrayListDataOI4.push(datax)
                         }
                     }
+                    if (element.kodeexternal == 'listdatainhalasi1') {
+                        for (let i = 0; i < arrayListDataInhalasi1.length; i++) {
+                            const element2 = arrayListDataInhalasi1[i];
+                            if (element2.namaexternal == element.namaexternal && element2.kodeexternal == element.kodeexternal) {
+                                detail.push(element)
+                                element2.details = detail
+                                sama = true
+                            }
+
+                        }
+                        if (sama == false) {
+                            var datax = {
+                                caption: element.caption,
+                                cbotable: element.cbotable,
+                                child: [],
+                                emrfk: element.emrfk,
+                                headfk: element.headfk,
+                                id: element.id,
+                                kdprofile: element.kdprofile,
+                                kodeexternal: element.kodeexternal,
+                                namaemr: element.namaemr,
+                                namaexternal: element.namaexternal,
+                                nourut: element.nourut,
+                                reportdisplay: element.reportdisplay,
+                                satuan: element.satuan,
+                                statusenabled: element.statusenabled,
+                                style: element.style,
+                                type: element.type,
+
+                            }
+                            arrayListDataInhalasi1.push(datax)
+                        }
+                    }
+                    if (element.kodeexternal == 'listdatainhalasi2') {
+                        for (let i = 0; i < arrayListDataInhalasi2.length; i++) {
+                            const element2 = arrayListDataInhalasi2[i];
+                            if (element2.namaexternal == element.namaexternal && element2.kodeexternal == element.kodeexternal) {
+                                detail.push(element)
+                                element2.details = detail
+                                sama = true
+                            }
+
+                        }
+                        if (sama == false) {
+                            var datax = {
+                                caption: element.caption,
+                                cbotable: element.cbotable,
+                                child: [],
+                                emrfk: element.emrfk,
+                                headfk: element.headfk,
+                                id: element.id,
+                                kdprofile: element.kdprofile,
+                                kodeexternal: element.kodeexternal,
+                                namaemr: element.namaemr,
+                                namaexternal: element.namaexternal,
+                                nourut: element.nourut,
+                                reportdisplay: element.reportdisplay,
+                                satuan: element.satuan,
+                                statusenabled: element.statusenabled,
+                                style: element.style,
+                                type: element.type,
+
+                            }
+                            arrayListDataInhalasi2.push(datax)
+                        }
+                    }
+                    if (element.kodeexternal == 'listdatainhalasi3') {
+                        for (let i = 0; i < arrayListDataInhalasi3.length; i++) {
+                            const element2 = arrayListDataInhalasi3[i];
+                            if (element2.namaexternal == element.namaexternal && element2.kodeexternal == element.kodeexternal) {
+                                detail.push(element)
+                                element2.details = detail
+                                sama = true
+                            }
+
+                        }
+                        if (sama == false) {
+                            var datax = {
+                                caption: element.caption,
+                                cbotable: element.cbotable,
+                                child: [],
+                                emrfk: element.emrfk,
+                                headfk: element.headfk,
+                                id: element.id,
+                                kdprofile: element.kdprofile,
+                                kodeexternal: element.kodeexternal,
+                                namaemr: element.namaemr,
+                                namaexternal: element.namaexternal,
+                                nourut: element.nourut,
+                                reportdisplay: element.reportdisplay,
+                                satuan: element.satuan,
+                                statusenabled: element.statusenabled,
+                                style: element.style,
+                                type: element.type,
+
+                            }
+                            arrayListDataInhalasi3.push(datax)
+                        }
+                    }
+                    if (element.kodeexternal == 'listdatain4') {
+                        for (let i = 0; i < arrayListDataInhalasi4.length; i++) {
+                            const element2 = arrayListDataInhalasi4[i];
+                            if (element2.namaexternal == element.namaexternal && element2.kodeexternal == element.kodeexternal) {
+                                detail.push(element)
+                                element2.details = detail
+                                sama = true
+                            }
+
+                        }
+                        if (sama == false) {
+                            var datax = {
+                                caption: element.caption,
+                                cbotable: element.cbotable,
+                                child: [],
+                                emrfk: element.emrfk,
+                                headfk: element.headfk,
+                                id: element.id,
+                                kdprofile: element.kdprofile,
+                                kodeexternal: element.kodeexternal,
+                                namaemr: element.namaemr,
+                                namaexternal: element.namaexternal,
+                                nourut: element.nourut,
+                                reportdisplay: element.reportdisplay,
+                                satuan: element.satuan,
+                                statusenabled: element.statusenabled,
+                                style: element.style,
+                                type: element.type,
+
+                            }
+                            arrayListDataInhalasi4.push(datax)
+                        }
+                    }
 
 
                 }
@@ -910,6 +1050,72 @@ define(['initialize'], function (initialize) {
                     }
                 }
                 $scope.listDataOI4 = arrayListDataOI4
+
+                // ARRAY listdatainhalasi1
+                var listDataInhalasi1KosongKeun = []
+                for (let k = 0; k < arrayListDataInhalasi1.length; k++) {
+                    const element = arrayListDataInhalasi1[k];
+                    for (let l = 0; l < datas.length; l++) {
+                        const element2 = datas[l];
+                        if (element2.namaexternal == element.namaexternal && element2.kodeexternal == element.kodeexternal) {
+                            listDataInhalasi1KosongKeun.push(element2)
+                            element.details = listDataInhalasi1KosongKeun
+                        } else {
+                            listDataInhalasi1KosongKeun = []
+                        }
+                    }
+                }
+                $scope.listDataInhalasi1 = arrayListDataInhalasi1
+
+                 // ARRAY listdatainhalasi2
+                 var listDataInhalasi2KosongKeun = []
+                 for (let k = 0; k < arrayListDataInhalasi2.length; k++) {
+                     const element = arrayListDataInhalasi2[k];
+                     for (let l = 0; l < datas.length; l++) {
+                         const element2 = datas[l];
+                         if (element2.namaexternal == element.namaexternal && element2.kodeexternal == element.kodeexternal) {
+                             listDataInhalasi2KosongKeun.push(element2)
+                             element.details = listDataInhalasi2KosongKeun
+                         } else {
+                             listDataInhalasi2KosongKeun = []
+                         }
+                     }
+                 }
+                 $scope.listDataInhalasi2 = arrayListDataInhalasi2
+ 
+                 
+                 // ARRAY listdatainhalasi3
+                 var listDataInhalasi3KosongKeun = []
+                 for (let k = 0; k < arrayListDataInhalasi3.length; k++) {
+                     const element = arrayListDataInhalasi3[k];
+                     for (let l = 0; l < datas.length; l++) {
+                         const element2 = datas[l];
+                         if (element2.namaexternal == element.namaexternal && element2.kodeexternal == element.kodeexternal) {
+                             listDataInhalasi3KosongKeun.push(element2)
+                             element.details = listDataInhalasi3KosongKeun
+                         } else {
+                             listDataInhalasi3KosongKeun = []
+                         }
+                     }
+                 }
+                 $scope.listDataInhalasi3 = arrayListDataInhalasi3
+
+                 // ARRAY listdatainhalasi4
+                 var listDataInhalasi4KosongKeun = []
+                 for (let k = 0; k < arrayListDataInhalasi4.length; k++) {
+                     const element = arrayListDataInhalasi4[k];
+                     for (let l = 0; l < datas.length; l++) {
+                         const element2 = datas[l];
+                         if (element2.namaexternal == element.namaexternal && element2.kodeexternal == element.kodeexternal) {
+                             listDataInhalasi4KosongKeun.push(element2)
+                             element.details = listDataInhalasi4KosongKeun
+                         } else {
+                             listDataInhalasi4KosongKeun = []
+                         }
+                     }
+                 }
+                 $scope.listDataInhalasi4 = arrayListDataInhalasi4
+
 
             })
 

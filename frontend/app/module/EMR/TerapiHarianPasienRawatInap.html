@@ -458,6 +458,102 @@
                         </div>
                     </td>
                 </tr>
+                <tr>
+                    <th style="text-align: center;background-color: #dedfe2d3;">No</th>
+                    <th style="text-align: center;background-color: #dedfe2d3;">Obat Inhalasi</th>
+                    <th style="text-align: center;background-color: #dedfe2d3;">Aturan Pakai</th>
+                    <th style="text-align: center;background-color: #dedfe2d3;">P</th>
+                    <th style="text-align: center;background-color: #dedfe2d3;">S</th>
+                    <th style="text-align: center;background-color: #dedfe2d3;">SR</th>
+                    <th style="text-align: center;background-color: #dedfe2d3;">M</th>
+
+                    <th style="text-align: center;background-color: #dedfe2d3;">P</th>
+                    <th style="text-align: center;background-color: #dedfe2d3;">S</th>
+                    <th style="text-align: center;background-color: #dedfe2d3;">SR</th>
+                    <th style="text-align: center;background-color: #dedfe2d3;">M</th>
+
+                    <th style="text-align: center;background-color: #dedfe2d3;">P</th>
+                    <th style="text-align: center;background-color: #dedfe2d3;">S</th>
+                    <th style="text-align: center;background-color: #dedfe2d3;">SR</th>
+                    <th style="text-align: center;background-color: #dedfe2d3;">M</th>
+
+                    <th style="text-align: center;background-color: #dedfe2d3;">P</th>
+                    <th style="text-align: center;background-color: #dedfe2d3;">S</th>
+                    <th style="text-align: center;background-color: #dedfe2d3;">SR</th>
+                    <th style="text-align: center;background-color: #dedfe2d3;">M</th>
+                </tr>
+                <tr ng-repeat="list in listDataInhalasi1 | orderBy:'id'" ng-init="jawabIndex = $index">
+                    <td>1</td>
+                    <td style="text-align: center;" ng-repeat="jawab in list.details">
+                        <div class="grid_12">
+                            <div ng-switch on="jawab.type">
+                                <div ng-switch-when="textbox">
+                                    <input class="k-textbox" ng-model="item.obj[jawab.id]" type="text">
+                                </div>
+                                <div ng-switch-when="checkbox">
+                                    <input type="checkbox" class="k-checkbox" id="item.obj{{jawab.id}}"
+                                        ng-model="item.obj[jawab.id]">
+                                    <label class="k-checkbox-label" for="item.obj{{jawab.id}}">
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr ng-repeat="list in listDataInhalasi2 | orderBy:'id'" ng-init="jawabIndex = $index">
+                    <td>2</td>
+                    <td style="text-align: center;" ng-repeat="jawab in list.details">
+                        <div class="grid_12">
+                            <div ng-switch on="jawab.type">
+                                <div ng-switch-when="textbox">
+                                    <input class="k-textbox" ng-model="item.obj[jawab.id]" type="text">
+                                </div>
+                                <div ng-switch-when="checkbox">
+                                    <input type="checkbox" class="k-checkbox" id="item.obj{{jawab.id}}"
+                                        ng-model="item.obj[jawab.id]">
+                                    <label class="k-checkbox-label" for="item.obj{{jawab.id}}">
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr ng-repeat="list in listDataInhalasi3 | orderBy:'id'" ng-init="jawabIndex = $index">
+                    <td>3</td>
+                    <td style="text-align: center;" ng-repeat="jawab in list.details">
+                        <div class="grid_12">
+                            <div ng-switch on="jawab.type">
+                                <div ng-switch-when="textbox">
+                                    <input class="k-textbox" ng-model="item.obj[jawab.id]" type="text">
+                                </div>
+                                <div ng-switch-when="checkbox">
+                                    <input type="checkbox" class="k-checkbox" id="item.obj{{jawab.id}}"
+                                        ng-model="item.obj[jawab.id]">
+                                    <label class="k-checkbox-label" for="item.obj{{jawab.id}}">
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr ng-repeat="list in listDataInhalasi4 | orderBy:'id'" ng-init="jawabIndex = $index">
+                    <td colspan="3" style="text-align: center"><b>Paraf Perawat</b></td>
+                    <td style="text-align: center;" ng-repeat="jawab in list.details">
+                        <div class="grid_12">
+                            <div ng-switch on="jawab.type">
+                                <div ng-switch-when="textbox">
+                                    <input class="k-textbox" ng-model="item.obj[jawab.id]" type="text">
+                                </div>
+                                <div ng-switch-when="checkbox">
+                                    <input type="checkbox" class="k-checkbox" id="item.obj{{jawab.id}}"
+                                        ng-model="item.obj[jawab.id]">
+                                    <label class="k-checkbox-label" for="item.obj{{jawab.id}}">
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
             </table>
             <div class="grid_6">
                 <div class="grid_12">
