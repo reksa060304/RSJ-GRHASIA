@@ -71,7 +71,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.hidetabspm = false
             $scope.item.tahun = null
             $scope.item.tahunkas = null
-            $scope.item.tglawal = moment($scope.now).format('YYYY-MM-DD');
+            $scope.item.tglawal = moment($scope.now).format('YYYY-01-01');
             $scope.item.tglakhir = moment($scope.now).format('YYYY-MM-DD');
             $scope.item.tglVerifSPJ = moment($scope.now).format('YYYY-MM-DD');
             $scope.item.tglPanjar = moment($scope.now).format('YYYY-MM-DD');
@@ -6338,7 +6338,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                                     
                                                                         // })
 
-                                                                        window.location.reload();
+                                                                        // window.location.reload();
                                                                         // var chacePeriode = {
                                                                         //     0: moment($scope.item.tglawal).format('YYYY-MM-DD'),
                                                                         //     1: moment($scope.item.tglakhir).format('YYYY-MM-DD'),
@@ -6397,7 +6397,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                                 // $state.go("SPJ", {
                                                     
                                                 // })
-                                                window.location.reload();
+                                                // window.location.reload();
                                                 // var chacePeriode = {
                                                 //     0: moment($scope.item.tglawal).format('YYYY-MM-DD'),
                                                 //     1: moment($scope.item.tglakhir).format('YYYY-MM-DD'),
