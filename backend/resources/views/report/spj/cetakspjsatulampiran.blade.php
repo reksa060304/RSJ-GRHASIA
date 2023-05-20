@@ -89,20 +89,20 @@
         <tbody>
         @foreach($detail AS $dt)
         <tr style="padding: 5px; width: 10%;">
-            <td style="padding: 5px; width: 10%;" align="center">
+            <td style="padding: 5px; width: 1%;" align="center">
                 {{$dt->nomor}}
             </td>
-            <td style="padding: 5px; width: 10%;" align="left">
+            <td style="padding: 5px; width: 40%;" align="left">
                 {{$dt->uraian}}
             </td>
             @php
                 $digitharga = strlen(substr(strrchr(sprintf("%s", $dt->harga), "."), 1));
                 $digitsubtotal = strlen(substr(strrchr(sprintf("%s", $dt->subtotal), "."), 1));
             @endphp
-            <td style="padding: 5px; width: 10%;" align="left">
+            <td style="padding: 5px; width: 15%;" align="left">
                 @ {{ number_format($dt->harga,$digitharga,',','.') }} x {{$dt->jml}} {{$dt->satuan}}
             </td>
-            <td style="padding: 5px; width: 10%;" align="center">
+            <td style="padding: 5px; width: 1%;" align="center">
                 =
             </td>
             <td style="padding: 5px; width: 10%;" align="left">
