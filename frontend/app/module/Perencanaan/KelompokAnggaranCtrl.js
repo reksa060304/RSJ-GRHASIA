@@ -3060,8 +3060,16 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             idpegawai = $scope.pegawaiLogin.id
                         }
                         
+                        var subkegiatan = '';
+                        var subsubkegiatan = '';
+                        if ($scope.item.combokegiatan!=undefined){
+                            subkegiatan = '&subkegiatan='+ $scope.item.combokegiatan.kode
+                        }
+                        if ($scope.item.combosubsubkegiatan != undefined) {
+                            subsubkegiatan = '&subsubkegiatan=' + $scope.item.combosubsubkegiatan.kode
+                        }
                         
-                        medifirstService.get("perencanaan/get-total-mata-anggaran?tahun="+moment($scope.item.thnAnggaran).format('YYYY')+"&tahap="+$scope.item.tahapdetail.id+"&idpegawai="+idpegawai+"&mataanggaran="+$scope.kodemataanggaranalokasi+"&noreckegiatan=" + $scope.idkegiatananggaran).then(function (e) {
+                        medifirstService.get("perencanaan/get-total-mata-anggaran?tahun="+moment($scope.item.thnAnggaran).format('YYYY')+"&tahap="+$scope.item.tahapdetail.id+"&idpegawai="+idpegawai+"&mataanggaran="+$scope.kodemataanggaranalokasi+"&noreckegiatan=" + $scope.idkegiatananggaran+subkegiatan+subsubkegiatan).then(function (e) {
                             
                             $scope.item.totalbulanan = formatRupiah(e.data.alokasimataanggaran[0].totalbulanan, "Rp. ")
                             let selisih = 0
@@ -3110,8 +3118,15 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         $scope.angkasaja = true
                         $scope.semuaanggaran = true
                     }
-
-                    medifirstService.get("perencanaan/get-total-mata-anggaran?tahun="+moment($scope.item.tahunkas).format('YYYY')+"&tahap="+$scope.item.searchtahap.id+"&idpegawai="+idpegawai).then(function (e) {
+                    var subkegiatan = '';
+                    var subsubkegiatan = '';
+                    if ($scope.item.combokegiatan != undefined) {
+                        subkegiatan = '&subkegiatan=' + $scope.item.combokegiatan.kode
+                    }
+                    if ($scope.item.combosubsubkegiatan != undefined) {
+                        subsubkegiatan = '&subsubkegiatan=' + $scope.item.combosubsubkegiatan.kode
+                    }
+                    medifirstService.get("perencanaan/get-total-mata-anggaran?tahun="+moment($scope.item.tahunkas).format('YYYY')+"&tahap="+$scope.item.searchtahap.id+"&idpegawai="+idpegawai+subkegiatan+subsubkegiatan).then(function (e) {
                         DataTotalMataAnggaran = e.data.data
                         $scope.listAsalProduk = e.data.asalproduk
                         $scope.dataSourceDetailMT = new kendo.data.DataSource({
