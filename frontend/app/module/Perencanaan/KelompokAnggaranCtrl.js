@@ -239,7 +239,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 //     });
                     
                 // })
-                
+                cacheLoad()
                 LoadSPJ()
 
                 var thn = moment($scope.now).format('YYYY')
@@ -2266,15 +2266,14 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     var data = []
                     for (let index = 0; index < DataSPJ.length; index++) {
                         let element = DataSPJ[index];
-                        if (element.mataanggaran.match($scope.item.searchSPJ)) {
+                        if (element.mataanggaran.match($scope.item.searchSPJ) && element.mataanggaran != null) {
                             data.push(element)
-                        }else if (element.norealisasi.match($scope.item.searchSPJ)) {
+                        } else if (element.norealisasi.match($scope.item.searchSPJ) && element.norealisasi != null) {
                             data.push(element)
-                        }else if (element.deskripsi.match($scope.item.searchSPJ)) {
-                            data.push(element)
-                        }else if (element.pihakketiga.match($scope.item.searchSPJ)) {
+                        } else if (element.totalbelanja.match($scope.item.searchSPJ) && element.totalbelanja != null) {
                             data.push(element)
                         }
+                            console.log(element.pihakketiga);
                     }
                     $scope.dataSourceSPJ = new kendo.data.DataSource({
                         data: data
@@ -3307,7 +3306,15 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         
                     })
             }
+            function cacheLoad(){
+                var chaceSPJ = cacheHelper.get('SPJ')
+                // console.log(chaceSPJ);
+                if (chaceSPJ != undefined) {
+                    $scope.item.statusspj = chaceSPJ[0]
+                }
+            }
             function LoadSPJ(){
+                $scope.isRouteLoading = true
 
                 // var chace = cacheHelper.get('KelompokAnggaranCtrl');
                 // console.log(chace)
@@ -3335,6 +3342,12 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         group: $scope.groupmataanggaran
                     });
                     
+                    var arr = {
+                        0: $scope.item.statusspj
+                    }
+                    cacheHelper.set('SPJ', arr)
+                $scope.isRouteLoading = false
+
                 })
             }
             $scope.BagiRata = function(){
