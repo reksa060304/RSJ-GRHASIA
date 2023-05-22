@@ -10632,6 +10632,64 @@ class EMRController  extends ApiController
             );
         return $this->respond($result);
     }
+    public function getEmrOtomatisVitalSign (Request $request)
+    {
+        $noemr = $request['noemr'];
+        $kdProfile = $this->getDataKdProfile($request);
+
+        //  $emrfk = $request['emrfk'];
+        // $main = \DB::select(DB::raw("SELECT id, type from emrd_t where emrfk = $emrfk and statusenabled = true and kdprofile = $kdProfile order by id
+        // "));
+
+        // $sec = \DB::select(DB::raw("SELECT id,id2, type from emrd_t where emrfk = $request[emrid] and statusenabled = true and kdprofile = $kdProfile and id2 is not null order by id
+        // "));
+
+        $data = \DB::select(DB::raw("SELECT x.noemr, string_agg(x.bb, null)as bb, string_agg(x.nadi, null)as nadi, string_agg(x.pernapasan, null)as pernapasan, string_agg(x.suhu, null)as suhu,
+        string_agg(x.tb, null) as tb, string_agg(x.td, null)as td, x.tgl FROM (SELECT ep.noemr, 
+        case when epd.emrdfk = 4241 then epd.value end as td, 
+        case when epd.emrdfk = 4242 then epd.value end as tb, 
+        case when epd.emrdfk = 4243 then epd.value end as bb, 
+        case when epd.emrdfk = 4244 then epd.value end as suhu, 
+        case when epd.emrdfk = 4245 then epd.value end as nadi, 
+        case when epd.emrdfk = 4246 then epd.value end as pernapasan, epd.tgl FROM emrpasien_t ep inner join emrpasiend_t epd on epd.emrpasienfk = ep.noemr where ep.emrfk = 147 and ep.noregistrasifk= '$request[noregistrasi]'
+        
+        
+        )as x
+        GROUP BY x.noemr, x.tgl
+        ORDER BY x.tgl desc limit 1"));
+
+        // $detail = [];
+        // $id=0;
+        // $value="";
+        // $id2=0;
+        
+        // foreach ($data as $dt) {
+        //     $id=0;
+        //     $id2=0;
+        //     $value="";
+        //     foreach ($sec as $s) {
+        //         if($dt->id == $s->id2){
+        //             // $id2 = $s->id2;
+        //             // $value= $dt->value;
+        //             $detail[]= array(
+        //             "id"=> $s->id,
+        //             "value"=> $dt->value,
+        //             "type"=> $dt->type,
+        //             "id2"=>$s->id2,
+                    
+        //             );
+        //         }
+        //     }
+            
+        // }
+        $result = array(
+                // 'data'=> $detail,
+                // "sec"=> $sec,
+                'data2'=> $data,
+                'as'=> 'Fizi@Epic'
+            );
+        return $this->respond($result);
+    }
     public function getValidasiEMR(Request $request)
     {
         $data = null;
