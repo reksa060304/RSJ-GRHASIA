@@ -119,6 +119,10 @@
                 @foreach ($data as $dt)
                 @php
                     
+                    
+                @endphp
+                @if($dt->kodefix != '')
+                @php
                     $totaljan += $dt->jumlahjan;
                     $totalfeb += $dt->jumlahfeb;
                     $totalmar += $dt->jumlahmar;
@@ -131,9 +135,6 @@
                     $totalokt += $dt->jumlahokt;
                     $totalnov += $dt->jumlahnov;
                     $totaldes += $dt->jumlahdes;
-                @endphp
-                @if($dt->kodefix != '')
-                @php
                     $totalanggaran += $dt->subtotal;
                     $i = 0;
                 @endphp
