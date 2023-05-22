@@ -236,6 +236,13 @@
     <div kendo-window="popUpKompleks" k-title="'Pasien Kompleks'" k-width="300" k-visible="false"
         k-on-open="win2visible = true" k-on-close="win2visible = false">
         <fieldset>
+            <div class="grid_12">
+                <label c-label item="item ">Tgl Kompleks</label>
+                <input style="width: 80%" k-ng-model="item.tglKompleks" kendo-datepicker k-max="now"
+                    placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd'" />
+            </div>
+            <br>
+            <br>
             <input type="checkbox" class="k-checkbox" id="isKompleks" ng-model="item.isKompleks" value="true">
             <label class="k-checkbox-label" for="isKompleks"><b>Pasien Ini dinyatakan Kompleks</b></label>
         </fieldset>
