@@ -6355,9 +6355,12 @@ class PelayananResepController extends ApiController
         $dataz = DB::select(DB::raw("select tglclosing 
         from pasiendaftar_t 
         where noregistrasi = '$noregistrasi'"));
-
+        $data2  = DB::select(DB::raw("
+        select pd.nosbmlastfk, sbm.tglsbm from pasiendaftar_t as pd 
+        inner join strukbuktipenerimaan_t as sbm on sbm.norec = pd.nosbmlastfk where pd.noregistrasi = '$noregistrasi'and pd.kdprofile = 30 "));
         
         $data['detail']  =$dataz;
+        $data['data2']  =$data2;
         return $this->respond($data);
     }
 
@@ -6648,7 +6651,7 @@ class PelayananResepController extends ApiController
             })
             ->leftJOIN('strukresep_t as sr','sr.norec','=','pp.strukresepfk')
             ->leftJOIN('strukorder_t as so','so.norec','=','sr.orderfk')
-            ->leftJOIN('orderpelayanan_t as op',function($j){
+            ->JOIN('orderpelayanan_t as op',function($j){
                 $j->on('op.strukorderfk','=','so.norec')->on('op.rke','=','pp.rke')->on('pp.produkfk','=','op.objectprodukfk');
             })
             ->leftJOIN('ruangan_m as ru2','ru2.id','=','sr.ruanganfk') /* ruangan depo*/ 
@@ -6660,7 +6663,7 @@ class PelayananResepController extends ApiController
                 'ks.nilaikonversi','ss2.satuanstandar as satuanstandar2','sr.noresep','sr.norec as norec_resep', 'sr.cito', 'pp.rke',
                 'jkm.jeniskemasan','jk.id as jkid','pp.jenisobatfk','jra.jenisracikan','pp.jasa','ru2.id as namaruanganasalid','ru2.id as ruangandepoid','ru2.namaruangan as ruangandepo',
                 'ru.namaruangan','dok.id as dokterid','dok.namalengkap as dokter','pp.ispagi','pp.issiang','pp.ismalam','pp.issore','pp.iskronis','sr.isreseppulang as reseppulang',
-                DB::raw("case when pp.jeniskemasanfk = 1 then (pp.jumlah::float*pr.kekuatan::float)/pp.dosis::float else pp.jumlah end AS jumlah,pr.kekuatan as kekuatan, case when pp.aturanpakai is not null then pp.aturanpakai else op.aturanpakai end as aturanpakai,
+                DB::raw("case when pp.jeniskemasanfk = 1 then round(op.qtyproduk::float * ( pr.kekuatan::float /op.dosis::float ) ) else pp.jumlah end AS jumlah,pr.kekuatan as kekuatan, case when pp.aturanpakai is not null then pp.aturanpakai else op.aturanpakai end as aturanpakai,
                                sn.satuanresep,pp.satuanresepfk,pp.tglkadaluarsa,pp.dosis,djp.detailjenisproduk,jp.jenisproduk,apd.norec norec_apd,pd.norec norec_pd,apd.objectkelasfk klid,op.keteranganpakai"))
             ->where('pp.kdprofile', $idProfile)
             ->where('jp.id',97)

@@ -108,15 +108,27 @@ class GeneralController extends ApiController
     public function getStatusClosePeriksa($noregistrasi, Request $request){
         $kdProfile = (int) $this->getDataKdProfile($request);
         $data  = PasienDaftar::where('noregistrasi',$noregistrasi)->where('kdprofile', $kdProfile)->first();
+        $data2  = DB::table('pasiendaftar_t as pd')
+        ->join('strukbuktipenerimaan_t as sbm','sbm.norec','=','pd.nosbmlastfk')
+        ->select('pd.nosbmlastfk', 'sbm.tglsbm')
+        ->where('pd.noregistrasi',$noregistrasi)->where('pd.kdprofile', $kdProfile)->first();
         $status = false;
         $tgl = null;
+        $tglbayar = null;
+        $nosbmlastfk = null;
         if(!empty($data) && $data->isclosing != null){
             $status = $data->isclosing;
             $tgl = $data->tglclosing;
         }
+        if(!empty($data2) && $data2->nosbmlastfk != null){
+            $nosbmlastfk = $data2->nosbmlastfk;
+            $tglbayar = $data2->tglsbm;
+        }
         $result = array(
+            'nosbmlastfk'=> $nosbmlastfk,
             'status'=> $status,
             'tglclosing'=> $tgl,
+            'tglbayar'=> $tglbayar,
             'message' => 'ramdan@epic',
         );
         return $this->respond($result);
