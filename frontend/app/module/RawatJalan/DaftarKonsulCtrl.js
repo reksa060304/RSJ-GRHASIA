@@ -243,6 +243,33 @@ define(['initialize'], function(initialize) {
                 })
               }
             $scope.mainGridOptions= {
+                toolbar: [
+                        "excel",
+                    ],
+                    excel: {
+                        fileName: "DaftarPasienKonsultasi.xlsx",
+                        allPages: true,
+                    },
+                    excelExport: function (e) {
+                        var sheet = e.workbook.sheets[0];
+                        sheet.frozenRows = 2;
+                        sheet.mergedCells = ["A1:S1"];
+                        sheet.name = "Sheet";
+
+                        var myHeaders = [{
+                            value: "Daftar Pasien Konsultasi",
+                            fontSize: 20,
+                            textAlign: "center",
+                            background: "#ffffff",
+                            // color:"#ffffff"
+                        }];
+
+                        sheet.rows.splice(0, 0, {
+                            cells: myHeaders,
+                            type: "header",
+                            height: 70
+                        });
+                    },
                 scrollable: true,
                 dataBound: onDataBound,
                 columns :[
@@ -267,6 +294,11 @@ define(['initialize'], function(initialize) {
                         "field":"noregistrasi",
                         "title":"No Registrasi",
                         "width":"80px"
+                    },
+                    {
+                        "field": "noregistrasi",
+                        "title": "Nama Pasien",
+                        "width": "80px"
                     },
                     {
                         "field":"nocm",
@@ -1959,13 +1991,16 @@ define(['initialize'], function(initialize) {
                     { field: "no", title: "No", width: 40 },
                     { field: "noregistrasi", title: "No Registrasi", width: 100 },
                     { field: "nocm", title: "No RM", width: 80 },
+                    { field: "namapasien", title: "Nama Pasien", width: 100 },
                     { field: "tglorder", title: "Tanggal", width: 120 },
                     { field: "ruanganasal", title: "Ruangan Asal", width: 120 },
                     { field: "ruangantujuan", title: "Ruangan Tujuan", width: 150 },
                     { field: "pengonsul", title: "Pengonsul", width: 120 },
                     { field: "keteranganorder", title: "Keterangan", width: 120 },
                     { field: "status", title: "Status", width: 120 },
-                    { command: [{ name: "edit", text: "Verifikasi", click: verif }], title: "&nbsp;", width: 120 }
+                    { command: [{ name: "edit", text: "Verifikasi", click: verif }], title: "&nbsp;", width: 120 },
+                    { command: [{ name: "delete", text: "Tolak Verifikasi", click: TolakVerif }], title: "&nbsp;", width: 120 },
+                    // { command: [{ name: "delete", text: "Hapus Data", click: Hapus }], title: "&nbsp;", width: 120 },
                 ],
             };
             function verif(e) {
@@ -1999,6 +2034,59 @@ define(['initialize'], function(initialize) {
                     $scope.saveLogKonsul();
 
 
+                })
+
+            }
+            function TolakVerif(e) {
+                e.preventDefault();
+                e.preventDefault();
+                var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                if (dataItem.status == 'Selesai') {
+                    toastr.error('Sudah di verifkasi')
+                    return
+                }
+                $scope.tolakItem = dataItem
+                $scope.popUpTolakOrder.center().open()
+                
+
+            }
+            $scope.saveTolakOrder = function(e){
+                
+                // var jawabanKonsul = prompt("Masukan Jawaban Konsul", "");
+                // // return alert(jawabanKonsul)
+                if ($scope.item.keteranganJawab == undefined) {
+                    toastr.error('Alasan Tolak Konsultasi Wajib Diisi')
+                    return
+                }
+                var dataKonsul = {
+                    "norec_so": e.norec,
+                    "keterangantolak": $scope.item.keteranganJawab
+                }
+                medifirstService.post('rawatjalan/tolak-konsul-from-order', dataKonsul).then(function (e) {
+                    $scope.item.keteranganJawab = undefined
+                    $scope.popUpTolakOrder.close()
+                    loadKonsul()
+                    medifirstService.postLogging('Tolak Order Konsultasi', 'Norec strukorder_t', e.norec,
+                        'Tolak Order Konsultasi No Order - ' + e.noorder + ' dengan No Registrasi ' + e.noregistrasi).then(function (res) {})
+
+                })
+            }
+            function Hapus(e) {
+                e.preventDefault();
+                var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+
+                if (!dataItem) {
+                    toastr.error("Data Tidak Ditemukan");
+                    return
+                }
+                var itemDelete = {
+                    "norec": dataItem.norec
+                }
+
+                medifirstService.post('emr/disabled-konsultasi', itemDelete).then(function (e) {
+                    if (e.status == 201) {
+                        init()
+                    }
                 })
 
             }

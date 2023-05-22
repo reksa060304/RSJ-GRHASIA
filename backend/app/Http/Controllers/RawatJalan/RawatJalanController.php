@@ -50,6 +50,7 @@ use App\Master\Departemen;
 use App\Transaksi\HistoriCetakDokumen;
 use App\Transaksi\EPPS;
 use App\Transaksi\EPPSDetail;
+use App\Transaksi\StrukOrder;
 use App\Traits\Valet;
 use App\Traits\PelayananPasienTrait;
 use DB;
@@ -1036,6 +1037,7 @@ $ruangdokter = \DB::table('ruangan_m as ru')
                 'ps.namapasien','pg.id as pegawaifk','so.objectruangantujuanfk','so.objectruanganfk','apd.norec as norec_apd')
             ->where('so.kdprofile', $idProfile)
             ->where('so.statusenabled',true)
+            ->whereNull('so.keterangantolak')
             ->wherenull('apd.norec')
             ->where('so.objectkelompoktransaksifk',$kelTrans->id)
             ->orderBy('so.tglorder','desc');
@@ -3683,5 +3685,37 @@ $ruangdokter = \DB::table('ruangan_m as ru')
             'as'=>'Fiz'
         );
         return $this->respond($result);
+    }
+    public function tolakKonsulFromOrder(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        DB::beginTransaction();
+        try {
+            $strukOrder = StrukOrder::where('norec',$request['norec_so'])->first();
+            $strukOrder->keterangantolak = $request['keterangantolak'];
+            $strukOrder->tgltolak = date('Y-m-d H:i:s');
+            $strukOrder->save();
+            $transStatus = 'true';
+            $transMessage = "simpan Tolak Order";
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+            $transMessage = "simpan Gagal";
+        }
+
+        if ($transStatus == 'true') {
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                // "data" => $dataAPD,
+            );
+        } else {
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                'e'=> $e->getLine() ." // " . $e->getMessage()
+            );
+        }
+
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
 }

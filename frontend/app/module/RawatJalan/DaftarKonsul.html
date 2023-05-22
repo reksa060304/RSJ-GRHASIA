@@ -298,7 +298,24 @@ k-on-close="win2visible = false">
     <div class="clear">
     <button class="k-button" ng-click="saveKompleks(item.isKompleks)" style="float:right;margin-top:4%">Simpan</button>
 </div>
-<div kendo-window="winKonsul" k-title="'Konsultasi Dokter'" k-width="1200"  k-visible="false"
+<div kendo-window="popUpTolakOrder" k-title="'Alasan Tolak Konsultasi'" k-width="500" k-visible="false"
+    k-on-open="win2visible = true" k-on-close="win2visible = false">
+    <fieldset>
+        <div class="grid_12">
+            <div class="grid_12">
+                <a>Alasan Menolak</a>
+            </div>
+            <div class="grid_12">
+                <textarea type="input" class="k-textbox" style="height: 200px; width: 100%; resize: none;"
+                    ng-model="item.keteranganJawab"></textarea>
+            </div>
+        </div>
+    </fieldset>
+    <div class="clear">
+        <button class="k-button" ng-click="saveTolakOrder(tolakItem)"
+            style="float:right;margin-top:4%">Simpan</button>
+    </div>
+<div kendo-window="winKonsul" k-title="'Konsultasi Dokter'" k-width="1350"  k-visible="false"
 k-on-open="win2visible = true" k-on-close="win2visible = false">
 <div class="panel panel-default container_12">
     <!-- <div class="panel panel-default container_12" style="padding: 0px 10px;"> -->
