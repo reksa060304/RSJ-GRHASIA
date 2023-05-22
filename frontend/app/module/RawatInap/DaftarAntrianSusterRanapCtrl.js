@@ -151,7 +151,51 @@ define(['initialize'], function (initialize) {
                 // }
             }
 
-            var onDataBound = function () {
+            // var onDataBound = function () {
+            //     $('td').each(function () {
+            //       if ($(this).text() == '28 Hari') {$(this).addClass('red')}
+            //         if ($(this).text() == 'HIJAU') {
+            //             $(this).addClass('green')
+            //         }
+            //         if ($(this).text() == 'KUNING') {
+            //             $(this).addClass('koneng')
+            //         }
+            //         if ($(this).text() == 'MERAH') {
+            //             $(this).addClass('merah')
+            //         }
+            //     })
+
+            //   }
+
+            var onDataBound = function (e) {
+                var columns = e.sender.columns;
+                var rows = e.sender.tbody.children();
+                for (var j = 0; j < rows.length; j++) {
+                    // sisa sekarang
+                    var row = $(rows[j]);
+                    var dataItem = e.sender.dataItem(row);
+
+                    var kompleks = dataItem.get("iskompleks");
+                    var tgl_kompleks = dataItem.get("tgl_kompleks");
+                    // console.log(kompleks);
+                    // var unitDept = dataItem.get("deptid");
+                    // var unitPpk = dataItem.get("ppkrujukan");
+                    // var unitSep = dataItem.get("nosep");
+                    if(kompleks == true){
+                        var cellSEP = row.children().eq(14);
+                        cellSEP.addClass("merah");
+                    }
+                    if(tgl_kompleks != null){
+                        var cellSEP = row.children().eq(15);
+                        cellSEP.addClass("merah");
+                    }
+                    
+
+                    // var isdiag = dataItem.get("isdiagnosis");
+                    // var cellDiag = row.children().eq(15);
+                    // cellDiag.addClass(getNotifDiag(isdiag));
+
+                }
                 $('td').each(function () {
                   if ($(this).text() == '28 Hari') {$(this).addClass('red')}
                     if ($(this).text() == 'HIJAU') {
@@ -163,6 +207,8 @@ define(['initialize'], function (initialize) {
                     if ($(this).text() == 'MERAH') {
                         $(this).addClass('merah')
                     }
+                    
+                    
                 })
 
               }
@@ -340,6 +386,12 @@ define(['initialize'], function (initialize) {
                     "title": "Kompleks",
                     "width": "50px",
                     "template": '# if( iskompleks==1 ) {# ✔ # } else {#  #} #'
+
+                },
+                {
+                    "field": "tgl_kompleks",
+                    "title": "Tgl Kompleks",
+                    "width": "70px",
 
                 },
                  {
@@ -1179,11 +1231,15 @@ define(['initialize'], function (initialize) {
 
                 var data = {
                     'nocm': $scope.item.nocm,
-                    'iskompleks': komplek
+                    'iskompleks': komplek,
+                    'tgl_kompleks': moment($scope.item.tglKompleks).format('YYYY-MM-DD')
                 }
                 medifirstService.post('rawatjalan/save-pasien-kompleks', data).then(function (e) {
                     loadData()
                     $scope.item.isKompleks = false
+                    $scope.item.tglKompleks = undefined
+                    $scope.popUpKompleks.close()
+
                 })
             }
             $scope.batalPindah = function () {

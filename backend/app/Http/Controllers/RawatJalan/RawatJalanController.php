@@ -1273,7 +1273,8 @@ $ruangdokter = \DB::table('ruangan_m as ru')
             $pasien = Pasien::where('nocm',$request['nocm'])
                 ->where('kdprofile',$idProfile)
                 ->update([
-                    'iskompleks' => $request['iskompleks']
+                    'iskompleks' => $request['iskompleks'],
+                    'tgl_kompleks' => $request['tgl_kompleks']
                 ]
             );
 
