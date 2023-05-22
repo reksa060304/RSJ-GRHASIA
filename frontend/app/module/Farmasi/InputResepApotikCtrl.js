@@ -2046,16 +2046,22 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                 $scope.tombolSimpanVis = false;
                 medifirstService.get("farmasi/get-penjagaan-closing-kasir?noregistrasi=" + $scope.item.noRegistrasi ).then(function (e) {
                     
-
+                    if (e.data.data2.length > 0) {
+                        var cek2 = 2345;
+                    } else{
+                        var cek2 = 0;
+                    }
                     if(e.data.detail[0].tglclosing == null){
                         var cek = 123;
                     } else{
                         var cek = 234;
                     }
-
+                    
                     console.log(cek);
+                    if (cek2 == 2345) {
 
-                    if(cek == 234){
+                        messageContainer.error("Data yang sudah dibayar tidak bisa ditambah obat");
+                    } else if(cek == 234){
                             
                         messageContainer.error("Data yang sudah diclosing tidak bisa ditambah obat");
                     } else if (cek == 123){

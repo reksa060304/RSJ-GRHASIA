@@ -61,6 +61,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             toastr.error('Pemeriksaan sudah ditutup kasir tanggal ' + moment(new Date(rese.data.tglclosing)).format('DD-MMM-YYYY HH:mm'), 'Peringatan!')
                             $scope.isSelesaiPeriksa = true
                         }
+                        if (rese.data.nosbmlastfk) {
+                            toastr.error('Pemeriksaan sudah dibayar pasien tanggal ' + moment(new Date(rese.data.tglbayar)).format('DD-MMM-YYYY HH:mm'), 'Peringatan!')
+                            $scope.isSelesaiPeriksa = true
+                        }
                     });
                     init()
                     medifirstService.get("farmasi/get-alamat?noregistrasi=" + $scope.item.noregistrasi).then(function (e) {
