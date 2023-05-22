@@ -7401,7 +7401,7 @@ order by subkodepertama asc, subkodekedua asc, subkodeketiga asc, subkodekeempat
                 $status
 				group by dp0.kode, dp0.keterangan, sr.norec, cbs.carabayar, sr.tglverif, sr.keterangan, sr.jumlahdibayarverif, sr.kdprofile, sr.statusenabled, sr.tglrealisasi, sr.norealisasi, sr.status, sr.totalbelanja, sr.objectcarabayarfk, sr.rekananfk, sr.deskripsi, sr.objectkegiatanfk, sr.objectmataanggaranfk, sr.bendaharafk, sr.penerimafk, sr.pph, sr.ppn, pg1.namalengkap, pg2.namalengkap, rkn.namarekanan ,
                 ka.kode || '~' || ka.keterangan, ma.kodemataanggaran || '~' || ma.namamataanggaran, ka.tahun, ma.kodemataanggaran, ma.namamataanggaran, dp0.id, ka.keterangan, ka.id, ap.id, ap.asalproduk
-                order by sr.norealisasi
+                order by sr.norealisasi desc
             ")
         );
         $result = [];

@@ -1042,7 +1042,7 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                         if ($scope.dataSelected != undefined) {
                             // $scope.item.jumlah = 0
                             
-                            $scope.item.jumlah = $scope.dataSelected.jumlahobat
+                            $scope.item.jumlah = $scope.dataSelected.jumlah
                             $scope.item.jumlahbulat = $scope.dataSelected.jumlahobat//Math.ceil($scope.dataSelected.jumlah);
                             $scope.item.dosis = $scope.dataSelected.dosis
                             $scope.item.jumlahxmakan = (parseFloat($scope.item.jumlah) / parseFloat($scope.item.dosis)) * parseFloat($scope.item.kekuatan)
@@ -2109,15 +2109,15 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                             }
 
                         }
-                        for (var i = data2.length - 1; i >= 0; i--) {
-                            if (parseFloat(data2[i].jmlstok) < parseFloat(data2[i].jumlah)) {
-                                alert("Terdapat obat " + data2[i].namaproduk + " dengan jumlah melebihi STOK !! " + data2[i].namaproduk)
-                                $scope.tombolSimpanVis = true;
-                                $scope.isRouteLoading = false;
-                                return
-                            }
+                        // for (var i = data2.length - 1; i >= 0; i--) {
+                        //     if (parseFloat(data2[i].jmlstok) < parseFloat(data2[i].jumlah)) {
+                        //         alert("Terdapat obat " + data2[i].namaproduk + " dengan jumlah melebihi STOK !! " + data2[i].namaproduk)
+                        //         $scope.tombolSimpanVis = true;
+                        //         $scope.isRouteLoading = false;
+                        //         return
+                        //     }
 
-                        }
+                        // }
                         var strukresep = {
                             tglresep: moment($scope.item.tglAwal).format('YYYY-MM-DD HH:mm:ss'),
                             pasienfk: norec_apd,//

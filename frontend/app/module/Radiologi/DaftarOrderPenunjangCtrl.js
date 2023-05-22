@@ -987,6 +987,11 @@ define(['initialize'], function (initialize) {
                     "width": "40px",
                 },
                 {
+                    "field": "hargasatuan",
+                    "title": "Harga Satuan",
+                    "width": "40px",
+                },
+                {
                     "field": "ruangantujuan",
                     "title": "Ruangan Tujuan",
                     "width": "140px"

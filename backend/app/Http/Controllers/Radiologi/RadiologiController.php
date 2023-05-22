@@ -1647,75 +1647,140 @@ class RadiologiController extends ApiController
             ->where('kdprofile',$idProfile)
             ->first();
         $jp = (int)$pasienDaftar->jenispelayanan;
-        $dataOrderPelayanan = DB::select(DB::raw("select DISTINCT op.norec as norec_op,pr.id as prid,pr.namaproduk,
-                op.tglpelayanan,op.qtyproduk ,ru.namaruangan as ruangantujuan,ru.objectdepartemenfk,op.strukorderfk,so.objectruangantujuanfk,
-                hnp.hargasatuan ,kls.namakelas,dpm.namadepartemen,
-                pps.norec as norec_pp, so.keteranganlainnya
-                ,op.ihs_id as ihs_service_request
-                from orderpelayanan_t op
-                left join strukorder_t as so on so.norec=op.strukorderfk
-                INNER JOIN produk_m as pr on pr.id=op.objectprodukfk
-                left JOIN harganettoprodukbykelas_m as hnp on pr.id=hnp.objectprodukfk
-                        and '$idkelas' =hnp.objectkelasfk
-                        and hnp.statusenabled=true
-                        and hnp.objectjenispelayananfk=$jp
-                        and hnp.objectpenjaminfk is null
-                --and op.objectkelasfk=hnp.objectkelasfk
-                left join kelas_m as kls on kls.id = '$idkelas'
-                --op.objectkelasfk
-                left join ruangan_m as ru on ru.id =so.objectruangantujuanfk
-                left join departemen_m as dpm on dpm.id=ru.objectdepartemenfk
-                left JOIN pelayananpasien_t as pps on pps.strukorderfk=so.norec
-                      and op.objectprodukfk =pps.produkfk
-                where op.kdprofile = $idProfile and op.strukorderfk=:norec_so
-                and kls.id=:objectkelasfk
-                ORDER by op.tglpelayanan"),
-            array(
-                'norec_so' => $norec_so,
-                'objectkelasfk' =>$idkelas ,
-            )
-        );
+        $idpenjamin = $pasienDaftar->objectrekananfk == null ? '-1' : $pasienDaftar->objectrekananfk;        
+        $dataOrderPelayanan = [];
+        
+        if ($idpenjamin != "-1") {
+                 $dataOrderPelayanan = DB::select(DB::raw("select DISTINCT op.norec as norec_op,pr.id as prid,pr.namaproduk,
+                        op.tglpelayanan,op.qtyproduk ,ru.namaruangan as ruangantujuan,ru.objectdepartemenfk,op.strukorderfk,so.objectruangantujuanfk,
+                        hnp.hargasatuan ,kls.namakelas,dpm.namadepartemen,pps.norec as norec_pp,
+                        CASE WHEN hnp.hargadijamin IS NULL THEN 0 ELSE hnp.hargadijamin END AS hargadijamin
+                        ,op.ihs_id as ihs_service_request,CASE WHEN hnp.hargadiscount IS NULL THEN 0 ELSE hnp.hargadiscount END AS diskon
+                        from orderpelayanan_t op
+                        left join strukorder_t as so on so.norec=op.strukorderfk
+                        INNER JOIN produk_m as pr on pr.id=op.objectprodukfk
+                        INNER JOIN harganettoprodukbykelas_m as hnp on pr.id=hnp.objectprodukfk
+                                and '$idkelas' =hnp.objectkelasfk
+                                and hnp.statusenabled=true
+                                and hnp.objectjenispelayananfk=$jp
+                                and hnp.objectpenjaminfk = $idpenjamin
+                        --and op.objectkelasfk=hnp.objectkelasfk
+                        left join kelas_m as kls on kls.id = '$idkelas'
+                        --op.objectkelasfk
+                        left join ruangan_m as ru on ru.id =so.objectruangantujuanfk
+                        left join departemen_m as dpm on dpm.id=ru.objectdepartemenfk
+                        left JOIN pelayananpasien_t as pps on pps.strukorderfk=so.norec
+                            and op.objectprodukfk =pps.produkfk
+                        where op.kdprofile = $idProfile and op.strukorderfk=:norec_so
+                        and kls.id=:objectkelasfk
+                        ORDER by op.tglpelayanan"),
+                    array(
+                        'norec_so' => $norec_so,
+                        'objectkelasfk' =>$idkelas ,
+                    )
+                ); 
+            }else{
+                $dataOrderPelayanan=[];
+            }  
+            if(count($dataOrderPelayanan) == 0){
+                 $dataOrderPelayanan = DB::select(DB::raw("select DISTINCT op.norec as norec_op,pr.id as prid,pr.namaproduk,
+                        op.tglpelayanan,op.qtyproduk ,ru.namaruangan as ruangantujuan,ru.objectdepartemenfk,op.strukorderfk,so.objectruangantujuanfk,
+                        hnp.hargasatuan ,kls.namakelas,dpm.namadepartemen,pps.norec as norec_pp,
+                        CASE WHEN hnp.hargadijamin IS NULL THEN 0 ELSE hnp.hargadijamin END AS hargadijamin
+                        ,op.ihs_id as ihs_service_request,CASE WHEN hnp.hargadiscount IS NULL THEN 0 ELSE hnp.hargadiscount END AS diskon
+                        from orderpelayanan_t op
+                        left join strukorder_t as so on so.norec=op.strukorderfk
+                        INNER JOIN produk_m as pr on pr.id=op.objectprodukfk
+                        INNER JOIN harganettoprodukbykelas_m as hnp on pr.id=hnp.objectprodukfk
+                                and '$idkelas' =hnp.objectkelasfk
+                                and hnp.statusenabled=true
+                                and hnp.objectjenispelayananfk=$jp
+                                and hnp.objectpenjaminfk is null
+                        --and op.objectkelasfk=hnp.objectkelasfk
+                        left join kelas_m as kls on kls.id = '$idkelas'
+                        --op.objectkelasfk
+                        left join ruangan_m as ru on ru.id =so.objectruangantujuanfk
+                        left join departemen_m as dpm on dpm.id=ru.objectdepartemenfk
+                        left JOIN pelayananpasien_t as pps on pps.strukorderfk=so.norec
+                            and op.objectprodukfk =pps.produkfk
+                        where op.kdprofile = $idProfile and op.strukorderfk=:norec_so
+                        and kls.id=:objectkelasfk
+                        ORDER by op.tglpelayanan"),
+                    array(
+                        'norec_so' => $norec_so,
+                        'objectkelasfk' =>$idkelas ,
+                    )
+                );  
+               
+            }  
 
         $result=[];
-        foreach ($dataOrderPelayanan as $item){
-            $dataz =  DB::select(DB::raw("select  
-                hnp.objectkomponenhargafk,kh.komponenharga,hnp.hargasatuan,
-                hnp.objectprodukfk,hnp.objectjenispelayananfk
-                from harganettoprodukbykelasd_m as hnp   
-                inner join produk_m as prd on prd.id=hnp.objectprodukfk
-                inner join komponenharga_m as kh on kh.id=hnp.objectkomponenhargafk
-                inner join kelas_m as kls on kls.id = hnp.objectkelasfk
-                where hnp.kdprofile = $idProfile and hnp.objectkelasfk='$idkelas'
-                and hnp.statusenabled=true
-                and hnp.objectjenispelayananfk=$jp
-                and prd.id='$item->prid'
-                and hnp.objectpenjaminfk is null"));
-            $keteranganlainnya=$item->keteranganlainnya;
-            $result[] = array(
-                'norec_op' => $item->norec_op,
-                'norec_pp' => $item->norec_pp,
-                'prid' => $item->prid,
-                'namaproduk' => $item->namaproduk,
-                'qtyproduk' => $item->qtyproduk,
-                'tglpelayanan' => $item->tglpelayanan,
-                'idruangan' => $item->objectruangantujuanfk,
-                'ruangantujuan' => $item->ruangantujuan,
-                'hargasatuan' => $item->hargasatuan,
-                'namakelas' => $item->namakelas,
-                'objectdepartemenfk' => $item->objectdepartemenfk,
-                'namadepartemen' => $item->namadepartemen,
-                'ihs_service_request' => $item->ihs_service_request,
-                'details' => $dataz,
+            foreach ($dataOrderPelayanan as $item){
+                $dataz =  DB::select(DB::raw("select distinct
+                    hnp.objectkomponenhargafk,kh.komponenharga,hnp.hargasatuan,
+                    hnp.objectprodukfk,hnp.objectjenispelayananfk,
+                    CASE WHEN hnp.hargadijamin IS NULL THEN 0 ELSE hnp.hargadijamin END AS hargadijamin,
+                    CASE WHEN hnp.hargadiscount IS NULL THEN 0 ELSE hnp.hargadiscount END AS diskon
+                    from harganettoprodukbykelasd_m as hnp   
+                    inner join produk_m as prd on prd.id=hnp.objectprodukfk
+                    inner join komponenharga_m as kh on kh.id=hnp.objectkomponenhargafk
+                    inner join kelas_m as kls on kls.id = hnp.objectkelasfk
+                    where hnp.kdprofile = $idProfile and hnp.objectkelasfk='$idkelas'
+                    and hnp.objectpenjaminfk = $idpenjamin
+                    and hnp.statusenabled=true
+                    and hnp.objectjenispelayananfk=$jp
+                    and prd.id='$item->prid'"));
+
+                if(count($dataz) == 0){
+                    $dataz =  DB::select(DB::raw("select distinct
+                    hnp.objectkomponenhargafk,kh.komponenharga,hnp.hargasatuan,
+                    hnp.objectprodukfk,hnp.objectjenispelayananfk,
+                    CASE WHEN hnp.hargadijamin IS NULL THEN 0 ELSE hnp.hargadijamin END AS hargadijamin,
+                    CASE WHEN hnp.hargadiscount IS NULL THEN 0 ELSE hnp.hargadiscount END AS diskon
+                    from harganettoprodukbykelasd_m as hnp   
+                    inner join produk_m as prd on prd.id=hnp.objectprodukfk
+                    inner join komponenharga_m as kh on kh.id=hnp.objectkomponenhargafk
+                    inner join kelas_m as kls on kls.id = hnp.objectkelasfk
+                    where hnp.kdprofile = $idProfile and hnp.objectkelasfk='$idkelas'
+                    and hnp.objectpenjaminfk is null
+                    and hnp.statusenabled=true
+                    and hnp.objectjenispelayananfk=$jp
+                    and prd.id='$item->prid'"));
+                      ;
+                }
+
+                $nilaiCito = 0;
+                $nilaiStatusCito = 0;
+              
+                $result[] = array(
+                    'norec_op' => $item->norec_op,
+                    'norec_pp' => $item->norec_pp,
+                    'prid' => $item->prid,
+                    'namaproduk' => $item->namaproduk,
+                    'qtyproduk' => $item->qtyproduk,
+                    'tglpelayanan' => $item->tglpelayanan,
+                    'idruangan' => $item->objectruangantujuanfk,
+                    'ruangantujuan' => $item->ruangantujuan,
+                    'hargasatuan' => $item->hargasatuan,
+                    'hargadijamin' => $item->hargadijamin,
+                    'diskon' => $item->diskon,
+                    'namakelas' => $item->namakelas,
+                    'objectdepartemenfk' => $item->objectdepartemenfk,
+                    'namadepartemen' => $item->namadepartemen,
+                    'cito' => $nilaiCito,
+                    'nilaiStatusCito' =>$nilaiStatusCito,
+                    'objectrekananfk' => $pasienDaftar->objectrekananfk,
+                    'ihs_service_request' => $item->ihs_service_request,
+                    'details' => $dataz,
+                );
+            }
+
+            $result=array(
+                'message' =>  'inhuman',
+                'data' =>  $result,
+
             );
-        }
-
-        $result=array(
-            'message' =>  'inhuman',
-            'keteranganlainnya' => $keteranganlainnya,         
-            'data' =>  $result,
-
-        );
-        return $this->respond($result);
+            return $this->respond($result);
     }
     public function cekstatusorder(Request $request)
     {

@@ -100,9 +100,19 @@
                     <td align="center" width="50" style="padding: 10px; font-weight: bold;  ">APBD</td>
                     <td align="center" width="50" style="padding: 10px; font-weight: bold;  ">SUB TOTAL</td>
                 </tr>
+                @php
+                $totaljasalayanan = 0;    
+                $totalapbd = 0;    
+                $subtotal = 0;    
+                @endphp
                 @foreach ($data as $dt)
                 <tr>
                     @if($dt->div == 2)
+                    @php
+                        $totaljasalayanan += $dt->jasalayanan;
+                        $totalapbd += $dt->apbd;
+                        $subtotal += $dt->total;
+                    @endphp
                     <td width="20" style="padding: 10px;"><b>{{ substr($dt->kode, -4) }}</b></td>
                     @elseif($dt->div == 3)
                     <td width="20" style="padding: 10px;">{{ substr($dt->kode, -2) }}</td>
@@ -123,9 +133,9 @@
                 @endforeach
                 <tr>
                     <td colspan="2" width="20" style="padding: 10px; font-weight: bold; text-align: center;">JUMLAH TOTAL</td>
-                    <td width="50" style="padding: 10px; font-weight: bold; ">{{ number_format($grandtotal->jasapelayanan,0,',','.') }}</td>
-                    <td width="50" style="padding: 10px; font-weight: bold; ">{{ number_format($grandtotal->apbd,0,',','.') }}</td>
-                    <td width="50" style="padding: 10px; font-weight: bold ;">{{ number_format($grandtotal->total,0,',','.') }}</td>
+                    <td width="50" style="padding: 10px; font-weight: bold; ">{{ number_format($totaljasalayanan,0,',','.') }}</td>
+                    <td width="50" style="padding: 10px; font-weight: bold; ">{{ number_format($totalapbd,0,',','.') }}</td>
+                    <td width="50" style="padding: 10px; font-weight: bold ;">{{ number_format($subtotal,0,',','.') }}</td>
                 </tr>
         </table>
         <table cellpadding="0" cellspacing="0" width="100%"  border="0">
