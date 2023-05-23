@@ -10395,7 +10395,7 @@ class ReportController extends ApiController{
         dp.indikatormasuk, dp.indikatorkeluaran, dp.indikatorhasil, dp.targetmasuk, dp.targetkeluaran, dp.targethasil"));     
 
         $sebelum = DB::select(DB::raw("
-        select
+        select * from(select
         case 
             when kodemataanggaran = 'A' then 'I.A'
             when kodemataanggaran = 'B' then 'I.B'
@@ -10588,7 +10588,8 @@ class ReportController extends ApiController{
         group by ap.id, ta.id, ta.tahap, kb.jml, kb.satuan, kb.hargasatuan, kb.keteranganbelanja, ma.kodemataanggaran
         
 
-		order by kodemataanggaran, jml, hargasatuan, satuan;
+		order by kodemataanggaran, jml, hargasatuan, satuan) as yyy
+        order by split_part(yyy.kodemataanggaran, '.', 1),split_part(yyy.kodemataanggaran, '.', 2),split_part(yyy.kodemataanggaran, '.', 3),split_part(yyy.kodemataanggaran, '.', 4),CASE WHEN split_part(yyy.kodemataanggaran, '.', 5) <> '' THEN split_part(yyy.kodemataanggaran, '.', 5)::int ELSE 0 END
         "));
 
         $pageWidth = 950;
@@ -10713,7 +10714,7 @@ class ReportController extends ApiController{
         dp.indikatormasuk, dp.indikatorkeluaran, dp.indikatorhasil, dp.targetmasuk, dp.targetkeluaran, dp.targethasil"));     
 
         $sebelum = DB::select(DB::raw("
-        select a.*, b.jml jmlsetelah, b.satuan satuansetelah, b.hargasatuan hargasatuansetelah,
+        select * from(select a.*, b.jml jmlsetelah, b.satuan satuansetelah, b.hargasatuan hargasatuansetelah,
         b.subtotaljasalayanan subtotaljasalayanansetelah, b.subtotalapbd subtotalapbdsetelah FROM
         (
 
@@ -11114,7 +11115,8 @@ inner join(
 		order by kodemataanggaran, jml, hargasatuan, satuan
 
         ) as b on a.kodemataanggaran = b.kodemataanggaran
-        $qsama
+        $qsama) as yyy
+        order by split_part(yyy.kodemataanggaran, '.', 1),split_part(yyy.kodemataanggaran, '.', 2),split_part(yyy.kodemataanggaran, '.', 3),split_part(yyy.kodemataanggaran, '.', 4),CASE WHEN split_part(yyy.kodemataanggaran, '.', 5) <> '' THEN split_part(yyy.kodemataanggaran, '.', 5)::int ELSE 0 END
         "));
 
         $pageWidth = 950;
