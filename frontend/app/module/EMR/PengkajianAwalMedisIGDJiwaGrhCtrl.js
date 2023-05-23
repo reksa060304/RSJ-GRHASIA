@@ -1539,6 +1539,8 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                 $scope.item.obj[310301] = moment($scope.now).format('YYYY-MM-DD HH:mm')
                 $scope.item.obj[120291] = moment($scope.now).format('HH:mm')
 
+               
+
                 $scope.item.obj[310595] = {
                     value: medifirstService.getPegawaiLogin().id,
                     text: medifirstService.getPegawaiLogin().namaLengkap
@@ -1677,6 +1679,7 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                 $scope.item.obj[116219] = true
                 $scope.item.obj[116222] = true
                 $scope.item.obj[120001] = moment($scope.now).format('YYYY-MM-DD HH:mm')
+                $scope.item.obj[310301] = moment($scope.now).format('YYYY-MM-DD HH:mm')
                 $scope.item.obj[120291] = new Date($scope.now)
 
                 $scope.item.obj[120295] = {
@@ -1743,6 +1746,29 @@ define(['initialize','Configuration'], function (initialize, configuration) {
         })
      }
      
+     function setSkorAkhir(total) {
+
+        if (total < 7) {
+            $scope.item.obj[3149] = true
+            $scope.item.obj[3150] = false
+            $scope.item.obj[3151] = false
+        }
+
+        if (total >= 7 && total <= 14) {
+            $scope.item.obj[3149] = false
+            $scope.item.obj[3150] = true
+            $scope.item.obj[3151] = false
+        }
+
+        if (total > 14) {
+            $scope.item.obj[3149] = false
+            $scope.item.obj[3150] = false
+            $scope.item.obj[3151] = true
+        }
+
+
+
+    }
             
             $scope.GCSKuantitatif = function () {
                 let e = parseInt($scope.item.obj[21008563]) || 0;
@@ -2224,29 +2250,50 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                 $scope.item.obj[115928] = $scope.skorGizi
             }
 
-            function setSkorAkhir(total) {
-
-                if (total < 7) {
-                    $scope.item.obj[3149] = true
-                    $scope.item.obj[3150] = false
-                    $scope.item.obj[3151] = false
+            $scope.tambah = function () {
+                let details = []
+                for (let i = 0; i < $scope.listItem.length; i++) {
+                    const element = $scope.listItem[i];
+                    if (element.inuse == undefined) {
+                        details.push(element.id)
+                    }
                 }
+                if (details.length == 0) {
+                    // $rootScope.showCppt2 = true;
 
-                if (total >= 7 && total <= 14) {
-                    $scope.item.obj[3149] = false
-                    $scope.item.obj[3150] = true
-                    $scope.item.obj[3151] = false
+                    toastr.info('Isi di Tab Berikutnya')
+                    return
                 }
-
-                if (total > 14) {
-                    $scope.item.obj[3149] = false
-                    $scope.item.obj[3150] = false
-                    $scope.item.obj[3151] = true
+                let json = {
+                    noemr: nomorEMR,
+                    emrfk: $scope.cc.emrfk,
+                    details: details
                 }
+                medifirstService.postNonMessage("emr/get-status-dipake", json).then(function (dat) {
+                    let result = dat.data.data
+                    for (let j = 0; j < $scope.listItem.length; j++) {
+                        const element = $scope.listItem[j];
+                        for (let x = 0; x < result.length; x++) {
+                            const element2 = result[x];
+                            if (element.id == element2.emrdfk) {
+                                element.inuse = true
+                            }
+                        }
+                    }
 
+                    for (let j = 0; j < $scope.listItem.length; j++) {
+                        const element2 = $scope.listItem[j];
+                        if (element2.inuse == undefined) {
+                            $scope.item.obj[parseInt(element2.id)] = new Date()
+                            saveTosDipake(element2.id)
+                            break
+                        }
+                    }
+                })
 
-
+                     
             }
+
             $scope.$watch('item.obj[14432]', function (nilai) {
 
                 if (nilai == undefined) return

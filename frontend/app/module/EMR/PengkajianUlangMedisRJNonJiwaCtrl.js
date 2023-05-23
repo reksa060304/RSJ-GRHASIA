@@ -1124,6 +1124,22 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             medifirstService.get("emr/get-emr-transaksi-detail?noemr=" + nomorEMR + "&emrfk=" + $scope.cc.emrfk, true).then(function (dat) {                
                 $scope.item.obj = []
                 $scope.item.obj2 = []
+                medifirstService.get("emr/get-emr-otomatisvitalsign?emrfk=147"+"&noregistrasi="+$scope.cc.noregistrasi).then(function (dat) {
+                    var datas = dat.data.data2
+                    $scope.isRouteLoading = false
+                    if(datas.length> 0){
+                        $scope.item.obj[3017312]= "Tekanan Darah = "+ datas[0].td+"mm/Hg"+ ", "+
+                        "Nadi = "+ datas[0].nadi+"x/menit"+", "+
+                        "Suhu ="+ datas[0].suhu+"°C"+", "+
+                        "Pernapasan ="+ datas[0].pernapasan+"x/menit"+", "+
+                        "Tinggi Badan ="+ datas[0].tb+"cm"+", "+
+                        "Berat Badan ="+ datas[0].tb+"kg"+", "
+
+                    }
+                    
+                    
+    
+                })
                 $scope.item.obj[31300216] = { value: $scope.cc.iddpjp , text:  $scope.cc.dokterdpjp }
                 // $scope.item.obj[13305] = { value: $scope.cc.objectruanganfk , text:  $scope.cc.namaruangan }
                 // $scope.item.obj[13306] = { value: $scope.cc.objectkelasfk , text:  $scope.cc.namakelas }

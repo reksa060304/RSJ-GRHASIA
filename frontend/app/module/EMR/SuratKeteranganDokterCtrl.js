@@ -288,6 +288,23 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             medifirstService.get("emr/get-emr-transaksi-detail?noemr=" + nomorEMR + "&emrfk=" + $scope.cc.emrfk, true).then(function (dat) {
                 $scope.item.obj = []
                 $scope.item.obj2 = []
+                medifirstService.get("emr/get-emr-otomatisvitalsign?emrfk=147"+"&noregistrasi="+$scope.cc.noregistrasi).then(function (dat) {
+                    var datas = dat.data.data2
+                    $scope.isRouteLoading = false
+                    if(datas.length> 0){
+                        $scope.item.obj[3003994]= datas[0].td
+                        $scope.item.obj[3003996]= datas[0].nadi
+                        $scope.item.obj[3015534]= datas[0].suhu
+                        $scope.item.obj[3015533]= datas[0].pernapasan
+                        $scope.item.obj[3003995]= datas[0].bb
+                        $scope.item.obj[3003993]= datas[0].tb
+
+
+                    }
+                    
+                    
+    
+                })
                 $scope.item.obj[116062]=$scope.now
                 $scope.item.obj[116068]={text:$scope.cc.namaruangan,value: $scope.cc.objectruanganfk}
 
