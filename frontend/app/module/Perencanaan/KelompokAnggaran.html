@@ -460,7 +460,27 @@
 										<input c-text-box type="input" class="k-textbox" ng-model="item.organisasi" disabled="true" />
 									</div>
 								</div>
-								<div class="grid_4"></div>
+								<div class="grid_2">
+									<div class="grid_12">
+										<label c-label item="item">Sub Kegiatan</label>
+									</div>
+									<div class="grid_12">
+										<input style="width: 100%;" kendo-combo-box k-ng-model="item.combokegiatan"
+											k-data-text-field="'keterangan'" k-data-value-field="'kode'" k-filter="'contains'" k-auto-bind="false"
+											k-data-source="listKegiatanCombo" />
+									</div>
+									
+								</div>
+								<div class="grid_2">
+									<div class="grid_12">
+										<label c-label item="item">Sub Sub Kegiatan</label>
+									</div>
+									<div class="grid_12">
+										<input style="width: 100%;" kendo-combo-box k-ng-model="item.combosubsubkegiatan"
+											k-data-text-field="'keterangan'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
+											k-data-source="listSubSubKegiatanCombo" />
+									</div>
+								</div>
 								<div class="grid_3" style="margin-top: 20px;">
 									<div class="grid_4" style="text-align: center;">
 										Tahap
@@ -1296,10 +1316,10 @@
 						<input c-text-box type="input" class="k-textbox" ng-model="item.pptktext" ng-hide="dispptk" ng-disabled="disidpegawai"                 " />
 					</div>
 					<div class="grid_1" style="margin-top: -10px;">
-						<button class="btnTemplate1" ng-click="TambahPPTK()" ng-hide="dispptk" ng-disabled="disidpegawai">Add</button>           
+						<button class="btnTemplate1" ng-click="TambahPPTK()" ng-hide="disidpegawai" ng-disabled="disidpegawai">Add</button>           
 					</div>
 					<div class="grid_1" style="margin-top: -10px; margin-left: 20px;">
-						<button class="btnTemplate1" ng-click="DeletePPTK()" ng-hide="dispptk" ng-disabled="disidpegawai">Delete</button>           
+						<button class="btnTemplate1" ng-click="DeletePPTK()" ng-hide="disidpegawai" ng-disabled="disidpegawai">Delete</button>           
 					</div>
 			</div>
 			

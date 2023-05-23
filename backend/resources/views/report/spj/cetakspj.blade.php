@@ -140,7 +140,7 @@
                 <font style="font-size: 12pt" color="#000000"></font>
             </td>
             <td  colspan="2" style="padding: 10px; padding-bottom: 5px; width: 100px;" align="left">
-                <font style="font-size: 12pt" color="#000000">&emsp;&nbsp;NIP. {{ $kegiatan[0]->nip_pns}}</font>
+                <font style="font-size: 12pt" color="#000000">&emsp;&nbsp;NIP. {{ $kegiatan[0]->nippns}}</font>
             </td>
         </tr>
         @endif

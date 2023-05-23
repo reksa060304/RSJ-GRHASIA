@@ -1329,7 +1329,7 @@ class ReportController extends ApiController{
         // }
         $dataStok = DB::select(DB::raw("select sk.norec,spd.objectprodukfk, sk.tglstruk,spd.objectasalprodukfk,
                             spd.harganetto2 as hargajual,spd.harganetto2 as harganetto,spd.hargadiscount,
-                    sum(spd.qtyproduk) as qtyproduk,spd.objectruanganfk
+                    cast(sum(spd.qtyproduk) as float) as qtyproduk,spd.objectruanganfk
                     from stokprodukdetail_t as spd
                     inner JOIN strukpelayanan_t as sk on sk.norec=spd.nostrukterimafk
                     where spd.kdprofile = 30 and spd.objectruanganfk =:ruanganid
@@ -2627,8 +2627,8 @@ class ReportController extends ApiController{
         group by ma.namamataanggaran, ma.kodemataanggaran, map3.kode || '.' || map2.kode || '.' || map1.kode || '.' || map.kode;"));
 
         $spj = DB::select(DB::raw("select rk.namarekanan,
-        sr.norealisasi, sr.pph, sr.ppn, sr.pph+sr.ppn as totalpp, pgb.namalengkap as namabendahara, pgb.nip_pns as nipbendahara, pgp.namalengkap as namapenerima,
-        pgp.nip_pns as nippenerima, sr.deskripsi        
+        sr.norealisasi, sr.pph, sr.ppn, sr.pph+sr.ppn as totalpp, pgb.namalengkap as namabendahara, pgb.nippns as nipbendahara, pgp.namalengkap as namapenerima,
+        pgp.nippns as nippenerima, sr.deskripsi        
         from strukrealisasi_t sr
         inner join realisasidetail_t rd on rd.strukrealisasifk =sr.norec
         inner join keteranganbelanja_t kb on kb.norec = rd.keteranganbelanjafk
@@ -2639,7 +2639,7 @@ class ReportController extends ApiController{
         left join kegiatananggaran_m kg on km.kode ilike '%' || kg.kode || '%' and kg.div = 3
         inner join mataanggaran_m ma on ma.id = sr.objectmataanggaranfk
         where sr.norec = '$norec'
-        group by pgp.nip_pns, rk.namarekanan, sr.norealisasi, sr.pph, sr.ppn, pgb.namalengkap, pgp.namalengkap, pgb.nip_pns, sr.deskripsi "));
+        group by pgp.nippns, rk.namarekanan, sr.norealisasi, sr.pph, sr.ppn, pgb.namalengkap, pgp.namalengkap, pgb.nippns, sr.deskripsi "));
         $detail = DB::select(DB::raw("select row_number() over(order by rd.norec) as nomor, rd.norec, rd.uraian, rd.jml, rd.satuan, rd.harga, rd.subtotal
         from strukrealisasi_t sr
         inner join realisasidetail_t rd on rd.strukrealisasifk =sr.norec
@@ -2976,8 +2976,8 @@ class ReportController extends ApiController{
         group by ma.namamataanggaran, ma.kodemataanggaran;"));
 
         $spj = DB::select(DB::raw("select rk.namarekanan,
-        sr.norealisasi, sr.pph, sr.ppn, sr.pph+sr.ppn as totalpp, pgb.namalengkap as namabendahara, pgb.nip_pns as nipbendahara, pgp.namalengkap as namapenerima,
-        pgp.nip_pns as nippenerima, sr.deskripsi 
+        sr.norealisasi, sr.pph, sr.ppn, sr.pph+sr.ppn as totalpp, pgb.namalengkap as namabendahara, pgb.nippns as nipbendahara, pgp.namalengkap as namapenerima,
+        pgp.nippns as nippenerima, sr.deskripsi 
         from strukrealisasi_t sr
         inner join realisasidetail_t rd on rd.strukrealisasifk =sr.norec
         inner join keteranganbelanja_t kb on kb.norec = rd.keteranganbelanjafk
@@ -2988,7 +2988,7 @@ class ReportController extends ApiController{
         left join kegiatananggaran_m kg on km.kode ilike kg.kode || '%' and kg.div = 3
         inner join mataanggaran_m ma on ma.id = sr.objectmataanggaranfk
         where sr.norec = '$norec'
-        group by pgp.nip_pns, rk.namarekanan, sr.norealisasi, sr.pph, sr.ppn, pgb.namalengkap, pgp.namalengkap, pgb.nip_pns, sr.deskripsi"));
+        group by pgp.nippns, rk.namarekanan, sr.norealisasi, sr.pph, sr.ppn, pgb.namalengkap, pgp.namalengkap, pgb.nippns, sr.deskripsi"));
 
         $detail = DB::select(DB::raw("select row_number() over(order by rd.norec) as nomor, rd.norec, rd.uraian, rd.jml, rd.satuan, rd.harga, rd.subtotal
         from strukrealisasi_t sr
@@ -13224,5 +13224,169 @@ public function suratBuktiPengembalian(Request $request)
         select * from temperesep_t where norec_apd ilike '$request[norec_apd]' and kdprofile = 30 and statusenabled =true order by rke asc
         "));
         return view('report.apotik.previeworder', compact('orderPelayanan'));
+    }
+    public function cetakRingkasanRajal(Request $request)
+    {
+        $norec = $request['emr'];
+        $kdProfile = (int) $request['kdprofile'];
+        $pasien = collect(DB::select("
+            select apd.statuskunjungan, kp.kelompokpasien, ps.nocm, ps.namapasien, to_char(ps.tgllahir,'dd-MM-yyyy') as tgllahir,
+			       CASE WHEN ps.objectjeniskelaminfk=1 then 'L' else 'P' END as jk,
+                   to_char(pd.tglregistrasi,'dd-MM-yyyy hh24:mi:ss') as tglregistrasi,rm.namaruangan,
+                   al.alamatlengkap,al.kecamatan,al.kotakabupaten
+            from antrianpasiendiperiksa_t apd
+            inner join pasiendaftar_t pd on pd.norec = apd.noregistrasifk
+            inner join pasien_m ps on ps.id = pd.nocmfk
+            inner join alamat_m as al on al.nocmfk=ps.id
+            inner join ruangan_m as rm on rm.id = apd.objectruanganfk
+            inner join kelompokpasien_m kp on kp.id = pd.objectkelompokpasienlastfk
+            where pd.noregistrasi = '$request[noregistrasi]'
+            and ps.statusenabled = true
+        "))->first();
+        $maindata = DB::select(DB::raw("SELECT DISTINCT ep.noemr FROM emrpasien_t ep 
+        inner join emrpasiend_t epd on epd.emrpasienfk = ep.noemr
+        where ep.noregistrasifk = '$request[noregistrasi]' and epd.emrfk = 210222"));
+        // $data = [];
+        $details = [];
+        foreach ($maindata as $m) {
+            $data = DB::select(DB::raw("
+            SELECT
+                epd.emrdfk,
+                ep.noemr,
+                ed.TYPE,
+                pa.nocm,
+                ep.noregistrasifk as noregistrasi ,
+                epd.value,ep.namaruangan,pg.namalengkap as namadokter
+                --case when ed.TYPE = 'datetime' then TO_CHAR(TO_TIMESTAMP(epd.value, 'YYYY-MM-DD HH24:MI:SS'),'YYYY-MM-DD HH24:MI:SS') else epd.value end as value
+            FROM
+                emrpasien_t AS ep
+                INNER JOIN emrpasiend_t AS epd ON ep.noemr = epd.emrpasienfk
+                INNER JOIN emrd_t AS ed ON epd.emrdfk = ed.ID
+                    INNER JOIN antrianpasiendiperiksa_t AS pd ON pd.norec = ep.norec_apd
+                left JOIN pegawai_m AS pg ON pg.id = pd.objectpegawaifk
+                left JOIN pasien_m as pa on ep.nocm =  pa.nocm
+                left JOIN alamat_m as al on pa.id = al.nocmfk
+            WHERE
+                ep.noregistrasifk = '$request[noregistrasi]'
+                    AND ep.kdprofile = '$kdProfile' 
+                    and ep.noemr = '$m->noemr'
+                AND epd.statusenabled = TRUE 
+                and epd.emrfk = 210222
+            ORDER BY
+            ed.nourut
+            "
+        ));
+        $details[]= $data;
+        }
+        
+
+        $diagnosa = DB::select(DB::raw("SELECT dg.namadiagnosa, dg.kddiagnosa, ddp.objectjenisdiagnosafk FROM detaildiagnosapasien_t ddp 
+        inner join diagnosapasien_t dp on dp.norec = ddp.objectdiagnosapasienfk
+        inner join diagnosa_m dg on dg.id = ddp.objectdiagnosafk
+        inner join antrianpasiendiperiksa_t apd on apd.norec = dp.noregistrasifk
+        inner join pasiendaftar_t pd on pd.norec = apd.noregistrasifk
+        where pd.noregistrasi = '$request[noregistrasi]'
+        and ddp.objectjenisdiagnosafk in (1,2)
+        ORDER BY ddp.objectdiagnosapasienfk asc"));
+        // dd($data);
+
+//         foreach ($data as $z){
+//             if ($z->type=="datetime"){
+//                 $z->value=date('Y-m-d H:i:s',strtotime($z->value));
+//             }
+// //            $z->value = nl2br( $z->value);
+//         }
+        // foreach ($data as $z){
+        //     if (isset($z->tgllahir) ||isset($z->tgl)){
+        //         $z->tgllahir=$this->tanggal_indonesia(date('Y-m-d',strtotime($z->tgllahir)));
+        //         $z->tgl=$this->tanggal_indonesia(date('Y-m-d',strtotime($z->tgl)));
+        //     }
+            
+        // }
+        $res['profile'] = Profile::where('id',$request['kdprofile'])->first();
+        $res['d'] = $details;
+        $item =[];   
+        $item2= [];  
+            $detailsitem =[];   
+
+        foreach( $res['d'] as $items){
+            foreach ($items as $items) {
+                if($items->type  ==  "textbox" ||$items->type  ==  "textarea"  ){
+                    $item[$items->emrdfk] =  $items->value;
+                }
+                if($items->type =='datetime'){
+                    $item[$items->emrdfk] = $this->tanggal_indonesia(date('Y-m-d',strtotime($items->value))) ." ". date('H:i',strtotime( $items->value));
+                }
+                // if($items->type  ==  "checkboxtextbox"){
+                //     $item[$items->emrdfk] =  $items->value;
+                //     $item2[$items->emrdfk] =  true;
+                // }
+                    // if($items->ppa) {
+                    //     $chekedd = false;
+                        
+                    //     $item[$items->emrdfk] = $chekedd;
+                    // }
+                if($items->type =='combobox') {
+                    $arr = explode('~',$items->value);
+                    $item[$items->emrdfk] = $arr[1];
+                }
+
+            }
+                $detailsitem[] = $item;
+
+        }
+        $konsultasi = DB::select(DB::raw(" select
+        ru.namaruangan as ruanganasal, 
+        pg.namalengkap, rutuju.namaruangan as ruangantujuan, pet.namalengkap as pengonsul, 
+        so.keteranganorder, 
+        so.keteranganlainnya from strukorder_t as so 
+        inner join pasiendaftar_t as pd on pd.norec = so.noregistrasifk 
+        inner join pasien_m as ps on ps.id = pd.nocmfk 
+        left join ruangan_m as ru on ru.id = so.objectruanganfk 
+        left join ruangan_m as rutuju on rutuju.id = so.objectruangantujuanfk 
+        left join pegawai_m as pg on pg.id = so.objectpegawaiorderfk 
+        left join pegawai_m as pet on pet.id = so.objectpetugasfk left join antrianpasiendiperiksa_t as apd on apd.objectstrukorderfk = so.norec where so.kdprofile = 30 and so.statusenabled = true and so.objectkelompoktransaksifk = 108 and pd.noregistrasi = '$request[noregistrasi]' order by so.tglorder desc"));
+        // dd($detailsitem);
+
+        // $pageWidth = 950;
+        // $peg = null;    
+        // if(isset($request['isttd']) && $request['isttd'] == true){
+        //     $peg = DB::table('pegawai_m')->where('id',$request['pegawaittd'])->first();
+            
+        // }
+
+        // dd($diagnosa, $konsultasi, $pasien, $detailsitem);
+        // ini_set("memory_limit", "2000M");
+        // ini_set('max_execution_time', '300');
+        $pdf = PDF::loadView(
+            'report.EMR.ringkasanrajal',
+            array(
+                // 'res' => $res,
+                'diagnosa' => $diagnosa,
+                'konsultasi' => $konsultasi,
+                'dataReport' => $pasien,
+                'item'=> $detailsitem,
+                // 'peg'=> $peg
+            )
+        );
+        if(isset($request['isttd']) && $request['isttd'] == true){
+            $objetoRequest = new \Illuminate\Http\Request();
+            $objetoRequest ['emrfk'] = $request['emrfk'];
+            $objetoRequest ['norec_emr'] = $request['emr'];
+            $objetoRequest ['pegawaittd'] = $request['pegawaittd'];
+            $objetoRequest ['nocm'] = $request['nocm'];
+            $objetoRequest ['noregistrasi'] = $request['noregistrasi'];
+            $objetoRequest ['norec_pd'] = $request['norec_pd'];
+            $bsre = app('App\Http\Controllers\Bridging\BridgingBSREController')->pengajuanTTE($objetoRequest,true);
+            if($bsre['status'] == 201){
+                $content = $pdf->download()->getOriginalContent();
+                \Storage::disk('local')->put( 'TTD_BSRE/' . $bsre['dokumen']->id . '/file' . '.pdf' , $content);
+            }
+          
+            return $bsre;
+        }
+
+        return $pdf->stream();
+        return view('report.EMR.ringkasanrajal',compact('data','pageWidth'));
     }
 }

@@ -5705,7 +5705,14 @@ class PerencanaanController extends ApiController {
         if(isset($request['kegiatan']) && $request['kegiatan'] != '' && $request['kegiatan'] != 'undefined'){
             $skegiatan = "and kb.objectkegiatanfk = ".$request['kegiatan'];
         }
-
+        $subkegiatan = '';
+        if(isset($request['subkegiatan']) && $request['subkegiatan'] != '' && $request['subkegiatan'] != 'undefined'){
+            $subkegiatan = "and dp0.kode = '$request[subkegiatan]'";
+        }
+        $subsubkegiatan = '';
+        if(isset($request['subsubkegiatan']) && $request['subsubkegiatan'] != '' && $request['subsubkegiatan'] != 'undefined'){
+            $subsubkegiatan = "and ka.kode = '$request[subsubkegiatan]'";
+        }
         $smataanggaran = '';
         if(isset($request['mataanggaran']) && $request['mataanggaran'] != '' && $request['mataanggaran'] != 'undefined'){
             $smataanggaran = "and ma.kodemataanggaran = '".$request['mataanggaran']."'";
@@ -5782,6 +5789,8 @@ class PerencanaanController extends ApiController {
                 and ka.objectpptkfk = $idpegawai
                 and ka.kdprofile = 30 and ka.statusenabled = true
                 $stahun
+                $subkegiatan
+                $subsubkegiatan
                 $stahap
                 group by kb.norec, kb.kdprofile, kb.statusenabled, kb.objectkegiatanfk, kb.objectmataanggaranfk, kb.keteranganbelanja,
                 ma.kodemataanggaran || ' ' || ma.namamataanggaran, kb.nourut, kb.jml, kb.hargasatuan, kb.subtotal, kb.satuan,
@@ -5823,6 +5832,8 @@ class PerencanaanController extends ApiController {
                 and ka.kdprofile = 30 and ka.statusenabled = true
                 $stahun
                 $stahap
+                $subkegiatan
+                $subsubkegiatan
                 group by kb.norec, kb.kdprofile, kb.statusenabled, kb.objectkegiatanfk, kb.objectmataanggaranfk, kb.keteranganbelanja,
                 ma.kodemataanggaran || ' ' || ma.namamataanggaran, kb.nourut, kb.jml, kb.hargasatuan, kb.subtotal, kb.satuan,
                 kb.objectasalprodukfk, kb.objecttahapfk,
@@ -5863,6 +5874,8 @@ class PerencanaanController extends ApiController {
                 where kb.kdprofile = 30 and kb.statusenabled = true
                 and ka.kdprofile = 30 and ka.statusenabled = true
                 $stahun
+                $subkegiatan
+                $subsubkegiatan
                 $stahap
                 group by kb.norec, kb.kdprofile, kb.statusenabled, kb.objectkegiatanfk, kb.objectmataanggaranfk, kb.keteranganbelanja,
                 ma.kodemataanggaran || ' ' || ma.namamataanggaran, kb.nourut, kb.jml, kb.hargasatuan, kb.subtotal, kb.satuan,
@@ -5940,6 +5953,8 @@ class PerencanaanController extends ApiController {
             and ma.kdprofile = 30
             $stahun
             $stahap
+            $subkegiatan
+                $subsubkegiatan
             $smataanggaran
             group by kb.norec, dp0.kode, dp0.keterangan, ka.kode, ka.keterangan, ka.tahun, ta.tahap, kb.subtotal, ka.kode || ' ' || ka.keterangan, ap.nilai, ap.bulanint, ma.kodemataanggaran, ma.namamataanggaran,
             ma.kodemataanggaran || ' - ' || ma.namamataanggaran
@@ -5985,6 +6000,8 @@ order by subkodepertama asc, subkodekedua asc, subkodeketiga asc, subkodekeempat
             and ma.statusenabled = true
             and ma.kdprofile = 30
             $stahun
+            $subkegiatan
+                $subsubkegiatan
             $stahap
             group by kb.norec, kb.keteranganbelanja, dp0.kode, dp0.keterangan, ka.kode, ka.keterangan, ka.tahun, ta.tahap, kb.subtotal, ka.kode || ' ' || ka.keterangan, ap.nilai, ap.bulanint, ma.kodemataanggaran, ma.namamataanggaran,
             ma.kodemataanggaran || ' - ' || ma.namamataanggaran
