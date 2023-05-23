@@ -6362,6 +6362,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                                                     medifirstService.post('perencanaan/save-realisasi-spj',datasave).then(function (e) {
                                                                         loadDataGrid();
                                                                         $scope.popupTambahSPJ.center().close()
+                                                                        $scope.item.itemRincian = undefined
+                                                                        DataDetailSPJ = []
+                                                                        $scope.dataSourceDetailSPJ = new kendo.data.DataSource({
+                                                                            data: DataDetailSPJ
+                                                                        });
                                                                         // $state.go("SPJ", {
                                                     
                                                                         // })
@@ -6422,6 +6427,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                             medifirstService.post('perencanaan/save-realisasi-spj',datasave).then(function (e) {
                                                 loadDataGrid();
                                                 $scope.popupTambahSPJ.center().close()
+                                                DataDetailSPJ = []
+                                                $scope.item.itemRincian = undefined
+                                                $scope.dataSourceDetailSPJ = new kendo.data.DataSource({
+                                                    data: DataDetailSPJ
+                                                });
                                                 // $state.go("SPJ", {
                                                     
                                                 // })
