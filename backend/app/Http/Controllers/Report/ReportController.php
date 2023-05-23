@@ -4194,6 +4194,7 @@ class ReportController extends ApiController{
                                     kdprofile = 30 and sr.statusenabled = true
                                     $qtahun
                                     $qsubsubkegiatansr
+                                    where pj.objectsubsubkegiatanfk = $subsubk
                                     group by ma.kodemataanggaran, ma.namamataanggaran, sppj.jumlahpanjar, pj.jumlah
                             ) as s group by kodemataanggaran, namamataanggaran
                         ) as y on y.kodemataanggaran = ma.kodemataanggaran
