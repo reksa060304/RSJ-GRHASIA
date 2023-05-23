@@ -1881,14 +1881,14 @@
                 <div class="grid_12">
                     <table>
                         <tr>
-                            <th colspan="4" style="text-align: center;">READ BACK/CABAK <br> (Catat Baca Konfirmasi Kembali)
+                            <th colspan="8" style="text-align: center;">READ BACK/CABAK <br> (Catat Baca Konfirmasi Kembali)
                             </th>
                         </tr>
                         <tr>
-                            <th colspan="2">
+                            <th colspan="4">
                                 PENERIMA PESAN
                             </th>
-                            <th colspan="2">
+                            <th colspan="4">
                                 PEMBERI PESAN
                             </th>
                         </tr>
@@ -1903,6 +1903,16 @@
                                         parsedate="yyyy-MM-dd HH:mm" />
                                 </div>
                             </td>
+                           
+                        
+                            <td>Nama Terang</td>
+                            <td>
+                                <div class="grid_12" >
+                                    <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[310624]"
+                                        k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                                        k-auto-bind="false" k-data-source="listPegawai" />
+                                </div>
+                            </td>
                             <td>
                                 Tanggal dan Jam
                             </td>
@@ -1913,22 +1923,18 @@
                                         parsedate="yyyy-MM-dd HH:mm" />
                                 </div>
                             </td>
-                        </tr>
-                        <tr>
-                            <td>Nama Terang</td>
-                            <td>
-                                <div class="grid_12" >
-                                    <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[310624]"
-                                        k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
-                                        k-auto-bind="false" k-data-source="listPegawai" />
-                                </div>
-                            </td>
                             <td>Nama Terang</td>
                             <td>
                                 <div class="grid_12">
                                     <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[310625]"
                                         k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
                                         k-auto-bind="false" k-data-source="listPegawai" />
+                                </div>
+                            </td>
+                            <td>
+                                <div class="grid_1" style="margin-top:20px">
+                                    <label ng-click="tambah()" class="clicks"><img src="stylesheets/Addd.png" width="25"
+                                            alt="Picture"></label>
                                 </div>
                             </td>
                         </tr>

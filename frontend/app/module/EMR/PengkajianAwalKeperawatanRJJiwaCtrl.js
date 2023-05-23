@@ -1215,6 +1215,23 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             medifirstService.get("emr/get-emr-transaksi-detail?noemr=" + nomorEMR + "&emrfk=" + $scope.cc.emrfk, true).then(function (dat) {                
                 $scope.item.obj = []
                 $scope.item.obj2 = []
+                medifirstService.get("emr/get-emr-otomatisvitalsign?emrfk=147"+"&noregistrasi="+$scope.cc.noregistrasi).then(function (dat) {
+                    var datas = dat.data.data2
+                    $scope.isRouteLoading = false
+                    if(datas.length> 0){
+                        $scope.item.obj[3019903]= datas[0].td
+                        $scope.item.obj[3019904]= datas[0].nadi
+                        $scope.item.obj[3019906]= datas[0].suhu
+                        $scope.item.obj[3019905]= datas[0].pernapasan
+                        $scope.item.obj[310031]= datas[0].bb
+                        $scope.item.obj[310030]= datas[0].tb
+
+
+                    }
+                    
+                    
+    
+                })
                 $scope.item.obj[31300216] = { value: $scope.cc.iddpjp , text:  $scope.cc.dokterdpjp }
                 $scope.item.obj[3019900] = moment($scope.now).format('YYYY-MM-DD HH:mm')
                 $scope.item.obj[3020130] = moment($scope.now).format('YYYY-MM-DD HH:mm')

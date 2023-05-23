@@ -1979,6 +1979,23 @@ console.log(jawab)
             medifirstService.get("emr/get-emr-transaksi-detail?noemr=" + nomorEMR + "&emrfk=" + $scope.cc.emrfk, true).then(function (dat) {
                 $scope.item.obj = []
                 $scope.item.obj2 = []
+                medifirstService.get("emr/get-emr-otomatisvitalsign?emrfk=147"+"&noregistrasi="+$scope.cc.noregistrasi).then(function (dat) {
+                    var datas = dat.data.data2
+                    $scope.isRouteLoading = false
+                    if(datas.length> 0){
+                        $scope.item.obj[310026]= datas[0].td
+                        $scope.item.obj[310027]= datas[0].nadi
+                        $scope.item.obj[310029]= datas[0].suhu
+                        $scope.item.obj[310028]= datas[0].pernapasan
+                        $scope.item.obj[310031]= datas[0].bb
+                        $scope.item.obj[310030]= datas[0].tb
+
+
+                    }
+                    
+                    
+    
+                })
                 $scope.item.obj[116062] = $scope.now
                 let pegawai = JSON.parse(localStorage.getItem('pegawai'))
                 if(pegawai.jenisPegawai.jenispegawai == 'Dokter'){
