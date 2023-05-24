@@ -513,7 +513,9 @@
 					</md-tab>
 					<md-tab label="SPJ" ng-if="spjaja === true && spjajas === false && panjaraja === false && sppaja === false && spmaja === false && semuaanggaran === false">
 						<md-content class="md-padding">
-
+							<div class="grid_12" style="margin-top:60px">
+								<div ng-include='"../app/template/Shared/TemplateLoading"'></div>
+							</div>
 							<br />
 							<div class="grid_3">
 								<label c-label item="item" c-label-text="Tanggal awal"></label>
@@ -2921,6 +2923,23 @@
 					<input c-text-box type="input" class="k-textbox" ng-model="item.jumlahdibayarSPJ"  />
 				</div>
 			</div>
+			<div class="grid_12">
+				<div class="grid_3" style="text-align: left;">
+					JUMLAH PAJAK 1. PPh
+				</div>
+				<div class="grid_4" style="margin-top: -10px;">
+					<input c-text-box type="input" class="k-textbox" ng-model="item.pph" />
+				</div>
+			</div>
+
+			<div class="grid_12">
+				<div class="grid_3" style="text-align: left;">
+					2. PPN
+				</div>
+				<div class="grid_4" style="margin-top: -10px;">
+					<input c-text-box type="input" class="k-textbox" ng-model="item.ppn" />
+				</div>
+			</div>
 			<div class="grid_12" style="margin-top: 25px;" ng-hide="true">
 				<div class="grid_3">
 					Pilih Data Panjar 
@@ -3031,6 +3050,9 @@
 <div class="grid_12">
 <div ng-include='"../app/template/Shared/TemplateLoading"'></div>
 
+</div>
+<div class="grid_12" style="margin-top:60px">
+	<div ng-include='"../app/template/Shared/TemplateLoading"'></div>
 </div>
 <script id="status-template" type="text/kendo-templ">
     # if (nospp == null) { #

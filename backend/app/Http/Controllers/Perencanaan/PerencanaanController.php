@@ -5053,6 +5053,8 @@ class PerencanaanController extends ApiController {
             $KB->objectcarabayarfk = $request['carabayar'];
             $KB->keterangan = $request['keterangan'];
             $KB->jumlahdibayarverif = $request['jumlahdibayarverif'];
+            $KB->ppn = $request['ppn'];
+            $KB->pph = $request['pph'];
             $KB->save();
             $transStatus = 'true';
        } catch (\Exception $e) {
@@ -7588,12 +7590,14 @@ order by subkodepertama asc, subkodekedua asc, subkodeketiga asc, subkodekeempat
 
         $data = DB::select(DB::raw("
         select rkn.namarekanan, sr.norec, sr.norealisasi, string_agg(DISTINCT rd.uraian, ',') uraian, cbs.carabayar, ma.kodemataanggaran || '~' || ma.namamataanggaran as mataanggaran,
-        sr.keterangan, sr.tglverif, sr.jumlahdibayarverif, sr.pph, sr.ppn  FROM
+        sr.keterangan, sr.tglverif, sr.jumlahdibayarverif, sr.pph, sr.ppn, ka.keterangan as kegiatan, ap.asalproduk FROM
         strukrealisasi_t sr
         inner join realisasidetail_t rd on rd.strukrealisasifk = sr.norec
         inner join carabayarspj_m cbs on cbs.id = sr.objectcarabayarfk
         inner JOIN mataanggaran_m ma on ma.id=sr.objectmataanggaranfk
         left JOIN rekanan_m rkn on rkn.id=sr.rekananfk
+        inner join kegiatananggaran_m ka on ka.id = sr.objectkegiatanfk
+        inner join asalproduk_m ap on ap.id = sr.objectasalprodukfk
         where sr.statusenabled = true
         and sr.kdprofile = 30
         and sr.tglrealisasi between '$tglAwal' and '$tglAkhir'
@@ -7601,9 +7605,37 @@ order by subkodepertama asc, subkodekedua asc, subkodeketiga asc, subkodekeempat
         and (sr.pph <> 0 or sr.ppn<>0)
         $qkey
         group by rkn.namarekanan, sr.norec, sr.norealisasi, cbs.carabayar, ma.kodemataanggaran || '~' || ma.namamataanggaran,
-        sr.keterangan, sr.tglverif, sr.jumlahdibayarverif
+        sr.keterangan, sr.tglverif, sr.jumlahdibayarverif, ka.keterangan,ap.asalproduk
             ")
         );
+        foreach ($data as $d) {
+            $norec = $d->norec;
+            $detail = DB::select(DB::raw("select 
+            pep.nopajak nopajakpep, pp.nopajak nopajakpp, pp.uraianpajak, sr.norealisasi,string_agg(DISTINCT rd.uraian, ',') uraian, sr.tglverif tglrealisasi, coalesce(jp.jenispajak,'PPh') as kode, pp.pph as jumlah 
+            from strukrealisasi_t sr 
+            left join realisasidetail_t rd on rd.strukrealisasifk = sr.norec
+            inner join pemungutanpajak_t pp on pp.objectspjfk = sr.norec and pp.statusenabled = true and pp.kdprofile = 30 
+            inner join penyetoranpajak_t pep on left(pep.nopajak, 3) = left(pp.nopajak, 3) and pep.statusenabled = true and pep.kdprofile = 30
+            left join jenispajak_m jp on jp.id = pp.objectjenispphfk and jp.statusenabled = true and jp.kdprofile = 30
+            where sr.norec = '$norec'
+            and pp.objectjenispphfk is not null
+            group by jp.jenispajak, pep.nopajak, pp.nopajak, pp.uraianpajak, sr.norealisasi, sr.tglverif, pp.pph
+
+            union all
+
+            select 
+            pep.nopajak nopajakpep, pp.nopajak nopajakpp, pp.uraianpajak, sr.norealisasi,string_agg(DISTINCT rd.uraian, ',') uraian, sr.tglverif tglrealisasi, 'PPn' as kode, pp.ppn as jumlah 
+            from strukrealisasi_t sr 
+            left join realisasidetail_t rd on rd.strukrealisasifk = sr.norec
+            inner join pemungutanpajak_t pp on pp.objectspjfk = sr.norec and pp.statusenabled = true and pp.kdprofile = 30
+            inner join penyetoranpajak_t pep on left(pep.nopajak, 3) = left(pp.nopajak, 3) and pep.statusenabled = true and pep.kdprofile = 30
+            where sr.norec = '$norec'
+            and pp.objectjenispphfk is null
+            group by pep.nopajak, pp.nopajak, pp.uraianpajak, sr.norealisasi, sr.tglverif, pp.ppn
+                ")
+            );
+            $d->details = $detail;
+        }
 
         $result = array(
             'data' => $data,

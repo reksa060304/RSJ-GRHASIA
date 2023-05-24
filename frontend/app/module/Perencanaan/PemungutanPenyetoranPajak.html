@@ -63,6 +63,11 @@
         margin-inline-end: 0px;
         font-weight: bold;
     }
+    .green {
+    background-color: #00ff00;
+    color: #000000;
+    /*font-weight: bold;*/
+    }
 </style>
 <div class="grid_12">
     <div class="panel panel-default container_12">
@@ -111,9 +116,10 @@
         <!-- Tabel Hasil Pencarian -->
         <div class="grid_12" style="margin-top:50px;">
             <div class="grid_12 borderBox">
-                <kendo-grid id="grid" data-source="dataGrid" options="columnGrid" k-pageable="'true'"
-                    k-sortable="'true'" k-groupable="'false'" k-resizable="'true'" k-selectable="'row'"
-                    k-ng-model="dataSelected" ng-click="klikGrid(dataSelected)" style="min-height: 0px; max-height: 1500px;">
+                <kendo-grid id="gridPajak" k-data-source="dataGrid" k-options="columnGrid"
+                    k-selectable="'row'"
+                    k-ng-model="dataSelected" ng-click="klikGrid(dataSelected)" style="min-height: 0px; max-height: 1500px;"
+                    >
                 </kendo-grid>
             </div>
         </div>

@@ -2243,6 +2243,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }
 
             $scope.CariSPJ = function () {
+                $scope.isRouteLoading = true
                 LoadSPJ()
             }
 
@@ -2912,6 +2913,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         carabayar: $scope.item.radioPencairanVerifikasi,
                         jumlahdibayarverif: $scope.item.jumlahdibayarSPJ,
                         norec: $scope.norecverif,
+                        pph: $scope.item.pph != undefined ? $scope.item.pph : 0,
+                        ppn: $scope.item.ppn != undefined ? $scope.item.ppn : 0,
                     }
 
                 if($scope.item.radioPencairanVerifikasi == '2'){
@@ -4760,15 +4763,15 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         // hidden: true
                     },
                     {
-                        "field": "carabayar",
-                        "title": "Cara Bayar",
+                        "field": "pph",
+                        "title": "PPh",
                         "width": "70px",
                         // hidden: true
                     },
                     {
-                        "field": "bendahara",
-                        "title": "Bendahara",
-                        "width": "200px",
+                        "field": "ppn",
+                        "title": "PPN",
+                        "width": "70px",
                         // hidden: true
                     },
                     {
@@ -6263,22 +6266,28 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }
             
             $scope.SimpanPopUpDetailSPJ = function() {
+                $scope.isRouteLoading = true
                 $scope.jumlahspjdipilih = 0
                 $scope.jumlahpanjardipilih = 0
                 $scope.jumlahpengembaliandipilih = 0
                 if($scope.item.pihakKetigaSPJ == undefined){
+                    $scope.isRouteLoading = false
                     return
                 }
                 if($scope.item.subSubKegiatanSPJ == undefined){
+                    $scope.isRouteLoading = false
                     return
                 }
                 if($scope.item.mataAnggaranSPJ == undefined){
+                    $scope.isRouteLoading = false
                     return
                 }
                 if($scope.item.bendaharaSPJ == undefined){
+                    $scope.isRouteLoading = false
                     return
                 }
                 if($scope.item.penerimaSPJ == undefined){
+                    $scope.isRouteLoading = false
                     return
                 }
 
@@ -6304,12 +6313,14 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                 medifirstService.get("perencanaan/get-lock-entry-spj?subsubkegiatan=" + $scope.item.subSubKegiatanSPJ.id ).then(function (e) {
                     if(e.data.data[0].islock == true){
+                        $scope.isRouteLoading = false
                         toastr.error('Entry SPJ Sudah Dilock, Silahkan Hubungi Admin Untuk Unlock', 'Informasi');
                         return
                     } else{
                         medifirstService.get("perencanaan/get-lock-entry-spj-perrekening?mataanggaran=" + $scope.item.mataAnggaranSPJ.kodemataanggaran +"&subsubkegiatan=" + $scope.item.subSubKegiatanSPJ.id).then(function (e) {
                             console.log(e.data.data[0].islock)
                             if(e.data.data[0].islock == true){
+                                $scope.isRouteLoading = false
                                 toastr.error('Entry SPJ Sudah Dilock, Silahkan Hubungi Admin Untuk Unlock', 'Informasi');
                                 return
                             } else{
@@ -6423,6 +6434,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                   
                                         if(cek == 234){
                                             messageContainer.error("Data yang sudah diverif tidak bisa diubah");
+                                            $scope.isRouteLoading = false
                                         } else if (cek == 123){
                                             medifirstService.post('perencanaan/save-realisasi-spj',datasave).then(function (e) {
                                                 loadDataGrid();
@@ -6445,12 +6457,15 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             
                                             })
                                         }
+                                        
                                     });
                                 }
                                     
                             }
                         });
+                    $scope.isRouteLoading = false
                     }
+
                 });
             }
 
@@ -6489,6 +6504,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }
 
             function editDetailSPJ(e) {
+                $scope.isRouteLoading = true
                 e.preventDefault();
                 var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
                 medifirstService.get("reservasionline/get-daftar-slotting?id=1").then(function (e) {
@@ -6641,7 +6657,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 });
                 $scope.totalspjawal = dataItem.totalbelanja
                 
-                
+                $scope.isRouteLoading = false
                 $scope.popupTambahSPJ.center().open()
             }
 
@@ -6653,6 +6669,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 
                 var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
                 console.log(dataItem)
+                $scope.item.pph = dataItem.pph
+                $scope.item.ppn = dataItem.ppn
                 $scope.item.jumlahdibayarSPJ = dataItem.totalbelanja
                 $scope.item.radioPencairanVerifikasi = dataItem.objectcarabayarfk
                 $scope.norecverif = dataItem.norec    

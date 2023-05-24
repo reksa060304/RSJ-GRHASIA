@@ -308,7 +308,7 @@ define(['initialize'], function (initialize) {
                     $scope.item.jumlahPPnDinamis = 'Rp'+$scope.item.jumlahPPn
                 }
             });
-
+            
             $scope.SavePajak = function () {
 
                 var objSave = {
@@ -761,8 +761,33 @@ define(['initialize'], function (initialize) {
                     }
                 ]
             };
+            var onDataBound = function (e) {
+                console.log(e);
+                var kendoGrid = $("#gridPajak").data("kendoGrid"); // get the grid widget
+                var rows = e.sender.element.find("tbody tr"); // get all rows
+                for (let i = 0; i < rows.length; i++) {
+                    // const element = rows[i];
+                    var row = rows[i];
+                    var details = kendoGrid.dataItem(row).details
+                    console.log(row);
+                    // $(row.cells[2]).addClass("koneng");
 
+                    if (details.length > 0) {
+                        $(row.cells[0]).addClass("green");
+                        $(row.cells[1]).addClass("green");
+                        $(row.cells[2]).addClass("green");
+                        $(row.cells[3]).addClass("green");
+                        $(row.cells[4]).addClass("green");
+                        $(row.cells[5]).addClass("green");
+                        $(row.cells[6]).addClass("green");
+                        $(row.cells[7]).addClass("green");
+
+                    }
+
+                }
+            }
             $scope.columnGrid = {
+                dataBound: onDataBound,
                 sortable: true,
                 selectable: true,
                 pageable: true,
@@ -788,39 +813,64 @@ define(['initialize'], function (initialize) {
                         "width": "100px",
                     },
                     {
+
+                        "field": "kegiatan",
+                        "title": "Sub Sub Kegiatan",
+                        "width": "120px",
+                    },
+                    {
+
+                        "field": "mataanggaran",
+                        "title": "Nama Rekening",
+                        "width": "120px",
+                    },
+                    {
+
+                        "field": "asalproduk",
+                        "title": "Sumber",
+                        "width": "80px",
+                    },
+                    {
+
+                        "field": "jumlahdibayarverif",
+                        "title": "Jumlah SPJ",
+                        "width": "90px",
+                        // aggregates: ["sum"],
+                        // template: "#: jumlahdibayarverif  #",
+                        // groupFooterTemplate: "#: data.jumlahdibayarverif.sum  #",
+                        // footerTemplate: "#: data.jumlahdibayarverif.sum  #"
+                    },
+                    {
                         
                         "field": "uraian",
                         "title": "Uraian",
                         "width": "100px",
                     },
                     {
-                        
-                        "field": "carabayar",
-                        "title": "Cara Bayar",
-                        "width": "100px",
+
+                        "field": "pph",
+                        "title": "PPh SPJ",
+                        "width": "80px",
                     },
                     {
-                        
-                        "field": "mataanggaran",
-                        "title": "Rekening",
-                        "width": "100px",
+
+                        "field": "ppn",
+                        "title": "PPN SPJ",
+                        "width": "80px",
                     },
-                    {
+                    // {
                         
-                        "field": "tglverif",
-                        "title": "Tgl Verif",
-                        "width": "100px",
-                    },
-                    {
+                    //     "field": "carabayar",
+                    //     "title": "Cara Bayar",
+                    //     "width": "100px",
+                    // },
+                    // {
                         
-                        "field": "jumlahdibayarverif",
-                        "title": "Total",
-                        "width": "100px",
-                        aggregates: ["sum"],
-                        template: "#: jumlahdibayarverif  #",
-                        groupFooterTemplate: "#: data.jumlahdibayarverif.sum  #",
-                        footerTemplate: "#: data.jumlahdibayarverif.sum  #"
-                    }
+                    //     "field": "tglverif",
+                    //     "title": "Tgl Verif",
+                    //     "width": "100px",
+                    // },
+                    
                 ]
             };
 
@@ -892,6 +942,7 @@ define(['initialize'], function (initialize) {
                     $scope.item.jumlahPPnDinamis = 'Rp' + e.data.data[1].jumlah
                 });
             }
+            
             //////////////////////////////////////////////////////////////          END             /////////////////////////////////////////////////////////////////////////////////////       
         }
     ]);
