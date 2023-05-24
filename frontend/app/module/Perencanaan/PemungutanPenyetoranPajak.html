@@ -125,6 +125,14 @@
                 <input c-text-box type="input" class="k-textbox" ng-model="item.caridatapajak"/>
             </div>
         </div>
+        <div class="grid_12">
+            <div class="grid_1">
+                <p style="font-weight: bold; margin-top: 10px;">Nomor SPJ</p>
+            </div>
+            <div class="grid_4">
+                <input c-text-box type="input" class="k-textbox" ng-model="item.nospj" disabled />
+            </div>
+        </div>
         <div class="grid_6" style="margin-top:50px;">
             <div class="grid_4" >
                 <legend id="filterData">
@@ -339,4 +347,7 @@
             </div>
         </div>
     </div>
+</div>
+<div class="grid_12" style="margin-top:60px">
+    <div ng-include='"../app/template/Shared/TemplateLoading"'></div>
 </div>

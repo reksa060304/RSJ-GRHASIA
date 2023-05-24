@@ -971,7 +971,7 @@ class PerencanaanController extends ApiController {
         ) as x 
         group by idmataanggaran, kodemataanggaran, idsubkegiatan, subkegiatan, idsubsubkegiatan, subsubkegiatan,
         norec, nopanjar, uraian, tglpanjar, jumlah, jenispanjar, norealisasi, jumlahspj, sumberpanjar
-        order by nopanjar;
+        order by nopanjar asc;
         "));
         $tglsppdate = "";
         $thnspp = "";
@@ -7418,7 +7418,7 @@ order by subkodepertama asc, subkodekedua asc, subkodeketiga asc, subkodekeempat
                 $status
 				group by dp0.kode, dp0.keterangan, sr.norec, cbs.carabayar, sr.tglverif, sr.keterangan, sr.jumlahdibayarverif, sr.kdprofile, sr.statusenabled, sr.tglrealisasi, sr.norealisasi, sr.status, sr.totalbelanja, sr.objectcarabayarfk, sr.rekananfk, sr.deskripsi, sr.objectkegiatanfk, sr.objectmataanggaranfk, sr.bendaharafk, sr.penerimafk, sr.pph, sr.ppn, pg1.namalengkap, pg2.namalengkap, rkn.namarekanan ,
                 ka.kode || '~' || ka.keterangan, ma.kodemataanggaran || '~' || ma.namamataanggaran, ka.tahun, ma.kodemataanggaran, ma.namamataanggaran, dp0.id, ka.keterangan, ka.id, ap.id, ap.asalproduk
-                order by sr.norealisasi desc
+                order by sr.norealisasi asc
             ")
         );
         $result = [];
@@ -7588,7 +7588,7 @@ order by subkodepertama asc, subkodekedua asc, subkodeketiga asc, subkodekeempat
 
         $data = DB::select(DB::raw("
         select rkn.namarekanan, sr.norec, sr.norealisasi, string_agg(DISTINCT rd.uraian, ',') uraian, cbs.carabayar, ma.kodemataanggaran || '~' || ma.namamataanggaran as mataanggaran,
-        sr.keterangan, sr.tglverif, sr.jumlahdibayarverif  FROM
+        sr.keterangan, sr.tglverif, sr.jumlahdibayarverif, sr.pph, sr.ppn  FROM
         strukrealisasi_t sr
         inner join realisasidetail_t rd on rd.strukrealisasifk = sr.norec
         inner join carabayarspj_m cbs on cbs.id = sr.objectcarabayarfk
@@ -7598,6 +7598,7 @@ order by subkodepertama asc, subkodekedua asc, subkodeketiga asc, subkodekeempat
         and sr.kdprofile = 30
         and sr.tglrealisasi between '$tglAwal' and '$tglAkhir'
         and sr.status = 'Sudah Diverifikasi'
+        and (sr.pph <> 0 or sr.ppn<>0)
         $qkey
         group by rkn.namarekanan, sr.norec, sr.norealisasi, cbs.carabayar, ma.kodemataanggaran || '~' || ma.namamataanggaran,
         sr.keterangan, sr.tglverif, sr.jumlahdibayarverif

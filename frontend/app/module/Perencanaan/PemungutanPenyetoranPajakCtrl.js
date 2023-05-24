@@ -767,20 +767,20 @@ define(['initialize'], function (initialize) {
                 selectable: true,
                 pageable: true,
                 columns: [
-                    {
-                        "command": [
-                              {
-                                 text: "Pilih",
-                                 click: PilihSPJ,
-                                 imageClass: "clinic fa",
-                                 visible: function(dataItem) { return dataItem.nospp }
-                              },
-                          ],
-                             title: "",
+                    // {
+                    //     "command": [
+                    //           {
+                    //              text: "Pilih",
+                    //              click: PilihSPJ,
+                    //              imageClass: "clinic fa",
+                    //              visible: function(dataItem) { return dataItem.nospp }
+                    //           },
+                    //       ],
+                    //          title: "",
                              
-                             width: "60px",
+                    //          width: "60px",
                              
-                    },
+                    // },
                     {
                         
                         "field": "norealisasi",
@@ -858,6 +858,39 @@ define(['initialize'], function (initialize) {
 
             $scope.formatRupiah = function (value, currency) {
                 return currency + " " + value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            }
+            $scope.klikGrid = function(e){
+                $scope.item.nospj = e.norealisasi
+                $scope.norecspj = e.norec
+                $scope.tglveriftopajak = moment(e.tglrealisasi).format('YYYY-MM-DD HH:mm')
+                $scope.item.uraianPajak = e.uraian
+                if(e.ppn != '0'){
+                    $scope.item.jumlahPPn = e.ppn
+                }
+                if (e.pph != '0') {
+                    $scope.item.jumlahPPh = e.pph
+                }
+                console.log($scope.tglveriftopajak)
+                medifirstService.get("perencanaan/get-pajak-pph-ppn?norec=" + e.norec).then(function (e) {
+                    $scope.dataGridPemungutan = e.data.data
+                    $scope.dataGridPenyetoran = e.data.data
+
+
+                    $scope.item.nospjpemungutan = e.data.data[0].nopajakpp
+                    $scope.item.nospjpenyetoran = e.data.data[0].nopajakpep
+                    if (e.data.data[0].uraianpajak != null) {
+                        $scope.item.uraianspjp = e.data.data[0].uraianpajak
+                        $scope.item.uraianPajak = e.data.data[0].uraianpajak
+                    } else {
+                        $scope.item.uraianspjp = 'PPh dan PPn ' + e.data.data[0].uraian
+                        $scope.item.uraianPajak = 'PPh dan PPn ' + e.data.data[0].uraian
+                    }
+
+                    $scope.item.jumlahPPh = e.data.data[0].jumlah
+                    $scope.item.jumlahPPhDinamis = 'Rp' + e.data.data[0].jumlah
+                    $scope.item.jumlahPPn = e.data.data[1].jumlah
+                    $scope.item.jumlahPPnDinamis = 'Rp' + e.data.data[1].jumlah
+                });
             }
             //////////////////////////////////////////////////////////////          END             /////////////////////////////////////////////////////////////////////////////////////       
         }
