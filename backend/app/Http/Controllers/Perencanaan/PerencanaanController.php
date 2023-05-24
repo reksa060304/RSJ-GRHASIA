@@ -7544,7 +7544,37 @@ order by subkodepertama asc, subkodekedua asc, subkodeketiga asc, subkodekeempat
 
         return $this->respond($result);
     }
+    public function getSPJtoLPJs(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $bulan = (int)$request['bulan'];
+        $tahun = (int)$request['tahun'];
 
+        $data = DB::select(DB::raw("
+        select sr.norec, sr.norealisasi, string_agg(DISTINCT rd.uraian, ',') uraian, cbs.carabayar, ma.kodemataanggaran || '~' || ma.namamataanggaran as mataanggaran,
+        sr.keterangan, sr.tglverif, sr.jumlahdibayarverif  FROM
+        strukrealisasi_t sr
+        inner join realisasidetail_t rd on rd.strukrealisasifk = sr.norec
+        inner join carabayarspj_m cbs on cbs.id = sr.objectcarabayarfk
+        inner JOIN mataanggaran_m ma on ma.id=sr.objectmataanggaranfk
+        where sr.statusenabled = true
+        and sr.kdprofile = 30
+        and sr.status = 'Sudah Diverifikasi'
+        and extract(month from sr.tglrealisasi) = $bulan
+        and extract(year from sr.tglrealisasi) = $tahun
+        
+        group by sr.norec, sr.norealisasi, cbs.carabayar, ma.kodemataanggaran || '~' || ma.namamataanggaran,
+        sr.keterangan, sr.tglverif, sr.jumlahdibayarverif
+            ")
+        );
+
+        $result = array(
+            'data' => $data,
+            'message' => '@epic',
+        );
+
+        return $this->respond($result);
+    }
     public function getSPJtoPajak(Request $request){
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;

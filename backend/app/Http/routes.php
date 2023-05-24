@@ -1708,6 +1708,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('perencanaan/get-spj', 'Perencanaan\PerencanaanController@getDataSPJ');
             Route::get('perencanaan/get-sts-keuangan', 'Perencanaan\PerencanaanController@getSTSKeuangan');
             Route::get('perencanaan/get-spj-to-lpj', 'Perencanaan\PerencanaanController@getSPJtoLPJ');
+            Route::get('perencanaan/get-spj-to-lpjs', 'Perencanaan\PerencanaanController@getSPJtoLPJs');
             Route::get('perencanaan/get-spj-to-pajak', 'Perencanaan\PerencanaanController@getSPJtoPajak');
             Route::get('perencanaan/get-spj-bku', 'Perencanaan\PerencanaanController@getSPJBKU');
             Route::get('perencanaan/get-pajak-pph-ppn', 'Perencanaan\PerencanaanController@getPajak');

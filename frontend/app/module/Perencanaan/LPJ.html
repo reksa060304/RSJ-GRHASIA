@@ -125,6 +125,13 @@
             <div class="grid_2">
                 <button class="btnTemplate1" ng-click="HapusLPJ()">Hapus</button>
             </div>
+            <div class="grid_12 borderBox" style="margin-top: 50px">
+                <kendo-grid id="grid" data-source="dataGridLPJS" options="columnGridLPJS" k-pageable="'true'"
+                    k-sortable="'true'" k-groupable="'false'" k-resizable="'true'" k-selectable="'row'"
+                    k-ng-model="dataSelected" ng-click="klikGrid(dataSelected)"
+                    style="min-height: 0px; max-height: 500px;">
+                </kendo-grid>
+            </div>
         </div>
 
 
