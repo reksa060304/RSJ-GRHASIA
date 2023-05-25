@@ -160,8 +160,8 @@
                             <div class="grid_12">
                                 <div ng-switch on="jawab.type">
                                     <div ng-switch-when="textbox">
-                                        <input class="k-textbox" ng-blur="getSkor(jawab)" ng-model="item.obj[jawab.id]"
-                                            type="text">
+                                        <input class="k-textbox" ng-change="getSkor(jawab)" ng-model="item.obj[jawab.id]"
+                                            type="number" >
                                     </div>
                                     <div ng-switch-when="label">
                                         <label class="k-label"> {{jawab.caption}}</label>

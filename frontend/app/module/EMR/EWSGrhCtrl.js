@@ -473,7 +473,7 @@ define(['initialize'], function (initialize) {
                     
                     dataLoad = dat.data.data
                     for (var i = 0; i <= dataLoad.length - 1; i++) {
-
+                    
                         if (parseFloat($scope.cc.emrfk) == dataLoad[i].emrfk && paramsIndex == dataLoad[i].index) {
                             if (dataLoad[i].type == "textbox") {
                                 $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
@@ -594,7 +594,6 @@ define(['initialize'], function (initialize) {
             // $scope.skor12 = 0
             $scope.skor13 = 0
             $scope.getSkor = function (stat) {
-
                 var arrobj = Object.keys($scope.item.obj)
                 var arrSave = []
                 for (var i = arrobj.length - 1; i >= 0; i--) {
@@ -609,20 +608,55 @@ define(['initialize'], function (initialize) {
                         if ($scope.item.obj[parseFloat(arrobj[i])] != undefined && $scope.item.obj[parseFloat(arrobj[i])] != "" && Boolean(cacheHelper.get('buatobj')) != Boolean($scope.item.obj[parseFloat(arrobj[i])]) ) {
                             if (stat.reportdisplay == null)
                                 break
-                            if (stat.satuan == 1)
-                                $scope.skor1 = $scope.skor1 + parseFloat(stat.reportdisplay)
-                            if (stat.satuan == 2)
-                                $scope.skor2 = $scope.skor2 + parseFloat(stat.reportdisplay)
-                            if (stat.satuan == 3)
-                                $scope.skor3 = $scope.skor3 + parseFloat(stat.reportdisplay)
-                            if (stat.satuan == 4)
-                                $scope.skor4 = $scope.skor4 + parseFloat(stat.reportdisplay)
-                            if (stat.satuan == 5)
-                                $scope.skor5 = $scope.skor5 + parseFloat(stat.reportdisplay)
-                            if (stat.satuan == 6)
-                                $scope.skor6 = $scope.skor6 + parseFloat(stat.reportdisplay)
-                            if (stat.satuan == 7)
-                                $scope.skor7 = $scope.skor7 + parseFloat(stat.reportdisplay)
+                                if(stat.kodeexternal == 'lajurespirasi'){
+                                    if (stat.satuan == 1){
+                                        if ($scope.item.obj[parseFloat(arrobj[i])] >= 6 && $scope.item.obj[parseFloat(arrobj[i])] <= 8){
+                                            $scope.skor11 = 3
+                                        }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 9 && $scope.item.obj[parseFloat(arrobj[i])] <= 11){
+                                            $scope.skor11 = 1
+                                        }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 12 && $scope.item.obj[parseFloat(arrobj[i])] <= 20) {
+                                            $scope.skor11 = 0
+                                        }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 21 && $scope.item.obj[parseFloat(arrobj[i])] <= 24) {
+                                            $scope.skor11 = 2
+                                        }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 25 && $scope.item.obj[parseFloat(arrobj[i])] <= 34) {
+                                            $scope.skor11 = 3
+                                        }
+                                        // if ($scope.item.obj[parseFloat(arrobj[i])] >= 35) {
+                                        //     $scope.skor11 = 0
+                                        //     $scope.item.obj2[parseFloat(arrobj[i])] = false
+                                        // }
+                                    }
+                                    if (stat.satuan == 2) {
+                                        if ($scope.item.obj[parseFloat(arrobj[i])] >= 6 && $scope.item.obj[parseFloat(arrobj[i])] <= 8) {
+                                            $scope.skor21 = 3
+                                        } else if ($scope.item.obj[parseFloat(arrobj[i])] >= 9 && $scope.item.obj[parseFloat(arrobj[i])] <= 11) {
+                                            $scope.skor21 = 1
+                                        } else if ($scope.item.obj[parseFloat(arrobj[i])] >= 12 && $scope.item.obj[parseFloat(arrobj[i])] <= 20) {
+                                            $scope.skor21 = 0
+                                        } else if ($scope.item.obj[parseFloat(arrobj[i])] >= 21 && $scope.item.obj[parseFloat(arrobj[i])] <= 24) {
+                                            $scope.skor21 = 2
+                                        } else if ($scope.item.obj[parseFloat(arrobj[i])] >= 25 && $scope.item.obj[parseFloat(arrobj[i])] <= 34) {
+                                            $scope.skor21 = 3
+                                        }
+                                        // if ($scope.item.obj[parseFloat(arrobj[i])] >= 35) {
+                                        //     $scope.skor11 = 0
+                                        //     $scope.item.obj2[parseFloat(arrobj[i])] = false
+                                        // }
+                                    }
+                                }
+                            
+                            // if (stat.satuan == 2)
+                            //     $scope.skor2 = $scope.skor2 + parseFloat(stat.reportdisplay)
+                            // if (stat.satuan == 3)
+                            //     $scope.skor3 = $scope.skor3 + parseFloat(stat.reportdisplay)
+                            // if (stat.satuan == 4)
+                            //     $scope.skor4 = $scope.skor4 + parseFloat(stat.reportdisplay)
+                            // if (stat.satuan == 5)
+                            //     $scope.skor5 = $scope.skor5 + parseFloat(stat.reportdisplay)
+                            // if (stat.satuan == 6)
+                            //     $scope.skor6 = $scope.skor6 + parseFloat(stat.reportdisplay)
+                            // if (stat.satuan == 7)
+                            //     $scope.skor7 = $scope.skor7 + parseFloat(stat.reportdisplay)
                             // if (stat.satuan == 8)
                             //     $scope.skor8 = $scope.skor8 + parseFloat(stat.reportdisplay)
                             // if (stat.satuan == 9)
@@ -642,32 +676,45 @@ define(['initialize'], function (initialize) {
                         else {
                             if (stat.reportdisplay == null)
                                 break
-                            if (stat.satuan == 1)
-                                $scope.skor1 = $scope.skor1 - parseFloat(stat.reportdisplay)
-                            if (stat.satuan == 2)
-                                $scope.skor2 = $scope.skor2 - parseFloat(stat.reportdisplay)
-                            if (stat.satuan == 3)
-                                $scope.skor3 = $scope.skor3 - parseFloat(stat.reportdisplay)
-                            if (stat.satuan == 4)
-                                $scope.skor4 = $scope.skor4 - parseFloat(stat.reportdisplay)
-                            if (stat.satuan == 5)
-                                $scope.skor5 = $scope.skor5 - parseFloat(stat.reportdisplay)
-                            if (stat.satuan == 6)
-                                $scope.skor6 = $scope.skor6 - parseFloat(stat.reportdisplay)
-                            if (stat.satuan == 7)
-                                $scope.skor7 = $scope.skor7 - parseFloat(stat.reportdisplay)
-                            // if (stat.satuan == 8)
-                            //     $scope.skor8 = $scope.skor8 - parseFloat(stat.reportdisplay)
-                            // if (stat.satuan == 9)
-                            //     $scope.skor9 = $scope.skor9 - parseFloat(stat.reportdisplay)
-                            // if (stat.satuan == 10)
-                            //     $scope.skor10 = $scope.skor10 - parseFloat(stat.reportdisplay)
-                            // if (stat.satuan == 11)
-                            //     $scope.skor11 = $scope.skor11 - parseFloat(stat.reportdisplay)
-                            // if (stat.satuan == 12)
-                            //     $scope.skor12 = $scope.skor12 - parseFloat(stat.reportdisplay)
-                            if (stat.satuan == 13)
-                                $scope.skor13 = $scope.skor13 - parseFloat(stat.reportdisplay)
+                            if (stat.kodeexternal == 'lajurespirasi') {
+                                if (stat.satuan == 1){
+                                    if (stat.namaexternal == '6 -8') {
+                                        $scope.skor11 = 0
+                                    }
+                                    if (stat.namaexternal == '9 - 11') {
+                                        $scope.skor11 = 0
+                                    }
+                                    if (stat.namaexternal == '12 - 20') {
+                                        $scope.skor11 = 0
+                                    }
+                                    if (stat.namaexternal == '21 - 24') {
+                                        $scope.skor11 = 0
+                                    }
+                                    if (stat.namaexternal == '25 - 34') {
+                                        $scope.skor11 = 0
+                                    }
+                                    
+                                }
+                                if (stat.satuan == 2) {
+                                    if (stat.namaexternal == '6 -8') {
+                                        $scope.skor21 = 0
+                                    }
+                                    if (stat.namaexternal == '9 - 11') {
+                                        $scope.skor21 = 0
+                                    }
+                                    if (stat.namaexternal == '12 - 20') {
+                                        $scope.skor21 = 0
+                                    }
+                                    if (stat.namaexternal == '21 - 24') {
+                                        $scope.skor21 = 0
+                                    }
+                                    if (stat.namaexternal == '25 - 34') {
+                                        $scope.skor21 = 0
+                                    }
+
+                                }
+                            }
+                            
                         }
                         cacheHelper.set('buatobj', $scope.item.obj[parseFloat(arrobj[i])])
 
@@ -682,8 +729,8 @@ define(['initialize'], function (initialize) {
                         //      $scope.item.obj[206438] = $scope.skor2
                         // }
                     
-                $scope.item.obj[310960] = $scope.skor1
-                $scope.item.obj[310961] = $scope.skor2
+                $scope.item.obj[310960] = $scope.skor11 + $scope.skor12
+                $scope.item.obj[310961] = $scope.skor21
                 $scope.item.obj[310962] = $scope.skor3
                 $scope.item.obj[310963] = $scope.skor4
                 $scope.item.obj[310964] = $scope.skor5
