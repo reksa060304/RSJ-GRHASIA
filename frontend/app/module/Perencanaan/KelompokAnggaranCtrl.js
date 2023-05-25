@@ -108,6 +108,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.item.jumlahpengembaliandipilih = 0
             $scope.datasave = {}
             $scope.selectedData2 = [];
+            $scope.selectedData3 = [];
 
             $scope.listDiv = [
                 { id: 0, div: "Urusan Pemerintahan" },
@@ -1448,7 +1449,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         name: "add", 
                         text: "Tambah",
                         template: '<div class="grid_1"><button ng-hide="disidpegawai" ng-click="Tambah()" class="k-button k-button-icontext k-grid-upload" href="\\#"><span class="k-icon k-i-plus"></span>Tambah</button></div>'                    
-                    },
+                    }, 
                     {
                         name: "add",
                         text: "Hapus yang dicentang",
@@ -4868,18 +4869,116 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                 })
             }
-            
+            $scope.selectRow2 = function (e) {
+                var element = $(e.currentTarget);
+                var checked = element.is(':checked'),
+                    row = element.closest('tr'),
+                    grid = $("#rincianGrids").data("kendoGrid"),
+                    // grid = $("#grid").data("kendoGrid"),
+                    dataItem = grid.dataItem(row);
+                // console.log(dataItem);
+                if (checked) {
+                    dataItem.statCheckbox2 = true;
+                    for (var i = 0; i < $scope.selectedData3.length; i++)
+                        if ($scope.selectedData3[i].norec == dataItem.norec) {
+                            $scope.selectedData3.splice(i, 1);
+                            break;
+                        }
+                    $scope.selectedData3.push(dataItem);
+                    row.addClass("k-state-selected");
+                } else {
+                    dataItem.statCheckbox2 = false;
+                    for (var i = 0; i < $scope.selectedData3.length; i++)
+                        if ($scope.selectedData3[i].norec == dataItem.norec) {
+                            $scope.selectedData3.splice(i, 1);
+                            break;
+                        }
+                    row.removeClass("k-state-selected");
+                }
+                console.log($scope.selectedData3);
+            }
+            $scope.hapusCentang2 = function(){
+                var confirm = $mdDialog.confirm()
+                    .title('Informasi')
+                    .htmlContent("Apakah anda yakin ingin menghapus centangan rincian anggaran?")
+                    .ariaLabel('Lucky day')
+                    .cancel('Batal')
+                    .ok('Ok');
+                $mdDialog.show(confirm).then(function () {
+                    var itemDelete = {
+                        "data": $scope.selectedData3
+                    }
+
+
+                    medifirstService.post('anggaran/delete-anggaran-kass', itemDelete).then(function (e) {
+                        $scope.selectedData3 = []
+                        medifirstService.get("perencanaan/get-total-anggaran-rcn?kegiatan=" + $scope.idkegiatananggaran).then(function (e) {
+                            var total = 0
+                            if (e.data.data.length == 0) {
+                                $scope.rcn.totalAnggaran = formatRupiah(total, "Rp. ")
+                                $scope.rcn.paguAnggaran = 0
+                            } else {
+                                total = e.data.data[0].total
+                                $scope.rcn.totalAnggaran = formatRupiah(total, "Rp. ")
+                                $scope.rcn.paguAnggaran = 0
+                            }
+
+                            $scope.item.targetKinerjaMasukan = formatRupiah(total, "Rp. ")
+
+                        })
+
+                        if ($scope.idkegiatanangkas != 0) {
+                            $scope.item.id = $scope.idkegiatanangkas
+                        } else {
+                            $scope.item.id = $scope.item.id
+                        }
+
+                        medifirstService.get("perencanaan/get-keterangan-belanja?objectkegiatanfk=" + $scope.item.id + "&idmataanggaran=" + $scope.rcn.idmataanggaran).then(function (e) {
+                            DataKeteranganBelanja = e.data.data
+                            $scope.dataSourceRincianAnggaran = new kendo.data.DataSource({
+                                data: DataKeteranganBelanja
+                            });
+                            for (let index = 0; index < DataKeteranganBelanja.length; index++) {
+                                let element = DataKeteranganBelanja[index];
+                                DataKeteranganBelanja[index].statCheckbox2 = false
+                                TotalAnggaran = TotalAnggaran + parseFloat(element.subtotal)
+                            }
+                            TotalAnggaran = parseFloat(TotalAnggaran)
+                        })
+                    });
+
+
+                    var idpegawai = ''
+                    $scope.pegawaiLogin = medifirstService.getPegawaiLogin();
+                    idpegawai = $scope.pegawaiLogin.id
+
+                    console.log($scope.item.isCekAdaAnggaranSaja)
+                    medifirstService.get("perencanaan/get-total-mata-anggaran?tahun=" + moment($scope.item.thnAnggaran).format('YYYY') + "&tahap=" + $scope.item.tahapdetail.id + "&idpegawai=" + idpegawai + "&cek=" + $scope.item.isCekAdaAnggaranSaja + "&noreckegiatan=" + $scope.idkegiatananggaran).then(function (e) {
+                        DataTotalMataAnggaran = e.data.data
+                        $scope.listAsalProduk = e.data.asalproduk
+                        $scope.dataSourceDetailMT = new kendo.data.DataSource({
+                            data: DataTotalMataAnggaran
+                        });
+                    });
+
+                })
+            }
             $scope.columnRincianAnggaran = {
                 toolbar:[
                     {
                         name: "add", 
                         text: "Tambah",
-                        template: '<div class="grid_2"><button ng-click="TambahKeterangan()" class="k-button k-button-icontext k-grid-upload" href="\\#"><span class="k-icon k-i-plus"></span>Tambah</button></div>'                    
+                        template: '<div class="grid_1"><button ng-click="TambahKeterangan()" class="k-button k-button-icontext k-grid-upload" href="\\#"><span class="k-icon k-i-plus"></span>Tambah</button></div>'                    
+                    },
+                    {
+                        name: "add",
+                        text: "Hapus yang dicentang",
+                        template: '<div class="grid_2"><button ng-hide="disidpegawai" ng-click="hapusCentang2()" class="k-button k-button-icontext k-grid-upload" href="\\#"><span class="k-icon k-i-plus"></span>Hapus yang dicentang</button></div>'
                     },
                     {
                         name: "src", 
                         text: "src",
-                        template:  '<div class="grid_6" style="margin-top: 10px;margin-left: -80px;">{{rcn.mataAnggaranDipilih}}</div>'
+                        template:  '<div class="grid_5" style="margin-top: 10px;margin-left: -50px;">{{rcn.mataAnggaranDipilih}}</div>'
                     }
                 ],
                 columns:[
@@ -4893,6 +4992,15 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                           ],
                              title: "",
                              width: "100px",
+                    },
+                    {
+                        "title": "#",
+                        template: "# if (statCheckbox2) { #" +
+                            "<input type='checkbox' class='checkbox' ng-click='selectRow2($event)' checked />" +
+                            "# } else { #" +
+                            "<input type='checkbox' class='checkbox' ng-click='selectRow2($event)' />" +
+                            "# } #",
+                        width: "30px"
                     },
                     {
                         "field": "nourut",
@@ -4993,6 +5101,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                 });
                                 for (let index = 0; index < DataKeteranganBelanja.length; index++) {
                                     let element = DataKeteranganBelanja[index];
+                                    DataKeteranganBelanja[index].statCheckbox2 = false
                                     TotalAnggaran = TotalAnggaran + parseFloat(element.subtotal)
                                 }
                                 TotalAnggaran = parseFloat(TotalAnggaran)
@@ -5428,6 +5537,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         });
                         for (let index = 0; index < DataKeteranganBelanja.length; index++) {
                             let element = DataKeteranganBelanja[index];
+                            DataKeteranganBelanja[index].statCheckbox2 = false
                             TotalAnggaran = TotalAnggaran + parseFloat(element.subtotal)
                         }
                         TotalAnggaran = parseFloat(TotalAnggaran)
@@ -5499,6 +5609,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                 });
                                 for (let index = 0; index < DataKeteranganBelanja.length; index++) {
                                     let element = DataKeteranganBelanja[index];
+                                    DataKeteranganBelanja[index].statCheckbox2 = false
                                     TotalAnggaran = TotalAnggaran + parseFloat(element.subtotal)
                                 }
                                 TotalAnggaran = parseFloat(TotalAnggaran)
