@@ -6388,7 +6388,7 @@ class ReportController extends ApiController{
         ) as x"));
 
         $belanja = DB::select(DB::raw("select map3.kode || '.' || map2.kode || '.' || map1.kode || '.' || map.kode as kodepermendagri,
-        sum(sr.totalbelanja) jumlahbelanja
+        sum(sr.totalbelanja) jumlahbelanja,map.mataanggaranpermen
         from strukrealisasi_t sr
         inner JOIN kegiatananggaran_m ka on ka.id=sr.objectkegiatanfk
         inner join kegiatananggaran_m as dp0 on ka.kode ilike dp0.kode || '%' and dp0.div = 3
@@ -6409,7 +6409,7 @@ class ReportController extends ApiController{
         and map.kdprofile = 30
         and extract(month from sr.tglrealisasi) = '$bulan'
         and extract(year from sr.tglrealisasi) = '$tahun'
-        group by map3.kode || '.' || map2.kode || '.' || map1.kode || '.' || map.kode"));
+        group by map3.kode || '.' || map2.kode || '.' || map1.kode || '.' || map.kode,map.mataanggaranpermen"));
 
         $totalbelanja = 0;
         foreach($belanja as $bl){

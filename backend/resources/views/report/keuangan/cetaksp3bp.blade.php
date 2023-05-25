@@ -117,25 +117,25 @@
             </td>
         </tr>
         <tr style="padding: 5px;">
-            <td align="center" colspan="4" style="padding: 5px;height:30px;"></td>
+            <td align="center" colspan="5" style="padding: 5px;height:30px;"></td>
         </tr>
         </tbody>
         <tbody class="tabel">
         <tr>
             <td style="padding: 5px; width: 100px;" align="center">Untuk bulan {{ $periode }}</td>
-            <td colspan="3" style="padding: 5px;" align="center">Tahun Anggaran {{ $tahun }}</td>
+            <td colspan="4" style="padding: 5px;" align="center">Tahun Anggaran {{ $tahun }}</td>
         </tr>
         <tr>
             <td style="padding: 5px; width: 100px;" align="left">Dasar pengesahan :</td>
             <td style="padding: 5px;" align="center">Urusan</td>
             <td style="padding: 5px;" align="center">Organisasi</td>
-            <td style="padding: 5px;" align="center">Nama BLUD</td>
+            <td colspan="2" style="padding: 5px;" align="center">Nama BLUD</td>
         </tr>
         <tr>
             <td style="padding: 5px; width: 100px;" align="left">Perda APBD Nomor 8 Tahun 2021 Tanggal 31 Desember 2021</td>
             <td rowspan="2" style="padding: 5px;" align="center">1.02</td>
             <td rowspan="2" style="padding: 5px;" align="center">1.02.2.22.0.00.01.0004</td>
-            <td rowspan="2" style="padding: 5px;" align="center">RUMAH SAKIT JIWA GRHASIA DIY</td>
+            <td rowspan="2" colspan="2" style="padding: 5px;" align="center">RUMAH SAKIT JIWA GRHASIA DIY</td>
         </tr>
         <tr>
             <td style="padding: 5px;" align="left">DPPA/A.2/1.02.2.22.0.00.01.0004/001/2022 Tanggal 12 Juli 2022</td>
@@ -146,7 +146,7 @@
         </tbody>
         <tbody>
         <tr style="padding: 5px;">
-            <td align="center" colspan="4" style="padding: 5px;height:30px;"></td>
+            <td align="center" colspan="5" style="padding: 5px;height:30px;"></td>
         </tr>
         <tr>
             <td colspan="5" style="padding: 10px" align="center">
@@ -164,18 +164,19 @@
             </td>
         </tr>
         <tr style="padding: 5px;">
-            <td align="center" colspan="4" style="padding: 5px;height:30px;"></td>
+            <td align="center" colspan="5" style="padding: 5px;height:30px;"></td>
         </tr>
         </tbody>
         <tbody class="tabel">
         <tr>
             <td colspan="2" style="padding: 5px;" align="center">Pendapatan</td>
-            <td colspan="2" style="padding: 5px;" align="center">Belanja</td>
+            <td colspan="3" style="padding: 5px;" align="center">Belanja</td>
         </tr>
         <tr>
             <td style="padding: 5px;" align="center">Kode Rekening</td>
             <td style="padding: 5px;" align="center">Jumlah</td>
             <td style="padding: 5px;" align="center">Kode Rekening</td>
+            <td style="padding: 5px;" align="center">Nama Kode Rekening</td>
             <td style="padding: 5px;" align="center">Jumlah</td>
         </tr>
         <!-- foreach -->
@@ -184,6 +185,7 @@
             <td style="padding: 5px;" align="center">{{ number_format($penerimaan[0]->jumlahpenerimaan,2,',','.') }}</td>
             @if(!empty($belanja))
             <td style="padding: 5px;" align="center">{{ $belanja[0]->kodepermendagri }}</td>
+            <td style="padding: 5px;" align="center">{{ $belanja[0]->mataanggaranpermen }}</td>
             <td style="padding: 5px;" align="center">{{ $belanja[0]->jumlahbelanja }}</td>
             @else
             <td style="padding: 5px;" align="center"></td>
@@ -197,12 +199,14 @@
             <td style="padding: 5px;" align="center"></td>
             <td style="padding: 5px;" align="center"></td>
             <td style="padding: 5px;" align="center">{{ $bj->kodepermendagri }}</td>
+            <td style="padding: 5px;" align="center">{{ $bj->mataanggaranpermen }}</td>
             <td style="padding: 5px;" align="center">{{ $bj->jumlahbelanja }}</td>
         </tr>
         @endif
         @endforeach
         @else
         <tr>
+            <td style="padding: 5px;" align="center"></td>
             <td style="padding: 5px;" align="center"></td>
             <td style="padding: 5px;" align="center"></td>
             <td style="padding: 5px;" align="center"></td>
@@ -215,11 +219,12 @@
             <td style="padding: 5px; height:30px;" align="center"></td>
             <td style="padding: 5px; height:30px;" align="center"></td>
             <td style="padding: 5px; height:30px;" align="center"></td>
+            <td style="padding: 5px; height:30px;" align="center"></td>
         </tr>
         <tr>
             <td style="padding: 5px;" align="center">Jumlah Pendapatan</td>
             <td style="padding: 5px;" align="center">{{ number_format($penerimaan[0]->jumlahpenerimaan,2,',','.') }}</td>
-            <td style="padding: 5px;" align="center">Jumlah Belanja</td>
+            <td colspan="2" style="padding: 5px;" align="center">Jumlah Belanja</td>
             <td style="padding: 5px;" align="center">{{ number_format($totalbelanja,2,',','.') }}</td>
         </tr>
         </tbody>
@@ -231,31 +236,31 @@
         <tbody class="tabel">
         <tr>
             <td colspan="2" style="padding: 5px;" align="center">Penerimaan Pembiayaan</td>
-            <td colspan="2" style="padding: 5px;" align="center">Pengeluaran Pembiayaan</td>
+            <td colspan="3" style="padding: 5px;" align="center">Pengeluaran Pembiayaan</td>
         </tr>
         <tr>
             <td style="padding: 5px;" align="center">Kode Rekening</td>
             <td style="padding: 5px;" align="center">Jumlah</td>
             <td style="padding: 5px;" align="center">Kode Rekening</td>
-            <td style="padding: 5px;" align="center">Jumlah</td>
+            <td colspan="2"style="padding: 5px;" align="center">Jumlah</td>
         </tr>
         <tr>
             <td style="padding: 5px; height:30px;" align="center"></td>
             <td style="padding: 5px; height:30px;" align="center"></td>
             <td style="padding: 5px; height:30px;" align="center"></td>
-            <td style="padding: 5px; height:30px;" align="center"></td>
+            <td colspan="2"style="padding: 5px; height:30px;" align="center"></td>
         </tr>
         <tr>
             <td style="padding: 5px; height:30px;" align="center"></td>
             <td style="padding: 5px; height:30px;" align="center"></td>
             <td style="padding: 5px; height:30px;" align="center"></td>
-            <td style="padding: 5px; height:30px;" align="center"></td>
+            <td colspan="2"style="padding: 5px; height:30px;" align="center"></td>
         </tr>
         <tr>
             <td style="padding: 5px;" align="center">Jumlah Penerimaan Pembiayaan</td>
             <td style="padding: 5px;" align="center"></td>
-            <td style="padding: 5px;" align="center">Jumlah Pengeluaran Pembiayaan</td>
-            <td style="padding: 5px;" align="center"></td>
+            <td  style="padding: 5px;" align="center">Jumlah Pengeluaran Pembiayaan</td>
+            <td colspan="2"style="padding: 5px;" align="center"></td>
         </tr>
         </tbody>
 
