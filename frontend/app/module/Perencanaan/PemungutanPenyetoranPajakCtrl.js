@@ -308,7 +308,7 @@ define(['initialize'], function (initialize) {
                     $scope.item.jumlahPPnDinamis = 'Rp'+$scope.item.jumlahPPn
                 }
             });
-
+            
             $scope.SavePajak = function () {
 
                 var objSave = {
@@ -761,31 +761,84 @@ define(['initialize'], function (initialize) {
                     }
                 ]
             };
+            var onDataBound = function (e) {
+                console.log(e);
+                var kendoGrid = $("#gridPajak").data("kendoGrid"); // get the grid widget
+                var rows = e.sender.element.find("tbody tr"); // get all rows
+                for (let i = 0; i < rows.length; i++) {
+                    // const element = rows[i];
+                    var row = rows[i];
+                    var details = kendoGrid.dataItem(row).details
+                    console.log(row);
+                    // $(row.cells[2]).addClass("koneng");
 
+                    if (details.length > 0) {
+                        $(row.cells[0]).addClass("green");
+                        $(row.cells[1]).addClass("green");
+                        $(row.cells[2]).addClass("green");
+                        $(row.cells[3]).addClass("green");
+                        $(row.cells[4]).addClass("green");
+                        $(row.cells[5]).addClass("green");
+                        $(row.cells[6]).addClass("green");
+                        $(row.cells[7]).addClass("green");
+
+                    }
+
+                }
+            }
             $scope.columnGrid = {
+                dataBound: onDataBound,
                 sortable: true,
                 selectable: true,
                 pageable: true,
                 columns: [
-                    {
-                        "command": [
-                              {
-                                 text: "Pilih",
-                                 click: PilihSPJ,
-                                 imageClass: "clinic fa",
-                                 visible: function(dataItem) { return dataItem.nospp }
-                              },
-                          ],
-                             title: "",
+                    // {
+                    //     "command": [
+                    //           {
+                    //              text: "Pilih",
+                    //              click: PilihSPJ,
+                    //              imageClass: "clinic fa",
+                    //              visible: function(dataItem) { return dataItem.nospp }
+                    //           },
+                    //       ],
+                    //          title: "",
                              
-                             width: "60px",
+                    //          width: "60px",
                              
-                    },
+                    // },
                     {
                         
                         "field": "norealisasi",
                         "title": "Nomor SPJ",
                         "width": "100px",
+                    },
+                    {
+
+                        "field": "kegiatan",
+                        "title": "Sub Sub Kegiatan",
+                        "width": "120px",
+                    },
+                    {
+
+                        "field": "mataanggaran",
+                        "title": "Nama Rekening",
+                        "width": "120px",
+                    },
+                    {
+
+                        "field": "asalproduk",
+                        "title": "Sumber",
+                        "width": "80px",
+                    },
+                    {
+
+                        "field": "jumlahdibayarverif",
+                        "title": "Jumlah SPJ",
+                        "width": "90px",
+                        // aggregates: ["sum"],
+                        // template: "#: jumlahdibayarverif  #",
+                        // groupFooterTemplate: "#: data.jumlahdibayarverif.sum  #",
+                        // footerTemplate: "#: data.jumlahdibayarverif.sum  #"
                     },
                     {
                         
@@ -794,33 +847,30 @@ define(['initialize'], function (initialize) {
                         "width": "100px",
                     },
                     {
-                        
-                        "field": "carabayar",
-                        "title": "Cara Bayar",
-                        "width": "100px",
+
+                        "field": "pph",
+                        "title": "PPh SPJ",
+                        "width": "80px",
                     },
                     {
-                        
-                        "field": "mataanggaran",
-                        "title": "Rekening",
-                        "width": "100px",
+
+                        "field": "ppn",
+                        "title": "PPN SPJ",
+                        "width": "80px",
                     },
-                    {
+                    // {
                         
-                        "field": "tglverif",
-                        "title": "Tgl Verif",
-                        "width": "100px",
-                    },
-                    {
+                    //     "field": "carabayar",
+                    //     "title": "Cara Bayar",
+                    //     "width": "100px",
+                    // },
+                    // {
                         
-                        "field": "jumlahdibayarverif",
-                        "title": "Total",
-                        "width": "100px",
-                        aggregates: ["sum"],
-                        template: "#: jumlahdibayarverif  #",
-                        groupFooterTemplate: "#: data.jumlahdibayarverif.sum  #",
-                        footerTemplate: "#: data.jumlahdibayarverif.sum  #"
-                    }
+                    //     "field": "tglverif",
+                    //     "title": "Tgl Verif",
+                    //     "width": "100px",
+                    // },
+                    
                 ]
             };
 
@@ -859,6 +909,40 @@ define(['initialize'], function (initialize) {
             $scope.formatRupiah = function (value, currency) {
                 return currency + " " + value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
             }
+            $scope.klikGrid = function(e){
+                $scope.item.nospj = e.norealisasi
+                $scope.norecspj = e.norec
+                $scope.tglveriftopajak = moment(e.tglrealisasi).format('YYYY-MM-DD HH:mm')
+                $scope.item.uraianPajak = e.uraian
+                if(e.ppn != '0'){
+                    $scope.item.jumlahPPn = e.ppn
+                }
+                if (e.pph != '0') {
+                    $scope.item.jumlahPPh = e.pph
+                }
+                console.log($scope.tglveriftopajak)
+                medifirstService.get("perencanaan/get-pajak-pph-ppn?norec=" + e.norec).then(function (e) {
+                    $scope.dataGridPemungutan = e.data.data
+                    $scope.dataGridPenyetoran = e.data.data
+
+
+                    $scope.item.nospjpemungutan = e.data.data[0].nopajakpp
+                    $scope.item.nospjpenyetoran = e.data.data[0].nopajakpep
+                    if (e.data.data[0].uraianpajak != null) {
+                        $scope.item.uraianspjp = e.data.data[0].uraianpajak
+                        $scope.item.uraianPajak = e.data.data[0].uraianpajak
+                    } else {
+                        $scope.item.uraianspjp = 'PPh dan PPn ' + e.data.data[0].uraian
+                        $scope.item.uraianPajak = 'PPh dan PPn ' + e.data.data[0].uraian
+                    }
+
+                    $scope.item.jumlahPPh = e.data.data[0].jumlah
+                    $scope.item.jumlahPPhDinamis = 'Rp' + e.data.data[0].jumlah
+                    $scope.item.jumlahPPn = e.data.data[1].jumlah
+                    $scope.item.jumlahPPnDinamis = 'Rp' + e.data.data[1].jumlah
+                });
+            }
+            
             //////////////////////////////////////////////////////////////          END             /////////////////////////////////////////////////////////////////////////////////////       
         }
     ]);

@@ -6509,6 +6509,7 @@ class LaporanRekamMedisController extends   ApiController
         and ru.objectdepartemenfk = 16
 				and dm.kddiagnosa <> '-'
         --and (jd.id = 1 or jd.id = 7)
+        and jd.id = 7
         and pd.tglregistrasi BETWEEN '$tglAwal' AND '$tglAkhir' 
         group by to_char(pd.tglregistrasi, 'Month'), to_char(pd.tglregistrasi, 'mm'), to_char(pd.tglregistrasi, 'YYYY'), dm.kddiagnosa, dm.namadiagnosa, jk.id, sk.id, pr.namalengkap, pr.namapemerintahan, pr.namakota, pr.id
         ) as x
@@ -6554,7 +6555,7 @@ class LaporanRekamMedisController extends   ApiController
         and pd.kdprofile = $kdProfile 
         and ru.objectdepartemenfk <> 16
         and pd.tglregistrasi between '$tglAwal' and '$tglAkhir'
-				and dm.kddiagnosa <> '-'
+				and dm.kddiagnosa <> '-' and jd.id = 7
         group by to_char(pd.tglregistrasi, 'Month'), to_char(pd.tglregistrasi, 'mm'), to_char(pd.tglregistrasi, 'YYYY'), dm.kddiagnosa, dm.namadiagnosa, jk.id, pr.namalengkap, pr.namapemerintahan, pr.namakota, pr.id, dp.iskasusbaru
         ) as x
         group by x.month, x.idmonth, x.year,x.nodaftarterperinci, x.golongansebabpenyakit, x.namalengkap, x.namapemerintahan, x.namakota, x.idprofile

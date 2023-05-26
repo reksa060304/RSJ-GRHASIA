@@ -1708,6 +1708,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('perencanaan/get-spj', 'Perencanaan\PerencanaanController@getDataSPJ');
             Route::get('perencanaan/get-sts-keuangan', 'Perencanaan\PerencanaanController@getSTSKeuangan');
             Route::get('perencanaan/get-spj-to-lpj', 'Perencanaan\PerencanaanController@getSPJtoLPJ');
+            Route::get('perencanaan/get-spj-to-lpjs', 'Perencanaan\PerencanaanController@getSPJtoLPJs');
             Route::get('perencanaan/get-spj-to-pajak', 'Perencanaan\PerencanaanController@getSPJtoPajak');
             Route::get('perencanaan/get-spj-bku', 'Perencanaan\PerencanaanController@getSPJBKU');
             Route::get('perencanaan/get-pajak-pph-ppn', 'Perencanaan\PerencanaanController@getPajak');
@@ -2573,6 +2574,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
                 Route::get('anggaran/load-combo-rincian-pendapatan','Perencanaan\PerencanaanController@loadComboRincian');
                 Route::get('anggaran/load-data-rincian-pendapatan','Perencanaan\PerencanaanController@loadDataRincian');
                 Route::post('anggaran/delete-anggaran-kas', 'Perencanaan\PerencanaanController@deleteAnggaranKas');
+                Route::post('anggaran/delete-anggaran-kass', 'Perencanaan\PerencanaanController@deleteAnggaranKass');
                 Route::post('anggaran/save-rincian-pendapatan', 'Perencanaan\PerencanaanController@saveRincianPendapatan');
                 Route::post('anggaran/hapus-rincian-pendapatan', 'Perencanaan\PerencanaanController@hapusRincianPendapatan');
                 Route::get('sdm/daftar-gaji-tunjangan', 'SDM\SumberDayaManusiaController@getGajiTunjangan');

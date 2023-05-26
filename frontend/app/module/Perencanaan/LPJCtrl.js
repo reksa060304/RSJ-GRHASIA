@@ -308,10 +308,127 @@ define(['initialize'], function (initialize) {
                     }
                 ]
             };
+            $scope.columnGridLPJS = {
+                sortable: true,
+                selectable: true,
+                pageable: true,
+                columns: [{
+
+                        "field": "norealisasi",
+                        "title": "Nomor SPJ",
+                        "width": "100px",
+                    },
+                    {
+
+                        "field": "uraian",
+                        "title": "Uraian",
+                        "width": "100px",
+                    },
+                    {
+
+                        "field": "carabayar",
+                        "title": "Cara Bayar",
+                        "width": "100px",
+                    },
+                    {
+
+                        "field": "mataanggaran",
+                        "title": "Rekening",
+                        "width": "100px",
+                    },
+                    {
+
+                        "field": "tglverif",
+                        "title": "Tgl Verif",
+                        "width": "100px",
+                    },
+                    {
+
+                        "field": "jumlahdibayarverif",
+                        "title": "Total",
+                        "width": "100px",
+                        aggregates: ["sum"],
+                        template: "#: jumlahdibayarverif  #",
+                        groupFooterTemplate: "#: data.jumlahdibayarverif.sum  #",
+                        footerTemplate: "#: data.jumlahdibayarverif.sum  #"
+                    }
+                ]
+            };
 
 
             $scope.formatRupiah = function (value, currency) {
                 return currency + " " + value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            }
+            $scope.columnGridLPJS = {
+                sortable: true,
+                selectable: true,
+                pageable: true,
+                columns: [{
+
+                        "field": "norealisasi",
+                        "title": "Nomor SPJ",
+                        "width": "100px",
+                    },
+                    {
+
+                        "field": "uraian",
+                        "title": "Uraian",
+                        "width": "100px",
+                    },
+                    {
+
+                        "field": "carabayar",
+                        "title": "Cara Bayar",
+                        "width": "100px",
+                    },
+                    {
+
+                        "field": "mataanggaran",
+                        "title": "Rekening",
+                        "width": "100px",
+                    },
+                    {
+
+                        "field": "tglverif",
+                        "title": "Tgl Verif",
+                        "width": "100px",
+                    },
+                    {
+
+                        "field": "jumlahdibayarverif",
+                        "title": "Total",
+                        "width": "100px",
+                        aggregates: ["sum"],
+                        template: "#: jumlahdibayarverif  #",
+                        groupFooterTemplate: "#: data.jumlahdibayarverif.sum  #",
+                        footerTemplate: "#: data.jumlahdibayarverif.sum  #"
+                    }
+                ]
+            };
+            $scope.klikGrid = function(e){
+                medifirstService.get("perencanaan/get-spj-to-lpjs?bulan=" + moment(e.tgllpj).format('MM') + "&tahun=" + moment(e.tgllpj).format('YYYY')).then(function (e) {
+
+                    $scope.dataGridLPJS = new kendo.data.DataSource({
+                        data: e.data.data,
+                        pageSize: 10,
+                        total: e.data.data.length,
+                        group: $scope.group,
+                        serverPaging: false,
+                        schema: {
+                            model: {
+                                fields: {
+                                    jumlahdibayarverif: {
+                                        type: "number"
+                                    },
+                                }
+                            }
+                        },
+                        aggregate: [{
+                            field: 'jumlahdibayarverif',
+                            aggregate: 'sum'
+                        }, ]
+                    });
+                });
             }
             //////////////////////////////////////////////////////////////          END             /////////////////////////////////////////////////////////////////////////////////////       
         }

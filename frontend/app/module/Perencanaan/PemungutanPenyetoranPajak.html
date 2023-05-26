@@ -63,6 +63,11 @@
         margin-inline-end: 0px;
         font-weight: bold;
     }
+    .green {
+    background-color: #00ff00;
+    color: #000000;
+    /*font-weight: bold;*/
+    }
 </style>
 <div class="grid_12">
     <div class="panel panel-default container_12">
@@ -111,9 +116,10 @@
         <!-- Tabel Hasil Pencarian -->
         <div class="grid_12" style="margin-top:50px;">
             <div class="grid_12 borderBox">
-                <kendo-grid id="grid" data-source="dataGrid" options="columnGrid" k-pageable="'true'"
-                    k-sortable="'true'" k-groupable="'false'" k-resizable="'true'" k-selectable="'row'"
-                    k-ng-model="dataSelected" ng-click="klikGrid(dataSelected)" style="min-height: 0px; max-height: 1500px;">
+                <kendo-grid id="gridPajak" k-data-source="dataGrid" k-options="columnGrid"
+                    k-selectable="'row'"
+                    k-ng-model="dataSelected" ng-click="klikGrid(dataSelected)" style="min-height: 0px; max-height: 1500px;"
+                    >
                 </kendo-grid>
             </div>
         </div>
@@ -123,6 +129,14 @@
             </div>
             <div class="grid_4">
                 <input c-text-box type="input" class="k-textbox" ng-model="item.caridatapajak"/>
+            </div>
+        </div>
+        <div class="grid_12">
+            <div class="grid_1">
+                <p style="font-weight: bold; margin-top: 10px;">Nomor SPJ</p>
+            </div>
+            <div class="grid_4">
+                <input c-text-box type="input" class="k-textbox" ng-model="item.nospj" disabled />
             </div>
         </div>
         <div class="grid_6" style="margin-top:50px;">
@@ -339,4 +353,7 @@
             </div>
         </div>
     </div>
+</div>
+<div class="grid_12" style="margin-top:60px">
+    <div ng-include='"../app/template/Shared/TemplateLoading"'></div>
 </div>
