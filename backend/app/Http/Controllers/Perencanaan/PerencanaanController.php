@@ -987,7 +987,20 @@ class PerencanaanController extends ApiController {
         left join spd_t spd on spd.norec = spp.objectspdfk and spd.statusenabled = true 
         left join asalproduk_m ap on ap.id = spp.objectasalprodukfk and ap.statusenabled = true 
         where spp.statusenabled = true $thnspp $tglsppdate"));
+        foreach ($spp as $sp) {
+            $nospp = $sp->nospp;
 
+            $details = DB::select(DB::raw("
+            select spm.*, spp.nospp, ap.id idasalproduk, ap.asalproduk FROM
+                spp_t spp
+                inner join spm_t spm on spm.objectsppfk = spp.norec
+                left join asalproduk_m ap on ap.id = spm.objectasalprodukfk and ap.statusenabled = true 
+                where spp.nospp = '$nospp'
+                and spm.statusenabled = true
+                ")
+            );
+            $sp->details = $details;
+        }
         $spd = DB::select(DB::raw("select spd.*, spp.nospp, ap.id idasalproduk, ap.asalproduk  from spd_t spd 
         left join spp_t spp on spp.objectspdfk = spd.norec and spp.statusenabled = true 
         left join asalproduk_m ap on ap.id = spd.objectasalprodukfk and ap.statusenabled = true 

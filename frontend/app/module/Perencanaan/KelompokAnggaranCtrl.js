@@ -1136,8 +1136,34 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
            $scope.klikKegiatan = function(dataKegiatanSelected){
                 
             }
+            var onDataBoundSPP = function (e) {
+                        // $(row.cells[1]).addClass("green");
 
+                var kendoGridSPP = $("#kGridspp").data("kendoGrid"); // get the grid widget
+                var rowsSPP = e.sender.element.find("tbody tr"); // get all rows
+                for (let i = 0; i < rowsSPP.length; i++) {
+                    var row = rowsSPP[i];
+                    var status = kendoGridSPP.dataItem(row).details;
+                    // console.log(status.length);
+                    if (status.length > 0) {
+                        $(row.cells[1]).addClass("green");
+                        $(row.cells[2]).addClass("green");
+                        $(row.cells[3]).addClass("green");
+                        $(row.cells[4]).addClass("green");
+                        $(row.cells[5]).addClass("green");
+                        $(row.cells[6]).addClass("green");
+                        $(row.cells[7]).addClass("green");
+                        $(row.cells[8]).addClass("green");
+                        $(row.cells[9]).addClass("green");
+                        $(row.cells[10]).addClass("green");
+                        $(row.cells[11]).addClass("green");
+                        $(row.cells[12]).addClass("green");
+                    }
+                }
+
+            }
             $scope.columnSPP = {
+                dataBound: onDataBoundSPP,
                 columns:[
                     {
                         "command": [
@@ -7017,6 +7043,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 
                 var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
                 //console.log(dataItem)
+                
                 if(dataItem.objectbkufk != null){
                     toastr.error('sudah dibuat BKU, tidak bisa dihapus')
                     return
@@ -7051,7 +7078,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 
                 var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
                 //console.log(dataItem)
-
+                if (dataItem.details.length > 0) {
+                    toastr.error('sudah dibuat SPM, tidak bisa dihapus')
+                    return
+                }
                 var objSave =
                     {
                         norec: dataItem.norec,
@@ -7455,6 +7485,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 				})
                 
                 var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                
                 if (dataItem.objectbkufk != null) {
                     toastr.error('sudah dibuat BKU, tidak bisa dirubah')
                     return
@@ -7491,6 +7522,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 				})
                 
                 var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                if (dataItem.details.length > 0) {
+                    toastr.error('sudah dibuat SPM, tidak bisa dirubah')
+                    return
+                }
                 if (dataItem != undefined) {
                     console.log(dataItem)
 
