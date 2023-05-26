@@ -3646,6 +3646,10 @@
         {
             "nameDep": "EWSGrhCtrl",
             "urlDep": "module/EMR/EWSGrhCtrl"
+        },
+        {
+            "nameDep": "PengkajianTumbangGrhCtrl",
+            "urlDep": "module/EMR/PengkajianTumbangGrhCtrl"
         }
     ]
 }
