@@ -125,6 +125,11 @@ define(['initialize'], function (initialize) {
             }
 
             $scope.HapusJasgir = function () {
+                if ($scope.dataSelected.objectbkufk != null){
+                    toastr.error('sudah dibuat BKU, tidak bisa dihapus')
+                    return
+                }
+                // console.log($scope.dataSelected.objectbkufk);
                 var objSave = {
                     "norec": $scope.dataSelected.norec,
                 }

@@ -6621,7 +6621,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 medifirstService.get("reservasionline/get-daftar-slotting?id=1").then(function (e) {
 
 				})
-
+                if(dataItem.objectbkufk != null){
+                    toastr.error('Sudah dibuat BKU tidak bisa dirubah')
+                    return
+                }
                 $scope.norecspjpanjar = dataItem.norec
 
                 medifirstService.getPart('emr/get-datacombo-part-pegawai', true, true, 20).then(function (data) {
@@ -6779,6 +6782,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 				})
                 
                 var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                if (dataItem.objectbkufk != null) {
+                    toastr.error('Sudah dibuat BKU tidak bisa diverifikasi')
+                    return
+                }
                 console.log(dataItem)
                 $scope.item.pph = dataItem.pph
                 $scope.item.ppn = dataItem.ppn
@@ -6813,6 +6820,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.subkegiatanverif = {id: dataItem.idsubkegiatan, keterangan: dataItem.keterangansubkegiatan}
                 $scope.subsubkegiatanverif = {id: dataItem.idsubsubkegiatan, keterangan: dataItem.subsubkegiatan}
                 $scope.mataanggaranverif = {kodemataanggaran: dataItem.kodemataanggaran, namamataanggaran: dataItem.namamataanggaran}
+                
                 $scope.popupVerifSPJ.center().open()
             }
 
@@ -7009,7 +7017,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 
                 var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
                 //console.log(dataItem)
-
+                if(dataItem.objectbkufk != null){
+                    toastr.error('sudah dibuat BKU, tidak bisa dihapus')
+                    return
+                }
                 var objSave =
                     {
                         norec: dataItem.norec,
@@ -7129,8 +7140,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 				})
                 
                 var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
-                //console.log(dataItem)
-
+                console.log(dataItem)
+                if(dataItem.objectbkufk != null){
+                    toastr.error('sudah dibuat BKU tidak bisa dihapus')
+                    return
+                }
                 var objSave =
                     {
                         norec: dataItem.norec,
@@ -7213,6 +7227,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 
                 var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
                 console.log(dataItem)
+                if (dataItem.objectbkufk != null) {
+                    toastr.error('Sudah dibuat BKU tidak bisa dihapus')
+                    return
+                }
                 var objSave =
                     {
                         norec: dataItem.norec,
@@ -7437,6 +7455,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 				})
                 
                 var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                if (dataItem.objectbkufk != null) {
+                    toastr.error('sudah dibuat BKU, tidak bisa dirubah')
+                    return
+                }
                 if (dataItem != undefined) {
                     console.log(dataItem)
                     $scope.norecspm = dataItem.norec
