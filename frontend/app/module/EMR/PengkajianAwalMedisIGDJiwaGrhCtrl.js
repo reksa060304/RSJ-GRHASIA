@@ -1503,7 +1503,18 @@ define(['initialize','Configuration'], function (initialize, configuration) {
 
             loadValidasi()
             function loadValidasi(){
-                
+                medifirstService.get("emr/get-masalah-keperawatan?noemr=" + nomorEMR ).then(function (dat) {
+                    var a = ""
+                    var b = ""
+                    for (var i = dat.data.length - 1; i >= 0; i--) {
+            
+                        var c = dat.data[i].caption
+                        b = ", " + c
+                        a = a + b
+                    }
+                    $scope.masalahkeperawatan = a.slice(1, a.length)
+                    // console.log($scope.bro);
+                })
                 $scope.isRouteLoading = true
                 medifirstService.get('emr/get-validasi-emr?noemr=' + nomorEMR + '&emrfk=' + $scope.cc.emrfk).then(function (data) {
                     var datas = data.data.data;
@@ -1519,6 +1530,7 @@ define(['initialize','Configuration'], function (initialize, configuration) {
             medifirstService.get("emr/get-emr-transaksi-detail?noemr=" + nomorEMR + "&emrfk=" + $scope.cc.emrfk, true).then(function (dat) {
                 $scope.item.obj = []
                 $scope.item.obj2 = []
+                
                 $scope.item.obj[310622] = $scope.now
                 $scope.item.obj[310623] = $scope.now
                 // $scope.item.obj[310624] = $scope.now
@@ -1527,7 +1539,7 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                     text: $scope.cc.namaruangan,
                     value: $scope.cc.objectruanganfk
                 }
-               
+                $scope.item.obj[310603] = $scope.masalahkeperawatan
                 $scope.item.obj[116201] = true
                 $scope.item.obj[116204] = true
                 $scope.item.obj[116207] = true
@@ -1549,18 +1561,7 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                     value: medifirstService.getPegawaiLogin().id,
                     text: medifirstService.getPegawaiLogin().namaLengkap
                 }
-                medifirstService.get("emr/get-masalah-keperawatan?noemr=" + nomorEMR ).then(function (dat) {
-                    var a = ""
-                    var b = ""
-                    for (var i = dat.data.length - 1; i >= 0; i--) {
-            
-                        var c = dat.data[i].caption
-                        b = ", " + c
-                        a = a + b
-                    }
-                    $scope.item.obj[310603] = a.slice(1, a.length)
-                    // console.log($scope.bro);
-                })
+                
                 dataLoad = dat.data.data
 
                 for (var i = 0; i <= dataLoad.length - 1; i++) {
@@ -1653,23 +1654,14 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                 $scope.isRouteLoading = false
                 $scope.item.obj = []
                 $scope.item.obj2 = []
+                
+                $scope.item.obj[310603] = $scope.masalahkeperawatan
                 $scope.item.obj[116062] = $scope.now
                 $scope.item.obj[116068] = {
                     text: $scope.cc.namaruangan,
                     value: $scope.cc.objectruanganfk
                 }
-                medifirstService.get("emr/get-masalah-keperawatan?noemr=" + nomorEMR ).then(function (dat) {
-                    var a = ""
-                    var b = ""
-                    for (var i = dat.data.length - 1; i >= 0; i--) {
-            
-                        var c = dat.data[i].caption
-                        b = ", " + c
-                        a = a + b
-                    }
-                    $scope.item.obj[310603] = a.slice(1, a.length)
-                    // console.log($scope.bro);
-                })
+                
                 $scope.item.obj[116201] = true
                 $scope.item.obj[116204] = true
                 $scope.item.obj[116207] = true
