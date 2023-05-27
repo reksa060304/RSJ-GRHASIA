@@ -936,7 +936,7 @@ class PerencanaanController extends ApiController {
             $thnpanjar= " and date_part('year', pj.tglpanjar)=". $request['tahun'];
         }
         $panjar = DB::select(DB::raw("
-        select idmataanggaran, kodemataanggaran, idsubkegiatan, subkegiatan, idsubsubkegiatan, subsubkegiatan,
+        select objectbkufk,idmataanggaran, kodemataanggaran, idsubkegiatan, subkegiatan, idsubsubkegiatan, subsubkegiatan,
         norec, nopanjar, uraian, tglpanjar, jumlah, jenispanjar, norealisasi, coalesce(jumlahspj, 0) jumlahspj, sumberpanjar,
         coalesce(sum(jumlahpengembalian), 0) jumlahpengembalian, coalesce(jumlahspj, 0) + coalesce(sum(jumlahpengembalian), 0) totalpemakaian,
         coalesce(jumlah, 0) - (coalesce(jumlahspj, 0) + coalesce(sum(jumlahpengembalian), 0)) selisih
@@ -945,7 +945,7 @@ class PerencanaanController extends ApiController {
                 subkeg.keterangan subkegiatan, subsubkeg.id idsubsubkegiatan, subsubkeg.keterangan subsubkegiatan, 
                 pj.norec, pj.nopanjar, pj.uraian, pj.tglpanjar, pj.jumlah, pj.jenispanjar, 
                 string_agg(DISTINCT sr.norealisasi, ',') norealisasi,
-                sum(stp.jumlahspj) as jumlahspj, pj.sumberpanjar, 
+                sum(stp.jumlahspj) as jumlahspj, pj.sumberpanjar, pj.objectbkufk,
                 pp.jumlahpengembalian, pp.norec norecpengembalian
                 from panjar_t pj
                 inner join mataanggaran_m ma on ma.id = pj.objectmataanggaranfk
@@ -966,10 +966,10 @@ class PerencanaanController extends ApiController {
                 and pj.statusenabled = true
                 group by ma.id, ma.kodemataanggaran, subkeg.id, subkeg.keterangan, 
                 subsubkeg.id, subsubkeg.keterangan, pj.norec, pj.nopanjar, pj.uraian, pj.tglpanjar, 
-                pj.jumlah, pj.jenispanjar, pj.sumberpanjar, pp.jumlahpengembalian, pp.norec
+                pj.jumlah, pj.jenispanjar, pj.sumberpanjar, pp.jumlahpengembalian, pp.norec,pj.objectbkufk
                 order by pj.nopanjar
         ) as x 
-        group by idmataanggaran, kodemataanggaran, idsubkegiatan, subkegiatan, idsubsubkegiatan, subsubkegiatan,
+        group by objectbkufk, idmataanggaran, kodemataanggaran, idsubkegiatan, subkegiatan, idsubsubkegiatan, subsubkegiatan,
         norec, nopanjar, uraian, tglpanjar, jumlah, jenispanjar, norealisasi, jumlahspj, sumberpanjar
         order by nopanjar asc;
         "));
@@ -987,7 +987,20 @@ class PerencanaanController extends ApiController {
         left join spd_t spd on spd.norec = spp.objectspdfk and spd.statusenabled = true 
         left join asalproduk_m ap on ap.id = spp.objectasalprodukfk and ap.statusenabled = true 
         where spp.statusenabled = true $thnspp $tglsppdate"));
+        foreach ($spp as $sp) {
+            $nospp = $sp->nospp;
 
+            $details = DB::select(DB::raw("
+            select spm.*, spp.nospp, ap.id idasalproduk, ap.asalproduk FROM
+                spp_t spp
+                inner join spm_t spm on spm.objectsppfk = spp.norec
+                left join asalproduk_m ap on ap.id = spm.objectasalprodukfk and ap.statusenabled = true 
+                where spp.nospp = '$nospp'
+                and spm.statusenabled = true
+                ")
+            );
+            $sp->details = $details;
+        }
         $spd = DB::select(DB::raw("select spd.*, spp.nospp, ap.id idasalproduk, ap.asalproduk  from spd_t spd 
         left join spp_t spp on spp.objectspdfk = spd.norec and spp.statusenabled = true 
         left join asalproduk_m ap on ap.id = spd.objectasalprodukfk and ap.statusenabled = true 
@@ -6110,7 +6123,7 @@ order by subkodepertama asc, subkodekedua asc, subkodeketiga asc, subkodekeempat
         $idProfile = (int) $kdProfile;
 
         $data = DB::select(DB::raw("
-                select pj.pph, pj.pph2, pj.ppn, jp.id idpajak, jp.jenispajak, ma.kodemataanggaran kodemataanggaran, ma.namamataanggaran namamataanggaran, kasub.id idsubkegiatan, 
+                select pj.objectbkufk, pj.pph, pj.pph2, pj.ppn, jp.id idpajak, jp.jenispajak, ma.kodemataanggaran kodemataanggaran, ma.namamataanggaran namamataanggaran, kasub.id idsubkegiatan, 
                 kasubsub.id idsubsubkegiatan, kasub.keterangan keterangansubkegiatan, kasubsub.keterangan keterangansubsubkegiatan, 
                 pj.norec, pj.nopanjar, pj.uraian, pj.tglpanjar, pj.jumlah, pj.jenispanjar, coalesce(pj.jumlahpengembalian, 0) jumlahpengembalian, pj.sumberpanjar,
                 pj.idbill, pj.ntpn, pj.idbillpph, pj.ntpnpph, pj.idbillpph2, pj.ntpnpph2, jp2.id idpajak2, jp2.jenispajak jenispajak2
@@ -7115,7 +7128,7 @@ order by subkodepertama asc, subkodekedua asc, subkodeketiga asc, subkodekeempat
         $tglAkhir = $request['akhir'];
         
         $data = DB::select(DB::raw("
-        select norec, nojasagiro, uraianjasagiro, tglpemasukan, jumlahpemasukan, tglpengeluaran, jumlahpengeluaran 
+        select objectbkufk, norec, nojasagiro, uraianjasagiro, tglpemasukan, jumlahpemasukan, tglpengeluaran, jumlahpengeluaran 
         from jasagiro_t where kdprofile = 30 and statusenabled = true
         and tglpemasukan between '$tglAwal' and '$tglAkhir'
         ")
@@ -7399,7 +7412,7 @@ order by subkodepertama asc, subkodekedua asc, subkodeketiga asc, subkodekeempat
                 pg1.namalengkap as bendahara, pg2.namalengkap as penerima, rkn.namarekanan as pihakketiga,
                 ka.kode || '~' || ka.keterangan as kegiatan, ma.kodemataanggaran || '~' || ma.namamataanggaran as mataanggaran,
                 dp0.kode kodesubkegiatan, dp0.keterangan keterangansubkegiatan, ma.kodemataanggaran, ma.namamataanggaran, dp0.id idsubkegiatan, ka.keterangan subsubkegiatan, ka.id idsubsubkegiatan,
-                ap.id idasalproduk, ap.asalproduk
+                ap.id idasalproduk, ap.asalproduk, sr.objectbkufk
                 from strukrealisasi_t sr
                 inner join realisasidetail_t rd on rd.strukrealisasifk = sr.norec
                 left join asalproduk_m ap on ap.id = sr.objectasalprodukfk
@@ -7419,7 +7432,7 @@ order by subkodepertama asc, subkodekedua asc, subkodeketiga asc, subkodekeempat
                 $pegawai
                 $status
 				group by dp0.kode, dp0.keterangan, sr.norec, cbs.carabayar, sr.tglverif, sr.keterangan, sr.jumlahdibayarverif, sr.kdprofile, sr.statusenabled, sr.tglrealisasi, sr.norealisasi, sr.status, sr.totalbelanja, sr.objectcarabayarfk, sr.rekananfk, sr.deskripsi, sr.objectkegiatanfk, sr.objectmataanggaranfk, sr.bendaharafk, sr.penerimafk, sr.pph, sr.ppn, pg1.namalengkap, pg2.namalengkap, rkn.namarekanan ,
-                ka.kode || '~' || ka.keterangan, ma.kodemataanggaran || '~' || ma.namamataanggaran, ka.tahun, ma.kodemataanggaran, ma.namamataanggaran, dp0.id, ka.keterangan, ka.id, ap.id, ap.asalproduk
+                ka.kode || '~' || ka.keterangan, ma.kodemataanggaran || '~' || ma.namamataanggaran, ka.tahun, ma.kodemataanggaran, ma.namamataanggaran, dp0.id, ka.keterangan, ka.id, ap.id, ap.asalproduk, sr.objectbkufk
                 order by sr.norealisasi asc
             ")
         );
@@ -7694,7 +7707,7 @@ order by subkodepertama asc, subkodekedua asc, subkodeketiga asc, subkodekeempat
         $idProfile = (int) $kdProfile;
         $norec = $request['norec'];
 
-        $data = DB::select(DB::raw("select 
+        $data = DB::select(DB::raw("select pp.objectbkufk,pep.objectbkufk,
         pep.nopajak nopajakpep, pp.nopajak nopajakpp, pp.uraianpajak, sr.norealisasi,string_agg(DISTINCT rd.uraian, ',') uraian, sr.tglverif tglrealisasi, coalesce(jp.jenispajak,'PPh') as kode, pp.pph as jumlah 
         from strukrealisasi_t sr 
         left join realisasidetail_t rd on rd.strukrealisasifk = sr.norec
@@ -7703,11 +7716,11 @@ order by subkodepertama asc, subkodekedua asc, subkodeketiga asc, subkodekeempat
         left join jenispajak_m jp on jp.id = pp.objectjenispphfk and jp.statusenabled = true and jp.kdprofile = 30
         where sr.norec = '$norec'
 		and pp.objectjenispphfk is not null
-        group by jp.jenispajak, pep.nopajak, pp.nopajak, pp.uraianpajak, sr.norealisasi, sr.tglverif, pp.pph
+        group by pp.objectbkufk,pep.objectbkufk,jp.jenispajak, pep.nopajak, pp.nopajak, pp.uraianpajak, sr.norealisasi, sr.tglverif, pp.pph
 
         union all
 
-        select 
+        select pp.objectbkufk,pep.objectbkufk,
         pep.nopajak nopajakpep, pp.nopajak nopajakpp, pp.uraianpajak, sr.norealisasi,string_agg(DISTINCT rd.uraian, ',') uraian, sr.tglverif tglrealisasi, 'PPn' as kode, pp.ppn as jumlah 
         from strukrealisasi_t sr 
         left join realisasidetail_t rd on rd.strukrealisasifk = sr.norec
@@ -7715,7 +7728,7 @@ order by subkodepertama asc, subkodekedua asc, subkodeketiga asc, subkodekeempat
         inner join penyetoranpajak_t pep on left(pep.nopajak, 3) = left(pp.nopajak, 3) and pep.statusenabled = true and pep.kdprofile = 30
         where sr.norec = '$norec'
 		and pp.objectjenispphfk is null
-        group by pep.nopajak, pp.nopajak, pp.uraianpajak, sr.norealisasi, sr.tglverif, pp.ppn
+        group by pp.objectbkufk,pep.objectbkufk, pep.nopajak, pp.nopajak, pp.uraianpajak, sr.norealisasi, sr.tglverif, pp.ppn
             ")
         );
 

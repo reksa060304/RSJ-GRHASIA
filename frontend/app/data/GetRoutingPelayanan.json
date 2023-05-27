@@ -20216,6 +20216,28 @@
         "define": "RekamMedisCtrl"
       }
     ]
+  }, 
+  {
+    "name": "RekamMedis.CpptDinamis.CpptDinamisDetail.InputDiagnosaDokter.InputResepApotikOrderV2",
+    "url": "/InputResepApotikOrderV2",
+    "templateurl": "module/EMR/InputResepApotikOrderV2.html",
+    "controller": "InputResepApotikOrderV2Ctrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "RekamMedisCtrl"
+      }
+    ]
   }
 ]
 

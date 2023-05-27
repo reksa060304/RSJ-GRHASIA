@@ -1136,8 +1136,34 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
            $scope.klikKegiatan = function(dataKegiatanSelected){
                 
             }
+            var onDataBoundSPP = function (e) {
+                        // $(row.cells[1]).addClass("green");
 
+                var kendoGridSPP = $("#kGridspp").data("kendoGrid"); // get the grid widget
+                var rowsSPP = e.sender.element.find("tbody tr"); // get all rows
+                for (let i = 0; i < rowsSPP.length; i++) {
+                    var row = rowsSPP[i];
+                    var status = kendoGridSPP.dataItem(row).details;
+                    // console.log(status.length);
+                    if (status.length > 0) {
+                        $(row.cells[1]).addClass("green");
+                        $(row.cells[2]).addClass("green");
+                        $(row.cells[3]).addClass("green");
+                        $(row.cells[4]).addClass("green");
+                        $(row.cells[5]).addClass("green");
+                        $(row.cells[6]).addClass("green");
+                        $(row.cells[7]).addClass("green");
+                        $(row.cells[8]).addClass("green");
+                        $(row.cells[9]).addClass("green");
+                        $(row.cells[10]).addClass("green");
+                        $(row.cells[11]).addClass("green");
+                        $(row.cells[12]).addClass("green");
+                    }
+                }
+
+            }
             $scope.columnSPP = {
+                dataBound: onDataBoundSPP,
                 columns:[
                     {
                         "command": [
@@ -6621,7 +6647,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 medifirstService.get("reservasionline/get-daftar-slotting?id=1").then(function (e) {
 
 				})
-
+                if(dataItem.objectbkufk != null){
+                    toastr.error('Sudah dibuat BKU tidak bisa dirubah')
+                    return
+                }
                 $scope.norecspjpanjar = dataItem.norec
 
                 medifirstService.getPart('emr/get-datacombo-part-pegawai', true, true, 20).then(function (data) {
@@ -6779,6 +6808,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 				})
                 
                 var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                if (dataItem.objectbkufk != null) {
+                    toastr.error('Sudah dibuat BKU tidak bisa diverifikasi')
+                    return
+                }
                 console.log(dataItem)
                 $scope.item.pph = dataItem.pph
                 $scope.item.ppn = dataItem.ppn
@@ -6813,6 +6846,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.subkegiatanverif = {id: dataItem.idsubkegiatan, keterangan: dataItem.keterangansubkegiatan}
                 $scope.subsubkegiatanverif = {id: dataItem.idsubsubkegiatan, keterangan: dataItem.subsubkegiatan}
                 $scope.mataanggaranverif = {kodemataanggaran: dataItem.kodemataanggaran, namamataanggaran: dataItem.namamataanggaran}
+                
                 $scope.popupVerifSPJ.center().open()
             }
 
@@ -7009,7 +7043,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 
                 var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
                 //console.log(dataItem)
-
+                
+                if(dataItem.objectbkufk != null){
+                    toastr.error('sudah dibuat BKU, tidak bisa dihapus')
+                    return
+                }
                 var objSave =
                     {
                         norec: dataItem.norec,
@@ -7040,7 +7078,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 
                 var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
                 //console.log(dataItem)
-
+                if (dataItem.details.length > 0) {
+                    toastr.error('sudah dibuat SPM, tidak bisa dihapus')
+                    return
+                }
                 var objSave =
                     {
                         norec: dataItem.norec,
@@ -7129,8 +7170,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 				})
                 
                 var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
-                //console.log(dataItem)
-
+                console.log(dataItem)
+                if(dataItem.objectbkufk != null){
+                    toastr.error('sudah dibuat BKU tidak bisa dihapus')
+                    return
+                }
                 var objSave =
                     {
                         norec: dataItem.norec,
@@ -7213,6 +7257,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 
                 var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
                 console.log(dataItem)
+                if (dataItem.objectbkufk != null) {
+                    toastr.error('Sudah dibuat BKU tidak bisa dihapus')
+                    return
+                }
                 var objSave =
                     {
                         norec: dataItem.norec,
@@ -7437,6 +7485,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 				})
                 
                 var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                
+                if (dataItem.objectbkufk != null) {
+                    toastr.error('sudah dibuat BKU, tidak bisa dirubah')
+                    return
+                }
                 if (dataItem != undefined) {
                     console.log(dataItem)
                     $scope.norecspm = dataItem.norec
@@ -7469,6 +7522,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 				})
                 
                 var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                if (dataItem.details.length > 0) {
+                    toastr.error('sudah dibuat SPM, tidak bisa dirubah')
+                    return
+                }
                 if (dataItem != undefined) {
                     console.log(dataItem)
 

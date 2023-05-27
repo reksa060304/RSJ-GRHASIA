@@ -389,6 +389,10 @@ define(['initialize'], function (initialize) {
             }
 
             $scope.HapusPenyetoran = function () {
+                if ($scope.objectbkufk!= undefined){
+                    toastr.error('sudah dibuat BKU, tidak bisa dihapus')
+                    return
+                }
                 var objSave = {
                     "norec": $scope.norecspj,
                 }
@@ -912,6 +916,7 @@ define(['initialize'], function (initialize) {
             $scope.klikGrid = function(e){
                 $scope.item.nospj = e.norealisasi
                 $scope.norecspj = e.norec
+                $scope.objectbkufk = e.objectbkufk
                 $scope.tglveriftopajak = moment(e.tglrealisasi).format('YYYY-MM-DD HH:mm')
                 $scope.item.uraianPajak = e.uraian
                 if(e.ppn != '0'){
