@@ -580,116 +580,659 @@ define(['initialize'], function (initialize) {
             // })  
 
 
-            $scope.skor1 = 0
-            $scope.skor2 = 0
-            $scope.skor3 = 0
-            $scope.skor4 = 0
-            $scope.skor5 = 0
-            $scope.skor6 = 0
-            $scope.skor7 = 0
-            // $scope.skor8 = 0
-            // $scope.skor9 = 0
-            // $scope.skor10 = 0
-            // $scope.skor11 = 0
-            // $scope.skor12 = 0
-            $scope.skor13 = 0
+            // $scope.skor1 = 0
+            // $scope.skor2 = 0
+            // $scope.skor3 = 0
+            // $scope.skor4 = 0
+            // $scope.skor5 = 0
+            // $scope.skor6 = 0
+            // $scope.skor7 = 0
+            // // $scope.skor8 = 0
+            // // $scope.skor9 = 0
+            // // $scope.skor10 = 0
+            // // $scope.skor11 = 0
+            // // $scope.skor12 = 0
+            // $scope.skor13 = 0
+            $scope.skor11 = 0
+                $scope.skor21 = 0
+                $scope.skor31 = 0
+                $scope.skor41 = 0
+                $scope.skor51 = 0
+                $scope.skor61 = 0
+                $scope.skor12 = 0
+                $scope.skor22 = 0
+                $scope.skor32 = 0
+                $scope.skor42 = 0
+                $scope.skor52 = 0
+                $scope.skor62 = 0
+                $scope.skor13 = 0
+                $scope.skor23 = 0
+                $scope.skor33 = 0
+                $scope.skor43 = 0
+                $scope.skor53 = 0
+                $scope.skor63 = 0
+                $scope.skor14 = 0
+                $scope.skor24 = 0
+                $scope.skor34 = 0
+                $scope.skor44 = 0
+                $scope.skor54 = 0
+                $scope.skor64 = 0
+                $scope.skor15 = 0
+                $scope.skor25 = 0
+                $scope.skor35 = 0
+                $scope.skor45 = 0
+                $scope.skor55 = 0
+                $scope.skor65 = 0
+                $scope.skor16 = 0
+                $scope.skor26 = 0
+                $scope.skor36 = 0
+                $scope.skor46 = 0
+                $scope.skor56 = 0
+                $scope.skor66 = 0
+                $scope.skor17 = 0
+                $scope.skor27 = 0
+                $scope.skor37 = 0
+                $scope.skor47 = 0
+                $scope.skor57 = 0
+                $scope.skor67 = 0
             $scope.getSkor = function (stat) {
+                
                 var arrobj = Object.keys($scope.item.obj)
                 var arrSave = []
                 for (var i = arrobj.length - 1; i >= 0; i--) {
                     if (arrobj[i] == stat.id) {
-                        console.log(Boolean(cacheHelper.get('buatobj')),Boolean($scope.item.obj[parseFloat(arrobj[i])]));
-                        if(Boolean($scope.item.obj[parseFloat(arrobj[i])]) == true){
-                            Boolean(cacheHelper.get('buatobj'))
-                        }else{
-                            cacheHelper.set('buatobj', $scope.item.obj[parseFloat(arrobj[i])])
-                        }
-                        console.log(Boolean(cacheHelper.get('buatobj')));
-                        if ($scope.item.obj[parseFloat(arrobj[i])] != undefined && $scope.item.obj[parseFloat(arrobj[i])] != "" && Boolean(cacheHelper.get('buatobj')) != Boolean($scope.item.obj[parseFloat(arrobj[i])]) ) {
-                            if (stat.reportdisplay == null)
-                                break
-                                if(stat.kodeexternal == 'lajurespirasi'){
-                                    if (stat.satuan == 1){
-                                        if ($scope.item.obj[parseFloat(arrobj[i])] >= 6 && $scope.item.obj[parseFloat(arrobj[i])] <= 8){
-                                            $scope.skor11 = 3
-                                        }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 9 && $scope.item.obj[parseFloat(arrobj[i])] <= 11){
-                                            $scope.skor11 = 1
-                                        }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 12 && $scope.item.obj[parseFloat(arrobj[i])] <= 20) {
-                                            $scope.skor11 = 0
-                                        }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 21 && $scope.item.obj[parseFloat(arrobj[i])] <= 24) {
-                                            $scope.skor11 = 2
-                                        }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 25 && $scope.item.obj[parseFloat(arrobj[i])] <= 34) {
-                                            $scope.skor11 = 3
-                                        }
-                                        // if ($scope.item.obj[parseFloat(arrobj[i])] >= 35) {
-                                        //     $scope.skor11 = 0
-                                        //     $scope.item.obj2[parseFloat(arrobj[i])] = false
-                                        // }
+                        if ($scope.item.obj[parseFloat(arrobj[i])] != undefined && $scope.item.obj[parseFloat(arrobj[i])] != "") {
+                            if(stat.kodeexternal == 'lajurespirasi'){
+                                if (stat.satuan == 1){
+                                    if ($scope.item.obj[parseFloat(arrobj[i])] >= 6 && $scope.item.obj[parseFloat(arrobj[i])] <= 8){
+                                        $scope.skor11 = 3
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 9 && $scope.item.obj[parseFloat(arrobj[i])] <= 11){
+                                        $scope.skor11 = 1
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 12 && $scope.item.obj[parseFloat(arrobj[i])] <= 20) {
+                                        $scope.skor11 = 0
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 21 && $scope.item.obj[parseFloat(arrobj[i])] <= 24) {
+                                        $scope.skor11 = 2
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 25 && $scope.item.obj[parseFloat(arrobj[i])] <= 34) {
+                                        $scope.skor11 = 3
                                     }
-                                    if (stat.satuan == 2) {
-                                        if ($scope.item.obj[parseFloat(arrobj[i])] >= 6 && $scope.item.obj[parseFloat(arrobj[i])] <= 8) {
-                                            $scope.skor21 = 3
-                                        } else if ($scope.item.obj[parseFloat(arrobj[i])] >= 9 && $scope.item.obj[parseFloat(arrobj[i])] <= 11) {
-                                            $scope.skor21 = 1
-                                        } else if ($scope.item.obj[parseFloat(arrobj[i])] >= 12 && $scope.item.obj[parseFloat(arrobj[i])] <= 20) {
-                                            $scope.skor21 = 0
-                                        } else if ($scope.item.obj[parseFloat(arrobj[i])] >= 21 && $scope.item.obj[parseFloat(arrobj[i])] <= 24) {
-                                            $scope.skor21 = 2
-                                        } else if ($scope.item.obj[parseFloat(arrobj[i])] >= 25 && $scope.item.obj[parseFloat(arrobj[i])] <= 34) {
-                                            $scope.skor21 = 3
-                                        }
-                                        // if ($scope.item.obj[parseFloat(arrobj[i])] >= 35) {
-                                        //     $scope.skor11 = 0
-                                        //     $scope.item.obj2[parseFloat(arrobj[i])] = false
-                                        // }
-                                    }
+                                    // if ($scope.item.obj[parseFloat(arrobj[i])] >= 35) {
+                                    //     $scope.skor11 = 0
+                                    //     $scope.item.obj2[parseFloat(arrobj[i])] = false
+                                    // }
                                 }
+                                if (stat.satuan == 2) {
+                                    if ($scope.item.obj[parseFloat(arrobj[i])] >= 6 && $scope.item.obj[parseFloat(arrobj[i])] <= 8) {
+                                        $scope.skor21 = 3
+                                    } else if ($scope.item.obj[parseFloat(arrobj[i])] >= 9 && $scope.item.obj[parseFloat(arrobj[i])] <= 11) {
+                                        $scope.skor21 = 1
+                                    } else if ($scope.item.obj[parseFloat(arrobj[i])] >= 12 && $scope.item.obj[parseFloat(arrobj[i])] <= 20) {
+                                        $scope.skor21 = 0
+                                    } else if ($scope.item.obj[parseFloat(arrobj[i])] >= 21 && $scope.item.obj[parseFloat(arrobj[i])] <= 24) {
+                                        $scope.skor21 = 2
+                                    } else if ($scope.item.obj[parseFloat(arrobj[i])] >= 25 && $scope.item.obj[parseFloat(arrobj[i])] <= 34) {
+                                        $scope.skor21 = 3
+                                    }
+                                    // if ($scope.item.obj[parseFloat(arrobj[i])] >= 35) {
+                                    //     $scope.skor11 = 0
+                                    //     $scope.item.obj2[parseFloat(arrobj[i])] = false
+                                    // }
+                                }
+                                if (stat.satuan == 3) {
+                                    if ($scope.item.obj[parseFloat(arrobj[i])] >= 6 && $scope.item.obj[parseFloat(arrobj[i])] <= 8) {
+                                        $scope.skor31 = 3
+                                    } else if ($scope.item.obj[parseFloat(arrobj[i])] >= 9 && $scope.item.obj[parseFloat(arrobj[i])] <= 11) {
+                                        $scope.skor31 = 1
+                                    } else if ($scope.item.obj[parseFloat(arrobj[i])] >= 12 && $scope.item.obj[parseFloat(arrobj[i])] <= 20) {
+                                        $scope.skor31 = 0
+                                    } else if ($scope.item.obj[parseFloat(arrobj[i])] >= 21 && $scope.item.obj[parseFloat(arrobj[i])] <= 24) {
+                                        $scope.skor31 = 2
+                                    } else if ($scope.item.obj[parseFloat(arrobj[i])] >= 25 && $scope.item.obj[parseFloat(arrobj[i])] <= 34) {
+                                        $scope.skor31 = 3
+                                    }
+                                    // if ($scope.item.obj[parseFloat(arrobj[i])] >= 35) {
+                                    //     $scope.skor11 = 0
+                                    //     $scope.item.obj2[parseFloat(arrobj[i])] = false
+                                    // }
+                                }
+                                if (stat.satuan == 4) {
+                                    if ($scope.item.obj[parseFloat(arrobj[i])] >= 6 && $scope.item.obj[parseFloat(arrobj[i])] <= 8) {
+                                        $scope.skor41 = 3
+                                    } else if ($scope.item.obj[parseFloat(arrobj[i])] >= 9 && $scope.item.obj[parseFloat(arrobj[i])] <= 11) {
+                                        $scope.skor41 = 1
+                                    } else if ($scope.item.obj[parseFloat(arrobj[i])] >= 12 && $scope.item.obj[parseFloat(arrobj[i])] <= 20) {
+                                        $scope.skor41 = 0
+                                    } else if ($scope.item.obj[parseFloat(arrobj[i])] >= 21 && $scope.item.obj[parseFloat(arrobj[i])] <= 24) {
+                                        $scope.skor41 = 2
+                                    } else if ($scope.item.obj[parseFloat(arrobj[i])] >= 25 && $scope.item.obj[parseFloat(arrobj[i])] <= 34) {
+                                        $scope.skor41 = 3
+                                    }
+                                    // if ($scope.item.obj[parseFloat(arrobj[i])] >= 35) {
+                                    //     $scope.skor11 = 0
+                                    //     $scope.item.obj2[parseFloat(arrobj[i])] = false
+                                    // }
+                                }
+                                if (stat.satuan == 5) {
+                                    if ($scope.item.obj[parseFloat(arrobj[i])] >= 6 && $scope.item.obj[parseFloat(arrobj[i])] <= 8) {
+                                        $scope.skor51 = 3
+                                    } else if ($scope.item.obj[parseFloat(arrobj[i])] >= 9 && $scope.item.obj[parseFloat(arrobj[i])] <= 11) {
+                                        $scope.skor51 = 1
+                                    } else if ($scope.item.obj[parseFloat(arrobj[i])] >= 12 && $scope.item.obj[parseFloat(arrobj[i])] <= 20) {
+                                        $scope.skor51 = 0
+                                    } else if ($scope.item.obj[parseFloat(arrobj[i])] >= 21 && $scope.item.obj[parseFloat(arrobj[i])] <= 24) {
+                                        $scope.skor51 = 2
+                                    } else if ($scope.item.obj[parseFloat(arrobj[i])] >= 25 && $scope.item.obj[parseFloat(arrobj[i])] <= 34) {
+                                        $scope.skor51 = 3
+                                    }
+                                    // if ($scope.item.obj[parseFloat(arrobj[i])] >= 35) {
+                                    //     $scope.skor11 = 0
+                                    //     $scope.item.obj2[parseFloat(arrobj[i])] = false
+                                    // }
+                                }
+                                if (stat.satuan == 6) {
+                                    if ($scope.item.obj[parseFloat(arrobj[i])] >= 6 && $scope.item.obj[parseFloat(arrobj[i])] <= 8) {
+                                        $scope.skor61 = 3
+                                    } else if ($scope.item.obj[parseFloat(arrobj[i])] >= 9 && $scope.item.obj[parseFloat(arrobj[i])] <= 11) {
+                                        $scope.skor61 = 1
+                                    } else if ($scope.item.obj[parseFloat(arrobj[i])] >= 12 && $scope.item.obj[parseFloat(arrobj[i])] <= 20) {
+                                        $scope.skor61 = 0
+                                    } else if ($scope.item.obj[parseFloat(arrobj[i])] >= 21 && $scope.item.obj[parseFloat(arrobj[i])] <= 24) {
+                                        $scope.skor61 = 2
+                                    } else if ($scope.item.obj[parseFloat(arrobj[i])] >= 25 && $scope.item.obj[parseFloat(arrobj[i])] <= 34) {
+                                        $scope.skor61 = 3
+                                    }
+                                    // if ($scope.item.obj[parseFloat(arrobj[i])] >= 35) {
+                                    //     $scope.skor11 = 0
+                                    //     $scope.item.obj2[parseFloat(arrobj[i])] = false
+                                    // }
+                                }
+                            }
+                            if(stat.kodeexternal == 'saturasi'){
+                                if (stat.satuan == 1){
+                                    if ($scope.item.obj[parseFloat(arrobj[i])] >= 96){
+                                        $scope.skor12 = 0
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 94 && $scope.item.obj[parseFloat(arrobj[i])] <= 95){
+                                        $scope.skor12 = 1
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 92 && $scope.item.obj[parseFloat(arrobj[i])] <= 93) {
+                                        $scope.skor12 = 2
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 21 && $scope.item.obj[parseFloat(arrobj[i])] <= 24) {
+                                        $scope.skor12 = 2
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] <= 91) {
+                                        $scope.skor12 = 3
+                                    }
+                                    // if ($scope.item.obj[parseFloat(arrobj[i])] >= 35) {
+                                    //     $scope.skor11 = 0
+                                    //     $scope.item.obj2[parseFloat(arrobj[i])] = false
+                                    // }
+                                }
+                                if (stat.satuan == 2) {
+                                    if ($scope.item.obj[parseFloat(arrobj[i])] >= 96){
+                                        $scope.skor22 = 0
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 94 && $scope.item.obj[parseFloat(arrobj[i])] <= 95){
+                                        $scope.skor22 = 1
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 92 && $scope.item.obj[parseFloat(arrobj[i])] <= 93) {
+                                        $scope.skor22 = 2
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 21 && $scope.item.obj[parseFloat(arrobj[i])] <= 24) {
+                                        $scope.skor22 = 2
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] <= 91) {
+                                        $scope.skor22 = 3
+                                    }
+                                    // if ($scope.item.obj[parseFloat(arrobj[i])] >= 35) {
+                                    //     $scope.skor11 = 0
+                                    //     $scope.item.obj2[parseFloat(arrobj[i])] = false
+                                    // }
+                                }
+                                if (stat.satuan == 3) {
+                                    if ($scope.item.obj[parseFloat(arrobj[i])] >= 96){
+                                        $scope.skor32 = 0
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 94 && $scope.item.obj[parseFloat(arrobj[i])] <= 95){
+                                        $scope.skor32 = 1
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 92 && $scope.item.obj[parseFloat(arrobj[i])] <= 93) {
+                                        $scope.skor32 = 2
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 21 && $scope.item.obj[parseFloat(arrobj[i])] <= 24) {
+                                        $scope.skor32 = 2
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] <= 91) {
+                                        $scope.skor32 = 3
+                                    }
+                                    // if ($scope.item.obj[parseFloat(arrobj[i])] >= 35) {
+                                    //     $scope.skor11 = 0
+                                    //     $scope.item.obj2[parseFloat(arrobj[i])] = false
+                                    // }
+                                }
+                                if (stat.satuan == 4) {
+                                    if ($scope.item.obj[parseFloat(arrobj[i])] >= 96){
+                                        $scope.skor42 = 0
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 94 && $scope.item.obj[parseFloat(arrobj[i])] <= 95){
+                                        $scope.skor42 = 1
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 92 && $scope.item.obj[parseFloat(arrobj[i])] <= 93) {
+                                        $scope.skor42 = 2
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 21 && $scope.item.obj[parseFloat(arrobj[i])] <= 24) {
+                                        $scope.skor42 = 2
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] <= 91) {
+                                        $scope.skor42 = 3
+                                    }
+                                    // if ($scope.item.obj[parseFloat(arrobj[i])] >= 35) {
+                                    //     $scope.skor11 = 0
+                                    //     $scope.item.obj2[parseFloat(arrobj[i])] = false
+                                    // }
+                                }
+                                if (stat.satuan == 5) {
+                                    if ($scope.item.obj[parseFloat(arrobj[i])] >= 96){
+                                        $scope.skor52 = 0
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 94 && $scope.item.obj[parseFloat(arrobj[i])] <= 95){
+                                        $scope.skor52 = 1
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 92 && $scope.item.obj[parseFloat(arrobj[i])] <= 93) {
+                                        $scope.skor52 = 2
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 21 && $scope.item.obj[parseFloat(arrobj[i])] <= 24) {
+                                        $scope.skor52 = 2
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] <= 91) {
+                                        $scope.skor52 = 3
+                                    }
+                                    // if ($scope.item.obj[parseFloat(arrobj[i])] >= 35) {
+                                    //     $scope.skor11 = 0
+                                    //     $scope.item.obj2[parseFloat(arrobj[i])] = false
+                                    // }
+                                }
+                                if (stat.satuan == 6) {
+                                    if ($scope.item.obj[parseFloat(arrobj[i])] >= 96){
+                                        $scope.skor62 = 0
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 94 && $scope.item.obj[parseFloat(arrobj[i])] <= 95){
+                                        $scope.skor62 = 1
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 92 && $scope.item.obj[parseFloat(arrobj[i])] <= 93) {
+                                        $scope.skor62 = 2
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 21 && $scope.item.obj[parseFloat(arrobj[i])] <= 24) {
+                                        $scope.skor62 = 2
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] <= 91) {
+                                        $scope.skor62 = 3
+                                    }
+                                    // if ($scope.item.obj[parseFloat(arrobj[i])] >= 35) {
+                                    //     $scope.skor11 = 0
+                                    //     $scope.item.obj2[parseFloat(arrobj[i])] = false
+                                    // }
+                                }
+                            }
+                            if(stat.kodeexternal == 'tekanandarah'){
+                                if (stat.satuan == 1){
+                                    if ($scope.item.obj[parseFloat(arrobj[i])] > 220){
+                                        $scope.skor13 = 3
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 181 && $scope.item.obj[parseFloat(arrobj[i])] <= 220){
+                                        $scope.skor13 = 1
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 111 && $scope.item.obj[parseFloat(arrobj[i])] <= 180) {
+                                        $scope.skor13 = 0
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 101 && $scope.item.obj[parseFloat(arrobj[i])] <= 110) {
+                                        $scope.skor13 = 1
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 91 && $scope.item.obj[parseFloat(arrobj[i])] <= 100) {
+                                        $scope.skor13 = 2
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 71 && $scope.item.obj[parseFloat(arrobj[i])] <= 90) {
+                                        $scope.skor13 = 3
+                                    }
+                                    // if ($scope.item.obj[parseFloat(arrobj[i])] >= 35) {
+                                    //     $scope.skor11 = 0
+                                    //     $scope.item.obj2[parseFloat(arrobj[i])] = false
+                                    // }
+                                }
+                                if (stat.satuan == 2) {
+                                    if ($scope.item.obj[parseFloat(arrobj[i])] > 220){
+                                        $scope.skor23 = 3
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 181 && $scope.item.obj[parseFloat(arrobj[i])] <= 220){
+                                        $scope.skor23 = 1
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 111 && $scope.item.obj[parseFloat(arrobj[i])] <= 180) {
+                                        $scope.skor23 = 0
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 101 && $scope.item.obj[parseFloat(arrobj[i])] <= 110) {
+                                        $scope.skor23 = 1
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 91 && $scope.item.obj[parseFloat(arrobj[i])] <= 100) {
+                                        $scope.skor23 = 2
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 71 && $scope.item.obj[parseFloat(arrobj[i])] <= 90) {
+                                        $scope.skor23 = 3
+                                    }
+                                    // if ($scope.item.obj[parseFloat(arrobj[i])] >= 35) {
+                                    //     $scope.skor11 = 0
+                                    //     $scope.item.obj2[parseFloat(arrobj[i])] = false
+                                    // }
+                                }
+                                if (stat.satuan == 3) {
+                                    if ($scope.item.obj[parseFloat(arrobj[i])] > 220){
+                                        $scope.skor33 = 3
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 181 && $scope.item.obj[parseFloat(arrobj[i])] <= 220){
+                                        $scope.skor33 = 1
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 111 && $scope.item.obj[parseFloat(arrobj[i])] <= 180) {
+                                        $scope.skor33 = 0
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 101 && $scope.item.obj[parseFloat(arrobj[i])] <= 110) {
+                                        $scope.skor33 = 1
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 91 && $scope.item.obj[parseFloat(arrobj[i])] <= 100) {
+                                        $scope.skor33 = 2
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 71 && $scope.item.obj[parseFloat(arrobj[i])] <= 90) {
+                                        $scope.skor33 = 3
+                                    }
+                                    // if ($scope.item.obj[parseFloat(arrobj[i])] >= 35) {
+                                    //     $scope.skor11 = 0
+                                    //     $scope.item.obj2[parseFloat(arrobj[i])] = false
+                                    // }
+                                }
+                                if (stat.satuan == 4) {
+                                    if ($scope.item.obj[parseFloat(arrobj[i])] > 220){
+                                        $scope.skor43 = 3
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 181 && $scope.item.obj[parseFloat(arrobj[i])] <= 220){
+                                        $scope.skor43 = 1
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 111 && $scope.item.obj[parseFloat(arrobj[i])] <= 180) {
+                                        $scope.skor43 = 0
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 101 && $scope.item.obj[parseFloat(arrobj[i])] <= 110) {
+                                        $scope.skor43 = 1
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 91 && $scope.item.obj[parseFloat(arrobj[i])] <= 100) {
+                                        $scope.skor43 = 2
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 71 && $scope.item.obj[parseFloat(arrobj[i])] <= 90) {
+                                        $scope.skor43 = 3
+                                    }
+                                    // if ($scope.item.obj[parseFloat(arrobj[i])] >= 35) {
+                                    //     $scope.skor11 = 0
+                                    //     $scope.item.obj2[parseFloat(arrobj[i])] = false
+                                    // }
+                                }
+                                if (stat.satuan == 5) {
+                                    if ($scope.item.obj[parseFloat(arrobj[i])] > 220){
+                                        $scope.skor53 = 3
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 181 && $scope.item.obj[parseFloat(arrobj[i])] <= 220){
+                                        $scope.skor53 = 1
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 111 && $scope.item.obj[parseFloat(arrobj[i])] <= 180) {
+                                        $scope.skor53 = 0
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 101 && $scope.item.obj[parseFloat(arrobj[i])] <= 110) {
+                                        $scope.skor53 = 1
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 91 && $scope.item.obj[parseFloat(arrobj[i])] <= 100) {
+                                        $scope.skor53 = 2
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 71 && $scope.item.obj[parseFloat(arrobj[i])] <= 90) {
+                                        $scope.skor53 = 3
+                                    }
+                                    // if ($scope.item.obj[parseFloat(arrobj[i])] >= 35) {
+                                    //     $scope.skor11 = 0
+                                    //     $scope.item.obj2[parseFloat(arrobj[i])] = false
+                                    // }
+                                }
+                                if (stat.satuan == 6) {
+                                    if ($scope.item.obj[parseFloat(arrobj[i])] > 220){
+                                        $scope.skor63 = 3
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 181 && $scope.item.obj[parseFloat(arrobj[i])] <= 220){
+                                        $scope.skor63 = 1
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 111 && $scope.item.obj[parseFloat(arrobj[i])] <= 180) {
+                                        $scope.skor63 = 0
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 101 && $scope.item.obj[parseFloat(arrobj[i])] <= 110) {
+                                        $scope.skor63 = 1
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 91 && $scope.item.obj[parseFloat(arrobj[i])] <= 100) {
+                                        $scope.skor63 = 2
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 71 && $scope.item.obj[parseFloat(arrobj[i])] <= 90) {
+                                        $scope.skor63 = 3
+                                    }
+                                    // if ($scope.item.obj[parseFloat(arrobj[i])] >= 35) {
+                                    //     $scope.skor11 = 0
+                                    //     $scope.item.obj2[parseFloat(arrobj[i])] = false
+                                    // }
+                                }
+                            }
+                            if(stat.kodeexternal == 'laju'){
+                                if (stat.satuan == 1){
+                                    if ($scope.item.obj[parseFloat(arrobj[i])] >= 131 && $scope.item.obj[parseFloat(arrobj[i])] <= 150){
+                                        $scope.skor14 = 3
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 111 && $scope.item.obj[parseFloat(arrobj[i])] <= 130){
+                                        $scope.skor14 = 2
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 101 && $scope.item.obj[parseFloat(arrobj[i])] <= 110) {
+                                        $scope.skor14 = 1
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 51 && $scope.item.obj[parseFloat(arrobj[i])] <= 100) {
+                                        $scope.skor14 = 0
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 40 && $scope.item.obj[parseFloat(arrobj[i])] <= 50) {
+                                        $scope.skor14 = 1
+                                    }
+                                    // if ($scope.item.obj[parseFloat(arrobj[i])] >= 35) {
+                                    //     $scope.skor11 = 0
+                                    //     $scope.item.obj2[parseFloat(arrobj[i])] = false
+                                    // }
+                                }
+                                if (stat.satuan == 2) {
+                                    if ($scope.item.obj[parseFloat(arrobj[i])] >= 131 && $scope.item.obj[parseFloat(arrobj[i])] <= 150){
+                                        $scope.skor24 = 3
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 111 && $scope.item.obj[parseFloat(arrobj[i])] <= 130){
+                                        $scope.skor24 = 2
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 101 && $scope.item.obj[parseFloat(arrobj[i])] <= 110) {
+                                        $scope.skor24 = 1
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 51 && $scope.item.obj[parseFloat(arrobj[i])] <= 100) {
+                                        $scope.skor24 = 0
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 40 && $scope.item.obj[parseFloat(arrobj[i])] <= 50) {
+                                        $scope.skor24 = 1
+                                    }
+                                    // if ($scope.item.obj[parseFloat(arrobj[i])] >= 35) {
+                                    //     $scope.skor11 = 0
+                                    //     $scope.item.obj2[parseFloat(arrobj[i])] = false
+                                    // }
+                                }
+                                if (stat.satuan == 3) {
+                                    if ($scope.item.obj[parseFloat(arrobj[i])] >= 131 && $scope.item.obj[parseFloat(arrobj[i])] <= 150){
+                                        $scope.skor34 = 3
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 111 && $scope.item.obj[parseFloat(arrobj[i])] <= 130){
+                                        $scope.skor34 = 2
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 101 && $scope.item.obj[parseFloat(arrobj[i])] <= 110) {
+                                        $scope.skor34 = 1
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 51 && $scope.item.obj[parseFloat(arrobj[i])] <= 100) {
+                                        $scope.skor34 = 0
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 40 && $scope.item.obj[parseFloat(arrobj[i])] <= 50) {
+                                        $scope.skor34 = 1
+                                    }
+                                    // if ($scope.item.obj[parseFloat(arrobj[i])] >= 35) {
+                                    //     $scope.skor11 = 0
+                                    //     $scope.item.obj2[parseFloat(arrobj[i])] = false
+                                    // }
+                                }
+                                if (stat.satuan == 4) {
+                                    if ($scope.item.obj[parseFloat(arrobj[i])] >= 131 && $scope.item.obj[parseFloat(arrobj[i])] <= 150){
+                                        $scope.skor44 = 3
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 111 && $scope.item.obj[parseFloat(arrobj[i])] <= 130){
+                                        $scope.skor44 = 2
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 101 && $scope.item.obj[parseFloat(arrobj[i])] <= 110) {
+                                        $scope.skor44 = 1
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 51 && $scope.item.obj[parseFloat(arrobj[i])] <= 100) {
+                                        $scope.skor44 = 0
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 40 && $scope.item.obj[parseFloat(arrobj[i])] <= 50) {
+                                        $scope.skor44 = 1
+                                    }
+                                    // if ($scope.item.obj[parseFloat(arrobj[i])] >= 35) {
+                                    //     $scope.skor11 = 0
+                                    //     $scope.item.obj2[parseFloat(arrobj[i])] = false
+                                    // }
+                                }
+                                if (stat.satuan == 5) {
+                                    if ($scope.item.obj[parseFloat(arrobj[i])] >= 131 && $scope.item.obj[parseFloat(arrobj[i])] <= 150){
+                                        $scope.skor54 = 3
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 111 && $scope.item.obj[parseFloat(arrobj[i])] <= 130){
+                                        $scope.skor54 = 2
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 101 && $scope.item.obj[parseFloat(arrobj[i])] <= 110) {
+                                        $scope.skor54 = 1
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 51 && $scope.item.obj[parseFloat(arrobj[i])] <= 100) {
+                                        $scope.skor54 = 0
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 40 && $scope.item.obj[parseFloat(arrobj[i])] <= 50) {
+                                        $scope.skor54 = 1
+                                    }
+                                    // if ($scope.item.obj[parseFloat(arrobj[i])] >= 35) {
+                                    //     $scope.skor11 = 0
+                                    //     $scope.item.obj2[parseFloat(arrobj[i])] = false
+                                    // }
+                                }
+                                if (stat.satuan == 6) {
+                                    if ($scope.item.obj[parseFloat(arrobj[i])] >= 131 && $scope.item.obj[parseFloat(arrobj[i])] <= 150){
+                                        $scope.skor64 = 3
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 111 && $scope.item.obj[parseFloat(arrobj[i])] <= 130){
+                                        $scope.skor64 = 2
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 101 && $scope.item.obj[parseFloat(arrobj[i])] <= 110) {
+                                        $scope.skor64 = 1
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 51 && $scope.item.obj[parseFloat(arrobj[i])] <= 100) {
+                                        $scope.skor64 = 0
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 40 && $scope.item.obj[parseFloat(arrobj[i])] <= 50) {
+                                        $scope.skor64 = 1
+                                    }
+                                    // if ($scope.item.obj[parseFloat(arrobj[i])] >= 35) {
+                                    //     $scope.skor11 = 0
+                                    //     $scope.item.obj2[parseFloat(arrobj[i])] = false
+                                    // }
+                                }
+                            }
+                            if(stat.kodeexternal == 'suhu'){
+                                if (stat.satuan == 1){
+                                    if ($scope.item.obj[parseFloat(arrobj[i])] <= 35){
+                                        $scope.skor15 = 3
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 35.1 && $scope.item.obj[parseFloat(arrobj[i])] <= 36){
+                                        $scope.skor15 = 1
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 36.1 && $scope.item.obj[parseFloat(arrobj[i])] <= 38) {
+                                        $scope.skor15 = 0
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 38.1 && $scope.item.obj[parseFloat(arrobj[i])] <= 39) {
+                                        $scope.skor15 = 1
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] > 39) {
+                                        $scope.skor15 = 2
+                                    }
+                                    // if ($scope.item.obj[parseFloat(arrobj[i])] >= 35) {
+                                    //     $scope.skor11 = 0
+                                    //     $scope.item.obj2[parseFloat(arrobj[i])] = false
+                                    // }
+                                }
+                                if (stat.satuan == 2) {
+                                    if ($scope.item.obj[parseFloat(arrobj[i])] <= 35){
+                                        $scope.skor25 = 3
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 35.1 && $scope.item.obj[parseFloat(arrobj[i])] <= 36){
+                                        $scope.skor25 = 1
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 36.1 && $scope.item.obj[parseFloat(arrobj[i])] <= 38) {
+                                        $scope.skor25 = 0
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 38.1 && $scope.item.obj[parseFloat(arrobj[i])] <= 39) {
+                                        $scope.skor25 = 1
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] > 39) {
+                                        $scope.skor25 = 2
+                                    }
+                                    // if ($scope.item.obj[parseFloat(arrobj[i])] >= 35) {
+                                    //     $scope.skor11 = 0
+                                    //     $scope.item.obj2[parseFloat(arrobj[i])] = false
+                                    // }
+                                }
+                                if (stat.satuan == 3) {
+                                    if ($scope.item.obj[parseFloat(arrobj[i])] <= 35){
+                                        $scope.skor35 = 3
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 35.1 && $scope.item.obj[parseFloat(arrobj[i])] <= 36){
+                                        $scope.skor35 = 1
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 36.1 && $scope.item.obj[parseFloat(arrobj[i])] <= 38) {
+                                        $scope.skor35 = 0
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 38.1 && $scope.item.obj[parseFloat(arrobj[i])] <= 39) {
+                                        $scope.skor35 = 1
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] > 39) {
+                                        $scope.skor35 = 2
+                                    }
+                                    // if ($scope.item.obj[parseFloat(arrobj[i])] >= 35) {
+                                    //     $scope.skor11 = 0
+                                    //     $scope.item.obj2[parseFloat(arrobj[i])] = false
+                                    // }
+                                }
+                                if (stat.satuan == 4) {
+                                    if ($scope.item.obj[parseFloat(arrobj[i])] <= 35){
+                                        $scope.skor45 = 3
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 35.1 && $scope.item.obj[parseFloat(arrobj[i])] <= 36){
+                                        $scope.skor45 = 1
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 36.1 && $scope.item.obj[parseFloat(arrobj[i])] <= 38) {
+                                        $scope.skor45 = 0
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 38.1 && $scope.item.obj[parseFloat(arrobj[i])] <= 39) {
+                                        $scope.skor45 = 1
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] > 39) {
+                                        $scope.skor45 = 2
+                                    }
+                                    // if ($scope.item.obj[parseFloat(arrobj[i])] >= 35) {
+                                    //     $scope.skor11 = 0
+                                    //     $scope.item.obj2[parseFloat(arrobj[i])] = false
+                                    // }
+                                }
+                                if (stat.satuan == 5) {
+                                    if ($scope.item.obj[parseFloat(arrobj[i])] <= 35){
+                                        $scope.skor55 = 3
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 35.1 && $scope.item.obj[parseFloat(arrobj[i])] <= 36){
+                                        $scope.skor55 = 1
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 36.1 && $scope.item.obj[parseFloat(arrobj[i])] <= 38) {
+                                        $scope.skor55 = 0
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 38.1 && $scope.item.obj[parseFloat(arrobj[i])] <= 39) {
+                                        $scope.skor55 = 1
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] > 39) {
+                                        $scope.skor55 = 2
+                                    }
+                                    // if ($scope.item.obj[parseFloat(arrobj[i])] >= 35) {
+                                    //     $scope.skor11 = 0
+                                    //     $scope.item.obj2[parseFloat(arrobj[i])] = false
+                                    // }
+                                }
+                                if (stat.satuan == 6) {
+                                    if ($scope.item.obj[parseFloat(arrobj[i])] <= 35){
+                                        $scope.skor56 = 3
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 35.1 && $scope.item.obj[parseFloat(arrobj[i])] <= 36){
+                                        $scope.skor56 = 1
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 36.1 && $scope.item.obj[parseFloat(arrobj[i])] <= 38) {
+                                        $scope.skor56 = 0
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 38.1 && $scope.item.obj[parseFloat(arrobj[i])] <= 39) {
+                                        $scope.skor56 = 1
+                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] > 39) {
+                                        $scope.skor56 = 2
+                                    }
+                                    // if ($scope.item.obj[parseFloat(arrobj[i])] >= 35) {
+                                    //     $scope.skor11 = 0
+                                    //     $scope.item.obj2[parseFloat(arrobj[i])] = false
+                                    // }
+                                }
+                            }
+                            if(stat.kodeexternal =='suplemen'){
+                                if (stat.satuan == 1) {
+                                    $scope.skor16 = 2
+                                }
+                                if (stat.satuan == 2) {
+                                    $scope.skor26 = 2
+                                }
+                                if (stat.satuan == 3) {
+                                    $scope.skor36 = 2
+                                }
+                                if (stat.satuan == 4) {
+                                    $scope.skor46 = 2
+                                }
+                                if (stat.satuan == 5) {
+                                    $scope.skor56 = 2
+                                }
+                                if (stat.satuan == 6) {
+                                    $scope.skor66 = 2
+                                }
+                            }
+                            if(stat.kodeexternal =='kesadaran'){
+                                if (stat.satuan == 1) {
+                                    $scope.skor17 = 3
+                                }
+                                if (stat.satuan == 2) {
+                                    $scope.skor27 = 3
+                                }
+                                if (stat.satuan == 3) {
+                                    $scope.skor37 = 3
+                                }
+                                if (stat.satuan == 4) {
+                                    $scope.skor47 = 3
+                                }
+                                if (stat.satuan == 5) {
+                                    $scope.skor57 = 3
+                                }
+                                if (stat.satuan == 6) {
+                                    $scope.skor67 = 3
+                                }
+                            }
                             
-                            // if (stat.satuan == 2)
-                            //     $scope.skor2 = $scope.skor2 + parseFloat(stat.reportdisplay)
-                            // if (stat.satuan == 3)
-                            //     $scope.skor3 = $scope.skor3 + parseFloat(stat.reportdisplay)
-                            // if (stat.satuan == 4)
-                            //     $scope.skor4 = $scope.skor4 + parseFloat(stat.reportdisplay)
-                            // if (stat.satuan == 5)
-                            //     $scope.skor5 = $scope.skor5 + parseFloat(stat.reportdisplay)
-                            // if (stat.satuan == 6)
-                            //     $scope.skor6 = $scope.skor6 + parseFloat(stat.reportdisplay)
-                            // if (stat.satuan == 7)
-                            //     $scope.skor7 = $scope.skor7 + parseFloat(stat.reportdisplay)
-                            // if (stat.satuan == 8)
-                            //     $scope.skor8 = $scope.skor8 + parseFloat(stat.reportdisplay)
-                            // if (stat.satuan == 9)
-                            //     $scope.skor9 = $scope.skor9 + parseFloat(stat.reportdisplay)
-                            // if (stat.satuan == 10)
-                            //     $scope.skor10 = $scope.skor10 + parseFloat(stat.reportdisplay)
-                            // if (stat.satuan == 11)
-                            //     $scope.skor11 = $scope.skor11 + parseFloat(stat.reportdisplay)
-                            // if (stat.satuan == 12)
-                            //     $scope.skor12 = $scope.skor12 + parseFloat(stat.reportdisplay)
-                            // if (stat.satuan == 13)
-                            //     $scope.skor13 = $scope.skor13 + parseFloat(stat.reportdisplay)
-
-                            break
+                            
                         } 
 
-                        else {
-                            if (stat.reportdisplay == null)
-                                break
+                        else if($scope.item.obj[parseFloat(arrobj[i])] == undefined && $scope.item.obj[parseFloat(arrobj[i])] == "" ){
                             if (stat.kodeexternal == 'lajurespirasi') {
                                 if (stat.satuan == 1){
                                     if (stat.namaexternal == '6 -8') {
                                         $scope.skor11 = 0
-                                    }
+                                    } else
                                     if (stat.namaexternal == '9 - 11') {
                                         $scope.skor11 = 0
-                                    }
+                                    }else
                                     if (stat.namaexternal == '12 - 20') {
                                         $scope.skor11 = 0
-                                    }
+                                    }else
                                     if (stat.namaexternal == '21 - 24') {
                                         $scope.skor11 = 0
-                                    }
+                                    }else
                                     if (stat.namaexternal == '25 - 34') {
                                         $scope.skor11 = 0
                                     }
@@ -698,48 +1241,692 @@ define(['initialize'], function (initialize) {
                                 if (stat.satuan == 2) {
                                     if (stat.namaexternal == '6 -8') {
                                         $scope.skor21 = 0
-                                    }
+                                    }else
                                     if (stat.namaexternal == '9 - 11') {
                                         $scope.skor21 = 0
-                                    }
+                                    }else
                                     if (stat.namaexternal == '12 - 20') {
                                         $scope.skor21 = 0
-                                    }
+                                    }else
                                     if (stat.namaexternal == '21 - 24') {
                                         $scope.skor21 = 0
-                                    }
+                                    }else
                                     if (stat.namaexternal == '25 - 34') {
                                         $scope.skor21 = 0
                                     }
 
                                 }
+                                if (stat.satuan == 3) {
+                                    if (stat.namaexternal == '6 -8') {
+                                        $scope.skor31 = 0
+                                    }else
+                                    if (stat.namaexternal == '9 - 11') {
+                                        $scope.skor31 = 0
+                                    }else
+                                    if (stat.namaexternal == '12 - 20') {
+                                        $scope.skor31 = 0
+                                    }else
+                                    if (stat.namaexternal == '21 - 24') {
+                                        $scope.skor31 = 0
+                                    }else
+                                    if (stat.namaexternal == '25 - 34') {
+                                        $elsescope.skor31 = 0
+                                    }
+
+                                }
+                                if (stat.satuan == 4) {
+                                    if (stat.namaexternal == '6 -8') {
+                                        $scope.skor41 = 0
+                                    }else
+                                    if (stat.namaexternal == '9 - 11') {
+                                        $scope.skor41 = 0
+                                    }else
+                                    if (stat.namaexternal == '12 - 20') {
+                                        $scope.skor41 = 0
+                                    }else
+                                    if (stat.namaexternal == '21 - 24') {
+                                        $scope.skor41 = 0
+                                    }else
+                                    if (stat.namaexternal == '25 - 34') {
+                                        $scope.skor41 = 0
+                                    }
+
+                                }
+                                if (stat.satuan == 5) {
+                                    if (stat.namaexternal == '6 -8') {
+                                        $scope.skor51 = 0
+                                    }else
+                                    if (stat.namaexternal == '9 - 11') {
+                                        $scope.skor51 = 0
+                                    }else
+                                    if (stat.namaexternal == '12 - 20') {
+                                        $scope.skor51 = 0
+                                    }else
+                                    if (stat.namaexternal == '21 - 24') {
+                                        $scope.skor51 = 0
+                                    }else
+                                    if (stat.namaexternal == '25 - 34') {
+                                        $scope.skor51 = 0
+                                    }
+
+                                }
+                                if (stat.satuan == 6) {
+                                    if (stat.namaexternal == '6 -8') {
+                                        $scope.skor61 = 0
+                                    }else
+                                    if (stat.namaexternal == '9 - 11') {
+                                        $scope.skor61 = 0
+                                    }else
+                                    if (stat.namaexternal == '12 - 20') {
+                                        $scope.skor61 = 0
+                                    }else
+                                    if (stat.namaexternal == '21 - 24') {
+                                        $scope.skor61 = 0
+                                    }else
+                                    if (stat.namaexternal == '25 - 34') {
+                                        $scope.skor61 = 0
+                                    }
+
+                                }
+                            }
+                            if (stat.kodeexternal == 'saturasi') {
+                                if (stat.satuan == 1){
+                                    if (stat.namaexternal == '>= 96') {
+                                        $scope.skor12 = 0
+                                    }else
+                                    if (stat.namaexternal == '94 - 95') {
+                                        $scope.skor12 = 0
+                                    }else
+                                    if (stat.namaexternal == '92 - 93') {
+                                        $scope.skor12 = 0
+                                    }else
+                                    if (stat.namaexternal == '<= 91') {
+                                        $scope.skor12 = 0
+                                    }
+                                   
+                                }
+                                if (stat.satuan == 2) {
+                                    if (stat.namaexternal == '>= 96') {
+                                        $scope.skor22 = 0
+                                    }else
+                                    if (stat.namaexternal == '94 - 95') {
+                                        $scope.skor22 = 0
+                                    }else
+                                    if (stat.namaexternal == '92 - 93') {
+                                        $scope.skor22 = 0
+                                    }else
+                                    if (stat.namaexternal == '<= 91') {
+                                        $scope.skor22 = 0
+                                    }
+
+                                }
+                                if (stat.satuan == 3) {
+                                    if (stat.namaexternal == '>= 96') {
+                                        $scope.skor32 = 0
+                                    }
+                                    if (stat.namaexternal == '94 - 95') {
+                                        $scope.skor32 = 0
+                                    }
+                                    if (stat.namaexternal == '92 - 93') {
+                                        $scope.skor32 = 0
+                                    }
+                                    if (stat.namaexternal == '<= 91') {
+                                        $scope.skor32 = 0
+                                    }
+
+                                }
+                                if (stat.satuan == 4) {
+                                    if (stat.namaexternal == '>= 96') {
+                                        $scope.skor42 = 0
+                                    }
+                                    if (stat.namaexternal == '94 - 95') {
+                                        $scope.skor42 = 0
+                                    }
+                                    if (stat.namaexternal == '92 - 93') {
+                                        $scope.skor42 = 0
+                                    }
+                                    if (stat.namaexternal == '<= 91') {
+                                        $scope.skor42 = 0
+                                    }
+
+                                }
+                                if (stat.satuan == 5) {
+                                    if (stat.namaexternal == '>= 96') {
+                                        $scope.skor52 = 0
+                                    }
+                                    if (stat.namaexternal == '94 - 95') {
+                                        $scope.skor52 = 0
+                                    }
+                                    if (stat.namaexternal == '92 - 93') {
+                                        $scope.skor52 = 0
+                                    }
+                                    if (stat.namaexternal == '<= 91') {
+                                        $scope.skor52 = 0
+                                    }
+
+                                }
+                                if (stat.satuan == 6) {
+                                    if (stat.namaexternal == '>= 96') {
+                                        $scope.skor62 = 0
+                                    }
+                                    if (stat.namaexternal == '94 - 95') {
+                                        $scope.skor62 = 0
+                                    }
+                                    if (stat.namaexternal == '92 - 93') {
+                                        $scope.skor62 = 0
+                                    }
+                                    if (stat.namaexternal == '<= 91') {
+                                        $scope.skor62 = 0
+                                    }
+
+                                }
+                            }
+                            if (stat.kodeexternal == 'tekanandarah') {
+                                if (stat.satuan == 1){
+                                    if (stat.namaexternal == '> 220') {
+                                        $scope.skor13 = 0
+                                    }
+                                    if (stat.namaexternal == '181 - 220') {
+                                        $scope.skor13 = 0
+                                    }
+                                    if (stat.namaexternal == '111 - 180') {
+                                        $scope.skor13 = 0
+                                    }
+                                    if (stat.namaexternal == '101 - 110') {
+                                        $scope.skor13 = 0
+                                    }
+                                    if (stat.namaexternal == '91 - 100') {
+                                        $scope.skor13 = 0
+                                    }
+                                    if (stat.namaexternal == '71 - 90') {
+                                        $scope.skor13 = 0
+                                    }
+                                   
+                                }
+                                if (stat.satuan == 2) {
+                                    if (stat.namaexternal == '> 220') {
+                                        $scope.skor23 = 0
+                                    }
+                                    if (stat.namaexternal == '181 - 220') {
+                                        $scope.skor23 = 0
+                                    }
+                                    if (stat.namaexternal == '111 - 180') {
+                                        $scope.skor23 = 0
+                                    }
+                                    if (stat.namaexternal == '101 - 110') {
+                                        $scope.skor23 = 0
+                                    }
+                                    if (stat.namaexternal == '91 - 100') {
+                                        $scope.skor23 = 0
+                                    }
+                                    if (stat.namaexternal == '71 - 90') {
+                                        $scope.skor23 = 0
+                                    }
+
+                                }
+                                if (stat.satuan == 3) {
+                                    if (stat.namaexternal == '> 220') {
+                                        $scope.skor33 = 0
+                                    }
+                                    if (stat.namaexternal == '181 - 220') {
+                                        $scope.skor33 = 0
+                                    }
+                                    if (stat.namaexternal == '111 - 180') {
+                                        $scope.skor33 = 0
+                                    }
+                                    if (stat.namaexternal == '101 - 110') {
+                                        $scope.skor33 = 0
+                                    }
+                                    if (stat.namaexternal == '91 - 100') {
+                                        $scope.skor33 = 0
+                                    }
+                                    if (stat.namaexternal == '71 - 90') {
+                                        $scope.skor33 = 0
+                                    }
+
+                                }
+                                if (stat.satuan == 4) {
+                                    if (stat.namaexternal == '> 220') {
+                                        $scope.skor43 = 0
+                                    }
+                                    if (stat.namaexternal == '181 - 220') {
+                                        $scope.skor43 = 0
+                                    }
+                                    if (stat.namaexternal == '111 - 180') {
+                                        $scope.skor43 = 0
+                                    }
+                                    if (stat.namaexternal == '101 - 110') {
+                                        $scope.skor43 = 0
+                                    }
+                                    if (stat.namaexternal == '91 - 100') {
+                                        $scope.skor43 = 0
+                                    }
+                                    if (stat.namaexternal == '71 - 90') {
+                                        $scope.skor43 = 0
+                                    }
+
+                                }
+                                if (stat.satuan == 5) {
+                                    if (stat.namaexternal == '> 220') {
+                                        $scope.skor53 = 0
+                                    }
+                                    if (stat.namaexternal == '181 - 220') {
+                                        $scope.skor53 = 0
+                                    }
+                                    if (stat.namaexternal == '111 - 180') {
+                                        $scope.skor53 = 0
+                                    }
+                                    if (stat.namaexternal == '101 - 110') {
+                                        $scope.skor53 = 0
+                                    }
+                                    if (stat.namaexternal == '91 - 100') {
+                                        $scope.skor53 = 0
+                                    }
+                                    if (stat.namaexternal == '71 - 90') {
+                                        $scope.skor53 = 0
+                                    }
+
+                                }
+                                if (stat.satuan == 6) {
+                                    if (stat.namaexternal == '> 220') {
+                                        $scope.skor63 = 0
+                                    }
+                                    if (stat.namaexternal == '181 - 220') {
+                                        $scope.skor63 = 0
+                                    }
+                                    if (stat.namaexternal == '111 - 180') {
+                                        $scope.skor63 = 0
+                                    }
+                                    if (stat.namaexternal == '101 - 110') {
+                                        $scope.skor63 = 0
+                                    }
+                                    if (stat.namaexternal == '91 - 100') {
+                                        $scope.skor63 = 0
+                                    }
+                                    if (stat.namaexternal == '71 - 90') {
+                                        $scope.skor63 = 0
+                                    }
+
+                                }
+                            }
+                            if (stat.kodeexternal == 'tekanandarah') {
+                                if (stat.satuan == 1){
+                                    if (stat.namaexternal == '> 220') {
+                                        $scope.skor13 = 0
+                                    }
+                                    if (stat.namaexternal == '181 - 220') {
+                                        $scope.skor13 = 0
+                                    }
+                                    if (stat.namaexternal == '111 - 180') {
+                                        $scope.skor13 = 0
+                                    }
+                                    if (stat.namaexternal == '101 - 110') {
+                                        $scope.skor13 = 0
+                                    }
+                                    if (stat.namaexternal == '91 - 100') {
+                                        $scope.skor13 = 0
+                                    }
+                                    if (stat.namaexternal == '71 - 90') {
+                                        $scope.skor13 = 0
+                                    }
+                                   
+                                }
+                                if (stat.satuan == 2) {
+                                    if (stat.namaexternal == '> 220') {
+                                        $scope.skor23 = 0
+                                    }
+                                    if (stat.namaexternal == '181 - 220') {
+                                        $scope.skor23 = 0
+                                    }
+                                    if (stat.namaexternal == '111 - 180') {
+                                        $scope.skor23 = 0
+                                    }
+                                    if (stat.namaexternal == '101 - 110') {
+                                        $scope.skor23 = 0
+                                    }
+                                    if (stat.namaexternal == '91 - 100') {
+                                        $scope.skor23 = 0
+                                    }
+                                    if (stat.namaexternal == '71 - 90') {
+                                        $scope.skor23 = 0
+                                    }
+
+                                }
+                                if (stat.satuan == 3) {
+                                    if (stat.namaexternal == '> 220') {
+                                        $scope.skor33 = 0
+                                    }
+                                    if (stat.namaexternal == '181 - 220') {
+                                        $scope.skor33 = 0
+                                    }
+                                    if (stat.namaexternal == '111 - 180') {
+                                        $scope.skor33 = 0
+                                    }
+                                    if (stat.namaexternal == '101 - 110') {
+                                        $scope.skor33 = 0
+                                    }
+                                    if (stat.namaexternal == '91 - 100') {
+                                        $scope.skor33 = 0
+                                    }
+                                    if (stat.namaexternal == '71 - 90') {
+                                        $scope.skor33 = 0
+                                    }
+
+                                }
+                                if (stat.satuan == 4) {
+                                    if (stat.namaexternal == '> 220') {
+                                        $scope.skor43 = 0
+                                    }
+                                    if (stat.namaexternal == '181 - 220') {
+                                        $scope.skor43 = 0
+                                    }
+                                    if (stat.namaexternal == '111 - 180') {
+                                        $scope.skor43 = 0
+                                    }
+                                    if (stat.namaexternal == '101 - 110') {
+                                        $scope.skor43 = 0
+                                    }
+                                    if (stat.namaexternal == '91 - 100') {
+                                        $scope.skor43 = 0
+                                    }
+                                    if (stat.namaexternal == '71 - 90') {
+                                        $scope.skor43 = 0
+                                    }
+
+                                }
+                                if (stat.satuan == 5) {
+                                    if (stat.namaexternal == '> 220') {
+                                        $scope.skor53 = 0
+                                    }
+                                    if (stat.namaexternal == '181 - 220') {
+                                        $scope.skor53 = 0
+                                    }
+                                    if (stat.namaexternal == '111 - 180') {
+                                        $scope.skor53 = 0
+                                    }
+                                    if (stat.namaexternal == '101 - 110') {
+                                        $scope.skor53 = 0
+                                    }
+                                    if (stat.namaexternal == '91 - 100') {
+                                        $scope.skor53 = 0
+                                    }
+                                    if (stat.namaexternal == '71 - 90') {
+                                        $scope.skor53 = 0
+                                    }
+
+                                }
+                                if (stat.satuan == 6) {
+                                    if (stat.namaexternal == '> 220') {
+                                        $scope.skor63 = 0
+                                    }
+                                    if (stat.namaexternal == '181 - 220') {
+                                        $scope.skor63 = 0
+                                    }
+                                    if (stat.namaexternal == '111 - 180') {
+                                        $scope.skor63 = 0
+                                    }
+                                    if (stat.namaexternal == '101 - 110') {
+                                        $scope.skor63 = 0
+                                    }
+                                    if (stat.namaexternal == '91 - 100') {
+                                        $scope.skor63 = 0
+                                    }
+                                    if (stat.namaexternal == '71 - 90') {
+                                        $scope.skor63 = 0
+                                    }
+
+                                }
+                            }
+                            if (stat.kodeexternal == 'laju') {
+                                if (stat.satuan == 1){
+                                    if (stat.namaexternal == '131 - 150') {
+                                        $scope.skor14 = 3
+                                    }
+                                    if (stat.namaexternal == '111 - 130') {
+                                        $scope.skor14 = 2
+                                    }
+                                    if (stat.namaexternal == '101 - 110') {
+                                        $scope.skor14 = 1
+                                    }
+                                    if (stat.namaexternal == '51 - 100') {
+                                        $scope.skor14 = 0
+                                    }
+                                    if (stat.namaexternal == '40 - 50') {
+                                        $scope.skor14 = 1
+                                    }
+                                   
+                                   
+                                }
+                                if (stat.satuan == 2) {
+                                    if (stat.namaexternal == '131 - 150') {
+                                        $scope.skor24 = 3
+                                    }
+                                    if (stat.namaexternal == '111 - 130') {
+                                        $scope.skor24 = 2
+                                    }
+                                    if (stat.namaexternal == '101 - 110') {
+                                        $scope.skor24 = 1
+                                    }
+                                    if (stat.namaexternal == '51 - 100') {
+                                        $scope.skor24 = 0
+                                    }
+                                    if (stat.namaexternal == '40 - 50') {
+                                        $scope.skor24 = 1
+                                    }
+
+                                }
+                                if (stat.satuan == 3) {
+                                    if (stat.namaexternal == '131 - 150') {
+                                        $scope.skor34 = 3
+                                    }
+                                    if (stat.namaexternal == '111 - 130') {
+                                        $scope.skor34 = 2
+                                    }
+                                    if (stat.namaexternal == '101 - 110') {
+                                        $scope.skor34 = 1
+                                    }
+                                    if (stat.namaexternal == '51 - 100') {
+                                        $scope.skor34 = 0
+                                    }
+                                    if (stat.namaexternal == '40 - 50') {
+                                        $scope.skor34 = 1
+                                    }
+
+                                }
+                                if (stat.satuan == 4) {
+                                    if (stat.namaexternal == '131 - 150') {
+                                        $scope.skor44 = 3
+                                    }
+                                    if (stat.namaexternal == '111 - 130') {
+                                        $scope.skor44 = 2
+                                    }
+                                    if (stat.namaexternal == '101 - 110') {
+                                        $scope.skor44 = 1
+                                    }
+                                    if (stat.namaexternal == '51 - 100') {
+                                        $scope.skor44 = 0
+                                    }
+                                    if (stat.namaexternal == '40 - 50') {
+                                        $scope.skor44 = 1
+                                    }
+
+                                }
+                                if (stat.satuan == 5) {
+                                    if (stat.namaexternal == '131 - 150') {
+                                        $scope.skor54 = 3
+                                    }
+                                    if (stat.namaexternal == '111 - 130') {
+                                        $scope.skor54 = 2
+                                    }
+                                    if (stat.namaexternal == '101 - 110') {
+                                        $scope.skor54 = 1
+                                    }
+                                    if (stat.namaexternal == '51 - 100') {
+                                        $scope.skor54 = 0
+                                    }
+                                    if (stat.namaexternal == '40 - 50') {
+                                        $scope.skor54 = 1
+                                    }
+
+                                }
+                                if (stat.satuan == 6) {
+                                    if (stat.namaexternal == '131 - 150') {
+                                        $scope.skor64 = 3
+                                    }
+                                    if (stat.namaexternal == '111 - 130') {
+                                        $scope.skor64 = 2
+                                    }
+                                    if (stat.namaexternal == '101 - 110') {
+                                        $scope.skor64 = 1
+                                    }
+                                    if (stat.namaexternal == '51 - 100') {
+                                        $scope.skor64 = 0
+                                    }
+                                    if (stat.namaexternal == '40 - 50') {
+                                        $scope.skor64 = 1
+                                    }
+
+                                }
+                            }
+                            if (stat.kodeexternal == 'suhu') {
+                                if (stat.satuan == 1){
+                                    if (stat.namaexternal == '<= 35') {
+                                        $scope.skor15 = 3
+                                    }
+                                    if (stat.namaexternal == '35.1 - 36') {
+                                        $scope.skor15 = 1
+                                    }
+                                    if (stat.namaexternal == '36.1 - 38') {
+                                        $scope.skor15 = 0
+                                    }
+                                    if (stat.namaexternal == '38.1 - 39') {
+                                        $scope.skor15 = 1
+                                    }
+                                    if (stat.namaexternal == '> 39') {
+                                        $scope.skor15 = 2
+                                    }
+                                   
+                                   
+                                }
+                                if (stat.satuan == 2) {
+                                    if (stat.namaexternal == '<= 35') {
+                                        $scope.skor25 = 3
+                                    }
+                                    if (stat.namaexternal == '35.1 - 36') {
+                                        $scope.skor25 = 1
+                                    }
+                                    if (stat.namaexternal == '36.1 - 38') {
+                                        $scope.skor25 = 0
+                                    }
+                                    if (stat.namaexternal == '38.1 - 39') {
+                                        $scope.skor25 = 1
+                                    }
+                                    if (stat.namaexternal == '> 39') {
+                                        $scope.skor25 = 2
+                                    }
+
+                                }
+                                if (stat.satuan == 3) {
+                                    if (stat.namaexternal == '<= 35') {
+                                        $scope.skor35 = 3
+                                    }
+                                    if (stat.namaexternal == '35.1 - 36') {
+                                        $scope.skor35 = 1
+                                    }
+                                    if (stat.namaexternal == '36.1 - 38') {
+                                        $scope.skor35 = 0
+                                    }
+                                    if (stat.namaexternal == '38.1 - 39') {
+                                        $scope.skor35 = 1
+                                    }
+                                    if (stat.namaexternal == '> 39') {
+                                        $scope.skor35 = 2
+                                    }
+
+                                }
+                                if (stat.satuan == 4) {
+                                    if (stat.namaexternal == '<= 35') {
+                                        $scope.skor45 = 3
+                                    }
+                                    if (stat.namaexternal == '35.1 - 36') {
+                                        $scope.skor45 = 1
+                                    }
+                                    if (stat.namaexternal == '36.1 - 38') {
+                                        $scope.skor45 = 0
+                                    }
+                                    if (stat.namaexternal == '38.1 - 39') {
+                                        $scope.skor45 = 1
+                                    }
+                                    if (stat.namaexternal == '> 39') {
+                                        $scope.skor45 = 2
+                                    }
+
+                                }
+                                if (stat.satuan == 5) {
+                                    if (stat.namaexternal == '<= 35') {
+                                        $scope.skor55 = 3
+                                    }
+                                    if (stat.namaexternal == '35.1 - 36') {
+                                        $scope.skor55 = 1
+                                    }
+                                    if (stat.namaexternal == '36.1 - 38') {
+                                        $scope.skor55 = 0
+                                    }
+                                    if (stat.namaexternal == '38.1 - 39') {
+                                        $scope.skor55 = 1
+                                    }
+                                    if (stat.namaexternal == '> 39') {
+                                        $scope.skor55 = 2
+                                    }
+
+                                }
+                                if (stat.satuan == 6) {
+                                    if (stat.namaexternal == '<= 35') {
+                                        $scope.skor65 = 3
+                                    }
+                                    if (stat.namaexternal == '35.1 - 36') {
+                                        $scope.skor65 = 1
+                                    }
+                                    if (stat.namaexternal == '36.1 - 38') {
+                                        $scope.skor65 = 0
+                                    }
+                                    if (stat.namaexternal == '38.1 - 39') {
+                                        $scope.skor65 = 1
+                                    }
+                                    if (stat.namaexternal == '> 39') {
+                                        $scope.skor65 = 2
+                                    }
+
+                                }
+                            }
+                            if(stat.kodeexternal =='suplemen'){
+                                $scope.skor16 = 0
+                                $scope.skor26 = 0
+                                $scope.skor36 = 0
+                                $scope.skor46 = 0
+                                $scope.skor56 = 0
+                                $scope.skor66 = 0
+                            }
+                            if(stat.kodeexternal =='kesadaran'){
+                                $scope.skor17 = 0
+                                $scope.skor27 = 0
+                                $scope.skor37 = 0
+                                $scope.skor47 = 0
+                                $scope.skor57 = 0
+                                $scope.skor67 = 0
                             }
                             
                         }
-                        cacheHelper.set('buatobj', $scope.item.obj[parseFloat(arrobj[i])])
-
                     }
                 }
-                // if $scope.skor1=0 
-                    
-                        // if($scope.skor1  != 0){
-                        //      $scope.item.obj[206437] = $scope.skor1
-                        // }
-                        // if($scope.skor2  != 0){
-                        //      $scope.item.obj[206438] = $scope.skor2
-                        // }
-                    
-                $scope.item.obj[310960] = $scope.skor11 + $scope.skor12
-                $scope.item.obj[310961] = $scope.skor21
-                $scope.item.obj[310962] = $scope.skor3
-                $scope.item.obj[310963] = $scope.skor4
-                $scope.item.obj[310964] = $scope.skor5
-                $scope.item.obj[310965] = $scope.skor6
-                $scope.item.obj[310966] = $scope.skor7
-                // $scope.item.obj[17387] = $scope.skor8
-                // $scope.item.obj[17388] = $scope.skor9
-                // $scope.item.obj[17389] = $scope.skor10
-                // $scope.item.obj[17390] = $scope.skor11
+                console.log(parseFloat($scope.skor11) , parseFloat($scope.skor12) , parseFloat($scope.skor13) , parseFloat($scope.skor14) , parseFloat($scope.skor15)               );
+                $scope.item.obj[310960] = parseFloat($scope.skor11) + parseFloat($scope.skor12) + parseFloat($scope.skor13) + parseFloat($scope.skor14) + parseFloat($scope.skor15) + parseFloat($scope.skor16) + parseFloat($scope.skor17)
+                $scope.item.obj[310961] = parseFloat($scope.skor21) + parseFloat($scope.skor22) + parseFloat($scope.skor23) + parseFloat($scope.skor24) + parseFloat($scope.skor25) + parseFloat($scope.skor26) + parseFloat($scope.skor27)
+                $scope.item.obj[310962] = parseFloat($scope.skor31) + parseFloat($scope.skor32) + parseFloat($scope.skor33) + parseFloat($scope.skor34) + parseFloat($scope.skor35) + parseFloat($scope.skor36) + parseFloat($scope.skor37)
+                $scope.item.obj[310963] = parseFloat($scope.skor41) + parseFloat($scope.skor42) + parseFloat($scope.skor43) + parseFloat($scope.skor44) + parseFloat($scope.skor45) + parseFloat($scope.skor46) + parseFloat($scope.skor47)
+                $scope.item.obj[310964] = parseFloat($scope.skor51) + parseFloat($scope.skor52) + parseFloat($scope.skor53) + parseFloat($scope.skor54) + parseFloat($scope.skor55) + parseFloat($scope.skor56) + parseFloat($scope.skor57)
+                $scope.item.obj[310965] = parseFloat($scope.skor61) + parseFloat($scope.skor62) + parseFloat($scope.skor63) + parseFloat($scope.skor64) + parseFloat($scope.skor65) + parseFloat($scope.skor66) + parseFloat($scope.skor67)
+                $scope.item.obj[310966] = $scope.skor71
                 // $scope.item.obj[17391] = $scope.skor12
                 $scope.item.obj[17392] = $scope.skor13
             }

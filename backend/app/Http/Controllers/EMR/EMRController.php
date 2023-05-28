@@ -10598,7 +10598,7 @@ class EMRController  extends ApiController
 
         $data = \DB::select(DB::raw("SELECT emd.id,empd.emrdfk, empd.value, emd.type FROM emrpasiend_t empd 
         inner join emrd_t emd on emd.id = empd.emrdfk 
-        where emd.emrfk = $emrfk and empd.emrpasienfk ilike '$noemr' 
+        where emd.emrfk = $emrfk and empd.emrpasienfk ilike '$noemr' and empd.statusenabled = true and empd.kdprofile = 30
         ORDER BY empd.emrfk asc"));
         $detail = [];
         $id=0;
@@ -10686,6 +10686,58 @@ class EMRController  extends ApiController
                 // 'data'=> $detail,
                 // "sec"=> $sec,
                 'data2'=> $data,
+                'as'=> 'Fizi@Epic'
+            );
+        return $this->respond($result);
+    }
+    public function getEmrToEmr (Request $request)
+    {
+        $noemr = $request['noemr'];
+        $kdProfile = $this->getDataKdProfile($request);
+
+        //  $emrfk = $request['emrfk'];
+        // $main = \DB::select(DB::raw("SELECT id, type from emrd_t where emrfk = $emrfk and statusenabled = true and kdprofile = $kdProfile order by id
+        // "));
+
+        // $sec = \DB::select(DB::raw("SELECT id,id2, type from emrd_t where emrfk = $request[emrid] and statusenabled = true and kdprofile = $kdProfile and id2 is not null order by id
+        // "));
+
+        $data = \DB::select(DB::raw("SELECT em.caption as namaemr, mee.idtujuan, epd.value, ed.type, ed.caption FROM emrpasien_t ep 
+        inner join emrpasiend_t epd on epd.emrpasienfk = ep.noemr
+        inner join mapemrtoemr_t mee on mee.emrasal = epd.emrfk and mee.idasal = epd.emrdfk
+        inner join emrd_t ed on ed.id = epd.emrdfk
+        inner join emr_t em on em.id = ed.emrfk
+        where ep.statusenabled = true and ep.kdprofile = 30 and mee.emrasal in ($request[emrfk]) and ep.noemr = '$request[noemr]' and epd.kdprofile= 30 and epd.statusenabled = true
+        "));
+
+        // $detail = [];
+        // $id=0;
+        // $value="";
+        // $id2=0;
+        
+        // foreach ($data as $dt) {
+        //     $id=0;
+        //     $id2=0;
+        //     $value="";
+        //     foreach ($sec as $s) {
+        //         if($dt->id == $s->id2){
+        //             // $id2 = $s->id2;
+        //             // $value= $dt->value;
+        //             $detail[]= array(
+        //             "id"=> $s->id,
+        //             "value"=> $dt->value,
+        //             "type"=> $dt->type,
+        //             "id2"=>$s->id2,
+                    
+        //             );
+        //         }
+        //     }
+            
+        // }
+        $result = array(
+                // 'data'=> $detail,
+                // "sec"=> $sec,
+                'data'=> $data,
                 'as'=> 'Fizi@Epic'
             );
         return $this->respond($result);
