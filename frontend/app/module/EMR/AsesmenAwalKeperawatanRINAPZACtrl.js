@@ -460,9 +460,9 @@ define(['initialize'], function (initialize) {
                 {
                     "id": 1, "nama": "Riwayat masalah ",
                     "detail": [
-                        { "id": 3010588, "nama": "Masalah sekolah", "satuan": "", "type": "textbox" },
-                        { "id": 3010589, "nama": "Masalah Pekerjaan", "satuan": "", "type": "textbox" },
-                        { "id": 3010590, "nama": "Konflik Sosial", "satuan": "", "type": "textbox" },
+                        { "id": 3010588, "nama": "Masalah sekolah", "satuan": "", "type": "textbox",'idd':3010669 },
+                        { "id": 3010589, "nama": "Masalah Pekerjaan", "satuan": "", "type": "textbox",'idd':3010670 },
+                        { "id": 3010590, "nama": "Konflik Sosial", "satuan": "", "type": "textbox",'idd':3010671 },
                     ]
                 }
             ] 
