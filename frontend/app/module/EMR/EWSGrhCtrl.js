@@ -641,6 +641,7 @@ define(['initialize'], function (initialize) {
                 var arrSave = []
                 for (var i = arrobj.length - 1; i >= 0; i--) {
                     if (arrobj[i] == stat.id) {
+                        console.log($scope.item.obj[parseFloat(arrobj[i])]);
                         if ($scope.item.obj[parseFloat(arrobj[i])] != undefined && $scope.item.obj[parseFloat(arrobj[i])] != "") {
                             if(stat.kodeexternal == 'lajurespirasi'){
                                 if (stat.satuan == 1){
@@ -1218,10 +1219,11 @@ define(['initialize'], function (initialize) {
                             
                         } 
 
-                        else if($scope.item.obj[parseFloat(arrobj[i])] == undefined && $scope.item.obj[parseFloat(arrobj[i])] == "" ){
+                        else if($scope.item.obj[parseFloat(arrobj[i])] == undefined || $scope.item.obj[parseFloat(arrobj[i])] == "" ){
                             if (stat.kodeexternal == 'lajurespirasi') {
                                 if (stat.satuan == 1){
                                     if (stat.namaexternal == '6 -8') {
+                                        console.log($scope.item.obj[parseFloat(arrobj[i])]);
                                         $scope.skor11 = 0
                                     } else
                                     if (stat.namaexternal == '9 - 11') {
@@ -1680,110 +1682,112 @@ define(['initialize'], function (initialize) {
                             if (stat.kodeexternal == 'laju') {
                                 if (stat.satuan == 1){
                                     if (stat.namaexternal == '131 - 150') {
-                                        $scope.skor14 = 3
-                                    }
+                                        $scope.skor14 = 0
+                                    } else
                                     if (stat.namaexternal == '111 - 130') {
-                                        $scope.skor14 = 2
-                                    }
-                                    if (stat.namaexternal == '101 - 110') {
-                                        $scope.skor14 = 1
-                                    }
+                                        $scope.skor14 = 0
+                                    }else
+                                    if (stat.namaexternal == '101 - 110 ') {
+                                    console.log($scope.item.obj[parseFloat(arrobj[i])]);
+
+                                        $scope.skor14 = 0
+                                    }else
                                     if (stat.namaexternal == '51 - 100') {
                                         $scope.skor14 = 0
-                                    }
+                                    }else
                                     if (stat.namaexternal == '40 - 50') {
-                                        $scope.skor14 = 1
+                                        $scope.skor14 = 0
                                     }
                                    
                                    
                                 }
                                 if (stat.satuan == 2) {
                                     if (stat.namaexternal == '131 - 150') {
-                                        $scope.skor24 = 3
-                                    }
+                                        $scope.skor24 = 0
+                                    }else
                                     if (stat.namaexternal == '111 - 130') {
-                                        $scope.skor24 = 2
-                                    }
+                                        $scope.skor24 = 0
+                                    }else
                                     if (stat.namaexternal == '101 - 110') {
-                                        $scope.skor24 = 1
-                                    }
+                                        $scope.skor24 = 0
+                                    }else
                                     if (stat.namaexternal == '51 - 100') {
                                         $scope.skor24 = 0
-                                    }
+                                    }else
                                     if (stat.namaexternal == '40 - 50') {
-                                        $scope.skor24 = 1
+                                        $scope.skor24 = 0
                                     }
 
                                 }
                                 if (stat.satuan == 3) {
                                     if (stat.namaexternal == '131 - 150') {
-                                        $scope.skor34 = 3
-                                    }
+                                        $scope.skor34 = 0
+                                    }else
                                     if (stat.namaexternal == '111 - 130') {
-                                        $scope.skor34 = 2
-                                    }
+                                        $scope.skor34 = 0
+                                    }else
                                     if (stat.namaexternal == '101 - 110') {
-                                        $scope.skor34 = 1
-                                    }
+                                        $scope.skor34 = 0
+                                    }else
                                     if (stat.namaexternal == '51 - 100') {
                                         $scope.skor34 = 0
-                                    }
+                                    }else
                                     if (stat.namaexternal == '40 - 50') {
-                                        $scope.skor34 = 1
+                                        $scope.skor34 = 0
                                     }
 
                                 }
                                 if (stat.satuan == 4) {
                                     if (stat.namaexternal == '131 - 150') {
-                                        $scope.skor44 = 3
-                                    }
+                                        $scope.skor44 = 0
+                                    }else
                                     if (stat.namaexternal == '111 - 130') {
-                                        $scope.skor44 = 2
-                                    }
+                                        $scope.skor44 = 0
+                                    }else
                                     if (stat.namaexternal == '101 - 110') {
-                                        $scope.skor44 = 1
-                                    }
+                                        $scope.skor44 = 0
+                                    }else
                                     if (stat.namaexternal == '51 - 100') {
                                         $scope.skor44 = 0
-                                    }
+                                    }else
                                     if (stat.namaexternal == '40 - 50') {
-                                        $scope.skor44 = 1
+                                        $scope.skor44 = 0
                                     }
 
                                 }
                                 if (stat.satuan == 5) {
                                     if (stat.namaexternal == '131 - 150') {
-                                        $scope.skor54 = 3
-                                    }
+                                        $scope.skor54 = 0
+                                    }else
                                     if (stat.namaexternal == '111 - 130') {
-                                        $scope.skor54 = 2
-                                    }
+                                        $scope.skor54 = 0
+                                    }else
                                     if (stat.namaexternal == '101 - 110') {
-                                        $scope.skor54 = 1
-                                    }
+                                        $scope.skor54 = 0
+                                    }else
                                     if (stat.namaexternal == '51 - 100') {
                                         $scope.skor54 = 0
-                                    }
+                                    }else
                                     if (stat.namaexternal == '40 - 50') {
-                                        $scope.skor54 = 1
+                                        $scope.skor54 = 0
                                     }
 
                                 }
                                 if (stat.satuan == 6) {
                                     if (stat.namaexternal == '131 - 150') {
-                                        $scope.skor64 = 3
-                                    }
+                                        $scope.skor64 = 0
+                                    }else
                                     if (stat.namaexternal == '111 - 130') {
-                                        $scope.skor64 = 2
-                                    }
+                                        $scope.skor64 = 0
+                                    }else
                                     if (stat.namaexternal == '101 - 110') {
-                                        $scope.skor64 = 1
-                                    }
+                                        $scope.skor64 = 0
+                                    }else
                                     if (stat.namaexternal == '51 - 100') {
                                         $scope.skor64 = 0
-                                    }
+                                    }else
                                     if (stat.namaexternal == '40 - 50') {
-                                        $scope.skor64 = 1
+                                        $scope.skor64 = 0
                                     }
 
                                 }
@@ -1791,110 +1795,110 @@ define(['initialize'], function (initialize) {
                             if (stat.kodeexternal == 'suhu') {
                                 if (stat.satuan == 1){
                                     if (stat.namaexternal == '<= 35') {
-                                        $scope.skor15 = 3
-                                    }
+                                        $scope.skor15 = 0
+                                    }else
                                     if (stat.namaexternal == '35.1 - 36') {
-                                        $scope.skor15 = 1
-                                    }
+                                        $scope.skor15 = 0
+                                    }else
                                     if (stat.namaexternal == '36.1 - 38') {
                                         $scope.skor15 = 0
-                                    }
+                                    }else
                                     if (stat.namaexternal == '38.1 - 39') {
-                                        $scope.skor15 = 1
-                                    }
+                                        $scope.skor15 = 0
+                                    }else
                                     if (stat.namaexternal == '> 39') {
-                                        $scope.skor15 = 2
+                                        $scope.skor15 = 0
                                     }
                                    
                                    
                                 }
                                 if (stat.satuan == 2) {
                                     if (stat.namaexternal == '<= 35') {
-                                        $scope.skor25 = 3
-                                    }
+                                        $scope.skor25 = 0
+                                    }else
                                     if (stat.namaexternal == '35.1 - 36') {
-                                        $scope.skor25 = 1
-                                    }
+                                        $scope.skor25 = 0
+                                    }else
                                     if (stat.namaexternal == '36.1 - 38') {
                                         $scope.skor25 = 0
-                                    }
+                                    }else
                                     if (stat.namaexternal == '38.1 - 39') {
-                                        $scope.skor25 = 1
-                                    }
+                                        $scope.skor25 = 0
+                                    }else
                                     if (stat.namaexternal == '> 39') {
-                                        $scope.skor25 = 2
+                                        $scope.skor25 = 0
                                     }
 
                                 }
                                 if (stat.satuan == 3) {
                                     if (stat.namaexternal == '<= 35') {
-                                        $scope.skor35 = 3
-                                    }
+                                        $scope.skor35 = 0
+                                    }else
                                     if (stat.namaexternal == '35.1 - 36') {
-                                        $scope.skor35 = 1
-                                    }
+                                        $scope.skor35 = 0
+                                    }else
                                     if (stat.namaexternal == '36.1 - 38') {
                                         $scope.skor35 = 0
-                                    }
+                                    }else
                                     if (stat.namaexternal == '38.1 - 39') {
-                                        $scope.skor35 = 1
-                                    }
+                                        $scope.skor35 = 0
+                                    }else
                                     if (stat.namaexternal == '> 39') {
-                                        $scope.skor35 = 2
+                                        $scope.skor35 = 0
                                     }
 
                                 }
                                 if (stat.satuan == 4) {
                                     if (stat.namaexternal == '<= 35') {
-                                        $scope.skor45 = 3
-                                    }
+                                        $scope.skor45 = 0
+                                    }else
                                     if (stat.namaexternal == '35.1 - 36') {
-                                        $scope.skor45 = 1
-                                    }
+                                        $scope.skor45 = 0
+                                    }else
                                     if (stat.namaexternal == '36.1 - 38') {
                                         $scope.skor45 = 0
-                                    }
+                                    }else
                                     if (stat.namaexternal == '38.1 - 39') {
-                                        $scope.skor45 = 1
-                                    }
+                                        $scope.skor45 = 0
+                                    }else
                                     if (stat.namaexternal == '> 39') {
-                                        $scope.skor45 = 2
+                                        $scope.skor45 = 0
                                     }
 
                                 }
                                 if (stat.satuan == 5) {
                                     if (stat.namaexternal == '<= 35') {
-                                        $scope.skor55 = 3
-                                    }
+                                        $scope.skor55 = 0
+                                    }else
                                     if (stat.namaexternal == '35.1 - 36') {
-                                        $scope.skor55 = 1
-                                    }
+                                        $scope.skor55 = 0
+                                    }else
                                     if (stat.namaexternal == '36.1 - 38') {
                                         $scope.skor55 = 0
-                                    }
+                                    }else
                                     if (stat.namaexternal == '38.1 - 39') {
-                                        $scope.skor55 = 1
-                                    }
+                                        $scope.skor55 = 0
+                                    }else
                                     if (stat.namaexternal == '> 39') {
-                                        $scope.skor55 = 2
+                                        $scope.skor55 = 0
                                     }
 
                                 }
                                 if (stat.satuan == 6) {
                                     if (stat.namaexternal == '<= 35') {
-                                        $scope.skor65 = 3
-                                    }
+                                        $scope.skor65 = 0
+                                    }else
                                     if (stat.namaexternal == '35.1 - 36') {
-                                        $scope.skor65 = 1
-                                    }
+                                        $scope.skor65 = 0
+                                    }else
                                     if (stat.namaexternal == '36.1 - 38') {
                                         $scope.skor65 = 0
-                                    }
+                                    }else
                                     if (stat.namaexternal == '38.1 - 39') {
-                                        $scope.skor65 = 1
-                                    }
+                                        $scope.skor65 = 0
+                                    }else
                                     if (stat.namaexternal == '> 39') {
-                                        $scope.skor65 = 2
+                                        $scope.skor65 = 0
                                     }
 
                                 }
