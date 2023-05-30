@@ -3077,6 +3077,11 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                             "field": "kekuatan",
                             "title": "Kekuatan",
                             "width": "80px",
+                        },
+                        {
+                            "field": "keterangan",
+                            "title": "Keterangan",
+                            "width": "80px",
                         }
 
                     ]
