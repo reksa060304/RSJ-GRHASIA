@@ -755,8 +755,6 @@ define(['initialize'], function (initialize) {
                                         $scope.skor12 = 1
                                     }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 92 && $scope.item.obj[parseFloat(arrobj[i])] <= 93) {
                                         $scope.skor12 = 2
-                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 21 && $scope.item.obj[parseFloat(arrobj[i])] <= 24) {
-                                        $scope.skor12 = 2
                                     }else if ($scope.item.obj[parseFloat(arrobj[i])] <= 91) {
                                         $scope.skor12 = 3
                                     }
@@ -771,8 +769,6 @@ define(['initialize'], function (initialize) {
                                     }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 94 && $scope.item.obj[parseFloat(arrobj[i])] <= 95){
                                         $scope.skor22 = 1
                                     }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 92 && $scope.item.obj[parseFloat(arrobj[i])] <= 93) {
-                                        $scope.skor22 = 2
-                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 21 && $scope.item.obj[parseFloat(arrobj[i])] <= 24) {
                                         $scope.skor22 = 2
                                     }else if ($scope.item.obj[parseFloat(arrobj[i])] <= 91) {
                                         $scope.skor22 = 3
@@ -789,8 +785,6 @@ define(['initialize'], function (initialize) {
                                         $scope.skor32 = 1
                                     }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 92 && $scope.item.obj[parseFloat(arrobj[i])] <= 93) {
                                         $scope.skor32 = 2
-                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 21 && $scope.item.obj[parseFloat(arrobj[i])] <= 24) {
-                                        $scope.skor32 = 2
                                     }else if ($scope.item.obj[parseFloat(arrobj[i])] <= 91) {
                                         $scope.skor32 = 3
                                     }
@@ -805,8 +799,6 @@ define(['initialize'], function (initialize) {
                                     }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 94 && $scope.item.obj[parseFloat(arrobj[i])] <= 95){
                                         $scope.skor42 = 1
                                     }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 92 && $scope.item.obj[parseFloat(arrobj[i])] <= 93) {
-                                        $scope.skor42 = 2
-                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 21 && $scope.item.obj[parseFloat(arrobj[i])] <= 24) {
                                         $scope.skor42 = 2
                                     }else if ($scope.item.obj[parseFloat(arrobj[i])] <= 91) {
                                         $scope.skor42 = 3
@@ -823,8 +815,6 @@ define(['initialize'], function (initialize) {
                                         $scope.skor52 = 1
                                     }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 92 && $scope.item.obj[parseFloat(arrobj[i])] <= 93) {
                                         $scope.skor52 = 2
-                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 21 && $scope.item.obj[parseFloat(arrobj[i])] <= 24) {
-                                        $scope.skor52 = 2
                                     }else if ($scope.item.obj[parseFloat(arrobj[i])] <= 91) {
                                         $scope.skor52 = 3
                                     }
@@ -839,8 +829,6 @@ define(['initialize'], function (initialize) {
                                     }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 94 && $scope.item.obj[parseFloat(arrobj[i])] <= 95){
                                         $scope.skor62 = 1
                                     }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 92 && $scope.item.obj[parseFloat(arrobj[i])] <= 93) {
-                                        $scope.skor62 = 2
-                                    }else if ($scope.item.obj[parseFloat(arrobj[i])] >= 21 && $scope.item.obj[parseFloat(arrobj[i])] <= 24) {
                                         $scope.skor62 = 2
                                     }else if ($scope.item.obj[parseFloat(arrobj[i])] <= 91) {
                                         $scope.skor62 = 3
@@ -1177,46 +1165,105 @@ define(['initialize'], function (initialize) {
                             }
                             if(stat.kodeexternal =='suplemen'){
                                 if (stat.satuan == 1) {
-                                    $scope.skor16 = 2
+                                    if (stat.namaexternal == 'Ada (L/menit)'){
+                                        $scope.skor16 = 2
+                                    }
+                                    if (stat.namaexternal == 'Tidak Ada'){
+                                        $scope.skor16 = 0
+                                    }
                                 }
                                 if (stat.satuan == 2) {
-                                    $scope.skor26 = 2
+                                    if (stat.namaexternal == 'Ada (L/menit)'){
+                                        $scope.skor26 = 2
+                                    }
+                                    if (stat.namaexternal == 'Tidak Ada'){
+                                        $scope.skor26 = 0
+                                    }
+                                   
                                 }
                                 if (stat.satuan == 3) {
-                                    $scope.skor36 = 2
+                                    if (stat.namaexternal == 'Ada (L/menit)'){
+                                        $scope.skor36 = 2
+                                    }
+                                    if (stat.namaexternal == 'Tidak Ada'){
+                                        $scope.skor36 = 0
+                                    }
                                 }
                                 if (stat.satuan == 4) {
-                                    $scope.skor46 = 2
+                                    if (stat.namaexternal == 'Ada (L/menit)'){
+                                        $scope.skor46 = 2
+                                    }
+                                    if (stat.namaexternal == 'Tidak Ada'){
+                                        $scope.skor46 = 0
+                                    }
                                 }
                                 if (stat.satuan == 5) {
-                                    $scope.skor56 = 2
+                                    if (stat.namaexternal == 'Ada (L/menit)'){
+                                        $scope.skor56 = 2
+                                    }
+                                    if (stat.namaexternal == 'Tidak Ada'){
+                                        $scope.skor56 = 0
+                                    }
                                 }
                                 if (stat.satuan == 6) {
-                                    $scope.skor66 = 2
+                                    if (stat.namaexternal == 'Ada (L/menit)'){
+                                        $scope.skor66 = 2
+                                    }
+                                    if (stat.namaexternal == 'Tidak Ada'){
+                                        $scope.skor66 = 0
+                                    }
                                 }
                             }
                             if(stat.kodeexternal =='kesadaran'){
                                 if (stat.satuan == 1) {
-                                    $scope.skor17 = 3
+                                    if (stat.namaexternal == 'Nyeri/Verbal'){
+                                        $scope.skor17 = 3
+                                    }
+                                    if (stat.namaexternal == 'Sadar'){
+                                        $scope.skor17 = 0
+                                    }
                                 }
                                 if (stat.satuan == 2) {
-                                    $scope.skor27 = 3
+                                    if (stat.namaexternal == 'Nyeri/Verbal'){
+                                        $scope.skor27 = 3
+                                    }
+                                    if (stat.namaexternal == 'Sadar'){
+                                        $scope.skor27 = 0
+                                    }
                                 }
                                 if (stat.satuan == 3) {
-                                    $scope.skor37 = 3
+                                    if (stat.namaexternal == 'Nyeri/Verbal'){
+                                        $scope.skor37 = 3
+                                    }
+                                    if (stat.namaexternal == 'Sadar'){
+                                        $scope.skor37 = 0
+                                    }
                                 }
                                 if (stat.satuan == 4) {
-                                    $scope.skor47 = 3
+                                    if (stat.namaexternal == 'Nyeri/Verbal'){
+                                        $scope.skor47 = 3
+                                    }
+                                    if (stat.namaexternal == 'Sadar'){
+                                        $scope.skor47 = 0
+                                    }
                                 }
                                 if (stat.satuan == 5) {
-                                    $scope.skor57 = 3
+                                    if (stat.namaexternal == 'Nyeri/Verbal'){
+                                        $scope.skor57 = 3
+                                    }
+                                    if (stat.namaexternal == 'Sadar'){
+                                        $scope.skor57 = 0
+                                    }
                                 }
                                 if (stat.satuan == 6) {
-                                    $scope.skor67 = 3
+                                    if (stat.namaexternal == 'Nyeri/Verbal'){
+                                        $scope.skor67 = 3
+                                    }
+                                    if (stat.namaexternal == 'Sadar'){
+                                        $scope.skor67 = 0
+                                    }
                                 }
                             }
-                            
-                            
                         } 
 
                         else if($scope.item.obj[parseFloat(arrobj[i])] == undefined || $scope.item.obj[parseFloat(arrobj[i])] == "" ){
