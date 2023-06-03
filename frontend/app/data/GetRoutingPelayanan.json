@@ -19322,8 +19322,8 @@
     ]
   },
   {
-    "name": "RekamMedis.AsesmenMedis.SeleksiRehabilitasiSosial",
-    "url": "/SeleksiRehabilitasiSosial",
+    "name": "RekamMedis.AsesmenMedis.MenuIndex.SeleksiRehabilitasiSosial",
+    "url": "/SeleksiRehabilitasiSosial/:index/:idEMR",
     "templateurl": "module/EMR/SeleksiRehabilitasiSosial.html",
     "controller": "SeleksiRehabilitasiSosialCtrl",
     "deps": [{

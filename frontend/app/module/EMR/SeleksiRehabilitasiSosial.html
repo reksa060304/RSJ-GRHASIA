@@ -891,10 +891,17 @@
                                                             </div>
                                                             <div class="grid_12 parentKeteranganFieldTambahan">
                                                                 <input c-text-box type="text" filter="" class="k-textbox"
-                                                                    ng-model="item.obj[jawab.id]"style="width: 229px" />
+                                                                    ng-model="item.obj[jawab.id]"style="width: 400px" />
                                                             </div>
                                                         </div>
                                                         <div class="grid_2" ng-switch-when="checkbox">
+                                                            <input type="checkbox" class="k-checkbox" id="item.obj{{jawab.id}}"
+                                                                ng-model="item.obj[jawab.id]">
+                                                            <label c-label item="item" style="margin-top: 13px;" class="k-checkbox-label" for="item.obj{{jawab.id}}">
+                                                                &nbsp;{{jawab.nama}}</label>
+                
+                                                        </div>
+                                                        <div class="grid_6" ng-switch-when="checkbox6">
                                                             <input type="checkbox" class="k-checkbox" id="item.obj{{jawab.id}}"
                                                                 ng-model="item.obj[jawab.id]">
                                                             <label c-label item="item" style="margin-top: 13px;" class="k-checkbox-label" for="item.obj{{jawab.id}}">
