@@ -123,9 +123,94 @@
                     </div>
                 </div>
                 <div class="grid_12">
-                    <div class="grid_1" style="margin-top: 10px">
-                        <button class="btnTemplate1" ng-click="reOrderResep()"><i class="fa fa-edit"></i>Order Ulang</button>
+                    <!-- <div class="grid_2" style="margin-top: 10px">
+                        <button class="btnTemplate1" ng-click="reOrderResep()"><i class="fa fa-edit"></i>Order Ulang Resep</button>
+                    </div> -->
+                </div>
+                <div class="grid_12"></div>
+                <br><br><br>
+                <div class="grid_12 headerBox">
+                    <p>Daftar Riwayat Order Resep Dokter</p>
+                </div>
+                <div class="grid_12">
+                    <div class="grid_12 borderBox">
+                        <div id="kGrid" kendo-grid k-data-source="dataGridRiwayat" k-selectable="'row'"
+                            k-columns="columnGridRiwayat" k-pageable="'true'" k-sortable="'true'"
+                            k-ng-model="dataSelectedRiwayat" ng-click="kliks(dataSelectedRiwayat)">
+                            <div k-detail-template>
+                                <kendo-tabstrip>
+                                    <div>
+                                        <div kendo-grid k-options="detailGridOptions(dataItem)"></div>
+                                    </div>
+                                </kendo-tabstrip>
+                            </div>
+                        </div>
                     </div>
+
+                </div>
+                
+                <div class="grid_12">
+                    <!-- <div class="grid_1">
+                <div class="grid_12">
+                    <label c-label item="item">No Resep</label>
+                </div>
+
+                <div class="grid_12">
+                    <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.noResep" />
+                </div>
+            </div>
+            <div class="grid_2">
+                <div class="grid_12">
+                    <label c-label item="item">No Registrasi</label>
+                </div>
+
+                <div class="grid_12">
+                    <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.noReg" />
+                </div>
+            </div>
+            <div class="grid_1">
+                <div class="grid_12">
+                    <label c-label item="item" >No.MR</label>
+                </div>
+
+                <div class="grid_12">
+                    <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.noMr" />
+                </div>
+            </div>
+            <div class="grid_2">
+                <div class="grid_12">
+                    <label c-label item="item" c-label-text="Nama Pasien"></label>
+                </div>
+
+                <div class="grid_12">
+                    <input c-text-box type="input"  filter="" class="k-textbox" ng-model="item.namaPasien" />
+                </div>
+            </div>
+            <div class="grid_1" style="margin-top: 22px">
+                <button class="c-button" ng-click="cari()">Cari</button>
+            </div> -->
+                    <!-- <div class="grid_6"></div> -->
+                    <div class="grid_1" style="margin-top: 10px">
+                        <button class="btnTemplate1" ng-click="reOrder()"><i class="fa fa-edit"></i>Order Ulang</button>
+                        <!-- <button class="c-button" ng-click="reOrder()">Re-Order</button> -->
+                    </div>
+                    <div class="grid_1" style="margin-top: 10px">
+                        <button class="btnTemplate1" ng-click="preview()"><i class="fa fa-edit"></i>Preview</button>
+                        <!-- <button class="c-button" ng-click="reOrder()">Re-Order</button> -->
+                    </div>
+                    <div class="grid_1" style="margin-top: 10px">
+                        <button class="btnTemplate1" ng-click="editOrder()"><i class="fa fa-edit"></i>Edit</button>
+                        <!-- <button class="c-button" ng-click="reOrder()">Re-Order</button> -->
+                    </div>
+                    
+                    <div class="grid_1" style="margin-top: 10px">
+                        <button class="btnTemplate1 error" ng-click="hapusOrder()"><i
+                                class="fa fa-trash"></i>Hapus</button>
+                        <!-- <button class="c-button" ng-click="reOrder()">Re-Order</button> -->
+                    </div>
+                    <!-- <div class="grid_2" style="margin-top: 10px">
+                        <button class="btnTemplate1" ng-click="newOrder()"><i class="fa fa-plus"></i>Order Baru</button>
+                    </div> -->
                 </div>
             </div>
             <div class="grid_12">
@@ -451,7 +536,7 @@
                     <div class="grid_3"></div>
                     <div class="grid_2">
                         <button class="btnTemplate1" ng-click="save()" ng-hide="hideSimpan"><i
-                                class="fa fa-save"></i>Simpan</button>
+                                class="fa fa-save"></i>Simpan Resep</button>
 
                     </div>
                     <div class="grid_2">
@@ -499,7 +584,7 @@
             <!-- <legend id="filterData">
                                         <a ng-click="showAndHide()">Daftar Obat yang Sering di Resepkan</a>
                             </legend> -->
-            <div class="grid_4 " style=" height: 400px;margin-top: 10px;">
+            <div class="grid_4 " style=" height: 200px;margin-top: 10px;">
                 <div class="grid_12 headerBox">
                     <p>Daftar Obat yang Sering di Resepkan</p>
                 </div>
@@ -522,7 +607,7 @@
                         <legend id="filterData">
                             <a ng-click="showAndHide()">Stok : {{item.namaProduks}}</a>
                         </legend> -->
-            <div class="grid_4 " style=" height: 400px;margin-top: 10px;">
+            <div class="grid_4 " style=" height: 200px;margin-top: 10px;">
                 <div class="grid_12 headerBox">
                     <p>Stok : {{item.namaProduks}}</p>
                 </div>

@@ -3651,7 +3651,7 @@ class LaporanRekamMedisController extends   ApiController
             case when bulan = 'December' then sum(jumlahnonrujukan) else 0 end as jumlahnonrujukandesember
             from(
             select rtrim(to_char(pd.tglregistrasi, 'Month'), ' ') as bulan, ru.namaruangan,
-            case when apd.objectasalrujukanfk in(1,2,3,4,8,9,11,12,13,14,15,16,17) then count(pd.noregistrasi) else 0 end as jumlahrujukan,
+            case when apd.objectasalrujukanfk in(1,2,3,4,8,9,11,12,13,14,15,16,17,18) then count(pd.noregistrasi) else 0 end as jumlahrujukan,
           case when apd.objectasalrujukanfk in(5,6,7,10) then count(pd.noregistrasi) else 0 end as jumlahnonrujukan
                             FROM
                             pasiendaftar_t pd

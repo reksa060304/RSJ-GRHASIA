@@ -378,6 +378,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             });
             $scope.$watch('item.rke', function (newValue, oldValue) {
                 if (newValue != oldValue) {
+                    console.log($scope.item.jumlahxmakan);
                     if($scope.rke != $scope.item.rke){
                         $scope.item.jumlahxmakan = null
                     }
@@ -911,6 +912,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 $scope.item.satuanresep = { id: dataSelected.satuanresepfk, satuanresep: dataSelected.satuanresep }
                 $scope.item.satuan = { ssid: dataSelected.satuanstandarfk, satuanstandar: dataSelected.satuanstandar }
                 $scope.item.jumlahxmakan = dataSelected.jumlahxmakan
+                console.log($scope.item.jumlahxmakan);
                 $scope.item.dosis = dataSelected.dosis
                 $scope.item.aturanPakai = { id: dataSelected.aturanpakaifk, name: dataSelected.aturanpakai }
                 $scope.item.aturanpakaitxt = dataSelected.aturanpakai
