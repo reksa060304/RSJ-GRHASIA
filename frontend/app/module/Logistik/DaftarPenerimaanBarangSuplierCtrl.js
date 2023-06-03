@@ -681,6 +681,11 @@ define(['initialize'], function (initialize) {
                             "width": "45px",
                         },
                         {
+                            "field": "namaexternal",
+                            "title": "Nama Faktur",
+                            "width": "100px",
+                        },
+                        {
                             "field": "namaproduk",
                             "title": "Nama Produk",
                             "width": "100px",
