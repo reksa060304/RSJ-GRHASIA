@@ -65,6 +65,20 @@
                 </div>
             </div>
             <div class="grid_12">
+                <div class="grid_2">
+                    <!-- <c-button style="width: 100%; padding:0px, margin:0px;" ng-click="konsul()" position="'right'">
+                    <span class="title">Konsultasi <a style="font-color:white" ng-show="showNotif"><span  class="notif">{{lengthKonsul}}</span> </a></span>
+                </c-button> -->
+                    <button class="btnTemplate1" style="margin-left: 0;" ng-click="konsul()"><i
+                            class="fa fa-arrow-right"></i>Konsultasi<a style="font-color:white"
+                            ng-show="showNotif"><span class="notif">{{lengthKonsul}}</span> </a></button>
+                    <!-- <c-button click='pasienJatuh' style="width: 100%; padding:0px;margin:0px;" item="item" position="'right'"
+            is-validate >
+            <span class="title">Pasien Jatuh</span>
+        </c-button> -->
+                </div>
+            </div>
+            <div class="grid_12">
                 <div class="grid_12 borderBox">
                     <kendo-grid id="grid" data-source="GridPasien" options="mainGridOptions" k-pageable="'true'"
                         k-sortable="'true'" k-groupable="'true'" k-resizable="'true'" k-selectable="'row'" class="max-height"
@@ -131,18 +145,7 @@
             <span class="title">Detail Pasien</span>
         </c-button>
     </div> -->
-        <div class="grid_2">
-            <!-- <c-button style="width: 100%; padding:0px, margin:0px;" ng-click="konsul()" position="'right'">
-                    <span class="title">Konsultasi <a style="font-color:white" ng-show="showNotif"><span  class="notif">{{lengthKonsul}}</span> </a></span>
-                </c-button> -->
-            <button class="btnTemplate1" style="margin-left: 0;" ng-click="konsul()"><i
-                    class="fa fa-arrow-right"></i>Konsultasi<a style="font-color:white" ng-show="showNotif"><span
-                        class="notif">{{lengthKonsul}}</span> </a></button>
-            <!-- <c-button click='pasienJatuh' style="width: 100%; padding:0px;margin:0px;" item="item" position="'right'"
-            is-validate >
-            <span class="title">Pasien Jatuh</span>
-        </c-button> -->
-        </div>
+        
         <div class="grid_2">
             <button class="btnTemplate1" style="margin-left: 0;" ng-click="residenceShow()"><i
                     class="fa fa-user"></i>Residence</button>

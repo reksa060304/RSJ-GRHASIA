@@ -138,7 +138,7 @@ class ResepElektronikController extends ApiController
                  LEFT JOIN antrianapotik_t AS aa ON aa.noresep = sr.noresep
                  INNER JOIN pasiendaftar_t AS pd ON pd.norec = so.noregistrasifk
                  INNER JOIN kelas_m AS kl ON kl.id = pd.objectkelasfk
-                 LEFT JOIN antrianpasiendiperiksa_t AS apd ON apd.noregistrasifk = pd.norec AND apd.objectruanganfk = so.objectruanganfk
+                 LEFT JOIN antrianpasiendiperiksa_t AS apd ON apd.noregistrasifk = pd.norec AND apd.objectruanganfk = so.objectruanganfk and apd.objectstrukorderfk = so.norec
                  LEFT JOIN kelompokpasien_m AS kp ON kp.id = pd.objectkelompokpasienlastfk
                  left join LATERAL (
                     select sp.norec 
@@ -171,7 +171,7 @@ class ResepElektronikController extends ApiController
                          sr.isreseppulang as checkreseppulang,null as isambilobat,null as cito,ps.nohp,alm.alamatlengkap, null as isordergrab,
                          null as iskurir, '' as noreservasi,case when sp.norec is not null then true else false end as isbayar, pd.norec norec_pd
                 FROM strukresep_t AS sr
-                INNER JOIN antrianpasiendiperiksa_t AS apd ON apd.norec = sr.pasienfk
+                INNER JOIN antrianpasiendiperiksa_t AS apd ON apd.norec = sr.pasienfk 
                 INNER JOIN pasiendaftar_t AS pd ON pd.norec = apd.noregistrasifk
                 INNER JOIN pasien_m AS ps ON ps.id = pd.nocmfk
                 INNER JOIN alamat_m AS alm ON ps.id = alm.nocmfk
@@ -201,6 +201,7 @@ class ResepElektronikController extends ApiController
                 $departemenIdOrder
                 $statusIdResep  
                 $checkSOPasienRanap      
+                ORDER BY statusorder asc
         "));
 
         $status ='';
