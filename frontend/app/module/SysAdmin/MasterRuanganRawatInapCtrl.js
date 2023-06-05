@@ -420,6 +420,44 @@ define(['initialize'], function (initialize) {
                     loadData()
                 })
             };
+            function enableDataTidur(e) {
+                e.preventDefault();
+                var dataItem = this.dataItem($(e.currentTarget).closest("tr"))
+
+                if (dataItem == undefined) {
+                    alert("Data Belum Dipilih!")
+                    return;
+                };
+
+                var objSave = {
+                    "id": dataItem.idtempattidur,
+                    "status": 1 //'t'
+                }
+                // console.log(objSave);
+                // return
+                medifirstService.post('sysadmin/master/save-statusenabled-tidur', objSave).then(function (e) {
+                    // init();
+                    loadData()
+                })
+            };
+
+            function disableDataTidur(e) {
+                e.preventDefault();
+                var dataItem = this.dataItem($(e.currentTarget).closest("tr"))
+
+                if (dataItem == undefined) {
+                    alert("Data Belum Dipilih!")
+                    return;
+                };
+
+                var objSave = {
+                    "id": dataItem.idtempattidur,
+                    "status": 0 //'f'
+                }
+                medifirstService.post('sysadmin/master/save-statusenabled-tidur', objSave).then(function (e) {
+                    loadData()
+                })
+            };
             $scope.tambahKamar = function(){
                 $scope.itemKamar.jumlahKamarKosong = 0
                 $scope.itemKamar.jumlahKamarIsi = 0
@@ -556,23 +594,23 @@ define(['initialize'], function (initialize) {
                         title: "Status Bed",
                         width: "100px"
                     },
-                    // {
-                    //     "command": [{
-                    //             text: "Enable",
-                    //             click: enableDataKamar,
-                    //             imageClass: "k-icon k-i-pencil",
-                    //             className: "btn-enabled",
-                    //         },
-                    //         {
-                    //             text: "Disable",
-                    //             click: disableDataKamar,
-                    //             imageClass: "k-icon k-delete",
-                    //             className: "btn-disabled",
-                    //         },
-                    //     ],
-                    //     title: "Command",
-                    //     width: "180px",
-                    // }
+                    {
+                        "command": [{
+                                text: "Enable",
+                                click: enableDataTidur,
+                                imageClass: "k-icon k-i-pencil",
+                                className: "btn-enabled",
+                            },
+                            {
+                                text: "Disable",
+                                click: disableDataTidur,
+                                imageClass: "k-icon k-delete",
+                                className: "btn-disabled",
+                            },
+                        ],
+                        title: "Command",
+                        width: "180px",
+                    }
                 ]
             }
             $scope.tambahTempatTidur = function(){
@@ -601,7 +639,7 @@ define(['initialize'], function (initialize) {
                 }
                 if (isValid.status) {
                     console.log($scope.idTempatTidur, $scope.itemTempatTidur.kamar.qtybed, $scope.itemTempatTidur.qtybed);
-                    var bandingqty = $scope.itemTempatTidur.qtybed < $scope.itemTempatTidur.kamar.qtybed
+                    var bandingqty = $scope.itemTempatTidur.qtybed <= $scope.itemTempatTidur.kamar.qtybed
                     var tambahbed = 1;
                     if($scope.idTempatTidur != ""){
                         bandingqty = true
@@ -627,7 +665,7 @@ define(['initialize'], function (initialize) {
                             loadData()
                             loadCombo()
                         })
-                        $scope.popUpDataTempatTidur.close();
+                        // $scope.popUpDataTempatTidur.close();
                     }else{
                         toastr.error('Jumlah Bed Kamar '+$scope.itemTempatTidur.kamar.namakamar+' sudah terisi!')
                         return

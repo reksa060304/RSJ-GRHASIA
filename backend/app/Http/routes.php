@@ -3016,6 +3016,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
                 Route::post('sysadmin/master/save-statusenabled-produk', 'SysAdmin\Master\MasterController@UpdateStatusEnabledProduk');
                 Route::post('sysadmin/master/save-statusenabled-ruangan', 'SysAdmin\Master\MasterController@UpdateStatusEnabledRuangan');
                 Route::post('sysadmin/master/save-statusenabled-kamar', 'SysAdmin\Master\MasterController@UpdateStatusEnabledKamar');
+                Route::post('sysadmin/master/save-statusenabled-tidur', 'SysAdmin\Master\MasterController@UpdateStatusEnabledTidur');
                 Route::post('sysadmin/master/save-data-produk', 'SysAdmin\Master\MasterController@saveDataProduk');
                 Route::post('sysadmin/master/save-kelompok-produk-bpjs', 'SysAdmin\Master\MasterController@SaveKelompokProduk');
                 Route::post('sysadmin/master/save-konversi-satuan', 'SysAdmin\Master\MasterController@SaveKonversiSatuan');
