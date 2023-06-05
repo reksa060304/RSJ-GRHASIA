@@ -1810,55 +1810,88 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 }
 
                 medifirstService.get("emr/get-detail-order?noorder=" + $scope.dataSelectedRiwayat.noorder, true).then(function (dat) {
-                    $scope.isRouteLoading = false;
-                    $scope.norecOrder = ''
-                    $scope.item.resep = $scope.dataSelectedRiwayat.noorder
-                    $scope.item.ruangan = { id: dat.data.strukorder.id, namaruangan: dat.data.strukorder.namaruangan }
-                    // $scope.item.penulisResep = { id: dat.data.strukorder.pgid, namalengkap: dat.data.strukorder.namalengkap }
-                    $scope.item.tglresep = new Date($scope.item.tglresep);
-                    $scope.item.tglresepAkhir = new Date($scope.item.tglresepAkhir);
-                    if ($scope.dataSelectedRiwayat.cekreseppulang == "✔") {
-                        $scope.checkResepPulang = true;
-                    }else{
-                        $scope.checkResepPulang = false;
-                    }
+                    $scope.isRouteLoading = true;
+                    // var datas = []
+                    var datas = dat.data.orderpelayanan
+                    
+                    for (let z = 0; z < datas.length; z++) {
+                        (function(z){
+                            medifirstService.get("emr/get-produkdetail?" +
+                                "produkfk=" + datas[z].produkfk +
+                                "&kpid=" + $scope.item.kpid, true).then(function (data) {
+                                // console.log(dat.data.orderpelayanan[i]);
+                                datas[z].dahlahcapeee = data.data.detail.length
+                                // console.log(dat.data.orderpelayanan[i]?.produkfk);
 
-                    if ($scope.dataSelectedRiwayat.cito == "✔") {
-                        $scope.item.iscito = true;
-                    }else{
-                        $scope.item.iscito = false;
+                                // $scope.isRouteLoading = false;
+                                // console.log(dat.data, orderp[i].produkfk);
+                                console.log(z, datas[z]);
+                                if (datas[z].dahlahcapeee == 0) {
+                                    // $scope.ppp = $scope.pppp[i].namaproduk
+                                    // console.log(orderp[i]);
+                                    toastr.error("STOK " + dat.data.orderpelayanan[z].namaproduk + " KOSONG!")
+                                    dat.data.orderpelayanan.splice(z, 1);
+                                    z--;
+                                }
+                                // var data2 = dat.data.orderpelayanan;
+                                // console.log(data2);
+                                $scope.norecOrder = ''
+                                $scope.item.resep = $scope.dataSelectedRiwayat.noorder
+                                $scope.item.ruangan = {
+                                    id: dat.data.strukorder.id,
+                                    namaruangan: dat.data.strukorder.namaruangan
+                                }
+                                // $scope.item.penulisResep = { id: dat.data.strukorder.pgid, namalengkap: dat.data.strukorder.namalengkap }
+                                $scope.item.tglresep = new Date($scope.item.tglresep);
+                                $scope.item.tglresepAkhir = new Date($scope.item.tglresepAkhir);
+                                if ($scope.dataSelectedRiwayat.cekreseppulang == "✔") {
+                                    $scope.checkResepPulang = true;
+                                } else {
+                                    $scope.checkResepPulang = false;
+                                }
+
+                                if ($scope.dataSelectedRiwayat.cito == "✔") {
+                                    $scope.item.iscito = true;
+                                } else {
+                                    $scope.item.iscito = false;
+                                }
+
+                                data2 = dat.data.orderpelayanan
+                                for (var i = data2.length - 1; i >= 0; i--) {
+
+
+
+                                    data2[i].noregistrasifk = norec_apd //$scope.item.noRegistrasi
+                                    data2[i].tglregistrasi = $scope.item.tglregistrasi
+
+                                    data2[i].kelasfk = $scope.item.kelas.id
+                                    data2[i].keterangan = data2[i].catatandokter
+                                    data2[i].jumlahxmakan = null
+                                    if (data2[i].jeniskemasanfk == 1) {
+                                        data2[i].jumlah = data2[i].jumlahracikan
+                                    }
+                                }
+
+                                $scope.dataGrid = new kendo.data.DataSource({
+                                    data: data2,
+                                    group: $scope.group
+                                });
+
+
+                                var subTotal = 0;
+                                for (var i = data2.length - 1; i >= 0; i--) {
+                                    subTotal = subTotal + parseFloat(data2[i].total)
+                                }
+                                $scope.item.totalSubTotal = subTotal
+                                $scope.riwayatFormResep = false
+                                $scope.riwayatForm = false
+                                $scope.inputObatOrder = true;
+                                $scope.isRouteLoading = false
+                            });
+                        })(z)
+                        
                     }
                     
-                    data2 = dat.data.orderpelayanan
-                    for (var i = data2.length - 1; i >= 0; i--) {
-
-
-
-                        data2[i].noregistrasifk = norec_apd//$scope.item.noRegistrasi
-                        data2[i].tglregistrasi = $scope.item.tglregistrasi
-
-                        data2[i].kelasfk = $scope.item.kelas.id
-                        data2[i].keterangan = data2[i].catatandokter
-                        data2[i].jumlahxmakan = null
-                        if (data2[i].jeniskemasanfk == 1){
-                            data2[i].jumlah = data2[i].jumlahracikan
-                        }
-                    }
-
-                    $scope.dataGrid = new kendo.data.DataSource({
-                        data: data2,
-                        group: $scope.group
-                    });
-
-
-                    var subTotal = 0;
-                    for (var i = data2.length - 1; i >= 0; i--) {
-                        subTotal = subTotal + parseFloat(data2[i].total)
-                    }
-                    $scope.item.totalSubTotal = subTotal
-                    $scope.riwayatFormResep = false
-                    $scope.riwayatForm = false
-                    $scope.inputObatOrder = true;
                 });
             }
             $scope.reOrderResep = function (){
