@@ -5236,10 +5236,10 @@ class MasterController extends ApiController{
                 }else{
                     $transMessage = "Ubah";
                     $Kmr = Kamar::where('id',$data['id'])->where('kdprofile', $kdProfile)->first();
+                    // $Kmr->norec = $idJenis;
                 }
                 $Kmr->kodeexternal = 'GRH';
                 $Kmr->namaexternal = '';
-                $Kmr->norec = $idJenis;
                 $Kmr->reportdisplay = '';
                 $Kmr->objectkelasfk = $data['objectkelasfk'];
                 $Kmr->objectruanganfk = $data['objectruanganfk'];

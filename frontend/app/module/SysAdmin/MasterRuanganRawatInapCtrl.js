@@ -639,7 +639,7 @@ define(['initialize'], function (initialize) {
                 }
                 if (isValid.status) {
                     console.log($scope.idTempatTidur, $scope.itemTempatTidur.kamar.qtybed, $scope.itemTempatTidur.qtybed);
-                    var bandingqty = $scope.itemTempatTidur.qtybed <= $scope.itemTempatTidur.kamar.qtybed
+                    var bandingqty = $scope.itemTempatTidur.qtybed < $scope.itemTempatTidur.kamar.qtybed
                     var tambahbed = 1;
                     if($scope.idTempatTidur != ""){
                         bandingqty = true
@@ -660,7 +660,9 @@ define(['initialize'], function (initialize) {
                         console.log(objSave);
                         // return
                         medifirstService.post('sysadmin/master/save-data-tempattidur', objSave).then(function () {
-                            $scope.itemTempatTidur = {}
+                            // $scope.itemTempatTidur = {}
+                            $scope.itemTempatTidur.nomorBed = undefined
+                            $scope.itemTempatTidur.statusBed = undefined
                             $scope.idTempatTidur = ""
                             loadData()
                             loadCombo()
