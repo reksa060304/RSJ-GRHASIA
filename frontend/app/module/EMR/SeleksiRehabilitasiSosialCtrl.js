@@ -2,6 +2,7 @@ define(['initialize'], function (initialize) {
     'use strict';
     initialize.controller('SeleksiRehabilitasiSosialCtrl', ['$q', '$rootScope', '$scope', 'ModelItem', '$state', 'CacheHelper', 'DateHelper', 'MedifirstService',
         function ($q, $rootScope, $scope, ModelItem, $state, cacheHelper, dateHelper, medifirstService) {
+            var paramsIndex = $state.params.index ? parseInt($state.params.index) : null;
 
             var isNotClick = true;
             $scope.noCM = $state.params.noCM;
@@ -185,8 +186,10 @@ define(['initialize'], function (initialize) {
                 {
                     "id" : 1, "nama": "(3) Lolos Seleksi",
                     "detail": [
-                        {"id": 3013013, "nama": "Ya","type": "checkbox"},
-                        {"id": 3013014, "nama": "Tidak","type": "checkbox"},
+                        {"id": 3013013, "nama": "Ya","type": "checkbox6"},
+                        {"id": 3013020, "nama": "","type": "textbox2"},
+                        {"id": 3013014, "nama": "Tidak","type": "checkbox6"},
+                        {"id": 3013021, "nama": "","type": "textbox2"}
                     ]
                 },
                 {
@@ -458,7 +461,7 @@ define(['initialize'], function (initialize) {
 
                     dataLoad = dat.data.data
                     for (var i = 0; i <= dataLoad.length - 1; i++) {
-                        if (parseFloat($scope.cc.emrfk) == dataLoad[i].emrfk) {
+                        if (parseFloat($scope.cc.emrfk) == dataLoad[i].emrfk && paramsIndex == dataLoad[i].index) {
                             if (dataLoad[i].type == "textbox") {
                                 $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
                                 if (dataLoad[i].emrdfk == '9084')
@@ -627,6 +630,7 @@ define(['initialize'], function (initialize) {
                     })
                 }
                 $scope.cc.jenisemr = 'asesmen'
+                $scope.cc.index = $state.params.index
                 var jsonSave = {
                     head: $scope.cc,
                     data: arrSave
