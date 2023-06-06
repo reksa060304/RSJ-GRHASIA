@@ -2699,8 +2699,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         untukpengeluaran: $scope.item.untuk,
                         status: $scope.item.radioStatusSPM,
                         nospp: $scope.item.nosppspm,
-                        tglspm: $scope.item.tglSPM,
-                        tglsah: $scope.item.tglSahSPM,
+                        tglspm: moment($scope.item.tglSPM).format('YYYY-MM-DD'),
+                        tglsah: moment($scope.item.tglSahSPM).format('YYYY-MM-DD'),
                         nilaispm: $scope.item.nilaispm,
                         noreg: $scope.item.noreg,
                         objectasalprodukfk: $scope.item.sumberDanaSPM.id,
@@ -2713,6 +2713,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         medifirstService.get("perencanaan/get-data-combo").then(function (e) {
                             $scope.dataSourceCariSPM = e.data.carispm
                         });
+                        $scope.popupSPM.close()
                     }, function (error) {
                 
                     })
