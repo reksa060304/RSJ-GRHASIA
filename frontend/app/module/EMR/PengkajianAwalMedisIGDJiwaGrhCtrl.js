@@ -1183,7 +1183,7 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                         {"id": 310461, "nama": "Isi Pikir", "type": "label0"},
                         {"id": 310462, "nama": "Tidak ada Kelainan", "type": "checkbox3"},
                         {"id": 310463, "nama": "Waham Sexual", "type": "checkbox3"},
-                        {"id": 310464, "nama": "Waham sisi pikir", "type": "checkbox3"},
+                        {"id": 310464, "nama": "Waham sisip pikir", "type": "checkbox3"},
                         {"id": 310465, "nama": "Phobi", "type": "checkbox3"},
                         {"id": 310466, "nama": "Waham kejar", "type": "checkbox3"},
                         {"id": 310467, "nama": "Waham berdosa", "type": "checkbox3"},
