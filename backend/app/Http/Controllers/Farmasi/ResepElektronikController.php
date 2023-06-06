@@ -121,7 +121,7 @@ class ResepElektronikController extends ApiController
         }
 
         $data = DB::select(DB::raw("
-                 select * from(SELECT row_number()over(partition by so.noorder order by so.tglorder desc )as nomor, so.norec AS norec_order,so.noorder,ps.nocm,ps.namapasien,jk.jeniskelamin,ru.namaruangan AS namaruanganrawat,
+                 select * from(SELECT row_number()over(partition by so.noorder order by apd.tglmasuk desc )as nomor, so.norec AS norec_order,so.noorder,ps.nocm,ps.namapasien,jk.jeniskelamin,ru.namaruangan AS namaruanganrawat,
                         so.tglorder,pg.namalengkap,ru2.namaruangan,so.statusorder,so.namapengambilorder,so.noregistrasifk,pd.noregistrasi,
                         kp.kelompokpasien,apd.norec AS norec_apd,pd.tglregistrasi,ps.tgllahir,kl.namakelas,kl. ID AS klid,so.tglambilorder,
                         sr.noresep,aa.noantri AS aanoantri,aa.jenis AS aajenis,sr.norec AS norecresep,sr.noresep,so.nourutruangan AS noruangan,
@@ -163,7 +163,7 @@ class ResepElektronikController extends ApiController
                 
                  UNION ALL
                  
-                 SELECT row_number()over(partition by sr.noresep order by sr.tglresep desc)as nomor, sr.norec AS norec_order,sr.noresep AS noorder,ps.nocm,ps.namapasien,jk.jeniskelamin,ru.namaruangan AS namaruanganrawat,
+                 SELECT row_number()over(partition by sr.noresep order by apd.tglmasuk desc)as nomor, sr.norec AS norec_order,sr.noresep AS noorder,ps.nocm,ps.namapasien,jk.jeniskelamin,ru.namaruangan AS namaruanganrawat,
                          sr.tglresep AS tglorder,pg.namalengkap,ru2.namaruangan,sr.status AS statusorder,
                          sr.namalengkapambilresep AS namapengambilorder,pd.norec AS noregistrasifk,pd.noregistrasi,kp.kelompokpasien,
                          apd.norec AS norec_apd,pd.tglregistrasi,ps.tgllahir,kl.namakelas,kl. ID AS klid,sr.tglambilresep AS tglambilorder,
