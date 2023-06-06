@@ -2533,7 +2533,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         }
                     }
                     $scope.dataSourceKeteranganBelanja = new kendo.data.DataSource({
-                        data: data
+                        data: data,
+                        
                     });
                 }
             });
@@ -2654,7 +2655,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     });
                 
             }
-
+            $scope.batalSPP = function(){
+                $scope.norecspp = ""
+                $scope.popupSPP.center().close()
+            }
             $scope.SimpanSPP = function(){
                 var objSave =
                     {
@@ -2673,10 +2677,12 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     }
 
                     medifirstService.post('perencanaan/save-spp', objSave).then(function (e) {
+                        $scope.norecspp = ""
                         loadDataGrid()
                         // medifirstService.get("perencanaan/get-data-combo").then(function (e) {
                         //     $scope.dataSourceSPP = e.data.spp
                         // });
+
                         $scope.popupSPP.center().close()
                     }, function (error) {
                 
@@ -3225,7 +3231,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             data: e.data.alokasimataanggaran,
                             group: $scope.groupmataanggaran,
                         });
-
+                        console.log($scope.dataSourceKeteranganBelanja);
                         $scope.dataSearchSourceKeteranganBelanja = $scope.dataSourceKeteranganBelanja
 
                         $scope.dataSourceDetailKeteranganBelanja = new kendo.data.DataSource({
@@ -3341,7 +3347,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         $scope.dataSourceKeteranganBelanja = new kendo.data.DataSource({
                             data: e.data.alokasimataanggaran,
                             group: $scope.groupmataanggaran,
+
                         });
+
 
                         $scope.dataSearchSourceKeteranganBelanja = $scope.dataSourceKeteranganBelanja
 
@@ -3384,7 +3392,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     DataDetailSPJALL = e.data.detail
                     $scope.dataSourceSPJ = new kendo.data.DataSource({
                         data: DataSPJ,
-                        group: $scope.groupmataanggaran
+                        group: $scope.groupmataanggaran,
                     });
                     
                     var arr = {
