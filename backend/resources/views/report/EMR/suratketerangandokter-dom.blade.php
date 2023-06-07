@@ -57,10 +57,10 @@
         }
         .footer2 {
             text-align: center;
-            position: relative;
-            left: 70%;
-            bottom: 0;
-            right: 5%;
+            position: absolute;
+            left: 67%;
+            bottom: 35%;
+            right: 3%;
             }
 
         footer {
@@ -262,7 +262,7 @@
             </div>
         </section>
         <p
-            style="font-size:10px;color: rgb(173, 173, 173); position: relative; bottom: 0; left: 3%; width: 50%; text-align: center;">
+            style="font-size:10px;color: rgb(173, 173, 173); position: absolute; bottom: 30%; left: 3%; width: 50%; text-align: center;">
             <i>Dokumen ini ditandatangani secara elektronik menggunakan sertifikat elektronik
                 yang diterbitkan oleh Balai Sertifikasi Elektronik (BSrE) Badan Siber dan Sandi Negara</i></p>
     </body>
