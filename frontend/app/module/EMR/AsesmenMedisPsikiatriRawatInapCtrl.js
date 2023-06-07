@@ -2294,6 +2294,7 @@ define(['initialize'], function (initialize) {
                     var arrStr = {
                         0: e.data.data.noemr
                     }
+                    $scope.cc.norec_emr = e.data.data.noemr
                     cacheHelper.set('cacheNomorEMR', arrStr);
                     var objSave = {
                         data: $scope.listItemREV
@@ -2393,34 +2394,46 @@ define(['initialize'], function (initialize) {
 
                             let resp = response.data.data;
 
+                                if (resp.length > 0) {
+                                    $scope.listItemREV = [];
 
-                            $scope.listItemREV = [];
-                            let arr = [];
-                            for (let xx = 0; xx < response.data.data.length; xx++) {
-                                const element = response.data.data[xx];
-                                var namaterangpenerima =
-                                    element.namaterangpenerima != null ?
-                                    element.namaterangpenerima.split("~") :
-                                    null;
-                                var namaterangpemberi =
-                                    element.namaterangpemberi != null ? element.namaterangpemberi.split("~") : null;
+                                    let arr = [];
+                                    for (let xx = 0; xx < response.data.data.length; xx++) {
+                                        const element = response.data.data[xx];
+                                        var namaterangpenerima =
+                                            element.namaterangpenerima != null ?
+                                            element.namaterangpenerima.split("~") :
+                                            null;
+                                        var namaterangpemberi =
+                                            element.namaterangpemberi != null ? element.namaterangpemberi.split("~") : null;
 
-                                arr.push({
-                                    norec: element.norec,
-                                    tgljampenerima: element.tgljampenerima != null ? new Date(element.tgljampenerima) : null,
-                                    tgljampemberi: element.tgljampemberi != null ? new Date(element.tgljampemberi) : null,
-                                    namaterangpemberi: element.namaterangpemberi != null ? {
-                                        value: namaterangpemberi[0],
-                                        text: namaterangpemberi[1],
-                                    } : null,
-                                    namaterangpenerima: element.namaterangpenerima != null ? {
-                                        value: namaterangpenerima[0],
-                                        text: namaterangpenerima[1],
-                                    } : null,
+                                        arr.push({
+                                            norec: element.norec,
+                                            tgljampenerima: element.tgljampenerima != null ? new Date(element.tgljampenerima) : null,
+                                            tgljampemberi: element.tgljampemberi != null ? new Date(element.tgljampemberi) : null,
+                                            namaterangpemberi: element.namaterangpemberi != null ? {
+                                                value: namaterangpemberi[0],
+                                                text: namaterangpemberi[1],
+                                            } : null,
+                                            namaterangpenerima: element.namaterangpenerima != null ? {
+                                                value: namaterangpenerima[0],
+                                                text: namaterangpenerima[1],
+                                            } : null,
 
-                                });
-                            }
-                            $scope.listItemREV = arr;
+                                        });
+                                    }
+                                    $scope.listItemREV = arr;
+                                } else {
+                                    $scope.listItemREV = [{
+                                            norec: null,
+                                            tgljampenerima: null,
+                                            namaterangpenerima: null,
+                                            tgljampemberi: null,
+                                            namaterangpemberi: null,
+                                        },
+                                        // { index: 1,tgljam: $scope.listCPPTNEW[0].id,soap: $scope.listCPPTNEW[1].id,tenagamedis: $scope.listCPPTNEW[2].id }
+                                    ];
+                                }
 
                             // ini buat disabled
                             // for (var i = 0; i <= arr.length - 1; i++) {
