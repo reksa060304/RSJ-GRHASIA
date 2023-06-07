@@ -5236,10 +5236,10 @@ class MasterController extends ApiController{
                 }else{
                     $transMessage = "Ubah";
                     $Kmr = Kamar::where('id',$data['id'])->where('kdprofile', $kdProfile)->first();
+                    // $Kmr->norec = $idJenis;
                 }
                 $Kmr->kodeexternal = 'GRH';
                 $Kmr->namaexternal = '';
-                $Kmr->norec = $idJenis;
                 $Kmr->reportdisplay = '';
                 $Kmr->objectkelasfk = $data['objectkelasfk'];
                 $Kmr->objectruanganfk = $data['objectruanganfk'];
@@ -5331,9 +5331,44 @@ class MasterController extends ApiController{
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
+    public function UpdateStatusEnabledTidur(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        DB::beginTransaction();
+        $data = $request['data'];
+        $transMessage = "";
+        try{
+                $JD = TempatTidur::where('id',$request['id'])->where('kdprofile', $kdProfile)->first();
+                $JD->statusenabled = $request['status'];
+                $JD->save();
+                $transMessage = "Ubah Status";
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+
+        if ($transStatus == 'true') {
+            $transMessage = $transMessage ." sukses";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "as" => 'Feezy',
+            );
+
+        } else {
+            $transMessage = $transMessage ." gagal";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "e"=> $e->getLine() . " | ". $e->getMessage(),
+                "as" => 'Feezy',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
     public function getQTYBedValidation(Request $request)
     {
-        $data = TempatTidur::where('objectkamarfk', $request['kamar'])->get();
+        $data = TempatTidur::where('objectkamarfk', $request['kamar'])->where('statusenabled', true)->get();
         $result = array(
             'data'=> $data
         );

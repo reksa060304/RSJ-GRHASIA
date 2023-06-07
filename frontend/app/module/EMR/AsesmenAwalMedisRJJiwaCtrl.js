@@ -283,6 +283,11 @@ define(['initialize'], function (initialize) {
             medifirstService.get("emr/get-emr-transaksi-detail?noemr=" + nomorEMR + "&emrfk=" + $scope.cc.emrfk, true).then(function (dat) {
                 $scope.item.obj = []
                 $scope.item.obj2 = []
+                let pegawai = JSON.parse(localStorage.getItem('pegawai'))
+                // console.log(pegawai);
+                if (pegawai.jenisPegawai.jenispegawai == 'Dokter') {
+                    $scope.item.obj[300000079] = { value: pegawai.id, text: pegawai.namaLengkap }
+                }
                 medifirstService.get("emr/get-emr-otomatisvitalsign?emrfk=147"+"&noregistrasi="+$scope.cc.noregistrasi).then(function (dat) {
                     var datas = dat.data.data2
                     $scope.isRouteLoading = false
@@ -404,6 +409,12 @@ define(['initialize'], function (initialize) {
                 //     }
                 // }
 
+            })
+            $scope.$watch('item.obj[300000002]', function (newValue, oldValue) {
+                if (newValue != oldValue) {
+                    $scope.item.obj[300000078] = $scope.item.obj[300000002]
+                    
+                }
             })
             $scope.$watch('item.obj[116131]', function (nilai) {
 

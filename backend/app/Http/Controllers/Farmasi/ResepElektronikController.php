@@ -121,7 +121,7 @@ class ResepElektronikController extends ApiController
         }
 
         $data = DB::select(DB::raw("
-                 SELECT so.norec AS norec_order,so.noorder,ps.nocm,ps.namapasien,jk.jeniskelamin,ru.namaruangan AS namaruanganrawat,
+                 select * from(SELECT row_number()over(partition by so.noorder order by apd.tglmasuk desc )as nomor, so.norec AS norec_order,so.noorder,ps.nocm,ps.namapasien,jk.jeniskelamin,ru.namaruangan AS namaruanganrawat,
                         so.tglorder,pg.namalengkap,ru2.namaruangan,so.statusorder,so.namapengambilorder,so.noregistrasifk,pd.noregistrasi,
                         kp.kelompokpasien,apd.norec AS norec_apd,pd.tglregistrasi,ps.tgllahir,kl.namakelas,kl. ID AS klid,so.tglambilorder,
                         sr.noresep,aa.noantri AS aanoantri,aa.jenis AS aajenis,sr.norec AS norecresep,sr.noresep,so.nourutruangan AS noruangan,
@@ -138,7 +138,7 @@ class ResepElektronikController extends ApiController
                  LEFT JOIN antrianapotik_t AS aa ON aa.noresep = sr.noresep
                  INNER JOIN pasiendaftar_t AS pd ON pd.norec = so.noregistrasifk
                  INNER JOIN kelas_m AS kl ON kl.id = pd.objectkelasfk
-                 LEFT JOIN antrianpasiendiperiksa_t AS apd ON apd.noregistrasifk = pd.norec AND apd.objectruanganfk = so.objectruanganfk and apd.objectstrukorderfk = so.norec
+                 LEFT JOIN antrianpasiendiperiksa_t AS apd ON apd.noregistrasifk = pd.norec AND apd.objectruanganfk = so.objectruanganfk
                  LEFT JOIN kelompokpasien_m AS kp ON kp.id = pd.objectkelompokpasienlastfk
                  left join LATERAL (
                     select sp.norec 
@@ -163,7 +163,7 @@ class ResepElektronikController extends ApiController
                 
                  UNION ALL
                  
-                 SELECT  sr.norec AS norec_order,sr.noresep AS noorder,ps.nocm,ps.namapasien,jk.jeniskelamin,ru.namaruangan AS namaruanganrawat,
+                 SELECT row_number()over(partition by sr.noresep order by apd.tglmasuk desc)as nomor, sr.norec AS norec_order,sr.noresep AS noorder,ps.nocm,ps.namapasien,jk.jeniskelamin,ru.namaruangan AS namaruanganrawat,
                          sr.tglresep AS tglorder,pg.namalengkap,ru2.namaruangan,sr.status AS statusorder,
                          sr.namalengkapambilresep AS namapengambilorder,pd.norec AS noregistrasifk,pd.noregistrasi,kp.kelompokpasien,
                          apd.norec AS norec_apd,pd.tglregistrasi,ps.tgllahir,kl.namakelas,kl. ID AS klid,sr.tglambilresep AS tglambilorder,
@@ -201,7 +201,7 @@ class ResepElektronikController extends ApiController
                 $departemenIdOrder
                 $statusIdResep  
                 $checkSOPasienRanap      
-                ORDER BY statusorder asc
+                ORDER BY statusorder asc) as xxx where xxx.nomor = 1
         "));
 
         $status ='';

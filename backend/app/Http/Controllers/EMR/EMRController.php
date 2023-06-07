@@ -12540,6 +12540,11 @@ class EMRController  extends ApiController
                     $CABAK->norec = $CABAK->generateNewId();
                     $CABAK->kdprofile = $kdProfile;
                     $CABAK->statusenabled = true;
+                    $CABAK->emrfk = $head['emrfk'];
+                    $CABAK->emrpasienfk = $head['norec_emr'];
+                    $CABAK->nocm = $head['nocm'];
+                    $CABAK->noregistrasi = $head['noregistrasi'];
+                    $CABAK->pegawaifk = $this->getCurrentUserID();
                 }else{
                     $CABAK = CABAKEMR::where('norec', $d['norec'])->where('statusenabled', true)->where('kdprofile', $kdProfile)->first();
                 }
@@ -12547,11 +12552,6 @@ class EMRController  extends ApiController
                 $CABAK->namaterangpenerima = $d['namaterangpenerima'];
                 $CABAK->tgljampemberi = $d['tgljampemberi'];
                 $CABAK->namaterangpemberi = $d['namaterangpemberi'];
-                $CABAK->emrfk = $head['emrfk'];
-                $CABAK->nocm = $head['nocm'];
-                $CABAK->emrpasienfk = $head['norec_emr'];
-                $CABAK->noregistrasi = $head['noregistrasi'];
-                $CABAK->pegawaifk = $this->getCurrentUserID();
                 $CABAK->save();
             }
             $transStatus = 'true';
@@ -12599,6 +12599,7 @@ class EMRController  extends ApiController
         $noemr = '';
         $noregistrasi = '';
         $nocm = '';
+        $emrfk = '';
         if(isset($request['noemr']) && $request['noemr']!=''){
             $noemr = " and dpo.emrpasienfk = '$request[noemr]'";
         }
@@ -12609,6 +12610,9 @@ class EMRController  extends ApiController
         if(isset($request['noregistrasi']) && $request['noregistrasi']!=''){
             $noregistrasi = " and dpo.noregistrasi = '$request[noregistrasi]'";
         }
+        if(isset($request['emrfk']) && $request['emrfk']!=''){
+            $emrfk = " and dpo.emrfk = '$request[emrfk]'";
+        }
         $data = collect(DB::select("
             select dpo.* from cabakemr_t as dpo
             left join emrpasien_t as emrp on emrp.noemr = dpo.emrpasienfk
@@ -12618,6 +12622,7 @@ class EMRController  extends ApiController
             $noemr
             $nocm
             $noregistrasi
+            $emrfk
             order by dpo.tgljampenerima asc
         "));
         
