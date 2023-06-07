@@ -55,7 +55,15 @@
         .text-top {
             vertical-align: text-top;
         }
-        .footer {
+        .footer2 {
+            text-align: center;
+            position: absolute;
+            left: 67%;
+            bottom: 35%;
+            right: 3%;
+            }
+
+        footer {
             text-align: center;
             position: absolute;
             bottom: 0;
@@ -225,7 +233,7 @@
                 
             </table>
 
-            <div class="footer ">
+            <div class="footer2 ">
                 <table>
                     <tbody>
                         <tr>
@@ -254,7 +262,7 @@
             </div>
         </section>
         <p
-            style="font-size:10px;color: rgb(173, 173, 173); position: absolute; bottom: 0; left: 3%; width: 50%; text-align: center;">
+            style="font-size:10px;color: rgb(173, 173, 173); position: absolute; bottom: 30%; left: 3%; width: 50%; text-align: center;">
             <i>Dokumen ini ditandatangani secara elektronik menggunakan sertifikat elektronik
                 yang diterbitkan oleh Balai Sertifikasi Elektronik (BSrE) Badan Siber dan Sandi Negara</i></p>
     </body>
