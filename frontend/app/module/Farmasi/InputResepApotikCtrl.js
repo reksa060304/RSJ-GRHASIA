@@ -1112,7 +1112,12 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                 if (newValue != oldValue) {
                     if ($scope.item.stok > 0) {
                         // $scope.item.jumlah = parseFloat($scope.item.jumlahxmakan) * parseFloat($scope.item.dosis)
-                        $scope.item.jumlah = (parseFloat($scope.item.jumlahxmakan) * parseFloat($scope.item.dosis)) / parseFloat($scope.item.kekuatan)
+                        if ($scope.item.jenisKemasan.id == 2) {
+                            $scope.item.jumlah = $scope.item.jumlah
+                        } else {
+                            $scope.item.jumlah = (parseFloat($scope.item.jumlahxmakan) * parseFloat($scope.item.dosis)) / parseFloat($scope.item.kekuatan)
+                        }
+                        // $scope.item.jumlah = (parseFloat($scope.item.jumlahxmakan) * parseFloat($scope.item.dosis)) / parseFloat($scope.item.kekuatan)
                         $scope.item.jumlahbulat = $scope.item.jumlah// Math.ceil($scope.item.jumlah);
                     }
                 }
