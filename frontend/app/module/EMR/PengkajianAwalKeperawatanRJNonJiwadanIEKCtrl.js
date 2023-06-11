@@ -25,6 +25,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             var dataLoad = []
             var dataDump = [];
             var norecEMR = ''
+            $scope.now = new Date()
             $scope.isCetak = true
             medifirstService.getPart('emr/get-datacombo-part-pegawai', true, true, 20).then(function (data) {
                 $scope.listPegawai = data
@@ -1215,9 +1216,26 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             }
             var chekedd = false
 
+            
             medifirstService.get("emr/get-emr-transaksi-detail?noemr=" + nomorEMR + "&emrfk=" + $scope.cc.emrfk, true).then(function (dat) {                
                 $scope.item.obj = []
                 $scope.item.obj2 = []
+                $scope.item.obj[3018100] = moment($scope.now).format('YYYY-MM-DD HH:mm')
+                $scope.item.obj[3018531] = moment($scope.now).format('YYYY-MM-DD HH:mm')
+                $scope.item.obj[3018493] = moment($scope.now).format('YYYY-MM-DD HH:mm')
+                $scope.item.obj[3016832] = {
+                    value: medifirstService.getPegawaiLogin().id,
+                    text: medifirstService.getPegawaiLogin().namaLengkap
+                }
+                $scope.item.obj[3018530] = {
+                    value: medifirstService.getPegawaiLogin().id,
+                    text: medifirstService.getPegawaiLogin().namaLengkap
+                }
+                $scope.item.obj[3018533] = {
+                    value: medifirstService.getPegawaiLogin().id,
+                    text: medifirstService.getPegawaiLogin().namaLengkap
+                }
+                
                 medifirstService.get("emr/get-emr-otomatisvitalsign?emrfk=147"+"&noregistrasi="+$scope.cc.noregistrasi).then(function (dat) {
                     var datas = dat.data.data2
                     $scope.isRouteLoading = false
