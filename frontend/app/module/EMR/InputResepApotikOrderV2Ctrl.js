@@ -346,7 +346,8 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                             $scope.item.nilaiKonversi = $scope.dataSelected.nilaikonversi
                             // $scope.item.satuan = {ssid:$scope.dataSelected.satuanstandarfk,satuanstandar:$scope.dataSelected.satuanstandar}
                             // $scope.item.stok = $scope.dataSelected.jmlstok //* $scope.item.nilaiKonversi 
-                            $scope.item.jumlah = $scope.dataSelected.jumlah
+                            $scope.item.jumlah = parseFloat($scope.dataSelected.jumlah)
+                            console.log($scope.item.jumlah);
                             $scope.item.hargaSatuan = $scope.dataSelected.hargasatuan
                             $scope.item.dosis =$scope.dataSelected.dosis
 
@@ -468,8 +469,14 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 if (newValue != oldValue) {
                     // if ($scope.item.stok > 0) {
                         // $scope.item.jumlah = parseFloat($scope.item.jumlahxmakan) * parseFloat($scope.item.dosis)
-                        $scope.item.jumlah = (parseFloat($scope.item.jumlahxmakan) * parseFloat($scope.item.dosis)) / parseFloat($scope.item.kekuatan)
-                    // }
+                        if ($scope.item.jenisKemasan.id == 2){
+                            $scope.item.jumlah = $scope.item.jumlah
+                        }else{
+                            $scope.item.jumlah = (parseFloat($scope.item.jumlahxmakan) * parseFloat($scope.item.dosis)) / parseFloat($scope.item.kekuatan)
+
+                        }
+                    console.log($scope.item.jumlah);
+                        // }
                 }
             });
             $scope.$watch('item.dosis', function (newValue, oldValue) {
@@ -907,12 +914,12 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         $scope.item.jenisRacikan = { id: JR.data.data[0].id, jenisracikan: JR.data.data[0].jenisracikan }
                     });
                 }
-                $scope.item.jumlah = dataSelected.jumlah
+                $scope.item.jumlah = parseFloat(dataSelected.jumlah)
+                // console.log($scope.item.jumlah);
                 $scope.item.jenisKemasan = { id: dataSelected.jeniskemasanfk, jeniskemasan: dataSelected.jeniskemasan }
                 $scope.item.satuanresep = { id: dataSelected.satuanresepfk, satuanresep: dataSelected.satuanresep }
                 $scope.item.satuan = { ssid: dataSelected.satuanstandarfk, satuanstandar: dataSelected.satuanstandar }
                 $scope.item.jumlahxmakan = dataSelected.jumlahxmakan
-                console.log($scope.item.jumlahxmakan);
                 $scope.item.dosis = dataSelected.dosis
                 $scope.item.aturanPakai = { id: dataSelected.aturanpakaifk, name: dataSelected.aturanpakai }
                 $scope.item.aturanpakaitxt = dataSelected.aturanpakai

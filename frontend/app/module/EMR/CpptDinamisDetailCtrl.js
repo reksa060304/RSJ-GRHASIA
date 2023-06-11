@@ -225,30 +225,35 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         "width": "10%",
                     },
                     {
-                        "field": "noemr",
-                        "title": "No EMR",
-                        "width": "15%",
-                        attributes: {
-                            style: "text-align: center;"
-                        } 
-                    },
-                    {
                         "field": "caption",
                         "title": "Nama EMR",
                         "width": "25%",
                     },
                     {
-                        "field": "noregistrasifk",
-                        "title": "No Registrasi",
-                        "width": "15%",
-                        attributes: {
-                            style: "text-align: center;"
-                        } 
+                        "field": "namalengkap",
+                        "title": "Nama Pegawai",
+                        "width": "25%",
                     },
+                    // {
+                    //     "field": "noregistrasifk",
+                    //     "title": "No Registrasi",
+                    //     "width": "15%",
+                    //     attributes: {
+                    //         style: "text-align: center;"
+                    //     } 
+                    // },
                     {
                         "field": "namaruangan",
                         "title": "Nama Ruangan",
                         "width": "25%",
+                    },
+                    {
+                        "field": "noemr",
+                        "title": "No EMR",
+                        "width": "15%",
+                        attributes: {
+                            style: "text-align: center;"
+                        }
                     },
                     {
                         "field": "tglregistrasi",
@@ -571,7 +576,8 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             $scope.addobj = function (id, nextid) {
                 // $scope.item.rcppt[nextid] = "S \n o \n"
                     $scope.item.obj[nextid] = "S : \n\nO : \n\nA : \n\nP : "
-
+                    // cacheHelper.set('buatSOAP', $scope.item.obj[nextid])
+                    // $scope.item.buatdiagnosa = cacheHelper.set('buatSOAP', $scope.item.obj[nextid])
                 // console.log($scope.listDataCppt);
                 for (let i = 0; i < $scope.listDataCppt.length; i++) {
                     if ($scope.listDataCppt[i].id == nextid){
@@ -635,10 +641,10 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 var arrobj = Object.keys($scope.item.obj)
                 var arrSave = []
 
-                if(kelompokUser!= 'dokter' && kelompokUser != 'suster'  && kelompokUser != 'gizi' && kelompokUser != 'apotik' && kelompokUser != 'terapis'){
-                    toastr.error('User bukan dokter/suster/gizi/apotik/terapis');
-                    return
-                }
+                // if(kelompokUser!= 'dokter' && kelompokUser != 'suster'  && kelompokUser != 'gizi' && kelompokUser != 'apotik' && kelompokUser != 'terapis'){
+                //     toastr.error('User bukan dokter/suster/gizi/apotik/terapis');
+                //     return
+                // }
                 // if( $scope.cc.norec_emr !='-' && pegawaiInputDetail !='' && pegawaiInputDetail !=null){
                 //     if(pegawaiInputDetail != medifirstService.getPegawaiLogin().id){
                 //         $scope.allDisabled =true
@@ -685,8 +691,28 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         $scope.item.obj[22034962] = { value: pegawai.jenisPegawai.id, text: pegawai.jenisPegawai.jenispegawai }
                         $scope.item.obj[22034964] = { value: pegawai.id, text: pegawai.namaLengkap }
                     }
+
                 }
             })
+            // $scope.$on('diagnosis', function (event, newData) {
+            //     // $scope.sharedData = newData;
+            //     var data = $scope.item.obj[22034963]; // data yang ingin dipecahkan
+            //     // var dataArray = data.split("\n");
+            //     var s = data.match(/S : (.*?)\n/)[1]
+            //     var o = data.match(/O : (.*?)\n/)[1]
+            //     var a = data.match(/A : (.*?)\n/)[1]
+            //     // var p = data.match(/P : (.*?)''/)[1]
+            //     console.log(a);
+            //     var aa = '',bb = '' 
+            //         var cc = []
+            //     for (var i = newData.length - 1; i >= 0; i--) {
+            //         cc.push(newData[i].kddiagnosa)
+            //         // bb = "," + cc
+            //     }
+            //     aa = cc.join(', ')
+            //     a = aa
+            //     $scope.item.obj[22034963] = "S : " + s + "\n\n" + "O : " + o + "\n\n" + "A : " + a + "\n\n" + "P : "
+            // });
             $scope.$watch('item.obj[22034971]', function(newValue,oldValue){
                 if(newValue!=oldValue){
                     if($scope.item.obj[22034971] !=null && $scope.item.obj[22034972]==undefined){

@@ -134,38 +134,51 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
             $scope.listTahapKegiatan = [
                 { id: 100, tahap: "Semua Kegiatan" },
-                { id: 1, tahap: "Indikatif Murni ~ 4" },
-                { id: 2, tahap: "Murni Definitif ~ 0" },
-                { id: 3, tahap: "Pergeseran APBD ~ 2" },
-                { id: 4, tahap: "Pergeseran APBD ~ 5" },
-                { id: 5, tahap: "Pegeseran BLUD ~ 3" },
-                { id: 6, tahap: "Perubahan APBD ~ 1" },
+                { id: 1, tahap: "Indikatif Murni" },
+                { id: 2, tahap: "Murni Definitif" },
+                { id: 4, tahap: "Pergeseran 1" },
+                { id: 3, tahap: "Pergeseran 2" },
+                { id: 5, tahap: "Pegeseran 3" },
+                { id: 6, tahap: "Perubahan" },
             ];
+            loadDataCombo()
+            function loadDataCombo() {
+                var idpegawai = '';
+                $scope.pegawaiLogin = medifirstService.getPegawaiLogin();
+                $scope.item.organisasi = '1.02.2.22.0.00.01.0004 - RS Jiwa GRHASIA DINKES DIY'
+                console.log($scope.pegawaiLogin)
+                if ($scope.pegawaiLogin.jenisPegawai.jenispegawai == "PenanggungJawab" || ($scope.pegawaiLogin.jenisPegawai.jenispegawai == "DOKTER" && $scope.pegawaiLogin.id != 320263)) {
+                    idpegawai = $scope.pegawaiLogin.id
+                    $scope.disidpegawai = true
+                    $scope.idpegawailogin = $scope.pegawaiLogin.id
+                    $scope.namapegawailogin = $scope.pegawaiLogin.namaLengkap
 
-            medifirstService.get("perencanaan/get-data-combo-pajak").then(function (e) {
-                $scope.listJenisPajak = e.data.data
-            })
+                }
+                medifirstService.get("perencanaan/get-data-combo-pajak").then(function (e) {
+                    $scope.listJenisPajak = e.data.data
+                })
 
-            medifirstService.get("perencanaan/get-data-combo").then(function (e) {
-                $scope.listJenisBelanja = e.data.jenisbelanja
-                $scope.listJenisAnggaran = e.data.jenisanggaran
-                $scope.listDirektur = e.data.direktur
-                $scope.listTahap = e.data.tahap
-                $scope.listAsalProduk = e.data.asalproduk
-                $scope.listKonsolidasi2 = e.data.konsolidasi2
-                //$scope.listSubSubKegiatan = e.data.kegiatansubsub
-                $scope.listKegiatanCombo = e.data.kegiatancombo
-                $scope.listKegiatanComboakhir = e.data.kegiatancombo
-                // $scope.dataSourcePanjarPengembalian = e.data.panjar
-                // $scope.dataSourceSPP = e.data.spp
-                // $scope.dataSourceCariSPM = e.data.carispm
-                $scope.dataSourceSPD = e.data.spd
-                $scope.listKonsolidasi5 = e.data.konsolidasi5
-                $scope.listKonsolidasi4 = e.data.konsolidasi4
-                $scope.listKonsolidasi3 = e.data.konso3
-                $scope.dataSourcePermenKelima = e.data.konsolidasikelima
-                $scope.dataSourcePermenKeempat = e.data.konsolidasikeempat
-            });
+                medifirstService.get("perencanaan/get-data-combo?&idpegawai=" + idpegawai ).then(function (e) {
+                    $scope.listJenisBelanja = e.data.jenisbelanja
+                    $scope.listJenisAnggaran = e.data.jenisanggaran
+                    $scope.listDirektur = e.data.direktur
+                    $scope.listTahap = e.data.tahap
+                    $scope.listAsalProduk = e.data.asalproduk
+                    $scope.listKonsolidasi2 = e.data.konsolidasi2
+                    //$scope.listSubSubKegiatan = e.data.kegiatansubsub
+                    $scope.listKegiatanCombo = e.data.kegiatancombo
+                    $scope.listKegiatanComboakhir = e.data.kegiatancombo
+                    // $scope.dataSourcePanjarPengembalian = e.data.panjar
+                    // $scope.dataSourceSPP = e.data.spp
+                    // $scope.dataSourceCariSPM = e.data.carispm
+                    $scope.dataSourceSPD = e.data.spd
+                    $scope.listKonsolidasi5 = e.data.konsolidasi5
+                    $scope.listKonsolidasi4 = e.data.konsolidasi4
+                    $scope.listKonsolidasi3 = e.data.konso3
+                    $scope.dataSourcePermenKelima = e.data.konsolidasikelima
+                    $scope.dataSourcePermenKeempat = e.data.konsolidasikeempat
+                });
+            }
 
             
             
@@ -324,7 +337,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     console.log($scope.idpegawailogin)
                     console.log(kegiatanGrid)
                     if($scope.idpegawailogin != '' && kegiatanGrid != null){
+                        console.log('kehide');
                         kegiatanGrid.hideColumn(7);
+                        kegiatanGrid.hideColumn(9);
                     }
                     
                     // for (let index = 0; index < e.data.keterangan.length; index++) {
@@ -1510,7 +1525,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                        width: "130px",
                 },
                 {
-                    "title": "#",
+                    "title": "<input type='checkbox' class='checkbox' ng-click='selectUnselectAllRow()' />",
                     template: "# if (statCheckbox) { #" +
                         "<input type='checkbox' class='checkbox' ng-click='selectRow($event)' checked />" +
                         "# } else { #" +
@@ -1564,7 +1579,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                           {
                              text: "Delete",
                              click: deleteKegiatanT,
-                             imageClass: "clinic fa"
+                             imageClass: "clinic fa",
                           },
                       ],
                          title: "",
@@ -2236,7 +2251,14 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
             $scope.$watch('item.hargaSatuanKT', function (newValue, oldValue) {
                 if (newValue != oldValue) {
-
+                    if ($scope.item.hargaSatuanKT.includes(',') ) {
+                        console.log('ada komanya');
+                        $scope.item.hargaSatuanKT = $scope.item.hargaSatuanKT.replace(',', '.');
+                        // $scope.item.hargaSatuanKT = parseFloat($scope.item.hargaSatuanKT.join('.'))
+                    }else{
+                        $scope.item.subTotalKT = $scope.item.hargaSatuanKT
+                    }
+                    
                     $scope.item.subTotalKT = $scope.item.hargaSatuanKT*$scope.item.jmlKT
                     //console.log($scope.item.subTotalKT)
                 }
@@ -2244,7 +2266,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
             $scope.$watch('item.jmlKT', function (newValue, oldValue) {
                 if (newValue != oldValue) {
-
+                    if ($scope.item.jmlKT.includes(',')) {
+                        $scope.item.jmlKT = $scope.item.jmlKT.replace(',', '.')
+                    } else {
+                        $scope.item.jmlKT = $scope.item.jmlKT
+                    }
                     $scope.item.subTotalKT = $scope.item.hargaSatuanKT*$scope.item.jmlKT
                     //console.log($scope.item.subTotalKT)
                 }
@@ -2311,7 +2337,18 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
             $scope.$watch('item.combokegiatan', function (newValue, oldValue) {
                 if (newValue != oldValue) {
-                    medifirstService.get("perencanaan/get-data-combo?subsubkegiatan="+$scope.item.combokegiatan.kode).then(function (e) {
+                    var idpegawai = '';
+                    $scope.pegawaiLogin = medifirstService.getPegawaiLogin();
+                    $scope.item.organisasi = '1.02.2.22.0.00.01.0004 - RS Jiwa GRHASIA DINKES DIY'
+                    console.log($scope.pegawaiLogin)
+                    if ($scope.pegawaiLogin.jenisPegawai.jenispegawai == "PenanggungJawab" || ($scope.pegawaiLogin.jenisPegawai.jenispegawai == "DOKTER" && $scope.pegawaiLogin.id != 320263)) {
+                        idpegawai = $scope.pegawaiLogin.id
+                        $scope.disidpegawai = true
+                        $scope.idpegawailogin = $scope.pegawaiLogin.id
+                        $scope.namapegawailogin = $scope.pegawaiLogin.namaLengkap
+
+                    }
+                    medifirstService.get("perencanaan/get-data-combo?subsubkegiatan=" + $scope.item.combokegiatan.kode + "&idpegawai=" + idpegawai + "&tahun=" + $scope.item.tahunkas).then(function (e) {
                         $scope.listSubSubKegiatanCombo = e.data.kegiatansubsubcombo
                     });
                 }
@@ -4911,7 +4948,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     grid = $("#rincianGrids").data("kendoGrid"),
                     // grid = $("#grid").data("kendoGrid"),
                     dataItem = grid.dataItem(row);
-                // console.log(dataItem);
+                console.log(dataItem);
                 if (checked) {
                     dataItem.statCheckbox2 = true;
                     for (var i = 0; i < $scope.selectedData3.length; i++)
@@ -5008,7 +5045,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     {
                         name: "add",
                         text: "Hapus yang dicentang",
-                        template: '<div class="grid_2"><button ng-hide="disidpegawai" ng-click="hapusCentang2()" class="k-button k-button-icontext k-grid-upload" href="\\#"><span class="k-icon k-i-plus"></span>Hapus yang dicentang</button></div>'
+                        template: '<div class="grid_2"><button ng-click="hapusCentang2()" class="k-button k-button-icontext k-grid-upload" href="\\#"><span class="k-icon k-i-plus"></span>Hapus yang dicentang</button></div>'
                     },
                     {
                         name: "src", 
@@ -5029,7 +5066,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                              width: "100px",
                     },
                     {
-                        "title": "#",
+                        "title": "<input type='checkbox' class='checkbox' ng-click='selectUnselectAllRow2()' />",
                         template: "# if (statCheckbox2) { #" +
                             "<input type='checkbox' class='checkbox' ng-click='selectRow2($event)' checked />" +
                             "# } else { #" +
@@ -5085,6 +5122,83 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     }
                 ]
             };
+			var isCheckAll2 = false
+            $scope.selectUnselectAllRow2 = function () {
+                var tempData = $scope.dataSourceRincianAnggaran._data;
+                console.log(tempData);
+                if (isCheckAll2) {
+                    isCheckAll2 = false;
+                    for (var i = 0; i < tempData.length; i++) {
+                        tempData[i].statCheckbox2 = false;
+                        $scope.selectedData3 = []
+                    }
+                } else {
+                    isCheckAll2 = true;
+                    for (var i = 0; i < tempData.length; i++) {
+                        console.log(tempData[i]);
+                        tempData[i].statCheckbox2 = true;
+                        $scope.selectedData3.push(tempData[i])
+                    }
+                }
+
+                console.log($scope.selectedData3)
+                reloaddataSourceGrid2(tempData);
+            }
+            function reloaddataSourceGrid2(ds) {
+
+                var newDs = new kendo.data.DataSource({
+                    data: ds,
+                    pageSize: 20,
+                    total: ds.length,
+                    serverPaging: true,
+
+                });
+
+                var grid = $('#rincianGrids').data("kendoGrid");
+
+                grid.setDataSource(newDs);
+                grid.refresh();
+
+            }
+            var isCheckAll = false
+            $scope.selectUnselectAllRow = function () {
+                var tempData = $scope.dataSourceKegiatan;
+                console.log(tempData);
+                if (isCheckAll) {
+                    isCheckAll = false;
+                    for (var i = 0; i < tempData.length; i++) {
+                        tempData[i].statCheckbox = false;
+                        $scope.selectedData2 = []
+                    }
+                } else {
+                    isCheckAll = true;
+                    for (var i = 0; i < tempData.length; i++) {
+                        console.log(tempData[i]);
+                        tempData[i].statCheckbox = true;
+                        $scope.selectedData2.push(tempData[i])
+                    }
+                }
+
+                console.log($scope.selectedData2)
+                reloaddataSourceGrid1(tempData);
+            }
+
+            function reloaddataSourceGrid1(ds) {
+
+                var newDs = new kendo.data.DataSource({
+                    data: ds,
+                    pageSize: 20,
+                    total: ds.length,
+                    serverPaging: true,
+
+                });
+
+                var grid = $('#kegGrid').data("kendoGrid");
+
+                grid.setDataSource(newDs);
+                grid.refresh();
+
+            }
             function HapusRincianKas(e){
                 e.preventDefault();
                 var dataItem = this.dataItem($(e.currentTarget).closest("tr"));

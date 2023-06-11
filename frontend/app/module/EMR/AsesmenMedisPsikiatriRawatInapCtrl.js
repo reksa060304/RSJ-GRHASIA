@@ -2294,6 +2294,7 @@ define(['initialize'], function (initialize) {
                     var arrStr = {
                         0: e.data.data.noemr
                     }
+                    $scope.cc.norec_emr = e.data.data.noemr
                     cacheHelper.set('cacheNomorEMR', arrStr);
                     var objSave = {
                         data: $scope.listItemREV
@@ -2324,7 +2325,172 @@ define(['initialize'], function (initialize) {
                         data: arrSave2
                     }
                     medifirstService.postNonMessage('emr/save-emr-cabak', jsonSave2).then(function () {
-                        $rootScope.loadRiwayat();
+                        loadRiwayat2();
+                        async function loadRiwayat2() {
+
+                            // if (nomorEMR == "-") {
+                            //     $scope.item.tgljamdatang = new Date();
+                            //     let pegawai = JSON.parse(localStorage.getItem("pegawai"));
+                            //     return;
+                            // }
+
+                            let cek = await medifirstService.get(
+                                "emr/get-emr-cabak-cek?noemr=" + $scope.cc.norec_emr
+                            );
+                            if (
+                                cek.data.data != null &&
+                                cek.data.data.isnewcabak != null &&
+                                cek.data.data.isnewcabak == true
+                            ) {
+                                $scope.CABAKNEW = true
+                                await medifirstService
+                                    .get(
+                                        "emr/get-emr-cabak?noemr=" + $scope.cc.norec_emr + "&emrfk=" + $scope.cc.emrfk
+                                    )
+                                    .then(async function (response) {
+                                        // $scope.start();
+                                        await medifirstService
+                                            .getPart("emr/get-datacombo-part-pegawai", true, true, 20)
+                                            .then(async function (data) {
+                                                $scope.listPegawai = data;
+                                            });
+
+                                        let resp = response.data.data;
+                                        console.log(resp.length);
+                                        if (resp.length > 0) {
+                                            $scope.listItemREV = [];
+
+                                            let arr = [];
+                                            for (let xx = 0; xx < response.data.data.length; xx++) {
+                                                const element = response.data.data[xx];
+                                                var namaterangpenerima =
+                                                    element.namaterangpenerima != null ?
+                                                    element.namaterangpenerima.split("~") :
+                                                    null;
+                                                var namaterangpemberi =
+                                                    element.namaterangpemberi != null ? element.namaterangpemberi.split("~") : null;
+
+                                                arr.push({
+                                                    norec: element.norec,
+                                                    tgljampenerima: element.tgljampenerima != null ? new Date(element.tgljampenerima) : null,
+                                                    tgljampemberi: element.tgljampemberi != null ? new Date(element.tgljampemberi) : null,
+                                                    namaterangpemberi: element.namaterangpemberi != null ? {
+                                                        value: namaterangpemberi[0],
+                                                        text: namaterangpemberi[1],
+                                                    } : null,
+                                                    namaterangpenerima: element.namaterangpenerima != null ? {
+                                                        value: namaterangpenerima[0],
+                                                        text: namaterangpenerima[1],
+                                                    } : null,
+
+                                                });
+                                            }
+                                            $scope.listItemREV = arr;
+                                        } else {
+                                            $scope.listItemREV = [{
+                                                    norec: null,
+                                                    tgljampenerima: null,
+                                                    namaterangpenerima: null,
+                                                    tgljampemberi: null,
+                                                    namaterangpemberi: null,
+                                                },
+                                                // { index: 1,tgljam: $scope.listCPPTNEW[0].id,soap: $scope.listCPPTNEW[1].id,tenagamedis: $scope.listCPPTNEW[2].id }
+                                            ];
+                                        }
+
+
+                                        // ini buat disabled
+                                        // for (var i = 0; i <= arr.length - 1; i++) {
+                                        //     var element = arr[i];
+                                        //     // element.tgljam2 = false;
+                                        //     // element.soap2 = false;
+                                        //     // element.tenagamedis2 = false;
+                                        //     // element.ppa2 = false;
+                                        //     // element.dpjp2 = false;
+                                        //     // element.tgldpjp2 = false;
+                                        //     // element.dropdpjp2 = false;
+                                        //     // if (element.tenagamedis != null) {
+                                        //     //     if (pegawaiLogin.id != element.tenagamedis.value) {
+                                        //     //         element.tgljam2 = true;
+                                        //     //         element.soap2 = true;
+                                        //     //         element.tenagamedis2 = true;
+                                        //     //         element.ppa2 = true;
+                                        //     //         // element.dpjp2 = true;
+                                        //     //         // element.tgldpjp2 = true;
+                                        //     //         // element.dropdpjp2 = true;
+                                        //     //     }
+                                        //     //     i
+                                        //     // }
+                                        // }
+                                    });
+                            } else {
+                                await medifirstService
+                                    .get(
+                                        "emr/get-emr-transaksi-detail?noemr=" +
+                                        nomorEMR +
+                                        "&emrfk=" +
+                                        $scope.cc.emrfk,
+                                        true
+                                    )
+                                    .then(async function (dat) {
+                                        // get dulu listPegawainya
+                                        // $scope.start();
+                                        await medifirstService
+                                            .getPart("emr/get-datacombo-part-pegawai", true, true, 20)
+                                            .then(async function (data) {
+                                                $scope.listPegawai = data;
+                                            });
+
+                                        if (dat.data.data.length > 0) {
+                                            if (dat.data.data[0].emrfk != $scope.cc.emrfk) {
+                                                return
+                                            }
+                                        }
+                                        dataLoad = dat.data.data;
+                                        if (dataLoad.length == 0) return
+                                        for (let i = 0; i < dataLoad.length; i++) {
+                                            const element = dataLoad[i];
+                                            element.nourut = parseInt(element.nourut);
+                                        }
+                                        dataLoad.sort(function (a, b) {
+                                            if (a.nourut < b.nourut) {
+                                                return -1;
+                                            }
+                                            if (a.nourut > b.nourut) {
+                                                return 1;
+                                            }
+                                            return 0;
+                                        });
+                                        var arrayPUSH = [];
+                                        // for (let zz = 0; zz < $scope.listBaris.length; zz++) {
+                                        //   arrayPUSH.push({
+                                        //     null: null,
+                                        //   });
+                                        // }
+
+                                        for (var i = 0; i <= dataLoad.length - 1; i++) {
+                                            if (
+                                                parseFloat($scope.cc.emrfk) == dataLoad[i].emrfk
+                                                // &&
+                                                // paramsIndex == dataLoad[i].index
+                                            ) {
+                                                setCPPTLAMA(dataLoad[i], arrayPUSH);
+
+                                                // validasina
+                                                // if(pegawaiLogin.id!= dataLoad[i].pegawaifk){
+                                                //     $scope.item.obj2[dataLoad[i].emrdfk] = true
+                                                // }
+                                            }
+                                        }
+
+
+
+                                        // $scope.disabledSimpan = true;
+                                        // $scope.disabledBatal = true;
+                                        // setTimeout(function(){medifirstService.setDisableAllInputElement()  }, 2000);
+                                    });
+                            }
+                        }
 
                     })
                 });
@@ -2393,34 +2559,46 @@ define(['initialize'], function (initialize) {
 
                             let resp = response.data.data;
 
+                                if (resp.length > 0) {
+                                    $scope.listItemREV = [];
 
-                            $scope.listItemREV = [];
-                            let arr = [];
-                            for (let xx = 0; xx < response.data.data.length; xx++) {
-                                const element = response.data.data[xx];
-                                var namaterangpenerima =
-                                    element.namaterangpenerima != null ?
-                                    element.namaterangpenerima.split("~") :
-                                    null;
-                                var namaterangpemberi =
-                                    element.namaterangpemberi != null ? element.namaterangpemberi.split("~") : null;
+                                    let arr = [];
+                                    for (let xx = 0; xx < response.data.data.length; xx++) {
+                                        const element = response.data.data[xx];
+                                        var namaterangpenerima =
+                                            element.namaterangpenerima != null ?
+                                            element.namaterangpenerima.split("~") :
+                                            null;
+                                        var namaterangpemberi =
+                                            element.namaterangpemberi != null ? element.namaterangpemberi.split("~") : null;
 
-                                arr.push({
-                                    norec: element.norec,
-                                    tgljampenerima: element.tgljampenerima != null ? new Date(element.tgljampenerima) : null,
-                                    tgljampemberi: element.tgljampemberi != null ? new Date(element.tgljampemberi) : null,
-                                    namaterangpemberi: element.namaterangpemberi != null ? {
-                                        value: namaterangpemberi[0],
-                                        text: namaterangpemberi[1],
-                                    } : null,
-                                    namaterangpenerima: element.namaterangpenerima != null ? {
-                                        value: namaterangpenerima[0],
-                                        text: namaterangpenerima[1],
-                                    } : null,
+                                        arr.push({
+                                            norec: element.norec,
+                                            tgljampenerima: element.tgljampenerima != null ? new Date(element.tgljampenerima) : null,
+                                            tgljampemberi: element.tgljampemberi != null ? new Date(element.tgljampemberi) : null,
+                                            namaterangpemberi: element.namaterangpemberi != null ? {
+                                                value: namaterangpemberi[0],
+                                                text: namaterangpemberi[1],
+                                            } : null,
+                                            namaterangpenerima: element.namaterangpenerima != null ? {
+                                                value: namaterangpenerima[0],
+                                                text: namaterangpenerima[1],
+                                            } : null,
 
-                                });
-                            }
-                            $scope.listItemREV = arr;
+                                        });
+                                    }
+                                    $scope.listItemREV = arr;
+                                } else {
+                                    $scope.listItemREV = [{
+                                            norec: null,
+                                            tgljampenerima: null,
+                                            namaterangpenerima: null,
+                                            tgljampemberi: null,
+                                            namaterangpemberi: null,
+                                        },
+                                        // { index: 1,tgljam: $scope.listCPPTNEW[0].id,soap: $scope.listCPPTNEW[1].id,tenagamedis: $scope.listCPPTNEW[2].id }
+                                    ];
+                                }
 
                             // ini buat disabled
                             // for (var i = 0; i <= arr.length - 1; i++) {

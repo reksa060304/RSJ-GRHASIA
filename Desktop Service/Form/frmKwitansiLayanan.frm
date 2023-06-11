@@ -155,7 +155,7 @@ End Sub
 Public Sub Cetak(strNorec As String, strKeterangan As String, strIdPegawai As String, strIdRuangan As String, view As String)
 'On Error GoTo errLoad
 Dim strSQL As String
-Dim strFilter As String
+Dim StrFilter As String
 Dim strFilter2 As String
 Set frmKwitansiLayanan = Nothing
 Dim adocmd As New ADODB.Command
@@ -167,9 +167,9 @@ Dim tglSbm, NamaKasir, totalBayar, NoKwitansi As String
 Dim tgllahir As String
 Dim Keterangan As String
 strSQL = ""
-strFilter = ""
+StrFilter = ""
 strFilter2 = ""
-strFilter = strFilter & strFilter2 & " ORDER BY tp.tglpelayanan "
+StrFilter = StrFilter & strFilter2 & " ORDER BY tp.tglpelayanan "
 
 If strKeterangan <> "" Then
     Keterangan = strKeterangan
@@ -207,7 +207,7 @@ End If
                      " INNER join ruangan_m  as ru2 on ru2.id=apdp.objectruanganfk " & _
                      " LEFT JOIN alamat_m as alm on alm.nocmfk = ps.id " & _
                      " LEFT JOIN pegawai_m as pg1 on pg1.id = pd.objectpegawaifk " & _
-                     " where tp.strukfk = '" & strNorec & "' and pro.id <> 402611  " & strFilter
+                     " where tp.strukfk = '" & strNorec & "' and pro.id <> 402611  " & StrFilter
         Else
             
             strSQL = " SELECT '-' AS noregistrasi,CASE WHEN sp.nostruk_intern IS NULL OR sp.nostruk_intern = '' OR sp.nostruk_intern = '-' THEN '-' ELSE pm.nocm END AS nocm, " & _
@@ -281,9 +281,9 @@ End If
         .txtNamaKota.SetText strNamaKota & ", "
         .udtgl.SetUnboundFieldSource ("{ado.tglregistrasi}")
         .usNoregistrasi.SetUnboundFieldSource ("{ado.noregistrasi}")
-        .usNoCM.SetUnboundFieldSource ("if isnull({ado.nocm}) then "" - "" else {ado.nocm} ")
+        .usNoCm.SetUnboundFieldSource ("if isnull({ado.nocm}) then "" - "" else {ado.nocm} ")
         .usnmpasien.SetUnboundFieldSource ("{ado.namapasien}")
-        .usJk.SetUnboundFieldSource ("if isnull({ado.jk}) then "" - "" else {ado.jk} ")
+        .usjk.SetUnboundFieldSource ("if isnull({ado.jk}) then "" - "" else {ado.jk} ")
 
         .usUnitLayanan.SetUnboundFieldSource ("{ado.ruanganperiksa}")
         .usTipe.SetUnboundFieldSource ("{ado.kelompokpasien}")
@@ -302,12 +302,12 @@ End If
         .ucDiskon.SetUnboundFieldSource ("{ado.diskon}")
         .usJumlah.SetUnboundFieldSource ("{ado.jumlah}")
 '       .ucTotal.SetUnboundFieldSource ("{ado.total}")
-        .txtUser.SetText UCase(strIdPegawai)
+        .txtuser.SetText UCase(strIdPegawai)
         .txtTglSbm.SetText tglSbm
         .txtUmur.SetText tgllahir
         '.usNamaKasir.SetUnboundFieldSource ("{ado.namakasir}")
         '.ucTotalBayar.SetUnboundFieldSource ("{ado.totaldibayar}")
-        .txtTotalBayar.SetText Format(totalBayar, "#,##0.#0")
+        .txtTotalBayar.SetText totalBayar
         .txtKasir.SetText NamaKasir
         .ucJasa.SetUnboundFieldSource ("{ado.jasa}")
         .txtNoSbm.SetText NoKwitansi

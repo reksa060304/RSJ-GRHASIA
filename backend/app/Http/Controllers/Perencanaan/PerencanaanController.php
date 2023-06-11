@@ -399,10 +399,40 @@ class PerencanaanController extends ApiController {
         $idmataanggaran = $request['idmataanggaran'];
         $tahapaktif = $request['tahapaktif'];
         $idpeg = $request['idpegawai'];
-
+        $searchbuatpptkanggaran = '';
         $pegawai = '';
+        $listsubkegiatan = [];
+        $listsubsubkegiatan = [];
+        $lisssss = '';
+        $lisssssssssss = '';
+        $setting = \DB::table('settinganggaran_t as st')
+            ->join('pegawai_m as pg','pg.id','=','st.objectkepalabludfk')
+            ->join('tahapanggaran_m as ta','ta.id','=','st.objecttahapaktivfk')
+            ->select('st.*','pg.namalengkap', 'ta.tahap', 'ta.id as idtahap', 'pg.id as idpegawai')
+            ->where('st.kdprofile', $idProfile)
+            ->where('st.statusenabled', true)
+            ->orderBy('st.tahunanggaran')
+            ->get();
         if (isset($request['idpegawai']) && $request['idpegawai'] != "" && $request['idpegawai'] != "undefined") {
             $pegawai = 'and dp.objectpptkfk = '.$idpeg;
+            foreach ($setting as $st) {
+                $ddddd = DB::select(DB::raw("
+            select ka1.id as idsubkegiatan, ka1.kode as kodesubkegiatan, ka.id as idsubsubkegiatan, ka.kode as kodesubsubkegiatan from kegiatananggaran_m ka 
+            inner join kegiatananggaran_m ka1 on ka.kode ilike ka1.kode || '%' and ka1.div= 3 and ka.statusenabled = true
+            where ka.objectpptkfk = $idpeg and ka.tahun ='$st->tahunanggaran'
+            "));
+            }
+            
+            $listsubkegiatan = [];
+            $listsubsubkegiatan = [];
+            foreach ($ddddd as $ddd) {
+                $listsubkegiatan[] = $ddd->idsubkegiatan;
+                if(isset($request['subsubkegiatan']) && $ddd->kodesubkegiatan == $request['subsubkegiatan']){
+                    $listsubsubkegiatan[] = $ddd->idsubsubkegiatan;  
+                }  
+            }
+            $lisssss = join(', ', $listsubkegiatan);
+            $lisssssssssss = join(', ', $listsubsubkegiatan);
         }
 
         $dv = '';
@@ -595,23 +625,33 @@ class PerencanaanController extends ApiController {
             ->where('dp.div', 3)
             ->orderBy('dp.kode')
             ->get();
-        
         $kegiatansubsubcombo = \DB::table('kegiatananggaran_m as dp')
             ->select('dp.id', 'dp.kode', 'dp.keterangan')
             ->where('dp.kdprofile', $idProfile)
+            ->where('dp.tahun', $tahunanggaran)
             ->where('dp.statusenabled', true)
             ->where('dp.div', 4)
-            ->where('dp.kode', 'ilike', '%'.$subsubkegiatan.'%')
-            ->orderBy('dp.kode')
-            ->get();
+            ->where('dp.kode', 'ilike', "%".$subsubkegiatan."%")->orderBy('dp.kode');
+
+            if($lisssssssssss != ''){
+                $kegiatansubsubcombo = $kegiatansubsubcombo->whereIn('dp.id', $listsubsubkegiatan)->get();
+            } else{
+            $kegiatansubsubcombo = $kegiatansubsubcombo->get();
+            }
+
 
         $kegiatancombo = \DB::table('kegiatananggaran_m as dp')
             ->select('dp.id', 'dp.kode', 'dp.keterangan')
             ->where('dp.kdprofile', $idProfile)
             ->where('dp.statusenabled', true)
             ->where('dp.div', 3)
-            ->orderBy('dp.kode')
-            ->get();
+            ->orderBy('dp.kode');
+        if($lisssss != ''){
+            $kegiatancombo = $kegiatancombo->whereIn('dp.id', $listsubkegiatan)->get();
+        } else{
+            $kegiatancombo = $kegiatancombo->get();
+        }
+            // ->get();
 
         $carabayarcombo = \DB::table('carabayarspj_m as cbs')
             ->select('cbs.id', 'cbs.carabayar')
@@ -644,14 +684,7 @@ class PerencanaanController extends ApiController {
         and length(cbs.kodemataanggaran) in (9,10)
         order by subkodepertama asc, subkodekedua asc, subkodeketiga asc, subkodekeempat asc, subkodekelima asc ;"));
 
-        $setting = \DB::table('settinganggaran_t as st')
-            ->join('pegawai_m as pg','pg.id','=','st.objectkepalabludfk')
-            ->join('tahapanggaran_m as ta','ta.id','=','st.objecttahapaktivfk')
-            ->select('st.*','pg.namalengkap', 'ta.tahap', 'ta.id as idtahap', 'pg.id as idpegawai')
-            ->where('st.kdprofile', $idProfile)
-            ->where('st.statusenabled', true)
-            ->orderBy('st.tahunanggaran')
-            ->get();
+        
         
         $direktur = \DB::table('pegawai_m as pg')
             ->select('pg.namalengkap', 'pg.id')
@@ -932,7 +965,7 @@ class PerencanaanController extends ApiController {
             $tglpanjardate = " and pj.tglpanjar::date between '$request[tglsppawal]' and '$request[tglsppakhir]'";
 
         }
-        if(isset($request['tahun'])){
+        if(isset($request['tahun']) && $request['tahun']!= ''){
             $thnpanjar= " and date_part('year', pj.tglpanjar)=". $request['tahun'];
         }
         $panjar = DB::select(DB::raw("
@@ -979,7 +1012,7 @@ class PerencanaanController extends ApiController {
             $tglsppdate = " and spp.tglspp between '$request[tglsppawal]' and '$request[tglsppakhir]'";
 
         }
-        if(isset($request['tahun'])){
+        if(isset($request['tahun']) && $request['tahun']!= ''){
             $thnspp= " and date_part('year', spp.tglspp)=". $request['tahun'];
         }
         $spp = DB::select(DB::raw("select spp.*, spd.nospd , ap.id idasalproduk, ap.asalproduk
@@ -1015,7 +1048,7 @@ class PerencanaanController extends ApiController {
             $tglspmdate = " and spp.tglspp::date between '$request[tglsppawal]' and '$request[tglsppakhir]'";
 
         }
-        if(isset($request['tahun'])){
+        if(isset($request['tahun']) && $request['tahun']!= ''){
             $thnspm= " and date_part('year', spp.tglspp)=". $request['tahun'];
         }
         $carispm = DB::select(DB::raw("select spm.*, spp.nospp, spp.tglspp, ap.id idasalproduk, ap.asalproduk
@@ -1072,6 +1105,7 @@ class PerencanaanController extends ApiController {
             'konso3' => $konso3,
             'konsolidasikeempat' => $konsolidasikeempat,
             'konsolidasikelima' => $konsolidasikelima,
+            'ppppp'=> $listsubsubkegiatan,
             'message' => 'epic',
         );
 
@@ -5918,7 +5952,7 @@ class PerencanaanController extends ApiController {
             ->get();    
             $arrALokasi[] = $dataAlokasi;
         }
-        $dataAlokasiMataanggaran = DB::select(DB::raw("select kodesubkegiatan, keterangansubkegiatan, kode, keterangan, tahun, tahap, kegiatan, kodemataanggaran, namamataanggaran, mataanggaran, sum(subtotal) subtotal, sum(jan::float8) jan, sum(feb::float8) feb, sum(mar::float8) mar,
+        $dataAlokasiMataanggaran = DB::select(DB::raw("select rank()over(order by split_part(kode, '.', 1) asc, split_part(kode, '.', 2)asc,  split_part(kode, '.', 3)asc, split_part(kode, '.', 4)asc, split_part(kode, '.', 5)asc, split_part(kode, '.', 6)::int asc, split_part(kode, '.', 7)::int asc ) as nomor ,kegiatan, kodesubkegiatan, keterangansubkegiatan, kode, keterangan, tahun, tahap, kodemataanggaran, namamataanggaran, mataanggaran, sum(subtotal) subtotal, sum(jan::float8) jan, sum(feb::float8) feb, sum(mar::float8) mar,
         sum(apr::float8) apr, sum(mei::float8) mei, sum(jun::float8) jun, sum(jul::float8) jul, sum(agt::float8) agt, sum(sep::float8) sep,
         sum(okt::float8) okt, sum(nov::float8) nov, sum(des::float8) des,
         coalesce(sum(jan::float8) + sum(feb::float8) + sum(mar::float8) +
@@ -5977,7 +6011,7 @@ class PerencanaanController extends ApiController {
         ) as x group by norec, kodesubkegiatan, keterangansubkegiatan, kode, keterangan, tahun, tahap, subtotal, kegiatan, kodemataanggaran, namamataanggaran, mataanggaran, subkodepertama, subkodekedua, subkodeketiga, subkodekeempat, subkodekelima
         order by subkodepertama asc, subkodekedua asc, subkodeketiga asc, subkodekeempat asc, subkodekelima asc
 ) as y group by kodesubkegiatan, keterangansubkegiatan, kode, keterangan, tahun, tahap, kegiatan, kodemataanggaran, namamataanggaran, mataanggaran, subkodepertama, subkodekedua, subkodeketiga, subkodekeempat, subkodekelima
-order by subkodepertama asc, subkodekedua asc, subkodeketiga asc, subkodekeempat asc, subkodekelima asc
+order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(kode, '.', 3)asc, split_part(kode, '.', 4)asc, split_part(kode, '.', 5)asc, split_part(kode, '.', 6)::int asc, split_part(kode, '.', 7)::int asc,  subkodepertama asc, subkodekedua asc, subkodeketiga asc, subkodekeempat asc, subkodekelima asc
 "));
 
         $detailalokasimataanggaran = DB::select(DB::raw("select norec, keteranganbelanja, kodesubkegiatan, keterangansubkegiatan, kode, keterangan, tahun, tahap, kegiatan, kodemataanggaran, namamataanggaran, mataanggaran, subtotal, sum(jan::float8) jan, sum(feb::float8) feb, sum(mar::float8) mar,

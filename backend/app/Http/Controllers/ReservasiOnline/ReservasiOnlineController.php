@@ -3930,7 +3930,8 @@ class ReservasiOnlineController extends ApiController
             ->select('*')
             ->where('statusenabled', true)
               ->where('kdprofile', $kdProfile)
-            ->where('objectjenispegawaifk',$kdJenisPegawaiDokter)
+            // ->where('objectjenispegawaifk',$kdJenisPegawaiDokter)
+            ->whereNull('usereksternal')
             ->orderBy('namalengkap')
             ->get();
         $dataHari = \DB::table('hari_m as hr')

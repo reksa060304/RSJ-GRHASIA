@@ -679,6 +679,11 @@ define(['initialize'], function (initialize) {
                             "field": "no",
                             "title": "No",
                             "width": "45px",
+                        }, 
+                        {
+                            "field": "kdbhp",
+                            "title": "No Rekening",
+                            "width": "100px",
                         },
                         {
                             "field": "namaexternal",

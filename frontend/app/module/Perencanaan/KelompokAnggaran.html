@@ -1010,6 +1010,26 @@
 <div kendo-window="popupTambah" k-title="'Tambah'" k-visible="false">
 	<div class="panel panel-default container_12">
 		<div class="grid_12">
+			<div class="grid_6">
+				<div class="grid_12">
+					<label c-label item="item" c-label-text="Div"></label>
+				</div>
+				<div class="grid_12">
+					<input style="width: 100%;" kendo-combo-box k-ng-model="item.div" k-data-text-field="'div'"
+						k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listDiv" />
+				</div>
+			</div>
+			<div class="grid_3" ng-hide="disdiv">
+				<div class="grid_12">
+					<label c-label item="item" c-label-text="Tahun"></label>
+				</div>
+				<div class="grid_12">
+					<input style="width: 100%;" k-options="yearUngkul" k-ng-model="item.tahuntambahkegiatan" kendo-date-picker
+						placeholer="YYYY" k-format="'yyyy'" />
+				</div>
+			</div>
+		</div>
+		<div class="grid_12">
 			<div class="grid_3">
 				<div class="grid_12">
 					<label c-label item="item" c-label-text="Kode"></label>
@@ -1026,25 +1046,7 @@
 					<input c-text-box type="input" class="k-textbox" ng-model="item.keteranganAdd" />
 				</div>
 			</div>
-			<div class="grid_6">
-				<div class="grid_12">
-					<label c-label item="item" c-label-text="Div"></label>
-				</div>
-				<div class="grid_12">
-					<input style="width: 100%;" kendo-combo-box k-ng-model="item.div"
-					k-data-text-field="'div'" k-data-value-field="'id'"
-					k-filter="'contains'" k-auto-bind="false" k-data-source="listDiv" />
-				</div>
-			</div>
-			<div class="grid_3" ng-hide="disdiv">
-				<div class="grid_12">
-					<label c-label item="item" c-label-text="Tahun"></label>
-				</div>
-				<div class="grid_12">
-					<input style="width: 100%;" k-options="yearUngkul" k-ng-model="item.tahuntambahkegiatan" kendo-date-picker
-					placeholer="YYYY" k-format="'yyyy'"/>
-				</div>
-			</div>
+			
 		</div>
 		
 		<div class="grid_12">
