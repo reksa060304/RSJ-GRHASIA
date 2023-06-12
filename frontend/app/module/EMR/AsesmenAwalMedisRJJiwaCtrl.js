@@ -303,6 +303,41 @@ define(['initialize'], function (initialize) {
                     
     
                 })
+                medifirstService.get("emr/get-emr-to-emr?noemr="+ nomorEMR + "&emrfk=3000556").then(function (dat) {
+                    
+                   
+                    var datas = dat.data.data
+                    var a = ""
+                    var b = ""
+                    for (var i = datas.length - 1; i >= 0; i--) {
+            
+                        var c = datas[i].caption
+                        b = ", " + c
+                        a = a + b
+                    }
+                    $scope.item.obj[300000096
+                    ] = a.slice(1, a.length)
+                    // console.log($scope.bro);
+                    $scope.isRouteLoading = false
+
+                    for (let i = 0; i < datas.length; i++) {
+                        if(datas[i].type == 'textbox'){
+                            $scope.item.obj[datas[i].idtujuan]= datas[i].value   
+                        }    
+                        if (datas[i].type == "checkbox") {
+                            if (datas[i].value == "1") {
+                                $scope.item.obj[datas[i].idtujuan] = datas[i].value 
+                                console.log(datas[i].type);
+                            }
+                        }       
+                        if (datas[i].type == "textarea") {
+                            $scope.item.obj[datas[i].idtujuan] = datas[i].value
+                        }                         
+                    }
+                    
+                    
+    
+                })
                 $scope.item.obj[116062]=$scope.now
                 $scope.item.obj[116068]={text:$scope.cc.namaruangan,value: $scope.cc.objectruanganfk}
                 $scope.item.obj[300000081] = moment($scope.now).format('YYYY-MM-DD HH:mm')

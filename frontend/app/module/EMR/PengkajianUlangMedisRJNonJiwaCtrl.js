@@ -1156,6 +1156,40 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     
     
                 })
+                medifirstService.get("emr/get-emr-to-emr?noemr="+ nomorEMR + "&emrfk=3000544").then(function (dat) {
+                    
+                   
+                    var datas = dat.data.data
+                    var a = ""
+                    var b = ""
+                    for (var i = datas.length - 1; i >= 0; i--) {
+            
+                        var c = datas[i].caption
+                        b = ", " + c
+                        a = a + b
+                    }
+                    $scope.item.obj[3017315] = a.slice(1, a.length)
+                    // console.log($scope.bro);
+                    $scope.isRouteLoading = false
+
+                    for (let i = 0; i < datas.length; i++) {
+                        if(datas[i].type == 'textbox'){
+                            $scope.item.obj[datas[i].idtujuan]= datas[i].value   
+                        }    
+                        if (datas[i].type == "checkbox") {
+                            if (datas[i].value == "1") {
+                                $scope.item.obj[datas[i].idtujuan] = datas[i].value 
+                                console.log(datas[i].type);
+                            }
+                        }       
+                        if (datas[i].type == "textarea") {
+                            $scope.item.obj[datas[i].idtujuan] = datas[i].value
+                        }                         
+                    }
+                    
+                    
+    
+                })
                 $scope.item.obj[31300216] = { value: $scope.cc.iddpjp , text:  $scope.cc.dokterdpjp }
                 // $scope.item.obj[13305] = { value: $scope.cc.objectruanganfk , text:  $scope.cc.namaruangan }
                 // $scope.item.obj[13306] = { value: $scope.cc.objectkelasfk , text:  $scope.cc.namakelas }
