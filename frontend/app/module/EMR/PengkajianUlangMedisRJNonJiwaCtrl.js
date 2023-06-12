@@ -1124,6 +1124,22 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             medifirstService.get("emr/get-emr-transaksi-detail?noemr=" + nomorEMR + "&emrfk=" + $scope.cc.emrfk, true).then(function (dat) {                
                 $scope.item.obj = []
                 $scope.item.obj2 = []
+                $scope.item.obj[3017300] = moment($scope.now).format('YYYY-MM-DD HH:mm')
+                $scope.item.obj[3017344] = moment($scope.now).format('YYYY-MM-DD HH:mm')
+                $scope.item.obj[3018493] = moment($scope.now).format('YYYY-MM-DD HH:mm')
+                $scope.item.obj[3017325] = {
+                    value: medifirstService.getPegawaiLogin().id,
+                    text: medifirstService.getPegawaiLogin().namaLengkap
+                }
+                $scope.item.obj[3017346] = {
+                    value: medifirstService.getPegawaiLogin().id,
+                    text: medifirstService.getPegawaiLogin().namaLengkap
+                }
+                $scope.item.obj[3018533] = {
+                    value: medifirstService.getPegawaiLogin().id,
+                    text: medifirstService.getPegawaiLogin().namaLengkap
+                }
+                
                 medifirstService.get("emr/get-emr-otomatisvitalsign?emrfk=147"+"&noregistrasi="+$scope.cc.noregistrasi).then(function (dat) {
                     var datas = dat.data.data2
                     $scope.isRouteLoading = false
