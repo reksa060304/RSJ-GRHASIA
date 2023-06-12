@@ -688,7 +688,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         id: dataItem.id,
                         div: dataItem.div,
                     }
-                
+                if(dataItem.islockrba == true){
+                    toastr.error('Sudah dilock!')
+                    return
+                }
                 var confirm = $mdDialog.confirm()
                     .title('Peringatan')
                     .textContent('Yakin ingin menghapus data ?')
@@ -733,8 +736,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
 				})
                 
-                console.log(dataItem)
+                // console.log(dataItem)
                 $scope.norecrcntotalanggaran = dataItem.norec 
+                $scope.datakegiatanbro = dataItem
                 medifirstService.get("perencanaan/get-total-anggaran-rcn?kegiatan=" + $scope.norecrcntotalanggaran).then(function (e) {
                     var total = 0
                     if(e.data.data.length == 0){
@@ -2425,17 +2429,14 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     watchBulan(newValue)
                 }
             });
-            $scope.$watch('item.bln12', function (newValue, oldValue) {
-                if (newValue != oldValue) {
-                    watchBulan(newValue)
-                }
-            });
+            // $scope.$watch('item.bln12', function (newValue, oldValue) {
+            //     if (newValue != oldValue) {
+            //         watchBulan(newValue)
+            //     }
+            // });
 
             function watchBulan(newValue){
                 let totalAlokasi = $scope.item.alokasiSubtotal
-                console.log(totalAlokasi)
-                console.log(parseFloat($scope.item.bln1))
-                console.log(parseFloat($scope.item.bln2))
                 let bln1 = 0
                 if($scope.item.bln1 != undefined){
                     bln1 = $scope.item.bln1
@@ -2480,10 +2481,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 if($scope.item.bln11 != undefined){
                     bln11 = $scope.item.bln11
                 }
-                let bln12 = 0
-                if($scope.item.bln12 != undefined){
-                    bln12 = $scope.item.bln12
-                }
+                // let bln12 = 0
+                // if($scope.item.bln12 != undefined){
+                //     bln12 = $scope.item.bln12
+                // }
                 $scope.item.totalBulanAlokasiDetail = parseFloat(bln1) + 
                 parseFloat(bln2) +
                     parseFloat(bln3) +
@@ -2494,11 +2495,25 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                         parseFloat(bln8) +
                                             parseFloat(bln9) +
                                                 parseFloat(bln10) +
-                                                    parseFloat(bln11) +
-                                                        parseFloat(bln12)
+                                                    parseFloat(bln11) 
+                                                    // +
+                                                        // parseFloat(bln12)
                 $scope.item.totalBulanAlokasiDetail = $scope.item.totalBulanAlokasiDetail.toFixed(2)
                 $scope.item.kurangAlokasiDetail = totalAlokasi - parseFloat($scope.item.totalBulanAlokasiDetail)
                 $scope.item.kurangAlokasiDetail = $scope.item.kurangAlokasiDetail.toFixed(2)
+                $scope.item.bln12 = parseFloat(bln1) +
+                    parseFloat(bln2) +
+                    parseFloat(bln3) +
+                    parseFloat(bln4) +
+                    parseFloat(bln5) +
+                    parseFloat(bln6) +
+                    parseFloat(bln7) +
+                    parseFloat(bln8) +
+                    parseFloat(bln9) +
+                    parseFloat(bln10) +
+                    parseFloat(bln11) 
+                $scope.item.bln12 = totalAlokasi - parseFloat($scope.item.totalBulanAlokasiDetail)
+                $scope.item.bln12 = $scope.item.bln12.toFixed(2)
             }
             
 
@@ -3930,6 +3945,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 
             }
             $scope.HapusPopUpSubSubKegiatan = function(){
+                // console.log($scope.datakegiatanbro);
+                if ($scope.datakegiatanbro.islockrba == true) {
+                    toastr.error('Sudah dilock!')
+                    return
+                }
                 var objSave =
                     {
                         tahap: $scope.item.tahap.id,
@@ -4208,6 +4228,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 
             }
             $scope.SimpanPopUpSubSubKegiatan = function(){
+                if ($scope.datakegiatanbro.islockrba == true) {
+                    toastr.error('Sudah dilock!')
+                    return
+                }
                 var jmlkode = $scope.item.kodeHead + '.' + $scope.item.kode
                 jmlkode = jmlkode.length
                 var divS = 0;
@@ -4970,6 +4994,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 console.log($scope.selectedData3);
             }
             $scope.hapusCentang2 = function(){
+                if ($scope.datakegiatanbro.islockrba == true) {
+                    toastr.error('Sudah dilock!')
+                    return
+                }
                 var confirm = $mdDialog.confirm()
                     .title('Informasi')
                     .htmlContent("Apakah anda yakin ingin menghapus centangan rincian anggaran?")
@@ -5208,6 +5236,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 };
                 //console.log(dataItem);
                 // return 
+                if ($scope.datakegiatanbro.islockrba == true) {
+                    toastr.error('Sudah dilock!')
+                    return
+                }
                 var confirm = $mdDialog.confirm()
                     .title('Informasi')
                     .htmlContent("Apakah anda yakin ingin menghapus " + dataItem.keteranganbelanja + "?")
@@ -5739,7 +5771,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     }
 
                 medifirstService.get("perencanaan/get-lock-entry-spj?subsubkegiatan="+$scope.item.id+"&tahap="+$scope.item.searchtahap.id).then(function (e) {
-                    if(e.data.data[0].islockrba == true){
+                    var datas = e.data.data
+                    if(datas.length >0 && datas[0].islockrba == true){
                         toastr.error('Entry SPJ Sudah Dilock, Silahkan Hubungi Admin Untuk Unlock', 'Informasi');
                         return
                     } else{
@@ -5825,7 +5858,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }
 
             $scope.TambahKeterangan = function(){
-
+                if ($scope.datakegiatanbro.islockrba == true) {
+                    toastr.error('Sudah dilock!')
+                    return
+                }
                 if($scope.idkegiatanangkas != 0){
                     $scope.item.id = $scope.idkegiatanangkas
                 } else{
@@ -5942,6 +5978,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
 
             $scope.TambahPPTK = function(){
+                if($scope.datakegiatanbro.islockrba == true) {
+                    toastr.error('Sudah dilock!')
+                    return
+                }
                 medifirstService.get("perencanaan/get-daftar-pptk"
                     , true).then(function (dat) {
                         $scope.isRouteLoading = false;
@@ -5984,6 +6024,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }
 
             $scope.DeletePPTK = function(){
+                if ($scope.datakegiatanbro.islockrba == true) {
+                    toastr.error('Sudah dilock!')
+                    return
+                }
                 $scope.item.pptktext = ''
                 $scope.item.savepptk = null
             }
@@ -7833,6 +7877,13 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 loadDataGrid()
             }
             $scope.hapusCentang = function () {
+                for (let i = 0; i < $scope.selectedData2.length; i++) {
+                    // const element = $scope.selectedData2[i];
+                    if ($scope.selectedData2[i].islockrba == true){
+                        toastr.error('Pada keterangan ' + $scope.selectedData2[i].keterangan+ ' sudah dilock!')
+                        return
+                    }
+                }
                 var confirm = $mdDialog.confirm()
                     .title('Informasi')
                     .htmlContent("Apakah anda yakin ingin menghapus Kegiatan yang dicentang?")

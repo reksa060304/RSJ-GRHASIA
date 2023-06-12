@@ -452,7 +452,7 @@ class PerencanaanController extends ApiController {
         $thp = '';
         if (isset($request['tahapaktif']) && $request['tahapaktif'] != "" && $request['tahapaktif'] != "undefined" && $request['tahapaktif'] != 100) {
             $thp = 'and kb.objecttahapfk = '.$request['tahapaktif'];
-            $kegiatan = DB::select(DB::raw("select ta.tahap, kb.objecttahapfk, dp.norec, dp0.kode kodesubkegiatan, dp0.keterangan keterangansubkegiatan,
+            $kegiatan = DB::select(DB::raw("select dp.islockrba, ta.tahap, kb.objecttahapfk, dp.norec, dp0.kode kodesubkegiatan, dp0.keterangan keterangansubkegiatan,
                 dp3.kode kodekegiatan, dp3.keterangan keterangankegiatan,
                 dp2.kode kodeprogram, dp2.keterangan keteranganprogram,
                 dp1.kode kodeurusan, dp1.keterangan keteranganurusan, 
@@ -494,7 +494,7 @@ class PerencanaanController extends ApiController {
                             , case when split_part(dp.kode, '.', 6) = '' then '0' else split_part(dp.kode, '.', 6)::int4 end
                             , case when split_part(dp.kode, '.', 7) = '' then '0' else split_part(dp.kode, '.', 7)::int4 end order by subkodeawal asc, subkodekedua asc, subkodeketiga asc, subkodekeempat asc, subkodekelima asc, subkodekeenam asc, subkodeakhir asc"));
         } else if (isset($request['tahapaktif']) && $request['tahapaktif'] != "" && $request['tahapaktif'] != "undefined" && $request['tahapaktif'] == 100) {
-            $kegiatan = DB::select(DB::raw("select ta.tahap, kb.objecttahapfk, dp.norec, dp0.kode kodesubkegiatan, dp0.keterangan keterangansubkegiatan,
+            $kegiatan = DB::select(DB::raw("select dp.islockrba, ta.tahap, kb.objecttahapfk, dp.norec, dp0.kode kodesubkegiatan, dp0.keterangan keterangansubkegiatan,
                 dp3.kode kodekegiatan, dp3.keterangan keterangankegiatan,
                 dp2.kode kodeprogram, dp2.keterangan keteranganprogram,
                 dp1.kode kodeurusan, dp1.keterangan keteranganurusan, 
@@ -534,7 +534,7 @@ class PerencanaanController extends ApiController {
                             , case when split_part(dp.kode, '.', 6) = '' then '0' else split_part(dp.kode, '.', 6)::int4 end
                             , case when split_part(dp.kode, '.', 7) = '' then '0' else split_part(dp.kode, '.', 7)::int4 end order by subkodeawal asc, subkodekedua asc, subkodeketiga asc, subkodekeempat asc, subkodekelima asc, subkodekeenam asc, subkodeakhir asc"));
         } else{
-            $kegiatan = DB::select(DB::raw("select ta.tahap, kb.objecttahapfk, dp.norec, dp0.kode kodesubkegiatan, dp0.keterangan keterangansubkegiatan,
+            $kegiatan = DB::select(DB::raw("select dp.islockrba, ta.tahap, kb.objecttahapfk, dp.norec, dp0.kode kodesubkegiatan, dp0.keterangan keterangansubkegiatan,
                 dp3.kode kodekegiatan, dp3.keterangan keterangankegiatan,
                 dp2.kode kodeprogram, dp2.keterangan keteranganprogram,
                 dp1.kode kodeurusan, dp1.keterangan keteranganurusan, 
@@ -6964,12 +6964,33 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
         $idProfile = (int) $kdProfile;
         $id = $request['kegiatan'];
         $tahun = $request['tahun'];
-
+        $idpeg = $request['idpegawai'];
+        $pegawai = '';
         $thp = '';
         if(isset($request['tahap']) && $request['tahap'] != "undefined" && $request['tahap'] != ""){
             $thp = "and kb.objecttahapfk = ".$request['tahap'];
         }
-        
+        if (isset($request['idpegawai']) && $request['idpegawai'] != "" && $request['idpegawai'] != "undefined") {
+            $pegawai = 'and kg.objectpptkfk = '.$idpeg;
+            // foreach ($setting as $st) {
+            //     $ddddd = DB::select(DB::raw("
+            // select ka1.id as idsubkegiatan, ka1.kode as kodesubkegiatan, ka.id as idsubsubkegiatan, ka.kode as kodesubsubkegiatan from kegiatananggaran_m ka 
+            // inner join kegiatananggaran_m ka1 on ka.kode ilike ka1.kode || '%' and ka1.div= 3 and ka.statusenabled = true
+            // where ka.objectpptkfk = $idpeg and ka.tahun ='$st->tahunanggaran'
+            // "));
+            // }
+            
+            // $listsubkegiatan = [];
+            // $listsubsubkegiatan = [];
+            // foreach ($ddddd as $ddd) {
+            //     $listsubkegiatan[] = $ddd->idsubkegiatan;
+            //     if(isset($request['subsubkegiatan']) && $ddd->kodesubkegiatan == $request['subsubkegiatan']){
+            //         $listsubsubkegiatan[] = $ddd->idsubsubkegiatan;  
+            //     }  
+            // }
+            // $lisssss = join(', ', $listsubkegiatan);
+            // $lisssssssssss = join(', ', $listsubsubkegiatan);
+        }
         $data = DB::select(DB::raw("
         select kg.id, kg.kode, kg.keterangan, kg.id || '-' || kg.keterangan as text,
         ta.tahap || '-' || kg.keterangan as texttahap
@@ -6983,6 +7004,7 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
         and km.id = $id
         and kg.tahun = '$tahun'
         $thp
+        $pegawai
         group by kg.id, kg.kode, kg.keterangan, kg.id || '-' || kg.keterangan, ta.tahap || '-' || kg.keterangan
         ")
         );
