@@ -19,7 +19,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.cc = {}
             var nomorEMR = '-'
             var norecEMR = ''
-
+            $scope.now = new Date();
             $scope.cc.emrfk = 3000426
             var dataLoad = []
             var pegawaiInputDetail= ''
@@ -288,6 +288,17 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             medifirstService.get("emr/get-emr-transaksi-detail?noemr=" + nomorEMR + "&emrfk=" + $scope.cc.emrfk, true).then(function (dat) {
                 $scope.item.obj = []
                 $scope.item.obj2 = []
+                $scope.item.obj[3003987] = moment($scope.now).format('YYYY-MM-DD HH:mm')
+                $scope.item.obj[3003991] = moment($scope.now).format('YYYY-MM-DD HH:mm')
+                $scope.item.obj[3000] = moment($scope.now).format('YYYY-MM-DD HH:mm')
+                $scope.item.obj[3003998] = {
+                    value: medifirstService.getPegawaiLogin().id,
+                    text: medifirstService.getPegawaiLogin().namaLengkap
+                }
+                $scope.item.obj[3000383] = {
+                    value: medifirstService.getPegawaiLogin().id,
+                    text: medifirstService.getPegawaiLogin().namaLengkap
+                }
                 medifirstService.get("emr/get-emr-otomatisvitalsign?emrfk=147"+"&noregistrasi="+$scope.cc.noregistrasi).then(function (dat) {
                     var datas = dat.data.data2
                     $scope.isRouteLoading = false

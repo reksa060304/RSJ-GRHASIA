@@ -22,6 +22,7 @@ define(['initialize'], function (initialize) {
             var pegawaiInputDetail= ''
             $scope.item.kasusbaru = true
             $scope.item.kasuslama = false
+            $scope.now = new Date();
             var urlcetak = ''
             //getfunction
             // loadMenu()
@@ -60,6 +61,63 @@ define(['initialize'], function (initialize) {
                     // $scope.item.obj[3100589] = $scope.cc.umur
                     // $scope.item.obj[3100590] = $scope.cc.jeniskelamin
                     // $scope.item.obj[3100591] = $scope.cc.alamatlengkap
+                   
+                    
+                    loady()
+                    async function loady(){
+                        await medifirstService.getPart('emr/get-datacombo-part-pegawai', true, true, 20).then(function (data) {
+                            $scope.listPegawai = data
+                        })
+                        if(paramsIndex == 1){
+                            $scope.item.obj[3000375] = moment($scope.now).format('YYYY-MM-DD HH:mm')
+                            $scope.item.obj[3000485] = moment($scope.now).format('YYYY-MM-DD HH:mm')
+                            $scope.item.obj[3000] = moment($scope.now).format('YYYY-MM-DD HH:mm')
+                            $scope.item.obj[3000385] = {
+                                value: medifirstService.getPegawaiLogin().id,
+                                text: medifirstService.getPegawaiLogin().namaLengkap
+                            }
+                            $scope.item.obj[3000383] = {
+                                value: medifirstService.getPegawaiLogin().id,
+                                text: medifirstService.getPegawaiLogin().namaLengkap
+                            }
+                            
+                            await medifirstService.get("emr/get-emr-otomatis?noemr=" + nomorEMR + "&emrfk=3000403" + "&emrid=" + $scope.cc.emrfk).then(function (data) {
+                                    var datas = data.data.data
+                                    $scope.isRouteLoading = false
+                                    $scope.item.obj[116062] = $scope.now
+                                    $scope.item.obj[116068] = {
+                                        text: $scope.cc.namaruangan,
+                                        value: $scope.cc.objectruanganfk
+                                    }
+                    
+                                    $scope.item.obj[116201] = true
+                                    $scope.item.obj[116204] = true
+                                    $scope.item.obj[116207] = true
+                                    $scope.item.obj[116210] = true
+                                    $scope.item.obj[116213] = true
+                                    $scope.item.obj[116216] = true
+                                    $scope.item.obj[116219] = true
+                                    $scope.item.obj[116222] = true
+                                    $scope.item.obj[120001] = moment($scope.now).format('YYYY-MM-DD HH:mm')
+                                    $scope.item.obj[120291] = new Date($scope.now)
+                    
+                                    $scope.item.obj[120295] = {
+                                        value: medifirstService.getPegawaiLogin().id,
+                                        text: medifirstService.getPegawaiLogin().namaLengkap
+                                    }
+                                    
+                                    for (let i = 0; i < datas.length; i++) {
+                                        
+                                        if (datas[i].type == "textbox") {
+                                            $scope.item.obj[datas[i].id] = datas[i].value
+                                        }
+                    
+                                    }
+                    
+                                })
+                            
+                        }
+                    }
                     dataLoad = dat.data.data
                     console.log(paramsIndex);
                     for (var i = 0; i <= dataLoad.length - 1; i++) {
@@ -103,7 +161,8 @@ define(['initialize'], function (initialize) {
                         }
                     }
                 })
-            }
+            } else 
+            
 
             medifirstService.getPart('emr/get-datacombo-part-pegawai', true, true, 20).then(function (data) {
                 $scope.listPegawai = data

@@ -21,6 +21,7 @@ define(['initialize','Configuration'], function (initialize, configuration) {
             var pegawaiInputDetail= ''
             $scope.item.kasusbaru = true
             $scope.item.kasuslama = false
+            $scope.now = new Date();
 
             medifirstService.getPart('emr/get-datacombo-part-pegawai', true, true, 20).then(function (data) {
                 $scope.listPegawai = data
@@ -281,6 +282,18 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                 $scope.item.obj[3003979]=$scope.cc.jeniskelamin
                 $scope.item.obj[3003980]=$scope.cc.gawean
                 $scope.item.obj[3003981]=$scope.cc.alamat
+
+                $scope.item.obj[3003971] = moment($scope.now).format('YYYY-MM-DD HH:mm')
+                $scope.item.obj[3003991] = 
+                $scope.item.obj[3000] = moment($scope.now).format('YYYY-MM-DD HH:mm')
+                $scope.item.obj[3003976] = {
+                    value: medifirstService.getPegawaiLogin().id,
+                    text: medifirstService.getPegawaiLogin().namaLengkap
+                }
+                $scope.item.obj[3000383] = {
+                    value: medifirstService.getPegawaiLogin().id,
+                    text: medifirstService.getPegawaiLogin().namaLengkap
+                }
 
 
 
