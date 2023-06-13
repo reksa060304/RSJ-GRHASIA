@@ -181,237 +181,208 @@
                         </td>
                         <td>{{ isset($item[111368]) ? $item[111404] : '' }}</td>
                         <td>
-                            {{ isset($item[111368]) ? $item[111560] : '' }}
-                            <p> {{ isset($item[111368]) ? $item[111561] : '' }}</p>
-                            <p> {{ isset($item[111368]) ? $item[111562] : '' }}</p>
+                            {{ isset($item[111560]) ? $item[111560] : '' }}
+                            <p> {{ isset($item[111561]) ? $item[111561] : '' }}</p>
+                            <p> {{ isset($item[111562]) ? $item[111562] : '' }}</p>
                         </td>
                     </tr>
                 @endif
                 @if (isset($item[111408]))
                     <tr>
-                        <td> {{ isset($item[111368]) ? $item[111408] : '' }}</td>
-                        <td>{{ isset($item[111368]) ? $item[111409] : '' }}</td>
+                        <td> {{ isset($item[111408]) ? $item[111408] : '' }}</td>
+                        <td>{{ isset($item[111409]) ? $item[111409] : '' }}</td>
                         <td>
-                            {{ isset($item[111368]) ? $item[111410] : '' }}
-                            <p> {{ isset($item[111368]) ? $item[111411] : '' }}</p>
+                            {{ isset($item[111410]) ? $item[111410] : '' }}
+                            <p> {{ isset($item[111411]) ? $item[111411] : '' }}</p>
                         </td>
-                        <td>{{ isset($item[111368]) ? $item[111414] : '' }}</td>
+                        <td>{{ isset($item[111414]) ? $item[111414] : '' }}</td>
                         <td>
-                            {{ isset($item[111368]) ? $item[21040380] : '' }}
-                            <p> {{ isset($item[111368]) ? $item[21040381] : '' }}</p>
-                            <p> {{ isset($item[111368]) ? $item[21040382] : '' }}</p>
+                            {{ isset($item[21040380]) ? $item[21040380] : '' }}
+                            <p> {{ isset($item[21040381]) ? $item[21040381] : '' }}</p>
+                            <p> {{ isset($item[21040382]) ? $item[21040382] : '' }}</p>
                         </td>
                     </tr>
                 @endif
                 @if (isset($item[111418]))
                     <tr>
-                        <td> {{ isset($item[111368]) ? $item[111418] : '' }}</td>
-                        <td>{{ isset($item[111368]) ? $item[111419] : '' }}</td>
+                        <td> {{ isset($item[111418]) ? $item[111418] : '' }}</td>
+                        <td>{{ isset($item[111419]) ? $item[111419] : '' }}</td>
                         <td>
-                            {{ isset($item[111368]) ? $item[111420] : '' }}
-                            <p> {{ isset($item[111368]) ? $item[111421] : '' }}</p>
+                            {{ isset($item[111420]) ? $item[111420] : '' }}
+                            <p> {{ isset($item[111421]) ? $item[111421] : '' }}</p>
                         </td>
-                        <td>{{ isset($item[111368]) ? $item[111424] : '' }}</td>
+                        <td>{{ isset($item[111424]) ? $item[111424] : '' }}</td>
                         <td>
-                            {{ isset($item[111368]) ? $item[21040383] : '' }}
-                            <p> {{ isset($item[111368]) ? $item[21040384] : '' }}</p>
-                            <p> {{ isset($item[111368]) ? $item[21040385] : '' }}</p>
+                            {{ isset($item[21040383]) ? $item[21040383] : '' }}
+                            <p> {{ isset($item[21040384]) ? $item[21040384] : '' }}</p>
+                            <p> {{ isset($item[21040385]) ? $item[21040385] : '' }}</p>
                         </td>
                     </tr>
                 @endif
                 @if (isset($item[111428]))
                     <tr>
-                        <td> {{ isset($item[111368]) ? $item[111428] : '' }}</td>
-                        <td>{{ isset($item[111368]) ? $item[111429] : '' }}</td>
+                        <td> {{ isset($item[111428]) ? $item[111428] : '' }}</td>
+                        <td>{{ isset($item[111429]) ? $item[111429] : '' }}</td>
                         <td>
-                            {{ isset($item[111368]) ? $item[111430] : '' }}
-                            <p> {{ isset($item[111368]) ? $item[111431] : '' }}</p>
+                            {{ isset($item[111430]) ? $item[111430] : '' }}
+                            <p> {{ isset($item[111431]) ? $item[111431] : '' }}</p>
                         </td>
-                        <td>{{ isset($item[111368]) ? $item[111434] : '' }}</td>
+                        <td>{{ isset($item[111434]) ? $item[111434] : '' }}</td>
                         <td>
-                            {{ isset($item[111368]) ? $item[21040386] : '' }}
-                            <p> {{ isset($item[111368]) ? $item[21040387] : '' }}</p>
-                            <p> {{ isset($item[111368]) ? $item[21040388] : '' }}</p>
+                            {{ isset($item[21040386]) ? $item[21040386] : '' }}
+                            <p> {{ isset($item[21040387]) ? $item[21040387] : '' }}</p>
+                            <p> {{ isset($item[21040388]) ? $item[21040388] : '' }}</p>
                         </td>
                     </tr>
                 @endif
                 @if (isset($item[111438]))
                     <tr>
-                        <td> {{ isset($item[111368]) ? $item[111438] : '' }}</td>
-                        <td>{{ isset($item[111368]) ? $item[111439] : '' }}</td>
+                        <td> {{ isset($item[111438]) ? $item[111438] : '' }}</td>
+                        <td>{{ isset($item[111439]) ? $item[111439] : '' }}</td>
                         <td>
-                            {{ isset($item[111368]) ? $item[111440] : '' }}
-                            <p> {{ isset($item[111368]) ? $item[111441] : '' }}</p>
+                            {{ isset($item[111440]) ? $item[111440] : '' }}
+                            <p> {{ isset($item[111441]) ? $item[111441] : '' }}</p>
                         </td>
-                        <td>{{ isset($item[111368]) ? $item[111444] : '' }}</td>
+                        <td>{{ isset($item[111444]) ? $item[111444] : '' }}</td>
                         <td>
-                            {{ isset($item[111368]) ? $item[21040389] : '' }}
-                            <p> {{ isset($item[111368]) ? $item[21040390] : '' }}</p>
-                            <p> {{ isset($item[111368]) ? $item[21040391] : '' }}</p>
+                            {{ isset($item[21040389]) ? $item[21040389] : '' }}
+                            <p> {{ isset($item[21040390]) ? $item[21040390] : '' }}</p>
+                            <p> {{ isset($item[21040391]) ? $item[21040391] : '' }}</p>
                         </td>
                     </tr>
                 @endif
                 @if (isset($item[111448]))
                     <tr>
-                        <td> {{ isset($item[111368]) ? $item[111448] : '' }}</td>
-                        <td>{{ isset($item[111368]) ? $item[111449] : '' }}</td>
+                        <td> {{ isset($item[111448]) ? $item[111448] : '' }}</td>
+                        <td>{{ isset($item[111449]) ? $item[111449] : '' }}</td>
                         <td>
-                            {{ isset($item[111368]) ? $item[111450] : '' }}
-                            <p> {{ isset($item[111368]) ? $item[111451] : '' }}</p>
+                            {{ isset($item[111450]) ? $item[111450] : '' }}
+                            <p> {{ isset($item[111451]) ? $item[111451] : '' }}</p>
                         </td>
-                        <td>{{ isset($item[111368]) ? $item[111454] : '' }}</td>
+                        <td>{{ isset($item[111454]) ? $item[111454] : '' }}</td>
                         <td>
-                            {{ isset($item[111368]) ? $item[21040392] : '' }}
-                            <p> {{ isset($item[111368]) ? $item[21040393] : '' }}</p>
-                            <p> {{ isset($item[111368]) ? $item[21040394] : '' }}</p>
+                            {{ isset($item[21040392]) ? $item[21040392] : '' }}
+                            <p> {{ isset($item[21040393]) ? $item[21040393] : '' }}</p>
+                            <p> {{ isset($item[21040394]) ? $item[21040394] : '' }}</p>
                         </td>
                     </tr>
                 @endif
                 @if (isset($item[111458]))
                     <tr>
-                        <td> {{ isset($item[111368]) ? $item[111458] : '' }}</td>
-                        <td>{{ isset($item[111368]) ? $item[111459] : '' }}</td>
+                        <td> {{ isset($item[111458]) ? $item[111458] : '' }}</td>
+                        <td>{{ isset($item[111459]) ? $item[111459] : '' }}</td>
                         <td>
-                            {{ isset($item[111368]) ? $item[111460] : '' }}
-                            <p> {{ isset($item[111368]) ? $item[111460] : '' }}</p>
+                            {{ isset($item[111460]) ? $item[111460] : '' }}
+                            <p> {{ isset($item[111460]) ? $item[111460] : '' }}</p>
                         </td>
-                        <td>{{ isset($item[111368]) ? $item[111464] : '' }}</td>
+                        <td>{{ isset($item[111464]) ? $item[111464] : '' }}</td>
                         <td>
-                            {{ isset($item[111368]) ? $item[21040395] : '' }}
-                            <p> {{ isset($item[111368]) ? $item[21040396] : '' }}</p>
-                            <p> {{ isset($item[111368]) ? $item[21040397] : '' }}</p>
+                            {{ isset($item[21040395]) ? $item[21040395] : '' }}
+                            <p> {{ isset($item[21040396]) ? $item[21040396] : '' }}</p>
+                            <p> {{ isset($item[21040397]) ? $item[21040397] : '' }}</p>
                         </td>
                     </tr>
                 @endif
                 @if (isset($item[111473]))
                     <tr>
-                        <td> {{ isset($item[111368]) ? $item[111473] : '' }}</td>
-                        <td>{{ isset($item[111368]) ? $item[111474] : '' }}</td>
+                        <td> {{ isset($item[111473]) ? $item[111473] : '' }}</td>
+                        <td>{{ isset($item[111474]) ? $item[111474] : '' }}</td>
                         <td>
-                            {{ isset($item[111368]) ? $item[111475] : '' }}
-                            <p> {{ isset($item[111368]) ? $item[111476] : '' }}</p>
+                            {{ isset($item[111475]) ? $item[111475] : '' }}
+                            <p> {{ isset($item[111476]) ? $item[111476] : '' }}</p>
                         </td>
-                        <td>{{ isset($item[111368]) ? $item[111479] : '' }}</td>
+                        <td>{{ isset($item[111479]) ? $item[111479] : '' }}</td>
                         <td>
-                            {{ isset($item[111368]) ? $item[21040398] : '' }}
-                            <p> {{ isset($item[111368]) ? $item[21040399] : '' }}</p>
-                            <p> {{ isset($item[111368]) ? $item[21040400] : '' }}</p>
+                            {{ isset($item[21040398]) ? $item[21040398] : '' }}
+                            <p> {{ isset($item[21040399]) ? $item[21040399] : '' }}</p>
+                            <p> {{ isset($item[21040400]) ? $item[21040400] : '' }}</p>
                         </td>
                     </tr>
                 @endif
                 @if (isset($item[111483]))
                     <tr>
-                        <td> {{ isset($item[111368]) ? $item[111483] : '' }}</td>
-                        <td>{{ isset($item[111368]) ? $item[111484] : '' }}</td>
+                        <td> {{ isset($item[111483]) ? $item[111483] : '' }}</td>
+                        <td>{{ isset($item[111484]) ? $item[111484] : '' }}</td>
                         <td>
-                            {{ isset($item[111368]) ? $item[111485] : '' }}
-                            <p> {{ isset($item[111368]) ? $item[111486] : '' }}</p>
+                            {{ isset($item[111485]) ? $item[111485] : '' }}
+                            <p> {{ isset($item[111486]) ? $item[111486] : '' }}</p>
                         </td>
-                        <td>{{ isset($item[111368]) ? $item[111489] : '' }}</td>
+                        <td>{{ isset($item[111489]) ? $item[111489] : '' }}</td>
                         <td>
-                            {{ isset($item[111368]) ? $item[21040401] : '' }}
-                            <p> {{ isset($item[111368]) ? $item[21040402] : '' }}</p>
-                            <p> {{ isset($item[111368]) ? $item[21040403] : '' }}</p>
+                            {{ isset($item[21040401]) ? $item[21040401] : '' }}
+                            <p> {{ isset($item[21040402]) ? $item[21040402] : '' }}</p>
+                            <p> {{ isset($item[21040403]) ? $item[21040403] : '' }}</p>
                         </td>
                     </tr>
                 @endif
                 @if (isset($item[111493]))
                     <tr>
-                        <td> {{ isset($item[111368]) ? $item[111493] : '' }}</td>
-                        <td>{{ isset($item[111368]) ? $item[111494] : '' }}</td>
+                        <td> {{ isset($item[111493]) ? $item[111493] : '' }}</td>
+                        <td>{{ isset($item[111494]) ? $item[111494] : '' }}</td>
                         <td>
-                            {{ isset($item[111368]) ? $item[111495] : '' }}
-                            <p> {{ isset($item[111368]) ? $item[111496] : '' }}</p>
+                            {{ isset($item[111495]) ? $item[111495] : '' }}
+                            <p> {{ isset($item[111496]) ? $item[111496] : '' }}</p>
                         </td>
-                        <td>{{ isset($item[111368]) ? $item[111499] : '' }}</td>
+                        <td>{{ isset($item[111499]) ? $item[111499] : '' }}</td>
                         <td>
-                            {{ isset($item[111368]) ? $item[21040404] : '' }}
-                            <p> {{ isset($item[111368]) ? $item[21040405] : '' }}</p>
-                            <p> {{ isset($item[111368]) ? $item[21040406] : '' }}</p>
+                            {{ isset($item[21040404]) ? $item[21040404] : '' }}
+                            <p> {{ isset($item[21040405]) ? $item[21040405] : '' }}</p>
+                            <p> {{ isset($item[21040406]) ? $item[21040406] : '' }}</p>
                         </td>
                     </tr>
                 @endif
                 @if (isset($item[111503]))
                     <tr>
-                        <td> {{ isset($item[111368]) ? $item[111503] : '' }}</td>
-                        <td>{{ isset($item[111368]) ? $item[111504] : '' }}</td>
+                        <td> {{ isset($item[111503]) ? $item[111503] : '' }}</td>
+                        <td>{{ isset($item[111504]) ? $item[111504] : '' }}</td>
                         <td>
-                            {{ isset($item[111368]) ? $item[111505] : '' }}
-                            <p> {{ isset($item[111368]) ? $item[111506] : '' }}</p>
+                            {{ isset($item[111505]) ? $item[111505] : '' }}
+                            <p> {{ isset($item[111506]) ? $item[111506] : '' }}</p>
                         </td>
-                        <td>{{ isset($item[111368]) ? $item[111509] : '' }}</td>
+                        <td>{{ isset($item[111509]) ? $item[111509] : '' }}</td>
                         <td>
-                            {{ isset($item[111368]) ? $item[21040407] : '' }}
-                            <p> {{ isset($item[111368]) ? $item[21040408] : '' }}</p>
-                            <p> {{ isset($item[111368]) ? $item[21040409] : '' }}</p>
+                            {{ isset($item[21040407]) ? $item[21040407] : '' }}
+                            <p> {{ isset($item[21040408]) ? $item[21040408] : '' }}</p>
+                            <p> {{ isset($item[21040409]) ? $item[21040409] : '' }}</p>
                         </td>
                     </tr>
                 @endif
                 @if (isset($item[111513]))
                     <tr>
-                        <td> {{ isset($item[111368]) ? $item[111513] : '' }}</td>
-                        <td>{{ isset($item[111368]) ? $item[111514] : '' }}</td>
+                        <td> {{ isset($item[111513]) ? $item[111513] : '' }}</td>
+                        <td>{{ isset($item[111514]) ? $item[111514] : '' }}</td>
                         <td>
-                            {{ isset($item[111368]) ? $item[111515] : '' }}
-                            <p> {{ isset($item[111368]) ? $item[111516] : '' }}</p>
+                            {{ isset($item[111515]) ? $item[111515] : '' }}
+                            <p> {{ isset($item[111516]) ? $item[111516] : '' }}</p>
                         </td>
-                        <td>{{ isset($item[111368]) ? $item[111519] : '' }}</td>
+                        <td>{{ isset($item[111519]) ? $item[111519] : '' }}</td>
                         <td>
-                            {{ isset($item[111368]) ? $item[21040410] : '' }}
-                            <p> {{ isset($item[111368]) ? $item[21040411] : '' }}</p>
-                            <p> {{ isset($item[111368]) ? $item[21040412] : '' }}</p>
+                            {{ isset($item[21040410]) ? $item[21040410] : '' }}
+                            <p> {{ isset($item[21040411]) ? $item[21040411] : '' }}</p>
+                            <p> {{ isset($item[21040412]) ? $item[21040412] : '' }}</p>
                         </td>
                     </tr>
                 @endif
                 @if (isset($item[111523]))
                     <tr>
-                        <td> {{ isset($item[111368]) ? $item[111523] : '' }}</td>
-                        <td>{{ isset($item[111368]) ? $item[111524] : '' }}</td>
+                        <td> {{ isset($item[111523]) ? $item[111523] : '' }}</td>
+                        <td>{{ isset($item[111524]) ? $item[111524] : '' }}</td>
                         <td>
-                            {{ isset($item[111368]) ? $item[111525] : '' }}
-                            <p> {{ isset($item[111368]) ? $item[111526] : '' }}</p>
+                            {{ isset($item[111525]) ? $item[111525] : '' }}
+                            <p> {{ isset($item[111526]) ? $item[111526] : '' }}</p>
                         </td>
-                        <td>{{ isset($item[111368]) ? $item[111529] : '' }}</td>
+                        <td>{{ isset($item[111529]) ? $item[111529] : '' }}</td>
                         <td>
-                            {{ isset($item[111368]) ? $item[21040413] : '' }}
-                            <p> {{ isset($item[111368]) ? $item[21040414] : '' }}</p>
-                            <p> {{ isset($item[111368]) ? $item[21040415] : '' }}</p>
+                            {{ isset($item[21040413]) ? $item[21040413] : '' }}
+                            <p> {{ isset($item[21040414]) ? $item[21040414] : '' }}</p>
+                            <p> {{ isset($item[21040415]) ? $item[21040415] : '' }}</p>
                         </td>
                     </tr>
                 @endif
             </table>
 
-            <div class="footer ">
-                <table>
-                    <tbody>
-                        <tr>
-                            <td width="33%" style="text-align: center"> </td>
-                            <td width="33%"></td>
-                            <td width="33%"><b>Yogyakarta</b>, {!! date('d-m-Y') !!} <br>
-                                <b>Dokter Penanggung Jawab</b>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td height="100px"> </td>
-                        </tr>
-                        <tr>
-                            <td style="text-align: center"></td>
-                            <td style="text-align: center">&nbsp;</td>
-                            <td style="text-align: center">
-                                {{-- <br>{!! $res['d'][0]->namadokter == null ? ($peg!=null?$peg->namalengkap:'-'): $res['d'][0]->namadokter !!} --}}
-                                <br>{!! $peg != null ? $peg->namalengkap : '-' !!}
-                            </td>
-                        </tr>
-                      
-                    </tbody>
-                </table>
-            </div>
+            
         </section>
-        <p
-            style="font-size:10px;color: rgb(173, 173, 173); position: absolute; bottom: 0; left: 3%; width: 50%; text-align: center;">
-            <i>Dokumen ini ditandatangani secara elektronik menggunakan sertifikat elektronik
-                yang diterbitkan oleh Balai Sertifikasi Elektronik (BSrE) Badan Siber dan Sandi Negara</i></p>
+        
     </body>
 @endsection
