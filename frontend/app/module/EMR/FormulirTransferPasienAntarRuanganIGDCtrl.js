@@ -64,8 +64,8 @@ define(['initialize'], function (initialize) {
                    
                     
                     loady()
-                    async function loady(){
-                        await medifirstService.getPart('emr/get-datacombo-part-pegawai', true, true, 20).then(function (data) {
+                    function loady(){
+                        medifirstService.getPart('emr/get-datacombo-part-pegawai', true, true, 20).then(function (data) {
                             $scope.listPegawai = data
                         })
                         if(paramsIndex == 1){
@@ -81,7 +81,7 @@ define(['initialize'], function (initialize) {
                                 text: medifirstService.getPegawaiLogin().namaLengkap
                             }
                             
-                            await medifirstService.get("emr/get-emr-otomatis?noemr=" + nomorEMR + "&emrfk=3000403" + "&emrid=" + $scope.cc.emrfk).then(function (data) {
+                            medifirstService.get("emr/get-emr-otomatis?noemr=" + nomorEMR + "&emrfk=3000403" + "&emrid=" + $scope.cc.emrfk).then(function (data) {
                                     var datas = data.data.data
                                     $scope.isRouteLoading = false
                                     $scope.item.obj[116062] = $scope.now

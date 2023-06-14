@@ -4,9 +4,13 @@ define(['initialize', 'Configuration'], function (initialize, config) {
         function ($q, $scope, $state, medifirstService, $timeout, cacheHelper, $rootScope) {
             $scope.isRouteLoading = false;
             $scope.now = new Date()
-            $scope.item = {
-                tglresume: $scope.now
-            } // set defined object
+            $scope.item = {}
+            // $scope.item = {
+            //     tglresume: $scope.now,
+            //     // alasanDirawat: ''
+            // }
+            $scope.cc = {
+            }  // set defined object
             $scope.isGrid = true
             $scope.isNext = true
             var data2 = []
@@ -138,6 +142,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             init();
 
             $scope.showInput = function () {
+                
                 $scope.isEdit = true
                 $scope.isGrid = false
                 $scope.item = {}
@@ -145,10 +150,17 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 $scope.sourceResume = new kendo.data.DataSource({
                     data: data2
                 });
+                
                 loadDataPemeriksaan();
             }
 
             function loadDataPemeriksaan() {
+                medifirstService.get("emr/get-ringkasan-pulang21?noregistrasi=" + $scope.cc.noregistrasi).then(
+                    function (dat) {
+                    $scope.item.alasanDirawat  = dat.data.data[0].value
+                    // console.log ($scope.item.alasanDirawat)
+                   // $scope.item.hasilfisik = dat.data.data2[0].value, dat.data.data2[1].value,  dat.data.data2[2].value,  dat.data.data2[3].value,  dat.data.data2[4].value, dat.data.data2[5].value
+                })
                 medifirstService.get("emr/get-data-perawatan?norec_apd=" + $scope.norecAPD).then(function (data) {                 
                     var datas = data.data;                   
                     if (datas.diagnosaawal.length > 0) {
@@ -178,6 +190,31 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     }                  
                 })
             }
+            var chacePeriode = cacheHelper.get('cacheRekamMedis');
+            if (chacePeriode != undefined) {
+                $scope.cc.nocm = chacePeriode[0]
+                $scope.cc.namapasien = chacePeriode[1]
+                $scope.cc.jeniskelamin = chacePeriode[2]
+                $scope.cc.noregistrasi = chacePeriode[3]
+                $scope.cc.umur = chacePeriode[4]
+                $scope.cc.kelompokpasien = chacePeriode[5]
+                $scope.cc.tglregistrasi = chacePeriode[6]
+                $scope.cc.norec = chacePeriode[7]
+                $scope.cc.norec_pd = chacePeriode[8]
+                $scope.cc.objectkelasfk = chacePeriode[9]
+                $scope.cc.namakelas = chacePeriode[10]
+                $scope.cc.objectruanganfk = chacePeriode[11]
+                $scope.cc.namaruangan = chacePeriode[12]
+                $scope.cc.DataNoregis = chacePeriode[12]
+                $scope.cc.dokterdpjp = chacePeriode[16]
+                $scope.cc.iddpjp = chacePeriode[17]
+                $scope.cc.alamat = chacePeriode[15]
+                $scope.cc.tglLahir = chacePeriode[18]
+                
+            }
+            
+
+            
 
             function loadisiDiagnosa() {
                 medifirstService.getPart("emr/get-combo-icd10", true, true, 10).then(function (data) {
