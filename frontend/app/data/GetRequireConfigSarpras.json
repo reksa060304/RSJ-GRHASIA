@@ -229,6 +229,10 @@
             "urlDep": "module/Logistik/OrderBarangLogistikCtrl"
         },
         {
+            "nameDep": "DaftarOrderBarangVerifikasiCtrl",
+            "urlDep": "module/Logistik/DaftarOrderBarangVerifikasiCtrl"
+        },
+        {
             "nameDep": "DaftarOrderBarangCtrl",
             "urlDep": "module/Logistik/DaftarOrderBarangCtrl"
         },
@@ -1229,6 +1233,10 @@
         {
             "nameDep": "MasterProdukApotikCtrl",
             "urlDep": "module/Farmasi/MasterProdukApotikCtrl"
+        },
+        {
+            "nameDep": "LaporanPenyerapanAnggaranVerifCtrl",
+            "urlDep": "module/Perencanaan/LaporanPenyerapanAnggaranVerifCtrl"
         }
     ]
 }

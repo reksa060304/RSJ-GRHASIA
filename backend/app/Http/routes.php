@@ -687,8 +687,11 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('emr/get-soap', 'Bridging\DokterKeluargaController@getSOAP');
           Route::post('emr/simpan-cppt', 'EMR\EMRController@SaveTransaksiEMRBackup');
           Route::post('emr/save-emr-cakem', 'EMR\EMRController@saveCakem');
+          Route::post('emr/save-emr-cakemv2', 'EMR\EMRController@saveCakemV2');
           Route::get('emr/get-emr-cakem', 'EMR\EMRController@getCakem');
           Route::post('emr/hapus-emr-cakem', 'EMR\EMRController@hapusCakem');
+          Route::post('cakem/simpan-tindakan', 'EMR\EMRController@simpanTindakan');
+          Route::post('cakem/simpan-evaluasi', 'EMR\EMRController@simpanEvaluasi');
           // Route::post('emr/save-emr-dinamis', 'EMR\EMRController@SaveTransaksiEMR');
           Route::get('emr/get-masalah-keperawatan', 'EMR\EMRController@getEMRMasalahKeperawatan');
           Route::get('emr/get-emr-transaksi', 'EMR\EMRController@getEMRTransaksiRiwayat');
@@ -1437,6 +1440,9 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('logistik/get-detail-order-barang-ruangan', 'Logistik\LogistikController@getDetailOrderBarang');
             Route::get('logistik/get-produkdetail', 'Logistik\LogistikController@getProdukDetail');
             Route::get('logistik/get-data-order-barang-ruangan', 'Logistik\LogistikController@getDaftarOrderBarang');
+            Route::get('logistik/get-data-order-barang-ruangan-baru', 'Logistik\LogistikController@getDaftarOrderBarangBaru');
+            Route::post('logistik/update-op', 'Logistik\LogistikController@saveOP');
+            Route::post('cppt/hapus-bariscppt', 'EMR\EMRController@hapusBarisCPPT');
             Route::get('logistik/get-detail-kirim-barang-ruangan', 'Logistik\LogistikController@getDetailKirimBarang');
             Route::get('logistik/get-detail-order-for-kirim-barang', 'Logistik\LogistikController@getDetailOrderBarangForKirim');
             Route::get('logistik/get-perencanaan-kebutuhan', 'Logistik\LogistikController@getPerencanaanKebutuhan');

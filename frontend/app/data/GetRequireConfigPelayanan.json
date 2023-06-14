@@ -3650,6 +3650,10 @@
         {
             "nameDep": "PengkajianTumbangGrhCtrl",
             "urlDep": "module/EMR/PengkajianTumbangGrhCtrl"
+        },
+        {
+            "nameDep": "CpptREVCtrl",
+            "urlDep": "module/EMR/CpptREVCtrl"
         }
     ]
 }

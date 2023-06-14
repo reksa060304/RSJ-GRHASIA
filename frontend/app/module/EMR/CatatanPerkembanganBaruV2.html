@@ -1,0 +1,238 @@
+<style type="text/css">
+    fieldset {
+        border-radius: 5px;
+        border: 1px solid #228be6;
+    }
+
+    .k-slider-horizontal {
+        display: inline-block;
+        width: 450px;
+
+        height: 26px;
+
+
+    }
+
+    .k-slider {
+
+        margin-left: 3%;
+        margin-right: 3%;
+        margin-top: 1%;
+        margin-bottom: 5%;
+        display: inline-block;
+    }
+    .k-grid td {
+    vertical-align: top;
+    /* padding-top: 4px; bisa disesuaikan */
+    }
+    .activeBtn {
+        background-color: #10c4b2;
+        color: #ffffff;
+    }
+
+    table,
+    th,
+    td {
+        border: 1px solid #929191;
+        border-collapse: collapse;
+        padding: 5px;
+    }
+
+    th,
+    td {
+        padding: 5px;
+        text-align: left;
+    }
+</style>
+
+<div class="grid_12">
+    <div class="grid_12">
+        <div class="panel panel-default container_12">
+            <div class="panel-heading" c-translate> Catatan Perkembangan</div>
+        </div>
+        <fieldset style="margin-top: 10px">
+            <div class="grid_12">
+                <table border="1">
+                    <tr>
+                        <td colspan="5">
+                            <div class="grid_12">
+                                <div class="grid_3">
+                                    <div class="grid_12">
+                                        <label c-label item="item">Tanggal</label>
+                                    </div>
+                                    <div class="grid_12">
+                                        <input k-ng-model="item.tanggal" kendo-datepicker
+                                            placeholer="dd-MM-yyyy" k-format="'dd-MM-yyyy'" on-change="loaddataaaa()"
+                                            parsedate="dd-MM-yyyy" />
+                                    </div>
+                                </div>
+                                <div class="grid_3">
+                                    <div class="grid_12">
+                                        <label c-label item="item">Shift</label>
+                                    </div>
+                                    <div class="grid_12">
+                                        <input  kendo-combo-box k-ng-model="item.shift"
+                                            k-data-text-field="'shift'" k-data-value-field="'id'" k-filter="'contains'"
+                                            k-auto-bind="false" k-data-source="listShift" />
+                                    </div>
+                                </div>
+                                <div class="grid_3 ">
+                                    <div class="grid_12">
+                                        <label c-label item="item">Pegawai</label>
+                                    </div>
+                                    <div class="grid_12">
+                                        <input  kendo-combo-box k-ng-model="item.pegawai"
+                                            k-data-text-field="'text'" k-data-value-field="'value'"
+                                            k-filter="'contains'" k-auto-bind="false" k-data-source="listPegawai" />
+                                    </div>
+                                </div>
+                                <div class="grid_3">
+                                    <div class="grid_12" 
+                                        ng-show='tombolSimpanVis' >
+                                        <button class="btnTemplate1" style="margin-top:20px"
+                                            ng-click="TambahEvaluasi()"><i class="fa fa-save"></i>Tambah
+                                            Evaluasi</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th style="text-align: center;" colspan="5">Hasil Evaluasi dan Perkembangan Tanggal : <input
+                                k-ng-model="item.tanggal" kendo-datepicker placeholer="dd-MM-yyyy"
+                                k-format="'dd-MM-yyyy'" parsedate="dd-MM-yyyy" ng-disabled="true" /> <br> Pasien:
+                            {{cc.namapasien}} </th>
+                    </tr>
+                    <tr ng-repeat="(index, data) in listItemEvaluasi">
+                        <td colspan="5">
+                            <table>
+                                <tr>
+                                    <td>Tanggal</td>
+                                    <td>Shift</td>
+                                    <td>Pelaksanaan/Tindakan</td>
+                                    <td width="50px">Paraf</td>
+                                </tr>
+                                <tr>
+                                    <td width="70px">
+                                        {{data.tanggal}}
+                                    </td>
+                                    <td>
+                                        {{data.shift}}
+                                    </td>
+                                    <td>
+                                        <div class="grid_12 borderBox">
+                                            <kendo-grid id="kGrid"
+                                                k-options="columnGrid(data.details)"
+                                                k-selectable="'row'" k-sortable="'true'" k-resizable="'true'"
+                                                k-ng-model="dataSelected" ng-click="klikGrid(dataSelected)">
+                                            </kendo-grid>
+                                        </div>
+                                    </td>
+                                    <td width="70px">
+                                        {{data.namalengkap}}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4">Evaluasi</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4">
+                                        <div class="grid_12">
+                                            <div class="grid_12">
+                                                <label c-label item="item">S: Data Subyektif</label>
+                                            </div>
+                                            <div class="grid_12">
+                                                <textarea c-text-area type="input" filter="'string'"
+                                                    class="k-textbox" ng-model="data.s" k-data-source=""
+                                                    style="height: 60px; width: 100%; " />
+                                            </div>
+                                        </div>
+                                        <div class="grid_12">
+                                            <div class="grid_12">
+                                                <label c-label item="item">O: Data Objektif</label>
+                                            </div>
+                                            <div class="grid_12">
+                                                <textarea c-text-area type="input" filter="'string'" class="k-textbox"
+                                                    ng-model="data.o" k-data-source="" style="height: 60px; width: 100%;" />
+                                                </div>
+                                        </div>
+                                        <div class="grid_12">
+                                            <div class="grid_12">
+                                                <label c-label item="item">A: Assesment</label>
+                                            </div>
+                                            <div class="grid_12" >
+                                                <md-radio-group layout="row" ng-model="data.a">
+                                                    <md-radio-button value="1" class="md-primary">Teratasi
+                                                    </md-radio-button>
+                                                    <md-radio-button value="2" class="md-primary">Teratasi Sebagian
+                                                    </md-radio-button>
+                                                </md-radio-group>
+                                            </div>
+                                        </div>
+                                        <div class="grid_12">
+                                            <div class="grid_12">
+                                                <label c-label item="item">P: Perencanaan</label>
+                                            </div>
+                                            <div class="grid_12">
+                                                <textarea c-text-area type="input" filter="'string'" class="k-textbox"
+                                                    ng-model="data.p" k-data-source="" style="height: 60px; width: 100%;" />
+                                                </div>
+                                        </div>
+                                        <div class="grid_10"></div>
+                                        <div class="grid_2">
+                                            <button class="btnTemplate1" style="margin-top:20px"
+                                                ng-click="SimpanEvaluasi(data)"><i class="fa fa-save"></i>Simpan
+                                                Evaluasi</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </fieldset>
+        <div kendo-window="popUpLembarCakem" k-title="'Tambah Tindakan dan Jam'" k-width="650" k-height="450"
+            k-visible="false" k-on-open="win2visible = true" k-on-close="win2visible = false">
+            <div class="panel panel-default container_12" style="padding: 0px 10px;">
+                <div class="grid_12" style="margin-top: 10px;">
+                    <div class="grid_12">
+                        <div class="grid_12">
+                            <div class="grid_12">
+                                <div class="grid_12">
+                                    <label c-label item="item">Jam</label>
+                                </div>
+                            </div>
+                            <div class="grid_4">
+                                <div class="grid_12">
+                                    <input style="width: 70%" k-ng-model="item.jam" kendo-timepicker placeholer="HH:mm"
+                                        k-format="'HH:mm'" parsedate="HH:mm" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid_12">
+                            <div class="grid_12">
+                                <label c-label item="item">Tindakan</label>
+                            </div>
+                        </div>
+                        <div class="grid_12 margin-top-20 margin-bottom">
+                            <label c-label item="item" class="margin-bottom"></label>
+                            <textarea c-text-area type="input" filter="'string'" class="k-textbox"
+                                ng-model="item.tindakan" k-data-source="" style="height: 100px; width: 80%; " />
+                            </div>
+                    </div>
+                    
+                    <div class="grid_12">
+                        <div class="grid_2">
+                            <button class="btnTemplate1" style="margin-top:20px" ng-click="SimpanTindakan(dataaaaa)"><i
+                                    class="fa fa-save"></i>Simpan
+                                Tindakan</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

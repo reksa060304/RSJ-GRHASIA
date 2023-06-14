@@ -13,6 +13,10 @@
             "urlDep": "module/EMR/CatatanPerkembanganBaruCtrl"
         },
         {
+            "nameDep": "CatatanPerkembanganBaruV2Ctrl",
+            "urlDep": "module/EMR/CatatanPerkembanganBaruV2Ctrl"
+        },
+        {
             "nameDep": "JumlahPemeriksaanPerDetailPemeriksaanCtrl",
             "urlDep": "module/Laboratorium/JumlahPemeriksaanPerDetailPemeriksaanCtrl"
         },

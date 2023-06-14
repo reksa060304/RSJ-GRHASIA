@@ -1169,6 +1169,25 @@
     ]
   },
   {
+    "name": "DaftarOrderBarangVerifikasi",
+    "url": "/MenuVerifikasiOrder",
+    "templateurl": "module/Logistik/DaftarOrderBarangVerifikasi.html",
+    "controller": "DaftarOrderBarangVerifikasiCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
     "name": "KirimBarangLogistik",
     "url": "/S2lyaW1CYXJhbmdMb2dpc3Rpaw==",
     "templateurl": "module/Logistik/KirimBarangLogistik.html",
@@ -6073,6 +6092,25 @@
     "controller": "MasterProdukApotikCtrl",
     "deps": [
       {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "LaporanPenyerapanAnggaranVerifCtrl",
+    "url": "/LaporanPenyerapanAnggaranTerverifikasi",
+    "templateurl": "module/Perencanaan/LaporanPenyerapanAnggaranVerifCtrl.html",
+    "controller": "LaporanPenyerapanAnggaranVerifCtrl",
+    "deps": [{
         "module": "Services",
         "define": "Service"
       },
