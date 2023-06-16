@@ -210,7 +210,10 @@
                                 <td colspan="4">{{$item[3003999]}}</td>
                             </tr>
                             <tr>
-                                <td style="padding-left: 40px; padding-right: 40px" colspan="6">Demikian Surat Keterangan Dokter ini dibuat dengan sebenarnya untuk keperluan :  {{$item[3003997]}}</td>
+                                <td style="padding-left: 40px; padding-right: 40px" colspan="6">Demikian Surat Keterangan Dokter ini dibuat dengan sebenarnya untuk keperluan : </td>
+                            </tr>
+                            <tr>
+                                <td style="padding-left: 40px; padding-right: 40px" colspan="6">{{$item[3003997]}} </td>
                             </tr>
                             <tr>
                                 <td style="padding-left: 40px; padding-right: 40px" colspan="6">dan tidak dapat digunakan untuk kepentingan hukum lainnya.</td>
