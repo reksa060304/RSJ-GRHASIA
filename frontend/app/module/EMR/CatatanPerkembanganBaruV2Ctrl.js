@@ -91,21 +91,9 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                         }
                     }
                     dataCakem = datas
-
-                    if(datas.length >0){
                         $scope.listItemEvaluasi = datas
 
-                    }else{
-                        $scope.listItemEvaluasi = {
-                            tanggal: null,
-                            shift: null,
-                            pegawai: null,
-                            s: null,
-                            o: null,
-                            a: null,
-                            p: null
-                        }
-                    }                 
+                                
                     
                 })
             }
