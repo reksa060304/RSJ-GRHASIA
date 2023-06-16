@@ -17608,8 +17608,8 @@
   ]
 },
 {
-  "name": "RekamMedis.AsesmenMedis.LembarPenilaianADL",
-  "url": "/LembarPenilaianADL",
+  "name": "RekamMedis.AsesmenMedis.MenuIndex.LembarPenilaianADL",
+  "url": "/LembarPenilaianADL/:index/:idEMR",
   "templateurl": "module/EMR/LembarPenilaianADL.html",
   "controller": "LembarPenilaianADLCtrl",
   "deps": [{
