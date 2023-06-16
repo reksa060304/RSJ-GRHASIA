@@ -12,6 +12,10 @@ define(['initialize'], function (initialize) {
             $scope.totalSkor = 0
             $scope.totalSkor2 = 0
             $scope.totalSkor4 = 0
+            $scope.skor1 = 0
+            $scope.skor2 = 0
+            $scope.skor3 = 0
+            $scope.skor4 = 0
             $scope.cc = {}
             var nomorEMR = '-'
             $scope.cc.emrfk = 3000409
@@ -833,7 +837,7 @@ define(['initialize'], function (initialize) {
                 $scope.item.obj[116216] = true
                 $scope.item.obj[116219] = true
                 $scope.item.obj[116222] = true
-
+                
                 // $scope.item.obj[111056]=$scope.now
                 // $scope.item.obj[14563]={ value: $scope.cc.iddpjp, text: $scope.cc.dokterdpjp }
                 dataLoad = dat.data.data
@@ -854,9 +858,22 @@ define(['initialize'], function (initialize) {
 
                 //     }
                 // })
+                console.log(paramsIndex);
                 for (var i = 0; i <= dataLoad.length - 1; i++) {
                     if (parseFloat($scope.cc.emrfk) == dataLoad[i].emrfk && paramsIndex == dataLoad[i].index) {
-
+                        
+                        if(dataLoad[i].emrdfk == 3001320){
+                            $scope.skor1 = parseFloat(dataLoad[i].value)
+                        }
+                        if(dataLoad[i].emrdfk == 3001321){
+                            $scope.skor2 = parseFloat(dataLoad[i].value)
+                        }
+                        if(dataLoad[i].emrdfk == 3001322){
+                            $scope.skor3 = parseFloat(dataLoad[i].value)
+                        }
+                        if(dataLoad[i].emrdfk == 3001323){
+                            $scope.skor4 = parseFloat(dataLoad[i].value)
+                        }
                         if (dataLoad[i].type == "textbox") {
                             $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
                             if(dataLoad[i].emrdfk == 115952)
@@ -906,6 +923,7 @@ define(['initialize'], function (initialize) {
                             $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
                         }
                         if (dataLoad[i].type == "combobox") {
+                            
                             var str = dataLoad[i].value
                             if(str != undefined){
                                 var res = str.split("~");
@@ -928,10 +946,7 @@ define(['initialize'], function (initialize) {
 
             })
 
-            $scope.skor1 = 0
-            $scope.skor2 = 0
-            $scope.skor3 = 0
-            $scope.skor4 = 0
+            
             $scope.getSkorNew = function (index, stat) {
                 console.log(index);
                 var arrobj = Object.keys($scope.item.obj)
