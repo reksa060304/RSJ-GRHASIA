@@ -20241,7 +20241,7 @@
   },
   {
     "name": "RekamMedis.AsesmenMedis.CPPTREV",
-    "url": "/CPPTREV",
+    "url": "/CPPTREV/:idEMR",
     "templateurl": "module/EMR/CpptREV.html",
     "controller": "CpptREVCtrl",
     "deps": [{

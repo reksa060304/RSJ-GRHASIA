@@ -2080,7 +2080,7 @@ class ReportController extends ApiController{
                         ep.norec = '$norec'
                          AND ep.kdprofile = '$kdProfile' 
                         AND epd.statusenabled = TRUE 
-                        and epd.emrfk = $request[emrfk]
+                        and epd.emrfk in(443,444)
                         ORDER BY
                         ed.nourut
                      "
@@ -13391,5 +13391,83 @@ public function suratBuktiPengembalian(Request $request)
 
         return $pdf->stream();
         return view('report.EMR.ringkasanrajal',compact('data','pageWidth'));
+    }
+    public function cetakCPPTRanapRev(Request $request){
+        $norec = $request['emr'];
+        $kdProfile = (int) $request['kdprofile'];
+        $data = collect(DB::select("
+            select dpo.*,
+            pa.namapasien,
+            pa.nocm,
+            pa.tgllahir,
+            emrp.jeniskelamin,
+            emrp.namaruangan,pg.namalengkap as namadokter,
+            emrp.noregistrasifk as noregistrasi
+            from cpptemr_t as dpo
+            left join emrpasien_t as emrp on emrp.noemr = dpo.emrpasienfk
+            INNER JOIN antrianpasiendiperiksa_t AS pd ON pd.norec = emrp.norec_apd
+            left JOIN pegawai_m AS pg ON pg.id = pd.objectpegawaifk
+            left JOIN pasien_m as pa on emrp.nocm =  pa.nocm
+            left JOIN alamat_m as al on pa.id = al.nocmfk
+            where emrp.statusenabled = true
+            and emrp.kdprofile = $kdProfile
+            and dpo.emrpasienfk = '$request[emrfk]'
+            order by dpo.tgljam asc
+        "));
+        $pageWidth = 500;
+        $res['datapasien'] = DB::table('emrpasien_t as ep')->select('ps.namapasien','ep.nocm','jk.jeniskelamin','ps.tgllahir','ep.namaruangan')
+        ->join('pasien_m as ps','ps.nocm','=','ep.nocm')
+        ->join('jeniskelamin_m as jk','jk.id','=','ps.objectjeniskelaminfk')
+        ->where('ep.noemr', $request['emrfk'])->first();
+        $res['profile'] = Profile::where('id',$request['kdprofile'])->first();
+        $res['d'] = $data;
+        foreach( $res['d'] as $items){
+                
+                if($items->tgljam != null ){
+                    $items->tgljam = date('d-m-Y H:i',strtotime( $items->tgljam));
+                }
+                if($items->tgldpjp != null ){
+                    $items->tgldpjp = date('d-m-Y H:i',strtotime( $items->tgldpjp));
+                }
+                if($items->tenagamedis != null) {
+                    $arr = explode('~',$items->tenagamedis );
+                     $items->tenagamedis = $arr[1];
+                }
+                if($items->jenisppa != null) {
+                    $arr = explode('~',$items->jenisppa );
+                     $items->jenisppa = $arr[1];
+                }
+                if($items->dropdpjp != null) {
+                    $arr = explode('~',$items->dropdpjp );
+                     $items->dropdpjp = $arr[1];
+                }
+        }
+        $pdf = PDF::loadView(
+            'report.cppt-ranap-rev',
+            array(
+                'res' => $res,
+                
+                // 'peg'=> $peg
+            )
+        );
+        if(isset($request['isttd']) && $request['isttd'] == true){
+            $objetoRequest = new \Illuminate\Http\Request();
+            $objetoRequest ['emrfk'] = $request['emrfk'];
+            $objetoRequest ['norec_emr'] = $request['emr'];
+            $objetoRequest ['pegawaittd'] = $request['pegawaittd'];
+            $objetoRequest ['nocm'] = $request['nocm'];
+            $objetoRequest ['noregistrasi'] = $request['noregistrasi'];
+            $objetoRequest ['norec_pd'] = $request['norec_pd'];
+            $bsre = app('App\Http\Controllers\Bridging\BridgingBSREController')->pengajuanTTE($objetoRequest,true);
+            if($bsre['status'] == 201){
+                $content = $pdf->download()->getOriginalContent();
+                \Storage::disk('local')->put( 'TTD_BSRE/' . $bsre['dokumen']->id . '/file' . '.pdf' , $content);
+            }
+          
+            return $bsre;
+        }
+
+        return $pdf->stream();
+        return view('report.cppt-ranap-rev',compact('res','pageWidth'));
     }
 }

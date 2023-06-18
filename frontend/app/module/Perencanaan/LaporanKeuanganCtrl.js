@@ -107,6 +107,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     $scope.baruaja = true
                 } else if($state.params.parameter == 'DDDDD'){
                     $scope.sp3bpaja = true
+                } else if ($state.params.parameter == '101010') {
+                    $scope.penyerapanverif = true
                 }
             });
 
@@ -668,6 +670,36 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.item.tglawal = $scope.now;
                 $scope.item.tglakhir = $scope.now;
 
+            }
+            $scope.CetakDataPenyeVerif = function () {
+
+                if ($scope.item.tahun == undefined) {
+                    toastr.warning('Tahun harus diisi', 'Informasi');
+                    return
+                }
+
+                if ($scope.item.jenisrekening == undefined) {
+                    toastr.warning('Jenis Rekening harus diisi', 'Informasi');
+                    return
+                }
+
+                var tahun = ""
+                if ($scope.item.tahun != undefined) {
+                    tahun = moment($scope.item.tahun).format('YYYY')
+                }
+
+                var asalproduk = ""
+                if ($scope.item.asalproduk != undefined) {
+                    asalproduk = $scope.item.asalproduk.id
+                }
+
+
+
+                if ($scope.item.jenisrekening.id == 1) {
+                    window.open(baseTransaksi + "report/get-cetak-keuangan-per-rekening?tahun=" + tahun + "&asalproduk=" + asalproduk, '_blank');
+                } else if ($scope.item.jenisrekening.id == 2) {
+                    window.open(baseTransaksi + "report/get-cetak-keuangan-per-rekening-permen?tahun=" + tahun + "&asalproduk=" + asalproduk, '_blank');
+                }
             }
 
         }

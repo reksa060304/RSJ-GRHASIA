@@ -8015,6 +8015,8 @@ class EMRController  extends ApiController
         //todo : detail
         $paramNocm = '';
         $paramNoreg = '';
+        $paramNocm2 = '';
+        $paramNoreg2 = '';
         $data = \DB::table('emrpasien_t as emrp')
             ->leftJoin('pegawai_m as pg', 'pg.id', '=', 'emrp.pegawaifk')
             ->select('emrp.*', 'emrp.noregistrasifk as noregistrasi', 'pg.namalengkap')
@@ -8033,11 +8035,13 @@ class EMRController  extends ApiController
         }
         if (isset($request['nocm']) && $request['nocm'] != '') {
             $data = $data->where('emrp.nocm', $request['nocm']);
-            $paramNocm = "AND emrp.nocm='" . $request['nocm']."'";
+            $paramNocm = "AND emrp.nocm='" . $request['nocm'] . "'";
+            $paramNocm2 = "AND emrdp.nocm='" . $request['nocm'] . "'";
         }
         if (isset($request['noregistrasi']) && $request['noregistrasi'] != '') {
             $data = $data->where('emrp.noregistrasifk', $request['noregistrasi']);
-            $paramNoreg = "AND emrp.noregistrasifk='" . $request['noregistrasi']."'";
+            $paramNoreg = "AND emrp.noregistrasifk='" . $request['noregistrasi'] . "'";
+            $paramNoreg2 = "AND emrdp.noregistrasi='" . $request['noregistrasi'] . "'";
         }
         if (isset($request['tgllahir']) && $request['tgllahir'] != "" && $request['tgllahir'] != "undefined" && $request['tgllahir'] != "null") {
             $tgllahir = $request['tgllahir'];
@@ -8054,34 +8058,119 @@ class EMRController  extends ApiController
         $data = $data->get();
         $jenisEMr = $request['jenisEmr'];
         $result = [];
+        $details2 = DB::select(DB::raw("
+        SELECT 
+               emrdp.emrpasienfk,
+               emrdp.emrfk,
+               emr.reportdisplay,
+               emrp.norec, emr.caption  as namaform,
+               emr.namaexternal 
+           FROM
+               emrpasiend_t AS emrdp
+           INNER JOIN emrpasien_t AS emrp ON emrp.noemr = emrdp.emrpasienfk
+           --INNER JOIN emrd_t AS emrd ON emrd.id = emrdp.emrdfk
+           INNER JOIN emr_t AS emr ON emr.id = emrdp.emrfk
+           WHERE emrdp.kdprofile = $idProfile and
+               emrdp.statusenabled = true
+              $paramNocm
+              $paramNoreg
+               AND emrp.jenisemr ILIKE '%$jenisEMr%'
+          
+               GROUP BY emrdp.emrpasienfk,
+               emrdp.emrfk,emrp.norec,emr.caption,
+               emr.reportdisplay,emr.namaexternal 
+
+       "));
+       $details2 = DB::select(DB::raw("
+       SELECT 
+              emrdp.emrpasienfk,
+              emrdp.emrfk,
+              emr.reportdisplay,
+              emrp.norec, emr.caption  as namaform,
+              emr.namaexternal ,
+              emrp.isnewcppt
+          FROM
+              emrpasiend_t AS emrdp
+          INNER JOIN emrpasien_t AS emrp ON emrp.noemr = emrdp.emrpasienfk
+          --INNER JOIN emrd_t AS emrd ON emrd.id = emrdp.emrdfk
+          INNER JOIN emr_t AS emr ON emr.id = emrdp.emrfk
+          WHERE emrdp.kdprofile = $idProfile and
+              emrdp.statusenabled = true
+             $paramNocm
+             $paramNoreg
+              AND emrp.jenisemr ILIKE '%$jenisEMr%'
+         
+              GROUP BY emrdp.emrpasienfk,
+              emrdp.emrfk,emrp.norec,emr.caption,
+              emr.reportdisplay,emr.namaexternal ,
+              emrp.isnewcppt
+
+      "));
+
+      $cpptnew = DB::select(DB::raw("
+         SELECT 
+            emrdp.emrpasienfk,
+            '443' as emrfk,
+            'RekamMedis.AsesmenMedis.CPPTREV' as reportdisplay,emrp.norec,
+            'CPPT Rawat Inap V2' as namaform,
+            null as namaexternal, true as isnewcppt
+         FROM
+             cpptemr_t AS emrdp
+         INNER JOIN emrpasien_t AS emrp ON emrp.noemr = emrdp.emrpasienfk
+         WHERE emrdp.kdprofile = $idProfile and  emrdp.statusenabled = true
+         $paramNocm
+         $paramNoreg
+         $paramNocm2
+         $paramNoreg2
+         GROUP BY emrdp.emrpasienfk,   emrp.norec
+       "));
+
         foreach ($data as $item) {
             $noemr = $item->noemr;
+            $details  = [];
+            foreach($details2 as $items){
+                if($item->noemr == $items->emrpasienfk){
+                    if($items->namaform =='CPPT Rawat Inap V2'
+                    && $items->isnewcppt == true ){
 
-            $details = DB::select(DB::raw("
-             SELECT 
-                    emrdp.emrpasienfk,
-                    emrdp.emrfk,
-                    emr.reportdisplay,
-                    emrp.norec,emr.caption as namaform
-                FROM
-                    emrpasiend_t AS emrdp
-                INNER JOIN emrpasien_t AS emrp ON emrp.noemr = emrdp.emrpasienfk
-                --INNER JOIN emrd_t AS emrd ON emrd.id = emrdp.emrdfk
-               INNER JOIN emr_t AS emr ON emr.id = emrdp.emrfk
-                WHERE emrdp.kdprofile = $idProfile and
-                    emrdp.statusenabled = true
-                   $paramNocm
-                   $paramNoreg
-                    AND emrp.jenisemr ILIKE '%$jenisEMr%'
-                    and emrdp.emrpasienfk='$noemr'
-                    GROUP BY emrdp.emrpasienfk,
-                    emrdp.emrfk,emrp.norec,emr.caption,
-                    emr.reportdisplay 
+                    }else{
+                        $details[] = $items;
+                    }
                 
+                }
+            }
+            foreach($cpptnew as $it2){
+                if($item->noemr == $it2->emrpasienfk){
+                    $details[] = $it2;
+                }
+            }
+   
+          
+            // $details = DB::select(DB::raw("
+            //  SELECT 
+            //         emrdp.emrpasienfk,
+            //         emrdp.emrfk,
+            //         emr.reportdisplay,
+            //         emrp.norec,case when emrdp.index is not null and emr.namaexternal = 'tabindex' then emr.caption || ' - Page ' ||emrdp.index else emr.caption end as namaform,
+            //         emrdp.index
+            //     FROM
+            //         emrpasiend_t AS emrdp
+            //     INNER JOIN emrpasien_t AS emrp ON emrp.noemr = emrdp.emrpasienfk
+            //     --INNER JOIN emrd_t AS emrd ON emrd.id = emrdp.emrdfk
+            //     INNER JOIN emr_t AS emr ON emr.id = emrdp.emrfk
+            //     WHERE emrdp.kdprofile = $idProfile and
+            //         emrdp.statusenabled = true
+            //        $paramNocm
+            //        $paramNoreg
+            //         AND emrp.jenisemr ILIKE '%$jenisEMr%'
+            //         and emrdp.emrpasienfk='$noemr'
+            //         GROUP BY emrdp.emrpasienfk,
+            //         emrdp.emrfk,emrp.norec,emr.caption,
+            //         emr.reportdisplay,emrdp.index,emr.namaexternal 
 
-            "));
-
-            $result [] = array(
+            // "));
+           
+            $result[] = array(
                 'norec' => $item->norec,
                 'kdprofile' => $item->kdprofile,
                 'statusenabled' => $item->statusenabled,
@@ -12440,7 +12529,7 @@ class EMRController  extends ApiController
             }
 
             $EMR->noemr = $noemr;
-            $EMR->emrfk = $head['emrfk'];
+            $EMR->emrfk = 443;
             $EMR->nocm = $head['nocm'];
             $EMR->namapasien = $head['namapasien'];
             $EMR->jeniskelamin = $head['jeniskelamin'];
@@ -12544,7 +12633,9 @@ class EMRController  extends ApiController
                             'dropdpjp' => $item['dropdpjp'],
                             'tgljamdatang' => $item['tgljamdatang'],
                             'dpjputama' => $item['dpjputama'],
-                            'dokterrawatbersama' => $item['dokterrawatbersama'],
+                            'bangsal' => $item['bangsal'],
+                            'kelas' => $item['kelas'],
+                            'jenisppa' => $item['jenisppa'],
                         ]);
                     $j++;
                 }
@@ -12568,12 +12659,14 @@ class EMRController  extends ApiController
                     $EMRD->dpjp = $item['dpjp'];
                     $EMRD->tgldpjp = $item['tgldpjp'];
                     $EMRD->dropdpjp = $item['dropdpjp'];
-                    $EMRD->emrfk = $head['emrfk'];
+                    $EMRD->emrfk = 443;
                     $EMRD->nocm = $head['nocm'];
                     $EMRD->noregistrasi = $head['noregistrasi'];
                     $EMRD->tgljamdatang = $item['tgljamdatang'];
                     $EMRD->dpjputama = $item['dpjputama'];
-                    $EMRD->dokterrawatbersama = $item['dokterrawatbersama'];
+                    $EMRD->jenisppa = $item['jenisppa'];
+                    $EMRD->bangsal = $item['bangsal'];
+                    $EMRD->kelas = $item['kelas'];
                     $EMRD->pegawaifk = $this->getCurrentUserID();
                     $EMRD->save();
                     $h++;
@@ -12925,5 +13018,60 @@ class EMRController  extends ApiController
         }
 
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    public function getEMRTransaksiDetails(Request $request)
+    {
+        //todo : detail
+        $kdProfile = $this->getDataKdProfile($request);
+        // $data = \DB::table('emrpasiend_t as emrdp')
+        //    ->join('emrpasien_t as emrp', 'emrp.noemr', '=', 'emrdp.emrpasienfk')
+        //     ->leftjoin('emrd_t as emrd', 'emrd.id', '=', 'emrdp.emrdfk')
+        //     // ->JOIN('emrd_t as emrd',function ($join){
+        //         // $join->on('emrd.id','=','emrdp.emrdfk');
+        //         // $join->on('emrd.emrfk','=','emrdp.emrfk');
+        //     // })
+        //     ->leftjoin('pasien_m as ps', 'ps.nocm', '=', 'emrp.nocm')
+        //     ->leftjoin('pegawai_m as pg', 'pg.id', '=', 'emrdp.pegawaifk')
+        //     //->leftjoin('emrfoto_t as ef', 'ef.noemrpasienfk', '=', 'emrp.noemr')
+        //     ->select('emrdp.*', 'emrd.caption', 'emrd.type', 'emrd.nourut', 'emrdp.emrfk', 'emrd.reportdisplay', 'emrd.kodeexternal as kodeex', 'emrd.satuan', 'pg.namalengkap')
+        //     ->where('emrdp.statusenabled', true)
+        //     ->where('emrdp.kdprofile',$kdProfile )
+        //     ->orderBy('emrd.nourut');
+
+        $data = \DB::table('emrpasiend_t as emrdp')
+            ->leftjoin('emrd_t as emrd', 'emrd.id', '=', 'emrdp.emrdfk')
+            ->leftjoin('pegawai_m as pg', 'pg.id', '=', 'emrdp.pegawaifk')
+            ->select('emrdp.*', 'emrd.caption', 'emrd.type', 'emrd.nourut', 'emrdp.emrfk', 'emrd.reportdisplay', 'emrd.kodeexternal as kodeex', 'emrd.satuan', 'pg.namalengkap')
+            ->where('emrdp.statusenabled', true)
+            ->where('emrdp.kdprofile',$kdProfile )
+            ->whereNotNull('emrdp.value')
+            ->where('emrdp.value','!=','Invalid date')
+            ->orderBy('emrd.nourut')
+            ->orderBy('emrdp.emrfk', 'asc');
+            ;
+        if (isset($request['noemr']) && $request['noemr'] != '') {
+            $data = $data->where('emrdp.emrpasienfk', $request['noemr']);
+        }
+        if (isset($request['emrfk']) && $request['emrfk'] != '') {
+            $data = $data->whereIn('emrdp.emrfk', $request['emrfk']);
+        }
+//        if (isset($request['norec']) && $request['norec'] != '') {
+//            $data = $data->where('emrp.norec', $request['norec']);
+//        }
+        // if (isset($request['noregistrasi']) && $request['noregistrasi'] != '') {
+        //     $data = $data->where('emrp.noregistrasifk', $request['noregistrasi']);
+        // }
+        if (isset($request['objectid']) && $request['objectid'] != '') {
+            $data = $data->where('emrdp.emrdfk', $request['objectid']);
+        }
+        if (isset($request['nik']) && $request['nik'] != '') {
+            // $data = $data->where('ps.noidentitas', $request['nik']);
+        }
+        $data = $data->get();
+        $result = array(
+            'data' => $data,
+            'message' => 'as@epic',
+        );
+        return $this->respond($result);
     }
 }
