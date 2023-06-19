@@ -45,7 +45,7 @@
         <div class="grid_5">
             <div class="grid_6">
                 <div class="grid_12">
-                    <label c-label item="item" c-label-text="Ruangan Pemesan"></label>
+                    <label c-label item="item" c-label-text="Ruangan Pemesan" real></label>
                 </div>
 
                 <div class="grid_12">
@@ -56,7 +56,7 @@
             </div>
             <div class="grid_6">
                 <div class="grid_12">
-                    <label c-label item="item" c-label-text="Ruangan Tujuan"></label>
+                    <label c-label item="item" c-label-text="Ruangan Tujuan" real></label>
                 </div>
 
                 <div class="grid_12">
@@ -69,7 +69,7 @@
         <div class="grid_4">
             <div class="grid_3">
                 <div class="grid_12">
-                    <label c-label item="item" c-label-text="Jenis Order"></label>
+                    <label c-label item="item" c-label-text="Jenis Order" real></label>
                 </div>
 
                 <div class="grid_12">
@@ -95,7 +95,7 @@
         <div class="grid_12 headerBox">
             <p>Detail Barang</p>
         </div>
-        <div class="grid_2">
+        <div class="grid_2" ng-hide="true">
             <div class="grid_12">
                 <label c-label item="item">Kode Produk</label>
             </div>
@@ -113,7 +113,7 @@
                     k-filter="'contains'" k-auto-bind="false" k-data-source="listProduk" k-on-change='getSatuan()' />
             </div>
         </div> -->
-        <div class="grid_4">
+        <div class="grid_3">
             <div class="grid_12">
                 <label c-label item="item" c-label-text="Produk"></label>
             </div>
@@ -143,9 +143,18 @@
                     ng-model="item.nilaiKonversi" ng-disabled="true" />
             </div>
         </div>
-        <div class="grid_1">
+        <div class="grid_2">
             <div class="grid_12">
-                <label c-label item="item" c-label-text="Stok"></label>
+                <label c-label item="item" c-label-text="Stok Ruangan Pemesan" real></label>
+            </div>
+            <div class="grid_12">
+                <input c-text-box type="input" style="text-align: right" filter="" class="k-textbox"
+                    ng-model="item.stokpemesan" ng-disabled="true" />
+            </div>
+        </div>
+        <div class="grid_2">
+            <div class="grid_12">
+                <label c-label item="item" c-label-text="Stok Ruangan Tujuan" real></label>
             </div>
             <div class="grid_12">
                 <input c-text-box type="input" style="text-align: right" filter="" class="k-textbox"

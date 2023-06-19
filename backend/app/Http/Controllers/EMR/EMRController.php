@@ -2830,7 +2830,7 @@ class EMRController  extends ApiController
             ->select('id as value', 'namaruangan as text')
             ->where('kdprofile',$idProfile)
             ->where('statusenabled', true)
-            ->wherein('objectdepartemenfk', array(25, 27, 24, 3, 17, 35, 26, 28, 16, 18))
+            ->wherein('objectdepartemenfk', array(25, 27, 24, 3, 17, 35, 26, 28, 16, 18, 30))
             ->orderBy('objectdepartemenfk');
         if (isset($req['filter']['filters'][0]['value']) &&
             $req['filter']['filters'][0]['value'] != "" &&
@@ -10872,6 +10872,7 @@ class EMRController  extends ApiController
         );
    
         return $this->respond($result);
+    }
   public function getLembarMasukKeluar (Request $request)
     {
         $noemr = $request['noemr'];

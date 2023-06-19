@@ -989,6 +989,25 @@
     ]
   },
   {
+    "name": "LaporanUnitKerjaLogistik",
+    "url": "/LaporanUnitKerjaLogistik",
+    "templateurl": "module/Logistik/LaporanUnitKerjaLogistik.html",
+    "controller": "LaporanUnitKerjaLogistikCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
     "name": "PemakaianStokRuangan",
     "url": "/UGVtYWthaWFuU3Rva1J1YW5nYW4=",
     "templateurl": "module/Logistik/PemakaianStokRuangan.html",
@@ -1194,6 +1213,25 @@
     "controller": "KirimBarangLogistikCtrl",
     "deps": [
       {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "KirimBarangLogistikBaru",
+    "url": "/KirimBarangLogistikBaru",
+    "templateurl": "module/Logistik/KirimBarangLogistikBaru.html",
+    "controller": "KirimBarangLogistikBaruCtrl",
+    "deps": [{
         "module": "Services",
         "define": "Service"
       },

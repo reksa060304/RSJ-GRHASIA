@@ -1494,6 +1494,10 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('logistik/get-daftar-pemakaian-bhp', 'Logistik\LogistikController@getDaftarPemakaianBarangBHP');
             Route::get('logistik/get-detail-pemakaian-bhp', 'Logistik\LogistikController@getPemakaianStokRuanganByNorec');
             Route::get('sdm/penelitian/daftar-tagihan-diklat', 'Kasir\KasirController@detailTagihanDiklat');
+            Route::get('logistik/get-daftar-pemakaian-ruangan-baru', 'Logistik\LogistikController@getDaftarPemakaianStokRuanganBaru');
+            Route::get('logistik/get-detail-order-for-kirim-barang-baru', 'Logistik\LogistikController@getDetailOrderBarangForKirimBaru');
+            Route::post('bhp/simpan-verif-order','Logistik\LogistikController@simpanVerifOrder');
+            Route::post('logistik/save-kirim-barang-ruangan-baru', 'Logistik\LogistikController@saveKirimBarangRuanganBaru');
             // GET //
 
             // POST //

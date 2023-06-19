@@ -197,6 +197,10 @@
             "urlDep": "module/Logistik/DaftarPemakaianStokRuanganCtrl"
         },
         {
+            "nameDep": "LaporanUnitKerjaLogistikCtrl",
+            "urlDep": "module/Logistik/LaporanUnitKerjaLogistikCtrl"
+        },
+        {
             "nameDep": "PemakaianStokRuanganCtrl",
             "urlDep": "module/Logistik/PemakaianStokRuanganCtrl"
         },
@@ -239,7 +243,11 @@
         {
             "nameDep": "KirimBarangLogistikCtrl",
             "urlDep": "module/Logistik/KirimBarangLogistikCtrl"
-        },        
+        },
+        {
+            "nameDep": "KirimBarangLogistikBaruCtrl",
+            "urlDep": "module/Logistik/KirimBarangLogistikBaruCtrl"
+        },
         {
             "nameDep": "DaftarDistribusiBarangCtrl",
             "urlDep": "module/Logistik/DaftarDistribusiBarangCtrl"

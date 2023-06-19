@@ -33,7 +33,17 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.konsolidasiaja = false
             $scope.jadwalaja = false
             $scope.cetakaja = false
+            var idpegawai = '';
+            $scope.pegawaiLogin = medifirstService.getPegawaiLogin();
+            $scope.item.organisasi = '1.02.2.22.0.00.01.0004 - RS Jiwa GRHASIA DINKES DIY'
+            console.log($scope.pegawaiLogin)
+            if ($scope.pegawaiLogin.jenisPegawai.jenispegawai == "PenanggungJawab" || ($scope.pegawaiLogin.jenisPegawai.jenispegawai == "DOKTER" && $scope.pegawaiLogin.id != 320263)) {
+                idpegawai = $scope.pegawaiLogin.id
+                $scope.disidpegawai = true
+                $scope.idpegawailogin = $scope.pegawaiLogin.id
+                $scope.namapegawailogin = $scope.pegawaiLogin.namaLengkap
 
+            }
             $scope.yearUngkul = {
                 start: "decade",
                 depth: "decade"
@@ -71,13 +81,13 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.jenisanggaranaja = true
             }
 
-            medifirstService.get("perencanaan/get-data-combo").then(function (e) {
+            medifirstService.get("perencanaan/get-data-combo?&idpegawai=" + idpegawai).then(function (e) {
                 $scope.listTahap = e.data.tahap
                 $scope.listKegiatan = e.data.kegiatancombo
             });
 
             $scope.changeKegiatan = function () {
-                medifirstService.get("perencanaan/get-detail-sub-kegiatan?kegiatan="+$scope.item.kegiatandetail.id+"&tahap="+$scope.item.tahapdetail.id+"&tahun="+moment($scope.item.tahundetail).format('YYYY')).then(function (e) {
+                medifirstService.get("perencanaan/get-detail-sub-kegiatan?kegiatan=" + $scope.item.kegiatandetail.id + "&tahap=" + $scope.item.tahapdetail.id + "&tahun=" + moment($scope.item.tahundetail).format('YYYY') + "&idpegawai=" + idpegawai).then(function (e) {
                     $scope.listSubKegiatan = e.data.data
                 });
             }

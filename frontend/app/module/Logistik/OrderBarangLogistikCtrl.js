@@ -273,6 +273,13 @@ define(['initialize'], function (initialize) {
                 // }
                 medifirstService.get("logistik/get-produkdetail?" +
                     "produkfk=" + $scope.item.produk.id +
+                    "&ruanganfk=" + $scope.item.ruangan.id, true).then(function (dat) {
+                    // dataProdukDetail = dat.data.detail;
+                    $scope.item.stokpemesan = dat.data.jmlstok / $scope.item.nilaiKonversi
+                    // $scope.item.jumlah = jml
+                });
+                medifirstService.get("logistik/get-produkdetail?" +
+                    "produkfk=" + $scope.item.produk.id +
                     "&ruanganfk=" + $scope.item.ruanganTujuan.id, true).then(function (dat) {
                         dataProdukDetail = dat.data.detail;
                         $scope.item.stok = dat.data.jmlstok / $scope.item.nilaiKonversi
@@ -409,7 +416,8 @@ define(['initialize'], function (initialize) {
                             data.hargasatuan = String($scope.item.hargaSatuan)
                             data.hargadiscount = String($scope.item.hargadiskon)
                             data.total = $scope.item.total
-
+                            data.jumlahstokruangan = $scope.item.stokpemesan
+                            data.jumlahstokgudang = $scope.item.stok
                             data2[i] = data;
                             $scope.dataGrid = new kendo.data.DataSource({
                                 data: data2
@@ -447,7 +455,9 @@ define(['initialize'], function (initialize) {
                         jumlah: $scope.item.jumlah,
                         hargasatuan: String($scope.item.hargaSatuan),
                         hargadiscount: String($scope.item.hargadiskon),
-                        total: $scope.item.total
+                        total: $scope.item.total,
+                        jumlahstokruangan: $scope.item.stokpemesan,
+                        jumlahstokgudang: $scope.item.stok
                     }
                     data2.push(data)
                     // $scope.dataGrid.add($scope.dataSelected)
@@ -679,6 +689,7 @@ define(['initialize'], function (initialize) {
                 medifirstService.post('logistik/save-order-barang-ruangan', objSave).then(function (e) {
                     $scope.item.noKirim = e.data.nokirim
                     norecCetak = $scope.item.noKirim;
+                    // sendNotification(e.data)
                     Kosongkan();
                     $scope.popUp.center().open();
                 })
@@ -805,7 +816,7 @@ define(['initialize'], function (initialize) {
                     if (data2.length > 0) {
                         for (let i = 0; i < data2.length; i++) {
                             const element = data2[i];
-                            if ($scope.item.produk.id == element.produkfk) {
+                            if ($scope.item.produk.id == element.produkfk && $scope.item.jumlah == element.jumlah) {
                                 window.messageContainer.error('Produk ' + element.namaproduk + ', tidak bisa menambahkan produk yang sama !')
                                 $scope.isAdd = false;
                                 // $scope.saveShow = false;
@@ -830,6 +841,30 @@ define(['initialize'], function (initialize) {
                 $scope.item.nilaiKonversi = dataSelected.nilaikonversi
                 $scope.item.stok = dataSelected.jmlstok
                 $scope.item.jumlah = dataSelected.jumlah
+            }
+            function sendNotification(e) {
+                var body = {
+                    norec: e.norec,
+                    judul: 'Order Barang Baru #' + e.noorder,
+                    jenis: 'Barang Logistik',
+                    pesanNotifikasi: '',
+                    idRuanganAsal: e.objectruanganfk,
+                    idRuanganTujuan: e.objectruangantujuanfk,
+                    ruanganAsal: $scope.item.ruangan.namaruangan,
+                    ruanganTujuan: $scope.item.ruanganTujuan.namaruangan,
+                    kelompokUser: null, //medifirstService.getKelompokUser()
+                    idKelompokUser: null,
+                    idPegawai: medifirstService.getPegawai().id,
+                    dataArray: [],
+                    urlForm: 'DaftarOrderBarang',
+                    params: {
+                        noOrder: e.noorder
+                    },
+                    namaFungsiFrontEnd: null,
+                    tgl: e.tglorder,
+                    tgl_string: dateHelper.getTanggalJamFormatted(e.tglorder),
+                }
+                medifirstService.sendSocket("sendNotification", body);
             }
             //** BATAS */           
         }
