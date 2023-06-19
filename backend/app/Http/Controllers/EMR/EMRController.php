@@ -10835,6 +10835,98 @@ class EMRController  extends ApiController
             );
         return $this->respond($result);
     }
+
+    public function getEMRRingkasanPulang21 (Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $custid = '';
+        if (isset($request['custid']) && $request['custid'] != '') {
+            $custid = "where  customerid = '" . $request['custid'] . "'";
+        }
+        $data = DB::select(DB::raw(" 
+        SELECT ed.id, ed.caption, empd.value, empd.emrpasienfk FROM emrpasiend_t empd 
+        inner join emrd_t ed on ed.id = empd.emrdfk
+				inner join emrpasien_t et on et.noemr = empd.emrpasienfk
+        where ed.id in ( 120007) and et.noregistrasifk = '$request[noregistrasi]' and empd.statusenabled = true and et.statusenabled = true"
+        ));
+
+        $data2 = DB::select(DB::raw(" 
+        SELECT ed.id, ed.caption, empd.value, empd.emrpasienfk FROM emrpasiend_t empd 
+        inner join emrd_t ed on ed.id = empd.emrdfk
+				inner join emrpasien_t et on et.noemr = empd.emrpasienfk
+        where ed.id in (120263, 120113, 120114, 120115, 120116, 120309, 120117) and et.noregistrasifk = '$request[noregistrasi]' and empd.statusenabled = true and et.statusenabled = true"
+        ));
+
+        $data3 = DB::select(DB::raw(" 
+        SELECT ed.id, ed.caption, empd.value, empd.emrpasienfk FROM emrpasiend_t empd 
+        inner join emrd_t ed on ed.id = empd.emrdfk
+				inner join emrpasien_t et on et.noemr = empd.emrpasienfk
+        where ed.id in ( 120007, 120263, 120113, 120114, 120115, 120116, 120309, 120117) and et.noregistrasifk = '$request[noregistrasi]' and empd.statusenabled = true and et.statusenabled = true"
+        ));
+        $result = array(
+            'data2'=> $data2,
+            'data3'=> $data3,
+            'data'=> $data,
+            'as'=> 'Fizi@Epic'
+        );
+   
+        return $this->respond($result);
+  public function getLembarMasukKeluar (Request $request)
+    {
+        $noemr = $request['noemr'];
+        $kdProfile = $this->getDataKdProfile($request);
+
+        //  $emrfk = $request['emrfk'];
+        // $main = \DB::select(DB::raw("SELECT id, type from emrd_t where emrfk = $emrfk and statusenabled = true and kdprofile = $kdProfile order by id
+        // "));
+
+        // $sec = \DB::select(DB::raw("SELECT id,id2, type from emrd_t where emrfk = $request[emrid] and statusenabled = true and kdprofile = $kdProfile and id2 is not null order by id
+        // "));
+
+        $data = \DB::select(DB::raw("SELECT 
+        EXTRACT(year from age(pd.tglregistrasi, ps.tgllahir) )as umur, ag.agama, pj.pekerjaan, pn.pendidikan, sp.statusperkawinan, ps.penanggungjawab,  ps.hubungankeluargapj, ps.alamatrmh, ps.teleponpenanggungjawab
+        FROM pasiendaftar_t pd
+        inner join pasien_m ps on ps.id = pd.nocmfk
+        inner join agama_m ag on ps.objectagamafk = ag.id
+        inner join pekerjaan_m pj on ps.objectpekerjaanfk = pj.id
+        inner join pendidikan_m pn on ps.objectpendidikanfk = pn.id
+        inner join statusperkawinan_m sp on ps.objectstatusperkawinanfk = sp.id
+        where pd.noregistrasi = '$request[noregistrasi]' and pd.kdprofile = '30'" ));
+
+        // $detail = [];
+        // $id=0;
+        // $value="";
+        // $id2=0;
+        
+        // foreach ($data as $dt) {
+        //     $id=0;
+        //     $id2=0;
+        //     $value="";
+        //     foreach ($sec as $s) {
+        //         if($dt->id == $s->id2){
+        //             // $id2 = $s->id2;
+        //             // $value= $dt->value;
+        //             $detail[]= array(
+        //             "id"=> $s->id,
+        //             "value"=> $dt->value,
+        //             "type"=> $dt->type,
+        //             "id2"=>$s->id2,
+                    
+        //             );
+        //         }
+        //     }
+            
+        // }
+        $result = array(
+                // 'data'=> $detail,
+                // "sec"=> $sec,
+                'data'=> $data,
+                'as'=> 'Fizi@Epic'
+            );
+        return $this->respond($result);
+    }
+        
     public function getValidasiEMR(Request $request)
     {
         $data = null;

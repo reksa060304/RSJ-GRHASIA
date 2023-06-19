@@ -851,6 +851,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('emr/get-emr-otomatis', 'EMR\EMRController@getEmrOtomatis');
           Route::get('emr/get-emr-otomatisvitalsign', 'EMR\EMRController@getEmrOtomatisVitalSign');
           Route::get('emr/get-emr-to-emr', 'EMR\EMRController@getEmrToEmr');
+          Route::get('emr/get-ringkasan-pulang21', 'EMR\EMRController@getEMRRingkasanPulang21');
+          Route::get('emr/get-data-lembar-masuk-keluar', 'EMR\EMRController@getLembarMasukKeluar');
           Route::get('emr/get-validasi-emr', 'EMR\EMRController@getValidasiEMR');
           Route::get('emr/get-emrbyid', 'EMR\EMRController@getMenuEmrById');
           Route::get('emr/get-info-emr-pasien', 'EMR\EMRController@getInfoEMRPasien');
