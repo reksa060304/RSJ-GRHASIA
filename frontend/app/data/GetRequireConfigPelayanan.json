@@ -3654,6 +3654,10 @@
         {
             "nameDep": "CpptREVCtrl",
             "urlDep": "module/EMR/CpptREVCtrl"
+        },
+        {
+            "nameDep": "TerapiHarianPasienRanaprevCtrl",
+            "urlDep": "module/EMR/TerapiHarianPasienRanaprevCtrl"
         }
     ]
 }

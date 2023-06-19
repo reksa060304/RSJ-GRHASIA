@@ -18414,8 +18414,8 @@
     ]
   },
   {
-    "name": "RekamMedis.AsesmenMedis.MonitorIntakeOutput",
-    "url": "/MonitorIntakeOutput",
+    "name": "RekamMedis.AsesmenMedis.MenuIndex.MonitorIntakeOutput",
+    "url": "/MonitorIntakeOutput/:index/:idEMR",
     "templateurl": "module/EMR/MonitorIntakeOutput.html",
     "controller": "MonitorIntakeOutputCtrl",
     "deps": [{
@@ -20258,6 +20258,28 @@
       },
       {
         "define": "RekamMedisCtrl"
+      }
+    ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.MenuIndex.TerapiHarianPasienRanaprev",
+    "url": "/TerapiHarianPasienRanaprev/:index/:idEMR",
+    "templateurl": "module/EMR/TerapiHarianPasienRanaprev.html",
+    "controller": "TerapiHarianPasienRanaprevCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+
+
+
       }
     ]
   }
