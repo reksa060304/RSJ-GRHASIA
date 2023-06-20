@@ -6886,7 +6886,7 @@ class RegistrasiController extends ApiController
             ->leftJOIN('jeniskelamin_m as jks', 'jks.id', '=', 'ps.objectjeniskelaminfk')
             ->leftjoin('identifikasipasien_t as it','pd.norec','=','it.noregistrasifk')
             ->distinct()
-            ->select('pd.norec', 'pd.statusenabled','ps.sidik_jari', 'ept.kdprofile','pd.tglregistrasi', 'ps.nocm', 'pd.nocmfk', 'pd.noregistrasi', 'ru.namaruangan', 'ps.namapasien',
+            ->select('pd.isanalis','pd.isrmlengkap','pd.isverifikasidpjp','ps.isinaktif','pd.norec', 'pd.statusenabled','ps.sidik_jari', 'ept.kdprofile','pd.tglregistrasi', 'ps.nocm', 'pd.nocmfk', 'pd.noregistrasi', 'ru.namaruangan', 'ps.namapasien',
                 'kp.kelompokpasien', 'rek.namarekanan', 'pg.namalengkap as namadokter', 'pd.tglpulang', 'pd.statuspasien',
                 'pa.norec as norec_pa', 'pa.objectasuransipasienfk', 'pd.objectpegawaifk as pgid', 'pd.objectruanganlastfk',
                 'pa.nosep as nosep', 'br.norec as norec_br', 'pd.nostruklastfk','klstg.namakelas as kelasditanggung','kls.namakelas',
@@ -13113,5 +13113,201 @@ GROUP BY y.KET
         );
         return $this->respond($result);
     }
-    
+    public function RMEAnalis(Request $request)
+    {
+        $wer = '';
+        if(isset($request['nocm'])){
+            $wer = 'and ep.nocm=' . $request['nocm'];
+        }
+        if(isset($request['noreg'])){
+            $wer = "and ep.noregistrasifk='$request[noreg]'";
+        }
+        $data = DB::select(DB::raw("
+        SELECT DISTINCT ep.norec as norec_emr, ep.tglregistrasi, em.caption, em.namaemr, ep.noemr, epd.emrfk, epd.isanalis, epd.islengkap, epd.keterangan, epd.verifikator, em.urlform  FROM emrpasiend_t epd 
+        inner join emrpasien_t ep on ep.noemr = epd.emrpasienfk
+        inner join emr_t em on em.id = epd.emrfk
+        where ep.kdprofile= 30 and ep.statusenabled = true
+        $wer
+        ORDER BY ep.tglregistrasi desc
+        "));
+        foreach ($data as $otem) {
+            if($otem->isanalis == true){
+                $otem->isanalis = '✔';
+            }
+            if($otem->islengkap == true){
+                $otem->islengkap = '✔';
+            }
+        }
+        $result = array(
+            'data'=> $data
+        );
+        return $this->respond($result);
+    }
+    public function saveMenuAnalis(Request $request)
+    {
+        
+        
+        try {
+            $data = DB::table('emrpasien_t as ep')
+        ->join('emrpasiend_t as epd', 'ep.noemr','=','epd.emrpasienfk')
+        ->where('ep.noemr', $request['noemr'])
+        ->where('epd.emrfk',$request['emrfk'])
+        ->where('ep.norec',$request['norec_em'])
+        ->select('epd.norec')
+        ->get();
+        foreach ($data as $item) {
+            if($request['method'] == 'isanalis'){
+                DB::table('emrpasiend_t as epd')->where('epd.norec', $item->norec)->update([
+                    'isanalis'=> true
+                ]);
+            } else if( $request['method'] == 'islengkap'){
+                DB::table('emrpasiend_t as epd')->where('epd.norec', $item->norec)->update([
+                    'islengkap'=> true
+                ]);
+            }
+
+        }
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+        $transMessage = "Simpan";
+
+        if ($transStatus == 'true') {
+            $transMessage = $transMessage . " Berhasil";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+            //                "data" => $selisihjam,
+                "as" => 'er@epic',
+            );
+        } else {
+            $transMessage = $transMessage ." Gagal!!";
+            DB::rollBack();
+            $result = array(
+                "status" => 201,
+                "e" => $e->getLine() . $e->getMessage(),
+                "as" => 'er@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    public function saveKedua(Request $request)
+    {
+        try {
+            $data = DB::table('emrpasien_t as ep')
+            ->join('emrpasiend_t as epd', 'ep.noemr','=','epd.emrpasienfk')
+            ->where('ep.noemr', $request['noemr'])
+            ->where('epd.emrfk',$request['emrfk'])
+            ->where('ep.norec',$request['norec_em'])
+            ->select('epd.norec')
+            ->get();
+        foreach ($data as $item) {
+            if(isset($request['verifikator'])){
+                DB::table('emrpasiend_t as epd')->where('epd.norec', $item->norec)->update([
+                    'verifikator'=> $request['verifikator']
+                ]);
+            } else if( isset($request['keterangan'])){
+                DB::table('emrpasiend_t as epd')->where('epd.norec', $item->norec)->update([
+                    'keterangan'=> $request['keterangan']
+                ]);
+            }
+
+        }
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+        $transMessage = "Simpan";
+
+        if ($transStatus == 'true') {
+            $transMessage = $transMessage . " Berhasil";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+            //                "data" => $selisihjam,
+                "as" => 'er@epic',
+            );
+        } else {
+            $transMessage = $transMessage ." Gagal!!";
+            DB::rollBack();
+            $result = array(
+                "status" => 201,
+                "e" => $e->getLine() . $e->getMessage(),
+                "as" => 'er@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    public function riwayatEMRTemp(Request $request)
+    {
+        $data = DB::select(DB::raw("
+        SELECT epd.emrpasienfk, ed.caption, epd.emrdfk, epd.value from emrpasiend_t epd 
+        inner join emrd_t ed on ed.id = epd.emrdfk
+        where epd.emrfk = $request[emrfk] and epd.emrpasienfk = '$request[noemr]'
+        "));
+
+        foreach ($data as $item) {
+            $details = DB::select(DB::raw("
+            SELECT epd.value, pg.namalengkap, epd.tgl	from emrpasiend_temp_t epd 
+            inner join pegawai_m pg on pg.id = epd.pegawaifk
+            where epd.emrfk =:emrfk and epd.emrpasienfk =:emrpasienfk and epd.emrdfk =:emrdfk
+
+            ORDER BY epd.tgl asc
+            "), 
+            array(
+                "emrfk"=>$request['emrfk'],
+                "emrpasienfk"=>$request['noemr'],
+                "emrdfk"=>$item->emrdfk,
+            ));
+            $item->details = $details;
+        }
+        $result = array(
+            "data"=> $data
+        );
+        return $this->respond($result);
+    }
+    public function saveSUDAH(Request $request)
+    {
+        try {
+            
+            $pd = PasienDaftar::where('norec', $request['norec'])->first();
+            $ps = Pasien::where('id', $pd->nocmfk)->first();
+            if($request['method'] == 'analis'){
+                $pd->isanalis = true;
+            } else if($request['method'] == 'verif'){
+                $pd->isverifikasidpjp = true;
+            } else if($request['method'] == 'lengkap'){
+                $pd->isrmlengkap = true;
+            } else if($request['method'] == 'inaktif'){
+                $ps->isinaktif = true;
+            }
+            $ps->save();
+            $pd->save();
+
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+        $transMessage = "Simpan";
+
+        if ($transStatus == 'true') {
+            $transMessage = $transMessage . " Berhasil";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+            //                "data" => $selisihjam,
+                "as" => 'er@epic',
+            );
+        } else {
+            $transMessage = $transMessage ." Gagal!!";
+            DB::rollBack();
+            $result = array(
+                "status" => 201,
+                "e" => $e->getLine() . $e->getMessage(),
+                "as" => 'er@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
 }

@@ -73,6 +73,14 @@
             "urlDep": "module/Registrasi/DaftarRegistrasiPasienOperatorCtrl"
         },
         {
+            "nameDep": "KelengkapanRekamMedisCtrl",
+            "urlDep": "module/Registrasi/KelengkapanRekamMedisCtrl"
+        },
+        {
+            "nameDep": "MenuAnalisisFormulirCtrl",
+            "urlDep": "module/Registrasi/MenuAnalisisFormulirCtrl"
+        },
+        {
             "nameDep": "DaftarAntrianSusterRajalCtrl",
             "urlDep": "module/RawatJalan/DaftarAntrianSusterRajalCtrl"
         },
@@ -383,6 +391,10 @@
         {
             "nameDep": "RekamMedisCtrl",
             "urlDep": "module/EMR/RekamMedisCtrl"
+        },
+        {
+            "nameDep": "RekamMedisAnalisCtrl",
+            "urlDep": "module/Registrasi/RekamMedisAnalisCtrl"
         },
         {
             "nameDep": "PengkajianMedisCtrl",
