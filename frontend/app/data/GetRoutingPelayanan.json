@@ -354,12 +354,50 @@
     ]
   },
   {
+    "name": "KelengkapanRekamMedis",
+    "url": "/KelengkapanRekamMedis",
+    "templateurl": "module/Registrasi/KelengkapanRekamMedis.html",
+    "controller": "KelengkapanRekamMedisCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "RekamMedisAnalis.MenuAnalisisFormulir",
+    "url": "/MenuAnalisisFormulir",
+    "templateurl": "module/Registrasi/MenuAnalisisFormulir.html",
+    "controller": "MenuAnalisisFormulirCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
     "name": "RGFmdGFyUmVnaXN0cmFzaVBhc2llbk9wZXJhdG9y",
     "url": "/RGFmdGFyUmVnaXN0cmFzaVBhc2llbk9wZXJhdG9y",
     "templateurl": "module/Registrasi/DaftarRegistrasiPasienOperator.html",
     "controller": "DaftarRegistrasiPasienOperatorCtrl",
-    "deps": [
-      {
+    "deps": [{
         "module": "Services",
         "define": "Service"
       },
@@ -1940,6 +1978,25 @@
     "controller": "RekamMedisCtrl",
     "deps": [
       {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "RekamMedisAnalis",
+    "url": "/RekamMedisAnalis/:noRec",
+    "templateurl": "module/Registrasi/RekamMedisAnalis.html",
+    "controller": "RekamMedisAnalisCtrl",
+    "deps": [{
         "module": "Services",
         "define": "Service"
       },

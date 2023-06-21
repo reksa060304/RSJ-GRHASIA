@@ -1541,9 +1541,12 @@ define(['initialize'], function (initialize) {
                                 value: medifirstService.getPegawaiLogin().id,
                                 text: medifirstService.getPegawaiLogin().namaLengkap
                             }
-                            $scope.item.obj[120290] = {
-                                value: medifirstService.getPegawaiLogin().id,
-                                text: medifirstService.getPegawaiLogin().namaLengkap
+                            console.log(medifirstService.getPegawaiLogin());
+                            if(medifirstService.getPegawaiLogin().jenisPegawai.id == 1 ){
+                                $scope.item.obj[120290] = {
+                                    value: medifirstService.getPegawaiLogin().id,
+                                    text: medifirstService.getPegawaiLogin().namaLengkap
+                                }
                             }
                             
                             dataLoad = dat.data.data

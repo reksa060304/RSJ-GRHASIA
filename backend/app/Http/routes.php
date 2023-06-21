@@ -1497,7 +1497,12 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('logistik/get-daftar-pemakaian-ruangan-baru', 'Logistik\LogistikController@getDaftarPemakaianStokRuanganBaru');
             Route::get('logistik/get-detail-order-for-kirim-barang-baru', 'Logistik\LogistikController@getDetailOrderBarangForKirimBaru');
             Route::post('bhp/simpan-verif-order','Logistik\LogistikController@simpanVerifOrder');
+            Route::get('rme/analisis-rme','Registrasi\RegistrasiController@RMEAnalis');
+            Route::post('emr/save-menu-analis', 'Registrasi\RegistrasiController@saveMenuAnalis');
+            Route::post('emr/save-kedua', 'Registrasi\RegistrasiController@saveKedua');
+            Route::post('emr/save-sudah-sudah','Registrasi\RegistrasiController@saveSUDAH');
             Route::post('logistik/save-kirim-barang-ruangan-baru', 'Logistik\LogistikController@saveKirimBarangRuanganBaru');
+            Route::get('emr/data-riwayat-emr', 'Registrasi\RegistrasiController@riwayatEMRTemp');
             // GET //
 
             // POST //
