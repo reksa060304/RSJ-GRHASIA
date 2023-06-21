@@ -335,7 +335,7 @@ class ReservasiOnlineController extends ApiController
             $newptp->tanggalreservasi = $tglDoang .' '.$antrian['jamkosong'];// $request['tglReservasiFix'];
             $newptp->tgllahir= $request['tglLahir'];
             $newptp->objectkelompokpasienfk= $request['tipePembayaran']['id'];
-            $newptp->objectpendidikanfk = 0;
+            // $newptp->objectpendidikanfk = 0;
             $newptp->namapasien=  $request['namaPasien'];
             $newptp->noidentitas=  $request['nik'];
             $newptp->nikpenanggungjawab=  $request['nikPenanggungJawab'];
