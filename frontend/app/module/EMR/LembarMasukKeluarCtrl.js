@@ -375,7 +375,43 @@ define(['initialize'], function (initialize) {
             medifirstService.get("emr/get-emr-transaksi-detail?noemr=" + nomorEMR + "&emrfk=" + $scope.cc.emrfk, true).then(function (dat) {
                 $scope.item.obj = []
                 $scope.item.obj2 = []
+                medifirstService.get("emr/get-emr-to-emr?noemr="+ nomorEMR + "&emrfk=777").then(function (dat) {
+                    
+                   
+                     var datas = dat.data.data
+                    // var a = ""
+                    // var b = ""
+                    // for (var i = datas.length - 1; i >= 0; i--) {
+            
+                    //     var c = datas[i].caption
+                    //     b = ", " + c
+                    //     a = a + b
+                    // }
+                    // $scope.item.obj[3017315] = a.slice(1, a.length)
+                    // console.log($scope.bro);
+                    // $scope.isRouteLoading = false
+
+                    for (let i = 0; i < datas.length; i++) {
+                        if(datas[i].type == 'textbox'){
+                            $scope.item.obj[datas[i].idtujuan]= datas[i].value   
+                        }    
+                        if (datas[i].type == "checkbox") {
+                            if (datas[i].value == "1") {
+                                $scope.item.obj[datas[i].idtujuan] = datas[i].value 
+                                console.log(datas[i].type);
+                            }
+                        }       
+                        if (datas[i].type == "textarea") {
+                            $scope.item.obj[datas[i].idtujuan] = datas[i].value
+                        }    
+                                           
+                    }
+                    
+                    
+    
+                })
                 medifirstService.get("emr/get-data-lembar-masuk-keluar?noregistrasi=" + $scope.cc.noregistrasi).then(function (dat) {  
+                    var datas=dat.data.data
                     if (dat.data.data[0].umur <= 18) {
                         $scope.item.obj[3004500] = true
                     }
@@ -534,6 +570,7 @@ define(['initialize'], function (initialize) {
                     $scope.item.obj[3004558] = dat.data.data[0].alamatrmh
                     $scope.item.obj[3004559] = dat.data.data[0].teleponpenanggungjawab
 
+                  
                     //$scope.item.obj[3017315] 
                     // console.log($scope.bro);
     
