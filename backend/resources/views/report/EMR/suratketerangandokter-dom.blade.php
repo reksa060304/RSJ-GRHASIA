@@ -169,13 +169,18 @@
                                 <table>
                                     <tr>
                                         {{-- <td></td> --}}
-                                        <td> {{$item[3003983]}} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Jenis Kelamin</td>
-                                        <td>:</td>
-                                        <td>{{$item[3003984]}}</td>
+                                        <td>{{$item[3003983]}} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </td>
+                                        <td></td>
+                                        <td></td>
                                     </tr>
                                 </table>
                                 </td>
                                 
+                            </tr>
+                            <tr>
+                                <td  style="padding-left: 60px ">Jenis Kelamin</td>
+                                <td width="1">:</td>
+                                <td>{{$item[3003984]}}</td>
                             </tr>
                             <tr>
                                 <td  style="padding-left: 60px ">Pekerjaan</td>

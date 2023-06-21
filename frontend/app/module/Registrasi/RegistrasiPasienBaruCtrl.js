@@ -319,6 +319,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.isRouteLoading = true
                 medifirstService.get('registrasi/get-pasienonline-bynorec/' + $state.params.noRec)
                     .then(function (e) {
+
                         $scope.isRouteLoading = false
                         var result = e.data.data
                         if (result.namaibu)
@@ -352,7 +353,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         if (result.alamatlengkap)
                             $scope.item.alamatLengkap = result.alamatlengkap;
                         if (result.notelepon)
-                            $scope.item.noTelepon = result.notelepon;
+                            $scope.item.noHp = result.notelepon;
                         if (result.nohp)
                             $scope.item.noHp = result.noaditional;
                         if (result.objectgolongandarahfk)
