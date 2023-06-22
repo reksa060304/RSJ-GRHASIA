@@ -480,13 +480,15 @@ define(['kendo.menu'], function (kendoMenu) {
         if (navigator.onLine) {
             toastr.success("PERANGKAT TERHUBUNG KE JARINGAN");
         } else {
-            var confirm = $mdDialog.confirm()
-                .title('PERINGATAN')
-                .textContent('KONEKSI TERPUTUS, KLIK YA UNTUK KONFIRMASI')
-                .ariaLabel('Lucky day')
-                .cancel('Tidak')
-                .ok('Ya')
-            $mdDialog.show(confirm).then(function () {})
+            toastr.error("PERANGKAT TERPUTUS KE JARINGAN");
+
+            // var confirm = $mdDialog.confirm()
+            //     .title('PERINGATAN')
+            //     .textContent('KONEKSI TERPUTUS, KLIK YA UNTUK KONFIRMASI')
+            //     .ariaLabel('Lucky day')
+            //     .cancel('Tidak')
+            //     .ok('Ya')
+            // $mdDialog.show(confirm).then(function () {})
         }
     }
     window.addEventListener("online", handleOnlineStatus);
