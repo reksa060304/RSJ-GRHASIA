@@ -1,7 +1,7 @@
 define(['kendo.menu'], function (kendoMenu) {
     'use strict';
 
-    function HeaderCtrl($window, $scope, MenuService, GlobalToState, $rootScope, $state, LoginHelper, $location, socket) {
+    function HeaderCtrl($window, $scope, MenuService, GlobalToState, $rootScope, $state, LoginHelper, $location, socket, $mdDialog) {
         $scope.isOpen = true;
         $scope.listMenuHeader = {};
         $scope.messages = [];
@@ -476,8 +476,22 @@ define(['kendo.menu'], function (kendoMenu) {
 
         };
     }
-
-    HeaderCtrl.$inject = ['$window', '$scope', 'MenuService', 'GlobalToState', '$rootScope', '$state', 'LoginHelper', '$location', 'socket'];
+    function handleOnlineStatus() {
+        if (navigator.onLine) {
+            toastr.success("PERANGKAT TERHUBUNG KE JARINGAN");
+        } else {
+            var confirm = $mdDialog.confirm()
+                .title('PERINGATAN')
+                .textContent('KONEKSI TERPUTUS, KLIK YA UNTUK KONFIRMASI')
+                .ariaLabel('Lucky day')
+                .cancel('Tidak')
+                .ok('Ya')
+            $mdDialog.show(confirm).then(function () {})
+        }
+    }
+    window.addEventListener("online", handleOnlineStatus);
+    window.addEventListener("offline", handleOnlineStatus);
+    HeaderCtrl.$inject = ['$window', '$scope', 'MenuService', 'GlobalToState', '$rootScope', '$state', 'LoginHelper', '$location', 'socket', '$mdDialog'];
 
     return HeaderCtrl;
 });
