@@ -199,9 +199,9 @@ Set Report = New Cr_cetakLabelKecil
              str1 & _
              ""
     strSQL = strSQL & " union all select distinct ps.nocm,ps.namapasien,to_char(ps.tgllahir, 'DD-MM-YYYY') as tgllahir,sr.noresep AS noresep,to_char(sr.tglresep, 'DD-MM-YYYY') as tglresep, " & _
-             " ' Racikan' || ' (' || CAST(((CAST(pp.qtydetailresep as INTEGER)/CAST(pp.dosis as INTEGER))*CAST(pro.kekuatan as INTEGER))as varchar) || ')' AS namaproduk,CASE WHEN pp.aturanpakai IS NULL THEN '1X1' WHEN pp.aturanpakai = '' THEN '1X1' ELSE pp.aturanpakai END AS aturanpakai,pp.rke, " & _
+             " ' Racikan' || ' (' || CAST(((CAST(pp.qtydetailresep as float)/CAST(pp.dosis as float))*CAST(pro.kekuatan as float))as varchar) || ')' AS namaproduk,CASE WHEN pp.aturanpakai IS NULL THEN '1X1' WHEN pp.aturanpakai = '' THEN '1X1' ELSE pp.aturanpakai END AS aturanpakai,pp.rke, " & _
              " case when alm.alamatlengkap is null then '-' else alm.alamatlengkap end as alamat,ps.notelepon,CASE when jr.jenisracikan IS NULL THEN '' ELSE jr.jenisracikan END AS satuanstandar, " & _
-             " ((CAST(pp.qtydetailresep as INTEGER)/CAST(pp.dosis as INTEGER))*CAST(pro.kekuatan as INTEGER)) as jumlah, " & _
+             " ((CAST(pp.qtydetailresep as float)/CAST(pp.dosis as float))*CAST(pro.kekuatan as float)) as jumlah, " & _
              " CASE WHEN pp.issiang = 't' THEN 'Siang' ELSE '-' END AS siang, CASE WHEN pp.ispagi = 't' THEN 'Pagi' ELSE '-' END AS pagi, " & _
              " CASE WHEN pp.ismalam = 't' THEN 'Malam' ELSE '-' END as malam, CASE WHEN pp.issore = 't' THEN 'Sore' ELSE '-' END as sore, " & _
              " CASE WHEN pp.keteranganpakai  = '' OR pp.keteranganpakai IS NULL THEN 'Semoga Lekas Sembuh' else pp.keteranganpakai END AS keteranganpakai,CASE WHEN sn.satuanresep IS NOT NULL THEN sn.satuanresep ELSE '' END AS satuanresep " & _
@@ -318,7 +318,7 @@ Set Report = New Cr_cetakLabelKecil
             str2 & _
             ""
     strSQL = strSQL & " union all select distinct ps.nocm,ps.namapasien,to_char(ps.tgllahir, 'DD-MM-YYYY') as tgllahir,sr.noresep,sr.tglresep,pro.namaproduk || ' (' || CAST(pp.jumlah as varchar) || ')' AS namaproduk,CASE WHEN pp.aturanpakai IS NULL THEN '1X1' WHEN pp.aturanpakai = '' THEN '1X1' ELSE pp.aturanpakai END AS aturanpakai,pp.rke, " & _
-            " case when pp.keteranganpakai is null then '' else pp.keteranganpakai end as keteranganpakai,CASE WHEN alm.alamatlengkap is null then '-' else alm.alamatlengkap end as alamat,ps.notelepon,CASE when jr.jenisracikan IS NULL THEN '' ELSE jr.jenisracikan END AS satuanstandar,((CAST(pp.qtydetailresep as INTEGER)/CAST(pp.dosis as INTEGER))*CAST(pro.kekuatan as INTEGER)) as jumlah, " & _
+            " case when pp.keteranganpakai is null then '' else pp.keteranganpakai end as keteranganpakai,CASE WHEN alm.alamatlengkap is null then '-' else alm.alamatlengkap end as alamat,ps.notelepon,CASE when jr.jenisracikan IS NULL THEN '' ELSE jr.jenisracikan END AS satuanstandar,((CAST(pp.qtydetailresep as float)/CAST(pp.dosis as float))*CAST(pro.kekuatan as float)) as jumlah, " & _
             " CASE WHEN pp.issiang = 't' THEN 'Siang' ELSE '-' END AS siang, CASE WHEN pp.ispagi = 't' THEN 'Pagi' ELSE '-' END AS pagi, " & _
             " CASE WHEN pp.ismalam = 't' THEN 'Malam' ELSE '-' END as malam, CASE WHEN issore = 't' THEN 'Sore' ELSE '-' END as sore, " & _
             " CASE WHEN pp.keteranganpakai  = '' OR pp.keteranganpakai IS NULL THEN 'Semoga Lekas Sembuh' else pp.keteranganpakai END AS keteranganpakai,CASE WHEN sn.satuanresep IS NOT NULL THEN sn.satuanresep ELSE '' END AS satuanresep " & _

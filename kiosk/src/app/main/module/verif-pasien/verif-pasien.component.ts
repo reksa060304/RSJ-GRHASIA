@@ -86,6 +86,19 @@ export class VerifPasienComponent implements OnInit {
       });
     
   }
+  formatDate(date) {
+    var d = new Date(date),
+        month = '' + (d.getMonth() + 1),
+        day = '' + d.getDate(),
+        year = d.getFullYear();
+
+    if (month.length < 2) 
+        month = '0' + month;
+    if (day.length < 2) 
+        day = '0' + day;
+
+    return [year, month, day].join('-');
+}
   ngOnDestroy() {
     this.sub.unsubscribe();
   }
@@ -152,11 +165,13 @@ export class VerifPasienComponent implements OnInit {
       let nik = this.formGroup.get('noCm').value
       if (nik != null && nik.length > 10) {
         this.loading = true
-        this.httpservice.get('medifirst2000/bridging/dukcapil/get-nik/' + nik).subscribe(e => {
-          if (e.content == undefined) {
+        
+        this.httpservice.get('medifirst2000/bridging/bpjs/get-nik?nik=' + nik +"&tglsep="+new Date().getFullYear() + "-" + new Date().getMonth() + "-" + new Date().getDate()
+        ).subscribe(e => {
+          if (e.response == undefined) {
             return
           }
-          if (e.messages) {
+          if (e.metaData.message != "OK") {
             this.alertService.error('', e.messages, {
               toastClass: 'toast ngx-toastr',
               closeButton: true,
@@ -165,8 +180,10 @@ export class VerifPasienComponent implements OnInit {
             // this.alertService.error('Error', e.messages)
             return
           }
-          if (e.content[0] != "") {
-            let result = e.content[0]
+          if (e.response.peserta != "") {
+            let result = e.response.peserta
+            console.log(result);
+            
             if(result== undefined){
               this.alertService.error('', e.content.RESPOND, {
                 toastClass: 'toast ngx-toastr',
@@ -176,7 +193,7 @@ export class VerifPasienComponent implements OnInit {
               // this.alertService.error('Error', e.content.RESPOND)
               return
             }
-            this.alertService.success('', 'Nama Lengkap : ' + result.NAMA_LGKP, {
+            this.alertService.success('', 'Nama Lengkap : ' + result.nama, {
               toastClass: 'toast ngx-toastr',
               closeButton: true,
               positionClass: 'toast-bottom-center'
@@ -186,74 +203,74 @@ export class VerifPasienComponent implements OnInit {
             this.isInfoPasienBaru = true
             // this.noCm =
 
-            this.namaPasien = result.NAMA_LGKP
-            this.jenisKelamin = result.JENIS_KLMIN
-            this.noIdentitas = result.NIK
-            this.tempatTglLahir = result.TMPT_LHR + ', ' + result.TGL_LHR
-            this.alamat = result.ALAMAT + ' KEL. ' + result.NAMA_KEL
-              + ' RT' + result.NO_RT + '/RW' + result.NO_RW + ' KEC. ' + result.NAMA_KEC
+            this.namaPasien = result.nama
+            this.jenisKelamin = result.sex
+            this.noIdentitas = result.nik
+            this.tempatTglLahir = result.tglLahir
+            // this.alamat = result.ALAMAT + ' KEL. ' + result.NAMA_KEL
+            //   + ' RT' + result.NO_RT + '/RW' + result.NO_RW + ' KEC. ' + result.NAMA_KEC
             this.noTelpon = '-'
             this.idPasien = '-'
-            this.statusKawin = result.STAT_KWN
+            // this.statusKawin = result.STAT_KWN
 
-            for (let i = 0; i < this.listDataAgama.length; i++) {
-              const element = this.listDataAgama[i];
-              if (element.agama.toLowerCase().indexOf(result.AGAMA.toLowerCase()) > -1) {
-                this.item.idAgama = element.id
-                break
-              }
-            }
+            // for (let i = 0; i < this.listDataAgama.length; i++) {
+            //   const element = this.listDataAgama[i];
+            //   if (element.agama.toLowerCase().indexOf(result.AGAMA.toLowerCase()) > -1) {
+            //     this.item.idAgama = element.id
+            //     break
+            //   }
+            // }
 
             for (let i = 0; i < this.listDataJenisKelamin.length; i++) {
               const element = this.listDataJenisKelamin[i];
-              if (element.jeniskelamin.toLowerCase().indexOf(result.JENIS_KLMIN.toLowerCase()) > -1) {
+              if (element.jeniskelamin.toLowerCase().indexOf(result.sex.toLowerCase()) > -1) {
                 this.item.jenisKelaminId = element.id
                 break
               }
             }
 
-            for (let i = 0; i < this.listDataPekerjaan.length; i++) {
-              const element = this.listDataPekerjaan[i];
-              if (element.pekerjaan.toLowerCase().indexOf(result.JENIS_PKRJN.toLowerCase()) > -1) {
-                this.item.pekerjaanId = element.id
-                break
-              }
-            }
-            for (let i = 0; i < this.listDataStatusPerkawinan.length; i++) {
-              const element = this.listDataStatusPerkawinan[i];
-              if (element.statusperkawinan == result.STATUS_KAWIN) {
-                this.item.statusPerkawinanId = element.id
-                break
-              }
-            }
-            for (let i = 0; i < this.listDataPendidikan.length; i++) {
-              const element = this.listDataPendidikan[i];
-              if (element.pendidikan.toLowerCase().indexOf(result.PDDK_AKH.toLowerCase()) > -1) {
-                this.item.pendidikanId = element.id
-                break
-              }
-            }
-            if (result.NAMA_KEL) {
-              this.httpservice.get("medifirst2000/registrasi/get-desa-kelurahan-paging?namadesakelurahan=" + result.NAMA_KEL).subscribe(res => {
-                if (res[0] != undefined) {
-                  var resss = res[0]
-                  var data = {
-                    id: resss.id,
-                    namadesakelurahan: resss.namadesakelurahan,
-                    kodepos: resss.kodepos,
-                    namakecamatan: resss.namakecamatan,
-                    namakotakabupaten: resss.namakotakabupaten,
-                    namapropinsi: resss.namapropinsi,
-                    objectkecamatanfk: resss.objectkecamatanfk,
-                    objectkotakabupatenfk: resss.objectkotakabupatenfk,
-                    objectpropinsifk: resss.objectpropinsifk,
-                    desa: resss.namadesakelurahan,
-                  }
+            // for (let i = 0; i < this.listDataPekerjaan.length; i++) {
+            //   const element = this.listDataPekerjaan[i];
+            //   if (element.pekerjaan.toLowerCase().indexOf(result.JENIS_PKRJN.toLowerCase()) > -1) {
+            //     this.item.pekerjaanId = element.id
+            //     break
+            //   }
+            // }
+            // for (let i = 0; i < this.listDataStatusPerkawinan.length; i++) {
+            //   const element = this.listDataStatusPerkawinan[i];
+            //   if (element.statusperkawinan == result.STATUS_KAWIN) {
+            //     this.item.statusPerkawinanId = element.id
+            //     break
+            //   }
+            // }
+            // for (let i = 0; i < this.listDataPendidikan.length; i++) {
+            //   const element = this.listDataPendidikan[i];
+            //   if (element.pendidikan.toLowerCase().indexOf(result.PDDK_AKH.toLowerCase()) > -1) {
+            //     this.item.pendidikanId = element.id
+            //     break
+            //   }
+            // }
+            // if (result.NAMA_KEL) {
+            //   this.httpservice.get("medifirst2000/registrasi/get-desa-kelurahan-paging?namadesakelurahan=" + result.NAMA_KEL).subscribe(res => {
+            //     if (res[0] != undefined) {
+            //       var resss = res[0]
+            //       var data = {
+            //         id: resss.id,
+            //         namadesakelurahan: resss.namadesakelurahan,
+            //         kodepos: resss.kodepos,
+            //         namakecamatan: resss.namakecamatan,
+            //         namakotakabupaten: resss.namakotakabupaten,
+            //         namapropinsi: resss.namapropinsi,
+            //         objectkecamatanfk: resss.objectkecamatanfk,
+            //         objectkotakabupatenfk: resss.objectkotakabupatenfk,
+            //         objectpropinsifk: resss.objectpropinsifk,
+            //         desa: resss.namadesakelurahan,
+            //       }
 
-                  this.item.desaKelurahan = data
-                }
-              });
-            }
+            //       this.item.desaKelurahan = data
+            //     }
+            //   });
+            // }
 
             var postJson = {
               'isbayi': false,
@@ -294,7 +311,7 @@ export class VerifPasienComponent implements OnInit {
                 'id': null,
               },
 
-              'namaIbu': result.NAMA_LGKP_IBU,
+              'namaIbu': null,
               'noTelepon': null,
               'noAditional': null,
               'kebangsaan': {
@@ -303,8 +320,8 @@ export class VerifPasienComponent implements OnInit {
               'negara': {
                 'id': 0,
               },
-              'namaAyah': result.NAMA_LGKP_AYAH,
-              'alamatLengkap': this.alamat,
+              'namaAyah': null,
+              'alamatLengkap': '-',
               'desaKelurahan': {
                 'id': this.item.desaKelurahan != undefined ? this.item.desaKelurahan.id : null,
                 'namaDesaKelurahan': this.item.desaKelurahan != undefined ? this.item.desaKelurahan.namadesakelurahan : null,
