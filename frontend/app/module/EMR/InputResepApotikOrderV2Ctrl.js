@@ -1302,7 +1302,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 for (var i = diffDays - 1; i >= 0; i--) {
                     var someDate = moment($scope.item.tglresep).toDate();//new Date(moment($scope.item.tglresep).format('YYYY-MM-DD hh:mm:ss'));
                     var numberOfDaysToAdd = i;
-                    tglResepHari = moment(someDate.setDate(someDate.getDate() + numberOfDaysToAdd)).format('YYYY-MM-DD hh:mm:ss');
+                    tglResepHari = moment(someDate.setDate(someDate.getDate() + numberOfDaysToAdd)).format('YYYY-MM-DD HH:mm:ss');
 
                     var strukorder = {
                         norec: $scope.norecOrder,
