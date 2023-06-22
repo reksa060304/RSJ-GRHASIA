@@ -18,11 +18,11 @@ import { CoreConfig } from '@core/types';
 export const coreConfig: CoreConfig = {
   app: {
     appName: 'Kiosk',                            // App Name
-    appTitle: 'Kiosk - RSJ Grhasia', // App Title
+    appTitle: 'Kiosk - RS Jiwa Grhasia', // App Title
     // appLogoImage: 'assets/images/logo/logo.svg',                  // App Logo
-    appLogoImage: 'assets/images/logo_only.png',
+    appLogoImage: 'assets/images/grhasia-bg-white.png',
     appVendor: 'TRANSMEDIC',
-    appRumahSakit: 'RSJ Grhasia',
+    appRumahSakit: 'RS Jiwa Grhasia',
     appLogoVendor: 'assets/images/logo.png',
     link: 'https://apps.transmedic.co.id'
   },
