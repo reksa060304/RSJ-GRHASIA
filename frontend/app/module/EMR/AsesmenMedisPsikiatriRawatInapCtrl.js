@@ -954,7 +954,7 @@ define(['initialize'], function (initialize) {
                     "no": 65
                 },
                 {
-                    "id": 120122,
+                    "id": 120322,
                     "nama": "Lain-lain",
                     "type": "checkbox12",
                     "no": 66
