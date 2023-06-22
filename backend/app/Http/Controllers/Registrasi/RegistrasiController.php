@@ -13310,4 +13310,107 @@ GROUP BY y.KET
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
+    public function getNoRMTerakhir(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idRunningNumber = 1745;
+        $runningNumber = RunningNumber::where('id', $idRunningNumber)->where('kdprofile', $kdProfile)->first();
+        $extension = $runningNumber->extention;
+        $noCmTerakhir = $runningNumber->nomer_terbaru + 1;
+        $noCm = $extension . $noCmTerakhir;
+        // $noCm = $this->generateCodeBySeqTable(new Pasien, 'nocm', 7, '', $kdProfile);
+        // $noCmTerakhir = (int)$noCm;  
+        // $data['nocmrunning'] = $noCmTerakhir;
+        $data['nocm'] = $noCm;
+        return $this->respond($data);
+    }
+    public function updateNORM(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+
+        DB::beginTransaction();
+        try {
+            $cek =  Pasien::where('nocm', $request['nocmbaru'])
+                ->where('statusenabled', true)
+                ->first();
+            $idRunningNumber = 1745;
+            $stt = '';
+            if (empty($cek)) {
+                RunningNumber::where('id', $idRunningNumber)
+                    ->update(
+                        [
+                            'nomer_terbaru' => $request['nocmrunning']
+                        ]
+                    );
+                Pasien::where('id', $request['id'])
+                    ->update(
+                        [
+                            'nocm' => $request['nocmbaru'],
+                            'nocmlama' => $request['nocm']
+                        ]
+                    );
+                $noCm = $request['nocmbaru'];
+
+                $updateEMR =  EMRPasien::where('nocm', $request['nocm'])
+                    ->update([
+                        'nocm' => $noCm
+                    ]);
+            } else {
+
+                // $runningNumber = RunningNumber::where('id', $idRunningNumber)->where('kdprofile', $kdProfile)->first();
+                // $extension = $runningNumber->extention;
+
+                // $noCmTerakhir = $runningNumber->nomer_terbaru + 1;
+                // $noCm = $extension . $noCmTerakhir;
+                $noCm = $this->generateCodeBySeqTable(new Pasien, 'nocm', 7, '', $kdProfile);
+                $noCmTerakhir = (int)$noCm;  
+
+                RunningNumber::where('id', $idRunningNumber)
+                    ->update(
+                        [
+                            'nomer_terbaru' => $noCmTerakhir
+                        ]
+                    );
+                Pasien::where('id', $request['id'])
+                    ->update(
+                        [
+                            'nocm' => $noCm,
+                            'nocmlama' => $request['nocm']
+                        ]
+                    );
+                $updateEMR =  EMRPasien::where('nocm', $request['nocm'])
+                    ->update([
+                        'nocm' => $noCm
+                    ]);
+                $stt = ' No RM baru : ' . $noCm;
+            }
+
+
+
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Sukses " . $stt;
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'nocm' => $noCm,
+                'as' => '',
+            );
+        } else {
+            $transMessage = "Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message'  => $transStatus,
+                'e'  => $e->getMessage() . ' ' . $e->getLine(),
+                'as' => '',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
 }

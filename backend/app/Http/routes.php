@@ -427,6 +427,9 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
               Route::post('bridging/penunjang/save-bridging-vans-lab', 'Bridging\BridgingPenunjangController@saveBridgingVansLab');
               Route::post('bridging/penunjang/save-hapus-order-lab', 'Bridging\BridgingPenunjangController@saveHapusOrderLab');
               Route::post('bridging/penunjang/save-hapus-order-rad', 'Bridging\BridgingPenunjangController@saveHapusOrderRad');
+              Route::get('registrasi/get-nocm-terakhir', 'Registrasi\RegistrasiController@getNoRMTerakhir');
+              Route::post('registrasi/update-nocm', 'Registrasi\RegistrasiController@updateNORM');
+          Route::get('api/trigger-telemedicine', 'Bridging\DokterKeluargaController@sendPHR');
 
               Route::get('bridging/penunjang/get-hasil-vans-lab', 'Bridging\BridgingPenunjangController@getHasilLaborat');
             // });
@@ -1503,6 +1506,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::post('emr/save-sudah-sudah','Registrasi\RegistrasiController@saveSUDAH');
             Route::post('logistik/save-kirim-barang-ruangan-baru', 'Logistik\LogistikController@saveKirimBarangRuanganBaru');
             Route::get('emr/data-riwayat-emr', 'Registrasi\RegistrasiController@riwayatEMRTemp');
+            Route::get('get/load-copy-resep', 'EMR\EMRController@getCopyResep');
             // GET //
 
             // POST //

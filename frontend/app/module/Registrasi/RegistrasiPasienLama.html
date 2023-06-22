@@ -212,6 +212,10 @@
         </c-button> -->
 
     </div>
+    <div class="grid_1" style="float:right;">
+        <button kendo-button style="width: 100%" class="primary" ng-click="ubahNoRM()"><i class="fa fa-plane"></i>Ubah
+            No RM</button>
+    </div>
     <div class="grid_2" style="float:right;">
         <button kendo-button style="width: 100%" class="primary" ng-click="RegistrasiPasien()"><i
                 class="fa fa-arrow-circle-right"></i> Registrasi</button>
@@ -454,5 +458,25 @@
         <div class="grid_12" style="margin-top:60px">
             <div ng-include='"../app/template/Shared/TemplateLoading"'></div>
         </div>
+    </div>
+</div>
+<div kendo-window="popUpRM" k-title="'Detail'" k-width="400" k-visible="false" k-on-open="win2visible = true"
+    k-on-close="win2visible = false">
+    <div class="grid_12">
+        <label c-label item="item ">No RM Lama</label>
+        <input c-text-box type="input" class="k-textbox" ng-model="dataPasienSelected.nocm" disabled />
+    </div>
+    <div class="grid_12">
+        <label c-label item="item ">Nama Pasien</label>
+        <input c-text-box type="input" class="k-textbox" ng-model="dataPasienSelected.namapasien" disabled />
+    </div>
+    <div class="grid_12">
+        <label c-label item="item ">No RM Baru</label>
+        <input c-text-box type="input" class="k-textbox" ng-model="item.rmBaru" disabled />
+
+    </div>
+    <div class="clear" ng-hide="isSaves">
+        <button class="k-button" ng-click="saveRM()" style="float:right;margin-top:4%;background-color: #e0360b;
+                border-color: #e0360b;">Simpan</button>
     </div>
 </div>

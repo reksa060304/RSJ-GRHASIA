@@ -1287,4 +1287,97 @@ class DokterKeluargaController extends ApiController
     }
     return $array_two;
 }
+public function sendPHR(Request $request)
+{
+    try {
+          
+            $pasien  =  DB::table('pasien_m')->where('nocm',$request['nocm'])->first();
+            $dataJsonSend = null;
+            $methods = 'GET';
+            // $ip = 'https://emr-api.transmedika.co.id';
+            $ip = 'http://157.230.243.231:9011';
+            $url =  $ip.'/emr/v1/notify-update/'.$pasien->noidentitas.'/'.$request['nocm'];
+            $header = ['token:HNoURUUdjnnzkiWTSR5b9XxungeLC0Dsv600X3qWcug='];    
+            $response = $this->curlAPI2($header, $dataJsonSend, $url, $methods, null);
+ 
+         
+            $response2 = array(
+                "metaData" => array(
+                    "code" => "200",
+                    "message" => 'Ok'
+                ),
+                "response" => $response
+            );
+            return $this->respond($response2);
+           
+        } catch (\Exception $e) {
+            $response = array(
+                "metaData" => array(
+                    "code" => "404",
+                    "message" => "Transaksi tidak dapat di proses, Gagal dicoba kembali!"
+                ),
+                "response" => null,
+                "e"=> $e->getMessage(). ' '.$e->getLine()
+            );
+    
+            return $this->respond($response);
+        }
+    }
+    protected function curlAPI2($headers, $dataJsonSend = null, $url, $method, $tipe = null)
+    {
+        $curl = curl_init();
+        if ($dataJsonSend == null) {
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => $url,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => "",
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 10,
+                CURLOPT_SSL_VERIFYHOST => 0,
+                CURLOPT_SSL_VERIFYPEER => 0,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => $method,
+                CURLOPT_HTTPHEADER => $headers,
+                CURLOPT_SSL_CIPHER_LIST => 'DEFAULT@SECLEVEL=1'
+            ));
+        } else {
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => $url,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => "",
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 10,
+                CURLOPT_SSL_VERIFYHOST => 0,
+                CURLOPT_SSL_VERIFYPEER => 0,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => $method,
+                CURLOPT_POSTFIELDS => $dataJsonSend,
+                CURLOPT_HTTPHEADER => $headers,
+                CURLOPT_SSL_CIPHER_LIST => 'DEFAULT@SECLEVEL=1'
+            ));
+        }
+
+        $response = curl_exec($curl);
+        $err = curl_error($curl);
+
+        curl_close($curl);
+
+        if ($err) {
+            $result = array(
+                'metaData' => array(
+                    'code' => 400,
+                    'message' => 'Gagal menghubungkan ke  (' . $url . ')'
+                ),
+            );
+        } else {
+         
+            if ($this->isJson($response)) {
+                $result = json_decode($response);
+            } else {
+                $result = $response;
+            }
+        }
+
+        return $result;
+    }
 }

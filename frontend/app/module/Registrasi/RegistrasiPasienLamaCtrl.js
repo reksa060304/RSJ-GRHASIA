@@ -1313,6 +1313,51 @@ define(['initialize'], function (initialize) {
                 })
 
            } 
+           $scope.ubahNoRM = function () {
+               if ($scope.dataPasienSelected == undefined) {
+                   toastr.error("Pilih data dulu!")
+               }
+               medifirstService.get('registrasi/get-nocm-terakhir').then(function (e) {
+                   $scope.item.rmBaru = e.data.nocm
+                   $scope.item.nocmrunning = e.data.nocmrunning
+
+                   $scope.popUpRM.center().open()
+               })
+
+           }
+           $scope.saveRM = function () {
+
+               var confirm = $mdDialog.confirm()
+                   .title('Info')
+                   .textContent('Yakin mau mengubah NO RM?')
+                   .ariaLabel('Lucky day')
+                   .cancel('Tidak')
+                   .ok('Ya')
+               $mdDialog.show(confirm).then(function () {
+
+                   let json = {
+                       'id': $scope.dataPasienSelected.nocmfk,
+                       'nocm': $scope.dataPasienSelected.nocm,
+                       'nocmbaru': $scope.item.rmBaru,
+                       'nocmrunning': $scope.item.nocmrunning
+
+                   }
+                   $scope.isSaves = true
+                   medifirstService.post('registrasi/update-nocm', json).then(function (e) {
+                       medifirstService.get('api/trigger-telemedicine?nocm=' + $scope.item.rmBaru).then(function (res) {})
+
+                       // loadData()
+                       $scope.isSaves = false
+                       $scope.dataPasienSelected.nocm = e.data.nocm
+                       delete $scope.item.rmBaru
+                       delete $scope.item.nocmrunning
+                       $scope.popUpRM.close()
+                   }, function (error) {
+                       $scope.isSaves = false
+                   })
+               })
+
+           }
             //** BATAS */
         }
     ]);
