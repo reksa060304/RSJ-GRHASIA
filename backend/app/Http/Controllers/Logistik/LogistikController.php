@@ -15267,4 +15267,280 @@ class LogistikController extends ApiController{
         );
         return $this->respond($result);
     }
+    public function getStokRuangan(Request $request)
+    {
+        $data = DB::select(DB::raw("
+        SELECT A
+	.namaproduk,
+	A.satuanstandar,
+	A.saldoawal,
+	b.saldomasuk,
+	b.saldokeluar,
+	b.harganetto1,
+	dgudang.saldokeluar as saldokeluargudang,
+	C.saldoakhir , e.saldoakhir as saldoakhirgudang,
+    C.saldoakhir + e.saldoakhir as totalakhir,
+    (C.saldoakhir + e.saldoakhir) * b.harganetto1 as jumlahharga
+FROM
+	(
+	SELECT ROW_NUMBER
+		( ) OVER ( ORDER BY pro.namaproduk ) nourut,
+		pro.namaproduk,
+		ss.satuanstandar,
+	CASE
+			
+			WHEN ks.status = TRUE THEN
+			ks.saldoawal - ks.jumlah ELSE ks.saldoawal + ks.jumlah 
+		END AS saldoawal 
+	FROM
+		kartustok_t AS ks
+		INNER JOIN produk_m AS pro ON pro.ID = ks.produkfk
+		INNER JOIN satuanstandar_m ss ON ss.ID = pro.objectsatuanstandarfk
+		INNER JOIN ruangan_m AS ru ON ru.ID = ks.ruanganfk
+		INNER JOIN (
+		SELECT
+			pro.namaproduk,
+			MIN ( ks.tglkejadian ) tglkejadian 
+		FROM
+			kartustok_t AS ks
+			INNER JOIN produk_m AS pro ON pro.ID = ks.produkfk
+			INNER JOIN ruangan_m AS ru ON ru.ID = ks.ruanganfk 
+		WHERE
+			ks.kdprofile = 30 
+			AND ks.statusenabled = TRUE 
+			AND ks.tglkejadian BETWEEN '$request[tglAwal]' 
+			AND '$request[tglAkhir]' 
+			AND ru.ID != $request[gudangid] 
+			AND ks.keterangan NOT LIKE'%Ubah Resep%' 
+		GROUP BY
+			pro.namaproduk 
+		) AS j ON j.tglkejadian = ks.tglkejadian 
+		AND j.namaproduk = pro.namaproduk 
+	WHERE
+		ks.kdprofile = 30 
+		AND ks.statusenabled = TRUE 
+		AND ks.tglkejadian BETWEEN '$request[tglAwal]' 
+		AND '$request[tglAkhir]' 
+		AND ru.ID = $request[ruanganid] 
+		AND ks.saldoawal >= 0 
+	GROUP BY
+		pro.namaproduk,
+		ks.status,
+		ks.saldoawal,
+		ks.jumlah,
+		ks.tglkejadian,
+		ss.satuanstandar 
+	ORDER BY
+		pro.namaproduk,
+		ks.tglkejadian 
+	)
+	AS A 
+	INNER JOIN (
+	SELECT ROW_NUMBER
+		( ) OVER ( ORDER BY y.namaproduk ) nourut,
+		y.namaproduk,
+		y.satuanstandar,
+		y.harganetto1,
+		SUM ( y.saldomasuk ) AS saldomasuk,
+		SUM ( y.saldokeluar ) AS saldokeluar
+	FROM
+		(
+		SELECT DISTINCT
+			x.namaproduk,
+			x.satuanstandar,
+			x.harganetto1,
+		CASE
+				
+				WHEN x.status = TRUE THEN
+				x.jumlah ELSE 0 
+			END AS saldomasuk,
+		CASE
+				
+				WHEN x.status = TRUE THEN
+				0 ELSE x.jumlah 
+			END AS saldokeluar 
+		FROM
+			(
+			SELECT distinct
+				ks.keterangan,
+				ks.tglkejadian,
+				pro.namaproduk,
+				ss.satuanstandar,
+				ks.jumlah,
+				ks.status,
+				spd.harganetto1 
+			FROM
+				kartustok_t AS ks
+				INNER JOIN produk_m AS pro ON pro.ID = ks.produkfk
+				INNER JOIN ruangan_m AS ru ON ru.ID = ks.ruanganfk
+				INNER JOIN satuanstandar_m ss ON ss.ID = pro.objectsatuanstandarfk 
+				inner join stokprodukdetail_t spd on spd.nostrukterimafk = ks.nostrukterimafk and ks.produkfk = spd.objectprodukfk
+			WHERE
+				ks.kdprofile = 30 
+				AND ks.statusenabled = TRUE 
+				AND ks.tglkejadian BETWEEN '$request[tglAwal]' 
+				AND '$request[tglAkhir]' 
+				AND ru.ID = $request[ruanganid] 
+				AND ks.saldoawal >= 0 
+                --group by ks.keterangan, pro.namaproduk, ks.jumlah, ks.status order by pro.namaproduk, ks.tglkejadian
+				
+			) AS x 
+		) AS y 
+	GROUP BY
+		y.namaproduk,
+		y.satuanstandar,
+		y.harganetto1
+	) AS b ON A.nourut = b.nourut
+	INNER JOIN (
+	SELECT ROW_NUMBER
+		( ) OVER ( ORDER BY pro.namaproduk ) nourut,
+		pro.namaproduk,
+		ss.satuanstandar,
+		ks.saldoawal AS saldoakhir 
+	FROM
+		kartustok_t AS ks
+		INNER JOIN produk_m AS pro ON pro.ID = ks.produkfk
+		INNER JOIN satuanstandar_m ss ON ss.ID = pro.objectsatuanstandarfk
+		INNER JOIN ruangan_m AS ru ON ru.ID = ks.ruanganfk
+		INNER JOIN (
+		SELECT
+			pro.namaproduk,
+			MAX ( ks.tglkejadian ) tglkejadian 
+		FROM
+			kartustok_t AS ks
+			INNER JOIN produk_m AS pro ON pro.ID = ks.produkfk
+			INNER JOIN ruangan_m AS ru ON ru.ID = ks.ruanganfk 
+		WHERE
+			ks.kdprofile = 30 
+			AND ks.statusenabled = TRUE 
+			AND ks.tglkejadian BETWEEN '$request[tglAwal]' 
+			AND '$request[tglAkhir]' 
+			AND ru.ID != $request[gudangid] 
+			AND ks.keterangan NOT LIKE'%Ubah Resep%' 
+		GROUP BY
+			pro.namaproduk 
+		) AS j ON j.tglkejadian = ks.tglkejadian 
+		AND j.namaproduk = pro.namaproduk 
+	WHERE
+		ks.kdprofile = 30 
+		AND ks.statusenabled = TRUE 
+		AND ks.tglkejadian BETWEEN '$request[tglAwal]' 
+		AND '$request[tglAkhir]' 
+		AND ru.ID = $request[ruanganid] 
+		AND ks.saldoawal >= 0 
+	GROUP BY
+		pro.namaproduk,
+		ks.saldoawal,
+		ks.tglkejadian,
+		ss.satuanstandar 
+	ORDER BY
+		pro.namaproduk,
+	ks.tglkejadian 
+	) AS C ON b.nourut = C.nourut
+	inner join(
+	SELECT ROW_NUMBER
+		( ) OVER ( ORDER BY y.namaproduk ) nourut,
+		y.namaproduk,
+		y.satuanstandar,
+		y.harganetto1,
+		SUM ( y.saldokeluar ) AS saldokeluar
+	FROM
+		(
+		SELECT DISTINCT
+			x.namaproduk,
+			x.satuanstandar,
+			x.harganetto1,
+		CASE
+				
+				WHEN x.status = TRUE THEN
+				x.jumlah ELSE 0 
+			END AS saldomasuk,
+		CASE
+				
+				WHEN x.status = TRUE THEN
+				0 ELSE x.jumlah 
+			END AS saldokeluar 
+		FROM
+			(
+			SELECT distinct
+				ks.keterangan,
+				ks.tglkejadian,
+				pro.namaproduk,
+				ss.satuanstandar,
+				ks.jumlah,
+				ks.status,
+				spd.harganetto1 
+			FROM
+				kartustok_t AS ks
+				INNER JOIN produk_m AS pro ON pro.ID = ks.produkfk
+				INNER JOIN ruangan_m AS ru ON ru.ID = ks.ruanganfk
+				INNER JOIN satuanstandar_m ss ON ss.ID = pro.objectsatuanstandarfk 
+				inner join stokprodukdetail_t spd on spd.nostrukterimafk = ks.nostrukterimafk and ks.produkfk = spd.objectprodukfk
+			WHERE
+				ks.kdprofile = 30 
+				AND ks.statusenabled = TRUE 
+				AND ks.tglkejadian BETWEEN '$request[tglAwal]' 
+				AND '$request[tglAkhir]' 
+				AND ru.ID = $request[gudangid] 
+				AND ks.saldoawal >= 0 
+                --group by ks.keterangan, pro.namaproduk, ks.jumlah, ks.status order by pro.namaproduk, ks.tglkejadian
+				
+			) AS x 
+		) AS y 
+	GROUP BY
+		y.namaproduk,
+		y.satuanstandar,
+		y.harganetto1)as dgudang on dgudang.nourut = b.nourut
+	inner join(
+	
+	SELECT ROW_NUMBER
+		( ) OVER ( ORDER BY pro.namaproduk ) nourut,
+		pro.namaproduk,
+		ss.satuanstandar,
+		ks.saldoawal AS saldoakhir 
+	FROM
+		kartustok_t AS ks
+		INNER JOIN produk_m AS pro ON pro.ID = ks.produkfk
+		INNER JOIN satuanstandar_m ss ON ss.ID = pro.objectsatuanstandarfk
+		INNER JOIN ruangan_m AS ru ON ru.ID = ks.ruanganfk
+		INNER JOIN (
+		SELECT
+			pro.namaproduk,
+			MAX ( ks.tglkejadian ) tglkejadian 
+		FROM
+			kartustok_t AS ks
+			INNER JOIN produk_m AS pro ON pro.ID = ks.produkfk
+			INNER JOIN ruangan_m AS ru ON ru.ID = ks.ruanganfk 
+		WHERE
+			ks.kdprofile = 30 
+			AND ks.statusenabled = TRUE 
+			AND ks.tglkejadian BETWEEN '$request[tglAwal]' 
+			AND '$request[tglAkhir]' 
+			AND ru.ID != $request[ruanganid] 
+			AND ks.keterangan NOT LIKE'%Ubah Resep%' 
+		GROUP BY
+			pro.namaproduk 
+		) AS j ON j.tglkejadian = ks.tglkejadian 
+		AND j.namaproduk = pro.namaproduk 
+	WHERE
+		ks.kdprofile = 30 
+		AND ks.statusenabled = TRUE 
+		AND ks.tglkejadian BETWEEN '$request[tglAwal]' 
+		AND '$request[tglAkhir]' 
+		AND ru.ID = $request[gudangid] 
+		AND ks.saldoawal >= 0 
+	GROUP BY
+		pro.namaproduk,
+		ks.saldoawal,
+		ks.tglkejadian,
+		ss.satuanstandar 
+	ORDER BY
+		pro.namaproduk,
+	ks.tglkejadian ) as e on e.nourut = c.nourut
+        "));
+        $result = array(
+            'data'=> $data
+        );
+        return $this->respond($result);
+    }
 }

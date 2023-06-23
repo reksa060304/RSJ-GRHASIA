@@ -1505,6 +1505,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::post('emr/save-kedua', 'Registrasi\RegistrasiController@saveKedua');
             Route::post('emr/save-sudah-sudah','Registrasi\RegistrasiController@saveSUDAH');
             Route::post('logistik/save-kirim-barang-ruangan-baru', 'Logistik\LogistikController@saveKirimBarangRuanganBaru');
+            Route::get('logistik/get-daftar-stok-ruangan', 'Logistik\LogistikController@getStokRuangan');
             Route::get('emr/data-riwayat-emr', 'Registrasi\RegistrasiController@riwayatEMRTemp');
             Route::get('get/load-copy-resep', 'EMR\EMRController@getCopyResep');
             // GET //
