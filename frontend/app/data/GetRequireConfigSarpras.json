@@ -201,6 +201,10 @@
             "urlDep": "module/Logistik/LaporanUnitKerjaLogistikCtrl"
         },
         {
+            "nameDep": "LaporanStokRuanganCtrl",
+            "urlDep": "module/Logistik/LaporanStokRuanganCtrl"
+        },
+        {
             "nameDep": "PemakaianStokRuanganCtrl",
             "urlDep": "module/Logistik/PemakaianStokRuanganCtrl"
         },
@@ -1245,6 +1249,10 @@
         {
             "nameDep": "LaporanPenyerapanAnggaranVerifCtrl",
             "urlDep": "module/Perencanaan/LaporanPenyerapanAnggaranVerifCtrl"
+        },
+        {
+            "nameDep": "CopyResepCtrl",
+            "urlDep": "module/Farmasi/CopyResepCtrl"
         }
     ]
 }
