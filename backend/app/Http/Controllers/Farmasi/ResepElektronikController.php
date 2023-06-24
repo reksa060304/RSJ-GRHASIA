@@ -201,7 +201,8 @@ class ResepElektronikController extends ApiController
                 $departemenIdOrder
                 $statusIdResep  
                 $checkSOPasienRanap      
-                ORDER BY statusorder asc) as xxx where xxx.nomor = 1
+                ORDER BY tglorder asc) as xxx where xxx.nomor = 1
+                order by xxx.tglorder asc
         "));
 
         $status ='';
@@ -602,8 +603,81 @@ class ResepElektronikController extends ApiController
                         ]
                     );
 
+                    /*
+                    if ($item->statusorder == 0){$status='Menunggu';};
+                    if ($item->statusorder == 5){$status='Verifikasi';};
+                    if ($item->statusorder == 1){$status='Produksi';};
+                    if ($item->statusorder == 2){$status='Packaging';};
+                    if ($item->statusorder == 3){$status='Selesai';};
+                    if ($item->statusorder == 4){$status='Penyerahan Obat';};
+                    if ($item->tglambilorder != null){$status='Sudah Di Ambil';};
+                */
+                if($request['statusorder']=="1"){
+                    StrukResep::where('noresep', $dt->noresep)
+                    ->where('kdprofile',$idProfile)
+                    ->update([
+                            'status' => $request['statusorder'],                            
+                            'tglproduksi' => date('Y-m-d H:i:s'),
+                            'namaproduksi' =>  $dataPegawaiUser[0]->namalengkap ,
+                            'tglselesai' => null,
+                            'namaselesai' => null ,
+                            'namalengkapambilresep' => null,
+                            'tglambilresep' => null,
+                            'namapemberi' => null ,
+                        ]
+                    );
+                }elseif($request['statusorder']=="2"){
+                    StrukResep::where('noresep', $dt->noresep)
+                    ->where('kdprofile',$idProfile)
+                    ->update([
+                            'status' => $request['statusorder'],                            
+                            'tglpackaging' => date('Y-m-d H:i:s'),
+                            'namapackaging' => $dataPegawaiUser[0]->namalengkap ,
+                            'tglselesai' => null,
+                            'namaselesai' => null ,
+                            'namalengkapambilresep' => null,
+                            'tglambilresep' => null,
+                            'namapemberi' => null ,
+                        ]
+                    );
+                }elseif($request['statusorder']=="3"){
+                    StrukResep::where('noresep', $dt->noresep)
+                    ->where('kdprofile',$idProfile)
+                    ->update([
+                            'status' => $request['statusorder'],                            
+                            'tglselesai' => date('Y-m-d H:i:s'),
+                            'namaselesai' => $dataPegawaiUser[0]->namalengkap ,
+                            'namalengkapambilresep' => null,
+                            'tglambilresep' => null,
+                            'namapemberi' => null ,
+                        ]
+                    );
+                }elseif($request['statusorder']=="4"){
+                    StrukResep::where('noresep', $dt->noresep)
+                    ->where('kdprofile',$idProfile)
+                    ->update([
+                            'status' => $request['statusorder'],
+                            'namalengkapambilresep' => $request['namapengambil'],
+                            'tglambilresep' => $request['tglambil'],
+                            'namapemberi' => $dataPegawaiUser[0]->namalengkap ,
+                        ]
+                    );
+                }else{
+                    StrukResep::where('noresep', $dt->noresep)
+                    ->where('kdprofile',$idProfile)
+                    ->update([
+                            'status' => $request['statusorder'],
+                        ]
+                    );
+                }
             }
             if(isset($request['strukresep']) && $request['strukresep'] == true){
+                AntrianApotik::where('noresep',$request['noorder'])
+                    ->where('kdprofile',$idProfile)
+                    ->update([
+                            'status' => $request['statusorder']
+                        ]
+                    );
                 /*
                     if ($item->statusorder == 0){$status='Menunggu';};
                     if ($item->statusorder == 5){$status='Verifikasi';};
@@ -703,6 +777,7 @@ class ResepElektronikController extends ApiController
             $result = array(
                 "status" => 400,
                 "by" => 'as@epic',
+                "e" => $e->getLine() . "// " .$e->getMessage(),
                 "errObj" => $errObj,
                 "errMsg" => $errMsg,
                 
