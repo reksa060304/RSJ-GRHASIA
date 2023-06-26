@@ -10680,11 +10680,14 @@ class ReportController extends ApiController{
 
         $qsubsubkegiatan  = '';
         $qsubsubkegiatansebelum  = '';
+        $subsubkegiatansebelum  = '';
         $subsubkegiatan  = '';
         if (isset($request['subsubkegiatan']) && $request['subsubkegiatan'] != "" && $request['subsubkegiatan'] != "undefined") {
             $qsubsubkegiatan =  ' and km.id =  ' . $request['subsubkegiatan'];
             $qsubsubkegiatansebelum =  ' and km.id =  ' . $dataterhadap[0]->id;
+            
             $subsubkegiatan =  ' and dp.id =  ' . $request['subsubkegiatan'];
+            $subsubkegiatansebelum =  ' and dp.id =  ' . $dataterhadap[0]->id;
         }
 
         $qsama = '';
@@ -10722,6 +10725,33 @@ class ReportController extends ApiController{
         dp2.kode, dp2.keterangan,
         dp1.kode, dp1.keterangan, 
         dp.indikatormasuk, dp.indikatorkeluaran, dp.indikatorhasil, dp.targetmasuk, dp.targetkeluaran, dp.targethasil"));     
+
+        $datasebelum = DB::select(DB::raw("select dp.tahun, dp.kode kodesubsubkegiatan, dp.keterangan keterangansubsubkegiatan,
+        dp0.kode kodesubkegiatan, dp0.keterangan keterangansubkegiatan,
+        dp3.kode kodekegiatan, dp3.keterangan keterangankegiatan,
+        dp2.kode kodeprogram, dp2.keterangan keteranganprogram,
+        dp1.kode kodeurusan, dp1.keterangan keteranganurusan, 
+        dp.indikatormasuk, dp.indikatorkeluaran, dp.indikatorhasil, dp.targetmasuk, dp.targetkeluaran, dp.targethasil
+        from kegiatananggaran_m as dp 
+        inner join keteranganbelanja_t as kb on kb.objectkegiatanfk = dp.id 
+        and kb.kdprofile = 30 and kb.statusenabled = true 
+        inner join kegiatananggaran_m as dp3 on dp.kode ilike dp3.kode || '%' and dp3.div = 2
+        and dp3.kdprofile = 30 and dp3.statusenabled = true 
+        inner join kegiatananggaran_m as dp2 on dp3.kode ilike dp2.kode || '%' and dp2.div = 1
+        and dp2.kdprofile = 30 and dp2.statusenabled = true 
+        inner join kegiatananggaran_m as dp1 on dp2.kode ilike dp1.kode || '%' and dp1.div = 0
+        and dp1.kdprofile = 30 and dp1.statusenabled = true 
+        inner join kegiatananggaran_m as dp0 on dp.kode ilike dp0.kode || '%' and dp0.div = 3
+        and dp0.kdprofile = 30 and dp0.statusenabled = true 
+        where dp.tahun = '$tahun'
+        $subsubkegiatansebelum
+        group by dp.tahun, dp.kode, dp.keterangan,
+        dp0.kode, dp0.keterangan,
+        dp3.kode, dp3.keterangan,
+        dp2.kode, dp2.keterangan,
+        dp1.kode, dp1.keterangan, 
+        dp.indikatormasuk, dp.indikatorkeluaran, dp.indikatorhasil, dp.targetmasuk, dp.targetkeluaran, dp.targethasil"));     
+
 
         $sebelum = DB::select(DB::raw("
         select * from(select distinct a.*, b.jml jmlsetelah, b.satuan satuansetelah, b.hargasatuan hargasatuansetelah,
@@ -11130,8 +11160,9 @@ inner join(
         yyy.kodemataanggaran, yyy.jml, yyy.hargasatuan, yyy.satuan
         "));
 
+        $itahap = DB::select(DB::raw("select id, tahap from tahapanggaran_m where id = $request[tahap]"));
         $pageWidth = 950;
-        return view('report.spj.cetakrbadetailsebelumsesudah',compact('sebelum','pageWidth', 'data', 'tanggalcetak'));
+        return view('report.spj.cetakrbadetailsebelumsesudah',compact('sebelum','pageWidth', 'data', 'tanggalcetak','itahap','datasebelum'));
     }
     
 
