@@ -2352,7 +2352,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         $scope.namapegawailogin = $scope.pegawaiLogin.namaLengkap
 
                     }
-                    medifirstService.get("perencanaan/get-data-combo?subsubkegiatan=" + $scope.item.combokegiatan.kode + "&idpegawai=" + idpegawai + "&tahun=" + $scope.item.tahunkas).then(function (e) {
+                    var tahap = ''
+                    if($scope.item.objecttahappemindahan != undefined){
+                        tahap = "&tahap=" + $scope.item.objecttahappemindahan.id
+                    }
+                    medifirstService.get("perencanaan/get-data-combo?subsubkegiatan=" + $scope.item.combokegiatan.kode + "&idpegawai=" + idpegawai + "&tahun=" + $scope.item.tahunkas+tahap).then(function (e) {
                         $scope.listSubSubKegiatanCombo = e.data.kegiatansubsubcombo
                     });
                 }
@@ -6850,8 +6854,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         });
                         
                     });
-
-                if($scope.dataSourcePanjarDipilih.options.data.length != 0 && $scope.selectedData2.length == 0){
+                if ($scope.dataSourcePanjarDipilih != undefined && $scope.dataSourcePanjarDipilih.options.data.length != 0 && $scope.selectedData2.length == 0) {
                     $scope.selectedData2 = $scope.dataSourcePanjarDipilih.options.data
                     console.log($scope.selectedData2)
                 }
@@ -7953,7 +7956,13 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 }
                 console.log($scope.selectedData2);
             }
-
+            $scope.getDataPegawai = function(data){
+                medifirstService.get('get-nip-pns?id='+ data).then(function(dat){
+                    console.log(dat);
+                    $scope.item.namapihakketiga = $scope.item.pegawaipihakketiga.text
+                    $scope.item.npwp = dat.data.nippns
+                })
+            }
 
 
 

@@ -5801,5 +5801,9 @@ class GeneralController extends ApiController
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
+    function getNIPPNS(Request $request) {
+        $data = DB::table('pegawai_m')->where('id', $request['id'])->first();
+        return $this->respond($data);
+    }
 
 }

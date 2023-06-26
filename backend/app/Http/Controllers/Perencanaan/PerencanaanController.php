@@ -631,8 +631,11 @@ class PerencanaanController extends ApiController {
             ->where('dp.tahun', $tahunanggaran)
             ->where('dp.statusenabled', true)
             ->where('dp.div', 4)
-            ->where('dp.kode', 'ilike', "%".$subsubkegiatan."%")->orderBy('dp.kode');
-
+            ->where('dp.kode', 'ilike', "%".$subsubkegiatan."%")->orderBy('dp.kode')->distinct();
+            if(isset($request['tahap'])){
+                $kegiatansubsubcombo = $kegiatansubsubcombo->join('keteranganbelanja_t as kb','kb.objectkegiatanfk','=','dp.id')
+                ->where('kb.objecttahapfk', $tahap);
+            }
             if($lisssssssssss != ''){
                 $kegiatansubsubcombo = $kegiatansubsubcombo->whereIn('dp.id', $listsubsubkegiatan)->get();
             } else{

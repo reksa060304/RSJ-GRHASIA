@@ -842,75 +842,70 @@
 		</div>
 	</div>
 	<div class="grid_12">
-		<div class="grid_12" >
-			<div class="grid_4" >
-				<div class="grid_4" style="text-align: center;">
-					Tahap Awal
-				</div>
-				<div class="grid_8" style="margin-top: -10px;">
-					<input style="width: 100%;" kendo-combo-box k-ng-model="item.tahapawal"
-						k-data-text-field="'tahap'" k-data-value-field="'id'"
-						k-filter="'contains'" k-auto-bind="false" k-data-source="listTahap" />
-				</div>
+		<div class="grid_12">
+			<div class="grid_6">
+				<fieldset>
+					<div class="grid_12">
+						<div class="grid_4" style="text-align: center;">
+							Tahap Awal
+						</div>
+						<div class="grid_8" style="margin-top: -10px;">
+							<input style="width: 100%;" kendo-combo-box k-ng-model="item.tahapawal" k-data-text-field="'tahap'"
+								k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listTahap" />
+						</div>
+					</div>
+					<div class="grid_12">
+						<div class="grid_4" style="text-align: center;">
+							Tahun Awal
+						</div>
+						<div class="grid_8" style="margin-top: -10px;">
+							<input style="width: 100%;" k-options="yearUngkul" k-ng-model="item.tahunawal" kendo-date-picker
+								placeholer="YYYY" k-format="'yyyy'" />
+						</div>
+					</div>
+					<div class="grid_12">
+						<div class="grid_4" style="text-align: center;">
+							Sub Kegiatan
+						</div>
+						<div class="grid_8" style="margin-top: -10px;">
+							<input style="width: 100%;" kendo-combo-box k-ng-model="item.subkegiatantransfer"
+								k-data-text-field="'keterangan'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
+								k-data-source="listSubKegiatanTransfer" />
+						</div>
+					</div>
+					<div class="grid_4">
+						<div class="grid_12">
+							<button class="btnTemplate1" ng-click="CariSettingTahap()">Cari</button>
+						</div>
+					</div>
+				</fieldset>
 			</div>
-			<div class="grid_4" ></div>
-			<div class="grid_4" >
-				<div class="grid_4" style="text-align: center;">
-					Tahap Akhir
-				</div>
-				<div class="grid_8" style="margin-top: -10px;">
-					<input style="width: 100%;" kendo-combo-box k-ng-model="item.tahapakhir"
-						k-data-text-field="'tahap'" k-data-value-field="'id'"
-						k-filter="'contains'" k-auto-bind="false" k-data-source="listTahap" />
-				</div>
-			</div>
-		</div>
-		<div class="grid_12" >
-			<div class="grid_4" >
-				<div class="grid_4" style="text-align: center;">
-					Tahun Awal
-				</div>
-				<div class="grid_8" style="margin-top: -10px;">
-					<input style="width: 100%;" k-options="yearUngkul" k-ng-model="item.tahunawal" kendo-date-picker
-						placeholer="YYYY" k-format="'yyyy'"/>
-				</div>
-			</div>
-			<div class="grid_4" ></div>
-			<div class="grid_4" >
-				<div class="grid_4" style="text-align: center;">
-					Tahun Akhir
-				</div>
-				<div class="grid_8" style="margin-top: -10px;">
-					<input style="width: 100%;" k-options="yearUngkul" k-ng-model="item.tahunakhir" kendo-date-picker
-						placeholer="YYYY" k-format="'yyyy'"/>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="grid_12" >
-		<div class="grid_4" >
-			<div class="grid_4" style="text-align: center;">
-				Sub Kegiatan
-			</div>
-			<div class="grid_8" style="margin-top: -10px;">
-				<input style="width: 100%;" kendo-combo-box k-ng-model="item.subkegiatantransfer"
-				k-data-text-field="'keterangan'" k-data-value-field="'id'"
-				k-filter="'contains'" k-auto-bind="false" k-data-source="listSubKegiatanTransfer" />
-			</div>
-		</div>
-		<div class="grid_4" ></div>
-		<div class="grid_4" ></div>
-	</div>
-	<div class="grid_12" >
-		<div class="grid_4" >
-			<div class="grid_12">
-				<button class="btnTemplate1" ng-click="CariSettingTahap()">Cari</button>
-			</div>
-		</div>
-		<div class="grid_4" ></div>
-		<div class="grid_4" >
-			<div class="grid_12">
-				<button class="btnTemplate1" ng-click="SaveSettingTahap()">Simpan</button>
+			<div class="grid_6">
+				<fieldset>
+					<div class="grid_12">
+						<div class="grid_4" style="text-align: center;">
+							Tahap Akhir
+						</div>
+						<div class="grid_8" style="margin-top: -10px;">
+							<input style="width: 100%;" kendo-combo-box k-ng-model="item.tahapakhir" k-data-text-field="'tahap'"
+								k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listTahap" />
+						</div>
+					</div>
+					<div class="grid_12">
+						<div class="grid_4" style="text-align: center;">
+							Tahun Akhir
+						</div>
+						<div class="grid_8" style="margin-top: -10px;">
+							<input style="width: 100%;" k-options="yearUngkul" k-ng-model="item.tahunakhir" kendo-date-picker
+								placeholer="YYYY" k-format="'yyyy'" />
+						</div>
+					</div>
+					<div class="grid_4">
+						<div class="grid_12">
+							<button class="btnTemplate1" ng-click="SaveSettingTahap()">Simpan</button>
+						</div>
+					</div>
+				</fieldset>
 			</div>
 		</div>
 	</div>
@@ -922,6 +917,26 @@
 			<a ng-click="showAndHide()">Dipindahkan</a>
 		</legend>
 		<br>
+		<div class="grid_12">
+			<div class="grid_12">
+				<label c-label item="item" c-label-text="Tahun"></label>
+			</div>
+			<div class="grid_1">
+				<input style="width: 100%;" k-options="yearUngkul" k-ng-model="item.tahun" kendo-date-picker placeholer="YYYY"
+					k-format="'yyyy'" ng-disabled="disidpegawai" />
+				<!-- </div> -->
+			</div>
+		</div>
+		<div class="grid_12">
+			<div class="grid_12">
+				<label c-label item="item" c-label-text="Tahap"></label>
+			</div>
+			<div class="grid_12">
+				<input style="width: 100%;" kendo-combo-box k-ng-model="item.objecttahappemindahan"
+					k-data-text-field="'tahap'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
+					k-data-source="listTahap" />
+			</div>
+		</div>
 		<legend id="filterData">
 			<a ng-click="showAndHide()">Sub Kegiatan</a>
 		</legend>
@@ -946,16 +961,7 @@
 				k-data-text-field="'namamataanggaran'" k-data-value-field="'id'"
 				k-filter="'contains'" k-auto-bind="false" k-data-source="listMataAnggaranCombo" />
 		</div><br>
-		<div class="grid_12">
-			<div class="grid_12">
-				<label c-label item="item" c-label-text="Tahap"></label>
-			</div>
-			<div class="grid_12">
-				<input style="width: 100%;" kendo-combo-box k-ng-model="item.objecttahappemindahan"
-					k-data-text-field="'tahap'" k-data-value-field="'id'"
-					k-filter="'contains'" k-auto-bind="false" k-data-source="listTahap" />
-			</div>
-		</div>
+		
 		<br>
 		<legend id="filterData">
 			<a ng-click="showAndHide()">List Keterangan</a>
@@ -2103,6 +2109,16 @@
 <div kendo-window="PihakKetiga" k-title="'Pihak Ketiga'" k-visible="false" k-width="500" style="overflow-y: hidden; overflow-x: hidden;">
 	<div class="panel panel-default container_12">
 		<div class="grid_12">
+			<div class="grid_12">
+				<div class="grid_3">
+					Nama Pegawai
+				</div>
+				<div class="grid_6">
+					<input kendo-combo-box k-ng-model="item.pegawaipihakketiga" k-on-change="getDataPegawai(item.pegawaipihakketiga.value)"
+						k-data-text-field="'text'" k-data-value-field="'value'"
+						k-filter="'contains'" k-auto-bind="false" k-data-source="listBendahara" />
+				</div>
+			</div>
 			<div class="grid_12" style="text-align: left; margin-top: 10px;">
 				Nama Pihak Ketiga
 			</div>
@@ -2112,7 +2128,7 @@
 		</div>
 		<div class="grid_12">
 			<div class="grid_12" style="text-align: left; margin-top: 10px;">
-				NPWP
+				NPWP/NIP
 			</div>
 			<div class="grid_12" style="margin-top: 10px;">
 				<input c-text-box type="input" class="k-textbox" ng-model="item.npwp"/>

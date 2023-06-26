@@ -56,21 +56,28 @@
         </tbody>
         <tbody>
         <tr>
-            <td style="text-align:left; padding-left: 50px; padding-bottom: 5px; padding-top: 15px;">
-                <font style="font-size: 12pt" color="#000000">Terima dari</font>
-            </td>
-            <td colspan="4" style="padding: 10px; padding-bottom: 5px; padding-top: 5px;" align="left">
-                <font style="font-size: 12pt" color="#000000">: Direktur RS Jiwa GRHASIA DINKES DIY</font>
+            <td colspan="5">
+                <table>
+                    <tr>
+                        <td colspan="2" style="text-align:left; padding-left: 50px; padding-bottom: 5px; padding-top: 15px;">
+                            <font style="font-size: 12pt" color="#000000">Terima dari</font>
+                        </td>
+                        <td colspan="4" style="padding: 10px; padding-bottom: 5px; padding-top: 5px;" align="left">
+                            <font style="font-size: 12pt" color="#000000">: Direktur RS Jiwa GRHASIA DINKES DIY</font>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="text-align:left; padding-left: 50px; padding-bottom: 5px; padding-top: 5px;">
+                            <font style="font-size: 12pt" color="#000000">Uang Sebesar</font>
+                        </td>
+                        <td colspan="4" style="padding: 10px; padding-bottom: 5px; padding-top: 5px;" align="left">
+                            <font style="font-size: 12pt" color="#000000">: {{$terbilang}}</font>
+                        </td>
+                    </tr>
+                </table>
             </td>
         </tr>
-        <tr>
-            <td style="text-align:left; padding-left: 50px; padding-bottom: 5px; padding-top: 5px;">
-                <font style="font-size: 12pt" color="#000000">Uang Sebesar</font>
-            </td>
-            <td colspan="4" style="padding: 10px; padding-bottom: 5px; padding-top: 5px;" align="left">
-                <font style="font-size: 12pt" color="#000000">: {{$terbilang}}</font>
-            </td>
-        </tr>
+        
         <tr>
             <td colspan="4" style="text-align:left; padding-left: 50px; padding-bottom: 5px; padding-top: 15px;">
                 <font style="font-size: 12pt" color="#000000">Yaitu untuk membayar: </font>
@@ -89,27 +96,34 @@
         <tbody>
         @foreach($detail AS $dt)
         <tr style="padding: 5px; width: 10%;">
-            <td style="padding: 5px; width: 1%;" align="center">
-                {{$dt->nomor}}
+            <td colspan="5">
+                <table>
+                    <tr>
+                        <td style="padding: 5px; width: 1%;" align="center">
+                        {{$dt->nomor}}
+                    </td>
+                    <td style="padding: 5px; width: 40%;" align="left">
+                        {{$dt->uraian}}
+                    </td>
+                    @php
+                        $digitharga = strlen(substr(strrchr(sprintf("%s", $dt->harga), "."), 1));
+                        $digitsubtotal = strlen(substr(strrchr(sprintf("%s", $dt->subtotal), "."), 1));
+                    @endphp
+                    <td style="padding: 5px; width: 15%;" align="left">
+                        @ {{ number_format($dt->harga,$digitharga,',','.') }} x {{$dt->jml}} {{$dt->satuan}}
+                    </td>
+                    <td style="padding: 5px; width: 1%;" align="center">
+                        =
+                    </td>
+                    <td style="padding: 5px; width: 10%;" align="left">
+                        {{ number_format($dt->subtotal,$digitsubtotal,',','.') }}
+                    </td>
+                    </tr>
+                </table>
             </td>
-            <td style="padding: 5px; width: 40%;" align="left">
-                {{$dt->uraian}}
-            </td>
-            @php
-                $digitharga = strlen(substr(strrchr(sprintf("%s", $dt->harga), "."), 1));
-                $digitsubtotal = strlen(substr(strrchr(sprintf("%s", $dt->subtotal), "."), 1));
-            @endphp
-            <td style="padding: 5px; width: 15%;" align="left">
-                @ {{ number_format($dt->harga,$digitharga,',','.') }} x {{$dt->jml}} {{$dt->satuan}}
-            </td>
-            <td style="padding: 5px; width: 1%;" align="center">
-                =
-            </td>
-            <td style="padding: 5px; width: 10%;" align="left">
-                {{ number_format($dt->subtotal,$digitsubtotal,',','.') }}
-            </td>
-            @endforeach
         </tr>
+            @endforeach
+
         @php
             $digitterbilang = strlen(substr(strrchr(sprintf("%s", $jumlah[0]->totalfix), "."), 1));
         @endphp
