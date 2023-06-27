@@ -2769,7 +2769,7 @@ class BendaharaPenerimaanController extends ApiController {
         union all
         
         select distinct 0 objectdepartemenfk2, cb2.id idcarabayar2, 0 idkelompokpasien, sp.objectkelompoktransaksifk, sbm.norec norecsbm, sp.norec, sc.tglclosing, ru.namaruangan, ru.id idruangan, pr.namaproduk, pr.id idproduk, pp.isobat,
-        (spd.qtyproduk * spd.hargasatuan * spd.qtyoranglast)::float8 as totaldibayarclosing,
+        case when (spd.qtyproduk * spd.hargasatuan * spd.qtyoranglast)::float8 != sbm.totaldibayar and (sbm.keteranganlainnya = 'Pembayaran Tagihan Non Layanan' or sbm.keteranganlainnya = 'Pembayaran Diklat')then sbm.totaldibayar else (spd.qtyproduk * spd.hargasatuan * spd.qtyoranglast)::float8 end as totaldibayarclosing,
         ru.objectdepartemenfk, sbmcr.objectcarabayarfk, sbm.totaldibayar as totaldibayarsbm, sc.noclosing, sc.tglclosing,
         sck.totaldibayar as totaldibayar,sck.carabayarfk, cb.carabayar, djp.detailjenisproduk, jpr.id as jenisproduk
         from strukclosingkasir_t as sck
