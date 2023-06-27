@@ -602,7 +602,6 @@ define(["initialize", "Configuration"], function (initialize, config) {
                   const element = resp[xxx];
                   if (element.tgljamdatang != null) {
                     $scope.item.tgljamdatang = new Date(element.tgljamdatang);
-                    break
                   }
                   if (element.dpjputama != null) {
                     var str = element.dpjputama;
@@ -614,13 +613,23 @@ define(["initialize", "Configuration"], function (initialize, config) {
                       };
                     }
                   }
-                  if (element.dokterrawatbersama != null) {
-                    var str2 = element.dokterrawatbersama;
-                    if (str2 != undefined) {
-                      var res2 = str2.split("~");
-                      $scope.item.dokterrawatbersama = {
-                        value: res2[0],
-                        text: res2[1],
+                  if (element.bangsal != null) {
+                    var str = element.bangsal;
+                    if (str != undefined) {
+                      var res = str.split("~");
+                      $scope.item.bangsal = {
+                        value: res[0],
+                        text: res[1],
+                      };
+                    }
+                  }
+                  if (element.kelas != null) {
+                    var str = element.kelas;
+                    if (str != undefined) {
+                      var res = str.split("~");
+                      $scope.item.kelas = {
+                        value: res[0],
+                        text: res[1],
                       };
                     }
                   }
