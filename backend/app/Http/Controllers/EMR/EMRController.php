@@ -12705,7 +12705,6 @@ class EMRController  extends ApiController
                     ||  $emrupdate->dropdpjp != $item['dropdpjp']
                     ||  $emrupdate->tgljamdatang != $item['tgljamdatang']
                     ||  $emrupdate->dpjputama != $item['dpjputama']
-                    ||  $emrupdate->dokterrawatbersama != $item['dokterrawatbersama']
                     )
                     ) {
                         $sama =  2;
@@ -13164,6 +13163,40 @@ class EMRController  extends ApiController
         $result = array(
             'data' => $data,
             'message' => 'as@epic',
+        );
+        return $this->respond($result);
+    }
+    public function getCopyResep(Request $request)
+    {
+        $datapasien = Db::select(DB::raw("
+        SELECT DISTINCT ps.namapasien,sr.noresep, sr.tglresep, pg.namalengkap
+        FROM strukresep_t sr 
+        inner join strukorder_t so on sr.orderfk = so.norec
+        inner join pasien_m ps on ps.id = so.nocmfk
+        inner join pegawai_m pg on pg.id = sr.penulisresepfk
+        where so.norec ilike '$request[norec_order]'
+        "));
+        $data = DB::select(DB::raw("
+        SELECT DISTINCT pr.namaproduk, op.rke, op.jeniskemasanfk, pp.ispagi, pp.issiang, pp.issore, pp.ismalam, pp.aturanpakai, op.dosis, op.satuandosis,
+                CASE
+                WHEN op.jumlahracikan <> NULL AND op.jeniskemasanfk = 1 THEN
+                op.jumlahracikan 
+                WHEN op.jumlahracikan is NULL AND op.jeniskemasanfk = 2 THEN
+                op.qtyproduk
+								
+								ELSE op.qtyproduk::float * ( pr.kekuatan::float / op.dosis::float ) 
+                END AS jumlah
+            FROM pelayananpasien_t pp 
+            inner join strukresep_t sr on sr.norec = pp.strukresepfk
+            inner join strukorder_t so on sr.orderfk = so.norec
+            inner join orderpelayanan_t op on op.noorderfk = sr.orderfk and op.rke = pp.rke and pp.produkfk = op.objectprodukfk
+            inner join produk_m pr on pr.id = pp.produkfk
+            where so.norec ilike '$request[norec_order]'
+            ORDER BY op.rke asc
+            "));
+        $result = array(
+            'datapasien'=> $datapasien,
+            'data'=> $data,
         );
         return $this->respond($result);
     }

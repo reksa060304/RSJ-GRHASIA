@@ -227,7 +227,7 @@ define(["initialize", "Configuration"], function (initialize, config) {
           .then(async function (dat) {
             $scope.mouseMoveResetTimeCPPT = dat.data.mouseMoveResetTimeCPPT;
             $scope.waktuRefreshMenit = parseInt(dat.data.menitAutoRefreshCPPT);
-            $scope.start();
+            // $scope.start();
           });
       }
 
@@ -250,7 +250,7 @@ define(["initialize", "Configuration"], function (initialize, config) {
 
       onmouseover = (event) => {
         if ($scope.mouseMoveResetTimeCPPT == "true") {
-          $scope.start();
+          // $scope.start();
         }
       };
 
@@ -290,7 +290,7 @@ define(["initialize", "Configuration"], function (initialize, config) {
           .ok("Ya");
         $mdDialog.show(confirm).then(
           function (e) {
-            $scope.start();
+            // $scope.start();
             statusConfirm = true;
             loadRiwayat();
 
@@ -589,7 +589,7 @@ define(["initialize", "Configuration"], function (initialize, config) {
               "emr/get-emr-cppt?noemr=" + nomorEMR + "&emrfk=" + $scope.cc.emrfk
             )
             .then(async function (response) {
-              $scope.start();
+              // $scope.start();
               await medifirstService
                 .getPart("emr/get-datacombo-part-pegawai", true, true, 20)
                 .then(async function (data) {
@@ -714,7 +714,7 @@ define(["initialize", "Configuration"], function (initialize, config) {
             )
             .then(async function (dat) {
               // get dulu listPegawainya
-              $scope.start();
+              // $scope.start();
               await medifirstService
                 .getPart("emr/get-datacombo-part-pegawai", true, true, 20)
                 .then(async function (data) {
@@ -729,16 +729,16 @@ define(["initialize", "Configuration"], function (initialize, config) {
               console.log(dat);
               dataLoad = dat.data.data;
               if (dataLoad.length == 0) return
-              $scope.item.obj[111468] = $scope.cc.tglregistrasi;
-              $scope.item.obj[111469] = {
+              $scope.item.tgljamdatang = $scope.cc.tglregistrasi;
+              $scope.item.dpjputama = {
                 value: $scope.cc.iddpjp,
                 text: $scope.cc.dokterdpjp,
               };
-              $scope.item.obj[111470] = {
+              $scope.item.bangsal = {
                 value: $scope.cc.objectruanganfk,
                 text: $scope.cc.namaruangan,
               };
-              $scope.item.obj[111471] = {
+              $scope.item.kelas = {
                 value: $scope.cc.objectkelasfk,
                 text: $scope.cc.namakelas,
               };
