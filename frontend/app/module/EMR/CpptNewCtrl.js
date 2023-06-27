@@ -1862,13 +1862,31 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                           // console.log(arrSave[j].values, datas[i].values);
                           if (parseInt(arrSave[j].id) == datas[i].emrdfk && arrSave[j].peliu != datas[i].values && medifirstService.getPegawaiLogin().id != datas[i].pegawaifk) {
                             toastr.error('terdapat Data pada kolom yang diisi pada ID' + datas[i].emrdfk + ', harap mengisi di kolom baru.')
-                            transaksiDetail()
+                            // transaksiDetail()
+                             var confirm = $mdDialog.confirm()
+                              .title('PERINGATAN')
+                              .textContent('BARIS INI SUDAH  DIISI PPA LAIN, MOHON UNTUK MENGCOPY CPPT, REFRESH, DAN PASTE DIBARIS YANG BARU.AGAR TIDAK HILANG DATANYA!!!.')
+                              .ariaLabel('Lucky day')
+                              .cancel('Tidak')
+                              .ok('Ya')
+                            $mdDialog.show(confirm).then(function () {
+
+                            })
                             return
                           }
                         } else {
                           if (parseInt(arrSave[j].id) == datas[i].emrdfk && arrSave[j].values != datas[i].values && medifirstService.getPegawaiLogin().id != datas[i].pegawaifk) {
                             toastr.error('terdapat Data pada kolom yang diisi pada ID' + datas[i].emrdfk + ', harap mengisi di kolom baru.')
-                            transaksiDetail()
+                            // transaksiDetail()
+                            var confirm = $mdDialog.confirm()
+                              .title('PERINGATAN')
+                              .textContent('BARIS INI SUDAH  DIISI PPA LAIN, MOHON UNTUK MENGCOPY CPPT, REFRESH, DAN PASTE DIBARIS YANG BARU.AGAR TIDAK HILANG DATANYA!!!.')
+                              .ariaLabel('Lucky day')
+                              .cancel('Tidak')
+                              .ok('Ya')
+                            $mdDialog.show(confirm).then(function () {
+
+                            })
                             return
                           }
                         }
@@ -2011,7 +2029,27 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 
                })
             }
-
+            $scope.hapusBaris = function(data,data2){
+              console.log(data2);
+              if($scope.item.obj[data2] != undefined){
+                toastr.error('Tidak bisa dihapus')
+                return
+              }
+              
+              var objSave = {
+                noemr: $scope.cc.norec_emr,
+                id: data,
+                emrfk: $scope.cc.emrfk
+              }
+              medifirstService.post('cppt/hapus-bariscppt',objSave).then(function(){
+                // loadRiwayat()
+                $scope.item.obj[data] = undefined
+                transaksiDetail()
+              })
+            }
+            $scope.refresh = function(){
+              transaksiDetail()
+            }
         }
     ]);
 });
