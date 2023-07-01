@@ -13,10 +13,13 @@
 <style>
     @page {
         margin:15mm 15mm 20mm 20mm;
+        size: landscape;
+
     }
 
     @page :first {
         margin:15mm 15mm 20mm 20mm;
+
     }
 
     @media print {
@@ -41,6 +44,9 @@
         border: 1px solid black;
         page-break-inside: avoid;
     }
+    table thead {
+    display: table-header-group;
+  }
 
     .tabel {
         width: 100%;
@@ -48,7 +54,7 @@
 
     }
 </style>
-<body style="width:25cm;">
+<body style="width:1500px;">
 <div>
 <table width="{{$pageWidth}}" bgcolor="#FFFFFF" class="tabel">
         <tbody >
@@ -63,7 +69,7 @@
                       
                     </p>
             </td>
-            <td align="center" width="85%">
+            <td align="center" width="100%">
                 <b style="font-size: 25px;">
                 ANGGARAN KAS DAN RENCANA JADWAL TIAP SUB KEGIATAN
                 </b><br>
@@ -82,7 +88,8 @@
         </tbody>
     </table>
     <table cellpadding="0" cellspacing="0" width="100%"  border="0" class="tabel">
-                <tr>
+                <thead>
+                    <tr>
                     <td align="center" style="padding: 10px; font-weight: bold ">No</td>
                     <td align="center" style="padding: 10px; font-weight: bold; ">Uraian</td>
                     <td align="center" style="padding: 10px; font-weight: bold;  ">Jan</td>
@@ -100,6 +107,7 @@
                     <td align="center" style="padding: 10px; font-weight: bold;  ">Sub Total</td>
                     <td align="center" style="padding: 10px; font-weight: bold;  ">Sumber Dana</td>
                 </tr>
+                </thead>
                 @php
                     $totalanggaran = 0;
                     $totaljan = 0;

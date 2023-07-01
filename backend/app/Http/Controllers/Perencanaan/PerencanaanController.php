@@ -2589,25 +2589,15 @@ class PerencanaanController extends ApiController {
        try{
             if ($request['id']==''){
                 $newID = KegiatanAnggaran::max('id');
-
                 $MA = new KegiatanAnggaran();
                 $MA->id =  $newID + 1;
                 $MA->norec = $newID + 1;
                 $MA->kdprofile = $idProfile;
                 $MA->statusenabled = true;
-
-                // $KB= KeteranganBelanja::where('objectkegiatanfk',$MA->id)
-                //     ->where('kdprofile', $idProfile)
-                //     ->get();
-
             }else{
                 $MA= KegiatanAnggaran::where('id',$request['id'])
                     ->where('kdprofile', $idProfile)
                     ->first();
-                
-                // $KB= KeteranganBelanja::where('objectkegiatanfk',$request['id'])
-                //     ->where('kdprofile', $idProfile)
-                //     ->get();
             }
             $MA->kode = $request['kode'];
             $MA->keterangan = $request['keterangan'];
@@ -2615,7 +2605,7 @@ class PerencanaanController extends ApiController {
             $MA->namaexternal = $request['namaexternal'];
             $MA->reportdisplay = $request['reportdisplay'];
             $MA->tahun = $request['tahun'];
-            //$MA->tahap = $request['tahap'];
+            // $MA->tahap = $request['tahap'];
             $MA->indikatormasuk = $request['indikatormasuk'];
             $MA->indikatorkeluaran = $request['indikatorkeluaran'];
             $MA->indikatorhasil = $request['indikatorhasil'];
@@ -2625,15 +2615,15 @@ class PerencanaanController extends ApiController {
             $MA->div = $request['div'];
             $MA->objectjenisbelanjafk = $request['jenisbelanja'];
             $MA->objectpptkfk = $request['pptk'];
-            $MA->div = $request['div'];
             $MA->save();
 
-            // if(!empty($KB)){
-            //     foreach($KB as $k){
-            //         $k->objecttahapfk = $request['idtahap'];
-            //         $k->save();
-            //     }
-            // }
+            $KB = new KeteranganBelanja();
+            $KB->norec = $KB->generateNewId();
+            $KB->kdprofile = $idProfile;
+            $KB->statusenabled = true;
+            $KB->objectkegiatanfk = $MA->id;
+            $KB->objecttahapfk = $request['tahap'];
+            $KB->save();
                 
            
             
@@ -5955,6 +5945,10 @@ class PerencanaanController extends ApiController {
             ->get();    
             $arrALokasi[] = $dataAlokasi;
         }
+        $pegawai = '';
+        if(isset($request['idpegawai']) && $request['idpegawai']!= ''){
+            $pegawai = "and ka.objectpptkfk = $request[idpegawai]";
+        }
         $dataAlokasiMataanggaran = DB::select(DB::raw("select rank()over(order by split_part(kode, '.', 1) asc, split_part(kode, '.', 2)asc,  split_part(kode, '.', 3)asc, split_part(kode, '.', 4)asc, split_part(kode, '.', 5)asc, split_part(kode, '.', 6)::int asc, split_part(kode, '.', 7)::int asc ) as nomor ,kegiatan, kodesubkegiatan, keterangansubkegiatan, kode, keterangan, tahun, tahap, kodemataanggaran, namamataanggaran, mataanggaran, sum(subtotal) subtotal, sum(jan::float8) jan, sum(feb::float8) feb, sum(mar::float8) mar,
         sum(apr::float8) apr, sum(mei::float8) mei, sum(jun::float8) jun, sum(jul::float8) jul, sum(agt::float8) agt, sum(sep::float8) sep,
         sum(okt::float8) okt, sum(nov::float8) nov, sum(des::float8) des,
@@ -6008,6 +6002,7 @@ class PerencanaanController extends ApiController {
             $subkegiatan
                 $subsubkegiatan
             $smataanggaran
+            $pegawai
             group by kb.norec, dp0.kode, dp0.keterangan, ka.kode, ka.keterangan, ka.tahun, ta.tahap, kb.subtotal, ka.kode || ' ' || ka.keterangan, ap.nilai, ap.bulanint, ma.kodemataanggaran, ma.namamataanggaran,
             ma.kodemataanggaran || ' - ' || ma.namamataanggaran
             order by subkodepertama asc, subkodekedua asc, subkodeketiga asc, subkodekeempat asc, subkodekelima asc
@@ -6217,13 +6212,16 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
     public function getPPTK(Request $request){
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
-
+        $id = $request['id'];
+        $tahun = $request['tahun'];
+        $kode = $request['kode'];
         $data = DB::select(DB::raw("
                 select ka.*, pg.namalengkap
                 from kegiatananggaran_m ka
                 inner join pegawai_m pg on pg.id = ka.objectpptkfk  
                 where ka.kdprofile = 30
-                and ka.statusenabled = true;
+                and ka.statusenabled = true
+                and ka.id = $id and tahun = '$tahun';
             ")
         );
 
@@ -7868,16 +7866,21 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
         $norec = $request['norec'];
-
+        
         $data = DB::select(DB::raw("
         select * FROM
             keteranganbelanja_t 
             where norec = '$norec'
             ")
         );
-
+        foreach ($data as $d) {
+            $sisa = DB::select(DB::raw("
+        select * from realisasidetail_t where keteranganbelanjafk ilike '$d->norec'
+        "));
+        }
         $result = array(
             'data' => $data,
+            'sisa' => $sisa,
             'message' => '@epic',
         );
 

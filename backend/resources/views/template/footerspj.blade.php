@@ -13,7 +13,7 @@
 <table>
     <tbody>
         <tr>
-            <td style="text-align:left;">
+            <td style="text-align:left;padding-left:250px">
                 <font style="font-size: 12pt;" color="#000000">{{$spj[0]->norealisasi}}</font>
             </td>
         </tr>

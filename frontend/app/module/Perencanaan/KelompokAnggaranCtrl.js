@@ -753,7 +753,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     $scope.item.targetKinerjaMasukan = formatRupiah(dataItem.targetmasuk, "Rp. ")
                     
 				})
-                
+                $scope.idkegiatan = dataItem.id
 
                 
 
@@ -992,6 +992,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 
             }
             $scope.SimpanPopUpDetailAlokasi = function() {
+                console.log($scope.item.bln12);
+                if ($scope.item.bln12 < 0) {
+                    toastr.error('Tidak boleh kurang dari 0')
+                    return
+                }
                 // $scope.dataSourceAlokasiAnggaran = $scope.listKeteranganBelanja
                 for (let index = 0; index < dataAlokasi2222.length; index++) {
                     let element = dataAlokasi2222[index];
@@ -1023,7 +1028,6 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
 				})
 
-                console.log(dataItem)
                 
                 let totalAnggaran = 0;
                 // let dataGridAlokasi = DataTabKeteranganBelanja
@@ -1032,7 +1036,6 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 dataAlokasi2222 =[]
                 for (let x = 0; x < $scope.dataSourceDetailKeteranganBelanja.options.data.length; x++) {
                     var el = $scope.dataSourceDetailKeteranganBelanja.options.data[x]
-                    console.log(el)
                     if (el.kodemataanggaran == dataItem.kodemataanggaran && el.keterangan == dataItem.keterangan) {
                         el.subtotalRP = formatRupiah(el.subtotal, "Rp. ")
                      
@@ -2166,7 +2169,19 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
             $scope.$watch('item.itemRincian', function (newValue, oldValue) {
                 if (newValue != oldValue) {
+                    // for (let i = 0; i < array.length; i++) {
+                    //     const element = array[i];
+                        
+                    // }
+                    // $scope.item.sisaa = $scope.item.itemRincian.subtotal
                     medifirstService.get("perencanaan/get-password-rba?norec="+$scope.item.itemRincian.norec).then(function (e) {
+                        var sisa = 0
+                        for (let i = 0; i < e.data.sisa.length; i++) {
+                            sisa += parseFloat(e.data.sisa[i].subtotal)
+                        }
+                        $scope.item.sisaa = parseFloat(e.data.data[0].subtotal) - parseFloat(sisa)
+
+                        // $scope.item.sisaa = parseFloat($scope.item.itemRincian.subtotal) - parseFloat($scope.totalrealisasidetail)
                         if(e.data.data[0].password != null){
                             $scope.passrba = false
                             $scope.item.passwordbenar = e.data.data[0].password
@@ -2435,7 +2450,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             });
             // $scope.$watch('item.bln12', function (newValue, oldValue) {
             //     if (newValue != oldValue) {
-            //         watchBulan(newValue)
+            //         // watchBulan(newValue)
+            //         if($scope.item.bln12 < 0){
+            //             console.log('kurang lurrr');
+            //             $scope.item.bln12.classList.add('koneng');
+            //         }
             //     }
             // });
 
@@ -2620,14 +2639,15 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         namaexternal: null,
                         reportdisplay: null,
                         tahun: tahuns,
-                        tahap: null,
+                        tahap: $scope.item.tahaptambah!= undefined ? $scope.item.tahaptambah.id : null,
                         indikatormasuk: null,
                         indikatorkeluaran: null,
                         indikatorhasil: null,
                         targetmasuk: null,
                         targetkeluaran: null,
                         targethasil: null,
-                        div: $scope.item.div.id
+                        div: $scope.item.div.id,
+                        pptk: $scope.item.pptktambah != undefined ? $scope.item.pptktambah.value : null
                     }
                 medifirstService.post('perencanaan/save-kegiatan-anggaran', objSave).then(function (e) {
                     var div = ''
@@ -3084,6 +3104,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }
 
             $scope.SimpanPopUpAlokasi = function() {
+                
                 var objSave = [];
                 for (let index = 0; index < dataAlokasi2222.length; index++) {
                     let element = dataAlokasi2222[index];
@@ -3137,7 +3158,6 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     });
                 }
                 
-
                 var datasave =
                     {
                         data: objSave
@@ -5757,6 +5777,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 if($scope.item.password != '' && $scope.item.password != undefined){
                     pass = $scope.item.password
                 }
+                if ($scope.datakegiatanbro.islockrba == true) {
+                    toastr.error('Sudah dilock!')
+                    return
+                }
                 var objSave =
                     {
                         norec: norecKT,
@@ -5986,7 +6010,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     toastr.error('Sudah dilock!')
                     return
                 }
-                medifirstService.get("perencanaan/get-daftar-pptk"
+                medifirstService.get("perencanaan/get-daftar-pptk?id=" + $scope.idkegiatan + "&tahun=" + $scope.item.thnAnggaran + "&kode=" + $scope.item.subSubKegiatankode
                     , true).then(function (dat) {
                         $scope.isRouteLoading = false;
                         var datas = dat.data.data
@@ -6008,8 +6032,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         });
                         
                     });
-
-                if($scope.item.subSubKegiatankode != undefined && $scope.item.subSubKegiatankode != '' && $scope.item.namasubsubpptk != undefined && $scope.item.namasubsubpptk != ''){
+                    console.log($scope.item.subSubKegiatankode,);
+                if($scope.item.subSubKegiatankode != undefined && $scope.item.subSubKegiatankode != ''){
                     $scope.item.kodesubsubpptk = $scope.item.subSubKegiatankode
                     $scope.item.namasubsubpptk = $scope.item.subSubKegiatan
                 } else if($scope.item.subsubkegiatanangkas != undefined){
@@ -6328,6 +6352,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                 medifirstService.get("perencanaan/get-data-combo-item-rincian?kegiatan="+$scope.item.subSubKegiatanSPJ.id+"&mataanggaran="+$scope.item.mataAnggaranSPJ.kodemataanggaran).then(function (e) {
                     $scope.listItemRincian = e.data.data
+                    // $scope.item.sisaanggaran = 
                     //console.log($scope.listItemRincian)
                 })
                 $scope.popupTambahDetailSPJ.center().open()

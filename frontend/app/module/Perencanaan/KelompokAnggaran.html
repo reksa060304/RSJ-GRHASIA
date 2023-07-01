@@ -1016,7 +1016,7 @@
 <div kendo-window="popupTambah" k-title="'Tambah'" k-visible="false">
 	<div class="panel panel-default container_12">
 		<div class="grid_12">
-			<div class="grid_6">
+			<div class="grid_3">
 				<div class="grid_12">
 					<label c-label item="item" c-label-text="Div"></label>
 				</div>
@@ -1025,13 +1025,32 @@
 						k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listDiv" />
 				</div>
 			</div>
-			<div class="grid_3" ng-hide="disdiv">
+			<div class="grid_1" ng-hide="disdiv">
 				<div class="grid_12">
 					<label c-label item="item" c-label-text="Tahun"></label>
 				</div>
 				<div class="grid_12">
 					<input style="width: 100%;" k-options="yearUngkul" k-ng-model="item.tahuntambahkegiatan" kendo-date-picker
 						placeholer="YYYY" k-format="'yyyy'" />
+				</div>
+			</div>
+			<div class="grid_2" ng-hide="disdiv">
+				<div class="grid_12">
+					<label c-label item="item" c-label-text="Tahap"></label>
+				</div>
+				<div class="grid_12" >
+					<input style="width: 100%;" kendo-combo-box k-ng-model="item.tahaptambah" k-data-text-field="'tahap'"
+						k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listTahap"
+						/>
+				</div>
+			</div>
+			<div class="grid_3" ng-hide="disdiv">
+				<div class="grid_12">
+					<label c-label item="item" c-label-text="PPTK" real></label>
+				</div>
+				<div class="grid_12">
+					<input kendo-combo-box k-ng-model="item.pptktambah" k-data-text-field="'text'" k-data-value-field="'value'"
+						k-filter="'contains'" k-auto-bind="false" k-data-source="listPenerima" />
 				</div>
 			</div>
 		</div>
@@ -1899,7 +1918,8 @@
 					Desember
 				</div>
 				<div class="grid_12" >
-					<input c-text-box type="input" class="k-textbox" ng-model="item.bln12"  style="text-align: right;" />
+					<input c-text-box type="input" class="k-textbox" ng-model="item.bln12"
+						ng-style="{'background-color': item.bln12 < 0 ? 'yellow' : ''}" style="text-align: right;" />
 				</div>
 			</div>
 		</div>
@@ -3021,6 +3041,15 @@
 					<input c-text-box type="input" class="k-textbox" ng-model="item.keteranganSPJ"  style="text-align: left;" />
 				</div>
 			</div>
+			<div class="grid_2">
+				<div class="grid_12" style="text-align: left;">
+					Sisa Anggaran
+				</div>
+				<div class="grid_12">
+					<input c-text-box type="input" class="k-textbox" ng-model="item.sisaa" style="text-align: right;"
+						disabled="true" />
+				</div>
+			</div>
 		</div>
 		<div class="grid_12">
 			<div class="grid_2">
@@ -3060,7 +3089,7 @@
 					Password
 				</div>
 				<div class="grid_12" >
-					<input c-text-box type="input" class="k-textbox" ng-model="item.passwordrba"   style="text-align: right;"/>
+					<input c-text-box type="password" class="k-textbox" ng-model="item.passwordrba" style="text-align: right;" />
 					<input c-text-box type="input" class="k-textbox" ng-model="item.passwordbenar"   style="text-align: right;" ng-hide="true"/>
 				</div>
 			</div>

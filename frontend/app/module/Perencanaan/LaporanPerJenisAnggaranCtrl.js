@@ -93,13 +93,13 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }
 
             $scope.changeTahap = function () {
-                medifirstService.get("perencanaan/get-detail-sub-kegiatan?kegiatan="+$scope.item.kegiatanjadwal.id+"&tahap="+$scope.item.tahapjadwal.id+"&tahun="+moment($scope.item.tahunjadwal).format('YYYY')).then(function (e) {
+                medifirstService.get("perencanaan/get-detail-sub-kegiatan?kegiatan=" + $scope.item.kegiatanjadwal.id + "&tahap=" + $scope.item.tahapjadwal.id + "&tahun=" + moment($scope.item.tahunjadwal).format('YYYY') +"&idpegawai=" + idpegawai).then(function (e) {
                     $scope.listSubKegiatan = e.data.data
                 });
             }
 
             $scope.changeKegiatanMonev = function () {
-                medifirstService.get("perencanaan/get-detail-sub-kegiatan?kegiatan="+$scope.item.kegiatanmonev.id+"&tahap="+$scope.item.tahapmonev.id+"&tahun="+moment($scope.item.tahunmonev).format('YYYY')).then(function (e) {
+                medifirstService.get("perencanaan/get-detail-sub-kegiatan?kegiatan=" + $scope.item.kegiatanmonev.id + "&tahap=" + $scope.item.tahapmonev.id + "&tahun=" + moment($scope.item.tahunmonev).format('YYYY') + "&idpegawai=" + idpegawai).then(function (e) {
                     $scope.listSubKegiatan = e.data.data
                 });
             }
