@@ -1013,6 +1013,13 @@ define(['initialize'], function (initialize) {
                         "width": "100px",
                     },
                     {
+
+                        "field": "jumlahtunaipasienrajal",
+                        "title": "Rawat Jalan Tunai",
+                        "width": "100px",
+                        "template": "<span class='style-right'>{{formatRupiah('#: jumlahtunaipasienrajal #', 'Rp.')}}</span>"
+                    },
+                    {
                         
                         "field": "jumlahrajalbpjs",
                         "title": "Rawat Jalan BPJS",

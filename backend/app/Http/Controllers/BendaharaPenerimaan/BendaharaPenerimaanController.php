@@ -10810,7 +10810,8 @@ class BendaharaPenerimaanController extends ApiController {
         sum(jumlahadmin) jumlahadmin,
         sum(jumlahtransfer) jumlahtransfer,
         sum(jumlahnetto) jumlahnetto,
-        sum(jumlahgizi) jumlahgizi
+        sum(jumlahgizi) jumlahgizi,
+        sum(jumlahtunaipasienrajal) jumlahtunaipasienrajal
         from(
         select x.nosts,
         case when x.uraian = 'PERIKSA DOKTER SPESIALIS JIWA' then sum(x.totalfix) else 0 end as jumlahjiwa,
@@ -10881,7 +10882,9 @@ class BendaharaPenerimaanController extends ApiController {
         case when x.uraian = 'JUMLAH KLAIM' then sum(x.totalfix) else 0 end as jumlahklaim,
         case when x.uraian = 'BIAYA ADMINISTRASI BANK' then sum(x.totalfix) else 0 end as jumlahadmin,
         case when x.uraian = 'BIAYA TRANSFER' then sum(x.totalfix) else 0 end as jumlahtransfer,
-        case when x.uraian = 'JUMLAH NETTO' then sum(x.totalfix) else 0 end as jumlahnetto
+        case when x.uraian = 'JUMLAH NETTO' then sum(x.totalfix) else 0 end as jumlahnetto,
+        case when x.uraian = 'PEMBAYARAN TUNAI PASIEN RAJAL' then sum(x.totalfix) else 0 end as jumlahtunaipasienrajal
+
         from(
             select i.nosts, i.kdrekening, i.nomer, i.uraian, sum(i.vol) as totalvol, sum(i.kolom1) as totalkolom1, sum(i.kolom2) as totalkolom2,
             (
