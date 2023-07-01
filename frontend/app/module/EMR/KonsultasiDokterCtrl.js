@@ -42,8 +42,8 @@ define(['initialize'], function (initialize) {
                     { field: "ruanganasal", title: "Ruangan Asal", width: 120 },
                     { field: "ruangantujuan", title: "Ruangan Tujuan", width: 150 },
                     { field: "namalengkap", title: "PPA", width: 120 },
-                    { field: "keteranganorder", title: "Keterangan", width: 120 },
-                    { field: "keteranganlainnya", title: "Jawaban", width: 200 },
+                    { field: "keteranganorder", title: "Keterangan", width: 120,"template": "#= keteranganorder.replace(/\\n/g, '<br />') #" },
+                    { field: "keteranganlainnya", title: "Jawaban", width: 200, "template": "#= keteranganlainnya.replace(/\\n/g, '<br />') #" },
                     { command: [
                         { imageClass: "k-icon k-delete", text: "Hapus", click: hapus }, 
                     { name: "edit", text: "Edit", click: editData },
