@@ -13,8 +13,8 @@ define(['initialize'], function (initialize) {
             var nocm_str = ''
             var detail = ''
             $scope.showTombol = false
-            $scope.item.kasusbaru = true
-            $scope.item.kasuslama = false
+            $scope.item.kasusbaru = false
+            $scope.item.kasuslama = true
 
             LoadCache();
             function LoadCache() {
@@ -214,6 +214,7 @@ define(['initialize'], function (initialize) {
                 ).then(function (data) {
                     // $scope.isRouteLoading = false;
                     var dataICD10 = data.data.datas;
+                    // $scope.$emit('diagnosis', dataICD10)
                     $scope.dataSourceDiagnosaIcd10 = new kendo.data.DataSource({
                         data: dataICD10,
                         pageSize: 10
@@ -725,6 +726,44 @@ define(['initialize'], function (initialize) {
                 cacheHelper.set('cacheCPPT', arrStr);
                 $state.go('CPPT')
             }
+            $scope.item.obj = []
+            // $scope.item.obj[22034963] = 'aaaaaa'
+            // $scope.$watch('item.diagnosa', function (newValue, oldValue) {
+            //     console.log('okee');
+            //     $scope.item.obj = []
+            //     $scope.$emit('diagnosis', $scope.item.diagnosa.kdDiagnosa)
+            //     // console.log($scope.item.obj[22034963]); 
+            //     // const data = $scope.item.obj[$scope.item.buatdiagnosa];
+            //     // console.log(data); // data yang ingin dipecahkan
+            //     // const dataArray = data.split("\n"); // memecah data menjadi array berdasarkan karakter baris baru (\n)
+            //     // const s = dataArray[0].split(":")[1]; // memecah string "S:ada" menjadi array ["S", "ada"] dan mengambil elemen kedua yaitu "ada"
+            //     // const o = dataArray[1].split(":")[1]; // memecah string "O:beta" menjadi array ["O", "beta"] dan mengambil elemen kedua yaitu "beta"
+            //     // const a = dataArray[2].split(":")[1]; // memecah string "A:kk" menjadi array ["A", "kk"] dan mengambil elemen kedua yaitu "kk"
+            //     // const p = dataArray[3].split(":")[1]; // memecah string "P:obat" menjadi array ["P", "obat"] dan mengambil elemen kedua yaitu "obat"
+
+            // })
+            loadResepE()
+            function loadResepE () {
+            var diggie = cacheHelper.get('buatDiagnosa');
+            // console.log();
+            // if (diggie[0] == true){
+            //     $scope.showRiwayatEMR = true
+            //     $scope.myVar = 2
+            //     var noemr2 = '-'
+            //     $state.go("RekamMedis.CpptDinamis.CpptDinamisDetail.InputDiagnosaDokter.InputResepApotikOrderV2", {
+            //         // namaEMR: 94,
+            //         // namaEMR: 210222,
+            //         // nomorEMR: noemr2
+            //     });
+            //     var arrStr = {
+            //         0: false,
+            //         1: ''
+            //     }
+            //     cacheHelper.set('buatDiagnosa', arrStr);
+            // }
+                
+            }
+
             $scope.saveDiagnosaKeperawatan = function(){
                 var norec = '-'
                 console.log($scope.dataDiagnosaKeperawatanSelected);
@@ -779,6 +818,8 @@ define(['initialize'], function (initialize) {
                     loadDiagnosa()
                 })
             }
+
+            
 
         }
 
