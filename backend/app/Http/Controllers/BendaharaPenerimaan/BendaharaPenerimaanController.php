@@ -10875,7 +10875,7 @@ class BendaharaPenerimaanController extends ApiController {
         case when x.uraian = 'RAWAT INAP Jamkesda' then sum(x.totalfix) else 0 end as jumlahranapjamkesda,
         case when x.uraian = 'RAWAT INAP Jamkesos' then sum(x.totalfix) else 0 end as jumlahranapjamkesos,
         case when x.uraian = 'RAWAT INAP IPWL' then sum(x.totalfix) else 0 end as jumlahranapipwl,
-        case when x.uraian = 'COST SHARING BPJS' then sum(x.totalfix) else 0 end as jumlahcsbpjs,
+        case when x.uraian in ('COST SHARING BPJS', 'Cost Sharing BPJS') then sum(x.totalfix) else 0 end as jumlahcsbpjs,
         case when x.uraian = 'COST SHARING JAMKESDA BANTUL' then sum(x.totalfix) else 0 end as jumlahcsjamkesda,
         case when x.uraian = 'COST SHARING JAMKESOS' then sum(x.totalfix) else 0 end as jumlahcsjamkesos,
         case when x.uraian = 'JUMLAH KLAIM' then sum(x.totalfix) else 0 end as jumlahklaim,
