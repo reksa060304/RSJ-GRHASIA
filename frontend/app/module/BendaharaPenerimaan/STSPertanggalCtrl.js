@@ -1420,6 +1420,13 @@ define(['initialize'], function (initialize) {
                         "template": "<span class='style-right'>{{formatRupiah('#: jumlahsewaambulan #', 'Rp.')}}</span>",
                     },
                     {
+
+                        "field": "jumlahsewabus",
+                        "title": "Sewa Bus",
+                        "width": "100px",
+                        "template": "<span class='style-right'>{{formatRupiah('#: jumlahsewabus #', 'Rp.')}}</span>",
+                    },
+                    {
                         
                         "field": "jumlahketerampilan",
                         "title": "Work Therapy",
