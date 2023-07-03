@@ -452,7 +452,7 @@ class PerencanaanController extends ApiController {
         $thp = '';
         if (isset($request['tahapaktif']) && $request['tahapaktif'] != "" && $request['tahapaktif'] != "undefined" && $request['tahapaktif'] != 100) {
             $thp = 'and kb.objecttahapfk = '.$request['tahapaktif'];
-            $kegiatan = DB::select(DB::raw("select dp.islockrba, ta.tahap, kb.objecttahapfk, dp.norec, dp0.kode kodesubkegiatan, dp0.keterangan keterangansubkegiatan,
+            $kegiatan = DB::select(DB::raw("select dp.objectpptkfk, dp.islockrba, ta.tahap, kb.objecttahapfk, dp.norec, dp0.kode kodesubkegiatan, dp0.keterangan keterangansubkegiatan,
                 dp3.kode kodekegiatan, dp3.keterangan keterangankegiatan,
                 dp2.kode kodeprogram, dp2.keterangan keteranganprogram,
                 dp1.kode kodeurusan, dp1.keterangan keteranganurusan, 
@@ -485,7 +485,7 @@ class PerencanaanController extends ApiController {
                             $dv
                             $thdv
                             $tn
-                            group by ta.tahap, kb.objecttahapfk, dp.norec, dp0.kode, dp0.keterangan, dp3.kode, dp3.keterangan, dp2.kode, dp2.keterangan, dp1.kode, dp1.keterangan, 
+                            group by dp.objectpptkfk, ta.tahap, kb.objecttahapfk, dp.norec, dp0.kode, dp0.keterangan, dp3.kode, dp3.keterangan, dp2.kode, dp2.keterangan, dp1.kode, dp1.keterangan, 
                             dp.indikatormasuk, dp.indikatorkeluaran, dp.indikatorhasil, dp.targetmasuk, dp.targetkeluaran, dp.targethasil, dp.id, dp.kode, dp.div, dp.tahun, dp.keterangan, kp.namakelompok, pg.namalengkap, cast(split_part(dp.kode, '.', 1) as int4)
                             , cast(split_part(dp.kode, '.', 2) as int4)
                             , case when split_part(dp.kode, '.', 3) = '' then '0' else split_part(dp.kode, '.', 3)::int4 end
@@ -494,7 +494,7 @@ class PerencanaanController extends ApiController {
                             , case when split_part(dp.kode, '.', 6) = '' then '0' else split_part(dp.kode, '.', 6)::int4 end
                             , case when split_part(dp.kode, '.', 7) = '' then '0' else split_part(dp.kode, '.', 7)::int4 end order by subkodeawal asc, subkodekedua asc, subkodeketiga asc, subkodekeempat asc, subkodekelima asc, subkodekeenam asc, subkodeakhir asc"));
         } else if (isset($request['tahapaktif']) && $request['tahapaktif'] != "" && $request['tahapaktif'] != "undefined" && $request['tahapaktif'] == 100) {
-            $kegiatan = DB::select(DB::raw("select dp.islockrba, ta.tahap, kb.objecttahapfk, dp.norec, dp0.kode kodesubkegiatan, dp0.keterangan keterangansubkegiatan,
+            $kegiatan = DB::select(DB::raw("select dp.objectpptkfk, dp.islockrba, ta.tahap, kb.objecttahapfk, dp.norec, dp0.kode kodesubkegiatan, dp0.keterangan keterangansubkegiatan,
                 dp3.kode kodekegiatan, dp3.keterangan keterangankegiatan,
                 dp2.kode kodeprogram, dp2.keterangan keteranganprogram,
                 dp1.kode kodeurusan, dp1.keterangan keteranganurusan, 
@@ -525,7 +525,7 @@ class PerencanaanController extends ApiController {
                             $pegawai
                             $dv
                             $tn
-                            group by ta.tahap, kb.objecttahapfk, dp.norec, dp0.kode, dp0.keterangan, dp3.kode, dp3.keterangan, dp2.kode, dp2.keterangan, dp1.kode, dp1.keterangan, 
+                            group by dp.objectpptkfk, ta.tahap, kb.objecttahapfk, dp.norec, dp0.kode, dp0.keterangan, dp3.kode, dp3.keterangan, dp2.kode, dp2.keterangan, dp1.kode, dp1.keterangan, 
                             dp.indikatormasuk, dp.indikatorkeluaran, dp.indikatorhasil, dp.targetmasuk, dp.targetkeluaran, dp.targethasil, dp.id, dp.kode, dp.div, dp.tahun, dp.keterangan, kp.namakelompok, pg.namalengkap, cast(split_part(dp.kode, '.', 1) as int4)
                             , cast(split_part(dp.kode, '.', 2) as int4)
                             , case when split_part(dp.kode, '.', 3) = '' then '0' else split_part(dp.kode, '.', 3)::int4 end
@@ -534,7 +534,7 @@ class PerencanaanController extends ApiController {
                             , case when split_part(dp.kode, '.', 6) = '' then '0' else split_part(dp.kode, '.', 6)::int4 end
                             , case when split_part(dp.kode, '.', 7) = '' then '0' else split_part(dp.kode, '.', 7)::int4 end order by subkodeawal asc, subkodekedua asc, subkodeketiga asc, subkodekeempat asc, subkodekelima asc, subkodekeenam asc, subkodeakhir asc"));
         } else{
-            $kegiatan = DB::select(DB::raw("select dp.islockrba, ta.tahap, kb.objecttahapfk, dp.norec, dp0.kode kodesubkegiatan, dp0.keterangan keterangansubkegiatan,
+            $kegiatan = DB::select(DB::raw("select dp.objectpptkfk, dp.islockrba, ta.tahap, kb.objecttahapfk, dp.norec, dp0.kode kodesubkegiatan, dp0.keterangan keterangansubkegiatan,
                 dp3.kode kodekegiatan, dp3.keterangan keterangankegiatan,
                 dp2.kode kodeprogram, dp2.keterangan keteranganprogram,
                 dp1.kode kodeurusan, dp1.keterangan keteranganurusan, 
@@ -564,7 +564,7 @@ class PerencanaanController extends ApiController {
                             $dv
                             $thdv
                             $tn
-                            group by ta.tahap, kb.objecttahapfk, dp.norec, dp0.kode, dp0.keterangan, dp3.kode, dp3.keterangan, dp2.kode, dp2.keterangan, dp1.kode, dp1.keterangan, 
+                            group by dp.objectpptkfk, ta.tahap, kb.objecttahapfk, dp.norec, dp0.kode, dp0.keterangan, dp3.kode, dp3.keterangan, dp2.kode, dp2.keterangan, dp1.kode, dp1.keterangan, 
                             dp.indikatormasuk, dp.indikatorkeluaran, dp.indikatorhasil, dp.targetmasuk, dp.targetkeluaran, dp.targethasil, dp.id, dp.kode, dp.div, dp.tahun, dp.keterangan, kp.namakelompok, pg.namalengkap, cast(split_part(dp.kode, '.', 1) as int4)
                             , cast(split_part(dp.kode, '.', 2) as int4)
                             , case when split_part(dp.kode, '.', 3) = '' then '0' else split_part(dp.kode, '.', 3)::int4 end

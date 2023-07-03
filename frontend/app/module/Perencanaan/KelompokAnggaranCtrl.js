@@ -736,7 +736,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
 				})
                 
-                // console.log(dataItem)
+                console.log(dataItem)
                 $scope.norecrcntotalanggaran = dataItem.norec 
                 $scope.datakegiatanbro = dataItem
                 medifirstService.get("perencanaan/get-total-anggaran-rcn?kegiatan=" + $scope.norecrcntotalanggaran).then(function (e) {
@@ -755,7 +755,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 				})
                 $scope.idkegiatan = dataItem.id
 
-                
+                $scope.item.savepptk = dataItem.objectpptkfk != null ? dataItem.objectpptkfk: null
 
                 medifirstService.get("perencanaan/get-jenis-belanja?kegiatan=" + dataItem.id).then(function (e) {
                     if(e.data.data.length == 0){
