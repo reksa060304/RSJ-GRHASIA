@@ -155,14 +155,14 @@
                 <tr>
                     <th style="padding: 3px;font-weight: none; font-size: 10pt" width="5%" rowspan="2">No. <br> Urut</th>
                     <th style="padding: 3px;font-weight: none; font-size: 10pt" width="40%" rowspan="2">Nama Barang</th>
-                    <th style="padding: 3px;font-weight: none; font-size: 10pt" width="10%" rowspan="2">Stok  <br>di Ruangan</th>
+                    <th style="padding: 3px;font-weight: none; font-size: 10pt" width="15%" rowspan="2">Stok  <br>di Ruangan</th>
                     <th style="padding: 3px;font-weight: none; font-size: 10pt" width="10%" rowspan="2">Satuan</th>
                     <th style="padding: 3px;font-weight: none; font-size: 10pt" width="10%" colspan="2">Jumlah</th>
                     <th style="padding: 3px;font-weight: none; font-size: 10pt" width="10%" rowspan="2">Ket</th>
                 </tr>
                 <tr>
-                    <td style="padding: 3px;font-weight: none; font-size: 10pt" width="10%">Permintaan</td>
-                    <td style="padding: 3px;font-weight: none; font-size: 10pt" width="10%">diberikan</td>
+                    <th style="padding: 3px;font-weight: none; font-size: 10pt" width="10%">Permintaan</th>
+                    <th style="padding: 3px;font-weight: none; font-size: 10pt" width="10%">diberikan</th>
                 </tr>
                 @php
                     $no = 1;
