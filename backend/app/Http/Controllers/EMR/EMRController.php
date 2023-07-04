@@ -2871,7 +2871,38 @@ class EMRController  extends ApiController
 
         return $this->respond($dt);
     }
+    public function getDataComboDiagnosaKeperawatan(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $req = $request->all();
+        $dataProduk = \DB::table('diagnosakep_m')
+            ->select('id as value', 'namaexternal as text')
+            ->where('kdprofile',$idProfile)
+            ->where('statusenabled', true)
+            ->orderBy('namaexternal');
+        
+        $dataProduk = $dataProduk->get();
 
+        foreach ($dataProduk as $d) {
+            $d->details = \DB::table('labelintervensi_m')
+            ->select('id as value', 'intervensi as text')
+            ->where('kdprofile',$idProfile)
+            ->where('statusenabled', true)
+            ->where('objectdiagnosakepfk', $d->value)
+            ->orderBy('intervensi')->get();
+            
+            foreach ($d->details as $i) {
+                $i->details = \DB::table('labelimplementasi_m')
+                ->select('id as value', 'implementasi as text')
+                ->where('kdprofile',$idProfile)
+                ->where('statusenabled', true)
+                ->where('objectlabelintervensifk', $i->value)
+                ->orderBy('implementasi')->get();
+                # code...
+            }
+        }
+        return $this->respond($dataProduk);
+    }
     public function getDataComboTindakanPart(Request $request){
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
@@ -11360,14 +11391,29 @@ class EMRController  extends ApiController
     {
         $tgl = '';
         
-        $data = \DB::table('emrcakem_t as ec')->select('ec.s','ec.o','ec.a','ec.p','ec.shift','ec.tanggal','ec.jam','ec.pelaksanaan','ec.evaluasi','ec.objectpegawaifk', 'pg.namalengkap','ec.norec as norec_ec')->join('pegawai_m as pg','pg.id','=','ec.objectpegawaifk')->where('emrpasienfk',$request['noemr'])->orderBy('tanggal','asc')->orderBy('jam','asc')->orderBy('shift','asc');
+        $data = \DB::table('emrcakem_t as ec')->select(
+            'dgk.diagnosakeperawatan as textdiagnosa1', 'dgk.id as iddiagnosa1',
+            'dgk1.diagnosakeperawatan as textdiagnosa2', 'dgk1.id as iddiagnosa2',
+            'dgk2.diagnosakeperawatan as textdiagnosa3', 'dgk2.id as iddiagnosa3',
+        
+        
+        'ec.s','ec.o','ec.a','ec.a1', 'ec.a2','ec.diagnosa1','ec.diagnosa2', 'ec.diagnosa3','ec.p','ec.shift','ec.tanggal','ec.jam','ec.pelaksanaan','ec.evaluasi','ec.objectpegawaifk', 'pg.namalengkap','ec.norec as norec_ec')
+        ->join('pegawai_m as pg','pg.id','=','ec.objectpegawaifk')
+        ->leftjoin('diagnosakep_m as dgk','dgk.id','=','ec.diagnosa1')
+        ->leftjoin('diagnosakep_m as dgk1','dgk1.id','=','ec.diagnosa2')
+        ->leftjoin('diagnosakep_m as dgk2','dgk2.id','=','ec.diagnosa3')
+        ->where('emrpasienfk',$request['noemr'])->orderBy('tanggal','asc')->orderBy('jam','asc')->orderBy('shift','asc');
         if(isset($request['tgl'])){
             $data = $data->where('ec.tanggal', $request['tgl'])->get();
         }else{
             $data = $data->get();
         }
         foreach ($data as $d) {
-            $d->details = DB::select(DB::raw("select * from emrcakemd_t where norec_ec=:norec_ec"),
+            $d->details = DB::select(DB::raw("select li.implementasi, ecd.norec, ecd.tanggal, ecd.jam from emrcakemd_t ecd
+            inner join labelimplementasi_m li on li.id = ecd.tindakan
+            where ecd.norec_ec=:norec_ec
+            
+            order by ecd.tanggal asc,ecd.jam asc"),
             array(
                 'norec_ec'=>$d->norec_ec 
             )
@@ -13045,6 +13091,7 @@ class EMRController  extends ApiController
                 'statusenabled'=> true,
                 'jam'=> $request['jam'],
                 'tindakan'=> $request['tindakan'],
+                'tanggal'=> $request['tanggal'],
                 'norec_ec'=> $request['norec_ec']
             ]);
             $transStatus = 'true';
@@ -13083,7 +13130,12 @@ class EMRController  extends ApiController
                 's'=> $request['s'],
                 'o'=> $request['o'],
                 'a'=> $request['a'],
+                'a1'=> $request['a1'],
+                'a2'=> $request['a2'],
                 'p'=> $request['p'],
+                'diagnosa1'=> $request['diagnosa1'] != null ? $request['diagnosa1']['value'] : null,
+                'diagnosa2'=> $request['diagnosa2']!= null ? $request['diagnosa2']['value'] : null,
+                'diagnosa3'=> $request['diagnosa3']!= null ? $request['diagnosa3']['value'] : null,
             ]);
             $transStatus = 'true';
         } catch (\Exception $e) {

@@ -18,11 +18,21 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                 s: null,
                 o: null,
                 a: null,
-                p: null
+                a1: null,
+                a2: null,
+                p: null,
+                diagnosa1: null,
+                diagnosa2: null,
+                diagnosa2: null
             }
             $scope.item.tanggal = new Date()
+            $scope.item.tanggaltindakan = new Date()
             medifirstService.getPart('emr/get-datacombo-part-pegawai', true, true, 20).then(function (data) {
                 $scope.listPegawai = data
+            })
+            medifirstService.get("emr/get-datacombo-part-diagnosa-keperawatan" ).then(function (data) {
+                console.log(data);
+                $scope.listDiagnosaKep = data.data
             })
             $scope.item.pegawai = {
                 text: medifirstService.getPegawaiLogin().namaLengkap,
@@ -31,7 +41,7 @@ define(['initialize','Configuration'], function (initialize, configuration) {
             $scope.listShift = [
                 {id:1, shift: 'Pagi'},
                 {id:2, shift: 'Siang'},
-                {id:3, shift: 'Sore'},
+                // {id:3, shift: 'Sore'},
                 {id:4, shift: 'Malam'},
 
             ]
@@ -40,6 +50,10 @@ define(['initialize','Configuration'], function (initialize, configuration) {
             }
             loadData()
             function loadData(){
+                medifirstService.get("emr/get-datacombo-part-diagnosa-keperawatan" ).then(function (data) {
+                    console.log(data);
+                    $scope.listDiagnosaKep = data.data
+                })
                 var cacheNomorEMR = cacheHelper.get('cacheNomorEMR');
                 var cacheNoREC = cacheHelper.get('cacheNOREC_EMR');
                 if (cacheNoREC != undefined) {
@@ -83,7 +97,18 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                     for (let i = 0; i < datas.length; i++) {
                         
                         datas[i].tanggal = moment(datas[i].tanggal).format('DD-MM-YYYY')
-                        
+                        datas[i].diagnosa1 = {
+                            text: datas[i].textdiagnosa1,
+                            value: datas[i].iddiagnosa1
+                        }
+                        datas[i].diagnosa2 = {
+                            text: datas[i].textdiagnosa2,
+                            value: datas[i].iddiagnosa2
+                        }
+                        datas[i].diagnosa3 = {
+                            text: datas[i].textdiagnosa3,
+                            value: datas[i].iddiagnosa3
+                        }
                         for (let j = 0; j < $scope.listShift.length; j++) {
                             if (datas[i].shift == $scope.listShift[j].id){
                                 datas[i].shift = $scope.listShift[j].shift
@@ -96,6 +121,18 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                                 
                     
                 })
+            }
+
+            
+            $scope.getintervensi = function(){
+                $scope.listintervensi = $scope.item.diagnosaKep.details
+            }
+            $scope.getImplementasi = function(){
+                $scope.listimplementasi = $scope.item.intervensi.details
+            }
+            $scope.item.diagnosakeper = {
+                text: medifirstService.getPegawaiLogin().namaLengkap,
+                value: medifirstService.getPegawaiLogin().id
             }
             $scope.Batal = function(){
                 $scope.item = {}
@@ -113,9 +150,10 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                         }],
                         selectable: "row",
                         pageable: true,
-                        columns: [{
-                                "field": "tindakan",
-                                "title": "Tindakan",
+                        columns: [
+                            {
+                                "field": "tanggal",
+                                "title": "Tanggal",
                                 "width": "50px",
                             },
                             {
@@ -123,6 +161,12 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                                 "title": "Jam",
                                 "width": "50px",
                             },
+                            {
+                                "field": "implementasi",
+                                "title": "Implementasi",
+                                "width": "50px",
+                            },
+                            
                             // {
                             //     "command": [{
                             //         text: "Hapus",
@@ -324,11 +368,15 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                 var objSave = {
                     norec_ec: data.norec_ec,
                     jam: moment($scope.item.jam).format('HH:mm'),
-                    tindakan: $scope.item.tindakan
+                    tanggal: moment($scope.item.tanggaltindakan).format('YYYY-MM-DD'),
+                    tindakan: $scope.item.implementasi.value
                 } 
                 medifirstService.post('cakem/simpan-tindakan', objSave).then(function(){
                     $scope.item.jam = undefined
                     $scope.item.tindakan = undefined
+                    $scope.item.diagnosaKep = undefined
+                    $scope.item.intervensi = undefined
+                    $scope.item.implementasi = undefined
                     loadData()
                     $scope.popUpLembarCakem.close()
                 })
@@ -336,6 +384,7 @@ define(['initialize','Configuration'], function (initialize, configuration) {
             $scope.SimpanEvaluasi = function(data){
                 console.log(data);
                 medifirstService.post('cakem/simpan-evaluasi', data).then(function () {
+                  
                     // $scope.item.jam = undefined
                     // $scope.item.tindakan = undefined
                     loadData()

@@ -704,6 +704,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('emr/get-datacombo-part-pegawai', 'EMR\EMRController@getDataComboPegawaiPart');
           Route::get('emr/get-datacombo-part-ruangan', 'EMR\EMRController@getDataComboRuanganPart');
           Route::get('emr/get-datacombo-part-diagnosa', 'EMR\EMRController@getDataComboDiagnosaPart');
+          Route::get('emr/get-datacombo-part-diagnosa-keperawatan', 'EMR\EMRController@getDataComboDiagnosaKeperawatan');
           Route::get('emr/get-datacombo-part-tindakan', 'EMR\EMRController@getDataComboTindakanPart');
           Route::get('emr/get-datacombo-part-dokter', 'EMR\EMRController@getDataComboDokterPart');
           Route::get('emr/get-datacombo-part-ruangan-pelayanan', 'EMR\EMRController@getDataComboRuanganPelayananPart');
