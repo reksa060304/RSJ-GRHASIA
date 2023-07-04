@@ -564,6 +564,14 @@ define(['initialize','Configuration'], function (initialize, configuration) {
 
                 window.open(configuration.baseApiBackend+'bhp/cetak-sppb?noorder='+$scope.dataSelected.noorder+"&kdprofile="+ 30, '_blank')
             }
+            $scope.cetakspb = function () {
+                if ($scope.dataSelected == undefined) {
+                    toastr.error('Pilih data dulu')
+                    return
+                }
+
+                window.open(configuration.baseApiBackend + 'bhp/cetak-spb?noorder=' + $scope.dataSelected.noorder + "&kdprofile=" + 30, '_blank')
+            }
             //***********************************
         }
     ]);

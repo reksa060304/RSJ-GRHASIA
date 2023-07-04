@@ -1569,6 +1569,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::post('logistik/save-pemakaian-bhp', 'Logistik\LogistikController@savePemakaianBarangBHP');
             Route::post('logistik/hapus-pemakaian-bhp', 'Logistik\LogistikController@hapusPemakaianBarangBHP');
             Route::get('bhp/cetak-sppb', 'Report\ReportController@cetakSPPB');
+            Route::get('bhp/cetak-spb', 'Report\ReportController@cetakSPB');
             // POST //
         // });
         // Route::group(['prefix' => 'asset'], function () {
