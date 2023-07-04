@@ -161,13 +161,65 @@
                                                 <label c-label item="item">A: Assesment</label>
                                             </div>
                                             <div class="grid_12" >
-                                                <md-radio-group layout="row" ng-model="data.a">
+                                                    <div class="grid_4">
+                                                        <div class="grid_12">
+                                                            <label c-label item="item">Diagnosa</label>
+                                                        </div>
+                                                        <div class="grid_12">
+                                                            <input  kendo-combo-box k-ng-model="data.diagnosa1"
+                                                                k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                                                                k-auto-bind="false" k-data-source="listDiagnosaKep"  />
+                                                        </div>
+                                                    </div>
+                                                    <div class="grid_8" style="margin-top: 25px;">
+                                                    <md-radio-group layout="row" ng-model="data.a">
+                                                        <md-radio-button value="1" class="md-primary">Teratasi
+                                                        </md-radio-button>
+                                                        <md-radio-button value="2" class="md-primary">Teratasi Sebagian
+                                                        </md-radio-button>
+                                                    </md-radio-group>
+                                                </div>
+                                            </div>
+                                            <div class="grid_12" >
+                                                <div class="grid_4">
+                                                    <div class="grid_12">
+                                                        <label c-label item="item">Diagnosa</label>
+                                                    </div>
+                                                    <div class="grid_12">
+                                                        <input  kendo-combo-box k-ng-model="data.diagnosa2"
+                                                            k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                                                            k-auto-bind="false" k-data-source="listDiagnosaKep" />
+                                                    </div>
+                                                </div>
+                                                <div class="grid_8" style="margin-top: 25px;">
+                                                <md-radio-group layout="row" ng-model="data.a1">
                                                     <md-radio-button value="1" class="md-primary">Teratasi
                                                     </md-radio-button>
                                                     <md-radio-button value="2" class="md-primary">Teratasi Sebagian
                                                     </md-radio-button>
                                                 </md-radio-group>
                                             </div>
+                                        </div>
+                                        <div class="grid_12" >
+                                            <div class="grid_4">
+                                                <div class="grid_12">
+                                                    <label c-label item="item">Diagnosa</label>
+                                                </div>
+                                                <div class="grid_12">
+                                                    <input  kendo-combo-box k-ng-model="data.diagnosa3"
+                                                        k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                                                        k-auto-bind="false" k-data-source="listDiagnosaKep" />
+                                                </div>
+                                            </div>
+                                            <div class="grid_8" style="margin-top: 25px;">
+                                            <md-radio-group layout="row" ng-model="data.a2">
+                                                <md-radio-button value="1" class="md-primary">Teratasi
+                                                </md-radio-button>
+                                                <md-radio-button value="2" class="md-primary">Teratasi Sebagian
+                                                </md-radio-button>
+                                            </md-radio-group>
+                                        </div>
+                                    </div>
                                         </div>
                                         <div class="grid_12">
                                             <div class="grid_12">
@@ -200,6 +252,14 @@
                     <div class="grid_12">
                         <div class="grid_12">
                             <div class="grid_12">
+                                <label c-label item="item">Tanggal</label>
+                            </div>
+                            <div class="grid_12">
+                                <input k-ng-model="item.tanggaltindakan" kendo-datepicker
+                                    placeholer="dd-MM-yyyy" k-format="'dd-MM-yyyy'"
+                                    parsedate="dd-MM-yyyy" />
+                            </div>
+                            <div class="grid_12">
                                 <div class="grid_12">
                                     <label c-label item="item">Jam</label>
                                 </div>
@@ -210,8 +270,32 @@
                                         k-format="'HH:mm'" parsedate="HH:mm" />
                                 </div>
                             </div>
+                            <div class="grid_12">
+                                <label c-label item="item">Diagnosa</label>
+                            </div>
+                            <div class="grid_12">
+                                <input  kendo-combo-box k-ng-model="item.diagnosaKep"
+                                    k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                                    k-auto-bind="false" k-data-source="listDiagnosaKep" k-on-change="getintervensi()" />
+                            </div>
+                            <div class="grid_12">
+                                <label c-label item="item">Intervensi</label>
+                            </div>
+                            <div class="grid_12">
+                                <input  kendo-combo-box k-ng-model="item.intervensi"
+                                    k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                                    k-auto-bind="false" k-data-source="listintervensi" k-on-change="getImplementasi()" />
+                            </div>
+                            <div class="grid_12">
+                                <label c-label item="item">Implementasi (Tindakan) </label>
+                            </div>
+                            <div class="grid_12">
+                                <input  kendo-combo-box k-ng-model="item.implementasi"
+                                    k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                                    k-auto-bind="false" k-data-source="listimplementasi" style="height: 100px;" />
+                            </div>
                         </div>
-                        <div class="grid_12">
+                        <!-- <div class="grid_12">
                             <div class="grid_12">
                                 <label c-label item="item">Tindakan</label>
                             </div>
@@ -220,14 +304,14 @@
                             <label c-label item="item" class="margin-bottom"></label>
                             <textarea c-text-area type="input" filter="'string'" class="k-textbox"
                                 ng-model="item.tindakan" k-data-source="" style="height: 100px; width: 80%; " />
-                            </div>
+                        </div> -->
                     </div>
                     
                     <div class="grid_12">
                         <div class="grid_2">
                             <button class="btnTemplate1" style="margin-top:20px" ng-click="SimpanTindakan(dataaaaa)"><i
                                     class="fa fa-save"></i>Simpan
-                                Tindakan</button>
+                                Implementasi (Tindakan) </button>
                         </div>
                     </div>
 
