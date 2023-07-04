@@ -108,7 +108,7 @@
             </div>
             <!-- <div class="grid_1"></div> -->
             <div class="grid_1" ng-show="isverif">
-                <button class="c-button" ng-click="simpanVerif(dataSelected)">Simpan Verif</button>
+                <button class="c-button" ng-click="simpanVerif()">Simpan Verif</button>
             </div>
         </div>
     </div>
@@ -134,9 +134,9 @@
         </div>
         <div class="grid_2">
         </div>
-        <div class="grid_1" style="margin-top: 22px">
+        <!-- <div class="grid_1" style="margin-top: 22px">
             <button class="c-button" ng-click="cetak()">Cetak Bukti</button>
-        </div>
+        </div> -->
         <!-- <div class="grid_1" style="margin-top: 22px">
             <button class="c-button" ng-click="newOrder()">Order Baru</button>
         </div> -->
@@ -147,6 +147,9 @@
             <button class="c-button" ng-click="EditOrder()">Ubah Order</button>
         </div> -->
         <div class="grid_1" style="margin-top: 22px">
+            <button class="c-button" ng-click="cetaksppb()">Cetak SPPB</button>
+        </div>
+        <div class="grid_2" style="margin-top: 22px">
             <button class="c-button" ng-click="KirimBarang()">Barang sudah bisa diambil</button>
         </div>
     </div>
@@ -240,7 +243,7 @@
                             </div>
                         </div>
                         <div class="grid_4">
-                            <button class="c-button" ng-click="simpanVeriff(dataverif)">Simpan</button>
+                            <button class="c-button" ng-click="simpanVeriff()">Simpan</button>
                         </div>
                     </div>
                 </div>

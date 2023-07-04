@@ -20,6 +20,7 @@ define(['initialize'], function (initialize) {
             var NorecCetak = '';
             $scope.kaskecilShow = false;
             $scope.disTanggal = false;
+            $scope.listProduk = []
             var noOrder = '';
             var pegawaiUser = {}
             var norec_Realisasi = '';
@@ -293,6 +294,10 @@ define(['initialize'], function (initialize) {
                                 $scope.item.pegawaiPembuat = { id: data_ih.data.detailterima.objectpegawaipenanggungjawabfk, namalengkap: data_ih.data.detailterima.penanggungjawab }
                                 $scope.item.tglFaktur = moment(data_ih.data.detailterima.tglfaktur).format('DD-MM-YYYY HH:mm');//data_ih.data.detailterima.tglfaktur
                                 $scope.item.noFaktur = data_ih.data.detailterima.nofaktur
+                                $scope.item.koordinator = {
+                                    id: data_ih.data.detailterima.jenisusulanfk,
+                                    jenisusulan: data_ih.data.detailterima.jenisusulan
+                                }
                                 $scope.item.namaRekanan = { id: data_ih.data.detailterima.objectrekananfk, namarekanan: data_ih.data.detailterima.namarekanan }
                                 norec_Realisasi = data_ih.data.detailterima.norecrealisasi;
                                 $scope.item.mataAnggaran = { norec: data_ih.data.detailterima.mataanggranid, mataanggaran: data_ih.data.detailterima.namamataanggaran }
@@ -350,12 +355,12 @@ define(['initialize'], function (initialize) {
                                 },
                                 {
                                     "field": "jumlah",
-                                    "title": "Qty",
+                                    "title": "Jumlah",
                                     "width": "50px",
                                 },
                                 {
                                     "field": "jumlahdipakai",
-                                    "title": "Qty Terpakai",
+                                    "title": "Jumlah Terpakai",
                                     "width": "50px",
                                 },
                                 {
@@ -1007,7 +1012,7 @@ define(['initialize'], function (initialize) {
                 // $scope.item.keterangan = '-';
                 $scope.item.keterangan = $scope.item.produk.spesifikasi;
                 $scope.item.nobatch = '-';
-                $scope.item.tglkadaluarsa = new Date();
+                // $scope.item.tglkadaluarsa = new Date();
                 
                 // if ($scope.item.ruangan == undefined) {
                 //     //alert("Pilih Ruangan terlebih dahulu!!")
@@ -1249,7 +1254,7 @@ define(['initialize'], function (initialize) {
                                 data.total = $scope.item.subTotaltxt
                                 data.keterangan = $scope.item.keterangan
                                 data.nobatch = $scope.item.nobatch
-                                data.tglkadaluarsa = $scope.item.tglkadaluarsa
+                                data.tglkadaluarsa = $scope.item.tglkadaluarsa != undefined ? $scope.item.tglkadaluarsa : null
 
                                 data2[i] = data;
                                 $scope.dataGrid = new kendo.data.DataSource({
@@ -1313,7 +1318,7 @@ define(['initialize'], function (initialize) {
                             total: $scope.item.subTotaltxt,
                             keterangan: $scope.item.keterangan,
                             nobatch: $scope.item.nobatch,
-                            tglkadaluarsa: $scope.item.tglkadaluarsa
+                            tglkadaluarsa: $scope.item.tglkadaluarsa != undefined ? $scope.item.tglkadaluarsa : null
                         }
                         data2.push(data)
                         $scope.dataGrid = new kendo.data.DataSource({
@@ -1379,7 +1384,7 @@ define(['initialize'], function (initialize) {
                                 data.total = $scope.item.subTotaltxt
                                 data.keterangan = $scope.item.keterangan
                                 data.nobatch = $scope.item.nobatch
-                                data.tglkadaluarsa = $scope.item.tglkadaluarsa
+                                data.tglkadaluarsa = $scope.item.tglkadaluarsa != undefined ? $scope.item.tglkadaluarsa : null
 
                                 data2[i] = data;
                                 $scope.dataGrid = new kendo.data.DataSource({
@@ -1442,7 +1447,7 @@ define(['initialize'], function (initialize) {
                             total: $scope.item.subTotaltxt,
                             keterangan: $scope.item.keterangan,
                             nobatch: $scope.item.nobatch,
-                            tglkadaluarsa: $scope.item.tglkadaluarsa
+                            tglkadaluarsa: $scope.item.tglkadaluarsa != undefined ? $scope.item.tglkadaluarsa : null
                         }
                         data2.push(data)
                         $scope.dataGrid = new kendo.data.DataSource({
@@ -1508,7 +1513,7 @@ define(['initialize'], function (initialize) {
                                 data.total = $scope.item.subTotaltxt
                                 data.keterangan = $scope.item.keterangan
                                 data.nobatch = $scope.item.nobatch
-                                data.tglkadaluarsa = $scope.item.tglkadaluarsa
+                                data.tglkadaluarsa = $scope.item.tglkadaluarsa != undefined ? $scope.item.tglkadaluarsa : null
 
                                 data2[i] = data;
                                 $scope.dataGrid = new kendo.data.DataSource({
@@ -1571,7 +1576,7 @@ define(['initialize'], function (initialize) {
                             total: $scope.item.subTotaltxt,
                             keterangan: $scope.item.keterangan,
                             nobatch: $scope.item.nobatch,
-                            tglkadaluarsa: $scope.item.tglkadaluarsa
+                            tglkadaluarsa: $scope.item.tglkadaluarsa != undefined ? $scope.item.tglkadaluarsa : null
                         }
                         data2.push(data)
                         $scope.dataGrid = new kendo.data.DataSource({
@@ -1631,7 +1636,7 @@ define(['initialize'], function (initialize) {
                                 data.total = $scope.item.subTotaltxt
                                 data.keterangan = $scope.item.keterangan
                                 data.nobatch = $scope.item.nobatch
-                                data.tglkadaluarsa = $scope.item.tglkadaluarsa
+                                data.tglkadaluarsa = $scope.item.tglkadaluarsa != undefined ? $scope.item.tglkadaluarsa : null
 
                                 data2[i] = data;
                                 $scope.dataGrid = new kendo.data.DataSource({
@@ -1693,7 +1698,7 @@ define(['initialize'], function (initialize) {
                             total: $scope.item.subTotaltxt,
                             keterangan: $scope.item.keterangan,
                             nobatch: $scope.item.nobatch,
-                            tglkadaluarsa: $scope.item.tglkadaluarsa
+                            tglkadaluarsa: $scope.item.tglkadaluarsa != undefined ? $scope.item.tglkadaluarsa : null
                         }
                         data2.push(data)
                         $scope.dataGrid = new kendo.data.DataSource({
@@ -1733,8 +1738,8 @@ define(['initialize'], function (initialize) {
 
             $scope.klikGrid = function (dataSelected) {
                 var dataProduk = [];
+                // $scope.getProduk()
                 //no:no,
-
                 $scope.item.no = dataSelected.no
                 // $scope.item.rke = dataSelected.rke
                 // $scope.item.jenisKemasan = {id:dataSelected.jeniskemasanfk,jeniskemasan:dataSelected.jeniskemasan}
@@ -1743,13 +1748,22 @@ define(['initialize'], function (initialize) {
                 // if (dataSelected.asalprodukfk != 0) {
                 //     $scope.item.asal = {id:dataSelected.asalprodukfk,asalproduk:dataSelected.asalproduk}    
                 // }
-                for (var i = $scope.listProduk.length - 1; i >= 0; i--) {
-                    if ($scope.listProduk[i].id == dataSelected.produkfk) {
-                        dataProduk = $scope.listProduk[i]
-                        break;
-                    }
-                }
-                $scope.item.produk = dataProduk//{id:dataSelected.produkfk,namaproduk:dataSelected.namaproduk}
+                // medifirstService.get("logistik/get-data-produk-detail?idkelompokproduk=" + $scope.item.kelompokproduk.id, true).then(function (dat) {
+                //     $scope.listProduk = dat.data.produk;
+                // })
+                // for (var i = 0; i < $scope.listProduk.length; i++) {
+                //     if ($scope.listProduk[i].id == dataSelected.produkfk) {
+                //         $scope.item.produk = {
+                //                 id: $scope.listProduk[i].id,
+                //                 namaproduk: $scope.listProduk[i].namaproduk,
+                //         }
+                //         dataProduk = $scope.listProduk[i]
+                //         break;
+                //     }
+                // }
+                
+                
+                // $scope.item.produk = dataProduk//{id:dataSelected.produkfk,namaproduk:dataSelected.namaproduk}
                 $scope.listSatuan = [{ ssid: dataSelected.satuanstandarfk, satuanstandar: dataSelected.satuanstandar }]//dataProduk.konversisatuan
                 // $scope.item.stok = dataSelected.jmlstok //* $scope.item.nilaiKonversi 
 
@@ -1798,7 +1812,13 @@ define(['initialize'], function (initialize) {
                 }
                 $scope.item.satuan = { ssid: dataSelected.satuanstandarfk, satuanstandar: dataSelected.satuanstandar }
 
-
+                medifirstService.get("logistik/get-data-produk-detail?idkelompokproduk=" + $scope.item.kelompokproduk.id, true).then(function (dat) {
+                    $scope.listProduk = dat.data.produk;
+                    $scope.item.produk = {
+                        id: dataSelected.produkfk,
+                        namaproduk: dataSelected.namaproduk,
+                    }
+                })
                 // $scope.item.jumlah = dataSelected.jumlah
                 // $scope.item.hargaSatuan = dataSelected.hargasatuan
                 // $scope.item.hargadiskon = dataSelected.hargadiscount

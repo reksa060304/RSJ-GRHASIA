@@ -13511,4 +13511,28 @@ public function suratBuktiPengembalian(Request $request)
         return $pdf->stream();
         return view('report.cppt-ranap-rev',compact('res','pageWidth'));
     }
+    function cetakSPPB(Request $request) {
+        $norec = $request['noorder'];
+        $kdProfile = (int) $request['kdprofile'];
+        $res['profile'] = Profile::where('id',$request['kdprofile'])->first();
+
+        $data = DB::select(DB::raw("
+        SELECT pr.namaproduk, kp.qtyproduk, kp.harganetto, sk.nokirim, so.noorder, ru.namaruangan FROM strukkirim_t sk
+        inner join strukorder_t so on so.norec = sk.noorderfk
+        inner join kirimproduk_t kp on kp.nokirimfk = sk.norec
+        inner join produk_m pr on pr.id = kp.objectprodukfk
+        inner join ruangan_m ru on ru.id = sk.objectruangantujuanfk
+        where so.noorder ilike '$norec' and kp.qtyproduk > 0
+        "));
+        $pdf = PDF::loadView(
+            'report.cetaksppb',
+            array(
+                'data' => $data,
+                'res'=> $res
+            )
+        );
+
+        return $pdf->stream();
+        // return view('report.cppt-ranap-rev',compact('res','pageWidth'));
+    }
 }

@@ -75,6 +75,8 @@ define(['initialize'], function (initialize) {
                     $scope.item.jenisKirim = { id: 2, jenis: 'Transfer' }
                     $scope.listDataJabatan = dataCombo.jabatan;
                     $scope.listProduk = dataCombo.produk;
+                    $scope.item.noKirim = dataCombo.sppb;
+                    $scope.item.snn = dataCombo.SNN;
                     init();
                 });
 
@@ -633,6 +635,8 @@ define(['initialize'], function (initialize) {
                     totalhargasatuan: 0,
                     norecOrder: noorderfk,
                     noreckirim: noreckirim,
+                    nokirim: $scope.item.noKirim,
+                    snn: $scope.item.snn,
                     norec_apd: 0
                 }
                 var objSave =
@@ -641,7 +645,7 @@ define(['initialize'], function (initialize) {
                     details: data2
                 }
 
-                medifirstService.post('logistik/save-kirim-barang-ruangan', objSave).then(function (e) {
+                medifirstService.post('logistik/save-kirim-barang-ruangan-baru', objSave).then(function (e) {
                     $scope.item.noKirim = e.data.nokirim.norec
                     norecCetak = $scope.item.noKirim;
                     Kosongkan();

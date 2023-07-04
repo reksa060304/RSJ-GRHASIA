@@ -31,7 +31,7 @@
                 <div class="grid_4" >
                     <div class="grid_6">
                         <div class="grid_12">
-                            <label c-label item="item">No SPPB / SPK</label>
+                            <label c-label item="item">No SPK</label>
                         </div>
 
                         <div class="grid_12">
@@ -40,7 +40,7 @@
                     </div>
                     <div class="grid_6">
                         <div class="grid_12">
-                            <label c-label item="item">Tanggal SPPB / SPK</label>
+                            <label c-label item="item">Tanggal SPK</label>
                         </div>
                         <div class="grid_12 padDatePicker">
                             <input style="width: 100%" k-ng-model="item.tglAwal" kendo-date-picker k-max="now"
@@ -67,7 +67,7 @@
                 </div>
                 <div class="grid_4" style="margin-top: 5px">
                     <div class="grid_12">
-                        <label c-label item="item" >Pegawai Pembuat Komitmen</label>
+                        <label c-label item="item" >PPTK</label>
                     </div>
                     <div class="grid_12">
                          <input kendo-combo-box k-ng-model="item.pegawaiPembuat" k-data-text-field="'namalengkap'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listPegawaiPembuat" ng-disabled="disableSppb"/>
@@ -84,7 +84,7 @@
                             <label c-label item="item">Koordinator</label>
                         </div>
                         <div class="grid_12">
-                            <input kendo-combo-box k-ng-model="item.koordinator" k-data-text-field="'jenisusulan'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listKoordinator" ng-disabled="disableSppb"/>
+                            <input kendo-combo-box k-ng-model="item.koordinator" k-data-text-field="'jenisusulan'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listKoordinator"/>
                         </div>
                     </div>
                     <div class="grid_4">
@@ -96,7 +96,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="grid_12">
+                <!-- <div class="grid_12">
                     <div class="grid_6">
                         <div class="grid_12">
                             <label c-label item="item">No Usulan</label>
@@ -113,16 +113,16 @@
                             <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.namaPengadaan" ng-disabled="disableSppb"/>
                         </div>
                     </div>
-                </div>
+                </div> -->
                 <div class="grid_12">
-                    <div class="grid_8">
+                    <!-- <div class="grid_8">
                         <div class="grid_12">
                             <label c-label item="item">No Kontrak</label>
                         </div>
                         <div class="grid_12">
                             <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.noKontrak"/>
                         </div>
-                    </div>
+                    </div> -->
                     <div class="grid_4">
                         <div class="grid_12">
                             <label c-label item="item">Tahun</label>
@@ -151,7 +151,7 @@
                     </div>
                     <div class="grid_6">
                         <div class="grid_12">
-                            <label c-label item="item" c-label-text="Tanggal Terima"></label>
+                            <label c-label item="item" c-label-text="Tanggal Terima"real></label>
                         </div>
                         <div class="grid_12 padDatePicker">
                             <input style="width: 100%" k-ng-model="item.tglTerima" kendo-date-picker k-max="now" placeholer="dd-MM-yyyy HH:mm" k-format="'dd-MM-yyyy HH:mm'" />
@@ -161,7 +161,7 @@
                 <div class="grid_12">
                     <div class="grid_6">
                         <div class="grid_12">
-                            <label c-label item="item" c-label-text="Kelompok Barang"></label>
+                            <label c-label item="item" c-label-text="Kelompok Barang" real></label>
                         </div>
                         <div class="grid_12">
                             <input kendo-combo-box k-ng-model="item.kelompokproduk" k-data-text-field="'kelompokproduk'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
@@ -170,7 +170,7 @@
                     </div>
                     <div class="grid_6">
                         <div class="grid_12">
-                            <label c-label item="item" c-label-text="Sumber Dana"></label>
+                            <label c-label item="item" c-label-text="Sumber Dana" real></label>
                         </div>
                         <div class="grid_12">
                             <input kendo-combo-box k-ng-model="item.asalproduk" k-data-text-field="'asalProduk'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" 
@@ -189,7 +189,7 @@
                     </div>
                     <div class="grid_6">
                         <div class="grid_12">
-                            <label c-label item="item" c-label-text="Pegawai Penerima"></label>
+                            <label c-label item="item" c-label-text="Pegawai Penerima" real></label>
                         </div>
                         <div class="grid_12">
                             <input kendo-combo-box k-ng-model="item.pegawaiPenerima" k-data-text-field="'namalengkap'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listPegawai" ng-disabled="disableSppb" />
@@ -207,7 +207,7 @@
                 <div class="grid_12">
                     <div class="grid_4">
                         <div class="grid_12">
-                            <label c-label item="item" c-label-text="Tanggal Dokumen"></label>
+                            <label c-label item="item" c-label-text="Tanggal Dokumen" real></label>
                         </div>
                         <div class="grid_12 padDatePicker">
                             <input style="width: 100%" k-ng-model="item.tglFaktur"  kendo-date-picker k-max="now" placeholer="dd-MM-yyyy" k-format="'dd-MM-yyyy HH:mm'" />
@@ -234,7 +234,7 @@
                 </div>
                 <div class="grid_12">
                     <div class="grid_12">
-                        <label c-label item="item" c-label-text="Nama Suplier"></label>
+                        <label c-label item="item" c-label-text="Nama Suplier" real></label>
                     </div>
 
                     <div class="grid_12">
@@ -245,7 +245,7 @@
                 <div class="grid_12" style="margin-top: 7px">
                     <div class="grid_12">
                         <div class="grid_12">
-                            <label c-label item="item" c-label-text="Tanggal Jatuh Tempo"></label>
+                            <label c-label item="item" c-label-text="Tanggal Jatuh Tempo" real></label>
                         </div>
                         <div class="grid_12 padDatePicker">
                             <input style="width: 100%" k-ng-model="item.TglJatuhTempo"  kendo-date-picker placeholer="dd-MM-yyyy HH:mm" k-format="'dd-MM-yyyy HH:mm'" />
@@ -344,14 +344,14 @@
             <input kendo-combo-box k-ng-model="item.satuan" k-data-text-field="'satuanstandar'" k-data-value-field="'ssid'" k-filter="'contains'" k-auto-bind="false" k-data-source="listSatuan" k-on-change='getNilaiKonversi()'/>
         </div>
     </div>
-    <div class="grid_1">
+    <!-- <div class="grid_1">
         <div class="grid_12">
             <label c-label item="item" c-label-text="Konversi"></label>
         </div>
         <div class="grid_12">
             <input c-text-box type="input"  style="text-align: right" filter="" class="k-textbox" ng-model="item.nilaiKonversi" ng-disabled="true" />
         </div>
-    </div>
+    </div> -->
    <!--  <div class="grid_1">
         <div class="grid_12">
             <label c-label item="item" c-label-text="Stok"></label>
@@ -378,7 +378,7 @@
     </div>
     <div class="grid_2">
         <div class="grid_12">
-            <label c-label item="item" c-label-text="Harga Satuan"></label>
+            <label c-label item="item" c-label-text="Harga Satuan" real></label>
         </div>
         <div class="grid_12">
             <input c-text-box type="input" style="text-align: right" filter="" class="k-textbox" ng-model="item.hargaSatuan"  ng-disabled="isUnitt"/>
@@ -387,7 +387,7 @@
     
  <div class="grid_1">
         <div class="grid_12">
-            <label c-label item="item" c-label-text="Harga Diskon"></label>
+            <label c-label item="item" c-label-text="Harga Diskon" real></label>
         </div>
         <div class="grid_12">
             <input c-text-box type="input" style="text-align: right" filter="" class="k-textbox" ng-model="item.hargaDiskon"  ng-disabled="isUnitt"/>
@@ -395,7 +395,7 @@
     </div>
     <div class="grid_1">
         <div class="grid_12">
-            <label c-label item="item" c-label-text="Harga Diskon %"></label>
+            <label c-label item="item" c-label-text="Harga Diskon %" real></label>
         </div>
         <div class="grid_12">
             <input c-text-box type="input" style="text-align: right" filter="" class="k-textbox" ng-model="item.hargaDiskonPersen"  ng-disabled="isUnitt"/>
@@ -411,7 +411,7 @@
     </div>
     <div class="grid_1">
         <div class="grid_12">
-            <label c-label item="item" c-label-text="No Batch"></label>
+            <label c-label item="item" c-label-text="No Batch" real></label>
         </div>
         <div class="grid_12">
             <input c-text-box type="input" style="text-align: left" filter="" class="k-textbox" ng-model="item.nobatch" />
@@ -419,7 +419,7 @@
     </div>
     <div class="grid_2">
         <div class="grid_12">
-            <label c-label item="item" c-label-text="Tgl Kadaluarsa"></label>
+            <label c-label item="item" c-label-text="Tgl Kadaluarsa" real></label>
         </div>
         <div class="grid_12 padDatePicker">
             <input style="width: 100%" k-ng-model="item.tglkadaluarsa"  kendo-date-picker  placeholer="dd-MM-yyyy" k-format="'dd-MM-yyyy'" />
@@ -444,7 +444,7 @@
    
     <div class="grid_2">
         <div class="grid_12">
-            <label c-label item="item" c-label-text="Sub Total"></label>
+            <label c-label item="item" c-label-text="Sub Total" real></label>
         </div>
         <div class="grid_12">
             <input c-text-box type="input" style="text-align: right" filter="" class="k-textbox" ng-model="item.subTotaltxt"  ng-disabled="isUnitt"/>
@@ -515,7 +515,7 @@
                 <div class="grid_2">
                 </div>
                 <div class="grid_2">
-                    <label c-label item="item" c-label-text="Sub Total"></label>
+                    <label c-label item="item" c-label-text="Sub Total" real></label>
                 </div>
                 <div class="grid_8">
                     <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.total" />

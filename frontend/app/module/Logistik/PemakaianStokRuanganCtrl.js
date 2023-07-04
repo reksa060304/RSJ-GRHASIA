@@ -586,6 +586,12 @@ define(['initialize'], function (initialize) {
                 }
                 Kosongkan()
             }
+            $scope.$watch('item.ruangan', function (newValue, oldValue) {
+                medifirstService.get("logistik/get-combo-logistik?ruangantujuan=" + $scope.item.ruangan.id).then(function (dat) {
+                    var dataCombo = dat.data;
+                    $scope.listProduk = dataCombo.produk2;
+                });
+            })
             //***********************************
         }
     ]);

@@ -103,13 +103,13 @@
                         RBA
                     </b><br>
                     @if($sebelum != [])
-                    {{substr($itahap[0]->tahap, 0, -3)}}
+                    {{$itahap[0]->tahap}}
                     @endif
                 </td>
             </tr>
             <tr align="center">
                 <td>
-                    <b>RS Jiwa GRHASIA<br>TAHUN {{ date('Y') }}</b>
+                    <b>RS JIWA GRHASIA<br>TAHUN {{ date('Y') }}</b>
                 </td>
             </tr>
             <tr >
@@ -331,7 +331,7 @@
             $jumlahtotaljasalayanan+=$sb->subtotaljasalayanan;
             $jumlahtotalapbd+=$sb->subtotalapbd;
             @endphp
-            <td align="center" style="padding: 10px; font-weight: bold ">{{ $sb->kodemataanggaran }}</td>
+            <td align="center" style="padding: 10px; font-weight: bold "> {{ $sb->kodemataanggaran }}</td>
             <td align="center" style="padding: 10px; font-weight: bold "></td>
             <td align="center" style="padding: 10px; font-weight: bold "></td>
             <td align="center" style="padding: 10px; font-weight: bold "></td>
@@ -467,7 +467,7 @@
             @endif
         </tr>
     </table>
-    
+
     <table cellpadding="0" cellspacing="0" width="100%"  border="0">
         <thead>
             <tr>
@@ -491,7 +491,7 @@
                 <td>
                     <p align="center" style="margin-bottom:50px">
                         <font style="font-size: 12pt; " color="#000000" face="Arial">
-                                Kepala BLUD RS Jiwa GRHASIA
+                                KEPALA BLUD RS JIWA GRHASIA
                         </font>
                     </p>
                 </td>

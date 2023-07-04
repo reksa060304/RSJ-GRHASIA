@@ -265,9 +265,11 @@
                             @{{ item.obj[111400] }}
                             <p> @{{ item.obj[111401] }}</p>
                         </td>
+                        <td></td>
                         <td>@{{ item.obj[111404] }}</td>
                         <td>
-                            @{{ item.obj[111560] }}
+
+                            @{{ isset(item.obj[111560]) ? item.obj[111560] : null }}
                             <p> @{{ item.obj[111561] }}</p>
                             <p> @{{ item.obj[111562] }}</p>
                         </td>

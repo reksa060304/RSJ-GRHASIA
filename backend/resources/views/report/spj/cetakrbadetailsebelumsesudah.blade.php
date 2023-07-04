@@ -551,10 +551,10 @@
         @if($sb->kodemataanggaran == 'I' || $sb->kodemataanggaran == 'II' || $sb->kodemataanggaran == 'III')
             @if(($sb->subtotaljasalayanansetelah + $sb->subtotalapbdsetelah) > ($sb->subtotaljasalayanan + $sb->subtotalapbd))
             @php
-                $jumlahtotalselisih += ($sb->subtotaljasalayanan + $sb->subtotalapbd) - ($sb->subtotaljasalayanansetelah + $sb->subtotalapbdsetelah)
+                $jumlahtotalselisih += ($sb->subtotaljasalayanansetelah + $sb->subtotalapbdsetelah) - ($sb->subtotaljasalayanan + $sb->subtotalapbd) 
             @endphp
-            <td align="right" width="25"  style="padding: 5px; font-weight: bold "> {{ number_format(($sb->subtotaljasalayanan + $sb->subtotalapbd) - ($sb->subtotaljasalayanansetelah + $sb->subtotalapbdsetelah),0,',','.') }}</td>
-            <td align="right" width="25"  style="padding: 5px; font-weight: bold "> {{ number_format((($sb->subtotaljasalayanan + $sb->subtotalapbd) - ($sb->subtotaljasalayanansetelah + $sb->subtotalapbdsetelah)/($sb->subtotaljasalayanan + $sb->subtotalapbd)*100),0,',','.') }}</td>
+            <td align="right" width="25"  style="padding: 5px; font-weight: bold "> {{ number_format(($sb->subtotaljasalayanansetelah + $sb->subtotalapbdsetelah) - ($sb->subtotaljasalayanan + $sb->subtotalapbd),0,',','.') }}</td>
+            <td align="right" width="25"  style="padding: 5px; font-weight: bold "> {{ number_format((($sb->subtotaljasalayanansetelah + $sb->subtotalapbdsetelah) - ($sb->subtotaljasalayanan + $sb->subtotalapbd))/($sb->subtotaljasalayanan + $sb->subtotalapbd)*100,0,',','.') }}</td>
             @elseif(($sb->subtotaljasalayanansetelah + $sb->subtotalapbdsetelah) < ($sb->subtotaljasalayanan + $sb->subtotalapbd))
             @php
                 $jumlahtotalselisih += ($sb->subtotaljasalayanan + $sb->subtotalapbd) - ($sb->subtotaljasalayanansetelah + $sb->subtotalapbdsetelah)

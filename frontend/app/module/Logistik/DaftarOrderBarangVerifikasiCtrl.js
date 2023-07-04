@@ -1,4 +1,4 @@
-define(['initialize'], function (initialize) {
+define(['initialize','Configuration'], function (initialize, configuration) {
     'use strict';
     initialize.controller('DaftarOrderBarangVerifikasiCtrl', ['$scope', '$state', 'CacheHelper', 'DateHelper', 'MedifirstService',
         function ($scope, $state, cacheHelper, dateHelper, medifirstService) {
@@ -8,9 +8,10 @@ define(['initialize'], function (initialize) {
             $scope.isRouteLoading = false;
             $scope.isanalis = false
             $scope.isverif = false
+            $scope.selectedData3 = []
             var pegawaiUser = {}
-            LoadCache();
             loadCombo();
+            LoadCache();
 
             function LoadCache() {
                 var chacePeriode = cacheHelper.get('DaftarOrderBarangCtrl');
@@ -21,7 +22,7 @@ define(['initialize'], function (initialize) {
                 }
                 else {
                     $scope.item.tglAwal = new moment($scope.now).format('YYYY-MM-DD 00:00');
-                    $scope.item.tglAkhir = $scope.now;
+                    $scope.item.tglAkhir = new moment($scope.now).format('YYYY-MM-DD 23:59');
                     init();
                 }
             }
@@ -37,9 +38,13 @@ define(['initialize'], function (initialize) {
                     $scope.listDataJabatan = dataCombo.jabatan;
                     if(dataCombo.detaillogin[0].isanalis == true){
                         $scope.isanalis = true
+                        $scope.isverif = false
+
                     }
                     if (dataCombo.detaillogin[0].isverif == true) {
                         $scope.isverif = true
+                        $scope.isanalis = false
+
                     }
                 });
 
@@ -97,27 +102,31 @@ define(['initialize'], function (initialize) {
                 if ($scope.item.namaBarang != undefined) {
                     var produkfk = "&produkfk=" + $scope.item.namaBarang.id
                 }
+                var isverif = ''
+                
                 var tglAwal = moment($scope.item.tglAwal).format('YYYY-MM-DD HH:mm:ss');
                 var tglAkhir = moment($scope.item.tglAkhir).format('YYYY-MM-DD HH:mm:ss');
                 medifirstService.get("logistik/get-data-order-barang-ruangan-baru?" +
                     "tglAwal=" + tglAwal +
                     "&tglAkhir=" + tglAkhir +
-                    "&noorder=" + $scope.item.struk + rg + produkfk
+                    "&noorder=" + $scope.item.struk + rg + produkfk + isverif
                     , true).then(function (dat) {
                         $scope.isRouteLoading = false;
                         // for (var i = 0; i < dat.data.daftar.length; i++) {
                         //     dat.data.daftar[i].no = i + 1                           
                         // }
-                        var data2 = dat.data.daftar;                       
+                        var data2 = dat.data.daftar;  
+                        $scope.data2 = data2
                         for (var i = 0; i < data2.length; i++) {
                             data2[i].no = i + 1
+                            data2[i].statCheckbox2 = false
                             for (let e = 0; e < data2[i].details.length; e++) {
                                 data2[i].details[e].no = e + 1;                            
                             }
                         }
                         $scope.group = [
                             {
-                                field: 'noorder'
+                                field: 'noorder',
                             }
                         ]
                         $scope.dataGrid = new kendo.data.DataSource({
@@ -233,6 +242,28 @@ define(['initialize'], function (initialize) {
             $scope.formatTanggal = function (tanggal) {
                 return moment(tanggal).format('DD-MMM-YYYY');
             }
+            $scope.selectRow2 = function (e) {
+                var element = $(e.currentTarget);
+                var checked = element.is(':checked'),
+                    row = element.closest('tr'),
+                    grid = $("#kGrid").data("kendoGrid"),
+                    // grid = $("#grid").data("kendoGrid"),
+                    dataItem = grid.dataItem(row);
+                if (checked) {
+                    dataItem.statCheckbox2 = true;
+                    $scope.selectedData3.push(dataItem);
+                    row.addClass("k-state-selected");
+                } else {
+                    dataItem.statCheckbox2 = false;
+                    for (var i = 0; i < $scope.selectedData3.length; i++)
+                        if ($scope.selectedData3[i].norec == dataItem.norec) {
+                            $scope.selectedData3.splice(i, 1);
+                            break;
+                        }
+                    row.removeClass("k-state-selected");
+                }
+                console.log($scope.selectedData3);
+            }
             $scope.mainGridOptions = {
                 toolbar: [
                     "excel",
@@ -259,7 +290,17 @@ define(['initialize'], function (initialize) {
                 },
                 editable: true,
                 scrollable: true,
-                columns: [{
+                columns: [
+                    {
+                        "title": "#",
+                        template: "# if (statCheckbox2) { #" +
+                            "<input type='checkbox' class='checkbox' ng-click='selectRow2($event)' checked />" +
+                            "# } else { #" +
+                            "<input type='checkbox' class='checkbox' ng-click='selectRow2($event)' />" +
+                            "# } #",
+                        width: "30px"
+                    },
+                    {
                         "field": "no",
                         "title": "No",
                         "width": "15px",
@@ -319,6 +360,11 @@ define(['initialize'], function (initialize) {
                         "field": "isveriforder",
                         "title": "Verif",
                         "width": "20px",
+                    },
+                    {
+                        "field": "noorder",
+                        "title": "SPB",
+                        "hidden": true
                     },
                 ]
         }
@@ -468,45 +514,55 @@ define(['initialize'], function (initialize) {
                 }
             }
             $scope.simpanAnalis = function(){
-                if ($scope.dataSelected == undefined) {
-                    toastr.error('Pilih data dahulu!!!')
-                    return
+                // if ($scope.selectedData3 == undefined) {
+                //     toastr.error('Pilih data dahulu!!!')
+                //     return
+                // }
+                for (let i = 0; i < $scope.selectedData3.length; i++) {
+                    if ($scope.selectedData3[i].isveriforder == '✔') {
+                        toastr.error('Sudah diverifikasi!!!')
+                        return
+                    }
                 }
-                if ($scope.dataSelected.isveriforder == '✔') {
-                    toastr.error('Sudah diverifikasi!!!')
-                    return
-                }
+                console.log($scope.selectedData3);
+                // return
                 var objSave = {
-                    data: $scope.dataSelected
+                    data: $scope.selectedData3
                 }
                 medifirstService.post('logistik/update-op', objSave).then(function(){
                     init()
                 })
             }
             $scope.simpanVerif = function(data){
-                if($scope.dataSelected == undefined){
-                    toastr.error('Pilih data dahulu!!!')
-                    return
-                }
-                if ($scope.dataSelected.isveriforder == '✔') {
-                    toastr.error('Sudah diverifikasi!!!')
-                    return
+                for (let i = 0; i < $scope.selectedData3.length; i++) {
+                    if ($scope.selectedData3[i].isveriforder == '✔') {
+                        toastr.error('Sudah diverifikasi!!!')
+                        return
+                    }
                 }
                 $scope.verif.center().open()
-                $scope.dataverif = data
+                // $scope.dataverif = data
             }
-            $scope.simpanVeriff = function (dataverif) {
-                console.log(dataverif);
+            $scope.simpanVeriff = function () {
+                // console.log(dataverif);
                 
                 var objSave = {
                     'tglverif': moment($scope.item.tglverif).format('YYYY-MM-DD HH:mm:ss'),
-                    'data': dataverif
+                    'data': $scope.selectedData3
                 }
                 medifirstService.post('bhp/simpan-verif-order', objSave).then(function () {
                     // $scope.item.tglverif = undefined
                     init()
                 })
                 $scope.verif.close()
+            }
+            $scope.cetaksppb = function(){
+                if($scope.dataSelected == undefined){
+                    toastr.error('Pilih data dulu')
+                    return
+                }
+
+                window.open(configuration.baseApiBackend+'bhp/cetak-sppb?noorder='+$scope.dataSelected.noorder+"&kdprofile="+ 30, '_blank')
             }
             //***********************************
         }

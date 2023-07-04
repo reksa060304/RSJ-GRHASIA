@@ -145,6 +145,8 @@ define(['initialize'], function (initialize) {
                 medifirstService.get("logistik/get-combo-logistik", true).then(function (dat) {
                     var dataCombo = dat.data;
                     $scope.listDataJabatan = dataCombo.jabatan;
+                    $scope.item.noOrder = dataCombo.spb
+                    $scope.item.sn = dataCombo.SN
                     // $scope.listPenulisResep = dat.data.penulisresep;
                     console.log(medifirstService.getMapLoginUserToRuangan());
                     $scope.listRuangan = dataCombo.ruanganall;
@@ -673,6 +675,8 @@ define(['initialize'], function (initialize) {
                 }
                 var strukorder = {
                     norecorder: norecOrder,
+                    noorder: $scope.item.noOrder,
+                    sn: $scope.item.sn,
                     pegawaiorderfk: pegawaiUser.id,
                     ruanganfk: $scope.item.ruangan.id,
                     ruangantujuanfk: $scope.item.ruanganTujuan.id,

@@ -1543,6 +1543,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::post('logistik/save-order-barang-ruangan', 'Logistik\LogistikController@saveOrderBarang');
             Route::post('logistik/delete-order-barang-ruangan', 'Logistik\LogistikController@saveBatalOrderBarang');
             Route::post('logistik/save-kirim-barang-ruangan', 'Logistik\LogistikController@saveKirimBarangRuangan');
+            Route::post('logistik/save-kirim-barang-ruangan-baru', 'Logistik\LogistikController@saveKirimBarangRuanganBaru');
             Route::post('logistik/cek-kirim-barang-ruangan', 'Logistik\LogistikController@CekProdukKirim');
             Route::post('logistik/batal-kirim-terima-barang', 'Logistik\LogistikController@BatalKirimTerima');
             Route::post('logistik/batal-kirim-terima-barang-peritem', 'Logistik\LogistikController@BatalKirimTerimaPerItem');
@@ -1567,6 +1568,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::post('logistik/save-data-perubahan-harga-penerimaan-supplier', 'Logistik\LogistikController@saveUbahHargaTerimaBarangSuplier');
             Route::post('logistik/save-pemakaian-bhp', 'Logistik\LogistikController@savePemakaianBarangBHP');
             Route::post('logistik/hapus-pemakaian-bhp', 'Logistik\LogistikController@hapusPemakaianBarangBHP');
+            Route::get('bhp/cetak-sppb', 'Report\ReportController@cetakSPPB');
             // POST //
         // });
         // Route::group(['prefix' => 'asset'], function () {
