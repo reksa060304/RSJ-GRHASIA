@@ -520,7 +520,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     $scope.item.nofoto = re.data.data.nofoto;
                     $scope.item.namalengkap = re.data.data.namalengkap;
                     $scope.item.tglInput = re.data.data.tanggal;
-                    $scope.item.keterangan = re.data.data.keterangan;
+                    $scope.item.keterangan = re.data.data.keterangan.replace(/~/ig, '\n');
                     $scope.popUpEkpertise.center().open();
 
 
