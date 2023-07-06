@@ -2,7 +2,7 @@ define(['initialize'], function (initialize) {
     'use strict';
     initialize.controller('DaftarPasienPerjanjianCtrl', ['CacheHelper', '$rootScope', '$scope', '$state', 'MedifirstService','$mdDialog',
         function (cacheHelper, $rootScope, $scope, $state, medifirstService,$mdDialog) {
-            
+            $scope.daftarpasienperjanjian = true;
             $scope.isRouteLoading = false;
             $scope.dataVOloaded = false;
             $rootScope.isOpen = true;
@@ -14,6 +14,12 @@ define(['initialize'], function (initialize) {
             $scope.until = $scope.now;
             $scope.kodeReservasi = ''
             var kode = ''
+            if (medifirstService.getKelompokUser() == 'operator'){
+                $scope.daftarpasienperjanjian = false;
+            }else{
+                $scope.daftarpasienperjanjian = true;
+            }
+            
             if ($state.params.noOrder != "-") {
                 kode = $state.params.noOrder
                 $scope.kodeReservasi = kode
