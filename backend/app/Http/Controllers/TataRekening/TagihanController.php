@@ -4571,7 +4571,7 @@ class TagihanController  extends ApiController
             ->join('pelayananpasien_t as pp', 'apd.norec', '=', 'pp.noregistrasifk')
             // ->leftjoin('strukpelayanan_t as sp', 'sp.norec', '=', 'pp.strukfk')
             // ->leftjoin('strukpelayananpenjamin_t as spp', 'spp.nostrukfk', '=', 'sp.norec')
-            ->select(DB::raw("sum(((case when pp.hargajual is null then 0 else pp.hargajual::float8  end - case when pp.hargadiscount is null then 0 else pp.hargadiscount::float8 end) * pp.jumlah) + case when pp.jasa is null then 0 else pp.jasa::float8 end) as totaltagihan"),'pd.norec AS norec_pd','pd.tglregistrasi', 'p.nocm', 'pd.noregistrasi', 'ru.namaruangan', 'p.namapasien', 'kp.kelompokpasien',
+            ->select(DB::raw("sum(((case when pp.hargajual is null then 0 else pp.hargajual::float8  end - case when pp.hargadiscount is null then 0 else pp.hargadiscount::float8 end) * pp.jumlah) + case when pp.jasa is null then 0 else pp.jasa::float8 end)::int as totaltagihan"),'pd.norec AS norec_pd','pd.tglregistrasi', 'p.nocm', 'pd.noregistrasi', 'ru.namaruangan', 'p.namapasien', 'kp.kelompokpasien',
                 'pd.tglpulang', 'pd.statuspasien','pd.nostruklastfk', 'pd.nosbmlastfk','pd.tglmeninggal','p.nosuratkematian',
                 // 'spp.noverifikasi',
                 'dept.id as deptid',

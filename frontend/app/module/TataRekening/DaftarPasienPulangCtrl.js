@@ -208,7 +208,11 @@ define(['initialize'], function (initialize) {
           "title": "Total Tagihan",
           "width": "40px",
           "template": "<span class='style-right'>{{formatRupiah('#: totaltagihan #', 'Rp.')}}</span>",
-
+          aggregates: ["sum"],
+            attributes: {
+              style: "text-align:right;"
+            },
+            footerTemplate: "<span class='style-right'>#: data.totaltagihan.sum#"
         },
         // {
         //   "field": "tglmeninggal",
@@ -485,12 +489,18 @@ define(['initialize'], function (initialize) {
               pageSize: 200,
               total: data.length,
               serverPaging: false,
-              schema: {
+              aggregate: [{
+                    field: 'totaltagihan',
+                    aggregate: 'sum'
+                  }, 
+                ],
                 model: {
                   fields: {
+                    totaltagihan: {
+                      type: "number"
+                    },
                   }
                 }
-              }
             });
           });
 

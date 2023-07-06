@@ -2432,12 +2432,14 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::post('sanitasi/save-jenis-layanan-sanitasi','Sanitasi\SanitasiController@SaveDataJenisLayananSanitasi');
           Route::get('sanitasi/get-status-pekerjaan-sanitasi','Sanitasi\SanitasiController@getStatusPekerjaanSanitasi');
           Route::post('sanitasi/hapus-permohonan-sanitasi','Sanitasi\SanitasiController@HapusPermohonanSanitasi');
-        Route::post('sanitasi/save-pengelolaan-limbah','Sanitasi\SanitasiController@SaveDataPengelolaanLimbah');
-        Route::get('sanitasi/get-data-pengangkutan-limbah','Sanitasi\SanitasiController@getDataPengangkutanLimbah');
-        Route::get('sanitasi/get-data-pencatatan-air-limbah','Sanitasi\SanitasiController@getDataPencatatanAirLimbah');
-        Route::get('sanitasi/get-data-pencatatan-air-bersih','Sanitasi\SanitasiController@getDataPencatatanAirBersih');
-        Route::post('sanitasi/hapus-pelayananlimbah-sanitasi','Sanitasi\SanitasiController@HapusPelayananLimbah');
-
+          Route::post('sanitasi/save-pengelolaan-limbah','Sanitasi\SanitasiController@SaveDataPengelolaanLimbah');
+          Route::get('sanitasi/get-data-pengangkutan-limbah','Sanitasi\SanitasiController@getDataPengangkutanLimbah');
+          Route::get('sanitasi/get-data-pencatatan-air-limbah','Sanitasi\SanitasiController@getDataPencatatanAirLimbah');
+          Route::get('sanitasi/get-data-pencatatan-air-bersih','Sanitasi\SanitasiController@getDataPencatatanAirBersih');
+          Route::post('sanitasi/hapus-pelayananlimbah-sanitasi','Sanitasi\SanitasiController@HapusPelayananLimbah');
+          Route::get('rumahtangga/get-jenis-alat','Sanitasi\SanitasiController@getJenisAlat');
+          Route::post('rumahtangga/save-pengerjaan-permohonan', 'Sanitasi\SanitasiController@SavePengerjaanPermohonanRT');
+          Route::get('anggaran/pj-rba', 'Perencanaan\PerencanaanController@getPJ');
         // });
         // Route::group(['prefix' => 'ipsrs'], function () {
             Route::post('sysadmin/response-time-perbaikan','IPSRS\IPSRSController@responseTime');
