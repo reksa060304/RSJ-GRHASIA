@@ -156,7 +156,6 @@ define(['initialize'], function (initialize) {
 
         console.log($scope.dataPasienSelected);
       };
-
       $scope.columnPasienPulang = [
         {
           "field": "tanggalMasuk",
@@ -203,6 +202,13 @@ define(['initialize'], function (initialize) {
           "title": "Status Pasien",
           "width": "40px",
           "template": '# if( tglmeninggal==null) {# <span class="label label-primary text-center">Hidup</span> # } else {# <span class="label label-danger text-center">Meninggal</span> #} #'
+        },
+        {
+          "field": "totaltagihan",
+          "title": "Total Tagihan",
+          "width": "40px",
+          "template": "<span class='style-right'>{{formatRupiah('#: totaltagihan #', 'Rp.')}}</span>",
+
         },
         // {
         //   "field": "tglmeninggal",
@@ -467,9 +473,13 @@ define(['initialize'], function (initialize) {
           + "&kelompokPasienId=" + kelompokPasienId
           +'&bpjs='+bpjs)
           .then(function (data) {
+
             $scope.showBtnBayar = false
             $scope.isRouteLoading = false;
             var data = data.data
+          // medifirstService.getServiceArray("tatarekening/detail-tagihan/" + data.noRegistrasi + '?jenisdata=' + 'billing' + '&idruangan=' + idRuangan).then(function (data) {
+          //   console.log(data);
+          // })
             $scope.dataPasienPulang = new kendo.data.DataSource({
               data: data,
               pageSize: 200,

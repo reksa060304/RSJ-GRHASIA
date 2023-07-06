@@ -4567,11 +4567,11 @@ class TagihanController  extends ApiController
             ->join('ruangan_m as ru', 'ru.id', '=', 'pd.objectruanganlastfk')
             ->leftJoin('kelompokpasien_m as kp', 'kp.id', '=', 'pd.objectkelompokpasienlastfk')
             ->leftJoin('departemen_m as dept', 'dept.id', '=', 'ru.objectdepartemenfk')
-            // ->join('antrianpasiendiperiksa_t as apd', 'pd.norec', '=', 'apd.noregistrasifk')
-            // ->join('pelayananpasien_t as pp', 'apd.norec', '=', 'pp.noregistrasifk')
+            ->join('antrianpasiendiperiksa_t as apd', 'pd.norec', '=', 'apd.noregistrasifk')
+            ->join('pelayananpasien_t as pp', 'apd.norec', '=', 'pp.noregistrasifk')
             // ->leftjoin('strukpelayanan_t as sp', 'sp.norec', '=', 'pp.strukfk')
             // ->leftjoin('strukpelayananpenjamin_t as spp', 'spp.nostrukfk', '=', 'sp.norec')
-            ->select('pd.norec AS norec_pd','pd.tglregistrasi', 'p.nocm', 'pd.noregistrasi', 'ru.namaruangan', 'p.namapasien', 'kp.kelompokpasien',
+            ->select(DB::raw("sum(((case when pp.hargajual is null then 0 else pp.hargajual::float8  end - case when pp.hargadiscount is null then 0 else pp.hargadiscount::float8 end) * pp.jumlah) + case when pp.jasa is null then 0 else pp.jasa::float8 end) as totaltagihan"),'pd.norec AS norec_pd','pd.tglregistrasi', 'p.nocm', 'pd.noregistrasi', 'ru.namaruangan', 'p.namapasien', 'kp.kelompokpasien',
                 'pd.tglpulang', 'pd.statuspasien','pd.nostruklastfk', 'pd.nosbmlastfk','pd.tglmeninggal','p.nosuratkematian',
                 // 'spp.noverifikasi',
                 'dept.id as deptid',
@@ -4580,6 +4580,7 @@ class TagihanController  extends ApiController
 //            ->whereNull('pd.nosbmlastfk')
             ->where('pd.statusenabled',true)
             ->whereNotNull('pd.tglpulang')
+            ->groupBy(DB::raw("kp.kelompokpasien,pd.tglpulang,dept.id,pd.statuspasien,p.namapasien,pd.norec, p.nocm, pd.tglregistrasi, ru.namaruangan,p.nosuratkematian, pd.tglmeninggal, pd.nosbmlastfk, pd.nostruklastfk"))
         ;
 
         $filter = $request->all();
@@ -4706,6 +4707,7 @@ class TagihanController  extends ApiController
                 'nosuratkematian' => $pasienD->nosuratkematian,
                 'kelasid' => $pasienD->objectkelasfk,
                 'ruanganid' => $pasienD->objectruanganlastfk,
+                'totaltagihan' => $pasienD->totaltagihan,
 //                'isPaid' => $pd->isBayar,
 //                'isLunas' => $pd->isBayar,
             );
