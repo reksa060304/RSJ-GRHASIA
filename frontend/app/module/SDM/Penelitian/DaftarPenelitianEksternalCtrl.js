@@ -145,9 +145,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             "width": "20%"
                         },
                         {
+                            "field": "tanggalmulai",
                             "title": "Tanggal",
                             "width": "20%",
-                            "template": "<span class='style-center'>#: tanggalmulai # s/d #: tanggalselesai #</span>",
+                            // "template": "<span class='style-center'>#: tanggalmulai # s/d #: tanggalselesai #</span>",
                             "footerTemplate": "TOTAL"
                         },
                         {
