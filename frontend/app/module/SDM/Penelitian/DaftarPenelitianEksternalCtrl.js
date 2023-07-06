@@ -218,9 +218,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             "width": "20px"
                         },
                         {
+                            "field": "tanggalmulai",
                             "title": "Tanggal",
                             "width": "50px",
-                            "template": "<span class='style-center'>#: tanggalmulai # s/d #: tanggalselesai #</span>"
+                            // "template": "<span class='style-center'>#: tanggalmulai # s/d #: tanggalselesai #</span>"
                         },
                         {
                             "title": "Verif",

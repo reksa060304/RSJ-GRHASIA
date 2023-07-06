@@ -503,7 +503,7 @@ class PenelitianController extends ApiController {
         }
         $data = DB::select(DB::raw("SELECT spp.norec as norec_spp,
             sdmp.norec,dk.diklatkategori,djp.detailjenisproduk,sdmp.objectprodukfk,sdmp.jumlahpeserta,
-            sdmp.institusipendidikan,sdmp.tanggalmulai::date,sdmp.tanggalselesai::date,sdmp.biayapenelitian,
+            sdmp.institusipendidikan,to_char(sdmp.tanggalmulai::date, 'DD-MM-YYYY') ||' s/d '||to_char(sdmp.tanggalselesai::date, 'DD-MM-YYYY') as tanggalmulai,sdmp.biayapenelitian,
             sdmp.notelp,sdmp.hargasatuan,sdmp.qty, sp.isverifikasi,sp.nosbmlastfk,sp.nosbklastfk,
             sp.norec as norec_sp,sdmp.noregistrasifk,sp.nostruk, count(sdmpd.norec), sdmp.judulpeneltian, sdmp.namapengawas, sdmp.namapendamping, sbm.tglsbm
             FROM
