@@ -13315,7 +13315,7 @@ GROUP BY y.KET
         $kdProfile = $this->getDataKdProfile($request);
         $idRunningNumber = 1745;
         $runningNumber = RunningNumber::where('id', $idRunningNumber)->where('kdprofile', $kdProfile)->first();
-        $extension = $runningNumber->extention;
+        $extension = $runningNumber->reset;
         $noCmTerakhir = $runningNumber->nomer_terbaru + 1;
         $noCm = $extension . $noCmTerakhir;
         // $noCm = $this->generateCodeBySeqTable(new Pasien, 'nocm', 7, '', $kdProfile);
@@ -13330,7 +13330,7 @@ GROUP BY y.KET
 
         DB::beginTransaction();
         try {
-            $cek =  Pasien::where('nocm', $request['nocmbaru'])
+            $cek =  Pasien::where('nocm', $request['nocm'])
                 ->where('statusenabled', true)
                 ->first();
             $idRunningNumber = 1745;
@@ -13339,7 +13339,7 @@ GROUP BY y.KET
                 RunningNumber::where('id', $idRunningNumber)
                     ->update(
                         [
-                            'nomer_terbaru' => $request['nocmrunning']
+                            'nomer_terbaru' => $request['nocmbaru']
                         ]
                     );
                 Pasien::where('id', $request['id'])
@@ -13362,27 +13362,25 @@ GROUP BY y.KET
 
                 // $noCmTerakhir = $runningNumber->nomer_terbaru + 1;
                 // $noCm = $extension . $noCmTerakhir;
-                $noCm = $this->generateCodeBySeqTable(new Pasien, 'nocm', 7, '', $kdProfile);
-                $noCmTerakhir = (int)$noCm;  
-
+                
                 RunningNumber::where('id', $idRunningNumber)
                     ->update(
                         [
-                            'nomer_terbaru' => $noCmTerakhir
+                            'nomer_terbaru' => $request['nocmbaru']
                         ]
                     );
                 Pasien::where('id', $request['id'])
                     ->update(
                         [
-                            'nocm' => $noCm,
+                            'nocm' => $request['nocmbaru'],
                             'nocmlama' => $request['nocm']
                         ]
                     );
                 $updateEMR =  EMRPasien::where('nocm', $request['nocm'])
                     ->update([
-                        'nocm' => $noCm
+                        'nocm' => $request['nocmbaru']
                     ]);
-                $stt = ' No RM baru : ' . $noCm;
+                $stt = ' No RM baru : ' . $request['nocmbaru'];
             }
 
 
@@ -13398,7 +13396,7 @@ GROUP BY y.KET
             $result = array(
                 'status' => 201,
                 'message' => $transMessage,
-                'nocm' => $noCm,
+                'nocm' => $request['nocmbaru'],
                 'as' => '',
             );
         } else {
