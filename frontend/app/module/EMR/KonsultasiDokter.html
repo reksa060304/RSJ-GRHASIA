@@ -13,6 +13,7 @@
     textarea[type="input"]:disabled {
         background: #dddddd;
     }
+    
 </style>
 <div>
     <c-panel item="item" header="'Konsultasi'" disabled>
@@ -50,7 +51,9 @@
         </div>
     </c-panel>
     <div class="grid_12" style="margin: 5px 5px 5px 5px;">
-        <div id="gridResume" kendo-grid k-data-source="sourceResume" options="resumeOpt"></div>
+        <kendo-grid id="gridResume" k-selectable="'row'" k-data-source="sourceResume" k-ng-model="dataSelected"
+            k-options="resumeOpt"
+        ng-dblclick="klikDoubleGrid(dataSelected)"></kendo-grid>
     </div>
 
     <!-- <div class="grid_12" style="float:right">
@@ -154,7 +157,7 @@
 
     </div>
 </div>
-<div kendo-window="popUpJawab" k-title="'Jawab Konsultasi'" k-width="800"  k-visible="false"
+<div kendo-window="popUpJawab" k-title="'Jawab Konsultasi'" k-width="1200" k-height="650"  k-visible="false"
     k-on-open="win2visible = true" k-on-close="win2visible = false">
     <div class="panel panel-default container_12" style="padding: 0px 10px;">
         <fieldset>
@@ -198,7 +201,7 @@
                 </div>
                 <div class="clear"></div>
                 <div class="grid_12">
-                    <textarea  type="input" class="k-textbox" style="height: 76px; width: 100%; resize: none;"
+                    <textarea  type="input" class="k-textbox" style="height: 200px; width: 100%; resize: none;"
                         ng-model="item.keteranganJawab" disabled></textarea>
                     <!-- <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.keterangan" /> -->
                 </div>
@@ -207,7 +210,7 @@
                 </div>
                 <div class="clear"></div>
                 <div class="grid_12">
-                    <textarea class="k-textbox" style="height: 76px; width: 100%; resize: none;"
+                    <textarea class="k-textbox" style="height: 200px; width: 100%; resize: none;"
                         ng-model="item.jawaban"></textarea>
                     <!-- <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.keterangan" /> -->
                 </div>

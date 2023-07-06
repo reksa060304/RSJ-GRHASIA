@@ -38,16 +38,27 @@ define(['initialize'], function (initialize) {
                 columns: [
                     // { field: "rowNumber", title: "#", width: 40, width: 40, attributes: { style: "text-align:right; padding-right: 15px;"}, hideMe: true},
                     { field: "no", title: "No", width: 40 },
-                    { field: "tglorder", title: "Tanggal", width: 120 },
+                    { field: "tglorder", title: "Tanggal", width: 100 },
                     { field: "ruanganasal", title: "Ruangan Asal", width: 120 },
                     { field: "ruangantujuan", title: "Ruangan Tujuan", width: 150 },
                     { field: "namalengkap", title: "PPA", width: 120 },
-                    { field: "keteranganorder", title: "Keterangan", width: 120, },
-                    { field: "keteranganlainnya", title: "Jawaban", width: 200,  },
+                    { field: "keteranganorder", title: "Keterangan", width: 150,
+                    // "template": "#= keteranganorder.replace(/\\n/g, '<br />') == null ? '' : keteranganorder.replace(/\\n/g, '<br />')#" 
+                    template: "#= keteranganorder ? keteranganorder.replace(/\\n/g, '<br />') : '' #"
+
+                },
+                    {
+                        field: "keteranganlainnya",
+                        title: "Jawaban",
+                        width: 150,
+                        // "template": "#= keteranganlainnya.replace(/\\n/g, '<br />') == null ? '' : keteranganlainnya.replace(/\\n/g, '<br />')  #"
+                        template: "#= keteranganlainnya ? keteranganlainnya.replace(/\\n/g, '<br />') : '' #"
+
+                    },
                     { command: [
                         { imageClass: "k-icon k-delete", text: "Hapus", click: hapus }, 
                     { name: "edit", text: "Edit", click: editData },
-                    { imageClass: "k-icon k-edit", text: "Jawab", click: jawab },], title: "&nbsp;", width: 200 }
+                    { imageClass: "k-icon k-edit", text: "Jawab", click: jawab },], title: "&nbsp;", width: 150 }
                 ],
             };
             $scope.inputBaru = function () {
@@ -326,6 +337,17 @@ define(['initialize'], function (initialize) {
                     anHttpRequest.open("GET", aUrl, true);
                     anHttpRequest.send(null);
                 }
+            }
+            $scope.klikDoubleGrid = function (dataSelected) {
+                var dataItem = dataSelected;
+                $scope.item.norec = dataItem.norec
+                $scope.item.ruanganAsalJawab = dataItem.ruanganasal
+                $scope.item.ruanganTujuanJawab = dataItem.ruangantujuan
+                $scope.item.dokterJawab = dataItem.namalengkap
+                $scope.item.keteranganJawab = dataItem.keteranganorder
+                if (dataItem.keteranganlainnya != null)
+                    $scope.item.jawaban = dataItem.keteranganlainnya
+                $scope.popUpJawab.center().open()
             }
         }
     ]);
