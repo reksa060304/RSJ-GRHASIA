@@ -13541,16 +13541,14 @@ public function suratBuktiPengembalian(Request $request)
         $res['profile'] = Profile::where('id',$request['kdprofile'])->first();
 
         $data = DB::select(DB::raw("
-        SELECT so.noorder, pr.namaproduk, ru.namaruangan, op.qtyproduk, op.qtyberi, ss.satuanstandar, sum(spd.qtyproduk)as qtyprodukruangan, ru.id, pg.namalengkap, pg.nippns FROM strukorder_t so
+        SELECT so.noorder, pr.namaproduk, ru.namaruangan, op.qtyproduk, op.qtyberi, ss.satuanstandar, op.jumlahstokruangan, ru.id, pg.namalengkap, pg.nippns FROM strukorder_t so
         inner join orderpelayanan_t op on op.noorderfk = so.norec
         inner join produk_m pr on pr.id = op.objectprodukfk
         inner join satuanstandar_m ss on ss.id = pr.objectsatuanstandarfk
         inner join ruangan_m ru on ru.id = so.objectruanganfk
         inner join pegawai_m pg on pg.id = so.objectpegawaiorderfk
-        inner join stokprodukdetail_t spd on spd.objectruanganfk = so.objectruanganfk and spd.statusenabled = true and op.objectprodukfk = spd.objectprodukfk
         where so.noorder ilike '$norec'
 
-        GROUP BY so.noorder, pr.namaproduk, ru.namaruangan, op.qtyproduk, op.qtyberi, ss.satuanstandar, ru.id, pg.namalengkap,pg.nippns
 
         "));
         $pdf = PDF::loadView(

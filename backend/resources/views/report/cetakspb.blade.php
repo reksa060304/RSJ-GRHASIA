@@ -171,7 +171,7 @@
                     <tr>
                         <th style="font-weight: none; font-size: 10pt">{{$no++}}</th>
                         <td style="padding: 3px">{{$item->namaproduk}}</td>
-                        <th style="font-weight: none; font-size: 10pt">{{$item->qtyprodukruangan}}</th>
+                        <th style="font-weight: none; font-size: 10pt">{{$item->jumlahstokruangan}}</th>
                         <th style="font-weight: none; font-size: 10pt">{{$item->satuanstandar}}</th>
                         <th style="font-weight: none; font-size: 10pt">{{$item->qtyproduk}}</th>
                         <th style="font-weight: none; font-size: 10pt">{{$item->qtyberi}}</th>
