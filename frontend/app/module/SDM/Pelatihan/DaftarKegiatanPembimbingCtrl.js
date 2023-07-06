@@ -3,6 +3,10 @@ define(['initialize'], function (initialize) {
     initialize.controller('DaftarKegiatanPembimbingCtrl', ['$state', '$q', '$scope', 'CacheHelper', 'DateHelper', 'MedifirstService',
         function ($state, $q, $scope, cacheHelper, dateHelper, medifirstService) {
             $scope.now = new Date();
+            $scope.ngpembimbing = true
+            if(medifirstService.getKelompokUser() == 'diklit'){
+                $scope.ngpembimbing = false
+            }
             $scope.item = {};
             $scope.itemP = {};
             $scope.item.periodeAwal = new Date();
