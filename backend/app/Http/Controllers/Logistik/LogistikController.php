@@ -68,7 +68,7 @@ class LogistikController extends ApiController{
                 // ->where(DB::raw("date_part('month', ".date('Y-m-d H:i:s').")"))
                 // ->where(DB::raw("date_part('month', '2023-07-01'::date) = ".date('m')))
                 ->where(DB::raw("date_part('month', '".date("Y-m-d")."'::date)"), date('m'))
-                ->max('seqnumber');
+                ->max(DB::raw("seqnumber::integer"));
             $prefixLen = strlen($prefix);
         $subPrefix = substr(trim($spb),$prefixLen);
         $SN = $prefix.(str_pad((int)$subPrefix+1, $length-$prefixLen, "0", STR_PAD_LEFT));
@@ -80,7 +80,7 @@ class LogistikController extends ApiController{
                 // ->where(DB::raw("date_part('month', ".date('Y-m-d H:i:s').")"))
                 // ->where(DB::raw("date_part('month', '2023-07-01'::date) = ".date('m')))
                 ->where(DB::raw("date_part('month', '".date("Y-m-d")."'::date)"), date('m'))
-                ->max('seqnumber');
+                ->max(DB::raw("seqnumber::integer"));
             $prefixLen = strlen($prefix);
         $subPrefix = substr(trim($sppb),$prefixLen);
         $SNN = $prefix.(str_pad((int)$subPrefix+1, $length-$prefixLen, "0", STR_PAD_LEFT));
@@ -15003,7 +15003,11 @@ class LogistikController extends ApiController{
             ->get();
         $strRuangan = [];
         foreach ($dataRuangan as $epic){
-            $strRuangan[] = $epic->id;
+            if(isset($request['ruangan'])){
+                $strRuangan[] = $request['ruangan'];
+            }else{
+                $strRuangan[] = $epic->id;
+            }
         }
 
         $data2 =\DB::table('strukorder_t as sp')
