@@ -13,6 +13,9 @@ use App\Transaksi\PelayananLimbah;
 use Illuminate\Http\Request;
 use App\Transaksi\StrukPlanning;
 use DB;
+use App\Transaksi\StrukPlanningDetail;
+use Webpatser\Uuid\Uuid;
+
 
 class SanitasiController extends ApiController
 {
@@ -801,48 +804,145 @@ class SanitasiController extends ApiController
 
     }
     public function getDaftarPermohonanSanitasi(Request $request){
-        $kdProfile = (int) $this->getDataKdProfile($request);
         $dataLogin = $request->all();
-
+        $kdProfile = (int) $this->getDataKdProfile($request);
         $tgl="";
         $jenisKerusakan="";
         $idRuangan="";
 
         if ((isset($request['tglAwal']) && $request['tglAwal'] != "" && $request['tglAwal'] != "undefined") && (isset($request['tglAkhir']) && $request['tglAkhir'] != "" && $request['tglAkhir'] != "undefined"))
         {
-            $tgl = "AND stp.tglplanning BETWEEN '".$request['tglAwal']."' AND '".$request['tglAkhir']."' ";
+            $tgl = " AND stp.tglplanning BETWEEN '".$request['tglAwal']."' AND '".$request['tglAkhir']."' ";
         }
 
         if (isset($request['jenisKerusakan']) && $request['jenisKerusakan'] != "" && $request['jenisKerusakan'] != "undefined")
         {
-            $jenisKerusakan = "AND stp.objectjenispekerjaanfk = '".$request['jenisKerusakan']."' ";
+            $jenisKerusakan = " AND stp.objectjenispekerjaanfk = '".$request['jenisKerusakan']."' ";
         }
 
-        if (isset($request['idRuangan']) && $request['idRuangan'] != "" && $request['idRuangan'] != "undefined")
-        {
-            $idRuangan = "AND stp.objectruanganfk = '".$request['idRuangan']."' ";
-        }
-
+        // if (isset($request['idRuangan']) && $request['idRuangan'] != "" && $request['idRuangan'] != "undefined")
+        // {
+        //     $idRuangan = " AND stp.objectruanganfk = '".$request['idRuangan']."' ";
+        // }
 
         $data = DB::select(DB::raw("
-        SELECT stp.norec, rg.namaruangan, stp.tglplanning, pg.nama, stp.startdate, stp.duedate, stp.rincianexecuteplanning_askep, stp.pelapor, stp.deskripsiplanning, stp.keteranganverifikasi, sttp.namaexternal,stp.signdate, jpk.reportdisplay, stp.worklist, stp.keteranganverifikasi, pg2.nama as namainspektor, pg3.nama as namapelapor,
-                sttp.reportdisplay as statuspekerjaan
+        SELECT stp.objectruanganperbaikanfk, stp.objectbarangperbaikanfk, stp.tglverif, rp.rekananperbaikan, stp.objectrekananperbaikanfk,  stp.objectdetailjenispekerjaanfk, stp.objectruanganfk,stp.catatan, stp.ispihakketiga, stp.norec, rg.namaruangan, stp.tglplanning,stp.objectpegawaipjawabfk,pg.namalengkap, stp.startdate, stp.duedate, stp.rincianexecuteplanning_askep, stp.pelapor, 
+                    stp.deskripsiplanning, stp.keteranganverifikasi, sttp.namaexternal,stp.signdate, stp.worklist, stp.keteranganverifikasi, 
+                    pg2.nama as namainspektor, pg3.nama as namapelapor,stp.objectstatuspekerjaanfk,sttp.reportdisplay as statuspekerjaan,stp.objectjenispekerjaanfk AS idjeniskerusakan,
+                    jpk.reportdisplay as jeniskerusakan,stp.objectjenisalatfk,jpk2.reportdisplay as jenisalat,r.namaruangan as namaruangantujuan, ukp.name
             FROM strukplanning_t as stp
             INNER JOIN ruangan_m as rg on rg.id = stp.objectruanganfk
+            inner join pegawai_m as pg1 on pg1.id = stp.narasumberfk 
             LEFT JOIN pegawai_m as pg on pg.id = stp.objectpegawaipjawabfk
             LEFT JOIN pegawai_m as pg2 on pg2.id = stp.objectpegawaipjawabevaluasifk
-            LEFT JOIN pegawai_m as pg3 on pg3.id = stp.narasumberfk 
+            LEFT JOIN pegawai_m as pg3 on pg3.id = stp.narasumberfk
+            LEFT JOIN unitkerjapegawai_m as ukp on pg1.objectunitkerjafk = ukp.id 
             LEFT JOIN statuspekerjaan_m as sttp on sttp.id = stp.objectstatuspekerjaanfk
-                        LEFT JOIN jenispekerjaan_m as jpk on jpk.id = stp.objectjenispekerjaanfk
-            WHERE stp.objectkelompoktransaksifk=305
-            AND stp.statusenabled=true
-            and stp.kdprofile='$kdProfile'
-            $tgl
-            $jenisKerusakan
-            $idRuangan
+			LEFT JOIN jenispekerjaan_m as jpk on jpk.id = stp.objectjenispekerjaanfk
+            LEFT JOIN jenispekerjaan_m as jpk2 on jpk2.id = stp.objectjenisalatfk
+            LEFT JOIN ruangan_m as r on r.id = stp.objectruangantujuanfk
+            left join rekananperbaikan_m rp on rp.id = stp.objectrekananperbaikanfk
+			WHERE stp.kdprofile = $kdProfile and stp.objectkelompoktransaksifk = 305 
+			AND stp.statusenabled=true 
+			$tgl
+			$jenisKerusakan
+			$idRuangan
             ORDER BY stp.tglplanning DESC"));
+        // foreach ($data as $d) {
+            
+        // }
+        foreach ($data as $item) {
+            $detailss = \DB::select(DB::raw("SELECT id, detailjenispekerjaan from detailjenispekerjaan_m djp where djp.kdprofile =  $kdProfile and djp.objectjenispekerjaanfk = :detailjenispekerjaan"),
+                array(
+                    'detailjenispekerjaan' => $item->objectjenisalatfk,
+                )
+            );
+            $details = \DB::select(DB::raw("select spd.pegawaifk as id,pr.namalengkap
+                    from strukplanningdetail_t as spd 
+                    left JOIN pegawai_m as pr on pr.id = spd.pegawaifk                    
+                    where spd.kdprofile = $kdProfile and noplanningfk = :norec"),
+                array(
+                    'norec' => $item->norec,
+                )
+            );
+            $detailjenisperbaikan = \DB::select(DB::raw("SELECT id, detailjenispekerjaan from detailjenispekerjaan_m djp where djp.kdprofile =  $kdProfile and djp.id = :detailjenispekerjaan"),
+                array(
+                    'detailjenispekerjaan' => $item->objectdetailjenispekerjaanfk,
+                )
+            );
+            $ruanganperbaikan = [];
+            if($item->objectruanganperbaikanfk != null){
+                $ruanganperbaikan = \DB::select(DB::raw("SELECT id, namaruangan from ruangan_m djp where djp.kdprofile =  $kdProfile and djp.id = :detailjenispekerjaan"),
+                array(
+                    'detailjenispekerjaan' => $item->objectruanganfk,
+                )
+            );
+            }
+            $barangperbaikan = [];
+            if($item->objectbarangperbaikanfk != null){
+                $barangperbaikan = \DB::select(DB::raw("SELECT id, barangperbaikan from barangperbaikan_m djp where djp.kdprofile =  $kdProfile and djp.id = :detailjenispekerjaan"),
+                array(
+                    'detailjenispekerjaan' => $item->objectbarangperbaikanfk,
+                )
+            );
+            }
+            $merkperbaikan = [];
+            $merkperbaikan = DB::select(DB::raw("select mp.*, djp.detailjenispekerjaan, jp.reportdisplay, mpp.merk as merkpekerjaan from merkperbaikan_t mp
+            inner join detailjenispekerjaan_m djp on djp.id = mp.objectdetailjenispekerjaanfk
+            inner join jenispekerjaan_m jp on jp.id = mp.objectjenispekerjaanfk
+            inner join merkperbaikan_m mpp on mpp.id = mp.objectmerkperbaikanfk
+            where mp.norec_sp ilike '$item->norec'"));
+            $result[] = array(
+                'norec' => $item->norec,
+                'namaruangan' => $item->namaruangan,
+                'tglplanning' => $item->tglplanning,
+                'objectpegawaipjawabfk' => $item->objectpegawaipjawabfk,
+                'namalengkap' => $item->namalengkap,
+                'startdate' => $item->startdate,
+                'duedate' => $item->duedate,
+                'rincianexecuteplanning_askep' => $item->rincianexecuteplanning_askep,
+                'pelapor' => $item->pelapor,
+                'deskripsiplanning' => $item->deskripsiplanning,
+                'keteranganverifikasi' => $item->keteranganverifikasi,
+                'signdate' => $item->signdate,
+                'worklist' => $item->worklist,
+                'namainspektor' => $item->namainspektor,
+                'namapelapor' => $item->namapelapor,
+                'objectstatuspekerjaanfk' => $item->objectstatuspekerjaanfk,
+                'statuspekerjaan' => $item->statuspekerjaan,
+                'idjeniskerusakan' => $item->idjeniskerusakan,
+                'jeniskerusakan' => $item->jeniskerusakan,
+                'jenisalat' => $item->jenisalat,
+                'objectjenisalatfk' => $item->objectjenisalatfk,
+                'details' => $details,
+                'namaruangantujuan' => $item->namaruangantujuan,
+                'name' => $item->name,
+                'ispihakketiga' => $item->ispihakketiga,
+                'catatan' => $item->catatan,
+                'objectruanganfk' => $item->objectruanganfk,
+                'detailjenisperbaikan' => $detailjenisperbaikan,
+                'ruanganperbaikan' => $ruanganperbaikan,
+                'barangperbaikan' => $barangperbaikan,
+                'detailss' => $detailss,
+                'objectrekananperbaikanfk' => $item->objectrekananperbaikanfk,
+                'rekananperbaikan' => $item->rekananperbaikan,
+                'tglverif' => $item->tglverif,
+                'merkperbaikan' => $merkperbaikan,
 
-        return $this->respond($data);
+            );
+        }
+        
+        if (count($data) == 0) {
+            $result = [];
+        }
+        $result = array(
+            'data' => $result,
+            // 'datalogin' => $dataLogin,
+            // 'KdKelTransIPSRS'=> $KdKelTransIPSRS,
+            'message' => 'as@epic',
+        );
+
+        return $this->respond($result);
 
     }
 
@@ -1119,4 +1219,144 @@ class SanitasiController extends ApiController
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
 
+    function getJenisAlat(Request $request) {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $dataLogin = $request->all();
+        $data = DB::select(DB::raw("
+        SELECT *
+            FROM jenispekerjaan_m
+			WHERE kdprofile = $kdProfile and statusenabled = true and jenispekerjaan = 'Rumah Tangga' AND namaexternal='Jenis Alat'"));
+        foreach ($data as $d) {
+            $d->details = \DB::select(DB::raw("SELECT * from detailjenispekerjaan_m djp where djp.kdprofile =  $kdProfile and djp.objectjenispekerjaanfk = :detailjenispekerjaan"),
+                array(
+                    'detailjenispekerjaan' => $d->id,
+                )
+            );
+            foreach ($d->details as $i) {
+                $i->details = \DB::select(DB::raw("SELECT * from merkperbaikan_m djp where djp.kdprofile =  $kdProfile and djp.objectdetailjenispekerjaanfk = :detailjenispekerjaan"),
+                array(
+                    'detailjenispekerjaan' => $i->id,
+                )
+            );
+            }
+        }
+        return $this->respond($data);
+    }
+
+    public function SavePengerjaanPermohonanRT(Request $request)
+    {
+        DB::beginTransaction();
+        $dataLogin = $request->all();
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        try {
+
+            if ($request['norec'] == ''){
+                return $this->respond("ASUP");
+                $newCOA = new StrukPlanning();
+                $norecHead = $newCOA->generateNewId();
+                $newCOA->kdprofile = $kdProfile;
+                $newCOA->norec = $norecHead;
+                $newCOA->statusenabled = true;
+            }else{
+                $newCOA = StrukPlanning::where('norec',$request['norec'])->where('kdprofile', $kdProfile)->first();
+                $Spd = StrukPlanningDetail::where('noplanningfk', $request['norec'])->delete();
+            }
+                $newCOA->startdate = $request['strukplanning']['tglmulai'];
+                $newCOA->duedate = $request['strukplanning']['tglselesai'];
+                $newCOA->objectstatuspekerjaanfk = $request['strukplanning']['status'];
+                $newCOA->deskripsiplanning = $request['strukplanning']['worklist'];
+                $newCOA->keteranganverifikasi = $request['strukplanning']['identifikasikerusakan'];
+                $newCOA->objectpegawaipjawabevaluasifk = $request['strukplanning']['penanngungjawab'];
+                $newCOA->objectpegawaipjawabfk = $request['strukplanning']['penanngungjawab'];
+                $newCOA->objectjenispekerjaanfk = $request['strukplanning']['jeniskerusakan'];
+                // $newCOA->objectjenisalatfk = $request['strukplanning']['jenisalat'];
+                $newCOA->ispihakketiga = $request['strukplanning']['ispihakketiga'];
+                $newCOA->catatan = $request['strukplanning']['catatan'];
+                // $newCOA->objectdetailjenispekerjaanfk = $request['strukplanning']['detailjenispekerjaan'];
+                $newCOA->objectrekananperbaikanfk = $request['strukplanning']['rekananperbaikan'];
+                // $newCOA->objectruanganperbaikanfk = $request['strukplanning']['objectruanganperbaikanfk'];
+                // $newCOA->objectbarangperbaikanfk = $request['strukplanning']['objectbarangperbaikanfk'];
+                $newCOA->save();
+                $norecHead2 = $newCOA->norec;
+
+            foreach ($request['datapegawai'] as $items){
+                $Spd = new StrukPlanningDetail();
+                $norecDetail = $Spd->generateNewId();
+                $Spd->kdprofile = $kdProfile;
+                $Spd->norec = $norecDetail;
+                $Spd->statusenabled = true;
+                $Spd->pegawaifk = $items['id'];
+                $Spd->noplanningfk = $norecHead2;
+                $Spd->save();
+            }
+            foreach ($request['details'] as $p) {
+                if($p['norec'] == null){
+                    DB::table('merkperbaikan_t')->insert([
+                        'norec'=>substr(Uuid::generate(), 0, 32),
+                        'kdprofile'=> 30,
+                        'statusenabled'=> true,
+                        'biaya'=>$p['biaya'],
+                        'jumlah'=>$p['jumlah'],
+                        'norec_sp'=>$request['norec'],
+                        'objectjenispekerjaanfk'=> $p['klasifikasi']['id'],
+                        'objectdetailjenispekerjaanfk'=> $p['objekperbaikan']['id'],
+                        'objectmerkperbaikanfk'=> $p['merk']['id'],
+                        'keterangan'=> $p['keterangan']
+                    ]);
+                }else{
+                    DB::table('merkperbaikan_t')->where('norec',$p['norec'])->update([
+                        'biaya'=>$p['biaya'],
+                        'jumlah'=>$p['jumlah'],
+                        'norec_sp'=>$request['norec'],
+                        'objectjenispekerjaanfk'=> $p['klasifikasi']['id'],
+                        'objectdetailjenispekerjaanfk'=> $p['objekperbaikan']['id'],
+                        'objectmerkperbaikanfk'=> $p['merk']['id'],
+                        'keterangan'=> $p['keterangan']
+                    ]);
+                }
+            }
+
+
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+        $transMessage = "Simpan";
+        if ($transStatus == 'true') {
+            $transMessage = $transMessage . " Berhasil" ;
+            DB::commit();
+            $result = array(
+                "status" => 201,
+               "data" => $newCOA,
+                "as" => 'as@epic',
+            );
+        } else {
+            $transMessage = $transMessage ." Gagal!!";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+//                "data" => $newPJT,
+                    "e"=> $e->getLine().$e->getMessage(),
+                "as" => 'as@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    function laporanRT(Request $request) {
+        $data= \DB::select(DB::raw("
+            SELECT sp.startdate::date, ru.namaruangan, jp.reportdisplay, djp.detailjenispekerjaan, mpp.merk, mp.jumlah, sp.rincianexecuteplanning_askep, mp.biaya, mp.keterangan FROM merkperbaikan_t mp
+            inner join strukplanning_t sp on sp.norec = mp.norec_sp
+            inner join detailjenispekerjaan_m djp on djp.id = mp.objectdetailjenispekerjaanfk
+            inner join jenispekerjaan_m jp on jp.id = mp.objectjenispekerjaanfk
+            inner join ruangan_m ru on ru.id = sp.objectruanganfk
+            inner join merkperbaikan_m mpp on mpp.id = mp.objectmerkperbaikanfk
+            where sp.startdate::date between '$request[tglawal]'::date and '$request[tglakhir]'::date
+        "));
+
+        $result = array(
+            'data'=>$data,
+            'as'=> 'Fizi'
+        );
+        return $this->respond($result);
+    }
 }

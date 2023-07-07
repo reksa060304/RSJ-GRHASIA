@@ -2440,6 +2440,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('rumahtangga/get-jenis-alat','Sanitasi\SanitasiController@getJenisAlat');
           Route::post('rumahtangga/save-pengerjaan-permohonan', 'Sanitasi\SanitasiController@SavePengerjaanPermohonanRT');
           Route::get('anggaran/pj-rba', 'Perencanaan\PerencanaanController@getPJ');
+          Route::get('laporan/rumahtangga', 'Sanitasi\SanitasiController@laporanRT');
         // });
         // Route::group(['prefix' => 'ipsrs'], function () {
             Route::post('sysadmin/response-time-perbaikan','IPSRS\IPSRSController@responseTime');

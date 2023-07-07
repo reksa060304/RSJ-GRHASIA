@@ -28,6 +28,7 @@ define(['initialize','Configuration'], function (initialize, configuration) {
             }
            
             function loadCombo() {
+                $scope.listRuangan = medifirstService.getMapLoginUserToRuangan();
                 $scope.dataLogin = medifirstService.getPegawaiLogin();
                 medifirstService.getPart("logistik/get-combo-barang-logistik", true, true, 20).then(function (data) {
                     $scope.listNamaBarang = data;
@@ -102,6 +103,10 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                 if ($scope.item.namaBarang != undefined) {
                     var produkfk = "&produkfk=" + $scope.item.namaBarang.id
                 }
+                var ruangan = ""
+                if ($scope.item.ruangan != undefined) {
+                    var ruangan = "&ruangan=" + $scope.item.ruangan.id
+                }
                 var isverif = ''
                 
                 var tglAwal = moment($scope.item.tglAwal).format('YYYY-MM-DD HH:mm:ss');
@@ -109,7 +114,7 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                 medifirstService.get("logistik/get-data-order-barang-ruangan-baru?" +
                     "tglAwal=" + tglAwal +
                     "&tglAkhir=" + tglAkhir +
-                    "&noorder=" + $scope.item.struk + rg + produkfk + isverif
+                    "&noorder=" + $scope.item.struk + rg + produkfk + isverif + ruangan
                     , true).then(function (dat) {
                         $scope.isRouteLoading = false;
                         // for (var i = 0; i < dat.data.daftar.length; i++) {
@@ -147,6 +152,7 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                                         qtyberi:{ editable: true, type: "number"},
                                         isveriforder:{ editable: false, type: "string"},
                                         namaruanganasal:{ editable: false, type: "string"},
+                                        namaruangantujuan:{ editable: false, type: "string"},
 
                                     }
                                 }
@@ -308,6 +314,12 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                     {
                         "field": 'namaruanganasal',
                         "title": 'Ruangan',
+                        "width": "80px",
+
+                    },
+                    {
+                        "field": 'namaruangantujuan',
+                        "title": 'Gudang',
                         "width": "80px",
 
                     },

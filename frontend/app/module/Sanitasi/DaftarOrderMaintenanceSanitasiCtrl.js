@@ -3,6 +3,7 @@ define(['initialize'], function (initialize) {
     initialize.controller('DaftarOrderMaintenanceSanitasiCtrl', ['$scope', '$state', 'CacheHelper', 'DateHelper', 'MedifirstService',
         function ($scope, $state, cacheHelper, dateHelper, medifirstService) {
             $scope.item = {};
+            $scope.itemd = {};
             $scope.dataVOloaded = true;
             $scope.now = new Date();
             $scope.isRouteLoading = false;
@@ -10,6 +11,7 @@ define(['initialize'], function (initialize) {
             var jenisForm = 0
             var tabNumber = 1
             var pegawaiUser = {}
+            // $scope.item.listPegawaiMulti = {}
             // if ($state.params.jenis == "1") {
             //     $scope.item.title = 'Manajemen Kebersihan Tempat Tidur'
             //     jenisForm = 16
@@ -30,7 +32,17 @@ define(['initialize'], function (initialize) {
             userRuangan();
             LoadCache();
             loadCombo();
-
+            $scope.listItemREV = [
+                {
+                    norec: null,
+                    klasifikasi: null,
+                    objekperbaikan: null,
+                    merk: null,
+                    jumlah: null,
+                    biaya: null,
+                    keterangan: null
+                }
+            ]
             function userRuangan() {
 
                 var listUserRuangan = medifirstService.getMapLoginUserToRuangan();
@@ -58,13 +70,29 @@ define(['initialize'], function (initialize) {
             }
 
             function loadCombo() {
-                $scope.dataLogin = medifirstService.getPegawaiLogin();
-                medifirstService.getPart("sysadmin/general/get-combo-pegawai", true, true, 20).then(function (data) {
-                    $scope.listStaff = data;
-                });
+                medifirstService.get("rumahtangga/get-jenis-alat").then(function (data) {
+                    $scope.listJenisAlat = data;
 
-                medifirstService.getPart("sanitasi/get-jenis-layanan-sanitasi").then(function (data) {
+                });
+                $scope.dataLogin = medifirstService.getPegawaiLogin();
+                medifirstService.getPart("ipsrs/get-status-pekerjaan").then(function (data) {
+                    $scope.listStatus = data;
+                });
+                medifirstService.getPart("ipsrs/get-jenis-pekerjaan").then(function (data) {
                     $scope.listJenisKerusakan = data;
+                });
+                medifirstService.get("ipsrs/get-combo-pegawai-perbaikan").then(function (data) {
+                    $scope.listPegawai = data.data.data;
+                    $scope.listStaff = data.data.data;
+                    $scope.selectOptionsPegawai = {
+                        placeholder: "Pilih Pegawai...",
+                        dataTextField: "namalengkap",
+                        dataValueField: "id",
+                        // dataSource:{
+                        //     data: $scope.listRuangan
+                        // },
+                        autoBind: false,
+                    };
                 });
             }
 
@@ -131,7 +159,7 @@ define(['initialize'], function (initialize) {
                     "&manage=" + manage
                     , true).then(function (dat) {
                         $scope.isRouteLoading = false;
-                        var data2 = dat.data;
+                        var data2 = dat.data.data;
                         for (var i = 0; i < data2.length; i++) {
                             data2[i].no = i + 1
                             var respon = ''
@@ -401,6 +429,9 @@ define(['initialize'], function (initialize) {
 
 
             $scope.data2 = function (dataItem) {
+                for (var i = 0; i < dataItem.details.length; i++) {
+                    dataItem.details[i].no = i + 1
+                }
                 return {
                     dataSource: new kendo.data.DataSource({
                         data: dataItem.details
@@ -412,30 +443,10 @@ define(['initialize'], function (initialize) {
                             "width": "35px",
                         },
                         {
-                            "field": "kdproduk",
-                            "title": "Kd Produk",
+                            "field": "namalengkap",
+                            "title": "Nama Staff",
                             "width": "70px",
                         },
-                        {
-                            "field": "kdsirs",
-                            "title": "Kd Sirs",
-                            "width": "70px",
-                        },
-                        {
-                            "field": "namaproduk",
-                            "title": "Nama Produk",
-                            "width": "100px",
-                        },
-                        {
-                            "field": "satuanstandar",
-                            "title": "Satuan",
-                            "width": "30px",
-                        },
-                        {
-                            "field": "qtyproduk",
-                            "title": "Qty",
-                            "width": "30px",
-                        }
                     ]
                 }
             };
@@ -564,9 +575,9 @@ define(['initialize'], function (initialize) {
                 $scope.item.idruangan = $scope.dataSelected.idruangan
                 $scope.item.desc = $scope.dataSelected.namaruangan
 
-                medifirstService.getPart("sanitasi/get-status-pekerjaan-sanitasi").then(function (data) {
-                    $scope.listStatus = data;
-                });
+                // medifirstService.getPart("sanitasi/get-status-pekerjaan-sanitasi").then(function (data) {
+                //     $scope.listStatus = data;
+                // });
             }
             $scope.batalStatus = function () {
                 $scope.popupStatus.close();
@@ -689,6 +700,224 @@ define(['initialize'], function (initialize) {
                     })
                 }
             }
+            $scope.Pengerjaan = function () {
+                if ($scope.dataSelected == undefined) {
+                    toastr.error("Data Belum Dipilih!")
+                    return;
+                }
+
+                if ($scope.dataSelected.statuspekerjaan == "Selesai") {
+                    toastr.error("Status Pekerjaan Telah Selesai!")
+                    return;
+                }
+
+                // $scope.itemd.p3 = ;
+                if ($scope.dataSelected.ispihakketiga == true) {
+                    $scope.item.p3 = true
+                } else if ($scope.dataSelected.ispihakketiga != true) {
+                    $scope.item.p3 = false
+                }
+                $scope.item.catatan = $scope.dataSelected.catatan
+                $scope.itemd.tglLapor = $scope.dataSelected.tglplanning;
+                $scope.itemd.Ruangan = $scope.dataSelected.namaruangan;
+                $scope.itemd.namaPelapor = $scope.dataSelected.pelapor;
+                $scope.itemd.kerusakan = $scope.dataSelected.rincianexecuteplanning_askep;
+                $scope.item.tglMulai = moment($scope.dataSelected.startdate).format('YYYY-MM-DD HH:mm');
+                $scope.item.tglSelesai = moment($scope.dataSelected.duedate).format('YYYY-MM-DD HH:mm');
+                $scope.item.jenisAlat = {
+                    id: $scope.dataSelected.objectjenisalatfk,
+                    reportdisplay: $scope.dataSelected.jenisalat
+                };
+                $scope.item.jenisKerusakan = {
+                    id: $scope.dataSelected.idjeniskerusakan,
+                    reportdisplay: $scope.dataSelected.jeniskerusakan
+                };
+                $scope.item.status = {
+                    id: $scope.dataSelected.objectstatuspekerjaanfk,
+                    reportdisplay: $scope.dataSelected.statuspekerjaan
+                };
+                $scope.item.staff = {
+                    id: $scope.dataSelected.objectpegawaipjawabfk,
+                    namalengkap: $scope.dataSelected.namalengkap
+                };
+                var dataheh = []
+                if ($scope.dataSelected.details.length != 0) {
+                    for (var i = $scope.dataSelected.details.length - 1; i >= 0; i--) {
+                        var data = {
+                            'id': $scope.dataSelected.details[i].id,
+                            'namalengkap': $scope.dataSelected.details[i].namalengkap,
+                        }
+                        dataheh.push(data);
+                    }
+                }
+                $scope.item.listPegawaiMulti = dataheh
+                console.log($scope.item.listPegawaiMulti);
+                if ($scope.dataSelected.merkperbaikan.length > 0){
+                    for (let i = 0; i < $scope.dataSelected.merkperbaikan.length; i++) {
+                        $scope.dataSelected.merkperbaikan[i].klasifikasi = {
+                            reportdisplay: $scope.dataSelected.merkperbaikan[i].reportdisplay,
+                            id: $scope.dataSelected.merkperbaikan[i].objectjenispekerjaanfk,
+                        }
+                        $scope.dataSelected.merkperbaikan[i].objekperbaikan = {
+                            detailjenispekerjaan: $scope.dataSelected.merkperbaikan[i].detailjenispekerjaan,
+                            id: $scope.dataSelected.merkperbaikan[i].objectdetailjenispekerjaanfk,
+                        }
+                        $scope.dataSelected.merkperbaikan[i].merk = {
+                            merk: $scope.dataSelected.merkperbaikan[i].merkpekerjaan,
+                            id: $scope.dataSelected.merkperbaikan[i].objectmerkperbaikanfk,
+                        }
+                    }
+                    $scope.listItemREV = $scope.dataSelected.merkperbaikan
+                }else{
+                    $scope.listItemREV = [{
+                        norec: null,
+                        klasifikasi: null,
+                        objekperbaikan: null,
+                        merk: null,
+                        jumlah: null,
+                        biaya: null,
+                        keterangan: null
+                    }]
+                }
+                $scope.item.worklist = $scope.dataSelected.deskripsiplanning;
+                $scope.item.identifikasi = $scope.dataSelected.keteranganverifikasi;
+                $scope.item.merk = $scope.dataSelected.merk
+                // $scope.item.ruanganLokasi = {
+                //     id: $scope.dataSelected.objectruanganfk, namaruangan: $scope.dataSelected.namaruangan
+                // }
+                // $scope.listObjekPerbaikan = $scope.dataSelected.detailjenisperbaikan
+                // if ($scope.dataSelected.detailjenisperbaikan.length > 0) {
+                //     $scope.item.objekPerbaikan = {
+                //         id: $scope.dataSelected.detailjenisperbaikan[0].id,
+                //         detailjenispekerjaan: $scope.dataSelected.detailjenisperbaikan[0].detailjenispekerjaan,
+                //     }
+                // }
+
+                $scope.popupPengerjaan.center().open();
+            }
+            
+            $scope.getComboIsiObjekPerbaikan = function (index, data) {
+                console.log(data);
+                $scope.listObjekPerbaikan = data.klasifikasi.details
+            }
+            $scope.getComboIsiDetailObjekPerbaikan = function (index, data) {
+
+                $scope.listMerk = data.objekperbaikan.details
+            }
+            $scope.addNewItem = function () {
+                let pegawai = JSON.parse(localStorage.getItem("pegawai"));
+                if (
+                    $scope.listPegawai == undefined
+                    // ||
+                    // $scope.listPegawai._data.length == 0
+                ) {
+                    $scope.listPegawai = [{
+                        value: pegawai.id,
+                        text: pegawai.namaLengkap,
+                    }];
+                }
+                var soap = ''
+                if (pegawai.jenisPegawai.jenispegawai == 'Dokter' || pegawai.jenisPegawai.jenispegawai == 'Perawat') {
+                    soap = 'S : \n\nO : \n\nA : \n\nP : '
+                }
+                $scope.listItemREV.push({
+                    norec: null,
+                    klasifikasi: null,
+                    objekperbaikan: null,
+                    merk: null,
+                    jumlah: null,
+                    biaya: null,
+                    keterangan: null
+                });
+                // $scope.listItemREV[ $scope.listItemREV.length + 1].tenagamedis = { value: pegawai.id, text: pegawai.namaLengkap }
+                // $scope.listItemREV[ $scope.listItemREV.length + 1].tgljam = $scope.now
+            };
+            $scope.removeItem = function (index) {
+                $scope.listItemREV.splice(index, 1);
+            };
+            $scope.getPihakKetiga = function () {
+                if ($scope.item.p3 == true) {
+                    $scope.pihak3 = true
+                    medifirstService.get('sysadmin/get-pihakketiga').then(function (data) {
+                        $scope.listPihakKetiga = data.data
+                    })
+                } else {
+                    $scope.pihak3 = false
+                    $scope.listPihakKetiga = []
+                }
+
+            }
+            $scope.savePengerjaan = function () {
+
+                if ($scope.dataSelected == undefined) {
+                    toastr.error("Data Belum Dipilih!")
+                    return;
+                }
+
+                // if (moment($scope.item.tglMulai).format('YYYY-MM-DD HH:mm') == moment($scope.item.tglSelesai).format('YYYY-MM-DD HH:mm')) {
+                //     toastr.error("Tanggal Mulai dan Tanggal Selasai Tidak Boleh Sama!")
+                //     return;
+                // }
+
+                if ($scope.item.staff == undefined) {
+                    toastr.error("Petugas Penanggung Jawab Belum Diisi!")
+                    return
+                }
+                if ($scope.item.listPegawaiMulti.length == 0) {
+                    toastr.error("Staff Pelaksana Masih Kosong!")
+                    return;
+                }
+                var datapegawai = [];
+                if ($scope.item.listPegawaiMulti.length != 0) {
+                    for (var i = $scope.item.listPegawaiMulti.length - 1; i >= 0; i--) {
+                        var data = {
+                            'id': $scope.item.listPegawaiMulti[i].id,
+                            'namalengkap': $scope.item.listPegawaiMulti[i].namalengkap,
+                        }
+                        datapegawai.push(data);
+                    }
+                }
+
+
+                var strukplanning = {
+                    'tglmulai': $scope.item.tglMulai != undefined ? moment($scope.item.tglMulai).format('YYYY-MM-DD HH:mm') : null,
+                    'tglselesai': $scope.item.tglSelesai != undefined ? moment($scope.item.tglSelesai).format('YYYY-MM-DD HH:mm') : null,
+                    'identifikasikerusakan': $scope.item.identifikasi != undefined ? $scope.item.identifikasi : null,
+                    'penanngungjawab': $scope.item.staff != undefined ? $scope.item.staff.id : null,
+                    'jeniskerusakan': $scope.item.jenisKerusakan != undefined ? $scope.item.jenisKerusakan.id : null,
+                    'worklist': $scope.item.worklist != undefined ? $scope.item.worklist : null,
+                    'status': $scope.item.status != undefined ? $scope.item.status.id : null,
+                    'ispihakketiga': $scope.item.p3 != undefined && $scope.item.p3 == true ? true : null,
+                    'catatan': $scope.item.catatan != undefined ? $scope.item.catatan : null,
+                    // 'detailjenispekerjaan': $scope.item.objekPerbaikan.id != undefined ? $scope.item.objekPerbaikan.id : null,
+                    'rekananperbaikan': $scope.item.pihakKetiga != undefined ? $scope.item.pihakKetiga.id : null,
+                    // 'objectruanganperbaikanfk': $scope.itemd.ruanganLokasi != undefined ? $scope.itemd.ruanganLokasi.id : null,
+                    // 'objectbarangperbaikanfk': $scope.itemd.namabarang != undefined ? $scope.itemd.namabarang.id : null,
+                }
+
+                var objSave = {
+                    norec: $scope.dataSelected.norec,
+                    strukplanning: strukplanning,
+                    datapegawai: datapegawai,
+                    details: $scope.listItemREV
+                }
+                // return
+                medifirstService.post('rumahtangga/save-pengerjaan-permohonan', objSave).then(function (e) {
+
+                    // 1 buat selesai
+                    if (e.data.data.objectstatuspekerjaanfk == 1) {
+                        sendNotification(e.data.data)
+                    }
+                    $scope.item = {}
+                    $scope.item.listPegawaiMulti = {};
+                    $scope.item.tglAwal = moment($scope.now).format('YYYY-MM-DD 00:00:00')
+                    $scope.item.tglAkhir = moment($scope.now).format('YYYY-MM-DD 23:59:59')
+                    $scope.popupPengerjaan.close()
+                    LoadCache();
+
+                })
+            }
+            
             //***********************************
         }
     ]);

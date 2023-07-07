@@ -23,7 +23,7 @@
         <h1 style="color: white;"><b>Daftar Verifikasi Order Barang</b></h1>
     </div>
     <div class="grid_12">
-        <div class="grid_3">
+        <!-- <div class="grid_3">
             <div class="grid_12">
                 <label c-label class="label-aja" item="item" c-label-text="Kode Barang"></label>
             </div>
@@ -32,7 +32,7 @@
                     k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
                     k-data-source="listNamaBarang" />
             </div>
-        </div>
+        </div> -->
         <div class="grid_3">
             <div class="grid_12">
                 <label c-label class="label-aja" item="item" c-label-text="namaBarang"></label>
@@ -44,6 +44,10 @@
             </div>
         </div>
         <div class="grid_2">
+            <label c-label item="item" c-label-text="Ruangan"></label>
+            <input style="width: 100%;" kendo-combo-box k-ng-model="item.ruangan" k-data-text-field="'namaruangan'"
+                k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listRuangan"
+                ng-keypress="($event.which == 13)? cari():item.ruangan" />
         </div>
         <div class="grid_4">
             <div class="grid_12">
@@ -123,7 +127,7 @@
                 <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.struk" />
             </div>
         </div>
-        <div class="grid_3">
+        <!-- <div class="grid_3">
             <div class="grid_12">
                 <label c-label item="item" c-label-text="Nama Ruangan Tujuan"></label>
             </div>
@@ -131,7 +135,7 @@
             <div class="grid_12">
                 <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.namaruangantujuan" />
             </div>
-        </div>
+        </div> -->
         <div class="grid_2">
         </div>
         <!-- <div class="grid_1" style="margin-top: 22px">

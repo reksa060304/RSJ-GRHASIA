@@ -6138,7 +6138,7 @@ class LogistikController extends ApiController{
                 $dataSPDK = StokProdukDetail::where('objectprodukfk', $item5->objectprodukfk)
 //                where('nostrukterimafk', $item['nostrukterimafk'])
                     ->where('kdprofile',$idProfile)
-                    ->where('qtyproduk', '>', 0)
+                    // ->where('qtyproduk', '>', 0)
                     ->where('objectruanganfk', $item5->objectruanganfk)
                     ->first();
 
@@ -6163,7 +6163,7 @@ class LogistikController extends ApiController{
                 $kartuStok[] = $kirim;
 
                 $dataSTOKDETAIL[] = DB::select(DB::raw("select qtyproduk as qty,nostrukterimafk,norec from stokprodukdetail_t 
-                        where kddprofile = $idProfile and objectruanganfk=:ruanganfk and objectprodukfk=:produkfk"),
+                        where kdprofile = $idProfile and objectruanganfk=:ruanganfk and objectprodukfk=:produkfk"),
                     array(
                         'ruanganfk' => $item5->objectruanganfk,
                         'produkfk' => $item5->objectprodukfk,
@@ -6200,7 +6200,7 @@ class LogistikController extends ApiController{
                 "message"  => $transMessage,
 //                "data" => $SP,
 //                "kartustok" => $kartuStok,
-//                "stokdetail" => $stokdetail,
+               "e" => $e->getLine(). ' / '.$e->getMessage(),
                 "as" => 'as@epic',
             );
         }
