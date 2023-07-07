@@ -901,12 +901,13 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         "width": "300px",
                         "template": "<span class='style-center'>#: diagnosarujukan #</span>"
                     },
-                    // {
-                    //     "field": "catatan",
-                    //     "title": "Catatan",
-                    //     "width": "80px",
-                    //     "template": "<span class='style-center'>#: catatan #</span>"
-                    // }
+                    {
+                        "field": "tglrencanakunjungan",
+                        "title": "Tanggal Rencana Kunjungan",
+                        "width": "80px",
+                        "template": "<span class='style-left'>{{formatTanggal('#: tglrencanakunjungan #')}}</span>"
+
+                    }
                     // {
                     //     "field": "statuspasien",
                     //     "title": "Status Pasien",

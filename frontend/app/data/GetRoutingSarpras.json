@@ -6199,5 +6199,24 @@
         "define": "MedifirstService"
       }
     ]
+  },
+  {
+    "name": "LaporanPemeliharanRT",
+    "url": "/TGFwb3JhblJ1bWFoVGFuZ2dh",
+    "templateurl": "module/Sanitasi/LaporanPemeliharanRT.html",
+    "controller": "LaporanPemeliharanRTCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
   }
 ]
