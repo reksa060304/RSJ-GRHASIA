@@ -5132,26 +5132,35 @@ class MasterController extends ApiController{
                 $idJenis= $idJenis +1;
                 if ($data['id'] == "") {
                     $JD = new Ruangan();
-                    $JD->norec = $JD->generateNewId();
+                    $JD->norec = $idJenis;
                     $JD->id = $idJenis;
                     $JD->kdprofile = $kdProfile;
                     $JD->statusenabled = true;
+                    $JD->kodeexternal = $idJenis;
+                    $JD->kdruangan = $idJenis;
+                    $JD->qruangan = $idJenis;
                     $transMessage = "Tambah";
+                    $JD->namaexternal = $data['namaruangan'];
+                    $JD->reportdisplay = $data['namaruangan'];
+                    $JD->namaruangan = $data['namaruangan'];
+                    $JD->objectdepartemenfk = $data['objectdepartemenfk'];
+                    if(isset($data['kdinternal'])){
+                        $JD->kdinternal = $data['kdinternal'];
+                    }
+                $JD->save();
                 }else{
                     $transMessage = "Ubah";
-                    $JD = Ruangan::where('id',$data['id'])->where('kdprofile', $kdProfile)->first();
+                    $JD = Ruangan::where('id', $data['id'])->where('kdprofile', $kdProfile)->where('kodeexternal', $data['id'])->first();
+                    $JD->namaexternal = $data['namaruangan'];
+                    $JD->reportdisplay = $data['namaruangan'];
+                    $JD->namaruangan = $data['namaruangan'];
+                    $JD->objectdepartemenfk = $data['objectdepartemenfk'];
+                    if(isset($data['kdinternal'])){
+                        $JD->kdinternal = $data['kdinternal'];
+                    }
+                    $JD->save();
                 }
-                $JD->kodeexternal = $idJenis;
-                $JD->namaexternal = $data['namaruangan'];
-                $JD->reportdisplay = $data['namaruangan'];
-                $JD->namaruangan = $data['namaruangan'];
-                $JD->kdruangan = $idJenis;
-                $JD->objectdepartemenfk = $data['objectdepartemenfk'];
-                if(isset($data['kdinternal'])){
-                    $JD->kdinternal = $data['kdinternal'];
-                }
-                $JD->qruangan = $idJenis;
-                $JD->save();
+                
             }
             if($request['method']== 'delete'){
                 $transMessage = "Hapus";
