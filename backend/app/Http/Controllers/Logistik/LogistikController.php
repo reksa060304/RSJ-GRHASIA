@@ -74,6 +74,15 @@ class LogistikController extends ApiController{
         $SN = $prefix.(str_pad((int)$subPrefix+1, $length-$prefixLen, "0", STR_PAD_LEFT));
         $spbnya = '020/'.$SN.'/'.$romawi[0]->rm."/SPB/".date("Y");
         $spbnya =  str_replace(' ', '', $spbnya);
+        DB::table('seqnumberkeu_t')->insert(
+            [
+                'kdprofile'=> $idProfile,
+                'seqnumber'=> $SN,
+                'tgljamseq'=> date('Y-m-d H:i:s'),
+                'seqname'=> 'spb',
+                'norec'=> substr(\Webpatser\Uuid\Uuid::generate(), 0, 32),
+            ]
+        );
         $sppb = DB::table('seqnumberkeu_t')->where('seqnumber', 'LIKE', $prefix.'%')
                 ->where('seqname','sppb')
                 ->where('kdprofile',30)
@@ -7045,15 +7054,7 @@ class LogistikController extends ApiController{
                 //     $noOrder = $this->generateCode(new StrukOrder, 'noorder', 14, 'OAMP-' . $this->getDateTime()->format('ym'), $idProfile);
                 // }
                 $noOrder = $request['strukorder']['noorder'];
-                DB::table('seqnumberkeu_t')->insert(
-                [
-                    'kdprofile'=> $idProfile,
-                    'seqnumber'=> $SN,
-                    'tgljamseq'=> date('Y-m-d H:i:s'),
-                    'seqname'=> 'spb',
-                    'norec'=> substr(\Webpatser\Uuid\Uuid::generate(), 0, 32),
-                ]
-            );
+                
                 $dataSO = new StrukOrder();
                 $dataSO->norec = $dataSO->generateNewId();
                 $dataSO->kdprofile = $idProfile;
