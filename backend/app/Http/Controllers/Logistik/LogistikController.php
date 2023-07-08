@@ -62,39 +62,27 @@ class LogistikController extends ApiController{
         $prefix = '';
         $length = 1;
         $romawi = DB::select(DB::raw("SELECT to_char(date '".date('Y-m-d H:i:s')."', 'RM') as rm;"));
-        $spb = DB::table('seqnumberkeu_t')->where('seqnumber', 'LIKE', $prefix.'%')
-                ->where('seqname','spb')
-                ->where('kdprofile',30)
-                // ->where(DB::raw("date_part('month', ".date('Y-m-d H:i:s').")"))
-                // ->where(DB::raw("date_part('month', '2023-07-01'::date) = ".date('m')))
-                ->where(DB::raw("date_part('month', '".date("Y-m-d")."'::date)"), date('m'))
-                ->max(DB::raw("seqnumber::integer"));
-            $prefixLen = strlen($prefix);
-        $subPrefix = substr(trim($spb),$prefixLen);
-        $SN = $prefix.(str_pad((int)$subPrefix+1, $length-$prefixLen, "0", STR_PAD_LEFT));
-        $spbnya = '020/'.$SN.'/'.$romawi[0]->rm."/SPB/".date("Y");
-        $spbnya =  str_replace(' ', '', $spbnya);
-        DB::table('seqnumberkeu_t')->insert(
-            [
-                'kdprofile'=> $idProfile,
-                'seqnumber'=> $SN,
-                'tgljamseq'=> date('Y-m-d H:i:s'),
-                'seqname'=> 'spb',
-                'norec'=> substr(\Webpatser\Uuid\Uuid::generate(), 0, 32),
-            ]
-        );
-        $sppb = DB::table('seqnumberkeu_t')->where('seqnumber', 'LIKE', $prefix.'%')
-                ->where('seqname','sppb')
-                ->where('kdprofile',30)
-                // ->where(DB::raw("date_part('month', ".date('Y-m-d H:i:s').")"))
-                // ->where(DB::raw("date_part('month', '2023-07-01'::date) = ".date('m')))
-                ->where(DB::raw("date_part('month', '".date("Y-m-d")."'::date)"), date('m'))
-                ->max(DB::raw("seqnumber::integer"));
-            $prefixLen = strlen($prefix);
-        $subPrefix = substr(trim($sppb),$prefixLen);
-        $SNN = $prefix.(str_pad((int)$subPrefix+1, $length-$prefixLen, "0", STR_PAD_LEFT));
-        $sppbnya = '020/'.$SNN.'/'.$romawi[0]->rm."/SPPB/".date("Y");
-        $sppbnya =  str_replace(' ', '', $sppbnya);
+        // $spb = DB::table('seqnumberkeu_t')->where('seqnumber', 'LIKE', $prefix.'%')
+        //         ->where('seqname','spb')
+        //         ->where('kdprofile',30)
+        //         // ->where(DB::raw("date_part('month', ".date('Y-m-d H:i:s').")"))
+        //         // ->where(DB::raw("date_part('month', '2023-07-01'::date) = ".date('m')))
+        //         ->where(DB::raw("date_part('month', '".date("Y-m-d")."'::date)"), date('m'))
+        //         ->max(DB::raw("seqnumber::integer"));
+        //     $prefixLen = strlen($prefix);
+        // $subPrefix = substr(trim($spb),$prefixLen);
+        // $SN = $prefix.(str_pad((int)$subPrefix+1, $length-$prefixLen, "0", STR_PAD_LEFT));
+        // $spbnya = '020/'.$SN.'/'.$romawi[0]->rm."/SPB/".date("Y");
+        // $spbnya =  str_replace(' ', '', $spbnya);
+        // DB::table('seqnumberkeu_t')->insert(
+        //     [
+        //         'kdprofile'=> $idProfile,
+        //         'seqnumber'=> $SN,
+        //         'tgljamseq'=> date('Y-m-d H:i:s'),
+        //         'seqname'=> 'spb',
+        //         'norec'=> substr(\Webpatser\Uuid\Uuid::generate(), 0, 32),
+        //     ]
+        // );
         
         $dataLogin = $request->all();
         $id = $request['userData']['id'];
@@ -106,6 +94,7 @@ class LogistikController extends ApiController{
                 'idLoginUser' => $dataLogin['userData']['id'],
             )
         );
+
         $getPasswordStokOpname = $this->settingDataFixed('passwordso',$idProfile);
         $getPasswordAdjusment = $this->settingDataFixed('PasswordAdjusment', $idProfile);
         $data = \DB::table('loginuser_s as lu')
@@ -465,10 +454,9 @@ class LogistikController extends ApiController{
             'noorder'=> $dataNoOrder,
             'passwordAdjusment' => $getPasswordAdjusment,
             'bulan' => $dataBulan,
-            'spb'=> $spbnya,
-            'sppb'=> $sppbnya,
-            'SN'=> $SN,
-            'SNN'=> $SNN,
+            // 'spb'=> $spbnya,
+            // 'sppb'=> $sppbnya,
+            // 'SNN'=> $SNN,
             'by' => 'ea@epic',
         );
         return $this->respond($result);
@@ -7044,17 +7032,35 @@ class LogistikController extends ApiController{
     public function saveOrderBarang(Request $request) {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
-        $SN = $request['strukorder']['sn'];
+        // $SN = $request['strukorder']['sn'];
         \DB::beginTransaction();
+        $prefix = '';
+        $length = 1;
         try{
             if ($request['strukorder']['norecorder'] == '') {
-                // if ($request['strukorder']['jenispermintaanfk'] != 1) {
-                //     $noOrder = $this->generateCode(new StrukOrder, 'noorder', 14, 'OTRF-' . $this->getDateTime()->format('ym'), $idProfile);
-                // } else {
-                //     $noOrder = $this->generateCode(new StrukOrder, 'noorder', 14, 'OAMP-' . $this->getDateTime()->format('ym'), $idProfile);
-                // }
-                $noOrder = $request['strukorder']['noorder'];
-                
+                $romawi = DB::select(DB::raw("SELECT to_char(date '".date('Y-m-d H:i:s')."', 'RM') as rm;"));
+                $spb = DB::table('seqnumberkeu_t')->where('seqnumber', 'LIKE', $prefix.'%')
+                        ->where('seqname','spb')
+                        ->where('kdprofile',30)
+                        // ->where(DB::raw("date_part('month', ".date('Y-m-d H:i:s').")"))
+                        // ->where(DB::raw("date_part('month', '2023-07-01'::date) = ".date('m')))
+                        ->where(DB::raw("date_part('month', '".date("Y-m-d")."'::date)"), date('m'))
+                        ->max(DB::raw("seqnumber::integer"));
+                    $prefixLen = strlen($prefix);
+                $subPrefix = substr(trim($spb),$prefixLen);
+                $SN = $prefix.(str_pad((int)$subPrefix+1, $length-$prefixLen, "0", STR_PAD_LEFT));
+                $spbnya = '020/'.$SN.'/'.$romawi[0]->rm."/SPB/".date("Y");
+                $spbnya =  str_replace(' ', '', $spbnya);
+                DB::table('seqnumberkeu_t')->insert(
+                    [
+                        'kdprofile'=> $idProfile,
+                        'seqnumber'=> $SN,
+                        'tgljamseq'=> date('Y-m-d H:i:s'),
+                        'seqname'=> 'spb',
+                        'norec'=> substr(\Webpatser\Uuid\Uuid::generate(), 0, 32),
+                    ]
+                );
+                $noOrder = $spbnya;
                 $dataSO = new StrukOrder();
                 $dataSO->norec = $dataSO->generateNewId();
                 $dataSO->kdprofile = $idProfile;
@@ -7129,7 +7135,7 @@ class LogistikController extends ApiController{
             $result = array(
                 "status" => 400,
                 "message"  => $transMessage,
-                "nokirim" => $dataSO,
+                // "nokirim" => $dataSO,
                 "e"=>$e->getLine() . " / ". $e->getMessage(),
                 "as" => 'as@epic',
             );
@@ -15658,29 +15664,36 @@ FROM
     public function saveKirimBarangRuanganBaru(Request $request) {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
-        $SN = $request['strukkirim']['snn'];
-        // if ($request['strukkirim']['jenispermintaanfk'] == 2) {
-        //     DB::table('seqnumberkeu_t')->insert(
-        //     [
-        //         'kdprofile'=> $idProfile,
-        //         'seqnumber'=> $SN,
-        //         'tgljamseq'=> date('Y-m-d H:i:s'),
-        //         'seqname'=> 'sppb',
-        //         'norec'=> substr(\Webpatser\Uuid\Uuid::generate(), 0, 32),
-        //     ]);
-        //     // $noKirim = $request['nokirim'];
-        // }else{
-            
-        // }
-            DB::table('seqnumberkeu_t')->insert(
+        // $SN = $request['strukkirim']['snn'];
+        $prefix = '';
+        $length = 1;
+        if ($request['strukkirim']['jenispermintaanfk'] == 2) {
+                $romawi = DB::select(DB::raw("SELECT to_char(date '".date('Y-m-d H:i:s')."', 'RM') as rm;"));
+            $sppb = DB::table('seqnumberkeu_t')->where('seqnumber', 'LIKE', $prefix.'%')
+                ->where('seqname','sppb')
+                ->where('kdprofile',30)
+                // ->where(DB::raw("date_part('month', ".date('Y-m-d H:i:s').")"))
+                // ->where(DB::raw("date_part('month', '2023-07-01'::date) = ".date('m')))
+                ->where(DB::raw("date_part('month', '".date("Y-m-d")."'::date)"), date('m'))
+                ->max(DB::raw("seqnumber::integer"));
+                $prefixLen = strlen($prefix);
+                $subPrefix = substr(trim($sppb),$prefixLen);
+                $SNN = $prefix.(str_pad((int)$subPrefix+1, $length-$prefixLen, "0", STR_PAD_LEFT));
+                $sppbnya = '020/'.$SNN.'/'.$romawi[0]->rm."/SPPB/".date("Y");
+                $sppbnya =  str_replace(' ', '', $sppbnya);
+                DB::table('seqnumberkeu_t')->insert(
                 [
                     'kdprofile'=> $idProfile,
-                    'seqnumber'=> $SN,
+                    'seqnumber'=> $SNN,
                     'tgljamseq'=> date('Y-m-d H:i:s'),
                     'seqname'=> 'sppb',
                     'norec'=> substr(\Webpatser\Uuid\Uuid::generate(), 0, 32),
                 ]);
-            $noKirim = $request['strukkirim']['nokirim'];
+            $noKirim = $sppbnya;
+        }else{
+            
+        }
+
         
             // $noKirim = 
         // if ($noKirim == ''){
