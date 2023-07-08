@@ -84,6 +84,7 @@
         table {
             width: 100%;
             height: 100%;
+
         }
     </style>
 </head>
@@ -184,7 +185,7 @@
                          <th >Review & Verifikasi DPJP</th>
                     </tr>
                     <tr ng-repeat="list in listDataCppt" ng-show="show.obj[list.id]">
-                        <td ng-repeat="jawab in list.detail | orderBy:'id'">
+                        <td ng-repeat="jawab in list.detail | orderBy:'id'" >
                             <div ng-switch on="jawab.type">
                                 <div ng-switch-when="tgl/jam">
                                     @{{ item.obj[jawab.id] }}
@@ -192,7 +193,7 @@
                                 <div ng-switch-when="ppa">
                                     @{{ item.obj[jawab.id] }}
                                 </div>
-                                <div ng-switch-when="soap">
+                                <div ng-switch-when="soap" style="white-space: pre-line;">
                                     @{{ item.obj[jawab.id] }}
                                     <br>
                                     @{{ item.obj[jawab.id2] }}
