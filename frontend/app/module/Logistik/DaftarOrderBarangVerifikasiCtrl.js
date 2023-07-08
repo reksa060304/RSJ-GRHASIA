@@ -312,6 +312,13 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                         "width": "15px",
                     },
                     {
+                        "field": "tglorder",
+                        "title": "Tanggal Order",
+                        "width": "40px",
+                        "template": "<span class='style-right'>{{formatTanggal('#: tglorder #', '')}}</span>"
+
+                    },
+                    {
                         "field": 'namaruanganasal',
                         "title": 'Ruangan',
                         "width": "80px",
@@ -367,6 +374,11 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                                 "width": "30px",
                             },
                         ]
+                    },
+                    {
+                        "field": "isanalis",
+                        "title": "Analis",
+                        "width": "20px",
                     },
                     {
                         "field": "isveriforder",

@@ -14874,7 +14874,7 @@ class LogistikController extends ApiController{
         and krp.statusenabled = true and krp.kdprofile = 30
         and skm.tglkirim::date between '$tglAwal' and '$tglAkhir' 
         and so.statusenabled = true and so.kdprofile = 30
-        and so.tglorder::date between '$tglAwal' and '$tglAkhir' and so.noorder ilike 'OTRF%'
+        and so.tglorder::date between '$tglAwal' and '$tglAkhir' and so.noorder ilike any( array['OTRF%','%SPB%'])
         and op.statusenabled = true and op.kdprofile = 30
         $searchnoorder
         $searchruangorder
@@ -15024,7 +15024,7 @@ class LogistikController extends ApiController{
             ->LEFTJOIN('ruangan_m as ru2','ru2.id','=','sp.objectruangantujuanfk')
             ->join('produk_m as pr', 'pr.id','=','op.objectprodukfk')
             ->join('satuanstandar_m as ss', 'ss.id','=','op.objectsatuanstandarfk')
-            ->select('sp.norec','sp.tglorder','sp.noorder','sp.jenispermintaanfk','pg.namalengkap',
+            ->select('op.isanalis','sp.norec','sp.tglorder','sp.noorder','sp.jenispermintaanfk','pg.namalengkap',
                 'ru.namaruangan as ruanganasal','ru2.namaruangan as ruangantujuan','sp.keteranganorder',
                 'sp.statusorder','sp.qtyjenisproduk', DB::raw("
                      op.norec as norec_op, op.jumlahstokgudang, pr.kdbhp, op.jumlahstokruangan, case when op.qtyberi is null then op.qtyproduk else op.qtyberi end as qtyberi, pr.id as kdproduk,pr.kdproduk as kdsirs,pr.namaproduk,
@@ -15068,6 +15068,9 @@ class LogistikController extends ApiController{
             }
             if($item->isveriforder == true){
                 $item->isveriforder = '✔';
+            }
+            if($item->isanalis == true){
+                $item->isanalis = '✔';
             }
             $details = DB::select(DB::raw("
                      select spd.norec, spd.jumlahstokgudang, pr.kdbhp, spd.jumlahstokruangan, case when spd.qtyberi is null then spd.qtyproduk else spd.qtyberi end as qtyberi,  pr.id as kdproduk,pr.kdproduk as kdsirs,pr.namaproduk,
@@ -15117,6 +15120,7 @@ class LogistikController extends ApiController{
                 'qtyproduk'=> $item->qtyproduk,
                 'satuanstandar'=> $item->satuanstandar,
                 'isveriforder'=> $item->isveriforder,
+                'isanalis'=> $item->isanalis,
                 'details' => $details,
             );
         }

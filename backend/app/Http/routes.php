@@ -400,6 +400,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             // Route::group(['prefix' => 'farmasi'], function () {
                 Route::post('bridging/farmasi/save-consis-d','Bridging\BridgingFarmasiController@SimpanBridgingConsisD');
             // });
+                Route::get('farmasi/cek-copyresep','EMR\EMRController@getCekCopyResep');
+                Route::post('farmasi/save-copy-resep','EMR\EMRController@saveCopyResep');
                 Route::post('farmasi/save-rekonsiliasi-obat', 'EMR\EMRController@saveRekonsiliasiObat');
                 Route::post('emr/farmasi-save-preview', 'EMR\EMRController@savePreview');
                 Route::get('emr/get-rekonsiliasi-obat','EMR\EMRController@getRekonsiliasiObat');
