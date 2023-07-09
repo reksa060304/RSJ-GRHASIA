@@ -1512,6 +1512,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('logistik/get-daftar-stok-ruangan', 'Logistik\LogistikController@getStokRuangan');
             Route::get('emr/data-riwayat-emr', 'Registrasi\RegistrasiController@riwayatEMRTemp');
             Route::get('get/load-copy-resep', 'EMR\EMRController@getCopyResep');
+            Route::get('get/get-copy-resepnya', 'EMR\EMRController@getCopyResepnyaya');
+            Route::get('farmasi/cetak-copyresep', 'Report\ReportController@cetakCopyResep');
             // GET //
 
             // POST //
