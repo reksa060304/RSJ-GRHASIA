@@ -16,7 +16,37 @@ define(['initialize'], function (initialize) {
                     $scope.isUnit = true;
 
                 $scope.daftarKartuStok = new kendo.data.DataSource({
-                    data: []
+                    data: [],
+                    aggregate: [{
+                        field: 'saldoawal',
+                        aggregate: 'sum'
+                    }, {
+                        field: 'saldomasuk',
+                        aggregate: 'sum'
+                    }, {
+                        field: 'saldokeluar',
+                        aggregate: 'sum'
+                    },
+                    {
+                        field: 'saldoakhir',
+                        aggregate: 'sum'
+                    }, ],
+                    model: {
+                        fields: {
+                            saldoawal: {
+                                type: "number"
+                            },
+                            saldomasuk: {
+                                type: "number"
+                            },
+                            saldokeluar: {
+                                type: "number"
+                            },
+                            saldoakhir: {
+                                type: "number"
+                            }
+                        }
+                    }
                 });
 
                 $scope.item.from = moment($scope.now).format('YYYY-MM-DD 00:00:00');
@@ -108,6 +138,37 @@ define(['initialize'], function (initialize) {
                             pageSize: datas.length,
                             total: datas.length,
                             serverPaging: false,
+                            aggregate: [{
+                                        field: 'saldoawal',
+                                        aggregate: 'sum'
+                                    }, {
+                                        field: 'saldomasuk',
+                                        aggregate: 'sum'
+                                    }, {
+                                        field: 'saldokeluar',
+                                        aggregate: 'sum'
+                                    },
+                                    {
+                                        field: 'saldoakhir',
+                                        aggregate: 'sum'
+                                    },
+                                ],
+                                model: {
+                                    fields: {
+                                        saldoawal: {
+                                            type: "number"
+                                        },
+                                        saldomasuk: {
+                                            type: "number"
+                                        },
+                                        saldokeluar: {
+                                            type: "number"
+                                        },
+                                        saldoakhir: {
+                                            type: "number"
+                                        }
+                                    }
+                                }
 
                         });
                     });
@@ -195,7 +256,38 @@ define(['initialize'], function (initialize) {
                         e.data.tanggalKejadian = DateHelper.getPeriodeFormatted(new Date(e.data.tanggalKejadian));
 
                         $scope.daftarKartuStok = new kendo.data.DataSource({
-                            data: e.data
+                            data: e.data,
+                            aggregate: [{
+                                        field: 'saldoawal',
+                                        aggregate: 'sum'
+                                    }, {
+                                        field: 'saldomasuk',
+                                        aggregate: 'sum'
+                                    }, {
+                                        field: 'saldokeluar',
+                                        aggregate: 'sum'
+                                    },
+                                    {
+                                        field: 'saldoakhir',
+                                        aggregate: 'sum'
+                                    },
+                                ],
+                                model: {
+                                    fields: {
+                                        saldoawal: {
+                                            type: "number"
+                                        },
+                                        saldomasuk: {
+                                            type: "number"
+                                        },
+                                        saldokeluar: {
+                                            type: "number"
+                                        },
+                                        saldoakhir: {
+                                            type: "number"
+                                        }
+                                    }
+                                }
                         });
                     })
                 } else {
@@ -253,25 +345,32 @@ define(['initialize'], function (initialize) {
                         "field": "saldoawal",
                         "title": "Saldo Awal",
                         "width": "120px",
-                        type: "number",
+                        aggregates: ["sum"],
+                        footerTemplate: "#: data.saldoawal.sum #",
                     },
                     {
                         "field": "saldomasuk",
                         "title": "Saldo Masuk",
                         "width": "120px",
-                        type: "number",
+                        aggregates: ["sum"],
+                        footerTemplate: "#: data.saldomasuk.sum #",
+
                     },
                     {
                         "field": "saldokeluar",
                         "title": "Saldo Keluar",
                         "width": "120px",
-                        type: "number",
+                        aggregates: ["sum"],
+                        footerTemplate: "#: data.saldokeluar.sum #",
+
                     },
                     {
                         "field": "saldoakhir",
                         "title": "Saldo Akhir",
                         "width": "120px",
-                        type: "number",
+                        aggregates: ["sum"],
+                        footerTemplate: "#: data.saldoakhir.sum #",
+
                     },
                     {
                         "field": "flag",
