@@ -1454,8 +1454,8 @@
 														<label c-label>Spesialis</label>
 														<input kendo-combo-box k-ng-model="kontrol.poliKontrol"
 															k-data-text-field="'namaruangan'" k-filter="'contains'"
-															k-data-value-field="'id'" k-auto-bind="false"
-															k-data-source="ruangans" />
+															k-data-value-field="'id'" k-auto-bind="false" 
+															k-data-source="ruangans" k-on-change="getDokterDPJP()"/>
 													</div>
 												</div>
 												<div class="grid_12">
