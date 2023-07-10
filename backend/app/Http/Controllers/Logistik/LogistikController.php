@@ -9058,7 +9058,7 @@ class LogistikController extends ApiController{
                 $dataSaldoAwalK = collect(DB::select("
                         select sum(qtyproduk) as qty from stokprodukdetail_t 
                         where kdprofile = $idProfile and objectruanganfk=$ruAsal and objectprodukfk=$item->objectprodukfk
-                "))->first;
+                "))->first();
                 $saldoAwalPengirim = (float)$dataSaldoAwalK->qty + (float)$item->qtyproduk;
                 $tambah = StokProdukDetail::where('nostrukterimafk', $item->nostrukterimafk)
                     ->where('kdprofile', $idProfile)
@@ -9193,6 +9193,7 @@ class LogistikController extends ApiController{
                 "saldoAwal" => $saldoAwalPengirim,
                 "data" => $dataSK,
                 "datalogin" => $dataLogin['userData'],
+                "e" => $e->getLine().'/'. $e->getMessage(),
                 "message"  => $transMessage,
             );
         }
