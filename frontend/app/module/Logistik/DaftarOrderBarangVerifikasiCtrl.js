@@ -558,12 +558,12 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                 })
             }
             $scope.simpanVerif = function(data){
-                for (let i = 0; i < $scope.selectedData3.length; i++) {
-                    if ($scope.selectedData3[i].isveriforder == '✔') {
-                        toastr.error('Sudah diverifikasi!!!')
-                        return
-                    }
-                }
+                // for (let i = 0; i < $scope.selectedData3.length; i++) {
+                //     // if ($scope.selectedData3[i].isveriforder == '✔') {
+                //     //     toastr.error('Sudah diverifikasi!!!')
+                //     //     return
+                //     // }
+                // }
                 $scope.verif.center().open()
                 // $scope.dataverif = data
             }
