@@ -72,7 +72,7 @@
             /* text-align: center; */
             /* position: fixed; */
             position: fixed;
-            top: 10%;
+            bottom: 10%;
             right: 5%;
         }
     </style>
@@ -207,7 +207,7 @@
                     <tr>
                         <td></td>
                         <td></td>
-                        <td height="50px"> </td>
+                        <td height="20px"> </td>
                     </tr>
                     <tr>
                         <td style="text-align: center"></td>
