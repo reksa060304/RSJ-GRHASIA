@@ -13522,7 +13522,7 @@ public function suratBuktiPengembalian(Request $request)
         inner join kirimproduk_t kp on kp.nokirimfk = sk.norec
         inner join produk_m pr on pr.id = kp.objectprodukfk
         inner join ruangan_m ru on ru.id = sk.objectruangantujuanfk
-        where so.noorder ilike '$norec' and kp.qtyproduk > 0
+        where so.noorder ilike '$norec' and kp.qtyproduk > 0 and sk.statusenabled = true and so.statusenabled = true
         "));
         $pdf = PDF::loadView(
             'report.cetaksppb',
