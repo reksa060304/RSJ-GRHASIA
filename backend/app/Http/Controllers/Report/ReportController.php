@@ -13627,8 +13627,20 @@ public function suratBuktiPengembalian(Request $request)
         ));
         $noemr = $data[0]->noemr;
         $alergi = DB::select(DB::raw("SELECT * FROM reaksialergi_t where noemr = '$noemr'"));
-        $penggunaan = DB::select(DB::raw("SELECT * FROM riwayatpenggunaanobat_t where noemr = '$noemr'"));
-        $rekon = DB::select(DB::raw("SELECT * FROM riwayatrekonsiliasiobat_t where noemr = '$noemr'
+        $penggunaan = DB::select(DB::raw("SELECT 
+        case when rp.objectprodukfk is null then rp.obatlain else pr.namaproduk end as namaproduk, 
+        rp.isresep, to_char(rp.tanggalmulai,'DD-MM-YYYY') as tanggalmulai,to_char(rp.tanggalstop,'DD-MM-YYYY') as tanggalstop, rp.rute, rp.indikasi,rp.frekuensi, rp.statusobat, rp.perubahanaturan
+        FROM riwayatpenggunaanobat_t rp
+        left join produk_m pr on pr.id = rp.objectprodukfk
+        where rp.noemr = '$noemr'"));
+        $rekon = DB::select(DB::raw("SELECT to_char(ro.tanggal,'DD-MM-YYYY') as tanggal,ru.namaruangan,
+        case when ro.objectprodukfk is null then ro.obatlain else pr.namaproduk end as namaproduk, 
+        ro.rute, ro.aturanpakai, ro.statusobat, ro.perubahanaturanpakai, pg.namalengkap
+        FROM riwayatrekonsiliasiobat_t ro
+        inner join ruangan_m ru on ru.id = ro.objectruanganfk
+        left join produk_m pr on pr.id = ro.objectprodukfk
+        inner join pegawai_m pg on pg.id = ro.objectpegawaifk
+        where noemr = '$noemr'
         "));
         // dd($rekon);
 
