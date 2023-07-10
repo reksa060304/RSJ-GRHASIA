@@ -327,6 +327,7 @@ class SumberDayaManusiaController extends ApiController {
             ->leftJoin('detailkategorypegawai_m as dkp','dkp.id','=','pg.objectdetailkategorypegawaifk ')
             ->leftJoin('golongandarah_m as gd','gd.id','=', 'pg.objectgolongandarahfk')
             ->leftJoin('jabatan_m as jb','jb.id','=','pg.objectjabatanfungsionalfk')
+            ->leftJoin('jenisjabatan_m as jj','jb.objectjenisjabatanfk','=','jj.id')
             ->leftJoin('jabatan_m as jb1','jb1.id', '=', 'pg.objectjabatanstrukturalfk')
             ->leftJoin('golonganpegawai_m as gp','gp.id','=', 'pg.objectgolonganpegawaifk')
             ->leftJoin('unitkerjapegawai_m as uk','uk.id','=','pg.objectunitkerjapegawaifk')
@@ -342,10 +343,10 @@ class SumberDayaManusiaController extends ApiController {
             ->leftJoin('sdm_kelompokshift_m as ks','ks.id','=','pg.objectshiftkerja')
             ->leftJoin('sdm_kedudukan_m as kdd','kdd.id','=','pg.kedudukanfk')
             ->leftJoin('jenispegawai_m as jp','jp.id','=','pg.objectjenispegawaifk')
-            ->select(\DB::raw("pg.*,ag.agama,dkp.detailkategorypegawai,gd.golongandarah,jb.namajabatan as jbfungsional,
+            ->select(\DB::raw("jb.objectjenisjabatanfk, jj.jenisjabatan,pg.*,ag.agama,dkp.detailkategorypegawai,gd.golongandarah,jb.namajabatan as jbfungsional,
 			                        jb1.namajabatan as jbstruktural,gp.golonganpegawai,uk.name as unitkerja,sp.statuspegawai,
 			                        kj.namakelompokjabatan,spp.statusperkawinan,ese.eselon,kp.kategorypegawai as namakategorypegawai,pend.pendidikan,jk.jeniskelamin,
-			                        gol.name as golongan,nkj.detailkelompokjabatan,nkj.grade,ks.kelompokshiftkerja,kdd.name as kedudukan,jp.jenispegawai"))
+			                        gol.namaexternal||', '||gol.name as golongan,nkj.detailkelompokjabatan,nkj.grade,ks.kelompokshiftkerja,kdd.name as kedudukan,jp.jenispegawai"))
             ->where('pg.kdprofile', $kdProfile)
             ->where('pg.namalengkap', '<>','-')
             ->where('pg.namalengkap', '<>','Programmer Administrator')
@@ -916,6 +917,8 @@ class SumberDayaManusiaController extends ApiController {
             $dataSavePegawai->bankrekeningatasnama = $dataPegawai['namarekening'];
             $dataSavePegawai->bankrekeningnama = $dataPegawai['namabank'];
             $dataSavePegawai->masakerjatambahan = $dataPegawai['masakerjatambahan'];
+            $dataSavePegawai->noskmasakerjatambahan = $dataPegawai['noskmasakerjatambahan'];
+            $dataSavePegawai->tglskmasakerjatambahan = $dataPegawai['tglskmasakerjatambahan'];
             // bank 2
             $dataSavePegawai->bankrekeningnomor2 = $dataPegawai['nomorrekening2'];
             $dataSavePegawai->bankrekeningatasnama2 = $dataPegawai['namarekening2'];
@@ -6016,7 +6019,7 @@ END as januari
         $arr_fix = $dataLogin['data'];
         $kode = [];
         foreach ( $dataLogin['data'] as $item){
-            $kode[] = $item['nippns'];
+            $kode[] = $item['nIP'];
         }
 //        return $arr_fix;
 
@@ -6054,20 +6057,20 @@ END as januari
         foreach ($arr_fix as $ketanItem){
             $sama = false;
             foreach ($data as $item){
-                if ($ketanItem['nippns'] == $item->nippns){
+                if ($ketanItem['nIP'] == $item->nippns){
                     $sama = true;
                     $data2[] = array(
                         'nippns' => $item->nippns,
                         'namalengkap' => $item->namalengkap,
-                        'gajipokok' => $ketanItem['gaji pokok'],
-                        'objectpegawaifk'=> $item->id,
-                        'tunjanganumum'=> $ketanItem['tunjangan umum'],
-                        'tunjanganjabatan'=> $ketanItem['tunjangan jabatan,fungsional tertentu'],
-                        'tunjanganberas'=> $ketanItem['tunjangan beras'],
-                        'jumlahbruto'=> $ketanItem['jumlah bruto'],
-                        'potonganiwp8'=> $ketanItem['potongan iwp 8%'],
-                        'jumlahpotongan'=> $ketanItem['jumlah potongan'],
-                        'jumlahyangdibayarkan'=> $ketanItem['jumlah yang dibayarkan'],
+                        'gajipokok' => isset($ketanItem['gaji Pokok']) ? $ketanItem['gaji Pokok'] : null,
+                        'id'=> $item->id,
+                        'tunjanganumum'=> isset($ketanItem['tunjangan Umum']) ? $ketanItem['tunjangan Umum'] : null,
+                        'tunjanganjabatan'=> isset($ketanItem['tunjangan Jabatan, Fungsional Tertentu']) ? $ketanItem['tunjangan Jabatan, Fungsional Tertentu'] : null,
+                        'tunjanganberas'=> isset($ketanItem['tunjangan Beras']) ? $ketanItem['tunjangan Beras'] : null,
+                        'tunjanganbruto'=> isset($ketanItem['jumlah Bruto']) ? $ketanItem['jumlah Bruto'] : null,
+                        'potonganiwp8'=> isset($ketanItem['potongan IWP 8%']) ? $ketanItem['potongan IWP 8%'] : null,
+                        'jumlahpotongan'=> isset($ketanItem['jumlah Potongan']) ? $ketanItem['jumlah Potongan'] : null,
+                        'jumlahyangdibayarkan'=>  isset($ketanItem['jumlah yang dibayarkan']) ? $ketanItem['jumlah yang dibayarkan'] : null,
                     );
                 }
             }
@@ -6137,7 +6140,16 @@ END as januari
         );
         return $this->respond($result);
     }
-
+    function getGajiPegawaiV2(Request $request) {
+        $data = DB::select(DB::raw("SELECT * FROM pegawai_m pg
+        left join gajipegawaiv2_t gp on gp.objectpegawaifk = pg.id
+        where pg.statusenabled = true and pg.kdprofile = 30 and pg.usereksternal is null and pg.namalengkap not in('-','Programmer Administrator')
+        "));
+        $result = array(
+            'detail'=> $data,
+        );
+        return $this->respond($result);
+    }
     public function saveGajiPegawaiV2(Request $request) {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
@@ -6154,11 +6166,18 @@ END as januari
                 $store = \DB::table('gajipegawaiv2_t')->insert([
                     'norec'=>substr(Uuid::generate(), 0, 32),
                     'objectpegawaifk' => $item['objectpegawaifk'],
-                    'gaji' => $item['gaji'],
-                    'tgl'=> $item['tgl'],
+                    'tglinput'=> $item['tgl'],
                     'kdprofile' => $idProfile,
                     'statusenabled'=> true,
-                    'nip'=> $item['nippns'],
+                    'nip'=> isset($item['nippns'])? $item['nippns'] : null,
+                    'gajipokok' => isset($item['gajipokok'])? $item['gajipokok'] : null,
+                    'tunjanganumum' => isset($item['tunjanganumum'])? $item['tunjanganumum'] : null,
+                    'tunjanganjabatan' => isset($item['tunjanganjabatan'])? $item['tunjanganjabatan'] : null,
+                    'tunjanganberas' => isset($item['tunjanganberas'])? $item['tunjanganberas'] : null,
+                    'tunjanganbruto' => isset($item['tunjanganbruto'])? $item['tunjanganbruto'] : null,
+                    'potonganiwp8' => isset($item['potonganiwp8'])? $item['potonganiwp8'] : null,
+                    'jumlahpotongan' => isset($item['jumlahpotongan'])? $item['jumlahpotongan'] : null,
+                    'jumlahyangdibayarkan' => isset($item['jumlahyangdibayarkan'])? $item['jumlahyangdibayarkan'] : null,
                 ]);
                 
             }
@@ -6180,6 +6199,7 @@ END as januari
             DB::rollBack();
             $result = array(
                 "status" => 400,
+                "e" => $e->getLine(). '/ ' . $e->getMessage(),
                 "by" => 'as@epic',
             );
         }

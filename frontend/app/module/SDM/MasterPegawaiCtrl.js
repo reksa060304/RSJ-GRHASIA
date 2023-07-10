@@ -25,6 +25,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 			$scope.item.idPegawai = undefined;
 			$scope.item.PasswordDefault = undefined;
 			$scope.item.masakerjatambahan = 0;
+			$scope.item.masakerjatambahantahun = 0;
+			$scope.item.masakerjatambahanbulan = 0;
 			$scope.now = new Date();
 			var dataKeluarga = [];
 			var dataPegawai = [];
@@ -297,6 +299,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 							$scope.item.nama = dataCachePegawai.nama;
 							$scope.item.tempatLahir = dataCachePegawai.tempatlahir;
 							$scope.item.masakerjatambahan = dataCachePegawai.masakerjatambahan;
+							$scope.item.noskmasakerjatambahan = dataCachePegawai.noskmasakerjatambahan;
+							$scope.item.tglskmasakerjatambahan = dataCachePegawai.tglskmasakerjatambahan;
 							if (dataCachePegawai.masakerjatambahan !=null){
 								var masakerjatambahan = dataCachePegawai.masakerjatambahan.split("-")
 								$scope.item.masakerjatambahantahun = masakerjatambahan[0]
@@ -3961,6 +3965,8 @@ $scope.formatRupiah = function (value, currency) {
 						pendidikan: $scope.item.pendidikan.id,
 						//pendidikanpegawai: $scope.item.pendidikanpegawai.id,
 						statusperkawinan: $scope.item.statusPerkawinanPegawai.id,
+						noskmasakerjatambahan: $scope.item.noskmasakerjatambahan != undefined ?  $scope.item.noskmasakerjatambahan : null,
+						tglskmasakerjatambahan: $scope.item.tglskmasakerjatambahan != undefined ? moment($scope.item.tglskmasakerjatambahan).format('YYYY-MM-DD HH:mm') : null,
 						npwp: Npwp,
 						agama: $scope.item.agama.id,
 						tglmeninggal: tglMeninggal,
@@ -5083,21 +5089,24 @@ $scope.formatRupiah = function (value, currency) {
 			$scope.$watch('gajilamanya', function (newValue, oldValue) {
 				if (newValue != oldValue) {
 					$scope.itemGajiBerkala = {}
+					if($scope.gajilamanya == undefined){
+						return
+					}
 					medifirstService.get('sdm/get-gaji-pokok-lama?gaji=' + $scope.gajilamanya + '&idpegawai=' + $scope.item.idPegawai).then(function (data) {
 						var datas = data.data.data[0]
 						$scope.itemGajiBerkala.jenissk = $scope.gajilamanya
-						if($scope.gajilamanya == 'KP'){
+						if ($scope.gajilamanya == 'KP') {
 							$scope.itemGajiBerkala.gajiawal = datas.nominal
 							$scope.itemGajiBerkala.tanggalsk = new Date(moment(datas.tglsk).format('YYYY-MM-DD'))
 							$scope.itemGajiBerkala.noskcetak = datas.nosk
 							$scope.itemGajiBerkala.tanggaltmtcetak = new Date(moment(datas.tgltmt).format('YYYY-MM-DD'))
-						}else{
+						} else {
 							$scope.itemGajiBerkala.gajiawal = datas.gajiakhir
 							$scope.itemGajiBerkala.tanggalsk = new Date(moment(datas.tglskbaru).format('YYYY-MM-DD'))
 							$scope.itemGajiBerkala.noskcetak = datas.nosk
 							$scope.itemGajiBerkala.tanggaltmtcetak = new Date(moment(datas.tgltmt).format('YYYY-MM-DD'))
 						}
-						
+
 					})
 				}
 			})
@@ -5108,6 +5117,9 @@ $scope.formatRupiah = function (value, currency) {
 				} 
 				if ($scope.datakeluarga == 'issuamiistri'){
 					tunjangan = (10 / 100)
+				}
+				if($scope.tunjangan == undefined){
+					return
 				}
 				medifirstService.get('sdm/get-gaji-pokok-lama?gaji=' + $scope.tunjangan + '&idpegawai=' + $scope.item.idPegawai).then(function (data) {
 					var datas = data.data.data[0]

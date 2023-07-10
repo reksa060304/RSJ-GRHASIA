@@ -14,7 +14,14 @@ define(['initialize'], function (initialize) {
 			$scope.selectedDetailJenis = [];
 			$scope.tombolSimpanVis = true;
 			FormLoad();
-
+			$scope.monthUngkul = {
+				start: "year",
+				depth: "year"
+			}
+			$scope.yearUngkul = {
+				start: "decade",
+				depth: "decade"
+			}
 			function FormLoad() {
 				$scope.isRouteLoading = true;
 				$scope.listJenisPemeriksaan = [{
@@ -99,7 +106,7 @@ define(['initialize'], function (initialize) {
 					listDetailJenis = a.slice(1, a.length)
 				}
 				$scope.isRouteLoading = false;
-				medifirstService.get('logistik/get-stok-ruangan-so?' +
+				medifirstService.get('logistik/riwayatpegawai?' +
 					'kelompokprodukid=' + kelBarang +
 					'&jeniskprodukid=' + listJenisProd +
 					'&ruanganfk=' + ruanganId +
@@ -166,7 +173,7 @@ define(['initialize'], function (initialize) {
 			$scope.optionsDataStokOpname = {
 				toolbar: ["excel"],
 				excel: {
-					fileName: "Data Stok Ruangan" + moment($scope.now).format('DD/MMM/YYYY'),
+					fileName: "Gaji" + moment($scope.now).format('DD/MMM/YYYY'),
 					allPages: true,
 				},
 				filterable: {
@@ -181,7 +188,13 @@ define(['initialize'], function (initialize) {
 				selectable: 'row',
 				pageable: true,
 				editable: true,
-				columns: [{
+				columns: [
+					{
+						"field": "id",
+						"title": "ID",
+						"width": 150,
+					},
+					{
 						"field": "nippns",
 						"title": "NIP",
 						"width": 150,
@@ -191,8 +204,36 @@ define(['initialize'], function (initialize) {
 						"title": "Nama Pegawai",
 					},
 					{
-						"field": "gaji",
-						"title": "Gaji Total",
+						"field": "gajipokok",
+						"title": "Gaji Pokok",
+					},
+					{
+						"field": "tunjanganumum",
+						"title": "Tunjangan Umum",
+					},
+					{
+						"field": "tunjanganjabatan",
+						"title": "Tunjangan Jabatan, Fungsional Tertentu",
+					},
+					{
+						"field": "tunjanganberas",
+						"title": "Tunjangan Beras",
+					},
+					{
+						"field": "tunjanganbruto",
+						"title": "Jumlah Bruto",
+					},
+					{
+						"field": "potonganiwp8",
+						"title": "Potongan IWP 8%",
+					},
+					{
+						"field": "jumlahpotongan",
+						"title": "jumlah Potongan",
+					},
+					{
+						"field": "jumlahyangdibayarkan",
+						"title": "jumlah yang dibayarkan",
 					},
 				]
 			};
@@ -275,9 +316,16 @@ define(['initialize'], function (initialize) {
 					// if ($scope.dataStokOpname._data[i].selisih != undefined)
 						dataArray.push({
 							"namalengkap": $scope.dataStokOpname._data[i].namalengkap,
-							"gajipokok": $scope.dataStokOpname._data[i].gaji,
-							"objectpegawaifk": $scope.dataStokOpname._data[i].objectpegawaifk,
+							"gajipokok": $scope.dataStokOpname._data[i].gajipokok,
+							"objectpegawaifk": $scope.dataStokOpname._data[i].id,
 							"nippns": $scope.dataStokOpname._data[i].nippns,
+							"tunjanganumum": $scope.dataStokOpname._data[i].tunjanganumum,
+							"tunjanganjabatan": $scope.dataStokOpname._data[i].tunjanganjabatan,
+							"tunjanganberas": $scope.dataStokOpname._data[i].tunjanganberas,
+							"tunjanganbruto": $scope.dataStokOpname._data[i].tunjanganbruto,
+							"potonganiwp8": $scope.dataStokOpname._data[i].potonganiwp8,
+							"jumlahpotongan": $scope.dataStokOpname._data[i].jumlahpotongan,
+							"jumlahyangdibayarkan": $scope.dataStokOpname._data[i].jumlahyangdibayarkan,
 							"tgl": moment($scope.now).format('YYYY-MM-DD HH:mm'),
 						});
 				}

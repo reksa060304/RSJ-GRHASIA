@@ -42,6 +42,11 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     $scope.ListKedudukanPegawai = dataCombo.statuspegawai;
                     $scope.ListStatusPegawai = dataCombo.kategorypegawai;
                     $scope.listJenis = dataCombo.jenispegawai;
+                    $scope.ListJabatanFungsional = dataCombo.jabatan
+                    $scope.listJenisJabatan = dataCombo.datajabatan;
+					$scope.ListJenisPegawai = dataCombo.jenispegawai;
+					$scope.ListKategoriPegawai = dataCombo.kategorypegawai;
+
                 });
 
                 medifirstService.getPart("sysadmin/general/get-combo-pegawai", true, true, 20).then(function (data) {
@@ -270,22 +275,20 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 scrollable: true,
                 resizable:true,
                 columns: [
-                    { field: "nippns", title: "Nip", width: "10%" },
+                    { field: "nippns", title: "NIP", width: "10%" },
                     { field: "namalengkap", title: "Nama Lengkap", width: "25%" },
-                    // {
-                    //   field: "NamaUser",
-                    //   title: "Username", 
-                    //   width: "20%", 
-                    //   hidden: true ,
-                    //   // template: "# for(var i=0; i < usernames.length;i++){# usernames.usernames.namaUser #}"
-                    // },
+                    { field: "golongan", title: "Pangkat Golongan", width: "10%" },
                     { field: "agama", title: "Agama", width: "10%" },
-                    { field: "unitkerja", title: "Unit Kerja", width: "25%" },
-                    { field: "jenispegawai", title: "Jenis Pegawai", width: "20%" },
-                    { field: "jbstruktural", title: "Jabatan Internal", width: "20%", hidden: "true" },
-                    { field: "statuspegawai", title: "Kedudukan pegawai", width: "10%" },
-                    { field: "namakategorypegawai", title: "Status Pegawai", width: "10%" },
-                    { field: "tglmasuk", title: "TglMasuk", width: "10%", 
+                    { field: "jbfungsional", title: "Jabatan", width: "25%" },
+                    { field: "pendidikan", title: "Pendidikan", width: "10%" },
+                    { field: "kedudukan", title: "Status Pegawai", width: "10%" },
+                    // { field: "agama", title: "STR SIP", width: "10%" },
+                    // { field: "unitkerja", title: "Unit Kerja", width: "25%" },
+                    // { field: "jenispegawai", title: "Jenis Pegawai", width: "20%" },
+                    // { field: "jbstruktural", title: "Jabatan Internal", width: "20%", hidden: "true" },
+                    // { field: "statuspegawai", title: "Kedudukan pegawai", width: "10%" },
+                    // { field: "namakategorypegawai", title: "Status Pegawai", width: "10%" },
+                    { field: "tglmasuk", title: "Tanggal Masuk", width: "10%", 
                     template: "<span class='style-left'>{{formatTanggal('#: tglmasuk #')}}</span>" },
                     { field: "nosipstr", title: "No SIP/ STR", width: "10%" },
                     { field: "id", title: "ID Pegawai", width: "10%" },
@@ -514,6 +517,42 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     }
                 }, 500)
             });
+            $scope.$watch('item.jabatanhehe', function (newVal, oldVal) {
+                if (!newVal) return;
+                $timeout.cancel(timeoutPromise);
+                timeoutPromise = $timeout(function () {
+                    if (newVal && newVal !== oldVal) {
+                        applyFilter("objectjabatanfungsionalfk", newVal);
+                    }
+                }, 500)
+            });
+            $scope.$watch('item.jenisJabatan', function (newVal, oldVal) {
+                if (!newVal) return;
+                $timeout.cancel(timeoutPromise);
+                timeoutPromise = $timeout(function () {
+                    if (newVal && newVal !== oldVal) {
+                        applyFilter("objectjenisjabatanfk", newVal);
+                    }
+                }, 500)
+            });
+            $scope.$watch('item.JenisPegawai', function (newVal, oldVal) {
+                if (!newVal) return;
+                $timeout.cancel(timeoutPromise);
+                timeoutPromise = $timeout(function () {
+                    if (newVal && newVal !== oldVal) {
+                        applyFilter("objectjenispegawaifk", newVal);
+                    }
+                }, 500)
+            });
+            $scope.$watch('item.kategoryPegawai', function (newVal, oldVal) {
+                if (!newVal) return;
+                $timeout.cancel(timeoutPromise);
+                timeoutPromise = $timeout(function () {
+                    if (newVal && newVal !== oldVal) {
+                        applyFilter("kategorypegawai", newVal);
+                    }
+                }, 500)
+            });
             $scope.$watch('item.qkedudukanPegawai', function (newVal, oldVal) {
                 if (!newVal) return;
                 if (newVal && newVal !== oldVal) {
@@ -573,7 +612,34 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         }
                     }
                 }
-
+                if (filterField === "kategorypegawai") {
+                    currentFilters.push({
+                        field: filterField,
+                        operator: "eq",
+                        value: filterValue.id
+                    });
+                } else
+                if (filterField === "objectjenispegawaifk") {
+                    currentFilters.push({
+                        field: filterField,
+                        operator: "eq",
+                        value: filterValue.id
+                    });
+                } else
+                if (filterField === "objectjenisjabatanfk") {
+                    currentFilters.push({
+                        field: filterField,
+                        operator: "eq",
+                        value: filterValue.id
+                    });
+                }else
+                if (filterField === "objectjabatanfungsionalfk") {
+                    currentFilters.push({
+                        field: filterField,
+                        operator: "eq",
+                        value: filterValue.id
+                    });
+                }else
                 if (filterField === "namalengkap") {
                     currentFilters.push({
                         field: filterField,
@@ -609,14 +675,14 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 
                     var date = new Date($scope.item.tglMasuk),
                         y = date.getFullYear(),
-                        m = date.getMonth() + 1;
+                        m = date.getMonth()+1;
 
                     if (m < 10) {
                         m = '0' + m;
                     }
 
-                    var filter = m + '-' + y;
-
+                    var filter = y + '-' + m;
+                    console.log(filter);
 
                     currentFilters.push({
                         field: filterField,

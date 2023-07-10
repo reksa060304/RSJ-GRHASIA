@@ -4,32 +4,26 @@
 		<div class="grid_12">
 
 			<div class="grid_12">
-				<div class="grid_2">
-					<label c-label item="item" c-label-text="Ruangan"></label>
-					<input style="width: 100%;" kendo-combo-box k-ng-model="item.ruangan"
-						k-data-text-field="'namaruangan'" k-data-value-field="'id'" k-filter="'contains'"
-						k-auto-bind="false" k-data-source="listRuangan"
-						ng-keypress="($event.which == 13)? cari():item.ruangan" />
-				</div>
-				<div class="grid_2" style="margin-bottom:5px">
-					<label c-label item="item"> Jenis Produk</label>
-					<select kendo-multi-select k-options="selectOptJenisProduk" k-data-source="listJenisProduk"
-						k-data-text-field="'jenisproduk'" k-data-value-field="'id'" k-ng-model="selectedJenisProduk" \>
-					</select>
-				</div>
-				<div class="grid_2" style="margin-bottom:5px">
-					<label c-label item="item">Detail Jenis Produk</label>
-					<select kendo-multi-select k-options="selectOptionsDetailJenis" k-data-source="listDetailJenis"
-						k-data-text-field="'detailjenisproduk'" k-data-value-field="'id'"
-						k-ng-model="selectedDetailJenis" \>
-					</select>
-				</div>
-				<div class="grid_3">
-					<label c-label item="item" c-label-text="namaProduk"></label>
-					<!-- <input style="width: 100%;" kendo-combo-box k-ng-model="item.namaBarang" k-data-text-field="'namaProduk'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listNamaBarang" /> -->
+				<div class="grid_4">
 					<div class="grid_12">
-						<input c-text-box type="input" filter="" class="k-textbox" ng-model="item.namaproduk"
-							ng-keypress="($event.which == 13)? cari():item.namaproduk" />
+						<label c-label item="item" c-label-text="Bulan"></label>
+					</div>
+					<div class="grid_12">
+						<div class="grid_12">
+							<input style="width: 100%" k-options="monthUngkul" k-ng-model="item.buland" kendo-date-picker
+								placeholer="MMMM" k-format="'MMMM'" />
+						</div>
+					</div>
+				</div>
+				<div class="grid_4">
+					<div class="grid_12">
+						<label c-label item="item" c-label-text="Tahun"></label>
+					</div>
+					<div class="grid_12">
+						<div class="grid_12">
+							<input style="width: 100%" k-options="yearUngkul" k-ng-model="item.tahund" kendo-date-picker
+								placeholer="YYYY" k-format="'yyyy'" />
+						</div>
 					</div>
 				</div>
 				<div class="grid_3 pull-right" style="margin-top: 15px">
@@ -38,9 +32,6 @@
 					</div>
 					<div class="grid_4">
 						<button class="c-button error" ng-click="batal()">Batal</button>
-					</div>
-					<div class="grid_4">
-						<button class="c-button" ng-click="daftar()">Daftar SO</button>
 					</div>
 				</div>
 				<!-- </fieldset> -->
@@ -63,7 +54,7 @@
 		<div class="grid_12" ng-show="btnTombol">
 			<div class="grid_6"></div>
 			<div class="grid_3">
-				<button class="btnTemplate1" style="margin-left: 0;" ng-click="Save()" ng-show='tombolSimpanVis'><i
+				<button class="btnTemplate1" style="margin-left: 0;" ng-click="Save()"><i
 						class="fa fa-floppy-o"></i>Simpan</button>
 			</div>
 			<div class="grid_3">

@@ -21,29 +21,61 @@
                     k-on-change="getIsiComboSubUnit()" />
             </div>
             <!-- Sub Unit -->
-            <div class="grid_2">
+            <!-- <div class="grid_2">
                 <label c-label item="item" c-label-text="SubUnitKerja"></label>
                 <input style="width: 100%;" kendo-combo-box k-ng-model="item.qsubUnitKerja" k-data-text-field="'name'"
                     k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listSubUnit" />
-            </div>
+            </div> -->
             <!-- Kedudukan pegawai -->
-            <div class="grid_2">
-                <label c-label item="item" c-label-text="StatusPegawai"></label>
+            <div class="grid_1">
+                <label c-label item="item" c-label-text="Status Pegawai" real></label>
                 <input style="width: 100%;" kendo-combo-box k-ng-model="item.qkedudukanPegawai"
                     k-data-text-field="'statuspegawai'" k-data-value-field="'id'" k-filter="'contains'"
                     k-auto-bind="false" k-data-source="ListKedudukanPegawai" />
             </div>
             <!-- status pegawai -->
             <div class="grid_2">
-                <label c-label item="item" c-label-text="KategoryPegawai"></label>
-                <input style="width: 100%;" kendo-combo-box k-ng-model="item.qstatusPegawai"
-                    k-data-text-field="'kategorypegawai'" k-data-value-field="'id'" k-filter="'contains'"
-                    k-auto-bind="false" k-data-source="ListStatusPegawai" />
+                <div class="grid_12">
+                    <label c-label item="item">Jabatan</label>
+                    <input style="width: 100%;" kendo-combo-box k-ng-model="item.jabatanhehe"
+                        k-data-text-field="'namajabatan'" k-data-value-field="'id'" k-filter="'contains'"
+                        k-auto-bind="false" k-data-source="ListJabatanFungsional" />
+                </div>
+            </div>
+            <div class="grid_1">
+                <div class="grid_12">
+                    <label c-label item="item">Jenis Jabatan</label>
+                </div>
+                <div class="grid_12">
+                    <input kendo-combo-box k-ng-model="item.jenisJabatan" k-data-text-field="'jenisjabatan'"
+                        k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
+                        k-data-source="listJenisJabatan" />
+                </div>
+            </div>
+            <div class="grid_1">
+                <div class="grid_12">
+                    <label c-label item="item">Kategori Jabatan</label>
+                </div>
+                <div class="grid_12">
+                    <input style="width: 100%;" kendo-combo-box k-ng-model="item.JenisPegawai"
+                        k-data-text-field="'jenispegawai'" k-data-value-field="'id'" k-filter="'contains'"
+                        k-auto-bind="false" k-data-source="ListJenisPegawai" />
+                </div>
+            </div>
+            <div class="grid_1">
+                <div class="grid_12">
+                    <label c-label item="item">Jenis Pegawai</label>
+                </div>
+                <div class="grid_12">
+                    <input style="width: 100%;" kendo-combo-box k-ng-model="item.kategoryPegawai"
+                        k-data-text-field="'kategorypegawai'" k-data-value-field="'id'" k-filter="'contains'"
+                        k-auto-bind="false" k-data-source="ListKategoriPegawai" />
+                </div>
             </div>
 
             <!-- Tanggal Masuk -->
             <div class="grid_1">
-                <label c-label item="item" c-label-text="TanggalMasuk"></label>
+                <label c-label item="item" c-label-text="Tanggal Masuk"real></label>
                 <input kendo-date-picker k-ng-model="item.tglMasuk" k-options="monthSelectorOptions"
                     k-format="'MM-yyyy'" style="width: 100%" />
             </div>
@@ -71,14 +103,6 @@
                 <!--   <div kendo-grid id="gridHistoriPegawai" k-data-source="dataHistoriPegawai" options="optHistoriPegawai" k-ng-model="dataSelected" ng-click="klik(dataSelected)"></div> -->
             </div>
         </div>
-    </div>
-    <div class="grid_12">
-           <div class="grid_2">
-                <label c-label item="item" c-label-text="JenisPegawai"></label>
-                <input style="width: 100%;" kendo-combo-box k-ng-model="item.qJenisPegawai"
-                    k-data-text-field="'jenispegawai'" k-data-value-field="'id'" k-filter="'contains'"
-                    k-auto-bind="false" k-data-source="listJenis" />
-            </div>
     </div>
     <div class="grid_12" ng-hide="klikRiwayat" style="float:left;margin-top: 25px">
         <div class="grid_12" style="float:left">
