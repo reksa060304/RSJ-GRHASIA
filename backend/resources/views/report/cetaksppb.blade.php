@@ -62,7 +62,7 @@
         }
         .footer2 {
             text-align: center;
-            position: absolute;
+            position: fixed;
             left: 67%;
             bottom: 35%;
             right: 3%;
@@ -70,19 +70,16 @@
 
         footer {
             /* text-align: center; */
-            position: absolute;
-            bottom: 0;
-            right: 5%;
-        }
-        footer {
+            /* position: fixed; */
             position: fixed;
-            bottom: 0;
+            top: 10%;
+            right: 5%;
         }
     </style>
 
 </head>
 <body>
-        <section style="font-family:Arial;padding:15mm 10mm 15mm 15mm">
+        <section style="font-family:Arial;padding:15mm 10mm 10mm 15mm">
             <table cellspacing="0" cellpadding="0" border="0" width="100%">
                 <tbody>
                     <tr>
@@ -121,11 +118,10 @@
                     </tr>
                 </tbody>
             </table>
-            <br>
             <table width="100%"   cellspacing="0" cellpadding="0" 
-                style="margin-left: 2px">
+                style="margin-left: 2px;padding:0">
                 <tr>
-                    <th style="font-size: 12px" colspan="3">SURAT PERINTAH PENGELUARAN / PENYALURAN BARANG</th>
+                    <th style="font-size: 12px;" colspan="3">SURAT PERINTAH PENGELUARAN / PENYALURAN BARANG</th>
                 </tr>
                 <tr>
                     <th style="font-size: 12px; font-weight: normal" colspan="3">
@@ -161,12 +157,12 @@
             <br>
             <table  cellspacing="0" cellpadding="0" border="1" width="100%">
                 <tr>
-                    <th style="padding: 3px;font-weight: none; font-size: 10pt" width="10%">No. <br> Urut</th>
-                    <th style="padding: 3px;font-weight: none; font-size: 10pt" width="3%">Banyaknya</th>
-                    <th style="padding: 3px;font-weight: none; font-size: 10pt" width="50%">Nama Barang</th>
-                    <th style="padding: 3px;font-weight: none; font-size: 10pt" width="20%">Harga Satuan</th>
-                    <th style="padding: 3px;font-weight: none; font-size: 10pt" width="20%">Jumlah</th>
-                    <th style="padding: 3px;font-weight: none; font-size: 10pt" width="20%">Ket</th>
+                    <th style="padding: 0px 3px 0px 3px;font-weight: none; font-size: 10pt" width="10%">No</th>
+                    <th style="padding: 0px 3px 0px 3px;font-weight: none; font-size: 10pt" width="3%">Banyaknya</th>
+                    <th style="padding: 0px 3px 0px 3px;font-weight: none; font-size: 10pt" width="50%">Nama Barang</th>
+                    <th style="padding: 0px 3px 0px 3px;font-weight: none; font-size: 10pt" width="20%">Harga Satuan</th>
+                    <th style="padding: 0px 3px 0px 3px;font-weight: none; font-size: 10pt" width="20%">Jumlah</th>
+                    <th style="padding: 0px 3px 0px 3px;font-weight: none; font-size: 10pt" width="20%">Ket</th>
                 </tr>
                 @php
                     $no = 1;
@@ -174,66 +170,58 @@
                 @foreach ($data as $item)
                     <tr>
                         <th style="font-weight: none; font-size: 10pt">{{$no++}}</th>
-                        <td style="padding: 3px">{{$item->qtyproduk}}</td>
-                        <td style="padding: 3px">{{$item->namaproduk}}</td>
-                        <td style="padding: 3px">Rp. {{ number_format($item->harganetto,2,",",".")}}</td>
-                        <td style="padding: 3px">RP. {{ number_format($item->harganetto * $item->qtyproduk,2,",",".")}}</td>
+                        <td style="padding: 0px 3px 0px 3px">{{$item->qtyproduk}}</td>
+                        <td style="padding: 0px 3px 0px 3px">{{$item->namaproduk}}</td>
+                        <td style="padding: 0px 3px 0px 3px">Rp. {{ number_format($item->harganetto,2,",",".")}}</td>
+                        <td style="padding: 0px 3px 0px 3px">Rp. {{ number_format($item->harganetto * $item->qtyproduk,2,",",".")}}</td>
                         <td></td>
                     </tr>
                 @endforeach
             </table>
 
-            <div class="footer ">
-                <table>
-                    <tbody>
-                        <tr>
-                            <td width="33%" style="text-align: center"> </td>
-                            <td width="33%">
-                            </td>
-                            <td width="33%">Sleman, {{$reportcontroller->tanggal_indonesia(date('Y-m-d'))}}</td>
-
-                        </tr>
-                        <tr>
-                            <td width="33%">
-                            </td>
-                            <td width="33%">
-                            </td>
-                            <td width="33%" style="text-align: center">Pengguna / Kuasa Pengguna
-                            </td>
-                        </tr>
-                        <tr>
-                            <td width="33%" style="text-align: center"> </td>
-                            <td width="33%"></td>
-                            <td width="33%" style="text-align: center">
-                                Pejabat Penatausahaan Barang
-                            </td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td height="100px"> </td>
-                        </tr>
-                        <tr>
-                            <td style="text-align: center"></td>
-                            <td style="text-align: center">&nbsp;</td>
-                            <td style="text-align: center">
-                                <br>
-                                <u>drg. RIRIN PUSPANDARI, M. Kes.</u>
-                                <br>
-                                NIP. 19670530 199403 2 003
-                                {{-- <br>{!! $res['d'][0]->namadokter == null ? ($peg!=null?$peg->namalengkap:'-'): $res['d'][0]->namadokter !!} --}}
-                                {{-- <br>{!! $item[3003998] !!} --}}
-                            </td>
-                        </tr>
-                        
-                    </tbody>
-                </table>
-                {{-- <p
-            style="font-size:10px;color: rgb(173, 173, 173); position: absolute; bottom: 30%; left: 3%; width: 50%; text-align: center;">
-            <i>Dokumen ini ditandatangani secara elektronik menggunakan sertifikat elektronik
-                yang diterbitkan oleh Balai Sertifikasi Elektronik (BSrE) Badan Siber dan Sandi Negara</i></p> --}}
-            </div>
             
+            <div class="footer">
+            <table>
+                <tbody>
+                    <tr>
+                        <td width="33%" style="text-align: center"> </td>
+                        <td width="33%">
+                        </td>
+                        <td width="33%" style="margin: 0">Sleman, {{$reportcontroller->tanggal_indonesia(date('Y-m-d', strtotime($data[0]->tglorder)))}}</td>
+                    </tr>
+                    <tr>
+                        <td width="33%">
+                        </td>
+                        <td width="33%">
+                        </td>
+                        <td width="33%" style="text-align: center">Pengguna / Kuasa Pengguna
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="33%" style="text-align: center"> </td>
+                        <td width="33%"></td>
+                        <td width="33%" style="text-align: center">
+                            Pejabat Penatausahaan Barang
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td height="50px"> </td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center"></td>
+                        <td style="text-align: center">&nbsp;</td>
+                        <td style="text-align: center">
+                            <br>
+                            <u>drg. RIRIN PUSPANDARI, M. Kes.</u>
+                            <br>
+                            NIP. 19670530 199403 2 003
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
         </section>
         
     </body>

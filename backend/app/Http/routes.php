@@ -703,6 +703,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('emr/get-emr-transaksi-detail', 'EMR\EMRController@getEMRTransaksiDetail');
           Route::post('emr/get-emr-transaksi-details', 'EMR\EMRController@getEMRTransaksiDetails');
           Route::get('report/cetak-cppt-ranap-rev','Report\ReportController@cetakCPPTRanapRev');
+          Route::get('report/get-cetak-rekon','Report\ReportController@cetakRekon');
           Route::get('emr/get-datacombo-part-pegawai', 'EMR\EMRController@getDataComboPegawaiPart');
           Route::get('emr/get-datacombo-part-ruangan', 'EMR\EMRController@getDataComboRuanganPart');
           Route::get('emr/get-datacombo-part-diagnosa', 'EMR\EMRController@getDataComboDiagnosaPart');
@@ -1527,6 +1528,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::post('logistik/get-stok-ruangan-so-from-fileexcel', 'Logistik\LogistikController@getStokRuanganSOFromFileExcel');
             Route::post('gaji/get-gaji-pegawai', 'SDM\SumberDayaManusiaController@gajiPegawaiV2');
             Route::post('gaji/save-data-gaji-pegawai', 'SDM\SumberDayaManusiaController@saveGajiPegawaiV2');
+            Route::get('logistik/riwayatpegawai','SDM\SumberDayaManusiaController@getGajiPegawaiV2');
             Route::post('logistik/delete-terima-barang-suplier', 'Logistik\LogistikController@DeletePenerimaanSuplier');
             Route::post('logistik/delete-data-usulan-ruangan', 'Logistik\LogistikController@saveBatalUsulanPermintaanBarang');
             Route::post('logistik/delete-data-rencana-usulan-ruangan', 'Logistik\LogistikController@hapusDataRUPB');
