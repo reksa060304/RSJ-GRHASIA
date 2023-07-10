@@ -6,7 +6,9 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             $scope.dataVOloaded = true;
             $scope.item = {};
             $rootScope.isOpen = true;
-            
+            if ($state.params.noOrder != '-') {
+                $scope.noPesanan = $state.params.noOrder
+            }
             $scope.listwaktuPakai = [
                 {id:1,waktupakai: 'Pagi'},
                 {id:2,waktupakai: 'Siang'},
@@ -62,7 +64,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     }
                     var cito = kendoGrid.dataItem(row).cito;
                     if (cito != null && cito == '✔') {
-                         $(row.cells[15]).addClass("red");
+                         $(row.cells[16]).addClass("red");
                     }else{
                         // $(row.cells[1]).addClass("red");
                     }
@@ -108,6 +110,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 //     }
                 // },
                 selectable: 'row',
+                sortable: true,
                 scrollable: true,
                 pageable: true,
                 groupable: true,  
@@ -248,8 +251,6 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         $scope.noCm = chacePeriode[2]
                     if (chacePeriode[3] != null)
                         $scope.namaPasien = chacePeriode[3]
-                    if (chacePeriode[4] != null)
-                        $scope.noPesanan = chacePeriode[4]
                     if (chacePeriode[5] != null)
                         $scope.departemen = chacePeriode[5]
                     if (chacePeriode[6] != null)
@@ -257,6 +258,8 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     if (chacePeriode[7] != null)
                         $scope.checkPasienRajal = chacePeriode[7]
                         
+                        // if (chacePeriode[4] != null)
+                        //     $scope.noPesanan = chacePeriode[4]
 
 
                 }
@@ -370,9 +373,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 if ($scope.namaPasien != undefined) {
                     namaPasien = '&namaPasien=' + $scope.namaPasien
                 }
-                if ($state.params.noOrder != '-') {
-                    $scope.noPesanan = $state.params.noOrder
-                }
+
                 var noPesanan = ''
                 if ($scope.noPesanan != undefined) {
                     noPesanan = '&noPesanan=' + $scope.noPesanan
@@ -419,6 +420,10 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 var tglAkhir = moment($scope.untilDate).format('YYYY-MM-DD');
                 medifirstService.get('farmasi/get-daftar-order?tglAwal=' + tglAwal + '&tglAkhir=' + tglAkhir + nocm + namaPasien + noPesanan + ruanganId + departemenId + '&statusId=' + status + depoId + checkPasienRanap + checkPasienRajal).then(function (e) {
                     // findPasien.findOrderObat($scope.noCm, $scope.ruanganId, $scope.startDate, $scope.untilDate).then(function(e) {
+                    var verif = 0
+                    var nunggu = 0
+                    var raciks = 0
+                    var nonraciks = 0
                     for (var i = 0; i < e.data.length; i++) {
                         e.data[i].no = i + 1
                         var tanggal = $scope.now;
@@ -426,6 +431,8 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         var umur = DateHelper.CountAge(tanggalLahir, tanggal);
                         e.data[i].umur = umur.year + ' thn ' + umur.month + ' bln ' + umur.day + ' hari'
                         //itungUsia(dat.data[i].tgllahir)
+
+                        
                         if (e.data[i].noorder == e.data[i].noresep) {
                             if (e.data[i].statusorder == 'Menunggu')
                                 e.data[i].statusorder = 'Verifikasi'
@@ -462,7 +469,23 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                             e.data[i].isbayar = "Belum dibayar"
                         }
 
+                        if (e.data[i].statusorder == 'Verifikasi') {
+                            verif += 1
+                        }
+                        if (e.data[i].statusorder == 'Menunggu') {
+                            nunggu += 1
+                        }
+                        if (e.data[i].jenis == 'Racikan') {
+                            raciks += 1
+                        }
+                        if (e.data[i].jenis == 'Non Racikan') {
+                            nonraciks += 1
+                        }
                     }
+                    $scope.verif = verif
+                    $scope.nunggu = nunggu
+                    $scope.raciks = raciks
+                    $scope.nonraciks = nonraciks
                     $scope.isRouteLoading = false
                     e.data.sort(function (a, b) {
                         if (a.noantri < b.noantri) { return -1; }
@@ -482,7 +505,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     1: tglAkhir,
                     2: $scope.noCm != undefined ? $scope.noCm : null,
                     3: $scope.namaPasien != undefined ? $scope.namaPasien : null,
-                    4: $scope.noPesanan != undefined ? $scope.noPesanan : null,
+                    4: null,
                     5: $scope.departemen != undefined ? $scope.departemen : null,
                     6: $scope.checkPasienRanap !=undefined ? $scope.checkPasienRanap : null,
                     7: $scope.checkPasienRajal !=undefined ? $scope.checkPasienRajal : null
@@ -942,6 +965,12 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             $scope.verifikasi = function () {
                         // debugger;
                         if ($scope.item.statusorder == 'Menunggu') {
+                            var notf = {
+                                data : $scope.item.noorder
+                            }
+                            medifirstService.postNonMessage('farmasi/disable-notif', notf).then(function(){
+
+                            })
                             medifirstService.get("farmasi/get-penjagaan-verif-eresep?noorder=" + $scope.item.noorder ).then(function (e) {
                     
 
@@ -2258,6 +2287,21 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 }
                 window.open(config.baseApiBackend + "report/cetak-tilik?noorder=" + noresep + "&norec_apd=" + norec_apd +
                     "&nocm=" + nocm + '&kodeprofile=' + profile + tglmalam + tglpagi + tglsiang + waktumalam + waktupagi + waktusiang);
+            }
+            $scope.copyResep = function(){
+                console.log($scope.item);
+                if (Object.keys($scope.item).length == 0) {
+                    toastr.error('Pilih data Pasien!')
+                    return
+                }
+                window.open("/app/#/CopyResepCtrl/" + $scope.item.norec_order)
+                
+            }
+            $scope.tombolotomatis = function(){
+                var data = {}
+                medifirstService.post('updatebro', data).then(function(data){
+                    console.log(data)
+                })
             }
             //** BATAS SUCI */
         }

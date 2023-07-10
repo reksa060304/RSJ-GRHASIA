@@ -6773,4 +6773,28 @@ class PelayananResepController extends ApiController
         }
         return $this->respond($result);
     }
+    public function updatebro(Request $request)
+    {
+        try {
+            $data = DB::select(DB::raw("
+            SELECT ru.namaruangan, ru.objectdepartemenfk,sr.noresep, v.tanggal, v.namalengkap FROM strukorder_t so 
+            inner join (SELECT * FROM (SELECT x.tanggal,split_part(x.split, '/ Noregistrasi : ', 1)as split, x.keterangan, x.namalengkap FROM (SELECT pgg.namalengkap, lu.tanggal, lu.keterangan, split_part(lu.keterangan,'Rubah Status Selasai Order Resep Elektronik No Order: ' , 2) as split FROM logginguser_t lu 
+            inner join loginuser_s pg on pg.id = lu.objectloginuserfk
+            inner join pegawai_m pgg on pgg.id = pg.objectpegawaifk
+            where lu.keterangan ilike 'Rubah Status Selasai Order Resep Elektronik No Order: %' and lu.tanggal between '2023-06-01' and '2023-06-30') as x)as xx where xx.split not ilike '%/%')as v on v.split = so.noorder
+            inner join strukresep_t sr on sr.orderfk = so.norec
+            inner join ruangan_m ru on ru.id = so.objectruanganfk
+
+            where sr.tglresep::date between '2023-06-01' and '2023-06-30' and sr.tglselesai is null and sr.namaselesai is null and ru.objectdepartemenfk not in(24,16) and so.statusorder not in(0,1) limit 100
+            "));
+            $data2 = [];
+            foreach ($data as $d) {
+                $data2 = DB::update("UPDATE strukresep_t SET tglselesai='$d->tanggal', namaselesai= '$d->namalengkap' WHERE noresep = '$d->noresep';");
+            }
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+        return $this->respond($data2);
+
+    }
 }

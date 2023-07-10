@@ -933,6 +933,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('sysadmin/master/get-data-riwayatkamar', 'SysAdmin\Master\MasterController@getLoadRiwayatKamarDll');
         // Route::group(['prefix' => 'farmasi'], function () {
           Route::get('farmasi/get-daftar-order', 'Farmasi\ResepElektronikController@getDaftarOrder');
+          Route::post('farmasi/disable-notif','Farmasi\ResepElektronikController@disabledNotif');
           Route::get('farmasi/get-penjagaan-order-sudah-verif', 'Farmasi\ResepElektronikController@getPenjagaanOrderSudahVerif');
           Route::get('farmasi/get-alergi', 'Farmasi\ResepElektronikController@getAlergi');
           Route::get('farmasi/get-daftar-detail-order', 'Farmasi\ResepElektronikController@getDaftarDetailOrder');

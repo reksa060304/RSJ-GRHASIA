@@ -125,7 +125,7 @@ class ResepElektronikController extends ApiController
                         so.tglorder,pg.namalengkap,ru2.namaruangan,so.statusorder,so.namapengambilorder,so.noregistrasifk,pd.noregistrasi,
                         kp.kelompokpasien,apd.norec AS norec_apd,pd.tglregistrasi,ps.tgllahir,kl.namakelas,kl. ID AS klid,so.tglambilorder,
                         sr.noresep,aa.noantri AS aanoantri,aa.jenis AS aajenis,sr.norec AS norecresep,sr.noresep,so.nourutruangan AS noruangan,
-                        so.isreseppulang as checkreseppulang,so.isambilobat,so.cito,so.no_hp as nohp,so.alamat_kirim AS alamatlengkap,so.isordergrab,
+                        so.isreseppulang as checkreseppulang,so.isambilobat,so.cito,so.no_hp as nohp,alm.alamatlengkap AS alamatlengkap,so.isordergrab,
                         so.iskurir , pd.statusschedule as noreservasi,case when sp.norec is not null then true else false end as isbayar, pd.norec norec_pd
                  FROM strukorder_t AS so
                  INNER JOIN pasien_m AS ps ON ps.id = so.nocmfk
@@ -939,6 +939,39 @@ class ResepElektronikController extends ApiController
                         'nokirimgrab' => $request['nokirimgrab']
                     ]
                 );
+
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+
+        $transMessage = "Update Status";
+
+        if ($transStatus == 'true') {
+            $transMessage = $transMessage . " Berhasil";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "by" => 'as@epic',
+            );
+        } else {
+            $transMessage = $transMessage . " Gagal!!";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "by" => 'as@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    function disabledNotif(Request $request) {
+        $kdProfile = $this->getDataKdProfile($request);
+        DB::beginTransaction();
+        $dataReq = $request->all();
+        try{
+            DB::table('listnotif')->where('jenis', 'Order Farmasi')->where('judul', 'ilike','%'. $request['data'].'%')->update([
+                'statusenabled'=> false
+            ]);
 
             $transStatus = 'true';
         } catch (\Exception $e) {

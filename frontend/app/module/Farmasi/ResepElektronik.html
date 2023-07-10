@@ -16,7 +16,7 @@
     }
 </style>
 <div class="panel panel-default">
-    <div class="panel-body">
+    <div class="panel-body" >
         <div class="grid_12">
             <div class="grid_3">
                 <div class="grid_12">
@@ -142,13 +142,51 @@
 </div>
 <div class="panel panel-default">
     <!--<div class="panel-heading">{{title}}</div>-->
-    <div class="panel-body" style="padding:0px">
+    <div class="panel-body" style="padding:0px" >
         <div class="grid_12">
             <!-- <kendo-grid k-groupable="'true'" k-ng-model="item" k-data-source="patienGrids" k-selectable="'row'"
                 k-sortable="'true'" k-columns="arrColumnGridResepElektronik" ng-dblclick="detailVerif()"></kendo-grid> -->
                       <kendo-grid id="kGrid" data-source="patienGrids"  k-resizable="'true'" k-groupable="'true'" k-selectable="'row'" options="arrColumnGridResepElektronik"
                     k-sortable="'true'" k-ng-model="item" ng-click="KlikGrids(item)" ng-dblclick="detailVerif()">
             </kendo-grid>
+        </div>
+        <div class="grid_12">
+            <div class="grid_3">
+                <div class="grid_12">
+                    <label c-label item="item">Menunggu</label>
+                </div>
+                <div class="clear"></div>
+                <div class="grid_12">
+                    <input c-text-box type="input" filter="" class="k-textbox" ng-model="nunggu" disabled />
+                </div>
+            </div>
+            <div class="grid_3">
+                <div class="grid_12">
+                    <label c-label item="item">Verifikasi</label>
+                </div>
+                <div class="clear"></div>
+                <div class="grid_12">
+                    <input c-text-box type="input" filter="" class="k-textbox" ng-model="verif" disabled />
+                </div>
+            </div>
+            <div class="grid_3">
+                <div class="grid_12">
+                    <label c-label item="item">Racikan</label>
+                </div>
+                <div class="clear"></div>
+                <div class="grid_12">
+                    <input c-text-box type="input" filter="" class="k-textbox" ng-model="raciks" disabled />
+                </div>
+            </div>
+            <div class="grid_3">
+                <div class="grid_12">
+                    <label c-label item="item">Non Racikan</label>
+                </div>
+                <div class="clear"></div>
+                <div class="grid_12">
+                    <input c-text-box type="input" filter="" class="k-textbox" ng-model="nonraciks" disabled />
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -246,6 +284,12 @@
     <div class="grid_2" style="margin-top: 5px">
         <button class="c-button" ng-click="preview()">Preview Order</button>
     </div>
+    <div class="grid_2" style="margin-top: 5px">
+        <button class="c-button" ng-click="copyResep()">Copy Resep</button>
+    </div>
+    <!-- <div class="grid_2" style="margin-top: 5px">
+        <button class="c-button" ng-click="tombolotomatis()">otomatis</button>
+    </div> -->
     <!-- <div class="grid_2">
         <c-button style="width: 100%; padding:0px, margin:0px;" item="item" position="'right'" click="detailVerif">
             <span class="title"><label c-label c-label-text='detailVerikasi' font-size="13"></label></span>

@@ -14941,7 +14941,7 @@ class LogistikController extends ApiController{
             ) as x group by kdproduk, namaproduk, satuanstandar, hargabeli, hargajual, idruangan, qtyproduk
         ) as y 
         group by kdproduk, namaproduk, satuanstandar, round(hargajual), round(hargabeli)
-        order by qtyfarmasi desc, qtygudang desc
+        order by namaproduk asc,qtyfarmasi desc, qtygudang desc
         limit $jumlah    
         "));
 

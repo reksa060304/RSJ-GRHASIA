@@ -8,7 +8,7 @@ define(['initialize'], function (initialize) {
             $scope.now = new Date();
             $scope.date = new Date();
             $scope.dataSelected = {};
-            $scope.item.jmlRows = 50;
+            $scope.item.jmlRows = 1000;
             init();
 
             function init() {

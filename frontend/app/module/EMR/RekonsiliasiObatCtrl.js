@@ -1,4 +1,4 @@
-define(['initialize'], function (initialize) {
+define(['initialize','Configuration'], function (initialize, configuration) {
     'use strict';
     initialize.controller('RekonsiliasiObatCtrl', ['$q', '$rootScope', '$scope', 'ModelItem', '$state', 'CacheHelper', 'DateHelper', 'MedifirstService',
         function ($q, $rootScope, $scope, ModelItem, $state, cacheHelper, dateHelper, medifirstService) {
@@ -20,7 +20,7 @@ define(['initialize'], function (initialize) {
             var dataAlergi = []
             var dataPO = []
             var dataRO = []
-            $scope.isCetak = true
+            $scope.isCetakV = true
             var norecEMR = ''
             loadCombo()
             function loadCombo(){
@@ -125,6 +125,8 @@ define(['initialize'], function (initialize) {
                 $scope.cc.DataNoregis = chacePeriode[12]
                 $scope.cc.tglLahir = chacePeriode[18]
                 $scope.cc.alamat = chacePeriode[15]
+                $scope.cc.dokterdpjp = chacePeriode[16];
+
                 if (nomorEMR == '-') {
                     $scope.cc.norec_emr = '-'
                 } else {
@@ -142,6 +144,7 @@ define(['initialize'], function (initialize) {
                 // $scope.itemd.tanggalmulai = moment($scope.now).format('YYYY-MM-DD')
                 // $scope.itemd.tanggalstop = moment($scope.now).format('YYYY-MM-DD')
                 // 
+                $scope.item.obj[100508] = $scope.cc.dokterdpjp
                 medifirstService.get('emr/get-rekonsiliasi-obat?noemr=' + nomorEMR + "&noregistrasi="+$scope.cc.noregistrasi).then(function (data) {
                     dataAlergi = data.data.reaksialergi
                     for (let i = 0; i < dataAlergi.length; i++) {
@@ -1213,6 +1216,32 @@ define(['initialize'], function (initialize) {
                     $scope.rslain = true
                 }
             })
+            $scope.cetakBlade = function () {
+                if (norecEMR == '') {
+                    toastr.error('Dokumen belum pernah di isi')
+                    return
+                }
+                // if ($scope.item.obj[3003998] != undefined) {
+                //     $scope.listPegawai.add($scope.item.obj[3003998])
+                //     $scope.item.pegawai = $scope.item.obj[3003998]
+                // }
+                // if (pegawai == undefined) {
+                //     return
+                // }
+                var local = JSON.parse(localStorage.getItem('profile'))
+                var nama = medifirstService.getPegawaiLogin().namaLengkap
+
+                window.open(configuration.baseApiBackend + 'report/get-cetak-rekon?nocm=' + $scope.cc.nocm +
+                    '&norec_apd=' + $scope.cc.norec +
+                    '&emr=' + norecEMR +
+                    '&emrfk=' + $scope.cc.emrfk +
+                    '&kdprofile=' + local.id +
+                    '&nama=' + nama +
+                    // '&isttd=true' +
+                    // '&pegawaittd=' + pegawai.value +
+                    '&noregistrasi=' + $scope.cc.noregistrasi +
+                    '&norec_pd=' + $scope.cc.norec_pd, '_blank');
+            }
         }
     ]);
 });
