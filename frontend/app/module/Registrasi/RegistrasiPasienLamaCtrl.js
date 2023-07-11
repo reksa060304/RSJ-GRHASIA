@@ -114,7 +114,7 @@ define(['initialize'], function (initialize) {
                     ayah = "&namaAyah=" + $scope.item.namaAyah
                 } var tglLahirs = ""
                 if ($scope.item.tglLahir != undefined) {
-                    tglLahirs = "tglLahir=" + DateHelper.formatDate($scope.item.tglLahir, 'YYYY-MM-DD');
+                    tglLahirs = "&tglLahir=" + DateHelper.formatDate($scope.item.tglLahir, 'YYYY-MM-DD');
                 }
 
                 medifirstService.get("registrasi/get-pasien?" +
