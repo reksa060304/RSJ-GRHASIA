@@ -10886,24 +10886,40 @@ class EMRController  extends ApiController
         SELECT ed.id, ed.caption, empd.value, empd.emrpasienfk FROM emrpasiend_t empd 
         inner join emrd_t ed on ed.id = empd.emrdfk
 				inner join emrpasien_t et on et.noemr = empd.emrpasienfk
-        where ed.id in (120263, 120113, 120114, 120115, 120116, 120309, 120117) and et.noregistrasifk = '$request[noregistrasi]' and empd.statusenabled = true and et.statusenabled = true"
+        where ed.id in (120007, 120263, 120113, 120114, 120115, 120116, 120309, 120117) and et.noregistrasifk = '$request[noregistrasi]' and empd.statusenabled = true and et.statusenabled = true"
         ));
 
         $data3 = DB::select(DB::raw(" 
         SELECT ed.id, ed.caption, empd.value, empd.emrpasienfk FROM emrpasiend_t empd 
         inner join emrd_t ed on ed.id = empd.emrdfk
 				inner join emrpasien_t et on et.noemr = empd.emrpasienfk
-        where ed.id in ( 120007, 120263, 120113, 120114, 120115, 120116, 120309, 120117) and et.noregistrasifk = '$request[noregistrasi]' and empd.statusenabled = true and et.statusenabled = true"
+        where ed.id in ( 120263, 120264, 120265, 120266, 120267) and et.noregistrasifk = '$request[noregistrasi]' and empd.statusenabled = true and et.statusenabled = true"
+        ));
+
+        $data4 = DB::select(DB::raw(" 
+        SELECT ed.id, ed.caption, empd.value, empd.emrpasienfk FROM emrpasiend_t empd 
+        inner join emrd_t ed on ed.id = empd.emrdfk
+				inner join emrpasien_t et on et.noemr = empd.emrpasienfk
+        where ed.id in ( 120118, 120119, 120120, 120121,120122, 120123, 120124, 120125, 120126, 120127, 120128, 120129, 120130, 120131, 120132, 120133, 120134, 120135, 120136,
+         120137, 120138, 120139, 120140, 120141, 120142, 120143, 120144, 120145, 120146, 120147, 120148, 120149, 120150, 120151, 120152, 120153, 120150, 120151, 120152, 120153,
+          120154, 120155, 120156, 120157, 120158, 120159, 120160, 120161, 120162, 120163, 120164, 120165, 120166, 120167, 120168, 120169, 120170, 120171, 120172, 120173, 120174, 
+          120175, 120176, 120177, 120178, 120179, 120180, 120181, 120182, 120183, 120184, 120185, 120186, 120187, 120188, 120189, 120190, 120191, 120192, 120193, 120194, 120195,
+          120196, 120197, 120198, 120199, 120200, 120233, 120234, 120201, 120202, 120203, 120204, 120205, 120206, 120207, 120208, 120209, 120210, 120211, 120212, 120213, 120214, 
+          120215, 120216, 120217, 120218, 120219, 120220, 120221, 120222, 120223, 120224, 120225, 120226, 120227, 120228, 120229, 120230, 120232, 119998, 120236, 120235, 119999,
+           120238, 120237, 120239, 120240, 120241, 120242, 120243, 120244, 120245, 120246, 120247, 120248, 120249, 120250, 120251, 120252, 1202453) 
+           and et.noregistrasifk = '$request[noregistrasi]' and empd.statusenabled = true and et.statusenabled = true"
         ));
         $result = array(
             'data2'=> $data2,
             'data3'=> $data3,
+            'data4'=> $data4,
             'data'=> $data,
-            'as'=> 'Fizi@Epic'
+            'as'=> 'ia@Epic'
         );
    
         return $this->respond($result);
     }
+
   public function getLembarMasukKeluar (Request $request)
     {
         $noemr = $request['noemr'];

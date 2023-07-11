@@ -1149,7 +1149,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         "Suhu ="+ datas[0].suhu+"°C"+", "+
                         "Pernapasan ="+ datas[0].pernapasan+"x/menit"+", "+
                         "Tinggi Badan ="+ datas[0].tb+"cm"+", "+
-                        "Berat Badan ="+ datas[0].tb+"kg"+", "
+                        "Berat Badan ="+ datas[0].bb+"kg"+", "
 
                     }
                     

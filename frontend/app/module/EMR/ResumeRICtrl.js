@@ -158,8 +158,358 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 medifirstService.get("emr/get-ringkasan-pulang21?noregistrasi=" + $scope.cc.noregistrasi).then(
                     function (dat) {
                     $scope.item.alasanDirawat  = dat.data.data[0].value
+                    $scope.item.diagnosamasuktext = dat.data.data3[0].value
+                    $scope.item.axis2 = dat.data.data3[1].value
+                    $scope.item.axis3 = dat.data.data3[2].value
+                    $scope.item.axis4 = dat.data.data3[3].value
+                    $scope.item.axis5 = dat.data.data3[4].value
+                    var a = ""
+                    var b = ""
+                    var ha = dat.data.data2
+                    var psi = dat.data.data4
+                    var td = "";
+                    var nadi = "";
+                    var suhu = "";
+                    var res = "";
+                    var sat = "";
+                    var generalis = "";
+                    var kesadaran = "";
+                    var orientasi = "";
+                    // $scope.item.hasilfisik= "Tekanan Darah : "+ ha[0]+ " "
+                    for (var i = dat.data.data2.length - 1; i >= 0; i--) {
+                        if(ha[i].id == 120113){
+                            td = "Tekanan Darah : " + ha[i].value
+                        }
+                        if(ha[i].id== 120114){
+                            nadi = "Nadi : " + ha[i].value
+                        }
+                        if(ha[i].id== 120115){
+                            suhu = "Suhu : " + ha[i].value
+                        }
+                        if(ha[i].id== 120116){
+                            res = "Respirasi : " + ha[i].value
+                        }
+                        if(ha[i].id== 120309){
+                            sat = "Saturasi : " + ha[i].value
+                        }
+                        if(ha[i].id== 120117){
+                            generalis = " Status Generalis dan Neurologis : " + ha[i].value
+                        }
+                    }
+                    $scope.item.hasilfisik = td + ", "+ nadi + ", "+ suhu + ", "+ res + ", "+ sat + ", "+ generalis
+                    // $scope.item.hasilfisik = a.slice(1, a.length)
                     // console.log ($scope.item.alasanDirawat)
                    // $scope.item.hasilfisik = dat.data.data2[0].value, dat.data.data2[1].value,  dat.data.data2[2].value,  dat.data.data2[3].value,  dat.data.data2[4].value, dat.data.data2[5].value
+
+
+                //Hasil Psikiatri
+                var ksm = ""
+                var aA = ""
+                var bA = ""
+                var kesadaranlain =""
+                var orang = ""
+                var tempat = ""
+                var waktu = ""
+                var situasi = ""
+                var aD = ""
+                var bD = ""
+                var aD1 = ""
+                var bD1 = ""
+                var disaktif =""
+                var hiperaktif = ""
+                var disaktiflain =""
+                var sikap = ""
+                var sikaplain = ""
+                var dbn =""
+                var hipoaktif =""
+                var aE = ""
+                var bE = ""
+                var bentukpikir = ""
+                var isipikir =""
+                var isipikirlain =""
+                var aE1 = ""
+                var bE1 = ""
+                var aE2 = ""
+                var bE2 = ""
+                var aE3 = ""
+                var bE3 = ""
+                var kualitatif = ""
+                var kuantitatif =""
+                var kualitatiflain =""
+                var kuantitatiflain =""
+                var prosespikir =""
+                var aF = ""
+                var bF = ""
+                var mood =""
+                var moodlain =""
+                var aG = ""
+                var bG = ""
+                var afek =""
+                var afeklain =""
+                var aH = ""
+                var bH = ""
+                var persepsi =""
+                var persepsilain =""
+                var aI = ""
+                var bI = ""
+                var memori =""
+                var memorilain =""
+                var aJ = ""
+                var bJ = ""
+                var Intelegensi =""
+                var intelegensilain=""
+                var aK = ""
+                var bK = ""
+                var hubungan=""
+                var aL = ""
+                var bL = ""
+                var perhatian=""
+                var aM = ""
+                var bM = ""
+                var insight =""
+                   for (var i = dat.data.data4.length - 1; i >= 0; i--) {
+                    //A. Kesan Umum
+                    if(psi[i].id == 120118){
+                        ksm = "A. Kesan Umum : " + psi[i].value
+                    }
+                    //B. Kesadaran
+                    if(psi[i].id== 120120 || psi[i].id== 120121 || psi[i].id== 120122 || psi[i].id== 120123
+                        || psi[i].id== 120124 || psi[i].id== 120125 || psi[i].id== 120126 ||psi[i].id== 120127
+                        || psi[i].id== 120128 || psi[i].id== 120129 && psi[i].value==true){
+                           
+                                var cA = dat.data.data4[i].caption
+                                bA = ", " + cA
+                                aA  = aA + bA
+                    }
+                    if(psi[i].id== 120130){
+                        kesadaranlain = "Lainnya : " + psi[i].value
+                    }
+                    
+                    //C. Orientasi
+                    if(psi[i].id== 120131){
+                        orang = "Orang : " + psi[i].value + ","
+                    }
+                    if(psi[i].id== 120132){
+                        tempat = "Tempat : " + psi[i].value + ","
+                    }
+                    if(psi[i].id== 120133){
+                        waktu = "Waktu : " + psi[i].value + ","
+                    }
+                    if(psi[i].id== 120133){
+                        situasi = "Situasi : " + psi[i].value+ ","
+                    }
+
+                    //D. Sikap Dan Tingkah Laku :
+                    if(psi[i].id== 120135){
+                        dbn = psi[i].caption+ ","
+                    }
+                    if(psi[i].id== 120136){
+                        hipoaktif =  psi[i].caption+ ","
+                    }
+                    //Disaktif
+                    if(psi[i].id== 120137 && psi[i].value==true){
+                        if(psi[i].id== 120138 || psi[i].id== 120139 || psi[i].id== 120140 || psi[i].id== 120141 ||psi[i].id== 120142
+                            || psi[i].id== 120143 || psi[i].id== 120144 ||  psi[i].id== 120145 || psi[i].id== 120146 || psi[i].id== 120147
+                            && psi[i].value==true){
+                        
+                                var cD = dat.data.data4[i].caption
+                                bD = ", " + cD
+                                aD  = aD + bD
+
+                        }
+                     }
+                     if(psi[i].id== 120148){
+                        disaktiflain = "Lainnya : " + psi[i].value
+                    }
+                     //Hiperaktif
+                     if(psi[i].id== 120149 && psi[i].value==true){
+                        if(psi[i].id== 120150 || psi[i].id== 120151 || psi[i].id== 120152 && psi[i].value==true){
+                        
+                                var cD1 = dat.data.data4[i].caption
+                                bD1 = ", " + cD1
+                                aD1  = aD1 + bD1
+
+                        }
+                     }
+
+                    if(psi[i].id== 120153){
+                        sikaplain = "Lainnya : " + psi[i].value
+                    }
+
+                      //E. Proses Pikir :
+                      //Bentuk Pikir
+                      if(psi[i].id== 120155 || psi[i].id== 120156 || psi[i].id== 120157 || psi[i].id== 120158
+                        || psi[i].id== 120159 || psi[i].id== 120160 && psi[i].value==true){
+                           
+                                var cE = dat.data.data4[i].caption
+                                bE = ", " + cE
+                                aE  = aE + bE
+                         }
+
+                    //Isi Pikir
+                    if(psi[i].id== 120162 || psi[i].id== 120163 || psi[i].id== 120164 || psi[i].id== 120165
+                        || psi[i].id== 120166 || psi[i].id== 120167 || psi[i].id== 120168 ||psi[i].id== 120169
+                        || psi[i].id== 120170 || psi[i].id== 120171  || psi[i].id== 120172 || psi[i].id== 120173 || psi[i].id== 120174 ||psi[i].id== 120175
+                        || psi[i].id== 120176 || psi[i].id== 120177 || psi[i].id== 120178 ||psi[i].id== 120179
+                         && psi[i].value==true){
+                           
+                                var cE1 = dat.data.data4[i].caption
+                                bE1 = ", " + cE1
+                                aE1  = aE1 + bE1
+                         }
+                    if(psi[i].id== 120180){
+                        isipikirlain = "Lainnya : " + psi[i].value
+                    }
+                    //Progresi fikir Kualitatif
+                    if(psi[i].id== 120182 || psi[i].id== 120183 || psi[i].id== 120184 || psi[i].id== 120185
+                        || psi[i].id== 120186 || psi[i].id== 120187 || psi[i].id== 120188 ||psi[i].id== 120189
+                        || psi[i].id== 120190 || psi[i].id== 120191  || psi[i].id== 120192 || psi[i].id== 120193 || psi[i].id== 120194 
+                         && psi[i].value==true){
+                           
+                                var cE2 = dat.data.data4[i].caption
+                                bE2 = ", " + cE2
+                                aE2  = aE2 + bE2
+                         }
+                         if(psi[i].id== 120195){
+                            kualitatiflain = "Lainnya : " + psi[i].value
+                        }
+
+                          //Progresi fikir Kuantitatif
+                          if(psi[i].id== 120197 || psi[i].id== 120198 || psi[i].id== 120199 || psi[i].id== 120200
+                            || psi[i].id== 120233
+                             && psi[i].value==true){
+                               
+                                    var cE3 = dat.data.data4[i].caption
+                                    bE3 = ", " + cE3
+                                    aE3  = aE3 + bE3
+                             }
+                             if(psi[i].id== 120234){
+                                kuantitatiflain = "Lainnya : " + psi[i].value
+                            }
+
+                            //F. Mood
+                            if(psi[i].id== 120201 || psi[i].id== 120202 || psi[i].id== 120203 || psi[i].id== 120204
+                                || psi[i].id== 120205
+                                && psi[i].value==true){
+                                
+                                        var cF = dat.data.data4[i].caption
+                                        bF = ", " + cF
+                                        aF  = aF + bF
+                                }
+                                if(psi[i].id== 120206){
+                                    moodlain = "Lainnya : " + psi[i].value
+                                }
+
+                            //G. Afek
+                            if(psi[i].id== 120207 || psi[i].id== 120208 || psi[i].id== 120209 || psi[i].id== 120210
+                                || psi[i].id== 120211 || psi[i].id== 120212 || psi[i].id== 120213 || psi[i].id== 120214
+                                || psi[i].id== 120215 || psi[i].id== 120216 || psi[i].id== 120217 || psi[i].id== 120218
+                                || psi[i].id== 120219 || psi[i].id== 120220 || psi[i].id== 120221 || psi[i].id== 120222
+                                && psi[i].value==true){
+                                
+                                        var cG = dat.data.data4[i].caption
+                                        bG = ", " + cG
+                                        aG  = aG + bG
+                                }
+                                if(psi[i].id== 120223){
+                                    afeklain = "Lainnya : " + psi[i].value
+                                }
+
+                            //H. Gangguan Persepsi
+                            if(psi[i].id== 120224 || psi[i].id== 120225 || psi[i].id== 120226 || psi[i].id== 120227
+                                || psi[i].id== 120228 || psi[i].id== 120229 || psi[i].id== 120230
+                                && psi[i].value==true){
+                                
+                                        var cH = dat.data.data4[i].caption
+                                        bH = ", " + cH
+                                        aH  = aH + bH
+                                }
+                                if(psi[i].id== 120232){
+                                    persepsilain = "Lainnya : " + psi[i].value
+                                }
+
+                                  //I. Gangguan Memori
+                            if(psi[i].id== 119998 || psi[i].id== 120236
+                                && psi[i].value==true){
+                                
+                                        var cI = dat.data.data4[i].caption
+                                        bI = ", " + cI
+                                        aI  = aI + bI
+                                }
+                                if(psi[i].id== 120235){
+                                    memorilain = "Lainnya : " + psi[i].value
+                                }
+
+                                 //J. Gangguan Intelegensi 
+                            if(psi[i].id== 119999 || psi[i].id== 120238
+                                && psi[i].value==true){
+                                
+                                        var cJ = dat.data.data4[i].caption
+                                        bJ = ", " + cJ
+                                        aJ  = aJ + bJ
+                                }
+                                if(psi[i].id== 120237){
+                                    intelegensilain = "Lainnya : " + psi[i].value
+                                }
+
+                                  //K. Hubungan Jiwa
+                            if(psi[i].id== 120239 || psi[i].id== 120240
+                                && psi[i].value==true){
+                                
+                                        var cK = dat.data.data4[i].caption
+                                        bK = ", " + cK
+                                        aK  = aK + bK
+                                }
+
+                                //L. Perhatian :
+                            if(psi[i].id== 120241 || psi[i].id== 120242 || psi[i].id== 120243 || psi[i].id== 120244
+                                && psi[i].value==true){
+                                
+                                        var cL = dat.data.data4[i].caption
+                                        bL = ", " + cL
+                                        aL  = aL + bL
+                                }
+                                
+                                
+                                 //M. Insight :
+                            if(psi[i].id== 120245 || psi[i].id== 120246 || psi[i].id== 120247 || psi[i].id== 120248
+                                || psi[i].id== 120249 || psi[i].id== 120250 || psi[i].id== 120251 || psi[i].id== 120252
+                                || psi[i].id== 120253
+                                && psi[i].value==true){
+                                
+                                        var cM = dat.data.data4[i].caption
+                                        bM = ", " + cM
+                                        aM  = aM + bM
+                                }
+                    
+                }
+                kesadaran = "B. Kesadaran Kualitatif : " + aA.slice(1, aA.length) + kesadaranlain+ ","
+                orientasi = "C. Orientasi : " + orang + tempat + waktu + situasi + "," 
+                disaktif = "Disaktif : "  + aD.slice(1, aD.length)
+                hiperaktif = "Hiperaktif : " +  aD1.slice(1, aD1.length)
+                sikap = "D. Sikap Dan Tingkah Laku : " + dbn + hipoaktif +  + disaktiflain  + sikaplain
+                bentukpikir = "Bentuk Pikir : "  + aE.slice(1, aE.length)
+                isipikir = "Isi Pikir : " + aE1.slice(1, aE1.length) + isipikirlain
+                kualitatif = "Kualitatif :" + aE2.slice(1, aE2.length) + kualitatiflain
+                kuantitatif = "Kuantitatif :" + aE3.slice(1, aE3.length) + kuantitatiflain
+                prosespikir = "E. Proses pikir" + isipikir + bentukpikir + kualitatif + kuantitatif
+                mood = "F. Mood : " + aF.slice(1, aF.length) + moodlain
+                afek = "G. Afek :" + aG.slice(1, aG.length) + afeklain
+                persepsi = "H. Persepsi :" + aH.slice(1, aH.length) + persepsilain
+                memori = "I. Gangguan Memori : " + aI.slice(1, aI.length) + memorilain
+                Intelegensi ="J. Gangguan Intelegensi :" + aJ.slice(1, aJ.length)+ intelegensilain
+                hubungan = "K. Hubungan Jiwa : "  + aK.slice(1, aK.length)
+                perhatian = "L. Perhatian : "  + aL.slice(1, aL.length)
+                insight ="M. Insight : " +  aM.slice(1, aM.length)
+
+
+
+                $scope.item.hasilpsikiatri = ksm + "\n "+ kesadaran + "\n "+ orientasi + "\n "+ sikap + "\n "+ prosespikir + "\n "+ mood +
+                "\n "+ afek + "\n "+ persepsi +"\n "+ memori + "\n "+ Intelegensi + "\n "+ perhatian +"\n "+ insight 
+
+
+
+
                 })
                 medifirstService.get("emr/get-data-perawatan?norec_apd=" + $scope.norecAPD).then(function (data) {                 
                     var datas = data.data;                   
