@@ -675,6 +675,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 var pindah = 0;
                 var golongan = "";
                 console.log($scope.dataSelected);
+                if ($scope.dataSelected.tmtskcpns == null){
+                    toastr.error('Tanggal SK CPNS belum ada, mohon untuk mengisi Data CPNS')
+                    return
+                }
                 medifirstService.get('sdm/get-thn-bln?tglcpns=' + moment($scope.dataSelected.tmtskcpns).format('YYYY-MM-DD') + '&tgltmt=' + moment($scope.itemGajiBerkala.tanggaltmt).format('YYYY-MM-DD')).then(function (data) {
                     var thn = data.data[0].thn,
                         bln = data.data[0].bln

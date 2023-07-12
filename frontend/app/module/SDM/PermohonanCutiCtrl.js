@@ -570,10 +570,10 @@ define(['initialize'], function (initialize) {
                         medifirstService.get('sdm/get-total-sisa-cuti?' + idPegawai + tglpengajuan)
                         .then(function (e) {
                             //console.log(e.data)
-                            $scope.item.totalsisacutitahunini = e.data.data[0].totalcutitahunini
-                            $scope.item.sisacutitahunkemarin = e.data.data[0].sisacutitahunsebelumnya
-                            $scope.item.totalCutiTahun = e.data.data[0].sisacutitahunsekarang + e.data.data[0].sisacutitahunsebelumnya
-                            $scope.item.sisacutitahunini = e.data.data[0].sisacutitahunsekarang
+                            $scope.item.totalsisacutitahunini = e.data.data.totalcutitahunini
+                            $scope.item.sisacutitahunkemarin = e.data.data.sisacutitahunsebelumnya
+                            $scope.item.totalCutiTahun = e.data.data.sisacutitahunsekarang + e.data.data.sisacutitahunsebelumnya
+                            $scope.item.sisacutitahunini = e.data.data.sisacutitahunsekarang
                             $scope.hidesisacuti = false
                         });
                     } else{
@@ -621,6 +621,10 @@ define(['initialize'], function (initialize) {
                         medifirstService.get('sdm/get-total-sisa-cuti?' + idPegawai + tglpengajuan)
                         .then(function (e) {
                             //console.log(e.data)
+                            $scope.item.totalsisacutitahunini = e.data.data.totalcutitahunini
+                            $scope.item.sisacutitahunkemarin = e.data.data.sisacutitahunsebelumnya
+                            $scope.item.totalCutiTahun = e.data.data.sisacutitahunsekarang + e.data.data.sisacutitahunsebelumnya
+                            $scope.item.sisacutitahunini = e.data.data.sisacutitahunsekarang
                             $scope.hidesisacuti = false
                         });
                     }
@@ -637,7 +641,10 @@ define(['initialize'], function (initialize) {
                         medifirstService.get('sdm/get-total-sisa-cuti?' + idPegawai + tglpengajuan)
                         .then(function (e) {
                             //console.log(e.data)
-                            $scope.item.totalsisacutitahunini = e.data.data[0].totalcutitahunini
+                            $scope.item.totalsisacutitahunini = e.data.data.totalcutitahunini
+                            $scope.item.sisacutitahunkemarin = e.data.data.sisacutitahunsebelumnya
+                            $scope.item.totalCutiTahun = e.data.data.sisacutitahunsekarang + e.data.data.sisacutitahunsebelumnya
+                            $scope.item.sisacutitahunini = e.data.data.sisacutitahunsekarang
                             $scope.hidesisacuti = false
                         });
                     }

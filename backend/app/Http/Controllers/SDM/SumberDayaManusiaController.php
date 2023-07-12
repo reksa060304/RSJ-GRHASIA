@@ -1452,7 +1452,7 @@ class SumberDayaManusiaController extends ApiController {
             ->where('pg.statusenabled',true)
             ->where('mbs.kdprofile', $kdProfile)
 //            ->where('mbs.jenismasaberlakufk',1)
-            ->orderBy('mbs.tglberakhir');
+            ->orderBy('mbs.berakhirstr','asc');
 
 //        if (isset($request['tglAwal']) && $request['tglAwal'] != "" && $request['tglAwal'] != "undefined") {
 //            $data = $data->where('pjk.tgljadwal', '>=', $request['tglAwal']);
@@ -3429,6 +3429,61 @@ left join(SELECT id, namalengkap,maxsisacuti , maxcutitahunini, jumlahcuti as cu
 				where pg.id = $idpegawai
 				
         "));
+        $totalcutitahunini = DB::select(DB::raw("SELECT pg.namalengkap, sum(pps.jumlahhari)as totalcutitahunini FROM pegawai_m pg 
+        inner join planningpegawaistatus_t pps on pps.objectpegawaifk = pg.id where pg.id = $idpegawai and date_part('year', pps.tglpengajuan::timestamp)= $tahun
+        GROUP BY pg.namalengkap
+        
+        "));
+        if(count($totalcutitahunini) > 0){
+            $totalcutitahunini = $totalcutitahunini[0]->totalcutitahunini;
+        }else{
+            $totalcutitahunini = 0;
+        }
+        $sisacutitahunsebelumnya = DB::select(DB::raw("SELECT pg.namalengkap, sum(pps.jumlahhari)as jumlahcuti,
+        CASE 
+            WHEN (kp.maxcutitahunini+kp.maxsisacuti)- sum(pps.jumlahhari)> kp.maxsisacuti THEN
+                kp.maxsisacuti
+            ELSE
+            (kp.maxcutitahunini+kp.maxsisacuti)- sum(pps.jumlahhari)
+        END as sisacutitahunsebelumnya
+
+        FROM pegawai_m pg 
+        inner join planningpegawaistatus_t pps on pps.objectpegawaifk = pg.id 
+        inner join kategorypegawai_m kp on kp.id = pg.kategorypegawai
+        where pg.id = $idpegawai and date_part('year', pps.tglpengajuan::timestamp)= $tahun-1
+        GROUP BY pg.namalengkap, kp.maxsisacuti, kp.maxcutitahunini
+        "));
+        if(count($sisacutitahunsebelumnya) > 0){
+            $sisacutitahunsebelumnya = $sisacutitahunsebelumnya[0]->sisacutitahunsebelumnya;
+        }else{
+            $sisacutitahunsebelumnya = 0;
+        }
+        $sisacutitahunsekarang = DB::select(DB::raw("SELECT pg.namalengkap, kp.maxcutitahunini as sisacutitahunsekarang
+
+        FROM pegawai_m pg 
+        inner join planningpegawaistatus_t pps on pps.objectpegawaifk = pg.id 
+        inner join kategorypegawai_m kp on kp.id = pg.kategorypegawai
+        where pg.id = $idpegawai and date_part('year', pps.tglpengajuan::timestamp)= $tahun-1
+        GROUP BY pg.namalengkap, kp.maxsisacuti, kp.maxcutitahunini
+        "));
+        if(count($sisacutitahunsekarang) > 0){
+            $sisacutitahunsekarang = $sisacutitahunsekarang[0]->sisacutitahunsekarang;
+        }else{
+            $sisacutitahunsekarang = 0;
+        }
+        $sisacutikeseluruhan = $sisacutitahunsekarang + $sisacutitahunsebelumnya;
+        $data = array(
+            'totalcutitahunini'=>$totalcutitahunini,
+            'sisacutitahunsebelumnya'=>$sisacutitahunsebelumnya,
+            'sisacutitahunsekarang'=>$sisacutitahunsekarang,
+            'sisacutikeseluruhan'=>$sisacutikeseluruhan,
+
+        );
+        $result = array(
+            'data'  => $data,
+            'as' => 'fizi@epic',
+        );
+        return $this->respond($result);
         // $data1 = DB::select(DB::raw("select pg.id idpegawai, pg.namalengkap, coalesce(a.sisacutitahunsebelumnya, 6) sisacutitahunsebelumnya, coalesce(b.sisacutitahunsekarang, 12) sisacutitahunsekarang, coalesce(a.sisacutitahunsebelumnya, 6) + coalesce(b.sisacutitahunsekarang, 12) as sisacutikeseluruhan
         // from pegawai_m pg
         // left join (
@@ -6210,20 +6265,9 @@ public function daftarKenaikanGajiBerkala(Request $request){
         $idProfile = (int) $kdProfile;
 
         $data = \DB::select(DB::raw("
-            SELECT fix.* FROM (
-            SELECT rg.norec as norec_kgb, gol2.level as levelcpns, gol.level, pg.tmtskcpns, pg.id as id_pegawai, row_number()over(partition by rg.objectpegawaifk ORDER BY rg.tgltmt desc)as rn2, pg.namalengkap, pg.nippns, rg.tgltmt, rg.objectgolonganfk, 
-            gol.namaexternal as pangkat, gol.name as golongan, rg.gajiakhir, split_part(rg.masakerjagolongan, ' ', '1')::integer +2  as mkg,rg.masakerjagolongan FROM riwayatgajiberkala_t rg
-            inner join sdm_golongan_m as gol on gol.id = rg.objectgolonganfk 
-            inner join pegawai_m pg on pg.id = rg.objectpegawaifk
-            inner join sdm_golongan_m as gol2 on gol2.id = pg.objectgolongancpnsfk
-            inner join (
-            select x.objectpegawaifk, x.tgltmt from(
-            select row_number()over(PARTITION by rg.objectpegawaifk ORDER BY rg.tgltmt asc)as rn, rg.* from pegawai_m as pg inner join riwayatgolongan_t as rg on rg.objectpegawaifk = pg.id 
-            )as x where x.rn=1
-            )as rgb on rgb.objectpegawaifk= rg.objectpegawaifk 
-            where rg.kdprofile = 30 and rg.statusenabled = true
-            ORDER BY rg.tgltmt asc
-            )as fix where fix.rn2 = 1 
+            SELECT * FROM (select pg.tmtskcpns,gol.level, rgb.norec as norec_kgb, pg.id as id_pegawai, ROW_NUMBER()over(PARTITION by pg.id order by tgltmt desc)as nomor, rgb.objectgolonganfk, pg.nippns, pg.namalengkap, rgb.tgltmt, gol.namaexternal as pangkat,gol.name as golongan, rgb.gajiakhir, split_part(rgb.masakerjagolongan, ' ', '1')::integer +2  as mkg from pegawai_m pg 
+inner join riwayatgajiberkala_t rgb on rgb.objectpegawaifk = pg.id
+inner join sdm_golongan_m gol on gol.id = rgb.objectgolonganfk)as x where x.nomor = 1 and x.mkg is not null order by x.tgltmt asc
         "));
         // var_dump($data);
         $data2 = '';
@@ -6269,10 +6313,10 @@ public function daftarKenaikanGajiBerkala(Request $request){
             $golongan = $dt->golongan;
             $gajiakhir = $dt->gajiakhir;
             $objectgolonganfk = $dt->objectgolonganfk;
-            $masakerjagolongan = $dt->masakerjagolongan;
+            // $masakerjagolongan = $dt->masakerjagolongan;
             $tmtskcpns = $dt->tmtskcpns;
             $level = $dt->level;
-            $levelcpns = $dt->levelcpns;
+            // $levelcpns = $dt->levelcpns;
             $norec_kgb = $dt->norec_kgb;
            
             // $data3 = $dt->mkg;
@@ -6293,9 +6337,9 @@ public function daftarKenaikanGajiBerkala(Request $request){
             'gajibaru' => $gajibaru,
             'tmtskcpns' => $tmtskcpns,
             'objectgolonganfk'=> $objectgolonganfk,
-            'masakerjagolongan'=> $masakerjagolongan,
+            // 'masakerjagolongan'=> $masakerjagolongan,
             'level'=> $level,
-            'levelcpns'=> $levelcpns,
+            // 'levelcpns'=> $levelcpns,
             'norec_kgb'=> $norec_kgb,
             // 'data'=> $data,
             'mkg'=> $mkg,
@@ -7645,11 +7689,14 @@ public function daftarKenaikanGajiBerkala(Request $request){
         $penjagaankgb = \DB::select(DB::raw("SELECT count(y.hari) FROM (SELECT (x.y*12 )+ x.m as hari, x.y, x.m,x.tgltmt FROM (select rg.tgltmt, extract(year from age(CURRENT_DATE,rg.tgltmt ))as y, extract(month from age(CURRENT_DATE,rg.tgltmt ))as m  from riwayatgajiberkala_t rg )as x 
         where (x.y*12 )+ x.m between 21 and 23)as y"));
 
-        $penjagaankgbd = \DB::select(DB::raw("SELECT * FROM (select pg.namalengkap, pg.nippns, pg.tgllahir::date,sdmg.namaexternal||', '||sdmg.name as golongan, rg.gajiakhir, rg.tgltmt,(rg.tgltmt + interval '2 year')::date as tmtberikutnya, extract(year from age(CURRENT_DATE,rg.tgltmt ))as y, extract(month from age(CURRENT_DATE,rg.tgltmt ))as m  from riwayatgajiberkala_t rg inner join pegawai_m pg on  pg.id = rg.objectpegawaifk inner join sdm_golongan_m sdmg on sdmg.id = rg.objectgolonganfk
+        $penjagaankgbd = \DB::select(DB::raw("SELECT * FROM (select pg.namalengkap, pg.nippns, pg.tgllahir::date,sdmg.namaexternal||', '||sdmg.name as golongan, rg.gajiakhir, rg.tgltmt,(rg.tgltmt + interval '2 year')::date as tmtberikutnya, extract(year from age(CURRENT_DATE,rg.tgltmt ))as y, extract(month from age(CURRENT_DATE,rg.tgltmt ))as m  from riwayatgajiberkala_t rg 
+        inner join pegawai_m pg on  pg.id = rg.objectpegawaifk inner join sdm_golongan_m sdmg on sdmg.id = rg.objectgolonganfk
         )as x where (x.y*12 )+ x.m between 21 and 23 ORDER BY x.tmtberikutnya desc"));
 
-        $penjagaanstrd = \DB::select(DB::raw("SELECT * FROM (SELECT pg.tgllahir::date, gol.namaexternal ||', '||gol.name as golongan, pg.namalengkap, pg.nippns, extract(year from age(mbs.berakhirstr::date,CURRENT_DATE))as y, extract(month from age(mbs.berakhirstr::date,CURRENT_DATE))as m , mbs.berakhirstr::date 
-        FROM masaberlakusipstr_t mbs inner join pegawai_m pg on pg.id = mbs.pegawaifk left join sdm_golongan_m gol on gol.id = pg.objectgolonganfk)as x where (x.y*12)+x.m between 1 and 6"));
+        $penjagaanstrd = \DB::select(DB::raw("SELECT * FROM (select DISTINCT row_number()over (partition by pg.id order by mbs.berakhirstr::date desc) nomor,pg.namalengkap, pg.nippns, gol.namaexternal ||', '||gol.name as golongan, pg.tgllahir::date, mbs.berakhirstr::date,extract(year from age(mbs.berakhirstr::date,CURRENT_DATE))as y, extract(month from age(mbs.berakhirstr::date,CURRENT_DATE))as m  from pegawai_m pg 
+inner join masaberlakusipstr_t mbs on mbs.pegawaifk = pg.id
+left join sdm_golongan_m gol on gol.id = pg.objectgolonganfk
+where pg.kdprofile = 30 and pg.statusenabled = true and pg.usereksternal is null )as x where x.nomor = 1 and (x.y*12)+x.m < 6 order by x.berakhirstr asc"));
         
         $penjagaanpensiun = \DB::select(DB::raw("SELECT * FROM (SELECT
             gol.namaexternal || ', ' || gol.NAME AS golongan,

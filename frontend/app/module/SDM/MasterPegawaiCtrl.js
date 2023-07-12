@@ -311,7 +311,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 							$scope.gajiterakhir = dataCache.datapegawai[0].gajiakhir;
 							if (dataCachePegawai.tgllahir)
 								$scope.item.tglLahir = moment(dataCachePegawai.tgllahir).format('YYYY-MM-DD HH:mm');
-							if (dataCachePegawai.unitkerja)
+
+								if (dataCachePegawai.unitkerja)
 								$scope.item.unitKerja =  { id: dataCachePegawai.objectunitkerjapegawaifk, name: dataCachePegawai.unitkerja };
 							$scope.item.jenisKelamin = { id: dataCachePegawai.objectjeniskelaminfk, jeniskelamin: dataCachePegawai.jeniskelamin };
 							$scope.item.pendidikan = { id: dataCachePegawai.objectpendidikanterakhirfk, pendidikan: dataCachePegawai.pendidikan };
@@ -350,6 +351,39 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 							$scope.item.golonganPegawai = { id: dataCachePegawai.objectgolonganfk, name: dataCachePegawai.golongan };
 							$scope.item.jabatanFungsional = { id: dataCachePegawai.objectjabatanfungsionalfk, namajabatan: dataCachePegawai.jbfungsional };
 							$scope.item.jabatanhehe = { id: dataCachePegawai.objectjabataninternalfk, namajabatan: dataCachePegawai.namajabatan };
+							if(dataCachePegawai.namajabatan != null && $scope.item.tglLahir != undefined){
+								if (dataCachePegawai.namajabatan.match('Madya')) {
+									$scope.item.pensiun = 60
+									$scope.mm = parseFloat(moment($scope.item.tglLahir).format('MM')) + 1
+									$scope.dd = 1
+									$scope.yyyy = parseFloat(moment($scope.item.tglLahir).format('YYYY')) + $scope.item.pensiun
+									$scope.ppppp = $scope.yyyy + '-' + $scope.mm + '-' + $scope.dd
+									console.log($scope.ppppp);
+									$scope.item.tglPensiun = new Date($scope.ppppp)
+								} else if (dataCachePegawai.namajabatan.match('Utama')) {
+									$scope.item.pensiun = 65
+									$scope.mm = parseFloat(moment($scope.item.tglLahir).format('MM')) + 1
+									$scope.dd = 1
+									$scope.yyyy = parseFloat(moment($scope.item.tglLahir).format('YYYY')) + $scope.item.pensiun
+									$scope.ppppp = $scope.yyyy + '-' + $scope.mm + '-' + $scope.dd
+									$scope.item.tglPensiun = new Date($scope.ppppp)
+								} else if (dataCachePegawai.namajabatan.match('Direktur')) {
+									$scope.item.pensiun = 60
+									$scope.mm = parseFloat(moment($scope.item.tglLahir).format('MM')) + 1
+									$scope.dd = 1
+									$scope.yyyy = parseFloat(moment($scope.item.tglLahir).format('YYYY')) + $scope.item.pensiun
+									$scope.ppppp = $scope.yyyy + '-' + $scope.mm + '-' + $scope.dd
+									$scope.item.tglPensiun = new Date($scope.ppppp)
+								} else {
+									$scope.item.pensiun = 58
+									$scope.mm = parseFloat(moment($scope.item.tglLahir).format('MM')) + 1
+									$scope.dd = '01'
+									$scope.yyyy = parseFloat(moment($scope.item.tglLahir).format('YYYY')) + $scope.item.pensiun
+									$scope.ppppp = $scope.yyyy + '-' + $scope.mm + '-' + $scope.dd
+									$scope.item.tglPensiun = new Date($scope.ppppp)
+									console.log($scope.ppppp);
+								}
+							}
 							$scope.item.detailKelompokJabatan = { id: dataCachePegawai.objectkelompokjabatanfk, detailkelompokjabatan: dataCachePegawai.detailkelompokjabatan };
 							if (dataCachePegawai.grade)
 								$scope.item.grade = parseFloat(dataCachePegawai.grade);
@@ -445,6 +479,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 									struk++
 								}
 							}
+							
 							// console.log(datajabatanPelaksana);
 							$scope.gridRiwayatJabatanFungsional = new kendo.data.DataSource({
 								data: datajabatanFungsional

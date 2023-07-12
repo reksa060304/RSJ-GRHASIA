@@ -196,6 +196,14 @@
 											ng-disabled="true" />
 									</div>
 								</div>
+								<div class="grid_4">
+									<div class="grid_12">
+										<label><b>Tanggal Masuk</b></label>
+									</div>
+									<div class="grid_12">
+										<input kendo-date-time-picker k-ng-model="item.tanggalmasuk" k-format="'dd-MM-yyyy HH:mm'" style="width: 100%" />
+									</div>
+								</div>
 								<!-- <div class="grid_4">
 									<div class="grid_12">
 										<label c-label item="item" c-label-text="Status Kawin"></label>
@@ -483,7 +491,7 @@
 			<md-tabs md-dynamic-height md-border-bottom>
 				<md-tab label="Status Kepegawaian" ng-disabled='nondiklat'>
 					<md-content class="md-padding">
-						<div class="grid_12" ng-hide="true">
+						<div class="grid_12" >
 							<div class="grid_4" >
 								<div class="grid_12">
 									<label c-label item="item" c-label-text="Tanggal Masuk"></label>
@@ -493,7 +501,7 @@
 										style="width: 100%" />
 								</div>
 							</div>
-							<div class="grid_4">
+							<div class="grid_4" ng-hide="true">
 								<div class="grid_12">
 									<label c-label item="item" c-label-text="Tanggal Keluar"></label>
 								</div>
@@ -502,7 +510,7 @@
 										style="width: 100%" />
 								</div>
 							</div>
-							<div class="grid_4">
+							<div class="grid_4" ng-hide="true">
 								<div class="grid_12">
 									<label c-label item="item" c-label-text="Masa Kerja"></label>
 								</div>
