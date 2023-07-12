@@ -746,7 +746,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 var data = {
                     norec: $scope.norec_sp,
                     isverifikasi: null,
-                    tglverif: moment($scope.tanggalmulai).format('YYYY-MM-DD hh:mm:ss')
+                    tglverif: moment(new Date).format('YYYY-MM-DD hh:mm:ss')
                 }
                 medifirstService.post('sdm/penelitian/verif-tagihan-kegiatan-penelitian-eksternal', data).then(function (e) {
                     GetData();
