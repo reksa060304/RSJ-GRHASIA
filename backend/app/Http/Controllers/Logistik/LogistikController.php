@@ -6542,7 +6542,7 @@ class LogistikController extends ApiController{
             ->leftjoin( 'ruangan_m as ru2','ru2.id','=','so.objectruangantujuanfk')
             ->join( 'produk_m as pr','pr.id','=','op.objectprodukfk')
             ->join( 'satuanstandar_m as ss','ss.id','=','op.objectsatuanstandarfk')
-            ->select('so.noorder',  'op.qtyproduk','op.objectprodukfk as produkfk','pr.kdproduk','pr.namaproduk',
+            ->select('op.jumlahstokruangan','op.jumlahstokgudang','so.noorder',  'op.qtyproduk','op.objectprodukfk as produkfk','pr.kdproduk','pr.namaproduk',
                 'op.hasilkonversi as nilaikonversi', 'op.objectsatuanstandarfk',
                 'ss.satuanstandar',  'op.objectsatuanstandarfk as satuanviewfk',
                 'ss.satuanstandar as ssview',  'op.qtyproduk as jumlah',
@@ -6629,6 +6629,8 @@ class LogistikController extends ApiController{
                     'satuanview' => $item->ssview,
                     'jmlstok' => $jmlstok,
                     'jumlah' => $item->jumlah,
+                    'jumlahstokruangan' => $item->jumlahstokruangan,
+                    'jumlahstokgudang' => $item->jumlahstokgudang,
                 );
             }
         }
