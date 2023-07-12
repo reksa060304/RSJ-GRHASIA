@@ -671,7 +671,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     keteranganlainnya: $scope.keteranganlainnya,
                     namapasien_klien: $scope.institusi,
                     notelp_klien: $scope.notelp,
-                    tglstruk: moment($scope.tanggalmulai).format('YYYY-MM-DD hh:mm:ss'),
+                    tglstruk: moment(new Date()).format('YYYY-MM-DD hh:mm:ss'),
                     totalharusdibayar: parseFloat($scope.biayapenelitian), //parseFloat($scope.item.totalBilling),
                     isverifikasi: false,
                     details: dataProduk,
