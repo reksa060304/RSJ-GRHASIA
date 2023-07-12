@@ -3670,6 +3670,10 @@
         {
             "nameDep": "TerapiHarianPasienRanaprevCtrl",
             "urlDep": "module/EMR/TerapiHarianPasienRanaprevCtrl"
+        },
+        {
+            "nameDep": "LaporanPengunjungTindakanImplementasiCtrl",
+            "urlDep": "module/Registrasi/Laporan/LaporanPengunjungTindakanImplementasiCtrl"
         }
     ]
 }

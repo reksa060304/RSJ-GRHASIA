@@ -1,8 +1,8 @@
 define(['initialize', 'Configuration'], function (initialize, config) {
     'use strict';
     var baseTransaksi = config.baseUrlData;
-    initialize.controller('CpptDinamisDetailCtrl', ['$rootScope', '$scope', '$state', 'CacheHelper', 'MedifirstService',
-        function ($rootScope, $scope, $state, cacheHelper, medifirstService) {
+    initialize.controller('CpptDinamisDetailCtrl', ['$rootScope', '$scope', '$state', 'CacheHelper', 'MedifirstService','$mdDialog',
+        function ($rootScope, $scope, $state, cacheHelper, medifirstService, $mdDialog) {
 
             $scope.item = {};
             $scope.cc = {};
@@ -663,6 +663,13 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     data: arrSave//$scope.item.obj
                 }
                 medifirstService.post('emr/save-emr-dinamis', jsonSave).then(function (e) {
+                    var confirm = $mdDialog.confirm()
+                        .title('Peringatan')
+                        .textContent('CPPT SUDAH TERSIMPAN, KLIK YA UNTUK KONFIRMASI')
+                        .ariaLabel('Lucky day')
+                        .cancel('Tidak')
+                        .ok('Ya')
+                    $mdDialog.show(confirm).then(function () {})
                     // $state.go("RekamMedis.OrderJadwalBedah.ProsedurKeselamatan", {
                     //     namaEMR : $scope.cc.emrfk,
                     //     nomorEMR : e.data.data.noemr 

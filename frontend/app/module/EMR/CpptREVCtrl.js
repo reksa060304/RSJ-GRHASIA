@@ -1195,6 +1195,13 @@ define(["initialize", "Configuration"], function (initialize, config) {
           data: arrSave,
         };
         medifirstService.post("emr/save-emr-cppt", jsonSave).then(function (e) {
+          var confirm = $mdDialog.confirm()
+                        .title('Peringatan')
+                        .textContent('EMR SUDAH TERSIMPAN, KLIK YA UNTUK KONFIRMASI')
+                        .ariaLabel('Lucky day')
+                        .cancel('Tidak')
+                        .ok('Ya')
+                    $mdDialog.show(confirm).then(function () {})
           var pegLogin = medifirstService.getPegawaiLogin()
           var body = {
             norec: e.data.data.norec,

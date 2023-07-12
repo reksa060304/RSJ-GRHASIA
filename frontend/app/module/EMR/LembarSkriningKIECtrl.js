@@ -1,7 +1,7 @@
 define(['initialize', 'Configuration'], function (initialize, config) {
     'use strict';
-    initialize.controller('LembarSkriningKIECtrl', ['$q', '$rootScope', '$scope', 'ModelItem', '$state', 'CacheHelper', 'DateHelper', 'MedifirstService',
-        function ($q, $rootScope, $scope, ModelItem, $state, cacheHelper, dateHelper, medifirstService) {
+    initialize.controller('LembarSkriningKIECtrl', ['$q', '$rootScope', '$scope', 'ModelItem', '$state', 'CacheHelper', 'DateHelper', 'MedifirstService','$mdDialog',
+        function ($q, $rootScope, $scope, ModelItem, $state, cacheHelper, dateHelper, medifirstService, $mdDialog) {
 
 
             $scope.noCM = $state.params.noCM;
@@ -2682,6 +2682,13 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     data: arrSave
                 }
                 medifirstService.post('emr/save-emr-dinamis', jsonSave).then(function (e) {
+                    var confirm = $mdDialog.confirm()
+                    .title('Peringatan')
+                    .textContent('EMR SUDAH TERSIMPAN, KLIK YA UNTUK KONFIRMASI')
+                    .ariaLabel('Lucky day')
+                    .cancel('Tidak')
+                    .ok('Ya')
+                $mdDialog.show(confirm).then(function () {})
 
                     $rootScope.loadRiwayat()
                     medifirstService.postLogging('EMR', 'norec emrpasien_t', e.data.data.norec,

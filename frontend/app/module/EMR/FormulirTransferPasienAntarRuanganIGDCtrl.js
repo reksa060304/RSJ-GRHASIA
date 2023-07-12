@@ -1,7 +1,7 @@
 define(['initialize'], function (initialize) {
     'use strict';
-    initialize.controller('FormulirTransferPasienAntarRuanganIGDCtrl', ['$q', '$rootScope', '$scope', 'ModelItem', '$state', 'CacheHelper', 'DateHelper', 'MedifirstService',
-        function ($q, $rootScope, $scope, ModelItem, $state, cacheHelper, dateHelper, medifirstService) {
+    initialize.controller('FormulirTransferPasienAntarRuanganIGDCtrl', ['$q', '$rootScope', '$scope', 'ModelItem', '$state', 'CacheHelper', 'DateHelper', 'MedifirstService','$mdDialog',
+        function ($q, $rootScope, $scope, ModelItem, $state, cacheHelper, dateHelper, medifirstService, $mdDialog) {
             var paramsIndex = $state.params.index ? parseInt($state.params.index) : null;
 
             console.log(paramsIndex);
@@ -1253,6 +1253,14 @@ define(['initialize'], function (initialize) {
                     data: arrSave
                 }
                 medifirstService.post('emr/save-emr-dinamis', jsonSave).then(function (e) {
+                    var confirm = $mdDialog.confirm()
+                        .title('Peringatan')
+                        .textContent('EMR SUDAH TERSIMPAN, KLIK YA UNTUK KONFIRMASI')
+                        .ariaLabel('Lucky day')
+                        .cancel('Tidak')
+                        .ok('Ya')
+                    $mdDialog.show(confirm).then(function () {})
+                    
                     // $state.go("RekamMedis.OrderJadwalBedah.ProsedurKeselamatan", {
                     //     namaEMR : $scope.cc.emrfk,
                     //     nomorEMR : e.data.data.noemr 

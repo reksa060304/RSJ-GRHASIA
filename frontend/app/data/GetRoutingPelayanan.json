@@ -20339,6 +20339,26 @@
 
       }
     ]
+  },
+  {
+    "name": "LaporanPengunjungTindakanImplementasi",
+    "url": "/TGFwb3JhblBlbmd1bmp1bmdUaW5kYWthbkltcGxlbWVudGFzaQ==",
+    "templateurl": "module/Registrasi/Laporan/LaporanPengunjungTindakanImplementasi.html",
+    "controller": "LaporanPengunjungTindakanImplementasiCtrl",
+    "deps": [    
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
   }
 ]
 

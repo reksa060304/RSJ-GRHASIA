@@ -3247,6 +3247,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
 //                Route::get('get-tindakan', 'TataRekening\TindakanController@getTindakan');
           Route::get('tindakan/cek-produk-duplicated','TataRekening\TindakanController@getProdukDuplicated');
           Route::get('tindakan/get-laporan-tindakan','TataRekening\TindakanController@getLaporanTindakan');
+          Route::get('tindakan/get-laporan-tindakan-implementasi','TataRekening\TindakanController@getLaporanTindakanImplementasi');
           Route::get('sysadmin/general/get-produk-nonobat','SysAdmin\Master\MasterController@getProdukNonObat');
           Route::get('tatarekening/tindakan/get-combo', 'TataRekening\TindakanController@getCombo');
           Route::get('tatarekening/tindakan/get-pegawaibyjenispetugas', 'TataRekening\TindakanController@getPegawaiByJenisPetugasPe');
