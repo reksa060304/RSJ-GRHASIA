@@ -1129,7 +1129,7 @@ class PelayananResepController extends ApiController
                 op.jumlahracikan 
                 WHEN op.jumlahracikan is NULL 
                 AND op.jeniskemasanfk = 2 THEN
-                null ELSE op.qtyproduk::float * ( pr.kekuatan::float / op.dosis::float ) 
+                null ELSE op.qtyproduk::float8 * ( pr.kekuatan::float8 / op.dosis::float8 ) 
                 END AS jumlahracikan"))
             ->where('so.kdprofile', $idProfile);
 

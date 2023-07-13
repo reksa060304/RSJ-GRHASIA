@@ -469,7 +469,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                             e.data[i].isbayar = "Belum dibayar"
                         }
 
-                        if (e.data[i].statusorder == 'Verifikasi') {
+                        if (e.data[i].statusorder == 'Selesai') {
                             verif += 1
                         }
                         if (e.data[i].statusorder == 'Menunggu') {
