@@ -10814,6 +10814,27 @@ class EMRController  extends ApiController
             );
         return $this->respond($result);
     }
+    public function getEmrPanssec (Request $request)
+    {
+        // $noemr = $request['noemr'];
+        $kdProfile = $this->getDataKdProfile($request);
+
+        $data = \DB::select(DB::raw("SELECT x.jumlah FROM (
+            SELECT 
+            ROW_NUMBER()over(PARTITION BY norec_apd ORDER BY tglinput ASC)AS nomor,*
+            FROM panssec_t ps
+            INNER JOIN antrianpasiendiperiksa_t apd ON ps.norec_apd = apd.norec
+            INNER JOIN	 pasiendaftar_t pd ON apd.noregistrasifk = pd.norec
+            WHERE pd.noregistrasi = '$request[noregistrasi]') AS x WHERE x.nomor = 1"));
+
+        
+        $result = array(
+               
+                'data'=> $data,
+                'as'=> 'ia@Epic'
+            );
+        return $this->respond($result);
+    }
     public function getEmrToEmr (Request $request)
     {
         $noemr = $request['noemr'];

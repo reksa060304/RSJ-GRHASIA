@@ -148,22 +148,26 @@ define(['initialize'], function (initialize) {
                         {
                             "id": 120003,
                             "nama": "1. Nama ",
-                            "type": "textbox6"
+                            "type": "textbox6",
+                            "nourut": 1
                         },
                         {
                             "id": 120004,
                             "nama": "hubungan dengan penderita ",
-                            "type": "textbox6"
+                            "type": "textbox6",
+                            "nourut": 2
                         },
                         {
                             "id": 120005,
                             "nama": "2. Nama",
-                            "type": "textbox6"
+                            "type": "textbox6",
+                            "nourut": 3
                         },
                         {
                             "id": 120006,
                             "nama": "hubungan dengan penderita ",
-                            "type": "textbox6"
+                            "type": "textbox6",
+                            "nourut": 4
                         }
                     ]
                 },
@@ -173,7 +177,8 @@ define(['initialize'], function (initialize) {
                     "detail": [{
                             "id": 120007,
                             "nama": "",
-                            "type": "textarea12"
+                            "type": "textarea12",
+                            "nourut": 1
                         }
                     ]
                 },
@@ -183,7 +188,8 @@ define(['initialize'], function (initialize) {
                     "detail": [{
                             "id": 120008,
                             "nama": "",
-                            "type": "textarea12"
+                            "type": "textarea12",
+                            "nourut": 1
                         },
                     ]
                 },
@@ -193,67 +199,98 @@ define(['initialize'], function (initialize) {
                     "detail": [{
                         "id": 120009,
                         "nama": "",
-                        "type": "textarea12"
+                        "type": "textarea12",
+                        "nourut": 1
                     }, ]
                 },
                 {
                     "id": 5,
                     "nama": "E. Riwayat Gangguan Jiwa Sebelumnya : ",
-                    "detail": [{
-                        "id": 120010,
-                        "nama": "Pernah",
-                        "type": "checkbox12"
-                    },
+                    "detail": [
                     {
                         "id": 120011,
                         "nama": "TIdak Pernah",
-                        "type": "checkbox12"
-                    },                    
+                        "type": "checkbox12",
+                        "nourut": 1
+                    }, 
+                    {
+                        "id": 120338,
+                        "nama": "",
+                        "type": "textbox12",
+                        "nourut": 2
+                    },
+                    {
+                        "id": 120010,
+                        "nama": "Pernah",
+                        "type": "checkbox6",
+                        "nourut": 3
+                    },               
                     {
                         "id": 120012,
                         "nama": "Pertama kali (Kapan) : ",
-                        "type": "textbox12"
+                        "type": "textbox12",
+                        "nourut": 4
                     },
                     {
                         "id": 120013,
                         "nama": "Berapa kali : ",
-                        "type": "textbox12"
+                        "type": "textbox12",
+                        "nourut": 5
                     },
                     {
                         "id": 120014,
                         "nama": "Pernah Sembuh: ",
-                        "type": "label0"
+                        "type": "label0",
+                        "nourut": 6
                     },
                     {
                         "id": 120015,
                         "nama": "Pernah",
-                        "type": "checkbox12"
+                        "type": "checkbox6",
+                        "nourut": 7
                     },
                     {
                         "id": 120016,
                         "nama": "Tidak Pernah",
-                        "type": "checkbox12"
+                        "type": "checkbox6",
+                        "nourut": 8
                     },
+                    {
+                        "id": 120339,
+                        "nama": "",
+                        "type": "textbox12",
+                        "nourut": 9
+                    },    
                     {
                         "id": 120017,
                         "nama": "Berobat Jalan : ",
-                        "type": "label0"
+                        "type": "label0",
+                        "nourut": 10
                     },
                     {
                         "id": 120018,
                         "nama": "Teratur",
-                        "type": "checkbox12"
+                        "type": "checkbox4",
+                        "nourut": 11
                     },
                     {
                         "id": 120019,
                         "nama": "Tidak Teratur",
-                        "type": "checkbox4"
+                        "type": "checkbox4",
+                        "nourut": 12
                     },
                     {
                         "id": 120020,
                         "nama": "Tidak Pernah",
-                        "type": "checkbox4"
+                        "type": "checkbox4",
+                        "nourut": 13
                     },
+                    {
+                        "id": 120340,
+                        "nama": "",
+                        "type": "textbox12",
+                        "nourut": 14
+                    },    
                 ]
                 },
                 {
@@ -262,12 +299,14 @@ define(['initialize'], function (initialize) {
                     "detail": [{
                         "id": 120296,
                         "nama": "Obat yang rutin dikonsumsi :",
-                        "type": "textarea13"
+                        "type": "textarea13",
+                        "nourut": 1
                     },
                     {
                         "id": 120297,
                         "nama": "Obat yang digunakan sekarang :",
-                        "type": "textarea13"
+                        "type": "textarea13",
+                        "nourut": 2
                     },
                   
                 ]
@@ -278,22 +317,26 @@ define(['initialize'], function (initialize) {
                     "detail": [{
                         "id": 120021,
                         "nama": "Tidak Ada",
-                        "type": "checkbox6"
+                        "type": "checkbox6",
+                        "nourut": 1
                     },
                     {
                         "id": 120022,
                         "nama": "Tidak Jelas",
-                        "type": "checkbox6"
+                        "type": "checkbox6",
+                        "nourut": 2
                     },
                     {
                         "id": 120023,
                         "nama": "Ada Yaitu",
-                        "type": "checkbox12"
+                        "type": "checkbox12",
+                        "nourut": 3
                     },
                     {
                         "id": 120024,
                         "nama": "",
-                        "type": "textbox12"
+                        "type": "textbox12",
+                        "nourut": 4
                     },
                 ]
                 },
@@ -303,62 +346,73 @@ define(['initialize'], function (initialize) {
                     "detail": [{
                         "id": 120025,
                         "nama": "Tidak Ada",
-                        "type": "checkbox12"
+                        "type": "checkbox12",
+                        "nourut": 1
                     }, 
                     {
                         "id": 120026,
                         "nama": "Kejang",
-                        "type": "checkbox3"
+                        "type": "checkbox3",
+                        "nourut": 2
                     },
                     {
                         "id": 120027,
                         "nama": "",
                         "type": "textbox8",
-                        "placeholder": "kapan"
+                        "placeholder": "kapan",
+                        "nourut": 3
                     },
                     {
                         "id": 120028,
                         "nama": "Panas",
-                        "type": "checkbox3"
+                        "type": "checkbox3",
+                        "nourut": 4
                     },
                     {
                         "id": 120029,
                         "nama": "",
                         "type": "textbox8",
-                        "placeholder": "kapan"
+                        "placeholder": "kapan",
+                        "nourut": 5
                     },
                     {
                         "id": 120030,
                         "nama": "Keracunan",
-                        "type": "checkbox3"
+                        "type": "checkbox3",
+                        "nourut": 6
                     },
                     {
                         "id": 120031,
                         "nama": "",
                         "type": "textbox8",
-                        "placeholder": "kapan"
+                        "placeholder": "kapan",
+                        "nourut": 7
                     },
                     {
                         "id": 120032,
                         "nama": "Trauma Kepala",
-                        "type": "checkbox3"
+                        "type": "checkbox3",
+                        "nourut": 8
                     },
                     {
                         "id": 120033,
                         "nama": "",
                         "type": "textbox8",
-                        "placeholder": "kapan"
+                        "placeholder": "kapan",
+                        "nourut": 9
                     },
                     {
                         "id": 120034,
                         "nama": "Lainnya",
-                        "type": "textbox12"
+                        "type": "textbox12",
+                        "nourut": 10
                     },
                     {
                         "id": 120035,
                         "nama": "",
                         "type": "textbox",
-                        "placeholder": "kapan"
+                        "placeholder": "kapan",
+                        "nourut": 11
                     },
                     ]
                 },
@@ -368,7 +422,8 @@ define(['initialize'], function (initialize) {
                     "detail": [{
                         "id": 120036,
                         "nama": "",
-                        "type": "textarea12"
+                        "type": "textarea12",
+                        "nourut": 1
                     }]
                 },
                 {
@@ -377,7 +432,8 @@ define(['initialize'], function (initialize) {
                     "detail": [{
                         "id": 120037,
                         "nama": "",
-                        "type": "textarea12"
+                        "type": "textarea12",
+                        "nourut": 1
                     }]
                 },
                 {
@@ -386,7 +442,8 @@ define(['initialize'], function (initialize) {
                     "detail": [{
                         "id": 120038,
                         "nama": "",
-                        "type": "textarea12"
+                        "type": "textarea12",
+                        "nourut": 1
                     }]
                 },
                 {
@@ -396,22 +453,26 @@ define(['initialize'], function (initialize) {
                         "id": 120039,
                         "nama": "Ada, Hubungan Keluarga",
                         "type": "checkbox3",
+                        "nourut": 1
                     },
                     {
                         "id": 120040,
                         "nama": "",
                         "type": "textbox6",
-                        "placeholder": "keterangan"
+                        "placeholder": "keterangan",
+                        "nourut": 2
                     },
                     {
                         "id": 120041,
                         "nama": "Tidak Ada",
-                        "type": "checkbox12"
+                        "type": "checkbox12",
+                        "nourut": 3
                     },
                     {
                         "id": 120042,
                         "nama": "Tidak Ada Keterangan",
-                        "type": "checkbox12"
+                        "type": "checkbox12",
+                        "nourut": 4
                     },
                 ]
                 },
@@ -421,7 +482,8 @@ define(['initialize'], function (initialize) {
                     "detail": [{
                         "id": 120043,
                         "nama": "",
-                        "type": "textarea12"
+                        "type": "textarea12",
+                        "nourut": 1
                     }]
                 },
             ]
@@ -453,65 +515,89 @@ define(['initialize'], function (initialize) {
                         "no": 4,
                     },
                     {
+                        "id": 120341,
+                        "nama": "",
+                        "type": "textbox12",
+                        "no": 5
+                    },
+                    {
                         "id": 120048,
                         "nama": "c. Kesehatan fisik ibu waktu hamil : ",
                         "type": "label0",
-                        "no": 5,
+                        "no": 6,
                     },
                     {
                         "id": 120049,
                         "nama": "Sehat ",
                         "type": "checkbox6",
-                        "no": 6,
+                        "no": 7,
                     },
                     {
                         "id": 120050,
                         "nama": "Tidak ",
                         "type": "checkbox6",
-                        "no": 7
+                        "no": 8
+                    },
+                    {
+                        "id": 120342,
+                        "no": 9,
+                        "nama": "",
+                        "type": "textbox12"
                     },
                     {
                         "id": 120051,
                         "nama": "d. Kehamilan dikehendaki : ",
                         "type": "label0",
-                        "no": 8
+                        "no": 10
                     },
                     {
                         "id": 120052,
                         "nama": "ya ",
                         "type": "checkbox6",
-                        "no": 9
+                        "no": 11
                     },
                     {
                         "id": 120053,
                         "nama": "tidak ",
                         "type": "checkbox6",
-                        "no": 10
+                        "no": 12
+                    },
+                    {
+                        "id": 120343,
+                        "no": 13,
+                        "nama": "",
+                        "type": "textbox12"
                     },
                     {
                         "id": 120054,
                         "nama": "e. Persalinan :  ",
                         "type": "label0",
-                        "no": 11
+                        "no": 14
                     },
                     {
                         "id": 120055,
                         "nama": "normal ",
                         "type": "checkbox6",
-                        "no": 12
+                        "no": 15
                     },
                     {
                         "id": 120056,
                         "nama": "tidak ",
                         "type": "checkbox6",
-                        "no": 13
+                        "no": 16
+                    },
+                    {
+                        "id": 120344,
+                        "no": 17,
+                        "nama": "",
+                        "type": "textbox12"
                     },
                     {
                         "id": 120057,
                         "nama": "f. Berat badan waktu lahir : ",
                         "type": "textbox6",
                         "satuan": "gram",
-                        "no": 14
+                        "no": 18
                     },
                     
                 ]
@@ -671,79 +757,103 @@ define(['initialize'], function (initialize) {
                         "id": 120072,
                         "nama": "SD, Lulus",
                         "type": "checkbox6",
-                        "no": 24
+                        "no": 1
                     },
                     {
                         "id": 120073,
                         "nama": "SD, Tidak",
                         "type": "checkbox6",
-                        "no": 25
+                        "no": 2
+                    },
+                    {
+                        "id": 120334,
+                        "nama": "",
+                        "type": "textbox12",
+                        "no": 3
                     },
                     {
                         "id": 120074,
                         "nama": "SLTP, Lulus",
                         "type": "checkbox6",
-                        "no": 26
+                        "no": 4
                     },
                     {
                         "id": 120075,
                         "nama": "SLTP, Tidak",
                         "type": "checkbox6",
-                        "no": 27
+                        "no": 5
+                    },
+                    {
+                        "id": 120335,
+                        "nama": "",
+                        "type": "textbox12",
+                        "no": 6
                     },
                     {
                         "id": 120076,
                         "nama": "SLTA, Lulus",
                         "type": "checkbox6",
-                        "no": 28
+                        "no": 7
                     }, 
                     {
                         "id": 120077,
                         "nama": "SLTA, Tidak",
                         "type": "checkbox6",
-                        "no": 29
+                        "no": 8
+                    },
+                    {
+                        "id": 120336,
+                        "nama": "",
+                        "type": "textbox12",
+                        "no": 9
                     },
                     {
                         "id": 120078,
                         "nama": "Perguruan Tinggi, Lulus",
                         "type": "checkbox6",
-                        "no": 30
+                        "no": 10
                     }, 
                     {
                         "id": 120079,
                         "nama": "Perguruan Tinggi, Tidak",
                         "type": "checkbox6",
-                        "no": 31
+                        "no": 11
+                    },
+                    {
+                        "id": 120337,
+                        "nama": "",
+                        "type": "textbox12",
+                        "no": 12
                     },
                     {
                         "id": 120080,
                         "nama": "Kecerdasan",
                         "type": "label0",
-                        "no": 32
+                        "no": 13
                     },
                     {
                         "id": 120081,
                         "nama": "Tinggi",
                         "type": "checkbox4",
-                        "no": 33
+                        "no": 14
                     },
                     {
                         "id": 120082,
                         "nama": "Cukup",
                         "type": "checkbox4",
-                        "no": 34
+                        "no": 15
                     },
                     {
                         "id": 120083,
                         "nama": "Kurang",
                         "type": "checkbox4",
-                        "no": 35
+                        "no": 16
                     },
                     {
                         "id": 120084,
                         "nama": "Kegemaran",
                         "type": "textbox12",
-                        "no": 36
+                        "no": 17
                     },
                     // {
                     //     "id": 120084,

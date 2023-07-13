@@ -75,7 +75,7 @@
                 <div class="grid_12" ng-repeat="list in listRiwayatPenyakit | orderBy:'id'" style="padding: 5pt 10pt">
                     <b>{{list.nama}}</b>
                     <div class="grid_12" style="padding: 5pt">
-                        <div ng-repeat="jawab in list.detail | orderBy:'id'">
+                        <div ng-repeat="jawab in list.detail | orderBy:'no'">
                             <div ng-switch on="jawab.type">
                                 <!-- label -->
                                 <div class="grid_12" ng-switch-when="label">
@@ -100,7 +100,7 @@
                                 </div>
                                 <!-- checkbox -->
                                 <div class="grid_12" ng-switch-when="checkbox12">
-                                    <input type="checkbox" class="k-checkbox" id="item.obj{{jawab.id}}"
+                                    <input type="checkbox" class="k-checkbox" id="item.obj{{jawab.id}}" style="margin-top: 10px;"
                                         ng-model="item.obj[jawab.id]">
                                     <label class="k-checkbox-label" for="item.obj{{jawab.id}}">
                                         &nbsp;{{jawab.nama}}</label>
@@ -1447,7 +1447,7 @@
                     style="padding: 5pt 10pt">
                     <b>{{list.nama}}</b>
                     <div class="grid_12" style="padding: 5pt">
-                        <div ng-repeat="jawab in list.detail | orderBy:'id'">
+                        <div ng-repeat="jawab in list.detail | orderBy:'nourut'">
                             <div ng-switch on="jawab.type">
                                 <!-- label -->
                                 <div class="grid_12" ng-switch-when="label">

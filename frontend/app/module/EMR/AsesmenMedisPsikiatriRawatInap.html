@@ -72,7 +72,7 @@
                 <div class="grid_12" ng-repeat="list in listRiwayatPenyakit | orderBy:'id'" style="padding: 5pt 10pt">
                     <b>{{list.nama}}</b>
                     <div class="grid_12" style="padding: 5pt">
-                        <div ng-repeat="jawab in list.detail | orderBy:'id'">
+                        <div ng-repeat="jawab in list.detail | orderBy:'nourut'">
                             <div ng-switch on="jawab.type">
                                 <!-- label -->
                                 <div class="grid_12" ng-switch-when="label">

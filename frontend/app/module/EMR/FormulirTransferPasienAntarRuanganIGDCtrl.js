@@ -61,7 +61,28 @@ define(['initialize'], function (initialize) {
                     // $scope.item.obj[3100589] = $scope.cc.umur
                     // $scope.item.obj[3100590] = $scope.cc.jeniskelamin
                     // $scope.item.obj[3100591] = $scope.cc.alamatlengkap
-                   
+                    medifirstService.get("emr/get-emr-to-emr?noemr="+ nomorEMR + "&emrfk=3000922").then(function (dat) {
+                        var datas = dat.data.data
+                        $scope.isRouteLoading = false
+                        for (let i = 0; i < datas.length; i++) {
+                            if(datas[i].type == 'textbox' && paramsIndex == 1 ){
+                                $scope.item.obj[datas[i].idtujuan]= datas[i].value   
+                            }    
+                            if (datas[i].type == "checkbox") {
+                                if (datas[i].value == "1") {
+                                    $scope.item.obj[datas[i].idtujuan] = datas[i].value 
+                                    console.log(datas[i].type);
+                                }
+                            }       
+                            if (datas[i].type == "textarea") {
+                                $scope.item.obj[datas[i].idtujuan] = datas[i].value
+                            }       
+
+                        }
+                        
+                        
+        
+                    })
                     
                     loady()
                     function loady(){
