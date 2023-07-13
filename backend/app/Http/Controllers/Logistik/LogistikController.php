@@ -15025,9 +15025,10 @@ class LogistikController extends ApiController{
             ->LEFTJOIN('pegawai_m as pg','pg.id','=','sp.objectpegawaiorderfk')
             ->LEFTJOIN('ruangan_m as ru','ru.id','=','sp.objectruanganfk')
             ->LEFTJOIN('ruangan_m as ru2','ru2.id','=','sp.objectruangantujuanfk')
+            ->leftjoin('strukkirim_t as sk','sk.noorderfk','=','sp.norec')
             ->join('produk_m as pr', 'pr.id','=','op.objectprodukfk')
             ->join('satuanstandar_m as ss', 'ss.id','=','op.objectsatuanstandarfk')
-            ->select('op.isanalis','sp.norec','sp.tglorder','sp.noorder','sp.jenispermintaanfk','pg.namalengkap',
+            ->select('sk.norec as norec_sk','op.isanalis','sp.norec','sp.tglorder','sp.noorder','sp.jenispermintaanfk','pg.namalengkap',
                 'ru.namaruangan as ruanganasal','ru2.namaruangan as ruangantujuan','sp.keteranganorder',
                 'sp.statusorder','sp.qtyjenisproduk', DB::raw("
                      op.norec as norec_op, op.jumlahstokgudang, pr.kdbhp, op.jumlahstokruangan, case when op.qtyberi is null then op.qtyproduk else op.qtyberi end as qtyberi, pr.id as kdproduk,pr.kdproduk as kdsirs,pr.namaproduk,
@@ -15124,6 +15125,7 @@ class LogistikController extends ApiController{
                 'satuanstandar'=> $item->satuanstandar,
                 'isveriforder'=> $item->isveriforder,
                 'isanalis'=> $item->isanalis,
+                'norec_sk'=> $item->norec_sk,
                 'details' => $details,
             );
         }
@@ -16530,6 +16532,40 @@ FROM
 //                "kirimproduk" => $dataKP,
 //                "saldoawalTujuan" => $dataSaldoAwalT,
 'e'=> $e->getLine(). '/'. $e->getMessage(),
+                "as" => 'as@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    function gantiketeranganstrukkirim(Request $request) {
+        try {
+            $strukkirim = StrukKirim::where('norec',$request['norec'])->first();
+            $strukkirim->keteranganlainnyakirim = $request['keterangan'];
+            $strukkirim->save();
+            $transStatus = 'true';
+        } catch (\Throwable $e) {
+            //throw $th;
+            $transStatus = 'false';
+
+        }
+        $transMessage = "Ubah Keterangan Distribusi Barang";
+        if ($transStatus == 'true') {
+            $transMessage = $transMessage . " Berhasil";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMessage,
+                // "nokirim" => $dataSK,//$noResep,,//$noResep,
+                // "stokdetailPenerima" => $dataSTOKDETAIL2,
+                "as" => 'as@epic',
+            );
+        } else {
+            $transMessage = $transMessage . " Gagal!!";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message"  => $transMessage,
+                'e'=> $e->getLine(). '/'. $e->getMessage(),
                 "as" => 'as@epic',
             );
         }

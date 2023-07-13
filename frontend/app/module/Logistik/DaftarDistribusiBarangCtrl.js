@@ -766,6 +766,24 @@ define(['initialize'], function (initialize) {
                     anHttpRequest.send(null);
                 }
             }
+            $scope.ubahKeterangan = function(){
+                if($scope.dataSelected == undefined){
+                    toastr.error('Pilih data dulu nggih')
+                    return
+                }
+                $scope.winDialogUbahKeterangan.center().open();
+            }
+            $scope.SimpanKeterangan = function(){
+                var objSave = {
+                    norec: $scope.dataSelected.norec,
+                    keterangan: $scope.item.gantiketerangan,
+                }
+                medifirstService.post('logistik/ganti-keterangan', objSave).then(function(){
+                    init();
+                    $scope.item.gantiketerangan = undefined
+                $scope.winDialogUbahKeterangan.close();
+                })
+            }
             //***********************************
         }
     ]);

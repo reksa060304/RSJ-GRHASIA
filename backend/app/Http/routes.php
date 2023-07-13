@@ -1455,6 +1455,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('logistik/get-produkdetail', 'Logistik\LogistikController@getProdukDetail');
             Route::get('logistik/get-data-order-barang-ruangan', 'Logistik\LogistikController@getDaftarOrderBarang');
             Route::get('logistik/get-data-order-barang-ruangan-baru', 'Logistik\LogistikController@getDaftarOrderBarangBaru');
+            Route::post('logistik/ganti-keterangan','Logistik\LogistikController@gantiketeranganstrukkirim');
             Route::post('logistik/update-op', 'Logistik\LogistikController@saveOP');
             Route::post('cppt/hapus-bariscppt', 'EMR\EMRController@hapusBarisCPPT');
             Route::get('logistik/get-detail-kirim-barang-ruangan', 'Logistik\LogistikController@getDetailKirimBarang');

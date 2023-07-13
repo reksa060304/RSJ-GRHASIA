@@ -126,6 +126,9 @@
             <button class="c-button" ng-click="EditKirim()">Ubah Distribusi</button>
         </div>
         <div class="grid_2" style="margin-top: 22px">
+            <button class="c-button success" ng-click="ubahKeterangan()">Ubah Keterangan</button>
+        </div>
+        <div class="grid_2" style="margin-top: 22px">
             <button class="c-button" ng-click="BatalKirim()">Batal Kirim</button>
         </div>
         <div class="grid_2" style="margin-top: 22px">
@@ -148,6 +151,30 @@
                     <input type="button" class="confirm_no k-button" value="Kembali" style="width: 70px" ng-click="batalBatal()"/>
                     &nbsp;
                     <input type="button" class="confirm_yes k-button" value="Lanjut" style="width: 70px" ng-click="lanjutBatal()"/>
+                </div>
+            </div>
+            <div kendo-window="winDialogBatalPerItem" k-title="'Batal Kirim'" k-width="450" k-visible="false" k-on-open="win2visible = true" 
+                k-on-close="win2visible = false">
+                <label c-label item="item" c-label-text="Alasan Pembatalan" style="margin:1.5em 0 .5em"></label>
+                <textarea c-text-area type="input" style="height:60px" filter="'string'" class="k-textbox" ng-model="item.alasanBatal1" placeholder="Alasan pembatalan" />
+                <br/>
+                <div class="dialog_buttons pull-right" style="margin-top:5%">
+                    <input type="button" class="confirm_no k-button" value="Kembali" style="width: 70px" ng-click="batalBatal1()"/>
+                    &nbsp;
+                    <input type="button" class="confirm_yes k-button" value="Lanjut" style="width: 70px" ng-click="lanjutBatal1()"/>
+                </div>
+            </div>
+            <div kendo-window="winDialogUbahKeterangan" k-title="'Ubah Keterangan Kirim'" k-width="450" k-visible="false"
+                k-on-open="win2visible = true" k-on-close="win2visible = false">
+                <label c-label item="item" c-label-text="Ganti Keterangan" style="margin:1.5em 0 .5em"></label>
+                <textarea c-text-area type="input" style="height:60px" filter="'string'" class="k-textbox"
+                    ng-model="item.gantiketerangan" placeholder="Ganti Keterangan" />
+                <br/>
+                <div class="dialog_buttons pull-right" style="margin-top:5%">
+                    <!-- <input type="button" class="confirm_no k-button" value="Kembali" style="width: 70px" ng-click="batalBatal()"/> -->
+                    &nbsp;
+                    <input type="button" class="confirm_yes k-button" value="Lanjut" style="width: 70px"
+                        ng-click="SimpanKeterangan()" />
                 </div>
             </div>
             <div kendo-window="winDialogBatalPerItem" k-title="'Batal Kirim'" k-width="450" k-visible="false" k-on-open="win2visible = true" 
