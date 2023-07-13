@@ -13268,4 +13268,152 @@ class EMRController  extends ApiController
         );
         return $this->respond($result);
     }
+    function saveCopyResep(Request $request) {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $copyresepd = $request['copyresepd'];
+        $copyresep = $request['copyresep'];
+        DB::beginTransaction();
+        $noreccpr = substr(Uuid::generate(), 0, 32);
+        try {
+            if($copyresep['norec'] == ''){
+                DB::table('copyresep_t')->insert([
+                    'norec'=> $noreccpr,
+                    'kdprofile'=> $kdProfile,
+                    'statusenabled'=> true,
+                    'namapasien'=> $copyresep['namapasien'],
+                    'dokter'=> $copyresep['dokter'],
+                    'tanggal'=> $copyresep['tanggal'],
+                    'noresep'=> $copyresep['noresep'],
+                    'iter1'=> $copyresep['iter1'],
+                    'iter2'=> $copyresep['iter2'],
+                    'iter3'=> $copyresep['iter3'],
+                    'tglcopy'=> $copyresep['tglcopy'],
+                    'objectpegawaifk'=> $copyresep['objectpegawaifk'],
+                    'norec_order'=> $copyresep['norec_order'],
+                ]);
+                $StrukOrder = StrukOrder::where('norec', $copyresep['norec_order'])
+                ->where('statusenabled', true)->where('kdprofile', $kdProfile)->first();
+                $StrukOrder->iscopyresep = true;
+                $StrukOrder->save();
+            }else if($copyresep['norec'] != ''){
+                DB::table('copyresep_t')->where('norec', $copyresep['norec'])->update([
+                    'namapasien'=> $copyresep['namapasien'],
+                    'dokter'=> $copyresep['dokter'],
+                    'tanggal'=> $copyresep['tanggal'],
+                    'noresep'=> $copyresep['noresep'],
+                    'iter1'=> $copyresep['iter1'],
+                    'iter2'=> $copyresep['iter2'],
+                    'iter3'=> $copyresep['iter3'],
+                    'tglcopy'=> $copyresep['tglcopy'],
+                    'objectpegawaifk'=> $copyresep['objectpegawaifk'],
+                ]);
+            }
+
+            foreach($copyresepd as $cpd){
+                if($cpd['norec'] == ''){
+                    DB::table('copyresepd_t')->insert([
+                        'norec'=> substr(Uuid::generate(), 0, 32),
+                        'kdprofile'=> $kdProfile,
+                        'statusenabled'=> true,
+                        'norec_cr' => $noreccpr,
+                        'rke'=> $cpd['rke'],
+                        'produk'=> $cpd['produk'],
+                        'dosis'=> $cpd['dosis'],
+                        'jumlah'=> $cpd['jumlah'],
+                        'aturanpakai'=> $cpd['aturanpakai'],
+                        'ispagi'=> $cpd['ispagi'],
+                        'issiang'=> $cpd['issiang'],
+                        'issore'=> $cpd['issore'],
+                        'ismalam'=> $cpd['ismalam'],
+                        'iter1'=> $cpd['iter1'],
+                        'iter2'=> $cpd['iter2'],
+                        'iter3'=> $cpd['iter3'],
+                        'entry'=> $cpd['entry'],
+                    ]);
+                }else if($cpd['norec'] != ''){
+                    DB::table('copyresepd_t')->where('norec', $cpd['norec'])->update([
+                        'rke'=> $cpd['rke'],
+                        'produk'=> $cpd['produk'],
+                        'dosis'=> $cpd['dosis'],
+                        'jumlah'=> $cpd['jumlah'],
+                        'aturanpakai'=> $cpd['aturanpakai'],
+                        'ispagi'=> $cpd['ispagi'],
+                        'issiang'=> $cpd['issiang'],
+                        'issore'=> $cpd['issore'],
+                        'ismalam'=> $cpd['ismalam'],
+                        'iter1'=> $cpd['iter1'],
+                        'iter2'=> $cpd['iter2'],
+                        'iter3'=> $cpd['iter3'],
+                        'entry'=> $cpd['entry'],
+                    ]);
+                }
+            }
+            
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+        $transMessage = 'Simpan Copy Resep ';
+
+        if ($transStatus == 'true') {
+            $transMessage = $transMessage . "Sukses";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "as" => 'as@epic',
+            );
+
+        } else {
+            $transMessage = $transMessage . " Gagal!!";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                'e' => $e->getMessage() . ' / ' . $e->getLine(),
+                "as" => 'as@epic',
+            );
+        }
+
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    function getCekCopyResep(Request $request) {
+        $data = DB::select(DB::raw("SELECT iscopyresep FROM strukorder_t where norec ilike '$request[norec_order]'"));
+        return $this->respond($data);
+    }
+
+    function getCopyResepnyaya(Request $request) {
+        $data = DB::select(DB::raw("SELECT cr.norec as norec_cr, crd.norec as norec_crd, cr.namapasien, cr.dokter,cr.tanggal, cr.tglcopy, 
+        cr.noresep, cr.iter1 as cpiter1, cr.iter2 as cpiter2, cr.iter3 as cpiter3,
+        crd.rke, crd.produk, crd.dosis, crd.jumlah, crd.aturanpakai, crd.ispagi, crd.issiang, crd.issore, crd.ismalam, crd.iter1 iteroabat1,
+        crd.iter2 iteroabat2, crd.iter3 iteroabat3, crd.entry
+        
+        FROM copyresep_t cr 
+        inner join copyresepd_t crd on crd.norec_cr = cr.norec
+        inner join pegawai_m pg on pg.id = cr.objectpegawaifk
+        where cr.norec_order ilike '$request[norec_order]'
+        "));
+        $result = array(
+            'data'=>$data
+        );
+        return $this->respond($result);
+    }
+    public function getEmrToEmrV2 (Request $request)
+    {
+        $noregistrasi = $request['noregistrasi'];
+        $kdProfile = $this->getDataKdProfile($request);
+
+        $data = \DB::select(DB::raw("SELECT * FROM (SELECT mee.idasal, ROW_NUMBER()OVER(partition by epd.emrdfk order by epd.tgl desc)as nomor, em.caption as namaemr, mee.idtujuan, epd.value, ed.type, ed.caption FROM emrpasien_t ep
+            inner join emrpasiend_t epd on epd.emrpasienfk = ep.noemr
+            inner join mapemrtoemr_t mee on mee.emrasal = epd.emrfk and mee.idasal = epd.emrdfk
+            inner join emrd_t ed on ed.id = epd.emrdfk
+            inner join emr_t em on em.id = ed.emrfk
+            where ep.statusenabled = true and ep.kdprofile = 30 and mee.emrtujuan = $request[emrfk] and ep.noregistrasifk = '$request[noregistrasi]' and epd.kdprofile= 30 and epd.statusenabled = true)as x where x.nomor = 1
+        "));
+        $result = array(
+                // 'data'=> $detail,
+                // "sec"=> $sec,
+                'data'=> $data,
+                'as'=> 'Fizi@Epic'
+            );
+        return $this->respond($result);
+    }
 }

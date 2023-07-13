@@ -332,6 +332,25 @@ define(['initialize'], function (initialize) {
             medifirstService.get("emr/get-emr-transaksi-detail?noemr=" + nomorEMR + "&emrfk=" + $scope.cc.emrfk, true).then(function (dat) {
                 $scope.item.obj = []
                 $scope.item.obj2 = []
+                medifirstService.get('emr/get-emr-to-emr-v2?emrfk=' + $scope.cc.emrfk + "&noregistrasi=" + $scope.cc.noregistrasi).then(function (data) {
+                    // var datas
+                    var datas = data.data.data
+                    $scope.isRouteLoading = false
+                    for (let i = 0; i < datas.length; i++) {
+                        if (datas[i].type == 'textbox') {
+                            $scope.item.obj[datas[i].idtujuan] = datas[i].value
+                        }
+                        if (datas[i].type == "checkbox") {
+                            if (datas[i].value == "1") {
+                                $scope.item.obj[datas[i].idtujuan] = datas[i].value
+                                console.log(datas[i].type);
+                            }
+                        }
+                        if (datas[i].type == "textarea") {
+                            $scope.item.obj[datas[i].idtujuan] = datas[i].value
+                        }
+                    }
+                })
                 $scope.item.obj[116062]= $scope.now
                 $scope.item.obj[3002092] = $scope.now
                 $scope.item.obj[116068]={text:$scope.cc.namaruangan,value: $scope.cc.objectruanganfk}
