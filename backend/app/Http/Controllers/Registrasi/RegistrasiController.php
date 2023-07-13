@@ -607,6 +607,13 @@ class RegistrasiController extends ApiController
                 }
                 $kdRuanganTeleme = $this->settingDataFixed('kdRuanganTelemedicine',$kdProfile);
 
+                $strukorder = StrukOrder::where('noregistrasifk', $r_NewPD['norec_pd'])->first();
+                if(isset($strukorder)){
+                    if($strukorder->objectruanganfk != $dataAPD->objectruanganfk){
+                        $strukorder->objectruanganfk = $dataAPD->objectruanganfk;
+                        $strukorder->save();
+                    }
+                }
                 
                 //endregion
                 $transStatus = 'true';
