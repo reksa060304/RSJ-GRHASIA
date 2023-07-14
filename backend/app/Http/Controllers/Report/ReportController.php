@@ -10529,7 +10529,8 @@ class ReportController extends ApiController{
 				) as x group by kodemataanggaran, keterangan, id, tahap, jml, satuan, hargasatuan
 
         union all
-
+                
+        SELECT zx.kodemataanggaran, zx.keterangan, zx.id, zx.tahap, zx.jml, zx.satuan, zx.hargasatuan, sum(zx.subtotaljasalayanan)as subtotaljasalayanan, sum(zx.subtotalapbd)as  subtotalapbd FROM (
         select ma.kodemataanggaran, ma.namamataanggaran keterangan, ta.id, ta.tahap, 0 jml, '' satuan, 0 hargasatuan, 
 				case when ap.id = 18 then sum(kb.subtotal) else 0 end as subtotaljasalayanan,
 				case when ap.id = 15 then sum(kb.subtotal) else 0 end as subtotalapbd
@@ -10557,7 +10558,9 @@ class ReportController extends ApiController{
         and mat.kdprofile = 30 and mat.statusenabled = true
         and kb.kdprofile = 30 and kb.statusenabled = true
         group by ap.id, ta.id, ta.tahap, ma.kodemataanggaran, ma.namamataanggaran
-
+            
+)as zx
+GROUP BY zx.kodemataanggaran, zx.keterangan, zx.id, zx.tahap, zx.jml, zx.satuan, zx.hargasatuan
 				union ALL
 
 				select ma.kodemataanggaran, kb.keteranganbelanja keterangan, ta.id, ta.tahap, kb.jml, kb.satuan, kb.hargasatuan,  
