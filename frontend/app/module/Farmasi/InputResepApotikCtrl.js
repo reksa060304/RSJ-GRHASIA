@@ -943,7 +943,7 @@ define(['initialize'], function (initialize) {
                 });
             }
 
-            $scope.getSatuan = function () {                
+            $scope.getSatuan = function () {   
 /*
 if(!pass || !cpass || !email || !cemail || !user){
 Which will check for empty strings (""), null, undefined, false and the numbers 0 and NaN.
@@ -953,7 +953,7 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                 }
                 if(($scope.item.namaProduks == $scope.item.produk.namaproduk) && ($scope.item.namaRuangans == $scope.item.ruangan.namaruangan)){
                     return
-                }
+                }   
 
                 /* info stok all ruangan */
                 medifirstService.get("farmasi/get-info-stok?produkfk=" + $scope.item.produk.id, true)
@@ -982,6 +982,49 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
 
                 GETKONVERSI()
             }
+            $scope.$watch('item.produk', function(newValue, oldValue){
+                if (newValue != oldValue) {
+                    getSatuan()
+                }
+            })
+            function getSatuan() {
+                /*
+                if(!pass || !cpass || !email || !cemail || !user){
+                Which will check for empty strings (""), null, undefined, false and the numbers 0 and NaN.
+                */
+                if (!$scope.item.produk) { //sama dengan $scope.item.produk === null
+                    return
+                }
+                if (($scope.item.namaProduks == $scope.item.produk.namaproduk) && ($scope.item.namaRuangans == $scope.item.ruangan.namaruangan)) {
+                    return
+                }
+
+                /* info stok all ruangan */
+                medifirstService.get("farmasi/get-info-stok?produkfk=" + $scope.item.produk.id, true)
+                    .then(function (e) {
+                        //dikasih nilai namaProduks & namaRuangans hanya ketika data yg dipilih ada data info stoknya/valid
+                        $scope.item.namaProduks = $scope.item.produk.namaproduk;
+                        $scope.item.namaRuangans = $scope.item.ruangan.namaruangan;
+                        for (var i = 0; i < e.data.infostok.length; i++) {
+                            e.data.infostok[i].no = i + 1
+                        }
+                        $scope.dataGridStok = new kendo.data.DataSource({
+                            data: e.data.infostok,
+                            pageable: true,
+                            pageSize: 5,
+                            total: e.data.infostok.length,
+                            serverPaging: false,
+                            schema: {
+                                model: {
+                                    fields: {}
+                                }
+                            }
+                        })
+                    })
+                /* end info stok all ruangan */
+
+                GETKONVERSI()
+            }
             function GETKONVERSI() {
                 if ($scope.item.produk == undefined) {
                     return
@@ -989,7 +1032,6 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                 if ($scope.item.produk == "") {
                     return
                 }
-                dataProdukDetail = [];
                 $scope.listSatuan = $scope.item.produk.konversisatuan
                 if ($scope.listSatuan.length == 0) {
                     $scope.listSatuan = ([{ ssid: $scope.item.produk.ssid, satuanstandar: $scope.item.produk.satuanstandar }])
@@ -1043,7 +1085,7 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                             // $scope.item.jumlah = 0
                             
                             $scope.item.jumlah = $scope.dataSelected.jumlah
-                            $scope.item.jumlahbulat = $scope.dataSelected.jumlahobat//Math.ceil($scope.dataSelected.jumlah);
+                            $scope.item.jumlahbulat = $scope.dataSelected.jumlah//Math.ceil($scope.dataSelected.jumlah);
                             $scope.item.dosis = $scope.dataSelected.dosis
                             $scope.item.jumlahxmakan = (parseFloat($scope.item.jumlah) / parseFloat($scope.item.dosis)) * parseFloat($scope.item.kekuatan)
                             $scope.item.nilaiKonversi = $scope.dataSelected.nilaikonversi
@@ -1704,6 +1746,7 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
             }
             
             $scope.klikGrid = function (dataSelected) {
+                dataProdukDetail = []
                 if (statusTambah == false)
                     return
                 var dataProduk = [];
@@ -1794,6 +1837,7 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                     }
                 }
                 $scope.item.produk = dataProduk//{id:dataSelected.produkfk,namaproduk:dataSelected.namaproduk}
+                console.log($scope.item.produk);
                 // $scope.item.stok = dataSelected.jmlstok //* $scope.item.nilaiKonversi
 
                 // $scope.item.jumlah = dataSelected.jumlah
@@ -1808,7 +1852,6 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                 // $scope.item.nilaiKonversi = dataSelected.nilaikonversi
                 // $scope.item.satuan = {ssid:dataSelected.satuanviewfk,satuanstandar:dataSelected.satuanview}
 
-                console.log(dataSelected);
                 // $scope.item.jumlah = dataSelected.jumlah
                 // $scope.item.hargaSatuan = dataSelected.hargasatuan
                 // $scope.item.hargadiskon = dataSelected.hargadiscount

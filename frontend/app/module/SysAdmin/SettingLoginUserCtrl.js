@@ -621,7 +621,16 @@ define(['initialize'], function (initialize) {
                     name: "create", text: "Input Baru",
                     template: '<button ng-click="addNewUser()" class="k-button k-button-icontext k-grid-upload" href="\\#"><span class="k-icon k-i-plus"></span>Tambah</button>'
 
-                }],
+                },{
+                    name: "excel", 
+                }
+                
+            ],
+                excel: {
+                    fileName: "Data Logging User.xlsx",
+                    allPages: true,
+                },
+                
                 selectable: 'row',
                 pageable: true,
                 columns: [

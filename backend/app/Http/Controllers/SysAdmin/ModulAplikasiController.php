@@ -924,6 +924,7 @@ class ModulAplikasiController extends ApiController
             ->select('lo.id','lo.namauser','lo.passcode as katakunci','pg.namalengkap','kl.kelompokuser','lo.objectkelompokuserfk',
                 'lo.objectpegawaifk')
             ->where('lo.statusenabled',true)
+            ->where('pg.statusenabled', true)
             ->where('lo.kdprofile', $kdProfile)
             ->orderBy('lo.namauser');
 
