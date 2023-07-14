@@ -1371,7 +1371,7 @@ class SumberDayaManusiaController extends ApiController {
                 order by pg.namalengkap,pg.id,rg.tgltmt asc
             ) a on pg.id = a.pegawaiid
             inner join(
-                select pg.id pegawaiid, pg.namalengkap, pg.masakerjatambahan, pg.masakerjatambahan*365 as jumlahmasakerjatambahan
+                select pg.id pegawaiid, pg.namalengkap, split_part(pg.masakerjatambahan, '-', 1)::integer, split_part(pg.masakerjatambahan, '-', 1)::integer*365 as jumlahmasakerjatambahan
                 from pegawai_m pg
                 order by jumlahmasakerjatambahan
             ) b on pg.id = b.pegawaiid
