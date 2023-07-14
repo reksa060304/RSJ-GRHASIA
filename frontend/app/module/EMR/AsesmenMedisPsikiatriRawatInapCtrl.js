@@ -1800,6 +1800,15 @@ define(['initialize'], function (initialize) {
                                 if (datas[i].type == "textarea") {
                                     $scope.item.obj[datas[i].id] = datas[i].value
                                 }
+                                if (datas[i].type == "textareabold") {
+                                    $scope.item.obj[datas[i].id] = datas[i].value
+                                }
+                                if (datas[i].type == "textarea12") {
+                                    $scope.item.obj[datas[i].id] = datas[i].value
+                                }
+                                if (datas[i].type == "textarea13") {
+                                    $scope.item.obj[datas[i].id] = datas[i].value
+                                }
                                 if (datas[i].type == "combobox") {
                                     var str = datas[i].value
                                     if (str != undefined) {
@@ -1811,6 +1820,36 @@ define(['initialize'], function (initialize) {
                                     }
                                 }
                                 if (datas[i].type == "checkbox") {
+                                    if (datas[i].value == "1") {
+                                        $scope.item.obj[datas[i].id] = true
+                                        console.log(datas[i].type);
+                                    }
+                                }
+                                if (datas[i].type == "checkbox2") {
+                                    if (datas[i].value == "1") {
+                                        $scope.item.obj[datas[i].id] = true
+                                        console.log(datas[i].type);
+                                    }
+                                }
+                                if (datas[i].type == "checkbox3") {
+                                    if (datas[i].value == "1") {
+                                        $scope.item.obj[datas[i].id] = true
+                                        console.log(datas[i].type);
+                                    }
+                                }
+                                if (datas[i].type == "checkbox4") {
+                                    if (datas[i].value == "1") {
+                                        $scope.item.obj[datas[i].id] = true
+                                        console.log(datas[i].type);
+                                    }
+                                }
+                                if (datas[i].type == "checkbox6") {
+                                    if (datas[i].value == "1") {
+                                        $scope.item.obj[datas[i].id] = true
+                                        console.log(datas[i].type);
+                                    }
+                                }
+                                if (datas[i].type == "checkbox12") {
                                     if (datas[i].value == "1") {
                                         $scope.item.obj[datas[i].id] = true
                                         console.log(datas[i].type);
@@ -1847,6 +1886,22 @@ define(['initialize'], function (initialize) {
                                 if (datas[i].type == "textbox") {
                                     $scope.item.obj[datas[i].id] = datas[i].value
                                 }
+                                if (datas[i].type == "textbox12") {
+                                    $scope.item.obj[datas[i].id] = datas[i].value
+                                }
+                                if (datas[i].type == "checkboxtextbox") {
+                                    $scope.item.obj[datas[i].id] = datas[i].value
+                                }
+                                if (datas[i].type == "textbox6") {
+                                    $scope.item.obj[datas[i].id] = datas[i].value
+                                }
+                                if (datas[i].type == "textbox4") {
+                                    $scope.item.obj[datas[i].id] = datas[i].value
+                                }
+                                if (datas[i].type == "textbox8") {
+                                    $scope.item.obj[datas[i].id] = datas[i].value
+                                }
+
 
                             }
 
