@@ -13574,7 +13574,7 @@ public function suratBuktiPengembalian(Request $request)
         cr.noresep, cr.iter1 as cpiter1, cr.iter2 as cpiter2, cr.iter3 as cpiter3,
         crd.rke, crd.produk, crd.dosis, crd.jumlah, crd.aturanpakai, crd.ispagi, crd.issiang, crd.issore, crd.ismalam, crd.iter1 iteroabat1,
         crd.iter2 iteroabat2, crd.iter3 iteroabat3, pg.namalengkap,
-        crd.entry
+        crd.entry, crd.sediaan, crd.jumlahobat, crd.mfla
         FROM copyresep_t cr 
         inner join copyresepd_t crd on crd.norec_cr = cr.norec
         inner join pegawai_m pg on pg.id = cr.objectpegawaifk

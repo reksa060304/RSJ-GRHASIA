@@ -1,0 +1,227 @@
+<style>
+    .clicks {
+    cursor: pointer;
+    }
+</style>
+<div class="grid_12">
+    <div class="grid_12">
+        <div class="grid_12">
+            <div class="grid_1">
+                <label c-label item="item" c-label-text="Pro"></label>
+            </div>
+            <div class="grid_6">
+                <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.namapasien" disabled />
+            </div>
+        </div>
+        <div class="grid_12">
+            <div class="grid_1">
+                <label c-label item="item" c-label-text="Dokter"></label>
+            </div>
+            <div class="grid_6">
+                <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.namadokter" disabled />
+            </div>
+        </div>
+        <div class="grid_12">
+            <div class="grid_1">
+                <label c-label item="item" c-label-text="Tanggal/No"></label>
+            </div>
+            <div class="grid_6">
+                <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.tglno" disabled />
+            </div>
+        </div>
+    </div>
+    <div class="grid_12 headerBox" style="height: 50px;">
+        <h1 style="color: white;"><b>Copy Resep</b></h1>
+    </div>
+    <div class="grid_12">
+        <div class="grid_12">
+            <div class="grid_12" style="margin-top: 5px">
+                <div class="grid_12">
+                    <div class="grid_12">
+                                <label c-label item="item" c-label-text="Iterasi Per Resep"></label>
+
+                    </div>
+                    <div class="grid_1">
+                        <input type="checkbox" class="k-checkbox" ng-model="item.iterasi1" id="iterasi1"
+                            >
+                        <label class="k-checkbox-label" for="iterasi1"><b>Iterasi 1x</b></label>
+                    </div>
+                    <div class="grid_1">
+                        <input type="checkbox" class="k-checkbox" ng-model="item.iterasi2" id="iterasi2"
+                            >
+                        <label class="k-checkbox-label" for="iterasi2"><b>Iterasi 2x</b></label>
+                    </div>
+                    <div class="grid_1">
+                        <input type="checkbox" class="k-checkbox" ng-model="item.iterasi3" id="iterasi3"
+                            >
+                        <label class="k-checkbox-label" for="iterasi3"><b>Iterasi 3x</b></label>
+                    </div>
+                </div>
+
+                <div class="grid_12" ng-repeat="(index, data) in listItemREV">
+                    <div class="grid_12">
+                        <div class="grid_1">
+                            <div class="grid_12">
+                                <label c-label item="item" c-label-text="R/ke"></label>
+                            </div>
+                            <div class="grid_12">
+                                <input c-text-box type="input" filter="" class="k-textbox" ng-model="data.rke" />
+                            </div>
+                        </div>
+                        <div class="grid_3">
+                            <div class="grid_12">
+                                <label c-label item="item" c-label-text="Produk"></label>
+                            </div>
+                            <div class="grid_12">
+                                <input style="font-weight: bold" c-text-box type="input" style="text-align: right"
+                                    filter="" class="k-textbox" ng-model="data.produk" />
+                            </div>
+                        </div>
+                        <div class="grid_1">
+                            <div class="grid_6">
+                                <label c-label item="item" c-label-text="Dosis"></label>
+                            </div>
+                            <div class="grid_12" style="margin-top: -10px">
+                                <input c-text-box type="input" style="text-align: right" filter="" class="k-textbox"
+                                    ng-model="data.dosis" />
+                            </div>
+                        </div>
+                        <div class="grid_1">
+                            <div class="grid_12">
+                                <label c-label item="item" c-label-text="Jumlah Obat"></label>
+                            </div>
+                            <div class="grid_6" style="margin-top: -6px">
+                                <input style="font-weight: bold" c-text-box type="input" style="text-align: right"
+                                    filter="" class="k-textbox" ng-model="data.jumlahobat"
+                                     />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid_12">
+                        <div class="grid_3">
+                            <label c-label item="item" c-label-text="Aturan Pakai"></label>
+                            <div class="grid_4 parentKeteranganFieldTambahan">
+                                <input c-text-box type="input" filter="" class="k-textbox" style="margin-top: -1px;"
+                                    ng-model="data.aturanpakai" />
+                            </div>
+                            <div style="margin-top: 5px; font-weight: bold;">
+                                <div class="grid_2">
+                                    <input type="checkbox" class="k-checkbox" 
+                                        id="ispagi{{data.index}}"
+                                        ng-model="data.ispagi">
+                                    <label class="k-checkbox-label" for="ispagi{{data.index}}">P</label>
+                                </div>
+                                <div class="grid_2">
+                                    <input type="checkbox" class="k-checkbox" 
+                                        id="issiang{{data.index}}"
+                                        ng-model="data.issiang">
+                                    <label class="k-checkbox-label" for="issiang{{data.index}}">S</label>
+                                </div>
+                                <div class="grid_2">
+                                    <input type="checkbox"  class="k-checkbox" 
+                                        id="issore{{data.index}}"
+                                        ng-model="data.issore">
+                                    <label class="k-checkbox-label" for="issore{{data.index}}">SR</label>
+                                </div>
+                                <div class="grid_2">
+                                    <input type="checkbox" class="k-checkbox"
+                                        id="ismalam{{data.index}}"
+                                        ng-model="data.ismalam">
+                                    <label class="k-checkbox-label" for="ismalam{{data.index}}">M</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid_2">
+                            <div class="grid_12">
+                                <label c-label item="item"c-label-text="Iterasi Per Obat"></label>
+
+                            </div>
+                            <div class="grid_4" style="margin-top: 5px; font-weight: bold;">
+                                <input type="checkbox" class="k-checkbox" ng-model="data.iter1"
+                                    id="iter1{{data.index}}">
+                                <label class="k-checkbox-label" for="iter1{{data.index}}"><b>Iter 1x</b></label>
+                            </div>
+                            <div class="grid_4" style="margin-top: 5px; font-weight: bold;">
+                                <input type="checkbox" class="k-checkbox" ng-model="data.iter2"
+                                    id="iter2{{data.index}}">
+                                <label class="k-checkbox-label" for="iter2{{data.index}}"><b>Iter 2x</b></label>
+                            </div>
+                            <div class="grid_4" style="margin-top: 5px; font-weight: bold;">
+                                <input type="checkbox" class="k-checkbox" ng-model="data.iter3"
+                                    id="iter3{{data.index}}">
+                                <label class="k-checkbox-label" for="iter3{{data.index}}"><b>Iter 3x</b></label>
+                            </div>
+                        </div>
+                        <!-- <div class="grid_2">
+                            <label ng-click="addNewItem()" class="clicks"><img
+                                    src="stylesheets/Addd.png" width="25" alt="Picture"></label>
+                            <label ng-click="removeItem(index)"
+                                class="clicks"><img src="stylesheets/cancel.png" width="25" alt="Picture"></label>
+                        </div> -->
+                    </div>
+                    <div class="grid_12">
+                        <div class="grid_2" ng-show="entryanmfla[data.index]">
+                            <div class="grid_12">
+                                <label c-label item="item" c-label-text="mfla" ></label>
+                            </div>
+                            <div class="grid_12">
+                                <input style="font-weight: bold" c-text-box type="input" style="text-align: right"
+                                    filter="" class="k-textbox" ng-model="data.mfla" />
+                            </div>
+                        </div>
+                        <div class="grid_1" ng-show="entryanmfla[data.index]">
+                            <div class="grid_12">
+                                <label c-label item="item" c-label-text="Jumlah Racikan"></label>
+                            </div>
+                            <div class="grid_12">
+                                <input style="font-weight: bold" c-text-box type="input" style="text-align: right"
+                                    filter="" class="k-textbox" ng-model="data.jumlah" />
+                            </div>
+                        </div>
+                        <div class="grid_1" ng-show="entryansediaan[data.index]">
+                            <div class="grid_12">
+                                <label c-label item="item" c-label-text="Sediaan"></label>
+                            </div>
+                            <div class="grid_12">
+                                <input style="font-weight: bold" c-text-box type="input" style="text-align: right"
+                                    filter="" class="k-textbox" ng-model="data.sediaan" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid_12" ng-show="entryan[data.index]">
+                        <div class="grid_6">
+                            <textarea style="width: 70%;height: 100px" cols="6" rows="5" c-text-area type="input"
+                                filter="'string'" class="k-textbox" ng-model="data.entry"></textarea>
+                        </div>
+                        <div class="grid_6"></div>
+                    </div>
+                    <div class="grid_12">
+                        <hr>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="grid_12">
+            <div class="grid_3"></div>
+            <div class="grid_3"></div>
+            <div class="grid_6">
+                <div class="grid_4"></div>
+                <div class="grid_2" style="margin-top: 22px" ng-show='tombolSimpanVis'>
+                    <button class="c-button" ng-click="cetakcopyresep()">Cetak</button>
+                </div>
+                <div class="grid_2" style="margin-top: 22px" ng-show='tombolSimpanVis'>
+                    <button class="c-button" ng-click="simpan()">Simpan</button>
+                </div>
+                <!--  <div class="grid_2" style="margin-top: 22px">
+                                                        <button class="c-button" ng-click="Cetak()">Cetak</button>
+                                                    </div> -->
+                <div class="grid_2" style="margin-top: 22px">
+                    <button class="c-button" ng-click="Batal()">Batal</button>
+                </div>
+                <div class="grid_2" style="margin-top: 22px">
+                    <button class="c-button" ng-click="kembali()">Kembali</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

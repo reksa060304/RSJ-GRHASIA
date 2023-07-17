@@ -13266,22 +13266,22 @@ class EMRController  extends ApiController
         where so.norec ilike '$request[norec_order]'
         "));
         $data = DB::select(DB::raw("
-        SELECT DISTINCT pr.namaproduk, op.rke, op.jeniskemasanfk, pp.ispagi, pp.issiang, pp.issore, pp.ismalam, pp.aturanpakai, op.dosis, op.satuandosis,
+        SELECT DISTINCT ROW_NUMBER()over(partition by op.rke order by op.rke)as nomor,ceil(op.qtyproduk) jumlahobat, jr.jenisracikan, pr.namaproduk, op.rke, op.jeniskemasanfk, pp.ispagi, pp.issiang, pp.issore, pp.ismalam, pp.aturanpakai, op.dosis, op.satuandosis,
                 CASE
                 WHEN op.jumlahracikan <> NULL AND op.jeniskemasanfk = 1 THEN
                 op.jumlahracikan 
                 WHEN op.jumlahracikan is NULL AND op.jeniskemasanfk = 2 THEN
-                op.qtyproduk
-								
-								ELSE op.qtyproduk::float * ( pr.kekuatan::float / op.dosis::float ) 
+                null
+                ELSE op.qtyproduk::float * ( pr.kekuatan::float / op.dosis::float ) 
                 END AS jumlah
             FROM pelayananpasien_t pp 
             inner join strukresep_t sr on sr.norec = pp.strukresepfk
             inner join strukorder_t so on sr.orderfk = so.norec
             inner join orderpelayanan_t op on op.noorderfk = sr.orderfk and op.rke = pp.rke and pp.produkfk = op.objectprodukfk
             inner join produk_m pr on pr.id = pp.produkfk
+            inner join jenisracikan_m jr on jr.id = op.jenisobatfk
             where so.norec ilike '$request[norec_order]'
-            ORDER BY op.rke asc
+            ORDER BY op.rke asc, ROW_NUMBER()over(partition by op.rke order by op.rke) desc
             "));
         $result = array(
             'datapasien'=> $datapasien,
@@ -13350,6 +13350,10 @@ class EMRController  extends ApiController
                         'iter2'=> $cpd['iter2'],
                         'iter3'=> $cpd['iter3'],
                         'entry'=> $cpd['entry'],
+                        'mfla'=> $cpd['mfla'],
+                        'sediaan'=> $cpd['sediaan'],
+                        'jumlahobat'=> $cpd['jumlahobat'],
+
                     ]);
                 }else if($cpd['norec'] != ''){
                     DB::table('copyresepd_t')->where('norec', $cpd['norec'])->update([
@@ -13366,6 +13370,10 @@ class EMRController  extends ApiController
                         'iter2'=> $cpd['iter2'],
                         'iter3'=> $cpd['iter3'],
                         'entry'=> $cpd['entry'],
+                        'mfla'=> $cpd['mfla'],
+                        'sediaan'=> $cpd['sediaan'],
+                        'jumlahobat'=> $cpd['jumlahobat'],
+
                     ]);
                 }
             }
@@ -13405,7 +13413,7 @@ class EMRController  extends ApiController
         $data = DB::select(DB::raw("SELECT cr.norec as norec_cr, crd.norec as norec_crd, cr.namapasien, cr.dokter,cr.tanggal, cr.tglcopy, 
         cr.noresep, cr.iter1 as cpiter1, cr.iter2 as cpiter2, cr.iter3 as cpiter3,
         crd.rke, crd.produk, crd.dosis, crd.jumlah, crd.aturanpakai, crd.ispagi, crd.issiang, crd.issore, crd.ismalam, crd.iter1 iteroabat1,
-        crd.iter2 iteroabat2, crd.iter3 iteroabat3, crd.entry
+        crd.iter2 iteroabat2, crd.iter3 iteroabat3, crd.entry, crd.sediaan, crd.mfla
         
         FROM copyresep_t cr 
         inner join copyresepd_t crd on crd.norec_cr = cr.norec
