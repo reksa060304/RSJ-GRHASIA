@@ -13740,4 +13740,88 @@ public function suratBuktiPengembalian(Request $request)
         return $pdf->stream();
         // return view('report.EMR.suratketerangandokter',compact('data','pageWidth'));
     }
+    function cetakObatPulang(Request $request) {
+       $norec_order = $request['norec_order'];
+       $produkfk = $request['produkfk'];
+        $kdProfile = (int) $request['kdprofile'];
+        $data = DB::select(DB::raw("
+        SELECT pg.namalengkap as namadokter, ru.namaruangan, ps.namapasien, ps.nocm, ps.tgllahir::date, pr.namaproduk, pp.keteranganpakai, pp.ispagi, pp.issiang, pp.issore, pp.ismalam FROM pelayananpasien_t pp
+        inner join strukresep_t sr on sr.norec = pp.strukresepfk
+        inner join strukorder_t so on so.norec = sr.orderfk
+        left join orderpelayanan_t op on op.noorderfk = so.norec and op.objectprodukfk = pp.produkfk and op.rke = pp.rke
+        inner join produk_m pr on pr.id = pp.produkfk
+        inner join pasiendaftar_t pd on pd.norec = so.noregistrasifk
+        inner join pasien_m ps on ps.id = pd.nocmfk
+        inner join ruangan_m ru on ru.id = so.objectruanganfk
+        inner join pegawai_m pg on pg.id = pd.objectpegawaifk
+        where so.norec ilike '$norec_order' and pp.isobat = true and so.isreseppulang = true and pp.produkfk in($produkfk)
+
+        ORDER BY pp.rke asc
+
+        "));
+        
+        $res['profile'] = Profile::where('id',$request['kdprofile'])->first();
+        $res['d'] = $data;
+        $pageWidth = 950;
+        $peg = null;    
+            $peg1 = DB::table('pegawai_m')->where('id',$request['pegawai'])->first();
+        if(isset($request['isttd']) && $request['isttd'] == true){
+            $peg = DB::table('pegawai_m')->where('id',$request['pegawaittd'])->first();
+            
+        }
+        // var_dump($data);
+        $pdf = PDF::loadView(
+            'report.EMR.cetakobatpulang',
+            array(
+                'res' => $res,
+                'pageWidth' => $pageWidth,
+                'data' => $data,
+                'peg'=> $peg,
+                'peg1'=> $peg1,
+            )
+            );
+        if(isset($request['isttd']) && $request['isttd'] == true){
+            $objetoRequest = new \Illuminate\Http\Request();
+            $objetoRequest ['emrfk'] = $request['emrfk'];
+            $objetoRequest ['norec_emr'] = $request['emr'];
+            $objetoRequest ['pegawaittd'] = $request['pegawaittd'];
+            $objetoRequest ['nocm'] = $request['nocm'];
+            $objetoRequest ['noregistrasi'] = $request['noregistrasi'];
+            $objetoRequest ['norec_pd'] = $request['norec_pd'];
+            $bsre = app('App\Http\Controllers\Bridging\BridgingBSREController')->pengajuanTTE($objetoRequest,true);
+            if($bsre['status'] == 201){
+                $content = $pdf->download()->getOriginalContent();
+                \Storage::disk('local')->put( 'TTD_BSRE/' . $bsre['dokumen']->id . '/file' . '.pdf' , $content);
+            }
+          
+            return $bsre;
+        }
+
+        return $pdf->stream();
+    }
+    function bilanganSebut($number) {
+        $sebutan = [
+            1 => 'satu',
+            2 => 'dua',
+            3 => 'tiga',
+            4 => 'empat',
+            5 => 'lima',
+            6 => 'enam',
+            7 => 'tujuh',
+            // dan seterusnya hingga angka yang Anda butuhkan
+        ];
+
+        return isset($sebutan[$number]) ? $sebutan[$number] : $number;
+    }
+    function singkatkanNama($nama) {
+        $singkatan = '';
+        $kata = explode(' ', $nama);
+        for ($i=3; $i < count($kata); $i++) { 
+            $singkatan .= strtoupper(substr($kata[$i], 0, 1)) . '. ';
+        }
+        // dd();
+        
+        
+        return $kata[0].' '.$kata[1].' '. $kata[2].' '.rtrim($singkatan);
+    }
 }

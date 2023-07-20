@@ -16,6 +16,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 {id:4,waktupakai: 'Malam'}
             ]
                 $scope.selectedData2 = [];
+                $scope.selectedData3 = [];
                 $scope.cetak = []
                 $scope.rmcetak = []
                 $scope.startPrint = []
@@ -1438,6 +1439,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     var dataGrids = e.data.pelayananPasien
                     for (let i = 0; i < dataGrids.length; i++) {
                         const element = dataGrids[i];
+                        element.statCheckbox = false
                         element.namaruangan = $scope.item.namaruangan
                         if (element.isreseppulang == '1') {
                             element.chekreseppulang = '✔'
@@ -1455,9 +1457,86 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 });
                 $scope.popUpDetailVerif.center().open()
             }
+            $scope.selectUnselectAllRow = function () {
+                var tempData = $scope.dataGridVerif._data;
+                console.log(tempData);
+                if (isCheckAll) {
+                    isCheckAll = false;
+                    for (var i = 0; i < tempData.length; i++) {
+                        tempData[i].statCheckbox = false;
+                        $scope.selectedData3 = []
+                    }
+                } else {
+                    isCheckAll = true;
+                    for (var i = 0; i < tempData.length; i++) {
+                        tempData[i].statCheckbox = true;
+                        $scope.selectedData3.push(tempData[i])
+                    }
+                }
 
+                console.log($scope.selectedData3)
+                reloaddataSourceGrid(tempData);
+            }
+            function reloaddataSourceGrid(ds) {
+                var newDs = new kendo.data.DataSource({
+                    data: ds,
+                    pageSize: 20,
+                    total: ds.length,
+                    serverPaging: true,
+                });
+                var grid = $('#kGridVerif').data("kendoGrid");
+                grid.setDataSource(newDs);
+                grid.refresh();
 
+            }
+			var isCheckAll = false
+            $scope.selectRow = function (e) {
+                var element = $(e.currentTarget);
+                var checked = element.is(':checked'),
+                    row = element.closest('tr'),
+                    grid = $("#kGridVerif").data("kendoGrid"),
+                    dataItem = grid.dataItem(row);
+                if (checked) {
+                    var result = $.grep($scope.selectedData3, function (e) {
+                        return e.produkfk == dataItem.produkfk;
+                    });
+                    if (result.length == 0) {
+                        console.log(1);
+                        dataItem.statCheckbox = false;
+
+                        $scope.selectedData3.push(dataItem);
+                    } else {
+                        console.log(2);
+                        for (var i = 0; i < $scope.selectedData3.length; i++)
+                            if ($scope.selectedData3[i].produkfk === dataItem.produkfk) {
+                                $scope.selectedData3.splice(i, 1);
+                                break;
+                            }
+                        $scope.selectedData3.push(dataItem);
+                    }
+                    row.addClass("k-state-selected");
+                } else {
+                    console.log(3);
+                    dataItem.statCheckbox = true;
+                    for (var i = 0; i < $scope.selectedData3.length; i++)
+                        if ($scope.selectedData3[i].produkfk === dataItem.produkfk) {
+                            $scope.selectedData3.splice(i, 1);
+                            break;
+                        }
+                    row.removeClass("k-state-selected");
+                }
+                    console.log($scope.selectedData3);
+            }
             $scope.columnGridVerif = [
+                {
+                    "title": "<input type='checkbox' class='checkbox' ng-click='selectUnselectAllRow()' />",
+                    template: "# if (statCheckbox) { #" +
+                        "<input type='checkbox' class='checkbox' ng-click='selectRow($event)' checked />" +
+                        "# } else { #" +
+                        "<input type='checkbox' class='checkbox' ng-click='selectRow($event)' />" +
+                        "# } #",
+                    width: "30px"
+                },
                 {
                     "field": "no",
                     "title": "No",
@@ -2303,7 +2382,38 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     console.log(data)
                 })
             }
+            $scope.daftarobatpulang = function(){
+                if ($scope.item == undefined) {
+                    toastr.error('Pilih data dulu!')
+                    return
+                }
+                if ($scope.item.statusorder == 'Menunggu') {
+                    toastr.error('Resep belum di verifikasi')
+                    return
+                }
+                if ($scope.item.checkreseppulang != true ){
+                    toastr.error('Bukan Resep Pulang')
+                    return
+                }
+                $scope.detailVerif()
+                $scope.popUpDetailVerif.center().open()
+                
+
+            }
             //** BATAS SUCI */
+            $scope.cetakobatpulang = function () {
+                var a = ""
+                var b = ""
+                for (var i = $scope.selectedData3.length - 1; i >= 0; i--) {
+                    var c = $scope.selectedData3[i].produkfk
+                    b = "," + c
+                    a = a + b
+                }
+                $scope.produkfkkkk = a.slice(1, a.length)
+                window.open(config.baseApiBackend + "report/cetak-obat-pulang?norec_order="+$scope.item.norec_order + "&kdprofile=30" + "&produkfk="+ $scope.produkfkkkk + "&pegawai="+medifirstService.getPegawaiLogin().id, '_BLANK')
+
+            }
         }
+        
     ]);
 });

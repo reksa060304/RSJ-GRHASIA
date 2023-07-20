@@ -287,6 +287,9 @@
     <div class="grid_2" style="margin-top: 5px">
         <button class="c-button" ng-click="copyResep()">Copy Resep</button>
     </div>
+    <div class="grid_2" style="margin-top: 5px">
+        <button class="c-button success" ng-click="daftarobatpulang()">Daftar Obat Pulang</button>
+    </div>
     <!-- <div class="grid_2" style="margin-top: 5px">
         <button class="c-button" ng-click="tombolotomatis()">otomatis</button>
     </div> -->
@@ -1017,7 +1020,7 @@
                 </div>
                 <div class="grid_12">
                     <div class="grid_12 borderBox">
-                        <div id="kGrid" kendo-grid k-data-source="dataGridVerif" k-selectable="'row'"
+                        <div id="kGridVerif" kendo-grid k-data-source="dataGridVerif" k-selectable="'row'"
                             k-columns="columnGridVerif" k-sortable="'true'" k-ng-model="dataSelectedRiwayat">
                             <!-- <div k-detail-template>
                             <kendo-tabstrip>
@@ -1035,6 +1038,11 @@
                     </div>
                     <div class="grid_12">
                         <textarea style="margin-top: 5px;" ng-model="item.diagnosa" disabled></textarea>
+                    </div>
+                </div>
+                <div class="grid_12">
+                    <div class="grid_2" style="margin-top: 5px">
+                        <button class="c-button success" ng-click="cetakobatpulang()">Cetak Daftar Obat Pulang</button>
                     </div>
                 </div>
             </fieldset>
