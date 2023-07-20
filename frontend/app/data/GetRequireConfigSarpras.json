@@ -1203,6 +1203,10 @@
             "urlDep": "module/Perencanaan/SPJCtrl"
         },
         {
+            "nameDep": "EISCtrl",
+            "urlDep": "module/Perencanaan/EISCtrl"
+        },
+        {
             "nameDep": "PanjarCtrl",
             "urlDep": "module/Perencanaan/PanjarCtrl"
         },

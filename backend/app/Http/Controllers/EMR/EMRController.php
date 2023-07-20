@@ -10930,11 +10930,51 @@ class EMRController  extends ApiController
            120238, 120237, 120239, 120240, 120241, 120242, 120243, 120244, 120245, 120246, 120247, 120248, 120249, 120250, 120251, 120252, 1202453) 
            and et.noregistrasifk = '$request[noregistrasi]' and empd.statusenabled = true and et.statusenabled = true"
         ));
+        $data5lab = DB::select(DB::raw("
+        SELECT pp.tglpelayanan, hl.detailpemeriksaan, hl.flag, hl.hasil FROM hasillaboratorium_t hl 
+        inner join pelayananpasien_t pp on pp.norec = hl.norecpelayanan
+        inner join antrianpasiendiperiksa_t apd on apd.norec = pp.noregistrasifk
+        inner join pasiendaftar_t pd on pd.norec = apd.noregistrasifk
+        where pd.noregistrasi = '$request[noregistrasi]' and hl.flag = 'Y' and hl.kdprofile = 30 and hl.statusenabled = true and pp.statusenabled = true
+        "));
+        $data5rad = DB::select(DB::raw("
+        SELECT hr.keterangan FROM hasilradiologi_t hr 
+        INNER join pelayananpasien_t pp on pp.norec = hr.pelayananpasienfk
+        inner join antrianpasiendiperiksa_t apd on apd.norec = pp.noregistrasifk
+        inner join pasiendaftar_t pd on pd.norec = apd.noregistrasifk
+        where pd.noregistrasi = '$request[noregistrasi]'
+        "));
+
+        $dataresep = DB::select(DB::raw("SELECT row_number()over(partition by op.rke order by op.rke asc)as nomor, pr.namaproduk, jr.jenisracikan, op.keteranganpakai, op.dosis, op.satuandosis, op.rke, op.jeniskemasanfk FROM strukorder_t so
+        inner join orderpelayanan_t op on op.noorderfk = so.norec
+        inner join jenisracikan_m jr on jr.id = op.jenisobatfk
+        inner join pasiendaftar_t pd on pd.norec = so.noregistrasifk
+        inner join produk_m pr on pr.id = op.objectprodukfk
+        where so.isreseppulang = true and so.kdprofile = 30 and so.statusenabled = true and so.keteranganorder = 'Order Farmasi' and pd.noregistrasi = '$request[noregistrasi]'
+        
+        order by  op.rke asc, row_number()over(partition by op.rke order by op.rke asc)desc"));
+
+        $datasoap = DB::select(DB::raw("
+        SELECT * FROM (SELECT ROW_NUMBER()OVER(PARTITION by cp.noregistrasi order by cp.tgljam desc)as nomor, * FROM cpptemr_t cp
+        where cp.noregistrasi = '$request[noregistrasi]' and cp.tenagamedis = cp.dpjputama 
+        )as x where x.nomor = 1"));
+        $pasiendaftar = DB::select(DB::raw("
+        select ru.namaruangan, pd.tglregistrasi, pd.tglpulang, ke.namakelas, pg.namalengkap from pasiendaftar_t as pd 
+        inner join ruangan_m ru on ru.id = pd.objectruanganlastfk
+        inner join kelas_m ke on ke.id = pd.objectkelasfk
+        inner join pegawai_m pg on pg.id = pd.objectpegawaifk
+        where pd.noregistrasi = '$request[noregistrasi]'
+        "));
         $result = array(
             'data2'=> $data2,
             'data3'=> $data3,
             'data4'=> $data4,
+            'data5lab'=> $data5lab,
+            'data5rad'=> $data5rad,
             'data'=> $data,
+            'dataresep'=> $dataresep,
+            'datasoap'=> $datasoap,
+            'pasiendaftar'=> $pasiendaftar,
             'as'=> 'ia@Epic'
         );
    

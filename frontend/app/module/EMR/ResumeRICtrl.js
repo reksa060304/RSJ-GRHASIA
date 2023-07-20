@@ -157,12 +157,12 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             function loadDataPemeriksaan() {
                 medifirstService.get("emr/get-ringkasan-pulang21?noregistrasi=" + $scope.cc.noregistrasi).then(
                     function (dat) {
-                    $scope.item.alasanDirawat  = dat.data.data[0].value
-                    $scope.item.diagnosamasuktext = dat.data.data3[0].value
-                    $scope.item.axis2 = dat.data.data3[1].value
-                    $scope.item.axis3 = dat.data.data3[2].value
-                    $scope.item.axis4 = dat.data.data3[3].value
-                    $scope.item.axis5 = dat.data.data3[4].value
+                    $scope.item.alasanDirawat = dat.data.data[0] != undefined ? dat.data.data[0].value : undefined
+                    $scope.item.diagnosamasuktext = dat.data.data3[0] != undefined ? dat.data.data3[0].value : undefined
+                    $scope.item.axis2 = dat.data.data3[1] != undefined ? dat.data.data3[1].value : undefined
+                    $scope.item.axis3 = dat.data.data3[2] != undefined ? dat.data.data3[2].value : undefined
+                    $scope.item.axis4 = dat.data.data3[3] != undefined ? dat.data.data3[3].value : undefined
+                    $scope.item.axis5 = dat.data.data3[4] != undefined ? dat.data.data3[4].value : undefined
                     var a = ""
                     var b = ""
                     var ha = dat.data.data2
@@ -508,9 +508,86 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 "\n "+ afek + "\n "+ persepsi +"\n "+ memori + "\n "+ Intelegensi + "\n "+ perhatian +"\n "+ insight 
 
 
+                var lab = ''
+                var aaaa = ''
+                var bbbb = ''
+                for (let i = 0; i < dat.data.data5lab.length; i++) {
+                    const element = dat.data.data5lab[i];
+                    var cccc = 'Tgl: '+element.tglpelayanan + ". Detail Pemeriksaan: " + element.detailpemeriksaan + ". Hasil: " + element.hasil
+                    bbbb = "\n" + cccc
+                    aaaa = aaaa + bbbb
+                }
+                var aaaaa = ''
+                var bbbbb = ''
+                var wkwkw = ''
+                for (let i = 0; i < dat.data.data5rad.length; i++) {
+                    const element = dat.data.data5rad[i];
+                    wkwkw = element.keterangan.split("Kesan")
+                    console.log(wkwkw);
+                    var ccccc = "Kesan: " + wkwkw[1].replace(/~/ig, "\n")
+                    bbbbb = "\n" + ccccc
+                    aaaaa = aaaaa + bbbbb
+                }
 
 
-                })
+                $scope.item.hasilpenunjang = 'Hasil Laboratorium\n' + aaaa.slice(1, aaaa.length) + '\n\nHasil Radiologi\n' + aaaaa
+                var nonracika = ''
+                var nonracikb = ''
+                var racika = ''
+                var racikb = ''
+                var racikd = ''
+                var racikccccc = ''
+                var arrracik = []
+                for (let i = 0; i < dat.data.dataresep.length; i++) {
+                    const element = dat.data.dataresep[i];
+                    if(element.jeniskemasanfk == 2){
+                        var nonracikc = element.namaproduk + " " + element.dosis + "" + element.satuandosis + " " + element.jenisracikan+" "+element.keteranganpakai
+                        nonracikb = "\n"+nonracikc
+                        nonracika = nonracika+ nonracikb
+                    }
+                    if(element.jeniskemasanfk == 1){
+                        var racikc = element.namaproduk 
+                        racikb = "+" + racikc
+                        var racikd = ''
+                        racika = racika + racikb
+                        if(element.nomor == 1){
+                            racikd = element.dosis + element.satuandosis + " " + element.jenisracikan + " " + element.keteranganpakai
+                            racika = racika.slice(1, racika.length)+' '+racikd
+                            arrracik.push(racika)
+                            racika = ''
+                            racikd = ''
+                        }
+
+                    }
+
+                }
+                console.log(arrracik);
+                var aha = ''
+                aha = nonracika != '' ? 'Non Racikan:\n' + nonracika.slice(1, nonracika.length) : ''
+                var aja = ''
+                aja = arrracik.length == 0 ? '' : "\nRacikan:\n" + arrracik.join('\n')
+                $scope.item.terapipulang = aha + aja
+                
+                for (let i = 0; i < dat.data.datasoap.length; i++) {
+                    const element = dat.data.datasoap[i];
+                    const matchA = element.soap.match(/\nA\s[:;]\s*(.*)/);
+                    console.log(matchA);
+                    if (matchA) {
+                        const dataA = matchA[1].trim();
+                        console.log(dataA); // Output: F25.0
+                        $scope.item.diagnosautamatext = dataA
+                    } else {
+                        console.log("Data A tidak ditemukan.");
+                    }
+                }
+                for (let i = 0; i < dat.data.pasiendaftar.length; i++) {
+                    const element = dat.data.pasiendaftar[i];
+                    $scope.item.tglmasuk = element.tglregistrasi
+                    $scope.item.tglpulang = element.tglpulang
+                    $scope.item.kelas = element.namakelas
+                    $scope.item.wisma = element.namaruangan
+                }
+            })
                 medifirstService.get("emr/get-data-perawatan?norec_apd=" + $scope.norecAPD).then(function (data) {                 
                     var datas = data.data;                   
                     if (datas.diagnosaawal.length > 0) {
@@ -522,22 +599,22 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                             }
                         }
                     }
-                    if (datas.diagnosautama.length > 0) {
-                        for (let i = 0; i < datas.diagnosautama.length; i++) {
-                            const element = datas.diagnosautama[i];
-                            if (element != undefined) {
-                                $scope.item.diagnosautamatext = element.kodenama;                                                                                               
-                                break;
-                            }
-                        }
-                    }
+                    // if (datas.diagnosautama.length > 0) {
+                    //     for (let i = 0; i < datas.diagnosautama.length; i++) {
+                    //         const element = datas.diagnosautama[i];
+                    //         if (element != undefined) {
+                    //             $scope.item.diagnosautamatext = element.kodenama;                                                                                               
+                    //             break;
+                    //         }
+                    //     }
+                    // }
                     if (datas.pemeriksaan != undefined) {
                         $scope.item.riwayatPenyakit = datas.pemeriksaan.value
                     }
-                    if (datas.dataresep != undefined) {
-                        var resep = datas.dataresep.replace("~","\n");
-                        $scope.item.terapi = resep;
-                    }                  
+                    // if (datas.dataresep != undefined) {
+                    //     var resep = datas.dataresep.replace("~","\n");
+                    //     $scope.item.terapi = resep;
+                    // }                  
                 })
             }
             var chacePeriode = cacheHelper.get('cacheRekamMedis');
@@ -985,6 +1062,55 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 window.open(config.baseApiBackend + "report/cetak-resume-medis?norec="
                     + $scope.modelGrid.norec + '&kdprofile=' + local.id
                     + '&nama=' + nama, '_blank');
+            }
+            $scope.cetakBladeV2 = function(){
+                if ($scope.modelGrid == undefined) {
+                    toastr.error('Pilih data dulu')
+                    return
+                }
+                var local = JSON.parse(localStorage.getItem('profile'))
+                var nama = medifirstService.getPegawaiLogin().namaLengkap
+
+                window.open(config.baseApiBackend + "report/cetak-resume-medis-v2?norec=" +
+                    $scope.modelGrid.norec + '&kdprofile=' + local.id +
+                    '&nama=' + nama, '_blank');
+            }
+            $scope.ttdElek = function () {
+                if ($scope.modelGrid == undefined) {
+                    toastr.error('Pilih data dulu')
+                    return
+                }
+
+                // var confirm = $mdDialog.confirm()
+                //   .title('Info')
+                //   .textContent('Yakin mau tanda tangani dokumen ini ? ')
+                //   .ariaLabel('Lucky day')
+                //   .cancel('Tidak')
+                //   .ok('Ya')
+                // $mdDialog.show(confirm).then(function () {
+                $scope.winDialog.center().open()
+                // })
+            }
+            $scope.savePengajuanTTE = function (pegawai) {
+                if (pegawai == undefined) {
+                    return
+                }
+                var local = JSON.parse(localStorage.getItem('profile'))
+                var nama = medifirstService.getPegawaiLogin().namaLengkap
+                $scope.isRouteLoading = true
+                medifirstService.get('report/cetak-resume-medis-v2?norec=' + $scope.modelGrid.norec +
+                    '&isttd=true'+'&kdprofile=' + local.id +
+                        '&nama=' + nama
+                ).then(function (e) {
+                    if (e.data.status == 201) {
+                        toastr.success(e.data.message)
+                        $scope.winDialog.close()
+                    } else {
+                        toastr.error(e.data.message)
+                    }
+                    $scope.isRouteLoading = false
+
+                })
             }
 
         }

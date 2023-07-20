@@ -2465,6 +2465,25 @@
     ]
   },
   {
+    "name": "EIS",
+    "url": "/EIS",
+    "templateurl": "module/Perencanaan/EIS.html",
+    "controller": "EISCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
     "name": "Panjar",
     "url": "/UGFuamFyQW5nZ2FyYW4=",
     "templateurl": "module/Perencanaan/Panjar.html",

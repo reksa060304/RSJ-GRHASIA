@@ -40,7 +40,7 @@
         <div class="grid_12">
             <div id="gridResumeHead" kendo-grid k-data-source="sourceResumeHead" options="resumeOptHead"
                 k-ng-model="modelGrid" ng-click="klik(modelGrid)">
-                <div k-detail-template>
+                <!-- <div k-detail-template>
                     <kendo-tabstrip>
                         <div>
                             <div id="kGridDetail" kendo-grid k-options="data2(dataItem)" k-sortable="'true'"
@@ -48,7 +48,7 @@
                             </div>
                         </div>
                     </kendo-tabstrip>
-                </div>
+                </div> -->
             </div>
         </div>
         <div class="grid_2">
@@ -66,9 +66,16 @@
             <button class="btnTemplate1 cancel" ng-click="hapusGrid()"><i class="fa fa-trash"></i>Hapus
             </button>
         </div>
-           <div class="grid_2">
+        <div class="grid_2">
             <button class="btnTemplate1" ng-click="cetakBlade()"><i class="fa fa-print"></i>Cetak View
             </button>
+        </div>
+        <div class="grid_2">
+            <button class="btnTemplate1" ng-click="cetakBladeV2()"><i class="fa fa-print"></i>Cetak View V2
+            </button>
+        </div>
+        <div class="grid_2" style="margin-top: 22px">
+            <button class="btnTemplate1 success" ng-click="ttdElek()"><i class="fa fa-key"></i>TTD Elektronik</button>
         </div>
         <!-- <div class="grid_2">
             <button class="btnTemplate1" ng-click="cetak()"><i class="fa fa-print"></i>Cetak
@@ -716,7 +723,7 @@
             </div>
 
         </div>
-    </div> -->
+    </div> 
     <!-- <div class="grid_12" style="margin: 5px 5px 5px 5px;" ng-show="showGrid">
         <div id="gridResume" kendo-grid k-data-source="sourceResume" options="resumeOpt"></div>
     </div> -->
@@ -730,5 +737,15 @@
     </div> -->
     <div class="grid_12" style="margin-top:100px">
         <div ng-include='"../app/template/Shared/TemplateLoading"'></div>
+    </div>
+    <div kendo-window="winDialog" k-title="'Pilih Pegawai'" k-width="400" k-height="120" k-visible="false"
+        k-on-open="win2visible = true" k-on-close="win2visible = false">
+        <label c-label item="item " c-label-text="pegawaiPenandaTangan "></label>
+        <input style="width: 100%; " kendo-combo-box k-ng-model="item.pegawai" k-data-text-field="'namalengkap'"
+            k-filter=" 'contains' " k-data-value-field=" 'id' " k-auto-bind="false " k-data-source="listDokter" />
+        <div class="clear">
+            <button class="k-button" ng-click="savePengajuanTTE(item.pegawai)"
+                style="float:right;margin-top:4%">Simpan</button>
+        </div>
     </div>
 </div>
