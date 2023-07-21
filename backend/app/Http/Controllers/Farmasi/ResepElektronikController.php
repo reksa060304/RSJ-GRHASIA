@@ -202,7 +202,7 @@ class ResepElektronikController extends ApiController
                 $statusIdResep  
                 $checkSOPasienRanap      
                 ORDER BY tglweh desc, tglorder asc) as xxx where xxx.nomor = 1
-                order by xxx.tglweh desc, xxx.tglorder asc
+                order by xxx.tglweh desc, xxx.tglorder desc
         "));
 
         $status ='';

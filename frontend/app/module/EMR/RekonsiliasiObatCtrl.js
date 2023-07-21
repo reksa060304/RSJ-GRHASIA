@@ -595,7 +595,44 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                     medifirstService.post('farmasi/save-rekonsiliasi-obat', objSaveRO).then(function(data){
                         console.log(data);
                         $scope.tombolSimpanVis = true
+                        medifirstService.get('emr/get-rekonsiliasi-obat?noemr=' + nomorEMR + "&noregistrasi=" + $scope.cc.noregistrasi).then(function (data) {
+                            dataAlergi = data.data.reaksialergi
+                            for (let i = 0; i < dataAlergi.length; i++) {
+                                dataAlergi[i].nomorAlergi = i + 1
+                            }
+                            $scope.dataSourceAlergiGrid = new kendo.data.DataSource({
+                                data: dataAlergi,
+                            });
+                            dataPO = data.data.penggunaanobat
+                            for (let i = 0; i < dataPO.length; i++) {
+                                dataPO[i].nomorPO = i + 1
+                                if (dataPO[i].isresep == true) {
+                                    dataPO[i].resep = "✓"
+                                    dataPO[i].tanpa = ""
+                                }
+                                if (dataPO[i].isresep == null) {
+                                    dataPO[i].resep = ""
+                                    dataPO[i].tanpa = "✓"
+                                }
+                            }
+                            $scope.dataSourcePOGrid = new kendo.data.DataSource({
+                                data: dataPO,
+                            });
 
+                            dataRO = data.data.rekonsiliasiobat
+                            for (let i = 0; i < dataRO.length; i++) {
+                                dataRO[i].nomorro = i + 1
+                                if (dataRO[i].islanjutaturansama == true) {
+                                    dataRO[i].islanjutaturansama = "✓"
+                                }
+                                if (dataRO[i].isstop == true) {
+                                    dataRO[i].isstop = "✓"
+                                }
+                            }
+                            $scope.dataSourceROGrid = new kendo.data.DataSource({
+                                data: dataRO,
+                            });
+                        })
                     })
 
                 });
