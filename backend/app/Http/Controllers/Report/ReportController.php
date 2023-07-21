@@ -11,6 +11,10 @@ use App\Transaksi\HasilLaboratorium;
 use App\Web\Profile;
 use Illuminate\Http\Request;
 use DB;
+use App\Transaksi\ResumeMedis;
+use App\Transaksi\EMR_BSRE;
+use Illuminate\Support\Facades\Storage;
+use App\Master\Pegawai;
 
 use Barryvdh\DomPDF\Facade as PDF;
 use JasperPHP\JasperPHP;
@@ -13953,15 +13957,32 @@ public function suratBuktiPengembalian(Request $request)
             'report.resume-medis-v2',
             array(
                 'res' => $res,
-                // 'pageWidth' => $pageWidth,
-                // 'data' => $data,
-                // 'peg'=> $peg,
                 'username'=> $username,
-                'Attachment' => 0
-            ),['isHtml5ParserEnabled' => true]
-            );
-        if(isset($request['isttd']) && $request['isttd'] == true){
-            $kdProfile = $this->getDataKdProfile($request);
+            ));
+        if(isset($r['isttd']) && $r['isttd'] == true){
+            $objetoRequest = new \Illuminate\Http\Request();
+            $objetoRequest ['emrfk'] = $r['emrfk'];
+            $objetoRequest ['norec_emr'] = $r['norec'];
+            $objetoRequest ['pegawaittd'] = $r['pegawaittd'];
+            $objetoRequest ['nocm'] = $r['nocm'];
+            $objetoRequest ['noregistrasi'] = $r['noregistrasi'];
+            $objetoRequest ['norec_pd'] = $r['norec_pd'];
+            $objetoRequest ['tipe'] = 'resumemedis';
+            $bsre = $this->pengajuanTTE($objetoRequest, true);
+            if($bsre['status'] == 201){
+                $content = $pdf->download()->getOriginalContent();
+                \Storage::disk('local')->put( 'TTD_BSRE/' . $bsre['dokumen']->id . '/file' . '.pdf' , $content);
+            }
+          
+            return $bsre;
+        }
+
+        return $pdf->stream();
+        // return view('report.resume-medis',compact('res','username'));
+    }
+    public function pengajuanTTE(Request $request)
+    {
+        $kdProfile = 30;
 
         DB::beginTransaction();
 
@@ -13970,7 +13991,14 @@ public function suratBuktiPengembalian(Request $request)
 
             $prof =  DB::table('profile_m')->where('statusenabled', true)->first();
 
-            $emr = EMRPasien::where('norec', $request['norec_emr'])->first();
+            if(isset($request['tipe']) && $request['tipe'] == 'resumemedis'){
+                $emr = ResumeMedis::where('norec', $request['norec_emr'])->first();
+                $emr->noemr = $emr->koderesume;
+            }else{
+                $emr = EMRPasien::where('norec', $request['norec_emr'])->first();
+                $emr->noemr = $emr->noemr;
+
+            }
 
             $emrM =  DB::table('emr_t')->where('id', $request['emrfk'])->first();
 
@@ -14041,17 +14069,6 @@ public function suratBuktiPengembalian(Request $request)
                 "as" => 'inhuman',
             );
         }
-            
-        
-        if($result['status'] == 201){
-            $content = $pdf->download()->getOriginalContent();
-            \Storage::disk('local')->put( 'TTD_BSRE/' . $result['dokumen']->id . '/file' . '.pdf' , $content);
-        }
-          
-            return $result;
-        }
-
-        return $pdf->stream();
-        return view('report.resume-medis',compact('res','username'));
+        return  $result;
     }
 }

@@ -1100,8 +1100,12 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 $scope.isRouteLoading = true
                 medifirstService.get('report/cetak-resume-medis-v2?norec=' + $scope.modelGrid.norec +
                     '&isttd=true'+'&kdprofile=' + local.id +
-                        '&nama=' + nama
+                        '&nama=' + nama + "&emrfk=" + 104 + "&pegawaittd=" + pegawai.id+
+                        '&noregistrasi=' + $scope.cc.noregistrasi+
+                        '&nocm=' + $scope.cc.nocm + '&norec_pd=' + $scope.cc.norec_pd
+
                 ).then(function (e) {
+                    console.log(e);
                     if (e.data.status == 201) {
                         toastr.success(e.data.message)
                         $scope.winDialog.close()
