@@ -178,7 +178,8 @@ class LaporanPengunjungController extends ApiController
             ->select('id','namalengkap')
             ->where('statusenabled',true)
             ->where('kdprofile', 30)
-            ->where('objectjenispegawaifk',true)
+            ->whereNull('usereksternal')
+            ->whereNotIn('namalengkap',['-'])
             ->get();
 
             $result = array(
