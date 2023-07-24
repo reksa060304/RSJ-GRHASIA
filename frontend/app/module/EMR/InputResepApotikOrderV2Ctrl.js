@@ -1826,22 +1826,16 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                             medifirstService.get("emr/get-produkdetail?" +
                                 "produkfk=" + datas[z].produkfk +
                                 "&kpid=" + $scope.item.kpid, true).then(function (data) {
-                                // console.log(dat.data.orderpelayanan[i]);
-                                datas[z].dahlahcapeee = data.data.detail.length
-                                // console.log(dat.data.orderpelayanan[i]?.produkfk);
+                                datas[z].dahlahcapeee = data.data.jmlstok
 
                                 // $scope.isRouteLoading = false;
-                                // console.log(dat.data, orderp[i].produkfk);
-                                console.log(z, datas[z]);
-                                if (datas[z].dahlahcapeee == 0) {
+                                if (datas[z].dahlahcapeee < datas[z].jumlah) {
                                     // $scope.ppp = $scope.pppp[i].namaproduk
-                                    // console.log(orderp[i]);
-                                    toastr.error("STOK " + dat.data.orderpelayanan[z].namaproduk + " KOSONG!")
+                                    toastr.error("STOK " + dat.data.orderpelayanan[z].namaproduk + " KURANG DARI STOK YANG TERSEDIA!")
                                     dat.data.orderpelayanan.splice(z, 1);
                                     z--;
                                 }
                                 // var data2 = dat.data.orderpelayanan;
-                                // console.log(data2);
                                 $scope.norecOrder = ''
                                 $scope.item.resep = $scope.dataSelectedRiwayat.noorder
                                 $scope.item.ruangan = {
