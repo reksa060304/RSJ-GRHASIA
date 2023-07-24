@@ -1,4 +1,4 @@
-define(['initialize'], function (initialize) {
+define(['initialize', 'Configuration'], function (initialize, configuration) {
     'use strict';
     initialize.controller('CatatanKonselingNAPZACtrl', ['$q', '$rootScope', '$scope', 'ModelItem', '$state', 'CacheHelper', 'DateHelper', 'MedifirstService','$mdDialog',
         function ($q, $rootScope, $scope, ModelItem, $state, cacheHelper, dateHelper, medifirstService, $mdDialog) {
@@ -12,6 +12,8 @@ define(['initialize'], function (initialize) {
             $scope.totalSkor = 0
             $scope.totalSkor2 = 0
             $scope.totalSkor4 = 0
+            $scope.isCetakV = true
+            $scope.isTTD_E = true
             $scope.cc = {}
             var nomorEMR = '-'
             $scope.cc.emrfk = 3000910
@@ -90,14 +92,19 @@ define(['initialize'], function (initialize) {
                 }
                 $scope.listData1 = arrayShiftJaga
             })
-            
+            var norecEMR = ''
             var cacheNomorEMR = cacheHelper.get('cacheNomorEMR');
+            var cacheNoREC = cacheHelper.get('cacheNOREC_EMR');
+            if (cacheNoREC != undefined) {
+                norecEMR = cacheNomorEMR[1]
+            }
             if (cacheNomorEMR != undefined) {
                 nomorEMR = cacheNomorEMR[0]
                 $scope.cc.norec_emr = nomorEMR
                 $scope.cc.tanggalEmrl = cacheNomorEMR[2]
             }
             var chacePeriode = cacheHelper.get('cacheRekamMedis');
+            console.log(chacePeriode);
             if (chacePeriode != undefined) {
                 $scope.cc.nocm = chacePeriode[0]
                 $scope.cc.namapasien = chacePeriode[1]
@@ -748,6 +755,83 @@ define(['initialize'], function (initialize) {
                     }
                     cacheHelper.set('cacheNomorEMR', arrStr);
                 });
+            }
+
+
+            $scope.cetakBlade = function () {
+                if (norecEMR == '') {
+                    toastr.error('Dokumen belum pernah di isi')
+                    return
+                }
+                // if ($scope.item.obj[3003998] != undefined) {
+                //     $scope.listPegawai.add($scope.item.obj[3003998])
+                //     $scope.item.pegawai = $scope.item.obj[3003998]
+                // }
+                // if (pegawai == undefined) {
+                //     return
+                // }
+                var local = JSON.parse(localStorage.getItem('profile'))
+                var nama = medifirstService.getPegawaiLogin().namaLengkap
+
+                window.open(configuration.baseApiBackend + 'report/get-cetak-catatan-konseling?nocm=' + $scope.cc.nocm +
+                    '&norec_apd=' + $scope.cc.norec +
+                    '&emr=' + norecEMR +
+                    '&emrfk=' + $scope.cc.emrfk +
+                    '&kdprofile=' + local.id +
+                    '&nama=' + nama +
+                    // '&isttd=true' +
+                    // '&pegawaittd=' + pegawai.value +
+                    '&noregistrasi=' + $scope.cc.noregistrasi +
+                    '&norec_pd=' + $scope.cc.norec_pd, '_blank');
+            }
+            $scope.ttdElek = function () {
+                if (norecEMR == '') {
+                    toastr.error('Dokumen belum pernah di isi')
+                    return
+                }
+
+                // var confirm = $mdDialog.confirm()
+                //   .title('Info')
+                //   .textContent('Yakin mau tanda tangani dokumen ini ? ')
+                //   .ariaLabel('Lucky day')
+                //   .cancel('Tidak')
+                //   .ok('Ya')
+                // $mdDialog.show(confirm).then(function () {
+
+                if ($scope.item.obj[3003998] != undefined) {
+                    $scope.listPegawai.add($scope.item.obj[3003998])
+                    $scope.item.pegawai = $scope.item.obj[3003998]
+                }
+                $scope.winDialog.center().open()
+                // })
+            }
+            $scope.savePengajuanTTE = function (pegawai) {
+                if (pegawai == undefined) {
+                    return
+                }
+                var local = JSON.parse(localStorage.getItem('profile'))
+                var nama = medifirstService.getPegawaiLogin().namaLengkap
+                $scope.isRouteLoading = true
+                medifirstService.get('report/get-cetak-catatan-konseling?nocm=' + $scope.cc.nocm +
+                    '&norec_apd=' + $scope.cc.norec +
+                    '&emr=' + norecEMR +
+                    '&emrfk=' + $scope.cc.emrfk +
+                    '&kdprofile=' + local.id +
+                    '&nama=' + nama +
+                    '&isttd=true' +
+                    '&pegawaittd=' + pegawai.value +
+                    '&noregistrasi=' + $scope.cc.noregistrasi +
+                    '&norec_pd=' + $scope.cc.norec_pd
+                ).then(function (e) {
+                    if (e.data.status == 201) {
+                        toastr.success(e.data.message)
+                        $scope.winDialog.close()
+                    } else {
+                        toastr.error(e.data.message)
+                    }
+                    $scope.isRouteLoading = false
+
+                })
             }
 
         }
