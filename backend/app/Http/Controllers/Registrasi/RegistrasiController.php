@@ -1190,7 +1190,7 @@ class RegistrasiController extends ApiController
             ->leftjoin('alamat_m as alm','alm.nocmfk','=','ps.id')
             ->leftjoin('profile_m as pro','pro.id','=','ps.kdprofile')
             ->leftjoin('jeniskelamin_m as jk','jk.id','=','ps.objectjeniskelaminfk')
-            ->select('ps.nocm','ps.namapasien','ps.tgldaftar', 'ps.tgllahir',
+            ->select('ps.isinaktif','ps.nocm','ps.namapasien','ps.tgldaftar', 'ps.tgllahir',
                 'jk.jeniskelamin','ps.noidentitas','alm.alamatlengkap',
                 'ps.id as nocmfk','ps.namaayah','ps.notelepon','ps.nohp','ps.tglmeninggal','ps.iskompleks','ps.nobpjs','ps.sidik_jari'//,
 //                'ps.foto'
@@ -1260,6 +1260,7 @@ class RegistrasiController extends ApiController
 //                'photo'=> $item->photo,
                 'iskompleks'=> $item->iskompleks,
                 'sidik_jari'=> $item->sidik_jari,
+                'isinaktif'=> $item->isinaktif
             );
         }
         $result = array(
@@ -13292,6 +13293,39 @@ GROUP BY y.KET
             $ps->save();
             $pd->save();
 
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+        $transMessage = "Simpan";
+
+        if ($transStatus == 'true') {
+            $transMessage = $transMessage . " Berhasil";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+            //                "data" => $selisihjam,
+                "as" => 'er@epic',
+            );
+        } else {
+            $transMessage = $transMessage ." Gagal!!";
+            DB::rollBack();
+            $result = array(
+                "status" => 201,
+                "e" => $e->getLine() . $e->getMessage(),
+                "as" => 'er@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    public function saveSUDAHH(Request $request)
+    {
+        try {
+            
+            // $pd = PasienDaftar::where('norec', $request['norec'])->first();
+            $ps = Pasien::where('nocm', $request['nocm'])->first();
+                $ps->isinaktif = true;
+            $ps->save();
             $transStatus = 'true';
         } catch (\Exception $e) {
             $transStatus = 'false';

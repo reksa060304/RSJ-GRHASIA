@@ -257,6 +257,13 @@ define(['initialize'], function (initialize) {
                        // "template": '# if( iskompleks==1 ) {# ✔ # } else {#  #} #'
 
                     },
+                    {
+                        "field": "isinaktif",
+                        "title": "Inaktif",
+                        "width": "50px",
+                        "template": '# if( isinaktif==true ) {# ✔ # } else {#  #} #'
+
+                    },
                 ]
             };
 
@@ -326,6 +333,10 @@ define(['initialize'], function (initialize) {
             $scope.tglhariini = moment($scope.now).format('YYYY-MM-DD');
 
             $scope.RegistrasiPasien = function () {
+                if($scope.dataPasienSelected.isinaktif == true){
+                    toastr.error('Pasien Inaktif!')
+                    return
+                }
                 var rm = "";
                 if ($scope.nocm != undefined) {
                     rm = "norm=" + $scope.nocm;
@@ -1358,6 +1369,19 @@ define(['initialize'], function (initialize) {
                })
 
            }
+            $scope.sudah = function (data) {
+                if ($scope.dataPasienSelected == undefined) {
+                    toastr.error('Pilih data dulu!')
+                    return
+                }
+                var objSave = {
+                    method: data,
+                    nocm: $scope.dataPasienSelected.nocm
+                }
+                medifirstService.post('emr/save-sudah-sudahh', objSave).then(function () {
+                    loadData()
+                })
+            }
             //** BATAS */
         }
     ]);
