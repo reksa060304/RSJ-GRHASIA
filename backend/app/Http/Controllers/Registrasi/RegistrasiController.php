@@ -6999,6 +6999,16 @@ class RegistrasiController extends ApiController
 //            ->where('apd.noregistrasifk',$value->norec)
 //            ->where('apd.kdprofile', (int)$kdProfile)
 //            ->first();
+            if($value->isanalis == true){
+                $value->isanalis = '✔';
+            }
+            if($value->isrmlengkap == true){
+                $value->isrmlengkap = '✔';
+            }
+            if($value->isinaktif == true){
+                $value->isinaktif = '✔';
+            }
+
             if($value->objectdiagnosafk != null){
                 $value->isdiagnosis = true;
             }else{

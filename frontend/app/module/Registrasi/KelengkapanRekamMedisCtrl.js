@@ -127,13 +127,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                   var unitPpk = dataItem.get("ppkrujukan");
                   var unitSep = dataItem.get("nosep");
 				
-                  var cellSEP= row.children().eq(14);       
-                  cellSEP.addClass(getNotifSEP(unitBpjs,unitSep,unitDept,unitPpk));
-
-  				  var isdiag = dataItem.get("isdiagnosis");
-                  var cellDiag= row.children().eq(15);
-                  cellDiag.addClass(getNotifDiag(isdiag));
-					
+				
                 }
               }
 			$scope.columnDaftarPasienPulang = {
