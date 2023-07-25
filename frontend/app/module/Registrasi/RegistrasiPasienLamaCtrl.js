@@ -116,7 +116,10 @@ define(['initialize'], function (initialize) {
                 if ($scope.item.tglLahir != undefined) {
                     tglLahirs = "&tglLahir=" + DateHelper.formatDate($scope.item.tglLahir, 'YYYY-MM-DD');
                 }
-
+                var inaktif = ""
+                if ($scope.item.inaktif == true) {
+                    inaktif = "&inaktif=" + $scope.item.inaktif;
+                }
                 medifirstService.get("registrasi/get-pasien?" +
                     nik +
                     tglLahirs +
@@ -124,7 +127,7 @@ define(['initialize'], function (initialize) {
                     pasien +
                     ayah +
                     almat + bpjs +
-                    Rows)
+                    Rows+inaktif)
                     .then(function (data) {
                         $scope.isRouteLoading = false;
 
@@ -673,6 +676,7 @@ define(['initialize'], function (initialize) {
                 if ($scope.itemD.noRegistrasi != undefined) {
                     noReg = "&noReg=" + $scope.itemD.noRegistrasi;
                 }
+                
                 dRiwayatReg = []
                 medifirstService.get("registrasi/daftar-riwayat-registrasi?" +
                     tglLahirs + rm + noReg + pasien)

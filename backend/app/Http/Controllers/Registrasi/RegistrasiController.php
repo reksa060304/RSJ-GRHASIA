@@ -1235,6 +1235,9 @@ class RegistrasiController extends ApiController
         if(isset($request['Rows']) && $request['Rows']!="" && $request['Rows']!="undefined"){
             $data = $data->take(($request['Rows']));
         };
+        if(isset($request['inaktif']) && $request['inaktif']!="" && $request['inaktif']!="undefined"){
+            $data = $data->where('ps.isinaktif',true);
+        };
         $data = $data->where('ps.kdprofile', (int)$kdProfile);
         $data = $data->where('ps.statusenabled',true);
          $data = $data->orderBy('ps.id','desc');
