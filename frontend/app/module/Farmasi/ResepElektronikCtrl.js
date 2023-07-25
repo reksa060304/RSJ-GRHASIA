@@ -2391,10 +2391,10 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     toastr.error('Resep belum di verifikasi')
                     return
                 }
-                if ($scope.item.checkreseppulang != true ){
-                    toastr.error('Bukan Resep Pulang')
-                    return
-                }
+                // if ($scope.item.checkreseppulang != true ){
+                //     toastr.error('Bukan Resep Pulang')
+                //     return
+                // }
                 $scope.detailVerif()
                 $scope.popUpDetailVerif.center().open()
                 
