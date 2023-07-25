@@ -6010,7 +6010,7 @@ END as januari
         $idProfile = (int) $kdProfile;
         $data1 = \DB::select(DB::raw("
             with eksternal as(
-            SELECT pg.namalengkap, pg.nippns,ukp.name, jp.jenispelatihan, rp.penyelenggara,  
+            SELECT rp.namapelatihan, pg.namalengkap, pg.nippns,ukp.name, jp.jenispelatihan, rp.penyelenggara,  
             rp.tglmulai::date  || ' s/d ' || rp.tglakhir :: DATE as waktu, 
             rp.lokasipelatihan, rp.durasi, rp.biayadiklat, rp.biayasppd, ' ' as waktusosialisasi FROM pegawai_m pg
             INNER JOIN riwayatpelatihan_t rp on pg.id = rp.objectpegawaifk
@@ -6022,8 +6022,8 @@ END as januari
             and date_part('month', rp.tglmulai :: date) between '$request->bulanawal' and '$request->bulanakhir'
             and date_part('year', rp.tglmulai :: date) = $request->tahun
             )
-            SELECT sum(eks.biayasppd+eks.biayadiklat)jumlahbiaya, eks.namalengkap, eks.nippns, eks.name  unitkerja, eks.jenispelatihan, eks.penyelenggara, eks.waktu, eks.lokasipelatihan, sum(eks.durasi::INTEGER)jumlahjam, sum(eks.biayadiklat)biayadiklat, sum(eks.biayasppd)biayasppd, eks.waktusosialisasi FROM eksternal eks 
-            GROUP BY eks.namalengkap, eks.nippns, eks.name, eks.jenispelatihan, eks.penyelenggara, eks.waktu, eks.lokasipelatihan, eks.waktusosialisasi
+            SELECT sum(eks.biayasppd+eks.biayadiklat)jumlahbiaya, eks.namapelatihan, eks.namalengkap, eks.nippns, eks.name  unitkerja, eks.jenispelatihan, eks.penyelenggara, eks.waktu, eks.lokasipelatihan, sum(eks.durasi::INTEGER)jumlahjam, sum(eks.biayadiklat)biayadiklat, sum(eks.biayasppd)biayasppd, eks.waktusosialisasi FROM eksternal eks 
+            GROUP BY eks.namapelatihan,eks.namalengkap, eks.nippns, eks.name, eks.jenispelatihan, eks.penyelenggara, eks.waktu, eks.lokasipelatihan, eks.waktusosialisasi
             ORDER BY eks.nippns asc, eks.namalengkap asc
         "));
         $data2 = \DB::select(DB::raw("

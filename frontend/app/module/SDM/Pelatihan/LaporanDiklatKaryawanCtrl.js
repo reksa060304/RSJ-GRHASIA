@@ -294,6 +294,11 @@ define(['initialize'], function (initialize) {
                         "width": "100px",
                     },
                     {
+                        "field": "namapelatihan",
+                        "title": "NAMA PELATIHAN",
+                        "width": "100px",
+                    },
+                    {
                         "field": "penyelenggara",
                         "title": "PENYELENGGARA",
                         "width": "100px",
