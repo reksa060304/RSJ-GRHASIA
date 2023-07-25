@@ -79,7 +79,7 @@
 
 </head>
 <body>
-        <section style="font-family:Arial;padding:3mm 110mm 10mm 3mm">
+        <section style="font-family:Arial;padding:3mm 110mm 10mm 3mm; width: 110mm; height: 220mm">
             <table cellspacing="0" cellpadding="0" border="0" width="100%">
                 <tbody>
                     <tr>
