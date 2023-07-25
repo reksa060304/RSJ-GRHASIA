@@ -17,7 +17,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 			$scope.isRouteLoading = false;
 			$scope.cboUbahSEP = true;
 			$scope.cboSep = false;
-			$scope.item.jmlRows = 50
+			$scope.item.jmlRows = 100
 			loadCombo();
 			loadData();
 			// postIKTvisite()

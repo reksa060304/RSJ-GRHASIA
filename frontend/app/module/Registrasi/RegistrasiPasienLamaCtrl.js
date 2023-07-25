@@ -13,7 +13,7 @@ define(['initialize'], function (initialize) {
             $scope.item.tglawal = $scope.now;
             $scope.item.tglakhir = $scope.now;
             $scope.tglMeninggal = '';
-            $scope.item.Rows = 50;
+            $scope.item.Rows = 100;
             $scope.Page = {
                 refresh: true,
                 pageSizes: true,
@@ -152,6 +152,34 @@ define(['initialize'], function (initialize) {
 
 
             $scope.columnGrid = {
+                toolbar: [
+                        "excel",
+
+                    ],
+                    excel: {
+                        fileName: "DaftarRegistrasi.xlsx",
+                        allPages: true,
+                    },
+                    excelExport: function (e) {
+                        var sheet = e.workbook.sheets[0];
+                        sheet.frozenRows = 2;
+                        sheet.mergedCells = ["A1:K1"];
+                        sheet.name = "Orders";
+
+                        var myHeaders = [{
+                            value: "Daftar Registrasi Pasien",
+                            fontSize: 20,
+                            textAlign: "center",
+                            background: "#ffffff",
+                            // color:"#ffffff"
+                        }];
+
+                        sheet.rows.splice(0, 0, {
+                            cells: myHeaders,
+                            type: "header",
+                            height: 70
+                        });
+                    },
                 pageable: true,
                 columns: [
                     {
