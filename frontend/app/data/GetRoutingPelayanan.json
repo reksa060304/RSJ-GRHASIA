@@ -140,6 +140,25 @@
     ]
   },
   {
+    "name": "DaftarPasienPerjanjianV2Ctrl",
+    "url": "/DaftarPerjanjianPasienV2",
+    "templateurl": "module/Registrasi/DaftarPasienPerjanjianV2.html",
+    "controller": "DaftarPasienPerjanjianV2Ctrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
     "name": "S2xhaW1JbmFDYmc=",
     "url": "/S2xhaW1JbmFDYmc=",
     "templateurl": "module/Registrasi/KlaimInaCbg.html",

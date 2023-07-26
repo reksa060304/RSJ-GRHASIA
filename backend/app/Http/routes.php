@@ -2067,6 +2067,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::post('registrasi/update-data-emrpasien', 'Registrasi\RegistrasiController@updateNoCmInEmrPasienReg');
             Route::post('registrasi/confirm-pasien-online', 'Registrasi\RegistrasiController@ConfirmOnline');
             Route::post('registrasi/update-data-emrpasien-pd', 'Registrasi\RegistrasiController@updatePdInEmrPasien');
+            Route::get('registrasi/get-data-pasien-reservasi-v2', 'Registrasi\RegistrasiController@getPasienPerjanjianV2');
             Route::get('registrasi/get-data-pasien-reservasi', 'Registrasi\RegistrasiController@getPasienPerjanjian');
             Route::get('registrasi/get-combo-perjanjian', 'Registrasi\RegistrasiController@getComboPasienPerjanjian');
             Route::get('report/cetak-sep-new','Report\ReportController@cetakSEPV2');

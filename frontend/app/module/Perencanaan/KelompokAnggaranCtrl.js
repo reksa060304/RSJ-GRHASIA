@@ -5930,6 +5930,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }
 
             $scope.TambahKeterangan = function(){
+                if ($scope.dataDetailMTSelected == undefined){
+                    toastr.error('Pilih dulu mata anggaran')
+                    return
+                }
                 if ($scope.datakegiatanbro.islockrba == true) {
                     toastr.error('Sudah dilock!')
                     return

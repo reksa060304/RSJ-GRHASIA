@@ -369,7 +369,8 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                     norec_ec: data.norec_ec,
                     jam: moment($scope.item.jam).format('HH:mm'),
                     tanggal: moment($scope.item.tanggaltindakan).format('YYYY-MM-DD'),
-                    tindakan: $scope.item.implementasi.value
+                    tindakan: $scope.item.implementasi.value,
+                    objectruanganfk: $scope.cc.objectruanganfk
                 } 
                 medifirstService.post('cakem/simpan-tindakan', objSave).then(function(){
                     $scope.item.jam = undefined

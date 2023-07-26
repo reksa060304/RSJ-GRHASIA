@@ -218,6 +218,11 @@ define(['initialize'], function (initialize) {
                         "title": "JENIS PELATIHAN",
                         "width": "100px",
                     },
+                    {
+                        "field": "namapelatihan",
+                        "title": "NAMA PELATIHAN",
+                        "width": "100px",
+                    },
                     // {
                     //     "field": "penyelenggara",
                     //     "title": "PENYELENGGARA",

@@ -3667,7 +3667,7 @@ select '-' as smf,* from  (
                 //     }
                 // }
 
-                $jumlahhariperawatan = $jumlahpasienawal + $jumlahpasienpindah + $jumlahpasienmasuk;
+                $jumlahhariperawatan = $jumlahpasienawal + $jumlahpasienpindah + $jumlahpasienmasuk ;
                 $jumlahpulang = $jumlahpasiendipindahkan + $jumlahpasienpulang + $jumlahpasienpulangaps + $jumlahpasienpulangmelarikandiri;
                 $jumlahsisa = $jumlahhariperawatan - $jumlahpulang;
                 $jumlahpulangsementara = $jumlahpasienpulang + $jumlahpasienpulangaps + $jumlahpasienpulangmelarikandiri;

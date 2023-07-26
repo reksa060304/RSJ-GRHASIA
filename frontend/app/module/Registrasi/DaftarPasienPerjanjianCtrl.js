@@ -128,7 +128,7 @@ define(['initialize'], function (initialize) {
                     },
                     {
                         field: "notelepon",
-                        title: "Nomor Telepon",
+                        title: "No HP",
                         width: 200
                     },
                     {

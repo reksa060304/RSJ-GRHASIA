@@ -29,6 +29,10 @@
             "urlDep": "module/Registrasi/DaftarPasienPerjanjianCtrl"
         },
         {
+            "nameDep": "DaftarPasienPerjanjianV2Ctrl",
+            "urlDep": "module/Registrasi/DaftarPasienPerjanjianV2Ctrl"
+        },
+        {
             "nameDep": "KlaimInaCbgCtrl",
             "urlDep": "module/Registrasi/KlaimInaCbgCtrl"
         },

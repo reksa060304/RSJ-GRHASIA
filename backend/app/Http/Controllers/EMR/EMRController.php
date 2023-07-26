@@ -11170,6 +11170,7 @@ class EMRController  extends ApiController
                 $EMR->norec = $norecTehMenikitunyaeuy;
                 $EMR->kdprofile = $kdProfile;
                 $EMR->statusenabled = 1;
+                $EMR->jenisemr = 'asesmen';
 
                 if (isset($head['noregistrasi'])) {
                     $EMR->noregistrasifk = $head['noregistrasi'];
@@ -11177,11 +11178,12 @@ class EMRController  extends ApiController
                 
             } else {
                 $EMR = EMRPasien::where('noemr', $head['norec_emr'])
-                   ->where('noregistrasifk', $head['noregistrasi'])
-                      ->where('kdprofile',$kdProfile)
-                    ->first();
+                ->where('noregistrasifk', $head['noregistrasi'])
+                ->where('kdprofile',$kdProfile)
+                ->first();
                 $noemr = $EMR->noemr;
             }
+            
             $EMR->noemr = $noemr;
             $EMR->emrfk = $head['emrfk'];
             $EMR->nocm = $head['nocm'];
@@ -11244,7 +11246,7 @@ class EMRController  extends ApiController
             $EMRD->tgl = $this->getDateTime()->format('Y-m-d H:i:s');
             $EMRD->save();
 
-            if($data['norec']== '-'){
+            if($data['norec'] == '-'){
                 $emrcakem = \DB::table('emrcakem_t')->insert([
                     'norec'=>substr(Uuid::generate(), 0, 32),
                     'kdprofile'=> $kdProfile,
@@ -11481,7 +11483,7 @@ class EMRController  extends ApiController
         ->leftjoin('diagnosakep_m as dgk2','dgk2.id','=','ec.diagnosa3')
         ->where('emrpasienfk',$request['noemr'])->orderBy('tanggal','asc')->orderBy('jam','asc')->orderBy('shift','asc');
         if(isset($request['tgl'])){
-            $data = $data->where('ec.tanggal', $request['tgl'])->get();
+            $data = $data->where('ec.tanggal', $request['tgl'])->whereNotNull('ec.shift')->get();
         }else{
             $data = $data->get();
         }
@@ -13169,7 +13171,8 @@ class EMRController  extends ApiController
                 'jam'=> $request['jam'],
                 'tindakan'=> $request['tindakan'],
                 'tanggal'=> $request['tanggal'],
-                'norec_ec'=> $request['norec_ec']
+                'norec_ec'=> $request['norec_ec'],
+                'objectruanganfk'=> $request['objectruanganfk'],
             ]);
             $transStatus = 'true';
         } catch (\Exception $e) {
