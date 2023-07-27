@@ -1803,16 +1803,20 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 }
                 medifirstService.post('emr/save-emr-dinamis', jsonSave).then(function (e) {
                     var confirm = $mdDialog.confirm()
-                    .title('Peringatan')
+                    .title('Informasi')
                     .textContent('EMR SUDAH TERSIMPAN, KLIK YA UNTUK KONFIRMASI')
                     .ariaLabel('Lucky day')
-                    .cancel('Tidak')
+                    .cancel('')
                     .ok('Ya')
-                $mdDialog.show(confirm).then(function () {})
-
+                $mdDialog.show(confirm).then(function () {
+                    medifirstService.postLogging('EMR', 'norec emrpasien_t', e.data.data.norec,  
+                    'RM.05.02.Rev02 Pengkajian Ulang Medis Rawat Jalan Jiwa' + ' dengan No EMR - ' +e.data.data.noemr +  ' pada No Registrasi ' 
+                    + $scope.cc.noregistrasi).then(function (res) {
+                    })
+                })
                     $rootScope.loadRiwayat()
                     medifirstService.postLogging('EMR', 'norec emrpasien_t', e.data.data.norec,  
-                    'PengkajianUlangMedisRJJiwaCtrl' + ' dengan No EMR - ' +e.data.data.noemr +  ' pada No Registrasi ' 
+                    'RM.05.02.Rev02 Pengkajian Ulang Medis Rawat Jalan Jiwa' + ' dengan No EMR - ' +e.data.data.noemr +  ' pada No Registrasi ' 
                     + $scope.cc.noregistrasi).then(function (res) {
                     })
                     $scope.cc.norec_emr = e.data.data.noemr

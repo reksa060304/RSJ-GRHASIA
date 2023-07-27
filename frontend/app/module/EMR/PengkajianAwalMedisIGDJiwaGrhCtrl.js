@@ -2748,15 +2748,20 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                 }
                 medifirstService.post('emr/save-emr-dinamis', jsonSave).then(function (e) {
                     var confirm = $mdDialog.confirm()
-                        .title('Peringatan')
+                        .title('Informasi')
                         .textContent('EMR SUDAH TERSIMPAN, KLIK YA UNTUK KONFIRMASI')
                         .ariaLabel('Lucky day')
-                        .cancel('Tidak')
+                        .cancel('')
                         .ok('Ya')
-                    $mdDialog.show(confirm).then(function () {})
+                    $mdDialog.show(confirm).then(function () {
+                        medifirstService.postLogging('EMR', 'norec emrpasien_t', e.data.data.norec,
+                        'RM.05.03.Rev02 Pengkajian Awal Medis IGD jiwa ' + ' dengan No EMR - ' + e.data.data.noemr + 'Sudah Klik ya pada popup No Registrasi ' +
+                        $scope.cc.noregistrasi).then(function (res) {})
+
+                    })
 
                     medifirstService.postLogging('EMR', 'norec emrpasien_t', e.data.data.norec,
-                        'PengkajianAwalMedisIGDJiwaGrhCtrl ' + ' dengan No EMR - ' + e.data.data.noemr + ' pada No Registrasi ' +
+                        'RM.05.03.Rev02 Pengkajian Awal Medis IGD jiwa ' + ' dengan No EMR - ' + e.data.data.noemr + ' pada No Registrasi ' +
                         $scope.cc.noregistrasi).then(function (res) {})
                     $scope.isRouteLoading = false
                     var arrStr = {
