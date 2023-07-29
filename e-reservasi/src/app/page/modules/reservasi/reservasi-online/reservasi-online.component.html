@@ -571,8 +571,8 @@
             <p-accordion [multiple]="true">
               <p-accordionTab
                 header="Demi Kenyamanan Bersama, dimohon untuk mematuhi syarat dan ketentuan yang berlaku, yaitu: "
-                [selected]="true">
-                <ul>
+                [selected]="true" style="text-align: 10pt;" >
+                <ul style="text-align: 10pt;">
                   <li>Untuk pengisian Data Diri, Persiapkan KTP anda terlebih dahulu. </li>
                   <li>Pastikan terlebih dahulu Layanan dan Jadwal yang dikehendaki.</li>
                   <li>Setelah melakukan Pendaftaran, namun ingin melakukan pembatalan maksimal H-1 dengan cara klik menu
@@ -589,14 +589,15 @@
 
             </p-accordion>
             <section class="example-section">
-              <mat-checkbox class="example-margin" [(ngModel)]="isSetuju">Dengan melanjutkan ke tahap selanjutnya pasien
+              <mat-checkbox style="text-align: 10pt;" [(ngModel)]="isSetuju">Dengan melanjutkan ke tahap selanjutnya pasien
                 dianggap telah menyetujui S&K yang berlaku.</mat-checkbox>
             </section>
-            <div class="ui-g-6 ui-md-6 ui-lg-1" *ngIf="simpanVisible">
+            <div class="ui-g-6 ui-md-6 ui-lg-1">
               <button type="button" pButton icon="fa fa-save" (click)="saveSetuju()" label="Setuju"></button>
             </div>
-            <div class="ui-g-6 ui-md-6 ui-lg-1" *ngIf="simpanVisible">
-              <button type="button" pButton icon="fa fa-save" (click)="saveTidakSetuju()" label="Tidak"></button>
+            <div class="ui-g-6 ui-md-6 ui-lg-1">
+              <button type="button" class="ui-button ui-button-danger" pButton icon="fa fa-arrow-left"
+                (click)="saveTidakSetuju()" label="Tidak Setuju"></button>
             </div>
           </div>
         </div>
@@ -1494,7 +1495,7 @@
   /* Styling for p-dialog content */
   ::ng-deep .ui-dialog-content {
   font-size: 16px; /* Set your base font size here */
-  text-align: left; /* Center the text */
+  text-align: justify; /* Center the text */
   line-height: 1.5; /* Set line height for better readability */
   }
 
