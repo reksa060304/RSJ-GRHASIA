@@ -5821,6 +5821,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 if($scope.item.password != '' && $scope.item.password != undefined){
                     pass = $scope.item.password
                 }
+                if ($scope.item.sumberDanaKT == undefined){
+                    toastr.error('Sumber Dana Tidak Boleh Kosong!')
+                    return
+                }
                 if ($scope.datakegiatanbro.islockrba == true) {
                     toastr.error('Sudah dilock!')
                     return

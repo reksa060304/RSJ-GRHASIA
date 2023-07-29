@@ -47,10 +47,9 @@
 
     }
 </style>
-<body style="width:19.5cm;">
+<body style="width:27cm;">
 <div>
-    <table cellpadding="0" cellspacing="0" width="100%"  border="0" class="tabel">
-        <tbody >
+    <table cellpadding="0" cellspacing="0" width="100%"  border="0" class="tabel" >
         <tr>
             <td rowspan="2" align="center" style="padding: 10px;">
                     <p>
@@ -72,12 +71,12 @@
                 <b style="font-size: 23px;">
                     RBA
                 </b><br>
-                {{substr($tahap[0]->tahap, 0, -3)}}
+                {{$tahap[0]->tahap}}
             </td>
         </tr>
         <tr align="center">
             <td>
-                <b>RS Jiwa GRHASIA<br>TAHUN {{ date('Y') }}</b>
+                <b>RS JIWA GRHASIA<br>TAHUN {{ date('Y') }}</b>
             </td>
         </tr>
         <tr >
@@ -90,15 +89,16 @@
                 </p>
             </td>
         </tr>
-        </tbody>
     </table>
         <table cellpadding="0" cellspacing="0" width="100%"  border="0" class="tabel">
-                <tr">
+                <tr>
                     <td align="center" style="padding: 10px; font-weight: bold ">NO</td>
                     <td align="center" style="padding: 10px; font-weight: bold; ">NAMA SUB KEGIATAN</td>
                     <td align="center" style="padding: 10px; font-weight: bold;  ">PEGAWAI</td>
                     <td align="center" style="padding: 10px; font-weight: bold;  ">BARANG JASA</td>
-                    <td align="center" style="padding: 10px; font-weight: bold ; ">MODAL</td>
+                    <td align="center" style="padding: 10px; font-weight: bold ; ">MODAL GEDUNG</td>
+                    <td align="center" style="padding: 10px; font-weight: bold ; ">MODAL ALAT DAN MESIN</td>
+                    <td align="center" style="padding: 10px; font-weight: bold ; ">MODAL LAINNYA</td>
                     <td align="center" style="padding: 10px; font-weight: bold;  ">SUB TOTAL</td>
                 </tr>
                 @foreach ($data as $dt)
@@ -119,7 +119,9 @@
                     @endif
                     <td align="right" style="padding: 10px;">{{ number_format($dt->jumlahpegawai,0,',','.') }}</td>
                     <td align="right" style="padding: 10px;">{{ number_format($dt->jumlahbarangjasa,0,',','.') }}</td>
-                    <td align="right" style="padding: 10px;">{{ number_format($dt->jumlahmodal,0,',','.') }}</td>
+                    <td align="right" style="padding: 10px;">{{ number_format($dt->jumlahmodalgedung,0,',','.') }}</td>
+                    <td align="right" style="padding: 10px;">{{ number_format($dt->jumlahmodalalat,0,',','.') }}</td>
+                    <td align="right" style="padding: 10px;">{{ number_format($dt->jumlahmodallainnya,0,',','.') }}</td>
                     <td align="right" style="padding: 10px;">{{ number_format($dt->total,0,',','.') }}</td>
                 </tr>
                 @endforeach
@@ -127,7 +129,9 @@
                     <td colspan="2" style="padding: 10px; font-weight: bold; text-align: center; ">JUMLAH TOTAL</td>
                     <td align="right" style="padding: 10px; font-weight: bold;  ">{{ number_format($jumlah[0]->jumlahpegawai,0,',','.') }}</td>
                     <td align="right" style="padding: 10px; font-weight: bold;  ">{{ number_format($jumlah[0]->jumlahbarangjasa,0,',','.') }}</td>
-                    <td align="right" style="padding: 10px; font-weight: bold ; ">{{ number_format($jumlah[0]->jumlahmodal,0,',','.') }}</td>
+                    <td align="right" style="padding: 10px; font-weight: bold ; ">{{ number_format($jumlah[0]->jumlahmodalgedung,0,',','.') }}</td>
+                    <td align="right" style="padding: 10px; font-weight: bold ; ">{{ number_format($jumlah[0]->jumlahmodalalat,0,',','.') }}</td>
+                    <td align="right" style="padding: 10px; font-weight: bold ; ">{{ number_format($jumlah[0]->jumlahmodallainnya,0,',','.') }}</td>
                     <td align="right" style="padding: 10px; font-weight: bold;  ">{{ number_format($jumlah[0]->total,0,',','.') }}</td>
                 </tr>
         </table>
@@ -154,7 +158,7 @@
                     <td>
                         <p align="center" style="margin-bottom:50px">
                             <font style="font-size: 12pt; " color="#000000" face="Arial">
-                                    Kepala BLUD RS Jiwa GRHASIA
+                                    Kepala BLUD RS JIWA GRHASIA
                             </font>
                         </p>
                     </td>
@@ -171,7 +175,7 @@
                     <td>
                         <p align="center" style="margin-top: 50px;">
                             <font style="font-size: 12pt; " color="#000000" face="Arial">
-                                   <u>dr. Akhmad Akhadi Syamsudhuha, M.P.H</u>
+                                   <u>{{$settingrba[0]->namalengkap}}</u>
                             </font>
                         </p>
                     </td>
@@ -184,7 +188,7 @@
                     <td>
                         <p align="center">
                             <font style="font-size: 12pt; " color="#000000" face="Arial">
-                            NIP. 19680714 200012 1 002
+                            NIP. {{$settingrba[0]->nippns}}
                             </font>
                         </p>
                     </td>
