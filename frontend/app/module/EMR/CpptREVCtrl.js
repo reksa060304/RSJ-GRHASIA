@@ -1196,12 +1196,25 @@ define(["initialize", "Configuration"], function (initialize, config) {
         };
         medifirstService.post("emr/save-emr-cppt", jsonSave).then(function (e) {
           var confirm = $mdDialog.confirm()
-                        .title('Peringatan')
+                        .title('Informasi')
                         .textContent('EMR SUDAH TERSIMPAN, KLIK YA UNTUK KONFIRMASI')
                         .ariaLabel('Lucky day')
-                        .cancel('Tidak')
+                        .cancel('')
                         .ok('Ya')
-                    $mdDialog.show(confirm).then(function () {})
+                    $mdDialog.show(confirm).then(function () {
+                      medifirstService
+                      .postLogging(
+                        "EMR",
+                        "norec emrpasien_t",
+                        e.data.data.norec,
+                        "Cppt rawat inap Versi 2 " +
+                        " dengan No EMR - " +
+                        e.data.data.noemr +
+                        " Sudah Klik ya pada popup No Registrasi " +
+                        $scope.cc.noregistrasi
+                      )
+                      .then(function (res) {});
+                    })
           var pegLogin = medifirstService.getPegawaiLogin()
           var body = {
             norec: e.data.data.norec,

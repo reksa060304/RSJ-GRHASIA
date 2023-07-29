@@ -780,19 +780,23 @@ define(['initialize'], function (initialize) {
                 }
                 medifirstService.post('emr/save-emr-dinamis', jsonSave).then(function (e) {
                     var confirm = $mdDialog.confirm()
-                    .title('Peringatan')
+                    .title('Informasi')
                     .textContent('EMR SUDAH TERSIMPAN, KLIK YA UNTUK KONFIRMASI')
                     .ariaLabel('Lucky day')
-                    .cancel('Tidak')
+                    .cancel('')
                     .ok('Ya')
-                $mdDialog.show(confirm).then(function () {})
+                $mdDialog.show(confirm).then(function () {
+                    medifirstService.postLogging('EMR', 'norec emrpasien_t', e.data.data.norec,
+                    'RM.22.02Rev01 Pengkajian Awal Medis Rawat Jalan NAPZA' + ' dengan No EMR - ' + e.data.data.noemr + ' Sudah Klik ya pada EMR No Registrasi ' +
+                    $scope.cc.noregistrasi).then(function (res) {})
+                })
                    
                     // $state.go("RekamMedis.OrderJadwalBedah.ProsedurKeselamatan", {
                     //     namaEMR : $scope.cc.emrfk,
                     //     nomorEMR : e.data.data.noemr 
                     // });
                     medifirstService.postLogging('EMR', 'norec emrpasien_t', e.data.data.norec,
-                        'PengkajianAwalMedisRJNAPZACtrl' + ' dengan No EMR - ' + e.data.data.noemr + ' pada No Registrasi ' +
+                        'RM.22.02Rev01 Pengkajian Awal Medis Rawat Jalan NAPZA' + ' dengan No EMR - ' + e.data.data.noemr + ' pada No Registrasi ' +
                         $scope.cc.noregistrasi).then(function (res) {})
 
                     var arrStr = {

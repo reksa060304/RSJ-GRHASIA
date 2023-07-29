@@ -55,39 +55,35 @@
                     <table style="border: 0px">
 
                         <tr>
-                            <th style="width: 25%">Tanggal</th>
-                            <th style="width: 18%">Jam</th>
-                            <th style="width: 18%">Tanda Vital</th>
-                            <th style="width: 18%">Tanda Cedera/Luka</th>
-                            <th style="width: 18%">Lingkup Gerak Sendiri/Range of Motion</th>
-                            <th style="width: 18%">Keluhan Pasien</th>
-                            <th style="width: 18%">Lepas Fiksasi</th>
-                            <th style="width: 18%">Keterangan</th>
+                            <th style="width: 40%">Tanggal</th>
+                            <th style="width: 25%">Jam</th>
+                            <th style="width: 15%">Tanda Vital</th>
+                            <th style="width: 15%">Tanda Cedera/Luka</th>
+                            <th style="width: 15%">Lingkup Gerak Sendiri/Range of Motion</th>
+                            <th style="width: 15%">Keluhan Pasien</th>
+                            <th style="width: 15%">Lepas Fiksasi</th>
+                            <th style="width: 15%">Keterangan</th>
                             
                         </tr>
                         <tr style="border: 0px" ng-repeat="list in listData1 | orderBy:'nourut'" ng-init="jawabIndex = $index">
                             <td ng-repeat="jawab in list.details">
                                 <div class="grid_12">
                                     <div ng-switch on="jawabIndex">
-
-                                        
                                     </div>
-
-                                <div ng-switch on="jawab.type">
+                                    <div ng-switch on="jawab.type">
                                         <div ng-switch-when="textarea">
                                             <textarea style="width: 100px;height: 55px" c-text-area type="input" filter="'string'" class="k-textbox" style="{{data.style}}"
                                             ng-model="item.obj[jawab.id]" />
                                         </div>
                                         <div ng-switch-when="date">
-                                            <div class="grid_12 padDatePicker"
-                                                style="margin-top: 0px;margin-bottom: 5px;margin-left: 0px">
+                                            <div class="grid_12 padDatePicker"style="margin-top: 0px;margin-bottom: 5px;margin-left: 0px; width: 150px;">
                                                 <input k-ng-model="item.obj[jawab.id]" kendo-date-picker k-max="now"
                                                     placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd'" parsedate="yyyy-MM-dd" style="width:100%"
                                                     />
                                             </div>
                                         </div>
                                         <div ng-switch-when="time">
-                                            <div class="grid_12 padDatePicker"  style="margin-top: 0px;margin-bottom: 5px;margin-left: 0px"> 
+                                            <div class="grid_12 padDatePicker"  style="margin-top: 0px;margin-bottom: 5px;margin-left: 0px;  width: 100px;"> 
                                                 <input  k-ng-model="item.obj[jawab.id]"  kendo-timepicker k-max="now" placeholer="HH:mm" k-format="'HH:mm'" style="width:75%" />
                                             </div>
                                         </div>
@@ -106,7 +102,7 @@
         
         
         
-  </div>
+         </div>
 
         <div class="grid_12">
             <div ng-include='"../app/module/EMR/TemplateButtonDinamis" '></div>
