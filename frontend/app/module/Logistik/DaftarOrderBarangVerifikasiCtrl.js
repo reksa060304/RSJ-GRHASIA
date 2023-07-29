@@ -564,6 +564,7 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                 //     //     return
                 //     // }
                 // }
+                $scope.item.tglverif = new Date()
                 $scope.verif.center().open()
                 // $scope.dataverif = data
             }
