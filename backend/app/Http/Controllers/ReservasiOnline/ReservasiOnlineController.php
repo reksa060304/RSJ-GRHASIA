@@ -767,7 +767,7 @@ class ReservasiOnlineController extends ApiController
         $ruangan = \DB::table('slottingonline_m as slot')
             ->join('ruangan_m as ru', 'slot.objectruanganfk', '=', 'ru.id')
             ->join('pegawai_m as pg', 'slot.objectpegawaifk', '=', 'pg.id')
-            ->select('ru.id as idruangan','slot.id', 'ru.namaruangan', 'ru.objectdepartemenfk', 'slot.jambuka', 'slot.jamtutup',
+            ->select('slot.tanggalcutiawal','slot.tanggalcutiakhir','ru.id as idruangan','slot.id', 'ru.namaruangan', 'ru.objectdepartemenfk', 'slot.jambuka', 'slot.jamtutup',
                 'slot.quota','pg.namalengkap','slot.objectpegawaifk','slot.hari',
                 DB::raw("extract(hour from slot.jamtutup) -extract(hour from slot.jambuka)as totaljam"))
             // DB::raw("datepart(hour,slot.jamtutup) -datepart(hour, slot.jambuka)as totaljam"))
@@ -815,6 +815,8 @@ class ReservasiOnlineController extends ApiController
 			$newptp->jambuka = $request['jambuka'];
 			$newptp->jamtutup =  $request['jamtutup'];
 			$newptp->quota =  $request['quota'];
+            $newptp->tanggalcutiawal = $request['tanggalcutiawal'];
+            $newptp->tanggalcutiakhir = $request['tanggalcutiakhir'];
 			$newptp->save();
 
 			$transMessage = "Simpan Slotting";

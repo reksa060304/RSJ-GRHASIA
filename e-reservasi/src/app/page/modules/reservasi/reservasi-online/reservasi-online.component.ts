@@ -52,7 +52,8 @@ export interface Dokter {
   providers: [ConfirmationService]
 })
 export class ReservasiOnlineComponent implements OnInit {
-
+  isGeneralConsent: boolean = false
+  isSetuju: boolean = false
   loading: boolean = false;
   isBaru: boolean = false
   isLama: boolean = false
@@ -232,12 +233,23 @@ export class ReservasiOnlineComponent implements OnInit {
       this.sortField = value;
     }
   }
-
-
+  saveTidakSetuju(){
+    if(this.isSetuju == false){
+    localStorage.setItem('GeneralConsent', 'false')
+      this.isGeneralConsent = false
+    }
+  }
+  saveSetuju(){
+    if(this.isSetuju == true){
+      this.isGeneralConsent = false
+      localStorage.setItem('GeneralConsent', 'true')
+    }
+  }
   ngOnInit() {
     // var ssn = document.getElementById('ssn');
+    localStorage.setItem('GeneralConsent', 'false')
     var ssn = (<HTMLInputElement>document.getElementById('ssn'));
-
+    this.isGeneralConsent = true
     // ssn.addEventListener('input', this.ssnMask, false);
     // var ssnFirstFive = "";
     // var secondHalf = "";
@@ -621,6 +633,14 @@ export class ReservasiOnlineComponent implements OnInit {
   activateMenu() {
     this.activeItem = this.menu['activeItem'];
     if (this.activeItem.label == "Reservasi") {
+      console.log(localStorage.getItem('GeneralConsent'));
+
+      if(localStorage.getItem('GeneralConsent') == 'true'){
+        this.isGeneralConsent = false
+      }else
+      if(localStorage.getItem('GeneralConsent') != 'true'){
+        this.isGeneralConsent = true
+      }
       this.activeIndex = 0;
     }
     // if (this.activeItem.label == "Bank Account") {

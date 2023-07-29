@@ -17,7 +17,7 @@ define(['initialize'], function (initialize) {
 			$scope.isRouteLoading = false;
 			FormLoad()
 			loadData();
-
+			
 			function FormLoad() {
 				medifirstService.get("reservasionline/get-combo-reservasi").then(function (dat) {
 					$scope.listRuangan = dat.data.ruanganrajal
@@ -199,8 +199,9 @@ define(['initialize'], function (initialize) {
 					"jamtutup": moment($scope.popUp.jamTutup).format('HH:mm'),
 					"quota": $scope.popUp.quota,
 					"hari": listHari != undefined ? listHari : null,
-					"objectpegawaifk": $scope.popUp.dokterInput.id
-
+					"objectpegawaifk": $scope.popUp.dokterInput.id,
+					"tanggalcutiawal": $scope.popUp.CutiBuka != undefined ? $scope.popUp.CutiBuka : null,
+					"tanggalcutiakhir": $scope.popUp.CutiTutup != undefined ? $scope.popUp.CutiTutup : null,
 				}
 				$scope.isSave = true
 				medifirstService.post('reservasionline/save-slotting', objSave).then(function (e) {
@@ -269,6 +270,12 @@ define(['initialize'], function (initialize) {
 				}
 				if (dataItem.jamtutup != undefined) {
 					$scope.popUp.jamTutup = new Date(moment(new Date()).format('YYYY-MM-DD '+ dataItem.jamtutup));
+				}
+				if (dataItem.tanggalcutiawal != undefined) {
+					$scope.popUp.CutiBuka = new Date(dataItem.tanggalcutiawal);
+				}
+				if (dataItem.tanggalcutiakhir != undefined) {
+					$scope.popUp.CutiTutup = new Date(dataItem.tanggalcutiakhir);
 				}
 				$scope.popUp.quota = dataItem.quota? parseInt(dataItem.quota):0
 				$scope.popUps.center().open();

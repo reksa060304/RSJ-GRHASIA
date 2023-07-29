@@ -558,6 +558,52 @@
     </div>
 
   </form>
+  <p-dialog header="Persetujuan Informasi" [(visible)]="isGeneralConsent" [modal]="true" [responsive]="true"
+    [style]="{width: '1000px', minWidth: '200px'}" appendTo="body" [baseZIndex]="10000">
+    <div class="ui-g-12">
+      <div class="card card-w-title" style="margin-top:10px" *ngIf="!isShowRiwayatRegis">
+        <div class="card card-form-header">
+          <h1>Terimakasih telah mengakses Layanan Pendaftaran Online RS Jiwa Grhasia.</h1>
+        </div>
+        <div class="ui-g ui-fluid">
+          <div class="ui-g-12 ui-md-12 ui-lg-12">
+
+            <p-accordion [multiple]="true">
+              <p-accordionTab
+                header="Demi Kenyamanan Bersama, dimohon untuk mematuhi syarat dan ketentuan yang berlaku, yaitu: "
+                [selected]="true">
+                <ul>
+                  <li>Untuk pengisian Data Diri, Persiapkan KTP anda terlebih dahulu. </li>
+                  <li>Pastikan terlebih dahulu Layanan dan Jadwal yang dikehendaki.</li>
+                  <li>Setelah melakukan Pendaftaran, namun ingin melakukan pembatalan maksimal H-1 dengan cara klik menu
+                    Riwayat (History), masukkan No RM & Tanggal Lahir klik Cari dan klik tombol Merah untuk menghapus
+                    reservasi pada tanggal tersebut</li>
+                  <li>Pada hari terjadwal periksa/konsultasi, dimohon datang 30 menit sebelum pelayanan</li>
+                  <li>Selanjutnya silahkan untuk melakukan konfirmasi kehadiran dengan menggunakan Mesin KiosK yang
+                    terletak pada bagian Pendaftaran, jika mengalami kesulitan silahkan memohon bantuan kepada Petugas
+                    Informasi kami. </li>
+                  <li>Informasi lebih lanjut silahkan hubungi WA Informasi 081388383939
+                    (Pada Jam Kerja)</li>
+                </ul>
+              </p-accordionTab>
+
+            </p-accordion>
+            <section class="example-section">
+              <mat-checkbox class="example-margin" [(ngModel)]="isSetuju">Dengan melanjutkan ke tahap selanjutnya pasien
+                dianggap telah menyetujui S&K yang berlaku.</mat-checkbox>
+            </section>
+            <div class="ui-g-6 ui-md-6 ui-lg-1" *ngIf="simpanVisible">
+              <button type="button" pButton icon="fa fa-save" (click)="saveSetuju()" label="Setuju"></button>
+            </div>
+            <div class="ui-g-6 ui-md-6 ui-lg-1" *ngIf="simpanVisible">
+              <button type="button" pButton icon="fa fa-save" (click)="saveTidakSetuju()" label="Tidak"></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </p-dialog>
 </div>
 <div *ngIf="activeItem.label == 'History' && !isBuktiReservasi">
 
@@ -766,6 +812,7 @@
 
                 </p-dataTable>
               </div>
+
               <!-- <p-dialog header="Details History" [(visible)]="displayDialog" [responsive]="true" showEffect="fade"
               [modal]="true" [baseZIndex]="8000" [positionTop]="80"
               appendTo="body">
@@ -1443,3 +1490,40 @@
     </div>
   </div>
 </div>
+<style>
+  /* Styling for p-dialog content */
+  ::ng-deep .ui-dialog-content {
+  font-size: 16px; /* Set your base font size here */
+  text-align: left; /* Center the text */
+  line-height: 1.5; /* Set line height for better readability */
+  }
+
+  /* Responsive font size using viewport width (vw) unit */
+  @media screen and (max-width: 768px) {
+  ::ng-deep .ui-dialog-content {
+  font-size: 4vw; /* Adjust the value as needed */
+  }
+  }
+
+  /* Flexbox layout to center the text vertically and horizontally */
+  ::ng-deep .ui-dialog-content {
+  display: flex;
+  justify-content: left;
+  align-items: left;
+  min-height: 150px; /* Set the minimum height of the dialog content */
+  }
+
+  /* Responsive minimum height using viewport height (vh) unit */
+  @media screen and (max-width: 768px) {
+  ::ng-deep .ui-dialog-content {
+  min-height: 80vh; /* Adjust the value as needed */
+  }
+  }
+  /* Anda bisa menyesuaikan nilai-nilai dalam CSS di atas sesuai dengan preferensi Anda dan desain p-dialog yang Anda
+  inginkan. Gunakan ::ng-deep untuk menerapkan gaya CSS ke dalam komponen p-dialog yang ada pada PrimeNG.
+
+  Pastikan kode CSS di atas ditempatkan dalam file CSS terpisah atau dalam bagian gaya (style) komponen Anda agar dapat
+  diterapkan dengan benar. Dengan menggunakan teknik ini, teks dalam p-dialog akan responsif dan dapat berubah mengikuti
+  keadaan layar, baik pada HP maupun laptop/desktop. */
+
+</style>
