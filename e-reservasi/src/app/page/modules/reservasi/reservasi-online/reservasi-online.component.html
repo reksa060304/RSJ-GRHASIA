@@ -1468,7 +1468,7 @@
 <style>
   /* Styling for p-dialog content */
   ::ng-deep .ui-dialog-content {
-  font-size: 16px; /* Set your base font size here */
+  font-size: 10pt; /* Set your base font size here */
   text-align: justify; /* Center the text */
   line-height: 1.5; /* Set line height for better readability */
   }
@@ -1476,7 +1476,7 @@
   /* Responsive font size using viewport width (vw) unit */
   @media screen and (max-width: 768px) {
   ::ng-deep .ui-dialog-content {
-  font-size: 4vw; /* Adjust the value as needed */
+  font-size: 10pt; /* Adjust the value as needed */
   }
   }
 
@@ -1535,10 +1535,14 @@
             </p-accordionTab>
 
           </p-accordion>
-          <section class="example-section">
-            <mat-checkbox style="font-size: 10pt;" [(ngModel)]="isSetuju">Dengan melanjutkan ke tahap selanjutnya pasien
-              dianggap telah menyetujui S&K yang berlaku.</mat-checkbox>
-          </section>
+          <div class="ui-g-12 ui-md-12 ui-lg-12">
+            <section>
+              <mat-checkbox style="font-size: 10pt;" [(ngModel)]="isSetuju">Dengan melanjutkan ke tahap selanjutnya
+                pasien
+                dianggap telah menyetujui S&K yang berlaku.</mat-checkbox>
+            </section>
+          </div>
+
           <div class="ui-g-6 ui-md-6 ui-lg-1">
             <button style="font-size: 10pt;" type="button" pButton icon="fa fa-save" (click)="saveSetuju()"
               label="Setuju"></button>
