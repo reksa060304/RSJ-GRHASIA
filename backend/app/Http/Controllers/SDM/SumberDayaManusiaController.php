@@ -6265,9 +6265,13 @@ public function daftarKenaikanGajiBerkala(Request $request){
         $idProfile = (int) $kdProfile;
 
         $data = \DB::select(DB::raw("
-            SELECT * FROM (select pg.tmtskcpns,gol.level, rgb.norec as norec_kgb, pg.id as id_pegawai, ROW_NUMBER()over(PARTITION by pg.id order by tgltmt desc)as nomor, rgb.objectgolonganfk, pg.nippns, pg.namalengkap, rgb.tgltmt, gol.namaexternal as pangkat,gol.name as golongan, rgb.gajiakhir, split_part(rgb.masakerjagolongan, ' ', '1')::integer +2  as mkg from pegawai_m pg 
-inner join riwayatgajiberkala_t rgb on rgb.objectpegawaifk = pg.id
-inner join sdm_golongan_m gol on gol.id = rgb.objectgolonganfk)as x where x.nomor = 1 and x.mkg is not null order by x.tgltmt asc
+            SELECT * FROM (select pg.tmtskcpns,gol.level, rgb.norec as norec_kgb, pg.id as id_pegawai, 
+            ROW_NUMBER()over(PARTITION by pg.id order by tgltmt desc)as nomor, rgb.objectgolonganfk, 
+            pg.nippns, pg.namalengkap, rgb.tgltmt, gol.namaexternal as pangkat,
+            gol.name as golongan, rgb.gajiakhir, split_part(rgb.masakerjagolongan, ' ', '1')::integer +2  as 
+            mkg from pegawai_m pg 
+            inner join riwayatgajiberkala_t rgb on rgb.objectpegawaifk = pg.id
+            inner join sdm_golongan_m gol on gol.id = rgb.objectgolonganfk)as x where x.nomor = 1 and x.mkg is not null order by x.tgltmt asc
         "));
         // var_dump($data);
         $data2 = '';
