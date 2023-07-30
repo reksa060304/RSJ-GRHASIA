@@ -132,6 +132,18 @@ define(['initialize'], function (initialize) {
 						"width": "100px"
 					},
 					{
+
+						"field": "tanggalcutiawal",
+						"title": "Cuti Awal",
+						"width": "100px"
+					},
+					{
+
+						"field": "tanggalcutiakhir",
+						"title": "Cuti Akhir",
+						"width": "100px"
+					},
+					{
 						"command": [{
 							text: "Edit",
 							click: editData,
