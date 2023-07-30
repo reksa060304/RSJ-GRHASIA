@@ -203,37 +203,3 @@ body .ui-fluid .ui-button-icon-only {
 .ui-widget, .ui-widget * {
   box-sizing: border-box;
 }
-/* Styling for p-dialog content */
-::ng-deep .ui-dialog-content {
-  font-size: 10pt;
-  /* Set your base font size here */
-  text-align: justify;
-  /* Center the text */
-  line-height: 1.5;
-  /* Set line height for better readability */
-}
-
-/* Responsive font size using viewport width (vw) unit */
-@media screen and (max-width: 768px) {
-  ::ng-deep .ui-dialog-content {
-    font-size: 10pt;
-    /* Adjust the value as needed */
-  }
-}
-
-/* Flexbox layout to center the text vertically and horizontally */
-::ng-deep .ui-dialog-content {
-  display: flex;
-  justify-content: left;
-  align-items: left;
-  min-height: 150px;
-  /* Set the minimum height of the dialog content */
-}
-
-/* Responsive minimum height using viewport height (vh) unit */
-@media screen and (max-width: 768px) {
-  ::ng-deep .ui-dialog-content {
-    min-height: 80vh;
-    /* Adjust the value as needed */
-  }
-}
