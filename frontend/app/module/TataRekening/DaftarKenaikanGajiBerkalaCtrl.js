@@ -36,8 +36,15 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.getIsiComboRuangan = function () {
                     $scope.listRuangans = $scope.item.departemen.ruangan
                 }
-                
-                medifirstService.get("sdm/daftar-kenaikan-gaji-berkala").then(function (data) {
+                var periodeAwal = ''
+                if($scope.item.periodeAwal != undefined){
+                    periodeAwal = "periodeAwal=" + moment($scope.item.periodeAwal).format('YYYY-MM-DD 00:00')
+                }
+                var periodeAkhir = ''
+                if ($scope.item.periodeAkhir != undefined) {
+                    periodeAkhir = "&periodeAkhir=" + moment($scope.item.periodeAkhir).format('YYYY-MM-DD 23:59')
+                }
+                medifirstService.get("sdm/daftar-kenaikan-gaji-berkala?"+periodeAwal+periodeAkhir).then(function (data) {
                     $scope.isRouteLoading = false
                     // $scope.listKelompokPasien = data.data.kelompokpasien;
                     var datas = data.data.detail
