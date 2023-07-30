@@ -168,7 +168,7 @@ class ReservasiOnlineController extends ApiController
 			->leftjoin ('golongandarah_m as gd','gd.id','=','ps.objectgolongandarahfk')
 			->leftjoin ('hambatankomunikasi_m as hk','hk.id','=','ps.hambatankomunikasifk')
 			->select('ps.nocm','ps.id as nocmfk','ps.namapasien','ps.objectjeniskelaminfk','jk.jeniskelamin',
-				'alm.alamatlengkap','pdd.pendidikan','pk.pekerjaan','ps.noidentitas','ps.notelepon','ps.tempatlahir',
+				'alm.alamatlengkap','pdd.pendidikan','pk.pekerjaan','ps.noidentitas','ps.nohp as notelepon','ps.tempatlahir',
                 'ps.nobpjs','ps.objectagamafk','ag.agama','ps.objectstatusperkawinanfk','sp.statusperkawinan','ps.objectgolongandarahfk','gd.golongandarah',
                 'ps.objectpendidikanfk','ps.objectpekerjaanfk','ps.hambatankomunikasifk','hk.hambatankomunikasi','ps.nik1','ps.alamatrmh', 'ps.teleponpenanggungjawab', 'ps.penanggungjawab',
 				DB::raw(" to_char ( ps.tgllahir,'yyyy-MM-dd') as tgllahir"))
@@ -4074,7 +4074,9 @@ class ReservasiOnlineController extends ApiController
 	}
     public function getDokterByRuang(Request $request)
 	{
-        if(!isset($request['id_ruangan']) || $request['id_ruangan']==''){
+        $kdProfile = $this->getDataKdProfile($request);
+        if($this->settingDataFixed('cutiDenganSlotting',$kdProfile) == true){
+            if(!isset($request['id_ruangan']) || $request['id_ruangan']==''){
             $result = array(
                 'message' => 'id_ruangan harus di isi',
                 'status'=> 201,
@@ -4096,6 +4098,8 @@ class ReservasiOnlineController extends ApiController
         ->where('pg.statusenabled', true)
         ->where('ru.statusenabled', true)
         ->where('ru.id', $request['id_ruangan'])
+        ->whereRaw("(not('$request[tgl]'::date BETWEEN slot.tanggalcutiawal::date AND slot.tanggalcutiakhir::date)
+        or (slot.tanggalcutiawal is null and slot.tanggalcutiakhir is null))")
         ->where('slot.statusenabled', true)
         ->get();
         $hari = $this->hari_ini($request['tgl']);
@@ -4141,6 +4145,8 @@ class ReservasiOnlineController extends ApiController
             'list' => $data11,
         );
         return $this->respond($result);
+        }
+        
     }
     public function GetJamKosongRes($kode,$dokter,$tgl,$jam,$dataReservasi,$kdProfile){
 

@@ -558,58 +558,7 @@
     </div>
 
   </form>
-  <p-dialog header="Persetujuan Informasi" [(visible)]="isGeneralConsent" [modal]="true" [responsive]="true"
-    [style]="{width: '1000px', minWidth: '200px'}" appendTo="body" [baseZIndex]="10000">
-    <div class="ui-g-12">
-      <div class="card card-w-title" style="margin-top:10px" *ngIf="!isShowRiwayatRegis">
-        <div class="card card-form-header">
-          <h1>Terimakasih telah mengakses Layanan Pendaftaran Online RS Jiwa Grhasia.</h1>
-        </div>
-        <div class="ui-g ui-fluid">
-          <div class="ui-g-12 ui-md-12 ui-lg-12">
 
-            <p-accordion [multiple]="true">
-              <p-accordionTab
-                header="Demi Kenyamanan Bersama, dimohon untuk mematuhi syarat dan ketentuan yang berlaku, yaitu: "
-                [selected]="true" style="font-size: 10pt;" >
-                <ul style="font-size: 10pt;">
-                  <li style="font-size: 10pt;">Untuk pengisian Data Diri, Persiapkan KTP anda terlebih dahulu. </li>
-                  <li style="font-size: 10pt;">Pastikan terlebih dahulu Layanan dan Jadwal yang dikehendaki.</li>
-                  <li style="font-size: 10pt;">Setelah melakukan Pendaftaran, namun ingin melakukan pembatalan maksimal
-                    H-1 dengan cara klik menu
-                    Riwayat (History), masukkan No RM & Tanggal Lahir klik Cari dan klik tombol Merah untuk menghapus
-                    reservasi pada tanggal tersebut</li>
-                  <li style="font-size: 10pt;">Pada hari terjadwal periksa/konsultasi, dimohon datang 30 menit sebelum
-                    pelayanan</li>
-                  <li style="font-size: 10pt;">Selanjutnya silahkan untuk melakukan konfirmasi kehadiran dengan
-                    menggunakan Mesin KiosK yang
-                    terletak pada bagian Pendaftaran, jika mengalami kesulitan silahkan memohon bantuan kepada Petugas
-                    Informasi kami. </li>
-                  <li style="font-size: 10pt;">Informasi lebih lanjut silahkan hubungi WA Informasi 081388383939
-                    (Pada Jam Kerja)</li>
-                </ul>
-              </p-accordionTab>
-
-            </p-accordion>
-            <section class="example-section">
-              <mat-checkbox style="font-size: 10pt;" [(ngModel)]="isSetuju">Dengan melanjutkan ke tahap selanjutnya pasien
-                dianggap telah menyetujui S&K yang berlaku.</mat-checkbox>
-            </section>
-            <div class="ui-g-6 ui-md-6 ui-lg-1">
-              <button style="font-size: 10pt;" type="button" pButton icon="fa fa-save" (click)="saveSetuju()"
-                label="Setuju"></button>
-            </div>
-            <div class="ui-g-6 ui-md-6 ui-lg-1">
-              <button style="font-size: 10pt;" type="button" class="ui-button ui-button-danger" pButton
-                icon="fa fa-arrow-left"
-                (click)="saveTidakSetuju()" label="Tidak Setuju"></button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-  </p-dialog>
 </div>
 <div *ngIf="activeItem.label == 'History' && !isBuktiReservasi">
 
@@ -901,6 +850,10 @@
         <!-- <img style="-webkit-user-select: none;cursor:pointer" (click)="popUpQR()" src="{{qrCode}}"> -->
       </div>
       <div class="ui-g-6 ui-md-6 ui-lg-6">
+        <div class="ui-g-12 ui-md-12 ui-lg-12"> <label for="input">Nama Pasien </label></div>
+        <div class="ui-g-12 ui-md-12 ui-lg-12"> <label for="input" class="label-popup">{{namaPasien}}</label></div>
+      </div>
+      <div class="ui-g-6 ui-md-6 ui-lg-6">
         <div class="ui-g-12 ui-md-12 ui-lg-12"> <label for="input">Tgl Reservasi </label></div>
         <div class="ui-g-12 ui-md-12 ui-lg-12"> <label for="input" class="label-popup">{{tglReservasi}}</label></div>
       </div>
@@ -913,7 +866,7 @@
         <div class="ui-g-12 ui-md-12 ui-lg-12"> <label for="input" class="label-popup">{{poliTujuan}}</label></div>
       </div>
       <div class="ui-g-6 ui-md-6 ui-lg-6">
-        <div class="ui-g-12 ui-md-12 ui-lg-12"> <label for="input">Dokter</label></div>
+        <div class="ui-g-12 ui-md-12 ui-lg-12"> <label for="input">Pemberi Layanan</label></div>
         <div class="ui-g-12 ui-md-12 ui-lg-12"> <label for="input" class="label-popup">{{dokter}}</label></div>
       </div>
       <div class="ui-g-6 ui-md-6 ui-lg-6">
@@ -925,8 +878,24 @@
     <div class="ui-g-12">
       <div class="ui-g-6 ui-md-6 ui-lg-11">
 
-        <span style="color:red;font-size:20px">* </span> <span style="font-size:20px;font-style:italic;">Harap Datang
-          60 menit sebelum jam estimasi dilayani</span>
+        <span style="color:red;font-size:15px">* </span> <span style="font-size:15px;">Harap datang 30
+          menit sebelum jam pelayanan.</span>
+      </div>
+      <div class="ui-g-6 ui-md-6 ui-lg-11">
+
+        <span style="color:red;font-size:15px">* </span> <span style="font-size:15px;">Cetak antrian
+          di loket pendaftaran / mesin Kios-K. </span>
+      </div>
+      <div class="ui-g-6 ui-md-6 ui-lg-11">
+
+        <span style="color:red;font-size:15px">* </span> <span style="font-size:15px;">Lebih dari 30
+          menit terlambat tanpa konfirmasi dianggap batal. </span>
+      </div>
+      <div class="ui-g-6 ui-md-6 ui-lg-11">
+
+        <span style="color:red;font-size:15px">* </span> <span style="font-size:15px;">
+          Konfirmasi WA Pendaftaran 081258392929 dan WA Informasi 081388383939
+        </span>
       </div>
 
     </div>
@@ -1533,3 +1502,54 @@
   keadaan layar, baik pada HP maupun laptop/desktop. */
 
 </style>
+<p-dialog header="Persetujuan Informasi" [(visible)]="isGeneralConsent" [modal]="true" [responsive]="true"
+  [style]="{width: '1000px', minWidth: '200px'}" appendTo="body" [baseZIndex]="10000">
+  <div class="ui-g-12">
+    <div class="card card-w-title" style="margin-top:10px" *ngIf="!isShowRiwayatRegis">
+      <div class="card card-form-header">
+        <h1>Terimakasih telah mengakses Layanan Pendaftaran Online RS Jiwa Grhasia.</h1>
+      </div>
+      <div class="ui-g ui-fluid">
+        <div class="ui-g-12 ui-md-12 ui-lg-12">
+
+          <p-accordion [multiple]="true">
+            <p-accordionTab
+              header="Demi Kenyamanan Bersama, dimohon untuk mematuhi syarat dan ketentuan yang berlaku, yaitu: "
+              [selected]="true" style="font-size: 10pt;">
+              <ul style="font-size: 10pt;">
+                <li style="font-size: 10pt;">Untuk pengisian Data Diri, Persiapkan KTP anda terlebih dahulu. </li>
+                <li style="font-size: 10pt;">Pastikan terlebih dahulu Layanan dan Jadwal yang dikehendaki.</li>
+                <li style="font-size: 10pt;">Setelah melakukan Pendaftaran, namun ingin melakukan pembatalan maksimal
+                  H-1 dengan cara klik menu
+                  Riwayat (History), masukkan No RM & Tanggal Lahir klik Cari dan klik tombol Merah untuk menghapus
+                  reservasi pada tanggal tersebut</li>
+                <li style="font-size: 10pt;">Pada hari terjadwal periksa/konsultasi, dimohon datang 30 menit sebelum
+                  pelayanan</li>
+                <li style="font-size: 10pt;">Selanjutnya silahkan untuk melakukan konfirmasi kehadiran dengan
+                  menggunakan Mesin KiosK yang
+                  terletak pada bagian Pendaftaran, jika mengalami kesulitan silahkan memohon bantuan kepada Petugas
+                  Informasi kami. </li>
+                <li style="font-size: 10pt;">Informasi lebih lanjut silahkan hubungi WA Informasi 081388383939
+                  (Pada Jam Kerja)</li>
+              </ul>
+            </p-accordionTab>
+
+          </p-accordion>
+          <section class="example-section">
+            <mat-checkbox style="font-size: 10pt;" [(ngModel)]="isSetuju">Dengan melanjutkan ke tahap selanjutnya pasien
+              dianggap telah menyetujui S&K yang berlaku.</mat-checkbox>
+          </section>
+          <div class="ui-g-6 ui-md-6 ui-lg-1">
+            <button style="font-size: 10pt;" type="button" pButton icon="fa fa-save" (click)="saveSetuju()"
+              label="Setuju"></button>
+          </div>
+          <div class="ui-g-6 ui-md-6 ui-lg-1">
+            <button style="font-size: 10pt;" type="button" class="ui-button ui-button-danger" pButton
+              icon="fa fa-arrow-left" (click)="saveTidakSetuju()" label="Tidak Setuju"></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</p-dialog>

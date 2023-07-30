@@ -106,7 +106,7 @@ export class ReservasiOnlineComponent implements OnInit {
   jamR:any
   qrCode: any;
   isBuktiReservasi: boolean = false
-
+  namaPasien: any;
   // displayDialog: boolean;
   sortOptions: SelectItem[];
   sortKey: string;
@@ -248,7 +248,11 @@ export class ReservasiOnlineComponent implements OnInit {
   ngOnInit() {
     // var ssn = document.getElementById('ssn');
     var ssn = (<HTMLInputElement>document.getElementById('ssn'));
-    this.isGeneralConsent = true
+    console.log(localStorage.getItem('GeneralConsent'));
+
+    if(localStorage.getItem('GeneralConsent') != 'true'){
+      this.isGeneralConsent = true
+    }
     // ssn.addEventListener('input', this.ssnMask, false);
     // var ssnFirstFive = "";
     // var secondHalf = "";
@@ -692,7 +696,7 @@ export class ReservasiOnlineComponent implements OnInit {
     this.poliTujuan = selected.namaruangan
     this.dokter = selected.dokter
     this.Estimasi = selected.tanggalreservasi
-
+    this.namaPasien = selected.namapasien
     this.barCode = this.linkBarcode + selected.noreservasi + this.linkBarcode2
     QRCode.toDataURL(selected.noreservasi)
       .then(url => {
@@ -708,17 +712,22 @@ export class ReservasiOnlineComponent implements OnInit {
   findHistory() {
 
     this.loadingHistory = true
-    let noCM = this.formHistory.get('noCm').value
-    if (noCM == null) {
+    let noCM = null;
+    let tglLahirLama = null;
+    console.log(this.formHistory.get('noCm').value);
+
+    if (this.formHistory.get('noCm').value == undefined) {
       this.messageService.warn('Peringatan', 'Nama atau No CM harus di isi !')
       return
     }
 
-    let tglLahirLama = moment(this.formHistory.get('tglLahir').value).format('DD-MM-YYYY')
-    if (tglLahirLama == null) {
+    if (this.formHistory.get('tglLahir').value == undefined) {
       this.messageService.warn('Peringatan', 'Tgl Lahir harus di isi !')
       return
     }
+    noCM = this.formHistory.get('noCm').value
+    tglLahirLama = moment(this.formHistory.get('tglLahir').value).format('DD-MM-YYYY')
+
     this.httpService.get('medifirst2000/reservasionline/get-history?nocmNama=' + noCM + '&tgllahir=' + tglLahirLama).subscribe(res => {
       this.loadingHistory = false
       if (res.data.length > 0) {
@@ -1341,7 +1350,24 @@ export class ReservasiOnlineComponent implements OnInit {
           this.messageService.info('Info', e.list.length+ ' Dokter tersedia di Poli ini')
           this.listDokter = e.list
         }
+        console.log(this.formGroup.get('poliKlinik'));
 
+        if(this.formGroup.get('poliKlinik').value.id == 791 ||this.formGroup.get('poliKlinik').value.id == 767
+        ||this.formGroup.get('poliKlinik').value.id == 807
+        ){
+          this.listTipePembayaran = []
+          this.listTipePembayaran.push({
+            id:1,
+            kelompokpasien: "Umum/Pribadi"
+          })
+        }else{
+          this.listTipePembayaran = []
+          this.httpService.get('medifirst2000/reservasionline/get-list-data').subscribe(e => {
+            e.kelompokpasien.forEach(element => {
+              this.listTipePembayaran.push(element)
+            });
+          })
+        }
       })
   }
   setJam(e){
