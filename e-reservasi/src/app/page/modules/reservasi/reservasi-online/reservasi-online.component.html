@@ -951,17 +951,25 @@
         <li style="font-size: 10pt;">Informasi lebih lanjut silahkan hubungi WA Informasi 081388383939
           (Pada Jam Kerja)</li>
       </ul>
+        <br>
+      <span style="font-size:10px">
+        <table>
+          <tr>
+            <td><input type="checkbox" id="vehicle1" style="margin-right: 10px;" [(ngModel)]="isSetuju"></td>
+            <td><label for="vehicle1"> Dengan melanjutkan ke tahap selanjutnya
+                pasien
+                dianggap telah menyetujui S&K yang berlaku.</label></td>
+          </tr>
+        </table>
+
+
+        <br>
+        <!-- <mat-checkbox style="font-size: 10pt;" ></mat-checkbox> -->
+      </span>
     </div>
   </div>
-  <p-footer>
-    <span style="font-size:10px">
-      <input type="checkbox" [(ngModel)]="isSetuju">Dengan melanjutkan ke tahap selanjutnya
-      pasien
-      dianggap telah menyetujui S&K yang berlaku.
-      <br>
-      <br>
-      <!-- <mat-checkbox style="font-size: 10pt;" ></mat-checkbox> -->
-    </span>
+  <p-footer style="text-align: left;">
+
     <button style="font-size: 10pt;" type="button" pButton icon="fa fa-save" (click)="saveSetuju()"
       label="Setuju"></button>
     <button style="font-size: 10pt;" type="button" class="ui-button ui-button-danger" pButton icon="fa fa-arrow-left"
