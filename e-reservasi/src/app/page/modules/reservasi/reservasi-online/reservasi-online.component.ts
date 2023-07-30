@@ -248,7 +248,7 @@ export class ReservasiOnlineComponent implements OnInit {
   ngOnInit() {
     // var ssn = document.getElementById('ssn');
     var ssn = (<HTMLInputElement>document.getElementById('ssn'));
-      this.isGeneralConsent = true
+    this.isGeneralConsent = true
     // ssn.addEventListener('input', this.ssnMask, false);
     // var ssnFirstFive = "";
     // var secondHalf = "";

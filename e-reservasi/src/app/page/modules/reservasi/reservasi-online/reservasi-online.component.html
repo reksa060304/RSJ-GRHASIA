@@ -30,7 +30,6 @@
       <div class="card card-form-header">
         <h1>Pilih Jenis Pasien</h1>
       </div>
-
       <div class="ui-g ui-fluid">
         <!-- <div id="barcode"></div> -->
 
@@ -931,7 +930,7 @@
   </p-footer>
 </p-dialog>
 <p-dialog header="Persetujuan Informasi" [(visible)]="isGeneralConsent" [modal]="true" [responsive]="true"
-  [style]="{width: '350px', minWidth: '200px'}" appendTo="body" [baseZIndex]="10000">
+  [style]="{width: '350px', minWidth: '200px'}" appendTo="body" [baseZIndex]="8000">
   <div class="ui-g">
     <div class="ui-g-12 ui-md-12 ui-lg-12">
       <h3>Terimakasih telah mengakses Layanan Pendaftaran Online RS Jiwa Grhasia.</h3>
@@ -956,9 +955,10 @@
   </div>
   <p-footer>
     <span style="font-size:10px">
-      <mat-checkbox style="font-size: 10pt;" [(ngModel)]="isSetuju">Dengan melanjutkan ke tahap selanjutnya
-        pasien
-        dianggap telah menyetujui S&K yang berlaku.</mat-checkbox>
+      <input type="checkbox" [(ngModel)]="isSetuju">Dengan melanjutkan ke tahap selanjutnya
+      pasien
+      dianggap telah menyetujui S&K yang berlaku.
+      <!-- <mat-checkbox style="font-size: 10pt;" ></mat-checkbox> -->
     </span>
     <button style="font-size: 10pt;" type="button" pButton icon="fa fa-save" (click)="saveSetuju()"
       label="Setuju"></button>
