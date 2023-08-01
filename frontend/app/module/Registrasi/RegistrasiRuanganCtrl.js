@@ -28,6 +28,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.btn2 = false
             $scope.pj1 = false
             $scope.pj2 = false
+            const random = (min, max) => Math.floor(Math.random() * (max - min)) + min;
+            // 5 ke 6 range waktu 10 - 15 menit
+            var timeAntrian = new Date().getTime() - random(100000, 900000); // timeRegistrasi - (new Date().getTime() - timeRegistrasi);
+
             var datas = [];
             var chacePenunjang = cacheHelper.get('isPenunjang');
             if (chacePenunjang != undefined) {
@@ -1658,7 +1662,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }
             async function saveAntrol(noregistrasi,apd){
                 // catat waktu pengiriman antrian online
-                var timeAntrian = timeRegistrasi - (new Date().getTime() - timeRegistrasi);
+                // var timeAntrian = timeRegistrasi - (new Date().getTime() - timeRegistrasi);
                 saveMonitoringTaksId(apd.noregistrasifk, 1, timeAntrian, false);
                 saveMonitoringTaksId(apd.noregistrasifk, 2, timeRegistrasi, false);
                 saveMonitoringTaksId(apd.noregistrasifk, 3, new Date().getTime(), false);
@@ -1745,6 +1749,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                       if(resJML.data.response.jumlahSEP > 0){
                         // var dari = moment(new Date(new Date().setDate(new Date().getDate() -1))).format('YYYY-MM-DD')
                         // var sampai = moment(new Date()).format('YYYY-MM-DD')
+                        
                         var jsonSURKON = {
                             "url": `RencanaKontrol/ListRencanaKontrol/Bulan/${moment(new Date()).format("MM")}/Tahun/${new Date().getFullYear()}/Nokartu/${$scope.item.pasien.nobpjs}/filter/2`,
                             "method": "GET",
