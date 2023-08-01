@@ -28,7 +28,21 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.kasaja = false
             $scope.sp3bpaja = false
             $scope.baruaja = false
+            var idpegawai = '';
+            $scope.item.ispj = false
+            $scope.pegawaiLogin = medifirstService.getPegawaiLogin();
+            $scope.item.organisasi = '1.02.2.22.0.00.01.0004 - RS Jiwa GRHASIA DINKES DIY'
+            console.log($scope.pegawaiLogin)
+            medifirstService.get('anggaran/pj-rba?id=' + medifirstService.getPegawaiLogin().id).then(function (data) {
+                $scope.item.ispj = data.data[0].ispj
+                if ($scope.item.ispj == true) {
+                    idpegawai = $scope.pegawaiLogin.id
+                    $scope.disidpegawai = true
+                    $scope.idpegawailogin = $scope.pegawaiLogin.id
+                    $scope.namapegawailogin = $scope.pegawaiLogin.namaLengkap
 
+                }
+            })
             $scope.yearUngkul = {
                 start: "decade",
                 depth: "decade"
@@ -678,8 +692,18 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     return
                 }
 
-                if ($scope.item.jenisrekening == undefined) {
+                if ($scope.item.jenisrekeningmonev == undefined) {
                     toastr.warning('Jenis Rekening harus diisi', 'Informasi');
+                    return
+                }
+
+                if ($scope.item.kegiatanmonev == undefined) {
+                    toastr.warning('Sub Kegiatan harus diisi', 'Informasi');
+                    return
+                }
+
+                if ($scope.item.subkegiatanmonev == undefined) {
+                    toastr.warning('Sub Sub Kegiatan harus diisi', 'Informasi');
                     return
                 }
 
@@ -688,20 +712,17 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     tahun = moment($scope.item.tahun).format('YYYY')
                 }
 
-                var asalproduk = ""
-                if ($scope.item.asalproduk != undefined) {
-                    asalproduk = $scope.item.asalproduk.id
-                }
-
-
-
-                if ($scope.item.jenisrekening.id == 1) {
-                    window.open(baseTransaksi + "report/get-cetak-keuangan-per-rekening?tahun=" + tahun + "&asalproduk=" + asalproduk, '_blank');
-                } else if ($scope.item.jenisrekening.id == 2) {
-                    window.open(baseTransaksi + "report/get-cetak-keuangan-per-rekening-permen?tahun=" + tahun + "&asalproduk=" + asalproduk, '_blank');
+                if ($scope.item.jenisrekeningmonev.id == 2) {
+                    window.open(baseTransaksi + "report/get-cetak-penyerap-verif?tahun=" + tahun + "&jenisrekening=" + $scope.item.jenisrekeningmonev.id + "&subkegiatan=" + $scope.item.kegiatanmonev.id + "&subsubkegiatan=" + $scope.item.subkegiatanmonev.id, '_blank');
+                } else if ($scope.item.jenisrekeningmonev.id == 1) {
+                    window.open(baseTransaksi + "report/get-cetak-penyerap-verif-rba?tahun=" + tahun + "&jenisrekening=" + $scope.item.jenisrekeningmonev.id + "&subkegiatan=" + $scope.item.kegiatanmonev.id + "&subsubkegiatan=" + $scope.item.subkegiatanmonev.id, '_blank');
                 }
             }
-
+            $scope.changeKegiatanMonev = function () {
+                medifirstService.get("perencanaan/get-detail-sub-kegiatan?kegiatan=" + $scope.item.kegiatanmonev.id + "&tahap=" + $scope.item.tahapmonev.id + "&tahun=" + moment($scope.item.tahunmonev).format('YYYY') + "&idpegawai=" + idpegawai).then(function (e) {
+                    $scope.listSubKegiatan = e.data.data
+                });
+            }
         }
     ]);
 });

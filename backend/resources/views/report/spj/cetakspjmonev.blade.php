@@ -60,7 +60,7 @@
             </tr>
             <tr align="center">
                 <td>
-                    <b style="font-size: 22px;">RS Jiwa GRHASIA DINKES DIY</b>
+                    <b style="font-size: 22px;">RS JIWA GRHASIA DINKES DIY</b>
                 </td>
             </tr>
         </tbody>

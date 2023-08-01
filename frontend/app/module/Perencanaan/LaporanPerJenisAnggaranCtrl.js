@@ -34,16 +34,21 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.jadwalaja = false
             $scope.cetakaja = false
             var idpegawai = '';
+            $scope.item.ispj = false
             $scope.pegawaiLogin = medifirstService.getPegawaiLogin();
             $scope.item.organisasi = '1.02.2.22.0.00.01.0004 - RS Jiwa GRHASIA DINKES DIY'
             console.log($scope.pegawaiLogin)
-            if ($scope.pegawaiLogin.jenisPegawai.jenispegawai == "PenanggungJawab" || ($scope.pegawaiLogin.jenisPegawai.jenispegawai == "DOKTER" && $scope.pegawaiLogin.id != 320263)) {
-                idpegawai = $scope.pegawaiLogin.id
-                $scope.disidpegawai = true
-                $scope.idpegawailogin = $scope.pegawaiLogin.id
-                $scope.namapegawailogin = $scope.pegawaiLogin.namaLengkap
+            medifirstService.get('anggaran/pj-rba?id=' + medifirstService.getPegawaiLogin().id).then(function (data) {
+                $scope.item.ispj = data.data[0].ispj
+                if ($scope.item.ispj == true) {
+                    idpegawai = $scope.pegawaiLogin.id
+                    $scope.disidpegawai = true
+                    $scope.idpegawailogin = $scope.pegawaiLogin.id
+                    $scope.namapegawailogin = $scope.pegawaiLogin.namaLengkap
 
-            }
+                }
+            })
+            
             $scope.yearUngkul = {
                 start: "decade",
                 depth: "decade"

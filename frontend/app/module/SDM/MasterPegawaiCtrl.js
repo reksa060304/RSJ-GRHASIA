@@ -2054,6 +2054,11 @@ $scope.formatRupiah = function (value, currency) {
 				$scope.itemGajiBerkala.gajiawal = dataItem.gajiawal;
 				$scope.itemGajiBerkala.gajiakhir = dataItem.gajiakhir;
 				$scope.itemGajiBerkala.masakerjagolongan = dataItem.masakerjagolongan;
+				if (dataItem.masakerjagolongan != null){
+					$scope.itemGajiBerkala.tahunmasakerjagolongan = dataItem.masakerjagolongan.split(" ")[0]
+					$scope.itemGajiBerkala.bulanmasakerjagolongan = dataItem.masakerjagolongan.split(" ")[2]
+				}
+
 				$scope.itemGajiBerkala.tanggaltmtcetak = moment(dataItem.tgltmtcetak).format('YYYY-MM-DD HH:mm');
 				$scope.itemGajiBerkala.tanggalskbaru = moment(dataItem.tglskbaru).format('YYYY-MM-DD HH:mm');
 
@@ -3267,6 +3272,8 @@ $scope.formatRupiah = function (value, currency) {
 					// "itemGajiBerkala.nosurat|ng-model|No Surat",
 					"itemGajiBerkala.pejabatmenetapkan|ng-model|Pejabat Yang Menetapkan",
 					"itemGajiBerkala.tanggaltmt|k-ng-model|Tanggal TMT",
+					"itemGajiBerkala.tahunmasakerjagolongan|ng-model|Tahun Gaji Berkala",
+					"itemGajiBerkala.bulanmasakerjagolongan|ng-model|Bulan Gaji Berkala",
 					"itemGajiBerkala.noskcetak|ng-model|No SK Lama",
 					"itemGajiBerkala.jenissk|ng-model|Jenis SK",
 					// "itemGajiBerkala.masakerjagolongan|ng-model|Masa Kerja Golongan",
@@ -4522,23 +4529,25 @@ $scope.formatRupiah = function (value, currency) {
 					console.log(bln, thn);
 					// console.log(umur);
 					// dataRiwayatPangkatGolongan.length
-					if ($scope.item.golongancpns.level < $scope.itemGajiBerkala.golongan.level) {
-						if ($scope.itemGajiBerkala.golongan.level == 2) {
-							pindah += 6
+					if ($scope.item.golongancpns != undefined) {
+						if ($scope.item.golongancpns.level < $scope.itemGajiBerkala.golongan.level) {
+							if ($scope.itemGajiBerkala.golongan.level == 2) {
+								pindah += 6
+							}
+							if ($scope.itemGajiBerkala.golongan.level == 3) {
+								pindah += 5
+							}
 						}
-						if ($scope.itemGajiBerkala.golongan.level == 3) {
-							pindah += 5
-						}
+						nominal = thn - pindah;
+						medifirstService.get('nominal/get-nominal?golongan=' + $scope.itemGajiBerkala.golongan.id + '&mkg=' + nominal + '&pegawai=' + $scope.item.idPegawai).then(function (data) {
+							$scope.itemGajiBerkala.tahunmasakerjagolongan = nominal
+							$scope.itemGajiBerkala.bulanmasakerjagolongan = bln
+							$scope.itemGajiBerkala.masakerjagolongan = $scope.itemGajiBerkala.tahunmasakerjagolongan + " tahun " + $scope.itemGajiBerkala.bulanmasakerjagolongan + " bulan "
+							$scope.itemGajiBerkala.gajiakhir = data.data.gajigolongan[0].gajipokok
+							// $scope.itemGajiBerkala.gajiawal = data.data.gajiawal[0].nominal
+							nominal = 0
+						})
 					}
-					nominal = thn - pindah;
-					medifirstService.get('nominal/get-nominal?golongan=' + $scope.itemGajiBerkala.golongan.id + '&mkg=' + nominal + '&pegawai=' + $scope.item.idPegawai).then(function (data) {
-						$scope.itemGajiBerkala.tahunmasakerjagolongan = nominal
-						$scope.itemGajiBerkala.bulanmasakerjagolongan = bln
-						$scope.itemGajiBerkala.masakerjagolongan = $scope.itemGajiBerkala.tahunmasakerjagolongan + " tahun " + $scope.itemGajiBerkala.bulanmasakerjagolongan + " bulan "
-						$scope.itemGajiBerkala.gajiakhir = data.data.gajigolongan[0].gajipokok
-						// $scope.itemGajiBerkala.gajiawal = data.data.gajiawal[0].nominal
-						nominal = 0
-					})
 				})
 				// var umur = dateHelper.CountAge(new Date($scope.item.tmtskcpns), new Date($scope.itemGajiBerkala.tanggaltmt));
 				// var mkgnya = umur.year

@@ -13,6 +13,7 @@
 <style type="text/css" media="print">
     @page {   /* auto is the initial value */
         margin: 0;  /* this affects the margin in the printer settings */
+        size: potrait;
     }
 </style>
 <style>
@@ -206,7 +207,7 @@
                     </tr>
                     <tr>
                         <td  style="text-align:center; padding-left: 50px; padding-bottom: 5px; padding-top: 5px; width: 120px;">
-                            <font style="font-size: 12pt" color="#000000"><u>dr.  Akhmad Akhadi Stamsudhuha, M.P.H</u></font>
+                            <font style="font-size: 12pt" color="#000000"><u>{{$settingrba[0]->namalengkap}}</u></font>
                         </td>
                         <td style="text-align:center; padding-bottom: 5px; padding-top: 5px; width: 80px;">
                             <font style="font-size: 12pt" color="#000000"><u>{{ $spj[0]->namabendahara}}</u></font>
@@ -217,7 +218,7 @@
                     </tr>
                     <tr>
                         <td   style="text-align:center; padding-left: 50px; padding-bottom: 5px; width: 120px;">
-                            <font style="font-size: 12pt" color="#000000">NIP. 19680714 200012 1 002</font>
+                            <font style="font-size: 12pt" color="#000000">NIP. {{$settingrba[0]->nippns}}</font>
                         </td>
                         <td style="text-align:center; padding-bottom: 5px; width: 80px;">
                             <font style="font-size: 12pt" color="#000000">NIP. {{ $spj[0]->nipbendahara}}</font>

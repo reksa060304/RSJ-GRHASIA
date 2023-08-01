@@ -787,14 +787,27 @@
                                     </div>
                                     <div class="grid_2">
                                         <div class="grid_12">
+                                            <label c-label item="item" c-label-text="Tahap"></label>
+                                        </div>
+                                        <div class="grid_12">
+                                            <div class="grid_12">
+                                                <input kendo-combo-box k-ng-model="item.tahapmonev"
+                                                    k-data-text-field="'tahap'" k-data-value-field="'id'"
+                                                    k-filter="'contains'" k-auto-bind="false"
+                                                    k-data-source="listTahap" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="grid_2">
+                                        <div class="grid_12">
                                             <label c-label item="item" c-label-text="Sub Kegiatan"></label>
                                         </div>
                                         <div class="grid_12">
                                             <div class="grid_12">
-                                                <input kendo-combo-box k-ng-model="item.subkegiatanro"
+                                                <input kendo-combo-box k-ng-model="item.kegiatanmonev"
                                                     k-data-text-field="'keterangan'" k-data-value-field="'id'"
                                                     k-filter="'contains'" k-auto-bind="false"
-                                                    k-data-source="listKegiatan" k-on-change='changeKegiatan()' />
+                                                    k-data-source="listKegiatan" k-on-change='changeKegiatanMonev()' />
                                             </div>
                                         </div>
                                     </div>
@@ -804,28 +817,10 @@
                                         </div>
                                         <div class="grid_12">
                                             <div class="grid_12">
-                                                <input kendo-combo-box k-ng-model="item.subsubkegiatanro"
-                                                    k-data-text-field="'keterangansubsubkegiatan'"
-                                                    k-data-value-field="'idsubsubkegiatan'" k-filter="'contains'"
-                                                    k-auto-bind="false" k-data-source="listSubSubKegiatanRO" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="grid_2">
-                                        <div class="grid_12">
-                                            <label c-label item="item" c-label-text="Bulan"></label>
-                                        </div>
-                                        <div class="grid_12">
-                                            <div class="grid_5">
-                                                <input style="width: 100%" k-options="monthUngkul"
-                                                    k-ng-model="item.bulan1" kendo-date-picker placeholer="MMMM"
-                                                    k-format="'MMMM'" />
-                                            </div>
-                                            <div class="grid_1">s/d</div>
-                                            <div class="grid_5">
-                                                <input style="width: 100%" k-options="monthUngkul"
-                                                    k-ng-model="item.bulan2" kendo-date-picker placeholer="MMMM"
-                                                    k-format="'MMMM'" />
+                                                <input kendo-combo-box k-ng-model="item.subkegiatanmonev"
+                                                    k-data-text-field="'texttahap'" k-data-value-field="'id'"
+                                                    k-filter="'contains'" k-auto-bind="false"
+                                                    k-data-source="listSubKegiatan" />
                                             </div>
                                         </div>
                                     </div>
@@ -835,26 +830,13 @@
                                         </div>
                                         <div class="grid_12">
                                             <div class="grid_12">
-                                                <input kendo-combo-box k-ng-model="item.jenisrekening"
+                                                <input kendo-combo-box k-ng-model="item.jenisrekeningmonev"
                                                     k-data-text-field="'jenisrekening'" k-data-value-field="'id'"
                                                     k-filter="'contains'" k-auto-bind="false"
                                                     k-data-source="listJenisRekening" />
                                             </div>
                                         </div>
                                     </div>
-                                    <!-- <div class="grid_2">
-                                        <div class="grid_12">
-                                            <label c-label item="item" c-label-text="Terhadap"></label>
-                                        </div>
-                                        <div class="grid_12">
-                                            <div class="grid_12">
-                                                <input kendo-combo-box k-ng-model="item.terhadap"
-                                                k-data-text-field="'tahap'" k-data-value-field="'id'"
-                                                k-filter="'contains'" k-auto-bind="false"
-                                                k-data-source="listTahap"  />
-                                            </div>
-                                        </div>
-                                    </div> -->
                                     <div class="grid_1">
                                         <div class="grid_12">
                                             <label>&nbsp;</label>
