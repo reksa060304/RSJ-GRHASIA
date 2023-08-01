@@ -7046,7 +7046,7 @@ class LogistikController extends ApiController{
                         ->where('kdprofile',30)
                         // ->where(DB::raw("date_part('month', ".date('Y-m-d H:i:s').")"))
                         // ->where(DB::raw("date_part('month', '2023-07-01'::date) = ".date('m')))
-                        ->where(DB::raw("date_part('month', '".date("Y-m-d")."'::date)"), date('m'))
+                        ->where(DB::raw("date_part('month', tgljamseq::date)"), date('m'))
                         ->max(DB::raw("seqnumber::integer"));
                     $prefixLen = strlen($prefix);
                 $subPrefix = substr(trim($spb),$prefixLen);
@@ -15683,7 +15683,7 @@ FROM
                 ->where('kdprofile',30)
                 // ->where(DB::raw("date_part('month', ".date('Y-m-d H:i:s').")"))
                 // ->where(DB::raw("date_part('month', '2023-07-01'::date) = ".date('m')))
-                ->where(DB::raw("date_part('month', '".date("Y-m-d")."'::date)"), date('m'))
+                ->where(DB::raw("date_part('month', tgljamseq::date)"), date('m'))
                 ->max(DB::raw("seqnumber::integer"));
                 $prefixLen = strlen($prefix);
                 $subPrefix = substr(trim($sppb),$prefixLen);
