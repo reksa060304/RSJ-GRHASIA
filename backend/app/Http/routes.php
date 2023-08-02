@@ -2296,7 +2296,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
               Route::get('registrasi/laporan/get-data-lap-lab-tahunan','Registrasi\RegistrasiController@getLaporanLabTahunan');
               Route::get('registrasi/laporan/get-lab-mutu-rj','Registrasi\RegistrasiController@getLaporanMutuRJ');
               Route::get('registrasi/laporan/get-lap-mutu-rad','Registrasi\RegistrasiController@getLaporanMutuRad');
-
+              Route::post('emr/save-rmhilang','Registrasi\RegistrasiController@saveRMhilang');
               Route::get('registrasi/laporan/get-kinerja-pelayanan-ranap','Registrasi\LaporanRegistrasiController@getKinerjaPelayananRanap');
               Route::get('registrasi/laporan/get-kinerja-pelayanan-ranap-tahunan','Registrasi\LaporanRegistrasiController@getKinerjaPelayananRanapTahunan');
               Route::get('registrasi/laporan/get-laporan-tindakan-ppa' ,'Registrasi\LaporanRegistrasiController@getLaporanTindakanPPA');
