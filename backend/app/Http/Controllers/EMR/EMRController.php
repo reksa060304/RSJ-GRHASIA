@@ -10981,7 +10981,7 @@ class EMRController  extends ApiController
         return $this->respond($result);
     }
 
-  public function getLembarMasukKeluar (Request $request)
+    public function getLembarMasukKeluar (Request $request)
     {
         $noemr = $request['noemr'];
         $kdProfile = $this->getDataKdProfile($request);
@@ -10996,11 +10996,11 @@ class EMRController  extends ApiController
         $data = \DB::select(DB::raw("SELECT 
         EXTRACT(year from age(pd.tglregistrasi, ps.tgllahir) )as umur, ag.agama, pj.pekerjaan, pn.pendidikan, sp.statusperkawinan, ps.penanggungjawab,  ps.hubungankeluargapj, ps.alamatrmh, ps.teleponpenanggungjawab
         FROM pasiendaftar_t pd
-        inner join pasien_m ps on ps.id = pd.nocmfk
-        inner join agama_m ag on ps.objectagamafk = ag.id
-        inner join pekerjaan_m pj on ps.objectpekerjaanfk = pj.id
-        inner join pendidikan_m pn on ps.objectpendidikanfk = pn.id
-        inner join statusperkawinan_m sp on ps.objectstatusperkawinanfk = sp.id
+        left join pasien_m ps on ps.id = pd.nocmfk
+        left join agama_m ag on ps.objectagamafk = ag.id
+        left join pekerjaan_m pj on ps.objectpekerjaanfk = pj.id
+        left join pendidikan_m pn on ps.objectpendidikanfk = pn.id
+        left join statusperkawinan_m sp on ps.objectstatusperkawinanfk = sp.id
         where pd.noregistrasi = '$request[noregistrasi]' and pd.kdprofile = '30'" ));
 
         // $detail = [];
