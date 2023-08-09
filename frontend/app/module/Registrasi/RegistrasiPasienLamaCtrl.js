@@ -120,6 +120,10 @@ define(['initialize'], function (initialize) {
                 if ($scope.item.inaktif == true) {
                     inaktif = "&inaktif=" + $scope.item.inaktif;
                 }
+                var rmhilang = ""
+                if ($scope.item.rmhilang == true) {
+                    rmhilang = "&rmhilang=" + $scope.item.rmhilang;
+                }
                 medifirstService.get("registrasi/get-pasien?" +
                     nik +
                     tglLahirs +
@@ -127,7 +131,7 @@ define(['initialize'], function (initialize) {
                     pasien +
                     ayah +
                     almat + bpjs +
-                    Rows+inaktif)
+                    Rows+inaktif+rmhilang)
                     .then(function (data) {
                         $scope.isRouteLoading = false;
 
@@ -256,17 +260,17 @@ define(['initialize'], function (initialize) {
                         "width": "80px",
                         "template": '# if( tglmeninggal==null) {# <span class="label label-primary text-center">Hidup</span> # } else {# <span class="label label-danger text-center">Meninggal</span> #} #'
                     },
-                    {
-                        "field": "photo",
-                        "title": "Photo",
-                        "width": "40px",
-                        "template": '# if( photo!=null ) {# ✔ # } else {# - #} #'
-                        // "template": "# if (photo) { #" +
-                        //     "<i class='fa fa-user' style='color:grey' />" +
-                        //     "# } else { # - # } #",
-                        // "template": "<div class='photo-pasien'"+
-                        // "style='background:url(#:data.photo#);'></div>"
-                    },
+                    // {
+                    //     "field": "photo",
+                    //     "title": "Photo",
+                    //     "width": "40px",
+                    //     "template": '# if( photo!=null ) {# ✔ # } else {# - #} #'
+                    //     // "template": "# if (photo) { #" +
+                    //     //     "<i class='fa fa-user' style='color:grey' />" +
+                    //     //     "# } else { # - # } #",
+                    //     // "template": "<div class='photo-pasien'"+
+                    //     // "style='background:url(#:data.photo#);'></div>"
+                    // },
                     {
                         "field": "ihs_number",
                         "title": "SATUSEHAT Number",
@@ -293,6 +297,12 @@ define(['initialize'], function (initialize) {
                         "title": "Inaktif",
                         "width": "50px",
                         "template": '# if( isinaktif==true ) {# ✔ # } else {#  #} #'
+                    },
+                    {
+                        "field": "isrmhilang",
+                        "title": "Inaktif",
+                        "width": "50px",
+                        "template": '# if( isrmhilang==true ) {# ✔ # } else {#  #} #'
 
                     },
                 ]
@@ -1414,7 +1424,20 @@ define(['initialize'], function (initialize) {
                     loadData()
                 })
             }
+            $scope.rmhilang = function () {
+                if ($scope.dataPasienSelected == undefined) {
+                    toastr.error('Pilih data dulu!')
+                    return
+                }
+                var objSave = {
+                    nocm: $scope.dataPasienSelected.nocm
+                }
+                medifirstService.post('emr/save-rmhilang', objSave).then(function () {
+                    loadData()
+                })
+            }
             //** BATAS */
         }
+        
     ]);
 });

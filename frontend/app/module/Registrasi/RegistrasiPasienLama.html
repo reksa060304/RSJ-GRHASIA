@@ -169,12 +169,16 @@
         </div>
     </div>
     <div class="grid_12">
-        <div class="grid_9">
+        <div class="grid_7">
         </div>
         <div class="grid_2" style="margin-top:15px">
             <input type="checkbox" class="k-checkbox" id="rawatGabung" ng-model="item.inaktif"
                 ng-click="SearchData()">
             <label class="k-checkbox-label" for="rawatGabung"><b>Pasien Inaktif</b></label>
+        </div>
+        <div class="grid_2" style="margin-top:15px">
+            <input type="checkbox" class="k-checkbox" id="rmhilang" ng-model="item.rmhilang" ng-click="SearchData()">
+            <label class="k-checkbox-label" for="rmhilang"><b>Pasien RM Hilang</b></label>
         </div>
         <div class="grid_1" style="margin-top:5px">
             <label c-label c-label-text="Row" real></label>
@@ -186,6 +190,16 @@
         <button kendo-button style="width: 100%" class="primary" ng-click="riwayatSatusehat()"><i class="fa fa-history"></i> SATUSEHAT
             </button>
    
+    </div>
+    <div class="grid_1" style="float:right;">
+        <button kendo-button style="width: 100%" class="cancel" ng-click="rmhilang()"><i
+                class="fa fa-trash"></i> RM Hilang
+        </button>
+    </div>
+    <div class="grid_1" style="float:right;">
+        <button kendo-button style="width: 100%" class="cancel" ng-click="rmhilang()"><i class="fa fa-trash"></i>
+            Pemusnahan RM
+        </button>
     </div>
     <div class="grid_1" style="float:right;">
         <md-menu>
@@ -228,8 +242,8 @@
         <button kendo-button style="width: 100%" class="primary" ng-click="ubahNoRM()"><i class="fa fa-plane"></i>Ubah
             No RM</button>
     </div>
-    <div class="grid_2" style="float:right;">
-        <button kendo-button style="width: 100%" class="primary" ng-click="RegistrasiPasien()"><i
+    <div class="grid_1" style="float:right;">
+        <button kendo-button style="width: 100%" class="success" ng-click="RegistrasiPasien()"><i
                 class="fa fa-arrow-circle-right"></i> Registrasi</button>
         <!--   <c-button ng-show="!isLoading" style="width: 100%; font-size: 24px; padding:0px, margin:0px;" item="item"
             size="24" position=" 'right'" ng-click="RegistrasiPasien()" class="primary">

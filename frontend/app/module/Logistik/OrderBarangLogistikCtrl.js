@@ -2,6 +2,7 @@ define(['initialize'], function (initialize) {
     'use strict';
     initialize.controller('OrderBarangLogistikCtrl', ['$scope', 'CacheHelper', '$mdDialog', 'MedifirstService',
         function ($scope, cacheHelper, $mdDialog, medifirstService) {
+            $scope.isRouteLoading = false
             $scope.item = {};
             $scope.dataVOloaded = true;
             $scope.now = new Date();
@@ -141,7 +142,7 @@ define(['initialize'], function (initialize) {
             }
 
             function ComboLoad() {
-
+                $scope.isRouteLoading = true
                 medifirstService.get("logistik/get-combo-logistik", true).then(function (dat) {
                     var dataCombo = dat.data;
                     $scope.listDataJabatan = dataCombo.jabatan;
@@ -153,7 +154,7 @@ define(['initialize'], function (initialize) {
                     $scope.listJenisKirim = [{ id: 1, jenis: 'Amprahan' }, { id: 2, jenis: 'Transfer' }]
                     $scope.listAsalProduk = dataCombo.asalproduk;
                     $scope.listProduk = dataCombo.produk;
-                    $scope.listRuanganTujuan = dataCombo.ruanganall;
+                    $scope.listRuanganTujuan = dataCombo.ruanganGudang;
                     pegawaiUser = dataCombo.detaillogin[0];
                     if (medifirstService.getMapLoginUserToRuangan()[0] != undefined) {
                         $scope.item.ruangan = {
@@ -163,6 +164,7 @@ define(['initialize'], function (initialize) {
                     }
                     // $scope.item.ruangan = { id: $scope.listRuangan[0].id, namaruangan: $scope.listRuangan[0].namaruangan }
                     $scope.item.jenisKirim = { id: 2, jenis: 'Transfer' }
+                    $scope.isRouteLoading = false
                 });
 
                 medifirstService.getPart("logistik/get-combo-pegawai-logistik", true, true, 20).then(function (data) {
@@ -175,11 +177,59 @@ define(['initialize'], function (initialize) {
             }
 
 
-
-            $scope.getSatuan = function () {
+            function getSatuan() {
+                $scope.isRouteLoading = true
                 /* info stok all ruangan */
                 medifirstService.get("farmasi/get-info-stok?produkfk=" + $scope.item.produk.id, true)
                     .then(function (e) {
+
+                        $scope.item.namaProduks = $scope.item.produk.namaproduk;
+                        for (var i = 0; i < e.data.infostok.length; i++) {
+                            e.data.infostok[i].no = i + 1
+                        }
+                        $scope.dataGridStok = new kendo.data.DataSource({
+                            data: e.data.infostok,
+                            pageable: true,
+                            pageSize: 5,
+                            total: e.data.infostok.length,
+                            serverPaging: false,
+                            schema: {
+                                model: {
+                                    fields: {}
+                                }
+                            }
+                        })
+                        
+
+                    })
+                /* end info stok all ruangan */
+                medifirstService.get('farmasi/get-info-transfer?produk=' + $scope.item.produk.id + '&ruangan=' + $scope.item.ruanganTujuan.id).then(function (data) {
+                    var datas = data.data.data;
+                    for (let i = 0; i < datas.length; i++) {
+                        datas[i].no = i + 1;
+                    }
+                    $scope.dataGridTransfer = new kendo.data.DataSource({
+                        data: datas,
+                        pageable: true,
+                        pageSize: 5,
+                        total: datas.length,
+                        serverPaging: false,
+                        schema: {
+                            model: {
+                                fields: {}
+                            }
+                        }
+                    })
+                })
+                GETKONVERSI(0)
+                $scope.isRouteLoading = false
+            }
+            $scope.getSatuan = function () {
+                $scope.isRouteLoading = true
+                /* info stok all ruangan */
+                medifirstService.get("farmasi/get-info-stok?produkfk=" + $scope.item.produk.id, true)
+                    .then(function (e) {
+
                         $scope.item.namaProduks = $scope.item.produk.namaproduk;
                         for (var i = 0; i < e.data.infostok.length; i++) {
                             e.data.infostok[i].no = i + 1
@@ -197,6 +247,8 @@ define(['initialize'], function (initialize) {
                                 }
                             }
                         })
+                $scope.isRouteLoading = false
+
                     })
                 /* end info stok all ruangan */
                 medifirstService.get('farmasi/get-info-transfer?produk=' + $scope.item.produk.id + '&ruangan=' + $scope.item.ruanganTujuan.id).then(function (data) {
@@ -252,7 +304,14 @@ define(['initialize'], function (initialize) {
                 },
 
             ];
+            $scope.$watch('item.produk', function (newValue, oldValue) {
+                if (newValue != oldValue) {
+                    getSatuan()
+                }
+            })
             function GETKONVERSI(jml) {
+                dataProdukDetail = []
+                console.log(123);
                 if ($scope.item.produk == undefined) {
                     return
                 }
@@ -284,9 +343,11 @@ define(['initialize'], function (initialize) {
                     "produkfk=" + $scope.item.produk.id +
                     "&ruanganfk=" + $scope.item.ruanganTujuan.id, true).then(function (dat) {
                         dataProdukDetail = dat.data.detail;
+                        console.log(dataProdukDetail);
                         $scope.item.stok = dat.data.jmlstok / $scope.item.nilaiKonversi
                         $scope.item.jumlah = jml
                     });
+
             }
 
             $scope.getNilaiKonversi = function () {
@@ -393,6 +454,10 @@ define(['initialize'], function (initialize) {
                     nomor = data2.length + 1
                 }
                 var data = {};
+                if(data2.length > 19){
+                    toastr.error('Maksimal Order 20')
+                    return
+                }
                 if ($scope.item.no != undefined) {
                     for (var i = data2.length - 1; i >= 0; i--) {
                         if (data2[i].no == $scope.item.no) {
@@ -624,11 +689,11 @@ define(['initialize'], function (initialize) {
                         "title": "Kode Produk",
                         "width": "70px",
                     },
-                    {
-                        "field": "kdproduk",
-                        "title": "Kode Sirs",
-                        "width": "70px",
-                    },
+                    // {
+                    //     "field": "kdproduk",
+                    //     "title": "Kode Sirs",
+                    //     "width": "70px",
+                    // },
                     {
                         "field": "asalproduk",
                         "title": "Asal Produk",

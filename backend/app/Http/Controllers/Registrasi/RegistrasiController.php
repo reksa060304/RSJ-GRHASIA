@@ -1190,7 +1190,7 @@ class RegistrasiController extends ApiController
             ->leftjoin('alamat_m as alm','alm.nocmfk','=','ps.id')
             ->leftjoin('profile_m as pro','pro.id','=','ps.kdprofile')
             ->leftjoin('jeniskelamin_m as jk','jk.id','=','ps.objectjeniskelaminfk')
-            ->select('ps.isinaktif','ps.nocm','ps.namapasien','ps.tgldaftar', 'ps.tgllahir',
+            ->select('ps.isrmhilang','ps.isinaktif','ps.nocm','ps.namapasien','ps.tgldaftar', 'ps.tgllahir',
                 'jk.jeniskelamin','ps.noidentitas','alm.alamatlengkap',
                 'ps.id as nocmfk','ps.namaayah','ps.notelepon','ps.nohp','ps.tglmeninggal','ps.iskompleks','ps.nobpjs','ps.sidik_jari'//,
 //                'ps.foto'
@@ -1238,6 +1238,9 @@ class RegistrasiController extends ApiController
         if(isset($request['inaktif']) && $request['inaktif']!="" && $request['inaktif']!="undefined"){
             $data = $data->where('ps.isinaktif',true);
         };
+        if(isset($request['rmhilang']) && $request['rmhilang']!="" && $request['rmhilang']!="undefined"){
+            $data = $data->where('ps.isrmhilang',true);
+        };
         $data = $data->where('ps.kdprofile', (int)$kdProfile);
         $data = $data->where('ps.statusenabled',true);
          $data = $data->orderBy('ps.id','desc');
@@ -1263,7 +1266,8 @@ class RegistrasiController extends ApiController
 //                'photo'=> $item->photo,
                 'iskompleks'=> $item->iskompleks,
                 'sidik_jari'=> $item->sidik_jari,
-                'isinaktif'=> $item->isinaktif
+                'isinaktif'=> $item->isinaktif,
+                'isrmhilang'=> $item->isrmhilang,
             );
         }
         $result = array(
@@ -6472,6 +6476,7 @@ class RegistrasiController extends ApiController
             )
             ->where('apr.noreservasi','<>','-')
             ->where('apr.statusenabled',true)
+            ->where('pd.statusenabled',true)
             ->where('apr.kdprofile', (int)$kdProfile)
             ->whereNotNull('apr.noreservasi');
 
@@ -6505,7 +6510,7 @@ class RegistrasiController extends ApiController
         //     $data = $data->orWhere('apr.namapasien','ilike','%'. $filter['namapasienapr'] .'%');
         // }
         $data = $data->orderBy('apr.tanggalreservasi','asc');
-        $data = $data->get();
+        $data = $data->distinct()->get();
 
         $result = array(
             'data' => $data,
@@ -13514,6 +13519,38 @@ GROUP BY y.KET
             );
         } else {
             $transMessage = "Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message'  => $transStatus,
+                'e'  => $e->getMessage() . ' ' . $e->getLine(),
+                'as' => '',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    function saveRMhilang(Request $request) {
+        $kdProfile = $this->getDataKdProfile($request);
+        DB::beginTransaction();
+        try {
+            $update = Pasien::where('nocm', $request['nocm'])->first();
+            $update->isrmhilang = true;
+            $update->save();
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Update RM Hilang Berhasil!";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'as' => '',
+            );
+        } else {
+            $transMessage = "Update RM Hilang Gagal";
             DB::rollBack();
             $result = array(
                 'status' => 400,

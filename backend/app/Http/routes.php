@@ -1524,6 +1524,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('get/load-copy-resep', 'EMR\EMRController@getCopyResep');
             Route::get('get/get-copy-resepnya', 'EMR\EMRController@getCopyResepnyaya');
             Route::get('farmasi/cetak-copyresep', 'Report\ReportController@cetakCopyResep');
+            Route::get('logistik/get-daftar-mutasi-barang','Logistik\LogistikController@getMutasiBarangBaru');
             // GET //
 
             // POST //
@@ -1958,6 +1959,9 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::post('jkn/save-checkin','ReservasiOnline\MyJKNV2Controller@saveCheckInAntrean_fix');
           Route::get('rawatjalan/get-antril-combo', 'RawatJalan\RawatJalanController@getComboAntrol');
           Route::post('rawatjalan/disabled-monitoring-taskid', 'RawatJalan\RawatJalanController@disabledMonitoringTaksId');
+          
+          Route::get('sysadmin/get-master-pendidikan','SysAdmin\GeneralController@getMasterPendidikan');
+          Route::post('sysadmin/save-pendidikan','SysAdmin\GeneralController@saveMasterPendidikan');
           
           Route::post('rawatjalan/save-daftar-surat', 'RawatJalan\RawatJalanController@saveDaftarSurat');
           Route::get('rawatjalan/get-detail-pasien-surat', 'RawatJalan\RawatJalanController@getDetailpasienSurat');

@@ -7478,7 +7478,7 @@ class LaporanPengunjungController extends ApiController
             inner join ruangan_m as rm on rm.id = pt.objectruanganlastfk 
             inner join pegawai_m as pm on pm.id = pt.objectpegawaifk 
             inner join pasien_m as pm2 on pm2.id = pt.nocmfk 
-            where rm.objectdepartemenfk != 16 and pt.statusenabled = true and pt.kdprofile = $idProfile and pt.tglregistrasi::date between '$tglAwal' and '$tglAkhir') as x
+            where rm.objectdepartemenfk <> 16 and pt.statusenabled = true and pt.kdprofile = $idProfile and pt.tglregistrasi::date between '$tglAwal' and '$tglAkhir') as x
             group by x.namalengkap
             order by x.namalengkap asc"));
         }else{

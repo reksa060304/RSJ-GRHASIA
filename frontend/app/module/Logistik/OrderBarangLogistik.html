@@ -51,7 +51,7 @@
                 <div class="grid_12">
                     <input style="width: 100%;" kendo-combo-box k-ng-model="item.ruangan"
                         k-data-text-field="'namaruangan'" k-data-value-field="'id'" k-filter="'contains'"
-                        k-auto-bind="false" k-data-source="listRuangan" k-on-change='getDataCombo()' />
+                        k-auto-bind="false" k-data-source="listRuangan"  />
                 </div>
             </div>
             <div class="grid_6">
@@ -62,7 +62,7 @@
                 <div class="grid_12">
                     <input style="width: 100%;" kendo-combo-box k-ng-model="item.ruanganTujuan"
                         k-data-text-field="'namaruangan'" k-data-value-field="'id'" k-filter="'contains'"
-                        k-auto-bind="false" k-data-source="listRuanganTujuan" k-on-change='getSatuan()' ng-disabled='disabledRuangan'/>
+                        k-auto-bind="false" k-data-source="listRuanganTujuan" ng-disabled='disabledRuangan'/>
                 </div>
             </div>
         </div>
@@ -120,7 +120,8 @@
             <div class="grid_12">
                 <input kendo-combo-box k-ng-model="item.produk" k-data-text-field="'namaproduk'"
                     k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listProduk"
-                    k-on-change='getSatuan()' />
+                    
+                     />
             </div>
         </div>
 
@@ -370,4 +371,7 @@
 </div>
 </div>
 </div>
+</div>
+<div class="grid_12" style="margin-top:60px">
+    <div ng-include='"../app/template/Shared/TemplateLoading"'></div>
 </div>

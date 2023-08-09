@@ -1,4 +1,4 @@
-define(['initialize'], function (initialize) {
+define(['initialize','Configuration'], function (initialize,configuration) {
     'use strict';
     initialize.controller('KirimBarangLogistikBaruCtrl', ['$scope', 'CacheHelper', '$mdDialog', 'MedifirstService',
         function ($scope, cacheHelper, $mdDialog, medifirstService) {
@@ -27,6 +27,7 @@ define(['initialize'], function (initialize) {
             var noreckirim = ''
             var norecOrder = '';
             var statusLoad = ''
+            var noordercetak = ''
             $scope.disabledRuangan = true;
             // $scope.item.tglAwal = $scope.now;
             // $scope.item.tglAkhir = $scope.now;  
@@ -40,6 +41,7 @@ define(['initialize'], function (initialize) {
                     noreckirim = chacePeriode[0]
                     norecOrder = chacePeriode[1]
                     statusLoad = chacePeriode[2]
+                    noordercetak = chacePeriode[3]
                     // init()
                     var chacePeriode = {
                         0: '',
@@ -911,7 +913,14 @@ define(['initialize'], function (initialize) {
                     $scope.isAdd = true;
                 }
             }
+            $scope.cetaksppb = function () {
+                // if ($scope.dataSelected == undefined) {
+                //     toastr.error('Pilih data dulu')
+                //     return
+                // }
 
+                window.open(configuration.baseApiBackend + 'bhp/cetak-sppb?noorder=' + noordercetak + "&kdprofile=" + 30, '_blank')
+            }
             //** BATAS */
         }
     ]);
