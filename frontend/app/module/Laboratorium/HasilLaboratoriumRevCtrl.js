@@ -270,9 +270,13 @@ define(['initialize'], function (initialize) {
                                 change: function (e) {
                                     console.log("change :" + e.action);
                                     if (e.field && e.action === "itemchange") {
+                                        console.log(e.items[0].hasil);
                                         if(e.items[0].hasil){
                                             // $scope.item.nilaistr = e.items[0].nilaimin + '-' + e.items[0].nilaimax
                                             let HasilInput = e.items[0].hasil 
+                                            if (HasilInput == '-' || HasilInput == 'Negatif') {
+                                                e.items[0].flag = "N"
+                                            }else 
                                             if (HasilInput.indexOf("+/") >= 0) {
                                                 let hssl = "positif"
                                                 let nilaistring = e.items[0].nilaitext
@@ -329,7 +333,8 @@ define(['initialize'], function (initialize) {
                                                 }else{
                                                     e.items[0].flag ="Y"         
                                                 }
-                                            }else if(e.items[0].nilaimin == null){
+                                                
+                                            } else if (e.items[0].nilaimin == null) {
                                                 let hssl = e.items[0].hasil 
                                                 let nilaistring = e.items[0].nilaitext
                                                 nilaistring = nilaistring.toUpperCase();
@@ -549,7 +554,6 @@ define(['initialize'], function (initialize) {
             }
 
             function dynamicEditor(container, options) {
-
               // if(options.model.tipedata == 1){
               //   var input = $('<input type="number" class="k-input k-textbox" name="hasil" data-bind="value:hasil">')
               //   input.appendTo(container);
