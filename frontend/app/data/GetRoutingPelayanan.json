@@ -17147,7 +17147,7 @@
   },
   {
     "name": "RekamMedis.AsesmenMedis.MenuIndex.MonitoringTransfusiDarah",
-    "url": "/MonitoringTransfusiDarah",
+    "url": "/MonitoringTransfusiDarah/:index/:idEMR",
     "templateurl": "module/EMR/MonitoringTransfusiDarah.html",
     "controller": "MonitoringTransfusiDarahCtrl",
     "deps": [

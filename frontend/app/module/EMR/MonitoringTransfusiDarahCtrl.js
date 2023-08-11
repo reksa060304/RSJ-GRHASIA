@@ -2,7 +2,9 @@ define(['initialize'], function (initialize) {
     'use strict';
     initialize.controller('MonitoringTransfusiDarahCtrl', ['$q', '$rootScope', '$scope', 'ModelItem', '$state', 'CacheHelper', 'DateHelper', 'MedifirstService',
         function ($q, $rootScope, $scope, ModelItem, $state, cacheHelper, dateHelper, medifirstService) {
+            var paramsIndex = $state.params.index ? parseInt($state.params.index) : null;
 
+            console.log(paramsIndex);
             $scope.myVar = true
             $scope.noCM = $state.params.noCM;
             $scope.tombolSimpanVis = true
@@ -140,7 +142,7 @@ define(['initialize'], function (initialize) {
                 $scope.item.obj[116222] = true
                 dataLoad = dat.data.data
                 for (var i = 0; i <= dataLoad.length - 1; i++) {
-                    if (parseFloat($scope.cc.emrfk) == dataLoad[i].emrfk) {
+                    if (parseFloat($scope.cc.emrfk) == dataLoad[i].emrfk && dataLoad[i].index == paramsIndex) {
 
                         if (dataLoad[i].type == "textbox") {
                             $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
@@ -717,6 +719,7 @@ define(['initialize'], function (initialize) {
                     arrSave.push({ id: arrobj[i], values: $scope.item.obj[parseInt(arrobj[i])] })
                 }
                 $scope.cc.jenisemr = 'asesmen'
+                $scope.cc.index = $state.params.index
                 var jsonSave = {
                     head: $scope.cc,
                     data: arrSave
