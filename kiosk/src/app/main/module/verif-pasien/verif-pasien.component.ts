@@ -36,7 +36,13 @@ export class VerifPasienComponent implements OnInit {
   listDataPendidikan: any = []
   listDataPekerjaan: any = []
   listDataJenisKelamin: any = []
+  listJenisKelamin: any = []
+  listStatusKawin: any = []
   listDataStatusPerkawinan: any = []
+  listGolonganDarah: any = []
+  listPendidikan: any = []
+  listPekerjaan: any = []
+  listHambatan: any = []
   item: any = {}
   loading: boolean
   constructor( private router: Router,
@@ -50,7 +56,62 @@ export class VerifPasienComponent implements OnInit {
     this.httpservice.get("medifirst2000/registrasi/get-combo-registrasi").subscribe(se => {
       this.listDataJenisKelamin = se.jeniskelamin
       this.listDataPekerjaan = se.pekerjaan
-      this.listDataAgama = se.agama
+      this.listDataAgama.push({label: '- Pilih Agama -', value: null})
+      se.agama.forEach(response => {
+        this.listDataAgama.push({label: response.agama, value: {
+            'id': response.id,
+            'agama': response.agama,
+          }
+        }) 
+      })
+      se.golongandarah.forEach(response => {
+        this.listGolonganDarah.push({
+          label: response.golongandarah, value: {
+            'id': response.id,
+            'golongandarah': response.golongandarah,
+          }
+        }) 
+      })
+      se.jeniskelamin.forEach(response => {
+        this.listJenisKelamin.push({
+          label: response.jeniskelamin, value: {
+            'id': response.id,
+            'jeniskelamin': response.jeniskelamin,
+          }
+        }) 
+      })
+      se.statusperkawinan.forEach(response => {
+        this.listStatusKawin.push({
+          label: response.statusperkawinan, value: {
+            'id': response.id,
+            'statusperkawinan': response.statusperkawinan,
+          }
+        }) 
+      })
+      se.pendidikan.forEach(response => {
+        this.listPendidikan.push({
+          label: response.pendidikan, value: {
+            'id': response.id,
+            'pendidikan': response.pendidikan,
+          }
+        }) 
+      })
+      se.hambatan.forEach(response => {
+        this.listHambatan.push({
+          label: response.hambatankomunikasi, value: {
+            'id': response.id,
+            'hambatankomunikasi': response.hambatankomunikasi,
+          }
+        }) 
+      })
+      se.pekerjaan.forEach(response => {
+        this.listPekerjaan.push({
+          label: response.pekerjaan, value: {
+            'id': response.id,
+            'pekerjaan': response.pekerjaan,
+          }
+        }) 
+      })
       this.listDataPendidikan = se.pendidikan
       this.listDataStatusPerkawinan = se.statusperkawinan
 
@@ -61,7 +122,18 @@ export class VerifPasienComponent implements OnInit {
       'baru': new FormControl(''),
       'lama': new FormControl(''),
       'jenisPasien': new FormControl(''),
-
+      'tempatLahir': new FormControl(''),
+      'idAgama': new FormControl(null),
+      'namaPasien': new FormControl(''),
+      'noHp': new FormControl(''),
+      'alamat': new FormControl(''),
+      'idJenisKelamin': new FormControl(null),
+      'tanggalLahir': new FormControl(null),
+      'idStatusPerkawinan': new FormControl(null),
+      'idGolonganDarah': new FormControl(null),
+      'idpendidikan': new FormControl(null),
+      'idpekerjaan': new FormControl(null),
+      'idhambatan': new FormControl(null),
     })
     this.sub = this.route
       .queryParams
@@ -165,152 +237,64 @@ export class VerifPasienComponent implements OnInit {
       let nik = this.formGroup.get('noCm').value
       if (nik != null && nik.length > 10) {
         this.loading = true
-        
-        this.httpservice.get('medifirst2000/bridging/bpjs/get-nik?nik=' + nik +"&tglsep="+new Date().getFullYear() + "-" + new Date().getMonth() + "-" + new Date().getDate()
-        ).subscribe(e => {
-          if (e.response == undefined) {
-            return
-          }
-          if (e.metaData.message != "OK") {
-            this.alertService.error('', e.messages, {
-              toastClass: 'toast ngx-toastr',
-              closeButton: true,
-              positionClass: 'toast-bottom-center'
-            });
-            // this.alertService.error('Error', e.messages)
-            return
-          }
-          if (e.response.peserta != "") {
-            let result = e.response.peserta
-            console.log(result);
-            
-            if(result== undefined){
-              this.alertService.error('', e.content.RESPOND, {
-                toastClass: 'toast ngx-toastr',
-                closeButton: true,
-                positionClass: 'toast-bottom-center'
-              });
-              // this.alertService.error('Error', e.content.RESPOND)
-              return
-            }
-            this.alertService.success('', 'Nama Lengkap : ' + result.nama, {
-              toastClass: 'toast ngx-toastr',
-              closeButton: true,
-              positionClass: 'toast-bottom-center'
-            });
-            // this.alertService.success('Sukses', 'Nama Lengkap : ' + result.NAMA_LGKP)
-            // this.formGroup.get('namaPasien').setValue(result.NAMA_LGKP)
-            this.isInfoPasienBaru = true
-            // this.noCm =
+        this.isInfoPasienBaru = true
+        this.noIdentitas = nik
 
-            this.namaPasien = result.nama
-            this.jenisKelamin = result.sex
-            this.noIdentitas = result.nik
-            this.tempatTglLahir = result.tglLahir
-            // this.alamat = result.ALAMAT + ' KEL. ' + result.NAMA_KEL
-            //   + ' RT' + result.NO_RT + '/RW' + result.NO_RW + ' KEC. ' + result.NAMA_KEC
-            this.noTelpon = '-'
-            this.idPasien = '-'
-            // this.statusKawin = result.STAT_KWN
+      }else{
+        this.alertService.error('', 'Data tidak ditemukan', {
+          toastClass: 'toast ngx-toastr',
+          closeButton: true,
+          positionClass: 'toast-bottom-center'
+        });
+      }
+    }
 
-            // for (let i = 0; i < this.listDataAgama.length; i++) {
-            //   const element = this.listDataAgama[i];
-            //   if (element.agama.toLowerCase().indexOf(result.AGAMA.toLowerCase()) > -1) {
-            //     this.item.idAgama = element.id
-            //     break
-            //   }
-            // }
-
-            for (let i = 0; i < this.listDataJenisKelamin.length; i++) {
-              const element = this.listDataJenisKelamin[i];
-              if (element.jeniskelamin.toLowerCase().indexOf(result.sex.toLowerCase()) > -1) {
-                this.item.jenisKelaminId = element.id
-                break
-              }
-            }
-
-            // for (let i = 0; i < this.listDataPekerjaan.length; i++) {
-            //   const element = this.listDataPekerjaan[i];
-            //   if (element.pekerjaan.toLowerCase().indexOf(result.JENIS_PKRJN.toLowerCase()) > -1) {
-            //     this.item.pekerjaanId = element.id
-            //     break
-            //   }
-            // }
-            // for (let i = 0; i < this.listDataStatusPerkawinan.length; i++) {
-            //   const element = this.listDataStatusPerkawinan[i];
-            //   if (element.statusperkawinan == result.STATUS_KAWIN) {
-            //     this.item.statusPerkawinanId = element.id
-            //     break
-            //   }
-            // }
-            // for (let i = 0; i < this.listDataPendidikan.length; i++) {
-            //   const element = this.listDataPendidikan[i];
-            //   if (element.pendidikan.toLowerCase().indexOf(result.PDDK_AKH.toLowerCase()) > -1) {
-            //     this.item.pendidikanId = element.id
-            //     break
-            //   }
-            // }
-            // if (result.NAMA_KEL) {
-            //   this.httpservice.get("medifirst2000/registrasi/get-desa-kelurahan-paging?namadesakelurahan=" + result.NAMA_KEL).subscribe(res => {
-            //     if (res[0] != undefined) {
-            //       var resss = res[0]
-            //       var data = {
-            //         id: resss.id,
-            //         namadesakelurahan: resss.namadesakelurahan,
-            //         kodepos: resss.kodepos,
-            //         namakecamatan: resss.namakecamatan,
-            //         namakotakabupaten: resss.namakotakabupaten,
-            //         namapropinsi: resss.namapropinsi,
-            //         objectkecamatanfk: resss.objectkecamatanfk,
-            //         objectkotakabupatenfk: resss.objectkotakabupatenfk,
-            //         objectpropinsifk: resss.objectpropinsifk,
-            //         desa: resss.namadesakelurahan,
-            //       }
-
-            //       this.item.desaKelurahan = data
-            //     }
-            //   });
-            // }
-
-            var postJson = {
+  }
+  pilihPoli(data) {
+    console.log(this.formGroup.get('tanggalLahir'));
+    
+    if(data == 'baru'){
+      var postJson = {
               'isbayi': false,
               'istriageigd': false,
               'isPenunjang': false,
               'idpasien': '',
               'pasien': {
-                'namaPasien': this.namaPasien,
+                'namaPasien': this.formGroup.get('namaPasien').value,
                 'noIdentitas': this.noIdentitas != undefined ? this.noIdentitas : null,
                 'namaSuamiIstri': null,
                 'noAsuransiLain': null,
                 'noBpjs': null,
-                'noHp': null,
-                'tempatLahir': result.TMPT_LHR,
+                'noHp': this.formGroup.get('noHp').value,
+                'tempatLahir': this.formGroup.get('tempatLahir').value,
                 'namaKeluarga': null,
-                'tglLahir': moment(result.TGL_LHR).format('YYYY-MM-DD HH:mm'),
+                'tglLahir': moment(this.formGroup.get('tanggalLahir').value.year + '-' +this.formGroup.get('tanggalLahir').value.month +'-'+ this.formGroup.get('tanggalLahir').value.day).format('YYYY-MM-DD HH:mm'),
                 'image': null
               },
               'agama': {
-                'id': this.item.idAgama != undefined ? this.item.idAgama : null,
+                'id': this.formGroup.get('idAgama').value.value.id,
               },
               'jenisKelamin': {
-                'id': this.item.jenisKelaminId != undefined ? this.item.jenisKelaminId : null,
+                'id': this.formGroup.get('idJenisKelamin').value.value.id,
               },
               'pekerjaan': {
-                'id': this.item.pekerjaanId != undefined ? this.item.pekerjaanId : null,
+                'id': this.formGroup.get('idpekerjaan').value.value.id,
               },
               'pendidikan': {
-                'id': this.item.pendidikanId != undefined ? this.item.pendidikanId : null,
+                'id': this.formGroup.get('idpendidikan').value.value.id,
               },
               'statusPerkawinan': {
-                'id': this.item.statusPerkawinanId != undefined ? this.item.statusPerkawinanId : 0,
+                'id': this.formGroup.get('idStatusPerkawinan').value.value.id,
               },
               'golonganDarah': {
-                'id': null,
+                'id': this.formGroup.get('idGolonganDarah').value.value.id,
               },
               'suku': {
                 'id': null,
               },
-
+              'hambatan': {
+                'id': this.formGroup.get('idhambatan').value.value.id,
+              },
               'namaIbu': null,
               'noTelepon': null,
               'noAditional': null,
@@ -321,7 +305,7 @@ export class VerifPasienComponent implements OnInit {
                 'id': 0,
               },
               'namaAyah': null,
-              'alamatLengkap': '-',
+              'alamatLengkap': this.formGroup.get('alamat').value,
               'desaKelurahan': {
                 'id': this.item.desaKelurahan != undefined ? this.item.desaKelurahan.id : null,
                 'namaDesaKelurahan': this.item.desaKelurahan != undefined ? this.item.desaKelurahan.namadesakelurahan : null,
@@ -353,44 +337,21 @@ export class VerifPasienComponent implements OnInit {
               'alamatdokter': null
             }
             this.dataCache = postJson
-        
-          } else {
-            this.alertService.error('', e.content.RESPON, {
-              toastClass: 'toast ngx-toastr',
-              closeButton: true,
-              positionClass: 'toast-bottom-center'
-            });
-            // this.alertService.error('Info', e.content.RESPON)
-          }
-          this.loading = false
-        }, error => {
-          this.isInfoPasien = false
-          this.loading = false
-          this.alertService.error('','Data tidak ditemukan', {
-            toastClass: 'toast ngx-toastr',
-            closeButton: true,
-            positionClass: 'toast-bottom-center'
-          });
-          // this.alertService.error('Info', 'Data tidak ditemukan')
-        })
-
-      }else{
-        this.alertService.error('', 'Data tidak ditemukan', {
-          toastClass: 'toast ngx-toastr',
-          closeButton: true,
-          positionClass: 'toast-bottom-center'
-        });
+            console.log(postJson);
+            
+      var cache = {
+        0: this.dataCache,
+        1: 'Umum',
       }
+      this.cacheHelper.set('cacheSelfRegis', cache);
+      this.router.navigate(['touchscreen/self-regis/verif-pasien/poli'], { queryParams: { nocmfk: this.idPasien, tipepasien: this.url } })
+    }else{
+      var cache = {
+        0: this.dataCache,
+        1: 'Umum',
+      }
+      this.cacheHelper.set('cacheSelfRegis', cache);
+      this.router.navigate(['touchscreen/self-regis/verif-pasien/poli'], { queryParams: { nocmfk: this.idPasien, tipepasien: this.url } })
     }
-
-  }
-  pilihPoli() {
-    var cache = {
-      0: this.dataCache,
-      1: 'Umum',
-    }
-
-    this.cacheHelper.set('cacheSelfRegis', cache);
-    this.router.navigate(['touchscreen/self-regis/verif-pasien/poli'], { queryParams: { nocmfk: this.idPasien, tipepasien: this.url } })
   }
 }
