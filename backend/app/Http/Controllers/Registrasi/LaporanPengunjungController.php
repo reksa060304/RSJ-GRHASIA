@@ -82,6 +82,7 @@ class LaporanPengunjungController extends ApiController
             ->select('pd.norec','pd.noregistrasi','pd.tglregistrasi','ps.nocm','ps.namapasien','ps.nohp','ps.tgllahir','jk.jeniskelamin','ag.agama','pdd.pendidikan','pkr.pekerjaan','alm.alamatlengkap',
                 'dsk.namadesakelurahan','alm.kecamatan','kkb.namakotakabupaten','sp.statusperkawinan','pd.statuspasien','rg.namaruangan','pg.namalengkap','ps.tgldaftar','klp.kelompokpasien','apd.norec as norec_apd',
                 DB::raw("to_char(pd.tglregistrasi,'DD-MM-YYYY') as tglregistrasi1,to_char(pd.tglregistrasi,'HH:mm') as jamregistrasi,'' AS kddiagnosa"))
+            ->whereNotIn('apd.objectruanganfk',[94])
             ->where('pd.statusenabled',true);
             //->where('ddp.objectjenisdiagnosafk',1);
             DB::raw('ddp.objectjenisdiagnosafk = 1 or ddp.objectjenisdiagnosafk IS NULL' );

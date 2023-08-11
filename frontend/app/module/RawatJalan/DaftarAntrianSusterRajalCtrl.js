@@ -174,7 +174,7 @@ define(['initialize'], function (initialize) {
                     var datas = data[0].data;
                     for (var i = 0; i < datas.length; i++) {
                         datas[i].no = i + 1
-                        var tanggal = $scope.now;
+                        var tanggal = new Date(datas[i].tglregistrasi);
                         var tanggalLahir = new Date(datas[i].tgllahir);
                         var umurzz = dateHelper.CountAge(tanggalLahir, tanggal);
                         datas[i].umurzz = umurzz.year + ' thn ' + umurzz.month + ' bln ' + umurzz.day + ' hari'

@@ -1,7 +1,7 @@
 define(['initialize'], function (initialize) {
 	'use strict';
-	initialize.controller('RincianTagihanCtrl', ['MedifirstService', '$state', '$q', '$scope', '$window', '$mdDialog',
-		function (medifirstService, $state, $q, $scope, window, $mdDialog) {
+	initialize.controller('RincianTagihanCtrl', ['MedifirstService', '$state', '$q', '$scope', '$window', '$mdDialog','DateHelper',
+		function (medifirstService, $state, $q, $scope, window, $mdDialog, dateHelper) {
 			$scope.now = new Date();
 
 			$scope.dataParams = JSON.parse($state.params.dataPasien);
@@ -162,6 +162,11 @@ define(['initialize'], function (initialize) {
 							norec_pd = data[0].norec_pd
 							$scope.item.tglPulang = $scope.formatTanggal($scope.item.tglPulang);
 							$scope.item.tglMasuk = $scope.formatTanggal($scope.item.tglMasuk);
+							var tanggal = new Date(data[0].tglMasuk);
+							var tanggalLahir = new Date(data[0].tgllahir);
+							var umurzz = dateHelper.CountAge(tanggalLahir, tanggal);
+							data[0].umurzz = umurzz.year + ' thn ' + umurzz.month + ' bln ' + umurzz.day + ' hari'
+							$scope.item.umur = data[0].umurzz
 							$scope.item.tgllahir = $scope.formatTanggal($scope.item.tgllahir);
 							data3 = data[0].details
 							if ($scope.IsDataResep) {

@@ -675,7 +675,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     //     nomorEMR : e.data.data.noemr 
                     // });
                     medifirstService.postLogging('EMR', 'norec emrpasien_t', e.data.data.norec,
-                        $scope.item.title + ' dengan No EMR - ' + e.data.data.noemr + ' pada No Registrasi '
+                        'CPPT Rawat Jalan' + ' dengan No EMR - ' + e.data.data.noemr + ' pada No Registrasi '
                         + $scope.cc.noregistrasi).then(function (res) {
                         })
                     $scope.savePeriksaDokter()

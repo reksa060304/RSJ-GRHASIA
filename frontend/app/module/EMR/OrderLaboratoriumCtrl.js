@@ -1110,7 +1110,7 @@ define(['initialize'], function (initialize) {
                     }
                     $scope.listProdukCek = []
                     $scope.listProdukCek = $scope.listTempProduk
-                    if ($scope.item.layanan != undefined && $scope.item.layanan != '') {
+                    if ($scope.item.layanan != undefined) {
                         for (let i = 0; i < $scope.listProdukCek.length; i++) {
                             const element1 = $scope.listProdukCek[i];
                             var arrobj = Object.keys($scope.item.layanan)
