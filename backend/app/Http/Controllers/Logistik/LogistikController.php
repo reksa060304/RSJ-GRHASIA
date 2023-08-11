@@ -664,7 +664,7 @@ class LogistikController extends ApiController{
             ->JOIN('kelompokproduk_m as kp', 'kp.id', '=', 'jp.objectkelompokprodukfk')
             ->leftJOIN('satuanstandar_m as ss', 'ss.id', '=', 'pr.objectsatuanstandarfk')
             ->leftJOIN('stokprodukdetail_t as spd', 'spd.objectprodukfk', '=', 'pr.id')
-            ->select('pr.id', 'pr.namaproduk', 'ss.id as ssid', 'ss.satuanstandar','pr.spesifikasi')
+            ->select('pr.harganetto','pr.id', 'pr.namaproduk', 'ss.id as ssid', 'ss.satuanstandar','pr.spesifikasi')
             ->where('pr.kdprofile',$idProfile)
             ->where('pr.statusenabled', true)
             ->where('kp.id', $request['idkelompokproduk'])
@@ -701,7 +701,8 @@ class LogistikController extends ApiController{
                 'ssid' => $item->ssid,
                 'satuanstandar' => $item->satuanstandar,
                 'konversisatuan' => $satuanKonversi,
-                'spesifikasi' => $item->spesifikasi
+                'spesifikasi' => $item->spesifikasi,
+                'harganetto' => $item->harganetto,
             );
         }
 
