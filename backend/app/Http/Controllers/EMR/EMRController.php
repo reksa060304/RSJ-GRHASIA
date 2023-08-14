@@ -9994,9 +9994,11 @@ class EMRController  extends ApiController
             ->leftJOIN('satuanstandar_m as ss', 'ss.id', '=', 'pr.objectsatuanstandarfk')
             ->JOIN('stokprodukdetail_t as spd', 'spd.objectprodukfk', '=', 'pr.id')
             ->select(DB::raw("
+                pr.satuan,
                 pr.kekuatan,pr.id,pr.namaproduk, ss.id as ssid,ss.satuanstandar,sum(spd.qtyproduk) AS stok
             "))
             ->groupBy(DB::raw("pr.kekuatan,
+                pr.satuan,
                 pr.id,pr.namaproduk,ss.id,ss.satuanstandar
             "))
             ->where('pr.kdprofile', $idProfile)
@@ -10056,6 +10058,7 @@ class EMRController  extends ApiController
                 'konversisatuan' => $satuanKonversi,
                 'stok' => $item->stok,
                 'kekuatan' => $item->kekuatan,
+                'satuan' => $item->satuan,
             );
         }
 
