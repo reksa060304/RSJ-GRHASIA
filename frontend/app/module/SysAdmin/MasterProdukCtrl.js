@@ -22,21 +22,21 @@ define(['initialize'], function (initialize) {
 					}
 
 					$scope.item.Status = {id:true,status:'True'}
-					$scope.item.jenisProdukDetail = [
-						{ "id": 474, "nama": "Obat", "no" : 1 },
-						{ "id": 1365, "nama": "Analgesic", "no" : 3 }, 
-						{ "id": 1847, "nama": "Psikotropika", "no" : 4 }, 
-						{ "id": 1598, "nama": "NARKOTIKA", "no" : 5 }, 
-						{ "id": 1597, "nama": "OBAT KERAS", "no" : 6 }, 
-						{ "id": 522, "nama": "HEMATOLOGI", "no" : 7 },
-						{ "id": 1444, "nama": "Antibiotika", "no" : 8 },
-						{ "id": 167, "nama": "Antelmintik", "no" : 9 },
-						{ "id": 1450, "nama": "Anti Hipertensi", "no" : 10 },
-						{ "id": 1318, "nama": "Barang Umum", "no" : 11 },
-						{ "id": 1479, "nama": "Cetakan", "no" : 12 },
-						{ "id": 1556, "nama": "-", "no" : 13 },
-						{ "id": 1346, "nama": "Alkes", "no" : 14 }, 
-					];
+					// $scope.item.jenisProdukDetail = [
+					// 	{ "id": 474, "nama": "Obat", "no" : 1 },
+					// 	{ "id": 1365, "nama": "Analgesic", "no" : 3 }, 
+					// 	{ "id": 1847, "nama": "Psikotropika", "no" : 4 }, 
+					// 	{ "id": 1598, "nama": "NARKOTIKA", "no" : 5 }, 
+					// 	{ "id": 1597, "nama": "OBAT KERAS", "no" : 6 }, 
+					// 	{ "id": 522, "nama": "HEMATOLOGI", "no" : 7 },
+					// 	{ "id": 1444, "nama": "Antibiotika", "no" : 8 },
+					// 	{ "id": 167, "nama": "Antelmintik", "no" : 9 },
+					// 	{ "id": 1450, "nama": "Anti Hipertensi", "no" : 10 },
+					// 	{ "id": 1318, "nama": "Barang Umum", "no" : 11 },
+					// 	{ "id": 1479, "nama": "Cetakan", "no" : 12 },
+					// 	{ "id": 1556, "nama": "-", "no" : 13 },
+					// 	{ "id": 1346, "nama": "Alkes", "no" : 14 }, 
+					// ];
 					
 					
 					loadData()
