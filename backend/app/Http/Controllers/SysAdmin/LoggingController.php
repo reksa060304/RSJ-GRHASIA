@@ -33,7 +33,7 @@ use App\Traits\PelayananPasienTrait;
 use DB;
 use App\Traits\Valet;
 use Carbon\Carbon;
-
+use Webpatser\Uuid\Uuid;
 class LoggingController extends ApiController
 {
 
@@ -1164,7 +1164,33 @@ class LoggingController extends ApiController
         //                $transMsg = "Simpan Log Gagal ";
         //
         //            }
-
+            $data = DB::select(DB::raw("select ru.id objectruanganfk,count(pd.noregistrasi)as jml from pasiendaftar_t pd 
+            inner join ruangan_m ru on ru.id = pd.objectruanganlastfk and ru.objectdepartemenfk = 16
+            where pd.tglpulang is null and pd.kdprofile = 30 and pd.statusenabled = true 
+            group by ru.id"));
+            $datars = DB::select(DB::raw("select count(pd.noregistrasi)as jml from pasiendaftar_t pd 
+            inner join ruangan_m ru on ru.id = pd.objectruanganlastfk and ru.objectdepartemenfk = 16
+            where pd.tglpulang is null and pd.kdprofile = 30 and pd.statusenabled =true 
+            "));
+            foreach ($data as $d) {
+                db::table('pasienawalbangsal_temp')->insert([
+                    'norec'=> substr(Uuid::generate(), 0, 32),
+                    'kdprofile'=> 30,
+                    'statusenabled'=> true,
+                    'jml'=> $d->jml,
+                    'tglinput'=> date('Y-m-d H:i:s'),
+                    'objectruanganfk'=> $d->objectruanganfk
+                ]);
+            }
+            foreach ($datars as $drs) {
+                db::table('pasienawalbangsal_temp')->insert([
+                    'norec'=> substr(Uuid::generate(), 0, 32),
+                    'kdprofile'=> 30,
+                    'statusenabled'=> true,
+                    'jml'=> $drs->jml,
+                    'tglinput'=> date('Y-m-d H:i:s'),
+                ]);
+            }
         if ($transStatus == true) {
             DB::commit();
             $result = array(
@@ -1216,7 +1242,33 @@ class LoggingController extends ApiController
         //                $transMsg = "Simpan Log Gagal ";
         //
         //            }
-
+            $data = DB::select(DB::raw("select ru.id objectruanganfk,count(pd.noregistrasi)as jml from pasiendaftar_t pd 
+            inner join ruangan_m ru on ru.id = pd.objectruanganlastfk and ru.objectdepartemenfk = 16
+            where pd.tglpulang is null and pd.kdprofile = 30 and pd.statusenabled = true 
+            group by ru.id"));
+            $datars = DB::select(DB::raw("select count(pd.noregistrasi)as jml from pasiendaftar_t pd 
+            inner join ruangan_m ru on ru.id = pd.objectruanganlastfk and ru.objectdepartemenfk = 16
+            where pd.tglpulang is null and pd.kdprofile = 30 and pd.statusenabled =true 
+            "));
+            foreach ($data as $d) {
+                db::table('pasienawalbangsal_temp')->insert([
+                    'norec'=> substr(Uuid::generate(), 0, 32),
+                    'kdprofile'=> 30,
+                    'statusenabled'=> true,
+                    'jml'=> $d->jml,
+                    'tglinput'=> date('Y-m-d H:i:s'),
+                    'objectruanganfk'=> $d->objectruanganfk
+                ]);
+            }
+            foreach ($datars as $drs) {
+                db::table('pasienawalrs_temp')->insert([
+                    'norec'=> substr(Uuid::generate(), 0, 32),
+                    'kdprofile'=> 30,
+                    'statusenabled'=> true,
+                    'jml'=> $drs->jml,
+                    'tglinput'=> date('Y-m-d H:i:s'),
+                ]);
+            }
         if ($transStatus == true) {
             DB::commit();
             $result = array(
