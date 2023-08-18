@@ -1183,7 +1183,7 @@ class LoggingController extends ApiController
                 ]);
             }
             foreach ($datars as $drs) {
-                db::table('pasienawalbangsal_temp')->insert([
+                db::table('pasienawalrs_temp')->insert([
                     'norec'=> substr(Uuid::generate(), 0, 32),
                     'kdprofile'=> 30,
                     'statusenabled'=> true,
