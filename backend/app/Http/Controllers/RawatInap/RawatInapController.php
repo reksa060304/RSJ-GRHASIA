@@ -72,6 +72,7 @@ use App\Transaksi\PostingJurnalTransaksi;
 use App\Transaksi\LogAcc;
 use App\Traits\SettingDataFixedTrait;
 use Carbon\Carbon;
+use Webpatser\Uuid\Uuid;
 
 class RawatInapController extends ApiController
 {
@@ -265,6 +266,33 @@ class RawatInapController extends ApiController
 //                }
 //            }
 //        }
+$data1 = DB::select(DB::raw("select ru.id objectruanganfk,count(pd.noregistrasi)as jml from pasiendaftar_t pd 
+        inner join ruangan_m ru on ru.id = pd.objectruanganlastfk and ru.objectdepartemenfk = 16
+        where pd.tglpulang is null and pd.kdprofile = 30 and pd.statusenabled = true 
+        group by ru.id"));
+        $datars = DB::select(DB::raw("select count(pd.noregistrasi)as jml from pasiendaftar_t pd 
+        inner join ruangan_m ru on ru.id = pd.objectruanganlastfk and ru.objectdepartemenfk = 16
+        where pd.tglpulang is null and pd.kdprofile = 30 and pd.statusenabled =true 
+        "));
+        foreach ($data1 as $d) {
+            db::table('pasienawalbangsal_temp')->insert([
+                'norec'=> substr(Uuid::generate(), 0, 32),
+                'kdprofile'=> 30,
+                'statusenabled'=> true,
+                'jml'=> $d->jml,
+                'tglinput'=> date('Y-m-d H:i:s'),
+                'objectruanganfk'=> $d->objectruanganfk
+            ]);
+        }
+        foreach ($datars as $drs) {
+            db::table('pasienawalrs_temp')->insert([
+                'norec'=> substr(Uuid::generate(), 0, 32),
+                'kdprofile'=> 30,
+                'statusenabled'=> true,
+                'jml'=> $drs->jml,
+                'tglinput'=> date('Y-m-d H:i:s'),
+            ]);
+        }
         return $this->respond($data);
     }
     public function getDokters(Request $request){
