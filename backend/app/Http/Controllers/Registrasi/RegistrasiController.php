@@ -56,6 +56,7 @@ use DB;
 use App\Traits\Valet;
 use Carbon\Carbon;
 use phpDocumentor\Reflection\Types\This;
+use Webpatser\Uuid\Uuid;
 
 class RegistrasiController extends ApiController
 {
@@ -13559,5 +13560,249 @@ GROUP BY y.KET
             );
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    function getLaporanSensus(Request $request) {
+        $tglAwal = $request['tahun'].'-'.$request['bulan'].'-'.'01';
+        $th = $request['bulan'];
+        $bl = $request['tahun'];
+        $tanggal = DB::select(DB::raw("
+            select d::date as tgl
+            from generate_series('$tglAwal', '$tglAwal'::date + INTERVAL '1 MONTH - 1 day', '1 day'::interval) d
+        "));
+
+        $tanggalmin = DB::select(DB::raw("
+            select min(d::date) as tglmin
+            from generate_series('$tglAwal', '$tglAwal'::date + INTERVAL '1 MONTH - 1 day', '1 day'::interval) d
+        "));
+
+        $tanggalmax = DB::select(DB::raw("
+            select max(d::date) as tglmax
+            from generate_series('$tglAwal', '$tglAwal'::date + INTERVAL '1 MONTH - 1 day', '1 day'::interval) d
+        "));
+        
+        $arr = [];
+        foreach($tanggal as $row)
+        {
+            $arr[] =  $row->tgl;
+        }
+        $arrmin = [];
+        foreach($tanggalmin as $rowmin)
+        {
+            $arrmin[] =  $rowmin->tglmin;
+        }
+        $arrmax = [];
+        foreach($tanggalmax as $rowmax)
+        {
+            $arrmax[] =  $rowmax->tglmax;
+        }  
+        
+        
+        $tanggalminawal = DB::select(DB::raw("select '$arrmin[0] 23:59:59'::timestamp - interval '1 day ' as tgl"));
+
+        $arrminawal = [];
+        foreach($tanggalminawal as $rowminawal)
+        {
+            $arrminawal[] =  $rowminawal->tgl;
+        }
+        $jumlahtt = DB::select(DB::raw("select '$tglAwal' as tanggal, sum(rm.jumlah_tt) as totalperperiode 
+                from riwayatkamar_m rm
+                inner join ruangan_m ru on ru.id = rm.objectruanganfk
+                inner join(
+                    select objectruanganfk,objectkamarfk,max(tanggalawal) as tanggal from riwayatkamar_m 
+                    where 
+                    '$arrmax[0] 23:59:59' BETWEEN tanggalawal and COALESCE(tanggalakhir,'$arrmax[0] 23:59:59')
+                    group by objectruanganfk,objectkamarfk
+                ) as x	
+                on rm.objectruanganfk=x.objectruanganfk and rm.objectkamarfk=x.objectkamarfk and rm.tanggalawal = x.tanggal
+                where rm.kdprofile = 30 and rm.statusenabled = true
+                "));
+        
+        $date_series = DB::select(DB::raw("
+        WITH date_series AS (
+        SELECT generate_series('$arrmin[0]'::date, '$arrmin[0]'::date + INTERVAL '1 month - 1 day', '1 day')::date AS series_date
+        )
+        SELECT date_part('day', series_date::date)as date FROM date_series
+        order by date_series asc
+        ;
+        "));
+
+        $pasienawalRS = DB::select(DB::raw("
+        select * from(select row_number()over(partition by x.tglinput order by x.tglinput asc)as nomor, x.jml, date_part('day', x.tglinput::date + 1)  tgl from(select row_number()over(partition by  tglinput::date order by tglinput desc)as nomor, jml, tglinput from pasienawalrs_temp where tglinput between '$arrminawal[0]' and '$arrmax[0]' 
+        GROUP BY jml , tglinput
+        )as x where x.nomor = 1)as xx where  xx.nomor = 1
+        "));
+
+        $pasienmasuk = DB::select(DB::raw("
+        select date_part('day', pd.tglregistrasi::date ) as tgl , count(pd.noregistrasi) as jml from pasiendaftar_t pd 
+        inner join ruangan_m ru on ru.id = pd.objectruanganlastfk
+        where pd.kdprofile = 30 and pd.statusenabled = true and date_part('month', pd.tglregistrasi::date ) = $th and date_part('year', pd.tglregistrasi::date ) = $bl  and ru.objectdepartemenfk = 16
+        group by pd.tglregistrasi::date
+        order by pd.tglregistrasi::date asc
+        "));
+
+        $pasienaps = DB::select(DB::raw("select count(pd.noregistrasi)as jml, date_part('day', pd.tglpulang::date)as tgl from pasiendaftar_t pd where pd.objectstatuspulangfk = 2 and date_part('month', pd.tglpulang)= $th and date_part('year', pd.tglpulang)=$bl and pd.kdprofile = 30 and pd.statusenabled = true
+        GROUP BY pd.tglpulang::date
+        order by pd.tglpulang::date asc
+        ")); 
+        $pasienapd = DB::select(DB::raw("select count(pd.noregistrasi)as jml, date_part('day', pd.tglpulang::date)as tgl from pasiendaftar_t pd where pd.objectstatuspulangfk = 1 and date_part('month', pd.tglpulang)= $th and date_part('year', pd.tglpulang)=$bl and pd.kdprofile = 30 and pd.statusenabled = true
+        GROUP BY pd.tglpulang::date
+        order by pd.tglpulang::date asc
+        ")); 
+        $pasienrujuk = DB::select(DB::raw("select count(pd.noregistrasi)as jml, date_part('day', pd.tglpulang::date)as tgl from pasiendaftar_t pd where pd.objectstatuspulangfk in (4,5,10,11) and date_part('month', pd.tglpulang)= $th and date_part('year', pd.tglpulang)=$bl and pd.kdprofile = 30 and pd.statusenabled = true
+        GROUP BY pd.tglpulang::date
+        order by pd.tglpulang::date asc
+        ")); 
+        $pasienlari = DB::select(DB::raw("select count(pd.noregistrasi)as jml, date_part('day', pd.tglpulang::date)as tgl from pasiendaftar_t pd where pd.objectstatuspulangfk = 3 and date_part('month', pd.tglpulang)= $th and date_part('year', pd.tglpulang)=$bl and pd.kdprofile = 30 and pd.statusenabled = true
+        GROUP BY pd.tglpulang::date
+        order by pd.tglpulang::date asc
+        ")); 
+        $pasiendropping = DB::select(DB::raw("select count(pd.noregistrasi)as jml, date_part('day', pd.tglpulang::date)as tgl from pasiendaftar_t pd where pd.objectstatuspulangfk = 12 and date_part('month', pd.tglpulang)= $th and date_part('year', pd.tglpulang)=$bl and pd.kdprofile = 30 and pd.statusenabled = true
+        GROUP BY pd.tglpulang::date
+        order by pd.tglpulang::date asc
+        ")); 
+        $pasienlbh48 = DB::select(DB::raw("
+        select count(pd.noregistrasi)as jml, date_part('day', pd.tglpulang::date)as tgl from pasiendaftar_t pd where pd.objectkondisipasienfk= 6 and date_part('month', pd.tglpulang)= $th and date_part('year', pd.tglpulang)=$bl and pd.kdprofile = 30 and pd.statusenabled = true
+        GROUP BY pd.tglpulang::date"));
+        $pasienkrg48 = DB::select(DB::raw("
+        select count(pd.noregistrasi)as jml, date_part('day', pd.tglpulang::date)as tgl from pasiendaftar_t pd where pd.objectkondisipasienfk= 5 and date_part('month', pd.tglpulang)= 8 and date_part('year', pd.tglpulang)=$bl and pd.kdprofile = 30 and pd.statusenabled = true
+        GROUP BY pd.tglpulang::date"));
+        $pasienmkhs = DB::select(DB::raw("
+        select date_part('day', pd.tglregistrasi::date ) as tgl , count(pd.noregistrasi) as jml from pasiendaftar_t pd 
+        inner join ruangan_m ru on ru.id = pd.objectruanganlastfk
+        where pd.kdprofile = 30 and pd.statusenabled = true and date_part('month', pd.tglregistrasi::date ) =$th and date_part('year', pd.tglregistrasi::date ) = $bl  and ru.objectdepartemenfk = 16 and pd.tglpulang::date = pd.tglregistrasi::date
+        group by pd.tglregistrasi::date
+        order by pd.tglregistrasi::date asc"));
+        $los = DB::select(DB::raw("SELECT sum(x.jml)as jml, x.tgl FROM (select date_part('day', pd.tglregistrasi::date ) as tgl , case when pd.tglpulang::date = pd.tglregistrasi::date then 1 else sum(pd.tglpulang::date - pd.tglregistrasi::date) end as jml from pasiendaftar_t pd 
+        inner join ruangan_m ru on ru.id = pd.objectruanganlastfk
+        where pd.kdprofile = 30 and pd.statusenabled = true and date_part('month', pd.tglregistrasi::date ) =$th and date_part('year', pd.tglregistrasi::date ) = $bl  and ru.objectdepartemenfk = 16 and pd.tglpulang is not null
+        GROUP BY pd.tglregistrasi, pd.tglpulang
+        )as x
+        GROUP BY x.tgl
+        order by x.tgl asc"));
+        $data = [];
+        $pasienAwal = 0;
+        $pasienMasuk = 0;
+        $pasienAPS = 0;
+        $pasienAPD = 0;
+        $pasienRujuk = 0;
+        $pasienLari = 0;
+        $pasienDropping = 0;
+        $jumlahpasienpulang = 0;
+        $pasienLBH48 = 0;
+        $pasienKRG48 = 0;
+        $jumlahsisapasien = 0;
+        $pasienMKHS = 0;
+        $hariPerawatan = 0;
+        $LOS = 0;
+
+        $tgl = 0;
+        $detail = [];
+        foreach ($date_series as $date) {
+            $pasienAwal = 0;
+            $pasienMasuk = 0;
+            $pasienAPS = 0;
+            $pasienAPD = 0;
+            $pasienRujuk = 0;
+            $pasienLari = 0;
+            $pasienDropping = 0;
+            $jumlahpasienpulang = 0;
+            $pasienLBH48 = 0;
+            $pasienKRG48 = 0;
+            $jumlahpasienmeninggal = 0;
+            $jumlahpasienkeluarrs = 0;
+            $jumlahsisapasien = 0;
+            $pasienMKHS = 0;
+            $hariPerawatan = 0;
+            $LOS = 0;
+            $jumlah = 0;
+            foreach ($pasienawalRS as $psa) {
+                if($date->date == $psa->tgl){
+                    $pasienAwal = $psa->jml;
+                }
+            }
+            foreach ($pasienmasuk as $psm) {
+                if($date->date == $psm->tgl){
+                    $pasienMasuk = $psm->jml;
+                }
+            }
+            foreach ($pasienaps as $psaps) {
+                if($date->date == $psaps->tgl){
+                    $pasienAPS = $psaps->jml;
+                }
+            }
+            foreach ($pasienapd as $psapd) {
+                if($date->date == $psapd->tgl){
+                    $pasienAPD = $psapd->jml;
+                }
+            }
+            foreach ($pasienrujuk as $psrujuk) {
+                if($date->date == $psrujuk->tgl){
+                    $pasienRujuk = $psrujuk->jml;
+                }
+            }
+            foreach ($pasienlari as $pslari) {
+                if($date->date == $pslari->tgl){
+                    $pasienLari = $pslari->jml;
+                }
+            }
+            foreach ($pasiendropping as $psdrop) {
+                if($date->date == $psdrop->tgl){
+                    $pasienDropping = $psdrop->jml;
+                }
+            }
+            foreach ($pasienlbh48 as $pslbh48) {
+                if($date->date == $pslbh48->tgl){
+                    $pasienLBH48 = $pslbh48->jml;
+                }
+            }
+            foreach ($pasienkrg48 as $pskrg48) {
+                if($date->date == $pskrg48->tgl){
+                    $pasienKRG48 = $pskrg48->jml;
+                }
+            }
+            foreach ($pasienmkhs as $psmkhs) {
+                if($date->date == $psmkhs->tgl){
+                    $pasienMKHS = $psmkhs->jml;
+                }
+            }
+            foreach ($los as $l) {
+                if($date->date == $l->tgl){
+                    $LOS = $l->jml;
+                }
+            }
+            $jumlah = $pasienAwal+ $pasienMasuk;
+            $jumlahpasienpulang = $pasienAPS+$pasienAPD+$pasienRujuk+$pasienLari+$pasienDropping;
+            $jumlahpasienmeninggal = $pasienKRG48+ $pasienLBH48;
+            $jumlahpasienkeluarrs = $jumlahpasienpulang+ $jumlahpasienmeninggal;
+            $jumlahsisapasien = $jumlah - $jumlahpasienkeluarrs;
+            $hariPerawatan = $jumlahsisapasien + $pasienMKHS;
+            $detail[] = array(
+                'tgl'=> $date->date,
+                'pasienawal'=> $pasienAwal,
+                'pasienmasuk'=> $pasienMasuk,
+                'jumlah'=> $jumlah,
+                'pasienaps'=> $pasienAPS,
+                'pasienapd'=> $pasienAPD,
+                'pasienrujuk'=> $pasienRujuk,
+                'pasienlari'=> $pasienLari,
+                'pasiendropping'=> $pasienDropping,
+                'jumlahpasienpulang'=> $jumlahpasienpulang,
+                'pasienlbh48'=> $pasienLBH48,
+                'pasienkrg48'=> $pasienKRG48,
+                'jumlahpasienmeninggal'=> $jumlahpasienmeninggal,
+                'jumlahpasienkeluarrs'=> $jumlahpasienkeluarrs,
+                'jumlahsisapasien'=> $jumlahsisapasien,
+                'pasienmkhs'=> $pasienMKHS,
+                'hariperawatan'=> $hariPerawatan,
+                'los'=> $LOS,
+                
+            );
+            
+        }
+        $result = array(
+            'data'=> $detail,
+            'jumlahtt'=> $jumlahtt
+        );
+        return $this->respond($result);
     }
 }
