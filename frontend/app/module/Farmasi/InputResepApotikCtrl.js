@@ -4,6 +4,7 @@ define(['initialize'], function (initialize) {
         function (saveToWindow, $rootScope, $scope, $window, ModelItem, $state, cacheHelper, dateHelper, $mdDialog, cetakHelper, medifirstService, $q) {
             var norecAPD = $state.params.noRec;
             $scope.isRouteLoading = false;
+            $scope.tambahobat = false;
             $scope.item = {};
             $scope.data = {};
             $scope.dataVOloaded = true;
@@ -948,6 +949,7 @@ define(['initialize'], function (initialize) {
 if(!pass || !cpass || !email || !cemail || !user){
 Which will check for empty strings (""), null, undefined, false and the numbers 0 and NaN.
 */
+                $scope.tambahobat = true
                 if(!$scope.item.produk){ //sama dengan $scope.item.produk === null
                     return
                 }
@@ -992,6 +994,7 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                 if(!pass || !cpass || !email || !cemail || !user){
                 Which will check for empty strings (""), null, undefined, false and the numbers 0 and NaN.
                 */
+               $scope.tambahobat = true
                 if (!$scope.item.produk) { //sama dengan $scope.item.produk === null
                     return
                 }
@@ -1098,7 +1101,7 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                         }
                         statusTambah = true
 
-
+                        $scope.tambahobat = false
                     });
 
             }
@@ -1746,6 +1749,7 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
             }
             
             $scope.klikGrid = function (dataSelected) {
+                $scope.tambahobat = true
                 dataProdukDetail = []
                 if (statusTambah == false)
                     return
