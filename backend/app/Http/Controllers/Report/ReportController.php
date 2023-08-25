@@ -1436,6 +1436,7 @@ class ReportController extends ApiController{
                 $item->dosis = 1;
             }
             // return $this->respond($item->qtyproduk);
+            
             $orderPelayanan[] = array(
                 'no' => $i,
                 'noregistrasifk' => '',
@@ -1490,8 +1491,21 @@ class ReportController extends ApiController{
                 "satuandosis" => $item->satuandosis,
             );
         }
-
-        return view('report.apotik.detailorder', compact('orderPelayanan', 'noorder'));
+        $noorder = $r['noorder'];
+        $raw = collect(DB::select("
+            select pm2.nocm ,to_char(pm2.tgllahir,'dd-mm-yyyy') as tgllahir,age(pm2.tgllahir) as umur ,jm.jeniskelamin ,pm2.namapasien ,pm3.namalengkap, rm.namaruangan ruanganasal, ra.namaruangan ruangantujuan, pm2.alergi, 
+            to_char(st.tglorder,'dd-mm-yyyy HH:MM:ss') as tglorder,pm3.nosip, kp.kelompokpasien 
+            from strukorder_t st
+            inner join pasien_m pm2 on pm2.id = st.nocmfk
+            inner join jeniskelamin_m jm on jm.id = pm2.objectjeniskelaminfk
+            inner join pegawai_m pm3 on pm3.id = st.objectpegawaiorderfk
+            inner join ruangan_m rm on rm.id = st.objectruanganfk 
+            inner join ruangan_m ra on ra.id = st.objectruangantujuanfk 
+            inner join pasiendaftar_t AS pd ON pd.norec = st.noregistrasifk
+            left join kelompokpasien_m AS kp ON kp.id = pd.objectkelompokpasienlastfk
+            where st.noorder = '$noorder'
+        "))->first();
+        return view('report.apotik.detailorder', compact('orderPelayanan', 'noorder','raw'));
     }
 
     public function cetakAntrianKiosk(Request $request) {

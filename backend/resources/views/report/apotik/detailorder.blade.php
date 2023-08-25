@@ -8,17 +8,17 @@
         <title>E-Resep</title>
         <style>
             .fs-11{
-                font-size: 13px;
+                font-size: 11px;
                 font-family: 'Tahoma';
             }
 
             .fs-13{
-                font-size: 17px;
+                font-size: 13px;
                 font-family: 'Tahoma';
             }
 
             .fs-9{
-                font-size: 13px;
+                font-size: 11px;
                 font-family: 'Tahoma';
             }
 
@@ -33,7 +33,6 @@
             th.description {
                 width: 165px;
                 max-width: 165px;
-                padding: 10px;
             }
 
             td.quantity,
@@ -41,14 +40,12 @@
                 width: 95px;
                 max-width: 95px;
                 word-break: break-all;
-                padding: 10px;
             }
 
             td.price,
             th.price {
                 width: 100px;
                 max-width: 100px;
-                padding: 10px;
             }
 
             .centered {
@@ -57,9 +54,8 @@
             }
 
             .ticket {
-                width: 580px;
-                max-width: 580px;
-                margin-left: 500px;
+                width: 380px;
+                max-width: 380px;
             }
 
             @media print {
@@ -76,7 +72,7 @@
     </head>
     <body>
         <div class="ticket">
-            <p class="centered fs-13" style="margin-top: 30px;"><b>E-RESEP</b>
+            <p class="centered fs-11" style="margin-top: 30px;"><b>E-RESEP</b>
                 <b><br>Rumah Sakit Jiwa Grhasia</b>
                 <br>Jl. Kaliurang KM.17, Pakembinangun, Kec. Pakem, Kab. Sleman, DIY
             </p>
@@ -148,6 +144,89 @@
                     <?php } ?>
                     <tr style="height: 10px;"><td></td></tr>
                 </tbody>
+            </table>
+            <table style="margin-left: 20px;">
+                <tbody>
+                    <tr>
+                        <td class="price fs-9"><strong>Status Pembiayaan</strong></td>
+                        <td class="description fs-9" style="text-align: left">: {{ $raw->kelompokpasien }}</td>
+                        <td style="width: 10px;"><strong></strong></td>
+                        <td class="price fs-9"><strong>Sumber Resep</strong></td>
+                        <td class="description fs-9" style="text-align: left">: {{ $raw->ruangantujuan }}</td>
+                    </tr>
+                    <tr>
+                        <td class="price fs-9"><strong>No. Rekam Medik</strong></td>
+                        <td class="description fs-9" style="text-align: left">: {{ $raw->nocm }}</td>
+                        <td style="width: 10px;"><strong></strong></td>
+                        <td class="price fs-9"><strong>Tanggal Resep</strong></td>
+                        <td class="description fs-9" style="text-align: left">: {{ $raw->tglorder }}</td>
+                    </tr>
+                    <tr>
+                        <td class="price fs-9"><strong>Nama Pasien</strong></td>
+                        <td class="description fs-9" style="text-align: left">: {{ $raw->namapasien }}</td>
+                        <td style="width: 10px;"><strong></strong></td>
+                        <td class="price fs-9"><strong>Nama Dokter</strong></td>
+                        <td class="description fs-9" style="text-align: left">: {{ $raw->namalengkap }}</td>
+                    </tr>
+                    <tr>
+                        <td class="price fs-9"><strong>Tgl Lahir</strong></td>
+                        <td class="description fs-9" style="text-align: left">: {{ $raw->tgllahir }}</td>
+                        <td style="width: 10px;"><strong></strong></td>
+                        <td class="price fs-9"><strong>Jenis Kelamin</strong></td>
+                        <td class="description fs-9" style="text-align: left">: {{ $raw->jeniskelamin }}</td>
+                    </tr>
+                    <tr>
+                        <td class="price fs-9"><strong>Alergi</strong></td>
+                        <td class="description fs-9" style="text-align: left">: {{ $raw->alergi }}</td>
+                        <td style="width: 10px;"><strong></strong></td>
+                        <td class="price fs-9"><strong>Ruangan Asal</strong></td>
+                        <td class="description fs-9" style="text-align: left">: {{ $raw->ruanganasal }}</td>
+                    </tr>
+                    <tr style="height: 10px;"><td></td></tr>
+                    <tr>
+                        <td class="price fs-9"><strong></strong></td>
+                        <td class="description fs-9" style="text-align: left"></td>
+                        <td style="width: 10px;"><strong></strong></td>
+                        <td class="price fs-9"><strong></strong></td>
+                        <td class="price fs-9" style="text-align: center">Tanda Tangan Penerima</td>
+                    </tr>
+                    <tr style="height: 30px;"><td></td></tr>
+                    <tr>
+                        <td class="price fs-9"><strong></strong></td>
+                        <td class="description fs-9" style="text-align: left"></td>
+                        <td style="width: 10px;"><strong></strong></td>
+                        <td class="price fs-9"><strong></strong></td>
+                        <td class="price fs-9" style="text-align: center">(...............)</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p class="centered fs-11" style="margin-top: -10px;">------Petugas Farmasi-----</p>
+            <table style="margin-left: 20px;">
+                <thead>
+                    <tr>
+                        <td class="description fs-9" style="text-align: center; border: 1px solid black;">
+                            Penerima
+                            <br><br><br><br><br>
+                            ............
+                        </td>
+                        <td class="description fs-9" style="text-align: center; border: 1px solid black;">
+                            Penelaah Resep
+                            <br><br><br><br><br>
+                            ............
+                        </td>
+                        <td class="description fs-9" style="text-align: center; border: 1px solid black;">
+                            Peracik dan Penelaah Obat
+                            <br><br><br><br>
+                            ............
+                        </td>
+                        <td class="description fs-9" style="text-align: center; border: 1px solid black;">
+                            Penyerahan dan Informasi
+                            <br><br><br><br>
+                            ............
+                        </td>
+                    </tr>
+                    
+                </thead>
             </table>
         </div>
     </body>
