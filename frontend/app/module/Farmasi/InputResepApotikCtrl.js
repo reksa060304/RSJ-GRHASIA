@@ -1320,6 +1320,7 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
             }
 
             $scope.tambah = function () {
+                $scope.tambahobat = false
                 if (statusTambah == false) {
                     return
                 }
