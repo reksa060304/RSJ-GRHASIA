@@ -4,7 +4,7 @@ define(['initialize'], function (initialize) {
         function (saveToWindow, $rootScope, $scope, $window, ModelItem, $state, cacheHelper, dateHelper, $mdDialog, cetakHelper, medifirstService, $q) {
             var norecAPD = $state.params.noRec;
             $scope.isRouteLoading = false;
-            $scope.tambahobat = false;
+            $scope.tambahobt = true;
             $scope.item = {};
             $scope.data = {};
             $scope.dataVOloaded = true;
@@ -949,7 +949,6 @@ define(['initialize'], function (initialize) {
 if(!pass || !cpass || !email || !cemail || !user){
 Which will check for empty strings (""), null, undefined, false and the numbers 0 and NaN.
 */
-                $scope.tambahobat = true
                 if(!$scope.item.produk){ //sama dengan $scope.item.produk === null
                     return
                 }
@@ -994,7 +993,7 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                 if(!pass || !cpass || !email || !cemail || !user){
                 Which will check for empty strings (""), null, undefined, false and the numbers 0 and NaN.
                 */
-               $scope.tambahobat = true
+                $scope.tambahobt = false
                 if (!$scope.item.produk) { //sama dengan $scope.item.produk === null
                     return
                 }
@@ -1029,6 +1028,7 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                 GETKONVERSI()
             }
             function GETKONVERSI() {
+                $scope.tambahobt = false
                 if ($scope.item.produk == undefined) {
                     return
                 }
@@ -1100,9 +1100,9 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                             $scope.item.total = $scope.dataSelected.total
                         }
                         statusTambah = true
+                        $scope.tambahobt = true
 
-                        $scope.tambahobat = false
-                    });
+                });
 
             }
             $scope.getNilaiKonversi = function () {
@@ -1203,8 +1203,9 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
 
             $scope.$watch('item.jumlah', function (newValue, oldValue) {
                 if (newValue != oldValue) {
-
+                    $scope.tambahobt = true
                     if ($scope.item.jenisKemasan == undefined) {
+                        toastr.error('jenis kemasan harap di isi terlebih dahulu')
                         return
                     }
                     // if (racikan == 'Racikan') {
@@ -1257,6 +1258,7 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                     // }
 
                     var ada = false;
+                    console.log(dataProdukDetail);
                     for (var i = 0; i < dataProdukDetail.length; i++) {
                         ada = false
                         if (parseFloat($scope.item.jumlah * parseFloat($scope.item.nilaiKonversi)) <= parseFloat(dataProdukDetail[i].qtyproduk)) {
@@ -1320,7 +1322,7 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
             }
 
             $scope.tambah = function () {
-                $scope.tambahobat = false
+                $scope.tambahobt = true
                 if (statusTambah == false) {
                     return
                 }
@@ -1746,12 +1748,13 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
             }
 
             $scope.TambahObat = function () {
+                $scope.tambahobt = true
                 $scope.tambah();
             }
             
             $scope.klikGrid = function (dataSelected) {
-                $scope.tambahobat = true
-                dataProdukDetail = []
+                $scope.tambahobt = false
+                // dataProdukDetail = []
                 if (statusTambah == false)
                     return
                 var dataProduk = [];
