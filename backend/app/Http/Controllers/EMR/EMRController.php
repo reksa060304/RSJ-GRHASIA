@@ -13324,10 +13324,10 @@ class EMRController  extends ApiController
             FROM pelayananpasien_t pp 
             inner join strukresep_t sr on sr.norec = pp.strukresepfk
             inner join strukorder_t so on sr.orderfk = so.norec
-            inner join orderpelayanan_t op on op.noorderfk = sr.orderfk and op.rke = pp.rke and pp.produkfk = op.objectprodukfk
-            inner join produk_m pr on pr.id = pp.produkfk
-            inner join jenisracikan_m jr on jr.id = op.jenisobatfk
-            where so.norec ilike '$request[norec_order]'
+            left join orderpelayanan_t op on op.noorderfk = sr.orderfk and op.rke = pp.rke and pp.produkfk = op.objectprodukfk
+            left join produk_m pr on pr.id = pp.produkfk
+            left join jenisracikan_m jr on jr.id = op.jenisobatfk
+            where so.norec ilike '$request[norec_order]' and pp.isobat = true
             ORDER BY op.rke asc, ROW_NUMBER()over(partition by op.rke order by op.rke) desc
             "));
         $result = array(
