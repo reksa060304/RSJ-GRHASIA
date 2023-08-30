@@ -7477,6 +7477,7 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
                 ap.id idasalproduk, ap.asalproduk, sr.objectbkufk
                 from strukrealisasi_t sr
                 inner join realisasidetail_t rd on rd.strukrealisasifk = sr.norec
+
                 left join asalproduk_m ap on ap.id = sr.objectasalprodukfk
                 left JOIN kegiatananggaran_m ka on ka.id=sr.objectkegiatanfk
                 and ka.kdprofile = 30 and ka.statusenabled=true
@@ -7495,27 +7496,62 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
                 $status
 				group by dp0.kode, dp0.keterangan, sr.norec, cbs.carabayar, sr.tglverif, sr.keterangan, sr.jumlahdibayarverif, sr.kdprofile, sr.statusenabled, sr.tglrealisasi, sr.norealisasi, sr.status, sr.totalbelanja, sr.objectcarabayarfk, sr.rekananfk, sr.deskripsi, sr.objectkegiatanfk, sr.objectmataanggaranfk, sr.bendaharafk, sr.penerimafk, sr.pph, sr.ppn, pg1.namalengkap, pg2.namalengkap, rkn.namarekanan ,
                 ka.kode || '~' || ka.keterangan, ma.kodemataanggaran || '~' || ma.namamataanggaran, ka.tahun, ma.kodemataanggaran, ma.namamataanggaran, dp0.id, ka.keterangan, ka.id, ap.id, ap.asalproduk, sr.objectbkufk
-                order by sr.norealisasi asc
+                order by sr.norealisasi desc
             ")
         );
         $result = [];
         $strukrealisasifk ='';
-        foreach($data as $item){
-            $strukrealisasifk= $item->norec;
-            $dataDetail = DB::select(DB::raw("
-                    select sr.*,ka.keteranganbelanja,0 as nourut
-                    from realisasidetail_t sr
-                    INNER JOIN keteranganbelanja_t ka on ka.norec=sr.keteranganbelanjafk
-                    where sr.strukrealisasifk = '$strukrealisasifk'
-                    and sr.statusenabled = true
-                    and sr.kdprofile = 30
+        $dataDetail = DB::select(DB::raw("
+                    select rd.*,ka.keteranganbelanja,0 as nourut
+                    from strukrealisasi_t sr
+                inner join realisasidetail_t rd on rd.strukrealisasifk = sr.norec
+                    INNER JOIN keteranganbelanja_t ka on ka.norec=rd.keteranganbelanjafk
+                    where  rd.statusenabled = true
+                    and rd.kdprofile = 30
                     and ka.statusenabled = true
                     and ka.kdprofile = 30
+                    and sr.tglrealisasi between  '$tglAwal' and '$tglAkhir'
                 ")
             );
+        $dataDetail1=[];
+        foreach($data as $item){
+            // $strukrealisasifk= ;
+            $dataDetail1 =[];
+            foreach($dataDetail as $detail){
+                if($item->norec == $detail->strukrealisasifk){
+                    $dataDetail1[]=array(
+                        'norec'=> $detail->norec,
+                        'kdprofile'	=> $detail->kdprofile,
+                        'statusenabled'	=> $detail->statusenabled,
+                        'strukrealisasifk'	=> $detail->strukrealisasifk,
+                        'uraian'	=> $detail->uraian,
+                        'jml'	=> $detail->jml,
+                        'satuan'	=> $detail->satuan,
+                        'harga'	=> $detail->harga,
+                        'subtotal'	=> $detail->subtotal,
+                        'keteranganbelanjafk'	=> $detail->keteranganbelanjafk,
+                        'keteranganbelanja'	=> $detail->keteranganbelanja,
+                        'nourut'	=> $detail->nourut
+                    );
+                    // break;
+                }
+                
+            }
+            
+            // $dataDetail = DB::select(DB::raw("
+            //         select sr.*,ka.keteranganbelanja,0 as nourut
+            //         from realisasidetail_t sr
+            //         INNER JOIN keteranganbelanja_t ka on ka.norec=sr.keteranganbelanjafk
+            //         where sr.strukrealisasifk = '$strukrealisasifk'
+            //         and sr.statusenabled = true
+            //         and sr.kdprofile = 30
+            //         and ka.statusenabled = true
+            //         and ka.kdprofile = 30
+            //     ")
+            // );
             $result[] = array(
-                'strukrealisasifk' => $strukrealisasifk,
-                'data' => $dataDetail,
+                'strukrealisasifk' => $item->norec,
+                'data' => $dataDetail1,
             );
         };
 
