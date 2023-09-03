@@ -955,7 +955,7 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                 if(($scope.item.namaProduks == $scope.item.produk.namaproduk) && ($scope.item.namaRuangans == $scope.item.ruangan.namaruangan)){
                     return
                 }   
-
+                dataProdukDetail = []
                 /* info stok all ruangan */
                 medifirstService.get("farmasi/get-info-stok?produkfk=" + $scope.item.produk.id, true)
                     .then(function (e) {
@@ -983,23 +983,24 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
 
                 GETKONVERSI()
             }
-            $scope.$watch('item.produk', function(newValue, oldValue){
-                if (newValue != oldValue) {
-                    getSatuan()
-                }
-            })
+            // $scope.$watch('item.produk', function(newValue, oldValue){
+            //     if (newValue != oldValue) {
+            //         getSatuan()
+            //     }
+            // })
             function getSatuan() {
                 /*
                 if(!pass || !cpass || !email || !cemail || !user){
                 Which will check for empty strings (""), null, undefined, false and the numbers 0 and NaN.
                 */
-                $scope.tambahobt = false
+                    $scope.item.jumlah = 0
                 if (!$scope.item.produk) { //sama dengan $scope.item.produk === null
                     return
                 }
                 if (($scope.item.namaProduks == $scope.item.produk.namaproduk) && ($scope.item.namaRuangans == $scope.item.ruangan.namaruangan)) {
                     return
                 }
+                dataProdukDetail = []
 
                 /* info stok all ruangan */
                 medifirstService.get("farmasi/get-info-stok?produkfk=" + $scope.item.produk.id, true)
@@ -1028,7 +1029,7 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                 GETKONVERSI()
             }
             function GETKONVERSI() {
-                $scope.tambahobt = false
+                $scope.isRouteLoading = true
                 if ($scope.item.produk == undefined) {
                     return
                 }
@@ -1063,6 +1064,7 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                     "produkfk=" + $scope.item.produk.id +
                     "&ruanganfk=" + $scope.item.ruangan.id +
                     "&kpid=" + $scope.item.kpid, true).then(function (dat) {
+
                         dataProdukDetail = dat.data.detail;
                         $scope.item.stok = dat.data.jmlstok / $scope.item.nilaiKonversi
                         if (dat.data.kekuatan == undefined || dat.data.kekuatan == 0 || dat.data.kekuatan == "") {
@@ -1088,6 +1090,7 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                             // $scope.item.jumlah = 0
                             
                             $scope.item.jumlah = $scope.dataSelected.jumlah
+                            console.log($scope.dataSelected.jumlah);
                             $scope.item.jumlahbulat = $scope.dataSelected.jumlah//Math.ceil($scope.dataSelected.jumlah);
                             $scope.item.dosis = $scope.dataSelected.dosis
                             $scope.item.jumlahxmakan = (parseFloat($scope.item.jumlah) / parseFloat($scope.item.dosis)) * parseFloat($scope.item.kekuatan)
@@ -1101,6 +1104,7 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                         }
                         statusTambah = true
                         $scope.tambahobt = true
+                        $scope.isRouteLoading = false
 
                 });
 
@@ -1154,6 +1158,7 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
             //     $scope.tombolSimpanVis = true
             // });
             $scope.$watch('item.jumlahxmakan', function (newValue, oldValue) {
+                console.log('masuk kesini');
                 if (newValue != oldValue) {
                     if ($scope.item.stok > 0) {
                         // $scope.item.jumlah = parseFloat($scope.item.jumlahxmakan) * parseFloat($scope.item.dosis)
@@ -1259,6 +1264,7 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
 
                     var ada = false;
                     console.log(dataProdukDetail);
+                    console.log($scope.item.jumlah);
                     for (var i = 0; i < dataProdukDetail.length; i++) {
                         ada = false
                         if (parseFloat($scope.item.jumlah * parseFloat($scope.item.nilaiKonversi)) <= parseFloat(dataProdukDetail[i].qtyproduk)) {
@@ -1748,13 +1754,13 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
             }
 
             $scope.TambahObat = function () {
-                $scope.tambahobt = true
+                // $scope.tambahobt = true
                 $scope.tambah();
             }
             
             $scope.klikGrid = function (dataSelected) {
                 $scope.tambahobt = false
-                // dataProdukDetail = []
+                dataProdukDetail = []
                 if (statusTambah == false)
                     return
                 var dataProduk = [];
@@ -1845,7 +1851,6 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                     }
                 }
                 $scope.item.produk = dataProduk//{id:dataSelected.produkfk,namaproduk:dataSelected.namaproduk}
-                console.log($scope.item.produk);
                 // $scope.item.stok = dataSelected.jmlstok //* $scope.item.nilaiKonversi
 
                 // $scope.item.jumlah = dataSelected.jumlah
