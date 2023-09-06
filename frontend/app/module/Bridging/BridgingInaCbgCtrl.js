@@ -4606,7 +4606,7 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 				var local = JSON.parse(localStorage.getItem('profile'))
 				var nama = medifirstService.getPegawaiLogin().namaLengkap
 
-				window.open(configuration.baseApiBackend + 'report/cetak-ringkasanrajal?nocm=' + $scope.dataPasienSelected.nocm +
+				window.open(configuration.baseApiBackend + 'report/cetak-monitoringjamkes?nocm=' + $scope.dataPasienSelected.nocm +
 					'&norec_pd=' + $scope.dataPasienSelected.norec +
 					// '&emr=' + norecEMR +
 					// '&emrfk=' + $scope.cc.emrfk +

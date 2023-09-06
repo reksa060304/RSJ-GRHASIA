@@ -2014,6 +2014,8 @@ class ReportController extends ApiController{
         $cetakan = '';
         if(isset($r['ctk']) && $r['ctk'] == 'rr'){
             $cetakan = 'RINGKASAN RAWAT JALAN';
+        } else if(isset($r['ctk']) && $r['ctk'] == 'mj'){
+            $cetakan = 'FORM MONITORING JAMINAN RAWAT JALAN';
         }else{
             $cetakan = 'RESUME MEDIS';  
         }
