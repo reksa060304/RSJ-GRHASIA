@@ -14468,12 +14468,13 @@ public function suratBuktiPengembalian(Request $request)
         $norec = $request['emr'];
         $kdProfile = (int) $request['kdprofile'];
         $pasien = collect(DB::select("
-            select  pg.namalengkap, apd.statuskunjungan, kp.kelompokpasien, ps.nocm, ps.namapasien, to_char(ps.tgllahir,'dd-MM-yyyy') as tgllahir,
+            select pa.nosep,  pg.namalengkap, apd.statuskunjungan, kp.kelompokpasien, ps.nocm, ps.namapasien, to_char(ps.tgllahir,'dd-MM-yyyy') as tgllahir,
 			       CASE WHEN ps.objectjeniskelaminfk=1 then 'L' else 'P' END as jk,
                    to_char(pd.tglregistrasi,'dd-MM-yyyy hh24:mi:ss') as tglregistrasi,rm.namaruangan,
                    al.alamatlengkap,al.kecamatan,al.kotakabupaten
             from antrianpasiendiperiksa_t apd
             inner join pasiendaftar_t pd on pd.norec = apd.noregistrasifk
+            inner join pemakaianasuransi_t pa on pa.noregistrasifk = pd.norec
             inner join pasien_m ps on ps.id = pd.nocmfk
             inner join alamat_m as al on al.nocmfk=ps.id
             inner join ruangan_m as rm on rm.id = apd.objectruanganfk and pd.objectruanganlastfk = apd.objectruanganfk

@@ -208,15 +208,15 @@
                                         <td style="white-space: pre-wrap;vertical-align: top; font-size: 10pt">{{$i['instruksi'] }}</td>
                                         <td style="white-space: pre-wrap;vertical-align: top; font-size: 10pt">{{$i['review'] }} <br> <br> <p>{{$i['tgldpjp'] }} <br> {{$i['ttddpjp'] }}</p></td>
                                     </tr>
-                                    {{-- @if (isset($item[22034969]))
+                                    @if ($i['tgljam2'] != '' && $i['jenisppa2'] == 'Dokter')
                                     <tr>
-                                        <td style="white-space: pre-wrap;vertical-align: top; font-size: 10pt">{{isset($item[22034970]) ? $item[22034970] : '' }}</td>
-                                        <td style="white-space: pre-wrap;vertical-align: top; font-size: 10pt">{{isset($item[22034971]) ? $item[22034971] : '' }}</td>
-                                        <td style="white-space: pre-wrap;vertical-align: top; font-size: 10pt">{{isset($item[22034972]) ? $item[22034972] : '' }} <br> <br> {{isset($item[22034973]) ? $item[22034973] : '' }}</td>
-                                        <td style="white-space: pre-wrap;vertical-align: top; font-size: 10pt">{{isset($item[22034974]) ? $item[22034974] : '' }}</td>
-                                        <td style="white-space: pre-wrap;vertical-align: top; font-size: 10pt">{{isset($item[22034975]) ? $item[22034975] : '' }} <br> <br> <p>{{isset($item[22034976]) ? $item[22034976] : '' }} <br> {{isset($item[22034968]) ? $item[22034968] : '' }}</p></td>
+                                        <td style="white-space: pre-wrap;vertical-align: top; font-size: 10pt">{{$i['tgljam2'] }}</td>
+                                        <td style="white-space: pre-wrap;vertical-align: top; font-size: 10pt">{{$i['jenisppa2'] }}</td>
+                                        <td style="white-space: pre-wrap;vertical-align: top; font-size: 10pt">{{$i['soap2'] }} <br> <br> {{$i['tenagamedis2'] }}</td>
+                                        <td style="white-space: pre-wrap;vertical-align: top; font-size: 10pt">{{$i['instruksi2'] }}</td>
+                                        <td style="white-space: pre-wrap;vertical-align: top; font-size: 10pt">{{$i['review2'] }} <br> <br> <p>{{$i['tgldpjp2'] }} <br> {{$i['ttddpjp2'] }}</p></td>
                                     </tr>
-                                    @endif --}}
+                                    @endif
                                 
                                     
                                 @endforeach

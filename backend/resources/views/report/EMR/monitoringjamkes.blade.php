@@ -184,6 +184,13 @@
                                     <td height="5" width="2%" style="border: none;"><font size="1">:</font></td>
                                     <td height="5" width="58%" style="border: none;"><font style="font-size: 10pt;" color="#000000">{{$dataReport->statuskunjungan}}</font></td>
                                 </tr>
+                                <tr>
+                                    <td height="5" width="40%" style="border: none;">
+                                        <font style="font-size: 10pt;" color="#000000" >&nbsp;&nbsp;NO. SEP</font>
+                                    </td>
+                                    <td height="5" width="2%" style="border: none;"><font size="1">:</font></td>
+                                    <td height="5" width="58%" style="border: none;"><font style="font-size: 10pt;" color="#000000">{{$dataReport->nosep}}</font></td>
+                                </tr>
                             </table>
                         </td>
                     </tr>
@@ -332,7 +339,7 @@ var baseUrl =
         $(function () {
             'use strict';
         $('#qrDokter').qrcode({
-            text: baseUrl + "/service/medifirst2000/report/cetak-dokter?reg={{$noregistrasi}}&ctk=rr",
+            text: baseUrl + "/service/medifirst2000/report/cetak-dokter?reg={{$noregistrasi}}&ctk=mj",
             height: 75,
             width: 75
         });
