@@ -1991,7 +1991,7 @@ class ReportController extends ApiController{
     public function cetakDokter(Request $r) {
         $kdProfile = (int)$r['kdprofile'];
         $raw = collect(DB::select("
-            SELECT pg.nip, pg.nosip,pg.namalengkap, jk.jeniskelamin, pg.tgllahir, ps.namapasien, ps.nocm, to_char( rm.tglresume, 'dd-MM-yyyy') AS tglresume
+            SELECT pg.nip, pg.nosip,pg.namalengkap, jk.jeniskelamin, pg.tgllahir, ps.namapasien, ps.nocm, to_char( apd.tglmasuk, 'dd-MM-yyyy') AS tglresume
             FROM pasiendaftar_t AS pd
             LEFT  JOIN antrianpasiendiperiksa_t AS apd ON apd.noregistrasifk=pd.norec
             LEFT JOIN resumemedis_t AS rm ON rm.noregistrasifk=apd.norec
