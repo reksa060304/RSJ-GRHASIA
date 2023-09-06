@@ -328,6 +328,29 @@
 <script type="text/javascript">
 var baseUrl =
         {!! json_encode(url('/')) !!}
+        var angular = angular.module('angularApp', [], function ($interpolateProvider) {
+            $interpolateProvider.startSymbol('@{{');
+            $interpolateProvider.endSymbol('}}');
+        }).factory('httpService', function ($http, $q) {
+            return {
+                get: function (url) {
+                    // $("#showLoading").show()
+                    var deffer = $q.defer();
+                    $http.get(baseUrl + '/' + url, {
+                        headers: {
+                            'Content-Type': 'application/json',
+                        }
+                    }).then(function successCallback(response) {
+                        deffer.resolve(response);
+                        // $("#showLoading").hide()
+                    }, function errorCallback(response) {
+                        deffer.reject(response);
+                        // $("#showLoading").hide()
+                    });
+                    return deffer.promise;
+                },
+            }
+        })
         $(function () {
             'use strict';
         $('#qrDokter').qrcode({
