@@ -2012,11 +2012,10 @@ class ReportController extends ApiController{
         $pageWidth = 950;
         $now =  $this->getDateTime();
         $cetakan = '';
-        if(isset($r['cetakan'])){
-            $cetakan = $r['cetakan'];
+        if(isset($r['ctk']) && $r['cetakan'] == 'rr'){
+            $cetakan = 'RINGKASAN RAWAT JALAN';
         }else{
-            $cetakan = 'RESUME MEDIS';
-
+            $cetakan = 'RESUME MEDIS';  
         }
         return view('report.pdf.infodokter',
             compact('raw', 'pageWidth','r','now','cetakan'));
@@ -13345,7 +13344,7 @@ public function suratBuktiPengembalian(Request $request)
         $norec = $request['emr'];
         $kdProfile = (int) $request['kdprofile'];
         $pasien = collect(DB::select("
-            select pd.noregistrasi, pg.namalengkap, apd.statuskunjungan, kp.kelompokpasien, ps.nocm, ps.namapasien, to_char(ps.tgllahir,'dd-MM-yyyy') as tgllahir,
+            select  pg.namalengkap, apd.statuskunjungan, kp.kelompokpasien, ps.nocm, ps.namapasien, to_char(ps.tgllahir,'dd-MM-yyyy') as tgllahir,
 			       CASE WHEN ps.objectjeniskelaminfk=1 then 'L' else 'P' END as jk,
                    to_char(pd.tglregistrasi,'dd-MM-yyyy hh24:mi:ss') as tglregistrasi,rm.namaruangan,
                    al.alamatlengkap,al.kecamatan,al.kotakabupaten
@@ -13486,6 +13485,7 @@ public function suratBuktiPengembalian(Request $request)
                 'ttddpjp2'=>$ttddpjp2,
             );
         }
+        
         // dd($details);
 
         $diagnosa = DB::select(DB::raw("SELECT dg.namadiagnosa, dg.kddiagnosa, ddp.objectjenisdiagnosafk FROM detaildiagnosapasien_t ddp 
@@ -13550,7 +13550,7 @@ public function suratBuktiPengembalian(Request $request)
                 'konsultasi' => $konsultasi,
                 'dataReport' => $pasien,
                 'item'=> $details,
-                // 'peg'=> $peg
+                'noregistrasi'=> $request['noregistrasi']
     ]);
     }
     public function cetakCPPTRanapRev(Request $request){
