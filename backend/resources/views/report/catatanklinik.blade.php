@@ -252,7 +252,7 @@
                         </td>
                         <td style="text-align: center">&nbsp;</td>
                         <td style="text-align: center"><span style="font-weight: bold;color: #ccc">Ditandatangani secara elektronik</span>
-                            <br>{!! $res['pegawai']['pegawai'] !!}
+                            <br>{!! $res['d'][0]->namadokter !!}
                         </td>
                     </tr>
 

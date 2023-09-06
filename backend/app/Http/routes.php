@@ -431,10 +431,13 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
               Route::post('bridging/penunjang/save-hapus-order-rad', 'Bridging\BridgingPenunjangController@saveHapusOrderRad');
               Route::get('registrasi/get-nocm-terakhir', 'Registrasi\RegistrasiController@getNoRMTerakhir');
               Route::get('registrasi/get-laporan-sensus-rs','Registrasi\RegistrasiController@getLaporanSensus');
+              Route::get('registrasi/get-laporan-sensus-bangsal','Registrasi\RegistrasiController@getLaporanSensusBangsal');
               Route::post('registrasi/update-nocm', 'Registrasi\RegistrasiController@updateNORM');
           Route::get('api/trigger-telemedicine', 'Bridging\DokterKeluargaController@sendPHR');
               Route::get('registrasi/get-pasienawal-rs','Registrasi\RegistrasiController@getCoba');
+              Route::get('registrasi/get-pasienawal-bangsal','Registrasi\RegistrasiController@getCobaBangsal');
               Route::post('registrasi/post-pasienawal-rs','Registrasi\RegistrasiController@savePasienAwal');
+              Route::post('registrasi/post-pasienawal-bangsal','Registrasi\RegistrasiController@savePasienAwalBangsal');
               Route::get('bridging/penunjang/get-hasil-vans-lab', 'Bridging\BridgingPenunjangController@getHasilLaborat');
             // });
             // Route::group(['prefix' => 'dukcapil'], function () {
