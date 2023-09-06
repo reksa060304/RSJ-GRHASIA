@@ -354,7 +354,7 @@ var baseUrl =
         $(function () {
             'use strict';
         $('#qrDokter').qrcode({
-            text: baseUrl + '/service/medifirst2000/report/cetak-dokter?reg=' + {{ $dataReport->noregistrasi }}+'&cetakan=RINGKASAN RAWAT JALAN' ,
+            text: baseUrl + '/serice/medifirst2000/report/cetak-dokter?reg=' + {{ $dataReport->noregistrasi }}+'&cetakan=RINGKASAN RAWAT JALAN' ,
             height: 75,
             width: 75
         });
