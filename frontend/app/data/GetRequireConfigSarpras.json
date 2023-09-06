@@ -1269,6 +1269,10 @@
         {
             "nameDep": "sensusRSCtrl",
             "urlDep": "module/Registrasi/sensusRSCtrl"
+        },
+        {
+            "nameDep": "sensusBangsalCtrl",
+            "urlDep": "module/Registrasi/sensusBangsalCtrl"
         }
     ]
 }
