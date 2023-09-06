@@ -2012,7 +2012,7 @@ class ReportController extends ApiController{
         $pageWidth = 950;
         $now =  $this->getDateTime();
         $cetakan = '';
-        if(isset($r['ctk']) && $r['cetakan'] == 'rr'){
+        if(isset($r['ctk']) && $r['ctk'] == 'rr'){
             $cetakan = 'RINGKASAN RAWAT JALAN';
         }else{
             $cetakan = 'RESUME MEDIS';  
