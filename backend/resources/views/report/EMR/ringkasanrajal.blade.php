@@ -5,12 +5,12 @@
 <head>
     <meta charset="utf-8">
     <title>Resume Medis</title>
-        <link rel="stylesheet" href="css/report/paper.css">
+        {{-- <link rel="stylesheet" href="css/report/paper.css">
         <link rel="stylesheet" href="css/report/table.css">
         <link rel="stylesheet" href="css/report/tabel.css">
         <link href="css/style.css" rel="stylesheet">
         <script src="js/jquery.min.js"></script>
-    <script src="js/jquery.qr-code.js"></script>
+    <script src="js/jquery.qr-code.js"></script> --}}
 
         <!-- angular -->
         @if(stripos(\Request::url(), 'localhost') !== FALSE)
