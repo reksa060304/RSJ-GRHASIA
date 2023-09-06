@@ -1055,8 +1055,8 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
 
                 // $scope.item.jumlah = 0
                 // $scope.item.jumlahbulat = 0;
-                $scope.item.dosis = 1
-                $scope.item.jumlahxmakan = 1
+                // $scope.item.dosis = 1
+                // $scope.item.jumlahxmakan = 1
                 statusTambah = false
                 $scope.HargaMaster = -1;
                 dataProdukDetail = []
@@ -1070,7 +1070,7 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                         if (dat.data.kekuatan == undefined || dat.data.kekuatan == 0 || dat.data.kekuatan == "") {
                             dat.data.kekuatan = 1
                         }
-                        $scope.item.kekuatan = dat.data.kekuatan
+                        $scope.item.kekuatan = parseFloat(dat.data.kekuatan)
                         $scope.item.sediaan = dat.data.sediaan
                         $scope.consis = dat.data.consis;
                         if (dataProdukDetail.length > 0){
@@ -1088,12 +1088,10 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                         // $scope.item.jumlahxmakan =1
                         if ($scope.dataSelected != undefined) {
                             // $scope.item.jumlah = 0
-                            
-                            $scope.item.jumlah = $scope.dataSelected.jumlah
-                            console.log($scope.dataSelected.jumlah);
+                            $scope.item.jumlah = parseFloat($scope.dataSelected.jumlah)
                             $scope.item.jumlahbulat = $scope.dataSelected.jumlah//Math.ceil($scope.dataSelected.jumlah);
-                            $scope.item.dosis = $scope.dataSelected.dosis
-                            $scope.item.jumlahxmakan = (parseFloat($scope.item.jumlah) / parseFloat($scope.item.dosis)) * parseFloat($scope.item.kekuatan)
+                            $scope.item.dosis = parseFloat($scope.dataSelected.dosis)
+                            $scope.item.jumlahxmakan = ((parseFloat($scope.item.jumlah) / parseFloat($scope.item.dosis)) * parseFloat($scope.item.kekuatan)).toFixed()
                             $scope.item.nilaiKonversi = $scope.dataSelected.nilaikonversi
                             //$scope.item.satuan = { ssid: $scope.dataSelected.satuanviewfk, satuanstandar: $scope.dataSelected.satuanview }
                             $scope.HargaMaster = $scope.dataSelected.hargasatuan
@@ -1101,6 +1099,7 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                             $scope.item.hargadiskon = $scope.dataSelected.hargadiscount
                             $scope.item.hargaNetto = $scope.dataSelected.harganetto
                             $scope.item.total = $scope.dataSelected.total
+                            // return
                         }
                         statusTambah = true
                         $scope.tambahobt = true
@@ -1759,7 +1758,6 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
             }
             
             $scope.klikGrid = function (dataSelected) {
-                $scope.tambahobt = false
                 dataProdukDetail = []
                 if (statusTambah == false)
                     return
