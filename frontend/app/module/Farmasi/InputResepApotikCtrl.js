@@ -1091,7 +1091,7 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                             $scope.item.jumlah = parseFloat($scope.dataSelected.jumlahobat)
                             $scope.item.jumlahbulat = Math.ceil($scope.dataSelected.jumlah);
                             $scope.item.dosis = parseFloat($scope.dataSelected.dosis)
-                            $scope.item.jumlahxmakan = ((parseFloat($scope.item.jumlah) / parseFloat($scope.item.dosis)) * parseFloat($scope.item.kekuatan))
+                            $scope.item.jumlahxmakan = ((parseFloat($scope.item.jumlah) / parseFloat($scope.item.dosis)) * parseFloat($scope.item.kekuatan)).toFixed(2)
                             $scope.item.nilaiKonversi = $scope.dataSelected.nilaikonversi
 
                             //$scope.item.satuan = { ssid: $scope.dataSelected.satuanviewfk, satuanstandar: $scope.dataSelected.satuanview }
