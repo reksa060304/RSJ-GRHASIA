@@ -1052,7 +1052,7 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                 // }
 
 
-
+                $scope.item.diskonTotalPersen = 0
                 $scope.item.jumlah = 0
                 $scope.item.jumlahbulat = 0;
                 $scope.item.dosis = 1
@@ -1199,6 +1199,7 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
             });
 
             $scope.$watch('item.hargadiskon', function (newValue, oldValue) {
+                // debugger
                 if (newValue != oldValue) {
                     hrgsdk = $scope.item.hargadiskon
                     $scope.item.total = (parseFloat($scope.item.jumlahbulat) * (hrg1 - hrgsdk)) + parseFloat(tarifJasa)
@@ -1288,8 +1289,16 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                         $scope.item.hargadiskon = 0
                         $scope.item.hargaNetto = 0
                         $scope.item.total = 0
-
                         noTerima = ''
+                        if($scope.dataSelected != undefined){
+                            $scope.HargaMaster = $scope.dataSelected.hargasatuan
+                            $scope.item.hargaSatuan = $scope.dataSelected.hargasatuan
+                            $scope.item.hargadiskon = $scope.dataSelected.hargadiscount
+                            $scope.item.hargaNetto = $scope.dataSelected.harganetto
+                            $scope.item.total = $scope.dataSelected.total
+                            hrg1 = $scope.dataSelected.hargasatuan
+                            noTerima = $scope.dataSelected.nostrukterimafk
+                        }
                         if (dataProdukDetail.length > 1) {
                             var stt = 'false'
                             if (confirm('Struk Penerimaan berbeda, merge/satukan stok? ')) {
@@ -3146,6 +3155,7 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
             };
 
             $scope.getNilaiPersenDiskon = function () {
+                // debugger
                 $scope.item.hargadiskon = 0;
                 if ($scope.item.diskonTotalPersen > 0) {
                     var diskon = (parseFloat($scope.item.hargaSatuan) * parseFloat($scope.item.diskonTotalPersen)) / 100
@@ -3155,6 +3165,7 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
             }
 
             $scope.getTotalDiskon = function () {
+                // debugger
                 $scope.item.diskonTotalPersen = 0;
                 if ($scope.item.hargadiskon > 0) {
                     var diskon = (parseFloat($scope.item.hargadiskon) * 100) / parseFloat($scope.item.hargaSatuan)
