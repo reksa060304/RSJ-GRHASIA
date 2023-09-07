@@ -1053,10 +1053,10 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
 
 
 
-                // $scope.item.jumlah = 0
-                // $scope.item.jumlahbulat = 0;
-                // $scope.item.dosis = 1
-                // $scope.item.jumlahxmakan = 1
+                $scope.item.jumlah = 0
+                $scope.item.jumlahbulat = 0;
+                $scope.item.dosis = 1
+                $scope.item.jumlahxmakan = 1
                 statusTambah = false
                 $scope.HargaMaster = -1;
                 dataProdukDetail = []
@@ -1088,11 +1088,12 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                         // $scope.item.jumlahxmakan =1
                         if ($scope.dataSelected != undefined) {
                             // $scope.item.jumlah = 0
-                            $scope.item.jumlah = parseFloat($scope.dataSelected.jumlah)
-                            $scope.item.jumlahbulat = $scope.dataSelected.jumlah//Math.ceil($scope.dataSelected.jumlah);
+                            $scope.item.jumlah = parseFloat($scope.dataSelected.jumlahobat)
+                            $scope.item.jumlahbulat = Math.ceil($scope.dataSelected.jumlah);
                             $scope.item.dosis = parseFloat($scope.dataSelected.dosis)
-                            $scope.item.jumlahxmakan = ((parseFloat($scope.item.jumlah) / parseFloat($scope.item.dosis)) * parseFloat($scope.item.kekuatan)).toFixed()
+                            $scope.item.jumlahxmakan = ((parseFloat($scope.item.jumlah) / parseFloat($scope.item.dosis)) * parseFloat($scope.item.kekuatan))
                             $scope.item.nilaiKonversi = $scope.dataSelected.nilaikonversi
+
                             //$scope.item.satuan = { ssid: $scope.dataSelected.satuanviewfk, satuanstandar: $scope.dataSelected.satuanview }
                             $scope.HargaMaster = $scope.dataSelected.hargasatuan
                             $scope.item.hargaSatuan = $scope.dataSelected.hargasatuan
@@ -1157,17 +1158,16 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
             //     $scope.tombolSimpanVis = true
             // });
             $scope.$watch('item.jumlahxmakan', function (newValue, oldValue) {
-                console.log('masuk kesini');
                 if (newValue != oldValue) {
                     if ($scope.item.stok > 0) {
                         // $scope.item.jumlah = parseFloat($scope.item.jumlahxmakan) * parseFloat($scope.item.dosis)
                         if ($scope.item.jenisKemasan.id == 2) {
                             $scope.item.jumlah = $scope.item.jumlah
                         } else {
-                            $scope.item.jumlah = (parseFloat($scope.item.jumlahxmakan) * parseFloat($scope.item.dosis)) / parseFloat($scope.item.kekuatan)
+                            $scope.item.jumlah = ((parseFloat($scope.item.jumlahxmakan) * parseFloat($scope.item.dosis)) / parseFloat($scope.item.kekuatan))
                         }
                         // $scope.item.jumlah = (parseFloat($scope.item.jumlahxmakan) * parseFloat($scope.item.dosis)) / parseFloat($scope.item.kekuatan)
-                        $scope.item.jumlahbulat = $scope.item.jumlah// Math.ceil($scope.item.jumlah);
+                        $scope.item.jumlahbulat = Math.ceil($scope.item.jumlah);
                     }
                 }
             });
@@ -1207,7 +1207,6 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
 
             $scope.$watch('item.jumlah', function (newValue, oldValue) {
                 if (newValue != oldValue) {
-                    $scope.tambahobt = true
                     if ($scope.item.jenisKemasan == undefined) {
                         toastr.error('jenis kemasan harap di isi terlebih dahulu')
                         return
@@ -1258,7 +1257,7 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                     //     $scope.item.jumlah = $scope.dataSelected.jumlah
                     //     $scope.item.jumlahbulat = $scope.dataSelected.jumlah                        
                     // }else{
-                    $scope.item.jumlahbulat = $scope.item.jumlah//Math.ceil($scope.item.jumlah);
+                    $scope.item.jumlahbulat = Math.ceil($scope.item.jumlah);
                     // }
 
                     var ada = false;
@@ -1327,7 +1326,6 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
             }
 
             $scope.tambah = function () {
-                $scope.tambahobt = true
                 if (statusTambah == false) {
                     return
                 }
