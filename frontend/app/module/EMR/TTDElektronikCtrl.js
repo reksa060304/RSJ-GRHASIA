@@ -1,9 +1,11 @@
+
 define(['initialize', 'Configuration'], function (initialize, config) {
     'use strict';
     var baseTransaksi = config.baseApiBackend;
-    initialize.controller('TTDElektronikCtrl', ['$q', '$rootScope', '$scope', '$state', 'CacheHelper', 'MedifirstService', '$mdDialog', '$parse',
+    initialize.controller('TTDElektronikCtrl', ['$q', '$rootScope', '$scope', '$state', 'CacheHelper', 'MedifirstService', '$mdDialog', '$parse', 
         function ($q, $rootScope, $scope, $state, cacheHelper, medifirstService, $mdDialog, $parse) {
             $scope.item = {};
+
             $scope.isRouteLoading = false;
             $scope.dataVOloaded = true;
             $scope.now = new Date();
@@ -34,6 +36,20 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             if ($state.params.noRec == undefined) {
                 cacheHelper.get('cacheRekamMedis', undefined);
             }
+            $scope.listPage = [
+                {id:1,page:'Halaman 1'},
+                {id:2,page:'Halaman 2'},
+                {id:3,page:'Halaman 3'},
+                {id:4,page:'Halaman 4'},
+                {id:5,page:'Halaman 5'},
+                {id:6,page:'Halaman 6'},
+                {id:7,page:'Halaman 7'},
+                {id:8,page:'Halaman 8'},
+                {id:9,page:'Halaman 9'},
+                {id:10,page:'Halaman 10'},
+                {id:11,page:'Halaman 11'},
+                {id:12,page:'Halaman 12'},
+            ]
             $scope.cacheRM = undefined
             $scope.cachePARAM = undefined
             LoadCacheHelper();
@@ -112,6 +128,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                                     { text: "Delete", click: hapus, imageClass: "k-icon k-i-close", },
                                     { text: "Edit", click: editBerkas, imageClass: "k-icon k-i-pencil" },
                                     { text: "Verify", click: verifyData, imageClass: "fa fa-check" },
+                                    { text: "Koordinat", click: koordinatData, imageClass: "fa fa-check" },
                                 ],
                                 title: "",
                                 width: "180px",
@@ -123,6 +140,8 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                                     { text: "View", click: LihatBerkas, imageClass: " fa fa-eye" },
                                     { text: "Sign Doc", click: tandaTangan, imageClass: "fa fa-key" },
                                     { text: "Verify", click: verifyData, imageClass: "fa fa-check" },
+                                    { text: "Koordinat", click: koordinatData, imageClass: "fa fa-check" },
+
                                 ],
                                 title: "",
                                 width: "180px",
@@ -347,6 +366,48 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     $scope.verify = dat.data
                     $scope.popUp2.center().open()
                 });
+            }
+            function Paging(e, paging){
+                var strBACKEND = baseTransaksi.replace('service/medifirst2000/', '')
+                const pdfUrl = strBACKEND + "service/storage_path?path=" + e.file +
+                    "&mimetype=application/pdf";
+                console.log(pdfUrl);
+                // Dapatkan referensi ke elemen <canvas>
+                var canvas = document.getElementById('pdfCanvas');
+                // Muat dokumen PDF
+                pdfjsLib.getDocument(pdfUrl).promise.then(function (pdf) {
+                    // Pilih halaman PDF yang akan ditampilkan (misalnya, halaman pertama)
+                    var pageNumber = paging;
+
+                    // Muat halaman PDF
+                    pdf.getPage(pageNumber).then(function (page) {
+                        // Dapatkan konteks 2D dari elemen <canvas>
+                        var context = canvas.getContext('2d');
+
+                        // Dapatkan ukuran halaman PDF
+                        var viewport = page.getViewport({
+                            scale: 1
+                        });
+
+                        // Sesuaikan ukuran elemen <canvas> dengan ukuran halaman PDF
+                        canvas.width = viewport.width;
+                        canvas.height = viewport.height;
+
+                        // Render halaman PDF ke elemen <canvas>
+                        var renderContext = {
+                            canvasContext: context,
+                            viewport: viewport
+                        };
+                        page.render(renderContext);
+                    });
+                });
+            }
+            function koordinatData(e) {
+                e.preventDefault();
+                var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                Paging(dataItem, 1)
+                $scope.dataItem = dataItem
+                $scope.popUpk.center().open().maximize()
             }
             function hapus(e) {
                 e.preventDefault();
@@ -624,7 +685,13 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     'passphrase': $scope.item.passphrase,
                     'nik': $scope.item.nik,
                     'reason': $scope.item.reason ? $scope.item.reason : null,
-                    'iduser': medifirstService.getUserLogin().id
+                    'iduser': medifirstService.getUserLogin().id,
+                    'page': $scope.item.page.id,
+                    'xAxis': $scope.xaxis,
+                    'yAxis': $scope.yaxis,
+                    'width': $scope.item.sizeWidth,
+                    'height': $scope.item.sizeHeight
+                    // 'namadokumen': $scope.item.namadokumen
                 }
 
                 var btnSimpan = angular.element(document.getElementById("btnSimpan2"));
@@ -656,6 +723,143 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             $scope.batal = function(){
                 $scope.popUpTTD.close()
             }
+            $scope.cekDulu = function(){
+                if($scope.item.sizeWidth == undefined){
+                    toastr.error('Lebar Barcode Wajib Diisi')
+                    return
+                }
+                if ($scope.item.sizeHeight == undefined) {
+                    toastr.error('Tinggi Barcode Wajib Diisi')
+                    return
+                }
+                const canvas = document.getElementById('pdfCanvas');
+                const ctx = canvas.getContext('2d');
+                const imageElement = document.getElementById('movingImage');
+                const canvasRect = canvas.getBoundingClientRect();
+                $scope.xaxis = imageElement.offsetLeft
+                $scope.yaxis = imageElement.offsetTop
+                $scope.popUpk.close()
+            }
+            $scope.changePage = function (e, page) {
+                Paging(e, page.id)
+            }
+            // Dapatkan referensi ke elemen gambar
+            const movingImage = document.getElementById('movingImage');
+
+            // Fungsi untuk menggerakkan gambar ke koordinat (x, y)
+            function moveImageTo(x, y) {
+                movingImage.style.left = x + 'px';
+                movingImage.style.top = y + 'px';
+            }
+
+            // Panggil fungsi untuk memindahkan gambar ke (200px, 200px)
+            moveImageTo(200, 200);
+            let isDragging = false;
+            let offsetX, offsetY;
+
+            movingImage.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                offsetX = e.clientX - parseInt(movingImage.style.left, 10);
+                offsetY = e.clientY - parseInt(movingImage.style.top, 10);
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                const x = e.clientX - offsetX;
+                const y = e.clientY - offsetY;
+                moveImageTo(x, y);
+            });
+
+            document.addEventListener('mouseup', () => {
+                isDragging = false;
+            });
+
+            //slider
+            const image = document.getElementById('movingImage');
+            const widthSlider = document.getElementById('imageWidthSlider');
+            const heightSlider = document.getElementById('imageHeightSlider');
+            const widthInput = document.getElementById('imageWidthInput');
+            const heightInput = document.getElementById('imageHeightInput');
+
+            // Fungsi untuk mengatur ukuran gambar
+            function resizeImage() {
+                const newWidth = widthInput.value;
+                const newHeight = heightInput.value;
+                image.style.width = newWidth + 'px';
+                image.style.height = newHeight + 'px';
+            }
+
+            // Menambahkan event listener untuk slide
+            widthSlider.addEventListener('input', resizeImage);
+            heightSlider.addEventListener('input', resizeImage);
+
+            // Menambahkan event listener untuk input angka
+            widthInput.addEventListener('input', resizeImage);
+            heightInput.addEventListener('input', resizeImage);
+
+            // Inisialisasi ukuran awal gambar
+            resizeImage();
+            $scope.$watch('item.sizeWidth', function(newValue, oldValue){
+                if (newValue!= oldValue){
+                    document.getElementById('imageWidthInput').value = $scope.item.sizeWidth
+                    const image = document.getElementById('movingImage');
+                    const widthSlider = document.getElementById('imageWidthSlider');
+                    const heightSlider = document.getElementById('imageHeightSlider');
+                    const widthInput = document.getElementById('imageWidthInput');
+                    const heightInput = document.getElementById('imageHeightInput');
+
+                    // Fungsi untuk mengatur ukuran gambar
+                    function resizeImage() {
+                        const newWidth = widthInput.value;
+                        const newHeight = heightInput.value;
+                        image.style.width = newWidth + 'px';
+                        image.style.height = newHeight + 'px';
+                    }
+
+                    // Menambahkan event listener untuk slide
+                    widthSlider.addEventListener('input', resizeImage);
+                    heightSlider.addEventListener('input', resizeImage);
+
+                    // Menambahkan event listener untuk input angka
+                    widthInput.addEventListener('input', resizeImage);
+                    heightInput.addEventListener('input', resizeImage);
+
+                    // Inisialisasi ukuran awal gambar
+                    resizeImage();
+                }
+            })
+            $scope.$watch('item.sizeHeight', function (newValue, oldValue) {
+                if (newValue != oldValue) {
+                    document.getElementById('imageHeightInput').value = $scope.item.sizeHeight
+                    const image = document.getElementById('movingImage');
+                    const widthSlider = document.getElementById('imageWidthSlider');
+                    const heightSlider = document.getElementById('imageHeightSlider');
+                    const widthInput = document.getElementById('imageWidthInput');
+                    const heightInput = document.getElementById('imageHeightInput');
+
+                    // Fungsi untuk mengatur ukuran gambar
+                    function resizeImage() {
+                        const newWidth = widthInput.value;
+                        const newHeight = heightInput.value;
+                        image.style.width = newWidth + 'px';
+                        image.style.height = newHeight + 'px';
+                    }
+
+                    // Menambahkan event listener untuk slide
+                    widthSlider.addEventListener('input', resizeImage);
+                    heightSlider.addEventListener('input', resizeImage);
+
+                    // Menambahkan event listener untuk input angka
+                    widthInput.addEventListener('input', resizeImage);
+                    heightInput.addEventListener('input', resizeImage);
+
+                    // Inisialisasi ukuran awal gambar
+                    resizeImage();
+                     
+                }
+            })
+            
+
         }
     ]);
 });
