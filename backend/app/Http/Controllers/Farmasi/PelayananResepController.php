@@ -6372,7 +6372,7 @@ class PelayananResepController extends ApiController
         $dataz = DB::select(DB::raw("select sr.tglresep 
         from strukorder_t as so 
         left join strukresep_t as sr on so.norec = sr.orderfk
-        where so.noorder = '$noorder'"));
+        where so.noorder = '$noorder' and sr.statusenabled = true"));
 
         
         $data['detail']  =$dataz;
