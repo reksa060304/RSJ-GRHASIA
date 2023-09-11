@@ -393,13 +393,13 @@ class BridgingBSREController  extends ApiController
 
                 $emrDkmn->save();
             } else {
-                // $emrDkmn = EMR_BSRE::where('id', $dataReq['norec'])->first();
-                // $emrDkmn->deskripsi = $dataReq['reason'];
-                // $emrDkmn->nik_pegawai = $dataReq['nik'];
-                // $emrDkmn->namadokumen = $dataReq['namadokumen'];
-                // $emrDkmn->pegawaifk = $dataReq['pegawaifk'];
-                // $emrDkmn->nomoremr = $dataReq['nomoremr'];
-                // $emrDkmn->save();
+                $emrDkmn = EMR_BSRE::where('id', $dataReq['norec'])->first();
+                $emrDkmn->deskripsi = $dataReq['reason'];
+                $emrDkmn->nik_pegawai = $dataReq['nik'];
+                $emrDkmn->namadokumen = $dataReq['namadokumen'];
+                $emrDkmn->pegawaifk = $dataReq['pegawaifk'];
+                $emrDkmn->nomoremr = $dataReq['nomoremr'];
+                $emrDkmn->save();
             }
 
 
@@ -803,13 +803,18 @@ class BridgingBSREController  extends ApiController
                 'nik' => trim($dataReq['nik']),
                 'passphrase' => $dataReq['passphrase'],
                 'tampilan' => 'visible',
-                'page' => $dataReq['page'] ?$dataReq['page'] : '1' ,
+                // 'page' => $dataReq['page'] ? $dataReq['page'] : '1' ,
+                'page' => '1' ,
                 'image' => true,
-                'linkQR' =>   stripos(\Request::url(), 'localhost') !== false ?  'localhost:3331/service/medifirst2000/verify-doc/' . $emrbsre->id : 'https://simrs-grhasia.jogjaprov.go.id/service/medifirst2000/verify-doc/' . $emrbsre->id,
-                'xAxis' =>  $dataReq['xAxis'] ?  $dataReq['xAxis'] : $emr_t->bsre_xaxis,
-                'yAxis' => $dataReq['yAxis'] ? $dataReq['yAxis']  : $emr_t->bsre_yaxis,
-                'width' => $dataReq['width'] ?  $dataReq['width'] : $emr_t->bsre_width,
-                'height' => $dataReq['height'] ? $dataReq['height']  : $emr_t->bsre_height,
+                'linkQR' =>   stripos(\Request::url(), 'localhost') !== false ?  'localhost:8000/service/medifirst2000/verify-doc/' . $emrbsre->id : 'https://simrs-grhasia.jogjaprov.go.id/service/medifirst2000/verify-doc/' . $emrbsre->id,
+                // 'xAxis' =>  $dataReq['xAxis'] ?  $dataReq['xAxis'] : $emr_t->bsre_xaxis,
+                // 'yAxis' => $dataReq['yAxis'] ? $dataReq['yAxis']  : $emr_t->bsre_yaxis,
+                // 'width' => $dataReq['width'] ?  $dataReq['width'] : $emr_t->bsre_width,
+                // 'height' => $dataReq['height'] ? $dataReq['height']  : $emr_t->bsre_height,
+                'xAxis' =>  $emr_t->bsre_xaxis ? $emr_t->bsre_xaxis  : 725,
+                'yAxis' => $emr_t->bsre_yaxis ? $emr_t->bsre_yaxis  : 70,
+                'width' => $emr_t->bsre_width ? $emr_t->bsre_width  : 251.46,
+                'height' => $emr_t->bsre_height ? $emr_t->bsre_height  : 133.13,
                 'reason' => isset($dataReq['reason']) ? $dataReq['reason'] : '',
                 'location' =>  $prof->namalengkap,
                 'file' => $file,
