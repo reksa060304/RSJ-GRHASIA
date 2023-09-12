@@ -802,6 +802,8 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             $scope.$watch('item.sizeWidth', function(newValue, oldValue){
                 if (newValue!= oldValue){
                     document.getElementById('imageWidthInput').value = $scope.item.sizeWidth
+                    document.getElementById('imageHeightInput').value = $scope.item.sizeWidth
+                    $scope.item.sizeHeight = $scope.item.sizeWidth
                     const image = document.getElementById('movingImage');
                     const widthSlider = document.getElementById('imageWidthSlider');
                     const heightSlider = document.getElementById('imageHeightSlider');
