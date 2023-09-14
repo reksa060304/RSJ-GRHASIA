@@ -8509,6 +8509,8 @@ class LogistikController extends ApiController{
             $result = array(
                 "status" => 400,
                 "message"  => $transMessage,
+                'e'=> $e->getMessage() ,
+                'line'=> $e->getLine() ,
 //                "nokirim" => $dataSK,//$noResep,
 //                "stokdetail" => $dataSTOKDETAIL,
 //                "stokdetailTujuan" => $dataSTOKDETAIL2,
