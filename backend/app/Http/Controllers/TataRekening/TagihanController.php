@@ -15004,7 +15004,7 @@ $result = array(
             if($filter['status']=='Belum Verifikasi'){
                 $data = $data ->whereNull('pd.nostruklastfk')->whereNull('pd.nosbmlastfk');
             }elseif($filter['status']=='Verifikasi'){
-                $data = $data ->whereNotNull('pd.nostruklastfk')->whereNull('pd.nosbmlastfk');
+                $data = $data ->whereNotNull('pd.nostruklastfk');
             }elseif($filter['status']=='Lunas'){
                 $data = $data ->whereNotNull('pd.nostruklastfk')->whereNotNull('pd.nosbmlastfk');;
             }elseif($filter['status']=='Sudah STS'){
