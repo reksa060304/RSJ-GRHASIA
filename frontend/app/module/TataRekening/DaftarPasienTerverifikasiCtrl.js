@@ -117,7 +117,7 @@ define(['initialize'], function (initialize) {
           
           dataLogin = medifirstService.getUserLogin();
         })
-        $scope.listStatus = [{ "id": "1", "namaExternal": "Semua" }, { "id": "3", "namaExternal": "Verifikasi" }, { "id": "4", "namaExternal": "Lunas" }]
+        $scope.listStatus = [{ "id": "1", "namaExternal": "Semua" }, { "id": "3", "namaExternal": "Verifikasi" }, { "id": "4", "namaExternal": "Lunas" }, { "id": "5", "namaExternal": "Sudah STS" }]
         $scope.listBPJS = [{ id: 1, name: true }, { id: 2, name: false }];
         medifirstService.getPart('sysadmin/general/get-combo-pegawai', true, 10).then(function (e) {
           $scope.listDataPegawai = e;
@@ -230,12 +230,11 @@ define(['initialize'], function (initialize) {
           aggregates: ["sum"],
           footerTemplate: "#: data.totaldibayar.sum #"
         },
-        // {
-        //   "field": "noverif",
-        //   "title": "Verif Piutang",
-        //   "width":"70px",
-        //   "template": "<span class='style-center'>#: noverif #</span>"
-        // }
+        {
+          "field": "nosts",
+          "title": "STS",
+          "width":"70px",
+        }
       ];
 
 

@@ -14939,17 +14939,26 @@ $result = array(
             ->leftJoin('pelayananpasien_t as pp', 'apd.norec', '=', 'pp.noregistrasifk')
             ->leftJoin('strukpelayanan_t as sp', 'sp.norec', '=', 'pp.strukfk')
             ->leftJoin('strukbuktipenerimaan_t as sbm', 'sbm.norec', '=', 'sp.nosbmlastfk')
+            ->leftJoin('strukclosing_t as sc','sc.norec','=','sbm.noclosingfk')
+            ->leftJoin('strukclosingkasir_t as sck','sc.norec','=','sck.noclosingfk')
+            // ->leftjoin('ststosck_t as stsc','stsc.objectscfk','=','sc.norec')
+            ->leftJoin('ststosck_t as stsc', function ($join) {
+                $join->on('stsc.objectscfk','=','sc.norec');
+                $join->on('stsc.objectsckfk','=','sck.norec');
+            })
+            ->leftjoin('surattandasetoran_t as sts','sts.norec','=','stsc.objectstsfk')
             ->leftJoin('kelompokpasien_m as kp', 'kp.id', '=', 'pd.objectkelompokpasienlastfk')
             ->leftJoin('departemen_m as dept', 'dept.id', '=', 'ru.objectdepartemenfk')
             // ->leftjoin('strukpelayananpenjamin_t as spp', 'spp.nostrukfk', '=', 'sp.norec')
             ->select(DB::raw("distinct coalesce(sbm.totaldibayar,0) totaldibayar, pd.norec as norec_pd, pd.tglregistrasi, p.nocm, pd.noregistrasi, 
             ru.namaruangan, p.namapasien, kp.kelompokpasien, pd.tglpulang, pd.statuspasien, 
             pd.nostruklastfk, pd.nosbmlastfk, pd.tglmeninggal, p.nosuratkematian, 
-            dept.id as deptid, pd.tglclosing, pd.objectruanganlastfk, pd.objectkelasfk"))
+            dept.id as deptid, pd.tglclosing, pd.objectruanganlastfk, pd.objectkelasfk, sts.nosts as nosts"))
 //            ->whereNull('pd.nostruklastfk')
-//            ->whereNull('pd.nosbmlastfk')
+           
             ->where('pd.statusenabled',true)
             ->whereNotNull('pd.tglpulang')
+            ->where('sbm.totaldibayar', '<>','0')
             ->whereNotNull('pd.nostruklastfk')
             ->whereNotNull('pd.nosbmlastfk')
         ;
@@ -14998,6 +15007,8 @@ $result = array(
                 $data = $data ->whereNotNull('pd.nostruklastfk')->whereNull('pd.nosbmlastfk');
             }elseif($filter['status']=='Lunas'){
                 $data = $data ->whereNotNull('pd.nostruklastfk')->whereNotNull('pd.nosbmlastfk');;
+            }elseif($filter['status']=='Sudah STS'){
+                $data = $data ->where('sts.statusenabled', true);
             }
         }
         if (isset($filter['jmlRows']) && $filter['jmlRows']!="" && $filter['jmlRows']!="undefined") {
@@ -15079,7 +15090,7 @@ $result = array(
                 'nosuratkematian' => $pasienD->nosuratkematian,
                 'kelasid' => $pasienD->objectkelasfk,
                 'ruanganid' => $pasienD->objectruanganlastfk,
-//                'isPaid' => $pd->isBayar,
+               'nosts' => $pasienD->nosts,
 //                'isLunas' => $pd->isBayar,
             );
         }
