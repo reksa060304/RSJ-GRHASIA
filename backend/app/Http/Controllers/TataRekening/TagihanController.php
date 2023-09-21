@@ -14932,117 +14932,131 @@ $result = array(
         return $this->respond($result);
     }
     public function daftarPasienTerverifikasi(Request $request){
-        $data= \DB::table('pasiendaftar_t as pd')
-            ->join('pasien_m as p', 'p.id', '=', 'pd.nocmfk')
-            ->join('ruangan_m as ru', 'ru.id', '=', 'pd.objectruanganlastfk')
-            ->leftJoin('kelompokpasien_m as kp', 'kp.id', '=', 'pd.objectkelompokpasienlastfk')
-            ->leftJoin('departemen_m as dept', 'dept.id', '=', 'ru.objectdepartemenfk')
-            ->join('antrianpasiendiperiksa_t as apd', 'pd.norec', '=', 'apd.noregistrasifk')
-            ->join('pelayananpasien_t as pp', 'apd.norec', '=', 'pp.noregistrasifk')
-            ->leftJoin('strukbuktipenerimaan_t as sbm', 'sbm.norec', '=', 'pd.nosbmlastfk')
-            ->leftJoin('strukclosing_t as sc','sc.norec','=','sbm.noclosingfk')
-            ->leftJoin('strukclosingkasir_t as sck','sc.norec','=','sck.noclosingfk')
-            // ->leftjoin('ststosck_t as stsc','stsc.objectscfk','=','sc.norec')
-            ->leftJoin('ststosck_t as stsc', function ($join) {
-                $join->on('stsc.objectscfk','=','sc.norec');
-                $join->on('stsc.objectsckfk','=','sck.norec');
-            })
-            ->leftjoin('surattandasetoran_t as sts', function($joins){
-                $joins->on('sts.norec','=','stsc.objectstsfk');
-                $joins->where('sts.statusenabled','=',true);
-            })
-            // ->leftjoin('strukpelayanan_t as sp', 'sp.norec', '=', 'pp.strukfk')
-            // ->leftjoin('strukpelayananpenjamin_t as spp', 'spp.nostrukfk', '=', 'sp.norec')
-            ->select(DB::raw("sum(((case when pp.hargajual is null then 0 else pp.hargajual::float8  end - case when pp.hargadiscount is null then 0 else pp.hargadiscount::float8 end) * pp.jumlah) + case when pp.jasa is null then 0 else pp.jasa::float8 end)::int as totaltagihan"),'pd.norec AS norec_pd','pd.tglregistrasi', 'p.nocm', 'pd.noregistrasi', 'ru.namaruangan', 'p.namapasien', 'kp.kelompokpasien',
-                'pd.tglpulang', 'pd.statuspasien','pd.nostruklastfk', 'pd.nosbmlastfk','pd.tglmeninggal','p.nosuratkematian',
-                // 'spp.noverifikasi',
-                'dept.id as deptid',
-                'pd.tglclosing','pd.objectruanganlastfk','pd.objectkelasfk','sts.nosts')
-//            ->whereNull('pd.nostruklastfk')
-//            ->whereNull('pd.nosbmlastfk')
-            ->where('pd.statusenabled',true)
-            ->whereNotNull('pd.tglpulang')
-            ->groupBy(DB::raw("sts.nosts,kp.kelompokpasien,pd.tglpulang,dept.id,pd.statuspasien,p.namapasien,pd.norec, p.nocm, pd.tglregistrasi, ru.namaruangan,p.nosuratkematian, pd.tglmeninggal, pd.nosbmlastfk, pd.nostruklastfk"))
-        ;
-
         $filter = $request->all();
-        if(isset($filter['tglAwal']) && $filter['tglAwal']!="" && $filter['tglAwal']!="undefined"){
-            $data = $data->where('pd.tglpulang','>=', $filter['tglAwal']);
-        }
-
-        if(isset($filter['tglAkhir']) && $filter['tglAkhir']!="" && $filter['tglAkhir']!="undefined"){
-            $tgl= $filter['tglAkhir'];//." 23:59:59";
-            $data = $data->where('pd.tglpulang','<=', $tgl);
-        }
-
+        $dep = '';
+        $ru ='';
+        $nama = '';
+        $noreg = '';
+        $norm = '';
         if(isset($filter['instalasiId']) && $filter['instalasiId']!="" && $filter['instalasiId']!="undefined"){
-            $data = $data->where('dept.id','=', $filter['instalasiId']);
+            $dep = "AND dept.id =  ". $filter['instalasiId'];
         }
 
         if(isset($filter['ruanganId']) && $filter['ruanganId']!="" && $filter['ruanganId']!="undefined"){
-            $data = $data->where('ru.id','=', $filter['ruanganId']);
+            $ru = "and ru.id  = ". $filter['ruanganId'];
         }
 
         if(isset($filter['namaPasien']) && $filter['namaPasien']!="" && $filter['namaPasien']!="undefined"){
-            $data = $data->where('p.namapasien','ilike', '%'.$filter['namaPasien'].'%');
+            $nama = "and p.namapasien ilike '$filter[namaPasien]'";
         }
 
         if(isset($filter['noReg']) && $filter['noReg']!="" && $filter['noReg']!="undefined"){
-            $data = $data->where('pd.noregistrasi','ilike', '%'.$filter['noReg'].'%');
-        }
-
-        if (isset($filter['bpjs']) && $filter['bpjs'] != "" && $filter['bpjs'] != "undefined" && $filter['bpjs'] == 1 ) {
-            $data = $data->whereIn('kp.id', [2, 21, 22, 24, 25]);
+            $noreg ="and pd.noregistrasi ilike '$filter[noReg]'";
         }
 
         if (isset($filter['noRm']) && $filter['noRm']!="" && $filter['noRm']!="undefined") {
-            $data = $data->where('p.nocm','ilike','%'.$filter['noRm'].'%');
+            $norm = "and p.nocm = '$filter[noRm]'";
         }
-        if (isset($filter['kelompokPasienId']) && $filter['kelompokPasienId']!="" && $filter['kelompokPasienId']!="undefined") {
-            $data = $data->where('kp.id','=',$filter['kelompokPasienId']);
-        }
-
+        
+        $status = '';
         if(isset($filter['status']) && $filter['status']!="" && $filter['status']!="undefined"){
             if($filter['status']=='Belum Verifikasi'){
-                $data = $data ->whereNull('pd.nostruklastfk')->whereNull('pd.nosbmlastfk');
+                $status =" and  pd.nostruklastfk is null and pd.nosbmlastfk is null";
             }elseif($filter['status']=='Verifikasi'){
-                $data = $data ->whereNotNull('pd.nostruklastfk');
+                $status =" and  pd.nostruklastfk is not null";
             }elseif($filter['status']=='Lunas'){
-                $data = $data ->whereNotNull('pd.nostruklastfk')->whereNotNull('pd.nosbmlastfk');;
+                $status =" and  pd.nostruklastfk is not null and pd.nosbmlastfk is not null";
             }elseif($filter['status']=='Sudah STS'){
-                $data= $data->whereNotNull('sts.nosts')->where('sts.statusenabled', true);
+                $status =" and  sts.nosts is not null and sts.statusenabled =  true";
             }
         }
-        if (isset($filter['jmlRows']) && $filter['jmlRows']!="" && $filter['jmlRows']!="undefined") {
-            $data = $data->take($filter['jmlRows']);
-        }
-
-        // $data=$data->groupBy('pd.norec','pd.tglregistrasi', 'p.nocm', 'pd.noregistrasi', 'ru.namaruangan', 'p.namapasien', 'kp.kelompokpasien',
-        //     'pd.tglpulang', 'pd.statuspasien','pd.nostruklastfk', 'pd.nosbmlastfk',
-        //     // 'spp.noverifikasi',
-        //     'dept.id','pd.tglclosing');
-
-
-//         if(!empty($filter['tglAwal']) && !empty($filter['tglAkhir']) && empty($filter['noReg']) && empty($filter['noRm']) && empty($filter['status']) && empty($filter['ruanganId']) && empty($filter['namaPasien']) && empty($filter['instalasiId'])){
-//             $data = $data->limit(10)->get();
-// //            $data = $data->get();
-
-//         }else if (empty($filter['tglAwal']) && empty($filter['tglAkhir']) && empty($filter['noReg']) && empty($filter['noRm']) && empty($filter['status']) && empty($filter['ruanganId']) && empty($filter['namaPasien']) && empty($filter['instalasiId'])) {
-
-//             $data = $data->limit(10)->get();
-
-//         }else if(!empty($filter['tglAwal']) && !empty($filter['tglAkhir']) && empty($filter['noReg']) && empty($filter['noRm']) && $filter['status'] == "undefined" && $filter['ruanganId'] == "undefined" && empty($filter['namaPasien']) && $filter['instalasiId'] == "undefined"){
-
-//             $data = $data->limit(10)->get();
-
-//         } else {
-//             $data = $data->limit(10)->get();
-// //            $data =$data->get();
-//         }
-        $data =$data->get();
-
-
-        $result = array();
+       
+        $data = DB::select(DB::raw("
+        select * from (
+            SELECT row_number()over(partition by noregistrasi order by sts.nosts asc), SUM
+	(
+		(
+			(
+			CASE
+					
+					WHEN pp.hargajual IS NULL THEN
+					0 ELSE pp.hargajual :: float8 
+				END -
+			CASE
+					
+					WHEN pp.hargadiscount IS NULL THEN
+					0 ELSE pp.hargadiscount :: float8 
+				END 
+					) * pp.jumlah 
+			) +
+		CASE
+				
+				WHEN pp.jasa IS NULL THEN
+				0 ELSE pp.jasa :: float8 
+			END 
+			) :: INT AS totaltagihan,
+			pd.norec AS norec_pd,
+			pd.tglregistrasi,
+			p.nocm,
+			pd.noregistrasi,
+			ru.namaruangan,
+			p.namapasien,
+			kp.kelompokpasien,
+			pd.tglpulang,
+			pd.statuspasien,
+			pd.nostruklastfk,
+			pd.nosbmlastfk,
+			pd.tglmeninggal,
+			p.nosuratkematian,
+			dept.id AS deptid,
+			pd.tglclosing,
+			pd.objectruanganlastfk,
+			pd.objectkelasfk,
+			sts.nosts 
+		FROM
+			pasiendaftar_t AS pd
+			INNER JOIN pasien_m AS p ON p.id = pd.nocmfk
+			INNER JOIN ruangan_m AS ru ON ru.id = pd.objectruanganlastfk
+			LEFT JOIN kelompokpasien_m AS kp ON kp.id = pd.objectkelompokpasienlastfk
+			LEFT JOIN departemen_m AS dept ON dept.id = ru.objectdepartemenfk
+			INNER JOIN antrianpasiendiperiksa_t AS apd ON pd.norec = apd.noregistrasifk
+			INNER JOIN pelayananpasien_t AS pp ON apd.norec = pp.noregistrasifk
+			LEFT JOIN strukbuktipenerimaan_t AS sbm ON sbm.norec = pd.nosbmlastfk
+			LEFT JOIN strukclosing_t AS sc ON sc.norec = sbm.noclosingfk
+			LEFT JOIN strukclosingkasir_t AS sck ON sc.norec = sck.noclosingfk
+			LEFT JOIN ststosck_t AS stsc ON stsc.objectscfk = sc.norec 
+			AND stsc.objectsckfk = sck.norec
+			LEFT JOIN surattandasetoran_t AS sts ON sts.norec = stsc.objectstsfk 
+			AND sts.statusenabled = true
+		WHERE
+			pd.statusenabled = true
+			AND pd.tglpulang IS NOT NULL 
+			AND pd.tglpulang >= '$filter[tglAwal]' 
+			AND pd.tglpulang <= '$filter[tglAkhir]' 
+			$dep
+            $ru
+        $nama 
+        $noreg 
+        $norm 
+        $status
+		GROUP BY
+			kp.kelompokpasien,
+			pd.tglpulang,
+			dept.ID,
+			pd.statuspasien,
+			P.namapasien,
+			pd.norec,
+			P.nocm,
+			pd.tglregistrasi,
+			ru.namaruangan,
+			P.nosuratkematian,
+			pd.tglmeninggal,
+			pd.nosbmlastfk,
+		pd.nostruklastfk,
+		sts.nosts
+	    LIMIT $filter[jmlRows]
+        ) as x where x.row_number = 1 
+        "));
         foreach ($data as $pasienD){
 //            $pd=PasienDaftar::find($pasienD->norec);
 //            $totalHrsDibayar = StrukPelayanan::where('noregistrasifk',$pasienD->norec)
