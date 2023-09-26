@@ -1857,7 +1857,7 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                 }
                 $scope.item.produk = dataProduk//{id:dataSelected.produkfk,namaproduk:dataSelected.namaproduk}
                 // $scope.item.stok = dataSelected.jmlstok //* $scope.item.nilaiKonversi
-
+                $scope.getSatuan()
                 // $scope.item.jumlah = dataSelected.jumlah
                 // $scope.item.jumlahbulat = dataSelected.jumlah //$scope.item.jumlah//Math.ceil($scope.item.jumlah);
                 tarifJasa = dataSelected.jasa
