@@ -41,8 +41,8 @@ define(['initialize','Configuration'], function (initialize, configuration) {
             $scope.listShift = [
                 {id:1, shift: 'Pagi'},
                 {id:2, shift: 'Siang'},
-                // {id:3, shift: 'Sore'},
-                {id:4, shift: 'Malam'},
+                {id:3, shift: 'Sore'},
+               // {id:4, shift: 'Sore'},
 
             ]
             $scope.loaddataaaa = function(){
@@ -146,7 +146,7 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                     toolbar: [{
                             name: "create",
                             text: "Tambah",
-                            template: '<button ng-click="createData(data)" class="k-button k-button-icontext k-grid-upload" href="\\#"><span class="k-icon k-i-plus"></span>Tambah Tindakan</button>'
+                            template: '<button ng-click="createData(data)" class="k-button k-button-icontext k-grid-upload" href="\\#"><span class="k-icon k-i-plus"></span>Tambah Tindakan Keperawatan</button>'
                         }],
                         selectable: "row",
                         pageable: true,
@@ -163,7 +163,7 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                             },
                             {
                                 "field": "implementasi",
-                                "title": "Implementasi",
+                                "title": "Tindakan Keperawatan / Implementasi",
                                 "width": "50px",
                             },
                             

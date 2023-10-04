@@ -430,9 +430,14 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
               Route::post('bridging/penunjang/save-hapus-order-lab', 'Bridging\BridgingPenunjangController@saveHapusOrderLab');
               Route::post('bridging/penunjang/save-hapus-order-rad', 'Bridging\BridgingPenunjangController@saveHapusOrderRad');
               Route::get('registrasi/get-nocm-terakhir', 'Registrasi\RegistrasiController@getNoRMTerakhir');
+              Route::get('registrasi/get-laporan-sensus-rs','Registrasi\RegistrasiController@getLaporanSensus');
+              Route::get('registrasi/get-laporan-sensus-bangsal','Registrasi\RegistrasiController@getLaporanSensusBangsal');
               Route::post('registrasi/update-nocm', 'Registrasi\RegistrasiController@updateNORM');
           Route::get('api/trigger-telemedicine', 'Bridging\DokterKeluargaController@sendPHR');
-
+              Route::get('registrasi/get-pasienawal-rs','Registrasi\RegistrasiController@getCoba');
+              Route::get('registrasi/get-pasienawal-bangsal','Registrasi\RegistrasiController@getCobaBangsal');
+              Route::post('registrasi/post-pasienawal-rs','Registrasi\RegistrasiController@savePasienAwal');
+              Route::post('registrasi/post-pasienawal-bangsal','Registrasi\RegistrasiController@savePasienAwalBangsal');
               Route::get('bridging/penunjang/get-hasil-vans-lab', 'Bridging\BridgingPenunjangController@getHasilLaborat');
             // });
             // Route::group(['prefix' => 'dukcapil'], function () {
@@ -1283,6 +1288,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('report/cetak-tilik','Report\ReportController@cetakTilik');
           Route::get('report/get-cetak-cakem','Report\ReportController@cetakCakem');
           Route::get('report/cetak-ringkasanrajal','Report\ReportController@cetakRingkasanRajal');
+          Route::get('report/cetak-monitoringjamkes','Report\ReportController@cetakmonitoringJamkes');
           Route::get('report/cetak-obat-pulang','Report\ReportController@cetakObatPulang');
           Route::get('laboratorium/get-hasil-lab','Laboratorium\LaboratoriumController@getHasilLab');
           Route::get('laboratorium/get-hasil-lab-vans','Laboratorium\LaboratoriumController@getHasilLaborat');
@@ -1524,6 +1530,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('get/load-copy-resep', 'EMR\EMRController@getCopyResep');
             Route::get('get/get-copy-resepnya', 'EMR\EMRController@getCopyResepnyaya');
             Route::get('farmasi/cetak-copyresep', 'Report\ReportController@cetakCopyResep');
+            Route::get('logistik/get-daftar-mutasi-barang','Logistik\LogistikController@getMutasiBarangBaru');
             // GET //
 
             // POST //
@@ -1959,6 +1966,9 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('rawatjalan/get-antril-combo', 'RawatJalan\RawatJalanController@getComboAntrol');
           Route::post('rawatjalan/disabled-monitoring-taskid', 'RawatJalan\RawatJalanController@disabledMonitoringTaksId');
           
+          Route::get('sysadmin/get-master-pendidikan','SysAdmin\GeneralController@getMasterPendidikan');
+          Route::post('sysadmin/save-pendidikan','SysAdmin\GeneralController@saveMasterPendidikan');
+          
           Route::post('rawatjalan/save-daftar-surat', 'RawatJalan\RawatJalanController@saveDaftarSurat');
           Route::get('rawatjalan/get-detail-pasien-surat', 'RawatJalan\RawatJalanController@getDetailpasienSurat');
           Route::get('rawatjalan/get-daftar-surat', 'RawatJalan\RawatJalanController@getDaftarSurat');
@@ -2296,7 +2306,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
               Route::get('registrasi/laporan/get-data-lap-lab-tahunan','Registrasi\RegistrasiController@getLaporanLabTahunan');
               Route::get('registrasi/laporan/get-lab-mutu-rj','Registrasi\RegistrasiController@getLaporanMutuRJ');
               Route::get('registrasi/laporan/get-lap-mutu-rad','Registrasi\RegistrasiController@getLaporanMutuRad');
-
+              Route::post('emr/save-rmhilang','Registrasi\RegistrasiController@saveRMhilang');
               Route::get('registrasi/laporan/get-kinerja-pelayanan-ranap','Registrasi\LaporanRegistrasiController@getKinerjaPelayananRanap');
               Route::get('registrasi/laporan/get-kinerja-pelayanan-ranap-tahunan','Registrasi\LaporanRegistrasiController@getKinerjaPelayananRanapTahunan');
               Route::get('registrasi/laporan/get-laporan-tindakan-ppa' ,'Registrasi\LaporanRegistrasiController@getLaporanTindakanPPA');

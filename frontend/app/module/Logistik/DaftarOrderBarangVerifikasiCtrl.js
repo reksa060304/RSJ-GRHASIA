@@ -132,6 +132,7 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                         $scope.group = [
                             {
                                 field: 'noorder',
+                                // "template": "<input type='checkbox' class='checkbox' ng-click='selectUnselectAllRow()' />"
                             }
                         ]
                         $scope.dataGrid = new kendo.data.DataSource({
@@ -153,6 +154,7 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                                         isveriforder:{ editable: false, type: "string"},
                                         namaruanganasal:{ editable: false, type: "string"},
                                         namaruangantujuan:{ editable: false, type: "string"},
+                                        tglorder:{ editable: false, type: "string"},
 
                                     }
                                 }
@@ -236,7 +238,7 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                     0: '',
                     1: $scope.dataSelected.norec,
                     2: 'KirimBarangBaru',
-                    3: '',
+                    3: $scope.dataSelected.noorder,
                     4: '',
                     5: '',
                     6: ''
@@ -269,6 +271,51 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                     row.removeClass("k-state-selected");
                 }
                 console.log($scope.selectedData3);
+            }   
+            var isCheckAll = false
+            $scope.selectUnselectAllRow = function () {
+                if ($scope.dataSelected == undefined) {
+                    toastr.error('Pilih dulu')
+                    return
+                }
+                var tempData = $scope.dataGrid._data;
+                // console.log(tempData);
+                // return
+                if (isCheckAll) {
+                    isCheckAll = false;
+                    for (var i = 0; i < tempData.length; i++) {
+                        tempData[i].statCheckbox2 = false;
+                        $scope.selectedData3 = []
+                    }
+                } else {
+                    isCheckAll = true;
+                    for (var i = 0; i < tempData.length; i++) {
+                        if ($scope.dataSelected.noorder == tempData[i].noorder){
+                            tempData[i].statCheckbox2 = true;
+                            $scope.selectedData3.push(tempData[i])
+                        }
+                        
+                    }
+                }
+
+                console.log($scope.selectedData3)
+                reloaddataSourceGrid(tempData);
+            }
+            function reloaddataSourceGrid(ds) {
+
+                var newDs = new kendo.data.DataSource({
+                    data: ds,
+                    pageSize: 20,
+                    total: ds.length,
+                    serverPaging: true,
+                    group: $scope.group,
+                });
+
+                var grid = $('#kGrid').data("kendoGrid");
+
+                grid.setDataSource(newDs);
+                grid.refresh();
+
             }
             $scope.mainGridOptions = {
                 toolbar: [
@@ -296,6 +343,7 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                 },
                 editable: true,
                 scrollable: true,
+                resizable: true,
                 columns: [
                     {
                         "title": "#",
@@ -304,7 +352,7 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                             "# } else { #" +
                             "<input type='checkbox' class='checkbox' ng-click='selectRow2($event)' />" +
                             "# } #",
-                        width: "30px"
+                        width: "15px"
                     },
                     {
                         "field": "no",
@@ -386,9 +434,16 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                         "width": "20px",
                     },
                     {
+                        "field": "keteranganorder",
+                        "title": "Keterangan Order",
+                        "width": "80px",
+                    },
+                    {
                         "field": "noorder",
                         "title": "SPB",
-                        "hidden": true
+                        "hidden": true,
+                        groupHeaderTemplate: "SPB : <button type='button' ng-click='selectUnselectAllRow()' >Check All</button> #= value # "
+                        // "template": "<input type='checkbox' class='checkbox' ng-click='selectUnselectAllRow()' />"
                     },
                 ]
         }
@@ -542,6 +597,7 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                 //     toastr.error('Pilih data dahulu!!!')
                 //     return
                 // }
+                console.log($scope.selectedData3);
                 for (let i = 0; i < $scope.selectedData3.length; i++) {
                     if ($scope.selectedData3[i].isveriforder == '✔') {
                         toastr.error('Sudah diverifikasi!!!')

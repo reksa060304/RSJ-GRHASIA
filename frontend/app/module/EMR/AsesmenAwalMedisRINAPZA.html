@@ -1042,6 +1042,13 @@
                                                         <div class="grid_12" style="padding: 5pt">
                                                             <div ng-repeat="jawab in list.detail | orderBy:'id'">
                                                                 <div ng-switch on="jawab.type">
+
+                                                                    <div class="grid_12" ng-switch-when="textarea" style="margin-top: -5px;">
+                                                                        <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[jawab.id]"
+                                                                        k-data-source=""
+                                                                        style="height: 80px; width: 90%; "/>                                                               
+                                                                    </div>
+
                                                                         <div class="grid_12" ng-switch-when="checkbox" style="margin-top: -5px;">
                                                                             <input type="checkbox" class="k-checkbox" id="item.obj{{jawab.id}}"
                                                                                 ng-model="item.obj[jawab.id]">

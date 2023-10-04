@@ -961,8 +961,13 @@ define(['initialize'], function (initialize) {
                 }
 
             }
+            $scope.$watch('item.produk', function (newValue, oldValue) {
+                if (newValue != oldValue) {
+                    $scope.item.hargaSatuan = $scope.item.produk.harganetto
+                    console.log($scope.item.hargaSatuan);
+                }
+            });
             $scope.getSatuan = function () {
-
                 medifirstService.get("farmasi/get-info-stok?produkfk=" + $scope.item.produk.id, true)
                 .then(function (e) {
                     //dikasih nilai namaProduks & namaRuangans hanya ketika data yg dipilih ada data info stoknya/valid
@@ -1003,6 +1008,9 @@ define(['initialize'], function (initialize) {
                 $scope.item.nilaiKonversi = 1// $scope.item.satuan.nilaikonversi
                 $scope.item.jumlah = 0;
                 $scope.item.hargaSatuan = 0;
+                if ($scope.item.produk.harganetto != null){
+                    $scope.item.hargaSatuan = $scope.item.produk.harganetto
+                }
                 // $scope.item.ppn = 0;
                 $scope.item.ppnpersen = 0;
                 $scope.item.hargaDiskon = 0;

@@ -1261,6 +1261,18 @@
         {
             "nameDep": "LaporanPemeliharanRTCtrl",
             "urlDep": "module/Sanitasi/LaporanPemeliharanRTCtrl"
+        },
+        {
+            "nameDep": "LaporanMutasiBarangBaruCtrl",
+            "urlDep": "module/Logistik/LaporanMutasiBarangBaruCtrl"
+        },
+        {
+            "nameDep": "sensusRSCtrl",
+            "urlDep": "module/Registrasi/sensusRSCtrl"
+        },
+        {
+            "nameDep": "sensusBangsalCtrl",
+            "urlDep": "module/Registrasi/sensusBangsalCtrl"
         }
     ]
 }

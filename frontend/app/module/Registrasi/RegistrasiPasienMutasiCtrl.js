@@ -310,11 +310,27 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.isSimpan = true
                 if ($scope.item.kelas == undefined) {
                     toastr.error('Kelas harus di isi')
+                    $scope.isSimpan = false
+
                     return
                 }
 
                 if ($scope.item.jenisKasus == undefined) {
                     toastr.error('Jenis kasus harus di isi')
+                    $scope.isSimpan = false
+
+                    return
+                }
+                if ($scope.item.kamar == undefined) {
+                    toastr.error('No Kamar harus di isi')
+                    $scope.isSimpan = false
+
+                    return
+                }
+                if ($scope.item.nomorTempatTidur == undefined) {
+                    toastr.error('No Tempat Tidur harus di isi')
+                    $scope.isSimpan = false
+
                     return
                 }
 

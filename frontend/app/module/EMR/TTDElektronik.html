@@ -20,6 +20,18 @@
     .k-treeview .k-item {
         background-color: #f9f9f9 !important;
     }
+    #canvas-container {
+    border: 2px dashed #ccc;
+    width: 400px;
+    height: 400px;
+    position: relative;
+    }
+
+    canvas {
+    border: 2px dashed #ccc;
+    width: 100%;
+    height: 100%;
+    }
 
     .k-checkbox-label:before {
         margin: 1px 0px 0px 6px;
@@ -99,6 +111,12 @@
         color: #FFFFFF;
         /*font-weight: bold;*/
     }
+    #movingImage {
+    position: absolute;
+    left: 100px;
+    top: 100px;
+    }
+
 </style>
 
 <div ng-show="cacheRM !=undefined || cachePARAM !=undefined">
@@ -420,6 +438,61 @@
             </div>
         </md-content>
 
+    </div>
+</div>
+<div kendo-window="popUpk" k-title="'Koordinat TTD'" k-width="1200" k-visible="false" k-on-open="win2visible = true"
+    k-on-close="win2visible = false">
+    <div class="panel panel-default container_12">
+        <div class="grid_12">
+            <div class="grid_12">
+                <div class="grid_12">
+                    <label c-label item="item">Halaman</label>
+                </div>
+                <div class="grid_6">
+                    <input style="width: 100%;" kendo-combo-box k-ng-model="item.page" k-data-text-field="'page'"
+                        k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listPage"
+                        k-on-change="changePage(dataItem,item.page)" />
+                </div>
+            </div>
+            <div class="grid_12">
+                <div class="grid_12">
+                    <div class="grid_12">
+                        <label c-label item="item">Ukuran QRcode</label>
+                    </div>
+                    <div class="grid_6">
+                        <input kendo-slider="" k-min="10" k-max="500" k-ng-model="item.sizeWidth" style="width: 100%;"
+                            id="imageWidthSlider" />
+                    </div>
+                    <div class="grid_3">
+                        <input c-text-box class="k-textbox" type="text" ng-model="item.sizeWidth" id="imageWidthInput"
+                        min="10" max="500">
+                    </div>
+                    <div class="grid_3">
+                        <input c-text-box class="k-textbox" type="text" ng-model="item.sizeHeight" id="imageHeightInput"
+                            min="10" max="500">
+                    </div>
+                </div>
+                <div class="grid_12" ng-hide="true">
+                    <label c-label item="item">Height</label>
+                    <input kendo-slider="" k-min="10" k-max="500" k-ng-model="item.sizeHeight" style="width: 50%;"
+                        id="imageHeightSlider" />
+                </div>
+            </div>
+            
+        </div>
+        <div class="grid_12">
+            <div class="grid_12" >
+                <img id="movingImage" src="images/contoh_ttd.png" alt="Gambar">
+            </div>
+            <div class="grid_12">
+                <canvas id="pdfCanvas" width="1200" height="450"></canvas>
+            </div>
+        </div>
+        
+        <button class="k-button k-button-icontext k-primary k-grid-update" ng-click="cekDulu()"
+            id="btnSimpanCek"><span class="k-icon k-update"></span>OK!!!</button>
+            <!-- <button class="k-button k-button-icontext k-primary k-grid-update" ng-click="barcode()"
+                id="btnSimpanCek"><span class="k-icon k-update"></span>BARCODE</button> -->
     </div>
 </div>
 

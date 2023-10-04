@@ -871,10 +871,7 @@ define(['initialize'], function (initialize) {
                    return;
                 }
 
-                if ($scope.dataSelected.statuspekerjaan == "Selesai") {
-                    toastr.error("Status Pekerjaan Telah Selesai!")
-                    return;
-                }
+                
 
                 // $scope.itemd.p3 = ;
                 if ($scope.dataSelected.ispihakketiga == true){
@@ -940,7 +937,10 @@ define(['initialize'], function (initialize) {
                     toastr.error("Data Belum Dipilih!")
                     return;
                 }                
-
+                if ($scope.dataSelected.statuspekerjaan == "Selesai") {
+                    toastr.error("Status Pekerjaan Telah Selesai!")
+                    return;
+                }
                 // if (moment($scope.item.tglMulai).format('YYYY-MM-DD HH:mm') == moment($scope.item.tglSelesai).format('YYYY-MM-DD HH:mm')) {
                 //     toastr.error("Tanggal Mulai dan Tanggal Selasai Tidak Boleh Sama!")
                 //     return;

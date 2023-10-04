@@ -66,18 +66,44 @@
                         ng-keypress="($event.which == 13)? SearchData():item.namaPegawai" />
                 </div>
                 <!-- <div class="grid_2">
+                    <input  kendo-combo-box k-ng-model="item.diagnosaKep"
+                        k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                        k-auto-bind="false" k-data-source="listDiagnosaKep" k-on-change="getintervensi()" />
+                </div> -->
+                <div class="grid_2">
+                    <label c-label item="item" >Diagnosa Keperawatan</label>
+                    <input ng-disabled="isDisable" style="width: 100%;" kendo-combo-box k-ng-model="item.diagnosaKep"
+                        k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                        k-auto-bind="false" k-data-source="listDiagnosaKep" k-on-change="getintervensi()"
+                        ng-keypress="($event.which == 13)? SearchData():item.diagnosaKep" />
+                </div>
+                <div class="grid_2">
+                    <label c-label item="item">Label Intervensi</label>
+                    <input ng-disabled="isDisable" style="width: 100%;" kendo-combo-box k-ng-model="item.labelintervensi"
+                        k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                        k-auto-bind="false" k-data-source="listLabelIntervensi" k-on-change="getImplementasi()"
+                        ng-keypress="($event.which == 13)? SearchData():item.labelintervensi" />
+                </div>
+                <div class="grid_3">
+                    <label c-label item="item">Implementasi/Tindakan Keperawatan</label>
+                    <input ng-disabled="isDisable" style="width: 100%;" kendo-combo-box k-ng-model="item.implementasi"
+                        k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                        k-auto-bind="false" k-data-source="listImplementasi" 
+                        ng-keypress="($event.which == 13)? SearchData():item.implementasi" />
+                </div>
+                <!-- <div class="grid_2">
                     <label c-label item="item" c-label-text="Kelompok Pasien"></label>
                     <input style="width: 100%;" kendo-combo-box k-ng-model="item.KelompokPasien"
                         k-data-text-field="'kelompokpasien'" k-data-value-field="'id'" class="'max-height'"
                         k-filter="'contains'" k-auto-bind="false" k-data-source="listKelompokPasien"
                         ng-keypress="($event.which == 13)? SearchData():item.KelompokPasien" />
                 </div> -->
-                <div class="grid_2" style="margin-top:5px">
+                <!-- <div class="grid_2" style="margin-top:5px">
                     <label c-label>Nama Implementasi</label>
                     <select kendo-multi-select k-options="selectOptionsRuangan"
                         k-filter="'contains'" k-data-source="listTindakan" k-ng-model="item.TindakanMulti"></select>
-                    <!--<input style="width: 100%;" kendo-combo-box k-ng-model="item.Ruangan" k-data-text-field="'namaRuangan'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="ruangans"/>-->
-                </div>
+                    <input style="width: 100%;" kendo-combo-box k-ng-model="item.Ruangan" k-data-text-field="'namaRuangan'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="ruangans"/>
+                </div> -->
                 <div class="grid_1" style="margin-top: 14px">
                     <div class="grid_12">
                         <button class="btnTemplate1" style="margin-left: 0;" ng-click="CariData()">Cari</button>

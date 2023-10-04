@@ -1,0 +1,86 @@
+<div class="grid_12">
+    <div class="grid_12 headerBox">
+        <h1 style="color: white;"><b>Sensus Harian Rawat Inap Rumah Sakit</b></h1>
+    </div>
+    <div class="grid_12">
+        
+        <div class="grid_2">
+            <div class="grid_12">
+                <label c-label item="item" c-label-text="Bulan"></label>
+            </div>
+            <div class="grid_12">
+                <div class="grid_12">
+                    <input style="width: 100%" k-options="monthUngkul" k-ng-model="item.bulan" kendo-date-picker
+                        placeholer="MMMM" k-format="'MMMM'" />
+                </div>
+            </div>
+        </div>
+        <div class="grid_2">
+            <div class="grid_12">
+                <label c-label item="item" c-label-text="Tahun"></label>
+            </div>
+            <div class="grid_12">
+                <div class="grid_12">
+                    <input style="width: 100%" k-options="yearUngkul" k-ng-model="item.tahun" kendo-date-picker
+                        placeholer="YYYY" k-format="'yyyy'" />
+                </div>
+            </div>
+        </div>
+        <div class="grid_2">
+            <div class="grid_12">
+                <label>&nbsp;</label>
+            </div>
+            <div class="grid_6">
+                <button class="primary c-button" style="margin-top: 6px" ng-click="cariFilter()">Cari</button>
+            </div>
+            <div class="grid_6">
+                <button class="primary c-button" style="margin-top: 6px" ng-click="savePosting()">Posting</button>
+            </div>
+        </div>
+    </div>
+    <div class="grid_12">
+        <div class="grid_2">
+            <label c-label item="item" c-label-text="Jumlah Tempat Tidur" real></label>
+            <input c-text-box type="input" style="text-align: right" filter="" class="k-textbox"
+                ng-model="item.ttlTempatTidur" disabled />
+        </div>
+        <div class="grid_1">
+            <label c-label item="item" c-label-text="BOR" real></label>
+            <input c-text-box type="input" style="text-align: right" filter="" class="k-textbox" ng-model="item.bortt"
+                disabled />
+        </div>
+        <div class="grid_1">
+            <label c-label item="item" c-label-text="LOS" real></label>
+            <input c-text-box type="input" style="text-align: right" filter="" class="k-textbox" ng-model="item.los"
+                disabled />
+        </div>
+        <div class="grid_1">
+            <label c-label item="item" c-label-text="TOI" real></label>
+            <input c-text-box type="input" style="text-align: right" filter="" class="k-textbox" ng-model="item.toi"
+                disabled />
+        </div>
+        <div class="grid_1">
+            <label c-label item="item" c-label-text="BTO" real></label>
+            <input c-text-box type="input" style="text-align: right" filter="" class="k-textbox" ng-model="item.bto"
+                disabled />
+        </div>
+        <div class="grid_1">
+            <label c-label item="item" c-label-text="NDR" real></label>
+            <input c-text-box type="input" style="text-align: right" filter="" class="k-textbox" ng-model="item.ndr"
+                disabled />
+        </div>
+        <div class="grid_1">
+            <label c-label item="item" c-label-text="GDR" real></label>
+            <input c-text-box type="input" style="text-align: right" filter="" class="k-textbox" ng-model="item.gdr"
+                disabled />
+        </div>
+    </div>
+    <div class="grid_12 borderBox">
+        <kendo-grid options="columnPendidikan" k-data-source="dataSourcePendidikan" k-sortable="'true'"
+            k-ng-model="dataSelected" ng-click="klikGrid(dataSelected)">
+        </kendo-grid>
+    </div>
+</div>
+<div class="grid_12" style="margin-top:60px">
+    <div ng-include='"../app/template/Shared/TemplateLoading"'></div>
+</div>

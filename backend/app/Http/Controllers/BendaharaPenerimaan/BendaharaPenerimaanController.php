@@ -3230,13 +3230,13 @@ class BendaharaPenerimaanController extends ApiController {
                 $cekjumlah = $konten->namaproduk;
             }
 
-            else if($konten->jenisproduk == 27688 && $konten->idcarabayar2 == null){
-                $jumlahdiklat += $konten->totaldibayarclosing;
-                $voljumlahdiklat++;
-                $cekjumlah = $konten->namaproduk;
-            }
+            // else if($konten->jenisproduk == 27688 && $konten->idcarabayar2 == null){
+            //     $jumlahdiklat += $konten->totaldibayarsbm;
+            //     $voljumlahdiklat++;
+            //     $cekjumlah = $konten->namaproduk;
+            // }
 
-            else if($konten->jenisproduk == 27688 && $konten->idcarabayar2 != null){
+            else if($konten->jenisproduk == 27688){
                 $jumlahdiklat += $konten->totaldibayarsbm;
                 $voljumlahdiklat++;
                 $cekjumlah = $konten->namaproduk;

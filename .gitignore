@@ -128,3 +128,7 @@ Thumbs.db
 *.tmp
 /frontend/app/javascripts/Setting.js
 frontend/app/javascripts/Setting.js
+e-reservasi/src/app/helper/config.ts
+kiosk/src/app/main/module/config.ts
+sistem-antrian/src/app/guard/config.ts
+sistem-antrian/socket-server/server.js

@@ -146,7 +146,8 @@ export class PilihPoliComponent implements OnInit {
       this.dataCache[0].tempatTglLahir = this.dataCache[0].pasien.tempatLahir + ', ' + this.dataCache[0].pasien.tglLahir
       this.dataCache[0].noidentitas = this.dataCache[0].pasien.noIdentitas
       this.dataCache[0].alamatlengkap = this.dataCache[0].alamatLengkap
-      this.dataCache[0].notelepon = '-'
+      this.dataCache[0].notelepon = this.dataCache[0].pasien.noHp
+      this.dataCache[0].hambatan = this.dataCache[0].hambatan.id
       this.dataCache[0].namaruangan = this.formGroup.get('idRuangan').value.value.namaruangan
       this.dataCache[0].idruangan = this.formGroup.get('idRuangan').value.value.id
       this.dataCache[0].objectdepartemenfk = this.formGroup.get('idRuangan').value.value.objectdepartemenfk
@@ -187,8 +188,23 @@ export class PilihPoliComponent implements OnInit {
         this.savePsienDaftar()
       })
     } else {
-      this.item.statuspasien = 'LAMA'
-      this.savePsienDaftar()
+    this.httpService.get('medifirst2000/registrasi/cek-pasien-daftar-duakali?nocm='+ this.item.nocmfk + '&tglregistrasi='+moment(new Date()).format('YYYY-MM-DD')).subscribe(e=>{
+      console.log(e);
+      if(e.data.length > 0){
+        for (let i = 0; i < e.data.length; i++) {
+          const element = e.data[i];
+          if(this.item.idruangan == element.objectruanganlastfk){
+            this.alertService.error('Error', 'Tidak Bisa Registrasi dengan Poli yang sama')
+            return
+          }
+        }
+        this.item.statuspasien = 'LAMA'
+        this.savePsienDaftar()
+      }else{
+        this.item.statuspasien = 'LAMA'
+        this.savePsienDaftar()
+      }
+    })
     }
   }
   savePsienDaftar() {

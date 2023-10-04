@@ -7,7 +7,7 @@
         <td bordercolor="#808080" height="13"></td>
     </tr>
     <tr>
-
+        
         <td bordercolor="#808080" height="13">
             <table cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: 0">
                 <tbody>
@@ -52,7 +52,7 @@
         <td bordercolor="#808080" height="13">
             <font style="font-size: 11pt" face="Arial" color="#000000">
                     <span style="font-weight: 700;font-size: 11pt">
-                        RESUME MEDIS INI DITULISKAN DI RUMAH SAKIT JIWA GRHASIA. PADA TANGGAL {{  $raw->tglresume }}.
+                        {{$cetakan}} INI DITULISKAN DI RUMAH SAKIT JIWA GRHASIA. PADA TANGGAL {{  $raw->tglresume }}.
                     </span>
             </font>
         </td>

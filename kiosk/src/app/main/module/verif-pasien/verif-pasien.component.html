@@ -2,7 +2,7 @@
     <div class="content-body">
         <!-- content-header component -->
         <app-content-header [contentHeader]="contentHeader"></app-content-header>
-        <section id="input-sizing">
+        <section id="input-sizing" >
             <form [formGroup]="formGroup">
                 <div class="card">
                     <div class="card-body">
@@ -89,7 +89,7 @@
                                                 <div class="col-12  col-md-12">
                                                     <button type="button" class="btn btn-outline-primary mb-1"
                                                         rippleEffect style="width:100%"
-                                                        (click)="pilihPoli()">Selanjutnya</button>
+                                                        (click)="pilihPoli('lama')">Selanjutnya</button>
                                                 </div>
                                             </div>
 
@@ -103,36 +103,140 @@
                         <div class="centers" *ngIf="isInfoPasienBaru">
 
                             <div class="row">
-                                <div class="col-12 col-md-3 col-lg-4"></div>
-                                <div class="col-12 col-md-6 col-lg-4">
+                                <!-- <div class="col-12 col-md-qw col-lg-4"></div> -->
+                                <div class="col-12 col-md-12 col-lg-12">
                                     <div class="card">
                                         <div class="card-header " style="display: inline;">
                                             <h3>NIK : {{noIdentitas}}</h3>
                                         </div>
                                         <div class="card-body">
-                                            <p class="card-text"> Nama Pasien </p>
-                                            <h4 class="card-title"> {{namaPasien}}</h4>
+                                            <div class="row">
+                                                <div class="col-12 col-md-12 col-lg-4">
+                                                    <div class="form-group">
+                                                        <label for="basicSelect">
+                                                            Nama Pasien
+                                                        </label>
+                                                        <input class="form-control" type="text"
+                                                            placeholder="Nama Pasien" formControlName="namaPasien"
+                                                            value="namaPasien" style="text-transform: uppercase;"/>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12 col-md-12 col-lg-4">
+                                                    <div class="form-group">
+                                                        <label for="basicSelect">
+                                                            Tempat Lahir
+                                                        </label>
+                                                        <input class="form-control" type="text"
+                                                            placeholder="tempat Lahir" formControlName="tempatLahir"
+                                                            value="tempatLahir" style="text-transform: uppercase;" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-12 col-md-6 col-lg-4">
+                                                    <label for="basicSelect">
+                                                        Tanggal Lahir
+                                                    </label>
+                                                    <div class="input-group">
+                                                        <input class="form-control"
+                                                            placeholder="yyyy-mm-dd"
+                                                            formControlName="tanggalLahir"
+                                                            ngbDatepicker #basicDP="ngbDatepicker" value="tanggalLahir">
+                                                        <div class="input-group-append">
+                                                            <button
+                                                                class="btn btn-outline-secondary feather icon-calendar"
+                                                                (click)="basicDP.toggle()" type="button"
+                                                                rippleEffect></button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-12 col-md-6 col-lg-4">
+                                                    <label for="basicSelect">Jenis Kelamin </label>
+                                                    <div class="form-group">
+                                                        <ng-select class="ng-select-size-lg" id="basicSelect"
+                                                            [items]="listJenisKelamin" formControlName="idJenisKelamin"
+                                                            value="idJenisKelamin">
+                                                        </ng-select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12 col-md-6 col-lg-4">
+                                                    <label for="basicSelect">Agama </label>
+                                                    <div class="form-group">
+                                                        <ng-select class="ng-select-size-lg" id="basicSelect"
+                                                            [items]="listDataAgama" formControlName="idAgama">
 
-                                            <p class="card-text">Jenis Kelamin </p>
-                                            <h4 class="card-title"> {{jenisKelamin}}</h4>
-<!-- 
-                                            <p class="card-text"> Status Kawin </p>
-                                            <h4 class="card-title"> {{statusKawin}}</h4> -->
+                                                        </ng-select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12 col-md-6 col-lg-4">
+                                                    <label for="basicSelect">Status Perkawinan </label>
+                                                    <div class="form-group">
+                                                        <ng-select class="ng-select-size-lg" id="basicSelect"
+                                                            [items]="listStatusKawin" formControlName="idStatusPerkawinan">
 
-                                            <p class="card-text"> Tanggal Lahir </p>
-                                            <h4 class="card-title"> {{tempatTglLahir}}</h4>
-<!-- 
-                                            <p class="card-text">Alamat </p>
-                                            <h4 class="card-title"> {{alamat}}</h4> -->
+                                                        </ng-select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12 col-md-6 col-lg-4">
+                                                    <label for="basicSelect">Golongan Darah</label>
+                                                    <div class="form-group">
+                                                        <ng-select class="ng-select-size-lg" id="basicSelect"
+                                                            [items]="listGolonganDarah"
+                                                            formControlName="idGolonganDarah">
 
-                                            <!-- <p class="card-text"> No. Telpon </p>
-                                            <h4 class="card-title"> {{noTelpon}}</h4> -->
+                                                        </ng-select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12 col-md-6 col-lg-4">
+                                                    <label for="basicSelect">Pendidikan</label>
+                                                    <div class="form-group">
+                                                        <ng-select class="ng-select-size-lg" id="basicSelect"
+                                                            [items]="listPendidikan"
+                                                            formControlName="idpendidikan">
+
+                                                        </ng-select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12 col-md-6 col-lg-4">
+                                                    <label for="basicSelect">Pekerjaan</label>
+                                                    <div class="form-group">
+                                                        <ng-select class="ng-select-size-lg" id="basicSelect"
+                                                            [items]="listPekerjaan" formControlName="idpekerjaan">
+
+                                                        </ng-select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12 col-md-6 col-lg-4">
+                                                    <label for="basicSelect">Hambatan Komunikasi</label>
+                                                    <div class="form-group">
+                                                        <ng-select class="ng-select-size-lg" id="basicSelect"
+                                                            [items]="listHambatan" formControlName="idhambatan">
+
+                                                        </ng-select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12 col-md-12 col-lg-4">
+                                                    <label for="basicSelect">
+                                                        No Hp
+                                                    </label>
+                                                    <input class="form-control" type="text" placeholder="No HP"
+                                                        formControlName="noHp" value="noHp" />
+                                                </div>
+                                                <div class="col-12 col-md-12 col-lg-4">
+                                                    <label for="basicSelect">
+                                                        Alamat
+                                                    </label>
+                                                    <input class="form-control" type="text" placeholder="Alamat"
+                                                        formControlName="alamat" value="alamat" />
+                                                </div>
+                                            </div>
+                                            
                                             <div class="row mt-2">
 
                                                 <div class="col-12  col-md-12">
                                                     <button type="button" class="btn btn-outline-primary mb-1"
                                                         rippleEffect style="width:100%"
-                                                        (click)="pilihPoli()">Selanjutnya</button>
+                                                        (click)="pilihPoli('baru')">Selanjutnya</button>
                                                 </div>
                                             </div>
 
@@ -141,7 +245,7 @@
                                 </div>
 
                             </div>
-
+                            
                         </div>
                     </div>
                 </div>

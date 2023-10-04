@@ -11,16 +11,19 @@
                         <label c-label item="item" c-label-text="statusKeluar"></label>
                         <input style="width: 100%;" kendo-combo-box k-ng-model="item.statusKeluar" k-data-text-field="'statuskeluar'" k-filter="'contains'" k-data-value-field="'id'" k-auto-bind="false" k-data-source="listStatusKeluar" k-on-change="loadKelas()" ng-disabled="disabledStatus"/>
                     </div>
+                    <div class="grid_4" ng-hide="item.statusKeluar.id === 2">
+                        <!-- Status Pulang -->
+                        <label c-label item="item" c-label-text="Cara Keluar" real></label>
+                        <input style="width: 100%;" kendo-combo-box k-ng-model="item.statusPulang"
+                            k-data-text-field="'statuspulang'" k-filter="'contains'" k-data-value-field="'id'"
+                            k-auto-bind="false" k-data-source="listStatusPulang" k-on-change="getKondisiKeluar()" />
+                    </div>
                     <div class="grid_4" ng-hide="item.statusKeluar.id === 2" >
                         <!-- Kondisi Keluar -->
                         <label c-label item="item" c-label-text="kondisiKeluar"></label>
                         <input style="width: 100%;" kendo-combo-box k-ng-model="item.kondisiKeluar" k-data-text-field="'kondisipasien'" k-filter="'contains'" k-data-value-field="'id'" k-auto-bind="false" k-data-source="listKondisiPasien" />
                     </div>
-                    <div class="grid_4" ng-hide="item.statusKeluar.id === 2" >
-                        <!-- Status Pulang -->
-                        <label c-label item="item" c-label-text="statusPulang"></label>
-                        <input style="width: 100%;" kendo-combo-box k-ng-model="item.statusPulang" k-data-text-field="'statuspulang'" k-filter="'contains'" k-data-value-field="'id'" k-auto-bind="false" k-data-source="listStatusPulang" />
-                    </div>
+                    
                     <!-- <div class="grid_1"  style="margin-top:5px" ng-show="item.statusKeluar.id === 2">
                          <input type="checkbox" class="k-checkbox" id="rawatGabung" ng-model="item.rawatGabung" ng-click="cekRawatGabung(item.rawatGabung)">
                                     <label class="k-checkbox-label" for="rawatGabung"><b>Rawat Gabung</b></label>
@@ -36,7 +39,7 @@
                     </div>
                 </div>
 
-                <div class="grid_12" ng-show="item.statusKeluar.id === 5">
+                <div class="grid_12" ng-show="item.statusPulang.id === 9 && item.statusKeluar.id === 1">
                     <div class="grid_4">
                         <label c-label item="item" c-label-text="tanggalMeninggal"></label>
                         <input style="width: 100%" kendo-date-time-picker k-ng-model="item.tglMeninggal" k-options="formatJam24"/>

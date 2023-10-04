@@ -438,11 +438,11 @@ define(['initialize'], function (initialize) {
                         $scope.item.obj[3004507] = true
 
                     }
-                    else if (dat.data.data[0].agama == "KRISTEN" || dat.data.data[0].agama == "KRISTEN KATHOLIK" ){
+                    else if (dat.data.data[0].agama == "KRISTEN (PROTESTAN)") {
                         $scope.item.obj[3004508] = true
 
                     }
-                    else if (dat.data.data[0].agama == "KRISTEN KATHOLIK"){
+                    else if (dat.data.data[0].agama == "KATHOLIK"){
                         $scope.item.obj[3004509] = true
 
                     }
@@ -556,7 +556,7 @@ define(['initialize'], function (initialize) {
                         $scope.item.obj[3004489] = true
 
                     }
-                    else if (dat.data.data[0].pekerjaan == "TIDAK BEKERJA" || dat.data.data[0].pekerjaan == "BELUM BEKERJA" ){
+                    else if (dat.data.data[0].pekerjaan == "Tidak Bekerja" || dat.data.data[0].pekerjaan == "Belum Bekerja" ){
                         $scope.item.obj[3004525] = true
 
                     }

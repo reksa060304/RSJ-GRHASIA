@@ -590,6 +590,10 @@ define(['initialize'], function (initialize) {
 				if ($scope.item.id != undefined) {
 					idProduk = $scope.item.id
 				}
+				var harganetto = null
+				if($scope.item.harganetto != undefined){
+					harganetto = $scope.item.harganetto
+				}
 				// if($scope.item.id !=undefined){
 				var objSave = {
 					"id": idProduk,
@@ -661,6 +665,7 @@ define(['initialize'], function (initialize) {
 					"qtyterkecil": null,
 					"kdprodukintern": null,
 					"objectsediaanfk": objectsediaanfk,
+					"harganetto": harganetto,
 					"objectstatusbarangfk": 1,
 					"tglproduksi": "2017-07-12",
 					"status": null,

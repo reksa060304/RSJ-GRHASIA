@@ -178,8 +178,10 @@ class ReservasiOnlineController extends ApiController
         //     $data = $data ->whereRaw("CONVERT(varchar, ps.tgllahir, 105)  ='$tgllahir' " );
         // }
         if(isset($nocm) &&$nocm != "" && $nocm != "undefined" && $nocm != "null") {
-            $data = $data->where('ps.nocm','=',$nocm)
-             ->Orwhere('ps.noidentitas','=',$nocm);
+            $data = $data->where(function($query) use ($nocm) {
+                    $query->where('ps.nocm', '=', $nocm)
+                        ->orWhere('ps.noidentitas', '=', $nocm);
+                });
         }
 		$data = $data->get();
 

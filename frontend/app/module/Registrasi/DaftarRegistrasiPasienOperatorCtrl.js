@@ -3102,7 +3102,24 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 
             }
 			
-        
+			$scope.monitoringjamkes = function(){
+				if ($scope.dataPasienSelected == undefined) {
+					messageContainer.error("Pilih data dulu")
+					return
+				}
+				var local = JSON.parse(localStorage.getItem('profile'))
+				var nama = medifirstService.getPegawaiLogin().namaLengkap
+
+				window.open(config.baseApiBackend + 'report/cetak-monitoringjamkes?nocm=' + $scope.dataPasienSelected.nocm +
+					'&norec_pd=' + $scope.dataPasienSelected.norec +
+					// '&emr=' + norecEMR +
+					// '&emrfk=' + $scope.cc.emrfk +
+					'&kdprofile=' + local.id +
+					'&nama=' + nama +
+					// '&isttd=true' +
+					// '&pegawaittd=' + pegawai.value +
+					'&noregistrasi=' + $scope.dataPasienSelected.noregistrasi, '_blank');
+			}
 		//** BATAS */
 		}
 	]);

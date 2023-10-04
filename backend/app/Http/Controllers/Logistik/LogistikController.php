@@ -134,6 +134,12 @@ class LogistikController extends ApiController{
             ->where('lu.statusenabled',true)
             ->where('lu.kdprofile', $idProfile)
             ->get();
+         $dataRuanganGudang = \DB::table('ruangan_m as lu')
+            ->select('lu.id','lu.namaruangan')
+            ->where('lu.statusenabled',true)
+            ->where('lu.kdprofile', $idProfile)
+            ->whereIn('lu.id',[38,165,59,183,603,893,894,895,896,897,898,899,900])
+            ->get();
 
         $dataJenisProduk = \DB::table('jenisproduk_m as lu')
             ->select('lu.id','lu.jenisproduk as jenisProduk')
@@ -454,7 +460,7 @@ class LogistikController extends ApiController{
             'noorder'=> $dataNoOrder,
             'passwordAdjusment' => $getPasswordAdjusment,
             'bulan' => $dataBulan,
-            // 'spb'=> $spbnya,
+            'ruanganGudang'=> $dataRuanganGudang,
             // 'sppb'=> $sppbnya,
             // 'SNN'=> $SNN,
             'by' => 'ea@epic',
@@ -658,7 +664,7 @@ class LogistikController extends ApiController{
             ->JOIN('kelompokproduk_m as kp', 'kp.id', '=', 'jp.objectkelompokprodukfk')
             ->leftJOIN('satuanstandar_m as ss', 'ss.id', '=', 'pr.objectsatuanstandarfk')
             ->leftJOIN('stokprodukdetail_t as spd', 'spd.objectprodukfk', '=', 'pr.id')
-            ->select('pr.id', 'pr.namaproduk', 'ss.id as ssid', 'ss.satuanstandar','pr.spesifikasi')
+            ->select('pr.harganetto','pr.id', 'pr.namaproduk', 'ss.id as ssid', 'ss.satuanstandar','pr.spesifikasi')
             ->where('pr.kdprofile',$idProfile)
             ->where('pr.statusenabled', true)
             ->where('kp.id', $request['idkelompokproduk'])
@@ -695,7 +701,8 @@ class LogistikController extends ApiController{
                 'ssid' => $item->ssid,
                 'satuanstandar' => $item->satuanstandar,
                 'konversisatuan' => $satuanKonversi,
-                'spesifikasi' => $item->spesifikasi
+                'spesifikasi' => $item->spesifikasi,
+                'harganetto' => $item->harganetto,
             );
         }
 
@@ -8502,6 +8509,8 @@ class LogistikController extends ApiController{
             $result = array(
                 "status" => 400,
                 "message"  => $transMessage,
+                'e'=> $e->getMessage() ,
+                'line'=> $e->getLine() ,
 //                "nokirim" => $dataSK,//$noResep,
 //                "stokdetail" => $dataSTOKDETAIL,
 //                "stokdetailTujuan" => $dataSTOKDETAIL2,
@@ -8993,7 +9002,8 @@ class LogistikController extends ApiController{
                 "datalogin" => $dataLogin['userData'],
                 "message"  => $transMessage,
 				'line'=> $e->getLine(),
-                'messages'=> $e->getMessage(),            );
+                'e'=> $e->getMessage(),            
+            );
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
@@ -15028,7 +15038,7 @@ class LogistikController extends ApiController{
             ->leftjoin('strukkirim_t as sk','sk.noorderfk','=','sp.norec')
             ->join('produk_m as pr', 'pr.id','=','op.objectprodukfk')
             ->join('satuanstandar_m as ss', 'ss.id','=','op.objectsatuanstandarfk')
-            ->select('sk.norec as norec_sk','op.isanalis','sp.norec','sp.tglorder','sp.noorder','sp.jenispermintaanfk','pg.namalengkap',
+            ->select('sp.keteranganorder','sk.norec as norec_sk','op.isanalis','sp.norec','sp.tglorder','sp.noorder','sp.jenispermintaanfk','pg.namalengkap',
                 'ru.namaruangan as ruanganasal','ru2.namaruangan as ruangantujuan','sp.keteranganorder',
                 'sp.statusorder','sp.qtyjenisproduk', DB::raw("
                      op.norec as norec_op, op.jumlahstokgudang, pr.kdbhp, op.jumlahstokruangan, case when op.qtyberi is null then op.qtyproduk else op.qtyberi end as qtyberi, pr.id as kdproduk,pr.kdproduk as kdsirs,pr.namaproduk,
@@ -15126,6 +15136,7 @@ class LogistikController extends ApiController{
                 'isveriforder'=> $item->isveriforder,
                 'isanalis'=> $item->isanalis,
                 'norec_sk'=> $item->norec_sk,
+                'keteranganorder'=> $item->keteranganorder,
                 'details' => $details,
             );
         }
@@ -16570,5 +16581,52 @@ FROM
             );
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    function getMutasiBarangBaru(Request $request) {
+        $mutasi =DB::select(DB::raw("
+        select x.kdrekening, x.jenisproduk, x.saldomasuk, x.hargamasuk, y.saldokeluar,y.hargakeluar, z.saldoawal, z.hargaawal 
+        from (select jp.kdrekening, jp.jenisproduk, sum(coalesce(ks.jumlah,0.0)) as saldomasuk,  sum(spd.harganetto) as hargamasuk
+
+        from kartustok_t ks 
+        inner join strukpelayanan_t sp on sp.norec = ks.nostrukterimafk
+        inner join strukpelayanandetail_t spd on spd.nostrukfk = sp.norec and ks.produkfk = spd.objectprodukfk
+        inner join produk_m pr on pr.id = spd.objectprodukfk
+        inner join detailjenisproduk_m djp on djp.id = pr.objectdetailjenisprodukfk
+        inner join jenisproduk_m jp on jp.id = djp.objectjenisprodukfk
+        inner join ruangan_m ru on ru.id = ks.ruanganfk
+        where ks.tglkejadian::date between '$request[tglAwal]' and '$request[tglAkhir]' and sp.statusenabled = true and sp.kdprofile= 30  and ks.status = true and ks.flagfk = 1
+        GROUP BY jp.jenisproduk, jp.kdrekening
+        )as x
+        left join(
+        select jp.jenisproduk, sum(coalesce(ks.jumlah,0.0)) as saldokeluar,  sum(spd.harganetto) as hargakeluar	from kartustok_t ks 
+        inner join strukpelayanan_t sp on sp.norec = ks.nostrukterimafk
+        inner join strukpelayanandetail_t spd on spd.nostrukfk = sp.norec and ks.produkfk = spd.objectprodukfk
+        inner join produk_m pr on pr.id = spd.objectprodukfk
+        inner join detailjenisproduk_m djp on djp.id = pr.objectdetailjenisprodukfk
+        inner join jenisproduk_m jp on jp.id = djp.objectjenisprodukfk
+        inner join ruangan_m ru on ru.id = ks.ruanganfk
+        where ks.tglkejadian::date between '$request[tglAwal]' and '$request[tglAkhir]' and sp.statusenabled = true and sp.kdprofile= 30  and ks.status = false and ks.keterangan ilike  '%Kirim Barang%'
+        GROUP BY jp.jenisproduk
+        )as y on y.jenisproduk = x.jenisproduk
+        left join (
+        SELECT * FROM (select row_number()over(partition by jp.jenisproduk order by ks.tglkejadian asc)as nomor, jp.jenisproduk, sum(coalesce(ks.saldoawal,0.0)- ks.jumlah) as saldoawal, case when coalesce(ks.saldoawal,0.0)- ks.jumlah  = 0 then 0 else sum(spd.harganetto) end hargaawal	from kartustok_t ks 
+        inner join strukpelayanan_t sp on sp.norec = ks.nostrukterimafk
+        inner join strukpelayanandetail_t spd on spd.nostrukfk = sp.norec and ks.produkfk = spd.objectprodukfk
+        inner join produk_m pr on pr.id = spd.objectprodukfk
+        inner join detailjenisproduk_m djp on djp.id = pr.objectdetailjenisprodukfk
+        inner join jenisproduk_m jp on jp.id = djp.objectjenisprodukfk
+        inner join ruangan_m ru on ru.id = ks.ruanganfk
+        where ks.tglkejadian::date between '$request[tglAwal]' and '$request[tglAkhir]' and sp.statusenabled = true and sp.kdprofile= 30 
+        GROUP BY jp.jenisproduk, ks.saldoawal, ks.jumlah, ks.tglkejadian
+        ORDER BY ks.tglkejadian asc)as x where x.nomor = 1
+
+        )as z on z.jenisproduk = x.jenisproduk
+
+        "));
+        $result = array(
+            'mutasi'=> $mutasi,
+            'as'=> 'Fizi@epic'
+        );
+        return $this->respond($result);
     }
 }

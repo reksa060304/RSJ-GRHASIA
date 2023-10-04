@@ -659,7 +659,6 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 $scope.cc.jenisemr = 'cppt'
                 var jsonSave = {
                     head: $scope.cc,
-
                     data: arrSave//$scope.item.obj
                 }
                 medifirstService.post('emr/save-emr-dinamis', jsonSave).then(function (e) {
@@ -675,7 +674,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     //     nomorEMR : e.data.data.noemr 
                     // });
                     medifirstService.postLogging('EMR', 'norec emrpasien_t', e.data.data.norec,
-                        $scope.item.title + ' dengan No EMR - ' + e.data.data.noemr + ' pada No Registrasi '
+                        'CPPT Rawat Jalan' + ' dengan No EMR - ' + e.data.data.noemr + ' pada No Registrasi '
                         + $scope.cc.noregistrasi).then(function (res) {
                         })
                     $scope.savePeriksaDokter()
@@ -684,6 +683,8 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     var arrStr = {
                         0: e.data.data.noemr
                     }
+                    nomorEMR = e.data.data.noemr
+                    FormLoad()
                     cacheHelper.set('cacheNomorEMR', arrStr);
                 });
             }

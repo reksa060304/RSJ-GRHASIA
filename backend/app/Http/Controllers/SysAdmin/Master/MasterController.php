@@ -39,6 +39,7 @@ use App\Traits\Valet;
 use App\Master\IcdSepuluh;
 use App\Master\IcdSembilan;
 use App\Master\BankAccount;
+use App\Master\Pekerjaan;
 use App\Transaksi\KonversiSatuan;
 use App\Transaksi\OrderPelayanan;
 use DB;
@@ -235,6 +236,7 @@ class MasterController extends ApiController{
             $prod->spesifikasi = $data['spesifikasi'];
             $prod->tglproduksi = $data['tglproduksi'];
             $prod->status = $data['status'];
+            $prod->harganetto = $data['harganetto'];
             $prod->verifikasianggaran = $data['verifikasianggaran'];
             if (isset($request['isprodukintern'])){
                 $prod->isprodukintern = $data['isprodukintern'];

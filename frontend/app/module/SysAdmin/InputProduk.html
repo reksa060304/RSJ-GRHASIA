@@ -29,7 +29,7 @@
 			<!-- kdBarcode -->
 			<div class="grid_2">
 				<div class="grid_12">
-					<label c-label item="item" c-label-text="kdBarcode"></label>
+					<label c-label item="item" >Kode Barcode</label>
 				</div>
 
 				<div class="grid_12">
@@ -39,7 +39,7 @@
 			<!-- kodeBmn -->
 			<div class="grid_2">
 				<div class="grid_12">
-					<label c-label item="item" c-label-text="kodeBmn"></label>
+					<label c-label item="item">kode BMN</label>
 				</div>
 
 				<div class="grid_12">
@@ -587,14 +587,21 @@
 										<input style="width: 100%;" kendo-combo-box k-ng-model="item.account" k-data-text-field="'namaaccount'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listaccount" />
 									</div>
 								</div>
-								<div class="grid_4">
+								<div class="grid_2">
 									<div class="grid_12">
 										<label c-label item="item" c-label-text="Verifikasi Anggaran"></label>
 									</div>
 									
-
 									<div class="grid_12">
 										<input style="width: 100%;" kendo-combo-box k-ng-model="item.verifikasiAnggaran" k-data-text-field="'namaExternal'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listverifikasiAnggaran" />
+									</div>
+								</div>
+								<div class="grid_2">
+									<div class="grid_12">
+										<label c-label item="item" c-label-text="Harga Netto"real></label>
+									</div>
+									<div class="grid_12">
+										<input c-text-box type="input" filter="" class="k-textbox" ng-model="item.harganetto" />
 									</div>
 								</div>
 

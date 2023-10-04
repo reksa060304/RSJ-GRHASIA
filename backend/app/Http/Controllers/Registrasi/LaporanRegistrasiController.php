@@ -1772,8 +1772,8 @@ select pd.tglregistrasi,apd.tglkeluar,apd.tglmasuk,rpp.tglpindah,pm.nocm,pd.nore
         if (isset($request['deptId']) && $request['deptId'] != "" && $request['deptId'] != "undefined") {
             $data = $data->where('rg.objectdepartemenfk', '=', $request['deptId']);
         }
-        if (isset($request['ruangId']) && $request['ruangId'] != "" && $request['ruangId'] != "undefined") {
-            $data = $data->where('pd.objectruanganlastfk', '=', $request['ruangId']);
+        if (isset($request['idRuangan']) && $request['idRuangan'] != "" && $request['idRuangan'] != "undefined") {
+            $data = $data->where('pd.objectruanganlastfk', '=', $request['idRuangan']);
         }
         if (isset($request['kelompokPasien']) && $request['kelompokPasien'] != "" && $request['kelompokPasien'] != "undefined") {
             $data = $data->where('pd.objectkelompokpasienlastfk', '=', $request['kelompokPasien']);

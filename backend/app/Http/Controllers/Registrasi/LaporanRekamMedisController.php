@@ -6322,7 +6322,7 @@ class LaporanRekamMedisController extends   ApiController
             array_push($bulan, $q->month);
         }
 
-        $main = array("Penyakit Dalam", "Bedah", "Kesehatan Anak (Neonatal)", "Kesehatan Anak Lainnya", "Obstetri & Ginekologi (Ibu Hamil)", "Obstetri & Ginekologi Lainnya", "Keluarga Berencana", "Bedah Saraf", "Saraf", "Jiwa", "NAPZA", "Psikologi", "THT", "Mata", "Kulit dan Kelamin", "Gigi & Mulut", "Geriatri", "Kardiologi", "Radiologi", "Bedah Orthopedi", "Paru-paru", "Kusta", "Umum", "Rawat Darurat", "Rehabilitasi Medik", "Akupuntur Medik", "Konsultasi Gizi", "Day Care", "Lain-Lain", "TOTAL");
+        $main = array("Penyakit Dalam", "Bedah", "Kesehatan Anak (Neonatal)", "Kesehatan Anak Lainnya", "Obstetri & Ginekologi (Ibu Hamil)", "Obstetri & Ginekologi Lainnya", "Keluarga Berencana", "Bedah Saraf", "Saraf", "Jiwa","Jiwa Anak", "Jiwa Geriatri", "NAPZA", "Psikologi", "THT", "Mata", "Kulit dan Kelamin", "Gigi & Mulut", "Geriatri", "Kardiologi", "Radiologi", "Bedah Orthopedi", "Paru-paru", "Kusta", "Umum", "Rawat Darurat", "Rehabilitasi Medik", "Akupuntur Medik", "Konsultasi Gizi", "Day Care", "Lain-Lain", "TOTAL");
         //$bulan = array("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December");
         $currentnama = "Larasatizka";
         $currentmonth = "Ayuningtyas";
@@ -6373,7 +6373,15 @@ class LaporanRekamMedisController extends   ApiController
                             } else if($row == "Saraf" && $item->id == 755 && $item->month == $month){
                                 $jumlah += $item->jumlahkunjungan;
                                 $total += $item->jumlahkunjungan;
-                            } else if($row == "Jiwa" && ($item->id == 785 || $item->id == 752 || $item->id == 782) && $item->month == $month){
+                            } else if($row == "Jiwa" && ($item->id == 752) && $item->month == $month){
+                                $jumlah += $item->jumlahkunjungan;
+                                $total += $item->jumlahkunjungan;
+                            } 
+                            else if($row == "Jiwa Anak" && ($item->id == 785 ) && $item->month == $month){
+                                $jumlah += $item->jumlahkunjungan;
+                                $total += $item->jumlahkunjungan;
+                            } 
+                            else if($row == "Jiwa Geriatri" && ($item->id == 890) && $item->month == $month){
                                 $jumlah += $item->jumlahkunjungan;
                                 $total += $item->jumlahkunjungan;
                             } else if($row == "NAPZA" && ($item->id == 768 || $item->id == 789) && $item->month == $month){

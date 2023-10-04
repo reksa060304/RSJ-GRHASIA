@@ -309,13 +309,13 @@ define(['initialize'], function (initialize) {
                 {
                     "id" : 4, "nama": "1. Terapi",
                     "detail": [
-                        {"id": 3013298, "nama": "","type": "textbox"},
+                        {"id": 3013298, "nama": "","type": "textarea"},
                     ]
                 },
                 {
                     "id" : 5, "nama": "2. Rencana Tindak Lanjut",
                     "detail": [
-                        {"id": 3013299, "nama": "","type": "textbox"},
+                        {"id": 3013299, "nama": "","type": "textarea"},
                     ]
                 },
             ]

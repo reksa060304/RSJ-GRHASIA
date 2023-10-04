@@ -72,6 +72,7 @@ use App\Transaksi\PostingJurnalTransaksi;
 use App\Transaksi\LogAcc;
 use App\Traits\SettingDataFixedTrait;
 use Carbon\Carbon;
+use Webpatser\Uuid\Uuid;
 
 class RawatInapController extends ApiController
 {

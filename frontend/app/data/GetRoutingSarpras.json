@@ -6237,5 +6237,62 @@
         "define": "MedifirstService"
       }
     ]
+  },
+  {
+    "name": "LaporanMutasiBarangBaru",
+    "url": "/LaporaMutasi",
+    "templateurl": "module/Logistik/LaporanMutasiBarangBaru.html",
+    "controller": "LaporanMutasiBarangBaruCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "sensusRS",
+    "url": "/sensusrs",
+    "templateurl": "module/Registrasi/sensusRS.html",
+    "controller": "sensusRSCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "sensusBangsal",
+    "url": "/sensusbangsal",
+    "templateurl": "module/Registrasi/sensusBangsal.html",
+    "controller": "sensusBangsalCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
   }
 ]

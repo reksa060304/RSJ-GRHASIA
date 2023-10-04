@@ -706,10 +706,10 @@ define(['initialize'], function (initialize) {
                     return;
                 }
 
-                if ($scope.dataSelected.statuspekerjaan == "Selesai") {
-                    toastr.error("Status Pekerjaan Telah Selesai!")
-                    return;
-                }
+                // if ($scope.dataSelected.statuspekerjaan == "Selesai") {
+                //     toastr.error("Status Pekerjaan Telah Selesai!")
+                //     return;
+                // }
 
                 // $scope.itemd.p3 = ;
                 if ($scope.dataSelected.ispihakketiga == true) {

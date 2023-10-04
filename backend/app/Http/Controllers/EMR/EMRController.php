@@ -1461,7 +1461,7 @@ class EMRController  extends ApiController
             ->leftjoin('kelas_m as kls', 'kls.id', '=', 'apd.objectkelasfk')
             ->leftJoin('pegawai_m as pg1', 'pg1.id', '=', 'pd.objectpegawaifk')
             ->leftJoin('agama_m as ag', 'ag.id', '=', 'ps.objectagamafk')
-            ->select('apd.norec', 'pd.noregistrasi', 'pd.tglregistrasi', 'ps.nocm', 'ps.namapasien', 'ps.tgllahir', 'ru.objectdepartemenfk',
+            ->select('ps.nohp','apd.norec', 'pd.noregistrasi', 'pd.tglregistrasi', 'ps.nocm', 'ps.namapasien', 'ps.tgllahir', 'ru.objectdepartemenfk',
                 'alm.alamatlengkap', 'kps.kelompokpasien', 'ru.namaruangan', 'pg.namalengkap', 'jk.jeniskelamin', 'pd.norec as norec_pd',
                 'pdd.pendidikan', 'pk.pekerjaan','ru.objectdepartemenfk','pd.jenispelayanan',
                 'rk.namarekanan', 'kls.namakelas', 'pd.nocmfk', 'pd.objectkelompokpasienlastfk', 'apd.objectruanganfk', 'apd.objectpegawaifk',
@@ -9994,9 +9994,11 @@ class EMRController  extends ApiController
             ->leftJOIN('satuanstandar_m as ss', 'ss.id', '=', 'pr.objectsatuanstandarfk')
             ->JOIN('stokprodukdetail_t as spd', 'spd.objectprodukfk', '=', 'pr.id')
             ->select(DB::raw("
-                pr.id,pr.namaproduk, ss.id as ssid,ss.satuanstandar,sum(spd.qtyproduk) AS stok
+                pr.satuan,
+                pr.kekuatan,pr.id,pr.namaproduk, ss.id as ssid,ss.satuanstandar,sum(spd.qtyproduk) AS stok
             "))
-            ->groupBy(DB::raw("
+            ->groupBy(DB::raw("pr.kekuatan,
+                pr.satuan,
                 pr.id,pr.namaproduk,ss.id,ss.satuanstandar
             "))
             ->where('pr.kdprofile', $idProfile)
@@ -10055,6 +10057,8 @@ class EMRController  extends ApiController
                 'satuanstandar' => $item->satuanstandar,
                 'konversisatuan' => $satuanKonversi,
                 'stok' => $item->stok,
+                'kekuatan' => $item->kekuatan,
+                'satuan' => $item->satuan,
             );
         }
 
@@ -10981,7 +10985,7 @@ class EMRController  extends ApiController
         return $this->respond($result);
     }
 
-  public function getLembarMasukKeluar (Request $request)
+    public function getLembarMasukKeluar (Request $request)
     {
         $noemr = $request['noemr'];
         $kdProfile = $this->getDataKdProfile($request);
@@ -10996,11 +11000,11 @@ class EMRController  extends ApiController
         $data = \DB::select(DB::raw("SELECT 
         EXTRACT(year from age(pd.tglregistrasi, ps.tgllahir) )as umur, ag.agama, pj.pekerjaan, pn.pendidikan, sp.statusperkawinan, ps.penanggungjawab,  ps.hubungankeluargapj, ps.alamatrmh, ps.teleponpenanggungjawab
         FROM pasiendaftar_t pd
-        inner join pasien_m ps on ps.id = pd.nocmfk
-        inner join agama_m ag on ps.objectagamafk = ag.id
-        inner join pekerjaan_m pj on ps.objectpekerjaanfk = pj.id
-        inner join pendidikan_m pn on ps.objectpendidikanfk = pn.id
-        inner join statusperkawinan_m sp on ps.objectstatusperkawinanfk = sp.id
+        left join pasien_m ps on ps.id = pd.nocmfk
+        left join agama_m ag on ps.objectagamafk = ag.id
+        left join pekerjaan_m pj on ps.objectpekerjaanfk = pj.id
+        left join pendidikan_m pn on ps.objectpendidikanfk = pn.id
+        left join statusperkawinan_m sp on ps.objectstatusperkawinanfk = sp.id
         where pd.noregistrasi = '$request[noregistrasi]' and pd.kdprofile = '30'" ));
 
         // $detail = [];
@@ -13320,10 +13324,10 @@ class EMRController  extends ApiController
             FROM pelayananpasien_t pp 
             inner join strukresep_t sr on sr.norec = pp.strukresepfk
             inner join strukorder_t so on sr.orderfk = so.norec
-            inner join orderpelayanan_t op on op.noorderfk = sr.orderfk and op.rke = pp.rke and pp.produkfk = op.objectprodukfk
-            inner join produk_m pr on pr.id = pp.produkfk
-            inner join jenisracikan_m jr on jr.id = op.jenisobatfk
-            where so.norec ilike '$request[norec_order]'
+            left join orderpelayanan_t op on op.noorderfk = sr.orderfk and op.rke = pp.rke and pp.produkfk = op.objectprodukfk
+            left join produk_m pr on pr.id = pp.produkfk
+            left join jenisracikan_m jr on jr.id = op.jenisobatfk
+            where so.norec ilike '$request[norec_order]' and pp.isobat = true
             ORDER BY op.rke asc, ROW_NUMBER()over(partition by op.rke order by op.rke) desc
             "));
         $result = array(

@@ -82,6 +82,7 @@ class LaporanPengunjungController extends ApiController
             ->select('pd.norec','pd.noregistrasi','pd.tglregistrasi','ps.nocm','ps.namapasien','ps.nohp','ps.tgllahir','jk.jeniskelamin','ag.agama','pdd.pendidikan','pkr.pekerjaan','alm.alamatlengkap',
                 'dsk.namadesakelurahan','alm.kecamatan','kkb.namakotakabupaten','sp.statusperkawinan','pd.statuspasien','rg.namaruangan','pg.namalengkap','ps.tgldaftar','klp.kelompokpasien','apd.norec as norec_apd',
                 DB::raw("to_char(pd.tglregistrasi,'DD-MM-YYYY') as tglregistrasi1,to_char(pd.tglregistrasi,'HH:mm') as jamregistrasi,'' AS kddiagnosa"))
+            ->whereNotIn('apd.objectruanganfk',[94])
             ->where('pd.statusenabled',true);
             //->where('ddp.objectjenisdiagnosafk',1);
             DB::raw('ddp.objectjenisdiagnosafk = 1 or ddp.objectjenisdiagnosafk IS NULL' );
@@ -7478,7 +7479,7 @@ class LaporanPengunjungController extends ApiController
             inner join ruangan_m as rm on rm.id = pt.objectruanganlastfk 
             inner join pegawai_m as pm on pm.id = pt.objectpegawaifk 
             inner join pasien_m as pm2 on pm2.id = pt.nocmfk 
-            where rm.objectdepartemenfk != 16 and pt.statusenabled = true and pt.kdprofile = $idProfile and pt.tglregistrasi::date between '$tglAwal' and '$tglAkhir') as x
+            where rm.objectdepartemenfk <> 16 and pt.statusenabled = true and pt.kdprofile = $idProfile and pt.tglregistrasi::date between '$tglAwal' and '$tglAkhir') as x
             group by x.namalengkap
             order by x.namalengkap asc"));
         }else{

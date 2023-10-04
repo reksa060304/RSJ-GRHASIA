@@ -839,6 +839,10 @@ export class ReservasiOnlineComponent implements OnInit {
     let alamatLengkapPenanggungJawab = this.formGroup.get('alamatLengkapPenanggungJawab').value
 
     if (valueIndex == 1) {
+      if(localStorage.getItem('GeneralConsent') != 'true'){
+        this.messageService.warn('Info','Anda tidak setuju dengan informasi yang berlaku')
+        return
+      }
       if (this.isBaru) {
         if (!nik) {
           this.messageService.warn('Peringatan', 'NIK harus di isi !')

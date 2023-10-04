@@ -33,7 +33,7 @@ use App\Traits\PelayananPasienTrait;
 use DB;
 use App\Traits\Valet;
 use Carbon\Carbon;
-
+use Webpatser\Uuid\Uuid;
 class LoggingController extends ApiController
 {
 
@@ -1164,7 +1164,6 @@ class LoggingController extends ApiController
         //                $transMsg = "Simpan Log Gagal ";
         //
         //            }
-
         if ($transStatus == true) {
             DB::commit();
             $result = array(
@@ -1216,7 +1215,7 @@ class LoggingController extends ApiController
         //                $transMsg = "Simpan Log Gagal ";
         //
         //            }
-
+        
         if ($transStatus == true) {
             DB::commit();
             $result = array(

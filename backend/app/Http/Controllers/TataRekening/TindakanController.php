@@ -1597,24 +1597,24 @@ class TindakanController extends ApiController
         $Kronis = "";
         $noreg = '';
         if (isset($request['noReg']) && $request['noReg'] != "" && $request['noReg'] != "undefined") {
-            $noreg = " AND pd.noregistrasi ILIKE '%" .  $request['noReg']."%'";
+            $noreg = " AND et.noregistrasifk ILIKE '%" .  $request['noReg']."%'";
         }
         $norm = '';
         if (isset($request['noRm']) && $request['noRm'] != "" && $request['noRm'] != "undefined") {
-            $norm = " AND pm.nocm ILIKE '%" .  $request['noRm']."%'";
+            $norm = " AND et.nocm ILIKE '%" .  $request['noRm']."%'";
         }
         $nosbm = '';
-        if (isset($request['nosbm']) && $request['nosbm'] != "" && $request['nosbm'] != "undefined") {
-            $nosbm = " AND sbm.nosbm ILIKE '%" .  $request['nosbm']."%'";
-        }
+        // if (isset($request['nosbm']) && $request['nosbm'] != "" && $request['nosbm'] != "undefined") {
+        //     $nosbm = " AND sbm.nosbm ILIKE '%" .  $request['nosbm']."%'";
+        // }
         $namaPasien = '';
         if (isset($request['namaPasien']) && $request['namaPasien'] != "" && $request['namaPasien'] != "undefined") {
             $request['namaPasien'] =  str_replace("'", "",   $request['namaPasien']);
-            $namaPasien = "  AND replace(pm.namapasien,'''','') ILIKE '%".$request['namaPasien']."%'";
+            $namaPasien = "  AND replace(et.namapasien,'''','') ILIKE '%".$request['namaPasien']."%'";
         }
         $ruId='';
         if(isset($request['ruanganId']) && $request['ruanganId'] != "" && $request['ruanganId'] != "undefined") {
-            $ruId = ' AND ru.id = ' . $request['ruanganId'];
+            $ruId = ' AND et.namaruangan = ' . $request['ruanganId'];
         }
         $deptId='';
         if(isset($request['idDept']) && $request['idDept'] != "" && $request['idDept'] != "undefined") {
@@ -1622,52 +1622,54 @@ class TindakanController extends ApiController
         }
         $dokter='';
         if(isset($request['dokter']) && $request['dokter'] != "" && $request['dokter'] != "undefined") {
-            $dokter = ' AND ppp.objectpegawaifk = ' . $request['dokter'];
+            $dokter = ' AND pg.namalengkap = ' . $request['dokter'];
         }
-        $namaproduk = '';
-        if (isset($request['namaproduk']) && $request['namaproduk'] != "" && $request['namaproduk'] != "undefined") {
-            $nosbm = " AND pr.namaproduk ILIKE '%" .  $request['namaproduk']."%'";
+        $implementasi = '';
+        if (isset($request['implementasi']) && $request['implementasi'] != "" && $request['implementasi'] != "undefined") {
+            $nosbm = " AND li.implementasi ILIKE '%" .  $request['implementasi']."%'";
         }
-        $ArrTindakan = '';
-        if(isset($request['ArrTindakan']) && $request['ArrTindakan'] != ""){
-            $ArrTindakan = " and pp.produkfk in($request[ArrTindakan])";
+        $ArrImplementasi = '';
+        if(isset($request['ArrImplementasi']) && $request['ArrImplementasi'] != ""){
+            $ArrTindakan = " li.implementasi in($request[ArrImplementasi])";
         }
         
         $data = \DB::select(DB::raw("SELECT 
-        et.tglregistrasi, et.nocm, et.noregistrasifk, et.namapasien, et.namaruangan, li.implementasi, et.tglemr, cd.tanggal, cd.jam, ct.shift, pg.namalengkap, jp.jenispegawai
+        et.tglregistrasi, et.nocm, et.noregistrasifk, et.namapasien, ru.objectdepartemenfk, et.namaruangan, dg.diagnosakeperawatan, liv.intervensi, li.implementasi, et.tglemr, cd.tanggal, cd.jam, ct.shift, pg.namalengkap, jp.jenispegawai
         FROM
         emrcakem_t ct
             inner join emrcakemd_t cd on cd.norec_ec = ct.norec
             inner join pegawai_m pg on ct.objectpegawaifk = pg.id
             inner join jenispegawai_m jp on pg.objectjenispegawaifk = jp.id
             inner join labelimplementasi_m li on cd.tindakan = li.id
+            inner join labelintervensi_m liv on li.objectlabelintervensifk = liv.id
+			inner join diagnosakep_m dg on liv.objectdiagnosakepfk = dg.id
             inner join emrpasien_t et on ct.emrpasienfk = et.noemr
             inner join pasiendaftar_t pd on et.noregistrasifk = pd.noregistrasi
             inner join ruangan_m ru on pd.objectruanganlastfk = ru.id
-        where ct.kdprofile = 30 and ct.statusenabled = true and  pd.tglregistrasi::date BETWEEN '2021-03-01 00:00' and '2023-05-31 23:59' 
+        where ct.kdprofile = 30 and ct.statusenabled = true and  et.tglemr::date BETWEEN '$request[tglAwal]' and '$request[tglAkhir]' 
         
         order by et.tglregistrasi, ct.tanggal, cd.tanggal, cd.jam
         "));
 
-$data = \DB::select(DB::raw("SELECT distinct pd.tglregistrasi, ps.nocm, pd.noregistrasi, ps.namapasien, ru.namaruangan,pr.namaproduk, 
-pp.tglpelayanan,pg.namalengkap, jp.jenispegawai,jpp.jenispetugaspe, pp.hargasatuan*pp.jumlah as harga FROM pelayananpasien_t pp 
-    inner join antrianpasiendiperiksa_t apd on apd.norec = pp.noregistrasifk
-    inner join pasiendaftar_t pd on pd.norec = apd.noregistrasifk
-    inner join pasien_m ps on ps.id = pd.nocmfk
-    inner join ruangan_m ru on ru.id = apd.objectruanganfk
-    inner join produk_m pr on pr.id = pp.produkfk
-    inner join pelayananpasienpetugas_t ppp on ppp.pelayananpasien = pp.norec
-    inner join pegawai_m pg on pg.id = ppp.objectpegawaifk
-    inner join jenispegawai_m jp on jp.id = pg.objectjenispegawaifk
-    inner join jenispetugaspelaksana_m jpp on jpp.id = ppp.objectjenispetugaspefk
-    where pp.kdprofile = 30 and pp.statusenabled = true and apd.kdprofile = 30 and apd.statusenabled = true and pd.kdprofile = 30 and pd.statusenabled = true and 
-    pp.tglpelayanan::date BETWEEN '$request[tglAwal]' and '$request[tglAkhir]' and pp.isobat is null
-    $ArrTindakan
-    $deptId
-    $ruId
-    $dokter
-    ORDER BY pd.tglregistrasi asc, ps.nocm asc
-"));
+// $data = \DB::select(DB::raw("SELECT distinct pd.tglregistrasi, ps.nocm, pd.noregistrasi, ps.namapasien, ru.namaruangan,pr.namaproduk, 
+// pp.tglpelayanan,pg.namalengkap, jp.jenispegawai,jpp.jenispetugaspe, pp.hargasatuan*pp.jumlah as harga FROM pelayananpasien_t pp 
+//     inner join antrianpasiendiperiksa_t apd on apd.norec = pp.noregistrasifk
+//     inner join pasiendaftar_t pd on pd.norec = apd.noregistrasifk
+//     inner join pasien_m ps on ps.id = pd.nocmfk
+//     inner join ruangan_m ru on ru.id = apd.objectruanganfk
+//     inner join produk_m pr on pr.id = pp.produkfk
+//     inner join pelayananpasienpetugas_t ppp on ppp.pelayananpasien = pp.norec
+//     inner join pegawai_m pg on pg.id = ppp.objectpegawaifk
+//     inner join jenispegawai_m jp on jp.id = pg.objectjenispegawaifk
+//     inner join jenispetugaspelaksana_m jpp on jpp.id = ppp.objectjenispetugaspefk
+//     where pp.kdprofile = 30 and pp.statusenabled = true and apd.kdprofile = 30 and apd.statusenabled = true and pd.kdprofile = 30 and pd.statusenabled = true and 
+//     pp.tglpelayanan::date BETWEEN '$request[tglAwal]' and '$request[tglAkhir]' and pp.isobat is null
+//     $ArrTindakan
+//     $deptId
+//     $ruId
+//     $dokter
+//     ORDER BY pd.tglregistrasi asc, ps.nocm asc
+// "));
 
 
         return $this->respond($data);

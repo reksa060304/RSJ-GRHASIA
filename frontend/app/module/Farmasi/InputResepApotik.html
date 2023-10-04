@@ -605,6 +605,7 @@
                                             <input kendo-combo-box k-ng-model="item.produk"
                                                 k-data-text-field="'namaproduk'" k-data-value-field="'id'"
                                                 k-filter="'contains'" k-auto-bind="false" k-data-source="listProduk"
+                                                k-on-change='getSatuan()'
                                                 />
                                         </div>
                                     </div>
@@ -1381,9 +1382,9 @@
             </md-content>
         </div>
     </div>
-    <div class="grid_12" style="margin-top:60px">
+    <!-- <div class="grid_12" style="margin-top:60px">
         <div ng-include='"../app/template/Shared/TemplateLoading"'></div>
-    </div>
+    </div> -->
     <!-- <div class="grid_12" ng-show='showRacikan'>
     <div class="grid_12 headerBox">
         <p>## Input Obat Racikan ##</p>

@@ -470,7 +470,45 @@ define(['initialize'], function (initialize) {
             $scope.Back = function () {
                 window.history.back()
             }
-
+            $scope.getKondisiKeluar = function(){
+                if ($scope.item.statusPulang.id == 9) {
+                    $scope.listKondisiPasien = [
+                        {
+                            id: 5,
+                            kondisipasien: "Meninggal < 48 jam"
+                        },
+                        {
+                            id: 6,
+                            kondisipasien: "Meninggal > 48 jam"
+                        }
+                    ]
+                }else{
+                    $scope.listKondisiPasien = [{
+                            "id": 9,
+                            "kondisipasien": "Belum Sembuh"
+                        },
+                        {
+                            "id": 5,
+                            "kondisipasien": "Meninggal < 48 jam"
+                        },
+                        {
+                            "id": 6,
+                            "kondisipasien": "Meninggal > 48 jam"
+                        },
+                        {
+                            "id": 10,
+                            "kondisipasien": "Perbaikan"
+                        },
+                        {
+                            "id": 8,
+                            "kondisipasien": "Sembuh"
+                        }
+                    ]
+                }
+            }
+            // $scope.$watch('item.statusPulang', function (e) {
+                
+            // })
             //End
         }
     ]);

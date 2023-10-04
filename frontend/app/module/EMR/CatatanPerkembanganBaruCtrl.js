@@ -135,13 +135,13 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                     "field": "pelaksanaan",
                         "title": "Pelaksanaan",
                         "width": "150px",
-                        "template": "#= pelaksanaan.replace(/\\n/g, '<br />') #"
+                        "template": "#= pelaksanaan ? pelaksanaan.replace(/\\n/g, '<br />') : '' #"
                     },
                     {
                         "field": "evaluasi",
                         "title": "Evaluasi",
                         "width": "180px",
-                        "template": "#= evaluasi.replace(/\\n/g, '<br />') #"
+                        "template": "#= evaluasi ? evaluasi.replace(/\\n/g, '<br />') : '' #"
                     },
                     {
                         "field": "namalengkap",

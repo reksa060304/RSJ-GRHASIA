@@ -12,7 +12,6 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             var isRegisOnline = '';
             var NomorRm = '';
             var isMobileJKN = false
-            var timeRegistrasi = new Date().getTime();
             $scope.isSimpanAsuransi = true;
             $scope.isNext = true;
             $scope.item = {};
@@ -30,8 +29,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.pj2 = false
             const random = (min, max) => Math.floor(Math.random() * (max - min)) + min;
             // 5 ke 6 range waktu 10 - 15 menit
+            var timeRegistrasi = new Date().getTime();
             var timeAntrian = new Date().getTime() - random(100000, 900000); // timeRegistrasi - (new Date().getTime() - timeRegistrasi);
-
+            console.log(timeRegistrasi, timeAntrian);
             var datas = [];
             var chacePenunjang = cacheHelper.get('isPenunjang');
             if (chacePenunjang != undefined) {
