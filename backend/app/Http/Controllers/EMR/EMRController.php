@@ -2617,7 +2617,7 @@ class EMRController  extends ApiController
                 $EMRD->norec = $norecD;
                 $EMRD->kdprofile = $idProfile;
                 $EMRD->statusenabled = 1;
-
+                $EMRD->norec_apd = $head['norec'];
                 $EMRD->emrpasienfk = $norec_EMR;
                 $EMRD->value = $valueemr;
                 $EMRD->emrdfk = $emrdfk;
@@ -9505,6 +9505,7 @@ class EMRController  extends ApiController
                     $EMRD->statusenabled = 1;
                     $EMRD->emrpasienfk = $norec_EMR;
                     $EMRD->value = $valueemr;
+                    $EMRD->norec_apd = $head['norec'];
                     $EMRD->emrdfk = $emrdfk;
                     $EMRD->emrfk = $head['emrfk'];
                     if (isset($head['jenis']) && $head['jenis'] == 'pasien') {
