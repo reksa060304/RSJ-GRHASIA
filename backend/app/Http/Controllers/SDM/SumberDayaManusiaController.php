@@ -687,7 +687,7 @@ class SumberDayaManusiaController extends ApiController {
         $dataRiwayatGajiBerkala = \DB::table("riwayatgajiberkala_t as gb")
         // ->leftjoin("riwayatgolongan_t as rg","rg.objectpegawaifk","=","gb.id") 
         ->join("sdm_golongan_m as gol","gol.id","=","gb.objectgolonganfk")
-        ->select(DB::raw("gb.tgltmtcetak, gb.tglskbaru,gb.masakerjagolongan,gb.jenissk, gb.nosurat, gb.noskcetak, gb.objectgolonganfk,gb.norec,gb.tglsk::date,gb.gajiawal, gb.gajiakhir, gb.tgltmt::date, gol.name, gol.namaexternal,gol.namaexternal || ', ' || gol.name as golongan, gb.nosk, gb.pejabatmenetapkan"))
+        ->select(DB::raw("gb.jenisskco,gb.tgltmtcetak, gb.tglskbaru,gb.masakerjagolongan,gb.jenissk, gb.nosurat, gb.noskcetak, gb.objectgolonganfk,gb.norec,gb.tglsk::date,gb.gajiawal, gb.gajiakhir, gb.tgltmt::date, gol.name, gol.namaexternal,gol.namaexternal || ', ' || gol.name as golongan, gb.nosk, gb.pejabatmenetapkan"))
         ->where("gb.objectpegawaifk",$request['idPegawai'])
         ->orderBy('gb.tgltmt','desc')
         ->get();
@@ -7045,6 +7045,7 @@ public function daftarKenaikanGajiBerkala(Request $request){
                 'noskcetak'=>$request['noskcetak'],
                 'tgltmtcetak'=>$request['tgltmtcetak'],
                 'jenissk'=>$request['jenissk'],
+                'jenisskco'=>$request['jenisskco'],
                 'tglskbaru'=>$request['tglskbaru'],
                 'masakerjagolongan'=>$request['masakerjagolongan'],
                 ]);
@@ -7075,6 +7076,7 @@ public function daftarKenaikanGajiBerkala(Request $request){
                     'noskcetak'=>$request['noskcetak'],
                     'tgltmtcetak'=>$request['tgltmtcetak'],
                     'jenissk'=>$request['jenissk'],
+                    'jenisskco'=>$request['jenisskco'],
                     'tglskbaru'=>$request['tglskbaru'],
                     'masakerjagolongan'=>$request['masakerjagolongan'],
                 ]);
