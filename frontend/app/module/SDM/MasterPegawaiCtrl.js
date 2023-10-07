@@ -2045,6 +2045,7 @@ $scope.formatRupiah = function (value, currency) {
 				};
 				$scope.itemGajiBerkala.noskcetak = dataItem.noskcetak
 				$scope.itemGajiBerkala.jenissk = dataItem.jenissk
+				$scope.gajilamanya = dataItem.jenisskco
 				// console.log(dataItem);
 				$scope.itemGajiBerkala.tanggaltmt = moment(dataItem.tgltmt).format('YYYY-MM-DD HH:mm');
 				$scope.itemGajiBerkala.tanggalsk = moment(dataItem.tglsk).format('YYYY-MM-DD HH:mm');
@@ -3306,7 +3307,8 @@ $scope.formatRupiah = function (value, currency) {
 								data.nosk = $scope.itemGajiBerkala.nosk
 								data.objectpegawaifk = $scope.item.idPegawai
 								data.noskcetak= $scope.itemGajiBerkala.noskcetak,
-								data.jenissk= $scope.itemGajiBerkala.jenissk
+								data.jenissk = $scope.itemGajiBerkala.jenissk
+								data.jenisskco = $scope.gajilamanya
 								data.masakerjagolongan = $scope.itemGajiBerkala.tahunmasakerjagolongan + " tahun " + $scope.itemGajiBerkala.bulanmasakerjagolongan + " bulan"
 								data.tgltmtcetak = moment($scope.itemGajiBerkala.tanggaltmtcetak).format('YYYY-MM-DD HH:mm')
 								data.tglskbaru= moment($scope.itemGajiBerkala.tanggalskbaru).format('YYYY-MM-DD HH:mm')
@@ -3336,6 +3338,7 @@ $scope.formatRupiah = function (value, currency) {
 							nosurat: $scope.itemGajiBerkala.nosurat,
 							noskcetak: $scope.itemGajiBerkala.noskcetak,
 							jenissk: $scope.itemGajiBerkala.jenissk,
+							jenisskco: $scope.gajilamanya,
 							masakerjagolongan: $scope.itemGajiBerkala.tahunmasakerjagolongan + " tahun " + $scope.itemGajiBerkala.bulanmasakerjagolongan + " bulan",
 							tgltmtcetak: moment($scope.itemGajiBerkala.tanggaltmtcetak).format('YYYY-MM-DD HH:mm'),
 							tglskbaru: moment($scope.itemGajiBerkala.tanggalskbaru).format('YYYY-MM-DD HH:mm')
@@ -5138,7 +5141,7 @@ $scope.formatRupiah = function (value, currency) {
 					}
 					medifirstService.get('sdm/get-gaji-pokok-lama?gaji=' + $scope.gajilamanya + '&idpegawai=' + $scope.item.idPegawai).then(function (data) {
 						var datas = data.data.data[0]
-						$scope.itemGajiBerkala.jenissk = $scope.gajilamanya
+						// $scope.itemGajiBerkala.jenissk = $scope.gajilamanya
 						if ($scope.gajilamanya == 'KP') {
 							$scope.itemGajiBerkala.gajiawal = datas.nominal
 							$scope.itemGajiBerkala.tanggalsk = new Date(moment(datas.tglsk).format('YYYY-MM-DD'))
