@@ -193,10 +193,10 @@
                             <td style="font-size: 11pt"> 
                                 {{-- {{var_dump($data[0]->jenissk)}} --}}
                                 
-                                @if ($data[0]->jenissk == 'KGB')
+                                @if ($data[0]->jenisskco == 'KGB')
                                 
                                     Surat Pemberitahuan Kenaikan Gaji Berkala
-                                @elseif($data[0]->jenissk == 'KP')
+                                @elseif($data[0]->jenisskco == 'KP')
                                     Surat Keputusan Kenaikan Pangkat
                                 @endif
                                 
