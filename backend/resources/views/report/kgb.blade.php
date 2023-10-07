@@ -192,7 +192,9 @@
                             <td style="font-size: 11pt"> : </td>
                             <td style="font-size: 11pt"> 
                                 {{-- {{var_dump($data[0]->jenissk)}} --}}
+                                
                                 @if ($data[0]->jenissk == 'KGB')
+                                
                                     Surat Pemberitahuan Kenaikan Gaji Berkala
                                 @elseif($data[0]->jenissk == 'KP')
                                     Surat Keputusan Kenaikan Pangkat
@@ -221,7 +223,13 @@
                             <td style="font-size: 11pt">Terhitung Mulai Tanggal : {{$data[0]->tmtlama }}</td>
                         </tr>
                         <tr>
-                            <td style="font-size: 11pt" colspan="4" height="30" style="padding-left: 6%">Diberikan Kenaikan Gaji Berkala sehingga memperoleh :</td>
+                            <td style="font-size: 11pt" colspan="4" height="30" style="padding-left: 6%">Diberikan 
+                                @if ($data[0]->jenissk == 'KGB')
+                                    Kenaikan Gaji Berkala
+                                @elseif($data[0]->jenissk == 'KP')
+                                    Kenaikan Pangkat
+                                @endif
+                                sehingga memperoleh :</td>
                         </tr>
                         <tr>
                             <td style="font-size: 11pt">1. </td>
