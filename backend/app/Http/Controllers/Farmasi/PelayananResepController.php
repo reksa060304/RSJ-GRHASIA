@@ -2361,6 +2361,7 @@ class PelayananResepController extends ApiController
                 $newPP->kelasfk = $r_PPL['kelasfk'];
                 $newPP->kdkelompoktransaksi = 1;
                 $newPP->produkfk = $r_PPL['produkfk'];
+                $newPP->catatandokter = $r_PPL['catatandokter'];
                 if (isset($r_PPL['routefk'])){
                     $newPP->routefk = $r_PPL['routefk'];
                 }
