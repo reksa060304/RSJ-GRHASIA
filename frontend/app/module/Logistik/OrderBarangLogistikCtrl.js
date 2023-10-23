@@ -319,7 +319,7 @@ define(['initialize'], function (initialize) {
                     return
                 }
                 $scope.listSatuan = $scope.item.produk.konversisatuan
-                if ($scope.listSatuan.length == 0) {
+                if ($scope.listSatuan.length == 0 && $scope.listSatuan!= undefined) {
                     $scope.listSatuan = ([{ ssid: $scope.item.produk.ssid, satuanstandar: $scope.item.produk.satuanstandar }])
                 }
                 $scope.item.satuan = { ssid: $scope.item.produk.ssid, satuanstandar: $scope.item.produk.satuanstandar }
