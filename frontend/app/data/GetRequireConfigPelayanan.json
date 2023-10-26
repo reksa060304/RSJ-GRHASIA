@@ -3678,6 +3678,14 @@
         {
             "nameDep": "LaporanPengunjungTindakanImplementasiCtrl",
             "urlDep": "module/Registrasi/Laporan/LaporanPengunjungTindakanImplementasiCtrl"
+        },
+        {
+            "nameDep": "SubSubRincianCtrl",
+            "urlDep": "module/EMR/SubSubRincianCtrl"
+        },
+        {
+            "nameDep": "SuratKeteranganGawatDaruratCtrl",
+            "urlDep": "module/EMR/SuratKeteranganGawatDaruratCtrl"
         }
     ]
 }

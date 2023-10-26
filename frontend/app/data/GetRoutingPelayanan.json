@@ -20378,6 +20378,50 @@
         "define": "MedifirstService"
       }
     ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.SubSubRincian",
+    "url": "/SubSubRincian",
+    "templateurl": "module/EMR/SubSubRincian.html",
+    "controller": "SubSubRincianCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "SubSubRincianCtrl"
+      }
+    ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.SuratKeteranganGawatDarurat",
+    "url": "/SuratKeteranganGawatDarurat",
+    "templateurl": "module/EMR/SuratKeteranganGawatDarurat.html",
+    "controller": "SuratKeteranganGawatDaruratCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "SuratKeteranganGawatDaruratCtrl"
+      }
+    ]
   }
 ]
 
