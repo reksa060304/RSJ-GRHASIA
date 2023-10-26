@@ -461,7 +461,7 @@ class FarmasiController extends ApiController
                 'namaruangan' => $item->namaruangan,
                 'norec' => $item->norec,
                 'keteranganlainnya' => $item->keteranganlainnya,
-//                'details' => $details,
+                'details' => $details,
             );
         }
 

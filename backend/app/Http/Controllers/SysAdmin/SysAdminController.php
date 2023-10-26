@@ -92,7 +92,7 @@ class SysAdminController  extends ApiController {
         //$produk = Produk::where('statusenabled',true)->get();
         $produk = DB::table('harganettoprodukbykelas_m as hnp')
             ->join('produk_m as prd','prd.id','=','hnp.objectprodukfk')
-            ->select('prd.id','prd.namaproduk')
+            ->select('prd.id','prd.namaproduk', 'hnp.harganetto1')
             ->where('hnp.statusenabled',true)
             ->where('prd.statusenabled',true)
             ->where('hnp.kdprofile',$kdProfile)

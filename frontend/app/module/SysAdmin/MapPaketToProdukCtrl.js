@@ -28,8 +28,14 @@ define(['initialize'], function (initialize) {
                 $scope.listPaket = data.data.paket
                 $scope.listProduk = data.data.produk
                 $scope.listProdukDefault = data.data.produk
+                for (let i = 0; i < $scope.listProduk.length; i++) {
+                    const element = $scope.listProduk[i];
+                    element.harganetto1 = $scope.formatRupiah(element.harganetto1, 'Rp')
+                }
             })
-
+            $scope.formatRupiah = function (value, currency) {
+                return currency + " " + parseFloat(value).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
+            }
             function loadData() {
                 $scope.isRouteLoading = true;
 

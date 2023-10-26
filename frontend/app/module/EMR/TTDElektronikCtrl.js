@@ -680,19 +680,27 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     toastr.error("Pass Phrase harus di isi!")
                     return
                 }
+                // var json = {
+                //     'norec': $scope.item.norecDOK,
+                //     'passphrase': $scope.item.passphrase,
+                //     'nik': $scope.item.nik,
+                //     'reason': $scope.item.reason ? $scope.item.reason : null,
+                //     'iduser': medifirstService.getUserLogin().id,
+                //     'page': $scope.item.page.id,
+                //     'xAxis': $scope.xaxis,
+                //     'yAxis': $scope.yaxis,
+                //     'width': $scope.item.sizeWidth,
+                //     'height': $scope.item.sizeHeight
+                //     // 'namadokumen': $scope.item.namadokumen
+                // }
                 var json = {
                     'norec': $scope.item.norecDOK,
                     'passphrase': $scope.item.passphrase,
                     'nik': $scope.item.nik,
                     'reason': $scope.item.reason ? $scope.item.reason : null,
-                    'iduser': medifirstService.getUserLogin().id,
-                    'page': $scope.item.page.id,
-                    'xAxis': $scope.xaxis,
-                    'yAxis': $scope.yaxis,
-                    'width': $scope.item.sizeWidth,
-                    'height': $scope.item.sizeHeight
-                    // 'namadokumen': $scope.item.namadokumen
+                    'iduser': medifirstService.getUserLogin().id
                 }
+
 
                 var btnSimpan = angular.element(document.getElementById("btnSimpan2"));
                 var btnBatal = angular.element(document.getElementById("btnBatal2"));

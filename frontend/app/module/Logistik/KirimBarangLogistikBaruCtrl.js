@@ -879,9 +879,11 @@ define(['initialize','Configuration'], function (initialize,configuration) {
                         const element = data2[i];
                         medifirstService.get("logistik/get-produkdetail?" +
                         "produkfk=" + element.produkfk +
-                        "&ruanganfk=" + $scope.item.ruangan.id, true).then(function (dat) {                            
+                        "&ruanganfk=" + $scope.item.ruangan.id, true).then(function (dat) {       
+                            dataProdukDetail = dat.data.detail;
                             var dataCek = dat.data.detail;
                             var cekstok = dat.data.jmlstok; // $scope.item.nilaiKonversi
+                            element.nostrukterimafk = dataProdukDetail[i].norec
                             if (parseFloat(element.jumlah) > parseFloat(cekstok)) {
                                 window.messageContainer.error('Data Stok Barang ' + element.namaproduk + ' Kurang !')                                
                                 $scope.saveShow = false;

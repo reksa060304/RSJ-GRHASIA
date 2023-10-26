@@ -1614,7 +1614,7 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                             data.tglkadaluarsa = $scope.tglkadaluarsa != undefined ? $scope.tglkadaluarsa : null
                             data.kdapotikonline = $scope.kdapotikonline
                             data.isfornas = $scope.isfornas
-                            data.catatandokter = $scope.item.catatanDokter
+                            data.catatandokter = $scope.item.catatanDokter != undefined ? $scope.item.catatanDokter : null
                             data.satuandosis = satuannya
                             if ($scope.item.jenisKemasan.jeniskemasan == 'Racikan') {
                                 data.jumlahracikan = $scope.item.jumlahxmakan
@@ -1695,7 +1695,7 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                         tglkadaluarsa: $scope.tglkadaluarsa != undefined ? $scope.tglkadaluarsa : null,
                         kdapotikonline: $scope.kdapotikonline,
                         isfornas: $scope.isfornas,
-                        catatandokter: $scope.item.catatanDokter,
+                        catatandokter: $scope.item.catatanDokter != undefined ? $scope.item.catatanDokter : null,
                         jumlahracikan: $scope.item.jenisKemasan.jeniskemasan == 'Racikan' ? $scope.item.jumlahxmakan : null
                         ,satuandosis: satuannya
                     }
