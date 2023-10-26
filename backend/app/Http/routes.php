@@ -430,14 +430,9 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
               Route::post('bridging/penunjang/save-hapus-order-lab', 'Bridging\BridgingPenunjangController@saveHapusOrderLab');
               Route::post('bridging/penunjang/save-hapus-order-rad', 'Bridging\BridgingPenunjangController@saveHapusOrderRad');
               Route::get('registrasi/get-nocm-terakhir', 'Registrasi\RegistrasiController@getNoRMTerakhir');
-              Route::get('registrasi/get-laporan-sensus-rs','Registrasi\RegistrasiController@getLaporanSensus');
-              Route::get('registrasi/get-laporan-sensus-bangsal','Registrasi\RegistrasiController@getLaporanSensusBangsal');
               Route::post('registrasi/update-nocm', 'Registrasi\RegistrasiController@updateNORM');
           Route::get('api/trigger-telemedicine', 'Bridging\DokterKeluargaController@sendPHR');
-              Route::get('registrasi/get-pasienawal-rs','Registrasi\RegistrasiController@getCoba');
-              Route::get('registrasi/get-pasienawal-bangsal','Registrasi\RegistrasiController@getCobaBangsal');
-              Route::post('registrasi/post-pasienawal-rs','Registrasi\RegistrasiController@savePasienAwal');
-              Route::post('registrasi/post-pasienawal-bangsal','Registrasi\RegistrasiController@savePasienAwalBangsal');
+
               Route::get('bridging/penunjang/get-hasil-vans-lab', 'Bridging\BridgingPenunjangController@getHasilLaborat');
             // });
             // Route::group(['prefix' => 'dukcapil'], function () {
@@ -595,7 +590,11 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         Route::post('sysadmin/master/save-data-produk-apotik', 'SysAdmin\Master\MasterController@saveDataProdukApotik');
         Route::get('sysadmin/master/get-daftar-master-pegawai', 'SysAdmin\Master\MasterController@getDataMasterPegawai');
         Route::post('sysadmin/master/save-data-master-pegawai', 'SysAdmin\Master\MasterController@saveDataMasterPegawai');
+        Route::get('sysadmin/master/get-data-master-bahasa', 'SysAdmin\Master\MasterController@getDataMasterBahasa');
+        Route::post('sysadmin/master/save-bahasa', 'SysAdmin\Master\MasterController@saveDataMasterBahasa');
+        Route::post('sysadmin/master/delete-master-bahasa', 'SysAdmin\Master\MasterController@deleteMasterBahasa');
 
+        
         Route::group(['prefix' => 'cssd'], function () {
 
         });
@@ -1288,7 +1287,6 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('report/cetak-tilik','Report\ReportController@cetakTilik');
           Route::get('report/get-cetak-cakem','Report\ReportController@cetakCakem');
           Route::get('report/cetak-ringkasanrajal','Report\ReportController@cetakRingkasanRajal');
-          Route::get('report/cetak-monitoringjamkes','Report\ReportController@cetakmonitoringJamkes');
           Route::get('report/cetak-obat-pulang','Report\ReportController@cetakObatPulang');
           Route::get('laboratorium/get-hasil-lab','Laboratorium\LaboratoriumController@getHasilLab');
           Route::get('laboratorium/get-hasil-lab-vans','Laboratorium\LaboratoriumController@getHasilLaborat');
@@ -1313,6 +1311,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('report/cetak-resep-dokter-rev','Report\ReportController@cetakResepDokterRev');
           Route::get('report/cetak-resep-dokter-harga','Report\ReportController@cetakResepDokterHarga');
           Route::get('report/get-cetak-suratketerangandokter','Report\ReportController@CetakSKDokter');
+          Route::get('report/get-cetak-suratketerangangawatdarurat','Report\ReportController@CetakSKGawatDarurat');
           Route::get('report/get-cetak-catatan-konseling', 'Report\ReportController@cetakCatatanKonselingNapza');
           Route::get('report/get-cetak-cmrm05','Report\ReportController@cetakCM05');
           Route::get('report/get-cetak-per-jenis-anggaran','Report\ReportController@CetakPerJenisAnggaran');
@@ -1530,7 +1529,6 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('get/load-copy-resep', 'EMR\EMRController@getCopyResep');
             Route::get('get/get-copy-resepnya', 'EMR\EMRController@getCopyResepnyaya');
             Route::get('farmasi/cetak-copyresep', 'Report\ReportController@cetakCopyResep');
-            Route::get('logistik/get-daftar-mutasi-barang','Logistik\LogistikController@getMutasiBarangBaru');
             // GET //
 
             // POST //
@@ -1965,9 +1963,6 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::post('jkn/save-checkin','ReservasiOnline\MyJKNV2Controller@saveCheckInAntrean_fix');
           Route::get('rawatjalan/get-antril-combo', 'RawatJalan\RawatJalanController@getComboAntrol');
           Route::post('rawatjalan/disabled-monitoring-taskid', 'RawatJalan\RawatJalanController@disabledMonitoringTaksId');
-          
-          Route::get('sysadmin/get-master-pendidikan','SysAdmin\GeneralController@getMasterPendidikan');
-          Route::post('sysadmin/save-pendidikan','SysAdmin\GeneralController@saveMasterPendidikan');
           
           Route::post('rawatjalan/save-daftar-surat', 'RawatJalan\RawatJalanController@saveDaftarSurat');
           Route::get('rawatjalan/get-detail-pasien-surat', 'RawatJalan\RawatJalanController@getDetailpasienSurat');
@@ -3660,7 +3655,7 @@ Route::group(['middleware' => 'cors'], function () {
     Route::get('bedmonitor', 'Auth\BridgingSiranapV2Controller@getBedMonitorRS');
     Route::get('{instalasi}', 'Bridging\BridgingSiranapV2Controller@getKunjungan');
     Route::get('hapus-bed/{kode_tipe_pasien}/{kode_kelas_ruang}', 'Bridging\BridgingSiranapV2Controller@hapusBed');
-
+    
     // Route::post('LapV2/PasienMasuk/{method}', 'Bridging\BridgingSiranapV2Controller@PasienMasuk');
     // Route::post('LapV2/PasienDirawatKomorbid/{method}', 'Bridging\BridgingSiranapV2Controller@Komorbid');
     // Route::post('LapV2/PasienDirawatTanpaKomorbid/{method}', 'Bridging\BridgingSiranapV2Controller@NonKomorbid');
