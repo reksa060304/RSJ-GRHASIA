@@ -149,28 +149,28 @@
                             <tr>
                                 <td width="80px" style="padding-left: 60px; font-size: 13px">Nama</td>
                                 <td width="1px" style="font-size: 13px">:</td>
-                                <td style="font-size: 13px">{{$item[190130801]}}</td>
+                                <td style="font-size: 13px">{{isset($item[190130801]) ? $item[190130801] : '' }}</td>
                             </tr>
                             <tr>
                                 <td style="padding-left: 60px; font-size: 13px">Nomor Rekam Medis</td>
                                 <td width="1" style="font-size: 13px">:</td>
-                                <td width="250" style="font-size: 13px">{{$item[190130802]}}</td>
+                                <td width="250" style="font-size: 13px">{{isset($item[190130802]) ? $item[190130802] : '' }}</td>
                                 
                             </tr>
                             <tr>
                                 <td  style="padding-left: 60px; font-size: 13px">Umur</td>
                                 <td width="1" style="font-size: 13px">:</td>
-                                <td style="font-size: 13px">{{$item[190130804]}}</td>
+                                <td style="font-size: 13px">{{isset($item[190130804]) ? $item[190130804] : '' }}</td>
                             </tr>
                             <tr>
                                 <td  style="padding-left: 60px; font-size: 13px">Jenis Kelamin</td>
                                 <td width="1" style="font-size: 13px">:</td>
-                                <td style="font-size: 13px">{{$item[190130803]}}</td>
+                                <td style="font-size: 13px">{{isset($item[190130803]) ? $item[190130803] : '' }}</td>
                             </tr>
                             <tr>
                                 <td style="padding-left: 60px; font-size: 13px">Alamat</td>
                                 <td width="1" style="font-size: 13px">:</td>
-                                <td style="font-size: 13px">{{$item[190130805]}}</td>
+                                <td style="font-size: 13px">{{isset($item[190130805]) ? $item[190130805] : '' }}</td>
                             </tr>
                             <tr>
                                 <td style="padding-left: 60px "></td>
@@ -181,7 +181,10 @@
                                 <td style="padding-left: 40px; padding-right: 40px" colspan="3"><br></td>
                             </tr>
                             <tr>
-                                <td align="justify" style="padding-left: 40px; padding-right: 40px; font-size: 13px" colspan="3">Dinyatakan dalam keadaan gawat darurat dan telah diperiksa di Instalasi Gawat Darurat Rumah Sakit Jiwa Grhasia pada tanggal {{$item[190130806]}} dengan diagnosa {{$item[190130807]}}.</td>
+                                <td align="justify" style="padding-left: 40px; padding-right: 40px; font-size: 13px" colspan="3">
+                                    Dinyatakan dalam keadaan gawat darurat dan telah diperiksa di Instalasi Gawat Darurat Rumah Sakit Jiwa Grhasia 
+                                    pada tanggal {{isset($item[190130806]) ? $item[190130806] : ''}} dengan diagnosa {{isset($item[190130807]) ? $item[190130807] : '' }}
+                                </td>
                             </tr>
                             <tr>
                                 <td style="padding-left: 40px; padding-right: 40px" colspan="3"><br></td>
@@ -200,7 +203,7 @@
                             <tr>
                                 <td width='100px'>&nbsp;</td>
                                 <td width='100px'>&nbsp;</td>
-                                <td width='150px' align="center" style="font-size: 13px">Yogyakarta, {{$item[190130808]}}</td>
+                                <td width='150px' align="center" style="font-size: 13px">Yogyakarta, {{isset($item[190130808]) ? $item[190130808] : '' }}</td>
                             </tr>
                             <tr>
                                 <td></td>
@@ -222,7 +225,7 @@
                                 <td style="text-align: center">&nbsp;</td>
                                 <td style="text-align: center" style="font-size: 13px">
                                     {{-- <br>{!! $res['d'][0]->namadokter == null ? ($peg!=null?$peg->namalengkap:'-'): $res['d'][0]->namadokter !!} --}}
-                                    <br>{!! $item[190130809] !!}
+                                    <br>{!! isset($item[190130809]) ? $item[190130809] : ''  !!}
                                 </td>
                             </tr>
                         </table>

@@ -20422,6 +20422,28 @@
         "define": "SuratKeteranganGawatDaruratCtrl"
       }
     ]
+  },
+  {
+    "name": "RekamMedis.AsesmenMedis.SuratKeteranganDirawatInap",
+    "url": "/SuratKeteranganDirawatInap",
+    "templateurl": "module/EMR/SuratKeteranganDirawatInap.html",
+    "controller": "SuratKeteranganDirawatInapCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "SuratKeteranganDirawatInapCtrl"
+      }
+    ]
   }
 ]
 

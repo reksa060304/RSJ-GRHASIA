@@ -2723,11 +2723,25 @@ class EMRController  extends ApiController
         //     ->where('emrdp.kdprofile',$kdProfile )
         //     ->orderBy('emrd.nourut');
 
-        $data = \DB::table('emrpasiend_t as emrdp')
+        // $data = \DB::table('emrpasiend_t as emrdp')
+        //     ->leftjoin('emrd_t as emrd', 'emrd.id', '=', 'emrdp.emrdfk')
+        //     ->leftjoin('pegawai_m as pg', 'pg.id', '=', 'emrdp.pegawaifk')
+        //     ->select('emrdp.*', 'emrd.caption', 'emrd.type', 'emrd.nourut', 'emrdp.emrfk', 'emrd.reportdisplay', 'emrd.kodeexternal as kodeex', 'emrd.satuan', 'pg.namalengkap')
+        //     ->where('emrdp.statusenabled', true)
+        //     ->where('emrdp.kdprofile',$kdProfile )
+        //     ->whereNotNull('emrdp.value')
+        //     ->where('emrdp.value','!=','Invalid date')
+        //     ->orderBy('emrd.nourut');
+
+            $data = \DB::table('emrpasiend_t as emrdp')
+            ->leftjoin('emrpasien_t as emrp', 'emrp.norec_apd', '=', 'emrdp.norec_apd')
             ->leftjoin('emrd_t as emrd', 'emrd.id', '=', 'emrdp.emrdfk')
             ->leftjoin('pegawai_m as pg', 'pg.id', '=', 'emrdp.pegawaifk')
-            ->select('emrdp.*', 'emrd.caption', 'emrd.type', 'emrd.nourut', 'emrdp.emrfk', 'emrd.reportdisplay', 'emrd.kodeexternal as kodeex', 'emrd.satuan', 'pg.namalengkap')
+            ->select('emrdp.*', 'emrp.norec as norec_p', 'emrd.caption', 'emrd.type', 'emrd.nourut', 'emrdp.emrfk', 'emrd.reportdisplay', 'emrd.kodeexternal as kodeex', 'emrd.satuan', 'pg.namalengkap')
+            ->where('emrp.noemr',$request['noemr'])
+            ->where('emrdp.emrpasienfk',$request['noemr'])
             ->where('emrdp.statusenabled', true)
+            ->where('emrp.statusenabled', true)
             ->where('emrdp.kdprofile',$kdProfile )
             ->whereNotNull('emrdp.value')
             ->where('emrdp.value','!=','Invalid date')

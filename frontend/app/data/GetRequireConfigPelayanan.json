@@ -3686,6 +3686,10 @@
         {
             "nameDep": "SuratKeteranganGawatDaruratCtrl",
             "urlDep": "module/EMR/SuratKeteranganGawatDaruratCtrl"
+        },
+        {
+            "nameDep": "SuratKeteranganDirawatInapCtrl",
+            "urlDep": "module/EMR/SuratKeteranganDirawatInapCtrl"
         }
     ]
 }

@@ -39,7 +39,6 @@ use App\Traits\Valet;
 use App\Master\IcdSepuluh;
 use App\Master\IcdSembilan;
 use App\Master\BankAccount;
-use App\Master\Pekerjaan;
 use App\Transaksi\KonversiSatuan;
 use App\Transaksi\OrderPelayanan;
 use DB;
@@ -47,6 +46,7 @@ use Illuminate\Http\Request;
 use Webpatser\Uuid\Uuid;
 use App\Master\IHS_MapBahanZat;
 use App\Master\Pegawai;
+
 class MasterController extends ApiController{
     use Valet;
 
@@ -236,7 +236,6 @@ class MasterController extends ApiController{
             $prod->spesifikasi = $data['spesifikasi'];
             $prod->tglproduksi = $data['tglproduksi'];
             $prod->status = $data['status'];
-            $prod->harganetto = $data['harganetto'];
             $prod->verifikasianggaran = $data['verifikasianggaran'];
             if (isset($request['isprodukintern'])){
                 $prod->isprodukintern = $data['isprodukintern'];
@@ -5877,4 +5876,102 @@ class MasterController extends ApiController{
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
+        
+    function getDataMasterBahasa(Request $request){
+        // dd('ppp');
+        // $bahasa = \DB::table('bahasa_m')->where('statusenabled',true);
+            $bahasa = \DB::table('bahasa_m');
+
+        // if(isset($request['id']) && $request['id']!="" && $request['id']!="undefined"){
+        //     $bahasa = $bahasa->where('id','=', $request['id']);
+        // }
+
+        if(isset($request['bahasa']) && $request['bahasa']!="" && $request['bahasa']!="undefined"){
+            // $bahasa = $bahasa->where('bahasa','=', $request['bahasa']);
+            $bahasa = $bahasa->where('bahasa','ILIKE', '%'.$request['bahasa'].'%');
+        }
+
+        $bahasa = $bahasa->ORDERBY('id');
+        //  $bahasa = DB::select( DB::raw('select * from bahasa_m where bahasa ilike', '%'.$request['bahasa'].'%', 'order by id') );
+        $bahasa = $bahasa->get();
+        $result = array(
+            'bahasa'=>$bahasa,
+            'as' => 'lulus@ok'
+        );
+        return $this->respond($result);
+    }
+
+    function saveDataMasterBahasa(Request $request){
+        $r = $request['data'];
+        DB::beginTransaction();
+        try {
+            if($r['id']==''){
+                $idMax = DB::table('bahasa_m')->max('id') + 1;
+                DB::table('bahasa_m')->insert([
+                    'id' => $idMax,
+                    'statusenabled' => true,
+                    'bahasa' => $r['bahasa']
+                ]);
+            }else{
+                DB::table('bahasa_m')->where('id',$r['id'])->update([
+                    'bahasa' => $r['bahasa']
+                ]);               
+            }
+            $transStatus = true;
+        } catch (\Throwable $th) {
+            $transStatus = false;
+        }
+
+        if($transStatus) {
+            $transMessage = "Simpan data master bahasa berhasil";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => '@',
+            );
+        } else {
+            $transMessage = "SImpan master bahasa GAGAL";
+            $message = $th->getMessage().' '.$th->getLine();
+            DB::rollBack();
+            $result = array(
+                "status" => 401,
+                "message" => $message
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    function deleteMasterBahasa(Request $request) {
+        DB::beginTransaction();
+        try{
+            $JD = DB::table('bahasa_m')->where('id', $request['id'])->update([
+                'statusenabled' => false
+            ]);
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Sukses";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "jenisdiet" => $JD,
+                "as" => 'inhuman',
+            );
+
+        } else {
+            $transMessage = "Hapus gagal";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "as" => 'inhuman',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+
+////////
 }
