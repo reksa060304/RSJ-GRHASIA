@@ -1,7 +1,7 @@
 {{-- @extends('report.dom') --}}
 <!DOCTYPE html>
 <html lang="en" ng-app="angularApp">
-
+    
 <head>
     <meta charset="utf-8">
     <title>Surat Keterangan Gawat Darurat</title>
