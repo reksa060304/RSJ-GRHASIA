@@ -706,6 +706,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('emr/get-emr-transaksi', 'EMR\EMRController@getEMRTransaksiRiwayat');
           Route::get('emr/get-emr-transaksi-detail', 'EMR\EMRController@getEMRTransaksiDetail');
           Route::post('emr/get-emr-transaksi-details', 'EMR\EMRController@getEMRTransaksiDetails');
+          Route::get('emr/get-emr-transaksi-detail2', 'EMR\EMRController@getEMRTransaksiDetail2');
           Route::get('report/cetak-cppt-ranap-rev','Report\ReportController@cetakCPPTRanapRev');
           Route::get('report/get-cetak-rekon','Report\ReportController@cetakRekon');
           Route::get('emr/get-datacombo-part-pegawai', 'EMR\EMRController@getDataComboPegawaiPart');

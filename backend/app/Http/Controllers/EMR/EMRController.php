@@ -2734,6 +2734,70 @@ class EMRController  extends ApiController
         //     ->orderBy('emrd.nourut');
 
             $data = \DB::table('emrpasiend_t as emrdp')
+            ->leftjoin('emrd_t as emrd', 'emrd.id', '=', 'emrdp.emrdfk')
+            ->leftjoin('pegawai_m as pg', 'pg.id', '=', 'emrdp.pegawaifk')
+            ->select('emrdp.*', 'emrd.caption', 'emrd.type', 'emrd.nourut', 'emrdp.emrfk', 'emrd.reportdisplay', 'emrd.kodeexternal as kodeex', 'emrd.satuan', 'pg.namalengkap')
+            ->where('emrdp.statusenabled', true)
+            ->where('emrdp.kdprofile',$kdProfile )
+            ->whereNotNull('emrdp.value')
+            ->where('emrdp.value','!=','Invalid date')
+            ->orderBy('emrd.nourut');
+        if (isset($request['noemr']) && $request['noemr'] != '') {
+            $data = $data->where('emrdp.emrpasienfk', $request['noemr']);
+        }
+        if (isset($request['emrfk']) && $request['emrfk'] != '') {
+            $data = $data->where('emrdp.emrfk', $request['emrfk']);
+        }
+//        if (isset($request['norec']) && $request['norec'] != '') {
+//            $data = $data->where('emrp.norec', $request['norec']);
+//        }
+        // if (isset($request['noregistrasi']) && $request['noregistrasi'] != '') {
+        //     $data = $data->where('emrp.noregistrasifk', $request['noregistrasi']);
+        // }
+        if (isset($request['objectid']) && $request['objectid'] != '') {
+            $data = $data->where('emrdp.emrdfk', $request['objectid']);
+        }
+        if (isset($request['nik']) && $request['nik'] != '') {
+            // $data = $data->where('ps.noidentitas', $request['nik']);
+        }
+        $data = $data->get();
+        $result = array(
+            'data' => $data,
+            'message' => 'as@epic',
+        );
+        return $this->respond($result);
+    }
+
+    public function getEMRTransaksiDetail2(Request $request)
+    {
+        //todo : detail
+        $kdProfile = $this->getDataKdProfile($request);
+        // $data = \DB::table('emrpasiend_t as emrdp')
+        //    ->join('emrpasien_t as emrp', 'emrp.noemr', '=', 'emrdp.emrpasienfk')
+        //     ->leftjoin('emrd_t as emrd', 'emrd.id', '=', 'emrdp.emrdfk')
+        //     // ->JOIN('emrd_t as emrd',function ($join){
+        //         // $join->on('emrd.id','=','emrdp.emrdfk');
+        //         // $join->on('emrd.emrfk','=','emrdp.emrfk');
+        //     // })
+        //     ->leftjoin('pasien_m as ps', 'ps.nocm', '=', 'emrp.nocm')
+        //     ->leftjoin('pegawai_m as pg', 'pg.id', '=', 'emrdp.pegawaifk')
+        //     //->leftjoin('emrfoto_t as ef', 'ef.noemrpasienfk', '=', 'emrp.noemr')
+        //     ->select('emrdp.*', 'emrd.caption', 'emrd.type', 'emrd.nourut', 'emrdp.emrfk', 'emrd.reportdisplay', 'emrd.kodeexternal as kodeex', 'emrd.satuan', 'pg.namalengkap')
+        //     ->where('emrdp.statusenabled', true)
+        //     ->where('emrdp.kdprofile',$kdProfile )
+        //     ->orderBy('emrd.nourut');
+
+        // $data = \DB::table('emrpasiend_t as emrdp')
+        //     ->leftjoin('emrd_t as emrd', 'emrd.id', '=', 'emrdp.emrdfk')
+        //     ->leftjoin('pegawai_m as pg', 'pg.id', '=', 'emrdp.pegawaifk')
+        //     ->select('emrdp.*', 'emrd.caption', 'emrd.type', 'emrd.nourut', 'emrdp.emrfk', 'emrd.reportdisplay', 'emrd.kodeexternal as kodeex', 'emrd.satuan', 'pg.namalengkap')
+        //     ->where('emrdp.statusenabled', true)
+        //     ->where('emrdp.kdprofile',$kdProfile )
+        //     ->whereNotNull('emrdp.value')
+        //     ->where('emrdp.value','!=','Invalid date')
+        //     ->orderBy('emrd.nourut');
+
+            $data = \DB::table('emrpasiend_t as emrdp')
             ->leftjoin('emrpasien_t as emrp', 'emrp.norec_apd', '=', 'emrdp.norec_apd')
             ->leftjoin('emrd_t as emrd', 'emrd.id', '=', 'emrdp.emrdfk')
             ->leftjoin('pegawai_m as pg', 'pg.id', '=', 'emrdp.pegawaifk')

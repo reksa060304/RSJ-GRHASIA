@@ -220,7 +220,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     cacheHelper.set('cacheNomorEMR', arrStr);
                     //  norecEMR = e.data.data.noemr
                      //cacheHelper.set('cacheNOREC_EMR', arrStr);
-                     medifirstService.get("emr/get-emr-transaksi-detail?noemr=" + e.data.data.noemr + "&emrfk=" + $scope.cc.emrfk, true).then(function (dat) {
+                     medifirstService.get("emr/get-emr-transaksi-detail2?noemr=" + e.data.data.noemr + "&emrfk=" + $scope.cc.emrfk, true).then(function (dat) {
                         dataLoad = dat.data.data
                         if(dataLoad.length > 0){
                             for (var i = 0; i <= dataLoad.length - 1; i++) {
