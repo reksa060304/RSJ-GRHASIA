@@ -208,17 +208,19 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     // });
                     // e.data.data.norec
                     medifirstService.postLogging('EMR', 'norec emrpasien_t', norecEMR,  
-                    'SuratKeteranganGawatDaruratCtrl' + ' dengan No EMR - ' +e.data.data.noemr +  ' pada No Registrasi ' 
+                    'SuratKeteranganDirawatInapCtrl' + ' dengan No EMR - ' +e.data.data.noemr +  ' pada No Registrasi ' 
                     + $scope.cc.noregistrasi).then(function (res) {
                     })
 
                     var arrStr = {
-                        0: e.data.data.noemr
+                        // 0: e.data.data.noemr
+                         0: e.data.data.norec
                     }
                     // norecEMR =e.data.data.noemr
                     cacheHelper.set('cacheNomorEMR', arrStr);
-                    //norecEMR =e.data.data.norec
-                    medifirstService.get("emr/get-emr-transaksi-detail2?noemr=" + e.data.data.noemr + "&emrfk=" + $scope.cc.emrfk, true).then(function (dat) {
+                    //  norecEMR = e.data.data.noemr
+                     //cacheHelper.set('cacheNOREC_EMR', arrStr);
+                     medifirstService.get("emr/get-emr-transaksi-detail2?noemr=" + e.data.data.noemr + "&emrfk=" + $scope.cc.emrfk, true).then(function (dat) {
                         dataLoad = dat.data.data
                         if(dataLoad.length > 0){
                             for (var i = 0; i <= dataLoad.length - 1; i++) {
@@ -232,8 +234,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             norecEMR = ''
                         }
                      })
+
                 });
             }
+
 
             $scope.cetakBlade = function () {
                 if (norecEMR == '') {
