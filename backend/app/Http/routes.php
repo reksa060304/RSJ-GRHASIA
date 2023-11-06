@@ -703,6 +703,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::post('cakem/simpan-evaluasi', 'EMR\EMRController@simpanEvaluasi');
           // Route::post('emr/save-emr-dinamis', 'EMR\EMRController@SaveTransaksiEMR');
           Route::get('emr/get-masalah-keperawatan', 'EMR\EMRController@getEMRMasalahKeperawatan');
+          Route::get('report/cetak-monitoringjamkes','Report\ReportController@cetakmonitoringJamkes');
           Route::get('emr/get-emr-transaksi', 'EMR\EMRController@getEMRTransaksiRiwayat');
           Route::get('emr/get-emr-transaksi-detail', 'EMR\EMRController@getEMRTransaksiDetail');
           Route::post('emr/get-emr-transaksi-details', 'EMR\EMRController@getEMRTransaksiDetails');
