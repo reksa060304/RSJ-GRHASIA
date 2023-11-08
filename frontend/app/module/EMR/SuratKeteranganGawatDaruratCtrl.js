@@ -79,7 +79,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 }
             }
             var chekedd = false;
-            medifirstService.get("emr/get-emr-transaksi-detail?noemr=" + nomorEMR + "&emrfk=" + $scope.cc.emrfk, true).then(function (dat) {
+            medifirstService.get("emr/get-emr-transaksi-detail2?noemr=" + nomorEMR + "&emrfk=" + $scope.cc.emrfk, true).then(function (dat) {
                 $scope.item.obj = []
                 $scope.item.obj2 = []
                 dataLoad = dat.data.data
