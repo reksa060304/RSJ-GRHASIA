@@ -917,9 +917,9 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
               ->generate('A simple example of QR code!'); 
               return response($image)->header('Content-type','image/png');
           });
-          Route::get('phpinfo', function () {
-            return phpinfo();
-          });
+          // Route::get('phpinfo', function () {
+          //   return phpinfo();
+          // });
  
         // });
 
