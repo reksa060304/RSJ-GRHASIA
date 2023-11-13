@@ -375,223 +375,7 @@ define(['initialize'], function (initialize) {
             medifirstService.get("emr/get-emr-transaksi-detail?noemr=" + nomorEMR + "&emrfk=" + $scope.cc.emrfk, true).then(function (dat) {
                 $scope.item.obj = []
                 $scope.item.obj2 = []
-                medifirstService.get("emr/get-emr-to-emr?noemr="+ nomorEMR + "&emrfk=777").then(function (dat) {
-                    
-                   
-                     var datas = dat.data.data
-                    // var a = ""
-                    // var b = ""
-                    // for (var i = datas.length - 1; i >= 0; i--) {
-            
-                    //     var c = datas[i].caption
-                    //     b = ", " + c
-                    //     a = a + b
-                    // }
-                    // $scope.item.obj[3017315] = a.slice(1, a.length)
-                    // console.log($scope.bro);
-                    // $scope.isRouteLoading = false
-
-                    for (let i = 0; i < datas.length; i++) {
-                        if(datas[i].type == 'textbox'){
-                            $scope.item.obj[datas[i].idtujuan]= datas[i].value   
-                        }    
-                        if (datas[i].type == "checkbox") {
-                            if (datas[i].value == "1") {
-                                $scope.item.obj[datas[i].idtujuan] = datas[i].value 
-                                console.log(datas[i].type);
-                            }
-                        }       
-                        if (datas[i].type == "textarea") {
-                            $scope.item.obj[datas[i].idtujuan] = datas[i].value
-                        }    
-                                           
-                    }
-                    
-                    
-    
-                })
-                medifirstService.get("emr/get-data-lembar-masuk-keluar?noregistrasi=" + $scope.cc.noregistrasi).then(function (dat) {  
-                    var datas=dat.data.data
-                    if (dat.data.data[0].umur <= 18) {
-                        $scope.item.obj[3004500] = true
-                    }
-                    else if (dat.data.data[0].umur >= 19  &&  dat.data.data[0].umur <=59){
-                        $scope.item.obj[3004501] = true
-                    }
-                    else if (dat.data.data[0].umur >= 60){
-                        $scope.item.obj[3004502] = true
-                    }
-                    
-                    if (dat.data.data[0].statusperkawinan == "KAWIN"){
-                        $scope.item.obj[3004503] = true
-                    }
-                    else if (dat.data.data[0].statusperkawinan == "BELUM KAWIN"){
-                        $scope.item.obj[3004504] = true
-                    }
-                    else if (dat.data.data[0].statusperkawinan == "JANDA"){
-                        $scope.item.obj[3004506] = true
-                    }
-                    else if (dat.data.data[0].statusperkawinan == "DUDA"){
-                        $scope.item.obj[3004505] = true
-                    }
-                    if (dat.data.data[0].agama == "ISLAM"){
-                        $scope.item.obj[3004507] = true
-
-                    }
-                    else if (dat.data.data[0].agama == "KRISTEN (PROTESTAN)") {
-                        $scope.item.obj[3004508] = true
-
-                    }
-                    else if (dat.data.data[0].agama == "KATHOLIK"){
-                        $scope.item.obj[3004509] = true
-
-                    }
-                    else if (dat.data.data[0].agama == "HINDU"){
-                        $scope.item.obj[3004510] = true
-
-                    }
-                    else if (dat.data.data[0].agama == "BUDHA"){
-                        $scope.item.obj[3004511] = true
-
-                    }
-                    else {
-                        $scope.item.obj[3004512] = true
-                        $scope.item.obj[3004513] = dat.data.data[0].agama
-
-                    }
-
-                    if (dat.data.data[0].pendidikan == "TIDAK SEKOLAH"){
-                        $scope.item.obj[3004514] = true
-
-                    }
-                    else if (dat.data.data[0].pendidikan == "SD"){
-                        $scope.item.obj[3004515] = true
-
-                    }
-                    else if (dat.data.data[0].pendidikan == "SLB"){
-                        $scope.item.obj[3004480] = true
-
-                    }
-                    else if (dat.data.data[0].pendidikan == "SLTP"){
-                        $scope.item.obj[3004516] = true
-
-                    }
-                    else if (dat.data.data[0].pendidikan == "MTS"){
-                        $scope.item.obj[3004481] = true
-
-                    }
-                    else if (dat.data.data[0].pendidikan == "SLTA"){
-                        $scope.item.obj[3004517] = true
-
-                    }
-                    else if (dat.data.data[0].pendidikan == "SMK"){
-                        $scope.item.obj[3004482] = true
-
-                    }
-                    else if (dat.data.data[0].pendidikan == "DIPLOMA I"){
-                        $scope.item.obj[3004518] = true
-
-                    }
-                    else if (dat.data.data[0].pendidikan == "DIPLOMA II"){
-                        $scope.item.obj[3004600] = true
-
-                    }
-                    else if (dat.data.data[0].pendidikan == "DIPLOMA III"){
-                        $scope.item.obj[3004601] = true
-
-                    }
-                    else if (dat.data.data[0].pendidikan == "DIPLOMA IV"){
-                        $scope.item.obj[3004602] = true
-
-                    }
-                    else if (dat.data.data[0].pendidikan == "S1"){
-                        $scope.item.obj[3004519] = true
-
-                    }
-                    else if (dat.data.data[0].pendidikan == "S2"){
-                        $scope.item.obj[3004483] = true
-
-                    }
-                    else if (dat.data.data[0].pendidikan == "S3"){
-                        $scope.item.obj[3004484] = true
-
-                    }
-                    if (dat.data.data[0].pekerjaan == "TNI"){
-                        $scope.item.obj[3004520] = true
-
-                    }
-                    else if (dat.data.data[0].pekerjaan == "POLRI" || dat.data.data[0].pekerjaan == "PNS ( POLRI)" ){
-                        $scope.item.obj[3004485] = true
-
-                    }
-                    else if (dat.data.data[0].pekerjaan == "WIRASWASTA" || dat.data.data[0].pekerjaan == "WIRASWASTA/ PENGUSAHA"){
-                        $scope.item.obj[3004521] = true
-
-                    }
-                    else if (dat.data.data[0].pekerjaan == "SWASTA" || dat.data.data[0].pekerjaan == "PEGAWAI SWASTA"){
-                        $scope.item.obj[3004486] = true
-
-                    }
-                    else if (dat.data.data[0].pekerjaan == "BURUH"){
-                        $scope.item.obj[3004522] = true
-
-                    }
-                    else if (dat.data.data[0].pekerjaan == "PETANI"){
-                        $scope.item.obj[3004487] = true
-
-                    }
-                    else if (dat.data.data[0].pekerjaan == "PNS"){
-                        $scope.item.obj[3004523] = true
-
-                    }
-                    else if (dat.data.data[0].pekerjaan == "PENSIUNAN"){
-                        $scope.item.obj[3004488] = true
-
-                    }
-                    else if (dat.data.data[0].pekerjaan == "PELAJAR" || dat.data.data[0].pekerjaan == "PELAJAR/MAHASISWA"){
-                        $scope.item.obj[3004524] = true
-
-                    }
-                    else if (dat.data.data[0].pekerjaan == "MAHASISWA" || dat.data.data[0].pekerjaan == "PELAJAR/MAHASISWA"){
-                        $scope.item.obj[3004489] = true
-
-                    }
-                    else if (dat.data.data[0].pekerjaan == "Tidak Bekerja" || dat.data.data[0].pekerjaan == "Belum Bekerja" ){
-                        $scope.item.obj[3004525] = true
-
-                    }
-                    else {
-                        $scope.item.obj[3004526] = true
-                        $scope.item.obj[3004527] = dat.data.data[0].pekerjaan
-
-                    }
-                    $scope.item.obj[3004556] = dat.data.data[0].penanggungjawab
-                    $scope.item.obj[3004557] = dat.data.data[0].hubungankeluargapj
-                    $scope.item.obj[3004558] = dat.data.data[0].alamatrmh
-                    $scope.item.obj[3004559] = dat.data.data[0].teleponpenanggungjawab
-
-                  
-                    //$scope.item.obj[3017315] 
-                    // console.log($scope.bro);
-    
-                    for (let i = 0; i < datas.length; i++) {
-                        if(datas[i].type == 'textbox'){
-                            $scope.item.obj[datas[i].idtujuan]= datas[i].value   
-                        }    
-                        if (datas[i].type == "checkbox") {
-                            if (datas[i].value == "1") {
-                                $scope.item.obj[datas[i].idtujuan] = datas[i].value 
-                                console.log(datas[i].type);
-                            }
-                        }       
-                        if (datas[i].type == "textarea") {
-                            $scope.item.obj[datas[i].idtujuan] = datas[i].value
-                        }                         
-                    }
-                    
-                    
-    
-                })
+                
 
 
                 $scope.item.obj[116062]=$scope.now
@@ -626,70 +410,288 @@ define(['initialize'], function (initialize) {
 
                 //     }
                 // })
-                for (var i = 0; i <= dataLoad.length - 1; i++) {
-                    if (parseFloat($scope.cc.emrfk) == dataLoad[i].emrfk) {
-
-                        if (dataLoad[i].type == "textbox") {
-                            $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
-                            if(dataLoad[i].emrdfk == 115952)
-                                $scope.totalSkor4 = parseFloat(dataLoad[i].value)
-                              if(dataLoad[i].emrdfk == 3152)
-                                $scope.totalSkor = parseFloat(dataLoad[i].value)
-                              if(dataLoad[i].emrdfk == 115928)
-                                $scope.skorGizi = parseFloat(dataLoad[i].value)
-                               
-                        }
-                        if (dataLoad[i].type == "checkbox") {
-                            chekedd = false
-                            if (dataLoad[i].value == '1') {
-                                chekedd = true
+                if(dataLoad.length > 0){
+                    for (var i = 0; i <= dataLoad.length - 1; i++) {
+                        if (parseFloat($scope.cc.emrfk) == dataLoad[i].emrfk) {
+    
+                            if (dataLoad[i].type == "textbox") {
+                                $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
+                                if(dataLoad[i].emrdfk == 115952)
+                                    $scope.totalSkor4 = parseFloat(dataLoad[i].value)
+                                  if(dataLoad[i].emrdfk == 3152)
+                                    $scope.totalSkor = parseFloat(dataLoad[i].value)
+                                  if(dataLoad[i].emrdfk == 115928)
+                                    $scope.skorGizi = parseFloat(dataLoad[i].value)
+                                   
                             }
-                            $scope.item.obj[dataLoad[i].emrdfk] = chekedd
-                            // if (dataLoad[i].emrdfk >= 14464 && dataLoad[i].emrdfk <= 14469 && chekedd) {
-                            //     $scope.getSkalaNyeri(1, { descNilai: dataLoad[i].reportdisplay })
-                            // }
-                            // if (dataLoad[i].emrdfk >= 5053 && dataLoad[i].emrdfk <= 5084 && dataLoad[i].reportdisplay != null) {
-                            //     var datass = { id: dataLoad[i].emrdfk, descNilai: dataLoad[i].reportdisplay }
-                            //     $scope.getSkor2(datass)
-                            // }
-                            // if (dataLoad[i].emrdfk >= 14424 && dataLoad[i].emrdfk <= 14431 && dataLoad[i].reportdisplay != null) {
-                            //     var datass = { id: dataLoad[i].emrdfk, descNilai: dataLoad[i].reportdisplay }
-                            //     $scope.getSkorGizi(datass)
-                            // }
-
-
-                        }
-
-                        if (dataLoad[i].type == "datetime") {
-                            $scope.item.obj[dataLoad[i].emrdfk] = new Date(dataLoad[i].value)
-                        }
-                        if (dataLoad[i].type == "time") {
-                            $scope.item.obj[dataLoad[i].emrdfk] = new Date(dataLoad[i].value)
-                        }
-                        if (dataLoad[i].type == "date") {
-                            $scope.item.obj[dataLoad[i].emrdfk] = new Date(dataLoad[i].value)
-                        }
-
-                        if (dataLoad[i].type == "checkboxtextbox") {
-                            $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
-                            $scope.item.obj2[dataLoad[i].emrdfk] = true
-                        }
-                        if (dataLoad[i].type == "textarea") {
-                            $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
-                        }
-                        if (dataLoad[i].type == "combobox") {
-                            var str = dataLoad[i].value
-                            if(str != undefined){
-                                var res = str.split("~");
-                                // $scope.item.objcbo[dataLoad[i].emrdfk]= {value:res[0],text:res[1]}
-                                $scope.item.obj[dataLoad[i].emrdfk] = { value: res[0], text: res[1] }        
+                            if (dataLoad[i].type == "checkbox") {
+                                chekedd = false
+                                if (dataLoad[i].value == '1') {
+                                    chekedd = true
+                                }
+                                $scope.item.obj[dataLoad[i].emrdfk] = chekedd
+                                // if (dataLoad[i].emrdfk >= 14464 && dataLoad[i].emrdfk <= 14469 && chekedd) {
+                                //     $scope.getSkalaNyeri(1, { descNilai: dataLoad[i].reportdisplay })
+                                // }
+                                // if (dataLoad[i].emrdfk >= 5053 && dataLoad[i].emrdfk <= 5084 && dataLoad[i].reportdisplay != null) {
+                                //     var datass = { id: dataLoad[i].emrdfk, descNilai: dataLoad[i].reportdisplay }
+                                //     $scope.getSkor2(datass)
+                                // }
+                                // if (dataLoad[i].emrdfk >= 14424 && dataLoad[i].emrdfk <= 14431 && dataLoad[i].reportdisplay != null) {
+                                //     var datass = { id: dataLoad[i].emrdfk, descNilai: dataLoad[i].reportdisplay }
+                                //     $scope.getSkorGizi(datass)
+                                // }
+    
+    
                             }
-
+    
+                            if (dataLoad[i].type == "datetime") {
+                                $scope.item.obj[dataLoad[i].emrdfk] = new Date(dataLoad[i].value)
+                            }
+                            if (dataLoad[i].type == "time") {
+                                $scope.item.obj[dataLoad[i].emrdfk] = new Date(dataLoad[i].value)
+                            }
+                            if (dataLoad[i].type == "date") {
+                                $scope.item.obj[dataLoad[i].emrdfk] = new Date(dataLoad[i].value)
+                            }
+    
+                            if (dataLoad[i].type == "checkboxtextbox") {
+                                $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
+                                $scope.item.obj2[dataLoad[i].emrdfk] = true
+                            }
+                            if (dataLoad[i].type == "textarea") {
+                                $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
+                            }
+                            if (dataLoad[i].type == "combobox") {
+                                var str = dataLoad[i].value
+                                if(str != undefined){
+                                    var res = str.split("~");
+                                    // $scope.item.objcbo[dataLoad[i].emrdfk]= {value:res[0],text:res[1]}
+                                    $scope.item.obj[dataLoad[i].emrdfk] = { value: res[0], text: res[1] }        
+                                }
+    
+                            }
+                            // pegawaiInputDetail = dataLoad[i].pegawaifk
                         }
-                        // pegawaiInputDetail = dataLoad[i].pegawaifk
+    
                     }
-
+                }else{
+                    medifirstService.get("emr/get-emr-to-emr?noemr="+ nomorEMR + "&emrfk=777").then(function (dat) {
+                    
+                   
+                        var datas = dat.data.data
+                       // var a = ""
+                       // var b = ""
+                       // for (var i = datas.length - 1; i >= 0; i--) {
+               
+                       //     var c = datas[i].caption
+                       //     b = ", " + c
+                       //     a = a + b
+                       // }
+                       // $scope.item.obj[3017315] = a.slice(1, a.length)
+                       // console.log($scope.bro);
+                       // $scope.isRouteLoading = false
+   
+                       for (let i = 0; i < datas.length; i++) {
+                           if(datas[i].type == 'textbox'){
+                               $scope.item.obj[datas[i].idtujuan]= datas[i].value   
+                           }    
+                           if (datas[i].type == "checkbox") {
+                               if (datas[i].value == "1") {
+                                   $scope.item.obj[datas[i].idtujuan] = datas[i].value 
+                                   console.log(datas[i].type);
+                               }
+                           }       
+                           if (datas[i].type == "textarea") {
+                               $scope.item.obj[datas[i].idtujuan] = datas[i].value
+                           }    
+                                              
+                       }
+                       
+                       
+       
+                   })
+                   medifirstService.get("emr/get-data-lembar-masuk-keluar?noregistrasi=" + $scope.cc.noregistrasi).then(function (dat) {  
+                       var datas=dat.data.data
+                       if (dat.data.data[0].umur <= 18) {
+                           $scope.item.obj[3004500] = true
+                       }
+                       else if (dat.data.data[0].umur >= 19  &&  dat.data.data[0].umur <=59){
+                           $scope.item.obj[3004501] = true
+                       }
+                       else if (dat.data.data[0].umur >= 60){
+                           $scope.item.obj[3004502] = true
+                       }
+                       
+                       if (dat.data.data[0].statusperkawinan == "KAWIN"){
+                           $scope.item.obj[3004503] = true
+                       }
+                       else if (dat.data.data[0].statusperkawinan == "BELUM KAWIN"){
+                           $scope.item.obj[3004504] = true
+                       }
+                       else if (dat.data.data[0].statusperkawinan == "JANDA"){
+                           $scope.item.obj[3004506] = true
+                       }
+                       else if (dat.data.data[0].statusperkawinan == "DUDA"){
+                           $scope.item.obj[3004505] = true
+                       }
+                       if (dat.data.data[0].agama == "ISLAM"){
+                           $scope.item.obj[3004507] = true
+   
+                       }
+                       else if (dat.data.data[0].agama == "KRISTEN (PROTESTAN)") {
+                           $scope.item.obj[3004508] = true
+   
+                       }
+                       else if (dat.data.data[0].agama == "KATHOLIK"){
+                           $scope.item.obj[3004509] = true
+   
+                       }
+                       else if (dat.data.data[0].agama == "HINDU"){
+                           $scope.item.obj[3004510] = true
+   
+                       }
+                       else if (dat.data.data[0].agama == "BUDHA"){
+                           $scope.item.obj[3004511] = true
+   
+                       }
+                       else {
+                           $scope.item.obj[3004512] = true
+                           $scope.item.obj[3004513] = dat.data.data[0].agama
+   
+                       }
+   
+                       if (dat.data.data[0].pendidikan == "TIDAK SEKOLAH"){
+                           $scope.item.obj[3004514] = true
+   
+                       }
+                       else if (dat.data.data[0].pendidikan == "SD"){
+                           $scope.item.obj[3004515] = true
+   
+                       }
+                       else if (dat.data.data[0].pendidikan == "SLB"){
+                           $scope.item.obj[3004480] = true
+   
+                       }
+                       else if (dat.data.data[0].pendidikan == "SLTP"){
+                           $scope.item.obj[3004516] = true
+   
+                       }
+                       else if (dat.data.data[0].pendidikan == "MTS"){
+                           $scope.item.obj[3004481] = true
+   
+                       }
+                       else if (dat.data.data[0].pendidikan == "SLTA"){
+                           $scope.item.obj[3004517] = true
+   
+                       }
+                       else if (dat.data.data[0].pendidikan == "SMK"){
+                           $scope.item.obj[3004482] = true
+   
+                       }
+                       else if (dat.data.data[0].pendidikan == "DIPLOMA I"){
+                           $scope.item.obj[3004518] = true
+   
+                       }
+                       else if (dat.data.data[0].pendidikan == "DIPLOMA II"){
+                           $scope.item.obj[3004600] = true
+   
+                       }
+                       else if (dat.data.data[0].pendidikan == "DIPLOMA III"){
+                           $scope.item.obj[3004601] = true
+   
+                       }
+                       else if (dat.data.data[0].pendidikan == "DIPLOMA IV"){
+                           $scope.item.obj[3004602] = true
+   
+                       }
+                       else if (dat.data.data[0].pendidikan == "S1"){
+                           $scope.item.obj[3004519] = true
+   
+                       }
+                       else if (dat.data.data[0].pendidikan == "S2"){
+                           $scope.item.obj[3004483] = true
+   
+                       }
+                       else if (dat.data.data[0].pendidikan == "S3"){
+                           $scope.item.obj[3004484] = true
+   
+                       }
+                       if (dat.data.data[0].pekerjaan == "TNI"){
+                           $scope.item.obj[3004520] = true
+   
+                       }
+                       else if (dat.data.data[0].pekerjaan == "POLRI" || dat.data.data[0].pekerjaan == "PNS ( POLRI)" ){
+                           $scope.item.obj[3004485] = true
+   
+                       }
+                       else if (dat.data.data[0].pekerjaan == "WIRASWASTA" || dat.data.data[0].pekerjaan == "WIRASWASTA/ PENGUSAHA"){
+                           $scope.item.obj[3004521] = true
+   
+                       }
+                       else if (dat.data.data[0].pekerjaan == "SWASTA" || dat.data.data[0].pekerjaan == "PEGAWAI SWASTA"){
+                           $scope.item.obj[3004486] = true
+   
+                       }
+                       else if (dat.data.data[0].pekerjaan == "BURUH"){
+                           $scope.item.obj[3004522] = true
+   
+                       }
+                       else if (dat.data.data[0].pekerjaan == "PETANI"){
+                           $scope.item.obj[3004487] = true
+   
+                       }
+                       else if (dat.data.data[0].pekerjaan == "PNS"){
+                           $scope.item.obj[3004523] = true
+   
+                       }
+                       else if (dat.data.data[0].pekerjaan == "PENSIUNAN"){
+                           $scope.item.obj[3004488] = true
+   
+                       }
+                       else if (dat.data.data[0].pekerjaan == "PELAJAR" || dat.data.data[0].pekerjaan == "PELAJAR/MAHASISWA"){
+                           $scope.item.obj[3004524] = true
+   
+                       }
+                       else if (dat.data.data[0].pekerjaan == "MAHASISWA" || dat.data.data[0].pekerjaan == "PELAJAR/MAHASISWA"){
+                           $scope.item.obj[3004489] = true
+   
+                       }
+                       else if (dat.data.data[0].pekerjaan == "Tidak Bekerja" || dat.data.data[0].pekerjaan == "Belum Bekerja" ){
+                           $scope.item.obj[3004525] = true
+   
+                       }
+                       else {
+                           $scope.item.obj[3004526] = true
+                           $scope.item.obj[3004527] = dat.data.data[0].pekerjaan
+   
+                       }
+                       $scope.item.obj[3004556] = dat.data.data[0].penanggungjawab
+                       $scope.item.obj[3004557] = dat.data.data[0].hubungankeluargapj
+                       $scope.item.obj[3004558] = dat.data.data[0].alamatrmh
+                       $scope.item.obj[3004559] = dat.data.data[0].teleponpenanggungjawab
+   
+                     
+                       //$scope.item.obj[3017315] 
+                       // console.log($scope.bro);
+       
+                       for (let i = 0; i < datas.length; i++) {
+                           if(datas[i].type == 'textbox'){
+                               $scope.item.obj[datas[i].idtujuan]= datas[i].value   
+                           }    
+                           if (datas[i].type == "checkbox") {
+                               if (datas[i].value == "1") {
+                                   $scope.item.obj[datas[i].idtujuan] = datas[i].value 
+                                   console.log(datas[i].type);
+                               }
+                           }       
+                           if (datas[i].type == "textarea") {
+                               $scope.item.obj[datas[i].idtujuan] = datas[i].value
+                           }                         
+                       }
+                   })
                 }
+                
                 // if( $scope.cc.norec_emr !='-' && pegawaiInputDetail !='' && pegawaiInputDetail !=null){
                 //     if(pegawaiInputDetail != medifirstService.getPegawaiLogin().id){
                 //         $scope.allDisabled =true
