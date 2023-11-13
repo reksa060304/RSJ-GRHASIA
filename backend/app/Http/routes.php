@@ -895,6 +895,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('emr/get-emr-cabak-cek', 'EMR\EMRController@getEMRCABAKCeK');
           Route::get('emr/get-emr-cabak', 'EMR\EMRController@getEMRCABAK');
 
+          Route::get('emr/cek_ttd_bsre_emr', 'EMR\EMRController@getCekBSRE');
 
           Route::post('bsre-esign/sign/pdf', 'Bridging\BridgingBSREController@signDokumen');
           Route::get('bsre-esign/sign/download/{id_dokumen}', 'Bridging\BridgingBSREController@downloadDokumen');

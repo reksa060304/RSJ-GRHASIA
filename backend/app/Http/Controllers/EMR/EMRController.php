@@ -2825,6 +2825,26 @@ class EMRController  extends ApiController
         return $this->respond($dataProduk);
     }
 
+    public function getCekBSRE(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+            $data = \DB::table('emr_bsre_t as bsre')
+            ->select('bsre.*')
+            ->where('bsre.nomoremr',$request['noemr'])
+            ->where('bsre.emrfk',$request['emrfk'])
+            ->where('bsre.norec_pd',$request['norec_pd'])
+            ->where('bsre.noregistrasi',$request['noregistrasi'])
+            ->where('bsre.statusenabled', true)
+            ->where('bsre.kdprofile',$kdProfile );
+
+        $data = $data->get();
+        $result = array(
+            'data' => $data,
+            'message' => 'as@epic',
+        );
+        return $this->respond($result);
+    }
+
     public function getDataComboDokterPart(Request $request){
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
@@ -2947,6 +2967,7 @@ class EMRController  extends ApiController
         }
         return $this->respond($dataProduk);
     }
+
     public function getDataComboTindakanPart(Request $request){
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;

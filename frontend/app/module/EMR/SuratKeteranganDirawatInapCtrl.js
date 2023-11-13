@@ -19,6 +19,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.cc = {}
             var nomorEMR = '-'
             var norecEMR = ''
+            var namaFile = ''
             $scope.now = new Date();
             $scope.cc.emrfk = 3001999
             var dataLoad = []
@@ -253,18 +254,49 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 var local = JSON.parse(localStorage.getItem('profile'))
                 var nama = medifirstService.getPegawaiLogin().namaLengkap
 
-                window.open(configuration.baseApiBackend + 'report/get-cetak-suratketerangandirawatinap?nocm=' + $scope.cc.nocm +
-                    '&norec_apd=' + $scope.cc.norec +
-                    '&emr=' + norecEMR +
-                    '&emrfk=' + $scope.cc.emrfk +
-                    '&kdprofile=' + local.id +
-                    '&nama=' + nama +
-                    '&namaemr=' + nomorEMR +
-                    // '&isttd=true' +
-                    // '&pegawaittd=' + pegawai.value +
-                    '&noregistrasi=' + $scope.cc.noregistrasi +
-                    '&norec_pd=' + $scope.cc.norec_pd, '_blank');
+                //CEK UNTUK MEMILIH CETAK DARI FILE INI ATAU DARI FILE TTE JIKA SUDAH DI VERIF TTE OLEH DOKTER
+                    medifirstService.get("emr/cek_ttd_bsre_emr?noemr=" + nomorEMR + "&emrfk=" + $scope.cc.emrfk + "&norec_pd=" + $scope.cc.norec_pd + "&noregistrasi=" + $scope.cc.noregistrasi, true).then(function (dat) {
+                    dataLoad = dat.data.data
+                    if(dataLoad.length > 0){
+                        for (var i = 0; i <= dataLoad.length - 1; i++) {
+                            namaFile = dataLoad[0].file
+                        }
+                        window.open(baseTransaksi.replace('service/medifirst2000/', '') + "service/storage_path?path=" + namaFile
+                        + "&mimetype=application/pdf");
+                        }
+                    else{
+                        namaFile = ''
+                        window.open(configuration.baseApiBackend + 'report/get-cetak-suratketerangandirawatinap?nocm=' + $scope.cc.nocm +
+                        '&norec_apd=' + $scope.cc.norec +
+                        '&emr=' + norecEMR +
+                        '&emrfk=' + $scope.cc.emrfk +
+                        '&kdprofile=' + local.id +
+                        '&nama=' + nama +
+                        '&namafile=' + namaFile +
+                        '&namaemr=' + nomorEMR +
+                        '&noregistrasi=' + $scope.cc.noregistrasi +
+                        '&norec_pd=' + $scope.cc.norec_pd, '_blank');
+                        }
+                    })
+                 //SAMPAI SINI
+                if(namaFile=='') {
+                    // window.open(configuration.baseApiBackend + 'report/get-cetak-suratketerangandirawatinap?nocm=' + $scope.cc.nocm +
+                    // '&norec_apd=' + $scope.cc.norec +
+                    // '&emr=' + norecEMR +
+                    // '&emrfk=' + $scope.cc.emrfk +
+                    // '&kdprofile=' + local.id +
+                    // '&nama=' + nama +
+                    // '&namafile=' + namaFile +
+                    // '&namaemr=' + nomorEMR +
+                    // '&noregistrasi=' + $scope.cc.noregistrasi +
+                    // '&norec_pd=' + $scope.cc.norec_pd, '_blank');
+                }
+                else{
+                    // window.open(baseTransaksi.replace('service/medifirst2000/', '') + "service/storage_path?path=" + namaFile
+                    // + "&mimetype=application/pdf");
+                }
             }
+
             $scope.ttdElek = function () {
                 if (norecEMR == '') {
                     toastr.error('Dokumen belum pernah di isi')
@@ -315,6 +347,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                 })
             }
+
         }
         
     ]);
