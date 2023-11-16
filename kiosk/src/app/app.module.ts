@@ -39,6 +39,7 @@ import { LoaderService } from './main/components/loader/loader.service';
 import { APP_BASE_HREF, HashLocationStrategy, LocationStrategy } from '@angular/common';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
+import { RedirectGuard } from './auth/helpers/redirect.guards';
 const appRoutes: Routes = [
   // {
   //   path: 'dashboard',
@@ -83,24 +84,24 @@ const appRoutes: Routes = [
   //   loadChildren: () => import('./main/charts-and-maps/charts-and-maps.module').then(m => m.ChartsAndMapsModule),
   //   canActivate: [AuthGuard]
   // },
-  { path: 'touchscreen', loadChildren: () => import('./main/module/touchscreen/touchscreen.module').then(m => m.TouchscreenModule), },
-  { path: 'choose-poli', loadChildren: () => import('./main/module/choose-poli/choose-poli.module').then(m => m.ChoosePoliModule), },
-  { path: 'touchscreen/self-regis', loadChildren: () => import('./main/module/self-regis/self-regis.module').then(m => m.SelfRegisModule), },
-  { path: 'touchscreen/self-regis/verif-pasien', loadChildren: () => import('./main/module/verif-pasien/verif-pasien.module').then(m => m.VerifPasienModule), },
-  { path: 'touchscreen/self-regis/verif-pasien/poli', loadChildren: () => import('./main/module/pilih-poli/pilih-poli.module').then(m => m.PilihPoliModule), },
-  { path: 'touchscreen/checkin', loadChildren: () => import('./main/module/checkin/checkin.module').then(m => m.CheckinModule), },
-  { path: 'touchscreen/self-regis/verif-pasien-bpjs-old', loadChildren: () => import('./main/module/verif-pasien-bpjs/verif-pasien-bpjs.module').then(m => m.VerifPasienBpjsModule), },
-  { path: 'touchscreen/self-regis/verif-pasien-bpjs', loadChildren: () => import('./main/module/verif-pasien-bpjs-old/verif-pasien-bpjs-old.module').then(m => m.VerifPasienBpjsOldModule), },
+  { path: 'touchscreen', loadChildren: () => import('./main/module/touchscreen/touchscreen.module').then(m => m.TouchscreenModule),canActivate: [RedirectGuard] },
+  { path: 'choose-poli', loadChildren: () => import('./main/module/choose-poli/choose-poli.module').then(m => m.ChoosePoliModule),canActivate: [RedirectGuard] },
+  { path: 'touchscreen/self-regis', loadChildren: () => import('./main/module/self-regis/self-regis.module').then(m => m.SelfRegisModule),canActivate: [RedirectGuard] },
+  { path: 'touchscreen/self-regis/verif-pasien', loadChildren: () => import('./main/module/verif-pasien/verif-pasien.module').then(m => m.VerifPasienModule),canActivate: [RedirectGuard] },
+  { path: 'touchscreen/self-regis/verif-pasien/poli', loadChildren: () => import('./main/module/pilih-poli/pilih-poli.module').then(m => m.PilihPoliModule),canActivate: [RedirectGuard] },
+  { path: 'touchscreen/checkin', loadChildren: () => import('./main/module/checkin/checkin.module').then(m => m.CheckinModule),canActivate: [RedirectGuard] },
+  { path: 'touchscreen/self-regis/verif-pasien-bpjs-old', loadChildren: () => import('./main/module/verif-pasien-bpjs/verif-pasien-bpjs.module').then(m => m.VerifPasienBpjsModule),canActivate: [RedirectGuard] },
+  { path: 'touchscreen/self-regis/verif-pasien-bpjs', loadChildren: () => import('./main/module/verif-pasien-bpjs-old/verif-pasien-bpjs-old.module').then(m => m.VerifPasienBpjsOldModule),canActivate: [RedirectGuard] },
   
-  { path: 'informasi-profil', loadChildren: () => import('./main/module/informasi-profil/informasi-profil.module').then(m => m.InformasiProfilModule), },
-  { path: 'gallery', loadChildren: () => import('./main/module/gallery/gallery.module').then(m => m.GalleryModule), },
-  { path: 'informasi-pelayanan', loadChildren: () => import('./main/module/informasi-pelayanan/informasi-pelayanan.module').then(m => m.InformasiPelayananModule), },
-  { path: 'denah', loadChildren: () => import('./main/module/denah/denah.module').then(m => m.DenahModule), },
-  { path: 'informasi-promosi', loadChildren: () => import('./main/module/informasi-promosi/informasi-promosi.module').then(m => m.InformasiPromosiModule), },
-  { path: 'informasi-bantuan', loadChildren: () => import('./main/module/informasi-bantuan/informasi-bantuan.module').then(m => m.InformasiBantuanModule), },
-  { path: 'informasi-kamar', loadChildren: () => import('./main/module/informasi-kamar/informasi-kamar.module').then(m => m.InformasiKamarModule), },
-  { path: 'info-kritik', loadChildren: () => import('./main/module/info-kritik/info-kritik.module').then(m => m.InfoKritikModule), },
-  { path: 'cek-kepesertaan-bpjs', loadChildren: () => import('./main/module/cek-kepesertaan-bpjs/cek-kepesertaan-bpjs.module').then(m => m.CekKepesertaanBpjsModule), },
+  { path: 'informasi-profil', loadChildren: () => import('./main/module/informasi-profil/informasi-profil.module').then(m => m.InformasiProfilModule),canActivate: [RedirectGuard] },
+  { path: 'gallery', loadChildren: () => import('./main/module/gallery/gallery.module').then(m => m.GalleryModule),canActivate: [RedirectGuard] },
+  { path: 'informasi-pelayanan', loadChildren: () => import('./main/module/informasi-pelayanan/informasi-pelayanan.module').then(m => m.InformasiPelayananModule),canActivate: [RedirectGuard] },
+  { path: 'denah', loadChildren: () => import('./main/module/denah/denah.module').then(m => m.DenahModule),canActivate: [RedirectGuard] },
+  { path: 'informasi-promosi', loadChildren: () => import('./main/module/informasi-promosi/informasi-promosi.module').then(m => m.InformasiPromosiModule),canActivate: [RedirectGuard] },
+  { path: 'informasi-bantuan', loadChildren: () => import('./main/module/informasi-bantuan/informasi-bantuan.module').then(m => m.InformasiBantuanModule),canActivate: [RedirectGuard] },
+  { path: 'informasi-kamar', loadChildren: () => import('./main/module/informasi-kamar/informasi-kamar.module').then(m => m.InformasiKamarModule),canActivate: [RedirectGuard] },
+  { path: 'info-kritik', loadChildren: () => import('./main/module/info-kritik/info-kritik.module').then(m => m.InfoKritikModule),canActivate: [RedirectGuard] },
+  { path: 'cek-kepesertaan-bpjs', loadChildren: () => import('./main/module/cek-kepesertaan-bpjs/cek-kepesertaan-bpjs.module').then(m => m.CekKepesertaanBpjsModule),canActivate: [RedirectGuard] },
  
 
   {
