@@ -10617,7 +10617,7 @@ class BendaharaPenerimaanController extends ApiController {
         sum(jumlahklaim) jumlahklaim,
         sum(jumlahadmin) jumlahadmin,
         sum(jumlahtransfer) jumlahtransfer,
-        sum(jumlahnetto) jumlahnetto
+        (sum(jumlahtotal) + sum(jumlahklaim)) - sum(jumlahadmin) - sum(jumlahtransfer) jumlahnetto
         from(
         select x.tanggal,
         case when x.uraian = 'PERIKSA DOKTER SPESIALIS JIWA' then sum(x.totalfix) else 0 end as jumlahjiwa,

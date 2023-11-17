@@ -7,6 +7,7 @@ define(['initialize'], function (initialize) {
             $scope.myVar = true
             $scope.noCM = $state.params.noCM;
             $scope.tombolSimpanVis = true
+
             $scope.isCetak = false
             $scope.noRecPap = cacheHelper.get('noRecPap');
             $scope.totalSkor = 0
@@ -19,6 +20,12 @@ define(['initialize'], function (initialize) {
             $scope.cc.emrfk = 146
             var dataLoad = []
             var pegawaiInputDetail= ''
+            if(medifirstService.getKelompokUser() == 'mahasiswadiklat'){
+                $scope.tombolSimpanVis = false
+            }
+            console.log($scope.tombolSimpanVis)
+            console.log(medifirstService);
+            $scope.namauser = medifirstService.getPegawaiLogin().namauser
             $scope.item.kasusbaru = true
             $scope.item.kasuslama = false
 
@@ -274,7 +281,7 @@ define(['initialize'], function (initialize) {
                 $scope.item.obj[116062]=$scope.now
                 $scope.item.obj[1901300425]=$scope.now
                 $scope.item.obj[116068]={text:$scope.cc.namaruangan,value: $scope.cc.objectruanganfk}
-
+                $scope.item.obj[1901300345] = $scope.now
                 $scope.item.obj[116201] = true
                 $scope.item.obj[116204] = true
                 $scope.item.obj[116207] = true
@@ -944,7 +951,11 @@ define(['initialize'], function (initialize) {
                     cacheHelper.set('cacheNomorEMR', arrStr);
                 });
             }
-
+            window.addEventListener("scroll", function() {
+                var scrollMarker = document.querySelector(".scroll-marker");
+                var scrollTop = window.scrollY;
+                scrollMarker.style.top = scrollTop + "px";
+            });
         }
         
     ]);

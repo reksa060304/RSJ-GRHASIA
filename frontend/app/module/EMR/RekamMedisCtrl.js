@@ -11,12 +11,19 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             var usia = ''
             var departemen = ''
             $scope.isLoadingNav = false
+            $scope.scrollmarker = false
+
+            if(medifirstService.getKelompokUser() == 'mahasiswadiklat'){
+                $scope.textUser = medifirstService.getUserLogin().kdUser
+                $scope.textNamaLengkap = medifirstService.getPegawaiLogin().namaLengkap
+                $scope.scrollmarker = true
+                $scope.tombolSimpanVis = false
+            }
             // cacheHelper.set('cacheRekamMedis', undefined);
             $scope.getRekamMedisCheck = function (checkNoregis) {
                 $rootScope.getRekamMedisCheck(checkNoregis);
             }
                 $scope.rekammedis = true
-            console.log(medifirstService.getKelompokUser());
             if (medifirstService.getKelompokUser() == 'operator') {
                 $scope.rekammedis = false
             }else{
@@ -133,10 +140,22 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     mapemr += "&ruangan=" + $scope.header.objectruanganfk
                 $scope.isLoadingNav = true
                 $scope.treeSourceMenu = [];
+                $scope.dataMenu = []
                 medifirstService.get("emr/get-menu-rekam-medis-dynamic?namaemr=navigasi" + mapemr).then(function (e) {
                     $scope.isLoadingNav = false
+                    for (let i = 0; i < e.data.data.length; i++) {
+                        const element = e.data.data[i];
+                        if(medifirstService.getKelompokUser() == 'mahasiswadiklat'){
+                            if (element.id == 112 || element.id == 210222) {
+                                $scope.dataMenu.push(element)
+                            }
+                        }else{
+                            $scope.dataMenu.push(element)
+                        }
+                    }
+                    console.log($scope.dataMenu);
                     var inlineDefault = new kendo.data.HierarchicalDataSource({
-                        data: e.data.data,
+                        data: $scope.dataMenu,
                         schema: {
                             model: {
                                 children: "child",
@@ -342,6 +361,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 })
                 
             }
+            window.addEventListener("scroll", function() {
+                var scrollMarker = document.querySelector(".scroll-marker");
+                var scrollTop = window.scrollY;
+                scrollMarker.style.top = scrollTop + "px";
+            });
 
         }
     ]);

@@ -11026,7 +11026,8 @@ class EMRController  extends ApiController
 
         $datasoap = DB::select(DB::raw("
         SELECT * FROM (SELECT ROW_NUMBER()OVER(PARTITION by cp.noregistrasi order by cp.tgljam desc)as nomor, * FROM cpptemr_t cp
-        where cp.noregistrasi = '$request[noregistrasi]' and cp.tenagamedis = cp.dpjputama 
+        inner join pasiendaftar_t pd on pd.noregistrasi = cp.noregistrasi
+        where cp.noregistrasi = '$request[noregistrasi]' and SPLIT_PART(cp.tenagamedis, '~', 1)::int4 = pd.objectpegawaifk
         )as x where x.nomor = 1"));
         $pasiendaftar = DB::select(DB::raw("
         select ru.namaruangan, pd.tglregistrasi, pd.tglpulang, ke.namakelas, pg.namalengkap from pasiendaftar_t as pd 

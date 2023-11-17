@@ -193,10 +193,10 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                             sat = "Saturasi : " + ha[i].value
                         }
                         if(ha[i].id== 120117){
-                            generalis = " Status Generalis dan Neurologis : " + ha[i].value
+                            generalis = "Status Generalis dan Neurologis : " + ha[i].value
                         }
                     }
-                    $scope.item.hasilfisik = td + ", "+ nadi + ", "+ suhu + ", "+ res + ", "+ sat + ", "+ generalis
+                    $scope.item.hasilfisik = td + "   "+ nadi + "   "+ suhu + "   "+ res + "   "+ sat + "\n"+ generalis
                     // $scope.item.hasilfisik = a.slice(1, a.length)
                     // console.log ($scope.item.alasanDirawat)
                    // $scope.item.hasilfisik = dat.data.data2[0].value, dat.data.data2[1].value,  dat.data.data2[2].value,  dat.data.data2[3].value,  dat.data.data2[4].value, dat.data.data2[5].value
@@ -483,8 +483,8 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                                 }
                     
                 }
-                kesadaran = "B. Kesadaran Kualitatif : " + aA.slice(1, aA.length) + kesadaranlain+ ","
-                orientasi = "C. Orientasi : " + orang + tempat + waktu + situasi + "," 
+                kesadaran = "B. Kesadaran Kualitatif : " + aA.slice(1, aA.length) + kesadaranlain
+                orientasi = "C. Orientasi : " + orang + tempat + waktu + situasi
                 disaktif = "Disaktif : "  + aD.slice(1, aD.length)
                 hiperaktif = "Hiperaktif : " +  aD1.slice(1, aD1.length)
                 sikap = "D. Sikap Dan Tingkah Laku : " + dbn + hipoaktif +  + disaktiflain  + sikaplain
@@ -504,8 +504,8 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 
 
 
-                $scope.item.hasilpsikiatri = ksm + "\n "+ kesadaran + "\n "+ orientasi + "\n "+ sikap + "\n "+ prosespikir + "\n "+ mood +
-                "\n "+ afek + "\n "+ persepsi +"\n "+ memori + "\n "+ Intelegensi + "\n "+ perhatian +"\n "+ insight 
+                $scope.item.hasilpsikiatri = ksm + "\n"+ kesadaran + "\n"+ orientasi + "\n"+ sikap + "\n"+ prosespikir + "\n"+ mood +
+                "\n"+ afek + "\n"+ persepsi +"\n"+ memori + "\n"+ Intelegensi + "\n"+ perhatian +"\n"+ insight 
 
 
                 var lab = ''
@@ -1072,6 +1072,18 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 var nama = medifirstService.getPegawaiLogin().namaLengkap
 
                 window.open(config.baseApiBackend + "report/cetak-resume-medis-v2?norec=" +
+                    $scope.modelGrid.norec + '&kdprofile=' + local.id +
+                    '&nama=' + nama, '_blank');
+            }
+            $scope.cetakBladeV3 = function(){
+                if ($scope.modelGrid == undefined) {
+                    toastr.error('Pilih data dulu')
+                    return
+                }
+                var local = JSON.parse(localStorage.getItem('profile'))
+                var nama = medifirstService.getPegawaiLogin().namaLengkap
+
+                window.open(config.baseApiBackend + "report/cetak-resume-medis-v3?norec=" +
                     $scope.modelGrid.norec + '&kdprofile=' + local.id +
                     '&nama=' + nama, '_blank');
             }

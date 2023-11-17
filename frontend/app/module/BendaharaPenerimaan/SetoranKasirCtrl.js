@@ -358,6 +358,7 @@ define(['initialize'], function (initialize) {
 			};
 
 			$scope.columnSetoranKasir = {
+				toolabar: ['excel'],
 				columns: [
 					{
 						"template": "<input type='checkbox' class='checkbox style-center' ng-click='onClickSatu($event,2)' />",

@@ -14344,6 +14344,158 @@ public function suratBuktiPengembalian(Request $request)
         return $pdf->stream();
         // return view('report.resume-medis',compact('res','username'));
     }
+    public function cetakResumeV3(Request $r)
+    {
+        $res['profile'] = Profile::where('id',$r['kdprofile'])->first();
+        $data = \DB::table('resumemedis_t as rm')
+            ->select('rm.norec', 'rm.tglresume', 'ru.namaruangan', 'pg.namalengkap as namadokter',
+                'rm.ringkasanriwayatpenyakit', 'rm.pemeriksaanfisik', 'rm.pemeriksaanpenunjang',
+                'rm.hasilkonsultasi', 'rm.terapi', 'rm.diagnosisawal', 'rm.diagnosissekunder', 'rm.tindakanprosedur',
+                'rm.tglmasuk', 'rm.tglpulang',
+                'rm.wisma','rm.kelas','rm.hasilfisik','rm.hasilpsikiatri','rm.hasilpenunjang','rm.hasilpenunjang','rm.terapipulang',
+                'rm.axis2','rm.axis3','rm.axis4','rm.axis5','rm.kontrolklinik','rm.kondisiwaktukeluare',
+                // 'rm.diagnosismasuk', 'rm.diagnosistambahan', 'rm.alasandirawat',
+                'rm.kddiagnosisawal', 'rm.diagnosismasuk', 'rm.kddiagnosismasuk', 'rm.diagnosistambahan', 'rm.kddiagnosistambahan', 'rm.kddiagnosistambahan2', 'rm.kddiagnosistambahan3', 'rm.kddiagnosistambahan4', 'rm.alasandirawat',
+                'dg1.kddiagnosa as kddiagnosa1', 'dg1.namadiagnosa as namadiagnosa1',
+                'dg2.kddiagnosa as kddiagnosa2', 'dg2.namadiagnosa as namadiagnosa2',
+                'dg3.kddiagnosa as kddiagnosa3', 'dg3.namadiagnosa as namadiagnosa3',
+                'dg4.kddiagnosa as kddiagnosa4', 'dg4.namadiagnosa as namadiagnosa4',
+                'dg5.kddiagnosa as kddiagnosa5', 'dg5.namadiagnosa as namadiagnosa5',
+                'dg6.kddiagnosa as kddiagnosa6', 'dg6.namadiagnosa as namadiagnosa6',
+                'rm.tglkontrolpoli', 'rm.rumahsakittujuan',
+                'rm.alergi', 'rm.diet', 'rm.instruksianjuran', 'rm.hasillab',
+                'rm.kondisiwaktukeluar', 'rm.pengobatandilanjutkan', 'rm.koderesume',
+                'rm.pegawaifk',
+                'pd.noregistrasi', 'pd.tglregistrasi', 'ps.nocm', 'rm.noregistrasifk',
+                'ps.namapasien','kp.kelompokpasien','ru.namaruangan','jk.jeniskelamin','ps.tgllahir')
+            ->Join('antrianpasiendiperiksa_t as apd', 'apd.norec', '=', 'rm.noregistrasifk')
+            ->Join('pasiendaftar_t as pd', 'pd.norec', '=', 'apd.noregistrasifk')
+            ->Join('kelompokpasien_m as kp', 'kp.id', '=', 'pd.objectkelompokpasienlastfk')
+            ->Join('pasien_m as ps', 'ps.id', '=', 'pd.nocmfk')
+            ->Join('jeniskelamin_m as jk', 'jk.id', '=', 'ps.objectjeniskelaminfk')
+            ->leftJoin('ruangan_m as ru', 'ru.id', '=', 'apd.objectruanganfk')
+            ->leftJoin('pegawai_m as pg', 'pg.id', '=', 'pd.objectpegawaifk')
+            ->leftJoin('diagnosa_m as dg1', 'dg1.id', '=', 'rm.kddiagnosismasuk')
+            ->leftJoin('diagnosa_m as dg2', 'dg2.id', '=', 'rm.kddiagnosisawal')
+            ->leftJoin('diagnosa_m as dg3', 'dg3.id', '=', 'rm.kddiagnosistambahan')
+            ->leftJoin('diagnosa_m as dg4', 'dg4.id', '=', 'rm.kddiagnosistambahan2')
+            ->leftJoin('diagnosa_m as dg5', 'dg5.id', '=', 'rm.kddiagnosistambahan3')
+            ->leftJoin('diagnosa_m as dg6', 'dg6.id', '=', 'rm.kddiagnosistambahan4')
+            ->where('rm.kdprofile', $r['kdprofile'])
+            ->where('rm.statusenabled', true)
+            ->where('rm.norec',  $r['norec'])
+            ->where('rm.keteranganlainnya', 'RawatInap');
+//            ->whereIn('ru.objectdepartemenfk',$iddept);
+
+        $data = $data->first();
+        $item = $data;
+//        $result = [];
+//        foreach ($data as $item) {
+            $details = DB::select(DB::raw("
+                   select * from resumemedisdetail_t
+                   where resumefk=:norec"),
+                array(
+                    'norec' => $item->norec,
+                )
+            );
+            $diagnosistambahanarray = array($item->kddiagnosa3, $item->kddiagnosa4, $item->kddiagnosa5, $item->kddiagnosa6);
+            $diagnosistambahan = [];
+            $no = 0;
+            foreach ($diagnosistambahanarray as $tambahan){
+                if($tambahan != "") {
+                    $diagnosistambahan[$no] = $tambahan;
+                    $no++;
+                }
+            }
+            $result= array(
+                'norec' => $item->norec,
+                'kelompokpasien' => $item->kelompokpasien,
+                'tglresume' => $item->tglresume,
+                'namaruangan' => $item->namaruangan,
+                'namadokter' => $item->namadokter,
+                'ringkasanriwayatpenyakit' => $item->ringkasanriwayatpenyakit,
+                'pemeriksaanfisik' => $item->pemeriksaanfisik,
+                'pemeriksaanpenunjang' => $item->pemeriksaanpenunjang,
+                'tglmasuk' => $item->tglmasuk,
+                'tglpulang' => $item->tglpulang,
+                'wisma' => $item->wisma,
+                'kelas' => $item->kelas,
+                'hasilfisik' => $item->hasilfisik,
+                'hasilpsikiatri' => $item->hasilpsikiatri,
+                'hasilpenunjang' => $item->hasilpenunjang,
+                'terapipulang' => $item->terapipulang,
+                'axis2' => $item->axis2,
+                'axis3' => $item->axis3,
+                'axis4' => $item->axis4,
+                'axis5' => $item->axis5,
+                'kontrolklinik' => $item->kontrolklinik,
+                'kondisiwaktukeluare' => $item->kondisiwaktukeluare,
+                'hasilkonsultasi' => $item->hasilkonsultasi,
+                'terapi' => $item->terapi,
+                'diagnosismasuk' => $item->diagnosismasuk,
+                'kddiagnosismasuk' => array($item->kddiagnosismasuk  != null ? $item->kddiagnosismasuk : '-', $item->kddiagnosa1, $item->namadiagnosa1!= null ? $item->namadiagnosa1 : '-'),
+                'diagnosisawal' => $item->diagnosisawal,
+                'kddiagnosisawal' => array($item->kddiagnosisawal, $item->kddiagnosa2,  $item->namadiagnosa2),
+                'diagnosistambahan' => $item->diagnosistambahan,
+                'kddiagnosistambahan' => array($item->kddiagnosistambahan, $item->kddiagnosa3,  $item->namadiagnosa3),
+                'kddiagnosistambahan2' => array($item->kddiagnosistambahan2, $item->kddiagnosa4,  $item->namadiagnosa4),
+                'kddiagnosistambahan3' => array($item->kddiagnosistambahan3, $item->kddiagnosa5,  $item->namadiagnosa5),
+                'kddiagnosistambahan4' => array($item->kddiagnosistambahan4, $item->kddiagnosa6,  $item->namadiagnosa6),
+                'kddiagnosistambahanall' => implode(", ", $diagnosistambahan),
+                'diagnosissekunder' => $item->diagnosissekunder,
+                'tglkontrolpoli' => $item->tglkontrolpoli,
+                'rumahsakittujuan' => $item->rumahsakittujuan,
+                'tindakanprosedur' => $item->tindakanprosedur,
+                'alasandirawat' => $item->alasandirawat,
+                'alergi' => $item->alergi,
+                'diet' => $item->diet,
+                'instruksianjuran' => $item->instruksianjuran,
+                'hasillab' => $item->hasillab,
+                'kondisiwaktukeluar' => $item->kondisiwaktukeluar,
+                'pengobatandilanjutkan' => $item->pengobatandilanjutkan,
+                'koderesume' => $item->koderesume,
+                'pegawaifk' => $item->pegawaifk,
+                'noregistrasi' => $item->noregistrasi,
+                'nocm' => $item->nocm,
+                'namapasien' => $item->namapasien,
+                'noregistrasifk' => $item->noregistrasifk,
+                'jeniskelamin'=> $item->jeniskelamin,
+                'tgllahir'=> $item->tgllahir,
+                'details' => $details,
+            );
+//        }
+//        dd($result);
+        $res['terapi'][] = array('tera' => 'asas');
+        $res['d'] =$result;
+        $username ='asa';
+        $pdf = PDF::loadView(
+            'report.resume-medis-v3',
+            array(
+                'res' => $res,
+                'username'=> $username,
+            ));
+            // dd($pdf);
+        if(isset($r['isttd']) && $r['isttd'] == true){
+            $objetoRequest = new \Illuminate\Http\Request();
+            $objetoRequest ['emrfk'] = $r['emrfk'];
+            $objetoRequest ['norec_emr'] = $r['norec'];
+            $objetoRequest ['pegawaittd'] = $r['pegawaittd'];
+            $objetoRequest ['nocm'] = $r['nocm'];
+            $objetoRequest ['noregistrasi'] = $r['noregistrasi'];
+            $objetoRequest ['norec_pd'] = $r['norec_pd'];
+            $objetoRequest ['tipe'] = 'resumemedis';
+            $bsre = $this->pengajuanTTE($objetoRequest, true);
+            if($bsre['status'] == 201){
+                $content = $pdf->download()->getOriginalContent();
+                \Storage::disk('local')->put( 'TTD_BSRE/' . $bsre['dokumen']->id . '/file' . '.pdf' , $content);
+            }
+          
+            return $bsre;
+        }
+
+        return $pdf->stream();
+        // return view('report.resume-medis',compact('res','username'));
+    }
     public function pengajuanTTE(Request $request)
     {
         $kdProfile = 30;
