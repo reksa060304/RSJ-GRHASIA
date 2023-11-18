@@ -13,12 +13,12 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.isLoadingNav = false
             $scope.scrollmarker = false
 
-            if(medifirstService.getKelompokUser() == 'mahasiswadiklat'){
-                $scope.textUser = medifirstService.getUserLogin().kdUser
-                $scope.textNamaLengkap = medifirstService.getPegawaiLogin().namaLengkap
-                $scope.scrollmarker = true
-                $scope.tombolSimpanVis = false
-            }
+            // if(medifirstService.getKelompokUser() == 'mahasiswadiklat'){
+            //     $scope.textUser = medifirstService.getUserLogin().kdUser
+            //     $scope.textNamaLengkap = medifirstService.getPegawaiLogin().namaLengkap
+            //     $scope.scrollmarker = true
+            //     $scope.tombolSimpanVis = false
+            // }
             // cacheHelper.set('cacheRekamMedis', undefined);
             $scope.getRekamMedisCheck = function (checkNoregis) {
                 $rootScope.getRekamMedisCheck(checkNoregis);
@@ -143,19 +143,19 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.dataMenu = []
                 medifirstService.get("emr/get-menu-rekam-medis-dynamic?namaemr=navigasi" + mapemr).then(function (e) {
                     $scope.isLoadingNav = false
-                    for (let i = 0; i < e.data.data.length; i++) {
-                        const element = e.data.data[i];
-                        if(medifirstService.getKelompokUser() == 'mahasiswadiklat'){
-                            if (element.id == 112 || element.id == 210222) {
-                                $scope.dataMenu.push(element)
-                            }
-                        }else{
-                            $scope.dataMenu.push(element)
-                        }
-                    }
-                    console.log($scope.dataMenu);
+                    // for (let i = 0; i < e.data.data.length; i++) {
+                    //     const element = e.data.data[i];
+                    //     if(medifirstService.getKelompokUser() == 'mahasiswadiklat'){
+                    //         if (element.id == 112 || element.id == 210222) {
+                    //             $scope.dataMenu.push(element)
+                    //         }
+                    //     }else{
+                    //         $scope.dataMenu.push(element)
+                    //     }
+                    // }
+                    // console.log($scope.dataMenu);
                     var inlineDefault = new kendo.data.HierarchicalDataSource({
-                        data: $scope.dataMenu,
+                        data: e.data.data,
                         schema: {
                             model: {
                                 children: "child",
@@ -361,11 +361,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 })
                 
             }
-            window.addEventListener("scroll", function() {
-                var scrollMarker = document.querySelector(".scroll-marker");
-                var scrollTop = window.scrollY;
-                scrollMarker.style.top = scrollTop + "px";
-            });
+            // window.addEventListener("scroll", function() {
+            //     var scrollMarker = document.querySelector(".scroll-marker");
+            //     var scrollTop = window.scrollY;
+            //     scrollMarker.style.top = scrollTop + "px";
+            // });
 
         }
     ]);
