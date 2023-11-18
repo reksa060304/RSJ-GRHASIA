@@ -13,7 +13,9 @@ define(['initialize'], function (initialize) {
               // $scope.collapseEMR =1
           }
           cacheHelper.set('cacheNomorEMR', undefined);
-
+          if(medifirstService.getKelompokUser() == 'mahasiswadiklat'){
+            $scope.tombolSimpanVis = false
+        }
           var norec_apd = ''
           var norec_pd = ''
           var nocm_str = ''

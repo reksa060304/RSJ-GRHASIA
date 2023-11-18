@@ -19,6 +19,9 @@ define(['initialize'], function (initialize) {
             medifirstService.getPart('emr/get-datacombo-part-pegawai', true, true, 20).then(function (data) {
                 $scope.listPegawai = data
             })
+            if(medifirstService.getKelompokUser() == 'mahasiswadiklat'){
+                $scope.tombolSimpanVis = false
+            }
             $scope.listRujukan = [
                 {
                     "id": 1, "nama": "1. Keluhan Utama atau Indikasi",

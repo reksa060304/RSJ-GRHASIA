@@ -12,6 +12,9 @@ define(['initialize'], function (initialize) {
                 $rootScope.isShowNavAses = !$rootScope.isShowNavAses
                 // $scope.collapseEMR =1
             }
+            if(medifirstService.getKelompokUser() == 'mahasiswadiklat'){
+                $scope.tombolSimpanVis = false
+            }
             let listData = []
             cacheHelper.set('cacheNomorEMR', undefined);
             var dataAsal = []
