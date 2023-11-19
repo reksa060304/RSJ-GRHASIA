@@ -24,6 +24,9 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             $scope.isCetakV = true;
             var dataLoad = []
             var dataDump = [];
+            if(medifirstService.getKelompokUser() == 'mahasiswadiklat'){
+                $scope.tombolSimpanVis = false
+            }
             var norecEMR = ''
             $scope.isCetak = true
             medifirstService.getPart('emr/get-datacombo-part-pegawai', true, true, 20).then(function (data) {

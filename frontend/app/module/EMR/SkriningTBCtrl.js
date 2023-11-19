@@ -21,6 +21,9 @@ define(['initialize'], function (initialize) {
             $scope.item.objcbo =[]
             var norecEMR = ''
             $scope.isCetak = true
+            if(medifirstService.getKelompokUser() == 'mahasiswadiklat'){
+                $scope.tombolSimpanVis = false
+            }
             var cacheNomorEMR = cacheHelper.get('cacheNomorEMR');
             var cacheNoREC = cacheHelper.get('cacheNOREC_EMR');
             if(cacheNoREC!= undefined){

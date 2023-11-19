@@ -15,6 +15,9 @@ define(['initialize'], function (initialize) {
             $scope.SkorSkalaFlacc = [];
             $scope.totalSkor2 = 0
             $scope.totalSkor4 = 0
+            if(medifirstService.getKelompokUser() == 'mahasiswadiklat'){
+                $scope.tombolSimpanVis = false
+            }
             $scope.listItem =[ {id:1901305901,inuse:true},{id:1901305921},{id:1901305941},{id:1901305961},{id:1901305981},{id:1901306001},{id:1901306021},
               {id:1901306041},{id:1901306061},{id:1901306081},{id:1901306101},{id:1901306121}]
             $scope.cc = {}

@@ -26,7 +26,9 @@ define(['initialize'], function (initialize) {
             var urlcetak = ''
             //getfunction
             // loadMenu()
-
+            if(medifirstService.getKelompokUser() == 'mahasiswadiklat'){
+                $scope.tombolSimpanVis = false
+            }
             //function
             var chacePeriode = cacheHelper.get('cacheNomorEMR');
             function loadMenu() {
