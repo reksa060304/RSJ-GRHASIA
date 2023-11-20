@@ -138,7 +138,7 @@
                                                     ng-click="Lihat()"><i class="fa fa-search"></i>Lihat / Melanjutkan</button>
                                                 <!-- <button class="c-button" ng-click="Lihat()" style="font-size:20px">Lihat</button> -->
                                             </div>
-                                            <div class="grid_2">
+                                            <div class="grid_2" ng-show="buatBaru">
                                                 <button class="btnTemplate1" style="margin-left: 0;"
                                                     ng-click="create()"><i class="fa fa-plus-circle"></i>Buat
                                                     Baru</button>
@@ -150,7 +150,7 @@
                                                     </button>
                                                 <!-- <button class="c-button" ng-click="create()" style="font-size:20px">Buat Baru</button> -->
                                             </div>
-                                            <div class="grid_2">
+                                            <div class="grid_2" ng-show="hapusButton">
                                                 <button class="btnTemplate1 error" style="margin-left: 0;"
                                                     ng-click="hapus()"><i class="fa fa-trash"></i>Hapus
                                                     </button>
