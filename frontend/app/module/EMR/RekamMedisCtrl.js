@@ -140,7 +140,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.isLoadingNav = true
                 $scope.treeSourceMenu = [];
                 $scope.dataMenu = []
-                medifirstService.get("emr/get-menu-rekam-medis-dynamic?namaemr=navigasi" + mapemr).then(function (e) {
+                var mahasiswadiklat = ''
+                if(medifirstService.getKelompokUser() == 'mahasiswadiklat'){
+                    mahasiswadiklat = '&mahasiswadiklat=true'
+                }
+                medifirstService.get("emr/get-menu-rekam-medis-dynamic?namaemr=navigasi" + mapemr+mahasiswadiklat).then(function (e) {
                     $scope.isLoadingNav = false
                     // if(medifirstService.getKelompokUser() == 'mahasiswadiklat'){
                     //     e.data.data = [

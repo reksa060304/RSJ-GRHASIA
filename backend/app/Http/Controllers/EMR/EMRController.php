@@ -2439,7 +2439,9 @@ class EMRController  extends ApiController
                 $dataRaw = $dataRaw->whereRaw("emr.id in (".$collection->implode('emrfk', ', ').")");
             }
         }
-
+        if(isset($request['mahasiswadiklat'])){
+            $dataRaw = $dataRaw->whereIn('emr.id',[112,210222]);
+        }
         $dataRaw = $dataRaw->get();
         if(count($dataRaw) == 0){
              $dataRaw = \DB::table('emr_t as emr')
