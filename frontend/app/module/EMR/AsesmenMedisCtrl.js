@@ -4,6 +4,12 @@ define(['initialize'], function (initialize) {
         function ($q, $rootScope, $scope, $state, cacheHelper, medifirstService, $mdDialog) {
             $scope.item = {};
             $scope.dataVOloaded = true;
+            $scope.buatBaru = true;
+            $scope.hapusButton = true;
+            if(medifirstService.getKelompokUser() == 'mahasiswadiklat'){
+                $scope.buatBaru = false;
+                $scope.hapusButton = false;
+            }
             $scope.now = new Date();
             $scope.item.tglOperasi = new Date();
             $rootScope.isShowNavAses = true

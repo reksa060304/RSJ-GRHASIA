@@ -108,13 +108,13 @@
                                             <div class="grid_4">
                                                         <!-- <button class="btnTemplate1" ng-click="riwayatResep()"><i class="fa fa-user"></i>Riwayat Resep</button> -->
                                             </div>
-                                            <div class="grid_2">
+                                            <div class="grid_2" ng-show="tambahBtn1">
                                                     <button class="btnTemplate1" ng-click="saveIcd10()"><i class="fa fa-save"></i>Tambah</button>
                                                 <!-- <button class="c-button success" ng-click="saveIcd10()">
                                                     <span style="font-size:10!important">Tambah</span>
                                                 </button> -->
                                             </div>
-                                            <div class="grid_2">
+                                            <div class="grid_2" ng-show="hapusBtn2">
                                                     <button class="btnTemplate1 cancel" ng-click="deleteIcd10()"><i class="fa fa-trash"></i>Hapus</button>
                                                 <!-- <button class="c-button cancel" ng-click="deleteIcd10()">
                                                     <span style="font-size:10!important">Hapus</span>
@@ -200,13 +200,13 @@
                                     <div class="grid_12" ng-show="!isView" ng-hide="findBy==='2'">
                                         <div class="grid_6"></div>
                                         <div class="grid_6">
-                                                <div class="grid_3">
+                                                <div class="grid_3" ng-show="tambahBtn2"> 
                                                         <button class="btnTemplate1" ng-click="saveIcd9()"><i class="fa fa-save"></i>Tambah</button>
                                                     <!-- <button class="c-button success" ng-click="saveIcd10()">
                                                         <span style="font-size:10!important">Tambah</span>
                                                     </button> -->
                                                 </div>
-                                                <div class="grid_3">
+                                                <div class="grid_3" ng-show="hapusBtn3">
                                                         <button class="btnTemplate1 cancel" ng-click="deleteIcd9()"><i class="fa fa-trash"></i>Hapus</button>
                                                     <!-- <button class="c-button cancel" ng-click="deleteIcd10()">
                                                         <span style="font-size:10!important">Hapus</span>
@@ -293,14 +293,14 @@
                                         <div class="grid_6" 
                                             style="margin-top:10px">
                                             
-                                            <div class="grid_2">
+                                            <div class="grid_2" ng-show="tambahBtn3">
                                                 <button class="btnTemplate1" ng-click="saveDiagnosaKeperawatan()"><i
                                                         class="fa fa-save"></i>Tambah</button>
                                                 <!-- <button class="c-button success" ng-click="saveDiagnosaKeperawatan()">
                                                     <span style="font-size:10!important">Tambah</span>
                                                 </button> -->
                                             </div>
-                                            <div class="grid_2">
+                                            <div class="grid_2" ng-show="hapusBtn1">
                                                 <button class="btnTemplate1 cancel" ng-click="deleteDiagnosaKeperawatan()"><i
                                                         class="fa fa-trash"></i>Hapus</button>
                                                 <!-- <button class="c-button cancel" ng-click="deleteIcd10()">

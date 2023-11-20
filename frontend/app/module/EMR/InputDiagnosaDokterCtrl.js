@@ -8,6 +8,20 @@ define(['initialize'], function (initialize) {
             $scope.now = new Date();
             $scope.dataVOloaded = true
             $scope.findBy = "1"
+            $scope.tambahBtn1 = true
+            $scope.tambahBtn2 = true
+            $scope.tambahBtn3 = true
+            $scope.hapusBtn1 = true
+            $scope.hapusBtn2 = true
+            $scope.hapusBtn3 = true
+            if(medifirstService.getKelompokUser() == 'mahasiswadiklat'){
+                $scope.tambahBtn1 = false
+                $scope.tambahBtn2 = false
+                $scope.tambahBtn3 = false
+                $scope.hapusBtn1 = false
+                $scope.hapusBtn2 = false
+                $scope.hapusBtn3 = false
+            }
             var norec_apd = ''
             var norec_pd = ''
             var nocm_str = ''
