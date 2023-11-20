@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use DB;
 use App\Transaksi\SeqNumber;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 Trait Valet {
     protected function generateCodeBySeqTable($objectModel, $atrribute, $length=8, $prefix='',$idProfile){
         DB::beginTransaction();
@@ -684,5 +685,58 @@ Trait Valet {
     {
         $set = 'ueyX84m1MZdSESlc3Ky3YRJ6eah3tjjA';
         return $set;
+    }protected function rateLimit($api, $batas = 25, $detik = 60, $toleransi = 5, $detikToleransi = 300)
+    {  // 25 hits,  dalam 60 detik 
+        $ipaddress = 0;
+        // Redis::del($api.$ipaddress);
+        // Redis::del($api.'-ban-'.$ipaddress);
+        // $cache = null;
+        // if (config('app.credis') == 'redis') {
+            $banTime = Cache::get($api . '-ban-' . $ipaddress);
+            if (!empty($banTime)) {
+                if ($banTime > time()) {
+                    return array('status' => 425, 'message'  => 'Too Early');
+                } else {
+                    // Redis::del($api.$ipaddress);
+                    Cache::forget($api . '-ban-' . $ipaddress);
+                }
+            }
+
+            $cache = Cache::get($api . $ipaddress);
+            
+        // }
+        if (empty($cache)) {
+            $hits = 1;
+            $tolerance = 1;
+            $waktu = time() + $detik;
+            $cache = [$hits, $tolerance, $waktu];
+            // Redis::set($api, json_encode($cache));
+        } else {
+            $cache = $cache;
+            $cache[0]++;
+            $hits = $cache[0];
+            $waktu = $cache[2];
+        }
+
+        if ($hits > $batas) {
+            if ($waktu > time()) {
+                $cache[1]++;
+                $tolerance = $cache[1];
+                // var_dump($tolerance);
+                if ($tolerance > $toleransi) {
+                    Cache::forget($api . $ipaddress);
+                    Cache::forever($api . '-ban-' . $ipaddress, time() + $detikToleransi);
+                } else {
+                    Cache::forever($api . $ipaddress, $cache);
+                }
+                return array('status' => 429, 'message'  => 'Username atau Password salah sudah 3 kali, tunggu satu menit untuk mencoba lagi.');
+            } else {
+                Cache::forget($api . $ipaddress);
+                return "";
+            }
+        } else {
+            Cache::forever($api . $ipaddress, $cache);
+            return "";
+        }
     }
 }
