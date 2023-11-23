@@ -1247,7 +1247,9 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('registrasi/get-pasienawal-bangsal','Registrasi\RegistrasiController@getCobaBangsal');
             Route::post('registrasi/post-pasienawal-rs','Registrasi\RegistrasiController@savePasienAwal');
             Route::post('registrasi/post-pasienawal-bangsal','Registrasi\RegistrasiController@savePasienAwalBangsal');
-            
+            Route::get('registrasi/get-laporan-sensus-rs','Registrasi\RegistrasiController@getLaporanSensus');
+            Route::get('registrasi/get-laporan-sensus-bangsal','Registrasi\RegistrasiController@getLaporanSensusBangsal');
+              
             // GET
 
             // POST
