@@ -1243,6 +1243,11 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::post('diklat/hapus-master-data-kampus','SDM\PelatihanController@hapusMasterDataKampus');
             Route::get('diklat/get-data-detail-mahasiswa', 'SDM\PelatihanController@getDataDetailMahasiswa');
             Route::get('sdm/penelitian/get-data-pkk','SDM\PelatihanController@getDataPKK');
+            Route::get('registrasi/get-pasienawal-rs','Registrasi\RegistrasiController@getCoba');
+            Route::get('registrasi/get-pasienawal-bangsal','Registrasi\RegistrasiController@getCobaBangsal');
+            Route::post('registrasi/post-pasienawal-rs','Registrasi\RegistrasiController@savePasienAwal');
+            Route::post('registrasi/post-pasienawal-bangsal','Registrasi\RegistrasiController@savePasienAwalBangsal');
+            
             // GET
 
             // POST
