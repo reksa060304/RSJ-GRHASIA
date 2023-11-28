@@ -30,6 +30,7 @@ define(['initialize'], function(initialize) {
             var tarifJasa = 0
             $scope.dissimpan = false
             $scope.item.hargaNetto = 0
+            $scope.item.norecpp = "";
             // $scope.item.tglAwal = $scope.now;
             // $scope.item.tglAkhir = $scope.now;
             LoadCache();
@@ -568,6 +569,7 @@ define(['initialize'], function(initialize) {
                         data.issore =  $scope.item.chksr
                         data.ismalam =  $scope.item.chkm
                         data.keterangan = $scope.KeteranganPakai
+                        data.norecpp = $scope.item.norecpp
                         // data.jumlahobat = $scope.item.jumlah
                         data2[i] = data;
                         $scope.dataGrid = new kendo.data.DataSource({
@@ -654,6 +656,7 @@ define(['initialize'], function(initialize) {
             //no:no,
             $scope.item.no = dataSelected.no
             $scope.item.rke = dataSelected.rke
+            $scope.item.norecpp = dataSelected.norecpp
             medifirstService.get("farmasi/get-jenis-obat?jrid="+dataSelected.jenisobatfk, true).then(function(JR){
                 $scope.item.jenisRacikan = {id:JR.data.data[0].id,jenisracikan:JR.data.data[0].jenisracikan}
             });
@@ -881,7 +884,7 @@ define(['initialize'], function(initialize) {
                     }
                 
                 
-                medifirstService.post('farmasi/save-pelayananobat',objSave).then(function(e) {
+                medifirstService.post('farmasi/save-retur-pelayananobat',objSave).then(function(e) {
                     $scope.item.resep = e.data.noresep.norec
                      //** save Logging user
                        medifirstService.get("sysadmin/logging/save-log-retur-resep?norec_resep="
