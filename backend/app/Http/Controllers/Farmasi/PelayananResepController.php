@@ -44,7 +44,7 @@ use App\Transaksi\StrukRetur;
 use App\Transaksi\PelayananPasienRetur;
 use App\Transaksi\AntrianApotik;
 use App\Master\Produk;
-
+use Carbon\Carbon;
 
 
 class PelayananResepController extends ApiController
@@ -2035,6 +2035,10 @@ class PelayananResepController extends ApiController
     }
 
     public function SimpanPelayananObat(Request $request) {
+        // $waktu = Carbon::now();
+
+            // Format dengan mikrodetik
+            // $tglUbah = \Carbon::now()->format('Y-m-d H:i:s.u');
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
        
@@ -2262,8 +2266,8 @@ class PelayananResepController extends ApiController
                             $newKS->ruanganfk = $resepOld->ruanganfk;
                             $newKS->saldoawal = (float)$saldoAwal;//- (float)$qtyJumlah;
                             $newKS->status = 1;
-                            $newKS->tglinput = date('Y-m-d H:i:s',strtotime('15 seconds',strtotime(date('Y-m-d H:i:s')))); //date('Y-m-d H:i:s');//$r_SR['tglresep'];//$r_SR['tglresep']->format('Y-m-d H:i:s');
-                            $newKS->tglkejadian = date('Y-m-d H:i:s',strtotime('15 seconds',strtotime(date('Y-m-d H:i:s')))); //date('Y-m-d H:i:s');//$r_SR['tglresep'];// $r_SR['tglresep']->format('Y-m-d H:i:s');
+                            $newKS->tglinput = date('Y-m-d H:i:s'); //date('Y-m-d H:i:s');//$r_SR['tglresep'];//$r_SR['tglresep']->format('Y-m-d H:i:s');
+                            $newKS->tglkejadian = date('Y-m-d H:i:s'); //date('Y-m-d H:i:s');//$r_SR['tglresep'];// $r_SR['tglresep']->format('Y-m-d H:i:s');
                             $newKS->nostrukterimafk = $newSPD->nostrukterimafk;
                             $newKS->norectransaksi = $newSPD->norec;
                             $newKS->tabletransaksi = 'stokprodukdetail_t';
@@ -2543,8 +2547,7 @@ class PelayananResepController extends ApiController
             ->where('apd.norec', $r_SR['pasienfk'])
             ->first();
             if ($r_SR['noorder'] != 'EditResep') {
-                if ($r_SR['noorder'] == '' || $r_SR['noorder'] != '') {
-                    $historyOrder = StrukOrder::where('noorder', $r_SR['noorder'])->where('kdprofile', $idProfile)->first();                    
+                $historyOrder = StrukOrder::where('noorder', $r_SR['noorder'])->where('kdprofile', $idProfile)->first();                    
                     $noAntri = "";
                     if ($historyOrder != null ){
                         $dataAntrian = AntrianApotik::where('noresep', $noResep)->where('kdprofile', $idProfile)->first();
@@ -2557,38 +2560,7 @@ class PelayananResepController extends ApiController
                                 "status" => '6'
                             ]);
                         }else{
-                            if ($dataDetail->objectdepartemenfk == 18) {
-                                $kelpasien = (int)$dataDetail->objectkelompokpasienlastfk;
-                                $countAntrian = AntrianApotik::where('jenis', $racikanORnonracikan)
-                                    ->where('kdprofile', $idProfile)
-                                    ->whereBetween('tglresep', [date('Y-m-d 00:00'), date('Y-m-d 23:59')])
-                                    ->max('noantri');
-                                
-                                $noAntriApotik = (str_pad((int)$countAntrian + 1, 4, "0", STR_PAD_LEFT));                    
-                                $newAA = new AntrianApotik();
-                                $norecAA = $newAA->generateNewId();
-                                $newAA->norec = $norecAA;
-                                $newAA->kdprofile = $idProfile;
-                                $newAA->statusenabled = true;
-                                $newAA->noantri = $noAntriApotik;
-                                $newAA->keterangan = $dataDetail->namapasien;
-                                $newAA->jenis = $racikanORnonracikan;
-                                $newAA->tglresep = date('Y-m-d H:i:s');
-                                $newAA->noresep = $noResep;
-                                $newAA->status = '6';
-                                
-                                $newAA->save();                       
-                            }                        
-                        }    
-                    }else{
-                        if ($dataDetail->objectdepartemenfk == 18) {
                             $kelpasien = (int)$dataDetail->objectkelompokpasienlastfk;
-                            $jenis = "";
-                            if ($kelpasien == 2) {
-                                $jenis = "B";
-                            }else{
-                                $jenis = "A";
-                            }
                             $countAntrian = AntrianApotik::where('jenis', $racikanORnonracikan)
                                 ->where('kdprofile', $idProfile)
                                 ->whereBetween('tglresep', [date('Y-m-d 00:00'), date('Y-m-d 23:59')])
@@ -2604,58 +2576,34 @@ class PelayananResepController extends ApiController
                             $newAA->keterangan = $dataDetail->namapasien;
                             $newAA->jenis = $racikanORnonracikan;
                             $newAA->tglresep = date('Y-m-d H:i:s');
-                            // $newAA->strukresepfk = $norec_SR;
                             $newAA->noresep = $noResep;
                             $newAA->status = '6';
                             
-                            $newAA->save();    
-                            
-                            // dd($newAA);
-                        } 
+                            $newAA->save();                           
+                        }    
+                    }else{
+                        $kelpasien = (int)$dataDetail->objectkelompokpasienlastfk;
+                        $countAntrian = AntrianApotik::where('jenis', $racikanORnonracikan)
+                            ->where('kdprofile', $idProfile)
+                            ->whereBetween('tglresep', [date('Y-m-d 00:00'), date('Y-m-d 23:59')])
+                            ->max('noantri');
+                        
+                        $noAntriApotik = (str_pad((int)$countAntrian + 1, 4, "0", STR_PAD_LEFT));                    
+                        $newAA = new AntrianApotik();
+                        $norecAA = $newAA->generateNewId();
+                        $newAA->norec = $norecAA;
+                        $newAA->kdprofile = $idProfile;
+                        $newAA->statusenabled = true;
+                        $newAA->noantri = $noAntriApotik;
+                        $newAA->keterangan = $dataDetail->namapasien;
+                        $newAA->jenis = $racikanORnonracikan;
+                        $newAA->tglresep = date('Y-m-d H:i:s');
+                        // $newAA->strukresepfk = $norec_SR;
+                        $newAA->noresep = $noResep;
+                        $newAA->status = '6';
+                        
+                        $newAA->save();   
                     }
-
-                    // if ($noAntri != "" || $noAntri != null) {                        
-                    //     $newAA = new AntrianApotik();
-                    //     $norecAA = $newAA->generateNewId();
-                    //     $newAA->norec = $norecAA;
-                    //     $newAA->kdprofile = $idProfile;
-                    //     $newAA->statusenabled = true;
-                    //     $newAA->noantri = $historyOrder->noantri; //(int)$countAntrian + 1;//substr($noResep,-4);
-                    //     $newAA->keterangan = $namaPasien;
-                    //     $newAA->jenis = $racikanORnonracikan;
-                    //     $newAA->tglresep = date('Y-m-d H:i:s');
-                    //     $newAA->noresep = $noResep;
-                    //     $newAA->save();
-                    // }elseif ($r_SR['noresep'] == '-'
-                    //     && $r_SR['ruanganfk'] == (int)$kdRuanganDepoRajal) {                        
-                    //     $countAntrian = AntrianApotik::where('jenis', $racikanORnonracikan)
-                    //         ->where('kdprofile', $idProfile)
-                    //         ->whereBetween('tglresep', [date('Y-m-d 00:00'), date('Y-m-d 23:59')])
-                    //         ->max('noantri');
-
-                    //     $noAntriApotik = (str_pad((int)$countAntrian + 1, 4, "0", STR_PAD_LEFT));
-                    //     $newAA = new AntrianApotik();
-                    //     $norecAA = $newAA->generateNewId();
-                    //     $newAA->norec = $norecAA;
-                    //     $newAA->kdprofile = $idProfile;
-                    //     $newAA->statusenabled = true;
-                    //     $newAA->noantri = $noAntriApotik; //(int)$countAntrian + 1;//substr($noResep,-4);
-                    //     $newAA->keterangan = $namaPasien;
-                    //     $newAA->jenis = $racikanORnonracikan;
-                    //     $newAA->tglresep = date('Y-m-d H:i:s');
-                    //     $newAA->noresep = $noResep;
-                    //     $newAA->save();                        
-                    //     if ($r_SR['noorder'] != 'EditResep' && $r_SR['noorder'] != '') {
-                    //         $dataOrder = StrukOrder::where('noorder', $r_SR['noorder'])
-                    //             ->where('kdprofile', $idProfile)
-                    //             ->update([
-                    //                 'noantri' => $noAntriApotik,
-                    //                 'jenis' => $racikanORnonracikan,
-                    //                 'keterangaantrian' => $namaPasien,
-                    //             ]);
-                    //     }
-                    // }
-                }
             }
 
             //endregion
