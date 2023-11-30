@@ -2717,7 +2717,7 @@ class PelayananResepController extends ApiController
                             AntrianApotik::where('noresep', $noResep)
                             ->where('kdprofile', $idProfile)
                             ->update([
-                                // "noresep" => $noResep,
+                                "noresep" => $noResep,
                                 "tglresep" => date('Y-m-d H:i:s'),
                                 // "strukresepfk" => $norec_SR,
                                 "status" => '6'
@@ -2764,7 +2764,7 @@ class PelayananResepController extends ApiController
                             }else{
                                 $jenis = "A";
                             }
-                            $countAntrian = AntrianApotik::where('jenis', $jenis)
+                            $countAntrian = AntrianApotik::where('jenis', $racikanORnonracikan)
                                 ->where('kdprofile', $idProfile)
                                 ->whereBetween('tglresep', [date('Y-m-d 00:00'), date('Y-m-d 23:59')])
                                 ->max('noantri');
