@@ -14454,7 +14454,7 @@ $result = array(
             $dataLogin=$request->all();
             
             $arr = $dataLogin['data'] ;
-        
+            $nokalaim = '';
             foreach ($arr as $array_data){
                 $noregistrasi =  $array_data['noregistrasi'];
                 $tglbayar =  $array_data['tglbayar'];
@@ -14499,7 +14499,7 @@ $result = array(
                     } else{
                         $STSK = RekapKlaim::where('norecpdfk', '=', $cekada[0]->norec)->whereNull('isobat')->first();
                     }
-                    
+                    $nokalaim = $array_data['noklaim'];
                     $STSK->nosep = $array_data['noklaim'];
                     $STSK->totalsetujui = $array_data['totalklaim'];
                     $STSK->totaltarifrs = $cek[0]->totaltarifrs;
@@ -14598,6 +14598,7 @@ $result = array(
                 "status" => 400,
                 'line'=> $e->getLine(),
                 'e'=> $e->getMessage(),
+                'noklaim'=> $noklaim,
                 'message'=> $transMessage,
 
                 "by" => 'fizi',
