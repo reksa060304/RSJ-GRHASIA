@@ -2037,12 +2037,7 @@ class PelayananResepController extends ApiController
     public function SimpanPelayananObat(Request $request) {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
-        // $cekprodukfk = $request['pelayananpasien'][0]['produkfk'];
-        // $ceknoregistrasifk = $request['pelayananpasien'][0]['noregistrasifk'];
-        // $ceknostrukterimafk = $request['pelayananpasien'][0]['nostrukterimafk'];
-
-        
-        //        ini_set('max_execution_time', 1000); //6 minutes
+       
         DB::beginTransaction();
         
         try {
@@ -2165,20 +2160,6 @@ class PelayananResepController extends ApiController
                         foreach ($dataKembaliStok as $item5) {
                             $saldoAwal = 0;
                             $TambahStok = (float)$item5->jumlah;
-                            // $dataSaldoAwal = collect(DB::select("
-                            //     select sum(qtyproduk) as qty from stokprodukdetail_t 
-                            //     where kdprofile = $idProfile and objectruanganfk=$resepOld->ruanganfk and objectprodukfk=$item5->produkfk"))
-                            //     ->first();
-                            // $saldoAwal = (float)$dataSaldoAwal->qty + $TambahStok;
-                            //b4yu4d4
-                            // $kdobatbayu=array($item5->produkfk,$item5->ruanganfk,$item5->strukterimafk);
-
-                            // $newSPD = StokProdukDetail::where('nostrukterimafk', $item5->strukterimafk)
-                            //     ->where('kdprofile', $idProfile)
-                            //     ->where('objectruanganfk', $item5->ruanganfk)
-                            //     ->where('objectprodukfk', $item5->produkfk)
-                            //     ->orderby('tglkadaluarsa', 'desc')
-                            //     ->first();
                             foreach($ArraySaldoAwal as $itemArray){
                                 if($itemArray->produkfk ==  $item5->produkfk){
                                     $saldoAwal = (float)$itemArray->qty + $TambahStok;
@@ -2240,9 +2221,6 @@ class PelayananResepController extends ApiController
                         foreach ($dataKembaliStok as $item5) {
                             $TambahStok = (float)$item5->jumlah;//*(float)$item5->nilaikonversi;
                             $saldoAwal = 0;
-                            // $dataSaldoAwal = collect(DB::select("select sum(qtyproduk) as qty from stokprodukdetail_t 
-                            //     where kdprofile = $idProfile and objectruanganfk=$resepOld->ruanganfk and objectprodukfk=$item5->produkfk"))
-                            //     ->first();
                             foreach($ArraySaldoAwal as $itemArray){
                                 if($itemArray->produkfk ==  $item5->produkfk){
                                     $saldoAwal = (float)$itemArray->qty + $TambahStok;
@@ -2294,114 +2272,7 @@ class PelayananResepController extends ApiController
                     }
                     //END##PENAMBAHAN KEMBALI STOKPRODUKDETAIL
                     //komen dulu siapa tau kepake
-                // if ($r_SR['retur'] != '-') {
-                //     $isRetur = true;
-                //     $newSRetur = new StrukRetur();
-                //     $norecSRetur = $newSRetur->generateNewId();
-                //     $noRetur = $this->generateCode(new StrukRetur, 'noretur', 12, 'Ret/' . $this->getDateTime()->format('ym') . '/', $kdProfile);
-                //     $newSRetur->norec = $norecSRetur;
-                //     $newSRetur->kdprofile = $idProfile;
-                //     $newSRetur->statusenabled = true;
-                //     $newSRetur->objectkelompoktransaksifk = 50;
-                //     $newSRetur->keteranganalasan = $r_SR['alasan'];
-                //     $newSRetur->keteranganlainnya = 'RETUR OBAT ALKES';
-                //     $newSRetur->noretur = $noRetur;
-                //     $newSRetur->objectruanganfk = $r_SR['ruanganfk'];
-                //     $newSRetur->objectpegawaifk = $r_SR['pegawairetur'];
-                //     $newSRetur->tglretur = $this->getDateTime()->format('Y-m-d H:i:s');
-                //     $newSRetur->strukresepfk = $norec_SR;
-                //     $newSRetur->save();
-                //     $transStatus = 'false';
-
-                //     $norec_retur = $newSRetur->norec ;
-
-                //     $r_PP = $request['pelayananpasien'];
-                //     foreach ($r_PP as $r_PPLXXXX) {
-                //         if ((int)$r_PPLXXXX['jmlretur'] != 0) {
-                //             $newPPR = new PelayananPasienRetur();
-                //             $norecPPR = $newPPR->generateNewId();
-                //             $newPPR->norec = $norecPPR;
-                //             $newPPR->kdprofile = $idProfile;
-                //             $newPPR->statusenabled = true;
-                //             $newPPR->noregistrasifk = $r_PPLXXXX['noregistrasifk'];
-                //             $newPPR->tglregistrasi = $r_PPLXXXX['tglregistrasi'];
-                //             $newPPR->aturanpakai = $r_PPLXXXX['aturanpakai'];
-                //             $newPPR->generik = $r_PPLXXXX['generik'];
-                //             $newPPR->hargadiscount = $r_PPLXXXX['hargadiscount'];
-                //             $newPPR->hargajual = $r_PPLXXXX['hargajual'];
-                //             $newPPR->hargasatuan = $r_PPLXXXX['hargasatuan'];
-                //             $newPPR->jenisobatfk = $r_PPLXXXX['jenisobatfk'];
-                //             $newPPR->jumlah = $r_PPLXXXX['jmlretur'];
-                //             $newPPR->kelasfk = $r_PPLXXXX['kelasfk'];
-                //             $newPPR->kdkelompoktransaksi = 1;
-                //             $newPPR->produkfk = $r_PPLXXXX['produkfk'];
-                //             if (isset($r_PPL['routefk'])) {
-                //                 $newPPR->routefk = $r_PPLXXXX['routefk'];
-                //             }
-                //             $newPPR->stock = $r_PPLXXXX['stock'];
-                //             $newPPR->tglpelayanan = $r_SR['tglresep'];//$r_SR['tglresep']->format('Y-m-d H:i:s');
-                //             $newPPR->harganetto = $r_PPLXXXX['harganetto'];
-                //             $newPPR->jeniskemasanfk = $r_PPLXXXX['jeniskemasanfk'];
-                //             $newPPR->rke = $r_PPLXXXX['rke'];
-                //             $newPPR->strukresepfk = $norec_SR;
-                //             $newPPR->satuanviewfk = $r_PPLXXXX['satuanviewfk'];
-                //             $newPPR->nilaikonversi = $r_PPLXXXX['nilaikonversi'];
-                //             $newPPR->strukterimafk = $r_PPLXXXX['nostrukterimafk'];
-                //             $newPPR->dosis = $r_PPLXXXX['dosis'];
-                //             if ((int)$r_PPLXXXX['jumlah'] == 0) {
-                //                 $newPPR->jasa = $r_PPLXXXX['jasa'];
-                //             } else {
-                //                 $newPPR->jasa = 0;
-                //             }
-                //             $newPPR->strukreturfk = $norec_retur;
-                //             $newPPR->save();
-
-                //             //## TAMBAH STOK DARI RETUR
-                //             $saldoAwal=0;
-                //             $TambahStok = (float)$r_PPLXXXX['jmlretur'] * (float)$r_PPLXXXX['nilaikonversi'];//$r_PPLXXXX['jmlretur'];
-                //             $dataSaldoAwal = collect(DB::select("
-                //                  select sum(qtyproduk) as qty from stokprodukdetail_t 
-                //                  where kdprofile = $idProfile and objectruanganfk=$r_SR[ruanganfk] 
-                //                  and objectprodukfk=$r_PPLXXXX[produkfk]                                 
-                //             "))->first();
-                //             $saldoAwal = (float)$dataSaldoAwal->qty + (float)$TambahStok;;
-
-                //             $newSPD = StokProdukDetail::where('nostrukterimafk',$r_PPLXXXX['nostrukterimafk'])
-                //                 ->where('kdprofile', $idProfile)
-                //                 ->where('objectruanganfk',$r_SR['ruanganfk'])
-                //                 ->where('objectprodukfk',$r_PPLXXXX['produkfk'])
-                //                 ->orderby('tglkadaluarsa','desc')
-                //                 ->first();
-
-                //             DB::table('stokprodukdetail_t')
-                //                 ->where('kdprofile', $idProfile)
-                //                 ->where('norec',$newSPD->norec)
-                //                 ->LockForUpdate()
-                //                 ->increment('qtyproduk', (float)$TambahStok);
-
-                //             $newKS = new KartuStok();
-                //             $norecKS = $newKS->generateNewId();
-                //             $newKS->norec = $norecKS;
-                //             $newKS->kdprofile = $idProfile;
-                //             $newKS->statusenabled = true;
-                //             $newKS->jumlah = $TambahStok;//$r_PPL['jumlah'];
-                //             $newKS->keterangan = 'Retur Resep No. ' . $noResep;
-                //             $newKS->produkfk = $r_PPLXXXX['produkfk'];
-                //             $newKS->ruanganfk = $r_SR['ruanganfk'];
-                //             $newKS->saldoawal = (float)$saldoAwal ;//- (float)$qtyJumlah;
-                //             $newKS->status = 1;
-                //             $newKS->tglinput = date('Y-m-d H:i:s');//$r_SR['tglresep'];//$r_SR['tglresep']->format('Y-m-d H:i:s');
-                //             $newKS->tglkejadian = date('Y-m-d H:i:s');//$r_SR['tglresep'];// $r_SR['tglresep']->format('Y-m-d H:i:s');
-                //             $newKS->nostrukterimafk =  $r_PPLXXXX['nostrukterimafk'];//$newSPD->nostrukterimafk;
-                //             $newKS->flagfk = 3;
-                //             $newKS->save();
-
-                //         }
-                //     }
-
-                // }else{
-                    
-
+                
                 //     //END##PENAMBAHAN KEMBALI STOKPRODUKDETAIL
                 // }
                 //end komen dulu siapa tau kepake
@@ -2579,42 +2450,7 @@ class PelayananResepController extends ApiController
                 $namaProduk = $r_PPL['namaproduk'];
                 // $saldoAwalIn = (float)$dataSaldoAwal->qty - $jmlPengurang;
                 $sqty =0;
-                // foreach($ArraySaldoAwal as $itemArray){
-                //     if($itemArray->produkfk ==  $r_PPL['produkfk']){
-                //         $dataSaldoAwal = (float)$itemArray->qty;
-                //         $saldoAwalIn = (float)$itemArray->qty - $jmlPengurang;
-                //     }
-                // }
-                // return $saldoAwalIn;
-                // foreach ($GetNorec as $item){
-                //     if ($item->qtyproduk > 0) {
-                //         $newSPD = StokProdukDetail::where('nostrukterimafk', $r_PPL['nostrukterimafk'])
-                //             ->where('kdprofile', $idProfile)
-                //             ->where('objectruanganfk', $r_PPL['ruanganfk'])
-                //             ->where('objectasalprodukfk', $r_PPL['asalprodukfk'])
-                //             ->where('objectprodukfk', $r_PPL['produkfk'])
-                //             ->where('norec', $item->norec)
-                //             ->first();
-
-                //         if ((float)$newSPD->qtyproduk <= (float)$jmlPengurang) {
-                //             $kurangStok = (float)$newSPD->qtyproduk;
-                //             $jmlPengurang = (float)$jmlPengurang - (float)$kurangStok;
-                //         } else {
-                //             $kurangStok = (float)$jmlPengurang;
-                //             $jmlPengurang = (float)$jmlPengurang - (float)$kurangStok;
-                //         }
-
-                //         $noTerimafk = $r_PPL['nostrukterimafk'];
-                //         if ($isRetur == true) {
-
-                //         } else {
-                //             DB::table('stokprodukdetail_t')
-                //                 ->where('kdprofile', $idProfile)
-                //                 ->where('norec', $item->norec)
-                //                 ->LockForUpdate()
-                //                 ->decrement('qtyproduk', (float)$kurangStok);
-                //         }
-                //     }
+               
                 // }
                 $newSPD = StokProdukDetail::where('kdprofile', $idProfile)
                 ->where('objectruanganfk', $r_PPL['ruanganfk'])
@@ -2711,7 +2547,6 @@ class PelayananResepController extends ApiController
                     $historyOrder = StrukOrder::where('noorder', $r_SR['noorder'])->where('kdprofile', $idProfile)->first();                    
                     $noAntri = "";
                     if ($historyOrder != null ){
-                        // $noAntri = $historyOrder->noantri;
                         $dataAntrian = AntrianApotik::where('noresep', $noResep)->where('kdprofile', $idProfile)->first();
                         if (!empty($dataAntrian)) {
                             AntrianApotik::where('noresep', $noResep)
@@ -2719,24 +2554,17 @@ class PelayananResepController extends ApiController
                             ->update([
                                 "noresep" => $noResep,
                                 "tglresep" => date('Y-m-d H:i:s'),
-                                // "strukresepfk" => $norec_SR,
                                 "status" => '6'
                             ]);
                         }else{
                             if ($dataDetail->objectdepartemenfk == 18) {
                                 $kelpasien = (int)$dataDetail->objectkelompokpasienlastfk;
-                                $jenis = "";
-                                if ($kelpasien == 2) {
-                                    $jenis = "B";
-                                }else{
-                                    $jenis = "A";
-                                }
-                                $countAntrian = AntrianApotik::where('jenis', $jenis)
+                                $countAntrian = AntrianApotik::where('jenis', $racikanORnonracikan)
                                     ->where('kdprofile', $idProfile)
                                     ->whereBetween('tglresep', [date('Y-m-d 00:00'), date('Y-m-d 23:59')])
                                     ->max('noantri');
                                 
-                                $noAntriApotik = (str_pad((int)$countAntrian + 1, 3, "0", STR_PAD_LEFT));                    
+                                $noAntriApotik = (str_pad((int)$countAntrian + 1, 4, "0", STR_PAD_LEFT));                    
                                 $newAA = new AntrianApotik();
                                 $norecAA = $newAA->generateNewId();
                                 $newAA->norec = $norecAA;
@@ -2747,11 +2575,8 @@ class PelayananResepController extends ApiController
                                 $newAA->jenis = $racikanORnonracikan;
                                 $newAA->tglresep = date('Y-m-d H:i:s');
                                 $newAA->noresep = $noResep;
-                                // $newAA->strukresepfk = $norec_SR;
                                 $newAA->status = '6';
-                                // if (isset($r_SR['isgeriatri'])) {
-                                //     $newAA->isgeriatri = $r_SR['isgeriatri'];
-                                // }  
+                                
                                 $newAA->save();                       
                             }                        
                         }    
@@ -2769,7 +2594,7 @@ class PelayananResepController extends ApiController
                                 ->whereBetween('tglresep', [date('Y-m-d 00:00'), date('Y-m-d 23:59')])
                                 ->max('noantri');
                             
-                            $noAntriApotik = (str_pad((int)$countAntrian + 1, 3, "0", STR_PAD_LEFT));                    
+                            $noAntriApotik = (str_pad((int)$countAntrian + 1, 4, "0", STR_PAD_LEFT));                    
                             $newAA = new AntrianApotik();
                             $norecAA = $newAA->generateNewId();
                             $newAA->norec = $norecAA;
