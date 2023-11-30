@@ -52,6 +52,8 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             $scope.item.noRuang = 0;
             $scope.copynoresep = ""
             $scope.rke = ''
+            $scope.editOrderAh = false;
+
             
             $scope.listJumlah =  [
                 { "jml": 7 },
@@ -1332,7 +1334,11 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     sendNotification(e.data)
                     $scope.item.resep == undefined
                     $scope.norecOrder = ''
-                    if($scope.copynoresep == ''){
+                    if($scope.editOrderAh == true){
+                        medifirstService.postLogging('Edit Order Resep', 'Norec strukresep_t', e.data.noresep.norec,
+                        'Order Resep No Order - ' + e.data.noresep.noorder + ' dengan No Registrasi ' + $scope.item.noregistrasi).then(function (res) {
+                        })
+                    }else if($scope.copynoresep == ''){
                         medifirstService.postLogging('Order Resep', 'Norec strukresep_t', e.data.noresep.norec,
                         'Order Resep No Order - ' + e.data.noresep.noorder + ' dengan No Registrasi ' + $scope.item.noregistrasi).then(function (res) {
                         })
@@ -1341,7 +1347,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         'Order Resep No Order - ' + e.data.noresep.noorder + ' dengan No Registrasi ' + $scope.item.noregistrasi+ ' dari copy no resep ' + $scope.copynoresep).then(function (res) {
                         })
                     }
-
+                    
                     var objSave = {
                         // data: data2,
                         norec_apd: norec_apd,
@@ -1735,6 +1741,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 
             ];
             $scope.editOrder = function () {
+                $scope.editOrderAh = true;
                 if ($scope.dataSelectedRiwayat == undefined) {
                     toastr.error('Pilih data dulu')
                     return
