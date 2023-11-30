@@ -14447,12 +14447,13 @@ $result = array(
 
     public function savePiutangBPJS(Request $request)
     {
-        ini_set('max_execution_time', 600);
-        $kdProfile = $this->getDataKdProfile($request);
-        $idProfile = (int) $kdProfile;
-        $dataLogin=$request->all();
-        
-        $arr = $dataLogin['data'] ;
+        try {
+            ini_set('max_execution_time', 600);
+            $kdProfile = $this->getDataKdProfile($request);
+            $idProfile = (int) $kdProfile;
+            $dataLogin=$request->all();
+            
+            $arr = $dataLogin['data'] ;
         
             foreach ($arr as $array_data){
                 $noregistrasi =  $array_data['noregistrasi'];
@@ -14568,21 +14569,42 @@ $result = array(
                 }
             }
 
-        if ($transStatus == 'true') {
-            $transMessage = "Import Sukses";
-            $status = 201;
-        } else if ($transStatus == 'false') {
-            $transMessage = "Import Gagal";
-            $status = 400;
-        }
+            if ($transStatus == 'true') {
+                $transMessage = "Import Sukses";
+                $status = 201;
+            } else if ($transStatus == 'false') {
+                $transMessage = "Import Gagal";
+                $status = 400;
+            }
 
         
-        $result = array(
-            'status' => $status,
-            'message'=> $transMessage,
-            'as' => 'er@epic',
-        );
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+
+        if ($transStatus == 'true') {
+            $transMessage = 'Sukses' ;
+            DB::commit();
+            $result = array(
+                'status' => $status,
+                'message'=> $transMessage,
+                'as' => 'er@epic',
+            );
+        } else {
+            $transMessage = 'Simpan Gagal';
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                'line'=> $e->getLine(),
+                'e'=> $e->getMessage(),
+                'message'=> $transMessage,
+
+                "by" => 'fizi',
+            );
+        }
         return $this->setStatusCode($result['status'])->respond($result, $result['message']);
+
     }
 
     public function savePiutangBPJSManual(Request $request)
