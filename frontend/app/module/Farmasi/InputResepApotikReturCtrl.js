@@ -29,6 +29,7 @@ define(['initialize'], function(initialize) {
             var strStatus = 0
             var tarifJasa = 0
             $scope.dissimpan = false
+            $scope.showSimpan = true
             $scope.item.hargaNetto = 0
             $scope.item.norecpp = "";
             // $scope.item.tglAwal = $scope.now;
@@ -853,7 +854,7 @@ define(['initialize'], function(initialize) {
             $scope.simpan = function(){
 
                 $scope.dissimpan = true
-
+                $scope.showSimpan = false
                 if ($scope.item.penulisResep == undefined) {
                     alert("Pilih Penulis Resep terlebih dahulu!!")
                     return
