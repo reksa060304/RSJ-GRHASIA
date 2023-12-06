@@ -18,7 +18,9 @@ define(['initialize'], function (initialize) {
             var pegawaiInputDetail= ''
             $scope.item.kasusbaru = true
             $scope.item.kasuslama = false
-
+            if(medifirstService.getKelompokUser() == 'mahasiswadiklat'){
+                $scope.tombolSimpanVis = false
+            }
              medifirstService.get("emr/get-rekam-medis-dynamic?emrid=" + $scope.cc.emrfk).then(function (e) {
 
                 var datas = e.data.kolom4

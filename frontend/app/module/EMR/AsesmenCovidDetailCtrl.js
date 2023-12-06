@@ -12,7 +12,9 @@ define(['initialize'], function (initialize) {
             var dataLoad = [];
             var urlcetak = ''
             // $scope.now = new Date()
-         
+            if(medifirstService.getKelompokUser() == 'mahasiswadiklat'){
+                $scope.tombolSimpanVis = false
+            }
             var pegawaiInputDetail= ''
             loadMenu();
             LoadCache();

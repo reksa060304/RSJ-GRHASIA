@@ -499,41 +499,55 @@ class ReservasiOnlineController extends ApiController
              ->where('apr.kdprofile',  $kdProfile )
             ->where('apr.statusenabled',true);
 
-
+            $status = false;
         if(isset($request['nocmNama']) && $request['nocmNama'] != "" && $request['nocmNama'] != "undefined" && $request['nocmNama'] != "null") {
             $data =
 
             $data->whereRaw("(pm.nocm  = '$request[nocmNama]' or apr.namapasien ilike '%$request[nocmNama]%')");
                 //  $data->where('pm.nocm', $request['nocmNama'])
                 //  -> Orwhere('apr.namapasien', 'ilike','%'.$request['nocmNama'].'%');
-
+            $status = true;
         }
         if(isset($request['tgllahir']) && $request['tgllahir'] != "" && $request['tgllahir'] != "undefined" && $request['tgllahir'] != "null" &&  $request['tgllahir'] !='Invaliddate'  &&  $request['tgllahir'] !='Invalid date') {
             $tgllahir= $request['tgllahir'];
             $data =
 //                $data->whereRaw("CONVERT(varchar, pm.tgllahir, 105)  ='$tgllahir' " )
                 $data->whereRaw("to_char( apr.tgllahir, 'dd-MM-yyyy')  ='$tgllahir' " );
+            $status = true;
+
         }
 
         if(isset($request['noReservasi']) && $request['noReservasi'] != "" && $request['noReservasi'] != "undefined" && $request['noReservasi'] != "null") {
             $data =
                  $data->where('apr.noreservasi', $request['noReservasi']);
+            $status = true;
+
             
         }
         if(isset($request['nik']) && $request['nik'] != "" && $request['nik'] != "undefined" && $request['nik'] != "null") {
             $data =
                  $data->where('apr.noidentitas', $request['nik']);
+            $status = true;
+
             
         }
         $data = $data->orderBy('apr.tanggalreservasi','desc');
         if(isset($request['jmlRows']) && $request['jmlRows'] != "" && $request['jmlRows'] != "undefined" && $request['jmlRows'] != "null" && $request['jmlRows'] != 0) {
             $data=$data->take($request['jmlRows']);
+            $status = true;
+
         }
 
         if(isset($request['jmlOffset']) && $request['jmlOffset'] != "" && $request['jmlOffset'] != "undefined" && $request['jmlOffset'] != "null") {
             $data=$data->offset($request['jmlOffset']);
+            $status = true;
+
         }
-        $data = $data->get();
+        if($status == true){
+            $data = $data->get();
+        }else{
+            $data = 0;
+        }
 
         $result = array(
             'data' => $data,
@@ -4067,7 +4081,7 @@ class ReservasiOnlineController extends ApiController
    
         } catch (\Exception $e) {
             $result = array(
-                'message' => $e->getMessage().' '.$e->getLine(),
+                'message' => 'Error',
                 'status'=> 201,
             );
         }

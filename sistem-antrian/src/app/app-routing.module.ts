@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { AppMainComponent } from './app.main.component';
 
 import { AuthGuard, LoginGuard } from './guard';
+import { RedirectGuard } from './guard/redirect.guard';
 import { AccessDeniedComponent,  NotFoundComponent } from './page';
 
 @NgModule({
@@ -12,7 +13,7 @@ import { AccessDeniedComponent,  NotFoundComponent } from './page';
             {
             path: '', component: AppMainComponent,
                 children: [
-                    { path: 'home', redirectTo: 'index' },
+                    {  path: 'home', redirectTo: 'index' },
                     { path: 'viewer', loadChildren: () => import('./page/queue/viewer/viewer.module').then(m => m.ViewerModule) },
                     { path: 'caller', loadChildren: () => import('./page/queue/caller/caller.module').then(m => m.CallerModule) },
                     { path: 'index', loadChildren: () => import('./page/queue/home/home.module').then(m => m.HomeModule) },

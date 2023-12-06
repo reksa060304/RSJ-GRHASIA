@@ -29,7 +29,9 @@ define(['initialize'], function (initialize) {
             $scope.listKarbohidrat = []
             $scope.listLemak = []
             $scope.now = new Date()
-
+            if(medifirstService.getKelompokUser() == 'mahasiswadiklat'){
+                $scope.tombolSimpanVis = false
+            }
             medifirstService.getPart('emr/get-datacombo-part-pegawai', true, true, 20).then(function (data) {
                 $scope.listPegawai = data
             })

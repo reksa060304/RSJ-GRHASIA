@@ -28,7 +28,10 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             $scope.isCetak = true
             medifirstService.getPart('emr/get-datacombo-part-pegawai', true, true, 20).then(function (data) {
                 $scope.listPegawai = data
-             })
+            })
+            if(medifirstService.getKelompokUser() == 'mahasiswadiklat'){
+                $scope.tombolSimpanVis = false
+            }
             medifirstService.getPart('emr/get-datacombo-part-kelas', true, true, 20).then(function (data) {
                 $scope.listKelas = data
 

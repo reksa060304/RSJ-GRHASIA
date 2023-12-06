@@ -976,6 +976,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('tatarekening/get-penjagaan-verif-piutang', 'Farmasi\PelayananResepController@getPenjagaanVerifPiutang');
           Route::get('farmasi/get-penjagaan-verif-kasir', 'Farmasi\PelayananResepController@getPenjagaanVerifKasir');
           Route::post('farmasi/save-pelayananobat', 'Farmasi\PelayananResepController@SimpanPelayananObat');
+          Route::post('farmasi/save-retur-pelayananobat', 'Farmasi\PelayananResepController@SimpanReturPelayananObat');
 
           Route::get('farmasi/get-data-combo-transfer', 'Farmasi\PaketObatController@getDataComboTransfer');
           Route::get('farmasi/get-detail-ruangan-apd', 'Farmasi\PaketObatController@getRuanganFromAPD');
@@ -1243,6 +1244,13 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::post('diklat/hapus-master-data-kampus','SDM\PelatihanController@hapusMasterDataKampus');
             Route::get('diklat/get-data-detail-mahasiswa', 'SDM\PelatihanController@getDataDetailMahasiswa');
             Route::get('sdm/penelitian/get-data-pkk','SDM\PelatihanController@getDataPKK');
+            Route::get('registrasi/get-pasienawal-rs','Registrasi\RegistrasiController@getCoba');
+            Route::get('registrasi/get-pasienawal-bangsal','Registrasi\RegistrasiController@getCobaBangsal');
+            Route::post('registrasi/post-pasienawal-rs','Registrasi\RegistrasiController@savePasienAwal');
+            Route::post('registrasi/post-pasienawal-bangsal','Registrasi\RegistrasiController@savePasienAwalBangsal');
+            Route::get('registrasi/get-laporan-sensus-rs','Registrasi\RegistrasiController@getLaporanSensus');
+            Route::get('registrasi/get-laporan-sensus-bangsal','Registrasi\RegistrasiController@getLaporanSensusBangsal');
+              
             // GET
 
             // POST
@@ -3306,6 +3314,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         Route::get('report/kegiatan-rawat-inap','Report\ReportController@getKegiatanRanap');
         Route::get('report/cetak-resume-medis','Report\ReportController@cetakResume');
         Route::get('report/cetak-resume-medis-v2','Report\ReportController@cetakResumeV2');
+        Route::get('report/cetak-resume-medis-v3','Report\ReportController@cetakResumeV3');
         Route::get('report/cetak-dokter','Report\ReportController@cetakDokter');
         Route::get('report/cetak-pasien','Report\ReportController@cetakPasien');
         Route::get('report/cetak-cppt','Report\ReportController@cetakCPPT');

@@ -25,7 +25,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.item.kasuslama = false
             $scope.lainnya2 = true
             $scope.lainnya1 = true
-
+            if(medifirstService.getKelompokUser() == 'mahasiswadiklat'){
+                $scope.tombolSimpanVis = false
+            }
             $scope.listHubunganPasien = [
                 {value: 1, text: 'Diri Sendiri'},
                 {value: 2, text: 'Suami'},

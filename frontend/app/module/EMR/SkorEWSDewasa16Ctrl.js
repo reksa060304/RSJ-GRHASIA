@@ -30,7 +30,9 @@ console.log($state.params);
             $scope.listSkorNyeri = []
             $scope.listUrinOutput = []
             $scope.loading = true
-
+            if(medifirstService.getKelompokUser() == 'mahasiswadiklat'){
+                $scope.tombolSimpanVis = false
+            }
             $scope.listTanggal = []
             $scope.listJam = []
             medifirstService.getPart('emr/get-datacombo-part-dokter', true, true, 20).then(function (data) {

@@ -11,7 +11,9 @@ define(['initialize'], function (initialize) {
             $scope.dataVOloaded = true;
             $rootScope.showMenu = true;
             $rootScope.showMenuDetail = false;
-
+            if(medifirstService.getKelompokUser() == 'mahasiswadiklat'){
+                $scope.tombolSimpanVis = false
+            }
             $scope.cc = {}
             var nomorEMR = '-'
             var cacheNomorEMR = cacheHelper.get('cacheNomorEMR');

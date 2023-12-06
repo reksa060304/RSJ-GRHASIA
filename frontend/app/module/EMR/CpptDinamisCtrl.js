@@ -6,6 +6,13 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             $scope.dataVOloaded = true;
             $scope.now = new Date();
             $scope.item.tglOperasi = new Date();
+            $scope.buatBaru = true
+            $scope.hapusButton = true
+            if(medifirstService.getKelompokUser() == 'mahasiswadiklat'){
+                $scope.buatBaru = false;
+                $scope.hapusButton = false;
+            }
+            
             var norec_apd = ''
             var norec_pd = ''
             var nocm_str = ''

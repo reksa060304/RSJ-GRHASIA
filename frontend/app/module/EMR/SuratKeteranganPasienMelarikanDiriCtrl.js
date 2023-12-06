@@ -27,6 +27,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             medifirstService.getPart('emr/get-datacombo-part-pegawai', true, true, 20).then(function (data) {
                 $scope.listPegawai = data
             })
+            if(medifirstService.getKelompokUser() == 'mahasiswadiklat'){
+                $scope.tombolSimpanVis = false
+            }
 
             medifirstService.get("emr/get-rekam-medis-dynamic?emrid=" + 3000509).then(function (e) {
 

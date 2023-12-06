@@ -7,10 +7,15 @@ define(['initialize'], function (initialize) {
 			$scope.item.periodeAwal = new Date();
 			$scope.item.periodeAkhir = new Date();
 			$scope.item.tanggalPulang = new Date();
+			// $scope.PengkajianMedis = false
 			$scope.dataPasienSelected = {};
 			$scope.cboDokter = false;
 			$scope.pasienPulang = false;
 			$scope.cboUbahDokter = true;
+			if(medifirstService.getKelompokUser() == 'mahasiswadiklat'){
+				$scope.cboUbahDokter = false;
+			}
+
 			$scope.isRouteLoading = false;
 			$scope.item.jmlRows = 50
 			$scope.jmlRujukanMasuk = 0

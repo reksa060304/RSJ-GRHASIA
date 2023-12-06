@@ -11,6 +11,9 @@ define(['initialize'], function (initialize) {
             $scope.totalSkor = 0
             $scope.totalSkor2 = 0
             $scope.totalSkor4 = 0
+            if(medifirstService.getKelompokUser() == 'mahasiswadiklat'){
+                $scope.tombolSimpanVis = false
+            }
             $scope.cc = {}
             var nomorEMR = '-'
             $scope.cc.emrfk = 3000456

@@ -2844,6 +2844,7 @@ class PelatihanController extends ApiController {
             $dataKampus->alamat= $request['alamat'];
             $dataKampus->usereksternal=true;
             $dataKampus->qpegawai=0;
+            $dataKampus->objectjenispegawaifk=0;
             $dataKampus->save();
 
             // Log User

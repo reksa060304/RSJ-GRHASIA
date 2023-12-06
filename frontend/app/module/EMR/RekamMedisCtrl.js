@@ -11,12 +11,18 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             var usia = ''
             var departemen = ''
             $scope.isLoadingNav = false
+            $scope.scrollmarker = false
+
+            if(medifirstService.getKelompokUser() == 'mahasiswadiklat'){
+                $scope.textUser = medifirstService.getUserLogin().kdUser
+                $scope.textNamaLengkap = medifirstService.getPegawaiLogin().namaLengkap
+                $scope.scrollmarker = true
+            }
             // cacheHelper.set('cacheRekamMedis', undefined);
             $scope.getRekamMedisCheck = function (checkNoregis) {
                 $rootScope.getRekamMedisCheck(checkNoregis);
             }
                 $scope.rekammedis = true
-            console.log(medifirstService.getKelompokUser());
             if (medifirstService.getKelompokUser() == 'operator') {
                 $scope.rekammedis = false
             }else{
@@ -133,8 +139,60 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     mapemr += "&ruangan=" + $scope.header.objectruanganfk
                 $scope.isLoadingNav = true
                 $scope.treeSourceMenu = [];
-                medifirstService.get("emr/get-menu-rekam-medis-dynamic?namaemr=navigasi" + mapemr).then(function (e) {
+                $scope.dataMenu = []
+                var mahasiswadiklat = ''
+                if(medifirstService.getKelompokUser() == 'mahasiswadiklat'){
+                    mahasiswadiklat = '&mahasiswadiklat=true'
+                }
+                medifirstService.get("emr/get-menu-rekam-medis-dynamic?namaemr=navigasi" + mapemr+mahasiswadiklat).then(function (e) {
                     $scope.isLoadingNav = false
+                    // if(medifirstService.getKelompokUser() == 'mahasiswadiklat'){
+                    //     e.data.data = [
+                    //         {
+                    //           "id": 112,
+                    //           "kdprofile": 30,
+                    //           "statusenabled": true,
+                    //           "kodeexternal": null,
+                    //           "namaexternal": null,
+                    //           "reportdisplay": "RekamMedis.AsesmenMedis",
+                    //           "namaemr": "navigasi",
+                    //           "caption": "EMR",
+                    //           "headfk": null,
+                    //           "nourut": 1
+                    //         },
+                    //         {
+                    //           "id": 210222,
+                    //           "kdprofile": 30,
+                    //           "statusenabled": true,
+                    //           "kodeexternal": null,
+                    //           "namaexternal": null,
+                    //           "reportdisplay": "RekamMedis.CpptDinamis",
+                    //           "namaemr": "navigasi",
+                    //           "caption": "CPPT Rawat Jalan",
+                    //           "headfk": null,
+                    //           "nourut": 5
+                    //         },
+                    //       ]
+                    // var inlineDefault = new kendo.data.HierarchicalDataSource({
+                    //     data: e.data.data,
+                    //     schema: {
+                    //         model: {
+                    //             children: "child",
+                    //             expanded: false
+                    //         }
+                    //     }
+                    // });
+                    // }else{
+                    //     var inlineDefault = new kendo.data.HierarchicalDataSource({
+                    //         data: e.data.data,
+                    //         schema: {
+                    //             model: {
+                    //                 children: "child",
+                    //                 expanded: false
+                    //             }
+                    //         }
+                    //     });
+                    // }
                     var inlineDefault = new kendo.data.HierarchicalDataSource({
                         data: e.data.data,
                         schema: {
@@ -342,6 +400,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 })
                 
             }
+            // window.addEventListener("scroll", function() {
+            //     var scrollMarker = document.querySelector(".scroll-marker");
+            //     var scrollTop = window.scrollY;
+            //     scrollMarker.style.top = scrollTop + "px";
+            // });
 
         }
     ]);

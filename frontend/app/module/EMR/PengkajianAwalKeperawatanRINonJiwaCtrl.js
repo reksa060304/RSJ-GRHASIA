@@ -25,6 +25,9 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             var dataLoad = []
             var dataDump = [];
             var norecEMR = ''
+            if(medifirstService.getKelompokUser() == 'mahasiswadiklat'){
+                $scope.tombolSimpanVis = false
+            }
             $scope.isCetak = true
             medifirstService.getPart('emr/get-datacombo-part-pegawai', true, true, 20).then(function (data) {
                 $scope.listPegawai = data

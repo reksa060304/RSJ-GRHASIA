@@ -42,7 +42,9 @@ define(["initialize", "Configuration"], function (initialize, config) {
       // $scope.disabledBatal = true;
       $scope.noCM = $state.params.noCM;
       $scope.tombolSimpanVis = true;
-
+      if(medifirstService.getKelompokUser() == 'mahasiswadiklat'){
+        $scope.tombolSimpanVis = false
+    }
       $scope.totalSkor = 0;
       $scope.totalSkor2 = 0;
       $scope.cc = {};
