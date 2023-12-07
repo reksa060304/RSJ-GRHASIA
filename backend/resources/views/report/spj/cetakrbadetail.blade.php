@@ -376,7 +376,65 @@
             @php
             $char = explode(".", $sb->kodemataanggaran);
             @endphp
-            @if($sb->kodemataanggaran == 'I')
+
+            @if($sb->isrincian == 1)
+            @php
+            $jumlahtotaljasalayanan+=$sb->subtotaljasalayanan;
+            $jumlahtotalapbd+=$sb->subtotalapbd;
+            $jumlahtotaldak+=$sb->subtotaldak;
+            $jumlahtotaldanais+=$sb->subtotaldanais;
+            $jumlahtotalsilpa+=$sb->subtotalsilpa;
+            @endphp
+            <td align="center" style="padding: 10px; font-weight: bold "> {{ $char[0] }}</td>
+            <td align="center" style="padding: 10px; font-weight: bold "></td>
+            <td align="center" style="padding: 10px; font-weight: bold "></td>
+            <td align="center" style="padding: 10px; font-weight: bold "></td>
+            <td align="left" style="padding: 10px; font-weight: bold ">{{ $sb->keterangan }}</td>
+            @elseif($sb->isrincian == 2)
+            <td align="center" style="padding: 10px; font-weight: bold "></td>
+            <td align="center" style="padding: 10px; font-weight: bold ">{{ $char[1] }}</td>
+            <td align="center" style="padding: 10px; font-weight: bold "></td>
+            <td align="center" style="padding: 10px; font-weight: bold "></td>
+            <td align="left" style="padding: 10px; font-weight: bold ">{{ $sb->keterangan }}</td>
+            @elseif($sb->isrincian == 3 && count($char)==2)
+            <td align="center" style="padding: 10px; font-weight: bold "></td>
+            <td align="center" style="padding: 10px; font-weight: bold "></td>
+            <td align="center" style="padding: 10px; font-weight: bold ">{{ $char[1] }}</td>
+            <td align="center" style="padding: 10px; font-weight: bold "></td>
+            <td align="left" style="padding: 10px; font-weight: bold ">{{ $sb->keterangan }}</td>
+            @elseif($sb->isrincian == 3 && count($char)==3)
+            <td align="center" style="padding: 10px; font-weight: bold "></td>
+            <td align="center" style="padding: 10px; font-weight: bold "></td>
+            <td align="center" style="padding: 10px; font-weight: bold ">{{ $char[2] }}</td>
+            <td align="center" style="padding: 10px; font-weight: bold "></td>
+            <td align="left" style="padding: 10px; font-weight: bold ">{{ $sb->keterangan }}</td>
+            @elseif($sb->isrincian == 4 && count($char)==4)
+            <td align="center" style="padding: 10px; font-weight: bold "></td>
+            <td align="center" style="padding: 10px; font-weight: bold "></td>
+            <td align="center" style="padding: 10px; font-weight: bold "></td>
+            <td align="center" style="padding: 10px; font-weight: bold ">{{ $char[2].'.'.$char[3] }}</td>
+            <td align="left" style="padding: 10px; font-weight: bold ">{{ $sb->keterangan }}</td>
+            @elseif($sb->isrincian == 4 && count($char)==5)
+            <td align="center" style="padding: 10px; font-weight: bold "></td>
+            <td align="center" style="padding: 10px; font-weight: bold "></td>
+            <td align="center" style="padding: 10px; font-weight: bold "></td>
+            <td align="center" style="padding: 10px; font-weight: bold ">{{ $char[3].'.'.$char[4] }}</td>
+            <td align="left" style="padding: 10px; font-weight: bold ">{{ $sb->keterangan }}</td>
+            @elseif($sb->isrincian == 5)
+            <td align="center" style="padding: 10px; font-weight: bold "></td>
+            <td align="center" style="padding: 10px; font-weight: bold "></td>
+            <td align="center" style="padding: 10px; font-weight: bold "></td>
+            <td align="center" style="padding: 10px; "></td>
+            <td align="left" style="padding: 10px; ">{{ $sb->keterangan }}</td>
+            @else
+            <td align="center" style="padding: 10px; font-weight: bold "></td>
+            <td align="center" style="padding: 10px; font-weight: bold "></td>
+            <td align="center" style="padding: 10px; font-weight: bold "></td>
+            <td align="center" style="padding: 10px; font-weight: bold"></td>
+            <td align="left" style="padding: 10px; font-weight: bold">{{ $sb->keterangan }}</td>
+            @endif
+
+            <!-- @if($sb->kodemataanggaran == 'I')
             @php
             $jumlahtotaljasalayanan+=$sb->subtotaljasalayanan;
             $jumlahtotalapbd+=$sb->subtotalapbd;
@@ -481,7 +539,8 @@
             <td align="center" style="padding: 10px; font-weight: bold "></td>
             <td align="center" style="padding: 10px; font-weight: bold ">{{ $sb->kodemataanggaran }}</td>
             <td align="left" style="padding: 10px; font-weight: bold ">{{ $sb->keterangan }}</td>
-            @endif
+            @endif -->
+            
             @if($sb->jml != 0)
             <td align="right" style="padding: 10px; ">{{ $sb->jml }}</td>
             @else
