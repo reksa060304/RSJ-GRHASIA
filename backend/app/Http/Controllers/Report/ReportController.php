@@ -9066,7 +9066,7 @@ class ReportController extends ApiController{
             $qterhadap =  ' and kb.objecttahapfk =  ' . $request['terhadap'];
         }
 
-        $sebelum = \DB::select(DB::raw("SELECT o.*, p.subtotaljasalayanansetelah, p.subtotalapbdsetelah, p.subtotalapbdsebelum, p.subtotaljasalayanansebelum
+        $sebelum = \DB::select(DB::raw("SELECT o.*, p.subtotaljasalayanansetelah, p.subtotalapbdsetelah, p.subtotaldaksetelah, p.subtotaldanaissetelah, p.subtotalsilpasetelah, p.subtotalapbdsebelum, p.subtotaljasalayanansebelum, p.subtotaldaksebelum, p.subtotaldanaissebelum, p.subtotalsilpasebelum
         from
         (
         select kodemataanggaran, namamataanggaran from mataanggaran_m WHERE
@@ -9078,7 +9078,7 @@ class ReportController extends ApiController{
         ) as o
         left join
         (
-        select j.kodemataanggaran, sum(j.subtotaljasalayanan) as subtotaljasalayanansetelah, sum(j.subtotalapbd )as subtotalapbdsetelah, sum(k.subtotalapbd) as subtotalapbdsebelum, sum(k.subtotaljasalayanan) as subtotaljasalayanansebelum
+        select j.kodemataanggaran, sum(j.subtotaljasalayanan) as subtotaljasalayanansetelah, sum(j.subtotalapbd )as subtotalapbdsetelah, sum(j.subtotaldak )as subtotaldaksetelah, sum(j.subtotaldanais )as subtotaldanaissetelah, sum(j.subtotalsilpa )as subtotalsilpasetelah, sum(k.subtotalapbd) as subtotalapbdsebelum, sum(k.subtotaljasalayanan) as subtotaljasalayanansebelum, sum(k.subtotaldak) as subtotaldaksebelum, sum(k.subtotaldanais) as subtotaldanaissebelum, sum(k.subtotalsilpa) as subtotalsilpasebelum
         from
         (
         select id, tahap,
@@ -9106,7 +9106,27 @@ class ReportController extends ApiController{
         when kodemataanggaran = 'B' and y.id_asalproduk=15 then sum(subtotalapbd)
         when kodemataanggaran = 'II' and y.id_asalproduk=15 then sum(subtotalapbd)
         when kodemataanggaran = 'III' and y.id_asalproduk=15 then sum(subtotalapbd)
-        end as subtotalapbd
+        end as subtotalapbd,
+
+        case
+        when kodemataanggaran = 'A' and y.id_asalproduk=21 then sum(subtotaldak)
+        when kodemataanggaran = 'B' and y.id_asalproduk=21 then sum(subtotaldak)
+        when kodemataanggaran = 'II' and y.id_asalproduk=21 then sum(subtotaldak)
+        when kodemataanggaran = 'III' and y.id_asalproduk=21 then sum(subtotaldak)
+        end as subtotaldak
+        case
+        when kodemataanggaran = 'A' and y.id_asalproduk=2 then sum(subtotaldanais)
+        when kodemataanggaran = 'B' and y.id_asalproduk=2 then sum(subtotaldanais)
+        when kodemataanggaran = 'II' and y.id_asalproduk=2 then sum(subtotaldanais)
+        when kodemataanggaran = 'III' and y.id_asalproduk=2 then sum(subtotaldanais)
+        end as subtotaldanais
+        case
+        when kodemataanggaran = 'A' and y.id_asalproduk=4 then sum(subtotalsilpa)
+        when kodemataanggaran = 'B' and y.id_asalproduk=4 then sum(subtotalsilpa)
+        when kodemataanggaran = 'II' and y.id_asalproduk=4 then sum(subtotalsilpa)
+        when kodemataanggaran = 'III' and y.id_asalproduk=4 then sum(subtotalsilpa)
+        end as subtotalsilpa
+
         from(
         select x.id, tahap,
         case
@@ -9128,6 +9148,26 @@ class ReportController extends ApiController{
         when kodemataanggaran ilike 'II.%' and x.id_asalproduk = 18 then sum(subtotal)
         when kodemataanggaran ilike 'III.%' and x.id_asalproduk = 18 then sum(subtotal)
         end subtotaljasalayanan
+
+        case
+        when kodemataanggaran ilike 'I.A.%' and x.id_asalproduk = 21 then sum(subtotal)
+        when kodemataanggaran ilike 'I.B.%' and x.id_asalproduk = 21 then sum (subtotal)
+        when kodemataanggaran ilike 'II.%' and x.id_asalproduk = 21 then sum(subtotal)
+        when kodemataanggaran ilike 'III.%' and x.id_asalproduk = 21 then sum(subtotal)
+        end subtotaldak
+        case
+        when kodemataanggaran ilike 'I.A.%' and x.id_asalproduk = 2 then sum(subtotal)
+        when kodemataanggaran ilike 'I.B.%' and x.id_asalproduk = 2 then sum (subtotal)
+        when kodemataanggaran ilike 'II.%' and x.id_asalproduk = 2 then sum(subtotal)
+        when kodemataanggaran ilike 'III.%' and x.id_asalproduk = 2 then sum(subtotal)
+        end subtotaldanais
+        case
+        when kodemataanggaran ilike 'I.A.%' and x.id_asalproduk = 4 then sum(subtotal)
+        when kodemataanggaran ilike 'I.B.%' and x.id_asalproduk = 4 then sum (subtotal)
+        when kodemataanggaran ilike 'II.%' and x.id_asalproduk = 4 then sum(subtotal)
+        when kodemataanggaran ilike 'III.%' and x.id_asalproduk = 4 then sum(subtotal)
+        end subtotalsilpa
+
         from(
         select DISTINCT ta.id, ta.tahap, mat.kodemataanggaran, mat.namamataanggaran, kb.keteranganbelanja, kb.subtotal as subtotal,
             ap.id as id_asalproduk, ap.asalproduk
@@ -9159,14 +9199,25 @@ class ReportController extends ApiController{
 
         union all
 
-        select uni.id,uni.tahap, uni.kodemataanggaran, uni.keterangan, sum(uni.subtotaljasalayanan)as subtotaljasalayanan, sum(uni.subtotalapbd )as subtotalapbd from (
+        select uni.id,uni.tahap, uni.kodemataanggaran, uni.keterangan, sum(uni.subtotaljasalayanan)as subtotaljasalayanan, sum(uni.subtotalapbd )as subtotalapbd, sum(uni.subtotaldak )as subtotaldak, sum(uni.subtotaldanais )as subtotaldanais, sum(uni.subtotalsilpa )as subtotalsilpa from (
         select distinct ta.id, ta.tahap, mat.kodemataanggaran, mat.namamataanggaran keterangan,kb.keteranganbelanja,
         case
         when ap.id = 18 then kb.subtotal
         end as subtotaljasalayanan,
         case
         when ap.id = 15 then kb.subtotal
-        end as subtotalapbd
+        end as subtotalapbd,
+
+        case
+        when ap.id = 21 then kb.subtotal
+        end as subtotaldak,
+        case
+        when ap.id = 2 then kb.subtotal
+        end as subtotaldanais,
+        case
+        when ap.id = 4 then kb.subtotal
+        end as subtotalsilpa
+
         from kegiatananggaran_m km
         inner join kegiatananggaran_m kms on km.kode ilike kms.kode || '%' and kms.div = 3
         left join kegiatananggaran_m kmss on km.kode ilike kmss.kode || '%' and kmss.div = 2
@@ -9221,7 +9272,27 @@ class ReportController extends ApiController{
         when kodemataanggaran = 'B' and y.id_asalproduk=15 then sum(subtotalapbd)
         when kodemataanggaran = 'II' and y.id_asalproduk=15 then sum(subtotalapbd)
         when kodemataanggaran = 'III' and y.id_asalproduk=15 then sum(subtotalapbd)
-        end as subtotalapbd
+        end as subtotalapbd,
+
+        case
+        when kodemataanggaran = 'A' and y.id_asalproduk=21 then sum(subtotaldak)
+        when kodemataanggaran = 'B' and y.id_asalproduk=21 then sum(subtotaldak)
+        when kodemataanggaran = 'II' and y.id_asalproduk=21 then sum(subtotaldak)
+        when kodemataanggaran = 'III' and y.id_asalproduk=21 then sum(subtotaldak)
+        end as subtotaldak,
+        case
+        when kodemataanggaran = 'A' and y.id_asalproduk=2 then sum(subtotaldanais)
+        when kodemataanggaran = 'B' and y.id_asalproduk=2 then sum(subtotaldanais)
+        when kodemataanggaran = 'II' and y.id_asalproduk=2 then sum(subtotaldanais)
+        when kodemataanggaran = 'III' and y.id_asalproduk=2 then sum(subtotaldanais)
+        end as subtotaldanais,
+        case
+        when kodemataanggaran = 'A' and y.id_asalproduk=4 then sum(subtotalsilpa)
+        when kodemataanggaran = 'B' and y.id_asalproduk=4 then sum(subtotalsilpa)
+        when kodemataanggaran = 'II' and y.id_asalproduk=4 then sum(subtotalsilpa)
+        when kodemataanggaran = 'III' and y.id_asalproduk=4 then sum(subtotalsilpa)
+        end as subtotalsilpa
+
         from(
         select x.id, tahap,
         case
@@ -9242,7 +9313,27 @@ class ReportController extends ApiController{
         when kodemataanggaran ilike 'I.B.%' and x.id_asalproduk = 18 then sum (subtotal)
         when kodemataanggaran ilike 'II.%' and x.id_asalproduk = 18 then sum(subtotal)
         when kodemataanggaran ilike 'III.%' and x.id_asalproduk = 18 then sum(subtotal)
-        end subtotaljasalayanan
+        end subtotaljasalayanan,
+
+        case
+        when kodemataanggaran ilike 'I.A.%' and x.id_asalproduk = 21 then sum(subtotal)
+        when kodemataanggaran ilike 'I.B.%' and x.id_asalproduk = 21 then sum (subtotal)
+        when kodemataanggaran ilike 'II.%' and x.id_asalproduk = 21 then sum(subtotal)
+        when kodemataanggaran ilike 'III.%' and x.id_asalproduk = 21 then sum(subtotal)
+        end subtotaldak,
+        case
+        when kodemataanggaran ilike 'I.A.%' and x.id_asalproduk = 2 then sum(subtotal)
+        when kodemataanggaran ilike 'I.B.%' and x.id_asalproduk = 2 then sum (subtotal)
+        when kodemataanggaran ilike 'II.%' and x.id_asalproduk = 2 then sum(subtotal)
+        when kodemataanggaran ilike 'III.%' and x.id_asalproduk = 2 then sum(subtotal)
+        end subtotaldanais,
+        case
+        when kodemataanggaran ilike 'I.A.%' and x.id_asalproduk = 4 then sum(subtotal)
+        when kodemataanggaran ilike 'I.B.%' and x.id_asalproduk = 4 then sum (subtotal)
+        when kodemataanggaran ilike 'II.%' and x.id_asalproduk = 4 then sum(subtotal)
+        when kodemataanggaran ilike 'III.%' and x.id_asalproduk = 4 then sum(subtotal)
+        end subtotalsilpa
+
         from(
         select DISTINCT ta.id, ta.tahap, mat.kodemataanggaran, mat.namamataanggaran, kb.keteranganbelanja, kb.subtotal as subtotal,
             ap.id as id_asalproduk, ap.asalproduk
@@ -9274,14 +9365,23 @@ class ReportController extends ApiController{
 
         union all
 
-        select uni.id,uni.tahap, uni.kodemataanggaran, uni.keterangan, sum(uni.subtotaljasalayanan)as subtotaljasalayanan, sum(uni.subtotalapbd )as subtotalapbd from (
+        select uni.id,uni.tahap, uni.kodemataanggaran, uni.keterangan, sum(uni.subtotaljasalayanan)as subtotaljasalayanan, sum(uni.subtotalapbd )as subtotalapbd, sum(uni.subtotaldak )as subtotaldak, sum(uni.subtotaldanais )as subtotaldanais, sum(uni.subtotalsilpa )as subtotalsilpa from (
         select distinct ta.id, ta.tahap, mat.kodemataanggaran, mat.namamataanggaran keterangan,kb.keteranganbelanja,
         case
         when ap.id = 18 then kb.subtotal
         end as subtotaljasalayanan,
         case
         when ap.id = 15 then kb.subtotal
-        end as subtotalapbd
+        end as subtotalapbd,
+        case
+        when ap.id = 21 then kb.subtotal
+        end as subtotaldak,
+        case
+        when ap.id = 2 then kb.subtotal
+        end as subtotaldanais,
+        case
+        when ap.id = 4 then kb.subtotal
+        end as subtotalsilpa
         from kegiatananggaran_m km
         inner join kegiatananggaran_m kms on km.kode ilike kms.kode || '%' and kms.div = 3
         left join kegiatananggaran_m kmss on km.kode ilike kmss.kode || '%' and kmss.div = 2
@@ -9310,13 +9410,13 @@ class ReportController extends ApiController{
         ) as k on j.kodemataanggaran = k.kodemataanggaran GROUP BY j.kodemataanggaran, k.kodemataanggaran
         order by k.kodemataanggaran
         ) as p on o.kodemataanggaran = p.kodemataanggaran
-        GROUP BY p.kodemataanggaran, o.namamataanggaran, o.kodemataanggaran,p.kodemataanggaran, p.subtotalapbdsebelum, p.subtotalapbdsetelah, p.subtotaljasalayanansebelum, p.subtotaljasalayanansetelah
+        GROUP BY p.kodemataanggaran, o.namamataanggaran, o.kodemataanggaran,p.kodemataanggaran, p.subtotalapbdsebelum, p.subtotalapbdsetelah, p.subtotaljasalayanansebelum, p.subtotaljasalayanansetelah, p.subtotaldaksebelum, p.subtotaldaksetelah, p.subtotaldanaissebelum, p.subtotaldanaissetelah, p.subtotalsilpasebelum, p.subtotalsilpasetelah
         order by o.kodemataanggaran
         "));
 
         $jumlah = \DB::select(DB::raw("
-        select sum(i.subtotalapbd) as subtotalapbd, sum(i.subtotaljasalayanan) as subtotaljasalayanan, sum(i.subtotalapbdsetelah) subtotalapbdsetelah, sum(i.subtotaljasalayanansetelah) subtotaljasalayanansetelah from(
-        SELECT k.kodemataanggaran, k.subtotaljasalayanan as subtotaljasalayanan, k.subtotalapbd as subtotalapbd, j.subtotalapbd as subtotalapbdsetelah, j.subtotaljasalayanan as subtotaljasalayanansetelah
+        select sum(i.subtotalapbd) as subtotalapbd, sum(i.subtotaljasalayanan) as subtotaljasalayanan, sum(i.subtotaldak) as subtotaldak, sum(i.subtotaljasadanais) as subtotaljasadanais, sum(i.subtotaljasasilpa) as subtotaljasasilpa, sum(i.subtotalapbdsetelah) subtotalapbdsetelah, sum(i.subtotaljasalayanansetelah) subtotaljasalayanansetelah, sum(i.subtotaldaksetelah) subtotaldaksetelah, sum(i.subtotaldanaissetelah) subtotaldanaissetelah, sum(i.subtotalsilpasetelah) subtotalsilpasetelah from(
+        SELECT k.kodemataanggaran, k.subtotaljasalayanan as subtotaljasalayanan, k.subtotalapbd as subtotalapbd, k.subtotaldak as subtotaldak, k.subtotaldanais as subtotaldanais, k.subtotalsilpa as subtotalsilpa, j.subtotalapbd as subtotalapbdsetelah, j.subtotaljasalayanan as subtotaljasalayanansetelah, j.subtotaldak as subtotaldaksetelah, j.subtotaldanais as subtotaldanaissetelah, j.subtotalsilpa as subtotalsilpasetelah
         from(
         select id, tahap,
         case
@@ -9348,7 +9448,27 @@ class ReportController extends ApiController{
         when kodemataanggaran = 'B' and y.id_asalproduk = 18 then sum(y.subtotaljasalayanan)
         when kodemataanggaran = 'II' and y.id_asalproduk = 18 then sum(y.subtotaljasalayanan)
         when kodemataanggaran = 'III' and y.id_asalproduk = 18 then sum(y.subtotaljasalayanan)
-        end as subtotaljasalayanan
+        end as subtotaljasalayanan,
+
+        case
+        when kodemataanggaran = 'A' and y.id_asalproduk = 21 then sum(y.subtotaldak)
+        when kodemataanggaran = 'B' and y.id_asalproduk = 21 then sum(y.subtotaldak)
+        when kodemataanggaran = 'II' and y.id_asalproduk = 21 then sum(y.subtotaldak)
+        when kodemataanggaran = 'III' and y.id_asalproduk = 21 then sum(y.subtotaldak)
+        end as subtotaldak,
+        case
+        when kodemataanggaran = 'A' and y.id_asalproduk = 2 then sum(y.subtotaldanais)
+        when kodemataanggaran = 'B' and y.id_asalproduk = 2 then sum(y.subtotaldanais)
+        when kodemataanggaran = 'II' and y.id_asalproduk = 2 then sum(y.subtotaldanais)
+        when kodemataanggaran = 'III' and y.id_asalproduk = 2 then sum(y.subtotaldanais)
+        end as subtotaldanais,
+        case
+        when kodemataanggaran = 'A' and y.id_asalproduk = 4 then sum(y.subtotalsilpa)
+        when kodemataanggaran = 'B' and y.id_asalproduk = 4 then sum(y.subtotalsilpa)
+        when kodemataanggaran = 'II' and y.id_asalproduk = 4 then sum(y.subtotalsilpa)
+        when kodemataanggaran = 'III' and y.id_asalproduk = 4 then sum(y.subtotalsilpa)
+        end as subtotalsilpa
+        
         from(
         select id, tahap, x.id_asalproduk,
         case
@@ -9374,7 +9494,27 @@ class ReportController extends ApiController{
         when kodemataanggaran ilike 'I.B.%' and x.id_asalproduk = 18 then sum(x.subtotaljasalayanan)
         when kodemataanggaran ilike 'II.%' and x.id_asalproduk = 18 then sum(x.subtotaljasalayanan)
         when kodemataanggaran ilike 'III.%' and x.id_asalproduk = 18 then sum(x.subtotaljasalayanan)
-        end as subtotaljasalayanan
+        end as subtotaljasalayanan,
+
+        case
+        when kodemataanggaran ilike 'I.A.%' and x.id_asalproduk = 21 then sum(x.subtotaldak)
+        when kodemataanggaran ilike 'I.B.%' and x.id_asalproduk = 21 then sum(x.subtotaldak)
+        when kodemataanggaran ilike 'II.%' and x.id_asalproduk = 21 then sum(x.subtotaldak)
+        when kodemataanggaran ilike 'III.%' and x.id_asalproduk = 21 then sum(x.subtotaldak)
+        end as subtotaldak,
+        case
+        when kodemataanggaran ilike 'I.A.%' and x.id_asalproduk = 2 then sum(x.subtotaldanais)
+        when kodemataanggaran ilike 'I.B.%' and x.id_asalproduk = 2 then sum(x.subtotaldanais)
+        when kodemataanggaran ilike 'II.%' and x.id_asalproduk = 2 then sum(x.subtotaldanais)
+        when kodemataanggaran ilike 'III.%' and x.id_asalproduk = 2 then sum(x.subtotaldanais)
+        end as subtotaldanais,
+        case
+        when kodemataanggaran ilike 'I.A.%' and x.id_asalproduk = 4 then sum(x.subtotalsilpa)
+        when kodemataanggaran ilike 'I.B.%' and x.id_asalproduk = 4 then sum(x.subtotalsilpa)
+        when kodemataanggaran ilike 'II.%' and x.id_asalproduk = 4 then sum(x.subtotalsilpa)
+        when kodemataanggaran ilike 'III.%' and x.id_asalproduk = 4 then sum(x.subtotalsilpa)
+        end as subtotalsilpa
+        
         from(
         select DISTINCT ta.id, ta.tahap, mat.kodemataanggaran, mat.namamataanggaran, kb.keteranganbelanja, ap.id as id_asalproduk,
         case
@@ -9382,7 +9522,18 @@ class ReportController extends ApiController{
         end as subtotalapbd,
         case
         when ap.id =18 then kb.subtotal
-        end as subtotaljasalayanan
+        end as subtotaljasalayanan,
+
+        case
+        when ap.id =21 then kb.subtotal
+        end as subtotaldak,
+        case
+        when ap.id =2 then kb.subtotal
+        end as subtotaldanais,
+        case
+        when ap.id =4 then kb.subtotal
+        end as subtotalsilpa
+
         from kegiatananggaran_m km
         inner join kegiatananggaran_m kms on km.kode ilike kms.kode || '%' and kms.div = 3
         left join kegiatananggaran_m kmss on km.kode ilike kmss.kode || '%' and kmss.div = 2
@@ -9411,13 +9562,24 @@ class ReportController extends ApiController{
 
         union all
 
-        SELECT uni.id, uni.tahap, uni.kodemataanggaran, uni.keterangan,sum(uni.subtotalapbd)as subtotalapbd, sum(uni.subtotaljasalayanan)as subtotaljasalayanan FROM (select DISTINCT ta.id, ta.tahap, kb.keteranganbelanja,  mat.kodemataanggaran, mat.namamataanggaran keterangan,
+        SELECT uni.id, uni.tahap, uni.kodemataanggaran, uni.keterangan,sum(uni.subtotalapbd)as subtotalapbd, sum(uni.subtotaljasalayanan)as subtotaljasalayanan, sum(uni.subtotaldak)as subtotaldak, sum(uni.subtotaldanais)as subtotaldanais, sum(uni.subtotalsilpa)as subtotalsilpa FROM (select DISTINCT ta.id, ta.tahap, kb.keteranganbelanja,  mat.kodemataanggaran, mat.namamataanggaran keterangan,
         case
         when ap.id = 15 then kb.subtotal
         end as subtotalapbd,
         case
         when ap.id = 18 then kb.subtotal
-        end as subtotaljasalayanan
+        end as subtotaljasalayanan,
+
+        case
+        when ap.id = 21 then kb.subtotal
+        end as subtotaldak,
+        case
+        when ap.id = 2 then kb.subtotal
+        end as subtotaldanais,
+        case
+        when ap.id = 4 then kb.subtotal
+        end as subtotalsilpa
+        
         from kegiatananggaran_m km
         inner join kegiatananggaran_m kms on km.kode ilike kms.kode || '%' and kms.div = 3
         left join kegiatananggaran_m kmss on km.kode ilike kmss.kode || '%' and kmss.div = 2
@@ -9475,7 +9637,27 @@ class ReportController extends ApiController{
         when kodemataanggaran = 'B' and y.id_asalproduk = 18 then sum(y.subtotaljasalayanan)
         when kodemataanggaran = 'II' and y.id_asalproduk = 18 then sum(y.subtotaljasalayanan)
         when kodemataanggaran = 'III' and y.id_asalproduk = 18 then sum(y.subtotaljasalayanan)
-        end as subtotaljasalayanan
+        end as subtotaljasalayanan,
+
+        case
+        when kodemataanggaran = 'A' and y.id_asalproduk = 21 then sum(y.subtotaldak)
+        when kodemataanggaran = 'B' and y.id_asalproduk = 21 then sum(y.subtotaldak)
+        when kodemataanggaran = 'II' and y.id_asalproduk = 21 then sum(y.subtotaldak)
+        when kodemataanggaran = 'III' and y.id_asalproduk = 21 then sum(y.subtotaldak)
+        end as subtotaldak,
+        case
+        when kodemataanggaran = 'A' and y.id_asalproduk = 2 then sum(y.subtotaldanais)
+        when kodemataanggaran = 'B' and y.id_asalproduk = 2 then sum(y.subtotaldanais)
+        when kodemataanggaran = 'II' and y.id_asalproduk = 2 then sum(y.subtotaldanais)
+        when kodemataanggaran = 'III' and y.id_asalproduk = 2 then sum(y.subtotaldanais)
+        end as subtotaldanais,
+        case
+        when kodemataanggaran = 'A' and y.id_asalproduk = 4 then sum(y.subtotalsilpa)
+        when kodemataanggaran = 'B' and y.id_asalproduk = 4 then sum(y.subtotalsilpa)
+        when kodemataanggaran = 'II' and y.id_asalproduk = 4 then sum(y.subtotalsilpa)
+        when kodemataanggaran = 'III' and y.id_asalproduk = 4 then sum(y.subtotalsilpa)
+        end as subtotalsilpa
+        
         from(
         select id, tahap, x.id_asalproduk,
         case
@@ -9501,7 +9683,27 @@ class ReportController extends ApiController{
         when kodemataanggaran ilike 'I.B.%' and x.id_asalproduk = 18 then sum(x.subtotaljasalayanan)
         when kodemataanggaran ilike 'II.%' and x.id_asalproduk = 18 then sum(x.subtotaljasalayanan)
         when kodemataanggaran ilike 'III.%' and x.id_asalproduk = 18 then sum(x.subtotaljasalayanan)
-        end as subtotaljasalayanan
+        end as subtotaljasalayanan,
+
+        case
+        when kodemataanggaran ilike 'I.A.%' and x.id_asalproduk = 21 then sum(x.subtotaldak)
+        when kodemataanggaran ilike 'I.B.%' and x.id_asalproduk = 21 then sum(x.subtotaldak)
+        when kodemataanggaran ilike 'II.%' and x.id_asalproduk = 21 then sum(x.subtotaldak)
+        when kodemataanggaran ilike 'III.%' and x.id_asalproduk = 21 then sum(x.subtotaldak)
+        end as subtotaldak,
+        case
+        when kodemataanggaran ilike 'I.A.%' and x.id_asalproduk = 2 then sum(x.subtotaldanais)
+        when kodemataanggaran ilike 'I.B.%' and x.id_asalproduk = 2 then sum(x.subtotaldanais)
+        when kodemataanggaran ilike 'II.%' and x.id_asalproduk = 2 then sum(x.subtotaldanais)
+        when kodemataanggaran ilike 'III.%' and x.id_asalproduk = 2 then sum(x.subtotaldanais)
+        end as subtotaldanais,
+        case
+        when kodemataanggaran ilike 'I.A.%' and x.id_asalproduk = 4 then sum(x.subtotalsilpa)
+        when kodemataanggaran ilike 'I.B.%' and x.id_asalproduk = 4 then sum(x.subtotalsilpa)
+        when kodemataanggaran ilike 'II.%' and x.id_asalproduk = 4 then sum(x.subtotalsilpa)
+        when kodemataanggaran ilike 'III.%' and x.id_asalproduk = 4 then sum(x.subtotalsilpa)
+        end as subtotalsilpa
+        
         from(
         select DISTINCT ta.id, ta.tahap, mat.kodemataanggaran, mat.namamataanggaran, kb.keteranganbelanja, ap.id as id_asalproduk,
         case
@@ -9509,7 +9711,18 @@ class ReportController extends ApiController{
         end as subtotalapbd,
         case
         when ap.id =18 then kb.subtotal
-        end as subtotaljasalayanan
+        end as subtotaljasalayanan,
+
+        case
+        when ap.id =21 then kb.subtotal
+        end as subtotaldak,
+        case
+        when ap.id =2 then kb.subtotal
+        end as subtotaldanais,
+        case
+        when ap.id =4 then kb.subtotal
+        end as subtotalsilpa
+        
         from kegiatananggaran_m km
         inner join kegiatananggaran_m kms on km.kode ilike kms.kode || '%' and kms.div = 3
         left join kegiatananggaran_m kmss on km.kode ilike kmss.kode || '%' and kmss.div = 2
@@ -9538,13 +9751,24 @@ class ReportController extends ApiController{
 
         union all
 
-        SELECT uni.id, uni.tahap, uni.kodemataanggaran, uni.keterangan,sum(uni.subtotalapbd)as subtotalapbd, sum(uni.subtotaljasalayanan)as subtotaljasalayanan FROM (select DISTINCT ta.id, ta.tahap, kb.keteranganbelanja,  mat.kodemataanggaran, mat.namamataanggaran keterangan,
+        SELECT uni.id, uni.tahap, uni.kodemataanggaran, uni.keterangan,sum(uni.subtotalapbd)as subtotalapbd, sum(uni.subtotaljasalayanan)as subtotaljasalayanan, sum(uni.subtotaldak)as subtotaldak, sum(uni.subtotaldanais)as subtotaldanais, sum(uni.subtotalsilpa)as subtotalsilpa FROM (select DISTINCT ta.id, ta.tahap, kb.keteranganbelanja,  mat.kodemataanggaran, mat.namamataanggaran keterangan,
         case
         when ap.id = 15 then kb.subtotal
         end as subtotalapbd,
         case
         when ap.id = 18 then kb.subtotal
-        end as subtotaljasalayanan
+        end as subtotaljasalayanan,
+
+        case
+        when ap.id = 21 then kb.subtotal
+        end as subtotaldak,
+        case
+        when ap.id = 2 then kb.subtotal
+        end as subtotaldanais,
+        case
+        when ap.id = 4 then kb.subtotal
+        end as subtotalsilpa
+
         from kegiatananggaran_m km
         inner join kegiatananggaran_m kms on km.kode ilike kms.kode || '%' and kms.div = 3
         left join kegiatananggaran_m kmss on km.kode ilike kmss.kode || '%' and kmss.div = 2
@@ -9777,7 +10001,7 @@ class ReportController extends ApiController{
         $itahap = DB::select(DB::raw("select id, tahap from tahapanggaran_m where id = $tahap"));
 
         $sebelum = DB::select(DB::raw("
-        SELECT o.*, p.subtotalapbd, p.subtotaljasalayanan, p.tahap
+        SELECT o.*, p.subtotalapbd, p.subtotaljasalayanan, p.subtotaldak, p.subtotaldanais, p.subtotalsilpa, p.tahap
         from
         (
             select kodemataanggaran, namamataanggaran from mataanggaran_m WHERE
@@ -9813,7 +10037,27 @@ class ReportController extends ApiController{
 				when kodemataanggaran = 'B' then sum(subtotaljasalayanan)
 				when kodemataanggaran = 'II' then sum(subtotaljasalayanan)
 				when kodemataanggaran = 'III' then sum(subtotaljasalayanan)
-			end as subtotaljasalayanan
+			end as subtotaljasalayanan,
+
+			case 
+				when kodemataanggaran = 'A' then sum(subtotaldak)
+				when kodemataanggaran = 'B' then sum(subtotaldak)
+				when kodemataanggaran = 'II' then sum(subtotaldak)
+				when kodemataanggaran = 'III' then sum(subtotaldak)
+			end as subtotaldak,
+			case 
+				when kodemataanggaran = 'A' then sum(subtotaldanais)
+				when kodemataanggaran = 'B' then sum(subtotaldanais)
+				when kodemataanggaran = 'II' then sum(subtotaldanais)
+				when kodemataanggaran = 'III' then sum(subtotaldanais)
+			end as subtotaldanais,
+			case 
+				when kodemataanggaran = 'A' then sum(subtotalsilpa)
+				when kodemataanggaran = 'B' then sum(subtotalsilpa)
+				when kodemataanggaran = 'II' then sum(subtotalsilpa)
+				when kodemataanggaran = 'III' then sum(subtotalsilpa)
+			end as subtotalsilpa
+
 			from(
 				select id, tahap,
 				case 
@@ -9833,11 +10077,36 @@ class ReportController extends ApiController{
 					when kodemataanggaran ilike 'I.B.%' then sum(subtotaljasalayanan)
 					when kodemataanggaran ilike 'II.%' then sum(subtotaljasalayanan)
 					when kodemataanggaran ilike 'III.%' then sum(subtotaljasalayanan)
-				end as subtotaljasalayanan
+				end as subtotaljasalayanan,
+
+				case 
+					when kodemataanggaran ilike 'I.A.%' then sum(subtotaldak)
+					when kodemataanggaran ilike 'I.B.%' then sum(subtotaldak)
+					when kodemataanggaran ilike 'II.%' then sum(subtotaldak)
+					when kodemataanggaran ilike 'III.%' then sum(subtotaldak)
+				end as subtotaldak,
+				case 
+					when kodemataanggaran ilike 'I.A.%' then sum(subtotaldanais)
+					when kodemataanggaran ilike 'I.B.%' then sum(subtotaldanais)
+					when kodemataanggaran ilike 'II.%' then sum(subtotaldanais)
+					when kodemataanggaran ilike 'III.%' then sum(subtotaldanais)
+				end as subtotaldanais,
+				case 
+					when kodemataanggaran ilike 'I.A.%' then sum(subtotalsilpa)
+					when kodemataanggaran ilike 'I.B.%' then sum(subtotalsilpa)
+					when kodemataanggaran ilike 'II.%' then sum(subtotalsilpa)
+					when kodemataanggaran ilike 'III.%' then sum(subtotalsilpa)
+				end as subtotalsilpa
+
 				from(
 							select ta.id, ta.tahap, mat.kodemataanggaran, mat.namamataanggaran, kb.keteranganbelanja, 
 							case when ap.id = 15 then sum(kb.subtotal) end as subtotalapbd,
-							case when ap.id = 18 then sum(kb.subtotal) end as subtotaljasalayanan
+
+							case when ap.id = 18 then sum(kb.subtotal) end as subtotaljasalayanan,
+							case when ap.id = 21 then sum(kb.subtotal) end as subtotaldak,
+							case when ap.id = 2 then sum(kb.subtotal) end as subtotaldanais,
+							case when ap.id = 4 then sum(kb.subtotal) end as subtotalsilpa
+
 							from kegiatananggaran_m km
 							inner join kegiatananggaran_m kms on km.kode ilike kms.kode || '%' and kms.div = 3
 							left join kegiatananggaran_m kmss on km.kode ilike kmss.kode || '%' and kmss.div = 2
@@ -9868,7 +10137,12 @@ class ReportController extends ApiController{
 			
 			select ta.id, ta.tahap, mat.kodemataanggaran, mat.namamataanggaran keterangan, 
 			case when ap.id = 15 then sum(kb.subtotal) end as subtotalapbd,
-			case when ap.id = 18 then sum(kb.subtotal) end as subtotaljasalayanan
+
+			case when ap.id = 18 then sum(kb.subtotal) end as subtotaljasalayanan,
+			case when ap.id = 21 then sum(kb.subtotal) end as subtotaldak,
+			case when ap.id = 2 then sum(kb.subtotal) end as subtotaldanais,
+			case when ap.id = 4 then sum(kb.subtotal) end as subtotalsilpa
+
 			from kegiatananggaran_m km
 			inner join kegiatananggaran_m kms on km.kode ilike kms.kode || '%' and kms.div = 3
 			left join kegiatananggaran_m kmss on km.kode ilike kmss.kode || '%' and kmss.div = 2
@@ -9893,10 +10167,10 @@ class ReportController extends ApiController{
             and kb.kdprofile = 30 and kb.statusenabled = true
 			group by ap.id, ta.id, ta.tahap, mat.kodemataanggaran, mat.namamataanggaran
         ) as p on o.kodemataanggaran = p.kodemataanggaran 
-        group by o.kodemataanggaran, o.namamataanggaran, p.subtotalapbd, p.subtotaljasalayanan, p.tahap
+        group by o.kodemataanggaran, o.namamataanggaran, p.subtotalapbd, p.subtotaljasalayanan, p.subtotaldak, p.subtotaldanais, p.subtotalsilpa, p.tahap
         order by o.kodemataanggaran"));
 
-        $jumlah = DB::select(DB::raw("select sum(subtotalapbd) totalapbd, sum(subtotaljasalayanan) totaljasalayanan from(
+        $jumlah = DB::select(DB::raw("select sum(subtotalapbd) totalapbd, sum(subtotaljasalayanan) totaljasalayanan, sum(subtotaldak) totaldak, sum(subtotaldanais) totaldanais, sum(subtotalsilpa) totalsilpa from(
             select id, tahap,
             case 
                 when kodemataanggaran = 'A' then 'I.A'
@@ -9921,7 +10195,27 @@ class ReportController extends ApiController{
                                         when kodemataanggaran = 'B' then sum(subtotaljasalayanan)
                                         when kodemataanggaran = 'II' then sum(subtotaljasalayanan)
                                         when kodemataanggaran = 'III' then sum(subtotaljasalayanan)
-                                    end as subtotaljasalayanan
+                                    end as subtotaljasalayanan,
+
+                                    case 
+                                        when kodemataanggaran = 'A' then sum(subtotaldak)
+                                        when kodemataanggaran = 'B' then sum(subtotaldak)
+                                        when kodemataanggaran = 'II' then sum(subtotaldak)
+                                        when kodemataanggaran = 'III' then sum(subtotaldak)
+                                    end as subtotaldak,
+                                    case 
+                                        when kodemataanggaran = 'A' then sum(subtotaldanais)
+                                        when kodemataanggaran = 'B' then sum(subtotaldanais)
+                                        when kodemataanggaran = 'II' then sum(subtotaldanais)
+                                        when kodemataanggaran = 'III' then sum(subtotaldanais)
+                                    end as subtotaldanais,
+                                    case 
+                                        when kodemataanggaran = 'A' then sum(subtotalsilpa)
+                                        when kodemataanggaran = 'B' then sum(subtotalsilpa)
+                                        when kodemataanggaran = 'II' then sum(subtotalsilpa)
+                                        when kodemataanggaran = 'III' then sum(subtotalsilpa)
+                                    end as subtotalsilpa
+
             from(
                 select id, tahap,
                 case 
@@ -9941,11 +10235,36 @@ class ReportController extends ApiController{
                                                 when kodemataanggaran ilike 'I.B.%' then sum(subtotaljasalayanan)
                                                 when kodemataanggaran ilike 'II.%' then sum(subtotaljasalayanan)
                                                 when kodemataanggaran ilike 'III.%' then sum(subtotaljasalayanan)
-                                            end as subtotaljasalayanan
+                                            end as subtotaljasalayanan,
+
+                                            case 
+                                                when kodemataanggaran ilike 'I.A.%' then sum(subtotaldak)
+                                                when kodemataanggaran ilike 'I.B.%' then sum(subtotaldak)
+                                                when kodemataanggaran ilike 'II.%' then sum(subtotaldak)
+                                                when kodemataanggaran ilike 'III.%' then sum(subtotaldak)
+                                            end as subtotaldak,
+                                            case 
+                                                when kodemataanggaran ilike 'I.A.%' then sum(subtotaldanais)
+                                                when kodemataanggaran ilike 'I.B.%' then sum(subtotaldanais)
+                                                when kodemataanggaran ilike 'II.%' then sum(subtotaldanais)
+                                                when kodemataanggaran ilike 'III.%' then sum(subtotaldanais)
+                                            end as subtotaldanais,
+                                            case 
+                                                when kodemataanggaran ilike 'I.A.%' then sum(subtotalsilpa)
+                                                when kodemataanggaran ilike 'I.B.%' then sum(subtotalsilpa)
+                                                when kodemataanggaran ilike 'II.%' then sum(subtotalsilpa)
+                                                when kodemataanggaran ilike 'III.%' then sum(subtotalsilpa)
+                                            end as subtotalsilpa
+
                             from(
                             select ta.id, ta.tahap, mat.kodemataanggaran, mat.namamataanggaran, kb.keteranganbelanja,
                                 case when ap.id = 15 then sum(kb.subtotal) end as subtotalapbd,
-                                case when ap.id = 18 then sum(kb.subtotal) end as subtotaljasalayanan
+
+                                case when ap.id = 18 then sum(kb.subtotal) end as subtotaljasalayanan,
+                                case when ap.id = 21 then sum(kb.subtotal) end as subtotaldak,
+                                case when ap.id = 2 then sum(kb.subtotal) end as subtotaldanais,
+                                case when ap.id = 4 then sum(kb.subtotal) end as subtotalsilpa
+
                             from kegiatananggaran_m km
                             inner join kegiatananggaran_m kms on km.kode ilike kms.kode || '%' and kms.div = 3
                             left join kegiatananggaran_m kmss on km.kode ilike kmss.kode || '%' and kmss.div = 2
@@ -10662,7 +10981,9 @@ class ReportController extends ApiController{
         $tahun = $request['tahun'];
         $tahap = $request['tahap'];
         $settingrba = DB::select(DB::raw("
-        select pg.namalengkap, pg.nippns from settinganggaran_t sa
+
+        select sa.*, pg.reportdisplay as namalengkap, pg.nippns from settinganggaran_t sa
+
         inner join pegawai_m pg on pg.id = sa.objectkepalabludfk
         where sa.statusenabled = true
         "));
@@ -10682,7 +11003,8 @@ class ReportController extends ApiController{
             $subsubkegiatan =  ' and dp.id =  ' . $request['subsubkegiatan'];
         }
 
-        $data = DB::select(DB::raw("select dp.tahun, dp.kode kodesubsubkegiatan, dp.keterangan keterangansubsubkegiatan,
+        $data = DB::select(DB::raw("select dp.tahun, dp.kode kodesubsubkegiatan, split_part(dp.keterangan, '-', 2) keterangansubsubkegiatan,
+
         dp0.kode kodesubkegiatan, dp0.keterangan keterangansubkegiatan,
         dp3.kode kodekegiatan, dp3.keterangan keterangankegiatan,
         dp2.kode kodeprogram, dp2.keterangan keteranganprogram,
@@ -10723,11 +11045,26 @@ class ReportController extends ApiController{
             when kodemataanggaran = 'A' then sum(subtotaljasalayanan)
             when kodemataanggaran = 'B' then sum(subtotaljasalayanan)
         end as subtotaljasalayanan,
-				case 
+		case 
             when kodemataanggaran = 'A' then sum(subtotalapbd)
             when kodemataanggaran = 'B' then sum(subtotalapbd)
-        end as subtotalapbd
-        from(
+        end as subtotalapbd,
+        case 
+        when kodemataanggaran ilike 'A' then sum(subtotaldak)
+        when kodemataanggaran ilike 'B' then sum(subtotaldak)
+        end as subtotaldak,			
+        case 
+        when kodemataanggaran ilike 'A' then sum(subtotaldanais)
+        when kodemataanggaran ilike 'B' then sum(subtotaldanais)
+        end as subtotaldanais,			
+        case 
+        when kodemataanggaran ilike 'A' then sum(subtotalsilpa)
+        when kodemataanggaran ilike 'B' then sum(subtotalsilpa)
+        end as subtotalsilpa, 
+
+        2 as isRincian, 0 as len3, 0 as len4			
+
+    from(
             select id, tahap, jml, satuan, hargasatuan,
             case 
                 when kodemataanggaran ilike 'I.A.%' then 'A'
@@ -10740,11 +11077,32 @@ class ReportController extends ApiController{
 						case 
                 when kodemataanggaran ilike 'I.A.%' then sum(subtotalapbd)
                 when kodemataanggaran ilike 'I.B.%' then sum(subtotalapbd)
-            end as subtotalapbd
+            end as subtotalapbd,
+            case 
+            when kodemataanggaran ilike 'I.A.%' then sum(subtotaldak)
+            when kodemataanggaran ilike 'I.B.%' then sum(subtotaldak)
+            end as subtotaldak,			  
+            case 
+            when kodemataanggaran ilike 'I.A.%' then sum(subtotaldanais)
+            when kodemataanggaran ilike 'I.B.%' then sum(subtotaldanais)
+            end as subtotaldanais,			    
+            case 
+            when kodemataanggaran ilike 'I.A.%' then sum(subtotalsilpa)
+            when kodemataanggaran ilike 'I.B.%' then sum(subtotalsilpa)
+            end as subtotalsilpa,
+            
+            2 as isRincian, 0 as len3, 0 as len4
+    
             from(
                         select ta.id, ta.tahap, mat.kodemataanggaran, mat.namamataanggaran, kb.keteranganbelanja, 0 jml, '' satuan, 0 hargasatuan, 
 						case when ap.id = 18 then sum(kb.subtotal) else 0 end as subtotaljasalayanan,
-						case when ap.id = 15 then sum(kb.subtotal) else 0 end as subtotalapbd
+						case when ap.id = 15 then sum(kb.subtotal) else 0 end as subtotalapbd,
+						case when ap.id = 21 then sum(kb.subtotal) else 0 end as subtotaldak,
+						case when ap.id = 2 then sum(kb.subtotal) else 0 end as subtotaldanais,
+						case when ap.id = 4 then sum(kb.subtotal) else 0 end as subtotalsilpa,
+
+                        2 as isRincian, 0 as len3, 0 as len4
+
                         from kegiatananggaran_m km
                         inner join kegiatananggaran_m kms on km.kode ilike kms.kode || '%' and kms.div = 3
                         left join kegiatananggaran_m kmss on km.kode ilike kmss.kode || '%' and kmss.div = 2
@@ -10776,12 +11134,21 @@ class ReportController extends ApiController{
         union all
 
         select kodemataanggaran, keterangan, id, tahap, jml, satuan, hargasatuan, sum(subtotaljasalayanan) subtotaljasalayanan,
-				sum(subtotalapbd) subtotalapbd
-				from(
+				sum(subtotalapbd) subtotalapbd, sum(subtotaldak) subtotaldak, sum(subtotaldanais) subtotaldanais, sum(subtotalsilpa) subtotalsilpa, 
+                
+                3 as isRincian, LENGTH(split_part(kodemataanggaran, '.', 3)) len3, 0 as len4
+				
+                from(
 					select mat.kodemataanggaran, mat.namamataanggaran keterangan,ta.id, ta.tahap, 0 jml, '' satuan, 0 hargasatuan, 
 					case when ap.id = 18 then sum(kb.subtotal) else 0 end as subtotaljasalayanan,
-					case when ap.id = 15 then sum(kb.subtotal) else 0 end as subtotalapbd
-					from kegiatananggaran_m km
+                    case when ap.id = 15 then sum(kb.subtotal) else 0 end as subtotalapbd,
+                    case when ap.id = 21 then sum(kb.subtotal) else 0 end as subtotaldak,
+                    case when ap.id = 2 then sum(kb.subtotal) else 0 end as subtotaldanais,
+                    case when ap.id = 4 then sum(kb.subtotal) else 0 end as subtotalsilpa,
+
+                    3 as isRincian, LENGTH(split_part(mat.kodemataanggaran, '.', 3)) len3, 0 as len4
+
+                    from kegiatananggaran_m km
 					inner join kegiatananggaran_m kms on km.kode ilike kms.kode || '%' and kms.div = 3
 					left join kegiatananggaran_m kmss on km.kode ilike kmss.kode || '%' and kmss.div = 2
 					inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
@@ -10810,12 +11177,21 @@ class ReportController extends ApiController{
         union all
 				
 				select kodemataanggaran, keterangan, id, tahap, jml, satuan, hargasatuan, sum(subtotaljasalayanan) subtotaljasalayanan,
-				sum(subtotalapbd) subtotalapbd
-				from(
+				sum(subtotalapbd) subtotalapbd, sum(subtotaldak) subtotaldak, sum(subtotaldanais) subtotaldanais, sum(subtotalsilpa) subtotalsilpa, 
+                
+                1 as isRincian, 0 as len3, 0 as len4
+				
+                from(
 					select mat.kodemataanggaran, mat.namamataanggaran keterangan, ta.id, ta.tahap, 0 jml, '' satuan, 0 hargasatuan, 
 					case when ap.id = 18 then sum(kb.subtotal) else 0 end as subtotaljasalayanan,
-					case when ap.id = 15 then sum(kb.subtotal) else 0 end as subtotalapbd
-					from kegiatananggaran_m km
+                    case when ap.id = 15 then sum(kb.subtotal) else 0 end as subtotalapbd,
+                    case when ap.id = 21 then sum(kb.subtotal) else 0 end as subtotaldak,
+                    case when ap.id = 2 then sum(kb.subtotal) else 0 end as subtotaldanais,
+                    case when ap.id = 4 then sum(kb.subtotal) else 0 end as subtotalsilpa,
+
+                    1 as isRincian, 0 as len3, 0 as len4
+
+                    from kegiatananggaran_m km
 					inner join kegiatananggaran_m kms on km.kode ilike kms.kode || '%' and kms.div = 3
 					left join kegiatananggaran_m kmss on km.kode ilike kmss.kode || '%' and kmss.div = 2
 					inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
@@ -10843,11 +11219,21 @@ class ReportController extends ApiController{
 
         union all
                 
-        SELECT zx.kodemataanggaran, zx.keterangan, zx.id, zx.tahap, zx.jml, zx.satuan, zx.hargasatuan, sum(zx.subtotaljasalayanan)as subtotaljasalayanan, sum(zx.subtotalapbd)as  subtotalapbd FROM (
+        SELECT zx.kodemataanggaran, zx.keterangan, zx.id, zx.tahap, zx.jml, zx.satuan, zx.hargasatuan, sum(zx.subtotaljasalayanan)as subtotaljasalayanan, sum(zx.subtotalapbd)as  subtotalapbd, sum(zx.subtotaldak)as subtotaldak, sum(zx.subtotaldanais)as subtotaldanais, sum(zx.subtotalsilpa)as subtotalsilpa,
+
+        4 as isRincian, LENGTH(split_part(zx.kodemataanggaran, '.', 3)) len3, LENGTH(split_part(zx.kodemataanggaran, '.', 4)) len4
+
+        FROM (
         select ma.kodemataanggaran, ma.namamataanggaran keterangan, ta.id, ta.tahap, 0 jml, '' satuan, 0 hargasatuan, 
 				case when ap.id = 18 then sum(kb.subtotal) else 0 end as subtotaljasalayanan,
-				case when ap.id = 15 then sum(kb.subtotal) else 0 end as subtotalapbd
-        from kegiatananggaran_m km
+                case when ap.id = 15 then sum(kb.subtotal) else 0 end as subtotalapbd,
+                case when ap.id = 21 then sum(kb.subtotal) else 0 end as subtotaldak,
+                case when ap.id = 2 then sum(kb.subtotal) else 0 end as subtotaldanais,
+                case when ap.id = 4 then sum(kb.subtotal) else 0 end as subtotalsilpa,
+
+                4 as isRincian, LENGTH(split_part(ma.kodemataanggaran, '.', 3)) len3, LENGTH(split_part(ma.kodemataanggaran, '.', 4)) len4
+
+from kegiatananggaran_m km
         inner join kegiatananggaran_m kms on km.kode ilike kms.kode || '%' and kms.div = 3
         left join kegiatananggaran_m kmss on km.kode ilike kmss.kode || '%' and kmss.div = 2
         inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
@@ -10878,8 +11264,14 @@ GROUP BY zx.kodemataanggaran, zx.keterangan, zx.id, zx.tahap, zx.jml, zx.satuan,
 
 				select ma.kodemataanggaran, kb.keteranganbelanja keterangan, ta.id, ta.tahap, kb.jml, kb.satuan, kb.hargasatuan,  
 				case when ap.id = 18 then sum(kb.subtotal) else 0 end as subtotaljasalayanan,
-				case when ap.id = 15 then sum(kb.subtotal) else 0 end as subtotalapbd
-        from kegiatananggaran_m km
+                case when ap.id = 15 then sum(kb.subtotal) else 0 end as subtotalapbd,
+                case when ap.id = 21 then sum(kb.subtotal) else 0 end as subtotaldak,
+                case when ap.id = 2 then sum(kb.subtotal) else 0 end as subtotaldanais,
+                case when ap.id = 4 then sum(kb.subtotal) else 0 end as subtotalsilpa,
+
+                5 as isRincian, LENGTH(split_part(ma.kodemataanggaran, '.', 3)) len3, LENGTH(split_part(ma.kodemataanggaran, '.', 4)) len4
+
+from kegiatananggaran_m km
         inner join kegiatananggaran_m kms on km.kode ilike kms.kode || '%' and kms.div = 3
         left join kegiatananggaran_m kmss on km.kode ilike kmss.kode || '%' and kmss.div = 2
         inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
@@ -10906,7 +11298,7 @@ GROUP BY zx.kodemataanggaran, zx.keterangan, zx.id, zx.tahap, zx.jml, zx.satuan,
         
 
 		order by kodemataanggaran, jml, hargasatuan, satuan) as yyy
-        order by split_part(yyy.kodemataanggaran, '.', 1),split_part(yyy.kodemataanggaran, '.', 2),split_part(yyy.kodemataanggaran, '.', 3),split_part(yyy.kodemataanggaran, '.', 4),CASE WHEN split_part(yyy.kodemataanggaran, '.', 5) <> '' THEN split_part(yyy.kodemataanggaran, '.', 5)::int ELSE 0 END
+        order by split_part(yyy.kodemataanggaran, '.', 1),split_part(yyy.kodemataanggaran, '.', 2),len3,split_part(yyy.kodemataanggaran, '.', 3),len4,split_part(yyy.kodemataanggaran, '.', 4),CASE WHEN split_part(yyy.kodemataanggaran, '.', 5) <> '' THEN split_part(yyy.kodemataanggaran, '.', 5)::int ELSE 0 END
         , yyy.jml , yyy.hargasatuan, yyy.satuan
         "));
 
@@ -11014,13 +11406,17 @@ GROUP BY zx.kodemataanggaran, zx.keterangan, zx.id, zx.tahap, zx.jml, zx.satuan,
         if($request['terhadap'] == $request['tahap']){
             $qsama = 'and a.subtotaljasalayanan = b.subtotaljasalayanan
             and a.subtotalapbd = b.subtotalapbd
+            and a.subtotaldak = b.subtotaldak
+            and a.subtotaldanais = b.subtotaldanais
+            and a.subtotalsilpa = b.subtotalsilpa
             and a.jml = b.jml
             and a.satuan = b.satuan
             and a.hargasatuan = b.hargasatuan';
         }
         
 
-        $data = DB::select(DB::raw("select dp.tahun, dp.kode kodesubsubkegiatan, dp.keterangan keterangansubsubkegiatan,
+        $data = DB::select(DB::raw("select dp.tahun, dp.kode kodesubsubkegiatan, split_part(dp.keterangan, '-', 2) keterangansubsubkegiatan,
+
         dp0.kode kodesubkegiatan, dp0.keterangan keterangansubkegiatan,
         dp3.kode kodekegiatan, dp3.keterangan keterangankegiatan,
         dp2.kode kodeprogram, dp2.keterangan keteranganprogram,
@@ -11046,7 +11442,8 @@ GROUP BY zx.kodemataanggaran, zx.keterangan, zx.id, zx.tahap, zx.jml, zx.satuan,
         dp1.kode, dp1.keterangan, 
         dp.indikatormasuk, dp.indikatorkeluaran, dp.indikatorhasil, dp.targetmasuk, dp.targetkeluaran, dp.targethasil"));     
 
-        $datasebelum = DB::select(DB::raw("select dp.tahun, dp.kode kodesubsubkegiatan, dp.keterangan keterangansubsubkegiatan,
+        $datasebelum = DB::select(DB::raw("select dp.tahun, dp.kode kodesubsubkegiatan, split_part(dp.keterangan, '-', 2) keterangansubsubkegiatan,
+
         dp0.kode kodesubkegiatan, dp0.keterangan keterangansubkegiatan,
         dp3.kode kodekegiatan, dp3.keterangan keterangankegiatan,
         dp2.kode kodeprogram, dp2.keterangan keteranganprogram,
@@ -11075,7 +11472,7 @@ GROUP BY zx.kodemataanggaran, zx.keterangan, zx.id, zx.tahap, zx.jml, zx.satuan,
 
         $sebelum = DB::select(DB::raw("
         select * from(select distinct a.*, b.jml jmlsetelah, b.satuan satuansetelah, b.hargasatuan hargasatuansetelah,
-        b.subtotaljasalayanan subtotaljasalayanansetelah, b.subtotalapbd subtotalapbdsetelah FROM
+        b.subtotaljasalayanan subtotaljasalayanansetelah, b.subtotalapbd subtotalapbdsetelah, b.subtotaldak subtotaldaksetelah, b.subtotaldanais subtotaldanaissetelah, b.subtotalsilpa subtotalsilpasetelah FROM
         (
 
 		select 
@@ -11092,11 +11489,25 @@ GROUP BY zx.kodemataanggaran, zx.keterangan, zx.id, zx.tahap, zx.jml, zx.satuan,
             when kodemataanggaran = 'A' then sum(subtotaljasalayanan)
             when kodemataanggaran = 'B' then sum(subtotaljasalayanan)
         end as subtotaljasalayanan,
-				case 
+		case 
             when kodemataanggaran = 'A' then sum(subtotalapbd)
             when kodemataanggaran = 'B' then sum(subtotalapbd)
         end as subtotalapbd
-        from(
+
+        case 
+            when kodemataanggaran = 'A' then sum(subtotaldak)
+            when kodemataanggaran = 'B' then sum(subtotaldak)
+        end as subtotaldak
+        case 
+            when kodemataanggaran = 'A' then sum(subtotaldanais)
+            when kodemataanggaran = 'B' then sum(subtotaldanais)
+        end as subtotaldanais
+        case 
+            when kodemataanggaran = 'A' then sum(subtotalsilpa)
+            when kodemataanggaran = 'B' then sum(subtotalsilpa)
+        end as subtotalsilpa
+
+    from(
             select id, tahap, jml, satuan, hargasatuan,
             case 
                 when kodemataanggaran ilike 'I.A.%' then 'A'
@@ -11106,14 +11517,33 @@ GROUP BY zx.kodemataanggaran, zx.keterangan, zx.id, zx.tahap, zx.jml, zx.satuan,
                 when kodemataanggaran ilike 'I.A.%' then sum(subtotaljasalayanan)
                 when kodemataanggaran ilike 'I.B.%' then sum(subtotaljasalayanan)
             end as subtotaljasalayanan,
-						case 
+			case 
                 when kodemataanggaran ilike 'I.A.%' then sum(subtotalapbd)
                 when kodemataanggaran ilike 'I.B.%' then sum(subtotalapbd)
             end as subtotalapbd
+
+			case 
+                when kodemataanggaran ilike 'I.A.%' then sum(subtotaldak)
+                when kodemataanggaran ilike 'I.B.%' then sum(subtotaldak)
+            end as subtotaldak
+			case 
+                when kodemataanggaran ilike 'I.A.%' then sum(subtotaldanais)
+                when kodemataanggaran ilike 'I.B.%' then sum(subtotaldanais)
+            end as subtotaldanais
+			case 
+                when kodemataanggaran ilike 'I.A.%' then sum(subtotalsilpa)
+                when kodemataanggaran ilike 'I.B.%' then sum(subtotalsilpa)
+            end as subtotalsilpa
+            
             from(
                         select ta.id, ta.tahap, mat.kodemataanggaran, mat.namamataanggaran, kb.keteranganbelanja, 0 jml, '' satuan, 0 hargasatuan, 
 												case when ap.id = 18 then sum(kb.subtotal) else 0 end as subtotaljasalayanan,
-												case when ap.id = 15 then sum(kb.subtotal) else 0 end as subtotalapbd
+
+												case when ap.id = 15 then sum(kb.subtotal) else 0 end as subtotalapbd,
+												case when ap.id = 21 then sum(kb.subtotal) else 0 end as subtotaldak,
+												case when ap.id = 2 then sum(kb.subtotal) else 0 end as subtotaldanais,
+												case when ap.id = 4 then sum(kb.subtotal) else 0 end as subtotalsilpa
+
                         from kegiatananggaran_m km
                         inner join kegiatananggaran_m kms on km.kode ilike kms.kode || '%' and kms.div = 3
                         left join kegiatananggaran_m kmss on km.kode ilike kmss.kode || '%' and kmss.div = 2
@@ -11145,11 +11575,16 @@ GROUP BY zx.kodemataanggaran, zx.keterangan, zx.id, zx.tahap, zx.jml, zx.satuan,
         union all
 				
 				select kodemataanggaran, keterangan, id, tahap, jml, satuan, hargasatuan, sum(subtotaljasalayanan) subtotaljasalayanan,
-				sum(subtotalapbd) subtotalapbd
+				sum(subtotalapbd) subtotalapbd, sum(subtotaldak) subtotaldak, sum(subtotaldanais) subtotaldanais, sum(subtotalsilpa) subtotalsilpa
 				from(
 					select mat.kodemataanggaran, mat.namamataanggaran keterangan,ta.id, ta.tahap, 0 jml, '' satuan, 0 hargasatuan, 
 					case when ap.id = 18 then sum(kb.subtotal) else 0 end as subtotaljasalayanan,
-					case when ap.id = 15 then sum(kb.subtotal) else 0 end as subtotalapbd
+
+												case when ap.id = 15 then sum(kb.subtotal) else 0 end as subtotalapbd,
+												case when ap.id = 21 then sum(kb.subtotal) else 0 end as subtotaldak,
+												case when ap.id = 2 then sum(kb.subtotal) else 0 end as subtotaldanais,
+												case when ap.id = 4 then sum(kb.subtotal) else 0 end as subtotalsilpa
+
 					from kegiatananggaran_m km
 					inner join kegiatananggaran_m kms on km.kode ilike kms.kode || '%' and kms.div = 3
 					left join kegiatananggaran_m kmss on km.kode ilike kmss.kode || '%' and kmss.div = 2
@@ -11179,12 +11614,17 @@ GROUP BY zx.kodemataanggaran, zx.keterangan, zx.id, zx.tahap, zx.jml, zx.satuan,
         union all
 				
 				select kodemataanggaran, keterangan, id, tahap, jml, satuan, hargasatuan, sum(subtotaljasalayanan) subtotaljasalayanan,
-				sum(subtotalapbd) subtotalapbd
+				sum(subtotalapbd) subtotalapbd, sum(subtotaldak) subtotaldak, sum(subtotaldanais) subtotaldanais, sum(subtotalsilpa) subtotalsilpa
 				from(
 					select mat.kodemataanggaran, mat.namamataanggaran keterangan, ta.id, ta.tahap, 0 jml, '' satuan, 0 hargasatuan, 
 					case when ap.id = 18 then sum(kb.subtotal) else 0 end as subtotaljasalayanan,
-					case when ap.id = 15 then sum(kb.subtotal) else 0 end as subtotalapbd
-					from kegiatananggaran_m km
+
+                    case when ap.id = 15 then sum(kb.subtotal) else 0 end as subtotalapbd,
+                    case when ap.id = 21 then sum(kb.subtotal) else 0 end as subtotaldak,
+                    case when ap.id = 2 then sum(kb.subtotal) else 0 end as subtotaldanais,
+                    case when ap.id = 4 then sum(kb.subtotal) else 0 end as subtotalsilpa
+
+from kegiatananggaran_m km
 					inner join kegiatananggaran_m kms on km.kode ilike kms.kode || '%' and kms.div = 3
 					left join kegiatananggaran_m kmss on km.kode ilike kmss.kode || '%' and kmss.div = 2
 					inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
@@ -11214,8 +11654,13 @@ GROUP BY zx.kodemataanggaran, zx.keterangan, zx.id, zx.tahap, zx.jml, zx.satuan,
 
         select ma.kodemataanggaran, ma.namamataanggaran keterangan, ta.id, ta.tahap, 0 jml, '' satuan, 0 hargasatuan, 
 				case when ap.id = 18 then sum(kb.subtotal) else 0 end as subtotaljasalayanan,
-				case when ap.id = 15 then sum(kb.subtotal) else 0 end as subtotalapbd
-        from kegiatananggaran_m km
+
+                case when ap.id = 15 then sum(kb.subtotal) else 0 end as subtotalapbd,
+                case when ap.id = 21 then sum(kb.subtotal) else 0 end as subtotaldak,
+                case when ap.id = 2 then sum(kb.subtotal) else 0 end as subtotaldanais,
+                case when ap.id = 4 then sum(kb.subtotal) else 0 end as subtotalsilpa
+
+from kegiatananggaran_m km
         inner join kegiatananggaran_m kms on km.kode ilike kms.kode || '%' and kms.div = 3
         left join kegiatananggaran_m kmss on km.kode ilike kmss.kode || '%' and kmss.div = 2
         inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
@@ -11244,7 +11689,12 @@ GROUP BY zx.kodemataanggaran, zx.keterangan, zx.id, zx.tahap, zx.jml, zx.satuan,
 
 				select ma.kodemataanggaran, kb.keteranganbelanja keterangan, ta.id, ta.tahap, kb.jml, kb.satuan, kb.hargasatuan,  
 				case when ap.id = 18 then sum(kb.subtotal) else 0 end as subtotaljasalayanan,
-				case when ap.id = 15 then sum(kb.subtotal) else 0 end as subtotalapbd
+
+												case when ap.id = 15 then sum(kb.subtotal) else 0 end as subtotalapbd,
+												case when ap.id = 21 then sum(kb.subtotal) else 0 end as subtotaldak,
+												case when ap.id = 2 then sum(kb.subtotal) else 0 end as subtotaldanais,
+												case when ap.id = 4 then sum(kb.subtotal) else 0 end as subtotalsilpa
+
         from kegiatananggaran_m km
         inner join kegiatananggaran_m kms on km.kode ilike kms.kode || '%' and kms.div = 3
         left join kegiatananggaran_m kmss on km.kode ilike kmss.kode || '%' and kmss.div = 2
@@ -11293,10 +11743,24 @@ inner join(
             when kodemataanggaran = 'A' then sum(subtotaljasalayanan)
             when kodemataanggaran = 'B' then sum(subtotaljasalayanan)
         end as subtotaljasalayanan,
-				case 
+		case 
             when kodemataanggaran = 'A' then sum(subtotalapbd)
             when kodemataanggaran = 'B' then sum(subtotalapbd)
         end as subtotalapbd
+
+        case
+            when kodemataanggaran = 'A' then sum(subtotaldak)
+            when kodemataanggaran = 'B' then sum(subtotaldak)
+        end as subtotaldak
+        case
+            when kodemataanggaran = 'A' then sum(subtotaldanais)
+            when kodemataanggaran = 'B' then sum(subtotaldanais)
+        end as subtotaldanais
+        case
+            when kodemataanggaran = 'A' then sum(subtotalsilpa)
+            when kodemataanggaran = 'B' then sum(subtotalsilpa)
+        end as subtotalsilpa
+
         from(
             select id, tahap, jml, satuan, hargasatuan,
             case 
@@ -11307,14 +11771,33 @@ inner join(
                 when kodemataanggaran ilike 'I.A.%' then sum(subtotaljasalayanan)
                 when kodemataanggaran ilike 'I.B.%' then sum(subtotaljasalayanan)
             end as subtotaljasalayanan,
-						case 
+			case 
                 when kodemataanggaran ilike 'I.A.%' then sum(subtotalapbd)
                 when kodemataanggaran ilike 'I.B.%' then sum(subtotalapbd)
             end as subtotalapbd
+
+			case 
+                when kodemataanggaran ilike 'I.A.%' then sum(subtotaldak)
+                when kodemataanggaran ilike 'I.B.%' then sum(subtotaldak)
+            end as subtotaldak
+			case 
+                when kodemataanggaran ilike 'I.A.%' then sum(subtotaldanais)
+                when kodemataanggaran ilike 'I.B.%' then sum(subtotaldanais)
+            end as subtotaldanais
+			case 
+                when kodemataanggaran ilike 'I.A.%' then sum(subtotalsilpa)
+                when kodemataanggaran ilike 'I.B.%' then sum(subtotalsilpa)
+            end as subtotalsilpa
+            
             from(
                         select ta.id, ta.tahap, mat.kodemataanggaran, mat.namamataanggaran, kb.keteranganbelanja, 0 jml, '' satuan, 0 hargasatuan, 
 												case when ap.id = 18 then sum(kb.subtotal) else 0 end as subtotaljasalayanan,
-												case when ap.id = 15 then sum(kb.subtotal) else 0 end as subtotalapbd
+
+												case when ap.id = 15 then sum(kb.subtotal) else 0 end as subtotalapbd,
+												case when ap.id = 21 then sum(kb.subtotal) else 0 end as subtotaldak,
+												case when ap.id = 2 then sum(kb.subtotal) else 0 end as subtotaldanais,
+												case when ap.id = 4 then sum(kb.subtotal) else 0 end as subtotalsilpa
+
                         from kegiatananggaran_m km
                         inner join kegiatananggaran_m kms on km.kode ilike kms.kode || '%' and kms.div = 3
                         left join kegiatananggaran_m kmss on km.kode ilike kmss.kode || '%' and kmss.div = 2
@@ -11346,11 +11829,16 @@ inner join(
         union all
 				
 				select kodemataanggaran, keterangan, id, tahap, jml, satuan, hargasatuan, sum(subtotaljasalayanan) subtotaljasalayanan,
-				sum(subtotalapbd) subtotalapbd
+				sum(subtotalapbd) subtotalapbd, sum(subtotaldak) subtotaldak, sum(subtotaldanais) subtotaldanais, sum(subtotalsilpa) subtotalsilpa
 				from(
 					select mat.kodemataanggaran, mat.namamataanggaran keterangan,ta.id, ta.tahap, 0 jml, '' satuan, 0 hargasatuan, 
 					case when ap.id = 18 then sum(kb.subtotal) else 0 end as subtotaljasalayanan,
-					case when ap.id = 15 then sum(kb.subtotal) else 0 end as subtotalapbd
+
+												case when ap.id = 15 then sum(kb.subtotal) else 0 end as subtotalapbd,
+												case when ap.id = 21 then sum(kb.subtotal) else 0 end as subtotaldak,
+												case when ap.id = 2 then sum(kb.subtotal) else 0 end as subtotaldanais,
+												case when ap.id = 4 then sum(kb.subtotal) else 0 end as subtotalsilpa
+
 					from kegiatananggaran_m km
 					inner join kegiatananggaran_m kms on km.kode ilike kms.kode || '%' and kms.div = 3
 					left join kegiatananggaran_m kmss on km.kode ilike kmss.kode || '%' and kmss.div = 2
@@ -11380,12 +11868,17 @@ inner join(
         union all
 				
 				select kodemataanggaran, keterangan, id, tahap, jml, satuan, hargasatuan, sum(subtotaljasalayanan) subtotaljasalayanan,
-				sum(subtotalapbd) subtotalapbd
+				sum(subtotalapbd) subtotalapbd, sum(subtotaldak) subtotaldak, sum(subtotaldanais) subtotaldanais, sum(subtotalsilpa) subtotalsilpa
 				from(
 					select mat.kodemataanggaran, mat.namamataanggaran keterangan, ta.id, ta.tahap, 0 jml, '' satuan, 0 hargasatuan, 
 					case when ap.id = 18 then sum(kb.subtotal) else 0 end as subtotaljasalayanan,
-					case when ap.id = 15 then sum(kb.subtotal) else 0 end as subtotalapbd
-					from kegiatananggaran_m km
+
+                    case when ap.id = 15 then sum(kb.subtotal) else 0 end as subtotalapbd,
+                    case when ap.id = 21 then sum(kb.subtotal) else 0 end as subtotaldak,
+                    case when ap.id = 2 then sum(kb.subtotal) else 0 end as subtotaldanais,
+                    case when ap.id = 4 then sum(kb.subtotal) else 0 end as subtotalsilpa
+
+from kegiatananggaran_m km
 					inner join kegiatananggaran_m kms on km.kode ilike kms.kode || '%' and kms.div = 3
 					left join kegiatananggaran_m kmss on km.kode ilike kmss.kode || '%' and kmss.div = 2
 					inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
@@ -11415,8 +11908,13 @@ inner join(
 
         select ma.kodemataanggaran, ma.namamataanggaran keterangan, ta.id, ta.tahap, 0 jml, '' satuan, 0 hargasatuan, 
 				case when ap.id = 18 then sum(kb.subtotal) else 0 end as subtotaljasalayanan,
-				case when ap.id = 15 then sum(kb.subtotal) else 0 end as subtotalapbd
-        from kegiatananggaran_m km
+
+                case when ap.id = 15 then sum(kb.subtotal) else 0 end as subtotalapbd,
+                case when ap.id = 21 then sum(kb.subtotal) else 0 end as subtotaldak,
+                case when ap.id = 2 then sum(kb.subtotal) else 0 end as subtotaldanais,
+                case when ap.id = 4 then sum(kb.subtotal) else 0 end as subtotalsilpa
+
+from kegiatananggaran_m km
         inner join kegiatananggaran_m kms on km.kode ilike kms.kode || '%' and kms.div = 3
         left join kegiatananggaran_m kmss on km.kode ilike kmss.kode || '%' and kmss.div = 2
         inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
@@ -11445,7 +11943,11 @@ inner join(
 
 				select ma.kodemataanggaran, kb.keteranganbelanja keterangan, ta.id, ta.tahap, kb.jml, kb.satuan, kb.hargasatuan,  
 				case when ap.id = 18 then sum(kb.subtotal) else 0 end as subtotaljasalayanan,
-				case when ap.id = 15 then sum(kb.subtotal) else 0 end as subtotalapbd
+
+												case when ap.id = 15 then sum(kb.subtotal) else 0 end as subtotalapbd,
+												case when ap.id = 21 then sum(kb.subtotal) else 0 end as subtotaldak,
+												case when ap.id = 2 then sum(kb.subtotal) else 0 end as subtotaldanais,
+												case when ap.id = 4 then sum(kb.subtotal) else 0 end as subtotalsilpa                                                
         from kegiatananggaran_m km
         inner join kegiatananggaran_m kms on km.kode ilike kms.kode || '%' and kms.div = 3
         left join kegiatananggaran_m kmss on km.kode ilike kmss.kode || '%' and kmss.div = 2
@@ -11474,7 +11976,7 @@ inner join(
 
 		order by kodemataanggaran, jml, hargasatuan, satuan
 
-        ) as b on a.kodemataanggaran = b.kodemataanggaran and a.keterangan = b.keterangan
+        ) as b on a.kod emataanggaran = b.kodemataanggaran and a.keterangan = b.keterangan
         $qsama) as yyy
         order by split_part(yyy.kodemataanggaran, '.', 1),split_part(yyy.kodemataanggaran, '.', 2),split_part(yyy.kodemataanggaran, '.', 3),split_part(yyy.kodemataanggaran, '.', 4),CASE WHEN split_part(yyy.kodemataanggaran, '.', 5) <> '' THEN split_part(yyy.kodemataanggaran, '.', 5)::int ELSE 0 END,
         yyy.kodemataanggaran, yyy.jml, yyy.hargasatuan, yyy.satuan
