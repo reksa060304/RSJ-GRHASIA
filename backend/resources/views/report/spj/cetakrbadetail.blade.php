@@ -256,7 +256,7 @@
 
     <table cellpadding="0" cellspacing="0"   border="0" class="tabels">
         <tr>
-            <td colspan="4" align="center" style="padding: 10px; width: 97px; font-weight: bold ">Indikator</td>
+            <td colspan="4" align="center" style="padding: 10px; width: 80px; font-weight: bold ">Indikator</td>
             <td colspan="4" align="center" style="padding: 10px; width: 300px; font-weight: bold ">Tolok Ukur</td>
             <td colspan="5" align="center" style="padding: 10px; font-weight: bold ">Target Kinerja</td>
         </tr>
@@ -284,10 +284,24 @@
         <tr>
             <td colspan="4" align="left" style="padding: 5px;">Keluaran</td>
             <td colspan="4" align="left" style="padding: 5px;">
-                <textarea name="" id="" cols="60" rows="7" style="font-size: 11pt;">{{ $data[0]->indikatorkeluaran }}</textarea>
+                @php
+                    $indikatorkeluaran = explode(chr(10), $data[0]->indikatorkeluaran);            
+                for ($i = 0; $i < count($indikatorkeluaran); $i++) {
+                    echo "$indikatorkeluaran[$i]";
+                    echo "<br>";
+                }
+                @endphp
+                <!-- <textarea name="" id="" cols="60" rows="6" style="font-size: 11pt;">{{ $data[0]->indikatorkeluaran }}</textarea> -->
             </td>
             <td colspan="5" align="left" style="padding: 5px; font-size: 11pt;">
-                <textarea name="" id="" cols="60" rows="7">{{ $data[0]->targetkeluaran }}</textarea>
+                @php
+                    $targetkeluaran = explode(chr(10), $data[0]->targetkeluaran);            
+                for ($i = 0; $i < count($targetkeluaran); $i++) {
+                    echo "$targetkeluaran[$i]";
+                    echo "<br>";
+                }
+                @endphp
+                <!-- <textarea name="" id="" cols="60" rows="6">{{ $data[0]->targetkeluaran }}</textarea> -->
             </td>
         </tr>
         <tr>
@@ -374,7 +388,7 @@
         @foreach($sebelum as $sb)
         <tr>
             @php
-            $char = explode(".", $sb->kodemataanggaran);
+                $char = explode(".", $sb->kodemataanggaran);
             @endphp
 
             @if($sb->isrincian == 1)
@@ -540,7 +554,7 @@
             <td align="center" style="padding: 10px; font-weight: bold ">{{ $sb->kodemataanggaran }}</td>
             <td align="left" style="padding: 10px; font-weight: bold ">{{ $sb->keterangan }}</td>
             @endif -->
-            
+
             @if($sb->jml != 0)
             <td align="right" style="padding: 10px; ">{{ $sb->jml }}</td>
             @else
@@ -552,7 +566,7 @@
             @else
             <td align="right" style="padding: 10px; "></td>
             @endif
-            @if(strlen($sb->kodemataanggaran) < 7)
+            @if($sb->isrincian < 5)
                 <td align="right" style="padding: 10px; font-weight: bold ">@if ($sb->subtotaljasalayanan>0) {{ number_format($sb->subtotaljasalayanan,0,',','.') }} @else {{''}} @endif</td>
                 <td align="right" style="padding: 10px; font-weight: bold ">@if ($sb->subtotalapbd>0) {{ number_format($sb->subtotalapbd,0,',','.') }} @else {{''}} @endif</td>
                 <td align="right" style="padding: 10px; font-weight: bold ">@if ($sb->subtotaldak>0) {{ number_format($sb->subtotaldak,0,',','.') }} @else {{''}} @endif</td>

@@ -11002,7 +11002,7 @@ class ReportController extends ApiController{
             $qsubsubkegiatan =  ' and km.id =  ' . $request['subsubkegiatan'];
             $subsubkegiatan =  ' and dp.id =  ' . $request['subsubkegiatan'];
         }
-
+        // edit
         $data = DB::select(DB::raw("select dp.tahun, dp.kode kodesubsubkegiatan, split_part(dp.keterangan, '-', 2) keterangansubsubkegiatan,
 
         dp0.kode kodesubkegiatan, dp0.keterangan keterangansubkegiatan,
