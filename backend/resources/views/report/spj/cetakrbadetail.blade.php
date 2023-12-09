@@ -350,11 +350,11 @@
             <td align="center" rowspan="2" colspan="4" style="padding: 10px; font-weight: bold ">NO. REKENING</td>
             <td align="center" rowspan="2" style="padding: 10px; font-weight: bold ">KOMPONEN BIAYA</td>
             <td align="center" colspan="3" style="padding: 10px; font-weight: bold ">RINCIAN BIAYA</td>
+            <td align="center" colspan="5" style="padding: 10px; font-weight: bold ">JUMLAH ANGGARAN (SUMBER DANA)</td>
 
             <!-- @if($jumlahtotaljasalayanan != 0 && $jumlahtotalapbd != 0)
             <td align="center" colspan="2" style="padding: 10px; font-weight: bold ">JUMLAH ANGGARAN</td>
             @elseif($jumlahtotaljasalayanan != 0 || $jumlahtotalapbd != 0)  -->
-            <td align="center" colspan="5" style="padding: 10px; font-weight: bold ">JUMLAH ANGGARAN (SUMBER DANA)</td>
             <!-- @endif -->
 
         </tr>
