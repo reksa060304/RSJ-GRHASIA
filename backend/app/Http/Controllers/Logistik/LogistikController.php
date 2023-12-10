@@ -11602,7 +11602,7 @@ class LogistikController extends ApiController{
 
             $norecSC = $dataSC->norec;
 
-
+            $idspd = '';
             foreach ($request['stokProduk'] as $item) {
 
 
@@ -11612,14 +11612,14 @@ class LogistikController extends ApiController{
 //                    ->where('tglkadaluarsa','>', $request['tglClosing'])
                     ->orderby('tglkadaluarsa')
                     ->first();
-//                return $this->respond(count($dataSPDK));
+                    $idspd = $item['produkfk'];
+            //    return $this->respond(count($dataSPDK));
 //                if (count($dataSPDK) == 0 || $dataSPDK == null){
                 if ($dataSPDK == null){
                     $dataSPDK2 =StokProdukDetail::where('objectprodukfk', $item['produkfk'])
                         ->where('kdprofile',$idProfile)
                         ->orderby('tglkadaluarsa')
                         ->first();
-
                     if(count($dataSPDK2) != 0 || $dataSPDK2 != null){
 
                         $dataSPD = new StokProdukDetailOpname();
@@ -11895,6 +11895,7 @@ class LogistikController extends ApiController{
                 "noSO" => $dataSC,
                 "detailstok" => $dataSTOKDETAIL,
                 "dataSPDK" => $dataSPDK,
+                'erweasdasdasdr'=>$idspd,
                "line and message" =>$e->getLine().' and ' . $e->getMessage() ,
                 "by" => 'as@epic',
             );
