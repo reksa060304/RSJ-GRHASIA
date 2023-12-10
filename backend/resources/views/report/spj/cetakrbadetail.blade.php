@@ -350,11 +350,11 @@
             <td align="center" rowspan="2" colspan="4" style="padding: 10px; font-weight: bold ">NO. REKENING</td>
             <td align="center" rowspan="2" style="padding: 10px; font-weight: bold ">KOMPONEN BIAYA</td>
             <td align="center" colspan="3" style="padding: 10px; font-weight: bold ">RINCIAN BIAYA</td>
+            <td align="center" colspan="5" style="padding: 10px; font-weight: bold ">JUMLAH ANGGARAN (SUMBER DANA)</td>
 
             <!-- @if($jumlahtotaljasalayanan != 0 && $jumlahtotalapbd != 0)
             <td align="center" colspan="2" style="padding: 10px; font-weight: bold ">JUMLAH ANGGARAN</td>
             @elseif($jumlahtotaljasalayanan != 0 || $jumlahtotalapbd != 0)  -->
-            <td align="center" colspan="5" style="padding: 10px; font-weight: bold ">JUMLAH ANGGARAN (SUMBER DANA)</td>
             <!-- @endif -->
 
         </tr>
@@ -601,14 +601,35 @@
             @endif
         </tr>
         @endforeach
+
+        @php
+            $jumlahtotal1 = 0;
+            $jumlahtotal2 = 0;
+            $jumlahtotal3 = 0;
+            $jumlahtotal4 = 0;
+            $jumlahtotal5 = 0;
+        @endphp
+        @foreach($sebelum as $sb)
+            @if($sebelum != [])
+                @if($sb->kodemataanggaran == 'I' || $sb->kodemataanggaran == 'II' || $sb->kodemataanggaran == 'III')
+                @php
+                $jumlahtotal1+=$sb->subtotaljasalayanan;
+                $jumlahtotal2+=$sb->subtotalapbd;
+                $jumlahtotal3+=$sb->subtotaldak;
+                $jumlahtotal4+=$sb->subtotaldanais;
+                $jumlahtotal5+=$sb->subtotalsilpa;
+                @endphp
+                @endif
+            @endif
+            @endforeach
         <tr>
             <td align="center" colspan="8"  style="padding: 10px; font-weight: bold ">JUMLAH TOTAL</td>
         <!-- {{isset($item[190130815]) ? $item[190130815] : '' }} -->
-            <td align="right" style="padding: 10px; font-weight: bold ">@if($jumlahtotaljasalayanan > 0) {{ number_format($jumlahtotaljasalayanan,0,',','.') }} @else {{ '' }}  @endif</td>
-            <td align="right" style="padding: 10px; font-weight: bold ">@if($jumlahtotalapbd > 0) {{ number_format($jumlahtotalapbd,0,',','.') }} @else {{ '' }}  @endif</td>
-            <td align="right" style="padding: 10px; font-weight: bold ">@if($jumlahtotaldak > 0) {{ number_format($jumlahtotaldak,0,',','.') }} @else {{ '' }}  @endif</td>
-            <td align="right" style="padding: 10px; font-weight: bold ">@if($jumlahtotaldanais > 0) {{ number_format($jumlahtotaldanais,0,',','.') }} @else {{ '' }}  @endif</td>
-            <td align="right" style="padding: 10px; font-weight: bold ">@if($jumlahtotalsilpa > 0) {{ number_format($jumlahtotalsilpa,0,',','.') }} @else {{ '' }}  @endif</td>
+            <td align="right" style="padding: 10px; font-weight: bold ">@if($jumlahtotal1 > 0) {{ number_format($jumlahtotal1,0,',','.') }} @else {{ '' }}  @endif</td>
+            <td align="right" style="padding: 10px; font-weight: bold ">@if($jumlahtotal2 > 0) {{ number_format($jumlahtotal2,0,',','.') }} @else {{ '' }}  @endif</td>
+            <td align="right" style="padding: 10px; font-weight: bold ">@if($jumlahtotal3 > 0) {{ number_format($jumlahtotal3,0,',','.') }} @else {{ '' }}  @endif</td>
+            <td align="right" style="padding: 10px; font-weight: bold ">@if($jumlahtotal4 > 0) {{ number_format($jumlahtotal4,0,',','.') }} @else {{ '' }}  @endif</td>
+            <td align="right" style="padding: 10px; font-weight: bold ">@if($jumlahtotal5 > 0) {{ number_format($jumlahtotal5,0,',','.') }} @else {{ '' }}  @endif</td>
             <!-- @if($jumlahtotaljasalayanan == -1 && $jumlahtotalapbd == -1)
             <td align="right" style="padding: 10px; font-weight: bold ">{{ number_format($jumlahtotaljasalayanan,0,',','.') }}</td>
             @elseif($jumlahtotaljasalayanan == -1 && $jumlahtotalapbd == -1)

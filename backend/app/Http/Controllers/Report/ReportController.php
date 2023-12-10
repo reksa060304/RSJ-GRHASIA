@@ -11062,7 +11062,7 @@ class ReportController extends ApiController{
         when kodemataanggaran ilike 'B' then sum(subtotalsilpa)
         end as subtotalsilpa, 
 
-        2 as isRincian, 0 as len3, 0 as len4			
+        2 as isRincian, 0 as len3, 0 as len4, 0 as nourut			
 
     from(
             select id, tahap, jml, satuan, hargasatuan,
@@ -11091,7 +11091,7 @@ class ReportController extends ApiController{
             when kodemataanggaran ilike 'I.B.%' then sum(subtotalsilpa)
             end as subtotalsilpa,
             
-            2 as isRincian, 0 as len3, 0 as len4
+            2 as isRincian, 0 as len3, 0 as len4, 0 as nourut
     
             from(
                         select ta.id, ta.tahap, mat.kodemataanggaran, mat.namamataanggaran, kb.keteranganbelanja, 0 jml, '' satuan, 0 hargasatuan, 
@@ -11101,7 +11101,7 @@ class ReportController extends ApiController{
 						case when ap.id = 2 then sum(kb.subtotal) else 0 end as subtotaldanais,
 						case when ap.id = 4 then sum(kb.subtotal) else 0 end as subtotalsilpa,
 
-                        2 as isRincian, 0 as len3, 0 as len4
+                        2 as isRincian, 0 as len3, 0 as len4, 0 as nourut
 
                         from kegiatananggaran_m km
                         inner join kegiatananggaran_m kms on km.kode ilike kms.kode || '%' and kms.div = 3
@@ -11136,7 +11136,7 @@ class ReportController extends ApiController{
         select kodemataanggaran, keterangan, id, tahap, jml, satuan, hargasatuan, sum(subtotaljasalayanan) subtotaljasalayanan,
 				sum(subtotalapbd) subtotalapbd, sum(subtotaldak) subtotaldak, sum(subtotaldanais) subtotaldanais, sum(subtotalsilpa) subtotalsilpa, 
                 
-                3 as isRincian, LENGTH(split_part(kodemataanggaran, '.', 3)) len3, 0 as len4
+                3 as isRincian, LENGTH(split_part(kodemataanggaran, '.', 3)) len3, 0 as len4, 0 as nourut
 				
                 from(
 					select mat.kodemataanggaran, mat.namamataanggaran keterangan,ta.id, ta.tahap, 0 jml, '' satuan, 0 hargasatuan, 
@@ -11146,7 +11146,7 @@ class ReportController extends ApiController{
                     case when ap.id = 2 then sum(kb.subtotal) else 0 end as subtotaldanais,
                     case when ap.id = 4 then sum(kb.subtotal) else 0 end as subtotalsilpa,
 
-                    3 as isRincian, LENGTH(split_part(mat.kodemataanggaran, '.', 3)) len3, 0 as len4
+                    3 as isRincian, LENGTH(split_part(mat.kodemataanggaran, '.', 3)) len3, 0 as len4, 0 as nourut
 
                     from kegiatananggaran_m km
 					inner join kegiatananggaran_m kms on km.kode ilike kms.kode || '%' and kms.div = 3
@@ -11179,7 +11179,7 @@ class ReportController extends ApiController{
 				select kodemataanggaran, keterangan, id, tahap, jml, satuan, hargasatuan, sum(subtotaljasalayanan) subtotaljasalayanan,
 				sum(subtotalapbd) subtotalapbd, sum(subtotaldak) subtotaldak, sum(subtotaldanais) subtotaldanais, sum(subtotalsilpa) subtotalsilpa, 
                 
-                1 as isRincian, 0 as len3, 0 as len4
+                1 as isRincian, 0 as len3, 0 as len4, 0 as nourut
 				
                 from(
 					select mat.kodemataanggaran, mat.namamataanggaran keterangan, ta.id, ta.tahap, 0 jml, '' satuan, 0 hargasatuan, 
@@ -11189,7 +11189,7 @@ class ReportController extends ApiController{
                     case when ap.id = 2 then sum(kb.subtotal) else 0 end as subtotaldanais,
                     case when ap.id = 4 then sum(kb.subtotal) else 0 end as subtotalsilpa,
 
-                    1 as isRincian, 0 as len3, 0 as len4
+                    1 as isRincian, 0 as len3, 0 as len4, 0 as nourut
 
                     from kegiatananggaran_m km
 					inner join kegiatananggaran_m kms on km.kode ilike kms.kode || '%' and kms.div = 3
@@ -11221,7 +11221,7 @@ class ReportController extends ApiController{
                 
         SELECT zx.kodemataanggaran, zx.keterangan, zx.id, zx.tahap, zx.jml, zx.satuan, zx.hargasatuan, sum(zx.subtotaljasalayanan)as subtotaljasalayanan, sum(zx.subtotalapbd)as  subtotalapbd, sum(zx.subtotaldak)as subtotaldak, sum(zx.subtotaldanais)as subtotaldanais, sum(zx.subtotalsilpa)as subtotalsilpa,
 
-        4 as isRincian, LENGTH(split_part(zx.kodemataanggaran, '.', 3)) len3, LENGTH(split_part(zx.kodemataanggaran, '.', 4)) len4
+        4 as isRincian, LENGTH(split_part(zx.kodemataanggaran, '.', 3)) len3, LENGTH(split_part(zx.kodemataanggaran, '.', 4)) len4, 0 as nourut
 
         FROM (
         select ma.kodemataanggaran, ma.namamataanggaran keterangan, ta.id, ta.tahap, 0 jml, '' satuan, 0 hargasatuan, 
@@ -11231,7 +11231,7 @@ class ReportController extends ApiController{
                 case when ap.id = 2 then sum(kb.subtotal) else 0 end as subtotaldanais,
                 case when ap.id = 4 then sum(kb.subtotal) else 0 end as subtotalsilpa,
 
-                4 as isRincian, LENGTH(split_part(ma.kodemataanggaran, '.', 3)) len3, LENGTH(split_part(ma.kodemataanggaran, '.', 4)) len4
+                4 as isRincian, LENGTH(split_part(ma.kodemataanggaran, '.', 3)) len3, LENGTH(split_part(ma.kodemataanggaran, '.', 4)) len4, 0 as nourut
 
 from kegiatananggaran_m km
         inner join kegiatananggaran_m kms on km.kode ilike kms.kode || '%' and kms.div = 3
@@ -11269,7 +11269,7 @@ GROUP BY zx.kodemataanggaran, zx.keterangan, zx.id, zx.tahap, zx.jml, zx.satuan,
                 case when ap.id = 2 then sum(kb.subtotal) else 0 end as subtotaldanais,
                 case when ap.id = 4 then sum(kb.subtotal) else 0 end as subtotalsilpa,
 
-                5 as isRincian, LENGTH(split_part(ma.kodemataanggaran, '.', 3)) len3, LENGTH(split_part(ma.kodemataanggaran, '.', 4)) len4
+                5 as isRincian, LENGTH(split_part(ma.kodemataanggaran, '.', 3)) len3, LENGTH(split_part(ma.kodemataanggaran, '.', 4)) len4, nourut
 
 from kegiatananggaran_m km
         inner join kegiatananggaran_m kms on km.kode ilike kms.kode || '%' and kms.div = 3
@@ -11294,12 +11294,12 @@ from kegiatananggaran_m km
         and ma.kdprofile = 30 and ma.statusenabled = true
         and mat.kdprofile = 30 and mat.statusenabled = true
         and kb.kdprofile = 30 and kb.statusenabled = true
-        group by ap.id, ta.id, ta.tahap, kb.jml, kb.satuan, kb.hargasatuan, kb.keteranganbelanja, ma.kodemataanggaran
+        group by ap.id, ta.id, ta.tahap, kb.nourut, kb.jml, kb.satuan, kb.hargasatuan, kb.keteranganbelanja, ma.kodemataanggaran
         
 
 		order by kodemataanggaran, jml, hargasatuan, satuan) as yyy
         order by split_part(yyy.kodemataanggaran, '.', 1),split_part(yyy.kodemataanggaran, '.', 2),len3,split_part(yyy.kodemataanggaran, '.', 3),len4,split_part(yyy.kodemataanggaran, '.', 4),CASE WHEN split_part(yyy.kodemataanggaran, '.', 5) <> '' THEN split_part(yyy.kodemataanggaran, '.', 5)::int ELSE 0 END
-        , yyy.jml , yyy.hargasatuan, yyy.satuan
+        , yyy.nourut, yyy.jml , yyy.hargasatuan, yyy.satuan
         "));
 
         $pageWidth = 950;
