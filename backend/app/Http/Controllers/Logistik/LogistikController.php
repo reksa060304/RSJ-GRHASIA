@@ -11895,7 +11895,7 @@ class LogistikController extends ApiController{
                 "noSO" => $dataSC,
                 "detailstok" => $dataSTOKDETAIL,
                 "dataSPDK" => $dataSPDK,
-//                "dataSPDK2" => $dataSPDK2,
+               "line and message" =>$e->getLine().' and ' . $e->getMessage() ,
                 "by" => 'as@epic',
             );
         }
