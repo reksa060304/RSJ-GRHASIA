@@ -6961,7 +6961,7 @@ class RegistrasiController extends ApiController
             ->leftJOIN('jeniskelamin_m as jks', 'jks.id', '=', 'ps.objectjeniskelaminfk')
             ->leftjoin('identifikasipasien_t as it','pd.norec','=','it.noregistrasifk')
             ->distinct()
-            ->select('pd.isanalis','pd.isrmlengkap','pd.isverifikasidpjp','ps.isinaktif','pd.norec', 'pd.statusenabled','ps.sidik_jari', 'ept.kdprofile','pd.tglregistrasi', 'ps.nocm', 'pd.nocmfk', 'pd.noregistrasi', 'ru.namaruangan', 'ps.namapasien',
+            ->select('ps.ihs_number','ps.noidentitas','pd.isanalis','pd.isrmlengkap','pd.isverifikasidpjp','ps.isinaktif','pd.norec', 'pd.statusenabled','ps.sidik_jari', 'ept.kdprofile','pd.tglregistrasi', 'ps.nocm', 'pd.nocmfk', 'pd.noregistrasi', 'ru.namaruangan', 'ps.namapasien',
                 'kp.kelompokpasien', 'rek.namarekanan', 'pg.namalengkap as namadokter', 'pd.tglpulang', 'pd.statuspasien',
                 'pa.norec as norec_pa', 'pa.objectasuransipasienfk', 'pd.objectpegawaifk as pgid', 'pd.objectruanganlastfk',
                 'pa.nosep as nosep', 'br.norec as norec_br', 'pd.nostruklastfk','klstg.namakelas as kelasditanggung','kls.namakelas',
@@ -14021,22 +14021,23 @@ GROUP BY y.KET
         select date_part('day', apd.tglmasuk::date ) as tgl, count(apd.norec) as jml  from antrianpasiendiperiksa_t apd
         inner join ruangan_m ru on ru.id = apd.objectruanganasalfk
         inner join ruangan_m ru2 on ru2.id = apd.objectruanganfk
-        where ru.objectdepartemenfk <> 16 and ru2.id = $ruangan and apd.kdprofile = 30 and apd.statusenabled = true and date_part('month', apd.tglmasuk::date ) = $th and date_part('year', apd.tglmasuk::date ) = $bl  and ru2.objectdepartemenfk = 16
+        where ru2.id = $ruangan and apd.kdprofile = 30 and apd.statusenabled = true and date_part('month', apd.tglmasuk::date ) = $th and date_part('year', apd.tglmasuk::date ) = $bl 
         GROUP BY apd.tglmasuk::date
         "));
         $pasienmpindahan = DB::select(DB::raw("
         select date_part('day', apd.tglmasuk::date ) as tgl, count(apd.norec) as jml  from antrianpasiendiperiksa_t apd
         inner join ruangan_m ru on ru.id = apd.objectruanganasalfk
         inner join ruangan_m ru2 on ru2.id = apd.objectruanganfk
-        where ru.objectdepartemenfk = 16 and ru2.id = $ruangan and apd.kdprofile = 30 and apd.statusenabled = true and date_part('month', apd.tglmasuk::date ) = $th and date_part('year', apd.tglmasuk::date ) = $bl  and ru2.objectdepartemenfk = 16
+        where ru.objectdepartemenfk = 16 and ru2.id = $ruangan and apd.kdprofile = 30 and apd.statusenabled = true and date_part('month', apd.tglmasuk::date ) = $th and date_part('year', apd.tglmasuk::date ) = $bl 
         GROUP BY apd.tglmasuk::date
         "));
         $pasiendipindahkan = DB::select(DB::raw("
-        select date_part('day', apd.tglmasuk::date ) as tgl, count(apd.norec) as jml  from antrianpasiendiperiksa_t apd
-        inner join ruangan_m ru on ru.id = apd.objectruanganasalfk
-        where ru.id = $ruangan and apd.kdprofile = 30 and apd.statusenabled = true and date_part('month', apd.tglmasuk::date ) = $th 
-        and date_part('year', apd.tglmasuk::date ) = $bl and ru.objectdepartemenfk = 16
-        GROUP BY apd.tglmasuk::date
+        select date_part('day', apd.tglkeluar::date ) as tgl, count(apd.norec) as jml  from antrianpasiendiperiksa_t apd
+        inner join ruangan_m ru2 on ru2.id = apd.objectruanganfk
+        inner join pasiendaftar_t pd on pd.norec = apd.noregistrasifk and pd.tglpulang::date <> apd.tglkeluar::date 
+        where ru2.id = $ruangan and apd.kdprofile = 30 and apd.statusenabled = true and date_part('month', apd.tglkeluar::date ) = $th
+        and date_part('year', apd.tglkeluar::date ) = $bl
+        GROUP BY apd.tglkeluar::date
         "));
 
         $pasienaps = DB::select(DB::raw("select count(pd.noregistrasi)as jml, date_part('day', pd.tglpulang::date)as tgl from pasiendaftar_t pd where pd.objectstatuspulangfk = 2 and date_part('month', pd.tglpulang)= $th and date_part('year', pd.tglpulang)=$bl and pd.kdprofile = 30 and pd.statusenabled = true 
@@ -14067,19 +14068,19 @@ GROUP BY y.KET
         select count(pd.noregistrasi)as jml, date_part('day', pd.tglpulang::date)as tgl from pasiendaftar_t pd where pd.objectkondisipasienfk= 5 and date_part('month', pd.tglpulang)= 8 and date_part('year', pd.tglpulang)=$bl and pd.kdprofile = 30 and pd.statusenabled = true and pd.objectruanganlastfk = $request[ruangan]
         GROUP BY pd.tglpulang::date"));
         $pasienmkhs = DB::select(DB::raw("
-        select date_part('day', apd.tglmasuk::date ) as tgl , count(apd.norec) as jml from pasiendaftar_t pd 
+        select date_part('day', apd.tglkeluar::date ) as tgl , count(apd.norec) as jml from pasiendaftar_t pd 
         inner join ruangan_m ru on ru.id = pd.objectruanganlastfk
         inner join antrianpasiendiperiksa_t apd on pd.norec = apd.noregistrasifk
-        where pd.kdprofile = 30 and pd.statusenabled = true and date_part('month', apd.tglmasuk::date ) =$th 
+        where pd.kdprofile = 30 and pd.statusenabled = true and date_part('month', apd.tglkeluar::date ) =$th 
         and apd.objectruanganfk = $request[ruangan]
-        and date_part('year', apd.tglmasuk::date ) = $bl  and ru.objectdepartemenfk = 16 and apd.tglkeluar::date = apd.tglmasuk::date
-        group by apd.tglmasuk::date
-        order by apd.tglmasuk::date asc"));
-        $los = DB::select(DB::raw("SELECT sum(x.jml)::integer as jml, x.tgl FROM (select date_part('day', apd.tglmasuk::date ) as tgl , case when apd.tglkeluar::date = apd.tglmasuk::date then 1 else sum(apd.tglkeluar::date - apd.tglmasuk::date) end as jml from pasiendaftar_t pd 
+        and date_part('year', apd.tglkeluar::date ) = $bl  and ru.objectdepartemenfk = 16 and apd.tglmasuk::date = apd.tglkeluar::date
+        group by apd.tglkeluar::date
+        order by apd.tglkeluar::date asc"));
+        $los = DB::select(DB::raw("SELECT sum(x.jml)::integer as jml, x.tgl FROM (select date_part('day', apd.tglkeluar::date ) as tgl , case when apd.tglkeluar::date = apd.tglkeluar::date then 1 else sum(apd.tglkeluar::date - apd.tglkeluar::date) end as jml from pasiendaftar_t pd 
         inner join antrianpasiendiperiksa_t apd on apd.noregistrasifk = pd.norec
         inner join ruangan_m ru on ru.id = apd.objectruanganfk
-        where pd.kdprofile = 30 and pd.statusenabled = true and date_part('month', apd.tglmasuk::date ) =$th and date_part('year', apd.tglmasuk::date ) = $bl  and ru.objectdepartemenfk = 16 and apd.tglkeluar is not null and apd.objectruanganfk = $request[ruangan]
-        GROUP BY apd.tglmasuk, apd.tglkeluar
+        where pd.kdprofile = 30 and pd.statusenabled = true and date_part('month', apd.tglkeluar::date ) =$th and date_part('year', apd.tglkeluar::date ) = $bl  and ru.objectdepartemenfk = 16 and apd.tglkeluar is not null and apd.objectruanganfk = $request[ruangan]
+        GROUP BY apd.tglkeluar::date
         )as x
         GROUP BY x.tgl
         order by x.tgl asc"));
