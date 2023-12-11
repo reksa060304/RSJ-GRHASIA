@@ -13,6 +13,8 @@ define(['initialize'], function (initialize) {
             $scope.item.tglawal = $scope.now;
             $scope.item.tglakhir = $scope.now;
             $scope.tglMeninggal = '';
+            $scope.BtnInaktif = true
+            $scope.BtnBatalInaktif = false
             $scope.item.Rows = 100;
             $scope.Page = {
                 refresh: true,
@@ -314,6 +316,13 @@ define(['initialize'], function (initialize) {
                     $scope.idPasien = dataPasienSelected.nocmfk;
                     $scope.tglMeninggal = dataPasienSelected.tglmeninggal;
                     $scope.dataPasienSelected = dataPasienSelected;
+                    if(dataPasienSelected.isinaktif){
+                        $scope.BtnBatalInaktif = true
+                        $scope.BtnInaktif = false
+                    }else{
+                        $scope.BtnBatalInaktif = false
+                        $scope.BtnInaktif = true
+                    }
                 }
             }
 
@@ -1416,13 +1425,22 @@ define(['initialize'], function (initialize) {
                     toastr.error('Pilih data dulu!')
                     return
                 }
-                var objSave = {
-                    method: data,
-                    nocm: $scope.dataPasienSelected.nocm
-                }
-                medifirstService.post('emr/save-sudah-sudahh', objSave).then(function () {
-                    loadData()
+                var confirm = $mdDialog.confirm()
+                    .title('Informasi')
+                    .htmlContent("Apakah anda yakin akan "+data+"kan pasien tersebut?")
+                    .ariaLabel('Lucky day')
+                    .cancel('Batal')
+                    .ok('Ok');
+                $mdDialog.show(confirm).then(function () {
+                    var objSave = {
+                        method: data,
+                        nocm: $scope.dataPasienSelected.nocm
+                    }
+                    medifirstService.post('emr/save-sudah-sudahh', objSave).then(function () {
+                        loadData()
+                    })
                 })
+                
             }
             $scope.rmhilang = function () {
                 if ($scope.dataPasienSelected == undefined) {
