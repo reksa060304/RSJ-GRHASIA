@@ -40,15 +40,6 @@
         <div class="grid_12">
             <div id="gridResumeHead" kendo-grid k-data-source="sourceResumeHead" options="resumeOptHead"
                 k-ng-model="modelGrid" ng-click="klik(modelGrid)">
-                <!-- <div k-detail-template>
-                    <kendo-tabstrip>
-                        <div>
-                            <div id="kGridDetail" kendo-grid k-options="data2(dataItem)" k-sortable="'true'"
-                                k-selectable="'row'" k-ng-model="dataSelected2" ng-click="klikDetail(dataSelected2)">
-                            </div>
-                        </div>
-                    </kendo-tabstrip>
-                </div> -->
             </div>
         </div>
         <div class="grid_2">
@@ -66,14 +57,7 @@
             <button class="btnTemplate1 cancel" ng-click="hapusGrid()"><i class="fa fa-trash"></i>Hapus
             </button>
         </div>
-        <!-- <div class="grid_2">
-            <button class="btnTemplate1" ng-click="cetakBlade()"><i class="fa fa-print"></i>Cetak View
-            </button>
-        </div> -->
-        <!-- <div class="grid_2">
-            <button class="btnTemplate1" ng-click="cetakBladeV2()"><i class="fa fa-print"></i>Cetak View V2
-            </button>
-        </div> -->
+        
         <div class="grid_2">
             <button class="btnTemplate1" ng-click="cetakBladeV3()"><i class="fa fa-print"></i>Cetak View V3
             </button>
@@ -81,168 +65,9 @@
         <div class="grid_2" style="margin-top: 22px">
             <button class="btnTemplate1 success" ng-click="ttdElek()"><i class="fa fa-key"></i>TTD Elektronik</button>
         </div>
-        <!-- <div class="grid_2">
-            <button class="btnTemplate1" ng-click="cetak()"><i class="fa fa-print"></i>Cetak
-            </button>
-        </div> -->
+        
     </div>
     <md-content class="md-padding" ng-show="isEdit">
-        <!-- <div class="grid_12 headerBox">
-            <p>Rekam Medis</p>
-        </div>
-        <div class="grid_6" style="margin-top:10px">
-            <div class="grid_12">
-                <label c-label item="item">Ringkasan Riwayat Penyakit </label>
-            </div>
-
-            <div class="grid_12" style="margin-top:5px">
-                <textarea c-text-box class="k-textbox" style="height: 50px; width: 100%; "
-                    ng-model="item.riwayatPenyakit"></textarea>
-            </div>
-        </div>
-        <div class="grid_6" style="margin-top:10px">
-            <div class="grid_12">
-                <label c-label item="item">Pemeriksaan Fisik </label>
-            </div>
-
-            <div class="grid_12" style="margin-top:5px">
-                <textarea class="k-textbox" style="height: 50px; width: 100%; "
-                    ng-model="item.pemeriksaanFisik"></textarea>
-            </div>
-        </div>
-        <div class="grid_6">
-            <div class="grid_12">
-                <label c-label item="item">Pemeriksaan Penunjang/Diagnostik Terpenting </label>
-            </div>
-            <div class="clear"></div>
-            <div class="grid_12" style="margin-top:5px">
-                <textarea class="k-textbox" style="height: 50px; width: 100%; "
-                    ng-model="item.pemeriksaanPenunjang"></textarea>
-            </div>
-        </div>
-        <div class="grid_6">
-            <div class="grid_12">
-                <label c-label item="item">Hasil Konsultasi </label>
-            </div>
-            <div class="clear"></div>
-            <div class="grid_12" style="margin-top:5px">
-                <textarea class="k-textbox" style="height: 50px; width: 100%; "
-                    ng-model="item.hasilKonsultasi"></textarea>
-            </div>
-        </div>
-        <div class="grid_6">
-            <div class="grid_12">
-                <label c-label item="item">Terapi/Pengobatan Selama Di Rumah Sakit </label>
-            </div>
-            <div class="clear"></div>
-            <div class="grid_12" style="margin-top:5px">
-                <textarea class="k-textbox" style="height: 50px; width: 100%; " ng-model="item.terapi"></textarea>
-            </div>
-        </div>
-        <div class="grid_12 headerBox" style="margin-top:10px">
-            <p>Pasien</p>
-        </div>
-        <div style="margin-top:10px">
-            <div class="grid_4">
-                <div class=" grid_12">
-                    <label c-label item="item">Diagnosis Masuk</label>
-                </div>
-                <div class="grid_12">
-                    <textarea class="k-textbox" style="height: 50px; width: 100%; "
-                        ng-model="item.diagnosaMasuk"></textarea>
-                </div>
-            </div>
-            <div class="grid_4">
-                <div class=" grid_12">
-                    <label c-label item="item">Diagnosis Utama</label>
-                </div>
-                <div class="grid_12">
-                    <textarea class="k-textbox" style="height: 50px; width: 100%; "
-                        ng-model="item.diagnosaUtama"></textarea>
-                </div>
-            </div>
-            <div class="grid_4">
-                <div class=" grid_12">
-                    <label c-label item="item">Diagnosis Tambahan</label>
-                </div>
-                <div class="grid_12">
-                    <textarea class="k-textbox" style="height: 50px; width: 100%; "
-                        ng-model="item.diagnosaTambahan"></textarea>
-                </div>
-            </div>
-            <div class="grid_4">
-                <div class="grid_12">
-                    <label c-label item="item">Diagnosis Sekunder </label>
-                </div>
-                <div class="grid_12">
-
-                    <textarea class="k-textbox" style="height: 50px; width: 100%; "
-                        ng-model="item.diagnosisSekunder"></textarea>
-                </div>
-            </div>
-            <div class="grid_4">
-                <div class="grid_12">
-                    <label c-label item="item">Tindakan Prosedur </label>
-                </div>
-                <div class="clear"></div>
-                <div class="grid_12">
-                    // Matiin /* <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.tindakanProsedur" /> */
-
-                    <textarea class="k-textbox" style="height: 50px; width: 100%; "
-                        ng-model="item.tindakanProsedur"></textarea>
-                </div>
-            </div>
-            <div class="grid_4">
-                <div class="grid_12">
-                    <label c-label item="item">Alasan Dirawat </label>
-                </div>
-                <div class="clear"></div>
-                <div class="grid_12">
-                    // Matiin /* <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.tindakanProsedur" /> */
-
-                    <textarea class="k-textbox" style="height: 50px; width: 100%; "
-                        ng-model="item.alasanDirawat"></textarea>
-                </div>
-            </div>
-            <div class="grid_4">
-                <div class="grid_12">
-                    <label c-label item="item">Alergi (Reaksi Obat) </label>
-                </div>
-                <div class="clear"></div>
-                <div class="grid_12">
-                    // Matiin /* <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.alergi" /> */
-
-                    <textarea class="k-textbox" style="height: 50px; width: 100%; " ng-model="item.alergi"></textarea>
-                </div>
-            </div>
-            <div class="grid_4">
-                <div class="grid_12">
-                    <label c-label item="item">Diet</label>
-                </div>
-                <div class="clear"></div>
-                <div class="grid_12">
-                    <textarea class="k-textbox" style="height: 50px; width: 100%; " ng-model="item.diet"></textarea>
-                </div>
-            </div>
-            <div class="grid_4">
-                <div class="grid_12">
-                    <label c-label item="item">Intruksi Anjuran dan Edukasi (Follow Up)</label>
-                </div>
-                <div class="clear"></div>
-                <div class="grid_12">
-                    <textarea class="k-textbox" style="height: 50px; width: 100%; " ng-model="item.intruksi"></textarea>
-                </div>
-            </div>
-            <div class="grid_4">
-                <div class="grid_12">
-                    <label c-label item="item">Hasil Laboratorium Belum Selesai (Pending)</label>
-                </div>
-                <div class="clear"></div>
-                <div class="grid_12">
-                    <textarea class="k-textbox" style="height: 50px; width: 100%; " ng-model="item.hasilLab"></textarea>
-                </div>
-            </div>
-        </div> -->
         <div class="grid_12">
             <div class="grid_1">
                 <label c-label>Tanggal Masuk</label>
@@ -436,256 +261,92 @@
             </div>
         </div>
         <div class="grid_12">
-            <!-- <div class="grid_8" ng-repeat="list in listPengobatan | orderBy:'id'">
-                <b>{{list.nama}}</b>
-                <div class="grid_12" style="padding: 5pt">
-                    <div ng-repeat="opsi in list.detail | orderBy:'id'">
-                        <div class="grid_2">
-                            <input type="radio" name="{{opsi.nama}}" id="{{opsi.nama}}" class="k-radio"
-                                ng-model="item.pengobatan" value="{{opsi.nama}}">
-                            <label class="k-radio-label" for="{{opsi.nama}}">{{opsi.nama}}</label>
-
-                            <input type="checkbox" ng-checked="opsi.isChecked" class="k-checkbox" name="{{opsi.nama}}"
-                                id="{{opsi.nama}}" ng-model="bool" value="{{opsi.id}}" ng-click="addListHambatan(bool,opsi)">
-                            <label class="k-checkbox-label" for="{{opsi.nama}}">{{opsi.nama}}</label>
-                        </div>
-                    </div>
-
-                </div>
-            </div> -->
             <div class="grid_12" style="margin-top: 5px; margin-bottom: 5px;">
                 <label c-label item="item">9. Intruksi Follow Up / Tindak Lanjut :</label>
             </div>
             <div class="grid_12">
-                <label c-label item="item" style="margin-top: 5px; margin-bottom: 5px;">a.  Minum obat sesuai aturan</label>
-            </div>
-            <div class="grid_2">
-                <label c-label item="item" style="margin-top: 5px; margin-bottom: 5px;">b. Kontrol klinik</label>
-            </div>
-            <div class="grid_2" style="margin-left:-240px">
-                <div class="grid_12" style="margin-top:20px">
-                    <input c-text-box type="input" filter="'char'" class="k-textbox" ng-model="item.kontrolklinik">
+                <div class="grid_12">
+                    <div class="grid_12" style="margin-left:5px">
+                        <label c-label item="item">a.  Minum obat sesuai aturan</label>
+                    </div>
+                </div>
+                <div class="grid_12">
+                    <div class="grid_2">
+                        <label c-label item="item">b. Kontrol klinik</label>
+                    </div>
+                    <div class="grid_2">
+                        <input c-text-box type="input" filter="'char'" class="k-textbox" ng-model="item.kontrolklinik">
+                    </div>
+                    <div class="grid_2">
+                        <label c-label item="item">di RS Jiwa Grhasia /</label>
+                    </div>
+                    <div class="grid_3">
+                        <input c-text-box type="input" filter="'char'" class="k-textbox" ng-model="item.rumahsakittujuan">
+                    </div>
+                    <div class="grid_1">
+                        <label c-label item="item">Tanggal</label>
+                    </div>
+                    <div class="grid_2">
+                        <input style="width: 100%" k-ng-model="item.tglkontrolpoli" kendo-datetimepicker
+                            placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+                    </div>
+                    
+                </div>
+                <div class="grid_12">
+                    <div class="grid_2">
+                        <label c-label item="item">
+                            c. Edukasi perawatan lanjut
+                        </label>
+                    </div>
+                    <div class="grid_10">
+                        <input c-text-box type="input" filter="'char'" class="k-textbox" ng-model="item.intruksi">
+                    </div>
+                </div>
+                <div class="grid_12">
+                    <div class="grid_1">
+                        <label c-label item="item">
+                            d. 
+                        </label>
+                    </div>
+                    <div class="grid_11">
+                        <input c-text-box type="input" filter="'char'" class="k-textbox" ng-model="item.kondisi">
+                    </div>
+                </div>
+                <div class="grid_12">
+                    <div class="grid_1">
+                        <label c-label item="item">
+                            e. 
+                        </label>
+                    </div>
+                    <div class="grid_11">
+                        <input c-text-box type="input" filter="'char'" class="k-textbox" ng-model="item.kondisiwaktukeluare">
+                    </div>
                 </div>
             </div>
-            <div class="grid_2">
-                <label c-label item="item" style="margin-top: 5px; margin-bottom: 5px;">di RS Jiwa Grhasia /</label>
+            <div class="grid_12">
+                <label c-label item="item">
+                    Saya telah menerima informasi tersebut diatas dan menyetujui bahwa Ringkasan Pulang ini hanya dapat digunakan untuk kepentingan pengobatan, serta TIDAK DAPAT digunakan untuk kepentingan lainnya. 
+                </label>
             </div>
-            <div class="grid_2" style="margin-left:-240px">
-                <div class="grid_12" style="margin-top:20px">
-                    <input c-text-box type="input" filter="'char'" class="k-textbox" ng-model="item.rumahsakittujuan">
-                </div>
-            </div>
-            
+            <div class="grid_12"></div><br>
             <div class="grid_4">
-                <div class="grid_6">
-                    <label c-label item="item">Tanggal</label>
-                </div>
-                <div class="grid_6">
-                    <input style="width: 100%" k-ng-model="item.tglkontrolpoli" kendo-datetimepicker
-                        placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
-                </div>
-            </div>
-            <div class="grid_12">
-                <div class="grid_2">
-                    <label c-label item="item">
-                        c. Edukasi perawatan lanjut
-                    </label>
-                </div>
-                <div class="grid_10">
-                    <input c-text-box type="input" filter="'char'" class="k-textbox" ng-model="item.intruksi">
-                </div>
-            </div>
-            <div class="grid_12">
-                <div class="grid_1">
-                    <label c-label item="item">
-                        d. 
-                    </label>
-                </div>
-                <div class="grid_11">
-                    <input c-text-box type="input" filter="'char'" class="k-textbox" ng-model="item.kondisi">
-                </div>
-            </div>
-            <div class="grid_12">
-                <div class="grid_1">
-                    <label c-label item="item">
-                        e. 
-                    </label>
-                </div>
-                <div class="grid_11">
-                    <input c-text-box type="input" filter="'char'" class="k-textbox" ng-model="item.kondisiwaktukeluare">
-                </div>
-            </div>
-            <div class="grid_12">
-            <label c-label item="item">
-                Saya telah menerima informasi tersebut diatas dan menyetujui bahwa Ringkasan Pulang ini hanya dapat digunakan untuk kepentingan pengobatan, serta TIDAK DAPAT digunakan untuk kepentingan lainnya. 
-            </label>
+                <label c-label item="item">
+                    Pasien / Wali Pasien
+                </label>
+                <input c-text-box type="input" filter="'char'" class="k-textbox" ng-model="item.pasien">
             </div>
         </div>
-                                            <!-- <div class="grid_12">
-            <div class="grid_2">
-                <label c-label item="item">IV. Tindakan Prosedur </label>
-            </div>
-            <div class="clear"></div>
-            <div class="grid_12" style="margin-top: 5px;">
-                <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.tindakanProsedur" /> 
-
-                <textarea class="k-textbox" style="height: 50px; width: 100%; "
-                    ng-model="item.tindakanProsedur"></textarea>
-            </div>
-        </div>
-      
-        <div class="grid_12">
-            <div class="grid_2">
-                <label c-label item="item">VI. Ringkasan Penyakit </label>
-            </div>
-        </div>
-        <div class="grid_10" style="margin-left: 25px; margin-top:10px;">
-            <div class="grid_3">
-                <label c-label item="item">Riwayat Penyakit Sekarang</label>
-            </div>
-
-            <div class="grid_9" style="margin-top:5px">
-                <textarea c-text-box class="k-textbox" style="height: 50px; width: 95%;"
-                    ng-model="item.riwayatPenyakit"></textarea>
-            </div>
-        </div>
-        <div class="grid_10" style="margin-left: 25px; margin-top:10px;">
-            <div class="grid_12" ng-repeat="list in listPemeriksaanFisik | orderBy:'id'">
-                <div class="grid_3">
-                    <b>{{list.nama}}</b>
-                </div>
-                <div class="grid_9">
-                    <div ng-repeat="opsi in list.detail | orderBy:'id'">
-                        <div class="grid_4">
-                            <input type="radio" name="{{opsi.nama}}" id="{{opsi.nama}}" class="k-radio"
-                                ng-model="item.pemeriksaanFisik" value="{{opsi.nama}}">
-                            <label class="k-radio-label" for="{{opsi.nama}}">{{opsi.nama}}</label>
-                            <input type="checkbox" ng-checked="opsi.isChecked" class="k-checkbox" name="{{opsi.nama}}" id="{{opsi.nama}}" ng-model="bool" value="{{opsi.id}}"  ng-click="addListHambatan(bool,opsi)" >
-                                    <label class="k-checkbox-label" for="{{opsi.nama}}">{{opsi.nama}}</label>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>-->
-        <!-- <div class="grid_12">
-            <div class="grid_2">
-                <label c-label item="item">VII. Terapi Pasien </label>
-            </div>
-            <div class="clear"></div>
-            <div class="grid_12" style="margin-top:5px">
-                <textarea class="k-textbox" style="height: 50px; width: 100%; " ng-model="item.terapi"></textarea>
-            </div>
-        </div>
-        <div class="grid_12">
-            <div class="grid_2">
-                <label c-label item="item">VIII. Hasil Konsul </label>
-            </div>
-            <div class="clear"></div>
-            <div class="grid_12" style="margin-top:5px">
-                <textarea class="k-textbox" style="height: 50px; width: 100%; " ng-model="item.hasilKonsultasi"></textarea>
-            </div>
-        </div>
-        <div class="grid_12">
-            <div class="grid_12" ng-repeat="list in listKondisi | orderBy:'id'" style="margin-top:5px">
-                <b>{{list.nama}}</b>
-                <div class="grid_12" style="padding: 5pt">
-                    <div ng-repeat="opsi in list.detail | orderBy:'id'">
-                        <div class="grid_4">
-                            <input type="radio" name="{{opsi.nama}}" id="{{opsi.nama}}" class="k-radio"
-                                ng-model="item.kondisi" value="{{opsi.nama}}">
-                            <label class="k-radio-label" for="{{opsi.nama}}">{{opsi.nama}}</label>
-                            <input type="checkbox" ng-checked="opsi.isChecked" class="k-checkbox" name="{{opsi.nama}}" id="{{opsi.nama}}" ng-model="bool" value="{{opsi.id}}"  ng-click="addListHambatan(bool,opsi)" >
-                                    <label class="k-checkbox-label" for="{{opsi.nama}}">{{opsi.nama}}</label>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="grid_12">
-            <div class="grid_3">
-                <label c-label item="item">X. Tindak Lanjut/Anjuran/Edukasi</label>
-            </div>
-            <div class="clear"></div>
-            <div class="grid_12">
-                <textarea class="k-textbox" style="height: 50px; width: 100%; " ng-model="item.intruksi"></textarea>
-            </div>
-        </div>
-        <div class="grid_12">
-            <div class="grid_8" ng-repeat="list in listPengobatan | orderBy:'id'">
-                <b>{{list.nama}}</b>
-                <div class="grid_12" style="padding: 5pt">
-                    <div ng-repeat="opsi in list.detail | orderBy:'id'">
-                        <div class="grid_2">
-                            <input type="radio" name="{{opsi.nama}}" id="{{opsi.nama}}" class="k-radio"
-                                ng-model="item.pengobatan" value="{{opsi.nama}}">
-                            <label class="k-radio-label" for="{{opsi.nama}}">{{opsi.nama}}</label>
-
-                            <input type="checkbox" ng-checked="opsi.isChecked" class="k-checkbox" name="{{opsi.nama}}"
-                                id="{{opsi.nama}}" ng-model="bool" value="{{opsi.id}}" ng-click="addListHambatan(bool,opsi)">
-                            <label class="k-checkbox-label" for="{{opsi.nama}}">{{opsi.nama}}</label>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-            <div class="grid_4" style="margin-left:-240px">
-                <div class="grid_12" style="margin-top:20px">
-                    <input c-text-box type="input" filter="'char'" class="k-textbox" ng-model="item.pengobatanLain"
-                        placeholder="Lain-lain">
-                </div>
-            </div>
-            <div class="grid_12">
-                <div class="grid_3">
-                    <label c-label item="item">Tanggal Kontrol Poliklinik</label>
-                </div>
-                <div class="grid_7">
-                    <input style="width: 100%" k-ng-model="item.tglkontrolpoli" kendo-datetimepicker
-                        placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
-                </div>
-            </div>
-            <div class="grid_12">
-                <div class="grid_6">
-                    <label c-label item="item">
-                        Jika muncul keluhan nyeri/rasa sakit tidak berkurang dengan obat anda atau tidak lebih buruk dan kebutuhan mendesak, segera datang ke IGD Rumah Sakit
-                    </label>
-                </div>
-                <div class="grid_4">
-                    <input c-text-box type="input" filter="'char'" class="k-textbox" ng-model="item.rumahsakittujuan">
-                </div>
-            </div>
-        </div> -->
-        <!-- <div class="grid_12">
-            <div class="grid_12 headerBox">
-                <p>XII. Terapi Pulang</p>
-            </div>
-            <div class="clear"></div>
-            <div class="grid_12 borderBox">
-
-                <div kendo-grid k-data-source="sourceResume" options="resumeOpt"></div>
-            </div>
-        </div> -->
+          
         <div class="grid_12">
                 <div class="grid_8" ></div>
             <div class="grid_2" >
                     <button class="btnTemplate1" ng-click="Save()"><i class="fa fa-save"></i>Simpan
-        
                     </button>
-                <!-- <c-button ng-show="!isLoading" class="success"
-                    style="width: 100%; font-size: 24px; padding:0px, margin:0px;" item="item" size="36"
-                    position=" 'right'" is-validate click="Save">
-                    <span class="title">Simpan</span>
-                </c-button> -->
             </div>
             <div class="grid_2">
                     <button class="btnTemplate1" ng-click="Back()"><i class="fa fa-arrow-left"></i>Kembali
-        
                     </button>
-                <!-- <c-button ng-show="!isLoading" style="width: 100%; font-size: 24px; padding:0px, margin:0px;"
-                    item="item" size="36" position=" 'right'" click="Back">
-                    <span class="title">Kembali</span>
-                </c-button> -->
             </div>
-            <!-- <div ng-include='"../app/module/Shared/TemplateButtonSimpanNotFixed"'></div> -->
         </div>
     </md-content>
 
@@ -725,20 +386,9 @@
                 <button class="k-button  k-button-icontext" ng-click="batal()"><span
                         class="k-icon k-cancel"></span>Batal</button>
             </div>
-
         </div>
     </div> 
-    <!-- <div class="grid_12" style="margin: 5px 5px 5px 5px;" ng-show="showGrid">
-        <div id="gridResume" kendo-grid k-data-source="sourceResume" options="resumeOpt"></div>
-    </div> -->
-
-    <!-- <div class="grid_12" style="float:right" ng-show="showGrid">
-        <div class="grid_2 " style="margin-top: 10px ">
-            <button class="c-button" ng-show="!isLoading" item="item" is-validate ng-click="cetak()">
-                <span class="title">Cetak</span>
-            </button>
-        </div>
-    </div> -->
+    
     <div class="grid_12" style="margin-top:100px">
         <div ng-include='"../app/template/Shared/TemplateLoading"'></div>
     </div>

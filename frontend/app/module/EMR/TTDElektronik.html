@@ -560,6 +560,16 @@
                 </div>
             </div>
             <div class="grid_12">
+                <div class="grid_3"  style=" margin-top: 10px;">
+                    <label c-label item="item">Halaman</label>
+                </div>
+                <div class="grid_9">
+                    <input style="width: 100%;" kendo-combo-box k-ng-model="item.page"
+                        k-data-text-field="'page'" k-data-value-field="'id'" k-filter="'contains'"
+                        k-auto-bind="false" k-data-source="listPage"/>
+                </div>
+            </div>
+            <div class="grid_12">
                 <div class="grid_3">
                     <label c-label item="item">Keterangan</label>
                 </div>

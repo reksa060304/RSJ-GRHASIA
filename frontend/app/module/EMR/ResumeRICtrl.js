@@ -684,6 +684,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             // }
             $scope.editGrid = function () {
                 $scope.item.norec = $scope.modelGrid.norec
+                $scope.item.pasien = $scope.modelGrid.pasien
 
                 $scope.item.diagnosamasuktext = $scope.modelGrid.diagnosismasuk
                 $scope.item.diagnosamasuk = $scope.modelGrid.kddiagnosismasuk[0] == null ? '' : {
@@ -865,7 +866,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     "tglkontrolpoli": $scope.item.tglkontrolpoli != undefined ? moment($scope.item.tglkontrolpoli).format("YYYY-MM-DD HH:mm:ss") : null,
                     "instruksianjuran": $scope.item.intruksi != undefined ? $scope.item.intruksi : "",
                     "kondisiwaktukeluar": $scope.item.kondisi != undefined ? $scope.item.kondisi : "",
-                    "kondisiwaktukeluare": $scope.item.kondisie != undefined ? $scope.item.kondisie : "",
+                    "kondisiwaktukeluare": $scope.item.kondisiwaktukeluare != undefined ? $scope.item.kondisiwaktukeluare : "",
                     
                     "tindakanprosedur": $scope.item.tindakanProsedur != undefined ? $scope.item.tindakanProsedur : "",
                     "pemeriksaanfisik": $scope.item.pemeriksaanFisik != undefined ? $scope.item.pemeriksaanFisik : "",
@@ -874,6 +875,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     "instruksianjuran": $scope.item.intruksi != undefined ? $scope.item.intruksi : "",
                     "pengobatandilanjutkan": $scope.item.pengobatan != undefined ? $scope.item.pengobatan : $scope.item.pengobatanLain,
                     "noregistrasifk": $scope.norecAPD,
+                    "pasien": $scope.item.pasien!= undefined ? $scope.item.pasien : '',
                     "detail": data2
                 }
 

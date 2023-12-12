@@ -14867,7 +14867,7 @@ public function suratBuktiPengembalian(Request $request)
                 'rm.tglkontrolpoli', 'rm.rumahsakittujuan',
                 'rm.alergi', 'rm.diet', 'rm.instruksianjuran', 'rm.hasillab',
                 'rm.kondisiwaktukeluar', 'rm.pengobatandilanjutkan', 'rm.koderesume',
-                'rm.pegawaifk',
+                'rm.pegawaifk','rm.pasien',
                 'pd.noregistrasi', 'pd.tglregistrasi', 'ps.nocm', 'rm.noregistrasifk',
                 'ps.namapasien','kp.kelompokpasien','ru.namaruangan','jk.jeniskelamin','ps.tgllahir')
             ->Join('antrianpasiendiperiksa_t as apd', 'apd.norec', '=', 'rm.noregistrasifk')
@@ -14887,12 +14887,28 @@ public function suratBuktiPengembalian(Request $request)
             ->where('rm.statusenabled', true)
             ->where('rm.norec',  $r['norec'])
             ->where('rm.keteranganlainnya', 'RawatInap');
-//            ->whereIn('ru.objectdepartemenfk',$iddept);
+        //            ->whereIn('ru.objectdepartemenfk',$iddept);
 
         $data = $data->first();
         $item = $data;
-//        $result = [];
-//        foreach ($data as $item) {
+        $data5lab = DB::select(DB::raw("
+        SELECT pp.tglpelayanan, hl.detailpemeriksaan, hl.flag, hl.hasil FROM hasillaboratorium_t hl 
+        inner join pelayananpasien_t pp on pp.norec = hl.norecpelayanan
+        inner join antrianpasiendiperiksa_t apd on apd.norec = pp.noregistrasifk
+        inner join pasiendaftar_t pd on pd.norec = apd.noregistrasifk
+        where pd.noregistrasi = '$item->noregistrasi' and hl.flag = 'Y' and hl.kdprofile = 30 and hl.statusenabled = true and pp.statusenabled = true
+        "));
+        $data5rad = DB::select(DB::raw("
+        SELECT hr.keterangan FROM hasilradiologi_t hr 
+        INNER join pelayananpasien_t pp on pp.norec = hr.pelayananpasienfk
+        inner join antrianpasiendiperiksa_t apd on apd.norec = pp.noregistrasifk
+        inner join pasiendaftar_t pd on pd.norec = apd.noregistrasifk
+        where pd.noregistrasi = '$item->noregistrasi'
+        "));
+        // dd($data5lab);
+
+        //        $result = [];
+        //        foreach ($data as $item) {
             $details = DB::select(DB::raw("
                    select * from resumemedisdetail_t
                    where resumefk=:norec"),
@@ -14963,10 +14979,13 @@ public function suratBuktiPengembalian(Request $request)
                 'noregistrasifk' => $item->noregistrasifk,
                 'jeniskelamin'=> $item->jeniskelamin,
                 'tgllahir'=> $item->tgllahir,
+                'pasien'=> $item->pasien,
                 'details' => $details,
+                'data5lab'=> $data5lab,
+                'data5rad'=> $data5rad,
             );
-//        }
-//        dd($result);
+        //        }
+        //        dd($result);
         $res['terapi'][] = array('tera' => 'asas');
         $res['d'] =$result;
         $username ='asa';
