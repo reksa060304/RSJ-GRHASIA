@@ -1850,6 +1850,7 @@ class EMRController  extends ApiController
                 $RekamMedis->rumahsakittujuan = $request['rumahsakittujuan'];                
                 $RekamMedis->pegawaifk = $this->getCurrentUserID();
                 $RekamMedis->noregistrasifk = $request['noregistrasifk'];
+                $RekamMedis->pasien = $request['pasien'];
                 $RekamMedis->keteranganlainnya = 'RawatInap';
                 $RekamMedis->koderesume = $kdResume;
                 $RekamMedis->save();
@@ -1936,7 +1937,7 @@ class EMRController  extends ApiController
                 'rm.tglkontrolpoli', 'rm.rumahsakittujuan',
                 'rm.alergi', 'rm.diet', 'rm.instruksianjuran', 'rm.hasillab',
                 'rm.kondisiwaktukeluar', 'rm.pengobatandilanjutkan', 'rm.koderesume',
-                'rm.pegawaifk',
+                'rm.pegawaifk','rm.pasien',
                 'pd.noregistrasi', 'pd.tglregistrasi', 'ps.nocm', 'rm.noregistrasifk',
                 'ps.namapasien')
             ->Join('antrianpasiendiperiksa_t as apd', 'apd.norec', '=', 'rm.noregistrasifk')
@@ -1995,6 +1996,7 @@ class EMRController  extends ApiController
                 'axis3' => $item->axis3,
                 'axis4' => $item->axis4,
                 'axis5' => $item->axis5,
+                'pasien' => $item->pasien,
                 'kontrolklinik' => $item->kontrolklinik,
                 'kondisiwaktukeluare' => $item->kondisiwaktukeluare,
                 'hasilkonsultasi' => $item->hasilkonsultasi,

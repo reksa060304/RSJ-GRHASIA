@@ -50,6 +50,9 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 {id:11,page:'Halaman 11'},
                 {id:12,page:'Halaman 12'},
             ]
+            $scope.item.page = {
+                id:1, page:'Halaman 1'
+            }
             $scope.cacheRM = undefined
             $scope.cachePARAM = undefined
             LoadCacheHelper();
@@ -698,6 +701,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     'passphrase': $scope.item.passphrase,
                     'nik': $scope.item.nik,
                     'reason': $scope.item.reason ? $scope.item.reason : null,
+                    'page': $scope.item.page != undefined ? $scope.item.page : '1',
                     'iduser': medifirstService.getUserLogin().id
                 }
 

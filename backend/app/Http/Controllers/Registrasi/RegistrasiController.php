@@ -13401,7 +13401,11 @@ GROUP BY y.KET
             
             // $pd = PasienDaftar::where('norec', $request['norec'])->first();
             $ps = Pasien::where('nocm', $request['nocm'])->first();
-                $ps->isinaktif = true;
+                if($request['method'] == 'inaktif'){
+                    $ps->isinaktif = true;
+                }else{
+                    $ps->isinaktif = null;
+                }
             $ps->save();
             $transStatus = 'true';
         } catch (\Exception $e) {

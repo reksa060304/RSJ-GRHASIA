@@ -226,11 +226,11 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 					"title": "RM Lengkap",
 					"width": "100px",
 				},
-				{
-					"field": "isinaktif",
-					"title": "Inaktif",
-					"width": "100px",
-				},
+				// {
+				// 	"field": "isinaktif",
+				// 	"title": "Inaktif",
+				// 	"width": "100px",
+				// },
 				{
 					"field": "sidik_jari",
 					"title": "Sidik Jari",
