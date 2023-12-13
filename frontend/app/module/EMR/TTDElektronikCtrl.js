@@ -701,7 +701,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     'passphrase': $scope.item.passphrase,
                     'nik': $scope.item.nik,
                     'reason': $scope.item.reason ? $scope.item.reason : null,
-                    'page': $scope.item.page != undefined ? $scope.item.page : '1',
+                    'page': $scope.item.page != undefined ? $scope.item.page.id : '1',
                     'iduser': medifirstService.getUserLogin().id
                 }
 
