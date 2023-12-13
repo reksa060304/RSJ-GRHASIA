@@ -11002,8 +11002,12 @@ class ReportController extends ApiController{
             $qsubsubkegiatan =  ' and km.id =  ' . $request['subsubkegiatan'];
             $subsubkegiatan =  ' and dp.id =  ' . $request['subsubkegiatan'];
         }
-        // edit
-        $data = DB::select(DB::raw("select dp.tahun, dp.kode kodesubsubkegiatan, split_part(dp.keterangan, '-', 2) keterangansubsubkegiatan,
+        // edit split_part(dp.keterangan, '-', 2)
+        $data = DB::select(DB::raw("select dp.tahun, dp.kode kodesubsubkegiatan, 
+        CASE
+            when $tahap=1 then dp.keterangan
+            else split_part(dp.keterangan, '-', 2)
+        END as keterangansubsubkegiatan,
 
         dp0.kode kodesubkegiatan, dp0.keterangan keterangansubkegiatan,
         dp3.kode kodekegiatan, dp3.keterangan keterangankegiatan,
@@ -12630,6 +12634,10 @@ public function suratBuktiPengembalian(Request $request)
         $tahun = $request['tahun'];
         $tahap =  $request['tahap'];
 
+        $settingrba = DB::select(DB::raw("select sa.*, pg.reportdisplay as namalengkap, pg.nippns from settinganggaran_t sa
+        inner join pegawai_m pg on pg.id = sa.objectkepalabludfk
+        where sa.statusenabled = true"));
+
         $tanggalcetak = $this->tanggal_indonesia(date('Y-m-d',strtotime($request['tglcetak'])));
 
         $qtahap  = '';
@@ -12637,18 +12645,23 @@ public function suratBuktiPengembalian(Request $request)
             $qtahap =  ' and kb.objecttahapfk =  ' . $request['tahap'];
         }
 
-        $tahap = DB::select(DB::raw("select * from tahapanggaran_m where id = $tahap"));
-        $data = \DB::select(DB::raw("SELECT a.kode, a.div, CASE WHEN a.div = 2 THEN SUBSTR(a.kode,9,4 ) WHEN a.div = 3 then SUBSTR(a.kode,14,2 ) 
-        WHEN a.div = 4 then a.kode END as kode, a.kode1 kode2,
-        a.kegiatan,a.jasalayanan,a.apbd,a.total 
+        $tahap = DB::select(DB::raw("select tahapanggaran_m.*,$tahun as thn from tahapanggaran_m where id = $tahap"));
+        $tahapnow = $request['tahap'];
+        $data = \DB::select(DB::raw("select a.kode, a.div, a.kode1 kode2,
+        a.kegiatan,a.jasalayanan,a.apbd,a.dak,a.danais,a.silpa,a.total 
         from(
         
-                select y.kegiatan, y.kode, y.kode1, y.div, sum(y.apbd) apbd, sum(y.jasalayanan) jasalayanan,
-                sum(y.apbd) + sum(y.jasalayanan) as total
+                select y.kegiatan, y.kode, y.kode1, y.div, sum(y.apbd) apbd, sum(y.jasalayanan) jasalayanan, sum(y.dak) dak, sum(y.danais) danais, sum(y.silpa) silpa,
+                sum(y.apbd) + sum(y.jasalayanan) + sum(y.dak) + sum(y.danais) + sum(y.silpa) as total
                 from(
                         select x.kegiatan, x.subkegiatan, x.kode, x.kode1, x.div,
                         case when x.id_asalproduk = 15 then x.subtotal else 0 end as apbd,
-                        case when x.id_asalproduk = 18 then subtotal else 0 end as jasalayanan
+                        case when x.id_asalproduk = 18 then subtotal else 0 end as jasalayanan,
+
+                        case when x.id_asalproduk = 21 then subtotal else 0 end as dak,
+                        case when x.id_asalproduk = 2 then subtotal else 0 end as danais,
+                        case when x.id_asalproduk = 4 then subtotal else 0 end as silpa
+
                         from(
                                 select kmss.keterangan kegiatan, ap.id as id_asalproduk,kmss.kode, 0 kode1, kmss.div, kms.keterangan subkegiatan, sum(kb.subtotal) subtotal
                                 from kegiatananggaran_m km
@@ -12668,12 +12681,17 @@ public function suratBuktiPengembalian(Request $request)
         
                 union all
         
-                select y.subkegiatan as kegiatan, y.kode, y.kode1, y.div, sum(y.apbd) apbd, sum(y.jasalayanan) jasalayanan,
-                sum(y.apbd) + sum(y.jasalayanan) as total
+                select y.subkegiatan as kegiatan, y.kode, y.kode1, y.div, sum(y.apbd) apbd, sum(y.jasalayanan) jasalayanan, sum(y.dak) dak, sum(y.danais) danais, sum(y.silpa) silpa,
+                sum(y.apbd) + sum(y.jasalayanan) + sum(y.dak) + sum(y.danais) + sum(y.silpa) as total
                 from(
                         select x.kegiatan, x.subkegiatan, x.kode, kode1, x.div,
                         case when x.id_asalproduk = 15 then x.subtotal else 0 end as apbd,
-                        case when x.id_asalproduk = 18 then subtotal else 0 end as jasalayanan
+                        case when x.id_asalproduk = 18 then subtotal else 0 end as jasalayanan,
+
+                        case when x.id_asalproduk = 21 then subtotal else 0 end as dak,
+                        case when x.id_asalproduk = 2 then subtotal else 0 end as danais,
+                        case when x.id_asalproduk = 4 then subtotal else 0 end as silpa
+
                         from(
                                 select kmss.keterangan kegiatan, kms.keterangan subkegiatan, kms.kode, 0 kode1, kms.div, ap.id as id_asalproduk,sum(kb.subtotal) subtotal
                                 from kegiatananggaran_m km
@@ -12693,22 +12711,22 @@ public function suratBuktiPengembalian(Request $request)
         
                 union all
         
-                select y.subkegiatan as kegiatan, y.kode, y.kode1, y.div, sum(y.apbd) apbd, sum(y.jasalayanan) jasalayanan,
-                sum(y.apbd) + sum(y.jasalayanan) as total
+                select case when $tahapnow=1 then y.subkegiatan else split_part(y.subkegiatan, '-', 2) end as kegiatan, 
+                y.kode, y.kode1, y.div, sum(y.apbd) apbd, sum(y.jasalayanan) jasalayanan, sum(y.dak) dak, sum(y.danais) danais, sum(y.silpa) silpa,
+                sum(y.apbd) + sum(y.jasalayanan) + sum(y.dak) + sum(y.danais) + sum(y.silpa) as total
                 from(
                         select x.kegiatan, x.subkegiatan, x.kode, x.kode1, x.div,
                         case when x.id_asalproduk = 15 then x.subtotal else 0 end as apbd,
-                        case when x.id_asalproduk = 18 then subtotal else 0 end as jasalayanan
+                        case when x.id_asalproduk = 18 then subtotal else 0 end as jasalayanan,
+
+                        case when x.id_asalproduk = 21 then subtotal else 0 end as dak,
+                        case when x.id_asalproduk = 2 then subtotal else 0 end as danais,
+                        case when x.id_asalproduk = 4 then subtotal else 0 end as silpa
+
                         from(
                                 select km.keterangan kegiatan, km.keterangan subkegiatan,
-                                case 
-                                        when length(km.kode) = 17 then left(km.kode, -1)
-                                        when length(km.kode) = 18 then left(km.kode, -2)
-                                end as kode,
-                                case 
-                                        when length(km.kode) = 17 then right(km.kode, 1)::int
-                                        when length(km.kode) = 18 then right(km.kode, 2)::int
-                                end as kode1,
+                                km.kode as kode,
+                                CAST(split_part(km.kode,'.',7) as int) as kode1,
                                 km.div, ap.id as id_asalproduk,sum(kb.subtotal) subtotal
                                 from kegiatananggaran_m km
                                 inner join kegiatananggaran_m kms on km.kode ilike kms.kode || '%' and kms.div = 3
@@ -12725,16 +12743,22 @@ public function suratBuktiPengembalian(Request $request)
                         ) as x group by x.kegiatan, x.subkegiatan, x.subtotal, x.kode, x.kode1, x.div, x.id_asalproduk
                 ) as y group by subkegiatan, kode, kode1, div
         
-        ) as a order by a.kode, kode1"));
+        ) as a order by CAST(split_part(kode,'.',1) as int), CAST(split_part(kode,'.',2) as int), CAST(split_part(kode,'.',3) as int),
+				CAST(split_part(kode,'.',4) as int),CAST(split_part(kode,'.',5) as int), div, kode2"));
 
         $grandtotal = collect(DB::select("
-        SELECT SUM ( xx.jasalayanan ) AS jasapelayanan, SUM ( xx.apbd ) AS apbd, SUM ( xx.total ) AS total  FROM ( SELECT A .kode, A.div,
+        SELECT SUM ( xx.jasalayanan ) AS jasapelayanan, SUM ( xx.apbd ) AS apbd, SUM ( xx.dak ) AS dak, SUM ( xx.danais ) AS danais, SUM ( xx.silpa ) AS silpa, SUM ( xx.total ) AS total  FROM ( SELECT A .kode, A.div,
                     CASE WHEN A.div = 2 THEN SUBSTR( A.kode, 9, 4 )  WHEN A.div = 3 THEN SUBSTR( A.kode, 14, 2 ) WHEN A.div = 4 THEN A.kode END AS kode,
-                        A.kode1 kode2, A.kegiatan, A.jasalayanan, A.apbd, A.total  FROM ( SELECT y.kegiatan, y.kode, y.kode1, y.div, SUM ( y.apbd ) apbd,
-                            SUM ( y.jasalayanan ) jasalayanan, SUM ( y.apbd ) + SUM ( y.jasalayanan ) AS total  FROM ( SELECT x.kegiatan, x.subkegiatan,
+                        A.kode1 kode2, A.kegiatan, A.jasalayanan, A.apbd, A.dak, A.danais, A.silpa, A.total  FROM ( SELECT y.kegiatan, y.kode, y.kode1, y.div, SUM ( y.apbd ) apbd,
+                            SUM ( y.jasalayanan ) jasalayanan, SUM ( y.dak ) dak, SUM ( y.danais ) danais, SUM ( y.silpa ) silpa, SUM ( y.apbd ) + SUM ( y.jasalayanan ) + SUM ( y.dak ) + SUM ( y.danais ) + SUM ( y.silpa ) AS total  FROM ( SELECT x.kegiatan, x.subkegiatan,
                                 x.kode, x.kode1, x.div,
                             CASE WHEN x.id_asalproduk = 15 THEN x.subtotal ELSE 0  END AS apbd,
-                            CASE WHEN x.id_asalproduk = 18 THEN subtotal ELSE 0  END AS jasalayanan 
+                            CASE WHEN x.id_asalproduk = 18 THEN subtotal ELSE 0  END AS jasalayanan,
+
+                            CASE WHEN x.id_asalproduk = 21 THEN subtotal ELSE 0  END AS dak, 
+                            CASE WHEN x.id_asalproduk = 2 THEN subtotal ELSE 0  END AS danais, 
+                            CASE WHEN x.id_asalproduk = 4 THEN subtotal ELSE 0  END AS silpa 
+
                             FROM ( SELECT kmss.keterangan kegiatan, ap.ID AS id_asalproduk, kmss.kode, 0 kode1, kmss.div, kms.keterangan subkegiatan,
                                     SUM ( kb.subtotal ) subtotal  FROM
                                     kegiatananggaran_m km
@@ -12782,7 +12806,12 @@ public function suratBuktiPengembalian(Request $request)
                             y.div,
                             SUM ( y.apbd ) apbd,
                             SUM ( y.jasalayanan ) jasalayanan,
-                            SUM ( y.apbd ) + SUM ( y.jasalayanan ) AS total 
+
+                            SUM ( y.dak ) dak,
+                            SUM ( y.danais ) danais,
+                            SUM ( y.silpa ) silpa,
+
+                            SUM ( y.apbd ) + SUM ( y.jasalayanan ) + SUM ( y.dak ) + SUM ( y.danais ) + SUM ( y.silpa ) AS total 
                         FROM
                             (
                             SELECT
@@ -12800,8 +12829,22 @@ public function suratBuktiPengembalian(Request $request)
                                     
                                     WHEN x.id_asalproduk = 18 THEN
                                     subtotal ELSE 0 
-                                END AS jasalayanan 
-                            FROM
+                                END AS jasalayanan, 
+
+                            CASE                                   
+                                WHEN x.id_asalproduk = 21 THEN
+                                subtotal ELSE 0 
+                            END AS dak, 
+                            CASE                                    
+                                WHEN x.id_asalproduk = 2 THEN
+                                subtotal ELSE 0 
+                            END AS danais, 
+                            CASE                                    
+                                WHEN x.id_asalproduk = 4 THEN
+                                subtotal ELSE 0 
+                            END AS silpa 
+
+                        FROM
                                 (
                                 SELECT
                                     kmss.keterangan kegiatan,
@@ -12858,7 +12901,12 @@ public function suratBuktiPengembalian(Request $request)
                             y.div,
                             SUM ( y.apbd ) apbd,
                             SUM ( y.jasalayanan ) jasalayanan,
-                            SUM ( y.apbd ) + SUM ( y.jasalayanan ) AS total 
+
+                            SUM ( y.dak ) dak,
+                            SUM ( y.danais ) danais,
+                            SUM ( y.silpa ) silpa,
+
+                            SUM ( y.apbd ) + SUM ( y.jasalayanan ) + SUM ( y.dak ) + SUM ( y.danais ) + SUM ( y.silpa ) AS total 
                         FROM
                             (
                             SELECT
@@ -12876,7 +12924,21 @@ public function suratBuktiPengembalian(Request $request)
                                     
                                     WHEN x.id_asalproduk = 18 THEN
                                     subtotal ELSE 0 
-                                END AS jasalayanan 
+                                END AS jasalayanan,
+                                
+                            CASE                                
+                                WHEN x.id_asalproduk = 21 THEN
+                                subtotal ELSE 0 
+                            END AS dak, 
+                            CASE                                
+                                WHEN x.id_asalproduk = 2 THEN
+                                subtotal ELSE 0 
+                            END AS danais, 
+                            CASE                                
+                                WHEN x.id_asalproduk = 4 THEN
+                                subtotal ELSE 0 
+                            END AS silpa 
+                            
                             FROM
                                 (
                                 SELECT
@@ -12946,7 +13008,7 @@ public function suratBuktiPengembalian(Request $request)
         ) AS xx"))->first();
 
         $pageWidth = 1200;
-        return view('report.spj.cetakrekapanggaransumberdana', compact('data','grandtotal','pageWidth','tahap', 'tanggalcetak'));
+        return view('report.spj.cetakrekapanggaransumberdana', compact('data','grandtotal','pageWidth','tahap', 'tanggalcetak', 'settingrba'));
     }
     public function CetakRekapSumberDanaAnggaran(Request $request)
     {   
