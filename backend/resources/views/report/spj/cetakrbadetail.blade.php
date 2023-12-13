@@ -112,7 +112,7 @@
                         {{ strtoupper($settingrba[0]->pengelolakeuanganblud) }}
                     </b>
                 </td>
-                <td align="center" style="width: 50;">
+                <td align="center" style="width: 50px;">
                     <b style="font-size: 25px;">
                         RBA
                     </b><br>
