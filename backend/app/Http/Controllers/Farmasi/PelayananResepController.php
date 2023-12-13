@@ -2289,7 +2289,7 @@ class PelayananResepController extends ApiController
                     $HapusPPD = PelayananPasienDetail::where('pelayananpasien', $pp['norec'])->where('kdprofile', $idProfile)->delete();
                     $HapusPPP = PelayananPasienPetugas::where('pelayananpasien', $pp['norec'])->where('kdprofile', $idProfile)->delete();
                 }
-                $HpsPP = PelayananPasien::where('strukresepfk', $norec_SR)->where('kdprofile', $idProfile)->delete();
+                $HpsPP = PelayananPasien::where('strukresepfk', $norec_SR)->where('kdprofile', $idProfile)->where('isobat', true)->delete();
             }
 
             //## PelayananPasien
@@ -2485,6 +2485,8 @@ class PelayananResepController extends ApiController
                 // }else{
 
                     //## KartuStok
+                    // $time =  DB::select(DB::raw("SELECT to_char((now()::TIMESTAMP + INTERVAL '5 second'), 'YYYY-MM-DD hh24:mi:ss')
+                    // "))[0];
                     $newKS = new KartuStok();
                     $norecKS = $newKS->generateNewId();
                     $newKS->norec = $norecKS;
