@@ -50,11 +50,12 @@
     }
 </style>
 <!-- <body style="width:19.5cm;"> -->
+<body>
 <div>
 <table cellpadding="0" cellspacing="0" width="100%"  border="0" class="tabel">
         <tbody >
         <tr>
-            <td align="center" style="padding: 10px;" style="padding: 5px; width: 50px;">
+            <td align="center" style="padding: 10px;" style="padding: 5px; width: 30px;">
                     <p>
                             @if(stripos(\Request::url(), 'localhost') !== FALSE)
                             <img src="{{ asset('img/LOGO GRHASIA.png') }}" style="width: 100px" >
@@ -64,7 +65,7 @@
                       
                     </p>
             </td>
-            <td align="center" style="padding: 3px;" style="padding: 5px; width: 300px;">
+            <td align="center" style="padding: 3px;" style="padding: 5px; width: 350px;">
                 <b style="font-size: 23px;">
                     RENCANA BISNIS DAN ANGGARAN<br>
                     BADAN LAYANAN UMUM DAERAH<br>
@@ -162,12 +163,12 @@
                 @endforeach
                 <tr>
                     <td colspan="2" width="20" style="padding: 10px; font-weight: bold; text-align: center;">JUMLAH TOTAL</td>
-                    <td width="50" style="padding: 10px; font-weight: bold; ">{{ number_format($totaljasalayanan,0,',','.') }}</td>
-                    <td width="50" style="padding: 10px; font-weight: bold; ">{{ number_format($totalapbd,0,',','.') }}</td>
-                    <td width="50" style="padding: 10px; font-weight: bold; ">{{ number_format($totaldak,0,',','.') }}</td>
-                    <td width="50" style="padding: 10px; font-weight: bold; ">{{ number_format($totaldanais,0,',','.') }}</td>
-                    <td width="50" style="padding: 10px; font-weight: bold; ">{{ number_format($totalsilpa,0,',','.') }}</td>
-                    <td width="50" style="padding: 10px; font-weight: bold ;">{{ number_format($subtotal,0,',','.') }}</td>
+                    <td width="50" style="padding: 10px; font-weight: bold; ">{{ number_format($totaljasalayanan,0,',','.') == 0 ? "" : number_format($totaljasalayanan,0,',','.') }}</td>
+                    <td width="50" style="padding: 10px; font-weight: bold; ">{{ number_format($totalapbd,0,',','.') == 0 ? "" : number_format($totalapbd,0,',','.') }}</td>
+                    <td width="50" style="padding: 10px; font-weight: bold; ">{{ number_format($totaldak,0,',','.') == 0 ? "" : number_format($totaldak,0,',','.') }}</td>
+                    <td width="50" style="padding: 10px; font-weight: bold; ">{{ number_format($totaldanais,0,',','.') == 0 ? "" : number_format($totaldanais,0,',','.') }}</td>
+                    <td width="50" style="padding: 10px; font-weight: bold; ">{{ number_format($totalsilpa,0,',','.') ==0 ? "" : number_format($totalsilpa,0,',','.') }}</td>
+                    <td width="50" style="padding: 10px; font-weight: bold ;">{{ number_format($subtotal,0,',','.') == 0 ? "" : number_format($subtotal,0,',','.') }}</td>
                 </tr>
         </table>
         <table cellpadding="0" cellspacing="0" width="100%"  border="0">
@@ -186,7 +187,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td width="400">
+                    <td width="700">
                     </td>
                     <td>
                     </td>
@@ -203,7 +204,7 @@
                 <tr></tr>
                 <tr></tr>
                 <tr>
-                    <td width="400">
+                    <td width="700">
                     </td>
                     <td>
                     </td>
@@ -216,7 +217,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td width="400">
+                    <td width="700">
                     </td>
                     <td>
                     </td>

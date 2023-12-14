@@ -3310,13 +3310,19 @@ class ReportController extends ApiController{
     }
 
     public function CetakPerJenisAnggaran(Request $request){
-        $settingrba = DB::select(DB::raw("
-        select pg.namalengkap, pg.nippns from settinganggaran_t sa
-        inner join pegawai_m pg on pg.id = sa.objectkepalabludfk
-        where sa.statusenabled = true
-        "));
+        // $settingrba = DB::select(DB::raw("
+        // select pg.namalengkap, pg.nippns from settinganggaran_t sa
+        // inner join pegawai_m pg on pg.id = sa.objectkepalabludfk
+        // where sa.statusenabled = true
+        // "));
+
         $tahun = $request['tahun'];
         $tahap =  $request['tahap'];
+
+        $settingrba = DB::select(DB::raw("select sa.*, pg.reportdisplay as namalengkap, pg.nippns from settinganggaran_t sa
+        inner join pegawai_m pg on pg.id = sa.objectkepalabludfk
+        where sa.statusenabled = true"));
+
         $tanggalcetak = $this->tanggal_indonesia(date('Y-m-d',strtotime($request['tglcetak'])));
 
         $qtahap  = '';
@@ -3324,8 +3330,8 @@ class ReportController extends ApiController{
             $qtahap =  ' and kb.objecttahapfk =  ' . $request['tahap'];
         }
 
-        $tahap = DB::select(DB::raw("select * from tahapanggaran_m where id = $tahap"));
-
+        $tahap = DB::select(DB::raw("select tahapanggaran_m.*,$tahun thn from tahapanggaran_m where id = $tahap"));
+        $tahapnow = $request['tahap'];
         $data = DB::select(DB::raw("select * from(
         select kegiatan, kode, kode1::int, div, sum(jumlahbarangjasa) jumlahbarangjasa, sum(jumlahmodalgedung) jumlahmodalgedung, sum(jumlahpegawai) jumlahpegawai,  sum(jumlahmodalalat) jumlahmodalalat, sum(jumlahmodallainnya) jumlahmodallainnya,
         sum(jumlahbarangjasa) + sum(jumlahmodalgedung)+ sum(jumlahpegawai)+sum(jumlahmodalalat)+sum(jumlahmodallainnya) as total
@@ -3340,15 +3346,18 @@ class ReportController extends ApiController{
         select kmss.keterangan kegiatan, 0 kode1, kmss.kode, kmss.div, kms.keterangan subkegiatan, ja.id as id_jenisanggaran, ja.jenisanggaran, sum(kb.subtotal) subtotal
         from kegiatananggaran_m km
         inner join kegiatananggaran_m kms on km.kode ilike kms.kode || '%' and kms.div = 3
-        left join kegiatananggaran_m kmss on km.kode ilike kmss.kode || '%' and kmss.div = 2
+        inner join kegiatananggaran_m kmss on km.kode ilike kmss.kode || '%' and kmss.div = 2
         inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
         inner join mataanggaran_m ma on ma.id = kb.objectmataanggaranfk
         inner join mataanggaran_m mat on ma.kodemataanggaran ilike mat.kodemataanggaran || '%' and mat.objectjenisanggaranfk is not null
         inner join jenisanggaran_m ja on ja.id = mat.objectjenisanggaranfk
         where km.kdprofile = 30 and km.statusenabled = true
+        and kms.kdprofile = 30 and kms.statusenabled = true
+        and kmss.kdprofile = 30 and kmss.statusenabled = true
         and kb.kdprofile = 30 and kb.statusenabled = true
         and ma.kdprofile = 30 and ma.statusenabled = true
         and mat.kdprofile = 30 and mat.statusenabled = true
+        and ja.kdprofile = 30 and ja.statusenabled = true
         and km.tahun = '$tahun'
         $qtahap
         group by kms.keterangan, kmss.keterangan, kmss.kode, ja.jenisanggaran, kmss.div, ja.id
@@ -3372,16 +3381,19 @@ class ReportController extends ApiController{
         select kmss.keterangan kegiatan, kms.keterangan subkegiatan, 0 kode1, kms.kode, kms.div, ja.id as id_jenisanggaran,  ja.jenisanggaran, sum(kb.subtotal) subtotal
         from kegiatananggaran_m km
         inner join kegiatananggaran_m kms on km.kode ilike kms.kode || '%' and kms.div = 3
-        left join kegiatananggaran_m kmss on km.kode ilike kmss.kode || '%' and kmss.div = 2
+        inner join kegiatananggaran_m kmss on km.kode ilike kmss.kode || '%' and kmss.div = 2
         inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
         inner join mataanggaran_m ma on ma.id = kb.objectmataanggaranfk
         inner join mataanggaran_m mat on ma.kodemataanggaran ilike mat.kodemataanggaran || '%' and mat.objectjenisanggaranfk is not null
         inner join jenisanggaran_m ja on ja.id = mat.objectjenisanggaranfk
         where km.kdprofile = 30 and km.statusenabled = true
+        and kms.kdprofile = 30 and kms.statusenabled = true
+        and kmss.kdprofile = 30 and kmss.statusenabled = true
             and kb.kdprofile = 30 and kb.statusenabled = true
             and ma.kdprofile = 30 and ma.statusenabled = true
             and mat.kdprofile = 30 and mat.statusenabled = true
-        and km.tahun = '$tahun'
+            and ja.kdprofile = 30 and ja.statusenabled = true
+            and km.tahun = '$tahun'
         $qtahap
         group by kms.keterangan, kmss.keterangan, kms.kode, ja.jenisanggaran, kms.div, ja.id
         ) as x group by kegiatan, subkegiatan, jenisanggaran, subtotal, kode, kode1::int, div, id_jenisanggaran
@@ -3392,7 +3404,7 @@ class ReportController extends ApiController{
         select subkegiatan kegiatan, kode, kode1::int, div, sum(jumlahbarangjasa) jumlahbarangjasa, sum(jumlahmodalgedung) jumlahmodalgedung, sum(jumlahpegawai) jumlahpegawai,  sum(jumlahmodalalat) jumlahmodalalat, sum(jumlahmodallainnya) jumlahmodallainnya,
         sum(jumlahbarangjasa) + sum(jumlahmodalgedung)+ sum(jumlahpegawai)+sum(jumlahmodalalat)+sum(jumlahmodallainnya) as total
         from(
-        select kegiatan, subkegiatan, kode, kode1::int, div,
+        select kegiatan, case when $tahapnow=1 then subkegiatan else split_part(subkegiatan, '-', 2) end as subkegiatan, kode, kode1::int, div,
         case when id_jenisanggaran = 3 then subtotal else 0 end as jumlahpegawai,
         case when id_jenisanggaran = 4 then subtotal else 0 end as jumlahbarangjasa,
         case when id_jenisanggaran = 5 then subtotal else 0 end as jumlahmodalgedung,
@@ -3400,31 +3412,30 @@ class ReportController extends ApiController{
         case when id_jenisanggaran = 7 then subtotal else 0 end as jumlahmodallainnya
         from(
         select km.keterangan kegiatan, km.keterangan subkegiatan,
-        case
-        when length(km.kode) = 17 then left(km.kode, -1)
-        when length(km.kode) = 18 then left(km.kode, -2)
-        end as kode,
-        case
-        when length(km.kode) = 17 then right(km.kode, 1)::int
-        when length(km.kode) = 18 then right(km.kode, 2)::int
-        end as kode1, km.div, ja.id as id_jenisanggaran,ja.jenisanggaran, sum(kb.subtotal) subtotal
+        km.kode as kode,
+        CAST(split_part(km.kode,'.',7) as int) as kode1, 
+        km.div, ja.id as id_jenisanggaran,ja.jenisanggaran, sum(kb.subtotal) subtotal
         from kegiatananggaran_m km
         inner join kegiatananggaran_m kms on km.kode ilike kms.kode || '%' and kms.div = 3
-        left join kegiatananggaran_m kmss on km.kode ilike kmss.kode || '%' and kmss.div = 2
+        inner join kegiatananggaran_m kmss on km.kode ilike kmss.kode || '%' and kmss.div = 2
         inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
         inner join mataanggaran_m ma on ma.id = kb.objectmataanggaranfk
         inner join mataanggaran_m mat on ma.kodemataanggaran ilike mat.kodemataanggaran || '%' and mat.objectjenisanggaranfk is not null
         inner join jenisanggaran_m ja on ja.id = mat.objectjenisanggaranfk
         where km.kdprofile = 30 and km.statusenabled = true
+        and kms.kdprofile = 30 and kms.statusenabled = true
+        and kmss.kdprofile = 30 and kmss.statusenabled = true
         and kb.kdprofile = 30 and kb.statusenabled = true
         and ma.kdprofile = 30 and ma.statusenabled = true
         and mat.kdprofile = 30 and mat.statusenabled = true
+        and ja.kdprofile = 30 and ja.statusenabled = true
         and km.tahun = '$tahun'
         $qtahap
         group by km.keterangan, km.keterangan, km.kode, ja.jenisanggaran, km.div, ja.id
         ) as x group by kegiatan, subkegiatan, jenisanggaran, subtotal, kode, kode1::int, div, id_jenisanggaran
         ) as y group by y.subkegiatan, y.kode, y.kode1::int, y.div
-        ) as a order by kode, kode1::integer asc"));
+        ) as a order by CAST(split_part(kode,'.',1) as int), CAST(split_part(kode,'.',2) as int), CAST(split_part(kode,'.',3) as int),
+        CAST(split_part(kode,'.',4) as int),CAST(split_part(kode,'.',5) as int), div, kode1"));
 
         $jumlah = DB::select(DB::raw("select sum(jumlahbarangjasa) jumlahbarangjasa, sum(jumlahmodalgedung) jumlahmodalgedung, sum(jumlahpegawai) jumlahpegawai,  sum(jumlahmodalalat) jumlahmodalalat, sum(jumlahmodallainnya) jumlahmodallainnya,
         sum(jumlahbarangjasa) + sum(jumlahmodalgedung)+ sum(jumlahpegawai)+sum(jumlahmodalalat)+sum(jumlahmodallainnya) as total
@@ -3442,15 +3453,18 @@ class ReportController extends ApiController{
                     select kmss.keterangan kegiatan, kmss.kode, kmss.div, kms.keterangan subkegiatan,ja.id as id_jenisanggaran, ja.jenisanggaran, sum(kb.subtotal) subtotal
                     from kegiatananggaran_m km
                     inner join kegiatananggaran_m kms on km.kode ilike kms.kode || '%' and kms.div = 3
-                    left join kegiatananggaran_m kmss on km.kode ilike kmss.kode || '%' and kmss.div = 2
+                    inner join kegiatananggaran_m kmss on km.kode ilike kmss.kode || '%' and kmss.div = 2
                     inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
                     inner join mataanggaran_m ma on ma.id = kb.objectmataanggaranfk
                     inner join mataanggaran_m mat on ma.kodemataanggaran ilike mat.kodemataanggaran || '%' and mat.objectjenisanggaranfk is not null
                     inner join jenisanggaran_m ja on ja.id = mat.objectjenisanggaranfk
                     where km.kdprofile = 30 and km.statusenabled = true
+                    and kms.kdprofile = 30 and kms.statusenabled = true
+                    and kmss.kdprofile = 30 and kmss.statusenabled = true
                     and kb.kdprofile = 30 and kb.statusenabled = true
                     and ma.kdprofile = 30 and ma.statusenabled = true
 					and mat.kdprofile = 30 and mat.statusenabled = true
+					and ja.kdprofile = 30 and ja.statusenabled = true
                     and km.tahun = '$tahun'
                     $qtahap
                     group by kms.keterangan, kmss.keterangan, kmss.kode, ja.jenisanggaran, kmss.div, ja.id
@@ -12666,13 +12680,14 @@ public function suratBuktiPengembalian(Request $request)
                                 select kmss.keterangan kegiatan, ap.id as id_asalproduk,kmss.kode, 0 kode1, kmss.div, kms.keterangan subkegiatan, sum(kb.subtotal) subtotal
                                 from kegiatananggaran_m km
                                 inner join kegiatananggaran_m kms on km.kode ilike kms.kode || '%' and kms.div = 3
-                                left join kegiatananggaran_m kmss on km.kode ilike kmss.kode || '%' and kmss.div = 2
+                                inner join kegiatananggaran_m kmss on km.kode ilike kmss.kode || '%' and kmss.div = 2
                                 inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
                                 inner join asalproduk_m ap on ap.id = kb.objectasalprodukfk
                                 where km.kdprofile = 30 and km.statusenabled = true
                                 and kms.kdprofile = 30 and kms.statusenabled = true
                                 and kmss.kdprofile = 30 and kmss.statusenabled = true
                                 and kb.kdprofile = 30 and kb.statusenabled = true
+                                and ap.kdprofile = 30 and ap.statusenabled = true
                                 and km.tahun = '$tahun'
                                 $qtahap
                                 group by kms.keterangan, kmss.keterangan, kmss.kode, kmss.div, ap.id
@@ -12696,13 +12711,14 @@ public function suratBuktiPengembalian(Request $request)
                                 select kmss.keterangan kegiatan, kms.keterangan subkegiatan, kms.kode, 0 kode1, kms.div, ap.id as id_asalproduk,sum(kb.subtotal) subtotal
                                 from kegiatananggaran_m km
                                 inner join kegiatananggaran_m kms on km.kode ilike kms.kode || '%' and kms.div = 3
-                                left join kegiatananggaran_m kmss on km.kode ilike kmss.kode || '%' and kmss.div = 2
+                                inner join kegiatananggaran_m kmss on km.kode ilike kmss.kode || '%' and kmss.div = 2
                                 inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
                                 inner join asalproduk_m ap on ap.id = kb.objectasalprodukfk
                                 where km.kdprofile = 30 and km.statusenabled = true
                                 and kms.kdprofile = 30 and kms.statusenabled = true
                                 and kmss.kdprofile = 30 and kmss.statusenabled = true
                                 and kb.kdprofile = 30 and kb.statusenabled = true
+                                and ap.kdprofile = 30 and ap.statusenabled = true
                                 and km.tahun = '$tahun'
                                 $qtahap
                                 group by kms.keterangan, kmss.keterangan, kms.kode, kms.div, ap.id
@@ -12730,13 +12746,14 @@ public function suratBuktiPengembalian(Request $request)
                                 km.div, ap.id as id_asalproduk,sum(kb.subtotal) subtotal
                                 from kegiatananggaran_m km
                                 inner join kegiatananggaran_m kms on km.kode ilike kms.kode || '%' and kms.div = 3
-                                left join kegiatananggaran_m kmss on km.kode ilike kmss.kode || '%' and kmss.div = 2
+                                inner join kegiatananggaran_m kmss on km.kode ilike kmss.kode || '%' and kmss.div = 2
                                 inner join keteranganbelanja_t kb on kb.objectkegiatanfk = km.id
                                 inner join asalproduk_m ap on ap.id = kb.objectasalprodukfk
                                 where km.kdprofile = 30 and km.statusenabled = true
                                 and kms.kdprofile = 30 and kms.statusenabled = true
                                 and kmss.kdprofile = 30 and kmss.statusenabled = true
                                 and kb.kdprofile = 30 and kb.statusenabled = true
+                                and ap.kdprofile = 30 and ap.statusenabled = true
                                 and km.tahun = '$tahun'
                                 $qtahap
                                 group by km.keterangan, km.keterangan, km.kode, km.div, ap.id
@@ -12764,18 +12781,16 @@ public function suratBuktiPengembalian(Request $request)
                                     kegiatananggaran_m km
                                     INNER JOIN kegiatananggaran_m kms ON km.kode ILIKE kms.kode || '%' 
                                     AND kms.div = 3
-                                    LEFT JOIN kegiatananggaran_m kmss ON km.kode ILIKE kmss.kode || '%' 
+                                    inner JOIN kegiatananggaran_m kmss ON km.kode ILIKE kmss.kode || '%' 
                                     AND kmss.div = 2
                                     INNER JOIN keteranganbelanja_t kb ON kb.objectkegiatanfk = km.
                                     ID INNER JOIN asalproduk_m ap ON ap.ID = kb.objectasalprodukfk 
                                 WHERE
                                     km.kdprofile = 30  AND km.statusenabled = TRUE 
-                                    AND kms.kdprofile = 30 
-                                    AND kms.statusenabled = TRUE 
-                                    AND kmss.kdprofile = 30 
-                                    AND kmss.statusenabled = TRUE 
-                                    AND kb.kdprofile = 30 
-                                    AND kb.statusenabled = TRUE 
+                                    AND kms.kdprofile = 30 AND kms.statusenabled = TRUE 
+                                    AND kmss.kdprofile = 30 AND kmss.statusenabled = TRUE 
+                                    AND kb.kdprofile = 30 AND kb.statusenabled = TRUE 
+                                    and ap.kdprofile = 30 and ap.statusenabled = true
                                     AND km.tahun = '$tahun' 
                                     $qtahap
                                 GROUP BY
@@ -12858,19 +12873,16 @@ public function suratBuktiPengembalian(Request $request)
                                     kegiatananggaran_m km
                                     INNER JOIN kegiatananggaran_m kms ON km.kode ILIKE kms.kode || '%' 
                                     AND kms.div = 3
-                                    LEFT JOIN kegiatananggaran_m kmss ON km.kode ILIKE kmss.kode || '%' 
+                                    inner JOIN kegiatananggaran_m kmss ON km.kode ILIKE kmss.kode || '%' 
                                     AND kmss.div = 2
                                     INNER JOIN keteranganbelanja_t kb ON kb.objectkegiatanfk = km.
                                     ID INNER JOIN asalproduk_m ap ON ap.ID = kb.objectasalprodukfk 
                                 WHERE
-                                    km.kdprofile = 30 
-                                    AND km.statusenabled = TRUE 
-                                    AND kms.kdprofile = 30 
-                                    AND kms.statusenabled = TRUE 
-                                    AND kmss.kdprofile = 30 
-                                    AND kmss.statusenabled = TRUE 
-                                    AND kb.kdprofile = 30 
-                                    AND kb.statusenabled = TRUE 
+                                    km.kdprofile = 30 AND km.statusenabled = TRUE 
+                                    AND kms.kdprofile = 30 AND kms.statusenabled = TRUE 
+                                    AND kmss.kdprofile = 30 AND kmss.statusenabled = TRUE 
+                                    AND kb.kdprofile = 30 AND kb.statusenabled = TRUE 
+                                    and ap.kdprofile = 30 and ap.statusenabled = true
                                     AND km.tahun = '$tahun' 
                                     $qtahap
                                 GROUP BY
@@ -12965,19 +12977,16 @@ public function suratBuktiPengembalian(Request $request)
                                     kegiatananggaran_m km
                                     INNER JOIN kegiatananggaran_m kms ON km.kode ILIKE kms.kode || '%' 
                                     AND kms.div = 3
-                                    LEFT JOIN kegiatananggaran_m kmss ON km.kode ILIKE kmss.kode || '%' 
+                                    inner JOIN kegiatananggaran_m kmss ON km.kode ILIKE kmss.kode || '%' 
                                     AND kmss.div = 2
                                     INNER JOIN keteranganbelanja_t kb ON kb.objectkegiatanfk = km.
                                     ID INNER JOIN asalproduk_m ap ON ap.ID = kb.objectasalprodukfk 
                                 WHERE
-                                    km.kdprofile = 30 
-                                    AND km.statusenabled = TRUE 
-                                    AND kms.kdprofile = 30 
-                                    AND kms.statusenabled = TRUE 
-                                    AND kmss.kdprofile = 30 
-                                    AND kmss.statusenabled = TRUE 
-                                    AND kb.kdprofile = 30 
-                                    AND kb.statusenabled = TRUE 
+                                    km.kdprofile = 30 AND km.statusenabled = TRUE 
+                                    AND kms.kdprofile = 30 AND kms.statusenabled = TRUE 
+                                    AND kmss.kdprofile = 30 AND kmss.statusenabled = TRUE 
+                                    AND kb.kdprofile = 30 AND kb.statusenabled = TRUE 
+                                    and ap.kdprofile = 30 and ap.statusenabled = true
                                     AND km.tahun = '$tahun' 
                                     $qtahap
                                 GROUP BY
