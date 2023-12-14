@@ -90,6 +90,7 @@
         </tr>
     </table>
         <table cellpadding="0" cellspacing="0" width="100%"  border="0" class="tabel">
+            <thead>
                 <tr>
                     <td align="center" style="padding: 10px; font-weight: bold ">KODE KEGIATAN</td>
                     <td align="center" style="padding: 10px; font-weight: bold; ">NAMA KEGIATAN</td>
@@ -100,6 +101,7 @@
                     <td align="center" style="padding: 10px; font-weight: bold ; ">MODAL LAINNYA</td>
                     <td align="center" style="padding: 10px; font-weight: bold;  ">SUB TOTAL</td>
                 </tr>
+            </thead>
                 @foreach ($data as $dt)
                 <tr>
                     @if($dt->div == 2)
