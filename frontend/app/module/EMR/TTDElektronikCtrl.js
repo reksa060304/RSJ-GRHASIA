@@ -130,7 +130,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                                     { text: "View", click: LihatBerkas, imageClass: " fa fa-eye" },
                                     { text: "Delete", click: hapus, imageClass: "k-icon k-i-close", },
                                     { text: "Edit", click: editBerkas, imageClass: "k-icon k-i-pencil" },
-                                    { text: "Verify", click: verifyData, imageClass: "fa fa-check" },
+                                    // { text: "Verify", click: verifyData, imageClass: "fa fa-check" },
                                     // { text: "Koordinat", click: koordinatData, imageClass: "fa fa-check" },
                                 ],
                                 title: "",
@@ -142,7 +142,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                                     { text: "Download", click: DownloadBerkas2, imageClass: "k-icon k-i-download" },
                                     { text: "View", click: LihatBerkas, imageClass: " fa fa-eye" },
                                     { text: "Sign Doc", click: tandaTangan, imageClass: "fa fa-key" },
-                                    { text: "Verify", click: verifyData, imageClass: "fa fa-check" },
+                                    // { text: "Verify", click: verifyData, imageClass: "fa fa-check" },
                                     // { text: "Koordinat", click: koordinatData, imageClass: "fa fa-check" },
 
                                 ],
