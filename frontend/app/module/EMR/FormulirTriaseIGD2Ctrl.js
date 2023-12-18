@@ -1,4 +1,4 @@
-define(['initialize'], function (initialize) {
+define(['initialize','Configuration'], function (initialize,configuration) {
     'use strict';
     initialize.controller('FormulirTriaseIGD2Ctrl', ['$q', '$rootScope', '$scope', 'ModelItem', '$state', 'CacheHelper', 'DateHelper', 'MedifirstService',
         function ($q, $rootScope, $scope, ModelItem, $state, cacheHelper, dateHelper, medifirstService) {
@@ -20,7 +20,8 @@ define(['initialize'], function (initialize) {
             $scope.listData4 = []
             $scope.listData5 = []
             var norecEMR = ''
-            $scope.isCetak = true
+            $scope.isCetak = false
+            $scope.isCetakV = true
             if(medifirstService.getKelompokUser() == 'mahasiswadiklat'){
                 $scope.tombolSimpanVis = false
             }
@@ -674,6 +675,81 @@ define(['initialize'], function (initialize) {
                     }
                     cacheHelper.set('cacheNomorEMR', arrStr);
                 });
+            }
+            $scope.cetakBlade = function () {
+                if (norecEMR == '') {
+                    toastr.error('Dokumen belum pernah di isi')
+                    return
+                }
+                // if ($scope.item.obj[3003998] != undefined) {
+                //     $scope.listPegawai.add($scope.item.obj[3003998])
+                //     $scope.item.pegawai = $scope.item.obj[3003998]
+                // }
+                // if (pegawai == undefined) {
+                //     return
+                // }
+                var local = JSON.parse(localStorage.getItem('profile'))
+                var nama = medifirstService.getPegawaiLogin().namaLengkap
+
+                window.open(configuration.baseApiBackend + 'report/get-cetak-triaseigd?nocm=' + $scope.cc.nocm +
+                    '&norec_apd=' + $scope.cc.norec +
+                    '&emr=' + norecEMR +
+                    '&emrfk=' + $scope.cc.emrfk +
+                    '&kdprofile=' + local.id +
+                    '&nama=' + nama +
+                    // '&isttd=true' +
+                    // '&pegawaittd=' + pegawai.value +
+                    '&noregistrasi=' + $scope.cc.noregistrasi +
+                    '&norec_pd=' + $scope.cc.norec_pd, '_blank');
+            }
+            $scope.ttdElek = function () {
+                if (norecEMR == '') {
+                    toastr.error('Dokumen belum pernah di isi')
+                    return
+                }
+
+                // var confirm = $mdDialog.confirm()
+                //   .title('Info')
+                //   .textContent('Yakin mau tanda tangani dokumen ini ? ')
+                //   .ariaLabel('Lucky day')
+                //   .cancel('Tidak')
+                //   .ok('Ya')
+                // $mdDialog.show(confirm).then(function () {
+
+                if ($scope.item.obj[3003998] != undefined) {
+                    $scope.listPegawai.add($scope.item.obj[3003998])
+                    $scope.item.pegawai = $scope.item.obj[3003998]
+                }
+                $scope.winDialog.center().open()
+                // })
+            }
+            $scope.savePengajuanTTE = function (pegawai) {
+                if (pegawai == undefined) {
+                    return
+                }
+                var local = JSON.parse(localStorage.getItem('profile'))
+                var nama = medifirstService.getPegawaiLogin().namaLengkap
+                $scope.isRouteLoading = true
+                medifirstService.get('report/get-cetak-suratketerangandokter?nocm=' + $scope.cc.nocm +
+                    '&norec_apd=' + $scope.cc.norec +
+                    '&emr=' + norecEMR +
+                    '&emrfk=' + $scope.cc.emrfk +
+                    '&kdprofile=' + local.id +
+                    '&nama=' + nama +
+                    '&isttd=true' +
+                    '&pegawaittd=' + pegawai.value +
+                    '&noregistrasi=' + $scope.cc.noregistrasi +
+                    '&norec_pd=' + $scope.cc.norec_pd
+                ).then(function (e) {
+                    if (e.data.status == 201) {
+                        toastr.success(e.data.message)
+                        $scope.winDialog.close()
+                    } else {
+                        toastr.error(e.data.message)
+                    }
+                    $scope.isRouteLoading = false
+
+                })
             }
 
         }

@@ -94,6 +94,12 @@ define(['initialize'], function (initialize) {
                         field: "nocm",
                         title: "No Rekam Medis",
                         width: 150
+                    },
+                    {
+                        field: "tglinput",
+                        title: "Tanggal Input",
+                        width: 120,
+                        template: "<span class='style-left'>{{formatTanggal('#: tglinput #')}}</span>",
                     }, {
                         field: "tanggalreservasi",
                         title: "Tanggal Reservasi",
@@ -148,12 +154,7 @@ define(['initialize'], function (initialize) {
                         title: "No Antrean",
                         width: 100
                     },
-                    {
-                        field: "tglinput",
-                        title: "Tanggal Input",
-                        width: 120,
-                        template: "<span class='style-left'>{{formatTanggal('#: tglinput #')}}</span>",
-                    }
+                    
 
                     ]
             };
