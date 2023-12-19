@@ -2840,7 +2840,7 @@ class ReportController extends ApiController{
         and krp.statusenabled = true and krp.kdprofile = 30
         and skm.tglkirim::date between '$tglAwal' and '$tglAkhir' 
         and so.statusenabled = true and so.kdprofile = 30
-        and so.tglorder::date between '$tglAwal' and '$tglAkhir' and skm.nokirim ilike 'TRF%'
+        and so.tglorder::date between '$tglAwal' and '$tglAkhir' and skm.nokirim ilike 'TRF%' and so.noorder ilike '%spb%'
         and op.statusenabled = true and op.kdprofile = 30
         $searchnoorder
         group by ruorder.namaruangan, rukirim.namaruangan, so.tglorder, skm.tglkirim, skm.nokirim, pr.namaproduk, ss.satuanstandar, so.norec, op.qtyproduk, krp.qtyproduk
