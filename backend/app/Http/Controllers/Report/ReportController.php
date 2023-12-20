@@ -10318,6 +10318,11 @@ class ReportController extends ApiController{
     public function CetakRekapTotalAnggaran(Request $request){
         $tahun = $request['tahun'];
         $tahap = $request['tahap'];
+
+        $settingrba = DB::select(DB::raw("select sa.*, pg.reportdisplay as namalengkap, pg.nippns from settinganggaran_t sa
+        inner join pegawai_m pg on pg.id = sa.objectkepalabludfk
+        where sa.statusenabled = true"));
+        
         $tanggalcetak = $this->tanggal_indonesia(date('Y-m-d',strtotime($request['tglcetak']))); 
 
         $qtahap  = '';
@@ -10325,13 +10330,14 @@ class ReportController extends ApiController{
             $qtahap =  ' and kb.objecttahapfk =  ' . $request['tahap'];
         }
 
-        $itahap = DB::select(DB::raw("select id, tahap from tahapanggaran_m where id = $tahap"));
+        $itahap = DB::select(DB::raw("select id, tahap, $tahun thn from tahapanggaran_m where id = $tahap"));
 
         $sebelum = DB::select(DB::raw("
         SELECT o.*, p.subtotal, p.tahap
         from
         (
             select kodemataanggaran, namamataanggaran from mataanggaran_m WHERE
+            kdprofile = 30 and statusenabled = true AND	
             case 
                 when kodemataanggaran ilike 'I%' then (char_length(kodemataanggaran) = 5 or char_length(kodemataanggaran) = 3)
                 when kodemataanggaran ilike 'II%' then (char_length(kodemataanggaran) = 4 or char_length(kodemataanggaran) = 2)
@@ -10497,7 +10503,7 @@ class ReportController extends ApiController{
         );
 
         $pageWidth = 1200;
-        return view('report.spj.cetakrekaptotalanggaran',compact('sebelum','pageWidth', 'jumlah', 'itahap', 'tanggalcetak'));
+        return view('report.spj.cetakrekaptotalanggaran',compact('sebelum','pageWidth', 'jumlah', 'itahap', 'tanggalcetak','settingrba'));
     }
 
     public function CetakRekapTotalAnggaranSebelumSesudah(Request $request){
