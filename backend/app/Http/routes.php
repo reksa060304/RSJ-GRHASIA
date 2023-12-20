@@ -1321,6 +1321,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('report/cetak-preview-order','Report\ReportController@cetakPreviewOrder');
           Route::get('report/cetak-resep-dokter-rev','Report\ReportController@cetakResepDokterRev');
           Route::get('report/cetak-resep-dokter-harga','Report\ReportController@cetakResepDokterHarga');
+          Route::get('report/get-cetak-triaseigd','Report\ReportController@cetakTriaseIGD');
           Route::get('report/get-cetak-suratketerangandokter','Report\ReportController@CetakSKDokter');
           Route::get('report/get-cetak-suratketerangangawatdarurat','Report\ReportController@CetakSKGawatDarurat');
           Route::get('report/get-cetak-suratketerangandirawatinap','Report\ReportController@CetakSKDirawatInap');
@@ -1329,8 +1330,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('report/get-cetak-per-jenis-anggaran','Report\ReportController@CetakPerJenisAnggaran');
           Route::get('report/get-cetak-per-jenis-anggaran-sebelum-sesudah','Report\ReportController@CetakPerJenisAnggaranSebelumSesudah');
           Route::get('report/get-cetak-rekap-mata-anggaran','Report\ReportController@CetakRekapMataAnggaran');
-          Route::get('report/get-cetak-rekap-mata-anggaran-sebelum','Report\ReportController@
-          ');
+          Route::get('report/get-cetak-rekap-mata-anggaran-sebelum','Report\ReportController@CetakRekapMataAnggaranSebelum');
           Route::get('report/get-cetak-rekap-total-anggaran','Report\ReportController@CetakRekapTotalAnggaran');
           Route::get('report/get-cetak-rekap-total-anggaran-sebelum-sesudah','Report\ReportController@CetakRekapTotalAnggaranSebelumSesudah');
           Route::get('report/get-cetak-rba-detail','Report\ReportController@CetakRBADetail');
