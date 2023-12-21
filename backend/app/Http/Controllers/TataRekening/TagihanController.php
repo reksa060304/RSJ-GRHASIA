@@ -5728,9 +5728,9 @@ class TagihanController  extends ApiController
         left join monitoringklaim_t mk on mk.nosep = pa.nosep and mk.statusklaimfk = 3
         left join rekapklaimbpjs_t rkbpjs on rkbpjs.norecpdfk = pd.norec
         where pd.kdprofile = 30 and pd.statusenabled = true
-        and pd.tglpulang between '$tglAwal 00:00' and '$tglAkhir 23:59'
+        and pd.tglregistrasi between '$tglAwal 00:00' and '$tglAkhir 23:59'
         and kp.id not in(1, 2, 21, 22, 24, 25)
-        and pd.nostruklastfk is not null
+        -- and pd.nostruklastfk is not null
         and pd.nosbmlastfk is null
         $qkey
         $qkp
