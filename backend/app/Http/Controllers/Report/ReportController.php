@@ -15785,6 +15785,7 @@ public function suratBuktiPengembalian(Request $request)
                 'peg'=> $peg
             )
         );
+        $pdf->setPaper('A4', 'portrait');
         if(isset($request['isttd']) && $request['isttd'] == true){
             $objetoRequest = new \Illuminate\Http\Request();
             $objetoRequest ['emrfk'] = $request['emrfk'];
