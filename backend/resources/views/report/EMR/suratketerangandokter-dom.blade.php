@@ -212,7 +212,7 @@
                             <tr>
                                 <td  style="padding-left: 60px ">Dalam Kondisi</td>
                                 <td  width="1">:</td>
-                                <td colspan="4">{{$item[3003999]}}</td>
+                                <td>{{$item[3003999]}}</td>
                             </tr>
                             <tr>
                                 <td style="padding-left: 40px; padding-right: 40px" colspan="6">Demikian Surat Keterangan Dokter ini dibuat dengan sebenarnya untuk keperluan : </td>
