@@ -151,6 +151,9 @@
                     <th style=" font-size: 14px">Nomor : 449 / {{isset($item[3003992]) ? $item[3003992] : '' }} </th>
                 </tr>
                 <tr>
+                    <td><br></td>
+                </tr>
+                <tr>
                     <td colspan="6" style="padding-left: 40px; padding-right: 40px" > Yang bertanda tangan di bawah ini, telah melakukan pemeriksaan kesehatan pada
                         tanggal {{$item[3003987]}}, terhadap : </td>
                 </tr>
@@ -223,6 +226,9 @@
                             <tr>
                                 <td style="padding-left: 40px; padding-right: 40px" colspan="6">dan tidak dapat digunakan untuk kepentingan hukum lainnya.</td>
                                 {{-- <td>{{$tb->keperluan}}</td> --}}
+                            </tr>
+                            <tr>
+                                <td><br></td>
                             </tr>
                             <tr>
                                 <td colspan="5"></td>
