@@ -158,13 +158,13 @@
                     <td>
                         <table border="0" width="{{$pageWidth}}" bgcolor="#FFFFFF">
                             <tr>
-                                <td style="padding-left: 60px ">Nama</td>
-                                <td width="1">:</td>
+                                <td width="30%" style="padding-left: 60px ">Nama</td>
+                                <td width="1%">:</td>
                                 <td>{{$item[3003982]}}</td>
                             </tr>
                             <tr>
-                                <td style="padding-left: 60px ">Tempat/Tanggal Lahir</td>
-                                <td width="1">:</td>
+                                <td width="30%" style="padding-left: 60px ">Tempat/Tanggal Lahir</td>
+                                <td width="1%">:</td>
                                 <td width="250">
                                 <table>
                                     <tr>
@@ -178,23 +178,23 @@
                                 
                             </tr>
                             <tr>
-                                <td  style="padding-left: 60px ">Jenis Kelamin</td>
-                                <td width="1">:</td>
+                                <td width="30%"  style="padding-left: 60px ">Jenis Kelamin</td>
+                                <td width="1%">:</td>
                                 <td>{{$item[3003984]}}</td>
                             </tr>
                             <tr>
-                                <td  style="padding-left: 60px ">Pekerjaan</td>
-                                <td width="1">:</td>
+                                <td width="30%"  style="padding-left: 60px ">Pekerjaan</td>
+                                <td width="1%">:</td>
                                 <td>{{$item[3003985]}}</td>
                             </tr>
                             <tr>
-                                <td style="padding-left: 60px ">Alamat</td>
-                                <td width="1">:</td>
+                                <td width="30%" style="padding-left: 60px ">Alamat</td>
+                                <td width="1%">:</td>
                                 <td >{{$item[3003986]}}</td>
                             </tr>
                             <tr>
-                                <td style="padding-left: 60px ">Pada waktu diperiksa</td>
-                                <td  width="1">:</td>
+                                <td  width="30%"style="padding-left: 60px ">Pada waktu diperiksa</td>
+                                <td  width="1%">:</td>
                                 <td>
                                     <table>
                                         <tr>
@@ -210,8 +210,8 @@
                                 </td>                    
                             </tr>
                             <tr>
-                                <td  style="padding-left: 60px ">Dalam Kondisi</td>
-                                <td  width="1">:</td>
+                                <td  width="30%" style="padding-left: 60px ">Dalam Kondisi</td>
+                                <td  width="1%">:</td>
                                 <td>{{$item[3003999]}}</td>
                             </tr>
                             <tr>
