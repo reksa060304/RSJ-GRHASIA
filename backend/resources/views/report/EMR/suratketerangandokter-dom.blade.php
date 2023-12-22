@@ -59,7 +59,7 @@
             text-align: center;
             position: absolute;
             left: 67%;
-            bottom: 35%;
+            bottom: 30%;
             right: 3%;
             }
 
