@@ -2078,7 +2078,43 @@ class PelayananResepController extends ApiController
             $resepOld = StrukResep::where('noresep', $r_SR['noresep'])
                 ->where('kdprofile', $idProfile)->first();
             $namaPasien = $r_SR['nocm'] . ' ' . $r_SR['namapasien'];
+            
+
+            
             if ($r_SR['noresep'] == '-') {
+                $cekresep = StrukResep::where('kdprofile', 30)
+                ->where('pasienfk', $r_SR['pasienfk'])
+                ->where('penulisresepfk',$r_SR['penulisresepfk'])
+                ->where('ruanganfk', $r_SR['ruanganfk'])
+                ->where('tglresep',$r_SR['tglresep']);
+                if(isset($r_SR['cito'])){
+                    $cekresep = $cekresep->where('cito',$r_SR['cito']);
+                }
+                $cekresep = $cekresep->first();
+                if(!empty($cekresep) ){
+                    $transMessage = "Resep Double check";
+                    DB::rollBack();
+                    $newId = LoggingUser::max('id');
+                    $newId = $newId +1;
+                    $logUser = new LoggingUser();
+                    $logUser->id = $newId;
+                    $logUser->norec = $logUser->generateNewId();
+                    $logUser->kdprofile= $kdProfile;
+                    $logUser->statusenabled=true;
+                    $logUser->jenislog = "Double Resep Apotik";
+                    $logUser->keterangan = "Double Resep nih untung ketahan". $r_SR['noresep'].' '.$r_SR['nocm'].' '.$r_SR['namapasien'];
+                    $logUser->noreff = '';
+                    $logUser->referensi='';
+                    $logUser->objectloginuserfk =  $request['userData']['id'];
+                    $logUser->tanggal = date('Y-m-d H:i:s');
+                    $logUser->save();
+                    $result = array(
+                        "status" => 201,
+                        "message"  => $transMessage,
+                        "as" => 'as@epic',
+                    );
+                    return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+                }
                 $newSR = new StrukResep();
                 $norecSR = $newSR->generateNewId();
                 /** Obat ALKES */
