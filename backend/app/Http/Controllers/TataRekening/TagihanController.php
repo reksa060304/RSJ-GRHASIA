@@ -5729,9 +5729,9 @@ class TagihanController  extends ApiController
         left join rekapklaimbpjs_t rkbpjs on rkbpjs.norecpdfk = pd.norec
         where pd.kdprofile = 30 and pd.statusenabled = true
         and pd.tglregistrasi between '$tglAwal 00:00' and '$tglAkhir 23:59'
-        and kp.id not in(1, 2, 21, 22, 24, 25)
+        and kp.id not in(2, 21, 22, 24, 25)
         -- and pd.nostruklastfk is not null
-        and pd.nosbmlastfk is null
+        -- and pd.nosbmlastfk is null
         $qkey
         $qkp
         group by rkbpjs.isobat, rkbpjs.totalsetujui, ps.nocm, jk.jeniskelamin, dept.id, ru.namaruangan, mk.totalsetujui, pd.norec, rkbpjs.tglbayar, mk.tglsep, pd.nostruklastfk, sp.norec, coalesce(mk.nosep,'-'), pd.tglpulang, pd.noregistrasi, ps.namapasien, kp.kelompokpasien, rek.namarekanan,
