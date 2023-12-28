@@ -155,20 +155,20 @@
                 @if($dt->kodefix != '')
                     <td align="center" style="padding: 10px;font-weight:bold;">{{ $dt->kodefix }}</td>
                     <td style="padding: 10px;font-weight:bold;">{{ $dt->namamataanggaran }}</td>
-                    <td style="padding: 10px;">{{ $dt->jumlahjan!= 0? number_format($dt->jumlahjan,0,',','.') : '' }}</td>
-                    <td style="padding: 10px;">{{ $dt->jumlahfeb!= 0? number_format($dt->jumlahfeb,0,',','.') : '' }}</td>
-                    <td style="padding: 10px;">{{ $dt->jumlahmar!= 0? number_format($dt->jumlahmar,0,',','.') : '' }}</td>
-                    <td style="padding: 10px;">{{ $dt->jumlahapr!= 0? number_format($dt->jumlahapr,0,',','.') : '' }}</td>
-                    <td style="padding: 10px;">{{ $dt->jumlahmei!= 0? number_format($dt->jumlahmei,0,',','.') : '' }}</td>
-                    <td style="padding: 10px;">{{ $dt->jumlahjun!= 0? number_format($dt->jumlahjun,0,',','.') : '' }}</td>
-                    <td style="padding: 10px;">{{ $dt->jumlahjul!= 0? number_format($dt->jumlahjul,0,',','.') : '' }}</td>
-                    <td style="padding: 10px;">{{ $dt->jumlahagt!= 0? number_format($dt->jumlahagt,0,',','.') : '' }}</td>
-                    <td style="padding: 10px;">{{ $dt->jumlahsep!= 0? number_format($dt->jumlahsep,0,',','.') : '' }}</td>
-                    <td style="padding: 10px;">{{ $dt->jumlahokt!= 0? number_format($dt->jumlahokt,0,',','.') : '' }}</td>
-                    <td style="padding: 10px;">{{ $dt->jumlahnov!= 0? number_format($dt->jumlahnov,0,',','.') : '' }}</td>
-                    <td style="padding: 10px;">{{ $dt->jumlahdes!= 0? number_format($dt->jumlahdes,0,',','.') : '' }}</td>
-                    <td style="padding: 10px;">{{ $dt->subtotal != 0 ?number_format($dt->subtotal,0,',','.') : '' }}</td>
-                    <td style="padding: 10px;">{{ $dt->asalproduk }}</td>
+                    <td style="padding: 10px;font-weight:bold;">{{ $dt->jumlahjan!= 0? number_format($dt->jumlahjan,0,',','.') : '' }}</td>
+                    <td style="padding: 10px;font-weight:bold;">{{ $dt->jumlahfeb!= 0? number_format($dt->jumlahfeb,0,',','.') : '' }}</td>
+                    <td style="padding: 10px;font-weight:bold;">{{ $dt->jumlahmar!= 0? number_format($dt->jumlahmar,0,',','.') : '' }}</td>
+                    <td style="padding: 10px;font-weight:bold;">{{ $dt->jumlahapr!= 0? number_format($dt->jumlahapr,0,',','.') : '' }}</td>
+                    <td style="padding: 10px;font-weight:bold;">{{ $dt->jumlahmei!= 0? number_format($dt->jumlahmei,0,',','.') : '' }}</td>
+                    <td style="padding: 10px;font-weight:bold;">{{ $dt->jumlahjun!= 0? number_format($dt->jumlahjun,0,',','.') : '' }}</td>
+                    <td style="padding: 10px;font-weight:bold;">{{ $dt->jumlahjul!= 0? number_format($dt->jumlahjul,0,',','.') : '' }}</td>
+                    <td style="padding: 10px;font-weight:bold;">{{ $dt->jumlahagt!= 0? number_format($dt->jumlahagt,0,',','.') : '' }}</td>
+                    <td style="padding: 10px;font-weight:bold;">{{ $dt->jumlahsep!= 0? number_format($dt->jumlahsep,0,',','.') : '' }}</td>
+                    <td style="padding: 10px;font-weight:bold;">{{ $dt->jumlahokt!= 0? number_format($dt->jumlahokt,0,',','.') : '' }}</td>
+                    <td style="padding: 10px;font-weight:bold;">{{ $dt->jumlahnov!= 0? number_format($dt->jumlahnov,0,',','.') : '' }}</td>
+                    <td style="padding: 10px;font-weight:bold;">{{ $dt->jumlahdes!= 0? number_format($dt->jumlahdes,0,',','.') : '' }}</td>
+                    <td style="padding: 10px;font-weight:bold;">{{ $dt->subtotal != 0 ?number_format($dt->subtotal,0,',','.') : '' }}</td>
+                    <td style="padding: 10px;font-weight:bold;">{{ $dt->asalproduk }}</td>
                 @else
                     <td align="center" style="padding: 10px;">{{ $i }}</td>
                     <td style="padding: 10px;">{{ $dt->namamataanggaran }}</td>
