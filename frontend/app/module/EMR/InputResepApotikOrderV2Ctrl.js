@@ -2062,6 +2062,9 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     return;
                 }
                 medifirstService.post('emr/hapus-order-pelayananobatfarmasi', { norec: $scope.dataSelectedRiwayat.norec_order }).then(function (e) {
+                    medifirstService.postLogging('Hapus Order Resep', 'Norec strukresep_t', '...',
+                    'Order Resep No Order - ' + $scope.dataSelectedRiwayat.noorder + ' dengan No Registrasi ' + $scope.item.noregistrasi).then(function (res) {
+                    })
                     init();
                 })
             }
