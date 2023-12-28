@@ -5834,7 +5834,7 @@ class EMRController  extends ApiController
             $alergi = Pasien::where('nocm',$request['data'][0]['strukorder']['nocm'])->first();
             $alergi->alergi = $request['data'][0]['strukorder']['alergi'];
             $alergi->save();
-
+            
             foreach($request['data'] as $data)
             {
 
@@ -5880,6 +5880,18 @@ class EMRController  extends ApiController
                         $newSO->kdprofile = $idProfile;
                         $newSO->statusenabled = true;
                     } else {
+                        $cekorder = DB::select(DB::raw("
+                        select * from strukresep_t where orderfk = '$r_SR[norec]' and statusenabled = true
+                        "));
+                        if(count($cekorder)>0){
+                            $transMessage = "Tidak Bisa Edit, sudah Di Verifikasi";
+                            $result = array(
+                                "status" => 400,
+                                "message" => $transMessage,
+                                "as" => 'er@epic',
+                            );
+                            return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+                        }
                         $newSO = StrukOrder::where('norec', $r_SR['norec'])->first();
         
                         $noOrder = $newSO->noorder;
