@@ -7730,8 +7730,10 @@ class EMRController  extends ApiController
         $idProfile = (int) $kdProfile;
         DB::beginTransaction();
         try {
-            $so = StrukOrder::where('norec', $request['norec'])->where('kdprofile', $idProfile)->first();
-            if ($so->statusorder == 5) {
+            $so = DB::select(DB::raw("
+            SELECT * from strukresep_t where orderfk = '$request[norec]' and statusenabled = true
+            "));
+            if (count($so) > 0) {
                 $transMessage = "Tidak Bisa dihapus sudah Di Verifikasi";
                 $result = array(
                     "status" => 400,
