@@ -5701,7 +5701,8 @@ class TagihanController  extends ApiController
         from(select norecpd, nocm, jeniskelamin, namaruangan, tglbayar, tglsep, iscek, nosep, tglpulang, noregistrasi, namapasien, kelompokpasien, namarekanan,
         sum(totalbilling) totalbilling, sum(totalbayar) totalbayar, coalesce(totalklaim,0) totalklaim, coalesce(totalobat,0) totalobat, lamahari
         from(select pd.norec norecpd, ps.nocm, jk.jeniskelamin, ru.namaruangan, rkbpjs.tglbayar, mk.tglsep, false as iscek, pd.nostruklastfk, sp.norec, coalesce(mk.nosep,'-') nosep, pd.tglpulang, pd.noregistrasi, ps.namapasien, kp.kelompokpasien, rek.namarekanan,
-        coalesce(sp.totalprekanan,0) totalbilling, 0 as totalbayar,
+        sum(((case when pp.hargajual is null then 0 else pp.hargajual::float8 end - case when pp.hargadiscount is null then 0 else pp.hargadiscount::float8 end) * pp.jumlah) + case when pp.jasa is null then 0 else pp.jasa::float8 end) totalbilling,
+        0 as totalbayar,
         case when (rkbpjs.isobat is null or rkbpjs.isobat = false) then coalesce(mk.totalsetujui,rkbpjs.totalsetujui) else 0 end as totalklaim,
         case when rkbpjs.isobat = true then coalesce(mk.totalsetujui,rkbpjs.totalsetujui) else 0 end as totalobat,
         CASE
