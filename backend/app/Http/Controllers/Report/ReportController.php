@@ -4101,7 +4101,9 @@ class ReportController extends ApiController{
 
         $subsubkegiatan = DB::select(DB::raw("select * from kegiatananggaran_m where id = ".$subsubk));
 
-        $data = DB::select(DB::raw("select DENSE_RANK ( ) OVER ( order by kodemataanggaran ) AS nourut, kodefix, kodemataanggaran, namamataanggaran, sum(jumlahjan) jumlahjan, sum(jumlahfeb) jumlahfeb,
+        $data = DB::select(DB::raw("
+        select * from (
+            select DENSE_RANK ( ) OVER ( order by kodemataanggaran ) AS nourut, kodefix, kodemataanggaran, namamataanggaran, sum(jumlahjan) jumlahjan, sum(jumlahfeb) jumlahfeb,
         sum(jumlahmar) jumlahmar, sum(jumlahapr) jumlahapr, sum(jumlahmei) jumlahmei, sum(jumlahjun) jumlahjun,
         sum(jumlahjul) jumlahjul, sum(jumlahagt) jumlahagt, sum(jumlahsep) jumlahsep, sum(jumlahokt) jumlahokt,
         sum(jumlahnov) jumlahnov, sum(jumlahdes) jumlahdes,
@@ -4186,7 +4188,9 @@ class ReportController extends ApiController{
             group by 
             ma.kodemataanggaran, ma.namamataanggaran, kb.norec, kb.keteranganbelanja, akb.bulanint, ap.asalproduk
         ) as x group by kodemataanggaran, namamataanggaran, norec, keteranganbelanja, asalproduk
-        order by nourut, kodefix desc;        
+        order by nourut, kodefix desc
+        )as x 
+        order by split_part(x.kodemataanggaran,'.',4) asc , split_part(x.kodemataanggaran,'.',5) ::int4 asc, kodefix desc
         "));
 
         $pageWidth = 1200;
