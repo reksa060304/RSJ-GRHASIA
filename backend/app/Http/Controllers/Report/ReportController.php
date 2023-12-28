@@ -11389,9 +11389,13 @@ from kegiatananggaran_m km
         and rp.tahun = '$tahun'
         $qperubahan
         order by nourut, bold"));     
-    
+        $settingrba = DB::select(DB::raw("
+        select pg.namalengkap, pg.nippns from settinganggaran_t sa
+        inner join pegawai_m pg on pg.id = sa.objectkepalabludfk
+        where sa.statusenabled = true
+        "));
         $pageWidth = 1200;
-        return view('report.spj.cetakpendapatanperubahan',compact('pageWidth', 'data', 'tanggalcetak'));
+        return view('report.spj.cetakpendapatanperubahan',compact('pageWidth', 'data', 'tanggalcetak','settingrba'));
     }
 
     public function CetakRBADetailSebelumSesudah(Request $request){

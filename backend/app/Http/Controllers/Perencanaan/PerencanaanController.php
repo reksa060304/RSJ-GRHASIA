@@ -8650,7 +8650,7 @@ public function loadComboRincian(Request $request)
                 'objecturaianpendapatanfk'=> $request['objecturaianpendapatanfk'],
                 'keterangan'=> $request['keterangan'],
                 'isperubahan'=> $request['isperubahan'],
-                'tahun'=> $request['tahun']
+                'tahun'=> date('Y', strtotime($request['tahun']))
                 ]);
             } else {
                 $data = \DB::table('rincianpendapatan_t')->where('norec',$request['norec'])->update([
@@ -8664,7 +8664,7 @@ public function loadComboRincian(Request $request)
                     'objecturaianpendapatanfk'=> $request['objecturaianpendapatanfk'],
                     'keterangan'=> $request['keterangan'],
                     'isperubahan'=> $request['isperubahan'],
-                    'tahun'=> $request['tahun']
+                    'tahun'=> date('Y', strtotime($request['tahun']))
                 ]);
             }
             
