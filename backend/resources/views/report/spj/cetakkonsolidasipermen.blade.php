@@ -48,7 +48,7 @@
 
     }
 </style>
-<body style="width:25cm;">
+<body style="width:100%;">
 <div>
 <table cellpadding="0" cellspacing="0"  border="0" class="tabel">
         <tr>
