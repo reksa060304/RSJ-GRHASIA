@@ -10967,10 +10967,18 @@ class EMRController  extends ApiController
         //     }
             
         // }
+        $pansec =DB::select(DB::raw("
+        SELECT * from panssec_t where norec_apd in (
+            SELECT epd.norec_apd FROM emrpasiend_t epd
+            inner join emrpasien_t ep on ep.noemr = epd.emrpasienfk
+            where epd.emrpasienfk = '$request[noemr]'
+            ) order by tglinput asc
+        "));
         $result = array(
                 // 'data'=> $detail,
                 // "sec"=> $sec,
                 'data'=> $data,
+                "panssec"=>$pansec,
                 'as'=> 'Fizi@Epic'
             );
         return $this->respond($result);
