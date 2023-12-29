@@ -6189,7 +6189,6 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }
             
             $scope.TambahSPJ = function(){
-                console.log($scope.dispptkspj)
                 $scope.norecspjpanjar = ''
 
                 if($scope.idpegawailogin != ''){
@@ -6197,7 +6196,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 } else{
                     $scope.dispptk = false
                 }
-                
+                $scope.dataSourceDetailSPJ = new kendo.data.DataSource({
+                    data: []
+                });
                 $scope.item.tglSPJ =  new Date(moment($scope.now).format('YYYY-MM-DD'));
                 
                 $scope.listSubKegiatanSPJ = [];
@@ -6385,9 +6386,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 if( $scope.item.mataAnggaranSPJ ==  undefined){
                     return
                 }
-                $scope.dataSourceDetailSPJ = new kendo.data.DataSource({
-                    data: []
-                });
+                
                 $scope.item.noUrutSPJ = DataDetailSPJ.length + 1
                 $scope.item.keteranganSPJ = ''
                 $scope.item.jmlSPJ = ''
