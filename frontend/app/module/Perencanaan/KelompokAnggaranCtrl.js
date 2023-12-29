@@ -6385,6 +6385,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 if( $scope.item.mataAnggaranSPJ ==  undefined){
                     return
                 }
+                $scope.dataSourceDetailSPJ = new kendo.data.DataSource({
+                    data: []
+                });
                 $scope.item.noUrutSPJ = DataDetailSPJ.length + 1
                 $scope.item.keteranganSPJ = ''
                 $scope.item.jmlSPJ = ''
