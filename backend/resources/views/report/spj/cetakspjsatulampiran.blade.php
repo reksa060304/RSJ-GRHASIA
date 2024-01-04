@@ -50,7 +50,7 @@
         <tr>
             <td colspan="5" style="padding: 10px" align="center">
                 <b>
-                    <font style="font-size: 14pt" color="#000000"><u> BUKTI KAS PENGELUARAN </u></font>
+                    <font style="font-size: 14pt" color="#000000"><u> BUKTI PENGELUARAN </u></font>
                 </b> 
             </td>
         </tr>
@@ -64,7 +64,7 @@
                             <font style="font-size: 12pt" color="#000000">Terima dari</font>
                         </td>
                         <td colspan="4" style="padding: 10px; padding-bottom: 5px; padding-top: 5px;" align="left">
-                            <font style="font-size: 12pt" color="#000000">: Direktur RS Jiwa GRHASIA DINKES DIY</font>
+                            <font style="font-size: 12pt" color="#000000">: Direktur Rumah Sakit Jiwa Grhasia</font>
                         </td>
                     </tr>
                     <tr>
@@ -72,7 +72,7 @@
                             <font style="font-size: 12pt" color="#000000">Uang Sebesar</font>
                         </td>
                         <td colspan="4" style="padding: 10px; padding-bottom: 5px; padding-top: 5px;" align="left">
-                            <font style="font-size: 12pt" color="#000000">: {{$terbilang}}</font>
+                            <font style="font-size: 12pt" color="#000000">: {{ucwords($terbilang)}}</font>
                         </td>
                     </tr>
                 </table>
@@ -81,16 +81,25 @@
         
         <tr>
             <td colspan="4" style="text-align:left; padding-left: 50px; padding-bottom: 5px; padding-top: 15px;">
-                <font style="font-size: 12pt" color="#000000">Yaitu untuk membayar: </font>
+                <font style="font-size: 12pt" color="#000000">
+               Yaitu untuk membayar: </font>
             </td>
         </tr>
         <tr>
             <td colspan="5" style="text-align:justify; padding-left: 50px; padding-bottom: 10px; padding-top: 10px; padding-right: 40px;">
-                <font style="font-size: 12pt" color="#000000">{{$keterangan[0]->keteranganbelanja}} ({{$mataanggaran[0]->kodemataanggaran}}) pada sub kegiatan {{ $kegiatan[0]->ktsub }} sub sub kegiatan {{ $kegiatan[0]->ktsubsub }}
+                @php
+                    $str = $kegiatan[0]->ktsubsub;
+                    $str1 = explode("-",$str)[count(explode("-",$str))-1];
+                @endphp
+                <font style="font-size: 12pt" color="#000000">{{$mataanggaran[0]->namamataanggaran}} ({{$mataanggaran[0]->kodemataanggaran}}) pada sub kegiatan {{ $kegiatan[0]->ktsub }} sub sub kegiatan {{ $str1 }}
                 @if( $spj[0]->deskripsi != null)
-                berdasar {{$spj[0]->deskripsi}} 
+                    @if ($spj[0]->deskripsi == "" || $spj[0]->deskripsi == "-")
+                    @else
+                        berdasarkan {{$spj[0]->deskripsi}} 
+                    @endif
+                @else
                 @endif
-                dengan rincian biaya terlampir.</font>
+                dengan rincian biaya sebagai berikut :</font>
             </td>
         </tr>
         </tbody>
@@ -140,7 +149,7 @@
             </td>
             <td style="width: 100px;"></td>
             <td colspan="2" style="padding: 10px; padding-bottom: 5px; padding-top: 5px; width: 100px;" align="center">
-                <font style="font-size: 12pt" color="#000000">Pejabat Pelaksana</font>
+                <font style="font-size: 12pt" color="#000000"></font>
             </td>
         </tr>
         <tr>
@@ -151,7 +160,7 @@
                 <font style="font-size: 12pt" color="#000000"></font>
             </td>
             <td  colspan="2" style="padding: 10px; padding-bottom: 80px; padding-top: 5px; width: 100px;" align="center">
-                <font style="font-size: 12pt" color="#000000">Teknis Kegiatan (PPTK)</font>
+                <font style="font-size: 12pt" color="#000000">Pejabat Pelaksana<br>Teknis Kegiatan (PPTK)</font>
             </td>
         </tr>
         <tr>
@@ -162,77 +171,47 @@
                 <font style="font-size: 12pt" color="#000000"></font>
             </td>
             <td colspan="2" style="padding: 10px; padding-bottom: 5px; padding-top: 5px; width: 100px;" align="center">
-                <font style="font-size: 12pt" color="#000000"><u>{{ $kegiatan[0]->namalengkap}}</u></font>
-            </td>
-        </tr>
-        <tr>
-            <td  colspan="2" style="text-align:center; padding-left: 50px; padding-bottom: 5px; width: 120px;">
-                <font style="font-size: 12pt" color="#000000"></font>
-            </td>
-            <td style="text-align:center; padding-left: 50px; padding-bottom: 5px; width: 80px;">
-                <font style="font-size: 12pt" color="#000000"></font>
-            </td>
-            <td  colspan="2" style="padding: 10px; padding-bottom: 5px; width: 100px;" align="center">
-                <font style="font-size: 12pt" color="#000000">&emsp;&emsp;NIP. {{ $kegiatan[0]->nippns}}</font>
+                <font style="font-size: 12pt" color="#000000"><u>{{ $kegiatan[0]->namalengkap}}</u><br>NIP. {{ $kegiatan[0]->nippns}}</font>
             </td>
         </tr>
         @endif
         <tr>
             <td colspan="5" style="text-align:right; padding-right: 50px; padding-bottom: 5px; padding-top: 30px;">
-                <font style="font-size: 12pt" color="#000000">Yogyakarta, &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; {{$kegiatan[0]->tahun}}</font>
+                <font style="font-size: 12pt" color="#000000"> </font>
             </td>
         </tr>
         <tr>
             <td colspan="5">
-                <table>
+                <table border=0>
                     <tr>
-                        <td  style="text-align:center; padding-left: 50px; padding-bottom: 5px; padding-top: 5px; width: 300px;">
-                            <font style="font-size: 12pt" color="#000000">Mengetahui dan Menyetujui</font>
+                        <td   style="text-align:center; padding-left: 50px; padding-bottom: 80px; padding-top: 5px; width: 300px;">
+                            <font style="font-size: 12pt" color="#000000">Mengetahui dan Menyetujui<br>Direktur Selaku KPA</font>
                         </td>
-                        <td style="width: 250px;"></td>
-                        <td  style="padding: 10px; padding-bottom: 5px; padding-top: 5px; width: 300px;" align="center">
-                            <font style="font-size: 12pt" color="#000000">Yang menerima,</font>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td   style="text-align:center; padding-left: 50px; padding-bottom: 80px; padding-top: 5px; width: 100px;">
-                            <font style="font-size: 12pt" color="#000000">Direktur Selaku KPA</font>
-                        </td>
-                        <td style="text-align:center;  padding-bottom: 80px; padding-top: 5px; width: 100px;">
+                        <td style="text-align:center;  padding-bottom: 80px; padding-top: 5px; width: 250px;">
                             <font style="font-size: 12pt" color="#000000">Bendahara Pengeluaran</font>
                         </td>
-                        <td  style="padding: 10px; padding-bottom: 80px; padding-top: 5px; width: 100px;" align="center">
-                            <font style="font-size: 12pt" color="#000000">Tanda Tangan</font>
+                        <td  style="padding: 10px; padding-bottom: 80px; padding-top: 5px; width: 300px;" align="center">
+                            <font style="font-size: 12pt" color="#000000">Yogyakarta, &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; {{$kegiatan[0]->tahun}} <br> Yang menerima,<br>Tanda Tangan</font>
                         </td>
                     </tr>
                     <tr>
                         <td  style="text-align:center; padding-left: 50px; padding-bottom: 5px; padding-top: 5px; width: 120px;">
-                            <font style="font-size: 12pt" color="#000000"><u>{{$settingrba[0]->namalengkap}}</u></font>
+                            <font style="font-size: 12pt" color="#000000"><u>{{$settingrba[0]->namalengkap}}</u><br>NIP. {{$settingrba[0]->nippns}}</font>
                         </td>
                         <td style="text-align:center; padding-bottom: 5px; padding-top: 5px; width: 80px;">
-                            <font style="font-size: 12pt" color="#000000"><u>{{ $spj[0]->namabendahara}}</u></font>
+                            <font style="font-size: 12pt" color="#000000"><u>{{ $spj[0]->namabendahara}}</u><br>NIP. {{ $spj[0]->nipbendahara}}</font>
                         </td>
                         <td  style="padding: 10px; padding-bottom: 5px; padding-top: 5px; width: 100px;" align="center">
                             <font style="font-size: 12pt" color="#000000"><u>{{ $spj[0]->namarekanan}}</u></font>
                         </td>
                     </tr>
                     <tr>
-                        <td   style="text-align:center; padding-left: 50px; padding-bottom: 5px; width: 120px;">
-                            <font style="font-size: 12pt" color="#000000">NIP. {{$settingrba[0]->nippns}}</font>
-                        </td>
-                        <td style="text-align:center; padding-bottom: 5px; width: 80px;">
-                            <font style="font-size: 12pt" color="#000000">NIP. {{ $spj[0]->nipbendahara}}</font>
-                        </td>
-                        <td  style="padding: 10px; padding-bottom: 5px; width: 100px;" align="center">
-                            {{-- <font style="font-size: 12pt" color="#000000">NIP. {{ $spj[0]->nippenerima}}</font> --}}
-                        </td>
-                    </tr>
                 </table>
             </td>
         </tr>
         <tr>
             <td colspan="5">
-                <table>
+                <table border=0>
                     <tr>
                         <td  style="text-align:center; padding-left: 50px; padding-bottom: 0px; width: 250px; border-top: 4px solid black; ">
                         </td>
@@ -266,8 +245,20 @@
                             <font style="font-size: 12pt" color="#000000"> Barang tersebut telah diterima dengan cukup dan baik
                             </font>
                         </td>
-                        <td style="text-align:center; padding-left: 0px; width: 80px; border-left: 2px solid black">
-                            <font style="font-size: 12pt" color="#000000">PPn&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;: {{ $spj[0]->ppn }}</font>
+                        <td style="text-align:center; padding-left: 20px; padding-right: 20px; width: 80px; border-left: 2px solid black">
+                            <table width=100%>
+                                <tr>
+                                    <td style="text-align:left; padding-left: 5px; width: 50px; border-left: 0px solid black">
+                                        <font style="font-size: 12pt" color="#000000">PPN</font>
+                                    </td>
+                                    <td style="text-align:center; padding-left: 5px; width: 10px; border-left: 0px solid black">
+                                        <font style="font-size: 12pt" color="#000000">:</font>
+                                    </td>
+                                    <td style="text-align:right; padding-left: 5px; width: 150px; border-left: 0px solid black">
+                                        <font style="font-size: 12pt" color="#000000">{{ number_format($spj[0]->ppn,$digitterbilang,',','.') }}</font>
+                                    </td>
+                                </tr>
+                            </table>
                         </td>
                         <td  style=" width: 100px; padding-left: 30px; border-left: 2px solid black" align="left">
                             <font style="font-size: 12pt" csolor="#000000">BK Tgl. ..............No...............</font>
@@ -278,8 +269,20 @@
                             <font style="font-size: 12pt" color="#000000">
                             </font>
                         </td>
-                        <td style="text-align:center; padding-left: 0px; width: 80px; border-left: 2px solid black">
-                            <font style="font-size: 12pt" color="#000000"><u>PPh&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;: {{ $spj[0]->pph }}</u></font>
+                        <td style="text-align:center; padding-left: 20px; padding-right: 20px; width: 80px; border-left: 2px solid black">
+                        <table width=100%>
+                                <tr>
+                                    <td style="text-align:left; padding-left: 5px; width: 50px">
+                                        <font style="font-size: 12pt" color="#000000">PPh</font>
+                                    </td>
+                                    <td style="text-align:center; padding-left: 5px; width: 10px">
+                                        <font style="font-size: 12pt" color="#000000">:</font>
+                                    </td>
+                                    <td style="text-align:right; padding-left: 5px; width: 150px; border-bottom: 1px solid black">
+                                        <font style="font-size: 12pt" color="#000000">{{ number_format($spj[0]->pph,$digitterbilang,',','.') }}</font>
+                                    </td>
+                                </tr>
+                            </table>                            
                         </td>
                         <td  style="width: 100px; padding-left: 30px; border-left: 2px solid black" align="left">
                             <font style="font-size: 12pt" csolor="#000000">No. Rek: {{$mataanggaran[0]->kodepermendagri}}</font>
@@ -290,23 +293,35 @@
                             <font style="font-size: 12pt" color="#000000">
                             </font>
                         </td>
-                        <td style="text-align:center; padding-left: 0px; width: 80px; border-left: 2px solid black">
-                            <font style="font-size: 12pt;" color="#000000">PPh&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;: {{ $spj[0]->totalpp }}</font>
+                        <td style="text-align:center; padding-left: 20px; padding-right: 20px; width: 80px; border-left: 2px solid black">
+                        <table width=100%; border=0>
+                                <tr>
+                                    <td style="text-align:left; padding-left: 5px; width: 50px; border-left: 0px solid black">
+                                        <font style="font-size: 12pt" color="#000000">Total</font>
+                                    </td>
+                                    <td style="text-align:center; padding-left: 5px; width: 10px; border-left: 0px solid black">
+                                        <font style="font-size: 12pt" color="#000000">:</font>
+                                    </td>
+                                    <td style="text-align:right; padding-left: 5px; width: 150px; border-left: 0px solid black">
+                                        <font style="font-size: 12pt" color="#000000">{{ number_format($spj[0]->totalpp,$digitterbilang,',','.') }}</font>
+                                    </td>
+                                </tr>
+                            </table>                                                        
                         </td>
                         <td  style="width: 100px; padding-left: 30px; border-left: 2px solid black" align="left">
                             <font style="font-size: 12pt" csolor="#000000">Kode Kegiatan: {{$kegiatan[0]->kodesubsub}}</font>
                         </td>
                     </tr>
                     <tr>
-                        <td  style="text-align:center; padding-left: 50px; padding-bottom: 30px; width: 120px;">
-                            <font style="font-size: 12pt" color="#000000">
+                        <td  style="text-align:center; padding-left: 50px; padding-bottom: 10px; width: 120px;">
+                            <font style="font-size: 12pt" color="#000000"><u>{{ $spj[0]->namapenerima}}</u><br>NIP. {{ $spj[0]->nippenerima}}
                             </font>
                         </td>
-                        <td style="text-align:center; padding-left: 0px; padding-bottom: 30px;  width: 80px; border-left: 2px solid black">
+                        <td style="text-align:center; padding-left: 0px; padding-bottom: 10px;  width: 80px; border-left: 2px solid black">
                             <font style="font-size: 12pt;" color="#000000"></font>
                         </td>
-                        <td  style="width: 100px; padding-left: 30px; padding-bottom: 30px; border-left: 2px solid black" align="left">
-                            <font style="font-size: 12pt" csolor="#000000">Tahun Anggaran: {{$kegiatan[0]->tahun}}</font>
+                        <td  style="width: 100px; padding-left: 30px; padding-bottom: 10px; border-left: 2px solid black" align="left">
+                            <font style="font-size: 12pt" csolor="#000000">Tahun Anggaran: {{$kegiatan[0]->tahun}}<br>&nbsp;</font>
                         </td>
                     </tr>
                     <tr>
@@ -323,7 +338,7 @@
                     </tr>
                     <tr>
                         <td  style="text-align:center; padding-left: 50px; width: 120px;">
-                            <font style="font-size: 12pt" color="#000000"><u>{{ $spj[0]->namapenerima}}</u>
+                            <font style="font-size: 12pt" color="#000000">
                             </font>
                         </td>
                         <td style="text-align:center; padding-left: 0px; width: 80px; border-left: 2px solid black">
@@ -335,7 +350,7 @@
                     </tr>
                     <tr>
                         <td  style="text-align:center; padding-left: 50px; width: 120px;">
-                            <font style="font-size: 12pt" color="#000000">NIP. {{ $spj[0]->nippenerima}}
+                            <font style="font-size: 12pt" color="#000000">
                             </font>
                         </td>
                         <td style="text-align:center; padding-left: 0px; width: 80px; border-left: 2px solid black">
