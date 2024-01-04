@@ -6071,9 +6071,6 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }
 
             $scope.TambahPanjar = function(){
-                $scope.item = {}
-                $scope.norecpanjar = ''
-                // $scope.item.tglPanjar = new Date() 
                 $scope.tambahpanjarspj = true
                 $scope.item.sisaAnggaranPanjar = $scope.item.sisaAnggaranSPJ
 
@@ -6100,9 +6097,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         
                     });
                 
-                // $scope.item.subkegiatanpanjar = {id: $scope.item.subKegiatanSPJ.id, keterangan: $scope.item.subKegiatanSPJ.keterangan}
-                // $scope.item.subsubkegiatanpanjar = {id: $scope.item.subSubKegiatanSPJ.id, keterangan: $scope.item.subSubKegiatanSPJ.keterangan}
-                // $scope.item.darirekeningpanjar = {kodemataanggaran: $scope.item.mataAnggaranSPJ.kodemataanggaran, namamataanggaran: $scope.item.mataAnggaranSPJ.namamataanggaran}
+                $scope.item.subkegiatanpanjar = {id: $scope.item.subKegiatanSPJ.id, keterangan: $scope.item.subKegiatanSPJ.keterangan}
+                $scope.item.subsubkegiatanpanjar = {id: $scope.item.subSubKegiatanSPJ.id, keterangan: $scope.item.subSubKegiatanSPJ.keterangan}
+                $scope.item.darirekeningpanjar = {kodemataanggaran: $scope.item.mataAnggaranSPJ.kodemataanggaran, namamataanggaran: $scope.item.mataAnggaranSPJ.namamataanggaran}
+                console.log($scope.item.subkegiatanpanjar)
                 $scope.popupPanjar.center().open() 
             }
 
@@ -6359,7 +6357,12 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.TambahPanjarVerif = function(){
                 //$scope.item.sisaAnggaranPanjar = $scope.item.sisaAnggaranSPJ
                 $scope.tambahpanjarspj = false
-
+                
+                $scope.item = {}
+                $scope.norecpanjar = ''
+                $scope.item.tglPanjar = moment($scope.now).format('YYYY-MM-DD');
+                $scope.item.tglSPPawalSearch = moment($scope.now).format('YYYY-01-01')
+                $scope.item.tglSPPakhirSearch = moment($scope.now).format('YYYY-MM-DD')
                 medifirstService.get("perencanaan/get-daftar-panjar"
                     , true).then(function (dat) {
                         $scope.isRouteLoading = false;
@@ -6386,6 +6389,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 medifirstService.get("perencanaan/get-data-combo").then(function (e) {
                     $scope.listSubKegiatanPanjarSPJ = e.data.kegiatancombo
                 })
+                
                 $scope.popupPanjar.center().open()
             }
             $scope.changeCboPilihSubKegiatanSPJ = function () {
