@@ -148,7 +148,7 @@
                     <th style="text-decoration: underline; font-size: 15px">SURAT KETERANGAN DOKTER</th>
                 </tr>
                 <tr>
-                    <th style=" font-size: 14px">Nomor : 449 / {{isset($item[3003992]) ? $item[3003992] : '' }} </th>
+                    <th style=" font-size: 14px">Nomor : 400.7.22.1 / {{isset($item[3003992]) ? $item[3003992] : '' }} </th>
                 </tr>
                 <tr>
                     <td><br></td>
