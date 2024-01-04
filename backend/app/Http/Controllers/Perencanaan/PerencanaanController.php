@@ -975,14 +975,14 @@ class PerencanaanController extends ApiController {
             $thnpanjar= " and date_part('year', pj.tglpanjar)=". $request['tahun'];
         }
         $panjar = DB::select(DB::raw("
-        select objectbkufk,idmataanggaran, kodemataanggaran, idsubkegiatan, subkegiatan, idsubsubkegiatan, subsubkegiatan,
+        select  ntpn, idbill, ppn, pph2,ntpnpph2,idbillpph2,jenispajak2,idpajak2, ntpnpph, idbillpph, pph, jenispajak, idpajak, namamataanggaran, objectbkufk,idmataanggaran, kodemataanggaran, idsubkegiatan, subkegiatan, idsubsubkegiatan, subsubkegiatan,
         norec, nopanjar, uraian, tglpanjar, jumlah, jenispanjar, norealisasi, coalesce(jumlahspj, 0) jumlahspj, sumberpanjar,
         coalesce(sum(jumlahpengembalian), 0) jumlahpengembalian, coalesce(jumlahspj, 0) + coalesce(sum(jumlahpengembalian), 0) totalpemakaian,
         coalesce(jumlah, 0) - (coalesce(jumlahspj, 0) + coalesce(sum(jumlahpengembalian), 0)) selisih
         from(
-                select ma.id idmataanggaran, ma.kodemataanggaran, subkeg.id idsubkegiatan, 
+                select pj.ntpn, pj.idbill, pj.ppn, pj.pph2, pj.ntpnpph2, pj.idbillpph2, jp2.jenispajak as jenispajak2, pj.objectjenispphfk2 as idpajak2, pj.ntpnpph, pj.idbillpph, jp.jenispajak, pj.objectjenispphfk as idpajak, ma.namamataanggaran, ma.id idmataanggaran, ma.kodemataanggaran, subkeg.id idsubkegiatan, 
                 subkeg.keterangan subkegiatan, subsubkeg.id idsubsubkegiatan, subsubkeg.keterangan subsubkegiatan, 
-                pj.norec, pj.nopanjar, pj.uraian, pj.tglpanjar, pj.jumlah, pj.jenispanjar, 
+                pj.norec, pj.nopanjar, pj.uraian, pj.tglpanjar, pj.jumlah, pj.jenispanjar, pj.pph,
                 string_agg(DISTINCT sr.norealisasi, ',') norealisasi,
                 sum(stp.jumlahspj) as jumlahspj, pj.sumberpanjar, pj.objectbkufk,
                 pp.jumlahpengembalian, pp.norec norecpengembalian
@@ -990,6 +990,8 @@ class PerencanaanController extends ApiController {
                 inner join mataanggaran_m ma on ma.id = pj.objectmataanggaranfk
                 inner join kegiatananggaran_m subkeg on subkeg.id = pj.objectsubkegiatanfk
                 inner join kegiatananggaran_m subsubkeg on subsubkeg.id = pj.objectsubsubkegiatanfk
+                left join jenispajak_m jp on jp.id = pj.objectjenispphfk
+                left join jenispajak_m jp2 on jp2.id = pj.objectjenispphfk2
                 left join spjtopanjar_t stp on stp.objectpanjarfk = pj.norec
                 and stp.kdprofile = 30
                 and stp.statusenabled = true
@@ -1003,12 +1005,12 @@ class PerencanaanController extends ApiController {
                 $thnpanjar
                 $tglpanjardate
                 and pj.statusenabled = true
-                group by ma.id, ma.kodemataanggaran, subkeg.id, subkeg.keterangan, 
+                group by pj.ntpn, pj.idbill, pj.ppn, pj.pph2, pj.ntpnpph2, pj.idbillpph2, jp2.jenispajak, pj.objectjenispphfk2, pj.ntpnpph,pj.idbillpph, pj.pph, jp.jenispajak, pj.objectjenispphfk,ma.namamataanggaran, ma.id, ma.kodemataanggaran, subkeg.id, subkeg.keterangan, 
                 subsubkeg.id, subsubkeg.keterangan, pj.norec, pj.nopanjar, pj.uraian, pj.tglpanjar, 
                 pj.jumlah, pj.jenispanjar, pj.sumberpanjar, pp.jumlahpengembalian, pp.norec,pj.objectbkufk
                 order by pj.nopanjar
         ) as x 
-        group by objectbkufk, idmataanggaran, kodemataanggaran, idsubkegiatan, subkegiatan, idsubsubkegiatan, subsubkegiatan,
+        group by ntpn, idbill, ppn, pph2,ntpnpph2,idbillpph2,jenispajak2,idpajak2,  ntpnpph, idbillpph, pph, jenispajak, idpajak, namamataanggaran, objectbkufk, idmataanggaran, kodemataanggaran, idsubkegiatan, subkegiatan, idsubsubkegiatan, subsubkegiatan,
         norec, nopanjar, uraian, tglpanjar, jumlah, jenispanjar, norealisasi, jumlahspj, sumberpanjar
         order by nopanjar asc;
         "));
@@ -6160,7 +6162,7 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
         $idProfile = (int) $kdProfile;
 
         $data = DB::select(DB::raw("
-                select pj.objectbkufk, pj.pph, pj.pph2, pj.ppn, jp.id idpajak, jp.jenispajak, ma.kodemataanggaran kodemataanggaran, ma.namamataanggaran namamataanggaran, kasub.id idsubkegiatan, 
+                select ma.namamataanggaran, pj.objectbkufk, pj.pph, pj.pph2, pj.ppn, jp.id idpajak, jp.jenispajak, ma.kodemataanggaran kodemataanggaran, ma.namamataanggaran namamataanggaran, kasub.id idsubkegiatan, 
                 kasubsub.id idsubsubkegiatan, kasub.keterangan keterangansubkegiatan, kasubsub.keterangan keterangansubsubkegiatan, 
                 pj.norec, pj.nopanjar, pj.uraian, pj.tglpanjar, pj.jumlah, pj.jenispanjar, coalesce(pj.jumlahpengembalian, 0) jumlahpengembalian, pj.sumberpanjar,
                 pj.idbill, pj.ntpn, pj.idbillpph, pj.ntpnpph, pj.idbillpph2, pj.ntpnpph2, jp2.id idpajak2, jp2.jenispajak jenispajak2
@@ -8861,5 +8863,37 @@ public function loadComboRincian(Request $request)
     function getPJ(Request $request) {
         $data = DB::select(DB::raw("select pg.ispj from pegawai_m pg where pg.id = $request[id]"));
         return $this->respond($data);
+    }
+    public function hapusPanjar(Request $request) {
+        DB::beginTransaction();
+        try{
+            $MA = Panjar::where('norec', '=', $request['data'])->first();
+            $MA->statusenabled = false;
+            $MA->save();
+
+           $transStatus = 'true';
+       } catch (\Exception $e) {
+            $transStatus = 'false';
+       }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Hapus";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Hapus Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'line'=> $e->getLine(),
+                'message'=> $e->getMessage(),
+                'as' => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
 }
