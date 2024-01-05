@@ -29,6 +29,10 @@
       "urlDep": "module/SDM/daftarPensiunPegawaiCtrl"
     },
     {
+      "nameDep": "daftarPegawai2Ctrl",
+      "urlDep": "module/SDM/daftarPegawaiCtrl"
+    },
+    {
       "nameDep": "JadwalKerjaPegawaiCtrl",
       "urlDep": "module/SDM/JadwalKerjaPegawaiCtrl"
     },

@@ -1982,7 +1982,11 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('rawatjalan/get-daftar-konsul-from-order', 'RawatJalan\RawatJalanController@getDaftarKonsulFromOrder');
           Route::post('rawatjalan/save-periksa', 'RawatJalan\RawatJalanController@saveSelesaiPeriksa');
           Route::post('rawatjalan/simpan-meninggal-pasien', 'RawatJalan\RawatJalanController@SimpanMeninggalPasien');
-          Route::post('rawatjalan/simpan-pulang-pasien', 'RawatJalan\RawatJalanController@SimpanPulangPasien');
+          Route::post('rawatjalan/simpan-pulang-pasien', 'RawatJalan\RawatJalanController@SimpanPulangPasien');   
+          // route toni/LaporanPegawai2 harus sama dengan ctrl.js, dibackend Toni\LaporanPegawai2Contrroller hrus sama dengan controller dan fodlernya yg beckend
+          // GetPegawai function ini harus sama dengan function contoller laporanpegawai2controller
+          Route::get('toni/LaporanPegawai2', 'Toni\LaporanPegawai2Contrroller@GetPegawai');
+          Route::post('toni/LaporanPegawai2', 'Toni\LaporanPegawai2Contrroller@SimpanPegawai');
         // });
         // Route::group(['prefix' => 'registrasi'], function () {
             // 2019-12 penambahan arif awal
@@ -2516,6 +2520,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('sdm/download-data-sipstr', 'SDM\SumberDayaManusiaController@downloadFileSipStr');
             Route::get('sdm/data-pegawai-sudah-pensiun', 'SDM\SumberDayaManusiaController@getPegawaiSudahPensiun');
             Route::get('sdm/get-data-pensiun', 'SDM\SumberDayaManusiaController@getPegawaiPensiun');
+            Route::get('toni/get-pegawai', 'Toni\ToniController@getPegawai2');
             Route::get('sdm/data-combo-pensiun', 'SDM\SumberDayaManusiaController@getComboPensiun');
             Route::get('sdm/get-jadwal-perbulan-pegawai', 'SDM\SumberDayaManusiaController@getJadwalBulananPegawai');
             Route::get('sdm/get-combo-pegawai-jadwal-all', 'SDM\SumberDayaManusiaController@getComboPegawaiJadwal');
@@ -3186,6 +3191,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('tatarekening/get-header-data-pasien/{noregistrasi}', 'TataRekening\TagihanController@getHeaderRekapTagihan'); //done
           Route::get('tatarekening/get-rekap-tagihan-pasien/{noregistrasi}', 'TataRekening\TagihanController@getRekapTagihan'); //done
           Route::get('tatarekening/get-pasien-bynorec', 'TataRekening\TagihanController@getPasienBynorecpdapd'); //done
+          Route::get('toni/get-rekap-tagihan-pasien/{noregistrasi}', 'Toni\ToniController@getRekapTagihan'); //done
+
 
 
           Route::get('tatarekening/get-status-verif-piutang', 'TataRekening\TagihanController@getStatusVerifPiutang'); //done

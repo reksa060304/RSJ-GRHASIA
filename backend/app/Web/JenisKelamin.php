@@ -9,6 +9,7 @@ class JenisKelamin extends AdminModel
     public $timestamps = false;
     public $incrementing = false;
     protected $primaryKey = "norec";
+    
 
     public function __construct(){
         //$this->setTransformerPath('App\Transformers\Web\VisiTransformer');
