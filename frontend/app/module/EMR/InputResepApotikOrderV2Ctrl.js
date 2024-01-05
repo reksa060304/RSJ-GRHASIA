@@ -1015,6 +1015,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     }
                 ];
                 }
+                $scope.dataSelected = undefined
             }
             function clear() {
                 if ($scope.item.jenisKemasan.jeniskemasan != 'Racikan') {
