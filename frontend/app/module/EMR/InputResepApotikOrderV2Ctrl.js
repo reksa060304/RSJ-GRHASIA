@@ -347,7 +347,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                             if($scope.item.jenisKemasan.id == 1){
                                 $scope.item.dosis = $scope.dataSelected.dosis
                                 $scope.item.satuannya = $scope.dataSelected.satuandosis
-                            }else{
+                            }else if($scope.item.jenisKemasan.id == 2){
                                 $scope.item.satuannya = dataProdukDetail[0].satuan
                                 $scope.item.dosis = dat.data.kekuatan
                             }
