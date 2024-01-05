@@ -347,6 +347,9 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                             if($scope.item.jenisKemasan.id == 1){
                                 $scope.item.dosis = $scope.dataSelected.dosis
                                 $scope.item.satuannya = $scope.dataSelected.satuandosis
+                            }else{
+                                $scope.item.satuannya = dataProdukDetail[0].satuan
+                                $scope.item.dosis = dat.data.kekuatan
                             }
                             $scope.item.nilaiKonversi = $scope.dataSelected.nilaikonversi
                             // $scope.item.satuan = {ssid:$scope.dataSelected.satuanstandarfk,satuanstandar:$scope.dataSelected.satuanstandar}
