@@ -26,7 +26,9 @@ define(['initialize'], function (initialize) {
             var urlcetak = ''
             //getfunction
             // loadMenu()
-
+            if(medifirstService.getKelompokUser() == 'mahasiswadiklat'){
+                $scope.tombolSimpanVis = false
+            }
             //function
             var chacePeriode = cacheHelper.get('cacheNomorEMR');
             function loadMenu() {
@@ -64,6 +66,9 @@ define(['initialize'], function (initialize) {
                     medifirstService.get("emr/get-emr-to-emr?noemr="+ nomorEMR + "&emrfk=3000922").then(function (dat) {
                         var datas = dat.data.data
                         $scope.isRouteLoading = false
+                        if(dat.data.panssec[0] && paramsIndex == 1){
+                            $scope.item.obj[3000389] = dat.data.panssec[0].jumlah
+                        }
                         for (let i = 0; i < datas.length; i++) {
                             if(datas[i].type == 'textbox' && paramsIndex == 1 ){
                                 $scope.item.obj[datas[i].idtujuan]= datas[i].value   

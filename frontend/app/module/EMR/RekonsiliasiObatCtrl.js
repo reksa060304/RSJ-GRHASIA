@@ -23,6 +23,9 @@ define(['initialize','Configuration'], function (initialize, configuration) {
             $scope.isCetakV = true
             var norecEMR = ''
             loadCombo()
+            if(medifirstService.getKelompokUser() == 'mahasiswadiklat'){
+                $scope.tombolSimpanVis = false
+            }
             function loadCombo(){
                 $scope.isRouteLoading = true;
                 medifirstService.get("emr/get-combo-resep-emr", true).then(function (dat) {

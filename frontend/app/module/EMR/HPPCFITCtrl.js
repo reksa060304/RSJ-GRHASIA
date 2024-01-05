@@ -24,6 +24,9 @@ define(['initialize','Configuration'], function (initialize,configuration) {
                 $scope.listPegawai = data
                 
             })
+            if(medifirstService.getKelompokUser() == 'mahasiswadiklat'){
+                $scope.tombolSimpanVis = false
+            }
             medifirstService.getPart('emr/get-datacombo-metode', true, true, 20).then(function (data) {
                 $scope.listMetode = data
             })

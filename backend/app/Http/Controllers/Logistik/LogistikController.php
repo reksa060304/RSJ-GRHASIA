@@ -11620,7 +11620,7 @@ class LogistikController extends ApiController{
                         ->orderby('tglkadaluarsa')
                         ->first();
 
-                    if(count($dataSPDK2) != 0 || $dataSPDK2 != null){
+                    if($dataSPDK2 != null && count($dataSPDK2) != 0 ){
 
                         $dataSPD = new StokProdukDetailOpname();
                         $dataSPD->norec = $dataSPD->generateNewId();
@@ -11895,7 +11895,7 @@ class LogistikController extends ApiController{
                 "noSO" => $dataSC,
                 "detailstok" => $dataSTOKDETAIL,
                 "dataSPDK" => $dataSPDK,
-//                "dataSPDK2" => $dataSPDK2,
+               "line and message" =>$e->getLine().' and ' . $e->getMessage() ,
                 "by" => 'as@epic',
             );
         }

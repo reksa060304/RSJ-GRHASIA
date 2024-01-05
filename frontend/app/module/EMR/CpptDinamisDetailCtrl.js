@@ -15,7 +15,9 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             $scope.RiwayatCPPTRJBaru = false;
             $scope.RiwayatCPPTRI = false;
             $scope.norecAPD = $state.params.noRec
-
+            if(medifirstService.getKelompokUser() == 'mahasiswadiklat'){
+                $scope.tombolSimpanVis = false
+            }
             var dataLoad = [];
             LoadCache();
             FormLoad();

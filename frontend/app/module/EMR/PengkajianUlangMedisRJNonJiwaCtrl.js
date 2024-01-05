@@ -27,6 +27,9 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             var dataDump = [];
             var norecEMR = ''
             $scope.isCetak = true
+            if(medifirstService.getKelompokUser() == 'mahasiswadiklat'){
+                $scope.tombolSimpanVis = false
+            }
             medifirstService.getPart('emr/get-datacombo-part-pegawai', true, true, 20).then(function (data) {
                 $scope.listPegawai = data
              })
@@ -1121,22 +1124,40 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             }
             var chekedd = false
             $scope.pemeriksaanfisik = ''
-            medifirstService.get("emr/get-emr-otomatisvitalsign?emrfk=147" + "&noregistrasi=" + $scope.cc.noregistrasi).then(function (dat) {
-                var datas = dat.data.data2
+            medifirstService.get('emr/get-emr-to-emr-v2?emrfk=' + $scope.cc.emrfk + "&noregistrasi=" + $scope.cc.noregistrasi).then(function (data) {
+                var datas
+                var datas = data.data.data
                 $scope.isRouteLoading = false
-                if (datas.length > 0) {
-                    $scope.pemeriksaanfisik = "Tekanan Darah = " + datas[0].td + "mm/Hg" + ", " +
-                        "Nadi = " + datas[0].nadi + "x/menit" + ", " +
-                        "Suhu =" + datas[0].suhu + "°C" + ", " +
-                        "Pernapasan =" + datas[0].pernapasan + "x/menit" + ", " +
-                        "Tinggi Badan =" + datas[0].tb + "cm" + ", " +
-                        "Berat Badan =" + datas[0].bb + "kg" + ", "
-
+                for (let i = 0; i < datas.length; i++) {
+                    if (datas[i].type == 'textbox') {
+                        $scope.item.obj[datas[i].idtujuan] = datas[i].value
+                    }
+                    if (datas[i].type == "checkbox") {
+                        if (datas[i].value == "1") {
+                            $scope.item.obj[datas[i].idtujuan] = datas[i].value
+                            console.log(datas[i].type);
+                        }
+                    }
+                    if (datas[i].type == "textarea") {
+                        $scope.item.obj[datas[i].idtujuan] = datas[i].value
+                    }
                 }
-
-
-
             })
+
+            // medifirstService.get("emr/get-emr-otomatisvitalsign?emrfk=147" + "&noregistrasi=" + $scope.cc.noregistrasi).then(function (dat) {
+            //     var datas = dat.data.data2
+            //     $scope.isRouteLoading = false
+            //     if (datas.length > 0) {
+            //         $scope.pemeriksaanfisik = "Tekanan Darah = " + datas[0].td + "mm/Hg" + ", " +
+            //             "Nadi = " + datas[0].nadi + "x/menit" + ", " +
+            //             "Suhu =" + datas[0].suhu + "°C" + ", " +
+            //             "Pernapasan =" + datas[0].pernapasan + "x/menit" + ", " +
+            //             "Tinggi Badan =" + datas[0].tb + "cm" + ", " +
+            //             "Berat Badan =" + datas[0].bb + "kg" + ", "
+
+            //     }
+            // })
+
             medifirstService.get("emr/get-emr-transaksi-detail?noemr=" + nomorEMR + "&emrfk=" + $scope.cc.emrfk, true).then(function (dat) {                
                 $scope.item.obj = []
                 $scope.item.obj2 = []

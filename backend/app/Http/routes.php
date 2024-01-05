@@ -976,6 +976,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('tatarekening/get-penjagaan-verif-piutang', 'Farmasi\PelayananResepController@getPenjagaanVerifPiutang');
           Route::get('farmasi/get-penjagaan-verif-kasir', 'Farmasi\PelayananResepController@getPenjagaanVerifKasir');
           Route::post('farmasi/save-pelayananobat', 'Farmasi\PelayananResepController@SimpanPelayananObat');
+          Route::post('farmasi/save-retur-pelayananobat', 'Farmasi\PelayananResepController@SimpanReturPelayananObat');
 
           Route::get('farmasi/get-data-combo-transfer', 'Farmasi\PaketObatController@getDataComboTransfer');
           Route::get('farmasi/get-detail-ruangan-apd', 'Farmasi\PaketObatController@getRuanganFromAPD');
@@ -1243,6 +1244,13 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::post('diklat/hapus-master-data-kampus','SDM\PelatihanController@hapusMasterDataKampus');
             Route::get('diklat/get-data-detail-mahasiswa', 'SDM\PelatihanController@getDataDetailMahasiswa');
             Route::get('sdm/penelitian/get-data-pkk','SDM\PelatihanController@getDataPKK');
+            Route::get('registrasi/get-pasienawal-rs','Registrasi\RegistrasiController@getCoba');
+            Route::get('registrasi/get-pasienawal-bangsal','Registrasi\RegistrasiController@getCobaBangsal');
+            Route::post('registrasi/post-pasienawal-rs','Registrasi\RegistrasiController@savePasienAwal');
+            Route::post('registrasi/post-pasienawal-bangsal','Registrasi\RegistrasiController@savePasienAwalBangsal');
+            Route::get('registrasi/get-laporan-sensus-rs','Registrasi\RegistrasiController@getLaporanSensus');
+            Route::get('registrasi/get-laporan-sensus-bangsal','Registrasi\RegistrasiController@getLaporanSensusBangsal');
+              
             // GET
 
             // POST
@@ -1313,6 +1321,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('report/cetak-preview-order','Report\ReportController@cetakPreviewOrder');
           Route::get('report/cetak-resep-dokter-rev','Report\ReportController@cetakResepDokterRev');
           Route::get('report/cetak-resep-dokter-harga','Report\ReportController@cetakResepDokterHarga');
+          Route::get('report/get-cetak-triaseigd','Report\ReportController@cetakTriaseIGD');
           Route::get('report/get-cetak-suratketerangandokter','Report\ReportController@CetakSKDokter');
           Route::get('report/get-cetak-suratketerangangawatdarurat','Report\ReportController@CetakSKGawatDarurat');
           Route::get('report/get-cetak-suratketerangandirawatinap','Report\ReportController@CetakSKDirawatInap');
@@ -1321,8 +1330,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('report/get-cetak-per-jenis-anggaran','Report\ReportController@CetakPerJenisAnggaran');
           Route::get('report/get-cetak-per-jenis-anggaran-sebelum-sesudah','Report\ReportController@CetakPerJenisAnggaranSebelumSesudah');
           Route::get('report/get-cetak-rekap-mata-anggaran','Report\ReportController@CetakRekapMataAnggaran');
-          Route::get('report/get-cetak-rekap-mata-anggaran-sebelum','Report\ReportController@
-          ');
+          Route::get('report/get-cetak-rekap-mata-anggaran-sebelum','Report\ReportController@CetakRekapMataAnggaranSebelum');
           Route::get('report/get-cetak-rekap-total-anggaran','Report\ReportController@CetakRekapTotalAnggaran');
           Route::get('report/get-cetak-rekap-total-anggaran-sebelum-sesudah','Report\ReportController@CetakRekapTotalAnggaranSebelumSesudah');
           Route::get('report/get-cetak-rba-detail','Report\ReportController@CetakRBADetail');
@@ -1744,6 +1752,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::post('perencanaan/save-realisasi-spj','Perencanaan\PerencanaanController@saveRealisasiSPJ');
             Route::post('perencanaan/save-realisasi-spj-verif','Perencanaan\PerencanaanController@saveRealisasiSPJVerif');
             Route::post('perencanaan/save-panjar','Perencanaan\PerencanaanController@savePanjar');
+            Route::post('perencanaan/hapus-panjar','Perencanaan\PerencanaanController@hapusPanjar');
             Route::post('perencanaan/save-spj-panjar','Perencanaan\PerencanaanController@saveSPJPanjar');
             Route::get('perencanaan/get-total-mata-anggaran', 'Perencanaan\PerencanaanController@getTotalMataAnggaran');
             Route::get('perencanaan/get-daftar-panjar', 'Perencanaan\PerencanaanController@getPanjar');

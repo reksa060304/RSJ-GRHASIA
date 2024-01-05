@@ -40,9 +40,9 @@ define(['initialize','Configuration'], function (initialize, configuration) {
             }
             $scope.listShift = [
                 {id:1, shift: 'Pagi'},
-                {id:2, shift: 'Siang'},
+                // {id:2, shift: 'Siang'},
                 {id:3, shift: 'Sore'},
-               // {id:4, shift: 'Sore'},
+                {id:4, shift: 'Malam'},
 
             ]
             $scope.loaddataaaa = function(){

@@ -23,7 +23,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             var pegawaiInputDetail= ''
             $scope.item.kasusbaru = true
             $scope.item.kasuslama = false
-
+            if(medifirstService.getKelompokUser() == 'mahasiswadiklat'){
+                $scope.tombolSimpanVis = false
+            }
             
 
             var cacheNomorEMR = cacheHelper.get('cacheNomorEMR');

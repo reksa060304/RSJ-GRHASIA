@@ -21,6 +21,9 @@ define(['initialize'], function (initialize) {
             if(cacheNoREC!= undefined){
                 norecEMR = cacheNomorEMR[1]
             }
+            if(medifirstService.getKelompokUser() == 'mahasiswadiklat'){
+                $scope.tombolSimpanVis = false
+            }
             if (cacheNomorEMR != undefined) {
                 nomorEMR = cacheNomorEMR[0]
                 norecEMR = cacheNomorEMR[1]

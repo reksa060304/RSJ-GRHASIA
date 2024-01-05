@@ -11,7 +11,9 @@ define(['initialize','Configuration'], function (initialize, configuration) {
             var nomorEMR = '-'
             var norecEMR = ''
             var dataCakem = []
-
+            if(medifirstService.getKelompokUser() == 'mahasiswadiklat'){
+                $scope.tombolSimpanVis = false
+            }
             medifirstService.getPart('emr/get-datacombo-part-pegawai', true, true, 20).then(function (data) {
                 $scope.listPegawai = data
             })

@@ -30,6 +30,9 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             medifirstService.getPart('emr/get-datacombo-part-pegawai', true, true, 20).then(function (data) {
                 $scope.listPegawai = data
              })
+            if(medifirstService.getKelompokUser() == 'mahasiswadiklat'){
+                $scope.tombolSimpanVis = false
+            }
             medifirstService.getPart('emr/get-datacombo-part-kelas', true, true, 20).then(function (data) {
                 $scope.listKelas = data
 
@@ -1220,6 +1223,42 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             medifirstService.get("emr/get-emr-transaksi-detail?noemr=" + nomorEMR + "&emrfk=" + $scope.cc.emrfk, true).then(function (dat) {                
                 $scope.item.obj = []
                 $scope.item.obj2 = []
+
+                medifirstService.get('emr/get-emr-to-emr-v2?emrfk=' + $scope.cc.emrfk + "&noregistrasi=" + $scope.cc.noregistrasi).then(function (data) {
+                    // var datas
+                    $scope.item.obj4 = []
+    
+                    var datas = data.data.data
+                    $scope.isRouteLoading = false
+                    for (let i = 0; i < datas.length; i++) {
+                        if (datas[i].type == 'textbox') {
+                            $scope.item.obj[datas[i].idtujuan] = datas[i].value
+                        }
+                        if (datas[i].type == "checkbox") {
+                            if (datas[i].value == "1") {
+                                $scope.item.obj[datas[i].idtujuan] = datas[i].value
+                            }
+                        }
+                        if (datas[i].type == "textarea") {
+                            $scope.item.obj[datas[i].idtujuan] = datas[i].value
+                        }
+    
+                        // if (datas[i].idasal == 4241 || datas[i].idasal == 4242 || datas[i].idasal == 4243 
+                        //     || datas[i].idasal == 4244 || datas[i].idasal == 4245 || datas[i].idasal == 4246) {
+                        //     $scope.item.obj4[datas[i].idasal] = datas[i].value
+                        // }
+    
+                    }
+                    //kodingan kalau emrnya ngegabung dalam satu form gitu
+                    // $scope.pemeriksaanfisik = "Tekanan Darah = " + $scope.item.obj4[4241] + " mm/Hg " + ", " +
+                    //             "Nadi = " + $scope.item.obj4[4245] + " x/menit " + ", " +
+                    //             "Suhu =" + $scope.item.obj4[4244] + " °C " + ", " +
+                    //             "Pernapasan =" + $scope.item.obj4[4246] + " x/menit " + ", " +
+                    //             "Tinggi Badan =" + $scope.item.obj4[4242] + " cm " + ", " +
+                    //             "Berat Badan =" + $scope.item.obj4[4243] + " kg " + ", "
+                    
+                })
+
                 $scope.item.obj[3018100] = moment($scope.now).format('YYYY-MM-DD HH:mm')
                 $scope.item.obj[3018531] = moment($scope.now).format('YYYY-MM-DD HH:mm')
                 $scope.item.obj[3018493] = moment($scope.now).format('YYYY-MM-DD HH:mm')

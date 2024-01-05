@@ -13,12 +13,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.isLoadingNav = false
             $scope.scrollmarker = false
 
-            // if(medifirstService.getKelompokUser() == 'mahasiswadiklat'){
-            //     $scope.textUser = medifirstService.getUserLogin().kdUser
-            //     $scope.textNamaLengkap = medifirstService.getPegawaiLogin().namaLengkap
-            //     $scope.scrollmarker = true
-            //     $scope.tombolSimpanVis = false
-            // }
+            if(medifirstService.getKelompokUser() == 'mahasiswadiklat'){
+                $scope.textUser = medifirstService.getUserLogin().kdUser
+                $scope.textNamaLengkap = medifirstService.getPegawaiLogin().namaLengkap
+                $scope.scrollmarker = true
+            }
             // cacheHelper.set('cacheRekamMedis', undefined);
             $scope.getRekamMedisCheck = function (checkNoregis) {
                 $rootScope.getRekamMedisCheck(checkNoregis);
@@ -141,19 +140,59 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.isLoadingNav = true
                 $scope.treeSourceMenu = [];
                 $scope.dataMenu = []
-                medifirstService.get("emr/get-menu-rekam-medis-dynamic?namaemr=navigasi" + mapemr).then(function (e) {
+                var mahasiswadiklat = ''
+                if(medifirstService.getKelompokUser() == 'mahasiswadiklat'){
+                    mahasiswadiklat = '&mahasiswadiklat=true'
+                }
+                medifirstService.get("emr/get-menu-rekam-medis-dynamic?namaemr=navigasi" + mapemr+mahasiswadiklat).then(function (e) {
                     $scope.isLoadingNav = false
-                    // for (let i = 0; i < e.data.data.length; i++) {
-                    //     const element = e.data.data[i];
-                    //     if(medifirstService.getKelompokUser() == 'mahasiswadiklat'){
-                    //         if (element.id == 112 || element.id == 210222) {
-                    //             $scope.dataMenu.push(element)
+                    // if(medifirstService.getKelompokUser() == 'mahasiswadiklat'){
+                    //     e.data.data = [
+                    //         {
+                    //           "id": 112,
+                    //           "kdprofile": 30,
+                    //           "statusenabled": true,
+                    //           "kodeexternal": null,
+                    //           "namaexternal": null,
+                    //           "reportdisplay": "RekamMedis.AsesmenMedis",
+                    //           "namaemr": "navigasi",
+                    //           "caption": "EMR",
+                    //           "headfk": null,
+                    //           "nourut": 1
+                    //         },
+                    //         {
+                    //           "id": 210222,
+                    //           "kdprofile": 30,
+                    //           "statusenabled": true,
+                    //           "kodeexternal": null,
+                    //           "namaexternal": null,
+                    //           "reportdisplay": "RekamMedis.CpptDinamis",
+                    //           "namaemr": "navigasi",
+                    //           "caption": "CPPT Rawat Jalan",
+                    //           "headfk": null,
+                    //           "nourut": 5
+                    //         },
+                    //       ]
+                    // var inlineDefault = new kendo.data.HierarchicalDataSource({
+                    //     data: e.data.data,
+                    //     schema: {
+                    //         model: {
+                    //             children: "child",
+                    //             expanded: false
                     //         }
-                    //     }else{
-                    //         $scope.dataMenu.push(element)
                     //     }
+                    // });
+                    // }else{
+                    //     var inlineDefault = new kendo.data.HierarchicalDataSource({
+                    //         data: e.data.data,
+                    //         schema: {
+                    //             model: {
+                    //                 children: "child",
+                    //                 expanded: false
+                    //             }
+                    //         }
+                    //     });
                     // }
-                    // console.log($scope.dataMenu);
                     var inlineDefault = new kendo.data.HierarchicalDataSource({
                         data: e.data.data,
                         schema: {

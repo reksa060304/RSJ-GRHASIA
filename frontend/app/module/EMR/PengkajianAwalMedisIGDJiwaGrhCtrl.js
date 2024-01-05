@@ -24,6 +24,9 @@ define(['initialize','Configuration'], function (initialize, configuration) {
             $scope.item.kasuslama = false
             $scope.now = new Date()
             // $scope.item.obj[120001] = new Date()
+            if(medifirstService.getKelompokUser() == 'mahasiswadiklat'){
+                $scope.tombolSimpanVis = false
+            }
             medifirstService.getPart('emr/get-datacombo-part-pegawai', true, true, 20).then(function (data) {
                 $scope.listPegawai = data
             })

@@ -18,6 +18,9 @@ define(['initialize'], function (initialize) {
             $scope.listData2 = []
             $scope.listData3 = []
             $scope.item.objcbo =[]
+            if(medifirstService.getKelompokUser() == 'mahasiswadiklat'){
+                $scope.tombolSimpanVis = false
+            }
             // medifirstService.get("emr/get-rekam-medis-dynamic?emrid=" + 133).then(function (e) {
             //     // debugger
             //   var datas = e.data.kolom1

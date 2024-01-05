@@ -232,8 +232,10 @@
 
     </div>
     <div class="grid_1" style="float:right;">
-        <button kendo-button style="width: 100%" ng-click="sudah('inaktif')"><i
+        <button kendo-button style="width: 100%" ng-click="sudah('inaktif')" ng-show="BtnInaktif"><i
                 class="fa fa-stethoscope"></i>Inaktif</button>
+        <button kendo-button style="width: 100%" ng-click="sudah('batal inaktif')" ng-show="BtnBatalInaktif"><i
+            class="fa fa-stethoscope"></i>Batal Inaktif</button>
         <!-- <c-button style="width: 100%; padding:0px;margin:0px;" item="item" position="'right'" is-validate click="UbahDokter">
             <span class="title">Pilih Dokter</span>
         </c-button> -->

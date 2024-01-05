@@ -50,6 +50,9 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 {id:11,page:'Halaman 11'},
                 {id:12,page:'Halaman 12'},
             ]
+            $scope.item.page = {
+                id:1, page:'Halaman 1'
+            }
             $scope.cacheRM = undefined
             $scope.cachePARAM = undefined
             LoadCacheHelper();
@@ -127,8 +130,8 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                                     { text: "View", click: LihatBerkas, imageClass: " fa fa-eye" },
                                     { text: "Delete", click: hapus, imageClass: "k-icon k-i-close", },
                                     { text: "Edit", click: editBerkas, imageClass: "k-icon k-i-pencil" },
-                                    { text: "Verify", click: verifyData, imageClass: "fa fa-check" },
-                                    { text: "Koordinat", click: koordinatData, imageClass: "fa fa-check" },
+                                    // { text: "Verify", click: verifyData, imageClass: "fa fa-check" },
+                                    // { text: "Koordinat", click: koordinatData, imageClass: "fa fa-check" },
                                 ],
                                 title: "",
                                 width: "180px",
@@ -139,8 +142,8 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                                     { text: "Download", click: DownloadBerkas2, imageClass: "k-icon k-i-download" },
                                     { text: "View", click: LihatBerkas, imageClass: " fa fa-eye" },
                                     { text: "Sign Doc", click: tandaTangan, imageClass: "fa fa-key" },
-                                    { text: "Verify", click: verifyData, imageClass: "fa fa-check" },
-                                    { text: "Koordinat", click: koordinatData, imageClass: "fa fa-check" },
+                                    // { text: "Verify", click: verifyData, imageClass: "fa fa-check" },
+                                    // { text: "Koordinat", click: koordinatData, imageClass: "fa fa-check" },
 
                                 ],
                                 title: "",
@@ -698,6 +701,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     'passphrase': $scope.item.passphrase,
                     'nik': $scope.item.nik,
                     'reason': $scope.item.reason ? $scope.item.reason : null,
+                    'page': $scope.item.page != undefined ? $scope.item.page.id : '1',
                     'iduser': medifirstService.getUserLogin().id
                 }
 

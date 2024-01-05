@@ -59,7 +59,7 @@
             text-align: center;
             position: absolute;
             left: 67%;
-            bottom: 35%;
+            bottom: 30%;
             right: 3%;
             }
 
@@ -148,7 +148,10 @@
                     <th style="text-decoration: underline; font-size: 15px">SURAT KETERANGAN DOKTER</th>
                 </tr>
                 <tr>
-                    <th style=" font-size: 14px">Nomor : 449 / {{isset($item[3003992]) ? $item[3003992] : '' }} </th>
+                    <th style=" font-size: 14px">Nomor : 400.7.22.1 / {{isset($item[3003992]) ? $item[3003992] : '' }} </th>
+                </tr>
+                <tr>
+                    <td><br></td>
                 </tr>
                 <tr>
                     <td colspan="6" style="padding-left: 40px; padding-right: 40px" > Yang bertanda tangan di bawah ini, telah melakukan pemeriksaan kesehatan pada
@@ -158,13 +161,13 @@
                     <td>
                         <table border="0" width="{{$pageWidth}}" bgcolor="#FFFFFF">
                             <tr>
-                                <td style="padding-left: 60px ">Nama</td>
-                                <td width="1">:</td>
+                                <td width="30%" style="padding-left: 60px ">Nama</td>
+                                <td width="1%">:</td>
                                 <td>{{$item[3003982]}}</td>
                             </tr>
                             <tr>
-                                <td style="padding-left: 60px ">Tempat/Tanggal Lahir</td>
-                                <td width="1">:</td>
+                                <td width="30%" style="padding-left: 60px ">Tempat/Tanggal Lahir</td>
+                                <td width="1%">:</td>
                                 <td width="250">
                                 <table>
                                     <tr>
@@ -178,23 +181,23 @@
                                 
                             </tr>
                             <tr>
-                                <td  style="padding-left: 60px ">Jenis Kelamin</td>
-                                <td width="1">:</td>
+                                <td width="30%"  style="padding-left: 60px ">Jenis Kelamin</td>
+                                <td width="1%">:</td>
                                 <td>{{$item[3003984]}}</td>
                             </tr>
                             <tr>
-                                <td  style="padding-left: 60px ">Pekerjaan</td>
-                                <td width="1">:</td>
+                                <td width="30%"  style="padding-left: 60px ">Pekerjaan</td>
+                                <td width="1%">:</td>
                                 <td>{{$item[3003985]}}</td>
                             </tr>
                             <tr>
-                                <td style="padding-left: 60px ">Alamat</td>
-                                <td width="1">:</td>
+                                <td width="30%" style="padding-left: 60px ">Alamat</td>
+                                <td width="1%">:</td>
                                 <td >{{$item[3003986]}}</td>
                             </tr>
                             <tr>
-                                <td style="padding-left: 60px ">Pada waktu diperiksa</td>
-                                <td  width="1">:</td>
+                                <td  width="30%"style="padding-left: 60px ">Pada waktu diperiksa</td>
+                                <td  width="1%">:</td>
                                 <td>
                                     <table>
                                         <tr>
@@ -210,9 +213,9 @@
                                 </td>                    
                             </tr>
                             <tr>
-                                <td  style="padding-left: 60px ">Dalam Kondisi</td>
-                                <td  width="1">:</td>
-                                <td colspan="4">{{$item[3003999]}}</td>
+                                <td  width="30%" style="padding-left: 60px ">Dalam Kondisi</td>
+                                <td  width="1%">:</td>
+                                <td>{{$item[3003999]}}</td>
                             </tr>
                             <tr>
                                 <td style="padding-left: 40px; padding-right: 40px" colspan="6">Demikian Surat Keterangan Dokter ini dibuat dengan sebenarnya untuk keperluan : </td>
@@ -223,6 +226,9 @@
                             <tr>
                                 <td style="padding-left: 40px; padding-right: 40px" colspan="6">dan tidak dapat digunakan untuk kepentingan hukum lainnya.</td>
                                 {{-- <td>{{$tb->keperluan}}</td> --}}
+                            </tr>
+                            <tr>
+                                <td><br></td>
                             </tr>
                             <tr>
                                 <td colspan="5"></td>

@@ -889,7 +889,7 @@ class BridgingPenunjangController extends ApiController
             $result = array(
                 "status" => 400,
 //                "sysmex" => $newBRG,
-                // "e" => $e,
+                "e line and message" => $e->getLine(). ' / ' .$e->getMessage(),
                 "as" => 'er@epic',
             );
         }

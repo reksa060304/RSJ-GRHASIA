@@ -89,11 +89,17 @@ define(['initialize'], function (initialize) {
                     [{
                         field: "noreservasi",
                         title: "Kode Reservasi",
-                        width: 150
+                        width: 100
                     }, {
                         field: "nocm",
                         title: "No Rekam Medis",
-                        width: 150
+                        width: 100
+                    },
+                    {
+                        field: "tglinput",
+                        title: "Tanggal Input",
+                        width: 120,
+                        template: "<span class='style-left'>{{formatTanggal('#: tglinput #')}}</span>",
                     }, {
                         field: "tanggalreservasi",
                         title: "Tanggal Reservasi",
@@ -108,7 +114,12 @@ define(['initialize'], function (initialize) {
                         field: "namapasien",
                         title: "Nama Pasien",
                         width: 200
-                    }, {
+                    }, 
+                    {
+                        field: "notelepon",
+                        title: "No HP",
+                        width: 200
+                    },{
                         field: "namaruangan",
                         title: "Ruangan Tujuan",
                         width: 200
@@ -124,13 +135,9 @@ define(['initialize'], function (initialize) {
                     }, {
                         field: "status",
                         title: "Status",
-                        width: 200
+                        width: 100
                     },
-                    {
-                        field: "notelepon",
-                        title: "No HP",
-                        width: 200
-                    },
+                    
                     {
                         field: "ismobilejkn",
                         title: "Mobile JKN",
@@ -148,12 +155,7 @@ define(['initialize'], function (initialize) {
                         title: "No Antrean",
                         width: 100
                     },
-                    {
-                        field: "tglinput",
-                        title: "Tanggal Input",
-                        width: 120,
-                        template: "<span class='style-left'>{{formatTanggal('#: tglinput #')}}</span>",
-                    }
+                    
 
                     ]
             };
