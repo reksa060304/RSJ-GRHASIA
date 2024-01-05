@@ -344,14 +344,15 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                             // $scope.item.dosis =$scope.dataSelected.dosis
                         // $scope.item.jumlahxmakan =parseFloat($scope.dataSelected.jumlah) / parseFloat($scope.item.dosis)
                         if ($scope.dataSelected != undefined ){      
-                            $scope.item.satuannya = $scope.dataSelected.satuandosis
+                            if($scope.item.jenisKemasan.id == 1){
+                                $scope.item.dosis = $scope.dataSelected.dosis
+                                $scope.item.satuannya = $scope.dataSelected.satuandosis
+                            }
                             $scope.item.nilaiKonversi = $scope.dataSelected.nilaikonversi
                             // $scope.item.satuan = {ssid:$scope.dataSelected.satuanstandarfk,satuanstandar:$scope.dataSelected.satuanstandar}
                             // $scope.item.stok = $scope.dataSelected.jmlstok //* $scope.item.nilaiKonversi 
                             $scope.item.jumlah = parseFloat($scope.dataSelected.jumlah)
-                            console.log($scope.item.jumlah);
                             $scope.item.hargaSatuan = $scope.dataSelected.hargasatuan
-                            $scope.item.dosis =$scope.dataSelected.dosis
 
                             // $scope.item.hargadiskon = $scope.dataSelected.hargadiscount
                             $scope.item.total = $scope.dataSelected.total
