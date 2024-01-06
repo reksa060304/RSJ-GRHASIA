@@ -3690,6 +3690,10 @@
         {
             "nameDep": "SuratKeteranganDirawatInapCtrl",
             "urlDep": "module/EMR/SuratKeteranganDirawatInapCtrl"
+        },
+        {
+            "nameDep": "LaporanPegawai2Ctrl",
+            "urlDep": "module/RawatJalan/LaporanPegawai2Ctrl"
         }
     ]
 }

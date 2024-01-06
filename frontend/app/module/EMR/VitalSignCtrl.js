@@ -98,6 +98,8 @@ define(['initialize'], function (initialize) {
             $scope.Batal = function () {
                 $scope.item.obj = []
             }
+            
+            
             loadEMR()
             function loadEMR() {
                 if (nomorEMR == '-') {
@@ -482,6 +484,13 @@ define(['initialize'], function (initialize) {
             $scope.back = function () {
                 window.history.back();
             }
+
+            $scope.$watch('item.obj[4242]', function () {
+                $scope.item.obj[901308930] = (parseFloat($scope.item.obj[4243])/(parseFloat($scope.item.obj[4242])*parseFloat($scope.item.obj[4242])/10000)).toFixed(2)
+            })
+            $scope.$watch('item.obj[4243]', function () {
+                $scope.item.obj[901308930] = (parseFloat($scope.item.obj[4243])/(parseFloat($scope.item.obj[4242])*parseFloat($scope.item.obj[4242])/10000)).toFixed(2)
+            })
 
 
 

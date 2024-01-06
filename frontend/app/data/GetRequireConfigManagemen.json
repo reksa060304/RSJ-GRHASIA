@@ -59,6 +59,10 @@
         {
             "nameDep": "cakemGigiCtrl",
             "urlDep": "module/EMR/cakemGigiCtrl"
+        },
+        {
+            "nameDep": "MasterJenisKelaminCtrl",
+            "urlDep": "module/SysAdmin/MasterJenisKelaminCtrl"
         }
 
     ]

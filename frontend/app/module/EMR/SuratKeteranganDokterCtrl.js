@@ -313,6 +313,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         $scope.item.obj[3015533]= datas[0].pernapasan
                         $scope.item.obj[3003995]= datas[0].bb
                         $scope.item.obj[3003993]= datas[0].tb
+                        $scope.item.obj[901308931]= datas[0].imt
 
 
                     }

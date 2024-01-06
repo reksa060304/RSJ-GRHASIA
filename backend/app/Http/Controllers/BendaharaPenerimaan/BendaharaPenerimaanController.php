@@ -3067,7 +3067,8 @@ class BendaharaPenerimaanController extends ApiController {
                 $voljumlahdipam++;
                 $cekjumlah = $konten->namaproduk;
             }
-
+            // yg 764 itu ruangan
+            //jadi semua produk yg ada di ruangan 764, 770, 788 masuk ke kir
             else if(($konten->idruangan == 764 || $konten->idruangan == 770 || $konten->idruangan == 771 || $konten->idruangan == 788) && $konten->isobat != 't' && ($konten->detailjenisproduk == 'PENUNJANG' || $konten->detailjenisproduk == 'Administrasi' || $konten->detailjenisproduk == 'TENAGA AHLI')){
                 $jumlahkir += $konten->totaldibayarclosing;
                 $voljumlahkir++;
