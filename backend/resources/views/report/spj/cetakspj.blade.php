@@ -461,7 +461,7 @@
                     <font style="font-size: 12pt" csolor="#000000"></font>
                 </td>
                 <td colspan="3" style="text-align:center; width: 300px; " align="right>
-                    <font style="font-size: 12pt" csolor="#000000">Yang Meneriman, <br> Tanda Tangan</font>
+                    <font style="font-size: 12pt" csolor="#000000">Yang Meneriman, <br> Tanda Tangan,</font>
                 </td>
             </tr>
         </tbody>
