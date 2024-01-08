@@ -87,9 +87,11 @@ class LoginController extends ApiController {
 //            );
 //            return $this->setStatusCode($result['status'])->respond($result);
 //        }
-        $login = DB::table('loginuser_s')
-            ->where('passcode', '=', $this->encryptSHA1($request->input('kataSandi')))
-            ->where('namauser', '=', $request->input('namaUser'));
+        $login = DB::table('loginuser_s as lu')
+            ->join('pegawai_m as pg','pg.id','=','lu.objectpegawaifk')
+            ->where('lu.passcode', '=', $this->encryptSHA1($request->input('kataSandi')))
+            ->where('pg.statusenabled', true)
+            ->where('lu.namauser', '=', $request->input('namaUser'));
         $LoginUser = $login->get();
         if (count($LoginUser) > 0){
             //region Cek Login Expired
