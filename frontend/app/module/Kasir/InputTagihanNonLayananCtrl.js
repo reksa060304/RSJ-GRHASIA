@@ -295,7 +295,7 @@ define(['initialize'], function (initialize) {
 				}
 				$scope.dataSelectedProduk = dataSelectedProduk;				
 				$scope.item.namaprodukInput = $scope.dataSelectedProduk.namaproduk;
-				if ($scope.dataSelectedProduk.namaproduk != "Pelayanan Lainnya") {
+				if ($scope.dataSelectedProduk.harga != "0") {
 					$scope.item.KeteranganProduk = "-";
 					$scope.disHarga = true;
 				}else{	

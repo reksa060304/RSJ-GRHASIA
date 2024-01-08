@@ -28,6 +28,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.isTTD_E = true
             if(medifirstService.getKelompokUser() == 'mahasiswadiklat'){
                 $scope.tombolSimpanVis = false
+                $scope.isTTD_E = false
+
             }
 
             medifirstService.getPart('emr/get-datacombo-part-pegawai', true, true, 20).then(function (data) {
@@ -311,6 +313,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         $scope.item.obj[3015533]= datas[0].pernapasan
                         $scope.item.obj[3003995]= datas[0].bb
                         $scope.item.obj[3003993]= datas[0].tb
+                        $scope.item.obj[901308931]= datas[0].imt
 
 
                     }

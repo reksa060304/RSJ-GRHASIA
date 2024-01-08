@@ -12,17 +12,21 @@
 </head>
 <style>
     @page {
-        margin:15mm 15mm 20mm 20mm;
+        margin: 10mm 5mm 35mm 17mm;
+        size: auto;
     }
 
     @page :first {
-        margin:15mm 15mm 20mm 20mm;
+        margin: 10mm 5mm 35mm 17mm;
+        size: auto;
     }
 
     @media print {
     body {
+        /* top - right - bottom - left */
+        /* margin: 10mm 5mm 10mm 15mm; */
         margin:0;
-        width:31cm;
+        /* width:31cm; */
     }
     }
 
@@ -47,13 +51,14 @@
 
     }
 </style>
-<body style="width:19.5cm;">
+<!-- <body style="width:19.5cm;"> -->
+<body>
 <div>
 <table cellpadding="0" cellspacing="0" width="100%"  border="0" class="tabel">
         <tbody >
         <tr>
-            <td rowspan="2" align="center" style="padding: 10px;">
-                    <p>
+            <td style="padding: 5px; width: 50px;">
+                    <p align="center">
                             @if(stripos(\Request::url(), 'localhost') !== FALSE)
                             <img src="{{ asset('img/LOGO GRHASIA.png') }}" style="width: 100px" >
                             @else
@@ -62,29 +67,25 @@
                       
                     </p>
             </td>
-            <td align="center" style="padding: 3px;">
+            <td align="center" style="padding: 5px; width: 300px;">
                 <b style="font-size: 23px;">
                     RENCANA BISNIS DAN ANGGARAN<br>
-                    BADAN LAYANAN UMUM DAERAH
+                    BADAN LAYANAN UMUM DAERAH<br>
+                    {{ strtoupper($settingrba[0]->pengelolakeuanganblud) }}
                 </b>
             </td>
-            <td rowspan="2"  align="center" style="padding: 3px;">
+            <td align="center" style="padding: 5px; width: 50px;">
                 <b style="font-size: 23px;">
                     RBA
                 </b><br>
                 {{substr($itahap[0]->tahap, 0, -3)}}
             </td>
         </tr>
-        <tr align="center">
-            <td>
-                <b>RS Jiwa GRHASIA<br>TAHUN {{ date('Y') }}</b>
-            </td>
-        </tr>
         <tr >
             <td colspan="3">
                 <p align="center" style="margin-top: 10px; margin-bottom:10px">
                     <font style="font-size: 12pt; " color="#000000">
-                            <b>REKAP ANGGARAN TIAP SUB KEGIATAN (JENIS ANGGARAN) <br> TAHUN ANGGARAN {{ date('Y') }}</b>
+                            <b>REKAP TOTAL ANGGARAN <br> TAHUN ANGGARAN {{ $itahap[0]->thn }}</b>
                     </font>
                     <br>
                 </p>
@@ -93,11 +94,13 @@
         </tbody>
     </table>
     <table cellpadding="0" cellspacing="0" width="100%"  border="0" class="tabel">
+        <thead>
                 <tr>
                     <td align="center"  colspan="2" style="padding: 10px; font-weight: bold ">NO</td>
                     <td align="center" style="padding: 10px; font-weight: bold; ">ALOKASI BIAYA/PENGELUARAN</td>
                     <td align="center" style="padding: 10px; font-weight: bold ; ">JUMLAH ANGGARAN</td>
                 </tr>
+        </thead>
                 @php
                 $totalsebelum = 0;
                 @endphp
@@ -171,7 +174,7 @@
                     <td>
                         <p align="center" style="margin-bottom:50px">
                             <font style="font-size: 12pt; " color="#000000" face="Arial">
-                                    Kepala BLUD RS Jiwa GRHASIA
+                                    Direktur
                             </font>
                         </p>
                     </td>
@@ -188,7 +191,7 @@
                     <td>
                         <p align="center" style="margin-top: 50px;">
                             <font style="font-size: 12pt; " color="#000000" face="Arial">
-                                   <u>dr. Akhmad Akhadi Syamsudhuha, M.P.H</u>
+                                   <u>{{$settingrba[0]->namalengkap}}</u>
                             </font>
                         </p>
                     </td>
@@ -201,7 +204,7 @@
                     <td>
                         <p align="center">
                             <font style="font-size: 12pt; " color="#000000" face="Arial">
-                            NIP. 19680714 200012 1 002
+                            NIP. {{$settingrba[0]->nippns}}
                             </font>
                         </p>
                     </td>

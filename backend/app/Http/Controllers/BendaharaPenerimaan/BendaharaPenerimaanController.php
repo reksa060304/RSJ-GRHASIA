@@ -2731,7 +2731,7 @@ class BendaharaPenerimaanController extends ApiController {
 
         // konten STS Detail
 
-        $data = DB::select(DB::raw("select distinct ru2.objectdepartemenfk objectdepartemenfk2, cb2.id idcarabayar2, kp.id idkelompokpasien, 0 objectkelompoktransaksifk, sbm.norec norecsbm, pp.norec, sc.tglclosing, ru.namaruangan, ru.id idruangan, pr.namaproduk, pr.id idproduk, pp.isobat,
+        $data = DB::select(DB::raw("select distinct  '' as keteranganpakai, ru2.objectdepartemenfk objectdepartemenfk2, cb2.id idcarabayar2, kp.id idkelompokpasien, 0 objectkelompoktransaksifk, sbm.norec norecsbm, pp.norec, sc.tglclosing, ru.namaruangan, ru.id idruangan, pr.namaproduk, pr.id idproduk, pp.isobat,
             (((CASE WHEN pp.hargajual IS NULL THEN 0 ELSE pp.hargajual END - CASE WHEN pp.hargadiscount IS NULL THEN
         0 ELSE pp.hargadiscount END) * pp.jumlah) + CASE WHEN pp.jasa IS NULL THEN 0 ELSE pp.jasa END ) AS totaldibayarclosing,
         ru.objectdepartemenfk, sbmcr.objectcarabayarfk, sbm.totaldibayar as totaldibayarsbm, sc.noclosing, sc.tglclosing,
@@ -2768,7 +2768,7 @@ class BendaharaPenerimaanController extends ApiController {
         
         union all
         
-        select distinct 0 objectdepartemenfk2, cb2.id idcarabayar2, 0 idkelompokpasien, sp.objectkelompoktransaksifk, sbm.norec norecsbm, sp.norec, sc.tglclosing, ru.namaruangan, ru.id idruangan, pr.namaproduk, pr.id idproduk, pp.isobat,
+        select distinct spd.keteranganlainnya as keteranganpakai, 0 objectdepartemenfk2, cb2.id idcarabayar2, 0 idkelompokpasien, sp.objectkelompoktransaksifk, sbm.norec norecsbm, sp.norec, sc.tglclosing, ru.namaruangan, ru.id idruangan, pr.namaproduk, pr.id idproduk, pp.isobat,
         (spd.qtyproduk * spd.hargasatuan * spd.qtyoranglast)::float8 as totaldibayarclosing,
         ru.objectdepartemenfk, sbmcr.objectcarabayarfk, sbm.totaldibayar as totaldibayarsbm, sc.noclosing, sc.tglclosing,
         sck.totaldibayar as totaldibayar,sck.carabayarfk, cb.carabayar, djp.detailjenisproduk, jpr.id as jenisproduk
@@ -3067,7 +3067,8 @@ class BendaharaPenerimaanController extends ApiController {
                 $voljumlahdipam++;
                 $cekjumlah = $konten->namaproduk;
             }
-
+            // yg 764 itu ruangan
+            //jadi semua produk yg ada di ruangan 764, 770, 788 masuk ke kir
             else if(($konten->idruangan == 764 || $konten->idruangan == 770 || $konten->idruangan == 771 || $konten->idruangan == 788) && $konten->isobat != 't' && ($konten->detailjenisproduk == 'PENUNJANG' || $konten->detailjenisproduk == 'Administrasi' || $konten->detailjenisproduk == 'TENAGA AHLI')){
                 $jumlahkir += $konten->totaldibayarclosing;
                 $voljumlahkir++;

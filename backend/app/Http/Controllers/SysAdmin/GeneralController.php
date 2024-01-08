@@ -5806,4 +5806,75 @@ class GeneralController extends ApiController
         return $this->respond($data);
     }
 
+    function getMasterKelamin(Request $request){
+        //$data =JenisKelamin kalo ada modelnya, dan model harus di declare diatas use app/blabla 
+        
+        $jeniskelamin = DB::table('jeniskelamin_m')->where('statusenabled',true)->get();
+        $agama = Pendidikan::where('statusenabled',true)->get();
+
+        $result= array(
+            'jeniskelamin'=> $jeniskelamin,
+            'agama'=> $agama
+        );
+        return $this->respond($result);
+    }
+    function saveMasterKelamin(Request $request){
+        //$data =JenisKelamin kalo ada modelnya, dan model harus di declare diatas use app/blabla 
+        
+        $r=$request['data'];
+        DB::beginTransaction();
+        try{
+            //versi model
+            if($r['id']==''){
+                //versimodel
+                 $idMax=JenisKelamin::max('id')+1;
+                 $jeniskelamin= new JenisKelamin();
+                 $jeniskelamin->id=$idMax;
+                 $jeniskelamin->statusenabled=true;
+                 $jeniskelamin->jeniskelamin=$r['jeniskelamin'];                
+                 $jeniskelamin->save();
+
+                //versinonmodel
+
+                // $idMax=DB::table('jeniskelamin_m')->max('id')+1;
+                // $jeniskelamin=DB::table('jeniskelamin_m')->insert([
+                //     'id'=>$idMax,
+                //     'jeniskelamin'=>$r['jeniskelamin']
+                //]);
+            }else{
+                //versimodel
+                $jeniskelamin=JenisKelamin::where('id',$r['id'])->first();
+                $jeniskelamin->jeniskelamin=$r['jeniskelamin'];
+                $jeniskelamin->save();
+                //nonmodel
+                $jeniskelamin = JenisKelamin::where('id',$r['id'])->update(
+                    [
+                        'jeniskelamin'=>$r['jeniskelamin']
+                    ]
+                    );
+            }
+            $transStatus=true;
+        }
+        catch(\Trhowable $th){
+            $transStatus=false;
+        }
+        if($transStatus){
+            $transMessage="Simpan data berhasil";
+            DB::commit(); //penet data ke db
+            $result=array(
+                "status"=>201,
+                "message"=>'@',
+            );
+        }else{
+            $transMessage="Simpan data gagal";
+            $message=$th->getMessage() . ' '.$th->getLine();
+            DB::rollBack(); //rollback data 
+            $result=array(
+                "status"=>401,
+                "message"=>$message,
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result,$transMessage);
+    }
+
 }

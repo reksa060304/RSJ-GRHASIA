@@ -29,6 +29,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.isTTD_E = true
             if(medifirstService.getKelompokUser() == 'mahasiswadiklat'){
                 $scope.tombolSimpanVis = false
+                $scope.isTTD_E = false
+
             }
 
             medifirstService.getPart('emr/get-datacombo-part-pegawai', true, true, 20).then(function (data) {

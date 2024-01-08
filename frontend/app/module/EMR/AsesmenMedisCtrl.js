@@ -6,9 +6,12 @@ define(['initialize'], function (initialize) {
             $scope.dataVOloaded = true;
             $scope.buatBaru = true;
             $scope.hapusButton = true;
+            $scope.hapusHide = true
             if(medifirstService.getKelompokUser() == 'mahasiswadiklat'){
                 $scope.buatBaru = false;
                 $scope.hapusButton = false;
+                $scope.hapusHide = false
+
             }
             $scope.now = new Date();
             $scope.item.tglOperasi = new Date();
@@ -585,7 +588,7 @@ define(['initialize'], function (initialize) {
                             "template": "# for(var i=0; i < details.length;i++){# <span class=\"button-details\" )\" >#= details[i].namaform #  <em class=\"k-button k-button-icon k-primary\""
                                 + " style=\" margin: 3px;padding-left: .4em;padding-right: .4em;\"  ng-click=\"asupKaForm('#=details[i].emrpasienfk#','#=details[i].reportdisplay#',"
                                 +"'#=details[i].emrfk#','#=details[i].norec#','#=details[i].index#','#=details[i].noregistrasi#')\" > <span class=\"k-sprite k-icon k-i-search\">Details</span></em> <em class=\"k-button k-button-icon  k-primary \""
-                                + " style=\" margin: 3px;padding-left: .4em;padding-right: .4em; margin-left: -3px;\"  ng-click=\"hapusFormHiji('#=details[i].emrpasienfk#','#=details[i].reportdisplay#',"
+                                + " style=\" margin: 3px;padding-left: .4em;padding-right: .4em; margin-left: -3px;\" ng-show='hapusHide' ng-click=\"hapusFormHiji('#=details[i].emrpasienfk#','#=details[i].reportdisplay#',"
                                 +"'#=details[i].emrfk#','#=details[i].norec#','#=details[i].index#')\" > <span class=\"k-sprite fa fa-trash\" style=\"float: left;margin-top: 0.3em;padding-bottom: 2px;\"</span></em></span> #}#",
 
                             // "template": "# for(var i=0; i < details.length;i++){# <button class=\"k-button custom-button\" style=\"margin:0 0 5px\"  ng-click=\"asupKaForm('#=details[i].emrpasienfk#','#=details[i].reportdisplay#','#=details[i].emrfk#','#=details[i].norec#')\" >#= details[i].namaform #</button> #}#",

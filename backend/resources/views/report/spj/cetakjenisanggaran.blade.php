@@ -12,17 +12,19 @@
 </head>
 <style>
     @page {
-        margin:15mm 15mm 20mm 20mm;
+        margin: 10mm 5mm 35mm 17mm;
+        size: auto;
     }
 
     @page :first {
-        margin:15mm 15mm 20mm 20mm;
+        margin: 10mm 5mm 35mm 17mm;
+        size: auto;
     }
 
     @media print {
     body {
         margin:0;
-        width:31cm;
+        /* width:31cm; */
     }
     }
 
@@ -47,11 +49,12 @@
 
     }
 </style>
-<body style="width:27cm;">
+<!-- <body style="width:27cm;"> -->
+<body>
 <div>
     <table cellpadding="0" cellspacing="0" width="100%"  border="0" class="tabel" >
         <tr>
-            <td rowspan="2" align="center" style="padding: 10px;">
+            <td align="center" style="padding: 5px; width: 20px;">
                     <p>
                             @if(stripos(\Request::url(), 'localhost') !== FALSE)
                             <img src="{{ asset('img/LOGO GRHASIA.png') }}" style="width: 100px" >
@@ -61,29 +64,25 @@
                       
                     </p>
             </td>
-            <td align="center" style="padding: 3px;">
+            <td align="center" style="padding: 5px; width: 350px;">
                 <b style="font-size: 23px;">
                     RENCANA BISNIS DAN ANGGARAN<br>
-                    BADAN LAYANAN UMUM DAERAH
+                    BADAN LAYANAN UMUM DAERAH<br>
+                    {{ strtoupper($settingrba[0]->pengelolakeuanganblud) }}
                 </b>
             </td>
-            <td rowspan="2"  align="center" style="padding: 3px;">
+            <td align="center" style="padding: 5px; width: 50px;">
                 <b style="font-size: 23px;">
                     RBA
                 </b><br>
                 {{$tahap[0]->tahap}}
             </td>
         </tr>
-        <tr align="center">
-            <td>
-                <b>RS JIWA GRHASIA<br>TAHUN {{ date('Y') }}</b>
-            </td>
-        </tr>
         <tr >
             <td colspan="3">
                 <p align="center" style="margin-top: 10px; margin-bottom:10px">
                     <font style="font-size: 12pt; " color="#000000">
-                            <b>REKAP ANGGARAN TIAP SUB KEGIATAN (JENIS ANGGARAN) <br> TAHUN ANGGARAN {{ date('Y') }}</b>
+                            <b>REKAP ANGGARAN TIAP KEGIATAN DAN JENIS ANGGARAN <br> TAHUN ANGGARAN {{ $tahap[0]->thn }}</b>
                     </font>
                     <br>
                 </p>
@@ -91,9 +90,10 @@
         </tr>
     </table>
         <table cellpadding="0" cellspacing="0" width="100%"  border="0" class="tabel">
+            <thead>
                 <tr>
-                    <td align="center" style="padding: 10px; font-weight: bold ">NO</td>
-                    <td align="center" style="padding: 10px; font-weight: bold; ">NAMA SUB KEGIATAN</td>
+                    <td align="center" style="padding: 10px; font-weight: bold ">KODE KEGIATAN</td>
+                    <td align="center" style="padding: 10px; font-weight: bold; ">NAMA KEGIATAN</td>
                     <td align="center" style="padding: 10px; font-weight: bold;  ">PEGAWAI</td>
                     <td align="center" style="padding: 10px; font-weight: bold;  ">BARANG JASA</td>
                     <td align="center" style="padding: 10px; font-weight: bold ; ">MODAL GEDUNG</td>
@@ -101,44 +101,59 @@
                     <td align="center" style="padding: 10px; font-weight: bold ; ">MODAL LAINNYA</td>
                     <td align="center" style="padding: 10px; font-weight: bold;  ">SUB TOTAL</td>
                 </tr>
+            </thead>
                 @foreach ($data as $dt)
                 <tr>
                     @if($dt->div == 2)
-                    <td style="padding: 10px; "><b>{{ substr($dt->kode, -4) }}</b></td>
+                    <td style="padding: 10px; "><b>{{ $dt->kode }}</b></td>
+                    <!-- <td style="padding: 10px; "><b>{{ substr($dt->kode, -4) }}</b></td> -->
                     @elseif($dt->div == 3)
-                    <td style="padding: 10px; ">{{ substr($dt->kode, -2) }}</td>
+                    <td style="padding: 10px; "><b>{{ $dt->kode }}</b></td>
+                    <!-- <td style="padding: 10px; ">{{ substr($dt->kode, -2) }}</td> -->
                     @elseif($dt->div == 4)
-                    <td style="padding: 10px; "></td>
+                    <td style="padding: 10px; ">{{ $dt->kode }}</td>
+                    <!-- <td style="padding: 10px; "></td> -->
                     @endif
                     @if($dt->div == 2)
                     <td style="padding: 10px; "><b>{{$dt->kegiatan}}</b></td>
                     @elseif($dt->div == 3)
-                    <td style="padding: 10px; ">{{$dt->kegiatan}}</td>
+                    <td style="padding: 10px; "><b>{{$dt->kegiatan}}</b></td>
                     @elseif($dt->div == 4)
-                    <td style="padding: 10px; ">{{ $dt->kode1 }}. {{$dt->kegiatan}}</td>
+                    <td style="padding: 10px; ">{{$dt->kegiatan}}</td>
                     @endif
-                    <td align="right" style="padding: 10px;">{{ number_format($dt->jumlahpegawai,0,',','.') }}</td>
-                    <td align="right" style="padding: 10px;">{{ number_format($dt->jumlahbarangjasa,0,',','.') }}</td>
-                    <td align="right" style="padding: 10px;">{{ number_format($dt->jumlahmodalgedung,0,',','.') }}</td>
-                    <td align="right" style="padding: 10px;">{{ number_format($dt->jumlahmodalalat,0,',','.') }}</td>
-                    <td align="right" style="padding: 10px;">{{ number_format($dt->jumlahmodallainnya,0,',','.') }}</td>
-                    <td align="right" style="padding: 10px;">{{ number_format($dt->total,0,',','.') }}</td>
+
+                    @if($dt->div == 4)
+                    <td align="right" style="padding: 10px;">{{ number_format($dt->jumlahpegawai,0,',','.') == 0 ? "" : number_format($dt->jumlahpegawai,0,',','.') }}</td>
+                    <td align="right" style="padding: 10px;">{{ number_format($dt->jumlahbarangjasa,0,',','.') == 0 ? "" : number_format($dt->jumlahbarangjasa,0,',','.') }}</td>
+                    <td align="right" style="padding: 10px;">{{ number_format($dt->jumlahmodalgedung,0,',','.') == 0 ? "" : number_format($dt->jumlahmodalgedung,0,',','.') }}</td>
+                    <td align="right" style="padding: 10px;">{{ number_format($dt->jumlahmodalalat,0,',','.') == 0 ? "" : number_format($dt->jumlahmodalalat,0,',','.') }}</td>
+                    <td align="right" style="padding: 10px;">{{ number_format($dt->jumlahmodallainnya,0,',','.') == 0 ? "" : number_format($dt->jumlahmodallainnya,0,',','.') }}</td>
+                    <td align="right" style="padding: 10px;">{{ number_format($dt->total,0,',','.') == 0 ? "" : number_format($dt->total,0,',','.') }}</td>
+                    @else
+                    <td align="right" style="padding: 10px;"><b>{{ number_format($dt->jumlahpegawai,0,',','.') == 0 ? "" : number_format($dt->jumlahpegawai,0,',','.') }}</b></td>
+                    <td align="right" style="padding: 10px;"><b>{{ number_format($dt->jumlahbarangjasa,0,',','.') == 0 ? "" : number_format($dt->jumlahbarangjasa,0,',','.') }}</b></td>
+                    <td align="right" style="padding: 10px;"><b>{{ number_format($dt->jumlahmodalgedung,0,',','.') == 0 ? "" : number_format($dt->jumlahmodalgedung,0,',','.') }}</b></td>
+                    <td align="right" style="padding: 10px;"><b>{{ number_format($dt->jumlahmodalalat,0,',','.') == 0 ? "" : number_format($dt->jumlahmodalalat,0,',','.') }}</b></td>
+                    <td align="right" style="padding: 10px;"><b>{{ number_format($dt->jumlahmodallainnya,0,',','.') == 0 ? "" : number_format($dt->jumlahmodallainnya,0,',','.') }}</b></td>
+                    <td align="right" style="padding: 10px;"><b>{{ number_format($dt->total,0,',','.') == 0 ? "" : number_format($dt->total,0,',','.') }}</b></td>
+                    @endif
+
                 </tr>
                 @endforeach
                 <tr>
                     <td colspan="2" style="padding: 10px; font-weight: bold; text-align: center; ">JUMLAH TOTAL</td>
-                    <td align="right" style="padding: 10px; font-weight: bold;  ">{{ number_format($jumlah[0]->jumlahpegawai,0,',','.') }}</td>
-                    <td align="right" style="padding: 10px; font-weight: bold;  ">{{ number_format($jumlah[0]->jumlahbarangjasa,0,',','.') }}</td>
-                    <td align="right" style="padding: 10px; font-weight: bold ; ">{{ number_format($jumlah[0]->jumlahmodalgedung,0,',','.') }}</td>
-                    <td align="right" style="padding: 10px; font-weight: bold ; ">{{ number_format($jumlah[0]->jumlahmodalalat,0,',','.') }}</td>
-                    <td align="right" style="padding: 10px; font-weight: bold ; ">{{ number_format($jumlah[0]->jumlahmodallainnya,0,',','.') }}</td>
-                    <td align="right" style="padding: 10px; font-weight: bold;  ">{{ number_format($jumlah[0]->total,0,',','.') }}</td>
+                    <td align="right" style="padding: 10px; font-weight: bold;  ">{{ number_format($jumlah[0]->jumlahpegawai,0,',','.') == 0 ? "" : number_format($jumlah[0]->jumlahpegawai,0,',','.') }}</td>
+                    <td align="right" style="padding: 10px; font-weight: bold;  ">{{ number_format($jumlah[0]->jumlahbarangjasa,0,',','.') == 0 ? "" : number_format($jumlah[0]->jumlahbarangjasa,0,',','.') }}</td>
+                    <td align="right" style="padding: 10px; font-weight: bold ; ">{{ number_format($jumlah[0]->jumlahmodalgedung,0,',','.') == 0 ? "" : number_format($jumlah[0]->jumlahmodalgedung,0,',','.') }}</td>
+                    <td align="right" style="padding: 10px; font-weight: bold ; ">{{ number_format($jumlah[0]->jumlahmodalalat,0,',','.') == 0 ? "" : number_format($jumlah[0]->jumlahmodalalat,0,',','.') }}</td>
+                    <td align="right" style="padding: 10px; font-weight: bold ; ">{{ number_format($jumlah[0]->jumlahmodallainnya,0,',','.') == 0 ? "" : number_format($jumlah[0]->jumlahmodallainnya,0,',','.') }}</td>
+                    <td align="right" style="padding: 10px; font-weight: bold;  ">{{ number_format($jumlah[0]->total,0,',','.') == 0 ? "" : number_format($jumlah[0]->total,0,',','.') }}</td>
                 </tr>
         </table>
         <table cellpadding="0" cellspacing="0" width="100%"  border="0">
             <thead>
                 <tr>
-                    <td width="400">
+                    <td width="700">
                     </td>
                     <td>
                     </td>
@@ -151,14 +166,14 @@
                     </td>
                 </tr>
                 <tr>
-                    <td width="400">
+                    <td width="700">
                     </td>
                     <td>
                     </td>
                     <td>
                         <p align="center" style="margin-bottom:50px">
                             <font style="font-size: 12pt; " color="#000000" face="Arial">
-                                    Kepala BLUD RS JIWA GRHASIA
+                                    Direktur
                             </font>
                         </p>
                     </td>
@@ -168,7 +183,7 @@
                 <tr></tr>
                 <tr></tr>
                 <tr>
-                    <td width="400">
+                    <td width="700">
                     </td>
                     <td>
                     </td>
@@ -181,7 +196,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td width="400">
+                    <td width="700">
                     </td>
                     <td>
                     </td>

@@ -52,6 +52,8 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             $scope.item.noRuang = 0;
             $scope.copynoresep = ""
             $scope.rke = ''
+            $scope.editOrderAh = false;
+
             
             $scope.listJumlah =  [
                 { "jml": 7 },
@@ -342,14 +344,18 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                             // $scope.item.dosis =$scope.dataSelected.dosis
                         // $scope.item.jumlahxmakan =parseFloat($scope.dataSelected.jumlah) / parseFloat($scope.item.dosis)
                         if ($scope.dataSelected != undefined ){      
-                            $scope.item.satuannya = $scope.dataSelected.satuandosis
+                            if($scope.item.jenisKemasan.id == 1){
+                                $scope.item.dosis = $scope.dataSelected.dosis
+                                $scope.item.satuannya = $scope.dataSelected.satuandosis
+                            }else if($scope.item.jenisKemasan.id == 2){
+                                $scope.item.satuannya = dataProdukDetail[0].satuan
+                                $scope.item.dosis = dat.data.kekuatan
+                            }
                             $scope.item.nilaiKonversi = $scope.dataSelected.nilaikonversi
                             // $scope.item.satuan = {ssid:$scope.dataSelected.satuanstandarfk,satuanstandar:$scope.dataSelected.satuanstandar}
                             // $scope.item.stok = $scope.dataSelected.jmlstok //* $scope.item.nilaiKonversi 
                             $scope.item.jumlah = parseFloat($scope.dataSelected.jumlah)
-                            console.log($scope.item.jumlah);
                             $scope.item.hargaSatuan = $scope.dataSelected.hargasatuan
-                            $scope.item.dosis =$scope.dataSelected.dosis
 
                             // $scope.item.hargadiskon = $scope.dataSelected.hargadiscount
                             $scope.item.total = $scope.dataSelected.total
@@ -1013,6 +1019,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     }
                 ];
                 }
+                $scope.dataSelected = undefined
             }
             function clear() {
                 if ($scope.item.jenisKemasan.jeniskemasan != 'Racikan') {
@@ -1332,7 +1339,11 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     sendNotification(e.data)
                     $scope.item.resep == undefined
                     $scope.norecOrder = ''
-                    if($scope.copynoresep == ''){
+                    if($scope.editOrderAh == true){
+                        medifirstService.postLogging('Edit Order Resep', 'Norec strukresep_t', e.data.noresep.norec,
+                        'Order Resep No Order - ' + e.data.noresep.noorder + ' dengan No Registrasi ' + $scope.item.noregistrasi).then(function (res) {
+                        })
+                    }else if($scope.copynoresep == ''){
                         medifirstService.postLogging('Order Resep', 'Norec strukresep_t', e.data.noresep.norec,
                         'Order Resep No Order - ' + e.data.noresep.noorder + ' dengan No Registrasi ' + $scope.item.noregistrasi).then(function (res) {
                         })
@@ -1341,7 +1352,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         'Order Resep No Order - ' + e.data.noresep.noorder + ' dengan No Registrasi ' + $scope.item.noregistrasi+ ' dari copy no resep ' + $scope.copynoresep).then(function (res) {
                         })
                     }
-
+                    
                     var objSave = {
                         // data: data2,
                         norec_apd: norec_apd,
@@ -1735,6 +1746,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 
             ];
             $scope.editOrder = function () {
+                $scope.editOrderAh = true;
                 if ($scope.dataSelectedRiwayat == undefined) {
                     toastr.error('Pilih data dulu')
                     return
@@ -2055,6 +2067,9 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     return;
                 }
                 medifirstService.post('emr/hapus-order-pelayananobatfarmasi', { norec: $scope.dataSelectedRiwayat.norec_order }).then(function (e) {
+                    medifirstService.postLogging('Hapus Order Resep', 'Norec strukresep_t', '...',
+                    'Order Resep No Order - ' + $scope.dataSelectedRiwayat.noorder + ' dengan No Registrasi ' + $scope.item.noregistrasi).then(function (res) {
+                    })
                     init();
                 })
             }

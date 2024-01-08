@@ -1,0 +1,78 @@
+<div class="grid_12 headerBox">
+    <h1 style="color: white;">
+        <b>Laporan Tindakan</b>
+    </h1>
+</div>
+<div class="grid_12">
+    <div class="grid_12">
+        <fieldset style="min-height:50px !important" align="left">
+            <legend>
+                <h2>Pencarian</h2>
+            </legend>
+            
+            <div class="grid_12">
+                <div class="grid_12" ng-repeat="list in listTglPeriode">
+                    <div ng-repeat="opsi in list.detail | orderBy:'id'" class="grid_1">
+                        <input type="radio" name="{{opsi.nama}}" id="{{opsi.nama}}" class="k-radio"
+                            ng-model="item.periodeBerdasarkan" value="{{opsi.id}}">
+                        <label class="k-radio-label" for="{{opsi.nama}}">{{opsi.nama}}</label>
+                    </div>
+                </div>
+            </div>
+            <div class="grid_12">
+                <div class="grid_3">
+                    <div class="grid_12">
+                        <label c-label item="item" c-label-text="Tanggal Lahir"></label>
+                    </div>
+                    <div class="grid_12">
+                        <!-- AwalPeriode -->
+                        <div class="grid_6 padDatePicker">
+                            <input style="width: 100%" k-ng-model="item.tglawal" kendo-datetimepicker k-max="now"
+                                placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" />
+                        </div>
+
+                        <!-- AkhirPeriode -->
+                        
+                        <div class="clear"></div>
+                    </div>
+                </div>
+                <div class="grid_2">
+                    <label c-label item="item" c-label-text="Departement"></label>
+                    <input style="width: 100%;" kendo-combo-box k-ng-model="item.departement"
+                        k-data-text-field="'departemen'" k-data-value-field="'id'" k-filter="'contains'"
+                        k-auto-bind="false" k-data-source="listDepartemen" k-on-change="getIsiComboRuangan()"
+                        ng-keypress="($event.which == 13)? SearchData():item.departement" />
+                </div>
+                <div class="grid_2">
+                    <label c-label item="item" c-label-text="Ruangan"></label>
+                    <input ng-disabled="isDisable" style="width: 100%;" kendo-combo-box k-ng-model="item.ruangan"
+                        k-data-text-field="'ruangan'" k-data-value-field="'id'" k-filter="'contains'"
+                        k-auto-bind="false" k-data-source="listRuangan"
+                        ng-keypress="($event.which == 13)? SearchData():item.ruangan" />
+                </div>
+                <div class="grid_2" >
+                    <label c-label real>Nama Pasien</label>
+                    <input c-text-box type="input" filter="'char'" class="k-textbox" ng-model="item.namaPasien"
+                        ng-keypress="($event.which == 13)? SearchEnter():item.namaPasien" />
+                </div>
+                
+                
+                <div class="grid_1" style="margin-top: 14px">
+                    <div class="grid_12">
+                        <button class="btnTemplate1" style="margin-left: 0;" ng-click="CariData()">Cari</button>
+                    </div>
+                </div>
+            </div>
+            <div class="grid_12">  
+            </div>
+        </fieldset>
+    </div>
+    <div class="grid_12" style="margin-top: 10px;">
+        <kendo-grid k-data-source="dataTindakan" k-selectable="'row'" k-options="columnTindakan"
+            k-ng-model="dataPasienSelected" ng-click="click(dataPasienSelected)">
+        </kendo-grid>
+    </div>
+</div>
+<div class="grid_12" style="margin-top:60px">
+    <div ng-include='"../app/template/Shared/TemplateLoading"'></div>
+</div>

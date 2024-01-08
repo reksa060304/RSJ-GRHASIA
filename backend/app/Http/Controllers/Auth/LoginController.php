@@ -87,6 +87,7 @@ class LoginController extends ApiController {
 //            );
 //            return $this->setStatusCode($result['status'])->respond($result);
 //        }
+
         $login = DB::table('loginuser_s')
             ->where('passcode', '=', $this->encryptSHA1($request->input('kataSandi')))
             ->where('namauser', '=', $request->input('namaUser'));
@@ -273,9 +274,11 @@ class LoginController extends ApiController {
             //endregion
         }else{
             //region Login Gagal send 400 code
+            $msg = $this->rateLimit($request->input('namaUser'),3);  // 25 hits,  dalam 60 detik 
+        
             $result = array(
                 'data' => [],
-                'messages' => 'Login gagal, Username atau Password salah',
+                'messages' =>!empty($msg) ? $msg['message'] : 'Login gagal, Username atau Password salah',
                 'status'=> 400,
                 'as'=> '#Inhuman'
             );

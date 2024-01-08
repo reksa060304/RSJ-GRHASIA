@@ -39,6 +39,8 @@
 
     .tabel tr td{
         border: 1px solid black;
+        page-break-inside: avoid;
+
     }
 
     .tabel {
@@ -194,7 +196,7 @@
                     <td>
                         <p align="center" style="margin-top: 50px;">
                             <font style="font-size: 12pt; " color="#000000" face="Arial">
-                                   <u>dr. Akhmad Akhadi Syamsudhuha, M.P.H</u>
+                                   <u>{{$settingrba[0]->namalengkap}}</u>
                             </font>
                         </p>
                     </td>
@@ -207,7 +209,7 @@
                     <td>
                         <p align="center">
                             <font style="font-size: 12pt; " color="#000000" face="Arial">
-                            NIP. 19680714 200012 1 002
+                            NIP. {{$settingrba[0]->nippns}}
                             </font>
                         </p>
                     </td>

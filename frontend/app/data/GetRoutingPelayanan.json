@@ -20444,6 +20444,28 @@
         "define": "SuratKeteranganDirawatInapCtrl"
       }
     ]
+  },
+  {
+    "name": "LaporanPegawai2",
+    "url": "/LaporanPegawai2",
+    "templateurl": "module/RawatJalan/LaporanPegawai2.html",
+    "controller": "LaporanPegawai2Ctrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "SuratKeteranganDirawatInapCtrl"
+      }
+    ]
   }
 ]
 

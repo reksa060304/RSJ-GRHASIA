@@ -1850,6 +1850,7 @@ class EMRController  extends ApiController
                 $RekamMedis->rumahsakittujuan = $request['rumahsakittujuan'];                
                 $RekamMedis->pegawaifk = $this->getCurrentUserID();
                 $RekamMedis->noregistrasifk = $request['noregistrasifk'];
+                $RekamMedis->pasien = $request['pasien'];
                 $RekamMedis->keteranganlainnya = 'RawatInap';
                 $RekamMedis->koderesume = $kdResume;
                 $RekamMedis->save();
@@ -1936,7 +1937,7 @@ class EMRController  extends ApiController
                 'rm.tglkontrolpoli', 'rm.rumahsakittujuan',
                 'rm.alergi', 'rm.diet', 'rm.instruksianjuran', 'rm.hasillab',
                 'rm.kondisiwaktukeluar', 'rm.pengobatandilanjutkan', 'rm.koderesume',
-                'rm.pegawaifk',
+                'rm.pegawaifk','rm.pasien',
                 'pd.noregistrasi', 'pd.tglregistrasi', 'ps.nocm', 'rm.noregistrasifk',
                 'ps.namapasien')
             ->Join('antrianpasiendiperiksa_t as apd', 'apd.norec', '=', 'rm.noregistrasifk')
@@ -1995,6 +1996,7 @@ class EMRController  extends ApiController
                 'axis3' => $item->axis3,
                 'axis4' => $item->axis4,
                 'axis5' => $item->axis5,
+                'pasien' => $item->pasien,
                 'kontrolklinik' => $item->kontrolklinik,
                 'kondisiwaktukeluare' => $item->kondisiwaktukeluare,
                 'hasilkonsultasi' => $item->hasilkonsultasi,
@@ -5832,7 +5834,7 @@ class EMRController  extends ApiController
             $alergi = Pasien::where('nocm',$request['data'][0]['strukorder']['nocm'])->first();
             $alergi->alergi = $request['data'][0]['strukorder']['alergi'];
             $alergi->save();
-
+            
             foreach($request['data'] as $data)
             {
 
@@ -5878,6 +5880,18 @@ class EMRController  extends ApiController
                         $newSO->kdprofile = $idProfile;
                         $newSO->statusenabled = true;
                     } else {
+                        $cekorder = DB::select(DB::raw("
+                        select * from strukresep_t where orderfk = '$r_SR[norec]' and statusenabled = true
+                        "));
+                        if(count($cekorder)>0){
+                            $transMessage = "Tidak Bisa Edit, sudah Di Verifikasi";
+                            $result = array(
+                                "status" => 400,
+                                "message" => $transMessage,
+                                "as" => 'er@epic',
+                            );
+                            return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+                        }
                         $newSO = StrukOrder::where('norec', $r_SR['norec'])->first();
         
                         $noOrder = $newSO->noorder;
@@ -7728,8 +7742,10 @@ class EMRController  extends ApiController
         $idProfile = (int) $kdProfile;
         DB::beginTransaction();
         try {
-            $so = StrukOrder::where('norec', $request['norec'])->where('kdprofile', $idProfile)->first();
-            if ($so->statusorder == 5) {
+            $so = DB::select(DB::raw("
+            SELECT * from strukresep_t where orderfk = '$request[norec]' and statusenabled = true
+            "));
+            if (count($so) > 0) {
                 $transMessage = "Tidak Bisa dihapus sudah Di Verifikasi";
                 $result = array(
                     "status" => 400,
@@ -10951,10 +10967,18 @@ class EMRController  extends ApiController
         //     }
             
         // }
+        $pansec =DB::select(DB::raw("
+        SELECT * from panssec_t where norec_apd in (
+            SELECT epd.norec_apd FROM emrpasiend_t epd
+            inner join emrpasien_t ep on ep.noemr = epd.emrpasienfk
+            where epd.emrpasienfk = '$request[noemr]'
+            ) order by tglinput asc
+        "));
         $result = array(
                 // 'data'=> $detail,
                 // "sec"=> $sec,
                 'data'=> $data,
+                "panssec"=>$pansec,
                 'as'=> 'Fizi@Epic'
             );
         return $this->respond($result);

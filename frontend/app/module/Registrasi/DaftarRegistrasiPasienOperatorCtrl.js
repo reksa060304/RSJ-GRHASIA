@@ -299,6 +299,13 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 				    "template": '# if( kdprofile!=null) {# ✔ # } else {#  #} #'
 
 				},
+				{
+					"field": "ihs_number",
+					"title": "SATUSEHAT Number",
+					"width": "80px",
+					"template": '# if( ihs_number==null) {# - # } else {# #= ihs_number # #} #'
+
+				},
 				
 				// {
 				// 	"field": "statuspasien",
@@ -658,6 +665,34 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 					// $scope.item.ruanganAntrian = {id:dataPasienSelected.objectruanganlastfk,namaruangan:dataPasienSelected.namaruangan}
 				}
 			}
+			$scope.klikdua = function (dataPasienSelected) {
+                // if (dataPasienSelected.foto != null) {
+                //     $scope.item.image = dataPasienSelected.foto
+                //     $scope.popUpPhoto.center().open()
+
+                // }
+                $scope.isRouteLoading = true;
+                let data = {
+                    "url": "Patient?identifier=https://fhir.kemkes.go.id/id/nik|" + dataPasienSelected.noidentitas,
+                    "method": "GET",
+                    "data": null
+                }
+                medifirstService.postNonMessage("bridging/ihs/tools", data).then(function (e) {
+                    $scope.isRouteLoading = false;
+                    if(e.data.total> 0 && ( dataPasienSelected.ihs_number == '' ||  dataPasienSelected.ihs_number == null)){
+                        let jsonSend = {
+                            'id':dataPasienSelected.nocmfk,
+                            'ihs_number':e.data.entry[0].resource.id
+                        }
+                        medifirstService.postNonMessage('bridging/ihs/update-ihs-pasien',jsonSend).then(function (z) {
+                            loadData()
+                        })
+                    }
+                }).then(function () {
+                    $scope.isRouteLoading = false;
+                });
+
+            }
 			$scope.simpan = function () {
 				var objSave =
 				{
