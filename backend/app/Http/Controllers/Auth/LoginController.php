@@ -128,7 +128,16 @@ class LoginController extends ApiController {
                 ->where('id', '=',$LoginUser[0]->objectkelompokuserfk)
                 ->first();
             $pegawai = Pegawai::where('id',$LoginUser[0]->objectpegawaifk)
+                ->where('statusenabled', true)
                 ->first();
+                if(count($pegawai) > 0){
+                    $result = array(
+                        'data' => [],
+                        'messages' =>'Login gagal, Username atau Password salah',
+                        'status'=> 400,
+                        'as'=> '#Inhuman'
+                    );
+                }
             $mapLoginUserToRuangan = DB::table('maploginusertoruangan_s as mlur')
                 ->join('loginuser_s as lu','lu.id','=','mlur.objectloginuserfk')
                 ->join('ruangan_m as ru','ru.id','=','mlur.objectruanganfk')
