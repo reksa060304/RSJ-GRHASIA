@@ -2874,7 +2874,7 @@ class ReportController extends ApiController{
             inner join mataanggaran_m ma on ma.id = sr.objectmataanggaranfk
             left join kegiatananggaran_m kg on km.kode ilike '%' || kg.kode || '%' and kg.div = 3
             left join pegawai_m pg on pg.id = km.objectpptkfk
-            where sr.norec = '$norec'
+            where sr.norec = '$norec' AND rd.statusenabled = true
             group by km.keterangan, km.kode, km.tahun, km.div, kg.keterangan, kg.kode, kg.div, pg.namalengkap, pg.nippns;
             ")
         );
@@ -2886,7 +2886,7 @@ class ReportController extends ApiController{
         inner join kegiatananggaran_m km on km.id = kb.objectkegiatanfk
         left join kegiatananggaran_m kg on km.kode ilike '%' || kg.kode || '%' and kg.div = 3
         inner join mataanggaran_m ma on ma.id = sr.objectmataanggaranfk
-        where sr.norec = '$norec'
+        where sr.norec = '$norec' AND rd.statusenabled = true
         group by kb.keteranganbelanja;"));
 
         $mataanggaran = DB::select(DB::raw("select ma.namamataanggaran, ma.kodemataanggaran,
@@ -2901,7 +2901,7 @@ class ReportController extends ApiController{
         left join mataanggaranpermen_m map1 on map1.id = map.mataanggaranpermenfk and map1.div = 4
         left join mataanggaranpermen_m map2 on map2.id = map1.mataanggaranpermenfk and map2.div = 3
         left join mataanggaranpermen_m map3 on map3.id = map2.mataanggaranpermenfk and map3.div = 2
-        where sr.norec = '$norec'
+        where sr.norec = '$norec' AND rd.statusenabled = true
         group by ma.namamataanggaran, ma.kodemataanggaran, map3.kode || '.' || map2.kode || '.' || map1.kode || '.' || map.kode;"));
 
         $spj = DB::select(DB::raw("select rk.namarekanan,
@@ -2916,7 +2916,7 @@ class ReportController extends ApiController{
         left join rekanan_m rk on rk.id = sr.rekananfk 
         left join kegiatananggaran_m kg on km.kode ilike '%' || kg.kode || '%' and kg.div = 3
         inner join mataanggaran_m ma on ma.id = sr.objectmataanggaranfk
-        where sr.norec = '$norec'
+        where sr.norec = '$norec' AND rd.statusenabled = true
         group by pgp.nippns, rk.namarekanan, sr.norealisasi, sr.pph, sr.ppn, pgb.namalengkap, pgp.namalengkap, pgb.nippns, sr.deskripsi "));
         $detail = DB::select(DB::raw("select row_number() over(order by rd.norec) as nomor, rd.norec, rd.uraian, rd.jml, rd.satuan, rd.harga, rd.subtotal
         from strukrealisasi_t sr
@@ -2925,7 +2925,7 @@ class ReportController extends ApiController{
         inner join kegiatananggaran_m km on km.id = kb.objectkegiatanfk
         left join kegiatananggaran_m kg on km.kode ilike '%' || kg.kode || '%' and kg.div = 3
         inner join mataanggaran_m ma on ma.id = sr.objectmataanggaranfk
-        where sr.norec = '$norec'
+        where sr.norec = '$norec' AND rd.statusenabled = true
         group by rd.uraian, rd.jml, rd.satuan, rd.harga, rd.subtotal, rd.norec;"));
 
         $jumlah = DB::select(DB::raw("select sum(subtotal) totalfix, round(sum(subtotal)) totalpembulatan
@@ -2939,7 +2939,7 @@ class ReportController extends ApiController{
         left join pegawai_m pgp on pgp.id = sr.penerimafk 
         left join kegiatananggaran_m kg on km.kode ilike '%' || kg.kode || '%' and kg.div = 3
         inner join mataanggaran_m ma on ma.id = sr.objectmataanggaranfk
-        where sr.norec = '$norec'
+        where sr.norec = '$norec' AND rd.statusenabled = true
         group by rd.subtotal, rd.norec
         ) as x;"));
 
@@ -3228,7 +3228,7 @@ class ReportController extends ApiController{
             inner join mataanggaran_m ma on ma.id = sr.objectmataanggaranfk
             left join kegiatananggaran_m kg on km.kode ilike kg.kode || '%' and kg.div = 3
             left join pegawai_m pg on pg.id = km.objectpptkfk
-            where sr.norec = '$norec'
+            where sr.norec = '$norec' AND rd.statusenabled = true
             group by km.keterangan, km.kode, km.tahun, km.div, kg.keterangan, kg.kode, kg.div, pg.namalengkap, pg.nippns;
             ")
         );
@@ -3240,7 +3240,7 @@ class ReportController extends ApiController{
         inner join kegiatananggaran_m km on km.id = kb.objectkegiatanfk
         left join kegiatananggaran_m kg on km.kode ilike kg.kode || '%' and kg.div = 3
         inner join mataanggaran_m ma on ma.id = sr.objectmataanggaranfk
-        where sr.norec = '$norec'
+        where sr.norec = '$norec' AND rd.statusenabled = true
         group by kb.keteranganbelanja;"));
 
         $mataanggaran = DB::select(DB::raw("select ma.namamataanggaran, ma.kodemataanggaran
@@ -3250,7 +3250,7 @@ class ReportController extends ApiController{
         inner join kegiatananggaran_m km on km.id = kb.objectkegiatanfk
         left join kegiatananggaran_m kg on km.kode ilike kg.kode || '%' and kg.div = 3
         inner join mataanggaran_m ma on ma.id = sr.objectmataanggaranfk
-        where sr.norec = '$norec'
+        where sr.norec = '$norec' AND rd.statusenabled = true
         group by ma.namamataanggaran, ma.kodemataanggaran;"));
 
         $spj = DB::select(DB::raw("select rk.namarekanan,
@@ -3265,7 +3265,7 @@ class ReportController extends ApiController{
         left join pegawai_m pgp on pgp.id = sr.penerimafk 
         left join kegiatananggaran_m kg on km.kode ilike kg.kode || '%' and kg.div = 3
         inner join mataanggaran_m ma on ma.id = sr.objectmataanggaranfk
-        where sr.norec = '$norec'
+        where sr.norec = '$norec' AND rd.statusenabled = true
         group by pgp.nippns, rk.namarekanan, sr.norealisasi, sr.pph, sr.ppn, pgb.namalengkap, pgp.namalengkap, pgb.nippns, sr.deskripsi"));
 
         $detail = DB::select(DB::raw("select row_number() over(order by rd.norec) as nomor, rd.norec, rd.uraian, rd.jml, rd.satuan, rd.harga, rd.subtotal
@@ -3275,7 +3275,7 @@ class ReportController extends ApiController{
         inner join kegiatananggaran_m km on km.id = kb.objectkegiatanfk
         left join kegiatananggaran_m kg on km.kode ilike kg.kode || '%' and kg.div = 3
         inner join mataanggaran_m ma on ma.id = sr.objectmataanggaranfk
-        where sr.norec = '$norec'
+        where sr.norec = '$norec' AND rd.statusenabled = true
         group by rd.uraian, rd.jml, rd.satuan, rd.harga, rd.subtotal, rd.norec;"));
 
         $jumlah = DB::select(DB::raw("select sum(subtotal) totalfix, round(sum(subtotal)) totalpembulatan
@@ -3289,7 +3289,7 @@ class ReportController extends ApiController{
         left join pegawai_m pgp on pgp.id = sr.penerimafk 
         left join kegiatananggaran_m kg on km.kode ilike kg.kode || '%' and kg.div = 3
         inner join mataanggaran_m ma on ma.id = sr.objectmataanggaranfk
-        where sr.norec = '$norec'
+        where sr.norec = '$norec' AND rd.statusenabled = true
         group by rd.subtotal, rd.norec
         ) as x;"));
 
