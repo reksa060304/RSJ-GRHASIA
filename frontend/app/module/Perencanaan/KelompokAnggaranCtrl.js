@@ -6879,6 +6879,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                                                         $scope.dataSourceDetailSPJ = new kendo.data.DataSource({
                                                                             data: DataDetailSPJ
                                                                         });
+                                                                        $scope.norecverif = ''
                                                                         // $state.go("SPJ", {
                                                     
                                                                         // })
