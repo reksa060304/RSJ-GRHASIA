@@ -2956,10 +2956,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                     medifirstService.get("perencanaan/get-pengembalian-panjar?norec="+$scope.item.norecpengembalian).then(function (e) {
                                         $scope.dataSourcePengembalian = e.data.data
                                     })
-                                    medifirstService.get("perencanaan/get-data-combo").then(function (e) {
+                                    // medifirstService.get("perencanaan/get-data-combo").then(function (e) {
                                         
-                                        $scope.dataSourcePanjarPengembalian = e.data.panjar
-                                    });
+                                    //     $scope.dataSourcePanjarPengembalian = e.data.panjar
+                                    // });
                                 }, function (error) {
                             
                                 })
@@ -6941,6 +6941,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                                 loadDataGrid();
                                                 $scope.popupTambahSPJ.center().close()
                                                 DataDetailSPJ = []
+                                                $scope.norecverif = ''
                                                 $scope.item.itemRincian = undefined
                                                 $scope.dataSourceDetailSPJ = new kendo.data.DataSource({
                                                     data: DataDetailSPJ
@@ -7602,6 +7603,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         medifirstService.get("perencanaan/get-pengembalian-panjar?norec="+$scope.item.norecpengembalian ).then(function (e) {
                             $scope.dataSourcePengembalian = e.data.data
                         })
+                        loadDataGrid();
                         medifirstService.get("perencanaan/get-data-combo").then(function (e) {
                                         
                             $scope.dataSourcePanjarPengembalian = e.data.panjar
