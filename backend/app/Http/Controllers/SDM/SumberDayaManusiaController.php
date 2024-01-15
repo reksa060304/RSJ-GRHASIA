@@ -5469,7 +5469,7 @@ left join(SELECT id, namalengkap,maxsisacuti , maxcutitahunini, jumlahcuti as cu
             pg.nippns
             FROM
                 riwayatpelatihan_t rp
-                inner JOIN pegawai_m pg ON pg.ID = rp.objectpegawaifk 
+                left JOIN pegawai_m pg ON pg.ID = rp.objectpegawaifk 
                 where rp.kdprofile = $idProfile
                 and rp.statusenabled= true
                 and pg.statusenabled= true
@@ -5495,7 +5495,7 @@ left join(SELECT id, namalengkap,maxsisacuti , maxcutitahunini, jumlahcuti as cu
 END as januari
             FROM
                 riwayatpelatihan_t rp
-                inner JOIN pegawai_m pg ON pg.ID = rp.objectpegawaifk 
+                left JOIN pegawai_m pg ON pg.ID = rp.objectpegawaifk 
                 where rp.kdprofile = $idProfile
                 and rp.statusenabled= true
                 and pg.statusenabled= true
@@ -5519,7 +5519,7 @@ END as januari
     END as februari
             FROM
                 riwayatpelatihan_t rp
-                inner JOIN pegawai_m pg ON pg.ID = rp.objectpegawaifk 
+                left JOIN pegawai_m pg ON pg.ID = rp.objectpegawaifk 
                 where rp.kdprofile = $idProfile
                 and rp.statusenabled= true
                 and pg.statusenabled= true
@@ -5544,7 +5544,7 @@ END as januari
             END as maret
             FROM
                 riwayatpelatihan_t rp
-                inner JOIN pegawai_m pg ON pg.ID = rp.objectpegawaifk 
+                left JOIN pegawai_m pg ON pg.ID = rp.objectpegawaifk 
                 where rp.kdprofile = $idProfile
                 and rp.statusenabled= true
                 and pg.statusenabled= true
@@ -5569,7 +5569,7 @@ END as januari
             END as april
             FROM
                 riwayatpelatihan_t rp
-                inner JOIN pegawai_m pg ON pg.ID = rp.objectpegawaifk 
+                left JOIN pegawai_m pg ON pg.ID = rp.objectpegawaifk 
                 where rp.kdprofile = $idProfile
                 and rp.statusenabled= true
                 and pg.statusenabled= true
@@ -5594,7 +5594,7 @@ END as januari
             END as mei
             FROM
                 riwayatpelatihan_t rp
-                inner JOIN pegawai_m pg ON pg.ID = rp.objectpegawaifk 
+                left JOIN pegawai_m pg ON pg.ID = rp.objectpegawaifk 
                 where rp.kdprofile = $idProfile
                 and rp.statusenabled= true
                 and pg.statusenabled= true
@@ -5619,7 +5619,7 @@ END as januari
             END as juni
             FROM
                 riwayatpelatihan_t rp
-                inner JOIN pegawai_m pg ON pg.ID = rp.objectpegawaifk 
+                left JOIN pegawai_m pg ON pg.ID = rp.objectpegawaifk 
                 where rp.kdprofile = $idProfile
                 and rp.statusenabled= true
                 and pg.statusenabled= true
@@ -5669,7 +5669,7 @@ END as januari
             END as agustus
             FROM
                 riwayatpelatihan_t rp
-                inner JOIN pegawai_m pg ON pg.ID = rp.objectpegawaifk 
+                left JOIN pegawai_m pg ON pg.ID = rp.objectpegawaifk 
                 where rp.kdprofile = $idProfile
                 and rp.statusenabled= true
                 and pg.statusenabled= true
@@ -5694,7 +5694,7 @@ END as januari
             END as september
             FROM
                 riwayatpelatihan_t rp
-                inner JOIN pegawai_m pg ON pg.ID = rp.objectpegawaifk 
+                left JOIN pegawai_m pg ON pg.ID = rp.objectpegawaifk 
                 where rp.kdprofile = $idProfile
                 and rp.statusenabled= true
                 and pg.statusenabled= true
@@ -5719,7 +5719,7 @@ END as januari
             END as oktober
             FROM
                 riwayatpelatihan_t rp
-                inner JOIN pegawai_m pg ON pg.ID = rp.objectpegawaifk 
+                left JOIN pegawai_m pg ON pg.ID = rp.objectpegawaifk 
                 where rp.kdprofile = $idProfile
                 and rp.statusenabled= true
                 and pg.statusenabled= true
@@ -5744,7 +5744,7 @@ END as januari
             END as november
             FROM
                 riwayatpelatihan_t rp
-                inner JOIN pegawai_m pg ON pg.ID = rp.objectpegawaifk 
+                left JOIN pegawai_m pg ON pg.ID = rp.objectpegawaifk 
                 where rp.kdprofile = $idProfile
                 and rp.statusenabled= true
                 and pg.statusenabled= true
@@ -5769,7 +5769,7 @@ END as januari
             END as desember
             FROM
                 riwayatpelatihan_t rp
-                inner JOIN pegawai_m pg ON pg.ID = rp.objectpegawaifk 
+                left JOIN pegawai_m pg ON pg.ID = rp.objectpegawaifk 
                 where rp.kdprofile = $idProfile
                 and rp.statusenabled= true
                 and pg.statusenabled= true
