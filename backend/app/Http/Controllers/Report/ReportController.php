@@ -4103,7 +4103,38 @@ class ReportController extends ApiController{
 
         $data = DB::select(DB::raw("
         select * from (
-            select DENSE_RANK ( ) OVER ( order by kodemataanggaran ) AS nourut, kodefix, kodemataanggaran, namamataanggaran, sum(jumlahjan) jumlahjan, sum(jumlahfeb) jumlahfeb,
+            select DENSE_RANK ( ) OVER ( order by kodemataanggaran ) AS nourut, 
+            case 
+            when kodemataanggaran ilike 'I.A.%' then 1
+            when kodemataanggaran ilike 'I.B.%' then 2
+            when kodemataanggaran ilike 'II.%' then 3
+            when kodemataanggaran ilike 'III.%' then 4
+          end as urut1,
+          case 
+            when kodemataanggaran ilike 'I.A.%' then split_part(kodemataanggaran,'.',3)
+            when kodemataanggaran ilike 'I.B.%' then split_part(kodemataanggaran,'.',3)
+            when kodemataanggaran ilike 'II.%' then split_part(kodemataanggaran,'.',2)
+            when kodemataanggaran ilike 'III.%' then split_part(kodemataanggaran,'.',2)
+          end as split3,
+          case 
+            when kodemataanggaran ilike 'I.A.%' then split_part(kodemataanggaran,'.',4)
+            when kodemataanggaran ilike 'I.B.%' then split_part(kodemataanggaran,'.',4)
+            when kodemataanggaran ilike 'II.%' then split_part(kodemataanggaran,'.',3)
+            when kodemataanggaran ilike 'III.%' then split_part(kodemataanggaran,'.',3)
+          end as split4,
+          case 
+            when kodemataanggaran ilike 'I.A.%' then split_part(kodemataanggaran,'.',5)
+            when kodemataanggaran ilike 'I.B.%' then split_part(kodemataanggaran,'.',5)
+            when kodemataanggaran ilike 'II.%' then split_part(kodemataanggaran,'.',4)
+            when kodemataanggaran ilike 'III.%' then split_part(kodemataanggaran,'.',4)
+          end as split5,
+          case 
+            when kodemataanggaran ilike 'I.A.%' then LENGTH(split_part(kodemataanggaran, '.', 5))
+            when kodemataanggaran ilike 'I.B.%' then LENGTH(split_part(kodemataanggaran, '.', 5))
+            when kodemataanggaran ilike 'II.%' then LENGTH(split_part(kodemataanggaran, '.', 4))
+            when kodemataanggaran ilike 'III.%' then LENGTH(split_part(kodemataanggaran, '.', 4))
+          end as len5,
+              kodefix, kodemataanggaran, namamataanggaran, sum(jumlahjan) jumlahjan, sum(jumlahfeb) jumlahfeb,
         sum(jumlahmar) jumlahmar, sum(jumlahapr) jumlahapr, sum(jumlahmei) jumlahmei, sum(jumlahjun) jumlahjun,
         sum(jumlahjul) jumlahjul, sum(jumlahagt) jumlahagt, sum(jumlahsep) jumlahsep, sum(jumlahokt) jumlahokt,
         sum(jumlahnov) jumlahnov, sum(jumlahdes) jumlahdes,
@@ -4148,7 +4179,38 @@ class ReportController extends ApiController{
         
         union all
         
-        select DENSE_RANK ( ) OVER ( order by kodemataanggaran ) AS nourut, '' kodefix, kodemataanggaran,  keteranganbelanja namamataanggaran, sum(jumlahjan) jumlahjan, sum(jumlahfeb) jumlahfeb,
+        select DENSE_RANK ( ) OVER ( order by kodemataanggaran ) AS nourut, 
+        case 
+          when kodemataanggaran ilike 'I.A.%' then 1
+          when kodemataanggaran ilike 'I.B.%' then 2
+          when kodemataanggaran ilike 'II.%' then 3
+          when kodemataanggaran ilike 'III.%' then 4
+        end as urut1,
+        case 
+          when kodemataanggaran ilike 'I.A.%' then split_part(kodemataanggaran,'.',3)
+          when kodemataanggaran ilike 'I.B.%' then split_part(kodemataanggaran,'.',3)
+          when kodemataanggaran ilike 'II.%' then split_part(kodemataanggaran,'.',2)
+          when kodemataanggaran ilike 'III.%' then split_part(kodemataanggaran,'.',2)
+        end as split3,
+        case 
+          when kodemataanggaran ilike 'I.A.%' then split_part(kodemataanggaran,'.',4)
+          when kodemataanggaran ilike 'I.B.%' then split_part(kodemataanggaran,'.',4)
+          when kodemataanggaran ilike 'II.%' then split_part(kodemataanggaran,'.',3)
+          when kodemataanggaran ilike 'III.%' then split_part(kodemataanggaran,'.',3)
+        end as split4,
+        case 
+          when kodemataanggaran ilike 'I.A.%' then split_part(kodemataanggaran,'.',5)
+          when kodemataanggaran ilike 'I.B.%' then split_part(kodemataanggaran,'.',5)
+          when kodemataanggaran ilike 'II.%' then split_part(kodemataanggaran,'.',4)
+          when kodemataanggaran ilike 'III.%' then split_part(kodemataanggaran,'.',4)
+        end as split5,
+        case 
+          when kodemataanggaran ilike 'I.A.%' then LENGTH(split_part(kodemataanggaran, '.', 5))
+          when kodemataanggaran ilike 'I.B.%' then LENGTH(split_part(kodemataanggaran, '.', 5))
+          when kodemataanggaran ilike 'II.%' then LENGTH(split_part(kodemataanggaran, '.', 4))
+          when kodemataanggaran ilike 'III.%' then LENGTH(split_part(kodemataanggaran, '.', 4))
+        end as len5,
+        '' kodefix, kodemataanggaran,  keteranganbelanja namamataanggaran, sum(jumlahjan) jumlahjan, sum(jumlahfeb) jumlahfeb,
         sum(jumlahmar) jumlahmar, sum(jumlahapr) jumlahapr, sum(jumlahmei) jumlahmei, sum(jumlahjun) jumlahjun,
         sum(jumlahjul) jumlahjul, sum(jumlahagt) jumlahagt, sum(jumlahsep) jumlahsep, sum(jumlahokt) jumlahokt,
         sum(jumlahnov) jumlahnov, sum(jumlahdes) jumlahdes,
@@ -4190,8 +4252,9 @@ class ReportController extends ApiController{
         ) as x group by kodemataanggaran, namamataanggaran, norec, keteranganbelanja, asalproduk
         order by nourut, kodefix desc
         )as x 
-        order by split_part(x.kodemataanggaran,'.',4) asc , split_part(x.kodemataanggaran,'.',5) ::int4 asc, kodefix desc
+        order by urut1, split3, split4, len5, split5, kodefix desc
         "));
+        // order by split_part(x.kodemataanggaran,'.',4) asc , split_part(x.kodemataanggaran,'.',5) ::int4 asc, kodefix desc
 
         $pageWidth = 1200;
         //return $this->respond($result);

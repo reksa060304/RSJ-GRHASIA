@@ -12,20 +12,22 @@
 </head>
 <style>
     @page {
-        margin:15mm 15mm 20mm 20mm;
+        margin: 10mm 5mm 35mm 17mm;
         size: landscape;
+        /* margin:15mm 15mm 20mm 20mm; */
 
     }
 
     @page :first {
-        margin:15mm 15mm 20mm 20mm;
-
+        margin: 10mm 5mm 35mm 17mm;
+        size: landscape;
+        /* margin:15mm 15mm 20mm 20mm; */
     }
 
     @media print {
     body {
         margin:0;
-        width:31cm;
+        /* width:31cm; */
     }
     }
 
@@ -54,10 +56,10 @@
 
     }
 </style>
-<body style="width:1500px;">
+<body>
 <div>
-<table width="{{$pageWidth}}" bgcolor="#FFFFFF" class="tabel">
-        <tbody >
+<table cellpadding="0" cellspacing="0"  border="0" class="tabel">
+        <!-- <tbody > -->
         <tr>
             <td align="center" rowspan="2" width="15%"  style="padding: 30px 30px 30px 40px; border-right: 1px solid black;" align="center">
                     <p align="center">
@@ -71,23 +73,28 @@
             </td>
             <td align="center" width="100%">
                 <b style="font-size: 25px;">
-                ANGGARAN KAS DAN RENCANA JADWAL TIAP SUB KEGIATAN
+                ANGGARAN KAS DAN RENCANA JADWAL TIAP SUB SUB KEGIATAN
                 </b><br>
                 <b style="font-size: 23px;">
-                RS Jiwa GRHASIA DINKES DIY
+                RUMAH SAKIT JIWA GRHASIA
                 </b>
             </td>
         </tr>
         <tr align="center">
             <td style="border-top: 1px solid black;">
-                <b>Sub Kegiatan : {{ $subkegiatan[0]->keterangan.' - '.$subsubkegiatan[0]->keterangan }}<br>
+                @php
+                    $str = $subsubkegiatan[0]->keterangan;
+                    $str1 = explode("-",$str)[count(explode("-",$str))-1];
+                @endphp
+
+                <b>Sub Sub Kegiatan : {{ $str1 }}<br>
                 Tahun Anggaran {{ $tahun }}
                 </b>
             </td>
         </tr>
-        </tbody>
+        <!-- </tbody> -->
     </table>
-    <table cellpadding="0" cellspacing="0" width="100%"  border="0" class="tabel">
+    <table cellpadding="0" cellspacing="0" border="0" class = "tabel">
                 <thead>
                     <tr>
                     <td align="center" style="padding: 10px; font-weight: bold ">No</td>
@@ -153,7 +160,7 @@
                 @endif
                 <tr>
                 @if($dt->kodefix != '')
-                    <td align="center" style="padding: 10px;font-weight:bold;">{{ $dt->kodefix }}</td>
+                    <td align="center" style="padding: 10px;font-weight:bold;">{{ $dt->kodemataanggaran }}</td>
                     <td style="padding: 10px;font-weight:bold;">{{ $dt->namamataanggaran }}</td>
                     <td style="padding: 10px;font-weight:bold;">{{ $dt->jumlahjan!= 0? number_format($dt->jumlahjan,0,',','.') : '' }}</td>
                     <td style="padding: 10px;font-weight:bold;">{{ $dt->jumlahfeb!= 0? number_format($dt->jumlahfeb,0,',','.') : '' }}</td>
@@ -205,20 +212,20 @@
                 @endforeach
                 <tr>
                     <td colspan="2" align="center" style="padding: 10px; font-weight: bold ">Jumlah Total</td>
-                    <td align="center" style="padding: 10px;">{{ $totaljan != 0 ? number_format($totaljan,0,',','.') : ''}}</td>
-                    <td align="center" style="padding: 10px;">{{ $totalfeb != 0 ? number_format($totalfeb,0,',','.') : ''}}</td>
-                    <td align="center" style="padding: 10px;">{{ $totalmar != 0 ? number_format($totalmar,0,',','.') : ''}}</td>
-                    <td align="center" style="padding: 10px;">{{ $totalapr != 0 ? number_format($totalapr,0,',','.') : ''}}</td>
-                    <td align="center" style="padding: 10px;">{{ $totalmei != 0 ? number_format($totalmei,0,',','.') : ''}}</td>
-                    <td align="center" style="padding: 10px;">{{ $totaljun != 0 ? number_format($totaljun,0,',','.') : ''}}</td>
-                    <td align="center" style="padding: 10px;">{{ $totaljul != 0 ? number_format($totaljul,0,',','.') : ''}}</td>
-                    <td align="center" style="padding: 10px;">{{ $totalagt != 0 ? number_format($totalagt,0,',','.') : ''}}</td>
-                    <td align="center" style="padding: 10px;">{{ $totalsep != 0 ? number_format($totalsep,0,',','.') : ''}}</td>
-                    <td align="center" style="padding: 10px;">{{ $totalokt != 0 ? number_format($totalokt,0,',','.') : ''}}</td>
-                    <td align="center" style="padding: 10px;">{{ $totalnov != 0 ? number_format($totalnov,0,',','.') : ''}}</td>
-                    <td align="center" style="padding: 10px;">{{ $totaldes != 0 ? number_format($totaldes,0,',','.') : ''}}</td>
-                    <td align="center" style="padding: 10px;">{{ $totalanggaran != 0 ? number_format($totalanggaran,0,',','.') : '' }}</td>
-                    <td align="center" style="padding: 10px;"></td>
+                    <td align="center" style="padding: 10px;font-weight: bold">{{ $totaljan != 0 ? number_format($totaljan,0,',','.') : ''}}</td>
+                    <td align="center" style="padding: 10px;font-weight: bold">{{ $totalfeb != 0 ? number_format($totalfeb,0,',','.') : ''}}</td>
+                    <td align="center" style="padding: 10px;font-weight: bold">{{ $totalmar != 0 ? number_format($totalmar,0,',','.') : ''}}</td>
+                    <td align="center" style="padding: 10px;font-weight: bold">{{ $totalapr != 0 ? number_format($totalapr,0,',','.') : ''}}</td>
+                    <td align="center" style="padding: 10px;font-weight: bold">{{ $totalmei != 0 ? number_format($totalmei,0,',','.') : ''}}</td>
+                    <td align="center" style="padding: 10px;font-weight: bold">{{ $totaljun != 0 ? number_format($totaljun,0,',','.') : ''}}</td>
+                    <td align="center" style="padding: 10px;font-weight: bold">{{ $totaljul != 0 ? number_format($totaljul,0,',','.') : ''}}</td>
+                    <td align="center" style="padding: 10px;font-weight: bold">{{ $totalagt != 0 ? number_format($totalagt,0,',','.') : ''}}</td>
+                    <td align="center" style="padding: 10px;font-weight: bold">{{ $totalsep != 0 ? number_format($totalsep,0,',','.') : ''}}</td>
+                    <td align="center" style="padding: 10px;font-weight: bold">{{ $totalokt != 0 ? number_format($totalokt,0,',','.') : ''}}</td>
+                    <td align="center" style="padding: 10px;font-weight: bold">{{ $totalnov != 0 ? number_format($totalnov,0,',','.') : ''}}</td>
+                    <td align="center" style="padding: 10px;font-weight: bold">{{ $totaldes != 0 ? number_format($totaldes,0,',','.') : ''}}</td>
+                    <td align="center" style="padding: 10px;font-weight: bold">{{ $totalanggaran != 0 ? number_format($totalanggaran,0,',','.') : '' }}</td>
+                    <td align="center" style="padding: 10px;font-weight: bold"></td>
                 </tr>
         </table>
 </div>
