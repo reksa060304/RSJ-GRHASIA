@@ -9,6 +9,18 @@ define(['initialize'], function (initialize) {
             $scope.item = {};
             $scope.isRouteLoading = false;
             $scope.listDokterMulti = [];
+            $scope.sumakujanuari = 0
+            $scope.sumakufebruari = 0
+            $scope.sumakumaret = 0
+            $scope.sumakuapril = 0
+            $scope.sumakumei = 0
+            $scope.sumakujuni =0
+            $scope.sumakujuli = 0
+            $scope.sumakuagustus = 0
+            $scope.sumakuseptember = 0
+            $scope.sumakuoktober = 0
+            $scope.sumakunovember = 0
+            $scope.sumakudesember = 0
             FormLoad();
             LoadData();
             var HttpClient = function () {
@@ -103,15 +115,12 @@ define(['initialize'], function (initialize) {
                     status = "&status=" + $scope.item.status.id;
                 }
                     
-                var sumakujanuari = 0,sumakufebruari = 0,sumakumaret = 0,sumakuapril = 0,sumakumei = 0,sumakujuni =0,
-                sumakujuli = 0,sumakuagustus = 0,sumakuseptember = 0,sumakuoktober = 0,sumakunovember = 0,sumakudesember = 0
+                
                 var count = 0;
                 medifirstService.get("sdm/get-datajampelatihan-pegawai?"+ tahun+status).then(function (data) {
                     $scope.isRouteLoading = false;
                     var datas = data.data.data;
                     count = data.data.count.length;
-                    console.log(count);
-                    console.log(datas);
                     for (let i = 0; i < datas.length; i++) {
                         datas[i].no = i + 1
                         // sumakufebruari += datas[i].akufebruari
@@ -124,45 +133,44 @@ define(['initialize'], function (initialize) {
                         // sumakuseptember += datas[i].akuseptember
                         // sumakuoktober += datas[i].akuoktober
                         if (datas[i].akujanuari >= 20) {
-                            sumakujanuari += 1
+                            $scope.sumakujanuari += 1
                         }
                         if(datas[i].akufebruari >= 20){
-                            sumakufebruari += 1
+                            $scope.sumakufebruari += 1
                         }
                         if(datas[i].akumaret >= 20){
-                            sumakumaret += 1
+                            $scope.sumakumaret += 1
                         }
                         if(datas[i].akuapril >= 20){
-                            sumakuapril += 1
+                            $scope.sumakuapril += 1
                         }
                         if(datas[i].akumei >= 20){
-                            sumakumei += 1
+                            $scope.sumakumei += 1
                         }
                         if(datas[i].akujuni >= 20){
-                            sumakujuni += 1
+                            $scope.sumakujuni += 1
                         }
                         if(datas[i].akujuli >= 20){
-                            sumakujuli += 1
+                            $scope.sumakujuli += 1
                         }
                         if(datas[i].akuagustus >= 20){
-                            sumakuagustus += 1
+                            $scope.sumakuagustus += 1
                         }
                         if(datas[i].akuseptember >= 20){
-                            sumakuseptember += 1
+                            $scope.sumakuseptember += 1
                         }
                         if(datas[i].akuoktober >= 20){
-                            sumakuoktober += 1
+                            $scope.sumakuoktober += 1
                         }
                         if(datas[i].akunovember >= 20){
-                            sumakunovember += 1
+                            $scope.sumakunovember += 1
                         }
                         if(datas[i].akudesember >= 20){
-                            sumakudesember += 1
+                            $scope.sumakudesember += 1
                         }
 
                     }
                     
-                    console.log(sumakujanuari,sumakufebruari,sumakumaret,sumakuapril,sumakumei,sumakujuni,sumakujuli,sumakuagustus,sumakuseptember,sumakuoktober,sumakunovember,sumakudesember);
                     $scope.dataGrid = new kendo.data.DataSource({
                         data: datas,
                         // group: $scope.group,
@@ -220,9 +228,9 @@ define(['initialize'], function (initialize) {
                                         value: "Data pegawai > 20 jam",}, {value: "",}, 
                             {value: "",
                                 // colSpan: 2,verticalAlign: "top",
-                            }, {value: sumakujanuari,}, {},{value:sumakufebruari},{}, {value: sumakumaret},{},{value: sumakuapril},{},{value: sumakumei},{},{value: sumakujuni},
-                            {},{value: sumakujuli},{},{value: sumakuagustus},{},{value: sumakuseptember},{},{value: sumakuoktober},{},{value: sumakunovember},
-                            {},{value: sumakudesember}],
+                            }, {value: $scope.sumakujanuari,}, {},{value:$scope.sumakufebruari},{}, {value: $scope.sumakumaret},{},{value: $scope.sumakuapril},{},{value: $scope.sumakumei},{},{value: $scope.sumakujuni},
+                            {},{value: $scope.sumakujuli},{},{value: $scope.sumakuagustus},{},{value: $scope.sumakuseptember},{},{value: $scope.sumakuoktober},{},{value: $scope.sumakunovember},
+                            {},{value: $scope.sumakudesember}],
                             type: "data",
                         });
                         sheet.rows.splice(3001, 0, {
@@ -236,31 +244,31 @@ define(['initialize'], function (initialize) {
                                     value: "",
                                     // colSpan: 2,verticalAlign: "top",
                                 }, {
-                                    value: ((sumakujanuari / count) * 100).toFixed(2) + "%",
+                                    value: (($scope.sumakujanuari / count) * 100).toFixed(2) + "%",
                                 }, {}, {
-                                    value: ((sumakufebruari / count) * 100).toFixed(2) + "%"
+                                    value: (($scope.sumakufebruari / count) * 100).toFixed(2) + "%"
                                 }, {}, {
-                                    value: ((sumakumaret / count) * 100).toFixed(2) + "%"
+                                    value: (($scope.sumakumaret / count) * 100).toFixed(2) + "%"
                                 }, {}, {
-                                    value: ((sumakuapril / count) * 100).toFixed(2) + "%"
+                                    value: (($scope.sumakuapril / count) * 100).toFixed(2) + "%"
                                 }, {}, {
-                                    value: ((sumakumei / count) * 100).toFixed(2) + "%"
+                                    value: (($scope.sumakumei / count) * 100).toFixed(2) + "%"
                                 }, {}, {
-                                    value: ((sumakujuni / count) * 100).toFixed(2) + "%"
+                                    value: (($scope.sumakujuni / count) * 100).toFixed(2) + "%"
                                 },
                                 {}, {
-                                    value: ((sumakujuli / count) * 100).toFixed(2) + "%"
+                                    value: (($scope.sumakujuli / count) * 100).toFixed(2) + "%"
                                 }, {}, {
-                                    value: ((sumakuagustus / count) * 100).toFixed(2) + "%"
+                                    value: (($scope.sumakuagustus / count) * 100).toFixed(2) + "%"
                                 }, {}, {
-                                    value: ((sumakuseptember / count) * 100).toFixed(2) + "%"
+                                    value: (($scope.sumakuseptember / count) * 100).toFixed(2) + "%"
                                 }, {}, {
-                                    value: ((sumakuoktober / count) * 100).toFixed(2) + "%"
+                                    value: (($scope.sumakuoktober / count) * 100).toFixed(2) + "%"
                                 }, {}, {
-                                    value: ((sumakunovember / count) * 100).toFixed(2) + "%"
+                                    value: (($scope.sumakunovember / count) * 100).toFixed(2) + "%"
                                 },
                                 {}, {
-                                    value: ((sumakudesember / count) * 100).toFixed(2) + "%"
+                                    value: (($scope.sumakudesember / count) * 100).toFixed(2) + "%"
                                 }
                             ],
                             type: "data",
