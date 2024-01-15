@@ -315,7 +315,11 @@ define(['initialize'], function (initialize) {
                     alert("Data Belum Dipilih!")
                     return;
                 }
-
+                if ($scope.PegawaiLogin.namaLengkap != $scope.dataPasienSelected.pembuatlaporan) {
+                    alert("Data Tidak Bisa Di Ubah!")
+                    return;
+                }
+               
                 var chacePeriode = {
                     0: $scope.dataPasienSelected.norec,
                     1: 'EditInsiden',
