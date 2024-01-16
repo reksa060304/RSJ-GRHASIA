@@ -194,13 +194,29 @@ define(['initialize'], function (initialize) {
                         // if (datas[i].statuslayanan == 'true' || datas[i].statuslayanan == true) {
                         //     datas[i].stts = "Di Panggil Dokter"
                         // }
+                        // if (datas[i].tgldipanggildokter != null) {
+                        //     datas[i].stts = 'Di Panggil Dokter'
+                        // }
                         if (datas[i].tgldipanggildokter != null) {
-                            datas[i].stts = 'Di Panggil Dokter'
+                            if (datas[i].namaruangan.includes('Psikologi')) {
+                                datas[i].stts = 'Di Panggil Dokter Psikologi';
+                            } else {
+                                datas[i].stts = 'Di Panggil Dokter';
+                            }
                         }
                         // if(datas[i].tgldipanggilsuster != null && datas[i].tgldipanggildokter != null)
                         //     datas[i].stts = 'Selesai'
+
+                        // if (datas[i].tglselesaiperiksa != null) {
+                        //     datas[i].stts = 'Selesai Periksa Dokter'
+                        // }
+
                         if (datas[i].tglselesaiperiksa != null) {
-                            datas[i].stts = 'Selesai Periksa Dokter'
+                            if (datas[i].namaruangan.includes('Psikologi')) {
+                                datas[i].stts = 'Selesai Periksa Dokter Psikologi';
+                            } else {
+                                datas[i].stts = 'Selesai Periksa Dokter';
+                            }
                         }
                     }
                     $scope.GridPasien = new kendo.data.DataSource({
@@ -280,7 +296,9 @@ define(['initialize'], function (initialize) {
                     //if ($(this).text() == 'Di Panggil Perawat') { $(this).addClass('green') }
                     if ($(this).text() == 'Selesai Periksa Perawat') { $(this).addClass('green') }
                     if ($(this).text() == 'Di Panggil Dokter') { $(this).addClass('blue') }
+                    if ($(this).text() == 'Di Panggil Dokter Psikologi') { $(this).addClass('blue') }
                     if ($(this).text() == 'Selesai Periksa Dokter') { $(this).addClass('birulaut') }
+                    if ($(this).text() == 'Selesai Periksa Dokter Psikologi') { $(this).addClass('birulaut') }
                     if ($(this).text() == 'Online') { $(this).addClass('koneng') }
 
                 })
