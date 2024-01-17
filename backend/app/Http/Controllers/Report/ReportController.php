@@ -11091,10 +11091,7 @@ class ReportController extends ApiController{
         }
         // edit split_part(dp.keterangan, '-', 2)
         $data = DB::select(DB::raw("select dp.tahun, dp.kode kodesubsubkegiatan, 
-        CASE
-            when $tahap=1 then dp.keterangan
-            else split_part(dp.keterangan, '-', 2)
-        END as keterangansubsubkegiatan,
+        dp.keterangan as keterangansubsubkegiatan,
 
         dp0.kode kodesubkegiatan, dp0.keterangan keterangansubkegiatan,
         dp3.kode kodekegiatan, dp3.keterangan keterangankegiatan,
