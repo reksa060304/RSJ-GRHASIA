@@ -143,6 +143,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 { id: 5, tahap: "Pegeseran 3" },
                 { id: 6, tahap: "Perubahan" },
             ];
+            medifirstService.getPart('perencanaan/get-datacombo-part-rekanan', true, true, 20).then(function (data) {
+                $scope.listPihakKetiga = data
+            })
+            
             loadDataCombo()
             function loadDataCombo() {
                 medifirstService.get('anggaran/pj-rba?id=' + medifirstService.getPegawaiLogin().id).then(function (data) {
@@ -423,9 +427,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         $scope.listBendahara = data
                         $scope.listPenerima = data
                     })
-                    medifirstService.getPart('perencanaan/get-datacombo-part-rekanan', true, true, 20).then(function (data) {
-                        $scope.listPihakKetiga = data
-                    })
+                    
 
                 })
                 
@@ -7140,7 +7142,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.listPenerima = [{value:dataItem.bendaharafk,text:dataItem.bendahara}]
                 $scope.item.penerimaSPJ =  {value:dataItem.penerimafk,text:dataItem.penerima}
 
-                $scope.listPihakKetiga = [{id:dataItem.rekananfk,namarekanan:dataItem.pihakketiga}]
+                $scope.listPihakKetiga.push({id:dataItem.rekananfk,namarekanan:dataItem.pihakketiga})
                 $scope.item.pihakKetigaSPJ = {id:dataItem.rekananfk,namarekanan:dataItem.pihakketiga}
 
                 let newArr = []
