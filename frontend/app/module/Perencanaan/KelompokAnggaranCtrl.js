@@ -143,10 +143,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 { id: 5, tahap: "Pegeseran 3" },
                 { id: 6, tahap: "Perubahan" },
             ];
+            $scope.listPihakKetiga = []
             medifirstService.getPart('perencanaan/get-datacombo-part-rekanan', true, true, 20).then(function (data) {
                 $scope.listPihakKetiga = data
             })
-            
+
             loadDataCombo()
             function loadDataCombo() {
                 medifirstService.get('anggaran/pj-rba?id=' + medifirstService.getPegawaiLogin().id).then(function (data) {
