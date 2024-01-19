@@ -7143,10 +7143,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.listPenerima = [{value:dataItem.bendaharafk,text:dataItem.bendahara}]
                 $scope.item.penerimaSPJ =  {value:dataItem.penerimafk,text:dataItem.penerima}
 
-                console.log($scope.listPihakKetiga);
-                console.log({id:dataItem.rekananfk,namarekanan:dataItem.pihakketiga});
-                $scope.listPihakKetiga.push({id:dataItem.rekananfk,namarekanan:dataItem.pihakketiga})
-                $scope.item.pihakKetigaSPJ = {id:dataItem.rekananfk,namarekanan:dataItem.pihakketiga}
+                if(dataItem.rekananfk) {
+                    $scope.listPihakKetiga.add({id:dataItem.rekananfk,namarekanan:dataItem.pihakketiga})
+                    $scope.item.pihakKetigaSPJ = {id:dataItem.rekananfk,namarekanan:dataItem.pihakketiga}
+                }
 
                 let newArr = []
                 for (let index = 0; index < DataDetailSPJALL.length; index++) {
