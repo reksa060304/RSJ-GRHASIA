@@ -7683,6 +7683,7 @@ class LogistikController extends ApiController{
         return $this->respond($result);
     }
 
+    // tanda1
     public function saveKirimBarangRuangan(Request $request) {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
@@ -7724,7 +7725,7 @@ class LogistikController extends ApiController{
         );
         $strRuanganTujuan='';
         $strRuanganTujuan = $ruanganTujuan[0]->namaruangan;
-        try{
+        // try{
             if ($request['strukkirim']['noreckirim'] == ''){
                 if ($request['strukkirim']['norecOrder'] != ''){
                     $dataAing = StrukOrder::where('norec',$request['strukkirim']['norecOrder'])
@@ -8489,9 +8490,9 @@ class LogistikController extends ApiController{
             }
 
             $transStatus = 'true';
-        } catch (\Exception $e) {
-            $transStatus = 'false';
-        }
+        // } catch (\Exception $e) {
+        //     $transStatus = 'false';
+        // }
         $transMessage = "Kirim Barang";
         if ($transStatus == 'true') {
             $transMessage = $transMessage . " Berhasil";

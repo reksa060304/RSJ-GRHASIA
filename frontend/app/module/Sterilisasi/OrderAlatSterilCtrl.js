@@ -74,7 +74,7 @@ define(['initialize'], function (initialize) {
                         });
                     }
                 }
-            }            
+            }
 
             function ComboLoad() {
 
@@ -82,11 +82,11 @@ define(['initialize'], function (initialize) {
                     var dataCombo = dat.data;
                     $scope.listDataJabatan = dataCombo.jabatan;
                     // $scope.listPenulisResep = dat.data.penulisresep;
-                    $scope.listRuangan = medifirstService.getMapLoginUserToRuangan();                   
+                    $scope.listRuangan = medifirstService.getMapLoginUserToRuangan();
                     $scope.listAsalProduk = dataCombo.asalproduk;
                     $scope.listProduk = dataCombo.produk;
                     $scope.listRuanganTujuan = dataCombo.ruangancssd;
-                    $scope.item.ruanganTujuan = $scope.listRuanganTujuan [0];
+                    $scope.item.ruanganTujuan = $scope.listRuanganTujuan[0];
                     pegawaiUser = medifirstService.getPegawaiLogin(); //dataCombo.detaillogin[0];
                     $scope.item.ruangan = $scope.listRuangan[0];
                     $scope.item.jenisKirim = $scope.listJenisKirim[0];//{ id: 2, jenis: 'Transfer' }
@@ -128,6 +128,8 @@ define(['initialize'], function (initialize) {
             }
 
             function GETKONVERSI(jml) {
+                dataProdukDetail = []
+                console.log(123);
                 if ($scope.item.produk == undefined) {
                     return
                 }
@@ -135,9 +137,15 @@ define(['initialize'], function (initialize) {
                     return
                 }
                 $scope.listSatuan = $scope.item.produk.konversisatuan
-                if ($scope.listSatuan.length == 0) {
-                    $scope.listSatuan = ([{ ssid: $scope.item.produk.ssid, satuanstandar: $scope.item.produk.satuanstandar }])
+                if ($scope.listSatuan != undefined) {
+                    if ($scope.listSatuan.length == 0) {
+                        $scope.listSatuan = ([{
+                            ssid: $scope.item.produk.ssid,
+                            satuanstandar: $scope.item.produk.satuanstandar
+                        }])
+                    }
                 }
+
                 $scope.item.satuan = { ssid: $scope.item.produk.ssid, satuanstandar: $scope.item.produk.satuanstandar }
                 $scope.item.nilaiKonversi = 1// $scope.item.satuan.nilaikonversi
                 if ($scope.item.ruangan == undefined) {
@@ -150,8 +158,16 @@ define(['initialize'], function (initialize) {
                 // }
                 medifirstService.get("logistik/get-produkdetail?" +
                     "produkfk=" + $scope.item.produk.id +
+                    "&ruanganfk=" + $scope.item.ruangan.id, true).then(function (dat) {
+                        // dataProdukDetail = dat.data.detail;
+                        $scope.item.stokpemesan = dat.data.jmlstok / $scope.item.nilaiKonversi
+                        // $scope.item.jumlah = jml
+                    });
+                medifirstService.get("logistik/get-produkdetail?" +
+                    "produkfk=" + $scope.item.produk.id +
                     "&ruanganfk=" + $scope.item.ruanganTujuan.id, true).then(function (dat) {
                         dataProdukDetail = dat.data.detail;
+                        console.log(dataProdukDetail);
                         $scope.item.stok = dat.data.jmlstok / $scope.item.nilaiKonversi
                         $scope.item.jumlah = jml
                     });
@@ -276,6 +292,8 @@ define(['initialize'], function (initialize) {
                             data.hargasatuan = String($scope.item.hargaSatuan)
                             data.hargadiscount = String($scope.item.hargadiskon)
                             data.total = $scope.item.total
+                            data.jumlahstokruangan = $scope.item.stokpemesan
+                            data.jumlahstokgudang = $scope.item.stok
 
                             data2[i] = data;
                             $scope.dataGrid = new kendo.data.DataSource({
@@ -314,7 +332,9 @@ define(['initialize'], function (initialize) {
                         jumlah: $scope.item.jumlah,
                         hargasatuan: String($scope.item.hargaSatuan),
                         hargadiscount: String($scope.item.hargadiskon),
-                        total: $scope.item.total
+                        total: $scope.item.total,
+                        jumlahstokruangan: $scope.item.stokpemesan,
+                        jumlahstokgudang: $scope.item.stok
                     }
                     data2.push(data)
                     // $scope.dataGrid.add($scope.dataSelected)
@@ -596,12 +616,12 @@ define(['initialize'], function (initialize) {
                             "field": "qty",
                             "title": "Qty",
                             "width": "30px",
-                        },                        
+                        },
                     ]
                 }
             };
 
-            $scope.BatalPaket = function(){
+            $scope.BatalPaket = function () {
                 dataPaket = [];
                 $scope.dataSource = new kendo.data.DataSource({
                     data: [],
@@ -609,7 +629,7 @@ define(['initialize'], function (initialize) {
                 $scope.popUpSetAlat.close();
             }
 
-            $scope.setAlat = function () {                
+            $scope.setAlat = function () {
                 dataPaket = []
                 medifirstService.get("sterilisasi/get-data-kelompokalat?").then(function (data) {
                     $scope.isRouteLoading = false;
@@ -670,7 +690,7 @@ define(['initialize'], function (initialize) {
                                         nomor = 1
                                     } else {
                                         nomor = data2.length + 1
-                                    }                                   
+                                    }
                                     var data = {
                                         no: nomor,
                                         hargajual: String(dataProdukDetail.hargajual),
@@ -683,19 +703,19 @@ define(['initialize'], function (initialize) {
                                         produkfk: element.produkfk,
                                         namaproduk: element.namaproduk,
                                         nilaikonversi: nilaiKonversi,
-                                        kdproduk: element.produkfk,                                        
+                                        kdproduk: element.produkfk,
                                         satuanstandarfk: element.objectsatuanstandarfk,
                                         satuanstandar: element.satuanstandar,
                                         satuanviewfk: element.objectsatuanstandarfk,
                                         satuanview: element.satuanstandar,
                                         jmlstok: String(stok),
-                                        jumlah: element.qty,                                        
+                                        jumlah: element.qty,
                                         qtyorder: 0,
                                         hargasatuan: String(dataProdukDetail.hargajual),
                                         hargadiscount: String(0),
-                                        total: (parseFloat(element.qty) * parseFloat(dataProdukDetail.hargajual)),                                                                               
+                                        total: (parseFloat(element.qty) * parseFloat(dataProdukDetail.hargajual)),
                                     }
-                                    dataPaket.push(data);                                    
+                                    dataPaket.push(data);
                                     data2.push(data)
                                     $scope.isRouteLoading = false;
                                     if (datas == $scope.dataSelectedSsS.details.length) {
@@ -713,11 +733,11 @@ define(['initialize'], function (initialize) {
                 if (dataPaket == undefined) {
                     toastr.error("data Belum Dipilih");
                     return;
-                }                              
+                }
                 $scope.dataGrid = new kendo.data.DataSource({
                     data: data2
                 });
-                                
+
                 Kosongkan()
                 $scope.butPaket = false
                 // statusTambah = false

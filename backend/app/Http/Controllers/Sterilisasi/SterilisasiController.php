@@ -34,6 +34,7 @@ class SterilisasiController extends ApiController
     {
         parent::__construct($skip_authentication = false);
     }
+
     public function getComboSteril(Request $request) {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
@@ -81,6 +82,12 @@ class SterilisasiController extends ApiController
                         ->select('id','namakelompokalat')
                         ->get();
 
+        $dataRuanganAll = \DB::table('ruangan_m as lu')
+            ->select('lu.id','lu.namaruangan')
+            ->where('lu.statusenabled',true)
+            ->where('lu.kdprofile', $idProfile)
+            ->get();
+
         $result = array(
             'pegawai' => $data,
             'datalogin' => $dataPegawaiUser,
@@ -88,6 +95,7 @@ class SterilisasiController extends ApiController
             'produk' => $dataProduk,
             'kelompokalat' => $dataKelompok,
             'ruangancssd' => $dataRuangCssd,
+            'ruanganall' => $dataRuanganAll,
             'by' => 'as@epic',
         );
         return $this->respond($result);
@@ -319,6 +327,7 @@ class SterilisasiController extends ApiController
         return $this->respond($result);
     }
 
+    // tanda1
     public function getDaftarDistribusiBarangSteril(Request $request) {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
