@@ -1,0 +1,127 @@
+<!-- <div class="grid_12 headerBox">
+	    <h1 style="color: white;"><b>MASTER BAHASA</b></h1>
+    </div>
+    
+    <div class="grid_12" border="1">
+        <div class="grid_4">
+        </div>
+        <div class="grid_4">
+        </div>
+        <div class="grid_4">
+            <div class="grid_3">
+                <label c-label item="item" c-label-text="Nama Bahasa"real></label>
+            </div>
+            <div class="grid_6">
+                <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.namaBahasa" />
+            </div>
+            <div class="grid_3">
+                <button class="c-button success" ng-click="cariMasterBahasa()">Cari</button>
+            </div>
+        </div>
+    </div>
+ -->
+    <!-- <div class="grid_12" style="margin-top: 20px;">
+        <div class="grid_12 borderBox">
+            <kendo-grid options="gridOptionBahasa" k-on-change="Select(data)" k-data-source="dataSourceBahasa" k-ng-model="current"
+			ng-click="klik(current)"></kendo-grid>
+        </div>
+    </div> -->
+
+    <div class="panel panel-default container_12">
+        <div class="panel-body">
+            <div class="grid_12">
+                <div class="grid_12">
+                    <div class="grid_1"></div>
+                    <div class="grid_10">
+                        <c-panel item="item" header="'MASTER BAHASA'" disabled> </c-panel>
+                    </div>
+                    <div class="grid_1"></div>
+                </div>
+                <div class="grid_12">
+                    <div class="grid_1"></div>
+                    <div class="grid_10">
+                        <table border="0">
+                            <tr>
+                                <td width = "400px" Align="right"><label c-label item="item" c-label-text="Nama Bahasa"real></label></td>
+                                <td width = "200px"><input c-text-box type="input" filter="" class="k-textbox" ng-model="item.namaBahasa" /></td>
+                                <td width = "10px"><button class="c-button success" ng-click="cariMasterBahasa()">CARI</button></td>
+                            </tr>
+                        </table>                        
+                    <!-- <div class="grid_2" style="margin-top: 10px">
+                        </div>
+                        <div class="grid_2" style="margin-top: 10px" border: 10px dotted blue>
+                        </div>
+                        <div class="grid_8" style="margin-top: 12px" border="1">
+                            </div> -->
+                        <!-- <div class="grid_12"> -->
+                                <!-- <label c-label item="item" c-label-text="ID"></label> -->
+                            <!-- </div>
+                            <div class="grid_12"> -->
+                                <!-- <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.id" /> -->
+                            <!-- </div> -->
+                        <!-- <div class="grid_2">
+                            <div class="grid_12">
+                                <label c-label item="item">Kode Pelayanan Mutu</label>
+                            </div>
+                            <div class="grid_12">
+                                <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.kdPelayananMutu"/>
+                            </div>
+                        </div> -->
+                        <!-- <div class="grid_3">
+                            <div class="grid_12">
+                                <label c-label item="item">Pelayanan Mutu</label>
+                            </div>
+                            <div class="grid_12">
+                                <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.PelayananMutu" />
+                            </div>
+                        </div>					 -->
+                        <!-- <div class="grid_1" style="margin-top: 20px">
+                            <button class="c-button success" ng-click="Search()">Cari</button>
+                        </div> -->
+                        <!-- <div class="grid_3">
+                            <div class="grid_12">
+                                <button class="c-button success" ng-click="cariMasterBahasa()">Cari</button>
+                            </div>
+                        </div> -->
+                                    <!-- <div class="grid_1" style="margin-top: 20px">
+                            <button class="c-button cancel" ng-click="Clear()">Clear</button>
+                        </div> -->
+    
+                    </div>
+                    <div class="grid_1"></div>
+                </div>
+            </div>
+            <div class="grid_12" style="margin-top: 10px">
+                <div class="grid_1"></div>
+                <div class="grid_10">
+                    <!-- <kendo-grid id="kGrids" data-source="dataSource" options="columnGrid" k-selectable="'row'"
+                        k-sortable="'true'" k-resizable="'true'" k-ng-model="dataSelected"
+                        ng-click="klikGrid(dataSelected)"></kendo-grid> -->
+                    <kendo-grid options="gridOptionBahasa" k-on-change="Select(data)" k-data-source="dataSourceBahasa" k-ng-model="current"
+                        ng-click="klik(current)"></kendo-grid>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid_12" style="margin-top:60px">
+        <div ng-include='"../app/template/Shared/TemplateLoading"'></div>
+    </div>   
+
+    <div kendo-window="popUps" k-title="'Master Bahasa'" k-width="900" k-visible="false">
+        <div class="panel panel-default container_12"  style="padding: 0px 10px;">
+            <div class="grid_12">
+                <label c-label item="item">Nama Bahasa</label>
+                <input c-text-box type="input" class="k-textbox" ng-model="popUp.bahasa" />
+            </div>
+        
+            <div class="k-edit-buttons  k-state-default pull-right" style="margin-top:10px">
+                <button class="k-button  k-button-icontext k-primary k-grid-update" ng-click="SimpanBahasa()" ng-hide="isSave"><span
+                    class="k-icon k-update"></span>Simpan</button>
+                <button class="k-button  btnHapus k-button-icontext" ng-click="tutupBahasa()"><span
+                    class="k-icon k-cancel"></span>Tutup</button>
+            </div>
+        </div>
+    </div>
+    
+

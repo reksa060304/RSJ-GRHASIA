@@ -1,5 +1,5 @@
 define(['initialize', 'Configuration'], function (initialize, configuration) {
-    'use strict';
+    'use strict';   
     var baseTransaksi = configuration.baseApiBackend;
     initialize.controller('KelompokAnggaranCtrl', ['$scope', 'CacheHelper', '$state', '$mdDialog','MedifirstService',
         function ($scope, cacheHelper, $state, $mdDialog, medifirstService) {
@@ -3341,7 +3341,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 })
             }
 
-            $scope.findData = function () {
+            $scope.findData = function () {                
                 var idpegawai = ''
                     $scope.pegawaiLogin = medifirstService.getPegawaiLogin();
                     //console.log($scope.pegawaiLogin)
