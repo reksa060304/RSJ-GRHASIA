@@ -15873,4 +15873,58 @@ public function suratBuktiPengembalian(Request $request)
 
         return $pdf->stream();
     }
+
+    public function cetakDistribusiAlat(Request $request)
+    {
+        $profile = (int)$request['kdprofile'];
+        $norec = $request['norec'];
+        $pageWidth = 950;
+
+        // Mengambil data struk kirim
+        $data = DB::table('strukkirim_t AS st')
+            ->select(
+                'st.norec', 
+                'st.nokirim AS noorder', 
+                'st.tglkirim AS tglorder',
+                'ru.namaruangan AS namaruangan', 
+                'pg.namalengkap AS namapengorder'
+            )
+            ->leftJoin('ruangan_m AS ru', 'ru.id', '=', 'st.objectruangantujuanfk')
+            ->leftJoin('pegawai_m AS pg', 'pg.id', '=', 'st.objectpegawaipengirimfk')
+            ->where('st.kdprofile', $profile)
+            ->where('st.norec', $norec)
+            ->where('st.statusenabled', true)
+            ->first(); // Menggunakan first() untuk mendapatkan satu baris data saja
+
+        // Pengecekan apakah data ditemukan sebelum mencoba mengakses propertinya
+        if ($data) {
+            // Mengambil detail dari tabel kirimproduk_t berdasarkan nokirimfk
+            $detailOrders = DB::table('kirimproduk_t AS kp')
+                ->select(
+                    'prd.kdproduk',
+                    'prd.namaproduk',
+                    'sat.satuanstandar',
+                    'kp.qtyproduk'
+                )
+                ->leftJoin('produk_m AS prd', 'prd.id', '=', 'kp.objectprodukfk')
+                ->leftJoin('satuanstandar_m AS sat', 'sat.id', '=', 'prd.objectsatuanstandarfk')
+                ->where('kp.kdprofile', $profile)
+                ->where('kp.nokirimfk', $norec)
+                ->get();
+
+            // Menambahkan properti detailOrders ke dalam objek data
+            $data->jmlitem = count($detailOrders);
+            $data->detailsOrder = $detailOrders;
+        } else {
+            // Data tidak ditemukan, respons halaman tidak ditemukan
+            abort(404);
+        }
+
+        // Mengembalikan respons
+        return view(
+            'report.cssd.report-monitoring',
+            compact('data', 'pageWidth')
+        );
+    }
+
 }
