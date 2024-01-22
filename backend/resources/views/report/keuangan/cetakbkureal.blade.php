@@ -112,7 +112,7 @@
                     <td align="center" style="padding: 10px; font-size: 15px; "></td>
                     <td align="center" width="350" style="padding: 10px; font-size: 15px; ">dr. Akhmad Akhadi Syamsudhuha, M.P.H</td>
                     <td align="center" style="padding: 10px; font-size: 15px; "></td>
-                    <td align="center" width="350" style="padding: 10px; font-size: 15px;  ">Paula Sofyanita, SE.</td>
+                    <td align="center" width="350" style="padding: 10px; font-size: 15px;  ">Christina Dewi Isti Paramita, S.E.</td>
                     <td align="center" style="padding: 10px; font-size: 15px; "></td>
                 </tr>
         </table>
@@ -121,7 +121,7 @@
                     <td align="center" style="padding: 10px; font-size: 15px; "></td>
                     <td align="center" width="350" style="padding: 10px; font-size: 15px; ">NIP. 19680714 200012 1 002</td>
                     <td align="center" style="padding: 10px; font-size: 15px; "></td>
-                    <td align="center" width="350" style="padding: 10px; font-size: 15px;  ">NIP. 19910622 201502 2 002</td>
+                    <td align="center" width="350" style="padding: 10px; font-size: 15px;  ">NIP. 19841027 201502 2 001</td>
                     <td align="center" style="padding: 10px; font-size: 15px; "></td>
                 </tr>
         </table>

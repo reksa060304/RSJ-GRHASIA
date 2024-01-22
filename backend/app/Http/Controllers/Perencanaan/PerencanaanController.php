@@ -3892,16 +3892,16 @@ class PerencanaanController extends ApiController {
         $cek = BKU::where('nobku', '=', $request['nobku'])->where('norec', '<>', $request['norec'])->where('objectasalprodukfk', '=', $ap)->first();
 
         try{ 
-                if(empty($cek)){
-                    $MA = BKU::where('norec', '=', $request['norec'])->first();
-                    $MA->tglbku = $request['tglbku'];
-                    $MA->nobku = $request['nobku'];
-                    $MA->save();
+            $MA = BKU::where('norec', '=', $request['norec'])->first();
+            $MA->tglbku = $request['tglbku'];
+            $MA->nobku = $request['nobku'];
+            $MA->save();
 
-                    $transStatus = 'true';
-                } else{
-                    $transStatus = 'false';
-                }
+            $transStatus = 'true';
+        // if(empty($cek)){
+        //         } else{
+        //             $transStatus = 'false';
+        //         }
        } catch (\Exception $e) {
             $transStatus = 'false';
        }

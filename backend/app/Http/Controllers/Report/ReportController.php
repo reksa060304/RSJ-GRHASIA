@@ -7001,14 +7001,23 @@ class ReportController extends ApiController{
             $qbulan =  " and extract(month from tglbku) =  '" . $request['bulanbku']."'";
         }
 
+        $qbulanSaldo  = '';
+        $bln = 0;
+        if (isset($request['bulanbku']) && $request['bulanbku'] != "" && $request['bulanbku'] != "undefined") {
+            $bln = $request['bulanbku'] - 1;
+            $qbulanSaldo =  " and extract(month from tglbku) =  '" . $bln."'";
+        }
+
+        // select 0 pph, 0 ppn, 0 nourut, '' objectmataanggaranfk, '' nobku, '' tgl, 'Saldo Awal Bulan' uraianbku, (saldo-penerimaan+pengeluaran) penerimaan, 0 pengeluaran, 0 saldoawal, '' nodokumen
+        // order by tglbku asc limit 1
+
         $data = DB::select(DB::raw("select * from(
-            select 0 pph, 0 ppn, 0 nourut, '' objectmataanggaranfk, '' nobku, '' tgl, 'Saldo Awal Bulan' uraianbku, (saldo-penerimaan+pengeluaran) penerimaan, 0 pengeluaran, 0 saldoawal, '' nodokumen
+            select 0 pph, 0 ppn, 0 nourut, '' objectmataanggaranfk, '' nobku, '' tgl, 'Saldo Awal Bulan' uraianbku, coalesce(sum(penerimaan)-sum(pengeluaran),0) penerimaan, 0 pengeluaran, 0 saldoawal, '' nodokumen
             from bukukasumum_t
             where kdprofile = 30
             and statusenabled = true
-            $qbulan
+            $qbulanSaldo
             $qtahun
-            order by tglbku asc limit 1
             ) as x
             
             union all
