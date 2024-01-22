@@ -51,7 +51,7 @@
                 <td align="center" style="width: 200px;">
                     <b style="font-size: 22px;">
                         PEMERINTAH DAERAH DAERAH ISTIMEWA YOGYAKARTA<br>
-                        BUKU SIMPANAN BANK<br>
+                        BUKU KAS UMUM<br>
                         BENDAHARA PENGELUARAN<br>
                         TAHUN ANGGARAN {{ $tahunjudul }}<br>
                         BULAN {{ $periode }}

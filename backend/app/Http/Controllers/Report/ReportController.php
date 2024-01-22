@@ -7034,7 +7034,7 @@ class ReportController extends ApiController{
                 when nosts is not null then nosts
             end as nodokumen
             from(
-                select ROW_NUMBER ( ) OVER ( ORDER BY bku.tglbku ) nourut, bku.objectmataanggaranfk, bku.nobku, 
+                select ROW_NUMBER ( ) OVER ( ORDER BY bku.nobku ) nourut, bku.objectmataanggaranfk, bku.nobku, 
                 to_char(bku.tglbku::date, 'DD-MM-YYYY') tgl, bku.uraianbku, bku.penerimaan, 
                 bku.pengeluaran, 0 saldoawal, sr.norealisasi, pj.nopanjar, spm.nospm,
                 pp.nopajak nopemungutan, coalesce(pp.pph, 0) pph, coalesce(pp.ppn, 0) ppn, ppj.nopajak nopenyetoran, jg.nojasagiro, sk.nosts 
