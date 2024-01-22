@@ -35,6 +35,7 @@ class SterilisasiController extends ApiController
         parent::__construct($skip_authentication = false);
     }
 
+    // tanda2
     public function getComboSteril(Request $request) {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
@@ -67,15 +68,60 @@ class SterilisasiController extends ApiController
             ->get();
 
         $dataProduk = \DB::table('produk_m as pr')
-            ->JOIN('detailjenisproduk_m as djp','djp.id','=','pr.objectdetailjenisprodukfk')
+            // ->JOIN('detailjenisproduk_m as djp','djp.id','=','pr.objectdetailjenisprodukfk')
+            // ->leftJOIN('satuanstandar_m as ss','ss.id','=','pr.objectsatuanstandarfk')
+            // ->select('pr.id','pr.namaproduk','ss.id as ssid','ss.satuanstandar')
+            // ->where('pr.kdprofile', $kdProfile)
+            // ->where('pr.statusenabled',true)
+            // ->whereIn('djp.id',[1476])
+            // ->groupBy('pr.id','pr.namaproduk','ss.id','ss.satuanstandar')
+            // ->orderBy('pr.namaproduk')
+            // ->get();
             ->leftJOIN('satuanstandar_m as ss','ss.id','=','pr.objectsatuanstandarfk')
-            ->select('pr.id','pr.namaproduk','ss.id as ssid','ss.satuanstandar')
-            ->where('pr.kdprofile', $kdProfile)
+            ->JOIN('stokprodukdetail_t as spd','spd.objectprodukfk','=','pr.id')
+            ->select('pr.id','pr.kdproduk as kdsirs','pr.namaproduk','ss.id as ssid','ss.satuanstandar')
             ->where('pr.statusenabled',true)
-            ->whereIn('djp.id',[1476])
-            ->groupBy('pr.id','pr.namaproduk','ss.id','ss.satuanstandar')
+            ->where('spd.statusenabled',true)
+            ->where('pr.kdprofile', $idProfile)
+            ->where('pr.objectdetailjenisprodukfk', 1476)
+//            ->where('jp.id',97)
+            ->where('spd.qtyproduk','>',0)
+            ->groupBy('pr.id','pr.kdproduk','pr.namaproduk','ss.id','ss.satuanstandar')
             ->orderBy('pr.namaproduk')
             ->get();
+
+        $dataKonversiProduk = \DB::table('konversisatuan_t as ks')
+            ->JOIN('satuanstandar_m as ss','ss.id','=','ks.satuanstandar_asal')
+            ->JOIN('satuanstandar_m as ss2','ss2.id','=','ks.satuanstandar_tujuan')
+            ->select('ks.objekprodukfk','ks.satuanstandar_asal','ss.satuanstandar','ks.satuanstandar_tujuan','ss2.satuanstandar as satuanstandar2',
+                'ks.nilaikonversi')
+            ->where('ks.kdprofile', $idProfile)
+            ->where('ks.statusenabled',true)
+            ->get();
+
+        $dataProdukResult=[];
+        foreach ($dataProduk as $item){
+            $satuanKonversi=[];
+            foreach ($dataKonversiProduk  as $item2){
+                if ($item->id == $item2->objekprodukfk){
+                    $satuanKonversi[] =array(
+                        'ssid' =>   $item2->satuanstandar_tujuan,
+                        'satuanstandar' =>   $item2->satuanstandar2,
+                        'nilaikonversi' =>   $item2->nilaikonversi,
+                    );
+                }
+            }
+
+            $dataProdukResult[]=array(
+                'id' =>   $item->id,
+                'namaproduk' =>   $item->namaproduk,
+                'kdsirs' => $item->kdsirs,
+                'kdproduk' => $item->kdsirs,
+                'ssid' =>   $item->ssid,
+                'satuanstandar' =>   $item->satuanstandar,
+                'konversisatuan' => $satuanKonversi,
+            );
+        }
 
         $dataKelompok = KelompokAlat::where('kdprofile', $kdProfile)
                         ->where('statusenabled', true)
@@ -92,7 +138,7 @@ class SterilisasiController extends ApiController
             'pegawai' => $data,
             'datalogin' => $dataPegawaiUser,
             'sumberdana' => $dataSumberDana,
-            'produk' => $dataProduk,
+            'produk' => $dataProdukResult,
             'kelompokalat' => $dataKelompok,
             'ruangancssd' => $dataRuangCssd,
             'ruanganall' => $dataRuanganAll,
@@ -197,6 +243,8 @@ class SterilisasiController extends ApiController
         );
         return $this->respond($result);
     }
+
+    // tanda1
     public function getComboTerimaBarang(Request $request) {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
@@ -327,7 +375,6 @@ class SterilisasiController extends ApiController
         return $this->respond($result);
     }
 
-    // tanda1
     public function getDaftarDistribusiBarangSteril(Request $request) {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
