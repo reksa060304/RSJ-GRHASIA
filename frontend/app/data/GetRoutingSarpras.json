@@ -4382,6 +4382,26 @@
     ]
   },
   {
+    "name": "MonitoringBarangSteril",
+    "url": "/MonitoringBarangSteril",
+    "templateurl": "module/Sterilisasi/MonitoringBarangSteril.html",
+    "controller": "MonitoringBarangSterilCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
     "name": "DaftarTerimaSteril",
     "url": "/446166746172546572696d6153746572696c",
     "templateurl": "module/Sterilisasi/DaftarTerimaSteril.html",

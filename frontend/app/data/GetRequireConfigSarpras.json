@@ -830,6 +830,10 @@
             "urlDep": "module/Sterilisasi/PenerimaanBarangSterilCtrl"
         },
         {
+            "nameDep": "MonitoringBarangSterilCtrl",
+            "urlDep": "module/Sterilisasi/MonitoringBarangSterilCtrl"
+        },
+        {
             "nameDep": "DaftarTerimaSterilCtrl",
             "urlDep": "module/Sterilisasi/DaftarTerimaSterilCtrl"
         },
