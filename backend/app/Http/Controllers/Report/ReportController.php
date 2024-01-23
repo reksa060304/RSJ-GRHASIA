@@ -6658,23 +6658,32 @@ class ReportController extends ApiController{
             $qbulan =  " and extract(month from tglbku) =  '" . $request['bulanbku']."'";
         }
 
+        $qbulanSaldo  = '';
+        $bln = 0;
+        if (isset($request['bulanbku']) && $request['bulanbku'] != "" && $request['bulanbku'] != "undefined") {
+            $bln = $request['bulanbku'] - 1;
+            $qbulanSaldo =  " and extract(month from tglbku) =  '" . $bln."'";
+        }
+
         $data = DB::select(DB::raw("
             select * from(
                 select 0 nourut, '' nobku, '' tgl, 'Saldo Awal Bulan' uraianbku, (saldo-penerimaan+pengeluaran) penerimaan, 0 pengeluaran, 0 saldoawal
                 from bukukasumum_t
                 where kdprofile = 30
                 and statusenabled = true
-                $qbulan
+                and objectjenisbuktifk<>4
+                $qbulanSaldo
                 $qtahun
                 order by tglbku asc limit 1
             ) as x
         
             union all
         
-            select ROW_NUMBER ( ) OVER ( ORDER BY bku.tglbku ) nourut, bku.nobku, to_char(bku.tglbku::date, 'DD-MM-YYYY') tgl, bku.uraianbku, bku.penerimaan, bku.pengeluaran, 0 saldoawal
+            select ROW_NUMBER ( ) OVER ( ORDER BY bku.nobku ) nourut, bku.nobku, to_char(bku.tglbku::date, 'DD-MM-YYYY') tgl, bku.uraianbku, bku.penerimaan, bku.pengeluaran, 0 saldoawal
             from bukukasumum_t bku
             where bku.kdprofile = 30
             and bku.statusenabled = true
+            and bku.objectjenisbuktifk<>4
             $qbulan
             $qtahun"));
 
@@ -7439,26 +7448,26 @@ class ReportController extends ApiController{
             $qbulan =  " and extract(month from tglbku) between '01' and  '" . $request['bulanpanjar']."'";
         }
 
-        $data = DB::select(DB::raw("select * from(
-            select 0 nourut, '' nobku, '' tgl, 'Saldo Awal Bulan' uraianbku, (saldo-penerimaan+pengeluaran) penerimaan, 0 pengeluaran, 0 saldo
-            from bukukasumum_t
-            where kdprofile = 30
-            and statusenabled = true
-            $qbulan
-            $qtahun
-            and objectjenisbuktifk = 3
-            order by tglbku asc limit 1
-        ) as x
+        // select * from(
+            //     select 0 nourut, '' nobku, '' tgl, 'Saldo Awal Bulan' uraianbku, (saldo-penerimaan+pengeluaran) penerimaan, 0 pengeluaran, 0 saldo
+        //     from bukukasumum_t
+        //     where kdprofile = 30
+        //     and statusenabled = true
+        //     $qbulan
+        //     $qtahun
+        //     and objectjenisbuktifk = 3
+        //     order by tglbku asc limit 1
+        // ) as x
     
-        union all
+        // union all
     
-        select ROW_NUMBER ( ) OVER ( ORDER BY bku.tglbku ) nourut, bku.nobku, to_char(bku.tglbku::date, 'DD-MM-YYYY') tgl, bku.uraianbku, bku.penerimaan, bku.pengeluaran, 0 saldo
+        $data = DB::select(DB::raw("select * from(select ROW_NUMBER ( ) OVER ( ORDER BY bku.nobku ) nourut, bku.nobku, to_char(bku.tglbku::date, 'DD-MM-YYYY') tgl, bku.uraianbku, bku.penerimaan, bku.pengeluaran, 0 saldo
         from bukukasumum_t bku
         where bku.kdprofile = 30
         and bku.statusenabled = true
         $qbulan
         $qtahun
-        and bku.objectjenisbuktifk = 3"));
+        and bku.objectjenisbuktifk = 3) as x ORDER BY nourut"));
 
         $saldoakhir = 0;
 
