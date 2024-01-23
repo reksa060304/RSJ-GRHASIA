@@ -7684,6 +7684,8 @@ class LogistikController extends ApiController{
     }
 
     public function saveKirimBarangRuangan(Request $request) {
+        // return 'test';
+        // ini_set('max_execution_time', 2000); //6 minutes
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
         if ($request['strukkirim']['jenispermintaanfk'] == 2) {
@@ -7724,7 +7726,7 @@ class LogistikController extends ApiController{
         );
         $strRuanganTujuan='';
         $strRuanganTujuan = $ruanganTujuan[0]->namaruangan;
-        try{
+        // try{
             if ($request['strukkirim']['noreckirim'] == ''){
                 if ($request['strukkirim']['norecOrder'] != ''){
                     $dataAing = StrukOrder::where('norec',$request['strukkirim']['norecOrder'])
@@ -8488,10 +8490,10 @@ class LogistikController extends ApiController{
                     ->get();
             }
 
-            $transStatus = 'true';
-        } catch (\Exception $e) {
-            $transStatus = 'false';
-        }
+        //     $transStatus = 'true';
+        // } catch (\Exception $e) {
+        //     $transStatus = 'false';
+        // }
         $transMessage = "Kirim Barang";
         if ($transStatus == 'true') {
             $transMessage = $transMessage . " Berhasil";

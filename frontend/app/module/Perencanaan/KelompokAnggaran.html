@@ -1951,7 +1951,13 @@
 </div>
 <div kendo-window="popupTambahSPJ" k-title="'SPJ'" k-visible="false" k-width="1200" k-height="800">
 	<div class="panel panel-default container_12">
-		<div class="grid_12">
+		<div class="grid_12">			
+			<div class="grid_3" style="text-align: left;" ng-hide="item.hidespj == 2">
+				NO SPJ
+			</div>
+			<div class="grid_6" style="text-align: left;" ng-hide="item.hidespj == 2">
+				<input c-text-box type="input" class="k-textbox" ng-model="item.norealisasi"  style="text-align:left;" />
+			</div>
 			<div class="grid_12">
 				<div class="grid_3" style="text-align: left;">
 					Tanggal Pelaksanaan Kegiatan
@@ -2192,6 +2198,14 @@
 <div kendo-window="popupPanjar" k-title="'Tambah Data Panjar'" k-visible="false" k-width="700" k-height="650">
 	<div class="panel panel-default container_12">
 		<div class="grid_12">
+			<div class="grid_12" ng-hide="item.statuspanjar === 2">
+				<div class="grid_3" style="text-align: left;margin-top: 15px;">
+					Nomor Panjar
+				</div>
+				<div class="grid_6" >
+					<input c-text-box type="input" class="k-textbox" ng-model="item.nopanjar" />
+				</div>
+			</div>
 			<div class="grid_12">
 				<div class="grid_3" style="text-align: left;margin-top: 15px;">
 					Sub Kegiatan

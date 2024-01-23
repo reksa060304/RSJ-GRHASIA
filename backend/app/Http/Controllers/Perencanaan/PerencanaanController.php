@@ -8116,6 +8116,9 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
                     
                 $jumlahall = (float)$request['totalbelanja'] - (float)$MA->totalbelanja;
             }
+            if(isset($request['norealisasi'])){
+                $MA->norealisasi = $request['norealisasi'];
+            }
             $MA->tglrealisasi = $request['tglrealisasi'];
             $MA->status = null;//$request['status'];
             $MA->totalbelanja = $request['totalbelanja'];
@@ -8507,7 +8510,7 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
             } else{
                 $MA = Panjar::where('norec', '=', $request['norec'])->first();
             }
-            
+                $MA->nopanjar = $request['nopanjar'];
                 $MA->tglpanjar = $request['tglPanjar'];
                 $MA->uraian = $request['uraianPanjar'];
                 $MA->jumlah = $request['jumlahpanjar'];
