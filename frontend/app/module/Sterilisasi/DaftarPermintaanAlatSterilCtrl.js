@@ -23,13 +23,13 @@ define(['initialize'], function (initialize) {
                     init();
                 }
             }
-           
+
             function loadCombo() {
                 $scope.dataLogin = medifirstService.getPegawaiLogin();
                 medifirstService.getPart("logistik/get-combo-barang-logistik", true, true, 20).then(function (data) {
                     $scope.listNamaBarang = data;
-                });  
-                
+                });
+
                 medifirstService.get("logistik/get-combo-logistik", true).then(function (dat) {
                     var dataCombo = dat.data;
                     $scope.listDataJabatan = dataCombo.jabatan;
@@ -45,7 +45,7 @@ define(['initialize'], function (initialize) {
             }
 
             $scope.BatalCetak = function () {
-                $scope.popUp.close();            
+                $scope.popUp.close();
             }
 
             $scope.deleteOrder = function () {
@@ -70,7 +70,7 @@ define(['initialize'], function (initialize) {
                     norecorder: $scope.dataSelected.norec
                 }
 
-                medifirstService.post('logistik/delete-order-barang-ruangan',objSave).then(function (e) {
+                medifirstService.post('logistik/delete-order-barang-ruangan', objSave).then(function (e) {
                     init()
                 })
             }
@@ -100,11 +100,12 @@ define(['initialize'], function (initialize) {
                         // for (var i = 0; i < dat.data.daftar.length; i++) {
                         //     dat.data.daftar[i].no = i + 1                           
                         // }
-                        var data2 = dat.data.daftar;                       
+                        var data2 = dat.data.daftar;
+                        console.log('cek data ini', data2);
                         for (var i = 0; i < data2.length; i++) {
                             data2[i].no = i + 1
                             for (let e = 0; e < data2[i].details.length; e++) {
-                                data2[i].details[e].no = e + 1;                            
+                                data2[i].details[e].no = e + 1;
                             }
                         }
                         $scope.dataGrid = new kendo.data.DataSource({
@@ -139,7 +140,7 @@ define(['initialize'], function (initialize) {
 
             $scope.cariFilter = function () {
                 init();
-            }                       
+            }
 
             $scope.EditOrder = function () {
                 if ($scope.dataSelected.status == 'Terima Order Barang') {
@@ -183,8 +184,8 @@ define(['initialize'], function (initialize) {
                 }
                 cacheHelper.set('PenerimaanBarangSterilCtrl', chacePeriode);
                 $state.go('PengirimanBarangSteril')
-            }           
-           
+            }
+
             $scope.formatTanggal = function (tanggal) {
                 return moment(tanggal).format('DD-MMM-YYYY');
             }
@@ -288,7 +289,7 @@ define(['initialize'], function (initialize) {
                     ]
                 }
             };
-           
+
             $scope.formatRupiah = function (value, currency) {
                 return currency + " " + parseFloat(value).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
             }
@@ -296,8 +297,8 @@ define(['initialize'], function (initialize) {
             $scope.formatTanggal = function (tanggal) {
                 return moment(tanggal).format('DD/MM/YYYY');
             }
-                   
-            $scope.CetakBukti = function () {               
+
+            $scope.CetakBukti = function () {
                 $scope.popUp.center().open();
             }
 
@@ -336,9 +337,9 @@ define(['initialize'], function (initialize) {
                     + '&jabatanMengetahui=' + jabatan1 + '&jabatanMeminta=' + jabatan2 + '&view=' + stt + '&user=' + pegawaiUser[0].namalengkap, function (response) {
                         //aadc=response; 
 
-                    });                
+                    });
                 $scope.popUp.close();
-            }            
+            }
 
             var HttpClient = function () {
                 this.get = function (aUrl, aCallback) {
@@ -352,6 +353,43 @@ define(['initialize'], function (initialize) {
                     anHttpRequest.send(null);
                 }
             }
+
+            $scope.verifOrderCSSD = function () {
+                if ($scope.dataSelected == undefined) {
+                    toastr.error("Pilih yg akan di verif!!")
+                    return;
+                }
+
+                var dataupdate = {
+                    strukorderfk: $scope.dataSelected.norec,
+                    statusorder: 1
+                }
+
+                medifirstService.post('sterilisasi/verifikasi-order-sterilisasi', dataupdate).then(function (e) {
+                    init();
+                }, function (error) {
+                    // $scope.saveShow = true;
+                });
+            }
+
+            $scope.btlVerifOrderCSSD = function () {
+                if ($scope.dataSelected == undefined) {
+                    toastr.error("Pilih yg akan di verif!!")
+                    return;
+                }
+
+                var dataupdate = {
+                    strukorderfk: $scope.dataSelected.norec,
+                    statusorder: 2
+                }
+
+                medifirstService.post('sterilisasi/verifikasi-order-sterilisasi', dataupdate).then(function (e) {
+                    init();
+                }, function (error) {
+                    // $scope.saveShow = true;
+                });
+            }
+
             //***********************************
         }
     ]);

@@ -6659,10 +6659,8 @@ class ReportController extends ApiController{
         }
 
         $qbulanSaldo  = '';
-        $bln = 0;
         if (isset($request['bulanbku']) && $request['bulanbku'] != "" && $request['bulanbku'] != "undefined") {
-            $bln = $request['bulanbku'] - 1;
-            $qbulanSaldo =  " and extract(month from tglbku) =  '" . $bln."'";
+            $qbulanSaldo =  " and extract(month from tglbku) <  '" . $request['bulanbku']."'";
         }
 
         $data = DB::select(DB::raw("
@@ -7011,17 +7009,38 @@ class ReportController extends ApiController{
         }
 
         $qbulanSaldo  = '';
-        $bln = 0;
         if (isset($request['bulanbku']) && $request['bulanbku'] != "" && $request['bulanbku'] != "undefined") {
-            $bln = $request['bulanbku'] - 1;
-            $qbulanSaldo =  " and extract(month from tglbku) =  '" . $bln."'";
+            $qbulanSaldo =  " and extract(month from tglbku) <  '" . $request['bulanbku']."'";
         }
 
         // select 0 pph, 0 ppn, 0 nourut, '' objectmataanggaranfk, '' nobku, '' tgl, 'Saldo Awal Bulan' uraianbku, (saldo-penerimaan+pengeluaran) penerimaan, 0 pengeluaran, 0 saldoawal, '' nodokumen
         // order by tglbku asc limit 1
 
+        $jumlahbkulalu = DB::select(DB::raw("
+        select coalesce(sum(penerimaan),0) penerimaanLalu, coalesce(sum(pengeluaran),0) pengeluaranLalu, coalesce(sum(penerimaan),0)-coalesce(sum(pengeluaran),0) as saldoLalu
+        from bukukasumum_t
+        where kdprofile = 30
+        and statusenabled = true
+        $qbulanSaldo
+        $qtahun"));
+
+        $jumlahbkusekarang = DB::select(DB::raw("
+        select coalesce(sum(penerimaan),0) penerimaanNow, coalesce(sum(pengeluaran),0) pengeluaranNow, coalesce(sum(penerimaan),0)-coalesce(sum(pengeluaran),0) as saldoNow
+        from bukukasumum_t
+        where kdprofile = 30
+        and statusenabled = true
+        $qbulan
+        $qtahun"));
+
+        $jumlahbkutotal = DB::select(DB::raw("
+        select coalesce(sum(penerimaan),0) penerimaanTotal, coalesce(sum(pengeluaran),0) pengeluaranTotal, coalesce(sum(penerimaan),0)-coalesce(sum(pengeluaran),0) as saldoTotal
+        from bukukasumum_t
+        where kdprofile = 30
+        and statusenabled = true
+        $qtahun"));
+
         $data = DB::select(DB::raw("select * from(
-            select 0 pph, 0 ppn, 0 nourut, '' objectmataanggaranfk, '' nobku, '' tgl, 'Saldo Awal Bulan' uraianbku, coalesce(sum(penerimaan)-sum(pengeluaran),0) penerimaan, 0 pengeluaran, 0 saldoawal, '' nodokumen
+            select 0 pph, 0 ppn, 0 nourut, '' objectmataanggaranfk, '' nobku, '' tgl, 'Saldo Awal Bulan' uraianbku, coalesce(sum(penerimaan)-sum(pengeluaran),0) penerimaan, 0 pengeluaran, 0 saldoawal, '' nodokumen, 0 objectjenisbuktifk, 'Saldo Awal Bulan' uraian
             from bukukasumum_t
             where kdprofile = 30
             and statusenabled = true
@@ -7041,12 +7060,12 @@ class ReportController extends ApiController{
                 when nopenyetoran is not null then nopenyetoran
                 when nojasagiro is not null then nojasagiro
                 when nosts is not null then nosts
-            end as nodokumen
+            end as nodokumen, objectjenisbuktifk, uraian
             from(
                 select ROW_NUMBER ( ) OVER ( ORDER BY bku.nobku ) nourut, bku.objectmataanggaranfk, bku.nobku, 
                 to_char(bku.tglbku::date, 'DD-MM-YYYY') tgl, bku.uraianbku, bku.penerimaan, 
                 bku.pengeluaran, 0 saldoawal, sr.norealisasi, pj.nopanjar, spm.nospm,
-                pp.nopajak nopemungutan, coalesce(pp.pph, 0) pph, coalesce(pp.ppn, 0) ppn, ppj.nopajak nopenyetoran, jg.nojasagiro, sk.nosts 
+                pp.nopajak nopemungutan, coalesce(pp.pph, 0) pph, coalesce(pp.ppn, 0) ppn, ppj.nopajak nopenyetoran, jg.nojasagiro, sk.nosts, objectjenisbuktifk, uraianbku uraian 
                 from bukukasumum_t bku
                 left join strukrealisasi_t sr on sr.objectbkufk = bku.norec
                 and sr.kdprofile = 30
@@ -7084,7 +7103,7 @@ class ReportController extends ApiController{
 
         $pageWidth = 950;
         //return $this->respond($result);
-        return view('report.keuangan.cetakbkureal',compact('data', 'pageWidth', 'tahunjudul', 'tanggalcetak', 'periode'));
+        return view('report.keuangan.cetakbkureal',compact('data', 'pageWidth', 'tahunjudul', 'tanggalcetak', 'periode', 'jumlahbkulalu', 'jumlahbkusekarang', 'jumlahbkutotal'));
     }
 
     public function CetakBukuPajak(Request $request){

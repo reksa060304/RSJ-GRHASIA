@@ -77,15 +77,54 @@
                     <td align="left" width="100" style="padding: 10px; font-size: 15px; ">{{ $dt->nobku }}</td>
                     <td align="left" width="50" style="padding: 10px; font-size: 15px; ">{{ $dt->tgl }}</td>
                     <td align="left" width="50" style="padding: 10px; font-size: 15px; ">{{ $dt->nodokumen }}</td>
-                    <td align="left" width="200" style="padding: 10px;  font-size: 15px; ">{{ $dt->uraianbku }}</td>
-                    @if(strpos($dt->nodokumen, 'PJK') !== false)
-                    <td align="center" width="50" style="padding: 10px; font-size: 15px; ">{{ $dt->objectmataanggaranfk }} <br> ({{ $dt->pph }}, {{ $dt->ppn }})</td>
-                    @else
-                    <td align="center" width="50" style="padding: 10px; font-size: 15px; ">{{ $dt->objectmataanggaranfk }}</td>
-                    @endif
+                    @php
+                    if($dt->objectjenisbuktifk == 4)
+                        {
+                        $uraian = EXPLODE('-',$dt->objectmataanggaranfk);
+                        $uraianBKU = $uraian[0]." ".$dt->uraianbku;
+                        if(is_null($dt->objectmataanggaranfk)) 
+                            {
+                                $koderek='PPN';
+                                $uraianBKU = $koderek." ".$dt->uraianbku;
+                            } 
+                        else {$koderek = $dt->objectmataanggaranfk;} 
+                        }
+                    else 
+                        {
+                            $uraianBKU = $dt->uraianbku;
+                            $koderek = $dt->objectmataanggaranfk;
+                        }                        
+                    @endphp
+                    <td align="left" width="200" style="padding: 10px;  font-size: 15px; ">{{ $uraianBKU }}</td>
+                    <td align="center" width="50" style="padding: 10px; font-size: 15px; ">{{ $koderek }}</td>
                     <td align="right" width="50" style="padding: 10px; font-size: 15px;  ">{{ number_format($dt->penerimaan,0,',','.') }}</td>
                     <td align="right" width="50" style="padding: 10px; font-size: 15px; ">{{ number_format($dt->pengeluaran,0,',','.') }}</td>
                     <td align="right" width="50" style="padding: 10px; font-size: 15px; ">{{ number_format($dt->saldoawal,0,',','.') }}</td>
+                </tr>
+                @endforeach
+
+                @foreach ($jumlahbkusekarang as $dtnow)
+                <tr>
+                    <td colspan="5" align="center" width="50" style="padding: 10px; font-weight: bold;font-size: 15px;  ">Total Bulan Sekarang</td>
+                    <td align="center" width="50" style="padding: 10px; font-size: 15px;  ">{{ ($dtnow->penerimaannow>0) ? number_format($dtnow->penerimaannow,0,',','.') : '' }}</td>
+                    <td align="center" width="50" style="padding: 10px; font-size: 15px; ">{{ ($dtnow->pengeluarannow>0) ? number_format($dtnow->pengeluarannow,0,',','.') : '' }}</td>
+                    <td align="center" width="50" style="padding: 10px; font-size: 15px; ">{{ ($dtnow->saldonow>0) ? number_format($dtnow->saldonow,0,',','.') : '' }}</td>
+                </tr>
+                @endforeach
+                @foreach ($jumlahbkulalu as $dtlalu)
+                <tr>
+                    <td colspan="5" align="center" width="50" style="padding: 10px; font-weight: bold;font-size: 15px;  ">Total Bulan Lalu</td>
+                    <td align="center" width="50" style="padding: 10px; font-size: 15px;  ">{{ ($dtlalu->penerimaanlalu>0) ? number_format($dtlalu->penerimaanlalu,0,',','.') : '' }}</td>
+                    <td align="center" width="50" style="padding: 10px; font-size: 15px; ">{{ ($dtlalu->pengeluaranlalu>0) ? number_format($dtlalu->pengeluaranlalu,0,',','.') : '' }}</td>
+                    <td align="center" width="50" style="padding: 10px; font-size: 15px; ">{{ ($dtlalu->saldolalu>0) ? number_format($dtlalu->saldolalu,0,',','.') : '' }}</td>
+                </tr>
+                @endforeach
+                @foreach ($jumlahbkutotal as $dttotal)
+                <tr>
+                    <td colspan="5" align="center" width="50" style="padding: 10px; font-weight: bold;font-size: 15px;  ">Jumlah</td>
+                    <td align="center" width="50" style="padding: 10px; font-size: 15px;  ">{{ ($dttotal->penerimaantotal>0) ? number_format($dttotal->penerimaantotal,0,',','.') : '' }}</td>
+                    <td align="center" width="50" style="padding: 10px; font-size: 15px; ">{{ ($dttotal->pengeluarantotal>0) ? number_format($dttotal->pengeluarantotal,0,',','.') : '' }}</td>
+                    <td align="center" width="50" style="padding: 10px; font-size: 15px; ">{{ ($dttotal->saldototal>0) ? number_format($dttotal->saldototal,0,',','.') : '' }}</td>
                 </tr>
                 @endforeach
         </table>
