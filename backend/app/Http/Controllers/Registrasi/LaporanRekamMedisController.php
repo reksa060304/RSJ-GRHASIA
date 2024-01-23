@@ -1200,16 +1200,16 @@ class LaporanRekamMedisController extends   ApiController
                         $bor = $jumlahhariperawatantt/$ttperperiode*100;
                         $alos = 0;
                         $toi = 0;
-                        $bto = $jumlahpulang/$tt;
+                        $bto = $jumlahpulangsementara/$tt;
                         $ndr = 0;
                         $gdr = 0;
                     } else{
                         $bor = $jumlahhariperawatantt/$ttperperiode*100;
                         $alos = $jumlahharidirawat/$jumlahpulangsementara;
-                        $toi = ($ttperperiode - $jumlahhariperawatantt)/$jumlahpulang;
-                        $bto = $jumlahpulang/$tt;
-                        $ndr = $jumlahpasienmeninggallebihdari/$jumlahpulang*1000;
-                        $gdr = $jumlahpasienmeninggal/$jumlahpulang*1000;
+                        $toi = ($ttperperiode - $jumlahhariperawatantt)/$jumlahpulangsementara;
+                        $bto = $jumlahpulangsementara/$tt;
+                        $ndr = $jumlahpasienmeninggallebihdari/$jumlahpulangsementara*1000;
+                        $gdr = $jumlahpasienmeninggal/$jumlahpulangsementara*1000;
                     }
                 
                 
