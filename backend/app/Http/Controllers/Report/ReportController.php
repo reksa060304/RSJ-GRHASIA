@@ -1188,7 +1188,7 @@ class ReportController extends ApiController{
             "));
         $raw = collect(DB::select("
             select pm2.nocm ,to_char(pm2.tgllahir,'dd-mm-yyyy') as tgllahir,age(pm2.tgllahir) as umur ,jm.jeniskelamin ,pm2.namapasien ,pm3.namalengkap, rm.namaruangan ruanganasal, ra.namaruangan ruangantujuan, pm2.alergi, 
-            to_char(st.tglorder,'dd-mm-yyyy HH24:MI:ss') as tglorder,pm3.nosip, kp.kelompokpasien 
+            to_char(st.tglorder,'dd-mm-yyyy HH24:MI:ss') as tglorder,pm3.nosip, kp.kelompokpasien, pas.nosep 
             from strukorder_t st
             inner join pasien_m pm2 on pm2.id = st.nocmfk
             inner join jeniskelamin_m jm on jm.id = pm2.objectjeniskelaminfk
@@ -1197,6 +1197,7 @@ class ReportController extends ApiController{
             inner join ruangan_m ra on ra.id = st.objectruangantujuanfk 
             inner join pasiendaftar_t AS pd ON pd.norec = st.noregistrasifk
             left join kelompokpasien_m AS kp ON kp.id = pd.objectkelompokpasienlastfk
+            LEFT JOIN pemakaianasuransi_t AS pas ON pas.noregistrasifk = pd.norec
             where st.noorder = '$noorder'
         "))->first();
         $detel = [];
