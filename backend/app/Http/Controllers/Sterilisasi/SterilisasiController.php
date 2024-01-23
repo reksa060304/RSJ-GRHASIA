@@ -20,6 +20,7 @@ use App\Transaksi\KirimProduk;
 use App\Transaksi\OrderPelayanan;
 use App\Transaksi\StokProdukDetail;
 use App\Transaksi\StrukKirim;
+use App\Transaksi\StrukOrder;
 use App\Transaksi\StrukPelayanan;
 use App\Transaksi\StrukPelayananDetail;
 use Illuminate\Http\Request;
@@ -35,7 +36,6 @@ class SterilisasiController extends ApiController
         parent::__construct($skip_authentication = false);
     }
 
-    // tanda2
     public function getComboSteril(Request $request) {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
@@ -244,7 +244,6 @@ class SterilisasiController extends ApiController
         return $this->respond($result);
     }
 
-    // tanda1
     public function getComboTerimaBarang(Request $request) {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
@@ -1771,5 +1770,77 @@ class SterilisasiController extends ApiController
         );
 
         return $this->respond($result);
+    }
+
+    public function saveVerifikasiOrderSterilisasi(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        \DB::beginTransaction();
+        $dataLogin = $request->all();
+        try {
+
+            StrukOrder::where('norec', $request['strukorderfk'])
+                ->where('kdprofile',$idProfile)
+                ->update([
+                        'statusorder' => $request['statusorder']]
+                );
+
+            $transStatus = 'true';
+        }catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan Berhasil";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMessage,
+            );
+        } else {
+            $transMessage = "Simpan Gagal!!";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message"  => $transMessage,
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function saveBtlVerifikasiOrderSterilisasi(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        \DB::beginTransaction();
+        $dataLogin = $request->all();
+        try {
+
+            StrukOrder::where('norec', $request['strukorderfk'])
+                ->where('kdprofile',$idProfile)
+                ->update([
+                        'statusorder' => $request['statusorder']]
+                );
+
+            $transStatus = 'true';
+        }catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan Berhasil";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMessage,
+            );
+        } else {
+            $transMessage = "Simpan Gagal!!";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message"  => $transMessage,
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
 }
