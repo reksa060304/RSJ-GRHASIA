@@ -23,6 +23,7 @@
 
     @media print {
     body {
+        /* margin: 10mm 5mm 10mm 15mm; */
         margin:0;
         /* width:31cm; */
     }

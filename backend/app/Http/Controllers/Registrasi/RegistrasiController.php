@@ -13676,9 +13676,9 @@ GROUP BY y.KET
         where pd.kdprofile = 30 and pd.statusenabled = true and date_part('month', pd.tglregistrasi::date ) =$th and date_part('year', pd.tglregistrasi::date ) = $bl  and ru.objectdepartemenfk = 16 and pd.tglpulang::date = pd.tglregistrasi::date
         group by pd.tglregistrasi::date
         order by pd.tglregistrasi::date asc"));
-        $los = DB::select(DB::raw("SELECT sum(x.jml)::integer as jml, x.tgl FROM (select date_part('day', pd.tglregistrasi::date ) as tgl , case when pd.tglpulang::date = pd.tglregistrasi::date then 1 else sum(pd.tglpulang::date - pd.tglregistrasi::date) end as jml from pasiendaftar_t pd 
+        $los = DB::select(DB::raw("SELECT sum(x.jml)::integer as jml, x.tgl FROM (select date_part('day', pd.tglpulang::date ) as tgl , case when pd.tglpulang::date = pd.tglregistrasi::date then 1 else sum(pd.tglpulang::date - pd.tglregistrasi::date) end as jml from pasiendaftar_t pd 
         inner join ruangan_m ru on ru.id = pd.objectruanganlastfk
-        where pd.kdprofile = 30 and pd.statusenabled = true and date_part('month', pd.tglregistrasi::date ) =$th and date_part('year', pd.tglregistrasi::date ) = $bl  and ru.objectdepartemenfk = 16 and pd.tglpulang is not null
+        where pd.kdprofile = 30 and pd.statusenabled = true and date_part('month', pd.tglpulang::date ) =$th and date_part('year', pd.tglpulang::date ) = $bl  and ru.objectdepartemenfk = 16 and pd.tglpulang is not null
         GROUP BY pd.tglregistrasi, pd.tglpulang
         )as x
         GROUP BY x.tgl

@@ -3880,22 +3880,28 @@ class PerencanaanController extends ApiController {
         $ap = 0;
         if($request['asalproduk'] == 'APBD'){
             $ap = 15;
-        }else{
+        }elseif($request['asalproduk'] == 'Jasa Layanan'){
             $ap = 18;
+        }elseif($request['asalproduk'] == 'DAK'){
+            $ap = 21;
+        }elseif($request['asalproduk'] == 'Danais'){
+            $ap = 2;
+        }elseif($request['asalproduk'] == 'SiLPA'){
+            $ap = 4;
         }
-        $cek = BKU::where('nobku', '=', $request['nobku'])->where('objectasalprodukfk', '=', $ap)->first();
+        $cek = BKU::where('nobku', '=', $request['nobku'])->where('norec', '<>', $request['norec'])->where('objectasalprodukfk', '=', $ap)->first();
 
         try{ 
-                if(empty($cek)){
-                    $MA = BKU::where('norec', '=', $request['norec'])->first();
-                    $MA->tglbku = $request['tglbku'];
-                    $MA->nobku = $request['nobku'];
-                    $MA->save();
+            $MA = BKU::where('norec', '=', $request['norec'])->first();
+            $MA->tglbku = $request['tglbku'];
+            $MA->nobku = $request['nobku'];
+            $MA->save();
 
-                    $transStatus = 'true';
-                } else{
-                    $transStatus = 'false';
-                }
+            $transStatus = 'true';
+        // if(empty($cek)){
+        //         } else{
+        //             $transStatus = 'false';
+        //         }
        } catch (\Exception $e) {
             $transStatus = 'false';
        }
@@ -4117,7 +4123,7 @@ class PerencanaanController extends ApiController {
                     
                     if($request['jenisbukti'] == 1){
                         $MA = new BKU();
-                        $norecKS = $MA->generateNewId();
+                        $norecKS = $MA->generateNewId(); 
                         $MA->norec = $norecKS;
                         $MA->kdprofile = $idProfile;
                         $MA->statusenabled = true;

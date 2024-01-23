@@ -2743,6 +2743,10 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         Route::post('sterilisasi/save-update-status-bersihkan', 'Sterilisasi\SterilisasiController@UpdateStatusBersih');
         Route::get('sterilisasi/get-data-orderalatsteril', 'Sterilisasi\SterilisasiController@getDaftarOrderAlatSteril');
         Route::post('sterilisasi/save-update-status-alatkotor', 'Sterilisasi\SterilisasiController@UpdateStatusAlatKotor');
+        Route::get('report/cetak-distribusi-alat','Report\ReportController@cetakDistribusiAlat');
+        Route::get('sterilisasi/get-monitoring-barang-steril', 'Sterilisasi\SterilisasiController@getMonitoringBarangSteril');
+        Route::post('sterilisasi/verifikasi-order-sterilisasi', 'Sterilisasi\SterilisasiController@saveVerifikasiOrderSterilisasi');
+        Route::post('sterilisasi/batal-verifikasi-order-sterilisasi', 'Sterilisasi\SterilisasiController@saveBtlVerifikasiOrderSterilisasi');
         // });
 
         // Route::group(['prefix' => 'sysadmin'], function () {

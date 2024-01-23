@@ -2833,7 +2833,7 @@ class TagihanController  extends ApiController
 //                'apd.objectasalrujukanfk','pd.nostruklastfk','pd.nosbmlastfk','rpp.noregistrasifk as rpp','apd.tglmasuk','apd.tglkeluar','ru.objectdepartemenfk','dept.namadepartemen',
 //                DB::raw('case when rpp.israwatgabung is null or rpp.israwatgabung =0 then \' \' else \'Ya\' end as israwatgabung','pm.tglmeninggal' ));
             ->select('apd.norec', 'apd.tglregistrasi', 'ru.id as ruid_asal', 'ru.namaruangan', 'kls.id as kelasid', 'kls.namakelas', 'km.namakamar', 'tt.reportdisplay as nobed', 'apd.statusantrian',
-                'apd.statuskunjungan', 'apd.tglregistrasi', 'apd.tgldipanggildokter', 'apd.tgldipanggilsuster', 'pg.id as pgid', 'pg.namalengkap as namadokter',
+                'apd.statuskunjungan', 'apd.tglregistrasi', 'apd.tgldipanggildokter', 'apd.tgldipanggilsuster', 'pg.id as pgid', 'pg.namalengkap as namadokter','pd.tglpulang',
                 'apd.objectasalrujukanfk','pd.nostruklastfk','pd.nosbmlastfk','apd.tglmasuk','apd.tglkeluar','ru.objectdepartemenfk','dept.namadepartemen','pm.tglmeninggal');
 //                DB::raw('pm.tglmeninggal' ));
 
@@ -2847,7 +2847,7 @@ class TagihanController  extends ApiController
 //                'apd.tglmasuk','apd.tglkeluar','ru.objectdepartemenfk','dept.namadepartemen','pm.tglmeninggal');
         $data = $data->groupBy('apd.norec', 'apd.tglregistrasi', 'ru.id', 'ru.namaruangan', 'kls.id', 'kls.namakelas', 'km.namakamar', 'tt.reportdisplay', 'apd.statusantrian',
                                 'apd.statuskunjungan', 'apd.tglregistrasi', 'apd.tgldipanggildokter', 'apd.tgldipanggilsuster', 'pg.id', 'pg.namalengkap',
-                                'apd.objectasalrujukanfk','pd.nostruklastfk','pd.nosbmlastfk','pd.noregistrasi',
+                                'apd.objectasalrujukanfk','pd.nostruklastfk','pd.nosbmlastfk','pd.noregistrasi','pd.tglpulang',
                                 'apd.tglmasuk','apd.tglkeluar','ru.objectdepartemenfk','dept.namadepartemen','pm.tglmeninggal');
         $data = $data->orderBy('apd.tglregistrasi','desc');
         $data = $data->get();
@@ -4002,12 +4002,13 @@ class TagihanController  extends ApiController
                             ]
                         );
                 }else{
-                    $updatePD= PasienDaftar::where('noregistrasi', $request['noregistrasi'])
+                    $tglPulang = $request['tglpulang'] != '' ? $request['tglpulang'] : $request['tglregistrasi'];
+
+                    $updatePD = PasienDaftar::where('noregistrasi', $request['noregistrasi'])
                         ->update([
-                                'tglregistrasi' => $request['tglregistrasi'],
-                                'tglpulang' => $request['tglregistrasi']
-                            ]
-                        );
+                            'tglregistrasi' => $request['tglregistrasi'],
+                            'tglpulang' => $tglPulang
+                        ]);
                     $updateAPDs= AntrianPasienDiperiksa::where('norec', $request['norec_apd'])
                         ->update([
                                 'tglregistrasi' => $request['tglregistrasi']
@@ -4025,6 +4026,18 @@ class TagihanController  extends ApiController
                         ]
                     );
             }
+
+
+            // update tgl pulang
+            if ($request['tglpulang']) {
+                    $updatePD= PasienDaftar::where('noregistrasi', $request['noregistrasi'])
+                        ->update([
+                                'tglpulang' => $request['tglpulang']
+
+                            ]
+                        );
+            }
+
 
             $dataAPD =  AntrianPasienDiperiksa::where('norec',$request['norec_apd'])->first();
             $kdProfile = $this->getDataKdProfile($request);

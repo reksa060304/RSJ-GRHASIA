@@ -1188,7 +1188,7 @@ class ReportController extends ApiController{
             "));
         $raw = collect(DB::select("
             select pm2.nocm ,to_char(pm2.tgllahir,'dd-mm-yyyy') as tgllahir,age(pm2.tgllahir) as umur ,jm.jeniskelamin ,pm2.namapasien ,pm3.namalengkap, rm.namaruangan ruanganasal, ra.namaruangan ruangantujuan, pm2.alergi, 
-            to_char(st.tglorder,'dd-mm-yyyy HH24:MI:ss') as tglorder,pm3.nosip, kp.kelompokpasien 
+            to_char(st.tglorder,'dd-mm-yyyy HH24:MI:ss') as tglorder,pm3.nosip, kp.kelompokpasien, pas.nosep 
             from strukorder_t st
             inner join pasien_m pm2 on pm2.id = st.nocmfk
             inner join jeniskelamin_m jm on jm.id = pm2.objectjeniskelaminfk
@@ -1197,6 +1197,7 @@ class ReportController extends ApiController{
             inner join ruangan_m ra on ra.id = st.objectruangantujuanfk 
             inner join pasiendaftar_t AS pd ON pd.norec = st.noregistrasifk
             left join kelompokpasien_m AS kp ON kp.id = pd.objectkelompokpasienlastfk
+            LEFT JOIN pemakaianasuransi_t AS pas ON pas.noregistrasifk = pd.norec
             where st.noorder = '$noorder'
         "))->first();
         $detel = [];
@@ -4103,7 +4104,38 @@ class ReportController extends ApiController{
 
         $data = DB::select(DB::raw("
         select * from (
-            select DENSE_RANK ( ) OVER ( order by kodemataanggaran ) AS nourut, kodefix, kodemataanggaran, namamataanggaran, sum(jumlahjan) jumlahjan, sum(jumlahfeb) jumlahfeb,
+            select DENSE_RANK ( ) OVER ( order by kodemataanggaran ) AS nourut, 
+            case 
+            when kodemataanggaran ilike 'I.A.%' then 1
+            when kodemataanggaran ilike 'I.B.%' then 2
+            when kodemataanggaran ilike 'II.%' then 3
+            when kodemataanggaran ilike 'III.%' then 4
+          end as urut1,
+          case 
+            when kodemataanggaran ilike 'I.A.%' then split_part(kodemataanggaran,'.',3)
+            when kodemataanggaran ilike 'I.B.%' then split_part(kodemataanggaran,'.',3)
+            when kodemataanggaran ilike 'II.%' then split_part(kodemataanggaran,'.',2)
+            when kodemataanggaran ilike 'III.%' then split_part(kodemataanggaran,'.',2)
+          end as split3,
+          case 
+            when kodemataanggaran ilike 'I.A.%' then split_part(kodemataanggaran,'.',4)
+            when kodemataanggaran ilike 'I.B.%' then split_part(kodemataanggaran,'.',4)
+            when kodemataanggaran ilike 'II.%' then split_part(kodemataanggaran,'.',3)
+            when kodemataanggaran ilike 'III.%' then split_part(kodemataanggaran,'.',3)
+          end as split4,
+          case 
+            when kodemataanggaran ilike 'I.A.%' then split_part(kodemataanggaran,'.',5)
+            when kodemataanggaran ilike 'I.B.%' then split_part(kodemataanggaran,'.',5)
+            when kodemataanggaran ilike 'II.%' then split_part(kodemataanggaran,'.',4)
+            when kodemataanggaran ilike 'III.%' then split_part(kodemataanggaran,'.',4)
+          end as split5,
+          case 
+            when kodemataanggaran ilike 'I.A.%' then LENGTH(split_part(kodemataanggaran, '.', 5))
+            when kodemataanggaran ilike 'I.B.%' then LENGTH(split_part(kodemataanggaran, '.', 5))
+            when kodemataanggaran ilike 'II.%' then LENGTH(split_part(kodemataanggaran, '.', 4))
+            when kodemataanggaran ilike 'III.%' then LENGTH(split_part(kodemataanggaran, '.', 4))
+          end as len5,
+              kodefix, kodemataanggaran, namamataanggaran, sum(jumlahjan) jumlahjan, sum(jumlahfeb) jumlahfeb,
         sum(jumlahmar) jumlahmar, sum(jumlahapr) jumlahapr, sum(jumlahmei) jumlahmei, sum(jumlahjun) jumlahjun,
         sum(jumlahjul) jumlahjul, sum(jumlahagt) jumlahagt, sum(jumlahsep) jumlahsep, sum(jumlahokt) jumlahokt,
         sum(jumlahnov) jumlahnov, sum(jumlahdes) jumlahdes,
@@ -4148,7 +4180,38 @@ class ReportController extends ApiController{
         
         union all
         
-        select DENSE_RANK ( ) OVER ( order by kodemataanggaran ) AS nourut, '' kodefix, kodemataanggaran,  keteranganbelanja namamataanggaran, sum(jumlahjan) jumlahjan, sum(jumlahfeb) jumlahfeb,
+        select DENSE_RANK ( ) OVER ( order by kodemataanggaran ) AS nourut, 
+        case 
+          when kodemataanggaran ilike 'I.A.%' then 1
+          when kodemataanggaran ilike 'I.B.%' then 2
+          when kodemataanggaran ilike 'II.%' then 3
+          when kodemataanggaran ilike 'III.%' then 4
+        end as urut1,
+        case 
+          when kodemataanggaran ilike 'I.A.%' then split_part(kodemataanggaran,'.',3)
+          when kodemataanggaran ilike 'I.B.%' then split_part(kodemataanggaran,'.',3)
+          when kodemataanggaran ilike 'II.%' then split_part(kodemataanggaran,'.',2)
+          when kodemataanggaran ilike 'III.%' then split_part(kodemataanggaran,'.',2)
+        end as split3,
+        case 
+          when kodemataanggaran ilike 'I.A.%' then split_part(kodemataanggaran,'.',4)
+          when kodemataanggaran ilike 'I.B.%' then split_part(kodemataanggaran,'.',4)
+          when kodemataanggaran ilike 'II.%' then split_part(kodemataanggaran,'.',3)
+          when kodemataanggaran ilike 'III.%' then split_part(kodemataanggaran,'.',3)
+        end as split4,
+        case 
+          when kodemataanggaran ilike 'I.A.%' then split_part(kodemataanggaran,'.',5)
+          when kodemataanggaran ilike 'I.B.%' then split_part(kodemataanggaran,'.',5)
+          when kodemataanggaran ilike 'II.%' then split_part(kodemataanggaran,'.',4)
+          when kodemataanggaran ilike 'III.%' then split_part(kodemataanggaran,'.',4)
+        end as split5,
+        case 
+          when kodemataanggaran ilike 'I.A.%' then LENGTH(split_part(kodemataanggaran, '.', 5))
+          when kodemataanggaran ilike 'I.B.%' then LENGTH(split_part(kodemataanggaran, '.', 5))
+          when kodemataanggaran ilike 'II.%' then LENGTH(split_part(kodemataanggaran, '.', 4))
+          when kodemataanggaran ilike 'III.%' then LENGTH(split_part(kodemataanggaran, '.', 4))
+        end as len5,
+        '' kodefix, kodemataanggaran,  keteranganbelanja namamataanggaran, sum(jumlahjan) jumlahjan, sum(jumlahfeb) jumlahfeb,
         sum(jumlahmar) jumlahmar, sum(jumlahapr) jumlahapr, sum(jumlahmei) jumlahmei, sum(jumlahjun) jumlahjun,
         sum(jumlahjul) jumlahjul, sum(jumlahagt) jumlahagt, sum(jumlahsep) jumlahsep, sum(jumlahokt) jumlahokt,
         sum(jumlahnov) jumlahnov, sum(jumlahdes) jumlahdes,
@@ -4190,8 +4253,9 @@ class ReportController extends ApiController{
         ) as x group by kodemataanggaran, namamataanggaran, norec, keteranganbelanja, asalproduk
         order by nourut, kodefix desc
         )as x 
-        order by split_part(x.kodemataanggaran,'.',4) asc , split_part(x.kodemataanggaran,'.',5) ::int4 asc, kodefix desc
+        order by urut1, split3, split4, len5, split5, kodefix desc
         "));
+        // order by split_part(x.kodemataanggaran,'.',4) asc , split_part(x.kodemataanggaran,'.',5) ::int4 asc, kodefix desc
 
         $pageWidth = 1200;
         //return $this->respond($result);
@@ -6595,23 +6659,30 @@ class ReportController extends ApiController{
             $qbulan =  " and extract(month from tglbku) =  '" . $request['bulanbku']."'";
         }
 
+        $qbulanSaldo  = '';
+        if (isset($request['bulanbku']) && $request['bulanbku'] != "" && $request['bulanbku'] != "undefined") {
+            $qbulanSaldo =  " and extract(month from tglbku) <  '" . $request['bulanbku']."'";
+        }
+
         $data = DB::select(DB::raw("
             select * from(
                 select 0 nourut, '' nobku, '' tgl, 'Saldo Awal Bulan' uraianbku, (saldo-penerimaan+pengeluaran) penerimaan, 0 pengeluaran, 0 saldoawal
                 from bukukasumum_t
                 where kdprofile = 30
                 and statusenabled = true
-                $qbulan
+                and objectjenisbuktifk<>4
+                $qbulanSaldo
                 $qtahun
                 order by tglbku asc limit 1
             ) as x
         
             union all
         
-            select ROW_NUMBER ( ) OVER ( ORDER BY bku.tglbku ) nourut, bku.nobku, to_char(bku.tglbku::date, 'DD-MM-YYYY') tgl, bku.uraianbku, bku.penerimaan, bku.pengeluaran, 0 saldoawal
+            select ROW_NUMBER ( ) OVER ( ORDER BY bku.nobku ) nourut, bku.nobku, to_char(bku.tglbku::date, 'DD-MM-YYYY') tgl, bku.uraianbku, bku.penerimaan, bku.pengeluaran, 0 saldoawal
             from bukukasumum_t bku
             where bku.kdprofile = 30
             and bku.statusenabled = true
+            and bku.objectjenisbuktifk<>4
             $qbulan
             $qtahun"));
 
@@ -6938,14 +7009,44 @@ class ReportController extends ApiController{
             $qbulan =  " and extract(month from tglbku) =  '" . $request['bulanbku']."'";
         }
 
+        $qbulanSaldo  = '';
+        if (isset($request['bulanbku']) && $request['bulanbku'] != "" && $request['bulanbku'] != "undefined") {
+            $qbulanSaldo =  " and extract(month from tglbku) <  '" . $request['bulanbku']."'";
+        }
+
+        // select 0 pph, 0 ppn, 0 nourut, '' objectmataanggaranfk, '' nobku, '' tgl, 'Saldo Awal Bulan' uraianbku, (saldo-penerimaan+pengeluaran) penerimaan, 0 pengeluaran, 0 saldoawal, '' nodokumen
+        // order by tglbku asc limit 1
+
+        $jumlahbkulalu = DB::select(DB::raw("
+        select coalesce(sum(penerimaan),0) penerimaanLalu, coalesce(sum(pengeluaran),0) pengeluaranLalu, coalesce(sum(penerimaan),0)-coalesce(sum(pengeluaran),0) as saldoLalu
+        from bukukasumum_t
+        where kdprofile = 30
+        and statusenabled = true
+        $qbulanSaldo
+        $qtahun"));
+
+        $jumlahbkusekarang = DB::select(DB::raw("
+        select coalesce(sum(penerimaan),0) penerimaanNow, coalesce(sum(pengeluaran),0) pengeluaranNow, coalesce(sum(penerimaan),0)-coalesce(sum(pengeluaran),0) as saldoNow
+        from bukukasumum_t
+        where kdprofile = 30
+        and statusenabled = true
+        $qbulan
+        $qtahun"));
+
+        $jumlahbkutotal = DB::select(DB::raw("
+        select coalesce(sum(penerimaan),0) penerimaanTotal, coalesce(sum(pengeluaran),0) pengeluaranTotal, coalesce(sum(penerimaan),0)-coalesce(sum(pengeluaran),0) as saldoTotal
+        from bukukasumum_t
+        where kdprofile = 30
+        and statusenabled = true
+        $qtahun"));
+
         $data = DB::select(DB::raw("select * from(
-            select 0 pph, 0 ppn, 0 nourut, '' objectmataanggaranfk, '' nobku, '' tgl, 'Saldo Awal Bulan' uraianbku, (saldo-penerimaan+pengeluaran) penerimaan, 0 pengeluaran, 0 saldoawal, '' nodokumen
+            select 0 pph, 0 ppn, 0 nourut, '' objectmataanggaranfk, '' nobku, '' tgl, 'Saldo Awal Bulan' uraianbku, coalesce(sum(penerimaan)-sum(pengeluaran),0) penerimaan, 0 pengeluaran, 0 saldoawal, '' nodokumen, 0 objectjenisbuktifk, 'Saldo Awal Bulan' uraian
             from bukukasumum_t
             where kdprofile = 30
             and statusenabled = true
-            $qbulan
+            $qbulanSaldo
             $qtahun
-            order by tglbku asc limit 1
             ) as x
             
             union all
@@ -6960,12 +7061,12 @@ class ReportController extends ApiController{
                 when nopenyetoran is not null then nopenyetoran
                 when nojasagiro is not null then nojasagiro
                 when nosts is not null then nosts
-            end as nodokumen
+            end as nodokumen, objectjenisbuktifk, uraian
             from(
-                select ROW_NUMBER ( ) OVER ( ORDER BY bku.tglbku ) nourut, bku.objectmataanggaranfk, bku.nobku, 
+                select ROW_NUMBER ( ) OVER ( ORDER BY bku.nobku ) nourut, bku.objectmataanggaranfk, bku.nobku, 
                 to_char(bku.tglbku::date, 'DD-MM-YYYY') tgl, bku.uraianbku, bku.penerimaan, 
                 bku.pengeluaran, 0 saldoawal, sr.norealisasi, pj.nopanjar, spm.nospm,
-                pp.nopajak nopemungutan, coalesce(pp.pph, 0) pph, coalesce(pp.ppn, 0) ppn, ppj.nopajak nopenyetoran, jg.nojasagiro, sk.nosts 
+                pp.nopajak nopemungutan, coalesce(pp.pph, 0) pph, coalesce(pp.ppn, 0) ppn, ppj.nopajak nopenyetoran, jg.nojasagiro, sk.nosts, objectjenisbuktifk, uraianbku uraian 
                 from bukukasumum_t bku
                 left join strukrealisasi_t sr on sr.objectbkufk = bku.norec
                 and sr.kdprofile = 30
@@ -7003,7 +7104,7 @@ class ReportController extends ApiController{
 
         $pageWidth = 950;
         //return $this->respond($result);
-        return view('report.keuangan.cetakbkureal',compact('data', 'pageWidth', 'tahunjudul', 'tanggalcetak', 'periode'));
+        return view('report.keuangan.cetakbkureal',compact('data', 'pageWidth', 'tahunjudul', 'tanggalcetak', 'periode', 'jumlahbkulalu', 'jumlahbkusekarang', 'jumlahbkutotal'));
     }
 
     public function CetakBukuPajak(Request $request){
@@ -7367,26 +7468,26 @@ class ReportController extends ApiController{
             $qbulan =  " and extract(month from tglbku) between '01' and  '" . $request['bulanpanjar']."'";
         }
 
-        $data = DB::select(DB::raw("select * from(
-            select 0 nourut, '' nobku, '' tgl, 'Saldo Awal Bulan' uraianbku, (saldo-penerimaan+pengeluaran) penerimaan, 0 pengeluaran, 0 saldo
-            from bukukasumum_t
-            where kdprofile = 30
-            and statusenabled = true
-            $qbulan
-            $qtahun
-            and objectjenisbuktifk = 3
-            order by tglbku asc limit 1
-        ) as x
+        // select * from(
+            //     select 0 nourut, '' nobku, '' tgl, 'Saldo Awal Bulan' uraianbku, (saldo-penerimaan+pengeluaran) penerimaan, 0 pengeluaran, 0 saldo
+        //     from bukukasumum_t
+        //     where kdprofile = 30
+        //     and statusenabled = true
+        //     $qbulan
+        //     $qtahun
+        //     and objectjenisbuktifk = 3
+        //     order by tglbku asc limit 1
+        // ) as x
     
-        union all
+        // union all
     
-        select ROW_NUMBER ( ) OVER ( ORDER BY bku.tglbku ) nourut, bku.nobku, to_char(bku.tglbku::date, 'DD-MM-YYYY') tgl, bku.uraianbku, bku.penerimaan, bku.pengeluaran, 0 saldo
+        $data = DB::select(DB::raw("select * from(select ROW_NUMBER ( ) OVER ( ORDER BY bku.nobku ) nourut, bku.nobku, to_char(bku.tglbku::date, 'DD-MM-YYYY') tgl, bku.uraianbku, bku.penerimaan, bku.pengeluaran, 0 saldo
         from bukukasumum_t bku
         where bku.kdprofile = 30
         and bku.statusenabled = true
         $qbulan
         $qtahun
-        and bku.objectjenisbuktifk = 3"));
+        and bku.objectjenisbuktifk = 3) as x ORDER BY nourut"));
 
         $saldoakhir = 0;
 
@@ -11028,10 +11129,7 @@ class ReportController extends ApiController{
         }
         // edit split_part(dp.keterangan, '-', 2)
         $data = DB::select(DB::raw("select dp.tahun, dp.kode kodesubsubkegiatan, 
-        CASE
-            when $tahap=1 then dp.keterangan
-            else split_part(dp.keterangan, '-', 2)
-        END as keterangansubsubkegiatan,
+        dp.keterangan as keterangansubsubkegiatan,
 
         dp0.kode kodesubkegiatan, dp0.keterangan keterangansubkegiatan,
         dp3.kode kodekegiatan, dp3.keterangan keterangankegiatan,
@@ -15813,4 +15911,58 @@ public function suratBuktiPengembalian(Request $request)
 
         return $pdf->stream();
     }
+
+    public function cetakDistribusiAlat(Request $request)
+    {
+        $profile = (int)$request['kdprofile'];
+        $norec = $request['norec'];
+        $pageWidth = 950;
+
+        // Mengambil data struk kirim
+        $data = DB::table('strukkirim_t AS st')
+            ->select(
+                'st.norec', 
+                'st.nokirim AS noorder', 
+                'st.tglkirim AS tglorder',
+                'ru.namaruangan AS namaruangan', 
+                'pg.namalengkap AS namapengorder'
+            )
+            ->leftJoin('ruangan_m AS ru', 'ru.id', '=', 'st.objectruangantujuanfk')
+            ->leftJoin('pegawai_m AS pg', 'pg.id', '=', 'st.objectpegawaipengirimfk')
+            ->where('st.kdprofile', $profile)
+            ->where('st.norec', $norec)
+            ->where('st.statusenabled', true)
+            ->first(); // Menggunakan first() untuk mendapatkan satu baris data saja
+
+        // Pengecekan apakah data ditemukan sebelum mencoba mengakses propertinya
+        if ($data) {
+            // Mengambil detail dari tabel kirimproduk_t berdasarkan nokirimfk
+            $detailOrders = DB::table('kirimproduk_t AS kp')
+                ->select(
+                    'prd.kdproduk',
+                    'prd.namaproduk',
+                    'sat.satuanstandar',
+                    'kp.qtyproduk'
+                )
+                ->leftJoin('produk_m AS prd', 'prd.id', '=', 'kp.objectprodukfk')
+                ->leftJoin('satuanstandar_m AS sat', 'sat.id', '=', 'prd.objectsatuanstandarfk')
+                ->where('kp.kdprofile', $profile)
+                ->where('kp.nokirimfk', $norec)
+                ->get();
+
+            // Menambahkan properti detailOrders ke dalam objek data
+            $data->jmlitem = count($detailOrders);
+            $data->detailsOrder = $detailOrders;
+        } else {
+            // Data tidak ditemukan, respons halaman tidak ditemukan
+            abort(404);
+        }
+
+        // Mengembalikan respons
+        return view(
+            'report.cssd.report-monitoring',
+            compact('data', 'pageWidth')
+        );
+    }
+
 }

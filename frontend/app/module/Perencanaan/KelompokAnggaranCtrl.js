@@ -1,5 +1,5 @@
 define(['initialize', 'Configuration'], function (initialize, configuration) {
-    'use strict';
+    'use strict';   
     var baseTransaksi = configuration.baseApiBackend;
     initialize.controller('KelompokAnggaranCtrl', ['$scope', 'CacheHelper', '$state', '$mdDialog','MedifirstService',
         function ($scope, cacheHelper, $state, $mdDialog, medifirstService) {
@@ -143,6 +143,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 { id: 5, tahap: "Pegeseran 3" },
                 { id: 6, tahap: "Perubahan" },
             ];
+            $scope.listPihakKetiga = []
+            medifirstService.getPart('perencanaan/get-datacombo-part-rekanan', true, true, 20).then(function (data) {
+                $scope.listPihakKetiga = data
+            })
+
             loadDataCombo()
             function loadDataCombo() {
                 medifirstService.get('anggaran/pj-rba?id=' + medifirstService.getPegawaiLogin().id).then(function (data) {
@@ -423,9 +428,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         $scope.listBendahara = data
                         $scope.listPenerima = data
                     })
-                    medifirstService.getPart('perencanaan/get-datacombo-part-rekanan', true, true, 20).then(function (data) {
-                        $scope.listPihakKetiga = data
-                    })
+                    
 
                 })
                 
@@ -2958,10 +2961,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                     medifirstService.get("perencanaan/get-pengembalian-panjar?norec="+$scope.item.norecpengembalian).then(function (e) {
                                         $scope.dataSourcePengembalian = e.data.data
                                     })
-                                    medifirstService.get("perencanaan/get-data-combo").then(function (e) {
+                                    // medifirstService.get("perencanaan/get-data-combo").then(function (e) {
                                         
-                                        $scope.dataSourcePanjarPengembalian = e.data.panjar
-                                    });
+                                    //     $scope.dataSourcePanjarPengembalian = e.data.panjar
+                                    // });
                                 }, function (error) {
                             
                                 })
@@ -3344,7 +3347,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 })
             }
 
-            $scope.findData = function () {
+            $scope.findData = function () {                
                 var idpegawai = ''
                     $scope.pegawaiLogin = medifirstService.getPegawaiLogin();
                     //console.log($scope.pegawaiLogin)
@@ -6887,6 +6890,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                                                         $scope.dataSourceDetailSPJ = new kendo.data.DataSource({
                                                                             data: DataDetailSPJ
                                                                         });
+                                                                        $scope.norecverif = ''
                                                                         // $state.go("SPJ", {
                                                     
                                                                         // })
@@ -6950,6 +6954,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                                 $scope.item.hidespj = 1
                                                 $scope.popupTambahSPJ.center().close()
                                                 DataDetailSPJ = []
+                                                $scope.norecverif = ''
                                                 $scope.item.itemRincian = undefined
                                                 $scope.dataSourceDetailSPJ = new kendo.data.DataSource({
                                                     data: DataDetailSPJ
@@ -7148,8 +7153,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.listPenerima = [{value:dataItem.bendaharafk,text:dataItem.bendahara}]
                 $scope.item.penerimaSPJ =  {value:dataItem.penerimafk,text:dataItem.penerima}
 
-                $scope.listPihakKetiga = [{id:dataItem.rekananfk,namarekanan:dataItem.pihakketiga}]
-                $scope.item.pihakKetigaSPJ = {id:dataItem.rekananfk,namarekanan:dataItem.pihakketiga}
+                if(dataItem.rekananfk) {
+                    $scope.listPihakKetiga.add({id:dataItem.rekananfk,namarekanan:dataItem.pihakketiga})
+                    $scope.item.pihakKetigaSPJ = {id:dataItem.rekananfk,namarekanan:dataItem.pihakketiga}
+                }
 
                 let newArr = []
                 for (let index = 0; index < DataDetailSPJALL.length; index++) {
@@ -7613,6 +7620,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         medifirstService.get("perencanaan/get-pengembalian-panjar?norec="+$scope.item.norecpengembalian ).then(function (e) {
                             $scope.dataSourcePengembalian = e.data.data
                         })
+                        loadDataGrid();
                         medifirstService.get("perencanaan/get-data-combo").then(function (e) {
                                         
                             $scope.dataSourcePanjarPengembalian = e.data.panjar

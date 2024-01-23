@@ -6,6 +6,7 @@ define(['initialize'], function (initialize) {
             $scope.popUp = {};
             $scope.isRouteLoading = false;
             loadData();
+
             $scope.Search = function () {
                 loadData()
             }
@@ -178,13 +179,13 @@ define(['initialize'], function (initialize) {
                 $scope.Clear();
                 e.preventDefault();
                 var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
-                if (dataItem == undefined) {
-                    alert("Data Belum Dipilih!")
-                    return;
-                };
+                // if (dataItem == undefined) {
+                //     alert("Data Belum Dipilih!")
+                //     return;
+                // };
                 medifirstService.get("sysadmin/master/get-daftar-jenisdiet?id=" + dataItem.id).then(function (e) {
 
-                })
+                 })
                 $scope.popUp.id = dataItem.id
                 $scope.popUp.kodePelayananMutu = dataItem.kdpelmutu
                 $scope.popUp.PelayananMutu = dataItem.pelayananmutu                

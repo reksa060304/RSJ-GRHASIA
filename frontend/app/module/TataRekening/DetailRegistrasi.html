@@ -347,6 +347,21 @@
 						ng-disabled="item.cekTglKeluar === false" k-options="startDateOptions" />
 				</div>
 			</div>
+			<div class="grid_3">
+				<div class="grid_12">
+					<input type="checkbox" class="k-checkbox" name="cekTglPulang" id="cekTglPulang"
+						ng-model="item.cekTglPulang">
+					<label class="k-checkbox-label" for="cekTglPulang">Tgl Pulang</label>
+				</div>
+				<div class="clear"></div>
+
+				<div class="grid_12">
+					<input style="width: 100%" k-ng-model="item.tglPulangs" kendo-datetimepicker 
+						k-min="minDate" placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'"
+						ng-disabled="item.cekTglPulang === false" k-options="startDateOptions" />
+				</div>
+			</div>
+
 
 			<div class="grid_1" style="margin-top: 16px">
 				<button class="btnTemplate1" style="margin-left: 0;" ng-click="simpanTanggal()">Simpan</button>

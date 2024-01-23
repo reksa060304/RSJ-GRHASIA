@@ -164,6 +164,11 @@
                         <td class="price fs-9"><strong>Ruangan Asal</strong></td>
                         <td class="description fs-9" style="text-align: left">: {{ $raw->ruanganasal }}</td>
                     </tr>
+                    <tr>
+                        <td class="price fs-9"><strong>No. SEP</strong></td>
+                        <td class="description fs-9" style="text-align: left">: {{ $raw->nosep }}</td>
+                        <td style="width: 10px;"><strong></strong></td>
+                    </tr>
                     <tr style="height: 10px;"><td></td></tr>
                     <tr>
                         <td class="price fs-9"><strong></strong></td>

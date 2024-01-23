@@ -957,6 +957,15 @@ class PMKPController extends ApiController
 
     public function saveLaporanInsidenInternal(Request $request) {
         $kdProfile = (int) $this->getDataKdProfile($request);
+        $dataLogin = $request->all();
+        $dataPegawaiUser = \DB::select(DB::raw("select pg.id,pg.namalengkap from loginuser_s as lu
+                INNER JOIN pegawai_m as pg on lu.objectpegawaifk=pg.id
+                where lu.id=:idLoginUser"),
+            array(
+                'idLoginUser' => $dataLogin['userData']['id'],
+            )
+        );
+       
         \DB::beginTransaction();
         try {
             if ($request['data']['norec'] == '') {
@@ -997,6 +1006,7 @@ class PMKPController extends ApiController
                 $data->grading = $request['data']['grading'];
                 $data->insidenkeselamatanfk = $request['data']['insidenkeselamatanfk'];
                 $data->noregistrasifk = $request['data']['noregistrasifk'];
+              
                 $data->save();
 
             $transStatus = 'true';

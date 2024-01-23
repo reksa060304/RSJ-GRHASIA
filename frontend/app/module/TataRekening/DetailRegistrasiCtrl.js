@@ -296,6 +296,12 @@ define(['initialize'], function (initialize) {
 					"title": "Tgl Keluar",
 					"width": "100px",
 					"template": "<span class='style-left'>{{formatTanggal('#: tglkeluar #')}}</span>"
+				},
+				{
+					"field": "tglpulang",
+					"title": "Tgl Pulang",
+					"width": "100px",
+					"template": "<span class='style-left'>{{formatTanggal('#: tglpulang #')}}</span>"
 				}
 			];
 
@@ -545,15 +551,17 @@ define(['initialize'], function (initialize) {
 				if ($scope.currentRowData === undefined) {
 					messageContainer.error("Pilih data terlebih dahulu");
 				} else {
-					$scope.item.tglRegiss = new Date();
-					$scope.item.tglMasuks = new Date();
-					$scope.item.tglKeluars = new Date();
+					// $scope.item.tglRegiss = new Date();
+					// $scope.item.tglMasuks = new Date();
+					// $scope.item.tglKeluars = new Date();
+					// $scope.item.tglPulangs = new Date();
 					$scope.cboDokter = false;
 					$scope.cboUbahDokter = false;
 					$scope.showUbahTanggal = true;
 					$scope.item.cekTglRegis = false;
 					$scope.item.cekTglMasuk = false;
 					$scope.item.cekTglKeluar = false;
+					$scope.item.cekTglPulang = false;
 				}
 			}
 			$scope.batalUbahTanggal = function () {
@@ -576,6 +584,10 @@ define(['initialize'], function (initialize) {
 				if ($scope.item.cekTglKeluar) {
 					tglkeluars = moment($scope.item.tglKeluars).format('YYYY-MM-DD HH:mm:ss')
 				}
+				var tglpulangs = "";
+				if ($scope.item.cekTglPulang) {
+					tglpulangs = moment($scope.item.tglPulangs).format('YYYY-MM-DD HH:mm:ss')
+				}
 
 				var dataJson = {
 					noregistrasi: $scope.item.noRegistrasi,
@@ -584,8 +596,10 @@ define(['initialize'], function (initialize) {
 					norec_apd: $scope.currentRowData.norec,
 					tglregistrasi: tglregistrasis,
 					tglmasuk: tglmasuks,
-					tglkeluar: tglkeluars
+					tglkeluar: tglkeluars,
+					tglpulang: tglpulangs,
 				}
+				console.log(dataJson);
 				medifirstService.get("farmasi/get-penjagaan-closing-kasir?noregistrasi=" + $scope.item.noRegistrasi ).then(function (e) {
                     
 
@@ -602,7 +616,7 @@ define(['initialize'], function (initialize) {
 					} else if (cek == 123){
 						medifirstService.post('tatarekening/ubah-tgl-detailregistrasi',dataJson).then(function (e) {
 							if (e.status = 201) {
-								$scope.saveLogging('Ubah Tgl Detail Registrasi', 'norec Antrian Pasien Diperiksa',
+								$scope.saveLogging('Ubah Tgl Detail Registrasi Ubah Tgl Pulang', 'norec Antrian Pasien Diperiksa', 
 									$scope.currentRowData.norec, 'Ubah Tgl di Detail Registrasi pada No Registrasi ' + $scope.item.noRegistrasi)
 								LoadData();
 								$scope.batalUbahTanggal();

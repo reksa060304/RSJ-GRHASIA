@@ -1448,10 +1448,10 @@
     </div>
   </div>
 </div>
-<div *ngIf="activeItem.label == 'Jadwal Dokter dan Psikolog' && !isBuktiReservasi">
+<div *ngIf="activeItem.label == 'Jadwal Profesional Pemberi Asuhan' && !isBuktiReservasi">
   <div class="card card-w-title" style="margin-top:10px" *ngIf="!isShowRiwayatRegis">
     <div class="card card-form-header">
-      <h1>Jadwal Dokter dan Psikolog</h1>
+      <h1>Jadwal Profesional Pemberi Asuhan</h1>
     </div>
     <div class="ui-g ui-fluid">
       <div class="ui-g-12 ui-md-12 ui-lg-12">
@@ -1460,7 +1460,7 @@
          [rowsPerPageOptions]="[5,10,20]" selectionMode="single" [(selection)]="selected" [loading]="loadingHistory"
          loadingIcon="fa fa-spinner" (onRowSelect)="onRowSelect($event)" scrollable="true" expandableRows="true">
          <p-column field="namaruangan" header="Ruangan" [sortable]="true" [style]="{'width':'150px'}"></p-column>
-         <p-column field="namalengkap" header="Dokter" [sortable]="true" [style]="{'width':'150px'}"></p-column>
+         <p-column field="namalengkap" header="Jadwal Profesional Pemberi Asuhan" [sortable]="true" [style]="{'width':'150px'}"></p-column>
          <p-column field="jambuka" header="Jam Buka" [sortable]="true" [style]="{'width':'100px'}"></p-column>
          <p-column field="jamtutup" header="Jam Tutup" [sortable]="true" [style]="{'width':'100px'}"></p-column>
          <p-column field="hari" header="Hari" [sortable]="true" [style]="{'width':'100px'}"></p-column>

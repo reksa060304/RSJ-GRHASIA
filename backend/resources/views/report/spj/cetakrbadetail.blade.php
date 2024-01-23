@@ -35,6 +35,7 @@
 
     @media print {
     body {
+        /* margin: 10mm 5mm 10mm 15mm; */
         margin: 0px;
         /* size: auto; */
     }
@@ -209,7 +210,11 @@
                         <td>
                             <p align="left" style="margin-left:10px">
                                     <font style="font-size: 12pt; " color="#000000" face="Arial">
-                                            : {{ $data[0]->kodesubsubkegiatan.' - '.$data[0]->keterangansubsubkegiatan }}
+                                        @php
+                                            $str = $data[0]->keterangansubsubkegiatan;
+                                            $str1 = explode("-",$str)[count(explode("-",$str))-1];
+                                        @endphp
+                                            : {{ $data[0]->kodesubsubkegiatan.' - '.$str1 }}
                                     </font>
                             </p>
                         </td>
@@ -647,7 +652,7 @@
     <table cellpadding="0" cellspacing="0" width="100%"  border="0">
         <thead>
             <tr>
-                <td width="700">
+                <td width="600">
                 </td>
                 <td>
                 </td>
@@ -660,7 +665,7 @@
                 </td>
             </tr>
             <tr>
-                <td width="700">
+                <td width="600">
                 </td>
                 <td>
                 </td>
@@ -677,7 +682,7 @@
             <tr></tr>
             <tr></tr>
             <tr>
-                <td width="700">
+                <td width="600">
                 </td>
                 <td>
                 </td>
@@ -690,7 +695,7 @@
                 </td>
             </tr>
             <tr>
-                <td width="700">
+                <td width="600">
                 </td>
                 <td>
                 </td>
