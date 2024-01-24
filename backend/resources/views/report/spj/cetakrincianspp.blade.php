@@ -40,7 +40,7 @@
 <body style="background-color: #CCCCCC">
 <div align="center" >
     <section >
-    <table  class="bayangprint" cellspacing="0" cellpadding="0" bgcolor="#FFFFFF" border="0" width="{{$pageWidth}}" style="height: 700px;padding-right: 70px;padding-left: 100px;">
+    <table  class="bayangprint" cellspacing="0" cellpadding="0" bgcolor="#FFFFFF" border="1" width="{{$pageWidth}}" style="height: 700px;padding-right: 70px;padding-left: 100px;">
         <tbody>
         <tr style="padding: 5px;">
             <td align="center" colspan="4" style="padding: 5px;height:50px;"></td>
@@ -108,9 +108,9 @@
             <td align="center" colspan="4" style="padding: 5px;height:70px;"></td>
         </tr>
         <tr style="padding: 5px;">
-            <td style="padding: 5px;height:200px;width: 100px;" align="left"></td>
-            <td style="padding: 5px;height:200px;" align="left" colspan="2"></td>
-            <td style="padding: 5px;height:200px;" align="center" colspan="2">
+            <td style="padding: 5px;height:200px;width: 50px;" align="left"></td>
+            <td style="padding: 5px;height:200px;width: 50px;" align="left" colspan="2"></td>
+            <td style="padding: 5px;height:200px;width: 300px;" align="center" colspan="2">
                 YOGYAKARTA,{{$tgl}}<br>
                 Direktur<br><br><br><br><br><br><br><br><br>
                 dr. Akhmad Akhadi Syamsudhuha, M.P.H<br>
