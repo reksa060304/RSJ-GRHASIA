@@ -1,4 +1,4 @@
-define(['initialize'], function (initialize) {
+define(['initialize', 'Configuration'], function (initialize, config) {
     'use strict';
     initialize.controller('DaftarTerimaSterilCtrl', ['$scope', '$state', 'CacheHelper', 'DateHelper', 'MedifirstService',
         function ($scope, $state, cacheHelper, dateHelper, medifirstService) {
@@ -15,7 +15,7 @@ define(['initialize'], function (initialize) {
             var norecKirim = '';
             var noKirim = '';
             LoadCache();
-            loadCombo();            
+            loadCombo();
             var data2 = []
 
             function LoadCache() {
@@ -75,7 +75,7 @@ define(['initialize'], function (initialize) {
                     "&nokirim=" + $scope.item.struk + rg + produkfk
                     , true).then(function (dat) {
                         $scope.isRouteLoading = false;
-                        data2 =  dat.data.daftar
+                        data2 = dat.data.daftar
                         for (var i = 0; i < dat.data.daftar.length; i++) {
                             dat.data.daftar[i].no = i + 1
                         }
@@ -121,8 +121,8 @@ define(['initialize'], function (initialize) {
                 }
 
             }
-            
-            $scope.bersihkan = function(){               
+
+            $scope.bersihkan = function () {
                 if ($scope.dataSelected == undefined) {
                     toastr.error("Pilih yg akan di ubah!!")
                     return;
@@ -145,7 +145,7 @@ define(['initialize'], function (initialize) {
                 });
             }
 
-            $scope.steril = function(){
+            $scope.steril = function () {
                 if ($scope.dataSelected == undefined) {
                     toastr.error("Pilih yg akan di ubah!!")
                     return;
@@ -168,11 +168,11 @@ define(['initialize'], function (initialize) {
                 });
             }
 
-            $scope.Kotor = function(){
+            $scope.Kotor = function () {
                 if ($scope.dataSelected == undefined) {
                     toastr.error("Pilih yg akan di ubah!!")
                     return;
-                }               
+                }
 
                 var dataupdate = {
                     strukkirimfk: $scope.dataSelected.norec,
@@ -186,7 +186,7 @@ define(['initialize'], function (initialize) {
                 });
             }
 
-            $scope.kirim = function(){
+            $scope.kirim = function () {
                 // if ($scope.dataSelected == undefined) {
                 //     toastr.error("Pilih yg akan di ubah!!")
                 //     return;
@@ -277,8 +277,8 @@ define(['initialize'], function (initialize) {
                         detail: etos
                     }
 
-                    medifirstService.post('logistik/batal-kirim-terima-barang',objSave).then(function (e) {
-                        medifirstService.post('sysadmin/general/hapus-jurnal-amprahan-barang',objSave).then(function (e) {
+                    medifirstService.post('logistik/batal-kirim-terima-barang', objSave).then(function (e) {
+                        medifirstService.post('sysadmin/general/hapus-jurnal-amprahan-barang', objSave).then(function (e) {
                             init();
                         }, function (error) {
                             init();
@@ -328,8 +328,8 @@ define(['initialize'], function (initialize) {
                                     detail: etos
                                 }
 
-                                medifirstService.post('logistik/batal-kirim-terima-barang',objSave).then(function (e) {
-                                    medifirstService.post('sysadmin/general/hapus-jurnal-amprahan-barang',objSave).then(function (e) {
+                                medifirstService.post('logistik/batal-kirim-terima-barang', objSave).then(function (e) {
+                                    medifirstService.post('sysadmin/general/hapus-jurnal-amprahan-barang', objSave).then(function (e) {
                                         init();
                                     }, function (error) {
                                         init();
@@ -420,8 +420,8 @@ define(['initialize'], function (initialize) {
                         detail: data3
                     }
 
-                    medifirstService.post('logistik/batal-kirim-terima-barang-peritem',objSave).then(function (e) {
-                        medifirstService.post('sysadmin/general/update-jurnal-batalkirim-peritem',objSave).then(function (e) {
+                    medifirstService.post('logistik/batal-kirim-terima-barang-peritem', objSave).then(function (e) {
+                        medifirstService.post('sysadmin/general/update-jurnal-batalkirim-peritem', objSave).then(function (e) {
                             init();
                         }, function (error) {
                             init();
@@ -432,7 +432,7 @@ define(['initialize'], function (initialize) {
                     $scope.winDialogBatalPerItem.close();
 
                 } else {
-                    medifirstService.get("logistik/get-daftar-barang-batal?nokirimfk=" + $scope.dataGrid._data[0].norec                    
+                    medifirstService.get("logistik/get-daftar-barang-batal?nokirimfk=" + $scope.dataGrid._data[0].norec
                         + "&ruanganfk=" + $scope.dataGrid._data[0].rutujuanid
                         + "&objectprodukfk=" + dataOn
                         , true).then(function (dat) {
@@ -490,8 +490,8 @@ define(['initialize'], function (initialize) {
                                     detail: data3
                                 }
 
-                                medifirstService.post('logistik/batal-kirim-terima-barang-peritem',objSave).then(function (e) {
-                                    medifirstService.post('sysadmin/general/update-jurnal-batalkirim-peritem',objSave).then(function (e) {
+                                medifirstService.post('logistik/batal-kirim-terima-barang-peritem', objSave).then(function (e) {
+                                    medifirstService.post('sysadmin/general/update-jurnal-batalkirim-peritem', objSave).then(function (e) {
                                         init();
                                     }, function (error) {
                                         init();
@@ -536,6 +536,21 @@ define(['initialize'], function (initialize) {
             $scope.batalBatal1 = function () {
                 $scope.item.alasanBatal1 = "";
                 $scope.winDialogBatalPerItem.close();
+            }
+
+            // $scope.Cetak = function () {
+            //     $scope.popUp.center().open();
+            // }
+
+            $scope.cetakDistribusiAlat = function () {
+                var local = JSON.parse(localStorage.getItem('profile'));
+                var profile = local.id;
+                if ($scope.dataSelected == null) {
+                    toastr.error("Pilih data yang ingin dicetak !!")
+                    return;
+                } else {
+                    window.open(config.baseApiBackend + "report/cetak-distribusi-alat?norec=" + $scope.dataSelected.norec + "&kdprofile=" + profile);
+                }
             }
 
             $scope.Cetak = function () {
@@ -588,7 +603,7 @@ define(['initialize'], function (initialize) {
 
                     });
                 $scope.popUp.close();
-            }                     
+            }
 
             $scope.formatTanggal = function (tanggal) {
                 return moment(tanggal).format('DD-MMM-YYYY');

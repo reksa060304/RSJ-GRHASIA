@@ -199,7 +199,7 @@ define(['initialize'], function (initialize) {
                         // }
                         if (datas[i].tgldipanggildokter != null) {
                             if (datas[i].namaruangan.includes('Psikologi')) {
-                                datas[i].stts = 'Di Panggil Dokter Psikologi';
+                                datas[i].stts = 'Di Panggil Psikologi';
                             } else {
                                 datas[i].stts = 'Di Panggil Dokter';
                             }
@@ -213,7 +213,7 @@ define(['initialize'], function (initialize) {
 
                         if (datas[i].tglselesaiperiksa != null) {
                             if (datas[i].namaruangan.includes('Psikologi')) {
-                                datas[i].stts = 'Selesai Periksa Dokter Psikologi';
+                                datas[i].stts = 'Selesai Periksa Psikologi';
                             } else {
                                 datas[i].stts = 'Selesai Periksa Dokter';
                             }
@@ -296,9 +296,9 @@ define(['initialize'], function (initialize) {
                     //if ($(this).text() == 'Di Panggil Perawat') { $(this).addClass('green') }
                     if ($(this).text() == 'Selesai Periksa Perawat') { $(this).addClass('green') }
                     if ($(this).text() == 'Di Panggil Dokter') { $(this).addClass('blue') }
-                    if ($(this).text() == 'Di Panggil Dokter Psikologi') { $(this).addClass('blue') }
+                    if ($(this).text() == 'Di Panggil Psikologi') { $(this).addClass('blue') }
                     if ($(this).text() == 'Selesai Periksa Dokter') { $(this).addClass('birulaut') }
-                    if ($(this).text() == 'Selesai Periksa Dokter Psikologi') { $(this).addClass('birulaut') }
+                    if ($(this).text() == 'Selesai Periksa Psikologi') { $(this).addClass('birulaut') }
                     if ($(this).text() == 'Online') { $(this).addClass('koneng') }
 
                 })

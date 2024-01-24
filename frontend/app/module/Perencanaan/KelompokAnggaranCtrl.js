@@ -1,5 +1,5 @@
 define(['initialize', 'Configuration'], function (initialize, configuration) {
-    'use strict';
+    'use strict';   
     var baseTransaksi = configuration.baseApiBackend;
     initialize.controller('KelompokAnggaranCtrl', ['$scope', 'CacheHelper', '$state', '$mdDialog','MedifirstService',
         function ($scope, cacheHelper, $state, $mdDialog, medifirstService) {
@@ -2065,6 +2065,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             kodemataanggaran:dataItem.kodemataanggaran
                         }
                         $scope.norecpanjar = dataItem.norec
+                        $scope.item.nopanjar = dataItem.nopanjar
                         $scope.item.tglPanjar = new Date(dataItem.tglpanjar) 
                         $scope.item.sumberPanjar = dataItem.sumberpanjar
                         $scope.item.uraianPanjar=dataItem.uraian
@@ -2081,6 +2082,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         $scope.item.ppnpanjar = dataItem.ppn
                         $scope.item.jenispajak = {id: dataItem.idpajak, jenispajak: dataItem.jenispajak}
                         $scope.item.jenispajak2 = {id: dataItem.idpajak2, jenispajak: dataItem.jenispajak2}
+                        $scope.item.statuspanjar = 1
                         $scope.popupPanjar.center().open() 
 
                     });
@@ -3097,6 +3099,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 var objSave =
                     {
                         norec: $scope.norecpanjar,
+                        nopanjar: $scope.item.nopanjar,
                         tglPanjar: $scope.item.tglPanjar,
                         sumberPanjar: $scope.item.sumberPanjar,
                         uraianPanjar: $scope.item.uraianPanjar,
@@ -3344,7 +3347,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 })
             }
 
-            $scope.findData = function () {
+            $scope.findData = function () {                
                 var idpegawai = ''
                     $scope.pegawaiLogin = medifirstService.getPegawaiLogin();
                     //console.log($scope.pegawaiLogin)
@@ -6102,8 +6105,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 
                 $scope.item.subkegiatanpanjar = {id: $scope.item.subKegiatanSPJ.id, keterangan: $scope.item.subKegiatanSPJ.keterangan}
                 $scope.item.subsubkegiatanpanjar = {id: $scope.item.subSubKegiatanSPJ.id, keterangan: $scope.item.subSubKegiatanSPJ.keterangan}
-                $scope.item.darirekeningpanjar = {kodemataanggaran: $scope.item.mataAnggaranSPJ.kodemataanggaran, namamataanggaran: $scope.item.mataAnggaranSPJ.namamataanggaran}
+                $scope.item.darirekeningpanjar = {kodemataanggaran: $scope.item.mataAnggaranSPJ.kodemataanggaran, namamataanggaran: $scope.item.mataAnggaranSPJ.namamataanggaran}               
                 console.log($scope.item.subkegiatanpanjar)
+                $scope.item.statuspanjar = 1
                 $scope.popupPanjar.center().open() 
             }
 
@@ -6137,6 +6141,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.item.subkegiatanpanjar = $scope.subkegiatanverif
                 $scope.item.subsubkegiatanpanjar = $scope.subsubkegiatanverif
                 $scope.item.darirekeningpanjar = $scope.mataanggaranverif
+                $scope.item.statuspanjar = 1
                 $scope.popupPanjar.center().open() 
             }
 
@@ -6355,6 +6360,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 //     })
                 // })
 
+                $scope.item.hidespj = 2
                 $scope.popupTambahSPJ.center().open()
             }
             $scope.TambahPanjarVerif = function(){
@@ -6392,7 +6398,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 medifirstService.get("perencanaan/get-data-combo").then(function (e) {
                     $scope.listSubKegiatanPanjarSPJ = e.data.kegiatancombo
                 })
-                
+                $scope.item.statuspanjar = 2
                 $scope.popupPanjar.center().open()
             }
             $scope.changeCboPilihSubKegiatanSPJ = function () {
@@ -6798,6 +6804,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 var datasave =
                     {
                         norec :  $scope.norecverif,
+                        norealisasi: $scope.item.norealisasi,
                         tglrealisasi:  moment($scope.item.tglSPJ).format('YYYY-MM-DD'),
                         status: null,
                         totalbelanja:  $scope.item.jumlahSPJ,
@@ -6876,6 +6883,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                                                 } else if (cek == 123){
                                                                     medifirstService.post('perencanaan/save-realisasi-spj',datasave).then(function (e) {
                                                                         loadDataGrid();
+                                                                        $scope.item.hidespj = 1
                                                                         $scope.popupTambahSPJ.center().close()
                                                                         $scope.item.itemRincian = undefined
                                                                         DataDetailSPJ = []
@@ -6943,6 +6951,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                         } else if (cek == 123){
                                             medifirstService.post('perencanaan/save-realisasi-spj',datasave).then(function (e) {
                                                 loadDataGrid();
+                                                $scope.item.hidespj = 1
                                                 $scope.popupTambahSPJ.center().close()
                                                 DataDetailSPJ = []
                                                 $scope.norecverif = ''
@@ -7101,6 +7110,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 }
                 $scope.listSubKegiatanSPJ = [{id: dataItem.idsubkegiatan,keterangan: dataItem.keterangansubkegiatan}] 
                 $scope.item.subKegiatanSPJ = {id: dataItem.idsubkegiatan,keterangan: dataItem.keterangansubkegiatan}
+                $scope.item.norealisasi = dataItem.norealisasi
                 
 
                 $scope.item.tglSPJ =  new Date(moment(dataItem.tglrealisasi).format('YYYY-MM-DD'));
@@ -7168,6 +7178,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.totalspjawal = dataItem.totalbelanja
                 
                 $scope.isRouteLoading = false
+                $scope.item.hidespj = 1
                 $scope.popupTambahSPJ.center().open()
             }
 
@@ -7697,7 +7708,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.item.subkegiatanpengembalian = dataItem.subkegiatan
                 $scope.item.subsubkegiatanpengembalian = dataItem.subsubkegiatan
                 $scope.item.rekeningpengembalian = dataItem.kodemataanggaran
-                $scope.item.norecpengembalian = dataItem.norec
+                $scope.item.norecpengembalian = dataItem.norec                
 
                 $scope.subkegiatanpengembalian = dataItem.idsubkegiatan
                 $scope.subsubkegiatanpengembalian = dataItem.idsubsubkegiatan

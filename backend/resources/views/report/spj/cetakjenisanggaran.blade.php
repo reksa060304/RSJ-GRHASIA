@@ -23,6 +23,7 @@
 
     @media print {
     body {
+        /* margin: 10mm 5mm 10mm 15mm; */
         margin:0;
         /* width:31cm; */
     }
@@ -54,8 +55,8 @@
 <div>
     <table cellpadding="0" cellspacing="0" width="100%"  border="0" class="tabel" >
         <tr>
-            <td align="center" style="padding: 5px; width: 20px;">
-                    <p>
+            <td style="padding: 5px; width: 50px;">
+                    <p align="center">
                             @if(stripos(\Request::url(), 'localhost') !== FALSE)
                             <img src="{{ asset('img/LOGO GRHASIA.png') }}" style="width: 100px" >
                             @else
@@ -64,7 +65,7 @@
                       
                     </p>
             </td>
-            <td align="center" style="padding: 5px; width: 350px;">
+            <td align="center" style="padding: 5px; width: 300px;">
                 <b style="font-size: 23px;">
                     RENCANA BISNIS DAN ANGGARAN<br>
                     BADAN LAYANAN UMUM DAERAH<br>

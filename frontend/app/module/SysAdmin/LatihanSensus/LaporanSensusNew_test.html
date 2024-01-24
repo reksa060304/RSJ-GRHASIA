@@ -1,0 +1,225 @@
+<style>
+    .k-grid .k-grid-header .k-header .k-link {
+        height: auto;
+    }
+
+    .k-grid .k-grid-header .k-header {
+        white-space: normal;
+    }
+
+    .k-grid .k-grid-header .k-header {
+        text-align: center;
+    }
+
+    .k-window-content .k-content {
+        overflow: none
+    }
+
+    legend {
+        cursor: pointer;
+        padding: 10px;
+    }
+
+    .effect-shadow {
+        -webkit-box-shadow: 2px 2px 5px #b6b6b6;
+        -moz-box-shadow: 2px 2px 5px #b6b6b6;
+        box-shadow: 2px 2px 5px #b6b6b6;
+    }
+
+    .warnaa {
+        color: black
+    }
+
+    hr {
+        border: 1px solid black;
+        margin-top: 0px;
+        margin-bottom: 0px;
+        display: inline-block;
+        width: 100%;
+    }
+
+    h1 {
+        color: black;
+        display: block;
+        font-size: 14px;
+        margin-block-start: 0px;
+        margin-block-end: 0;
+        margin-inline-start: 0px;
+        margin-inline-end: 0px;
+        font-weight: bold;
+    }
+
+    h2 {
+        color: black;
+        display: block;
+        font-size: 14px;
+        margin-block-start: 0px;
+        margin-block-end: 0;
+        margin-inline-start: 0px;
+        margin-inline-end: 0px;
+        font-weight: bold;
+    }
+</style>
+<div class="grid_12">
+    <div class="panel panel-default container_12">
+        <div class="panel-heading" c-translate>Sensus Harian Rawat Inap</div>
+    </div>
+    <div class="panel panel-default panel-white" ng-hide="isMasuk">
+        <fieldset class="effect-shadow" style=" border-radius: 4px">
+            <legend id="filterData">
+                <a ng-click="showAndHide()">
+                    <h2><span class="fa fa-plus warnaa">
+                        </span> &nbsp;Pencarian</h2>
+                </a>
+            </legend>
+            <div class="grid_12" id="contentPencarian">
+                <div class="grid_12">
+                    <div class="grid_3">
+                        <div class="grid_6">
+                            <label c-label item="item" c-label-text="Periode"></label>
+                            <input style="width: 100%" k-ng-model="item.tglawal" kendo-datepicker
+                                placeholer="yyyy-mm-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" />
+                        </div>
+                    </div>
+                    <div class="grid_2" style="margin-top: 2px;">
+                        <label c-label item="item" c-label-text="Ruangan"></label>
+                        <input style="width: 100%;" kendo-combo-box k-ng-model="item.ruangan"
+                            k-data-text-field="'namaruangan'" k-data-value-field="'id'" k-filter="'contains'"
+                            k-auto-bind="false" k-data-source="listRuangan" />
+                    </div>
+                    <div class="grid_1" style="margin-top: 2px;" ng-hide="true">
+                        <label c-label item="item" c-label-text="Kelas"></label>
+                        <input style="width: 100%;" kendo-combo-box k-ng-model="item.kelas"
+                            k-data-text-field="'namakelas'" k-data-value-field="'id'" k-filter="'contains'"
+                            k-auto-bind="false" k-data-source="listKelas" />
+                    </div>
+                    <div class="grid_2" style="margin-top:23px">
+                        <button class="k-button k-button-icontext k-primary k-grid-update" ng-click="SearchData()"
+                            style="width:100px"><span class="k-sprite k-icon k-i-search"></span>Cari </button>
+                        <button class="k-button  k-button-icontext" ng-click="ClearData()" style="width:100px"><span
+                                class="k-sprite k-icon k-delete"></span>Clear</button>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+</div>
+<div class="grid_12" style="margin-top: 40px; margin-bottom: -10px;">
+    <div class="grid_2">
+        <label c-label item="item" c-label-text="Jumlah Tempat Tidur"></label>
+        <input c-text-box type="input" style="text-align: right" filter="" class="k-textbox"
+            ng-model="item.ttlTempatTidur" disabled />
+    </div>
+    <div class="grid_1">
+        <label c-label item="item" c-label-text="BOR"></label>
+        <input c-text-box type="input" style="text-align: right" filter="" class="k-textbox"
+            ng-model="item.bortt" disabled />
+    </div>
+    <div class="grid_1">
+        <label c-label item="item" c-label-text="AVLOS"></label>
+        <input c-text-box type="input" style="text-align: right" filter="" class="k-textbox"
+            ng-model="item.los" disabled />
+    </div>
+    <div class="grid_1">
+        <label c-label item="item" c-label-text="LOS"></label>
+        <input c-text-box type="input" style="text-align: right" filter="" class="k-textbox"
+            ng-model="item.losaja" disabled />
+    </div>
+    <div class="grid_1">
+        <label c-label item="item" c-label-text="TOI"></label>
+        <input c-text-box type="input" style="text-align: right" filter="" class="k-textbox"
+            ng-model="item.toi" disabled />
+    </div>
+    <div class="grid_1">
+        <label c-label item="item" c-label-text="BTO"></label>
+        <input c-text-box type="input" style="text-align: right" filter="" class="k-textbox"
+            ng-model="item.bto" disabled />
+    </div>
+    <div class="grid_1">
+        <label c-label item="item" c-label-text="NDR"></label>
+        <input c-text-box type="input" style="text-align: right" filter="" class="k-textbox"
+            ng-model="item.ndr" disabled />
+    </div>
+    <div class="grid_1">
+        <label c-label item="item" c-label-text="GDR"></label>
+        <input c-text-box type="input" style="text-align: right" filter="" class="k-textbox"
+            ng-model="item.gdr" disabled />
+    </div>
+    <div class="grid_1" ng-hide="true">
+        <label c-label item="item" c-label-text="Tanggal Awal"></label>
+        <input c-text-box type="input" style="text-align: right" filter="" class="k-textbox"
+            ng-model="item.tglperiodeawal" disabled />
+    </div>
+    <div class="grid_1" ng-hide="true">
+        <label c-label item="item" c-label-text="Tanggal Akhir"></label>
+        <input c-text-box type="input" style="text-align: right" filter="" class="k-textbox"
+            ng-model="item.tglperiodeakhir" disabled />
+    </div>
+    <div class="grid_1" ng-hide="true">
+        <label c-label item="item" c-label-text="Ruangan"></label>
+        <input c-text-box type="input" style="text-align: right" filter="" class="k-textbox"
+            ng-model="item.ruangan" disabled />
+    </div>
+</div>
+
+<div class="grid_12" style="margin-top:60px;z-index:100000">
+    <div ng-include='"../app/template/Shared/TemplateLoading"'></div>
+</div>
+<div class="grid_12">
+    <md-content>
+        <md-tabs md-dynamic-height md-border-bottom md-selected="myVar">
+            <md-tab label="Data Informasi Pasien Ruangan">
+                <md-content class="md-padding">
+                    <div class="grid_12" style="margin-top: 10px;">
+                        <div class="grid_12 borderBox">
+                            <kendo-grid id="kGrid" data-source="sourceLaporanIn" options="columnLaporanIn"
+                                k-selectable="'row'" k-sortable="'true'" k-resizable="'true'"
+                                k-ng-model="dataSelectedIn" ng-click="klikIn(dataSelectedIn)">
+                            </kendo-grid>
+                        </div>
+                    </div>
+                    <div id="#grid"></div>
+                </md-content>
+            </md-tab>
+        </md-tabs>
+    </md-content>
+</div>
+<!-- <div class="grid_12" style="margin-top:60px">
+    <div ng-include='"../app/module/Shared/TemplateLoading"'></div>
+</div> -->
+<!-- <div class="grid_6">
+    <md-content>
+        <md-tabs md-dynamic-height md-border-bottom md-selected="myVar">                    
+           
+        </md-tabs>
+    </md-content>
+</div>
+<div class="grid_6">
+    <md-content>
+        <md-tabs md-dynamic-height md-border-bottom md-selected="myVar">                    
+            
+        </md-tabs>
+    </md-content>
+</div>
+<div class="grid_6">
+    <md-content>
+        <md-tabs md-dynamic-height md-border-bottom md-selected="myVar">                    
+            
+        </md-tabs>
+    </md-content>
+</div>
+<div class="grid_6">
+    <md-content>
+        <md-tabs md-dynamic-height md-border-bottom md-selected="myVar">                    
+            
+        </md-tabs>
+    </md-content>
+</div>
+<div class="grid_6">
+    <md-content>
+        <md-tabs md-dynamic-height md-border-bottom md-selected="myVar">                    
+            
+        </md-tabs>
+    </md-content> -->
+
+<!-- </div> -->
