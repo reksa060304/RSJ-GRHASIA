@@ -101,7 +101,7 @@ class LaundryController extends ApiController
             ->leftJOIN('jenisproduk_m as jp','jp.id','=','djp.objectjenisprodukfk')
             ->leftJOIN('satuanstandar_m as ss','ss.id','=','pr.objectsatuanstandarfk')
 //            ->JOIN('stokprodukdetail_t as spd','spd.objectprodukfk','=','pr.id')
-            ->select('pr.id','pr.kdproduk as kdsirs','pr.namaproduk','ss.id as ssid','ss.satuanstandar')
+        ->select('pr.id','pr.kdproduk as kdsirs','pr.namaproduk','ss.id as ssid','ss.satuanstandar')
             ->where('pr.statusenabled',true)
             ->where('pr.objectdepartemenfk',$this->settingDataFixed('KdDepartemenLaundry', $idProfile))
             ->where('pr.kdprofile', $idProfile)
@@ -476,6 +476,7 @@ class LaundryController extends ApiController
                     'qtyorder' => $item->jumlah,
                     'qtyretur' => $item->qtyprodukretur,
                     'jasa' => $item->jasa,
+                    'nostrukterimafk' => $item->nostrukterimafk
                 );
             }
 
@@ -708,7 +709,7 @@ class LaundryController extends ApiController
             $data = $data->where('sp.norec','=', $request['norecOrder']);
         }
 
-//        $data = $data->distinct();
+        $data = $data->distinct();
         $data = $data->where('sp.statusenabled',true);
         $data = $data->where('sp.objectkelompoktransaksifk',6);
 //        $data = $data->wherein('sp.objectruanganfk',$strRuangan);
@@ -986,9 +987,9 @@ class LaundryController extends ApiController
 //            ->select('st.id','st.name')
 //            ->get();
         $dataStruk = \DB::table('strukorder_t as sr')
-            ->JOIN('pegawai_m as pg','pg.id','=','sr.objectpegawaiorderfk')
-            ->JOIN('ruangan_m as ru','ru.id','=','sr.objectruanganfk')
-            ->JOIN('ruangan_m as ru2','ru2.id','=','sr.objectruangantujuanfk')
+            ->leftJoin('pegawai_m as pg','pg.id','=','sr.objectpegawaiorderfk')
+            ->leftJoin('ruangan_m as ru','ru.id','=','sr.objectruanganfk')
+            ->leftJoin('ruangan_m as ru2','ru2.id','=','sr.objectruangantujuanfk')
             ->select('sr.noorder','pg.id as pgid','pg.namalengkap','ru.id as ruidasal','ru.namaruangan as ruanganasal',
                 'ru2.id as ruidtujuan','ru2.namaruangan as ruangantujuan','sr.tglorder','sr.jenispermintaanfk','sr.keteranganorder')
             ->where('sr.kdprofile', $idProfile);
@@ -1039,60 +1040,60 @@ class LaundryController extends ApiController
 
         $details=[];
         $i = 0;
-//        $dataStok = \DB::select(DB::raw("select sk.norec,spd.objectprodukfk, sk.tglstruk,spd.objectasalprodukfk,
-//                    sum(spd.qtyproduk) as qtyproduk,spd.objectruanganfk
-//                    from stokprodukdetail_t as spd
-//                    inner JOIN strukpelayanan_t as sk on sk.norec=spd.nostrukterimafk
-//                    where  spd.objectruanganfk =:ruanganid
-//                    group by sk.norec,spd.objectprodukfk, sk.tglstruk,spd.objectasalprodukfk,
-//                            spd.harganetto2,spd.hargadiscount,
-//                    spd.objectruanganfk
-//                    order By sk.tglstruk"),
-//            array(
-//                'ruanganid' => $dataStruk->ruidtujuan
-//            )
-//        );
-//        $hargajual=0;
-//        $harganetto=0;
-//        $nostrukterimafk='';
-//        $asalprodukfk=0;
-//        $asalproduk='';
-//        $jmlstok=0;
-//        $hargasatuan=0;
-//        $hargadiscount=0;
-//        $total=0;
-//        $aturanpakaifk=0;
+        $dataStok = \DB::select(DB::raw("select sk.norec,spd.objectprodukfk, sk.tglstruk,spd.objectasalprodukfk,
+                    sum(spd.qtyproduk) as qtyproduk,spd.objectruanganfk
+                    from stokprodukdetail_t as spd
+                    inner JOIN strukpelayanan_t as sk on sk.norec=spd.nostrukterimafk
+                    where  spd.objectruanganfk =:ruanganid
+                    group by sk.norec,spd.objectprodukfk, sk.tglstruk,spd.objectasalprodukfk,
+                            spd.harganetto2,spd.hargadiscount,
+                    spd.objectruanganfk
+                    order By sk.tglstruk"),
+            array(
+                'ruanganid' => $dataStruk->ruidtujuan
+            )
+        );
+        $hargajual=0;
+        $harganetto=0;
+        $nostrukterimafk='';
+        $asalprodukfk=0;
+        $asalproduk='';
+        $jmlstok=0;
+        $hargasatuan=0;
+        $hargadiscount=0;
+        $total=0;
+        $aturanpakaifk=0;
         foreach ($data as $item){
             $i = $i+1;
-//            foreach ($dataStok as $item2){
-////                if ($item2->objectprodukfk == $item->produkfk){
-////                    $jmlstok =0;
-////                    if ((float)$item2->qtyproduk >= (float)$item->jumlah*(float)$item->nilaikonversi){
-//////                        $hargajual = $item2->hargajual+(($item2->hargajual*25)/100);
-//////                        $harganetto = $item2->harganetto+(($item2->harganetto*25)/100);
-////
-//////                        $hargajual = $item->hargajual;
-//////                        $harganetto = $item->hargasatuan;
-////
-////                        $nostrukterimafk = $item2->norec;
-////                        $asalprodukfk = $item2->objectasalprodukfk;
-////                        $jmlstok = (float)$item2->qtyproduk/(float)$item->nilaikonversi;
-////                        break;
-////                    }
-////                }
-////            }
-////            foreach ($dataAsalProduk as $item3){
-////                if ($asalprodukfk == $item3->id){
-////                    $asalproduk = $item3->asalproduk;
-////                }
-////            }
+            foreach ($dataStok as $item2){
+                if ($item2->objectprodukfk == $item->produkfk){
+                    $jmlstok =0;
+                    if ((float)$item2->qtyproduk >= (float)$item->jumlah*(float)$item->nilaikonversi){
+                        // $hargajual = $item2->hargajual+(($item2->hargajual*25)/100);
+                        // $harganetto = $item2->harganetto+(($item2->harganetto*25)/100);
+
+                        // $hargajual = $item->hargajual;
+                        // $harganetto = $item->hargasatuan;
+
+                        $nostrukterimafk = $item2->norec;
+                        // $asalprodukfk = $item2->objectasalprodukfk;
+                        // $jmlstok = (float)$item2->qtyproduk/(float)$item->nilaikonversi;
+                        break;
+                    }
+                }
+            }
+        //    foreach ($dataAsalProduk as $item3){
+        //        if ($asalprodukfk == $item3->id){
+        //            $asalproduk = $item3->asalproduk;
+        //        }
+        //    }
 
             $details[] = array(
                 'no' => $i,
 //                'hargajual' => $hargajual,
 //                'stock' => $jmlstok,
 //                'harganetto' => $harganetto,
-//                'nostrukterimafk' => $nostrukterimafk,
+                'nostrukterimafk' => $nostrukterimafk,
                 'ruanganfk' => $item->objectruanganfk,
 //                'asalprodukfk' => $asalprodukfk,
 //                'asalproduk' => $asalproduk,
@@ -1176,6 +1177,13 @@ class LaundryController extends ApiController
                         ->update([
                                 'statuskirim' => 'Kirim',
                                 'nokirim_intern' => $request['strukkirim']['norecOrder']
+                            ]
+                        );
+
+                    $dataSilaing = StrukOrder::where('norec',$request['strukkirim']['norecOrder'])
+                        ->where('kdprofile', $idProfile)
+                        ->update([
+                                'statusorder' => 1,
                             ]
                         );
                 }
@@ -1365,7 +1373,8 @@ class LaundryController extends ApiController
                     }
 
                     $saldoAwalPengirim = 0;
-                    $jumlah=(float)$item['jumlah'] * (float)$item['nilaikonversi'];
+                    $nilaiKonversi = $item['nilaikonversi'] != null ? (float)$item['nilaikonversi'] : 1;
+                    $jumlah=(float)$item['jumlah'] * $nilaiKonversi;
                     foreach ($dataSaldoAwalK as $items) {
                         $saldoAwalPengirim =$saldoAwalPengirim + (float)$items->qty;
                         if ((float)$items->qty <= $jumlah){
@@ -1392,6 +1401,7 @@ class LaundryController extends ApiController
                                 $dataKP->qtyprodukkonfirmasi = $qtyqtyqty;
                                 $dataKP->qtyprodukretur = 0;
                                 $dataKP->qtyorder = $item['qtyorder'];
+                                $dataKP->qtyproduk = $jumlah;
                                 $dataKP->qtyprodukterima = $qtyqtyqty;
                                 $dataKP->nostrukterimafk = $items->nostrukterimafk;
                                 $dataKP->objectruanganfk = $request['strukkirim']['objectruangantujuanfk'];
@@ -1404,7 +1414,7 @@ class LaundryController extends ApiController
                                 $dataKP->save();
 
                                 $jumlah = $jumlah - (float)$items->qty;
-                                StokProdukDetail::where('norec', $items->norec)
+                                StokProdukDetail::where('norec', $items->nostrukterimafk)
                                     ->where('kdprofile', $idProfile)
                                     ->update([
                                             'qtyproduk' => 0]
@@ -1457,6 +1467,7 @@ class LaundryController extends ApiController
                                 $dataKP->qtyprodukkonfirmasi = $jumlah;
                                 $dataKP->qtyprodukretur = 0;
                                 $dataKP->qtyorder = $item['qtyorder'];
+                                $dataKP->qtyproduk = $jumlah;
                                 $dataKP->qtyprodukterima = $jumlah;
                                 $dataKP->nostrukterimafk = $items->nostrukterimafk;
                                 $dataKP->objectruanganfk = $request['strukkirim']['objectruangantujuanfk'];
@@ -1598,7 +1609,7 @@ class LaundryController extends ApiController
             $result = array(
                 "status" => 400,
                 "message"  => $transMessage,
-                "nokirim" => $dataSK,//$noResep,
+                // "nokirim" => $dataSK,//$noResep,
 //                "stokdetail" => $dataSTOKDETAIL,
 //                "stokdetailTujuan" => $dataSTOKDETAIL2,
                 "req" => $request->all(),

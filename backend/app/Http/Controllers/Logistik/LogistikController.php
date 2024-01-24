@@ -6342,6 +6342,9 @@ class LogistikController extends ApiController{
                 $SPD->tglpelayanan = $req['struk']['tglstruk'];
                 $SPD->is_terbayar = 0;
                 $SPD->linetotal = 0;
+                if (isset($item['qtypenggunaan']) && $item['qtypenggunaan'] != null) {
+                    $SPD->qtypenggunaan = $item['qtypenggunaan'];
+                }
                 $SPD->save();
                 //<editor-fold desc="Update STOK StokProdukDetails ">
                 $dataSaldoAwalK = DB::select(DB::raw("select sum(qtyproduk) as qty from stokprodukdetail_t 

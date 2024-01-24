@@ -144,26 +144,26 @@ define(['initialize'], function (initialize) {
 
             $scope.getSatuan = function () {
                 /* info stok all ruangan */
-                // medifirstService.get("farmasi/get-info-stok?produkfk=" + $scope.item.produk.id, true)
-                //     .then(function (e) {
-                //         $scope.item.namaProduks = $scope.item.produk.namaproduk;
-                //         for (var i = 0; i < e.data.infostok.length; i++) {
-                //             e.data.infostok[i].no = i + 1
-                //         }
-                //         $scope.dataGridStok = new kendo.data.DataSource({
-                //             data: e.data.infostok,
-                //             pageable: true,
-                //             pageSize: 5,
-                //             total: e.data.infostok.length,
-                //             serverPaging: false,
-                //             schema: {
-                //                 model: {
-                //                     fields: {
-                //                     }
-                //                 }
-                //             }
-                //         })
-                //     })
+                medifirstService.get("farmasi/get-info-stok?produkfk=" + $scope.item.produk.id, true)
+                    .then(function (e) {
+                        $scope.item.namaProduks = $scope.item.produk.namaproduk;
+                        for (var i = 0; i < e.data.infostok.length; i++) {
+                            e.data.infostok[i].no = i + 1
+                        }
+                        $scope.dataGridStok = new kendo.data.DataSource({
+                            data: e.data.infostok,
+                            pageable: true,
+                            pageSize: 5,
+                            total: e.data.infostok.length,
+                            serverPaging: false,
+                            schema: {
+                                model: {
+                                    fields: {
+                                    }
+                                }
+                            }
+                        })
+                    })
                 /* end info stok all ruangan */
                 GETKONVERSI(0)
             }
@@ -237,11 +237,11 @@ define(['initialize'], function (initialize) {
                     // if ($scope.item.jenisKemasan == undefined) {
                     //     return
                     // }
-                    if ($scope.item.stok == 0) {
-                        $scope.item.jumlah = 0
+                    // if ($scope.item.stok == 0) {
+                    //     $scope.item.jumlah = 0
                         // toastr.error('Stok kosong')
                         // return;
-                    }
+                    // }
 
                     $scope.item.hargaSatuan = 0
                     $scope.item.hargadiskon = 0
@@ -405,7 +405,7 @@ define(['initialize'], function (initialize) {
                 }
                 $scope.item.produk = dataProduk
                 $scope.item.jumlah = dataSelected.jumlah
-                // GETKONVERSI(dataSelected.jumlah)
+                GETKONVERSI(dataSelected.jumlah)
                 // $scope.item.nilaiKonversi = dataSelected.nilaikonversi
                 $scope.item.satuan = { ssid: dataSelected.satuanstandarfk, satuanstandar: dataSelected.satuanstandar }
             }
