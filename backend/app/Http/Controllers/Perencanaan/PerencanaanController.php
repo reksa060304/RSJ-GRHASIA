@@ -64,6 +64,7 @@ use App\Transaksi\UraianPendapatan;
 use phpDocumentor\Reflection\Types\Null_;
 use phpDocumentor\Reflection\Types\Parent_;
 use Webpatser\Uuid\Uuid;
+use App\Master\RunningNumber;
 
 class PerencanaanController extends ApiController {
     use Valet;
@@ -2910,8 +2911,22 @@ class PerencanaanController extends ApiController {
                     $MA->norec = $norecKS;
                     $MA->kdprofile = $idProfile;
                     $MA->statusenabled = true;
-                    $nos = $this->generateCodeBySeqTableSPP(new SPP, 'nospp', 6, '/',$kdProfile, $thn, $tgl);
-                    $noSPP = '04.00/02.0'.$nos.'/LS/1.02.2.22.0.00.01.0004/M/1/'.$thn;
+
+                    // $nos = $this->generateCodeBySeqTableSPP(new SPP, 'nospp', 6, '/',$kdProfile, $thn, $tgl);
+
+                    $runningNumber = RunningNumber::where('id',13543)->first();
+                        $nomor = $runningNumber->nomer_terbaru +1;
+                        $nos = str_pad((int)$nomor, 5, "0", STR_PAD_LEFT);
+
+                        RunningNumber::where('id', 13543)
+                        ->update(
+                            [
+                                'nomer_terbaru' => $nos
+                            ]
+                        );
+
+                    $noSPP = '04.00/02.0/'.$nos.'/LS/1.02.2.22.0.00.01.0004/M/1/'.$thn;
+                    // return $noSPP;
                     $MA->nospp = $noSPP;
                     
                 } else{
@@ -4127,8 +4142,20 @@ class PerencanaanController extends ApiController {
                         $MA->norec = $norecKS;
                         $MA->kdprofile = $idProfile;
                         $MA->statusenabled = true;
-                        $noa = $this->generateCodeBKU(new BKU, 'nobku', $request['asalproduk'], 5, '', $idProfile);
-                        $MA->nobku = $noa.'-B02';
+
+                        // $noa = $this->generateCodeBKU(new BKU, 'nobku', $request['asalproduk'], 5, '', $idProfile);
+                        $runningNumber = RunningNumber::where('id',13542)->first();
+                        $nomor = $runningNumber->nomer_terbaru +1;
+                        $nos = str_pad((int)$nomor, 5, "0", STR_PAD_LEFT);
+
+                        RunningNumber::where('id', 13542)
+                        ->update(
+                            [
+                                'nomer_terbaru' => $nos
+                            ]
+                        );
+
+                        $MA->nobku = $nos.'-B02';
                         $MA->objectjenisbuktifk = $request['jenisbukti'];
                         $MA->tglbku = $request['tglbku'];
                         $MA->uraianbku = $request['uraian'];
@@ -8111,10 +8138,20 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
                 $MA->kdprofile = $idProfile;
                 $MA->statusenabled = true;
 
-                $nos = $this->generateCodeBySeqTable(new StrukRealisasi, 'norealisasi', 6, ' ',$kdProfile);
+                // $nos = $this->generateCodeBySeqTable(new StrukRealisasi, 'norealisasi', 6, ' ',$kdProfile);
+                $runningNumber = RunningNumber::where('id',13540)->first();
+                $nomor = $runningNumber->nomer_terbaru +1;
+                $nos = str_pad((int)$nomor, 5, "0", STR_PAD_LEFT);
+
+                RunningNumber::where('id', 13540)
+                ->update(
+                    [
+                        'nomer_terbaru' => $nos
+                    ]
+                );
+
                 $noRealiasi = $nos.'/BPK/UP/1.02.2.22.0.00.01.0004/B02/'.$thn;
                 $MA->norealisasi = $noRealiasi;
-
             }else{
                 $MA= StrukRealisasi::where('norec',$request['norec'])
                     ->where('kdprofile', $idProfile)
@@ -8504,7 +8541,18 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
                 $MA->norec = $norecKS;
                 $MA->kdprofile = $idProfile;
                 $MA->statusenabled = true;
-                $nos = $this->generateCodeBySeqTable(new Panjar, 'nopanjar', 6, ' ',$kdProfile);
+                // $nos = $this->generateCodeBySeqTable(new Panjar, 'nopanjar', 6, ' ',$kdProfile);
+
+                $runningNumber = RunningNumber::where('id',13541)->first();
+                $nomor = $runningNumber->nomer_terbaru +1;
+                $nos = str_pad((int)$nomor, 5, "0", STR_PAD_LEFT);
+
+                RunningNumber::where('id', 13541)
+                ->update(
+                    [
+                        'nomer_terbaru' => $nos
+                    ]
+                );
 
                 $noPanjar = $nos.'/PANJAR/1.02.2.22.0.00.01.0004/'.$tgl.'/'.$thn;
                 $MA->nopanjar = $noPanjar;
@@ -8515,8 +8563,8 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
                 
             } else{
                 $MA = Panjar::where('norec', '=', $request['norec'])->first();
-            }
                 $MA->nopanjar = $request['nopanjar'];
+            }
                 $MA->tglpanjar = $request['tglPanjar'];
                 $MA->uraian = $request['uraianPanjar'];
                 $MA->jumlah = $request['jumlahpanjar'];
