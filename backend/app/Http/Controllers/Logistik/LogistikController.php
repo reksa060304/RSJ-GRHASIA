@@ -7683,6 +7683,7 @@ class LogistikController extends ApiController{
         return $this->respond($result);
     }
 
+    // tanda1
     public function saveKirimBarangRuangan(Request $request) {
         // return 'test';
         // ini_set('max_execution_time', 2000); //6 minutes
