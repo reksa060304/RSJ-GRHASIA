@@ -81,17 +81,17 @@
                     if($dt->objectjenisbuktifk == 4)
                         {
                         $uraian = EXPLODE('-',$dt->objectmataanggaranfk);
-                        $uraianBKU = $uraian[0]." ".$dt->uraianbku;
+                        $uraianBKU = $uraian[0]." ".$dt->uraian;
                         if(is_null($dt->objectmataanggaranfk)) 
                             {
                                 $koderek='PPN';
-                                $uraianBKU = $koderek." ".$dt->uraianbku;
+                                $uraianBKU = $koderek." ".$dt->uraian;
                             } 
                         else {$koderek = $dt->objectmataanggaranfk;} 
                         }
                     else 
                         {
-                            $uraianBKU = $dt->uraianbku;
+                            $uraianBKU = $dt->uraian;
                             $koderek = $dt->objectmataanggaranfk;
                         }                        
                     @endphp
