@@ -1268,15 +1268,10 @@ class ReportController extends ApiController{
         $pageWidth = 550;
         //var_dump($skrining);
 
-        $jenis_racikan = [];
-        foreach($details as $d){
-            array_push($jenis_racikan, $d->jeniskemasanfk);
-        }
-
         // return $r['norec'];
         $cetakkin = $r['cetakkin'];
         return view('report.apotik.resepdokterrev',
-            compact('raw', 'pageWidth','r','details','profile', 'skrining','cetakkin', 'jenis_racikan'));
+            compact('raw', 'pageWidth','r','details','profile', 'skrining','cetakkin'));
     }
 
     public function cetakDetailOrder(Request $r) {
