@@ -7061,12 +7061,16 @@ class ReportController extends ApiController{
                 when nopenyetoran is not null then nopenyetoran
                 when nojasagiro is not null then nojasagiro
                 when nosts is not null then nosts
-            end as nodokumen, objectjenisbuktifk, uraian
+            end as nodokumen, objectjenisbuktifk, 
+			case 
+                when norealisasi is not null AND deskripsi <> '' AND deskripsi is not null then concat(uraian,' : ',deskripsi)
+                else uraianbku
+            end as uraian
             from(
                 select ROW_NUMBER ( ) OVER ( ORDER BY bku.nobku ) nourut, bku.objectmataanggaranfk, bku.nobku, 
                 to_char(bku.tglbku::date, 'DD-MM-YYYY') tgl, bku.uraianbku, bku.penerimaan, 
                 bku.pengeluaran, 0 saldoawal, sr.norealisasi, pj.nopanjar, spm.nospm,
-                pp.nopajak nopemungutan, coalesce(pp.pph, 0) pph, coalesce(pp.ppn, 0) ppn, ppj.nopajak nopenyetoran, jg.nojasagiro, sk.nosts, objectjenisbuktifk, uraianbku uraian 
+                pp.nopajak nopemungutan, coalesce(pp.pph, 0) pph, coalesce(pp.ppn, 0) ppn, ppj.nopajak nopenyetoran, jg.nojasagiro, sk.nosts, objectjenisbuktifk, uraianbku uraian, sr.deskripsi 
                 from bukukasumum_t bku
                 left join strukrealisasi_t sr on sr.objectbkufk = bku.norec
                 and sr.kdprofile = 30
