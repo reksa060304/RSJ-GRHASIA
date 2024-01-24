@@ -100,7 +100,7 @@
                             Bendahara / <strike>Pihak ketiga</strike> *)
                         </td>
                         <td class="child" colspan="1" style="padding: 5px;" align="left">
-                        : Paula Sofyanita, SE. Bendahara Pengeluaran
+                        : Christina Dewi Isti Paramita, S.E. Bendahara Pengeluaran
                         </td>
                     </tr>
                     <tr>

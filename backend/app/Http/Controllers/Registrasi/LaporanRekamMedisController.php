@@ -1233,6 +1233,232 @@ class LaporanRekamMedisController extends   ApiController
         return $this->respond($result);
     }
 
+    public function getDataRL31RawatInapNew(Request $request) {
+        $idProfile = (int) $this->getDataKdProfile($request);
+        $idDepRaJal = (int) $this->settingDataFixed('KdDepartemenRawatJalan', $idProfile);
+        $idDepRanap = (int) $this->settingDataFixed('idDepRawatInap', $idProfile);
+        $idStatKelMeninggal = (int) $this->settingDataFixed('KdStatKeluarMeninggal', $idProfile);
+        $idKondisiPasienMeninggal = (int) $this->settingDataFixed('KdKondisiPasienMeninggal', $idProfile);
+        $tglAwal = $request['tglAwal'];
+        $tglAkhir = $request['tglAkhir'];
+        $tahun = new \DateTime($tglAkhir);
+        $tahun = date('Y');
+        $datetime1 = new \DateTime($tglAwal);
+        $datetime2 = new \DateTime($tglAkhir);
+        $interval = $datetime1->diff($datetime2);
+        $sehari = 1; //$interval->format('%d');
+        $data10 = [];
+        $jumlahTT = collect(DB::select("SELECT
+                    tt.id,
+                    tt.objectstatusbedfk
+            FROM
+                    tempattidur_m AS tt
+            INNER JOIN kamar_m AS kmr ON kmr.id = tt.objectkamarfk
+            INNER JOIN ruangan_m AS ru ON ru.id = kmr.objectruanganfk
+            WHERE
+                    tt.kdprofile = $idProfile
+            AND tt.statusenabled = true
+            AND kmr.statusenabled = true
+            AND tt.reportdisplay NOT ILIKE '%cadangan%'
+            "))->count();
+        if ($jumlahTT == 0) {
+            $data10[] = array(
+                'lamarawat' => 0,
+                'hariperawatan' => 0,
+                'pasienpulang' => 0,
+                'meninggal' => 0,
+                'matilebih48' =>  0,
+                'tahun' => 0,
+                'bulan' => date('d-M-Y'), //(float)$item->bulanregis ,
+                'bor' => 0,
+                'alos' => 0,
+                'bto' => 0,
+                'toi' =>  0,
+                'gdr' => 0,
+                'ndr' =>  0,
+            );
+
+            return $data10;
+        }
+
+        $hariPerawatan = DB::select(DB::raw(
+            "
+           SELECT   COUNT (x.noregistrasi) AS jumlahhariperawatan
+            FROM
+            (
+                SELECT
+                    pd.noregistrasi,
+                    pd.tglpulang,
+                    to_char ( pd.tglregistrasi,'mm') AS bulanregis
+                FROM
+                    pasiendaftar_t AS pd
+                INNER JOIN ruangan_m AS ru ON ru.ID = pd.objectruanganlastfk
+                WHERE
+                    ru.objectdepartemenfk = $idDepRanap
+                    and pd.kdprofile = $idProfile
+            and (  (pd.tglregistrasi < '$tglAwal' AND pd.tglpulang >= '$tglAkhir' )
+               or pd.tglpulang is null
+            )
+
+            and pd.statusenabled = true
+            ) AS x"
+        ));
+        // dd($hariPerawatan);
+        $lamaRawat = DB::select(DB::raw("
+                        select sum(x.hari) as lamarawat, count(x.noregistrasi)as jumlahpasienpulang from (
+                        SELECT
+                            date_part('DAY', pd.tglpulang- pd.tglregistrasi) as hari ,pd.noregistrasi
+                            FROM
+                                    pasiendaftar_t AS pd
+                        --  INNER JOIN antrianpasiendiperiksa_t AS apd ON apd.noregistrasifk = pd.norec
+                            INNER JOIN ruangan_m AS ru ON ru. ID = pd.objectruanganlastfk
+                            WHERE pd.kdprofile = $idProfile and
+                            pd.tglpulang BETWEEN '$tglAwal'
+                                AND '$tglAkhir'
+                            and pd.tglpulang is not null
+                            and pd.statusenabled=true
+                            and  ru.objectdepartemenfk = $idDepRanap
+                            GROUP BY pd.noregistrasi,pd.tglpulang,pd.tglregistrasi
+                        -- order by pd.noregistrasi
+                    ) as x
+                "));
+
+
+        $dataMeninggal = DB::select(DB::raw("select count(x.noregistrasi) as jumlahmeninggal, x.bulanregis,
+                count(case when x.objectkondisipasienfk = $idKondisiPasienMeninggal then 1 end ) AS jumlahlebih48 FROM
+                (
+                select noregistrasi,to_char(tglregistrasi , 'mm')  as bulanregis ,statuskeluar,kondisipasien,objectkondisipasienfk
+                from pasiendaftar_t
+                join statuskeluar_m on statuskeluar_m.id =pasiendaftar_t.objectstatuskeluarfk
+                left join kondisipasien_m on kondisipasien_m.id =pasiendaftar_t.objectkondisipasienfk
+                where pasiendaftar_t.kdprofile = $idProfile and objectstatuskeluarfk = $idStatKelMeninggal
+                and  tglregistrasi BETWEEN '$tglAwal' and '$tglAkhir'
+                and pasiendaftar_t.statusenabled=true
+                ) as x
+                GROUP BY x.bulanregis;"));
+        //        return $this->respond($dataMeninggal);
+        $ratarata = DB::select(DB::raw("with cte as(
+            select extract(year from month) as year, sum(days) as jumlah from(
+                SELECT date_trunc('month',dt) AS month,
+                COUNT(*) as days
+                FROM generate_series( DATE '$tglAwal',DATE '$tglAkhir',interval '1 DAY' )
+                as dt group by date_trunc('month',dt) 
+                order by month
+            ) as x group by extract(year from month)
+        )
+        SELECT extract(year from apd.tglmasuk) as tgl, count(apd.norec), cte.jumlah, round(count(apd.norec)/cte.jumlah) as total
+        FROM
+        antrianpasiendiperiksa_t apd
+        inner join ruangan_m ru on ru.id = apd.objectruanganfk
+        inner join cte on cte.year = extract(year from apd.tglmasuk)
+        WHERE apd.tglmasuk BETWEEN '$tglAwal' and '$tglAkhir'
+        and apd.kdprofile = $idProfile
+        and apd.statusenabled=true
+        and ru.objectdepartemenfk = 16
+        group by extract(year from apd.tglmasuk), cte.jumlah"));
+        $year = Carbon::now()->year;
+        $num_of_days = [];
+        if ($year == date('Y'))
+            $total_month = date('m');
+        else
+            $total_month = 12;
+
+        for ($m = 1; $m <= $total_month; $m++) {
+            $num_of_days[] = array(
+                'bulan' =>  $m,
+                'jumlahhari' =>  cal_days_in_month(CAL_GREGORIAN, $m, $year),
+            );
+        }
+        $bor = 0;
+        $alos = 0;
+        $toi = 0;
+        $bto = 0;
+        $ndr = 0;
+        $gdr = 0;
+        $hariPerawatanJml = 0;
+        $jmlPasienPlg = 0;
+        $jmlLamaRawat = 0;
+        $jmlMeninggal = 0;
+        $jmlMatilebih48 = 0;
+        $hasilRata = 0;
+        foreach ($hariPerawatan as $item) {
+            foreach ($lamaRawat as $itemLamaRawat) {
+                foreach ($dataMeninggal as $itemDead) {
+                    if ($itemLamaRawat->jumlahpasienpulang == 0) {
+                        $itemLamaRawat->jumlahpasienpulang  = 1;
+                    }
+                    if ($itemDead->jumlahmeninggal == 0) {
+                        $itemDead->jumlahmeninggal = 1;
+                    }
+                    if ($itemDead->jumlahlebih48 == 0) {
+                        $itemDead->jumlahlebih48 = 1;
+                    }
+                    //                         if ($item->bulanregis == $itemLamaRawat->bulanpulang &&
+                    //                             $itemLamaRawat->bulanpulang == $itemDead->bulanregis ) {
+                    /** @var  $gdr = (Jumlah Mati dibagi Jumlah pasien Keluar (Hidup dan Mati) */
+                    $gdr = (int) $itemDead->jumlahmeninggal * 1000 / (int)$itemLamaRawat->jumlahpasienpulang;
+                    /** @var  $NDR = (Jumlah Mati > 48 Jam dibagi Jumlah pasien Keluar (Hidup dan Mati) */
+                    $ndr = (int) $itemDead->jumlahlebih48 * 1000 / (int)$itemLamaRawat->jumlahpasienpulang;
+
+                    $jmlMeninggal = (int) $itemDead->jumlahmeninggal;
+                    $jmlMatilebih48 = (int) $itemDead->jumlahlebih48;
+                    //                         }
+                }
+                //                if ($item->bulanregis == $itemLamaRawat->bulanpulang ) {
+                /** @var  $alos = (Jumlah Lama Dirawat dibagi Jumlah pasien Keluar (Hidup dan Mati) */
+                //                return $this->respond($itemLamaRawat->jumlahpasienpulang );
+                if ((int)$itemLamaRawat->jumlahpasienpulang > 0) {
+                    $alos = (int)$itemLamaRawat->lamarawat / (int)$itemLamaRawat->jumlahpasienpulang;
+                }
+
+                /** @var  $bto = Jumlah pasien Keluar (Hidup dan Mati) DIBAGI Jumlah tempat tidur */
+                $bto = (int)$itemLamaRawat->jumlahpasienpulang / $jumlahTT;
+
+                //                }
+                //                foreach ($num_of_days as $numday){
+                //                    if ($numday['bulan'] == $item->bulanregis){
+                /** @var  $bor = (Jumlah hari perawatn RS dibagi ( jumlah TT x Jumlah hari dalam satu periode ) ) x 100 % */
+                $bor = ((int)$item->jumlahhariperawatan * 100 / ($jumlahTT *  (float)$sehari)); //$numday['jumlahhari']));
+                /** @var  $toi = (Jumlah TT X Periode) - Hari Perawatn DIBAGI Jumlah pasien Keluar (Hidup dan Mati)*/
+                //                        $toi = ( ( $jumlahTT * $numday['jumlahhari'] )- (int)$item->jumlahhariperawatan ) /(int)$itemLamaRawat->jumlahpasienpulang ;
+                if ((int)$itemLamaRawat->jumlahpasienpulang > 0) {
+                    $toi = (($jumlahTT * (float)$sehari) - (int)$item->jumlahhariperawatan) / (int)$itemLamaRawat->jumlahpasienpulang;
+                }
+                $hariPerawatanJml = (int)$item->jumlahhariperawatan;
+                $jmlPasienPlg = (int)$itemLamaRawat->jumlahpasienpulang;
+                //                    }
+                //                }
+                foreach($ratarata as $rata){
+                    $hasilRata = $rata->total;
+                }
+            }
+
+            $data10[] = array(
+                'lamarawat' => (int)$itemLamaRawat->lamarawat,
+                'hariperawatan' => $hariPerawatanJml,
+                'pasienpulang' => $jmlPasienPlg,
+                'meninggal' => $jmlMeninggal,
+                'matilebih48' =>  $jmlMatilebih48,
+                'tahun' => $tahun,
+                'ratarataperhari' => $hasilRata,
+                'bulan' => date('d-M-Y'), //(float)$item->bulanregis ,
+                'bor' => (float) number_format($bor, 2),
+                'alos' => (float) number_format($alos, 2),
+                'bto' => (float) number_format($bto, 2),
+                'toi' => (float)number_format($toi, 2),
+                'gdr' => (float)number_format($gdr, 2),
+                'ndr' => (float) number_format($ndr, 2),
+                'hasil' => (float) number_format($hasilRata,2),
+            );
+        }
+
+        $result = array(
+            'data' => $data10,
+            'message' => 'as@cepot',
+        );
+        return $this->respond($result);
+    }
+
     public function getDataRL31RawatInapPerBangsal(Request $request){
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;

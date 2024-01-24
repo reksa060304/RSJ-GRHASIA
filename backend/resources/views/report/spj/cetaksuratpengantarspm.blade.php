@@ -74,7 +74,7 @@
             <td colspan="5" style="text-align:justify; padding-bottom: 10px; padding-top: 10px; ">
             <br><br>
                 <font style="font-size: 12pt" color="#000000">Bersama ini kami sampaikan SPM-UP Nomor {{$detail[0]->nospm}} Tanggal {{ $tgl }} mohon untuk diterbitkan SP2D sebesar
-                Rp {{ number_format($detail[0]->nilaispm,2,',','.') }} ({{ $terbilang }}) atas nama Paula Sofyanita, SE..
+                Rp {{ number_format($detail[0]->nilaispm,2,',','.') }} ({{ $terbilang }}) atas nama Christina Dewi Isti Paramita, S.E.
                 Bendahara Pengeluaran, alamat Yogyakarta untuk pencairan dana Pengajuan Uang Persediaan RS Jiwa GRHASIA DINKES
                 DIY Tahun Anggaran {{ date('Y', strtotime($detail[0]->tglspm)) }}</font>
             </td>
