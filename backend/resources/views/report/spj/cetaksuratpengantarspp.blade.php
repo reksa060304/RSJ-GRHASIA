@@ -122,7 +122,7 @@
         </tr>
         <tr style="padding: 5px;">
             <td colspan="1" style="padding: 5px;" align="left">f. Nama Bendahara Pengeluaran</td>
-            <td colspan="4" style="padding: 5px;" align="left">: Paula Sofyanita, SE.</td>
+            <td colspan="4" style="padding: 5px;" align="left">: Christina Dewi Isti Paramita, S.E.</td>
         </tr>
         <tr style="padding: 5px;">
             <td colspan="1" style="padding: 5px;" align="left">g. Jumlah Pembayaran Yang Diminta</td>

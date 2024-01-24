@@ -314,7 +314,7 @@
                     </tr>
                     <tr>
                         <td  style="text-align:center; padding-left: 50px; padding-bottom: 10px; width: 120px;">
-                            <font style="font-size: 12pt" color="#000000"><u>{{ $spj[0]->namapenerima}}</u><br>NIP. {{ $spj[0]->nippenerima}}
+                            <font style="font-size: 12pt" color="#000000"><u>{{ $spj[0]->namapenerima}}</u><br> {{ ($spj[0]->namapenerima<>'') ? 'NIP. '.$spj[0]->nippenerima : ''}}
                             </font>
                         </td>
                         <td style="text-align:center; padding-left: 0px; padding-bottom: 10px;  width: 80px; border-left: 2px solid black">
