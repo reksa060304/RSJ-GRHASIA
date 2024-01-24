@@ -2915,15 +2915,15 @@ class PerencanaanController extends ApiController {
                     // $nos = $this->generateCodeBySeqTableSPP(new SPP, 'nospp', 6, '/',$kdProfile, $thn, $tgl);
 
                     $runningNumber = RunningNumber::where('id',13543)->first();
-                        $nomor = $runningNumber->nomer_terbaru +1;
-                        $nos = str_pad((int)$nomor, 5, "0", STR_PAD_LEFT);
+                    $nomor = $runningNumber->nomer_terbaru +1;
+                    $nos = str_pad((int)$nomor, 5, "0", STR_PAD_LEFT);
 
-                        RunningNumber::where('id', 13543)
-                        ->update(
-                            [
-                                'nomer_terbaru' => $nos
-                            ]
-                        );
+                    RunningNumber::where('id', 13543)
+                    ->update(
+                        [
+                            'nomer_terbaru' => $nos
+                        ]
+                    );
 
                     $noSPP = '04.00/02.0/'.$nos.'/LS/1.02.2.22.0.00.01.0004/M/1/'.$thn;
                     // return $noSPP;
@@ -4798,7 +4798,19 @@ class PerencanaanController extends ApiController {
                 }
 
                     $noa = $this->generateCode(new SPM, 'noreg', 5, '', $kdProfile);
-                    $nos = $this->generateCodeBySeqTableSPP(new SPM, 'nospm', 5, '',$kdProfile, $thn, $tgl);
+                    // $nos = $this->generateCodeBySeqTableSPP(new SPM, 'nospm', 5, '',$kdProfile, $thn, $tgl);
+
+                    $runningNumber = RunningNumber::where('id',13544)->first();
+                    $nomor = $runningNumber->nomer_terbaru +1;
+                    $nos = str_pad((int)$nomor, 5, "0", STR_PAD_LEFT);
+
+                    RunningNumber::where('id', 13544)
+                    ->update(
+                        [
+                            'nomer_terbaru' => $nos
+                        ]
+                    );
+
                     $noSPM = '04.00/03.0/'.$nos.'/LS/1.02.2.22.0.00.01.0004/M/1/'.$thn;
                     $MA->nospm = $noSPM;
                     $MA->jenisbukti = $request['jenisbukti'];
