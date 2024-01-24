@@ -118,7 +118,7 @@
                                         </div>
                                         <div class="panel-body">
                                             @php
-                                                $bor = App\Http\Controllers\MainController::getBorLosToi(request()->get("tglawal"),request()->get("tglakhir"),session('kdProfile'));
+                                                $bor = App\Http\Controllers\MainController::getBorLosToiNew(request()->get("tglawal"),request()->get("tglakhir"),session('kdProfile'));
                                             @endphp
                                             <div class="row" style="padding: 10px">
                                                 <div class="col-md-12 col-xl-4">
