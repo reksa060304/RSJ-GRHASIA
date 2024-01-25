@@ -173,6 +173,22 @@ define(['initialize'], function (initialize) {
                     alert('Sudah Di Kirim!')
                     return;
                 }
+                if ($scope.dataSelected == undefined) {
+                    toastr.error("Pilih yg akan di verif!!")
+                    return;
+                }
+
+                var dataupdate = {
+                    strukorderfk: $scope.dataSelected.norec,
+                    statusorder: 1
+                }
+
+                medifirstService.post('sterilisasi/verifikasi-order-sterilisasi', dataupdate).then(function (e) {
+                    init();
+                }, function (error) {
+                    // $scope.saveShow = true;
+                });
+
                 var chacePeriode = {
                     0: $scope.dataSelected.norec,
                     1: '',

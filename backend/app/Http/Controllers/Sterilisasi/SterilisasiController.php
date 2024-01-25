@@ -1791,7 +1791,7 @@ class SterilisasiController extends ApiController
         }
 
         if ($transStatus == 'true') {
-            $transMessage = "Simpan Berhasil";
+            $transMessage = "Berhasil verifikasi, lanjutkan pengiriman barang.";
             DB::commit();
             $result = array(
                 "status" => 201,
