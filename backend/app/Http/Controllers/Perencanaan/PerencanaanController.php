@@ -7091,8 +7091,9 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
             $qkey = " and (bku.uraianbku ilike '%".$request['key']."%' or jb.jenisbukti ilike '%".$request['key']."%' or bku.penerimaan::varchar ilike '%".$request['key']."%' or bku.pengeluaran::varchar ilike '%".$request['key']."%')";
         }
         
+        // select ap.id idasalproduk, ap.asalproduk, (right(left(bku.nobku, -4), 2))::int4 nourut, rm.namarekanan, bku.norec norecbku, bku.nobku, jb.jenisbukti, jb.id, bku.objectmataanggaranfk kodemataanggaran, bku.tglbku, bku.uraianbku, bku.penerimaan, bku.pengeluaran, bku.saldo
         $data = DB::select(DB::raw("
-        select ap.id idasalproduk, ap.asalproduk, (right(left(bku.nobku, -4), 2))::int4 nourut, rm.namarekanan, bku.norec norecbku, bku.nobku, jb.jenisbukti, jb.id, bku.objectmataanggaranfk kodemataanggaran, bku.tglbku, bku.uraianbku, bku.penerimaan, bku.pengeluaran, bku.saldo
+        select ap.id idasalproduk, ap.asalproduk, ROW_NUMBER ( ) OVER ( ORDER BY bku.nobku ) nourut, rm.namarekanan, bku.norec norecbku, bku.nobku, jb.jenisbukti, jb.id, bku.objectmataanggaranfk kodemataanggaran, bku.tglbku, bku.uraianbku, bku.penerimaan, bku.pengeluaran, bku.saldo
         from bukukasumum_t bku
         left join jenisbukti_m jb on jb.id = bku.objectjenisbuktifk
         left join rekanan_m rm on rm.id = bku.rekananfk
