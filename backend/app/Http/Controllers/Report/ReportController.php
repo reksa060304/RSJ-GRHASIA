@@ -1202,7 +1202,11 @@ class ReportController extends ApiController{
         "))->first();
         $detel = [];
         $details = \DB::select(DB::raw("
-                SELECT x.* FROM (select distinct row_number()over(partition by pt.rke, pm.namaproduk ORDER BY pt.rke asc)as no, pt.jeniskemasanfk, jr.jenisracikan, pt.rke,pt.dosis, pt.jumlah , pt.aturanpakai , pm.namaproduk, pm.kekuatan, pt.keteranganpakai,
+                SELECT x.* FROM (select distinct row_number()over(partition by pt.rke, pm.namaproduk ORDER BY pt.rke asc)as no, pt.jeniskemasanfk, jr.jenisracikan, pt.rke,
+                CASE
+                    WHEN pt.jeniskemasanfk = 2 THEN NULL
+                    ELSE pt.dosis
+                END AS dosis, pt.jumlah , pt.aturanpakai , pm.namaproduk, pm.kekuatan, pt.keteranganpakai,
                 op.keteranganpakai as catatandokter, op.satuandosis
                 from pelayananpasien_t pt
                 inner join produk_m pm on pm.id = pt.produkfk
