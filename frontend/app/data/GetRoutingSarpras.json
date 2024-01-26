@@ -3381,6 +3381,46 @@
         "define": "MedifirstService"
       }
     ]
+  },  
+  {
+    "name": "DaftarVerifikasiInsidenInternal",
+    "url": "/RGFmdGFyVmVyaWZpa2FzaUluc2lkZW5JbnRlcm5hbA==",
+    "templateurl": "module/PMKP/DaftarVerifikasiInsidenInternal.html",
+    "controller": "DaftarVerifikasiInsidenInternalCtrl",
+    "deps": [    
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },  
+  {
+    "name": "DaftarRekapInsidenInternal",
+    "url": "/RGFmdGFyUmVrYXBJbnNpZGVuSW50ZXJuYWw=",
+    "templateurl": "module/PMKP/DaftarRekapInsidenInternal.html",
+    "controller": "DaftarRekapInsidenInternalCtrl",
+    "deps": [    
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
   },
   {
     "name": "SensusHarianInsidenKeselamatanPasien",
