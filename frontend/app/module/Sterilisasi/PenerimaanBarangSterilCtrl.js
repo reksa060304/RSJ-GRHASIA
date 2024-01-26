@@ -74,8 +74,8 @@ define(['initialize'], function (initialize) {
                 medifirstService.get("sterilisasi/get-data-combo-terima-steril", true).then(function (dat) {
                     var dataCombo = dat.data;
                     $scope.listPenulisResep = medifirstService.getPegawaiLogin();
-                    $scope.listRuangan = medifirstService.getMapLoginUserToRuangan();
-                    $scope.listRuanganTujuan = dataCombo.ruanganall;
+                    $scope.listRuangan = dataCombo.ruanganall//medifirstService.getMapLoginUserToRuangan();
+                    $scope.listRuanganTujuan = dataCombo.ruangancssd;
                     $scope.listJenisKirim = [{ id: 1, jenis: 'Amprahan' }, { id: 2, jenis: 'Transfer' }]
                     $scope.listAsalProduk = dataCombo.asalproduk;
                     pegawaiUser = dataCombo.detaillogin[0];
