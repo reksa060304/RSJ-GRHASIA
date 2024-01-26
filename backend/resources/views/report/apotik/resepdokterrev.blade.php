@@ -104,7 +104,6 @@
                         <th class="quantity fs-13">R/</th>
                         <th class="description fs-13">Nama Obat</th>
                         <th class="description fs-13">Dosis</th>
-                        <th class="fs-13">Aturan Pakai</th>
                         <th class="price fs-13">Jumlah</th>
                         <th class="description fs-13">Signa</th>
 
@@ -117,7 +116,6 @@
                             <td class="price fs-13" style="text-align: center"><?= $d->rke; ?></td>
                             <td class="price fs-13" style="text-align: left"><?= $d->namaproduk; ?></td>
                             <td class="fs-13" style="text-align: center">{{ $d->dosis }}</td>
-                            <td class="price fs-13" style="text-align: left">{{ $d->aturanpakai }}</td>
                             <td class="price fs-13" style="text-align: center"><?= $d->jumlah; ?></td>
                             <td class="price fs-13" style="text-align: center"><?= $d->catatandokter ?></td>
                         </tr>

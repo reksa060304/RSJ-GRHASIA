@@ -36,6 +36,7 @@ class SterilisasiController extends ApiController
         parent::__construct($skip_authentication = false);
     }
 
+    // tanda3
     public function getComboSteril(Request $request) {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
@@ -244,6 +245,7 @@ class SterilisasiController extends ApiController
         return $this->respond($result);
     }
 
+    // tanda2
     public function getComboTerimaBarang(Request $request) {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
@@ -260,6 +262,12 @@ class SterilisasiController extends ApiController
             ->select('lu.id','lu.namaruangan')
             ->where('lu.statusenabled',true)
             ->where('lu.kdprofile', $idProfile)
+            ->get();
+
+        $dataRuangCssd = \DB::table('ruangan_m as lu')
+            ->select('lu.id','lu.namaruangan')
+            ->where('lu.id', 66)
+            ->where('lu.statusenabled', true)
             ->get();
 
         $dataSumberDana = \DB::table('asalproduk_m as lu')
@@ -369,6 +377,7 @@ class SterilisasiController extends ApiController
             'detaillogin' => $dataPegawaiUser,
             'produk' => $dataProdukResult,
             'produkbaru' => $dataProdukResultBR,
+            'ruangancssd' => $dataRuangCssd,
             'by' => 'as@epic',
         );
         return $this->respond($result);
@@ -1791,7 +1800,7 @@ class SterilisasiController extends ApiController
         }
 
         if ($transStatus == 'true') {
-            $transMessage = "Simpan Berhasil";
+            $transMessage = "Berhasil verifikasi, lanjutkan pengiriman barang.";
             DB::commit();
             $result = array(
                 "status" => 201,
