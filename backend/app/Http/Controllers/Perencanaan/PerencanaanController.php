@@ -1141,7 +1141,7 @@ class PerencanaanController extends ApiController {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
 
-        $data = DB::select(DB::raw("select id, jenispajak from jenispajak_m where statusenabled = true and kdprofile = 30"));
+        $data = DB::select(DB::raw("select id, jenispajak from jenispajak_m where namaexternal ilike '%pph%' and statusenabled = true and kdprofile = 30"));
 
         $result = array(
             'data' => $data,
@@ -3496,7 +3496,8 @@ class PerencanaanController extends ApiController {
                 
                 $MA->uraianpajak = $request['uraianpajak'];
                 $MA->objectspjfk = $norecspj;
-                //$MA->objectjenispphfk = $request['pph']['objectjenispphfk'];
+                // $MA->objectjenispphfk = $request['pph']['objectjenispphfk'];
+                $MA->objectjenispphfk = '1';
                 //$MA->pph = $request['pph']['pph'];
                 $MA->ppn = $request['ppn'][$x]['ppn'];
                 //$MA->objectspjfk = $request['pph']['norec'];
@@ -3510,7 +3511,8 @@ class PerencanaanController extends ApiController {
 
                 $MP->uraianpajak = $request['uraianpajak'];
                 $MP->objectspjfk = $norecspj;
-                //$MP->objectjenispphfk = $request['pph']['objectjenispphfk'];
+                // $MP->objectjenispphfk = $request['pph']['objectjenispphfk'];
+                $MP->objectjenispphfk = '1';
                 //$MP->pph = $request['pph']['pph'];
                 $MP->ppn = $request['ppn'][$x]['ppn'];
                 //$MP->objectspjfk = $request['pph']['norec'];
@@ -7854,27 +7856,28 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
         $norec = $request['norec'];
 
         $data = DB::select(DB::raw("select pp.objectbkufk,pep.objectbkufk,
-        pep.nopajak nopajakpep, pp.nopajak nopajakpp, pp.uraianpajak, sr.norealisasi,string_agg(DISTINCT rd.uraian, ',') uraian, sr.tglverif tglrealisasi, coalesce(jp.jenispajak,'PPh') as kode, pp.pph as jumlah 
+        pep.nopajak nopajakpep, pp.nopajak nopajakpp, pp.uraianpajak, sr.norealisasi,string_agg(DISTINCT rd.uraian, ',') uraian, sr.tglverif tglrealisasi, jp.jenispajak as kode, pp.pph as jumlah 
         from strukrealisasi_t sr 
         left join realisasidetail_t rd on rd.strukrealisasifk = sr.norec
 		inner join pemungutanpajak_t pp on pp.objectspjfk = sr.norec and pp.statusenabled = true and pp.kdprofile = 30 
         inner join penyetoranpajak_t pep on left(pep.nopajak, 3) = left(pp.nopajak, 3) and pep.statusenabled = true and pep.kdprofile = 30
         left join jenispajak_m jp on jp.id = pp.objectjenispphfk and jp.statusenabled = true and jp.kdprofile = 30
         where sr.norec = '$norec'
-		and pp.objectjenispphfk is not null
+		and jp.namaexternal ilike '%pph%'
         group by pp.objectbkufk,pep.objectbkufk,jp.jenispajak, pep.nopajak, pp.nopajak, pp.uraianpajak, sr.norealisasi, sr.tglverif, pp.pph
 
         union all
 
         select pp.objectbkufk,pep.objectbkufk,
-        pep.nopajak nopajakpep, pp.nopajak nopajakpp, pp.uraianpajak, sr.norealisasi,string_agg(DISTINCT rd.uraian, ',') uraian, sr.tglverif tglrealisasi, 'PPn' as kode, pp.ppn as jumlah 
+        pep.nopajak nopajakpep, pp.nopajak nopajakpp, pp.uraianpajak, sr.norealisasi,string_agg(DISTINCT rd.uraian, ',') uraian, sr.tglverif tglrealisasi, jp.jenispajak as kode, pp.ppn as jumlah 
         from strukrealisasi_t sr 
         left join realisasidetail_t rd on rd.strukrealisasifk = sr.norec
 		inner join pemungutanpajak_t pp on pp.objectspjfk = sr.norec and pp.statusenabled = true and pp.kdprofile = 30
         inner join penyetoranpajak_t pep on left(pep.nopajak, 3) = left(pp.nopajak, 3) and pep.statusenabled = true and pep.kdprofile = 30
+        left join jenispajak_m jp on jp.id = pp.objectjenispphfk and jp.statusenabled = true and jp.kdprofile = 30
         where sr.norec = '$norec'
-		and pp.objectjenispphfk is null
-        group by pp.objectbkufk,pep.objectbkufk, pep.nopajak, pp.nopajak, pp.uraianpajak, sr.norealisasi, sr.tglverif, pp.ppn
+		and jp.namaexternal ilike '%ppn%'
+        group by pp.objectbkufk,pep.objectbkufk,jp.jenispajak, pep.nopajak, pp.nopajak, pp.uraianpajak, sr.norealisasi, sr.tglverif, pp.ppn
             ")
         );
 

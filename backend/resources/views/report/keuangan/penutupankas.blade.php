@@ -199,7 +199,7 @@
             </td>
             <td style="padding: 5px;height:200px;" align="center" colspan="2"></td>
             <td style="padding: 5px;height:200px;" align="center" colspan="1">
-                YOGYAKARTA, {{$tanggalcetak}}<br>
+                Yogyakarta, {{$tanggalcetak}}<br>
                 Bendahara Pengeluaran<br><br><br><br><br><br><br><br><br>
                 Christina Dewi Isti Paramita, S.E.<br>
                 NIP. 19841027 201502 2 001<br>
