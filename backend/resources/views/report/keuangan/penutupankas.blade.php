@@ -80,7 +80,7 @@
                         Nama Penutup Kas
                         </td>
                         <td class="child" colspan="3" style="padding: 5px;" align="left">
-                        : Paula Sofyanita, SE.
+                        : Christina Dewi Isti Paramita, S.E.
                         </td>
                     </tr>
                     <tr>
@@ -201,8 +201,8 @@
             <td style="padding: 5px;height:200px;" align="center" colspan="1">
                 YOGYAKARTA, {{$tanggalcetak}}<br>
                 Bendahara Pengeluaran<br><br><br><br><br><br><br><br><br>
-                Paula Sofyanita, SE.<br>
-                NIP. 19910622 201502 2 002<br>
+                Christina Dewi Isti Paramita, S.E.<br>
+                NIP. 19841027 201502 2 001<br>
             </td>
             <td style="padding: 5px;height:200px;" align="center" colspan="1"></td>
         </tr>
