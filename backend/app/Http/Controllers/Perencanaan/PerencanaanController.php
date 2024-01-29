@@ -5075,6 +5075,44 @@ class PerencanaanController extends ApiController {
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
 
+    public function PengembalianSPJ(Request $request) {
+        DB::beginTransaction();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        try{
+            $KB= StrukRealisasi::where('norec',$request['norec'])
+                ->first();
+            $KB->jumlahpengembalian = $request['uangpengembalian'];
+            $KB->save();
+
+           $transStatus = 'true';
+       } catch (\Exception $e) {
+            $transStatus = 'false';
+       }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'result' => $KB,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'line'=> $e->getLine(),
+                'message'=> $e->getMessage(),
+                'as' => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
     public function savePengembalian(Request $request) {
         DB::beginTransaction();
         $kdProfile = $this->getDataKdProfile($request);

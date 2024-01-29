@@ -1207,6 +1207,10 @@
             "urlDep": "module/Perencanaan/SPJCtrl"
         },
         {
+            "nameDep": "SPJPengembalianCtrl",
+            "urlDep": "module/Perencanaan/SPJPengembalianCtrl"
+        },
+        {
             "nameDep": "EISCtrl",
             "urlDep": "module/Perencanaan/EISCtrl"
         },
