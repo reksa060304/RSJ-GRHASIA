@@ -730,7 +730,7 @@ define(['initialize'], function (initialize) {
                     return;
                 }
                 if ($scope.dataSelected.tglcuci != null) {
-                    toastr.error("Sedang di cuci")
+                    toastr.error("Sudah di cuci")
                     return;
                 }
                 $scope.item.tglCuci = new Date()
@@ -743,7 +743,8 @@ define(['initialize'], function (initialize) {
                     tglcuci: moment($scope.item.tglCuci).format('YYYY-MM-DD HH:mm')
                 }
                 medifirstService.post('laundry/save-pencucian-linen', data).then(function (e) {
-                    $scope.popUpCuci.center().open()
+                    $scope.popUpCuci.center().close()
+                    init()
                 })
 
 

@@ -41,6 +41,12 @@ define(['initialize'], function (initialize) {
             var tarifJasa = 0
             // $scope.item.tglAwal = $scope.now;
             // $scope.item.tglAkhir = $scope.now;
+            var kelompokUser = medifirstService.getKelompokUser()
+            $scope.kelUser = medifirstService.getKelompokUser()
+            $scope.isLaundry = false
+            if (kelompokUser == 'suster' || kelompokUser == 'laundry') {
+                $scope.isLaundry = true
+            }
             LoadCache();
             // init();
             function LoadCache() {
@@ -318,6 +324,7 @@ define(['initialize'], function (initialize) {
                             data.keterangan = $scope.item.keterangan
                             data.nobatch = $scope.item.nobatch
                             data.tglkadaluarsa = $scope.item.tglkadaluarsa
+                            data.qtypenggunaan = parseFloat($scope.item.qtypenggunaan)
 
                             data2[i] = data;
                             $scope.dataGrid = new kendo.data.DataSource({
@@ -363,7 +370,8 @@ define(['initialize'], function (initialize) {
                         total: parseFloat($scope.item.subTotaltxt),
                         keterangan: $scope.item.keterangan,
                         nobatch: $scope.item.nobatch,
-                        tglkadaluarsa: $scope.item.tglkadaluarsa
+                        tglkadaluarsa: $scope.item.tglkadaluarsa,
+                        qtypenggunaan: parseFloat($scope.item.qtypenggunaan)
                     }
                     data2.push(data)
                     $scope.dataGrid = new kendo.data.DataSource({

@@ -197,8 +197,8 @@ define(['initialize'], function (initialize) {
                     5: '',
                     6: ''
                 }
-                cacheHelper.set('KirimBarangLaundryCtrl', chacePeriode);
-                $state.go('KirimBarangLaundry')
+                cacheHelper.set('PenerimaanLaundryCtrl', chacePeriode);
+                $state.go('PenerimaanLaundry')
             }           
            
             $scope.formatTanggal = function (tanggal) {

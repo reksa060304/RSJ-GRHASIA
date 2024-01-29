@@ -2400,6 +2400,38 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 
 
             }
+
+            // Tombol EMR
+            $scope.emr = function () {
+                if ($scope.item.nocm == null && $scope.item.norec_apd == null) {
+                    window.messageContainer.error("Pilih Dahulu Pasien!")
+                    return
+                }
+                cacheHelper.set('cacheRekamMedis', undefined);
+                cacheHelper.set('cacheRMelektronik', undefined);
+                var arrStr = {
+                    0: $scope.item.nocm,
+                    1: $scope.item.namapasien,
+                    2: $scope.item.jeniskelamin,
+                    3: $scope.item.noregistrasi,
+                    4: $scope.item.umurzz,
+                    5: $scope.item.kelompokpasien,
+                    6: $scope.item.tglregistrasi,
+                    7: $scope.item.norec_apd,
+                    8: $scope.item.norec_pd,
+                    9: $scope.item.idkelas,
+                    10: $scope.item.namakelas,
+                    11: $scope.item.objectruanganfk,
+                    12: $scope.item.namaruangan + '`',
+                    19: $scope.item.objectdepartemenfk
+                }
+                cacheHelper.set('cacheRMelektronik', arrStr);
+                cacheHelper.set('cacheRekamMedis', arrStr);
+                $state.go('RekamMedis.AsesmenMedis', {
+                    noRec: $scope.item.norec_apd
+                })
+            }
+
             //** BATAS SUCI */
             $scope.cetakobatpulang = function () {
                 var a = ""

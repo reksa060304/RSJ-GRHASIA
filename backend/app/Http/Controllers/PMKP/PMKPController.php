@@ -1099,6 +1099,15 @@ class PMKPController extends ApiController
         if (isset($request['idPelapor']) && $request['idPelapor'] != "" && $request['idPelapor'] != "undefined") {
             $data = $data->where('lki.pembuatlaporanfk', '=', $request['idPelapor']);
         }
+        if (isset($request['statusverif']) && $request['statusverif'] != "" && $request['statusverif'] != "undefined") {
+            $data = $data->where('lki.statusverif', '=', $request['statusverif']);
+        }
+        if (isset($request['norm']) && $request['norm'] != "" && $request['norm'] != "undefined") {
+            $data = $data->where('lki.nocm', '=', $request['norm']);
+        }
+        if (isset($request['namapasien']) && $request['namapasien'] != "" && $request['namapasien'] != "undefined") {
+            $data = $data->where('lki.namapasien', 'ilike', '%'.$request['namapasien'].'%');
+        }
 
         $data = $data->where('lki.statusenabled', true);
         $data = $data->get();
@@ -1813,5 +1822,44 @@ class PMKPController extends ApiController
 
       
         return $this->respond($data);
+    }
+
+    public function verifDataLaporanInsidenInternal(Request $request, $stat)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        DB::beginTransaction();
+        try {
+
+            foreach ($request->data as $data) {
+                LaporanInsidenInternal::where('norec',$data['norec'])
+                ->where('kdprofile', $kdProfile)
+                ->update([
+                    'statusverif' => $stat
+                ]);
+            }
+
+            $transStatus = true;
+        } catch (\Exception $e) {
+            $transStatus = false;
+        }
+
+        if ($transStatus) {
+            $transMessage = $stat == "true" ? "Verifikasi Berhasil" : "Batal Verifikasi Berhasil";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMessage,
+                "as" => '@epic',
+            );
+        } else {
+            $transMessage = $stat == "true" ? "Verifikasi Gagal" : "Batal Verifikasi Gagal";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message"  => $transMessage,
+                "as" => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
 }

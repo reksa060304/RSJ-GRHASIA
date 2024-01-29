@@ -120,6 +120,15 @@
                     ng-model="item.jumlah" />
             </div>
         </div>
+        <div class="grid_1" ng-if="isLaundry">
+            <div class="grid_12">
+                <label c-label item="item" c-label-text="Qty Penggunaan"></label>
+            </div>
+            <div class="grid_12">
+                <input c-text-box type="input" style="text-align: right" filter="" class="k-textbox"
+                    ng-model="item.qtypenggunaan" />
+            </div>
+        </div>
         <div class="grid_1">
             <div class="grid_12">
                 <label c-label item="item" c-label-text="Harga Satuan"></label>

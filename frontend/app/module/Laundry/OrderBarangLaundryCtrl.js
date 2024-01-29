@@ -165,7 +165,7 @@ define(['initialize'], function (initialize) {
                 //         })
                 //     })
                 // /* end info stok all ruangan */
-                // GETKONVERSI(0)
+                GETKONVERSI(0)
             }
 
             function GETKONVERSI(jml) {
@@ -191,7 +191,7 @@ define(['initialize'], function (initialize) {
                 // }
                 medifirstService.get("logistik/get-produkdetail?" +
                     "produkfk=" + $scope.item.produk.id +
-                    "&ruanganfk=" + $scope.item.ruanganTujuan.id, true).then(function (dat) {
+                    "&ruanganfk=" + $scope.item.ruangan.id, true).then(function (dat) {
                         dataProdukDetail = dat.data.detail;
                         $scope.item.stok = dat.data.jmlstok / $scope.item.nilaiKonversi
                         $scope.item.jumlah = jml
@@ -388,7 +388,7 @@ define(['initialize'], function (initialize) {
                 }
                 $scope.item.produk = dataProduk//{id:dataSelected.produkfk,namaproduk:dataSelected.namaproduk}                
                 $scope.item.jumlah = dataSelected.jumlah
-                // GETKONVERSI(dataSelected.jumlah)
+                GETKONVERSI(dataSelected.jumlah)
                 // $scope.item.nilaiKonversi = dataSelected.nilaikonversi
                 $scope.listSatuan = ([{ ssid:dataSelected.satuanstandarfk, satuanstandar: dataSelected.satuanstandar }])
                 $scope.item.satuan = { ssid: dataSelected.satuanstandarfk, satuanstandar: dataSelected.satuanstandar }

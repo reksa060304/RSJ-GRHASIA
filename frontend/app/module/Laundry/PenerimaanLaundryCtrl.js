@@ -108,6 +108,28 @@ define(['initialize'], function (initialize) {
                             });
                         });
                     }
+                    if (statusLoad == 'KirimBarang') {
+                        medifirstService.get("laundry/get-detail-order-for-kirim-laundry?norecOrder=" + norecOrder, true).then(function (data_ih) {
+                            $scope.isRouteLoading = false;
+                            $scope.item.tglAwal = moment($scope.now).format('YYYY-MM-DD HH:mm:ss') //data_ih.data.detail.tglorder
+                            $scope.item.ruangan = { id: data_ih.data.detail.ruidasal, namaruangan: data_ih.data.detail.ruanganasal };
+                            $scope.item.ruanganTujuan = { id: data_ih.data.detail.ruidtujuan, namaruangan: data_ih.data.detail.ruangantujuan };
+                            $scope.item.jenisKirim = { id: data_ih.data.detail.jenisid, jenis: data_ih.data.detail.jenis }
+                            data2 = data_ih.data.details;
+                            $scope.item.Keterangan = data_ih.data.detail.keterangan;
+                            $scope.dataGrid = new kendo.data.DataSource({
+                                data: data2,
+                                group: $scope.group,
+                                pageSize: 100,
+                                total: data2.length,
+                                serverPaging: false,
+                                schema: {
+                                    model: {
+                                    }
+                                }
+                            });
+                        });
+                    }
                     if (statusLoad == 'KirimBalik') {
                         $scope.title = 'Kirim Laundry'
                         $scope.titleTambahan ='Kirim'
@@ -409,7 +431,9 @@ define(['initialize'], function (initialize) {
                 $scope.item.produk = dataProduk
                 $scope.item.jumlah = 0
                 GETKONVERSI(dataSelected.jumlah)
-                $scope.item.nilaiKonversi = dataSelected.nilaikonversi
+                if (dataSelected.nilaikonversi != undefined && dataSelected.nilaikonversi != null) {
+                    $scope.item.nilaiKonversi = dataSelected.nilaikonversi
+                }
                 $scope.item.satuan = { ssid: dataSelected.satuanstandarfk, satuanstandar: dataSelected.satuanstandar }
             }
             function Kosongkan() {
@@ -449,11 +473,11 @@ define(['initialize'], function (initialize) {
                     "title": "Satuan",
                     "width": "80px",
                 },
-                {
-                    "field": "jmlstok",
-                    "title": "Stok",
-                    "width": "70px",
-                },
+                // {
+                //     "field": "jmlstok",
+                //     "title": "Stok",
+                //     "width": "70px",
+                // },
                 {
                     "field": "jumlah",
                     "title": "Qty",
@@ -514,6 +538,7 @@ define(['initialize'], function (initialize) {
                     norecCetak = $scope.item.noKirim;
                     Kosongkan();
                     $scope.saveShow = true;
+                    window.history.back();
                     // $scope.popUp.center().open();
                 }, function (error) {
                     $scope.saveShow = true;

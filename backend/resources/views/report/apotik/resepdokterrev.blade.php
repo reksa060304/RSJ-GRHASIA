@@ -115,7 +115,7 @@
                         <tr>
                             <td class="price fs-13" style="text-align: center"><?= $d->rke; ?></td>
                             <td class="price fs-13" style="text-align: left"><?= $d->namaproduk; ?></td>
-                            <td class="price fs-13" style="text-align: center"><?= $d->dosis; ?> <?= $d->satuandosis; ?></td>
+                            <td class="fs-13" style="text-align: center">{{ $d->dosis }}</td>
                             <td class="price fs-13" style="text-align: center"><?= $d->jumlah; ?></td>
                             <td class="price fs-13" style="text-align: center"><?= $d->catatandokter ?></td>
                         </tr>

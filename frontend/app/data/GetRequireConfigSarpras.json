@@ -646,6 +646,14 @@
             "urlDep": "module/PMKP/DaftarLaporanInsidenInternalCtrl"
         },
         {
+            "nameDep": "DaftarVerifikasiInsidenInternalCtrl",
+            "urlDep": "module/PMKP/DaftarVerifikasiInsidenInternalCtrl"
+        },
+        {
+            "nameDep": "DaftarRekapInsidenInternalCtrl",
+            "urlDep": "module/PMKP/DaftarRekapInsidenInternalCtrl"
+        },
+        {
             "nameDep": "DaftarOrderMaintenanceCtrl",
             "urlDep": "module/IPSRS/DaftarOrderMaintenanceCtrl"
         } ,
