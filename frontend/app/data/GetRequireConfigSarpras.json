@@ -682,6 +682,10 @@
             "urlDep": "module/PMKP/DaftarRiskRegisterCtrl"
         },
         {
+            "nameDep": "DaftarVerifikasiRiskRegisterCtrl",
+            "urlDep": "module/PMKP/DaftarVerifikasiRiskRegisterCtrl"
+        },
+        {
             "nameDep": "InformasiJadwalKalibrasiCtrl",
             "urlDep": "module/IPSRS/InformasiJadwalKalibrasiCtrl"
         },

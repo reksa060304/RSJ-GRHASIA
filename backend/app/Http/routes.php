@@ -1861,6 +1861,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::post('pmkp/save-data-risk-register', 'PMKP\PMKPController@saveRiskRegister');
             Route::post('pmkp/hapus-data-risk-register', 'PMKP\PMKPController@hapusRiskRegister');
             Route::post('pmkp/verifikasi-data-insiden-internal/{stat}', 'PMKP\PMKPController@verifDataLaporanInsidenInternal');
+            Route::post('pmkp/verifikasi-data-risk-register/{stat}', 'PMKP\PMKPController@verifDataLaporanRiskRegister');
             /*END POST*/
         // });
         // Route::group(['prefix' => 'radiologi'], function () {
