@@ -221,6 +221,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     }
                     if ($state.params.parameter == '77777') {
                         $scope.spjaja = true
+                    } else if ($state.params.parameter == '33333') {
+                        $scope.spjpengembalian = true
                     } else if ($state.params.parameter == '99999') {
                         $scope.panjaraja = true
                     } else if ($state.params.parameter == '88888') {
@@ -2454,6 +2456,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.isRouteLoading = true
                 LoadSPJ()
             }
+            $scope.CariSPJPengembalian = function () {
+                $scope.isRouteLoading = true
+                LoadSPJPengembalian()
+            }
 
             $scope.CariKeteranganPerubahan = function () {
                 medifirstService.get("perencanaan/get-data-combo?idmataanggaran="+$scope.item.combomataanggaran.id+"&tahapaktif="+$scope.item.objecttahappemindahan.id).then(function (e) {
@@ -3037,6 +3043,21 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 
             }
 
+            $scope.SimpanPengembalianSPJ = function(){
+                var objSave =
+                {
+                    norec: $scope.item.norecpengembalian,
+                    uangpengembalian: $scope.item.jumlahpengembalianspj,
+                }
+                medifirstService.post('perencanaan/pengembalian-spj', objSave).then(function (e) {
+                    $scope.item.jumlahpengembalianspj = 0;
+                    $scope.popupPengembalianSPJ.center().close()
+                    LoadSPJPengembalian();
+
+                })
+                
+            }
+
             $scope.SimpanPanjar = function(){
 
                 var idbill = null;
@@ -3358,6 +3379,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         }
                         if ($state.params.parameter == '77777') {
                             $scope.spjaja = true
+                        } else if ($state.params.parameter == '33333') {
+                            $scope.spjpengembalian = true
                         } else if ($state.params.parameter == '99999') {
                             $scope.panjaraja = true
                         } else if ($state.params.parameter == '88888') {
@@ -3485,6 +3508,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         }
                         if ($state.params.parameter == '77777') {
                             $scope.spjaja = true
+                        } else if ($state.params.parameter == '33333') {
+                            $scope.spjpengembalian = true
                         } else if ($state.params.parameter == '99999') {
                             $scope.panjaraja = true
                         } else if ($state.params.parameter == '88888') {
@@ -3626,6 +3651,43 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     DataSPJ = e.data.data
                     DataDetailSPJALL = e.data.detail
                     $scope.dataSourceSPJ = new kendo.data.DataSource({
+                        data: DataSPJ,
+                        group: $scope.groupmataanggaran,
+                    });
+                    
+                    var arr = {
+                        0: $scope.item.statusspj
+                    }
+                    cacheHelper.set('SPJ', arr)
+                $scope.isRouteLoading = false
+
+                })
+            }
+            function LoadSPJPengembalian(){
+                $scope.isRouteLoading = true
+
+                // var chace = cacheHelper.get('KelompokAnggaranCtrl');
+                // console.log(chace)
+                // if (chace != undefined) {
+                //     var tglawal = moment(chace[0]).format('YYYY-MM-DD');
+                //     var tglakhir = moment(chace[1]).format('YYYY-MM-DD');
+                // } else{
+                //     var tglawal = moment($scope.item.tglawal).format('YYYY-MM-DD');
+                //     var tglakhir = moment($scope.item.tglakhir).format('YYYY-MM-DD');
+                // }
+
+                var tglawal = moment($scope.item.tglawal).format('YYYY-MM-DD');
+                var tglakhir = moment($scope.item.tglakhir).format('YYYY-MM-DD');
+
+                var stat=''
+                if($scope.item.statusspj != undefined){
+                    stat = $scope.item.statusspj.id
+                }
+                
+                medifirstService.get("perencanaan/get-spj?tglAwal="+tglawal+"&tglAkhir="+tglakhir+"&idpegawai="+$scope.idpegawailogin+"&status="+stat).then(function (e) {
+                    DataSPJ = e.data.data
+                    DataDetailSPJALL = e.data.detail
+                    $scope.dataSourceSPJPengembalian = new kendo.data.DataSource({
                         data: DataSPJ,
                         group: $scope.groupmataanggaran,
                     });
@@ -4970,6 +5032,157 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                 {
                                     text: "Cetak SPJ dan Lampiran",
                                     click: cetakSPJPlusLampiran,
+                                    imageClass: "clinic fa"
+                                },
+                                
+                            ],
+                                title: "",
+                                width: "230px",
+                    },
+                    {
+                        "command": [
+                              {
+                                text: "Verifikasi",
+                                click: verifSPJ,
+                                imageClass: "clinic fa",
+                              },
+                              {
+                                text: "Batal",
+                                click: batalVerifSPJ,
+                                imageClass: "clinic fa",
+                              },
+                          ],
+                             title: "",
+                             width: "100px",
+                    },
+                    {
+                        "field": "tglrealisasi",
+                        "title": "Tgl SPJ",
+                        "width": "100px",
+                        // hidden: true
+                    },
+                    {
+                        "field": "mataanggaran",
+                        "title": "Kode Rekening",
+                        "width": "200px",
+                        // hidden: true
+                    },
+                    {
+                        "field": "kegiatan",
+                        "title": "Kegiatan",
+                        "width": "200px",
+                        hidden: true
+                    },
+                    {
+                        "field": "norealisasi",
+                        "title": "No SPJ",
+                        "width": "100px",
+                        // hidden: true
+                    },
+                    {
+                        "field": "asalproduk",
+                        "title": "Sumber Dana",
+                        "width": "100px",
+                        // hidden: true
+                    },
+                    {
+                        "field": "deskripsi",
+                        "title": "Dasar Kontraktual",
+                        "width": "100px",
+                        // hidden: true
+                    },
+                    {
+                        "field": "totalbelanja",
+                        "title": "Total Belanja",
+                        "width": "130px",
+                        // hidden: true,
+                    },
+                    {
+                        "field": "uraian",
+                        "title": "Uraian",
+                        "width": "200px",
+                        // hidden: true
+                    },
+                    {
+                        "field": "pph",
+                        "title": "PPh",
+                        "width": "70px",
+                        // hidden: true
+                    },
+                    {
+                        "field": "ppn",
+                        "title": "PPN",
+                        "width": "70px",
+                        // hidden: true
+                    },
+                    {
+                        "field": "penerima",
+                        "title": "Penerima",
+                        "width": "200px",
+                        // hidden: true
+                    },
+                    {
+                        "field": "pihakketiga",
+                        "title": "Nama Pihak Ketiga",
+                        "width": "150px",
+                        // hidden: true
+                    },
+                    {
+                        "field": "tglverif",
+                        "title": "Tgl Verif",
+                        "width": "100px",
+                        // hidden: true
+                    },
+                    {
+                        "field": "keterangan",
+                        "title": "Keterangan",
+                        "width": "200px",
+                        // hidden: true
+                    },
+                    {
+                        "command": [
+                              {
+                                 text: "Delete",
+                                 click: deleteDetailSPJ,
+                                 imageClass: "clinic fa"
+                              },
+                          ],
+                             title: "",
+                             width: "100px",
+                    },
+                ]
+            };
+
+            $scope.columnSPJPengembalian = {
+                dataBound: onDataBound,
+                toolbar:[
+                    {
+                        name: "add", 
+                        text: "Tambah",
+                        template: '<div class="grid_2"><button ng-click="TambahSPJ()" class="k-button k-button-icontext k-grid-upload" href="\\#"><span class="k-icon k-i-plus"></span>Tambah</button></div>'                    
+                    },
+                    {
+                        name: "ads", 
+                        text: "asd",
+                        template: '<div class="grid_6"></div>'
+                    },
+                    {
+                        name: "src", 
+                        text: "src",
+                        template:  '<div class="grid_4" style="margin-top: -8px;"><div class="grid_1" style="margin-top: 10px;"><label c-label item="item" c-label-text="Search"></label></div><div class="grid_11"><input c-text-box type="input" class="k-textbox" ng-model="item.searchSPJ" /></div></div>'
+                    }
+                ],
+                selectable: 'row',
+                scrollable: true,
+
+                pageable: true,
+                groupable: true,  
+                columns:[
+                    {
+                        "command": [
+                                {
+                                    text: "Pengembalian",
+                                    click: PengembalianSPJ,
                                     imageClass: "clinic fa"
                                 },
                                 
@@ -7713,6 +7926,34 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.subkegiatanpengembalian = dataItem.idsubkegiatan
                 $scope.subsubkegiatanpengembalian = dataItem.idsubsubkegiatan
                 $scope.rekeningpengembalian = dataItem.idmataanggaran
+
+                $scope.norecspj = dataItem.norecspj
+                console.log($scope.norecspj)
+            }
+
+            function PengembalianSPJ(e) {
+                e.preventDefault();
+                medifirstService.get("reservasionline/get-daftar-slotting?id=1").then(function (e) {
+
+				})
+                
+                $scope.popupPengembalianSPJ.center().open()
+                var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+
+                medifirstService.get("perencanaan/get-pengembalian-panjar?norec="+dataItem.norec).then(function (e) {
+                    $scope.dataSourcePengembalian = e.data.data
+				})
+                //console.log(dataItem)
+                $scope.item.tglPengembalian = dataItem.tglrealisasi
+                $scope.item.sumberpengembalian = dataItem.asalproduk
+                $scope.item.subkegiatanpengembalian = dataItem.keterangansubkegiatan
+                $scope.item.subsubkegiatanpengembalian = dataItem.subsubkegiatan
+                $scope.item.rekeningpengembalian = dataItem.kodemataanggaran
+                $scope.item.norecpengembalian = dataItem.norec                
+
+                $scope.subkegiatanpengembalian = dataItem.idsubkegiatan
+                $scope.subsubkegiatanpengembalian = dataItem.idsubsubkegiatan
+                $scope.rekeningpengembalian = dataItem.objectmataanggaranfk
 
                 $scope.norecspj = dataItem.norecspj
                 console.log($scope.norecspj)
