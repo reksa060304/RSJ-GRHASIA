@@ -7647,7 +7647,8 @@ class ReportController extends ApiController{
         // if (isset($request['bulanpanjar']) && $request['bulanpanjar'] != "" && $request['bulanpanjar'] != "undefined") {
         //     $qbulan =  " and extract(month from tglbku) between '01' and  '" . $request['bulanpanjar']."'";
         // }
-        
+        $settingrba = DB::table('settinganggaran_t')->where('statusenabled', true)->where('kdprofile', 30)->first();
+        // dd($settingrba->objecttahapaktivfk);
         if($request['jenisrekening'] == 1){
             $data = DB::select(DB::raw("select text, kode, div, sum(subtotal) subtotal, sum(totalbulanlalu) totalbulanlalu, 
         sum(totalbulanini) totalbulanini
@@ -7674,6 +7675,7 @@ class ReportController extends ApiController{
                         and kmsss.kdprofile = 30 and kmsss.statusenabled = true
                         and ap.kdprofile = 30 and ap.statusenabled = true
                         and kb.kdprofile = 30 and kb.statusenabled = true
+                        and kb.objecttahapfk = $settingrba->objecttahapaktivfk
                         and km.tahun = '$tahun'
                                         $qasalproduk
                         group by kmsss.keterangan, kmsss.kode, kmsss.div, sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi)
@@ -7703,6 +7705,7 @@ class ReportController extends ApiController{
                         and kmsss.kdprofile = 30 and kmsss.statusenabled = true
                         and ap.kdprofile = 30 and ap.statusenabled = true
                         and kb.kdprofile = 30 and kb.statusenabled = true
+                        and kb.objecttahapfk = $settingrba->objecttahapaktivfk
                         and km.tahun = '$tahun'
                                         $qasalproduk
                         group by kmss.keterangan, kmss.kode, kmss.div, sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi)
@@ -7732,6 +7735,7 @@ class ReportController extends ApiController{
                         and kmsss.kdprofile = 30 and kmsss.statusenabled = true
                         and ap.kdprofile = 30 and ap.statusenabled = true
                         and kb.kdprofile = 30 and kb.statusenabled = true
+                        and kb.objecttahapfk = $settingrba->objecttahapaktivfk
                         and km.tahun = '$tahun'
                                         $qasalproduk
                         group by kms.keterangan, kms.kode, kms.div, sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi)
@@ -7760,6 +7764,7 @@ class ReportController extends ApiController{
                         and kmss.kdprofile = 30 and kmss.statusenabled = true
                         and kmsss.kdprofile = 30 and kmsss.statusenabled = true
                         and ap.kdprofile = 30 and ap.statusenabled = true
+                        and kb.objecttahapfk = $settingrba->objecttahapaktivfk
                         and kb.kdprofile = 30 and kb.statusenabled = true
                         and km.tahun = '$tahun'
                                         $qasalproduk
@@ -7793,6 +7798,7 @@ class ReportController extends ApiController{
                                 and km.tahun = '$tahun'
                                                         $qasalproduk
                                 and ma.kdprofile = 30 and ma.statusenabled = true
+                                and kb.objecttahapfk = $settingrba->objecttahapaktivfk
                                 and mat.kdprofile = 30 and mat.statusenabled = true
                                 and kb.kdprofile = 30 and kb.statusenabled = true
                                 group by mat.kodemataanggaran, mat.namamataanggaran, sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi)
@@ -7825,6 +7831,7 @@ class ReportController extends ApiController{
                                 and ma.kdprofile = 30 and ma.statusenabled = true
                                 and mat.kdprofile = 30 and mat.statusenabled = true
                                 and kb.kdprofile = 30 and kb.statusenabled = true
+                                and kb.objecttahapfk = $settingrba->objecttahapaktivfk
                                                         $qasalproduk
                                 group by mat.kodemataanggaran, mat.namamataanggaran, sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi)
                             ) as b 
@@ -7858,6 +7865,7 @@ class ReportController extends ApiController{
                                 and ma.kdprofile = 30 and ma.statusenabled = true
                                 and mat.kdprofile = 30 and mat.statusenabled = true
                                 and kb.kdprofile = 30 and kb.statusenabled = true
+                                and kb.objecttahapfk = $settingrba->objecttahapaktivfk
                                                         $qasalproduk
                                 group by mat.kodemataanggaran, mat.namamataanggaran, sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi)
                             ) as c 
@@ -7883,6 +7891,7 @@ class ReportController extends ApiController{
                                 and km.tahun = '$tahun'
                                 and ma.kdprofile = 30 and ma.statusenabled = true
                                 and kb.kdprofile = 30 and kb.statusenabled = true
+                                and kb.objecttahapfk = $settingrba->objecttahapaktivfk
                                                         $qasalproduk
                                 group by ma.kodemataanggaran, ma.namamataanggaran, sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi)
                             ) as d 
@@ -8150,6 +8159,7 @@ class ReportController extends ApiController{
                                     and bku.kdprofile = 30 and bku.statusenabled = true
                                     and sr.status = 'Sudah Diverifikasi'
                                     and bku.tglbku::date between '$tahun-01-01' and '$tglbku'
+                                    and kb.objecttahapfk = $settingrba->objecttahapaktivfk
                                     $qasalproduk
                                     group by extract(month from bku.tglbku), sr.totalbelanja, sr.norec
                             ) as x
@@ -8267,6 +8277,7 @@ class ReportController extends ApiController{
                                             and bku.kdprofile = 30 and bku.statusenabled = true
                                             and sr.status = 'Sudah Diverifikasi'
                                             and bku.tglbku::date between '$tahun-01-01' and '$tglbku'
+                                            and kb.objecttahapfk = $settingrba->objecttahapaktivfk
                                             $qasalproduk
                                             group by extract(month from bku.tglbku), sr.totalbelanja, sr.norec
                                     ) as x
@@ -8381,6 +8392,7 @@ class ReportController extends ApiController{
                         and kmsss.kdprofile = 30 and kmsss.statusenabled = true
                         and ap.kdprofile = 30 and ap.statusenabled = true
                         and kb.kdprofile = 30 and kb.statusenabled = true
+                        and kb.objecttahapfk = $settingrba->objecttahapaktivfk
                         and km.tahun = '$tahun'
                                         $qasalproduk
                         group by kmsss.keterangan, kmsss.kode, kmsss.div, sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi)
@@ -8410,6 +8422,7 @@ class ReportController extends ApiController{
                         and kmsss.kdprofile = 30 and kmsss.statusenabled = true
                         and ap.kdprofile = 30 and ap.statusenabled = true
                         and kb.kdprofile = 30 and kb.statusenabled = true
+                        and kb.objecttahapfk = $settingrba->objecttahapaktivfk
                         and km.tahun = '$tahun'
                                         $qasalproduk
                         group by kmss.keterangan, kmss.kode, kmss.div, sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi)
@@ -8439,6 +8452,7 @@ class ReportController extends ApiController{
                         and kmsss.kdprofile = 30 and kmsss.statusenabled = true
                         and ap.kdprofile = 30 and ap.statusenabled = true
                         and kb.kdprofile = 30 and kb.statusenabled = true
+                        and kb.objecttahapfk = $settingrba->objecttahapaktivfk
                         and km.tahun = '$tahun'
                                         $qasalproduk
                         group by kms.keterangan, kms.kode, kms.div, sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi)
@@ -8468,6 +8482,7 @@ class ReportController extends ApiController{
                         and kmsss.kdprofile = 30 and kmsss.statusenabled = true
                         and ap.kdprofile = 30 and ap.statusenabled = true
                         and kb.kdprofile = 30 and kb.statusenabled = true
+                        and kb.objecttahapfk = $settingrba->objecttahapaktivfk
                         and km.tahun = '$tahun'
                                         $qasalproduk
                         group by km.keterangan, km.kode, km.div, sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi)
@@ -8507,6 +8522,7 @@ class ReportController extends ApiController{
                                 and map2.kdprofile = 30 and map2.statusenabled = true
                                 and map3.kdprofile = 30 and map3.statusenabled = true
                                 and kb.kdprofile = 30 and kb.statusenabled = true
+                                and kb.objecttahapfk = $settingrba->objecttahapaktivfk
                                 group by map3.kode, map3.mataanggaranpermen, sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi)
                             ) as a
                             group by kode, text, bulan
@@ -8539,6 +8555,7 @@ class ReportController extends ApiController{
                                 and map2.kdprofile = 30 and map2.statusenabled = true
                                 and map3.kdprofile = 30 and map3.statusenabled = true
                                 and kb.kdprofile = 30 and kb.statusenabled = true
+                                and kb.objecttahapfk = $settingrba->objecttahapaktivfk
                                 $qasalproduk
                                 group by map2.kode, map2.mataanggaranpermen, sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi)
                             ) as b 
@@ -8572,6 +8589,7 @@ class ReportController extends ApiController{
                                 and map2.kdprofile = 30 and map2.statusenabled = true
                                 and map3.kdprofile = 30 and map3.statusenabled = true
                                 and kb.kdprofile = 30 and kb.statusenabled = true
+                                and kb.objecttahapfk = $settingrba->objecttahapaktivfk
                                 $qasalproduk
                                 group by map1.kode, map1.mataanggaranpermen, sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi)
                             ) as c 
@@ -8605,6 +8623,7 @@ class ReportController extends ApiController{
                                 and map2.kdprofile = 30 and map2.statusenabled = true
                                 and map3.kdprofile = 30 and map3.statusenabled = true
                                 and kb.kdprofile = 30 and kb.statusenabled = true
+                                and kb.objecttahapfk = $settingrba->objecttahapaktivfk
                                 $qasalproduk
                                 group by map.kode, map.mataanggaranpermen, sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi)
                             ) as d 
@@ -8864,6 +8883,7 @@ class ReportController extends ApiController{
                                     and bku.kdprofile = 30 and bku.statusenabled = true
                                     and sr.status = 'Sudah Diverifikasi'
                                     and bku.tglbku::date between '$tahun-01-01' and '$tglbku'
+                                    and kb.objecttahapfk = $settingrba->objecttahapaktivfk
                                     $qasalproduk
                                     group by extract(month from bku.tglbku), sr.totalbelanja, sr.norec
                             ) as x
@@ -8971,6 +8991,7 @@ class ReportController extends ApiController{
                                             and km.kdprofile = 30 and km.statusenabled = true
                                             and kb.kdprofile = 30 and kb.statusenabled = true
                                             and bku.kdprofile = 30 and bku.statusenabled = true
+                                            and kb.objecttahapfk = $settingrba->objecttahapaktivfk
                                             and sr.status = 'Sudah Diverifikasi'
                                             and bku.tglbku::date between '$tahun-01-01' and '$tglbku'
                                             $qasalproduk
