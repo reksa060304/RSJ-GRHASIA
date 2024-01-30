@@ -1673,6 +1673,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('perencanaan/get-daftar-mataanggaran-upk','Perencanaan\PerencanaanController@getDaftarMataAnggaranForUpk');
             Route::get('perencanaan/get-kel-kelima-part','Perencanaan\PerencanaanController@getKelAnggaranKelima');
             Route::get('perencanaan/get-kel-keenam-part','Perencanaan\PerencanaanController@getKelAnggaranKeenam');
+            Route::get('report/cetak-spj-pengembalian', 'Report\ReportController@cetakSPJPengembalian');
 
             Route::post('perencanaan/save-pihak-ketiga','Perencanaan\PerencanaanController@savePihakKetiga');
             Route::post('perencanaan/save-lock-entry-spj','Perencanaan\PerencanaanController@saveLockSPJ');

@@ -148,6 +148,15 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.listPihakKetiga = data
             })
 
+            medifirstService.get("logistik/get-combo-logistik", true).then(function (dat) {
+                var dataCombo = dat.data;
+                $scope.listDataJabatan = dataCombo.jabatan;
+            });
+
+            medifirstService.getPart("logistik/get-combo-pegawai-logistik", true, true, 20).then(function (data) {
+                $scope.ListDataPegawai = data;
+            });
+
             loadDataCombo()
             function loadDataCombo() {
                 medifirstService.get('anggaran/pj-rba?id=' + medifirstService.getPegawaiLogin().id).then(function (data) {
@@ -6461,6 +6470,41 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         }
                     );
                 }
+            }
+
+            $scope.cetakSPJPengembalian = function(){
+                // window.open(baseTransaksi + "report/cetak-spj-pengembalian?tglawal=" + $scope.item.tglawal + "&tglakhir=" + $scope.item.tglakhir, '_blank');
+                $scope.popUp.center().open();
+            }
+
+            $scope.CetakAh = function () {
+
+                var jabatan1 = ''
+                if ($scope.item.DataJabatan2 != undefined) {
+                    jabatan1 = $scope.item.DataJabatan2.namajabatan;
+                }
+
+                var pegawai1 = ''
+                if ($scope.item.DataPegawai2 != undefined) {
+                    pegawai1 = $scope.item.DataPegawai2.namalengkap;
+                }
+
+                var jabatan2 = ''
+                if ($scope.item.DataJabatan != undefined) {
+                    jabatan2 = $scope.item.DataJabatan.namajabatan;
+                }
+
+                var pegawai2 = ''
+                if ($scope.item.DataPegawai != undefined) {
+                    pegawai2 = $scope.item.DataPegawai.namalengkap;
+                }
+
+                window.open(baseTransaksi + "report/cetak-spj-pengembalian?tglawal=" + $scope.item.tglawal + "&tglakhir=" + $scope.item.tglakhir + '&pegawaiMegetahui=' + pegawai1 + '&pegawaiMeminta=' + pegawai2 + '&jabatanMengetahui=' + jabatan1 + '&jabatanMeminta=' + jabatan2, '_blank');
+                $scope.popUp.close();
+            }
+
+            $scope.BatalCetak = function () {
+                $scope.popUp.close();            
             }
 
             $scope.CariPanjar = function(){
