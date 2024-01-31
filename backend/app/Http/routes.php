@@ -1613,7 +1613,10 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('asset/get-jadwal-kalibrasi', 'Asset\AssetController@getJadwalKalibrasi');
           Route::get('asset/get-jadwal-pemeliharaan', 'Asset\AssetController@getJadwalPemeliharaan');
           Route::get('asset/get-produk-asset-part', 'Asset\AssetController@getDataProduk');
-        // });
+          Route::get('asset/get-master-asset', 'Asset\AssetController@getMasterAsset');
+          Route::post('asset/save-master-asset', 'Asset\AssetController@saveMasterAsset');
+          Route::post('asset/edit-master-asset', 'Asset\AssetController@editMasterAsset');
+          // });
         // Route::group(['prefix' => 'microservice'], function () {
         //     Route::group(['prefix' => 'pendaftaran'], function () {
                 /*GET*/

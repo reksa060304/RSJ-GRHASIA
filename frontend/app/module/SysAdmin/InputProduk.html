@@ -131,6 +131,8 @@
 					<md-tab label="Kategory" >
 						<md-content class="md-padding">
 							<div class="grid_12">
+
+								<!-- Kelompok -->
 								<div class="grid_2">
 									<div class="grid_12">
 										<label c-label item="item" c-label-text="Kelompok"></label>
@@ -139,6 +141,8 @@
 										<input style="width: 100%;" kendo-combo-box k-ng-model="item.kelompok" k-data-text-field="'kelompokproduk'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listKelompok" k-on-change="KelompokToJenis(item.kelompok)" ng-click="KelompokToJenis()"/>
 									</div>
 								</div>
+
+								<!-- Jenis -->
 								<div class="grid_2">
 									<div class="grid_12">
 										<label c-label item="item" c-label-text="Jenis"></label>
@@ -147,6 +151,8 @@
 										<input style="width: 100%;" kendo-combo-box k-ng-model="item.jenisProduk" k-data-text-field="'jenisproduk'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-ng-click="'jenisproduk'" k-data-source="listJenisProduk" k-ng-model="'jenisproduk'" k-on-change="JenisToDetail(item.jenisProduk)" ng-click="JenisToDetail()" />
 									</div>
 								</div>
+
+								<!-- Detail jenis -->
 								<div class="grid_2">
 									<div class="grid_12">
 										<label c-label item="item" c-label-text="detailJenis"></label>
@@ -178,6 +184,7 @@
 										<input style="width: 100%;" kendo-combo-box k-ng-model="item.generik" k-data-text-field="'name'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listgenerik"/>
 									</div>
 								</div>
+
 								<!-- gProduk -->
 								<div class="grid_2">
 									<div class="grid_12">
@@ -188,6 +195,65 @@
 										<input style="width: 100%;" kendo-combo-box k-ng-model="item.gProduk" k-data-text-field="'namagproduk'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listgproduk" />
 									</div>
 								</div>
+							</div>
+
+							<div class="grid_12" ng-if="showMasterAssetOption">
+								<div class="grid_2">
+									<div class="grid_12">
+										<label c-label item="item">Master Akun Ke - 1</label>
+									</div>
+									<div class="grid_12">
+										<input style="width: 100%;" kendo-combo-box k-ng-model="item.masterAkun" k-data-text-field="'urian'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="masterAssetOption" k-on-change="handleMasterAsset1(item.masterAkun)"/>
+									</div>
+								</div>
+
+								<div class="grid_2" ng-if="currentAsset.includes(2) && showMasterAssetOption">
+									<div class="grid_12">
+										<label c-label item="item">Master Akun Ke - 2</label>
+									</div>
+									<div class="grid_12">
+										<input style="width: 100%;" kendo-combo-box k-ng-model="item.masterAkun2" k-data-text-field="'urian'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="masterAssetOption2" k-on-change="handleMasterAsset2(item.masterAkun2)"/>
+									</div>
+								</div>
+
+								<div class="grid_2" ng-if="currentAsset.includes(3) && showMasterAssetOption">
+									<div class="grid_12">
+										<label c-label item="item">Master Akun Ke - 3</label>
+									</div>
+									<div class="grid_12">
+										<input style="width: 100%;" kendo-combo-box k-ng-model="item.masterAkun3" k-data-text-field="'urian'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="masterAssetOption3" k-on-change="handleMasterAsset3(item.masterAkun3)"/>
+									</div>
+								</div>
+
+								<div class="grid_2" ng-if="currentAsset.includes(4) && showMasterAssetOption">
+									<div class="grid_12">
+										<label c-label item="item">Master Akun Ke - 4</label>
+									</div>
+									<div class="grid_12">
+										<input style="width: 100%;" kendo-combo-box k-ng-model="item.masterAkun4" k-data-text-field="'urian'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="masterAssetOption4" k-on-change="handleMasterAsset4(item.masterAkun4)"/>
+									</div>
+								</div>
+
+								<div class="grid_2" ng-if="currentAsset.includes(5) && showMasterAssetOption">
+									<div class="grid_12">
+										<label c-label item="item">Master Akun Ke - 5</label>
+									</div>
+									<div class="grid_12">
+										<input style="width: 100%;" kendo-combo-box k-ng-model="item.masterAkun5" k-data-text-field="'urian'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="masterAssetOption5" k-on-change="handleMasterAsset5(item.masterAkun5)"/>
+									</div>
+								</div>
+
+								<div class="grid_2" ng-if="currentAsset.includes(6) && showMasterAssetOption">
+									<div class="grid_12">
+										<label c-label item="item">Master Akun Ke - 6</label>
+									</div>
+									<div class="grid_12">
+										<input style="width: 100%;" kendo-combo-box k-ng-model="item.masterAkun6" k-data-text-field="'urian'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="masterAssetOption6"/>
+									</div>
+								</div>
+							</div>
+
+							<div class="grid_12">
 								<!-- levelProduk -->
 								<div class="grid_2">
 									<div class="grid_12">
@@ -199,6 +265,7 @@
 										<input style="width: 100%;" kendo-combo-box k-ng-model="item.levelProduk" k-data-text-field="'levelproduk'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listlevel" />
 									</div>
 								</div>
+
 								<!-- isProdukIntern -->
 								<div class="grid_2">
 									<div class="grid_12">

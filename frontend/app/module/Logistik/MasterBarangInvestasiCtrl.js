@@ -281,7 +281,9 @@ define(['initialize'], function (initialize) {
 							var datas = data.data.detailterima;
 							var dataProduk = data.data.pelayananPasien[0];
 							$scope.item.kdProduk = dataProduk.kpid
-							$scope.item.kodeBmn = undefined;
+							// $scope.item.kodeBmn = undefined;
+							// $scope.item.kodeBmn = dataProduk.kodeasset
+							$scope.item.kodeBmn = dataProduk.kodeasset
 							$scope.listProduk = [{id:dataProduk.kpid, namaproduk:dataProduk.namaproduk}];
 							$scope.item.produk = {id:dataProduk.kpid, namaproduk:dataProduk.namaproduk};							
 							$scope.item.TglRegistrasi = moment(datas.tglstruk).format("YYYY-MM-DD HH:mm");
@@ -291,6 +293,9 @@ define(['initialize'], function (initialize) {
 							$scope.ListRuangan = [{id:datas.id, namaruangan:datas.namaruangan}];
 							$scope.item.ruanganAsal = {id:datas.id, namaruangan:datas.namaruangan};	
 							$scope.item.ruangan = {id:datas.id, namaruangan:datas.namaruangan};
+							$scope.item.jenisProduk = {id:dataProduk.idjp, jenisproduk:dataProduk.jenisproduk}
+							$scope.item.detailJenisProduk = {id:dataProduk.iddpj, detailjenisproduk:dataProduk.detailjenisproduk}
+							$scope.item.asalproduk = { id: dataProduk.asalprodukfk, asalProduk: dataProduk.asalproduk }
 						})
 					}
 				}
@@ -410,12 +415,12 @@ define(['initialize'], function (initialize) {
 					// "item.jenisProduk|k-ng-model|Jenis Produk",
 					// "item.detailJenisProduk|k-ng-model|Detail Jenis Produk",
 					// "item.asalproduk|k-ng-model|Sumber Dana",
-					// "item.kelompokaset|k-ng-model|Kelompok Aset",
+					"item.kelompokaset|k-ng-model|Kelompok Aset",
 					// * END KATEGORY
 
 					// * SPESIFIKASI
 					// "item.fungsiProduk|k-ng-model|Fungsi Produk",
-					// "item.bahanProduk|k-ng-model|Bahan Produk",
+					"item.bahanProduk|k-ng-model|Bahan Produk",
 					// "item.typeProduk|k-ng-model|Type Produk",
 					// "item.warnaProduk|k-ng-model|Warna Produk",
 					// "item.merkProduk|k-ng-model|Merk Produk",
@@ -436,16 +441,16 @@ define(['initialize'], function (initialize) {
 
 					// * KENDARAAN
 					// "item.NoMesin|ng-model|No Mesin",
-					//          "item.NoBPKB|ng-model|No BPKB",
-					//          "item.NoModel|ng-model|No Model",
-					//          "item.NoSeri|ng-model|No Seri",
-					//          "item.NoPolisi|ng-model|No Polisi",
-					//          "item.BPKBPegawai|k-ng-model|BPKB Atas Nama",
-					//          "item.NoRangka|ng-model|No Rangka",   		
+					// "item.NoBPKB|ng-model|No BPKB",
+					// "item.NoModel|ng-model|No Model",
+					// "item.NoSeri|ng-model|No Seri",
+					// "item.NoPolisi|ng-model|No Polisi",
+					// "item.BPKBPegawai|k-ng-model|BPKB Atas Nama",
+					// "item.NoRangka|ng-model|No Rangka",   		
 					// * END KENDARAAN
 
 					// * SERTIFIKAT
-					// "item.JenisSertifikat|k-ng-model|BPKB Atas Nama",	
+					"item.JenisSertifikat|k-ng-model|Jenis Sertifikat",	
 					// "item.NoSertifikat|ng-model|No Sertifikat",
 					//"item.MasaBerlakuSertifikat|ng-model|Masa Berlaku Sertifikat",
 					// "item.Pegawai|k-ng-model|Sertifikat Atas Nama",	
@@ -648,6 +653,72 @@ define(['initialize'], function (initialize) {
 					UmurAsset = $scope.item.umurEkonomis;
 				}
 
+				var fungsikegunaan = '';
+				if ($scope.item.fungsiProduk != undefined) {
+					fungsikegunaan = $scope.item.fungsiProduk.fungsiproduk;
+				}
+				// if ($scope.item.fungsiProduk.fungsiproduk != undefined) {
+				// 	fungsikegunaan = $scope.item.fungsiProduk.fungsiproduk;
+				// }
+				var objectbahanprodukfk = null;
+				if ($scope.item.bahanProduk != undefined) {
+					objectbahanprodukfk = $scope.item.bahanProduk.id;
+				}
+				var objecttypeprodukfk = null;
+				if ($scope.item.typeProduk != undefined) {
+					objecttypeprodukfk = $scope.item.typeProduk.id;
+				}
+				var objectwarnaprodukfk = null;
+				if ($scope.item.warnaProduk != undefined) {
+					objectwarnaprodukfk = $scope.item.warnaProduk.id;
+				}
+				var objectmerkprodukfk = null;
+				if ($scope.item.merkProduk != undefined) {
+					objectmerkprodukfk = $scope.item.merkProduk.id;
+				}
+				var keteranganlainnya = '';
+				if ($scope.item.keteranganlainnya != undefined) {
+					keteranganlainnya = $scope.item.spesifikasi;
+				}
+				var lb_lebar = '';
+				if ($scope.item.Lebar != undefined) {
+					lb_lebar = $scope.item.Lebar;
+				}
+				var lb_panjang = '';
+				if ($scope.item.Panjang != undefined) {
+					lb_panjang = $scope.item.Panjang;
+				}
+				var lb_tinggi = '';
+				if ($scope.item.Tinggi != undefined) {
+					lb_tinggi = $scope.item.Tinggi;
+				}
+				var dayalistrik = '';
+				if ($scope.item.Listrik != undefined) {
+					dayalistrik = $scope.item.Listrik;
+				}
+				var klasifikasiteknologi = '';
+				if ($scope.item.Teknologi != undefined) {
+					klasifikasiteknologi = $scope.item.Teknologi;
+				}
+				var objectsatuan = null
+				if($scope.item.satuanStandar != undefined){
+					objectsatuan = $scope.item.satuanStandar.id
+				}
+
+				var usiaPakai = null
+				if($scope.item.UsiaPakai != undefined){
+					usiaPakai = $scope.item.UsiaPakai
+				}
+
+				var usiaTeknis = null
+				if($scope.item.UsiaTeknis != undefined){
+					usiaTeknis = $scope.item.UsiaTeknis
+				}
+
+				var sisaUmur = null
+				if($scope.item.SisaUmur != undefined){
+					sisaUmur = $scope.item.SisaUmur
+				}
 
 				var regAset = {
 
@@ -693,26 +764,26 @@ define(['initialize'], function (initialize) {
 					// * END KATEGORY
 
 					// * SPESIFIKASI
-					fungsikegunaan: $scope.item.fungsiProduk.fungsiproduk,
-					objectbahanprodukfk: $scope.item.bahanProduk.id,
-					objecttypeprodukfk: $scope.item.typeProduk.id,
-					objectwarnaprodukfk: $scope.item.warnaProduk.id,
-					objectmerkprodukfk: $scope.item.merkProduk.id,
-					keteranganlainnya: $scope.item.spesifikasi,
-					lb_lebar: $scope.item.Lebar,
-					lb_panjang: $scope.item.Panjang,
-					lb_tinggi: $scope.item.Tinggi,
-					dayalistrik: $scope.item.Listrik,
-					klasifikasiteknologi: $scope.item.Teknologi,
-					usiapakai: $scope.item.UsiaPakai,
-					usiateknis: $scope.item.UsiaTeknis,
-					sisaumur: $scope.item.SisaUmur,
+					fungsikegunaan: fungsikegunaan,//$scope.item.fungsiProduk.fungsiproduk,
+					objectbahanprodukfk: objectbahanprodukfk,//$scope.item.bahanProduk.id,
+					objecttypeprodukfk: objecttypeprodukfk,//$scope.item.typeProduk.id,
+					objectwarnaprodukfk: objectwarnaprodukfk,//$scope.item.warnaProduk.id,
+					objectmerkprodukfk: objectmerkprodukfk,//$scope.item.merkProduk.id,
+					keteranganlainnya: keteranganlainnya,//$scope.item.spesifikasi,
+					lb_lebar: lb_lebar,//$scope.item.Lebar,
+					lb_panjang: lb_panjang, //$scope.item.Panjang,
+					lb_tinggi: lb_tinggi, //$scope.item.Tinggi,
+					dayalistrik: dayalistrik, //$scope.item.Listrik,
+					klasifikasiteknologi: klasifikasiteknologi, //$scope.item.Teknologi,
+					usiapakai: usiaPakai, //$scope.item.UsiaPakai,
+					usiateknis: usiaTeknis,//$scope.item.UsiaTeknis,
+					sisaumur: sisaUmur, //$scope.item.SisaUmur,
 					tglproduksi: moment($scope.item.TglProduksi).format('YYYY-MM-DD HH:mm'),
 					noseri: noSeri,
 					// * END SPESIFIKASI
 
 					// * SATUAN
-					objectsatuan: $scope.item.satuanStandar.id,
+					objectsatuan: objectsatuan,//$scope.item.satuanStandar.id,
 					// * END SATUAN
 
 					// * KENDARAAN
@@ -746,6 +817,8 @@ define(['initialize'], function (initialize) {
 				var objSave = {
 					regAset: regAset
 				}
+
+				// console.log(regAset)
 
 				medifirstService.post('logistik/simpan-detail-regisaset', objSave).then(function (e) {
 					// Kosongkan();

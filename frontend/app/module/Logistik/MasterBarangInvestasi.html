@@ -60,6 +60,9 @@
 					<div class="grid_12">
 						<input c-text-box type="input" filter="'varchar'" class="k-textbox" ng-model="item.kodeBmn"
 							ng-disabled="isUnit" />
+						<!-- <input kendo-combo-box k-ng-model="item.kodeBmn" k-data-text-field="'kodeakun'"
+							k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
+							ng-disabled="isUnit" /> -->
 					</div>
 				</div>
 
@@ -155,13 +158,24 @@
 							k-data-value-field="'id'" k-data-source="ListRuangan" k-filter="'contains'" style="width: 100%"></input>
 					</div>
 				</div>
-				<div class=" grid_4">
+				<div class=" grid_2">
 					<div class="grid_12">
 						<label c-label item="item">Qty Aset</label>
 					</div>
 					<div class="grid_12">
 						<div class="grid_12">
 							<input c-text-box type="number" filter="" class="k-textbox" ng-model="item.QtyAset" />
+						</div>
+					</div>					
+				</div>
+				<div class=" grid_2">
+					<div class="grid_12">
+						<label c-label item="item">Kode Register RS</label>
+					</div>
+					<div class="grid_12">
+						<div class="grid_12">
+							<input c-text-box type="input" filter="'varchar'" class="k-textbox" ng-model="item.koderegisterrs"
+							 />
 						</div>
 					</div>					
 				</div>
@@ -354,6 +368,7 @@
 															k-data-value-field="'id'" k-filter="'contains'"
 															k-auto-bind="false" k-data-source="ListBahanProduk" />
 													</div>
+													{{ item.bahanProduk }}
 												</div>
 												<!-- typeProduk -->
 												<div class="grid_2">
