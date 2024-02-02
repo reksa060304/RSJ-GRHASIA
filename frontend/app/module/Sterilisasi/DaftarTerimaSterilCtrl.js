@@ -557,6 +557,10 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 $scope.popUp.center().open();
             }
 
+            $scope.matachana = function () {
+                $scope.popUp.center().open();
+            }
+
             $scope.CetakAh = function () {
                 var jabatan1 = ''
                 if ($scope.item.DataJabatan != undefined) {

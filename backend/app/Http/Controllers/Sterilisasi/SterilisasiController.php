@@ -1492,6 +1492,7 @@ class SterilisasiController extends ApiController
             );
         }
 
+        // dd($results);
         $result = array(
             'daftar' => $results,
             'datalogin' =>$dataPegawaiUser,
