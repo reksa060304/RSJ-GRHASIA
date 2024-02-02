@@ -8,6 +8,21 @@ define(['initialize'], function (initialize) {
             $scope.item = {};
             LoadDataCombo();
 
+            function LoadCache() {
+                // $scope.item.namarekanan = undefined
+                var chacePeriode = cacheHelper.get('DaftarBarangInvestasiCtrl');
+                if (chacePeriode != undefined) {
+                    $scope.item.tglAwal = new Date(chacePeriode[0]);
+                    $scope.item.tglAkhir = new Date(chacePeriode[1]);
+                    init();
+                }
+                else {
+                    $scope.item.tglAwal = new Date(moment($scope.now).format('YYYY-MM-DD 00:00:00'));
+                    $scope.item.tglAkhir = $scope.now;
+                    LoadData();
+                }
+            }
+
 
             function LoadDataCombo() {
                 var DataRuanganAll = [];
@@ -38,11 +53,11 @@ define(['initialize'], function (initialize) {
 
                 LoadData();
             }
-
+// 
             function LoadData() {
                 $scope.isRouteLoading = true;
-                var tglAwal = moment($scope.item.Awal).format('YYYY-MM-DD HH:mm:ss');
-                var tglAkhir = moment($scope.item.Akhir).format('YYYY-MM-DD HH:mm:ss');
+                var tglAwal = moment($scope.item.tglAwal).format('YYYY-MM-DD');
+                var tglAkhir = moment($scope.item.tglAkhir).format('YYYY-MM-DD');
 
                 var ruanganId = "";
                 if ($scope.item.ruangan != undefined) {
@@ -61,8 +76,8 @@ define(['initialize'], function (initialize) {
                     namaproduk = "&namaproduk=" + $scope.item.NamaProduk;
                 }
                 medifirstService.get("logistik/get-daftar-asset?"
-                    // +"tglAwal="+tglAwal+
-                    // "&tglAkhir="+tglAkhir
+                    +"tglAwal="+tglAwal
+                    +"&tglAkhir="+tglAkhir
                     + ruanganId + kdDetailJenis + namaproduk, true).then(function (dat) {
                         //debugger
                         $scope.isRouteLoading = false;
