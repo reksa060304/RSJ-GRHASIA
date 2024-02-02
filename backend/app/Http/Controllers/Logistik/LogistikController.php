@@ -9598,12 +9598,29 @@ class LogistikController extends ApiController{
             }else{
                 $dataRegAset =  RegistrasiAset::where('noregisteraset',$request['regAset']['noRegisaset'])->first();
             }
+
+            // Awal
+            $dataRegAset->noregisteraset_int=$request['regAset']['noaset'];
+            $dataRegAset->kdbmn=$request['regAset']['kdbmn'];
+            $dataRegAset->objectruanganfk = $request['regAset']['objectruanganfk'];
+            $dataRegAset->objectruanganposisicurrentfk =$request['regAset']['objectruanganposisicurrentfk'];
+            $dataRegAset->judul=$request['regAset']['judul'];
+            $dataRegAset->spesifikasi=$request['regAset']['spesifikasi'];
+            $dataRegAset->jenisaset=$request['regAset']['jenisaset'];
+            $dataRegAset->idprodukfk=$request['regAset']['idprodukfk'];
+            $dataRegAset->koderegisterrs = $request['regAset']['koderegisterrs'];
+
             // Alamat
             $dataRegAset->alamatlengkap = $request['regAset']['alamatlengkap'];
             $dataRegAset->objectdesakelurahanfk= ($request['regAset']['objectdesakelurahanfk'] == null) ? 49502 :$request['regAset']['objectdesakelurahanfk']; //$request['regAset']['objectdesakelurahanfk'];
             $dataRegAset->objectkecamatanfk = ($request['regAset']['objectkecamatanfk'] == null) ? 3482 : $request['regAset']['objectkecamatanfk']; //$request['regAset']['objectkecamatanfk'];
             $dataRegAset->objectkotakabupatenfk=  ($request['regAset']['objectkotakabupatenfk'] == null) ? 226 : $request['regAset']['objectkotakabupatenfk']; //$request['regAset']['objectkotakabupatenfk'];
-            
+            $dataRegAset->objectpropinsifk=$request['regAset']['objectpropinsifk'];
+            $dataRegAset->kodepos= isset($request['regAset']['kodepos']) ? $request['regAset']['kodepos'] : null;
+            $dataRegAset->desakelurahan= isset($request['regAset']['desakelurahan']) ? $request['regAset']['desakelurahan'] : null; //$request['regAset']['desakelurahan'];
+            $dataRegAset->kecamatan= isset($request['regAset']['kecamatan']) ? $request['regAset']['kecamatan'] : null; //$request['regAset']['kecamatan'];
+            $dataRegAset->kotakabupaten= isset($request['regAset']['kotakabupaten']) ? $request['regAset']['kotakabupaten'] : null; //$request['regAset']['kotakabupaten'];
+
             // Kategori
             $dataRegAset->objectdetailjenisproduk=$request['regAset']['objectdetailjenisproduk'];
             $dataRegAset->objectjenisproduk=$request['regAset']['objectjenisproduk'];
@@ -9611,59 +9628,53 @@ class LogistikController extends ApiController{
             $dataRegAset->objectkelompokasetfk= $request['regAset']['objectkelompokasetfk']; //isset($request['regAset']['objectkelompokasetfk']) ? $request['regAset']['objectkelompokasetfk'] : null;
 
             // Spesifikasi
+            $dataRegAset->noseri=$request['regAset']['noseri'];
+            $dataRegAset->fungsikegunaan=$request['regAset']['fungsikegunaan'];
             $dataRegAset->objectbahanprodukfk = $request['regAset']['objectbahanprodukfk']; //isset($request['regAset']['objectbahanprodukfk']) ? $request['regAset']['objectbahanprodukfk'] : null;
+            $dataRegAset->objectwarnaprodukfk=$request['regAset']['objectwarnaprodukfk'];
+            $dataRegAset->objectmerkprodukfk= isset($request['regAset']['objectmerkprodukfk']) ? $request['regAset']['objectmerkprodukfk'] : null; //$request['regAset']['objectmerkprodukfk'];
             $dataRegAset->lb_lebar= ($request['regAset']['lb_lebar'] ==  null) ?  0 : $request['regAset']['lb_lebar']; //$request['regAset']['lb_lebar']
             $dataRegAset->lb_panjang= ($request['regAset']['lb_panjang'] ==  null) ? 0 : $request['regAset']['lb_panjang']; //$request['regAset']['lb_panjang']
             $dataRegAset->lb_tinggi= ($request['regAset']['lb_tinggi'] ==  null) ? 0 : $request['regAset']['lb_tinggi']; //$request['regAset']['lb_panjang']
-            $dataRegAset->sisaumur=$request['regAset']['sisaumur'];
-            
-            $dataRegAset->objectruanganfk = $request['regAset']['objectruanganfk'];
-            $dataRegAset->objectruanganposisicurrentfk =$request['regAset']['objectruanganposisicurrentfk'];
-            $dataRegAset->bpkb_atasnama = ($request['regAset']['bpkb_atasnama'] == null) ? $bpkb->id : $request['regAset']['bpkb_atasnama']; //$request['regAset']['bpkb_atasnama'];
-            $dataRegAset->kdbmn=$request['regAset']['kdbmn'];
-            $dataRegAset->kdjenissertifikat= isset($request['regAset']['kdjenissertifikat']) ? $request['regAset']['kdjenissertifikat'] : null; //$request['regAset']['kdjenissertifikat'];
-//            $dataRegAset->kdrsabhk=$request['regAset']['kdrsabhk'];
-            $dataRegAset->kodepos= isset($request['regAset']['kodepos']) ? $request['regAset']['kodepos'] : null;
-            $dataRegAset->masaberlakusertifikat= isset($request['regAset']['masaberlakusertifikat']) ? $request['regAset']['masaberlakusertifikat'] : null; //$request['regAset']['masaberlakusertifikat'];
-            $dataRegAset->sertifikat_atasnama= isset($request['regAset']['sertifikat_atasnama']) ? $request['regAset']['sertifikat_atasnama'] : null; //$request['regAset']['sertifikat_atasnama']
-            $dataRegAset->kdjenissertifikat=$request['regAset']['kdjenissertifikat'];
-            $dataRegAset->objectmerkprodukfk= isset($request['regAset']['objectmerkprodukfk']) ? $request['regAset']['objectmerkprodukfk'] : null; //$request['regAset']['objectmerkprodukfk'];
-            $dataRegAset->desakelurahan= isset($request['regAset']['desakelurahan']) ? $request['regAset']['desakelurahan'] : null; //$request['regAset']['desakelurahan'];
-            $dataRegAset->kecamatan= isset($request['regAset']['kecamatan']) ? $request['regAset']['kecamatan'] : null; //$request['regAset']['kecamatan'];
-            $dataRegAset->kotakabupaten= isset($request['regAset']['kotakabupaten']) ? $request['regAset']['kotakabupaten'] : null; //$request['regAset']['kotakabupaten'];
-            $dataRegAset->nobpkb= isset($request['regAset']['nobpkb']) ? $request['regAset']['nobpkb'] : null; //$request['regAset']['nobpkb'];
-            $dataRegAset->nomesin= isset($request['regAset']['nomesin']) ? $request['regAset']['nomesin'] : nll; //$request['regAset']['nomesin'];
-            $dataRegAset->nomodel=  isset($request['regAset']['nomodel']) ? $request['regAset']['nomodel'] : null; //$request['regAset']['nomodel'];
-            $dataRegAset->nopolisi= isset($request['regAset']['nopolisi']) ? $request['regAset']['nopolisi'] : null; //$request['regAset']['nopolisi'];
-            $dataRegAset->norangka= isset($request['regAset']['norangka']) ? $request['regAset']['norangka'] : null; //$request['regAset']['norangka'];
-            $dataRegAset->noseri=$request['regAset']['noseri'];
-            $dataRegAset->nosertifikat=$request['regAset']['nosertifikat'];
-            $dataRegAset->objectprodusenprodukfk=$request['regAset']['objectprodusenprodukfk'];
-            $dataRegAset->objectpropinsifk=$request['regAset']['objectpropinsifk'];
-            $dataRegAset->objectwarnaprodukfk=$request['regAset']['objectwarnaprodukfk'];
             $dataRegAset->dayalistrik=$request['regAset']['dayalistrik'];
-            
-            if (isset($request['regAset']['klasifikasiteknologi'])) {
-                $dataRegAset->klasifikasiteknologi=$request['regAset']['klasifikasiteknologi'];
-            }            
-            $dataRegAset->objectsatuan=$request['regAset']['objectsatuan'];
-            $dataRegAset->objectsupplier=$request['regAset']['objectsupplier'];
-            $dataRegAset->tahunperolehan=$request['regAset']['tahunperolehan'];
+            $dataRegAset->sisaumur=$request['regAset']['sisaumur'];
             $dataRegAset->usiapakai=$request['regAset']['usiapakai'];
             $dataRegAset->usiateknis=$request['regAset']['usiateknis'];
-            $dataRegAset->fungsikegunaan=$request['regAset']['fungsikegunaan'];
-//            $dataRegAset->objecttypeprodukfk=$request['regAset']['objecttypeprodukfk'];
             $dataRegAset->tglproduksi=$request['regAset']['tglproduksi'];
+            
+            // Satuan
+            $dataRegAset->objectsatuan=$request['regAset']['objectsatuan'];
+            
+            // Kendaraan
+            $dataRegAset->nomesin= isset($request['regAset']['nomesin']) ? $request['regAset']['nomesin'] : nll; //$request['regAset']['nomesin'];
+            $dataRegAset->nobpkb= isset($request['regAset']['nobpkb']) ? $request['regAset']['nobpkb'] : null; //$request['regAset']['nobpkb'];
+            $dataRegAset->nomodel=  isset($request['regAset']['nomodel']) ? $request['regAset']['nomodel'] : null; //$request['regAset']['nomodel'];
+            $dataRegAset->norangka= isset($request['regAset']['norangka']) ? $request['regAset']['norangka'] : null; //$request['regAset']['norangka'];
             $dataRegAset->noseri=$request['regAset']['noseri'];
+            $dataRegAset->nopolisi= isset($request['regAset']['nopolisi']) ? $request['regAset']['nopolisi'] : null; //$request['regAset']['nopolisi'];
+            $dataRegAset->bpkb_atasnama = ($request['regAset']['bpkb_atasnama'] == null) ? $bpkb->id : $request['regAset']['bpkb_atasnama']; //$request['regAset']['bpkb_atasnama'];
+
+            // Sertifikat
+            $dataRegAset->kdjenissertifikat= isset($request['regAset']['kdjenissertifikat']) ? $request['regAset']['kdjenissertifikat'] : null; //$request['regAset']['kdjenissertifikat'];
+            $dataRegAset->nosertifikat=$request['regAset']['nosertifikat'];
+            $dataRegAset->sertifikat_atasnama= isset($request['regAset']['sertifikat_atasnama']) ? $request['regAset']['sertifikat_atasnama'] : null; //$request['regAset']['sertifikat_atasnama']
+            $dataRegAset->masaberlakusertifikat= isset($request['regAset']['masaberlakusertifikat']) ? $request['regAset']['masaberlakusertifikat'] : null; //$request['regAset']['masaberlakusertifikat'];
+
+            // Rekanan
+            $dataRegAset->objectprodusenprodukfk=$request['regAset']['objectprodusenprodukfk'];
+            $dataRegAset->objectsupplier=$request['regAset']['objectsupplier'];
+
+            // Penyusutan Asset
+            $dataRegAset->tahunperolehan=$request['regAset']['tahunperolehan'];
             $dataRegAset->hargaperolehan=$request['regAset']['hargaperolehan'];
-            $dataRegAset->noregisteraset_int=$request['regAset']['noaset'];
-            $dataRegAset->judul=$request['regAset']['judul'];
-            $dataRegAset->spesifikasi=$request['regAset']['spesifikasi'];
-            $dataRegAset->jenisaset=$request['regAset']['jenisaset'];
             $dataRegAset->nilaisisa=$request['regAset']['nilaisisa'];
             $dataRegAset->umurasset=$request['regAset']['umurasset'];
 
-            // dd($request['regAset']['objectasalprodukfk']);
+//            $dataRegAset->kdrsabhk=$request['regAset']['kdrsabhk'];
+            if (isset($request['regAset']['klasifikasiteknologi'])) {
+                $dataRegAset->klasifikasiteknologi=$request['regAset']['klasifikasiteknologi'];
+            }            
+//            $dataRegAset->objecttypeprodukfk=$request['regAset']['objecttypeprodukfk'];
 
             $dataRegAset->save();
             //## END RegisterAsset
@@ -9824,7 +9835,8 @@ class LogistikController extends ApiController{
         $data = \DB::table('registrasiaset_t as ra')
             ->leftJOIN('strukpelayanan_t as sp','sp.norec','=','ra.nostrukterimafk')
             ->leftJOIN('strukpelayanandetail_t as spd','spd.norec','=','ra.nostrukterimadetailfk')
-            ->leftJOIN('produk_m as pr','pr.id','=','ra.objectprodukfk')
+            // ->leftJOIN('produk_m as pr','pr.id','=','ra.objectprodukfk')
+            ->leftJOIN('produk_m as pr','pr.id','=','ra.idprodukfk')
             ->leftJOIN('detailjenisproduk_m as djp','djp.id','=','pr.objectdetailjenisprodukfk')
             ->leftJOIN('jenisproduk_m as jp','jp.id','=','djp.objectjenisprodukfk')
             ->leftJOIN('kelompokproduk_m as kp','kp.id','=','jp.objectkelompokprodukfk')

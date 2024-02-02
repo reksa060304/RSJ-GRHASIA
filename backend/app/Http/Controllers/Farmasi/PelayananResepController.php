@@ -5833,52 +5833,52 @@ class PelayananResepController extends ApiController
 
 
 
-                if ($layanan->bulan == 'January' && $layanan->namaproduk == 'Pelayanan Obat Unit Dose Dispending/ UDD'){
+                if ($layanan->bulan == 'January' && $layanan->namaproduk == 'Pelayanan Obat Unit Dose Dispensing/ UDD'){
                     $jumlahtotaluddjanuary = $layanan->jumlah;
                     $totaludd+=$jumlahtotaluddjanuary;
                 }
-                if ($layanan->bulan == 'February' && $layanan->namaproduk == 'Pelayanan Obat Unit Dose Dispending/ UDD'){
+                if ($layanan->bulan == 'February' && $layanan->namaproduk == 'Pelayanan Obat Unit Dose Dispensing/ UDD'){
                     $jumlahtotaluddfebruary = $layanan->jumlah;
                     $totaludd+=$jumlahtotaluddfebruary;
                 }
-                if ($layanan->bulan == 'March' && $layanan->namaproduk == 'Pelayanan Obat Unit Dose Dispending/ UDD'){
+                if ($layanan->bulan == 'March' && $layanan->namaproduk == 'Pelayanan Obat Unit Dose Dispensing/ UDD'){
                     $jumlahtotaluddmarch = $layanan->jumlah;
                     $totaludd+=$jumlahtotaluddmarch;
                 }
-                if ($layanan->bulan == 'April' && $layanan->namaproduk == 'Pelayanan Obat Unit Dose Dispending/ UDD'){
+                if ($layanan->bulan == 'April' && $layanan->namaproduk == 'Pelayanan Obat Unit Dose Dispensing/ UDD'){
                     $jumlahtotaluddapril = $layanan->jumlah;
                     $totaludd+=$jumlahtotaluddapril;
                 }
-                if ($layanan->bulan == 'May' && $layanan->namaproduk == 'Pelayanan Obat Unit Dose Dispending/ UDD'){
+                if ($layanan->bulan == 'May' && $layanan->namaproduk == 'Pelayanan Obat Unit Dose Dispensing/ UDD'){
                     $jumlahtotaluddmay = $layanan->jumlah;
                     $totaludd+=$jumlahtotaluddmay;
                 }
-                if ($layanan->bulan == 'June'&& $layanan->namaproduk == 'Pelayanan Obat Unit Dose Dispending/ UDD'){
+                if ($layanan->bulan == 'June'&& $layanan->namaproduk == 'Pelayanan Obat Unit Dose Dispensing/ UDD'){
                     $jumlahtotaluddjune = $layanan->jumlah;
                     $totaludd+=$jumlahtotaluddjune;
                 }
-                if ($layanan->bulan == 'July' && $layanan->namaproduk == 'Pelayanan Obat Unit Dose Dispending/ UDD'){
+                if ($layanan->bulan == 'July' && $layanan->namaproduk == 'Pelayanan Obat Unit Dose Dispensing/ UDD'){
                     $jumlahtotaluddjuly = $layanan->jumlah;
                     $totaludd+=$jumlahtotaluddjuly;
                 }
-                if ($layanan->bulan == 'August' && $layanan->namaproduk == 'Pelayanan Obat Unit Dose Dispending/ UDD'){
+                if ($layanan->bulan == 'August' && $layanan->namaproduk == 'Pelayanan Obat Unit Dose Dispensing/ UDD'){
                     $jumlahtotaluddaugust = $layanan->jumlah;
                     $totaludd+=$jumlahtotaluddaugust;
                 }
-                if ($layanan->bulan == 'September' && $layanan->namaproduk == 'Pelayanan Obat Unit Dose Dispending/ UDD'){
+                if ($layanan->bulan == 'September' && $layanan->namaproduk == 'Pelayanan Obat Unit Dose Dispensing/ UDD'){
                     $jumlahtotaluddseptember = $layanan->jumlah;
                     $totaludd+=$jumlahtotaluddseptember;
                 }
-                if ($layanan->bulan == 'October' && $layanan->namaproduk == 'Pelayanan Obat Unit Dose Dispending/ UDD'){
+                if ($layanan->bulan == 'October' && $layanan->namaproduk == 'Pelayanan Obat Unit Dose Dispensing/ UDD'){
                     $jumlahtotaluddoctober = $layanan->jumlah;
                     $totaludd+=$jumlahtotaluddoctober;
 
                 }
-                if ($layanan->bulan == 'November' && $layanan->namaproduk == 'Pelayanan Obat Unit Dose Dispending/ UDD'){
+                if ($layanan->bulan == 'November' && $layanan->namaproduk == 'Pelayanan Obat Unit Dose Dispensing/ UDD'){
                     $jumlahtotaluddnovember = $layanan->jumlah;
                     $totaludd+=$jumlahtotaluddnovember;
                 }
-                if ($layanan->bulan == 'December' && $layanan->namaproduk == 'Pelayanan Obat Unit Dose Dispending/ UDD'){
+                if ($layanan->bulan == 'December' && $layanan->namaproduk == 'Pelayanan Obat Unit Dose Dispensing/ UDD'){
                     $jumlahtotaludddecember = $layanan->jumlah;
                     $totaludd+=$jumlahtotaludddecember;
                 }

@@ -284,8 +284,8 @@ define(['initialize'], function (initialize) {
 							// $scope.item.kodeBmn = undefined;
 							// $scope.item.kodeBmn = dataProduk.kodeasset
 							$scope.item.kodeBmn = dataProduk.kodeasset
-							$scope.listProduk = [{id:dataProduk.kpid, namaproduk:dataProduk.namaproduk}];
-							$scope.item.produk = {id:dataProduk.kpid, namaproduk:dataProduk.namaproduk};							
+							$scope.listProduk = [{id:dataProduk.produkfk, namaproduk:dataProduk.namaproduk}];
+							$scope.item.produk = {id:dataProduk.produkfk, namaproduk:dataProduk.namaproduk};							
 							$scope.item.TglRegistrasi = moment(datas.tglstruk).format("YYYY-MM-DD HH:mm");
 							$scope.item.TahunPerolehan = moment(datas.tglstruk).format("YYYY");
 							$scope.item.HargaPengadaan = parseFloat(dataProduk.hargasatuan);
@@ -399,6 +399,7 @@ define(['initialize'], function (initialize) {
 					// "item.ruanganAsal|k-ng-model|Ruangan Asal",
 					"item.ruangan|k-ng-model|Ruangan Current",
 					"item.TahunPerolehan|ng-model|Tahun Perolehan",
+					"item.koderegisterrs|ng-model|Kode Register RS",
 					// * END UMUM
 
 					// * ALAMAT
@@ -464,6 +465,10 @@ define(['initialize'], function (initialize) {
 				var isValid = medifirstService.setValidation($scope, listRawRequired);
 
 				if (isValid.status) {
+					if($scope.item.koderegisterrs.length < 5){
+						toastr.error('Kode Register RS harus 5 digit')
+						return
+					}
 					if ($scope.item != undefined) {
 						var confirm = $mdDialog.confirm()
 							.title('Peringatan')
@@ -518,6 +523,7 @@ define(['initialize'], function (initialize) {
 				if ($scope.item.ruanganAsal != undefined) {
 					ruanganasalfk = $scope.item.ruanganAsal.id;
 				}
+				
 				// * END UMUM
 
 				// * ALAMAT
@@ -742,6 +748,8 @@ define(['initialize'], function (initialize) {
 					spesifikasi: SpesifikasiDet,
 					jenisaset: JenisAset,
 					qtyprodukaset: $scope.item.QtyAset,
+					koderegisterrs: $scope.item.koderegisterrs,
+					idprodukfk: $scope.item.produk.id,
 					// * END UMUM
 
 					// * ALAMAT
