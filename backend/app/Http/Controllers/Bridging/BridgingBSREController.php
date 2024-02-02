@@ -45,6 +45,10 @@ use Endroid\QrCode\Builder\Builder;
 use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelHigh;
 use Endroid\QrCode\Label\Alignment\LabelAlignmentCenter;
 use Endroid\QrCode\Label\Font\NotoSans;
+
+use App\Web\LoginUser;
+use App\Master\MapLoginUserToModulAplikasi;
+
 class BridgingBSREController  extends ApiController
 {
     
@@ -944,4 +948,115 @@ class BridgingBSREController  extends ApiController
   
         return view('report.verify-doc', compact('r', 'data','profile','password'));
     }
+
+    protected function encryptSHA1($pass)
+    {
+        return sha1($pass);
+    }
+
+    public function RegistrasiAkunMahasiswa(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        \DB::beginTransaction();
+        $tglAyeuna = date('Y-m-d H:i:s');
+        // dd($request);
+        //        $dataLogin = $request->all();
+        //        $dataPegawai = \DB::table('loginuser_s as lu')
+        //            ->select('lu.objectpegawaifk')
+        //            ->where('lu.id',$dataLogin['userData']['id'])
+        //            ->first();
+        try {
+            $dataPegawai = $request['datapegawai'];
+            #region savePegawai
+
+            //            return $this->respond($dataKeluargaPegawai);
+
+
+            // if ($dataPegawai['id'] == '') {
+            $idPegawai = Pegawai::max('id') + 1;
+
+            $dataSavePegawai = new Pegawai();
+            $dataSavePegawai->id = $idPegawai;
+            $dataSavePegawai->kdprofile = $kdProfile;
+            $dataSavePegawai->statusenabled = true;
+            $dataSavePegawai->norec = $dataSavePegawai->generateNewId();
+            $dataSavePegawai->qpegawai = 0;
+            $dataSavePegawai->namalengkap = $dataPegawai['namalengkap'];
+            $dataSavePegawai->nama = $dataPegawai['nama'];
+            $dataSavePegawai->objectjenispegawaifk = 0;
+            $dataSavePegawai->nohandphone = $dataPegawai['nomorhp'];
+            $dataSavePegawai->usereksternal = true;
+            // dd($dataSavePegawai->nohandphone);
+            // } else {
+            //     $dataSavePegawai = Pegawai::where('id', $dataPegawai['id'])->where('kdprofile', $kdProfile)->first();
+            // }
+
+            $dataSavePegawai->save();
+
+            $idLoginUser = LoginUser::max('id') + 1;
+
+            $dataSaveLoginUser = new LoginUser();
+            $dataSaveLoginUser->objectpegawaifk = $idPegawai;
+            $dataSaveLoginUser->id = $idLoginUser;
+            $dataSaveLoginUser->kdprofile = $kdProfile;
+            $dataSaveLoginUser->statusenabled = true;
+            $dataSaveLoginUser->norec = $dataSavePegawai->generateNewId();
+            $dataSaveLoginUser->objectkelompokuserfk = 67;
+            $dataSaveLoginUser->namauser = $dataPegawai['namauser'];
+            $dataSaveLoginUser->passcode = $this->encryptSHA1($dataPegawai['passcode']);
+            $dataSaveLoginUser->katasandi = $this->encryptSHA1($dataPegawai['passcode']);
+            $dataSaveLoginUser->statuslogin = 0;
+
+
+
+            $dataSaveLoginUser->Save();
+
+            $idMapLoginUser = MapLoginUserToModulAplikasi::max('id') + 1;
+
+            $dataSaveMapLoginUser = new MapLoginUserToModulAplikasi();
+            $dataSaveMapLoginUser->objectmodulaplikasifk = 277;
+            $dataSaveMapLoginUser->id = $idMapLoginUser;
+            $dataSaveMapLoginUser->kdprofile = $kdProfile;
+            $dataSaveMapLoginUser->statusenabled = true;
+            $dataSaveMapLoginUser->norec = $dataSavePegawai->generateNewId();
+            $dataSaveMapLoginUser->objectloginuserfk = $idLoginUser;
+
+
+
+            $dataSaveMapLoginUser->Save();
+
+
+            // $IdPegawais = $dataPegawai['id'];
+            // if ($IdPegawais == "") {
+            //     $IdPegawais = $idPegawai;
+            // }
+
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+            $transMessage = "Simpan Gagal";
+        }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan Berhasil";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMessage,
+                "as" => 'ea@epic',
+            );
+        } else {
+            $transMessage = "Simpan Gagal!!";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message"  => $transMessage,
+                "error" => $e->getMessage() . ' ' . $e->getLine(),
+                'p' => $dataSavePegawai,
+                "as" => 'ea@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
 }

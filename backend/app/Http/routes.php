@@ -2520,8 +2520,9 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('diklat/detail-diklat-penjamin/{norecSPP}','SDM\PelatihanController@detailPenjaminDiklat');
             Route::get('diklat/diklat/get-data-pembayaran-diklat', 'SDM\PelatihanController@pembayaranDiklat');
             Route::post('diklat/simpan-data-pembayaran', 'SDM\PelatihanController@simpanPembayaran');  //done
-
-        // });
+            // sdm/get-data-akun-mahasiswa-all
+            Route::get('sdm/get-data-akun-mahasiswa-all', 'SDM\SumberDayaManusiaController@getDaftarAkunMahasiswa');
+            Route::post('bsre-esign/registrasi-akun-mahasiswa', 'Bridging\BridgingBSREController@RegistrasiAkunMahasiswa');        // });
         // Route::group(['prefix' => 'sdm'], function () {
             /*GET*/
             Route::get('sdm/get-data-jabatan', 'SDM\SumberDayaManusiaController@getDataJabatan');
