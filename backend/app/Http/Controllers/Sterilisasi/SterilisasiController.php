@@ -623,7 +623,7 @@ class SterilisasiController extends ApiController
             return $this->setStatusCode($result['status'])->respond($result, $transMessage);
         }
         DB::beginTransaction();
-        try{
+        // try{
             if ($request['strukkirim']['noreckirim'] == ""){
                 $SP = new StrukPelayanan();
                 $norecSP = $SP->generateNewId();
@@ -863,10 +863,10 @@ class SterilisasiController extends ApiController
 
 
        $transStatus = 'true';
-       } catch (\Exception $e) {
-            $transStatus = 'false';
-            $transMessage = "GAGAL";
-       }
+    //    } catch (\Exception $e) {
+    //         $transStatus = 'false';
+    //         $transMessage = "GAGAL";
+    //    }
 
         if ($transStatus == 'true') {
             $transMessage = "Registrasi Alat Berhasil";
