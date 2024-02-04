@@ -2755,6 +2755,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         Route::get('sterilisasi/get-monitoring-barang-steril', 'Sterilisasi\SterilisasiController@getMonitoringBarangSteril');
         Route::post('sterilisasi/verifikasi-order-sterilisasi', 'Sterilisasi\SterilisasiController@saveVerifikasiOrderSterilisasi');
         Route::post('sterilisasi/batal-verifikasi-order-sterilisasi', 'Sterilisasi\SterilisasiController@saveBtlVerifikasiOrderSterilisasi');
+        Route::post('sterilisasi/simpan-data-matachana', 'Sterilisasi\SterilisasiController@saveMatachana');
         // });
 
         // Route::group(['prefix' => 'sysadmin'], function () {

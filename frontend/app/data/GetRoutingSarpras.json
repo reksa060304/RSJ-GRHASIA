@@ -4642,6 +4642,26 @@
     ]
   },
   {
+    "name": "SterilisasiMatachana",
+    "url": "/c5503b5619c873ad6ea51442c9ef0fa9",
+    "templateurl": "module/Sterilisasi/SterilisasiMatachana.html",
+    "controller": "SterilisasiMatachanaCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
     "name": "DaftarPenunggu",
     "url": "/RGFmdGFyUGVudW5nZ3U=",
     "templateurl": "module/Humas/DaftarPenunggu.html",

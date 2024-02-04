@@ -882,6 +882,10 @@
             "urlDep": "module/Sterilisasi/OrderAlatSterilCtrl"
         },
         {
+            "nameDep": "SterilisasiMatachanaCtrl",
+            "urlDep": "module/Sterilisasi/SterilisasiMatachanaCtrl"
+        },
+        {
             "nameDep": "DaftarPenungguCtrl",
             "urlDep": "module/Humas/DaftarPenungguCtrl"
         },

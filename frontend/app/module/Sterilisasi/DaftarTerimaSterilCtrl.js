@@ -13,6 +13,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             var dataCheck = [];
             $scope.dataAh = [];
             var norecKirim = '';
+            var statusLoad = ''
             var noKirim = '';
             LoadCache();
             loadCombo();
@@ -76,6 +77,9 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     , true).then(function (dat) {
                         $scope.isRouteLoading = false;
                         data2 = dat.data.daftar
+
+                        console.log('tangkap norec nya', data2);
+
                         for (var i = 0; i < dat.data.daftar.length; i++) {
                             dat.data.daftar[i].no = i + 1
                         }
@@ -251,6 +255,24 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 }
                 cacheHelper.set('PenerimaanBarangSterilCtrl', chacePeriode);
                 $state.go('PenerimaanBarangSteril')
+            }
+
+            $scope.SterilisasiNew = function () {
+                if ($scope.dataSelected == undefined) {
+                    alert("Pilih yg akan di sterilasi!!")
+                    return;
+                }
+                var chacePeriode = {
+                    0: $scope.dataSelected.norec,
+                    1: '',
+                    2: 'EditKirim',
+                    3: '',
+                    4: '',
+                    5: '',
+                    6: ''
+                }
+                cacheHelper.set('SterilisasiMatachanaCtrl', chacePeriode);
+                $state.go('SterilisasiMatachana')
             }
 
             function GetprodukBatal() {
@@ -552,15 +574,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     window.open(config.baseApiBackend + "report/cetak-distribusi-alat?norec=" + $scope.dataSelected.norec + "&kdprofile=" + profile);
                 }
             }
-
-            $scope.Cetak = function () {
-                $scope.popUp.center().open();
-            }
-
-            $scope.matachana = function () {
-                $scope.popUp.center().open();
-            }
-
+            
             $scope.CetakAh = function () {
                 var jabatan1 = ''
                 if ($scope.item.DataJabatan != undefined) {
