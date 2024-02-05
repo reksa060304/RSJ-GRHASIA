@@ -2861,10 +2861,11 @@ class ReportController extends ApiController{
         $norec = $request['norec'];
         $terbilang = $request['terbilang'];
 
-        $tampilsumberdana = true;
-        if($request['sumberdana'] == 15){
-            $tampilsumberdana = false;
+        $tampilsumberdana = false;
+        if($request['sumberdana'] == 18){
+            $tampilsumberdana = true;
         }
+
         $settingrba = DB::select(DB::raw("
         select pg.namalengkap, pg.nippns from settinganggaran_t sa
         inner join pegawai_m pg on pg.id = sa.objectkepalabludfk
@@ -3326,9 +3327,9 @@ class ReportController extends ApiController{
         $norec = $request['norec'];
         $terbilang = $request['terbilang'];
 
-        $tampilsumberdana = true;
-        if($request['sumberdana'] == 15){
-            $tampilsumberdana = false;
+        $tampilsumberdana = false;
+        if($request['sumberdana'] == 18){
+            $tampilsumberdana = true;
         }
 
         $kegiatan = DB::select(DB::raw("
