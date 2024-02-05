@@ -384,6 +384,7 @@ class SterilisasiController extends ApiController
         return $this->respond($result);
     }
 
+    // tanda1
     public function getDaftarDistribusiBarangSteril(Request $request) {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
@@ -1909,4 +1910,50 @@ class SterilisasiController extends ApiController
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
+
+    public function getLaporanMatachana(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $data = [];
+        $tglAwal = $request->input('tglAwal');
+        $tglAkhir = $request->input('tglAkhir');
+
+        $data = DB::select(DB::raw(
+            "SELECT
+                ROW_NUMBER() OVER (ORDER BY mch.tglinput) AS nomor,
+                mch.tglinput,
+                mch.suhu,
+                mch.loadke,
+                mch.waktu,
+                ru.namaruangan AS asalalkes,
+                prd.namaproduk AS namaalkes,
+                pg.namalengkap AS petugas,
+                CASE
+                    WHEN mch.status = true THEN 'Berhasil'
+                    WHEN mch.status = false THEN 'Gagal'
+                    ELSE ''
+                END AS status
+            FROM
+                matachana_t AS mch 
+                LEFT JOIN ruangan_m AS ru ON ru.id = mch.ruangantujuanfk
+                LEFT JOIN pegawai_m AS pg ON pg.id = mch.namapetugas
+                LEFT JOIN strukkirim_t AS sk ON sk.nokirim = mch.nostruk
+                LEFT JOIN kirimproduk_t AS kp ON kp.nokirimfk = sk.norec
+                LEFT JOIN produk_m AS prd ON prd.id = kp.objectprodukfk 
+            WHERE
+                    mch.kdprofile = $idProfile 
+                    AND mch.tglinput BETWEEN '$tglAwal' 
+                    AND '$tglAkhir' 
+            "
+        ));
+
+        $result = [
+            'data' => $data,
+            'message' => 'data berhasil diambil',
+            'as' => '@friday@epic'
+        ];
+
+        return $this->respond($result);
+    }
+
 }

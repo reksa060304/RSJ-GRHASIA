@@ -4662,6 +4662,26 @@
     ]
   },
   {
+    "name": "LaporanTableTop",
+    "url": "/2bed1c673ed5e5db35f06ba1f558c1bc=",
+    "templateurl": "module/Sterilisasi/LaporanTableTop.html",
+    "controller": "LaporanTableTopCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
     "name": "DaftarPenunggu",
     "url": "/RGFmdGFyUGVudW5nZ3U=",
     "templateurl": "module/Humas/DaftarPenunggu.html",

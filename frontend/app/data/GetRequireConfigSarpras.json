@@ -886,6 +886,10 @@
             "urlDep": "module/Sterilisasi/SterilisasiMatachanaCtrl"
         },
         {
+            "nameDep": "LaporanTableTopCtrl",
+            "urlDep": "module/Sterilisasi/LaporanTableTopCtrl"
+        },
+        {
             "nameDep": "DaftarPenungguCtrl",
             "urlDep": "module/Humas/DaftarPenungguCtrl"
         },
