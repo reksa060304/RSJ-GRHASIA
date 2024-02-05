@@ -363,7 +363,7 @@ class LaundryController extends ApiController
                      from kirimproduk_t as spd 
                     left JOIN produk_m as pr on pr.id=spd.objectprodukfk
                     left JOIN satuanstandar_m as ss on ss.id=spd.objectsatuanstandarfk
-                    where spd.kdprofile = $idProfile and nokirimfk=:norec"),
+                    where spd.kdprofile = $idProfile and nokirimfk=:norec and spd.qtyproduk > 0"),
                 array(
                     'norec' => $item->norec,
                 )
@@ -1411,6 +1411,9 @@ class LaundryController extends ApiController
                                 $dataKP->satuanviewfk = $item['satuanviewfk'];
                                 $dataKP->tglpelayanan = date($request['strukkirim']['tglkirim']);
                                 $dataKP->qtyprodukterimakonversi = $qtyqtyqty;
+                                if (isset($item['qtyTidakKirim'])) {
+                                    $dataKP->qtyproduktidakkirim = $item['qtyTidakKirim'];
+                                }
                                 $dataKP->save();
 
                                 $jumlah = $jumlah - (float)$items->qty;
@@ -1477,6 +1480,9 @@ class LaundryController extends ApiController
                                 $dataKP->satuanviewfk = $item['satuanviewfk'];
                                 $dataKP->tglpelayanan = date($request['strukkirim']['tglkirim']);
                                 $dataKP->qtyprodukterimakonversi = $jumlah;
+                                if (isset($item['qtyTidakKirim'])) {
+                                    $dataKP->qtyproduktidakkirim = $item['qtyTidakKirim'];
+                                }
                                 $dataKP->save();
 
                                 $saldoakhir = (float)$items->qty - $jumlah;
@@ -1884,7 +1890,7 @@ class LaundryController extends ApiController
                      from kirimproduk_t as spd 
                     left JOIN produk_m as pr on pr.id=spd.objectprodukfk
                     left JOIN satuanstandar_m as ss on ss.id=spd.objectsatuanstandarfk
-                    where spd.kdprofile = $idProfile and nokirimfk=:norec"),
+                    where spd.kdprofile = $idProfile and nokirimfk=:norec and spd.qtyproduk > 0"),
                 array(
                     'norec' => $item->norec,
                 )

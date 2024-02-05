@@ -7207,7 +7207,7 @@ class LogistikController extends ApiController{
             $data = $data->where('sp.norec','=', $request['norecOrder']);
         }
         $data = $data->where('pg.id', $dataPegawaiUser[0]->id);
-        $data = $data->distinct();
+        // $data = $data->distinct();
         $data = $data->where('sp.statusenabled',true);
         $data = $data->where('sp.objectkelompoktransaksifk',34);
         
