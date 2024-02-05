@@ -1874,7 +1874,7 @@ class SterilisasiController extends ApiController
             $inputData = [
                 'kdprofile' => $idProfile,
                 'nostruk' => $request->postData['nostruk'],
-                'namapetugas' => $request->postData['namapetugas'],
+                'petugasfk' => $request->postData['petugasfk'],
                 'ruanganpengirimfk' => $request->postData['ruanganpengirimfk'],
                 'ruangantujuanfk' => $request->postData['ruangantujuanfk'],
                 'waktu' => $request->postData['waktu'],

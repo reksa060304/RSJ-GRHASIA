@@ -618,7 +618,7 @@ define(['initialize'], function (initialize) {
                 {
                     postData: {
                         nostruk: $scope.item.noKirim,
-                        namapetugas: pegawaiUser.id,
+                        petugasfk: pegawaiUser.id,
                         ruanganpengirimfk: $scope.item.ruangan.id,
                         ruangantujuanfk: $scope.item.ruanganTujuan.id,
                         waktu: $scope.item.waktu,
