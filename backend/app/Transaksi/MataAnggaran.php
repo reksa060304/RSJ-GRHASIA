@@ -9,6 +9,4 @@ class MataAnggaran extends Transaksi
     public $timestamps = false;
     public $incrementing = false;
     protected $primaryKey = "id";
-
-
 }

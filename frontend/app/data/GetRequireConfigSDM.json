@@ -312,6 +312,10 @@
     {
       "nameDep": "RekonsiliasiObatCtrl",
       "urlDep": "module/EMR/RekonsiliasiObatCtrl"
+    },
+    {
+      "nameDep": "SettingAkunMahasiswaCtrl",
+      "urlDep": "module/SDM/SettingAkunMahasiswaCtrl"
     }
   ]
 }

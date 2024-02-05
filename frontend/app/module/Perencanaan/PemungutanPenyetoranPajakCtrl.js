@@ -310,13 +310,14 @@ define(['initialize'], function (initialize) {
             });
             
             $scope.SavePajak = function () {
-
+                $scope.item.tglPPh = moment($scope.now).format('YYYY-MM-DD');
                 var objSave = {
                     "norec": $scope.norecspj,
                     "uraianpajak": $scope.item.uraianPajak,
                     "nopajak": $scope.item.nopajak,
                     "pph": $scope.dataGridPPh.options.data,
                     "ppn": $scope.dataGridPPN.options.data,
+                    "tglpph": $scope.item.tglPPh,
                 }
                 console.log(objSave);
                 // return

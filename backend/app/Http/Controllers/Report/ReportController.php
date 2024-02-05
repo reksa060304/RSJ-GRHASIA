@@ -2861,10 +2861,11 @@ class ReportController extends ApiController{
         $norec = $request['norec'];
         $terbilang = $request['terbilang'];
 
-        $tampilsumberdana = true;
-        if($request['sumberdana'] == 15){
-            $tampilsumberdana = false;
+        $tampilsumberdana = false;
+        if($request['sumberdana'] == 18){
+            $tampilsumberdana = true;
         }
+
         $settingrba = DB::select(DB::raw("
         select pg.namalengkap, pg.nippns from settinganggaran_t sa
         inner join pegawai_m pg on pg.id = sa.objectkepalabludfk
@@ -2957,6 +2958,113 @@ class ReportController extends ApiController{
 
         $pageWidth = 950;
         return view('report.spj.cetakspjsatulampiran',compact('kegiatan','pageWidth', 'keterangan', 'mataanggaran', 'spj', 'detail', 'jumlah', 'terbilang', 'tampilsumberdana','settingrba'));
+    }
+
+    public function cetakSPJPengembalian(Request $request){
+        $pegawaimengetahui = '';
+        if(isset($request['pegawaiMegetahui'])){
+            $pegawaimengetahui = $request['pegawaiMegetahui'];
+        }
+        $jabatanmengetahui = '';
+        if(isset($request['jabatanMengetahui'])){
+            $jabatanmengetahui = $request['jabatanMengetahui'];
+        }
+        $pegawaimeminta = '';
+        if(isset($request['pegawaiMeminta'])){
+            $pegawaimeminta = $request['pegawaiMeminta'];
+        }
+        $jabatanmeminta = '';
+        if(isset($request['jabatanMeminta'])){
+            $jabatanmeminta = $request['jabatanMeminta'];
+        }
+        $tglawal = $request['tglawal'];
+        $tglakhir = $request['tglakhir'];
+        
+        $data = DB::select(DB::raw("
+        select string_agg(DISTINCT rd.uraian, ',') uraian, sr.*, cbs.carabayar, sr.tglverif, sr.keterangan, sr.jumlahdibayarverif, ka.tahun,--sr.norealisasi,sr.deskripsi,sr.totalbelanja,
+                pg1.namalengkap as bendahara, pg2.namalengkap as penerima, rkn.namarekanan as pihakketiga,
+                ka.kode || '~' || ka.keterangan as kegiatan, ma.kodemataanggaran || '~' || ma.namamataanggaran as mataanggaran,
+                dp0.kode kodesubkegiatan, dp0.keterangan keterangansubkegiatan, ma.kodemataanggaran, ma.namamataanggaran, dp0.id idsubkegiatan, ka.keterangan subsubkegiatan, ka.id idsubsubkegiatan,
+                ap.id idasalproduk, ap.asalproduk, sr.objectbkufk
+                from strukrealisasi_t sr
+                inner join realisasidetail_t rd on rd.strukrealisasifk = sr.norec
+
+                left join asalproduk_m ap on ap.id = sr.objectasalprodukfk
+                left JOIN kegiatananggaran_m ka on ka.id=sr.objectkegiatanfk
+                and ka.kdprofile = 30 and ka.statusenabled=true
+                left join kegiatananggaran_m as dp0 on ka.kode ilike dp0.kode || '%' and dp0.div = 3
+                and dp0.kdprofile = 30 and dp0.statusenabled=true
+                left JOIN rekanan_m rkn on rkn.id=sr.rekananfk
+                left JOIN pegawai_m as pg1 on pg1.id=sr.bendaharafk
+                left JOIN pegawai_m as pg2 on pg2.id=sr.penerimafk
+                left join carabayarspj_m cbs on cbs.id = sr.objectcarabayarfk
+                left JOIN mataanggaran_m ma on ma.id=sr.objectmataanggaranfk
+                where sr.tglrealisasi between '$tglawal' 
+                AND '$tglakhir'
+                and sr.statusenabled = true
+                and rd.statusenabled = true
+                and rd.kdprofile = 30
+				group by dp0.kode, dp0.keterangan, sr.norec, cbs.carabayar, sr.tglverif, sr.keterangan, sr.jumlahdibayarverif, sr.kdprofile, sr.statusenabled, sr.tglrealisasi, sr.norealisasi, sr.status, sr.totalbelanja, sr.objectcarabayarfk, sr.rekananfk, sr.deskripsi, sr.objectkegiatanfk, sr.objectmataanggaranfk, sr.bendaharafk, sr.penerimafk, sr.pph, sr.ppn, pg1.namalengkap, pg2.namalengkap, rkn.namarekanan ,
+                ka.kode || '~' || ka.keterangan, ma.kodemataanggaran || '~' || ma.namamataanggaran, ka.tahun, ma.kodemataanggaran, ma.namamataanggaran, dp0.id, ka.keterangan, ka.id, ap.id, ap.asalproduk, sr.objectbkufk
+                order by sr.norealisasi desc
+            ")
+        );
+        $result = [];
+        $strukrealisasifk ='';
+        $dataDetail = DB::select(DB::raw("
+                    select rd.*,ka.keteranganbelanja,0 as nourut
+                    from strukrealisasi_t sr
+                inner join realisasidetail_t rd on rd.strukrealisasifk = sr.norec
+                    INNER JOIN keteranganbelanja_t ka on ka.norec=rd.keteranganbelanjafk
+                    where  rd.statusenabled = true
+                    and rd.kdprofile = 30
+                    and ka.statusenabled = true
+                    and ka.kdprofile = 30
+                    and sr.tglrealisasi between  '2024-01-01' 
+                    AND '2024-01-29'
+                ")
+            );
+        $dataDetail1=[];
+        foreach($data as $item){
+            // $strukrealisasifk= ;
+            $dataDetail1 =[];
+            foreach($dataDetail as $detail){
+                if($item->norec == $detail->strukrealisasifk){
+                    $dataDetail1[]=array(
+                        'norec'=> $detail->norec,
+                        'kdprofile'	=> $detail->kdprofile,
+                        'statusenabled'	=> $detail->statusenabled,
+                        'strukrealisasifk'	=> $detail->strukrealisasifk,
+                        'uraian'	=> $detail->uraian,
+                        'jml'	=> $detail->jml,
+                        'satuan'	=> $detail->satuan,
+                        'harga'	=> $detail->harga,
+                        'subtotal'	=> $detail->subtotal,
+                        'keteranganbelanjafk'	=> $detail->keteranganbelanjafk,
+                        'keteranganbelanja'	=> $detail->keteranganbelanja,
+                        'nourut'	=> $detail->nourut
+                    );
+                    // break;
+                }
+                
+            }
+
+            $result[] = array(
+                'strukrealisasifk' => $item->norec,
+                'data' => $dataDetail1,
+            );
+        };
+
+        $result = array(
+            'data' => $data,
+            'detail' => $result,
+            'message' => '@epic',
+        );
+
+        // return $result['data'];
+
+        $pageWidth = 950;
+        return view('report.spj.cetakspjpengembalian',compact('result','pegawaimengetahui','jabatanmengetahui','pegawaimeminta','jabatanmeminta','tglawal','tglakhir'));
     }
 
     public function getCetakPengantarSPM(Request $request){
@@ -3219,9 +3327,9 @@ class ReportController extends ApiController{
         $norec = $request['norec'];
         $terbilang = $request['terbilang'];
 
-        $tampilsumberdana = true;
-        if($request['sumberdana'] == 15){
-            $tampilsumberdana = false;
+        $tampilsumberdana = false;
+        if($request['sumberdana'] == 18){
+            $tampilsumberdana = true;
         }
 
         $kegiatan = DB::select(DB::raw("
@@ -7540,7 +7648,8 @@ class ReportController extends ApiController{
         // if (isset($request['bulanpanjar']) && $request['bulanpanjar'] != "" && $request['bulanpanjar'] != "undefined") {
         //     $qbulan =  " and extract(month from tglbku) between '01' and  '" . $request['bulanpanjar']."'";
         // }
-        
+        $settingrba = DB::table('settinganggaran_t')->where('statusenabled', true)->where('kdprofile', 30)->first();
+        // dd($settingrba->objecttahapaktivfk);
         if($request['jenisrekening'] == 1){
             $data = DB::select(DB::raw("select text, kode, div, sum(subtotal) subtotal, sum(totalbulanlalu) totalbulanlalu, 
         sum(totalbulanini) totalbulanini
@@ -7567,6 +7676,7 @@ class ReportController extends ApiController{
                         and kmsss.kdprofile = 30 and kmsss.statusenabled = true
                         and ap.kdprofile = 30 and ap.statusenabled = true
                         and kb.kdprofile = 30 and kb.statusenabled = true
+                        and kb.objecttahapfk = $settingrba->objecttahapaktivfk
                         and km.tahun = '$tahun'
                                         $qasalproduk
                         group by kmsss.keterangan, kmsss.kode, kmsss.div, sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi)
@@ -7596,6 +7706,7 @@ class ReportController extends ApiController{
                         and kmsss.kdprofile = 30 and kmsss.statusenabled = true
                         and ap.kdprofile = 30 and ap.statusenabled = true
                         and kb.kdprofile = 30 and kb.statusenabled = true
+                        and kb.objecttahapfk = $settingrba->objecttahapaktivfk
                         and km.tahun = '$tahun'
                                         $qasalproduk
                         group by kmss.keterangan, kmss.kode, kmss.div, sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi)
@@ -7625,6 +7736,7 @@ class ReportController extends ApiController{
                         and kmsss.kdprofile = 30 and kmsss.statusenabled = true
                         and ap.kdprofile = 30 and ap.statusenabled = true
                         and kb.kdprofile = 30 and kb.statusenabled = true
+                        and kb.objecttahapfk = $settingrba->objecttahapaktivfk
                         and km.tahun = '$tahun'
                                         $qasalproduk
                         group by kms.keterangan, kms.kode, kms.div, sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi)
@@ -7653,6 +7765,7 @@ class ReportController extends ApiController{
                         and kmss.kdprofile = 30 and kmss.statusenabled = true
                         and kmsss.kdprofile = 30 and kmsss.statusenabled = true
                         and ap.kdprofile = 30 and ap.statusenabled = true
+                        and kb.objecttahapfk = $settingrba->objecttahapaktivfk
                         and kb.kdprofile = 30 and kb.statusenabled = true
                         and km.tahun = '$tahun'
                                         $qasalproduk
@@ -7686,6 +7799,7 @@ class ReportController extends ApiController{
                                 and km.tahun = '$tahun'
                                                         $qasalproduk
                                 and ma.kdprofile = 30 and ma.statusenabled = true
+                                and kb.objecttahapfk = $settingrba->objecttahapaktivfk
                                 and mat.kdprofile = 30 and mat.statusenabled = true
                                 and kb.kdprofile = 30 and kb.statusenabled = true
                                 group by mat.kodemataanggaran, mat.namamataanggaran, sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi)
@@ -7718,6 +7832,7 @@ class ReportController extends ApiController{
                                 and ma.kdprofile = 30 and ma.statusenabled = true
                                 and mat.kdprofile = 30 and mat.statusenabled = true
                                 and kb.kdprofile = 30 and kb.statusenabled = true
+                                and kb.objecttahapfk = $settingrba->objecttahapaktivfk
                                                         $qasalproduk
                                 group by mat.kodemataanggaran, mat.namamataanggaran, sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi)
                             ) as b 
@@ -7751,6 +7866,7 @@ class ReportController extends ApiController{
                                 and ma.kdprofile = 30 and ma.statusenabled = true
                                 and mat.kdprofile = 30 and mat.statusenabled = true
                                 and kb.kdprofile = 30 and kb.statusenabled = true
+                                and kb.objecttahapfk = $settingrba->objecttahapaktivfk
                                                         $qasalproduk
                                 group by mat.kodemataanggaran, mat.namamataanggaran, sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi)
                             ) as c 
@@ -7776,6 +7892,7 @@ class ReportController extends ApiController{
                                 and km.tahun = '$tahun'
                                 and ma.kdprofile = 30 and ma.statusenabled = true
                                 and kb.kdprofile = 30 and kb.statusenabled = true
+                                and kb.objecttahapfk = $settingrba->objecttahapaktivfk
                                                         $qasalproduk
                                 group by ma.kodemataanggaran, ma.namamataanggaran, sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi)
                             ) as d 
@@ -8043,6 +8160,7 @@ class ReportController extends ApiController{
                                     and bku.kdprofile = 30 and bku.statusenabled = true
                                     and sr.status = 'Sudah Diverifikasi'
                                     and bku.tglbku::date between '$tahun-01-01' and '$tglbku'
+                                    and kb.objecttahapfk = $settingrba->objecttahapaktivfk
                                     $qasalproduk
                                     group by extract(month from bku.tglbku), sr.totalbelanja, sr.norec
                             ) as x
@@ -8160,6 +8278,7 @@ class ReportController extends ApiController{
                                             and bku.kdprofile = 30 and bku.statusenabled = true
                                             and sr.status = 'Sudah Diverifikasi'
                                             and bku.tglbku::date between '$tahun-01-01' and '$tglbku'
+                                            and kb.objecttahapfk = $settingrba->objecttahapaktivfk
                                             $qasalproduk
                                             group by extract(month from bku.tglbku), sr.totalbelanja, sr.norec
                                     ) as x
@@ -8274,6 +8393,7 @@ class ReportController extends ApiController{
                         and kmsss.kdprofile = 30 and kmsss.statusenabled = true
                         and ap.kdprofile = 30 and ap.statusenabled = true
                         and kb.kdprofile = 30 and kb.statusenabled = true
+                        and kb.objecttahapfk = $settingrba->objecttahapaktivfk
                         and km.tahun = '$tahun'
                                         $qasalproduk
                         group by kmsss.keterangan, kmsss.kode, kmsss.div, sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi)
@@ -8303,6 +8423,7 @@ class ReportController extends ApiController{
                         and kmsss.kdprofile = 30 and kmsss.statusenabled = true
                         and ap.kdprofile = 30 and ap.statusenabled = true
                         and kb.kdprofile = 30 and kb.statusenabled = true
+                        and kb.objecttahapfk = $settingrba->objecttahapaktivfk
                         and km.tahun = '$tahun'
                                         $qasalproduk
                         group by kmss.keterangan, kmss.kode, kmss.div, sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi)
@@ -8332,6 +8453,7 @@ class ReportController extends ApiController{
                         and kmsss.kdprofile = 30 and kmsss.statusenabled = true
                         and ap.kdprofile = 30 and ap.statusenabled = true
                         and kb.kdprofile = 30 and kb.statusenabled = true
+                        and kb.objecttahapfk = $settingrba->objecttahapaktivfk
                         and km.tahun = '$tahun'
                                         $qasalproduk
                         group by kms.keterangan, kms.kode, kms.div, sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi)
@@ -8361,6 +8483,7 @@ class ReportController extends ApiController{
                         and kmsss.kdprofile = 30 and kmsss.statusenabled = true
                         and ap.kdprofile = 30 and ap.statusenabled = true
                         and kb.kdprofile = 30 and kb.statusenabled = true
+                        and kb.objecttahapfk = $settingrba->objecttahapaktivfk
                         and km.tahun = '$tahun'
                                         $qasalproduk
                         group by km.keterangan, km.kode, km.div, sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi)
@@ -8400,6 +8523,7 @@ class ReportController extends ApiController{
                                 and map2.kdprofile = 30 and map2.statusenabled = true
                                 and map3.kdprofile = 30 and map3.statusenabled = true
                                 and kb.kdprofile = 30 and kb.statusenabled = true
+                                and kb.objecttahapfk = $settingrba->objecttahapaktivfk
                                 group by map3.kode, map3.mataanggaranpermen, sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi)
                             ) as a
                             group by kode, text, bulan
@@ -8432,6 +8556,7 @@ class ReportController extends ApiController{
                                 and map2.kdprofile = 30 and map2.statusenabled = true
                                 and map3.kdprofile = 30 and map3.statusenabled = true
                                 and kb.kdprofile = 30 and kb.statusenabled = true
+                                and kb.objecttahapfk = $settingrba->objecttahapaktivfk
                                 $qasalproduk
                                 group by map2.kode, map2.mataanggaranpermen, sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi)
                             ) as b 
@@ -8465,6 +8590,7 @@ class ReportController extends ApiController{
                                 and map2.kdprofile = 30 and map2.statusenabled = true
                                 and map3.kdprofile = 30 and map3.statusenabled = true
                                 and kb.kdprofile = 30 and kb.statusenabled = true
+                                and kb.objecttahapfk = $settingrba->objecttahapaktivfk
                                 $qasalproduk
                                 group by map1.kode, map1.mataanggaranpermen, sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi)
                             ) as c 
@@ -8498,6 +8624,7 @@ class ReportController extends ApiController{
                                 and map2.kdprofile = 30 and map2.statusenabled = true
                                 and map3.kdprofile = 30 and map3.statusenabled = true
                                 and kb.kdprofile = 30 and kb.statusenabled = true
+                                and kb.objecttahapfk = $settingrba->objecttahapaktivfk
                                 $qasalproduk
                                 group by map.kode, map.mataanggaranpermen, sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi)
                             ) as d 
@@ -8757,6 +8884,7 @@ class ReportController extends ApiController{
                                     and bku.kdprofile = 30 and bku.statusenabled = true
                                     and sr.status = 'Sudah Diverifikasi'
                                     and bku.tglbku::date between '$tahun-01-01' and '$tglbku'
+                                    and kb.objecttahapfk = $settingrba->objecttahapaktivfk
                                     $qasalproduk
                                     group by extract(month from bku.tglbku), sr.totalbelanja, sr.norec
                             ) as x
@@ -8864,6 +8992,7 @@ class ReportController extends ApiController{
                                             and km.kdprofile = 30 and km.statusenabled = true
                                             and kb.kdprofile = 30 and kb.statusenabled = true
                                             and bku.kdprofile = 30 and bku.statusenabled = true
+                                            and kb.objecttahapfk = $settingrba->objecttahapaktivfk
                                             and sr.status = 'Sudah Diverifikasi'
                                             and bku.tglbku::date between '$tahun-01-01' and '$tglbku'
                                             $qasalproduk
@@ -14273,7 +14402,131 @@ public function suratBuktiPengembalian(Request $request)
         }
 
         return $pdf->stream();
-        return view('report.EMR.suratketerangandokter',compact('data','pageWidth'));
+        return view('report.EMR.cmrm05-dom',compact('data','pageWidth'));
+    }
+    public function cetakOkupasiTerapi(Request $request)
+    {
+        $norec = $request['emr'];
+        $kdProfile = (int) $request['kdprofile'];
+        $data = DB::select(DB::raw("
+        SELECT
+            split_part(epd.value, '~', 2) as split,
+            epd.emrdfk,
+            ep.noemr,
+            ed.TYPE,
+            pa.namapasien,
+            pa.tgllahir,
+            pa.nohp,
+            pa.nocm,
+            ep.jeniskelamin,
+            ep.umur,
+            al.alamatlengkap,
+            ep.noregistrasifk as noregistrasi ,
+            epd.value,ep.namaruangan,pg.namalengkap as namadokter
+            --case when ed.TYPE = 'datetime' then TO_CHAR(TO_TIMESTAMP(epd.value, 'YYYY-MM-DD HH24:MI:SS'),'YYYY-MM-DD HH24:MI:SS') else epd.value end as value
+        FROM
+            emrpasien_t AS ep
+            INNER JOIN emrpasiend_t AS epd ON ep.noemr = epd.emrpasienfk
+            INNER JOIN emrd_t AS ed ON epd.emrdfk = ed.ID
+                INNER JOIN antrianpasiendiperiksa_t AS pd ON pd.norec = ep.norec_apd
+            left JOIN pegawai_m AS pg ON pg.id = pd.objectpegawaifk
+            left JOIN pasien_m as pa on ep.nocm =  pa.nocm
+            left JOIN alamat_m as al on pa.id = al.nocmfk
+        WHERE
+            ep.norec = '$norec'
+                AND ep.kdprofile = '$kdProfile' 
+            AND epd.statusenabled = TRUE 
+            and epd.emrfk = $request[emrfk]
+        ORDER BY
+            ed.nourut
+            "
+        ));
+        foreach ($data as $z){
+            if ($z->type=="datetime"){
+                $z->value=date('Y-m-d H:i:s',strtotime($z->value));
+            }
+//            $z->value = nl2br( $z->value);
+        }
+        // foreach ($data as $z){
+        //     if (isset($z->tgllahir) ||isset($z->tgl)){
+        //         $z->tgllahir=$this->tanggal_indonesia(date('Y-m-d',strtotime($z->tgllahir)));
+        //         $z->tgl=$this->tanggal_indonesia(date('Y-m-d',strtotime($z->tgl)));
+        //     }
+            
+        // }
+        $res['profile'] = Profile::where('id',$request['kdprofile'])->first();
+        $res['d'] = $data;
+        // return view('report.cppt-ranap-dom',compact('res','pageWidth', 'data'));
+        // dd($res);
+        $item =[];   
+        $item2= [];      
+        foreach( $res['d'] as $items){
+                if($items->type  ==  "textbox" ||$items->type  ==  "textarea"  ){
+                    $item[$items->emrdfk] =  $items->value;
+        }
+                if($items->type  ==  "datetime"){
+                    $item[$items->emrdfk] = $this->tanggal_indonesia(date('Y-m-d',strtotime( $items->value))) ;
+                }
+                if($items->type  ==  "time"){
+                    $item[$items->emrdfk] = date('H:i',strtotime( $items->value));
+                }
+                if($items->type  ==  "date"){
+                    $item[$items->emrdfk] = date('Y-m-d',strtotime( $items->value));
+                }
+                if($items->type  ==  "checkboxtextbox"){
+                    $item[$items->emrdfk] =  $items->value;
+                    $item2[$items->emrdfk] =  true;
+                }
+                if($items->type == "checkbox") {
+                    $chekedd = false;
+                    if ($items->value == '1') {
+                        $chekedd = true;
+                    }
+                    $item[$items->emrdfk] = $chekedd;
+                }
+                if($items->type == "combobox") {
+                    $arr = explode('~',$items->value );
+                    $item[$items->emrdfk] = $arr[1];
+                }
+        }
+        $pageWidth = 950;
+        $peg = null;    
+        if(isset($request['isttd']) && $request['isttd'] == true){
+            $peg = DB::table('pegawai_m')->where('id',$request['pegawaittd'])->first();
+            
+        }
+        // dd($data, $item);
+
+        // var_dump($data);
+        $pdf = PDF::loadView(
+            'report.EMR.okupasi-terapi',
+            array(
+                'res' => $res,
+                'pageWidth' => $pageWidth,
+                'data' => $data,
+                'item'=> $item,
+                'peg'=> $peg
+            )
+        );
+        if(isset($request['isttd']) && $request['isttd'] == true){
+            $objetoRequest = new \Illuminate\Http\Request();
+            $objetoRequest ['emrfk'] = $request['emrfk'];
+            $objetoRequest ['norec_emr'] = $request['emr'];
+            $objetoRequest ['pegawaittd'] = $request['pegawaittd'];
+            $objetoRequest ['nocm'] = $request['nocm'];
+            $objetoRequest ['noregistrasi'] = $request['noregistrasi'];
+            $objetoRequest ['norec_pd'] = $request['norec_pd'];
+            $bsre = app('App\Http\Controllers\Bridging\BridgingBSREController')->pengajuanTTE($objetoRequest,true);
+            if($bsre['status'] == 201){
+                $content = $pdf->download()->getOriginalContent();
+                \Storage::disk('local')->put( 'TTD_BSRE/' . $bsre['dokumen']->id . '/file' . '.pdf' , $content);
+            }
+          
+            return $bsre;
+        }
+
+        return $pdf->stream();
+        return view('report.EMR.okupasi-terapi',compact('data','pageWidth'));
     }
     public function cetakPreviewOrder(Request $request)
     {

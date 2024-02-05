@@ -475,6 +475,10 @@
         {
             "nameDep": "DaftarPiutangSelainBPJSCtrl",
             "urlDep": "module/Piutang/DaftarPiutangSelainBPJSCtrl"
+        },
+        {
+            "nameDep": "MasterAsetCtrl",
+            "urlDep": "module/Aset/MasterAsetCtrl"
         }
     ]
 }

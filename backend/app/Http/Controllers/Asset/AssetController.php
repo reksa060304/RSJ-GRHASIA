@@ -13,6 +13,7 @@ use App\Http\Controllers\ApiController;
 use App\Traits\Valet;
 use Illuminate\Http\Request;
 use App\Transaksi\StrukPlanning;
+use App\Master\CharAsset;
 use DB;
 
 class AssetController extends ApiController
@@ -315,4 +316,143 @@ class AssetController extends ApiController
 
         return $this->respond($dataProdukResult);
     }
+
+    public function getMasterAsset(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        $data = \DB::table('charkodeakunasset_m as cka')
+            ->select('cka.*');
+
+            if(isset($request['urian']) && $request['urian']!="" && $request['urian']!="undefined"){
+                $data = $data->where('cka.urian','ilike',''. $request['urian'].'%');
+            }
+            if(isset($request['kodeakun']) && $request['kodeakun']!="" && $request['kodeakun']!="undefined"){
+                $data = $data->where('cka.kodeakun','ilike','%'. $request['kodeakun'].'%');
+            }
+            if(isset($request['level']) && $request['level']!="" && $request['level']!="undefined"){
+                $data = $data->where('cka.level', $request['level']);
+            }
+            $data = $data->get();
+        return $this->respond($data);
+    }
+
+    public function saveMasterAsset(Request $request)
+    {
+        $dataLogin = $request->all();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        $newId = CharAsset::max('id') + 1;
+        DB::beginTransaction();
+        try {
+            DB::table('charkodeakunasset_m')->insert([
+                'id' =>  $newId,
+                'kdprofile' => $kdProfile,
+                'statusenabled' => $request['statusenabled'],
+                'akun' => $request['akun'],
+                'kelompok' => $request['kelompok'],
+                'jenis' => $request['jenis'],
+                'object' => $request['object'],
+                'rinciobject' => $request['rinciobject'],
+                'subrinci' => $request['subrinci'],
+                'subsubrinci' => $request['subsubrinci'],
+                'level' => $request['level'],
+                'urian' => $request['urian']
+            ]);
+
+            $transStatus = 'true';
+        }catch (\Exception $e){
+            $transStatus = 'false';
+        }
+        $transMessage = "";
+
+        if ($transStatus == 'true') {
+            $transMessage = $transMessage . " Berhasil" ;
+            DB::commit();
+            $result = array(
+                "status" => 201,
+//                "data" => $newPJT,
+                "as" => 'as@epic',
+            );
+        } else {
+            $transMessage = $transMessage ." Gagal!!";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+//                "data" => $newPJT,
+                "as" => 'as@epic',
+            );
+        }
+
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+        // return $this->respond($kdProfile);
+    }
+
+    public function editMasterAsset(Request $request)
+    {
+        $dataLogin = $request->all();
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        $newId = CharAsset::max('id') + 1;
+        DB::beginTransaction();
+        // try {
+            $asset = CharAsset::where('id',$request['id'])->first();
+
+            $asset->kdprofile = $kdProfile;
+            $asset->statusenabled = $request['statusenabled'];
+            $asset->akun = $request['akun'];
+            $asset->kelompok = $request['kelompok'];
+            $asset->jenis = $request['jenis'];
+            $asset->object = $request['object'];
+            $asset->rinciobject = $request['rinciobject'];
+            $asset->subrinci = $request['subrinci'];
+            $asset->subsubrinci = $request['subsubrinci'];
+            $asset->level = $request['level'];
+            $asset->kodeakun = $request['kodeakun'];
+            $asset->urian = $request['urian'];
+            
+            $asset->save();
+            // CharAsset::find($request['id'])->update([
+            //     'kdprofile' => $kdProfile,
+            //     'statusenabled' => $request['statusenabled'],
+            //     'akun' => $request['akun'],
+            //     'kelompok' => $request['kelompok'],
+            //     'jenis' => $request['jenis'],
+            //     'object' => $request['object'],
+            //     'rinciobject' => $request['rinciobject'],
+            //     'subrinci' => $request['subrinci'],
+            //     'subsubrinci' => $request['subsubrinci'],
+            //     'level' => $request['level'],
+            //     'urian' => $request['urian']
+            // ]);
+
+            $transStatus = 'true';
+        // }catch (\Exception $e){
+        //     $transStatus = 'false';
+        // }
+        $transMessage = "";
+
+        if ($transStatus == 'true') {
+            $transMessage = $transMessage . " Berhasil" ;
+            DB::commit();
+            $result = array(
+                "status" => 201,
+//                "data" => $newPJT,
+                "as" => 'as@epic',
+            );
+        } else {
+            $transMessage = $transMessage ." Gagal!!";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+//                "data" => $newPJT,
+                "as" => 'as@epic',
+            );
+        }
+
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    } 
 }

@@ -343,6 +343,32 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     // do something with response
                 });
             }
+            // $scope.cetakBlade = function(){
+            //     if (norecEMR == '') {
+            //         toastr.error('Dokumen belum pernah di isi')
+            //         return
+            //     }
+            //     // if ($scope.item.obj[3003998] != undefined) {
+            //     //     $scope.listPegawai.add($scope.item.obj[3003998])
+            //     //     $scope.item.pegawai = $scope.item.obj[3003998]
+            //     // }
+            //     // if (pegawai == undefined) {
+            //     //     return
+            //     // }
+            //     var local = JSON.parse(localStorage.getItem('profile'))
+            //     var nama = medifirstService.getPegawaiLogin().namaLengkap
+
+            //     window.open(configuration.baseApiBackend + 'report/cetak-okupasi-terapi' + $scope.cc.nocm +
+            //         '&norec_apd=' + $scope.cc.norec +
+            //         '&emr=' + norecEMR +
+            //         '&emrfk=' + $scope.cc.emrfk +
+            //         '&kdprofile=' + local.id +
+            //         '&nama=' + nama +
+            //         // '&isttd=true' +
+            //         // '&pegawaittd=' + pegawai.value +
+            //         '&noregistrasi=' + $scope.cc.noregistrasi +
+            //         '&norec_pd=' + $scope.cc.norec_pd, '_blank');
+            // }
 
             var chekedd = false
             loadDiagnosa();
@@ -1905,17 +1931,20 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     cacheHelper.set('cacheNomorEMR', arrStr);
                 });
             }
+   
+
             $scope.cetakBlade = function(){
                 if (norecEMR == '') return
             
               var local =JSON.parse(localStorage.getItem('profile')) 
               var nama = medifirstService.getPegawaiLogin().namaLengkap
           
-               window.open(config.baseApiBackend + 'report/cetak-asesmen-keperawatan-inap?nocm='
+               window.open(config.baseApiBackend + 'report/cetak-okupasi-terapi?nocm='
                    + $scope.cc.nocm + '&norec_apd='+  $scope.cc.norec +'&emr=' + norecEMR
                    + '&emrfk='+  $scope.cc.emrfk
                    +'&kdprofile='+local.id 
                    +'&nama='+nama,  '_blank');
+                   
             } 
 
         }

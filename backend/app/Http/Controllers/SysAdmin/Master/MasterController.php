@@ -170,6 +170,7 @@ class MasterController extends ApiController{
         DB::beginTransaction();
         $data = $request->all();
         $kdProfile = (int) $this->getDataKdProfile($request);
+        // dd($data);
         try {
             if ($data['id'] == null || $data['id'] == ''){
                 $newId = Produk::max('id');
@@ -237,6 +238,7 @@ class MasterController extends ApiController{
             $prod->tglproduksi = $data['tglproduksi'];
             $prod->status = $data['status'];
             $prod->verifikasianggaran = $data['verifikasianggaran'];
+            $prod->objectprodukassetfk = $data['objectProductAsset'];
             if (isset($request['isprodukintern'])){
                 $prod->isprodukintern = $data['isprodukintern'];
             }
