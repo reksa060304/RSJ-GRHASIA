@@ -2991,4 +2991,222 @@ class LaundryController extends ApiController
 
         return $this->respond($result);
     }
+
+    public function getDataLinenBersih(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        $queryRuangan = '';
+        if (isset($request['ruanganId']) && $request['ruanganId'] != '' && $request['ruanganId'] != 'undefined')
+        {
+            $queryRuangan = 'ru.id = ' . $request['ruanganId'];
+        }
+
+        $data = DB::select(DB::raw("SELECT 
+            SELECT
+                x.namaruangan,
+                x.namaproduk,
+                SUM(x.tgl01) AS tgl01,
+                SUM(x.tgl02) AS tgl02,
+                SUM(x.tgl03) AS tgl03,
+                SUM(x.tgl04) AS tgl04,
+                SUM(x.tgl05) AS tgl05,
+                SUM(x.tgl06) AS tgl06,
+                SUM(x.tgl07) AS tgl07,
+                SUM(x.tgl08) AS tgl08,
+                SUM(x.tgl09) AS tgl09,
+                SUM(x.tgl10) AS tgl10,
+                SUM(x.tgl11) AS tgl11,
+                SUM(x.tgl12) AS tgl12,
+                SUM(x.tgl13) AS tgl13,
+                SUM(x.tgl14) AS tgl14,
+                SUM(x.tgl15) AS tgl15,
+                SUM(x.tgl16) AS tgl16,
+                SUM(x.tgl17) AS tgl17,
+                SUM(x.tgl18) AS tgl18,
+                SUM(x.tgl19) AS tgl19,
+                SUM(x.tgl20) AS tgl20,
+                SUM(x.tgl21) AS tgl21,
+                SUM(x.tgl22) AS tgl22,
+                SUM(x.tgl23) AS tgl23,
+                SUM(x.tgl24) AS tgl24,
+                SUM(x.tgl25) AS tgl25,
+                SUM(x.tgl26) AS tgl26,
+                SUM(x.tgl27) AS tgl27,
+                SUM(x.tgl28) AS tgl28,
+                SUM(x.tgl29) AS tgl29,
+                SUM(x.tgl30) AS tgl30,
+                SUM(x.tgl31) AS tgl31,
+                SUM(x.tgl01) + SUM(x.tgl02) + SUM(x.tgl03) + SUM(x.tgl04) + SUM(x.tgl05) + SUM(x.tgl06) + SUM(x.tgl07) + SUM(x.tgl08) + SUM(x.tgl09) + SUM(x.tgl10) + SUM(x.tgl11) + SUM(x.tgl12) + SUM(x.tgl13) + SUM(x.tgl14) + SUM(x.tgl15) + SUM(x.tgl16) + SUM(x.tgl17) + SUM(x.tgl18) + SUM(x.tgl19) + SUM(x.tgl20) + SUM(x.tgl21) + SUM(x.tgl22) + SUM(x.tgl23) + SUM(x.tgl24) + SUM(x.tgl25) + SUM(x.tgl26) + SUM(x.tgl27) + SUM(x.tgl28) + SUM(x.tgl29) + SUM(x.tgl30) + SUM(x.tgl31) AS jumlah,
+                (SUM(x.tgl01) + SUM(x.tgl02) + SUM(x.tgl03) + SUM(x.tgl04) + SUM(x.tgl05) + SUM(x.tgl06) + SUM(x.tgl07) + SUM(x.tgl08) + SUM(x.tgl09) + SUM(x.tgl10) + SUM(x.tgl11) + SUM(x.tgl12) + SUM(x.tgl13) + SUM(x.tgl14) + SUM(x.tgl15) + SUM(x.tgl16) + SUM(x.tgl17) + SUM(x.tgl18) + SUM(x.tgl19) + SUM(x.tgl20) + SUM(x.tgl21) + SUM(x.tgl22) + SUM(x.tgl23) + SUM(x.tgl24) + SUM(x.tgl25) + SUM(x.tgl26) + SUM(x.tgl27) + SUM(x.tgl28) + SUM(x.tgl29) + SUM(x.tgl30) + SUM(x.tgl31)) * (x.kekuatan::INT) AS jumlahkg, 
+                x.kekuatan AS estimasikg
+            FROM (
+                SELECT 
+                    ru.namaruangan,
+                    pr.namaproduk,
+                    pr.kekuatan,
+                    CASE WHEN EXTRACT (DAY FROM sk.tglkirim) = 01 AND pc.norec IS NOT NULL THEN 1 ELSE 0 END AS tgl01,
+                    CASE WHEN EXTRACT (DAY FROM sk.tglkirim) = 02 AND pc.norec IS NOT NULL THEN 1 ELSE 0 END AS tgl02,
+                    CASE WHEN EXTRACT (DAY FROM sk.tglkirim) = 03 AND pc.norec IS NOT NULL THEN 1 ELSE 0 END AS tgl03,
+                    CASE WHEN EXTRACT (DAY FROM sk.tglkirim) = 04 AND pc.norec IS NOT NULL THEN 1 ELSE 0 END AS tgl04,
+                    CASE WHEN EXTRACT (DAY FROM sk.tglkirim) = 05 AND pc.norec IS NOT NULL THEN 1 ELSE 0 END AS tgl05,
+                    CASE WHEN EXTRACT (DAY FROM sk.tglkirim) = 06 AND pc.norec IS NOT NULL THEN 1 ELSE 0 END AS tgl06,
+                    CASE WHEN EXTRACT (DAY FROM sk.tglkirim) = 07 AND pc.norec IS NOT NULL THEN 1 ELSE 0 END AS tgl07,
+                    CASE WHEN EXTRACT (DAY FROM sk.tglkirim) = 08 AND pc.norec IS NOT NULL THEN 1 ELSE 0 END AS tgl08,
+                    CASE WHEN EXTRACT (DAY FROM sk.tglkirim) = 09 AND pc.norec IS NOT NULL THEN 1 ELSE 0 END AS tgl09,
+                    CASE WHEN EXTRACT (DAY FROM sk.tglkirim) = 10 AND pc.norec IS NOT NULL THEN 1 ELSE 0 END AS tgl10,
+                    CASE WHEN EXTRACT (DAY FROM sk.tglkirim) = 11 AND pc.norec IS NOT NULL THEN 1 ELSE 0 END AS tgl11,
+                    CASE WHEN EXTRACT (DAY FROM sk.tglkirim) = 12 AND pc.norec IS NOT NULL THEN 1 ELSE 0 END AS tgl12,
+                    CASE WHEN EXTRACT (DAY FROM sk.tglkirim) = 13 AND pc.norec IS NOT NULL THEN 1 ELSE 0 END AS tgl13,
+                    CASE WHEN EXTRACT (DAY FROM sk.tglkirim) = 14 AND pc.norec IS NOT NULL THEN 1 ELSE 0 END AS tgl14,
+                    CASE WHEN EXTRACT (DAY FROM sk.tglkirim) = 15 AND pc.norec IS NOT NULL THEN 1 ELSE 0 END AS tgl15,
+                    CASE WHEN EXTRACT (DAY FROM sk.tglkirim) = 16 AND pc.norec IS NOT NULL THEN 1 ELSE 0 END AS tgl16,
+                    CASE WHEN EXTRACT (DAY FROM sk.tglkirim) = 17 AND pc.norec IS NOT NULL THEN 1 ELSE 0 END AS tgl17,
+                    CASE WHEN EXTRACT (DAY FROM sk.tglkirim) = 18 AND pc.norec IS NOT NULL THEN 1 ELSE 0 END AS tgl18,
+                    CASE WHEN EXTRACT (DAY FROM sk.tglkirim) = 19 AND pc.norec IS NOT NULL THEN 1 ELSE 0 END AS tgl19,
+                    CASE WHEN EXTRACT (DAY FROM sk.tglkirim) = 20 AND pc.norec IS NOT NULL THEN 1 ELSE 0 END AS tgl20,
+                    CASE WHEN EXTRACT (DAY FROM sk.tglkirim) = 21 AND pc.norec IS NOT NULL THEN 1 ELSE 0 END AS tgl21,
+                    CASE WHEN EXTRACT (DAY FROM sk.tglkirim) = 22 AND pc.norec IS NOT NULL THEN 1 ELSE 0 END AS tgl22,
+                    CASE WHEN EXTRACT (DAY FROM sk.tglkirim) = 23 AND pc.norec IS NOT NULL THEN 1 ELSE 0 END AS tgl23,
+                    CASE WHEN EXTRACT (DAY FROM sk.tglkirim) = 24 AND pc.norec IS NOT NULL THEN 1 ELSE 0 END AS tgl24,
+                    CASE WHEN EXTRACT (DAY FROM sk.tglkirim) = 25 AND pc.norec IS NOT NULL THEN 1 ELSE 0 END AS tgl25,
+                    CASE WHEN EXTRACT (DAY FROM sk.tglkirim) = 26 AND pc.norec IS NOT NULL THEN 1 ELSE 0 END AS tgl26,
+                    CASE WHEN EXTRACT (DAY FROM sk.tglkirim) = 27 AND pc.norec IS NOT NULL THEN 1 ELSE 0 END AS tgl27,
+                    CASE WHEN EXTRACT (DAY FROM sk.tglkirim) = 28 AND pc.norec IS NOT NULL THEN 1 ELSE 0 END AS tgl28,
+                    CASE WHEN EXTRACT (DAY FROM sk.tglkirim) = 29 AND pc.norec IS NOT NULL THEN 1 ELSE 0 END AS tgl29,
+                    CASE WHEN EXTRACT (DAY FROM sk.tglkirim) = 30 AND pc.norec IS NOT NULL THEN 1 ELSE 0 END AS tgl30,
+                    CASE WHEN EXTRACT (DAY FROM sk.tglkirim) = 31 AND pc.norec IS NOT NULL THEN 1 ELSE 0 END AS tgl31
+                FROM produk_m AS pr
+                INNER JOIN kirimproduk_t AS kp ON kp.objectprodukkirimfk = pr.id
+                INNER JOIN strukkirim_t AS sk ON sk.norec = kp.nokirimfk
+                INNER JOIN ruangan_m AS ru ON ru.id = sk.objectruanganfk
+                LEFT JOIN pencucianlinen_t AS pc ON pc.strukkirimfk = sk.norec
+                WHERE pr.kdprofile = $idProfile
+                AND sk.objectkelompoktransaksifk IN (119)
+                AND tglkirim BETWEEN '2024-02-01 00:00' AND '2024-02-29 23:59'
+                $queryRuangan
+            ) AS x
+            GROUP BY
+                x.namaproduk,
+                x.kekuatan,
+                x.namaruangan
+        "));
+
+        $result = array(
+            'data' => $data,
+            'message' => 'epic',
+        );
+
+        return $this->respond($result);
+    }
+
+    public function getDataLinenKotor(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        $queryRuangan = '';
+        if (isset($request['ruanganId']) && $request['ruanganId'] != '' && $request['ruanganId'] != 'undefined')
+        {
+            $queryRuangan = 'ru.id = ' . $request['ruanganId'];
+        }
+
+        $data = DB::select(DB::raw("SELECT 
+            SELECT
+                x.namaruangan,
+                x.namaproduk,
+                SUM(x.tgl01) AS tgl01,
+                SUM(x.tgl02) AS tgl02,
+                SUM(x.tgl03) AS tgl03,
+                SUM(x.tgl04) AS tgl04,
+                SUM(x.tgl05) AS tgl05,
+                SUM(x.tgl06) AS tgl06,
+                SUM(x.tgl07) AS tgl07,
+                SUM(x.tgl08) AS tgl08,
+                SUM(x.tgl09) AS tgl09,
+                SUM(x.tgl10) AS tgl10,
+                SUM(x.tgl11) AS tgl11,
+                SUM(x.tgl12) AS tgl12,
+                SUM(x.tgl13) AS tgl13,
+                SUM(x.tgl14) AS tgl14,
+                SUM(x.tgl15) AS tgl15,
+                SUM(x.tgl16) AS tgl16,
+                SUM(x.tgl17) AS tgl17,
+                SUM(x.tgl18) AS tgl18,
+                SUM(x.tgl19) AS tgl19,
+                SUM(x.tgl20) AS tgl20,
+                SUM(x.tgl21) AS tgl21,
+                SUM(x.tgl22) AS tgl22,
+                SUM(x.tgl23) AS tgl23,
+                SUM(x.tgl24) AS tgl24,
+                SUM(x.tgl25) AS tgl25,
+                SUM(x.tgl26) AS tgl26,
+                SUM(x.tgl27) AS tgl27,
+                SUM(x.tgl28) AS tgl28,
+                SUM(x.tgl29) AS tgl29,
+                SUM(x.tgl30) AS tgl30,
+                SUM(x.tgl31) AS tgl31,
+                SUM(x.tgl01) + SUM(x.tgl02) + SUM(x.tgl03) + SUM(x.tgl04) + SUM(x.tgl05) + SUM(x.tgl06) + SUM(x.tgl07) + SUM(x.tgl08) + SUM(x.tgl09) + SUM(x.tgl10) + SUM(x.tgl11) + SUM(x.tgl12) + SUM(x.tgl13) + SUM(x.tgl14) + SUM(x.tgl15) + SUM(x.tgl16) + SUM(x.tgl17) + SUM(x.tgl18) + SUM(x.tgl19) + SUM(x.tgl20) + SUM(x.tgl21) + SUM(x.tgl22) + SUM(x.tgl23) + SUM(x.tgl24) + SUM(x.tgl25) + SUM(x.tgl26) + SUM(x.tgl27) + SUM(x.tgl28) + SUM(x.tgl29) + SUM(x.tgl30) + SUM(x.tgl31) AS jumlah,
+                (SUM(x.tgl01) + SUM(x.tgl02) + SUM(x.tgl03) + SUM(x.tgl04) + SUM(x.tgl05) + SUM(x.tgl06) + SUM(x.tgl07) + SUM(x.tgl08) + SUM(x.tgl09) + SUM(x.tgl10) + SUM(x.tgl11) + SUM(x.tgl12) + SUM(x.tgl13) + SUM(x.tgl14) + SUM(x.tgl15) + SUM(x.tgl16) + SUM(x.tgl17) + SUM(x.tgl18) + SUM(x.tgl19) + SUM(x.tgl20) + SUM(x.tgl21) + SUM(x.tgl22) + SUM(x.tgl23) + SUM(x.tgl24) + SUM(x.tgl25) + SUM(x.tgl26) + SUM(x.tgl27) + SUM(x.tgl28) + SUM(x.tgl29) + SUM(x.tgl30) + SUM(x.tgl31)) * (x.kekuatan::INT) AS jumlahkg, 
+                x.kekuatan AS estimasikg
+            FROM (
+                SELECT 
+                    ru.namaruangan,
+                    pr.namaproduk,
+                    pr.kekuatan,
+                    CASE WHEN EXTRACT (DAY FROM sk.tglkirim) = 01 AND pc.norec IS NULL THEN 1 ELSE 0 END AS tgl01,
+                    CASE WHEN EXTRACT (DAY FROM sk.tglkirim) = 02 AND pc.norec IS NULL THEN 1 ELSE 0 END AS tgl02,
+                    CASE WHEN EXTRACT (DAY FROM sk.tglkirim) = 03 AND pc.norec IS NULL THEN 1 ELSE 0 END AS tgl03,
+                    CASE WHEN EXTRACT (DAY FROM sk.tglkirim) = 04 AND pc.norec IS NULL THEN 1 ELSE 0 END AS tgl04,
+                    CASE WHEN EXTRACT (DAY FROM sk.tglkirim) = 05 AND pc.norec IS NULL THEN 1 ELSE 0 END AS tgl05,
+                    CASE WHEN EXTRACT (DAY FROM sk.tglkirim) = 06 AND pc.norec IS NULL THEN 1 ELSE 0 END AS tgl06,
+                    CASE WHEN EXTRACT (DAY FROM sk.tglkirim) = 07 AND pc.norec IS NULL THEN 1 ELSE 0 END AS tgl07,
+                    CASE WHEN EXTRACT (DAY FROM sk.tglkirim) = 08 AND pc.norec IS NULL THEN 1 ELSE 0 END AS tgl08,
+                    CASE WHEN EXTRACT (DAY FROM sk.tglkirim) = 09 AND pc.norec IS NULL THEN 1 ELSE 0 END AS tgl09,
+                    CASE WHEN EXTRACT (DAY FROM sk.tglkirim) = 10 AND pc.norec IS NULL THEN 1 ELSE 0 END AS tgl10,
+                    CASE WHEN EXTRACT (DAY FROM sk.tglkirim) = 11 AND pc.norec IS NULL THEN 1 ELSE 0 END AS tgl11,
+                    CASE WHEN EXTRACT (DAY FROM sk.tglkirim) = 12 AND pc.norec IS NULL THEN 1 ELSE 0 END AS tgl12,
+                    CASE WHEN EXTRACT (DAY FROM sk.tglkirim) = 13 AND pc.norec IS NULL THEN 1 ELSE 0 END AS tgl13,
+                    CASE WHEN EXTRACT (DAY FROM sk.tglkirim) = 14 AND pc.norec IS NULL THEN 1 ELSE 0 END AS tgl14,
+                    CASE WHEN EXTRACT (DAY FROM sk.tglkirim) = 15 AND pc.norec IS NULL THEN 1 ELSE 0 END AS tgl15,
+                    CASE WHEN EXTRACT (DAY FROM sk.tglkirim) = 16 AND pc.norec IS NULL THEN 1 ELSE 0 END AS tgl16,
+                    CASE WHEN EXTRACT (DAY FROM sk.tglkirim) = 17 AND pc.norec IS NULL THEN 1 ELSE 0 END AS tgl17,
+                    CASE WHEN EXTRACT (DAY FROM sk.tglkirim) = 18 AND pc.norec IS NULL THEN 1 ELSE 0 END AS tgl18,
+                    CASE WHEN EXTRACT (DAY FROM sk.tglkirim) = 19 AND pc.norec IS NULL THEN 1 ELSE 0 END AS tgl19,
+                    CASE WHEN EXTRACT (DAY FROM sk.tglkirim) = 20 AND pc.norec IS NULL THEN 1 ELSE 0 END AS tgl20,
+                    CASE WHEN EXTRACT (DAY FROM sk.tglkirim) = 21 AND pc.norec IS NULL THEN 1 ELSE 0 END AS tgl21,
+                    CASE WHEN EXTRACT (DAY FROM sk.tglkirim) = 22 AND pc.norec IS NULL THEN 1 ELSE 0 END AS tgl22,
+                    CASE WHEN EXTRACT (DAY FROM sk.tglkirim) = 23 AND pc.norec IS NULL THEN 1 ELSE 0 END AS tgl23,
+                    CASE WHEN EXTRACT (DAY FROM sk.tglkirim) = 24 AND pc.norec IS NULL THEN 1 ELSE 0 END AS tgl24,
+                    CASE WHEN EXTRACT (DAY FROM sk.tglkirim) = 25 AND pc.norec IS NULL THEN 1 ELSE 0 END AS tgl25,
+                    CASE WHEN EXTRACT (DAY FROM sk.tglkirim) = 26 AND pc.norec IS NULL THEN 1 ELSE 0 END AS tgl26,
+                    CASE WHEN EXTRACT (DAY FROM sk.tglkirim) = 27 AND pc.norec IS NULL THEN 1 ELSE 0 END AS tgl27,
+                    CASE WHEN EXTRACT (DAY FROM sk.tglkirim) = 28 AND pc.norec IS NULL THEN 1 ELSE 0 END AS tgl28,
+                    CASE WHEN EXTRACT (DAY FROM sk.tglkirim) = 29 AND pc.norec IS NULL THEN 1 ELSE 0 END AS tgl29,
+                    CASE WHEN EXTRACT (DAY FROM sk.tglkirim) = 30 AND pc.norec IS NULL THEN 1 ELSE 0 END AS tgl30,
+                    CASE WHEN EXTRACT (DAY FROM sk.tglkirim) = 31 AND pc.norec IS NULL THEN 1 ELSE 0 END AS tgl31
+                FROM produk_m AS pr
+                INNER JOIN kirimproduk_t AS kp ON kp.objectprodukkirimfk = pr.id
+                INNER JOIN strukkirim_t AS sk ON sk.norec = kp.nokirimfk
+                INNER JOIN ruangan_m AS ru ON ru.id = sk.objectruanganfk
+                LEFT JOIN pencucianlinen_t AS pc ON pc.strukkirimfk = sk.norec
+                WHERE pr.kdprofile = $idProfile
+                AND sk.objectkelompoktransaksifk IN (119)
+                AND tglkirim BETWEEN '2024-02-01 00:00' AND '2024-02-29 23:59'
+                $queryRuangan
+            ) AS x
+            GROUP BY
+                x.namaproduk,
+                x.kekuatan,
+                x.namaruangan
+        "));
+
+        $result = array(
+            'data' => $data,
+            'message' => 'epic',
+        );
+
+        return $this->respond($result);
+    }
 }

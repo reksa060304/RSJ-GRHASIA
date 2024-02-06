@@ -1418,6 +1418,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('laundry/get-data-laporan-penerimaan-linen','Laundry\LaundryController@getDataLaporanPenerimaanLinen');
             Route::get('laundry/get-data-laporan-distribusi-linen','Laundry\LaundryController@getDataLaporanDistribusiLinen');
             Route::get('laundry/get-data-laporan-pencucian-linen','Laundry\LaundryController@getDataLaporanPencucianLinen');
+            Route::get('laundry/get-data-laporan-linen-bersih','Laundry\LaundryController@getDataLinenBersih');
+            Route::get('laundry/get-data-laporan-linen-kotor','Laundry\LaundryController@getDataLinenKotor');
 
             Route::post('laundry/save-kirim-linen-ruangan','Laundry\LaundryController@saveKirimLinen');
             Route::post('laundry/save-batal-terima','Laundry\LaundryController@saveBatalKirim');
