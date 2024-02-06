@@ -19,6 +19,7 @@ use App\Transaksi\StrukKirim;
 use App\Transaksi\StrukOrder;
 use App\Transaksi\StrukPelayanan;
 use App\Transaksi\StrukPelayananDetail;
+use Carbon\Carbon;
 use DB;
 use Illuminate\Http\Request;
 
@@ -2996,15 +2997,20 @@ class LaundryController extends ApiController
     {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
+        $dateStart = Carbon::parse($request['bulan']);
+        $dateEnd = Carbon::parse($request['bulan']);
+        $tglStart = $dateStart->firstOfMonth();
+        $tglEnd = $dateEnd->lastOfMonth();
+        $tglAwal = $tglStart->format('Y-m-d') . " 00:00";
+        $tglAkhir = $tglEnd->format('Y-m-d') . " 23:59";
 
         $queryRuangan = '';
         if (isset($request['ruanganId']) && $request['ruanganId'] != '' && $request['ruanganId'] != 'undefined')
         {
-            $queryRuangan = 'ru.id = ' . $request['ruanganId'];
+            $queryRuangan = 'AND ru.id = ' . $request['ruanganId'];
         }
 
         $data = DB::select(DB::raw("SELECT 
-            SELECT
                 x.namaruangan,
                 x.namaproduk,
                 SUM(x.tgl01) AS tgl01,
@@ -3084,7 +3090,7 @@ class LaundryController extends ApiController
                 LEFT JOIN pencucianlinen_t AS pc ON pc.strukkirimfk = sk.norec
                 WHERE pr.kdprofile = $idProfile
                 AND sk.objectkelompoktransaksifk IN (119)
-                AND tglkirim BETWEEN '2024-02-01 00:00' AND '2024-02-29 23:59'
+                AND tglkirim BETWEEN '$tglAwal' AND '$tglAkhir'
                 $queryRuangan
             ) AS x
             GROUP BY
@@ -3105,15 +3111,20 @@ class LaundryController extends ApiController
     {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
+        $dateStart = Carbon::parse($request['bulan']);
+        $dateEnd = Carbon::parse($request['bulan']);
+        $tglStart = $dateStart->firstOfMonth();
+        $tglEnd = $dateEnd->lastOfMonth();
+        $tglAwal = $tglStart->format('Y-m-d') . " 00:00";
+        $tglAkhir = $tglEnd->format('Y-m-d') . " 23:59";
 
         $queryRuangan = '';
         if (isset($request['ruanganId']) && $request['ruanganId'] != '' && $request['ruanganId'] != 'undefined')
         {
-            $queryRuangan = 'ru.id = ' . $request['ruanganId'];
+            $queryRuangan = 'AND ru.id = ' . $request['ruanganId'];
         }
 
         $data = DB::select(DB::raw("SELECT 
-            SELECT
                 x.namaruangan,
                 x.namaproduk,
                 SUM(x.tgl01) AS tgl01,
@@ -3193,7 +3204,7 @@ class LaundryController extends ApiController
                 LEFT JOIN pencucianlinen_t AS pc ON pc.strukkirimfk = sk.norec
                 WHERE pr.kdprofile = $idProfile
                 AND sk.objectkelompoktransaksifk IN (119)
-                AND tglkirim BETWEEN '2024-02-01 00:00' AND '2024-02-29 23:59'
+                AND tglkirim BETWEEN '$tglAwal' AND '$tglAkhir'
                 $queryRuangan
             ) AS x
             GROUP BY
