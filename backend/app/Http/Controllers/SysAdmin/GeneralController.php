@@ -4482,7 +4482,31 @@ class GeneralController extends ApiController
         $dataProduk = $dataProduk->take(20);
         $dataProduk = $dataProduk->get();
 
-        return $this->respond($dataProduk);
+        $dataRuangan = \DB::table('ruangan_m as ru')
+            ->where('ru.statusenabled', true)
+            ->where('ru.kdprofile', $kdProfile)
+            ->orderBy('ru.namaruangan')
+            ->get();
+        foreach ($dataProduk as $item) {
+            $detail = [];
+            foreach ($dataRuangan as $item2) {
+                if ($item->value == $item2->objectdepartemenfk) {
+                    $detail[] = array(
+                        'value' => $item2->id,
+                        'text' => $item2->namaruangan,
+                        'namaruangan' => $item2->namaruangan,
+                    );
+                }
+            }
+
+            $dataDepartemen[] = array(
+                'value' => $item->value,
+                'text' => $item->text,
+                'namadepartemen' => $item->namadepartemen,
+                'ruangan' => $detail,
+            );
+        }
+        return $this->respond($dataDepartemen);
     }
 
     public function getDetailPasienGeneral(Request $request) {

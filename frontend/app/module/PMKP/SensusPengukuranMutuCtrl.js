@@ -36,9 +36,9 @@ define(['initialize'], function (initialize) {
             }
 
             function LoadCombo() {
-                medifirstService.getPart('sysadmin/general/get-ruangan-part', true, true, 10).then(function (e) {
-                    $scope.listRuangan = e;
-                });
+                // medifirstService.getPart('sysadmin/general/get-ruangan-part', true, true, 10).then(function (e) {
+                //     $scope.listRuangan = e;
+                // });
 
                 medifirstService.get('sysadmin/general/get-combo-pegawai').then(function (e) {
                     $scope.listPegawai = e.data
@@ -48,6 +48,10 @@ define(['initialize'], function (initialize) {
                     $scope.listDepartemen = data;
                 });
             }
+
+            $scope.getIsiComboRuangan = function () {
+				$scope.listRuangan = $scope.item.Departemen.ruangan
+			}
 
 
             $scope.cekAll = function (bool) {
@@ -158,18 +162,24 @@ define(['initialize'], function (initialize) {
                 // if ($scope.isInput) {
                 //     $scope.titleButton = 'Hide Input Edukasi'                    
                 // } else { $scope.titleButton = 'Input Edukasi' }                                   
-                if ($scope.item.Departemen != undefined) {
-                    medifirstService.get("pmkp/get-data-indikator-departemen?" + "idDept=" + $scope.item.Departemen.value).then(function (e) {
-                        var datas = e.data.data
-                        for (let i = 0; i < datas.length; i++) {
-                            datas[i].no = i + 1;
-                        }
-                        datana.push(datas);
-                        $scope.generateTable()
-                    });
-                } else {
+                if (!$scope.item.Departemen) {
                     window.messageContainer.error("Departemen Masih Kosong");
+                   return
                 }
+
+                if (!$scope.item.Ruangan) {
+                    window.messageContainer.error("Ruangan Masih Kosong");
+                   return
+                }
+
+                medifirstService.get("pmkp/get-data-indikator-departemen?" + "idDept=" + $scope.item.Departemen.value + "&idRuangan=" + $scope.item.Ruangan.value).then(function (e) {
+                    var datas = e.data.data
+                    for (let i = 0; i < datas.length; i++) {
+                        datas[i].no = i + 1;
+                    }
+                    datana.push(datas);
+                    $scope.generateTable()
+                });
             }
 
             $scope.Hide = function () {
@@ -178,6 +188,7 @@ define(['initialize'], function (initialize) {
                     data: [],
                 });
                 $scope.item.Departemen = undefined;
+                $scope.item.Ruangan = undefined;
             }
 
             $scope.generateTable = function () {
@@ -202,16 +213,16 @@ define(['initialize'], function (initialize) {
                             style: "text-align: left;"
                         }
                     },
-                    {
-                        "field": "keterangan",
-                        "title": "<h3 align=center>Keterangan<h3>",
-                        "width": "210px",
-                        "filterable": false,
-                        attributes: {
-                            "class": "table-cell",
-                            style: "text-align: left;"
-                        }
-                    },
+                    // {
+                    //     "field": "keterangan",
+                    //     "title": "<h3 align=center>Keterangan<h3>",
+                    //     "width": "210px",
+                    //     "filterable": false,
+                    //     attributes: {
+                    //         "class": "table-cell",
+                    //         style: "text-align: left;"
+                    //     }
+                    // },
                     {
                         "title": "<h3 align=center>" + $scope.getBulan() + "<h3>",
                         "columns": $scope.createColumn(),
@@ -311,7 +322,7 @@ define(['initialize'], function (initialize) {
                 for (var i = 0; i < tempDate.getDate(); i++) {
                     var data = {
                         field: "[" + (i + 1) + "]",
-                        title: (i + 1).toString(),
+                        title: (i + 1).toString() + "<br>" + "N/D",
                         format: "{0:n1}",
                         width: "50px"
                     };
@@ -345,7 +356,7 @@ define(['initialize'], function (initialize) {
                     var capaian = 0;
                     data_head = [];
                     $scope.selectedData = grid.dataItem(row);
-                    if (colIdx > 2) {
+                    if (colIdx > 1) {
                         var person = prompt("Masukan Nilai Sensus", "");
                         e.currentTarget.innerText = person
                         var colDateIdx = colIdx - 2;
@@ -381,7 +392,7 @@ define(['initialize'], function (initialize) {
                         if (colName.length == 1) {
                             colName = "0" + colName;
                         }
-                        if (colName.length <= 2) {
+                        if (colName.length <= 4) {
                             // var date = dateHelper.getFormatMonthPicker($scope.item.bulan) + "-" + colName;  
                             var tgl = dateHelper.getFormatMonthPicker($scope.item.bulan);
                             var Tglset = "";
@@ -466,6 +477,10 @@ define(['initialize'], function (initialize) {
                     toastr.error('Departemen Tidak Boleh Kosong')
                     return
                 }
+                if ($scope.item.Ruangan == undefined) {
+                    toastr.error('Ruangan Tidak Boleh Kosong')
+                    return
+                }
                 var data2 = []
                 // var isi = ' ';                
                 // for (let i = 0; i < dataARR.length; i++) {
@@ -486,6 +501,7 @@ define(['initialize'], function (initialize) {
                 }
                 var objSave = {
                     'departemenfk': $scope.item.Departemen.value,
+                    'ruanganfk': $scope.item.Ruangan.value,
                     'capaian': $scope.Capaian != undefined ? $scope.Capaian : 0,
                     'denumerator': $scope.denumerator != undefined ? $scope.denumerator : 0,
                     'numerator': $scope.numerator != undefined ? $scope.numerator : 0,
@@ -502,10 +518,15 @@ define(['initialize'], function (initialize) {
                 if ($scope.item.Departemen != undefined) {
                     idDept = '&idDept=' + $scope.item.Departemen.value
                 }
+                var idRuangan = ''
+                if ($scope.item.Ruangan != undefined) {
+                    idRuangan = '&idRuangan=' + $scope.item.Ruangan.value
+                }
+                
                 $scope.isRouteLoading = true;
                 //'pmkp/get-data-sasaran-mutu?bulan=' + bln + idDept
                 //pmkp/get-data-indikator-departemen?" + "idDept=" + $scope.item.Departemen.value             
-                medifirstService.get('pmkp/get-data-indikator-departemen?' + idDept).then(function (e) {
+                medifirstService.get('pmkp/get-data-indikator-departemen?' + idDept + idRuangan).then(function (e) {
                     $scope.isRouteLoading = false;
                     dataGrid = e.data.data;
                     for (let i = 0; i < dataGrid.length; i++) {
@@ -619,15 +640,24 @@ define(['initialize'], function (initialize) {
                 if ($scope.item.Departemen != undefined) {
                     idDept = '&idDept=' + $scope.item.Departemen.value
                 }
+                var idRuangan = ''
+                if ($scope.item.Ruangan != undefined) {
+                    idRuangan = '&idRuangan=' + $scope.item.Ruangan.value
+                }
                 $scope.isRouteLoading = false;
-                medifirstService.get('pmkp/get-data-sasaran-mutu?bulan=' + bln + idDept).then(function (e) {
+                medifirstService.get('pmkp/get-data-sasaran-mutu?bulan=' + bln + idDept + idRuangan).then(function (e) {
                     $scope.datasSearch = e.data
                     for (var i = $scope.datasSearch.length - 1; i >= 0; i--) {
                         $scope.datasSearch[i].no = i + 1
-                        if (parseFloat($scope.datasSearch[i].nilai) != 0) {
-                            $scope.datasSearch[i].isian = parseFloat($scope.datasSearch[i].nilai)
+                        // if (parseFloat($scope.datasSearch[i].nilai) != 0) {
+                        //     $scope.datasSearch[i].isian = parseFloat($scope.datasSearch[i].nilai)
+                        // } else {
+                        //     $scope.datasSearch[i].isian = 0
+                        // }
+                        if($scope.datasSearch[i].nilai) {
+                            $scope.datasSearch[i].isian = $scope.datasSearch[i].nilai;
                         } else {
-                            $scope.datasSearch[i].isian = 0
+                            $scope.datasSearch[i].isian = 0;
                         }
                     }
 
