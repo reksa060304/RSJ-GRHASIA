@@ -6434,5 +6434,45 @@
         "define": "MedifirstService"
       }
     ]
+  },
+  {
+    "name": "LaporanLinenBersih",
+    "url": "/TGFwb3JhbkxpbmVuQmVyc2lo",
+    "templateurl": "module/Laundry/LaporanLaundry/LaporanLinenBersih.html",
+    "controller": "LaporanLinenBersihCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "LaporanLinenKotor",
+    "url": "/TGFwb3JhbkxpbmVuS290b3I=",
+    "templateurl": "module/Laundry/LaporanLaundry/LaporanLinenKotor.html",
+    "controller": "LaporanLinenKotorCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
   }
 ]

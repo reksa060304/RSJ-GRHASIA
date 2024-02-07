@@ -1301,6 +1301,14 @@
         {
             "nameDep": "sensusBangsalCtrl",
             "urlDep": "module/Registrasi/sensusBangsalCtrl"
+        },
+        {
+            "nameDep": "LaporanLinenBersihCtrl",
+            "urlDep": "module/Laundry/LaporanLaundry/LaporanLinenBersihCtrl"
+        },
+        {
+            "nameDep": "LaporanLinenKotorCtrl",
+            "urlDep": "module/Laundry/LaporanLaundry/LaporanLinenKotorCtrl"
         }
     ]
 }
