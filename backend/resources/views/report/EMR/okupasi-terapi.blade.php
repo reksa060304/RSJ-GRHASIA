@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="css/report/tabel.css">
 
     <link href="css/style.css" rel="stylesheet">
-    <title>Pengkajian Awal Medis IGD Jiwa</title>
+    <title>PENGKAJIAN PASIEN / KLIEN OKUPASI TERAPI</title>
     <style>
         @page {
             size: A4;
@@ -155,9 +155,7 @@
 
                         </b>
                     </td>
-                    {{-- @php 
-                        @dd($res);
-                        @endphp --}}
+                  
                     <td width="30%">
                         <div class="box" style="text-align: left">
                             <table style="padding: 1px;">
