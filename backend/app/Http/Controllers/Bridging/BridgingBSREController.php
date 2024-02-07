@@ -1002,6 +1002,7 @@ class BridgingBSREController  extends ApiController
             $dataSaveLoginUser->statusenabled = true;
             $dataSaveLoginUser->norec = $dataSavePegawai->generateNewId();
             $dataSaveLoginUser->objectkelompokuserfk = 67;
+            $dataSaveLoginUser->namaexternal = $dataPegawai['nim'];
             $dataSaveLoginUser->namauser = $dataPegawai['namauser'];
             $dataSaveLoginUser->passcode = $this->encryptSHA1($dataPegawai['passcode']);
             $dataSaveLoginUser->katasandi = $this->encryptSHA1($dataPegawai['passcode']);

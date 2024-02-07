@@ -8105,12 +8105,12 @@ where pg.kdprofile = 30 and pg.statusenabled = true and pg.usereksternal is null
         if (isset($request['nama']) && $request['nama'] != "" && $request['nama'] != "undefined") {
             $nama = $request['nama'];
         }
-        $data = DB::SELECT(DB::RAW("SELECT distinct spd.nama, spd.nim, spd.nomorhp, 
+        $data = DB::SELECT(DB::RAW("SELECT distinct spd.nama, spd.nim, replace(spd.nim,'/','') nim_user, spd.nomorhp, 
         spe.institusipendidikan, lu.namauser, lu.passcode, pgw.namalengkap, 
 		objectmodulaplikasifk mapakses, pgw.id, ma.modulaplikasi 
 		FROM sdm_pesertadidik_t spd 
 		left join sdm_penelitianeksternal_t spe on spe.norec = spd.noregistrasifk
-		left join loginuser_s lu on spd.nim = lu.namauser
+		left join loginuser_s lu on spd.nim = lu.namaexternal
 		left join pegawai_m pgw on lu.objectpegawaifk = pgw.id		
 		left join maploginusertomodulaplikasi_s mlu on lu.id = mlu.objectloginuserfk
 		left join modulaplikasi_s ma on ma.id = mlu.objectmodulaplikasifk

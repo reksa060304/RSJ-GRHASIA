@@ -789,7 +789,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 $scope.itembsre.nim = dataItem.nim;
                 $scope.itembsre.institusipendidikan = dataItem.institusipendidikan;
                 if (dataItem.namauser == undefined) {
-                    $scope.itembsre.namauser = dataItem.nim;
+                    $scope.itembsre.namauser = dataItem.nim_user;
                     $scope.itembsre.passcode = 'mhs30';
                 } else {
                     $scope.itembsre.namauser = dataItem.namauser;
@@ -803,16 +803,14 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             }
 
             $scope.SaveRegisterBsre = function () {
-
-
+                
+              
                 var namapegawai = $scope.itembsre.nama;
                 var nomorhp = $scope.itembsre.nomorhp;
                 var nim = $scope.itembsre.nim;
                 var institusipendidikan = $scope.itembsre.institusipendidikan;
                 var namauser = $scope.itembsre.namauser;
                 var passcode = $scope.itembsre.passcode;
-
-
 
                 dataPegawai = {
                     // Data Pegawai
