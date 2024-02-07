@@ -1328,6 +1328,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('report/get-cetak-catatan-konseling', 'Report\ReportController@cetakCatatanKonselingNapza');
           Route::get('report/get-cetak-cmrm05','Report\ReportController@cetakCM05');
           Route::get('report/cetak-okupasi-terapi','Report\ReportController@cetakOkupasiTerapi');
+          Route::get('report/cetak-pengkajian-rajal-nonjiwa','Report\ReportController@cetakPengkajianRajalNonJiwa');
+          
           Route::get('report/get-cetak-per-jenis-anggaran','Report\ReportController@CetakPerJenisAnggaran');
           Route::get('report/get-cetak-per-jenis-anggaran-sebelum-sesudah','Report\ReportController@CetakPerJenisAnggaranSebelumSesudah');
           Route::get('report/get-cetak-rekap-mata-anggaran','Report\ReportController@CetakRekapMataAnggaran');
