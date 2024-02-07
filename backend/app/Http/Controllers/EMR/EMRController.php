@@ -8756,7 +8756,7 @@ class EMRController  extends ApiController
             if ($dataReq['norec'] == '') {
                 $dataSave = new KepatuhanHandHygiene();
                 $dataSave->norec = $dataSave->generateNewId();
-                $dataSave->kdprofile = 0;
+                $dataSave->kdprofile = $idProfile;
                 $dataSave->statusenabled = true;
                 $kegiatan = 'Input IPCLN';
                 # code...
@@ -8831,7 +8831,7 @@ class EMRController  extends ApiController
             ->select(DB::raw("
                 kh.norec,kh.tanggal,kh.objectruanganfk,CAST(kh.objectindikasifk AS VARCHAR) AS objectindikasifk,ru.namaruangan,
                 CAST(kh.objecthygienefk AS VARCHAR) AS objecthygienefk,kh.objectpegawaifk,
-                pg.namalengkap,kh.langkah,kh.objectjenispegawaifk,jp.jenispegawai,kh.kesempatan,kh.langkah
+                pg.namalengkap,kh.langkah,kh.objectjenispegawaifk,jp.jenispegawai,kh.kesempatan,kh.langkah,kh.isverif
             "))
             ->where('kh.kdprofile', $idProfile)
             ->where('kh.statusenabled', true)
