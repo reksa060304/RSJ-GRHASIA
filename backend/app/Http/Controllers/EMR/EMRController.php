@@ -13585,4 +13585,42 @@ class EMRController  extends ApiController
             );
         return $this->respond($result);
     }
+    public function verifikasiKepatuhanHandHygiene (Request $request, $stat)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        DB::beginTransaction();
+        try {
+
+            foreach ($request->data as $data) {
+                KepatuhanHandHygiene::where('norec',$data['norec'])
+                ->where('kdprofile', $kdProfile)
+                ->update([
+                    'isverif' => $stat
+                ]);
+            }
+
+            $transStatus = true;
+        } catch (\Exception $e) {
+            $transStatus = false;
+        }
+
+        if ($transStatus) {
+            $transMessage = $stat == "true" ? "Verifikasi Berhasil" : "Batal Verifikasi Berhasil";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMessage,
+                "as" => '@epic',
+            );
+        } else {
+            $transMessage = $stat == "true" ? "Verifikasi Gagal" : "Batal Verifikasi Gagal";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message"  => $transMessage,
+                "as" => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
 }

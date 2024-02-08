@@ -622,7 +622,7 @@ define(['initialize'], function (initialize) {
                 }
 
                 if ($scope.dataSelect.objectpegawaifk != $scope.PegawaiLogin.id) {
-                    toastr.error('Anda tidak punya akses untuk mengedit !')
+                    toastr.error('Anda tidak punya akses untuk menghapus !')
                     return
                 }
                 var data = {

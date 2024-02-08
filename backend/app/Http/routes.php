@@ -856,6 +856,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::post('emr/save-kepatuhanhandhygiene', 'EMR\EMRController@saveDataKepatuhanHandHygiene');
           Route::get('emr/get-data-kepatuhan-handhygiene','EMR\EMRController@getDataKepatuhanHandHygiene');
           Route::post('emr/batal-kepatuhan-handhygiene','EMR\EMRController@saveBatalKepatuhanHandHygiene');
+          Route::post('emr/verifikasi-kepatuhan-handhygiene/{stat}','EMR\EMRController@verifikasiKepatuhanHandHygiene');
           Route::get('emr/get-nilai-statis-igd', 'EMR\EMRController@getNilaiStatisIGD');
           Route::post('emr/disable-emr-details', 'EMR\EMRController@disableEMRdetail');
           Route::get('emr/get-data-dg-primary/{Noregistrasi}', 'EMR\EMRController@getDataDiagnosaPrimary');
