@@ -897,6 +897,10 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('emr/get-emr-cabak', 'EMR\EMRController@getEMRCABAK');
 
           Route::get('emr/cek_ttd_bsre_emr', 'EMR\EMRController@getCekBSRE');
+          Route::post('emr/save-emr-bundlehai', 'EMR\EMRController@postTransBundleHai');
+          Route::post('emr/hapus-emr-bundlehai', 'EMR\EMRController@hapusTransBundleHai');
+          Route::get('emr/get-data-trans-bundlehais', 'EMR\EMRController@getDataTransBundleHais');
+          Route::get('emr/get-data-trans-bundlehais-detail', 'EMR\EMRController@getDataTransBundleHaisDetail');
 
           Route::post('bsre-esign/sign/pdf', 'Bridging\BridgingBSREController@signDokumen');
           Route::get('bsre-esign/sign/download/{id_dokumen}', 'Bridging\BridgingBSREController@downloadDokumen');
@@ -3031,6 +3035,9 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
                 Route::post('sysadmin/general/rensar/post-pengembalian-dok-rm','EIS\EISController@postPengembalianRekamMedik');
                 Route::post('sysadmin/general/rensar/post-waktu-tunggu-rj','EIS\EISController@postWaktuTungguRawatJalan');
                 Route::post('sysadmin/general/rensar/save-kelompok-transaksi','EIS\EISController@saveKelompokTransaksi');
+
+                Route::get('sysadmin/general/get-data-master-bundlehai','SysAdmin\GeneralController@getDataBundleHais');
+                Route::get('sysadmin/general/get-data-master-bundlehai-iad','SysAdmin\GeneralController@getDataBundleHais_IAD');
                 /*POST*/
                 // });
                 // });

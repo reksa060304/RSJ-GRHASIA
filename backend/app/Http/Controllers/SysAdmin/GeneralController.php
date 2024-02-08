@@ -5901,4 +5901,31 @@ class GeneralController extends ApiController
         return $this->setStatusCode($result['status'])->respond($result,$transMessage);
     }
 
+    public function getDataBundleHais(Request $request){
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $jenis = $request['jenis'];
+        $data = collect(DB::select("
+             SELECT id AS idbundle,namaexternal || '. ' || kelompok AS kelompok,
+                    namabundle as keterangan,jenisbundle,nourut,kelompok AS namakelompok
+            FROM haisbundle_m 
+            WHERE jenisbundle = '$jenis'
+            ORDER BY nourut asc
+        "));
+
+        return $this->respond($data);
+    }
+
+    public function getDataBundleHais_IAD(Request $request){
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $data = collect(DB::select("
+            SELECT id AS idbundle,namaexternal || '. ' || kelompok AS kelompok,
+                   namabundle as keterangan,jenisbundle,nourut,kelompok AS namakelompok
+            FROM haisbundle_m 
+            WHERE jenisbundle = 'IAD'
+            ORDER BY nourut asc
+        "));
+
+        return $this->respond($data);
+    }
+
 }
