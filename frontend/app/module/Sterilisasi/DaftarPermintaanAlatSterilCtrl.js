@@ -101,7 +101,7 @@ define(['initialize'], function (initialize) {
                         //     dat.data.daftar[i].no = i + 1                           
                         // }
                         var data2 = dat.data.daftar;
-                        console.log('cek data ini', data2);
+                        
                         for (var i = 0; i < data2.length; i++) {
                             data2[i].no = i + 1
                             for (let e = 0; e < data2[i].details.length; e++) {
@@ -120,6 +120,11 @@ define(['initialize'], function (initialize) {
                             }
                         });
                         pegawaiUser = dat.data.datalogin
+
+                        if (dat.data.str.length > 0) {
+                            if (dat.data.str[0] !== 66)
+                                $scope.disableCSSD = true
+                        }
                     });
 
                 var chacePeriode = {
@@ -173,6 +178,22 @@ define(['initialize'], function (initialize) {
                     alert('Sudah Di Kirim!')
                     return;
                 }
+                if ($scope.dataSelected == undefined) {
+                    toastr.error("Pilih yg akan di verif!!")
+                    return;
+                }
+
+                var dataupdate = {
+                    strukorderfk: $scope.dataSelected.norec,
+                    statusorder: 1
+                }
+
+                medifirstService.post('sterilisasi/verifikasi-order-sterilisasi', dataupdate).then(function (e) {
+                    init();
+                }, function (error) {
+                    // $scope.saveShow = true;
+                });
+
                 var chacePeriode = {
                     0: $scope.dataSelected.norec,
                     1: '',

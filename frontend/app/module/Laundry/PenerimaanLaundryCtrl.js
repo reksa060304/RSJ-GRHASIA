@@ -13,6 +13,8 @@ define(['initialize'], function (initialize) {
             $scope.title ='Penerimaan Laundry'
             $scope.titleTambahan ='Terima'
             $scope.disableKirimBalik =false
+            $scope.hideBukanKirimBalik =false
+            $scope.item.jumlahTerima = 0
             var pegawaiUser = {}
             var norecCetak = '';
             var norec_apd = '';
@@ -135,6 +137,7 @@ define(['initialize'], function (initialize) {
                         $scope.titleTambahan ='Kirim'
                         jenis = 'kirim'
                         $scope.disableKirimBalik =true
+                        $scope.hideBukanKirimBalik =true
                         medifirstService.get("laundry/get-detail-kirim-laundry-ruangan?norec=" + noreckirim, true).then(function (data_ih) {
                             $scope.isRouteLoading = false;
                             // $scope.item.noKirim = data_ih.data.head.nokirim
@@ -232,6 +235,9 @@ define(['initialize'], function (initialize) {
                 }
 
                 $scope.item.jumlah = jml
+                if ($scope.hideBukanKirimBalik) {
+                    $scope.item.jumlahTerima = jml
+                }
                 medifirstService.get("laundry/get-produkdetail?" +
                     "produkfk=" + $scope.item.produk.id +
                     "&ruanganfk=" + $scope.item.ruangan.id, true).then(function (dat) {
@@ -287,6 +293,14 @@ define(['initialize'], function (initialize) {
                     }
                     if ($scope.item.jumlah == 0) {
                         $scope.item.hargaSatuan = 0
+                    }
+
+                    if ($scope.item.jumlahTerima > 0) {
+                        if (parseFloat($scope.item.jumlah) > parseFloat($scope.item.jumlahTerima)) {
+                            $scope.item.jumlah = 0
+                            return
+                        }
+                        $scope.item.jumlahTidakKirim = parseFloat($scope.item.jumlahTerima) - parseFloat($scope.item.jumlah)
                     }
                 }
             });
@@ -346,6 +360,7 @@ define(['initialize'], function (initialize) {
                             data.jmlstok = String($scope.item.stok)
                             data.jumlah = $scope.item.jumlah
                             data.qtyorder = data2[i].qtyorder
+                            data.qtyTidakKirim = $scope.item.jumlahTidakKirim ? parseFloat($scope.item.jumlahTidakKirim) : 0 
                             // data.hargasatuan = String($scope.item.hargaSatuan)
                             // data.hargadiscount = String($scope.item.hargadiskon)
                             // data.total = $scope.item.total
@@ -393,6 +408,7 @@ define(['initialize'], function (initialize) {
                         jmlstok: String($scope.item.stok),
                         jumlah: $scope.item.jumlah,
                         qtyorder: 0,
+                        qtyTidakKirim: $scope.item.jumlahTidakKirim ? parseFloat($scope.item.jumlahTidakKirim) : 0,
                         // hargasatuan: String($scope.item.hargaSatuan),
                         // hargadiscount: String($scope.item.hargadiskon),
                         // total: $scope.item.total

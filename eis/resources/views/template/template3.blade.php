@@ -20,6 +20,7 @@ $configData = \App\Helpers\Helper::applClasses();
     <meta name="description" content="Transmedic">
     <meta name="keywords" content="">
     <meta name="author" content="#">
+    <meta name="robots" content="noindex, nofollow">
     <!-- Favicon icon -->
         <link rel="icon" type="image/x-icon" href="{{ asset($configData['favicon']) }}" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300&amp;display=swap" rel="stylesheet">

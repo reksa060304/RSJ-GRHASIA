@@ -49,9 +49,15 @@
         </tr>
         <tr>
             <td colspan="5" style="padding: 10px" align="center">
+            @if($tampilsumberdana == true)
                 <b>
                     <font style="font-size: 14pt" color="#000000"><u> BUKTI PENGELUARAN </u></font>
-                </b> 
+                </b>
+            @else
+            <b>
+                    <font style="font-size: 14pt" color="#000000"><u> BUKTI KAS PENGELUARAN </u></font>
+                </b>
+            @endif 
             </td>
         </tr>
         </tbody>
@@ -142,7 +148,7 @@
                 <font style="font-size: 12pt" color="#000000">Terbilang: {{ number_format($jumlah[0]->totalfix,$digitterbilang,',','.') }}</font>
             </td>
         </tr>
-        @if($kegiatan[0]->namalengkap != null && $tampilsumberdana == true)
+        @if($tampilsumberdana == true)
         <tr>
             <td colspan="2" style="text-align:center; padding-left: 50px; padding-bottom: 5px; padding-top: 5px; width: 100px;">
                 <font style="font-size: 12pt" color="#000000"></font>

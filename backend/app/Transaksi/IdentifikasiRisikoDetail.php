@@ -15,4 +15,5 @@ class IdentifikasiRisikoDetail extends Transaksi
     protected $table = 'identifikasirisikodetail_t';
     protected $fillable = [];
     public $timestamps = false;
+    protected $primaryKey = "norec";
 }

@@ -699,16 +699,18 @@ class PMKPController extends ApiController
             $id = [];
             $ket = [];
             $departemenfk = $request['departemenfk'];
+            $ruaganfk = $request['ruaganfk'];
             foreach ($request['data'] as $item) {
                 $tgl []= $item['tgl'];
                 $id []= $item['indikatorfk'];
-                $ket []= $item['keterangan'];
+                // $ket []= $item['keterangan'];
             }
             $dele = SasaranMutu::where('departemenfk',$departemenfk)
                 ->where('kdprofile', $kdProfile)
                 ->whereIn('tgl',$tgl)
                 ->whereIn('indikatorfk',$id)
-                ->whereIn('keterangan',$ket)
+                ->where('ruanganfk',$ruaganfk)
+                // ->whereIn('keterangan',$ket)
                  ->delete();
 //            return $this->respond($dele);
 
@@ -726,11 +728,12 @@ class PMKPController extends ApiController
                 $dataJadwal->tglnilai = $item['tgl'];
                 $dataJadwal->tgl = $item['tgl'];
                 $dataJadwal->departemenfk = $request['departemenfk'];
+                $dataJadwal->ruanganfk = $request['ruanganfk'];
                 $dataJadwal->nilai = $item['isi'];
                 $dataJadwal->num = $request['numerator'];
                 $dataJadwal->denum = $request['denumerator'];
                 $dataJadwal->capaian = $request['capaian'];
-                $dataJadwal->keterangan = $item['keterangan'];
+                $dataJadwal->keterangan = isset($item['keterangan']) ? $item['keterangan'] : null;
                 $dataJadwal->save();
             }
 
@@ -763,20 +766,21 @@ class PMKPController extends ApiController
     public function getDaftarIndikator(Request $request){
         $kdProfile = (int) $this->getDataKdProfile($request);
         $tahun = Carbon::now()->format('Y');
-        $data = DB::table('indikatorrensar_m as head')
-            ->select(DB::raw("head.id,head.indikator,head.denominator,head.numerator,'NUM' as keterangan"))
-            ->where('head.kdprofile', $kdProfile)
-            ->where('head.statusenabled',true)
-            ->where('head.objectdepartemenfk',$request['idDept']);
+        // $data = DB::table('indikatorrensar_m as head')
+        //     ->select(DB::raw("head.id,head.indikator,head.denominator,head.numerator,'NUM' as keterangan"))
+        //     ->where('head.kdprofile', $kdProfile)
+        //     ->where('head.statusenabled',true)
+        //     ->where('head.objectdepartemenfk',$request['idDept']);
 //            ->orderBy('head.id','asc');
 
         $dataSatu = DB::table('indikatorrensar_m as head')
-            ->select(DB::raw("head.id,head.indikator,head.denominator,head.numerator,'DENUM' as keterangan"))
+            ->select(DB::raw("head.id,head.indikator,head.denominator,head.numerator"))
             ->where('head.kdprofile', $kdProfile)
             ->where('head.statusenabled',true)
             ->where('head.objectdepartemenfk',$request['idDept'])
+            ->where('head.objectruanganfk',$request['idRuangan']);
 //            ->orderBy('head.id','asc')
-            ->union($data);
+            // ->union($data);
 
 //        if(isset($request['idDept']) && $request['idDept']!= ''){
 //            $data = $data->where('head.objectdepartemenfk',$request['idDept']);
@@ -819,6 +823,11 @@ class PMKPController extends ApiController
             $request['idDept']!="" &&
             $request['idDept']!="undefined"){
             $data = $data->where('sm.departemenfk','=', $request['idDept'] );
+        };
+        if(isset($request['idRuangan']) &&
+            $request['idRuangan']!="" &&
+            $request['idRuangan']!="undefined"){
+            $data = $data->where('sm.ruanganfk','=', $request['idRuangan'] );
         };
         $data = $data->distinct();
         $data = $data->get();
@@ -1098,6 +1107,15 @@ class PMKPController extends ApiController
         }
         if (isset($request['idPelapor']) && $request['idPelapor'] != "" && $request['idPelapor'] != "undefined") {
             $data = $data->where('lki.pembuatlaporanfk', '=', $request['idPelapor']);
+        }
+        if (isset($request['statusverif']) && $request['statusverif'] != "" && $request['statusverif'] != "undefined") {
+            $data = $data->where('lki.statusverif', '=', $request['statusverif']);
+        }
+        if (isset($request['norm']) && $request['norm'] != "" && $request['norm'] != "undefined") {
+            $data = $data->where('lki.nocm', '=', $request['norm']);
+        }
+        if (isset($request['namapasien']) && $request['namapasien'] != "" && $request['namapasien'] != "undefined") {
+            $data = $data->where('lki.namapasien', 'ilike', '%'.$request['namapasien'].'%');
         }
 
         $data = $data->where('lki.statusenabled', true);
@@ -1813,5 +1831,83 @@ class PMKPController extends ApiController
 
       
         return $this->respond($data);
+    }
+
+    public function verifDataLaporanInsidenInternal(Request $request, $stat)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        DB::beginTransaction();
+        try {
+
+            foreach ($request->data as $data) {
+                LaporanInsidenInternal::where('norec',$data['norec'])
+                ->where('kdprofile', $kdProfile)
+                ->update([
+                    'statusverif' => $stat
+                ]);
+            }
+
+            $transStatus = true;
+        } catch (\Exception $e) {
+            $transStatus = false;
+        }
+
+        if ($transStatus) {
+            $transMessage = $stat == "true" ? "Verifikasi Berhasil" : "Batal Verifikasi Berhasil";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMessage,
+                "as" => '@epic',
+            );
+        } else {
+            $transMessage = $stat == "true" ? "Verifikasi Gagal" : "Batal Verifikasi Gagal";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message"  => $transMessage,
+                "as" => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function verifDataLaporanRiskRegister(Request $request, $stat)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        DB::beginTransaction();
+        try {
+
+            foreach ($request->data as $data) {
+                RiskRegister::where('norec',$data['norec'])
+                ->where('kdprofile', $kdProfile)
+                ->update([
+                    'statusverif' => $stat
+                ]);
+            }
+
+            $transStatus = true;
+        } catch (\Exception $e) {
+            $transStatus = false;
+        }
+
+        if ($transStatus) {
+            $transMessage = $stat == "true" ? "Verifikasi Berhasil" : "Batal Verifikasi Berhasil";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMessage,
+                "as" => '@epic',
+            );
+        } else {
+            $transMessage = $stat == "true" ? "Verifikasi Gagal" : "Batal Verifikasi Gagal";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message"  => $transMessage,
+                "as" => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
 }

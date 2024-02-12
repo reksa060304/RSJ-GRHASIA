@@ -646,6 +646,14 @@
             "urlDep": "module/PMKP/DaftarLaporanInsidenInternalCtrl"
         },
         {
+            "nameDep": "DaftarVerifikasiInsidenInternalCtrl",
+            "urlDep": "module/PMKP/DaftarVerifikasiInsidenInternalCtrl"
+        },
+        {
+            "nameDep": "DaftarRekapInsidenInternalCtrl",
+            "urlDep": "module/PMKP/DaftarRekapInsidenInternalCtrl"
+        },
+        {
             "nameDep": "DaftarOrderMaintenanceCtrl",
             "urlDep": "module/IPSRS/DaftarOrderMaintenanceCtrl"
         } ,
@@ -672,6 +680,10 @@
         {
             "nameDep": "DaftarRiskRegisterCtrl",
             "urlDep": "module/PMKP/DaftarRiskRegisterCtrl"
+        },
+        {
+            "nameDep": "DaftarVerifikasiRiskRegisterCtrl",
+            "urlDep": "module/PMKP/DaftarVerifikasiRiskRegisterCtrl"
         },
         {
             "nameDep": "InformasiJadwalKalibrasiCtrl",
@@ -868,6 +880,14 @@
         {
             "nameDep": "OrderAlatSterilCtrl",
             "urlDep": "module/Sterilisasi/OrderAlatSterilCtrl"
+        },
+        {
+            "nameDep": "SterilisasiMatachanaCtrl",
+            "urlDep": "module/Sterilisasi/SterilisasiMatachanaCtrl"
+        },
+        {
+            "nameDep": "LaporanTableTopCtrl",
+            "urlDep": "module/Sterilisasi/LaporanTableTopCtrl"
         },
         {
             "nameDep": "DaftarPenungguCtrl",
@@ -1207,6 +1227,10 @@
             "urlDep": "module/Perencanaan/SPJCtrl"
         },
         {
+            "nameDep": "SPJPengembalianCtrl",
+            "urlDep": "module/Perencanaan/SPJPengembalianCtrl"
+        },
+        {
             "nameDep": "EISCtrl",
             "urlDep": "module/Perencanaan/EISCtrl"
         },
@@ -1277,6 +1301,14 @@
         {
             "nameDep": "sensusBangsalCtrl",
             "urlDep": "module/Registrasi/sensusBangsalCtrl"
+        },
+        {
+            "nameDep": "LaporanLinenBersihCtrl",
+            "urlDep": "module/Laundry/LaporanLaundry/LaporanLinenBersihCtrl"
+        },
+        {
+            "nameDep": "LaporanLinenKotorCtrl",
+            "urlDep": "module/Laundry/LaporanLaundry/LaporanLinenKotorCtrl"
         }
     ]
 }

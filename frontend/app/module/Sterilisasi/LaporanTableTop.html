@@ -1,0 +1,117 @@
+<style>
+    .k-grid .k-grid-header .k-header .k-link {
+        height: auto;
+    }
+
+    .k-grid .k-grid-header .k-header {
+        white-space: normal;
+    }
+
+    .k-grid .k-grid-header .k-header {
+        text-align: center;
+    }
+
+    /* table */
+    .tg {
+        border-collapse: collapse;
+        border-spacing: 0;
+    }
+
+    .tg td {
+        border-color: black;
+        border-style: solid;
+        border-width: 1px;
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        overflow: hidden;
+        padding: 10px 5px;
+        word-break: normal;
+    }
+
+    .tg th {
+        border-color: black;
+        border-style: solid;
+        border-width: 1px;
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        font-weight: normal;
+        overflow: hidden;
+        padding: 10px 5px;
+        word-break: normal;
+    }
+
+    .tg .tg-dpoy {
+        color: #202124;
+        text-align: left;
+        vertical-align: bottom
+    }
+
+    .tg .tg-0lax {
+        text-align: left;
+        vertical-align: top
+    }
+</style>
+<div class="panel panel-default container_12">
+    <div class="panel-heading"><label class='title' c-label item="item">Laporan Table Top Matchana</label></div>
+    <div class="panel-body">
+
+        <!-- Periode Tanggal -->
+        <div class="grid_4">
+            <div class="grid_12">
+                <label c-label item="item" c-label-text="Periode Tanggal"></label>
+            </div>
+            <div class="clear"></div>
+
+            <div class="grid_12">
+                <!-- AwalPeriode -->
+                <div class="grid_6 padDatePicker">
+                    <input style="width: 100%" k-ng-model="item.periodeAwal" kendo-datetimepicker k-max="now"
+                        placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+                </div>
+
+                <!-- AkhirPeriode -->
+                <div class="grid_6 padDatePicker">
+                    <input style="width: 100%" k-ng-model="item.periodeAkhir" kendo-datetimepicker
+                        placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" />
+                </div>
+                <div class="clear"></div>
+            </div>
+        </div>
+
+        <div class="grid_1">
+            <label c-label c-label-text=""></label>
+            <em style="margin-top:6px;" ng-click='cariFilter()' id="iconButton" data-role="button"
+                class="k-button k-button-icon k-primary" role="button" aria-disabled="false" tabindex="0"><span
+                    class="k-sprite k-icon k-i-search">Search</span></em>
+            <em style="margin-top:6px;" ng-click='resetFilter()' id="iconButton" data-role="button"
+                class="k-button k-button-icon k-primary" role="button" aria-disabled="false" tabindex="0"><span
+                    class="k-sprite k-icon k-i-cancel">Refresh</span></em>
+        </div>
+    </div>
+    <div class="grid_12">
+        <div class="panel-body grid_12">
+            <kendo-grid id="gridMaster" k-selectable="'row'" k-data-source="dataSource" ng-click="klikGrid(dataSelect)"
+                k-ng-model="dataSelect" options="optionGridMaster" k-resizable="'true'"></kendo-grid>
+        </div>
+    </div>
+</div>
+</div>
+
+<div class="grid_12" style="margin-top:60px">
+    <div ng-include='"../app/template/Shared/TemplateLoading"'></div>
+</div>
+<style>
+    p {
+        font-size: 16px;
+        text-align: center;
+    }
+
+    .k-window-titlebar {
+        /* background-c/olor: #10c4b2; */
+        font-weight: 800;
+    }
+
+    .k-i-close {
+        display: none;
+    }
+</style>

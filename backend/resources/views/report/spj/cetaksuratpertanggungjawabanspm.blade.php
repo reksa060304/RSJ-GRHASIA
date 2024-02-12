@@ -55,11 +55,11 @@
                 <font style="font-size: 14pt" color="#000000">PENGGUNA ANGGARAN/ KUASA PENGGUNA ANGGARAN</b></font>
             </td>
         </tr>
-        <tr>
+        {{-- <tr>
             <td colspan="5" style="padding: 10px" align="center">
                 <font style="font-size: 14pt" color="#000000">NOMOR :</font>
             </td>
-        </tr>
+        </tr> --}}
         </tbody>
         <tbody>
         <tr>

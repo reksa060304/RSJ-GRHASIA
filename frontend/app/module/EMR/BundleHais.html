@@ -1,0 +1,230 @@
+<style>
+    .k-window-content .k-content {
+        overflow: none
+    }
+
+    legend {
+        cursor: pointer;
+        padding: 10px;
+    }
+
+    .effect-shadow {
+        -webkit-box-shadow: 2px 2px 5px #b6b6b6;
+        -moz-box-shadow: 2px 2px 5px #b6b6b6;
+        box-shadow: 2px 2px 5px #b6b6b6;
+    }
+
+    .warnaa {
+        color: black
+    }
+
+    hr {
+        border: 1px solid black;
+        margin-top: 0px;
+        margin-bottom: 0px;
+        display: inline-block;
+        width: 100%;
+    }
+
+    h1 {
+        color: black;
+        display: block;
+        font-size: 14px;
+        margin-block-start: 0px;
+        margin-block-end: 0;
+        margin-inline-start: 0px;
+        margin-inline-end: 0px;
+        font-weight: bold;
+    }
+
+    h2 {
+        color: black;
+        display: block;
+        font-size: 14px;
+        margin-block-start: 0px;
+        margin-block-end: 0;
+        margin-inline-start: 0px;
+        margin-inline-end: 0px;
+        font-weight: bold;
+    }   
+</style>
+<div class="panel panel-default container_12">
+    <div class="panel-heading" c-translate>Bundle Hais</div>
+    <div class="panel-body">
+        <div class="grid_12">
+            <div ng-cloak>
+                <md-content>
+                    <md-tabs md-dynamic-height md-border-bottom md-selected="myVar">
+                        <md-tab label="Riwayat Bundle Hais">
+                            <md-content class="md-padding">
+                                <div class="grid_12">                                 
+                                    <div class="grid_12 borderBox">
+                                        <kendo-grid id="kGrid" data-source="dataDaftar" options="columnDaftar"
+                                            k-selectable="'row'" k-sortable="'true'" k-resizable="'true'"
+                                            k-ng-model="dataSelected" ng-click="klikGrid(dataSelected)">
+                                        </kendo-grid>
+                                    </div>
+                                    <div class="grid_12">
+                                        <div class="grid_3"></div>
+                                        <div class="grid_3">
+                                            <button class="btnTemplate1" ng-click="Lihat()"><i
+                                                    class="fa fa-search"></i>Lihat</button>
+                                        </div>
+                                        <div class="grid_3">
+                                            <button class="btnTemplate1" ng-click="createNew()"><i
+                                                    class="fa fa-plus"></i>Buat Baru</button>
+                                        </div>
+                                        <div class="grid_3">
+                                            <button class="btnTemplate1 cancel" ng-click="hapusData()" ng-show="visSimpan"><i
+                                                    class="fa fa-trash"></i>Hapus</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </md-content>
+                        </md-tab>
+                        <md-tab label="Input Bundle Hais">
+                            <div class="grid_12"> 
+                                <div class="grid_3">
+                                    <div class="grid_12">
+                                        <label c-label item="item" c-label-text="Tanggal"></label>
+                                    </div>
+                                    <div class="grid_12">                
+                                        <input style="width: 100%" k-ng-model="item.tglInput" kendo-datetimepicker
+                                            placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'"
+                                            parsedate="yyyy-MM-dd HH:mm"/>
+                                    </div>
+                                </div>                                                   
+                                <div class="grid_3">
+                                    <div class="grid_12">
+                                        <label c-label item="item" c-label-text="Petugas"></label>
+                                    </div>
+                                    <div class="grid_12">
+                                        <input style="width: 100%;" kendo-combo-box k-ng-model="item.Petugas"
+                                            k-data-text-field="'namalengkap'" k-data-value-field="'id'" k-filter="'contains'"
+                                            k-auto-bind="false" k-data-source="listPetugas" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="grid_12"> 
+                                <md-content class="md-padding">
+                                     <md-content>
+                                        <md-tabs md-dynamic-height md-border-bottom md-selected="myVarD">
+                                            <md-tab label="IAD">
+                                                <md-content class="md-padding">                                                
+                                                    <div class="grid_12">
+                                                        <kendo-grid id="kGrid1" data-source="dataSource1" options="column1"
+                                                            k-selectable="'row'" k-sortable="'true'" k-resizable="'true'"
+                                                            k-ng-model="dataSelected1" ng-click="klikGrid1(dataSelected1)">
+                                                        </kendo-grid>
+                                                    </div>
+                                                    <div class="grid_12">
+                                                        <div class="grid_8"></div>
+                                                        <div class="grid_2">
+                                                            <button class="btnTemplate1" style="margin-left: 0;background-color: green;" ng-click="SimpanIAD()" ng-show="visSimpan"><i
+                                                                    class="fa fa-floppy-o"></i>Simpan</button>
+                                                        </div>
+                                                        <div class="grid_2">
+                                                            <button class="btnTemplate1" style="margin-left: 0;background-color: red;" ng-click="BatalIAD()" ><i
+                                                                    class="fa fa-ban"></i>Batal</button>
+                                                        </div>
+                                                    </div>
+                                                </md-content>
+                                            </md-tab>
+                                            <md-tab label="ISK">
+                                                <md-content class="md-padding">                                                
+                                                    <div class="grid_12">
+                                                        <kendo-grid id="kGrid2" data-source="dataSource2" options="column2"
+                                                            k-selectable="'row'" k-sortable="'true'" k-resizable="'true'"
+                                                            k-ng-model="dataSelected2" ng-click="klikGrid2(dataSelected2)">
+                                                        </kendo-grid>
+                                                    </div>
+                                                    <div class="grid_12">
+                                                        <div class="grid_8"></div>
+                                                        <div class="grid_2">
+                                                            <button class="btnTemplate1" style="margin-left: 0;background-color: green;" ng-click="SimpanISK()" ><i
+                                                                    class="fa fa-floppy-o"></i>Simpan</button>
+                                                        </div>
+                                                        <div class="grid_2">
+                                                            <button class="btnTemplate1" style="margin-left: 0;background-color: red;" ng-click="BatalISK()" ><i
+                                                                    class="fa fa-ban"></i>Batal</button>
+                                                        </div>
+                                                    </div>
+                                                </md-content>
+                                            </md-tab>
+                                            <md-tab label="VAP">
+                                                <md-content class="md-padding">                                                
+                                                    <div class="grid_12">
+                                                        <kendo-grid id="kGrid3" data-source="dataSource3" options="column3"
+                                                            k-selectable="'row'" k-sortable="'true'" k-resizable="'true'"
+                                                            k-ng-model="dataSelected3" ng-click="klikGrid3(dataSelected3)">
+                                                        </kendo-grid>
+                                                    </div>
+                                                    <div class="grid_12">
+                                                        <div class="grid_8"></div>
+                                                        <div class="grid_2">
+                                                            <button class="btnTemplate1" style="margin-left: 0;background-color: green;" ng-click="SimpanVAP()" ><i
+                                                                    class="fa fa-floppy-o"></i>Simpan</button>
+                                                        </div>
+                                                        <div class="grid_2">
+                                                            <button class="btnTemplate1" style="margin-left: 0;background-color: red;" ng-click="BatalVAP()" ><i
+                                                                    class="fa fa-ban"></i>Batal</button>
+                                                        </div>
+                                                    </div>
+                                                </md-content>
+                                            </md-tab>
+                                            <md-tab label="IDO">
+                                                <md-content class="md-padding">                                                
+                                                    <div class="grid_12">
+                                                        <kendo-grid id="kGrid4" data-source="dataSource4" options="column4"
+                                                            k-selectable="'row'" k-sortable="'true'" k-resizable="'true'"
+                                                            k-ng-model="dataSelected4" ng-click="klikGrid4(dataSelected4)">
+                                                        </kendo-grid>
+                                                    </div>
+                                                    <div class="grid_12">
+                                                        <div class="grid_8"></div>
+                                                        <div class="grid_2">
+                                                            <button class="btnTemplate1" style="margin-left: 0;background-color: green;" ng-click="SimpanIDO()" ><i
+                                                                    class="fa fa-floppy-o"></i>Simpan</button>
+                                                        </div>
+                                                        <div class="grid_2">
+                                                            <button class="btnTemplate1" style="margin-left: 0;background-color: red;" ng-click="BatalIDO()" ><i
+                                                                    class="fa fa-ban"></i>Batal</button>
+                                                        </div>
+                                                    </div>
+                                                </md-content>
+                                            </md-tab>
+                                            <md-tab label="PHLEBITIS">
+                                                <md-content class="md-padding">                                                
+                                                    <div class="grid_12">
+                                                        <kendo-grid id="kGrid5" data-source="dataSource5" options="column5"
+                                                            k-selectable="'row'" k-sortable="'true'" k-resizable="'true'"
+                                                            k-ng-model="dataSelected5" ng-click="klikGrid5(dataSelected5)">
+                                                        </kendo-grid>
+                                                    </div>
+                                                    <div class="grid_12">
+                                                        <div class="grid_8"></div>
+                                                        <div class="grid_2">
+                                                            <button class="btnTemplate1" style="margin-left: 0;background-color: green;" ng-click="SimpanPHLEBITIS()" ><i
+                                                                    class="fa fa-floppy-o"></i>Simpan</button>
+                                                        </div>
+                                                        <div class="grid_2">
+                                                            <button class="btnTemplate1" style="margin-left: 0;background-color: red;" ng-click="BatalPHLEBITIS()" ><i
+                                                                    class="fa fa-ban"></i>Batal</button>
+                                                        </div>
+                                                    </div>
+                                                </md-content>
+                                            </md-tab>
+                                        </md-tabs>
+                                    </md-content>
+                                </md-content>
+                            </div>                            
+                        </md-tab>                     
+                    </md-tabs>
+                </md-content>
+            </div>
+        </div>
+        <div class="grid_12" style="margin-top:60px">
+            <div ng-include='"../app/template/Shared/TemplateLoading"'></div>
+        </div>
+    </div>
+</div>

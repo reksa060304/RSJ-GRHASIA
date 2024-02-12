@@ -21,6 +21,7 @@ define(['initialize'], function (initialize) {
             loadFirst();
             loadData();
             loadKonsul();
+            $scope.ruanganMap = medifirstService.getMapLoginUserToRuangan();
 
             function loadCombo() {
                 medifirstService.get("pmkp/get-data-combo-pmkp")
@@ -156,6 +157,25 @@ define(['initialize'], function (initialize) {
                     })
             }
 
+            var onDataBound = function (e) {
+                var columns = e.sender.columns;
+                var rows = e.sender.tbody.children();
+                
+                for (var j = 0; j < rows.length; j++) {
+                  // sisa sekarang
+                  var row = $(rows[j]);
+                  var dataItem = e.sender.dataItem(row);
+
+                  var grading = dataItem.get("grading");
+				
+                  var cellNo = row.children().eq(1);
+                  if(grading == "3" 
+                  ||grading == "4") {
+                    cellNo.addClass("red");
+                  }
+                }
+            }
+
             $scope.group = {
                 field: "jeniskeselamatan",
                 aggregates: [{
@@ -197,6 +217,7 @@ define(['initialize'], function (initialize) {
                     }];
                     sheet.rows.splice(0, 0, { cells: myHeaders, type: "header", height: 70 });
                 },
+                dataBound: onDataBound,
                 selectable: 'row',
                 pageable: true,
                 columns: [
@@ -211,16 +232,16 @@ define(['initialize'], function (initialize) {
                         "width": "95px",
                         "template": "<span class='style-left'>{{formatTanggal('#: tglinsiden #')}}</span>"
                     },
-                    {
-                        "field": "nocm",
-                        "title": "No Rm",
-                        "width": "220px",
-                    },
-                    {
-                        "field": "namapasien",
-                        "title": "Nama Pasien",
-                        "width": "220px",
-                    },
+                    // {
+                    //     "field": "nocm",
+                    //     "title": "No Rm",
+                    //     "width": "220px",
+                    // },
+                    // {
+                    //     "field": "namapasien",
+                    //     "title": "Nama Pasien",
+                    //     "width": "220px",
+                    // },
                     {
                         "field": "insiden",
                         "title": "Insiden",
@@ -344,6 +365,11 @@ define(['initialize'], function (initialize) {
                 }
 
                 if ($scope.dataPasienSelected != undefined) {
+                    if ($scope.PegawaiLogin.namaLengkap != $scope.dataPasienSelected.pembuatlaporan) {
+                        alert("Data Tidak Bisa Di Hapus!")
+                        return;
+                    }
+
                     var item = {
                         norec: $scope.dataPasienSelected.norec
                     }
@@ -360,6 +386,20 @@ define(['initialize'], function (initialize) {
             $scope.Lanjut = function () {
                 if ($scope.dataPasienSelected == undefined) {
                     alert("Data Belum Dipilih!")
+                    return;
+                }
+
+                var statvalidiasi = true
+                for (let i = 0; i < $scope.ruanganMap.length; i++) {
+                    const element = $scope.ruanganMap[i];
+                    if(element.id == $scope.dataPasienSelected.ruanganfk) {
+                        statvalidiasi = false
+                        break;
+                    }
+                }
+
+                if(statvalidiasi) {
+                    alert("Tidak bisa tindak lanjut karna Anda tidak terdaftar di ruangan ini!")
                     return;
                 }
 

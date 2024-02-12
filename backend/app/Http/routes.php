@@ -856,6 +856,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::post('emr/save-kepatuhanhandhygiene', 'EMR\EMRController@saveDataKepatuhanHandHygiene');
           Route::get('emr/get-data-kepatuhan-handhygiene','EMR\EMRController@getDataKepatuhanHandHygiene');
           Route::post('emr/batal-kepatuhan-handhygiene','EMR\EMRController@saveBatalKepatuhanHandHygiene');
+          Route::post('emr/verifikasi-kepatuhan-handhygiene/{stat}','EMR\EMRController@verifikasiKepatuhanHandHygiene');
           Route::get('emr/get-nilai-statis-igd', 'EMR\EMRController@getNilaiStatisIGD');
           Route::post('emr/disable-emr-details', 'EMR\EMRController@disableEMRdetail');
           Route::get('emr/get-data-dg-primary/{Noregistrasi}', 'EMR\EMRController@getDataDiagnosaPrimary');
@@ -896,6 +897,10 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('emr/get-emr-cabak', 'EMR\EMRController@getEMRCABAK');
 
           Route::get('emr/cek_ttd_bsre_emr', 'EMR\EMRController@getCekBSRE');
+          Route::post('emr/save-emr-bundlehai', 'EMR\EMRController@postTransBundleHai');
+          Route::post('emr/hapus-emr-bundlehai', 'EMR\EMRController@hapusTransBundleHai');
+          Route::get('emr/get-data-trans-bundlehais', 'EMR\EMRController@getDataTransBundleHais');
+          Route::get('emr/get-data-trans-bundlehais-detail', 'EMR\EMRController@getDataTransBundleHaisDetail');
 
           Route::post('bsre-esign/sign/pdf', 'Bridging\BridgingBSREController@signDokumen');
           Route::get('bsre-esign/sign/download/{id_dokumen}', 'Bridging\BridgingBSREController@downloadDokumen');
@@ -1327,6 +1332,9 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('report/get-cetak-suratketerangandirawatinap','Report\ReportController@CetakSKDirawatInap');
           Route::get('report/get-cetak-catatan-konseling', 'Report\ReportController@cetakCatatanKonselingNapza');
           Route::get('report/get-cetak-cmrm05','Report\ReportController@cetakCM05');
+          Route::get('report/cetak-okupasi-terapi','Report\ReportController@cetakOkupasiTerapi');
+          Route::get('report/cetak-pengkajian-rajal-nonjiwa','Report\ReportController@cetakPengkajianRajalNonJiwa');
+          
           Route::get('report/get-cetak-per-jenis-anggaran','Report\ReportController@CetakPerJenisAnggaran');
           Route::get('report/get-cetak-per-jenis-anggaran-sebelum-sesudah','Report\ReportController@CetakPerJenisAnggaranSebelumSesudah');
           Route::get('report/get-cetak-rekap-mata-anggaran','Report\ReportController@CetakRekapMataAnggaran');
@@ -1417,6 +1425,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('laundry/get-data-laporan-penerimaan-linen','Laundry\LaundryController@getDataLaporanPenerimaanLinen');
             Route::get('laundry/get-data-laporan-distribusi-linen','Laundry\LaundryController@getDataLaporanDistribusiLinen');
             Route::get('laundry/get-data-laporan-pencucian-linen','Laundry\LaundryController@getDataLaporanPencucianLinen');
+            Route::get('laundry/get-data-laporan-linen-bersih','Laundry\LaundryController@getDataLinenBersih');
+            Route::get('laundry/get-data-laporan-linen-kotor','Laundry\LaundryController@getDataLinenKotor');
 
             Route::post('laundry/save-kirim-linen-ruangan','Laundry\LaundryController@saveKirimLinen');
             Route::post('laundry/save-batal-terima','Laundry\LaundryController@saveBatalKirim');
@@ -1613,7 +1623,10 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('asset/get-jadwal-kalibrasi', 'Asset\AssetController@getJadwalKalibrasi');
           Route::get('asset/get-jadwal-pemeliharaan', 'Asset\AssetController@getJadwalPemeliharaan');
           Route::get('asset/get-produk-asset-part', 'Asset\AssetController@getDataProduk');
-        // });
+          Route::get('asset/get-master-asset', 'Asset\AssetController@getMasterAsset');
+          Route::post('asset/save-master-asset', 'Asset\AssetController@saveMasterAsset');
+          Route::post('asset/edit-master-asset', 'Asset\AssetController@editMasterAsset');
+          // });
         // Route::group(['prefix' => 'microservice'], function () {
         //     Route::group(['prefix' => 'pendaftaran'], function () {
                 /*GET*/
@@ -1673,6 +1686,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('perencanaan/get-daftar-mataanggaran-upk','Perencanaan\PerencanaanController@getDaftarMataAnggaranForUpk');
             Route::get('perencanaan/get-kel-kelima-part','Perencanaan\PerencanaanController@getKelAnggaranKelima');
             Route::get('perencanaan/get-kel-keenam-part','Perencanaan\PerencanaanController@getKelAnggaranKeenam');
+            Route::get('report/cetak-spj-pengembalian', 'Report\ReportController@cetakSPJPengembalian');
 
             Route::post('perencanaan/save-pihak-ketiga','Perencanaan\PerencanaanController@savePihakKetiga');
             Route::post('perencanaan/save-lock-entry-spj','Perencanaan\PerencanaanController@saveLockSPJ');
@@ -1737,6 +1751,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::post('perencanaan/delete-kel-ketiga-anggaran','Perencanaan\PerencanaanController@deleteKelompokKetiga');
             Route::post('perencanaan/delete-kel-keempat-anggaran','Perencanaan\PerencanaanController@deleteKelompokKeempat');
             Route::post('perencanaan/delete-rincian-belanja','Perencanaan\PerencanaanController@deleteRincianBelanja');
+            Route::post('perencanaan/pengembalian-spj','Perencanaan\PerencanaanController@PengembalianSPJ');
 
             Route::post('perencanaan/delete-kel-anggaran','Perencanaan\PerencanaanController@deleteKelompokAnggaran');
             Route::post('perencanaan/save-kel-anggaran','Perencanaan\PerencanaanController@saveKelompokAnggaran');
@@ -1860,6 +1875,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::post('pmkp/hapus-data-identifikasi-risiko', 'PMKP\PMKPController@hapusIdentifikasiRisiko');
             Route::post('pmkp/save-data-risk-register', 'PMKP\PMKPController@saveRiskRegister');
             Route::post('pmkp/hapus-data-risk-register', 'PMKP\PMKPController@hapusRiskRegister');
+            Route::post('pmkp/verifikasi-data-insiden-internal/{stat}', 'PMKP\PMKPController@verifDataLaporanInsidenInternal');
+            Route::post('pmkp/verifikasi-data-risk-register/{stat}', 'PMKP\PMKPController@verifDataLaporanRiskRegister');
             /*END POST*/
         // });
         // Route::group(['prefix' => 'radiologi'], function () {
@@ -2513,8 +2530,9 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('diklat/detail-diklat-penjamin/{norecSPP}','SDM\PelatihanController@detailPenjaminDiklat');
             Route::get('diklat/diklat/get-data-pembayaran-diklat', 'SDM\PelatihanController@pembayaranDiklat');
             Route::post('diklat/simpan-data-pembayaran', 'SDM\PelatihanController@simpanPembayaran');  //done
-
-        // });
+            // sdm/get-data-akun-mahasiswa-all
+            Route::get('sdm/get-data-akun-mahasiswa-all', 'SDM\SumberDayaManusiaController@getDaftarAkunMahasiswa');
+            Route::post('bsre-esign/registrasi-akun-mahasiswa', 'Bridging\BridgingBSREController@RegistrasiAkunMahasiswa');        // });
         // Route::group(['prefix' => 'sdm'], function () {
             /*GET*/
             Route::get('sdm/get-data-jabatan', 'SDM\SumberDayaManusiaController@getDataJabatan');
@@ -2747,6 +2765,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         Route::get('sterilisasi/get-monitoring-barang-steril', 'Sterilisasi\SterilisasiController@getMonitoringBarangSteril');
         Route::post('sterilisasi/verifikasi-order-sterilisasi', 'Sterilisasi\SterilisasiController@saveVerifikasiOrderSterilisasi');
         Route::post('sterilisasi/batal-verifikasi-order-sterilisasi', 'Sterilisasi\SterilisasiController@saveBtlVerifikasiOrderSterilisasi');
+        Route::post('sterilisasi/simpan-data-matachana', 'Sterilisasi\SterilisasiController@saveMatachana');
+        Route::get('sterilisasi/laporan-table-top-matachana', 'Sterilisasi\SterilisasiController@getLaporanMatachana');
         // });
 
         // Route::group(['prefix' => 'sysadmin'], function () {
@@ -3015,6 +3035,9 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
                 Route::post('sysadmin/general/rensar/post-pengembalian-dok-rm','EIS\EISController@postPengembalianRekamMedik');
                 Route::post('sysadmin/general/rensar/post-waktu-tunggu-rj','EIS\EISController@postWaktuTungguRawatJalan');
                 Route::post('sysadmin/general/rensar/save-kelompok-transaksi','EIS\EISController@saveKelompokTransaksi');
+
+                Route::get('sysadmin/general/get-data-master-bundlehai','SysAdmin\GeneralController@getDataBundleHais');
+                Route::get('sysadmin/general/get-data-master-bundlehai-iad','SysAdmin\GeneralController@getDataBundleHais_IAD');
                 /*POST*/
                 // });
                 // });

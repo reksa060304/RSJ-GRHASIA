@@ -9,23 +9,24 @@
 
 namespace App\Http\Controllers\Sterilisasi;
 
-use App\Http\Controllers\ApiController;
-use App\Master\KelompokAlat;
-use App\Master\KelompokAlatDetail;
-use App\Master\PaketObat;
-use App\Master\PaketObatDetail;
+use DB;
 use App\Traits\Valet;
+use App\Master\PaketObat;
+use App\Master\KelompokAlat;
 use App\Transaksi\KartuStok;
-use App\Transaksi\KirimProduk;
-use App\Transaksi\OrderPelayanan;
-use App\Transaksi\StokProdukDetail;
+use App\Transaksi\Matachana;
+use Illuminate\Http\Request;
 use App\Transaksi\StrukKirim;
 use App\Transaksi\StrukOrder;
-use App\Transaksi\StrukPelayanan;
-use App\Transaksi\StrukPelayananDetail;
-use Illuminate\Http\Request;
+use App\Transaksi\KirimProduk;
+use App\Master\PaketObatDetail;
 use App\Transaksi\StrukPlanning;
-use DB;
+use App\Transaksi\OrderPelayanan;
+use App\Transaksi\StrukPelayanan;
+use App\Master\KelompokAlatDetail;
+use App\Transaksi\StokProdukDetail;
+use App\Http\Controllers\ApiController;
+use App\Transaksi\StrukPelayananDetail;
 
 class SterilisasiController extends ApiController
 {
@@ -36,6 +37,7 @@ class SterilisasiController extends ApiController
         parent::__construct($skip_authentication = false);
     }
 
+    // tanda3
     public function getComboSteril(Request $request) {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
@@ -244,6 +246,7 @@ class SterilisasiController extends ApiController
         return $this->respond($result);
     }
 
+    // tanda2
     public function getComboTerimaBarang(Request $request) {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
@@ -260,6 +263,12 @@ class SterilisasiController extends ApiController
             ->select('lu.id','lu.namaruangan')
             ->where('lu.statusenabled',true)
             ->where('lu.kdprofile', $idProfile)
+            ->get();
+
+        $dataRuangCssd = \DB::table('ruangan_m as lu')
+            ->select('lu.id','lu.namaruangan')
+            ->where('lu.id', 66)
+            ->where('lu.statusenabled', true)
             ->get();
 
         $dataSumberDana = \DB::table('asalproduk_m as lu')
@@ -369,11 +378,13 @@ class SterilisasiController extends ApiController
             'detaillogin' => $dataPegawaiUser,
             'produk' => $dataProdukResult,
             'produkbaru' => $dataProdukResultBR,
+            'ruangancssd' => $dataRuangCssd,
             'by' => 'as@epic',
         );
         return $this->respond($result);
     }
 
+    // tanda1
     public function getDaftarDistribusiBarangSteril(Request $request) {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
@@ -568,7 +579,7 @@ class SterilisasiController extends ApiController
         $dataLogin = $request->all();
         try {
 
-            StrukKirim::where('norec', $request['strukkirimfk'])
+            StrukKirim::where('nokirim', $request['strukkirimfk'])
                 ->where('kdprofile',$idProfile)
                 ->update([
                         'statussteril' => $request['status']]
@@ -581,14 +592,14 @@ class SterilisasiController extends ApiController
         }
 
         if ($transStatus == 'true') {
-            $transMessage = "Simpan Berhasil";
+            $transMessage = "Status berhasil diubah menjadi steril";
             DB::commit();
             $result = array(
                 "status" => 201,
                 "message" => $transMessage,
             );
         } else {
-            $transMessage = "Simpan Gagal!!";
+            $transMessage = "Gagal mengubah status!";
             DB::rollBack();
             $result = array(
                 "status" => 400,
@@ -614,7 +625,7 @@ class SterilisasiController extends ApiController
             return $this->setStatusCode($result['status'])->respond($result, $transMessage);
         }
         DB::beginTransaction();
-        try{
+        // try{
             if ($request['strukkirim']['noreckirim'] == ""){
                 $SP = new StrukPelayanan();
                 $norecSP = $SP->generateNewId();
@@ -854,10 +865,10 @@ class SterilisasiController extends ApiController
 
 
        $transStatus = 'true';
-       } catch (\Exception $e) {
-            $transStatus = 'false';
-            $transMessage = "GAGAL";
-       }
+    //    } catch (\Exception $e) {
+    //         $transStatus = 'false';
+    //         $transMessage = "GAGAL";
+    //    }
 
         if ($transStatus == 'true') {
             $transMessage = "Registrasi Alat Berhasil";
@@ -1483,6 +1494,7 @@ class SterilisasiController extends ApiController
             );
         }
 
+        // dd($results);
         $result = array(
             'daftar' => $results,
             'datalogin' =>$dataPegawaiUser,
@@ -1791,7 +1803,7 @@ class SterilisasiController extends ApiController
         }
 
         if ($transStatus == 'true') {
-            $transMessage = "Simpan Berhasil";
+            $transMessage = "Berhasil verifikasi, lanjutkan pengiriman barang.";
             DB::commit();
             $result = array(
                 "status" => 201,
@@ -1843,4 +1855,105 @@ class SterilisasiController extends ApiController
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
+  
+    public function saveMatachana(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        \DB::beginTransaction();
+        try {
+            $loadke = DB::table('matachana_t') 
+                ->max('loadke');
+            // Jika $loadke kosong atau null, atur nilai default ke '1(1)'
+            $loadke = $loadke ? $loadke : '1(0)';
+
+            // Ekstrak nilai numerik di dalam tanda kurung, tingkatkan nilainya, dan perbarui loadke
+            $loadke = preg_replace_callback('/\((\d+)\)/', function($matches) {
+                return '(' . ($matches[1] + 1) . ')';
+            }, $loadke);
+
+            $inputData = [
+                'kdprofile' => $idProfile,
+                'nostruk' => $request->postData['nostruk'],
+                'petugasfk' => $request->postData['petugasfk'],
+                'ruanganpengirimfk' => $request->postData['ruanganpengirimfk'],
+                'ruangantujuanfk' => $request->postData['ruangantujuanfk'],
+                'waktu' => $request->postData['waktu'],
+                'suhu' => $request->postData['suhu'],
+                'tglinput' => $request->postData['tglinput'],
+                'status' => $request->postData['status'],
+                'loadke' => $loadke,
+            ];
+
+            // Menyimpan data ke database tanpa menggunakan create()
+            $result = new Matachana($inputData);
+            $result->save();
+
+            $transStatus = 'true';
+        }catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Berhasil simpan matachana";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMessage,
+            );
+        } else {
+            $transMessage = "Gagal simpan!";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message"  => $transMessage,
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function getLaporanMatachana(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $data = [];
+        $tglAwal = $request->input('tglAwal');
+        $tglAkhir = $request->input('tglAkhir');
+
+        $data = DB::select(DB::raw(
+            "SELECT
+                ROW_NUMBER() OVER (ORDER BY mch.tglinput) AS nomor,
+                mch.tglinput,
+                mch.suhu,
+                mch.loadke,
+                mch.waktu,
+                ru.namaruangan AS asalalkes,
+                prd.namaproduk AS namaalkes,
+                pg.namalengkap AS petugas,
+                CASE
+                    WHEN mch.status = true THEN 'Berhasil'
+                    WHEN mch.status = false THEN 'Gagal'
+                    ELSE ''
+                END AS status
+            FROM
+                matachana_t AS mch 
+                LEFT JOIN ruangan_m AS ru ON ru.id = mch.ruangantujuanfk
+                LEFT JOIN pegawai_m AS pg ON pg.id = mch.namapetugas
+                LEFT JOIN strukkirim_t AS sk ON sk.nokirim = mch.nostruk
+                LEFT JOIN kirimproduk_t AS kp ON kp.nokirimfk = sk.norec
+                LEFT JOIN produk_m AS prd ON prd.id = kp.objectprodukfk 
+            WHERE
+                    mch.kdprofile = $idProfile 
+                    AND mch.tglinput BETWEEN '$tglAwal' 
+                    AND '$tglAkhir' 
+            "
+        ));
+
+        $result = [
+            'data' => $data,
+            'message' => 'data berhasil diambil',
+            'as' => '@friday@epic'
+        ];
+
+        return $this->respond($result);
+    }
+
 }

@@ -662,6 +662,7 @@ class KasirController extends ApiController{
         }
 
         $noregistasi =$strukPelayanan->pasien_daftar->noregistrasi;
+        // dd($strukPelayanan->pasien_daftar->pasien->jenis_kelamin);
         $result =array(
             "noRegistrasi"  => $strukPelayanan->pasien_daftar->noregistrasi,
             "noCm"  => $strukPelayanan->pasien_daftar->pasien->nocm,

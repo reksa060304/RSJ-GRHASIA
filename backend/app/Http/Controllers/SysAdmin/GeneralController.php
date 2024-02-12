@@ -4482,7 +4482,31 @@ class GeneralController extends ApiController
         $dataProduk = $dataProduk->take(20);
         $dataProduk = $dataProduk->get();
 
-        return $this->respond($dataProduk);
+        $dataRuangan = \DB::table('ruangan_m as ru')
+            ->where('ru.statusenabled', true)
+            ->where('ru.kdprofile', $kdProfile)
+            ->orderBy('ru.namaruangan')
+            ->get();
+        foreach ($dataProduk as $item) {
+            $detail = [];
+            foreach ($dataRuangan as $item2) {
+                if ($item->value == $item2->objectdepartemenfk) {
+                    $detail[] = array(
+                        'value' => $item2->id,
+                        'text' => $item2->namaruangan,
+                        'namaruangan' => $item2->namaruangan,
+                    );
+                }
+            }
+
+            $dataDepartemen[] = array(
+                'value' => $item->value,
+                'text' => $item->text,
+                'namadepartemen' => $item->namadepartemen,
+                'ruangan' => $detail,
+            );
+        }
+        return $this->respond($dataDepartemen);
     }
 
     public function getDetailPasienGeneral(Request $request) {
@@ -5875,6 +5899,33 @@ class GeneralController extends ApiController
             );
         }
         return $this->setStatusCode($result['status'])->respond($result,$transMessage);
+    }
+
+    public function getDataBundleHais(Request $request){
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $jenis = $request['jenis'];
+        $data = collect(DB::select("
+             SELECT id AS idbundle,namaexternal || '. ' || kelompok AS kelompok,
+                    namabundle as keterangan,jenisbundle,nourut,kelompok AS namakelompok
+            FROM haisbundle_m 
+            WHERE jenisbundle = '$jenis'
+            ORDER BY nourut asc
+        "));
+
+        return $this->respond($data);
+    }
+
+    public function getDataBundleHais_IAD(Request $request){
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $data = collect(DB::select("
+            SELECT id AS idbundle,namaexternal || '. ' || kelompok AS kelompok,
+                   namabundle as keterangan,jenisbundle,nourut,kelompok AS namakelompok
+            FROM haisbundle_m 
+            WHERE jenisbundle = 'IAD'
+            ORDER BY nourut asc
+        "));
+
+        return $this->respond($data);
     }
 
 }

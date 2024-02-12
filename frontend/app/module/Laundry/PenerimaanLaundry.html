@@ -145,13 +145,31 @@
                     ng-model="item.stok" ng-disabled="true" />
             </div>
         </div>
+        <div class="grid_1" ng-show="hideBukanKirimBalik">
+            <div class="grid_12">
+                <label c-label item="item" c-label-text="Terima"></label>
+            </div>
+            <div class="grid_12">
+                <input c-text-box type="input" style="text-align: right" filter="" class="k-textbox"
+                    ng-model="item.jumlahTerima" ng-disabled='disableKirimBalik' />
+            </div>
+        </div>
         <div class="grid_1">
             <div class="grid_12">
                 <label c-label item="item" c-label-text="Jumlah"></label>
             </div>
             <div class="grid_12">
                 <input c-text-box type="input" style="text-align: right" filter="" class="k-textbox"
-                    ng-model="item.jumlah" ng-disabled='disableKirimBalik' />
+                    ng-model="item.jumlah" />
+            </div>
+        </div>
+        <div class="grid_1" ng-show="hideBukanKirimBalik">
+            <div class="grid_12">
+                <label c-label item="item" c-label-text="Sisa Tidak Terkirim"></label>
+            </div>
+            <div class="grid_12">
+                <input c-text-box type="input" style="text-align: right" filter="" class="k-textbox"
+                    ng-model="item.jumlahTidakKirim" ng-disabled='disableKirimBalik' />
             </div>
         </div>
 

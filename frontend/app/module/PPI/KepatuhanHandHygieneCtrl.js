@@ -27,6 +27,7 @@ define(['initialize'], function (initialize) {
                     format: "MMMM yyyy",
                 }
             }
+            $scope.PegawaiLogin = medifirstService.getPegawaiLogin();
                   
 
             LoadCombo();
@@ -531,6 +532,16 @@ define(['initialize'], function (initialize) {
                     toastr.error('Pilih data dulu')
                     return
                 }
+
+                if ($scope.dataSelect.isverif) {
+                    toastr.error('Data Sudah Diverifikasi !')
+                    return
+                }
+
+                if ($scope.dataSelect.objectpegawaifk != $scope.PegawaiLogin.id) {
+                    toastr.error('Anda tidak punya akses untuk mengedit !')
+                    return
+                }
                 for (var i = 0; i < $scope.listIndikasi.length; i++) {
                   $scope.listIndikasi[i].isChecked =false
                 }
@@ -603,6 +614,15 @@ define(['initialize'], function (initialize) {
             $scope.hapus = function () {
                 if ($scope.dataSelect == undefined) {
                     toastr.error('Pilih data dulu')
+                    return
+                }
+                if ($scope.dataSelect.isverif) {
+                    toastr.error('Data Sudah Diverifikasi !')
+                    return
+                }
+
+                if ($scope.dataSelect.objectpegawaifk != $scope.PegawaiLogin.id) {
+                    toastr.error('Anda tidak punya akses untuk menghapus !')
                     return
                 }
                 var data = {

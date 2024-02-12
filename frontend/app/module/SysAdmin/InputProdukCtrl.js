@@ -6,9 +6,13 @@ define(['initialize'], function (initialize) {
 			$scope.isRouteLoading = false;
 			$scope.dataVOloaded = true;
 			$scope.now = new Date();
+			$scope.masterAssetOption = [];
+			$scope.showMasterAssetOption = false;
 			var dataLoad = {}
 			$scope.kembali = function () { $state.go('MasterProduk') }
 			load();
+
+			$scope.currentAsset = [];
 
 			function load() {
 				$scope.listverifikasiAnggaran = [
@@ -200,9 +204,14 @@ define(['initialize'], function (initialize) {
 					LoadCombo()
 					$scope.item.StatusEnabledT = { id: 1, status: "t", statusenabled: "True" }
 				}
-			}			
+			}
 
 			$scope.KelompokToJenis = function (kelompok) {
+				if(kelompok.kelompokproduk == 'Barang Inventaris'){
+					$scope.showMasterAssetOption = true
+				}else{
+					$scope.showMasterAssetOption = false
+				}
 				medifirstService.get("sysadmin/master/get-jenis-produk?kelompokProdukfk=" + kelompok.id, true).then(function (dat) {
 					$scope.listJenisProduk = dat.data;
 				})
@@ -290,7 +299,11 @@ define(['initialize'], function (initialize) {
 							$scope.item.StatusEnabledT = { id: 1, status: "t", statusenabled: "True" }
 						}
 					})				
-
+				
+				// Get Kode akun asset
+				medifirstService.get('asset/get-master-asset?level=1').then(function(data){
+					$scope.masterAssetOption = data.data
+				})
 				
 			}
 
@@ -299,6 +312,13 @@ define(['initialize'], function (initialize) {
 				if ($scope.item.kelompok == undefined) {
 					alert("Kelompok Produk Kosong!!!")
 					return
+				}
+
+				if($scope.showMasterAssetOption){
+					if($scope.item.masterAkun6 == undefined){
+						alert("Master Akun Masih Kosong")
+						return
+					}
 				}
 
 				if ($scope.item.jenisProduk == undefined) {
@@ -594,6 +614,10 @@ define(['initialize'], function (initialize) {
 				if($scope.item.harganetto != undefined){
 					harganetto = $scope.item.harganetto
 				}
+				var objectProductAsset = null
+				if($scope.item.masterAkun6 != undefined){
+					objectProductAsset = $scope.item.masterAkun6.id
+				}
 				// if($scope.item.id !=undefined){
 				var objSave = {
 					"id": idProduk,
@@ -670,7 +694,8 @@ define(['initialize'], function (initialize) {
 					"tglproduksi": "2017-07-12",
 					"status": null,
 					"objectjenisgenerikfk": null,
-					"poinmedis": null
+					"poinmedis": null,
+					"objectProductAsset": objectProductAsset
 				}
 				if ($scope.item.id != undefined) {
 					medifirstService.post('sysadmin/master/save-data-produk', objSave).then(function (e) {
@@ -698,6 +723,41 @@ define(['initialize'], function (initialize) {
 			$scope.batal = function () {
 				$scope.showEdit = false;
 				$scope.item = {};
+			}
+
+			$scope.handleMasterAsset1 = function(data){
+				medifirstService.get('asset/get-master-asset?level=2&kodeakun=' + data.kodeakun).then(function(data){
+					$scope.masterAssetOption2 = data.data
+					$scope.currentAsset.push(2)
+				});
+			}
+
+			$scope.handleMasterAsset2 = function(data){
+				medifirstService.get('asset/get-master-asset?level=3&kodeakun=' + data.kodeakun).then(function(data){
+					$scope.masterAssetOption3 = data.data
+					$scope.currentAsset.push(3)
+				});
+			}
+
+			$scope.handleMasterAsset3 = function(data){
+				medifirstService.get('asset/get-master-asset?level=4&kodeakun=' + data.kodeakun).then(function(data){
+					$scope.masterAssetOption4 = data.data
+					$scope.currentAsset.push(4)
+				});
+			}
+
+			$scope.handleMasterAsset4 = function(data){
+				medifirstService.get('asset/get-master-asset?level=5&kodeakun=' + data.kodeakun).then(function(data){
+					$scope.masterAssetOption5 = data.data
+					$scope.currentAsset.push(5)
+				});
+			}
+
+			$scope.handleMasterAsset5 = function(data){
+				medifirstService.get('asset/get-master-asset?level=6').then(function(data){
+					$scope.masterAssetOption6 = data.data
+					$scope.currentAsset.push(6)
+				});
 			}
 			///////////////////////////////////////////////////////////////////		END			//////////////////////////////////////////////////////////////			
 		}

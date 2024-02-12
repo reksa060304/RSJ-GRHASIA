@@ -2465,6 +2465,26 @@
     ]
   },
   {
+    "name": "SPJPengembalian",
+    "url": "/U1BKUGVuZ2VtYmFsaWFu",
+    "templateurl": "module/Perencanaan/SPJPengembalian.html",
+    "controller": "SPJPengembalianCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
     "name": "EIS",
     "url": "/EIS",
     "templateurl": "module/Perencanaan/EIS.html",
@@ -3381,6 +3401,46 @@
         "define": "MedifirstService"
       }
     ]
+  },  
+  {
+    "name": "DaftarVerifikasiInsidenInternal",
+    "url": "/RGFmdGFyVmVyaWZpa2FzaUluc2lkZW5JbnRlcm5hbA==",
+    "templateurl": "module/PMKP/DaftarVerifikasiInsidenInternal.html",
+    "controller": "DaftarVerifikasiInsidenInternalCtrl",
+    "deps": [    
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },  
+  {
+    "name": "DaftarRekapInsidenInternal",
+    "url": "/RGFmdGFyUmVrYXBJbnNpZGVuSW50ZXJuYWw=",
+    "templateurl": "module/PMKP/DaftarRekapInsidenInternal.html",
+    "controller": "DaftarRekapInsidenInternalCtrl",
+    "deps": [    
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
   },
   {
     "name": "SensusHarianInsidenKeselamatanPasien",
@@ -3587,6 +3647,26 @@
     "url": "/RGFmdGFyUmlza1JlZ2lzdGVy",
     "templateurl": "module/PMKP/DaftarRiskRegister.html",
     "controller": "DaftarRiskRegisterCtrl",
+    "deps": [    
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },  
+  {
+    "name": "DaftarVerifikasiRiskRegister",
+    "url": "/RGFmdGFyVmVyaWZpa2FzaVJpc2tSZWdpc3Rlcg==",
+    "templateurl": "module/PMKP/DaftarVerifikasiRiskRegister.html",
+    "controller": "DaftarVerifikasiRiskRegisterCtrl",
     "deps": [    
       {
         "module": "Services",
@@ -4546,6 +4626,46 @@
     "url": "/T3JkZXJBbGF0U3Rlcmls",
     "templateurl": "module/Sterilisasi/OrderAlatSteril.html",
     "controller": "OrderAlatSterilCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "SterilisasiMatachana",
+    "url": "/c5503b5619c873ad6ea51442c9ef0fa9",
+    "templateurl": "module/Sterilisasi/SterilisasiMatachana.html",
+    "controller": "SterilisasiMatachanaCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "LaporanTableTop",
+    "url": "/2bed1c673ed5e5db35f06ba1f558c1bc=",
+    "templateurl": "module/Sterilisasi/LaporanTableTop.html",
+    "controller": "LaporanTableTopCtrl",
     "deps": [
       {
         "module": "Services",
@@ -6302,6 +6422,46 @@
     "templateurl": "module/Registrasi/sensusBangsal.html",
     "controller": "sensusBangsalCtrl",
     "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "LaporanLinenBersih",
+    "url": "/TGFwb3JhbkxpbmVuQmVyc2lo",
+    "templateurl": "module/Laundry/LaporanLaundry/LaporanLinenBersih.html",
+    "controller": "LaporanLinenBersihCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "LaporanLinenKotor",
+    "url": "/TGFwb3JhbkxpbmVuS290b3I=",
+    "templateurl": "module/Laundry/LaporanLaundry/LaporanLinenKotor.html",
+    "controller": "LaporanLinenKotorCtrl",
+    "deps": [
+      {
         "module": "Services",
         "define": "Service"
       },

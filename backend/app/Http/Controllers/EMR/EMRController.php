@@ -81,6 +81,8 @@ use phpDocumentor\Reflection\Types\Null_;
 use Webpatser\Uuid\Uuid;
 use Twilio\Rest\Client;
 use App\Transaksi\SeqNumber;
+use App\Transaksi\BundleHai;
+use App\Transaksi\BundleHaiDetail;
 
 class EMRController  extends ApiController
 {
@@ -8756,7 +8758,7 @@ class EMRController  extends ApiController
             if ($dataReq['norec'] == '') {
                 $dataSave = new KepatuhanHandHygiene();
                 $dataSave->norec = $dataSave->generateNewId();
-                $dataSave->kdprofile = 0;
+                $dataSave->kdprofile = $idProfile;
                 $dataSave->statusenabled = true;
                 $kegiatan = 'Input IPCLN';
                 # code...
@@ -8831,7 +8833,7 @@ class EMRController  extends ApiController
             ->select(DB::raw("
                 kh.norec,kh.tanggal,kh.objectruanganfk,CAST(kh.objectindikasifk AS VARCHAR) AS objectindikasifk,ru.namaruangan,
                 CAST(kh.objecthygienefk AS VARCHAR) AS objecthygienefk,kh.objectpegawaifk,
-                pg.namalengkap,kh.langkah,kh.objectjenispegawaifk,jp.jenispegawai,kh.kesempatan,kh.langkah
+                pg.namalengkap,kh.langkah,kh.objectjenispegawaifk,jp.jenispegawai,kh.kesempatan,kh.langkah,kh.isverif
             "))
             ->where('kh.kdprofile', $idProfile)
             ->where('kh.statusenabled', true)
@@ -13584,5 +13586,221 @@ class EMRController  extends ApiController
                 'as'=> 'Fizi@Epic'
             );
         return $this->respond($result);
+    }
+    public function verifikasiKepatuhanHandHygiene (Request $request, $stat)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        DB::beginTransaction();
+        try {
+
+            foreach ($request->data as $data) {
+                KepatuhanHandHygiene::where('norec',$data['norec'])
+                ->where('kdprofile', $kdProfile)
+                ->update([
+                    'isverif' => $stat
+                ]);
+            }
+
+            $transStatus = true;
+        } catch (\Exception $e) {
+            $transStatus = false;
+        }
+
+        if ($transStatus) {
+            $transMessage = $stat == "true" ? "Verifikasi Berhasil" : "Batal Verifikasi Berhasil";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMessage,
+                "as" => '@epic',
+            );
+        } else {
+            $transMessage = $stat == "true" ? "Verifikasi Gagal" : "Batal Verifikasi Gagal";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message"  => $transMessage,
+                "as" => '@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function getDataTransBundleHais(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+  
+        $paramNorec_pd = "";
+        if (isset($request['norec_pd']) && $request['norec_pd'] != "" && $request['norec_pd'] != "undefined") {
+            $paramNorec_pd = " and bd.norec_pd = " . "'" . $request['norec_pd'] . "'";
+        }
+
+        $paramNorec_apd = "";
+        if (isset($request['norec_apd']) && $request['norec_apd'] != "" && $request['norec_apd'] != "undefined") {
+            $paramNorec_apd = " and bd.norec_spd = " . "'" . $request['norec_apd'] . "'";
+        }
+
+        $data = collect(DB::select("
+            SELECT bd.norec,bd.notransaksi,bd.tglpemeriksaan,bd.petugasfk,pg.namalengkap,
+                   apd.objectruanganfk,ru.namaruangan,bd.jenisbundle
+            FROM bundlehai_t AS bd
+            INNER JOIN pasiendaftar_t AS pd ON pd.norec = bd.norec_pd
+            INNER JOIN antrianpasiendiperiksa_t AS apd ON apd.norec = bd.norec_apd
+            INNER JOIN pasien_m AS pm ON pm.id = pd.nocmfk
+            LEFT JOIN ruangan_m AS ru ON ru.id = apd.objectruanganfk
+            LEFT JOIN pegawai_m AS pg ON pg.id = bd.petugasfk
+            WHERE bd.statusenabled = true AND bd.kdprofile = $kdProfile
+            $paramNorec_pd
+            $paramNorec_apd
+            ORDER BY bd.tglpemeriksaan DESC
+        "));
+
+        return $this->respond($data);
+    }
+
+    public function hapusTransBundleHai(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        DB::beginTransaction();
+        try {
+
+
+            BundleHai::where('norec', $request['norec'])->where('kdprofile', $idProfile)
+                ->update([
+                    "statusenabled" => false,
+                ]);
+
+            BundleHaiDetail::where('bundlehaifk', $request['norec'])->where('kdprofile', $idProfile)
+                ->update([
+                    "statusenabled" => false,
+                ]);
+
+
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+
+        $transMessage = 'Hapus Bundle Hais ';
+
+        if ($transStatus == 'true') {
+            $transMessage = $transMessage . "Sukses";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'as' => 'hs@epic',
+            );
+        } else {
+            $transMessage = $transMessage . "Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message' => $transMessage,
+                'as' => 'hs@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function getDataTransBundleHaisDetail(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $norec = $request['norec'];
+        $jenis = $request['jenis'];
+        $data = collect(DB::select("
+            SELECT hb.id AS idbundle,hb.namaexternal || '. ' || hb.kelompok AS kelompok,
+                   hb.namabundle as keterangan,hb.jenisbundle,hb.nourut,hb.kelompok AS namakelompok,
+                   bhd.statusiya,bhd.statustidak
+            FROM bundlehaidetail_t AS bhd
+            INNER JOIN haisbundle_m AS hb ON hb.id = bhd.bundlefk
+            WHERE bhd.statusenabled = true AND bhd.kdprofile = $kdProfile 
+            AND bhd.bundlehaifk = '$norec' AND hb.jenisbundle = '$jenis'
+            ORDER BY hb.nourut
+        "));
+
+        return $this->respond($data);
+    }
+
+    public function postTransBundleHai(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        DB::beginTransaction();
+        try {
+
+            if ($request['norec'] == '') {
+
+                $noOrder = $this->generateCodeBySeqTable(new BundleHai, 'notransaksi', 11, 'B' . date('ym'), $idProfile);
+                if ($noOrder == '') {
+                    $transMessage = "Gagal mengumpukan data, Coba lagi.!";
+                    DB::rollBack();
+                    $result = array(
+                        "status" => 400,
+                        "message"  => $transMessage,
+                        "as" => 'as@epic',
+                    );
+                    return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+                }
+
+                $head = new BundleHai();
+                $head->kdprofile = $idProfile;
+                $head->statusenabled = true;
+                $head->norec = $head->generateNewId();
+                $head->notransaksi = $noOrder;
+            } else {
+                $head = BundleHai::where('norec', $request['norec'])->where('kdprofile', $idProfile)->first();
+                $dd = BundleHaiDetail::where('bundlehaifk', $request['norec'])->where('kdprofile', $idProfile)->delete();
+            }
+
+            $head->jenisbundle = $request['jenis'];
+            $head->norec_pd = $request['norec_pd'];
+            $head->norec_apd = $request['norec_apd'];
+            $head->tglpemeriksaan = $request['tanggal'];
+            $head->petugasfk = $request['petugas'];
+            $head->save();
+            $norec = $head->norec;
+
+            foreach ($request['detail'] as $item) {
+                $detail = new BundleHaiDetail();
+                $detail->norec = $detail->generateNewId();
+                $detail->kdprofile = $idProfile;
+                $detail->statusenabled = true;
+                $detail->bundlehaifk = $norec;
+                $detail->jeniskonten = $request['jenis'];
+                $detail->grupkonten = $item['namakelompok'];
+                $detail->namakonten = $item['keterangan'];
+                $detail->bundlefk = $item['idbundle'];
+                $detail->statusiya = $item['statusiya'];
+                $detail->statustidak = $item['statustidak'];
+                $detail->save();
+            }
+
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+
+        $transMessage = 'Save Bundle Hais ';
+
+        if ($transStatus == 'true') {
+            $transMessage = $transMessage . "Sukses";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'as' => 'hs@epic',
+            );
+        } else {
+            $transMessage = $transMessage . "Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message' => $transMessage,
+                'as' => 'hs@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
 }
