@@ -2956,7 +2956,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                     if($scope.norecpengembalian == ''){
                         medifirstService.get("perencanaan/get-sisa-panjar?panjar=" + $scope.item.norecpengembalian ).then(function (e) {
-                            if((parseInt(e.data.sisapanjar[0].jumlahpanjar) - parseInt(e.data.sisapanjar[0].jumlahspj) - parseInt(e.data.pengembalian[0].jumlahpengembalian)) >= parseInt($scope.item.jumlahpengembalianpanjar)){
+                            // if((parseInt(e.data.sisapanjar[0].jumlahpanjar) - parseInt(e.data.sisapanjar[0].jumlahspj) - parseInt(e.data.pengembalian[0].jumlahpengembalian)) >= parseInt($scope.item.jumlahpengembalianpanjar)){
+                            if(parseInt($scope.item.jumlahpengembalianpanjar) >= (parseInt(e.data.pengembalian[0].jumlahpengembalian))){
                                 medifirstService.post('perencanaan/save-pengembalian', objSave).then(function (e) {
                                     medifirstService.get("perencanaan/get-pengembalian-panjar?norec="+$scope.item.norecpengembalian).then(function (e) {
                                         $scope.dataSourcePengembalian = e.data.data
@@ -2975,7 +2976,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         })
                     } else{
                         medifirstService.get("perencanaan/get-sisa-panjar?panjar=" + $scope.item.norecpengembalian ).then(function (e) {
-                            if((parseInt(e.data.sisapanjar[0].jumlahpanjar) - parseInt(e.data.sisapanjar[0].jumlahspj) - parseInt(e.data.pengembalian[0].jumlahpengembalian) + parseInt($scope.pengembalianawal)) >= parseInt($scope.item.jumlahpengembalianpanjar)){
+                            // if((parseInt(e.data.sisapanjar[0].jumlahpanjar) - parseInt(e.data.sisapanjar[0].jumlahspj) - parseInt(e.data.pengembalian[0].jumlahpengembalian) + parseInt($scope.pengembalianawal)) >= parseInt($scope.item.jumlahpengembalianpanjar)){
+                            if(parseInt($scope.item.jumlahpengembalianpanjar) >= (parseInt(e.data.pengembalian[0].jumlahpengembalian) + parseInt($scope.pengembalianawal))){
                                 medifirstService.post('perencanaan/save-pengembalian', objSave).then(function (e) {
                                     medifirstService.get("perencanaan/get-pengembalian-panjar?norec="+$scope.item.norecpengembalian).then(function (e) {
                                         $scope.dataSourcePengembalian = e.data.data
