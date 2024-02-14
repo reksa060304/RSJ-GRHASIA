@@ -1974,6 +1974,12 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('rawatinap/get-data-ido-surveilans', 'RawatInap\RawatInapController@getDataIdoSurveilans');
           Route::post('rawatinap/save-data-apd','RawatInap\RawatInapController@saveCheklisApd');
           Route::get('rawatinap/get-data-cheklis-apd','RawatInap\RawatInapController@getDataCheklisApd');
+
+          Route::get('rawatinap/get-master-audit-apd','RawatInap\RawatInapController@getMasterAuditAPD');
+          Route::get('rawatinap/get-audit-apd','RawatInap\RawatInapController@getAuditAPD');
+          Route::post('rawatinap/save-audit-apd','RawatInap\RawatInapController@saveAuditAPD');
+          Route::post('rawatinap/delete-audit-apd','RawatInap\RawatInapController@deleteAuditAPD');
+          
         // });
         // Route::group(['prefix' => 'rawatjalan'], function () {
           Route::get('rawatjalan/get-data-combo-dokter', 'RawatJalan\RawatJalanController@getDataComboDokter');

@@ -1030,6 +1030,10 @@
             "urlDep": "module/RawatInap/InputCheklisApdCtrl"
         },
         {
+            "nameDep": "InputCheklisApdNewCtrl",
+            "urlDep": "module/RawatInap/InputCheklisApdNewCtrl"
+        },
+        {
             "nameDep": "InputFormulirPendelegasianObatCtrl",
             "urlDep": "module/EMR/InputFormulirPendelegasianObatCtrl"
                                                                                               

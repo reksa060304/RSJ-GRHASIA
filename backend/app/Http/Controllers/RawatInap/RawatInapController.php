@@ -2116,4 +2116,155 @@ class RawatInapController extends ApiController
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
+
+    public function getMasterAuditAPD(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $data = DB::table('auditapd_m')
+        ->where('kdprofile', $kdProfile)
+        ->where('statusenabled', true)
+        ->get();
+
+        return $this->respond($data);
+    }
+
+    public function getAuditAPD(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $masterdata = DB::table('auditapd_m')
+        ->where('kdprofile', $kdProfile)
+        ->where('statusenabled', true)
+        ->get();
+
+        $data = DB::table('auditapd_t as au')
+        ->select('au.*', 'pg.namalengkap as observer', 'jp.jenispegawai as profesi')
+        ->join('pegawai_m as pg', 'au.objectpegawaifk', '=', 'pg.id')
+        ->join('jenispegawai_m as jp', 'au.objectjenispegawaifk', '=', 'jp.id')
+        ->where('au.kdprofile', $kdProfile)
+        ->where('au.statusenabled', true)
+        ->where('au.objectruanganfk', $request['objectruanganfk'])
+        ->whereRaw('to_char(au.tanggal, \'MM-YYYY\') = ?', [$request['bulan']])
+        ->orderBy('au.tanggal', 'desc')
+        ->get();
+
+        $datadetail = DB::table('auditapd_t as apd')
+        ->select('apddt.*')
+        ->join('auditapddetail_t as apddt', 'apd.norec', '=', 'apddt.norecauditapd')
+        ->where('apd.kdprofile', $kdProfile)
+        ->where('apd.statusenabled', true)
+        ->where('apd.objectruanganfk', $request['objectruanganfk'])
+        ->whereRaw('to_char(apd.tanggal, \'MM-YYYY\') = ?', [$request['bulan']])
+        ->get();
+
+        foreach ($data as $item) {
+            foreach($masterdata as $md) {
+                $func = 'w'. $md->id;
+                $item->$func = false;
+                foreach($datadetail as $item2) {
+                    if($item->norec == $item2->norecauditapd && $item2->auditapdfk == $md->id) {
+                        $item->$func = true;
+                    }
+                }
+            }
+        }
+
+        return $this->respond($data);
+    }
+
+    public function saveAuditAPD(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        DB::beginTransaction();
+        try {
+
+            $data = DB::table('auditapd_t')
+            ->where('norec', $request['norec'])
+            ->where('kdprofile', $kdProfile)
+            ->where('statusenabled', true)
+            ->first();
+
+            if(!empty($data)) {
+                DB::table('auditapd_t')->where('norec', $request['norec'])->delete();
+                DB::table('auditapddetail_t')->where('norecauditapd', $request['norec'])->delete();
+            }
+
+            $dataInsert = array (
+                "norec" => substr(Uuid::generate(), 0, 32),
+                "kdprofile" => $kdProfile,
+                "statusenabled" => true,
+                "objectpegawaifk" => $request['objectpegawaifk'],
+                "tanggal" => $request['tanggal'],
+                "objectjenispegawaifk" => $request['objectjenispegawaifk'],
+                "jenisaktifitas" => $request['jenisaktifitas'],
+                "objectruanganfk" => $request['objectruanganfk']
+            );
+            DB::table('auditapd_t')->insert($dataInsert);
+
+            foreach ($request['detail'] as $key => $item) {
+                if($item){
+                    $dataDetailInsert = array (
+                        "norec" => substr(Uuid::generate(), 0, 32),
+                        "kdprofile" => $kdProfile,
+                        "statusenabled" => true,
+                        "norecauditapd" => $dataInsert['norec'],
+                        "auditapdfk" => substr($key, 1, strlen($key) - 1),
+                    );
+                    DB::table('auditapddetail_t')->insert($dataDetailInsert);
+                }
+            }
+
+            $transStatus = true;
+        } catch (\Exception $e) {
+            $transStatus = false;
+        }
+
+        if ($transStatus) {
+            $transMessage = "Simpan Data Berhasil";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMessage,
+            );
+        } else {
+            $transMessage = "Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message"  => $transMessage,
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function deleteAuditAPD(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        DB::beginTransaction();
+        try {
+
+            DB::table('auditapd_t')->where('norec', $request['norec'])->delete();
+            DB::table('auditapddetail_t')->where('norecauditapd', $request['norec'])->delete();
+
+            $transStatus = true;
+        } catch (\Exception $e) {
+            $transStatus = false;
+        }
+
+        if ($transStatus) {
+            $transMessage = "Hapus Data Berhasil";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMessage,
+            );
+        } else {
+            $transMessage = "Hapus Gagal";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message"  => $transMessage,
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
 }
