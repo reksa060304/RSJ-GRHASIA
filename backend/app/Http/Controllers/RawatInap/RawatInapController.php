@@ -2123,6 +2123,7 @@ class RawatInapController extends ApiController
         $data = DB::table('auditapd_m')
         ->where('kdprofile', $kdProfile)
         ->where('statusenabled', true)
+        ->orderBy('order')
         ->get();
 
         return $this->respond($data);
@@ -2244,6 +2245,157 @@ class RawatInapController extends ApiController
 
             DB::table('auditapd_t')->where('norec', $request['norec'])->delete();
             DB::table('auditapddetail_t')->where('norecauditapd', $request['norec'])->delete();
+
+            $transStatus = true;
+        } catch (\Exception $e) {
+            $transStatus = false;
+        }
+
+        if ($transStatus) {
+            $transMessage = "Hapus Data Berhasil";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMessage,
+            );
+        } else {
+            $transMessage = "Hapus Gagal";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message"  => $transMessage,
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function getMasterAuditHygiene(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $data = DB::table('audithygiene_m')
+        ->where('kdprofile', $kdProfile)
+        ->where('statusenabled', true)
+        ->orderBy('order')
+        ->get();
+
+        return $this->respond($data);
+    }
+
+    public function getAuditHygiene(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $masterdata = DB::table('audithygiene_m')
+        ->where('kdprofile', $kdProfile)
+        ->where('statusenabled', true)
+        ->get();
+
+        $data = DB::table('audithygiene_t as au')
+        ->select('au.*', 'pg.namalengkap as observer', 'jp.jenispegawai as profesi')
+        ->join('pegawai_m as pg', 'au.objectpegawaifk', '=', 'pg.id')
+        ->join('jenispegawai_m as jp', 'au.objectjenispegawaifk', '=', 'jp.id')
+        ->where('au.kdprofile', $kdProfile)
+        ->where('au.statusenabled', true)
+        ->where('au.objectruanganfk', $request['objectruanganfk'])
+        ->whereRaw('to_char(au.tanggal, \'MM-YYYY\') = ?', [$request['bulan']])
+        ->orderBy('au.tanggal', 'desc')
+        ->get();
+
+        $datadetail = DB::table('audithygiene_t as apd')
+        ->select('apddt.*')
+        ->join('audithygienedetail_t as apddt', 'apd.norec', '=', 'apddt.norecaudithygiene')
+        ->where('apd.kdprofile', $kdProfile)
+        ->where('apd.statusenabled', true)
+        ->where('apd.objectruanganfk', $request['objectruanganfk'])
+        ->whereRaw('to_char(apd.tanggal, \'MM-YYYY\') = ?', [$request['bulan']])
+        ->get();
+
+        foreach ($data as $item) {
+            foreach($masterdata as $md) {
+                $func = 'w'. $md->id;
+                $item->$func = false;
+                foreach($datadetail as $item2) {
+                    if($item->norec == $item2->norecaudithygiene && $item2->audithygienefk == $md->id) {
+                        $item->$func = true;
+                    }
+                }
+            }
+        }
+
+        return $this->respond($data);
+    }
+
+    public function saveAuditHygiene(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        DB::beginTransaction();
+        try {
+
+            $data = DB::table('audithygiene_t')
+            ->where('norec', $request['norec'])
+            ->where('kdprofile', $kdProfile)
+            ->where('statusenabled', true)
+            ->first();
+
+            if(!empty($data)) {
+                DB::table('audithygiene_t')->where('norec', $request['norec'])->delete();
+                DB::table('audithygienedetail_t')->where('norecaudithygiene', $request['norec'])->delete();
+            }
+
+            $dataInsert = array (
+                "norec" => substr(Uuid::generate(), 0, 32),
+                "kdprofile" => $kdProfile,
+                "statusenabled" => true,
+                "objectpegawaifk" => $request['objectpegawaifk'],
+                "tanggal" => $request['tanggal'],
+                "objectjenispegawaifk" => $request['objectjenispegawaifk'],
+                "objectruanganfk" => $request['objectruanganfk']
+            );
+            DB::table('audithygiene_t')->insert($dataInsert);
+
+            foreach ($request['detail'] as $key => $item) {
+                if($item){
+                    $dataDetailInsert = array (
+                        "norec" => substr(Uuid::generate(), 0, 32),
+                        "kdprofile" => $kdProfile,
+                        "statusenabled" => true,
+                        "norecaudithygiene" => $dataInsert['norec'],
+                        "audithygienefk" => substr($key, 1, strlen($key) - 1),
+                    );
+                    DB::table('audithygienedetail_t')->insert($dataDetailInsert);
+                }
+            }
+
+            $transStatus = true;
+        } catch (\Exception $e) {
+            $transStatus = false;
+        }
+
+        if ($transStatus) {
+            $transMessage = "Simpan Data Berhasil";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMessage,
+            );
+        } else {
+            $transMessage = "Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message"  => $transMessage,
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function deleteAuditHygiene(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        DB::beginTransaction();
+        try {
+
+            DB::table('audithygiene_t')->where('norec', $request['norec'])->delete();
+            DB::table('audithygienedetail_t')->where('norecaudithygiene', $request['norec'])->delete();
 
             $transStatus = true;
         } catch (\Exception $e) {

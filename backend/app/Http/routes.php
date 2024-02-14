@@ -1979,6 +1979,11 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('rawatinap/get-audit-apd','RawatInap\RawatInapController@getAuditAPD');
           Route::post('rawatinap/save-audit-apd','RawatInap\RawatInapController@saveAuditAPD');
           Route::post('rawatinap/delete-audit-apd','RawatInap\RawatInapController@deleteAuditAPD');
+
+          Route::get('rawatinap/get-master-audit-hygiene','RawatInap\RawatInapController@getMasterAuditHygiene');
+          Route::get('rawatinap/get-audit-hygiene','RawatInap\RawatInapController@getAuditHygiene');
+          Route::post('rawatinap/save-audit-hygiene','RawatInap\RawatInapController@saveAuditHygiene');
+          Route::post('rawatinap/delete-audit-hygiene','RawatInap\RawatInapController@deleteAuditHygiene');
           
         // });
         // Route::group(['prefix' => 'rawatjalan'], function () {

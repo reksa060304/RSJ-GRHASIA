@@ -1034,6 +1034,10 @@
             "urlDep": "module/RawatInap/InputCheklisApdNewCtrl"
         },
         {
+            "nameDep": "InputCheklisHygieneCtrl",
+            "urlDep": "module/RawatInap/InputCheklisHygieneCtrl"
+        },
+        {
             "nameDep": "InputFormulirPendelegasianObatCtrl",
             "urlDep": "module/EMR/InputFormulirPendelegasianObatCtrl"
                                                                                               
