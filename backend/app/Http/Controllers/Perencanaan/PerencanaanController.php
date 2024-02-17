@@ -4127,7 +4127,7 @@ class PerencanaanController extends ApiController {
         $pengeluaran = 0;
 
         $saldoakhir = DB::select(DB::raw("select saldo from bukukasumum_t where statusenabled = true and kdprofile = 30 
-        order by nobku desc limit 1"));
+        order by tgljam DESC limit 1"));
         if(count($saldoakhir) == 0){
             $saldofix = 0;
         } else{
@@ -4171,6 +4171,7 @@ class PerencanaanController extends ApiController {
                             $penerimaan += $request['bku'][$i]['nilaispm'];
                         }
 
+                        $MA->tgljam = date('Y-m-d H:i:s');
                         $MA->penerimaan = $penerimaan;
                         $MA->pengeluaran = 0;
                         $MA->saldo = $saldofix;
@@ -4204,6 +4205,7 @@ class PerencanaanController extends ApiController {
                             $pengeluaran += $request['bku'][$i]['jumlahpengeluaran'];
                         }
 
+                        $MA->tgljam = date('Y-m-d H:i:s');
                         $MA->penerimaan = $penerimaan;
                         $MA->pengeluaran = $pengeluaran;
                         $MA->saldo = $saldofix;
@@ -4237,6 +4239,7 @@ class PerencanaanController extends ApiController {
                             $pengeluaran += $request['bku'][$i]['nilaists'];
                         }
 
+                        $MA->tgljam = date('Y-m-d H:i:s');
                         $MA->penerimaan = $penerimaan;
                         $MA->pengeluaran = $pengeluaran;
                         $MA->saldo = $saldofix;
@@ -4282,6 +4285,7 @@ class PerencanaanController extends ApiController {
                                 $MA->saldo = (((int)$request['bku'][$i]['pph'] + (int)$request['bku'][$i]['ppn']) - ((int)$request['bku'][$i]['pph'] + (int)$request['bku'][$i]['ppn']));
                             }
 
+                            $MA->tgljam = date('Y-m-d H:i:s');
                             $MA->save();
 
                             if($request['bku'][$i]['jenis'] == 'Pemungutan'){
@@ -4326,6 +4330,7 @@ class PerencanaanController extends ApiController {
                                 $pengeluaran += $request['bku'][$i]['jumlah'];
                             }
 
+                            $MA->tgljam = date('Y-m-d H:i:s');
                             $MA->penerimaan = 0;
                             $MA->pengeluaran = $pengeluaran;
                             $MA->saldo = $saldofix;
@@ -4360,6 +4365,7 @@ class PerencanaanController extends ApiController {
                                 $penerimaan += $request['bku'][$i]['jumlahpengembalian'];
                             }
 
+                            $MB->tgljam = date('Y-m-d H:i:s');
                             $MB->penerimaan = $penerimaan;
                             $MB->pengeluaran = 0;
                             $MB->saldo = $saldofix;
@@ -4396,6 +4402,7 @@ class PerencanaanController extends ApiController {
                                 $pengeluaran += $request['bku'][$i]['jumlah'];
                             }
 
+                            $MA->tgljam = date('Y-m-d H:i:s');
                             $MA->penerimaan = 0;
                             $MA->pengeluaran = $pengeluaran;
                             $MA->saldo = $saldofix;
@@ -4438,6 +4445,7 @@ class PerencanaanController extends ApiController {
                             }
                         }
 
+                        $MA->tgljam = date('Y-m-d H:i:s');
                         $MA->penerimaan = $penerimaan;
                         $MA->pengeluaran = $pengeluaran;
                         $MA->saldo = $saldofix;
@@ -4470,6 +4478,7 @@ class PerencanaanController extends ApiController {
                                 $penerimaan += $request['bku'][$i]['jumlahpengembalian'];
                             }
 
+                            $MA->tgljam = date('Y-m-d H:i:s');
                             $MA->penerimaan = $penerimaan;
                             $MA->pengeluaran = 0;
                             $MA->saldo = $saldofix;
