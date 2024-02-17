@@ -7197,7 +7197,7 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
         $asalproduk
         $qkey
         and tglbku between '$tglAwal' and '$tglAkhir'
-        order by nourut
+        order by tgljam DESC
         ")
         );
 
