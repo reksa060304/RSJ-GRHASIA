@@ -169,6 +169,12 @@
                     k-ng-model="dataSelected" ng-click="klikGrid(dataSelected)" style="min-height: 0px; max-height: 500px;" >
                 </kendo-grid>
             </div>
+            <div class="grid_12 borderBox" ng-hide="hidepengembalianpanjar">
+                <kendo-grid id="gridpengembalianpanjar" data-source="dataGridPengembalianPanjar" options="columnGridPengembalianPanjar" k-pageable="'true'"
+                    k-sortable="'true'" k-groupable="'false'" k-resizable="'true'" k-selectable="'row'"
+                    k-ng-model="dataSelected" ng-click="klikGrid(dataSelected)" style="min-height: 0px; max-height: 500px;" >
+                </kendo-grid>
+            </div>
             <div class="grid_12 borderBox" ng-hide="hidespm">
                 <kendo-grid id="grid" data-source="dataGridSPM" options="columnGridSPM" k-pageable="'true'"
                     k-sortable="'true'" k-groupable="'false'" k-resizable="'true'" k-selectable="'row'"
@@ -288,6 +294,12 @@
             </legend>
             <div class="grid_12 borderBox" ng-hide="hidepanjar">
                 <kendo-grid id="grids" data-source="dataGridPanjar" options="columnGridPanjar" k-pageable="'true'"
+                    k-sortable="'true'" k-groupable="'false'" k-resizable="'true'" k-selectable="'row'"
+                    k-ng-model="dataSelected" ng-click="klikGrid(dataSelected)" style="min-height: 0px; max-height: 500px;" >
+                </kendo-grid>
+            </div>
+            <div class="grid_12 borderBox" ng-hide="hidepengembalianpanjar">
+                <kendo-grid id="grids" data-source="dataGridPengembalianPanjar" options="columnGridPengembalianPanjar" k-pageable="'true'"
                     k-sortable="'true'" k-groupable="'false'" k-resizable="'true'" k-selectable="'row'"
                     k-ng-model="dataSelected" ng-click="klikGrid(dataSelected)" style="min-height: 0px; max-height: 500px;" >
                 </kendo-grid>
