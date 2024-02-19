@@ -106,7 +106,7 @@ Trait Valet {
         $result = $objectModel->where($atrribute, 'LIKE', $prefix.'%')
         ->where('kdprofile',$idProfile)
         ->where('statusenabled',true)
-        ->where('objectasalprodukfk',$asalproduk)
+        // ->where('objectasalprodukfk',$asalproduk)
         ->max($atrribute);
 
         //var_dump($result);

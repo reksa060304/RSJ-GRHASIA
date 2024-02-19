@@ -4127,7 +4127,7 @@ class PerencanaanController extends ApiController {
         $pengeluaran = 0;
 
         $saldoakhir = DB::select(DB::raw("select saldo from bukukasumum_t where statusenabled = true and kdprofile = 30 
-        order by nobku desc limit 1"));
+        order by tgljam DESC limit 1"));
         if(count($saldoakhir) == 0){
             $saldofix = 0;
         } else{
@@ -4171,6 +4171,7 @@ class PerencanaanController extends ApiController {
                             $penerimaan += $request['bku'][$i]['nilaispm'];
                         }
 
+                        $MA->tgljam = date('Y-m-d H:i:s');
                         $MA->penerimaan = $penerimaan;
                         $MA->pengeluaran = 0;
                         $MA->saldo = $saldofix;
@@ -4204,6 +4205,7 @@ class PerencanaanController extends ApiController {
                             $pengeluaran += $request['bku'][$i]['jumlahpengeluaran'];
                         }
 
+                        $MA->tgljam = date('Y-m-d H:i:s');
                         $MA->penerimaan = $penerimaan;
                         $MA->pengeluaran = $pengeluaran;
                         $MA->saldo = $saldofix;
@@ -4237,6 +4239,7 @@ class PerencanaanController extends ApiController {
                             $pengeluaran += $request['bku'][$i]['nilaists'];
                         }
 
+                        $MA->tgljam = date('Y-m-d H:i:s');
                         $MA->penerimaan = $penerimaan;
                         $MA->pengeluaran = $pengeluaran;
                         $MA->saldo = $saldofix;
@@ -4282,6 +4285,7 @@ class PerencanaanController extends ApiController {
                                 $MA->saldo = (((int)$request['bku'][$i]['pph'] + (int)$request['bku'][$i]['ppn']) - ((int)$request['bku'][$i]['pph'] + (int)$request['bku'][$i]['ppn']));
                             }
 
+                            $MA->tgljam = date('Y-m-d H:i:s');
                             $MA->save();
 
                             if($request['bku'][$i]['jenis'] == 'Pemungutan'){
@@ -4298,11 +4302,12 @@ class PerencanaanController extends ApiController {
 
                         $yes = 'no';
 
-                        for($y = 0; $y < count($request['bku']); $y++){
-                            if($request['bku'][$y]['jumlahpengembalian'] != '0'){
-                                $yes = 'oke';
-                            }
-                        }
+                        // dicomment karena jika ada pengembalian langsung ke $request['jenisbukti'] == 7
+                        // for($y = 0; $y < count($request['bku']); $y++){
+                        //     if($request['bku'][$y]['jumlahpengembalian'] != '0'){
+                        //         $yes = 'oke';
+                        //     }
+                        // }
 
                         if($yes == 'oke'){
                             $MA = new BKU();
@@ -4325,6 +4330,7 @@ class PerencanaanController extends ApiController {
                                 $pengeluaran += $request['bku'][$i]['jumlah'];
                             }
 
+                            $MA->tgljam = date('Y-m-d H:i:s');
                             $MA->penerimaan = 0;
                             $MA->pengeluaran = $pengeluaran;
                             $MA->saldo = $saldofix;
@@ -4359,6 +4365,7 @@ class PerencanaanController extends ApiController {
                                 $penerimaan += $request['bku'][$i]['jumlahpengembalian'];
                             }
 
+                            $MB->tgljam = date('Y-m-d H:i:s');
                             $MB->penerimaan = $penerimaan;
                             $MB->pengeluaran = 0;
                             $MB->saldo = $saldofix;
@@ -4395,6 +4402,7 @@ class PerencanaanController extends ApiController {
                                 $pengeluaran += $request['bku'][$i]['jumlah'];
                             }
 
+                            $MA->tgljam = date('Y-m-d H:i:s');
                             $MA->penerimaan = 0;
                             $MA->pengeluaran = $pengeluaran;
                             $MA->saldo = $saldofix;
@@ -4437,6 +4445,7 @@ class PerencanaanController extends ApiController {
                             }
                         }
 
+                        $MA->tgljam = date('Y-m-d H:i:s');
                         $MA->penerimaan = $penerimaan;
                         $MA->pengeluaran = $pengeluaran;
                         $MA->saldo = $saldofix;
@@ -4447,6 +4456,51 @@ class PerencanaanController extends ApiController {
                             $MP->objectbkufk = $MA->norec;
                             $MP->save();
                         }
+                    }else if($request['jenisbukti'] == 7){
+                        $MA = new BKU();
+                            $norecKS = $MA->generateNewId();
+                            $MA->norec = $norecKS;
+                            $MA->kdprofile = $idProfile;
+                            $MA->statusenabled = true;
+                            $noa = $this->generateCodeBKU(new BKU, 'nobku', $request['asalproduk'], 5, '', $idProfile);
+                            $MA->nobku = $noa.'-B02';
+                            $MA->objectjenisbuktifk = $request['jenisbukti'];
+                            $MA->tglbku = $request['tglbku'];
+                            $MA->uraianbku = $request['uraian'];
+                            $MA->rekananfk = $request['rekananfk'];
+                            $MA->objectasalprodukfk = $request['asalproduk'];
+
+                            $MA->objectmataanggaranfk = $request['bku'][0]['kodemataanggaran'];
+
+                            
+                            for($i = 0; $i < count($request['bku']); $i++){
+                                $saldofix += $request['bku'][$i]['jumlahpengembalian'];
+                                $penerimaan += $request['bku'][$i]['jumlahpengembalian'];
+                            }
+
+                            $MA->tgljam = date('Y-m-d H:i:s');
+                            $MA->penerimaan = $penerimaan;
+                            $MA->pengeluaran = 0;
+                            $MA->saldo = $saldofix;
+                            $MA->save();
+
+                            for($x = 0; $x < count($request['bku']); $x++){
+                                $MP = Panjar::where('norec', '=', $request['bku'][$x]['norec'])->first();
+                                $MP->objectbkufk = $MA->norec;
+                                $MP->save();
+                            }
+
+
+                            for($x = 0; $x < count($request['bku']); $x++){
+                                $MQ = Pengembalian::where('objectpanjarfk', '=', $request['bku'][$x]['norec'])->first();
+                                if(!empty($MQ)){
+                                    $bla = Pengembalian::where('objectpanjarfk', '=', $request['bku'][$x]['norec'])->get();
+                                    foreach ($bla as $ble) {
+                                        $ble->objectbkufk = $MA->norec;
+                                        $ble->save();
+                                    }
+                                }
+                            }
                     }
 
                     
@@ -7143,7 +7197,7 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
         $asalproduk
         $qkey
         and tglbku between '$tglAwal' and '$tglAkhir'
-        order by nourut
+        order by tgljam DESC
         ")
         );
 
@@ -7312,6 +7366,38 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
         and pp.statusenabled = true
         where pj.kdprofile = 30 and pj.statusenabled = true
         $norec
+        group by ma.id, ma.kodemataanggaran, subkeg.id, subkeg.keterangan, subsubkeg.id, subsubkeg.keterangan, pj.norec, pj.tglpanjar, pj.nopanjar, pj.uraian, pj.jumlah, pj.jenispanjar, pj.sumberpanjar
+        ")
+        );
+
+        $result = array(
+            'data' => $data,
+            'message' => '@epic',
+        );
+
+        return $this->respond($result);
+    }
+    public function getDataPengembalianPanjarBKU(Request $request){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        // if(isset($request['norec']) && $request['norec'] != '' && $request['norec'] != "undefined"){
+        //     $norec = " and pj.objectbkufk = '".$request['norec']."'";
+        // } else{
+        //     $norec = " and pj.objectbkufk is null ";
+        // }
+        
+        $data = DB::select(DB::raw("
+        select ma.id idmataanggaran, ma.kodemataanggaran, subkeg.id idsubkegiatan, subkeg.keterangan subkegiatan, subsubkeg.id idsubsubkegiatan, subsubkeg.keterangan subsubkegiatan, pj.norec, pj.tglpanjar, pj.nopanjar, pj.uraian, pj.jumlah, pj.jenispanjar, coalesce(sum(pp.jumlahpengembalian),0) jumlahpengembalian, pj.sumberpanjar 
+        from panjar_t pj
+        inner join mataanggaran_m ma on ma.id = pj.objectmataanggaranfk
+        inner join kegiatananggaran_m subkeg on subkeg.id = pj.objectsubkegiatanfk
+        inner join kegiatananggaran_m subsubkeg on subsubkeg.id = pj.objectsubsubkegiatanfk
+        left join pengembalianpanjar_t pp on pp.objectpanjarfk = pj.norec
+        where pj.kdprofile = 30 and pj.statusenabled = true
+        and pp.kdprofile = 30
+        and pp.statusenabled = true
+        and pp.jumlahpengembalian is not null
+       
         group by ma.id, ma.kodemataanggaran, subkeg.id, subkeg.keterangan, subsubkeg.id, subsubkeg.keterangan, pj.norec, pj.tglpanjar, pj.nopanjar, pj.uraian, pj.jumlah, pj.jenispanjar, pj.sumberpanjar
         ")
         );

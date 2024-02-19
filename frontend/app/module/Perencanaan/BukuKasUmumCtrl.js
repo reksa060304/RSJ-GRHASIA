@@ -12,6 +12,7 @@ define(['initialize'], function (initialize) {
             $scope.item.tglawal = moment($scope.now).format('YYYY-01-01');
             $scope.item.tglakhir = $scope.now;
             $scope.hidepanjar =true
+            $scope.hidepengembalianpanjar =true
             $scope.hidespm =true
             $scope.hidejasgir =true
             $scope.hidepajak =true
@@ -56,15 +57,15 @@ define(['initialize'], function (initialize) {
                     asalproduk = $scope.item.asalprodukbku.id
                 }
 
-                var saldo = 0
+                // var saldo = 0
                 medifirstService.get("perencanaan/get-bku?awal="+awal+"&akhir="+akhir+"&rekanan="+rekanan+"&asalproduk="+asalproduk).then(function (e) {
                         $scope.isRouteLoading = false;
 
-                        for(var i = 0; i < e.data.data.length; i++){
-                            saldo += parseInt(e.data.data[i].penerimaan)
-                            saldo -= parseInt(e.data.data[i].pengeluaran)
-                            e.data.data[i].saldo = saldo 
-                        }
+                        // for(var i = 0; i < e.data.data.length; i++){
+                        //     saldo += parseInt(e.data.data[i].penerimaan)
+                        //     saldo -= parseInt(e.data.data[i].pengeluaran)
+                        //     e.data.data[i].saldo = saldo 
+                        // }
                         
                         $scope.dataGrid = new kendo.data.DataSource({
                             data: e.data.data,
@@ -91,6 +92,7 @@ define(['initialize'], function (initialize) {
                 $scope.item.uraianBKU = ''
                 $scope.item.itemJenisBukti = undefined
                 $scope.dataGridPanjar = []
+                $scope.dataGridPengembalianPanjar = []
                 $scope.dataGridSPM = []
                 $scope.dataGridJasaGiro = []
                 $scope.hidepanjar =true
@@ -98,6 +100,7 @@ define(['initialize'], function (initialize) {
                 $scope.hidejasgir =true
                 $scope.hidests =true
                 $scope.hidepajak =true
+                $scope.hidepengembalianpanjar = true
                 medifirstService.get("perencanaan/get-jenis-bukti-bku").then(function (e) {
                     $scope.listJenisBukti = e.data.data
                 });
@@ -118,15 +121,15 @@ define(['initialize'], function (initialize) {
                     rekanan = $scope.item.namarekanan.id
                 }
 
-                var saldo = 0
+                // var saldo = 0
                 medifirstService.get("perencanaan/get-bku?awal="+awal+"&akhir="+akhir+"&rekanan="+rekanan+"&key="+$scope.item.caridatabku).then(function (e) {
                     $scope.isRouteLoading = false;
 
-                    for(var i = 0; i < e.data.data.length; i++){
-                        saldo += parseInt(e.data.data[i].penerimaan)
-                        saldo -= parseInt(e.data.data[i].pengeluaran)
-                        e.data.data[i].saldo = saldo 
-                    }
+                    // for(var i = 0; i < e.data.data.length; i++){
+                    //     saldo += parseInt(e.data.data[i].penerimaan)
+                    //     saldo -= parseInt(e.data.data[i].pengeluaran)
+                    //     e.data.data[i].saldo = saldo 
+                    // }
                         
                     $scope.dataGrid = new kendo.data.DataSource({
                         data: e.data.data,
@@ -149,9 +152,10 @@ define(['initialize'], function (initialize) {
 
             $scope.$watch('item.itemJenisBukti', function (newValue, oldValue) {
                 if (newValue != oldValue) {
-                    console.log($scope.item.itemJenisBukti.id)
+                    // console.log($scope.item.itemJenisBukti.id)
                     if($scope.item.itemJenisBukti.id == 3){
                         $scope.hidepanjar = false
+                        $scope.hidepengembalianpanjar = true
                         $scope.hidespm =true
                         $scope.hidejasgir =true
                         $scope.hidepajak =true
@@ -176,8 +180,36 @@ define(['initialize'], function (initialize) {
                                 ]
                             });
                         });
+                    }else if($scope.item.itemJenisBukti.id == 7){
+                        $scope.hidepengembalianpanjar = false
+                        $scope.hidepanjar = true
+                        $scope.hidespm =true
+                        $scope.hidejasgir =true
+                        $scope.hidepajak =true
+                        $scope.hidespj =true
+                        $scope.hidests =true
+                        $scope.hiderekanan = false
+                        medifirstService.get("perencanaan/get-datapengembalian-panjar-bku").then(function (e) {
+                        
+                            $scope.dataGridPengembalianPanjar = new kendo.data.DataSource({
+                                data:  e.data.data,
+                                pageSize: 10,
+                                total: e.data.data.length,
+                                group: $scope.group,
+                                serverPaging: false,
+                                schema: {
+                                    model: {
+                                        fields: {
+                                        }
+                                    }
+                                },
+                                aggregate: [
+                                ]
+                            });
+                        });
                     } else if($scope.item.itemJenisBukti.id == 1){
                         $scope.hidespm = false
+                        $scope.hidepengembalianpanjar = true
                         $scope.hidepanjar =true
                         $scope.hidejasgir =true
                         $scope.hidepajak =true
@@ -204,6 +236,7 @@ define(['initialize'], function (initialize) {
                         });
                     } else if($scope.item.itemJenisBukti.id == 5){
                         $scope.hidejasgir = false
+                        $scope.hidepengembalianpanjar = true
                         $scope.hidepanjar =true
                         $scope.hidespm =true
                         $scope.hidepajak =true
@@ -230,6 +263,7 @@ define(['initialize'], function (initialize) {
                         });
                     } else if($scope.item.itemJenisBukti.id == 4){
                         $scope.hidepajak = false
+                        $scope.hidepengembalianpanjar = true
                         $scope.hidepanjar =true
                         $scope.hidespm =true
                         $scope.hidejasgir =true
@@ -256,6 +290,7 @@ define(['initialize'], function (initialize) {
                         });
                     } else if($scope.item.itemJenisBukti.id == 6){
                         $scope.hidejasgir = true
+                        $scope.hidepengembalianpanjar = true
                         $scope.hidepanjar =true
                         $scope.hidespm =true
                         $scope.hidepajak =true
@@ -282,6 +317,7 @@ define(['initialize'], function (initialize) {
                         });
                     } else if($scope.item.itemJenisBukti.id == 2){
                         $scope.hidespm = true
+                        $scope.hidepengembalianpanjar = true
                         $scope.hidepanjar =true
                         $scope.hidejasgir =true
                         $scope.hidepajak =true
@@ -668,6 +704,49 @@ define(['initialize'], function (initialize) {
                 }
                 console.log($scope.selectedData2)
 			}
+            $scope.onClickSatuPengembalianPanjar = function (e, param) {
+
+				var element = $(e.currentTarget);
+				var checked = element.is(':checked')
+				var row = element.closest('tr')
+				var grid = $("#gridpengembalianpanjar").data("kendoGrid")
+				var dataItem = grid.dataItem(row);
+                $scope.item.uraianBKU = ''
+
+				if (checked) {
+					var result = $.grep($scope.selectedData2, function (e) {
+						return e.nospm == dataItem.nopanjar;
+					});
+					if (result.length == 0) {
+						$scope.selectedData2.push(dataItem);
+					} else {
+						for (var i = 0; i < $scope.selectedData2.length; i++)
+							if ($scope.selectedData2[i].nopanjar === dataItem.nopanjar) {
+								$scope.selectedData2.splice(i, 1);
+								break;
+							}
+						$scope.selectedData2.push(dataItem);
+					}
+					row.addClass("k-state-selected");
+                    
+				} else {
+					for (var i = 0; i < $scope.selectedData2.length; i++)
+						if ($scope.selectedData2[i].nopanjar === dataItem.nopanjar) {
+							$scope.selectedData2.splice(i, 1);
+							break;
+						}
+					row.removeClass("k-state-selected");
+				}
+
+                for (var i = 0; i < $scope.selectedData2.length; i++){
+                    if(i != $scope.selectedData2.length-1){
+                        $scope.item.uraianBKU += $scope.selectedData2[i].uraian + ', '
+                    } else{
+                        $scope.item.uraianBKU += $scope.selectedData2[i].uraian
+                    }
+                }
+                console.log($scope.selectedData2)
+			}
 
             var HttpClient = function () {
                 this.get = function (aUrl, aCallback) {
@@ -706,6 +785,7 @@ define(['initialize'], function (initialize) {
                 if(dataItem.id == 3){
                     if(dataItem.penerimaan == 0){
                         $scope.hidepanjar = false
+                        $scope.hidepengembalianpanjar = true
                         $scope.hidespm =true
                         $scope.hidejasgir =true
                         $scope.hidepajak =true
@@ -736,6 +816,7 @@ define(['initialize'], function (initialize) {
                         });
                     } else if(dataItem.penerimaan != 0){
                         $scope.hidepanjar = true
+                        $scope.hidepengembalianpanjar = true
                         $scope.hidespm =true
                         $scope.hidejasgir =true
                         $scope.hidepajak =true
@@ -769,6 +850,7 @@ define(['initialize'], function (initialize) {
                 } else if(dataItem.id == 1){
                     $scope.hidespm = false
                     $scope.hidepanjar =true
+                    $scope.hidepengembalianpanjar = true
                     $scope.hidejasgir =true
                     $scope.hidepajak =true
                     $scope.hidespj =true
@@ -799,6 +881,7 @@ define(['initialize'], function (initialize) {
                 } else if(dataItem.id == 5){
                     $scope.hidejasgir = false
                     $scope.hidepanjar =true
+                    $scope.hidepengembalianpanjar = true
                     $scope.hidespm =true
                     $scope.hidepajak =true
                     $scope.hidespj =true
@@ -829,6 +912,7 @@ define(['initialize'], function (initialize) {
                 } else if(dataItem.id == 6){
                     $scope.hidejasgir = true
                     $scope.hidepanjar =true
+                    $scope.hidepengembalianpanjar = true
                     $scope.hidespm =true
                     $scope.hidepajak =true
                     $scope.hidespj =true
@@ -860,6 +944,7 @@ define(['initialize'], function (initialize) {
                 } else if(dataItem.id == 4){
                     $scope.hidepajak = false
                     $scope.hidepanjar =true
+                    $scope.hidepengembalianpanjar = true
                     $scope.hidespm =true
                     $scope.hidejasgir =true
                     $scope.hidespj =true
@@ -891,6 +976,7 @@ define(['initialize'], function (initialize) {
                     console.log(dataItem)
                     $scope.hidespm = true
                     $scope.hidepanjar =true
+                    $scope.hidepengembalianpanjar = true
                     $scope.hidejasgir =true
                     $scope.hidepajak =true
                     $scope.hidespj =false
@@ -1082,6 +1168,74 @@ define(['initialize'], function (initialize) {
                 columns: [
                     {
 						"template": "<input type='checkbox' class='checkbox style-center' ng-click='onClickSatuPanjar($event,2)' />",
+						"width": "30px"
+					},
+                    {
+                        
+                        "field": "nopanjar",
+                        "title": "Nomor Panjar",
+                        "width": "100px",
+                    },
+                    {
+                        
+                        "field": "tglpanjar",
+                        "title": "Tgl Panjar",
+                        "width": "100px",
+                    },
+                    {
+                        
+                        "field": "uraian",
+                        "title": "Uraian",
+                        "width": "100px",
+                    },
+                    {
+                        
+                        "field": "jumlah",
+                        "title": "Jumlah",
+                        "width": "100px",
+                        "template": "<span class='style-right'>{{formatRupiah('#: jumlah #', 'Rp.')}}</span>",
+                    },
+                    {
+                        
+                        "field": "kodemataanggaran",
+                        "title": "Kode Rek.",
+                        "width": "100px",
+                    },
+                    {
+                        
+                        "field": "subkegiatan",
+                        "title": "Sub Kegiatan",
+                        "width": "100px",
+                    },
+                    {
+                        
+                        "field": "subsubkegiatan",
+                        "title": "Sub Sub Kegiatan",
+                        "width": "100px",
+                    },
+                    {
+                        
+                        "field": "jenispanjar",
+                        "title": "Jenis Panjar",
+                        "width": "100px",
+                    },
+                    // {
+                        
+                    //     "field": "jumlahpengembalian",
+                    //     "title": "Pengembalian",
+                    //     "width": "100px",
+                    //     "template": "<span class='style-right'>{{formatRupiah('#: jumlahpengembalian #', 'Rp.')}}</span>",
+                    // }
+                ]
+            };
+
+            $scope.columnGridPengembalianPanjar = {
+                sortable: true,
+                selectable: "multiple",
+                pageable: true,
+                columns: [
+                    {
+						"template": "<input type='checkbox' class='checkbox style-center' ng-click='onClickSatuPengembalianPanjar($event,2)' />",
 						"width": "30px"
 					},
                     {
