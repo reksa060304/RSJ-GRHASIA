@@ -116,10 +116,19 @@
                         <label c-label item="item">Jenis Aktifitas</label>
                     </div>
                     <div class="grid_12">
+                        <input style="width: 100%;" kendo-combo-box k-ng-model="item.aktifitas" k-data-text-field="'namaproduk'"
+                        k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listTindakan" />
+                    </div>
+                </div>
+                <!-- <div class="grid_12" style="padding:5px;">
+                    <div class="grid_12">
+                        <label c-label item="item">Jenis Aktifitas</label>
+                    </div>
+                    <div class="grid_12">
                         <textarea style="width: 100%;" c-text-area type="input" class="k-textbox"
                         ng-model="item.aktifitas" placeholder="Jenis Aktifitas"></textarea>
                     </div>
-                </div>
+                </div> -->
             </fieldset>
         </div>
         <div class="grid_12">

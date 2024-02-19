@@ -2138,9 +2138,10 @@ class RawatInapController extends ApiController
         ->get();
 
         $data = DB::table('auditapd_t as au')
-        ->select('au.*', 'pg.namalengkap as observer', 'jp.jenispegawai as profesi')
+        ->select('au.*', 'pg.namalengkap as observer', 'jp.jenispegawai as profesi', 'pr.namaproduk')
         ->join('pegawai_m as pg', 'au.objectpegawaifk', '=', 'pg.id')
         ->join('jenispegawai_m as jp', 'au.objectjenispegawaifk', '=', 'jp.id')
+        ->join('produk_m as pr', 'pr.id', '=', 'au.jenisaktifitas')
         ->where('au.kdprofile', $kdProfile)
         ->where('au.statusenabled', true)
         ->where('au.objectruanganfk', $request['objectruanganfk'])

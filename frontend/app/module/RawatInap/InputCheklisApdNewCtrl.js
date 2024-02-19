@@ -52,6 +52,14 @@ define(['initialize'], function (initialize) {
                 })
             }
 
+            $scope.search = function () {
+                if($scope.item.ruangan) {
+                    medifirstService.get('sysadmin/general/get-tindakan?idRuangan='+ $scope.item.ruangan.id, true, true, 10).then(function (e) {
+                        $scope.listTindakan = e;
+                    });
+                }
+            }
+
             function searchData() {
                 if(!$scope.item.bulan) {
                     toastr.error("Harap pilih bulan terlebih dahulu !");
@@ -147,7 +155,7 @@ define(['initialize'], function (initialize) {
                         locked: true,
                     },
                     {
-                        field: 'jenisaktifitas',
+                        field: 'namaproduk',
                         title: "JENIS AKTIFITAS",
                         width: 250,
                         locked: true,
@@ -249,7 +257,7 @@ define(['initialize'], function (initialize) {
                 $scope.item.observer = { id: dataItem.objectpegawaifk, namalengkap: dataItem.observer, }
                 $scope.item.tanggal = dataItem.tanggal
                 $scope.item.profesi = { value: dataItem.objectjenispegawaifk, text: dataItem.profesi, }
-                $scope.item.aktifitas = dataItem.jenisaktifitas
+                $scope.item.aktifitas = { id: dataItem.jenisaktifitas, namaproduk: dataItem.namaproduk, }
 
                 for (let i = 0; i < $scope.columndinamis.length; i++) {
                     const element = $scope.columndinamis[i];
@@ -324,7 +332,7 @@ define(['initialize'], function (initialize) {
                     "objectpegawaifk": $scope.item.observer.id,
                     "tanggal": moment($scope.item.tanggal).format("YYYY-MM-DD"),
                     "objectjenispegawaifk": $scope.item.profesi.value,
-                    "jenisaktifitas": $scope.item.aktifitas,
+                    "jenisaktifitas": $scope.item.aktifitas.id,
                     "objectruanganfk": $scope.item.ruangan.id,
                 }
                 const jsonsave = { ...json, "detail": jsontemp, }
