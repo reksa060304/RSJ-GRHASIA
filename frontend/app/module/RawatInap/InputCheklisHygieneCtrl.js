@@ -339,6 +339,16 @@ define(['initialize'], function (initialize) {
                 searchData();
             }
 
+            $scope.onlyone = function (data,item) {
+                for (let i = 0; i < data.length; i++) {
+                    const element = data[i];
+                    if($scope.item[element.field]) {
+                        $scope.item[element.field] = false
+                    }
+                }
+                $scope.item[item] = true;
+            }
+
             /////////////////////////////// // ///////
         }
     ]);

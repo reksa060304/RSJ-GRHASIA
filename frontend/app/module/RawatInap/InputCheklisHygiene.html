@@ -118,7 +118,7 @@
                 <div ng-if="data.field == ''">
                     <div class="grid_12"><label c-label item="item">{{data.title}}</label></div>
                     <div ng-repeat="detail in data.columns" class="grid_4">
-                        <input type="checkbox" class="k-checkbox" id="item.{{detail.field}}" ng-model="item[detail.field]">
+                        <input type="checkbox" class="k-checkbox" id="item.{{detail.field}}" ng-model="item[detail.field]" ng-click="onlyone(data.columns, detail.field)">
                         <label class="k-checkbox-label"for="item.{{detail.field}}">{{detail.title}}</label>
                     </div>
                 </div>
