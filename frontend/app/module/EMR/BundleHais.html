@@ -105,11 +105,37 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="grid_12">
+                                <div class="grid_4">
+                                    <div class="grid_12">
+                                        <label c-label item="item" c-label-text="Suhu"></label>
+                                    </div>
+                                    <div class="grid_12">
+                                        <input class="k-textbox" ng-model="item.suhu" type="text" placeholder="suhu">
+                                    </div>
+                                </div>
+                                <div class="grid_4">
+                                    <div class="grid_12">
+                                        <label c-label item="item" c-label-text="Diagnosa Medis"></label>
+                                    </div>
+                                    <div class="grid_12">
+                                        <input class="k-textbox" ng-model="item.diagnosa" type="text" placeholder="Diagnosa Medis">
+                                    </div>
+                                </div>
+                                <div class="grid_4">
+                                    <div class="grid_12">
+                                        <label c-label item="item" c-label-text="Tirah Baring"></label>
+                                    </div>
+                                    <div class="grid_12">
+                                        <input class="k-textbox" ng-model="item.tirahbaring" type="text" placeholder="Tirah Baring">
+                                    </div>
+                                </div>
+                            </div>
                             <div class="grid_12"> 
                                 <md-content class="md-padding">
                                      <md-content>
                                         <md-tabs md-dynamic-height md-border-bottom md-selected="myVarD">
-                                            <md-tab label="IAD">
+                                            <!-- <md-tab label="IAD">
                                                 <md-content class="md-padding">                                                
                                                     <div class="grid_12">
                                                         <kendo-grid id="kGrid1" data-source="dataSource1" options="column1"
@@ -209,6 +235,49 @@
                                                         </div>
                                                         <div class="grid_2">
                                                             <button class="btnTemplate1" style="margin-left: 0;background-color: red;" ng-click="BatalPHLEBITIS()" ><i
+                                                                    class="fa fa-ban"></i>Batal</button>
+                                                        </div>
+                                                    </div>
+                                                </md-content>
+                                            </md-tab> -->
+
+                                            <md-tab label="TINDAKAN">
+                                                <md-content class="md-padding">                                                
+                                                    <div class="grid_12">
+                                                        <kendo-grid id="kGrid6" data-source="dataSource6" options="column6"
+                                                            k-selectable="'row'" k-sortable="'true'" k-resizable="'true'"
+                                                            k-ng-model="dataSelected6" ng-click="klikGrid6(dataSelected6)">
+                                                        </kendo-grid>
+                                                    </div>
+                                                    <div class="grid_12">
+                                                        <div class="grid_8"></div>
+                                                        <div class="grid_2">
+                                                            <button class="btnTemplate1" style="margin-left: 0;background-color: green;" ng-click="SimpanTINDAKAN()" ng-show="visSimpan"><i
+                                                                    class="fa fa-floppy-o"></i>Simpan</button>
+                                                        </div>
+                                                        <div class="grid_2">
+                                                            <button class="btnTemplate1" style="margin-left: 0;background-color: red;" ng-click="BatalTINDAKAN()" ><i
+                                                                    class="fa fa-ban"></i>Batal</button>
+                                                        </div>
+                                                    </div>
+                                                </md-content>
+                                            </md-tab>
+                                            <md-tab label="Infeksi Rumah Sakit">
+                                                <md-content class="md-padding">                                                
+                                                    <div class="grid_12">
+                                                        <kendo-grid id="kGrid7" data-source="dataSource7" options="column7"
+                                                            k-selectable="'row'" k-sortable="'true'" k-resizable="'true'"
+                                                            k-ng-model="dataSelected7" ng-click="klikGrid7(dataSelected7)">
+                                                        </kendo-grid>
+                                                    </div>
+                                                    <div class="grid_12">
+                                                        <div class="grid_8"></div>
+                                                        <div class="grid_2">
+                                                            <button class="btnTemplate1" style="margin-left: 0;background-color: green;" ng-click="SimpanINFEKSIRUMAHSAKIT()" ><i
+                                                                    class="fa fa-floppy-o"></i>Simpan</button>
+                                                        </div>
+                                                        <div class="grid_2">
+                                                            <button class="btnTemplate1" style="margin-left: 0;background-color: red;" ng-click="BatalINFEKSIRUMAHSAKIT()" ><i
                                                                     class="fa fa-ban"></i>Batal</button>
                                                         </div>
                                                     </div>

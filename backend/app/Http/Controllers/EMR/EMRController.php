@@ -13642,7 +13642,7 @@ class EMRController  extends ApiController
 
         $data = collect(DB::select("
             SELECT bd.norec,bd.notransaksi,bd.tglpemeriksaan,bd.petugasfk,pg.namalengkap,
-                   apd.objectruanganfk,ru.namaruangan,bd.jenisbundle
+                   apd.objectruanganfk,ru.namaruangan,bd.jenisbundle,bd.suhu,bd.diagnosa,bd.tirahbaring
             FROM bundlehai_t AS bd
             INNER JOIN pasiendaftar_t AS pd ON pd.norec = bd.norec_pd
             INNER JOIN antrianpasiendiperiksa_t AS apd ON apd.norec = bd.norec_apd
@@ -13759,6 +13759,15 @@ class EMRController  extends ApiController
             $head->norec_apd = $request['norec_apd'];
             $head->tglpemeriksaan = $request['tanggal'];
             $head->petugasfk = $request['petugas'];
+            if(isset($request['suhu'])) {
+                $head->suhu = $request['suhu'];
+            }
+            if(isset($request['diagnosa'])) {
+                $head->diagnosa = $request['diagnosa'];
+            }
+            if(isset($request['tirahbaring'])) {
+                $head->tirahbaring = $request['tirahbaring'];
+            }
             $head->save();
             $norec = $head->norec;
 

@@ -19,6 +19,8 @@ define(['initialize'], function (initialize) {
             var dataVAP = [];
             var dataIDO = [];
             var dataPHLEBITIS = [];
+            var dataTINDAKAN = [];
+            var dataINFEKSIRUMAHSAKIT = [];
             var noRegistrasi = '';
             var nocm_str = '';
             LoadCacheHelper();           
@@ -209,12 +211,66 @@ define(['initialize'], function (initialize) {
                 })
             }
 
+            function loadTINDAKAN(){
+                $scope.isRouteLoading = true;
+                medifirstService.get('sysadmin/general/get-data-master-bundlehai?jenis=TINDAKAN').then(function (data) {
+                    $scope.isRouteLoading = false;
+                    var dataBundle = data.data;
+                    for (var i = dataBundle.length - 1; i >= 0; i--) {
+                        // dataBundle[i].no = i + 1;
+                        dataBundle[i].statusiya = false;
+                        dataBundle[i].statustidak = false;
+                    }
+                    dataTINDAKAN = dataBundle;
+                    $scope.dataSource6 = new kendo.data.DataSource({
+                        data: dataTINDAKAN,                        
+                        pageSize: dataTINDAKAN.length,
+                        total: dataTINDAKAN.length,
+                        serverPaging: false,
+                        schema: {
+                            model: {
+                                fields: {
+                                }
+                            }
+                        }                        
+                    });
+                })
+            }
+
+            function loadINFEKSIRUMAHSAKIT(){
+                $scope.isRouteLoading = true;
+                medifirstService.get('sysadmin/general/get-data-master-bundlehai?jenis=INFEKSIRUMAHSAKIT').then(function (data) {
+                    $scope.isRouteLoading = false;
+                    var dataBundle = data.data;
+                    for (var i = dataBundle.length - 1; i >= 0; i--) {
+                        // dataBundle[i].no = i + 1;
+                        dataBundle[i].statusiya = false;
+                        dataBundle[i].statustidak = false;
+                    }
+                    dataINFEKSIRUMAHSAKIT = dataBundle;
+                    $scope.dataSource7 = new kendo.data.DataSource({
+                        data: dataINFEKSIRUMAHSAKIT,                        
+                        pageSize: dataINFEKSIRUMAHSAKIT.length,
+                        total: dataINFEKSIRUMAHSAKIT.length,
+                        serverPaging: false,
+                        schema: {
+                            model: {
+                                fields: {
+                                }
+                            }
+                        }                        
+                    });
+                })
+            }
+
             function firstLoad(){
                 loadIAD();
                 loadISK();
                 loadVAP();
                 loadIDO();
                 loadPHLEBITIS();          
+                loadTINDAKAN();          
+                loadINFEKSIRUMAHSAKIT();          
             }
 
             function ClearAll(){
@@ -227,6 +283,9 @@ define(['initialize'], function (initialize) {
                 $scope.myVar = 2    
                 $scope.listPetugas = [{ id: medifirstService.getPegawaiLogin().id, namalengkap: medifirstService.getPegawaiLogin().namaLengkap }];
                 $scope.item.Petugas = { id: medifirstService.getPegawaiLogin().id, namalengkap: medifirstService.getPegawaiLogin().namaLengkap };                       
+                delete $scope.item.suhu;
+                delete $scope.item.diagnosa;
+                delete $scope.item.tirahbaring;
             }
 
             $scope.klikGrid = function(dataSelected){
@@ -242,6 +301,9 @@ define(['initialize'], function (initialize) {
                     $scope.item.tglInput = moment($scope.dataSelected.tglpemeriksaan).format('YYYY-MM-DD HH:mm');
                     $scope.listPetugas = [{id: $scope.dataSelected.petugsafk, namalengkap: $scope.dataSelected.namalengkap}];
                     $scope.item.Petugas = {id: $scope.dataSelected.petugsafk, namalengkap: $scope.dataSelected.namalengkap};
+                    $scope.item.suhu = $scope.dataSelected.suhu;
+                    $scope.item.diagnosa = $scope.dataSelected.diagnosa;
+                    $scope.item.tirahbaring = $scope.dataSelected.tirahbaring;
                     LoadHistory();
                 } else {
                     window.messageContainer.error("Data Belum Dipilih!");
@@ -356,6 +418,40 @@ define(['initialize'], function (initialize) {
                             data: dataPHLEBITIS,                        
                             pageSize: dataPHLEBITIS.length,
                             total: dataPHLEBITIS.length,
+                            serverPaging: false,
+                            schema: {
+                                model: {
+                                    fields: {
+                                    }
+                                }
+                            }                        
+                        });
+                    }else if (jenisBundle == "TINDAKAN") {
+                        $scope.item.norecTINDAKAN = norecTransaksi;
+                        $scope.myVar = 2;
+                        $scope.myVarD = 0;                        
+                        dataTINDAKAN = datas;
+                        $scope.dataSource6 = new kendo.data.DataSource({
+                            data: dataTINDAKAN,                        
+                            pageSize: dataTINDAKAN.length,
+                            total: dataTINDAKAN.length,
+                            serverPaging: false,
+                            schema: {
+                                model: {
+                                    fields: {
+                                    }
+                                }
+                            }                        
+                        });
+                    }else if (jenisBundle == "INFEKSIRUMAHSAKIT") {
+                        $scope.item.norecINFEKSIRUMAHSAKIT = norecTransaksi;
+                        $scope.myVar = 2;
+                        $scope.myVarD = 1;                        
+                        dataINFEKSIRUMAHSAKIT = datas;
+                        $scope.dataSource7 = new kendo.data.DataSource({
+                            data: dataINFEKSIRUMAHSAKIT,                        
+                            pageSize: dataINFEKSIRUMAHSAKIT.length,
+                            total: dataINFEKSIRUMAHSAKIT.length,
                             serverPaging: false,
                             schema: {
                                 model: {
@@ -604,6 +700,78 @@ define(['initialize'], function (initialize) {
                     ]
             };
 
+            $scope.column6 = {
+                selectable: 'row',
+                pageable: true,
+                columns:
+                    [
+                        // {
+                        //     "field": "no",
+                        //     "title": "No",
+                        //     "width": "60px",                            
+                        // },
+                        {
+                            "field": "keterangan",
+                            "title": "Keterangan",
+                            "width": "150px"
+                        },
+                        {
+                            "title": "Ya",
+                            template: "# if (statusiya) { #" +
+                                "<input type='checkbox' class='checkbox' ng-click='selectRowYa6(dataItem)' checked />" +
+                                "# } else { #" +
+                                "<input type='checkbox' class='checkbox' ng-click='selectRowYa6(dataItem)' />" +
+                                "# } #",
+                            width: "50px"
+                        },
+                        {
+                            "title": "Tidak",
+                            template: "# if (statustidak) { #" +
+                                "<input type='checkbox' class='checkbox' ng-click='selectRowTidak6(dataItem)' checked />" +
+                                "# } else { #" +
+                                "<input type='checkbox' class='checkbox' ng-click='selectRowTidak6(dataItem)' />" +
+                                "# } #",
+                            width: "50px"
+                        },
+                    ]
+            };
+
+            $scope.column7 = {
+                selectable: 'row',
+                pageable: true,
+                columns:
+                    [
+                        // {
+                        //     "field": "no",
+                        //     "title": "No",
+                        //     "width": "60px",                            
+                        // },
+                        {
+                            "field": "keterangan",
+                            "title": "Keterangan",
+                            "width": "150px"
+                        },
+                        {
+                            "title": "Ya",
+                            template: "# if (statusiya) { #" +
+                                "<input type='checkbox' class='checkbox' ng-click='selectRowYa7(dataItem)' checked />" +
+                                "# } else { #" +
+                                "<input type='checkbox' class='checkbox' ng-click='selectRowYa7(dataItem)' />" +
+                                "# } #",
+                            width: "50px"
+                        },
+                        {
+                            "title": "Tidak",
+                            template: "# if (statustidak) { #" +
+                                "<input type='checkbox' class='checkbox' ng-click='selectRowTidak7(dataItem)' checked />" +
+                                "# } else { #" +
+                                "<input type='checkbox' class='checkbox' ng-click='selectRowTidak7(dataItem)' />" +
+                                "# } #",
+                            width: "50px"
+                        },
+                    ]
+            };
+
             $scope.selectRowYa1 = function (dataItem) {
                 var dataSelect = _.find($scope.dataSource1._data, function (data) {
                     return data.idbundle == dataItem.idbundle;
@@ -724,6 +892,54 @@ define(['initialize'], function (initialize) {
                 }
             }
 
+            $scope.selectRowYa6 = function (dataItem) {
+                var dataSelect = _.find($scope.dataSource6._data, function (data) {
+                    return data.idbundle == dataItem.idbundle;
+                });
+                if (dataSelect.statusiya) {
+                    dataSelect.statusiya = false;
+                }
+                else {
+                    dataSelect.statusiya = true;
+                }
+            }
+
+            $scope.selectRowTidak6 = function (dataItem) {
+                var dataSelect = _.find($scope.dataSource6._data, function (data) {
+                    return data.idbundle == dataItem.idbundle;
+                });
+                if (dataSelect.statustidak) {
+                    dataSelect.statustidak = false;
+                }
+                else {
+                    dataSelect.statustidak = true;
+                }
+            }
+
+            $scope.selectRowYa7 = function (dataItem) {
+                var dataSelect = _.find($scope.dataSource7._data, function (data) {
+                    return data.idbundle == dataItem.idbundle;
+                });
+                if (dataSelect.statusiya) {
+                    dataSelect.statusiya = false;
+                }
+                else {
+                    dataSelect.statusiya = true;
+                }
+            }
+
+            $scope.selectRowTidak7 = function (dataItem) {
+                var dataSelect = _.find($scope.dataSource7._data, function (data) {
+                    return data.idbundle == dataItem.idbundle;
+                });
+                if (dataSelect.statustidak) {
+                    dataSelect.statustidak = false;
+                }
+                else {
+                    dataSelect.statustidak = true;
+                }
+            }
+
             $scope.BatalIAD = function(){
                 $scope.item.norecIAD = undefined;
                 loadIAD();
@@ -736,6 +952,9 @@ define(['initialize'], function (initialize) {
                     norec : $scope.item.norecIAD != undefined ? $scope.item.norecIAD : "",
                     tanggal : moment($scope.item.tglInput).format('YYYY-MM-DD HH:mm'),
                     petugas : $scope.item.Petugas.id,
+                    suhu : $scope.item.suhu,
+                    diagnosa : $scope.item.diagnosa,
+                    tirahbaring : $scope.item.tirahbaring,
                     norec_pd : norec_pd,
                     norec_apd : norec_apd,
                     jenis : "IAD",
@@ -763,6 +982,9 @@ define(['initialize'], function (initialize) {
                     norec : $scope.item.norecISK != undefined ? $scope.item.norecISK : "",
                     tanggal : moment($scope.item.tglInput).format('YYYY-MM-DD HH:mm'),
                     petugas : $scope.item.Petugas.id,
+                    suhu : $scope.item.suhu,
+                    diagnosa : $scope.item.diagnosa,
+                    tirahbaring : $scope.item.tirahbaring,
                     norec_pd : norec_pd,
                     norec_apd : norec_apd,
                     jenis : "ISK",
@@ -790,6 +1012,9 @@ define(['initialize'], function (initialize) {
                     norec : $scope.item.norecVAP != undefined ? $scope.item.norecVAP : "",
                     tanggal : moment($scope.item.tglInput).format('YYYY-MM-DD HH:mm'),
                     petugas : $scope.item.Petugas.id,
+                    suhu : $scope.item.suhu,
+                    diagnosa : $scope.item.diagnosa,
+                    tirahbaring : $scope.item.tirahbaring,
                     norec_pd : norec_pd,
                     norec_apd : norec_apd,
                     jenis : "VAP",
@@ -817,6 +1042,9 @@ define(['initialize'], function (initialize) {
                     norec : $scope.item.norecIDO != undefined ? $scope.item.norecIDO : "",
                     tanggal : moment($scope.item.tglInput).format('YYYY-MM-DD HH:mm'),
                     petugas : $scope.item.Petugas.id,
+                    suhu : $scope.item.suhu,
+                    diagnosa : $scope.item.diagnosa,
+                    tirahbaring : $scope.item.tirahbaring,
                     norec_pd : norec_pd,
                     norec_apd : norec_apd,
                     jenis : "IDO",
@@ -844,10 +1072,73 @@ define(['initialize'], function (initialize) {
                     norec : $scope.item.norecPHLEBITIS != undefined ? $scope.item.norecPHLEBITIS : "",
                     tanggal : moment($scope.item.tglInput).format('YYYY-MM-DD HH:mm'),
                     petugas : $scope.item.Petugas.id,
+                    suhu : $scope.item.suhu,
+                    diagnosa : $scope.item.diagnosa,
+                    tirahbaring : $scope.item.tirahbaring,
                     norec_pd : norec_pd,
                     norec_apd : norec_apd,
                     jenis : "PHLEBITIS",
                     detail : $scope.dataSource5._data
+                }
+                medifirstService.post('emr/save-emr-bundlehai', objSave).then(function (e) {
+                    $scope.isRouteLoading = false;
+                    $scope.visSimpan = true;
+                    init();
+                }, function (error) {
+                    $scope.isRouteLoading = false;
+                    $scope.visSimpan = true;
+                });
+            }
+
+            $scope.BatalTINDAKAN = function(){
+                $scope.item.norecTINDAKAN = undefined;
+                loadTINDAKAN();
+            }
+
+            $scope.SimpanTINDAKAN = function(){
+                $scope.isRouteLoading = true;
+                $scope.visSimpan = false;
+                var objSave = {
+                    norec : $scope.item.norecTINDAKAN != undefined ? $scope.item.norecTINDAKAN : "",
+                    tanggal : moment($scope.item.tglInput).format('YYYY-MM-DD HH:mm'),
+                    petugas : $scope.item.Petugas.id,
+                    suhu : $scope.item.suhu,
+                    diagnosa : $scope.item.diagnosa,
+                    tirahbaring : $scope.item.tirahbaring,
+                    norec_pd : norec_pd,
+                    norec_apd : norec_apd,
+                    jenis : "TINDAKAN",
+                    detail : $scope.dataSource6._data
+                }
+                medifirstService.post('emr/save-emr-bundlehai', objSave).then(function (e) {
+                    $scope.isRouteLoading = false;
+                    $scope.visSimpan = true;
+                    init();
+                }, function (error) {
+                    $scope.isRouteLoading = false;
+                    $scope.visSimpan = true;
+                });
+            }
+
+            $scope.BatalINFEKSIRUMAHSAKIT = function(){
+                $scope.item.norecINFEKSIRUMAHSAKIT = undefined;
+                loadINFEKSIRUMAHSAKIT();
+            }
+
+            $scope.SimpanINFEKSIRUMAHSAKIT = function(){
+                $scope.isRouteLoading = true;
+                $scope.visSimpan = false;
+                var objSave = {
+                    norec : $scope.item.norecINFEKSIRUMAHSAKIT != undefined ? $scope.item.norecINFEKSIRUMAHSAKIT : "",
+                    tanggal : moment($scope.item.tglInput).format('YYYY-MM-DD HH:mm'),
+                    petugas : $scope.item.Petugas.id,
+                    suhu : $scope.item.suhu,
+                    diagnosa : $scope.item.diagnosa,
+                    tirahbaring : $scope.item.tirahbaring,
+                    norec_pd : norec_pd,
+                    norec_apd : norec_apd,
+                    jenis : "INFEKSIRUMAHSAKIT",
+                    detail : $scope.dataSource7._data
                 }
                 medifirstService.post('emr/save-emr-bundlehai', objSave).then(function (e) {
                     $scope.isRouteLoading = false;
