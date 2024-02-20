@@ -7187,17 +7187,35 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
         
         // select ap.id idasalproduk, ap.asalproduk, (right(left(bku.nobku, -4), 2))::int4 nourut, rm.namarekanan, bku.norec norecbku, bku.nobku, jb.jenisbukti, jb.id, bku.objectmataanggaranfk kodemataanggaran, bku.tglbku, bku.uraianbku, bku.penerimaan, bku.pengeluaran, bku.saldo
         $data = DB::select(DB::raw("
-        select ap.id idasalproduk, ap.asalproduk, ROW_NUMBER ( ) OVER ( ORDER BY bku.nobku ) nourut, rm.namarekanan, bku.norec norecbku, bku.nobku, jb.jenisbukti, jb.id, bku.objectmataanggaranfk kodemataanggaran, bku.tglbku, bku.uraianbku, bku.penerimaan, bku.pengeluaran, bku.saldo
-        from bukukasumum_t bku
-        left join jenisbukti_m jb on jb.id = bku.objectjenisbuktifk
-        left join rekanan_m rm on rm.id = bku.rekananfk
-        left join asalproduk_m ap on ap.id = bku.objectasalprodukfk
-        where bku.statusenabled = true and bku.kdprofile = 30
-        $rekanan
-        $asalproduk
-        $qkey
-        and tglbku between '$tglAwal' and '$tglAkhir'
-        order by tgljam DESC
+        SELECT
+                ap.id as idasalproduk,
+                ap.asalproduk,
+                ROW_NUMBER() OVER (ORDER BY bku.tglbku) AS nourut,
+                rm.namarekanan,
+                bku.norec as norecbku,
+                bku.nobku,
+                jb.jenisbukti,
+                jb.id,
+                bku.objectmataanggaranfk as kodemataanggaran,
+                bku.tglbku,
+                bku.uraianbku,
+                bku.penerimaan,
+                bku.pengeluaran,
+                SUM(bku.penerimaan - bku.pengeluaran) OVER (ORDER BY bku.nobku) AS saldo
+            FROM
+                bukukasumum_t bku
+            LEFT JOIN jenisbukti_m jb ON jb.id = bku.objectjenisbuktifk
+            LEFT JOIN rekanan_m rm ON rm.id = bku.rekananfk
+            LEFT JOIN asalproduk_m ap ON ap.id = bku.objectasalprodukfk
+            WHERE
+                bku.statusenabled = true
+                AND bku.kdprofile = 30
+                    $rekanan
+                    $asalproduk
+                    $qkey
+            AND tglbku BETWEEN '$tglAwal' AND '$tglAkhir'
+            ORDER BY nobku DESC
+
         ")
         );
 
