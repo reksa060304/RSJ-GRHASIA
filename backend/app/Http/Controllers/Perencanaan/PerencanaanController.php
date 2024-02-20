@@ -4126,8 +4126,8 @@ class PerencanaanController extends ApiController {
         $penerimaan = 0;
         $pengeluaran = 0;
 
-        $saldoakhir = DB::select(DB::raw("select saldo from bukukasumum_t where statusenabled = true and kdprofile = 30 
-        order by tgljam DESC limit 1"));
+        $saldoakhir = DB::select(DB::raw("SELECT saldo FROM bukukasumum_t WHERE statusenabled = true AND kdprofile = 30 AND objectasalprodukfk = '" . $request['asalproduk'] . "' ORDER BY nobku DESC LIMIT 1"));
+        return $saldoakhir;
         if(count($saldoakhir) == 0){
             $saldofix = 0;
         } else{
