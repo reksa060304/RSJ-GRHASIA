@@ -149,7 +149,7 @@ define(['initialize'], function (initialize) {
             }
 
             $scope.kirim = function(){
-                debugger;
+                // debugger;
                 if ($scope.dataSelected == undefined) {
                     toastr.error("Pilih yg akan di ubah!!")
                     return;
