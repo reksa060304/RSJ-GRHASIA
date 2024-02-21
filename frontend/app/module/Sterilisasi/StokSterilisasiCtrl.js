@@ -149,7 +149,7 @@ define(['initialize'], function (initialize) {
                     },
                     {
                         "field": "kdsirs",
-                        "title": "Kode Produk",
+                        "title": "Kode Produk SIRS",
                         "width": "50px",
                     },
                     {

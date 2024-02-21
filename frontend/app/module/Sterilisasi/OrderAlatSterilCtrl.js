@@ -82,7 +82,8 @@ define(['initialize'], function (initialize) {
                     var dataCombo = dat.data;
                     $scope.listDataJabatan = dataCombo.jabatan;
                     // $scope.listPenulisResep = dat.data.penulisresep;
-                    $scope.listRuangan = dataCombo.ruanganall//medifirstService.getMapLoginUserToRuangan();
+                    $scope.listRuangan = medifirstService.getMapLoginUserToRuangan();                   
+                    // $scope.listRuangan = dataCombo.ruanganall;
                     $scope.listAsalProduk = dataCombo.asalproduk;
                     $scope.listProduk = dataCombo.produk;
                     $scope.listRuanganTujuan = dataCombo.ruangancssd;

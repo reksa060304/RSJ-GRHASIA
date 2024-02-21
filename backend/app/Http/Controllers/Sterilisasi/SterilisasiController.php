@@ -1936,7 +1936,7 @@ class SterilisasiController extends ApiController
             FROM
                 matachana_t AS mch 
                 LEFT JOIN ruangan_m AS ru ON ru.id = mch.ruangantujuanfk
-                LEFT JOIN pegawai_m AS pg ON pg.id = mch.namapetugas
+                LEFT JOIN pegawai_m AS pg ON pg.id = mch.petugasfk
                 LEFT JOIN strukkirim_t AS sk ON sk.nokirim = mch.nostruk
                 LEFT JOIN kirimproduk_t AS kp ON kp.nokirimfk = sk.norec
                 LEFT JOIN produk_m AS prd ON prd.id = kp.objectprodukfk 
