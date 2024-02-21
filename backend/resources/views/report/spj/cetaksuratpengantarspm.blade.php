@@ -114,9 +114,9 @@
                     <td></td>
                     <td style="padding: 5px;height:200px;" align="center" colspan="2">
                         YOGYAKARTA,{{$tgl}}<br>
-                        Direktur<br><br><br><br><br><br><br><br><br>
-                        dr. Akhmad Akhadi Syamsudhuha, M.P.H<br>
-                        NIP. 19680714 200012 1 002<br>
+                        Bendahara Pengeluaran<br><br><br><br><br><br><br><br><br>
+                        Christina Dewi Isti Paramita, S.E.<br>
+                        NIP. 19841027 201502 2 001<br>
                     </td>
                 </tr>
             </table>

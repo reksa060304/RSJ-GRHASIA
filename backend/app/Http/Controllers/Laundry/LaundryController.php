@@ -3044,9 +3044,7 @@ class LaundryController extends ApiController
                 SUM(x.tgl29) AS tgl29,
                 SUM(x.tgl30) AS tgl30,
                 SUM(x.tgl31) AS tgl31,
-                SUM(x.tgl01) + SUM(x.tgl02) + SUM(x.tgl03) + SUM(x.tgl04) + SUM(x.tgl05) + SUM(x.tgl06) + SUM(x.tgl07) + SUM(x.tgl08) + SUM(x.tgl09) + SUM(x.tgl10) + SUM(x.tgl11) + SUM(x.tgl12) + SUM(x.tgl13) + SUM(x.tgl14) + SUM(x.tgl15) + SUM(x.tgl16) + SUM(x.tgl17) + SUM(x.tgl18) + SUM(x.tgl19) + SUM(x.tgl20) + SUM(x.tgl21) + SUM(x.tgl22) + SUM(x.tgl23) + SUM(x.tgl24) + SUM(x.tgl25) + SUM(x.tgl26) + SUM(x.tgl27) + SUM(x.tgl28) + SUM(x.tgl29) + SUM(x.tgl30) + SUM(x.tgl31) AS jumlah,
-                (SUM(x.tgl01) + SUM(x.tgl02) + SUM(x.tgl03) + SUM(x.tgl04) + SUM(x.tgl05) + SUM(x.tgl06) + SUM(x.tgl07) + SUM(x.tgl08) + SUM(x.tgl09) + SUM(x.tgl10) + SUM(x.tgl11) + SUM(x.tgl12) + SUM(x.tgl13) + SUM(x.tgl14) + SUM(x.tgl15) + SUM(x.tgl16) + SUM(x.tgl17) + SUM(x.tgl18) + SUM(x.tgl19) + SUM(x.tgl20) + SUM(x.tgl21) + SUM(x.tgl22) + SUM(x.tgl23) + SUM(x.tgl24) + SUM(x.tgl25) + SUM(x.tgl26) + SUM(x.tgl27) + SUM(x.tgl28) + SUM(x.tgl29) + SUM(x.tgl30) + SUM(x.tgl31)) * (x.kekuatan::INT) AS jumlahkg, 
-                x.kekuatan AS estimasikg
+                SUM(x.tgl01) + SUM(x.tgl02) + SUM(x.tgl03) + SUM(x.tgl04) + SUM(x.tgl05) + SUM(x.tgl06) + SUM(x.tgl07) + SUM(x.tgl08) + SUM(x.tgl09) + SUM(x.tgl10) + SUM(x.tgl11) + SUM(x.tgl12) + SUM(x.tgl13) + SUM(x.tgl14) + SUM(x.tgl15) + SUM(x.tgl16) + SUM(x.tgl17) + SUM(x.tgl18) + SUM(x.tgl19) + SUM(x.tgl20) + SUM(x.tgl21) + SUM(x.tgl22) + SUM(x.tgl23) + SUM(x.tgl24) + SUM(x.tgl25) + SUM(x.tgl26) + SUM(x.tgl27) + SUM(x.tgl28) + SUM(x.tgl29) + SUM(x.tgl30) + SUM(x.tgl31) AS jumlah
             FROM (
                 SELECT 
                     ru.namaruangan,
@@ -3158,9 +3156,7 @@ class LaundryController extends ApiController
                 SUM(x.tgl29) AS tgl29,
                 SUM(x.tgl30) AS tgl30,
                 SUM(x.tgl31) AS tgl31,
-                SUM(x.tgl01) + SUM(x.tgl02) + SUM(x.tgl03) + SUM(x.tgl04) + SUM(x.tgl05) + SUM(x.tgl06) + SUM(x.tgl07) + SUM(x.tgl08) + SUM(x.tgl09) + SUM(x.tgl10) + SUM(x.tgl11) + SUM(x.tgl12) + SUM(x.tgl13) + SUM(x.tgl14) + SUM(x.tgl15) + SUM(x.tgl16) + SUM(x.tgl17) + SUM(x.tgl18) + SUM(x.tgl19) + SUM(x.tgl20) + SUM(x.tgl21) + SUM(x.tgl22) + SUM(x.tgl23) + SUM(x.tgl24) + SUM(x.tgl25) + SUM(x.tgl26) + SUM(x.tgl27) + SUM(x.tgl28) + SUM(x.tgl29) + SUM(x.tgl30) + SUM(x.tgl31) AS jumlah,
-                (SUM(x.tgl01) + SUM(x.tgl02) + SUM(x.tgl03) + SUM(x.tgl04) + SUM(x.tgl05) + SUM(x.tgl06) + SUM(x.tgl07) + SUM(x.tgl08) + SUM(x.tgl09) + SUM(x.tgl10) + SUM(x.tgl11) + SUM(x.tgl12) + SUM(x.tgl13) + SUM(x.tgl14) + SUM(x.tgl15) + SUM(x.tgl16) + SUM(x.tgl17) + SUM(x.tgl18) + SUM(x.tgl19) + SUM(x.tgl20) + SUM(x.tgl21) + SUM(x.tgl22) + SUM(x.tgl23) + SUM(x.tgl24) + SUM(x.tgl25) + SUM(x.tgl26) + SUM(x.tgl27) + SUM(x.tgl28) + SUM(x.tgl29) + SUM(x.tgl30) + SUM(x.tgl31)) * (x.kekuatan::INT) AS jumlahkg, 
-                x.kekuatan AS estimasikg
+                SUM(x.tgl01) + SUM(x.tgl02) + SUM(x.tgl03) + SUM(x.tgl04) + SUM(x.tgl05) + SUM(x.tgl06) + SUM(x.tgl07) + SUM(x.tgl08) + SUM(x.tgl09) + SUM(x.tgl10) + SUM(x.tgl11) + SUM(x.tgl12) + SUM(x.tgl13) + SUM(x.tgl14) + SUM(x.tgl15) + SUM(x.tgl16) + SUM(x.tgl17) + SUM(x.tgl18) + SUM(x.tgl19) + SUM(x.tgl20) + SUM(x.tgl21) + SUM(x.tgl22) + SUM(x.tgl23) + SUM(x.tgl24) + SUM(x.tgl25) + SUM(x.tgl26) + SUM(x.tgl27) + SUM(x.tgl28) + SUM(x.tgl29) + SUM(x.tgl30) + SUM(x.tgl31) AS jumlah
             FROM (
                 SELECT 
                     ru.namaruangan,

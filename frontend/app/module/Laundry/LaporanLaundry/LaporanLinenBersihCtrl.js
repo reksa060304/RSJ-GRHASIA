@@ -349,17 +349,7 @@ define(['initialize'], function (initialize) {
                         field: "jumlah",
                         title: "Jumlah/Lembar",
                         width: "80px"
-                    },
-                    {
-                        field: "jumlahkg",
-                        title: "Jumlah/Kg",
-                        width: "80px"
-                    },
-                    {
-                        field: "estimasikg",
-                        title: "Estimasi Kg",
-                        width: "80px"
-                    },
+                    }
                 ],
                 selectable: "cell",
                 sortable: true
