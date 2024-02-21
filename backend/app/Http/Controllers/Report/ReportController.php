@@ -16358,4 +16358,207 @@ public function suratBuktiPengembalian(Request $request)
         );
     }
 
+    public function cetakDaftarBarangAsset(Request $request)
+    {
+        $kdProfile = (int) $request['kodeprofile'];
+
+        $data = \DB::table('registrasiaset_t as ra')
+            ->leftJOIN('strukpelayanan_t as sp','sp.norec','=','ra.nostrukterimafk')
+            ->leftJOIN('strukpelayanandetail_t as spd','spd.norec','=','ra.nostrukterimadetailfk')
+            ->leftJOIN('produk_m as pr','pr.id','=','ra.idprodukfk')
+            ->leftJOIN('merkproduk_m as mrk', 'mrk.id', '=', 'ra.objectmerkprodukfk')
+            ->leftJOIN('detailjenisproduk_m as djp','djp.id','=','pr.objectdetailjenisprodukfk')
+            ->leftJOIN('jenisproduk_m as jp','jp.id','=','djp.objectjenisprodukfk')
+            ->leftJOIN('kelompokproduk_m as kp','kp.id','=','jp.objectkelompokprodukfk')
+            ->leftJOIN('satuanstandar_m as ss','ss.id','=','pr.objectsatuanstandarfk')
+            ->leftJOIN('asalproduk_m as ap','ap.id','=','ra.objectasalprodukfk')
+            // ->leftJOIN('ruangan_m as ru','ru.id','=','ra.objectruanganfk')
+            ->leftJOIN('ruangan_m as ru1','ru1.id','=','ra.objectruanganposisicurrentfk')
+            ->leftJOIN('rekanan_m as rek','rek.id','=','ra.objectsupplier')
+            ->select('ra.norec','ra.noregisteraset','ra.objectprodukfk as kdproduk','pr.namaproduk','jp.jenisproduk',
+                     'ru1.id as ruanganasalfk','ru1.namaruangan as namaruanganasal',
+                     'ra.tglregisteraset','ra.tglstrukterima','ra.qtyprodukaset','ra.hargaperolehan','ra.tglregisteraset','ra.tglstrukterima',
+                     'rek.namarekanan as namasupplier','rek.alamatlengkap as almSupplier','sp.norec as norecsp',
+                     'spd.norec as norecspd','ap.asalproduk','ra.keteranganlainnya','ra.spesifikasi','ra.jenisaset','ra.judul','ra.kdbmn', 'ra.koderegisterrs', 'ra.tahunperolehan', 'pr.deskripsiproduk', 'mrk.merkproduk', 'ra.nilaisisa')
+            ->where('ra.kdprofile', $kdProfile);
+
+        if (isset($request['tglAwal']) && $request['tglAwal'] != "" && $request['tglAwal'] != "undefined") {
+            $data = $data->where('ra.tglregisteraset', '>=', $request['tglAwal']);
+        }
+        if (isset($request['tglAkhir']) && $request['tglAkhir'] != "" && $request['tglAkhir'] != "undefined") {
+            $data = $data->where('ra.tglregisteraset', '<=', $request['tglAkhir']);
+        }
+
+        $data = $data->orderBy('ra.noregisteraset');
+        $data = $data->take(100);
+        $data = $data->get();
+
+        return view('report.asset.cetakan', compact('data'));
+    }
+
+    public function cetakKartuInventarisRuangan(Request $request)
+    {
+        $kdProfile = (int) $request['kodeprofile'];
+
+        $data = DB::select(
+            DB::raw("
+                SELECT
+                    x.namaproduk,
+                    x.merkproduk,
+                    x.noseri,
+                    x.norangka,
+                    x.nomesin,
+                    x.nobpkb,
+                    x.nopolisi,
+                    x.dayalistrik,
+                    x.namabahanproduk,
+                    to_char(x.tglproduksi, 'YYYY') AS tahun,
+                    x.kdbmn,
+                    COUNT ( x.noregisteraset ) || '/' ||
+                    array_to_string( ARRAY_AGG ( x.koderegisterrs ), ' - ' ) AS registerasset,
+                    x.hargaperolehan
+                FROM
+                    (
+                        SELECT
+                            ra.norec,
+                            ra.noregisteraset,
+                            ra.objectprodukfk AS kdproduk,
+                            ra.nilaisisa,
+                            ra.tglregisteraset,
+                            ra.tglstrukterima,
+                            ra.qtyprodukaset,
+                            ra.hargaperolehan,
+                            ra.tglregisteraset,
+                            ra.tglstrukterima,
+                            ra.keteranganlainnya,
+                            ra.spesifikasi,
+                            ra.jenisaset,
+                            ra.judul,
+                            ra.kdbmn,
+                            ra.koderegisterrs,
+                            ra.tahunperolehan,
+                            ra.noseri,
+                            ra.norangka,
+                            ra.nomesin,
+                            ra.nobpkb,
+                            ra.nopolisi,
+                            ra.dayalistrik,
+                            ra.tglproduksi,
+                            pr.namaproduk,
+                            jp.jenisproduk,
+                            ru1.id AS ruanganasalfk,
+                            ru1.namaruangan AS namaruanganasal,
+                            rek.namarekanan AS namasupplier,
+                            rek.alamatlengkap AS almSupplier,
+                            sp.norec AS norecsp,
+                            spd.norec AS norecspd,
+                            ap.asalproduk,
+                            pr.deskripsiproduk,
+                            mrk.merkproduk,
+                            bp.namabahanproduk
+                        FROM
+                            registrasiaset_t AS ra
+                            LEFT JOIN strukpelayanan_t AS sp ON sp.norec = ra.nostrukterimafk
+                            LEFT JOIN strukpelayanandetail_t AS spd ON spd.norec = ra.nostrukterimadetailfk
+                            LEFT JOIN produk_m AS pr ON pr.id = ra.idprodukfk
+                            LEFT JOIN merkproduk_m AS mrk ON mrk.id = ra.objectmerkprodukfk
+                            LEFT JOIN detailjenisproduk_m AS djp ON djp.id = pr.objectdetailjenisprodukfk
+                            LEFT JOIN jenisproduk_m AS jp ON jp.id = djp.objectjenisprodukfk
+                            LEFT JOIN kelompokproduk_m AS kp ON kp.id = jp.objectkelompokprodukfk
+                            LEFT JOIN satuanstandar_m AS ss ON ss.id = pr.objectsatuanstandarfk
+                            LEFT JOIN asalproduk_m AS ap ON ap.id = ra.objectasalprodukfk
+                            LEFT JOIN ruangan_m AS ru1 ON ru1.id = ra.objectruanganposisicurrentfk
+                            LEFT JOIN rekanan_m AS rek ON rek.id = ra.objectsupplier
+                            LEFT JOIN bahanproduk_m AS bp ON bp.id = ra.objectbahanprodukfk
+                        WHERE
+                            ra.kdprofile=$kdProfile
+                            AND ra.objectruanganfk=".$request['ruangancurrenfk']."
+                        ORDER BY
+                            ra.noregisteraset ASC 
+                    ) x 
+                GROUP BY
+                    x.namaproduk,
+                    x.merkproduk,
+                    x.noseri,
+                    x.norangka,
+                    x.nomesin,
+                    x.nobpkb,
+                    x.nopolisi,
+                    x.dayalistrik,
+                    x.namabahanproduk,
+                    tahun,
+                    x.kdbmn,
+                    x.hargaperolehan
+                        
+            ")
+        );
+
+        $dataKepala = DB::table('pegawai_m')->where('id', $request['idkepala'])->first();
+
+        $dataPenanggung = DB::table('pegawai_m')->where('id', $request['idpenanggung'])->first();
+
+        return view('report.asset.kartu-inventaris-ruangan', compact('data', 'dataKepala', 'dataPenanggung'));
+    }
+
+
+    public function cetakKIBB(Request $request)
+    {
+        $kdProfile = (int) $request['kdprofile'];
+        
+        $query = DB::select(DB::raw("
+        SELECT
+            ap.asalproduk,
+            pr.namaproduk,
+            pr.deskripsiproduk,
+            mrk.merkproduk,
+            bhn.namabahanproduk,
+            ra.koderegisterrs,
+            ra.tahunperolehan,
+            ra.norangka,
+            ra.nomesin,
+            ra.nopolisi,
+            ra.nobpkb,
+            ra.hargaperolehan,
+            ra.kdprofile,
+            cha1.ID AS idcha1,
+            cha1.kodeakun AS kodeakuncha1,
+            cha1.urian AS uriancha1,
+            cha2.ID AS idcha2,
+            cha2.kodeakun AS kodeakuncha2,
+            cha2.urian AS uriancha2,
+            cha3.ID AS idcha3,
+            cha3.kodeakun AS kodeakuncha3,
+            cha3.urian AS uriancha3,
+            cha4.ID AS idcha4,
+            cha4.kodeakun AS kodeakuncha4,
+            cha4.urian AS uriancha4,
+            cha5.ID AS idcha5,
+            cha5.kodeakun AS kodeakuncha5,
+            cha5.urian AS uriancha5,
+            cha6.ID AS idch6,
+            cha6.kodeakun AS kodeakuncha6,
+            cha6.urian AS uriancha6 
+        FROM
+            registrasiaset_t AS ra
+            INNER JOIN charkodeakunasset_m AS cha6 ON cha6.kodeakun = ra.kdbmn
+            LEFT JOIN charkodeakunasset_m AS cha1 ON cha1.ID = cha6.idlevel1
+            LEFT JOIN charkodeakunasset_m AS cha2 ON cha2.ID = cha6.idlevel2
+            LEFT JOIN charkodeakunasset_m AS cha3 ON cha3.ID = cha6.idlevel3
+            LEFT JOIN charkodeakunasset_m AS cha4 ON cha4.ID = cha6.idlevel4
+            LEFT JOIN charkodeakunasset_m AS cha5 ON cha5.ID = cha6.idlevel5
+            LEFT JOIN produk_m AS pr ON pr.ID = ra.idprodukfk
+            LEFT JOIN bahanproduk_m AS bhn ON bhn.ID = ra.objectbahanprodukfk
+            LEFT JOIN merkproduk_m AS mrk ON mrk.ID = ra.objectmerkprodukfk
+            LEFT JOIN asalproduk_m AS ap ON ap.ID = ra.objectasalprodukfk
+        WHERE
+            ra.kdprofile=$kdProfile
+        "));
+
+        // dd($query);
+
+        return view('report.asset.kibb', [
+            'data' => $query
+        ]);
+    }
+
 }

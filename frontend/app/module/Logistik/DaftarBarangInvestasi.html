@@ -59,12 +59,12 @@
         </div>
     </div>
     <div class="clear">&nbsp;</div>
+
 </c-panel>
 <div class="grid_12" style="margin-top:60px">
     <div ng-include='"../app/template/Shared/TemplateLoading"'></div>
 </div>
 <div class="grid_12 place_button" style="float:right;" ng-hide="isHide">
-    <div class="grid_3"></div>
     <div class="grid_3" style="float:right;">
         <c-button style="width: 100%; font-size: 24px; padding:0px; margin:0px;" item="item" size="36"
             position="'right'" is-validate ng-click="Cetak()">
@@ -82,5 +82,52 @@
             position="'right'" is-validate ng-click="DetailAsset()">
             <span class="title">Detail Barang Aset</span>
         </c-button>
+    </div>
+    <div class="grid_3" style="float:right;">
+        <c-button style="width: 100%; font-size: 24px; padding:0px; margin:0px;" item="item" size="36"
+            position="'right'" is-validate ng-click="confirmCetakKartuInventaris()">
+            <span class="title">Cetak Kartu Inventaris</span>
+        </c-button>
+    </div>
+    <div class="grid_3" style="float:right;">
+        <c-button style="width: 100%; font-size: 24px; padding:0px; margin:0px;" item="item" size="36"
+            position="'right'" is-validate ng-click="cetakKIBB()">
+            <span class="title">Cetak KIBB</span>
+        </c-button>
+    </div>
+</div>
+
+<!-- Popup select ketua dan kepala ruangan -->
+<div kendo-window="popUp" k-title="'Mengetahui'" k-width="600" k-visible="false" k-on-open="win2visible = true" k-on-close="win2visible = false">
+    <div class="panel panel-default container_12" style="padding: 0px 10px;"> 
+        <div class="grid_12">
+            <fieldset>
+                <legend><b>Mengetahui</b></legend>
+                <div class="grid_12">
+                    <div class="grid_12">
+                        <div class="grid_12" style="margin-top: 10px">
+                            <label c-label item="item" c-label-text="Kepala" real></label>
+                        </div>
+                        <div class="grid_12">
+                            <input kendo-combo-box k-ng-model="item.kepala" k-data-text-field="'namalengkap'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listPegawai" />
+                        </div>
+                    </div>
+                        <div class="grid_13">
+                        <div class="grid_12" style="margin-top: 10px">
+                            <label c-label item="item" c-label-text="Ketua Ruangan" real></label>
+                        </div>
+                        <div class="grid_12">
+                            <input kendo-combo-box k-ng-model="item.penanggungjawab" k-data-text-field="'namalengkap'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listPegawai" />
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+    </div>
+    <!-- kata kunci confirm -->   
+    <div class="dialog_buttons pull-right" style="margin-top:5%">
+        <input type="button" class="confirm_no k-button" value="Tidak" style="width: 70px" ng-click="batalCetakKartuInventaris()"/>
+        &nbsp;
+        <input type="button" class="confirm_yes k-button" value="Ya" style="width: 70px" ng-click="cetakKartuInventaris()"/>
     </div>
 </div>
