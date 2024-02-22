@@ -4384,246 +4384,760 @@ class ReportController extends ApiController{
 
         $tahap = DB::select(DB::raw("select * from tahapanggaran_m where id = ". $request['tahap']));
 
-        $data = DB::select(DB::raw("select 'tidak' bold, 'iya' tkode, nourut, kode, keterangan, sum(jumlahanggaran) jumlahanggaran, sum(jumlahjan) jumlahjan, sum(jumlahfeb) jumlahfeb,
-        sum(jumlahmar) jumlahmar, sum(jumlahapr) jumlahapr, sum(jumlahmei) jumlahmei, sum(jumlahjun) jumlahjun,
-        sum(jumlahjul) jumlahjul, sum(jumlahagt) jumlahagt, sum(jumlahsep) jumlahsep, sum(jumlahokt) jumlahokt,
-        sum(jumlahnov) jumlahnov, sum(jumlahdes) jumlahdes,
-        sum(jumlahjan) + sum(jumlahfeb) + sum(jumlahmar) + sum(jumlahapr) + sum(jumlahmei) + sum(jumlahjun) +
-        sum(jumlahjul) + sum(jumlahagt) + sum(jumlahsep) + sum(jumlahokt) + sum(jumlahnov) + sum(jumlahdes) subtotal
-        from(
-            select DENSE_RANK ( ) OVER ( order by kode ) AS nourut, kode, keterangan, jumlahanggaran, idap, norec, sum(jumlahjan) jumlahjan, sum(jumlahfeb) jumlahfeb,
-            sum(jumlahmar) jumlahmar, sum(jumlahapr) jumlahapr, sum(jumlahmei) jumlahmei, sum(jumlahjun) jumlahjun,
-            sum(jumlahjul) jumlahjul, sum(jumlahagt) jumlahagt, sum(jumlahsep) jumlahsep, sum(jumlahokt) jumlahokt,
-            sum(jumlahnov) jumlahnov, sum(jumlahdes) jumlahdes,
-            sum(jumlahjan) + sum(jumlahfeb) + sum(jumlahmar) + sum(jumlahapr) + sum(jumlahmei) + sum(jumlahjun) +
-            sum(jumlahjul) + sum(jumlahagt) + sum(jumlahsep) + sum(jumlahokt) + sum(jumlahnov) + sum(jumlahdes) subtotal
-            from(
-                select
-                ka.kode, ka.keterangan, kb.subtotal jumlahanggaran, ap.id idap, kb.norec,
-                case when akb.bulanint = 1 then sum(akb.nilai::float8) else 0 end as jumlahjan,
-                case when akb.bulanint = 2 then sum(akb.nilai::float8) else 0 end as jumlahfeb,
-                case when akb.bulanint = 3 then sum(akb.nilai::float8) else 0 end as jumlahmar,
-                case when akb.bulanint = 4 then sum(akb.nilai::float8) else 0 end as jumlahapr,
-                case when akb.bulanint = 5 then sum(akb.nilai::float8) else 0 end as jumlahmei,
-                case when akb.bulanint = 6 then sum(akb.nilai::float8) else 0 end as jumlahjun,
-                case when akb.bulanint = 7 then sum(akb.nilai::float8) else 0 end as jumlahjul,
-                case when akb.bulanint = 8 then sum(akb.nilai::float8) else 0 end as jumlahagt,
-                case when akb.bulanint = 9 then sum(akb.nilai::float8) else 0 end as jumlahsep,
-                case when akb.bulanint = 10 then sum(akb.nilai::float8) else 0 end as jumlahokt,
-                case when akb.bulanint = 11 then sum(akb.nilai::float8) else 0 end as jumlahnov,
-                case when akb.bulanint = 12 then sum(akb.nilai::float8) else 0 end as jumlahdes
-                from mataanggaran_m ma
-                inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
-                INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
-                inner join kegiatananggaran_m as dp0 on ka.kode ilike dp0.kode || '%' and dp0.div = 3
-                inner join asalproduk_m ap on ap.id = kb.objectasalprodukfk
-                left join alokasiketeranganbelanja_t akb on akb.keteranganbelanjafk = kb.norec
-                and akb.kdprofile = 30 and akb.statusenabled = true
-                where ma.kdprofile = 30 and ma.statusenabled = true
-                and kb.kdprofile = 30 and kb.statusenabled = true
-                and ka.kdprofile = 30 and ka.statusenabled = true
-                and dp0.kdprofile = 30 and dp0.statusenabled = true
-                and ka.tahun = '$tahun'
+        $data = DB::select(DB::raw("SELECT
+        'tidak' bold,
+        'iya' tkode,
+        nourut,
+        kode,
+        keterangan,
+        SUM ( jumlahanggaran ) jumlahanggaran,
+        SUM ( jumlahjan ) jumlahjan,
+        SUM ( jumlahfeb ) jumlahfeb,
+        SUM ( jumlahmar ) jumlahmar,
+        SUM ( jumlahapr ) jumlahapr,
+        SUM ( jumlahmei ) jumlahmei,
+        SUM ( jumlahjun ) jumlahjun,
+        SUM ( jumlahjul ) jumlahjul,
+        SUM ( jumlahagt ) jumlahagt,
+        SUM ( jumlahsep ) jumlahsep,
+        SUM ( jumlahokt ) jumlahokt,
+        SUM ( jumlahnov ) jumlahnov,
+        SUM ( jumlahdes ) jumlahdes,
+        SUM ( jumlahjan ) + SUM ( jumlahfeb ) + SUM ( jumlahmar ) + SUM ( jumlahapr ) + SUM ( jumlahmei ) + SUM ( jumlahjun ) + SUM ( jumlahjul ) + SUM ( jumlahagt ) + SUM ( jumlahsep ) + SUM ( jumlahokt ) + SUM ( jumlahnov ) + SUM ( jumlahdes ) subtotal 
+    FROM
+        (
+        SELECT 
+            CASE WHEN LEFT(RIGHT(kode, 2), 1) = '.' THEN substring(kode FROM 1 for length(kode)-1) || '0' || RIGHT(kode, 1) ELSE kode END AS nourut,
+            kode,
+            keterangan,
+            jumlahanggaran,
+            idap,
+            norec,
+            SUM ( jumlahjan ) jumlahjan,
+            SUM ( jumlahfeb ) jumlahfeb,
+            SUM ( jumlahmar ) jumlahmar,
+            SUM ( jumlahapr ) jumlahapr,
+            SUM ( jumlahmei ) jumlahmei,
+            SUM ( jumlahjun ) jumlahjun,
+            SUM ( jumlahjul ) jumlahjul,
+            SUM ( jumlahagt ) jumlahagt,
+            SUM ( jumlahsep ) jumlahsep,
+            SUM ( jumlahokt ) jumlahokt,
+            SUM ( jumlahnov ) jumlahnov,
+            SUM ( jumlahdes ) jumlahdes,
+            SUM ( jumlahjan ) + SUM ( jumlahfeb ) + SUM ( jumlahmar ) + SUM ( jumlahapr ) + SUM ( jumlahmei ) + SUM ( jumlahjun ) + SUM ( jumlahjul ) + SUM ( jumlahagt ) + SUM ( jumlahsep ) + SUM ( jumlahokt ) + SUM ( jumlahnov ) + SUM ( jumlahdes ) subtotal 
+        FROM
+            (
+            SELECT
+                ka.kode,
+                ka.keterangan,
+                kb.subtotal jumlahanggaran,
+                ap.ID idap,
+                kb.norec,
+            CASE
+                    
+                    WHEN akb.bulanint = 1 THEN
+                    SUM ( akb.nilai :: FLOAT8 ) ELSE 0 
+                END AS jumlahjan,
+            CASE
+                    
+                    WHEN akb.bulanint = 2 THEN
+                    SUM ( akb.nilai :: FLOAT8 ) ELSE 0 
+                END AS jumlahfeb,
+            CASE
+                    
+                    WHEN akb.bulanint = 3 THEN
+                    SUM ( akb.nilai :: FLOAT8 ) ELSE 0 
+                END AS jumlahmar,
+            CASE
+                    
+                    WHEN akb.bulanint = 4 THEN
+                    SUM ( akb.nilai :: FLOAT8 ) ELSE 0 
+                END AS jumlahapr,
+            CASE
+                    
+                    WHEN akb.bulanint = 5 THEN
+                    SUM ( akb.nilai :: FLOAT8 ) ELSE 0 
+                END AS jumlahmei,
+            CASE
+                    
+                    WHEN akb.bulanint = 6 THEN
+                    SUM ( akb.nilai :: FLOAT8 ) ELSE 0 
+                END AS jumlahjun,
+            CASE
+                    
+                    WHEN akb.bulanint = 7 THEN
+                    SUM ( akb.nilai :: FLOAT8 ) ELSE 0 
+                END AS jumlahjul,
+            CASE
+                    
+                    WHEN akb.bulanint = 8 THEN
+                    SUM ( akb.nilai :: FLOAT8 ) ELSE 0 
+                END AS jumlahagt,
+            CASE
+                    
+                    WHEN akb.bulanint = 9 THEN
+                    SUM ( akb.nilai :: FLOAT8 ) ELSE 0 
+                END AS jumlahsep,
+            CASE
+                    
+                    WHEN akb.bulanint = 10 THEN
+                    SUM ( akb.nilai :: FLOAT8 ) ELSE 0 
+                END AS jumlahokt,
+            CASE
+                    
+                    WHEN akb.bulanint = 11 THEN
+                    SUM ( akb.nilai :: FLOAT8 ) ELSE 0 
+                END AS jumlahnov,
+            CASE
+                    
+                    WHEN akb.bulanint = 12 THEN
+                    SUM ( akb.nilai :: FLOAT8 ) ELSE 0 
+                END AS jumlahdes 
+            FROM
+                mataanggaran_m ma
+                INNER JOIN keteranganbelanja_t kb ON ma.ID = kb.objectmataanggaranfk
+                INNER JOIN kegiatananggaran_m ka ON ka.ID = kb.objectkegiatanfk
+                INNER JOIN kegiatananggaran_m AS dp0 ON ka.kode ILIKE dp0.kode || '%' 
+                AND dp0.div = 3
+                INNER JOIN asalproduk_m ap ON ap.ID = kb.objectasalprodukfk
+                LEFT JOIN alokasiketeranganbelanja_t akb ON akb.keteranganbelanjafk = kb.norec 
+                AND akb.kdprofile = 30 
+                AND akb.statusenabled = TRUE 
+            WHERE
+                ma.kdprofile = 30 
+                AND ma.statusenabled = TRUE 
+                AND kb.kdprofile = 30 
+                AND kb.statusenabled = TRUE 
+                AND ka.kdprofile = 30 
+                AND ka.statusenabled = TRUE 
+                AND dp0.kdprofile = 30 
+                AND dp0.statusenabled = TRUE 
+                AND ka.tahun = '$tahun' 
                 $qtahap
-                group by
-                ka.kode, ka.keterangan, akb.bulanint, kb.subtotal, ap.id, kb.norec
-            ) as x group by kode, keterangan, jumlahanggaran, idap, norec
-        ) as y group by kode, keterangan, nourut
-
-        union ALL
-
-        select 'iya' bold, 'iya' tkode, nourut, kode, keterangan, sum(jumlahanggaran) jumlahanggaran, sum(jumlahjan) jumlahjan, sum(jumlahfeb) jumlahfeb,
-        sum(jumlahmar) jumlahmar, sum(jumlahapr) jumlahapr, sum(jumlahmei) jumlahmei, sum(jumlahjun) jumlahjun,
-        sum(jumlahjul) jumlahjul, sum(jumlahagt) jumlahagt, sum(jumlahsep) jumlahsep, sum(jumlahokt) jumlahokt,
-        sum(jumlahnov) jumlahnov, sum(jumlahdes) jumlahdes,
-        sum(jumlahjan) + sum(jumlahfeb) + sum(jumlahmar) + sum(jumlahapr) + sum(jumlahmei) + sum(jumlahjun) +
-        sum(jumlahjul) + sum(jumlahagt) + sum(jumlahsep) + sum(jumlahokt) + sum(jumlahnov) + sum(jumlahdes) subtotal
-        from(
-            select DENSE_RANK ( ) OVER ( order by kode ) AS nourut, kode, keterangan, jumlahanggaran, idap, norec, sum(jumlahjan) jumlahjan, sum(jumlahfeb) jumlahfeb,
-            sum(jumlahmar) jumlahmar, sum(jumlahapr) jumlahapr, sum(jumlahmei) jumlahmei, sum(jumlahjun) jumlahjun,
-            sum(jumlahjul) jumlahjul, sum(jumlahagt) jumlahagt, sum(jumlahsep) jumlahsep, sum(jumlahokt) jumlahokt,
-            sum(jumlahnov) jumlahnov, sum(jumlahdes) jumlahdes,
-            sum(jumlahjan) + sum(jumlahfeb) + sum(jumlahmar) + sum(jumlahapr) + sum(jumlahmei) + sum(jumlahjun) +
-            sum(jumlahjul) + sum(jumlahagt) + sum(jumlahsep) + sum(jumlahokt) + sum(jumlahnov) + sum(jumlahdes) subtotal
-            from(
-                select
-                dp0.kode, dp0.keterangan, kb.subtotal jumlahanggaran, ap.id idap, kb.norec,
-                case when akb.bulanint = 1 then sum(akb.nilai::float8) else 0 end as jumlahjan,
-                case when akb.bulanint = 2 then sum(akb.nilai::float8) else 0 end as jumlahfeb,
-                case when akb.bulanint = 3 then sum(akb.nilai::float8) else 0 end as jumlahmar,
-                case when akb.bulanint = 4 then sum(akb.nilai::float8) else 0 end as jumlahapr,
-                case when akb.bulanint = 5 then sum(akb.nilai::float8) else 0 end as jumlahmei,
-                case when akb.bulanint = 6 then sum(akb.nilai::float8) else 0 end as jumlahjun,
-                case when akb.bulanint = 7 then sum(akb.nilai::float8) else 0 end as jumlahjul,
-                case when akb.bulanint = 8 then sum(akb.nilai::float8) else 0 end as jumlahagt,
-                case when akb.bulanint = 9 then sum(akb.nilai::float8) else 0 end as jumlahsep,
-                case when akb.bulanint = 10 then sum(akb.nilai::float8) else 0 end as jumlahokt,
-                case when akb.bulanint = 11 then sum(akb.nilai::float8) else 0 end as jumlahnov,
-                case when akb.bulanint = 12 then sum(akb.nilai::float8) else 0 end as jumlahdes
-                from mataanggaran_m ma
-                inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
-                INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
-                inner join kegiatananggaran_m as dp0 on ka.kode ilike dp0.kode || '%' and dp0.div = 3
-                inner join asalproduk_m ap on ap.id = kb.objectasalprodukfk
-                left join alokasiketeranganbelanja_t akb on akb.keteranganbelanjafk = kb.norec
-                and akb.kdprofile = 30 and akb.statusenabled = true
-                where ma.kdprofile = 30 and ma.statusenabled = true
-                and kb.kdprofile = 30 and kb.statusenabled = true
-                and ka.kdprofile = 30 and ka.statusenabled = true
-                and dp0.kdprofile = 30 and dp0.statusenabled = true
-                and ka.tahun = '$tahun'
+            GROUP BY
+                ka.kode,
+                ka.keterangan,
+                akb.bulanint,
+                kb.subtotal,
+                ap.ID,
+                kb.norec 
+            ) AS x 
+        GROUP BY
+            kode,
+            keterangan,
+            jumlahanggaran,
+            idap,
+            norec 
+        ) AS y 
+    GROUP BY
+        kode,
+        keterangan,
+        nourut UNION ALL
+    SELECT
+        'iya' bold,
+        'iya' tkode,
+        CASE WHEN LEFT(RIGHT(kode, 2), 1) = '.' THEN substring(kode FROM 1 for length(kode)-1) || '0' || RIGHT(kode, 1) ELSE kode END AS nourut,
+        kode,
+        keterangan,
+        SUM ( jumlahanggaran ) jumlahanggaran,
+        SUM ( jumlahjan ) jumlahjan,
+        SUM ( jumlahfeb ) jumlahfeb,
+        SUM ( jumlahmar ) jumlahmar,
+        SUM ( jumlahapr ) jumlahapr,
+        SUM ( jumlahmei ) jumlahmei,
+        SUM ( jumlahjun ) jumlahjun,
+        SUM ( jumlahjul ) jumlahjul,
+        SUM ( jumlahagt ) jumlahagt,
+        SUM ( jumlahsep ) jumlahsep,
+        SUM ( jumlahokt ) jumlahokt,
+        SUM ( jumlahnov ) jumlahnov,
+        SUM ( jumlahdes ) jumlahdes,
+        SUM ( jumlahjan ) + SUM ( jumlahfeb ) + SUM ( jumlahmar ) + SUM ( jumlahapr ) + SUM ( jumlahmei ) + SUM ( jumlahjun ) + SUM ( jumlahjul ) + SUM ( jumlahagt ) + SUM ( jumlahsep ) + SUM ( jumlahokt ) + SUM ( jumlahnov ) + SUM ( jumlahdes ) subtotal 
+    FROM
+        (
+        SELECT DENSE_RANK
+            ( ) OVER ( ORDER BY kode ) AS nourut,
+            kode,
+            keterangan,
+            jumlahanggaran,
+            idap,
+            norec,
+            SUM ( jumlahjan ) jumlahjan,
+            SUM ( jumlahfeb ) jumlahfeb,
+            SUM ( jumlahmar ) jumlahmar,
+            SUM ( jumlahapr ) jumlahapr,
+            SUM ( jumlahmei ) jumlahmei,
+            SUM ( jumlahjun ) jumlahjun,
+            SUM ( jumlahjul ) jumlahjul,
+            SUM ( jumlahagt ) jumlahagt,
+            SUM ( jumlahsep ) jumlahsep,
+            SUM ( jumlahokt ) jumlahokt,
+            SUM ( jumlahnov ) jumlahnov,
+            SUM ( jumlahdes ) jumlahdes,
+            SUM ( jumlahjan ) + SUM ( jumlahfeb ) + SUM ( jumlahmar ) + SUM ( jumlahapr ) + SUM ( jumlahmei ) + SUM ( jumlahjun ) + SUM ( jumlahjul ) + SUM ( jumlahagt ) + SUM ( jumlahsep ) + SUM ( jumlahokt ) + SUM ( jumlahnov ) + SUM ( jumlahdes ) subtotal 
+        FROM
+            (
+            SELECT
+                dp0.kode,
+                dp0.keterangan,
+                kb.subtotal jumlahanggaran,
+                ap.ID idap,
+                kb.norec,
+            CASE
+                    
+                    WHEN akb.bulanint = 1 THEN
+                    SUM ( akb.nilai :: FLOAT8 ) ELSE 0 
+                END AS jumlahjan,
+            CASE
+                    
+                    WHEN akb.bulanint = 2 THEN
+                    SUM ( akb.nilai :: FLOAT8 ) ELSE 0 
+                END AS jumlahfeb,
+            CASE
+                    
+                    WHEN akb.bulanint = 3 THEN
+                    SUM ( akb.nilai :: FLOAT8 ) ELSE 0 
+                END AS jumlahmar,
+            CASE
+                    
+                    WHEN akb.bulanint = 4 THEN
+                    SUM ( akb.nilai :: FLOAT8 ) ELSE 0 
+                END AS jumlahapr,
+            CASE
+                    
+                    WHEN akb.bulanint = 5 THEN
+                    SUM ( akb.nilai :: FLOAT8 ) ELSE 0 
+                END AS jumlahmei,
+            CASE
+                    
+                    WHEN akb.bulanint = 6 THEN
+                    SUM ( akb.nilai :: FLOAT8 ) ELSE 0 
+                END AS jumlahjun,
+            CASE
+                    
+                    WHEN akb.bulanint = 7 THEN
+                    SUM ( akb.nilai :: FLOAT8 ) ELSE 0 
+                END AS jumlahjul,
+            CASE
+                    
+                    WHEN akb.bulanint = 8 THEN
+                    SUM ( akb.nilai :: FLOAT8 ) ELSE 0 
+                END AS jumlahagt,
+            CASE
+                    
+                    WHEN akb.bulanint = 9 THEN
+                    SUM ( akb.nilai :: FLOAT8 ) ELSE 0 
+                END AS jumlahsep,
+            CASE
+                    
+                    WHEN akb.bulanint = 10 THEN
+                    SUM ( akb.nilai :: FLOAT8 ) ELSE 0 
+                END AS jumlahokt,
+            CASE
+                    
+                    WHEN akb.bulanint = 11 THEN
+                    SUM ( akb.nilai :: FLOAT8 ) ELSE 0 
+                END AS jumlahnov,
+            CASE
+                    
+                    WHEN akb.bulanint = 12 THEN
+                    SUM ( akb.nilai :: FLOAT8 ) ELSE 0 
+                END AS jumlahdes 
+            FROM
+                mataanggaran_m ma
+                INNER JOIN keteranganbelanja_t kb ON ma.ID = kb.objectmataanggaranfk
+                INNER JOIN kegiatananggaran_m ka ON ka.ID = kb.objectkegiatanfk
+                INNER JOIN kegiatananggaran_m AS dp0 ON ka.kode ILIKE dp0.kode || '%' 
+                AND dp0.div = 3
+                INNER JOIN asalproduk_m ap ON ap.ID = kb.objectasalprodukfk
+                LEFT JOIN alokasiketeranganbelanja_t akb ON akb.keteranganbelanjafk = kb.norec 
+                AND akb.kdprofile = 30 
+                AND akb.statusenabled = TRUE 
+            WHERE
+                ma.kdprofile = 30 
+                AND ma.statusenabled = TRUE 
+                AND kb.kdprofile = 30 
+                AND kb.statusenabled = TRUE 
+                AND ka.kdprofile = 30 
+                AND ka.statusenabled = TRUE 
+                AND dp0.kdprofile = 30 
+                AND dp0.statusenabled = TRUE 
+                AND ka.tahun = '$tahun' 
                 $qtahap
-                group by
-                dp0.kode, dp0.keterangan, akb.bulanint, kb.subtotal, ap.id, kb.norec
-            ) as x group by kode, keterangan, jumlahanggaran, idap, norec
-        ) as y group by kode, keterangan, nourut
-
-        union ALL
-
-        select 'iya' bold, 'iya' tkode, nourut, kode, keterangan, sum(jumlahanggaran) jumlahanggaran, sum(jumlahjan) jumlahjan, sum(jumlahfeb) jumlahfeb,
-        sum(jumlahmar) jumlahmar, sum(jumlahapr) jumlahapr, sum(jumlahmei) jumlahmei, sum(jumlahjun) jumlahjun,
-        sum(jumlahjul) jumlahjul, sum(jumlahagt) jumlahagt, sum(jumlahsep) jumlahsep, sum(jumlahokt) jumlahokt,
-        sum(jumlahnov) jumlahnov, sum(jumlahdes) jumlahdes,
-        sum(jumlahjan) + sum(jumlahfeb) + sum(jumlahmar) + sum(jumlahapr) + sum(jumlahmei) + sum(jumlahjun) +
-        sum(jumlahjul) + sum(jumlahagt) + sum(jumlahsep) + sum(jumlahokt) + sum(jumlahnov) + sum(jumlahdes) subtotal
-        from(
-            select DENSE_RANK ( ) OVER ( order by kode ) AS nourut, kode, keterangan, jumlahanggaran, idap, norec, sum(jumlahjan) jumlahjan, sum(jumlahfeb) jumlahfeb,
-            sum(jumlahmar) jumlahmar, sum(jumlahapr) jumlahapr, sum(jumlahmei) jumlahmei, sum(jumlahjun) jumlahjun,
-            sum(jumlahjul) jumlahjul, sum(jumlahagt) jumlahagt, sum(jumlahsep) jumlahsep, sum(jumlahokt) jumlahokt,
-            sum(jumlahnov) jumlahnov, sum(jumlahdes) jumlahdes,
-            sum(jumlahjan) + sum(jumlahfeb) + sum(jumlahmar) + sum(jumlahapr) + sum(jumlahmei) + sum(jumlahjun) +
-            sum(jumlahjul) + sum(jumlahagt) + sum(jumlahsep) + sum(jumlahokt) + sum(jumlahnov) + sum(jumlahdes) subtotal
-            from(
-                select
-                dp2.kode, dp2.keterangan, kb.subtotal jumlahanggaran, ap.id idap, kb.norec,
-                case when akb.bulanint = 1 then sum(akb.nilai::float8) else 0 end as jumlahjan,
-                case when akb.bulanint = 2 then sum(akb.nilai::float8) else 0 end as jumlahfeb,
-                case when akb.bulanint = 3 then sum(akb.nilai::float8) else 0 end as jumlahmar,
-                case when akb.bulanint = 4 then sum(akb.nilai::float8) else 0 end as jumlahapr,
-                case when akb.bulanint = 5 then sum(akb.nilai::float8) else 0 end as jumlahmei,
-                case when akb.bulanint = 6 then sum(akb.nilai::float8) else 0 end as jumlahjun,
-                case when akb.bulanint = 7 then sum(akb.nilai::float8) else 0 end as jumlahjul,
-                case when akb.bulanint = 8 then sum(akb.nilai::float8) else 0 end as jumlahagt,
-                case when akb.bulanint = 9 then sum(akb.nilai::float8) else 0 end as jumlahsep,
-                case when akb.bulanint = 10 then sum(akb.nilai::float8) else 0 end as jumlahokt,
-                case when akb.bulanint = 11 then sum(akb.nilai::float8) else 0 end as jumlahnov,
-                case when akb.bulanint = 12 then sum(akb.nilai::float8) else 0 end as jumlahdes
-                from mataanggaran_m ma
-                inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
-                INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
-                inner join kegiatananggaran_m as dp2 on ka.kode ilike dp2.kode || '%' and dp2.div = 2
-                inner join asalproduk_m ap on ap.id = kb.objectasalprodukfk
-                left join alokasiketeranganbelanja_t akb on akb.keteranganbelanjafk = kb.norec
-                and akb.kdprofile = 30 and akb.statusenabled = true
-                where ma.kdprofile = 30 and ma.statusenabled = true
-                and kb.kdprofile = 30 and kb.statusenabled = true
-                and ka.kdprofile = 30 and ka.statusenabled = true
-                and dp2.kdprofile = 30 and dp2.statusenabled = true
-                and ka.tahun = '$tahun'
+            GROUP BY
+                dp0.kode,
+                dp0.keterangan,
+                akb.bulanint,
+                kb.subtotal,
+                ap.ID,
+                kb.norec 
+            ) AS x 
+        GROUP BY
+            kode,
+            keterangan,
+            jumlahanggaran,
+            idap,
+            norec 
+        ) AS y 
+    GROUP BY
+        kode,
+        keterangan,
+        nourut UNION ALL
+    SELECT
+        'iya' bold,
+        'iya' tkode,
+        CASE WHEN LEFT(RIGHT(kode, 2), 1) = '.' THEN substring(kode FROM 1 for length(kode)-1) || '0' || RIGHT(kode, 1) ELSE kode END AS nourut,
+        kode,
+        keterangan,
+        SUM ( jumlahanggaran ) jumlahanggaran,
+        SUM ( jumlahjan ) jumlahjan,
+        SUM ( jumlahfeb ) jumlahfeb,
+        SUM ( jumlahmar ) jumlahmar,
+        SUM ( jumlahapr ) jumlahapr,
+        SUM ( jumlahmei ) jumlahmei,
+        SUM ( jumlahjun ) jumlahjun,
+        SUM ( jumlahjul ) jumlahjul,
+        SUM ( jumlahagt ) jumlahagt,
+        SUM ( jumlahsep ) jumlahsep,
+        SUM ( jumlahokt ) jumlahokt,
+        SUM ( jumlahnov ) jumlahnov,
+        SUM ( jumlahdes ) jumlahdes,
+        SUM ( jumlahjan ) + SUM ( jumlahfeb ) + SUM ( jumlahmar ) + SUM ( jumlahapr ) + SUM ( jumlahmei ) + SUM ( jumlahjun ) + SUM ( jumlahjul ) + SUM ( jumlahagt ) + SUM ( jumlahsep ) + SUM ( jumlahokt ) + SUM ( jumlahnov ) + SUM ( jumlahdes ) subtotal 
+    FROM
+        (
+        SELECT DENSE_RANK
+            ( ) OVER ( ORDER BY kode ) AS nourut,
+            kode,
+            keterangan,
+            jumlahanggaran,
+            idap,
+            norec,
+            SUM ( jumlahjan ) jumlahjan,
+            SUM ( jumlahfeb ) jumlahfeb,
+            SUM ( jumlahmar ) jumlahmar,
+            SUM ( jumlahapr ) jumlahapr,
+            SUM ( jumlahmei ) jumlahmei,
+            SUM ( jumlahjun ) jumlahjun,
+            SUM ( jumlahjul ) jumlahjul,
+            SUM ( jumlahagt ) jumlahagt,
+            SUM ( jumlahsep ) jumlahsep,
+            SUM ( jumlahokt ) jumlahokt,
+            SUM ( jumlahnov ) jumlahnov,
+            SUM ( jumlahdes ) jumlahdes,
+            SUM ( jumlahjan ) + SUM ( jumlahfeb ) + SUM ( jumlahmar ) + SUM ( jumlahapr ) + SUM ( jumlahmei ) + SUM ( jumlahjun ) + SUM ( jumlahjul ) + SUM ( jumlahagt ) + SUM ( jumlahsep ) + SUM ( jumlahokt ) + SUM ( jumlahnov ) + SUM ( jumlahdes ) subtotal 
+        FROM
+            (
+            SELECT
+                dp2.kode,
+                dp2.keterangan,
+                kb.subtotal jumlahanggaran,
+                ap.ID idap,
+                kb.norec,
+            CASE
+                    
+                    WHEN akb.bulanint = 1 THEN
+                    SUM ( akb.nilai :: FLOAT8 ) ELSE 0 
+                END AS jumlahjan,
+            CASE
+                    
+                    WHEN akb.bulanint = 2 THEN
+                    SUM ( akb.nilai :: FLOAT8 ) ELSE 0 
+                END AS jumlahfeb,
+            CASE
+                    
+                    WHEN akb.bulanint = 3 THEN
+                    SUM ( akb.nilai :: FLOAT8 ) ELSE 0 
+                END AS jumlahmar,
+            CASE
+                    
+                    WHEN akb.bulanint = 4 THEN
+                    SUM ( akb.nilai :: FLOAT8 ) ELSE 0 
+                END AS jumlahapr,
+            CASE
+                    
+                    WHEN akb.bulanint = 5 THEN
+                    SUM ( akb.nilai :: FLOAT8 ) ELSE 0 
+                END AS jumlahmei,
+            CASE
+                    
+                    WHEN akb.bulanint = 6 THEN
+                    SUM ( akb.nilai :: FLOAT8 ) ELSE 0 
+                END AS jumlahjun,
+            CASE
+                    
+                    WHEN akb.bulanint = 7 THEN
+                    SUM ( akb.nilai :: FLOAT8 ) ELSE 0 
+                END AS jumlahjul,
+            CASE
+                    
+                    WHEN akb.bulanint = 8 THEN
+                    SUM ( akb.nilai :: FLOAT8 ) ELSE 0 
+                END AS jumlahagt,
+            CASE
+                    
+                    WHEN akb.bulanint = 9 THEN
+                    SUM ( akb.nilai :: FLOAT8 ) ELSE 0 
+                END AS jumlahsep,
+            CASE
+                    
+                    WHEN akb.bulanint = 10 THEN
+                    SUM ( akb.nilai :: FLOAT8 ) ELSE 0 
+                END AS jumlahokt,
+            CASE
+                    
+                    WHEN akb.bulanint = 11 THEN
+                    SUM ( akb.nilai :: FLOAT8 ) ELSE 0 
+                END AS jumlahnov,
+            CASE
+                    
+                    WHEN akb.bulanint = 12 THEN
+                    SUM ( akb.nilai :: FLOAT8 ) ELSE 0 
+                END AS jumlahdes 
+            FROM
+                mataanggaran_m ma
+                INNER JOIN keteranganbelanja_t kb ON ma.ID = kb.objectmataanggaranfk
+                INNER JOIN kegiatananggaran_m ka ON ka.ID = kb.objectkegiatanfk
+                INNER JOIN kegiatananggaran_m AS dp2 ON ka.kode ILIKE dp2.kode || '%' 
+                AND dp2.div = 2
+                INNER JOIN asalproduk_m ap ON ap.ID = kb.objectasalprodukfk
+                LEFT JOIN alokasiketeranganbelanja_t akb ON akb.keteranganbelanjafk = kb.norec 
+                AND akb.kdprofile = 30 
+                AND akb.statusenabled = TRUE 
+            WHERE
+                ma.kdprofile = 30 
+                AND ma.statusenabled = TRUE 
+                AND kb.kdprofile = 30 
+                AND kb.statusenabled = TRUE 
+                AND ka.kdprofile = 30 
+                AND ka.statusenabled = TRUE 
+                AND dp2.kdprofile = 30 
+                AND dp2.statusenabled = TRUE 
+                AND ka.tahun = '$tahun' 
                 $qtahap
-                group by
-                dp2.kode, dp2.keterangan, akb.bulanint, kb.subtotal, ap.id, kb.norec
-            ) as x group by kode, keterangan, jumlahanggaran, idap, norec
-        ) as y group by kode, keterangan, nourut
-
-        union ALL
-
-        select 'iya' bold, 'iya' tkode, nourut, kode, keterangan, sum(jumlahanggaran) jumlahanggaran, sum(jumlahjan) jumlahjan, sum(jumlahfeb) jumlahfeb,
-        sum(jumlahmar) jumlahmar, sum(jumlahapr) jumlahapr, sum(jumlahmei) jumlahmei, sum(jumlahjun) jumlahjun,
-        sum(jumlahjul) jumlahjul, sum(jumlahagt) jumlahagt, sum(jumlahsep) jumlahsep, sum(jumlahokt) jumlahokt,
-        sum(jumlahnov) jumlahnov, sum(jumlahdes) jumlahdes,
-        sum(jumlahjan) + sum(jumlahfeb) + sum(jumlahmar) + sum(jumlahapr) + sum(jumlahmei) + sum(jumlahjun) +
-        sum(jumlahjul) + sum(jumlahagt) + sum(jumlahsep) + sum(jumlahokt) + sum(jumlahnov) + sum(jumlahdes) subtotal
-        from(
-            select DENSE_RANK ( ) OVER ( order by kode ) AS nourut, kode, keterangan, jumlahanggaran, idap, norec, sum(jumlahjan) jumlahjan, sum(jumlahfeb) jumlahfeb,
-            sum(jumlahmar) jumlahmar, sum(jumlahapr) jumlahapr, sum(jumlahmei) jumlahmei, sum(jumlahjun) jumlahjun,
-            sum(jumlahjul) jumlahjul, sum(jumlahagt) jumlahagt, sum(jumlahsep) jumlahsep, sum(jumlahokt) jumlahokt,
-            sum(jumlahnov) jumlahnov, sum(jumlahdes) jumlahdes,
-            sum(jumlahjan) + sum(jumlahfeb) + sum(jumlahmar) + sum(jumlahapr) + sum(jumlahmei) + sum(jumlahjun) +
-            sum(jumlahjul) + sum(jumlahagt) + sum(jumlahsep) + sum(jumlahokt) + sum(jumlahnov) + sum(jumlahdes) subtotal
-            from(
-                select
-                dp1.kode, dp1.keterangan, kb.subtotal jumlahanggaran, ap.id idap, kb.norec,
-                case when akb.bulanint = 1 then sum(akb.nilai::float8) else 0 end as jumlahjan,
-                case when akb.bulanint = 2 then sum(akb.nilai::float8) else 0 end as jumlahfeb,
-                case when akb.bulanint = 3 then sum(akb.nilai::float8) else 0 end as jumlahmar,
-                case when akb.bulanint = 4 then sum(akb.nilai::float8) else 0 end as jumlahapr,
-                case when akb.bulanint = 5 then sum(akb.nilai::float8) else 0 end as jumlahmei,
-                case when akb.bulanint = 6 then sum(akb.nilai::float8) else 0 end as jumlahjun,
-                case when akb.bulanint = 7 then sum(akb.nilai::float8) else 0 end as jumlahjul,
-                case when akb.bulanint = 8 then sum(akb.nilai::float8) else 0 end as jumlahagt,
-                case when akb.bulanint = 9 then sum(akb.nilai::float8) else 0 end as jumlahsep,
-                case when akb.bulanint = 10 then sum(akb.nilai::float8) else 0 end as jumlahokt,
-                case when akb.bulanint = 11 then sum(akb.nilai::float8) else 0 end as jumlahnov,
-                case when akb.bulanint = 12 then sum(akb.nilai::float8) else 0 end as jumlahdes
-                from mataanggaran_m ma
-                inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
-                INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
-                inner join kegiatananggaran_m as dp1 on ka.kode ilike dp1.kode || '%' and dp1.div = 1
-                inner join asalproduk_m ap on ap.id = kb.objectasalprodukfk
-                left join alokasiketeranganbelanja_t akb on akb.keteranganbelanjafk = kb.norec
-                and akb.kdprofile = 30 and akb.statusenabled = true
-                where ma.kdprofile = 30 and ma.statusenabled = true
-                and kb.kdprofile = 30 and kb.statusenabled = true
-                and ka.kdprofile = 30 and ka.statusenabled = true
-                and dp1.kdprofile = 30 and dp1.statusenabled = true
-                and ka.tahun = '$tahun'
+            GROUP BY
+                dp2.kode,
+                dp2.keterangan,
+                akb.bulanint,
+                kb.subtotal,
+                ap.ID,
+                kb.norec 
+            ) AS x 
+        GROUP BY
+            kode,
+            keterangan,
+            jumlahanggaran,
+            idap,
+            norec 
+        ) AS y 
+    GROUP BY
+        kode,
+        keterangan,
+        nourut UNION ALL
+    SELECT
+        'iya' bold,
+        'iya' tkode,
+        CASE WHEN LEFT(RIGHT(kode, 2), 1) = '.' THEN substring(kode FROM 1 for length(kode)-1) || '0' || RIGHT(kode, 1) ELSE kode END AS nourut,
+        kode,
+        keterangan,
+        SUM ( jumlahanggaran ) jumlahanggaran,
+        SUM ( jumlahjan ) jumlahjan,
+        SUM ( jumlahfeb ) jumlahfeb,
+        SUM ( jumlahmar ) jumlahmar,
+        SUM ( jumlahapr ) jumlahapr,
+        SUM ( jumlahmei ) jumlahmei,
+        SUM ( jumlahjun ) jumlahjun,
+        SUM ( jumlahjul ) jumlahjul,
+        SUM ( jumlahagt ) jumlahagt,
+        SUM ( jumlahsep ) jumlahsep,
+        SUM ( jumlahokt ) jumlahokt,
+        SUM ( jumlahnov ) jumlahnov,
+        SUM ( jumlahdes ) jumlahdes,
+        SUM ( jumlahjan ) + SUM ( jumlahfeb ) + SUM ( jumlahmar ) + SUM ( jumlahapr ) + SUM ( jumlahmei ) + SUM ( jumlahjun ) + SUM ( jumlahjul ) + SUM ( jumlahagt ) + SUM ( jumlahsep ) + SUM ( jumlahokt ) + SUM ( jumlahnov ) + SUM ( jumlahdes ) subtotal 
+    FROM
+        (
+        SELECT DENSE_RANK
+            ( ) OVER ( ORDER BY kode ) AS nourut,
+            kode,
+            keterangan,
+            jumlahanggaran,
+            idap,
+            norec,
+            SUM ( jumlahjan ) jumlahjan,
+            SUM ( jumlahfeb ) jumlahfeb,
+            SUM ( jumlahmar ) jumlahmar,
+            SUM ( jumlahapr ) jumlahapr,
+            SUM ( jumlahmei ) jumlahmei,
+            SUM ( jumlahjun ) jumlahjun,
+            SUM ( jumlahjul ) jumlahjul,
+            SUM ( jumlahagt ) jumlahagt,
+            SUM ( jumlahsep ) jumlahsep,
+            SUM ( jumlahokt ) jumlahokt,
+            SUM ( jumlahnov ) jumlahnov,
+            SUM ( jumlahdes ) jumlahdes,
+            SUM ( jumlahjan ) + SUM ( jumlahfeb ) + SUM ( jumlahmar ) + SUM ( jumlahapr ) + SUM ( jumlahmei ) + SUM ( jumlahjun ) + SUM ( jumlahjul ) + SUM ( jumlahagt ) + SUM ( jumlahsep ) + SUM ( jumlahokt ) + SUM ( jumlahnov ) + SUM ( jumlahdes ) subtotal 
+        FROM
+            (
+            SELECT
+                dp1.kode,
+                dp1.keterangan,
+                kb.subtotal jumlahanggaran,
+                ap.ID idap,
+                kb.norec,
+            CASE
+                    
+                    WHEN akb.bulanint = 1 THEN
+                    SUM ( akb.nilai :: FLOAT8 ) ELSE 0 
+                END AS jumlahjan,
+            CASE
+                    
+                    WHEN akb.bulanint = 2 THEN
+                    SUM ( akb.nilai :: FLOAT8 ) ELSE 0 
+                END AS jumlahfeb,
+            CASE
+                    
+                    WHEN akb.bulanint = 3 THEN
+                    SUM ( akb.nilai :: FLOAT8 ) ELSE 0 
+                END AS jumlahmar,
+            CASE
+                    
+                    WHEN akb.bulanint = 4 THEN
+                    SUM ( akb.nilai :: FLOAT8 ) ELSE 0 
+                END AS jumlahapr,
+            CASE
+                    
+                    WHEN akb.bulanint = 5 THEN
+                    SUM ( akb.nilai :: FLOAT8 ) ELSE 0 
+                END AS jumlahmei,
+            CASE
+                    
+                    WHEN akb.bulanint = 6 THEN
+                    SUM ( akb.nilai :: FLOAT8 ) ELSE 0 
+                END AS jumlahjun,
+            CASE
+                    
+                    WHEN akb.bulanint = 7 THEN
+                    SUM ( akb.nilai :: FLOAT8 ) ELSE 0 
+                END AS jumlahjul,
+            CASE
+                    
+                    WHEN akb.bulanint = 8 THEN
+                    SUM ( akb.nilai :: FLOAT8 ) ELSE 0 
+                END AS jumlahagt,
+            CASE
+                    
+                    WHEN akb.bulanint = 9 THEN
+                    SUM ( akb.nilai :: FLOAT8 ) ELSE 0 
+                END AS jumlahsep,
+            CASE
+                    
+                    WHEN akb.bulanint = 10 THEN
+                    SUM ( akb.nilai :: FLOAT8 ) ELSE 0 
+                END AS jumlahokt,
+            CASE
+                    
+                    WHEN akb.bulanint = 11 THEN
+                    SUM ( akb.nilai :: FLOAT8 ) ELSE 0 
+                END AS jumlahnov,
+            CASE
+                    
+                    WHEN akb.bulanint = 12 THEN
+                    SUM ( akb.nilai :: FLOAT8 ) ELSE 0 
+                END AS jumlahdes 
+            FROM
+                mataanggaran_m ma
+                INNER JOIN keteranganbelanja_t kb ON ma.ID = kb.objectmataanggaranfk
+                INNER JOIN kegiatananggaran_m ka ON ka.ID = kb.objectkegiatanfk
+                INNER JOIN kegiatananggaran_m AS dp1 ON ka.kode ILIKE dp1.kode || '%' 
+                AND dp1.div = 1
+                INNER JOIN asalproduk_m ap ON ap.ID = kb.objectasalprodukfk
+                LEFT JOIN alokasiketeranganbelanja_t akb ON akb.keteranganbelanjafk = kb.norec 
+                AND akb.kdprofile = 30 
+                AND akb.statusenabled = TRUE 
+            WHERE
+                ma.kdprofile = 30 
+                AND ma.statusenabled = TRUE 
+                AND kb.kdprofile = 30 
+                AND kb.statusenabled = TRUE 
+                AND ka.kdprofile = 30 
+                AND ka.statusenabled = TRUE 
+                AND dp1.kdprofile = 30 
+                AND dp1.statusenabled = TRUE 
+                AND ka.tahun = '$tahun' 
                 $qtahap
-                group by
-                dp1.kode, dp1.keterangan, akb.bulanint, kb.subtotal, ap.id, kb.norec
-            ) as x group by kode, keterangan, jumlahanggaran, idap, norec
-        ) as y group by kode, keterangan, nourut
-
-        union ALL
-
-        select 'tidak' bold, 'tidak' tkode, nourut, kode, keterangan, sum(jumlahanggaran) jumlahanggaran, sum(jumlahjan) jumlahjan, sum(jumlahfeb) jumlahfeb,
-        sum(jumlahmar) jumlahmar, sum(jumlahapr) jumlahapr, sum(jumlahmei) jumlahmei, sum(jumlahjun) jumlahjun,
-        sum(jumlahjul) jumlahjul, sum(jumlahagt) jumlahagt, sum(jumlahsep) jumlahsep, sum(jumlahokt) jumlahokt,
-        sum(jumlahnov) jumlahnov, sum(jumlahdes) jumlahdes,
-        sum(jumlahjan) + sum(jumlahfeb) + sum(jumlahmar) + sum(jumlahapr) + sum(jumlahmei) + sum(jumlahjun) +
-        sum(jumlahjul) + sum(jumlahagt) + sum(jumlahsep) + sum(jumlahokt) + sum(jumlahnov) + sum(jumlahdes) subtotal
-        from(
-        select DENSE_RANK ( ) OVER ( order by kode ) AS nourut, kode, keterangan, jumlahanggaran, idap, norec, sum(jumlahjan) jumlahjan, sum(jumlahfeb) jumlahfeb,
-        sum(jumlahmar) jumlahmar, sum(jumlahapr) jumlahapr, sum(jumlahmei) jumlahmei, sum(jumlahjun) jumlahjun,
-        sum(jumlahjul) jumlahjul, sum(jumlahagt) jumlahagt, sum(jumlahsep) jumlahsep, sum(jumlahokt) jumlahokt,
-        sum(jumlahnov) jumlahnov, sum(jumlahdes) jumlahdes,
-        sum(jumlahjan) + sum(jumlahfeb) + sum(jumlahmar) + sum(jumlahapr) + sum(jumlahmei) + sum(jumlahjun) +
-        sum(jumlahjul) + sum(jumlahagt) + sum(jumlahsep) + sum(jumlahokt) + sum(jumlahnov) + sum(jumlahdes) subtotal
-        from(
-        select
-        ap.id, ap.asalproduk keterangan, kb.subtotal jumlahanggaran, ka.kode, ap.id idap, kb.norec,
-        case when akb.bulanint = 1 then sum(akb.nilai::float8) else 0 end as jumlahjan,
-        case when akb.bulanint = 2 then sum(akb.nilai::float8) else 0 end as jumlahfeb,
-        case when akb.bulanint = 3 then sum(akb.nilai::float8) else 0 end as jumlahmar,
-        case when akb.bulanint = 4 then sum(akb.nilai::float8) else 0 end as jumlahapr,
-        case when akb.bulanint = 5 then sum(akb.nilai::float8) else 0 end as jumlahmei,
-        case when akb.bulanint = 6 then sum(akb.nilai::float8) else 0 end as jumlahjun,
-        case when akb.bulanint = 7 then sum(akb.nilai::float8) else 0 end as jumlahjul,
-        case when akb.bulanint = 8 then sum(akb.nilai::float8) else 0 end as jumlahagt,
-        case when akb.bulanint = 9 then sum(akb.nilai::float8) else 0 end as jumlahsep,
-        case when akb.bulanint = 10 then sum(akb.nilai::float8) else 0 end as jumlahokt,
-        case when akb.bulanint = 11 then sum(akb.nilai::float8) else 0 end as jumlahnov,
-        case when akb.bulanint = 12 then sum(akb.nilai::float8) else 0 end as jumlahdes
-        from mataanggaran_m ma
-        inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
-        INNER JOIN kegiatananggaran_m ka on ka.id=kb.objectkegiatanfk
-        inner join kegiatananggaran_m as dp0 on ka.kode ilike dp0.kode || '%' and dp0.div = 3
-        inner join asalproduk_m ap on ap.id = kb.objectasalprodukfk
-        left join alokasiketeranganbelanja_t akb on akb.keteranganbelanjafk = kb.norec
-        and akb.kdprofile = 30 and akb.statusenabled = true
-        where ma.kdprofile = 30 and ma.statusenabled = true
-        and kb.kdprofile = 30 and kb.statusenabled = true
-        and ka.kdprofile = 30 and ka.statusenabled = true
-        and dp0.kdprofile = 30 and dp0.statusenabled = true
-        and ka.tahun = '$tahun'
-        $qtahap
-        group by
-        ap.id, ap.asalproduk, akb.bulanint, kb.subtotal, ka.kode, ap.id, kb.norec
-        ) as x group by kode, keterangan, jumlahanggaran, idap, norec
-        ) as y group by kode, keterangan, nourut
-
-        order by nourut, kode, tkode;        
-        "));
+            GROUP BY
+                dp1.kode,
+                dp1.keterangan,
+                akb.bulanint,
+                kb.subtotal,
+                ap.ID,
+                kb.norec 
+            ) AS x 
+        GROUP BY
+            kode,
+            keterangan,
+            jumlahanggaran,
+            idap,
+            norec 
+        ) AS y 
+    GROUP BY
+        kode,
+        keterangan,
+        nourut UNION ALL
+    SELECT
+        'tidak' bold,
+        'tidak' tkode,
+        CASE WHEN LEFT(RIGHT(kode, 2), 1) = '.' THEN substring(kode FROM 1 for length(kode)-1) || '0' || RIGHT(kode, 1) ELSE kode END AS nourut,
+        kode,
+        keterangan,
+        SUM ( jumlahanggaran ) jumlahanggaran,
+        SUM ( jumlahjan ) jumlahjan,
+        SUM ( jumlahfeb ) jumlahfeb,
+        SUM ( jumlahmar ) jumlahmar,
+        SUM ( jumlahapr ) jumlahapr,
+        SUM ( jumlahmei ) jumlahmei,
+        SUM ( jumlahjun ) jumlahjun,
+        SUM ( jumlahjul ) jumlahjul,
+        SUM ( jumlahagt ) jumlahagt,
+        SUM ( jumlahsep ) jumlahsep,
+        SUM ( jumlahokt ) jumlahokt,
+        SUM ( jumlahnov ) jumlahnov,
+        SUM ( jumlahdes ) jumlahdes,
+        SUM ( jumlahjan ) + SUM ( jumlahfeb ) + SUM ( jumlahmar ) + SUM ( jumlahapr ) + SUM ( jumlahmei ) + SUM ( jumlahjun ) + SUM ( jumlahjul ) + SUM ( jumlahagt ) + SUM ( jumlahsep ) + SUM ( jumlahokt ) + SUM ( jumlahnov ) + SUM ( jumlahdes ) subtotal 
+    FROM
+        (
+        SELECT 
+            CASE WHEN LEFT(RIGHT(kode, 2), 1) = '.' THEN substring(kode FROM 1 for length(kode)-1) || '0' || RIGHT(kode, 1) ELSE kode END AS nourut,
+            kode,
+            keterangan,
+            jumlahanggaran,
+            idap,
+            norec,
+            SUM ( jumlahjan ) jumlahjan,
+            SUM ( jumlahfeb ) jumlahfeb,
+            SUM ( jumlahmar ) jumlahmar,
+            SUM ( jumlahapr ) jumlahapr,
+            SUM ( jumlahmei ) jumlahmei,
+            SUM ( jumlahjun ) jumlahjun,
+            SUM ( jumlahjul ) jumlahjul,
+            SUM ( jumlahagt ) jumlahagt,
+            SUM ( jumlahsep ) jumlahsep,
+            SUM ( jumlahokt ) jumlahokt,
+            SUM ( jumlahnov ) jumlahnov,
+            SUM ( jumlahdes ) jumlahdes,
+            SUM ( jumlahjan ) + SUM ( jumlahfeb ) + SUM ( jumlahmar ) + SUM ( jumlahapr ) + SUM ( jumlahmei ) + SUM ( jumlahjun ) + SUM ( jumlahjul ) + SUM ( jumlahagt ) + SUM ( jumlahsep ) + SUM ( jumlahokt ) + SUM ( jumlahnov ) + SUM ( jumlahdes ) subtotal 
+        FROM
+            (
+            SELECT
+                ap.ID,
+                ap.asalproduk keterangan,
+                kb.subtotal jumlahanggaran,
+                ka.kode,
+                ap.ID idap,
+                kb.norec,
+            CASE
+                    
+                    WHEN akb.bulanint = 1 THEN
+                    SUM ( akb.nilai :: FLOAT8 ) ELSE 0 
+                END AS jumlahjan,
+            CASE
+                    
+                    WHEN akb.bulanint = 2 THEN
+                    SUM ( akb.nilai :: FLOAT8 ) ELSE 0 
+                END AS jumlahfeb,
+            CASE
+                    
+                    WHEN akb.bulanint = 3 THEN
+                    SUM ( akb.nilai :: FLOAT8 ) ELSE 0 
+                END AS jumlahmar,
+            CASE
+                    
+                    WHEN akb.bulanint = 4 THEN
+                    SUM ( akb.nilai :: FLOAT8 ) ELSE 0 
+                END AS jumlahapr,
+            CASE
+                    
+                    WHEN akb.bulanint = 5 THEN
+                    SUM ( akb.nilai :: FLOAT8 ) ELSE 0 
+                END AS jumlahmei,
+            CASE
+                    
+                    WHEN akb.bulanint = 6 THEN
+                    SUM ( akb.nilai :: FLOAT8 ) ELSE 0 
+                END AS jumlahjun,
+            CASE
+                    
+                    WHEN akb.bulanint = 7 THEN
+                    SUM ( akb.nilai :: FLOAT8 ) ELSE 0 
+                END AS jumlahjul,
+            CASE
+                    
+                    WHEN akb.bulanint = 8 THEN
+                    SUM ( akb.nilai :: FLOAT8 ) ELSE 0 
+                END AS jumlahagt,
+            CASE
+                    
+                    WHEN akb.bulanint = 9 THEN
+                    SUM ( akb.nilai :: FLOAT8 ) ELSE 0 
+                END AS jumlahsep,
+            CASE
+                    
+                    WHEN akb.bulanint = 10 THEN
+                    SUM ( akb.nilai :: FLOAT8 ) ELSE 0 
+                END AS jumlahokt,
+            CASE
+                    
+                    WHEN akb.bulanint = 11 THEN
+                    SUM ( akb.nilai :: FLOAT8 ) ELSE 0 
+                END AS jumlahnov,
+            CASE
+                    
+                    WHEN akb.bulanint = 12 THEN
+                    SUM ( akb.nilai :: FLOAT8 ) ELSE 0 
+                END AS jumlahdes 
+            FROM
+                mataanggaran_m ma
+                INNER JOIN keteranganbelanja_t kb ON ma.ID = kb.objectmataanggaranfk
+                INNER JOIN kegiatananggaran_m ka ON ka.ID = kb.objectkegiatanfk
+                INNER JOIN kegiatananggaran_m AS dp0 ON ka.kode ILIKE dp0.kode || '%' 
+                AND dp0.div = 3
+                INNER JOIN asalproduk_m ap ON ap.ID = kb.objectasalprodukfk
+                LEFT JOIN alokasiketeranganbelanja_t akb ON akb.keteranganbelanjafk = kb.norec 
+                AND akb.kdprofile = 30 
+                AND akb.statusenabled = TRUE 
+            WHERE
+                ma.kdprofile = 30 
+                AND ma.statusenabled = TRUE 
+                AND kb.kdprofile = 30 
+                AND kb.statusenabled = TRUE 
+                AND ka.kdprofile = 30 
+                AND ka.statusenabled = TRUE 
+                AND dp0.kdprofile = 30 
+                AND dp0.statusenabled = TRUE 
+                AND ka.tahun = '$tahun' 
+                $qtahap
+            GROUP BY
+                ap.ID,
+                ap.asalproduk,
+                akb.bulanint,
+                kb.subtotal,
+                ka.kode,
+                ap.ID,
+                kb.norec 
+            ) AS x 
+        GROUP BY
+            kode,
+            keterangan,
+            jumlahanggaran,
+            idap,
+            norec 
+        ) AS y 
+    GROUP BY
+        kode,
+        keterangan,
+        nourut 
+    ORDER BY
+        nourut"));
 
         $pageWidth = 1200;
         //return $this->respond($result);
