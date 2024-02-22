@@ -7603,7 +7603,7 @@ class ReportController extends ApiController{
         and bku.statusenabled = true
         $qbulan
         $qtahun
-        and bku.objectjenisbuktifk = 3) as x ORDER BY nourut"));
+        and bku.objectjenisbuktifk in (3,7)) as x ORDER BY nourut"));
 
         $saldoakhir = 0;
 
