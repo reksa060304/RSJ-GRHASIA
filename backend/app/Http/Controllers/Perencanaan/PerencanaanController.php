@@ -3621,7 +3621,7 @@ class PerencanaanController extends ApiController {
         DB::beginTransaction();
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
-
+        $tglAyeuna = date('Y-m-d H:i:s');
         $thn = date("Y", strtotime($request['tglsts']) );
         $tgl = date("n", strtotime($request['tglsts']) );
 
@@ -3633,7 +3633,8 @@ class PerencanaanController extends ApiController {
                         $MA->kdprofile = $idProfile;
                         $MA->statusenabled = true;
 
-                        $nos = $this->generateCodeBySeqTable(new STSKeuangan, 'nojasagiro', 6, ' ',$kdProfile);
+                        $thn = date("Y", strtotime($request['tglsts']) );
+                        $nos = $this->generateCodeBySeqTableSTS(new STSKeuangan, 'nojasagiro', 6, ' ',$kdProfile, $thn);
                         $noSTS = $nos.'/STS/'.$tgl.'/'.$thn;
                         $MA->nosts = $noSTS;
                         
@@ -3648,6 +3649,7 @@ class PerencanaanController extends ApiController {
                     $MA->objectmataanggaranfk = $request['objectmataanggaranfk'];
                     $MA->objectsubsubkegiatanfk = $request['objectsubsubkegiatanfk'];
                     $MA->objectsumberdanafk = $request['objectsumberdanafk'];
+                    $MA->tglinput = $tglAyeuna;
                     $MA->save();
 
            $transStatus = 'true';
