@@ -739,4 +739,39 @@ Trait Valet {
             return "";
         }
     }
+    protected function generateCodeBySeqTableSTS($objectModel, $atrribute, $length=8, $prefix='',$idProfile, $thn){
+        DB::beginTransaction();
+        try {
+            $result = SeqNumber::where('seqnumber', 'LIKE', $prefix.'%')
+                ->where('seqname',$atrribute)
+                ->where('kdprofile',$idProfile)
+                ->where('tgljamseq','>=',$thn. '-01-01')
+                ->where('tgljamseq','<=',$thn. '-12-31')
+                ->max('seqnumber');
+            $prefixLen = strlen($prefix);
+            $subPrefix = substr(trim($result),$prefixLen);
+            $SN = $prefix.(str_pad((int)$subPrefix+1, $length-$prefixLen, "0", STR_PAD_LEFT));
+
+            $newSN = new SeqNumber();
+            $newSN->kdprofile = $idProfile;
+            $newSN->seqnumber = $SN;
+            $newSN->tgljamseq = date('Y-m-d H:i:s');;
+            $newSN->seqname = $atrribute;
+            $newSN->save();
+
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+
+        if ($transStatus == 'true') {
+            DB::commit();
+            return $SN;
+        } else {
+            DB::rollBack();
+            return '';
+        }
+
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
 }

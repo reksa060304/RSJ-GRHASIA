@@ -9509,8 +9509,9 @@ class LogistikController extends ApiController{
             ->leftJOIN('jenisproduk_m as jp','jp.id','=','djp.objectjenisprodukfk')
             ->leftJOIN('kelompokproduk_m as kp','kp.id','=','jp.objectkelompokprodukfk')
             ->leftJOIN('satuanstandar_m as ss','ss.id','=','pr.objectsatuanstandarfk')
+            ->leftJOIN('charkodeakunasset_m AS ak', 'ak.id', '=', 'pr.objectprodukassetfk')
             ->select('pr.id as kodeproduk','pr.kodebmn','pr.namaproduk','djp.id as djpid','djp.detailjenisproduk','jp.id as jpid','jp.jenisproduk','ss.id as ssid','ss.satuanstandar',
-                'kp.id as kpid','kp.kelompokproduk')
+                'kp.id as kpid','kp.kelompokproduk','ak.kodeakun as kodebmn')
             ->where('pr.kdprofile', $idProfile);
 
         if (isset($request['kodeproduk']) && $request['kodeproduk'] != "" && $request['kodeproduk'] != "undefined") {
@@ -9845,7 +9846,7 @@ class LogistikController extends ApiController{
             ->leftJOIN('ruangan_m as ru','ru.id','=','ra.objectruanganfk')
             ->leftJOIN('ruangan_m as ru1','ru1.id','=','ra.objectruanganposisicurrentfk')
             ->leftJOIN('rekanan_m as rek','rek.id','=','ra.objectsupplier')
-            ->select('ra.norec','ra.noregisteraset','ra.objectprodukfk as kdproduk','pr.namaproduk','jp.jenisproduk',
+            ->select('ra.norec','ra.koderegisterrs as noregisteraset','ra.objectprodukfk as kdproduk','pr.namaproduk','jp.jenisproduk',
                      'ru.id as ruanganasalfk','ru.namaruangan as namaruanganasal','ru1.id as ruangancurrenfk','ru1.namaruangan as ruangancurrent',
                      'ra.tglregisteraset','ra.tglstrukterima','ra.qtyprodukaset','ra.hargaperolehan','ra.tglregisteraset','ra.tglstrukterima',
                      'rek.namarekanan as namasupplier','rek.alamatlengkap as almSupplier','sp.norec as norecsp',

@@ -1,4 +1,4 @@
-define(['initialize'], function (initialize) {
+define(['initialize', 'Configuration'], function (initialize, config) {
     'use strict';
     initialize.controller('DaftarBarangInvestasiCtrl', ['$scope', '$state', 'CacheHelper', 'MedifirstService',
         function ($scope, $state, cacheHelper, medifirstService) {
@@ -17,12 +17,11 @@ define(['initialize'], function (initialize) {
                     init();
                 }
                 else {
-                    $scope.item.tglAwal = new Date(moment($scope.now).format('YYYY-MM-DD 00:00:00'));
-                    $scope.item.tglAkhir = $scope.now;
+                    $scope.item.tglAwal = new Date(moment($scope.now).format('YYYY-MM-DD HH:ii:ss'));
+                    $scope.item.tglAkhir = new Date(moment($scope.now).format('YYYY-MM-DD HH:ii:ss'));
                     LoadData();
                 }
             }
-
 
             function LoadDataCombo() {
                 var DataRuanganAll = [];
@@ -51,13 +50,18 @@ define(['initialize'], function (initialize) {
                 });
                 //}
 
+                // Load pegawai_m
+                medifirstService.get('sysadmin/master/get-daftar-master-pegawai').then(function(data){
+                    $scope.listPegawai = data.data
+                })
+
                 LoadData();
             }
-// 
+
             function LoadData() {
                 $scope.isRouteLoading = true;
-                var tglAwal = moment($scope.item.tglAwal).format('YYYY-MM-DD');
-                var tglAkhir = moment($scope.item.tglAkhir).format('YYYY-MM-DD');
+                var tglAwal = moment($scope.item.tglAwal).format('YYYY-MM-DD hh:mm:ss');
+                var tglAkhir = moment($scope.item.tglAkhir).format('YYYY-MM-DD hh:mm:ss');
 
                 var ruanganId = "";
                 if ($scope.item.ruangan != undefined) {
@@ -98,8 +102,8 @@ define(['initialize'], function (initialize) {
                                 }
                             }
                         });
-                        var chacePeriode = tglAwal + "~" + tglAkhir;
-                        cacheHelper.set('DaftarBarangInvestasiCtrl', chacePeriode);
+                        // var chacePeriode = tglAwal + "~" + tglAkhir;
+                        // cacheHelper.set('DaftarBarangInvestasiCtrl', chacePeriode);
 
                     });
             };
@@ -142,7 +146,8 @@ define(['initialize'], function (initialize) {
                 {
                     "field": "asalproduk",
                     "title": "SumberDana"
-                }]
+                }
+            ]
 
             // };
             // manageSarpras.getOrderList("anggaran/get-ruangan", true).then(function(e){
@@ -159,7 +164,13 @@ define(['initialize'], function (initialize) {
 
             $scope.Search = function () {
                 if ($scope.item.ruangan == undefined) {
-                    alert('Pilih Ruangan terlebih dahulu!!!')
+                    toastr.error('Pilih Ruangan terlebih dahulu!!!')
+                    return
+                }
+
+                if($scope.item.tglAwal == undefined){
+                    toastr.error('Pilih Periode tanggal terlebih dahulu')
+                    return
                 }
                 LoadData();
                 // var ruanganId, awal, akhir, periode;
@@ -232,6 +243,85 @@ define(['initialize'], function (initialize) {
 
             $scope.getIsiComboRuangan = function () {
                 $scope.sourceRuangan = $scope.item.departemen.ruangan
+            }
+
+            $scope.Cetak = function(){
+
+                if($scope.item.tglAwal == undefined){
+                    toastr.error('Periode Tanggal perlu dipilih')
+                    return
+                }
+
+                var tglAwal = moment($scope.item.tglAwal).format('YYYY-MM-DD');
+                var tglAkhir = moment($scope.item.tglAkhir).format('YYYY-MM-DD');
+                var local = JSON.parse(localStorage.getItem('profile'));
+                var profile = local.id;
+
+                window.open(config.baseApiBackend 
+                    + "report/cetak-daftar-barang-asset?" 
+                    + "tglAwal=" + tglAwal
+                    + "&tglAkhir=" + tglAkhir
+                    + "&kodeprofile=" + profile)
+
+                medifirstService.get("report/cetak-daftar-barang-asset?"
+                        +"tglAwal="+tglAwal
+                        +"&tglAkhir="+tglAkhir)
+                    .then(function (dat) {
+                        console.log(dat)
+                });
+            }
+
+            $scope.confirmCetakKartuInventaris = function(){
+                $scope.popUp.center().open();
+            }
+
+            $scope.batalCetakKartuInventaris = function(){
+                $scope.popUp.close()
+                $scope.item.kepala = undefined
+                $scope.item.penanggungjawab = undefined
+            }
+            
+            $scope.cetakKartuInventaris = function(){
+                if($scope.item.ruangan == undefined){
+                    toastr.error('Ruangan Perlu dipilih')
+                    return
+                }
+
+                if($scope.item.tglAwal == undefined){
+                    toastr.error('Periode Tanggal perlu dipilih')
+                    return
+                }
+
+                if($scope.item.kepala == undefined){
+                    toastr.error('Kepala Perlu dipilih')
+                    return
+                }
+                if($scope.item.penanggungjawab == undefined){
+                    toastr.error('Penanggung Jawab Perlu dipilih')
+                    return
+                }
+
+                var local = JSON.parse(localStorage.getItem('profile'));
+                var profile = local.id;
+
+                window.open(config.baseApiBackend 
+                    + "report/cetak-kartu-inventaris-ruangan?"
+                    + "kodeprofile=" + profile
+                    + "&ruangancurrenfk=" + $scope.item.ruangan.id
+                    + "&idkepala=" + $scope.item.kepala.id
+                    + "&idpenanggung=" + $scope.item.penanggungjawab.id
+                )
+                
+            }
+
+            $scope.cetakKIBB = function(){
+                var local = JSON.parse(localStorage.getItem('profile'));
+                var profile = local.id;
+
+                window.open(config.baseApiBackend
+                    + "report/cetak-kibb?"
+                    + "kdprofile=" + profile
+                )
             }
         }
     ])

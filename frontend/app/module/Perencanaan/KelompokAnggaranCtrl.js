@@ -7479,6 +7479,12 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                 }
                             },
                         });
+
+                        
+                    if ($scope.dataSourcePanjarDipilih != undefined && $scope.dataSourcePanjarDipilih.options.data.length != 0 && $scope.selectedData2.length == 0) {
+                        $scope.selectedData2 = $scope.dataSourcePanjarDipilih.options.data
+                        console.log($scope.selectedData2)
+                    }
                         
                     });
                 

@@ -1802,6 +1802,17 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('perencanaan/get-data-rba-belum', 'Perencanaan\PerencanaanController@getRBABelum');
             Route::get('perencanaan/get-password-rba', 'Perencanaan\PerencanaanController@getPassRBA');
 
+            Route::get('perencanaan/get-combo-perencanaan-belanja', 'Perencanaan\PerencanaanController@getComboPerencanaanBelanja');
+            Route::get('perencanaan/get-sub-sub-kegiatan', 'Perencanaan\PerencanaanController@getSubSubKegiatan');
+            Route::get('perencanaan/get-map-login-to-subsub', 'Perencanaan\PerencanaanController@getMapLoginToSubSub');
+            Route::get('perencanaan/save-map-login-to-subsub', 'Perencanaan\PerencanaanController@saveMapLoginToSubSub');
+            Route::get('perencanaan/delete-map-login-to-subsub', 'Perencanaan\PerencanaanController@deleteMapLoginToSubSub');
+            Route::get('perencanaan/get-info-stok-perencanaan', 'Perencanaan\PerencanaanController@getInfoStokPerencanaan');
+            Route::post('perencanaan/simpan-rencana-belanja', 'Perencanaan\PerencanaanController@simpanRencanaBelanja');
+            Route::get('perencanaan/get-rencana-belanja', 'Perencanaan\PerencanaanController@getRencanaBelanja');
+            Route::post('perencanaan/delete-rencana-belanja', 'Perencanaan\PerencanaanController@deleteRencanaBelanja');
+            Route::get('perencanaan/edit-rencana-belanja', 'Perencanaan\PerencanaanController@editRencanaBelanja');
+            Route::post('perencanaan/update-rencana-belanja', 'Perencanaan\PerencanaanController@updateRencanaBelanja');
         // });
         // Route::group(['prefix' => 'piutang'], function () {
             /*GET*/
@@ -3374,6 +3385,11 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         Route::get('report/cetak-bukti-pendaftaran','Report\ReportController@cetakBuktiPendaftaran');
         Route::get('report/cetak-sep','Report\ReportController@cetakSEP');
         Route::get('report/get-cetak-bukti-pendaftaran','Report\ReportController@cetakBuktiPendaftaranGet');
+        
+        // Cetakan Asset
+        Route::get('report/cetak-daftar-barang-asset', 'Report\ReportController@cetakDaftarBarangAsset');
+        Route::get('report/cetak-kartu-inventaris-ruangan', 'Report\ReportController@cetakKartuInventarisRuangan');
+        Route::get('report/cetak-kibb', 'Report\ReportController@cetakKIBB');
 
         Route::get('viewer/get-list-antrian','Antrian\AntrianController@getListAntrian');
         Route::get('viewer/update-antrian','Antrian\AntrianController@updatePanggil');

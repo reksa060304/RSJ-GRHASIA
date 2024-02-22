@@ -146,8 +146,8 @@ define(['initialize'], function (initialize) {
 				} else {
 					$scope.item.TglRegistrasi = moment($scope.now).format('YYYY-MM-DD HH:mm');
 					$scope.item.TglProduksi = moment($scope.now).format('YYYY-MM-DD HH:mm');
-					$scope.item.tglAwal = moment($scope.now).format('YYYY-MM-DD HH:mm');
-					$scope.item.tglAkhir = moment($scope.now).format('YYYY-MM-DD HH:mm');
+					$scope.item.tglAwal = moment($scope.now).format('YYYY-MM-DD 00:00');
+					$scope.item.tglAkhir = moment($scope.now).format('YYYY-MM-DD 23:59');
 					load();
 					// getDataLain();
 					$scope.isUnit = false;
@@ -161,7 +161,9 @@ define(['initialize'], function (initialize) {
 				}
 				medifirstService.get("logistik/get-barang-for-regis?" + "kodeproduk=" + produkId, true).then(function (data) {
 					var datas = data.data.datas[0];
+					// console.log(datas)
 					$scope.item.kdProduk = datas.kodeproduk;
+					$scope.item.kodeBmn = datas.kodebmn;
 					$scope.item.jenisProduk = { id: datas.jpid, jenisproduk: datas.jenisproduk };
 					$scope.item.detailJenisProduk = { id: datas.djpid, detailjenisproduk: datas.detailjenisproduk };
 					$scope.item.satuanStandar = { id: datas.ssid, satuanstandar: datas.satuanstandar };
@@ -465,10 +467,10 @@ define(['initialize'], function (initialize) {
 				var isValid = medifirstService.setValidation($scope, listRawRequired);
 
 				if (isValid.status) {
-					if($scope.item.koderegisterrs.length < 5){
-						toastr.error('Kode Register RS harus 5 digit')
-						return
-					}
+					// if($scope.item.koderegisterrs.length < 5){
+					// 	toastr.error('Kode Register RS harus 5 digit')
+					// 	return
+					// }
 					if ($scope.item != undefined) {
 						var confirm = $mdDialog.confirm()
 							.title('Peringatan')

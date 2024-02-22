@@ -149,6 +149,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 // return
                 medifirstService.post('perencanaan/save-sts-keuangan', objSave).then(function (e) {
                     $scope.popupTambahJasgir.center().close()
+                    bersihkan();
+                    
                     init();
                 })
 
@@ -169,6 +171,23 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.ClearData = function () {
                 $scope.item.tglAwal = moment($scope.now).format('YYYY-MM-DD');
                 $scope.item.tglAkhir = moment($scope.now).format('YYYY-MM-DD');
+            }
+            $scope.btntutup = function () {
+                    $scope.popupTambahJasgir.center().close()
+                    bersihkan();
+            }
+
+            function bersihkan() {
+                $scope.item.nosts = undefined
+                $scope.item.tglsts = moment($scope.now).format('YYYY-MM-DD');               
+                $scope.item.subkegiatanpanjar = undefined
+                $scope.item.subsubkegiatanpanjar = undefined
+                $scope.item.darirekeningpanjar = undefined
+                $scope.item.sumberDana = undefined;
+                $scope.item.uraiansts = null;
+                $scope.item.nilaists = null;
+                $scope.item.nosts  = null;
+
             }
 
             $scope.cariFilter = function () {
