@@ -73,7 +73,8 @@ define(['initialize'], function (initialize) {
                     var dataCombo = dat.data;
                     $scope.listPenulisResep = medifirstService.getPegawaiLogin();
                     $scope.listRuangan = dataCombo.ruanganall;
-                    $scope.listRuanganTujuan =medifirstService.getMapLoginUserToRuangan();
+                    // $scope.listRuanganTujuan =medifirstService.getMapLoginUserToRuangan();
+                    $scope.listRuanganTujuan = dataCombo.ruangancssd;
                     $scope.listJenisKirim = [{ id: 1, jenis: 'Amprahan' }, { id: 2, jenis: 'Transfer' }]
                     $scope.listAsalProduk = dataCombo.asalproduk;
                     pegawaiUser = dataCombo.detaillogin[0];
@@ -95,12 +96,12 @@ define(['initialize'], function (initialize) {
                 if (statusLoad != '') {
                     if (statusLoad == 'EditKirim') {
                         medifirstService.get("sterilisasi/get-daftar-registrasi-steril?norec=" + noreckirim, true).then(function (data_ih) {
-                            $scope.isRouteLoading = false;                        
+                            $scope.isRouteLoading = false;
                             $scope.item.noKirim = data_ih.data.daftar[0].nostruk
                             $scope.item.tglAwal = new Date(moment(data_ih.data.daftar[0].tglstruk).format('YYYY-MM-DD HH:mm:ss'));
-//                             $scope.item.ruangan = { id: data_ih.data.daftar[0].objectruanganfk, namaruangan: data_ih.data.daftar[0].namaruangan }
+                            //                             $scope.item.ruangan = { id: data_ih.data.daftar[0].objectruanganfk, namaruangan: data_ih.data.daftar[0].namaruangan }
                             $scope.item.ruanganTujuan = { id: data_ih.data.daftar[0].objectruanganfk, namaruangan: data_ih.data.daftar[0].namaruangan }
-//                             $scope.item.Keterangan = data_ih.data.head.keterangan;
+                            //                             $scope.item.Keterangan = data_ih.data.head.keterangan;
                             data2 = data_ih.data.daftar[0].details
                             for (let i = 0; i < data2.length; i++) {
                                 const element = data2[i];
@@ -158,8 +159,8 @@ define(['initialize'], function (initialize) {
                         });
                     }
                     if (statusLoad == 'KirimSteril') {
-                        $scope.item.ruangan = {id:idrutujuan,namaruangan:rutujuan}
-                        $scope.item.ruanganTujuan = {id:idruasal,namaruangan:ruasal}
+                        $scope.item.ruangan = { id: idrutujuan, namaruangan: rutujuan }
+                        $scope.item.ruanganTujuan = { id: idruasal, namaruangan: ruasal }
                         $scope.item.title = JudulFOrm
                     }
                 }
@@ -187,9 +188,9 @@ define(['initialize'], function (initialize) {
                 //             }
                 //         })
                 //     })
-                /* end info stok all ruangan */                
-                var satuans = [{ssid:$scope.item.produk.ssid, satuanstandar:$scope.item.produk.satuanstandar}]
-                $scope.listSatuan=satuans
+                /* end info stok all ruangan */
+                var satuans = [{ ssid: $scope.item.produk.ssid, satuanstandar: $scope.item.produk.satuanstandar }]
+                $scope.listSatuan = satuans
                 // $scope.item.nilaiKonversi = dataSelected.nilaikonversi
                 $scope.item.satuan = $scope.listSatuan[0];
                 GETKONVERSI(0)
@@ -199,20 +200,20 @@ define(['initialize'], function (initialize) {
                 {
                     "field": "no",
                     "title": "No",
-                    "width" : "20px",
+                    "width": "20px",
                 },
                 {
                     "field": "namaruangan",
                     "title": "Ruangan",
-                    "width" : "100px",
+                    "width": "100px",
                 },
                 {
                     "field": "qtyproduk",
                     "title": "Stok",
-                    "width" : "50px",
+                    "width": "50px",
                 }
-              
-             ];
+
+            ];
 
             function GETKONVERSI(jml) {
                 if ($scope.item.produk == undefined) {
@@ -420,27 +421,27 @@ define(['initialize'], function (initialize) {
                 racikan = ''
             }
 
-            $scope.klikGrid = function (dataSelected) { 
+            $scope.klikGrid = function (dataSelected) {
                 var dataProduk = [];
                 $scope.item.no = dataSelected.no
                 for (var i = $scope.listProduk.length - 1; i >= 0; i--) {
                     if ($scope.listProduk[i].id == dataSelected.kdproduk) {
                         dataProduk = $scope.listProduk[i]
                         break;
-                    }else{
-                        var produk = {id:dataSelected.kdproduk,namaproduk:dataSelected.namaproduk};
+                    } else {
+                        var produk = { id: dataSelected.kdproduk, namaproduk: dataSelected.namaproduk };
                         $scope.listProduk.push(produk);
                         dataProduk = produk;
-                        break;  
+                        break;
                     }
                 }
                 $scope.item.produk = dataProduk
                 $scope.item.jumlah = 0
-                var satuans = [{ssid:dataSelected.objectsatuanstandarfk, satuanstandar:dataSelected.satuanstandar}]
-                $scope.listSatuan=satuans
+                var satuans = [{ ssid: dataSelected.objectsatuanstandarfk, satuanstandar: dataSelected.satuanstandar }]
+                $scope.listSatuan = satuans
                 // $scope.item.nilaiKonversi = dataSelected.nilaikonversi
                 $scope.item.satuan = $scope.listSatuan[0];
-                GETKONVERSI(dataSelected.jumlah)                
+                GETKONVERSI(dataSelected.jumlah)
             }
             function Kosongkan() {
                 $scope.item.produk = ''
@@ -530,12 +531,12 @@ define(['initialize'], function (initialize) {
                     details: data2
                 }
 
-                medifirstService.post('sterilisasi/save-registrasi-barang-sterilisasi', objSave).then(function (e) {                    
+                medifirstService.post('sterilisasi/save-registrasi-barang-sterilisasi', objSave).then(function (e) {
                     var norecCetak = e.data.norec;
                     var noStruk = e.data.nostruk
                     medifirstService.postLogging('Registrasi Alat CSSD', 'norec strukpelayanan_t', norecCetak,
-                    'Registrasi Alat CSSD Noregistrasi : ' + noStruk).then(function (res) {
-                    })
+                        'Registrasi Alat CSSD Noregistrasi : ' + noStruk).then(function (res) {
+                        })
                     Kosongkan();
                     // $scope.popUp.center().open();
                 }, function (error) {
@@ -545,7 +546,7 @@ define(['initialize'], function (initialize) {
 
             $scope.tes = function () {
                 $scope.popUp.center().open();
-            }            
+            }
 
             $scope.simpan = function () {
 
@@ -608,23 +609,23 @@ define(['initialize'], function (initialize) {
                 //         }
                 //     }
 
-                    // if (groupingData2.length == jumlah) {
+                // if (groupingData2.length == jumlah) {
 
-                        var confirm = $mdDialog.confirm()
-                            .title('Peringatan')
-                            .textContent('Apakah anda yakin akan kirim barang?')
-                            .ariaLabel('Lucky day')
-                            .cancel('Tidak')
-                            .ok('Ya')
-                        $mdDialog.show(confirm).then(function () {
-                            $scope.SaveKirim();
-                        })
+                var confirm = $mdDialog.confirm()
+                    .title('Peringatan')
+                    .textContent('Apakah anda yakin akan kirim barang?')
+                    .ariaLabel('Lucky day')
+                    .cancel('Tidak')
+                    .ok('Ya')
+                $mdDialog.show(confirm).then(function () {
+                    $scope.SaveKirim();
+                })
 
-                    // } else {
-                    //     alert("Stok Tidak Ada, Tidak Bisa Dikirim!!!")
-                    //     $scope.winDialog.close();
-                    //     return;
-                    // }
+                // } else {
+                //     alert("Stok Tidak Ada, Tidak Bisa Dikirim!!!")
+                //     $scope.winDialog.close();
+                //     return;
+                // }
 
                 // });
 
