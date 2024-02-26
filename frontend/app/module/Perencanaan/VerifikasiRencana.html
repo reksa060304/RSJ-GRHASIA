@@ -1,0 +1,458 @@
+<style type="text/css">
+    .style-center {
+        display: inline-block;
+        text-align: center;
+        width: 100%;
+    }
+
+    .style-right {
+        display: inline-block;
+        text-align: right;
+        width: 100%;
+    }
+	.floatAboveEverything {
+	z-index: 1000;
+	position: absolute;
+	}
+	.md-dialog-container,
+	md-dialog {
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: flex;
+	z-index: 200000;
+	}
+    .style-left {
+        display: inline-block;
+        text-align: left;
+        width: 100%;
+    }
+	.k-grid .k-grid-header .k-header .k-link {
+		height: auto;
+	}
+
+	.k-grid .k-grid-header .k-header {
+		white-space: normal;
+	}
+
+	.k-grid .k-grid-header .k-header {
+		text-align: center;
+	}
+            img.photo-pasien {
+                width: 300px;
+                height: 100%;
+                object-fit: contain;
+            }
+
+            legend {
+                cursor: pointer;
+                padding: 10px;
+            }
+
+            .effect-shadow {
+                -webkit-box-shadow: 2px 2px 5px #b6b6b6;
+                -moz-box-shadow: 2px 2px 5px #b6b6b6;
+                box-shadow: 2px 2px 5px #b6b6b6;
+            }
+
+            .green {
+                    background-color: #98FB98;
+                    color: #000000;
+                    /*font-weight: bold;*/
+                }
+
+                .red {
+                    background-color: #ff3860;
+                    color: #FFFFFF;
+                    /*font-weight: bold;*/
+                }
+
+                .blue {
+                    background-color: #1E90FF;
+                    color: #ffffff;
+                    /*font-weight: bold;*/
+                }
+
+                .koneng {
+                    background-color: #FFFF00;
+                    color: #191970;
+                    /*font-weight: bold;*/
+                }
+              .k-button {
+                    background-color: rgb(255, 35, 89);
+                    border: none;   
+                }
+				.k-grid tbody .k-button, .k-ie8 .k-grid tbody button.k-button {
+    min-width: 24px;
+}
+          .k-button .fa{
+            float: none;
+         
+          }      
+    k-button{
+        min-width: 84px;
+        background-color: #e0360b;
+        border: none;
+        margin: .1em;
+    }
+    
+    .green {
+        background-color: #00ff00;
+        color: #000000;
+        /*font-weight: bold;*/
+    }
+
+    .orange {
+        background-color: #ff6600;
+        color: #FFFFFF;
+        /*font-weight: bold;*/
+    }
+
+    .koneng {
+        background-color: #FFFF00;
+        color: #191970;
+        /*font-weight: bold;*/
+    }
+
+    .merah {
+        background-color: red;
+        color: #FFFFFF;
+        /*font-weight: bold;*/
+    }
+	
+</style>
+
+<div>
+    <!-- Loading indicator -->
+    <div class="grid_12" ng-show="dataVOloaded">
+        <div ng-include='"../app/template/Shared/TemplateLoading"'></div>
+    </div>
+
+	<c-panel item="item" header="'RENCANA BELANJA'">
+        <div class="grid_12" style="margin-top: 2em;">
+            
+            <!-- Filter -->
+            <div class="grid_12">
+                <div class="grid_3">
+                    <label c-label item="item" c-label-text="Tanggal awal"></label>
+                    <input style="width: 100%" k-ng-model="item.tglAwal" kendo-datepicker
+                        k-format="'yyyy-MM-dd HH:mm:ss'" />
+                </div>
+            
+                <div class="grid_3">
+                    <label c-label item="item" c-label-text="Tanggal Akhir"></label>
+                    <input style="width: 100%" k-ng-model="item.tglAkhir" kendo-datepicker
+                        k-format="'yyyy-MM-dd HH:mm:ss'" />
+                </div>
+                <div class="grid_1" style="margin-top: 12px;">
+                    <button class="btnTemplate1" ng-click="cari()">Cari</button>
+                </div>
+            </div>
+
+            <!-- Grid -->
+            <div class="grid_12">
+                <div class="grid_12 borderBox">
+                    <div id="kGrid" kendo-grid k-data-source="dataGridPerencanaan" k-selectable="'row'" k-options="columnGridPerencanaan"
+                        k-pageable="'true'" k-sortable="'true'" ng-click="klikGrid(dataSelected)" k-ng-model="dataSelected">
+                        <div k-detail-template>
+                            <kendo-tabstrip>
+                                <div>
+                                    <div id="kGridDetail" kendo-grid k-options="columnGridDetailPerencanaan(dataItem)" k-sortable="'true'"
+                                        k-selectable="'row'">
+                                    </div>
+                                </div>
+                            </kendo-tabstrip>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tombol -->
+            <div class="grid_12">
+                <div class="grid_3">
+                    <button class="btnTemplate1" ng-click="verifikasiData()">
+                        Verifikasi
+                    </button>
+                </div>
+
+                <div class="grid_3">
+                    <button class="btnTemplate1" ng-click="sandingkan()">
+                        Sandingkan
+                    </button>
+                </div>
+            </div>
+        </div>  
+    </c-panel>
+
+    <!-- Modal Rencana Belanja -->
+    <div kendo-window="popupTambahRencanaBelanja" k-title="'RENCANA BELANJA'" k-visible="false" k-width="1700">
+        <div class="panel panel-default container_12">
+            
+            <!-- Kegiatan -->
+            <div class="grid_12">			
+                <div class="grid_12">
+                    <div class="grid_3" style="text-align: left;">
+                        Tanggal Pengajuan
+                    </div>
+                    <div class="grid_4" style="margin-top: -10px;">
+                        <input disabled style="width: 100%" k-ng-model="item.tglPengajuan" kendo-datepicker 
+                         placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd'"
+                        parsedate="yyyy-MM-dd" />
+                    </div>
+                </div>
+                <div class="grid_12">
+                    <div class="grid_3" style="text-align: left;">
+                        Tanggal Verifikasi
+                    </div>
+                    <div class="grid_4" style="margin-top: -10px;">
+                        <input ng-disabled="isSandingkan" style="width: 100%" k-ng-model="item.tglVerifikasi" kendo-datepicker 
+                         placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd'"
+                        parsedate="yyyy-MM-dd" />
+                    </div>
+                </div>
+                <div class="grid_12">
+                    <div class="grid_3" style="text-align: left;">
+                        SUB SUB KEGIATAN
+                    </div>
+                    <div class="grid_9" style="margin-top: -10px;">
+                        <input disabled id="subusbinput" kendo-combo-box k-ng-model="item.subSubKegiatanSPJ"
+                            k-data-text-field="'keterangan'" k-data-value-field="'id'"
+                            k-filter="'contains'" k-auto-bind="false"
+                            k-data-source="listSubSubKegiatanSPJ"  />
+                    </div>
+                </div>
+                <div class="grid_12">
+                    <div class="grid_3" style="text-align: left;">
+                        DARI REKENING
+                    </div>
+                    <div class="grid_9" style="margin-top: -10px;">
+                        <input disabled id="rekeninginput" kendo-combo-box k-ng-model="item.mataAnggaranSPJ"
+                            k-data-text-field="'text'" k-data-value-field="'kodemataanggaran'"
+                            k-filter="'contains'" k-auto-bind="false"
+                            k-data-source="listMataAnggaranSPJ"  />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ruangan dan Prioritas -->
+            <div class="grid_12">
+                <div class="grid_4">
+                    <div class="grid_4">
+                        Ruangan
+                    </div>
+                    <div class="grid_12">
+                        <input
+                            disabled  kendo-combo-box k-ng-model="item.idRuanganLoginUser"
+                            k-data-value-field="'id'" k-data-text-field="'namaruangan'" k-filter="'contains'" 
+                            k-auto-bind="false" k-data-source="listLoginUserToRuangan"
+                        />
+                    </div>
+                </div>
+                <div class="grid_4">
+                    <div class="grid_4">
+                        Prioritas
+                    </div>
+                    <div class="grid_12">
+                        <input 
+                            kendo-combo-box k-ng-model="item.prioritas"
+                            k-data-value-field="'id'" k-data-text-field="'nama'" k-filter="'contains'" 
+                            k-auto-bind="false" k-data-source="listPrioritas"
+                        />
+                    </div>
+                </div>
+            </div>
+    
+            <!-- Produk -->
+            <div class="grid_12">
+                <div class="grid_4" ng-show="!isRencanaProduk">
+                    <div class="grid_10">
+                        Rencana Kegiatan
+                    </div>
+                    <div class="grid_12">
+                        <input c-text-box type="input" class="k-textbox" ng-model="item.namaKegiatan"  style="width: 100%;" />
+                    </div>
+                </div>
+                <div class="grid_3" ng-show="isRencanaProduk">
+                    <div class="grid_4">
+                        Produk
+                    </div>
+                    <div class="grid_12">
+                        <input 
+                            ng-disabled="isUbahDetail"
+                            kendo-combo-box 
+                            k-ng-model="item.produk"
+                            k-data-text-field="'namaproduk'" 
+                            k-data-value-field="'id'"
+                            k-filter="'contains'" 
+                            k-auto-bind="false" 
+                            k-data-source="listProduk"
+                            k-on-change='getSatuan()'
+                        />
+                    </div>
+                </div>
+                <div class="grid_1" ng-show="isRencanaProduk">
+                    <div class="grid_10">
+                        Jumlah Stok
+                    </div>
+                    <div class="grid_12">
+                        <input disabled c-text-box type="input" class="k-textbox" ng-model="item.stokProduk"  style="width: 100%;" />
+                    </div>
+                </div>
+                <div class="grid_1">
+                    <div class="grid_10">
+                        Jumlah Rencana
+                    </div>
+                    <div class="grid_12">
+                        <input type="number" class="k-textbox" ng-model="item.jumlahRencana"  style="width: 100%;" />
+                    </div>
+                </div>
+                <div class="grid_1">
+                    <div class="grid_10">
+                        Jumlah Verifikasi
+                    </div>
+                    <div class="grid_12">
+                        <input type="number" class="k-textbox" ng-model="item.jumlahVerifikasi"  style="width: 100%;" />
+                    </div>
+                </div>
+                <div class="grid_2">
+                    <div class="grid_10">
+                        Harga Satuan
+                    </div>
+                    <div class="grid_12">
+                        <input type="number" class="k-textbox" ng-model="item.hargaSatuan"  style="width: 100%;" />
+                    </div>
+                </div>
+                <div class="grid_2">
+                    <div class="grid_10">
+                        Reverensi
+                    </div>
+                    <div class="grid_12">
+                        <input c-text-box disabled type="input" class="k-textbox" ng-model="item.listReverensi"  style="width: 100%;" />
+                    </div>
+                </div>
+                <div class="grid_1">
+                    <div class="grid_12">
+                        Tambah Reverensi
+                    </div>
+                    <div class="grid_10">
+                        <button class="btnTemplate1" ng-click="bukaTambahReverensi()">Tambah Reverensi</button>
+                    </div>
+                </div>
+                <div ng-if="!isUbahDetail" class="grid_1">
+                    <div class="grid_12">
+                        Tambah
+                    </div>
+                    <div class="grid_10">
+                        <button class="btnTemplate1" ng-click="tambahPerencanaan()">Tambah Detail</button>
+                    </div>
+                </div>
+                <div ng-if="isUbahDetail" class="grid_1">
+                    <div class="grid_12">
+                        Ubah
+                    </div>
+                    <div class="grid_10">
+                        <button class="btnTemplate1" ng-click="ubahDetail()">Ubah Detail</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Grid rencana barang -->
+            <div class="grid_12" ng-if="isRencanaProduk">
+                <div class="grid_12 borderBox">
+                    <div id="kGrid" kendo-grid k-data-source="gridDataPerencanaan" k-selectable="'row'"
+                        k-columns="columnGrid" k-pageable="'true'" ng-click="klikListPerencanaan(selectedListPerencanaan)" k-sortable="'true'"
+                        k-ng-model="selectedListPerencanaan">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Grid rencana kegiatan -->
+            <div class="grid_12" ng-if="!isRencanaProduk">
+                <div class="grid_12 borderBox">
+                    <div id="kGrid" kendo-grid k-data-source="gridDataPerencanaan" k-selectable="'row'"
+                        k-columns="columnGridRencanaKegiatan" k-pageable="'true'" ng-click="klikListPerencanaan(selectedListPerencanaan)" k-sortable="'true'"
+                        k-ng-model="selectedListPerencanaan">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hapus -->
+            <div class="grid_12">
+                <div class="grid_6"></div>
+                <div class="grid_6">
+                    <div class="grid_12" style="margin-top: 10px">
+                        <div class="grid_6"></div>
+                       
+                        <div class="grid_6" ng-if="!isUpdate">
+                            <button class="btnTemplate1 cancel" ng-click="hapusListPerencanaan()">
+                                Hapus Detail                               
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+            <!-- Simpan hapus update -->
+            <div class="grid_12">
+                <div class="grid_6"></div>
+                <div class="grid_6">
+                    <div class="grid_12" style="margin-top: 10px">
+                        
+                        <div class="grid_6">
+                            <button class="btnTemplate1 cancel" ng-click="tutup()">
+                                <i class="fa fa-trash"></i>
+                                Tutup
+                            </button>
+                        </div>
+                        
+                        <div class="grid_6">
+                            <button class="btnTemplate1" ng-click="varifikasiPerencanaan()">
+                                <i class="fa fa-refresh"></i>
+                                Verifikasi
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal tambah reverensi -->
+    <div kendo-window="popupTambahReverensi" k-title="'Reverensi'" k-visible="false" k-width="500">
+        <div class="panel panel-default container_12">
+            
+            <!-- Reverensi -->
+            <div class="grid_12" style="width: 100%;">
+                <div class="grid_12">
+                    <div class="grid_10">
+                        Reverensi
+                    </div>
+                    <div class="grid_12">
+                        <input c-text-box type="input" class="k-textbox" ng-model="item.reverensi"  style="width: 100%;" />
+                    </div>
+                </div>
+                <!-- {{ listReverensi }} -->
+            </div>
+    
+            <!-- Button -->
+            <div class="grid_12" style="width: 100%;">
+                <div class="grid_6"></div>
+                <div class="grid_6">
+                    <div class="grid_12" style="margin-top: 10px">
+                        <div class="grid_6">
+                            <button class="btnTemplate1 cancel" ng-click="tutupTambahReverensi()">
+                                Tutup
+                            </button>
+    
+                        </div>
+                        <div class="grid_6">
+                            <button class="btnTemplate1" ng-click="tambahReverensi()">
+                                Tambah
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

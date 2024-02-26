@@ -28,6 +28,8 @@ define(['initialize'], function (initialize) {
                     "<button class='btnHapus' ng-click='disableData()'>Disable</button>"
             }];
 
+            $scope.listSubSubKegiatan = [];
+
             function init() {
                 $scope.isRouteLoading = true;
                 $scope.treeSourceModulAplikasi = [];
@@ -90,6 +92,10 @@ define(['initialize'], function (initialize) {
                     $scope.lisUserArr = datapegawai.data.loginuser
                     // console.log($scope.listdatapegawai);
                 });
+
+                medifirstService.get("perencanaan/get-sub-sub-kegiatan?tahun="+$scope.now.getFullYear()).then(function(response){
+                    $scope.listSubSubKegiatan = response.data
+                })
             }
 
             $scope.CariPegawai = function () {
@@ -124,6 +130,7 @@ define(['initialize'], function (initialize) {
             $scope.getDataUser = function () {
                 getdadata()
                 getMapLoginToModulApp()
+                getMapLoginToSubSub()
             }
             function getdadata() {
                 // DataGetPegawai()
@@ -140,6 +147,7 @@ define(['initialize'], function (initialize) {
 
                 })
             }
+
             // $scope.klikGrid = function(){
             // 	$scope.item.instalasi = {id:$scope.dataSelected.dpid,title:$scope.dataSelected.namadepartemen}
             // 	$scope.item.ruangan = {id:$scope.dataSelected.ruid,title:$scope.dataSelected.namaruangan}
@@ -360,6 +368,7 @@ define(['initialize'], function (initialize) {
                 },
 
             ];
+
             $scope.tambahMap = function () {
                 medifirstService.get("sysadmin/menu/save-map-login-to-modul-aplikasi?objectloginuserfk=" +
                     $scope.item.loginUser.luid + "&objectmodulaplikasifk=" + $scope.item.modulAplikasi.id).then(function (data) {
@@ -782,8 +791,95 @@ define(['initialize'], function (initialize) {
                 delete $scope.new.cariKelompokUser
                 delete $scope.new.cariUser
             }
-            // *******END
 
+            /**
+             * Kolom untuk tabel map login user ke sub sub kegiatan
+             */
+            $scope.columnGridMapLoginToSubSub = [
+                { "field": "kode", "title": "Kode", "width": "100px" },
+                { "field": "keterangan", "title": "Keterangan", "width": "200px" }
+            ]
+
+            /** 
+             * Get data map login user ke sub sub kegiatan anggaran
+             */
+            function getMapLoginToSubSub(){
+                $scope.isRouteLoading = true
+
+                medifirstService.get("perencanaan/get-map-login-to-subsub?idLogin=" + $scope.item.loginUser.luid, true).then(function (e) {
+                    for (let i = 0; i < e.data.data.length; i++) {
+                        e.data.data[i].no = i + 1
+                    }
+                    $scope.dataSourceMapLoginToSubSub = new kendo.data.DataSource({
+                        data: e.data.data,
+                        pageSize: 5,
+                        total: e.data.data,
+                        serverPaging: false,
+                        schema: {
+                            model: {
+                                fields: {
+                                }
+                            }
+                        }
+                    });
+                    $scope.isRouteLoading = false
+                })
+            }
+
+            /**
+             * Tambah data map login user ke sub sub kegiatan anggaran
+             */
+            $scope.tambahSubSub = function(){
+                if($scope.item.subSubKegiatan == undefined){
+                    toastr.error('Pilih Sub Sub Kegiatan Terlebih Dahulu')
+                    return
+                }
+                
+                if($scope.item.loginUser == undefined){
+                    toastr.error('Pilih Login User Terlebih Dahulu')
+                    return
+                }
+
+                medifirstService.get("perencanaan/save-map-login-to-subsub?idLogin=" 
+                    + $scope.item.loginUser.luid 
+                    + "&idSubSub=" + $scope.item.subSubKegiatan.id)
+                    .then(function (data) {
+                        if (data.statResponse) {
+                            toastr.success('Sukses')
+                            getMapLoginToSubSub()
+                        }
+
+                    })
+            }
+
+
+            $scope.selectSubSub = function(data){
+                // console.log(data.id)
+            }
+
+            /**
+             * Hapus data map login user ke sub sub kegiatan anggaran
+             */
+            $scope.hapusSubSub = function(){
+                if($scope.selectedSubSub == undefined){
+                    toastr.error('Pilih Sub Sub Kegiatan Terlebih Dahulu')
+                    return
+                }
+
+                console.log($scope.selectedSubSub.id)
+                medifirstService.get("perencanaan/delete-map-login-to-subsub?idMapLoginSub="
+                    + $scope.selectedSubSub.id
+                ).then(function(data){
+                    if (data.statResponse) {
+                        toastr.success('Sukses')
+                        getMapLoginToSubSub()
+                    }
+                })
+
+            }
+            
+            
+            // *******END
 
         }
     ]

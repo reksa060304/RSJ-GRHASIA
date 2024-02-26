@@ -188,324 +188,378 @@
 									</div>
 								</div>
 
+							</div>
+
+							<div class="grid_12">
+
+								<div class="grid_6">
+									<!-- id login -->
+									<div class="grid_12">
+										<div class="grid_3">
+											<label c-label item="item" c-label-text="IdLogin" real></label>
+										</div>
+										<div class="clear"></div>
+										<div class="grid_9">
+											<input c-text-box type="input" filter="" class="k-textbox"
+												ng-model="item.idlogin" />
+										</div>
+									</div>
+									<!-- nama user -->
+									<div class="grid_12">
+										<div class="grid_3">
+											<label c-label item="item" c-label-text="NamaUser" real></label>
+										</div>
+										<div class="clear"></div>
+										<div class="grid_9">
+											<input c-text-box type="input" filter="" class="k-textbox"
+												ng-model="item.namaUser" />
+										</div>
+									</div>
+									<!-- kata kunci -->
+									<div class="grid_12"">
+										<div class=" grid_3">
+											<label c-label item="item" c-label-text="KataKunci" real></label>
+										</div>
+										<div class="clear"></div>
+										<div class="grid_9">
+											<input c-text-box type="password" filter="" class="k-textbox"
+												ng-model="item.kataKunciPass" />
+										</div>
+									</div>
+									<!-- kata kunci confirm -->
+									<div class="grid_12">
+										<div class=" grid_3">
+											<label c-label item="item" c-label-text="UlangiKataKunci" real></label>
+										</div>
+										<div class="clear"></div>
+										<div class="grid_9">
+											<input c-text-box type="password" filter="" class="k-textbox"
+												ng-model="item.kataKunciConfirm" />
+										</div>
+									</div>
+									<!-- kelompok user -->
+									<div class="grid_12" ">
+										<div class=" grid_3">
+											<label c-label item="item" c-label-text="KelompokUser" real></label>
+										</div>
+										<div class="clear"></div>
+										<div class="grid_9">
+											<input kendo-combo-box k-ng-model="item.kelompokUserHakAkses" k-data-text-field="'kelompokuser'"
+												k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listKelompokuser" />
+										</div>
+									</div>
+									<!-- simpan / batal -->
+									<div class="grid_12" style="margin: 10px 0px;">
+										<div class="grid_8">
+										</div>
+										<div class="grid_2">
+											<button class="c-button" ng-click="simpan()">Simpan</button>
+										</div>
+										<div class="grid_2">
+											<button class="c-button" ng-click="batal2()">Batal</button>
+										</div>
+									</div>
+								</div>
+
 								<div class="grid_6">
 
+									<div class="grid_12">
+										<div class="grid_3" style="margin: 10px 0 0 0;">
+											<label c-label item="item" c-label-text="Instalasi"></label>
+										</div>
+										<div class="grid_9">
+											<input style="width: 100%;" kendo-combo-box k-ng-model="item.instalasi" k-data-text-field="'title'"
+												k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listInstalasi"
+												k-on-change="getDataRuangan(item.instalasi)" />
+										</div>
+									</div>
+									<div class="grid_12">
+										<div class="grid_3" style="margin: 10px 0 0 0;">
+											<label c-label item="item" c-label-text="Ruangan"></label>
+										</div>
+										<div class="grid_9">
+											<input style="width: 100%;" kendo-combo-box k-ng-model="item.ruangan" k-data-text-field="'title'"
+												k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listdataruangan" />
+										</div>
+									</div>
+									<div class="grid_12">
+										<div class="grid_12 headerBox">
+											<p>Map Ruangan</p>
+										</div>
+										<!-- grid table -->
+										<div class="grid_12 borderBox">
+											<div id="kGrid" kendo-grid k-data-source="dataGrid" k-selectable="'row'" k-columns="columnGrid"
+												k-pageable="'true'" k-sortable="'true'" k-ng-model="dataSelected" ng-click="klikGrid(dataSelected)">
+												<!-- <div k-detail-template>
+																					<kendo-tabstrip>
+																						<div>
+																							<div id="kGridDetail" kendo-grid k-options="data2(dataItem)" 
+																								k-sortable="'true'" 
+																								k-selectable="'row'" 
+																								k-ng-model="dataSelected2"
+																								ng-click="klikDetail(dataSelected2)">
+																							</div>
+																						</div>
+																					</kendo-tabstrip>
+																				</div> -->
+											</div>
+										</div>
+								
+									</div>
+								
+									<div class="grid_2">
+										<button class="c-button" ng-click="tambah()">Tambah</button>
+									</div>
+									<div class="grid_2">
+										<button class="c-button" ng-click="hapus()">Hapus</button>
+									</div>
+								</div>
+							</div>
+
+							<div class="grid_12" style="margin-top: -10px;">
+
+								<div class="grid_6">
+									<fieldset class="effect-shadow " style="margin:10px; border-radius: 4px">
+										<legend id="filterData">
+											<a ng-click="showAndHide()" class="fieldset-toggleable fieldset-toggler fieldset-legend ">
+												<span class="fa fa-minus warnaa">
+												</span> &nbsp;Map Login User To Modul Aplikasi </a>
+										</legend>
+										<div class="grid_12" id="contentHide" style="margin:0 auto;">
+											<div class="grid_8">
+												<div class="grid_3" style="margin: 10px 0 0 0;">
+													<label c-label item="item" c-label-text="Modul Aplikasi"></label>
+												</div>
+												<div class="grid_9">
+													<input style="width: 100%;" kendo-combo-box k-ng-model="item.modulAplikasi"
+														k-data-text-field="'modulaplikasi'" k-data-value-field="'id'" k-filter="'contains'"
+														k-auto-bind="false" k-data-source="listModulAplikasi" />
+												</div>
+											</div>
+											<div class="grid_2" style="margin-top:10px">
+												<button class="c-button" ng-click="tambahMap()">Tambah</button>
+											</div>
+											<div class="grid_2" style="margin-top:10px">
+												<button class="c-button" ng-click="hapusMap()">Hapus</button>
+											</div>
+											<div class="grid_12">
+							
+												<div class="grid_12 borderBox">
+													<div id="kGrid" kendo-grid k-data-source="dataSourceMapLoginToModul" k-selectable="'row'"
+														k-columns="columnGridMapLoginToModul" k-pageable="'true'" k-sortable="'true'"
+														k-ng-model="dataSelected2" ng-click="klikMapLogin(dataSelected2)">
+							
+													</div>
+												</div>
+							
+											</div>
+							
+							
+										</div>
+									</fieldset>
+								</div>
+						
+								<div class="grid_6">
+									<fieldset class="effect-shadow " style="margin:10px; border-radius: 4px">
+										<legend id="filterData">
+											<a ng-click="showAndHide()" class="fieldset-toggleable fieldset-toggler fieldset-legend ">
+												<span class="fa fa-minus warnaa">
+												</span> &nbsp;Map Login User To Sub Sub Kegiatan Anggaran </a>
+										</legend>
+										<div class="grid_12" id="contentHide" style="margin:0 auto;">
+											<div class="grid_8">
+												<div class="grid_3" style="margin: 10px 0 0 0;">
+													<label c-label item="item" c-label-text="Sub Sub Kegiatan Anggaran"></label>
+												</div>
+												<div class="grid_9">
+													<input style="width: 100%;" kendo-combo-box k-ng-model="item.subSubKegiatan"
+														k-data-text-field="'keterangan'" k-data-value-field="'id'" k-filter="'contains'"
+														k-auto-bind="false" k-data-source="listSubSubKegiatan" />
+													{{ item.subSubKegiatan }}
+												</div>
+											</div>
+											<div class="grid_2" style="margin-top:10px">
+												<button class="c-button" ng-click="tambahSubSub()">Tambah</button>
+											</div>
+											<div class="grid_2" style="margin-top:10px">
+												<button class="c-button" ng-click="hapusSubSub()">Hapus</button>
+											</div>
+											<div class="grid_12">
+							
+												<div class="grid_12 borderBox">
+													<div id="kGrid" kendo-grid k-data-source="dataSourceMapLoginToSubSub" k-selectable="'row'"
+														k-columns="columnGridMapLoginToSubSub" k-pageable="'true'" k-sortable="'true'"
+														k-ng-model="selectedSubSub" ng-click="selectSubSub(selectedSubSub)">
+													</div>
+												</div>
+							
+											</div>
+										</div>
+									</fieldset>
+								</div>
+							</div>
+						</md-content>
+					</md-tab>
+					<md-tab label="Mapping Pegawai">
+						<md-content class="md-padding">
+							<div class="grid_6">
+								<div class="grid_12">
+									<div class="grid_3" style="margin: 10px 0 0 0;">
+										<label c-label item="item" c-label-text="Login User"></label>
+									</div>
+									<div class="grid_9">
+										<input style="width: 100%;" kendo-combo-box k-ng-model="item.loginUser"
+											k-data-text-field="'namauser'" k-data-value-field="'luid'" k-filter="'contains'"
+											k-auto-bind="false" k-data-source="listdataloginuser"
+											k-on-change="getDataUser(item.loginUser)" />
+									</div>
+								</div>
+								<div class="grid_12 headerBox containerBorderBox" style="padding:0px">
+									<p>Map To Ruangan</p>
+								</div>
+								<div class="grid_12 borderBox containerBorderBox" style="overflow-y: scroll; height:400px;">
+									<div class="grid_12">
+										<div kendo-tree-view="tree" k-data-source="treeSourceRuangan" options="mainTreeViewOptionRuangan"
+											ng-model="treeView" ng-click="klik(tree)">
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="grid_6" style="margin-top: 45px">
+					
+								<div class="grid_12 headerBox containerBorderBox" style="padding:0px">
+									<p>Map To Modul</p>
+								</div>
+								<div class="grid_12 borderBox containerBorderBox" style="overflow-y: scroll; height:400px;">
+									<div class="grid_12">
+										<div kendo-tree-view="tree2" k-data-source="treeSourceModulAplikasi"
+											options="mainTreeViewSubsistemOption" ng-model="treeView" ng-click="klik3(tree)">
+										</div>
+									</div>
+								</div>
+							</div>
+						</md-content>
+					</md-tab>
+					<md-tab label="Waktu Login">
+						<md-content class="md-padding">
+							<div class="grid_6">
+								<div class="grid_12 headerBox">
+									<p>List User</p>
+								</div>
+								<div class="grid_12 borderBox containerBorderBox" style="overflow-y: scroll; min-height:500px;">
+									<div class="grid_12">
+										<div class="grid_6">
+											<div class="grid_4" style="margin-top:10px">
+												<label c-label item="item">Waktu Berakhir</label>
+											</div>
+											<div class="grid_8">
+												<input style="width: 100%" k-ng-model="item.endDateLogin" kendo-datetimepicker k-min="now"
+													placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
+											</div>
+										</div>
+									</div>
+									<div class="grid_12 ">
+										<div class="grid_12 headerBox">
+											<p> <input type="checkbox" class="k-checkbox" id="cekAll" ng-model="item.cekAll"
+													ng-click="cekAll(item.cekAll)">
+												<label class="k-checkbox-label" for="cekAll" style="margin-left:5px"><b>Check All
+														User</b></label></p>
+										</div>
+										<div class="grid_12 borderBox containerBorderBox" style="overflow-y: scroll; height:340px;">
+											<div class="grid_4" ng-repeat="user in listUserForTimeLogin track by $index  ">
+												<input type="checkbox" ng-checked="user.isChecked" class="k-checkbox" name="{{user.namauser}}"
+													id="{{user.namauser}}" ng-model="bool" value="{{user.luid}}" ng-click="addUser(bool,user)">
+						
+												<label class="k-checkbox-label" for="{{user.namauser}}">{{user.namauser}}</label>
+						
+											</div>
+										</div>
+										<div class="grid_12">
+											<div class="grid_5">
+												<div class="grid_2" style="margin-top:10px">
+													<label c-label item="item">User</label>
+												</div>
+												<div class="grid_10">
+													<input c-text-box type="input" filter="" class="k-textbox" ng-model="item.cariUser" />
+												</div>
+											</div>
+											<div class="grid_2" style="margin-top: 10px">
+												<button class="c-button" ng-click="cariUserTime()">Cari</button>
+											</div>
+											<div class="grid_1"></div>
+											<div class="grid_2" style="margin-top: 10px">
+												<button class="c-button" ng-click="simpanUserTime()">Simpan</button>
+											</div>
+											<div class="grid_2" style="margin-top: 10px">
+												<button class="c-button error" ng-click="batalUserTime()">Batal</button>
+											</div>
+						
+										</div>
+									</div>
 								</div>
 							</div>
 							<div class="grid_6">
-								<div class="grid_12">
-									<div class="grid_3">
-										<label c-label item="item" c-label-text="IdLogin" real></label>
-									</div>
-									<div class="clear"></div>
-									<div class="grid_9">
-										<input c-text-box type="input" filter="" class="k-textbox"
-											ng-model="item.idlogin" />
-									</div>
+								<div class="grid_12 headerBox">
+									<p>List Waktu Login Berakhir</p>
 								</div>
-								<div class="grid_12">
-									<div class="grid_3">
-										<label c-label item="item" c-label-text="NamaUser" real></label>
+						
+								<div class="grid_12 borderBox containerBorderBox" style="overflow-y: scroll; min-height:500px;">
+									<div class="grid_8">
+										<div class="grid_4" style="margin-top:10px">
+											<label c-label item="item">Nama User</label>
+										</div>
+										<div class="grid_8">
+											<input c-text-box type="input" filter="" placeholder="Cari Nama User" class="k-textbox"
+												ng-model="item.cariUserS" />
+										</div>
 									</div>
-									<div class="clear"></div>
-									<div class="grid_9">
-										<input c-text-box type="input" filter="" class="k-textbox"
-											ng-model="item.namaUser" />
+									<div class="grid_1" style="margin-top:-5px">
+										<label c-label c-label-text=""></label>
+										<em ng-click='resetFilter()' id="iconButton" data-role="button" class="k-button k-button-icon k-primary"
+											role="button" aria-disabled="false" tabindex="0"><span
+												class="k-sprite k-icon k-i-cancel">Refresh</span></em>
 									</div>
+						
+									<div class="grid_12 borderBox">
+										<div id="kGrid3" kendo-grid k-data-source="dataSourceWaktuLogin" k-selectable="'row'"
+											options="columnGridWaktuLogin" k-pageable="'true'" k-sortable="'true'" k-ng-model="selectedWaktu"
+											ng-click="klikWaktuLogin(selectedWaktu)">
+						
+										</div>
+									</div>
+						
 								</div>
-								<div class="grid_12"">
-										<div class=" grid_3">
-									<label c-label item="item" c-label-text="KataKunci" real></label>
-								</div>
-								<div class="clear"></div>
-								<div class="grid_9">
-									<input c-text-box type="password" filter="" class="k-textbox"
-										ng-model="item.kataKunciPass" />
-								</div>
+								<!-- <div class="grid_12">
+																		
+															<div class="grid_12 borderBox">
+															<div id="kGrid" 
+															kendo-grid k-data-source="dataSourceWaktuLogin" 
+															k-selectable="'row'" 
+															k-columns="columnGridWaktuLogin" 
+															k-pageable="'true'" 
+															k-sortable="'true'" 
+															k-ng-model="selectedWaktu"
+															ng-click="klikWaktuLogin(selectedWaktu)">
+														
+															</div>
+														</div>
+													</div> -->
+								<!-- </md-content> -->
 							</div>
-							<div class="clear"></div>
-							<!-- kata kunci confirm -->
-							<div class="grid_12" ">
-										<div class=" grid_3">
-								<label c-label item="item" c-label-text="UlangiKataKunci" real></label>
-							</div>
-							<div class="clear"></div>
-							<div class="grid_9">
-								<input c-text-box type="password" filter="" class="k-textbox"
-									ng-model="item.kataKunciConfirm" />
-							</div>
+						</md-content>
+					</md-tab>
+				</md-tabs>
+			</md-content>
 		</div>
-		<div class="clear"></div>
-		<!-- kelompok user -->
-		<div class="grid_12" ">
-										<div class=" grid_3">
-			<label c-label item="item" c-label-text="KelompokUser" real></label>
-		</div>
-		<div class="clear"></div>
-		<div class="grid_9">
-			<input kendo-combo-box k-ng-model="item.kelompokUserHakAkses" k-data-text-field="'kelompokuser'"
-				k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listKelompokuser" />
-		</div>
-	</div>
-	<div class="grid_12" style="margin: 10px 0px;">
-		<div class="grid_8">
-		</div>
-		<div class="grid_2">
-			<button class="c-button" ng-click="simpan()">Simpan</button>
-		</div>
-		<div class="grid_2">
-			<button class="c-button" ng-click="batal2()">Batal</button>
-		</div>
-	</div>
-	<div class="grid_12" style="margin-top: -10px;">
-
-		<fieldset class="effect-shadow " style="margin:10px; border-radius: 4px">
-			<legend id="filterData">
-				<a ng-click="showAndHide()" class="fieldset-toggleable fieldset-toggler fieldset-legend ">
-					<span class="fa fa-minus warnaa">
-					</span> &nbsp;Map Login User To Modul Aplikasi </a>
-			</legend>
-			<div class="grid_12" id="contentHide" style="margin:0 auto;">
-				<div class="grid_8">
-					<div class="grid_3" style="margin: 10px 0 0 0;">
-						<label c-label item="item" c-label-text="Modul Aplikasi"></label>
-					</div>
-					<div class="grid_9">
-						<input style="width: 100%;" kendo-combo-box k-ng-model="item.modulAplikasi"
-							k-data-text-field="'modulaplikasi'" k-data-value-field="'id'" k-filter="'contains'"
-							k-auto-bind="false" k-data-source="listModulAplikasi" />
-					</div>
-				</div>
-				<div class="grid_2" style="margin-top:10px">
-					<button class="c-button" ng-click="tambahMap()">Tambah</button>
-				</div>
-				<div class="grid_2" style="margin-top:10px">
-					<button class="c-button" ng-click="hapusMap()">Hapus</button>
-				</div>
-				<div class="grid_12">
-
-					<div class="grid_12 borderBox">
-						<div id="kGrid" kendo-grid k-data-source="dataSourceMapLoginToModul" k-selectable="'row'"
-							k-columns="columnGridMapLoginToModul" k-pageable="'true'" k-sortable="'true'"
-							k-ng-model="dataSelected2" ng-click="klikMapLogin(dataSelected2)">
-
-						</div>
-					</div>
-
-				</div>
-
-
-			</div>
-		</fieldset>
-	</div>
-
-</div>
-<div class="grid_6">
-
-	<div class="grid_12">
-		<div class="grid_3" style="margin: 10px 0 0 0;">
-			<label c-label item="item" c-label-text="Instalasi"></label>
-		</div>
-		<div class="grid_9">
-			<input style="width: 100%;" kendo-combo-box k-ng-model="item.instalasi" k-data-text-field="'title'"
-				k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listInstalasi"
-				k-on-change="getDataRuangan(item.instalasi)" />
-		</div>
-	</div>
-	<div class="grid_12">
-		<div class="grid_3" style="margin: 10px 0 0 0;">
-			<label c-label item="item" c-label-text="Ruangan"></label>
-		</div>
-		<div class="grid_9">
-			<input style="width: 100%;" kendo-combo-box k-ng-model="item.ruangan" k-data-text-field="'title'"
-				k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listdataruangan" />
-		</div>
-	</div>
-	<div class="grid_12">
-		<div class="grid_12 headerBox">
-			<p>Map Ruangan</p>
-		</div>
-		<!-- grid table -->
-		<div class="grid_12 borderBox">
-			<div id="kGrid" kendo-grid k-data-source="dataGrid" k-selectable="'row'" k-columns="columnGrid"
-				k-pageable="'true'" k-sortable="'true'" k-ng-model="dataSelected" ng-click="klikGrid(dataSelected)">
-				<!-- <div k-detail-template>
-					                                <kendo-tabstrip>
-					                                    <div>
-					                                        <div id="kGridDetail" kendo-grid k-options="data2(dataItem)" 
-					                                            k-sortable="'true'" 
-					                                            k-selectable="'row'" 
-					                                            k-ng-model="dataSelected2"
-					                                            ng-click="klikDetail(dataSelected2)">
-					                                        </div>
-					                                    </div>
-					                                </kendo-tabstrip>
-					                            </div> -->
-			</div>
-		</div>
-
-	</div>
-
-	<div class="grid_2">
-		<button class="c-button" ng-click="tambah()">Tambah</button>
-	</div>
-	<div class="grid_2">
-		<button class="c-button" ng-click="hapus()">Hapus</button>
 	</div>
 </div>
-</md-content>
-</md-tab>
 <!-- <md-tab label="Mapping Pegawai Ruangan">
 							<md-content class="md-padding">
 								
 							</md-content>
 						</md-tab> -->
-<md-tab label="Mapping Pegawai">
-	<md-content class="md-padding">
-		<div class="grid_6">
-			<div class="grid_12">
-				<div class="grid_3" style="margin: 10px 0 0 0;">
-					<label c-label item="item" c-label-text="Login User"></label>
-				</div>
-				<div class="grid_9">
-					<input style="width: 100%;" kendo-combo-box k-ng-model="item.loginUser"
-						k-data-text-field="'namauser'" k-data-value-field="'luid'" k-filter="'contains'"
-						k-auto-bind="false" k-data-source="listdataloginuser"
-						k-on-change="getDataUser(item.loginUser)" />
-				</div>
-			</div>
-			<div class="grid_12 headerBox containerBorderBox" style="padding:0px">
-				<p>Map To Ruangan</p>
-			</div>
-			<div class="grid_12 borderBox containerBorderBox" style="overflow-y: scroll; height:400px;">
-				<div class="grid_12">
-					<div kendo-tree-view="tree" k-data-source="treeSourceRuangan" options="mainTreeViewOptionRuangan"
-						ng-model="treeView" ng-click="klik(tree)">
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="grid_6" style="margin-top: 45px">
 
-			<div class="grid_12 headerBox containerBorderBox" style="padding:0px">
-				<p>Map To Modul</p>
-			</div>
-			<div class="grid_12 borderBox containerBorderBox" style="overflow-y: scroll; height:400px;">
-				<div class="grid_12">
-					<div kendo-tree-view="tree2" k-data-source="treeSourceModulAplikasi"
-						options="mainTreeViewSubsistemOption" ng-model="treeView" ng-click="klik3(tree)">
-					</div>
-				</div>
-			</div>
-		</div>
-	</md-content>
-</md-tab>
-<md-tab label="Waktu Login">
-	<!-- <md-content class="md-padding"> -->
-	<div class="grid_6">
-		<div class="grid_12 headerBox">
-			<p>List User</p>
-		</div>
-		<div class="grid_12 borderBox containerBorderBox" style="overflow-y: scroll; min-height:500px;">
-			<div class="grid_12">
-				<div class="grid_6">
-					<div class="grid_4" style="margin-top:10px">
-						<label c-label item="item">Waktu Berakhir</label>
-					</div>
-					<div class="grid_8">
-						<input style="width: 100%" k-ng-model="item.endDateLogin" kendo-datetimepicker k-min="now"
-							placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
-					</div>
-				</div>
-			</div>
-			<div class="grid_12 ">
-				<div class="grid_12 headerBox">
-					<p> <input type="checkbox" class="k-checkbox" id="cekAll" ng-model="item.cekAll"
-							ng-click="cekAll(item.cekAll)">
-						<label class="k-checkbox-label" for="cekAll" style="margin-left:5px"><b>Check All
-								User</b></label></p>
-				</div>
-				<div class="grid_12 borderBox containerBorderBox" style="overflow-y: scroll; height:340px;">
-					<div class="grid_4" ng-repeat="user in listUserForTimeLogin track by $index  ">
-						<input type="checkbox" ng-checked="user.isChecked" class="k-checkbox" name="{{user.namauser}}"
-							id="{{user.namauser}}" ng-model="bool" value="{{user.luid}}" ng-click="addUser(bool,user)">
 
-						<label class="k-checkbox-label" for="{{user.namauser}}">{{user.namauser}}</label>
-
-					</div>
-				</div>
-				<div class="grid_12">
-					<div class="grid_5">
-						<div class="grid_2" style="margin-top:10px">
-							<label c-label item="item">User</label>
-						</div>
-						<div class="grid_10">
-							<input c-text-box type="input" filter="" class="k-textbox" ng-model="item.cariUser" />
-						</div>
-					</div>
-					<div class="grid_2" style="margin-top: 10px">
-						<button class="c-button" ng-click="cariUserTime()">Cari</button>
-					</div>
-					<div class="grid_1"></div>
-					<div class="grid_2" style="margin-top: 10px">
-						<button class="c-button" ng-click="simpanUserTime()">Simpan</button>
-					</div>
-					<div class="grid_2" style="margin-top: 10px">
-						<button class="c-button error" ng-click="batalUserTime()">Batal</button>
-					</div>
-
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="grid_6">
-		<div class="grid_12 headerBox">
-			<p>List Waktu Login Berakhir</p>
-		</div>
-
-		<div class="grid_12 borderBox containerBorderBox" style="overflow-y: scroll; min-height:500px;">
-			<div class="grid_8">
-				<div class="grid_4" style="margin-top:10px">
-					<label c-label item="item">Nama User</label>
-				</div>
-				<div class="grid_8">
-					<input c-text-box type="input" filter="" placeholder="Cari Nama User" class="k-textbox"
-						ng-model="item.cariUserS" />
-				</div>
-			</div>
-			<div class="grid_1" style="margin-top:-5px">
-				<label c-label c-label-text=""></label>
-				<em ng-click='resetFilter()' id="iconButton" data-role="button" class="k-button k-button-icon k-primary"
-					role="button" aria-disabled="false" tabindex="0"><span
-						class="k-sprite k-icon k-i-cancel">Refresh</span></em>
-			</div>
-
-			<div class="grid_12 borderBox">
-				<div id="kGrid3" kendo-grid k-data-source="dataSourceWaktuLogin" k-selectable="'row'"
-					options="columnGridWaktuLogin" k-pageable="'true'" k-sortable="'true'" k-ng-model="selectedWaktu"
-					ng-click="klikWaktuLogin(selectedWaktu)">
-
-				</div>
-			</div>
-
-		</div>
-		<!-- <div class="grid_12">
-												
-									<div class="grid_12 borderBox">
-									<div id="kGrid" 
-									kendo-grid k-data-source="dataSourceWaktuLogin" 
-									k-selectable="'row'" 
-									k-columns="columnGridWaktuLogin" 
-									k-pageable="'true'" 
-									k-sortable="'true'" 
-									k-ng-model="selectedWaktu"
-									ng-click="klikWaktuLogin(selectedWaktu)">
-								
-									</div>
-								</div>
-							</div> -->
-		<!-- </md-content> -->
-</md-tab>
 
 <!-- <md-tab label="User Login">
 						<md-content class="md-padding">
@@ -532,11 +586,6 @@
 							</div>
 						</md-content>
 					</md-tab> -->
-</md-tabs>
-</md-content>
-</div>
-</div>
-</div>
 <div class="grid_12" style="margin-top:60px">
 	<div ng-include='"../app/template/Shared/TemplateLoading"'></div>
 </div>

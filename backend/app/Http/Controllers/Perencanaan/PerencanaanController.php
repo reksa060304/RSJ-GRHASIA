@@ -24,6 +24,7 @@ use App\Transaksi\PelayananPasien;
 use App\Transaksi\PelayananPasienDetail;
 use App\Transaksi\PelayananPasienPetugas;
 use App\Transaksi\RiwayatRealisasi;
+use App\Transaksi\StrukPelayananDetail;
 use App\Transaksi\StrukRealisasi;
 use App\Transaksi\StrukVerifikasi;
 use App\Transaksi\StrukVerifikasiAnggaran;
@@ -65,6 +66,10 @@ use phpDocumentor\Reflection\Types\Null_;
 use phpDocumentor\Reflection\Types\Parent_;
 use Webpatser\Uuid\Uuid;
 use App\Master\RunningNumber;
+use App\Transaksi\StrukPelayanan;
+
+use App\Transaksi\StrukPerencanaan;
+use App\Transaksi\StrukPerencanaanDetail;
 
 class PerencanaanController extends ApiController {
     use Valet;
@@ -1085,7 +1090,7 @@ class PerencanaanController extends ApiController {
             'mataanggaran' => $mata,
             'mataanggaranpermen' => $mataanggaranpermen,
             'keteranganperubahan' => $keteranganperubahan,
-            'mataanggarancombo' => $mataanggarancombo,
+            // 'mataanggarancombo' => $mataanggarancombo,
             'mataanggarancombodiv' => $mataanggarancombodiv,
             'jenisanggaran' => $jenisanggaran,
             'jenisbelanja' => $jenisbelanja,
@@ -1953,7 +1958,7 @@ class PerencanaanController extends ApiController {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
         $dataLogin = $request->all();
-        $data = \DB::table('strukpelayanan_t as sp')
+        $data = DB::table('strukpelayanan_t as sp')
             ->LEFTJOIN('riwayatrealisasi_t as rr','rr.penerimaanfk','=','sp.norec')
             ->LEFTJOIN('strukrealisasi_t as sr','sr.norec','=','rr.objectstrukrealisasifk')
             ->LEFTJOIN('mataanggaran_t as ma','ma.norec','=','sr.objectmataanggaranfk')
@@ -2222,7 +2227,7 @@ class PerencanaanController extends ApiController {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
         $dataLogin = $request->all();
-        $dataPegawai = \DB::table('loginuser_s as lu')
+        $dataPegawai = DB::table('loginuser_s as lu')
             ->select('lu.objectpegawaifk')
             ->where('lu.kdprofile', $idProfile)
             ->where('lu.id',$dataLogin['userData']['id'])
@@ -2344,7 +2349,7 @@ class PerencanaanController extends ApiController {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
         $req=$request->all();
-        $keempat = \DB::table('kelompokanggaranketiga_m as ru')
+        $keempat = DB::table('kelompokanggaranketiga_m as ru')
             ->select('ru.id','ru.kdchildketiga','ru.childketiga')
             ->where('ru.statusenabled', true)
             ->where('ru.kdprofile', $idProfile)
@@ -6083,7 +6088,7 @@ class PerencanaanController extends ApiController {
         
         $arrALokasi = [];
         foreach($dataKeteranganBelanja as $item){
-            $dataAlokasi = \DB::table('alokasiketeranganbelanja_t as ap')
+            $dataAlokasi = DB::table('alokasiketeranganbelanja_t as ap')
             ->join('keteranganbelanja_t as kb', 'ap.keteranganbelanjafk', '=', 'kb.norec')
             ->join('mataanggaran_m as ma', 'ma.id', '=', 'kb.objectmataanggaranfk')
             ->select('ap.norec', 'ap.keteranganbelanjafk', 'ap.bulanint', 'ap.nilai', 'ma.kodemataanggaran')
@@ -6203,7 +6208,7 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
         ) as x group by norec, keteranganbelanja, kodesubkegiatan, keterangansubkegiatan, kode, keterangan, tahun, tahap, subtotal, kegiatan, kodemataanggaran, namamataanggaran, mataanggaran
         order by kodemataanggaran"));
 
-        $dataAsalProduk = \DB::table('asalproduk_m as ap')
+        $dataAsalProduk = DB::table('asalproduk_m as ap')
             ->select('ap.id','ap.asalproduk')
             ->where('ap.statusenabled',true)
             ->where('ap.isanggaran',true)
@@ -9047,7 +9052,7 @@ public function loadComboRincian(Request $request)
         $req = $request['data'];
         try {
             foreach ($req as $r) {
-                $data[] = \DB::table('keteranganbelanja_t')->where('norec', $r['norec'])->where('kdprofile', $idProfile)->update([
+                $data[] = DB::table('keteranganbelanja_t')->where('norec', $r['norec'])->where('kdprofile', $idProfile)->update([
                 'statusenabled'=> false
                 ]);
             }
@@ -9112,5 +9117,636 @@ public function loadComboRincian(Request $request)
             );
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    /**
+     * Get data sub sub kegiatan
+     */
+    public function getSubSubKegiatan(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $dataLogin = $request->all();
+
+        $tahun = $request['tahun'];
+        
+        $sql = DB::select(DB::raw("
+            SELECT MIN(id) AS id, kode, MIN(keterangan) AS keterangan
+            FROM kegiatananggaran_m
+            WHERE div = 4
+            AND statusenabled = TRUE
+            AND tahun='$tahun'
+            GROUP BY kode
+            ORDER BY kode
+        "));
+
+        return $this->respond($sql);
+    }
+
+    /**
+     * Get data sub sub kegiatan berdasarkan login user
+     */
+    public function getMapLoginToSubSub(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $dataLogin = $request->all();
+
+        $sql = DB::select(DB::raw("
+            SELECT map.*, lu.namauser, ka.kode, ka.id || '-' || ka.keterangan as keterangan, ka.targetmasuk, ka.targetkeluaran
+            FROM maploginusertosubsubkegiatan_s AS map
+            LEFT JOIN loginuser_s AS lu ON lu.id = map.objectloginuserfk
+            LEFT JOIN kegiatananggaran_m AS ka ON ka.id = map.objectsubsubkegiatanfk
+            WHERE map.kdprofile = ".$idProfile."
+            AND map.statusenabled = TRUE
+            AND lu.id = ".$request['idLogin']."
+        "));
+
+        $result = [
+            'data' => $sql
+        ];
+
+        return $this->respond($result);
+    }
+
+    /**
+     * Tambah map login user ke subsub kegiatan
+     */
+    public function saveMapLoginToSubSub(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        
+        DB::beginTransaction();
+        try{
+            $data = DB::table('maploginusertosubsubkegiatan_s')->insert([
+                'kdprofile' => $kdProfile,
+                'statusenabled' => true,
+                'objectsubsubkegiatanfk' => $request['idSubSub'],
+                'objectloginuserfk' => $request['idLogin']
+            ]);
+            $transStatus = true;
+        } catch (\Exception $e) {
+            $transStatus = false;
+        }
+
+        if ($transStatus) {
+            $transMessage = 'Sukses';
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'result' => $data,
+                'as' => 'inhuman',
+            );
+        } else {
+            $transMessage = 'Error';
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message'  => $transMessage,
+                'as' => 'inhuman',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    /**
+     * Delete map login user ke subsub kegiatan
+     */
+    public function deleteMapLoginToSubSub(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+
+        DB::beginTransaction();
+        try{
+            $data = DB::table('maploginusertosubsubkegiatan_s')
+                ->where('id', $request['idMapLoginSub'])
+                ->where('kdprofile', $kdProfile)
+                ->delete();
+            $transStatus = true;
+        } catch (\Exception $e) {
+            $transStatus = false;
+        }
+
+        if ($transStatus) {
+            $transMessage = 'Sukses';
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'as' => 'inhuman',
+            );
+        } else {
+            $transMessage = 'Error';
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message'  => $transMessage,
+                'as' => 'inhuman',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    /**
+     * Get data combo untuk input rencana belanja
+     */
+    public function getComboPerencanaanBelanja(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        // SubSub
+        $subSubKegiatan = DB::select(DB::raw("
+            SELECT ka.id, ka.id || '-' || ka.keterangan as keterangan
+            FROM maploginusertosubsubkegiatan_s AS map
+            LEFT JOIN loginuser_s AS lu ON lu.id = map.objectloginuserfk
+            LEFT JOIN kegiatananggaran_m AS ka ON ka.id = map.objectsubsubkegiatanfk
+            WHERE map.kdprofile = ".$idProfile."
+            AND map.statusenabled = TRUE
+            AND lu.id = ".$request['idLogin']."
+        "));
+
+        // Asal Produk
+        $asalProduk = DB::table('asalproduk_m as ap')
+            ->select('ap.id','ap.asalproduk')
+            ->where('ap.statusenabled',true)
+            ->where('ap.isanggaran',true)
+            ->orderBy('ap.asalproduk')
+            ->get();
+
+        // Produk
+        $kdjenisobat = explode (',',$this->settingDataFixed('kdJenisProdukObat',$idProfile));
+        $arrkdjenisobat = [];
+        foreach ($kdjenisobat as $it){
+            $arrkdjenisobat []=  (int)$it;
+        }
+        $dataProdukAll = DB::table('produk_m as pr')
+            ->JOIN('detailjenisproduk_m as djp','djp.id','=','pr.objectdetailjenisprodukfk')
+            ->JOIN('jenisproduk_m as jp','jp.id','=','djp.objectjenisprodukfk')
+            ->leftJOIN('satuanstandar_m as ss','ss.id','=','pr.objectsatuanstandarfk')
+            ->JOIN('stokprodukdetail_t as spd','spd.objectprodukfk','=','pr.id')
+            ->select('pr.id','pr.namaproduk')
+            ->where('pr.kdprofile', $idProfile)
+            ->where('pr.statusenabled',true)
+            // ->whereIn('jp.id',[97,283])
+            ->whereIn('jp.id',$arrkdjenisobat)
+            ->groupBy('pr.id','pr.namaproduk')
+            ->orderBy('pr.namaproduk')
+            ->get();
+        
+        //Prioritas
+        $prioritas = DB::table('filter_t')->where('keterangan', 'level-rencana')->get(); 
+
+        $result = [
+            'subSubKegiatan' => $subSubKegiatan,
+            'dataProdukAll' => $dataProdukAll,
+            'asalProduk' => $asalProduk,
+            'prioritas' => $prioritas,
+        ];
+
+        return $this->respond($result);
+    }
+
+    /**
+     * Get info stock produk yang dipilih berdasarkan ruangan
+     */
+    public function getInfoStokPerencanaan(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        // Query id ruangan yang hanya digudang
+        $kdRuanganDepoRajal = $this->settingDataFixed('kdruanganperencanaan', $idProfile);
+
+        // Query stok produk
+        $sql = DB::select(DB::raw("
+        SELECT
+            ru.id,
+            ru.namaruangan,
+            CAST ( SUM ( spd.qtyproduk ) AS FLOAT ) AS qtyproduk
+        FROM
+            stokprodukdetail_t AS spd
+            INNER JOIN ruangan_m AS ru ON ru.ID = spd.objectruanganfk
+            INNER JOIN strukpelayanan_t AS sk ON sk.norec = spd.nostrukterimafk 
+        WHERE
+            spd.kdprofile = 30 
+            AND spd.objectprodukfk =".$request['produkfk']."
+            AND ru.statusenabled = TRUE
+            AND spd.objectruanganfk IN(".$kdRuanganDepoRajal.")
+        GROUP BY
+            ru.namaruangan,
+            ru.id
+        "));
+
+        return $this->respond($sql);
+    }
+
+    /**
+     * Simpan data perencanaan
+     */
+    public function simpanRencanaBelanja(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        $strukPerencanaan = new StrukPerencanaan();
+        
+        $norec = $strukPerencanaan->generateNewId();
+
+        $noStruk = $this->generateCode(new StrukPerencanaan, 'nostruk', 9, 'P' . $this->getDateTime()->format('ym'), $idProfile);
+        
+        DB::beginTransaction();
+        try{
+
+            $struk = DB::table('strukperencanaan_t')->insert([
+                'norec' => $norec,
+                'kdprofile' => $idProfile,
+                'nostruk' => $noStruk, 
+                'statusenabled' => true,
+                'tgldokumen' => $request['tgldokumen'],
+                'objectpegawaifk' => $request['idLogin'],
+                'objectruanganasalfk' => $request['idRuangan'],
+                'keteranganlainnya' => 'Rencana Usulan Pengadaan',
+                'objectsubkegiatanfk' => $request['idSubSubKegiatan'],
+                'objectsumberdanafk' => $request['idMataAnggaran'],
+            ]);
+
+            foreach($request['dataPerencanaan'] as $item){
+                $strukPerencanaanDetail = new StrukPerencanaanDetail();
+
+                DB::table('strukperencanaandetail_t')->insert([
+                    'norec' => $strukPerencanaanDetail->generateNewId(),
+                    'nostrukfk' => $norec,
+                    'kdprofile' => $idProfile,
+                    'statusenabled' => TRUE,
+                    'objectprodukfk' => (isset($item['produk']['id'])) ? $item['produk']['id'] : null,
+                    'namaproduk' => (isset($item['produk']['namaproduk'])) ? $item['produk']['namaproduk'] : null,
+                    'namakegiatan' => (isset($item['namaKegiatan'])) ? $item['namaKegiatan'] : null,
+                    'qtystok' => (isset($item['stokProduk'])) ? $item['stokProduk'] : null,
+                    'qtyrencana' => $item['jumlahRencana'],
+                    'hargasatuan' => $item['hargaSatuan'],
+                    'keteranganlainnya' => $item['listReverensi'],
+                    'isverifikasi' => FALSE,
+                ]);
+            }
+            $transStatus = true;
+        }catch (\Exception $e) {
+            $transStatus = false;
+            $result = $e;
+        }
+
+        if ($transStatus) {
+            $transMessage = 'Sukses';
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'as' => 'inhuman',
+            );
+        } else {
+            $transMessage = 'Error';
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message'  => $e->getMessage(),
+                'as' => 'inhuman',
+            );
+        }
+
+        return $this->setStatusCode($result['status'])->respond($result);
+
+    }
+
+    /**
+     * Get data perencanaan
+     */
+    public function getRencanaBelanja(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        $tglAwal = $request['tglAwal'];
+        $tglAkhir = $request['tglAkhir'];
+
+        $rencana = DB::select(DB::raw("
+            SELECT sp.tglverifikasi, sp.statusenabled, sp.objectsubkegiatanfk, sp.norec, sp.tgldokumen, sp.nostruk, pg.namalengkap, ka.id || '-' || ka.keterangan AS keterangan, ma.kodemataanggaran || '-' || ma.namamataanggaran AS matanggaran, ru.namaruangan
+            FROM strukperencanaan_t as sp
+            LEFT JOIN pegawai_m as pg ON pg.id = sp.objectpegawaifk
+            LEFT JOIN kegiatananggaran_m as ka ON ka.id = sp.objectsubkegiatanfk
+            LEFT JOIN mataanggaran_m as ma ON ma.id = sp.objectsumberdanafk
+            LEFT JOIN ruangan_m as ru ON ru.id = sp.objectruanganasalfk
+            WHERE sp.keteranganlainnya = 'Rencana Usulan Pengadaan'
+            AND sp.statusenabled = TRUE
+            AND sp.kdprofile = $idProfile
+            AND sp.tgldokumen BETWEEN '$tglAwal' AND '$tglAkhir'
+            ORDER BY sp.nostruk
+        "));
+
+        $data = [];
+        foreach($rencana as $key=>$item){
+            $detail = DB::select(DB::raw("
+                SELECT spd.qtyverifikasi, spd.namakegiatan, spd.hargasatuan, spd.isverifikasi, spd.norec, spd.nostrukfk, spd.objectprodukfk, spd.qtyrencana, spd.qtystok, spd.keteranganlainnya, pr.namaproduk
+                FROM strukperencanaandetail_t as spd
+                LEFT JOIN produk_m as pr ON pr.id = spd.objectprodukfk
+                WHERE spd.nostrukfk = '$item->norec'
+                AND spd.statusenabled = TRUE
+                AND spd.kdprofile = ".$idProfile."
+            "));
+            $data[$key]['rencana'] = $item;
+            $data[$key]['details'] = $detail;
+        }
+
+        return $this->respond($data);
+    }
+
+    /**
+     * Delete data perencanaan
+     */
+    public function deleteRencanaBelanja(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        DB::beginTransaction();
+        try{
+
+            DB::table('strukperencanaan_t')
+                ->where('norec', $request['norec'])
+                ->update([
+                    'statusenabled' => false
+                ]);
+            DB::table('strukperencanaandetail_t')
+                ->where('nostrukfk', $request['norec'])
+                ->update([
+                    'statusenabled' => false
+                ]);
+
+            $transStatus = true;
+        }catch(\Exception $e){
+            $transStatus = false;
+            $result = $e;
+        }
+
+        if ($transStatus) {
+            $transMessage = 'Sukses';
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'as' => 'inhuman',
+            );
+        } else {
+            $transMessage = 'Error';
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message'  => $e->getMessage(),
+                'as' => 'inhuman',
+            );
+        }
+
+        return $this->setStatusCode($result['status'])->respond($result);
+    }
+
+    /**
+     * Edit data perencanaan
+     */
+    public function editRencanaBelanja(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        $rencana = DB::table('strukperencanaan_t as sp')
+            ->select(DB::raw("sp.statusenabled, sp.objectsubkegiatanfk, sp.objectsumberdanafk, sp.norec, sp.tgldokumen, sp.nostruk, sp.objectruanganasalfk, pg.namalengkap, ka.id || '-' || ka.keterangan AS keterangan, ma.kodemataanggaran || '-' || ma.namamataanggaran AS matanggaran, ru.namaruangan, dp.namadepartemen AS departemen, ru.objectdepartemenfk"))
+            ->leftJoin('pegawai_m as pg', 'pg.id', '=', 'sp.objectpegawaifk')
+            ->leftJoin('kegiatananggaran_m as ka', 'ka.id', '=', 'sp.objectsubkegiatanfk')
+            ->leftJoin('mataanggaran_m as ma', 'ma.id', '=', 'sp.objectsumberdanafk')
+            ->leftJoin('ruangan_m as ru', 'ru.id', '=', 'sp.objectruanganasalfk')
+            ->leftJoin('departemen_m as dp', 'dp.id', '=', 'ru.objectdepartemenfk')
+            ->where('sp.keteranganlainnya', '=', 'Rencana Usulan Pengadaan')
+            ->where('sp.statusenabled', '=', true)
+            ->where('sp.kdprofile', '=', $idProfile)
+            ->where('sp.kdprofile', '=', $idProfile)
+            ->where('sp.norec', '=', $request['norec'])
+            ->first();
+
+        $detail = DB::select(DB::raw("
+            SELECT spd.namakegiatan, spd.hargasatuan, spd.isverifikasi, spd.norec, spd.nostrukfk, spd.objectprodukfk, spd.qtyrencana, spd.qtystok, spd.keteranganlainnya, pr.namaproduk
+            FROM strukperencanaandetail_t as spd
+            LEFT JOIN produk_m as pr ON pr.id = spd.objectprodukfk
+            WHERE spd.nostrukfk = '$rencana->norec'
+            AND spd.statusenabled = TRUE
+            AND spd.kdprofile = $idProfile
+        "));
+
+        $subsub = [
+            'id' => $rencana->objectsubkegiatanfk,
+            'keterangan' => $rencana->keterangan
+        ];
+
+        $ruangan = [
+            'id' => $rencana->objectruanganasalfk,
+            'namaruangan' => $rencana->namaruangan,
+            'objectdepartemenfk' => $rencana->objectdepartemenfk,
+            'departemen' => $rencana->departemen
+        ];
+
+        $mataanggarancombo = DB::select(DB::raw("select cbs.id, cbs.kodemataanggaran, cbs.namamataanggaran, cbs.kodemataanggaran || ' - ' || cbs.namamataanggaran as text
+            , split_part(cbs.kodemataanggaran, '.', 1) as subkodepertama
+            , split_part(cbs.kodemataanggaran, '.', 2) as subkodekedua
+            , case when split_part(cbs.kodemataanggaran, '.', 3) = '' then '0' else split_part(cbs.kodemataanggaran, '.', 3)::int4 end as subkodeketiga
+            , case when split_part(cbs.kodemataanggaran, '.', 4) = '' then '0' else split_part(cbs.kodemataanggaran, '.', 4)::int4 end as subkodekeempat
+            , case when split_part(cbs.kodemataanggaran, '.', 5) = '' then '0' else split_part(cbs.kodemataanggaran, '.', 5)::int4 end as subkodekelima
+            from mataanggaran_m as cbs
+            where cbs.kdprofile = $idProfile
+            and cbs.statusenabled = true
+            and cbs.id = $rencana->objectsumberdanafk 
+            order by subkodepertama asc, subkodekedua asc, subkodeketiga asc, subkodekeempat asc, subkodekelima asc ;
+        "));
+
+        $rencana->details = $detail;
+        $rencana->subsub = $subsub;
+        $rencana->mataanggaran = $mataanggarancombo[0];
+        $rencana->ruangan = $ruangan;
+
+        // dd($rencana);
+        return $this->respond($rencana);
+    }
+
+    /**
+     * Update data perencanaan
+     */
+    public function updateRencanaBelanja(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        $noStruk = $this->generateCode(new StrukPerencanaan, 'nostruk', 9, 'P' . $this->getDateTime()->format('ym'), $idProfile);
+        
+        DB::beginTransaction();
+        try{
+
+            // Update Perencanaan
+            $struk = DB::table('strukperencanaan_t')->where('norec', $request['norec'])->update([
+                'kdprofile' => $idProfile,
+                'statusenabled' => true,
+                'tgldokumen' => $request['tgldokumen'],
+                'objectpegawaifk' => $request['idLogin'],
+                'objectruanganasalfk' => $request['idRuangan'],
+                'keteranganlainnya' => 'Rencana Usulan Pengadaan',
+                'objectsubkegiatanfk' => $request['idSubSubKegiatan'],
+                'objectsumberdanafk' => $request['idMataAnggaran'],
+            ]);
+
+            // Delete Detail Perencanaan Sebelumnya
+            DB::table('strukperencanaandetail_t')->where('nostrukfk', $request['norec'])->delete();
+
+            foreach($request['dataPerencanaan'] as $item){
+                $strukPerencanaanDetail = new StrukPerencanaanDetail();
+                DB::table('strukperencanaandetail_t')->insert([
+                    'norec' => $strukPerencanaanDetail->generateNewId(),
+                    'nostrukfk' => $request['norec'],
+                    'kdprofile' => $idProfile,
+                    'statusenabled' => TRUE,
+                    'objectprodukfk' => $item['produk']['id'],
+                    'qtyrencana' => $item['jumlahRencana'],
+                    'qtystok' => $item['stokProduk'],
+                    'keteranganlainnya' => $item['listReverensi'],
+                    'isverifikasi' => FALSE,
+                ]);
+            }
+            $transStatus = true;
+        }catch (\Exception $e) {
+            $transStatus = false;
+            $result = $e;
+        }
+
+        if ($transStatus) {
+            $transMessage = 'Sukses';
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'as' => 'inhuman',
+            );
+        } else {
+            $transMessage = 'Error';
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message'  => $e->getMessage(),
+                'as' => 'inhuman',
+            );
+        }
+
+        return $this->setStatusCode($result['status'])->respond($result);
+
+    }
+
+    public function verifikasiRencanaBelanja(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        DB::beginTransaction();
+        try{
+
+            // Update Perencanaan
+            $struk = DB::table('strukperencanaan_t')->where('norec', $request['norec'])->update([
+                'kdprofile' => $idProfile,
+                'statusenabled' => true,
+                'objectpegawaiveriffk' => $request['idLogin'],
+                'tglverifikasi' => $request['tglVerifikasi'],
+                'objectprioritasfk' => $request['idPrioritas']
+            ]);
+
+            foreach($request['dataPerencanaan'] as $item){
+                $strukPerencanaanDetail = new StrukPerencanaanDetail();
+
+                /**
+                 * Kode ini akan mendisable setiap detail struk pengajuan berdasarkan norec struk pengajuan
+                 * Kemudian akan melakukan insert data yang diverifikasi
+                 */
+                // DB::table('detailperencanaan_t')->where('nostrukfk', $request['norec'])->update([
+                //     'statusenabled' => false
+                // ]);
+
+                // DB::table('detailperencanaan_t')->insert([
+                //     'norec' => $strukPerencanaanDetail->generateNewId(),
+                //     'kdprofile' => $idProfile,
+                //     'statusenabled' => true,
+                //     'nostrukfk' => $request['norec'],
+                //     'objectprodukfk' => $item['produk']['id'],
+                //     'qtystok' => $item['stokProduk'],
+                //     'qtyperencanaan' => $item['jumlahRencana'],
+                //     'qtyverifikasi' => $item['jumlahVerifikasi'],
+                //     'keteranganlainnya' => $item['listReverensi'],
+                //     'isverifikasi' => true
+                // ]);
+
+
+                /**
+                 * Kode ini akan meupdate setiap detail struk pengajuan berdasarkan norec detail struk pengajuan
+                 * dan apabila tidak ada norec (yang berarti menambah data baru saat verifikasi) maka akan
+                 * insert data. apabila data sebelumnya didelete maka data tersebut masih ada dan tidak akan
+                 * terdelete.
+                 */
+                if(isset($item['norec'])){
+                    DB::table('strukperencanaandetail_t')->where('norec', $item['norec'])->update([
+                        'kdprofile' => $idProfile,
+                        'statusenabled' => true,
+                        'objectprodukfk' => (isset($item['produk']['id'])) ? $item['produk']['id'] : null,
+                        'namaproduk' => (isset($item['produk']['namaproduk'])) ? $item['produk']['namaproduk'] : null,
+                        'namakegiatan' => (isset($item['namaKegiatan'])) ? $item['namaKegiatan'] : null,
+                        'qtystok' => (isset($item['stokProduk'])) ? $item['stokProduk'] : null,
+                        'qtyrencana' => $item['jumlahRencana'],
+                        'qtyverifikasi' => $item['jumlahVerifikasi'],
+                        'keteranganlainnya' => $item['listReverensi'],
+                        'isverifikasi' => true
+                    ]);
+                }
+                else{
+                    DB::table('strukperencanaandetail_t')->insert([
+                        'norec' => $strukPerencanaanDetail->generateNewId(),
+                        'kdprofile' => $idProfile,
+                        'statusenabled' => true,
+                        'nostrukfk' => $request['norec'],
+                        'objectprodukfk' => (isset($item['produk']['id'])) ? $item['produk']['id'] : null,
+                        'namaproduk' => (isset($item['produk']['namaproduk'])) ? $item['produk']['namaproduk'] : null,
+                        'namakegiatan' => (isset($item['namaKegiatan'])) ? $item['namaKegiatan'] : null,
+                        'qtystok' => (isset($item['stokProduk'])) ? $item['stokProduk'] : null,
+                        'qtyperencanaan' => $item['jumlahRencana'],
+                        'qtyverifikasi' => $item['jumlahVerifikasi'],
+                        'keteranganlainnya' => $item['listReverensi'],
+                        'isverifikasi' => true
+                    ]);
+                }
+            }
+            $transStatus = true;
+        }catch (\Exception $e) {
+            $transStatus = false;
+            $result = $e;
+        }
+
+        if ($transStatus) {
+            $transMessage = 'Sukses';
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'as' => 'inhuman',
+            );
+        } else {
+            $transMessage = 'Error';
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'message'  => $e->getMessage(),
+                'as' => 'inhuman',
+            );
+        }
+
+        return $this->setStatusCode($result['status'])->respond($result);
     }
 }

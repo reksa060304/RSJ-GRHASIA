@@ -1309,6 +1309,14 @@
         {
             "nameDep": "LaporanLinenKotorCtrl",
             "urlDep": "module/Laundry/LaporanLaundry/LaporanLinenKotorCtrl"
+        },
+        {
+            "nameDep": "RencanaBelanjaCtrl",
+            "urlDep": "module/Perencanaan/RencanaBelanjaCtrl"
+        },
+        {
+            "nameDep": "VerifikasiRencanaCtrl",
+            "urlDep": "module/Perencanaan/VerifikasiRencanaCtrl"
         }
     ]
 }

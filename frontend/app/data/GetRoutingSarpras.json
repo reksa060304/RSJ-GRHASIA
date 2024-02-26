@@ -6474,5 +6474,45 @@
         "define": "MedifirstService"
       }
     ]
+  },
+  {
+    "name": "RencanaBelanja",
+    "url": "/UmVuY2FuYUJlbGFuamE=",
+    "templateurl": "module/Perencanaan/RencanaBelanja.html",
+    "controller": "RencanaBelanjaCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "VerifikasiRencana",
+    "url": "/VmVyaWZpa2FzaVJlbmNhbmE=",
+    "templateurl": "module/Perencanaan/VerifikasiRencana.html",
+    "controller": "VerifikasiRencanaCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
   }
 ]

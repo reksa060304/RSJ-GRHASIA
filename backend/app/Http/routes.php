@@ -1813,6 +1813,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::post('perencanaan/delete-rencana-belanja', 'Perencanaan\PerencanaanController@deleteRencanaBelanja');
             Route::get('perencanaan/edit-rencana-belanja', 'Perencanaan\PerencanaanController@editRencanaBelanja');
             Route::post('perencanaan/update-rencana-belanja', 'Perencanaan\PerencanaanController@updateRencanaBelanja');
+            Route::post('perencanaan/verifikasi-rencana-belanja', 'Perencanaan\PerencanaanController@verifikasiRencanaBelanja');
+            Route::get('perencanaan/sandingkan-data', 'Perencanaan\PerencanaanController@sandingkanData');
         // });
         // Route::group(['prefix' => 'piutang'], function () {
             /*GET*/
