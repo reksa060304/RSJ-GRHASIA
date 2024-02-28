@@ -1334,6 +1334,11 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('report/get-cetak-cmrm05','Report\ReportController@cetakCM05');
           Route::get('report/cetak-okupasi-terapi','Report\ReportController@cetakOkupasiTerapi');
           Route::get('report/cetak-pengkajian-rajal-nonjiwa','Report\ReportController@cetakPengkajianRajalNonJiwa');
+          Route::get('report/cetak-pengkajian-igd','Report\ReportController@cetakPengkajianIGDNonJiwa');
+          Route::get('report/cetak-pengkajian-rajal','Report\ReportController@cetakPengkajianRajalJiwa');
+          Route::get('report/cetak-asesmen-terapi-wicara','Report\ReportController@cetakTerapiWicara');
+          Route::get('report/cetak-asesmen-fisioterapi','Report\ReportController@cetakAsesmenFisioterapi');
+          
           
           Route::get('report/get-cetak-per-jenis-anggaran','Report\ReportController@CetakPerJenisAnggaran');
           Route::get('report/get-cetak-per-jenis-anggaran-sebelum-sesudah','Report\ReportController@CetakPerJenisAnggaranSebelumSesudah');

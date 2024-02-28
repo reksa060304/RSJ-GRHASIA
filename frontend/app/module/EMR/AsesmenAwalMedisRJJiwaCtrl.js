@@ -1,4 +1,4 @@
-define(['initialize'], function (initialize) {
+define(['initialize', 'Configuration'], function (initialize,config) {
     'use strict';
     initialize.controller('AsesmenAwalMedisRJJiwaCtrl', ['$q', '$rootScope', '$scope', 'ModelItem', '$state', 'CacheHelper', 'DateHelper', 'MedifirstService','$mdDialog',
         function ($q, $rootScope, $scope, ModelItem, $state, cacheHelper, dateHelper, medifirstService, $mdDialog) {
@@ -8,6 +8,7 @@ define(['initialize'], function (initialize) {
             $scope.noCM = $state.params.noCM;
             $scope.tombolSimpanVis = true
             $scope.isCetak = false
+            $scope.isCetakV = true;
             $scope.noRecPap = cacheHelper.get('noRecPap');
             $scope.totalSkor = 0
             $scope.skorNutrisi = 0
@@ -16,6 +17,8 @@ define(['initialize'], function (initialize) {
             $scope.totalSkor4 = 0
             $scope.cc = {}
             var nomorEMR = '-'
+            var noregEMR = ''
+            var norecEMR = ''
             $scope.cc.emrfk = 3000004
             var dataLoad = []
             var pegawaiInputDetail= ''
@@ -143,11 +146,23 @@ define(['initialize'], function (initialize) {
                 $scope.listData2 = arrayShiftJaga2
             })
 
+            // var cacheNomorEMR = cacheHelper.get('cacheNomorEMR');
+            // if (cacheNomorEMR != undefined) {
+            //     nomorEMR = cacheNomorEMR[0]
+            //     $scope.cc.norec_emr = nomorEMR
+            //     $scope.cc.tanggalEmrl = cacheNomorEMR[2]
+            // }
+
             var cacheNomorEMR = cacheHelper.get('cacheNomorEMR');
+            var cacheNoREC = cacheHelper.get('cacheNOREC_EMR');
+            if(cacheNoREC!= undefined){
+                norecEMR = cacheNomorEMR[1]
+            }
             if (cacheNomorEMR != undefined) {
                 nomorEMR = cacheNomorEMR[0]
+                norecEMR = cacheNomorEMR[1]
+                noregEMR = cacheNomorEMR[2]
                 $scope.cc.norec_emr = nomorEMR
-                $scope.cc.tanggalEmrl = cacheNomorEMR[2]
             }
 
             $scope.listSkor = [
@@ -276,9 +291,15 @@ define(['initialize'], function (initialize) {
                 $scope.cc.tglLahir = chacePeriode[18]
                 if (nomorEMR == '-') {
                     $scope.cc.norec_emr = '-'
+                    noregEMR = $scope.cc.noregistrasi
                 } else {
                     $scope.cc.norec_emr = nomorEMR
                 }
+                // if (nomorEMR == '-') {
+                //     $scope.cc.norec_emr = '-'
+                // } else {
+                //     $scope.cc.norec_emr = nomorEMR
+                // }
             }
             var chekedd = false;
 
@@ -730,7 +751,18 @@ define(['initialize'], function (initialize) {
                 
             })
 
-
+            $scope.cetakBlade = function(){
+                if (norecEMR == '') return
+            
+              var local =JSON.parse(localStorage.getItem('profile')) 
+              var nama = medifirstService.getPegawaiLogin().namaLengkap
+          
+               window.open(config.baseApiBackend + 'report/cetak-pengkajian-rajal?nocm='
+                   + $scope.cc.nocm + '&norec_apd='+  $scope.cc.norec +'&emr=' + norecEMR
+                   + '&emrfk='+  $scope.cc.emrfk
+                   +'&kdprofile='+local.id 
+                   +'&nama='+nama,  '_blank');
+            } 
             
                 
 

@@ -2172,51 +2172,56 @@
                     </font>
                 </td>
             </tr>
-            <div class="footer2">
-                <table width="100%">
-                    <tbody style="text-align: center">
-                        <tr>
-                            <td width="33%" style="text-align: center"></td>
-                            <td width="33%"></td>
-                            <td width="33%">
-                                Tanggal,  @foreach ($res['d'] as $item)
-                                @if ($item->emrdfk == 3018853 && !empty($item->value))
-                                {!! $item->value !!}
-                                @break
-                                @endif
-                                @endforeach
-                            </td>
-                        </tr>
-                        <tr>
-                            <td width="33%" style="text-align: center"></td>
-                            <td width="33%"></td>
-                            <td width="33%">
-                                Okupasi Terapis
-                            </td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td height="60px"> </td>
-                        </tr>
-                        <tr>
-                            <td style="text-align: center"></td>
-                            <td style="text-align: center">&nbsp;</td>
-                            <td width="33%">
-                                @foreach ($res['d'] as $item)
-                                @if ($item->emrdfk == 3018854 && !empty($item->value))
-                                {!! $item->split !!}
-                                @break
-                                @endif
-                                @endforeach
-                                {{-- {{isset($item[3018854]) ? $item[3018854]:''}} --}}
-                                
-                            </td>
-                        </tr>
-                      
-                    </tbody>
-                </table>
-            </div>
+            <tr>
+                <td></td>
+    
+                <td style="font-size: 8pt;padding-top:12px;" colspan="2">
+                    <table width="100%">
+                        <tbody style="text-align: center">
+                            <tr>
+                                <td width="25%" style="text-align: center"></td>
+                                <td width="25%"></td>
+                                <td width="50%">
+                                    Tanggal, @foreach ($res['d'] as $item)
+                                    @if ($item->emrdfk == 3018853 && !empty($item->value))
+                                    {!! $item->value !!}
+                                    @break
+                                    @endif
+                                    @endforeach
+                                </td>
+                            </tr>
+                            <tr>
+                                <td width="33%" style="text-align: center"></td>
+                                <td width="33%"></td>
+                                <td width="33%">
+                                    Okupasi Terapis
+                                </td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td height="60px"> </td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: center"></td>
+                                <td style="text-align: center">&nbsp;</td>
+                                <td width="33%">
+                                    @foreach ($res['d'] as $item)
+                                    @if ($item->emrdfk == 3018854 && !empty($item->value))
+                                    {!! $item->split !!}
+                                    @break
+                                    @endif
+                                    @endforeach
+                                    {{-- {{isset($item[3018854]) ? $item[3018854]:''}} --}}
+                                    
+                                </td>
+                            </tr>
+                          
+                        </tbody>
+                    </table>
+                </td>
+                </tr>
+       
         </table>
        
        
