@@ -359,6 +359,20 @@ define(['initialize'], function (initialize) {
                 searchData();
             }
 
+            $scope.onlyone = function (item) {
+
+                if(item == "w9" || item == "w10") {
+                    $scope.item["w9"] = false;
+                    $scope.item["w10"] = false;
+                }
+
+                if(item == "w11" || item == "w12") {
+                    $scope.item["w11"] = false;
+                    $scope.item["w12"] = false;
+                }
+                $scope.item[item] = true;
+            }
+
             /////////////////////////////// // ///////
         }
     ]);
