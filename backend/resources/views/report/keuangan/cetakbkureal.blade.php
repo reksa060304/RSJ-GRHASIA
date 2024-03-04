@@ -97,9 +97,9 @@
                     @endphp
                     <td align="left" width="200" style="padding: 10px;  font-size: 15px; ">{{ $uraianBKU }}</td>
                     <td align="center" width="50" style="padding: 10px; font-size: 15px; ">{{ $koderek }}</td>
-                    <td align="right" width="50" style="padding: 10px; font-size: 15px;  ">{{ number_format($dt->penerimaan,0,',','.') }}</td>
-                    <td align="right" width="50" style="padding: 10px; font-size: 15px; ">{{ number_format($dt->pengeluaran,0,',','.') }}</td>
-                    <td align="right" width="50" style="padding: 10px; font-size: 15px; ">{{ number_format($dt->saldoawal,0,',','.') }}</td>
+                    <td align="right" width="50" style="padding: 10px; font-size: 15px;  ">{{ number_format($dt->penerimaan,2,',','.') }}</td>
+                    <td align="right" width="50" style="padding: 10px; font-size: 15px; ">{{ number_format($dt->pengeluaran,2,',','.') }}</td>
+                    <td align="right" width="50" style="padding: 10px; font-size: 15px; ">{{ number_format($dt->saldoawal,2,',','.') }}</td>
                 </tr>
                 @endforeach
 

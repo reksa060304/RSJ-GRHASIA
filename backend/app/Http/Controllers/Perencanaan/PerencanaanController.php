@@ -4445,10 +4445,10 @@ class PerencanaanController extends ApiController {
                                 $penerimaan += $request['bku'][$i]['jumlahpanjar'];
                                 $pengeluaran += $request['bku'][$i]['jumlahdibayarverif'];
                             } else if($request['bku'][$i]['carabayar'] == 'PANJAR'){
-                                $saldofix -= 0;
+                                $saldofix -=$request['bku'][$i]['jumlahpanjar'];;
                                 $saldofix += $request['bku'][$i]['jumlahdibayarverif'];
                                 $penerimaan += $request['bku'][$i]['jumlahdibayarverif'];
-                                $pengeluaran += 0;
+                                $pengeluaran += $request['bku'][$i]['jumlahpanjar'];;
                             }
                         }
 
@@ -7505,43 +7505,114 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
         } else{
             $norecpep = " and pep.objectbkufk is null ";
         }
-        
+        // $data = DB::select(DB::raw("
+        // select * from(
+        // select pp.objectspjfk, pp.pph, coalesce(pp.ppn,0) ppn, pp.uraianpajak, pp.norec, pp.nopajak, pp.tglpph as tanggal, 'Pemungutan' as jenis,
+        // case 
+        // when pp.ppn = 0 or pp.ppn is null then jp.namaexternal
+        // when pp.ppn != 0 and pp.ppn is not null then jp.namaexternal || ', PPN'
+        // end as koderek,
+        // pp.pph || ', ' || coalesce(pp.ppn, 0) as jumlahpenerimaan,
+        // '0' as jumlahpengeluaran,
+        // ap.id idasalproduk, ap.asalproduk
+        // from pemungutanpajak_t pp
+        // inner join strukrealisasi_t sr on sr.norec = pp.objectspjfk
+        // left join jenispajak_m jp on jp.id = pp.objectjenispphfk
+        // left join asalproduk_m ap on ap.id = sr.objectasalprodukfk
+        // where pp.kdprofile = 30 and pp.statusenabled = true
+        // $norecpp
+
+        // union ALL
+
+        // select pep.objectspjfk, pep.pph, coalesce(pep.ppn,0) ppn, pep.uraianpajak, pep.norec, pep.nopajak, pep.tglpph as tanggal, 'Penyetoran' as jenis,
+        // case 
+        // when pep.ppn = 0 or pep.ppn is null then jp.namaexternal
+        // when pep.ppn != 0 and pep.ppn is not null then jp.namaexternal || ', PPN'
+        // end as koderek,
+        // '0' as jumlahpenerimaan,
+        // pep.pph || ', ' || coalesce(pep.ppn, 0) as jumlahpengeluaran,
+        // ap.id idasalproduk, ap.asalproduk
+        // from pemungutanpajak_t pp
+        // inner join strukrealisasi_t sr on sr.norec = pp.objectspjfk
+        // inner join penyetoranpajak_t pep on pep.objectspjfk = pp.objectspjfk
+        // left join jenispajak_m jp on jp.id = pp.objectjenispphfk
+        // left join asalproduk_m ap on ap.id = sr.objectasalprodukfk
+        // where pp.kdprofile = 30 and pp.statusenabled = true
+        // and pep.kdprofile = 30 and pep.statusenabled = true
+        // $norecpep
+        // ) as x order by nopajak
+        // ")
+        // );
         $data = DB::select(DB::raw("
-        select * from(
-        select pp.objectspjfk, pp.pph, coalesce(pp.ppn,0) ppn, pp.uraianpajak, pp.norec, pp.nopajak, pp.tglpph as tanggal, 'Pemungutan' as jenis,
-        case 
-        when pp.ppn = 0 or pp.ppn is null then jp.namaexternal
-        when pp.ppn != 0 and pp.ppn is not null then jp.namaexternal || ', PPN'
-        end as koderek,
-        pp.pph || ', ' || coalesce(pp.ppn, 0) as jumlahpenerimaan,
-        '0' as jumlahpengeluaran,
-        ap.id idasalproduk, ap.asalproduk
-        from pemungutanpajak_t pp
-        inner join strukrealisasi_t sr on sr.norec = pp.objectspjfk
-        left join jenispajak_m jp on jp.id = pp.objectjenispphfk
-        left join asalproduk_m ap on ap.id = sr.objectasalprodukfk
-        where pp.kdprofile = 30 and pp.statusenabled = true
-        $norecpp
-
-        union ALL
-
-        select pep.objectspjfk, pep.pph, coalesce(pep.ppn,0) ppn, pep.uraianpajak, pep.norec, pep.nopajak, pep.tglpph as tanggal, 'Penyetoran' as jenis,
-        case 
-        when pep.ppn = 0 or pep.ppn is null then jp.namaexternal
-        when pep.ppn != 0 and pep.ppn is not null then jp.namaexternal || ', PPN'
-        end as koderek,
-        '0' as jumlahpenerimaan,
-        pep.pph || ', ' || coalesce(pep.ppn, 0) as jumlahpengeluaran,
-        ap.id idasalproduk, ap.asalproduk
-        from pemungutanpajak_t pp
-        inner join strukrealisasi_t sr on sr.norec = pp.objectspjfk
-        inner join penyetoranpajak_t pep on pep.objectspjfk = pp.objectspjfk
-        left join jenispajak_m jp on jp.id = pp.objectjenispphfk
-        left join asalproduk_m ap on ap.id = sr.objectasalprodukfk
-        where pp.kdprofile = 30 and pp.statusenabled = true
-        and pep.kdprofile = 30 and pep.statusenabled = true
-        $norecpep
-        ) as x order by nopajak
+        select distinct x.objectspjfk,	x.pph,	x.ppn,	x.uraianpajak	,	x.norec	,	x.nopajak	,	x.tanggal	,	x.jenis	,	x.koderek	,	x.jumlahpenerimaan	,	x.jumlahpengeluaran	,	x.idasalproduk	,	x.asalproduk from(
+            select pp.objectspjfk, coalesce(pp.pph,0) pph, coalesce(pp.ppn,0) ppn, pp.uraianpajak, pp.norec, pp.nopajak,CASE
+            WHEN pp.tglpph isnull THEN pp.tglppn
+            
+            ELSE pp.tglpph
+            END AS tanggal, 'Pemungutan' as jenis,
+            case
+            when pp.ppn = 0 or pp.ppn is null then jp.namaexternal
+            when pp.ppn != 0 and pp.ppn is not null then jp.namaexternal 
+            end as koderek,
+            
+            case when pp.pph is null then 
+            COALESCE(pp.pph, 0)  || ', ' || pp.ppn 
+            else 
+            pp.pph || ', ' || COALESCE(pp.ppn, 0) end AS jumlahpenerimaan,
+            
+            --.pph || ', ' || coalesce(pp.ppn, 0) as jumlahpenerimaan,
+            '0' as jumlahpengeluaran,
+            ap.id idasalproduk, ap.asalproduk
+            from pemungutanpajak_t pp
+            inner join strukrealisasi_t sr on sr.norec = pp.objectspjfk
+            left join jenispajak_m jp on jp.id = pp.objectjenispphfk
+            left join asalproduk_m ap on ap.id = sr.objectasalprodukfk
+            where pp.kdprofile = 30 and pp.statusenabled = true
+       
+            $norecpp
+            
+            union ALL
+            
+            SELECT
+            pep.objectspjfk,
+            COALESCE(pep.pph, 0) AS pph,
+            COALESCE(pep.ppn, 0) AS ppn,
+            pep.uraianpajak,
+            pep.norec,
+            pep.nopajak,
+            
+            CASE
+            WHEN pep.tglpph isnull THEN pep.tglppn
+            
+            ELSE pep.tglpph
+            END AS tanggal,
+            'Penyetoran' AS jenis,
+            CASE
+            WHEN pep.ppn = 0 OR pep.ppn IS NULL THEN jp.namaexternal
+            WHEN pep.ppn != 0 AND pep.ppn IS NOT NULL THEN jp.namaexternal 
+            END AS koderek,
+            '0' AS jumlahpenerimaan,
+            case when pep.pph is null then 
+            COALESCE(pep.pph, 0)  || ', ' || pep.ppn 
+            else 
+            pep.pph || ', ' || COALESCE(pep.ppn, 0) end AS jumlahpengeluaran,
+            ap.id AS idasalproduk,
+            ap.asalproduk
+            FROM
+            pemungutanpajak_t pp
+            INNER JOIN
+            strukrealisasi_t sr ON sr.norec = pp.objectspjfk
+            INNER JOIN
+            penyetoranpajak_t pep ON pep.objectspjfk = pp.objectspjfk
+            LEFT JOIN
+            jenispajak_m jp ON jp.id = pep.objectjenispphfk
+            LEFT JOIN
+            asalproduk_m ap ON ap.id = sr.objectasalprodukfk
+            where pp.kdprofile = 30 and pp.statusenabled = true
+            and pep.kdprofile = 30 and pep.statusenabled = true
+            
+            $norecpep
+            ) as x order by nopajak
         ")
         );
 
@@ -7965,10 +8036,37 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
             $norec = " and sr.objectbkufk is null ";
         }
 
-        $data = DB::select(DB::raw("
+        // $data = DB::select(DB::raw("
+        // select rkn.namarekanan, rkn.id idrekanan, ma.kodemataanggaran, pj.norec norecpanjar,
+        // case 
+        // when pj.jumlah is not null then sr.jumlahdibayarverif
+        // when pj.jumlah is null then 0
+        // end as jumlahpanjar
+        // , sr.norec, sr.norealisasi, string_agg(DISTINCT rd.uraian, ',') uraian, cbs.carabayar, ma.kodemataanggaran || '~' || ma.namamataanggaran as mataanggaran,
+        // sr.keterangan, sr.tglverif, sr.jumlahdibayarverif,
+        // ap.id idasalproduk, ap.asalproduk
+        // FROM
+        // strukrealisasi_t sr
+        // inner join realisasidetail_t rd on rd.strukrealisasifk = sr.norec
+        // inner join carabayarspj_m cbs on cbs.id = sr.objectcarabayarfk
+        // inner JOIN mataanggaran_m ma on ma.id=sr.objectmataanggaranfk
+        // left join asalproduk_m ap on ap.id = sr.objectasalprodukfk
+		// left join panjar_t pj on pj.norec = sr.objectpanjarfk
+        // left JOIN rekanan_m rkn on rkn.id=sr.rekananfk
+        // where sr.statusenabled = true
+        // and sr.kdprofile = 30
+        // $norec
+        // and sr.status = 'Sudah Diverifikasi'
+        // group by ap.id, ap.asalproduk, rkn.namarekanan, rkn.id, ma.kodemataanggaran, pj.norec, pj.jumlah, sr.norec, sr.norealisasi, cbs.carabayar, ma.kodemataanggaran || '~' || ma.namamataanggaran,
+        // sr.keterangan, sr.tglverif, sr.jumlahdibayarverif
+        //     ")
+        // );
+
+
+         $data = DB::select(DB::raw("
         select rkn.namarekanan, rkn.id idrekanan, ma.kodemataanggaran, pj.norec norecpanjar,
         case 
-        when pj.jumlah is not null then sr.jumlahdibayarverif
+        when pj.jumlah is not null then pj.jumlah
         when pj.jumlah is null then 0
         end as jumlahpanjar
         , sr.norec, sr.norealisasi, string_agg(DISTINCT rd.uraian, ',') uraian, cbs.carabayar, ma.kodemataanggaran || '~' || ma.namamataanggaran as mataanggaran,
@@ -8340,6 +8438,7 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
             $MA->penerimafk = $request['penerimafk'];
             $MA->pph = (float)$request['pph'];
             $MA->ppn = (float)$request['ppn'];
+            $MA->objectpanjarfk = isset($request['norecpanjar'][0]) ? $request['norecpanjar'][0]['norecpanjar'] : null;
             $MA->save();
 
             $norecStrukRealisasiJangInsertTableDetailNa = $MA->norec;

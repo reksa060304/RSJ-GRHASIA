@@ -16,6 +16,9 @@
         text-align: left;
         width: 100%;
     }
+	.uppercase-label {
+    text-transform: uppercase;
+	}
 </style>
 <!-- <div class="panel panel-default container_12"> -->
 	<div class="grid_12 headerBox">
@@ -110,7 +113,7 @@
 
 				<div class="grid_2">
 					<div class="grid_12">
-						<label c-label item="item" c-label-text="Tgl Registrasi"></label>
+						<label c-label item="item">Tgl. Registrasi</label>
 						<input style="width: 100%;" k-ng-model="item.TglRegistrasi" kendo-datetimepicker k-max="now"
 							placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
 					</div>
@@ -214,7 +217,7 @@
 										<div class="panel-body">
 											<div class="grid_12">
 												<div class="grid_10">
-													<label c-label item="item" c-label-text="pasien.alamat"
+													<label style="text-transform: capitalize;" c-label item="item" c-label-text="pasien.alamat"
 														required></label>
 													<textarea required class="k-textbox"
 														style="height: 76px; width: 100%; resize: none;"
@@ -223,7 +226,7 @@
 
 												<div class="grid_2">
 													<div class="grid_12">
-														<label c-label item="item" c-label-text="RT/RW"></label>
+														<label  style="text-transform: uppercase;" c-label item="item" c-label-text="RT/RW"></label>
 													</div>
 													<div class="grid_12">
 														<input c-text-box type="input" filter="" class="k-textbox"
@@ -232,7 +235,7 @@
 												</div>
 
 												<div class="grid_4">
-													<label c-label item="item">Kode Pos</label>
+													<label style="text-transform: capitalize;" c-label item="item">Kode Pos</label>
 													<input required is-busy='isBusy' c-text-box type="input"
 														filter="'numeric'" ng-blur="findKodePos(item.kodePos)"
 														class="k-textbox" ng-blur="checkKodePos"
@@ -240,7 +243,7 @@
 												</div>
 
 												<div class="grid_8" style="margin-bottom: 2px;">
-													<label c-label item="item" c-label-text="kelurahan"
+													<label style="text-transform: capitalize;" c-label item="item" c-label-text="kelurahan"
 														required></label>
 													<input required style="width: 100%;" kendo-combo-box
 														k-ng-model="item.desaKelurahan" k-data-text-field="'desa'"
@@ -251,7 +254,7 @@
 												</div>
 
 												<div class="grid_4" style="margin-bottom: 2px;">
-													<label c-label item="item" c-label-text="kecamatan"></label>
+													<label style="text-transform: capitalize;" c-label item="item" c-label-text="kecamatan"></label>
 													<input required style="width: 100%;" kendo-combo-box
 														k-ng-model="item.kecamatan" k-data-text-field="'namakecamatan'"
 														k-filter="'contains'" k-data-value-field="'id'"
@@ -259,7 +262,7 @@
 												</div>
 
 												<div class="grid_4">
-													<label c-label item="item" c-label-text="kotaKabupaten"></label>
+													<label style="text-transform: capitalize;" c-label item="item" c-label-text="kotaKabupaten"></label>
 													<input required style="width: 100%;" kendo-combo-box
 														k-ng-model="item.kotaKabupaten"
 														k-data-text-field="'namakotakabupaten'" k-filter="'contains'"
@@ -306,7 +309,7 @@
 											</div>
 											<div class="grid_6">
 												<div class="grid_12">
-													<label c-label item="item" c-label-text="Sumber Dana"></label>
+													<label style="text-transform: capitalize;" c-label item="item" c-label-text="Sumber Dana"></label>
 												</div>
 												<div class="grid_12">
 													<input kendo-combo-box k-ng-model="item.asalproduk"
@@ -317,7 +320,7 @@
 											</div>
 											<div class="grid_6">
 												<div class="grid_12">
-													<label c-label item="item" c-label-text="Kelompok Aset"></label>
+													<label style="text-transform: capitalize;" c-label item="item" c-label-text="Kelompok Aset"></label>
 												</div>
 												<div class="grid_12">
 													<input kendo-combo-box k-ng-model="item.kelompokaset"
@@ -398,7 +401,7 @@
 												<!-- merkProduk -->
 												<div class="grid_2">
 													<div class="grid_12">
-														<label c-label item="item" c-label-text="merkProduk"></label>
+														<label style="text-transform: capitalize;" c-label item="item" c-label-text="merkProduk"></label>
 													</div>
 													<div class="grid_12">
 														<input style="width: 100%;" kendo-combo-box
@@ -462,7 +465,7 @@
 													</div>
 												</div>
 												<div class="grid_2">
-													<label c-label item="item" c-label-text="Usia Pakai"></label>
+													<label style="text-transform: capitalize;" c-label item="item" c-label-text="Usia Pakai"></label>
 													<div class="grid_12 parentKeteranganFieldTambahan">
 														<input kendo-numeric-text-box k-ng-model="item.UsiaPakai"
 															style="width: 100%;" />
@@ -480,7 +483,7 @@
 													</div>
 												</div>
 												<div class="grid_2">
-													<label c-label item="item" c-label-text="Sisa Umur"></label>
+													<label style="text-transform: capitalize;" c-label item="item" c-label-text="Sisa Umur"></label>
 													<div class="grid_12 parentKeteranganFieldTambahan">
 														<input kendo-numeric-text-box k-ng-model="item.SisaUmur"
 															style="width: 100%;" />
@@ -490,7 +493,7 @@
 												</div>
 												<div class="grid_2">
 													<div class="grid_12">
-														<label c-label item="item" c-label-text="Tgl Produksi"></label>
+														<label style="text-transform: capitalize;" c-label item="item" c-label-text="Tgl Produksi"></label>
 														<input style="width: 100%;" k-ng-model="item.TglProduksi"
 															kendo-datetimepicker k-max="now"
 															placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'"
@@ -529,37 +532,37 @@
 													ng-model="item.NoMesin" />
 											</div>
 											<div class="grid_2">
-												<label c-label item="item" c-label-text="No BPKB"></label>
+												<label><span style="text-transform: capitalize;">No</span> <strong style="text-transform: uppercase;">BPKB</strong></label>
 
 												<input c-text-box type="input" filter="'numeric'" class="k-textbox"
 													ng-model="item.NoBPKB" />
 											</div>
 											<div class="grid_2">
-												<label c-label item="item" c-label-text="No Model"></label>
+												<label style="text-transform: capitalize;" c-label item="item" c-label-text="No Model"></label>
 
 												<input c-text-box type="input" filter="'numeric'" class="k-textbox"
 													ng-model="item.NoModel" />
 											</div>
 											<div class="grid_2">
-												<label c-label item="item" c-label-text="No Rangka"></label>
+												<label style="text-transform: capitalize;" c-label item="item" c-label-text="No Rangka"></label>
 
 												<input c-text-box type="input" filter="'numeric'" class="k-textbox"
 													ng-model="item.NoRangka" />
 											</div>
 											<div class="grid_2">
-												<label c-label item="item" c-label-text="No Seri"></label>
+												<label style="text-transform: capitalize;" c-label item="item" c-label-text="No Seri"></label>
 
 												<input c-text-box type="input" filter="'numeric'" class="k-textbox"
 													ng-model="item.NoSeri" />
 											</div>
 											<div class="grid_2">
-												<label c-label item="item" c-label-text="No Polisi"></label>
+												<label style="text-transform: capitalize;" c-label item="item" c-label-text="No Polisi"></label>
 
 												<input c-text-box type="input" filter="'numeric'" class="k-textbox"
 													ng-model="item.NoPolisi" />
 											</div>
 											<div class="grid_2">
-												<label c-label item="item" c-label-text="BPKB Atas Nama"></label>
+												<label><b style="text-transform: uppercase;">BPKB</b> <span style="text-transform: capitalize;">atas nama</span></label>
 												<div class="grid_12">
 													<input style="width: 100%;" kendo-combo-box
 														k-ng-model="item.BPKBPegawai" k-data-text-field="'namalengkap'"
@@ -576,7 +579,7 @@
 											<!-- accountId -->
 											<div class="grid_3">
 												<div class="grid_12">
-													<label c-label item="item" c-label-text="Jenis Sertifikat"></label>
+													<label style="text-transform: capitalize;" c-label item="item" c-label-text="Jenis Sertifikat"></label>
 												</div>
 												<div class="grid_12">
 													<input style="width: 100%;" kendo-combo-box
@@ -588,7 +591,7 @@
 											</div>
 											<div class="grid_3">
 												<div class="grid_12">
-													<label c-label item="item" c-label-text="No Sertifikat"></label>
+													<label style="text-transform: capitalize;" c-label item="item" c-label-text="No Sertifikat"></label>
 												</div>
 												<div class="grid_12">
 													<input c-text-box type="input" filter="" class="k-textbox"
@@ -598,7 +601,7 @@
 											<!-- account -->
 											<div class="grid_4">
 												<div class="grid_12">
-													<label c-label item="item"
+													<label style="text-transform: capitalize;" c-label item="item"
 														c-label-text="Sertifikat Atas Nama"></label>
 												</div>
 												<div class="grid_12">
@@ -609,7 +612,7 @@
 												</div>
 											</div>
 											<div class="grid_2">
-												<label c-label item="item"
+												<label  style="text-transform: capitalize;" c-label item="item"
 													c-label-text="Masa Berlaku Sertifikat"></label>
 												<div class="grid_12 parentKeteranganFieldTambahan">
 													<input kendo-numeric-text-box
@@ -628,7 +631,7 @@
 											<!-- produsenProduk -->
 											<div class="grid_4">
 												<div class="grid_12">
-													<label c-label item="item" c-label-text="produsen"></label>
+													<label  style="text-transform: capitalize;" c-label item="item" c-label-text="produsen"></label>
 												</div>
 
 
@@ -662,7 +665,7 @@
 										<div class="grid_12">
 											<div class="grid_2">
 									            <div class="grid_12">
-									                <label c-label item="item" c-label-text="Tahun Perolehan"></label>
+									                <label style="text-transform: capitalize;" c-label item="item" c-label-text="Tahun Perolehan"></label>
 									            </div>
 									            <div class="grid_12">
 									                <input style="width: 100%" k-ng-model="item.TahunPerolehan" kendo-datepicker k-max="now"
@@ -672,7 +675,7 @@
 									        </div>
 											<div class="grid_2">
 									            <div class="grid_12">
-									                <label c-label item="item" c-label-text="Harga Perolehan"></label>
+									                <label style="text-transform: capitalize;" c-label item="item" c-label-text="Harga Perolehan"></label>
 									            </div>
 									            <div class="grid_12">
 									                <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.HargaPengadaan" />
@@ -680,7 +683,7 @@
 									        </div>
 									        <div class="grid_2">
 									            <div class="grid_12">
-									                <label c-label item="item" c-label-text="Nilai Sisa"></label>
+									                <label style="text-transform: capitalize;" c-label item="item" c-label-text="Nilai Sisa"></label>
 									            </div>
 									            <div class="grid_12">
 									                <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.nilaiSisa" />
@@ -688,7 +691,7 @@
 									        </div>
 											<div class="grid_2">
 									            <div class="grid_12">
-									                <label c-label item="item" c-label-text="Umur Ekonomis"></label>
+									                <label style="text-transform: capitalize;" c-label item="item" c-label-text="Umur Ekonomis"></label>
 									            </div>
 									            <div class="grid_12">
 									                <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.umurEkonomis"  />
@@ -727,7 +730,7 @@
 											<div class="grid_4">
 												<div class="grid_6">
 										            <div class="grid_12">
-										                <label c-label item="item" c-label-text="Jadwal Kalibrasi"></label>
+										                <label style="text-transform: capitalize;" c-label item="item" c-label-text="Jadwal Kalibrasi"></label>
 										            </div>
 										            <div class="grid_12">
 										                <input style="width: 100%" k-ng-model="item.jadwalKalibrasi" kendo-datetimepicker
@@ -737,7 +740,7 @@
 										        </div>
 										        <div class="grid_12">
 									                <div class="grid_12">
-									                    <label c-label item="item" c-label-text="Keterangan Kalibrasi"></label>
+									                    <label style="text-transform: capitalize;" c-label item="item" c-label-text="Keterangan Kalibrasi"></label>
 									                </div>
 									                <div class="grid_12">
 									                    <input c-text-box type="input" class="k-textbox" ng-model="item.keteranganKalibrasi"  />
@@ -745,7 +748,7 @@
 									            </div>
 									            <div class="grid_8">
 									                <div class="grid_12">
-									                    <label c-label item="item" c-label-text="PIC"></label>
+									                    <label style="text-transform: uppercase;"c-label item="item" c-label-text="PIC"></label>
 									                </div>
 									                <div class="grid_12">
 									                    <input kendo-combo-box k-data-source="listStaff" k-ng-model="item.staff"
@@ -766,7 +769,7 @@
 											<div class="grid_8">
 											    <div class="grid_6">
 										            <div class="grid_12">
-										                <label c-label item="item" c-label-text="Periode Tanggal"></label>
+										                <label style="text-transform: capitalize;"  c-label item="item" c-label-text="Periode Tanggal"></label>
 										            </div>
 										            <div class="grid_12">
 										                <div class="grid_5 padDatePicker">
@@ -816,7 +819,7 @@
 											<div class="grid_4">
 												<div class="grid_6">
 										            <div class="grid_12">
-										                <label c-label item="item" c-label-text="Jadwal Pemeliharaan"></label>
+										                <label style="text-transform: capitalize;"  c-label item="item" c-label-text="Jadwal Pemeliharaan"></label>
 										            </div>
 										            <div class="grid_12">
 										                <input style="width: 100%" k-ng-model="item.jadwalPemeliharaan" kendo-datetimepicker
@@ -826,7 +829,7 @@
 										        </div>
 										        <div class="grid_12">
 									                <div class="grid_12">
-									                    <label c-label item="item" c-label-text="Keterangan Pemeliharaan"></label>
+									                    <label style="text-transform: capitalize;"  c-label item="item" c-label-text="Keterangan Pemeliharaan"></label>
 									                </div>
 									                <div class="grid_12">
 									                    <input c-text-box type="input" class="k-textbox" ng-model="item.keteranganPemeliharaan"  />
@@ -855,7 +858,7 @@
 											<div class="grid_8">
 											    <div class="grid_6">
 										            <div class="grid_12">
-										                <label c-label item="item" c-label-text="Periode Tanggal"></label>
+										                <label style="text-transform: capitalize;"  c-label item="item" c-label-text="Periode Tanggal"></label>
 										            </div>
 										            <div class="grid_12">
 										                <div class="grid_5 padDatePicker">
