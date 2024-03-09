@@ -1020,6 +1020,7 @@ class PerencanaanController extends ApiController {
         norec, nopanjar, uraian, tglpanjar, jumlah, jenispanjar, norealisasi, jumlahspj, sumberpanjar
         order by nopanjar asc;
         "));
+        // dd( $panjar);
         $tglsppdate = "";
         $thnspp = "";
         if(isset($request['tglsppawal']) && isset($request['tglsppakhir'])){
@@ -4491,11 +4492,11 @@ class PerencanaanController extends ApiController {
                             $MA->saldo = $saldofix;
                             $MA->save();
 
-                            for($x = 0; $x < count($request['bku']); $x++){
-                                $MP = Panjar::where('norec', '=', $request['bku'][$x]['norec'])->first();
-                                $MP->objectbkufk = $MA->norec;
-                                $MP->save();
-                            }
+                            // for($x = 0; $x < count($request['bku']); $x++){
+                            //     $MP = Panjar::where('norec', '=', $request['bku'][$x]['norec'])->first();
+                            //     $MP->objectbkufk = $MA->norec;
+                            //     $MP->save();
+                            // }
 
 
                             for($x = 0; $x < count($request['bku']); $x++){
@@ -7412,7 +7413,7 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
         // }
         
         $data = DB::select(DB::raw("
-        select ma.id idmataanggaran, ma.kodemataanggaran, subkeg.id idsubkegiatan, subkeg.keterangan subkegiatan, subsubkeg.id idsubsubkegiatan, subsubkeg.keterangan subsubkegiatan, pj.norec, pj.tglpanjar, pj.nopanjar, pj.uraian, pj.jumlah, pj.jenispanjar, coalesce(sum(pp.jumlahpengembalian),0) jumlahpengembalian, pj.sumberpanjar 
+        select ma.id idmataanggaran, ma.kodemataanggaran, subkeg.id idsubkegiatan, subkeg.keterangan subkegiatan, subsubkeg.id idsubsubkegiatan, subsubkeg.keterangan subsubkegiatan, pj.norec, pj.tglpanjar, pp.nopengembalian as nopanjar, pj.uraian, pj.jumlah, pj.jenispanjar, coalesce(sum(pp.jumlahpengembalian),0) jumlahpengembalian, pj.sumberpanjar 
         from panjar_t pj
         inner join mataanggaran_m ma on ma.id = pj.objectmataanggaranfk
         inner join kegiatananggaran_m subkeg on subkeg.id = pj.objectsubkegiatanfk
@@ -7423,7 +7424,7 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
         and pp.statusenabled = true
         and pp.jumlahpengembalian is not null
        
-        group by ma.id, ma.kodemataanggaran, subkeg.id, subkeg.keterangan, subsubkeg.id, subsubkeg.keterangan, pj.norec, pj.tglpanjar, pj.nopanjar, pj.uraian, pj.jumlah, pj.jenispanjar, pj.sumberpanjar
+        group by ma.id, ma.kodemataanggaran, subkeg.id, subkeg.keterangan, subsubkeg.id, subsubkeg.keterangan, pj.norec, pj.tglpanjar, pp.nopengembalian, pj.uraian, pj.jumlah, pj.jenispanjar, pj.sumberpanjar
         ")
         );
 

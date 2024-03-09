@@ -7681,7 +7681,9 @@ class ReportController extends ApiController{
             select pph, ppn, nourut, objectmataanggaranfk, nobku, tgl, uraianbku, penerimaan, pengeluaran, saldoawal,
             case 
                 when norealisasi is not null then norealisasi
-                when nopanjar is not null then nopanjar
+                when nopengembalian is not null then nopengembalian
+                WHEN nopanjar is not null  then nopanjar
+                --WHEN nopanjar is not null  THEN (CASE WHEN nopengembalian IS NOT NULL THEN nopengembalian ELSE nopanjar END)
                 when nospm is not null then nospm
                 when nopemungutan is not null then nopemungutan
                 when nopenyetoran is not null then nopenyetoran
@@ -7696,7 +7698,7 @@ class ReportController extends ApiController{
                 select ROW_NUMBER ( ) OVER ( ORDER BY bku.nobku ) nourut, bku.objectmataanggaranfk, bku.nobku, 
                 to_char(bku.tglbku::date, 'DD-MM-YYYY') tgl, bku.uraianbku, bku.penerimaan, 
                 bku.pengeluaran, 0 saldoawal, sr.norealisasi, pj.nopanjar, spm.nospm,
-                pp.nopajak nopemungutan, coalesce(pp.pph, 0) pph, coalesce(pp.ppn, 0) ppn, ppj.nopajak nopenyetoran, jg.nojasagiro, sk.nosts, objectjenisbuktifk, uraianbku uraian, sr.deskripsi 
+                pp.nopajak nopemungutan, coalesce(pp.pph, 0) pph, coalesce(pp.ppn, 0) ppn, ppj.nopajak nopenyetoran, jg.nojasagiro, sk.nosts,pep.nopengembalian , objectjenisbuktifk, uraianbku uraian, sr.deskripsi 
                 from bukukasumum_t bku
                 left join strukrealisasi_t sr on sr.objectbkufk = bku.norec
                 and sr.kdprofile = 30
@@ -7719,8 +7721,10 @@ class ReportController extends ApiController{
                 left join stskeuangan_t sk on sk.objectbkufk = bku.norec
                 and sk.kdprofile = 30
                 and sk.statusenabled = true
+                left join pengembalianpanjar_t pep on pep.objectbkufk = bku.norec and pep.kdprofile = 30 and pep.statusenabled = true
                 where bku.kdprofile = 30
                 and bku.statusenabled = true 
+                
                 $qbulan
                 $qtahun
             ) as x"));
