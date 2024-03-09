@@ -7507,7 +7507,7 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
             $norecpep = " and pep.objectbkufk is null ";
         }
         // $data = DB::select(DB::raw("
-        // select * from(
+        // select distinct * from(
         // select pp.objectspjfk, pp.pph, coalesce(pp.ppn,0) ppn, pp.uraianpajak, pp.norec, pp.nopajak, pp.tglpph as tanggal, 'Pemungutan' as jenis,
         // case 
         // when pp.ppn = 0 or pp.ppn is null then jp.namaexternal
@@ -7554,13 +7554,11 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
             case
             when pp.ppn = 0 or pp.ppn is null then jp.namaexternal
             when pp.ppn != 0 and pp.ppn is not null then jp.namaexternal 
-            end as koderek,
-            
+            end as koderek,            
             case when pp.pph is null then 
-            COALESCE(pp.pph, 0)  || ', ' || pp.ppn 
+           pp.ppn 
             else 
-            pp.pph || ', ' || COALESCE(pp.ppn, 0) end AS jumlahpenerimaan,
-            
+            pp.pph  end AS jumlahpenerimaan,            
             --.pph || ', ' || coalesce(pp.ppn, 0) as jumlahpenerimaan,
             '0' as jumlahpengeluaran,
             ap.id idasalproduk, ap.asalproduk
@@ -7594,9 +7592,9 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
             END AS koderek,
             '0' AS jumlahpenerimaan,
             case when pep.pph is null then 
-            COALESCE(pep.pph, 0)  || ', ' || pep.ppn 
+            pep.ppn 
             else 
-            pep.pph || ', ' || COALESCE(pep.ppn, 0) end AS jumlahpengeluaran,
+            pep.pph  end AS jumlahpengeluaran,
             ap.id AS idasalproduk,
             ap.asalproduk
             FROM
