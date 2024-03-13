@@ -17576,4 +17576,334 @@ public function suratBuktiPengembalian(Request $request)
         ]);
     }
 
+    public function cetakAPDBulanan(Request $request)
+    {
+        $kdProfile = (int) $request['kdprofile'];
+
+        $masterdata = DB::table('auditapd_m')
+            ->where('kdprofile', $kdProfile)
+            ->where('statusenabled', true)
+            ->get();
+
+        $data = DB::table('auditapd_t as au')
+            ->select('au.*', 'pg.namalengkap as observer', 'jp.jenispegawai as profesi', 'pr.namaproduk', 'ru.namaruangan')
+            ->join('pegawai_m as pg', 'au.objectpegawaifk', '=', 'pg.id')
+            ->join('jenispegawai_m as jp', 'au.objectjenispegawaifk', '=', 'jp.id')
+            ->join('produk_m as pr', 'pr.id', '=', 'au.jenisaktifitas')
+            ->join('ruangan_m as ru', 'ru.id', '=', 'au.objectruanganfk')
+            ->where('au.kdprofile', $kdProfile)
+            ->where('au.statusenabled', true)
+            ->where('au.objectruanganfk', $request['objectruanganfk'])
+            ->whereRaw('to_char(au.tanggal, \'MM-YYYY\') = ?', [$request['bulan']])
+            ->where('au.isverifikasi', true)
+            ->orderBy('au.tanggal', 'desc')
+            ->get();
+        
+        $datadetail = DB::table('auditapd_t as apd')
+            ->select('apddt.*')
+            ->join('auditapddetail_t as apddt', 'apd.norec', '=', 'apddt.norecauditapd')
+            ->where('apd.kdprofile', $kdProfile)
+            ->where('apd.statusenabled', true)
+            ->where('apd.objectruanganfk', $request['objectruanganfk'])
+            ->whereRaw('to_char(apd.tanggal, \'MM-YYYY\') = ?', [$request['bulan']])
+            ->get();
+
+        $masterapd = array();
+        $masterkesesuaian = array();
+        $mastercucitangan = array();
+
+        foreach($masterdata as $md){
+            if($md->header == 'Pilihan APD'){
+                array_push($masterapd, $md);
+            }
+            if($md->header == 'Kesesuaian'){
+                array_push($masterkesesuaian, $md);
+            }
+            if($md->header == 'Cuci Tangan Sebelum Menggunakan APD'){
+                array_push($mastercucitangan, $md);
+            }
+        }
+
+        foreach($data as $item){
+            $item->pilihanAPD = array();
+            $item->kesesuaian = null;
+            $item->cucitangan = null;
+
+            foreach($masterdata as $md){
+
+                foreach($datadetail as $dt){
+                    if($dt->norecauditapd == $item->norec){
+                        if($dt->auditapdfk == $md->id && $md->header == 'Pilihan APD'){
+                            array_push($item->pilihanAPD, $md);
+                        }
+                        if($dt->auditapdfk == $md->id && $md->header == 'Kesesuaian'){
+                            $item->kesesuaian = $md;
+                        }
+                        if($dt->auditapdfk == $md->id && $md->header == 'Cuci Tangan Sebelum Menggunakan APD'){
+                            $item->cucitangan = $md;
+                        }
+                    }
+                }
+            }
+        }
+
+        return view('report.apd.laporan-bulanan-apd', [
+            'data' => $data,
+            'masterapd' => $masterapd,
+            'masterkesesuaian' => $masterkesesuaian,
+            'mastercucitangan' => $mastercucitangan
+        ]);
+
+        // return response()->json([
+        //     'masterapd' => $masterapd,
+        //     'masterkesesuaian' => $masterkesesuaian,
+        //     'mastercucitangan' => $mastercucitangan
+        // ]);
+    }
+
+    public function cetakHygieneBulanan(Request $request)
+    {
+        $kdProfile = (int) $request['kdprofile'];
+
+        $masterHygiene = DB::table('audithygiene_m')
+        ->where('kdprofile', $kdProfile)
+        ->where('statusenabled', true)
+        ->orderBy('id')
+        ->get();
+
+        $data = DB::table('audithygiene_t as au')
+        ->select('au.*', 'pg.namalengkap as observer', 'jp.jenispegawai as profesi', 'ru.namaruangan')
+        ->join('pegawai_m as pg', 'au.objectpegawaifk', '=', 'pg.id')
+        ->join('jenispegawai_m as jp', 'au.objectjenispegawaifk', '=', 'jp.id')
+        ->join('ruangan_m as ru', 'ru.id', '=', 'au.objectruanganfk')
+        ->where('au.kdprofile', $kdProfile)
+        ->where('au.statusenabled', true)
+        ->where('au.objectruanganfk', $request['objectruanganfk'])
+        ->whereRaw('to_char(au.tanggal, \'MM-YYYY\') = ?', [$request['bulan']])
+        ->orderBy('au.tanggal', 'desc')
+        ->get();
+
+        $detailHygiene = DB::table('audithygiene_t as apd')
+        ->select('apddt.*')
+        ->join('audithygienedetail_t as apddt', 'apd.norec', '=', 'apddt.norecaudithygiene')
+        ->where('apd.kdprofile', $kdProfile)
+        ->where('apd.statusenabled', true)
+        ->where('apd.objectruanganfk', $request['objectruanganfk'])
+        ->whereRaw('to_char(apd.tanggal, \'MM-YYYY\') = ?', [$request['bulan']])
+        ->get();
+
+        $masterSebelumKontak = array();
+        $masterSebelumProsedur = array();
+        $masterSetelahCairan = array();
+        $masterSetelahKontak = array();
+        $masterSetelahLingkungan = array();
+        $masterLainLain = array();
+
+        foreach($masterHygiene as $mhygiene){
+            if($mhygiene->header == 'Sebelum kontak dengan pasien'){
+                array_push($masterSebelumKontak, $mhygiene);
+            }
+            if($mhygiene->header == 'Sebelum melakukan prosedur bersih/tindakan aseptik'){
+                array_push($masterSebelumProsedur, $mhygiene);
+            }
+            if($mhygiene->header == 'Setelah kontak dengan cairan tubuh pasien'){
+                array_push($masterSetelahCairan, $mhygiene);
+            }
+            if($mhygiene->header == 'Setelah kontak dengan pasien'){
+                array_push($masterSetelahKontak, $mhygiene);
+            }
+            if($mhygiene->header == 'Setelah kontak dengan lingkungan pasien'){
+                array_push($masterSetelahLingkungan, $mhygiene);
+            }
+            if($mhygiene->header == 'Lain-lain'){
+                array_push($masterLainLain, $mhygiene);
+            }
+        }
+
+        foreach($data as $hygiene){
+
+            $hygiene->sebelumKontak = array();
+            $hygiene->sebelumProsedur = array();
+            $hygiene->setelahCairan = array();
+            $hygiene->setelahKontak = array();
+            $hygiene->setelahLingkungan = array();
+            $hygiene->lainLain = array();
+
+            foreach($masterHygiene as $mhygiene){
+                
+                foreach($detailHygiene as $dthygiene){
+
+                    if($dthygiene->norecaudithygiene == $hygiene->norec){
+
+                        if($dthygiene->audithygienefk == $mhygiene->id && $mhygiene->header == 'Sebelum kontak dengan pasien'){
+                            array_push($hygiene->sebelumKontak, $mhygiene);
+                        }
+                        if($dthygiene->audithygienefk == $mhygiene->id && $mhygiene->header == 'Sebelum melakukan prosedur bersih/tindakan aseptik'){
+                            array_push($hygiene->sebelumProsedur, $mhygiene);
+                        }
+                        if($dthygiene->audithygienefk == $mhygiene->id && $mhygiene->header == 'Setelah kontak dengan cairan tubuh pasien'){
+                            array_push($hygiene->setelahCairan, $mhygiene);
+                        }
+                        if($dthygiene->audithygienefk == $mhygiene->id && $mhygiene->header == 'Setelah kontak dengan pasien'){
+                            array_push($hygiene->setelahKontak, $mhygiene);
+                        }
+                        if($dthygiene->audithygienefk == $mhygiene->id && $mhygiene->header == 'Setelah kontak dengan lingkungan pasien'){
+                            array_push($hygiene->setelahLingkungan, $mhygiene);
+                        }
+                        if($dthygiene->audithygienefk == $mhygiene->id && $mhygiene->header == 'Lain-lain'){
+                            array_push($hygiene->lainLain, $mhygiene);
+                        }
+                    }
+                }
+            }
+        }
+
+        return view('report.hygiene.laporan-bulanan-hygiene', [
+            'data' => $data,
+            'masterSebelumKontak' => $masterSebelumKontak,
+            'masterSebelumProsedur' => $masterSebelumProsedur,
+            'masterSetelahCairan' => $masterSetelahCairan,
+            'masterSetelahKontak' => $masterSetelahKontak,
+            'masterSetelahLingkungan' => $masterSetelahLingkungan,
+            'masterLainLain' => $masterLainLain,
+        ]);
+        // return response()->json([
+        //     'masterSebelumKontak' => $masterSebelumKontak,
+        //     'masterSebelumProsedur' => $masterSebelumProsedur,
+        //     'masterSetelahCairan' => $masterSetelahCairan,
+        //     'masterSetelahKontak' => $masterSetelahKontak,
+        //     'masterSetelahLingkungan' => $masterSetelahLingkungan,
+        //     'masterLainLain' => $masterLainLain,
+        // ]);
+
+    }
+
+    public function cetakJumlahAPD(Request $request)
+    {
+        $kdProfile = (int) $request['kdprofile'];
+
+        $masterAPD = DB::table('auditapd_m')
+            ->where('kdprofile', $kdProfile)
+            ->where('statusenabled', true)
+            ->orderBy('id', 'asc')
+            ->get();
+
+        $apdDetail = DB::table('auditapd_t as apd')
+            ->select(DB::raw('apdm.description, COUNT(apddt.norec) as jumlah_pemakaian, MIN(ru.namaruangan) AS namaruangan, MIN(apdm.id) AS idmasterapd, MIN(apdm.description) as deskripsi, MIN(apd.tanggal) as tanggal_apd'))
+            ->join('auditapddetail_t as apddt', 'apddt.norecauditapd', '=', 'apd.norec')
+            ->join('auditapd_m as apdm', 'apdm.id', '=', 'apddt.auditapdfk')
+            ->join('ruangan_m as ru', 'ru.id', '=', 'apd.objectruanganfk')
+            ->where('apd.kdprofile', $kdProfile)
+            ->where('apd.statusenabled', true)
+            ->where('apd.objectruanganfk', $request['objectruanganfk'])
+            ->where('apd.isverifikasi', true)
+            ->whereRaw('to_char(apd.tanggal, \'MM-YYYY\') = ?', [$request['bulan']])
+            ->groupBy('apdm.description')
+            ->get();
+        
+        
+
+        $apd = array();
+        $masterkesesuaian = array();
+        $mastercuci = array();
+
+        foreach($masterAPD as $mapd){
+            if($mapd->header == "Pilihan APD"){
+                array_push($apd, $mapd);
+            }
+            if($mapd->header == "Kesesuaian"){
+                array_push($masterkesesuaian, $mapd);
+            }
+            if($mapd->header == "Cuci Tangan Sebelum Menggunakan APD"){
+                array_push($mastercuci, $mapd);
+            }
+        }
+        
+        return view('report.apd.laporan-jumlah-apd', [
+            'masterAPD' => $apd,
+            'masterkesesuaian' => $masterkesesuaian,
+            'mastercuci' => $mastercuci,
+            'jumlahAPD' => $apdDetail
+        ]);
+        // return response()->json([
+        //         'masterAPD' => $apd,
+        //         'masterkesesuaian' => $masterkesesuaian,
+        //         'mastercuci' => $mastercuci,
+        //         'jumlahAPD' => $apdDetail
+        // ]);
+    }
+
+    public function cetakJumlahHygiene(Request $request)
+    {
+        $kdProfile = (int) $request['kdprofile'];
+
+        $masterHygiene = DB::table('audithygiene_m')
+        ->where('kdprofile', $kdProfile)
+        ->where('statusenabled', true)
+        ->orderBy('id')
+        ->get();
+
+        $detailHygiene = DB::table('audithygiene_t as apd')
+        ->select(DB::raw('MIN(ahym.id) as idmasterhygiene, ahym.header, ahym.description, COUNT(apddt.norec) as jumlah_pemakaian, MIN(ru.namaruangan) as namaruangan, MIN(apd.tanggal) as tanggal_hygiene'))
+        ->join('audithygienedetail_t as apddt', 'apd.norec', '=', 'apddt.norecaudithygiene')
+        ->join('audithygiene_m as ahym', 'ahym.id', '=', 'apddt.audithygienefk')
+        ->join('ruangan_m as ru', 'ru.id', '=', 'apd.objectruanganfk')
+        ->where('apd.isverifikasi', '=', true)
+        ->where('apd.kdprofile', $kdProfile)
+        ->where('apd.statusenabled', true)
+        ->where('apd.objectruanganfk', $request['objectruanganfk'])
+        ->whereRaw('to_char(apd.tanggal, \'MM-YYYY\') = ?', [$request['bulan']])
+        ->groupBy('ahym.description', 'ahym.header')
+        ->get();
+
+        $masterSebelumKontak = array();
+        $masterSebelumProsedur = array();
+        $masterSetelahCairan = array();
+        $masterSetelahKontak = array();
+        $masterSetelahLingkungan = array();
+        $masterLainLain = array();
+
+        foreach($masterHygiene as $mhygiene){
+                
+            if($mhygiene->header == 'Sebelum kontak dengan pasien'){
+                array_push($masterSebelumKontak, $mhygiene);
+            }
+            if($mhygiene->header == 'Sebelum melakukan prosedur bersih/tindakan aseptik'){
+                array_push($masterSebelumProsedur, $mhygiene);
+            }
+            if($mhygiene->header == 'Setelah kontak dengan cairan tubuh pasien'){
+                array_push($masterSetelahCairan, $mhygiene);
+            }
+            if($mhygiene->header == 'Setelah kontak dengan pasien'){
+                array_push($masterSetelahKontak, $mhygiene);
+            }
+            if($mhygiene->header == 'Setelah kontak dengan lingkungan pasien'){
+                array_push($masterSetelahLingkungan, $mhygiene);
+            }
+            if($mhygiene->header == 'Lain-lain'){
+                array_push($masterLainLain, $mhygiene);
+            }
+        }
+
+        return view('report.hygiene.laporan-jumlah-hygiene', [
+            'jumlahHygiene' => $detailHygiene,
+            'masterSebelumKontak' => $masterSebelumKontak,
+            'masterSebelumProsedur' => $masterSebelumProsedur,
+            'masterSetelahCairan' => $masterSetelahCairan,
+            'masterSetelahKontak' => $masterSetelahKontak,
+            'masterSetelahLingkungan' => $masterSetelahLingkungan,
+            'masterLainLain' => $masterLainLain,
+        ]);
+
+        // return response()->json([
+        //     'jumlahHygiene' => $detailHygiene,
+        //     'masterSebelumKontak' => $masterSebelumKontak,
+        //     'masterSebelumProsedur' => $masterSebelumProsedur,
+        //     'masterSetelahCairan' => $masterSetelahCairan,
+        //     'masterSetelahKontak' => $masterSetelahKontak,
+        //     'masterSetelahLingkungan' => $masterSetelahLingkungan,
+        //     'masterLainLain' => $masterLainLain,
+        // ]);
+    }
+
 }

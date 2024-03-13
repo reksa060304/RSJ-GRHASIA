@@ -2004,6 +2004,9 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::post('rawatinap/save-audit-hygiene','RawatInap\RawatInapController@saveAuditHygiene');
           Route::post('rawatinap/delete-audit-hygiene','RawatInap\RawatInapController@deleteAuditHygiene');
           
+          Route::post('rawatinap/verifikasi-audit-apd', 'RawatInap\RawatInapController@verifikasiAuditAPD');
+          Route::post('rawatinap/verifikasi-audit-hygiene', 'RawatInap\RawatInapController@verifikasiAuditHygiene');
+
         // });
         // Route::group(['prefix' => 'rawatjalan'], function () {
           Route::get('rawatjalan/get-data-combo-dokter', 'RawatJalan\RawatJalanController@getDataComboDokter');
@@ -3397,6 +3400,11 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         Route::get('report/cetak-daftar-barang-asset', 'Report\ReportController@cetakDaftarBarangAsset');
         Route::get('report/cetak-kartu-inventaris-ruangan', 'Report\ReportController@cetakKartuInventarisRuangan');
         Route::get('report/cetak-kibb', 'Report\ReportController@cetakKIBB');
+        
+        Route::get('report/cetak-apd-bulanan', 'Report\ReportController@cetakAPDBulanan');
+        Route::get('report/cetak-hygiene-bulanan', 'Report\ReportController@cetakHygieneBulanan');
+        Route::get('report/cetak-jumlah-apd', 'Report\ReportController@cetakJumlahAPD');
+        Route::get('report/cetak-jumlah-hygiene', 'Report\ReportController@cetakJumlahHygiene');
 
         Route::get('viewer/get-list-antrian','Antrian\AntrianController@getListAntrian');
         Route::get('viewer/update-antrian','Antrian\AntrianController@updatePanggil');

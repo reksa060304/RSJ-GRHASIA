@@ -46,6 +46,7 @@ use App\Transaksi\PemakaianAsuransi;
 use App\Transaksi\RegistrasiPelayananPasien;
 use App\Transaksi\StrukBuktiPenerimaan;
 use App\Transaksi\StrukBuktiPengeluaran;
+use Exception;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Transaksi\PelayananPasienPetugas;
@@ -1741,7 +1742,7 @@ class RawatInapController extends ApiController
             'data' => $data,
             'message' => 'ea@epic',
         );
-        return $this->respond($result);
+        return $this->respond((int)$kdProfile);
     }
     public function getDataHarianSurveilans(Request $request){
         $tglAwal = $request['tglAwal'];
@@ -2157,6 +2158,8 @@ class RawatInapController extends ApiController
         ->where('apd.objectruanganfk', $request['objectruanganfk'])
         ->whereRaw('to_char(apd.tanggal, \'MM-YYYY\') = ?', [$request['bulan']])
         ->get();
+        
+        $verifikator = $this->settingDataFixed('VerifikatorAPD', $kdProfile);
 
         foreach ($data as $item) {
             foreach($masterdata as $md) {
@@ -2170,7 +2173,11 @@ class RawatInapController extends ApiController
             }
         }
 
-        return $this->respond($data);
+
+        return $this->respond([
+            'auditapd' => $data,
+            'verifikator' => $verifikator
+        ]);
     }
 
     public function saveAuditAPD(Request $request)
@@ -2310,6 +2317,8 @@ class RawatInapController extends ApiController
         ->whereRaw('to_char(apd.tanggal, \'MM-YYYY\') = ?', [$request['bulan']])
         ->get();
 
+        $verifikator = $this->settingDataFixed('VerifikatorHygiene', $kdProfile);
+
         foreach ($data as $item) {
             foreach($masterdata as $md) {
                 $func = 'w'. $md->id;
@@ -2322,7 +2331,10 @@ class RawatInapController extends ApiController
             }
         }
 
-        return $this->respond($data);
+        return $this->respond([
+            'audithygiene' => $data,
+            'verifikator' => $verifikator
+        ]);
     }
 
     public function saveAuditHygiene(Request $request)
@@ -2418,6 +2430,72 @@ class RawatInapController extends ApiController
                 "message"  => $transMessage,
             );
         }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function verifikasiAuditAPD(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+
+        DB::beginTransaction();
+        try{
+            DB::table('auditapd_t')->where('norec', $request['norec'])->update([
+                'isverifikasi' => TRUE
+            ]);
+            $transStatus = true;
+        }catch(Exception $e){
+            $transStatus = false;
+        }
+
+        if ($transStatus) {
+            $transMessage = "Verifikasi Data Berhasil";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMessage,
+            );
+        } else {
+            $transMessage = "Verifikasi Gagal";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message"  => $transMessage,
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function verifikasiAuditHygiene(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+
+        DB::beginTransaction();
+        try{
+            DB::table('audithygiene_t')->where('norec', $request['norec'])->update([
+                'isverifikasi' => TRUE
+            ]);
+            $transStatus = true;
+        }catch(Exception $e){
+            $transStatus = false;
+            $transMessage = $e->getMessage();
+        }
+
+        if ($transStatus) {
+            $transMessage = "Verifikasi Data Berhasil";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMessage,
+            );
+        } else {
+            $transMessage = "Verifikasi Gagal";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message"  => $transMessage,
+            );
+        }
+
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
 }

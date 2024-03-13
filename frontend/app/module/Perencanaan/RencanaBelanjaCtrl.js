@@ -15,7 +15,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.item.tglPengajuan = moment($scope.now).format('YYYY-MM-DD')
             
             // Tanggal filter
-            $scope.item.tglAwal = moment($scope.now).format('YYYY-MM-DD HH:mm:ss')
+            $scope.item.tglAwal = moment($scope.now).format('YYYY-MM-DD 00:00:00')
             $scope.item.tglAkhir = moment($scope.now).format('YYYY-MM-DD HH:mm:ss')
 
             // State
@@ -53,7 +53,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                 if(result[i].details[e].isverifikasi == true){
                                     result[i].details[e].isverifikasi = 'Telah Diverifikasi'
                                 }else{
-                                    result[i].details[e].isverifikasi = 'Ditolak verifikasi'
+                                    result[i].details[e].isverifikasi = 'Belum verifikasi'
                                 }
                             }
                         }

@@ -9761,6 +9761,7 @@ public function loadComboRincian(Request $request)
 
             foreach($request['dataPerencanaan'] as $item){
                 $strukPerencanaanDetail = new StrukPerencanaanDetail();
+                $keteranganBelanja = new KeteranganBelanja();
 
                 /**
                  * Kode ini akan mendisable setiap detail struk pengajuan berdasarkan norec struk pengajuan
@@ -9820,6 +9821,23 @@ public function loadComboRincian(Request $request)
                         'isverifikasi' => true
                     ]);
                 }
+
+                /**
+                 * Simpan ke keterangan belanja
+                 */
+                DB::table('keteranganbelanja_t')->insert([
+                    'norec' => $keteranganBelanja->generateNewId(),
+                    'kdprofile' => $idProfile,
+                    'statusenabled' => true,
+                    'objectkegiatanfk' => $request['idKegiatan'],
+                    'objectmataanggaranfk' => $request['idMataAnggaran'],
+                    'keteranganbelanja' => (isset($item['produk']['id'])) ? $item['produk']['namaproduk'] : $item['namaKegiatan'],
+                    'jml' => $item['jumlahVerifikasi'],
+                    'hargasatuan' => $item['hargaSatuan'],
+                    'subtotal' => ($item['jumlahVerifikasi'] * $item['hargaSatuan']),
+                    'objectasalprodukfk' => $request['idAsalProduk'],
+                    'objecttahapfk' => $request['idTahap'],
+                ]);
             }
             $transStatus = true;
         }catch (\Exception $e) {

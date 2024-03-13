@@ -170,7 +170,7 @@
             <div class="grid_12">
                 <div class="grid_3">
                     <button class="btnTemplate1" ng-click="bukaTambahRencanaProduk()">
-                        Tambah Rencana Produk
+                        Tambah Rencana Barang
                     </button>
                 </div>
                 <div class="grid_3">
@@ -193,7 +193,7 @@
     </c-panel>
 
     <!-- Popup Rencana Belanja -->
-    <div kendo-window="popupTambahRencanaBelanja" k-title="'RENCANA BELANJA'" k-visible="false" k-width="1700">
+    <div kendo-window="popupTambahRencanaBelanja" k-title="'RENCANA BELANJA'" k-visible="false" k-width="1200">
         <div class="panel panel-default container_12">
             
             <!-- Kegiatan -->
@@ -253,9 +253,9 @@
             </div>
             
             <!-- Produk / Kegiatan -->
-            <div class="grid_12">
+            <div class="">
                 <div class="grid_4" ng-show="!isRencanaProduk">
-                    <div class="grid_10">
+                    <div class="grid_12">
                         Rencana Kegiatan
                     </div>
                     <div class="grid_12">
@@ -263,7 +263,7 @@
                     </div>
                 </div>
                 <div class="grid_4" ng-show="isRencanaProduk">
-                    <div class="grid_4">
+                    <div class="grid_12">
                         Produk
                     </div>
                     <div class="grid_12">
@@ -280,23 +280,23 @@
                     </div>
                 </div>
                 <div class="grid_1" ng-show="isRencanaProduk">
-                    <div class="grid_10">
-                        Jumlah Stok
+                    <div class="grid_12">
+                        Jml Stok
                     </div>
                     <div class="grid_12">
                         <input disabled c-text-box type="input" class="k-textbox" ng-model="item.stokProduk"  style="width: 100%;" />
                     </div>
                 </div>
                 <div class="grid_1">
-                    <div class="grid_10">
-                        Jumlah Rencana
+                    <div class="grid_12">
+                        Jml Rencana
                     </div>
                     <div class="grid_12">
                         <input c-text-box type="input" class="k-textbox" ng-model="item.jumlahRencana"  style="width: 100%;" />
                     </div>
                 </div>
                 <div class="grid_2">
-                    <div class="grid_10">
+                    <div class="grid_12">
                         Harga Satuan
                     </div>
                     <div class="grid_12">
@@ -304,7 +304,7 @@
                     </div>
                 </div>
                 <div class="grid_2">
-                    <div class="grid_10">
+                    <div class="grid_12">
                         Reverensi
                     </div>
                     <div class="grid_12">
@@ -312,17 +312,11 @@
                     </div>
                 </div>
                 <div class="grid_1">
-                    <div class="grid_12">
-                        Tambah Reverensi
-                    </div>
                     <div class="grid_10">
                         <button class="btnTemplate1" ng-click="bukaTambahReverensi()">Tambah Reverensi</button>
                     </div>
                 </div>
                 <div class="grid_1">
-                    <div class="grid_12">
-                        Tambah
-                    </div>
                     <div class="grid_10">
                         <button class="btnTemplate1" ng-click="tambahPerencanaan()">Tambah Rencana</button>
                     </div>

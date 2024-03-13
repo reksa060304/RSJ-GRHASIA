@@ -12,6 +12,10 @@ define(['initialize'], function (initialize) {
             $scope.selectedData = [];
             var dataARR = []
             var dataLoad = []
+            
+            let verifikator = []
+            let pegawai = JSON.parse(window.localStorage.getItem('pegawai'))
+            
             FormLoad();
 
             function FormLoad() {
@@ -74,11 +78,18 @@ define(['initialize'], function (initialize) {
                 $scope.isRouteLoading = true;
                 medifirstService.get(`rawatinap/get-audit-apd?bulan=${moment($scope.item.bulan).format("MM-YYYY")}&objectruanganfk=${$scope.item.ruangan.id}`).then(function (dat) {
                     $scope.isRouteLoading = false;
-                    for (let i = 0; i < dat.data.length; i++) {
-                        const element = dat.data[i];
+                    
+                    verifikator = dat.data.verifikator
+                    
+                    if(verifikator.includes(pegawai.id.toString()) && $scope.columndinamis[0].command.length == 2){
+                        $scope.columndinamis[0].command.push({ text: "verifikasi", click: verifikasi })
+                    }
+
+                    for (let i = 0; i < dat.data.auditapd.length; i++) {
+                        const element = dat.data.auditapd[i];
                         element.tanggalformat = $scope.formatTanggal(element.tanggal);
                     }
-                    dataLoad = dat.data;
+                    dataLoad = dat.data.auditapd;
                     creategrid()
                 })
             }
@@ -253,6 +264,12 @@ define(['initialize'], function (initialize) {
                     toastr.error('Harap pilih Ruangan terlebih dahulu !')
                     return
                 }
+
+                if(dataItem.isverifikasi == true && (verifikator.includes(pegawai.id.toString()) == false)){
+                    toastr.error('Data Sudah Diverifikasi !')
+                    return
+                }
+
                 $scope.item.norecaudit = dataItem.norec
                 $scope.item.observer = { id: dataItem.objectpegawaifk, namalengkap: dataItem.observer, }
                 $scope.item.tanggal = dataItem.tanggal
@@ -371,6 +388,72 @@ define(['initialize'], function (initialize) {
                     $scope.item["w12"] = false;
                 }
                 $scope.item[item] = true;
+            }
+
+            function verifikasi(e){
+                e.preventDefault()
+
+				let dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+
+                if(dataItem.isverifikasi == true){
+                    toastr.error("Data Telah diverifikasi")
+                    return
+                }
+
+                return medifirstService.post('rawatinap/verifikasi-audit-apd', {
+                    norec: dataItem.norec,
+                })
+                .then(function(e){
+                    searchData()
+                })
+            }
+
+            $scope.laporanAPD = function(){
+                if(!$scope.item.bulan) {
+                    toastr.error("Harap pilih bulan terlebih dahulu !");
+                    return
+                }
+
+                if(!$scope.item.ruangan) {
+                    toastr.error("Harap pilih ruangan terlebih dahulu !");
+                    return
+                }
+
+                var profile = JSON.parse(localStorage.getItem('profile'));
+
+                window.open(config.baseApiBackend
+                    + 'report/cetak-apd-bulanan?'
+                    + 'bulan=' + moment($scope.item.bulan).format("MM-YYYY")
+                    + '&objectruanganfk=' + $scope.item.ruangan.id
+                    + '&kdprofile=' + profile.id)
+                    .then(function(res){
+                        console.log(res.data)
+                    })
+                
+
+            }
+
+            $scope.laporanJumlahAPD = function(){
+                if(!$scope.item.bulan) {
+                    toastr.error("Harap pilih bulan terlebih dahulu !");
+                    return
+                }
+
+                if(!$scope.item.ruangan) {
+                    toastr.error("Harap pilih ruangan terlebih dahulu !");
+                    return
+                }
+
+                var profile = JSON.parse(localStorage.getItem('profile'));
+
+                window.open(config.baseApiBackend
+                    + 'report/cetak-jumlah-apd?'
+                    + 'bulan=' + moment($scope.item.bulan).format("MM-YYYY")
+                    + '&objectruanganfk=' + $scope.item.ruangan.id
+                    + '&kdprofile=' + profile.id)
+                    .then(function(res){
+                        console.log(res.data)
+                    })
             }
 
             /////////////////////////////// // ///////
