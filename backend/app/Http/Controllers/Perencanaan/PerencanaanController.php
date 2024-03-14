@@ -4449,7 +4449,8 @@ class PerencanaanController extends ApiController {
                                 $saldofix -=$request['bku'][$i]['jumlahpanjar'];;
                                 $saldofix += $request['bku'][$i]['jumlahdibayarverif'];
                                 $penerimaan += $request['bku'][$i]['jumlahdibayarverif'];
-                                $pengeluaran += $request['bku'][$i]['jumlahpanjar'];;
+                                // $pengeluaran += $request['bku'][$i]['jumlahpanjar'];;
+                                $pengeluaran += $request['bku'][$i]['jumlahdibayarverif'];
                             }
                         }
 
