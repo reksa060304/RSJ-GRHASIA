@@ -29,6 +29,16 @@
                         k-data-text-field="'kategorypegawai'" k-data-value-field="'id'" k-filter="'contains'"
                         k-auto-bind="false" k-data-source="listKategory" /> -->
                 </div>
+                <div class="grid_3">
+                    <div class="grid_12">
+                        <label c-label>Surat Keputusan</label>
+                    </div>
+                    <div class="grid_12">
+                        <input kendo-combo-box k-ng-model="item.suratkeputusanSearch"
+                            k-data-text-field="'keteranganlainnya'" k-data-value-field="'id'" k-filter="'contains'"
+                            k-auto-bind="false" k-data-source="ListSuratKeputusan" />
+                    </div>
+                </div>
                 
                 <!-- <div class="grid_3">
                     <label c-label item="item" c-label-text="Kategory Laporan"></label>
@@ -65,6 +75,16 @@
     <div class="panel panel-default container_12" style="padding: 0px 10px;">
         <div class="grid_12">
             <div class="grid_12">
+                <div class="grid_5">
+                    <div class="grid_12">
+                        <label c-label>Surat Keputusan</label>
+                    </div>
+                    <div class="grid_12">
+                        <input kendo-combo-box k-ng-model="item.suratkeputusan"
+                            k-data-text-field="'keteranganlainnya'" k-data-value-field="'id'" k-filter="'contains'"
+                            k-auto-bind="false" k-data-source="ListSuratKeputusan" />
+                    </div>
+                </div>
                 <div class="grid_3">
                     <div class="grid_12">
                         <label c-label>Pangkat & Golongan</label>
@@ -94,7 +114,7 @@
                             />
                     </div>
                 </div>
-                <div class="grid_3">
+                <!-- <div class="grid_3">
                     <div class="grid_12">
                         <label c-label>Gaji Copy</label>
                     </div>
@@ -103,7 +123,8 @@
                             ng-model="item.gajicopy"
                             ng-keypress="($event.which == 13)? pindah() :item.gajicopy" />
                     </div>
-                </div>
+                </div> -->
+                
             </div>
             <div class="grid_12">
                 <div class="k-edit-buttons  k-state-default pull-right" style="margin-top:10px">

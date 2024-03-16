@@ -98,6 +98,7 @@ class SumberDayaManusiaController extends ApiController {
         $KategoryPegawai = KategoryPegawai::where('statusenabled',true)->where('kdprofile', $kdProfile)->get();
         $jabatan = Jabatan::where('statusenabled', true)->where('kdprofile', $kdProfile)->whereIn('objectjenisjabatanfk',[6,7,8])->get();
         $jabatanbaru = Jabatan::where('statusenabled', true)->where('objectjenisjabatanfk', $request['jabatan'])->where('kdprofile', $kdProfile)->get();
+        $suratkeputusan = SuratKeputusan::where('statusenabled', true)->where('objectjeniskeputusanfk', 9)->where('kdprofile', $kdProfile)->get();
 
         if(isset($request['jabatan']) && $request['jabatan']!="" && $request['jabatan']!="undefined"){
             if($request['jabatan'] == 6){
@@ -314,6 +315,7 @@ class SumberDayaManusiaController extends ApiController {
             'jabatanbaru'=> $jabatanbaru,
             'tunjanganbaru'=> $tunjanganbaru,
             'validasi'=> $validasi,
+            'suratkeputusan'=> $suratkeputusan,
             'by' => 'ea@epic',
         );
 
@@ -7833,7 +7835,20 @@ where pg.kdprofile = 30 and pg.statusenabled = true and pg.usereksternal is null
     }
     public function MasterKenaikanGajiBerkala(Request $request)
     {
-        $data =  \DB::select(DB::raw("select case when gol.namaexternal is null then gol.name else gol.namaexternal ||', ' ||gol.name end as golongan,gg.mkg, gg.gajipokok from gajigolongan_m gg inner join sdm_golongan_m gol on gol.id = golonganfk where gg.kdprofile = 30 and gg.statusenabled = true"));
+        $sk = '';
+        $golongan = '';
+
+        if(isset($request['sk'])){
+            $sk = 'and sk.id ='. $request['sk'];
+        }
+        if(isset($request['golonganpegawai'])){
+            $golongan = 'and gol.id in('. $request['golonganpegawai'] .')';
+        }
+        $data =  \DB::select(DB::raw("select sk.keteranganlainnya, case when gol.namaexternal is null then gol.name else gol.namaexternal ||', ' ||gol.name end as golongan,gg.mkg, 
+        gg.gajipokok from gajigolongan_m gg 
+        inner join sdm_golongan_m gol on gol.id = golonganfk 
+        INNER JOIN suratkeputusan_m sk on sk.id = gg.objectsuratkeputusanfk
+        where gg.kdprofile = 30 and gg.statusenabled = true $sk $golongan"));
         $result = array(
             'data'=> $data,
             'as'=> 'Fizi'
@@ -7856,6 +7871,7 @@ where pg.kdprofile = 30 and pg.statusenabled = true and pg.usereksternal is null
                     'namaexternal'=> $data['mkg'],
                     'golonganfk'=> $data['golonganfk'],
                     'mkg'=> $data['mkg'],
+                    'objectsuratkeputusanfk'=> $data['objectsuratkeputusanfk'],
                     'gajipokok'=> $data['gajipokok'],
                 ]);
             }

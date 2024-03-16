@@ -37,6 +37,7 @@ define(['initialize'], function (initialize) {
                     $scope.listJenisPegawai = dataCombo.jenispegawai;
                     $scope.listKategory = dataCombo.golonganpegawai;
                     $scope.ListGolonganPegawai = dataCombo.golonganpegawai
+                    $scope.ListSuratKeputusan = dataCombo.suratkeputusan
                     $scope.selectOptionsKategory = {
                         placeholder: "Pilih Golongan Pegawai...",
                         dataTextField: "golongan",
@@ -112,21 +113,27 @@ define(['initialize'], function (initialize) {
                 }
 
                 var status = "";
-                if ($scope.item.status.length != 0) {
+                if ($scope.item.kategory.length != 0) {
                     var a = ""
                     var b = ""
-                    for (var i = $scope.item.status.length - 1; i >= 0; i--) {
-                        var c = $scope.item.status[i].id
+                    for (var i = $scope.item.kategory.length - 1; i >= 0; i--) {
+                        var c = $scope.item.kategory[i].id
                         b = "," + c
                         a = a + b
                     }
-                    status = "&statusPegId=" + a.slice(1, a.length)
+                    status = "&golonganpegawai=" + a.slice(1, a.length)
+                }
+                var sk = ''
+                if($scope.item.suratkeputusanSearch != undefined){
+                    sk = "&sk="+ $scope.item.suratkeputusanSearch.id
                 }
 
 
 
-                medifirstService.get("sdm/master-kenaikan-gajiberkala").then(function (data) {
+                medifirstService.get("sdm/master-kenaikan-gajiberkala?"+status+sk).then(function (data) {
                     $scope.isLoadingData = false;
+                    $scope.isRouteLoading = false;
+                    
                     var datas = data.data.data
                     // if ($scope.item.kategoryLap != undefined) {
                     //     for (let i = datas.length - 1; i >= 0; i--) {
@@ -291,6 +298,11 @@ define(['initialize'], function (initialize) {
                         "template": "<span class='style-right'>{{formatRupiah('#: gajipokok #', '')}}</span>"
 
                     },
+                    {
+                        "field": "keteranganlainnya",
+                        "title": "SURAT KEPUTUSAN",
+                        "width": "70px",
+                    },
 
                     // {
                     //     width: '10%',
@@ -310,20 +322,27 @@ define(['initialize'], function (initialize) {
                 $scope.popUpCreate.center().open()
             }
             $scope.tambahMKG = function(){
+            $scope.isRouteLoading = true;
+            $scope.isLoadingData = true
                 var data = {
                     id: "",
                     golonganfk: $scope.item.golongan.id,
                     mkg: $scope.item.mkg,
-                    gajipokok: $scope.item.gajipokok
+                    gajipokok: $scope.item.gajipokok,
+                    objectsuratkeputusanfk: $scope.item.suratkeputusan.id
                 }
                 var objSave = {
                     data: data
                 }
                 medifirstService.post('sdm/save-master-kenaikan-gaji', objSave).then(function(){
-                    $scope.item.gajicopy = $scope.item.gajipokok
+                $scope.isRouteLoading = false;
+                $scope.isLoadingData = false
+                    
                     $scope.item.mkg = parseInt($scope.item.mkg)+ 1
                     $scope.item.gajipokok = undefined
-                    document.querySelector("#txtData2").focus();
+                    // document.querySelector("#txtData2").focus();
+                    $scope.isRouteLoading = false;
+                    LoadData()
 
                 })
             }
