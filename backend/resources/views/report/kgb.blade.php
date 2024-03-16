@@ -223,13 +223,7 @@
                             <td style="font-size: 11pt">Terhitung Mulai Tanggal : {{$data[0]->tmtlama }}</td>
                         </tr>
                         <tr>
-                            <td style="font-size: 11pt" colspan="4" height="30" style="padding-left: 6%">Diberikan 
-                                @if ($data[0]->jenisskco == 'KGB')
-                                    Kenaikan Gaji Berkala
-                                @elseif($data[0]->jenisskco == 'KP')
-                                    Kenaikan Pangkat
-                                @endif
-                                sehingga memperoleh :</td>
+                            <td style="font-size: 11pt" colspan="4" height="30" style="padding-left: 6%">Diberikan Kenaikan Gaji Berkala sehingga memperoleh :</td>
                         </tr>
                         <tr>
                             <td style="font-size: 11pt">1. </td>
