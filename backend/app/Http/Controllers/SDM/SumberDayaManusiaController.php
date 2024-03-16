@@ -98,7 +98,7 @@ class SumberDayaManusiaController extends ApiController {
         $KategoryPegawai = KategoryPegawai::where('statusenabled',true)->where('kdprofile', $kdProfile)->get();
         $jabatan = Jabatan::where('statusenabled', true)->where('kdprofile', $kdProfile)->whereIn('objectjenisjabatanfk',[6,7,8])->get();
         $jabatanbaru = Jabatan::where('statusenabled', true)->where('objectjenisjabatanfk', $request['jabatan'])->where('kdprofile', $kdProfile)->get();
-        $suratkeputusan = SuratKeputusan::where('statusenabled', true)->where('objectjeniskeputusanfk', 9)->where('kdprofile', $kdProfile)->get();
+        $suratkeputusan = SuratKeputusan::where('statusenabled', true)->where('objectjeniskeputusanfk', 9)->where('kdprofile', $kdProfile)->select('*','nosk as nosk2')->get();
 
         if(isset($request['jabatan']) && $request['jabatan']!="" && $request['jabatan']!="undefined"){
             if($request['jabatan'] == 6){
@@ -689,7 +689,8 @@ class SumberDayaManusiaController extends ApiController {
         $dataRiwayatGajiBerkala = \DB::table("riwayatgajiberkala_t as gb")
         // ->leftjoin("riwayatgolongan_t as rg","rg.objectpegawaifk","=","gb.id") 
         ->join("sdm_golongan_m as gol","gol.id","=","gb.objectgolonganfk")
-        ->select(DB::raw("gb.jenisskco,gb.tgltmtcetak, gb.tglskbaru,gb.masakerjagolongan,gb.jenissk, gb.nosurat, gb.noskcetak, gb.objectgolonganfk,gb.norec,gb.tglsk::date,gb.gajiawal, gb.gajiakhir, gb.tgltmt::date, gol.name, gol.namaexternal,gol.namaexternal || ', ' || gol.name as golongan, gb.nosk, gb.pejabatmenetapkan"))
+        ->leftjoin("suratkeputusan_m as sk","sk.id","=","gb.objectsuratkeputusanfk")
+        ->select(DB::raw("gol.level,sk.reportdisplay, gb.objectsuratkeputusanfk, sk.nosk as nosk2,gb.jenisskco,gb.tgltmtcetak, gb.tglskbaru,gb.masakerjagolongan,gb.jenissk, gb.nosurat, gb.noskcetak, gb.objectgolonganfk,gb.norec,gb.tglsk::date,gb.gajiawal, gb.gajiakhir, gb.tgltmt::date, gol.name, gol.namaexternal,gol.namaexternal || ', ' || gol.name as golongan, gb.nosk, gb.pejabatmenetapkan"))
         ->where("gb.objectpegawaifk",$request['idPegawai'])
         ->orderBy('gb.tgltmt','desc')
         ->get();
@@ -741,6 +742,7 @@ class SumberDayaManusiaController extends ApiController {
         $gajigolongan = \DB::table("gajigolongan_m as gg")
         ->where("gg.golonganfk",$request['golongan'])
         ->where("gg.mkg",$request['mkg'])
+        ->where("gg.objectsuratkeputusanfk",$request['sk'])
         ->get();
         
         $result = array(
@@ -7050,6 +7052,7 @@ public function daftarKenaikanGajiBerkala(Request $request){
                 'jenisskco'=>$request['jenisskco'],
                 'tglskbaru'=>$request['tglskbaru'],
                 'masakerjagolongan'=>$request['masakerjagolongan'],
+                'objectsuratkeputusanfk'=>$request['objectsuratkeputusanfk'],
                 ]);
                 $getgol = \DB::table("pegawai_m")->where("id", "=", $request['objectpegawaifk'])->get();
                 foreach ($getgol as $gg) {
@@ -7081,6 +7084,7 @@ public function daftarKenaikanGajiBerkala(Request $request){
                     'jenisskco'=>$request['jenisskco'],
                     'tglskbaru'=>$request['tglskbaru'],
                     'masakerjagolongan'=>$request['masakerjagolongan'],
+                    'objectsuratkeputusanfk'=>$request['objectsuratkeputusanfk'],
                 ]);
 
                 DB::table("pegawai_m")->where("id", "=", $request['objectpegawaifk'])->update([

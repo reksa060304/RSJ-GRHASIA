@@ -1815,8 +1815,8 @@
 								style="font-size: small;"></kendo-grid>
 						</div>
 
-						<div kendo-window="popUpRiwayatGajiBerkala" k-title="'Kenaikan Gaji Berkala'" k-width="850"
-							k-height="350" k-visible="false" k-on-open="win2visible = true" k-on-close="win2visible = false">
+						<div kendo-window="popUpRiwayatGajiBerkala" k-title="'Kenaikan Gaji Berkala'" k-width="1000" 
+							k-height="700" k-visible="false" k-on-open="win2visible = true" k-on-close="win2visible = false">
 							<div class="panel panel-default container_12" style="padding: 0px 10px;">
 								<div class="panel-heading-white"><span class="title" c-translate>Lama</span></div>
 								<div class="panel-body">
@@ -1838,6 +1838,17 @@
 													ng-model="itemGajiBerkala.gajiawal" />
 											</div>
 										</div>
+										<!-- <div class="grid_4">
+											<div class="grid_12">
+												<label c-label item="item">Surat Keputusan</label>
+											</div>
+											<div class="grid_12">
+												<input style="width: 100%;" kendo-combo-box k-ng-model="itemGajiBerkala.suratkeputusan"
+													k-data-text-field="'nosk'" k-data-value-field="'id'" k-auto-bind="true"
+													k-data-source="ListSuratKeputusan" />
+												
+											</div>
+										</div> -->
 									</div>
 									<div class="grid_12">
 										<div class="grid_4">
@@ -1877,6 +1888,19 @@
 								<div class="panel-heading-white"><span class="title" c-translate>Baru</span></div>
 								<div class="panel-body">
 									<div class="grid_12">
+										<div class="grid_12">
+											<div class="grid_4">
+												<div class="grid_12">
+													<label c-label item="item">Surat Keputusan</label>
+												</div>
+												<div class="grid_12">
+													<input style="width: 100%;" kendo-combo-box k-ng-model="itemGajiBerkala.suratkeputusanBaru"
+														k-data-text-field="'nosk2'" k-data-value-field="'id'" k-auto-bind="true"
+														k-data-source="ListSuratKeputusan" k-on-change="getDataGolongan()" />
+													
+												</div>
+											</div>
+										</div>
 										<div class="grid_12">
 											<div class="grid_4">
 												<div class="grid_12">

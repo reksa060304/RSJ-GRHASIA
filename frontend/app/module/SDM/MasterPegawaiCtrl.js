@@ -208,6 +208,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 					$scope.ListJenisPegawai = dataCombo.jenispegawai;
 					$scope.ListJenisHukuman = dataCombo.jenishukuman;
 					$scope.ListKomponenDel = dataCombo.komponengajidel;
+					$scope.ListSuratKeputusan = dataCombo.suratkeputusan;
 					// $scope.ListSubUnitKerja = dataCombo.subunitkerja;
 					$scope.ListAktif = [{ id: 0, aktif: "Tidak Aktif" }, { id: 1, aktif: "Aktif" }]
 					LoadCache();
@@ -2041,10 +2042,14 @@ $scope.formatRupiah = function (value, currency) {
 				$scope.item.norecGajiBerkala = dataItem.norec;
 				$scope.itemGajiBerkala.golongan = {
 					id: dataItem.objectgolonganfk,
-					golongan: dataItem.name
+					golongan: dataItem.name,
+					level: dataItem.level
 				};
 				$scope.itemGajiBerkala.noskcetak = dataItem.noskcetak
 				$scope.itemGajiBerkala.jenissk = dataItem.jenissk
+				$scope.itemGajiBerkala.suratkeputusanBaru = {
+					id: dataItem.objectsuratkeputusanfk, nosk2: dataItem.nosk2
+				}
 				$scope.gajilamanya = dataItem.jenisskco
 				// console.log(dataItem);
 				$scope.itemGajiBerkala.tanggaltmt = moment(dataItem.tgltmt).format('YYYY-MM-DD HH:mm');
@@ -3341,7 +3346,8 @@ $scope.formatRupiah = function (value, currency) {
 							jenisskco: $scope.gajilamanya,
 							masakerjagolongan: $scope.itemGajiBerkala.tahunmasakerjagolongan + " tahun " + $scope.itemGajiBerkala.bulanmasakerjagolongan + " bulan",
 							tgltmtcetak: moment($scope.itemGajiBerkala.tanggaltmtcetak).format('YYYY-MM-DD HH:mm'),
-							tglskbaru: moment($scope.itemGajiBerkala.tanggalskbaru).format('YYYY-MM-DD HH:mm')
+							tglskbaru: moment($scope.itemGajiBerkala.tanggalskbaru).format('YYYY-MM-DD HH:mm'),
+							objectsuratkeputusanfk: $scope.itemGajiBerkala.suratkeputusanBaru.id
 						}
 						dataRiwayatGajiBerkala.push(data)
 						$scope.gridRiwayatGajiBerkala = new kendo.data.DataSource({
@@ -4526,6 +4532,9 @@ $scope.formatRupiah = function (value, currency) {
 				var nominal = 0;
 				var pindah = 0;
 				var golongan = "";
+				if($scope.itemGajiBerkala.tanggaltmt == undefined){
+					return
+				}
 				medifirstService.get('sdm/get-thn-bln?tglcpns=' + moment($scope.item.tmtskcpns).format('YYYY-MM-DD') + '&tgltmt=' + moment($scope.itemGajiBerkala.tanggaltmt).format('YYYY-MM-DD')).then(function (data) {
 					var thn = data.data[0].thn,
 						bln = data.data[0].bln
@@ -4542,7 +4551,11 @@ $scope.formatRupiah = function (value, currency) {
 							}
 						}
 						nominal = thn - pindah;
-						medifirstService.get('nominal/get-nominal?golongan=' + $scope.itemGajiBerkala.golongan.id + '&mkg=' + nominal + '&pegawai=' + $scope.item.idPegawai).then(function (data) {
+						if($scope.itemGajiBerkala.suratkeputusanBaru == undefined){
+							toastr.error('Pilih Surat Keputusan Terlebih Dahulu!')
+							return
+						}
+						medifirstService.get('nominal/get-nominal?golongan=' + $scope.itemGajiBerkala.golongan.id + '&mkg=' + nominal + '&pegawai=' + $scope.item.idPegawai + '&sk='+ $scope.itemGajiBerkala.suratkeputusanBaru.id).then(function (data) {
 							$scope.itemGajiBerkala.tahunmasakerjagolongan = nominal
 							$scope.itemGajiBerkala.bulanmasakerjagolongan = bln
 							$scope.itemGajiBerkala.masakerjagolongan = $scope.itemGajiBerkala.tahunmasakerjagolongan + " tahun " + $scope.itemGajiBerkala.bulanmasakerjagolongan + " bulan "
@@ -4577,7 +4590,7 @@ $scope.formatRupiah = function (value, currency) {
 					return;
 				}
 				// console.log($scope.dataSelected);
-				window.open(configuration.baseApiBackend + 'report/get-cetak-suratkgb?norec=' + dataItem.norec+ '&rgb=oke', '_blank');
+				window.open(configuration.baseApiBackend + dataItem.reportdisplay +'?norec=' + dataItem.norec+ '&rgb=oke', '_blank');
 			}
 			$scope.simpanCPNS = function(){
 				var listRawRequired = [
