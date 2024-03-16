@@ -8115,13 +8115,60 @@ class ReportController extends ApiController{
     
         // union all
     
-        $data = DB::select(DB::raw("select * from(select ROW_NUMBER ( ) OVER ( ORDER BY bku.nobku ) nourut, bku.nobku, to_char(bku.tglbku::date, 'DD-MM-YYYY') tgl, bku.uraianbku, bku.penerimaan, bku.pengeluaran, 0 saldo
-        from bukukasumum_t bku
-        where bku.kdprofile = 30
-        and bku.statusenabled = true
-        $qbulan
-        $qtahun
-        and bku.objectjenisbuktifk in (3,7)) as x ORDER BY nourut"));
+        // $data = DB::select(DB::raw("select * from(select ROW_NUMBER ( ) OVER ( ORDER BY bku.nobku ) nourut, bku.nobku, to_char(bku.tglbku::date, 'DD-MM-YYYY') tgl, bku.uraianbku, bku.penerimaan, bku.pengeluaran, 0 saldo
+        // from bukukasumum_tx bku
+        // where bku.kdprofile = 30
+        // and bku.statusenabled = true
+        // $qbulan
+        // $qtahun
+        // and bku.objectjenisbuktifk in (3,7)) as x ORDER BY nourut"));
+
+        $data = DB::select(DB::raw("SELECT ROW_NUMBER
+        ( ) OVER ( ORDER BY x.nobku ) nourut,
+        x.nobku,
+        x.tgl,
+        x.uraianbku,
+        x.penerimaan,
+        x.pengeluaran,
+        x.saldo 
+    FROM
+        (
+        select 
+            bku.nobku,
+            to_char( bku.tglbku :: DATE, 'DD-MM-YYYY' ) tgl,
+            bku.uraianbku,
+            bku.penerimaan,
+            bku.pengeluaran,
+            0 saldo 
+        FROM
+            bukukasumum_t bku 
+        WHERE
+            bku.kdprofile = 30 
+            AND bku.statusenabled = TRUE             
+            $qbulan
+            $qtahun
+            AND bku.objectjenisbuktifk IN ( 3, 7 ) UNION
+        SELECT
+            bku.nobku,
+            to_char( bku.tglbku :: DATE, 'DD-MM-YYYY' ) tgl,
+            bku.uraianbku,
+            spj.jumlahdibayarverif AS penerimaan,
+            0 pengeluaran,
+            0 saldo 
+        FROM
+            bukukasumum_t bku
+            INNER JOIN strukrealisasi_t spj ON bku.norec = spj.objectbkufk
+            INNER JOIN spjtopanjar_t stp ON spj.norec = stp.objectspjfk 
+            where 
+            bku.kdprofile = 30 
+            AND bku.statusenabled = TRUE            
+            $qbulan
+            $qtahun
+            AND bku.statusenabled = TRUE 
+            AND spj.statusenabled = TRUE 
+        ) AS x 
+    ORDER BY
+        nourut"));
 
         $saldoakhir = 0;
 
