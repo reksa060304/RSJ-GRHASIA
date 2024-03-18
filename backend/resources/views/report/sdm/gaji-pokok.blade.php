@@ -19,9 +19,9 @@
 
                     </td>
                     <td style="text-align: center; font-family: Arial">
-                        <p style="font-size: margin-bottom:0; 12pt; margin:0;">{{strtoupper($profile[0]->baris1)}}</p><br>
+                        <p style="font-size:12pt;">{{strtoupper($profile[0]->baris1)}}</p>
                         
-                        <h1 style="font-size: 14pt; font-weight:bold; ">SEKERTARIAT DAERAH</h1>
+                        <h1 style="font-size:14pt; font-weight:bold; ">SEKERTARIAT DAERAH</h1>
                         
                         <p style="margin: 0;">Kepatihan Danurejan Yogyakarta Telepon (0274)56281 Faksimile (0274) 555459</p>
                         <p style="margin: 0;">Website: jdih.jogjaprov.go.id Email: birohukum@jogjaprov.go.id Kode pos 55213</p>
@@ -196,10 +196,12 @@
         {{-- Penetapan --}}
         <table style="padding-right: 1cm;" cellspacing="0" cellpadding="0" border="0" width="100%">
             <tr>
-                <td style="text-align: right;">Ditetapkan di Yogyakarta</td>
+                <td style="width: 57%"></td>
+                <td style="text-align: left;">Ditetapkan di Yogyakarta</td>
             </tr>
             <tr>
-                <td style="text-align: right;">Pada tanggal 14 Maret 2024</td>
+                <td style="width: 57%"></td>
+                <td style="text-align: left;">Pada tanggal 14 Maret 2024</td>
             </tr>
         </table>
 
