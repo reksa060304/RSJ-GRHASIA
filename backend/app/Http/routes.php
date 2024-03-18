@@ -2570,7 +2570,13 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             /*GET*/
             Route::get('sdm/get-data-jabatan', 'SDM\SumberDayaManusiaController@getDataJabatan');
             Route::get('sdm/get-data-combo-sdm', 'SDM\SumberDayaManusiaController@getComboPegawaiSdm');
+
+            Route::get('sdm/get-data-combo-sdm-inpassing', 'SDM\SumberDayaManusiaController@getComboPegawaiSdmInpassing');
+
             Route::get('sdm/get-data-pegawai-all-sdm', 'SDM\SumberDayaManusiaController@getDaftarPegawai');
+
+            Route::get('sdm/get-data-pegawai-inpassing', 'SDM\SumberDayaManusiaController@getDaftarPegawaiInpassing');
+
             Route::get('sdm/get-data-abk', 'SDM\SumberDayaManusiaController@getDaftarABK');
             Route::get('sdm/get-data-detail-pegawai', 'SDM\SumberDayaManusiaController@getDetailPegawai');
             Route::get('sdm/get-data-urut-kepangakatan-pegawai', 'SDM\SumberDayaManusiaController@getDataDaftarUrutKepangkatan');

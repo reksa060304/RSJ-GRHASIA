@@ -209,6 +209,12 @@
       "nameDep": "DaftarKenaikanGajiBerkalaCtrl",
       "urlDep": "module/TataRekening/DaftarKenaikanGajiBerkalaCtrl"
     },
+
+    {
+      "nameDep": "DaftarKenaikanGajiInpasingCtrl",
+      "urlDep": "module/TataRekening/DaftarKenaikanGajiInpasingCtrl"
+    },    
+
     {
       "nameDep": "RemunerasiCtrl",
       "urlDep": "module/TataRekening/RemunerasiCtrl"

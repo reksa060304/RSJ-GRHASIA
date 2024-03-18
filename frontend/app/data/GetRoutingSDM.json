@@ -1029,6 +1029,27 @@
       }
     ]
   },
+
+  {
+    "name": "DaftarKenaikanGajiInpasingCtrl",
+    "url": "/KenaikanGajiInpasing",
+    "templateurl": "module/TataRekening/DaftarKenaikanGajiInpasing.html",
+    "controller": "DaftarKenaikanGajiInpasingCtrl",
+    "deps": [{
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+
   {
     "name": "Remunerasi",
     "url": "/UmVtdW5lcmFzaQ==",

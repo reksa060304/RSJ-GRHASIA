@@ -96,6 +96,8 @@ class SumberDayaManusiaController extends ApiController {
         $Ruangan = Ruangan::where('statusenabled',true)->where('kdprofile', $kdProfile)->get();
         $StatusPegawai = StatusPegawai::where('statusenabled',true)->where('kdprofile', $kdProfile)->get();
         $KategoryPegawai = KategoryPegawai::where('statusenabled',true)->where('kdprofile', $kdProfile)->get();
+        // $KategoryPegawaiInpasing = KategoryPegawai::where('statusenabled',true)->where('kdprofile', $kdProfile)->whereIn('id',[13,1,23])->get();
+        $KategoryPegawaiInpasing = DB::select( DB::raw("select '' as kategorypegawai union select kategorypegawai from kategorypegawai_m where statusenabled = true and kdprofile='$kdProfile' and id in(1,23)") );
         $jabatan = Jabatan::where('statusenabled', true)->where('kdprofile', $kdProfile)->whereIn('objectjenisjabatanfk',[6,7,8])->get();
         $jabatanbaru = Jabatan::where('statusenabled', true)->where('objectjenisjabatanfk', $request['jabatan'])->where('kdprofile', $kdProfile)->get();
         $suratkeputusan = SuratKeputusan::where('statusenabled', true)->where('objectjeniskeputusanfk', 9)->where('kdprofile', $kdProfile)->select('*','nosk as nosk2')->get();
@@ -283,6 +285,7 @@ class SumberDayaManusiaController extends ApiController {
             'dataunitkerja' => $DataUnitkerja,
             'statuspegawai' => $StatusPegawai,
             'kategorypegawai' => $KategoryPegawai,
+            'kategorypegawaiinpasing' => $KategoryPegawaiInpasing,
             'jeniskelamin' => $jeniskelamin,
             'ruangan' => $Ruangan,
             'agama' => $agama,
@@ -316,6 +319,19 @@ class SumberDayaManusiaController extends ApiController {
             'tunjanganbaru'=> $tunjanganbaru,
             'validasi'=> $validasi,
             'suratkeputusan'=> $suratkeputusan,
+            'by' => 'ea@epic',
+        );
+
+        return $this->respond($result);
+    }
+
+    public function getComboPegawaiSdmInpassing (Request $request){
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        // $KategoryPegawaiInpasing = KategoryPegawai::where('statusenabled',true)->where('kdprofile', $kdProfile)->whereIn('id',[13,1,23])->get();
+        $KategoryPegawaiInpasing = DB::select( DB::raw("select '' as kategorypegawai union select kategorypegawai from kategorypegawai_m where statusenabled = true and kdprofile='$kdProfile' and id in(1,23)") );
+
+        $result = array(
+            'kategorypegawaiinpasing' => $KategoryPegawaiInpasing,
             'by' => 'ea@epic',
         );
 
@@ -361,6 +377,57 @@ class SumberDayaManusiaController extends ApiController {
             $data = $data->where('pg.id','=',$request['idPegawai']);
         }
         $data = $data->get();
+        return $this->respond($data);
+    }
+
+    public function getDaftarPegawaiInpassing (Request $request) {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        // $data = \DB::table('pegawai_m as pg')
+        //     ->leftJoin('agama_m as ag','ag.id','=','pg.objectagamafk')
+        //     ->leftJoin('detailkategorypegawai_m as dkp','dkp.id','=','pg.objectdetailkategorypegawaifk ')
+        //     ->leftJoin('golongandarah_m as gd','gd.id','=', 'pg.objectgolongandarahfk')
+        //     ->leftJoin('jabatan_m as jb','jb.id','=','pg.objectjabatanfungsionalfk')
+        //     ->leftJoin('jenisjabatan_m as jj','jb.objectjenisjabatanfk','=','jj.id')
+        //     ->leftJoin('jabatan_m as jb1','jb1.id', '=', 'pg.objectjabatanstrukturalfk')
+        //     ->leftJoin('golonganpegawai_m as gp','gp.id','=', 'pg.objectgolonganpegawaifk')
+        //     ->leftJoin('unitkerjapegawai_m as uk','uk.id','=','pg.objectunitkerjapegawaifk')
+        //     ->leftJoin('statuspegawai_m as sp','sp.id','=','pg.objectstatuspegawaifk')
+        //     ->leftJoin('kelompokjabatan_m as kj','kj.id','=','pg.objectkelompokjabatanfk')
+        //     ->leftJoin('statusperkawinanpegawai_m as spp','spp.id','=','pg.objectstatusperkawinanpegawaifk')
+        //     ->leftJoin('kategorypegawai_m as kp','kp.id','=','pg.kategorypegawai')
+        //     ->leftJoin('eselon_m as ese','ese.id','=','pg.objecteselonfk')
+        //     ->leftJoin('pendidikan_m as pend','pend.id', '=','pg.objectpendidikanterakhirfk')
+        //     ->leftJoin('jeniskelamin_m as jk','jk.id','=','pg.objectjeniskelaminfk')
+        //     ->leftJoin('sdm_golongan_m as gol','gol.id','=','pg.objectgolonganfk')
+        //     ->leftJoin('nilaikelompokjabatan_m as nkj','nkj.id','=','pg.objectkelompokjabatanfk')
+        //     ->leftJoin('sdm_kelompokshift_m as ks','ks.id','=','pg.objectshiftkerja')
+        //     ->leftJoin('sdm_kedudukan_m as kdd','kdd.id','=','pg.kedudukanfk')
+        //     ->leftJoin('jenispegawai_m as jp','jp.id','=','pg.objectjenispegawaifk')
+        //     ->select(\DB::raw("jb.objectjenisjabatanfk, jj.jenisjabatan,pg.*,ag.agama,dkp.detailkategorypegawai,gd.golongandarah,jb.namajabatan as jbfungsional,
+		// 	                        jb1.namajabatan as jbstruktural,gp.golonganpegawai,uk.name as unitkerja,sp.statuspegawai,
+		// 	                        kj.namakelompokjabatan,spp.statusperkawinan,ese.eselon,kp.kategorypegawai as namakategorypegawai,pend.pendidikan,jk.jeniskelamin,
+		// 	                        gol.namaexternal||', '||gol.name as golongan,nkj.detailkelompokjabatan,nkj.grade,ks.kelompokshiftkerja,kdd.name as kedudukan,jp.jenispegawai"))
+        //     ->where('pg.kdprofile', $kdProfile)
+        //     ->where('pg.namalengkap', '<>','-')
+        //     ->where('pg.namalengkap', '<>','Programmer Administrator')
+        //     ->whereNull('pg.usereksternal')
+        //     ->where('pg.statusenabled',true)
+        //     ->whereIN('kp.id',[1,23])
+        //     // ->take(50)
+        //     ->orderBy('pg.namalengkap');
+
+        $data = DB::SELECT(DB::RAW("select rgi.* from riwayatgajiinpassing_t rgi
+        left join pegawai_m p on rgi.idpeg = p.id
+        left join kategorypegawai_m kp on kp.id = p.kategorypegawai
+        where kp.id in (1,23) order by no
+        "));
+
+        // if(isset($request['kategoriPegawai']) && $request['kategoriPegawai']!="" && $request['kategoriPegawai']!="undefined"){
+        //     // ('column', 'like', '%SearchString%')
+        //     $data = $data->where('kp.kategorypegawai', 'ilike', '%'.$request['kategoriPegawai'].'%');
+        // }
+
+        // $data = $data->get();
         return $this->respond($data);
     }
 
