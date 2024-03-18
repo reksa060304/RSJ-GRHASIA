@@ -100,9 +100,14 @@
                 </td>
                 <td>
                     <p>
-                        Terhitung mulai tanggal 1 Januari 2024 menyesuaikan gaji pokok 
-                        Calon Pegawai Negeri Sipil/Pegawai Negeri Sipil/Pegawai Pemerintah 
-                        dengan Perjanjian Kerja sebagai berikut:
+                        Terhitung mulai tanggal 1 Januari 2024 menyesuaikan gaji pokok
+                        @if($data->reportdisplay)
+                            {{ $data->reportdisplay }}
+                        @else
+                            -
+                        @endif
+                        sebagai berikut:
+                        
                     </p>
                     <div>
                         
@@ -225,8 +230,8 @@
                 <td><p>TTD</p></td>
             </tr>
             <tr style="text-align: center;">
-                <td>HARY SETIAWAN S.H, M.H.</td>
-                <td>Drs. BENY SUHARSONO, M.Si.</td>
+                <td>HARY SETIAWAN</td>
+                <td>BENY SUHARSONO</td>
             </tr>
         </table>
 
