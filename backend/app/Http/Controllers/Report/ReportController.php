@@ -17953,4 +17953,21 @@ public function suratBuktiPengembalian(Request $request)
         // ]);
     }
 
+    public function cetakGajiInpassing(Request $request)
+    {
+        $data = DB::table('riwayatgajiinpassing_t')->where('no', $request['no'])->first();
+
+        $kdProfile = 30;
+
+        $profile = DB::select("select*from profile_m where kdprofile = $kdProfile and statusenabled = true");
+        
+        // $pdf = PDF::loadview('report.sdm.gaji-pokok', compact('data', 'profile'))->setPaper('f4', 'potrait');
+        // return $pdf->stream('Riwayat Gaji '.$data->nama.'.pdf');
+
+        return view('report.sdm.gaji-pokok', [
+            'data' => $data,
+            'profile' => $profile
+        ]);
+    }
+
 }

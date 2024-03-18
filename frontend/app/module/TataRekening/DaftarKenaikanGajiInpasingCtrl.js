@@ -784,18 +784,24 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             function RegBsre(e) {
                 e.preventDefault();
                 var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
-                $scope.itembsre.id = dataItem.id
-                $scope.itembsre.nik = dataItem.noidentitas
-                $scope.itembsre.nip  = dataItem.nip
-                $scope.itembsre.namalengkap = dataItem.namalengkap
-                $scope.itembsre.email = dataItem.email
-                $scope.itembsre.notelp = dataItem.notlp
-                // $scope.itembsre.kota = "Sleman"//dataItem
-                // $scope.itembsre.provinsi = "Daerah Istimewa Yogyakarta"//dataItem
-                $scope.itembsre.jabatan = dataItem.jenispegawai
-                $scope.itembsre.unitkerja = dataItem.unitkerja
-                $scope.popUpFile.center().open()
                 console.log(dataItem);
+
+                window.open(config.baseApiBackend
+                        + "report/cetak-gaji-inpassing?"
+                        + "no=" + dataItem.no
+                    )
+
+                // $scope.itembsre.id = dataItem.id
+                // $scope.itembsre.nik = dataItem.noidentitas
+                // $scope.itembsre.nip  = dataItem.nip
+                // $scope.itembsre.namalengkap = dataItem.namalengkap
+                // $scope.itembsre.email = dataItem.email
+                // $scope.itembsre.notelp = dataItem.notlp
+                // // $scope.itembsre.kota = "Sleman"//dataItem
+                // // $scope.itembsre.provinsi = "Daerah Istimewa Yogyakarta"//dataItem
+                // $scope.itembsre.jabatan = dataItem.jenispegawai
+                // $scope.itembsre.unitkerja = dataItem.unitkerja
+                // // $scope.popUpFile.center().open()
             }
 
             $scope.SaveRegisterBsre = function() {
