@@ -17966,7 +17966,7 @@ public function suratBuktiPengembalian(Request $request)
         ->join('kategorypegawai_m as cat', 'cat.id', '=', 'pg.objectstatuspegawaifk')
         ->first();
 
-        $pdf = PDF::loadview('report.sdm.gaji-pokok', compact('data', 'profile', 'pegawai', 'statuspeg'))->setPaper('f4', 'potrait');
+        $pdf = PDF::loadview('report.sdm.gaji-pokok', compact('data', 'profile'))->setPaper('f4', 'potrait');
         return $pdf->stream('Riwayat Gaji '.$data->nama.'.pdf');
 
         // return view('report.sdm.gaji-pokok', [
