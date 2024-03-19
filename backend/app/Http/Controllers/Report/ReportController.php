@@ -18938,13 +18938,17 @@ public function suratBuktiPengembalian(Request $request)
         ->join('kategorypegawai_m as cat', 'cat.id', '=', 'pg.objectstatuspegawaifk')
         ->first();
 
-        $pdf = PDF::loadview('report.sdm.gaji-pokok', compact('data', 'profile'))->setPaper('f4', 'potrait');
-        return $pdf->stream('Riwayat Gaji '.$data->nama.'.pdf');
+        $status = ['Calon Pegawai Negeri Sipil', 'Pegawai Negeri Sipil', 'Pegawai Pemerintah 
+        dengan Perjanjian Kerja'];
 
-        // return view('report.sdm.gaji-pokok', [
-        //     'data' => $data,
-        //     'profile' => $profile
-        // ]);
+        return view('report.sdm.gaji-pokok', [
+            'data' => $data,
+            'profile' => $profile,
+            'status' => $status
+        ]);
+        // $pdf = PDF::loadview('report.sdm.gaji-pokok', compact('data', 'profile'))->setPaper('f4', 'potrait');
+        // return $pdf->stream('Riwayat Gaji '.$data->nama.'.pdf');
+
     }
 
 }
