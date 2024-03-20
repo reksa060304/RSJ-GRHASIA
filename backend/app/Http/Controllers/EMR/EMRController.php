@@ -10788,11 +10788,36 @@ class EMRController  extends ApiController
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
     public function getLembarPanssEc(Request $request)
-    {
-        $data = \DB::table('panssec_t as pa')
-        ->join('pegawai_m as pg', 'pg.id', '=','pa.objectpegawaifk')
-        ->select('pa.*', 'pg.namalengkap')
-        ->where('pa.statusenabled', true)->where('pa.norec_apd', $request['norec_apd'])->get();
+    { 
+        $norec_apd = $request['norec_apd'];
+     
+        $main = collect(DB::select("
+        select noregistrasifk from antrianpasiendiperiksa_t
+         where norec = '$norec_apd'
+         "));
+
+         $data = collect(DB::select("
+            SELECT
+            pa.*,
+            pg.namalengkap 
+        FROM
+            panssec_t AS pa
+            INNER JOIN pegawai_m AS pg ON pg.ID = pa.objectpegawaifk
+            INNER JOIN antrianpasiendiperiksa_t AS apd ON apd.norec = pa.norec_apd
+            INNER JOIN pasiendaftar_t AS pd ON pd.norec = apd.noregistrasifk 
+        WHERE
+            pa.statusenabled = true 	
+            AND pd.norec = '".$main[0]->noregistrasifk."' 
+         "));
+        // dd($main);
+    
+        // $data = \DB::table('panssec_tx as pa')
+        // ->join('pegawai_m as pg', 'pg.id', '=','pa.objectpegawaifk')
+        // ->join('antrianpasiendiperiksa_t as apd', 'apd.norec', '=','pa.norec_apd')
+        // ->join('pasiendaftar_t as pd', 'pd.norec', '=','apd.noregistrasifk')
+        // ->select('pa.*', 'pg.namalengkap')
+        // ->where('pa.statusenabled', true)
+        // ->where('pa.norec_apd', '$main')->get();
         $result = array(
             'data'=> $data,
         );
