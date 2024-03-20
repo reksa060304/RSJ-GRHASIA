@@ -18932,14 +18932,16 @@ public function suratBuktiPengembalian(Request $request)
         $profile = DB::select("select*from profile_m where kdprofile = $kdProfile and statusenabled = true");
         
         $data = DB::table('riwayatgajiinpassing_t as rg')
-        ->select(DB::raw('rg.*, cat.reportdisplay'))
+        ->select(DB::raw('rg.*, cat.reportdisplay', 'cat.id as idstatus'))
         ->where('no', $request['no'])
-        ->join('pegawai_m as pg', 'pg.id', '=', 'rg.idpeg')
-        ->join('kategorypegawai_m as cat', 'cat.id', '=', 'pg.objectstatuspegawaifk')
+        ->leftjoin('pegawai_m as pg', 'pg.id', '=', 'rg.idpeg')
+        ->leftjoin('kategorypegawai_m as cat', 'cat.id', '=', 'pg.kategorypegawai')
         ->first();
 
-        $status = ['Calon Pegawai Negeri Sipil', 'Pegawai Negeri Sipil', 'Pegawai Pemerintah 
-        dengan Perjanjian Kerja'];
+        // dd($data);
+        $status = ['Calon Pegawai Negeri Sipil', 'Pegawai Negeri Sipil', 'Pegawai Pemerintah dengan Perjanjian Kerja'];
+
+        // $status = [1, 14, 23];
 
         return view('report.sdm.gaji-pokok', [
             'data' => $data,

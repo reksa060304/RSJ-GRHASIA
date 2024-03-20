@@ -43,7 +43,7 @@
             <tr>
                 <td width="10%" style="text-align:left;">
                     <img src="data:image/jpeg;base64,{{$profile[0]->logopemerintahan}}" alt=""
-                        style="height:120px; width:97px;">
+                        style="height:90px; width:97px;">
                 </td>
                 <td style="text-align: center; font-family: Arial">
                     <p style="margin:0; font-size:12pt;">{{strtoupper($profile[0]->baris1)}}</p>
@@ -140,19 +140,23 @@
             <td>
                 <p style="margin:0">
                     Terhitung mulai tanggal 1 Januari 2024 menyesuaikan gaji pokok 
-                    @foreach ($status as $item)
+                    @foreach ($status as $key=>$item)
                         @if ($item !== $data->reportdisplay)
+                            
                             <span style="text-decoration: line-through;">
                                 {{ $item }}
                             </span>
                         @else
                             <span>
-                                <span> / </span>
                                 <span>{{ $item }}</span>
-                                <span> / </span>
                             </span>
                         @endif
+
+                        @if($key+1 < count($status))
+                            <span>/</span>
+                        @endif
                     @endforeach
+                    
                     sebagai berikut:
                 </p>
                 <div>
@@ -194,6 +198,35 @@
                             <td style="padding: 0.5em; width: 33%; border: 1px solid black;">Masa Kerja Golongan</td>
                             <td style="padding: 0.5em; border: 1px solid black;">{{ $data->mkglama }}</td>
                         </tr>
+                        
+                    </table>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    {{-- Lanjutan --}}
+    <table cellspacing="0" cellpadding="0" border="0" width="100%">
+        <tr>
+            <td style="width: 17%; vertical-align:top; padding-bottom:12pt"></td>
+            <td>
+                <table style="width: 100%;">
+                    <tr>
+                        <td style="padding: 0.5em; width: 5%;"></td>
+                        <td style="padding: 0.5em; width: 33%;"></td>
+                        <td style="padding: 0.5em; padding-left: 3em;">6. Gaji ..........................</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+    <table cellspacing="0" cellpadding="0" border="0" width="100%">
+        <tr>
+            <td style="width: 17%; vertical-align:top; padding-bottom:12pt"></td>
+            <td>
+                <div style="padding-top: 1em; padding-bottom:12pt;">
+                    <table style="border: 1px solid black; border-collapse: collapse;">
                         <tr>
                             <td style="padding: 0.5em; width: 5%; border: 1px solid black;">6</td>
                             <td style="padding: 0.5em; width: 33%; border: 1px solid black;">Gaji Pokok Lama</td>
@@ -237,6 +270,7 @@
             </td>
         </tr>
     </table>
+    
 
     {{-- Kedua --}}
     <table cellspacing="0" cellpadding="0" border="0" width="100%">
