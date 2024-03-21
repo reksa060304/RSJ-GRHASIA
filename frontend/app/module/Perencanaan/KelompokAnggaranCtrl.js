@@ -111,6 +111,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.selectedData2 = [];
             $scope.selectedData3 = [];
             $scope.item.ispj = false
+
+            var defaultspj = null
             
             $scope.listDiv = [
                 { id: 0, div: "Urusan Pemerintahan" },
@@ -291,6 +293,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         thn = moment($scope.item.tahunawal).format('YYYY')
                     }
                     medifirstService.get("perencanaan/get-data-combo?tahun=" + thn + "&idpegawai=" + idpegawai + tglsppawal + tglsppakhir).then(function (e) {
+                        
                         $scope.isRouteLoading = false
                         $scope.dataSourceSPP = e.data.spp
                         $scope.dataSourceCariSPM = e.data.carispm
@@ -361,7 +364,14 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         }
 
                         medifirstService.get("perencanaan/get-data-combo?tahun=" + moment($scope.item.tahun).format('YYYY') + "&idpegawai=" + idpegawai + "&tahapaktif=" + $scope.item.searchtahapkeg.id + "&div=" + div + "&lockdiv=true").then(function (e) {
+                            
+                            
                             DataKegiatan = e.data.kegiatan
+
+                            defaultspj = e.data.bendahara[0]
+
+                            //console.log(defaultspj)
+
                             for (let i = 0; i < DataKegiatan.length; i++) {
                                 DataKegiatan[i].statCheckbox = false
                             }
@@ -6606,7 +6616,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.item.pihakKetigaSPJ = ""
                 $scope.item.radioPencairan = 1
                 $scope.totalspjawal = $scope.item.jumlahSPJ
-                $scope.item.bendaharaSPJ = {value: 2873, text: 'PAULA SOFYANITA, S.E.'}
+                $scope.item.bendaharaSPJ = defaultspj
 
                 // medifirstService.get("perencanaan/get-data-combo?tahun="+moment($scope.now).format('YYYY')).then(function (e) {
                 //     medifirstService.get("perencanaan/get-total-keterangan?tahap=" +e.data.setting[0].objecttahapaktivfk + "&subsubkegiatan=" + $scope.item.subSubKegiatanSPJ.id).then(function (e) {

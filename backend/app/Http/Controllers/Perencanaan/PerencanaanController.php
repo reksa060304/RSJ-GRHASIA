@@ -626,7 +626,7 @@ class PerencanaanController extends ApiController {
             ->where('dp.div', 4)
             ->orderBy('dp.kode')
             ->get();
-
+        
         $subkegiatantransfer = \DB::table('kegiatananggaran_m as dp')
             ->select('dp.id', 'dp.kode', 'dp.keterangan', 'dp.norec')
             ->where('dp.kdprofile', $idProfile)
@@ -703,6 +703,13 @@ class PerencanaanController extends ApiController {
             ->where('pg.kdprofile', $idProfile)
             ->where('pg.statusenabled', true)
             ->where('pg.grade', 1)
+            ->orderBy('pg.namalengkap')
+            ->get();
+        $bendahara = \DB::table('pegawai_m as pg')
+            ->select('pg.namalengkap as text', 'pg.id as value')
+            ->where('pg.kdprofile', $idProfile)
+            ->where('pg.statusenabled', true)
+            ->where('pg.objectjabatanfungsionalfk', 1426)
             ->orderBy('pg.namalengkap')
             ->get();
 
@@ -1121,6 +1128,7 @@ class PerencanaanController extends ApiController {
             'konsolidasikeempat' => $konsolidasikeempat,
             'konsolidasikelima' => $konsolidasikelima,
             'ppppp'=> $listsubsubkegiatan,
+            'bendahara'=> $bendahara,
             'message' => 'epic',
         );
 
