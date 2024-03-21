@@ -2860,17 +2860,23 @@ class ReportController extends ApiController{
     public function getCetakSPJSatuLampiran(Request $request){
         $norec = $request['norec'];
         $terbilang = $request['terbilang'];
+        $idsumberdana = $request['sumberdana'];
 
         $tampilsumberdana = false;
         if($request['sumberdana'] == 18){
             $tampilsumberdana = true;
         }
+        
+        $sumberdana = DB::select(DB::raw("
+        select asalproduk from asalproduk_m where id = '$idsumberdana'
+        "));
 
         $settingrba = DB::select(DB::raw("
         select pg.namalengkap, pg.nippns from settinganggaran_t sa
         inner join pegawai_m pg on pg.id = sa.objectkepalabludfk
         where sa.statusenabled = true
         "));
+
         $kegiatan = DB::select(DB::raw("
             select km.keterangan ktsubsub, km.kode kodesubsub, km.tahun, km.div divsubsub, pg.namalengkap, pg.nippns, kg.keterangan ktsub, kg.kode kodesub, kg.div divsub
             from strukrealisasi_t sr
@@ -2957,7 +2963,7 @@ class ReportController extends ApiController{
         );
 
         $pageWidth = 950;
-        return view('report.spj.cetakspjsatulampiran',compact('kegiatan','pageWidth', 'keterangan', 'mataanggaran', 'spj', 'detail', 'jumlah', 'terbilang', 'tampilsumberdana','settingrba'));
+        return view('report.spj.cetakspjsatulampiran',compact('kegiatan','pageWidth', 'keterangan', 'mataanggaran', 'spj', 'detail', 'jumlah', 'terbilang', 'tampilsumberdana', 'sumberdana','settingrba'));
     }
 
     public function cetakSPJPengembalian(Request $request){
@@ -3326,11 +3332,16 @@ class ReportController extends ApiController{
     public function getCetakSPJ(Request $request){
         $norec = $request['norec'];
         $terbilang = $request['terbilang'];
+        $idsumberdana = $request['sumberdana'];
 
         $tampilsumberdana = false;
         if($request['sumberdana'] == 18){
             $tampilsumberdana = true;
         }
+
+        $sumberdana = DB::select(DB::raw("
+        select asalproduk from asalproduk_m where id = '$idsumberdana'
+        "));
 
         $kegiatan = DB::select(DB::raw("
             select km.keterangan ktsubsub, km.kode kodesubsub, km.tahun, km.div divsubsub, kg.keterangan ktsub, kg.kode kodesub, kg.div divsub, pg.namalengkap, pg.nippns
@@ -3419,7 +3430,7 @@ class ReportController extends ApiController{
         inner join pegawai_m pg on pg.id = sa.objectkepalabludfk
         where sa.statusenabled = true
         "));
-        return view('report.spj.cetakspj',compact('kegiatan','pageWidth', 'keterangan', 'mataanggaran', 'spj', 'detail', 'jumlah', 'terbilang', 'tampilsumberdana','settingrba'));
+        return view('report.spj.cetakspj',compact('kegiatan','pageWidth', 'keterangan', 'mataanggaran', 'spj', 'detail', 'jumlah', 'terbilang', 'tampilsumberdana', 'sumberdana','settingrba'));
     }
 
     public function CetakPerJenisAnggaran(Request $request){
