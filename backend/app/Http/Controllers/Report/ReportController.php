@@ -5199,7 +5199,7 @@ class ReportController extends ApiController{
                             where sr.kdprofile = 30 and sr.statusenabled = true
                             and sr.objectcarabayarfk = 1
                             $qtahun
-                            $qsubsubkegiatansr
+                           --$qsubsubkegiatansr
                             group by ma.kodemataanggaran, ma.namamataanggaran
                         ) as x on x.kodemataanggaran = ma.kodemataanggaran
                         left join (
@@ -5212,7 +5212,7 @@ class ReportController extends ApiController{
                                     left join strukrealisasi_t sr on sppj.objectspjfk = sr.norec and sr.
                                     kdprofile = 30 and sr.statusenabled = true
                                     $qtahun
-                                    $qsubsubkegiatansr
+                                    --$qsubsubkegiatansr
                                     where pj.objectsubsubkegiatanfk = $subsubk
                                     group by ma.kodemataanggaran, ma.namamataanggaran, sppj.jumlahpanjar, pj.jumlah
                             ) as s group by kodemataanggaran, namamataanggaran
