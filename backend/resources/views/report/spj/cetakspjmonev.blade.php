@@ -112,7 +112,7 @@
                     <td>
                         <p align="left" style="margin-top:5px">
                                 <font style="font-size: 12pt; " color="#000000" face="Arial">
-                                : {{ $subsubkegiatan[0]->kode.' - '.$subsubkegiatan[0]->keterangan }}
+                                : {{ $subsubkegiatan[0]->kode.' - '.$subsubkegiatan[0]->keterangan2 }}
                                 </font>
                         </p>
                     </td>

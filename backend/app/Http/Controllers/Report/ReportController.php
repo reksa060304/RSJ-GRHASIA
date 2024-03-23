@@ -5175,7 +5175,7 @@ class ReportController extends ApiController{
         $subk = $request['subkegiatan'];
         $subsubk = $request['subsubkegiatan'];
 
-        $subsubkegiatan = DB::select(DB::raw("select * from kegiatananggaran_m where id = ".$subsubk));
+        $subsubkegiatan = DB::select(DB::raw("select regexp_replace(keterangan, '\d|-', '', 'g') as keterangan2,*  from kegiatananggaran_m where id = ".$subsubk));
 
         $subkegiatan = DB::select(DB::raw("select * from kegiatananggaran_m where id = ".$subk));
 
@@ -5186,8 +5186,8 @@ class ReportController extends ApiController{
         , case when split_part(ma.kodemataanggaran, '.', 4) = '' then '0' else split_part(ma.kodemataanggaran, '.', 4)::int4 end as subkodekeempat
         , case when split_part(ma.kodemataanggaran, '.', 5) = '' then '0' else split_part(ma.kodemataanggaran, '.', 5)::int4 end as subkodekelima,
                 sum(kb.subtotal) jumlahanggaran,
-                x.totalbelanja jumlahspj, y.jumlah jumlahpanjar,
-                x.totalbelanja + y.jumlah as subtotal, round(cast(((x.totalbelanja + y.jumlah)/sum(kb.subtotal))*100 as numeric), 2) as persentase,  
+                coalesce(x.totalbelanja,0) jumlahspj, coalesce(y.jumlah,0) jumlahpanjar,
+                coalesce(x.totalbelanja,0) + coalesce(y.jumlah,0) as subtotal, round(cast(((x.totalbelanja + y.jumlah)/sum(kb.subtotal))*100 as numeric), 2) as persentase,  
                 sum(kb.subtotal) - (coalesce(x.totalbelanja,0) + coalesce(y.jumlah,0)) sisaanggaran
                 from mataanggaran_m ma
                 inner join keteranganbelanja_t kb on ma.id=kb.objectmataanggaranfk
