@@ -5199,6 +5199,7 @@ class ReportController extends ApiController{
                             where sr.kdprofile = 30 and sr.statusenabled = true
                             and sr.objectcarabayarfk = 1
                             $qtahun
+                            and sr.objectkegiatanfk in (select id from kegiatananggaran_m where kode = (select kode from kegiatananggaran_m where id = $subsubk and statusenabled=true and kdprofile=30 limit 1) and tahun='$tahun' and statusenabled=true )
                            --$qsubsubkegiatansr
                             group by ma.kodemataanggaran, ma.namamataanggaran
                         ) as x on x.kodemataanggaran = ma.kodemataanggaran
@@ -5212,6 +5213,7 @@ class ReportController extends ApiController{
                                     left join strukrealisasi_t sr on sppj.objectspjfk = sr.norec and sr.
                                     kdprofile = 30 and sr.statusenabled = true
                                     $qtahun
+                                    and sr.objectkegiatanfk in (select id from kegiatananggaran_m where kode = (select kode from kegiatananggaran_m where id = $subsubk and statusenabled=true and kdprofile=30 limit 1) and tahun='$tahun' and statusenabled=true )
                                     --$qsubsubkegiatansr
                                     where pj.objectsubsubkegiatanfk = $subsubk
                                     group by ma.kodemataanggaran, ma.namamataanggaran, sppj.jumlahpanjar, pj.jumlah
