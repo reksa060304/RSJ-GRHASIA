@@ -419,6 +419,10 @@ define(['initialize'], function (initialize) {
             $scope.formatRupiah = function (value, currency) {
                 return currency + " " + parseFloat(value).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
             }
+            $scope.formatRupiah2 = function (value, currency) {
+				return currency + " " + parseFloat(value).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
+			}
+         
 
             $scope.formatTanggal = function (tanggal) {
                 return moment(tanggal).format('YYYY-MM-DD');
@@ -1075,21 +1079,21 @@ define(['initialize'], function (initialize) {
                         "field": "penerimaan",
                         "title": "Penerimaan",
                         "width": "100px",
-                        "template": "<span class='style-right'>{{formatRupiah('#: penerimaan #', 'Rp.')}}</span>",
+                        "template": "<span class='style-right'>{{formatRupiah2('#: penerimaan #', 'Rp.')}}</span>",
                     },
                     {
                         
                         "field": "pengeluaran",
                         "title": "Pengeluaran",
                         "width": "100px",
-                        "template": "<span class='style-right'>{{formatRupiah('#: pengeluaran #', 'Rp.')}}</span>",
+                        "template": "<span class='style-right'>{{formatRupiah2('#: pengeluaran #', 'Rp.')}}</span>",
                     },
                     {
                         
                         "field": "saldo",
                         "title": "Saldo",
                         "width": "100px",
-                        "template": "<span class='style-right'>{{formatRupiah('#: saldo #', 'Rp.')}}</span>",
+                        "template": "<span class='style-right'>{{formatRupiah2('#: saldo #', 'Rp.')}}</span>",
                     },
                     {
                         "command": [
@@ -1590,9 +1594,9 @@ define(['initialize'], function (initialize) {
             };
 
 
-            $scope.formatRupiah = function (value, currency) {
-                return currency + " " + value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-            }
+            // $scope.formatRupiah = function (value, currency) {
+            //     return currency + " " + value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            // }
             //////////////////////////////////////////////////////////////          END             /////////////////////////////////////////////////////////////////////////////////////       
         }
     ]);
