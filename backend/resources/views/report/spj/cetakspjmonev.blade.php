@@ -139,7 +139,7 @@
                 $jumlahpanjar = 0;
                 $jumlahspj = 0;
                 $subtotal = 0;
-                $persentase = 0;
+                
                 $sisaanggaran = 0;
                 @endphp
                 @foreach ($data as $dt)
@@ -148,7 +148,7 @@
                 $jumlahpanjar += $dt->jumlahpanjar;
                 $jumlahspj += $dt->jumlahspj;
                 $subtotal += $dt->subtotal;
-                $persentase += $dt->persentase;
+                
                 $sisaanggaran += $dt->sisaanggaran;
                 @endphp
                 <tr style="border: 1px solid black;">
