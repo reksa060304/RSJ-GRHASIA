@@ -3391,6 +3391,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::post('tatarekening/tindakan/save-mutu', 'TataRekening\TindakanController@saveMutu');
           Route::get('tatarekening/tindakan/get-riwayat-mutu', 'TataRekening\TindakanController@getRiwayatMutu');
           Route::post('tatarekening/tindakan/delete-mutu','TataRekening\TindakanController@delMutu');
+          Route::get('emr/get-laporan-kie', 'TataRekening\TindakanController@getLaporanKIE');
         //     });
         //
         // });

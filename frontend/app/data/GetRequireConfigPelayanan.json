@@ -3710,6 +3710,10 @@
         {
             "nameDep": "VerifBundleHaisCtrl",
             "urlDep": "module/PPI/VerifBundleHaisCtrl"
+        },
+        {
+            "nameDep": "LaporanKIECtrl",
+            "urlDep": "module/RawatJalan/LaporanKIECtrl"
         }
     ]
 }

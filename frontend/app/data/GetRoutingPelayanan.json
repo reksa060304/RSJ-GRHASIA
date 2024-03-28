@@ -20552,6 +20552,29 @@
         "define": "RekamMedisCtrl"
       }
     ]
+  },
+  {
+    "name": "LaporanKIE",
+    "url": "/TGFwb3JhbktJRQ==",
+    "templateurl": "module/RawatJalan/LaporanKIE.html",
+    "controller": "LaporanKIECtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      },
+      {
+        "define": "LaporanKIECtrl"
+      }
+    ]
   }
 ]
 

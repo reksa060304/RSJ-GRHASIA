@@ -1674,4 +1674,83 @@ class TindakanController extends ApiController
 
         return $this->respond($data);
     }
+
+    public function getLaporanKIE(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $tglAwal = $request['tglAwal'];
+        $tglAkhir = $request['tglAkhir'];
+        $Kronis = "";
+        $noreg = '';
+        $deptId = '';
+        $ruId = '';
+        if (isset($request['ruanganId']) && $request['ruanganId'] != "" && $request['ruanganId'] != "undefined") {
+            $ruId = ' AND x.id_ruangan = ' . $request['ruanganId'];
+        }
+
+        if (isset($request['idDept']) && $request['idDept'] != "" && $request['idDept'] != "undefined") {
+            $deptId = ' AND ru.objectdepartemenfk = ' . $request['idDept'];
+        }
+
+        $data = \DB::select(DB::raw("SELECT x.namaruangan, x.id_ruangan, x.noemr, x.tglregistrasi, x.noregistrasifk, x.nocm, x.namapasien, x.umur, x.alamat, 
+        string_agg(x.pekerjaan, null) as pekerjaan,
+        string_agg(x.pendidikan, null) as pendidikan, 
+        string_agg(x.pernikahan, null) as pernikahan,
+        string_agg(x.gravida, null) as gravida,
+        string_agg(x.partus, null) as partus,
+        string_agg(x.abortus, null) as abortus,
+        string_agg(x.jumlahanakhidup, null) as jumlahanakhidup,
+        string_agg(x.usiaanakkecil, null) as usiaanakkecil,
+        string_agg(x.hasilkie, null) as hasilkie,
+        string_agg(x.carakbterakhir, null) as carakbterakhir,
+        string_agg(x.siklusmens, null) as siklusmens,
+        string_agg(x.riwayatpenyakit, null) as riwayatpenyakit,
+        string_agg(x.sarankie, null) as sarankie,
+        string_agg(x.pemberiedukasi, null) as pemberiedukasi,
+        string_agg(x.penerimaedukasi, null) as penerimaedukasi
+        
+        from (SELECT DISTINCT ru.namaruangan, ru.id as id_ruangan, ep.noemr, ep.tglregistrasi,ep.noregistrasifk, ep.nocm, ep.namapasien,ep.umur,ep.alamat, 
+        case when epd.emrdfk = 1700004 then epd.value else null end as pekerjaan, 
+        case when epd.emrdfk = 1700005 then epd.value else null end as pendidikan, 
+        case when epd.emrdfk = 1700006 then epd.value else null end as pernikahan, 
+        case when epd.emrdfk = 1700016 then epd.value else null end as gravida, 
+        case when epd.emrdfk = 1700017 then epd.value else null end as partus, 
+        case when epd.emrdfk = 1700018 then epd.value else null end as abortus,
+        case when epd.emrdfk = 1700019 then epd.value else null end as jumlahanakhidup,
+        case when epd.emrdfk = 1700020 then epd.value else null end as usiaanakkecil,
+        case when epd.emrdfk = 1700097 then epd.value else null end as hasilkie,
+        case 
+         when epd.emrdfk = 1700075 then ed.caption
+         when epd.emrdfk = 1700076 then ed.caption 
+         when epd.emrdfk = 1700077 then ed.caption
+         when epd.emrdfk = 1700078 then ed.caption
+         when epd.emrdfk = 1700080 then epd.value
+            else null end as carakbterakhir,
+        case when epd.emrdfk = 1700076 then ed.caption else null end as hpmt,
+        case 
+         when epd.emrdfk = 1700084 then ed.caption
+         when epd.emrdfk = 1700085 then ed.caption
+            else null end as siklusmens,
+        case 
+         when epd.emrdfk = 1700087 then ed.caption
+         when epd.emrdfk = 1700090 then ed.caption
+         when epd.emrdfk = 1700090 then epd.value
+         when epd.emrdfk = 1700091 then epd.value
+            else null end as riwayatpenyakit,
+        case when epd.emrdfk = 1700098 then epd.value else null end as sarankie,
+        case when epd.emrdfk = 1700100 then epd.value else null end as pemberiedukasi,
+        case when epd.emrdfk = 1700101 then epd.value else null end as penerimaedukasi FROM emrpasiend_t epd
+        inner join emrpasien_t ep on epd.emrpasienfk = ep.noemr
+        inner join emrd_t ed on ed.id = epd.emrdfk
+        inner join antrianpasiendiperiksa_t apd on apd.norec = epd.norec_apd
+        inner join ruangan_m ru on ru.id = apd.objectruanganfk
+        where epd.emrfk = 671 and epd.statusenabled = true and ep.statusenabled = true) as x
+        where x.tglregistrasi BETWEEN '$request[tglAwal]' and '$request[tglAkhir]'
+        $ruId
+        GROUP BY x.namaruangan, x.id_ruangan, x.noemr, x.tglregistrasi, x.noregistrasifk, x.nocm, x.namapasien, x.umur, x.alamat
+        "));
+
+
+        return $this->respond($data);
+    }
 }
