@@ -210,7 +210,7 @@
                 </div>
                 <div class="grid_12">
                     <div class="grid_3" style="text-align: left;">
-                        SUB SUB KEGIATAN
+                        Sub Sub Kegiatan
                     </div>
                     <div class="grid_9" style="margin-top: -10px;">
                         <input id="subusbinput" kendo-combo-box k-ng-model="item.subSubKegiatanSPJ"
@@ -219,26 +219,15 @@
                             k-data-source="listSubSubKegiatanSPJ"  />
                     </div>
                 </div>
-                <div class="grid_12">
-                    <div class="grid_3" style="text-align: left;">
-                        DARI REKENING
-                    </div>
-                    <div class="grid_9" style="margin-top: -10px;">
-                        <input id="rekeninginput" kendo-combo-box k-ng-model="item.mataAnggaranSPJ"
-                            k-data-text-field="'text'" k-data-value-field="'kodemataanggaran'"
-                            k-filter="'contains'" k-auto-bind="false"
-                            k-data-source="listMataAnggaranSPJ"  />
-                    </div>
-                </div>
             </div>
 
             <!-- List Ruangan Berdasarkan Login User -->
             <div class="grid_12">
-                <div class="grid_4">
-                    <div class="grid_4">
+                <div class="grid_12">
+                    <div class="grid_3">
                         Ruangan
                     </div>
-                    <div class="grid_12">
+                    <div class="grid_3" style="margin-top: -10px;">
                         <input 
                             kendo-combo-box 
                             k-ng-model="item.idRuanganLoginUser"
@@ -251,9 +240,28 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Tahun -->
+            <div class="grid_12">
+                <div class="grid_12">
+                    <div class="grid_3">
+                        Tahun Anggaran
+                    </div>
+                    <div class="grid_3" style="margin-top: -10px;">
+                        <input 
+                            disabled
+                            style="width: 100%;" 
+                            kendo-date-picker
+                            k-options="yearUngkul" 
+                            k-ng-model="item.tahunAnggaran" 
+                            k-format="'yyyy'" 
+                            />
+                    </div>
+                </div>
+            </div>
             
             <!-- Produk / Kegiatan -->
-            <div class="">
+            <div class="grid_12" style="margin-top: 3em;">
                 <div class="grid_4" ng-show="!isRencanaProduk">
                     <div class="grid_12">
                         Rencana Kegiatan
@@ -292,7 +300,7 @@
                         Jml Rencana
                     </div>
                     <div class="grid_12">
-                        <input c-text-box type="input" class="k-textbox" ng-model="item.jumlahRencana"  style="width: 100%;" />
+                        <input c-text-box id="jumlah-rencana" type="input" class="handleTotal k-textbox" ng-model="item.jumlahRencana" ng-change="handleRencana(item.jumlahRencana)" style="width: 100%;" />
                     </div>
                 </div>
                 <div class="grid_2">
@@ -300,9 +308,37 @@
                         Harga Satuan
                     </div>
                     <div class="grid_12">
-                        <input type="number" class="k-textbox" ng-model="item.hargaSatuan"  style="width: 100%;" />
+                        <input type="number" id="harga-satuan" class="handleTotal k-textbox" ng-model="item.hargaSatuan" ng-change="handleHarga(item.hargaSatuan)" style="width: 100%;" />
                     </div>
                 </div>
+                <div class="grid_2">
+                    <div class="grid_12">
+                        Satuan
+                    </div>
+                    <div class="grid_12">
+                        <input 
+                            kendo-combo-box 
+                            k-ng-model="item.satuan"
+                            k-data-text-field="'satuanstandar'" 
+                            k-data-value-field="'id'"
+                            k-filter="'contains'" 
+                            k-auto-bind="false" 
+                            k-data-source="listSatuan"
+                        />
+                    </div>
+                </div>
+                <div class="grid_2">
+                    <div class="grid_12">
+                        Total Harga
+                    </div>
+                    <div class="grid_12">
+                        <input disabled id="total-harga" type="number" class="k-textbox" ng-model="item.totalHarga"  style="width: 100%;" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reverensi -->
+            <div class="grid_12">
                 <div class="grid_2">
                     <div class="grid_12">
                         Reverensi
@@ -313,12 +349,12 @@
                 </div>
                 <div class="grid_1">
                     <div class="grid_10">
-                        <button class="btnTemplate1" ng-click="bukaTambahReverensi()">Tambah Reverensi</button>
+                        <button style="padding: 5px;" class="btnTemplate1" ng-click="bukaTambahReverensi()">Tambah Reverensi</button>
                     </div>
                 </div>
                 <div class="grid_1">
                     <div class="grid_10">
-                        <button class="btnTemplate1" ng-click="tambahPerencanaan()">Tambah Rencana</button>
+                        <button style="padding: 5px;" class="btnTemplate1" ng-click="tambahPerencanaan()">Tambah Rencana</button>
                     </div>
                 </div>
             </div>
@@ -350,7 +386,7 @@
                     <div class="grid_12" style="margin-top: 10px">
                         <div class="grid_6"></div>
                        
-                        <div class="grid_6" ng-if="!isUpdate">
+                        <div class="grid_6">
                             <button class="btnTemplate1 cancel" ng-click="hapusListPerencanaan()">
                                 Hapus Detail                               
                             </button>

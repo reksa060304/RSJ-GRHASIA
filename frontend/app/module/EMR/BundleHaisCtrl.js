@@ -23,6 +23,11 @@ define(['initialize'], function (initialize) {
             var dataINFEKSIRUMAHSAKIT = [];
             var noRegistrasi = '';
             var nocm_str = '';
+
+            $scope.listTindakan = []
+            $scope.listInfeksiRS = []
+            $scope.listPilihanTindakan = [{name: 'Ya', value: 'ya'}, {name: 'Tidak', value: 'tidak'}]
+
             LoadCacheHelper();           
 
             function LoadCacheHelper() {
@@ -221,7 +226,14 @@ define(['initialize'], function (initialize) {
                         dataBundle[i].statusiya = false;
                         dataBundle[i].statustidak = false;
                     }
+
+                    dataBundle.map(function(data){
+                        data.pilihan = $scope.listPilihanTindakan
+                    });
+                    
                     dataTINDAKAN = dataBundle;
+                    $scope.listTindakan = dataBundle
+
                     $scope.dataSource6 = new kendo.data.DataSource({
                         data: dataTINDAKAN,                        
                         pageSize: dataTINDAKAN.length,
@@ -247,7 +259,10 @@ define(['initialize'], function (initialize) {
                         dataBundle[i].statusiya = false;
                         dataBundle[i].statustidak = false;
                     }
+
                     dataINFEKSIRUMAHSAKIT = dataBundle;
+                    $scope.listInfeksiRS = dataBundle
+
                     $scope.dataSource7 = new kendo.data.DataSource({
                         data: dataINFEKSIRUMAHSAKIT,                        
                         pageSize: dataINFEKSIRUMAHSAKIT.length,
@@ -431,6 +446,7 @@ define(['initialize'], function (initialize) {
                         $scope.myVar = 2;
                         $scope.myVarD = 0;                        
                         dataTINDAKAN = datas;
+                        $scope.listTindakan = datas
                         $scope.dataSource6 = new kendo.data.DataSource({
                             data: dataTINDAKAN,                        
                             pageSize: dataTINDAKAN.length,
@@ -715,24 +731,36 @@ define(['initialize'], function (initialize) {
                             "title": "Keterangan",
                             "width": "150px"
                         },
+                        // {
+                        //     "title": "Ya",
+                        //     template: "# if (statusiya && !statustidak) { #" +
+                        //         "<input type='checkbox' class='checkbox' ng-click='selectRowYa6(dataItem)' checked />" +
+                        //         "# } else { #" +
+                        //         "<input type='checkbox' class='checkbox' ng-click='selectRowYa6(dataItem)' />" +
+                        //         "# } #",
+                        //     width: "50px"
+                        // },
                         {
                             "title": "Ya",
-                            template: "# if (statusiya) { #" +
-                                "<input type='checkbox' class='checkbox' ng-click='selectRowYa6(dataItem)' checked />" +
-                                "# } else { #" +
-                                "<input type='checkbox' class='checkbox' ng-click='selectRowYa6(dataItem)' />" +
-                                "# } #",
+                            template: 
+                                "<input type='checkbox' class='checkbox tindakan-checkbox' ng-click='selectOne(dataItem)' />",
                             width: "50px"
                         },
                         {
                             "title": "Tidak",
-                            template: "# if (statustidak) { #" +
-                                "<input type='checkbox' class='checkbox' ng-click='selectRowTidak6(dataItem)' checked />" +
-                                "# } else { #" +
-                                "<input type='checkbox' class='checkbox' ng-click='selectRowTidak6(dataItem)' />" +
-                                "# } #",
+                            template: 
+                                "<input type='checkbox' class='checkbox tindakan-checkbox' ng-click='selectOne(dataItem)' />",
                             width: "50px"
                         },
+                        // {
+                        //     "title": "Tidak",
+                        //     template: "# if (statustidak && !statusiya) { #" +
+                        //         "<input type='checkbox' class='checkbox' ng-click='selectRowTidak6(dataItem)' checked />" +
+                        //         "# } else { #" +
+                        //         "<input type='checkbox' class='checkbox' ng-click='selectRowTidak6(dataItem)' />" +
+                        //         "# } #",
+                        //     width: "50px"
+                        // },
                     ]
             };
 
@@ -905,15 +933,23 @@ define(['initialize'], function (initialize) {
             }
 
             $scope.selectRowTidak6 = function (dataItem) {
+
                 var dataSelect = _.find($scope.dataSource6._data, function (data) {
                     return data.idbundle == dataItem.idbundle;
                 });
+                
+                dataSelect.statusiya = false
+
+                console.log(dataSelect)
+
                 if (dataSelect.statustidak) {
                     dataSelect.statustidak = false;
                 }
                 else {
                     dataSelect.statustidak = true;
                 }
+
+
             }
 
             $scope.selectRowYa7 = function (dataItem) {
@@ -1096,6 +1132,38 @@ define(['initialize'], function (initialize) {
             }
 
             $scope.SimpanTINDAKAN = function(){
+
+                if(!$scope.item.suhu){
+                    toastr.error('Isi data suhu terlebih dahulu')
+                    return
+                }
+
+                if(!$scope.item.diagnosa){
+                    toastr.error('Isi data diagnosa terlebih dahulu')
+                    return
+                }
+
+                if(!$scope.item.tirahbaring){
+                    toastr.error('Isi data tirahbaring terlebih dahulu')
+                    return
+                }
+
+                if(!$scope.item.tindakan){
+                    toastr.error('Pilih Data Tindakan')
+                    return
+                }
+
+                let pilihanTindakan = []
+                $scope.listTindakan.map(function(data){
+                    if(data.idbundle in $scope.item.tindakan){
+                        let keyObj = data.idbundle
+                        
+                        if($scope.item.tindakan[keyObj] == 'true'){
+                            pilihanTindakan.push(data)
+                        }
+                    }
+                })
+
                 $scope.isRouteLoading = true;
                 $scope.visSimpan = false;
                 var objSave = {
@@ -1108,11 +1176,21 @@ define(['initialize'], function (initialize) {
                     norec_pd : norec_pd,
                     norec_apd : norec_apd,
                     jenis : "TINDAKAN",
-                    detail : $scope.dataSource6._data
+                    detail : pilihanTindakan
                 }
+
+                // console.log(objSave)
+
                 medifirstService.post('emr/save-emr-bundlehai', objSave).then(function (e) {
                     $scope.isRouteLoading = false;
                     $scope.visSimpan = true;
+                    
+                    // Reset input
+                    $scope.item.suhu = null
+                    $scope.item.diagnosa = null
+                    $scope.item.tirahbaring = null
+                    $scope.item.tindakan = null
+                    
                     init();
                 }, function (error) {
                     $scope.isRouteLoading = false;
@@ -1126,9 +1204,41 @@ define(['initialize'], function (initialize) {
             }
 
             $scope.SimpanINFEKSIRUMAHSAKIT = function(){
+                if(!$scope.item.suhu){
+                    toastr.error('Isi data suhu terlebih dahulu')
+                    return
+                }
+
+                if(!$scope.item.diagnosa){
+                    toastr.error('Isi data diagnosa terlebih dahulu')
+                    return
+                }
+
+                if(!$scope.item.tirahbaring){
+                    toastr.error('Isi data tirahbaring terlebih dahulu')
+                    return
+                }
+
+                if(!$scope.item.infeksiRS){
+                    toastr.error('Pilih data infeksi rumah sakit terlebih dahulu')
+                    return
+                }
+
+                let pilihanInfeksiRS = []
+                $scope.listInfeksiRS.map(function(data){
+                    if(data.idbundle in $scope.item.infeksiRS){
+                        let keyObj = data.idbundle
+                        
+                        if($scope.item.infeksiRS[keyObj] == 'true'){
+                            pilihanInfeksiRS.push(data)
+                        }
+                    }
+                })
+ 
                 $scope.isRouteLoading = true;
                 $scope.visSimpan = false;
-                var objSave = {
+
+                let objSave = {
                     norec : $scope.item.norecINFEKSIRUMAHSAKIT != undefined ? $scope.item.norecINFEKSIRUMAHSAKIT : "",
                     tanggal : moment($scope.item.tglInput).format('YYYY-MM-DD HH:mm'),
                     petugas : $scope.item.Petugas.id,
@@ -1137,12 +1247,118 @@ define(['initialize'], function (initialize) {
                     tirahbaring : $scope.item.tirahbaring,
                     norec_pd : norec_pd,
                     norec_apd : norec_apd,
-                    jenis : "INFEKSIRUMAHSAKIT",
-                    detail : $scope.dataSource7._data
+                    detail : pilihanInfeksiRS
                 }
+
                 medifirstService.post('emr/save-emr-bundlehai', objSave).then(function (e) {
                     $scope.isRouteLoading = false;
                     $scope.visSimpan = true;
+
+                    // Reset input
+                    $scope.item.suhu = null
+                    $scope.item.diagnosa = null
+                    $scope.item.tirahbaring = null
+                    $scope.item.infeksiRS = null
+
+                    init();
+                }, function (error) {
+                    $scope.isRouteLoading = false;
+                    $scope.visSimpan = true;
+                });
+            }
+
+            $scope.simpanSemua = function(){
+                if(!$scope.item.suhu){
+                    toastr.error('Isi data suhu terlebih dahulu')
+                    return
+                }
+
+                if(!$scope.item.diagnosa){
+                    toastr.error('Isi data diagnosa terlebih dahulu')
+                    return
+                }
+
+                if(!$scope.item.tirahbaring){
+                    toastr.error('Isi data tirah baring terlebih dahulu')
+                    return
+                }
+
+                if(!$scope.item.pemeriksaan){
+                    toastr.error('Isi pemeriksaan terlebih dahulu')
+                    return
+                }
+
+                if(!$scope.item.terapi){
+                    toastr.error('Isi data terapi terlebih dahulu')
+                    return
+                }
+
+                if(!$scope.item.tindakan){
+                    toastr.error('Pilih data tindakan terlebih dahulu')
+                    return
+                }
+
+                if($scope.item.infeksiRS == undefined || $scope.item.infeksiRS == null){
+                    toastr.error('Pilih data infeksi terlebih dahulu')
+                    return
+                }
+
+                let pilihanTindakan = []
+                $scope.listTindakan.map(function(data){
+                    if(data.idbundle in $scope.item.tindakan){
+                        let keyObj = data.idbundle
+                        
+                        if($scope.item.tindakan[keyObj] == 'true'){
+                            pilihanTindakan.push(data)
+                        }
+                    }
+                })
+
+                let pilihanInfeksiRS = []
+                $scope.listInfeksiRS.map(function(data){
+                    if(data.idbundle in $scope.item.infeksiRS){
+                        let keyObj = data.idbundle
+                        
+                        if($scope.item.infeksiRS[keyObj] == 'true'){
+                            pilihanInfeksiRS.push(data)
+                        }
+                    }
+                })
+                
+                // $scope.isRouteLoading = true;
+                // $scope.visSimpan = false;
+
+                var objSave = {
+                    norec : $scope.item.norecTINDAKAN != undefined ? $scope.item.norecTINDAKAN : "",
+                    tanggal : moment($scope.item.tglInput).format('YYYY-MM-DD HH:mm'),
+                    petugas : $scope.item.Petugas.id,
+                    suhu : $scope.item.suhu,
+                    diagnosa : $scope.item.diagnosa,
+                    tirahbaring : $scope.item.tirahbaring,
+                    pemeriksaan: $scope.item.pemeriksaan,
+                    terapi: $scope.item.terapi,
+                    norec_pd : norec_pd,
+                    norec_apd : norec_apd,
+                    jenis : "TINDAKAN",
+                    tindakan : pilihanTindakan,
+                    infeksi: pilihanInfeksiRS
+                }
+
+
+                console.log(objSave)
+                medifirstService.post('emr/save-emr-bundlehai', objSave).then(function (e) {
+                    $scope.isRouteLoading = false;
+                    $scope.visSimpan = true;
+                    
+                    // Reset input
+                    $scope.item.suhu = null
+                    $scope.item.diagnosa = null
+                    $scope.item.tirahbaring = null
+                    $scope.item.tindakan = null
+                    $scope.item.infeksiRS = null
+                    $scope.item.pemeriksaan = null
+                    $scope.item.terapi = null
+                    
                     init();
                 }, function (error) {
                     $scope.isRouteLoading = false;

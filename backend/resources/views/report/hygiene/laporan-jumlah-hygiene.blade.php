@@ -6,26 +6,26 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>LAPORAN PENGGUNAAN Hygiene</title>
     <style>
-        table {
-            border-collapse: collapse;
-            max-width: 3508px;
-            width: 99vw;
-            max-width: 99vw;
+        @page {
+            size: 21.5cm 33cm;
+            margin: 1cm;
         }
-
-        #table-content td, th{
-            width: auto;
-            word-wrap: break-word;
+        p {
+            margin: 0;
+        }
+        body {
+            margin: 0;
+        }
+        .content {
+            padding: 3px 5px;
             border: 1px solid black;
-            padding: .3em .6em;
+            font-size: 11pt;
         }
-
-        @media print{@page {size: portrait}}
     </style>
 </head>
 <body>
     {{-- Header --}}
-    <table style="margin-bottom: 4rem; text-align:center; font-weight:bold;">
+    <table cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-bottom: 4rem; text-align:center; font-weight:bold;">
         <tr>
             <td>LAPORAN PENGGUNAAN HYGIENE</td>
         </tr>
@@ -56,7 +56,7 @@
     </table>
 
     {{-- Content --}}
-    <table id="table-content">
+    <table cellspacing="0" cellpadding="0" border="0" width="100%" style="border: 1px solid black; border-collapse: collapse;">
         <thead>
             <tr>
                 <th class="content">Kegiatan</th>
@@ -65,8 +65,8 @@
         </thead>
         <tbody>
             <tr>
-                <td><b>Sebelum kontak dengan pasien</b></td>
-                <td></td>
+                <td class="content"><b>Sebelum kontak dengan pasien</b></td>
+                <td class="content"></td>
             </tr>
             @foreach ($masterSebelumKontak as $row)
                 @php
@@ -78,13 +78,13 @@
                     }
                 @endphp
                 <tr>
-                    <td>{{ $row->description }}</td>
-                    <td>{{ $jumlah }}</td>
+                    <td class="content">{{ $row->description }}</td>
+                    <td class="content">{{ $jumlah }}</td>
                 </tr>
             @endforeach
             <tr>
-                <td><b>Sebelum melakukan prosedur bersih/tindakan aseptik</b></td>
-                <td></td>
+                <td class="content"><b>Sebelum melakukan prosedur bersih/tindakan aseptik</b></td>
+                <td class="content"></td>
             </tr>
             @foreach ($masterSebelumProsedur as $row)
                 @php
@@ -96,13 +96,13 @@
                     }
                 @endphp
                 <tr>
-                    <td>{{ $row->description }}</td>
-                    <td>{{ $jumlah }}</td>
+                    <td class="content">{{ $row->description }}</td>
+                    <td class="content">{{ $jumlah }}</td>
                 </tr>
             @endforeach
             <tr>
-                <td><b>Setelah kontak dengan cairan tubuh pasien</b></td>
-                <td></td>
+                <td class="content"><b>Setelah kontak dengan cairan tubuh pasien</b></td>
+                <td class="content"></td>
             </tr>
             @foreach ($masterSetelahCairan as $row)
                 @php
@@ -114,13 +114,13 @@
                     }
                 @endphp
                 <tr>
-                    <td>{{ $row->description }}</td>
-                    <td>{{ $jumlah }}</td>
+                    <td class="content">{{ $row->description }}</td>
+                    <td class="content">{{ $jumlah }}</td>
                 </tr>
             @endforeach
             <tr>
-                <td><b>Setelah kontak dengan pasien</b></td>
-                <td></td>
+                <td class="content"><b>Setelah kontak dengan pasien</b></td>
+                <td class="content"></td>
             </tr>
             @foreach ($masterSetelahKontak as $row)
                 @php
@@ -132,13 +132,13 @@
                     }
                 @endphp
                 <tr>
-                    <td>{{ $row->description }}</td>
-                    <td>{{ $jumlah }}</td>
+                    <td class="content">{{ $row->description }}</td>
+                    <td class="content">{{ $jumlah }}</td>
                 </tr>
             @endforeach
             <tr>
-                <td><b>Setelah kontak dengan lingkungan pasien</b></td>
-                <td></td>
+                <td class="content"><b>Setelah kontak dengan lingkungan pasien</b></td>
+                <td class="content"></td>
             </tr>
             @foreach ($masterSetelahLingkungan as $row)
                 @php
@@ -150,13 +150,13 @@
                     }
                 @endphp
                 <tr>
-                    <td>{{ $row->description }}</td>
-                    <td>{{ $jumlah }}</td>
+                    <td class="content">{{ $row->description }}</td>
+                    <td class="content">{{ $jumlah }}</td>
                 </tr>
             @endforeach
             <tr>
-                <td><b>Lain-lain</b></td>
-                <td></td>
+                <td class="content"><b>Lain-lain</b></td>
+                <td class="content"></td>
             </tr>
             @foreach ($masterLainLain as $row)
                 @php
@@ -168,8 +168,8 @@
                     }
                 @endphp
                 <tr>
-                    <td>{{ $row->description }}</td>
-                    <td>{{ $jumlah }}</td>
+                    <td class="content">{{ $row->description }}</td>
+                    <td class="content">{{ $jumlah }}</td>
                 </tr>
             @endforeach
         </tbody>

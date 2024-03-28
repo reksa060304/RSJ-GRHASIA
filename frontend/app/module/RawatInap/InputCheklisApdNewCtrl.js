@@ -1,5 +1,5 @@
 
-define(['initialize'], function (initialize) {
+define(['initialize', 'Configuration'], function (initialize, config) {
 
     'use strict';
     initialize.controller('InputCheklisApdNewCtrl', ['$state', 'MedifirstService', '$rootScope', '$scope', 'DateHelper', '$timeout', '$mdDialog',

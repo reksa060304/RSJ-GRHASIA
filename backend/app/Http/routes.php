@@ -28,6 +28,35 @@ use  SimpleSoftwareIO\QrCode\Facades\QrCode;
 Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
 
     Route::group(['prefix' => 'medifirst2000'], function () {
+
+        Route::get('rba/get-data-rba', 'Perencanaan\RBAController@getRBA');
+
+        // Start Verif HAIS Route-------------------------------------------------------------------------------------------
+        Route::get('verif-hais/get-bundlehais', 'EMR\BundleHaisController@getBundleHais');
+        Route::get('verif-hais/get-combo-verif-hais', 'EMR\BundleHaisController@getComboVerifHais');
+        Route::post('verif-hais/verif-bundle-hais', 'EMR\BundleHaisController@verifBundleHais');
+        Route::get('verif-hais/laporan-bundle-hais', 'Report\ReportController@laporanBundleHais');
+        // End Verif Hais Route----------------------------------------------------------------------------------------------
+
+        // Start Route Map Login User to Sub Sub Kegiatan Anggaran-----------------------------------------------------------
+        Route::get('perencanaan/get-sub-sub-kegiatan', 'Perencanaan\PerencanaanController@getSubSubKegiatan');
+        Route::get('perencanaan/get-map-login-to-subsub', 'Perencanaan\PerencanaanController@getMapLoginToSubSub');
+        Route::get('perencanaan/save-map-login-to-subsub', 'Perencanaan\PerencanaanController@saveMapLoginToSubSub');
+        Route::get('perencanaan/delete-map-login-to-subsub', 'Perencanaan\PerencanaanController@deleteMapLoginToSubSub');
+        // End Route Map Login User to Sub Sub Kegiatan Anggaran------------------------------------------------------------- 
+
+        // Start Rencana Belanja Route---------------------------------------------------------------------------------------
+        Route::get('perencanaan/get-combo-perencanaan-belanja', 'Perencanaan\RBAController@getComboRencanaBelanja');
+        Route::get('perencanaan/get-rencana-belanja', 'Perencanaan\RBAController@getRencanaBelanja');
+        Route::get('perencanaan/get-info-stok-perencanaan', 'Perencanaan\RBAController@getInfoStokRencanaBelanja');
+        Route::post('perencanaan/simpan-rencana-belanja', 'Perencanaan\RBAController@simpanRencanaBelanja');
+        Route::post('perencanaan/delete-rencana-belanja', 'Perencanaan\RBAController@deleteRencanaBelanja');
+        Route::get('perencanaan/edit-rencana-belanja', 'Perencanaan\RBAController@editRencanaBelanja');
+        Route::post('perencanaan/update-rencana-belanja', 'Perencanaan\RBAController@updateRencanaBelanja');
+        Route::post('perencanaan/verifikasi-rencana-belanja', 'Perencanaan\RBAController@verifikasiRencanaBelanja');
+        Route::post('perencanaan/transfer-verifikasi-rencana', 'Perencanaan\RBAController@transferDariVerifikasi');
+        // End Rencana Belanja Route-------------------------------------------------------------------------------------------
+
         Route::get('get-profile-login', function(){
            $profile = \App\Web\Profile::where('statusenabled',true)->first();
            return array('as' => 'ea&er@epic', 'profile' => $profile->login);
@@ -1807,20 +1836,6 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('perencanaan/get-data-spm', 'Perencanaan\PerencanaanController@getDataSPM');
             Route::get('perencanaan/get-data-rba-belum', 'Perencanaan\PerencanaanController@getRBABelum');
             Route::get('perencanaan/get-password-rba', 'Perencanaan\PerencanaanController@getPassRBA');
-
-            Route::get('perencanaan/get-combo-perencanaan-belanja', 'Perencanaan\PerencanaanController@getComboPerencanaanBelanja');
-            Route::get('perencanaan/get-sub-sub-kegiatan', 'Perencanaan\PerencanaanController@getSubSubKegiatan');
-            Route::get('perencanaan/get-map-login-to-subsub', 'Perencanaan\PerencanaanController@getMapLoginToSubSub');
-            Route::get('perencanaan/save-map-login-to-subsub', 'Perencanaan\PerencanaanController@saveMapLoginToSubSub');
-            Route::get('perencanaan/delete-map-login-to-subsub', 'Perencanaan\PerencanaanController@deleteMapLoginToSubSub');
-            Route::get('perencanaan/get-info-stok-perencanaan', 'Perencanaan\PerencanaanController@getInfoStokPerencanaan');
-            Route::post('perencanaan/simpan-rencana-belanja', 'Perencanaan\PerencanaanController@simpanRencanaBelanja');
-            Route::get('perencanaan/get-rencana-belanja', 'Perencanaan\PerencanaanController@getRencanaBelanja');
-            Route::post('perencanaan/delete-rencana-belanja', 'Perencanaan\PerencanaanController@deleteRencanaBelanja');
-            Route::get('perencanaan/edit-rencana-belanja', 'Perencanaan\PerencanaanController@editRencanaBelanja');
-            Route::post('perencanaan/update-rencana-belanja', 'Perencanaan\PerencanaanController@updateRencanaBelanja');
-            Route::post('perencanaan/verifikasi-rencana-belanja', 'Perencanaan\PerencanaanController@verifikasiRencanaBelanja');
-            Route::get('perencanaan/sandingkan-data', 'Perencanaan\PerencanaanController@sandingkanData');
         // });
         // Route::group(['prefix' => 'piutang'], function () {
             /*GET*/

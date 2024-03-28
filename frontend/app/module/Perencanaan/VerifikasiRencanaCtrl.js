@@ -24,20 +24,24 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.isRencanaProduk = null
 
             // Data
+            $scope.listSubKegiatanTransfer = []
             $scope.listSubKegiatanSPJ = []
             $scope.listMataAnggaranSPJ = []
             $scope.dataPerencanaan = []
             $scope.listReverensi = []
             $scope.listPrioritas = []
+            $scope.listSatuan = []
+            $scope.listVerifikasi = [{ name: "Ya", value: 1 }, { name: "Tidak", value: 0 }]
             $scope.listTahapKegiatan = [
                 { id: 100, tahap: "Semua Kegiatan" },
-                { id: 1, tahap: "Indikatif Murni" },
+                { id: 1, tahap: "Indikatif 1" },
                 { id: 2, tahap: "Murni Definitif" },
                 { id: 4, tahap: "Pergeseran 1" },
                 { id: 3, tahap: "Pergeseran 2" },
                 { id: 5, tahap: "Pegeseran 3" },
                 { id: 6, tahap: "Perubahan" },
-            ];
+                { id: 7, tahap: "Indikatif 2" },
+            ]
 
             loadDataCombo()
 
@@ -165,11 +169,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             function loadDataCombo() {
                 $scope.dataVOloaded = true
 
-                // Memilih item array ke 2
+                // Memilih tahap indikatif 1
                 $scope.item.tahap =  $scope.listTahapKegiatan[1]
 
-                medifirstService.get('perencanaan/get-combo-perencanaan-belanja?idLogin='
-                    + $scope.userLogin.id)
+                medifirstService.get('perencanaan/get-combo-perencanaan-belanja?'
+                    +'idLogin=' + $scope.userLogin.id)
                     .then(function(e){
 
                         $scope.dataVOloaded = false
@@ -178,35 +182,30 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         $scope.listAsalProduk = e.data.asalProduk
                         $scope.listProduk = e.data.dataProdukAll
                         $scope.listPrioritas = e.data.prioritas
+                        $scope.listSatuan = e.data.satuan
                     })
                 
                 loadPerencanaan()
             }
 
-            /**
-             * Cari filter
-             */
+            // Tombol cari filter
             $scope.cari = function(){
                 loadPerencanaan()
             }
 
-            /**
-             * Klik Data Rencana di Grid Utama
-             */
+            // Klik grid perencanaan utama
             $scope.klikGrid = function (dataSelected){
                 if (dataSelected != undefined) {
                     $scope.dataSelected = dataSelected
 
-                    // console.log($scope.dataSelected.rencana)
                 }
             }
 
-            /**
-             * Popup verifikasi
-             */
+            // Klik tombol verifikasi
             $scope.verifikasiData = function(){
-                // Kosongkan data perencanaan dulu
+                // Kosongkan data dulu
                 $scope.dataPerencanaan = []
+                $scope.listMataAnggaranSPJ = []
 
                 if($scope.dataSelected == undefined || $scope.dataSelected == null){
                     toastr.error("Pilih Data Terlebih Dahulu")
@@ -218,10 +217,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     return
                 }
 
+                $scope.dataVOloaded = true
                 medifirstService.get('perencanaan/edit-rencana-belanja?norec='
                     + $scope.dataSelected.rencana.norec)
                     .then(function(e){
-                        $scope.dataVOloaded = false
+                        // $scope.dataVOloaded = false
                         let result = e.data
 
                         if(result.details[0].namakegiatan == null){
@@ -230,18 +230,29 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             $scope.isRencanaProduk = false
                         }
                         
+                        // Get mata anggaran berdasarkan sub sub
+                        medifirstService.get('perencanaan/get-data-combo?' 
+                            + 'idsubsub=' + $scope.dataSelected.rencana.objectsubkegiatanfk)
+                            .then(function (e) {
+                                $scope.dataVOloaded = false
+                                
+                                $scope.listMataAnggaranSPJ = e.data.mataanggarancombo
+
+                            })
+
                         // Buka popup
                         $scope.popupTambahRencanaBelanja.center().open()
 
                         // Data ke form
                         $scope.item.tglPengajuan = result.tgldokumen
                         $scope.item.subSubKegiatanSPJ = result.subsub
-                        $scope.item.mataAnggaranSPJ = result.mataanggaran
                         $scope.item.idRuanganLoginUser = result.ruangan
+                        $scope.item.tahunAnggaran = moment(result.tahunanggaran).format('YYYY')
                         
-                        result.details.forEach(function(data, index){
+                        result.details.map(function(data, index){
                             // Kondisi jika detail perencanaan menggunakan produk atau kegiatan
                             if(data.namakegiatan == null){
+                                $scope.isRencanaProduk = true
 
                                 const item = {
                                     no: (index + 1),
@@ -250,11 +261,16 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                     stokProduk: data.qtystok,
                                     jumlahRencana: data.qtyrencana,
                                     hargaSatuan: data.hargasatuan,
-                                    listReverensi: data.keteranganlainnya
+                                    listReverensi: data.keteranganlainnya,
+                                    satuan: data.satuan,
+                                    totalHarga: data.totalharga,
+                                    mataAnggaran: null
                                 }
             
                                 $scope.dataPerencanaan.push(item)
                             }else{
+
+                                $scope.isRencanaProduk = false
 
                                 const item = {
                                     no: (index + 1),
@@ -262,7 +278,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                     namaKegiatan: data.namakegiatan,
                                     jumlahRencana: data.qtyrencana,
                                     hargaSatuan: data.hargasatuan,
-                                    listReverensi: data.keteranganlainnya
+                                    listReverensi: data.keteranganlainnya,
+                                    satuan: data.satuan,
+                                    totalHarga: data.totalharga,
+                                    mataAnggaran: null
                                 }
             
                                 $scope.dataPerencanaan.push(item)
@@ -277,6 +296,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
             }
 
+            // Klik tombol tutup di popup verifikasi
             $scope.tutup = function(){
                 $scope.isRencanaProduk = null
 
@@ -292,50 +312,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.popupTambahRencanaBelanja.close()
             }
 
-            /**
-             * Mengetahui stock jika input produk berubah
-             */
-            $scope.getSatuan = function(){
-                $scope.dataVOloaded = true
-                medifirstService.get("perencanaan/get-info-stok-perencanaan?produkfk=" + $scope.item.produk.id, true)
-                    .then(function (e) {
-                        $scope.dataVOloaded = false
-                        $scope.item.stokProduk = e.data[0].qtyproduk
-                    })
-            }
-
-            /**
-             * Klik tambah rencana
-             */
-            $scope.tambahPerencanaan = function(){
-                
-                validation()
-
-                const data = {
-                    no: ($scope.dataPerencanaan.length + 1),
-                    produk: $scope.item.produk,
-                    stokProduk: $scope.item.stokProduk,
-                    jumlahRencana: $scope.item.jumlahRencana,
-                    listReverensi: $scope.item.listReverensi
-                }
-
-                $scope.dataPerencanaan.push(data)
-                $scope.gridDataPerencanaan = new kendo.data.DataSource({
-                    data: $scope.dataPerencanaan
-                })
-                
-                $scope.item.produk = undefined
-                $scope.item.stokProduk = null
-                $scope.item.listReverensi = null
-                $scope.listReverensi = []
-                $scope.item.jumlahRencana = null
-
-                console.log($scope.dataPerencanaan)
-            }
-
-            /**
-             * Klik Grid Detail Perencanaan
-             */
+            // Klik grid detail perencanaan
             $scope.klikListPerencanaan = function(dataSelected){
                 if(dataSelected != undefined){
 
@@ -346,26 +323,26 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     $scope.isUbahDetail = true
 
                     // Maskkan reverensi dari data yang dipilh kedalam variabel
-                    $scope.listReverensi = $scope.selectedListPerencanaan.listReverensi.split(',')
+                    if($scope.selectedListPerencanaan.listReverensi){
+                        $scope.listReverensi = $scope.selectedListPerencanaan.listReverensi.split(',')
+                    }
 
                     // Masukkan data yang dipilih kedalam input
                     $scope.item.stokProduk = $scope.selectedListPerencanaan.stokProduk
                     $scope.item.jumlahRencana = parseInt($scope.selectedListPerencanaan.jumlahRencana)
                     $scope.item.listReverensi = $scope.selectedListPerencanaan.listReverensi
                     $scope.item.hargaSatuan = parseInt($scope.selectedListPerencanaan.hargaSatuan)
-                    
-                    if(dataSelected.namaKegiatan == null){
+                    $scope.item.satuan = $scope.selectedListPerencanaan.satuan
+
+                    if($scope.isRencanaProduk == true){
                         $scope.item.produk = $scope.selectedListPerencanaan.produk
                     }else{
                         $scope.item.namaKegiatan = $scope.selectedListPerencanaan.namaKegiatan
                     }
-                    // console.log(dataSelected)
                 }
             }
 
-            /**
-             * Ubah Detail Perencanaan
-             */
+            // Klik tombol verifikasi
             $scope.ubahDetail = function(){
                 if($scope.selectedListPerencanaan == undefined || $scope.selectedListPerencanaan == null){
                     toastr.error('Pilih Data Terlebih Dahulu')
@@ -373,11 +350,22 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 }
 
                 if($scope.item.jumlahVerifikasi == undefined || $scope.item.jumlahVerifikasi == null){
-                    toastr.error('Isi jumlah verifikasi Terlebih Dahulu')
+                    toastr.error('Isi Jumlah Verifikasi Terlebih Dahulu')
                     return
                 }
 
-                $scope.dataPerencanaan.forEach(function(data, index){
+                if(!$scope.item.mataAnggaran){
+                    toastr.error('Pilih Rekening Terlebih Dahulu')
+                    return
+                }
+
+                if(!$scope.item.statusVerif){
+                    toastr.error('Pilih Status Verifikasi Terlebih Dahulu')
+                    return
+                }
+
+                // ubah data
+                $scope.dataPerencanaan.map(function(data, index){
                     if(data.no == $scope.selectedListPerencanaan.no){
                         if(data.namaKegiatan == null){
                             data.produk = $scope.item.produk
@@ -389,6 +377,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         data.jumlahVerifikasi = $scope.item.jumlahVerifikasi
                         data.hargaSatuan = $scope.item.hargaSatuan
                         data.listReverensi = $scope.item.listReverensi
+                        data.totalHarga = $scope.item.totalHarga
+                        data.satuan = $scope.item.satuan
+                        data.mataAnggaran = $scope.item.mataAnggaran
+                        data.isVerifikasi = $scope.item.statusVerif
                     }
                 })
 
@@ -403,36 +395,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 // Ubah state
                 $scope.isUbahDetail = false
 
-                console.log($scope.dataPerencanaan)
             }
 
-            /**
-             * Hapus List Detail Perencanaan
-             */
-            $scope.hapusListPerencanaan = function(){
-                if($scope.selectedListPerencanaan == undefined || $scope.selectedListPerencanaan == null){
-                    toastr.error('Pilih Data Terlebih Dahulu')
-                    return
-                }
-
-                $scope.dataPerencanaan.forEach(function(a, index){
-                    // console.log(a.no)
-                    if(a.no == $scope.selectedListPerencanaan.no){
-                        $scope.dataPerencanaan.splice(index, 1)
-                    }
-
-                    $scope.gridDataPerencanaan = new kendo.data.DataSource({
-                        data: $scope.dataPerencanaan
-                    })
-                })
-
-                resetFormVerifikasi()
-                
-            }
-
-            /**
-             * Simpan Data Rencana dan Detailnya
-             */
+            // Klik tombol validasi
             $scope.verifikasiPerencanaan = function(){
                 
                 if($scope.dataPerencanaan == undefined || $scope.dataPerencanaan.length <=0){
@@ -450,26 +415,39 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     return
                 }
 
-                if($scope.dataPerencanaan[0].jumlahVerifikasi == undefined || $scope.dataPerencanaan[0].jumlahVerifikasi == null){
-                    toastr.error('Isi Jumlah Verifikasi Terlebih Dahulu')
-                    return
-                }
+                $scope.dataPerencanaan.map(function(data, index){
+                    if(data.jumlahVerifikasi == undefined || data.jumlahVerifikasi == null){
+                        toastr.error('Isi Jumlah Verifikasi Terlebih Dahulu')
+                        return false
+                    }
+                    if(!data.mataAnggaran){
+                        toastr.error('Pilih Mata Anggaran Terlebih Dahulu')
+                        return false
+                    }
+                })
 
-                $scope.dataVOloaded = true
+                // console.log({
+                //     norec: $scope.dataSelected.rencana.norec,
+                //     idLogin: $scope.pegawai.id,
+                //     idKegiatan: $scope.item.subSubKegiatanSPJ.id,
+                //     idTahap: $scope.item.tahap.id,
+                //     idAsalProduk: $scope.item.asalproduk.id,
+                //     tglVerifikasi: $scope.item.tglVerifikasi,
+                //     dataPerencanaan: $scope.dataPerencanaan,
+                //     idPrioritas: $scope.item.prioritas.id,
+                // })
 
                 // Memverifikasi
                 medifirstService.post('perencanaan/verifikasi-rencana-belanja', {
                         norec: $scope.dataSelected.rencana.norec,
                         idLogin: $scope.pegawai.id,
                         idKegiatan: $scope.item.subSubKegiatanSPJ.id,
-                        idMataAnggaran: $scope.item.mataAnggaranSPJ.id,
                         idTahap: $scope.item.tahap.id,
                         idAsalProduk: $scope.item.asalproduk.id,
                         tglVerifikasi: $scope.item.tglVerifikasi,
                         dataPerencanaan: $scope.dataPerencanaan,
                         idPrioritas: $scope.item.prioritas.id,
                     }).then(function(e){
-                        $scope.dataVOloaded = false
                         
                         // Tutup popup
                         $scope.popupTambahRencanaBelanja.close()
@@ -479,105 +457,134 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     })
             }
 
-            $scope.columnGrid = [
-                { "field": "no", "title": "No", },
-                { "field": "produk.namaproduk", "title": "Nama Produk", },
-                { "field": "stokProduk", "title": "Stok Produk" },
-                { "field": "jumlahRencana", "title": "Jumlah Rencana" },
-                { "field": "jumlahVerifikasi", "title": "Jumlah Verifikasi" },
-                { "field": "listReverensi", "title": "Reverensi" },
-            ]
+            // Klik tombol transfer anggaran
+            $scope.klikTransfer = function(){
+                $scope.dataVOloaded = true
 
-            $scope.columnGridPerencanaan = {
-                columns: [
-                    {
-                        "field": "rencana.no",
-                        "title": "No",
-                        "width": "45px",
-                    },
-                    {
-                        "field": "rencana.nostruk",
-                        "title": "No Struk",
-                    },
-                    {
-                        "field": "rencana.tgldokumen",
-                        "title": "Tanggal Pengajuan",
-                    },
-                    {
-                        "field": "rencana.namalengkap",
-                        "title": "Nama Pegawai",
-                    },
-                    {
-                        "field": "rencana.namaruangan",
-                        "title": "Nama Ruangan",
-                    },
-                    {
-                        "field": "rencana.keterangan",
-                        "title": "Sub Sub Kegiatan",
-                    },
-                    {
-                        "field": "rencana.matanggaran",
-                        "title": "Sumber Dana"
-                    }
-                ]
+                medifirstService.get("perencanaan/get-data-combo?" 
+                    + "tahun=" +moment($scope.now).format('YYYY'))
+                    .then(function (e) {
+                        $scope.dataVOloaded = false
+
+                        $scope.listSubKegiatanTransfer = e.data.subkegiatantransfer
+
+                        $scope.popupTransferAnggaran.center().open()
+
+                    })
             }
 
-            $scope.columnGridRencanaKegiatan = [
-                { "field": "no", "title": "No", "width": "45px", },
-                { "field": "namaKegiatan", "title": "Nama Kegiatan", },
-                { "field": "jumlahRencana", "title": "Jumlah Rencana" },
-                { "field": "hargaSatuan", "title": "Harga Satuan"},
-                { "field": "jumlahVerifikasi", "title": "Jumlah Verifikasi" },
-                { "field": "listReverensi", "title": "Reverensi" },
-            ]
-
-            function validation() {
-                if($scope.item.tglPengajuan == undefined){
-                    toastr.error('Isi Tanggal Pengajuan Terlebih Dahulu')
-                    return false
+            // Klik tombol cari transfer anggaran
+            $scope.cariTransferAnggaran = function(){
+                
+                if($scope.item.tahapawal == undefined || $scope.item.tahapawal == null){
+                    toastr.error('Pilih tahap awal terlebih dahulu')
+                    return
                 }
 
-                if($scope.item.subSubKegiatanSPJ == undefined){
-                    toastr.error('Pilih Sub Sub Kegiatan Terlebih Dahulu')
-                    return false
+                if($scope.item.tahunawal == undefined || $scope.item.tahunawal == null){
+                    toastr.error('Pilih tahun awal terlebih dahulu')
+                    return
                 }
 
-                if($scope.item.mataAnggaranSPJ == undefined){
-                    toastr.error('Pilih Rekening Terlebih Dahulu')
-                    return false
+                if($scope.item.subkegiatantransfer == undefined || $scope.item.subkegiatantransfer == null){
+                    toastr.error('Pilih sub sub kegiatan terlebih dahulu')
+                    return
+                }
+                
+                $scope.dataVOloaded = true
+
+                // Cari sub kegiatan
+                medifirstService.get("perencanaan/get-data-combo?" 
+                    + "tahap=" + $scope.item.tahapawal.id 
+                    + "&tahunawal=" + moment($scope.item.tahunawal).format('YYYY') 
+                    + "&subkegiatan=" + $scope.item.subkegiatantransfer.id)
+                    .then(function (e) {
+                        $scope.dataVOloaded = false
+
+                        $scope.listSubSubKegiatan = e.data.kegiatansubsub
+                        $scope.arrayProdukTemp = []
+                        if ($scope.listSubSubKegiatan.length > 0) {
+                            for (let i = 0; i < $scope.listSubSubKegiatan.length; i++) {
+                                const element = $scope.listSubSubKegiatan[i];
+                                element.isChecked = false
+                            }
+                        }
+                    })
+            }
+            
+            $scope.ceklisOne = function (bool, data) {
+                if (bool) {
+                    $scope.listSubSubKegiatan.forEach(function (e) {
+                        if (data.idsubsubkegiatan == e.idsubsubkegiatan && bool == e.isChecked) {
+                            e.isChecked = false
+                            $scope.arrayProdukTemp.splice(e, 1);
+
+                        }
+                        if (data.idsubsubkegiatan == e.idsubsubkegiatan && bool != e.isChecked) {
+                            e.isChecked = true
+                            $scope.arrayProdukTemp.push(e)
+
+                        }
+                    })
+                } else {
+                    $scope.listSubSubKegiatan.forEach(function (e) {
+                        if (data.idsubsubkegiatan == e.idsubsubkegiatan && bool == e.isChecked) {
+                            e.isChecked = true
+                            $scope.arrayProdukTemp.push(e)
+
+                        }
+                        if (data.idsubsubkegiatan == e.idsubsubkegiatan && bool != e.isChecked) {
+                            e.isChecked = false
+                            $scope.arrayProdukTemp.splice(e, 1);
+
+                        }
+                    })
+                }
+            }
+
+            // Klik simpan transfer
+            $scope.SaveSettingTahap = function () {
+                if ($scope.arrayProdukTemp.length == 0) {
+                    toastr.error('Data belum di pilih')
+                    return
                 }
 
-                if($scope.item.produk == undefined ){
-                    toastr.error('Pilih Produk Terlebih Dahulu')
-                    return false
+                if($scope.item.tahapakhir == undefined || $scope.item.tahapakhir == null){
+                    toastr.error('Pilih tahap akhir terlebhih dahulu')
+                    return
                 }
 
-                if($scope.item.jumlahRencana == null || $scope.item.jumlahRencana == undefined){
-                    toastr.error('Isi Jumlah Rencana Terlebih Dahulu')
-                    return false
+                if($scope.item.tahunakhir == undefined || $scope.item.tahunakhir == null){
+                    toastr.error('Pilih tahun akhir terlebih dahulu')
+                    return
                 }
 
-                if($scope.item.jumlahVerifikasi == null || $scope.item.jumlahVerifikasi == undefined){
-                    toastr.error('Isi Jumlah Verifikasi Terlebih Dahulu')
-                    return false
+                var objSave = {
+                    "details": $scope.arrayProdukTemp,
+                    "tahapawal": $scope.item.tahapawal,
+                    "tahapakhir": $scope.item.tahapakhir,
+                    "tahunakhir": moment($scope.item.tahunakhir).format('YYYY'),
+                    "tglbuat": moment($scope.now).format('YYYY-MM-DD HH:mm:ss')
                 }
 
-                if($scope.item.listReverensi == null || $scope.item.listReverensi == undefined){
-                    toastr.error('Isi Reverensi Terlebih Dahulu')
-                    return false
-                }
+                // console.log(objSave)
 
-                if($scope.listLoginUserToRuangan == undefined || $scope.listLoginUserToRuangan.length <= 0){
-                    toastr.error('Login User Belum di Map ke Ruangan')
-                    return false
-                }
+                medifirstService.post('perencanaan/transfer-verifikasi-rencana', objSave).then(function (e) {
+                    $scope.arrayProdukTemp = []
 
-                if($scope.item.idRuanganLoginUser == undefined){
-                    toastr.error('Pilih Ruangan Terlebih Dahulu')
-                    return false
-                }
+                    $scope.popupTransferAnggaran.center().close()
+                    
+                    // loadDataGrid();
 
-                return (true)
+                    // Reset input
+                    $scope.item.tahapawal = null
+                    $scope.item.tahunawal = null
+                    item.subkegiatantransfer = null
+                    $scope.arrayProdukTemp = []
+                    $scope.item.tahapakhir = null
+                    $scope.item.tahunakhir = null
+                })
+
             }
 
             function resetFormVerifikasi(){
@@ -595,92 +602,63 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.item.jumlahVerifikasi = null
                 $scope.item.hargaSatuan = null
                 $scope.item.listReverensi = null
+                $scope.item.satuan = null
+                $scope.item.totalHarga = null
+                $scope.item.mataAnggaran = null
+                $scope.item.statusVerif = null
 
             }
 
-            // ---------------------- dalam pengembangan ---------------------------------
-            $scope.sandingkan = function(){
-
-                if($scope.dataSelected == undefined || $scope.dataSelected == null){
-                    toastr.error("Pilih Data Terlebih Dahulu")
-                    return
-                }
-
-                if($scope.dataSelected.rencana.tglverifikasi == null){
-                    toastr.error("Data Yang Dipilih Belum Terverifikasi")
-                    return
-                }
-
-                $scope.dataVOloaded = true
-
-                medifirstService.get('perencanaan/sandingkan-data?norec='+$scope.dataSelected.rencana.norec, true).then(function(e){
-                    
-                    $scope.dataVOloaded = false
-
-                    // result
-                    const result = e.data
-
-                    $scope.popupTambahRencanaBelanja.center().open()
-
-                    if(result.details[0].namakegiatan == null){
-                        $scope.isRencanaProduk = true
-                    }else{
-                        $scope.isRencanaProduk = false
-                    }
-
-                    // update state
-                    $scope.isSandingkan = true
-
-                    // Data ke form
-                    $scope.item.tglPengajuan = moment(result.tgldokumen).format('YYYY-MM-DD')
-                    $scope.item.tglPengajuan = moment(result.tglverifikasi).format('YYYY-MM-DD')
-                    $scope.item.subSubKegiatanSPJ = result.objectKegiatan
-                    $scope.item.mataAnggaranSPJ = result.objectMataAnggaran
-                    $scope.item.idRuanganLoginUser = result.objectRuangan
-                    $scope.item.prioritas = result.objectPrioritas
-
-                    result.details.forEach(function(data, index){
-                        // Kondisi jika detail perencanaan menggunakan produk atau kegiatan
-                        if(data.namakegiatan == null){
-
-                            const item = {
-                                no: (index + 1),
-                                norec: data.norec_detail,
-                                produk: data.produk,
-                                stokProduk: data.qtystok,
-                                jumlahRencana: data.qtyrencana,
-                                hargaSatuan: data.hargasatuan,
-                                listReverensi: data.keteranganlainnya
-                            }
-        
-                            $scope.dataPerencanaan.push(item)
-                        }else{
-
-                            const item = {
-                                no: (index + 1),
-                                norec: data.norec_detail,
-                                namaKegiatan: data.namakegiatan,
-                                jumlahRencana: data.qtyrencana,
-                                hargaSatuan: data.hargasatuan,
-                                listReverensi: data.keteranganlainnya
-                            }
-        
-                            $scope.dataPerencanaan.push(item)
-                        }
-
-                        // Update grid
-                        $scope.gridDataPerencanaan = new kendo.data.DataSource({
-                            data: $scope.dataPerencanaan
-                        })
-                    })
-                    
-                })
-
+            $scope.handleHargaSatuan = function(data){
+                $scope.item.totalHarga = data * ($scope.item.jumlahRencana ? $scope.item.jumlahRencana : 0)
             }
 
-            $scope.bukaKirim = function(){
+            $scope.handleJmlVerifikasi = function(data){
+                $scope.item.totalHarga = data * ($scope.item.hargaSatuan ? $scope.item.hargaSatuan : 0)
+            }
 
-            }            
+            $scope.columnGrid = {
+                columns: [
+                    { field: "no", title: "No", width: "45px" },
+                    { field: "produk.namaproduk", title: "Nama Produk" },
+                    { field: "stokProduk", title: "Stok Produk" },
+                    { field: "jumlahRencana", title: "Jumlah Rencana", width: "70px" },
+                    { field: "jumlahVerifikasi", title: "Jumlah Verifikasi", width: "70px" },
+                    { field: "satuan.satuanstandar", title: "Satuan", width: "80px" },
+                    { field: "hargaSatuan", title: "Harga Satuan", width: "80px" },
+                    { field: "totalHarga", title: "Total Harga", width: "100px" }, 
+                    { field: "listReverensi", title: "Reverensi" },
+                    { field: "mataAnggaran?.text", title: "Rekening" },
+                ]
+            }
+
+            $scope.columnGridPerencanaan = {
+                columns: [
+                    { field: "rencana.no", title: "No", width: "45px", },
+                    { field: "rencana.nostruk", title: "No Struk", },
+                    { field: "rencana.tgldokumen", title: "Tanggal Pengajuan", },
+                    { field: "rencana.namalengkap", title: "Nama Pegawai", },
+                    { field: "rencana.namaruangan", title: "Nama Ruangan", },
+                    { field: "rencana.keterangan", title: "Sub Sub Kegiatan", },
+                ]
+            }
+
+            $scope.columnGridRencanaKegiatan = [
+                { field: "no", title: "No", width: "45px" },
+                { field: "namaKegiatan", title: "Nama Kegiatan" },
+                { field: "jumlahRencana", title: "Jumlah Rencana", width: "70px" },
+                { field: "jumlahVerifikasi", title: "Jumlah Verifikasi", width: "70px" },
+                { field: "satuan.satuanstandar", title: "Satuan", width: "80px" },
+                { field: "hargaSatuan", title: "Harga Satuan", width: "80px" },
+                { field: "totalHarga", title: "Total Harga", width: "100px" }, 
+                { field: "listReverensi", title: "Reverensi" },
+                { field: "mataAnggaran?.text", title: "Rekening" }
+            ]
+            
+            $scope.yearUngkul = {
+                start: "decade",
+                depth: "decade"
+            }
         }
     ]);
 });

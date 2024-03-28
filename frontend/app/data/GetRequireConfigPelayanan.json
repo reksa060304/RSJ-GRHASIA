@@ -3706,6 +3706,10 @@
         {
             "nameDep": "BundleHaisCtrl",
             "urlDep": "module/EMR/BundleHaisCtrl"
+        },
+        {
+            "nameDep": "VerifBundleHaisCtrl",
+            "urlDep": "module/PPI/VerifBundleHaisCtrl"
         }
     ]
 }

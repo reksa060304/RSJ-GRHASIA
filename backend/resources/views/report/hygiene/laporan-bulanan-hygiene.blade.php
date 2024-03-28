@@ -6,26 +6,26 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>FORMULIR AUDIT KEPATUHAN PENGGUNAAN HYGIENE</title>
     <style>
-        table {
-            border-collapse: collapse;
-            max-width: 3508px;
-            width: 99vw;
-            max-width: 99vw;
+        @page {
+            size: 33cm 21.5cm;
+            margin: 1cm;
         }
-
-        #table-content td, th{
-            width: auto;
-            word-wrap: break-word;
+        p {
+            margin: 0;
+        }
+        body {
+            margin: 0;
+        }
+        .content {
+            padding: 3px 5px;
             border: 1px solid black;
-            padding: .3em .6em;
+            font-size: 11pt;
         }
-
-        @media print{@page {size: landscape}}
     </style>
 </head>
 <body>
     {{-- Header --}}
-    <table style="margin-bottom: 4rem; text-align:center; font-weight:bold;">
+    <table cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-bottom: 4rem; text-align:center; font-weight:bold;">
         <tr>
             <td>FORMULIR AUDIT KEPATUHAN PENGGUNAAN HYGIENE</td>
         </tr>
@@ -56,7 +56,7 @@
     </table>
 
     {{-- Content --}}
-    <table style="width:95%" id="table-content">
+    <table cellspacing="0" cellpadding="0" border="0" width="100%" style="border: 1px solid black; border-collapse: collapse;">
         <thead>
             <tr>
                 <th rowspan="2" class="content">OBSERVER</th>
@@ -93,9 +93,9 @@
         <tbody>
             @foreach ($data as $key=>$item)
                 <tr>
-                    <td>{{ $item->observer }}</td>
-                    <td>{{ date_format(date_create($item->tanggal), 'd-m-Y') }}</td>
-                    <td>{{ $item->profesi }}</td>
+                    <td class="content">{{ $item->observer }}</td>
+                    <td class="content">{{ date_format(date_create($item->tanggal), 'd-m-Y') }}</td>
+                    <td class="content">{{ $item->profesi }}</td>
                     @foreach ($masterSebelumKontak as $row)
                         @php
                             $checklist = 0; 
@@ -105,7 +105,7 @@
                                 }
                             }  
                         @endphp
-                        <td>{{ $checklist }}</td>
+                        <td class="content">{{ $checklist }}</td>
                     @endforeach
                     @foreach ($masterSebelumProsedur as $row)
                         @php
@@ -116,7 +116,7 @@
                                 }
                             }   
                         @endphp
-                        <td>{{ $checklist }}</td>
+                        <td class="content">{{ $checklist }}</td>
                     @endforeach
                     @foreach ($masterSetelahCairan as $row)
                         @php
@@ -127,7 +127,7 @@
                                 }
                             }
                         @endphp
-                        <td>{{ $checklist }}</td>
+                        <td class="content">{{ $checklist }}</td>
                     @endforeach
                     @foreach ($masterSetelahKontak as $row)
                         @php
@@ -138,7 +138,7 @@
                                 }
                             }
                         @endphp
-                        <td>{{ $checklist }}</td>
+                        <td class="content">{{ $checklist }}</td>
                     @endforeach
                     @foreach ($masterSetelahLingkungan as $row)
                         @php
@@ -149,7 +149,7 @@
                                 }
                             }
                         @endphp
-                        <td>{{ $checklist }}</td>
+                        <td class="content">{{ $checklist }}</td>
                     @endforeach
                     @foreach ($masterLainLain as $row)
                         @php
@@ -160,7 +160,7 @@
                                 }
                             }
                         @endphp
-                        <td>{{ $checklist }}</td>
+                        <td class="content">{{ $checklist }}</td>
                     @endforeach
                 </tr>
             @endforeach

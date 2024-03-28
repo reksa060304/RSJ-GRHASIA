@@ -6,30 +6,30 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>FORMULIR AUDIT KEPATUHAN PENGGUNAAN APD</title>
     <style>
-        table {
-            border-collapse: collapse;
-            max-width: 3508px;
-            width: 99vw;
-            max-width: 99vw;
+        @page {
+            size: 33cm 21.5cm;
+            margin: 1cm;
         }
-
-        #table-content td, th{
-            width: auto;
-            word-wrap: break-word;
+        p {
+            margin: 0;
+        }
+        body {
+            margin: 0;
+        }
+        .content {
+            padding: 3px 5px;
             border: 1px solid black;
-            padding: .3em .6em;
+            font-size: 11pt;
         }
-
-        @media print{@page {size: landscape}}
     </style>
 
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
     <script src="//cdn.rawgit.com/rainabba/jquery-table2excel/1.1.0/dist/jquery.table2excel.min.js"></script>
 </head>
 <body>
-    <table id="laporan-bulanan-apd">
+    <table cellspacing="0" cellpadding="0" border="0" width="100%">
         {{-- Header --}}
-        <table style="margin-bottom: 4rem; text-align:center; font-weight:bold;">
+        <table  cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-bottom: 4rem; text-align:center; font-weight:bold;">
             <tr>
                 <td>FORMULIR AUDIT KEPATUHAN PENGGUNAAN APD</td>
             </tr>
@@ -60,7 +60,7 @@
         </table>
     
         {{-- Content --}}
-        <table id="table-content">
+        <table cellspacing="0" cellpadding="0" border="0" width="100%" style="border: 1px solid black; border-collapse: collapse;">
             <thead>
                 <tr>
                     <th rowspan="2" class="content">OBSERVER</th>
@@ -86,10 +86,10 @@
             <tbody>
                 @foreach ($data as $key=>$item)
                     <tr>
-                        <td>{{ $item->observer }}</td>
-                        <td>{{ date_format(date_create($item->tanggal), 'd-m-Y') }}</td>
-                        <td>{{ $item->profesi }}</td>
-                        <td>{{ $item->namaproduk }}</td>
+                        <td class="content">{{ $item->observer }}</td>
+                        <td class="content">{{ date_format(date_create($item->tanggal), 'd-m-Y') }}</td>
+                        <td class="content">{{ $item->profesi }}</td>
+                        <td class="content">{{ $item->namaproduk }}</td>
                         @foreach ($masterapd as $mapd)
                             @php
                                 $checklist = 0; 
@@ -99,7 +99,7 @@
                                     }
                                 }  
                             @endphp
-                            <td>{{ $checklist }}</td>
+                            <td class="content">{{ $checklist }}</td>
                         @endforeach
                         @foreach ($masterkesesuaian as $sesuai)
                             @php
@@ -108,7 +108,7 @@
                                     $checklist = 1;
                                 }   
                             @endphp
-                            <td>{{ $checklist }}</td>
+                            <td class="content">{{ $checklist }}</td>
                         @endforeach
                         @foreach ($mastercucitangan as $cucitangan)
                             @php
@@ -117,7 +117,7 @@
                                     $checklist = 1;
                                 }   
                             @endphp
-                            <td>{{ $checklist }}</td>
+                            <td class="content">{{ $checklist }}</td>
                         @endforeach
                     </tr>
                 @endforeach

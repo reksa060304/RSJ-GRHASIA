@@ -85,12 +85,12 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 })
             }
 
-
             function renderColumn(data) {
                 setColumnDefault();
                 for (let i = 0; i < data.length; i++) {
                     const element = data[i];
                     var header = $scope.columndinamis.map(function(e) { return e.title; }).indexOf(element.header);
+                    // console.log(header)
                     if(header > -1) {
                         var item = 
                         {
@@ -100,13 +100,13 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                             template: `# if(w${element.id}==true) {# ✔ # } else {# - #} #`,
                             headerAttributes: { style: "text-align : center" },
                         }
-                        console.log(item);
+                        // console.log(item);
                         $scope.columndinamis[header].columns.push(item);
                     } else {
                         var item = 
                         { 
                             field: '', 
-                            title: element.header,
+                            title: element.header+'\n\r',
                             // width: 100,
                             headerAttributes: { style: "text-align : center" },
                             columns: [

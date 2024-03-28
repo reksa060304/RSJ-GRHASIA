@@ -6,26 +6,26 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>LAPORAN PENGGUNAAN APD</title>
     <style>
-        table {
-            border-collapse: collapse;
-            max-width: 3508px;
-            width: 99vw;
-            max-width: 99vw;
+        @page {
+            size: 21.5cm 33cm;
+            margin: 1cm;
         }
-
-        #table-content td, th{
-            width: auto;
-            word-wrap: break-word;
+        p {
+            margin: 0;
+        }
+        body {
+            margin: 0;
+        }
+        .content {
+            padding: 3px 5px;
             border: 1px solid black;
-            padding: .3em .6em;
+            font-size: 11pt;
         }
-
-        @media print{@page {size: portrait}}
     </style>
 </head>
 <body>
     {{-- Header --}}
-    <table style="margin-bottom: 4rem; text-align:center; font-weight:bold;">
+    <table cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-bottom: 4rem; text-align:center; font-weight:bold;">
         <tr>
             <td>LAPORAN PENGGUNAAN APD</td>
         </tr>
@@ -35,7 +35,7 @@
     </table>
 
     {{-- Deskripsi --}}
-    <table style="margin-bottom: 1rem;font-weight:bold;">
+    <table style="width: auto; margin-bottom: 1rem;font-weight:bold;">
         <thead>
             <tr><td></td></tr>
             <tr><td></td></tr>
@@ -44,19 +44,19 @@
         <tbody>
             <tr>
                 <td>WISMA</td>
-                <td>:</td>
+                <td style="padding-left: 1em; padding-right: 1em">:</td>
                 <td>{{ $jumlahAPD[0]->namaruangan }}</td>
             </tr>
             <tr>
                 <td>BULAN</td>
-                <td>:</td>
+                <td style="padding-left: 1em; padding-right: 1em">:</td>
                 <td>{{ date_format(date_create($jumlahAPD[0]->tanggal_apd), 'm-Y') }}</td>
             </tr>
         </tbody>
     </table>
 
     {{-- Content --}}
-    <table id="table-content">
+    <table cellspacing="0" cellpadding="0" border="0" width="100%" style="border: 1px solid black; border-collapse: collapse;">
         <thead>
             <tr>
                 <th class="content">Kegiatan</th>
@@ -65,8 +65,8 @@
         </thead>
         <tbody>
             <tr>
-                <td><b>Pilihan APD</b></td>
-                <td></td>
+                <td class="content"><b>Pilihan APD</b></td>
+                <td class="content"></td>
             </tr>
             @foreach ($masterAPD as $row)
                 @php
@@ -78,13 +78,13 @@
                     }
                 @endphp
                 <tr>
-                    <td>{{ $row->description }}</td>
-                    <td>{{ $jumlah }}</td>
+                    <td class="content">{{ $row->description }}</td>
+                    <td class="content">{{ $jumlah }}</td>
                 </tr>
             @endforeach
             <tr>
-                <td><b>Kesesuaian</b></td>
-                <td></td>
+                <td class="content"><b>Kesesuaian</b></td>
+                <td class="content"></td>
             </tr>
             @foreach ($masterkesesuaian as $row)
                 @php
@@ -96,13 +96,13 @@
                     }
                 @endphp
                 <tr>
-                    <td>{{ $row->description }}</td>
-                    <td>{{ $jumlah }}</td>
+                    <td class="content">{{ $row->description }}</td>
+                    <td class="content">{{ $jumlah }}</td>
                 </tr>
             @endforeach
             <tr>
-                <td><b>Cuci tangan sebelum menggunakan APD</b></td>
-                <td></td>
+                <td class="content"><b>Cuci tangan sebelum menggunakan APD</b></td>
+                <td class="content"></td>
             </tr>
             @foreach ($mastercuci as $row)
                 @php
@@ -114,8 +114,8 @@
                     }
                 @endphp
                 <tr>
-                    <td>{{ $row->description }}</td>
-                    <td>{{ $jumlah }}</td>
+                    <td class="content">{{ $row->description }}</td>
+                    <td class="content">{{ $jumlah }}</td>
                 </tr>
             @endforeach
         </tbody>

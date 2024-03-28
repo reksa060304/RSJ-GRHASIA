@@ -138,12 +138,13 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
             $scope.listTahapKegiatan = [
                 { id: 100, tahap: "Semua Kegiatan" },
-                { id: 1, tahap: "Indikatif Murni" },
+                { id: 1, tahap: "Indikatif 1" },
                 { id: 2, tahap: "Murni Definitif" },
                 { id: 4, tahap: "Pergeseran 1" },
                 { id: 3, tahap: "Pergeseran 2" },
                 { id: 5, tahap: "Pegeseran 3" },
                 { id: 6, tahap: "Perubahan" },
+                { id: 7, tahap: "Indikatif 2" }
             ];
             $scope.listPihakKetiga = []
             medifirstService.getPart('perencanaan/get-datacombo-part-rekanan', true, true, 20).then(function (data) {

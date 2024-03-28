@@ -1317,6 +1317,10 @@
         {
             "nameDep": "VerifikasiRencanaCtrl",
             "urlDep": "module/Perencanaan/VerifikasiRencanaCtrl"
+        },
+        {
+            "nameDep": "EntryAnggaranCtrl",
+            "urlDep": "module/Perencanaan/EntryAnggaranCtrl"
         }
     ]
 }
