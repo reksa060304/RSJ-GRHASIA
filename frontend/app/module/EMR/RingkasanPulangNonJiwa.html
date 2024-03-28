@@ -1,0 +1,394 @@
+<style type="text/css">
+    fieldset {
+        border-radius: 5px;
+        border: 1px solid #228be6;
+    }
+
+    .k-slider-horizontal {
+        display: inline-block;
+        float: left;
+        width: 450px;
+
+        height: 26px;
+
+
+    }
+
+    .k-slider {
+
+        margin-left: 3%;
+        margin-right: 3%;
+        margin-top: 1%;
+        margin-bottom: 5%;
+        display: inline-block;
+    }
+
+    .activeBtn {
+        background-color: #10c4b2;
+        color: #ffffff;
+    }
+
+    table,
+    th,
+    td {
+        border: 1px solid #929191;
+        border-collapse: collapse;
+        padding: 5px;
+    }
+
+    th,
+    td {
+        padding: 5px;
+        text-align: left;
+    }
+
+    .tbl-defibrilasi,
+    .tbl-defibrilasi th,
+    .tbl-defibrilasi td {
+        border: none;
+        border-collapse: collapse;
+    }
+
+    .tbl-defibrilasi th,
+    .tbl-defibrilasi td {
+        padding: 5px;
+        text-align: center;
+    }
+</style>
+
+<div class="grid_12" disable-contents="allDisabled">
+    <div class="grid_12">
+        <div class="panel panel-default container_12">
+            <div class="panel-heading" c-translate>Ringkasan Pulang Non Jiwa</div>
+        </div>
+
+
+        <div class="grid_12" style="margin-top: 10px;">
+            <div>
+                <fieldset>
+
+                    <div class="grid_12">
+
+                        <div class="grid_3">
+                            <div class="grid_12">
+                                <label c-label item="item">Tanggal Masuk :</label>
+                            </div>
+                            <div class="grid_12">
+                                <input style="width: 100%" k-ng-model="item.obj[30008000]" kendo-datetimepicker
+                                    k-max="now" placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'"
+                                    parsedate="yyyy-MM-dd HH:mm" />
+                            </div>
+                        </div>
+                        <div class="grid_3">
+                            <div class="grid_12">
+                                <label c-label item="item">Tanggal Pulang :</label>
+                            </div>
+                            <div class="grid_12">
+                                <input style="width: 100%" k-ng-model="item.obj[30008001]" kendo-datetimepicker
+                                    k-max="now" placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'"
+                                    parsedate="yyyy-MM-dd HH:mm" />
+                            </div>
+                        </div>
+                        <div class="grid_3">
+                            <div class="grid_12">
+                                <label c-label item="item">Wisma:</label>
+                            </div>
+                            <div class="grid_12">
+                                <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[30008002]"
+                                    k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                                    k-auto-bind="false" k-data-source="listRuang" />
+                            </div>
+                        </div>
+                        <div class="grid_3">
+                            <label c-label item="item">Kelas :</label>
+                            <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[30008003]"
+                                k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                                k-auto-bind="false" k-data-source="listKelas" />
+
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+        </div>
+        <div class="grid_12" style="margin-top: 10px;">
+            <div>
+                <fieldset>
+
+                    <div class="grid_12" style="margin-bottom: 10px;">
+                        <div class="grid_12">
+
+                            <label c-label item="item">1. Indikasi pasien dirawat inap/diagnosis masuk :</label>
+                            <textarea style="width:50%;height: 100px" c-text-area type="input" filter="'string'"
+                                class="k-textbox" ng-model="item.obj[30008004]"></textarea>
+
+                        </div>
+                        <div class="grid_12">
+
+                            <label c-label item="item"> 2. Pemeriksaan fisik yang penting :</label>
+                            <textarea style="width:50%;height: 100px" c-text-area type="input" filter="'string'"
+                                class="k-textbox" ng-model="item.obj[30008005]"></textarea>
+
+                        </div>
+                        <div class="grid_12">
+
+                            <label c-label item="item"> 3. Riwayat kesehatan :</label>
+                            <textarea style="width:50%;height: 100px" c-text-area type="input" filter="'string'"
+                                class="k-textbox" ng-model="item.obj[30008006]"></textarea>
+
+                        </div>
+                        <div class="grid_8">
+                            <label c-label item="item">4. Alergi :</label>
+
+
+
+                            <div class="grid_6">
+                                <div class="grid_12">
+
+                                    <input type="checkbox" class="k-checkbox" id="item.obj{{30008007}}"
+                                        ng-model="item.obj[30008007]" />
+                                    <label class="k-checkbox-label" for="item.obj{{30008007}}"> Tidak
+                                     
+                                    </label>
+
+                                </div>
+
+                            </div>
+                            <div class="grid_6">
+                                <div class="grid_12">
+                                    <input type="checkbox" class="k-checkbox" id="item.obj{{30008008}}"
+                                        ng-model="item.obj[30008008]" />
+                                    <label class="k-checkbox-label" for="item.obj{{30008008}}"> Ya,Sebutkan
+                                    </label>
+                                    <input c-text-box type="text" filter="" class="k-textbox"
+                                    ng-model="item.obj[30008009]" style="width: 75%" />
+
+                                </div>
+
+                            </div>
+                      
+                        </div>
+                        <div class="grid_12">
+
+                            <label c-label item="item">5. Hasil pemeriksaan diagnostik / penunjang yang mendukung diagnosis:</label>
+                            <textarea style="width:50%;height: 100px" c-text-area type="input" filter="'string'"
+                                class="k-textbox" ng-model="item.obj[30008010]"></textarea>
+
+                        </div>
+                        <div class="grid_12">
+
+                            <label c-label item="item"> 6. Diagnosis </label>
+                          
+                            &nbsp;&nbsp;<label c-label item="item"> a. Diagnosis Utama </label>
+                            <input style="width: 40%;" kendo-combo-box k-ng-model="item.obj[30008011]"
+                                k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                                k-auto-bind="false" k-data-source="listDiagnosa" />
+                            <br>
+                            &nbsp;&nbsp;<label c-label item="item"> b. Diagnosis Sekunder </label>
+                            <input style="width: 40%;" kendo-combo-box k-ng-model="item.obj[30008012]"
+                                k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                                k-auto-bind="false" k-data-source="listDiagnosa" />
+
+
+                        </div>
+                        <div class="grid_12">
+                            <label c-label item="item"> 7. Tindakan diagnostik dan prosedur terapi :</label>
+                            <input c-text-box type="text" filter="" class="k-textbox" ng-model="item.obj[30008013]"
+                        style="width:40%" />
+
+                        </div>
+                        <div class="grid_12">
+                            <label c-label item="item">  8. Pemberian obat selama perawatan :</label>
+                            <input c-text-box type="text" filter="" class="k-textbox" ng-model="item.obj[30008014]"
+                        style="width:40%" />
+
+                        </div>
+                        <div class="grid_12">
+                            <label c-label item="item"> 9. Instruksi tindak lanjut</label>
+                            <label c-label item="item"> a. Pemberian obat waktu pulang :</label>
+                            <input c-text-box type="text" filter="" class="k-textbox" ng-model="item.obj[30008015]"
+                        style="width:40%" />
+                        <label c-label item="item"> b. Edukasi waktu pulang :</label>
+                        <div class="grid_6">
+                            <div class="grid_12">
+
+                                <input type="checkbox" class="k-checkbox" id="item.obj{{30008016}}"
+                                    ng-model="item.obj[30008016]" />
+                                <label class="k-checkbox-label" for="item.obj{{30008016}}"> Perawatan di rumah 
+                                 
+                                </label>
+                                <input c-text-box type="text" filter="" class="k-textbox"
+                                ng-model="item.obj[30008017]" style="width: 75%" />
+
+                            </div>
+
+                        </div>
+                        <div class="grid_6">
+                            <div class="grid_12">
+                                <input type="checkbox" class="k-checkbox" id="item.obj{{30008018}}"
+                                    ng-model="item.obj[30008018]" />
+                                <label class="k-checkbox-label" for="item.obj{{30008018}}">
+                                </label>
+                                <input c-text-box type="text" filter="" class="k-textbox"
+                                ng-model="item.obj[30008019]" style="width: 75%" />
+
+                            </div>
+
+                        </div>
+
+                        </div>
+                        <div class="grid_12">
+                            <label c-label item="item">10. Keadaan keluar : </label>
+                            
+                            
+                        </div>
+                        <div class="grid_4">
+                            <div class="grid_12">
+                               
+                                <input type="checkbox" class="k-checkbox" id="item.obj{{30008020}}"
+                            ng-model="item.obj[30008020]" />
+                            <label class="k-checkbox-label" for="item.obj{{30008020}}"> Perbaikan
+                            </label>
+                                
+                            </div>
+                           
+                        </div>
+                        <div class="grid_4">
+                            <div class="grid_12">
+                                <input type="checkbox" class="k-checkbox" id="item.obj{{30008021}}"
+                                ng-model="item.obj[30008021]" />
+                                <label class="k-checkbox-label" for="item.obj{{30008021}}"> Sembuh </label>
+    
+                            </div>
+                            
+                        </div>
+                        
+                        <div class="grid_4">
+                            <div class="grid_12">
+                                <input type="checkbox" class="k-checkbox" id="item.obj{{30008022}}"
+                                ng-model="item.obj[30008022]" />
+                                <label class="k-checkbox-label" for="item.obj{{26000384}}"> Pulang </label>
+    
+                            </div>
+                            
+                        </div>
+
+                        <div class="grid_12">
+                            <label c-label item="item">11. Cara keluar : </label>
+                            
+                            
+                        </div>
+                        <div class="grid_3">
+                            <div class="grid_12">
+                               
+                                <input type="checkbox" class="k-checkbox" id="item.obj{{30008023}}"
+                            ng-model="item.obj[30008023]" />
+                            <label class="k-checkbox-label" for="item.obj{{30008023}}"> Atas persetujuan dokter
+                            </label>
+                                
+                            </div>
+                           
+                        </div>
+                        <div class="grid_3">
+                            <div class="grid_12">
+                                <input type="checkbox" class="k-checkbox" id="item.obj{{30008024}}"
+                                ng-model="item.obj[30008024]" />
+                                <label class="k-checkbox-label" for="item.obj{{30008024}}"> Rujuk </label>
+                                <input c-text-box type="text" filter="" class="k-textbox"
+                                ng-model="item.obj[30008025]" style="width: 75%" />
+                            </div>
+                            
+                        </div>
+                        
+                        <div class="grid_3">
+                            <div class="grid_12">
+                                <input type="checkbox" class="k-checkbox" id="item.obj{{30008026}}"
+                                ng-model="item.obj[30008026]" />
+                                <label class="k-checkbox-label" for="item.obj{{30008026}}"> Atas permintaan sendiri  </label>
+    
+                            </div>
+                            
+                        </div>
+                        <div class="grid_3">
+                            <div class="grid_12">
+                                <input type="checkbox" class="k-checkbox" id="item.obj{{30008027}}"
+                                ng-model="item.obj[30008027]" />
+                                <label class="k-checkbox-label" for="item.obj{{30008027}}"> Lain - lain  </label>
+                                <input c-text-box type="text" filter="" class="k-textbox"
+                                ng-model="item.obj[30008028]" style="width: 75%" />
+                            </div>
+                            
+                        </div>
+                        <div class="grid_12">
+                           <p>Saya telah menerima informasi tersebut di atas dan menyetujui bahwa Ringkasan Pulang ini hanya dapat digunakan
+                            untuk kepentingan pengobatan, serta TIDAK DAPAT digunakan untuk kepentingan lainnya</p>
+                            
+                            
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+        </div>
+
+
+
+
+
+
+
+        <div class="grid_12">
+            <div class="grid_8"></div>
+            <div class="grid_4">
+                <fieldset style="margin-top:10px;border-radius: 10px;height: 300px;">
+                    <div style="padding: 20px;">
+                        <div class="grid_12" style="margin-top:10px">
+                            <label c-label item="item" c-label-text="Yogyakarta"></label>
+                        </div>
+                        <div class="grid_12">
+                            <input style="width: 100%" k-ng-model="item.obj[30008029]" kendo-datetimepicker
+                                placeholer="yyyy-MM-dd" k-format="'yyyy-MM-dd'" parsedate="yyyy-MM-dd" />
+                        </div>
+                       
+                        <div class="grid_12" style="margin-top:10px">
+                            <div class="grid_12">
+                                <label c-label item="item" c-label-text="Penerima Informasi"></label>
+                            </div>
+                            <div class="grid_12">
+                                <input c-text-box type="text" filter="" class="k-textbox" ng-model="item.obj[30008030]"
+                                    style="width:100%" />
+                            </div>
+                        </div>
+                        <div class="grid_12" style="margin-top:10px">
+                            <div class="grid_12">
+                                <label c-label item="item" c-label-text=" Pemberi Informasi"></label>
+                            </div>
+                            <div class="grid_12">
+                                <input c-text-box type="text" filter="" class="k-textbox" ng-model="item.obj[30008031]"
+                                style="width:100%" />
+
+                            </div>
+                        </div>
+                        <div class="grid_12" style="margin-top:10px">
+                            <div class="grid_12">
+                                <label c-label item="item" c-label-text=" Dokter Penanggung Jawab Pasien"></label>
+                            </div>
+                            <div class="grid_12">
+                                <input style="width: 100%;" kendo-combo-box k-ng-model="item.obj[30008032]"
+                                    k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                                    k-auto-bind="false" k-data-source="listDokter" />
+
+                            </div>
+                        </div>
+
+                    </div>
+                </fieldset>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="grid_12">
+    <div ng-include='"../app/module/EMR/TemplateButtonDinamis" '></div>
+</div>
+</div>
+</div>

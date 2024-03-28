@@ -3715,5 +3715,10 @@
             "nameDep": "LaporanKIECtrl",
             "urlDep": "module/RawatJalan/LaporanKIECtrl"
         }
+        ,
+        {
+            "nameDep": "RingkasanPulangNonJiwaCtrl",
+            "urlDep": "module/EMR/RingkasanPulangNonJiwaCtrl"
+        }
     ]
 }
