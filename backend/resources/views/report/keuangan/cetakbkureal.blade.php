@@ -106,25 +106,25 @@
                 @foreach ($jumlahbkusekarang as $dtnow)
                 <tr>
                     <td colspan="5" align="center" width="50" style="padding: 10px; font-weight: bold;font-size: 15px;  ">Total Bulan Sekarang</td>
-                    <td align="center" width="50" style="padding: 10px; font-size: 15px;  ">{{ ($dtnow->penerimaannow>0) ? number_format($dtnow->penerimaannow,0,',','.') : '' }}</td>
-                    <td align="center" width="50" style="padding: 10px; font-size: 15px; ">{{ ($dtnow->pengeluarannow>0) ? number_format($dtnow->pengeluarannow,0,',','.') : '' }}</td>
-                    <td align="center" width="50" style="padding: 10px; font-size: 15px; ">{{ ($dtnow->saldonow>0) ? number_format($dtnow->saldonow,0,',','.') : '' }}</td>
+                    <td align="center" width="50" style="padding: 10px; font-size: 15px;  ">{{ ($dtnow->penerimaannow>0) ? number_format($dtnow->penerimaannow,2,',','.') : '' }}</td>
+                    <td align="center" width="50" style="padding: 10px; font-size: 15px; ">{{ ($dtnow->pengeluarannow>0) ? number_format($dtnow->pengeluarannow,2,',','.') : '' }}</td>
+                    <td align="center" width="50" style="padding: 10px; font-size: 15px; ">{{ ($dtnow->saldonow>0) ? number_format($dtnow->saldonow,2,',','.') : '' }}</td>
                 </tr>
                 @endforeach
                 @foreach ($jumlahbkulalu as $dtlalu)
                 <tr>
                     <td colspan="5" align="center" width="50" style="padding: 10px; font-weight: bold;font-size: 15px;  ">Total Bulan Lalu</td>
-                    <td align="center" width="50" style="padding: 10px; font-size: 15px;  ">{{ ($dtlalu->penerimaanlalu>0) ? number_format($dtlalu->penerimaanlalu,0,',','.') : '' }}</td>
-                    <td align="center" width="50" style="padding: 10px; font-size: 15px; ">{{ ($dtlalu->pengeluaranlalu>0) ? number_format($dtlalu->pengeluaranlalu,0,',','.') : '' }}</td>
-                    <td align="center" width="50" style="padding: 10px; font-size: 15px; ">{{ ($dtlalu->saldolalu>0) ? number_format($dtlalu->saldolalu,0,',','.') : '' }}</td>
+                    <td align="center" width="50" style="padding: 10px; font-size: 15px;  ">{{ ($dtlalu->penerimaanlalu>0) ? number_format($dtlalu->penerimaanlalu,2,',','.') : '' }}</td>
+                    <td align="center" width="50" style="padding: 10px; font-size: 15px; ">{{ ($dtlalu->pengeluaranlalu>0) ? number_format($dtlalu->pengeluaranlalu,2,',','.') : '' }}</td>
+                    <td align="center" width="50" style="padding: 10px; font-size: 15px; ">{{ ($dtlalu->saldolalu>0) ? number_format($dtlalu->saldolalu,2,',','.') : '' }}</td>
                 </tr>
                 @endforeach
                 @foreach ($jumlahbkutotal as $dttotal)
                 <tr>
                     <td colspan="5" align="center" width="50" style="padding: 10px; font-weight: bold;font-size: 15px;  ">Jumlah</td>
-                    <td align="center" width="50" style="padding: 10px; font-size: 15px;  ">{{ ($dttotal->penerimaantotal>0) ? number_format($dttotal->penerimaantotal,0,',','.') : '' }}</td>
-                    <td align="center" width="50" style="padding: 10px; font-size: 15px; ">{{ ($dttotal->pengeluarantotal>0) ? number_format($dttotal->pengeluarantotal,0,',','.') : '' }}</td>
-                    <td align="center" width="50" style="padding: 10px; font-size: 15px; ">{{ ($dttotal->saldototal>0) ? number_format($dttotal->saldototal,0,',','.') : '' }}</td>
+                    <td align="center" width="50" style="padding: 10px; font-size: 15px;  ">{{ ($dttotal->penerimaantotal>0) ? number_format($dttotal->penerimaantotal,2,',','.') : '' }}</td>
+                    <td align="center" width="50" style="padding: 10px; font-size: 15px; ">{{ ($dttotal->pengeluarantotal>0) ? number_format($dttotal->pengeluarantotal,2,',','.') : '' }}</td>
+                    <td align="center" width="50" style="padding: 10px; font-size: 15px; ">{{ ($dttotal->saldototal>0) ? number_format($dttotal->saldototal,2,',','.') : '' }}</td>
                 </tr>
                 @endforeach
         </table>
