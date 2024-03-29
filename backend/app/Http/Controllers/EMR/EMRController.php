@@ -1463,11 +1463,12 @@ class EMRController  extends ApiController
             ->leftjoin('kelas_m as kls', 'kls.id', '=', 'apd.objectkelasfk')
             ->leftJoin('pegawai_m as pg1', 'pg1.id', '=', 'pd.objectpegawaifk')
             ->leftJoin('agama_m as ag', 'ag.id', '=', 'ps.objectagamafk')
+            ->leftJoin('pemakaianasuransi_t as pa', 'pa.noregistrasifk', '=', 'pd.norec')
             ->select('ps.nohp','apd.norec', 'pd.noregistrasi', 'pd.tglregistrasi', 'ps.nocm', 'ps.namapasien', 'ps.tgllahir', 'ru.objectdepartemenfk',
                 'alm.alamatlengkap', 'kps.kelompokpasien', 'ru.namaruangan', 'pg.namalengkap', 'jk.jeniskelamin', 'pd.norec as norec_pd',
                 'pdd.pendidikan', 'pk.pekerjaan','ru.objectdepartemenfk','pd.jenispelayanan',
                 'rk.namarekanan', 'kls.namakelas', 'pd.nocmfk', 'pd.objectkelompokpasienlastfk', 'apd.objectruanganfk', 'apd.objectpegawaifk',
-                'ps.objectjeniskelaminfk', 'apd.objectkelasfk', 'ps.objectgolongandarahfk', 'gd.golongandarah','ps.foto', 'ps.tempatlahir', "pd.statuspasien",
+                'ps.objectjeniskelaminfk', 'apd.objectkelasfk', 'ps.objectgolongandarahfk', 'gd.golongandarah','ps.foto', 'ps.tempatlahir', "pd.statuspasien",'pa.kodedpjp','ps.nobpjs','pa.nosep','pa.tanggalsep',
 //                DB::raw('encode(foto, \'base64\') AS foto'),
                 'pg1.namalengkap as dokterdpjp', 'pg1.id as iddpjp','ps.objectjeniskelaminfk', 'pd.statusschedule as noreservasi', 'apd.skoriq', 'ps.noidentitas as nik', 'sk.suku', 'ag.agama')
             ->where('apd.kdprofile',$idProfile)

@@ -680,13 +680,21 @@ class LaundryController extends ApiController
 //            $strRuangan[] = $epic->id;
 //        }
         $data = \DB::table('strukorder_t as sp')
-            ->JOIN('orderpelayanan_t as op','op.strukorderfk','=','sp.norec')
+            ->leftJOIN('orderpelayanan_t as op','op.strukorderfk','=','sp.norec')
             ->LEFTJOIN('pegawai_m as pg','pg.id','=','sp.objectpegawaiorderfk')
             ->LEFTJOIN('ruangan_m as ru','ru.id','=','sp.objectruanganfk')
             ->LEFTJOIN('ruangan_m as ru2','ru2.id','=','sp.objectruangantujuanfk')
             ->select('sp.norec','sp.tglorder','sp.noorder','sp.jenispermintaanfk','pg.namalengkap',
                 'ru.namaruangan as ruanganasal','ru2.namaruangan as ruangantujuan','sp.keteranganorder',
-                'sp.statusorder','sp.qtyjenisproduk'
+                'sp.statusorder','sp.qtyjenisproduk','sp.keterangankeperluan',
+                \DB::raw("case when sp.keterangankeperluan is NULL then 
+                            case when sp.jenispermintaanfk = 1 then 'Amprahan' 
+                            when  sp.jenispermintaanfk = 2 then 'Transfer' end
+                        else 
+                            case when sp.jenispermintaanfk = 1 then 'Amprahan - Linen Infeksius' 
+                            when  sp.jenispermintaanfk = 2 then 'Transfer - Linen Infeksius'   end                 
+                        end as jeniskirim 
+                    ")
             )
             ->where('sp.kdprofile',$idProfile);
 
@@ -731,12 +739,12 @@ class LaundryController extends ApiController
                 )
             );
             $jeniskirim ='';
-            if ($item->jenispermintaanfk == 1){
-                $jeniskirim ='Amprahan';
-            }
-            if ($item->jenispermintaanfk == 2){
-                $jeniskirim ='Transfer';
-            }
+            // if ($item->jenispermintaanfk == 1){
+            //     $jeniskirim ='Amprahan';
+            // }
+            // if ($item->jenispermintaanfk == 2){
+            //     $jeniskirim ='Transfer';
+            // }
             if ($item->statusorder == 0){
                 $status ='';
             }else if ($item->statusorder == 1){
@@ -749,7 +757,7 @@ class LaundryController extends ApiController
                 'status' => 'Order Laundry',
                 'tglorder' => $item->tglorder,
                 'noorder' => $item->noorder,
-                'jeniskirim' => $jeniskirim,
+                'jeniskirim' =>  $item->jeniskirim,//$jeniskirim,
                 'norec' => $item->norec,
                 'namaruanganasal' => $item->ruanganasal,
                 'namaruangantujuan' => $item->ruangantujuan,
@@ -3216,4 +3224,117 @@ class LaundryController extends ApiController
 
         return $this->respond($result);
     }
+
+    public function saveOrderLaundryInfeksius(Request $request) {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $KdPelayananLaundry = $this->settingDataFixed('KdPelayananLaundry',$idProfile);
+        // $idPegawai = \DB::table('loginuser_sx as lu')            
+        //     ->select(DB::raw("lu.objectpegawaifk"))
+        //     ->where('lu.kdprofile',  $request['pegawaiorderfk']);
+        $idPegawai = \DB::table('loginuser_s as lu')
+            ->select('lu.objectpegawaifk')
+            ->where('lu.id', $request['pegawaiorderfk'])
+            ->get();
+        
+        
+
+        \DB::beginTransaction();
+        try{
+            if ($request['norecorder'] == '') {
+//                if ($request['strukorder']['jenispermintaanfk'] != 1) {
+                    $noOrder = $this->generateCode(new StrukOrder, 'noorder', 14, 'OTRL-' . $this->getDateTime()->format('ym'), $idProfile);
+//                } else {
+//                    $noOrder = $this->generateCode(new StrukOrder, 'noorder', 14, 'OAMP-' . $this->getDateTime()->format('ym'));
+//                }
+                $dataSO = new StrukOrder();
+                $dataSO->norec = $dataSO->generateNewId();
+                $dataSO->kdprofile = $idProfile;
+                $dataSO->statusenabled = true;
+                $dataSO->isdelivered = 0;
+                $dataSO->noorder = $noOrder;
+            }else {
+                $dataSO = StrukOrder::where('norec',$request['norecorder'])->where('kdprofile', $idProfile)->first();
+          
+            }
+            $dataSO->jenispermintaanfk = $request['jenispermintaanfk'];
+            $dataSO->objectkelompoktransaksifk = $KdPelayananLaundry;
+            $dataSO->keteranganorder = $request['keteranganorder'];
+            $dataSO->objectpegawaiorderfk = $idPegawai[0]->objectpegawaifk;//$request['pegawaiorderfk'];
+            $dataSO->qtyjenisproduk = $request['qtyjenisproduk'];
+            $dataSO->qtyproduk = $request['qtyjenisproduk'];
+            $dataSO->objectruanganfk = $request['ruanganfk'];
+            $dataSO->objectruangantujuanfk = $request['ruangantujuanfk'];
+            $dataSO->tglorder = $request['tglorder'];
+            $dataSO->keterangankeperluan = 'Linen Infeksius';
+            $dataSO->statusorder = 1;
+            $dataSO->totalbeamaterai = 0;
+            $dataSO->totalbiayakirim = 0;
+            $dataSO->totalbiayatambahan = 0;
+            $dataSO->totaldiscount = 0;
+            $dataSO->totalhargasatuan = 0;
+            $dataSO->totalharusdibayar = 0;
+            $dataSO->totalpph = 0;
+            $dataSO->totalppn = 0;
+            $dataSO->save();
+
+            $noKirim = $this->generateCodeBySeqTable(new StrukKirim, 'nokirim', 13, 'RL-' . $this->getDateTime()->format('ym'), $idProfile);            
+            $dataSK = new StrukKirim;        
+            $dataSK->norec = $dataSK->generateNewId();
+            $dataSK->nokirim = $noKirim;           
+            $dataSK->kdprofile =$idProfile;
+            $dataSK->statusenabled = true;
+            $dataSK->objectpegawaipengirimfk = $idPegawai[0]->objectpegawaifk;//$request['pegawaiorderfk'];
+            $dataSK->objectruanganasalfk =$request['ruanganfk'];
+            $dataSK->objectruanganfk = $request['ruanganfk'];
+            $dataSK->objectruangantujuanfk = $request['ruangantujuanfk'];
+            $dataSK->objectkelompoktransaksifk = '119';
+            $dataSK->keteranganlainnyakirim =$request['keteranganorder'];
+            $dataSK->qtydetailjenisproduk = 0;
+            $dataSK->qtyproduk =  $request['qtyjenisproduk'];
+            $dataSK->tglkirim = $request['tglorder'];
+            $dataSK->totalbeamaterai = 0;
+            $dataSK->totalbiayakirim = 0;
+            $dataSK->totalbiayatambahan = 0;
+            $dataSK->totaldiscount = 0;
+            $dataSK->totalhargasatuan = 0;
+            $dataSK->totalharusdibayar = 0;
+            $dataSK->totalpph =0;
+            $dataSK->totalppn = 0;
+            // $dataSK->noregistrasifk = $request['strukkirim']['norec_apd'];
+            $dataSK->noorderfk = $dataSO->norec;
+            $dataSK->statuskirim = '-';
+            $dataSK->save();
+
+            
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan Order Berhasil";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMessage,
+                "nokirim" => $dataSO,
+                "as" => 'er@epic',
+            );
+        } else {
+            $transMessage = "Simpan Order Gagal!!";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message"  => $transMessage,
+                "nokirim" => $dataSO,
+                "as" => 'er@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+
+        
+    }
+   
+    
 }

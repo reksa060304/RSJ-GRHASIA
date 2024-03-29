@@ -3209,19 +3209,47 @@ class BridgingBPJSV2Controller extends ApiController
 
             }
 
+            if (isset($request['jenis']) && $request['jenis'] == 'i-care') {
+                $baseURL = $this->getUrlBrigdingBPJS_ICARE();
+                $headers['headers'][0]  = 'Content-Type: application/json';
+                // $headers['headers'][4]  = 'user_key:' . $this->getUserKeyICARE();
+            }
+            if (isset($request['jenis']) && $request['jenis'] == 'eRekamMedis') {
+                $baseURL = $this->urlERekamMedis();
+                $headers['headers'][0]  = 'Content-Type: text/plain';
+                $jsonErekamMedis = $request['data'];
+
+                $key = $headers['cons']['data'] .  $headers['cons']['secretKey'] .$this->getKodeRS();
+
+                $objetoRequest = new \Illuminate\Http\Request();
+                $objetoRequest['nosep'] = $request['data']['request']['noSep'];
+                
+                $getMRBundle = app('App\Http\Controllers\Bridging\BridgingBPJSV2Controller')->getMRBundle($objetoRequest, true);
+                $jsonErekamMedis['request']['dataMR'] = $this->compressGZIP($getMRBundle, $key);
+           
+                $dataJsonSend = json_encode($jsonErekamMedis);
+
+            }
+
             $url =   $baseURL . $request['url'];
   
             $response = $this->curlAPI2($headers['headers'], $dataJsonSend, $url, $methods, null);
 
-            $cekData = array(
-                'request' => array(
-                    'url' => $url,
-                    'headers' =>  $headers['headers'],
-                    'payload' =>$dataJsonSend,
-                    'secretKey' => $headers['cons']['secretKey'],
-                ), 'response' => $response
-                ,'method' => $methods
-            );
+            // $cekData = array(
+            //     'request' => array(
+            //         'url' => $url,
+            //         'headers' =>  $headers['headers'],
+            //         'payload' =>$dataJsonSend,
+            //         'secretKey' => $headers['cons']['secretKey'],
+            //     ), 'response' => $response
+            // );
+
+            if (isset($request['jenis']) && $request['jenis'] == 'eRekamMedis') {
+                $objetoRequest = new \Illuminate\Http\Request();
+                $objetoRequest['nosep'] = $request['data']['request']['noSep'];
+                $objetoRequest['keterangan'] = $response;
+                $this->saveLogMRBundle($objetoRequest);
+            }
             //return $cekData;
          
             if (isset($request['jenis']) && $request['jenis'] == 'antrean') {
@@ -3402,5 +3430,849 @@ class BridgingBPJSV2Controller extends ApiController
         }
 
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function compressGZIP($req, $key){
+     
+        $string = json_encode($req, false);
+        $compressed = gzencode($string, 9);
+        $encrypt_method = 'AES-256-CBC';
+        $encrypt_key = $key; // gabungan consid + secretkey + kodefaskes
+        
+        // hash
+        $key_hash = hex2bin(hash('sha256', $encrypt_key));
+          
+          // iv - encrypt method AES-256-CBC expects 16 bytes - else you will get a warning
+        $iv = substr(hex2bin(hash('sha256', $encrypt_key)), 0, 16);
+        
+        //Data to encrypt 
+        $data = $compressed; 
+        $encrypted_data = openssl_encrypt(base64_encode($data), $encrypt_method, $key_hash, 0, $iv); 
+        return $encrypted_data;
+    }
+    public function decompressGZIP($data, $key){
+     
+        // $data = 'ASA';
+        // $output = false;
+        // $encrypt_method = "AES-256-CBC";
+        // $string =  gzcompress($data, 9);
+        // $key =  hex2bin(hash('sha256', $key));
+        // $iv =  substr(hex2bin(hash('sha256', $key)), 0, 16);
+        // $output = openssl_encrypt($string, $encrypt_method, $key, 0, $iv);
+        
+
+        //     // decrypt
+        // $output = openssl_decrypt($output, $encrypt_method, $key, 0, $iv);
+        // $result = gzuncompress($output);
+
+        // $res['bahan'] = $data;
+        // $res['encrypt'] = $output;
+        // $res['decrypt'] = $result;
+
+      
+        $encrypt_method = 'AES-256-CBC';
+        $encrypt_key = $key; // gabungan consid + secretkey + kodefaskes
+
+        // iv - encrypt method AES-256-CBC expects 16 bytes - else you will get a warning
+        $iv = substr(hex2bin(hash('sha256', $encrypt_key)), 0, 16);
+
+        $key_hash =  hex2bin(hash('sha256', $key));
+        //Data to encrypt 
+        $output = openssl_decrypt($data, $encrypt_method, $key_hash, 0, $iv); 
+ 
+        $encrypted_data = gzuncompress($output);
+        $decrypted_data =  json_decode($encrypted_data);
+
+        
+        return $decrypted_data;
+    }
+    public function getMRBundle(Request $r){
+        $kodePPK = $this->getKodeRS();
+        // $kdProfile = $this->getDataKdProfile($r);
+        $data = DB::table('pemakaianasuransi_t as pa')
+        ->join ('pasiendaftar_t as pd','pd.norec','=','pa.noregistrasifk')
+        ->join ('pasien_m as ps','ps.id','=','pd.nocmfk')
+        ->join ('alamat_m as alm','alm.nocmfk','=','ps.id')
+        ->leftjoin ('ruangan_m as ru','ru.id','=','pd.objectruanganlastfk')
+        ->leftjoin ('asuransipasien_m as apn','apn.id','=','pa.objectasuransipasienfk')
+        ->leftjoin ('rekanan_m as rek2','rek2.id','=','pd.objectrekananfk')
+        ->leftjoin ('hubunganpesertaasuransi_m as hpa','hpa.id','=','apn.objecthubunganpesertafk')
+        ->leftjoin ('kelas_m as kls','kls.id','=','apn.objectkelasdijaminfk')
+        ->leftjoin ('diagnosa_m as dg','dg.id','=','pa.objectdiagnosafk')
+        ->leftjoin ('kelompokpasien_m as kps','kps.id','=','pd.objectkelompokpasienlastfk')
+        ->leftjoin ('asalrujukan_m as asl','asl.id','=','pa.asalrujukanfk')
+        ->leftjoin ('pegawai_m as pg','pg.id','=','pd.objectpegawaifk')
+        ->leftjoin ('desakelurahan_m as ds','ds.id','=','alm.objectdesakelurahanfk')
+        ->select('pa.norec','apn.id as norec_ap','pd.noregistrasi','pa.nokepesertaan','apn.namapeserta',
+            'apn.noasuransi','apn.tgllahir','apn.noidentitas','apn.alamatlengkap',
+            'apn.objecthubunganpesertafk','pa.nosep','pa.tanggalsep',
+            'apn.objectkelasdijaminfk','kls.namakelas','pa.catatan','pa.norujukan',
+            'apn.kdprovider','apn.nmprovider','pa.tglrujukan','pa.objectdiagnosafk',
+            'dg.kddiagnosa','dg.namadiagnosa','pa.lakalantas','pa.ppkrujukan','pa.lokasilakalantas','pa.penjaminlaka',
+            'pd.objectkelompokpasienlastfk','pd.objectrekananfk','rek2.namarekanan','kps.kelompokpasien','apn.kdpenjaminpasien',
+            'apn.jenispeserta','hpa.hubunganpeserta','apn.tgllahir','pa.cob','pa.katarak','pa.keteranganlaka',
+            'pa.tglkejadian','pa.suplesi','pa.nosepsuplesi','pa.kdpropinsi','pa.namapropinsi','pa.kdkabupaten',
+            'pa.namakabupaten','pa.kdkecamatan','pa.namakecamatan','pa.nosuratskdp','pa.kodedpjp','pa.namadpjp',
+            'pa.asalrujukanfk','asl.asalrujukan','pa.kodedpjpmelayani','pa.namadjpjpmelayanni',
+            'pa.klsrawatnaik', 'pa.pembiayaan', 'pa.penanggungjawab','pa.tujuankunj','pa.flagprocedure','pa.kdpenunjang',
+            'pa.assesmentpel','pa.tglcreate','pa.statuskunjungan','pa.poliasalkode','pa.politujuankode',
+            'ru.objectdepartemenfk','pd.objectpegawaifk',
+            'pg.tgllahir as tgllahir_prac','pg.objectjeniskelaminfk as jeniskelaminfk_prac',
+            'pg.namalengkap as namalengkap_prac', 'pg.noidentitas as noidentitas_prac',
+            'ps.objectjeniskelaminfk as jeniskelaminfk_pas','ps.nohp','ps.noidentitas','ps.tgllahir as tgllahir_pas',
+            'alm.alamatlengkap', 'alm.kodepos','ds.namadesakelurahan','ps.namapasien',
+            'pd.tglregistrasi','pd.tglpulang','ps.nocm'
+            )
+        ->where('pa.nosep',$r['nosep'])
+        // ->where('pa.kdprofile', $kdProfile)
+        ->first();
+        $icd10 =  collect(DB::select(" 
+                SELECT 
+                ps.namapasien
+                ,pd.noregistrasi
+                ,dg.kddiagnosa
+                ,dg.namadiagnosa
+                ,pd.noregistrasi
+                ,ddp.norec
+                ,ddp.tglinputdiagnosa
+                FROM pasiendaftar_t as pd
+                join pasien_m as ps on ps.id=pd.nocmfk
+                join antrianpasiendiperiksa_t as apd on apd.noregistrasifk=pd.norec
+                JOIN detaildiagnosapasien_t as ddp on ddp.noregistrasifk=apd.norec
+                join diagnosa_m as dg on dg.id=ddp.objectdiagnosafk 
+                where pd.noregistrasi='$data->noregistrasi'
+        "));
+        $icd9 = collect(DB::select("
+                SELECT
+                pd.noregistrasi,
+                pd.tglregistrasi,
+                apd.objectruanganfk,
+             
+                apd.norec AS norec_apd,
+                ddt.objectdiagnosatindakanfk,
+                dt.kddiagnosatindakan,
+                dt.namadiagnosatindakan,
+                dtp.norec AS norec_diagnosapasien,
+                ddt.norec AS norec_detaildpasien,
+                dt.*,
+                ddt.keterangantindakan,
+                pg.namalengkap,
+                ddt.tglinputdiagnosa,
+                ps.namapasien
+            
+            FROM
+                pasiendaftar_t AS pd
+                INNER JOIN pasien_m AS ps ON ps.id = pd.nocmfk
+                INNER JOIN antrianpasiendiperiksa_t AS apd ON apd.noregistrasifk = pd.norec
+                INNER JOIN diagnosatindakanpasien_t AS dtp ON dtp.objectpasienfk = apd.norec
+                INNER JOIN detaildiagnosatindakanpasien_t AS ddt ON ddt.objectdiagnosatindakanpasienfk = dtp.norec
+                INNER JOIN diagnosatindakan_m AS dt ON dt.id = ddt.objectdiagnosatindakanfk
+                LEFT JOIN pegawai_m AS pg ON pg.id = ddt.objectpegawaifk 
+                 WHERE  pd.noregistrasi ='$data->noregistrasi'
+            "));
+
+   
+        $objetoRequest = new \Illuminate\Http\Request();
+        $objetoRequest['id_dept'] = $data->objectdepartemenfk;
+        $objetoRequest['smart_claim'] = true;
+        $Organization = app('App\Http\Controllers\Bridging\IHSController')->Organization($objetoRequest, true);
+        // $Organization['id'] = $kodePPK.'-'.substr(Uuid::generate(), 0, 36);
+
+        $Practitioner = [
+            "resourceType" => "Practitioner",
+            "id" => $kodePPK.'-'.substr(Uuid::generate(), 0, 36),
+            "birthDate" => $data->tgllahir_prac,
+            "gender" => $data->jeniskelaminfk_prac  == 1 ? 'male' : "female",
+            "identifier" => [
+                [
+                    "system" => "https://fhir.kemkes.go.id/id/nakes-his-number",
+                    "value" => $data->objectpegawaifk
+                ],
+                [
+                    "system" => "https://fhir.kemkes.go.id/id/nik",
+                    "use" => "official",
+                    "value" =>  $data->noidentitas_prac,
+                ]
+            ],
+            "meta" => [
+                "lastUpdated" => "2023-08-31T01:05:06.281570+00:00",
+                "versionId" => "MTY5MzQ0MzkwNjI4MTU3MDAwMA"
+            ],
+            "name" => [
+                [
+                    "text" =>  $data->namalengkap_prac,
+                    "use" => "official"
+                ]
+            ],
+            "qualification" => [
+                [
+                    "code" => [
+                        "coding" => [
+                            [
+                                "code" => "STR-KKI",
+                                "display" => "Surat Tanda Registrasi Dokter",
+                                "system" => "https://terminology.kemkes.go.id/v1-0302"
+                            ]
+                        ]
+                    ],
+                    "identifier" => [
+                        [
+                            "system" => "https://fhir.kemkes.go.id/id/str-kki-number",
+                            "value" => ""
+                        ]
+                    ],
+                    "period" => [
+                        "end" => "",
+                        "start" =>""
+                    ]
+                ],
+                [
+                    "code" => [
+                        "coding" => [
+                            [
+                                "code" => "STR-KKI",
+                                "display" => "Surat Tanda Registrasi Dokter",
+                                "system" => "https://terminology.kemkes.go.id/v1-0302"
+                            ]
+                        ]
+                    ],
+                    "identifier" => [
+                        [
+                            "system" => "https://fhir.kemkes.go.id/id/str-kki-number",
+                            "value" => ""
+                        ]
+                    ],
+                    "period" => [
+                        "end" => "",
+                        "start" => ""
+                    ]
+                ]
+            ]
+        ];
+      
+
+        $Patient = [
+            "resourceType" => "Patient",
+            "id" => $kodePPK.'-'.substr(Uuid::generate(), 0, 36),
+            "identifier" => [
+                [
+                    "use" => "usual",
+                    "type" => [
+                    "coding" => [
+                        [
+                            "system" => "http://hl7.org/fhir/v2/0203",
+                            "code" => "MR"
+                        ]
+                    ]
+                    ],
+                    "value" => $data->nocm,
+                    "assigner" => [
+                    "display" => $Organization['partOf']['display']
+                    ]
+                ],
+                [
+                    "use" => "official",
+                    "type" => [
+                    "coding" => [
+                        [
+                            "system" => "http://hl7.org/fhir/v2/0203",
+                            "code" => "MB"
+                        ]
+                    ]
+                    ],
+                    "value" => $data->nokepesertaan,
+                    "assigner" => [
+                    "display" => "BPJS KESEHATAN"
+                    ]
+                ],
+                [
+                    "use" => "official",
+                    "type" => [
+                    "coding" => [
+                        [
+                            "system" => "http://hl7.org/fhir/v2/0203",
+                            "code" => "NNIDN"
+                        ]
+                    ]
+                    ],
+                    "value" =>  $data->noidentitas,
+                    "assigner" => [
+                    "display" => "KEMENDAGRI"
+                    ]
+                ]
+            ],
+            "active" => true,
+            "name" => [
+                [
+                    "use" => "official",
+                    "text" => $data->namapasien
+                ]
+            ],
+            "maritalStatus" => [
+                "coding" => [
+                    [
+                    "system" => "http://hl7.org/fhir/v3/MaritalStatus",
+                    "code" => ""
+                    ]
+                ]
+            ],
+            "telecom" => [
+                [
+                    "system" => "phone",
+                    "value" => "",
+                    "use" => "work"
+                ],
+                [
+                    "system" => "phone",
+                    "value" => $data->nohp,
+                    "use" => "mobile"
+                ],
+                [
+                    "system" => "phone",
+                    "value" => "TDK ADA",
+                    "use" => "home"
+                ]
+            ],
+            "gender" => $data->jeniskelaminfk_pas ==1 ?  "male":"female",
+            "birthDate" => $data->tgllahir_pas,
+            "deceasedBoolean" => false,
+            "address" => [
+                [
+                    "line" => [
+                      $data->alamatlengkap
+                    ],
+                    "city" => "",
+                    "district" => $data->namadesakelurahan,
+                    "state" => "",
+                    "postalCode" => $data->kodepos,
+                    "text" =>   $data->alamatlengkap,
+                    "use" => "home",
+                    "type" => "both"
+                ]
+            ],
+            "managingOrganization" => [
+                "reference" => "Organization/".explode('/',$Organization['partOf']['reference'])[1],
+                "display" => $Organization['partOf']['display']
+            ]
+         
+        ];
+        $Condition = [];
+        $Procedure = [];
+        if($data->kddiagnosa != null){
+            $Condition []= [
+   
+                "resourceType" => "Condition",
+                "id" => $kodePPK.'-'.substr(Uuid::generate(), 0, 36),
+                "clinicalStatus" => "active",
+                "verificationStatus" => "confirmed",
+                "category" => [
+                    [
+                        "coding" => [
+                        [
+                            "system" => "http://hl7.org/fhir/condition-category",
+                            "code" => "encounter-diagnosis",
+                            "display" => "Encounter Diagnosis"
+                        ]
+                        ]
+                    ]
+                ],
+                "code" => [
+                    "coding" => [
+                        [
+                        "system" => "http://hl7.org/fhir/sid/icd-10",
+                        "code" => $data->kddiagnosa,
+                        "display" => $data->namadiagnosa,
+                        ]
+                    ],
+                    "text" => $data->namadiagnosa,
+                ],
+                "subject" => [
+                    "reference" => "Patient/".$Patient['id'],
+                ],
+                "onsetDateTime" => $data->tanggalsep
+      
+            ];
+        }
+      
+        if(count($icd10)> 0){
+         foreach($icd10 as $d){
+            $Condition []= [
+                "resourceType" => "Condition",
+                "id" => $kodePPK.'-'.substr(Uuid::generate(), 0, 36),
+                "clinicalStatus" => "active",
+                "verificationStatus" => "confirmed",
+                "category" => [
+                    [
+                        "coding" => [
+                        [
+                            "system" => "http://hl7.org/fhir/condition-category",
+                            "code" => "encounter-diagnosis",
+                            "display" => "Encounter Diagnosis"
+                        ]
+                        ]
+                    ]
+                ],
+                "code" => [
+                    "coding" => [
+                        [
+                        "system" => "http://hl7.org/fhir/sid/icd-10",
+                        "code" => $d->kddiagnosa,
+                        "display" => $d->namadiagnosa,
+                        ]
+                    ],
+                    "text" => $d->namadiagnosa,
+                ],
+                "subject" => [
+                    "reference" => "Patient/".$Patient['id'],
+                ],
+                "onsetDateTime" => $d->tglinputdiagnosa
+      
+            ];
+         }   
+        }
+       
+        $conEncounter = [];
+        foreach($Condition as $cin){
+            $conEncounter []=  [
+                "condition" => [
+                   "reference" => "Condition/". $cin['id'],
+                   "role" => [
+                      "coding" => [
+                         [
+                            "system" => "http://hl7.org/fhir/diagnosis-role",
+                            "code" => "DD",
+                            "display" => "Discharge Diagnosis"
+                         ]
+                      ]
+                   ],
+                   "rank" => 1
+                ]
+          ];
+         
+        }
+    
+        $Encounter = [
+     
+            "resourceType" => "Encounter",
+            "id" => $kodePPK.'-'.substr(Uuid::generate(), 0, 36),
+            "identifier" => [
+               [
+                  "system" => "http://api.bpjs-kesehatan.go.id:8080/Vclaim-rest/SEP/",
+                  "value" => $r['nosep']
+               ]
+            ],
+            "subject" => [
+               "reference" => "Patient/".$Patient['id'],
+               "display" => $Patient['name'][0]['text'],
+               "noSep" =>$r['nosep']
+            ],
+            "class" => [
+               "system" => "http://hl7.org/fhir/v3/ActCode",
+               "code" =>  $data->objectdepartemenfk == 16?  'IMP' : 'AMB',
+               "display" =>  $data->objectdepartemenfk == 16?   "inpatient encounter" :  "ambulatory"
+            ],
+            "incomingReferral" => [
+               [
+                  "identifier" => [
+                     [
+                        "system" => "nomor_rujukan_bpjs",
+                        "value" => $data->norujukan
+                     ],
+                     [
+                        "system" => "nomor_rujukan_internal_rs",
+                        "value" => $data->nosuratskdp
+                     ]
+                  ]
+               ]
+            ],
+            "reason" => [
+               [
+                  "coding" => [
+                     [
+                        "code" => $data->kddiagnosa,
+                        "display" =>  $data->namadiagnosa,
+                        "system" => "http://hl7.org/fhir/sid/icd-10"
+                     ]
+                  ],
+                  "text" =>  $data->namadiagnosa
+               ]
+            ],
+            "diagnosis" => $conEncounter,
+            "hospitalization" => [
+               "dischargeDisposition" => [
+                  [
+                     "coding" => [
+                        [
+                           "code" => "home",
+                           "display" => "Home",
+                           "system" => "http://hl7.org/fhir/discharge-disposition"
+                        ]
+                     ]
+                  ]
+               ]
+            ],
+            "period" => [
+               "end" => $data->tglregistrasi,
+               "start" => $data->tglpulang
+            ],
+            "status" => "finished"
+            
+       
+       ];
+     
+        $Procedure = [];
+        if(count($icd9)> 0){
+            foreach($icd9 as $d){
+               
+                $Procedure [] =
+                        [
+                            "resourceType" => "Procedure",
+                            "id" =>  $kodePPK.'-'.substr(Uuid::generate(), 0, 36),
+                            "status" => "completed",
+                            'code' =>
+                            array(
+                                'coding' =>
+                                array(
+                                    0 =>
+                                    array(
+                                        'system' => 'http://hl7.org/fhir/sid/icd-9-cm',
+                                        'code' =>  $d->kddiagnosatindakan,
+                                        'display' => $d->namadiagnosatindakan,
+                                    ),
+                                ),
+                            ),
+                            "subject" => [
+                                "reference" => "Patient/".$Patient['id'],
+                                "display" => $Patient['name'][0]['text'],
+                            ],
+                            "context" => [
+                                "reference" =>
+                                    "Encounter/".$Encounter['id'],
+                                "display" => $Patient['name'][0]['text']." encounter on ".$data->tglregistrasi,
+                            ],
+                            "performedPeriod" => [
+                                "start" => $d-> tglinputdiagnosa,
+                                "end" => $d-> tglinputdiagnosa,
+                            ],
+                            "performer" => [
+                                [
+                                    "actor" => [
+                                        "reference" =>
+                                            "Practitioner/". $kodePPK.'-'.substr(Uuid::generate(), 0, 36),
+                                        "display" => $d->namalengkap,
+                                    ],
+                                ],
+                            ],
+                            'note' =>
+                            array(
+                            
+                                array(
+                                    'text' => $d->keterangantindakan,
+                                ),
+                            )
+                ];
+                
+            }
+        }
+     
+
+        $medication  =  collect(DB::select(" 
+
+            SELECT
+            sr.noresep,  
+            pp.hargasatuan,
+            pp.stock,
+            apd.objectruanganfk,
+            ru.namaruangan,
+            pp.rke,
+            pp.jeniskemasanfk,
+            pp.aturanpakai,
+            pp.routefk,
+            pp.produkfk,
+            pp.produkfk as idproduk,
+            pr.namaproduk,
+            pp.nilaikonversi,
+            pr.objectsatuanstandarfk,
+            ss.satuanstandar,
+            pp.satuanviewfk,
+            pp.jumlah,
+            pp.hargadiscount,
+            pp.dosis,
+            pp.jenisobatfk,
+            pp.jasa,
+            pp.hargajual,
+            pp.hargasatuan,
+            pp.strukterimafk,
+            pp.qtydetailresep,
+            pp.ispagi,
+            pp.issiang,
+            pp.ismalam,
+            pp.issore,
+            pr.kekuatan,
+            pp.keteranganpakai,
+            pp.iskronis,
+            pp.satuanresepfk,
+          
+            pp.tglkadaluarsa 
+            ,case when ru.objectdepartemenfk=16 then  'inpatient' else 'outpatient'  end as code_class
+            ,case when ru.objectdepartemenfk=16 then  'Inpatient' else 'Outpatient'  end as name_class
+            ,ru.namaruangan
+       
+            ,pg.namalengkap  as penulisresep
+            ,ru2.namaruangan as ihs_apotik_display
+            ,sr.tglresep
+            ,pp.norec as norec_pp
+        FROM
+            strukresep_t AS sr
+            INNER JOIN pelayananpasien_t AS pp ON pp.strukresepfk = sr.norec
+            INNER JOIN antrianpasiendiperiksa_t AS apd ON apd.norec = pp.noregistrasifk
+            INNER JOIN ruangan_m AS ru ON ru.id = apd.objectruanganfk
+            INNER JOIN ruangan_m AS ru2 ON ru2.id = sr.ruanganfk
+            INNER JOIN produk_m AS pr ON pr.id = pp.produkfk
+            INNER JOIN satuanstandar_m AS ss ON ss.id = pr.objectsatuanstandarfk
+            inner join pasiendaftar_t as pd on pd.norec=apd.noregistrasifk
+            left join pegawai_m as pg on pg.id=sr.penulisresepfk
+        WHERE
+             pd.noregistrasi = '$data->noregistrasi'
+            and sr.statusenabled=true
+            and pp.strukresepfk is not null
+       
+       "));
+        $MedicationRequest = [];
+        foreach($medication as $k => $m){
+             $MedicationRequest [] = 
+                [
+                    "resourceType" => "MedicationRequest",
+                    "identifier" => [
+                        "system" => "https://transmedic.co.id/no_resep",
+                        "value" =>  $m->noresep .'-'. ($k+1),
+                    ],
+                    "subject" => [
+              
+                            "reference" => "Patient/".$Patient['id'],
+                            "display" => $Patient['name'][0]['text'],
+                        
+                    ],
+                    "intent" => "final",
+                    "medicationCodeableConcept" => [
+                        "coding" => [
+                            [
+                                "code" => $m->produkfk,
+                                "system" => "https://transmedic.co.id/drug",
+                            ],
+                        ],
+                        "text" => $m->namaproduk,
+                    ],
+                    "dosageInstruction" => [
+                        [
+                            "doseQuantity" => [
+                                "code" => $m->satuanstandar,
+                                "system" => "http://unitsofmeasure.org",
+                                "unit" =>$m->satuanstandar,
+                                "value" => $m->jumlah,
+                            ],
+                            // "route" => [
+                            //     "coding" => [
+                            //         [
+                            //             "code" => "002",
+                            //             "display" => "INTRAVENOUS",
+                            //             "system" => "http://snomed.info/sct",
+                            //         ],
+                            //     ],
+                            // ],
+                            "timing" => [
+                                "repeat" => [
+                                    "frequency" =>  $m->aturanpakai,
+                                    "period" => 1,
+                                    "periodUnit" => "na",
+                                ],
+                            ],
+                            "additionalInstruction" => [["text" => $m->aturanpakai]],
+                        ],
+                    ],
+                    "reasonCode" => [
+                        [
+                            "coding" => [
+                                ["code" => "", "display" => "", "system" => ""],
+                            ],
+                            "text" => "",
+                        ],
+                    ],
+                    "requester" => [
+                        "agent" => [
+                            "display" => $m->penulisresep,
+                            "reference" =>
+                                "Practitioner/". $kodePPK.'-'.substr(Uuid::generate(), 0, 36),
+                        ],
+                        "onBehalfOf" => [
+                            "reference" =>
+                                "Organization/".explode('/',$Organization['partOf']['reference'])[1],
+                        ],
+                    ],
+                    "meta" => ["lastUpdated" =>  $m->tglresep],
+               
+            
+                ];
+        }
+        $expertise = \DB::table('pelayananpasien_t as pp')
+            ->JOIN('antrianpasiendiperiksa_t as apd', 'apd.norec', '=', 'pp.noregistrasifk')
+            ->JOIN('pasiendaftar_t as pd', 'pd.norec', '=', 'apd.noregistrasifk')
+            ->JOIN('ruangan_m as ru', 'ru.id', '=', 'apd.objectruanganfk')
+            ->JOIN('produk_m as pr', 'pr.id', '=', 'pp.produkfk')
+            ->join('hasilradiologi_t as hr','hr.pelayananpasienfk','=','pp.norec')
+            ->join('pegawai_m as pg','hr.pegawaifk','=','pg.id')
+            ->select(
+                DB::raw("
+                to_char(pp.tglpelayanan,'dd-MM-yyyy') as tgllayanan,
+                to_char(pp.tglpelayanan,'HH:mm') as jamlayanan,pp.tglpelayanan as tanggal, pp.jumlah,
+                ru.namaruangan,pd.noregistrasi, pd.tglregistrasi,hr.norec,hr.nofoto,
+                hr.keterangan as ekspertise,pr.namaproduk,pr.id as produkfk,pg.namalengkap as dokter")
+            )
+            ->where('pd.noregistrasi', $data->noregistrasi )
+            ->get();
+        $DiagnosticReport = [];
+  
+        foreach($expertise as $ex){
+            $DiagnosticReport [] = [
+                "resourceType" => "DiagnosticReport",
+                "id" =>  $kodePPK.'-'.substr(Uuid::generate(), 0, 36),
+                "subject" => [
+                    "reference" => "Patient/".$Patient['id'],
+                    "display" => $Patient['name'][0]['text'],
+                    "noSep" =>$r['nosep']
+                ],
+                "category" => [
+                    "coding" => [
+                        "system" => "http://hl7.org/fhir/v2/0074",
+                        "code" => "RAD",
+                        "display" => "Radiology",
+                    ],
+                ],
+                "status" => "final",
+                "performer" => [
+                    [
+                        "reference" =>
+                            "Organization/".$kodePPK.'-'.substr(Uuid::generate(), 0, 36),
+                        "display" => $ex->namaruangan,
+                    ],
+                ],
+                "result" => [
+                    [
+                        "resourceType" => "Observation",
+                        "id" => $ex->norec,
+                        "status" => "final",
+                       
+                        "issued" => $ex->tanggal,
+                        "effectiveDateTime" =>$ex->tanggal,
+                        "code" => [
+                            "coding" => [
+                                // "system" => "http://snomed.info/sct",
+                                "system" => "http://transmedic.co.id/radiologi_id",
+                                "code" => $ex->produkfk,
+                                "display" =>  $ex->namaproduk,
+                            ],
+                            "text" =>  $ex->namaproduk,
+                        ],
+                        "performer" => [
+                            "reference" =>
+                                "Practitioner/".$kodePPK.'-'.substr(Uuid::generate(), 0, 36),
+                            "display" => $ex->dokter,
+                        ],
+                        "image" => [
+                            [
+                                "comment" => $ex->nofoto,
+                                "link" => ["reference" => "", "display" => ""],
+                            ],
+                        ],
+                        "conclusion" =>
+                        $ex->ekspertise,
+                    ],
+                ],
+                 
+            ];
+    
+        }
+      
+        $bundle = [
+            "resourceType" => "Bundle",
+            "id" => $kodePPK.'-'.substr(Uuid::generate(), 0, 36),
+            "meta" => [
+                "lastUpdated" => date('Y-m-d H:i:s')
+            ],
+            "identifier" => [
+                "system" => "sep", 
+                "value" => $r['nosep']
+            ],
+            "type" => "document",
+            "entry" => [
+                array(
+                    "resource" => $Organization
+                ),
+               
+                array(
+                    "resource" => $Patient
+                ),
+              
+                array(
+                    "resource" => $Practitioner
+                ),
+              
+                array(
+                    "resource" => $Condition
+                ),
+                array(
+                    "resource" => $Encounter
+                ),
+                array(
+                    "resource" => $Procedure
+                ),
+                array(
+                    "resource" => $MedicationRequest
+                ),
+                array(
+                    "resource" => $DiagnosticReport
+                ),
+                // array(
+                //     "resource" => $Composition
+                // ),
+                // array(
+                //     "resource" => $Device
+                // ),
+                
+            ],
+        ];
+
+        foreach($bundle['entry']  as $k =>  $bun){
+            if(count($bun['resource']) == 0 || $bun['resource'] == null){
+                 array_splice( $bundle['entry'],$k);
+            }
+         }
+        return $bundle;
+    }
+    public function saveLogMRBundle(Request $request){
+        DB::beginTransaction();
+        try{
+            $data = DB::table('loginuser_s')->where('id', $this->getCurrentLoginID())->first();
+            $kdProfile = $data->kdprofile;
+
+            $newId = LoggingUser::max('id');
+            $newId = $newId +1;
+            $logUser = new LoggingUser();
+            $logUser->id = $newId;
+            $logUser->norec = $logUser->generateNewId();
+            $logUser->kdprofile= $kdProfile;
+            $logUser->statusenabled=true;
+            $logUser->jenislog = 'SMART CLAIM';
+            $logUser->noreff = $request['nosep'];
+            $logUser->referensi= 'nomor sep';
+            $logUser->keterangan= 'SMART CLAIM No SEP : '.$request['nosep'] .' | '. json_encode($request['keterangan']);
+            $logUser->objectloginuserfk = $this->getCurrentLoginID();
+            $logUser->tanggal = date('Y-m-d H:i:s');
+            $logUser->save();
+            DB::commit();
+       }catch(\Exception $e){
+            DB::rollBack();
+          
+       }
     }
 }

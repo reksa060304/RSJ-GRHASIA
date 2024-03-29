@@ -721,8 +721,16 @@ define(['initialize'], function (initialize) {
                     5: '',
                     6: ''
                 }
-                cacheHelper.set('PenerimaanLaundryCtrl', chacePeriode);
-                $state.go('PenerimaanLaundry')
+                if ($scope.dataSelected.keterangan == 'Order Laundry Infeksius') {
+                    cacheHelper.set('KirimBarangInfeksiusCtrl', chacePeriode);
+                    $state.go('KirimBarangInfeksius')
+                }
+                else 
+                {
+                    cacheHelper.set('PenerimaanLaundryCtrl', chacePeriode);
+                    $state.go('PenerimaanLaundry')
+                };
+               
             }
             $scope.cuciLinen = function () {
                 if ($scope.dataSelected == undefined) {

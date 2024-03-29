@@ -1321,6 +1321,10 @@
         {
             "nameDep": "EntryAnggaranCtrl",
             "urlDep": "module/Perencanaan/EntryAnggaranCtrl"
+        },        
+        {
+            "nameDep": "KirimBarangInfeksiusCtrl",
+            "urlDep": "module/Laundry/KirimBarangInfeksiusCtrl"
         }
     ]
 }

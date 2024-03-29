@@ -608,6 +608,59 @@ define(['initialize'], function (initialize) {
 
             ];
 
+            $scope.Infeksius = function () {
+			
+				$scope.popUpInfeksius.center().open();
+				
+			}
+
+            $scope.saveInfeksius = function () {
+                if ($scope.item.ruangan == undefined ) {
+                    toastr.error('Ruangan Pemesan Harus di Isi')
+                    return
+                }
+                if ($scope.item.jumlah == undefined ) {
+                    toastr.error('Jumlah Harus di Isi')
+                    return
+                }
+                var keterangan = 'Order Laundry';
+                if ($scope.item.Keterangan != undefined ) {
+                    keterangan = $scope.item.Keterangan
+                }
+                var strukorder = {
+                    norecorder: norecOrder,
+                    pegawaiorderfk: medifirstService.getUserLogin().id,
+                    ruanganfk: $scope.item.ruangan.id,
+                    ruangantujuanfk: $scope.item.ruanganTujuan.id,
+                    jenispermintaanfk: $scope.item.jenisKirim.id,
+                    keteranganorder: 'Order Laundry Infeksius',
+                    qtyjenisproduk: $scope.item.jumlah,
+                    tglorder: moment($scope.item.tglAwal).format('YYYY-MM-DD HH:mm:ss'),
+                }
+                medifirstService.post('laundry/save-order-laundry-ruangan-infeksius', strukorder).then(function (e) {
+                        $scope.item.noKirim = e.data.nokirim
+                        norecCetak = $scope.item.noKirim;
+                        $scope.popUpInfeksius.close();
+                        BerishkanInfeksius()
+                       
+                    
+                    },function(error){
+                        $scope.saveShow = true;
+                    })
+             				
+                
+			}
+
+            $scope.batalInfeksius = function () {
+                BerishkanInfeksius()
+				$scope.popUpInfeksius.close();
+			}
+            function BerishkanInfeksius() {
+                $scope.item.ruangan = undefined
+                $scope.item.jumlah = undefined			
+			};
+
+        
             ////////////////////////////////////////           
         }
     ]);

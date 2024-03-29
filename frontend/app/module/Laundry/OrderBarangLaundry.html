@@ -199,15 +199,16 @@
             </div>
             <div class="grid_3"></div>
             <div class="grid_6">
-                <div class="grid_6">
+                <div class="grid_2" style="margin-top: 15px">
+                    <button class="c-button" ng-click="Infeksius()">Infeksius</button>
                 </div>
-                <div class="grid_2" style="margin-top: 22px">
+                <div class="grid_2" style="margin-top: 15px">
                     <button class="c-button" ng-click="simpan()" ng-show='saveShow'>Simpan</button>
                 </div>
-                <div class="grid_2" style="margin-top: 22px">
+                <div class="grid_2" style="margin-top: 15px">
                     <button class="c-button" ng-click="Batal()">Batal</button>
                 </div>
-                <div class="grid_2" style="margin-top: 22px">
+                <div class="grid_2" style="margin-top: 15px">
                     <button class="c-button" ng-click="kembali()">Kembali</button>
                 </div>
             </div>
@@ -278,6 +279,63 @@
         &nbsp;
         <input type="button" class="confirm_yes k-button" value="Ya" style="width: 70px" ng-click="CetakAh()" />
     </div>
+    </div>
 </div>
 </div>
+
+<div kendo-window="popUpInfeksius" k-title="'Permintaan Laundry Infeksius'" k-width="850"
+    k-height="200" k-visible="false" k-on-open="win2visible = true" k-on-close="win2visible = false">
+    <div class="panel panel-default container_12" style="padding: 0px 10px;">
+        <div class="grid_12">
+            <div class="grid_3">
+                <div class="grid_12">
+                    <label c-label item="item" c-label-text="Tanggal Order"></label>
+                </div>
+                <div class="grid_12 padDatePicker">
+                    <input style="width: 100%" k-ng-model="item.tglAwal" kendo-date-picker k-max="now"
+                        placeholer="dd-MM-yyyy HH:mm" k-format="'dd-MM-yyyy HH:mm'" />
+                </div>
+            </div>
+            <div class="grid_3">
+                <div class="grid_12">
+                    <label c-label item="item" c-label-text="Ruangan Pemesan"></label>
+                </div>
+
+                <div class="grid_12">
+                    <input style="width: 100%;" kendo-combo-box k-ng-model="item.ruangan"
+                        k-data-text-field="'namaruangan'" k-data-value-field="'id'" k-filter="'contains'"
+                        k-auto-bind="false" k-data-source="listRuangan" k-on-change='getDataCombo()' />
+                </div>
+            </div>
+            <div class="grid_3">
+                <div class="grid_12">
+                    <label c-label item="item" c-label-text="Ruangan Tujuan"></label>
+                </div>
+
+                <div class="grid_12">
+                    <input style="width: 100%;" kendo-combo-box k-ng-model="item.ruanganTujuan"
+                        k-data-text-field="'namaruangan'" k-data-value-field="'id'" k-filter="'contains'"
+                        k-auto-bind="false" k-data-source="listRuanganTujuan" k-on-change='getSatuan()' />
+                </div>
+            </div>
+            <div class="grid_3">
+                <div class="grid_12">
+                    <label c-label item="item" c-label-text="Jumlah"></label>
+                </div>
+                <div class="grid_12">
+                    <input c-text-box type="input" style="text-align: right" filter="" class="k-textbox"
+                        ng-model="item.jumlah" />
+                </div>
+            </div>
+        </div>
+        <div class="grid_12">
+            <div class="k-edit-buttons  k-state-default pull-right" style="margin-top:10px">
+                <button class="k-button k-button-icontext k-primary k-grid-update"
+                    ng-click="saveInfeksius()"><span
+                        class="k-icon k-update"></span>Simpan</button>
+                <button class="k-button  k-button-icontext" ng-click="batalInfeksius()"><span
+                        class="k-icon k-cancel"></span>Batal</button>
+            </div>
+        </div>
+    </div>
 </div>

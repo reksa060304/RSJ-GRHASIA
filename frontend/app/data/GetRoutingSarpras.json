@@ -6534,5 +6534,25 @@
         "define": "MedifirstService"
       }
     ]
+  },
+  {
+    "name": "KirimBarangInfeksius",
+    "url": "/S2lyaW1CYXJhbmdJbmZla3NpdXM==",
+    "templateurl": "module/Laundry/KirimBarangInfeksius.html",
+    "controller": "KirimBarangInfeksiusCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
   }
 ]

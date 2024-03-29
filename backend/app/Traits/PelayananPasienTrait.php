@@ -429,4 +429,46 @@ Trait PelayananPasienTrait
             ->where('kdprofile',$this->getKdProfile())->first();
         return $set->nilaifield;
     }
+
+    protected function getUrlBrigdingBPJS_ICARE(){
+        $statusBridgingProduction = SettingDataFixed::where('namafield', 'isBridgingProduction')->first();
+        if(!empty($statusBridgingProduction) && $statusBridgingProduction->nilaifield == 'false'){
+            $set = SettingDataFixed::where('namafield', 'linkBPJS')->first();
+            $rep =  str_replace('vclaim-rest-dev/','ihs_dev/',$set->nilaifield);
+           
+        }else{
+            $set = SettingDataFixed::where('namafield', 'linkBPJSV1.1')->first();
+            $rep =  str_replace('vclaim-rest/','wsihs/',$set->nilaifield);
+        }
+     
+        return $rep;
+    }
+    protected function getUserKeyICARE(){
+        $set = SettingDataFixed::where('namafield', 'userKeyICare')->first();
+        return $set->nilaifield;
+    }
+    protected function getUrlBrigdingeRekamMedis(){
+        $statusBridgingProduction = SettingDataFixed::where('namafield', 'isBridgingProduction')->first();
+        if(!empty($statusBridgingProduction) && $statusBridgingProduction->nilaifield == 'false'){
+            $set = SettingDataFixed::where('namafield', 'linkBPJS')->first();
+            $rep =  str_replace('vclaim-rest-dev/','erekammedis_dev/',$set->nilaifield);
+           
+        }else{
+            $set = SettingDataFixed::where('namafield', 'linkBPJSV1.1')->first();
+            $rep =  str_replace('vclaim-rest/','erekammedis/',$set->nilaifield);
+        }
+     
+        return $rep;
+    }
+    protected function getKodeRS(){
+        $set = SettingDataFixed::where('namafield', 'kodePPKRujukan')->first();
+        return $set->nilaifield;
+    }
+    protected function urlERekamMedis(){
+        $set = SettingDataFixed::where('namafield', 'urlERekamMedis')->first();
+        if(!empty($set)){
+            return $set->nilaifield;
+        }
+        return null;
+    }
 }
