@@ -1473,6 +1473,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::post('laundry/batal-kirim-terima-laundry','Laundry\LaundryController@BatalKirimTerimaLaundry');
             Route::post('laundry/save-pencucian-linen','Laundry\LaundryController@saveCuciLinen');
             Route::post('laundry/save-registrasi-linen','Laundry\LaundryController@saveRegistrasiLinen');
+            Route::post('laundry/save-order-laundry-ruangan-infeksius','Laundry\LaundryController@saveOrderLaundryInfeksius');
 
         // });
 
