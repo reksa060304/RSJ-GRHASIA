@@ -13,6 +13,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             $scope.cc = {}
             var nomorEMR = '-'
             var emrfk_ = 3003000
+            $scope.isCetakV = true;
             $scope.cc.emrfk = emrfk_
             var dataLoad = []
             var dataDump = []
@@ -498,6 +499,19 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                  
                 });
             }
+            $scope.cetakBlade = function(){
+                if (norecEMR == '') return
+            
+              var local =JSON.parse(localStorage.getItem('profile')) 
+              var nama = medifirstService.getPegawaiLogin().namaLengkap
+          
+               window.open(config.baseApiBackend + 'report/cetak-ringkasan-pulang-nonjiwa?nocm='
+                   + $scope.cc.nocm + '&norec_apd='+  $scope.cc.norec +'&emr=' + norecEMR
+                   + '&emrfk='+  $scope.cc.emrfk
+                   +'&kdprofile='+local.id 
+                   +'&nama='+nama,  '_blank');
+                   
+            } 
 
         }
     ]);
