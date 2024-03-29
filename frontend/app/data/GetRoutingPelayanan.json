@@ -20134,8 +20134,7 @@
         "define": "RekamMedisCtrl"
       }
     ]
-  },
-  ,
+  },  
   {
     "name": "RekamMedis.AsesmenMedis.RingkasanPulangNonJiwa",
     "url": "/RingkasanPulangNonJiwa",
