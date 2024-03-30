@@ -13753,6 +13753,8 @@ class EMRController  extends ApiController
     {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
+        $errMsg = null;
+        
         DB::beginTransaction();
         try {
 
@@ -13785,6 +13787,8 @@ class EMRController  extends ApiController
             $head->norec_apd = $request['norec_apd'];
             $head->tglpemeriksaan = $request['tanggal'];
             $head->petugasfk = $request['petugas'];
+            $head->pemeriksaan = $request['pemeriksaan'];
+            $head->terapi = $request['terapi'];
             if(isset($request['suhu'])) {
                 $head->suhu = $request['suhu'];
             }
@@ -13797,24 +13801,41 @@ class EMRController  extends ApiController
             $head->save();
             $norec = $head->norec;
 
-            foreach ($request['detail'] as $item) {
+            // simpan tindakan
+            foreach ($request['tindakan'] as $tindakan) {
                 $detail = new BundleHaiDetail();
-                $detail->norec = $detail->generateNewId();
-                $detail->kdprofile = $idProfile;
-                $detail->statusenabled = true;
-                $detail->bundlehaifk = $norec;
-                $detail->jeniskonten = $request['jenis'];
-                $detail->grupkonten = $item['namakelompok'];
-                $detail->namakonten = $item['keterangan'];
-                $detail->bundlefk = $item['idbundle'];
-                $detail->statusiya = $item['statusiya'];
-                $detail->statustidak = $item['statustidak'];
-                $detail->save();
+                
+                $tindakan = DB::table('bundlehaidetail_t')->insert([
+                    'norec' => $detail->generateNewId(),
+                    'kdprofile' => $idProfile,
+                    'statusenabled' => true,
+                    'jeniskonten' => 'TINDAKAN',
+                    'namakonten' => $tindakan['keterangan'],
+                    'bundlefk' => $tindakan['idbundle'],
+                    'bundlehaifk' => $head->norec,
+                ]);
+            }
+
+            // Simpan infeksi
+            foreach($request['infeksi'] as $infeksi){
+                $detail = new BundleHaiDetail();
+
+                $infeksi = DB::table('bundlehaidetail_t')->insert([
+                    'norec' => $detail->generateNewId(),
+                    'kdprofile' => $idProfile,
+                    'statusenabled' => true,
+                    'jeniskonten' => 'INFEKSIRUMAHSAKIT',
+                    'namakonten' => $infeksi['keterangan'],
+                    'bundlefk' => $infeksi['idbundle'],
+                    'bundlehaifk' => $head->norec,
+                ]);
             }
 
             $transStatus = 'true';
+            $transMessage = 'Save Bundle Hais ';
         } catch (\Exception $e) {
             $transStatus = 'false';
+            $errMsg = $e->getMessage();
         }
 
         $transMessage = 'Save Bundle Hais ';
@@ -13832,7 +13853,7 @@ class EMRController  extends ApiController
             DB::rollBack();
             $result = array(
                 'status' => 400,
-                'message' => $transMessage,
+                'message' => $errMsg,
                 'as' => 'hs@epic',
             );
         }

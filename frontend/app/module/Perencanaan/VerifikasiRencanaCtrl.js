@@ -32,16 +32,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.listPrioritas = []
             $scope.listSatuan = []
             $scope.listVerifikasi = [{ name: "Ya", value: 1 }, { name: "Tidak", value: 0 }]
-            $scope.listTahapKegiatan = [
-                { id: 100, tahap: "Semua Kegiatan" },
-                { id: 1, tahap: "Indikatif 1" },
-                { id: 2, tahap: "Murni Definitif" },
-                { id: 4, tahap: "Pergeseran 1" },
-                { id: 3, tahap: "Pergeseran 2" },
-                { id: 5, tahap: "Pegeseran 3" },
-                { id: 6, tahap: "Perubahan" },
-                { id: 7, tahap: "Indikatif 2" },
-            ]
+            $scope.listTahapKegiatan = []
 
             loadDataCombo()
 
@@ -169,23 +160,32 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             function loadDataCombo() {
                 $scope.dataVOloaded = true
 
-                // Memilih tahap indikatif 1
-                $scope.item.tahap =  $scope.listTahapKegiatan[1]
-
-                medifirstService.get('perencanaan/get-combo-perencanaan-belanja?'
-                    +'idLogin=' + $scope.userLogin.id)
-                    .then(function(e){
-
-                        $scope.dataVOloaded = false
-
-                        $scope.listSubSubKegiatanSPJ = e.data.subSubKegiatan
-                        $scope.listAsalProduk = e.data.asalProduk
-                        $scope.listProduk = e.data.dataProdukAll
-                        $scope.listPrioritas = e.data.prioritas
-                        $scope.listSatuan = e.data.satuan
+                // Get combo perencanaan
+                medifirstService.get('rba/get-combo-rba')
+                    .then(function(response){
+                    
+                        $scope.listTahapKegiatan = response.data.tahapAnggaran
+                        
+                        // Memilih tahap indikatif 1
+                        $scope.item.tahap =  $scope.listTahapKegiatan[0]
+        
+                        medifirstService.get('perencanaan/get-combo-perencanaan-belanja?'
+                            +'idLogin=' + $scope.userLogin.id)
+                            .then(function(e){
+        
+                                $scope.dataVOloaded = false
+        
+                                $scope.listSubSubKegiatanSPJ = e.data.subSubKegiatan
+                                $scope.listAsalProduk = e.data.asalProduk
+                                $scope.listProduk = e.data.dataProdukAll
+                                $scope.listPrioritas = e.data.prioritas
+                                $scope.listSatuan = e.data.satuan
+                            })
+                        
+                        loadPerencanaan()
+                        
                     })
-                
-                loadPerencanaan()
+
             }
 
             // Tombol cari filter

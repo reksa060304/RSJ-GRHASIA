@@ -1099,6 +1099,13 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 });
             }
             $scope.cetakResep = function () {
+                if(!$scope.dataSelected){
+                    toastr.error('Pilih Daftar Resep Dulu')
+                    return
+                }
+
+                $scope.popUpResepDokter.center().open()
+
                 // var user = medifirstService.getPegawaiLogin();
                 // if ($scope.dataSelected == undefined) {
                 //     alert('Pilih resep yg akan di cetak')
@@ -1120,17 +1127,31 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 //     // aadc=response;
                 // });
 
+            }
+
+            $scope.CETAKRESEPDOKTERREV = function(){
                 var local = JSON.parse(localStorage.getItem('profile'));
                 var profile = local.id;
-                console.log($scope.dataSelected)
-                
-                    var stt = 1
-                    window.open(baseTransaksi + "report/cetak-resep-dokter-rev?noorder=" + 0 + "&norec=" + $scope.dataSelected.norec_resep 
-                    + "&nocm=" + $scope.dataSelected.nocm + '&kodeprofile=' + profile + '&qtybagi=' + stt);
+                var stt = 1
+
+                if(!$scope.item.pilihanCetak){
+                    toastr.error("Pilih yang ingin dicetak !!")
+                    return
+                }
+
+                $scope.popUpResepDokter.close()
+
+                window.open(baseTransaksi + "report/cetak-resep-dokter-rev?" 
+                    + "noorder=" + 0 
+                    + "&norec=" + $scope.dataSelected.norec_resep 
+                    + "&nocm=" + $scope.dataSelected.nocm 
+                    + "&kodeprofile=" + profile 
+                    + "&qtybagi=" + stt
+                    + "&cetakkin=" + $scope.item.pilihanCetak);
                     // // window.open(config.baseApiBackend + "report/cetak-hasil-lab-histopatologi?norec=" + $scope.dataSelected.norec_pp + '&kdprofile=' + profile
                     //     + '&user=' + user + '&jenis=his', '_blank');
-                
             }
+
             $scope.cetakLabelResep = function () {
                 // if ($scope.dataSelected == undefined || ) {
                 //     alert('Pilih resep yg akan di cetak')

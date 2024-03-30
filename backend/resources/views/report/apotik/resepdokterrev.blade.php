@@ -166,7 +166,11 @@
                     </tr>
                     <tr>
                         <td class="price fs-9"><strong>No. SEP</strong></td>
-                        <td class="description fs-9" style="text-align: left">: {{ $raw->nosep }}</td>
+                        <td class="description fs-9" style="text-align: left">: 
+                            @if (isset($raw->nosep))
+                                {{ $raw->nosep }}
+                            @endif
+                        </td>
                         <td style="width: 10px;"><strong></strong></td>
                     </tr>
                     <tr style="height: 10px;"><td></td></tr>
