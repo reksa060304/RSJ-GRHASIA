@@ -561,6 +561,30 @@ class RBAController extends ApiController
         return $this->setStatusCode($result['status'])->respond($result);
     }
 
+
+    public function getComboRBA(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        $kelompokAnggaran = DB::table('kelompokanggaran_m as ka')
+            ->select(DB::raw('ka.id, ka.namakelompok as div'))
+            ->where('statusenabled', true)
+            ->orderBy('id', 'asc')
+            ->get();
+        
+        $tahapAnggaran = DB::table('tahapanggaran_m as ta')
+            ->select(DB::raw('ta.id, ta.tahap'))
+            ->where('statusenabled', true)
+            ->orderBy('id', 'asc')
+            ->get();
+
+        return $this->respond([
+            'kelompokAnggaran' => $kelompokAnggaran,
+            'tahapAnggaran' => $tahapAnggaran
+        ]);
+    }
+    
     public function getRBA(Request $request)
     {
         $kdProfile = $this->getDataKdProfile($request);

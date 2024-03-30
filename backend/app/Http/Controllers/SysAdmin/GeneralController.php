@@ -5904,13 +5904,25 @@ class GeneralController extends ApiController
     public function getDataBundleHais(Request $request){
         $kdProfile = (int) $this->getDataKdProfile($request);
         $jenis = $request['jenis'];
-        $data = collect(DB::select("
-             SELECT id AS idbundle,namaexternal || '. ' || kelompok AS kelompok,
-                    namabundle as keterangan,jenisbundle,nourut,kelompok AS namakelompok
-            FROM haisbundle_m 
-            WHERE jenisbundle = '$jenis'
-            ORDER BY nourut asc
-        "));
+        // $data = collect(DB::select("
+        //      SELECT id AS idbundle,namaexternal || '. ' || kelompok AS kelompok,
+        //             namabundle as keterangan,jenisbundle,nourut,kelompok AS namakelompok
+        //     FROM haisbundle_m 
+        //     WHERE jenisbundle = '$jenis'
+        //     ORDER BY nourut asc
+        // "));
+
+        $data = DB::table('haisbundle_m')
+            ->when($request['jenis'], function($query) use ($request){
+                return $query->where('jenisbundle', $request['jenis']);
+            })
+            ->when($request['jenis2'], function($query) use ($request){
+                return $query->orWhere('jenisbundle', $request['jenis2']);
+            })
+            ->select(DB::raw("id AS idbundle,namaexternal || '. ' || kelompok AS kelompok, 
+                namabundle as keterangan, jenisbundle, nourut, kelompok AS namakelompok"))
+            ->orderBy('nourut', 'asc')
+            ->get();
 
         return $this->respond($data);
     }
