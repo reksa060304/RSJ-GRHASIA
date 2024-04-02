@@ -3044,7 +3044,7 @@ class BendaharaPenerimaanController extends ApiController {
                 $cekjumlah = $konten->namaproduk;
             }
 
-            else if(($konten->idruangan == 786 && ($konten->idproduk == 5006289 || $konten->idproduk == 5006504)) || ($konten->idruangan == 761 && ($konten->idproduk == 5006289 || $konten->idproduk == 5006504))){
+            else if(($konten->idruangan == 786 && ($konten->idproduk == 5006289 || $konten->idproduk == 5006504)) || ($konten->idruangan == 761 && ($konten->idproduk == 5006289 || $konten->idproduk == 5006504))|| ($konten->idruangan == 773 )){
                 $jumlahperiksaelektromedik += $konten->totaldibayarclosing;
                 $voljumlahperiksaelektromedik++;
                 $cekjumlah = $konten->namaproduk;
@@ -3261,7 +3261,7 @@ class BendaharaPenerimaanController extends ApiController {
                 $cekjumlah = $konten->namaproduk;
             }
 
-            else if(($konten->objectdepartemenfk != 16 && $konten->isobat == 't') || ($konten->idruangan == 94 && $konten->detailjenisproduk == 'TENAGA AHLI')){
+            else if(($konten->objectdepartemenfk != 16 && $konten->isobat == 't') || ($konten->idruangan == 94 && $konten->detailjenisproduk == 'TENAGA AHLI') || ($konten->idruangan == 778)){
                 $jumlahobatrajal += $konten->totaldibayarclosing;
                 $voljumlahobatrajal++;
                 $cekjumlah = $konten->namaproduk;
