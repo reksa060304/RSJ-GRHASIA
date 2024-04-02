@@ -3904,6 +3904,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                 var objSave = {
                     "details": $scope.arrayProdukTemp,
+                    "tgltransfer": moment($scope.now).format('YYYY-MM-DD HH:mm:ss'),
                     "tahapawal": $scope.item.tahapawal,
                     "tahapakhir": $scope.item.tahapakhir,
                     "tahunakhir": moment($scope.item.tahunakhir).format('YYYY'),
