@@ -9835,11 +9835,13 @@ public function CetakFungsionalNew(Request $request){
     $pageWidth = 950;
 
     $data = DB::select(DB::raw("
-
-    SELECT kode,text,div,subtotal,jumlahpengembalian,totalbulanlalu,totalbulanini from (
-        select text, kode, div, sum(subtotal) subtotal, SUM(jumlahpengembalian) as jumlahpengembalian,
-        case when bulan = '01' then sum(totalbelanja) else 0 end as totalbulanlalu,
-        case when bulan = '$bulan' then sum(totalbelanja) else 0 end as totalbulanini
+    select code, text, kode, div, sum(subtotal) subtotal, SUM(jumlahpengembalian) as jumlahpengembalian, sum(jumlahpengembalian) as jumlahpengembalian, 
+    sum(totalbulanlalu) as totalbulanlalu, sum(totalbulanini) as totalbulanini from (
+    
+    SELECT code, kode,text,div,subtotal,jumlahpengembalian,totalbulanlalu,totalbulanini from (
+        select 0 as code, text, kode, div, sum(subtotal) subtotal, SUM(jumlahpengembalian) as jumlahpengembalian,
+        case when bulan between 1 and $bulanlalu then sum(totalbelanja) else 0 end as totalbulanlalu,
+        case when bulan = $bulan then sum(totalbelanja) else 0 end as totalbulanini
         from(
             select kmsss.keterangan as text, kmsss.kode, kmsss.div, sum(kb.subtotal) subtotal, sr.totalbelanja,SUM(sr.jumlahpengembalian) as jumlahpengembalian, sr.norec,
                 extract(month from sr.tglrealisasi) bulan
@@ -9852,13 +9854,14 @@ public function CetakFungsionalNew(Request $request){
             left join strukrealisasi_t sr on km.id = sr.objectkegiatanfk
             and sr.kdprofile = 30 and sr.statusenabled = true
             and sr.status = 'Sudah Diverifikasi'
-            and extract(month from sr.tglrealisasi) in('01', '$bulan')
+            and extract(month from sr.tglrealisasi) between 1 and $bulan
             where km.kdprofile = 30 and km.statusenabled = true
             and kms.kdprofile = 30 and kms.statusenabled = true
             and kmss.kdprofile = 30 and kmss.statusenabled = true
             and kmsss.kdprofile = 30 and kmsss.statusenabled = true
             and ap.kdprofile = 30 and ap.statusenabled = true
             and kb.kdprofile = 30 and kb.statusenabled = true
+            and sr.norec is not null
             and kb.objecttahapfk = $settingrba->objecttahapaktivfk
             and km.tahun = '$tahun'
                             $qasalproduk
@@ -9868,9 +9871,9 @@ public function CetakFungsionalNew(Request $request){
         UNION ALL
               --data2--
 
-        select text, kode, div, sum(subtotal) subtotal, SUM(jumlahpengembalian) as jumlahpengembalian,
-        case when bulan = '01' then sum(totalbelanja) else 0 end as totalbulanlalu,
-        case when bulan = '$bulan' then sum(totalbelanja) else 0 end as totalbulanini
+        select 0 as code, text, kode, div, sum(subtotal) subtotal, SUM(jumlahpengembalian) as jumlahpengembalian,
+        case when bulan between 1 and $bulanlalu then sum(totalbelanja) else 0 end as totalbulanlalu,
+        case when bulan = $bulan then sum(totalbelanja) else 0 end as totalbulanini
         from(
             select kmss.keterangan as text, kmss.kode, kmss.div, sum(kb.subtotal) subtotal, sr.totalbelanja,SUM(sr.jumlahpengembalian) as jumlahpengembalian, sr.norec,
                 extract(month from sr.tglrealisasi) bulan
@@ -9883,12 +9886,12 @@ public function CetakFungsionalNew(Request $request){
             left join strukrealisasi_t sr on km.id = sr.objectkegiatanfk
             and sr.kdprofile = 30 and sr.statusenabled = true
             and sr.status = 'Sudah Diverifikasi'
-            and extract(month from sr.tglrealisasi) in('01', '$bulan')
+            and extract(month from sr.tglrealisasi) between 1 and $bulan
             where km.kdprofile = 30 and km.statusenabled = true
             and kms.kdprofile = 30 and kms.statusenabled = true
             and kmss.kdprofile = 30 and kmss.statusenabled = true
             and kmsss.kdprofile = 30 and kmsss.statusenabled = true
-            and kmss.kode != '1.02.01.1.02'
+            and sr.norec is not null
             and ap.kdprofile = 30 and ap.statusenabled = true
             and kb.kdprofile = 30 and kb.statusenabled = true
             and kb.objecttahapfk = $settingrba->objecttahapaktivfk
@@ -9899,11 +9902,11 @@ public function CetakFungsionalNew(Request $request){
 
         UNION ALL 
                 --data2a--
-        select text, kode, div, sum(subtotal) subtotal,SUM(jumlahpengembalian) as jumlahpengembalian,
-        case when bulan = '01' then sum(totalbelanja) else 0 end as totalbulanlalu,
-        case when bulan = '$bulan' then sum(totalbelanja) else 0 end as totalbulanini
+        select 1 as code, text, kode, div, sum(subtotal) subtotal,SUM(jumlahpengembalian) as jumlahpengembalian,
+        case when bulan between 1 and $bulanlalu then sum(totalbelanja) else 0 end as totalbulanlalu,
+        case when bulan = $bulan then sum(totalbelanja) else 0 end as totalbulanini
         from(
-            select je.jenisanggaran as text, kmss.kode, kmss.div, sum(kb.subtotal) subtotal, sr.totalbelanja, SUM(sr.jumlahpengembalian) as jumlahpengembalian, sr.norec,
+            select   je.jenisanggaran as text, kmss.kode, kmss.div, sum(kb.subtotal) subtotal, sr.totalbelanja, SUM(sr.jumlahpengembalian) as jumlahpengembalian, sr.norec,
                 extract(month from sr.tglrealisasi) bulan
                 from kegiatananggaran_m km
             inner join kegiatananggaran_m kms on km.kode ilike  kms.kode || '%' and kms.div = 3
@@ -9921,12 +9924,12 @@ public function CetakFungsionalNew(Request $request){
             left join strukrealisasi_t sr on km.id = sr.objectkegiatanfk
             and sr.kdprofile = 30 and sr.statusenabled = true
             and sr.status = 'Sudah Diverifikasi'
-            and extract(month from sr.tglrealisasi) in('01', '$bulan')
+            and extract(month from sr.tglrealisasi) between 1 and $bulan
             where km.kdprofile = 30 and km.statusenabled = true
             and kms.kdprofile = 30 and kms.statusenabled = true
             and kmss.kdprofile = 30 and kmss.statusenabled = true
             and kmsss.kdprofile = 30 and kmsss.statusenabled = true
-            and kmss.kode != '1.02.01.1.02'
+            and sr.norec is not null
             and ap.kdprofile = 30 and ap.statusenabled = true
             and kb.kdprofile = 30 and kb.statusenabled = true
             and kb.objecttahapfk = $settingrba->objecttahapaktivfk
@@ -9937,9 +9940,9 @@ public function CetakFungsionalNew(Request $request){
 
         UNION ALL
                 --data3--
-        select text, kode, div, sum(subtotal) subtotal, SUM(jumlahpengembalian) as jumlahpengembalian,
-        case when bulan = '01' then sum(totalbelanja) else 0 end as totalbulanlalu,
-        case when bulan = '$bulan' then sum(totalbelanja) else 0 end as totalbulanini
+        select 0 as code, text, kode, div, sum(subtotal) subtotal, SUM(jumlahpengembalian) as jumlahpengembalian,
+        case when bulan between 1 and $bulanlalu then sum(totalbelanja) else 0 end as totalbulanlalu,
+        case when bulan = $bulan then sum(totalbelanja) else 0 end as totalbulanini
         from(
             select kms.keterangan as text, kms.kode, kms.div, sum(kb.subtotal) subtotal, sr.totalbelanja, SUM(sr.jumlahpengembalian) as jumlahpengembalian, sr.norec,
                 extract(month from sr.tglrealisasi) bulan
@@ -9952,12 +9955,12 @@ public function CetakFungsionalNew(Request $request){
             left join strukrealisasi_t sr on km.id = sr.objectkegiatanfk
             and sr.kdprofile = 30 and sr.statusenabled = true
             and sr.status = 'Sudah Diverifikasi'
-            and extract(month from sr.tglrealisasi) in('01', '$bulan')
+            and extract(month from sr.tglrealisasi) between 1 and $bulan
             where km.kdprofile = 30 and km.statusenabled = true
             and kms.kdprofile = 30 and kms.statusenabled = true
             and kmss.kdprofile = 30 and kmss.statusenabled = true
             and kmsss.kdprofile = 30 and kmsss.statusenabled = true
-            and kms.kode != '1.02.01.1.02'
+            and sr.norec is not null
             and ap.kdprofile = 30 and ap.statusenabled = true
             and kb.kdprofile = 30 and kb.statusenabled = true
             and kb.objecttahapfk = $settingrba->objecttahapaktivfk
@@ -9970,9 +9973,9 @@ public function CetakFungsionalNew(Request $request){
         UNION ALL
                 --data3a--
 
-        select text, kode, div, sum(subtotal) subtotal, SUM(jumlahpengembalian) as jumlahpengembalian,
-            case when bulan = '01' then sum(totalbelanja) else 0 end as totalbulanlalu,
-            case when bulan = '$bulan' then sum(totalbelanja) else 0 end as totalbulanini
+        select 1 as code, text, kode, div, sum(subtotal) subtotal, SUM(jumlahpengembalian) as jumlahpengembalian,
+            case when bulan between 1 and $bulanlalu then sum(totalbelanja) else 0 end as totalbulanlalu,
+            case when bulan = $bulan then sum(totalbelanja) else 0 end as totalbulanini
             from(
                 select je.jenisanggaran as text, kms.kode, kms.div, sum(kb.subtotal) subtotal, sr.totalbelanja,SUM(sr.jumlahpengembalian) as jumlahpengembalian, sr.norec,
                     extract(month from sr.tglrealisasi) bulan
@@ -9992,12 +9995,12 @@ public function CetakFungsionalNew(Request $request){
                 left join strukrealisasi_t sr on km.id = sr.objectkegiatanfk
                 and sr.kdprofile = 30 and sr.statusenabled = true
                 and sr.status = 'Sudah Diverifikasi'
-                and extract(month from sr.tglrealisasi) in('01', '$bulan')
+                and extract(month from sr.tglrealisasi) between 1 and $bulan
                 where km.kdprofile = 30 and km.statusenabled = true
                 and kms.kdprofile = 30 and kms.statusenabled = true
                 and kmss.kdprofile = 30 and kmss.statusenabled = true
                 and kmsss.kdprofile = 30 and kmsss.statusenabled = true
-                and kms.kode != '1.02.01.1.02'
+                and sr.norec is not null
                 and ap.kdprofile = 30 and ap.statusenabled = true
                 and kb.kdprofile = 30 and kb.statusenabled = true
                 and kb.objecttahapfk = $settingrba->objecttahapaktivfk
@@ -10009,9 +10012,9 @@ public function CetakFungsionalNew(Request $request){
             UNION ALL
                     --data4--
 
-            select text, kode, div, sum(subtotal) subtotal, SUM(jumlahpengembalian) as jumlahpengembalian,
-            case when bulan = '01' then sum(totalbelanja) else 0 end as totalbulanlalu,
-            case when bulan = '$bulan' then sum(totalbelanja) else 0 end as totalbulanini
+            select 0 as code, text, kode, div, sum(subtotal) subtotal, SUM(jumlahpengembalian) as jumlahpengembalian,
+            case when bulan between 1 and $bulanlalu then sum(totalbelanja) else 0 end as totalbulanlalu,
+            case when bulan = $bulan then sum(totalbelanja) else 0 end as totalbulanini
             from(
                 select km.keterangan as text, km.kode, km.div, sum(kb.subtotal) subtotal, sr.totalbelanja, SUM(sr.jumlahpengembalian) as jumlahpengembalian, sr.norec,
                     extract(month from sr.tglrealisasi) bulan
@@ -10024,12 +10027,12 @@ public function CetakFungsionalNew(Request $request){
                 left join strukrealisasi_t sr on km.id = sr.objectkegiatanfk
                 and sr.kdprofile = 30 and sr.statusenabled = true
                 and sr.status = 'Sudah Diverifikasi'
-                and extract(month from sr.tglrealisasi) in('01', '$bulan')
+                and extract(month from sr.tglrealisasi) between 1 and $bulan
                 where km.kdprofile = 30 and km.statusenabled = true
                 and kms.kdprofile = 30 and kms.statusenabled = true
                 and kmss.kdprofile = 30 and kmss.statusenabled = true
                 and kmsss.kdprofile = 30 and kmsss.statusenabled = true
-                and km.kode != '1.02.01.1.02'
+                and sr.norec is not null
                 and ap.kdprofile = 30 and ap.statusenabled = true
                 and kb.kdprofile = 30 and kb.statusenabled = true
                 and kb.objecttahapfk = $settingrba->objecttahapaktivfk
@@ -10039,10 +10042,16 @@ public function CetakFungsionalNew(Request $request){
             ) as f group by text, kode, div, bulan ) as a  order by length(kode), kode
         
 
-
+) as x 
+group by text, kode, div, code
+order by split_part(kode,'.',1) asc, split_part(kode,'.',2) asc,split_part(kode,'.',3)::int asc, 
+CASE WHEN split_part(kode, '.', 4 ) = '' THEN 0 ELSE split_part(kode, '.', 4 )::INT end asc,
+CASE WHEN split_part(kode, '.', 5 ) = '' THEN 0 ELSE split_part(kode, '.', 5 )::INT end asc,
+              CASE WHEN split_part(kode, '.', 6 ) = '' THEN 0 ELSE split_part(kode, '.', 6 )::INT end asc,
+              CASE WHEN split_part(kode, '.', 7 ) = '' THEN 0 ELSE split_part(kode, '.', 7 )::INT end asc, code asc
     "));
 
-
+    // dd($data)
 
         $dataMat1 = DB::select(DB::raw("
                                         SELECT 
@@ -10051,8 +10060,8 @@ public function CetakFungsionalNew(Request $request){
                                             kode, 
                                             5 AS div, 
                                             SUM(subtotal) AS subtotal, SUM(jumlahpengembalian) as jumlahpengembalian,
-                                            CASE WHEN bulan = '01' THEN SUM(totalbelanja) ELSE 0 END AS totalbulanlalu,
-                                            CASE WHEN bulan = '$bulan' THEN SUM(totalbelanja) ELSE 0 END AS totalbulanini
+                                            CASE WHEN bulan between 1 and $bulanlalu THEN SUM(totalbelanja) ELSE 0 END AS totalbulanlalu,
+                                            CASE WHEN bulan = $bulan  THEN SUM(totalbelanja) ELSE 0 END AS totalbulanini
                                         FROM (
                                             SELECT 
                                                 km.kode AS kodekm,
@@ -10078,7 +10087,7 @@ public function CetakFungsionalNew(Request $request){
                                                 strukrealisasi_t sr ON km.id = sr.objectkegiatanfk
                                                     AND sr.kdprofile = 30 AND sr.statusenabled = true
                                                     AND sr.status = 'Sudah Diverifikasi'
-                                                    AND EXTRACT(MONTH FROM sr.tglrealisasi) IN ('01', '$bulan')
+                                                    AND EXTRACT(MONTH FROM sr.tglrealisasi) between 1 and $bulan
                                             WHERE 
                                                 km.kdprofile = 30 AND km.statusenabled = true
                                                 AND km.tahun = '$tahun'
@@ -10112,7 +10121,7 @@ public function CetakFungsionalNew(Request $request){
                                         kode, 
                                         5 AS div, 
                                         SUM(subtotal) AS subtotal, SUM(jumlahpengembalian) as jumlahpengembalian,
-                                        CASE WHEN bulan = '01' THEN SUM(totalbelanja) ELSE 0 END AS totalbulanlalu,
+                                        CASE WHEN bulan between 1 and $bulanlalu THEN SUM(totalbelanja) ELSE 0 END AS totalbulanlalu,
                                         CASE WHEN bulan = '$bulan' THEN SUM(totalbelanja) ELSE 0 END AS totalbulanini
                                     FROM (
                                         SELECT 
@@ -10142,7 +10151,7 @@ public function CetakFungsionalNew(Request $request){
                                             strukrealisasi_t sr ON km.id = sr.objectkegiatanfk
                                                 AND sr.kdprofile = 30 AND sr.statusenabled = true
                                                 AND sr.status = 'Sudah Diverifikasi'
-                                                AND EXTRACT(MONTH FROM sr.tglrealisasi) IN ('01', '$bulan')
+                                                AND EXTRACT(MONTH FROM sr.tglrealisasi) between 1 and $bulan
                                         WHERE 
                                             km.kdprofile = 30 AND km.statusenabled = true
                                             and km.kode != '1.02.01.1.02.01.1'
@@ -10175,7 +10184,7 @@ public function CetakFungsionalNew(Request $request){
                                         5 AS div, 
                                         SUM(subtotal) AS subtotal,
                                         SUM(jumlahpengembalian) as jumlahpengembalian,
-                                        CASE WHEN bulan = '01' THEN SUM(totalbelanja) ELSE 0 END AS totalbulanlalu,
+                                        CASE WHEN bulan between 1 and $bulanlalu THEN SUM(totalbelanja) ELSE 0 END AS totalbulanlalu,
                                         CASE WHEN bulan = '$bulan' THEN SUM(totalbelanja) ELSE 0 END AS totalbulanini
                                     FROM (
                                         SELECT 
@@ -10207,7 +10216,7 @@ public function CetakFungsionalNew(Request $request){
                                             strukrealisasi_t sr ON km.id = sr.objectkegiatanfk
                                                 AND sr.kdprofile = 30 AND sr.statusenabled = true
                                                 AND sr.status = 'Sudah Diverifikasi'
-                                                AND EXTRACT(MONTH FROM sr.tglrealisasi) IN ('01', '$bulan')
+                                                AND EXTRACT(MONTH FROM sr.tglrealisasi) between 1 and $bulan
                                         WHERE 
                                             km.kdprofile = 30 AND km.statusenabled = true
                                             -- and km.kode != '1.02.01.1.02.01.1'
@@ -10241,7 +10250,7 @@ public function CetakFungsionalNew(Request $request){
                                         5 AS div, 
                                         SUM(subtotal) AS subtotal,
                                         SUM(jumlahpengembalian) as jumlahpengembalian,
-                                        CASE WHEN bulan = '01' THEN SUM(totalbelanja) ELSE 0 END AS totalbulanlalu,
+                                        CASE WHEN bulan between 1 and $bulanlalu THEN SUM(totalbelanja) ELSE 0 END AS totalbulanlalu,
                                         CASE WHEN bulan = '$bulan' THEN SUM(totalbelanja) ELSE 0 END AS totalbulanini
                                     FROM (
                                         SELECT 
@@ -10265,7 +10274,7 @@ public function CetakFungsionalNew(Request $request){
                                             strukrealisasi_t sr ON km.id = sr.objectkegiatanfk
                                                 AND sr.kdprofile = 30 AND sr.statusenabled = true
                                                 AND sr.status = 'Sudah Diverifikasi'
-                                                AND EXTRACT(MONTH FROM sr.tglrealisasi) IN ('01', '$bulan')
+                                                AND EXTRACT(MONTH FROM sr.tglrealisasi) between 1 and $bulan
                                         WHERE 
                                             km.kdprofile = 30 AND km.statusenabled = true
                                             -- and km.kode != '1.02.01.1.02.01.1'
