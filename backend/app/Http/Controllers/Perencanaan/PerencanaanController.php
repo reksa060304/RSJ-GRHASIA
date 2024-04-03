@@ -2852,6 +2852,7 @@ class PerencanaanController extends ApiController {
                     $KA->div = $dt['div'];
                     $KA->objectjenisbelanjafk = $dt['objectjenisbelanjafk'];
                     $KA->objectpptkfk = $dt['objectpptkfk'];
+                    $KA->tgltransfer = $request['tgltransfer'];
                     $KA->save();
 
                     $KB = KeteranganBelanja::where('objectkegiatanfk',$dt['idsubsubkegiatan'])
@@ -2877,7 +2878,7 @@ class PerencanaanController extends ApiController {
                         $MA->objectasalprodukfk = $k->objectasalprodukfk;
                         $MA->password = $k->password;
                         $MA->objecttahapfk = $akhir;
-
+                        $MA->tgltransfer = $request['tgltransfer'];
                         $MA->save();
 
                         // Get alokasi keterangkan belanja (angkas)
