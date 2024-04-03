@@ -2852,12 +2852,13 @@ class PerencanaanController extends ApiController {
                     $KA->div = $dt['div'];
                     $KA->objectjenisbelanjafk = $dt['objectjenisbelanjafk'];
                     $KA->objectpptkfk = $dt['objectpptkfk'];
+                    $KA->tgltransfer = $request['tgltransfer'];
                     $KA->save();
 
-                    $KB= KeteranganBelanja::where('objectkegiatanfk',$dt['idsubsubkegiatan'])
-                    ->where('objecttahapfk', $awal)
-                    ->where('statusenabled', true)
-                    ->get();
+                    $KB = KeteranganBelanja::where('objectkegiatanfk',$dt['idsubsubkegiatan'])
+                        ->where('objecttahapfk', $awal)
+                        ->where('statusenabled', true)
+                        ->get();
                 
                     foreach($KB as $k){
 
@@ -2877,8 +2878,32 @@ class PerencanaanController extends ApiController {
                         $MA->objectasalprodukfk = $k->objectasalprodukfk;
                         $MA->password = $k->password;
                         $MA->objecttahapfk = $akhir;
-
+                        $MA->tgltransfer = $request['tgltransfer'];
                         $MA->save();
+
+                        // Get alokasi keterangkan belanja (angkas)
+                        // berdasarkan keterangan belanja
+                        $listAngkas = AlokasiKeteranganBelanja::where('keteranganbelanjafk', $k->norec)
+                            ->where('statusenabled', true)
+                            ->where('kdprofile', $idProfile)
+                            ->get();
+                        
+                        if(count($listAngkas) > 0){
+                            // Membuat angkas baru sesuai dengan norec keterangan belanja baru
+                            // dan tgl transfer
+                            foreach($listAngkas as $angkas){
+                                $newAngkas = new AlokasiKeteranganBelanja();
+                                $newAngkas->norec = $newAngkas->generateNewId();
+                                $newAngkas->kdprofile = $idProfile;
+                                $newAngkas->statusenabled = true;
+                                $newAngkas->keteranganbelanjafk = $MA->norec;
+                                $newAngkas->bulanint = $angkas->bulanint;
+                                $newAngkas->nilai = $angkas->nilai;
+                                $newAngkas->tgltransfer = $request['tgltransfer'];
+                                $newAngkas->save();
+                            }
+                        }
+
                     }
             }
 
