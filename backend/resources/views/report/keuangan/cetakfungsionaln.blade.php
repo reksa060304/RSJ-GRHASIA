@@ -124,7 +124,8 @@
                 </tr>
                 @foreach ($allData as $dt)
                 @if((strpos($dt->kode, 'I') !== false || strpos($dt->kode, '1') !== false) && strlen($dt->kode) != 6)
-                    @if($dt->div == 1 || $dt->div == 2 || $dt->div == 3)
+                    @if($dt->div == 1 || $dt->div == 2 || $dt->div == 3 ||$dt->div == 4 )
+                    @if($dt->code == 0 )
                         <tr>
                             <td align="left" width="50" style="font-weight: bold; padding: 10px; font-size: 11px; ">{{ $dt->kode }}</td>
                             <td align="left" width="50" style="font-weight: bold; padding: 10px; font-size: 11px; ">{{ $dt->text }}</td>
@@ -136,6 +137,19 @@
                             <td align="right" width="100" style="font-weight: bold; padding: 10px; font-size: 11px; ">{{ number_format($dt->jumlahpengembalian,2,',','.') }}</td>
                             <td align="right" width="100" style="font-weight: bold; padding: 10px; font-size: 11px; ">{{ number_format($dt->totalbulanlalu + $dt->totalbulanini - $dt->jumlahpengembalian,2,',','.') }}</td>
                         </tr>
+                    @else
+                        <tr>
+                            <td align="left" width="50" style=" padding: 10px; font-size: 11px; ">{{ $dt->kode }}</td>
+                            <td align="left" width="50" style=" padding: 10px; font-size: 11px; ">{{ $dt->text }}</td>
+                            <td align="right" width="50" style=" padding: 10px; font-size: 11px;  ">{{ number_format($dt->subtotal,2,',','.') }}</td>
+                            <td align="right" width="50" style=" padding: 10px; font-size: 11px; ">{{ number_format($dt->totalbulanlalu,2,',','.') }}</td>
+                            <td align="right" width="100" style=" padding: 10px; font-size: 11px; ">{{ number_format($dt->totalbulanini,2,',','.') }}</td>
+                            <td align="right" width="50" style=" padding: 10px; font-size: 11px; ">{{ number_format($dt->totalbulanlalu + $dt->totalbulanini,2,',','.') }}</td>
+                            <td align="right" width="50" style=" padding: 10px; font-size: 11px; ">{{ number_format($dt->subtotal - $dt->totalbulanlalu - $dt->totalbulanini,2,',','.') }}</td>
+                            <td align="right" width="100" style=" padding: 10px; font-size: 11px; ">{{ number_format($dt->jumlahpengembalian,2,',','.') }}</td>
+                            <td align="right" width="100" style=" padding: 10px; font-size: 11px; ">{{ number_format($dt->totalbulanlalu + $dt->totalbulanini - $dt->jumlahpengembalian,2,',','.') }}</td>
+                        </tr>
+                    @endif
                     @else
                         @if(strpos($dt->kode, 'I') !== false)
                             @php
