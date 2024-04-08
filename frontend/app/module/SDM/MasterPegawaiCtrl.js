@@ -4589,8 +4589,9 @@ $scope.formatRupiah = function (value, currency) {
 					toastr.error("Data Belum Dipilih!")
 					return;
 				}
-				// console.log($scope.dataSelected);
-				window.open(configuration.baseApiBackend + dataItem.reportdisplay +'?norec=' + dataItem.norec+ '&rgb=oke', '_blank');
+				// console.log($scope.dataSelected); report/get-cetak-suratkgb
+				// window.open(configuration.baseApiBackend + dataItem.reportdisplay +'?norec=' + dataItem.norec+ '&rgb=oke', '_blank');
+				window.open(configuration.baseApiBackend + 'report/get-cetak-suratkgb?norec=' + dataItem.norec+ '&rgb=oke', '_blank');
 			}
 			$scope.simpanCPNS = function(){
 				var listRawRequired = [
