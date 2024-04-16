@@ -347,14 +347,15 @@ define(['initialize'], function (initialize) {
 							'idKasir': $scope.item.namaKasir? $scope.item.namaKasir.id : $scope.dataLogin.id,
 						}
 						// medifirstService.post('sysadmin/general/save-jurnal-setorankasir', data).then(function (e) {})
+						$scope.datachecklist = [];	
+						$scope.selectedData2 = [];
 						loadData();
 					})
 				}
 
 				if(cek == 8910){
 					toastr.error('Data sudah ada yang di closing');
-				}
-				
+				}			
 			};
 
 			$scope.columnSetoranKasir = {
