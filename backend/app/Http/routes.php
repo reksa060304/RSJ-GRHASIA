@@ -715,6 +715,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('emr/get-resume-medis/{nocm}', 'EMR\EMRController@getResumeMedis');
           Route::post('emr/post-resume-medis-inap/{method}', 'EMR\EMRController@postResumeMedisInap');
           Route::get('emr/get-resume-medis-inap/{nocm}', 'EMR\EMRController@getResumeMedisInap');
+          Route::get('emr/get-resume-medis-inap-nonjiwa/{nocm}', 'EMR\EMRController@getResumeMedisInapJiwa');
           Route::post('emr/post-konsultasi', 'EMR\EMRController@saveOrderKonsul');
           Route::get('emr/get-order-konsul', 'EMR\EMRController@getOrderKonsul');
           Route::post('emr/disabled-konsultasi', 'EMR\EMRController@disabledOrderKonsul');

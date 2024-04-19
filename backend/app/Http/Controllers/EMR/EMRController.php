@@ -1856,6 +1856,45 @@ class EMRController  extends ApiController
                 $RekamMedis->pasien = $request['pasien'];
                 $RekamMedis->keteranganlainnya = 'RawatInap';
                 $RekamMedis->koderesume = $kdResume;
+                if (isset($request['ralergi']) && $request['ralergi'] != "") {
+                    $RekamMedis->ralergi = $request['ralergi'];
+                } 
+                if (isset($request['rkeadaankeluar']) && $request['rkeadaankeluar'] != "") {
+                    $RekamMedis->rkeadaankeluar = $request['rkeadaankeluar'];
+                } 
+                if (isset($request['rcarapulang']) && $request['rcarapulang'] != "") {
+                    $RekamMedis->rcarapulang = $request['rcarapulang'];
+                } 
+                if (isset($request['keteranganringkasanpulang']) && $request['keteranganringkasanpulang'] != "") {
+                    $RekamMedis->keteranganringkasanpulang = $request['keteranganringkasanpulang'];
+                }
+                if (isset($request['rujuk']) && $request['rujuk'] != "") {
+                    $RekamMedis->rujuk = $request['rujuk'];
+                }
+                if (isset($request['lainlain']) && $request['lainlain'] != "") {
+                    $RekamMedis->lainlain = $request['lainlain'];
+                }
+                if (isset($request['rujuk']) && $request['rujuk'] != "") {
+                    $RekamMedis->rujuk = $request['rujuk'];
+                }
+                if (isset($request['lainlain']) && $request['lainlain'] != "") {
+                    $RekamMedis->lainlain = $request['lainlain'];
+                }
+                if (isset($request['edukasi']) && $request['edukasi'] != "") {
+                    $RekamMedis->edukasi = $request['edukasi'];
+                }
+                if (isset($request['indikasi']) && $request['indikasi'] != "") {
+                    $RekamMedis->indikasi = $request['indikasi'];
+                }
+                if (isset($request['riwayatlalu']) && $request['riwayatlalu'] != "") {
+                    $RekamMedis->riwayatlalu = $request['riwayatlalu'];
+                }
+                if (isset($request['alergi']) && $request['alergi'] != "") {
+                    $RekamMedis->alergi = $request['alergi'];
+                }
+                
+
+               
                 $RekamMedis->save();
                 $norec = $RekamMedis->norec;
                 $norecHead = $RekamMedis->norec;
@@ -1940,9 +1979,11 @@ class EMRController  extends ApiController
                 'rm.tglkontrolpoli', 'rm.rumahsakittujuan',
                 'rm.alergi', 'rm.diet', 'rm.instruksianjuran', 'rm.hasillab',
                 'rm.kondisiwaktukeluar', 'rm.pengobatandilanjutkan', 'rm.koderesume',
-                'rm.pegawaifk','rm.pasien',
+                'rm.pegawaifk','rm.pasien','rm.rujuk','rm.lainlain',
                 'pd.noregistrasi', 'pd.tglregistrasi', 'ps.nocm', 'rm.noregistrasifk',
-                'ps.namapasien')
+                'ps.namapasien','rm.edukasi','rm.indikasi','rm.riwayatlalu','rm.rkeadaankeluar','rm.rcarapulang','rm.ralergi',
+                DB::raw("CASE WHEN rm.rkeadaankeluar = '1' THEN 'Perbaikan'  WHEN rm.rkeadaankeluar = '2' THEN 'Sembuh' ELSE 'Pulang' END AS keadaankeluarj"))
+            
             ->Join('antrianpasiendiperiksa_t as apd', 'apd.norec', '=', 'rm.noregistrasifk')
             ->Join('pasiendaftar_t as pd', 'pd.norec', '=', 'apd.noregistrasifk')
             ->Join('pasien_m as ps', 'ps.id', '=', 'pd.nocmfk')
@@ -1957,7 +1998,8 @@ class EMRController  extends ApiController
             ->where('rm.kdprofile', $idProfile)
             ->where('rm.statusenabled', true)
             ->where('ps.nocm', $nocm)
-            ->where('rm.keteranganlainnya', 'RawatInap');
+            ->where('rm.keteranganlainnya', 'RawatInap')
+            ->wherenull('keteranganringkasanpulang');
 //            ->whereIn('ru.objectdepartemenfk',$iddept);
 
         $data = $data->get();
@@ -2032,6 +2074,15 @@ class EMRController  extends ApiController
                 'tglregistrasi' => $item->tglregistrasi,
                 'namapasien' => $item->namapasien,
                 'noregistrasifk' => $item->noregistrasifk,
+                'keadaankeluarj' => $item->keadaankeluarj,
+                'edukasi' => $item->edukasi,
+                'indikasi' => $item->indikasi,
+                'riwayatlalu' => $item->riwayatlalu,
+                'rujuk' => $item->rujuk,
+                'lainlain' => $item->lainlain,
+                'rkeadaankeluar' => $item->rkeadaankeluar,
+                'rcarapulang' => $item->rcarapulang,
+                'ralergi' => $item->ralergi,             
                 'details' => $details,
             );
         }
@@ -13859,4 +13910,141 @@ class EMRController  extends ApiController
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
+
+    public function getResumeMedisInapJiwa(Request $request, $nocm){
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $data = \DB::table('resumemedis_t as rm')
+            ->select('rm.norec', 'rm.tglresume', 'ru.namaruangan', 'pg.namalengkap as namadokter',
+                'rm.ringkasanriwayatpenyakit', 'rm.pemeriksaanfisik', 'rm.pemeriksaanpenunjang',
+                'rm.hasilkonsultasi', 'rm.terapi', 'rm.diagnosisawal', 'rm.diagnosissekunder', 'rm.tindakanprosedur',
+                'rm.tglmasuk', 'rm.tglpulang',
+                'rm.wisma','rm.kelas','rm.hasilfisik','rm.hasilpsikiatri','rm.hasilpenunjang','rm.hasilpenunjang','rm.terapipulang',
+                'rm.axis2','rm.axis3','rm.axis4','rm.axis5','rm.kontrolklinik','rm.kondisiwaktukeluare',
+                // 'rm.diagnosismasuk', 'rm.diagnosistambahan', 'rm.alasandirawat',
+                'rm.kddiagnosisawal', 'rm.diagnosismasuk', 'rm.kddiagnosismasuk', 'rm.diagnosistambahan', 'rm.kddiagnosistambahan', 'rm.kddiagnosistambahan2', 'rm.kddiagnosistambahan3', 'rm.kddiagnosistambahan4', 'rm.alasandirawat',
+                'dg1.kddiagnosa as kddiagnosa1', 'dg1.namadiagnosa as namadiagnosa1',
+                'dg2.kddiagnosa as kddiagnosa2', 'dg2.namadiagnosa as namadiagnosa2',
+                'dg3.kddiagnosa as kddiagnosa3', 'dg3.namadiagnosa as namadiagnosa3',
+                'dg4.kddiagnosa as kddiagnosa4', 'dg4.namadiagnosa as namadiagnosa4',
+                'dg5.kddiagnosa as kddiagnosa5', 'dg5.namadiagnosa as namadiagnosa5',
+                'dg6.kddiagnosa as kddiagnosa6', 'dg6.namadiagnosa as namadiagnosa6',
+                'rm.tglkontrolpoli', 'rm.rumahsakittujuan',
+                'rm.alergi', 'rm.diet', 'rm.instruksianjuran', 'rm.hasillab',
+                'rm.kondisiwaktukeluar', 'rm.pengobatandilanjutkan', 'rm.koderesume',
+                'rm.pegawaifk','rm.pasien','rm.rujuk','rm.lainlain',
+                'pd.noregistrasi', 'pd.tglregistrasi', 'ps.nocm', 'rm.noregistrasifk',
+                'ps.namapasien','rm.edukasi','rm.indikasi','rm.riwayatlalu','rm.rkeadaankeluar','rm.rcarapulang','rm.ralergi',
+                DB::raw("CASE WHEN rm.rkeadaankeluar = '1' THEN 'Perbaikan'  WHEN rm.rkeadaankeluar = '2' THEN 'Sembuh' ELSE 'Pulang' END AS keadaankeluarj"))
+            
+            ->Join('antrianpasiendiperiksa_t as apd', 'apd.norec', '=', 'rm.noregistrasifk')
+            ->Join('pasiendaftar_t as pd', 'pd.norec', '=', 'apd.noregistrasifk')
+            ->Join('pasien_m as ps', 'ps.id', '=', 'pd.nocmfk')
+            ->leftJoin('ruangan_m as ru', 'ru.id', '=', 'apd.objectruanganfk')
+            ->leftJoin('pegawai_m as pg', 'pg.id', '=', 'rm.pegawaifk')
+            ->leftJoin('diagnosa_m as dg1', 'dg1.id', '=', 'rm.kddiagnosismasuk')
+            ->leftJoin('diagnosa_m as dg2', 'dg2.id', '=', 'rm.kddiagnosisawal')
+            ->leftJoin('diagnosa_m as dg3', 'dg3.id', '=', 'rm.kddiagnosistambahan')
+            ->leftJoin('diagnosa_m as dg4', 'dg4.id', '=', 'rm.kddiagnosistambahan2')
+            ->leftJoin('diagnosa_m as dg5', 'dg5.id', '=', 'rm.kddiagnosistambahan3')
+            ->leftJoin('diagnosa_m as dg6', 'dg6.id', '=', 'rm.kddiagnosistambahan4')
+            ->where('rm.kdprofile', $idProfile)
+            ->where('rm.statusenabled', true)
+            ->where('ps.nocm', $nocm)
+            ->where('rm.keteranganlainnya', 'RawatInap')
+            ->wherenotnull('keteranganringkasanpulang');
+//            ->whereIn('ru.objectdepartemenfk',$iddept);
+
+        $data = $data->get();
+        $result = [];
+        foreach ($data as $item) {
+            $details = DB::select(DB::raw("
+                   select * from resumemedisdetail_t
+                   where resumefk=:norec"),
+                array(
+                    'norec' => $item->norec,
+                )
+            );
+            $diagnosistambahanarray = array($item->kddiagnosa3, $item->kddiagnosa4, $item->kddiagnosa5, $item->kddiagnosa6);
+            $diagnosistambahan = [];
+            $no = 0;
+            foreach ($diagnosistambahanarray as $tambahan){
+                if($tambahan != "") {
+                    $diagnosistambahan[$no] = $tambahan;
+                    $no++;
+                }
+            }
+            $result[] = array(
+                'norec' => $item->norec,
+                'tglresume' => $item->tglresume,
+                'namaruangan' => $item->namaruangan,
+                'namadokter' => $item->namadokter,
+                'ringkasanriwayatpenyakit' => $item->ringkasanriwayatpenyakit,
+                'pemeriksaanfisik' => $item->pemeriksaanfisik,
+                'pemeriksaanpenunjang' => $item->pemeriksaanpenunjang,
+                'tglmasuk' => $item->tglmasuk,
+                'tglpulang' => $item->tglpulang,
+                'wisma' => $item->wisma,
+                'kelas' => $item->kelas,
+                'hasilfisik' => $item->hasilfisik,
+                'hasilpsikiatri' => $item->hasilpsikiatri,
+                'hasilpenunjang' => $item->hasilpenunjang,
+                'terapipulang' => $item->terapipulang,
+                'axis2' => $item->axis2,
+                'axis3' => $item->axis3,
+                'axis4' => $item->axis4,
+                'axis5' => $item->axis5,
+                'pasien' => $item->pasien,
+                'kontrolklinik' => $item->kontrolklinik,
+                'kondisiwaktukeluare' => $item->kondisiwaktukeluare,
+                'hasilkonsultasi' => $item->hasilkonsultasi,
+                'terapi' => $item->terapi,
+                'diagnosismasuk' => $item->diagnosismasuk,
+                'kddiagnosismasuk' => array($item->kddiagnosismasuk, $item->kddiagnosa1,  $item->namadiagnosa1),
+                'diagnosisawal' => $item->diagnosisawal,
+                'kddiagnosisawal' => array($item->kddiagnosisawal, $item->kddiagnosa2,  $item->namadiagnosa2),
+                'diagnosistambahan' => $item->diagnosistambahan,
+                'kddiagnosistambahan' => array($item->kddiagnosistambahan, $item->kddiagnosa3,  $item->namadiagnosa3),
+                'kddiagnosistambahan2' => array($item->kddiagnosistambahan2, $item->kddiagnosa4,  $item->namadiagnosa4),
+                'kddiagnosistambahan3' => array($item->kddiagnosistambahan3, $item->kddiagnosa5,  $item->namadiagnosa5),
+                'kddiagnosistambahan4' => array($item->kddiagnosistambahan4, $item->kddiagnosa6,  $item->namadiagnosa6),
+                'kddiagnosistambahanall' => implode(", ", $diagnosistambahan),
+                'diagnosissekunder' => $item->diagnosissekunder,
+                'tglkontrolpoli' => $item->tglkontrolpoli,
+                'rumahsakittujuan' => $item->rumahsakittujuan,
+                'tindakanprosedur' => $item->tindakanprosedur,
+                'alasandirawat' => $item->alasandirawat,
+                'alergi' => $item->alergi,
+                'diet' => $item->diet,
+                'instruksianjuran' => $item->instruksianjuran,
+                'hasillab' => $item->hasillab,
+                'kondisiwaktukeluar' => $item->kondisiwaktukeluar,
+                'pengobatandilanjutkan' => $item->pengobatandilanjutkan,
+                'koderesume' => $item->koderesume,
+                'pegawaifk' => $item->pegawaifk,
+                'noregistrasi' => $item->noregistrasi,
+                'nocm' => $item->nocm,
+                'tglregistrasi' => $item->tglregistrasi,
+                'namapasien' => $item->namapasien,
+                'noregistrasifk' => $item->noregistrasifk,
+                'keadaankeluarj' => $item->keadaankeluarj,
+                'edukasi' => $item->edukasi,
+                'indikasi' => $item->indikasi,
+                'riwayatlalu' => $item->riwayatlalu,
+                'rujuk' => $item->rujuk,
+                'lainlain' => $item->lainlain,
+                'rkeadaankeluar' => $item->rkeadaankeluar,
+                'rcarapulang' => $item->rcarapulang,
+                'ralergi' => $item->ralergi,             
+                'details' => $details,
+            );
+        }
+        $result = array(
+            'data' => $result,
+            'message' => 'Inhuman',
+        );
+        return $this->respond($result);
+    }
+    
+    
 }

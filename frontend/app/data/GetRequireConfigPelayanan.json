@@ -3720,5 +3720,10 @@
             "nameDep": "RingkasanPulangNonJiwaCtrl",
             "urlDep": "module/EMR/RingkasanPulangNonJiwaCtrl"
         }
+        ,
+        {
+            "nameDep": "ResumeRINonJiwaCtrl",
+            "urlDep": "module/EMR/ResumeRINonJiwaCtrl"
+        }
     ]
 }
