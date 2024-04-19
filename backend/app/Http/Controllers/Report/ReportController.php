@@ -16354,6 +16354,130 @@ public function suratBuktiPengembalian(Request $request)
         return view('report.EMR.ringkasan-pulangnNonJiwa',compact('data','pageWidth'));
     }
      
+    public function cetakRingkasanPulangNonJiwaNew(Request $request)
+    {
+        $norec = $request['emr'];
+        $kdProfile = (int) $request['kdprofile'];
+        $data = DB::select(DB::raw("
+        SELECT
+            split_part(epd.value, '~', 2) as split,
+            epd.emrdfk,
+            ep.noemr,
+            ed.TYPE,
+            pa.namapasien,
+            pa.tgllahir,
+            pa.nohp,
+            pa.nocm,
+            ep.jeniskelamin,
+            ep.umur,
+            al.alamatlengkap,
+            ep.noregistrasifk as noregistrasi ,
+            epd.value,ep.namaruangan,pg.namalengkap as namadokter
+            --case when ed.TYPE = 'datetime' then TO_CHAR(TO_TIMESTAMP(epd.value, 'YYYY-MM-DD HH24:MI:SS'),'YYYY-MM-DD HH24:MI:SS') else epd.value end as value
+        FROM
+            emrpasien_t AS ep
+            INNER JOIN emrpasiend_t AS epd ON ep.noemr = epd.emrpasienfk
+            INNER JOIN emrd_t AS ed ON epd.emrdfk = ed.ID
+                INNER JOIN antrianpasiendiperiksa_t AS pd ON pd.norec = ep.norec_apd
+            left JOIN pegawai_m AS pg ON pg.id = pd.objectpegawaifk
+            left JOIN pasien_m as pa on ep.nocm =  pa.nocm
+            left JOIN alamat_m as al on pa.id = al.nocmfk
+        WHERE
+            ep.norec = '$norec'
+                AND ep.kdprofile = '$kdProfile' 
+            AND epd.statusenabled = TRUE 
+            and epd.emrfk = $request[emrfk]
+        ORDER BY
+            ed.nourut
+            "
+        ));
+        foreach ($data as $z){
+            if ($z->type=="datetime"){
+                $z->value=date('Y-m-d H:i:s',strtotime($z->value));
+            }
+//            $z->value = nl2br( $z->value);
+        }
+        // foreach ($data as $z){
+        //     if (isset($z->tgllahir) ||isset($z->tgl)){
+        //         $z->tgllahir=$this->tanggal_indonesia(date('Y-m-d',strtotime($z->tgllahir)));
+        //         $z->tgl=$this->tanggal_indonesia(date('Y-m-d',strtotime($z->tgl)));
+        //     }
+            
+        // }
+        $res['profile'] = Profile::where('id',$request['kdprofile'])->first();
+        $res['d'] = $data;
+        // return view('report.cppt-ranap-dom',compact('res','pageWidth', 'data'));
+        // dd($res);
+        $item =[];   
+        $item2= [];      
+        foreach( $res['d'] as $items){
+                if($items->type  ==  "textbox" ||$items->type  ==  "textarea"  ){
+                    $item[$items->emrdfk] =  $items->value;
+        }
+                if($items->type  ==  "datetime"){
+                    $item[$items->emrdfk] = $this->tanggal_indonesia(date('Y-m-d',strtotime( $items->value))) ;
+                }
+                if($items->type  ==  "time"){
+                    $item[$items->emrdfk] = date('H:i',strtotime( $items->value));
+                }
+                if($items->type  ==  "date"){
+                    $item[$items->emrdfk] = date('Y-m-d',strtotime( $items->value));
+                }
+                if($items->type  ==  "checkboxtextbox"){
+                    $item[$items->emrdfk] =  $items->value;
+                    $item2[$items->emrdfk] =  true;
+                }
+                if($items->type == "checkbox") {
+                    $chekedd = false;
+                    if ($items->value == '1') {
+                        $chekedd = true;
+                    }
+                    $item[$items->emrdfk] = $chekedd;
+                }
+                if($items->type == "combobox") {
+                    $arr = explode('~',$items->value );
+                    $item[$items->emrdfk] = $arr[1];
+                }
+        }
+        $pageWidth = 950;
+        $peg = null;    
+        if(isset($request['isttd']) && $request['isttd'] == true){
+            $peg = DB::table('pegawai_m')->where('id',$request['pegawaittd'])->first();
+            
+        }
+        // dd($data, $item);
+
+        // var_dump($data);
+        $pdf = PDF::loadView(
+            'report.EMR.ringkasan-pulangnNonJiwaNew',
+            array(
+                'res' => $res,
+                'pageWidth' => $pageWidth,
+                'data' => $data,
+                'item'=> $item,
+                'peg'=> $peg
+            )
+        );
+        if(isset($request['isttd']) && $request['isttd'] == true){
+            $objetoRequest = new \Illuminate\Http\Request();
+            $objetoRequest ['emrfk'] = $request['emrfk'];
+            $objetoRequest ['norec_emr'] = $request['emr'];
+            $objetoRequest ['pegawaittd'] = $request['pegawaittd'];
+            $objetoRequest ['nocm'] = $request['nocm'];
+            $objetoRequest ['noregistrasi'] = $request['noregistrasi'];
+            $objetoRequest ['norec_pd'] = $request['norec_pd'];
+            $bsre = app('App\Http\Controllers\Bridging\BridgingBSREController')->pengajuanTTE($objetoRequest,true);
+            if($bsre['status'] == 201){
+                $content = $pdf->download()->getOriginalContent();
+                \Storage::disk('local')->put( 'TTD_BSRE/' . $bsre['dokumen']->id . '/file' . '.pdf' , $content);
+            }
+          
+            return $bsre;
+        }
+
+        return $pdf->stream();
+        return view('report.EMR.ringkasan-pulangnNonJiwaNew',compact('data','pageWidth'));
+    }
     public function cetakPengkajianRajalJiwa(Request $request)
     {
         $norec = $request['emr'];
@@ -17747,12 +17871,12 @@ public function suratBuktiPengembalian(Request $request)
     {
         $res['profile'] = Profile::where('id',$r['kdprofile'])->first();
         $data = \DB::table('resumemedis_t as rm')
-            ->select('rm.norec', 'rm.tglresume', 'ru.namaruangan', 'pg.namalengkap as namadokter',
-                'rm.ringkasanriwayatpenyakit', 'rm.pemeriksaanfisik', 'rm.pemeriksaanpenunjang',
+            ->select('rm.norec', 'rm.tglresume', 'ru.namaruangan', 'pg.namalengkap as namadokter','rm.indikasi','rm.lainlain',
+                'rm.ringkasanriwayatpenyakit', 'rm.pemeriksaanfisik', 'rm.pemeriksaanpenunjang','rm.riwayatlalu',
                 'rm.hasilkonsultasi', 'rm.terapi', 'rm.diagnosisawal', 'rm.diagnosissekunder', 'rm.tindakanprosedur',
-                'rm.tglmasuk', 'rm.tglpulang',
+                'rm.tglmasuk', 'rm.tglpulang','rm.ralergi','rm.terapi','rm.edukasi','rm.rkeadaankeluar','rm.rujuk','rm.rcarapulang',
                 'rm.wisma','rm.kelas','rm.hasilfisik','rm.hasilpsikiatri','rm.hasilpenunjang','rm.hasilpenunjang','rm.terapipulang',
-                'rm.axis2','rm.axis3','rm.axis4','rm.axis5','rm.kontrolklinik','rm.kondisiwaktukeluare',
+                'rm.axis2','rm.axis3','rm.axis4','rm.axis5','rm.kontrolklinik','rm.kondisiwaktukeluare','rm.instruksianjuran',
                 // 'rm.diagnosismasuk', 'rm.diagnosistambahan', 'rm.alasandirawat',
                 'rm.kddiagnosisawal', 'rm.diagnosismasuk', 'rm.kddiagnosismasuk', 'rm.diagnosistambahan', 'rm.kddiagnosistambahan', 'rm.kddiagnosistambahan2', 'rm.kddiagnosistambahan3', 'rm.kddiagnosistambahan4', 'rm.alasandirawat',
                 'dg1.kddiagnosa as kddiagnosa1', 'dg1.namadiagnosa as namadiagnosa1',
@@ -17828,13 +17952,20 @@ public function suratBuktiPengembalian(Request $request)
                 'tglresume' => $item->tglresume,
                 'namaruangan' => $item->namaruangan,
                 'namadokter' => $item->namadokter,
+                'indikasi' => $item->indikasi,
+                'rujuk' => $item->rujuk,
+                'lainlain' => $item->lainlain,
+                'ralergi' => $item->ralergi,
+                'riwayatlalu' => $item->riwayatlalu,
                 'ringkasanriwayatpenyakit' => $item->ringkasanriwayatpenyakit,
                 'pemeriksaanfisik' => $item->pemeriksaanfisik,
                 'pemeriksaanpenunjang' => $item->pemeriksaanpenunjang,
                 'tglmasuk' => $item->tglmasuk,
                 'tglpulang' => $item->tglpulang,
                 'wisma' => $item->wisma,
+                'rcarapulang' => $item->rcarapulang,
                 'kelas' => $item->kelas,
+                'instruksianjuran' => $item->instruksianjuran,
                 'hasilfisik' => $item->hasilfisik,
                 'hasilpsikiatri' => $item->hasilpsikiatri,
                 'hasilpenunjang' => $item->hasilpenunjang,
@@ -17847,6 +17978,8 @@ public function suratBuktiPengembalian(Request $request)
                 'kondisiwaktukeluare' => $item->kondisiwaktukeluare,
                 'hasilkonsultasi' => $item->hasilkonsultasi,
                 'terapi' => $item->terapi,
+                'rkeadaankeluar' => $item->rkeadaankeluar,
+                'edukasi' => $item->edukasi,
                 'diagnosismasuk' => $item->diagnosismasuk,
                 'kddiagnosismasuk' => array($item->kddiagnosismasuk  != null ? $item->kddiagnosismasuk : '-', $item->kddiagnosa1, $item->namadiagnosa1!= null ? $item->namadiagnosa1 : '-'),
                 'diagnosisawal' => $item->diagnosisawal,
@@ -17914,6 +18047,7 @@ public function suratBuktiPengembalian(Request $request)
         return $pdf->stream();
         // return view('report.resume-medis',compact('res','username'));
     }
+    
     public function pengajuanTTE(Request $request)
     {
         $kdProfile = 30;
