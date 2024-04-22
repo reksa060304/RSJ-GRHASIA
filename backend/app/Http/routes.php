@@ -29,8 +29,11 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
 
     Route::group(['prefix' => 'medifirst2000'], function () {
 
+		// RBA
         Route::get('rba/get-data-rba', 'Perencanaan\RBAController@getRBA');
         Route::get('rba/get-combo-rba', 'Perencanaan\RBAController@getComboRBA');
+		Route::get('rba/getSubSubRBA', 'Perencanaan\RBAController@getSubSubRBA');
+		Route::get('report/cetak-rba-detail-sebelum-sesudah-rev', 'Report\ReportController@cetakRBADetailRev');
 
         // Start Verif HAIS Route-------------------------------------------------------------------------------------------
         Route::get('verif-hais/get-bundlehais', 'EMR\BundleHaisController@getBundleHais');

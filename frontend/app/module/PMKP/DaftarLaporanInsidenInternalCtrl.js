@@ -17,6 +17,11 @@ define(['initialize'], function (initialize) {
                 pageSizes: true,
                 buttonCount: 5
             }
+
+            var petugasInsidenInternal = ''
+            var verifikatorInsidenInternal = ''
+            $scope.pegawai = ModelItem.getPegawai();
+
             loadCombo();
             loadFirst();
             loadData();
@@ -25,7 +30,12 @@ define(['initialize'], function (initialize) {
 
             function loadCombo() {
                 medifirstService.get("pmkp/get-data-combo-pmkp")
-                    .then(function (data) {                        
+                    .then(function (data) { 
+
+                        // Petugas dan verifikator insiden
+                        petugasInsidenInternal = data.data.petugasInsidenInternal
+                        verifikatorInsidenInternal = data.data.verifikatorInsidenInternal
+                        
                         $scope.KelompokUser = medifirstService.getKelompokUser();
                         $scope.PegawaiLogin = medifirstService.getPegawaiLogin();
                         var datas = data.data;    //get-datacombo-ruangan                    
@@ -332,10 +342,22 @@ define(['initialize'], function (initialize) {
             }
 
             $scope.editData = function () {
+
+                if(petugasInsidenInternal.includes($scope.pegawai.id.toString()) == false || verifikatorInsidenInternal.includes($scope.pegawai.id.toString()) == false){
+                    toastr.error('Anda Bukan Petugas Insiden Internal')
+                    return
+                }
+
                 if ($scope.dataPasienSelected == undefined) {
                     alert("Data Belum Dipilih!")
                     return;
                 }
+
+                if($scope.dataPasienSelected.statusverif == true){
+                    toastr.error("Data sudah diverifikasi")
+                    return
+                }
+
                 if ($scope.PegawaiLogin.namaLengkap != $scope.dataPasienSelected.pembuatlaporan) {
                     alert("Data Tidak Bisa Di Ubah!")
                     return;
@@ -359,6 +381,16 @@ define(['initialize'], function (initialize) {
             }
 
             $scope.hapusData = function () {
+                if(petugasInsidenInternal.includes($scope.pegawai.id.toString()) == false || verifikatorInsidenInternal.includes($scope.pegawai.id.toString()) == false){
+                    toastr.error('Anda Bukan Petugas / Verifikator Insiden Internal')
+                    return
+                }
+
+                if ($scope.dataPasienSelected == undefined) {
+                    alert("Data Belum Dipilih!")
+                    return;
+                }
+
                 if ($scope.dataPasienSelected.norec_lk != undefined) {
                     messageContainer.error("Insiden Telah Ditindaklanjuti Tidak Bisa Dihapus!")
                     return

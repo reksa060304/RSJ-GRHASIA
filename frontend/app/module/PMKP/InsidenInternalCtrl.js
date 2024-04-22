@@ -23,6 +23,10 @@ define(['initialize'], function (initialize) {
             $scope.currentKejadianSama = [];
             $scope.currentGrading = [];
             $scope.disabledText = false;
+
+            var petugasInsidenInternal = '';
+            var verifikatorInsidenInternal = ''
+
             LoadCombo();
             // LoadCache();                        
 
@@ -41,6 +45,11 @@ define(['initialize'], function (initialize) {
                 medifirstService.get('pmkp/get-data-combo-pmkp').then(function (e) {
                     $scope.listKeselamatanInput = e.data.insidenkeselamtanpasien;
                     $scope.listRegrading = e.data.regrading;
+
+                    // petugas dan verifikator insiden
+                    petugasInsidenInternal = e.data.petugasInsidenInternal
+                    verifikatorInsidenInternal = e.data.verifikatorInsidenInternal
+
                     LoadCache();
                 });
 
@@ -332,7 +341,7 @@ define(['initialize'], function (initialize) {
                             $scope.item.TglLaporan = moment(datas.tgllapor).format('YYYY-MM-DD HH:mm');
                             $scope.item.TglTerimaLaporan = moment(datas.tglterima).format('YYYY-MM-DD HH:mm');
                             $scope.item.PenerimaLaporan = { id: datas.penerimalaporanfk, namalengkap: datas.penerimalaporan };
-                            $scope.item.PembuatLaporan = { id: datas.PembuatLaporanfk, namalengkap: datas.PembuatLaporan };
+                            $scope.item.PembuatLaporan = { id: datas.pembuatlaporanfk, namalengkap: datas.pembuatlaporan };
                             $scope.item.JenisKeselamatanInput = { jeniskesalamatanfk: datas.jeniskesalamatanfk, jeniskeselamatan: datas.jeniskeselamatan };
                             $scope.item.KeselamatanInput = { id: datas.insidenkeselamatanfk, keselamatan: datas.keselamatan };
                             $scope.item.JenisKelamin = { id: datas.jeniskelaminfk, jeniskelaminfk: datas.jeniskelaminfk, jeniskelamin: datas.jeniskelamin };
@@ -391,23 +400,23 @@ define(['initialize'], function (initialize) {
                                 })
                             }
 
-                            if (datas.insidenpenyangkut != '' || datas.insidenpenyangkut != null) {
-                                var insidenpenyangkut = datas.insidenpenyangkut.split(',')
-                                insidenpenyangkut.forEach(function (data) {
-                                    $scope.listInsiden.forEach(function (e) {
-                                        for (let i in e.detail) {
-                                            if (e.detail[i].id == data) {
-                                                e.detail[i].isChecked = true
-                                                var dataid = {
-                                                    "id": e.detail[i].id, "nama": e.detail[i].nama,
-                                                    "value": e.detail[i].id,
-                                                }
-                                                $scope.currentInsiden.push(dataid)
-                                            }
-                                        }
-                                    })
-                                })
-                            }
+                            // if (datas.insidenpenyangkut != '' || datas.insidenpenyangkut != null) {
+                            //     var insidenpenyangkut = datas.insidenpenyangkut.split(',')
+                            //     insidenpenyangkut.forEach(function (data) {
+                            //         $scope.listInsiden.map(function (e) {
+                            //             for (let i in e.detail) {
+                            //                 if (e.detail[i].id == data) {
+                            //                     e.detail[i].isChecked = true
+                            //                     var dataid = {
+                            //                         "id": e.detail[i].id, "nama": e.detail[i].nama,
+                            //                         "value": e.detail[i].id,
+                            //                     }
+                            //                     $scope.currentInsiden.push(dataid)
+                            //                 }
+                            //             }
+                            //         })
+                            //     })
+                            // }
 
                             if (datas.insidenterjadi != '' || datas.insidenterjadi != null) {
                                 var insidenterjadi = datas.insidenterjadi.split(',')
@@ -523,6 +532,7 @@ define(['initialize'], function (initialize) {
                         medifirstService.get("pmkp/get-data-pasien-registrasi?Norec=" + kpid, true).then(function (dat) {
                             $scope.isRouteLoading = false;
                             var pegawaiLogin = medifirstService.getPegawaiLogin();
+                            // console.log(pegawaiLogin)
                             $scope.item.PembuatLaporan = { id: pegawaiLogin.id, namalengkap: pegawaiLogin.namaLengkap }
                             noRegistrasifk = kpid;
                             $scope.item.TglInsiden = moment($scope.now).format('YYYY-MM-DD HH:mm');
@@ -774,8 +784,27 @@ define(['initialize'], function (initialize) {
             }
 
             $scope.Save = function () {
+                if(noOrder == 'InputInsidenInternal'){
+                    // hanya petugas yang bisa input
+                    if(petugasInsidenInternal.includes($scope.pegawai.id.toString()) == false){
+                        toastr.error('Anda Bukan Petugas Insiden Internal')
+                        return
+                    }
+                }
+
+                if(noOrder == 'EditInsiden'){
+                    // hanya petugas dan verifikator yang bisa edit
+                    if(petugasInsidenInternal.includes($scope.pegawai.id.toString()) == false || verifikatorInsidenInternal.includes($scope.pegawai.id.toString() == false) ){
+                        toastr.error('Anda Bukan Petugas Insiden Internal')
+                        return
+                    }
+        
+                }
+
+                
                 if ($scope.item.KeselamatanInput == undefined) {
                     toastr.error('Peringatan, Insiden Keselamatan Belum Dipilih');
+                    return
                 }
 
                 var confirm = $mdDialog.confirm()
@@ -994,8 +1023,8 @@ define(['initialize'], function (initialize) {
                         "grading": grading,
                         "insidenkeselamatanfk": $scope.item.KeselamatanInput.id,
                         "noregistrasifk": noRegistrasifk != undefined ? noRegistrasifk : null,
-                        "pembuatlaporanfk": $scope.item.PembuatLaporan != undefined ? $scope.item.PembuatLaporan.id : null,
-                        "penerimalaporanfk": $scope.item.PenerimaLaporan != undefined ? $scope.item.PenerimaLaporan.id : null,
+                        "pembuatlaporanfk": $scope.item.PembuatLaporan ? $scope.item.PembuatLaporan.id : null,
+                        "penerimalaporanfk": $scope.item.PenerimaLaporan ? $scope.item.PenerimaLaporan.id : null,
                     }
                     var objSave = {
                         data: dataSave,

@@ -375,6 +375,9 @@ class PMKPController extends ApiController
             ->where('statusenabled', true)
             ->orderBy('id')
             ->get();
+        
+        $petugasInsidenInternal = $this->settingDataFixed('petugasInsidenInternal', $kdProfile);
+        $verifikatorInsidenInternal = $this->settingDataFixed('verifikatorInsidenInternal', $kdProfile);
 
         $result = array(
             'ruangan' => $ruangan,
@@ -397,6 +400,8 @@ class PMKPController extends ApiController
             'regrading' => $dataRegrading,
             'kdUser' => $kdUserPmkp,
             'kategoryrisiko' => $dataKategoryRisiko,
+            'petugasInsidenInternal' => $petugasInsidenInternal,
+            'verifikatorInsidenInternal' => $verifikatorInsidenInternal,
             'message' => 'ea@epic',
         );
 
@@ -1015,12 +1020,15 @@ class PMKPController extends ApiController
                 $data->grading = $request['data']['grading'];
                 $data->insidenkeselamatanfk = $request['data']['insidenkeselamatanfk'];
                 $data->noregistrasifk = $request['data']['noregistrasifk'];
-              
+                $data->pembuatlaporanfk = $request['data']['pembuatlaporanfk'];
+                $data->penerimalaporanfk = $request['data']['penerimalaporanfk'];
+                
                 $data->save();
 
             $transStatus = 'true';
         } catch (\Exception $e) {
             $transStatus = 'false';
+            $errMsg = $e->getMessage();
         }
 
         if ($transStatus == 'true') {
@@ -1037,7 +1045,7 @@ class PMKPController extends ApiController
             DB::rollBack();
             $result = array(
                 "status" => 400,
-                "message"  => $transMessage,
+                "message"  => $errMsg,
                 "as" => 'ea@epic',
             );
         }
@@ -1342,7 +1350,6 @@ class PMKPController extends ApiController
             array(
                 'norec' => $request['Norec'],
             ));
-
         $result = array(
             'data' => $data,
             'message' => 'ea@epic',

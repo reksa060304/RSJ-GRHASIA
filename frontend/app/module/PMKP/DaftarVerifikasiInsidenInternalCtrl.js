@@ -18,15 +18,30 @@ define(['initialize'], function (initialize) {
                 pageSizes: true,
                 buttonCount: 5
             }
+
+            var petugasInsidenInternal = ''
+            var verifikatorInsidenInternal = ''
+            $scope.pegawai = ModelItem.getPegawai();
+
             loadCombo();
             loadFirst();
             loadData();
             loadKonsul();
 
             function loadCombo() {
-                medifirstService.getPart("sysadmin/general/get-datacombo-ruangan", true, true, 20).then(function (data) {
-                    $scope.listRuangan = data;
-                });
+                medifirstService.get("pmkp/get-data-combo-pmkp")
+                    .then(function (data) {
+                        
+                        // Petugas dan verifikator insiden
+                        petugasInsidenInternal = data.data.petugasInsidenInternal
+                        verifikatorInsidenInternal = data.data.verifikatorInsidenInternal
+                        
+                        medifirstService.getPart("sysadmin/general/get-datacombo-ruangan", true, true, 20).then(function (data) {
+                            $scope.listRuangan = data;
+                        });
+                        
+                        
+                    })
             }
 
             function loadFirst() {
@@ -385,8 +400,18 @@ define(['initialize'], function (initialize) {
             }
 
             $scope.editData = function () {
+                if(petugasInsidenInternal.includes($scope.pegawai.id.toString()) == false || verifikatorInsidenInternal.includes($scope.pegawai.id.toString()) == false){
+                    toastr.error('Anda Bukan Petugas / Verifikator Insiden Internal')
+                    return
+                }
+
                 if ($scope.dataPasienSelected == undefined) {
                     alert("Data Belum Dipilih!")
+                    return;
+                }
+
+                if ($scope.dataPasienSelected.statusverif == true) {
+                    toastr.error("Data Sudah Diverifikasi!")
                     return;
                 }
                
@@ -408,6 +433,16 @@ define(['initialize'], function (initialize) {
             }
 
             $scope.hapusData = function () {
+                if(petugasInsidenInternal.includes($scope.pegawai.id.toString()) == false || verifikatorInsidenInternal.includes($scope.pegawai.id.toString()) == false){
+                    toastr.error('Anda Bukan Petugas / Verifikator Insiden Internal')
+                    return
+                }
+
+                if ($scope.dataPasienSelected == undefined) {
+                    alert("Data Belum Dipilih!")
+                    return;
+                }
+
                 if ($scope.dataPasienSelected.norec_lk != undefined) {
                     messageContainer.error("Insiden Telah Ditindaklanjuti Tidak Bisa Dihapus!")
                     return
@@ -515,9 +550,25 @@ define(['initialize'], function (initialize) {
             }
 
             $scope.verifikasiInsiden = function () {
+                if(verifikatorInsidenInternal.includes($scope.pegawai.id.toString()) == false){
+                    toastr.error("Anda Bukan Verifikator Insiden Internal")
+                    return
+                }
+
                 if($scope.selectedOnCheck.length == 0) {
                     alert("Harap pilih data yang akan diverifikasi!")
                     return;
+                }
+
+                let listStatusVerif = [] 
+
+                $scope.selectedOnCheck.map(function(data){
+                   listStatusVerif.push(data.statusverif)
+                })
+
+                if(listStatusVerif.includes(true)){
+                    toastr.error("Ada data yang sudah diverifikasi")
+                    return
                 }
                 
                 var json = {
@@ -532,6 +583,11 @@ define(['initialize'], function (initialize) {
             }
 
             $scope.unverifikasiInsiden = function () {
+                if(verifikatorInsidenInternal.includes($scope.pegawai.id.toString()) == false){
+                    toastr.error("Anda Bukan Verifikator Insiden Internal")
+                    return
+                }
+
                 if($scope.selectedOnCheck.length == 0) {
                     alert("Harap pilih data yang akan di unverifikasi!")
                     return;
