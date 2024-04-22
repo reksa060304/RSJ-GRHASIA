@@ -47,7 +47,12 @@
     <div class=" grid_12">
         <div class=" grid_12">
             <div class="grid_12">
-                <kendo-grid k-data-source="resultGrids" id="gridId" k-selectable="'row'" k-options="ColumnResult"
+
+                <kendo-grid ng-if="IsSave == false" k-data-source="resultGrids" id="gridId" k-selectable="'row'" k-options="ColumnResult2"
+                    k-ng-model="dataSelected">
+                </kendo-grid>
+
+                <kendo-grid ng-if="IsSave == true" k-data-source="resultGrids" id="gridId" k-selectable="'row'" k-options="ColumnResult"
                     k-ng-model="dataSelected" ng-click="kl(dataSelected)" ng-dblclick="gridDblKlik(dataSelected)">
                 </kendo-grid>
             </div>

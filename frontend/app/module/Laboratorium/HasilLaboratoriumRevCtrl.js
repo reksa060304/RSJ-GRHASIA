@@ -199,6 +199,95 @@ define(['initialize'], function (initialize) {
 
                     }]
                 };
+
+                $scope.ColumnResult2 = {
+                    toolbar: [
+                        "excel",
+
+                    ],
+                    excel: {
+                        fileName: "HasilLab.xlsx",
+                        allPages: true,
+                    },
+                    selectable: 'row',
+                    pageable: true,
+
+                    // dataBound: onDataBound,
+                    excelExport: function (e) {
+
+                        var sheet = e.workbook.sheets[0];
+                        sheet.frozenRows = 2;
+                        sheet.mergedCells = ["A1:H1"];
+                        sheet.name = "Hasil";
+
+                        var myHeaders = [
+
+                            {
+                                value: "Hasil Laboratorium",
+                                fontSize: 15,
+                                textAlign: "center",
+                                background: "#c1d2d2",
+                                // color:"#ffffff"
+                            }];
+
+                        sheet.rows.splice(0, 0, { cells: myHeaders, type: "header", height: 50 });
+                    },
+                    columns: [
+                        {
+                            field: "tglpelayanan",
+                            title: "Tanggal",
+                            width: "20%"
+                        }, 
+                        {
+                        field: "namaproduk",
+                        title: "Nama Pemeriksaan",
+                        width: "20%"
+                    },
+                    {
+                        field: "detailpemeriksaan",
+                        title: "Detail Pemeriksaan",
+                        width: "20%"
+                    }, {
+                        field: "hasil",
+                        title: "Hasil Pemeriksaan",
+                        width: "15%",
+                        attributes: {
+                            class: "#=flag != 'N' ? 'red' : 'green' #"
+                       },
+                    }, {
+                        field: "nilaitext",
+                        title: "Nilai Normal",
+                        width: "15%"
+                    },
+                    // {
+                    //     field: "tipedata",
+                    //     title: "tipedata",
+                    //     width: "0%"
+                        
+                    // },
+                    {
+                        field: "satuanstandar",
+                        title: "Satuan Hasil",
+                        width: "20%"
+                    },
+                    {
+                        field: "Metode",
+                        title: "Metode",
+                        width: "20%"
+                    },
+
+                    {
+                        hidden: true,
+                        field: "detailjenisproduk",
+                        title: "Jenis Pemeriksaan"
+                    },
+
+                    {
+                        hidden: true,
+                        field: "nourutdetail"
+
+                    }]
+                };
                 $scope.isRouteLoading = true
                 
                 medifirstService.get("laboratorium/get-hasil-lab-manual?norec_apd=" + $state.params.norecApd +
