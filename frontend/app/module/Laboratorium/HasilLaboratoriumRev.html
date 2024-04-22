@@ -63,7 +63,7 @@
                 <!-- <div class="grid_1">
                     {{item.nilaistr}}
                 </div> -->
-                 <div class="grid_1">
+                 <div class="grid_1" ng-show="IsSave">
                     <div class="grid_12">
                         <label c-label item="item" c-label-text="Min"></label>
                     </div>
@@ -71,7 +71,7 @@
                         <input c-text-box type="input" class="k-textbox" ng-model="item.nilaimin" style="text-align: center;" />
                     </div>
                 </div>
-                <div class="grid_1">
+                <div class="grid_1" ng-show="IsSave">
                     <div class="grid_12">
                         <label c-label item="item" c-label-text="Max"></label>
                     </div>
@@ -99,7 +99,7 @@
                     </div>
                     
                     <div class="grid_3" style="margin-top: 10px">
-                        <button class="btnTemplate1" ng-click="cetakds()"><i class="fa fa-print"></i>Cetak</button>
+                        <button class="btnTemplate1" ng-click="cetakds()" ng-show="IsSave"><i class="fa fa-print"></i>Cetak</button>
                     </div>
                     <div class="grid_3" style="margin-top: 10px">
                         <button class="btnTemplate1" ng-click="cetakSurat()"><i class="fa fa-print"></i>Cetak Surat Keterangan</button>
