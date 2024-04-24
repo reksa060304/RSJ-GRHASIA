@@ -6440,7 +6440,8 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
         and subkeg.statusenabled = true
         and subsubkeg.kdprofile = 30
         and subsubkeg.statusenabled = true
-        and ma.kodemataanggaran = '$kode'")
+        --and ma.kodemataanggaran = '$kode'--munculkan semunya 23-042024
+        ")
         );
 
         $result = array(
