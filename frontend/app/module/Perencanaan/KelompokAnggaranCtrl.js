@@ -138,13 +138,12 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
             $scope.listTahapKegiatan = [
                 { id: 100, tahap: "Semua Kegiatan" },
-                { id: 1, tahap: "Indikatif 1" },
+                { id: 1, tahap: "Indikatif Murni" },
                 { id: 2, tahap: "Murni Definitif" },
                 { id: 4, tahap: "Pergeseran 1" },
                 { id: 3, tahap: "Pergeseran 2" },
                 { id: 5, tahap: "Pegeseran 3" },
                 { id: 6, tahap: "Perubahan" },
-                { id: 7, tahap: "Indikatif 2" }
             ];
             $scope.listPihakKetiga = []
             medifirstService.getPart('perencanaan/get-datacombo-part-rekanan', true, true, 20).then(function (data) {
@@ -2702,6 +2701,18 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     parseFloat(bln11) 
                 $scope.item.bln12 = totalAlokasi - parseFloat($scope.item.totalBulanAlokasiDetail)
                 $scope.item.bln12 = $scope.item.bln12.toFixed(2)
+
+                $scope.item.totalJanDes = parseFloat(bln1) +
+                    parseFloat(bln2) +
+                    parseFloat(bln3) +
+                    parseFloat(bln4) +
+                    parseFloat(bln5) +
+                    parseFloat(bln6) +
+                    parseFloat(bln7) +
+                    parseFloat(bln8) +
+                    parseFloat(bln9) +
+                    parseFloat(bln10) +
+                    parseFloat(bln11) + parseFloat($scope.item.bln12)
             }
             
 
