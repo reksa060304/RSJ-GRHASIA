@@ -155,6 +155,8 @@ define(['initialize'], function (initialize) {
                         sheet.rows[0].cells[7].color = '#000000'; 
                         sheet.rows[0].cells[8].background = '#6fde78'; 
                         sheet.rows[0].cells[8].color = '#000000'; 
+                        sheet.rows[0].cells[8].background = '#6fde78'; 
+                        sheet.rows[0].cells[8].color = '#000000'; 
                        
                     },
                     columns: [
@@ -190,6 +192,23 @@ define(['initialize'], function (initialize) {
                             field: "hasilnama",
                             title: "JENIS KEGIATAN"
                         },
+                        {
+                            title: "JENIS KELAMIN",
+                            headerAttributes: { style: "text-align : center" },
+                            columns: [
+                                {
+                                    field: "jumlahlk",
+                                    title: "LAKI-LAKI",                                    
+                                    headerAttributes: { style: "text-align : center" }
+                                },
+                                {
+                                    field: "jumlahpr",
+                                    title: "PEREMPUAN",                                  
+                                    headerAttributes: { style: "text-align : center" },
+                                }
+    
+                            ]
+                        },                      
                         {
                             field: "jumlah",
                             title: "JUMLAH"
