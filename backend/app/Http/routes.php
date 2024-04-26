@@ -1407,7 +1407,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('report/get-cetak-buku-pajak','Report\ReportController@CetakBukuPajak');
           Route::get('report/get-register-penutupan-kas','Report\ReportController@getRegisterPenutupanKas');
           Route::get('report/get-cetak-buku-panjar','Report\ReportController@CetakBukuPanjar');
-          Route::get('report/get-cetak-fungsional','Report\ReportController@CetakFungsional');
+          // Route::get('report/get-cetak-fungsional','Report\ReportController@CetakFungsional');
+          Route::get('report/get-cetak-fungsional','Report\ReportController@CetakFungsionalv2');
           Route::get('report/get-cetak-fungsional-new','Report\ReportController@CetakFungsionalNew');
           Route::get('report/get-cetak-ro','Report\ReportController@CetakRO');
           Route::get('report/get-cetak-rk','Report\ReportController@CetakRK');
