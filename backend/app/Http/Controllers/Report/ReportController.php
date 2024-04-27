@@ -12227,7 +12227,7 @@ public function CetakFungsionalNew(Request $request){
                 and km.tahun = '$tahun'
                                 $qasalproduk
                 group by km.keterangan, km.kode, km.div, sr.totalbelanja, sr.norec, extract(month from sr.tglrealisasi)
-            ) as f group by text, kode, div, bulan ) as a  order by length(kode), kode
+            ) as f group by text, kode, div, bulan ) as a group by code, kode,text,div,jumlahpengembalian,totalbulanlalu,totalbulanini   order by length(kode), kode
         
 
 ) as x 

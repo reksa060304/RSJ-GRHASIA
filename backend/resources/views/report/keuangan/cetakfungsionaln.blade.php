@@ -84,7 +84,7 @@
                 </td>
                 <td></td>
                 <td align="left">
-                    <p style="text-align: left; font-size: 20px; margin-top:-5px;">: Paula Sofyanita, SE.</p>
+                    <p style="text-align: left; font-size: 20px; margin-top:-5px;">: Christina Dewi Isti Paramita, S.E.</p>
                 </td>
             </tr>
             <tr>
@@ -665,13 +665,13 @@
                 <td>- Uang Muka Kerja : </td>
                 <td style="text-align: right">Rp. {{number_format($saldoKasBuld[0]->jml_uang_muka_kerja,2,',','.')}}</td>
                 <td align="center">dr. Akhmad Akhadi Syamsudhuha, M.P.H</td>
-                <td align="center">Paula Sofyanita, SE.</td>
+                <td align="center">Christina Dewi Isti Paramita, S.E.</td>
                 <td></td>
             </tr>
             <tr>
                 <td colspan="2">_______________________________________________________</td>
                 <td align="center">NIP. 19680714 200011 1 002</td>
-                <td align="center">NIP. 19910622 201502 2 002</td>
+                <td align="center">NIP. 19841027 201502 2 001</td>
                 <td></td>
             </tr>
             <tr>
