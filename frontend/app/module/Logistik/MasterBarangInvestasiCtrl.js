@@ -66,6 +66,8 @@ define(['initialize'], function (initialize) {
 					$scope.ListRekanan = dataComboMaster.rekanan;
 					$scope.ListAsalBarang = dataComboMaster.asalproduk;
 					$scope.ListKelompokAset = dataComboMaster.kelompokaset;
+					$scope.ListkondisiFisik = dataComboMaster.kondisiFisik;
+					$scope.ListKeterangan = dataComboMaster.keterangan;
 
 
 					$scope.listDataKecamatan = dataComboAlamat.kecamatan
@@ -196,6 +198,7 @@ define(['initialize'], function (initialize) {
 							$scope.item.kdAspak = " ";
 							$scope.item.noaset = datas.noregisteraset_int;
 							$scope.item.TahunPerolehan = datas.tahunperolehan;
+							$scope.item.koderegisterrs = datas.koderegisterrs;
 							// $scope.item.kdRs=datas.kdproduk;
 							$scope.item.produk = { id: datas.idproduk, namaproduk: datas.namaproduk };
 							// $scope.item.namaProduk=datas.namaproduk;
@@ -238,6 +241,7 @@ define(['initialize'], function (initialize) {
 							// $scope.item.sisaumur = datas.sisaumur
 							$scope.item.merkProduk = { id: datas.merkid, merkproduk: datas.merkproduk };
 							$scope.item.typeProduk = { id: datas.typeid, typeproduk: datas.typeproduk };
+							$scope.item.KondisiBarang = { id: datas.kondisibarangfk, nama: datas.kondisibarang };
 							$scope.item.UsiaPakai = 0;
 							$scope.item.UsiaTeknis = 0;
 							$scope.item.TglProduksi = $scope.now;
@@ -262,6 +266,7 @@ define(['initialize'], function (initialize) {
 							// $scope.item.NoSertifikat="";
 							// $scope.item.Pegawai="";
 							$scope.item.MasaBerlakuSertifikat = 0;
+							$scope.item.LuasTanah = datas.luastanah;
 							// * END SERTIFIKAT
 
 							// * REKANAN
@@ -271,6 +276,16 @@ define(['initialize'], function (initialize) {
 
 							$scope.item.nilaiSisa = datas.nilaisisa;
 							$scope.item.umurEkonomis = datas.umurasset;
+							// * BANGUNAN
+							// $scope.item.sisaumur = datas.sisaumur Tingkat
+						
+							$scope.item.KondisiBangunan = { id: datas.kondisbanguanfk, nama: datas.kondisibanguanan };
+							$scope.item.Tingkat = { id: datas.tingkatfk, nama: datas.tingkat };
+							$scope.item.Beton = { id: datas.betonfk, nama: datas.beton };
+							$scope.item.LuasLantai = datas.luaslantai;
+							$scope.item.LuasBanguanan = datas.luasbangunan;
+						
+							// * END SPESIFIKASI
 
 							hitungPenyusutanFunc();
 							historyPindahAssetFunc();
@@ -578,6 +593,10 @@ define(['initialize'], function (initialize) {
 				if ($scope.item.MasaBerlakuSertifikat != undefined) {
 					MasaBerlakuSertifikat = $scope.item.MasaBerlakuSertifikat + " " + "Tahun";
 				}
+				var LuasTanah = '';
+				if ($scope.item.LuasTanah != undefined) {
+					LuasTanah = $scope.item.LuasTanah ;
+				}
 				// * END SERTIFIKAT
 
 				// * KENDARAAN
@@ -665,6 +684,10 @@ define(['initialize'], function (initialize) {
 				if ($scope.item.fungsiProduk != undefined) {
 					fungsikegunaan = $scope.item.fungsiProduk.fungsiproduk;
 				}
+				var KondisiBarangfk = '';
+				if ($scope.item.KondisiBarang != undefined) {
+					KondisiBarangfk = $scope.item.KondisiBarang.id;
+				}
 				// if ($scope.item.fungsiProduk.fungsiproduk != undefined) {
 				// 	fungsikegunaan = $scope.item.fungsiProduk.fungsiproduk;
 				// }
@@ -728,6 +751,30 @@ define(['initialize'], function (initialize) {
 					sisaUmur = $scope.item.SisaUmur
 				}
 
+				// Bangunan
+				var kondisbanguanfk = null;
+				if ($scope.item.KondisiBangunan != undefined) {
+					kondisbanguanfk = $scope.item.KondisiBangunan.id;
+				}
+				var tingkatfk = null;
+				if ($scope.item.Tingkat != undefined) {
+					tingkatfk = $scope.item.Tingkat.id;
+				}
+				var betonfk = null;
+				if ($scope.item.Beton != undefined) {
+					betonfk = $scope.item.Beton.id;
+				}
+				var luasLantai = null
+				if($scope.item.LuasLantai != undefined){
+					luasLantai = $scope.item.LuasLantai
+				}
+				var LuasBanguanan = null
+				if($scope.item.LuasBanguanan != undefined){
+					LuasBanguanan = $scope.item.LuasBanguanan
+				}
+				
+				// End Bagunanan
+
 				var regAset = {
 
 					// * UMUM
@@ -774,6 +821,7 @@ define(['initialize'], function (initialize) {
 					// * END KATEGORY
 
 					// * SPESIFIKASI
+					kondisibarangfk: KondisiBarangfk,
 					fungsikegunaan: fungsikegunaan,//$scope.item.fungsiProduk.fungsiproduk,
 					objectbahanprodukfk: objectbahanprodukfk,//$scope.item.bahanProduk.id,
 					objecttypeprodukfk: objecttypeprodukfk,//$scope.item.typeProduk.id,
@@ -811,6 +859,7 @@ define(['initialize'], function (initialize) {
 					nosertifikat: Nosertifikat,
 					sertifikat_atasnama: pegawaiSertifikat,
 					masaberlakusertifikat: MasaBerlakuSertifikat,
+					luastanah: LuasTanah,
 					// * END SERTIFIKAT
 
 					// * REKANAN
@@ -820,8 +869,20 @@ define(['initialize'], function (initialize) {
 
 					// * PENYUSUTAN
 					nilaisisa : NilaiSisa,
-					umurasset : UmurAsset
+					umurasset : UmurAsset,
+					
+
 					// * END PENYUSUTAN
+					// * Bangunan
+					kondisbanguanfk : kondisbanguanfk,
+					tingkatfk : tingkatfk,
+					betonfk : betonfk,
+					luasbangunan : LuasBanguanan,
+					luaslantai : luasLantai,
+					// * END Bangunan
+
+
+		
 				}
 
 				var objSave = {

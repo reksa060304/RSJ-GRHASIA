@@ -417,6 +417,16 @@ class LogistikController extends ApiController{
             ->where('b.statusenabled',true)
             ->orderBy('b.id')
             ->get();
+        $KondsiFisik = \DB::table('masterdata_m as b')
+            ->where('b.statusenabled',true)
+            ->where('b.fungsi',2)
+            ->orderBy('b.id')
+            ->get();
+        $Keterangan = \DB::table('masterdata_m as b')
+            ->where('b.statusenabled',true)
+            ->where('b.fungsi',1)
+            ->orderBy('b.id')
+            ->get();
 
         $result = array(
             'pegawai' => $data,
@@ -461,6 +471,8 @@ class LogistikController extends ApiController{
             'passwordAdjusment' => $getPasswordAdjusment,
             'bulan' => $dataBulan,
             'ruanganGudang'=> $dataRuanganGudang,
+            'kondisiFisik'=> $KondsiFisik,
+            'keterangan'=> $Keterangan,
             // 'sppb'=> $sppbnya,
             // 'SNN'=> $SNN,
             'by' => 'ea@epic',
@@ -572,7 +584,7 @@ class LogistikController extends ApiController{
             ->select('pr.id', 'pr.namaproduk', 'pr.reportdisplay', 'ss.id as ssid', 'ss.satuanstandar','pr.kdproduk')
             ->where('pr.statusenabled', true)
             ->where('pr.kdprofile',$idProfile)
-            ->orderBy('pr.namaproduk');
+            ->orderBy('pr.namaproduk'); 
 
         if(isset($req['namaproduk']) &&
             $req['namaproduk']!="" &&
@@ -9548,6 +9560,10 @@ class LogistikController extends ApiController{
             ->leftJOIN('kelompokaset_m as ka','ka.id','=','ra.objectkelompokasetfk')
             ->leftJOIN('merkproduk_m as mp','mp.id','=','ra.objectmerkprodukfk')
             ->leftJOIN('typeproduk_m as tp','tp.id','=','ra.objecttypeprodukfk')
+            ->leftJOIN('masterdata_m as md1','md1.id','=','ra.tingkatfk')
+            ->leftJOIN('masterdata_m as md2','md2.id','=','ra.kondisbanguanfk')
+            ->leftJOIN('masterdata_m as md3','md3.id','=','ra.kondisibarangfk')
+            ->leftJOIN('masterdata_m as md4','md4.id','=','ra.betonfk')
             ->select('ra.norec','ra.noregisteraset','ra.objectprodukfk as idproduk','pr.namaproduk','jp.id as jpid','jp.jenisproduk','ra.kdbmn as kodebmn',
                 'pr.kodeexternal','pr.kdproduk','pr.tglproduksi','ru.id as ruanganasalfk','ru.namaruangan as namaruanganasal','ru1.id as ruangancurrenfk',
                 'ru1.namaruangan as ruangancurrent','ap.id as apid','ap.asalproduk','ka.id as kaid','ka.kelompokaset','ra.tglregisteraset',
@@ -9555,7 +9571,8 @@ class LogistikController extends ApiController{
                 'ra.tglstrukterima','rek.id as idsupplier','rek.namarekanan as namasupplier','rek.alamatlengkap as almSupplier','sp.norec as norecsp',
                 'ss.id as ssid','ss.satuanstandar','ra.qtyprodukaset','spd.norec as norecspd','ap.asalproduk','ra.noregisteraset_int',
                 'ra.masaberlakusertifikat','ra.sisaumur','ra.noseri','ra.tahunperolehan','ra.objectmerkprodukfk as merkid','mp.merkproduk',
-                'ra.tahunperolehan','tp.typeproduk','ra.nilaisisa','ra.umurasset')
+                'ra.tahunperolehan','tp.typeproduk','ra.nilaisisa','ra.luasbangunan','ra.luaslantai','md1.nama as tingkat','md2.nama as kondisibanguanan','md3.nama as kondisibarang','md4.nama as beton'
+                ,'ra.tingkatfk','ra.kondisbanguanfk','ra.kondisibarangfk','ra.betonfk','ra.luastanah','ra.koderegisterrs')
             ->where('ra.kdprofile',$idProfile);
 
         if (isset($request['norecAsset']) && $request['norecAsset'] != "" && $request['norecAsset'] != "undefined") {
@@ -9642,6 +9659,7 @@ class LogistikController extends ApiController{
             $dataRegAset->usiapakai=$request['regAset']['usiapakai'];
             $dataRegAset->usiateknis=$request['regAset']['usiateknis'];
             $dataRegAset->tglproduksi=$request['regAset']['tglproduksi'];
+            $dataRegAset->kondisibarangfk= isset($request['regAset']['kondisibarangfk']) ? $request['regAset']['kondisibarangfk'] : null;
             
             // Satuan
             $dataRegAset->objectsatuan=$request['regAset']['objectsatuan'];
@@ -9660,7 +9678,7 @@ class LogistikController extends ApiController{
             $dataRegAset->nosertifikat=$request['regAset']['nosertifikat'];
             $dataRegAset->sertifikat_atasnama= isset($request['regAset']['sertifikat_atasnama']) ? $request['regAset']['sertifikat_atasnama'] : null; //$request['regAset']['sertifikat_atasnama']
             $dataRegAset->masaberlakusertifikat= isset($request['regAset']['masaberlakusertifikat']) ? $request['regAset']['masaberlakusertifikat'] : null; //$request['regAset']['masaberlakusertifikat'];
-
+            $dataRegAset->luastanah= isset($request['regAset']['luastanah']) ? $request['regAset']['luastanah'] : null; //$request['regAset']['masaberlakusertifikat'];
             // Rekanan
             $dataRegAset->objectprodusenprodukfk=$request['regAset']['objectprodusenprodukfk'];
             $dataRegAset->objectsupplier=$request['regAset']['objectsupplier'];
@@ -9670,6 +9688,17 @@ class LogistikController extends ApiController{
             $dataRegAset->hargaperolehan=$request['regAset']['hargaperolehan'];
             $dataRegAset->nilaisisa=$request['regAset']['nilaisisa'];
             $dataRegAset->umurasset=$request['regAset']['umurasset'];
+
+            
+            // Bangunan
+            $dataRegAset->kondisbanguanfk = $request['regAset']['kondisbanguanfk']; 
+            $dataRegAset->tingkatfk = $request['regAset']['tingkatfk']; 
+            $dataRegAset->betonfk = $request['regAset']['betonfk']; 
+            $dataRegAset->luasbangunan= isset($request['regAset']['luasbangunan']) ? $request['regAset']['luasbangunan'] : null;
+            $dataRegAset->luaslantai= isset($request['regAset']['luaslantai']) ? $request['regAset']['luaslantai'] : null;
+            
+            
+            
 
 //            $dataRegAset->kdrsabhk=$request['regAset']['kdrsabhk'];
             if (isset($request['regAset']['klasifikasiteknologi'])) {
@@ -9850,7 +9879,7 @@ class LogistikController extends ApiController{
                      'ru.id as ruanganasalfk','ru.namaruangan as namaruanganasal','ru1.id as ruangancurrenfk','ru1.namaruangan as ruangancurrent',
                      'ra.tglregisteraset','ra.tglstrukterima','ra.qtyprodukaset','ra.hargaperolehan','ra.tglregisteraset','ra.tglstrukterima',
                      'rek.namarekanan as namasupplier','rek.alamatlengkap as almSupplier','sp.norec as norecsp',
-                     'spd.norec as norecspd','ap.asalproduk','ra.keteranganlainnya','ra.spesifikasi','ra.jenisaset','ra.judul','ra.kdbmn')
+                     'spd.norec as norecspd','ap.asalproduk','ra.keteranganlainnya','ra.spesifikasi','ra.jenisaset','ra.judul','ra.kdbmn','ra.luasbangunan','ra.luaslantai')
             ->where('ra.kdprofile', $idProfile);
 
         if (isset($request['tglAwal']) && $request['tglAwal'] != "" && $request['tglAwal'] != "undefined") {
@@ -12263,8 +12292,11 @@ class LogistikController extends ApiController{
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
         if(isset( $request['noregisterasetfk'])&&  $request['noregisterasetfk']!=''){
-            $noregisterasetfk = "and kpa.noregisterasetfk " . $request['noregisterasetfk'] . ")";
+            // $noregisterasetfk = "and kpa.noregisterasetfk " .'='."'.$request['noregisterasetfk'].'";
+            $noregisterasetfk = "and kpa.noregisterasetfk = '" . $request['noregisterasetfk'] . "'";
+
         }
+      
 
         $data = DB::select(DB::raw("
                 select sk.nokirim,sk.tglkirim,sk.objectruanganasalfk,
