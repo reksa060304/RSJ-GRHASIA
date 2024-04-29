@@ -137,32 +137,25 @@
         </tr>
         <tr>
             <td style="padding: .2em .4em;">Masukan</td>
+            {{-- <td style="padding: .2em .4em;">{{ $data[0]->indikatormasuk_sesudah }}</td> --}}
             <td style="padding: .2em .4em;">{{ $data[0]->indikatormasuk }}</td>
-            <td style="padding: .2em .4em;">{{ $data[0]->targetmasuk }}</td>
-            <td style="padding: .2em .4em;">{{ $data[0]->indikatormasuk_sesudah }}</td>
+            {{-- <td style="padding: .2em .4em;">{{ $data[0]->targetmasuk }}</td> --}}
             <td style="padding: .2em .4em;">{{ $data[0]->targetmasuk_sesudah }}</td>
+            {{-- <td style="padding: .2em .4em;">{{ $data[0]->indikatormasuk_sesudah }}</td> --}}
+            <td style="padding: .2em .4em;">{{ $data[0]->indikatormasuk }}</td>
+            {{-- <td style="padding: .2em .4em;">{{ $data[0]->targetmasuk_sesudah }}</td> --}}
+            <td style="padding: .2em .4em;">{{ $data[0]->targetmasuk }}</td>
         </tr>
         <tr>
             <td style="padding: .2em .4em;">Keluaran</td>
             <td style="padding: .2em .4em;">
-                @php
+                {{-- @php
                     $indikatorkeluaran = explode(chr(10), $data[0]->indikatorkeluaran);            
                     for ($i = 0; $i < count($indikatorkeluaran); $i++) {
                         echo "$indikatorkeluaran[$i]";
                         echo "<br>";
                     }
-                @endphp
-            </td>
-            <td style="padding: .2em .4em;">
-                @php
-                    $targetkeluaran = explode(chr(10), $data[0]->targetkeluaran);            
-                    for ($i = 0; $i < count($targetkeluaran); $i++) {
-                        echo "$targetkeluaran[$i]";
-                        echo "<br>";
-                    }
-                @endphp
-            </td>
-            <td style="padding: .2em .4em;">
+                @endphp --}}
                 @php
                     $indikatorkeluaranSesudah = explode(chr(10), $data[0]->indikatorkeluaran_sesudah);            
                     for ($i = 0; $i < count($indikatorkeluaranSesudah); $i++) {
@@ -172,6 +165,13 @@
                 @endphp
             </td>
             <td style="padding: .2em .4em;">
+                {{-- @php
+                    $targetkeluaran = explode(chr(10), $data[0]->targetkeluaran);            
+                    for ($i = 0; $i < count($targetkeluaran); $i++) {
+                        echo "$targetkeluaran[$i]";
+                        echo "<br>";
+                    }
+                @endphp --}}
                 @php
                     $targetkeluaranSesudah = explode(chr(10), $data[0]->targetkeluaran_sesudah);            
                     for ($i = 0; $i < count($targetkeluaranSesudah); $i++) {
@@ -180,13 +180,49 @@
                     }
                 @endphp
             </td>
+            <td style="padding: .2em .4em;">
+                {{-- @php
+                    $indikatorkeluaranSesudah = explode(chr(10), $data[0]->indikatorkeluaran_sesudah);            
+                    for ($i = 0; $i < count($indikatorkeluaranSesudah); $i++) {
+                        echo "$indikatorkeluaranSesudah[$i]";
+                        echo "<br>";
+                    }
+                @endphp --}}
+                @php
+                    $indikatorkeluaran = explode(chr(10), $data[0]->indikatorkeluaran);            
+                    for ($i = 0; $i < count($indikatorkeluaran); $i++) {
+                        echo "$indikatorkeluaran[$i]";
+                        echo "<br>";
+                    }
+                @endphp
+            </td>
+            <td style="padding: .2em .4em;">
+                {{-- @php
+                    $targetkeluaranSesudah = explode(chr(10), $data[0]->targetkeluaran_sesudah);            
+                    for ($i = 0; $i < count($targetkeluaranSesudah); $i++) {
+                        echo "$targetkeluaranSesudah[$i]";
+                        echo "<br>";
+                    }
+                @endphp --}}
+                @php
+                    $targetkeluaran = explode(chr(10), $data[0]->targetkeluaran);            
+                    for ($i = 0; $i < count($targetkeluaran); $i++) {
+                        echo "$targetkeluaran[$i]";
+                        echo "<br>";
+                    }
+                @endphp
+            </td>
         </tr>
         <tr>
             <td style="padding: .2em .4em; border-bottom: 0;">Hasil</td>
-            <td style="padding: .2em .4em; border-bottom: 0;">{{ $data[0]->indikatorhasil }}</td>
-            <td style="padding: .2em .4em; border-bottom: 0;">{{ $data[0]->targethasil }}</td>
+            {{-- <td style="padding: .2em .4em; border-bottom: 0;">{{ $data[0]->indikatorhasil }}</td> --}}
             <td style="padding: .2em .4em; border-bottom: 0;">{{ $data[0]->indikatorhasil_sesudah }}</td>
+            {{-- <td style="padding: .2em .4em; border-bottom: 0;">{{ $data[0]->targethasil }}</td> --}}
             <td style="padding: .2em .4em; border-bottom: 0;">{{ $data[0]->targethasil_sesudah }}</td>
+            {{-- <td style="padding: .2em .4em; border-bottom: 0;">{{ $data[0]->indikatorhasil_sesudah }}</td> --}}
+            <td style="padding: .2em .4em; border-bottom: 0;">{{ $data[0]->indikatorhasil }}</td>
+            {{-- <td style="padding: .2em .4em; border-bottom: 0;">{{ $data[0]->targethasil_sesudah }}</td> --}}
+            <td style="padding: .2em .4em; border-bottom: 0;">{{ $data[0]->targethasil }}</td>
         </tr>
     </table>
 
@@ -265,11 +301,13 @@
                         <td style="padding: .2em .4em;"></td>
                         <td style="padding: .2em .4em;"></td>
                         <td style="padding: .2em .4em;"></td>
-                        <td style="text-align: right; padding: .2em .4em;">{{ number_format($totalParent1,0,',','.') }}</td>
-                        <td style="padding: .2em .4em;"></td>
-                        <td style="padding: .2em .4em;"></td>
-                        <td style="padding: .2em .4em;"></td>
+                        {{-- <td style="text-align: right; padding: .2em .4em;">{{ number_format($totalParent1,0,',','.') }}</td> --}}
                         <td style="text-align: right; padding: .2em .4em;">{{ number_format($totalParent1Sesudah,0,',','.') }}</td>
+                        <td style="padding: .2em .4em;"></td>
+                        <td style="padding: .2em .4em;"></td>
+                        <td style="padding: .2em .4em;"></td>
+                        {{-- <td style="text-align: right; padding: .2em .4em;">{{ number_format($totalParent1Sesudah,0,',','.') }}</td> --}}
+                        <td style="text-align: right; padding: .2em .4em;">{{ number_format($totalParent1,0,',','.') }}</td>
                         <td style="text-align: right; padding: .2em .4em;">{{ number_format(abs($selisihParent1),0,',','.') }}</td>
                         <td style="text-align: right; padding: .2em .4em;">{{ number_format($persenParent1, 3) }}</td>
                     </tr>
@@ -297,11 +335,13 @@
                         <td style="padding: .2em .4em;"></td>
                         <td style="padding: .2em .4em;"></td>
                         <td style="padding: .2em .4em;"></td>
-                        <td style="text-align:right; padding: .2em .4em;"><b>{{ number_format($totalParent2,0,',','.') }}</b></td>
+                        {{-- <td style="text-align:right; padding: .2em .4em;"><b>{{ number_format($totalParent2,0,',','.') }}</b></td> --}}
+                        <td style="text-align:right; padding: .2em .4em;"><b>{{ number_format($totalParent2Sesudah,0,',','.') }}</b></td>
                         <td style="padding: .2em .4em;"></td>
                         <td style="padding: .2em .4em;"></td>
                         <td style="padding: .2em .4em;"></td>
-                        <td style="text-align: right; padding: .2em .4em;"><b>{{ number_format($totalParent2Sesudah,0,',','.') }}</b></td>
+                        {{-- <td style="text-align: right; padding: .2em .4em;"><b>{{ number_format($totalParent2Sesudah,0,',','.') }}</b></td> --}}
+                        <td style="text-align: right; padding: .2em .4em;"><b>{{ number_format($totalParent2,0,',','.') }}</b></td>
                         <td style="text-align: right; padding: .2em .4em;"><b>{{ number_format(abs($selisihParent2),0,',','.') }}</b></td>
                         <td style="text-align: right; padding: .2em .4em;">{{ number_format($persenParent2, 3) }}</td>
                     </tr>
@@ -329,11 +369,13 @@
                         <td style="padding: .2em .4em;"></td>
                         <td style="padding: .2em .4em;"></td>
                         <td style="padding: .2em .4em;"></td>
-                        <td style="text-align:right; padding: .2em .4em;">{{ number_format($totalParent3,0,',','.') }}</td>
-                        <td style="padding: .2em .4em;"></td>
-                        <td style="padding: .2em .4em;"></td>
-                        <td style="padding: .2em .4em;"></td>
+                        {{-- <td style="text-align:right; padding: .2em .4em;">{{ number_format($totalParent3,0,',','.') }}</td> --}}
                         <td style="text-align:right; padding: .2em .4em;">{{ number_format($totalParent3Sesudah,0,',','.') }}</td>
+                        <td style="padding: .2em .4em;"></td>
+                        <td style="padding: .2em .4em;"></td>
+                        <td style="padding: .2em .4em;"></td>
+                        {{-- <td style="text-align:right; padding: .2em .4em;">{{ number_format($totalParent3Sesudah,0,',','.') }}</td> --}}
+                        <td style="text-align:right; padding: .2em .4em;">{{ number_format($totalParent3,0,',','.') }}</td>
                         <td style="text-align:right; padding: .2em .4em;">{{ number_format(abs($selisihParent3),0,',','.') }}</td>
                         <td style="text-align:right; padding: .2em .4em;">{{ number_format($persenParent3, 3) }}</td>
                     </tr>
@@ -361,11 +403,13 @@
                         <td style="padding: .2em .4em;"></td>
                         <td style="padding: .2em .4em;"></td>
                         <td style="text-align: right; padding: .2em .4em;"></td>
-                        <td style="text-align: right; padding: .2em .4em;">{{ number_format($totalParent4,0,',','.') }}</td>
-                        <td style="padding: .2em .4em;"></td>
-                        <td style="padding: .2em .4em;"></td>
-                        <td style="padding: .2em .4em;"></td>
+                        {{-- <td style="text-align: right; padding: .2em .4em;">{{ number_format($totalParent4,0,',','.') }}</td> --}}
                         <td style="text-align: right; padding: .2em .4em;">{{ number_format($totalParent4Sesudah,0,',','.') }}</td>
+                        <td style="padding: .2em .4em;"></td>
+                        <td style="padding: .2em .4em;"></td>
+                        <td style="padding: .2em .4em;"></td>
+                        {{-- <td style="text-align: right; padding: .2em .4em;">{{ number_format($totalParent4Sesudah,0,',','.') }}</td> --}}
+                        <td style="text-align: right; padding: .2em .4em;">{{ number_format($totalParent4,0,',','.') }}</td>
                         <td style="text-align: right; padding: .2em .4em;">{{ number_format(abs($selisihParent4),0,',','.') }}</td>
                         <td style="text-align: right; padding: .2em .4em;">{{ number_format($persenParent4, 3) }}</td>
                     </tr>
@@ -383,14 +427,22 @@
                     <td style="padding: .2em .4em;"></td>
                     <td style="padding: .2em .4em;"></td>
                     <td style="padding: .2em .4em;">{{ $item->keteranganbelanja }}</td>
-                    <td style="padding: .2em .4em;">{{ $item->jml }}</td>
-                    <td style="padding: .2em .4em;">{{ $item->satuan }}</td>
-                    <td style="text-align: right; padding: .2em .4em;">{{ number_format($item->hargasatuan,0,',','.') }}</td>
-                    <td style="text-align: right; padding: .2em .4em;">{{ number_format( $totalKB,0,',','.' ) }}</td>
-                    <td style="text-align: right; padding: .2em .4em;">{{ $item->jml_sesudah }}</td>
-                    <td style="text-align: center; padding: .2em .4em;">{{ $item->satuan_sesudah }}</td>
+                    {{-- <td style="padding: .2em .4em;">{{ $item->jml }}</td> --}}
+                    <td style="padding: .2em .4em;">{{ $item->jml_sesudah }}</td>
+                    {{-- <td style="padding: .2em .4em;">{{ $item->satuan }}</td> --}}
+                    <td style="padding: .2em .4em;">{{ $item->satuan_sesudah }}</td>
+                    {{-- <td style="text-align: right; padding: .2em .4em;">{{ number_format($item->hargasatuan,0,',','.') }}</td> --}}
                     <td style="text-align: right; padding: .2em .4em;">{{ number_format($item->hargasatuan_sesudah,0,',','.') }}</td>
-                    <td style="text-align: right; padding: .2em .4em;">{{ number_format($totalKBSesudah,0,',','.') }}</td>
+                    {{-- <td style="text-align: right; padding: .2em .4em;">{{ number_format( $totalKB,0,',','.' ) }}</td> --}}
+                    <td style="text-align: right; padding: .2em .4em;">{{ number_format( $totalKBSesudah,0,',','.' ) }}</td>
+                    {{-- <td style="text-align: right; padding: .2em .4em;">{{ $item->jml_sesudah }}</td> --}}
+                    <td style="text-align: right; padding: .2em .4em;">{{ $item->jml }}</td>
+                    {{-- <td style="text-align: center; padding: .2em .4em;">{{ $item->satuan_sesudah }}</td> --}}
+                    <td style="text-align: center; padding: .2em .4em;">{{ $item->satuan }}</td>
+                    {{-- <td style="text-align: right; padding: .2em .4em;">{{ number_format($item->hargasatuan_sesudah,0,',','.') }}</td> --}}
+                    <td style="text-align: right; padding: .2em .4em;">{{ number_format($item->hargasatuan,0,',','.') }}</td>
+                    {{-- <td style="text-align: right; padding: .2em .4em;">{{ number_format($totalKBSesudah,0,',','.') }}</td> --}}
+                    <td style="text-align: right; padding: .2em .4em;">{{ number_format($totalKB,0,',','.') }}</td>
                     <td style="text-align: right; padding: .2em .4em;">{{ number_format(abs($selisih),0,',','.') }}</td>
                     <td style="text-align: right; padding: .2em .4em;">{{ number_format($persen, 3) }}</td>
                 </tr>
@@ -408,9 +460,11 @@
             
             <tr>
                 <td colspan="8" style="text-align: center; padding: .2em .4em;"><b>Total</b></td>
-                <td style="text-align: right; padding: .2em .4em;"><b>{{ number_format($totalSemua,0,',','.') }}</b></td>
-                <td colspan="3" style="text-align: center; padding: .2em .4em;"><b></b></td>
+                {{-- <td style="text-align: right; padding: .2em .4em;"><b>{{ number_format($totalSemua,0,',','.') }}</b></td> --}}
                 <td style="text-align: right; padding: .2em .4em;"><b>{{ number_format($totalSemuaSesudah,0,',','.') }}</b></td>
+                <td colspan="3" style="text-align: center; padding: .2em .4em;"><b></b></td>
+                {{-- <td style="text-align: right; padding: .2em .4em;"><b>{{ number_format($totalSemuaSesudah,0,',','.') }}</b></td> --}}
+                <td style="text-align: right; padding: .2em .4em;"><b>{{ number_format($totalSemua,0,',','.') }}</b></td>
                 <td></td>
                 <td></td>
             </tr>
