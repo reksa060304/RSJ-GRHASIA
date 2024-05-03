@@ -3225,7 +3225,7 @@ class BendaharaPenerimaanController extends ApiController {
                 $cekjumlah = $konten->namaproduk;
             }
 
-            else if($konten->idproduk == 5008631 || $konten->idproduk == 5008632 || $konten->idproduk == 5008633 || $konten->objectkelompoktransaksifk == 307){
+            else if($konten->idproduk == 1004125344 || $konten->idproduk == 5008631 || $konten->idproduk == 5008632 || $konten->idproduk == 5008633 || $konten->objectkelompoktransaksifk == 307){
                 $parkir += $konten->totaldibayarclosing;
                 $volparkir++;
                 $cekjumlah = $konten->namaproduk;
