@@ -4589,9 +4589,21 @@ $scope.formatRupiah = function (value, currency) {
 					toastr.error("Data Belum Dipilih!")
 					return;
 				}
+
+				if ($scope.item.kategoryPegawai != undefined && $scope.item.kategoryPegawai.id == 1){
+					window.open(configuration.baseApiBackend + 'report/get-cetak-suratkgb?norec=' + dataItem.norec+ '&rgb=oke', '_blank');
+				}
+				else if($scope.item.kategoryPegawai != undefined && $scope.item.kategoryPegawai.id == 14){
+					window.open(configuration.baseApiBackend + 'report/get-cetak-suratkgb?norec=' + dataItem.norec+ '&rgb=oke', '_blank');
+				}
+				else if($scope.item.kategoryPegawai != undefined && $scope.item.kategoryPegawai.id == 23){
+					window.open(configuration.baseApiBackend + 'report/get-cetak-suratkgbPPPK?norec=' + dataItem.norec+ '&rgb=oke', '_blank');
+				}
+				else {
+					window.open(configuration.baseApiBackend + 'report/get-cetak-suratkgbLainnya?norec=' + dataItem.norec+ '&rgb=oke', '_blank');
+				}
 				// console.log($scope.dataSelected); report/get-cetak-suratkgb
 				// window.open(configuration.baseApiBackend + dataItem.reportdisplay +'?norec=' + dataItem.norec+ '&rgb=oke', '_blank');
-				window.open(configuration.baseApiBackend + 'report/get-cetak-suratkgb?norec=' + dataItem.norec+ '&rgb=oke', '_blank');
 			}
 			$scope.simpanCPNS = function(){
 				var listRawRequired = [
