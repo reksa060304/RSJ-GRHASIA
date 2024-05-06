@@ -6110,9 +6110,9 @@ END as januari
             and pg.statusenabled = TRUE
             and date_part('month', rp.tglmulai :: date) between '$request->bulanawal' and '$request->bulanakhir'
             and date_part('year', rp.tglmulai :: date) = $request->tahun
-            )
-            SELECT eks.namalengkap, eks.nippns, eks.name  unitkerja, eks.jenispelatihan,eks.waktu, sum(eks.durasi::INTEGER)jumlahjam FROM eksternal eks 
-            GROUP BY eks.namalengkap, eks.nippns, eks.name, eks.jenispelatihan, eks.penyelenggara, eks.waktu, eks.lokasipelatihan, eks.waktusosialisasi
+            )-
+            SELECT eks.namalengkap, eks.nippns, eks.name  unitkerja, eks.jenispelatihan, eks.namapelatihan, eks.waktu, sum(eks.durasi::INTEGER)jumlahjam FROM eksternal eks 
+            GROUP BY eks.namalengkap, eks.nippns, eks.name, eks.jenispelatihan, eks.namapelatihan, eks.penyelenggara, eks.waktu, eks.lokasipelatihan, eks.waktusosialisasi
             ORDER BY eks.nippns asc, eks.namalengkap asc
         "));
         $data3 = \DB::select(DB::raw("
