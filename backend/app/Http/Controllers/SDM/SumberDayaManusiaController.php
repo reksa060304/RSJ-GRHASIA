@@ -6099,7 +6099,7 @@ END as januari
         "));
         $data2 = \DB::select(DB::raw("
             with eksternal as(
-            SELECT pg.namalengkap, pg.nippns,ukp.name, jp.jenispelatihan, rp.penyelenggara,  
+            SELECT pg.namalengkap, pg.nippns,ukp.name, jp.jenispelatihan, rp.namapelatihan, rp.penyelenggara,  
             rp.tglmulai::date  || ' s/d ' || rp.tglakhir :: DATE as waktu, 
             rp.lokasipelatihan, rp.durasi, rp.biayadiklat, rp.biayasppd, ' ' as waktusosialisasi FROM pegawai_m pg
             INNER JOIN riwayatpelatihan_t rp on pg.id = rp.objectpegawaifk
