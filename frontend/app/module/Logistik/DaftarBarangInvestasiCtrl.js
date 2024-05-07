@@ -323,6 +323,25 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     + "kdprofile=" + profile
                 )
             }
+
+            $scope.cetakKIBC = function(){
+                var local = JSON.parse(localStorage.getItem('profile'));
+                var profile = local.id;
+
+                window.open(config.baseApiBackend
+                    + "report/cetak-kibc?"
+                    + "kdprofile=" + profile
+                )
+            }
+            $scope.cetakKIBD = function(){
+                var local = JSON.parse(localStorage.getItem('profile'));
+                var profile = local.id;
+
+                window.open(config.baseApiBackend
+                    + "report/cetak-kibd?"
+                    + "kdprofile=" + profile
+                )
+            }
         }
     ])
 })

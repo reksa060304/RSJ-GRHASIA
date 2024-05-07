@@ -3165,12 +3165,12 @@ class BendaharaPenerimaanController extends ApiController {
                 $cekjumlah = $konten->namaproduk;
             }
 
-            else if($konten->idproduk == 5006041 || $konten->idproduk == 5006039 || $konten->idproduk == 5006780 || $konten->idproduk == 5006776 || $konten->idproduk == 5007118 || $konten->idproduk == 5006775 || $konten->idproduk == 5008618 || $konten->idproduk == 5008619 || $konten->idproduk == 5008614 || $konten->idproduk == 5006040 || $konten->idproduk == 5007119 || $konten->idproduk == 5005994 || $konten->idproduk == 5006774){
+            else if($konten->idproduk == 5006041 || $konten->idproduk == 5006040 || $konten->idproduk == 5006041 
+            || $konten->idproduk == 5006776 || $konten->idproduk == 5006775 || $konten->idproduk == 5008614 ){
                 $jumlahperawatanjenazah += $konten->totaldibayarclosing;
                 $voljumlahperawatanjenazah++;
                 $cekjumlah = $konten->namaproduk;
             }
-
             else if($konten->idproduk == 5008622){
                 $jumlahlegalisir += $konten->totaldibayarclosing;
                 $voljumlahlegalisir++;
@@ -3212,8 +3212,8 @@ class BendaharaPenerimaanController extends ApiController {
                 $voljumlahsewatanah++;
                 $cekjumlah = $konten->namaproduk;
             }
-
-            else if($konten->idproduk == 5006036 || $konten->idproduk == 5006035 || $konten->idproduk == 5007117 || $konten->idproduk == 5005995 || $konten->idproduk == 5005996){
+            else if($konten->idproduk == 5006036 || $konten->idproduk == 5006035 || $konten->idproduk == 5007117 || $konten->idproduk == 5005995 || $konten->idproduk == 5005996
+            || $konten->idproduk == 5008618 ||$konten->idproduk == 5007119 ||$konten->idproduk == 5005994 ||$konten->idproduk == 5005994){
                 $jumlahsewaambulan += $konten->totaldibayarclosing;
                 $voljumlahsewaambulan++;
                 $cekjumlah = $konten->namaproduk;
