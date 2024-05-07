@@ -12246,19 +12246,18 @@ CASE WHEN split_part(kode, '.', 7 ) = '' THEN 0 ELSE split_part(kode, '.', 7 )::
     SELECT
         ma2.ID,
         kt.objectkegiatanfk,
-        CAST ( SUM ( kt.subtotal ) AS FLOAT ) AS total ,
+        CAST ( SUM ( kt.subtotal ) AS FLOAT ) AS total,
         ma2.kodemataanggaran,
         ma2.namamataanggaran
     FROM
         mataanggaran_m ma
         inner JOIN keteranganbelanja_t kt ON kt.objectmataanggaranfk = ma.ID 
-        AND kt.statusenabled = TRUE 	
-        inner join mataanggaran_m ma2 on ma.kodemataanggaran ilike ma2.kodemataanggaran || '%'
+        AND kt.statusenabled = TRUE 
+        inner join mataanggaran_m ma2 on ma.kodemataanggaran ilike ma2.kodemataanggaran || '%' and split_part(ma.kodemataanggaran, '.', 1) = split_part(ma2.kodemataanggaran, '.', 1)
     WHERE
         ma.kdprofile = 30 
         AND ma.statusenabled = TRUE 
         AND kt.subtotal != 0 
-    -- 	AND kt.objectkegiatanfk = 249 
     GROUP BY
         ma2.ID,
         ma2.kodemataanggaran,
