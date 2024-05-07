@@ -144,8 +144,8 @@
                     @foreach ($detail as $items)
                         @if ($dt->id == $items->objectkegiatanfk)
                             <tr>
-                                <td align="left" width="50" style="padding: 10px; font-size: 15px; ">{{ $items->kodemataanggaran }}</td>
-                                <td align="left" width="50" style="padding: 10px; font-size: 15px; ">{{ $items->namamataanggaran }}</td>
+                                <td align="left" width="50" style="padding: 10px; font-size: 15px; "></td>
+                                <td align="left" width="50" style="padding: 10px; font-size: 15px; ">{{ $items->kodemataanggaran }} {{ $items->namamataanggaran }}</td>
                                 <td align="right" width="50" style="padding: 10px; font-size: 15px;  ">{{ number_format($items->total,2,',','.') }}</td>
                                 {{-- <td align="right" width="50" style="padding: 10px; font-size: 15px; ">{{ number_format($dt->totalbulanlalu,2,',','.') }}</td>
                                 <td align="right" width="100" style="padding: 10px; font-size: 15px; ">{{ number_format($dt->totalbulanini,2,',','.') }}</td>
