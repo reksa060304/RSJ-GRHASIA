@@ -12243,33 +12243,56 @@ CASE WHEN split_part(kode, '.', 7 ) = '' THEN 0 ELSE split_part(kode, '.', 7 )::
     "));
 
     $detail = DB::select(DB::raw("
-    SELECT
-        ma2.ID,
-        kt.objectkegiatanfk,
-        CAST ( SUM ( kt.subtotal ) AS FLOAT ) AS total,
-        ma2.kodemataanggaran,
-        ma2.namamataanggaran
-    FROM
-        mataanggaran_m ma
-        inner JOIN keteranganbelanja_t kt ON kt.objectmataanggaranfk = ma.ID 
-        AND kt.statusenabled = TRUE 
-        inner join mataanggaran_m ma2 on ma.kodemataanggaran ilike ma2.kodemataanggaran || '%' and split_part(ma.kodemataanggaran, '.', 1) = split_part(ma2.kodemataanggaran, '.', 1)
-    WHERE
-        ma.kdprofile = 30 
-        AND ma.statusenabled = TRUE 
-        AND kt.subtotal != 0 
-    GROUP BY
-        ma2.ID,
-        ma2.kodemataanggaran,
-        ma2.namamataanggaran,
-        kt.objectkegiatanfk
-    ORDER BY
-        kt.objectkegiatanfk ASC
+        SELECT
+            ma2.ID,
+            kt.objectkegiatanfk,
+            CAST ( SUM ( kt.subtotal ) AS FLOAT ) AS total,
+            ma2.kodemataanggaran,
+            ma2.namamataanggaran
+        FROM
+            mataanggaran_m ma
+            inner JOIN keteranganbelanja_t kt ON kt.objectmataanggaranfk = ma.ID 
+            AND kt.statusenabled = TRUE 
+            inner join mataanggaran_m ma2 on ma.kodemataanggaran ilike ma2.kodemataanggaran || '%' and split_part(ma.kodemataanggaran, '.', 1) = split_part(ma2.kodemataanggaran, '.', 1)
+        WHERE
+            ma.kdprofile = 30 
+            AND ma.statusenabled = TRUE 
+            AND kt.subtotal != 0 
+        GROUP BY
+            ma2.ID,
+            ma2.kodemataanggaran,
+            ma2.namamataanggaran,
+            kt.objectkegiatanfk
+        ORDER BY
+            kt.objectkegiatanfk ASC
+    "));
+
+    $bulandiv4 = DB::select(DB::raw("     
+        SELECT 
+            x.objectkegiatanfk, SUM(x.totalbulanlalu) as totalbulanlalu, SUM(x.totalbulanini) as totalbulanini FROM (
+            SELECT
+                sr.objectkegiatanfk,
+                ka.keterangan,
+                CASE WHEN extract(month from sr.tglrealisasi) BETWEEN '1' AND '4' THEN SUM( sr.totalbelanja ) ELSE 0 END as totalbulanlalu,
+                case when extract(month from sr.tglrealisasi) = 05 then sum(sr.totalbelanja) else 0 end as totalbulanini
+            FROM
+                strukrealisasi_t as sr
+                INNER JOIN kegiatananggaran_m as ka on ka.id = sr.objectkegiatanfk
+            WHERE
+                sr.statusenabled = 't' 
+                AND sr.status = 'Sudah Diverifikasi'
+            GROUP BY
+                sr.objectkegiatanfk,
+                ka.keterangan,
+                sr.tglrealisasi
+        ) as x
+        GROUP BY
+            x.objectkegiatanfk
     "));
 
         $pageWidth = 950;
         
-        return view('report.keuangan.cetakfungsionalv3',compact('head','div4', 'detail', 'pageWidth', 'tanggalcetak', 'tahun', 'tanggaljudul'));
+        return view('report.keuangan.cetakfungsionalv3',compact('head','div4', 'bulandiv4', 'detail', 'pageWidth', 'tanggalcetak', 'tahun', 'tanggaljudul'));
     }
 
     

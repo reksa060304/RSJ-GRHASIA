@@ -7230,7 +7230,7 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
         
         // select ap.id idasalproduk, ap.asalproduk, (right(left(bku.nobku, -4), 2))::int4 nourut, rm.namarekanan, bku.norec norecbku, bku.nobku, jb.jenisbukti, jb.id, bku.objectmataanggaranfk kodemataanggaran, bku.tglbku, bku.uraianbku, bku.penerimaan, bku.pengeluaran, bku.saldo
         $data = DB::select(DB::raw("
-        SELECT
+            SELECT
                 ap.id as idasalproduk,
                 ap.asalproduk,
                 ROW_NUMBER() OVER (ORDER BY bku.tglbku) AS nourut,
@@ -7258,8 +7258,7 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
                     $qkey
             AND tglbku BETWEEN '$tglAwal' AND '$tglAkhir'
             ORDER BY nobku DESC
-
-        ")
+            ")
         );
 
         $result = array(

@@ -133,13 +133,18 @@
                 @endforeach
                 @foreach ($div4 as $dt)
                     <tr>
-                        <td align="left" width="50" style="font-weight: bold; padding: 10px; font-size: 15px; ">{{ $dt->kode }}</td>
-                        <td align="left" width="50" style="font-weight: bold; padding: 10px; font-size: 15px; ">{{ $dt->keterangan }}</td>
-                        <td align="right" width="50" style="font-weight: bold; padding: 10px; font-size: 15px;  ">{{ number_format($dt->total,2,',','.') }}</td>
-                        {{-- <td align="right" width="50" style="font-weight: bold; padding: 10px; font-size: 15px; ">{{ number_format($dt->totalbulanlalu,2,',','.') }}</td>
-                        <td align="right" width="100" style="font-weight: bold; padding: 10px; font-size: 15px; ">{{ number_format($dt->totalbulanini,2,',','.') }}</td>
-                        <td align="right" width="50" style="font-weight: bold; padding: 10px; font-size: 15px; ">{{ number_format($dt->totalbulanlalu + $dt->totalbulanini,2,',','.') }}</td>
-                        <td align="right" width="50" style="font-weight: bold; padding: 10px; font-size: 15px; ">{{ number_format($dt->subtotal - $dt->totalbulanlalu - $dt->totalbulanini,2,',','.') }}</td> --}}
+                        
+                        @foreach ($bulandiv4 as $item)
+                            @if ($dt->id == $item->objectkegiatanfk)
+                                <td align="left" width="50" style="font-weight: bold; padding: 10px; font-size: 15px; ">{{ $dt->kode }}</td>
+                                <td align="left" width="50" style="font-weight: bold; padding: 10px; font-size: 15px; ">{{ $dt->keterangan }}</td>
+                                <td align="right" width="50" style="font-weight: bold; padding: 10px; font-size: 15px;  ">{{ number_format($dt->total,2,',','.') }}</td>
+                                <td align="right" width="50" style="font-weight: bold; padding: 10px; font-size: 15px; ">{{ number_format($item->totalbulanlalu, 2, ',', '.') }}</td>
+                                <td align="right" width="100" style="font-weight: bold; padding: 10px; font-size: 15px; ">{{ number_format($item->totalbulanini,2,',','.') }}</td>
+                                <td align="right" width="50" style="font-weight: bold; padding: 10px; font-size: 15px; ">{{ number_format($item->totalbulanlalu + $item->totalbulanini,2,',','.') }}</td>
+                                <td align="right" width="50" style="font-weight: bold; padding: 10px; font-size: 15px; ">{{ number_format($dt->total - $item->totalbulanlalu - $item->totalbulanini,2,',','.') }}</td>
+                            @endif                            
+                        @endforeach                        
                     </tr>
                     @foreach ($detail as $items)
                         @if ($dt->id == $items->objectkegiatanfk)
