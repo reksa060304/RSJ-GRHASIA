@@ -12243,28 +12243,126 @@ CASE WHEN split_part(kode, '.', 7 ) = '' THEN 0 ELSE split_part(kode, '.', 7 )::
     "));
 
     $detail = DB::select(DB::raw("
+    SELECT
+    x.id,x.objectkegiatanfk,SUM(total) as total,x.kodemataanggaran,x.namamataanggaran
+     from (
+    SELECT
+        ma2.ID,
+        kt.objectkegiatanfk,
+        CAST ( SUM ( kt.subtotal ) AS FLOAT ) AS total,
+        ma2.kodemataanggaran,
+        ma2.namamataanggaran
+    FROM
+        mataanggaran_m ma
+        INNER JOIN keteranganbelanja_t kt ON kt.objectmataanggaranfk = ma.ID 
+        AND kt.statusenabled = TRUE 
+        INNER JOIN mataanggaran_m ma2 ON split_part( ma.kodemataanggaran, '.', 1 ) = ma2.kodemataanggaran
+    WHERE
+        ma.kdprofile = 30 
+        AND ma.statusenabled = TRUE 
+        AND kt.subtotal != 0 
+    GROUP BY
+        ma2.ID,
+        ma.kodemataanggaran,
+        ma2.kodemataanggaran,
+        ma2.namamataanggaran,
+        kt.objectkegiatanfk 
+    
+    union all
+    SELECT
+        ma2.ID,
+        kt.objectkegiatanfk,
+        CAST ( SUM ( kt.subtotal ) AS FLOAT ) AS total,
+        ma2.kodemataanggaran,
+        ma2.namamataanggaran
+    FROM
+        mataanggaran_m ma
+        INNER JOIN keteranganbelanja_t kt ON kt.objectmataanggaranfk = ma.ID 
+        AND kt.statusenabled = TRUE 
+        INNER JOIN mataanggaran_m ma2 ON split_part( ma.kodemataanggaran, '.', 1 )||'.'||split_part( ma.kodemataanggaran, '.', 2 ) = ma2.kodemataanggaran
+    WHERE
+        ma.kdprofile = 30 
+        AND ma.statusenabled = TRUE 
+        AND kt.subtotal != 0 
+    GROUP BY
+        ma2.ID,
+        ma.kodemataanggaran,
+        ma2.kodemataanggaran,
+        ma2.namamataanggaran,
+        kt.objectkegiatanfk 
+        
+        union ALL 
         SELECT
-            ma2.ID,
-            kt.objectkegiatanfk,
-            CAST ( SUM ( kt.subtotal ) AS FLOAT ) AS total,
-            ma2.kodemataanggaran,
-            ma2.namamataanggaran
-        FROM
-            mataanggaran_m ma
-            inner JOIN keteranganbelanja_t kt ON kt.objectmataanggaranfk = ma.ID 
-            AND kt.statusenabled = TRUE 
-            inner join mataanggaran_m ma2 on ma.kodemataanggaran ilike ma2.kodemataanggaran || '%' and split_part(ma.kodemataanggaran, '.', 1) = split_part(ma2.kodemataanggaran, '.', 1)
-        WHERE
-            ma.kdprofile = 30 
-            AND ma.statusenabled = TRUE 
-            AND kt.subtotal != 0 
+        ma2.ID,
+        kt.objectkegiatanfk,
+        CAST ( SUM ( kt.subtotal ) AS FLOAT ) AS total,
+        ma2.kodemataanggaran,
+        ma2.namamataanggaran
+    FROM
+        mataanggaran_m ma
+        INNER JOIN keteranganbelanja_t kt ON kt.objectmataanggaranfk = ma.ID 
+        AND kt.statusenabled = TRUE 
+        INNER JOIN mataanggaran_m ma2 ON split_part( ma.kodemataanggaran, '.', 1 )||'.'||split_part( ma.kodemataanggaran, '.', 2 ) ||'.'||split_part( ma.kodemataanggaran, '.', 3 )= ma2.kodemataanggaran
+    WHERE
+        ma.kdprofile = 30 
+        AND ma.statusenabled = TRUE 
+        AND kt.subtotal != 0 
+    GROUP BY
+        ma2.ID,
+        ma.kodemataanggaran,
+        ma2.kodemataanggaran,
+        ma2.namamataanggaran,
+        kt.objectkegiatanfk
+        
+            union ALL 
+        SELECT
+        ma2.ID,
+        kt.objectkegiatanfk,
+        CAST ( SUM ( kt.subtotal ) AS FLOAT ) AS total,
+        ma2.kodemataanggaran,
+        ma2.namamataanggaran
+    FROM
+        mataanggaran_m ma
+        INNER JOIN keteranganbelanja_t kt ON kt.objectmataanggaranfk = ma.ID 
+        AND kt.statusenabled = TRUE 
+        INNER JOIN mataanggaran_m ma2 ON split_part( ma.kodemataanggaran, '.', 1 )||'.'||split_part( ma.kodemataanggaran, '.', 2 ) ||'.'||split_part( ma.kodemataanggaran, '.', 3 )||'.'||split_part( ma.kodemataanggaran, '.', 4 )= ma2.kodemataanggaran
+    WHERE
+        ma.kdprofile = 30 
+        AND ma.statusenabled = TRUE 
+        AND kt.subtotal != 0 
+    GROUP BY
+        ma2.ID,
+        ma.kodemataanggaran,
+        ma2.kodemataanggaran,
+        ma2.namamataanggaran,
+        kt.objectkegiatanfk
+        
+            union ALL 
+        SELECT
+        ma.ID,
+        kt.objectkegiatanfk,
+        CAST ( SUM ( kt.subtotal ) AS FLOAT ) AS total,
+        ma.kodemataanggaran,
+        ma.namamataanggaran
+    FROM
+        mataanggaran_m ma
+        INNER JOIN keteranganbelanja_t kt ON kt.objectmataanggaranfk = ma.ID 
+        AND kt.statusenabled = TRUE 
+    WHERE
+        ma.kdprofile = 30 
+        AND ma.statusenabled = TRUE 
+        AND kt.subtotal != 0 
+    GROUP BY
+        ma.ID,
+        ma.kodemataanggaran,
+        ma.namamataanggaran,
+        kt.objectkegiatanfk
+        
+        ORDER BY id) as x
         GROUP BY
-            ma2.ID,
-            ma2.kodemataanggaran,
-            ma2.namamataanggaran,
-            kt.objectkegiatanfk
+        x.id,x.objectkegiatanfk,x.kodemataanggaran,x.namamataanggaran
         ORDER BY
-            kt.objectkegiatanfk ASC
+		x.objectkegiatanfk ASC
     "));
 
     $bulandiv4 = DB::select(DB::raw("     
@@ -21534,8 +21632,8 @@ public function suratBuktiPengembalian(Request $request)
             ra.norangka,
             ra.nomesin,
             ra.nopolisi,
-            ra.nobpkb,            
-            CAST(ra.hargaperolehan AS DECIMAL(20)) AS hargaperolehan,
+            ra.nobpkb,
+            ra.hargaperolehan,
             ra.kdprofile,
             cha1.ID AS idcha1,
             cha1.kodeakun AS kodeakuncha1,
@@ -21554,16 +21652,7 @@ public function suratBuktiPengembalian(Request $request)
             cha5.urian AS uriancha5,
             cha6.ID AS idch6,
             cha6.kodeakun AS kodeakuncha6,
-            cha6.urian AS uriancha6 ,
-            md.nama as kondisibangunan,
-            md2.nama as tingkat,
-            md3.nama as beton,
-            ra.alamatlengkap,
-            ra.luaslantai,
-            ra.luastanah,
-            ra.luasbangunan,
-            ra.keteranganlainnya,
-            ra.spesifikasi
+            cha6.urian AS uriancha6 
         FROM
             registrasiaset_t AS ra
             INNER JOIN charkodeakunasset_m AS cha6 ON cha6.kodeakun = ra.kdbmn
@@ -21572,16 +21661,12 @@ public function suratBuktiPengembalian(Request $request)
             LEFT JOIN charkodeakunasset_m AS cha3 ON cha3.ID = cha6.idlevel3
             LEFT JOIN charkodeakunasset_m AS cha4 ON cha4.ID = cha6.idlevel4
             LEFT JOIN charkodeakunasset_m AS cha5 ON cha5.ID = cha6.idlevel5
-            LEFT JOIN produk_m AS pr ON pr.ID = ra.objectprodukfk
+            LEFT JOIN produk_m AS pr ON pr.ID = ra.idprodukfk
             LEFT JOIN bahanproduk_m AS bhn ON bhn.ID = ra.objectbahanprodukfk
             LEFT JOIN merkproduk_m AS mrk ON mrk.ID = ra.objectmerkprodukfk
             LEFT JOIN asalproduk_m AS ap ON ap.ID = ra.objectasalprodukfk
-            LEFT JOIN masterdata_m AS md ON md.ID = ra.kondisbanguanfk
-            LEFT JOIN masterdata_m AS md2 ON md2.ID = ra.tingkatfk
-            LEFT JOIN masterdata_m AS md3 ON md3.ID = ra.betonfk
-            
         WHERE
-            ra.kdprofile=$kdProfile --and cha2.kodeakun = ('01.03.01')
+            ra.kdprofile=$kdProfile
         "));
 
         // dd($query);
@@ -22140,153 +22225,6 @@ public function suratBuktiPengembalian(Request $request)
             'tanggalcetak' => $tanggalcetak,
             'settingrba' => $settingrba,
             'asalproduk' => $asalProduk
-        ]);
-    }
-
-    public function cetakKIBC(Request $request)
-    {
-        $kdProfile = (int) $request['kdprofile'];
-        
-        $query = DB::select(DB::raw("
-        SELECT
-            ap.asalproduk,
-            pr.namaproduk,
-            pr.deskripsiproduk,
-            mrk.merkproduk,
-            bhn.namabahanproduk,
-            ra.koderegisterrs,
-            ra.tahunperolehan,
-            ra.norangka,
-            ra.nomesin,
-            ra.nopolisi,
-            ra.nobpkb,            
-            CAST(ra.hargaperolehan AS DECIMAL(20)) AS hargaperolehan,
-            ra.kdprofile,
-            cha1.ID AS idcha1,
-            cha1.kodeakun AS kodeakuncha1,
-            cha1.urian AS uriancha1,
-            cha2.ID AS idcha2,
-            cha2.kodeakun AS kodeakuncha2,
-            cha2.urian AS uriancha2,
-            cha3.ID AS idcha3,
-            cha3.kodeakun AS kodeakuncha3,
-            cha3.urian AS uriancha3,
-            cha4.ID AS idcha4,
-            cha4.kodeakun AS kodeakuncha4,
-            cha4.urian AS uriancha4,
-            cha5.ID AS idcha5,
-            cha5.kodeakun AS kodeakuncha5,
-            cha5.urian AS uriancha5,
-            cha6.ID AS idch6,
-            cha6.kodeakun AS kodeakuncha6,
-            cha6.urian AS uriancha6 ,
-            md.nama as kondisibangunan,
-            md2.nama as tingkat,
-            md3.nama as beton,
-            ra.alamatlengkap,
-            ra.luaslantai,
-            ra.luastanah,
-            ra.luasbangunan,
-            ra.keteranganlainnya,
-            ra.spesifikasi
-        FROM
-            registrasiaset_t AS ra
-            INNER JOIN charkodeakunasset_m AS cha6 ON cha6.kodeakun = ra.kdbmn
-            LEFT JOIN charkodeakunasset_m AS cha1 ON cha1.ID = cha6.idlevel1
-            LEFT JOIN charkodeakunasset_m AS cha2 ON cha2.ID = cha6.idlevel2
-            LEFT JOIN charkodeakunasset_m AS cha3 ON cha3.ID = cha6.idlevel3
-            LEFT JOIN charkodeakunasset_m AS cha4 ON cha4.ID = cha6.idlevel4
-            LEFT JOIN charkodeakunasset_m AS cha5 ON cha5.ID = cha6.idlevel5
-            LEFT JOIN produk_m AS pr ON pr.ID = ra.objectprodukfk
-            LEFT JOIN bahanproduk_m AS bhn ON bhn.ID = ra.objectbahanprodukfk
-            LEFT JOIN merkproduk_m AS mrk ON mrk.ID = ra.objectmerkprodukfk
-            LEFT JOIN asalproduk_m AS ap ON ap.ID = ra.objectasalprodukfk
-            LEFT JOIN masterdata_m AS md ON md.ID = ra.kondisbanguanfk
-            LEFT JOIN masterdata_m AS md2 ON md2.ID = ra.tingkatfk
-            LEFT JOIN masterdata_m AS md3 ON md3.ID = ra.betonfk
-            
-        WHERE
-            ra.kdprofile=$kdProfile and cha2.kodeakun in ('01.03.03','01.03.01')
-        "));
-
-        // dd($query);
-
-        return view('report.asset.kibc', [
-            'data' => $query
-        ]);
-    }
-
-    public function cetakKIBD(Request $request)
-    {
-        $kdProfile = (int) $request['kdprofile'];
-        
-        $query = DB::select(DB::raw("
-        SELECT
-            ap.asalproduk,
-            pr.namaproduk,
-            pr.deskripsiproduk,
-            mrk.merkproduk,
-            bhn.namabahanproduk,
-            ra.koderegisterrs,
-            ra.tahunperolehan,
-            ra.norangka,
-            ra.nomesin,
-            ra.nopolisi,
-            ra.nobpkb,            
-            CAST(ra.hargaperolehan AS DECIMAL(20)) AS hargaperolehan,
-            ra.kdprofile,
-            cha1.ID AS idcha1,
-            cha1.kodeakun AS kodeakuncha1,
-            cha1.urian AS uriancha1,
-            cha2.ID AS idcha2,
-            cha2.kodeakun AS kodeakuncha2,
-            cha2.urian AS uriancha2,
-            cha3.ID AS idcha3,
-            cha3.kodeakun AS kodeakuncha3,
-            cha3.urian AS uriancha3,
-            cha4.ID AS idcha4,
-            cha4.kodeakun AS kodeakuncha4,
-            cha4.urian AS uriancha4,
-            cha5.ID AS idcha5,
-            cha5.kodeakun AS kodeakuncha5,
-            cha5.urian AS uriancha5,
-            cha6.ID AS idch6,
-            cha6.kodeakun AS kodeakuncha6,
-            cha6.urian AS uriancha6 ,
-            md.nama as kondisibangunan,
-            md2.nama as tingkat,
-            md3.nama as beton,
-            ra.alamatlengkap,
-            ra.luaslantai,
-            ra.luastanah,
-            ra.luasbangunan,
-            ra.keteranganlainnya,md4.nama as kontruksi,
-            ra.spesifikasi,lb_lebar,ra.lb_panjang,ra,dtanggal,ra.dnomor
-        FROM
-            registrasiaset_t AS ra
-            INNER JOIN charkodeakunasset_m AS cha6 ON cha6.kodeakun = ra.kdbmn
-            LEFT JOIN charkodeakunasset_m AS cha1 ON cha1.ID = cha6.idlevel1
-            LEFT JOIN charkodeakunasset_m AS cha2 ON cha2.ID = cha6.idlevel2
-            LEFT JOIN charkodeakunasset_m AS cha3 ON cha3.ID = cha6.idlevel3
-            LEFT JOIN charkodeakunasset_m AS cha4 ON cha4.ID = cha6.idlevel4
-            LEFT JOIN charkodeakunasset_m AS cha5 ON cha5.ID = cha6.idlevel5
-            LEFT JOIN produk_m AS pr ON pr.ID = ra.objectprodukfk
-            LEFT JOIN bahanproduk_m AS bhn ON bhn.ID = ra.objectbahanprodukfk
-            LEFT JOIN merkproduk_m AS mrk ON mrk.ID = ra.objectmerkprodukfk
-            LEFT JOIN asalproduk_m AS ap ON ap.ID = ra.objectasalprodukfk
-            LEFT JOIN masterdata_m AS md ON md.ID = ra.kondisbanguanfk
-            LEFT JOIN masterdata_m AS md2 ON md2.ID = ra.tingkatfk
-            LEFT JOIN masterdata_m AS md3 ON md3.ID = ra.betonfk
-            LEFT JOIN masterdata_m AS md4 ON md4.ID = ra.kontruksi
-            
-        WHERE
-            ra.kdprofile=$kdProfile and cha2.kodeakun in ('01.03.04')
-        "));
-
-        // dd($query);
-
-        return view('report.asset.kibd', [
-            'data' => $query
         ]);
     }
 
