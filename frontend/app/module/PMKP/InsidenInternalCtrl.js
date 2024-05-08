@@ -784,22 +784,22 @@ define(['initialize'], function (initialize) {
             }
 
             $scope.Save = function () {
-                if(noOrder == 'InputInsidenInternal'){
-                    // hanya petugas yang bisa input
-                    if(petugasInsidenInternal.includes($scope.pegawai.id.toString()) == false){
-                        toastr.error('Anda Bukan Petugas Insiden Internal')
-                        return
-                    }
-                }
+                // if(noOrder == 'InputInsidenInternal'){
+                //     // hanya petugas yang bisa input
+                //     if(petugasInsidenInternal.includes($scope.pegawai.id.toString()) == false){
+                //         toastr.error('Anda Bukan Petugas Insiden Internal')
+                //         return
+                //     }
+                // }
 
-                if(noOrder == 'EditInsiden'){
-                    // hanya petugas dan verifikator yang bisa edit
-                    if(petugasInsidenInternal.includes($scope.pegawai.id.toString()) == false || verifikatorInsidenInternal.includes($scope.pegawai.id.toString() == false) ){
-                        toastr.error('Anda Bukan Petugas Insiden Internal')
-                        return
-                    }
+                // if(noOrder == 'EditInsiden'){
+                //     // hanya petugas dan verifikator yang bisa edit
+                //     if(petugasInsidenInternal.includes($scope.pegawai.id.toString()) == false || verifikatorInsidenInternal.includes($scope.pegawai.id.toString() == false) ){
+                //         toastr.error('Anda Bukan Petugas Insiden Internal')
+                //         return
+                //     }
         
-                }
+                // }
 
                 
                 if ($scope.item.KeselamatanInput == undefined) {

@@ -4315,6 +4315,11 @@ class GeneralController extends ApiController
             ->orderBy('ru.namaruangan')
             ->get();
 
+        $dataRuanganAset = \DB::table('ruanganasset_m as ra')
+                ->select('ra.id','ra.namaruangan as ruangan')
+                ->where('ra.statusenabled',true)           
+                ->orderBy('ra.id')
+                ->get();
 
         foreach ($dataInstalasi as $item) {
             $detail = [];
@@ -4336,6 +4341,7 @@ class GeneralController extends ApiController
 
         $result = array(
             'departemen' => $dataDepartemen,
+            'ruangan' => $dataRuanganAset,
             'message' => 'as@epic',
         );
 
