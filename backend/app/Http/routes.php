@@ -2968,6 +2968,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
               Route::get('sysadmin/master/get-data-qtybed','SysAdmin\Master\MasterController@getQTYBedValidation');
               Route::post('sysadmin/master/save-data-tempattidur','SysAdmin\Master\MasterController@saveMasterTempatTidur');
               Route::post('sysadmin/simpan-masterrekanan','SysAdmin\GeneralController@simpanMasterRekananPerbaikan');
+              Route::post('sysadmin/master/save-data-ruangan-aset','SysAdmin\Master\MasterController@saveMasterRuanganAset');
               // });
             // Route::group(['prefix' => 'general'], function () {
                 // GET //

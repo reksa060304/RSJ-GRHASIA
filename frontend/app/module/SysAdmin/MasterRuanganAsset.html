@@ -1,0 +1,101 @@
+<style>
+    .btn-disabled {
+        background-color: red;
+    }
+
+    .btn-enabled {
+        background-color: green;
+    }
+</style>
+<div class="grid_12">
+    <div class="grid_12 headerBox">
+        <h1 style="color: white;"><b>Master Data Ruangan Aset</b></h1>
+    </div>
+</div>
+<div class="grid_12">
+    <div ng-cloak>
+        <md-content>
+            <md-tabs md-dynamic-height md-border-top md-selected="myVar">
+                <md-tab label="ruangan" ng-click="getRuangan('ruangan')">
+                    <md-content class="md-padding">
+                        <div class="grid_12">
+                            <div class="grid_2">
+                                <div class="grid_12">
+                                    <label c-label item="item">Status Enabled</label>
+                                </div>
+                                <div class="grid_12">
+                                    <input style="width: 100%; " kendo-combo-box k-ng-model="item.Status"
+                                        k-data-text-field=" 'status' " k-filter=" 'contains' "
+                                        k-data-value-field=" 'id' " k-auto-bind="false " k-data-source="listStatus" />
+                                </div>
+                            </div>
+                            <div class="grid_2">
+                                <div class="grid_12">
+                                    <label c-label item="item">Nama Ruangan</label>
+                                </div>
+                                <div class="grid_12">
+                                    <!-- <select kendo-multi-select k-options="selectOptionsRuangan" k-filter="'contains'"
+                                         k-ng-model="itemRuangan.namaRuangan"></select> -->
+                                    <input style="width: 100%;" kendo-combo-box k-ng-model="itemRuangan.namaRuangan"
+                                        k-data-text-field="'namaruangan'" k-data-value-field="'id'"
+                                        k-filter="'contains'" k-auto-bind="false" k-data-source="listRuanganAset" />
+                                </div>
+                            </div>
+                            <div class="grid_1">
+                                <button class="c-button" style="margin-top: 22px" ng-click="cariFilter()">Cari</button>
+                            </div>
+                        </div>
+                        <div class="grid_12">
+                            <div class="grid_12 borderBox">
+                                <kendo-grid options="columnRuangan" k-data-source="dataRuangan" k-sortable="'true'"
+                                    k-ng-model="dataRuanganSelected" ng-click="klikDataRuangan(dataRuanganSelected)">
+                                </kendo-grid>
+                            </div>
+                        </div>
+                        <div class="grid_12" style="margin-top: 20px;">
+                            <div class="grid_2">
+                                <button class="c-button" ng-click="editRuangan()">Ubah</button>
+                            </div>
+                            <div class="grid_2">
+                                <button class="c-button" ng-click="tambahRuangan()">Tambah</button>
+                            </div>
+                            <div class="grid_2">
+                                <button class="c-button" ng-click="hapusRuangan()">Hapus</button>
+                            </div>
+                        </div>
+                        <div kendo-window="popUpDataRuangan" k-title="'Ruangan'" k-width="300"
+                            k-height="150" k-visible="false" k-on-open="win2visible = true"
+                            k-on-close="win2visible = false">
+                            <div class="panel panel-default container_12" style="padding: 0px 10px;">
+                                <div class="grid_12">
+                                    <div class="grid_12">
+                                        <div class="grid_12">
+                                            <label c-label item="item" c-label-text="Nama Ruangan" real></label>
+                                        </div>
+                                        <div class="grid_12">
+                                            <input c-text-box type="input" class="k-textbox"
+                                                ng-model="itemRuangan.namaRuangan" />
+                                        </div>
+                                    </div>
+                                    
+                                <div class="grid_12">
+                                    <div class="k-edit-buttons  k-state-default pull-right" style="margin-top:10px">
+                                        <button class="k-button k-button-icontext k-primary k-grid-update"
+                                            ng-click="simpanDataRuangan()"><span
+                                                class="k-icon k-update"></span>Simpan</button>
+                                        <button class="k-button  k-button-icontext" ng-click="batalDataRuangan()"><span
+                                                class="k-icon k-cancel"></span>Batal</button>
+                                    </div>
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+                    </md-content>
+                </md-tab>
+               
+            </md-tabs>
+        </md-content>
+    </div>
+
+</div>
+

@@ -63,6 +63,10 @@
         {
             "nameDep": "MasterJenisKelaminCtrl",
             "urlDep": "module/SysAdmin/MasterJenisKelaminCtrl"
+        },
+        {
+            "nameDep": "MasterRuanganAssetCtrl",
+            "urlDep": "module/SysAdmin/MasterRuanganAssetCtrl"
         }
 
     ]

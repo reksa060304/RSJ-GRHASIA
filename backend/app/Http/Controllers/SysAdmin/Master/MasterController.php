@@ -41,6 +41,7 @@ use App\Master\IcdSembilan;
 use App\Master\BankAccount;
 use App\Transaksi\KonversiSatuan;
 use App\Transaksi\OrderPelayanan;
+use App\Transaksi\RuanganAset;
 use DB;
 use Illuminate\Http\Request;
 use Webpatser\Uuid\Uuid;
@@ -5091,7 +5092,7 @@ class MasterController extends ApiController{
         $kdProfile = (int) $this->getDataKdProfile($request);
         $departemen = \DB::table('departemen_m')->where('statusenabled', true)
         ->where('kdprofile', $kdProfile)->get();
-        $ruangan = \DB::table('ruangan_m')->where('kdprofile', $kdProfile)->get();
+        $ruangan = \DB::table('ruangan_m')->where('kdprofile', $kdProfile)->get();       
         $kamarall = \DB::table('kamar_m')->where('kdprofile', $kdProfile)->get();
         $kelas = \DB::table('kelas_m')->where('kdprofile', $kdProfile)->where('statusenabled', true)->get();
         foreach ($ruangan as $ru) {
@@ -5113,12 +5114,14 @@ class MasterController extends ApiController{
             );
         }
         $ruangantrue = \DB::table('ruangan_m')->where('kdprofile', $kdProfile)->where('statusenabled', true)->get();
+        $ruanganaset = \DB::table('ruanganasset_m')->where('kdprofile', $kdProfile)->where('statusenabled', true)->get();
         $result = array(
             'departemen'=> $departemen,
             'ruangan'=> $ruanganKelas,
             'kelas'=> $kelas,
             'kamarall'=> $kamarall,
             'ruangantrue'=> $ruangantrue,
+            'ruanganaset'=> $ruanganaset,
             'as'=> 'Feezy'
         );
         return $this->respond($result);
@@ -5969,6 +5972,83 @@ class MasterController extends ApiController{
             $result = array(
                 "status" => 400,
                 "as" => 'inhuman',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function getLoadRuanganAset(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $tempruangan = '';
+        if(isset($request['ruangan'])){
+            $tempruangan = "and ru.id =". $request['ruangan'];
+        }
+        $ruangan = \DB::select(DB::raw("select ru.id as idRuangan, ru.statusenabled, 
+        ru.namaruangan  from ruanganasset_m as ru 
+         where ru.kdprofile = $kdProfile and ru.statusenabled = $request[status] $tempruangan"));
+        $result = array(
+            'ruangan'=>$ruangan,
+            'as'=> 'al'
+        );
+        return $this->respond($result);
+    }
+
+    public function saveMasterRuanganAset(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        DB::beginTransaction();
+        $data = $request['data'];
+        $transMessage = "";
+        try{
+            if($request['method'] == 'post'){
+                $idJenis = RuanganAset::max('id');
+                $idJenis= $idJenis +1;
+                if ($data['id'] == "") {
+                    $JD = new RuanganAset();
+                    $JD->norec = $idJenis;
+                    $JD->id = $idJenis;
+                    $JD->kdprofile = $kdProfile;
+                    $JD->statusenabled = true;
+                    $JD->kodeexternal = $idJenis;                    
+                    $transMessage = "Tambah";
+                    $JD->namaexternal = $data['namaruangan'];                   
+                    $JD->namaruangan = $data['namaruangan'];
+                   
+                $JD->save();
+                }else{
+                    $transMessage = "Ubah";
+                    $JD = RuanganAset::where('id', $data['id'])->where('kdprofile', $kdProfile)->where('kodeexternal', $data['id'])->first();
+                    $JD->namaexternal = $data['namaruangan'];                  
+                    $JD->namaruangan = $data['namaruangan'];                 
+                    $JD->save();
+                }
+                
+            }
+            if($request['method']== 'delete'){
+                $transMessage = "Hapus";
+                $JD = RuanganAset::where('id',$data['id'])->where('kdprofile', $kdProfile)->delete();
+            }
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+
+        if ($transStatus == 'true') {
+            $transMessage = $transMessage ." sukses";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "as" => 'Feezy',
+            );
+
+        } else {
+            $transMessage = $transMessage ." gagal";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "e"=> $e->getLine() . " | ". $e->getMessage(),
+                "as" => 'al',
             );
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);

@@ -140,8 +140,8 @@
                     @endphp
                     <tr>
                         <td class="content"></td>
-                        <td class="content">{{ $item->uriancha1 }}</td>
-                        <td class="content">{{ $item->kodeakuncha1 }}</td>
+                        <td class="content"><b>{{ $item->uriancha1 }}</b></td>
+                        <td class="content"><b>{{ $item->kodeakuncha1 }}</b></td>
                         <td class="content"></td>
                         <td class="content"></td>
                         <td class="content"></td>
@@ -152,7 +152,7 @@
                         <td class="content"></td>
                         <td class="content"></td>
                         <td class="content"></td>
-                        <td class="content">{{ $totalcha1 }}</td>
+                        <td class="content" style="text-align: right;"><b>{{number_format( $totalcha1, 2, '.', ',') }}</b></td>
                         <td class="content"></td>
                         <td class="content"></td>
                         <td class="content"></td>
@@ -169,8 +169,8 @@
                     @endphp
                     <tr>
                         <td class="content"></td>
-                        <td class="content">{{ $item->uriancha2 }}</td>
-                        <td class="content">{{ $item->kodeakuncha2 }}</td>
+                        <td class="content" ><b>{{ $item->uriancha2 }}</b></td>
+                        <td class="content"><b>{{ $item->kodeakuncha2 }}</b></td>
                         <td class="content"></td>
                         <td class="content"></td>
                         <td class="content"></td>
@@ -181,7 +181,7 @@
                         <td class="content"></td>
                         <td class="content"></td>
                         <td class="content"></td>
-                        <td class="content">{{ $totalcha2 }}</td>
+                        <td class="content" style="text-align: right;"><b>{{number_format(  $totalcha2, 2, '.', ',') }}</b></td>
                         <td class="content"></td>
                         <td class="content"></td>
                         <td class="content"></td>
@@ -198,8 +198,8 @@
                     @endphp
                     <tr>
                         <td class="content"></td>
-                        <td class="content">{{ $item->uriancha3 }}</td>
-                        <td class="content">{{ $item->kodeakuncha3 }}</td>
+                        <td class="content"><b>{{ $item->uriancha3 }}</b></td>
+                        <td class="content"><b>{{ $item->kodeakuncha3 }}</b></td>
                         <td class="content"></td>
                         <td class="content"></td>
                         <td class="content"></td>
@@ -210,7 +210,7 @@
                         <td class="content"></td>
                         <td class="content"></td>
                         <td class="content"></td>
-                        <td class="content">{{ $totalcha3 }}</td>
+                        <td class="content" style="text-align: right;"><b>{{number_format(  $totalcha3, 2, '.', ',') }}</b></td>
                         <td class="content"></td>
                         <td class="content"></td>
                         <td class="content"></td>
@@ -227,8 +227,8 @@
                     @endphp
                     <tr>
                         <td class="content"></td>
-                        <td class="content">{{ $item->uriancha4 }}</td>
-                        <td class="content">{{ $item->kodeakuncha4 }}</td>
+                        <td class="content"><b>{{ $item->uriancha4 }}</b></td>
+                        <td class="content"><b>{{ $item->kodeakuncha4 }}</b></td>
                         <td class="content"></td>
                         <td class="content"></td>
                         <td class="content"></td>
@@ -239,7 +239,7 @@
                         <td class="content"></td>
                         <td class="content"></td>
                         <td class="content"></td>
-                        <td class="content">{{ $totalcha4 }}</td>
+                        <td class="content" style="text-align: right;"><b>{{number_format(  $totalcha4, 2, '.', ',') }}</b></td>
                         <td class="content"></td>
                         <td class="content"></td>
                         <td class="content"></td>
@@ -258,8 +258,8 @@
                     @endphp
                     <tr>
                         <td class="content"></td>
-                        <td class="content">{{ $item->uriancha5 }}</td>
-                        <td class="content">{{ $item->kodeakuncha5 }}</td>
+                        <td class="content"><b>{{ $item->uriancha5 }}</b></td>
+                        <td class="content"><b>{{ $item->kodeakuncha5 }}</b></td>
                         <td class="content"></td>
                         <td class="content"></td>
                         <td class="content"></td>
@@ -270,7 +270,7 @@
                         <td class="content"></td>
                         <td class="content"></td>
                         <td class="content"></td>
-                        <td class="content">{{ $totalcha5 }}</td>
+                        <td class="content" style="text-align: right;"><b>{{ number_format(  $totalcha5, 2, '.', ',') }}</b></td>
                         <td class="content"></td>
                         <td class="content"></td>
                         <td class="content"></td>
@@ -291,7 +291,7 @@
                     <td class="content">{{ $item->nopolisi }}</td>
                     <td class="content">{{ $item->nobpkb }}</td>
                     <td class="content">{{ $item->asalproduk }}</td>
-                    <td class="content">{{ $item->hargaperolehan }}</td>
+                    <td class="content" style="text-align: right;">{{ number_format( $item->hargaperolehan, 2, '.', ',') }}</td>
                     <td class="content">{{ $item->deskripsiproduk }}</td>
                     <td class="content">Keterangan</td>
                     <td class="content">1.02.01.04.00.000 - RUMAH SAKIT JIWA GRHASIA</td>
