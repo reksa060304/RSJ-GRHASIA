@@ -109,56 +109,86 @@
     </table>
         <table width="{{$pageWidth}}" bgcolor="#FFFFFF" class="tabel" style="margin-top: 50px;">
                 <tr>
-                    <td align="center" rowspan="2" width="50" style="padding: 10px; font-weight: bold;font-size: 15px; ">KODE REKENING</td>
-                    <td align="center" rowspan="2" width="50" style="padding: 10px; font-weight: bold;font-size: 15px; ">URAIAN</td>
-                    <td align="center" rowspan="2" width="200" style="padding: 10px; font-weight: bold; font-size: 15px; ">JUMLAH ANGGARAN</td>
-                    <td align="center" colspan="3" width="50" style="padding: 10px; font-weight: bold;font-size: 15px;  ">REALISASI GU/TU/UP/LS</td>
-                    <td align="center" rowspan="2" width="50" style="padding: 10px; font-weight: bold ;font-size: 15px; ">SISA ANGGARAN</td>
+                    <td align="center" rowspan="2" width="50" style="padding: 10px; font-weight: bold;font-size: 12px; ">KODE REKENING</td>
+                    <td align="center" rowspan="2" width="50" style="padding: 10px; font-weight: bold;font-size: 12px; ">URAIAN</td>
+                    <td align="center" rowspan="2" width="200" style="padding: 10px; font-weight: bold; font-size: 12px; ">JUMLAH ANGGARAN</td>
+                    <td align="center" colspan="3" width="50" style="padding: 10px; font-weight: bold;font-size: 12px;  ">REALISASI GU/TU/UP/LS</td>
+                    <td align="center" rowspan="2" width="50" style="padding: 10px; font-weight: bold ;font-size: 12px; ">SISA ANGGARAN</td>
+                    <td align="center" rowspan="2" width="50" style="padding: 10px; font-weight: bold ;font-size: 12px; ">PENGEMBALIAN BELANJA</td>
+                    <td align="center" rowspan="2" width="50" style="padding: 10px; font-weight: bold ;font-size: 12px; ">PENGELUARAN BELANJA BERSIH</td>
                 </tr>
                 <tr>
-                    <td align="center" width="50" style="padding: 10px; font-weight: bold;font-size: 15px; ">Bulan lalu</td>
-                    <td align="center" width="100" style="padding: 10px; font-weight: bold;font-size: 15px; ">Bulan ini</td>
-                    <td align="center" width="50" style="padding: 10px; font-weight: bold; font-size: 15px; ">Jumlah</td>
+                    <td align="center" width="50" style="padding: 10px; font-weight: bold;font-size: 12px; ">Bulan lalu</td>
+                    <td align="center" width="100" style="padding: 10px; font-weight: bold;font-size: 12px; ">Bulan ini</td>
+                    <td align="center" width="50" style="padding: 10px; font-weight: bold; font-size: 12px; ">Jumlah</td>
                 </tr>
                 @foreach ($head as $item)
                     <tr>
-                        <td align="left" width="50" style="padding: 10px; font-size: 15px;font-weight: {{ $item->code == 0 ? 'bold' : 'normal' }}; ">{{ $item->kode }}</td>
-                        <td align="left" width="50" style="padding: 10px; font-size: 15px;font-weight: {{ $item->code == 0 ? 'bold' : 'normal' }}; ">{{ $item->text }}</td>
-                        <td align="right" width="50" style="padding: 10px; font-size: 15px;font-weight: {{ $item->code == 0 ? 'bold' : 'normal' }};  ">{{ number_format($item->subtotal,2,',','.') }}</td>
-                        <td align="right" width="50" style="padding: 10px; font-size: 15px;font-weight: {{ $item->code == 0 ? 'bold' : 'normal' }}; ">{{ number_format($item->totalbulanlalu,2,',','.') }}</td>
-                        <td align="right" width="100" style="padding: 10px; font-size: 15px;font-weight: {{ $item->code == 0 ? 'bold' : 'normal' }}; ">{{ number_format($item->totalbulanini,2,',','.') }}</td>
-                        <td align="right" width="50" style="padding: 10px; font-size: 15px;font-weight: {{ $item->code == 0 ? 'bold' : 'normal' }}; ">{{ number_format($item->totalbulanlalu + $item->totalbulanini,2,',','.') }}</td>
-                        <td align="right" width="50" style="padding: 10px; font-size: 15px;font-weight: {{ $item->code == 0 ? 'bold' : 'normal' }}; ">{{ number_format($item->subtotal - $item->totalbulanlalu - $item->totalbulanini,2,',','.') }}</td>
+                        <td align="left" width="50" style="padding: 10px; font-size: 12px;font-weight: {{ $item->code == 0 ? 'bold' : 'normal' }}; ">{{ $item->kode }}</td>
+                        <td align="left" width="50" style="padding: 10px; font-size: 12px;font-weight: {{ $item->code == 0 ? 'bold' : 'normal' }}; ">{{ $item->text }}</td>
+                        <td align="right" width="50" style="padding: 10px; font-size: 12px;font-weight: {{ $item->code == 0 ? 'bold' : 'normal' }};  ">{{ number_format($item->subtotal,2,',','.') }}</td>
+                        <td align="right" width="50" style="padding: 10px; font-size: 12px;font-weight: {{ $item->code == 0 ? 'bold' : 'normal' }}; ">{{ number_format($item->totalbulanlalu,2,',','.') }}</td>
+                        <td align="right" width="100" style="padding: 10px; font-size: 12px;font-weight: {{ $item->code == 0 ? 'bold' : 'normal' }}; ">{{ number_format($item->totalbulanini,2,',','.') }}</td>
+                        <td align="right" width="50" style="padding: 10px; font-size: 12px;font-weight: {{ $item->code == 0 ? 'bold' : 'normal' }}; ">{{ number_format($item->totalbulanlalu + $item->totalbulanini,2,',','.') }}</td>
+                        <td align="right" width="50" style="padding: 10px; font-size: 12px;font-weight: {{ $item->code == 0 ? 'bold' : 'normal' }}; ">{{ number_format($item->subtotal - $item->totalbulanlalu - $item->totalbulanini,2,',','.') }}</td>
+                        <td align="right" width="50" style="padding: 10px; font-size: 12px;font-weight: {{ $item->code == 0 ? 'bold' : 'normal' }}; ">0</td>
+                        <td align="right" width="50" style="padding: 10px; font-size: 12px;font-weight: {{ $item->code == 0 ? 'bold' : 'normal' }}; ">{{ number_format($item->totalbulanlalu + $item->totalbulanini,2,',','.') }}</td>
                     </tr>
                 @endforeach
                 @foreach ($div4 as $dt)
-                    <tr>
-                        
+                    <tr>                        
                         @foreach ($bulandiv4 as $item)
                             @if ($dt->id == $item->objectkegiatanfk)
-                                <td align="left" width="50" style="font-weight: bold; padding: 10px; font-size: 15px; ">{{ $dt->kode }}</td>
-                                <td align="left" width="50" style="font-weight: bold; padding: 10px; font-size: 15px; ">{{ $dt->keterangan }}</td>
-                                <td align="right" width="50" style="font-weight: bold; padding: 10px; font-size: 15px;  ">{{ number_format($dt->total,2,',','.') }}</td>
-                                <td align="right" width="50" style="font-weight: bold; padding: 10px; font-size: 15px; ">{{ number_format($item->totalbulanlalu, 2, ',', '.') }}</td>
-                                <td align="right" width="100" style="font-weight: bold; padding: 10px; font-size: 15px; ">{{ number_format($item->totalbulanini,2,',','.') }}</td>
-                                <td align="right" width="50" style="font-weight: bold; padding: 10px; font-size: 15px; ">{{ number_format($item->totalbulanlalu + $item->totalbulanini,2,',','.') }}</td>
-                                <td align="right" width="50" style="font-weight: bold; padding: 10px; font-size: 15px; ">{{ number_format($dt->total - $item->totalbulanlalu - $item->totalbulanini,2,',','.') }}</td>
+                                <td align="left" width="50" style="font-weight: bold; padding: 10px; font-size: 12px; ">{{ $dt->kode }}</td>
+                                <td align="left" width="50" style="font-weight: bold; padding: 10px; font-size: 12px; ">{{ $dt->keterangan }}</td>
+                                <td align="right" width="50" style="font-weight: bold; padding: 10px; font-size: 12px;  ">{{ number_format($dt->total,2,',','.') }}</td>
+                                <td align="right" width="50" style="font-weight: bold; padding: 10px; font-size: 12px; ">{{ number_format($item->totalbulanlalu, 2, ',', '.') }}</td>
+                                <td align="right" width="100" style="font-weight: bold; padding: 10px; font-size: 12px; ">{{ number_format($item->totalbulanini,2,',','.') }}</td>
+                                <td align="right" width="50" style="font-weight: bold; padding: 10px; font-size: 12px; ">{{ number_format($item->totalbulanlalu + $item->totalbulanini,2,',','.') }}</td>
+                                <td align="right" width="50" style="font-weight: bold; padding: 10px; font-size: 12px; ">{{ number_format($dt->total - $item->totalbulanlalu - $item->totalbulanini,2,',','.') }}</td>
+                                <td align="right" width="50" style="font-weight: bold; padding: 10px; font-size: 12px; ">0</td>
+                                <td align="right" width="50" style="font-weight: bold; padding: 10px; font-size: 12px; ">{{ number_format($item->totalbulanlalu + $item->totalbulanini,2,',','.') }}</td>
+                                @foreach ($detail as $items)
+                                    @if ($dt->id == $items->objectkegiatanfk && $dt->id == $item->objectkegiatanfk)
+                                        <tr>
+                                            @php
+                                                $found = false;
+                                            @endphp
+            
+                                            @foreach ($detaildiv4 as $dd)
+                                                @if ($items->objectkegiatanfk == $dd->objectkegiatanfk && $dd->kodemataanggaran == $items->kodemataanggaran && $dd->namamataanggaran == $items->namamataanggaran)
+                                                    @php
+                                                        $found = true;
+                                                    @endphp
+                                                    <td align="left" width="50" style="padding: 10px; font-size: 12px; "></td>
+                                                    <td align="left" width="50" style="padding: 10px; font-size: 12px; ">{{ $items->kodemataanggaran }} {{ $items->namamataanggaran }}</td>
+                                                    <td align="right" width="50" style="padding: 10px; font-size: 12px;  ">{{ number_format($items->total,2,',','.') }}</td>
+                                                    <td align="right" width="50" style="padding: 10px; font-size: 12px;">{{ number_format($dd->totalbulanlalu, 2, ',', '.') }}</td>
+                                                    <td align="right" width="50" style="padding: 10px; font-size: 12px;">{{ number_format($dd->totalbulanini, 2, ',', '.') }}</td>
+                                                    <td align="right" width="50" style="padding: 10px; font-size: 12px;">{{ number_format($dd->totalbulanlalu + $dd->totalbulanini, 2, ',', '.') }}</td>
+                                                    <td align="right" width="50" style="padding: 10px; font-size: 12px;">{{ number_format($items->total - $dd->totalbulanlalu - $dd->totalbulanini, 2, ',', '.') }}</td>
+                                                    <td align="right" width="50" style="padding: 10px; font-size: 12px;">0</td>
+                                                    <td align="right" width="50" style="padding: 10px; font-size: 12px;">{{ number_format($dd->totalbulanlalu + $dd->totalbulanini, 2, ',', '.') }}</td>        
+                                                @endif
+                                            @endforeach
+                                            @if (!$found)
+                                                <td align="left" width="50" style="padding: 10px; font-size: 12px; "></td>
+                                                <td align="left" width="50" style="padding: 10px; font-size: 12px; ">{{ $items->kodemataanggaran }} {{ $items->namamataanggaran }}</td>
+                                                <td align="right" width="50" style="padding: 10px; font-size: 12px;  ">{{ number_format($items->total,2,',','.') }}</td>
+                                                <td align="right" width="50" style="padding: 10px; font-size: 12px;">0</td>
+                                                <td align="right" width="50" style="padding: 10px; font-size: 12px;">0</td>
+                                                <td align="right" width="50" style="padding: 10px; font-size: 12px;">0</td>
+                                                <td align="right" width="50" style="padding: 10px; font-size: 12px;">0</td>
+                                                <td align="right" width="50" style="padding: 10px; font-size: 12px;">0</td>
+                                                <td align="right" width="50" style="padding: 10px; font-size: 12px;">0</td>
+                                            @endif
+                                        </tr>
+                                    @endif
+                                @endforeach
                             @endif                            
                         @endforeach                        
                     </tr>
-                    @foreach ($detail as $items)
-                        @if ($dt->id == $items->objectkegiatanfk)
-                            <tr>
-                                <td align="left" width="50" style="padding: 10px; font-size: 15px; "></td>
-                                <td align="left" width="50" style="padding: 10px; font-size: 15px; ">{{ $items->kodemataanggaran }} {{ $items->namamataanggaran }}</td>
-                                <td align="right" width="50" style="padding: 10px; font-size: 15px;  ">{{ number_format($items->total,2,',','.') }}</td>
-                                {{-- <td align="right" width="50" style="padding: 10px; font-size: 15px; ">{{ number_format($dt->totalbulanlalu,2,',','.') }}</td>
-                                <td align="right" width="100" style="padding: 10px; font-size: 15px; ">{{ number_format($dt->totalbulanini,2,',','.') }}</td>
-                                <td align="right" width="50" style="padding: 10px; font-size: 15px; ">{{ number_format($dt->totalbulanlalu + $dt->totalbulanini,2,',','.') }}</td>
-                                <td align="right" width="50" style="padding: 10px; font-size: 15px; ">{{ number_format($dt->subtotal - $dt->totalbulanlalu - $dt->totalbulanini,2,',','.') }}</td> --}}
-                            </tr>
-                        @endif
-                    @endforeach
+                    
                 @endforeach                
         </table>
     </div>

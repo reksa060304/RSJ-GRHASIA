@@ -12290,9 +12290,47 @@ CASE WHEN split_part(kode, '.', 7 ) = '' THEN 0 ELSE split_part(kode, '.', 7 )::
             x.objectkegiatanfk
     "));
 
+    $detaildiv4 = DB::select(DB::raw("     
+    SELECT 
+        x.objectkegiatanfk,
+        x.keterangan,
+        x.kodemataanggaran,
+        x.namamataanggaran,
+        SUM(x.totalbulanlalu) as totalbulanlalu,
+        SUM(x.totalbulanini) as totalbulanini
+        FROM (
+    SELECT
+        sr.objectkegiatanfk,
+        ka.keterangan,
+        ma2.kodemataanggaran,
+        ma2.namamataanggaran,
+        CASE WHEN extract(month from sr.tglrealisasi) BETWEEN '1' AND '4' THEN SUM( sr.totalbelanja ) ELSE 0 END as totalbulanlalu,
+    case when extract(month from sr.tglrealisasi) = 05 then sum(sr.totalbelanja) else 0 end as totalbulanini
+    FROM
+        strukrealisasi_t as sr
+        INNER JOIN kegiatananggaran_m as ka on ka.id = sr.objectkegiatanfk
+        INNER JOIN mataanggaran_m as ma on sr.objectmataanggaranfk = ma.id
+        inner join mataanggaran_m ma2 on ma.kodemataanggaran ilike ma2.kodemataanggaran || '%' and split_part(ma.kodemataanggaran, '.', 1) = split_part(ma2.kodemataanggaran, '.', 1)
+    WHERE
+        sr.statusenabled = 't' 
+        AND sr.status = 'Sudah Diverifikasi'
+        --AND sr.objectkegiatanfk = 249
+    GROUP BY
+        sr.objectkegiatanfk,
+        ka.keterangan,
+        ma2.kodemataanggaran,
+        ma2.namamataanggaran,
+        sr.tglrealisasi ) AS x
+        GROUP BY
+        x.objectkegiatanfk,
+        x.keterangan,
+        x.kodemataanggaran,
+        x.namamataanggaran
+    "));
+
         $pageWidth = 950;
         
-        return view('report.keuangan.cetakfungsionalv3',compact('head','div4', 'bulandiv4', 'detail', 'pageWidth', 'tanggalcetak', 'tahun', 'tanggaljudul'));
+        return view('report.keuangan.cetakfungsionalv3',compact('head','div4', 'bulandiv4', 'detaildiv4', 'detail', 'pageWidth', 'tanggalcetak', 'tahun', 'tanggaljudul'));
     }
 
     
