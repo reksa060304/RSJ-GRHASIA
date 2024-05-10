@@ -487,14 +487,14 @@ define(['initialize'], function (initialize) {
                             "id": 9,
                             "kondisipasien": "Belum Sembuh"
                         },
-                        {
-                            "id": 5,
-                            "kondisipasien": "Meninggal < 48 jam"
-                        },
-                        {
-                            "id": 6,
-                            "kondisipasien": "Meninggal > 48 jam"
-                        },
+                        // {
+                        //     "id": 5,
+                        //     "kondisipasien": "Meninggal < 48 jam"
+                        // },
+                        // {
+                        //     "id": 6,
+                        //     "kondisipasien": "Meninggal > 48 jam"
+                        // },
                         {
                             "id": 10,
                             "kondisipasien": "Perbaikan"

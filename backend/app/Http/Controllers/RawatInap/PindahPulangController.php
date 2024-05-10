@@ -196,9 +196,10 @@ class PindahPulangController extends ApiController
         $r_NewAPD=$request['antrianpasiendiperiksa'];
         DB::beginTransaction();
         //##Update Pasiendaftar##
+        // dd($r_NewPD);
         try{
 
-            if ( $r_NewPD['norec_pd'] != 'undefined' && $r_NewPD['noregistrasi']!= 'undefined' && $r_NewPD['objectstatuskeluarfk']==5) {
+            if ( $r_NewPD['norec_pd'] != 'undefined' && $r_NewPD['noregistrasi']!= 'undefined' && $r_NewPD['objectstatuspulangfk']=9) {
                 $updatePD= PasienDaftar::where('noregistrasi', $r_NewPD['noregistrasi'])
                     ->update([
                             'objecthubungankeluargaambilpasienfk' => $r_NewPD['objecthubungankeluargaambilpasienfk'],
@@ -212,7 +213,7 @@ class PindahPulangController extends ApiController
                         ]
                     );
             }
-            if ( $r_NewPD['norec_pd'] != 'undefined' && $r_NewPD['noregistrasi']!= 'undefined' && $r_NewPD['objectstatuskeluarfk']==5 && $r_NewPD['objectpenyebabkematianfk'] ==4) {
+            if ( $r_NewPD['norec_pd'] != 'undefined' && $r_NewPD['noregistrasi']!= 'undefined' && $r_NewPD['objectstatuspulangfk']==9 && $r_NewPD['objectpenyebabkematianfk'] ==4) {
                 $updatePD= PasienDaftar::where('noregistrasi', $r_NewPD['noregistrasi'])
                     ->update([
                             'objecthubungankeluargaambilpasienfk' => $r_NewPD['objecthubungankeluargaambilpasienfk'],
@@ -241,7 +242,8 @@ class PindahPulangController extends ApiController
                         ]
                     );
             }
-            if ($r_NewPD['nocmfk'] != 'undefined' && $r_NewPD['objectstatuskeluarfk']== 5) {
+            // if ($r_NewPD['nocmfk'] != 'undefined' && $r_NewPD['objectstatuskeluarfk']== 5) { diganti jadi objectstatuspulangfk karena status keluar id 5 d falsekan
+            if ($r_NewPD['nocmfk'] != 'undefined' && $r_NewPD['objectstatuspulangfk']== 9) {
                 $updatePS= Pasien::where('id', $r_NewPD['nocmfk'])
                     ->update([
                             'tglmeninggal' => $r_NewPD['tglmeninggal'],

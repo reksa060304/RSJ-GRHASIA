@@ -465,6 +465,7 @@ class RegistrasiController extends ApiController
                     $dataAPD->kdprofile = (int)$kdProfile;
                     $dataAPD->statusenabled = true;
                     $dataAPD->noantrian = $noAntrian;
+                    $dataAPD->tglmasuk =$r_NewAPD['tglregistrasi'];
 //                    $dataAPD->objectruanganfk = $r_NewAPD['objectruanganfk'];
                 }else{
                     $dataAPD =  AntrianPasienDiperiksa::where('norec',$r_NewAPD['norec_apd'])->where('kdprofile', $idProdile)->first();
@@ -523,8 +524,8 @@ class RegistrasiController extends ApiController
                 $dataAPD->statusantrian = 0;
                 $dataAPD->statuskunjungan =$dataStatusPasien;
                 $dataAPD->statuspasien = 1;
-                $dataAPD->tglregistrasi =  $r_NewAPD['tglregistrasi'];
-                $dataAPD->tglmasuk =$r_NewAPD['tglregistrasi'];
+                $dataAPD->tglregistrasi =  $r_NewAPD['tglregistrasi'];                
+				// $dataAPD->tglmasuk =$r_NewAPD['tglregistrasi']; dipindahkan ke atas
                 $dataAPD->israwatgabung = null;
                 //region Dibuang Sayang Oge
                 //$dataAPD->tgldipanggildokter = null;
@@ -10310,19 +10311,22 @@ FROM
             and ps.objectkondisipasienfk not in (5,6)
             union ALL
             SELECT
-            COUNT(ps.noregistrasi) as jumlah,'Meninggal < 24 jam' as ket
+            COUNT(ps.noregistrasi) as jumlah,kp.kondisipasien as ket
             FROM pasiendaftar_t as ps
             INNER JOIN ruangan_m as ru on ru.id = ps.objectruanganlastfk
+            INNER JOIN kondisipasien_m as kp on kp.id = ps.objectkondisipasienfk
             WHERE ps.tglpulang BETWEEN '$tglAwal'::date and '$tglAkhir'::date AND objectdepartemenfk = 16
             and ps.objectkondisipasienfk = 5
+            group by kp.kondisipasien 
             union ALL
             SELECT
-            COUNT(ps.noregistrasi) as jumlah,'Meninggal > 24 jam' as ket
+            COUNT(ps.noregistrasi) as jumlah,kp.kondisipasien as ket
             FROM pasiendaftar_t as ps
             INNER JOIN ruangan_m as ru on ru.id = ps.objectruanganlastfk
+            INNER JOIN kondisipasien_m as kp on kp.id = ps.objectkondisipasienfk
             WHERE tglpulang BETWEEN '$tglAwal'::date and '$tglAkhir'::date AND objectdepartemenfk = 16
             and ps.objectkondisipasienfk = 6
-
+            group by kp.kondisipasien 
             UNION ALL
             SELECT COUNT (x.noregistrasi) AS jumlah, 'HARI PERAWATAN' as ket
             FROM
@@ -13648,7 +13652,7 @@ GROUP BY y.KET
         GROUP BY pd.tglpulang::date
         order by pd.tglpulang::date asc
         ")); 
-        $pasienapd = DB::select(DB::raw("select count(pd.noregistrasi)as jml, date_part('day', pd.tglpulang::date)as tgl from pasiendaftar_t pd where pd.objectstatuspulangfk = 1 and date_part('month', pd.tglpulang)= $th and date_part('year', pd.tglpulang)=$bl and pd.kdprofile = 30 and pd.statusenabled = true
+        $pasienapd = DB::select(DB::raw("select count(pd.noregistrasi)as jml, date_part('day', pd.tglpulang::date)as tgl from pasiendaftar_t pd where pd.objectstatuspulangfk in (1,6) and date_part('month', pd.tglpulang)= $th and date_part('year', pd.tglpulang)=$bl and pd.kdprofile = 30 and pd.statusenabled = true
         GROUP BY pd.tglpulang::date
         order by pd.tglpulang::date asc
         ")); 
@@ -13668,7 +13672,7 @@ GROUP BY y.KET
         select count(pd.noregistrasi)as jml, date_part('day', pd.tglpulang::date)as tgl from pasiendaftar_t pd where pd.objectkondisipasienfk= 6 and date_part('month', pd.tglpulang)= $th and date_part('year', pd.tglpulang)=$bl and pd.kdprofile = 30 and pd.statusenabled = true
         GROUP BY pd.tglpulang::date"));
         $pasienkrg48 = DB::select(DB::raw("
-        select count(pd.noregistrasi)as jml, date_part('day', pd.tglpulang::date)as tgl from pasiendaftar_t pd where pd.objectkondisipasienfk= 5 and date_part('month', pd.tglpulang)= 8 and date_part('year', pd.tglpulang)=$bl and pd.kdprofile = 30 and pd.statusenabled = true
+        select count(pd.noregistrasi)as jml, date_part('day', pd.tglpulang::date)as tgl from pasiendaftar_t pd where pd.objectkondisipasienfk= 5 and date_part('month', pd.tglpulang)= $th and date_part('year', pd.tglpulang)=$bl and pd.kdprofile = 30 and pd.statusenabled = true
         GROUP BY pd.tglpulang::date"));
         $pasienmkhs = DB::select(DB::raw("
         select date_part('day', pd.tglregistrasi::date ) as tgl , count(pd.noregistrasi) as jml from pasiendaftar_t pd 
