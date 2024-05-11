@@ -197,9 +197,9 @@ class PindahPulangController extends ApiController
         DB::beginTransaction();
         //##Update Pasiendaftar##
         // dd($r_NewPD);
-        try{
+        // try{
 
-            if ( $r_NewPD['norec_pd'] != 'undefined' && $r_NewPD['noregistrasi']!= 'undefined' && $r_NewPD['objectstatuspulangfk']=9) {
+            if ( $r_NewPD['norec_pd'] != 'undefined' && $r_NewPD['noregistrasi']!= 'undefined' && $r_NewPD['objectstatuspulangfk']==9) {
                 $updatePD= PasienDaftar::where('noregistrasi', $r_NewPD['noregistrasi'])
                     ->update([
                             'objecthubungankeluargaambilpasienfk' => $r_NewPD['objecthubungankeluargaambilpasienfk'],
@@ -228,7 +228,7 @@ class PindahPulangController extends ApiController
                         ]
                     );
             }
-            if ( $r_NewPD['norec_pd'] != 'undefined' && $r_NewPD['noregistrasi']!= 'undefined' && $r_NewPD['objectstatuskeluarfk']!=5) {
+            if ( $r_NewPD['norec_pd'] != 'undefined' && $r_NewPD['noregistrasi']!= 'undefined' && $r_NewPD['objectstatuspulangfk']!=9) {
                 $updatePD= PasienDaftar::where('noregistrasi', $r_NewPD['noregistrasi'])
                     ->update([
                             'objecthubungankeluargaambilpasienfk' => $r_NewPD['objecthubungankeluargaambilpasienfk'],
@@ -246,7 +246,7 @@ class PindahPulangController extends ApiController
             if ($r_NewPD['nocmfk'] != 'undefined' && $r_NewPD['objectstatuspulangfk']== 9) {
                 $updatePS= Pasien::where('id', $r_NewPD['nocmfk'])
                     ->update([
-                            'tglmeninggal' => $r_NewPD['tglmeninggal'],
+                            'tglmeninggald' => $r_NewPD['tglmeninggal'],
                         ]
                     );
 
@@ -310,9 +310,9 @@ class PindahPulangController extends ApiController
                 ]);
             }
             $transStatus = 'true';
-        } catch (\Exception $e) {
-            $transStatus = 'false';
-        }
+        // } catch (\Exception $e) {
+        //     $transStatus = 'false';
+        // }
 
 
 
