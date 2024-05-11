@@ -739,15 +739,19 @@ select '-' as smf,* from  (
         }
 
         $data = DB::select(DB::raw("select pd.norec,pm.nocm,pd.noregistrasi,pm.namapasien,kp.kelompokpasien,kls.namakelas,ru.namaruangan,'-' as smf,
-                 pd.tglregistrasi,pd.tglpulang,pd.tglmeninggal
+                 pd.tglregistrasi,pd.tglpulang,pd.tglmeninggal,pdd.pendidikan,ag.agama,pe.pekerjaan,kop.kondisipasien
                 FROM pasiendaftar_t as pd
                 LEFT JOIN batalregistrasi_t as br on br.pasiendaftarfk = pd.norec
                 INNER JOIN pasien_m as pm on pm.id = pd.nocmfk
                 INNER JOIN kelompokpasien_m as kp on kp.id = pd.objectkelompokpasienlastfk
                 INNER JOIN kelas_m as kls on kls.id = pd.objectkelasfk
                 INNER JOIN ruangan_m as ru on ru.id = pd.objectruanganlastfk
+                left join pendidikan_m as pdd on pdd.id = pm.objectpendidikanfk
+                left join pekerjaan_m as pe on pe.id =pm.objectpekerjaanfk
+                left join agama_m as ag on ag.id = pm.objectagamafk	
+                left join kondisipasien_m as kop on kop.id = pd.objectkondisipasienfk	
                 where pd.kdprofile = $idProfile and pd.tglmeninggal BETWEEN '$tglAwal' and '$tglAkhir' and br.pasiendaftarfk is null
-                 and pd.objectstatuskeluarfk = 5
+                 and pd.objectstatuspulangfk = 9
                 and pm.namapasien ilike '%$namapasien%' $paramNoRm
                 $paramRuangan
                 $paramKelas"));

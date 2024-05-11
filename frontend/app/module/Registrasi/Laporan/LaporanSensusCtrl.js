@@ -694,13 +694,14 @@ define(['initialize'], function (initialize) {
                         title: "Noregistrasi",
                         width: "95px",
                     },
+                    
                     {
-                        field: "namapasien",
+						 field: "namapasien",
                         title: "Nama Pasien",
                         width: "120px",
                     },
-                    {
-                        field: "kelompokpasien",
+					{
+						field: "kelompokpasien",
                         title: "Tipe Pasien",
                         width: "105px",
                     },
@@ -1007,7 +1008,23 @@ define(['initialize'], function (initialize) {
                         width: "120px",
                     },
                     {
-                        field: "statuskeluar",
+                        field: "agama",
+                        title: "Pekerjaan",
+                        width: "120px",
+                    },
+                    {
+                        field: "pendidikan",
+                        title: "Pendidikan",
+                        width: "120px",
+                    },
+                    {
+                        field: "pekerjaan",
+                        title: "Pekerjaan",
+                        width: "120px",
+                    },
+                    
+                    {
+                        field: "kondisipasien",
                         title: "Cara Keluar",
                         width: "120px",
                     },
