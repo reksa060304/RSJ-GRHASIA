@@ -107,7 +107,7 @@
 					<div class="grid_12">
 						<input kendo-combo-box k-ng-model="item.produk" k-data-text-field="'namaproduk'"
 							k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
-							k-data-source="listProduk" k-on-change='getDataLain()' ng-disabled="isUnit" />
+							k-data-source="listProdukAset" k-on-change='getDataLain()' ng-disabled="isUnit" />
 					</div>
 				</div>
 
@@ -146,9 +146,14 @@
 					<div class="grid_12">
 						<label c-label item="item">Ruangan Asal</label>
 					</div>
-					<div class="grid_12">
+					<!-- <div class="grid_12">
 						<input kendo-combo-box k-ng-model="item.ruanganAsal" k-data-text-field="'namaruangan'"
 							k-data-value-field="'id'" k-data-source="ListRuanganAsal" k-filter="'contains'"
+							style="width: 100%;" ng-disabled=" isUnit"></input>
+					</div> -->
+					<div class="grid_12">
+						<input kendo-combo-box k-ng-model="item.ruanganAsal" k-data-text-field="'namaruangan'"
+							k-data-value-field="'id'" k-data-source="ListRuanganAsetAsal" k-filter="'contains'"
 							style="width: 100%;" ng-disabled=" isUnit"></input>
 					</div>
 				</div>
@@ -156,9 +161,13 @@
 					<div class="grid_12">
 						<label c-label item="item">Ruangan</label>
 					</div>
-					<div class="grid_12">
+					<!-- <div class="grid_12">
 						<input kendo-combo-box k-ng-model="item.ruangan" k-data-text-field="'namaruangan'"
 							k-data-value-field="'id'" k-data-source="ListRuangan" k-filter="'contains'" style="width: 100%"></input>
+					</div> -->
+					<div class="grid_12">
+						<input kendo-combo-box k-ng-model="item.ruangan" k-data-text-field="'namaruangan'"
+							k-data-value-field="'id'" k-data-source="ListRuanganAset" k-filter="'contains'" style="width: 100%"></input>
 					</div>
 				</div>
 				<div class=" grid_2">

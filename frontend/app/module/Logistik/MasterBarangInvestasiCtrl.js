@@ -36,6 +36,10 @@ define(['initialize'], function (initialize) {
 					$scope.listProduk = data;
 				});
 
+				medifirstService.getPart("logistik/get-combo-barang-logistik-aset", true, true, 20).then(function (data) {
+					$scope.listProdukAset = data;
+				});
+
 				medifirstService.getPart("sysadmin/general/get-datacombo-rekanan", true, true, 10).then(function (data) {
 					$scope.ListRekanan = data;
 				});
@@ -68,6 +72,8 @@ define(['initialize'], function (initialize) {
 					$scope.ListKelompokAset = dataComboMaster.kelompokaset;
 					$scope.ListkondisiFisik = dataComboMaster.kondisiFisik;
 					$scope.ListKeterangan = dataComboMaster.keterangan;
+					$scope.ListRuanganAset = dataComboMaster.ruanganaset;
+					$scope.ListRuanganAsetAsal = dataComboMaster.ruanganasetasal;
 
 
 					$scope.listDataKecamatan = dataComboAlamat.kecamatan
@@ -178,6 +184,9 @@ define(['initialize'], function (initialize) {
 					$scope.item.SisaUmur = 0;
 					$scope.item.TglProduksi = $scope.now;
 					$scope.item.MasaBerlakuSertifikat = 0;
+					$scope.item.LuasTanah = 0;
+					$scope.item.LuasBanguanan = 0;
+					$scope.item.LuasLantai = 0;
 					$scope.item.HargaPengadaan = 0;
 					$scope.item.TahunPerolehan = moment($scope.now).format('YYYY');
 					$scope.item.TglRegistrasi = moment($scope.now).format('YYYY-MM-DD HH:mm');
@@ -264,9 +273,9 @@ define(['initialize'], function (initialize) {
 							// * SERTIFIKAT
 							// $scope.item.JenisSertifikat="";
 							// $scope.item.NoSertifikat="";
-							// $scope.item.Pegawai="";
+							// $scope.item.Pegawai=""; LuasTanah
 							$scope.item.MasaBerlakuSertifikat = 0;
-							$scope.item.LuasTanah = datas.luastanah;
+							$scope.item.LuasTanah = 0;
 							// * END SERTIFIKAT
 
 							// * REKANAN
@@ -282,8 +291,8 @@ define(['initialize'], function (initialize) {
 							$scope.item.KondisiBangunan = { id: datas.kondisbanguanfk, nama: datas.kondisibanguanan };
 							$scope.item.Tingkat = { id: datas.tingkatfk, nama: datas.tingkat };
 							$scope.item.Beton = { id: datas.betonfk, nama: datas.beton };
-							$scope.item.LuasLantai = datas.luaslantai;
-							$scope.item.LuasBanguanan = datas.luasbangunan;
+							$scope.item.LuasLantai = 0;
+							$scope.item.LuasBanguanan = 0;
 						
 							// * END SPESIFIKASI
 
@@ -369,6 +378,7 @@ define(['initialize'], function (initialize) {
 				$scope.item.SisaUmur = 0;
 				$scope.item.TglProduksi = $scope.now;
 				$scope.item.NoSeri = "";
+				$scope.item.spesifikasi = KondisiBarang;
 				// * END SPESIFIKASI
 
 				// * SATUAN
@@ -390,12 +400,21 @@ define(['initialize'], function (initialize) {
 				$scope.item.NoSertifikat = "";
 				$scope.item.Pegawai = undefined;
 				$scope.item.MasaBerlakuSertifikat = 0;
+				$scope.item.LuasTanah = 0;
 				// * END SERTIFIKAT
 
 				// * REKANAN
 				$scope.item.rekanan = undefined;
 				$scope.item.produsenProduk = undefined;
 				// * END REKANAN
+
+				// * BANGUNAN
+				$scope.item.KondisiBangunan = undefined;
+				$scope.item.Tingkat = "";
+				$scope.item.Beton = undefined;
+				$scope.item.LuasLantai = 0;
+				$scope.item.LuasBanguanan = 0;
+				// * END 
 			}
 
 			$scope.Batal = function () {
@@ -433,12 +452,12 @@ define(['initialize'], function (initialize) {
 					// "item.jenisProduk|k-ng-model|Jenis Produk",
 					// "item.detailJenisProduk|k-ng-model|Detail Jenis Produk",
 					// "item.asalproduk|k-ng-model|Sumber Dana",
-					"item.kelompokaset|k-ng-model|Kelompok Aset",
+					"item.kelompokaset|k-ng-model|Kategory->Kelompok Aset",
 					// * END KATEGORY
 
 					// * SPESIFIKASI
 					// "item.fungsiProduk|k-ng-model|Fungsi Produk",
-					"item.bahanProduk|k-ng-model|Bahan Produk",
+					"item.bahanProduk|k-ng-model|Spesifikasi->Bahan Produk",
 					// "item.typeProduk|k-ng-model|Type Produk",
 					// "item.warnaProduk|k-ng-model|Warna Produk",
 					// "item.merkProduk|k-ng-model|Merk Produk",
@@ -449,7 +468,7 @@ define(['initialize'], function (initialize) {
 					// "item.Listrik|ng-model|Listrik",
 					// "item.UsiaPakai|ng-model|UsiaPakai",
 					// "item.UsiaTeknis|ng-model|UsiaTeknis",
-					"item.SisaUmur|ng-model|SisaUmur",
+					"item.SisaUmur|ng-model|Spesifikasi->SisaUmur",
 					// "item.Teknologi|ng-model|klasifikasiteknologi",
 					// * END SPESIFIKASI
 
@@ -468,7 +487,7 @@ define(['initialize'], function (initialize) {
 					// * END KENDARAAN
 
 					// * SERTIFIKAT
-					"item.JenisSertifikat|k-ng-model|Jenis Sertifikat",	
+					"item.JenisSertifikat|k-ng-model|Sertifikat->Jenis Sertifikat",	
 					// "item.NoSertifikat|ng-model|No Sertifikat",
 					//"item.MasaBerlakuSertifikat|ng-model|Masa Berlaku Sertifikat",
 					// "item.Pegawai|k-ng-model|Sertifikat Atas Nama",	
@@ -683,11 +702,7 @@ define(['initialize'], function (initialize) {
 				var fungsikegunaan = '';
 				if ($scope.item.fungsiProduk != undefined) {
 					fungsikegunaan = $scope.item.fungsiProduk.fungsiproduk;
-				}
-				var KondisiBarangfk = '';
-				if ($scope.item.KondisiBarang != undefined) {
-					KondisiBarangfk = $scope.item.KondisiBarang.id;
-				}
+				}			
 				// if ($scope.item.fungsiProduk.fungsiproduk != undefined) {
 				// 	fungsikegunaan = $scope.item.fungsiProduk.fungsiproduk;
 				// }
@@ -771,9 +786,13 @@ define(['initialize'], function (initialize) {
 				var LuasBanguanan = null
 				if($scope.item.LuasBanguanan != undefined){
 					LuasBanguanan = $scope.item.LuasBanguanan
-				}
+				}						
 				
 				// End Bagunanan
+				var KondisiBarangfk = '';
+				if ($scope.item.KondisiBarang != undefined) {
+					KondisiBarangfk = $scope.item.KondisiBarang.id;
+				}
 
 				var regAset = {
 
@@ -1128,7 +1147,8 @@ define(['initialize'], function (initialize) {
             function historyPindahAssetFunc(){
             	
             	medifirstService.get("logistik/get-daftar-history-pindah-asset?" + "noregisterasetfk=" + norecNoAsset, true).then(function (data) {
-					var datas = data.data[0].data;
+					var datas = data.data.data;
+					console.log(datas)
 					$scope.dataGridHistoryAsset = new kendo.data.DataSource({
 	                    data: datas
 	                });
@@ -1170,22 +1190,22 @@ define(['initialize'], function (initialize) {
 						"width": "20px",
 					},
 					{
-						"field": "NoStruk",
+						"field": "nokirim",
 						"title": "NoStruk",
 						"width": "50px",
 					},
 					{
-						"field": "inttahun",
+						"field": "tglkirim",
 						"title": "Tgl Pindah",
 						"width": "50px",
 					},
 					{
-						"field": "hargaperolehan",
+						"field": "ruanganasal",
 						"title": "Dari Ruangan",
 						"width": "70px"
 					},
 					{
-						"field": "nilaisisa",
+						"field": "ruangantujuan",
 						"title": "Ke Ruangan",
 						"width": "70px",
 					}

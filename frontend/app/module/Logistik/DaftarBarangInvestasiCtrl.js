@@ -47,6 +47,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 // }else{
                 medifirstService.get("sysadmin/general/get-combo-ruangan-general").then(function (dat) {
                     $scope.sourceDepartemen = dat.data.departemen;
+                    $scope.sourceRuanganAset = dat.data.ruangan;
                 });
                 //}
 
@@ -168,10 +169,10 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     return
                 }
 
-                if($scope.item.tglAwal == undefined){
-                    toastr.error('Pilih Periode tanggal terlebih dahulu')
-                    return
-                }
+                // if($scope.item.tglAwal == undefined){
+                //     toastr.error('Pilih Periode tanggal terlebih dahulu')
+                //     return
+                // }
                 LoadData();
                 // var ruanganId, awal, akhir, periode;
                 // if ($scope.item.ruangan !== undefined) {

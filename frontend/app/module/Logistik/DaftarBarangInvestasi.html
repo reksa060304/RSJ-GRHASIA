@@ -6,16 +6,16 @@
                 k-data-source="sourceProduk" k-filter="'contains'" style=\ "width: 100%\"></input> -->
             <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.NamaProduk" />
         </div>
-        <div class="grid_2">
+        <!-- <div class="grid_2">
             <label c-label>Departemen</label>
             <input kendo-combo-box k-ng-model="item.departemen" k-data-text-field="'departemen'"
                 k-data-value-field="'id'" k-data-source="sourceDepartemen" k-filter="'contains'" style="width: 100%"
                 k-on-change="getIsiComboRuangan()"></input>
-        </div>
+        </div> -->
         <div class="grid_2">
             <label c-label>Ruangan</label>
             <input kendo-combo-box k-ng-model="item.ruangan" k-data-text-field="'ruangan'" k-data-value-field="'id'"
-                k-data-source="sourceRuangan" k-filter="'contains'" style="width: 100%"></input>
+                k-data-source="sourceRuanganAset" k-filter="'contains'" style="width: 100%"></input>
         </div>
         <div class="grid_2">
             <label c-label>Detail Jenis Produk</label>
@@ -28,7 +28,7 @@
                 <label c-label item="item" c-label-text="Periode Tanggal"></label>
             </div>
             <div class="grid_12">
-                <!-- AwalPeriode -->
+               
                 <div class="grid_5 padDatePicker">
                     <div class="grid_12">
                         <input style="width: 100%" k-ng-model="item.tglAwal" kendo-datetimepicker k-max="now"
@@ -36,7 +36,6 @@
                     </div>
                 </div>
 
-                <!-- AkhirPeriode -->
                 <div class="grid_5 padDatePicker">
                     <div class="grid_12">
                         <input style="width: 100%" k-ng-model="item.tglAkhir" kendo-datetimepicker

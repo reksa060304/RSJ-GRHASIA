@@ -427,6 +427,15 @@ class LogistikController extends ApiController{
             ->where('b.fungsi',1)
             ->orderBy('b.id')
             ->get();
+        $RuanganAset = \DB::table('ruanganasset_m as ra')
+            ->where('ra.statusenabled',true)           
+            ->orderBy('ra.id')
+            ->get();
+        $RuanganAsetAsal = \DB::table('ruangan_m as lu')
+            ->select('lu.id','lu.namaruangan')
+            ->where('lu.statusenabled',true)
+            ->where('lu.kdprofile', $idProfile)
+            ->get();
 
         $result = array(
             'pegawai' => $data,
@@ -473,6 +482,8 @@ class LogistikController extends ApiController{
             'ruanganGudang'=> $dataRuanganGudang,
             'kondisiFisik'=> $KondsiFisik,
             'keterangan'=> $Keterangan,
+            'ruanganaset'=>$RuanganAset,
+            'ruanganasetasal'=>$RuanganAsetAsal,
             // 'sppb'=> $sppbnya,
             // 'SNN'=> $SNN,
             'by' => 'ea@epic',
@@ -9658,8 +9669,8 @@ class LogistikController extends ApiController{
             $dataRegAset->sisaumur=$request['regAset']['sisaumur'];
             $dataRegAset->usiapakai=$request['regAset']['usiapakai'];
             $dataRegAset->usiateknis=$request['regAset']['usiateknis'];
-            $dataRegAset->tglproduksi=$request['regAset']['tglproduksi'];
-            $dataRegAset->kondisibarangfk= isset($request['regAset']['kondisibarangfk']) ? $request['regAset']['kondisibarangfk'] : null;
+            $dataRegAset->tglproduksi=$request['regAset']['tglproduksi'];           
+            $dataRegAset->keteranganlainnya = $request['regAset']['keteranganlainnya'];
             
             // Satuan
             $dataRegAset->objectsatuan=$request['regAset']['objectsatuan'];
@@ -9678,7 +9689,7 @@ class LogistikController extends ApiController{
             $dataRegAset->nosertifikat=$request['regAset']['nosertifikat'];
             $dataRegAset->sertifikat_atasnama= isset($request['regAset']['sertifikat_atasnama']) ? $request['regAset']['sertifikat_atasnama'] : null; //$request['regAset']['sertifikat_atasnama']
             $dataRegAset->masaberlakusertifikat= isset($request['regAset']['masaberlakusertifikat']) ? $request['regAset']['masaberlakusertifikat'] : null; //$request['regAset']['masaberlakusertifikat'];
-            $dataRegAset->luastanah= isset($request['regAset']['luastanah']) ? $request['regAset']['luastanah'] : null; //$request['regAset']['masaberlakusertifikat'];
+            
             // Rekanan
             $dataRegAset->objectprodusenprodukfk=$request['regAset']['objectprodusenprodukfk'];
             $dataRegAset->objectsupplier=$request['regAset']['objectsupplier'];
@@ -9691,11 +9702,13 @@ class LogistikController extends ApiController{
 
             
             // Bangunan
-            $dataRegAset->kondisbanguanfk = $request['regAset']['kondisbanguanfk']; 
-            $dataRegAset->tingkatfk = $request['regAset']['tingkatfk']; 
-            $dataRegAset->betonfk = $request['regAset']['betonfk']; 
+            $dataRegAset->kondisbanguanfk =  isset($request['regAset']['kondisbanguanfk']) ? $request['regAset']['kondisbanguanfk'] : null;
+            $dataRegAset->tingkatfk =  isset($request['regAset']['tingkatfk']) ? $request['regAset']['tingkatfk'] : null;
+            $dataRegAset->betonfk =   isset($request['regAset']['betonfk']) ? $request['regAset']['betonfk'] : null;
             $dataRegAset->luasbangunan= isset($request['regAset']['luasbangunan']) ? $request['regAset']['luasbangunan'] : null;
             $dataRegAset->luaslantai= isset($request['regAset']['luaslantai']) ? $request['regAset']['luaslantai'] : null;
+            $dataRegAset->kondisibarangfk= isset($request['regAset']['KondisiBarangfk']) ? $request['regAset']['KondisiBarangfk'] : null;
+            $dataRegAset->luastanah= isset($request['regAset']['luastanah']) ? $request['regAset']['luastanah'] : null; 
             
             
             
@@ -9872,8 +9885,8 @@ class LogistikController extends ApiController{
             ->leftJOIN('kelompokproduk_m as kp','kp.id','=','jp.objectkelompokprodukfk')
             ->leftJOIN('satuanstandar_m as ss','ss.id','=','pr.objectsatuanstandarfk')
             ->leftJOIN('asalproduk_m as ap','ap.id','=','ra.objectasalprodukfk')
-            ->leftJOIN('ruangan_m as ru','ru.id','=','ra.objectruanganfk')
-            ->leftJOIN('ruangan_m as ru1','ru1.id','=','ra.objectruanganposisicurrentfk')
+            ->leftJOIN('ruanganasset_m as ru','ru.id','=','ra.objectruanganfk')
+            ->leftJOIN('ruanganasset_m as ru1','ru1.id','=','ra.objectruanganposisicurrentfk')
             ->leftJOIN('rekanan_m as rek','rek.id','=','ra.objectsupplier')
             ->select('ra.norec','ra.koderegisterrs as noregisteraset','ra.objectprodukfk as kdproduk','pr.namaproduk','jp.jenisproduk',
                      'ru.id as ruanganasalfk','ru.namaruangan as namaruanganasal','ru1.id as ruangancurrenfk','ru1.namaruangan as ruangancurrent',
@@ -9882,12 +9895,12 @@ class LogistikController extends ApiController{
                      'spd.norec as norecspd','ap.asalproduk','ra.keteranganlainnya','ra.spesifikasi','ra.jenisaset','ra.judul','ra.kdbmn','ra.luasbangunan','ra.luaslantai')
             ->where('ra.kdprofile', $idProfile);
 
-        if (isset($request['tglAwal']) && $request['tglAwal'] != "" && $request['tglAwal'] != "undefined") {
-            $data = $data->where('ra.tglregisteraset', '>=', $request['tglAwal']);
-        }
-        if (isset($request['tglAkhir']) && $request['tglAkhir'] != "" && $request['tglAkhir'] != "undefined") {
-            $data = $data->where('ra.tglregisteraset', '<=', $request['tglAkhir']);
-        }
+        // if (isset($request['tglAwal']) && $request['tglAwal'] != "" && $request['tglAwal'] != "undefined") {
+        //     $data = $data->where('ra.tglregisteraset', '>=', $request['tglAwal']);
+        // }
+        // if (isset($request['tglAkhir']) && $request['tglAkhir'] != "" && $request['tglAkhir'] != "undefined") {
+        //     $data = $data->where('ra.tglregisteraset', '<=', $request['tglAkhir']);
+        // }
         if(isset($request['kdproduk']) && $request['kdproduk']!="" && $request['kdproduk']!="undefined"){
             $data = $data->where('ra.objectprodukfk','=', $request['kdproduk']);
         }
@@ -9974,7 +9987,9 @@ class LogistikController extends ApiController{
                                        inner JOIN produk_m as pr on pr.id = ra.objectprodukfk
                                        inner JOIN ruangan_m as ru on ru.id = ra.objectruanganfk
                                        INNER JOIN ruangan_m as ru1 on ru1.id = ra.objectruanganposisicurrentfk
-                                       where ra.kdprofile = $idProfile and ra.statusenabled=1 and pr.id=:produkId and ru1.id=:ruanganid"),
+                                       where ra.kdprofile = $idProfile and ra.statusenabled= true 
+                                       and pr.id=:produkId and ru1.id=:ruanganid
+                                       "),
             array(
                 'produkId' => $request['produkfk'],
                 'ruanganid' => $request['ruanganfk'],
@@ -9987,7 +10002,7 @@ class LogistikController extends ApiController{
                                        inner JOIN produk_m as pr on pr.id = ra.objectprodukfk
                                        inner JOIN ruangan_m as ru on ru.id = ra.objectruanganfk
                                        INNER JOIN ruangan_m as ru1 on ru1.id = ra.objectruanganposisicurrentfk
-                                       where ra.kdprofile = $idProfile and ra.statusenabled=1 and ra.noregisteraset=:noregisteraset"),
+                                       where ra.kdprofile = $idProfile and ra.statusenabled=true and ra.noregisteraset=:noregisteraset"),
             array(
                 'noregisteraset' => $request['noregisteraset'],
             )
@@ -10068,54 +10083,65 @@ class LogistikController extends ApiController{
                 );
                 $saldoAwalPengirim = 0;
                 $jumlah=(float)$item['jumlah'] * (float)$nilaikonversi;
-                foreach ($dataSaldoAwalK as $items) {
-                    $saldoAwalPengirim =$saldoAwalPengirim + (float)$items->qty;
-                }
-                if ((float)$items->qty <= $jumlah){
-                    //## KirimProdukAset
-                    $dataKPA = new KirimProdukAset();
-                    $dataKPA->norec = $dataKPA->generateNewId();
-                    $dataKPA->kdprofile = $idProfile;
-                    $dataKPA->statusenabled = true;
-                    $dataKPA->objectkondisiprodukfk = $item['kondisiprodukfk'];
-                    $dataKPA->nokirimfk =$SK['norec'];
-                    $dataKPA->noregisterasetfk = $request['strukkirimaset']['norecAsset'];
-                    $dataKPA->qtyproduk = $item['jumlah'];
-                    $dataKPA->produkfk =  $item['produkfk'];
-                    $dataKPA->save();
-                    //## END KirimProdukAset
+                // foreach ($dataSaldoAwalK as $items) {
+                //     $saldoAwalPengirim = $saldoAwalPengirim + (float)$items->qty;
 
-                    $jumlah = $jumlah - (float)$items->qty;
-                    StokProdukDetail::where('norec', $items->norec)
-                        ->where('kdprofile', $idProfile)
-                        ->update([
-                                'qtyproduk' => 0]
-                        );
-                }else{
-                    //## KirimProdukAset
-                    $dataKPA = new KirimProdukAset();
-                    $dataKPA->norec = $dataKPA->generateNewId();
-                    $dataKPA->kdprofile = $idProfile;
-                    $dataKPA->statusenabled = true;
-                    $dataKPA->objectkondisiprodukfk = $item['kondisiprodukfk'];
-                    $dataKPA->nokirimfk =$SK['norec'];
-                    $dataKPA->noregisterasetfk = $request['strukkirimaset']['norecAsset'];
-                    $dataKPA->qtyproduk = $item['jumlah'];
-                    $dataKPA->produkfk =  $item['produkfk'];
-                    $dataKPA->save();
-                    //## END KirimProdukAset
-
-                    $saldoakhir =(float)$items->qty - $jumlah;
-                    $jumlah=0;
-                    StokProdukDetail::where('norec', $items->norec)
-                        ->where('kdprofile', $idProfile)
-                        ->update([
-                                'qtyproduk' => (float)$saldoakhir]
-                        );
-                }
+                //     if ((float)$items->qty <= $jumlah){
+                //         //## KirimProdukAset
+                //         $dataKPA = new KirimProdukAset();
+                //         $dataKPA->norec = $dataKPA->generateNewId();
+                //         $dataKPA->kdprofile = $idProfile;
+                //         $dataKPA->statusenabled = true;
+                //         $dataKPA->objectkondisiprodukfk = $item['kondisiprodukfk'];
+                //         $dataKPA->nokirimfk =$SK['norec'];
+                //         $dataKPA->noregisterasetfk = $item['norecasset'];
+                //         $dataKPA->qtyproduk = $item['jumlah'];
+                //         $dataKPA->produkfk =  $item['produkfk'];
+                //         $dataKPA->save();
+                //         //## END KirimProdukAset
+    
+                //         $jumlah = $jumlah - (float)$items->qty;
+                //         StokProdukDetail::where('norec', $items->norec)
+                //             ->where('kdprofile', $idProfile)
+                //             ->update([
+                //                     'qtyproduk' => 0]
+                //             );
+                //     }else{
+                //         //## KirimProdukAset
+                //         $dataKPA = new KirimProdukAset();
+                //         $dataKPA->norec = $dataKPA->generateNewId();
+                //         $dataKPA->kdprofile = $idProfile;
+                //         $dataKPA->statusenabled = true;
+                //         $dataKPA->objectkondisiprodukfk = $item['kondisiprodukfk'];
+                //         $dataKPA->nokirimfk = $dataSK->norec;
+                //         $dataKPA->noregisterasetfk = $item['norecasset'];
+                //         $dataKPA->qtyproduk = $item['jumlah'];
+                //         $dataKPA->produkfk =  $item['produkfk'];
+                //         $dataKPA->save();
+                //         //## END KirimProdukAset
+    
+                //         $saldoakhir =(float)$items->qty - $jumlah;
+                //         $jumlah=0;
+                //         StokProdukDetail::where('norec', $items->norec)
+                //             ->where('kdprofile', $idProfile)
+                //             ->update([
+                //                     'qtyproduk' => (float)$saldoakhir]
+                //             );
+                //     }
+                // }
+                $dataKPA = new KirimProdukAset();
+                $dataKPA->norec = $dataKPA->generateNewId();
+                $dataKPA->kdprofile = $idProfile;
+                $dataKPA->statusenabled = true;
+                $dataKPA->objectkondisiprodukfk = $item['kondisiprodukfk'];
+                $dataKPA->nokirimfk = $dataSK->norec;
+                $dataKPA->noregisterasetfk = $item['norecasset'];
+                $dataKPA->qtyproduk = $item['jumlah'];
+                $dataKPA->produkfk =  $item['produkfk'];
+                $dataKPA->save();
 
                 //## RegisterAsset
-                $dataRA = RegistrasiAset::where('norec', $request['strukkirimaset']['norecAsset'])
+                $dataRA = RegistrasiAset::where('norec', $item['norecasset'])
                     ->where('kdprofile', $idProfile)
                     ->update([
                         'objectruanganposisicurrentfk' => $request['strukkirimaset']['objectruangantujuanfk'],
@@ -16705,5 +16731,71 @@ FROM
             'as'=> 'Fizi@epic'
         );
         return $this->respond($result);
+    }
+
+    public function getDataProdukLogistikAset(Request $request) {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $req=$request->all();
+        $dataProduk = \DB::table('produk_m as pr')
+            ->JOIN('detailjenisproduk_m as djp', 'djp.id', '=', 'pr.objectdetailjenisprodukfk')
+            ->JOIN('jenisproduk_m as jp', 'jp.id', '=', 'djp.objectjenisprodukfk')
+            ->leftJOIN('satuanstandar_m as ss', 'ss.id', '=', 'pr.objectsatuanstandarfk')
+            ->select('pr.id', 'pr.namaproduk', 'pr.reportdisplay', 'ss.id as ssid', 'ss.satuanstandar','pr.kdproduk')
+            ->where('pr.statusenabled', true)
+            ->where('pr.kdprofile',$idProfile)
+            ->whereIn('jp.objectkelompokprodukfk',[20,36,76])
+            ->orderBy('pr.namaproduk'); 
+
+        if(isset($req['namaproduk']) &&
+            $req['namaproduk']!="" &&
+            $req['namaproduk']!="undefined"){
+            $dataProduk = $dataProduk->where('pr.namaproduk','ILIKE','%'. $req['namaproduk'] .'%' );
+        };
+
+        if(isset($req['filter']['filters'][0]['value']) &&
+            $req['filter']['filters'][0]['value']!="" &&
+            $req['filter']['filters'][0]['value']!="undefined"){
+            $dataProduk = $dataProduk->where('pr.namaproduk','ILIKE','%'. $req['filter']['filters'][0]['value'].'%' );
+        };
+        $dataProduk = $dataProduk->take(20);
+        $dataProduk = $dataProduk->get();
+
+        $dataKonversiProduk = \DB::table('konversisatuan_t as ks')
+            ->JOIN('satuanstandar_m as ss','ss.id','=','ks.satuanstandar_asal')
+            ->JOIN('satuanstandar_m as ss2','ss2.id','=','ks.satuanstandar_tujuan')
+            ->select('ks.objekprodukfk','ks.satuanstandar_asal','ss.satuanstandar',
+                     'ks.satuanstandar_tujuan','ss2.satuanstandar as satuanstandar2',
+                     'ks.nilaikonversi')
+            ->where('ks.kdprofile',$idProfile)
+            ->where('ks.statusenabled',true)
+            ->get();
+
+
+        $dataProdukResult=[];
+        foreach ($dataProduk as $item){
+            $satuanKonversi=[];
+            foreach ($dataKonversiProduk  as $item2){
+                if ($item->id == $item2->objekprodukfk){
+                    $satuanKonversi[] =array(
+                        'ssid' =>   $item2->satuanstandar_tujuan,
+                        'satuanstandar' =>   $item2->satuanstandar2,
+                        'nilaikonversi' =>   $item2->nilaikonversi,
+                    );
+                }
+            }
+
+            $dataProdukResult[]=array(
+                'id' =>   $item->id,
+                'namaproduk' =>   $item->namaproduk,
+                'reportdisplay' =>   $item->reportdisplay,
+                'ssid' =>   $item->ssid,
+                'satuanstandar' =>   $item->satuanstandar,
+                'konversisatuan' => $satuanKonversi,
+                'kdproduk' => $item->kdproduk,
+            );
+        }
+
+        return $this->respond($dataProdukResult);
     }
 }

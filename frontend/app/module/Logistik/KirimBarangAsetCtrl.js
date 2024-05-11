@@ -54,7 +54,18 @@ define(['initialize'], function(initialize) {
                 medifirstService.getPart("logistik/get-combo-pegawai-logistik", true, true, 20).then(function (data) {
                     $scope.ListDataPegawai = data;
                 });               
-            } 
+            }
+            
+            $scope.handleRuang = function(){
+                var ruanganid = '';
+                if ($scope.item.ruangan != undefined) {
+                    ruanganid = $scope.item.ruangan.id;
+                }
+                medifirstService.get("logistik/get-data-produkforkirim?ruanganId="+ruanganid, true).then(function(dat){
+                    var data = dat.data[0].data;
+                    $scope.listProduk= data;
+                })
+            }
 
             function loadProduk(){
                 var ruanganid = '';
@@ -117,7 +128,8 @@ define(['initialize'], function(initialize) {
             medifirstService.get("logistik/get-nomor-asset?"+
                 "produkfk="+ $scope.item.produk.id +
                 "&ruanganfk="+ $scope.item.ruangan.id , true).then(function(dat){
-                    $scope.listAsset = dat.data.result;                    
+                    $scope.listAsset = dat.data.result;
+                  
             });
         }
 
@@ -214,7 +226,7 @@ define(['initialize'], function(initialize) {
                 return;
             }
 
-            if ($scope.item.jumlah >= $scope.item.stok) {
+            if ($scope.item.jumlah > $scope.item.stok) {
                 alert("Jumlah Tidak Bisa Lebih Dari Stok!")
                 return;
             }
