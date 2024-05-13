@@ -3127,6 +3127,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
                 Route::get('sysadmin/master/get-data-barang-konversi', 'SysAdmin\Master\MasterController@getBarangKonversi');
                 Route::get('sysadmin/master/get-data-rekanan','SysAdmin\Master\MasterController@getDataRekanan');
                 Route::get('sysadmin/master/get-rekanan-perkode','SysAdmin\Master\MasterController@getRekananById');
+                Route::get('sysadmin/master/get-data-produk-aset', 'SysAdmin\Master\MasterController@getListProdukAset');
 
                 Route::get('sysadmin/master/get-list_table','SysAdmin\Master\MasterController@getKelompokTableMaster');
                 Route::get('sysadmin/master/get-table-detail','SysAdmin\Master\MasterController@getTableDetail');

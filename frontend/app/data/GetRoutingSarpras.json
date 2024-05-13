@@ -6554,5 +6554,45 @@
         "define": "MedifirstService"
       }
     ]
+  },
+  {
+    "name": "MasterProdukAset",
+    "url": "/TWFzdGVyUHJvZHVrQXNldA==",
+    "templateurl": "module/SysAdmin/MasterProdukAset.html",
+    "controller": "MasterProdukAsetCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "InputProdukAset",
+    "url": "/InputProdukAset/:idx",
+    "templateurl": "module/SysAdmin/InputProdukAset.html",
+    "controller": "InputProdukAsetCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
   }
 ]

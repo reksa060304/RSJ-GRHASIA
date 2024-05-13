@@ -1325,6 +1325,14 @@
         {
             "nameDep": "KirimBarangInfeksiusCtrl",
             "urlDep": "module/Laundry/KirimBarangInfeksiusCtrl"
+        },
+        {
+            "nameDep": "MasterProdukAsetCtrl",
+            "urlDep": "module/SysAdmin/MasterProdukAsetCtrl"
+        },
+        {
+            "nameDep": "InputProdukAsetCtrl",
+            "urlDep": "module/SysAdmin/InputProdukAsetCtrl"
         }
     ]
 }

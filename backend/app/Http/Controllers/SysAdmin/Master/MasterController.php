@@ -6054,6 +6054,90 @@ class MasterController extends ApiController{
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
 
+    public function getListProdukAset(Request $request,$limit=null){
+        //get request
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $filter = $request->all();
+        //get data
+        $idBarangAset = explode (',',$this->settingDataFixed('KelompokBarangAset',$kdProfile));        
+        $kdBarangAset = [];
+        
+        foreach ($idBarangAset as $item){
+            $kdBarangAset []=  (int)$item;
+        }
+       
+        $data = \DB::table('produk_m as p')
+            ->select('p.id','p.kdproduk','p.kdbarcode','p.deskripsiproduk','p.namaproduk','dj.detailjenisproduk','p.statusenabled')
+            ->leftJoin('rm_sediaan_m as rm','rm.id','=','p.objectsediaanfk')
+            ->leftJoin('merkproduk_m as mp','mp.id','=','objectmerkprodukfk')
+            ->leftJoin('rekanan_m as rk','rk.id','=','p.objectrekananfk')
+            ->leftJoin('golongandarah_m as gd','gd.id','=','p.golongandarahfk')
+            ->leftJoin('status_barang_m as sb','sb.id','=','p.objectstatusbarangfk')
+            ->leftJoin('rhesus_m as rh','rh.id','=','p.rhesusfk')
+            ->leftJoin('rm_generik_m as rg','rg.id','=','p.objectgenerikfk')
+            ->leftJoin('rm_detail_obat_m as rd','rd.id','=','p.objectdetailobatfk')
+            ->leftJoin('bahansample_m as bs','bs.id','=','p.bahansamplefk')
+            ->leftJoin('chartofaccount_m as ch','ch.id','=','p.objectaccountfk')
+            ->leftJoin('bahanproduk_m as bh','bh.id','=','p.objectbahanprodukfk')
+            ->leftJoin('bentukproduk_m as bp','bp.id','=','p.objectbentukprodukfk')
+            ->leftJoin('departemen_m as dp','dp.id','=','p.objectdepartemenfk')
+            ->leftJoin('detailgolonganproduk_m as dg','dg.id','=','p.objectdetailgolonganprodukfk')
+            ->leftJoin('detailjenisproduk_m as dj','dj.id','=','p.objectdetailjenisprodukfk')
+            ->leftJoin('jenisproduk_m as jp','jp.id','=','dj.objectjenisprodukfk')
+            ->where('p.kdprofile', $kdProfile)
+            ->wherein('jp.objectkelompokprodukfk', $kdBarangAset);
+
+        if(isset($filter['kdProduk']) && !empty($filter['kdProduk'])){
+            $data = $data->where('p.id','=',$filter['kdProduk']);
+        }
+        if (isset($filter['kdInternal']) && !empty($filter['kdInternal'])) {
+            $data = $data->where('p.kdproduk','=',$filter['kdInternal']);
+        }
+        if (isset($filter['kdBarcode']) && !empty($filter['kdBarcode'])) {
+            $data = $data->where('p.kdbarcode','=',$filter['kdBarcode']);
+        }
+        if (isset($filter['kdBmn']) && !empty($filter['kdBmn'])) {
+            $data = $data->where('p.kodebmn','=',$filter['kdBmn']);
+        }
+        if (isset($filter['nmProduk']) && !empty($filter['nmProduk'])) {
+            $data = $data->where('p.namaproduk','ilike','%'.$filter['nmProduk'].'%');
+        }
+        if (isset($filter['detailjenisproduk']) && !empty($filter['detailjenisproduk'])) {
+            $data = $data->where('dj.id','=', $filter['detailjenisproduk']);
+        }
+
+        if(isset($filter['JenisArr']) && $filter['JenisArr']!="" && $filter['JenisArr']!="undefined"){
+            $arrRuang = explode(',',$request['JenisArr']) ;
+            $data = $data->whereIn('dj.id', $arrRuang);
+        }
+
+        if (isset($filter['status']) && !empty($filter['status'])) {            
+            if($filter['status'] == "true"){
+                $data = $data->where('p.statusenabled','=',true);
+
+            }else{
+                $data = $data->where('p.statusenabled','=',false);
+            }
+            
+        }        
+        if (isset($filter['idProduk']) && !empty($filter['idProduk'])) {
+            $data = $data->where('p.id','=',$filter['idProduk']);
+        }
+        //var_dump($filter['filter']);
+        if(isset($filter['filter']['filters'][0]['value']) &&
+            $filter['filter']['filters'][0]['value']!="" &&
+            $filter['filter']['filters'][0]['value']!="undefined"){
+            $data = $data
+                ->where('p.namaproduk','ilike','%'.$filter['filter']['filters'][0]['value'].'%' );
+        }
+        
+
+        $data = $data->orderBy('p.namaproduk');
+        $data = $data->take($filter['jmlRows']);
+        $data = $data->get();
+        return $this->respond($data);
+    }
+
 
 ////////
 }
