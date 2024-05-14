@@ -2970,6 +2970,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
               Route::post('sysadmin/master/save-data-tempattidur','SysAdmin\Master\MasterController@saveMasterTempatTidur');
               Route::post('sysadmin/simpan-masterrekanan','SysAdmin\GeneralController@simpanMasterRekananPerbaikan');
               Route::post('sysadmin/master/save-data-ruangan-aset','SysAdmin\Master\MasterController@saveMasterRuanganAset');
+              Route::get('sysadmin/master/get-data-ruangan-aset', 'SysAdmin\Master\MasterController@getLoadRuanganAset');
               // });
             // Route::group(['prefix' => 'general'], function () {
                 // GET //
