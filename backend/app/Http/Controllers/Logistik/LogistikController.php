@@ -9878,8 +9878,8 @@ class LogistikController extends ApiController{
         $data = \DB::table('registrasiaset_t as ra')
             ->leftJOIN('strukpelayanan_t as sp','sp.norec','=','ra.nostrukterimafk')
             ->leftJOIN('strukpelayanandetail_t as spd','spd.norec','=','ra.nostrukterimadetailfk')
-            // ->leftJOIN('produk_m as pr','pr.id','=','ra.objectprodukfk')
-            ->leftJOIN('produk_m as pr','pr.id','=','ra.idprodukfk')
+            ->leftJOIN('produk_m as pr','pr.id','=','ra.objectprodukfk')
+            // ->leftJOIN('produk_m as pr','pr.id','=','ra.idprodukfk')
             ->leftJOIN('detailjenisproduk_m as djp','djp.id','=','pr.objectdetailjenisprodukfk')
             ->leftJOIN('jenisproduk_m as jp','jp.id','=','djp.objectjenisprodukfk')
             ->leftJOIN('kelompokproduk_m as kp','kp.id','=','jp.objectkelompokprodukfk')
@@ -9893,14 +9893,16 @@ class LogistikController extends ApiController{
                      'ra.tglregisteraset','ra.tglstrukterima','ra.qtyprodukaset','ra.hargaperolehan','ra.tglregisteraset','ra.tglstrukterima',
                      'rek.namarekanan as namasupplier','rek.alamatlengkap as almSupplier','sp.norec as norecsp',
                      'spd.norec as norecspd','ap.asalproduk','ra.keteranganlainnya','ra.spesifikasi','ra.jenisaset','ra.judul','ra.kdbmn','ra.luasbangunan','ra.luaslantai')
-            ->where('ra.kdprofile', $idProfile);
+            ->where('ra.kdprofile', $idProfile)
+            ->where('ra.statusenabled', true)
+            ->where('pr.statusenabled', true);
 
-        // if (isset($request['tglAwal']) && $request['tglAwal'] != "" && $request['tglAwal'] != "undefined") {
-        //     $data = $data->where('ra.tglregisteraset', '>=', $request['tglAwal']);
-        // }
-        // if (isset($request['tglAkhir']) && $request['tglAkhir'] != "" && $request['tglAkhir'] != "undefined") {
-        //     $data = $data->where('ra.tglregisteraset', '<=', $request['tglAkhir']);
-        // }
+        if (isset($request['tglAwal']) && $request['tglAwal'] != "" && $request['tglAwal'] != "undefined") {
+            $data = $data->where('ra.tglregisteraset', '>=', $request['tglAwal']);
+        }
+        if (isset($request['tglAkhir']) && $request['tglAkhir'] != "" && $request['tglAkhir'] != "undefined") {
+            $data = $data->where('ra.tglregisteraset', '<=', $request['tglAkhir']);
+        }
         if(isset($request['kdproduk']) && $request['kdproduk']!="" && $request['kdproduk']!="undefined"){
             $data = $data->where('ra.objectprodukfk','=', $request['kdproduk']);
         }
@@ -9916,9 +9918,8 @@ class LogistikController extends ApiController{
         if (isset($request['namaproduk']) && $request['namaproduk'] != "" && $request['namaproduk'] != "undefined") {
             $data = $data->where('pr.namaproduk', 'ILIKE', '%'.$request['namaproduk'].'%');
         }
-//        $data = $data->where('ra.statusenabled',true);
+        // $data = $data->where('ra.statusenabled',true);
         $data = $data->orderBy('ra.noregisteraset');
-        $data = $data->take(100);
         $data = $data->get();
 
         $result = array(

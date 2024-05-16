@@ -7,6 +7,9 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             $scope.now = new Date();
             $scope.item = {};
             LoadDataCombo();
+            
+            $scope.checkAll = false;
+            $scope.selectedAsset = []
 
             function LoadCache() {
                 // $scope.item.namarekanan = undefined
@@ -88,7 +91,9 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         $scope.isRouteLoading = false;
                         var datas = dat.data.datas;
                         for (var i = 0; i < datas.length; i++) {
+                            datas[i].norec = datas[i].norec.trim()
                             datas[i].no = i + 1
+                            datas[i].statCheckbox = false
                         }
 
                         $scope.sourceBarang = new kendo.data.DataSource({
@@ -109,65 +114,11 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     });
             };
 
-            $scope.columnGrid = [
-                {
-                    "field": "no",
-                    "title": "No",
-                    "width": "50px",
-                    // filterable: false
-                },
-                {
-                    "field": "noregisteraset",
-                    "title": "No Aset"
-                },
-                {
-                    "field": "kdbmn",
-                    "title": "Kode BMN"
-                },
-                {
-                    "field": "namaproduk",
-                    "title": "Nama Barang"
-                },
-                {
-                    "field": "spesifikasi",
-                    "title": "Spesifikasi"
-                },
-                {
-                    "field": "jenisaset",
-                    "title": "Jenis Asset"
-                },
-                {
-                    "field": "qtyprodukaset",
-                    "title": "Qty Asset"
-                },
-                {
-                    "field": "ruangancurrent",
-                    "title": "Ruangan"
-                },
-                {
-                    "field": "asalproduk",
-                    "title": "SumberDana"
-                }
-            ]
-
-            // };
-            // manageSarpras.getOrderList("anggaran/get-ruangan", true).then(function(e){
-            //     $scope.item.ruangan = e.data.data;
-            // console.log(JSON.stringify($scope.item.ruangan));
-
-            // manageSarpras.getListAset($scope.item.ruangan.id, '', '').then(function(dat) {
-            //     $scope.sourceBarang = new kendo.data.DataSource({
-            //         data: dat.data.data
-            //     });
-            // });
-            // //debugger;
-            // });
-
             $scope.Search = function () {
-                if ($scope.item.ruangan == undefined) {
-                    toastr.error('Pilih Ruangan terlebih dahulu!!!')
-                    return
-                }
+                // if ($scope.item.ruangan == undefined) {
+                //     toastr.error('Pilih Ruangan terlebih dahulu!!!')
+                //     return
+                // }
 
                 // if($scope.item.tglAwal == undefined){
                 //     toastr.error('Pilih Periode tanggal terlebih dahulu')
@@ -259,17 +210,10 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 var profile = local.id;
 
                 window.open(config.baseApiBackend 
-                    + "report/cetak-daftar-barang-asset?" 
-                    + "tglAwal=" + tglAwal
+                    + "report/cetak-daftar-barang-asset" 
+                    + "?tglAwal=" + tglAwal
                     + "&tglAkhir=" + tglAkhir
                     + "&kodeprofile=" + profile)
-
-                medifirstService.get("report/cetak-daftar-barang-asset?"
-                        +"tglAwal="+tglAwal
-                        +"&tglAkhir="+tglAkhir)
-                    .then(function (dat) {
-                        console.log(dat)
-                });
             }
 
             $scope.confirmCetakKartuInventaris = function(){
@@ -334,6 +278,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     + "kdprofile=" + profile
                 )
             }
+            
             $scope.cetakKIBD = function(){
                 var local = JSON.parse(localStorage.getItem('profile'));
                 var profile = local.id;
@@ -343,6 +288,100 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     + "kdprofile=" + profile
                 )
             }
+
+            $scope.cetakPilihan = function() {
+                if($scope.selectedAsset == null || $scope.selectedAsset.length == 0){
+                    toastr.error('Pilih Data Dulu')
+                    return
+                }
+                
+                var local = JSON.parse(localStorage.getItem('profile'));
+                var profile = local.id;
+
+                window.open(config.baseApiBackend
+                    + "report/cetak-label-pilihan"
+                    + "?kodeprofile=" + profile
+                    + "&norec=" + $scope.selectedAsset
+                )
+            }
+
+            $scope.selectRowAsset = function(dataItem){
+                let index = $scope.selectedAsset.indexOf(dataItem?.norec)
+                
+                if(index > -1){
+                    $scope.selectedAsset.splice(index, 1)
+                }else{
+                    $scope.selectedAsset.push(dataItem?.norec)
+                }
+
+                // console.log($scope.selectedAsset)
+            }
+
+            $scope.selectAllAsset = function(){
+                let data = $scope.sourceBarang._data
+
+                if($scope.checkAll == false){
+                    $scope.selectedAsset = []
+
+                    data.forEach(function(data){
+                        $scope.selectedAsset.push(data?.norec)
+                    })
+
+                    $scope.checkAll = true
+                }else{
+                    $scope.selectedAsset = []
+
+                    $scope.checkAll = false
+                }
+
+                // console.log($scope.selectedAsset)
+            }
+
+            $scope.columnGrid = [
+                {
+                    title: '<input type="checkbox" ng-checked="checkAll" ng-click="selectAllAsset()" />',
+                    template: '<input type="checkbox" ng-checked="checkAll" ng-click="selectRowAsset(dataItem)" />',
+                    width: "60px"
+                },
+                {
+                    "field": "no",
+                    "title": "No",
+                    "width": "50px",
+                    // filterable: false
+                },
+                {
+                    "field": "noregisteraset",
+                    "title": "No Aset"
+                },
+                {
+                    "field": "kdbmn",
+                    "title": "Kode BMN"
+                },
+                {
+                    "field": "namaproduk",
+                    "title": "Nama Barang"
+                },
+                {
+                    "field": "spesifikasi",
+                    "title": "Spesifikasi"
+                },
+                {
+                    "field": "jenisaset",
+                    "title": "Jenis Asset"
+                },
+                {
+                    "field": "qtyprodukaset",
+                    "title": "Qty Asset"
+                },
+                {
+                    "field": "ruangancurrent",
+                    "title": "Ruangan"
+                },
+                {
+                    "field": "asalproduk",
+                    "title": "SumberDana"
+                }
+            ]
         }
     ])
 })

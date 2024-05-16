@@ -21480,7 +21480,7 @@ public function suratBuktiPengembalian(Request $request)
         $data = \DB::table('registrasiaset_t as ra')
             ->leftJOIN('strukpelayanan_t as sp','sp.norec','=','ra.nostrukterimafk')
             ->leftJOIN('strukpelayanandetail_t as spd','spd.norec','=','ra.nostrukterimadetailfk')
-            ->leftJOIN('produk_m as pr','pr.id','=','ra.idprodukfk')
+            ->leftJOIN('produk_m as pr','pr.id','=','ra.objectprodukfk')
             ->leftJOIN('merkproduk_m as mrk', 'mrk.id', '=', 'ra.objectmerkprodukfk')
             ->leftJOIN('detailjenisproduk_m as djp','djp.id','=','pr.objectdetailjenisprodukfk')
             ->leftJOIN('jenisproduk_m as jp','jp.id','=','djp.objectjenisprodukfk')
@@ -21488,27 +21488,26 @@ public function suratBuktiPengembalian(Request $request)
             ->leftJOIN('satuanstandar_m as ss','ss.id','=','pr.objectsatuanstandarfk')
             ->leftJOIN('asalproduk_m as ap','ap.id','=','ra.objectasalprodukfk')
             // ->leftJOIN('ruangan_m as ru','ru.id','=','ra.objectruanganfk')
-            ->leftJOIN('ruangan_m as ru1','ru1.id','=','ra.objectruanganposisicurrentfk')
+            ->leftJOIN('ruanganasset_m as ru1','ru1.id','=','ra.objectruanganposisicurrentfk')
             ->leftJOIN('rekanan_m as rek','rek.id','=','ra.objectsupplier')
             ->select('ra.norec','ra.noregisteraset','ra.objectprodukfk as kdproduk','pr.namaproduk','jp.jenisproduk',
                      'ru1.id as ruanganasalfk','ru1.namaruangan as namaruanganasal',
                      'ra.tglregisteraset','ra.tglstrukterima','ra.qtyprodukaset','ra.hargaperolehan','ra.tglregisteraset','ra.tglstrukterima',
                      'rek.namarekanan as namasupplier','rek.alamatlengkap as almSupplier','sp.norec as norecsp',
                      'spd.norec as norecspd','ap.asalproduk','ra.keteranganlainnya','ra.spesifikasi','ra.jenisaset','ra.judul','ra.kdbmn', 'ra.koderegisterrs', 'ra.tahunperolehan', 'pr.deskripsiproduk', 'mrk.merkproduk', 'ra.nilaisisa')
-            ->where('ra.kdprofile', $kdProfile);
+            ->where('ra.kdprofile', $kdProfile)
+            ->where('ra.statusenabled', true)
+            ->where('pr.statusenabled', true)
+            ->when($request['tglAwal'], function($query) use ($request){
+                return $query->where('ra.tglregisteraset', '>=', $request['tglAwal']);
+            })
+            ->when($request['tglAkhir'], function($query) use ($request){
+                return $query->where('ra.tglregisteraset', '<=', $request['tglAkhir']);
+            })
+            ->orderBy('ra.noregisteraset')
+            ->get();
 
-        if (isset($request['tglAwal']) && $request['tglAwal'] != "" && $request['tglAwal'] != "undefined") {
-            $data = $data->where('ra.tglregisteraset', '>=', $request['tglAwal']);
-        }
-        if (isset($request['tglAkhir']) && $request['tglAkhir'] != "" && $request['tglAkhir'] != "undefined") {
-            $data = $data->where('ra.tglregisteraset', '<=', $request['tglAkhir']);
-        }
-
-        $data = $data->orderBy('ra.noregisteraset');
-        $data = $data->take(100);
-        $data = $data->get();
-
-        return view('report.asset.cetakan', compact('data'));
+        return view('report.asset.cetak-label', compact('data'));
     }
 
     public function cetakKartuInventarisRuangan(Request $request)
@@ -22226,6 +22225,38 @@ public function suratBuktiPengembalian(Request $request)
             'settingrba' => $settingrba,
             'asalproduk' => $asalProduk
         ]);
+    }
+
+    public function cetakLabelPilihan(Request $request)
+    {
+        $norec = explode(',', $request['norec']);
+
+        $kdProfile = (int) $request['kodeprofile'];
+
+        $data = DB::table('registrasiaset_t as ra')
+            ->leftJOIN('strukpelayanan_t as sp','sp.norec','=','ra.nostrukterimafk')
+            ->leftJOIN('strukpelayanandetail_t as spd','spd.norec','=','ra.nostrukterimadetailfk')
+            ->leftJoin('produk_m as pr', 'pr.id', '=', 'ra.objectprodukfk')
+            ->leftJOIN('merkproduk_m as mrk', 'mrk.id', '=', 'ra.objectmerkprodukfk')
+            ->leftJOIN('detailjenisproduk_m as djp','djp.id','=','pr.objectdetailjenisprodukfk')
+            ->leftJOIN('jenisproduk_m as jp','jp.id','=','djp.objectjenisprodukfk')
+            ->leftJOIN('kelompokproduk_m as kp','kp.id','=','jp.objectkelompokprodukfk')
+            ->leftJOIN('satuanstandar_m as ss','ss.id','=','pr.objectsatuanstandarfk')
+            ->leftJOIN('asalproduk_m as ap','ap.id','=','ra.objectasalprodukfk')
+            ->leftJOIN('ruanganasset_m as ru1','ru1.id','=','ra.objectruanganposisicurrentfk')
+            ->leftJOIN('rekanan_m as rek','rek.id','=','ra.objectsupplier')
+            ->select('ra.norec','ra.noregisteraset','ra.objectprodukfk as kdproduk','pr.namaproduk','jp.jenisproduk',
+                     'ru1.id as ruanganasalfk','ru1.namaruangan as namaruanganasal',
+                     'ra.tglregisteraset','ra.tglstrukterima','ra.qtyprodukaset','ra.hargaperolehan','ra.tglregisteraset','ra.tglstrukterima',
+                     'rek.namarekanan as namasupplier','rek.alamatlengkap as almSupplier','sp.norec as norecsp',
+                     'spd.norec as norecspd','ap.asalproduk','ra.keteranganlainnya','ra.spesifikasi','ra.jenisaset','ra.judul','ra.kdbmn', 'ra.koderegisterrs', 'ra.tahunperolehan', 'pr.deskripsiproduk', 'mrk.merkproduk', 'ra.nilaisisa')
+            ->whereIn('ra.norec', $norec)
+            ->where('ra.kdprofile', $kdProfile)
+            ->where('pr.statusenabled', true)
+            ->orderBy('ra.noregisteraset')
+            ->get();
+
+        return view('report.asset.cetak-label-pilihan', compact('data'));
     }
 
 }
