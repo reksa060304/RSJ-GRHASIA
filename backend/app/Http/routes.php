@@ -29,6 +29,9 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
 
     Route::group(['prefix' => 'medifirst2000'], function () {
 
+		// Cetakan
+		Route::get('report/cetak-label-pilihan', 'Report\ReportController@cetakLabelPilihan');
+
 		// RBA
         Route::get('rba/get-data-rba', 'Perencanaan\RBAController@getRBA');
         Route::get('rba/get-combo-rba', 'Perencanaan\RBAController@getComboRBA');
