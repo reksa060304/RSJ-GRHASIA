@@ -1,0 +1,410 @@
+<style>
+    button:disabled {
+        background: #B5B2B1;
+    }
+    .shadow-md {
+        filter: drop-shadow(0 4px 3px rgb(0 0 0 / 0.07)) drop-shadow(0 2px 2px rgb(0 0 0 / 0.06));
+    }
+</style>
+<div class="panel panel-default" style="background-color:transparant">
+    <div class="panel-heading">
+        <label class='title' c-label item="item" real>INSIDEN (INTERNAL)</label>
+    </div>
+    <div style="padding-left: 1em; padding-right: 1em;" class="panel-body">
+        <div class="grid_12">
+            <!-- Data orang -->
+            <div style="margin-top: 2em; border-radius: 1em; padding: 2em;" class="shadow-md panel panel-default panel-white">
+                <div class="panel-heading-white">
+                    <span class="title" c-translate>I. DATA ORANG</span>
+                </div>
+                
+                <div class="grid_12" style="margin-top: 10px;">
+                    <div class="grid_3">
+                        <div class="grid_12">
+                            <label c-label item="item">Nama</label>
+                        </div>
+                        <div class="grid_12">
+                            <div class="grid_12">
+                                <input c-text-box type="input" filter="'text'" class="k-textbox"
+                                    ng-model="item.NamaPasien" ng-disabled='disabledText'/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid_3">
+                        <div class="grid_12">
+                            <label c-label item="item">Jenis Kelamin</label>
+                        </div>
+                        <div class="grid_12">
+                            <input style="width: 100%;" kendo-combo-box k-ng-model="item.JenisKelamin"
+                                k-data-text-field="'jeniskelamin'" k-data-value-field="'id'" k-filter="'contains'"
+                                k-auto-bind="false" k-data-source="listDataJenisKelamin" ng-disabled='disabledText'/>
+                        </div>
+                    </div>
+
+                    <div class="grid_3">
+                        <div class="grid_12">
+                            <label c-label item="item">Tgl Masuk</label>
+                        </div>
+                        <div class="grid_12">
+                            <input style="width: 99.5%" 
+                                kendo-datetimepicker
+                                k-ng-model="item.TglMasuk" 
+                                k-format="'yyyy-MM-dd HH:mm'"
+                                placeholer="yyyy-MM-dd HH:mm"
+                                parsedate="yyyy-MM-dd HH:mm"
+                                ng-disabled='disabledText'/>
+                        </div>
+                    </div>
+
+                    <div class="grid_12">
+                        <div class="grid_12">
+                            <label c-label item="item">Umur</label>
+                        </div>
+                        <div class="grid_6">
+                            <div class="grid_3" ng-repeat="umurItem in listUmur">
+                                <div style="display: inline-flex;">
+                                    <input
+                                        class="k-checkbox"
+                                        type="checkbox"
+                                        id="umur.{{ umurItem.id }}"
+                                        ng-value="{id: umurItem.id, nama: umurItem.nama}"
+                                        ng-model="item.selectedUmur[umurItem.id]"/>
+                                    <label class="k-checkbox-label" for="umur.{{ umurItem.id }}">{{ umurItem.nama }}</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Rincian Kejadian -->
+            <div style="margin-top: 2em; border-radius: 1em; padding: 2em;" class="shadow-md panel panel-default panel-white">
+                <div class="panel-heading-white">
+                    <span class="title" c-translate>II. RINCIAN KEJADIAN</span>
+                </div>
+                
+                <div class="grid_12" style="margin-top: 10px;">
+
+                    <!-- Tgl insiden -->
+                    <div class="grid_4" style="margin-top: 10px;">
+                        <div class="grid_12">
+                            <label c-label item="item" style="margin-top: 5px">Tgl & Waktu Insiden</label>
+                        </div>
+                        <div class="grid_12">
+                            <input style="width: 99.5%" k-ng-model="item.TglInsiden" kendo-datetimepicker
+                                placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'"
+                                parsedate="yyyy-MM-dd HH:mm" ng-disabled='disabledText'/>
+                        </div>
+                    </div>
+
+                    <!-- Insiden -->
+                    <div class="grid_4" style="margin-top: 12px;">
+                        <div class="grid_12">
+                            <label c-label item="item" c-label-text="Insiden"></label>
+                        </div>
+                        <div class="grid_12">
+                            <input style="width: 100%;" kendo-combo-box k-ng-model="item.KeselamatanInput"
+                                k-data-text-field="'keselamatan'" k-data-value-field="'id'" k-filter="'contains'"
+                                k-auto-bind="false" k-data-source="listKeselamatanInput" ng-disabled='disabledText'/>
+                        </div>
+                    </div>
+
+                    <!-- Kelompok insiden -->
+                    <div class="grid_4" style="margin-top: 12px;">
+                        <div class="grid_12">
+                            <label c-label item="item" c-label-text="Kelompok Insiden"></label>
+                        </div>
+                        <div class="grid_12">
+                            <input style="width: 100%;" kendo-combo-box k-ng-model="item.JenisKeselamatanInput"
+                                k-data-text-field="'jeniskeselamatan'" k-data-value-field="'jeniskesalamatanfk'"
+                                k-filter="'contains'" k-auto-bind="false" k-data-source="listKeselamatanInput" disabled />
+                        </div>
+                    </div>
+
+                    <!-- Kronologis -->
+                     <div class="grid_12" style="margin-top: 10px;">
+                        <div class="grid_12">
+                            <label c-label item="item" style="margin-top: 5px">Kronologis Insiden</label>
+                        </div>
+                        <div class="grid_12">
+                            <textarea required class="k-textbox"
+                                style="height: 150px; width: 100%; resize: none; margin-top: 5px"
+                                ng-model="item.Insiden" ng-disabled='disabledText'></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Jenis insiden -->
+                <div style="margin-top: 2em;" class="grid_12">
+                    <div class="grid_12">
+                        <label c-label item="item">Jenis Insiden</label>
+                    </div>
+                    <div class="grid_8">
+                        <div class="grid_6" ng-repeat="jenisInsiden in listJenisInsiden">
+                            <div style="display: inline-flex;">
+                                <input 
+                                    class="k-checkbox" 
+                                    type="checkbox" 
+                                    id="jenisInsiden.{{ jenisInsiden.id }}" 
+                                    ng-model="item.selectedJenisInsiden[jenisInsiden.id]"/>
+                                <label class="k-checkbox-label" for="jenisInsiden.{{ jenisInsiden.id }}">{{ jenisInsiden.nama }}</label>
+                            </div>
+                        </div>
+                        {{ selectedJenisInsiden }}
+                    </div>
+                </div>
+
+                <!-- Pelapor -->
+                <div style="margin-top: 2em;" class="grid_12">
+                    <div class="grid_12">
+                        <label c-label item="item">Orang Pertama Yang Melaporkan Insiden</label>
+                    </div>
+                    <div class="grid_8">
+                        <div class="grid_6" ng-repeat="pelapor in listPelapor">
+                            <div style="display: inline-flex;">
+                                <input 
+                                    class="k-checkbox" 
+                                    type="checkbox" 
+                                    id="pelapor.{{ pelapor.id }}"
+                                    ng-model="item.selectedPelapor[pelapor.id]"/>
+                                <label class="k-checkbox-label" for="pelapor.{{ pelapor.id }}">{{ pelapor.nama }}</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lokasi insiden -->
+                <div style="margin-top: 2em;" class="grid_12">
+                    <div class="grid_12">
+                        <label c-label item="item" style="margin-top: 5px">Lokasi Insiden</label>
+                    </div>
+                    <div class="grid_12">
+                        <textarea 
+                            class="k-textbox"
+                            required 
+                            ng-model="item.lokasiInsiden" ng-disabled='disabledText'
+                            rows="5">
+                        </textarea>
+                    </div>
+                </div>
+
+                <!-- Menyangkut Pasien -->
+                <div style="margin-top: 2em;" class="grid_12">
+                    <div class="grid_12">
+                        <label c-label item="item">Insiden Menyangkut Pasien</label>
+                    </div>
+                    <div class="grid_8">
+                        <div class="grid_6" ng-repeat="jenisPasien in listJenisPasien">
+                            <div style="display: inline-flex;">
+                                <input 
+                                    class="k-checkbox" 
+                                    type="checkbox" 
+                                    id="jenisPasien.{{ jenisPasien.id }}"
+                                    ng-model="item.selectedJenisPasien[jenisPasien.id]"
+                                    ng-click="handleJenisPasien()"/>
+                                <label class="k-checkbox-label" for="jenisPasien.{{ jenisPasien.id }}">{{ jenisPasien.nama }}</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Terjadi pada pasien -->
+                <div style="margin-top: 2em;" class="grid_12">
+                    <div class="grid_12">
+                        <label c-label item="item">Insiden terjadi pada pasien : ( jiwa dan sub spesialisasnya)</label>
+                    </div>
+                    <div class="grid_8">
+                        <div class="grid_6" ng-repeat="kategoriPasien in listKategoriPasien">
+                            <div style="display: inline-flex;">
+                                <input 
+                                    class="k-checkbox" 
+                                    type="checkbox" 
+                                    id="kategoriPasien.{{ kategoriPasien.id }}"
+                                    ng-model="item.selectedKategoriPasien[kategoriPasien.id]" 
+                                    ng-click="handleKategoriPasien()"/>
+                                <label class="k-checkbox-label" for="kategoriPasien.{{ kategoriPasien.id }}">{{ kategoriPasien.nama }}</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Unit kerja penyeban -->
+                <div style="margin-top: 2em;" class="grid_12">
+                    <div class="grid_12">
+                        <label c-label item="item" style="margin-top: 5px">Unit Kerja Penyebab</label>
+                    </div>
+                    <div class="grid_12">
+                        <textarea required class="k-textbox"
+                            style="height: 75px; width: 100%; resize: none; margin-top: 5px"
+                            ng-model="item.UnitKerja" ng-disabled='disabledText'></textarea>
+                    </div>
+                </div>
+
+                <!-- Akibat insiden -->
+                <div style="margin-top: 2em;" class="grid_12">
+                    <div class="grid_12">
+                        <label c-label item="item">
+                            Akibat Insiden Terhadap Pasien
+                        </label>
+                    </div>
+                    <div class="grid_8">
+                        <div class="grid_6" ng-repeat="akibatInsiden in listAkibatInsiden">
+                            <div style="display: inline-flex;">
+                                <input 
+                                    class="k-checkbox" 
+                                    type="checkbox" 
+                                    id="item.akibatInsiden.{{ akibatInsiden.id }}" 
+                                    ng-model="item.selectedAkibatInsiden[akibatInsiden.id]"
+                                    ng-click="handleAkibatInsiden({ id:akibatInsiden.id, nama: akibatInsiden.nama })"/>
+                                <label class="k-checkbox-label" for="item.akibatInsiden.{{ akibatInsiden.id }}">{{ akibatInsiden.nama }}</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tindakan -->
+                <div style="margin-top: 2em;" class="grid_12">
+                    <div class="grid_12">
+                        <label c-label item="item" style="margin-top: 5px">Tindakan yang Dilakukan Segera Setelah
+                            Kejadian, dan hasilnya</label>
+                    </div>
+                    <div class="grid_12">
+                        <textarea required class="k-textbox"
+                            style="height: 75px; width: 100%; resize: none; margin-top: 5px"
+                            ng-model="item.Tindakan" ng-disabled='disabledText'></textarea>
+                    </div>
+                </div>
+
+                <!-- Apakah pernah -->
+                <div style="margin-top: 2em;" class="grid_12">
+                    <div class="grid_12">
+                        <label c-label item="item">
+                            Apakah Yang Kejadian Sama Pernah Terjadi di Unit Kerja Lain
+                        </label>
+                    </div>
+                    <div class="grid_8">
+                        <div class="grid_6" ng-repeat="kejadianSama in listKejadianSama">
+                            <div style="display: inline-flex;">
+                                <input type="radio"
+                                    ng-value="kejadianSama"
+                                    ng-model="item.selectedKejadianSama"/>
+                                <label>{{ kejadianSama.nama }}</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tindakan dilakukan oleh -->
+                <div style="margin-top: 2em;" class="grid_12">
+                    <div class="grid_12">
+                        <label c-label item="item">
+                            Tindakan Dilakukan Oleh
+                        </label>
+                    </div>
+                    <div class="grid_8">
+                        <div class="grid_6" ng-repeat="tindakan in listTindakan">
+                            <div style="display: inline-flex;">
+                                <input 
+                                    class="k-checkbox" 
+                                    type="checkbox" 
+                                    id="tindakan.{{ tindakan.id }}"
+                                    ng-model="item.selectedTindakanOleh[tindakan.id]"
+                                    ng-click="handleTindakanOleh()"/>
+                                <label class="k-checkbox-label" for="tindakan.{{ tindakan.id }}">{{ tindakan.nama }}</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tidak terulang -->
+                <div style="margin-top: 2em;" class="grid_12">
+                    <div class="grid_12">
+                        <label c-label item="item" style="margin-top: 5px">Kapan dan Langkah apa yang telah diambil pada
+                            Unit kerja Tersebut untuk mencegah terulangnya kejadiannya yang sama</label>
+                    </div>
+                    <div class="grid_12">
+                        <textarea required class="k-textbox"
+                            style="height: 75px; width: 100%; resize: none; margin-top: 5px"
+                            ng-model="item.Penanggulangan" ng-disabled='disabledText'></textarea>
+                    </div>
+                </div>
+
+                <div style="margin-top: 2em;" class="grid_12">
+                    <div class="grid_3">
+                        <div class="grid_12">
+                            <label c-label item="item" style="margin-top: 5px">Pembuat Laporan</label>
+                        </div>
+                        <div class="grid_12">
+                            <input style="width: 100%;" kendo-combo-box k-ng-model="item.PembuatLaporan"
+                                k-data-text-field="'namalengkap'" k-data-value-field="'id'" k-filter="'contains'"
+                                k-auto-bind="false" k-data-source="listDataPegawai" ng-disabled='disabledText'/>
+                        </div>
+                    </div>
+                    <div class="grid_3">
+                        <div class="grid_12">
+                            <label c-label item="item" style="margin-top: 5px">Tgl. Laporan</label>
+                        </div>
+                        <div class="grid_12">
+                            <input style="width: 99.5%" k-ng-model="item.TglLaporan" kendo-datetimepicker
+                                placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'"
+                                parsedate="yyyy-MM-dd HH:mm" ng-disabled='disabledText'/>
+                        </div>
+                    </div>
+                    <div class="grid_3">
+                        <div class="grid_12">
+                            <label c-label item="item" style="margin-top: 5px">Penerima Laporan (Ka.Ru/Ka.Ins)</label>
+                        </div>
+                        <div class="grid_12">
+                            <input style="width: 100%;" kendo-combo-box k-ng-model="item.PenerimaLaporan"
+                                k-data-text-field="'namalengkap'" k-data-value-field="'id'" k-filter="'contains'"
+                                k-auto-bind="false" k-data-source="listDataPegawai" ng-disabled='disabledText'/>
+                        </div>                       
+                    </div>
+                    <div class="grid_3">
+                        <div class="grid_12">
+                            <label c-label item="item" style="margin-top: 5px">Tgl. Terima</label>
+                        </div>
+                        <div class="grid_12">
+                            <input style="width: 99.5%" k-ng-model="item.TglTerimaLaporan" kendo-datetimepicker
+                                placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'"
+                                parsedate="yyyy-MM-dd HH:mm" ng-disabled='disabledText'/>
+                        </div>
+                    </div>
+                    <div class="grid_12" style="margin-top: 10px;">
+                        <div class="grid_12">
+                            <label c-label item="item">
+                                Grading Risiko Kejadian (Diisi Oleh Atasan Pelapor)
+                            </label>
+                        </div>
+                        <div class="grid_8">
+                            <div class="grid_6" ng-repeat="grading in listGrading">
+                                <div style="display: inline-flex;">
+                                    <input 
+                                        type="radio"
+                                        ng-value="grading"
+                                        ng-model="item.selectedGrading"/>
+                                    <label>{{ grading.nama }}</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="grid_12" ng-hide="disabledText">
+        <div class="grid_8"></div>
+        <div class="grid_2" style="margin-top: 22px">
+            <button class="c-button" ng-click="Save()">Simpan</button>
+        </div>
+        <div class="grid_2" style="margin-top: 22px">
+            <button class="c-button" ng-click="reset()">Batal</button>
+        </div>
+    </div>
+
+    <div ng-show="isRouteLoading" class="grid_12" style="margin-top:60px">
+        <div ng-include='"../app/template/Shared/TemplateLoading"'></div>
+    </div>
+</div>
+</div>

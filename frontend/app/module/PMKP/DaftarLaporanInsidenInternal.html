@@ -182,6 +182,18 @@
                         class="fa fa-arrow-right"></i>Insiden Baru<a style="color: white;" ng-show="showNotif"><span
                             class="notif">{{lengthInsiden}}</span> </a></button>
             </div>
+
+            <div class="grid_3" style="margin-top: 22px">
+                <button class="c-button" ng-click="tambahInsidenBukanPasien()">Buat Insiden Bukan Pasien</button>
+            </div>
+
+            <div class="grid_3" style="margin-top: 22px" ng-show="isPasien == false">
+                <button class="c-button" ng-click="editInsidenBukanPasien()">Edit Insiden Bukan Pasien</button>
+            </div>
+
+            <div class="grid_3" style="margin-top: 22px" ng-show="isPasien == false">
+                <button class="c-button" ng-click="lihatInsidenBukanPasien()">Lihat Insiden Bukan Pasien</button>
+            </div>
         </div>
     </div>
     <div class="grid_12" style="margin-top:40px">

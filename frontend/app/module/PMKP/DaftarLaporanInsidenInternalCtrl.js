@@ -28,6 +28,8 @@ define(['initialize'], function (initialize) {
             loadKonsul();
             $scope.ruanganMap = medifirstService.getMapLoginUserToRuangan();
 
+            $scope.isPasien = null
+
             function loadCombo() {
                 medifirstService.get("pmkp/get-data-combo-pmkp")
                     .then(function (data) { 
@@ -334,6 +336,12 @@ define(['initialize'], function (initialize) {
             $scope.klikGrid = function (dataPasienSelected) {
                 if (dataPasienSelected != undefined) {
                     $scope.dataPasienSelected = dataPasienSelected;
+
+                    if($scope.dataPasienSelected.nocm){
+                        $scope.isPasien = true
+                    }else{
+                        $scope.isPasien = false
+                    }
                 }
             }
 
@@ -342,16 +350,21 @@ define(['initialize'], function (initialize) {
             }
 
             $scope.editData = function () {
+                if ($scope.dataPasienSelected == undefined) {
+                    alert("Data Belum Dipilih!")
+                    return;
+                }
+
+                if($scope.isPasien == false){
+                    toastr.error('Data yang dipilih bukan insiden internal pasien, silahkan klik tombol Edit Insiden Bukan Pasien')
+                    return
+                }
 
                 if(petugasInsidenInternal.includes($scope.pegawai.id.toString()) == false || verifikatorInsidenInternal.includes($scope.pegawai.id.toString()) == false){
                     toastr.error('Anda Bukan Petugas Insiden Internal')
                     return
                 }
 
-                if ($scope.dataPasienSelected == undefined) {
-                    alert("Data Belum Dipilih!")
-                    return;
-                }
 
                 if($scope.dataPasienSelected.statusverif == true){
                     toastr.error("Data sudah diverifikasi")
@@ -499,6 +512,11 @@ define(['initialize'], function (initialize) {
                     return;
                 }
 
+                if($scope.isPasien == false){
+                    toastr.error('Data yang dipilih bukan insiden internal pasien, silahkan klik tombol Lihat Insiden Bukan Pasien')
+                    return
+                }
+
                 var chacePeriode = {
                     0: $scope.dataPasienSelected.norec,
                     1: 'LihatInsiden',
@@ -513,6 +531,95 @@ define(['initialize'], function (initialize) {
                 $state.go('InsidenInternal', {
                     kpid: $scope.dataPasienSelected.norec,
                     noOrder: 'LihatInsiden'
+                });
+            }
+
+            $scope.tambahInsidenBukanPasien = function(){
+
+                var chacePeriode = {
+                    0: '',
+                    1: 'InputInsidenBaru',
+                    2: '',
+                    3: '',
+                    4: '',
+                    5: '',
+                    6: ''
+                }
+
+                cacheHelper.set('InsidenBaruCtrl', chacePeriode);
+                $state.go('InsidenBaru', {
+                    noOrder: 'InputInsidenBaru'
+                })
+            }
+
+            $scope.editInsidenBukanPasien = function (){
+                if ($scope.dataPasienSelected == undefined) {
+                    alert("Data Belum Dipilih!")
+                    return;
+                }
+
+                if($scope.isPasien == true){
+                    toastr.error('Data yang dipilih merupakan insiden internal pasien, silahkan klik tombol Edit')
+                    return
+                }
+
+                if(petugasInsidenInternal.includes($scope.pegawai.id.toString()) == false || verifikatorInsidenInternal.includes($scope.pegawai.id.toString()) == false){
+                    toastr.error('Anda Bukan Petugas Insiden Internal')
+                    return
+                }
+
+
+                if($scope.dataPasienSelected.statusverif == true){
+                    toastr.error("Data sudah diverifikasi")
+                    return
+                }
+
+                if ($scope.PegawaiLogin.namaLengkap != $scope.dataPasienSelected.pembuatlaporan) {
+                    alert("Data Tidak Bisa Di Ubah!")
+                    return;
+                }
+               
+                var chacePeriode = {
+                    0: $scope.dataPasienSelected.norec,
+                    1: 'EditInsidenBaru',
+                    2: '',
+                    3: '',
+                    4: '',
+                    5: '',
+                    6: ''
+                }
+
+                cacheHelper.set('InsidenBaruCtrl', chacePeriode);
+                $state.go('InsidenBaru', {
+                    kpid: $scope.dataPasienSelected.norec,
+                    noOrder: 'EditInsidenBaru'
+                });
+            }
+
+            $scope.lihatInsidenBukanPasien = function(){
+                if ($scope.dataPasienSelected == undefined) {
+                    alert("Data Belum Dipilih!")
+                    return;
+                }
+
+                if($scope.isPasien == true){
+                    toastr.error('Data yang dipilih merupakan insiden internal pasien, silahkan klik tombol Lihat Detail Insiden')
+                    return
+                }
+
+                var chacePeriode = {
+                    0: $scope.dataPasienSelected.norec,
+                    1: 'LihatInsidenBaru',
+                    2: '',
+                    3: '',
+                    4: '',
+                    5: '',
+                    6: ''
+                }
+
+                cacheHelper.set('InsidenBaruCtrl', chacePeriode);
+                $state.go('InsidenBaru', {
+                    noOrder: 'LihatInsidenBaru'
                 });
             }
 

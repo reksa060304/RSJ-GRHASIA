@@ -990,38 +990,45 @@ class PMKPController extends ApiController
             } else {
                 $data = LaporanInsidenInternal::where('norec', $request['data']['norec'])->where('kdprofile', $kdProfile)->first();
             }
+                // data orang
                 $data->nocm = $request['data']['nocm'];
                 $data->namapasien = $request['data']['namapasien'];
                 $data->tglahir = $request['data']['tglahir'];
-                $data->ruanganfk = $request['data']['ruanganfk'];
-                $data->umur = $request['data']['umur'];
                 $data->jeniskelaminfk = $request['data']['jeniskelaminfk'];
-                $data->penanggungbiayapasienfk = $request['data']['penanggungbiayapasienfk'];
+                $data->ruanganfk = isset($request['data']['ruanganfk']) ? $request['data']['ruanganfk'] : null;
                 $data->tglmasuk = $request['data']['tglmasuk'];
+                $data->penanggungbiayapasienfk = $request['data']['penanggungbiayapasienfk'];
+                $data->umur = $request['data']['umur'];
+                
+                // rincian kejadian
                 $data->tglinsiden = $request['data']['tglinsiden'];
-                $data->insiden = $request['data']['insiden'];
-                $data->kronologisinsiden = $request['data']['kronologisinsiden'];
+                $data->insidenkeselamatanfk = $request['data']['insidenkeselamatanfk'];
+                $data->insiden = $request['data']['insiden']; //kronologis
                 $data->jenisinsiden = $request['data']['jenisinsiden'];
                 $data->pelaporinsiden = $request['data']['pelaporinsiden'];
-                $data->insidenpenyangkut = $request['data']['insidenpenyangkut'];
                 $data->tempatinsiden = $request['data']['tempatinsiden'];
+                $data->insidenpenyangkut = $request['data']['insidenpenyangkut'];
                 $data->insidenterjadi = $request['data']['insidenterjadi'];
-                $data->jiwa = $request['data']['jiwa'];
                 $data->unitterkait = $request['data']['unitterkait'];
                 $data->akibatinsiden = $request['data']['akibatinsiden'];
                 $data->penanganan = $request['data']['penanganan'];
-                $data->dilakukanoleh = $request['data']['dilakukanoleh'];
                 $data->kejadiansama = $request['data']['kejadiansama'];
+                $data->dilakukanoleh = $request['data']['dilakukanoleh'];
                 $data->langkahpenanganan = $request['data']['langkahpenanganan'];
+                
+                // akhiran
                 $data->pembuatlaporan = $request['data']['pembuatlaporan'];
+                $data->pembuatlaporanfk = $request['data']['pembuatlaporanfk'];
                 $data->tgllapor = $request['data']['tgllapor'];
                 $data->penerimalaporan = $request['data']['penerimalaporan'];
+                $data->penerimalaporanfk = $request['data']['penerimalaporanfk'];
                 $data->tglterima = $request['data']['tglterima'];
                 $data->grading = $request['data']['grading'];
-                $data->insidenkeselamatanfk = $request['data']['insidenkeselamatanfk'];
                 $data->noregistrasifk = $request['data']['noregistrasifk'];
-                $data->pembuatlaporanfk = $request['data']['pembuatlaporanfk'];
-                $data->penerimalaporanfk = $request['data']['penerimalaporanfk'];
+                
+                // lain2
+                $data->jiwa = isset($request['data']['jiwa']) ? $request['data']['jiwa'] : null;
+                $data->kronologisinsiden = isset($request['data']['kronologisinsiden']) ? $request['data']['kronologisinsiden'] : null;
                 
                 $data->save();
 

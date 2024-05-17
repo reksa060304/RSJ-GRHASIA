@@ -1333,6 +1333,10 @@
         {
             "nameDep": "InputProdukAsetCtrl",
             "urlDep": "module/SysAdmin/InputProdukAsetCtrl"
+        },
+        {
+            "nameDep": "InsidenBaruCtrl",
+            "urlDep": "module/PMKP/InsidenBaruCtrl"
         }
     ]
 }
