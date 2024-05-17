@@ -51,6 +51,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     // changeFormatdata(data);
                     // await searchData();
                     // crate grid in here
+                    // console.log(data)
                     renderColumn(data);
                 })
             }
@@ -90,7 +91,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 for (let i = 0; i < data.length; i++) {
                     const element = data[i];
                     var header = $scope.columndinamis.map(function(e) { return e.title; }).indexOf(element.header);
-                    // console.log(header)
+
                     if(header > -1) {
                         var item = 
                         {
@@ -106,7 +107,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         var item = 
                         { 
                             field: '', 
-                            title: element.header+'\n\r',
+                            title: element.header,
                             // width: 100,
                             headerAttributes: { style: "text-align : center" },
                             columns: [
@@ -121,9 +122,11 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         }
                         $scope.columndinamis.push(item);
                     }
+
+                    // console.log(header)
                 }
                
-                console.log($scope.columndinamis);
+                // console.log($scope.columndinamis);
                 creategrid();
             }
 
@@ -404,7 +407,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     + '&objectruanganfk=' + $scope.item.ruangan.id
                     + '&kdprofile=' + profile.id)
                     .then(function(res){
-                        console.log(res.data)
+                        // console.log(res.data)
                     })
 
             }
@@ -428,7 +431,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     + '&objectruanganfk=' + $scope.item.ruangan.id
                     + '&kdprofile=' + profile.id)
                     .then(function(res){
-                        console.log(res.data)
+                        // console.log(res.data)
                     })
             }
 
