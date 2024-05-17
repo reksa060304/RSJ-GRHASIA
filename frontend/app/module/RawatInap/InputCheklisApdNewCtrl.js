@@ -52,6 +52,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     // changeFormatdata(data);
                     // await searchData();
                     // crate grid in here
+                    // console.log(data)
                     renderColumn(data);
                 })
             }
@@ -109,7 +110,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                             template: `# if(w${element.id}==true) {# ✔ # } else {# - #} #`,
                             headerAttributes: { style: "text-align : center" },
                         }
-                        console.log(item);
+                        // console.log(item);
                         $scope.columndinamis[header].columns.push(item);
                     } else {
                         var item = 
@@ -132,7 +133,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     }
                 }
                
-                console.log($scope.columndinamis);
+                // console.log($scope.columndinamis);
                 creategrid();
             }
 
@@ -427,7 +428,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     + '&objectruanganfk=' + $scope.item.ruangan.id
                     + '&kdprofile=' + profile.id)
                     .then(function(res){
-                        console.log(res.data)
+                        // console.log(res.data)
                     })
                 
 
@@ -452,7 +453,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     + '&objectruanganfk=' + $scope.item.ruangan.id
                     + '&kdprofile=' + profile.id)
                     .then(function(res){
-                        console.log(res.data)
+                        // console.log(res.data)
                     })
             }
 
