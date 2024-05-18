@@ -9888,6 +9888,7 @@ class LogistikController extends ApiController{
             ->leftJOIN('ruanganasset_m as ru','ru.id','=','ra.objectruanganfk')
             ->leftJOIN('ruanganasset_m as ru1','ru1.id','=','ra.objectruanganposisicurrentfk')
             ->leftJOIN('rekanan_m as rek','rek.id','=','ra.objectsupplier')
+            ->limit('100')
             ->select('ra.norec','ra.koderegisterrs as noregisteraset','ra.objectprodukfk as kdproduk','pr.namaproduk','jp.jenisproduk',
                      'ru.id as ruanganasalfk','ru.namaruangan as namaruanganasal','ru1.id as ruangancurrenfk','ru1.namaruangan as ruangancurrent',
                      'ra.tglregisteraset','ra.tglstrukterima','ra.qtyprodukaset','ra.hargaperolehan','ra.tglregisteraset','ra.tglstrukterima',
@@ -9896,6 +9897,7 @@ class LogistikController extends ApiController{
             ->where('ra.kdprofile', $idProfile)
             ->where('ra.statusenabled', true)
             ->where('pr.statusenabled', true);
+
 
         if (isset($request['tglAwal']) && $request['tglAwal'] != "" && $request['tglAwal'] != "undefined") {
             $data = $data->where('ra.tglregisteraset', '>=', $request['tglAwal']);

@@ -15,13 +15,13 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 // $scope.item.namarekanan = undefined
                 var chacePeriode = cacheHelper.get('DaftarBarangInvestasiCtrl');
                 if (chacePeriode != undefined) {
-                    $scope.item.tglAwal = new Date(chacePeriode[0]);
-                    $scope.item.tglAkhir = new Date(chacePeriode[1]);
+                    // $scope.item.tglAwal = new Date(chacePeriode[0]);
+                    // $scope.item.tglAkhir = new Date(chacePeriode[1]);
                     init();
                 }
                 else {
-                    $scope.item.tglAwal = new Date(moment($scope.now).format('YYYY-MM-DD HH:ii:ss'));
-                    $scope.item.tglAkhir = new Date(moment($scope.now).format('YYYY-MM-DD HH:ii:ss'));
+                    // $scope.item.tglAwal = new Date(moment($scope.now).format('YYYY-MM-DD HH:ii:ss'));
+                    // $scope.item.tglAkhir = new Date(moment($scope.now).format('YYYY-MM-DD HH:ii:ss'));
                     LoadData();
                 }
             }
@@ -29,16 +29,16 @@ define(['initialize', 'Configuration'], function (initialize, config) {
             function LoadDataCombo() {
                 var DataRuanganAll = [];
                 var chacePeriode = cacheHelper.get('DaftarBarangInvestasiCtrl');
-                if (chacePeriode != undefined) {
-                    var arrPeriode = chacePeriode.split('~');
-                    $scope.item.Awal = new Date(arrPeriode[0]);
-                    $scope.item.Akhir = new Date(arrPeriode[1]);
+                // if (chacePeriode != undefined) {
+                //     var arrPeriode = chacePeriode.split('~');
+                //     $scope.item.Awal = new Date(arrPeriode[0]);
+                //     $scope.item.Akhir = new Date(arrPeriode[1]);
 
-                } else {
+                // } else {
 
-                    $scope.item.Awal = $scope.now;
-                    $scope.item.Akhir = $scope.now;
-                }
+                //     $scope.item.Awal = $scope.now;
+                //     $scope.item.Akhir = $scope.now;
+                // }
 
                 medifirstService.get('logistik/get-combo-logistik').then(function (data) {
                     var dataCombo = data.data;
@@ -64,8 +64,8 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 
             function LoadData() {
                 $scope.isRouteLoading = true;
-                var tglAwal = moment($scope.item.tglAwal).format('YYYY-MM-DD hh:mm:ss');
-                var tglAkhir = moment($scope.item.tglAkhir).format('YYYY-MM-DD hh:mm:ss');
+                var tglAwal = $scope.item.tglAwal == undefined ? undefined: moment($scope.item.tglAwal).format('YYYY-MM-DD hh:mm:ss');
+                var tglAkhir = $scope.item.tglAkhir == undefined ? undefined: moment($scope.item.tglAkhir).format('YYYY-MM-DD hh:mm:ss');
 
                 var ruanganId = "";
                 if ($scope.item.ruangan != undefined) {
