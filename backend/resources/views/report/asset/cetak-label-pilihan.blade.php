@@ -42,7 +42,11 @@
             <table style="border-collapse: collapse; border: 3px solid red;">
                 <tr>
                     <td style="width: 3.5cm; border: 1px solid red">
+                        @if(stripos(\Request::url(), 'localhost') !== FALSE)
                         <img src="{{ asset('img/logo-diy.jpeg') }}" style="width: 100%;" alt="LOGO DIY">
+                        @else
+                        <img src="{{ asset('service/img/logo-diy.jpeg') }}" style="width: 100%;" alt="LOGO DIY">
+                        @endif
                     </td>
                     
                     <td style="border: 3px solid red; text-align:center;">
