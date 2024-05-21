@@ -339,7 +339,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 
             $scope.columnGrid = [
                 {
-                    title: '<input type="checkbox" ng-checked="checkAll" ng-click="selectAllAsset()" />',
+                    title: "<input type='checkbox' ng-checked='checkAll' ng-click='selectAllAsset()' />",
                     template: '<input type="checkbox" ng-checked="checkAll" ng-click="selectRowAsset(dataItem)" />',
                     width: "60px"
                 },
