@@ -454,6 +454,7 @@ class GeneralController extends ApiController
             ->orderBy('namakecamatan')
             ->get();
         $carakeluar=\DB::table('statuskeluar_m')->where('statusenabled', true)->where('kdprofile',30)->get();
+        $kondisipulang=\DB::table('kondisipasien_m')->where('statusenabled', true)->where('kdprofile',30)->get();
         $result = array(
             'kebangsaan' => $kebangsaan,
             'negara' => $negara,
@@ -461,6 +462,7 @@ class GeneralController extends ApiController
             'propinsi' => $propinsi,
             'kecamatan' => $kecamatan,
             'carakeluar' => $carakeluar,
+            'kondisipulang' => $kondisipulang,
             'message' => 'inhuman',
         );
 

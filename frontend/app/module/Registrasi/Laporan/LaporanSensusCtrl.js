@@ -716,6 +716,11 @@ define(['initialize'], function (initialize) {
                         width: "125px",
                     },
                     {
+                        field: "ruanganskrng",
+                        title: "Ruangan Tujuan",
+                        width: "125px",
+                    },
+                    {
                         field: "namakelas",
                         title: "Kelas Rawat",
                         width: "105px",
@@ -982,13 +987,13 @@ define(['initialize'], function (initialize) {
                     },
                     {
                         field: "tglmeninggal",
-                        title: "Tgl Keluar  ",
+                        title: "Tgl Meninggal  ",
                         width: "80px",
                         template: "<span class='style-left'>{{formatTanggal('#: tglmeninggal #')}}</span>"
                     },
                     {
                         field: "tglmeninggal",
-                        title: "Jam Keluar  ",
+                        title: "Jam Meninggal  ",
                         width: "80px",
                         template: "<span class='style-left'>{{formatJam('#: tglmeninggal #')}}</span>"
                     },
@@ -1006,6 +1011,11 @@ define(['initialize'], function (initialize) {
                         field: "namapasien",
                         title: "Nama Pasien",
                         width: "120px",
+                    },
+                    {
+                        field: "umur",
+                        title: "Umur",
+                        width: "95px",
                     },
                     {
                         field: "agama",
@@ -1037,6 +1047,11 @@ define(['initialize'], function (initialize) {
                         field: "smf",
                         title: "HR",
                         width: "75px",
+                    },                    
+                    {
+                        field: "kunjungan",
+                        title: "Kunj. Ke",
+                        width: "75px",
                     },
                     {
                         field: "kelompokpasien",
@@ -1057,12 +1072,12 @@ define(['initialize'], function (initialize) {
                         field: "namakelas",
                         title: "Kelas Rawat",
                         width: "105px",
-                    },
-                    {
-                        field: "smf",
-                        title: "SMF",
-                        width: "75px",
                     }
+                    // {
+                    //     field: "smf",
+                    //     title: "SMF",
+                    //     width: "75px",
+                    // }
                 ]
             }
 

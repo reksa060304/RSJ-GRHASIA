@@ -91,14 +91,19 @@
             k-auto-bind="false " k-data-source="listJenisPasien" />
     </div>
     <div class="grid_1" style="margin-top:5px">
-        <label c-label c-label-text="Cara Keluar" real></label>
+        <label c-label c-label-text="Status Keluar" real></label>
         <input style="width: 100%; " kendo-combo-box k-ng-model="item.carakeluar" k-data-text-field=" 'statuskeluar' "
             k-filter=" 'contains' " k-data-value-field=" 'id' " k-auto-bind="false " k-data-source="listCaraKeluar" />
+    </div>
+    <div class="grid_1" style="margin-top:5px">
+        <label c-label c-label-text="Kondisi Pasien" real></label>
+        <input style="width: 100%; " kendo-combo-box k-ng-model="item.kondisipasien" k-data-text-field=" 'kondisipasien' "
+            k-filter=" 'contains' " k-data-value-field=" 'id' " k-auto-bind="false " k-data-source="listkondisipulang" />
     </div>
 
 
 
-    <div class="grid_3" style="margin-top:5px">
+    <div class="grid_2" style="margin-top:5px">
         <div class="grid_12">
             <label c-label item="item" c-label-text="Periode Registrasi"></label>
         </div>

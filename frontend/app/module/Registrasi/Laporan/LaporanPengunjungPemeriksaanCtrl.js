@@ -67,6 +67,7 @@ define(['initialize'], function (initialize) {
                     .then(function (data) {
                         $scope.listKotaKabupaten = data.data.kotakabupaten
                         $scope.listCaraKeluar = data.data.carakeluar
+                        $scope.listkondisipulang = data.data.kondisipulang
                     })
             }
             loadFirst()
@@ -143,6 +144,10 @@ define(['initialize'], function (initialize) {
                 if ($scope.item.carakeluar != undefined) {
                     carakeluar = "&carakeluar=" + $scope.item.carakeluar.id
                 }
+                var kondisipasien = ""
+                if ($scope.item.kondisipasien != undefined) {
+                    kondisipasien = "&kondisipasien=" + $scope.item.kondisipasien.id
+                }
                 var jenisranap = ""
                 if ($scope.item.jenispasien != undefined) {
                     jenisranap = "&jenisranap=" + $scope.item.jenispasien.id
@@ -153,7 +158,7 @@ define(['initialize'], function (initialize) {
                         rm +
                         pasien +
                         namaruangan +
-                        departemen+carakeluar + jenisranap)
+                        departemen+carakeluar + jenisranap+kondisipasien)
                     .then(function (data) {
                         $scope.isRouteLoading = false;
                         for (var i = 0; i < data.data.data.length; i++) {
@@ -517,12 +522,12 @@ define(['initialize'], function (initialize) {
                     },
                     {
                         field: "statuskeluar",
-                        title: "CARA KELUAR",
+                        title: "STATUS KELUAR",
                         width: "125px",
                     },
                     {
                         "field": "kondisipasien",
-                        title: "KEADAAN",
+                        title: "KONDISI PASIEN",
                         width: "140px",
                     },
                     {

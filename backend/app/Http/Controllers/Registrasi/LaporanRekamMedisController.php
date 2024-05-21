@@ -6518,19 +6518,98 @@ class LaporanRekamMedisController extends   ApiController
         $tglAkhir = $request['tglAkhir'];
         $bulan = [];
 
-        $data = DB::select(DB::raw("select pd.tglregistrasi::date, rtrim(to_char(pd.tglregistrasi, 'Month'), ' ') as month, ru.namaruangan, ru.id, count(apd.objectruanganfk) jumlahkunjungan, dp.namadepartemen, ru.objectdepartemenfk, pr.namalengkap, pr.namapemerintahan, pr.namakota, pr.id as idprofile
-        from
-        pasien_m ps 
-        inner join pasiendaftar_t pd on ps.id=pd.nocmfk
-        inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
-        inner join ruangan_m ru on ru.id = apd.objectruanganfk
-        inner join departemen_m dp on dp.id = ru.objectdepartemenfk
-        inner join profile_m pr on pr.id = pd.kdprofile
-        where pd.statusenabled = true and pd.kdprofile = $kdProfile
-        and ru.objectdepartemenfk <> 16
-        and pd.tglregistrasi between '$tglAwal' and '$tglAkhir'
-        group by pd.tglregistrasi::date, ru.namaruangan, ru.id, dp.namadepartemen, ru.objectdepartemenfk, pr.namalengkap, pr.namapemerintahan, pr.namakota, pr.id, rtrim(to_char(pd.tglregistrasi, 'Month'), ' ')
-        order by pd.tglregistrasi::date"));
+        // $data = DB::select(DB::raw("select pd.tglregistrasi::date, rtrim(to_char(pd.tglregistrasi, 'Month'), ' ') as month, ru.namaruangan, ru.id, count(apd.objectruanganfk) jumlahkunjungan, dp.namadepartemen, ru.objectdepartemenfk, pr.namalengkap, pr.namapemerintahan, pr.namakota, pr.id as idprofile
+        // from
+        // pasien_m ps 
+        // inner join pasiendaftar_t pd on ps.id=pd.nocmfk
+        // inner join antrianpasiendiperiksa_t apd on pd.norec=apd.noregistrasifk
+        // inner join ruangan_m ru on ru.id = apd.objectruanganfk
+        // inner join departemen_m dp on dp.id = ru.objectdepartemenfk
+        // inner join profile_m pr on pr.id = pd.kdprofile
+        // where pd.statusenabled = true and pd.kdprofile = $kdProfile
+        // and ru.objectdepartemenfk <> 16
+        // and pd.tglregistrasi between '$tglAwal' and '$tglAkhir'
+        // group by pd.tglregistrasi::date, ru.namaruangan, ru.id, dp.namadepartemen, ru.objectdepartemenfk, pr.namalengkap, pr.namapemerintahan, pr.namakota, pr.id, rtrim(to_char(pd.tglregistrasi, 'Month'), ' ')
+        // order by pd.tglregistrasi::date"));
+
+        $data = DB::select(DB::raw(" SELECT
+                x.tglregistrasi::date, rtrim(to_char(x.tglregistrasi, 'Month'), ' ') as month,
+                x.namaruangan,
+                x.ID,
+                x.namadepartemen,
+                x.objectdepartemenfk,
+                x.namalengkap,
+                x.namapemerintahan,
+                x.namakota,
+                x.idprofile,
+                SUM ( x.jk ) AS jk,
+                SUM ( x.pr ) AS pr ,
+                SUM ( x.jk ) + SUM ( x.pr ) AS jumlahkunjungan
+            FROM
+                (
+                SELECT
+                    pd.tglregistrasi,
+                    ru.namaruangan,
+                    ru.ID,
+                    dp.namadepartemen,
+                    ru.objectdepartemenfk,
+                    pr.namalengkap,
+                    pr.namapemerintahan,
+                    pr.namakota,
+                    pr.ID AS idprofile,
+                    ps.objectjeniskelaminfk,
+                CASE
+                        
+                        WHEN ps.objectjeniskelaminfk = '1' THEN
+                        1 ELSE 0 
+                    END AS jk,
+                CASE
+                        
+                        WHEN ps.objectjeniskelaminfk = '2' THEN
+                        1 ELSE 0
+                    END AS pr,
+                    pd.noregistrasi 
+                FROM
+                    pasien_m ps
+                    INNER JOIN pasiendaftar_t pd ON ps.ID = pd.nocmfk
+                    INNER JOIN antrianpasiendiperiksa_t apd ON pd.norec = apd.noregistrasifk
+                    INNER JOIN ruangan_m ru ON ru.ID = apd.objectruanganfk
+                    INNER JOIN departemen_m dp ON dp.ID = ru.objectdepartemenfk
+                    INNER JOIN profile_m pr ON pr.ID = pd.kdprofile 
+                WHERE
+                    pd.statusenabled = TRUE 
+                    AND pd.kdprofile = $kdProfile
+                    AND ru.objectdepartemenfk <> 16 
+                    and pd.tglregistrasi between '$tglAwal' and '$tglAkhir'
+                GROUP BY
+                
+                    pd.noregistrasi,
+                    pd.tglregistrasi,
+                    ru.namaruangan,
+                    ru.ID,
+                    dp.namadepartemen,
+                    ru.objectdepartemenfk,
+                    pr.namalengkap,
+                    pr.namapemerintahan,
+                    ps.objectjeniskelaminfk,
+                    pr.namakota,
+                    pr.ID --, rtrim(to_char(pd.tglregistrasi, 'Month'), ' ')
+                    
+                ORDER BY
+                    pd.noregistrasi 
+                ) x 
+            GROUP BY
+                x.tglregistrasi::date,
+                x.namaruangan,
+                x.ID,
+                x.namadepartemen,
+                x.objectdepartemenfk,
+                x.namalengkap,
+                x.namapemerintahan,
+                x.namakota,
+                x.idprofile,
+                rtrim(to_char(x.tglregistrasi, 'Month'), ' ')
+                order by x.tglregistrasi::date"));
 
         $querybulan = DB::select(DB::raw("select rtrim(to_char(pd.tglregistrasi, 'Month'), ' ') as month, to_char(pd.tglregistrasi, 'mm') as idmonth
         from
@@ -6562,10 +6641,14 @@ class LaporanRekamMedisController extends   ApiController
         foreach($bulan as $month){
             if($month != $currentmonth){
                 $total = 0;
+                $totallk = 0;
+                $totalpr = 0;
                 $totalfix = 0;
                 foreach($main as $row){
                     if($row != $currentnama){
                         $jumlah = 0;
+                        $jumlahlk= 0;
+                        $jumlahpr= 0;
                         
                         foreach($data as $item){
                            $koders = $item->idprofile;
@@ -6573,95 +6656,215 @@ class LaporanRekamMedisController extends   ApiController
                            $namakota = $item->namakota;
                            $idprofile = $item->idprofile;
                             if($row == "Penyakit Dalam" && $item->id == 765 && $item->month == $month){
+                                $jumlahlk += $item->jk;
+                                $totallk += $item->jk;
+                                $jumlahpr += $item->pr;
+                                $totalpr += $item->pr;
                                 $jumlah += $item->jumlahkunjungan;
                                 $total += $item->jumlahkunjungan;
                             } else if($row == "Bedah" && $item->id == 44 && $item->month == $month){
+                                $jumlahlk += $item->jk;
+                                $totallk += $item->jk;
+                                $jumlahpr += $item->pr;
+                                $totalpr += $item->pr;
                                 $jumlah += $item->jumlahkunjungan;
                                 $total += $item->jumlahkunjungan;
                             } else if($row == "Kesehatan Anak (Neonatal)"  && $item->month == $month){
+                                $jumlahlk += 0;
+                                $totallk += $item->jk;
+                                $jumlahpr += 0;
+                                $totalpr += $item->pr;
                                 $jumlah += 0;
                                 $total += $item->jumlahkunjungan;
                             } else if($row == "Kesehatan Anak Lainnya" && ($item->id == 753 || $item->id == 775) && $item->month == $month){
+                                $jumlahlk += $item->jk;
+                                $totallk += $item->jk;
+                                $jumlahpr += $item->pr;
+                                $totalpr += $item->pr;
                                 $jumlah += $item->jumlahkunjungan;
                                 $total += $item->jumlahkunjungan;
                             } else if($row == "Obstetri & Ginekologi (Ibu Hamil)"  && $item->month == $month){
+                                $jumlahlk += 0;
+                                $totallk += $item->jk;
+                                $jumlahpr += 0;
+                                $totalpr += $item->pr;
                                 $jumlah += 0;
                                 $total += $item->jumlahkunjungan;
                             } else if($row == "Obstetri & Ginekologi Lainnya"  && $item->month == $month){
+                                $jumlahlk += 0;
+                                $totallk += $item->jk;
+                                $jumlahpr += 0;
+                                $totalpr += $item->pr;
                                 $jumlah += 0;
                                 $total += $item->jumlahkunjungan;
                             } else if($row == "Keluarga Berencana"  && $item->month == $month){
+                                $jumlahlk += 0;
+                                $totallk += $item->jk;
+                                $jumlahpr += 0;
+                                $totalpr += $item->pr;
                                 $jumlah += 0;
                                 $total += $item->jumlahkunjungan;
                             } else if($row == "Bedah Saraf"  && $item->month == $month){
+                                $jumlahlk += 0;
+                                $totallk += $item->jk;
+                                $jumlahpr += 0;
+                                $totalpr += $item->pr;
                                 $jumlah += 0;
                                 $total += $item->jumlahkunjungan;
                             } else if($row == "Saraf" && $item->id == 755 && $item->month == $month){
+                                $jumlahlk += $item->jk;
+                                $totallk += $item->jk;
+                                $jumlahpr += $item->pr;
+                                $totalpr += $item->pr;
                                 $jumlah += $item->jumlahkunjungan;
                                 $total += $item->jumlahkunjungan;
                             } else if($row == "Jiwa" && ($item->id == 752) && $item->month == $month){
+                                $jumlahlk += $item->jk;
+                                $totallk += $item->jk;
+                                $jumlahpr += $item->pr;
+                                $totalpr += $item->pr;
                                 $jumlah += $item->jumlahkunjungan;
                                 $total += $item->jumlahkunjungan;
                             } 
                             else if($row == "Jiwa Anak" && ($item->id == 785 ) && $item->month == $month){
+                                $jumlahlk += $item->jk;
+                                $totallk += $item->jk;
+                                $jumlahpr += $item->pr;
+                                $totalpr += $item->pr;
                                 $jumlah += $item->jumlahkunjungan;
                                 $total += $item->jumlahkunjungan;
                             } 
                             else if($row == "Jiwa Geriatri" && ($item->id == 890) && $item->month == $month){
+                                $jumlahlk += $item->jk;
+                                $totallk += $item->jk;
+                                $jumlahpr += $item->pr;
+                                $totalpr += $item->pr;
                                 $jumlah += $item->jumlahkunjungan;
                                 $total += $item->jumlahkunjungan;
                             } else if($row == "NAPZA" && ($item->id == 768 || $item->id == 789) && $item->month == $month){
+                                $jumlahlk += $item->jk;
+                                $totallk += $item->jk;
+                                $jumlahpr += $item->pr;
+                                $totalpr += $item->pr;
                                 $jumlah += $item->jumlahkunjungan;
                                 $total += $item->jumlahkunjungan;
                             } else if($row == "Psikologi" && ($item->id == 807 || $item->id == 767 || $item->id == 791) && $item->month == $month){
+                                $jumlahlk += $item->jk;
+                                $totallk += $item->jk;
+                                $jumlahpr += $item->pr;
+                                $totalpr += $item->pr;
                                 $jumlah += $item->jumlahkunjungan;
                                 $total += $item->jumlahkunjungan;
                             } else if($row == "THT"  && $item->month == $month){
+                                $jumlahlk += 0;
+                                $totallk += $item->jk;
+                                $jumlahpr += 0;
+                                $totalpr += $item->pr;
                                 $jumlah += 0;
                                 $total += $item->jumlahkunjungan;
                             } else if($row == "Mata"  && $item->month == $month){
+                                $jumlahlk += 0;
+                                $totallk += $item->jk;
+                                $jumlahpr += 0;
+                                $totalpr += $item->pr;
                                 $jumlah += 0;
                                 $total += $item->jumlahkunjungan;
                             } else if($row == "Kulit dan Kelamin" && $item->id == 754 && $item->month == $month){
+                                $jumlahlk += $item->jk;
+                                $totallk += $item->jk;
+                                $jumlahpr += $item->pr;
+                                $totalpr += $item->pr;
                                 $jumlah += $item->jumlahkunjungan;
                                 $total +=$item->jumlahkunjungan;
                             } else if($row == "Gigi & Mulut" && $item->id == 759 && $item->month == $month){
+                                $jumlahlk += $item->jk;
+                                $totallk += $item->jk;
+                                $jumlahpr += $item->pr;
+                                $totalpr += $item->pr;
                                 $jumlah += $item->jumlahkunjungan;
                                 $total +=$item->jumlahkunjungan;
                             } else if($row == "Geriatri"  && $item->month == $month){
+                                $jumlahlk += 0;
+                                $totallk += $item->jk;
+                                $jumlahpr += 0;
+                                $totalpr += $item->pr;
                                 $jumlah += 0;
                                 $total +=$item->jumlahkunjungan;
                             } else if($row == "Kardiologi"  && $item->month == $month){
+                                $jumlahlk += 0;
+                                $totallk += $item->jk;
+                                $jumlahpr += 0;
+                                $totalpr += $item->pr;
                                 $jumlah += 0;
                                 $total +=$item->jumlahkunjungan;
                             } else if($row == "Radiologi" && $item->id == 576 && $item->month == $month){
+                                $jumlahlk += $item->jk;
+                                $totallk += $item->jk;
+                                $jumlahpr += $item->pr;
+                                $totalpr += $item->pr;
                                 $jumlah += $item->jumlahkunjungan;
                                 $total +=$item->jumlahkunjungan;
                             } else if($row == "Bedah Orthopedi"  && $item->month == $month){
+                                $jumlahlk += 0;
+                                $totallk += $item->jk;
+                                $jumlahpr += 0;
+                                $totalpr += $item->pr;
                                 $jumlah += 0;
                                 $total +=$item->jumlahkunjungan;
                             } else if($row == "Paru-paru"  && $item->month == $month){
+                                $jumlahlk += 0;
+                                $totallk += $item->jk;
+                                $jumlahpr += 0;
+                                $totalpr += $item->pr;
                                 $jumlah += 0;
                                 $total += $item->jumlahkunjungan;
                             } else if($row == "Kusta"  && $item->month == $month){
+                                $jumlahlk += 0;
+                                $totallk += $item->jk;
+                                $jumlahpr += 0;
+                                $totalpr += $item->pr;
                                 $jumlah += 0;
                                 $total += $item->jumlahkunjungan;
                             } else if($row == "Umum" && ($item->id == 758 || $item->id == 771) && $item->month == $month){
+                                $jumlahlk += $item->jk;
+                                $totallk += $item->jk;
+                                $jumlahpr += $item->pr;
+                                $totalpr += $item->pr;
                                 $jumlah += $item->jumlahkunjungan;
                                 $total += $item->jumlahkunjungan;
                             } else if($row == "Rawat Darurat" && ($item->id == 765 || $item->id == 766) && $item->month == $month){
+                                $jumlahlk += $item->jk;
+                                $totallk += $item->jk;
+                                $jumlahpr += $item->pr;
+                                $totalpr += $item->pr;
                                 $jumlah += $item->jumlahkunjungan;
                                 $total += $item->jumlahkunjungan;
                             } else if($row == "Akupuntur Medik" && $item->id == 772 && $item->month == $month){
+                                $jumlahlk += $item->jk;
+                                $totallk += $item->jk;
+                                $jumlahpr += $item->pr;
+                                $totalpr += $item->pr;
                                 $jumlah += $item->jumlahkunjungan;
                                 $total += $item->jumlahkunjungan;
                             } else if($row == "Konsultasi Gizi" && $item->id == 784 && $item->month == $month){
+                                $jumlahlk += $item->jk;
+                                $totallk += $item->jk;
+                                $jumlahpr += $item->pr;
+                                $totalpr += $item->pr;
                                 $jumlah += $item->jumlahkunjungan;
                                 $total += $item->jumlahkunjungan;
                             } else if($row == "Day Care" && $item->id == 779 && $item->month == $month){
+                                $jumlahlk += $item->jk;
+                                $totallk += $item->jk;
+                                $jumlahpr += $item->pr;
+                                $totalpr += $item->pr;
                                 $jumlah += $item->jumlahkunjungan;
                                 $total += $item->jumlahkunjungan;
                             } else if($row == "Lain-Lain" && $item->month == $month && $item->id != 779 && $item->id != 784 && $item->id != 772 && $item->id != 765 && $item->id != 766 && $item->id != 758 && $item->id != 576 && $item->id != 759 && $item->id != 754 && $item->id != 807 && $item->id != 767 && $item->id != 791 && $item->id != 768 && $item->id != 789 && $item->id != 785 && $item->id != 752 && $item->id != 755 && $item->id != 753 && $item->id != 775 && $item->id != 44 && $item->id != 782 && $item->id != 771){
+                                $jumlahlk += $item->jk;
+                                $totallk += $item->jk;
+                                $jumlahpr += $item->pr;
+                                $totalpr += $item->pr;  
                                 $jumlah += $item->jumlahkunjungan;
                                 $total += $item->jumlahkunjungan;
                             } 
@@ -6686,6 +6889,8 @@ class LaporanRekamMedisController extends   ApiController
                             'namars' =>  $namars,
                             'namakota' =>  $namakota,
                             'idprofile' =>  $idprofile, 
+                            'jumlahlk' =>  $jumlahlk,
+                            'jumlahpr' =>  $jumlahpr,
                         );
 
                        $currentnama = $row;

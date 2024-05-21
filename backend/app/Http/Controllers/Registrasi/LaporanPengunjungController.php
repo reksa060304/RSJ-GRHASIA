@@ -7167,6 +7167,15 @@ class LaporanPengunjungController extends ApiController
 
             }
         }
+        $kondisipasien = '';
+        if (isset($request['kondisipasien']) && $request['kondisipasien'] != "" && $request['kondisipasien'] != "undefined") {
+            if ($request['statuspulang'] == 2) {
+                $kondisipasien = 'and kp.id is null';
+            }else{
+                $kondisipasien = 'and kp.id = '. $request['kondisipasien'];
+
+            }
+        }
         $jenisPasien = '';
         if($request['jenisranap'] == 1){
                 $jenisPasien = "and pd.objectruanganlastfk NOT IN (800, 799)";
@@ -7229,6 +7238,7 @@ class LaporanPengunjungController extends ApiController
         $carakeluar
         $jenisPasien
         $dep
+        $kondisipasien
         
         union all
 
@@ -7282,6 +7292,7 @@ class LaporanPengunjungController extends ApiController
         $carakeluar
         $jenisPasien
         $dep
+        $kondisipasien
 
         and so.keteranganorder ilike 'Order Radiologi'
         union all
@@ -7335,6 +7346,7 @@ class LaporanPengunjungController extends ApiController
         $carakeluar
         $jenisPasien
         $dep
+        $kondisipasien
 
 
 

@@ -739,7 +739,10 @@ select '-' as smf,* from  (
         }
 
         $data = DB::select(DB::raw("select pd.norec,pm.nocm,pd.noregistrasi,pm.namapasien,kp.kelompokpasien,kls.namakelas,ru.namaruangan,'-' as smf,
-                 pd.tglregistrasi,pd.tglpulang,pd.tglmeninggal,pdd.pendidikan,ag.agama,pe.pekerjaan,kop.kondisipasien
+                 pd.tglregistrasi,pd.tglpulang,pd.tglmeninggal,pdd.pendidikan,ag.agama,pe.pekerjaan,kop.kondisipasien,pd.nokunjungan,
+                 EXTRACT (YEAR FROM AGE(pd.tglmeninggal,pm.tgllahir)) || ' Thn ' 
+                 || EXTRACT (MONTH FROM AGE(pd.tglmeninggal,pm.tgllahir)) || ' bln '                 
+                 || EXTRACT (day FROM AGE(pd.tglmeninggal,pm.tgllahir)) ||' hr' as umur
                 FROM pasiendaftar_t as pd
                 LEFT JOIN batalregistrasi_t as br on br.pasiendaftarfk = pd.norec
                 INNER JOIN pasien_m as pm on pm.id = pd.nocmfk
@@ -751,7 +754,7 @@ select '-' as smf,* from  (
                 left join agama_m as ag on ag.id = pm.objectagamafk	
                 left join kondisipasien_m as kop on kop.id = pd.objectkondisipasienfk	
                 where pd.kdprofile = $idProfile and pd.tglmeninggal BETWEEN '$tglAwal' and '$tglAkhir' and br.pasiendaftarfk is null
-                 and pd.objectstatuspulangfk = 9
+                 and pd.objectkondisipasienfk in(5,6)--pd.objectstatuspulangfk = 9
                 and pm.namapasien ilike '%$namapasien%' $paramNoRm
                 $paramRuangan
                 $paramKelas"));

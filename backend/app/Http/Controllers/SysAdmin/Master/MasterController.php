@@ -6137,7 +6137,5 @@ class MasterController extends ApiController{
         $data = $data->get();
         return $this->respond($data);
     }
-
-
 ////////
 }
