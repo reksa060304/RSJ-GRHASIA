@@ -435,7 +435,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }
             saveAntrol4(params,4);
             saveAntrol(params,5); 
-            loadOtomatisProduk();
+            // loadOtomatisProduk();
           }
 
           if($scope.ruanganfk  == 768 && ($scope.pegawaiLogin.jenisPegawai.jenispegawai == "DOKTER" || $scope.pegawaiLogin.jenisPegawai.jenispegawai == "Dokter")){
@@ -445,7 +445,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }
             saveAntrol4(params,4);
             saveAntrol(params,5); 
-            loadOtomatisProduk();
+            // loadOtomatisProduk();
           }
 
           if($scope.ruanganfk  == 770 && ($scope.pegawaiLogin.jenisPegawai.jenispegawai == "DOKTER" || $scope.pegawaiLogin.jenisPegawai.jenispegawai == "Dokter")){
@@ -455,7 +455,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }
             saveAntrol4(params,4);
             saveAntrol(params,5); 
-            loadOtomatisProduk();
+            // loadOtomatisProduk();
           }
 
           medifirstService.get("emr/get-kode-eksternal-pegawai?id=" + $scope.pegawaiLogin.id, true ).then(function (e) {
@@ -468,7 +468,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
               }
               saveAntrol4(params,4);
               saveAntrol(params,5); 
-              loadOtomatisProduk();
+              // loadOtomatisProduk();
             }
           })
 
