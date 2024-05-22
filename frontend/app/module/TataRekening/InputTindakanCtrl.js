@@ -124,20 +124,20 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
           
           $scope.getHargaTindakan();
           //$scope.tambahTindakans();//MASUKIN DI HARGA KOMPONEN
-        }else if($scope.departemenfk  == 16 && ($scope.pegawaiLogin.jenisPegawai.jenispegawai == "DOKTER" || $scope.pegawaiLogin.jenisPegawai.jenispegawai == "Dokter")){
-          $scope.isLoadOtomatisProduk = true;
+        //}else if(//$scope.departemenfk  == 16 && ($scope.pegawaiLogin.jenisPegawai.jenispegawai == "DOKTER" || $scope.pegawaiLogin.jenisPegawai.jenispegawai == "Dokter")){
+          //$scope.isLoadOtomatisProduk = true;
           
-          $scope.item.namaProduk={
-            id: 5006572,
-            namaproduk: "Visite Dokter Spesialis Jiwa",
-          }
+          //$scope.item.namaProduk={
+            //id: 5006572,
+            //namaproduk: "Visite Dokter Spesialis Jiwa",
+          //}
           // ,
           // {
           //   id: 5006572,
           //   namaproduk: "Visite Dokter Spesialis Jiwa",
           //   objectruanganfk: 752
           // }
-          ;
+          //;
 
 
           
