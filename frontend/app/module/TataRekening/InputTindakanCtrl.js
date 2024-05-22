@@ -62,67 +62,67 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
       
 
       $scope.isLoadOtomatisProduk=false;
-      function loadOtomatisProduk(){
-        console.log($scope.item.pasien.kdinternal)
-        if(($scope.item.pasien.kdinternal  == "JIW") && ($scope.pegawaiLogin.jenisPegawai.jenispegawai == "DOKTER" || $scope.pegawaiLogin.jenisPegawai.jenispegawai == "Dokter")){
-          $scope.isLoadOtomatisProduk = true;
+      // function loadOtomatisProduk(){
+      //   console.log($scope.item.pasien.kdinternal)
+        // if(($scope.item.pasien.kdinternal  == "JIW") && ($scope.pegawaiLogin.jenisPegawai.jenispegawai == "DOKTER" || $scope.pegawaiLogin.jenisPegawai.jenispegawai == "Dokter")){
+        //   $scope.isLoadOtomatisProduk = true;
           
-          $scope.item.namaProduk={
-            id: 5006382,
-            namaproduk: "Pemeriksaan Dokter Spesialis Jiwa",
-            objectruanganfk: 752
-          }
+        //   $scope.item.namaProduk={
+        //     id: 5006382,
+        //     namaproduk: "Pemeriksaan Dokter Spesialis Jiwa",
+        //     objectruanganfk: 752
+        //   }
           // ,
           // {
           //   id: 5006572,
           //   namaproduk: "Visite Dokter Spesialis Jiwa",
           //   objectruanganfk: 752
           // }
-          ;
+          // ;
 
 
           
-          $scope.getHargaTindakan();
+          // $scope.getHargaTindakan();
           //$scope.tambahTindakans();//MASUKIN DI HARGA KOMPONEN
-        }else if($scope.ruanganfk  == 768 && ($scope.pegawaiLogin.jenisPegawai.jenispegawai == "DOKTER" || $scope.pegawaiLogin.jenisPegawai.jenispegawai == "Dokter")){
-          $scope.isLoadOtomatisProduk = true;
+        // }else if($scope.ruanganfk  == 768 && ($scope.pegawaiLogin.jenisPegawai.jenispegawai == "DOKTER" || $scope.pegawaiLogin.jenisPegawai.jenispegawai == "Dokter")){
+        //   $scope.isLoadOtomatisProduk = true;
           
-          $scope.item.namaProduk={
-            id: 5006382,
-            namaproduk: "Pemeriksaan Dokter Spesialis Jiwa",
-            objectruanganfk: 768
-          }
+        //   $scope.item.namaProduk={
+        //     id: 5006382,
+        //     namaproduk: "Pemeriksaan Dokter Spesialis Jiwa",
+        //     objectruanganfk: 768
+        //   }
           // ,
           // {
           //   id: 5006572,
           //   namaproduk: "Visite Dokter Spesialis Jiwa",
           //   objectruanganfk: 752
           // }
-          ;
+          // ;
 
 
           
-          $scope.getHargaTindakan();
+          // $scope.getHargaTindakan();
           //$scope.tambahTindakans();//MASUKIN DI HARGA KOMPONEN
-        }else if($scope.ruanganfk  == 770 && ($scope.pegawaiLogin.jenisPegawai.jenispegawai == "DOKTER" || $scope.pegawaiLogin.jenisPegawai.jenispegawai == "Dokter")){
-          $scope.isLoadOtomatisProduk = true;
+        // }else if($scope.ruanganfk  == 770 && ($scope.pegawaiLogin.jenisPegawai.jenispegawai == "DOKTER" || $scope.pegawaiLogin.jenisPegawai.jenispegawai == "Dokter")){
+        //   $scope.isLoadOtomatisProduk = true;
           
-          $scope.item.namaProduk={
-            id: 5007079,
-            namaproduk: "Pemeriksaan Bebas Narkoba",
-            objectruanganfk: 770
-          }
+        //   $scope.item.namaProduk={
+        //     id: 5007079,
+        //     namaproduk: "Pemeriksaan Bebas Narkoba",
+        //     objectruanganfk: 770
+        //   }
           // ,
           // {
           //   id: 5006572,
           //   namaproduk: "Visite Dokter Spesialis Jiwa",
           //   objectruanganfk: 752
           // }
-          ;
+          // ;
 
 
           
-          $scope.getHargaTindakan();
+          // $scope.getHargaTindakan();
           //$scope.tambahTindakans();//MASUKIN DI HARGA KOMPONEN
         //}else if(//$scope.departemenfk  == 16 && ($scope.pegawaiLogin.jenisPegawai.jenispegawai == "DOKTER" || $scope.pegawaiLogin.jenisPegawai.jenispegawai == "Dokter")){
           //$scope.isLoadOtomatisProduk = true;
@@ -141,14 +141,14 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
 
           
-          $scope.getHargaTindakan();
+          // $scope.getHargaTindakan();
           //$scope.tambahTindakans();//MASUKIN DI HARGA KOMPONEN
-        }else{
-          $scope.isLoadOtomatisProduk = false;
+      //   }else{
+      //     $scope.isLoadOtomatisProduk = false;
 
-        }
+      //   }
         
-      }
+      // }
       function saveAntrol(param,waktu){
         var data = {
            "url": "antrean/updatewaktu",
