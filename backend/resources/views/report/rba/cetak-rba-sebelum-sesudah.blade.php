@@ -231,8 +231,8 @@
         <tbody>
             <tr style="text-align: center;">
                 <td style="width: 40%; padding: .2em .4em;" colspan="5"><b>Anggaran Belanja</b></td>
-                <td style="padding: .2em .4em;" colspan="4"><b>Sebelum Perubahan</b></td>
-                <td style="padding: .2em .4em;" colspan="4"><b>Sesudah Perubahan</b></td>
+                <td style="padding: .2em .4em;" colspan="{{ count($asalproduk)+3 }}"><b>Sebelum Perubahan</b></td>
+                <td style="padding: .2em .4em;" colspan="{{ count($asalproduk)+3 }}"><b>Sesudah Perubahan</b></td>
                 <td style="padding: .2em .4em;" rowspan="3">
                     Bertambah/
                     Berkurang
@@ -240,30 +240,33 @@
                 <td style="padding: .2em .4em;" rowspan="3">%</td>
                 
             </tr>
+
             <tr style="text-align: center;">
                 <td style="padding: .2em .4em;" rowspan="2" colspan="4"><b>No Rekening</b></td>
                 <td style="padding: .2em .4em;" rowspan="2"><b>Komponen Biaya</b></td>
                 <td style="padding: .2em .4em;" colspan="3"><b>Rincian Biaya</b></td>
-                <td style="padding: .2em .4em;"><b>Jumlah Anggaran</b></td>
+                <td style="padding: .2em .4em;" colspan="{{ count($asalproduk) }}"><b>Jumlah Anggaran</b></td>
                 <td style="padding: .2em .4em;" colspan="3"><b>Rincian Biaya</b></td>
-                <td style="padding: .2em .4em;"><b>Jumlah Anggaran</b></td>
+                <td style="padding: .2em .4em;" colspan="{{ count($asalproduk) }}"><b>Jumlah Anggaran</b></td>
             </tr>
+            
             <tr style="text-align: center;">
                 <td style="padding: .2em .4em;"><b>Jumlah</b></td>
                 <td style="padding: .2em .4em;"><b>Satuan</b></td>
                 <td style="padding: .2em .4em;"><b>Harga Satuan</b></td>
-                @foreach ($asalproduk as $ap)
-                    @if ($ap->id == $data[0]->objectasalprodukfk)
-                        <td style="padding: .2em .4em;"><b>{{ $ap->asalproduk }}</b></td>
-                    @endif
+
+                {{-- coba perbaiki --}}
+                @foreach ($asalproduk as $item)
+                    <td style="padding: .2em .4em;"><b>{{ $item->asalproduk }}</b></td>
                 @endforeach
+                
                 <td style="padding: .2em .4em;">Jumlah</td>
                 <td style="padding: .2em .4em;">Satuan</td>
                 <td style="padding: .2em .4em;">Harga Satuan</td>
-                @foreach ($asalproduk as $ap)
-                    @if ($ap->id == $data[0]->objectasalprodukfk_sesudah)
-                        <td style="padding: .2em .4em;"><b>{{ $ap->asalproduk }}</b></td>
-                    @endif
+                
+                {{-- coba perbaiki  --}}
+                @foreach ($asalproduk as $item)
+                    <td style="padding: .2em .4em;"><b>{{ $item->asalproduk }}</b></td>
                 @endforeach
             </tr>
 
@@ -277,7 +280,8 @@
             @endphp
 
             @foreach ($data as $item)
-                
+
+                {{-- Mata anggaran 1 --}}
                 @if ($item->id_mataanggaran1 && ($item->id_mataanggaran1 !== $parent1))
                     @php
                         $totalParent1 = 0;
@@ -302,17 +306,68 @@
                         <td style="padding: .2em .4em;"></td>
                         <td style="padding: .2em .4em;"></td>
                         {{-- <td style="text-align: right; padding: .2em .4em;">{{ number_format($totalParent1,0,',','.') }}</td> --}}
-                        <td style="text-align: right; padding: .2em .4em;">{{ number_format($totalParent1Sesudah,0,',','.') }}</td>
+                        {{-- <td style="text-align: right; padding: .2em .4em;">{{ number_format($totalParent1Sesudah,0,',','.') }}</td> --}}
+
+                        @foreach ($asalproduk as $ap)
+                            {{-- untuk menghitung total setiap belanja berdasarkan asal produk --}}
+                            {{-- mengambil jml_sesudah dan hargasatuan_sesudah --}}
+                            @php
+                                $ap->subtotal = 0;
+                                foreach ($data as $ma1) {
+                                    if($ma1->id_mataanggaran1 === $item->id_mataanggaran1){
+                                        if($ma1->objectasalprodukfk == $ap->id){
+                                            $ap->subtotal += ( (int)$ma1->jml_sesudah * (int)$ma1->hargasatuan_sesudah );
+                                        }
+                                    }
+                                }
+                            @endphp
+
+                            @if ($ap->id == $item->objectasalprodukfk)
+                                <td style="text-align: right; padding: .2em .4em;">{{ number_format($ap->subtotal,0,',','.') }}</td>
+                            @else
+                                <td style="text-align: right; padding: .2em .4em;">{{ number_format($ap->subtotal,0,',','.') }}</td>
+                            @endif
+                        @endforeach
+
+
                         <td style="padding: .2em .4em;"></td>
                         <td style="padding: .2em .4em;"></td>
                         <td style="padding: .2em .4em;"></td>
                         {{-- <td style="text-align: right; padding: .2em .4em;">{{ number_format($totalParent1Sesudah,0,',','.') }}</td> --}}
-                        <td style="text-align: right; padding: .2em .4em;">{{ number_format($totalParent1,0,',','.') }}</td>
-                        <td style="text-align: right; padding: .2em .4em;">{{ number_format(abs($selisihParent1),0,',','.') }}</td>
-                        <td style="text-align: right; padding: .2em .4em;">{{ number_format($persenParent1, 3) }}</td>
+                        {{-- <td style="text-align: right; padding: .2em .4em;">{{ number_format($totalParent1,0,',','.') }}</td> --}}
+
+                        
+                        @foreach ($asalproduk as $ap)
+                            {{-- untuk menghitung total setiap belanja berdasarkan asal produk --}}
+                            {{-- mengambil jml dan hargasatuan --}}
+                            @php
+                                $ap->subtotal = 0;
+                                foreach ($data as $ma1) {
+                                    if($ma1->id_mataanggaran1 === $item->id_mataanggaran1){
+                                        if($ma1->objectasalprodukfk == $ap->id){
+                                            $ap->subtotal += ( (int)$ma1->jml * (int)$ma1->hargasatuan );
+                                        }
+                                    }
+                                }
+                            @endphp
+                            
+                            @if ($ap->id == $item->objectasalprodukfk)
+                                <td style="text-align: right; padding: .2em .4em;">{{ number_format($ap->subtotal,0,',','.') }}</td>
+                            @else
+                                <td style="text-align: right; padding: .2em .4em;">{{ number_format($ap->subtotal,0,',','.') }}</td>
+                            @endif
+                        @endforeach
+
+                        {{-- selisih masih salah karena cara asal produk lebih dua --}}
+                        <td style="text-align: right; padding: .2em .4em;">0</td>
+                        <td style="text-align: right; padding: .2em .4em;">0</td>
+                        {{-- <td style="text-align: right; padding: .2em .4em;">{{ number_format(abs($selisihParent1),0,',','.') }}</td> --}}
+                        {{-- <td style="text-align: right; padding: .2em .4em;">{{ number_format($persenParent1, 3) }}</td> --}}
                     </tr>
                 @endif
+                
 
+                {{-- Mata anggaran 2 --}}
                 @if ($item->id_mataanggaran2 && ($item->id_mataanggaran2 !== $parent2))
                     @php
                         $totalParent2 = 0;
@@ -336,18 +391,70 @@
                         <td style="padding: .2em .4em;"></td>
                         <td style="padding: .2em .4em;"></td>
                         {{-- <td style="text-align:right; padding: .2em .4em;"><b>{{ number_format($totalParent2,0,',','.') }}</b></td> --}}
-                        <td style="text-align:right; padding: .2em .4em;"><b>{{ number_format($totalParent2Sesudah,0,',','.') }}</b></td>
+                        {{-- <td style="text-align:right; padding: .2em .4em;"><b>{{ number_format($totalParent2Sesudah,0,',','.') }}</b></td> --}}
+
+
+                        @foreach ($asalproduk as $ap)
+                            {{-- untuk menghitung total setiap belanja berdasarkan asal produk --}}
+                            {{-- mengambil jml_sesudah dan hargasatuan_sesudah --}}
+                            @php
+                                $ap->subtotal = 0;
+                                foreach ($data as $ma2) {
+                                    if($ma2->id_mataanggaran2 === $item->id_mataanggaran2){
+                                        if($ma2->objectasalprodukfk == $ap->id){
+                                            $ap->subtotal += ( (int)$ma2->jml_sesudah * (int)$ma2->hargasatuan_sesudah );
+                                        }
+                                    }
+                                }
+                            @endphp
+
+                            @if ($ap->id == $item->objectasalprodukfk)
+                                <td style="text-align: right; padding: .2em .4em;">{{ number_format($ap->subtotal,0,',','.') }}</td>
+                            @else
+                                <td style="text-align: right; padding: .2em .4em;">{{ number_format($ap->subtotal,0,',','.') }}</td>
+                            @endif
+                        @endforeach
+
+
                         <td style="padding: .2em .4em;"></td>
                         <td style="padding: .2em .4em;"></td>
                         <td style="padding: .2em .4em;"></td>
                         {{-- <td style="text-align: right; padding: .2em .4em;"><b>{{ number_format($totalParent2Sesudah,0,',','.') }}</b></td> --}}
-                        <td style="text-align: right; padding: .2em .4em;"><b>{{ number_format($totalParent2,0,',','.') }}</b></td>
-                        <td style="text-align: right; padding: .2em .4em;"><b>{{ number_format(abs($selisihParent2),0,',','.') }}</b></td>
-                        <td style="text-align: right; padding: .2em .4em;">{{ number_format($persenParent2, 3) }}</td>
+                        {{-- <td style="text-align: right; padding: .2em .4em;"><b>{{ number_format($totalParent2,0,',','.') }}</b></td> --}}
+
+                        @foreach ($asalproduk as $ap)
+                            {{-- untuk menghitung total setiap belanja berdasarkan asal produk --}}
+                            {{-- mengambil jml dan hargasatuan --}}
+                            @php
+                                $ap->subtotal = 0;
+                                foreach ($data as $ma2) {
+                                    if($ma2->id_mataanggaran2 === $item->id_mataanggaran2){
+                                        if($ma2->objectasalprodukfk == $ap->id){
+                                            $ap->subtotal += ( (int)$ma2->jml * (int)$ma2->hargasatuan );
+                                        }
+                                    }
+                                }
+                            @endphp
+                            
+                            @if ($ap->id == $item->objectasalprodukfk)
+                                <td style="text-align: right; padding: .2em .4em;">{{ number_format($ap->subtotal,0,',','.') }}</td>
+                            @else
+                                <td style="text-align: right; padding: .2em .4em;">{{ number_format($ap->subtotal,0,',','.') }}</td>
+                            @endif
+                        @endforeach
+
+                        {{-- selisih masih salah karena cara asal produk lebih dua --}}
+                        <td style="text-align: right; padding: .2em .4em;">0</td>
+                        <td style="text-align: right; padding: .2em .4em;">0</td>
+                        {{-- <td style="text-align: right; padding: .2em .4em;"><b>{{ number_format(abs($selisihParent2),0,',','.') }}</b></td> --}}
+                        {{-- <td style="text-align: right; padding: .2em .4em;">{{ number_format($persenParent2, 3) }}</td> --}}
                     </tr>
                 @endif
 
+                
+                {{-- Mata anggaran 3 --}}
                 @if ($item->id_mataanggaran3 && ($item->id_mataanggaran3 !== $parent3))
+                    {{-- directive php ini masih memiliki kesalahan karena belanja memiliki dua asal produk --}}
                     @php
                         $totalParent3 = 0;
                         $totalParent3Sesudah = 0;
@@ -360,6 +467,7 @@
                         $selisihParent3 = (int)$totalParent3 - (int)$totalParent3Sesudah;
                         $persenParent3 = (abs($selisihParent3) / ($totalParent3 + $totalParent3Sesudah) * 100);
                     @endphp
+
                     <tr>
                         <td style="padding: .2em .4em;"></td>
                         <td style="padding: .2em .4em;"></td>
@@ -370,25 +478,75 @@
                         <td style="padding: .2em .4em;"></td>
                         <td style="padding: .2em .4em;"></td>
                         {{-- <td style="text-align:right; padding: .2em .4em;">{{ number_format($totalParent3,0,',','.') }}</td> --}}
-                        <td style="text-align:right; padding: .2em .4em;">{{ number_format($totalParent3Sesudah,0,',','.') }}</td>
+                        
+                        @foreach ($asalproduk as $ap)
+                            {{-- untuk menghitung total setiap belanja berdasarkan asal produk --}}
+                            {{-- mengambil jml_sesudah dan hargasatuan_sesudah --}}
+                            @php
+                                $ap->subtotal = 0;
+                                foreach ($data as $ma3) {
+                                    if($ma3->id_mataanggaran3 === $item->id_mataanggaran3){
+                                        if($ma3->objectasalprodukfk == $ap->id){
+                                            $ap->subtotal += ( (int)$ma3->jml_sesudah * (int)$ma3->hargasatuan_sesudah );
+                                        }
+                                    }
+                                }
+                            @endphp
+
+                            @if ($ap->id == $item->objectasalprodukfk)
+                                <td style="text-align: right; padding: .2em .4em;">{{ number_format($ap->subtotal,0,',','.') }}</td>
+                            @else
+                                <td style="text-align: right; padding: .2em .4em;">{{ number_format($ap->subtotal,0,',','.') }}</td>
+                            @endif
+                        @endforeach
+
                         <td style="padding: .2em .4em;"></td>
                         <td style="padding: .2em .4em;"></td>
                         <td style="padding: .2em .4em;"></td>
                         {{-- <td style="text-align:right; padding: .2em .4em;">{{ number_format($totalParent3Sesudah,0,',','.') }}</td> --}}
-                        <td style="text-align:right; padding: .2em .4em;">{{ number_format($totalParent3,0,',','.') }}</td>
-                        <td style="text-align:right; padding: .2em .4em;">{{ number_format(abs($selisihParent3),0,',','.') }}</td>
-                        <td style="text-align:right; padding: .2em .4em;">{{ number_format($persenParent3, 3) }}</td>
+                        
+                        
+                        @foreach ($asalproduk as $ap)
+                            {{-- untuk menghitung total setiap belanja berdasarkan asal produk --}}
+                            {{-- mengambil jml dan hargasatuan --}}
+                            @php
+                                $ap->subtotal = 0;
+                                foreach ($data as $ma3) {
+                                    if($ma3->id_mataanggaran3 === $item->id_mataanggaran3){
+                                        if($ma3->objectasalprodukfk == $ap->id){
+                                            $ap->subtotal += ( (int)$ma3->jml * (int)$ma3->hargasatuan );
+                                        }
+                                    }
+                                }
+                            @endphp
+                            
+                            @if ($ap->id == $item->objectasalprodukfk)
+                                <td style="text-align: right; padding: .2em .4em;">{{ number_format($ap->subtotal,0,',','.') }}</td>
+                            @else
+                                <td style="text-align: right; padding: .2em .4em;">{{ number_format($ap->subtotal,0,',','.') }}</td>
+                            @endif
+                        @endforeach
+                        
+
+                        {{-- selisih masih salah karena cara asal produk lebih dua --}}
+                        <td style="text-align: right; padding: .2em .4em;">0</td>
+                        <td style="text-align: right; padding: .2em .4em;">0</td>
+                        {{-- <td style="text-align:right; padding: .2em .4em;">{{ number_format(abs($selisihParent3),0,',','.') }}</td>
+                        <td style="text-align:right; padding: .2em .4em;">{{ number_format($persenParent3, 3) }}</td> --}}
                     </tr>
                 @endif
-                
+
+                {{-- Mata anggaran 4 --}}
                 @if ($item->id_mataanggaran4 && ($item->id_mataanggaran4 !== $parent4))
+                    {{-- directive php ini masih memiliki kesalahan karena belanja memiliki dua asal produk --}}
                     @php
                         $totalParent4 = 0;
                         $totalParent4Sesudah = 0;
-                        foreach ($data as $kb) {
-                            if($kb->id_mataanggaran4 === $item->id_mataanggaran4){
-                                $totalParent4 = $totalParent4 + ( (int)$kb->jml * (int)$kb->hargasatuan );
-                                $totalParent4Sesudah = $totalParent4Sesudah + ( (int)$kb->jml_sesudah * (int)$kb->hargasatuan_sesudah );
+                        
+                        foreach ($data as $ma4) {
+                            if($ma4->id_mataanggaran4 === $item->id_mataanggaran4){
+                                $totalParent4 = $totalParent4 + ( (int)$ma4->jml * (int)$ma4->hargasatuan );
+                                $totalParent4Sesudah = $totalParent4Sesudah + ( (int)$ma4->jml_sesudah * (int)$ma4->hargasatuan_sesudah );
                             }
                         }
                         $selisihParent4 = (int)$totalParent4- (int)$totalParent4Sesudah;
@@ -404,17 +562,65 @@
                         <td style="padding: .2em .4em;"></td>
                         <td style="text-align: right; padding: .2em .4em;"></td>
                         {{-- <td style="text-align: right; padding: .2em .4em;">{{ number_format($totalParent4,0,',','.') }}</td> --}}
-                        <td style="text-align: right; padding: .2em .4em;">{{ number_format($totalParent4Sesudah,0,',','.') }}</td>
+                        
+                        {{-- total setiap asal produk sudah benar --}}
+                        @foreach ($asalproduk as $ap)
+                            {{-- untuk menghitung total setiap belanja berdasarkan asal produk --}}
+                            {{-- mengambil jml_sesudah dan hargasatuan_sesudah --}}
+                            @php
+                                $ap->subtotal = 0;
+                                foreach ($data as $ma4) {
+                                    if($ma4->id_mataanggaran4 === $item->id_mataanggaran4){
+                                        if($ma4->objectasalprodukfk == $ap->id){
+                                            $ap->subtotal += ( (int)$ma4->jml_sesudah * (int)$ma4->hargasatuan_sesudah );
+                                        }
+                                    }
+                                }
+                            @endphp
+
+                            @if ($ap->id == $item->objectasalprodukfk)
+                                <td style="text-align: right; padding: .2em .4em;">{{ number_format($ap->subtotal,0,',','.') }}</td>
+                            @else
+                                <td style="text-align: right; padding: .2em .4em;">{{ number_format($ap->subtotal,0,',','.') }}</td>
+                            @endif
+                        @endforeach
+                        
                         <td style="padding: .2em .4em;"></td>
                         <td style="padding: .2em .4em;"></td>
                         <td style="padding: .2em .4em;"></td>
                         {{-- <td style="text-align: right; padding: .2em .4em;">{{ number_format($totalParent4Sesudah,0,',','.') }}</td> --}}
-                        <td style="text-align: right; padding: .2em .4em;">{{ number_format($totalParent4,0,',','.') }}</td>
-                        <td style="text-align: right; padding: .2em .4em;">{{ number_format(abs($selisihParent4),0,',','.') }}</td>
-                        <td style="text-align: right; padding: .2em .4em;">{{ number_format($persenParent4, 3) }}</td>
+                        
+                        {{-- total setiap asal produk sudah benar --}}
+                        @foreach ($asalproduk as $ap)
+                            {{-- untuk menghitung total setiap belanja berdasarkan asal produk --}}
+                            {{-- mengambil jml dan hargasatuan --}}
+                            @php
+                                $ap->subtotal = 0;
+                                foreach ($data as $ma4) {
+                                    if($ma4->id_mataanggaran4 === $item->id_mataanggaran4){
+                                        if($ma4->objectasalprodukfk == $ap->id){
+                                            $ap->subtotal += ( (int)$ma4->jml * (int)$ma4->hargasatuan );
+                                        }
+                                    }
+                                }
+                            @endphp
+                            
+                            @if ($ap->id == $item->objectasalprodukfk)
+                                <td style="text-align: right; padding: .2em .4em;">{{ number_format($ap->subtotal,0,',','.') }}</td>
+                            @else
+                                <td style="text-align: right; padding: .2em .4em;">{{ number_format($ap->subtotal,0,',','.') }}</td>
+                            @endif
+                        @endforeach
+                            
+                        {{-- selisih masih salah karena cara asal produk lebih dua --}}
+                        <td style="text-align: right; padding: .2em .4em;">0</td>
+                        <td style="text-align: right; padding: .2em .4em;">0</td>
+                        {{-- <td style="text-align: right; padding: .2em .4em;">{{ number_format(abs($selisihParent4),0,',','.') }}</td>
+                        <td style="text-align: right; padding: .2em .4em;">{{ number_format($persenParent4, 3) }}</td> --}}
                     </tr>
                 @endif
 
+                {{-- Belanja --}}
                 @php
                     $totalKB = ( (int)$item->jml * (int)$item->hargasatuan );
                     $totalKBSesudah = ( (int)$item->jml_sesudah * (int)$item->hargasatuan_sesudah );
@@ -434,7 +640,15 @@
                     {{-- <td style="text-align: right; padding: .2em .4em;">{{ number_format($item->hargasatuan,0,',','.') }}</td> --}}
                     <td style="text-align: right; padding: .2em .4em;">{{ number_format($item->hargasatuan_sesudah,0,',','.') }}</td>
                     {{-- <td style="text-align: right; padding: .2em .4em;">{{ number_format( $totalKB,0,',','.' ) }}</td> --}}
-                    <td style="text-align: right; padding: .2em .4em;">{{ number_format( $totalKBSesudah,0,',','.' ) }}</td>
+                    
+                    @foreach ($asalproduk as $ap)
+                        @if ($ap->id == $item->objectasalprodukfk)
+                            <td style="text-align: right; padding: .2em .4em;">{{ number_format( $totalKBSesudah,0,',','.' ) }}</td>
+                        @else
+                            <td style="text-align: right; padding: .2em .4em;">0</td>
+                        @endif
+                    @endforeach
+                    
                     {{-- <td style="text-align: right; padding: .2em .4em;">{{ $item->jml_sesudah }}</td> --}}
                     <td style="text-align: right; padding: .2em .4em;">{{ $item->jml }}</td>
                     {{-- <td style="text-align: center; padding: .2em .4em;">{{ $item->satuan_sesudah }}</td> --}}
@@ -442,9 +656,20 @@
                     {{-- <td style="text-align: right; padding: .2em .4em;">{{ number_format($item->hargasatuan_sesudah,0,',','.') }}</td> --}}
                     <td style="text-align: right; padding: .2em .4em;">{{ number_format($item->hargasatuan,0,',','.') }}</td>
                     {{-- <td style="text-align: right; padding: .2em .4em;">{{ number_format($totalKBSesudah,0,',','.') }}</td> --}}
-                    <td style="text-align: right; padding: .2em .4em;">{{ number_format($totalKB,0,',','.') }}</td>
-                    <td style="text-align: right; padding: .2em .4em;">{{ number_format(abs($selisih),0,',','.') }}</td>
-                    <td style="text-align: right; padding: .2em .4em;">{{ number_format($persen, 3) }}</td>
+                    
+                    @foreach ($asalproduk as $ap)
+                        @if ($ap->id == $item->objectasalprodukfk)
+                            <td style="text-align: right; padding: .2em .4em;">{{ number_format($totalKB,0,',','.') }}</td>
+                        @else
+                            <td style="text-align: right; padding: .2em .4em;">0</td>
+                        @endif
+                    @endforeach
+                    
+                    {{-- selisih masih salah karena cara asal produk lebih dua --}}
+                    <td style="text-align: right; padding: .2em .4em;">0</td>
+                    <td style="text-align: right; padding: .2em .4em;">0</td>
+                    {{-- <td style="text-align: right; padding: .2em .4em;">{{ number_format(abs($selisih),0,',','.') }}</td>
+                    <td style="text-align: right; padding: .2em .4em;">{{ number_format($persen, 3) }}</td> --}}
                 </tr>
 
                 @php
@@ -461,10 +686,43 @@
             <tr>
                 <td colspan="8" style="text-align: center; padding: .2em .4em;"><b>Total</b></td>
                 {{-- <td style="text-align: right; padding: .2em .4em;"><b>{{ number_format($totalSemua,0,',','.') }}</b></td> --}}
-                <td style="text-align: right; padding: .2em .4em;"><b>{{ number_format($totalSemuaSesudah,0,',','.') }}</b></td>
+                {{-- <td style="text-align: right; padding: .2em .4em;"><b>{{ number_format($totalSemuaSesudah,0,',','.') }}</b></td> --}}
+
+                @foreach ($asalproduk as $ap_sesudah)
+                    @php
+                        $ap_sesudah->subtotal = 0;
+
+                        foreach ($data as $dt) {
+                            if($dt->objectasalprodukfk == $ap_sesudah->id){
+                                $ap_sesudah->subtotal += ( (int)$dt->jml_sesudah * (int)$dt->hargasatuan_sesudah );
+                            }
+                        }
+                    @endphp
+
+                    <td style="text-align: right; padding: .2em .4em;">{{ number_format($ap_sesudah->subtotal,0,',','.') }}</td>
+                @endforeach
+
+
                 <td colspan="3" style="text-align: center; padding: .2em .4em;"><b></b></td>
                 {{-- <td style="text-align: right; padding: .2em .4em;"><b>{{ number_format($totalSemuaSesudah,0,',','.') }}</b></td> --}}
-                <td style="text-align: right; padding: .2em .4em;"><b>{{ number_format($totalSemua,0,',','.') }}</b></td>
+                {{-- <td style="text-align: right; padding: .2em .4em;"><b>{{ number_format($totalSemua,0,',','.') }}</b></td> --}}
+
+                
+                @foreach ($asalproduk as $ap)
+                    @php
+                        $ap->subtotal = 0;
+
+                        foreach ($data as $dt) {
+                            if($dt->objectasalprodukfk == $ap->id){
+                                $ap->subtotal += ( (int)$dt->jml * (int)$dt->hargasatuan );
+                            }
+                        }
+                    @endphp
+
+                    <td style="text-align: right; padding: .2em .4em;">{{ number_format($ap->subtotal,0,',','.') }}</td>
+                @endforeach
+
+
                 <td></td>
                 <td></td>
             </tr>
