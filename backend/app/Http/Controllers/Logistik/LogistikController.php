@@ -3787,6 +3787,8 @@ class LogistikController extends ApiController{
                 'djp.id as iddpj', 'djp.detailjenisproduk', 'jp.id as idjp', 'jp.jenisproduk', 
                 'ap.id as idasalproduk',)
             ->where('sp.kdprofile',$idProfile)
+            ->where('spd.kdprofile',$idProfile)
+            ->where('spd.statusenabled',true)
             ->where('spd.qtyproduk','!=', 0);
 
         if (isset($request['norec']) && $request['norec'] != "" && $request['norec'] != "undefined") {
