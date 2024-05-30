@@ -5757,7 +5757,7 @@ class LogistikController extends ApiController{
                     left JOIN produk_m as pr on pr.id=spd.objectprodukfk
                     left JOIN satuanstandar_m as ss on ss.id=spd.objectsatuanstandarfk
                     left JOIN asalproduk_m as ap on ap.id = spd.objectasalprodukfk
-                    where spd.kdprofile = $idProfile and nostrukfk=:norec
+                    where spd.kdprofile = $idProfile and nostrukfk=:norec and spd.statusenabled= true
                     and spd.qtyproduk != 0"),
                 array(
                     'norec' => $item->norec,
