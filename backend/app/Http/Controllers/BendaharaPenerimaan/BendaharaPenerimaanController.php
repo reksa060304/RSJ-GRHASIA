@@ -2498,8 +2498,7 @@ class BendaharaPenerimaanController extends ApiController {
         where sc.tglclosing::date between '$tglAwal' and '$tglAkhir'
         and sh.statusenabled <> false
         and sc.kdprofile = $kdProfile
-        and sc.statusenabled <> false
-        and sts.statusenabled <> false
+        and sc.statusenabled <> false       
         order by sc.tglclosing desc
         ) as x where nopenerimaan is not null
         $status
