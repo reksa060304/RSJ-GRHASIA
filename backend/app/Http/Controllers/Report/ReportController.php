@@ -22246,8 +22246,8 @@ public function suratBuktiPengembalian(Request $request)
             and dp1.kdprofile = 30 and dp1.statusenabled = true 
             inner join kegiatananggaran_m as dp0 on dp.kode ilike dp0.kode || '%' and dp0.div = 3
             and dp0.kdprofile = 30 and dp0.statusenabled = true 
-            where dp.tahun = '2024'
-            and dp.id = 254
+            where dp.tahun = '".$request['tahun']."'
+            and dp.id = ".$request['subsubkegiatan']."
             group by dp.tahun, dp.kode, dp.keterangan,
             dp0.kode, dp0.keterangan,
             dp3.kode, dp3.keterangan,

@@ -293,7 +293,7 @@
                             }
                         }
                         $selisihParent1 = (int)$totalParent1 - (int)$totalParent1Sesudah;
-                        $persenParent1 = (abs($selisihParent1) / ($totalParent1 + $totalParent1Sesudah) * 100);
+                        // $persenParent1 = (abs($selisihParent1) / ($totalParent1 + $totalParent1Sesudah) * 100);
                     @endphp
 
                     <tr>
@@ -359,9 +359,8 @@
                         @endforeach
 
                         {{-- selisih masih salah karena cara asal produk lebih dua --}}
+                        <td style="text-align: right; padding: .2em .4em;">{{ number_format($selisihParent1,0,',','.') }}</td>
                         <td style="text-align: right; padding: .2em .4em;">0</td>
-                        <td style="text-align: right; padding: .2em .4em;">0</td>
-                        {{-- <td style="text-align: right; padding: .2em .4em;">{{ number_format(abs($selisihParent1),0,',','.') }}</td> --}}
                         {{-- <td style="text-align: right; padding: .2em .4em;">{{ number_format($persenParent1, 3) }}</td> --}}
                     </tr>
                 @endif
@@ -379,7 +378,7 @@
                             }
                         }
                         $selisihParent2 =  (int)$totalParent2 - (int)$totalParent2Sesudah;
-                        $persenParent2 = (abs($selisihParent2) / ($totalParent2 + $totalParent2Sesudah) * 100);
+                        // $persenParent2 = (abs($selisihParent2) / ($totalParent2 + $totalParent2Sesudah) * 100);
                     @endphp
                     <tr>
                         <td style="padding: .2em .4em;"></td>
@@ -444,9 +443,8 @@
                         @endforeach
 
                         {{-- selisih masih salah karena cara asal produk lebih dua --}}
+                        <td style="text-align: right; padding: .2em .4em;"><b>{{ number_format($selisihParent2,0,',','.') }}</b></td>
                         <td style="text-align: right; padding: .2em .4em;">0</td>
-                        <td style="text-align: right; padding: .2em .4em;">0</td>
-                        {{-- <td style="text-align: right; padding: .2em .4em;"><b>{{ number_format(abs($selisihParent2),0,',','.') }}</b></td> --}}
                         {{-- <td style="text-align: right; padding: .2em .4em;">{{ number_format($persenParent2, 3) }}</td> --}}
                     </tr>
                 @endif
@@ -465,7 +463,7 @@
                             }
                         }
                         $selisihParent3 = (int)$totalParent3 - (int)$totalParent3Sesudah;
-                        $persenParent3 = (abs($selisihParent3) / ($totalParent3 + $totalParent3Sesudah) * 100);
+                        // $persenParent3 = (abs($selisihParent3) / ($totalParent3 + $totalParent3Sesudah) * 100);
                     @endphp
 
                     <tr>
@@ -529,12 +527,12 @@
                         
 
                         {{-- selisih masih salah karena cara asal produk lebih dua --}}
+                        <td style="text-align:right; padding: .2em .4em;">{{ number_format($selisihParent3,0,',','.') }}</td>
                         <td style="text-align: right; padding: .2em .4em;">0</td>
-                        <td style="text-align: right; padding: .2em .4em;">0</td>
-                        {{-- <td style="text-align:right; padding: .2em .4em;">{{ number_format(abs($selisihParent3),0,',','.') }}</td>
-                        <td style="text-align:right; padding: .2em .4em;">{{ number_format($persenParent3, 3) }}</td> --}}
+                        {{-- <td style="text-align:right; padding: .2em .4em;">{{ number_format($persenParent3, 3) }}</td> --}}
                     </tr>
                 @endif
+
 
                 {{-- Mata anggaran 4 --}}
                 @if ($item->id_mataanggaran4 && ($item->id_mataanggaran4 !== $parent4))
@@ -549,8 +547,8 @@
                                 $totalParent4Sesudah = $totalParent4Sesudah + ( (int)$ma4->jml_sesudah * (int)$ma4->hargasatuan_sesudah );
                             }
                         }
-                        $selisihParent4 = (int)$totalParent4- (int)$totalParent4Sesudah;
-                        $persenParent4 = (abs($selisihParent4) / ($totalParent4 + $totalParent4Sesudah) * 100);
+                        $selisihParent4 = (int)$totalParent4 - (int)$totalParent4Sesudah;
+                        // $persenParent4 = (abs($selisihParent4) / ($totalParent4 + $totalParent4Sesudah) * 100);
                     @endphp
                     <tr>
                         <td style="padding: .2em .4em;"></td>
@@ -613,19 +611,19 @@
                         @endforeach
                             
                         {{-- selisih masih salah karena cara asal produk lebih dua --}}
+                        <td style="text-align: right; padding: .2em .4em;">{{ number_format($selisihParent4,0,',','.') }}</td>
                         <td style="text-align: right; padding: .2em .4em;">0</td>
-                        <td style="text-align: right; padding: .2em .4em;">0</td>
-                        {{-- <td style="text-align: right; padding: .2em .4em;">{{ number_format(abs($selisihParent4),0,',','.') }}</td>
-                        <td style="text-align: right; padding: .2em .4em;">{{ number_format($persenParent4, 3) }}</td> --}}
+                        {{-- <td style="text-align: right; padding: .2em .4em;">{{ number_format($persenParent4, 3) }}</td> --}}
                     </tr>
                 @endif
+
 
                 {{-- Belanja --}}
                 @php
                     $totalKB = ( (int)$item->jml * (int)$item->hargasatuan );
                     $totalKBSesudah = ( (int)$item->jml_sesudah * (int)$item->hargasatuan_sesudah );
                     $selisih = $totalKB - $totalKBSesudah;
-                    $persen = (abs($selisih) / ($totalKB + $totalKBSesudah) * 100);
+                    // $persen = (abs($selisih) / ($totalKB + $totalKBSesudah) * 100);
                 @endphp
                 <tr>
                     <td style="padding: .2em .4em;"></td>
@@ -666,10 +664,10 @@
                     @endforeach
                     
                     {{-- selisih masih salah karena cara asal produk lebih dua --}}
+                    {{-- <td style="text-align: right; padding: .2em .4em;">0</td> --}}
+                    <td style="text-align: right; padding: .2em .4em;">{{ number_format($selisih,0,',','.') }}</td>
                     <td style="text-align: right; padding: .2em .4em;">0</td>
-                    <td style="text-align: right; padding: .2em .4em;">0</td>
-                    {{-- <td style="text-align: right; padding: .2em .4em;">{{ number_format(abs($selisih),0,',','.') }}</td>
-                    <td style="text-align: right; padding: .2em .4em;">{{ number_format($persen, 3) }}</td> --}}
+                    {{-- <td style="text-align: right; padding: .2em .4em;">{{ number_format($persen, 3) }}</td> --}}
                 </tr>
 
                 @php
