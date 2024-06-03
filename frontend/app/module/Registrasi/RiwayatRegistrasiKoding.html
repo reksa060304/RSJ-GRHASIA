@@ -91,7 +91,7 @@
                             </div>
                             <div class="grid_12" style="margin-top:5px">
                                 <input c-text-box type="input" filter="" class="k-textbox"
-                                    ng-model="item.noRegistrasi" />
+                                    ng-model="item.noRegistrasi"  ng-keypress="($event.which == 13) ? findByRegistrasi() : null"  />
                             </div>
                         </div>
                         <!--  <div class="grid_4">
@@ -281,8 +281,7 @@
 
                 <div class="grid_12" ng-show="cboDiagnosa1">
                     <div class="grid_12" style="margin-top:10px">
-                        <label c-label style="padding:5px;font-size:14px; font-weight:600">Pencarian Diagnosa
-                            berdasarkan ICD 9:</label>
+                        <label c-label style="padding:5px;font-size:14px; font-weight:600">Pencarian  Kode Tindakan Medis berdasarkan ICD 9-CM:</label>
                     </div>
                     <div class="grid_12" style="margin-top:10px">
                         <md-radio-group ng-model="findBy1" layout="row" layout-sm="row" layout-align="left left"

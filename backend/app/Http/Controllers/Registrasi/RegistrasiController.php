@@ -3088,7 +3088,7 @@ class RegistrasiController extends ApiController
                     'alm.objectpropinsifk','prp.namapropinsi','ps.notelepon','ps.nohp','ps.namaayah','ps.namaibu',
                     'ps.namakeluarga','ps.namasuamiistri','ps.penanggungjawab','ps.hubungankeluargapj','ps.pekerjaanpenangggungjawab',
                     'ps.ktppenanggungjawab','ps.alamatrmh','ps.alamatktr','pk1.id as idpek','ps.photo','ps.foto',
-                    'ps.objectgolongandarahfk','gol.golongandarah','ps.objectsukufk','sk.suku','ps.bahasa','ps.teleponpenanggungjawab',
+                    'ps.objectgolongandarahfk','gol.golongandarah','ps.objectsukufk','sk.suku','ps.bahasa as bahasapj','ps.teleponpenanggungjawab',
                     'ps.dokterpengirim','ps.alamatdokterpengirim','jk1.id as jkidpenanggungjawab','ps.jeniskelaminpenanggungjawab','ps.umurpenanggungjawab','ps.hambatankomunikasifk','ps.bahasafk','ham.hambatankomunikasi','bh.bahasa',
                     'ps.penanggungjawab2','ps.hubungankeluargapj2','ps.pekerjaanpenangggungjawab2','ps.alamatrmh2','ps.bahasa2',
                     'ps.teleponpenanggungjawab2','ps.jeniskelaminpenanggungjawab2','ps.umurpenanggungjawab2','jk2.id as idjk2','pk2.id as idpek2','ps.nik1','ps.nik2','ps.alergi','ps.sidik_jari')
@@ -3180,6 +3180,7 @@ class RegistrasiController extends ApiController
                 'nik2' => $data->nik2,
                 'alergi' => $data->alergi,
                 'sidik_jari' => $data->sidik_jari,
+                'bahasapj' => $data->bahasapj,
             );
 //        }
         $result = array(

@@ -28,7 +28,7 @@ define(['initialize'], function (initialize, pasienServices) {
             medifirstService.get("registrasi/get-combo-riwayat-regis", false).then(function (data) {
                 $scope.listDepartemen = data.data.deptrirj;
                 if($state.params.noregistrasi == '-')
-                     $scope.item.departement = { id: $scope.listDepartemen[0].id, namadepartemen: $scope.listDepartemen[0].namadepartemen }
+                     $scope.item.departement = { id: $scope.listDepartemen[1].id, namadepartemen: $scope.listDepartemen[1].namadepartemen }
                 $scope.sourceJenisDiagnosisPrimer = data.data.jenisdiagnosa;
                 $scope.sourceJenisDiagnosisPrimer1 = data.data.jenisdiagnosa;
             })

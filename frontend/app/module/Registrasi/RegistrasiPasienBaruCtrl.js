@@ -410,7 +410,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     $scope.item.alamatRumah = result.alamatrmh;
                     $scope.item.alamatKantor = result.alamatktr;
 
-                    $scope.item.Bahasa = result.bahasa;
+                    $scope.item.Bahasa = result.bahasapj;
                     $scope.item.TeleponP = result.teleponpenanggungjawab;
                     $scope.item.UmurP = result.umurpenanggungjawab;
                     $scope.item.DokterPengirim = result.dokterpengirim;
@@ -496,7 +496,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                      if (result.bahasa2)
                         $scope.item.Bahasa2 = result.bahasa2
                      if (result.jeniskelaminpenanggungjawab2){
-                        $scope.item.jenisKelaminP = { id: result.idjk2, jeniskelamin: result.jeniskelaminpenanggungjawab2 };
+                        $scope.item.jenisKelaminP2 = { id: result.idjk2, jeniskelamin: result.jeniskelaminpenanggungjawab2 };
                      }
                        
                     if (result.umurpenanggungjawab2)
@@ -903,6 +903,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                                 'id': $scope.item.propinsi != undefined ? $scope.item.propinsi.id : null,
                                             },
                                             'kodePos': $scope.item.kodePos != undefined ? $scope.item.kodePos : null,
+
                                             'penanggungjawab': $scope.item.PenanggungJawab != undefined ? $scope.item.PenanggungJawab : null,
                                             'hubungankeluargapj': $scope.item.Hubungan != undefined ? $scope.item.Hubungan : null,
                                             'pekerjaanpenangggungjawab': pekerjaanPj,
