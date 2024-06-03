@@ -74,7 +74,7 @@ class RegistrasiController extends ApiController
             ->leftjoin ('pekerjaan_m as pk','ps.objectpekerjaanfk','=','pk.id')
             ->leftjoin ('jeniskelamin_m as jk','jk.id','=','ps.objectjeniskelaminfk')
 //            ->leftjoin ('pasiendaftar_t as pd','pd.nocmfk','=','ps.id')
-            ->select('ps.nocm','ps.id as nocmfk','ps.namapasien','ps.objectjeniskelaminfk','jk.jeniskelamin','ps.tgllahir',
+            ->select('ps.nocm','ps.id as nocmfk','ps.namapasien','ps.objectjeniskelaminfk','jk.jeniskelamin','ps.tgllahir','ps.nokunjunganterakhir',
                 'alm.alamatlengkap','pdd.pendidikan','pk.pekerjaan','ps.noidentitas','ps.notelepon','ps.foto','ps.nobpjs','ps.pj1','ps.pj2','ps.pj3'
 //                DB::raw('encode(foto, \'base64\') AS foto'))
             )
@@ -728,7 +728,8 @@ class RegistrasiController extends ApiController
                 'pg.kddokterbpjs',
                 'ru.noruangan as kdruanganbpjs',
                 DB::raw('case when ru.objectdepartemenfk in (16,35,17) then \'true\'
-                when ru.objectdepartemenfk =45 then \'edelweis\' else \'false\' end as israwatinap'))
+                when ru.objectdepartemenfk =45 then \'edelweis\' else \'false\' end as israwatinap')
+                )
             ->where('pd.norec', $request['norecPD'])
             ->where('apd.norec', $request['norecAPD'])
             ->where('pd.kdprofile', (int)$kdProfile)
@@ -1193,7 +1194,7 @@ class RegistrasiController extends ApiController
             ->leftjoin('profile_m as pro','pro.id','=','ps.kdprofile')
             ->leftjoin('jeniskelamin_m as jk','jk.id','=','ps.objectjeniskelaminfk')
             ->select('ps.isrmhilang','ps.isinaktif','ps.nocm','ps.namapasien','ps.tgldaftar', 'ps.tgllahir',
-                'jk.jeniskelamin','ps.noidentitas','alm.alamatlengkap',
+                'jk.jeniskelamin','ps.noidentitas','alm.alamatlengkap','ps.nokunjunganterakhir',
                 'ps.id as nocmfk','ps.namaayah','ps.notelepon','ps.nohp','ps.tglmeninggal','ps.iskompleks','ps.nobpjs','ps.sidik_jari'//,
 //                'ps.foto'
                 ,
@@ -7462,9 +7463,16 @@ class RegistrasiController extends ApiController
                         'nostruklastfk' => null,
                         'nosbmlastfk' => null,
                         'objectjeniskasusfk' => $request['jeniskasus']['id'],
+                        'nokunjungan' =>  $request['kunjungan'],
 
                     ]
                 );
+            $ddddd=Pasien::where('id', $request['nocmfk'])
+            ->update([                   
+                    'nokunjunganterakhir' =>  $request['kunjungan'],
+
+                ]
+            );
         }
 
         try{
@@ -13616,9 +13624,9 @@ GROUP BY y.KET
                 from riwayatkamar_m rm
                 inner join ruangan_m ru on ru.id = rm.objectruanganfk
                 inner join(
-                    select objectruanganfk,objectkamarfk,max(tanggalawal) as tanggal from riwayatkamar_m 
+                    select objectruanganfk,objectkamarfk,max(tanggalawal) as tanggal from riwayatkamar_m
                     where 
-                    '$arrmax[0] 23:59:59' BETWEEN tanggalawal and COALESCE(tanggalakhir,'$arrmax[0] 23:59:59')
+                    '$arrmax[0] ' BETWEEN tanggalawal and COALESCE(tanggalakhir,'$arrmax[0] ')
                     group by objectruanganfk,objectkamarfk
                 ) as x	
                 on rm.objectruanganfk=x.objectruanganfk and rm.objectkamarfk=x.objectkamarfk and rm.tanggalawal = x.tanggal
@@ -13648,19 +13656,19 @@ GROUP BY y.KET
         order by pd.tglregistrasi::date asc
         "));
 
-        $pasienaps = DB::select(DB::raw("select count(pd.noregistrasi)as jml, date_part('day', pd.tglpulang::date)as tgl from pasiendaftar_t pd where pd.objectstatuspulangfk = 2 and date_part('month', pd.tglpulang)= $th and date_part('year', pd.tglpulang)=$bl and pd.kdprofile = 30 and pd.statusenabled = true
+        $pasienaps = DB::select(DB::raw("select count(pd.noregistrasi)as jml, date_part('day', pd.tglpulang::date)as tgl from pasiendaftar_t pd where pd.objectstatuspulangfk = 2 and pd.objectkondisipasienfk not in(6,5) and date_part('month', pd.tglpulang)= $th and date_part('year', pd.tglpulang)=$bl and pd.kdprofile = 30 and pd.statusenabled = true
         GROUP BY pd.tglpulang::date
         order by pd.tglpulang::date asc
         ")); 
-        $pasienapd = DB::select(DB::raw("select count(pd.noregistrasi)as jml, date_part('day', pd.tglpulang::date)as tgl from pasiendaftar_t pd where pd.objectstatuspulangfk in (1,6) and date_part('month', pd.tglpulang)= $th and date_part('year', pd.tglpulang)=$bl and pd.kdprofile = 30 and pd.statusenabled = true
+        $pasienapd = DB::select(DB::raw("select count(pd.noregistrasi)as jml, date_part('day', pd.tglpulang::date)as tgl from pasiendaftar_t pd where pd.objectstatuspulangfk in (1,6) and pd.objectkondisipasienfk not in(6,5)and date_part('month', pd.tglpulang)= $th and date_part('year', pd.tglpulang)=$bl and pd.kdprofile = 30 and pd.statusenabled = true
         GROUP BY pd.tglpulang::date
         order by pd.tglpulang::date asc
         ")); 
-        $pasienrujuk = DB::select(DB::raw("select count(pd.noregistrasi)as jml, date_part('day', pd.tglpulang::date)as tgl from pasiendaftar_t pd where pd.objectstatuspulangfk in (4,5,10,11) and date_part('month', pd.tglpulang)= $th and date_part('year', pd.tglpulang)=$bl and pd.kdprofile = 30 and pd.statusenabled = true
+        $pasienrujuk = DB::select(DB::raw("select count(pd.noregistrasi)as jml, date_part('day', pd.tglpulang::date)as tgl from pasiendaftar_t pd where pd.objectstatuspulangfk in (4,5,10,11) and pd.objectkondisipasienfk not in(6,5) and date_part('month', pd.tglpulang)= $th and date_part('year', pd.tglpulang)=$bl and pd.kdprofile = 30 and pd.statusenabled = true
         GROUP BY pd.tglpulang::date
         order by pd.tglpulang::date asc
         ")); 
-        $pasienlari = DB::select(DB::raw("select count(pd.noregistrasi)as jml, date_part('day', pd.tglpulang::date)as tgl from pasiendaftar_t pd where pd.objectstatuspulangfk = 3 and date_part('month', pd.tglpulang)= $th and date_part('year', pd.tglpulang)=$bl and pd.kdprofile = 30 and pd.statusenabled = true
+        $pasienlari = DB::select(DB::raw("select count(pd.noregistrasi)as jml, date_part('day', pd.tglpulang::date)as tgl from pasiendaftar_t pd where pd.objectstatuspulangfk = 3 and pd.objectkondisipasienfk not in(6,5) and date_part('month', pd.tglpulang)= $th and date_part('year', pd.tglpulang)=$bl and pd.kdprofile = 30 and pd.statusenabled = true
         GROUP BY pd.tglpulang::date
         order by pd.tglpulang::date asc
         ")); 

@@ -109,7 +109,8 @@ class IGDController extends  ApiController
                 'pd.objectpegawaifk', 'peg.namalengkap as namadokter',
                 'apd.objectruanganfk', 'ru.namaruangan', 'apd.norec as norec_apd','pd.norec as norec_pd',
                 'ps.tgllahir','kps.kelompokpasien','kls.namakelas','jk.jeniskelamin',
-                'pd.objectruanganlastfk','sps.nostruk','ps.id as nocmfk'
+                'pd.objectruanganlastfk','sps.nostruk','ps.id as nocmfk','ps.nokunjunganterakhir',
+                \DB::raw('ps.nokunjunganterakhir - 1 as min1')
             )
             ->where('pd.kdprofile', (int)$kdProfile)
             ->whereNull('btl.norec')

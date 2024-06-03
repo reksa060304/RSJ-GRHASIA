@@ -123,6 +123,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             $scope.isBatal = true;
                             $scope.isReport = true;
                             $scope.isReportPendaftaran = true;
+                            // $scope.item.kunjungan = his.data[0].min1 +1;
 
                             $scope.isReportRawatInap = true;
 
@@ -145,6 +146,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         var umur = dateHelper.CountAge(new Date($scope.item.pasien.tgllahir), now);
                         $scope.item.pasien.umur = umur.year + ' thn ' + umur.month + ' bln ' + umur.day + ' hari'
                         $scope.item.nocmfk = e.data.data[0].nocmfk;
+                        $scope.item.kunjungan = e.data.data[0].nokunjunganterakhir + 1
                         $scope.item.pj1 = e.data.data[0].pj1
                         $scope.item.pj2 = e.data.data[0].pj2
                         $scope.item.pj3 = e.data.data[0].pj3
@@ -321,6 +323,12 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                     return
                 }
+                if ($scope.item.kunjungan == undefined) {
+                    toastr.error('Jumlah kunjungan sebelumnya harus diisi')
+                    $scope.isSimpan = false
+
+                    return
+                }
                 if ($scope.item.kamar == undefined) {
                     toastr.error('No Kamar harus di isi')
                     $scope.isSimpan = false
@@ -378,6 +386,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 if ($scope.item.jenisKasus != undefined){
                     jenisKasus = $scope.item.jenisKasus.id
                 }
+                var kunjungan = null;
+                if ($scope.item.kunjungan != undefined){
+                    kunjungan = parseInt($scope.item.kunjungan)
+                }
                 var tmpData = {
                     "jeniskasus": {
                         "id": jenisKasus
@@ -425,6 +437,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     "status": "pindah Kamar",
                     "noRecPasienDaftar": $scope.currentNorec,
                     "statusPasien": $scope.item.historyPasien.statuspasien,
+                    "kunjungan":kunjungan,
+                    "nocmfk":$scope.item.pasien.nocmfk,
 
                 }
 

@@ -376,11 +376,11 @@ define(['initialize'], function (initialize) {
                         title: "Kelas Rawat",
                         width: "105px",
                     },
-                    {
-                        field: "smf",
-                        title: "SMF",
-                        width: "75px",
-                    },
+                    // {
+                    //     field: "smf",
+                    //     title: "SMF",
+                    //     width: "75px",
+                    // },
                     {
                         field: "",
                         title: "Keterangan",
@@ -438,12 +438,12 @@ define(['initialize'], function (initialize) {
                             if (lR.day == 0) {
                                 datas[i].lamarawat = '1 hr';
                             } else {
-                                datas[i].lamarawat = lR.day + ' hr ';
+                                datas[i].lamarawat = parseInt(lR.day)  + ' hr ';
                             }
                             if (lD.day == 0) {
                                 datas[i].haridirawat = '1 hr';
                             } else {
-                                datas[i].haridirawat = lD.day + ' hr ';
+                                datas[i].haridirawat = parseInt(lD.day) + 1 + ' hr ';
                             }
                         }
 
@@ -489,16 +489,16 @@ define(['initialize'], function (initialize) {
 
                     { field: "no", title: "No", width: "45px" },
                     {
-                        field: "tglregistrasi",
+                        field: "tglmasuk2",
                         title: "Tgl Masuk  ",
                         width: "80px",
-                        template: "<span class='style-left'>{{formatTanggal('#: tglregistrasi #')}}</span>"
+                        template: "<span class='style-left'>{{formatTanggal('#: tglmasuk2 #')}}</span>"
                     },
                     {
-                        field: "tglregistrasi",
+                        field: "tglmasuk",
                         title: "Jam Masuk  ",
                         width: "80px",
-                        template: "<span class='style-left'>{{formatJam('#: tglregistrasi #')}}</span>"
+                        template: "<span class='style-left'>{{formatJam('#: tglmasuk2 #')}}</span>"
                     },
                     {
                         field: "tglkeluar",
@@ -533,15 +533,25 @@ define(['initialize'], function (initialize) {
                         width: "120px",
                     },
                     {
-                        field: "lamarawat",
+                        field: "lamadirawat",
                         title: "LD",
                         width: "75px",
                     },
                     {
-                        field: "haridirawat",
+                        field: "lamaperawatan",
                         title: "HP",
                         width: "75px",
                     },
+                    // {
+                    //     field: "lamarawat",
+                    //     title: "LD",
+                    //     width: "75px",
+                    // },
+                    // {
+                    //     field: "haridirawat",
+                    //     title: "HP",
+                    //     width: "75px",
+                    // },
                     {
                         field: "kelompokpasien",
                         title: "Tipe Pasien",
@@ -562,11 +572,11 @@ define(['initialize'], function (initialize) {
                         title: "Kelas Rawat",
                         width: "105px",
                     },
-                    {
-                        field: "smf",
-                        title: "SMF",
-                        width: "75px",
-                    },
+                    // {
+                    //     field: "smf",
+                    //     title: "SMF",
+                    //     width: "75px",
+                    // },
                     {
                         field: "namalengkap",
                         title: "Dokter",
@@ -674,13 +684,13 @@ define(['initialize'], function (initialize) {
                     { field: "no", title: "No", width: "45px" },
                     {
                         field: "tglregistrasi",
-                        title: "Tgl Masuk  ",
+                        title: "Tgl Pindah  ",
                         width: "80px",
                         template: "<span class='style-left'>{{formatTanggal('#: tglmasuk #')}}</span>"
                     },
                     {
                         field: "tglregistrasi",
-                        title: "Jam Masuk  ",
+                        title: "Jam Pindah  ",
                         width: "80px",
                         template: "<span class='style-left'>{{formatJam('#: tglmasuk #')}}</span>"
                     },
@@ -724,12 +734,13 @@ define(['initialize'], function (initialize) {
                         field: "namakelas",
                         title: "Kelas Rawat",
                         width: "105px",
-                    },
-                    {
-                        field: "smf",
-                        title: "SMF",
-                        width: "75px",
                     }
+                    // ,
+                    // {
+                    //     field: "smf",
+                    //     title: "SMF",
+                    //     width: "75px",
+                    // }
                 ]
             }
 
@@ -871,12 +882,12 @@ define(['initialize'], function (initialize) {
                         field: "namakelas",
                         title: "Kelas Rawat",
                         width: "105px",
-                    },
-                    {
-                        field: "smf",
-                        title: "SMF",
-                        width: "75px",
                     }
+                    // {
+                    //     field: "smf",
+                    //     title: "SMF",
+                    //     width: "75px",
+                    // }
                 ]
             }
 
@@ -1019,7 +1030,7 @@ define(['initialize'], function (initialize) {
                     },
                     {
                         field: "agama",
-                        title: "Pekerjaan",
+                        title: "Agama",
                         width: "120px",
                     },
                     {
@@ -1039,18 +1050,18 @@ define(['initialize'], function (initialize) {
                         width: "120px",
                     },
                     {
-                        field: "lamarawat",
-                        title: "LD",
+                        field: "lamadirawat",
+                        title: "LD", //tgl keluar - tgl masuk kalau hasil 0 maka 1
                         width: "75px",
                     },
                     {
-                        field: "smf",
-                        title: "HR",
+                        field: "lamaperawatan",
+                        title: "HR", //tgl keluar - tgl masuk
                         width: "75px",
                     },                    
                     {
                         field: "kunjungan",
-                        title: "Kunj. Ke",
+                        title: "Rawat Ke",
                         width: "75px",
                     },
                     {

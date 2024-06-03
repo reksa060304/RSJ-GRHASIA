@@ -88,6 +88,17 @@
                                     k-auto-bind="false" k-data-source="listNoBed"
                                     k-on-change="reformatModel(item.nomorTempatTidur)" />
                             </div>
+                            <div class="grid_4 " style="margin-top: 13px">
+                                <label c-label item="item ">Kunjungan Ke RI</label>
+                            </div>
+                            <div class="grid_8 ">
+                                <div class="grid_12">
+                                    <input type="text" name="catatan" class="k-textbox" ng-model="item.kunjungan" style="width: 100%;"
+                                        ng-pattern="/^\d*$/"
+                                        oninput="this.value=this.value.replace(/[^0-9]/g,'')"
+                                        required>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="grid_4 " style="margin-top: 13px">
