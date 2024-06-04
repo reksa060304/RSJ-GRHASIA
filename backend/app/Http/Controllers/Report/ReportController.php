@@ -3528,7 +3528,7 @@ class ReportController extends ApiController{
         select subkegiatan kegiatan, kode, kode1::int, div, sum(jumlahbarangjasa) jumlahbarangjasa, sum(jumlahmodalgedung) jumlahmodalgedung, sum(jumlahpegawai) jumlahpegawai,  sum(jumlahmodalalat) jumlahmodalalat, sum(jumlahmodallainnya) jumlahmodallainnya,
         sum(jumlahbarangjasa) + sum(jumlahmodalgedung)+ sum(jumlahpegawai)+sum(jumlahmodalalat)+sum(jumlahmodallainnya) as total
         from(
-        select kegiatan, case when $tahapnow=1 then subkegiatan else split_part(subkegiatan, '-', 2) end as subkegiatan, kode, kode1::int, div,
+        select kegiatan, case when $tahapnow=1 then subkegiatan else REGEXP_REPLACE(subkegiatan, '^[0-9-]+', '') end as subkegiatan, kode, kode1::int, div,
         case when id_jenisanggaran = 3 then subtotal else 0 end as jumlahpegawai,
         case when id_jenisanggaran = 4 then subtotal else 0 end as jumlahbarangjasa,
         case when id_jenisanggaran = 5 then subtotal else 0 end as jumlahmodalgedung,
@@ -17296,7 +17296,7 @@ public function suratBuktiPengembalian(Request $request)
         
                 union all
         
-                select case when $tahapnow=1 then y.subkegiatan else split_part(y.subkegiatan, '-', 2) end as kegiatan, 
+                select case when $tahapnow=1 then y.subkegiatan else REGEXP_REPLACE(y.subkegiatan, '^[0-9-]+', '') end as kegiatan, 
                 y.kode, y.kode1, y.div, sum(y.apbd) apbd, sum(y.jasalayanan) jasalayanan, sum(y.dak) dak, sum(y.danais) danais, sum(y.silpa) silpa,
                 sum(y.apbd) + sum(y.jasalayanan) + sum(y.dak) + sum(y.danais) + sum(y.silpa) as total
                 from(
