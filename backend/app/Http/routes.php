@@ -29,6 +29,9 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
 
     Route::group(['prefix' => 'medifirst2000'], function () {
 
+		// Masih dalam percobaan. abaikan
+		Route::get('report/coba-lapung', 'Report\ReportController@cobaLapung');
+
 		// Cetakan
 		Route::get('report/cetak-label-pilihan', 'Report\ReportController@cetakLabelPilihan');
 

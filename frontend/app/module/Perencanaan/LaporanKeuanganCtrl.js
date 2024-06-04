@@ -552,6 +552,35 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 window.open(baseTransaksi + "report/get-cetak-fungsional-new?tglcetak=" + tglcetakfungsional + "&tglbku=" + tglbkufungsional + "&asalproduk=" + asalprodukfungsional + "&jenisrekening=" + jenisrekeningfungsional, '_blank');
             }
 
+            $scope.CetakFungsionalRev = function(){
+
+                var tglcetakfungsional = ""
+                if ($scope.item.tglcetakfungsional != undefined){
+                    tglcetakfungsional = moment($scope.item.tglcetakfungsional).format('YYYY-MM-DD')
+                }
+
+                var tglbkufungsional = ""
+                if ($scope.item.tglbkufungsional != undefined){
+                    tglbkufungsional = moment($scope.item.tglbkufungsional).format('YYYY-MM-DD')
+                }
+
+                var asalprodukfungsional = ""
+                if ($scope.item.asalprodukfungsional != undefined){
+                    asalprodukfungsional = $scope.item.asalprodukfungsional.id
+                }
+
+                var jenisrekeningfungsional = ""
+                if ($scope.item.jenisrekeningfungsional != undefined){
+                    jenisrekeningfungsional = $scope.item.jenisrekeningfungsional.id
+                }
+
+                window.open(baseTransaksi + "report/coba-lapung" 
+                    + "?tglcetak=" + tglcetakfungsional 
+                    + "&tglbku=" + tglbkufungsional 
+                    + "&asalproduk=" + asalprodukfungsional 
+                    + "&jenisrekening=" + jenisrekeningfungsional, '_blank');
+            }
+
             $scope.CetakRO = function(){
 
                 if ($scope.item.tahunro == undefined){

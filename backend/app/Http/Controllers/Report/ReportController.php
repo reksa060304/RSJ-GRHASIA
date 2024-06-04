@@ -22348,7 +22348,7 @@ public function suratBuktiPengembalian(Request $request)
     {   
         $asalProduk = null;
 
-        if($request['objectasalprodukfk'] == 18 || $request['objectasalprodukfk'] == 2){
+        if($request['asalproduk'] == 18 || $request['asalproduk'] == 2){
             $asalProduk = [18,2];
         }else {
             $asalProduk = [4,15,21];
@@ -22424,7 +22424,7 @@ public function suratBuktiPengembalian(Request $request)
                 kb.statusenabled = true
                 and kb.objecttahapfk = 4
                 and kb.objectasalprodukfk in (".implode(',', $asalProduk).")
-                and ka.tahun = cast(extract(year from timestamp '".$request['tanggal']."') as VARCHAR)
+                and ka.tahun = cast(extract(year from timestamp '".$request['tglbku']."') as VARCHAR)
             group by
                 ka.id,
                 ka.kode,
@@ -22482,11 +22482,11 @@ public function suratBuktiPengembalian(Request $request)
                 ma1.id as id_mataanggaran1,
                 ma1.kodemataanggaran as kode_mataanggaran1,
                 ap.id as id_asalproduk,
-                SUM(case when extract(year from bku.tglbku) = extract(year from timestamp '".$request['tanggal']."')
-                    and bku.tglbku <= DATE_TRUNC('MONTH', timestamp '".$request['tanggal']."')
+                SUM(case when extract(year from bku.tglbku) = extract(year from timestamp '".$request['tglbku']."')
+                    and bku.tglbku <= DATE_TRUNC('MONTH', timestamp '".$request['tglbku']."')
                 then sr.totalbelanja else 0 end) as total_belanja_bulan_lalu,
-                SUM(case when extract(year from bku.tglbku) = extract(year from timestamp '".$request['tanggal']."')
-                    and extract(month from bku.tglbku) = extract(month from timestamp '".$request['tanggal']."')
+                SUM(case when extract(year from bku.tglbku) = extract(year from timestamp '".$request['tglbku']."')
+                    and extract(month from bku.tglbku) = extract(month from timestamp '".$request['tglbku']."')
                 then sr.totalbelanja else 0 end) as total_belanja_bulan_ini,
                 SUM(sr.totalbelanja) as total_belanja
             from 
@@ -22518,12 +22518,11 @@ public function suratBuktiPengembalian(Request $request)
             WHERE
                 sr.status = 'Sudah Diverifikasi'
                 and sr.statusenabled = true
-                and extract(month from bku.tglbku) <= extract(month from timestamp '".$request['tanggal']."') 
-                and extract(year from bku.tglbku) = extract(year from timestamp '".$request['tanggal']."')
-                and ka.tahun = cast(extract(year from timestamp '".$request['tanggal']."') as VARCHAR)
+                and extract(month from bku.tglbku) <= extract(month from timestamp '".$request['tglbku']."') 
+                and extract(year from bku.tglbku) = extract(year from timestamp '".$request['tglbku']."')
+                and ka.tahun = cast(extract(year from timestamp '".$request['tglbku']."') as VARCHAR)
                 AND kb.objecttahapfk = 4
-            --	and sr.objectasalprodukfk in (4,15,21)
-                and sr.objectasalprodukfk in (2,18)
+                and sr.objectasalprodukfk in (".implode(',', $asalProduk).")
             GROUP BY
                 ka.id,
                 ka.kode,
