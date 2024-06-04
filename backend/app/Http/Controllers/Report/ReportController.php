@@ -22205,6 +22205,7 @@ public function suratBuktiPengembalian(Request $request)
                     AND ta.kdprofile = 30
                 -- sebelum
                 LEFT JOIN keteranganbelanja_t AS kb2 ON kb2.objectmataanggaranfk = kb.objectmataanggaranfk 
+                    AND kb2.statusenabled = TRUE    
                     AND kb2.objecttahapfk = ".$request['terhadap']."
                     AND kb2.keteranganbelanja = kb.keteranganbelanja
                     AND kb2.objectkegiatanfk = ".$idSebelum[0]->id_kegiatan."
@@ -22341,6 +22342,407 @@ public function suratBuktiPengembalian(Request $request)
             ->get();
 
         return view('report.asset.cetak-label-pilihan', compact('data'));
+    }
+
+    public function cobaLapung(Request $request)
+    {   
+        $asalProduk = null;
+
+        if($request['objectasalprodukfk'] == 18 || $request['objectasalprodukfk'] == 2){
+            $asalProduk = [18,2];
+        }else {
+            $asalProduk = [4,15,21];
+        }
+
+        $dataAnggaran = DB::select(DB::raw("
+            select
+                -- kegiatan anggaran
+                ka.id as id_kegiatan,
+                ka.kode as kode_kegiatan,
+                MIN(ka.keterangan) as keterangan_kegiatan,
+                MIN(ka.targetmasuk) as targetmasuk_kegiatan,
+                -- anak kegiatan anggaran
+                ka3.id as id_kegiatan3,
+                ka3.kode as kode_kegiatan3,
+                MIN(ka3.keterangan) as keterangan_kegiatan3,
+                ka2.id as id_kegiatan2,
+                ka2.kode as kode_kegiatan2,
+                MIN(ka2.keterangan) as keterangan_kegiatan2,
+                ka1.id as id_kegiatan1,
+                ka1.kode as kode_kegiatan1,
+                MIN(ka1.keterangan) as keterangan_kegiatan1,
+                -- mata anggaran
+                ma.id as id_mataanggaran,
+                ma.kodemataanggaran as kode_mataanggaran,
+                MIN(ma.namamataanggaran) as nama_mataanggaran,
+                -- anak mata anggaran
+                ma3.id as id_mataanggaran3,
+                ma3.kodemataanggaran as kode_mataanggaran3,
+                MIN(ma3.namamataanggaran) as nama_mataanggaran3,
+                ma2.id as id_mataanggaran2,
+                ma2.kodemataanggaran as kode_mataanggaran2,
+                MIN(ma2.namamataanggaran) as nama_mataanggaran2,
+                ma1.id as id_mataanggaran1,
+                ma1.kodemataanggaran as kode_mataanggaran1,
+                MIN(ma1.namamataanggaran) as nama_mataanggaran1,
+                ap.id as id_asalproduk,
+                -- total anggaran
+                SUM(kb.subtotal) as total_anggaran
+            from
+                keteranganbelanja_t as kb
+            join asalproduk_m as ap on
+                ap.id = kb.objectasalprodukfk
+                and ap.statusenabled = true
+            join tahapanggaran_m as ta on
+                ta.id = kb.objecttahapfk
+                and ta.statusenabled = true
+                -- kegiatan anggaran
+            join kegiatananggaran_m as ka on
+                ka.id = kb.objectkegiatanfk
+                and ka.statusenabled = true
+            join kegiatananggaran_m as ka3 on
+                ka3.kode = SPLIT_PART(ka.kode, '.', 1) || '.' || SPLIT_PART(ka.kode, '.', 2) || '.' || SPLIT_PART(ka.kode, '.', 3)  || '.' || SPLIT_PART(ka.kode, '.', 4) 
+                || '.' || SPLIT_PART(ka.kode, '.', 5) || '.' || SPLIT_PART(ka.kode, '.', 6) and ka3.statusenabled = true
+            join kegiatananggaran_m as ka2 on
+                ka2.kode = SPLIT_PART(ka.kode, '.', 1) || '.' || SPLIT_PART(ka.kode, '.', 2) || '.' || SPLIT_PART(ka.kode, '.', 3)  || '.' || SPLIT_PART(ka.kode, '.', 4) 
+                || '.' || SPLIT_PART(ka.kode, '.', 5) and ka2.statusenabled = true
+            join kegiatananggaran_m as ka1 on
+                ka1.kode = SPLIT_PART(ka.kode, '.', 1) || '.' || SPLIT_PART(ka.kode, '.', 2) || '.' || SPLIT_PART(ka.kode, '.', 3) and ka1.statusenabled = true
+                -- mata anggaran
+            join mataanggaran_m as ma on
+                ma.id = kb.objectmataanggaranfk
+                and ma.statusenabled = true
+            join mataanggaran_m as ma3 on
+                ma3.kodemataanggaran ilike SPLIT_PART(ma.kodemataanggaran, '.', 1) || '.' || SPLIT_PART(ma.kodemataanggaran, '.', 2)  
+                || '.' || SPLIT_PART(ma.kodemataanggaran, '.', 3) and ma3.statusenabled = true
+            join mataanggaran_m as ma2 on
+                ma2.kodemataanggaran ilike SPLIT_PART(ma3.kodemataanggaran, '.', 1) || '.' || SPLIT_PART(ma3.kodemataanggaran, '.', 2)
+                and ma2.statusenabled = true
+            join mataanggaran_m as ma1 on
+                ma1.kodemataanggaran ilike SPLIT_PART(ma2.kodemataanggaran, '.', 1) and ma1.statusenabled = true
+            where
+                kb.statusenabled = true
+                and kb.objecttahapfk = 4
+                and kb.objectasalprodukfk in (".implode(',', $asalProduk).")
+                and ka.tahun = cast(extract(year from timestamp '".$request['tanggal']."') as VARCHAR)
+            group by
+                ka.id,
+                ka.kode,
+                ma.id,
+                ma.kodemataanggaran,
+                ap.id,
+                -- anak kegiatan
+                ka3.id,
+                ka3.kode,
+                ka2.id,
+                ka2.kode,
+                ka1.id,
+                ka1.kode,
+                -- anak mata anggaran
+                ma3.id,
+                ma3.kodemataanggaran,
+                ma2.id,
+                ma2.kodemataanggaran,
+                ma1.id,
+                ma1.kodemataanggaran
+            order by
+                SPLIT_PART(ka.kode, '.', 2),
+                SPLIT_PART(ka.kode, '.', 3),
+                cast(SPLIT_PART(ka.kode, '.', 7) as INTEGER),
+                SPLIT_PART(ma.kodemataanggaran, '.', 1),
+                SPLIT_PART(ma.kodemataanggaran, '.', 2),
+                cast(SPLIT_PART(ma.kodemataanggaran, '.', 3) as INTEGER),
+                case when SPLIT_PART(ma.kodemataanggaran, '.', 5) = '' then
+                    cast(SPLIT_PART(ma.kodemataanggaran, '.', 4) as INTEGER)
+                else
+                    cast(SPLIT_PART(ma.kodemataanggaran, '.', 5) as INTEGER)
+                end
+        "));
+
+        $dataSPJ = DB::select(DB::raw("
+            select 
+                ka.id as id_kegiatan,
+                ka.kode  as kode_kegiatan,
+                MIN(ka.keterangan) as keterangan_kegiatan,
+                ma.id as id_mataanggaran,
+                ma.kodemataanggaran as kode_mataanggaran,
+                ma.namamataanggaran as nama_mataanggaran,
+                -- anak kegiatan anggaran
+                ka3.id as id_kegiatan3,
+                ka3.kode as kode_kegiatan3,
+                ka2.id as id_kegiatan2,
+                ka2.kode as kode_kegiatan2,
+                ka1.id as id_kegiatan1,
+                ka1.kode as kode_kegiatan1,
+                -- anak mata anggaran
+                ma3.id as id_mataanggaran3,
+                ma3.kodemataanggaran as kode_mataanggaran3,
+                ma2.id as id_mataanggaran2,
+                ma2.kodemataanggaran as kode_mataanggaran2,
+                ma1.id as id_mataanggaran1,
+                ma1.kodemataanggaran as kode_mataanggaran1,
+                ap.id as id_asalproduk,
+                SUM(case when extract(year from bku.tglbku) = extract(year from timestamp '".$request['tanggal']."')
+                    and bku.tglbku <= DATE_TRUNC('MONTH', timestamp '".$request['tanggal']."')
+                then sr.totalbelanja else 0 end) as total_belanja_bulan_lalu,
+                SUM(case when extract(year from bku.tglbku) = extract(year from timestamp '".$request['tanggal']."')
+                    and extract(month from bku.tglbku) = extract(month from timestamp '".$request['tanggal']."')
+                then sr.totalbelanja else 0 end) as total_belanja_bulan_ini,
+                SUM(sr.totalbelanja) as total_belanja
+            from 
+                strukrealisasi_t as sr
+            JOIN realisasidetail_t AS rd ON rd.strukrealisasifk = sr.norec AND rd.statusenabled = TRUE
+            JOIN keteranganbelanja_t AS kb ON kb.norec = rd.keteranganbelanjafk AND kb.statusenabled = TRUE
+            JOIN  bukukasumum_t as bku ON bku.norec = sr.objectbkufk and bku.statusenabled = true
+            JOIN kegiatananggaran_m as ka on ka.id = sr.objectkegiatanfk and ka.statusenabled = true
+            JOIN mataanggaran_m as ma on ma.id = sr.objectmataanggaranfk and ma.statusenabled = true
+            JOIN asalproduk_m as ap on ap.id = sr.objectasalprodukfk and ap.statusenabled = true
+            --	anak kegiatan
+            JOIN kegiatananggaran_m as ka3 on
+                ka3.kode = SPLIT_PART(ka.kode, '.', 1) || '.' || SPLIT_PART(ka.kode, '.', 2) || '.' || SPLIT_PART(ka.kode, '.', 3)  || '.' || SPLIT_PART(ka.kode, '.', 4) 
+                || '.' || SPLIT_PART(ka.kode, '.', 5) || '.' || SPLIT_PART(ka.kode, '.', 6) and ka3.statusenabled = true
+            JOIN kegiatananggaran_m as ka2 on
+                ka2.kode = SPLIT_PART(ka.kode, '.', 1) || '.' || SPLIT_PART(ka.kode, '.', 2) || '.' || SPLIT_PART(ka.kode, '.', 3)  || '.' || SPLIT_PART(ka.kode, '.', 4) 
+                || '.' || SPLIT_PART(ka.kode, '.', 5) and ka2.statusenabled = true
+            JOIN kegiatananggaran_m as ka1 on
+                ka1.kode = SPLIT_PART(ka.kode, '.', 1) || '.' || SPLIT_PART(ka.kode, '.', 2) || '.' || SPLIT_PART(ka.kode, '.', 3) and ka1.statusenabled = true
+            -- anak mata anggaran
+            JOIN mataanggaran_m as ma3 on
+                ma3.kodemataanggaran ilike SPLIT_PART(ma.kodemataanggaran, '.', 1) || '.' || SPLIT_PART(ma.kodemataanggaran, '.', 2)  
+                || '.' || SPLIT_PART(ma.kodemataanggaran, '.', 3) and ma3.statusenabled = true
+            JOIN mataanggaran_m as ma2 on
+                ma2.kodemataanggaran ilike SPLIT_PART(ma3.kodemataanggaran, '.', 1) || '.' || SPLIT_PART(ma3.kodemataanggaran, '.', 2)
+                and ma2.statusenabled = true
+            JOIN mataanggaran_m as ma1 on
+                ma1.kodemataanggaran ilike SPLIT_PART(ma2.kodemataanggaran, '.', 1) and ma1.statusenabled = true
+            WHERE
+                sr.status = 'Sudah Diverifikasi'
+                and sr.statusenabled = true
+                and extract(month from bku.tglbku) <= extract(month from timestamp '".$request['tanggal']."') 
+                and extract(year from bku.tglbku) = extract(year from timestamp '".$request['tanggal']."')
+                and ka.tahun = cast(extract(year from timestamp '".$request['tanggal']."') as VARCHAR)
+                AND kb.objecttahapfk = 4
+            --	and sr.objectasalprodukfk in (4,15,21)
+                and sr.objectasalprodukfk in (2,18)
+            GROUP BY
+                ka.id,
+                ka.kode,
+                ma.id,
+                ma.kodemataanggaran,
+                -- anak kegiatan
+                ka3.id,
+                ka3.kode,
+                ka2.id,
+                ka2.kode,
+                ka1.id,
+                ka1.kode,
+                -- anak mata anggaran
+                ma3.id,
+                ma3.kodemataanggaran,
+                ma2.id,
+                ma2.kodemataanggaran,
+                ma1.id,
+                ma1.kodemataanggaran,
+                ap.id
+            ORDER BY
+                SPLIT_PART(ka.kode, '.', 2),
+                SPLIT_PART(ka.kode, '.', 3),
+                cast(SPLIT_PART(ka.kode, '.', 7) as INTEGER),
+                SPLIT_PART(ma.kodemataanggaran, '.', 1),
+                SPLIT_PART(ma.kodemataanggaran, '.', 2),
+                cast(SPLIT_PART(ma.kodemataanggaran, '.', 3) as INTEGER),
+                case when SPLIT_PART(ma.kodemataanggaran, '.', 5) = '' then
+                    cast(SPLIT_PART(ma.kodemataanggaran, '.', 4) as INTEGER)
+                else
+                    cast(SPLIT_PART(ma.kodemataanggaran, '.', 5) as INTEGER)
+                end
+        "));
+
+        $dataJenisAnggaran = DB::table('jenisanggaran_m')
+            ->where('statusenabled', true)
+            ->where('kdprofile', 30)
+            ->get();
+        
+
+        foreach($dataJenisAnggaran as $anggaran){
+            $anggaran->anggaran = 0;
+        }
+
+        return view('report.coba-lapung2', [
+            'data' => $dataAnggaran,
+            'lapung' => $dataSPJ,
+            'jenisAnggaran' => $dataJenisAnggaran
+        ]);
+    }
+
+    public function cobaLapung2(Request $request)
+    {
+        $anggaran = DB::select(DB::raw("
+            SELECT 
+                -- kegiatan anggaran
+                ka.id AS id_kegiatan,
+                ka.kode AS kode_kegiatan,
+                MIN(ka.keterangan) AS keterangan_kegiatan,
+                -- mata anggaran
+                ma.id AS id_mataanggaran,
+                ma.kodemataanggaran AS kode_mataanggaran,
+                MIN(ma.namamataanggaran) AS nama_mataanggaran,
+                
+                -- anak kegiatan anggaran
+                ka3.id AS id_kegiatan3,
+                ka3.kode AS kode_kegiatan3,
+                MIN(ka3.keterangan) AS keterangan_kegiatan3,
+                ka2.id AS id_kegiatan2,
+                ka2.kode AS kode_kegiatan2,
+                MIN(ka2.keterangan) AS keterangan_kegiatan2,
+                ka1.id AS id_kegiatan1,
+                ka1.kode AS kode_kegiatan1,
+                MIN(ka1.keterangan) AS keterangan_kegiatan1,
+                -- anak mata anggaran
+            ma3.id AS id_mataanggaran3,
+            ma3.kodemataanggaran AS kode_mataanggaran3,
+                MIN(ma3.namamataanggaran) AS nama_mataanggaran3,
+            ma2.id as id_mataanggaran2,
+            ma2.kodemataanggaran AS kode_mataanggaran2,
+                MIN(ma2.namamataanggaran) AS nama_mataanggaran2,
+            ma1.id as id_mataanggaran1,
+            ma1.kodemataanggaran AS kode_mataanggaran1,
+                MIN(ma1.namamataanggaran) AS nama_mataanggaran1,
+                SUM(kb.subtotal) AS total_anggaran
+            -- 	kb.subtotal
+            FROM keteranganbelanja_t AS kb
+            JOIN asalproduk_m AS ap ON ap.id = kb.objectasalprodukfk AND ap.statusenabled = TRUE AND ap.kdprofile = 30
+            JOIN tahapanggaran_m AS ta ON ta.id = kb.objecttahapfk AND ta.statusenabled = TRUE AND ta.kdprofile = 30
+            JOIN kegiatananggaran_m AS ka ON ka.id = kb.objectkegiatanfk AND ka.statusenabled = TRUE AND ka.kdprofile = 30                   
+            JOIN mataanggaran_m AS ma ON ma.id = kb.objectmataanggaranfk AND ma.statusenabled = TRUE AND ma.kdprofile = 30
+                -- anak kegiatan
+            JOIN kegiatananggaran_m AS ka3 ON ka3.kode = SPLIT_PART(ka.kode, '.', 1) || '.' || SPLIT_PART(ka.kode, '.', 2) || '.' || SPLIT_PART(ka.kode, '.', 3) 
+                || '.' || SPLIT_PART(ka.kode, '.', 4) || '.' || SPLIT_PART(ka.kode, '.', 5) || '.' || SPLIT_PART(ka.kode, '.', 6) AND ka3.statusenabled = TRUE
+            JOIN kegiatananggaran_m AS ka2 ON ka2.kode = SPLIT_PART(ka3.kode, '.', 1) || '.' || SPLIT_PART(ka3.kode, '.', 2) || '.' || SPLIT_PART(ka3.kode, '.', 3) 
+                || '.' || SPLIT_PART(ka3.kode, '.', 4) || '.' || SPLIT_PART(ka3.kode, '.', 5) AND ka2.statusenabled = TRUE
+            JOIN kegiatananggaran_m AS ka1 ON ka1.kode = SPLIT_PART(ka2.kode, '.', 1) || '.' || SPLIT_PART(ka2.kode, '.', 2) || '.' || SPLIT_PART(ka2.kode, '.', 3) 
+                AND ka1.statusenabled = TRUE
+                -- anak mata anggaran
+            JOIN mataanggaran_m as ma3 on ma3.kodemataanggaran ilike SPLIT_PART(ma.kodemataanggaran, '.', 1) || '.' || SPLIT_PART(ma.kodemataanggaran, '.', 2) 
+                || '.' || SPLIT_PART(ma.kodemataanggaran, '.', 3) and ma3.statusenabled = true
+            JOIN mataanggaran_m as ma2 on ma2.kodemataanggaran ilike SPLIT_PART(ma3.kodemataanggaran, '.', 1) || '.' || SPLIT_PART(ma3.kodemataanggaran, '.', 2) 
+                and ma2.statusenabled = true
+            JOIN mataanggaran_m as ma1 on ma1.kodemataanggaran ilike SPLIT_PART(ma2.kodemataanggaran, '.', 1) and ma1.statusenabled = true
+            WHERE 
+                kb.statusenabled = TRUE AND kb.objecttahapfk = 4 
+                AND kb.objectasalprodukfk IN (18, 2)
+            -- 	AND kb.objectasalprodukfk IN (4,21,15)
+                AND ka.tahun = CAST(EXTRACT(YEAR FROM timestamp '2024-05-07') AS VARCHAR)
+            GROUP BY
+                ka.id,
+                ka.kode,
+                ma.id,
+                ma.kodemataanggaran,
+                -- anak kegiatan
+                ka3.id,
+                ka3.kode,
+                ka2.id,
+                ka2.kode,
+                ka1.id,
+                ka1.kode,
+                -- anak mataanggaran
+                ma3.id,
+                ma3.kodemataanggaran,
+                ma2.id,
+                ma2.kodemataanggaran,
+                ma1.id,
+                ma1.kodemataanggaran
+            ORDER BY
+                CAST(SPLIT_PART(ka.kode, '.', 3) AS INTEGER),
+                CAST(SPLIT_PART(ka.kode, '.', 7) AS INTEGER),
+                SPLIT_PART(ma.kodemataanggaran, '.', 1),
+                SPLIT_PART(ma.kodemataanggaran, '.', 2),
+                CAST(SPLIT_PART(ma.kodemataanggaran, '.', 3) AS INTEGER),
+                CASE WHEN SPLIT_PART(ma.kodemataanggaran, '.', 5) = '' THEN
+                    CAST(SPLIT_PART(ma.kodemataanggaran, '.', 4) AS INTEGER)
+                ELSE
+                    CAST(SPLIT_PART(ma.kodemataanggaran, '.', 5) AS INTEGER)
+                END
+        "));
+
+        $spj = DB::select(DB::raw("
+            SELECT
+                ka.id AS id_kegiatan,
+                ka.kode AS kode_kegiatan,
+                ma.id AS id_mataanggaran,
+                ma.kodemataanggaran AS kode_mataanggaran,
+                SUM(sr.totalbelanja) AS total_belanja,
+                SUM(CASE WHEN EXTRACT(YEAR FROM bku.tglbku) = EXTRACT(YEAR FROM timestamp '2024-05-07')
+                    AND EXTRACT(MONTH FROM bku.tglbku) = EXTRACT(MONTH FROM timestamp '2024-05-07')
+                THEN sr.totalbelanja ELSE 0 END) AS total_belanja_bulan_ini,
+                SUM(CASE WHEN EXTRACT(YEAR FROM bku.tglbku) = EXTRACT(YEAR FROM timestamp '2024-05-07')
+                    AND bku.tglbku <= DATE_TRUNC('MONTH', timestamp '2024-05-07')
+                THEN sr.totalbelanja ELSE 0 END) AS total_belanja_bulan_lalu
+            FROM strukrealisasi_t AS sr
+            JOIN bukukasumum_t AS bku ON bku.norec = sr.objectbkufk AND bku.statusenabled = TRUE AND bku.kdprofile = 30
+            JOIN kegiatananggaran_m AS ka ON ka.id = sr.objectkegiatanfk AND ka.statusenabled = TRUE AND ka.kdprofile = 30
+            JOIN mataanggaran_m AS ma ON ma.id = sr.objectmataanggaranfk AND ma.statusenabled = TRUE AND ma.kdprofile = 30
+            JOIN realisasidetail_t AS rd ON rd.strukrealisasifk = sr.norec AND rd.statusenabled = TRUE AND rd.kdprofile = 30
+            JOIN keteranganbelanja_t AS kb ON kb.norec = rd.keteranganbelanjafk AND kb.statusenabled = TRUE AND kb.kdprofile = 30
+            WHERE 
+                sr.statusenabled = TRUE 
+                AND sr.kdprofile = 30 
+                AND sr.status = 'Sudah Diverifikasi'
+                AND sr.objectasalprodukfk IN (18,2)
+                AND ka.tahun = '2024'
+                AND EXTRACT(MONTH FROM bku.tglbku) <= EXTRACT(MONTH FROM timestamp '2024-05-07') 
+                AND EXTRACT(YEAR FROM bku.tglbku) = EXTRACT(YEAR FROM timestamp '2024-05-07')
+                AND kb.objecttahapfk = 4
+                AND kb.objectasalprodukfk IN (18,2)
+            GROUP BY
+                ka.id,
+                ka.kode,
+                ma.id,
+                ma.kodemataanggaran
+            ORDER BY
+                CAST(SPLIT_PART(ka.kode, '.', 3) AS INTEGER),
+                CAST(SPLIT_PART(ka.kode, '.', 7) AS INTEGER),
+                SPLIT_PART(ma.kodemataanggaran, '.', 1),
+                SPLIT_PART(ma.kodemataanggaran, '.', 2),
+                CAST(SPLIT_PART(ma.kodemataanggaran, '.', 3) AS INTEGER),
+                CASE WHEN SPLIT_PART(ma.kodemataanggaran, '.', 5) = '' THEN
+                    CAST(SPLIT_PART(ma.kodemataanggaran, '.', 4) AS INTEGER)
+                ELSE
+                    CAST(SPLIT_PART(ma.kodemataanggaran, '.', 5) AS INTEGER)
+                END
+        "));
+
+
+        foreach ($spj as $spj_item) {
+            foreach ($anggaran as &$anggaran_item) {
+                if ($spj_item->id_kegiatan == $anggaran_item->id_kegiatan &&
+                    $spj_item->id_mataanggaran == $anggaran_item->id_mataanggaran) {
+                    $anggaran_item->total_belanja = $spj_item->total_belanja;
+                    $anggaran_item->total_belanja_bulan_ini = $spj_item->total_belanja_bulan_ini;
+                    $anggaran_item->total_belanja_bulan_lalu = $spj_item->total_belanja_bulan_lalu;
+                }
+            }
+        }
+        
+        // Jika tidak ada kesamaan, set bulan_ini dan bulan_lalu menjadi 0
+        foreach ($anggaran as &$anggaran_item) {
+            $found = false;
+            foreach ($spj as $spj_item) {
+                if ($spj_item->id_kegiatan == $anggaran_item->id_kegiatan &&
+                    $spj_item->id_mataanggaran == $anggaran_item->id_mataanggaran) {
+                    $found = true;
+                    break;
+                }
+            }
+            if (!$found) {
+                $anggaran_item->total_belanja = 0;
+                $anggaran_item->total_belanja_bulan_ini = 0;
+                $anggaran_item->total_belanja_bulan_lalu = 0;
+            }
+        }
+
+        dd($anggaran);
+
     }
 
 }
