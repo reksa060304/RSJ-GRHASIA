@@ -2356,5 +2356,25 @@
         "define": "MedifirstService"
       }
     ]
+  },  
+  {
+    "name": "MasterPendapatan",
+    "url": "/TWFzdGVyUGVuZGFwYXRhbg==",
+    "templateurl": "module/Perencanaan/MasterPendapatan.html",
+    "controller": "MasterPendapatanCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
   }
 ]

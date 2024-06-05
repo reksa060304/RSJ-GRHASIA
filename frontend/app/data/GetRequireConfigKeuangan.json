@@ -479,6 +479,10 @@
         {
             "nameDep": "MasterAsetCtrl",
             "urlDep": "module/Aset/MasterAsetCtrl"
+        }, 
+        {
+            "nameDep": "MasterPendapatanCtrl",
+            "urlDep": "module/Perencanaan/MasterPendapatanCtrl"
         }
     ]
 }
