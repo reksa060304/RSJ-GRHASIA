@@ -74,11 +74,11 @@
                     <!-- <b>RS Jiwa GRHASIA<br>TAHUN {{ $tahap[0]->thn }}</b> -->
                 </b>
             </td>
-            <td align="center" style="padding: 3px;" style="padding: 5px; width: 50px;">
+            <td align="center" style="padding: 3px;" style="padding: 5px; width: 70px;">
                 <b style="font-size: 23px;">
                     RBA
                 </b><br>
-                {{substr($tahap[0]->tahap, 0, -3)}}
+                {{$tahap[0]->tahap}}
             </td>
         </tr>
         <!-- <tr align="center">
