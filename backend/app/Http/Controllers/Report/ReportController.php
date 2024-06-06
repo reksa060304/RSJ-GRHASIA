@@ -3528,7 +3528,7 @@ class ReportController extends ApiController{
         select subkegiatan kegiatan, kode, kode1::int, div, sum(jumlahbarangjasa) jumlahbarangjasa, sum(jumlahmodalgedung) jumlahmodalgedung, sum(jumlahpegawai) jumlahpegawai,  sum(jumlahmodalalat) jumlahmodalalat, sum(jumlahmodallainnya) jumlahmodallainnya,
         sum(jumlahbarangjasa) + sum(jumlahmodalgedung)+ sum(jumlahpegawai)+sum(jumlahmodalalat)+sum(jumlahmodallainnya) as total
         from(
-        select kegiatan, case when $tahapnow=1 then subkegiatan else REGEXP_REPLACE(subkegiatan, '^[0-9-]+', '') end as subkegiatan, kode, kode1::int, div,
+        select kegiatan, case when $tahapnow=1 then subkegiatan else split_part(subkegiatan, '-', 2) end as subkegiatan, kode, kode1::int, div,
         case when id_jenisanggaran = 3 then subtotal else 0 end as jumlahpegawai,
         case when id_jenisanggaran = 4 then subtotal else 0 end as jumlahbarangjasa,
         case when id_jenisanggaran = 5 then subtotal else 0 end as jumlahmodalgedung,
@@ -17296,7 +17296,7 @@ public function suratBuktiPengembalian(Request $request)
         
                 union all
         
-                select case when $tahapnow=1 then y.subkegiatan else REGEXP_REPLACE(y.subkegiatan, '^[0-9-]+', '') end as kegiatan, 
+                select case when $tahapnow=1 then y.subkegiatan else split_part(y.subkegiatan, '-', 2) end as kegiatan, 
                 y.kode, y.kode1, y.div, sum(y.apbd) apbd, sum(y.jasalayanan) jasalayanan, sum(y.dak) dak, sum(y.danais) danais, sum(y.silpa) silpa,
                 sum(y.apbd) + sum(y.jasalayanan) + sum(y.dak) + sum(y.danais) + sum(y.silpa) as total
                 from(
@@ -22348,11 +22348,16 @@ public function suratBuktiPengembalian(Request $request)
     {   
         $asalProduk = null;
 
-        if($request['asalproduk'] == 18 || $request['asalproduk'] == 2){
-            $asalProduk = [18,2];
+        if($request['asalproduk'] == 18 || $request['asalproduk'] == 4){
+            $asalProduk = [18,4];
         }else {
-            $asalProduk = [4,15,21];
+            $asalProduk = [2,15,21];
         }
+
+         $settingRBA = DB::table('settinganggaran_t')
+            ->where('statusenabled', true)
+            ->where('kdprofile', 30)
+            ->first();
 
         $dataAnggaran = DB::select(DB::raw("
             select
@@ -22422,7 +22427,7 @@ public function suratBuktiPengembalian(Request $request)
                 ma1.kodemataanggaran ilike SPLIT_PART(ma2.kodemataanggaran, '.', 1) and ma1.statusenabled = true
             where
                 kb.statusenabled = true
-                and kb.objecttahapfk = 4
+                and kb.objecttahapfk = ".$settingRBA->objecttahapaktivfk."
                 and kb.objectasalprodukfk in (".implode(',', $asalProduk).")
                 and ka.tahun = cast(extract(year from timestamp '".$request['tglbku']."') as VARCHAR)
             group by
@@ -22493,7 +22498,7 @@ public function suratBuktiPengembalian(Request $request)
                 strukrealisasi_t as sr
             JOIN realisasidetail_t AS rd ON rd.strukrealisasifk = sr.norec AND rd.statusenabled = TRUE
             JOIN keteranganbelanja_t AS kb ON kb.norec = rd.keteranganbelanjafk AND kb.statusenabled = TRUE
-            JOIN  bukukasumum_t as bku ON bku.norec = sr.objectbkufk and bku.statusenabled = true
+            JOIN bukukasumum_t as bku ON bku.norec = sr.objectbkufk and bku.statusenabled = true
             JOIN kegiatananggaran_m as ka on ka.id = sr.objectkegiatanfk and ka.statusenabled = true
             JOIN mataanggaran_m as ma on ma.id = sr.objectmataanggaranfk and ma.statusenabled = true
             JOIN asalproduk_m as ap on ap.id = sr.objectasalprodukfk and ap.statusenabled = true
@@ -22521,8 +22526,8 @@ public function suratBuktiPengembalian(Request $request)
                 and extract(month from bku.tglbku) <= extract(month from timestamp '".$request['tglbku']."') 
                 and extract(year from bku.tglbku) = extract(year from timestamp '".$request['tglbku']."')
                 and ka.tahun = cast(extract(year from timestamp '".$request['tglbku']."') as VARCHAR)
-                AND kb.objecttahapfk = 4
-                and sr.objectasalprodukfk in (".implode(',', $asalProduk).")
+                AND kb.objecttahapfk = ".$settingRBA->objecttahapaktivfk."
+                And sr.objectasalprodukfk in (".implode(',', $asalProduk).")
             GROUP BY
                 ka.id,
                 ka.kode,
