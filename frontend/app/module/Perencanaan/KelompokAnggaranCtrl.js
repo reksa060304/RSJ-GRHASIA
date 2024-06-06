@@ -2323,23 +2323,17 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             });
 
             $scope.$watch('item.itemRincian', function (newValue, oldValue) {
-                if (newValue != oldValue) {
-                    // for (let i = 0; i < array.length; i++) {
-                    //     const element = array[i];
-                        
-                    // }
-                    // $scope.item.sisaa = $scope.item.itemRincian.subtotal
-                    medifirstService.get("perencanaan/get-password-rba?norec="+$scope.item.itemRincian.norec).then(function (e) {
-                        var sisa = 0
-                        for (let i = 0; i < e.data.sisa.length; i++) {
-                            sisa += parseFloat(e.data.sisa[i].subtotal)
-                        }
-                        $scope.item.sisaa = parseFloat(e.data.data[0].subtotal) - parseFloat(sisa)
+                $scope.dataVOloaded = true;
 
-                        // $scope.item.sisaa = parseFloat($scope.item.itemRincian.subtotal) - parseFloat($scope.totalrealisasidetail)
-                        if(e.data.data[0].password != null){
+                if (newValue != oldValue) {
+                    medifirstService.get("perencanaan/get-password-rba?norec="+$scope.item.itemRincian.norec).then(function (e) {
+                        $scope.dataVOloaded = false;
+
+                        $scope.item.sisaa = parseInt(e.data.keterangan.subtotal) - parseInt(e.data.sisa.total_sisa)
+                        
+                        if(e.data.keterangan.password != null){
                             $scope.passrba = false
-                            $scope.item.passwordbenar = e.data.data[0].password
+                            $scope.item.passwordbenar = e.data.keterangan.password
                         } else{
                             $scope.passrba = true
                             $scope.item.passwordbenar = undefined

@@ -578,8 +578,11 @@ class RBAController extends ApiController
             ->where('statusenabled', true)
             ->orderBy('id', 'asc')
             ->get();
+        
+        $kegiatanAnggaranAll = DB::table('kegiatananggaran_m')->where('statusenabled', true)->where('kdprofile', $idProfile)->get();
 
         return $this->respond([
+            'kegiatanAnggaranAll' => $kegiatanAnggaranAll,
             'kelompokAnggaran' => $kelompokAnggaran,
             'tahapAnggaran' => $tahapAnggaran
         ]);
@@ -882,42 +885,109 @@ class RBAController extends ApiController
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
 
-    /**
-     * Masih dalam pengembangan
-     * Abaikan
-     */
-    public function cariSubSubRencanaBelanja(Request $request)
+    public function getSubSubRBA(Request $request)
     {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
 
-        $subsub = DB::table('kegiatananggaran_m as dp')
+        $subSubKegiatan = DB::table('kegiatananggaran_m as ka1')
             ->select(DB::raw("
-                dp.tahun tahunsubsubkegiatan, dp.id idsubsubkegiatan, dp.kode kodesubsubkegiatan, dp.id || '-' || dp.keterangan keterangansubsubkegiatan, 
-                dp.indikatormasuk, dp.indikatorkeluaran, dp.indikatorhasil, dp.targetmasuk, dp.targetkeluaran, dp.targethasil, dp.div, 
-                dp.objectjenisbelanjafk, dp.objectpptkfk, dp.id, dp.keterangan"))
-            ->join('kegiatananggaran_m as dp2', 'dp.kode', 'like', DB::raw("dp2.kode || '%'"))
-            ->leftJoin('strukperencanaandetail_t as ktb', 'ktb.objectkegiatanfk', '=' ,'dp.id')
-            ->where('dp.kdprofile', $idProfile)->where('dp2.kdprofile', $idProfile)->where('ktb.kdprofile', $idProfile)
-            ->where('dp.statusenabled', true)->where('dp2.statusenabled', true)->where('ktb.statusenabled', true)
-            ->where('dp.div', 4)->where('dp2.div', 3)
-            ->where('ktb.istransfer', false)  //mendapatkan sub sub jika strukperencanaan detail belum ada yang ditransfer
+                ka1.tahun tahunsubsubkegiatan, ka1.id idsubsubkegiatan, ka1.kode kodesubsubkegiatan, ka1.id || '-' || ka1.keterangan keterangansubsubkegiatan, 
+                ka1.indikatormasuk, ka1.indikatorkeluaran, ka1.indikatorhasil, ka1.targetmasuk, ka1.targetkeluaran, ka1.targethasil, ka1.div, 
+                ka1.objectjenisbelanjafk, ka1.objectpptkfk, ka1.id, ka1.keterangan"))
+            ->join('kegiatananggaran_m as ka2', 'ka1.kode', 'like', DB::raw("ka2.kode || '%'"))
+            ->leftJoin('strukperencanaandetail_t as spd', 'spd.objectkegiatanfk', '=' ,'ka1.id')
+            ->where('ka1.kdprofile', $idProfile)->where('ka2.kdprofile', $idProfile)->where('spd.kdprofile', $idProfile)
+            ->where('ka1.statusenabled', true)->where('ka2.statusenabled', true)->where('spd.statusenabled', true)
+            ->where('ka1.div', 4)->where('ka2.div', 3)
+            ->where('spd.istransfer', false)->where('spd.isverifikasi', true)  //mendapatkan sub sub jika strukperencanaan detail belum ada yang ditransfer
             ->when($request['tahap'], function($query) use ($request){
-                return $query->where('ktb.objecttahapfk', $request['tahap']);
+                return $query->where('spd.objecttahapfk', $request['tahap']);
             })
             ->when($request['tahunawal'], function($query) use ($request){
-                return $query->where('dp.tahun', (string)$request['tahunawal']);
+                return $query->where('ka1.tahun', (string)$request['tahunawal']);
             })
             ->when($request['subkegiatan'], function($query) use ($request){
-                return $query->where('dp2.id', $request['subkegiatan']);
+                return $query->where('ka2.id', $request['subkegiatan']);
             })
             ->groupBy(DB::raw("
-                dp.id, dp.kode, dp.id || '-' || dp.keterangan, dp.tahun, dp.indikatormasuk, dp.indikatorkeluaran, dp.indikatorhasil, dp.targetmasuk, 
-                dp.targetkeluaran, dp.targethasil, dp.div, dp.objectjenisbelanjafk, dp.objectpptkfk, dp.id, dp.keterangan"))
-            ->orderBy('dp.kode')
+                ka1.id, ka1.kode, ka1.id || '-' || ka1.keterangan, ka1.tahun, ka1.indikatormasuk, ka1.indikatorkeluaran, ka1.indikatorhasil, ka1.targetmasuk, 
+                ka1.targetkeluaran, ka1.targethasil, ka1.div, ka1.objectjenisbelanjafk, ka1.objectpptkfk, ka1.id, ka1.keterangan"))
+            ->orderBy('ka1.kode')
             ->get();
-        
-        
-        return $this->respond($subsub);
+
+        return $this->respond($subSubKegiatan);
+    }
+
+    // Abaikan, dalam tahap pengembangan
+    // Mengecek jumlah nilai alokasi sama gak dengan yng ditransfer
+    // ubah nilai objectkegianfk dan tahap
+    public function coba()
+    {
+        $data = DB::select(DB::raw("
+            SELECT
+                kb.objectkegiatanfk, kb.objecttahapfk,
+                ak.nilai AS nilai_alokasi 
+            FROM
+                alokasiketeranganbelanja_t AS ak
+                LEFT JOIN keteranganbelanja_t AS kb ON kb.norec = ak.keteranganbelanjafk 
+            WHERE
+                kb.statusenabled = TRUE 
+                AND ak.statusenabled = TRUE
+                AND kb.objectkegiatanfk = 214
+                AND kb.objecttahapfk = 7
+            ORDER BY
+                nilai_alokasi DESC
+        "));
+
+        $totalNilaiAlokasi = 0;
+
+        foreach($data as $d){
+            $totalNilaiAlokasi = $totalNilaiAlokasi + (int)$d->nilai_alokasi;
+        }
+
+        return $this->respond($totalNilaiAlokasi);
+    }
+
+    public function cobaCetak()
+    {
+        $data = DB::select(DB::raw("
+            SELECT
+                ma4.namamataanggaran, kb.jml, kb.satuan, kb.hargasatuan, kb.subtotal,
+                ka.id AS id_kegiatananggaran, ka.kode AS kode_kegiatananggaran, ka.keterangan,
+                ma4.id AS id_mataanggaran4, ma3.id AS id_mataanggaran3, ma2.id AS id_mataanggaran2, ma1.id AS id_mataanggaran1,
+                ma1.namamataanggaran AS nama_mataanggaran1, ma2.namamataanggaran AS nama_mataanggaran2, ma3.namamataanggaran AS nama_mataanggaran3, ma4.namamataanggaran AS nama_namamataanggaran4,
+                ma4.kodemataanggaran as kode_mataanggaran4_gabung,
+                SPLIT_PART(ma4.kodemataanggaran, '.', 4) || '.' || SPLIT_PART(ma4.kodemataanggaran, '.', 5) as kode_mataanggaran4,
+                SPLIT_PART(ma4.kodemataanggaran, '.', 3) AS kode_mataanggaran3,
+                SPLIT_PART(ma4.kodemataanggaran, '.', 2) AS kode_mataanggaran2,
+                SPLIT_PART(ma4.kodemataanggaran, '.', 1) AS kode_mataanggaran1,
+                ta.tahap
+            FROM keteranganbelanja_t AS kb
+            LEFT JOIN mataanggaran_m AS ma4 ON ma4.id = kb.objectmataanggaranfk
+            LEFT JOIN kegiatananggaran_m AS ka ON ka.id = kb.objectkegiatanfk
+            LEFT JOIN asalproduk_m as ap ON ap.id = kb.objectasalprodukfk
+            LEFT JOIN mataanggaran_m AS ma3 ON ma3.kodemataanggaran ILIKE 
+                SPLIT_PART(ma4.kodemataanggaran, '.', 1) || '.' || SPLIT_PART(ma4.kodemataanggaran, '.', 2) || '.' || SPLIT_PART(ma4.kodemataanggaran, '.', 3)
+            LEFT JOIN mataanggaran_m AS ma2 ON ma2.kodemataanggaran ILIKE
+                SPLIT_PART(ma3.kodemataanggaran, '.', 1) || '.' || SPLIT_PART(ma3.kodemataanggaran, '.', 2)
+            LEFT JOIN mataanggaran_m AS ma1 ON ma1.kodemataanggaran ILIKE
+                SPLIT_PART(ma2.kodemataanggaran, '.', 1)
+            LEFT JOIN tahapanggaran_m AS ta ON ta.id = kb.objecttahapfk
+            WHERE kb.statusenabled = TRUE AND kb.kdprofile = 30
+            AND kb.objecttahapfk = 4 AND kb.objectkegiatanfk = 220
+            AND ma4.statusenabled = TRUE AND ma4.kdprofile = 30
+            AND ma3.statusenabled = TRUE AND ma3.kdprofile = 30
+            AND ma2.statusenabled = TRUE AND ma2.kdprofile = 30
+            AND ma1.statusenabled = TRUE AND ma1.kdprofile = 30
+            AND ka.statusenabled = TRUE AND ka.kdprofile = 30 AND ka.tahun = '2024'
+            AND ap.statusenabled = TRUE AND ap.kdprofile = 30
+            ORDER BY
+                CAST(split_part(ma4.kodemataanggaran, '.', 5) AS INTEGER)
+        "));
+
+        return view('report.cobacetak', [
+            'data' => $data
+        ]);
     }
 }

@@ -598,7 +598,7 @@ class PerencanaanController extends ApiController {
             $ktahap =  "and ktb.objecttahapfk = ".$request['tahap'];
         }
 
-        $kegiatansubsub = DB::select(DB::raw("select dp.tahun tahunsubsubkegiatan, dp.id idsubsubkegiatan, dp.kode kodesubsubkegiatan, dp.id || '-' || dp.keterangan keterangansubsubkegiatan,
+        $kegiatansubsub = DB::select(DB::raw("select dp.headfk, dp.idrelasi, dp.tahun tahunsubsubkegiatan, dp.id idsubsubkegiatan, dp.kode kodesubsubkegiatan, dp.id || '-' || dp.keterangan keterangansubsubkegiatan,
         dp.indikatormasuk, dp.indikatorkeluaran, dp.indikatorhasil, dp.targetmasuk, dp.targetkeluaran, dp.targethasil, dp.div,
         dp.objectjenisbelanjafk, dp.objectpptkfk, dp.id, dp.keterangan
         from kegiatananggaran_m as dp
@@ -2614,6 +2614,7 @@ class PerencanaanController extends ApiController {
                 $MA->norec = $newID + 1;
                 $MA->kdprofile = $idProfile;
                 $MA->statusenabled = true;
+                $MA->idrelasi = $newID + 1;
             }else{
                 $MA= KegiatanAnggaran::where('id',$request['id'])
                     ->where('kdprofile', $idProfile)
@@ -2635,6 +2636,7 @@ class PerencanaanController extends ApiController {
             $MA->div = $request['div'];
             $MA->objectjenisbelanjafk = $request['jenisbelanja'];
             $MA->objectpptkfk = $request['pptk'];
+            $MA->headfk = (isset($request['headfk'])) ? $request['headfk'] : null;
             $MA->save();
             if(isset($request['tahap'])){
                 $KB = new KeteranganBelanja();
@@ -2827,39 +2829,47 @@ class PerencanaanController extends ApiController {
 
             foreach($details as $dt){
                 $cek = KegiatanAnggaran::where('kode', '=', $dt['kodesubsubkegiatan'])
-                ->where('tahun', '=', $request['tahunakhir'])
-                ->first();
+                    ->where('tahun', '=', $request['tahunakhir'])
+                    ->where('div', $dt['div'])
+                    ->first();
                 
-                    $newID = KegiatanAnggaran::max('id');
+                $newID = KegiatanAnggaran::max('id');
 
-                    $KA = new KegiatanAnggaran();
-                    $KA->id =  $newID + 1;
-                    $KA->norec = $newID + 1;
-                    $KA->kdprofile = $idProfile;
-                    $KA->statusenabled = true;
-                    $KA->kode = $dt['kodesubsubkegiatan'];
-                    $KA->keterangan = $dt['keterangansubsubkegiatan'];
-                    $KA->kodeexternal = null;
-                    $KA->namaexternal = null;
-                    $KA->reportdisplay = null;
-                    $KA->tahun = $request['tahunakhir'];
-                    $KA->indikatormasuk = $dt['indikatormasuk'];
-                    $KA->indikatorkeluaran = $dt['indikatorkeluaran'];
-                    $KA->indikatorhasil = $dt['indikatorhasil'];
-                    $KA->targetmasuk = $dt['targetmasuk'];
-                    $KA->targetkeluaran = $dt['targetkeluaran'];
-                    $KA->targethasil = $dt['targethasil'];
-                    $KA->div = $dt['div'];
-                    $KA->objectjenisbelanjafk = $dt['objectjenisbelanjafk'];
-                    $KA->objectpptkfk = $dt['objectpptkfk'];
-                    $KA->tgltransfer = $request['tgltransfer'];
-                    $KA->save();
-
-                    $KB = KeteranganBelanja::where('objectkegiatanfk',$dt['idsubsubkegiatan'])
-                        ->where('objecttahapfk', $awal)
-                        ->where('statusenabled', true)
-                        ->get();
+                $KA = new KegiatanAnggaran();
+                $KA->id =  $newID + 1;
+                $KA->norec = $KA->generateNewId();
+                $KA->kdprofile = $idProfile;
+                $KA->statusenabled = true;
+                $KA->kode = $dt['kodesubsubkegiatan'];
+                // $KA->keterangan = $dt['keterangan'];
+                $KA->keterangan = $dt['keterangansubsubkegiatan'];
+                $KA->kodeexternal = null;
+                $KA->namaexternal = null;
+                $KA->reportdisplay = null;
+                $KA->tahun = $request['tahunakhir'];
+                $KA->indikatormasuk = $dt['indikatormasuk'];
+                $KA->indikatorkeluaran = $dt['indikatorkeluaran'];
+                $KA->indikatorhasil = $dt['indikatorhasil'];
+                $KA->targetmasuk = $dt['targetmasuk'];
+                $KA->targetkeluaran = $dt['targetkeluaran'];
+                $KA->targethasil = $dt['targethasil'];
+                $KA->div = $dt['div'];
+                $KA->objectjenisbelanjafk = $dt['objectjenisbelanjafk'];
+                $KA->objectpptkfk = $dt['objectpptkfk'];
+                $KA->tgltransfer = $request['tgltransfer'];
+                $KA->idtransfer = $dt['idsubsubkegiatan'];
+                $KA->headfk = (isset($dt['headfk'])) ? $dt['headfk'] : null;
+                $KA->idrelasi = (isset($dt['idrelasi'])) ? $dt['idrelasi'] : null;
+                $KA->save();
                 
+                // Keterangan belanja berdasarkan kegiatan anggaran dan tahap
+                $KB = KeteranganBelanja::where('objectkegiatanfk',$dt['idsubsubkegiatan'])
+                    ->where('objecttahapfk', $awal)
+                    ->where('statusenabled', true)
+                    ->get();
+                
+                if(count($KB) > 0){
+
                     foreach($KB as $k){
 
                         $MA = new KeteranganBelanja();
@@ -2879,18 +2889,17 @@ class PerencanaanController extends ApiController {
                         $MA->password = $k->password;
                         $MA->objecttahapfk = $akhir;
                         $MA->tgltransfer = $request['tgltransfer'];
+                        $MA->norectransfer = $k->norec;
                         $MA->save();
-
-                        // Get alokasi keterangkan belanja (angkas)
-                        // berdasarkan keterangan belanja
+    
+                        // Get alokasi keterangkan belanja (angkas) berdasarkan keterangan belanja
                         $listAngkas = AlokasiKeteranganBelanja::where('keteranganbelanjafk', $k->norec)
                             ->where('statusenabled', true)
                             ->where('kdprofile', $idProfile)
                             ->get();
                         
                         if(count($listAngkas) > 0){
-                            // Membuat angkas baru sesuai dengan norec keterangan belanja baru
-                            // dan tgl transfer
+                            // Membuat angkas baru sesuai dengan norec keterangan belanja baru dan tgl transfer
                             foreach($listAngkas as $angkas){
                                 $newAngkas = new AlokasiKeteranganBelanja();
                                 $newAngkas->norec = $newAngkas->generateNewId();
@@ -2903,8 +2912,10 @@ class PerencanaanController extends ApiController {
                                 $newAngkas->save();
                             }
                         }
-
+    
                     }
+                }
+                
             }
 
            $transStatus = 'true';
@@ -8239,20 +8250,73 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
         $idProfile = (int) $kdProfile;
         $norec = $request['norec'];
         
-        $data = DB::select(DB::raw("
-        select * FROM
-            keteranganbelanja_t 
-            where norec = '$norec'
-            ")
-        );
-        foreach ($data as $d) {
-            $sisa = DB::select(DB::raw("
-        select * from realisasidetail_t where keteranganbelanjafk ilike '$d->norec'
-        "));
+        // $data = DB::select(DB::raw("
+        // select * FROM
+        //     keteranganbelanja_t 
+        //     where norec = '$norec'
+        //     ")
+        // );
+
+        // ambil settingrba
+        $settingRBA = DB::table('settinganggaran_t')
+            ->where('statusenabled', true)
+            ->where('kdprofile', 30)
+            ->first();
+
+        // ambil keterangan belanja
+        $keterangan = DB::table('keteranganbelanja_t')
+            ->where('statusenabled', true)
+            ->where('norec', $norec)
+            ->first();
+
+        // kegiatan anggaran berdasarkan keterangan belanja
+        $kegiatan = DB::table('kegiatananggaran_m')
+            ->where('statusenabled', true)
+            ->where('id', $keterangan->objectkegiatanfk)
+            ->where('tahun', $settingRBA->tahunanggaran)
+            ->first();
+
+        // ambil kegiatan dengan kode yang sama
+        $kegiatan = DB::table('kegiatananggaran_m')
+            ->where('statusenabled', true)
+            ->where('kode', $kegiatan->kode)
+            ->where('tahun', $settingRBA->tahunanggaran)
+            ->get();
+
+        $idKegiatan = [];
+
+        // masukkan setiap id kegiatan ke ada dalam array
+        foreach($kegiatan as $kegi){
+            array_push($idKegiatan, $kegi->id);
         }
+
+        // menghitung spj dari semua tahap
+        $sisa_semua_tahap = DB::select(DB::raw("
+            SELECT
+                SUM(rd.subtotal) AS total_sisa
+            FROM keteranganbelanja_t AS kb 
+            JOIN realisasidetail_t AS rd ON rd.keteranganbelanjafk = kb.norec 
+                AND rd.statusenabled = TRUE 
+                AND rd.kdprofile = 30
+            WHERE
+                kb.statusenabled = TRUE 
+                AND kb.kdprofile = 30
+                AND kb.objectkegiatanfk IN (".implode(',', $idKegiatan).") 
+                AND kb.keteranganbelanja = '".$keterangan->keteranganbelanja."'
+                AND kb.objectkegiatanfk = ".$keterangan->objectkegiatanfk."
+        "));
+        
+    
+        // foreach ($data as $d) {
+        //     $sisa = DB::select(DB::raw("
+        //         select * from realisasidetail_t where keteranganbelanjafk = '".$d->norec."'
+        //     "));
+        // }
         $result = array(
-            'data' => $data,
-            'sisa' => $sisa,
+            // 'data' => $data,
+            // 'sisa' => $sisa,
+            'keterangan' => $keterangan,
+            'sisa' => $sisa_semua_tahap[0],
             'message' => '@epic',
         );
 
