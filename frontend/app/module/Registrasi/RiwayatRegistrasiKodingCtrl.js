@@ -51,6 +51,9 @@ define(['initialize'], function (initialize, pasienServices) {
 
                 loadDatas()
 
+                $scope.cboDiagnosa = false;
+                $scope.cboDiagnosa1 = false;
+                $scope.cboInputDiagnosa = true;
             }
 
 
