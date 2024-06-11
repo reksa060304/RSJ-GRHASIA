@@ -391,6 +391,10 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                     loadData()
                 })
             }
+
+            $scope.kembali = function () {
+                $rootScope.showRiwayat()
+            }
         }
     ]);
 });
