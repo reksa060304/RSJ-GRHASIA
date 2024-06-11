@@ -622,6 +622,16 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 );
                 
             }
+
+            $scope.SuratPengantarSPM2 = function(){
+                // console.log($scope.dataSPM)
+                medifirstService.get("sysadmin/general/get-terbilang/" + $scope.dataSPM.nilaispm).then(
+                    function (dat) {
+                        window.open(baseTransaksi + "report/get-cetak-pengantar-spm2?norec="+$scope.dataSPM.norec+"&terbilang="+dat.data.terbilang, '_blank');
+                    }
+                );
+                
+            }
             $scope.SuratPengantarSPP = function(){
                 console.log($scope.dataSPP)
                 medifirstService.get("sysadmin/general/get-terbilang/" + $scope.dataSPP.nilaispp).then(
@@ -631,8 +641,26 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 );
                 
             }
+            $scope.SuratPengantarSPP2 = function(){
+                console.log($scope.dataSPP)
+                medifirstService.get("sysadmin/general/get-terbilang/" + $scope.dataSPP.nilaispp).then(
+                    function (dat) {
+                        window.open(baseTransaksi + "report/get-cetak-pengantar-spp2?norec="+$scope.dataSPP.norec+"&terbilang="+dat.data.terbilang, '_blank');
+                    }
+                );
+                
+            }
+            $scope.SuratPertanggungjawabanSPM2 = function(){
+                // console.log($scope.dataSPM)
+                medifirstService.get("sysadmin/general/get-terbilang/" + $scope.dataSPM.nilaispm).then(
+                    function (dat) {
+                        window.open(baseTransaksi + "report/get-cetak-pertanggungjawaban-spm2?norec="+$scope.dataSPM.norec+"&terbilang="+dat.data.terbilang, '_blank');
+                    }
+                );
+                
+            }
             $scope.SuratPertanggungjawabanSPM = function(){
-                console.log($scope.dataSPM)
+                // console.log($scope.dataSPM)
                 medifirstService.get("sysadmin/general/get-terbilang/" + $scope.dataSPM.nilaispm).then(
                     function (dat) {
                         window.open(baseTransaksi + "report/get-cetak-pertanggungjawaban-spm?norec="+$scope.dataSPM.norec+"&terbilang="+dat.data.terbilang, '_blank');
@@ -649,6 +677,15 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 );
                 
             }
+            $scope.SuratRincianSPM2 = function(){
+                console.log($scope.dataSPM)
+                medifirstService.get("sysadmin/general/get-terbilang/" + $scope.dataSPM.nilaispm).then(
+                    function (dat) {
+                        window.open(baseTransaksi + "report/get-cetak-rincian-spm2?norec="+$scope.dataSPM.norec+"&terbilang="+dat.data.terbilang, '_blank');
+                    }
+                );
+                
+            }
             $scope.SuratPertanggungjawabanSPP = function(){
                 console.log($scope.dataSPP)
                 medifirstService.get("sysadmin/general/get-terbilang/" + $scope.dataSPP.nilaispp).then(
@@ -658,11 +695,29 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 );
                 
             }
+            $scope.SuratRingkasanSPP = function(){
+                console.log($scope.dataSPP)
+                medifirstService.get("sysadmin/general/get-terbilang/" + $scope.dataSPP.nilaispp).then(
+                    function (dat) {
+                        window.open(baseTransaksi + "report/get-cetak-ringkasan-spp2?norec="+$scope.dataSPP.norec+"&terbilang="+dat.data.terbilang, '_blank');
+                    }
+                );
+                
+            }
             $scope.SuratRincianSPP = function(){
                 console.log($scope.dataSPP)
                 medifirstService.get("sysadmin/general/get-terbilang/" + $scope.dataSPP.nilaispp).then(
                     function (dat) {
                         window.open(baseTransaksi + "report/get-cetak-rincian-spp?norec="+$scope.dataSPP.norec+"&terbilang="+dat.data.terbilang, '_blank');
+                    }
+                );
+                
+            }
+            $scope.SuratRincianSPP2 = function(){
+                console.log($scope.dataSPP)
+                medifirstService.get("sysadmin/general/get-terbilang/" + $scope.dataSPP.nilaispp).then(
+                    function (dat) {
+                        window.open(baseTransaksi + "report/get-cetak-rincian-spp2?norec="+$scope.dataSPP.norec+"&terbilang="+dat.data.terbilang, '_blank');
                     }
                 );
                 

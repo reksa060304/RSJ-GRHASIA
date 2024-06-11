@@ -3093,7 +3093,26 @@ class ReportController extends ApiController{
         $pageWidth = 950;
         return view('report.spj.cetaksuratpengantarspm',compact('pageWidth', 'detail', 'terbilang', 'tgl'));
     }
+    public function getCetakPengantarSPM2(Request $request){
+        $norec = $request['norec'];
+        $terbilang = $request['terbilang'];
+        
 
+        $detail = DB::select(DB::raw("
+            select * from spm_t where statusenabled = true and kdprofile = 30 and norec = '$norec'
+            ")
+        );
+
+        $tgl = $this->tanggal_indonesia(date('Y-m-d',strtotime($detail[0]->tglspm)));
+
+        $result = array(
+            'data' => $detail,
+            'message' => '@epic',
+        );
+
+        $pageWidth = 950;
+        return view('report.spj.cetaksuratpengantarspm2',compact('pageWidth', 'detail', 'terbilang', 'tgl'));
+    }
     public function getCetakPengantarSPP(Request $request){
         $norec = $request['norec'];
         $terbilang = $request['terbilang'];
@@ -3113,6 +3132,26 @@ class ReportController extends ApiController{
 
         $pageWidth = 950;
         return view('report.spj.cetaksuratpengantarspp',compact('pageWidth', 'detail', 'terbilang', 'tgl'));
+    }
+    public function getCetakPengantarSPP2(Request $request){
+        $norec = $request['norec'];
+        $terbilang = $request['terbilang'];
+        
+
+        $detail = DB::select(DB::raw("
+            select * from spp_t where statusenabled = true and kdprofile = 30 and norec = '$norec'
+            ")
+        );
+
+        $tgl = $this->tanggal_indonesia(date('Y-m-d',strtotime($detail[0]->tglspp)));
+
+        $result = array(
+            'data' => $detail,
+            'message' => '@epic',
+        );
+
+        $pageWidth = 950;
+        return view('report.spj.cetaksuratpengantarspp2',compact('pageWidth', 'detail', 'terbilang', 'tgl'));
     }
 
     public function getCetakRingkasanSPP(Request $request){
@@ -3134,6 +3173,26 @@ class ReportController extends ApiController{
 
         $pageWidth = 950;
         return view('report.spj.cetakringkasanspp',compact('pageWidth', 'detail', 'terbilang', 'tgl'));
+    }
+    public function getCetakRingkasanSPP2(Request $request){
+        $norec = $request['norec'];
+        $terbilang = $request['terbilang'];
+        
+
+        $detail = DB::select(DB::raw("
+            select * from spp_t where statusenabled = true and kdprofile = 30 and norec = '$norec'
+            ")
+        );
+
+        $tgl = $this->tanggal_indonesia(date('Y-m-d',strtotime($detail[0]->tglspp)));
+
+        $result = array(
+            'data' => $detail,
+            'message' => '@epic',
+        );
+
+        $pageWidth = 950;
+        return view('report.spj.cetakringkasanspp2',compact('pageWidth', 'detail', 'terbilang', 'tgl'));
     }
 
     public function getCetakRincianSPP(Request $request){
@@ -3160,6 +3219,31 @@ class ReportController extends ApiController{
         $pageWidth = 950;
         return view('report.spj.cetakrincianspp',compact('pageWidth', 'detail', 'terbilang', 'tgl', 'permen'));
     }
+    public function getCetakRincianSPP2(Request $request){
+        $norec = $request['norec'];
+        $terbilang = $request['terbilang'];
+        
+
+        $detail = DB::select(DB::raw("
+            select * from spp_t where statusenabled = true and kdprofile = 30 and norec = '$norec'
+            ")
+        );
+
+        $permen = DB::select(DB::raw("select row_number() over(order by id) as nomor, *
+            from mataanggaranpermen_m where statusenabled = true and kdprofile = 30 and div = 2
+        "));
+
+        $tgl = $this->tanggal_indonesia(date('Y-m-d',strtotime($detail[0]->tglspp)));
+
+        $result = array(
+            'data' => $detail,
+            'message' => '@epic',
+        );
+
+        $pageWidth = 950;
+        return view('report.spj.cetakrincianspp2',compact('pageWidth', 'detail', 'terbilang', 'tgl', 'permen'));
+    }
+
 
     public function getCetakSTSPdf(Request $request){
         $nosts = $request['nosts'];
@@ -3293,7 +3377,26 @@ class ReportController extends ApiController{
         $pageWidth = 950;
         return view('report.spj.cetaksuratpertanggungjawabanspm',compact('pageWidth', 'detail', 'terbilang', 'tgl'));
     }
+    public function getCetakPertanggungjawabanSPM2(Request $request){
+        $norec = $request['norec'];
+        $terbilang = $request['terbilang'];
+        
 
+        $detail = DB::select(DB::raw("
+            select * from spm_t where statusenabled = true and kdprofile = 30 and norec = '$norec'
+            ")
+        );
+
+        $tgl = $this->tanggal_indonesia(date('Y-m-d',strtotime($detail[0]->tglspm)));
+
+        $result = array(
+            'data' => $detail,
+            'message' => '@epic',
+        );
+
+        $pageWidth = 950;
+        return view('report.spj.cetaksuratpertanggungjawabanspm2',compact('pageWidth', 'detail', 'terbilang', 'tgl'));
+    }
     public function getCetakRincianSPM(Request $request){
         $norec = $request['norec'];
         $terbilang = $request['terbilang'];
@@ -3327,6 +3430,40 @@ class ReportController extends ApiController{
 
         $pageWidth = 950;
         return view('report.spj.cetaksuratrincianspm',compact('pageWidth', 'detail', 'terbilang', 'tgl', 'tglspd'));
+    }
+    public function getCetakRincianSPM2(Request $request){
+        $norec = $request['norec'];
+        $terbilang = $request['terbilang'];
+        
+
+        $detail = DB::select(DB::raw("
+            select * from spm_t where statusenabled = true and kdprofile = 30 and norec = '$norec'
+            ")
+        );
+
+        $spd = DB::select(DB::raw("
+            select spd.* 
+                from spm_t spm
+            inner join spp_t spp on spp.norec = spm.objectsppfk
+            left join spd_t spd on spd.norec = spp.objectspdfk and spd.statusenabled = true 
+            where spm.statusenabled = true 
+            and spm.kdprofile = 30
+            and spp.statusenabled = true 
+            and spp.kdprofile = 30 
+            and spm.norec = '$norec'
+        "));
+
+        $tglspd = '';
+        $tglspd = $this->tanggal_indonesia(date('Y-m-d',strtotime($spd[0]->tglspd)));
+        $tgl = $this->tanggal_indonesia(date('Y-m-d',strtotime($detail[0]->tglspm)));
+
+        $result = array(
+            'data' => $detail,
+            'message' => '@epic',
+        );
+
+        $pageWidth = 950;
+        return view('report.spj.cetaksuratrincianspm2',compact('pageWidth', 'detail', 'terbilang', 'tgl', 'tglspd'));
     }
 
     public function getCetakSPJ(Request $request){

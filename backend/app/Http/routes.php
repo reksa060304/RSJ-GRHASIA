@@ -1719,11 +1719,17 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('report/get-cetak-spj', 'Report\ReportController@getCetakSPJ');
             Route::get('report/get-cetak-spj-satu-lampiran', 'Report\ReportController@getCetakSPJSatuLampiran');
             Route::get('report/get-cetak-pengantar-spm', 'Report\ReportController@getCetakPengantarSPM');
+            Route::get('report/get-cetak-pengantar-spm2', 'Report\ReportController@getCetakPengantarSPM2');
             Route::get('report/get-cetak-pengantar-spp', 'Report\ReportController@getCetakPengantarSPP');
+            Route::get('report/get-cetak-pengantar-spp2', 'Report\ReportController@getCetakPengantarSPP2');
             Route::get('report/get-cetak-pertanggungjawaban-spm', 'Report\ReportController@getCetakPertanggungjawabanSPM');
+            Route::get('report/get-cetak-pertanggungjawaban-spm2', 'Report\ReportController@getCetakPertanggungjawabanSPM2');
             Route::get('report/get-cetak-rincian-spm', 'Report\ReportController@getCetakRincianSPM');
+            Route::get('report/get-cetak-rincian-spm2', 'Report\ReportController@getCetakRincianSPM2');
             Route::get('report/get-cetak-ringkasan-spp', 'Report\ReportController@getCetakRingkasanSPP');
+            Route::get('report/get-cetak-ringkasan-spp2', 'Report\ReportController@getCetakRingkasanSPP2');
             Route::get('report/get-cetak-rincian-spp', 'Report\ReportController@getCetakRincianSPP');
+            Route::get('report/get-cetak-rincian-spp2', 'Report\ReportController@getCetakRincianSPP2');
             Route::get('report/get-cetak-sts-pdf', 'Report\ReportController@getCetakSTSPdf');
             Route::get('report/get-cetak-sts-manual-pdf', 'Report\ReportController@getCetakSTSManualPdf');
             Route::get('report/get-cetak-sts-klaim-pdf', 'Report\ReportController@getCetakSTSKlaimPdf');
