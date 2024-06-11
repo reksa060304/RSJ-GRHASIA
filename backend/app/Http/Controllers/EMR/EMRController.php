@@ -1979,7 +1979,8 @@ class EMRController  extends ApiController
                 'rm.tglkontrolpoli', 'rm.rumahsakittujuan',
                 'rm.alergi', 'rm.diet', 'rm.instruksianjuran', 'rm.hasillab',
                 'rm.kondisiwaktukeluar', 'rm.pengobatandilanjutkan', 'rm.koderesume',
-                'rm.pegawaifk','rm.pasien','rm.rujuk','rm.lainlain',
+                'rm.pegawaifk','rm.pasien','rm.lainlain',
+                // 'rm.rujuk',
                 'pd.noregistrasi', 'pd.tglregistrasi', 'ps.nocm', 'rm.noregistrasifk',
                 'ps.namapasien','rm.edukasi','rm.indikasi','rm.riwayatlalu','rm.rkeadaankeluar','rm.rcarapulang','rm.ralergi',
                 DB::raw("CASE WHEN rm.rkeadaankeluar = '1' THEN 'Perbaikan'  WHEN rm.rkeadaankeluar = '2' THEN 'Sembuh' ELSE 'Pulang' END AS keadaankeluarj"))
