@@ -458,7 +458,7 @@
                     {{-- <br>
                     &nbsp;&nbsp; &nbsp; {{isset($item[310385]) ?$item[310385] : ""  }} --}}
                     <br>
-                    &nbsp;&nbsp; - Perkawinan : {{isset($item[310385]) ?$item[310391] : ""  }}
+                    &nbsp;&nbsp; - Perkawinan : {{isset($item[310391]) ?$item[310391] : ""  }}
                     {{-- <br>
                     &nbsp;&nbsp; &nbsp; {{isset($item[310385]) ?$item[310391] : ""  }} --}}
                 </td>
