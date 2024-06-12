@@ -6614,5 +6614,65 @@
         "define": "MedifirstService"
       }
     ]
+  },  
+  {
+    "name": "OrderBarangCSSD",
+    "url": "/T3JkZXJCYXJhbmdDU1NE",
+    "templateurl": "module/CSSD/OrderBarangCSSD.html",
+    "controller": "OrderBarangCSSDCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "DaftarOrderCSSD",
+    "url": "/RGFmdGFyT3JkZXJMYXVuZHJ52",
+    "templateurl": "module/CSSD/DaftarOrderCSSD.html",
+    "controller": "DaftarOrderCSSDCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "PenerimaanCSSD",
+    "url": "/RGFmdGFyT3JkZXJMYXVuZHJ53",
+    "templateurl": "module/CSSD/PenerimaanCSSD.html",
+    "controller": "PenerimaanCSSDCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
   }
 ]

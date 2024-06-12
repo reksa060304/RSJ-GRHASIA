@@ -249,3 +249,54 @@
         </div>
     </div>
 </div>
+<div kendo-window="popupTambahRencanaPendapatan" k-title="'Rincian Pendapatan'" k-visible="false" k-width="800"
+    k-height="500" k-on-open="win2visible = true" k-on-close="win2visible = false">
+    <div class="panel panel-default container_12">
+        <div class="grid_12">
+            <div class="grid_12">
+                <div class="grid_6">
+                    <label c-label item="item" c-label-text="Tanggal"></label>
+                    <input style="width: 100%" k-ng-model="itemRincian.tglinput" kendo-datetimepicker placeholer="yyyy-mm-dd"
+                        k-format="'yyyy-MM-dd HH:mm'" />
+                </div>
+                <div class="grid_6">
+                    <label c-label item="item" c-label-text="Tahun Diperoleh"></label>
+                    <input style="width: 100%" k-options="yearUngkul" k-ng-model="itemRincian.tahun" kendo-date-picker
+                        placeholer="YYYY" k-format="'yyyy'" />
+                </div>
+            </div>
+            <div class="grid_12">
+                <label c-label item="item">Pilih Sumber Pendapatan</label>
+                <input kendo-combo-box k-ng-model="itemPendapatan.Akun" k-data-text-field="'namarekening'"
+                    k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
+                    k-data-source="listAkun" />
+            </div>
+            <!-- <div class="grid_12">
+                <label c-label item="item">Pilih Uraian Pendapatan</label>
+                <input kendo-combo-box k-ng-model="itemRincian.uraianpendapatans" k-data-text-field="'uraianpendapatan'"
+                    k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
+                    k-data-source="listUraianPendapatan" />
+            </div> -->
+            <div class="grid_6">
+                <label c-label item="item">Uraian Pendapatan</label>
+                <input c-text-box type="input" class="k-textbox" ng-model="itemPendapatan.uraianPendapatan"
+                    style="text-align:right;" />
+            </div>
+            <div class="grid_6">
+                <label c-label item="item">Jumlah Pendapatan</label>
+                <input c-text-box type="text" class="k-textbox" ng-model="itemPendapatan.jumlahPendapatan"
+                    style="text-align:right;" />
+            </div>
+           
+           
+        </div>
+        <div class="grid_12" style="margin-top: 10px;">
+            <div class="grid_2" style="margin: 10px;">
+                <button class="btnTemplate1" ng-click="simpanPendapatan()">Simpan</button>
+            </div>
+            <div class="grid_2" style="margin: 10px;">
+                <button class="btnTemplate1" ng-click="batalRincian()">Batal</button>
+            </div>
+        </div>
+    </div>
+</div>

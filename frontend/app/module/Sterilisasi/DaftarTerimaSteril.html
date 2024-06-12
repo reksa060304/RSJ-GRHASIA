@@ -125,13 +125,17 @@
         <!-- <div class="grid_2" style="margin-top: 5px;">
             <button class="btnTemplate1" ng-click="kirim()"><i class="fa fa-paper-plane"></i>Kirim</button>
         </div> -->
-        <div class="grid_1" style="margin-top: 5px;">
+        <!-- <div class="grid_1" style="margin-top: 5px;">
             <button class="btnTemplate1" ng-click="Kotor()" style="background-color: green;"><i
                     class="fa fa-pencil-square-o"></i>Kotor</button>
-        </div>
+        </div> -->
         <div class="grid_1" style="margin-top: 5px;">
             <button class="btnTemplate1" ng-click="bersihkan()" style="background-color: green;"><i
                     class="fa fa-paint-brush"></i>Bersihkan</button>
+        </div>
+        <div class="grid_1" style="margin-top: 5px;">
+            <button class="btnTemplate1" ng-click="Pengemasan()" style="background-color: green;"><i
+                    class="fa fa-sign-language"></i>Pengemasan</button>
         </div>
         <div class="grid_1" style="margin-top: 5px;">
             <button class="btnTemplate1" ng-click="SterilisasiNew()" style="background-color: green;"><i
@@ -187,6 +191,8 @@
                 ng-click="lanjutBatal1()" />
         </div>
     </div>
+
+    
 
     <div kendo-window="popUp" k-title="'Tanda tangan'" k-width="600" k-visible="false" k-on-open="win2visible = true"
         k-on-close="win2visible = false">
@@ -368,4 +374,29 @@
     </div>
 </div>
 
+</div>
+
+<div kendo-window="WinPengemasan" k-title="''" k-width="450" k-visible="false"
+        k-on-open="win2visible = true" k-on-close="win2visible = false">
+        <div class="grid_12">
+            <!-- <div class="grid_4" style="margin-top:5px"> -->
+            <label c-label real>Nama Set</label>
+            <input required style="width: 100%;" kendo-combo-box k-ng-model="item.kelompokset"
+                k-data-text-field="'namakelompokalat'" k-filter="'contains'" k-minLength="'3'"
+                k-data-value-field="'id'" k-data-source="listKelompokAlat" />
+            <!-- </div> -->
+        </div>
+        <div class="grid_12">
+            <label c-label item="item" c-label-text="Jumlah" style="margin:1.5em 0 .5em"></label>
+            <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.jumlah" />
+        
+        </div>
+        
+        <div class="dialog_buttons pull-right" style="margin-top:5%">
+            <input type="button" class="confirm_no k-button" value="Batal" style="width: 70px"
+                ng-click="BatalP()" />
+            &nbsp;
+            <input type="button" class="confirm_yes k-button" value="Simpan" style="width: 70px"
+                ng-click="SimpanP()" />
+        </div>
 </div>

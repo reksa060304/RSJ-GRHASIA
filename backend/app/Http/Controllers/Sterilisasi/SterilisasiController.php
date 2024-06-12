@@ -27,6 +27,7 @@ use App\Master\KelompokAlatDetail;
 use App\Transaksi\StokProdukDetail;
 use App\Http\Controllers\ApiController;
 use App\Transaksi\StrukPelayananDetail;
+use App\Transaksi\Pengemasan;
 
 class SterilisasiController extends ApiController
 {
@@ -136,6 +137,12 @@ class SterilisasiController extends ApiController
             ->where('lu.kdprofile', $idProfile)
             ->get();
 
+        $kelompokAlat = \DB::table('kelompokalat_m as sp')
+            ->select('sp.id','sp.namakelompokalat')
+            ->where('sp.kdprofile', $kdProfile)
+            ->where('sp.statusenabled', true)
+            ->get();
+
         $result = array(
             'pegawai' => $data,
             'datalogin' => $dataPegawaiUser,
@@ -144,6 +151,7 @@ class SterilisasiController extends ApiController
             'kelompokalat' => $dataKelompok,
             'ruangancssd' => $dataRuangCssd,
             'ruanganall' => $dataRuanganAll,
+            'kelompokalat' => $kelompokAlat,
             'by' => 'as@epic',
         );
         return $this->respond($result);
@@ -417,6 +425,7 @@ class SterilisasiController extends ApiController
                 DB::raw('count(kp.objectprodukfk) as jmlitem')
             )
             ->where('sp.kdprofile', $idProfile)
+            ->where('sp.statuskirim', 'Terima Barang')
             ->groupBy('sp.norec','sp.tglkirim','sp.nokirim','sp.jenispermintaanfk','pg.namalengkap','sp.noorderfk','ru.id',
                 'ru.namaruangan','ru2.id','ru2.namaruangan','sp.keteranganlainnyakirim','sp.statuskirim','sp.statusbersih','sp.statussteril');
 
@@ -1954,6 +1963,252 @@ class SterilisasiController extends ApiController
         ];
 
         return $this->respond($result);
+    }
+    public function saveOrderCSSD(Request $request) {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $KdPelayananLaundry = $this->settingDataFixed('KelompokTransaksiCSSD',$idProfile);
+        \DB::beginTransaction();
+        try{
+            if ($request['strukorder']['norecorder'] == '') {
+//                if ($request['strukorder']['jenispermintaanfk'] != 1) {
+                    $noOrder = $this->generateCode(new StrukOrder, 'noorder', 14, 'OTCS-' . $this->getDateTime()->format('ym'), $idProfile);
+//                } else {
+//                    $noOrder = $this->generateCode(new StrukOrder, 'noorder', 14, 'OAMP-' . $this->getDateTime()->format('ym'));
+//                }
+                $dataSO = new StrukOrder();
+                $dataSO->norec = $dataSO->generateNewId();
+                $dataSO->kdprofile = $idProfile;
+                $dataSO->statusenabled = true;
+                $dataSO->isdelivered = 0;
+                $dataSO->noorder = $noOrder;
+            }else {
+                $dataSO = StrukOrder::where('norec',$request['strukorder']['norecorder'])->where('kdprofile', $idProfile)->first();
+                OrderPelayanan::where('noorderfk',$request['strukorder']['norecorder'])->where('kdprofile', $idProfile)->delete();
+            }
+            $dataSO->jenispermintaanfk = $request['strukorder']['jenispermintaanfk'];
+            $dataSO->objectkelompoktransaksifk = $KdPelayananLaundry;
+            $dataSO->keteranganorder = $request['strukorder']['keteranganorder'];
+            $dataSO->objectpegawaiorderfk = $request['strukorder']['pegawaiorderfk'];
+            $dataSO->qtyjenisproduk = $request['strukorder']['qtyjenisproduk'];
+            $dataSO->qtyproduk = $request['strukorder']['qtyjenisproduk'];
+            $dataSO->objectruanganfk = $request['strukorder']['ruanganfk'];
+            $dataSO->objectruangantujuanfk = $request['strukorder']['ruangantujuanfk'];
+            $dataSO->tglorder = $request['strukorder']['tglorder'];
+            $dataSO->statusorder = 0;
+            $dataSO->totalbeamaterai = 0;
+            $dataSO->totalbiayakirim = 0;
+            $dataSO->totalbiayatambahan = 0;
+            $dataSO->totaldiscount = 0;
+            $dataSO->totalhargasatuan = 0;
+            $dataSO->totalharusdibayar = 0;
+            $dataSO->totalpph = 0;
+            $dataSO->totalppn = 0;
+            $dataSO->save();
+            $dataSO = $dataSO->norec;
+
+            foreach ($request['details'] as $item) {
+                $dataOP = new OrderPelayanan();
+                $dataOP->norec = $dataOP->generateNewId();
+                $dataOP->kdprofile = $idProfile;
+                $dataOP->statusenabled = true;
+//                $dataOP->hasilkonversi = $item['nilaikonversi'];
+                $dataOP->iscito = 0;
+                $dataOP->noorderfk = $dataSO;
+                $dataOP->objectprodukfk = $item['produkfk'];
+                $dataOP->qtyproduk = $item['jumlah'];
+                $dataOP->qtyprodukretur = 0;
+                $dataOP->objectruanganfk = $request['strukorder']['ruanganfk'];
+                $dataOP->objectruangantujuanfk =  $request['strukorder']['ruangantujuanfk'];
+                $dataOP->objectsatuanstandarfk = $item['satuanviewfk'];
+                $dataOP->strukorderfk = $dataSO;
+                $dataOP->tglpelayanan = $request['strukorder']['tglorder'];
+                $dataOP->save();
+            }
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan Order Berhasil";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMessage,
+                "nokirim" => $dataSO,
+                "as" => 'er@epic',
+            );
+        } else {
+            $transMessage = "Simpan Order Gagal!!";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message"  => $transMessage,
+                "nokirim" => $dataSO,
+                "as" => 'er@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function getDaftarOrderCSSD(Request $request) {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $dataLogin = $request->all();
+//      
+        $data = \DB::table('strukorder_t as sp')
+            ->leftJOIN('orderpelayanan_t as op','op.strukorderfk','=','sp.norec')
+            ->LEFTJOIN('pegawai_m as pg','pg.id','=','sp.objectpegawaiorderfk')
+            ->LEFTJOIN('ruangan_m as ru','ru.id','=','sp.objectruanganfk')
+            ->LEFTJOIN('ruangan_m as ru2','ru2.id','=','sp.objectruangantujuanfk')
+            ->select('sp.norec','sp.tglorder','sp.noorder','sp.jenispermintaanfk','pg.namalengkap',
+                'ru.namaruangan as ruanganasal','ru2.namaruangan as ruangantujuan','sp.keteranganorder',
+                'sp.statusorder','sp.qtyjenisproduk','sp.keterangankeperluan',
+                \DB::raw("case when sp.keterangankeperluan is NULL then 
+                            case when sp.jenispermintaanfk = 1 then 'Amprahan' 
+                            when  sp.jenispermintaanfk = 2 then 'Transfer' end
+                        else 
+                            case when sp.jenispermintaanfk = 1 then 'Amprahan - Linen Infeksius' 
+                            when  sp.jenispermintaanfk = 2 then 'Transfer - Linen Infeksius'   end                 
+                        end as jeniskirim 
+                    ")
+            )
+            ->where('sp.kdprofile',$idProfile);
+
+        if(isset($request['tglAwal']) && $request['tglAwal']!="" && $request['tglAwal']!="undefined"){
+            $data = $data->where('sp.tglorder','>=', $request['tglAwal']);
+        }
+        if(isset($request['tglAkhir']) && $request['tglAkhir']!="" && $request['tglAkhir']!="undefined"){
+            $tgl= $request['tglAkhir'];
+            $data = $data->where('sp.tglorder','<=', $tgl);
+        }
+        if(isset($request['noorder']) && $request['noorder']!="" && $request['noorder']!="undefined"){
+            $data = $data->where('sp.noorder','ilike','%'. $request['noorder']);
+        }
+        if(isset($request['ruangantujuanfk']) && $request['ruangantujuanfk']!="" && $request['ruangantujuanfk']!="undefined"){
+            $data = $data->where('ru.namaruangan','ilike', '%'. $request['ruangantujuanfk'].'%');
+        }
+        if(isset($request['produkfk']) && $request['produkfk']!="" && $request['produkfk']!="undefined"){
+            $data = $data->where('op.objectprodukfk','=',$request['produkfk']);
+        }
+        if(isset($request['norecOrder']) && $request['norecOrder']!="" && $request['norecOrder']!="undefined"){
+            $data = $data->where('sp.norec','=', $request['norecOrder']);
+        }
+
+        $data = $data->distinct();
+        $data = $data->where('sp.statusenabled',true);
+        $data = $data->where('sp.objectkelompoktransaksifk',23);
+//        $data = $data->wherein('sp.objectruanganfk',$strRuangan);
+        $data = $data->orderBy('sp.noorder');
+        $data = $data->get();
+
+        $results =array();
+        foreach ($data as $item){
+            $details = DB::select(DB::raw("
+                     select  pr.id as kdproduk,pr.kdproduk as kdsirs,pr.namaproduk,
+                    ss.satuanstandar,spd.qtyproduk
+                     from orderpelayanan_t as spd 
+                    left JOIN produk_m as pr on pr.id=spd.objectprodukfk
+                    left JOIN satuanstandar_m as ss on ss.id=spd.objectsatuanstandarfk
+                    where spd.kdprofile = $idProfile and strukorderfk=:norec"),
+                array(
+                    'norec' => $item->norec,
+                )
+            );
+            $jeniskirim ='';
+            // if ($item->jenispermintaanfk == 1){
+            //     $jeniskirim ='Amprahan';
+            // }
+            // if ($item->jenispermintaanfk == 2){
+            //     $jeniskirim ='Transfer';
+            // }
+            if ($item->statusorder == 0){
+                $status ='';
+            }else if ($item->statusorder == 1){
+                $status ='Sudah Kirim';
+            }else if ($item->statusorder == 2){
+                $status ='Batal Kirim';
+            }
+
+            $results[] = array(
+                'status' => 'Order Laundry',
+                'tglorder' => $item->tglorder,
+                'noorder' => $item->noorder,
+                'jeniskirim' =>  $item->jeniskirim,//$jeniskirim,
+                'norec' => $item->norec,
+                'namaruanganasal' => $item->ruanganasal,
+                'namaruangantujuan' => $item->ruangantujuan,
+                'petugas' => $item->namalengkap,
+                'keterangan' => $item->keteranganorder,
+                'statusorder' => $status,
+                'jmlitem' => $item->qtyjenisproduk,
+                'details' => $details,
+            );
+        }
+//        
+
+        $result = array(
+            'daftar' => $results,
+//            'datalogin' =>$dataPegawaiUser,
+            'message' => 'as@epic',
+//            'str' => $strRuangan,
+        );
+        return $this->respond($result);
+    }
+   
+    public function savePengemasan(Request $request){
+        $idProfile = (int) $this->getDataKdProfile($request); 
+        $req = $request;
+        
+       
+        DB::beginTransaction();
+        try{
+                for($i=0; $i<$request['jumlah']; $i++){
+                    $tglnow = date('Y-m-d H:i:s'); 
+                    $result = Pengemasan::max('urut');
+                    $SN = str_pad((int)$result + 1, 6, "0", STR_PAD_LEFT); // Menambahkan nol di depan jika perlu
+                    $noPengemasan = $this->generateCodeBySeqTable(new Pengemasan, 'pengemasan', 6, date('y'),$idProfile); 
+                           
+                    $newKS = new Pengemasan();
+                    $norecKS = $newKS->generateNewId();
+                    $newKS->norec = $norecKS;
+                    $newKS->kdprofile = $idProfile;
+                    $newKS->statusenabled = true;
+                    $newKS->objectpegawaifk = true;
+                    $newKS->tglpengemasan = $tglnow;
+                    $newKS->objectkelompoksetfk =  $req ['idKelompok'];
+                    // $newKS->objectprodukfk = $req ['objectprodukfk'];
+                    $newKS->nomor = $noPengemasan;
+                  
+                    
+                    $newKS->save();
+                }
+       $transStatus = 'true';
+       } catch (\Exception $e) {
+            $transStatus = 'false';
+            $transMessage = "GAGAL";
+       }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan";
+            \DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMessage,
+               
+                "as" => 'ea@epic',
+            );
+        } else {
+            $transMessage = "Registrasi Alat Gagal!!";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message"  => $transMessage,
+                "as" => 'ea@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
 
 }

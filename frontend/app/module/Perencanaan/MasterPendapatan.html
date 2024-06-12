@@ -1,0 +1,245 @@
+<style type="text/css">
+    .style-center {
+        display: inline-block;
+        text-align: center;
+        width: 100%;
+    }
+
+    .style-right {
+        display: inline-block;
+        text-align: right;
+        width: 100%;
+    }
+
+    .style-left {
+        display: inline-block;
+        text-align: left;
+        width: 100%;
+    }
+
+    .k-grid .k-grid-header .k-header .k-link {
+        height: auto;
+    }
+
+    .k-grid .k-grid-header .k-header {
+        white-space: normal;
+    }
+
+    .k-grid .k-grid-header .k-header {
+        text-align: center;
+    }
+
+    img.photo-pasien {
+        width: 300px;
+        height: 100%;
+        object-fit: contain;
+    }
+
+    legend {
+        cursor: pointer;
+        padding: 10px;
+    }
+
+    .effect-shadow {
+        -webkit-box-shadow: 2px 2px 5px #b6b6b6;
+        -moz-box-shadow: 2px 2px 5px #b6b6b6;
+        box-shadow: 2px 2px 5px #b6b6b6;
+    }
+
+    .green {
+        background-color: #98FB98;
+        color: #000000;
+        /*font-weight: bold;*/
+    }
+
+    .red {
+        background-color: #ff3860;
+        color: #FFFFFF;
+        /*font-weight: bold;*/
+    }
+
+    .blue {
+        background-color: #1E90FF;
+        color: #ffffff;
+        /*font-weight: bold;*/
+    }
+
+    .koneng {
+        background-color: #FFFF00;
+        color: #191970;
+        /*font-weight: bold;*/
+    }
+
+    .k-button {
+        background-color: rgb(255, 35, 89);
+        border: none;
+    }
+
+    .k-grid tbody .k-button,
+    .k-ie8 .k-grid tbody button.k-button {
+        min-width: 24px;
+    }
+
+    .k-button .fa {
+        float: none;
+
+    }
+
+    k-button {
+        min-width: 84px;
+        background-color: #e0360b;
+        border: none;
+        margin: .1em;
+    }
+
+    .green {
+        background-color: #00ff00;
+        color: #000000;
+        /*font-weight: bold;*/
+    }
+
+    .orange {
+        background-color: #ff6600;
+        color: #FFFFFF;
+        /*font-weight: bold;*/
+    }
+
+    .koneng {
+        background-color: #FFFF00;
+        color: #191970;
+        /*font-weight: bold;*/
+    }
+
+    .merah {
+        background-color: red;
+        color: #FFFFFF;
+        /*font-weight: bold;*/
+    }
+</style>
+<div>
+    <c-panel item="item" header="'Master Pendapatan'" disabled>
+    </c-panel>
+    <div class="grid_12">
+        
+
+        <!-- <div class="grid_1" style="margin-top: 12px;">
+            <button class="btnTemplate1" ng-click="Cari()">Cari</button>
+        </div> -->
+        <div class="grid_12">
+            <div class="grid_12">
+                <div class="grid_2" style="text-align: left;vertical-align: middle;">
+                    PILIH SUMBER PENDAPATAN
+                </div>
+                <div class="grid_4">
+                    <input kendo-combo-box k-ng-model="item.sumberPendapatan" k-data-text-field="'namaexternal'"
+                        k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
+                        k-data-source="listSumberPendapatan" />
+                </div>
+                
+            </div>
+            <div class="grid_12">
+                <div class="grid_2" style="text-align: left;">
+                    RINCIAN URAIAN PENDAPATAN
+                </div>
+                <div class="grid_4">
+                    <input kendo-combo-box k-ng-model="item.uraianPendapatan" k-data-text-field="'uraianpendapatan'"
+                        k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
+                        k-data-source="listUraianPendapatan" />
+                </div>
+                
+                <div class="grid_2">
+                    <button class="btnTemplate1" style="margin-left: 0;" ng-click="resetFilters()"> <i
+                            class="fa fa-refresh"></i>Reset</button>
+                </div>
+            </div>
+            <div class="grid_12 borderBox">
+                <kendo-grid id="kGrids" k-data-source="dataSourceRincianPendapatan" k-selectable="'row'"
+                    class="max-height" k-options="columnRincianPendapatan" k-ng-model="dataSelected"
+                    ng-click="klikGrid(dataSelected)">
+                  
+                </kendo-grid>
+            </div>
+        </div>
+
+        <div class="clear"></div>
+
+    </div>
+</div>
+<div kendo-window="popupTambahRincianPendapatan" k-title="'Rincian Pendapatan'" k-visible="false" k-width="800"
+    k-height="500" k-on-open="win2visible = true" k-on-close="win2visible = false">
+    <div class="panel panel-default container_12">
+        <div class="grid_12">
+            <div class="grid_12">
+                <div class="grid_6">
+                    <label c-label item="item">Pilih Level</label>
+                    <input kendo-combo-box k-ng-model="item.level" k-data-text-field="'nama'"
+                        k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
+                        k-data-source="listLevel" />
+                </div>  
+            </div>
+            <div class="grid_6" ng-show="item.level.id == 6 || item.level.id === 7 || item.level.id === 8 || item.level.id === 9 || item.level.id === 10 || item.level.id === 11 || item.level.id === 12">
+                <label c-label item="item">Akun Pendapatan 1</label>
+                <input kendo-combo-box k-ng-model="item.level1" k-data-text-field="'namarekening'"
+                    k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
+                    k-data-source="listakunlev1"  k-on-change="handleMasterPendapatan(item.level1)"/>
+            </div>
+            <div class="grid_6" ng-show="item.level.id === 7|| item.level.id === 8 || item.level.id === 9 || item.level.id === 10 || item.level.id === 11 || item.level.id === 12">
+                <label c-label item="item">Akun Pendapatan 2</label>
+                <input kendo-combo-box k-ng-model="item.level2" k-data-text-field="'namarekening'"
+                    k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
+                    k-data-source="masterAssetOption" k-on-change="handleMasterPendapatan(item.level2)"/>
+            </div> 
+            <div class="grid_6" ng-show="item.level.id === 8 || item.level.id === 9 || item.level.id === 10 || item.level.id === 11 || item.level.id === 12">
+                <label c-label item="item">Akun Pendapatan 3</label>
+                <input kendo-combo-box k-ng-model="item.level3" k-data-text-field="'namarekening'"
+                    k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
+                    k-data-source="masterAssetOption" k-on-change="handleMasterPendapatan(item.level3) "/>
+            </div> 
+            <div class="grid_6" ng-show="item.level.id === 9 || item.level.id === 10 || item.level.id === 11 || item.level.id === 12">
+                <label c-label item="item">Akun Pendapatan 4</label>
+                <input kendo-combo-box k-ng-model="item.level4" k-data-text-field="'namarekening'"
+                    k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
+                    k-data-source="masterAssetOption" k-on-change="handleMasterPendapatan(item.level14)" />
+            </div>  
+            <div class="grid_6" ng-show="item.level.id === 10 || item.level.id === 11 || item.level.id === 12">
+                <label c-label item="item">Akun Pendapatan 5</label>
+                <input kendo-combo-box k-ng-model="item.level5" k-data-text-field="'namarekening'"
+                    k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
+                    k-data-source="masterAssetOption" k-on-change="handleMasterPendapatan(item.level5) "/>
+            </div>  
+            <div class="grid_6" ng-show="item.level.id === 11 || item.level.id === 12">
+                <label c-label item="item">Akun Pendapatan 6</label>
+                <input kendo-combo-box k-ng-model="item.level6" k-data-text-field="'namarekening'"
+                    k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
+                    k-data-source="masterAssetOption" k-on-change="handleMasterPendapatan(item.level6) "/>
+            </div>  
+            <div class="grid_6" ng-show="item.level.id === 12">
+                <label c-label item="item">Akun Pendapatan 7</label>
+                <input kendo-combo-box k-ng-model="item.level7" k-data-text-field="'namarekening'"
+                    k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
+                    k-data-source="masterAssetOption" k-on-change="handleMasterPendapatan7(item.level) "/>
+            </div> 
+            <div class="grid_6">
+                <label c-label item="item">Nama Akun</label>
+                <input c-text-box type="input" class="k-textbox" ng-model="item.namarekening"
+                    style="text-align:right;" />
+            </div>
+            <div class="grid_6">
+                <label c-label item="item">Kode Akun</label>
+                <input c-text-box type="input" class="k-textbox" ng-model="item.kodeakun"
+                    style="text-align:right;" />
+            </div>
+            
+            
+           
+        </div>
+        <div class="grid_12" style="margin-top: 10px;">
+            <div class="grid_2" style="margin: 10px;">
+                <button class="btnTemplate1" ng-click="simpanRincian()">Simpan</button>
+            </div>
+            <div class="grid_2" style="margin: 10px;">
+                <button class="btnTemplate1" ng-click="batalRincian()">Batal</button>
+            </div>
+        </div>
+    </div>
+</div>

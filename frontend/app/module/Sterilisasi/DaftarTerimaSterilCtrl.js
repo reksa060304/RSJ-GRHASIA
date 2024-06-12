@@ -48,6 +48,11 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 medifirstService.getPart("logistik/get-combo-pegawai-logistik", true, true, 20).then(function (data) {
                     $scope.ListDataPegawai = data;
                 });
+
+                medifirstService.get("sterilisasi/get-data-combo-steril", true).then(function (dat) {
+                    var dataCombo = dat.data;
+                    $scope.listKelompokAlat = dataCombo.kelompokalat;
+                });
             }
 
             $scope.BatalCetak = function () {
@@ -854,6 +859,33 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     anHttpRequest.send(null);
                 }
             }
+
+            $scope.Pengemasan = function () {
+                if ($scope.dataSelected == undefined) {
+                    toastr.error('Pilih data dulu')
+                    return
+                }
+                $scope.WinPengemasan.center().open();
+            }
+            $scope.BatalP = function () {
+
+                $scope.item.kelompokset = undefined
+                $scope.item.jumlah= ''
+                $scope.WinPengemasan.close();
+            }
+            $scope.SimpanP = function () {
+                var dataupdate = {
+                    idKelompok:  $scope.item.kelompokset.id,
+                    jumlah: $scope.item.jumlah
+                }
+
+                medifirstService.post('sterilisasi/post-pengemasan', dataupdate).then(function (e) {
+                    init();
+                }),
+               
+                $scope.WinPengemasan.close();
+            }
+
             //***********************************
         }
     ]);

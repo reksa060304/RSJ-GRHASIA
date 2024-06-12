@@ -189,7 +189,7 @@ define(['initialize'], function (initialize) {
                 //     //toastr.error("Pilih asal terlebih dahulu!!")
                 //     return;
                 // }
-                medifirstService.get("logistik/get-produkdetail?" +
+                medifirstService.get("laundry/get-produkdetail?" +
                     "produkfk=" + $scope.item.produk.id +
                     "&ruanganfk=" + $scope.item.ruangan.id, true).then(function (dat) {
                         dataProdukDetail = dat.data.detail;
@@ -262,6 +262,10 @@ define(['initialize'], function (initialize) {
             $scope.tambah = function () {
                 if ($scope.item.jumlah == 0) {
                     toastr.error("Jumlah harus di isi!")
+                    return;
+                }
+                if ($scope.item.jumlah > $scope.item.stok) {
+                    toastr.error("Permintaan Laundry Melebih Stok!")
                     return;
                 }
                 // if (parseFloat($scope.item.stok) == 0) {

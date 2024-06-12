@@ -1337,6 +1337,18 @@
         {
             "nameDep": "InsidenBaruCtrl",
             "urlDep": "module/PMKP/InsidenBaruCtrl"
+        },
+        {
+            "nameDep": "OrderBarangCSSDCtrl",
+            "urlDep": "module/CSSD/OrderBarangCSSDCtrl"
+        },
+        {
+            "nameDep": "DaftarOrderCSSDCtrl",
+            "urlDep": "module/CSSD/DaftarOrderCSSDCtrl"
+        },
+        {
+            "nameDep": "PenerimaanCSSDCtrl",
+            "urlDep": "module/CSSD/PenerimaanCSSDCtrl"
         }
     ]
 }

@@ -483,6 +483,10 @@
         {
             "nameDep": "MasterPendapatanCtrl",
             "urlDep": "module/Perencanaan/MasterPendapatanCtrl"
+        }, 
+        {
+            "nameDep": "TargetPendapatanCtrl",
+            "urlDep": "module/Perencanaan/TargetPendapatanCtrl"
         }
     ]
 }

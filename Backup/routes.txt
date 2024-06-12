@@ -2724,6 +2724,11 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         Route::post('sterilisasi/save-update-status-bersihkan', 'Sterilisasi\SterilisasiController@UpdateStatusBersih');
         Route::get('sterilisasi/get-data-orderalatsteril', 'Sterilisasi\SterilisasiController@getDaftarOrderAlatSteril');
         Route::post('sterilisasi/save-update-status-alatkotor', 'Sterilisasi\SterilisasiController@UpdateStatusAlatKotor');
+        Route::get('logistik/get-produkdetail-linen', 'Logistik\LogistikController@getProdukDetailLinen');
+        Route::post('anggaran/save-target-pendapatan', 'Perencanaan\PerencanaanController@saveTargetPendapatan');
+        Route::post('sterilisasi/save-order-cssd-ruangan','Sterilisasi\SterilisasiController@saveOrderCSSD');
+        Route::get('sterilisasi/get-daftar-order-cssd-ruangan', 'Sterilisasi\SterilisasiController@getDaftarOrderCSSD');
+        Route::post('sterilisasi/post-pengemasan','Sterilisasi\SterilisasiController@savePengemasan');
         // });
 
         // Route::group(['prefix' => 'sysadmin'], function () {

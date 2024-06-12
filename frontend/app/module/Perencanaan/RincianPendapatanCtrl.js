@@ -19,14 +19,16 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     var datas = data.data
                     $scope.listSumberPendapatan = datas.sumberpendapatan
                     $scope.listUraianPendapatan = datas.uraianpendapatan
-                    for (let i = 0; i < datas.rincianpendapatan.length; i++) {
-                        datas.rincianpendapatan[i].no = i+1;
+                    $scope.listAkun = datas.akun
+                    $scope.listTarget = datas.targetpendapatan
+                    for (let i = 0; i < datas.targetpendapatan.length; i++) {
+                        datas.targetpendapatan[i].no = i+1;
                         
                     }
                     $scope.dataSourceRincianPendapatan = new kendo.data.DataSource({
-                        data: datas.rincianpendapatan,
+                        data: datas.targetpendapatan,
                         pageSize: 150,
-                        total: datas.rincianpendapatan.length,
+                        total: datas.targetpendapatan.length,
                         serverPaging: false,
                         schema: {
                             model: {
@@ -65,50 +67,37 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         // hidden: true
                     },
                     {
-                        "field": "uraian",
-                        "title": "Uraian Pendapatan",
+                        "field": "koderekening",
+                        "title": "Kode Rekening",
                         "width": "100px",
                         // hidden: true
                     },
                     {
-                        "field": "jumlahpendapatan",
-                        "title": "Jumlah Pendapatan",
+                        "field": "namarekening",
+                        "title": "Rekening",
+                        "width": "100px",
+                        // hidden: true
+                    },
+                    {
+                        "field": "uraian",
+                        "title": "Keterangan",
                         "width": "60px",
                         // hidden: true
                     },
                     {
-                        "field": "keterangan",
-                        "title": "Keterangan",
-                        "width": "100px",
+                        "field": "jumlahpendapatan",
+                        "title": "Target",
+                        "width": "60px",
                         // hidden: true
                     },
                     {
-                        "field": "namaexternal",
-                        "title": "Sumber Pendapatan",
+                        "field": "tahun",
+                        "title": "Tahun",
                         "width": "100px",
                         // hidden: true
                     },
-                    {
-                        "field": "uraianpendapatan",
-                        "title": "Rincian Uraian Pendapatan",
-                        "width": "100px",
-                        // hidden: true
-                    },
-                    {
-                        // "field": "keterangan",
-                        "title": "Perubahan",
-                        "width": "100px",
-                        "template": "#: isperubahan == true ? '✔' : ''#"
-
-                        // hidden: true
-                    },
-                    {
-                        // "field": "keterangan",
-                        "title": "Non Perubahan",
-                        "width": "100px",
-                        "template": "#: isperubahan == false ? '✔' : ''#"
-                        // hidden: true
-                    },
+                  
+                   
                     {
 						"command": [
 							{ text: "Edit", click: EditRincian, imageClass: "k-icon k-i-pencil" },
@@ -127,7 +116,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.dataSelected = undefined
                 console.log($scope.dataSelected)
                 $scope.itemRincian.norec = undefined
-                $scope.popupTambahRincianPendapatan.center().open()
+                // $scope.popupTambahRincianPendapatan.center().open()
+                $scope.popupTambahRencanaPendapatan.center().open()
             }
             $scope.perubahan = function(data){
                 if (data == true) {
@@ -165,6 +155,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 if($scope.itemRincian.norec != undefined){
                     norec = $scope.itemRincian.norec
                 }
+                var akun = ''
+                if($scope.itemPendapatan.Akun != undefined){
+                    akun = $scope.itemPendapatan.Akun.id
+                }
                 var objSave = {
                     'norec': norec,
                     'tglinput': $scope.itemRincian.tglinput,
@@ -173,7 +167,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     'uraianpendapatan': $scope.itemRincian.uraianPendapatan,
                     'jumlahpendapatan': $scope.itemRincian.jumlahPendapatan,
                     'keterangan': $scope.itemRincian.keterangan,
-                    'objecturaianpendapatanfk': $scope.itemRincian.uraianpendapatans.id,
+                    'objecturaianpendapatanfk':akun,
+                    'objectakunpendapatanfk': $scope.itemPendapatan.Akun.id,
                     'isperubahan': perubahan
                 }
                 medifirstService.post('anggaran/save-rincian-pendapatan', objSave).then(function(data){
@@ -404,6 +399,43 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                 })
                 
+            }
+
+            $scope.simpanPendapatan = function(){
+                console.log($scope.dataSelected)
+                var tahun = $scope.itemRincian.tahun;
+                
+           
+                norec = ''
+                if($scope.itemRincian.norec != undefined){
+                    norec = $scope.itemRincian.norec
+                }
+                var akun = ''
+                if($scope.itemPendapatan.Akun != undefined){
+                    akun = $scope.itemPendapatan.Akun.id
+                }
+                var objSave = {
+                    'norec': norec,
+                    'tglinput': $scope.itemRincian.tglinput,
+                    'tahun': tahun,
+                    'objectasalprodukfk': null,
+                    'uraianpendapatan': $scope.itemPendapatan.uraianPendapatan,
+                    'jumlahpendapatan': $scope.itemPendapatan.jumlahPendapatan,                    
+                    'objecturaianpendapatanfk':akun,
+                    'objectakunpendapatanfk': $scope.itemPendapatan.Akun.id ,
+                    'isperubahan': false,
+                }
+                medifirstService.post('anggaran/save-target-pendapatan', objSave).then(function(data){
+                    console.log(data);
+                    $scope.popupTambahRencanaPendapatan.close()
+                    $scope.itemRincian = {}
+                    $scope.itemPendapatan = {}
+                    LoadCombo()
+                    $scope.dataSelected = {}
+                    // norec = ""
+                    console.log(norec);
+                })
+                console.log(objSave);
             }
             // BATASSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
         }

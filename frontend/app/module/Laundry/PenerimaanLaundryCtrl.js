@@ -318,6 +318,10 @@ define(['initialize'], function (initialize) {
                     toastr.error("Stok Tidak Ada!")
                     return;
                 }
+                if ($scope.item.jumlah > $scope.item.stok) {
+                    toastr.error("Permintaan Laundry Melebih Stok!")
+                    return;
+                }
                 if (noTerima == '') {
                     $scope.item.jumlah = 0
                     toastr.error("Jumlah blm di isi!!")
@@ -548,7 +552,7 @@ define(['initialize'], function (initialize) {
                     strukkirim: strukkirim,
                     details: data2
                 }
-
+                console.log(objSave)
                 medifirstService.post('laundry/save-terima-laundry', objSave).then(function (e) {
                     $scope.item.noKirim = e.data.nokirim.nokirim
                     norecCetak = $scope.item.noKirim;

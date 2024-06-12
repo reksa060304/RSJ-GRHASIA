@@ -362,7 +362,7 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                     $scope.saveShow = true;
                 });
             }
-            $scope.UbahGolDar = function () {
+            $scope.Pengemasan = function () {
                 if ($scope.dataSelected == undefined) {
                     toastr.error('Pilih data dulu')
                     return
