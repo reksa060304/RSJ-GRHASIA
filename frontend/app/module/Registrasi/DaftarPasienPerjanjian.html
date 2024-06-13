@@ -36,7 +36,7 @@
                     <label c-label c-label-text="Nama Pasien" real></label>
                 </div>
                 <div class="grid_12">
-                    <input c-text-box type="input" class="k-textbox" ng-model="namaPasien" />
+                    <input c-text-box type="input" class="k-textbox" ng-model="namaPasien" ng-keypress="($event.which == 13) ? findData() : namaPasien" />
                 </div>
             </div>
             <div class="grid_2">
