@@ -17,7 +17,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.totalSkor4 = 0
             $scope.isCetakV = true;
             $scope.cc = {}
-            var nomorEMR = '-'
+            var nomorEMR = '-'           
+            var norecEMR = ''
             $scope.cc.emrfk = 3000700
             var dataLoad = []
             var pegawaiInputDetail= ''
@@ -734,9 +735,16 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 var local = JSON.parse(localStorage.getItem('profile'))
                 var nama = medifirstService.getPegawaiLogin().namaLengkap
 
-                window.open(configuration.baseApiBackend + 'report/get-cetak-suratketerangandokter?noemr=' + nomorEMR + '&emfk=' + $scope.cc.emrfk +
-                    '&kdprofile=' + local.id +
-                    '&nama=' + nama, '_blank');
+                window.open(configuration.baseApiBackend + 'report/get-cetak-suratketerangandokter?nocm=' + $scope.cc.nocm +
+                '&norec_apd=' + $scope.cc.norec +
+                '&emr=' + norecEMR +
+                '&emrfk=' + $scope.cc.emrfk +
+                '&kdprofile=' + local.id +
+                '&nama=' + nama +
+                // '&isttd=true' +
+                // '&pegawaittd=' + pegawai.value +
+                '&noregistrasi=' + $scope.cc.noregistrasi +
+                '&norec_pd=' + $scope.cc.norec_pd, '_blank');
             }
         }
         
