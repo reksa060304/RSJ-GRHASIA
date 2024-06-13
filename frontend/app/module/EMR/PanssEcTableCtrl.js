@@ -1,7 +1,7 @@
 define(['initialize', 'Configuration'], function (initialize, configuration) {
     'use strict';
-    initialize.controller('PanssEcTableCtrl', ['MedifirstService', 'CacheHelper', '$scope', 'DateHelper', '$state', 'ModelItem',
-        function (medifirstService, cacheHelper, $scope, DateHelper, $state, ModelItem) {
+    initialize.controller('PanssEcTableCtrl', ['MedifirstService', 'CacheHelper', '$scope', '$rootScope', 'DateHelper', '$state', 'ModelItem',
+        function (medifirstService, cacheHelper, $scope, $rootScope, DateHelper, $state, ModelItem) {
             $scope.now = new Date();
             $scope.dataSelected = {};
             $scope.item = {};
@@ -438,6 +438,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             })
             $scope.Save = function () {
                 
+            }
+
+            $scope.kembali = function () {
+                $rootScope.showRiwayat()
             }
             //** BATAS */
         }
