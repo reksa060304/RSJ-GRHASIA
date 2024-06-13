@@ -32,6 +32,12 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
 		// Masih dalam percobaan. abaikan
 		Route::get('report/coba-lapung', 'Report\ReportController@cobaLapung');
 
+    // route lock angkas
+		Route::get('perencanaan/get-lock-angkas', 'Perencanaan\PerencanaanController@getLockAngkas');
+		Route::post('perencanaan/save-lock-angkas', 'Perencanaan\PerencanaanController@saveLockAngkas');
+		Route::post('sysadmin/logging/save-log-lock-angkas', 'SysAdmin\LoggingController@saveLoggingLockAngkas');
+
+
 		// Cetakan
 		Route::get('report/cetak-label-pilihan', 'Report\ReportController@cetakLabelPilihan');
 

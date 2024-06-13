@@ -1,0 +1,147 @@
+<style>
+    .k-grid .k-grid-header .k-header .k-link {
+        height: auto;
+    }
+
+    .k-grid .k-grid-header .k-header {
+        white-space: normal;
+    }
+
+    .k-grid .k-grid-header .k-header {
+        text-align: center;
+    }
+
+    .k-window-content .k-content {
+        overflow: none
+    }
+
+    legend {
+        cursor: pointer;
+        padding: 10px;
+    }
+
+    .effect-shadow {
+        -webkit-box-shadow: 2px 2px 5px #b6b6b6;
+        -moz-box-shadow: 2px 2px 5px #b6b6b6;
+        box-shadow: 2px 2px 5px #b6b6b6;
+    }
+
+    .warnaa {
+        color: black
+    }
+
+    .align-right{
+        text-align: right;
+    }
+
+    hr {
+        border: 1px solid black;
+        margin-top: 0px;
+        margin-bottom: 0px;
+        display: inline-block;
+        width: 100%;
+    }
+
+    h1 {
+        color: black;
+        display: block;
+        font-size: 14px;
+        margin-block-start: 0px;
+        margin-block-end: 0;
+        margin-inline-start: 0px;
+        margin-inline-end: 0px;
+        font-weight: bold;
+    }
+
+    h2 {
+        color: black;
+        display: block;
+        font-size: 14px;
+        margin-block-start: 0px;
+        margin-block-end: 0;
+        margin-inline-start: 0px;
+        margin-inline-end: 0px;
+        font-weight: bold;
+    }
+</style>
+<div class="grid_12">
+
+    <div class="grid_12" ng-show="isRouteLoading">
+        <div ng-include='"../app/template/Shared/TemplateLoading"'></div>
+    </div>
+
+    <div class="panel panel-default container_12">
+        <div class="panel-heading" c-translate>Lock (Kunci) Fasilitas </div>
+    </div>
+    <div class="panel panel-default panel-white" ng-hide="isMasuk">
+        
+        <div class="grid_12" style="margin-top:50px;">
+
+            <!-- Filter -->
+            <div class="grid_12">
+                <div class="grid_3">
+                    <div class="grid_12">
+                        <label c-label item="item" c-label-text="Tahap"></label>
+                    </div>
+                    <div class="grid_12">
+                        <input 
+                            style="width: 100%;" 
+                            kendo-combo-box 
+                            k-ng-model="item.searchtahap"
+                            k-data-text-field="'tahap'" 
+                            k-data-value-field="'id'"
+                            k-filter="'contains'"
+                            k-data-source="listTahap"/>
+                    </div>
+                </div>
+                <div class="grid_2">
+                    <div class="grid_12">
+                        <label c-label item="item" c-label-text="Tahun"></label>
+                    </div>
+                    <div class="grid_12">
+                        <div class="grid_12">
+                            <input style="width: 100%" k-options="yearUngkul" k-ng-model="item.tahunlock"  kendo-date-picker  placeholer="YYYY" k-format="'yyyy'" />
+                        </div>
+                    </div>
+                </div>
+                <div class="grid_1">
+                    <div class="grid_12">
+                        <label>&nbsp;</label>
+                    </div>
+                    <div class="grid_12">
+                        <button class="primary c-button" style="margin-top: 6px" ng-click="CariLock()">Cari</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Checkbox -->
+            <div class="grid_12" style="margin-top: 10px">
+                <div class="grid_1" style="margin-top: 10px">
+                    <input type="checkbox" class="k-checkbox" id="item.kasusbaru"
+                        ng-model="item.kasusbaru"
+                        ng-click="checkboxSelectAll()">
+                    <label class="k-checkbox-label" for="item.kasusbaru">Lock Semua</label>
+                </div>
+                <div class="grid_1" style="margin-top: 10px">
+                    <input type="checkbox" class="k-checkbox" id="item.kasus"
+                        ng-model="item.kasus"
+                        ng-click="checkboxUnselectAll()">
+                    <label class="k-checkbox-label" for="item.kasus">Unlock Semua</label>
+                </div>
+            </div>
+
+            <!-- Grid -->
+            <div class="grid_12 borderBox" style="margin-top: 10px;">
+                <kendo-grid id="grid" data-source="dataGrid" options="columnGrid" k-pageable="'true'"
+                    k-sortable="'true'" k-groupable="'false'" k-resizable="'true'" k-selectable="'row'"
+                    k-ng-model="dataSelected" ng-click="klikGrid(dataSelected)" style="min-height: 0px; max-height: 1500px;">
+                </kendo-grid>
+            </div>
+
+            <!-- Simpan -->
+            <div class="grid_2">
+                <button class="btnTemplate1" ng-click="Simpan()">Simpan</button>
+            </div>
+        </div>
+    </div>
+</div>

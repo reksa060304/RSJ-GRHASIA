@@ -2072,4 +2072,68 @@ class LoggingController extends ApiController
         );
         return $this->respond($result);
     }
+
+    public function saveLoggingLockAngkas(Request $request) {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+
+        $dataLogin = $request->all();
+        $iduser = '';
+        $dataPegawaiUser = DB::select(DB::raw("select pg.id,pg.namalengkap from loginuser_s as lu
+                INNER JOIN pegawai_m as pg on lu.objectpegawaifk=pg.id
+                where pg.kdprofile = $kdProfile and lu.id=:idLoginUser"),
+            array(
+                'idLoginUser' => $dataLogin['userData']['id'],
+            )
+        );
+
+        foreach($dataPegawaiUser as $dat){
+            $iduser = $dat->id;
+            $namauser = $dat->namalengkap;
+        }
+
+        
+        $dataLogin = $request->all();
+
+        for($s = 0; $s < count($dataLogin['data']); $s++){
+            $newId = LoggingUser::max('id');
+            $newId = $newId +1;
+            $logUser = new LoggingUser();
+            $logUser->id = $newId;
+            $logUser->norec = $logUser->generateNewId();
+            $logUser->kdprofile= $kdProfile;
+            $logUser->statusenabled=true;
+            if($dataLogin['data'][$s]['iscek'] == true){
+                $logUser->jenislog ='Simpan Lock Angkas';
+                $logUser->noreff = $dataLogin['data'][$s]['tahun'];
+                $logUser->referensi='Sub Sub Kegiatan';
+                $logUser->keterangan='Simpan Lock Angkas oleh user '.$namauser.' pada tanggal '.date('Y-m-d H:m:s'). ' dengan tahun anggaran dan tahap: ' .$dataLogin['data'][$s]['tahun']. ' - '.$dataLogin['data'][$s]['tahap'].' pada sub kegiatan dan sub sub kegiatan: '.$dataLogin['data'][$s]['text'];
+            } else if($dataLogin['data'][$s]['iscek'] == false){
+                $logUser->jenislog ='Simpan Unlock Angkas';
+                $logUser->noreff = $dataLogin['data'][$s]['tahun'];
+                $logUser->referensi='Sub Sub Kegiatan';
+                $logUser->keterangan='Simpan Unlock Angkas oleh user '.$namauser.' pada tanggal '.date('Y-m-d H:m:s'). ' dengan tahun anggaran dan tahap: ' .$dataLogin['data'][$s]['tahun']. ' - '.$dataLogin['data'][$s]['tahap'].' pada sub kegiatan dan sub sub kegiatan: '.$dataLogin['data'][$s]['text'];
+            }
+            $logUser->objectloginuserfk = $dataLogin['userData']['id'];
+            $logUser->tanggal = $this->getDateTime()->format('Y-m-d H:i:s');
+            $logUser->save();
+            $transStatus = 'true';
+        }
+        
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan Log Lock Angkas";
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Simpan Gagal";
+            $result = array(
+                'status' => 400,
+                'as' => '@epic',
+            );
+        }
+        
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
 }

@@ -6154,14 +6154,14 @@ class PerencanaanController extends ApiController {
         coalesce(sum(jan::float8) + sum(feb::float8) + sum(mar::float8) +
         sum(apr::float8) + sum(mei::float8) + sum(jun::float8) + sum(jul::float8) + sum(agt::float8) +
         sum(sep::float8) + sum(okt::float8) + sum(nov::float8) + sum(des::float8), 0) totalbulanan,
-        subkodepertama, subkodekedua, subkodeketiga, subkodekeempat, subkodekelima
+        subkodepertama, subkodekedua, subkodeketiga, subkodekeempat, subkodekelima, islockangkas
         from(
 		select norec, kodesubkegiatan, keterangansubkegiatan, kode, keterangan, tahun, tahap, kegiatan, kodemataanggaran, namamataanggaran, mataanggaran, subtotal, sum(jan::float8) jan, sum(feb::float8) feb, sum(mar::float8) mar,
         sum(apr::float8) apr, sum(mei::float8) mei, sum(jun::float8) jun, sum(jul::float8) jul, sum(agt::float8) agt, sum(sep::float8) sep,
         sum(okt::float8) okt, sum(nov::float8) nov, sum(des::float8) des,
-        subkodepertama, subkodekedua, subkodeketiga, subkodekeempat, subkodekelima
+        subkodepertama, subkodekedua, subkodeketiga, subkodekeempat, subkodekelima, islockangkas
         from(
-            select kb.norec, dp0.kode kodesubkegiatan, dp0.keterangan keterangansubkegiatan, ka.kode, ka.keterangan, ka.tahun, ta.tahap, kb.subtotal, ka.kode || ' ' || ka.keterangan as kegiatan, ma.kodemataanggaran, ma.namamataanggaran,
+            select ka.islockangkas, kb.norec, dp0.kode kodesubkegiatan, dp0.keterangan keterangansubkegiatan, ka.kode, ka.keterangan, ka.tahun, ta.tahap, kb.subtotal, ka.kode || ' ' || ka.keterangan as kegiatan, ma.kodemataanggaran, ma.namamataanggaran,
             ma.kodemataanggaran || ' - ' || ma.namamataanggaran mataanggaran, 
             case when ap.bulanint = 1 then coalesce(ap.nilai, '0') end as jan,
             case when ap.bulanint = 2 then coalesce(ap.nilai, '0') end as feb,
@@ -6202,12 +6202,12 @@ class PerencanaanController extends ApiController {
                 $subsubkegiatan
             $smataanggaran
             $pegawai
-            group by kb.norec, dp0.kode, dp0.keterangan, ka.kode, ka.keterangan, ka.tahun, ta.tahap, kb.subtotal, ka.kode || ' ' || ka.keterangan, ap.nilai, ap.bulanint, ma.kodemataanggaran, ma.namamataanggaran,
+            group by ka.islockangkas, kb.norec, dp0.kode, dp0.keterangan, ka.kode, ka.keterangan, ka.tahun, ta.tahap, kb.subtotal, ka.kode || ' ' || ka.keterangan, ap.nilai, ap.bulanint, ma.kodemataanggaran, ma.namamataanggaran,
             ma.kodemataanggaran || ' - ' || ma.namamataanggaran
             order by subkodepertama asc, subkodekedua asc, subkodeketiga asc, subkodekeempat asc, subkodekelima asc
-        ) as x group by norec, kodesubkegiatan, keterangansubkegiatan, kode, keterangan, tahun, tahap, subtotal, kegiatan, kodemataanggaran, namamataanggaran, mataanggaran, subkodepertama, subkodekedua, subkodeketiga, subkodekeempat, subkodekelima
+        ) as x group by islockangkas, norec, kodesubkegiatan, keterangansubkegiatan, kode, keterangan, tahun, tahap, subtotal, kegiatan, kodemataanggaran, namamataanggaran, mataanggaran, subkodepertama, subkodekedua, subkodeketiga, subkodekeempat, subkodekelima
         order by subkodepertama asc, subkodekedua asc, subkodeketiga asc, subkodekeempat asc, subkodekelima asc
-) as y group by kodesubkegiatan, keterangansubkegiatan, kode, keterangan, tahun, tahap, kegiatan, kodemataanggaran, namamataanggaran, mataanggaran, subkodepertama, subkodekedua, subkodeketiga, subkodekeempat, subkodekelima
+) as y group by islockangkas, kodesubkegiatan, keterangansubkegiatan, kode, keterangan, tahun, tahap, kegiatan, kodemataanggaran, namamataanggaran, mataanggaran, subkodepertama, subkodekedua, subkodeketiga, subkodekeempat, subkodekelima
 order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(kode, '.', 3)asc, split_part(kode, '.', 4)asc, split_part(kode, '.', 5)asc, split_part(kode, '.', 6)::int asc, split_part(kode, '.', 7)::int asc,  subkodepertama asc, subkodekedua asc, subkodeketiga asc, subkodekeempat asc, subkodekelima asc
 "));
 
@@ -9962,5 +9962,100 @@ public function loadComboRincian(Request $request)
         }
 
         return $this->setStatusCode($result['status'])->respond($result);
+    }
+
+    public function getLockAngkas(Request $request)
+    {
+
+        $data = DB::select(DB::raw("
+            SELECT
+                ka.ID idsubsubkegiatan,
+                ka.kode kodesubsubkegiatan,
+                reverse(split_part(reverse(ka.keterangan), '-', 1)) keterangan,
+                ka.tahun,
+                ka.islock,
+                ka.islockrba,
+                ka.islockangkas,
+                ta.id idtahap,
+                ta.tahap,
+                ka3.kode kodesubkegiatan,
+                ka3.keterangan keterangansubkegiatan,
+                ka3.id idsubkegiatan,
+                ka3.keterangan || ' ~ ' || reverse(split_part(reverse(ka.keterangan), '-', 1)) AS TEXT
+            FROM
+                kegiatananggaran_m AS ka
+                JOIN kegiatananggaran_m AS ka3 on ka.kode ilike ka3.kode || '%' and ka3.div = 3
+                JOIN keteranganbelanja_t AS kb on kb.objectkegiatanfk = ka.id
+                JOIN alokasiketeranganbelanja_t AS ak ON ak.keteranganbelanjafk = kb.norec
+                JOIN tahapanggaran_m AS ta on ta.id = kb.objecttahapfk
+            WHERE
+                ka.statusenabled = TRUE 
+                AND ka.kdprofile = 30 
+                AND ka.div = 4 
+                AND ka3.statusenabled = TRUE 
+                AND ka3.kdprofile = 30 
+                AND kb.statusenabled = TRUE 
+                AND kb.kdprofile = 30 
+                AND ta.statusenabled = TRUE 
+                AND ta.kdprofile = 30
+                AND ak.statusenabled = TRUE
+                AND ak.kdprofile = 30
+                -- disesuaikan
+                AND ta.id = ".$request['tahap']."
+                AND ka.tahun = '".$request['tahun']."'
+            GROUP BY
+                ka.norec,
+                ta.ID,
+                ta.tahap,
+                ka3.kode,
+                ka3.keterangan,
+                ka3.ID,
+                ka.tahun,
+                ka.islock,
+                ka.kode,
+                ka.keterangan,
+                ka.ID,
+                ka3.keterangan || ' ~ ' || ka.keterangan,
+                ka.islockrba
+            ORDER BY
+                ka3.kode,
+                CAST(reverse(split_part(reverse(ka.kode), '.', 1)) AS INTEGER)
+        "));
+
+
+        return $this->respond($data);
+    }
+
+    public function saveLockAngkas(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+
+        for($i = 0; $i < count($request['data']); $i++){
+            $STSK = KegiatanAnggaran::where('id', '=', $request['data'][$i]['idsubsubkegiatan'])->first();
+            $STSK->islockangkas = $request['data'][$i]['iscek'];
+            $STSK->save();
+        }
+               
+        if($STSK->save()){
+            $transStatus = 'true';
+        } else{
+            $transStatus = 'false';
+        }
+
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan Lock Angkas Sukses";
+            $status = 201;
+        } else if ($transStatus == 'false') {
+            $transMessage = "Simpan Lock Angkas Gagal";
+            $status = 400;
+        }
+
+        $result = array(
+            'status' => $status,
+            'message'=> $transMessage,
+            'as' => 'er@epic',
+        );
+
+        return $this->setStatusCode($result['status'])->respond($result, $result['message']);
     }
 }
