@@ -1177,6 +1177,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             "nov": el.nov,
                             "des": el.des,
                             "subtotalRP":  el.subtotalRP,
+                            "islockangkas": dataItem.islockangkas
                         })
                     }
                 }
@@ -1231,6 +1232,12 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             function DetailAlokasi(e) {
                 e.preventDefault();
                 var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+
+                if(dataItem.islockangkas == true){
+                    toastr.error('Angkas Sudah Dilock')
+                    return
+                }
+
                 medifirstService.get("reservasionline/get-daftar-slotting?id=1").then(function (e) {
 
 				})
