@@ -6,7 +6,7 @@
     <div class="panel-body">
 
         <div class="breadcrum detail" style='margin-top: 0px;'>
-            <div class="grid_2" ng-repeat="data in lisIndex">
+            <div class="grid_2" ng-repeat="data in lisIndex | orderBy:'index'">
                 <a class="n1 default" ng-class="{'active': activeMenuTransfer == URLFORM +data.index}"
                     ng-click="nav(URLFORM,data.index)">&nbsp;&nbsp;Page {{data.index}}
                 </a>

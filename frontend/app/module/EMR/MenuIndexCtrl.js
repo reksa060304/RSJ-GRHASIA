@@ -48,18 +48,17 @@ define(['initialize'], function (initialize) {
 
             function loadPage(nomorEMR, EMRFK) {
                 medifirstService.get("emr/get-emr-transaksi-detail-index?noemr=" + nomorEMR + "&emrfk=" + EMRFK, true).then(function (dat) {
-                    if (dat.data.data.length > 0) {
+                    if(dat.data.data.length > 0){
                         $scope.lisIndex = []
-                        for (let x = 0; x < dat.data.data.length; x++) {
-                            const element = dat.data.data[x];
-                            if (element.index != null) {
+                        dat.data.data.map(function(item){
+                            if(item.index !== null){
                                 $scope.lisIndex.push({
-                                    index: parseInt(element.index),
+                                    index: parseInt(item.index),
                                     url: $state.current.name
                                 })
                             }
-                        }
-                    } else {
+                        })
+                    }else{
                         $scope.lisIndex = []
                         $scope.lisIndex = [{
                             index: 1,
