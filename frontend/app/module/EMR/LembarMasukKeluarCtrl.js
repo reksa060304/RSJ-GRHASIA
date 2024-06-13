@@ -275,15 +275,15 @@ define(['initialize'], function (initialize) {
                 {
                     "id": 1, "nama": "Dirawat di RSJ Grhasia yang ke",
                     "detail": [
-                        { "id": 3004544, "nama": "I", "type": "checkbox" },
-                        { "id": 3004545, "nama": "II", "type": "checkbox" },
-                        { "id": 3004546, "nama": "III", "type": "checkbox" },
-                        { "id": 3004547, "nama": "IV", "type": "checkbox" },
-                        { "id": 3004548, "nama": "V", "type": "checkbox" },
-                        { "id": 3004549, "nama": "VI", "type": "checkbox" },
-                        { "id": 3004550, "nama": "VII", "type": "checkbox" },
-                        { "id": 3004551, "nama": "VIII", "type": "checkbox"},
-                        { "id": 3004552, "nama": "IX", "type": "checkbox" },
+                        // { "id": 3004544, "nama": "I", "type": "checkbox" },
+                        // { "id": 3004545, "nama": "II", "type": "checkbox" },
+                        // { "id": 3004546, "nama": "III", "type": "checkbox" },
+                        // { "id": 3004547, "nama": "IV", "type": "checkbox" },
+                        // { "id": 3004548, "nama": "V", "type": "checkbox" },
+                        // { "id": 3004549, "nama": "VI", "type": "checkbox" },
+                        // { "id": 3004550, "nama": "VII", "type": "checkbox" },
+                        // { "id": 3004551, "nama": "VIII", "type": "checkbox"},
+                        // { "id": 3004552, "nama": "IX", "type": "checkbox" },
                         { "id": 3004553, "nama": "Sebutkan", "satuan": "", "type": "textbox2", "idd":  "3004554"},
                     ]
                 },
@@ -494,7 +494,7 @@ define(['initialize'], function (initialize) {
                        // console.log($scope.bro);
                        // $scope.isRouteLoading = false
    
-                       for (let i = 0; i < datas.length; i++) {
+                        for (let i = 0; i < datas.length; i++) {
                            if(datas[i].type == 'textbox'){
                                $scope.item.obj[datas[i].idtujuan]= datas[i].value   
                            }    
@@ -508,13 +508,18 @@ define(['initialize'], function (initialize) {
                                $scope.item.obj[datas[i].idtujuan] = datas[i].value
                            }    
                                               
-                       }
+                        }
                        
                        
        
-                   })
-                   medifirstService.get("emr/get-data-lembar-masuk-keluar?noregistrasi=" + $scope.cc.noregistrasi).then(function (dat) {  
-                       var datas=dat.data.data
+                    })
+
+                    medifirstService.get("emr/get-data-lembar-masuk-keluar?noregistrasi=" + $scope.cc.noregistrasi).then(function (dat) {  
+                       var datas=dat.data.data[0]
+
+                        // dapatkan data terakhir    
+                        let dataTerakhir = dat.data.data.slice(-1)[0]
+
                        if (dat.data.data[0].umur <= 18) {
                            $scope.item.obj[3004500] = true
                        }
@@ -525,10 +530,10 @@ define(['initialize'], function (initialize) {
                            $scope.item.obj[3004502] = true
                        }
                        
-                       if (dat.data.data[0].statusperkawinan == "KAWIN"){
+                       if (dat.data.data[0].statusperkawinan == "KAWIN" || datas.statusperkawinan == "Kawin"){
                            $scope.item.obj[3004503] = true
                        }
-                       else if (dat.data.data[0].statusperkawinan == "BELUM KAWIN"){
+                       else if (dat.data.data[0].statusperkawinan == "BELUM KAWIN" || dat.data.data[0].statusperkawinan == "Belum Kawin"){
                            $scope.item.obj[3004504] = true
                        }
                        else if (dat.data.data[0].statusperkawinan == "JANDA"){
@@ -563,7 +568,7 @@ define(['initialize'], function (initialize) {
    
                        }
    
-                       if (dat.data.data[0].pendidikan == "TIDAK SEKOLAH"){
+                       if (dat.data.data[0].pendidikan == "TIDAK SEKOLAH" || datas.pendidikan == null){
                            $scope.item.obj[3004514] = true
    
                        }
@@ -668,10 +673,54 @@ define(['initialize'], function (initialize) {
                            $scope.item.obj[3004527] = dat.data.data[0].pekerjaan
    
                        }
-                       $scope.item.obj[3004556] = dat.data.data[0].penanggungjawab
-                       $scope.item.obj[3004557] = dat.data.data[0].hubungankeluargapj
-                       $scope.item.obj[3004558] = dat.data.data[0].alamatrmh
-                       $scope.item.obj[3004559] = dat.data.data[0].teleponpenanggungjawab
+                       
+                        // dirawat di rsj grhasia ke
+                        $scope.item.obj[3004553] = true
+                        $scope.item.obj[3004554] = datas.nokunjungan
+                        
+                        // dirawat terakhir di RS Grhasia
+                        $scope.item.obj[3004555] = dataTerakhir.tglmasuk
+
+                        // cara bayar
+                        if(datas.kelompokpasien == 'IPWL'){
+                            $scope.item.obj[3004541] = true
+                        }else if(datas.kelompokpasien == 'Umum/Pribadi'){
+                            $scope.item.obj[3004537] = true
+                        }else if(datas.kelompokpasien == 'Jamkesos'){
+                            $scope.item.obj[3004538] = true
+                        }else if(datas.kelompokpasien == 'BPJS KELAS I'){
+                            $scope.item.obj[3004540] = true
+                        }else if(datas.kelompokpasien == 'BPJS KELAS II'){
+                            $scope.item.obj[3004603] = true
+                        }else if(datas.kelompokpasien == 'BPJS KELAS III NON PBI (Mandiri)'){
+                            $scope.item.obj[3004605] = true
+                        }else if(datas.kelompokpasien == 'BPJS KELAS III PBI'){
+                            $scope.item.obj[3004604] = true
+                        }else{
+                            $scope.item.obj[3004542] = true
+                            $scope.item.obj[3004543] = datas.kelompokpasien
+                        }
+
+                        // asal rujukan
+                        $scope.item.obj[3004535] = true
+                        $scope.item.obj[3004536] = datas.asalrujukan
+                        // if(datas.asalrujukan == 'Puskesmas'){
+                        //     $scope.item.obj[3004531] = true
+                        // }else if(datas.asalrujukan == 'Dinsos'){
+                        //     $scope.item.obj[3004533] = true
+                        // }else if(datas.asalrujukan == 'Kepolisian'){
+                        //     $scope.item.obj[3004534] = true
+                        // }else if(datas.asalrujukan == 'Kejaksaan'){
+                        //     $scope.item.obj[3004534] = true
+                        // }else{
+                        //     $scope.item.obj[3004535] = true
+                        //     $scope.item.obj[3004536] = datas.asalrujukan
+                        // }
+
+                        $scope.item.obj[3004556] = dat.data.data[0].penanggungjawab
+                        $scope.item.obj[3004557] = dat.data.data[0].hubungankeluargapj
+                        $scope.item.obj[3004558] = dat.data.data[0].alamatrmh
+                        $scope.item.obj[3004559] = dat.data.data[0].teleponpenanggungjawab
    
                      
                        //$scope.item.obj[3017315] 

@@ -11170,15 +11170,28 @@ class EMRController  extends ApiController
         // $sec = \DB::select(DB::raw("SELECT id,id2, type from emrd_t where emrfk = $request[emrid] and statusenabled = true and kdprofile = $kdProfile and id2 is not null order by id
         // "));
 
-        $data = \DB::select(DB::raw("SELECT 
-        EXTRACT(year from age(pd.tglregistrasi, ps.tgllahir) )as umur, ag.agama, pj.pekerjaan, pn.pendidikan, sp.statusperkawinan, ps.penanggungjawab,  ps.hubungankeluargapj, ps.alamatrmh, ps.teleponpenanggungjawab
-        FROM pasiendaftar_t pd
-        left join pasien_m ps on ps.id = pd.nocmfk
-        left join agama_m ag on ps.objectagamafk = ag.id
-        left join pekerjaan_m pj on ps.objectpekerjaanfk = pj.id
-        left join pendidikan_m pn on ps.objectpendidikanfk = pn.id
-        left join statusperkawinan_m sp on ps.objectstatusperkawinanfk = sp.id
-        where pd.noregistrasi = '$request[noregistrasi]' and pd.kdprofile = '30'" ));
+        $data = \DB::select(DB::raw("
+            SELECT 
+                EXTRACT(year from age(pd.tglregistrasi, ps.tgllahir) )as umur, ag.agama, pj.pekerjaan, pn.pendidikan, sp.statusperkawinan, ps.penanggungjawab,  ps.hubungankeluargapj, ps.alamatrmh, ps.teleponpenanggungjawab,
+                adp.tglmasuk,
+                ar.asalrujukan,
+                pd.objectruanganlastfk,
+                ru.namaruangan,
+                pd.nokunjungan,
+                kp.kelompokpasien
+            FROM pasiendaftar_t pd
+                left join pasien_m ps on ps.id = pd.nocmfk
+                left join agama_m ag on ps.objectagamafk = ag.id
+                left join pekerjaan_m pj on ps.objectpekerjaanfk = pj.id
+                left join pendidikan_m pn on ps.objectpendidikanfk = pn.id
+                left join statusperkawinan_m sp on ps.objectstatusperkawinanfk = sp.id
+                JOIN antrianpasiendiperiksa_t adp ON adp.noregistrasifk = pd.norec AND adp.statusenabled = TRUE AND adp.kdprofile = 30
+                JOIN asalrujukan_m ar ON ar.id = adp.objectasalrujukanfk AND ar.statusenabled = TRUE AND ar.kdprofile = 30
+                JOIN ruangan_m ru ON ru.id = pd.objectruanganlastfk AND ru.statusenabled = TRUE AND ru.kdprofile = 30 
+                JOIN kelompokpasien_m kp ON kp.id = pd.objectkelompokpasienlastfk AND kp.statusenabled = TRUE AND kp.kdprofile = 30
+            where pd.noregistrasi = '$request[noregistrasi]' and pd.kdprofile = '30' AND ru.objectdepartemenfk = 16 
+            ORDER BY adp.tglmasuk ASC
+        " ));
 
         // $detail = [];
         // $id=0;
