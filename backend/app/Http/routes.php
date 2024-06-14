@@ -3463,6 +3463,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         Route::get('report/cetak-daftar-barang-asset', 'Report\ReportController@cetakDaftarBarangAsset');
         Route::get('report/cetak-kartu-inventaris-ruangan', 'Report\ReportController@cetakKartuInventarisRuangan');
         Route::get('report/cetak-kibb', 'Report\ReportController@cetakKIBB');
+        Route::get('report/cetak-kibd', 'Report\ReportController@cetakKIBD');
+        Route::get('report/cetak-kibc', 'Report\ReportController@cetakKIBC');
         
         Route::get('report/cetak-apd-bulanan', 'Report\ReportController@cetakAPDBulanan');
         Route::get('report/cetak-hygiene-bulanan', 'Report\ReportController@cetakHygieneBulanan');
