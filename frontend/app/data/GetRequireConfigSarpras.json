@@ -1353,6 +1353,22 @@
         {
             "nameDep": "LockAngkasCtrl",
             "urlDep": "module/Perencanaan/LockAngkasCtrl"
+        },
+        {
+            "nameDep": "MasterProdukLinenCtrl",
+            "urlDep": "module/SysAdmin/MasterProdukLinenCtrl"
+        },
+        {
+            "nameDep": "InputProdukLinenCtrl",
+            "urlDep": "module/SysAdmin/InputProdukLinenCtrl"
+        },
+        {
+            "nameDep": "InputProdukCSSDCtrl",
+            "urlDep": "module/SysAdmin/InputProdukCSSDCtrl"
+        },
+        {
+            "nameDep": "MasterProdukCSSDCtrl",
+            "urlDep": "module/SysAdmin/MasterProdukCSSDCtrl"
         }
 
     ]

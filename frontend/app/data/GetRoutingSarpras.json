@@ -6694,6 +6694,86 @@
         "define": "MedifirstService"
       }
     ]
+  },
+  {
+    "name": "MasterProdukLinen",
+    "url": "/TWFzdGVyIEJhcmFuZyBMaW5lbg==",
+    "templateurl": "module/SysAdmin/MasterProdukLinen.html",
+    "controller": "MasterProdukLinenCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "InputProdukLinen",
+    "url": "/InputProdukLinen/:idx",
+    "templateurl": "module/SysAdmin/InputProdukLinen.html",
+    "controller": "InputProdukLinenCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "InputProdukCSSD",
+    "url": "/InputProdukCSSD/:idx",
+    "templateurl": "module/SysAdmin/InputProdukCSSD.html",
+    "controller": "InputProdukCSSDCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  },
+  {
+    "name": "MasterProdukCSSD",
+    "url": "/TWFzdGVyIFByb2R1ayBDU1NE",
+    "templateurl": "module/SysAdmin/MasterProdukCSSD.html",
+    "controller": "MasterProdukCSSDCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
   }
 
 ]

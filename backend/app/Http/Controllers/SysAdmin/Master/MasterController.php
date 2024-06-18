@@ -6056,12 +6056,22 @@ class MasterController extends ApiController{
 
     public function getListProdukAset(Request $request,$limit=null){
         //get request
+        
         $kdProfile = (int) $this->getDataKdProfile($request);
         $filter = $request->all();
         //get data
-        $idBarangAset = explode (',',$this->settingDataFixed('KelompokBarangAset',$kdProfile));        
-        $kdBarangAset = [];
+     
+        if($request['fungsi'] == 'linen'){
+            $idBarangAset = explode(',', $this->settingDataFixed('KelompokBarangLinen', $kdProfile));
+        } elseif($request['fungsi'] == 'cssd'){
+            $idBarangAset = explode(',', $this->settingDataFixed('KelompokBarangCSSD', $kdProfile));
+        } else {
+            $idBarangAset = explode(',', $this->settingDataFixed('KelompokBarangAset', $kdProfile));
+        }
+
         
+        $kdBarangAset = [];
+        // dd($idBarangAset);
         foreach ($idBarangAset as $item){
             $kdBarangAset []=  (int)$item;
         }

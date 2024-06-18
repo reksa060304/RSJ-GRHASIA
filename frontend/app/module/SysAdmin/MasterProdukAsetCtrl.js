@@ -188,6 +188,7 @@ define(['initialize'], function (initialize) {
                     0: listJenis,
 					1: status,
                 }
+				var linen = 'aset'
                 cacheHelper.set('MasterProdukAsetCtrl', chacePeriode);
 
 
@@ -195,6 +196,7 @@ define(['initialize'], function (initialize) {
 					+ '&kdInternal=' + kodeintern
 					+ '&kdBarcode=' + kdBarcode
 					+ '&kdBmn=' + kdBmn
+					+ '&fungsi=' + linen
 					//+ '&detailjenisproduk=' + jenisproduk
 					+ "&JenisArr=" + listJenis
 					+ '&nmProduk=' + NamaProduk + jmlRows + status + idProduk).then(function (e) {
