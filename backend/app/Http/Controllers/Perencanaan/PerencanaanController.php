@@ -6301,6 +6301,11 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
             $subsubkegiatan = 'and ka.id = '.$request['subsubkegiatan'];
         }
 
+        $settingRBA = DB::table('settinganggaran_t')
+            ->where('statusenabled', true)
+            ->where('kdprofile', 30)
+            ->first();
+
         $data = DB::select(DB::raw("
         select coalesce(sum(kb.subtotal),0) totalketerangan
         from kegiatananggaran_m ka 
@@ -6313,19 +6318,43 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
         and kb.kdprofile = 30    ")
         );
 
+        // cari kode kegiatan
+        $cari = DB::table('kegiatananggaran_m')->where('id', $request['subsubkegiatan'])->first();
+
+        // query detail baru
         $detail = DB::select(DB::raw("
-        select coalesce(sum(rd.subtotal),0) totalrealisasidetail
-        from kegiatananggaran_m ka 
-        inner join keteranganbelanja_t kb on ka.id = kb.objectkegiatanfk
-        inner join realisasidetail_t rd on rd.keteranganbelanjafk = kb.norec
-        inner join mataanggaran_m ma on ma.id = kb.objectmataanggaranfk
-        where kb.objecttahapfk = $tahap
-        and ma.kodemataanggaran = '$rekening'
-        $subsubkegiatan
-        and rd.statusenabled = true
-        and rd.kdprofile = 30;
-            ")
-        );
+            select
+                coalesce(sum(rd.subtotal),
+                0) totalrealisasidetail
+            from
+                kegiatananggaran_m ka
+            inner join keteranganbelanja_t kb on
+                ka.id = kb.objectkegiatanfk
+            inner join realisasidetail_t rd on
+                rd.keteranganbelanjafk = kb.norec
+            inner join mataanggaran_m ma on
+                ma.id = kb.objectmataanggaranfk
+            where
+                ma.kodemataanggaran = '".$rekening."'
+                and ka.kode = '".$cari->kode."'
+                and ka.tahun = '".$settingRBA->tahunanggaran."'
+                and rd.statusenabled = true
+                and rd.kdprofile = 30
+        "));
+
+        // $detail = DB::select(DB::raw("
+        // select coalesce(sum(rd.subtotal),0) totalrealisasidetail
+        // from kegiatananggaran_m ka 
+        // inner join keteranganbelanja_t kb on ka.id = kb.objectkegiatanfk
+        // inner join realisasidetail_t rd on rd.keteranganbelanjafk = kb.norec
+        // inner join mataanggaran_m ma on ma.id = kb.objectmataanggaranfk
+        // where kb.objecttahapfk = $tahap
+        // and ma.kodemataanggaran = '$rekening'
+        // $subsubkegiatan
+        // and rd.statusenabled = true
+        // and rd.kdprofile = 30;
+        //     ")
+        // );
 
         $panjar = DB::select(DB::raw("select pj.norec, pj.jumlah, coalesce(pj.jumlahpengembalian, 0) jumlahpengembalian
         from kegiatananggaran_m ka 
