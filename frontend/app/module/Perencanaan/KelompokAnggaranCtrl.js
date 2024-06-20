@@ -3365,6 +3365,16 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
             $scope.SimpanPopUpAlokasi = function() {
                 
+                // check jika angkas sudah dilock
+                let isLockAngkas = dataAlokasi2222.every(function(item){
+                    return item.islockangkas == true
+                })
+
+                if(isLockAngkas){
+                    toastr.error('Angkas sudah dilock')
+                    return
+                }
+
                 var objSave = [];
                 for (let index = 0; index < dataAlokasi2222.length; index++) {
                     let element = dataAlokasi2222[index];
