@@ -6,32 +6,23 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Kartu Inventaris Barang (KIB)B</title>
     <style>
-        table {
-            border-collapse: collapse;
-            max-width: 3508px;
-            width: 100vw;
+        @page {
+            size: 33cm 21.5cm;
         }
-        /* .content{
-            border: 1px solid black;
-            padding: 5px 20px;
-        } */
+
+        table {
+            table-layout: auto;
+            border-collapse: collapse;
+            width: 100%;
+        }
 
         #table-content td, th{
             width: auto;
             word-wrap: break-word;
             border: 1px solid black;
-            padding: .3em .6em;
+            padding: .2em .4em;
         }
 
-        /* #table-content th{
-            width: auto;
-            word-wrap: break-word;
-            overflow: hidden;
-            border: 1px solid black;
-            border-collapse: collapse;
-            padding: 5px 20px;
-        } */
-        @media print{@page {size: landscape}}
     </style>
 </head>
 <body>
@@ -96,7 +87,7 @@
         <thead>
             <tr>
                 <th rowspan="2" class="content">No.</th>
-                <th rowspan="2" class="content">Jenis Barang / Nama Barang</th>
+                <th rowspan="2" style="width: 10%;" class="content">Jenis Barang / Nama Barang</th>
                 <th rowspan="2" class="content">Kode Barang</th>
                 <th rowspan="2" class="content">Register</th>
                 <th rowspan="2" class="content">Merek / Type</th>
