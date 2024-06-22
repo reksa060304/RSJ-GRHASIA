@@ -448,6 +448,11 @@ define(['initialize'], function (initialize) {
                     return
                 }
 
+                if($scope.dataPasienSelected.statusverif == true){
+                    toastr.error('Insiden sudah diverifikasi')
+                    return
+                }
+
                 if ($scope.dataPasienSelected != undefined) {
 
                     var item = {

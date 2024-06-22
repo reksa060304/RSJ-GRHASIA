@@ -782,8 +782,14 @@ class PMKPController extends ApiController
             ->select(DB::raw("head.id,head.indikator,head.denominator,head.numerator"))
             ->where('head.kdprofile', $kdProfile)
             ->where('head.statusenabled',true)
-            ->where('head.objectdepartemenfk',$request['idDept'])
-            ->where('head.objectruanganfk',$request['idRuangan']);
+            ->when($request['idDept'], function($query) use ($request){
+                return $query->where('head.objectdepartemenfk',$request['idDept']);
+            })
+            ->when($request['idRuangan'], function($query) use ($request){
+                return $query->where('head.objectruanganfk',$request['idRuangan']);
+            });
+            
+            
 //            ->orderBy('head.id','asc')
             // ->union($data);
 
@@ -1374,24 +1380,26 @@ class PMKPController extends ApiController
             ->where('lu.id',$dataLogin['userData']['id'])
             ->first();
         try {
-                if ($request['norec'] == '') {
-                    $data = new IdentifikasiRisiko();
-                    $data->norec = $data->generateNewId();
-                    $data->kdprofile = $kdProfile;
-                    $data->statusenabled = true;
-                } else {
-                    $data = IdentifikasiRisiko::where('norec', $request['norec'])->where('kdprofile', $kdProfile)->first();
-                    $dataD = IdentifikasiRisikoDetail::where('identifikasirisikofk',$request['norec'])->where('kdprofile', $kdProfile)->delete();
-                }
-                    $data->departemenfk = $request['departemenfk'];
-                    $data->kategoririsikofk = $request['kategoririsikofk'];
-                    $data->kainstalasifk = $request['instalasi'];
-                    $data->kepalabidangfk = $request['kplabidang'];
-                    $data->direkturfk = $request['direktur'];
-                    $data->pegawaifk = $dataPegawai->objectpegawaifk;
-                    $data->tanggal = $request['tanggal'];
-                    $data->save();
-                    $dataNorec = $data->norec;
+            if ($request['norec'] == '') {
+                $data = new IdentifikasiRisiko();
+                $data->norec = $data->generateNewId();
+                $data->kdprofile = $kdProfile;
+                $data->statusenabled = true;
+            } else {
+                $data = IdentifikasiRisiko::where('norec', $request['norec'])->where('kdprofile', $kdProfile)->first();
+                $dataD = IdentifikasiRisikoDetail::where('identifikasirisikofk',$request['norec'])->where('kdprofile', $kdProfile)->delete();
+            }
+
+            $data->departemenfk = $request['departemenfk'];
+            $data->kategoririsikofk = $request['kategoririsikofk'];
+            $data->kainstalasifk = $request['instalasi'];
+            $data->kepalabidangfk = $request['kplabidang'];
+            $data->direkturfk = $request['direktur'];
+            $data->pegawaifk = $dataPegawai->objectpegawaifk;
+            $data->tanggal = $request['tanggal'];
+            $data->save();
+
+            $dataNorec = $data->norec;
 
             foreach ($request['details'] as $item) {
                 $dataOP = new IdentifikasiRisikoDetail();
@@ -1438,15 +1446,18 @@ class PMKPController extends ApiController
 
     public function GetDaftarLaporanIdentifikasiRisiko(Request $request) {
         $kdProfile = (int) $this->getDataKdProfile($request);
-        $data = \DB::table('identifikasirisiko_t as ir')
-            ->LEFTJOIN ('kategoryrisiko_m as kr','kr.id', '=','ir.kategoririsikofk')
-            ->LEFTJOIN ('departemen_m as dept','dept.id', '=','ir.departemenfk')
-            ->LEFTJOIN ('pegawai_m as pg','pg.id', '=','ir.kainstalasifk')
-            ->LEFTJOIN ('pegawai_m as pg1','pg1.id', '=','ir.kepalabidangfk')
-            ->LEFTJOIN ('pegawai_m as pg2','pg2.id', '=','ir.direkturfk')
-            ->SELECT(DB::raw("ir.*,dept.namadepartemen,kr.kategoryrisiko,pg.namalengkap as kainstalasi,
+        
+        $data = DB::table('identifikasirisiko_t as ir')
+            ->join('kategoryrisiko_m as kr','kr.id', '=','ir.kategoririsikofk')
+            ->join('departemen_m as dept','dept.id', '=','ir.departemenfk')
+            ->join('pegawai_m as pg','pg.id', '=','ir.kainstalasifk')
+            ->join('pegawai_m as pg1','pg1.id', '=','ir.kepalabidangfk')
+            ->join('pegawai_m as pg2','pg2.id', '=','ir.direkturfk')
+            ->join('identifikasirisikodetail_t as ird', 'ird.identifikasirisikofk', '=', 'ir.norec')
+            ->select(DB::raw("ir.*,dept.namadepartemen,kr.kategoryrisiko,pg.namalengkap as kainstalasi,
                                      pg1.namalengkap as kabidang,pg2.namalengkap as direktur"))
-            ->where('ir.kdprofile', $kdProfile);
+            ->where('ir.kdprofile', $kdProfile)
+            ->orderBy('ird.skor', 'desc');
 
         if (isset($request['tglAwal']) && $request['tglAwal'] != "" && $request['tglAwal'] != "undefined") {
             $data = $data->where('ir.tanggal', '>=', $request['tglAwal']);
@@ -1464,14 +1475,14 @@ class PMKPController extends ApiController
         $data = $data->get();
 
         foreach ($data as $item) {
-            $details = \DB::select(DB::raw("select ird.norec,ird.identifikasirisikofk,ird.jenisrisiko,ird.keparahan,
-                                                   ird.kemungkinan,ird.skor,rangkingrisiko,ird.pengendalian,ird.rangkingaction
-                                    from identifikasirisikodetail_t as ird
-                                    where ird.kdprofile= $kdProfile and ird.identifikasirisikofk=:norec"),
-                array(
-                    'norec' => $item->norec,
-                )
-            );
+
+            $details = DB::table('identifikasirisikodetail_t as ird')
+                ->select(DB::raw('ird.norec,ird.identifikasirisikofk,ird.jenisrisiko,ird.keparahan, ird.kemungkinan,ird.skor,rangkingrisiko,ird.pengendalian,ird.rangkingaction'))
+                ->where('ird.statusenabled', true)
+                ->where('ird.kdprofile', $kdProfile)
+                ->where('ird.identifikasirisikofk', $item->norec)
+                ->get();
+
             $result[] = array(
                 'tanggal' => $item->tanggal,
                 'norec' => $item->norec,
@@ -1488,17 +1499,13 @@ class PMKPController extends ApiController
                 'details' => $details,
             );
         }
+
         if (count($data) == 0) {
             $result = [];
         }
 
         $result = array(
             'data' => $result,
-            'message' => 'ea@epic',
-        );
-        return $this->respond($result);
-        $result = array(
-            'data'=> $data,
             'message' => 'ea@epic',
         );
         return $this->respond($result);

@@ -42,21 +42,25 @@ define(['initialize'], function (initialize) {
 
             function loadData() {
                 $scope.isRouteLoading = true;
-                var tglAwal = moment($scope.item.periodeAwal).format('YYYY-MM-DD HH:mm');
-                var tglAkhir = moment($scope.item.periodeAkhir).format('YYYY-MM-DD HH:mm');
+                var tglAwal = moment($scope.item.periodeAwal).format('YYYY-MM-DD HH:mm:ss');
+                var tglAkhir = moment($scope.item.periodeAkhir).format('YYYY-MM-DD HH:mm:ss');
                 var idDept = ''
                 if ($scope.item.UnitKerja != undefined) {
                     idDept = "idDept=" + $scope.item.UnitKerja.id
                 }
-                medifirstService.get("pmkp/get-data-identifikasi-risiko?" +
-                    "tglAwal=" + tglAwal +
-                    "&tglAkhir=" + tglAkhir +
-                    idDept).then(function (data) {
+                medifirstService.get("pmkp/get-data-identifikasi-risiko?" 
+                    + "tglAwal=" + tglAwal 
+                    + "&tglAkhir=" + tglAkhir 
+                    + idDept)
+                    .then(function (response) {
                         $scope.isRouteLoading = false;
-                        var doto = data.data.data;
+                        
+                        var doto = response.data.data;
+
                         for (var i = 0; i < doto.length; i++) {
                             doto[i].no = i + 1
                         }
+                        
                         $scope.dataSourceGrid = new kendo.data.DataSource({
                             data: doto,
                             group: $scope.group,
@@ -173,11 +177,6 @@ define(['initialize'], function (initialize) {
                             "field": "skor",
                             "title": "Skor",
                             "width": "100px",
-                        },
-                        {
-                            "field": "rangkingrisiko",
-                            "title": "Rangking Risiko",
-                            "width": "100px"
                         },
                         {
                             "field": "pengendalian",

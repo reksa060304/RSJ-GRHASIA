@@ -236,12 +236,11 @@ define(['initialize'], function (initialize) {
                     {
                         "field": "no",
                         "title": "No",
-                        "width": "60px",
+                        "width": "60px"
                     },
                     {
                         "field": "tglinsiden",
                         "title": "Tgl Insiden",
-                        "width": "95px",
                         "template": "<span class='style-left'>{{formatTanggal('#: tglinsiden #')}}</span>"
                     },
                     // {
@@ -255,14 +254,16 @@ define(['initialize'], function (initialize) {
                     //     "width": "220px",
                     // },
                     {
-                        "field": "insiden",
-                        "title": "Insiden",
-                        "width": "220px",
+                        "field": "keselamatan",
+                        "title": "Jenis Insiden",
                     },
                     {
-                        "field": "keselamatan",
-                        "title": "Keselamatan",
-                        "width": "220px",
+                        "field": "insiden",
+                        "title": "Kronologis",
+                    },
+                    {
+                        "field": "penerimalaporan",
+                        "title": "Penerima Laporan",
                     },
                     {
                         hidden: true,
@@ -406,6 +407,11 @@ define(['initialize'], function (initialize) {
 
                 if ($scope.dataPasienSelected.norec_lk != undefined) {
                     messageContainer.error("Insiden Telah Ditindaklanjuti Tidak Bisa Dihapus!")
+                    return
+                }
+
+                if($scope.dataPasienSelected.statusverif == true){
+                    toastr.error('Insiden sudah diverifikasi')
                     return
                 }
 
