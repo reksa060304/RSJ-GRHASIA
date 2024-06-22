@@ -43,6 +43,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 medifirstService.get('logistik/get-combo-logistik').then(function (data) {
                     var dataCombo = data.data;
                     $scope.sourceDetailJenis = dataCombo.detailjenisproduk
+                    $scope.listKelompokAset = dataCombo.kelompokaset
                 });
                 // $scope.sourceRuangan = medifirstService.getMapLoginUserToRuangan();
                 // if ($scope.sourceRuangan != undefined) {
@@ -64,29 +65,30 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 
             function LoadData() {
                 $scope.isRouteLoading = true;
-                var tglAwal = $scope.item.tglAwal == undefined ? undefined: moment($scope.item.tglAwal).format('YYYY-MM-DD hh:mm:ss');
-                var tglAkhir = $scope.item.tglAkhir == undefined ? undefined: moment($scope.item.tglAkhir).format('YYYY-MM-DD hh:mm:ss');
-
+                var tglAwal = $scope.item.tglAwal == undefined ? '' : moment($scope.item.tglAwal).format('YYYY-MM-DD hh:mm:ss');
+                var tglAkhir = $scope.item.tglAkhir == undefined ? '' : moment($scope.item.tglAkhir).format('YYYY-MM-DD hh:mm:ss');
+                
                 var ruanganId = "";
                 if ($scope.item.ruangan != undefined) {
                     ruanganId = "&ruangancurrenfk=" + $scope.item.ruangan.id
                 }
-                // var kdproduk="";
-                // if ($scope.item.produk !== undefined) {
-                //     kdproduk = "&kdproduk=" +$scope.item.produk.id;
-                // }
-                var kdDetailJenis = "";
-                if ($scope.item.DetailJenis != undefined) {
-                    kdDetailJenis = "&kdDetailJenis=" + $scope.item.DetailJenis.id;
+
+                var kelompokAsset = ""
+                if($scope.item.kelompokaset !== undefined){
+                    kelompokAsset = "&kelompokaset=" + $scope.item.kelompokaset?.id
                 }
+
                 var namaproduk = "";
                 if ($scope.item.NamaProduk != undefined) {
                     namaproduk = "&namaproduk=" + $scope.item.NamaProduk;
                 }
+
                 medifirstService.get("logistik/get-daftar-asset?"
                     +"tglAwal="+tglAwal
                     +"&tglAkhir="+tglAkhir
-                    + ruanganId + kdDetailJenis + namaproduk, true).then(function (dat) {
+                    + ruanganId 
+                    + namaproduk
+                    + kelompokAsset).then(function (dat) {
                         //debugger
                         $scope.isRouteLoading = false;
                         var datas = dat.data.datas;
@@ -232,10 +234,10 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     return
                 }
 
-                if($scope.item.tglAwal == undefined){
-                    toastr.error('Periode Tanggal perlu dipilih')
-                    return
-                }
+                // if($scope.item.tglAwal == undefined){
+                //     toastr.error('Periode Tanggal perlu dipilih')
+                //     return
+                // }
 
                 if($scope.item.kepala == undefined){
                     toastr.error('Kepala Perlu dipilih')
@@ -249,6 +251,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 var local = JSON.parse(localStorage.getItem('profile'));
                 var profile = local.id;
 
+
                 window.open(config.baseApiBackend 
                     + "report/cetak-kartu-inventaris-ruangan?"
                     + "kodeprofile=" + profile
@@ -257,16 +260,49 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     + "&idpenanggung=" + $scope.item.penanggungjawab.id
                 )
                 
+                $scope.popUp.close()
+                $scope.item.kepala = null
+                $scope.item.penanggungjawab = null
+                
             }
 
             $scope.cetakKIBB = function(){
+                // var local = JSON.parse(localStorage.getItem('profile'));
+                // var profile = local.id;
+
+                // window.open(config.baseApiBackend
+                //     + "report/cetak-kibb?"
+                //     + "kdprofile=" + profile
+                // )
+                $scope.popUpCetakKelompokAset.open().center()
+            }
+
+            $scope.batalCetakKelompokAset = function() {
+
+                $scope.popUpCetakKelompokAset.close()
+                $scope.item.selectedKelompokAset = null
+
+            }
+
+            $scope.cetakKelompokAset = function() {
+
                 var local = JSON.parse(localStorage.getItem('profile'));
                 var profile = local.id;
+
+                if($scope.item.selectedKelompokAset == null || $scope.item.selectedKelompokAset == undefined){
+                    toastr.error("Pilih Kelompok Asset Terlebih Dahulu")
+                    return
+                }
 
                 window.open(config.baseApiBackend
                     + "report/cetak-kibb?"
                     + "kdprofile=" + profile
+                    + "&kelompokaset=" + $scope.item.selectedKelompokAset.id
                 )
+
+                $scope.popUpCetakKelompokAset.close()
+                $scope.item.selectedKelompokAset = null
+
             }
 
             $scope.cetakKIBC = function(){

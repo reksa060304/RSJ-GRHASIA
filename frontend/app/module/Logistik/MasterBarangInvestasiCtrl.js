@@ -1,7 +1,7 @@
 define(['initialize'], function (initialize) {
 	'use strict';
-	initialize.controller('MasterBarangInvestasiCtrl', ['$q', '$scope', 'ModelItem', 'CacheHelper', 'DateHelper','MedifirstService', '$mdDialog',
-		function ($q, $scope, ModelItem, cacheHelper,dateHelper, medifirstService, $mdDialog) {
+	initialize.controller('MasterBarangInvestasiCtrl', ['$q', '$scope', '$state','ModelItem', 'CacheHelper', 'DateHelper','MedifirstService', '$mdDialog',
+		function ($q, $scope, $state, ModelItem, cacheHelper,dateHelper, medifirstService, $mdDialog) {
 			$scope.item = {};
 			$scope.isUnitt = true;
 			var norecNoAsset = ''
@@ -14,8 +14,25 @@ define(['initialize'], function (initialize) {
 			var norecPemeliharaan = '';
 			var JenisOrder = '';
 
+			$scope.listItemPenambahan = []
+			$scope.ListBahanProduk = []
+			$scope.ListJenisSertifikat = []
+
 			loadDataCombo();
 			LoadCache();
+
+			// cari list
+			function cariDariList(id, list){
+				let cari = null
+
+				list.map(function(item){
+					if(item.id == id){
+						cari = item
+					}
+				})
+
+				return cari
+			}
 
 			$scope.monthSelectorOptions = function () {
 				return {
@@ -213,9 +230,9 @@ define(['initialize'], function (initialize) {
 							// $scope.item.namaProduk=datas.namaproduk;
 							$scope.item.ruanganAsal = { id: datas.ruanganasalfk, namaruangan: datas.namaruanganasal };
 							$scope.item.ruangan = { id: datas.ruangancurrenfk, namaruangan: datas.ruangancurrent };
-							$scope.item.TahunPerolehan = datas.tahunperolehan;
+							$scope.item.TahunPerolehan = datas.tahunperolehan.toString();
 							$scope.item.TglRegistrasi = moment(datas.tglregisteraset).format('YYYY-MM-DD HH:mm');
-							$scope.item.HargaPengadaan = datas.hargaperolehan;
+							$scope.item.HargaPengadaan = parseFloat(datas.hargaperolehan);
 							// * END UMUM
 
 							// * ALAMAT
@@ -230,13 +247,13 @@ define(['initialize'], function (initialize) {
 							// * KATEGORY
 							$scope.item.jenisProduk = { id: datas.jpid, jenisproduk: datas.jenisproduk };
 							$scope.item.detailJenisProduk = { id: datas.djpid, detailjenisproduk: datas.detailjenisproduk };
-							$scope.item.asalproduk = { id: datas.apid, asalproduk: datas.asalproduk };
+							$scope.item.asalproduk = { id: datas.apid, asalProduk: datas.asalproduk };
 							$scope.item.kelompokaset = { id: datas.kaid, kelompokaset: datas.kelompokaset };
 							// * END KATEGORY
 
 							// * SPESIFIKASI
 							//$scope.item.fungsiProduk="";
-							// $scope.item.bahanProduk="";
+							$scope.item.bahanProduk = cariDariList(datas.objectbahanprodukfk, $scope.ListBahanProduk);
 							// $scope.item.typeProduk="";
 							// $scope.item.warnaProduk="";
 							// $scope.item.merkProduk="";
@@ -247,7 +264,7 @@ define(['initialize'], function (initialize) {
 							$scope.item.Listrik = 0;
 							// $scope.item.Teknologir="";
 							$scope.item.NoSeri = datas.noseri;
-							// $scope.item.sisaumur = datas.sisaumur
+							$scope.item.SisaUmur = datas.sisaumur
 							$scope.item.merkProduk = { id: datas.merkid, merkproduk: datas.merkproduk };
 							$scope.item.typeProduk = { id: datas.typeid, typeproduk: datas.typeproduk };
 							$scope.item.KondisiBarang = { id: datas.kondisibarangfk, nama: datas.kondisibarang };
@@ -271,7 +288,7 @@ define(['initialize'], function (initialize) {
 							// * END KENDARAAN
 
 							// * SERTIFIKAT
-							// $scope.item.JenisSertifikat="";
+							$scope.item.JenisSertifikat = cariDariList(datas.kdjenissertifikat, $scope.ListJenisSertifikat);
 							// $scope.item.NoSertifikat="";
 							// $scope.item.Pegawai=""; LuasTanah
 							$scope.item.MasaBerlakuSertifikat = 0;
@@ -295,6 +312,20 @@ define(['initialize'], function (initialize) {
 							$scope.item.LuasBanguanan = 0;
 						
 							// * END SPESIFIKASI
+
+							// Penambahan nilai asset
+							let defaultList = data.data.penambahanNilai.map(function(item, index){
+								return {...item, no: index+1}
+							})
+
+							$scope.listItemPenambahan = defaultList
+
+							// update grid penambahan nilai asset
+							$scope.dataGridItemPenambahan = new kendo.data.DataSource({
+								data: $scope.listItemPenambahan,
+								pageSize: 100,
+								total: $scope.listItemPenambahan.length,
+							})
 
 							hitungPenyusutanFunc();
 							historyPindahAssetFunc();
@@ -799,6 +830,7 @@ define(['initialize'], function (initialize) {
 					// * UMUM
 					tglregisteraset: moment($scope.item.TglRegistrasi).format('YYYY-MM-DD HH:mm'),
 					noRegisaset: noRegisaset,
+					norec: norecNoAsset,
 					objectprodukfk: $scope.item.kdProduk,
 					kdbmn: KodeBmn,
 					hargaperolehan: hargaperolehan,
@@ -889,9 +921,8 @@ define(['initialize'], function (initialize) {
 					// * PENYUSUTAN
 					nilaisisa : NilaiSisa,
 					umurasset : UmurAsset,
-					
-
 					// * END PENYUSUTAN
+
 					// * Bangunan
 					kondisbanguanfk : kondisbanguanfk,
 					tingkatfk : tingkatfk,
@@ -901,7 +932,8 @@ define(['initialize'], function (initialize) {
 					// * END Bangunan
 
 
-		
+					// Penambahan nilai
+					listitempenambahan: $scope.listItemPenambahan 
 				}
 
 				var objSave = {
@@ -912,7 +944,7 @@ define(['initialize'], function (initialize) {
 
 				medifirstService.post('logistik/simpan-detail-regisaset', objSave).then(function (e) {
 					// Kosongkan();
-					$state.go('DaftarBarangInvestasiCtrl');
+					$state.go('DaftarBarangInvestasi');
 				})
 			}
 
@@ -1148,7 +1180,7 @@ define(['initialize'], function (initialize) {
             	
             	medifirstService.get("logistik/get-daftar-history-pindah-asset?" + "noregisterasetfk=" + norecNoAsset, true).then(function (data) {
 					var datas = data.data.data;
-					console.log(datas)
+					// console.log(datas)
 					$scope.dataGridHistoryAsset = new kendo.data.DataSource({
 	                    data: datas
 	                });
@@ -1499,6 +1531,114 @@ define(['initialize'], function (initialize) {
                 })    
                    
             }
+
+			// Penambahan nilai asset
+			$scope.selectedItemGridPenambahan = null 
+
+			$scope.columnGridItemPenambahan = {
+				columns: [
+					{
+						"title": "Aksi",
+						"template": '<button ng-click="hapusItemGridPenambahan(dataItem)" class="k-button k-button-icontext k-grid-upload">Hapus</button>'
+                    },
+                    {
+						"field": "no",
+						"title": "No",
+					},
+					{
+						"field": "tglpenambahan",
+						"title": "Tanggal Penambahan",
+					},
+					{
+						"field": "keteranganpenambahan",
+						"title": "Keterangan",
+					},
+					{
+						"field": "hargapenambahan",
+						"title": "Harga Penambahan",
+					},
+                ]
+			}
+
+			$scope.tambahItemPenambahan = function(){
+
+				if($scope.item.tglpenambahan == null || $scope.item.tglpenambahan == undefined){
+					toastr.error('Tanggal penambahan nilai asset perlu diisi')
+					return
+				}
+
+				if($scope.item.keteranganpenambahan == null || $scope.item.keteranganpenambahan == undefined){
+					toastr.error('Keterangan penambahan nilai asset perlu diisi')
+					return
+				}
+
+				if($scope.item.hargapenambahan == null || $scope.item.hargapenambahan == undefined){
+					toastr.error('Harga penambahan nilai asset perlu diisi')
+					return
+				}
+
+				// check jika selectedItemGridPenambahan ada
+				if($scope.selectedItemGridPenambahan !== null){
+					// cari data
+					let index = $scope.listItemPenambahan.findIndex(item => item.no == $scope.selectedItemGridPenambahan.no)
+
+					// update data
+					$scope.listItemPenambahan[index].no = $scope.selectedItemGridPenambahan.no
+					$scope.listItemPenambahan[index].tglpenambahan = $scope.item.tglpenambahan
+					$scope.listItemPenambahan[index].keteranganpenambahan = $scope.item.keteranganpenambahan
+					$scope.listItemPenambahan[index].hargapenambahan = $scope.item.hargapenambahan
+
+				}else{
+					// masukkan data ke array
+					$scope.listItemPenambahan.push({
+						no: $scope.listItemPenambahan.length + 1,
+						tglpenambahan: moment($scope.item.tglpenambahan).format('YYYY-MM-DD HH:mm:ss'),
+						keteranganpenambahan: $scope.item.keteranganpenambahan,
+						hargapenambahan: $scope.item.hargapenambahan,
+					})
+				}
+
+				// update grid
+				$scope.dataGridItemPenambahan = new kendo.data.DataSource({
+                    data: $scope.listItemPenambahan,
+                    pageSize: 100,
+                    total: $scope.listItemPenambahan.length,
+                })
+
+				clearInputPenambahan()
+				$scope.selectedItemGridPenambahan = null
+			}
+
+			function clearInputPenambahan(){
+				$scope.item.tglpenambahan = null
+				$scope.item.keteranganpenambahan = null
+				$scope.item.hargapenambahan = null
+			}
+
+			$scope.hapusItemGridPenambahan = function(selectedData){
+
+				// hapus berdasarkan no.
+				let arrbaru = $scope.listItemPenambahan.filter(item => item.no !== selectedData.no)
+
+				$scope.listItemPenambahan = arrbaru
+
+				// update grid
+				$scope.dataGridItemPenambahan = new kendo.data.DataSource({
+                    data: $scope.listItemPenambahan,
+                    pageSize: 100,
+                    total: arrbaru.length,
+                })
+			}
+
+			$scope.klikGridItemPenambahan = function(selectedData){
+				// console.log(selectedData)
+
+				// masukkan data ke input
+				$scope.item.tglpenambahan = moment(selectedData.tglpenambahan).format('YYYY-MM-DD HH:mm:ss')
+				$scope.item.keteranganpenambahan = selectedData.keteranganpenambahan
+				$scope.item.hargapenambahan = selectedData.hargapenambahan
+
+			}
 
 			//////////////			`
 		}

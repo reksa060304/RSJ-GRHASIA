@@ -18,9 +18,9 @@
                 k-data-source="sourceRuanganAset" k-filter="'contains'" style="width: 100%"></input>
         </div>
         <div class="grid_2">
-            <label c-label>Detail Jenis Produk</label>
-            <input kendo-combo-box k-ng-model="item.DetailJenis" k-data-text-field="'detailjenisproduk'"
-                k-data-value-field="'id'" k-data-source="sourceDetailJenis" k-filter="'contains'"
+            <label c-label>Kelompok Aset</label>
+            <input kendo-combo-box k-ng-model="item.kelompokaset" k-data-text-field="'kelompokaset'"
+                k-data-value-field="'id'" k-data-source="listKelompokAset" k-filter="'contains'"
                 style="width: 100%"></input>
         </div>
         <div class="grid_4">
@@ -70,12 +70,12 @@
             <span class="title">Cetak Label</span>
         </c-button>
     </div>
-    <div class="grid_3" style="float:right;">
+    <!-- <div class="grid_3" style="float:right;">
         <c-button style="width: 100%; font-size: 24px; padding:0px; margin:0px;" item="item" size="36"
             position="'right'" is-validate ng-click="KirimAsset()">
             <span class="title">Kirim Barang Aset</span>
         </c-button>
-    </div>
+    </div> -->
     <div class="grid_3" style="float:right;">
         <c-button style="width: 100%; font-size: 24px; padding:0px; margin:0px;" item="item" size="36"
             position="'right'" is-validate ng-click="DetailAsset()">
@@ -147,5 +147,32 @@
         <input type="button" class="confirm_no k-button" value="Tidak" style="width: 70px" ng-click="batalCetakKartuInventaris()"/>
         &nbsp;
         <input type="button" class="confirm_yes k-button" value="Ya" style="width: 70px" ng-click="cetakKartuInventaris()"/>
+    </div>
+</div>
+
+<!-- Popup cetak kelompok asset-->
+<div kendo-window="popUpCetakKelompokAset" k-title="'Pilih Kelompok Asset'" k-width="600" k-visible="false" k-on-open="win2visible = true" k-on-close="win2visible = false">
+    <div class="panel panel-default container_12" style="padding: 0px 10px;"> 
+        <div class="grid_12">
+            <div class="grid_12">
+                <div class="grid_12">
+                    <div class="grid_12" style="margin-top: 10px">
+                        <label c-label item="item" c-label-text="Kelompok Aset" real></label>
+                    </div>
+                    <div class="grid_12">
+                        <input 
+                            kendo-combo-box 
+                            k-ng-model="item.selectedKelompokAset" 
+                            k-data-text-field="'kelompokaset'"
+                            k-data-value-field="'id'" k-data-source="listKelompokAset" k-filter="'contains'" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- kata kunci confirm -->   
+    <div class="dialog_buttons pull-right" style="margin-top:5%">
+        <input type="button" class="confirm_no k-button" value="Batal" style="width: 70px" ng-click="batalCetakKelompokAset()" />
+        <input type="button" class="confirm_yes k-button" value="Cetak" style="width: 70px" ng-click="cetakKelompokAset()"/>
     </div>
 </div>

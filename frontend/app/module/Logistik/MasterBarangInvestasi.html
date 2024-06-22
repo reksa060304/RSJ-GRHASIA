@@ -999,6 +999,77 @@
 										</div>
 									</md-content>
 								</md-tab>
+
+								<!-- Penambahan nilai barang -->
+								<md-tab label="Penambahan Nilai Asset">
+									<md-content class="md-padding">
+										<div class="grid_12">
+											<div class="grid_12">
+												
+												<!-- Inputan penambahan nilai asset -->
+												<div class="grid_4">
+													<!-- tanggal penambahan -->
+													<div class="grid_3">
+														<div class="grid_12">
+															<label style="text-transform: capitalize;"  c-label item="item" c-label-text="Tanggal penambahan"></label>
+														</div>
+														<div class="grid_12">
+															<input k-ng-model="item.tglpenambahan" kendo-datetimepicker
+																placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'"
+															 />
+														</div>
+													</div>
+	
+													<!-- Keterangan penambahan -->
+													<div class="grid_12" style="margin-top: .5em;">
+														<div class="grid_12">
+															<label style="text-transform: capitalize;"  c-label item="item" c-label-text="Keterangan penambahan"></label>
+														</div>
+														<div class="grid_12">
+															<input c-text-box type="input" class="k-textbox" ng-model="item.keteranganpenambahan"  />
+														</div>
+													</div>
+	
+													<!-- Harga penambahan -->
+													<div class="grid_12" style="margin-top: .5em;">
+														<div class="grid_12">
+															<label style="text-transform: capitalize;"  c-label item="item" c-label-text="Harga penambahan"></label>
+														</div>
+														<div class="grid_12">
+															<input c-text-box type="input" class="k-textbox" ng-model="item.hargapenambahan"  />
+														</div>
+													</div>
+	
+													<!-- Tombol2 -->
+													<div class="grid_12" style="margin-top: 18px">
+														<div class="grid_6">
+															<button class="c-button" ng-click="tambahItemPenambahan()">Tambah</button>
+														</div>
+													</div>
+												</div>
+									            
+												<!-- Grid penambahan nilai asset -->
+												<div class="grid_8">
+													
+													<div class="grid_12 borderBox">
+														<div 
+															id="kGrid" 
+															kendo-grid 
+															k-data-source="dataGridItemPenambahan" 
+															k-selectable="'row'" 
+															options="columnGridItemPenambahan"
+															k-pageable="'true'" 
+															k-sortable="'true'" 
+															k-ng-model="selectedItemGridPenambahan"
+															ng-click="klikGridItemPenambahan(selectedItemGridPenambahan)">
+														</div>
+													</div>
+
+												</div>
+										    </div>
+										</div>
+									</md-content>
+								</md-tab>
 							</md-tabs>
 						</md-content>
 					</div>

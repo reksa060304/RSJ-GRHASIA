@@ -9585,7 +9585,7 @@ class LogistikController extends ApiController{
                 'ss.id as ssid','ss.satuanstandar','ra.qtyprodukaset','spd.norec as norecspd','ap.asalproduk','ra.noregisteraset_int',
                 'ra.masaberlakusertifikat','ra.sisaumur','ra.noseri','ra.tahunperolehan','ra.objectmerkprodukfk as merkid','mp.merkproduk',
                 'ra.tahunperolehan','tp.typeproduk','ra.nilaisisa','ra.luasbangunan','ra.luaslantai','md1.nama as tingkat','md2.nama as kondisibanguanan','md3.nama as kondisibarang','md4.nama as beton'
-                ,'ra.tingkatfk','ra.kondisbanguanfk','ra.kondisibarangfk','ra.betonfk','ra.luastanah','ra.koderegisterrs')
+                ,'ra.tingkatfk','ra.kondisbanguanfk','ra.kondisibarangfk','ra.betonfk','ra.luastanah','ra.koderegisterrs', 'ra.kdjenissertifikat', 'ra.objectbahanprodukfk')
             ->where('ra.kdprofile',$idProfile);
 
         if (isset($request['norecAsset']) && $request['norecAsset'] != "" && $request['norecAsset'] != "undefined") {
@@ -9596,8 +9596,16 @@ class LogistikController extends ApiController{
         $data = $data->limit(1);
         $data = $data->get();
 
+        // get penambahan nilai asset
+        $penambahanNilai = DB::table('penambahannilaiasset_t')
+            ->where('objectregistrasiassetfk', $data[0]->norec)
+            ->where('statusenabled', true)
+            ->where('kdprofile', $idProfile)
+            ->get();
+
         $result = array(
             'datas' => $data,
+            'penambahanNilai' => $penambahanNilai,
             'message' => 'ea@epic',
         );
 
@@ -9627,7 +9635,7 @@ class LogistikController extends ApiController{
                 $dataRegAset->objectprodukfk=$request['regAset']['objectprodukfk'];
                 $dataRegAset->qtyprodukaset=1;
             }else{
-                $dataRegAset =  RegistrasiAset::where('noregisteraset',$request['regAset']['noRegisaset'])->first();
+                $dataRegAset =  RegistrasiAset::where('norec',$request['regAset']['norec'])->first();
             }
 
             // Awal
@@ -9643,7 +9651,7 @@ class LogistikController extends ApiController{
 
             // Alamat
             $dataRegAset->alamatlengkap = $request['regAset']['alamatlengkap'];
-            $dataRegAset->objectdesakelurahanfk= ($request['regAset']['objectdesakelurahanfk'] == null) ? 49502 :$request['regAset']['objectdesakelurahanfk']; //$request['regAset']['objectdesakelurahanfk'];
+            $dataRegAset->objectdesakelurahanfk= isset($request['regAset']['objectdesakelurahanfk']) ? $request['regAset']['objectdesakelurahanfk'] : 49502; //$request['regAset']['objectdesakelurahanfk'];
             $dataRegAset->objectkecamatanfk = ($request['regAset']['objectkecamatanfk'] == null) ? 3482 : $request['regAset']['objectkecamatanfk']; //$request['regAset']['objectkecamatanfk'];
             $dataRegAset->objectkotakabupatenfk=  ($request['regAset']['objectkotakabupatenfk'] == null) ? 226 : $request['regAset']['objectkotakabupatenfk']; //$request['regAset']['objectkotakabupatenfk'];
             $dataRegAset->objectpropinsifk=$request['regAset']['objectpropinsifk'];
@@ -9723,6 +9731,80 @@ class LogistikController extends ApiController{
 
             $dataRegAset->save();
             //## END RegisterAsset
+
+            // start simpan penambahan nilai asset
+            if(isset($request['regAset']['listitempenambahan']) || $request['regAset']['listitempenambahan'] !== null){
+                $arrId = [];
+                $totalPertambahan = 0;
+                $totalSebelummnya = 0;
+
+                // dapatkan semua id penambahan dan total pertambahan
+                foreach($request['regAset']['listitempenambahan'] as $row){
+                    if(isset($row['id'])){
+                        array_push($arrId, $row['id']);
+                    }
+
+                    $totalPertambahan = $totalPertambahan + (int)$row['hargapenambahan'];
+                }
+
+                // ambil total sebelummnya
+                $sebelummnya = DB::table('penambahannilaiasset_t')
+                    ->where('objectregistrasiassetfk', $dataRegAset->norec)
+                    ->where('statusenabled', true)
+                    ->where('kdprofile', $idProfile)
+                    ->get();
+                
+                if(count($sebelummnya) > 0){
+                    foreach($sebelummnya as $sb){
+                        $totalSebelummnya = $totalSebelummnya + (int)$sb->hargapenambahan;
+                    }
+                } 
+                
+                // disable penambahan yang tidak ada dalam arrId
+                DB::table('penambahannilaiasset_t')
+                    ->where('objectregistrasiassetfk', $dataRegAset->norec)
+                    ->whereNotIn('id', $arrId)
+                    ->update([
+                        'statusenabled' => false
+                    ]);
+                
+                // update or insert 
+                foreach($request['regAset']['listitempenambahan'] as $penambahan){
+
+                    // jika ada id berarti update berdasarkan id
+                    if(isset($penambahan['id'])){
+                        // cari data
+                        $cari = DB::table('penambahannilaiasset_t')
+                            ->where('id', $penambahan['id'])
+                            ->update([
+                                'keteranganpenambahan' => $penambahan['keteranganpenambahan'],
+                                'hargapenambahan' => $penambahan['hargapenambahan'],
+                                'tglpenambahan' => $penambahan['tglpenambahan']
+                            ]);
+
+                    }else{
+
+                        DB::table('penambahannilaiasset_t')->insert([
+                            'statusenabled' => true,
+                            'kdprofile' => $idProfile,
+                            'objectregistrasiassetfk' => $dataRegAset->norec,
+                            'keteranganpenambahan' => $penambahan['keteranganpenambahan'],
+                            'hargapenambahan' => $penambahan['hargapenambahan'],
+                            'tglpenambahan' => $penambahan['tglpenambahan']
+                        ]);
+                    }
+
+                }
+
+                // update registrasi asset total penambahan dan
+                DB::table('registrasiaset_t')->where('norec', $dataRegAset->norec)->update([
+                    'hargapertambahan' => $totalPertambahan,
+                    'hargaperolehan' => (int)$dataRegAset->hargaperolehan - (int)$totalSebelummnya + (int)$totalPertambahan
+                ]);
+
+            }
+            // end penambahan nilai asset
+
 
             $norecdataRegAset = $dataRegAset->norec;
 
@@ -9922,7 +10004,12 @@ class LogistikController extends ApiController{
         if (isset($request['namaproduk']) && $request['namaproduk'] != "" && $request['namaproduk'] != "undefined") {
             $data = $data->where('pr.namaproduk', 'ILIKE', '%'.$request['namaproduk'].'%');
         }
-        // $data = $data->where('ra.statusenabled',true);
+
+        // jika ada kelompokasset
+        if(isset($request['kelompokaset']) && $request['kelompokaset'] != "" && $request['kelompokaset'] != "undefined"){
+            $data = $data->where('ra.objectkelompokasetfk', $request['kelompokaset']);
+        }
+
         $data = $data->orderBy('ra.noregisteraset');
         $data = $data->get();
 
@@ -9944,7 +10031,7 @@ class LogistikController extends ApiController{
             ->leftJOIN('detailjenisproduk_m as djp','djp.id','=','ra.objectdetailjenisproduk')
             ->leftJOIN('jenisproduk_m as jp','jp.id','=','ra.objectjenisproduk')
             ->leftJOIN('satuanstandar_m as ss','ss.id','=','ra.objectsatuan')
-            ->leftJOIN('ruangan_m as ru','ru.id','=','ra.objectruanganposisicurrentfk')
+            ->leftJOIN('ruanganasset_m as ru','ru.id','=','ra.objectruanganposisicurrentfk')
             ->select('ra.noregisteraset','pr.id','pr.namaproduk','ss.id as ssid','ss.satuanstandar','pr.kdproduk','ra.qtyprodukaset','ru.namaruangan')
             ->where('ra.qtyprodukaset','>',0)
             ->where('ra.kdprofile', $idProfile)
@@ -10025,6 +10112,7 @@ class LogistikController extends ApiController{
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
         \DB::beginTransaction();
+        $errmsg = '';
 //        $dataLogin = $request->all();
         $nilaikonversi = 1;
         $dataPegawaiUser = DB::select(DB::raw("select pg.id,pg.namalengkap from loginuser_s as lu
@@ -10041,8 +10129,8 @@ class LogistikController extends ApiController{
 //                    $noKirim = $this->generateCode(new StrukKirim, 'nokirim', 14, 'TRFA-' . $this->getDateTime()->format('ym'));
 //                    $jenispermintaan = 2;
 //                }else{
-            $noKirim = $this->generateCode(new StrukKirim, 'nokirim', 14, 'TRFA-' . $this->getDateTime()->format('ym'), $idProfile);
-            $jenispermintaan = 1;
+                $noKirim = $this->generateCode(new StrukKirim, 'nokirim', 14, 'TRFA-' . $this->getDateTime()->format('ym'), $idProfile);
+                $jenispermintaan = 1;
 //                }
                 $dataSK = new StrukKirim();
                 $dataSK->norec = $dataSK->generateNewId();
@@ -10158,6 +10246,7 @@ class LogistikController extends ApiController{
             $transStatus = 'true';
         } catch (\Exception $e) {
             $transStatus = 'false';
+            $errmsg = $e->getMessage();
         }
 
         if ($transStatus == 'true') {
@@ -10177,6 +10266,7 @@ class LogistikController extends ApiController{
             $result = array(
                 "status" => 400,
                 "message"  => $transMessage,
+                "err" => $errmsg,
 //                "strukkirim" => $dataSK,
 //                "kirimaset" => $dataKPA,
 //                 'dataRA' => $dataRA->objectruanganposisicurrentfk,
@@ -12334,10 +12424,10 @@ class LogistikController extends ApiController{
                 ruasal.namaruangan as ruanganasal,sk.objectruangantujuanfk ,rutujuan.namaruangan as ruangantujuan
                 from strukkirim_t as sk 
                 INNER JOIN kirimprodukaset_t as kpa on kpa.nokirimfk=sk.norec
-                INNER JOIN ruangan_m as ruasal on ruasal.id=sk.objectruanganasalfk
-                INNER JOIN ruangan_m as rutujuan on rutujuan.id=sk.objectruangantujuanfk
+                INNER JOIN ruanganasset_m as ruasal on ruasal.id=sk.objectruanganasalfk
+                INNER JOIN ruanganasset_m as rutujuan on rutujuan.id=sk.objectruangantujuanfk
                 where sk.kdprofile = $idProfile and sk.objectkelompoktransaksifk=95
-                $noregisterasetfk
+                $noregisterasetfk order by sk.tglkirim desc
 			"));
 
         $result= array(

@@ -32,18 +32,19 @@ define(['initialize'], function(initialize) {
 
             function loadDataCombo(){                
                 var ruangid='';
-                medifirstService.getPart("logistik/get-combo-barang-logistik", true, true, 20).then(function (data) {
-					$scope.listProduk = data;
-				});
+                // medifirstService.getPart("logistik/get-combo-barang-logistik", true, true, 20).then(function (data) {
+				// 	$scope.listProduk = data;
+				// });
                 medifirstService.get('logistik/get-combo-logistik').then(function (dat) { 
                     var dataCombo = dat.data;
                     $scope.listPenulisResep = medifirstService.getPegawaiLogin();
-                    $scope.listRuangan = medifirstService.getMapLoginUserToRuangan();
+                    // $scope.listRuangan = medifirstService.getMapLoginUserToRuangan();
+                    $scope.listRuangan = dataCombo.ruanganaset;
                     $scope.listJenisKirim = [{ id: 1, jenis: 'Amprahan' }, { id: 2, jenis: 'Transfer' }]
                     $scope.listAsalProduk = dataCombo.asalproduk;
-                    $scope.listRuanganTujuan = dataCombo.ruanganall;
+                    $scope.listRuanganTujuan = dataCombo.ruanganaset;
                     pegawaiUser = dataCombo.detaillogin[0];
-                    $scope.item.ruangan = { id: $scope.listRuangan[0].id, namaruangan: $scope.listRuangan[0].namaruangan }
+                    // $scope.item.ruangan = { id: $scope.listRuangan[0].id, namaruangan: $scope.listRuangan[0].namaruangan }
                     $scope.item.jenisKirim = { id: 2, jenis: 'Transfer' }
                     $scope.listDataJabatan = dataCombo.jabatan;                    
                     $scope.ListKondisiProduk = dataCombo.kondisiaset;
@@ -67,16 +68,16 @@ define(['initialize'], function(initialize) {
                 })
             }
 
-            function loadProduk(){
-                var ruanganid = '';
-                if ($scope.item.ruangan != undefined) {
-                    ruanganid = $scope.item.ruangan.id;
-                }
-                medifirstService.get("logistik/get-data-produkforkirim?ruanganId="+ruanganid, true).then(function(dat){
-                    var data = dat.data[0].data;
-                    $scope.listProduk= data;
-                })
-            }
+            // function loadProduk(){
+            //     var ruanganid = '';
+            //     if ($scope.item.ruangan != undefined) {
+            //         ruanganid = $scope.item.ruangan.id;
+            //     }
+            //     medifirstService.get("logistik/get-data-produkforkirim?ruanganId="+ruanganid, true).then(function(dat){
+            //         var data = dat.data[0].data;
+            //         $scope.listProduk= data;
+            //     })
+            // }
 
             function LoadCache(){
                 var chacePeriode = cacheHelper.get('KirimBarangAsetCtrl');

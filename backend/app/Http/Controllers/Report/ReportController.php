@@ -2462,7 +2462,7 @@ class ReportController extends ApiController{
             epd.value,ep.namaruangan,pg.namalengkap as namadokter
             --case when ed.TYPE = 'datetime' then TO_CHAR(TO_TIMESTAMP(epd.value, 'YYYY-MM-DD HH24:MI:SS'),'YYYY-MM-DD HH24:MI:SS') else epd.value end as value
         FROM
-            emrpasien_tx AS ep
+            emrpasien_t AS ep
             INNER JOIN emrpasiend_t AS epd ON ep.noemr = epd.emrpasienfk
             INNER JOIN emrd_t AS ed ON epd.emrdfk = ed.ID
                 INNER JOIN antrianpasiendiperiksa_t AS pd ON pd.norec = ep.norec_apd
@@ -21718,12 +21718,12 @@ public function suratBuktiPengembalian(Request $request)
                             LEFT JOIN kelompokproduk_m AS kp ON kp.id = jp.objectkelompokprodukfk
                             LEFT JOIN satuanstandar_m AS ss ON ss.id = pr.objectsatuanstandarfk
                             LEFT JOIN asalproduk_m AS ap ON ap.id = ra.objectasalprodukfk
-                            LEFT JOIN ruangan_m AS ru1 ON ru1.id = ra.objectruanganposisicurrentfk
+                            LEFT JOIN ruanganasset_m AS ru1 ON ru1.id = ra.objectruanganposisicurrentfk
                             LEFT JOIN rekanan_m AS rek ON rek.id = ra.objectsupplier
                             LEFT JOIN bahanproduk_m AS bp ON bp.id = ra.objectbahanprodukfk
                         WHERE
                             ra.kdprofile=$kdProfile
-                            AND ra.objectruanganfk=".$request['ruangancurrenfk']."
+                            AND ra.objectruanganposisicurrentfk=".$request['ruangancurrenfk']."
                         ORDER BY
                             ra.noregisteraset ASC 
                     ) x 
@@ -21802,7 +21802,8 @@ public function suratBuktiPengembalian(Request $request)
             LEFT JOIN merkproduk_m AS mrk ON mrk.ID = ra.objectmerkprodukfk
             LEFT JOIN asalproduk_m AS ap ON ap.ID = ra.objectasalprodukfk
         WHERE
-            ra.kdprofile=$kdProfile
+            ra.kdprofile=".$kdProfile."
+            AND ra.objectkelompokasetfk=".$request['kelompokaset']."
         "));
 
         // dd($query);
