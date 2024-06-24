@@ -1,3 +1,4 @@
+
 define(['initialize'], function (initialize) {
     'use strict';
     initialize.controller('OrderBarangLaundryCtrl', ['$scope', 'CacheHelper', '$mdDialog', 'MedifirstService',
@@ -23,6 +24,12 @@ define(['initialize'], function (initialize) {
             var hrgsdk = 0
             var racikan = 0
             var norecOrder = '';
+
+            $scope.listKeterangan = [
+                { id: 1, nama: 'Linen Pasien' },
+                { id: 2, nama: 'Linen Petugas' }
+            ]
+
             ComboLoad();
             LoadCache();
             // init();
@@ -139,9 +146,9 @@ define(['initialize'], function (initialize) {
 
 
             $scope.getSatuan = function () {
-           
-                    $scope.listSatuan = ([{ ssid: $scope.item.produk.ssid, satuanstandar: $scope.item.produk.satuanstandar }])
-                
+
+                $scope.listSatuan = ([{ ssid: $scope.item.produk.ssid, satuanstandar: $scope.item.produk.satuanstandar }])
+
                 $scope.item.satuan = { ssid: $scope.item.produk.ssid, satuanstandar: $scope.item.produk.satuanstandar }
                 /* info stok all ruangan */
                 // medifirstService.get("farmasi/get-info-stok?produkfk=" + $scope.item.produk.id, true)
@@ -264,10 +271,10 @@ define(['initialize'], function (initialize) {
                     toastr.error("Jumlah harus di isi!")
                     return;
                 }
-                if ($scope.item.jumlah > $scope.item.stok) {
-                    toastr.error("Permintaan Laundry Melebih Stok!")
-                    return;
-                }
+                //if ($scope.item.jumlah > $scope.item.stok) {
+                //toastr.error("Permintaan Laundry Melebih Stok!")
+                //return;
+                // }
                 // if (parseFloat($scope.item.stok) == 0) {
                 //     toastr.error("Stok tidak ada!")
                 //     return;
@@ -380,7 +387,7 @@ define(['initialize'], function (initialize) {
             }
 
             $scope.klikGrid = function (dataSelected) {
-                if(dataSelected == undefined)return
+                if (dataSelected == undefined) return
                 var dataProduk = [];
                 //no:no,
                 $scope.item.no = dataSelected.no
@@ -394,7 +401,7 @@ define(['initialize'], function (initialize) {
                 $scope.item.jumlah = dataSelected.jumlah
                 GETKONVERSI(dataSelected.jumlah)
                 // $scope.item.nilaiKonversi = dataSelected.nilaikonversi
-                $scope.listSatuan = ([{ ssid:dataSelected.satuanstandarfk, satuanstandar: dataSelected.satuanstandar }])
+                $scope.listSatuan = ([{ ssid: dataSelected.satuanstandarfk, satuanstandar: dataSelected.satuanstandar }])
                 $scope.item.satuan = { ssid: dataSelected.satuanstandarfk, satuanstandar: dataSelected.satuanstandar }
             }
             function Kosongkan() {
@@ -467,9 +474,9 @@ define(['initialize'], function (initialize) {
 
             $scope.SaveOrder = function () {
                 $scope.saveShow = false;
-                var keterangan = 'Order Laundry';
-                if ($scope.item.Keterangan != undefined ) {
-                    keterangan = $scope.item.Keterangan
+                var keterangan = '';
+                if ($scope.item.Keterangan != undefined) {
+                    keterangan = $scope.item.Keterangan.nama
                 }
                 var strukorder = {
                     norecorder: norecOrder,
@@ -491,7 +498,7 @@ define(['initialize'], function (initialize) {
                     Kosongkan();
                     // $scope.saveShow = false;
                     // $scope.popUp.center().open();
-                },function(error){
+                }, function (error) {
                     $scope.saveShow = true;
                 })
             }
@@ -525,7 +532,7 @@ define(['initialize'], function (initialize) {
                 //     .cancel('Tidak')
                 //     .ok('Ya')
                 // $mdDialog.show(confirm).then(function () {
-                    $scope.SaveOrder();
+                $scope.SaveOrder();
                 // })
             }
 
@@ -613,22 +620,22 @@ define(['initialize'], function (initialize) {
             ];
 
             $scope.Infeksius = function () {
-			
-				$scope.popUpInfeksius.center().open();
-				
-			}
+
+                $scope.popUpInfeksius.center().open();
+
+            }
 
             $scope.saveInfeksius = function () {
-                if ($scope.item.ruangan == undefined ) {
+                if ($scope.item.ruangan == undefined) {
                     toastr.error('Ruangan Pemesan Harus di Isi')
                     return
                 }
-                if ($scope.item.jumlah == undefined ) {
+                if ($scope.item.jumlah == undefined) {
                     toastr.error('Jumlah Harus di Isi')
                     return
                 }
                 var keterangan = 'Order Laundry';
-                if ($scope.item.Keterangan != undefined ) {
+                if ($scope.item.Keterangan != undefined) {
                     keterangan = $scope.item.Keterangan
                 }
                 var strukorder = {
@@ -642,29 +649,29 @@ define(['initialize'], function (initialize) {
                     tglorder: moment($scope.item.tglAwal).format('YYYY-MM-DD HH:mm:ss'),
                 }
                 medifirstService.post('laundry/save-order-laundry-ruangan-infeksius', strukorder).then(function (e) {
-                        $scope.item.noKirim = e.data.nokirim
-                        norecCetak = $scope.item.noKirim;
-                        $scope.popUpInfeksius.close();
-                        BerishkanInfeksius()
-                       
-                    
-                    },function(error){
-                        $scope.saveShow = true;
-                    })
-             				
-                
-			}
+                    $scope.item.noKirim = e.data.nokirim
+                    norecCetak = $scope.item.noKirim;
+                    $scope.popUpInfeksius.close();
+                    BerishkanInfeksius()
+
+
+                }, function (error) {
+                    $scope.saveShow = true;
+                })
+
+
+            }
 
             $scope.batalInfeksius = function () {
                 BerishkanInfeksius()
-				$scope.popUpInfeksius.close();
-			}
+                $scope.popUpInfeksius.close();
+            }
             function BerishkanInfeksius() {
                 $scope.item.ruangan = undefined
-                $scope.item.jumlah = undefined			
-			};
+                $scope.item.jumlah = undefined
+            };
 
-        
+
             ////////////////////////////////////////           
         }
     ]);

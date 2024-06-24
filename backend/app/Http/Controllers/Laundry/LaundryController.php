@@ -101,13 +101,16 @@ class LaundryController extends ApiController
             ->leftJOIN('detailjenisproduk_m as djp','djp.id','=','pr.objectdetailjenisprodukfk')
             ->leftJOIN('jenisproduk_m as jp','jp.id','=','djp.objectjenisprodukfk')
             ->leftJOIN('satuanstandar_m as ss','ss.id','=','pr.objectsatuanstandarfk')
-           ->JOIN('stokprodukdetail_t as spd','spd.objectprodukfk','=','pr.id')
-           ->JOIN('strukpelayanan_t as sp','spd.nostrukterimafk','=','sp.norec')
+           //->JOIN('stokprodukdetail_t as spd','spd.objectprodukfk','=','pr.id')--
+           //->JOIN('strukpelayanan_t as sp','spd.nostrukterimafk','=','sp.norec')--
         ->select('pr.id','pr.kdproduk as kdsirs','pr.namaproduk','ss.id as ssid','ss.satuanstandar')
             ->where('pr.statusenabled',true)
             // ->where('pr.objectdepartemenfk',$this->settingDataFixed('KdDepartemenLaundry', $idProfile))
             ->where('pr.kdprofile', $idProfile)
-            ->where('sp.keteranganlainnya','Registrasi Linen Ruangan')
+            ->where('jp.id', 27707)
+            ->where('djp.id', 2059)
+
+           // ->where('sp.keteranganlainnya','Registrasi Linen Ruangan')--
 //            ->where('jp.id',97)
 //            ->where('spd.qtyproduk','>',0)
             ->groupBy('pr.id','pr.kdproduk','pr.namaproduk','ss.id','ss.satuanstandar')
