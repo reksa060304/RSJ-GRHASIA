@@ -58,6 +58,39 @@ define(['initialize'], function (initialize) {
                 });
             }
 
+            /**
+             * 
+             * @param {string} str
+             * @returns {object} 
+             */
+            function konversiCheckBox(str){
+                let hasil = {}
+                
+                str.split(',').forEach(function(data){
+                    hasil[data] = true
+                })
+
+                return hasil
+            }
+
+            /**
+             * 
+             * @param {number} id
+             * @param {Array} arr 
+             * @returns {object} 
+             */
+            function konversiRadio(id, arr){
+                let select = {}
+                
+                arr.forEach(function(data){
+                    if(data['id'] == id){
+                        select = data
+                    }
+                })
+
+                return select
+            }
+
             $scope.listUmur = [
                 {
                     "id": 1,
@@ -73,16 +106,6 @@ define(['initialize'], function (initialize) {
                     ]
                 }
             ]
-            $scope.addListUmur = function (bool, data) {
-                var index = $scope.currentUmur.indexOf(data);
-                if (_.filter($scope.currentUmur, {
-                    id: data.id
-                }).length === 0)
-                    $scope.currentUmur.push(data);
-                else {
-                    $scope.currentUmur.splice(index, 1);
-                }
-            }
 
             $scope.listJenisInsiden = [
                 {
@@ -97,16 +120,6 @@ define(['initialize'], function (initialize) {
                     ]
                 }
             ]
-            $scope.addListJenisInsiden = function (bool, data) {
-                var index = $scope.currentJenisInsiden.indexOf(data);
-                if (_.filter($scope.currentJenisInsiden, {
-                    id: data.id
-                }).length === 0)
-                    $scope.currentJenisInsiden.push(data);
-                else {
-                    $scope.currentJenisInsiden.splice(index, 1);
-                }
-            }
 
             $scope.listPelapor = [
                 {
@@ -121,16 +134,6 @@ define(['initialize'], function (initialize) {
                     ]
                 }
             ]
-            $scope.addListPelapor = function (bool, data) {
-                var index = $scope.currentPelapor.indexOf(data);
-                if (_.filter($scope.currentPelapor, {
-                    id: data.id
-                }).length === 0)
-                    $scope.currentPelapor.push(data);
-                else {
-                    $scope.currentPelapor.splice(index, 1);
-                }
-            }
 
             $scope.listInsidenPasien = [
                 {
@@ -144,39 +147,6 @@ define(['initialize'], function (initialize) {
                     ]
                 }
             ]
-            $scope.addListInsidenPasien = function (bool, data) {
-                var index = $scope.currentInsidenPesien.indexOf(data);
-                if (_.filter($scope.currentInsidenPesien, {
-                    id: data.id
-                }).length === 0)
-                    $scope.currentInsidenPesien.push(data);
-                else {
-                    $scope.currentInsidenPesien.splice(index, 1);
-                }
-            }
-
-            // $scope.listInsiden = [
-            //     {
-            //         "id": 4,
-            //         "nama": "Insiden Menyangkut Pasien",
-            //         "detail": [
-            //             { "id": 1, "nama": "Pasien Rawat Inap" },
-            //             { "id": 2, "nama": "Pasien Rawat Jalan" },
-            //             { "id": 3, "nama": "Pasien IGD" },
-            //             { "id": 4, "nama": "Lain-lain" },
-            //         ]
-            //     }
-            // ]
-            // $scope.addListInsiden = function (bool, data) {
-            //     var index = $scope.currentInsiden.indexOf(data);
-            //     if (_.filter($scope.currentInsiden, {
-            //         id: data.id
-            //     }).length === 0)
-            //         $scope.currentInsiden.push(data);
-            //     else {
-            //         $scope.currentInsiden.splice(index, 1);
-            //     }
-            // }
 
             $scope.listJiwa = [
                 {
@@ -193,16 +163,6 @@ define(['initialize'], function (initialize) {
                     ]
                 }
             ]
-            $scope.addListJiwa = function (bool, data) {
-                var index = $scope.currentJiwa.indexOf(data);
-                if (_.filter($scope.currentJiwa, {
-                    id: data.id
-                }).length === 0)
-                    $scope.currentJiwa.push(data);
-                else {
-                    $scope.currentJiwa.splice(index, 1);
-                }
-            }
 
             $scope.listAkibatInsiden = [
                 {
@@ -217,16 +177,6 @@ define(['initialize'], function (initialize) {
                     ]
                 }
             ]
-            $scope.addListAkibatInsiden = function (bool, data) {
-                var index = $scope.currentAkibatInsiden.indexOf(data);
-                if (_.filter($scope.currentAkibatInsiden, {
-                    id: data.id
-                }).length === 0)
-                    $scope.currentAkibatInsiden.push(data);
-                else {
-                    $scope.currentAkibatInsiden.splice(index, 1);
-                }
-            }
 
             $scope.listKejadianSama = [
                 {
@@ -238,16 +188,6 @@ define(['initialize'], function (initialize) {
                     ]
                 }
             ]
-            $scope.addListKejadianSama = function (bool, data) {
-                var index = $scope.currentKejadianSama.indexOf(data);
-                if (_.filter($scope.currentKejadianSama, {
-                    id: data.id
-                }).length === 0)
-                    $scope.currentKejadianSama.push(data);
-                else {
-                    $scope.currentKejadianSama.splice(index, 1);
-                }
-            }
 
             $scope.listTindakan = [
                 {
@@ -261,17 +201,6 @@ define(['initialize'], function (initialize) {
                     ]
                 }
             ]
-            $scope.addListTindakan = function (bool, data) {
-                var index = $scope.currentTindakanInsiden.indexOf(data);
-                if (_.filter($scope.currentTindakanInsiden, {
-                    id: data.id
-                }).length === 0)
-                    $scope.currentTindakanInsiden.push(data);
-                else {
-                    $scope.currentTindakanInsiden.splice(index, 1);
-                }
-            }
-
 
             $scope.listGrading = [
                 {
@@ -285,16 +214,6 @@ define(['initialize'], function (initialize) {
                     ]
                 }
             ]
-            $scope.addListGrading = function (bool, data) {
-                var index = $scope.currentGrading.indexOf(data);
-                if (_.filter($scope.currentGrading, {
-                    id: data.id
-                }).length === 0)
-                    $scope.currentGrading.push(data);
-                else {
-                    $scope.currentGrading.splice(index, 1);
-                }
-            }
 
             function LoadCache() {
                 var chacePeriode = cacheHelper.get('InsidenInternalCtrl');
@@ -326,205 +245,41 @@ define(['initialize'], function (initialize) {
                             $scope.isRouteLoading = false;
                             norec = kpid                            
                             var datas = dat.data.data[0];
-                            $scope.item.NoRM = datas.nocm;
+
+                            // data pasien
                             $scope.item.NamaPasien = datas.namapasien;
+                            $scope.item.NoRM = datas.nocm;
                             $scope.item.TglLahir = moment(datas.tgllahir).format('YYYY-MM-DD HH:mm');
+                            $scope.item.JenisKelamin = { id: datas.jeniskelaminfk, jeniskelaminfk: datas.jeniskelaminfk, jeniskelamin: datas.jeniskelamin };
                             $scope.item.Ruangan = { value: datas.ruanganfk, id: datas.ruanganfk, text: datas.namaruangan }
                             $scope.item.TglMasuk = moment(datas.tglmasuk).format('YYYY-MM-DD HH:mm');
-                            $scope.item.TglInsiden = moment(datas.tglinsiden).format('YYYY-MM-DD HH:mm');
-                            $scope.item.Insiden = datas.insiden;
-                            $scope.item.KronologiInsiden = datas.kronologisinsiden;
-                            $scope.item.lokasiInsiden = datas.tempatinsiden;
-                            $scope.item.UnitKerja = datas.unitterkait;
-                            $scope.item.Tindakan = datas.penanganan;
-                            $scope.item.Penanggulangan = datas.langkahpenanganan;
-                            $scope.item.TglLaporan = moment(datas.tgllapor).format('YYYY-MM-DD HH:mm');
-                            $scope.item.TglTerimaLaporan = moment(datas.tglterima).format('YYYY-MM-DD HH:mm');
-                            $scope.item.PenerimaLaporan = { id: datas.penerimalaporanfk, namalengkap: datas.penerimalaporan };
-                            $scope.item.PembuatLaporan = { id: datas.pembuatlaporanfk, namalengkap: datas.pembuatlaporan };
-                            $scope.item.JenisKeselamatanInput = { jeniskesalamatanfk: datas.jeniskesalamatanfk, jeniskeselamatan: datas.jeniskeselamatan };
-                            $scope.item.KeselamatanInput = { id: datas.insidenkeselamatanfk, keselamatan: datas.keselamatan };
-                            $scope.item.JenisKelamin = { id: datas.jeniskelaminfk, jeniskelaminfk: datas.jeniskelaminfk, jeniskelamin: datas.jeniskelamin };
                             $scope.item.KelompokPasien = { id: datas.penanggungbiayapasienfk, penanggungbiayapasienfk: datas.penanggungbiayapasienfk, kelompokpasien: datas.kelompokpasien };
-                            if (datas.umur != '' || datas.umur != null) {
-                                var umur = datas.umur.split(',')
-                                umur.forEach(function (data) {
-                                    $scope.listUmur.forEach(function (e) {
-                                        for (let i in e.detail) {
-                                            if (e.detail[i].id == data) {
-                                                e.detail[i].isChecked = true
-                                                var dataid = {
-                                                    "id": e.detail[i].id, "nama": e.detail[i].nama,
-                                                    "value": e.detail[i].id,
-                                                }
-                                                $scope.currentUmur.push(dataid)
-                                            }
-                                        }
-                                    })
-                                })
-                            }
+                            $scope.item.selectedUmur = konversiCheckBox(datas.umur)
 
-                            if (datas.jenisinsiden != '' || datas.jenisinsiden != null) {
-                                var jenisinsiden = datas.jenisinsiden.split(',')
-                                jenisinsiden.forEach(function (data) {
-                                    $scope.listJenisInsiden.forEach(function (e) {
-                                        for (let i in e.detail) {
-                                            if (e.detail[i].id == data) {
-                                                e.detail[i].isChecked = true
-                                                var dataid = {
-                                                    "id": e.detail[i].id, "nama": e.detail[i].nama,
-                                                    "value": e.detail[i].id,
-                                                }
-                                                $scope.currentJenisInsiden.push(dataid)
-                                            }
-                                        }
-                                    })
-                                })
-                            }
+                            // detail
+                            $scope.item.TglInsiden = moment(datas.tglinsiden).format('YYYY-MM-DD HH:mm');
+                            $scope.item.KeselamatanInput = { id: datas.insidenkeselamatanfk, keselamatan: datas.keselamatan };
+                            $scope.item.Insiden = datas.insiden;
+                            $scope.item.selectedJenisInsiden = konversiCheckBox(datas.jenisinsiden)
+                            $scope.item.selectedPelapor = konversiCheckBox(datas.pelaporinsiden)
+                            $scope.item.lokasiInsiden = datas.tempatinsiden;
+                            $scope.item.selectedMenyangkut = konversiCheckBox(datas.insidenpenyangkut)
+                            $scope.item.selectedJiwa = konversiCheckBox(datas.jiwa)
+                            $scope.item.UnitKerja = datas.unitterkait;
+                            $scope.item.selectedAkibatInsiden = konversiCheckBox(datas.akibatinsiden)
+                            $scope.item.Tindakan = datas.penanganan;
+                            $scope.item.selectedKejadianSama = konversiRadio(datas.kejadiansama, $scope.listKejadianSama[0].detail)
+                            $scope.item.selectedTindakanOleh = konversiCheckBox(datas.dilakukanoleh)
+                            $scope.item.Penanggulangan = datas.langkahpenanganan;
 
-                            if (datas.pelaporinsiden != '' || datas.pelaporinsiden != null) {
-                                var pelaporinsiden = datas.pelaporinsiden.split(',')
-                                pelaporinsiden.forEach(function (data) {
-                                    $scope.listPelapor.forEach(function (e) {
-                                        for (let i in e.detail) {
-                                            if (e.detail[i].id == data) {
-                                                e.detail[i].isChecked = true
-                                                var dataid = {
-                                                    "id": e.detail[i].id, "nama": e.detail[i].nama,
-                                                    "value": e.detail[i].id,
-                                                }
-                                                $scope.currentPelapor.push(dataid)
-                                            }
-                                        }
-                                    })
-                                })
-                            }
+                            $scope.item.PembuatLaporan = { id: datas.PembuatLaporanfk, namalengkap: datas.PembuatLaporan };
+                            $scope.item.TglLaporan = moment(datas.tgllapor).format('YYYY-MM-DD HH:mm');
+                            $scope.item.PenerimaLaporan = { id: datas.penerimalaporanfk, namalengkap: datas.penerimalaporan };
+                            $scope.item.TglTerimaLaporan = moment(datas.tglterima).format('YYYY-MM-DD HH:mm');
+                            $scope.item.selectedGrading = konversiRadio(datas.grading, $scope.listGrading[0].detail)
 
-                            // if (datas.insidenpenyangkut != '' || datas.insidenpenyangkut != null) {
-                            //     var insidenpenyangkut = datas.insidenpenyangkut.split(',')
-                            //     insidenpenyangkut.forEach(function (data) {
-                            //         $scope.listInsiden.map(function (e) {
-                            //             for (let i in e.detail) {
-                            //                 if (e.detail[i].id == data) {
-                            //                     e.detail[i].isChecked = true
-                            //                     var dataid = {
-                            //                         "id": e.detail[i].id, "nama": e.detail[i].nama,
-                            //                         "value": e.detail[i].id,
-                            //                     }
-                            //                     $scope.currentInsiden.push(dataid)
-                            //                 }
-                            //             }
-                            //         })
-                            //     })
-                            // }
-
-                            if (datas.insidenterjadi != '' || datas.insidenterjadi != null) {
-                                var insidenterjadi = datas.insidenterjadi.split(',')
-                                insidenterjadi.forEach(function (data) {
-                                    $scope.listInsidenPasien.forEach(function (e) {
-                                        for (let i in e.detail) {
-                                            if (e.detail[i].id == data) {
-                                                e.detail[i].isChecked = true
-                                                var dataid = {
-                                                    "id": e.detail[i].id, "nama": e.detail[i].nama,
-                                                    "value": e.detail[i].id,
-                                                }
-                                                $scope.currentInsidenPesien.push(dataid)
-                                            }
-                                        }
-                                    })
-                                })
-                            }
-
-                            if (datas.akibatinsiden != '' || datas.akibatinsiden != null) {
-                                var akibatinsiden = datas.akibatinsiden.split(',')
-                                akibatinsiden.forEach(function (data) {
-                                    $scope.listAkibatInsiden.forEach(function (e) {
-                                        for (let i in e.detail) {
-                                            if (e.detail[i].id == data) {
-                                                e.detail[i].isChecked = true
-                                                var dataid = {
-                                                    "id": e.detail[i].id, "nama": e.detail[i].nama,
-                                                    "value": e.detail[i].id,
-                                                }
-                                                $scope.currentAkibatInsiden.push(dataid)
-                                            }
-                                        }
-                                    })
-                                })
-                            }
-
-                            if (datas.dilakukanoleh != '' || datas.dilakukanoleh != null) {
-                                var dilakukanoleh = datas.dilakukanoleh.split(',')
-                                dilakukanoleh.forEach(function (data) {
-                                    $scope.listTindakan.forEach(function (e) {
-                                        for (let i in e.detail) {
-                                            if (e.detail[i].id == data) {
-                                                e.detail[i].isChecked = true
-                                                var dataid = {
-                                                    "id": e.detail[i].id, "nama": e.detail[i].nama,
-                                                    "value": e.detail[i].id,
-                                                }
-                                                $scope.currentTindakanInsiden.push(dataid)
-                                            }
-                                        }
-                                    })
-                                })
-                            }
-
-                            if (datas.kejadiansama != '' || datas.kejadiansama != null) {
-                                var kejadiansama = datas.kejadiansama.split(',')
-                                kejadiansama.forEach(function (data) {
-                                    $scope.listKejadianSama.forEach(function (e) {
-                                        for (let i in e.detail) {
-                                            if (e.detail[i].id == data) {
-                                                e.detail[i].isChecked = true
-                                                var dataid = {
-                                                    "id": e.detail[i].id, "nama": e.detail[i].nama,
-                                                    "value": e.detail[i].id,
-                                                }
-                                                $scope.currentKejadianSama.push(dataid)
-                                            }
-                                        }
-                                    })
-                                })
-                            }
-
-                            if (datas.jiwa != '' || datas.jiwa != null) {
-                                var jiwa = datas.jiwa.split(',')
-                                jiwa.forEach(function (data) {
-                                    $scope.listJiwa.forEach(function (e) {
-                                        for (let i in e.detail) {
-                                            if (e.detail[i].id == data) {
-                                                e.detail[i].isChecked = true
-                                                var dataid = {
-                                                    "id": e.detail[i].id, "nama": e.detail[i].nama,
-                                                    "value": e.detail[i].id,
-                                                }
-                                                $scope.currentJiwa.push(dataid)
-                                            }
-                                        }
-                                    })
-                                })
-                            }
-
-                            if (datas.grading != '' || datas.grading != null) {
-                                var grading = datas.grading.split(',')
-                                grading.forEach(function (data) {
-                                    $scope.listGrading.forEach(function (e) {
-                                        for (let i in e.detail) {
-                                            if (e.detail[i].id == data) {
-                                                e.detail[i].isChecked = true
-                                                var dataid = {
-                                                    "id": e.detail[i].id, "nama": e.detail[i].nama,
-                                                    "value": e.detail[i].id,
-                                                }
-                                                $scope.currentGrading.push(dataid)
-                                            }
-                                        }
-                                    })
-                                })
-                            }
+                            $scope.item.JenisKeselamatanInput = { jeniskesalamatanfk: datas.jeniskesalamatanfk, jeniskeselamatan: datas.jeniskeselamatan };
+                            $scope.item.KronologiInsiden = datas.kronologisinsiden;
 
                         }); //
                     } else if (noOrder == 'InputInsidenInternal') {
@@ -554,206 +309,42 @@ define(['initialize'], function (initialize) {
                             $scope.isRouteLoading = false;
                             norec = kpid
                             var datas = dat.data.data[0];
-                            $scope.item.NoRM = datas.nocm;
+                            
+                            // data pasien
                             $scope.item.NamaPasien = datas.namapasien;
+                            $scope.item.NoRM = datas.nocm;
                             $scope.item.TglLahir = moment(datas.tgllahir).format('YYYY-MM-DD HH:mm');
+                            $scope.item.JenisKelamin = { id: datas.jeniskelaminfk, jeniskelaminfk: datas.jeniskelaminfk, jeniskelamin: datas.jeniskelamin };
                             $scope.item.Ruangan = { value: datas.ruanganfk, id: datas.ruanganfk, text: datas.namaruangan }
                             $scope.item.TglMasuk = moment(datas.tglmasuk).format('YYYY-MM-DD HH:mm');
-                            $scope.item.TglInsiden = moment(datas.tglinsiden).format('YYYY-MM-DD HH:mm');
-                            $scope.item.Insiden = datas.insiden;
-                            $scope.item.KronologiInsiden = datas.kronologisinsiden;
-                            $scope.item.lokasiInsiden = datas.tempatinsiden;
-                            $scope.item.UnitKerja = datas.unitterkait;
-                            $scope.item.Tindakan = datas.penanganan;
-                            $scope.item.Penanggulangan = datas.langkahpenanganan;
-                            $scope.item.TglLaporan = moment(datas.tgllapor).format('YYYY-MM-DD HH:mm');
-                            $scope.item.TglTerimaLaporan = moment(datas.tglterima).format('YYYY-MM-DD HH:mm');
-                            $scope.item.PenerimaLaporan = { id: datas.penerimalaporanfk, namalengkap: datas.penerimalaporan };
-                            $scope.item.PembuatLaporan = { id: datas.PembuatLaporanfk, namalengkap: datas.PembuatLaporan };
-                            $scope.item.JenisKeselamatanInput = { jeniskesalamatanfk: datas.jeniskesalamatanfk, jeniskeselamatan: datas.jeniskeselamatan };
-                            $scope.item.KeselamatanInput = { id: datas.insidenkeselamatanfk, keselamatan: datas.keselamatan };
-                            $scope.item.JenisKelamin = { id: datas.jeniskelaminfk, jeniskelaminfk: datas.jeniskelaminfk, jeniskelamin: datas.jeniskelamin };
                             $scope.item.KelompokPasien = { id: datas.penanggungbiayapasienfk, penanggungbiayapasienfk: datas.penanggungbiayapasienfk, kelompokpasien: datas.kelompokpasien };
-                            if (datas.umur != '' || datas.umur != null) {
-                                var umur = datas.umur.split(',')
-                                umur.forEach(function (data) {
-                                    $scope.listUmur.forEach(function (e) {
-                                        for (let i in e.detail) {
-                                            if (e.detail[i].id == data) {
-                                                e.detail[i].isChecked = true
-                                                var dataid = {
-                                                    "id": e.detail[i].id, "nama": e.detail[i].nama,
-                                                    "value": e.detail[i].id,
-                                                }
-                                                $scope.currentUmur.push(dataid)
-                                            }
-                                        }
-                                    })
-                                })
-                            }
+                            $scope.item.selectedUmur = konversiCheckBox(datas.umur)
 
-                            if (datas.jenisinsiden != '' || datas.jenisinsiden != null) {
-                                var jenisinsiden = datas.jenisinsiden.split(',')
-                                jenisinsiden.forEach(function (data) {
-                                    $scope.listJenisInsiden.forEach(function (e) {
-                                        for (let i in e.detail) {
-                                            if (e.detail[i].id == data) {
-                                                e.detail[i].isChecked = true
-                                                var dataid = {
-                                                    "id": e.detail[i].id, "nama": e.detail[i].nama,
-                                                    "value": e.detail[i].id,
-                                                }
-                                                $scope.currentJenisInsiden.push(dataid)
-                                            }
-                                        }
-                                    })
-                                })
-                            }
+                            // detail
+                            $scope.item.TglInsiden = moment(datas.tglinsiden).format('YYYY-MM-DD HH:mm');
+                            $scope.item.KeselamatanInput = { id: datas.insidenkeselamatanfk, keselamatan: datas.keselamatan };
+                            $scope.item.Insiden = datas.insiden;
+                            $scope.item.selectedJenisInsiden = konversiCheckBox(datas.jenisinsiden)
+                            $scope.item.selectedPelapor = konversiCheckBox(datas.pelaporinsiden)
+                            $scope.item.lokasiInsiden = datas.tempatinsiden;
+                            $scope.item.selectedMenyangkut = konversiCheckBox(datas.insidenpenyangkut)
+                            $scope.item.selectedJiwa = konversiCheckBox(datas.jiwa)
+                            $scope.item.UnitKerja = datas.unitterkait;
+                            $scope.item.selectedAkibatInsiden = konversiCheckBox(datas.akibatinsiden)
+                            $scope.item.Tindakan = datas.penanganan;
+                            $scope.item.selectedKejadianSama = konversiRadio(datas.kejadiansama, $scope.listKejadianSama[0].detail)
+                            $scope.item.selectedTindakanOleh = konversiCheckBox(datas.dilakukanoleh)
+                            $scope.item.Penanggulangan = datas.langkahpenanganan;
 
-                            if (datas.pelaporinsiden != '' || datas.pelaporinsiden != null) {
-                                var pelaporinsiden = datas.pelaporinsiden.split(',')
-                                pelaporinsiden.forEach(function (data) {
-                                    $scope.listPelapor.forEach(function (e) {
-                                        for (let i in e.detail) {
-                                            if (e.detail[i].id == data) {
-                                                e.detail[i].isChecked = true
-                                                var dataid = {
-                                                    "id": e.detail[i].id, "nama": e.detail[i].nama,
-                                                    "value": e.detail[i].id,
-                                                }
-                                                $scope.currentPelapor.push(dataid)
-                                            }
-                                        }
-                                    })
-                                })
-                            }
+                            // akhiran
+                            $scope.item.PembuatLaporan = { id: datas.PembuatLaporanfk, namalengkap: datas.PembuatLaporan };
+                            $scope.item.TglLaporan = moment(datas.tgllapor).format('YYYY-MM-DD HH:mm');
+                            $scope.item.PenerimaLaporan = { id: datas.penerimalaporanfk, namalengkap: datas.penerimalaporan };
+                            $scope.item.TglTerimaLaporan = moment(datas.tglterima).format('YYYY-MM-DD HH:mm');
+                            $scope.item.selectedGrading = konversiRadio(datas.grading, $scope.listGrading[0].detail)
 
-                            if (datas.insidenpenyangkut != '' || datas.insidenpenyangkut != null) {
-                                var insidenpenyangkut = datas.insidenpenyangkut.split(',')
-                                insidenpenyangkut.forEach(function (data) {
-                                    $scope.listInsiden.forEach(function (e) {
-                                        for (let i in e.detail) {
-                                            if (e.detail[i].id == data) {
-                                                e.detail[i].isChecked = true
-                                                var dataid = {
-                                                    "id": e.detail[i].id, "nama": e.detail[i].nama,
-                                                    "value": e.detail[i].id,
-                                                }
-                                                $scope.currentInsiden.push(dataid)
-                                            }
-                                        }
-                                    })
-                                })
-                            }
-
-                            if (datas.insidenterjadi != '' || datas.insidenterjadi != null) {
-                                var insidenterjadi = datas.insidenterjadi.split(',')
-                                insidenterjadi.forEach(function (data) {
-                                    $scope.listInsidenPasien.forEach(function (e) {
-                                        for (let i in e.detail) {
-                                            if (e.detail[i].id == data) {
-                                                e.detail[i].isChecked = true
-                                                var dataid = {
-                                                    "id": e.detail[i].id, "nama": e.detail[i].nama,
-                                                    "value": e.detail[i].id,
-                                                }
-                                                $scope.currentInsidenPesien.push(dataid)
-                                            }
-                                        }
-                                    })
-                                })
-                            }
-
-                            if (datas.akibatinsiden != '' || datas.akibatinsiden != null) {
-                                var akibatinsiden = datas.akibatinsiden.split(',')
-                                akibatinsiden.forEach(function (data) {
-                                    $scope.listAkibatInsiden.forEach(function (e) {
-                                        for (let i in e.detail) {
-                                            if (e.detail[i].id == data) {
-                                                e.detail[i].isChecked = true
-                                                var dataid = {
-                                                    "id": e.detail[i].id, "nama": e.detail[i].nama,
-                                                    "value": e.detail[i].id,
-                                                }
-                                                $scope.currentAkibatInsiden.push(dataid)
-                                            }
-                                        }
-                                    })
-                                })
-                            }
-
-                            if (datas.dilakukanoleh != '' || datas.dilakukanoleh != null) {
-                                var dilakukanoleh = datas.dilakukanoleh.split(',')
-                                dilakukanoleh.forEach(function (data) {
-                                    $scope.listTindakan.forEach(function (e) {
-                                        for (let i in e.detail) {
-                                            if (e.detail[i].id == data) {
-                                                e.detail[i].isChecked = true
-                                                var dataid = {
-                                                    "id": e.detail[i].id, "nama": e.detail[i].nama,
-                                                    "value": e.detail[i].id,
-                                                }
-                                                $scope.currentTindakanInsiden.push(dataid)
-                                            }
-                                        }
-                                    })
-                                })
-                            }
-
-                            if (datas.kejadiansama != '' || datas.kejadiansama != null) {
-                                var kejadiansama = datas.kejadiansama.split(',')
-                                kejadiansama.forEach(function (data) {
-                                    $scope.listKejadianSama.forEach(function (e) {
-                                        for (let i in e.detail) {
-                                            if (e.detail[i].id == data) {
-                                                e.detail[i].isChecked = true
-                                                var dataid = {
-                                                    "id": e.detail[i].id, "nama": e.detail[i].nama,
-                                                    "value": e.detail[i].id,
-                                                }
-                                                $scope.currentKejadianSama.push(dataid)
-                                            }
-                                        }
-                                    })
-                                })
-                            }
-
-                            if (datas.jiwa != '' || datas.jiwa != null) {
-                                var jiwa = datas.jiwa.split(',')
-                                jiwa.forEach(function (data) {
-                                    $scope.listJiwa.forEach(function (e) {
-                                        for (let i in e.detail) {
-                                            if (e.detail[i].id == data) {
-                                                e.detail[i].isChecked = true
-                                                var dataid = {
-                                                    "id": e.detail[i].id, "nama": e.detail[i].nama,
-                                                    "value": e.detail[i].id,
-                                                }
-                                                $scope.currentJiwa.push(dataid)
-                                            }
-                                        }
-                                    })
-                                })
-                            }
-
-                            if (datas.grading != '' || datas.grading != null) {
-                                var grading = datas.grading.split(',')
-                                grading.forEach(function (data) {
-                                    $scope.listGrading.forEach(function (e) {
-                                        for (let i in e.detail) {
-                                            if (e.detail[i].id == data) {
-                                                e.detail[i].isChecked = true
-                                                var dataid = {
-                                                    "id": e.detail[i].id, "nama": e.detail[i].nama,
-                                                    "value": e.detail[i].id,
-                                                }
-                                                $scope.currentGrading.push(dataid)
-                                            }
-                                        }
-                                    })
-                                })
-                            }
-
+                            $scope.item.JenisKeselamatanInput = { jeniskesalamatanfk: datas.jeniskesalamatanfk, jeniskeselamatan: datas.jeniskeselamatan };
+                            $scope.item.KronologiInsiden = datas.kronologisinsiden;
                         }); //
                     }
                 } else {
@@ -830,157 +421,10 @@ define(['initialize'], function (initialize) {
             }
 
             $scope.Simpan = function () {
-                var listUmur = ""
-                var listJenisInsiden = ""
-                var listPelapor = ""
-                var listInsiden = ""
-                var listInsidenPasien = ""
-                var listJiwa = ""
-                var listAkibatInsiden = ""
-                var listTindakan = ""
-                var listKejadianSama = ""
-                var grading = ""
-                var a = ""
-                var b = ""
-                var c = ""
-                var d = ""
-                var e = ""
-                var f = ""
-                var g = ""
-                var h = ""
-                var i = ""
-                var j = ""
-                var k = ""
-                var l = ""
-                var m = ""
-                var n = ""
-                var o = ""
-                var p = ""
-                var q = ""
-                var r = ""
-                var s = ""
-                var t = ""
-                var u = ""
-                var v = ""
-                var w = ""
-                var x = ""
-                var z = ""
-
-                for (var i = $scope.currentUmur.length - 1; i >= 0; i--) {
-                    var c = $scope.currentUmur[i].id
-                    b = "," + c
-                    a = a + b
-                }
-                listUmur = a.slice(1, a.length)
-                if (listUmur == undefined) {
-                    toastr.error("Umur Belum Dipilih!")
-                    return;
-                }
-
-                for (var i = $scope.currentJenisInsiden.length - 1; i >= 0; i--) {
-                    var c = $scope.currentJenisInsiden[i].id
-                    d = "," + c
-                    e = e + d
-                }
-                listJenisInsiden = e.slice(1, e.length)
-                if (listJenisInsiden == undefined) {
-                    toastr.error("Jenis Insiden Belum Dipilih!")
-                    return;
-                }
-
-                for (var i = $scope.currentJenisInsiden.length - 1; i >= 0; i--) {
-                    var c = $scope.currentJenisInsiden[i].id
-                    f = "," + c
-                    g = g + f
-                }
-                listPelapor = g.slice(1, g.length)
-                if (listPelapor == undefined) {
-                    toastr.error("Pelapor Belum Dipilih!")
-                    return;
-                }
-
-                for (var i = $scope.currentPelapor.length - 1; i >= 0; i--) {
-                    var c = $scope.currentPelapor[i].id
-                    h = "," + c
-                    x = x + h
-                }
-                listInsiden = x.slice(1, x.length)
-                if (listInsiden == undefined) {
-                    listInsiden = ""
-                }
-
-                for (var i = $scope.currentInsidenPesien.length - 1; i >= 0; i--) {
-                    var c = $scope.currentInsidenPesien[i].id
-                    j = "," + c
-                    k = k + j
-                }
-                listInsidenPasien = k.slice(1, k.length)
-                if (listInsidenPasien == undefined) {
-                    listInsidenPasien = ""
-                }
-
-                for (var i = $scope.currentJiwa.length - 1; i >= 0; i--) {
-                    var c = $scope.currentJiwa[i].id
-                    l = "," + c
-                    m = m + l
-                }
-                listJiwa = m.slice(1, m.length)
-                if (listJiwa == undefined) {
-                    listJiwa = ""
-                }
-
-                // for (var i = $scope.currentJiwa.length - 1; i >= 0; i--) {
-                //     var c = $scope.currentJiwa[i].id
-                //     v = "," + c
-                //     w = w + v
-                // }
-                // listJiwa = w.slice(1, w.length)
-
-                for (var i = $scope.currentAkibatInsiden.length - 1; i >= 0; i--) {
-                    var c = $scope.currentAkibatInsiden[i].id
-                    n = "," + c
-                    o = o + n
-                }
-                listAkibatInsiden = o.slice(1, o.length)
-                if (listAkibatInsiden == undefined) {
-                    toastr.error("Akibat Insiden Belum Dipilih!")
-                    return;
-                }
-
-                for (var i = $scope.currentTindakanInsiden.length - 1; i >= 0; i--) {
-                    var c = $scope.currentTindakanInsiden[i].id
-                    p = "," + c
-                    q = q + p
-                }
-                listTindakan = q.slice(1, q.length)
-                if (listTindakan == undefined) {
-                    toastr.error("Tindakan Insiden Belum Dipilih!")
-                    return;
-                }
-
-                for (var i = $scope.currentKejadianSama.length - 1; i >= 0; i--) {
-                    var c = $scope.currentKejadianSama[i].id
-                    r = "," + c
-                    s = s + r
-                }
-                listKejadianSama = s.slice(1, s.length)
-                if (listKejadianSama == undefined) {
-                    toastr.error("Insiden Kejadian Sama Belum Dipilih!")
-                    return;
-                }
-
-                for (var i = $scope.currentGrading.length - 1; i >= 0; i--) {
-                    var c = $scope.currentGrading[i].id
-                    t = "," + c
-                    u = u + t
-                }
-                grading = u.slice(1, u.length)
-                if (grading == undefined) {
-                    toastr.error("Grading Sama Belum Dipilih!")
-                    return;
-                }
+                
 
                 var listRawRequired = [
+                    // data pasien
                     "item.NamaPasien|ng-model|Nama Pasien",
                     "item.NoRM|ng-model|No Rekam Medis",
                     "item.TglLahir|k-ng-model|Tanggal Lahir",
@@ -988,54 +432,111 @@ define(['initialize'], function (initialize) {
                     "item.Ruangan|k-ng-model|Ruangan",
                     "item.TglMasuk|k-ng-model|Tanggal Masuk",
                     "item.KelompokPasien|k-ng-model|Penanggung Biaya",
+                    "item.selectedUmur|ng-model|Umur",
+
+                    // detail
+                    "item.TglInsiden|k-ng-model|Tanggal Insiden",
+                    "item.Insiden|ng-model|Kronologis Insiden",
+                    "item.selectedJenisInsiden|ng-model|Jenis Insiden",
+                    "item.selectedPelapor|ng-model|Pelapor Insiden",
+                    "item.lokasiInsiden|ng-model|Lokasi Insiden",
+                    "item.selectedMenyangkut|ng-model|Insiden Menyangkut Pasien",
+                    "item.selectedJiwa|ng-model|Insiden Terjadi Pada Pasien",
+                    "item.UnitKerja|ng-model|Unit Kerja",
+                    "item.selectedAkibatInsiden|ng-model|Akibat Insiden",
+                    "item.selectedKejadianSama|ng-model|Kejadian Sama",
+                    "item.selectedTindakanOleh|ng-model|Tindakan Dilakukan Oleh",
+
+                    // Akhiran
+                    "item.selectedGrading|ng-model|Grading",
                 ]
+
                 var isValid = medifirstService.setValidation($scope, listRawRequired);
+
                 if (isValid.status) {
                     var dataSave = {
+                        // data pasien
                         "norec": norec != undefined ? norec : '',
-                        "nocm": $scope.item.NoRM,
                         "namapasien": $scope.item.NamaPasien,
+                        "nocm": $scope.item.NoRM,
                         "tglahir": moment($scope.item.TglLahir).format('YYYY-MM-DD HH:mm'),
-                        "ruanganfk": $scope.item.Ruangan.value,
-                        "umur": listUmur,
                         "jeniskelaminfk": $scope.item.JenisKelamin.id,
-                        "penanggungbiayapasienfk": $scope.item.KelompokPasien.id,
+                        "ruanganfk": $scope.item.Ruangan.value,
                         "tglmasuk": moment($scope.item.TglMasuk).format('YYYY-MM-DD HH:mm'),
+                        "penanggungbiayapasienfk": $scope.item.KelompokPasien.id,
+                        "umur": checkBoxToString($scope.item.selectedUmur),
+                        
+                        // data detail
                         "tglinsiden": $scope.item.TglInsiden != undefined ? moment($scope.item.TglInsiden).format('YYYY-MM-DD HH:mm') : null,
+                        "insidenkeselamatanfk": $scope.item.KeselamatanInput.id,
                         "insiden": $scope.item.Insiden != undefined ? $scope.item.Insiden : '',
-                        "kronologisinsiden": $scope.item.KronologiInsiden != undefined ? $scope.item.KronologiInsiden : '',
-                        "jenisinsiden": listJenisInsiden,
-                        "pelaporinsiden": listPelapor,
-                        "insidenpenyangkut": listInsiden,
+                        "jenisinsiden": checkBoxToString($scope.item.selectedJenisInsiden),
+                        "pelaporinsiden": checkBoxToString($scope.item.selectedPelapor),
                         "tempatinsiden": $scope.item.lokasiInsiden != undefined ? $scope.item.lokasiInsiden : '',
-                        "insidenterjadi": listInsidenPasien,
-                        "jiwa": listJiwa,
+                        "insidenpenyangkut": checkBoxToString($scope.item.selectedMenyangkut),
+                        "jiwa": checkBoxToString($scope.item.selectedJiwa),
+                        "insidenterjadi": checkBoxToString($scope.item.selectedJiwa),
                         "unitterkait": $scope.item.UnitKerja != undefined ? $scope.item.UnitKerja : '',
-                        "akibatinsiden": listAkibatInsiden,
+                        "akibatinsiden": checkBoxToString($scope.item.selectedAkibatInsiden),
                         "penanganan": $scope.item.Tindakan != undefined ? $scope.item.Tindakan : '',
-                        "dilakukanoleh": listTindakan,
-                        "kejadiansama": listKejadianSama,
+                        "kejadiansama": $scope.item.selectedKejadianSama.id,
+                        "dilakukanoleh": checkBoxToString($scope.item.selectedTindakanOleh),
                         "langkahpenanganan": $scope.item.Penanggulangan != undefined ? $scope.item.Penanggulangan : '',
+                        "kronologisinsiden": $scope.item.KronologiInsiden != undefined ? $scope.item.KronologiInsiden : '',
+                        
+                        // akhiran
                         "pembuatlaporan": $scope.item.PembuatLaporan != undefined ? $scope.item.PembuatLaporan.namalengkap : '',
+                        "pembuatlaporanfk": $scope.item.PembuatLaporan ? $scope.item.PembuatLaporan.id : null,
                         "tgllapor": $scope.item.TglLaporan != undefined ? moment($scope.item.TglLaporan).format('YYYY-MM-DD HH:mm') : null,
                         "penerimalaporan": $scope.item.PenerimaLaporan != undefined ? $scope.item.PenerimaLaporan.namalengkap : '',
-                        "tglterima": $scope.item.TglTerimaLaporan != undefined ? moment($scope.item.TglTerimaLaporan).format('YYYY-MM-DD HH:mm') : null,
-                        "grading": grading,
-                        "insidenkeselamatanfk": $scope.item.KeselamatanInput.id,
-                        "noregistrasifk": noRegistrasifk != undefined ? noRegistrasifk : null,
-                        "pembuatlaporanfk": $scope.item.PembuatLaporan ? $scope.item.PembuatLaporan.id : null,
                         "penerimalaporanfk": $scope.item.PenerimaLaporan ? $scope.item.PenerimaLaporan.id : null,
+                        "tglterima": $scope.item.TglTerimaLaporan != undefined ? moment($scope.item.TglTerimaLaporan).format('YYYY-MM-DD HH:mm') : null,
+                        "grading": $scope.item.selectedGrading.id,
+                        "noregistrasifk": noRegistrasifk != undefined ? noRegistrasifk : null,
                     }
                     var objSave = {
                         data: dataSave,
                     }
+                    console.log(objSave)
+
+                    $scope.isRouteLoading = true;
                     medifirstService.post('pmkp/save-data-insiden-internal', objSave).then(function (e) {
+                        $scope.isRouteLoading = false;
+                        
                         Kosong();
                     });
                 } else {
                     medifirstService.showMessages(isValid.messages);
                 }
             }
+
+            /**
+             * 
+             * @param {Object} obj 
+             * @returns {string}
+             */
+            function checkBoxToString(obj){
+                let hasil = Object.keys(obj).filter(function(key){
+                    if(obj[key] === true){
+                      return obj[key]
+                    }
+                })
+
+                return hasil.toString()
+            }
+
+            function selectedInsiden(idInsiden){
+                let hasil = null
+
+                $scope.listKeselamatanInput.forEach(function(item){
+                    if(item.id == idInsiden){
+                        hasil = item
+                    }
+                })
+
+                return hasil
+            }
+
             //** BATAS SUCI */
         }
     ]);

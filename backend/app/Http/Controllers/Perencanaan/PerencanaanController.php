@@ -6311,7 +6311,7 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
         from kegiatananggaran_m ka 
         inner join keteranganbelanja_t kb on ka.id = kb.objectkegiatanfk
         inner join mataanggaran_m ma on ma.id = kb.objectmataanggaranfk
-        where kb.objecttahapfk = $tahap
+        where kb.objecttahapfk = ".$tahap."
         and ma.kodemataanggaran = '$rekening'
         $subsubkegiatan
         and kb.statusenabled = TRUE
@@ -8332,7 +8332,6 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
                 AND kb.kdprofile = 30
                 AND kb.objectkegiatanfk IN (".implode(',', $idKegiatan).") 
                 AND kb.keteranganbelanja = '".$keterangan->keteranganbelanja."'
-                AND kb.objectkegiatanfk = ".$keterangan->objectkegiatanfk."
         "));
         
     

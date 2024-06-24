@@ -361,10 +361,10 @@ define(['initialize'], function (initialize) {
                     return
                 }
 
-                if(petugasInsidenInternal.includes($scope.pegawai.id.toString()) == false || verifikatorInsidenInternal.includes($scope.pegawai.id.toString()) == false){
-                    toastr.error('Anda Bukan Petugas Insiden Internal')
-                    return
-                }
+                // if(petugasInsidenInternal.includes($scope.pegawai.id.toString()) == false || verifikatorInsidenInternal.includes($scope.pegawai.id.toString()) == false){
+                //     toastr.error('Anda Bukan Petugas Insiden Internal')
+                //     return
+                // }
 
 
                 if($scope.dataPasienSelected.statusverif == true){
@@ -395,10 +395,10 @@ define(['initialize'], function (initialize) {
             }
 
             $scope.hapusData = function () {
-                if(petugasInsidenInternal.includes($scope.pegawai.id.toString()) == false || verifikatorInsidenInternal.includes($scope.pegawai.id.toString()) == false){
-                    toastr.error('Anda Bukan Petugas / Verifikator Insiden Internal')
-                    return
-                }
+                // if(petugasInsidenInternal.includes($scope.pegawai.id.toString()) == false || verifikatorInsidenInternal.includes($scope.pegawai.id.toString()) == false){
+                //     toastr.error('Anda Bukan Petugas / Verifikator Insiden Internal')
+                //     return
+                // }
 
                 if ($scope.dataPasienSelected == undefined) {
                     alert("Data Belum Dipilih!")

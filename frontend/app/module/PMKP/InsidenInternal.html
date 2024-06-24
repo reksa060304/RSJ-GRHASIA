@@ -94,10 +94,14 @@
                             <b>{{list.nama}}</b>
                             <div ng-repeat="opsi in list.detail | orderBy:'id'" style="margin-top: 5px;">
                                 <div class="grid_4">
-                                    <input type="checkbox" ng-checked="opsi.isChecked" class="k-checkbox"
-                                        name="{{opsi.nama}}" id="{{opsi.nama}}" ng-model="bool" value="{{opsi.id}}"
-                                        ng-click="addListUmur(bool,opsi)" ng-disabled='disabledText'>
-                                    <label class="k-checkbox-label" for="{{opsi.nama}}">{{opsi.nama}}</label>
+                                    <input 
+                                        id="umur.{{opsi.id}}"
+                                        class="k-checkbox"
+                                        type="checkbox" 
+                                        ng-model="item.selectedUmur[opsi.id]"
+                                        ng-click="addListUmur(opsi)" 
+                                        ng-disabled='disabledText'>
+                                    <label class="k-checkbox-label" for="umur.{{opsi.id}}">{{opsi.nama}}</label>
                                 </div>
                             </div>
                         </div>
@@ -150,26 +154,19 @@
                                 ng-model="item.Insiden" ng-disabled='disabledText'></textarea>
                         </div>
                     </div>
-                    <!--<div class="grid_4" style="margin-top: 10px;">
-                        <div class="grid_12">
-                            <label c-label item="item" style="margin-top: 5px">Kronologi Insiden</label>
-                        </div>
-                        <div class="grid_12">
-                            <textarea required class="k-textbox"
-                                style="height: 150px; width: 100%; resize: none; margin-top: 5px"
-                                ng-model="item.KronologiInsiden"></textarea>
-                        </div>
-                    </div> -->
                 </div>
                 <div class="grid_12" style="margin-top: 10px;">
                     <div class="grid_12" ng-repeat="list in listJenisInsiden | orderBy:'id'" style="margin-top: 10px;">
                         <b>{{list.nama}}</b>
                         <div ng-repeat="opsi in list.detail | orderBy:'id'" style="margin-top: 5px;">
                             <div class="grid_6">
-                                <input type="checkbox" ng-checked="opsi.isChecked" class="k-checkbox"
-                                    name="{{opsi.nama}}" id="{{opsi.nama}}" ng-model="bool" value="{{opsi.id}}"
-                                    ng-click="addListJenisInsiden(bool,opsi)" ng-disabled='disabledText'>
-                                <label class="k-checkbox-label" for="{{opsi.nama}}">{{opsi.nama}}</label>
+                                <input 
+                                    id="jenisInsiden.{{opsi.id}}" 
+                                    class="k-checkbox" 
+                                    type="checkbox" 
+                                    ng-model="item.selectedJenisInsiden[opsi.id]" 
+                                    ng-disabled='disabledText'>
+                                <label class="k-checkbox-label" for="jenisInsiden.{{opsi.id}}">{{opsi.nama}}</label>
                             </div>
                         </div>
                     </div>
@@ -179,10 +176,13 @@
                         <b>{{list.nama}}</b>
                         <div ng-repeat="opsi in list.detail | orderBy:'id'" style="margin-top: 5px;">
                             <div class="grid_6">
-                                <input type="checkbox" ng-checked="opsi.isChecked" class="k-checkbox"
-                                    name="{{opsi.nama}}" id="{{opsi.nama}}" ng-model="bool" value="{{opsi.id}}"
-                                    ng-click="addListPelapor(bool,opsi)" ng-disabled='disabledText'>
-                                <label class="k-checkbox-label" for="{{opsi.nama}}">{{opsi.nama}}</label>
+                                <input 
+                                    id="pelapor.{{opsi.id}}" 
+                                    class="k-checkbox" 
+                                    type="checkbox" 
+                                    ng-model="item.selectedPelapor[opsi.id]"
+                                    ng-disabled='disabledText'>
+                                <label class="k-checkbox-label" for="pelapor.{{opsi.id}}">{{opsi.nama}}</label>
                             </div>
                         </div>
                     </div>
@@ -202,10 +202,13 @@
                         <b>{{list.nama}}</b>
                         <div ng-repeat="opsi in list.detail | orderBy:'id'" style="margin-top: 5px;">
                             <div class="grid_6">
-                                <input type="checkbox" ng-checked="opsi.isChecked" class="k-checkbox"
-                                    name="{{opsi.nama}}" id="{{opsi.nama}}" ng-model="bool" value="{{opsi.id}}"
-                                    ng-click="addListInsidenPasien(bool,opsi)" ng-disabled='disabledText'>
-                                <label class="k-checkbox-label" for="{{opsi.nama}}">{{opsi.nama}}</label>
+                                <input 
+                                    id="menyangkut.{{opsi.id}}" 
+                                    class="k-checkbox" 
+                                    type="checkbox" 
+                                    ng-model="item.selectedMenyangkut[opsi.id]" 
+                                    ng-disabled='disabledText'>
+                                <label class="k-checkbox-label" for="menyangkut.{{opsi.id}}">{{opsi.nama}}</label>
                             </div>
                         </div>
                     </div>
@@ -215,10 +218,13 @@
                         <b>{{list.nama}}</b>
                         <div ng-repeat="opsi in list.detail | orderBy:'id'" style="margin-top: 5px;">
                             <div class="grid_6">
-                                <input type="checkbox" ng-checked="opsi.isChecked" class="k-checkbox"
-                                    name="{{opsi.nama}}" id="{{opsi.nama}}" ng-model="bool" value="{{opsi.id}}"
-                                    ng-click="addListJiwa(bool,opsi)" ng-disabled='disabledText'>
-                                <label class="k-checkbox-label" for="{{opsi.nama}}">{{opsi.nama}}</label>
+                                <input 
+                                    id="jiwa.{{opsi.id}}" 
+                                    class="k-checkbox" 
+                                    type="checkbox" 
+                                    ng-model="item.selectedJiwa[opsi.id]" 
+                                    ng-disabled='disabledText'>
+                                <label class="k-checkbox-label" for="jiwa.{{opsi.id}}">{{opsi.nama}}</label>
                             </div>
                         </div>
                     </div>
@@ -238,10 +244,13 @@
                         <b>{{list.nama}}</b>
                         <div ng-repeat="opsi in list.detail | orderBy:'id'" style="margin-top: 5px;">
                             <div class="grid_6">
-                                <input type="checkbox" ng-checked="opsi.isChecked" class="k-checkbox"
-                                    name="{{opsi.nama}}" id="{{opsi.nama}}" ng-model="bool" value="{{opsi.id}}"
-                                    ng-click="addListAkibatInsiden(bool,opsi)" ng-disabled='disabledText'>
-                                <label class="k-checkbox-label" for="{{opsi.nama}}">{{opsi.nama}}</label>
+                                <input 
+                                    id="akibat.{{opsi.id}}" 
+                                    class="k-checkbox" 
+                                    type="checkbox" 
+                                    ng-model="item.selectedAkibatInsiden[opsi.id]" 
+                                    ng-disabled='disabledText'>
+                                <label class="k-checkbox-label" for="akibat.{{opsi.id}}">{{opsi.nama}}</label>
                             </div>
                         </div>
                     </div>
@@ -262,10 +271,12 @@
                         <b>{{list.nama}}</b>
                         <div ng-repeat="opsi in list.detail | orderBy:'id'" style="margin-top: 5px;">
                             <div class="grid_6">
-                                <input type="checkbox" ng-checked="opsi.isChecked" class="k-checkbox"
-                                    name="{{opsi.nama}}" id="{{opsi.nama}}" ng-model="bool" value="{{opsi.id}}"
-                                    ng-click="addListKejadianSama(bool,opsi)" ng-disabled='disabledText'>
-                                <label class="k-checkbox-label" for="{{opsi.nama}}">{{opsi.nama}}</label>
+                                <input 
+                                    type="radio" 
+                                    ng-model="item.selectedKejadianSama"
+                                    ng-value="opsi" 
+                                    ng-disabled='disabledText'>
+                                <label>{{opsi.nama}}</label>
                             </div>
                         </div>
                     </div>
@@ -275,10 +286,13 @@
                         <b>{{list.nama}}</b>
                         <div ng-repeat="opsi in list.detail | orderBy:'id'" style="margin-top: 5px;">
                             <div class="grid_6">
-                                <input type="checkbox" ng-checked="opsi.isChecked" class="k-checkbox"
-                                    name="{{opsi.nama}}" id="{{opsi.nama}}" ng-model="bool" value="{{opsi.id}}"
-                                    ng-click="addListTindakan(bool,opsi)" ng-disabled='disabledText'>
-                                <label class="k-checkbox-label" for="{{opsi.nama}}">{{opsi.nama}}</label>
+                                <input 
+                                    id="tindakanOleh.{{opsi.id}}" 
+                                    class="k-checkbox" 
+                                    type="checkbox" 
+                                    ng-model="item.selectedTindakanOleh[opsi.id]" 
+                                    ng-disabled='disabledText'>
+                                <label class="k-checkbox-label" for="tindakanOleh.{{opsi.id}}">{{opsi.nama}}</label>
                             </div>
                         </div>
                     </div>
@@ -343,10 +357,13 @@
                             <b>{{list.nama}}</b>
                             <div ng-repeat="opsi in list.detail | orderBy:'id'" style="margin-top: 5px;">
                                 <div class="grid_6">
-                                    <input type="checkbox" ng-checked="opsi.isChecked" class="k-checkbox"
-                                        name="{{opsi.nama}}" id="{{opsi.nama}}" ng-model="bool" value="{{opsi.id}}"
-                                        ng-click="addListGrading(bool,opsi)" ng-disabled='disabledText'>
-                                    <label class="k-checkbox-label" for="{{opsi.nama}}">{{opsi.nama}}</label>
+                                    <input 
+                                        type="radio" 
+                                        ng-model="item.selectedGrading" 
+                                        ng-value="opsi" 
+                                        ng-click="handleGrading()"
+                                        ng-disabled='disabledText'>
+                                    <label>{{opsi.nama}}</label>
                                 </div>
                             </div>
                         </div>
