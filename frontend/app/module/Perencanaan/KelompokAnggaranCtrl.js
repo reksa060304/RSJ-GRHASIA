@@ -533,7 +533,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.$watch('item.subKegiatanSPJ', function (newValue, oldValue) {
                 if (newValue != oldValue) {
                     medifirstService.get("perencanaan/get-data-combo").then(function (e) {
-                        medifirstService.get("perencanaan/get-data-combo?tahunawal="+e.data.setting[0].tahunanggaran+"&tahap="+e.data.setting[0].objecttahapaktivfk+"&subkegiatan="+$scope.item.subKegiatanSPJ.id).then(function (e) {
+                        medifirstService.get("perencanaan/get-data-combo" 
+                            + "?tahunawal="+e.data.setting[0].tahunanggaran 
+                            + "&tahap="+e.data.setting[0].objecttahapaktivfk 
+                            + "&subkegiatan="+$scope.item.subKegiatanSPJ.id
+                            + "&objectpptkfk=" + medifirstService.getPegawaiLogin().id).then(function (e) {
                             $scope.listSubSubKegiatanSPJ = e.data.kegiatansubsub
                         });
                     })

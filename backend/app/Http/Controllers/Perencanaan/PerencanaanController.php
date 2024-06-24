@@ -598,6 +598,11 @@ class PerencanaanController extends ApiController {
             $ktahap =  "and ktb.objecttahapfk = ".$request['tahap'];
         }
 
+        $pptk = '';
+        if (isset($request['objectpptkfk']) && $request['objectpptkfk'] != "" && $request['objectpptkfk'] != "undefined") {
+            $pptk =  "and dp.objectpptkfk = ".$request['objectpptkfk'];
+        }
+
         $kegiatansubsub = DB::select(DB::raw("select dp.headfk, dp.idrelasi, dp.tahun tahunsubsubkegiatan, dp.id idsubsubkegiatan, dp.kode kodesubsubkegiatan, dp.id || '-' || dp.keterangan keterangansubsubkegiatan,
         dp.indikatormasuk, dp.indikatorkeluaran, dp.indikatorhasil, dp.targetmasuk, dp.targetkeluaran, dp.targethasil, dp.div,
         dp.objectjenisbelanjafk, dp.objectpptkfk, dp.id, dp.keterangan
@@ -615,6 +620,7 @@ class PerencanaanController extends ApiController {
         $ktahap
         $ktahun
         $ksubkegiatan
+        $pptk
         group by dp.id, dp.kode, dp.id || '-' || dp.keterangan, dp.tahun, dp.indikatormasuk, dp.indikatorkeluaran, dp.indikatorhasil, dp.targetmasuk, dp.targetkeluaran, dp.targethasil, dp.div,
         dp.objectjenisbelanjafk, dp.objectpptkfk, dp.id, dp.keterangan
         order by dp.kode"));
