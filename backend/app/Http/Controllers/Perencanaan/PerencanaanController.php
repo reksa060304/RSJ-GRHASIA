@@ -620,7 +620,6 @@ class PerencanaanController extends ApiController {
         $ktahap
         $ktahun
         $ksubkegiatan
-        $pptk
         group by dp.id, dp.kode, dp.id || '-' || dp.keterangan, dp.tahun, dp.indikatormasuk, dp.indikatorkeluaran, dp.indikatorhasil, dp.targetmasuk, dp.targetkeluaran, dp.targethasil, dp.div,
         dp.objectjenisbelanjafk, dp.objectpptkfk, dp.id, dp.keterangan
         order by dp.kode"));

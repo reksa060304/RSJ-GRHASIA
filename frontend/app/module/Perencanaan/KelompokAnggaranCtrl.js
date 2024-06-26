@@ -536,8 +536,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         medifirstService.get("perencanaan/get-data-combo" 
                             + "?tahunawal="+e.data.setting[0].tahunanggaran 
                             + "&tahap="+e.data.setting[0].objecttahapaktivfk 
-                            + "&subkegiatan="+$scope.item.subKegiatanSPJ.id
-                            + "&objectpptkfk=" + medifirstService.getPegawaiLogin().id).then(function (e) {
+                            + "&subkegiatan="+$scope.item.subKegiatanSPJ.id).then(function (e) {
                             $scope.listSubSubKegiatanSPJ = e.data.kegiatansubsub
                         });
                     })
