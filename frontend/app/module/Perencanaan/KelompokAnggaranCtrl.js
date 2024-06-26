@@ -2598,7 +2598,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         if ($scope.item.objecttahappemindahan != undefined) {
                             tahap = "&tahap=" + $scope.item.objecttahappemindahan.id
                         }
-                        medifirstService.get("perencanaan/get-data-combo?subsubkegiatan=" + $scope.item.combokegiatan.kode + "&idpegawai=" + idpegawai + "&tahun=" + $scope.item.tahunkas + tahap).then(function (e) {
+                        medifirstService.get("perencanaan/get-data-combo" 
+                            + "?subsubkegiatan=" + $scope.item.combokegiatan.kode 
+                            + "&idpegawai=" + idpegawai 
+                            + "&tahun=" + $scope.item.tahunkas + tahap
+                            + "&tahap=" + $scope.item.searchtahap.id).then(function (e) {
                             $scope.listSubSubKegiatanCombo = e.data.kegiatansubsubcombo
                         });
                     })
