@@ -411,6 +411,21 @@ class PerencanaanController extends ApiController {
         $listsubsubkegiatan = [];
         $lisssss = '';
         $lisssssssssss = '';
+
+        $ispj = false;
+        $cariPegawai = null;
+        if(isset($request['idpegawai']) && $request['idpegawai'] !== '' && $request['idpegawai'] !== "undefined"){
+            $cariPegawai = DB::table('pegawai_m')
+                ->where('statusenabled', true)
+                ->where('id', $request['idpegawai'])
+                ->first();
+            
+            if($cariPegawai){
+                $ispj = $cariPegawai->ispj;
+            }
+        }
+
+
         $setting = \DB::table('settinganggaran_t as st')
             ->join('pegawai_m as pg','pg.id','=','st.objectkepalabludfk')
             ->join('tahapanggaran_m as ta','ta.id','=','st.objecttahapaktivfk')
@@ -598,9 +613,14 @@ class PerencanaanController extends ApiController {
             $ktahap =  "and ktb.objecttahapfk = ".$request['tahap'];
         }
 
+        // $pptk = '';
+        // if (isset($request['objectpptkfk']) && $request['objectpptkfk'] != "" && $request['objectpptkfk'] != "undefined") {
+        //     $pptk =  "and dp.objectpptkfk = ".$request['objectpptkfk'];
+        // }
+
         $pptk = '';
-        if (isset($request['objectpptkfk']) && $request['objectpptkfk'] != "" && $request['objectpptkfk'] != "undefined") {
-            $pptk =  "and dp.objectpptkfk = ".$request['objectpptkfk'];
+        if($ispj == true && $cariPegawai){
+            $pptk = "and dp.objectpptkfk=".$cariPegawai->id;
         }
 
         $kegiatansubsub = DB::select(DB::raw("select dp.headfk, dp.idrelasi, dp.tahun tahunsubsubkegiatan, dp.id idsubsubkegiatan, dp.kode kodesubsubkegiatan, dp.id || '-' || dp.keterangan keterangansubsubkegiatan,
@@ -620,6 +640,7 @@ class PerencanaanController extends ApiController {
         $ktahap
         $ktahun
         $ksubkegiatan
+        $pptk
         group by dp.id, dp.kode, dp.id || '-' || dp.keterangan, dp.tahun, dp.indikatormasuk, dp.indikatorkeluaran, dp.indikatorhasil, dp.targetmasuk, dp.targetkeluaran, dp.targethasil, dp.div,
         dp.objectjenisbelanjafk, dp.objectpptkfk, dp.id, dp.keterangan
         order by dp.kode"));
