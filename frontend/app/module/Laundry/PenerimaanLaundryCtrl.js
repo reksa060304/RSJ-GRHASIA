@@ -132,7 +132,7 @@ define(['initialize'], function (initialize) {
                             });
 
                             // updatestatus
-                            statuskirim = 'Kirim'
+                            // statuskirim = 'Kirim'
                         });
                     }
                     if (statusLoad == 'KirimBalik') {

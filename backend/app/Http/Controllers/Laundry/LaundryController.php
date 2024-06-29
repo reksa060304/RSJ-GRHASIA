@@ -1689,6 +1689,12 @@ class LaundryController extends ApiController
                 $dataSK->norec = $dataSK->generateNewId();
                 $dataSK->nokirim = $noKirim;
 
+            }else{
+
+                $dataSK = StrukKirim::where('norec',$request['strukkirim']['noreckirim'])->where('kdprofile', $idProfile)->first();
+
+                // delete kirim produk
+                KirimProduk::where('nokirimfk',$request['strukkirim']['noreckirim'])->delete();
             }
 
             $dataSK->kdprofile = $idProfile;
