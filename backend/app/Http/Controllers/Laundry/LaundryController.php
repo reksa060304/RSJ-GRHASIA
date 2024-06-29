@@ -539,6 +539,7 @@ class LaundryController extends ApiController
     public function saveOrderLaundry(Request $request) {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
+        $errMsg = null;
         $KdPelayananLaundry = $this->settingDataFixed('KdPelayananLaundry',$idProfile);
         \DB::beginTransaction();
         try{
@@ -560,7 +561,7 @@ class LaundryController extends ApiController
             }
             $dataSO->jenispermintaanfk = $request['strukorder']['jenispermintaanfk'];
             $dataSO->objectkelompoktransaksifk = $KdPelayananLaundry;
-            $dataSO->keteranganorder = $request['strukorder']['keteranganorder'];
+            $dataSO->keteranganorder = isset($request['strukorder']['keteranganorder']) ? $request['strukorder']['keteranganorder'] : null;
             $dataSO->objectpegawaiorderfk = $request['strukorder']['pegawaiorderfk'];
             $dataSO->qtyjenisproduk = $request['strukorder']['qtyjenisproduk'];
             $dataSO->qtyproduk = $request['strukorder']['qtyjenisproduk'];
@@ -600,6 +601,7 @@ class LaundryController extends ApiController
             $transStatus = 'true';
         } catch (\Exception $e) {
             $transStatus = 'false';
+            $errMsg = $e->getMessage(). ' '.$e->getLine();
         }
 
         if ($transStatus == 'true') {
@@ -617,6 +619,7 @@ class LaundryController extends ApiController
             $result = array(
                 "status" => 400,
                 "message"  => $transMessage,
+                "errMsg" => $errMsg,
                 "nokirim" => $dataSO,
                 "as" => 'er@epic',
             );
@@ -1198,7 +1201,7 @@ class LaundryController extends ApiController
                         ->where('kdprofile', $idProfile)
                         ->update([
                                 'statusorder' => 1,
-                            ]
+                            ]   
                         );
                 }
 
@@ -1642,6 +1645,161 @@ class LaundryController extends ApiController
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
+
+    public function saveTerimaLaundryV2(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        
+        if($request['strukkirim']['jenis'] =='terima'){
+            $noKirim = $this->generateCodeBySeqTable(new StrukKirim, 'nokirim', 13, 'RL-' . $this->getDateTime()->format('ym'), $idProfile);
+        }
+        if($request['strukkirim']['jenis'] =='kirim'){
+            $noKirim = $this->generateCodeBySeqTable(new StrukKirim, 'nokirim', 13, 'SL-' . $this->getDateTime()->format('ym'), $idProfile);
+        }
+
+        if ($noKirim == ''){
+            $transMessage = "Gagal mengumpukan data, Coba lagi.!";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "NOKIRIM" => $noKirim,
+                "message"  => $transMessage,
+                "as" => 'as@epic',
+            );
+            return $this->setStatusCode($result['status'])->respond($result);
+        }
+
+        DB::beginTransaction();
+        try {
+
+            // kondisi untuk simpan dan update
+            if ($request['strukkirim']['noreckirim'] == ''){
+
+                // update strukordermenjadi kirim
+                if($request['strukkirim']['norecOrder']){
+                    StrukOrder::where('norec',$request['strukkirim']['norecOrder'])
+                        ->where('kdprofile', $idProfile)
+                        ->update([
+                            'statusorder' => 1,
+                        ]);
+                }
+
+                $dataSK = new StrukKirim;
+                $dataSK->norec = $dataSK->generateNewId();
+                $dataSK->nokirim = $noKirim;
+
+            }
+
+            $dataSK->kdprofile = $idProfile;
+            $dataSK->statusenabled = true;
+            $dataSK->objectpegawaipengirimfk = $request['strukkirim']['objectpegawaipengirimfk'];
+            $dataSK->objectruanganasalfk = $request['strukkirim']['objectruanganfk'];
+            $dataSK->objectruanganfk = $request['strukkirim']['objectruanganfk'];
+            $dataSK->objectruangantujuanfk = $request['strukkirim']['objectruangantujuanfk'];
+            $dataSK->objectkelompoktransaksifk = $request['strukkirim']['kelompoktransaksi'];
+            $dataSK->keteranganlainnyakirim =$request['strukkirim']['keteranganlainnyakirim'];
+            $dataSK->qtydetailjenisproduk = 0;
+            $dataSK->qtyproduk = $request['strukkirim']['qtyproduk'];
+            $dataSK->tglkirim = date($request['strukkirim']['tglkirim']);
+            $dataSK->totalbeamaterai = 0;
+            $dataSK->totalbiayakirim = 0;
+            $dataSK->totalbiayatambahan = 0;
+            $dataSK->totaldiscount = 0;
+            $dataSK->totalhargasatuan = 0;
+            $dataSK->totalharusdibayar = 0;
+            $dataSK->totalpph =0;
+            $dataSK->totalppn = 0;
+            $dataSK->noregistrasifk = $request['strukkirim']['norec_apd'];
+            $dataSK->noorderfk = $request['strukkirim']['norecOrder'];
+            $dataSK->statuskirim = $request['strukkirim']['status'];
+            $dataSK->save();
+
+            // ambil norec strukkirim
+            $norecSK = $dataSK->norec;
+
+            // looping detail
+            foreach($request['details'] as $item){
+                // cari satuan standar
+                $satuanstandar = DB::select(DB::raw("
+                     select  ru.objectsatuanstandarfk
+                     from produk_m as ru 
+                    where ru.kdprofile = $idProfile and ru.id=:id"),
+                    array(
+                        'id' => $item['produkfk'],
+                    )
+                );
+                $satuanstandarfk = $satuanstandar[0]->objectsatuanstandarfk;
+
+                // hitung jumlah setiap detail
+                $nilaiKonversi = $item['nilaikonversi'] != null ? (float)$item['nilaikonversi'] : 1;
+                $jumlah=(int)$item['jumlah'] * $nilaiKonversi;
+
+                $dataKP = new KirimProduk;
+                $dataKP->norec = $dataKP->generateNewId();
+                $dataKP->kdprofile = $idProfile;
+                $dataKP->statusenabled = true;
+                // $dataKP->objectasalprodukfk = $items->asalprodukfk;
+                $dataKP->hargadiscount = 0;
+                $dataKP->harganetto = 0;
+                $dataKP->hargapph = 0;
+                $dataKP->hargappn = 0;
+                $dataKP->hargasatuan = 0;//$items->hargasatuan;
+                $dataKP->hargatambahan = 0;
+                $dataKP->hasilkonversi = $jumlah;
+                $dataKP->objectprodukfk = $item['produkfk'];
+                $dataKP->objectprodukkirimfk = $item['produkfk'];
+                $dataKP->nokirimfk = $norecSK;
+                $dataKP->persendiscount = 0;
+                $dataKP->qtyproduk = $jumlah;
+                $dataKP->qtyprodukkonfirmasi = $jumlah;
+                $dataKP->qtyprodukretur = 0;
+                $dataKP->qtyorder = $item['qtyorder'];
+                $dataKP->qtyproduk = $jumlah;
+                $dataKP->qtyprodukterima = $jumlah;
+                // $dataKP->nostrukterimafk = $items->nostrukterimafk;
+                $dataKP->objectruanganfk = $request['strukkirim']['objectruangantujuanfk'];
+                $dataKP->objectruanganpengirimfk = $request['strukkirim']['objectruanganfk'];
+                $dataKP->satuan = '-';
+                $dataKP->objectsatuanstandarfk = $satuanstandarfk;//$item['satuanstandarfk'];
+                $dataKP->satuanviewfk = $item['satuanviewfk'];
+                $dataKP->tglpelayanan = date($request['strukkirim']['tglkirim']);
+                $dataKP->qtyprodukterimakonversi = $jumlah;
+                if (isset($item['qtyTidakKirim'])) {
+                    $dataKP->qtyproduktidakkirim = $item['qtyTidakKirim'];
+                }
+                $dataKP->save();
+            }
+
+            $transStatus = 'true';
+        } catch (\Exception $th) {
+            $transStatus = 'false';
+        }
+
+        $transMessage =$request['strukkirim']['jenis']. " Linen";
+
+        if ($transStatus == 'true') {
+            $transMessage = $transMessage . " Berhasil";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMessage,
+                "nokirim" => $dataSK,
+                "as" => 'as@epic',
+            );
+        } else {
+            $transMessage = $transMessage . " Gagal!!";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message"  => $transMessage,
+                "req" => $request->all(),
+                "as" => 'as@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
     public function CekProdukKirimLaundry(Request $request) {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
