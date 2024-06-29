@@ -42,6 +42,9 @@ use App\Master\BankAccount;
 use App\Transaksi\KonversiSatuan;
 use App\Transaksi\OrderPelayanan;
 use App\Transaksi\RuanganAset;
+use App\Transaksi\GedungAset;
+use App\Transaksi\LantaiAset;
+
 use DB;
 use Illuminate\Http\Request;
 use Webpatser\Uuid\Uuid;
@@ -5115,6 +5118,8 @@ class MasterController extends ApiController{
         }
         $ruangantrue = \DB::table('ruangan_m')->where('kdprofile', $kdProfile)->where('statusenabled', true)->get();
         $ruanganaset = \DB::table('ruanganasset_m')->where('kdprofile', $kdProfile)->where('statusenabled', true)->get();
+        $gedungaset = \DB::table('gedungaset_m')->where('kdprofile', $kdProfile)->where('statusenabled', true)->get();
+        $lantai = \DB::table('lantai_m')->where('kdprofile', $kdProfile)->where('statusenabled', true)->get();
         $result = array(
             'departemen'=> $departemen,
             'ruangan'=> $ruanganKelas,
@@ -5122,6 +5127,8 @@ class MasterController extends ApiController{
             'kamarall'=> $kamarall,
             'ruangantrue'=> $ruangantrue,
             'ruanganaset'=> $ruanganaset,
+            'lantai'=> $lantai,
+            'gedungaset'=> $gedungaset,
             'as'=> 'Feezy'
         );
         return $this->respond($result);
@@ -5980,13 +5987,25 @@ class MasterController extends ApiController{
     public function getLoadRuanganAset(Request $request)
     {
         $kdProfile = (int) $this->getDataKdProfile($request);
-        $tempruangan = '';
-        if(isset($request['ruangan'])){
-            $tempruangan = "and ru.id =". $request['ruangan'];
+        $gedung = '';
+        if(isset($request['gedung'])){
+            $gedung = "and la.objectgedungasetfk =". $request['gedung'];
         }
-        $ruangan = \DB::select(DB::raw("select ru.id as idRuangan, ru.statusenabled, 
+      
+        $lantai = "";
+        if(isset($request['lantai'])){
+            $gedung = "and  ru.objectlantaifk =". $request['lantai'];
+        }
+        $ruangan = "";
+        if (isset($request['ruangan']) && $request['ruangan'] != "" && $request['ruangan'] != "undefined") {
+            $lantai = " and ru.namaruangan ilike  '%".$request['ruangan']."%'";
+        }
+        $ruangan = \DB::select(DB::raw("select ru.id as idRuangan, ru.statusenabled, ru.objectlantaifk,la.lantai,
+        la.objectgedungasetfk,gd.namagedung,
         ru.namaruangan  from ruanganasset_m as ru 
-         where ru.kdprofile = $kdProfile and ru.statusenabled = $request[status] $tempruangan"));
+        inner join lantai_m as la on la.id = ru.objectlantaifk
+        inner join gedungaset_m as gd on gd.id = la.objectgedungasetfk
+         where ru.kdprofile = $kdProfile and ru.statusenabled = $request[status] $gedung $lantai $ruangan"));
         $result = array(
             'ruangan'=>$ruangan,
             'as'=> 'al'
@@ -6014,13 +6033,15 @@ class MasterController extends ApiController{
                     $transMessage = "Tambah";
                     $JD->namaexternal = $data['namaruangan'];                   
                     $JD->namaruangan = $data['namaruangan'];
+                    $JD->objectlantaifk = $data['objectlantaifk'];
                    
                 $JD->save();
                 }else{
                     $transMessage = "Ubah";
                     $JD = RuanganAset::where('id', $data['id'])->where('kdprofile', $kdProfile)->where('kodeexternal', $data['id'])->first();
                     $JD->namaexternal = $data['namaruangan'];                  
-                    $JD->namaruangan = $data['namaruangan'];                 
+                    $JD->namaruangan = $data['namaruangan'];  
+                    $JD->objectlantaifk = $data['objectlantaifk'];               
                     $JD->save();
                 }
                 
@@ -6147,5 +6168,274 @@ class MasterController extends ApiController{
         $data = $data->get();
         return $this->respond($data);
     }
+
+    public function getLoadGedungAset(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $tempruangan = '';
+        if(isset($request['ruangan'])){
+            $tempruangan = "and ru.id =". $request['ruangan'];
+        }
+        $ruangan = \DB::select(DB::raw("select ru.id as idgedung, ru.statusenabled, 
+        ru.namaGedung  from gedungaset_m as ru 
+         where ru.kdprofile = $kdProfile and ru.statusenabled = $request[status] $tempruangan"));
+        $result = array(
+            'ruangan'=>$ruangan,
+            'as'=> 'al'
+        );
+        return $this->respond($result);
+    }
+    public function UpdateStatusEnabledGedung(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        DB::beginTransaction();
+        $data = $request['data'];
+        $transMessage = "";
+        try{
+                $JD = GedungAset::where('id',$request['id'])->where('kdprofile', $kdProfile)->first();
+                $JD->statusenabled = $request['status'];
+                $JD->save();
+                $transMessage = "Ubah Status";
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+
+        if ($transStatus == 'true') {
+            $transMessage = $transMessage ." sukses";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "as" => 'Feezy',
+            );
+
+        } else {
+            $transMessage = $transMessage ." gagal";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "e"=> $e->getLine() . " | ". $e->getMessage(),
+                "as" => 'Feezy',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function UpdateStatusEnabledRuanganAset(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        DB::beginTransaction();
+        $data = $request['data'];
+        $transMessage = "";
+        try{
+                $JD = GedungAset::where('id',$request['id'])->where('kdprofile', $kdProfile)->first();
+                $JD->statusenabled = $request['status'];
+                $JD->save();
+                $transMessage = "Ubah Status";
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+
+        if ($transStatus == 'true') {
+            $transMessage = $transMessage ." sukses";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "as" => 'Feezy',
+            );
+
+        } else {
+            $transMessage = $transMessage ." gagal";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "e"=> $e->getLine() . " | ". $e->getMessage(),
+                "as" => 'Feezy',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function saveMasterGedungAset(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        DB::beginTransaction();
+        $data = $request->all();//$request['data'];
+        // dd($data['id']);
+        $transMessage = "";
+        try{
+            if($request['method'] == 'post'){
+                $idJenis = GedungAset::max('id');
+                $idJenis= $idJenis +1;
+                if ($data['data']['id'] == "") {
+                    $JD = new GedungAset();
+                    $JD->id = $idJenis;
+                    $JD->kdprofile = $kdProfile;
+                    $JD->statusenabled = true;
+                    $JD->kodeexternal = $idJenis;
+                    $transMessage = "Tambah";
+                    $JD->namaexternal = $data['data']['namagedung'];
+                    $JD->namagedung = $data['data']['namagedung'];
+                    $JD->save();                   
+                
+                }else{
+                    $transMessage = "Ubah";
+                    $JD = GedungAset::where('id', $data['data']['id'])->where('kdprofile', $kdProfile)->first();
+                    $JD->namaexternal = $data['data']['namagedung'];
+                    $JD->namagedung = $data['data']['namagedung'];               
+                    $JD->save();
+                }
+                
+            }
+            if($request['method']== 'delete'){
+                $transMessage = "Hapus";
+                $JD = GedungAset::where('id',$data['data']['id'])->where('kdprofile', $kdProfile)->delete();
+            }
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+
+        if ($transStatus == 'true') {
+            $transMessage = $transMessage ." sukses";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "as" => 'al',
+            );
+
+        } else {
+            $transMessage = $transMessage ." gagal";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "e"=> $e->getLine() . " | ". $e->getMessage(),
+                "as" => 'al',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    public function getLoadLantaiAset(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        $tempruangan = '';
+        if(isset($request['ruangan'])){
+            $tempruangan = "and ru.objectlantaaifk =". $request['ruangan'];
+        }
+      
+        $lantai = "";
+        if (isset($request['Lantai']) && $request['Lantai'] != "" && $request['Lantai'] != "undefined") {
+            $lantai = " and ru.lantai ilike  '%".$request['Lantai']."%'";
+        }
+        $ruangan = \DB::select(DB::raw("select ru.id as idlantai, ru.statusenabled,
+        ru.lantai,ru.objectgedungasetfk,ga.namagedung from lantai_m as ru
+        inner join gedungaset_m as ga on ga.id = ru.objectgedungasetfk 
+         where ru.kdprofile = $kdProfile and ru.statusenabled = $request[status] $tempruangan  $lantai "));
+        $result = array(
+            'ruangan'=>$ruangan,
+            'as'=> 'al'
+        );
+        return $this->respond($result);
+    }
+
+    public function saveMasterLantaiAset(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        DB::beginTransaction();
+        $data = $request->all();//$request['data'];
+        // dd($data['id']);
+        $transMessage = "";
+        try{
+            if($request['method'] == 'post'){
+                $idJenis = LantaiAset::max('id');
+                $idJenis= $idJenis +1;
+                if ($data['data']['id'] == "") {
+                    $JD = new LantaiAset();
+                    $JD->id = $idJenis;
+                    $JD->kdprofile = $kdProfile;
+                    $JD->statusenabled = true;
+                    $JD->kodeexternal = $idJenis;
+                    $transMessage = "Tambah";
+                    $JD->namaexternal = $data['data']['lantai'];
+                    $JD->lantai = $data['data']['lantai'];
+                    $JD->objectgedungasetfk = $data['data']['objectgedungasetfk']; 
+                    $JD->save();                   
+                
+                }else{
+                    $transMessage = "Ubah";
+                    $JD = LantaiAset::where('id', $data['data']['id'])->where('kdprofile', $kdProfile)->first();
+                    $JD->namaexternal = $data['data']['lantai'];
+                    $JD->lantai = $data['data']['lantai'];
+                    $JD->objectgedungasetfk = $data['data']['objectgedungasetfk'];                
+                    $JD->save();
+                }
+                
+            }
+            if($request['method']== 'delete'){
+                $transMessage = "Hapus";
+                $JD = LantaiAset::where('id',$data['data']['id'])->where('kdprofile', $kdProfile)->delete();
+            }
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+
+        if ($transStatus == 'true') {
+            $transMessage = $transMessage ." sukses";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "as" => 'al',
+            );
+
+        } else {
+            $transMessage = $transMessage ." gagal";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "e"=> $e->getLine() . " | ". $e->getMessage(),
+                "as" => 'al',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function UpdateStatusEnabledRuanganLantai(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        DB::beginTransaction();
+        $data = $request['data'];
+        $transMessage = "";
+        try{
+                $JD = LantaiAset::where('id',$request['id'])->where('kdprofile', $kdProfile)->first();
+                $JD->statusenabled = $request['status'];
+                $JD->save();
+                $transMessage = "Ubah Status";
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+
+        if ($transStatus == 'true') {
+            $transMessage = $transMessage ." sukses";
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "as" => 'Feezy',
+            );
+
+        } else {
+            $transMessage = $transMessage ." gagal";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "e"=> $e->getLine() . " | ". $e->getMessage(),
+                "as" => 'Feezy',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+    
 ////////
 }
