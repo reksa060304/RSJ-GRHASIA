@@ -17,10 +17,12 @@
         width: 100%;
     }
 </style>
+
 <div class="grid_12">
     <div class="grid_12 headerBox">
         <h1 style="color: white;"><b>Order Laundry1</b></h1>
     </div>
+
     <div class="grid_12">
 
         <div class="grid_2">
@@ -101,11 +103,12 @@
 
     </div>
 
-    <div class="grid_12" ng-show='showInputObat'>
+    <div class="grid_12">
 
         <div class="grid_12 headerBox">
             <p>Detail Barang</p>
         </div>
+
         <div class="grid_2">
             <div class="grid_12">
                 <label c-label item="item">Kode Produk</label>
@@ -147,22 +150,13 @@
         </div>
         <!-- <div class="grid_1">
             <div class="grid_12">
-                <label c-label item="item" c-label-text="Konversi"></label>
-            </div>
-            <div class="grid_12">
-                <input c-text-box type="input" style="text-align: right" filter="" class="k-textbox"
-                    ng-model="item.nilaiKonversi" ng-disabled="true" />
-            </div>
-        </div> -->
-        <div class="grid_1">
-            <div class="grid_12">
                 <label c-label item="item" c-label-text="Stok"></label>
             </div>
             <div class="grid_12">
                 <input c-text-box type="input" style="text-align: right" filter="" class="k-textbox"
                     ng-model="item.stok" ng-disabled="true" />
             </div>
-        </div>
+        </div> -->
         <div class="grid_1">
             <div class="grid_12">
                 <label c-label item="item" c-label-text="Jumlah"></label>
@@ -194,23 +188,8 @@
                 </div>
             </div>
         </div>
-        <!-- NamaKegiatan -->
+
         <div class="grid_12">
-            <div class="grid_3">
-                <!-- <div class="grid_12 headerBox">
-                    <p>Informasi Stok : {{item.namaProduks}}</p>
-                </div>
-                <div class="clear"></div>
-
-                <div class="grid_12 borderBox">
-                    <div id="kGrid" kendo-grid k-data-source="dataGridStok" k-selectable="'row'"
-                        k-columns="columnGridStok" k-sortable="'true'" k-pageable="'true'" k-ng-model="dataSelectedStok"
-                        ng-click="click(dataSelectedStok)">
-                    </div>
-
-                </div> -->
-            </div>
-            <div class="grid_3"></div>
             <div class="grid_6">
                 <div class="grid_2" style="margin-top: 15px">
                     <button class="c-button" ng-click="Infeksius()">Infeksius</button>
@@ -227,73 +206,6 @@
             </div>
         </div>
     </div>
-
-    <div kendo-window="popUp" k-title="'Tanda tangan'" k-width="600" k-visible="false" k-on-open="win2visible = true"
-        k-on-close="win2visible = false">
-        <div class="panel panel-default container_12" style="padding: 0px 10px;">
-            <div class="grid_12">
-                <fieldset>
-                    <legend><b>Mengetahui</b></legend>
-                    <div class="grid_12"">
-                        <div class=" grid_12">
-                        <div class="grid_12" style="margin-top: 10px">
-                            <label c-label item="item" c-label-text="Jabatan" real></label>
-                        </div>
-                        <div class="grid_12">
-                            <input kendo-combo-box k-ng-model="item.DataJabatan2" k-data-text-field="'namajabatan'"
-                                k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
-                                k-data-source="listDataJabatan" />
-                        </div>
-                    </div>
-                    <div class="grid_13">
-                        <div class="grid_12" style="margin-top: 10px">
-                            <label c-label item="item" c-label-text="Pegawai" real></label>
-                        </div>
-                        <div class="grid_12">
-                            <input kendo-combo-box k-ng-model="item.DataPegawai2" k-data-text-field="'namalengkap'"
-                                k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
-                                k-data-source="ListDataPegawai" />
-                        </div>
-                    </div>
-            </div>
-            </fieldset>
-        </div>
-        <div class="grid_12">
-            <fieldset>
-                <legend><b>Yang Meminta</b></legend>
-                <div class="grid_12"">
-                        <div class=" grid_12">
-                    <div class="grid_12" style="margin-top: 10px">
-                        <label c-label item="item" c-label-text="Jabatan" real></label>
-                    </div>
-                    <div class="grid_12">
-                        <input kendo-combo-box k-ng-model="item.DataJabatan" k-data-text-field="'namajabatan'"
-                            k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
-                            k-data-source="listDataJabatan" />
-                    </div>
-                </div>
-                <div class="grid_13">
-                    <div class="grid_12" style="margin-top: 10px">
-                        <label c-label item="item" c-label-text="Pegawai" real></label>
-                    </div>
-                    <div class="grid_12">
-                        <input kendo-combo-box k-ng-model="item.DataPegawai" k-data-text-field="'namalengkap'"
-                            k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
-                            k-data-source="ListDataPegawai" />
-                    </div>
-                </div>
-        </div>
-        </fieldset>
-    </div>
-    <div class="clear"></div>
-    <!-- kata kunci confirm -->
-    <div class="dialog_buttons pull-right" style="margin-top:5%">
-        <input type="button" class="confirm_no k-button" value="Tidak" style="width: 70px" ng-click="BatalCetak()" />
-        &nbsp;
-        <input type="button" class="confirm_yes k-button" value="Ya" style="width: 70px" ng-click="CetakAh()" />
-    </div>
-</div>
-</div>
 </div>
 
 <div kendo-window="popUpInfeksius" k-title="'Permintaan Laundry Infeksius'" k-width="850" k-height="200"

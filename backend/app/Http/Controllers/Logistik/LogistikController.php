@@ -687,12 +687,12 @@ class LogistikController extends ApiController{
             ->JOIN('kelompokproduk_m as kp', 'kp.id', '=', 'jp.objectkelompokprodukfk')
             ->leftJOIN('satuanstandar_m as ss', 'ss.id', '=', 'pr.objectsatuanstandarfk')
             ->leftJOIN('stokprodukdetail_t as spd', 'spd.objectprodukfk', '=', 'pr.id')
-            ->select('pr.harganetto','pr.id', 'pr.namaproduk', 'ss.id as ssid', 'ss.satuanstandar','pr.spesifikasi')
+            ->select('pr.harganetto','pr.id', 'pr.namaproduk', 'ss.id as ssid', 'ss.satuanstandar','pr.spesifikasi', 'djp.detailjenisproduk')
             ->where('pr.kdprofile',$idProfile)
             ->where('pr.statusenabled', true)
             ->where('kp.id', $request['idkelompokproduk'])
 //            ->where('spd.qtyproduk','>',0)
-            ->groupBy('pr.id', 'pr.namaproduk', 'ss.id', 'ss.satuanstandar','pr.spesifikasi')
+            ->groupBy('pr.id', 'pr.namaproduk', 'ss.id', 'ss.satuanstandar','pr.spesifikasi', 'djp.detailjenisproduk')
             ->orderBy('pr.namaproduk')
             ->get();
 
@@ -726,6 +726,8 @@ class LogistikController extends ApiController{
                 'konversisatuan' => $satuanKonversi,
                 'spesifikasi' => $item->spesifikasi,
                 'harganetto' => $item->harganetto,
+                'detailjenisproduk' => $item->detailjenisproduk,
+                'detail' => $item->namaproduk.'-'.$item->detailjenisproduk,
             );
         }
 
@@ -10010,7 +10012,7 @@ class LogistikController extends ApiController{
             $data = $data->where('ra.objectkelompokasetfk', $request['kelompokaset']);
         }
 
-        $data = $data->orderBy('ra.noregisteraset');
+        $data = $data->orderBy(DB::raw("CAST(SPLIT_PART(ra.noregisteraset, 'AST', 2) AS DECIMAL)"), 'asc');
         $data = $data->get();
 
         $result = array(

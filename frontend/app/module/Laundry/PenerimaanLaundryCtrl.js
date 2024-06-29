@@ -130,6 +130,9 @@ define(['initialize'], function (initialize) {
                                     }
                                 }
                             });
+
+                            // updatestatus
+                            statuskirim = 'Kirim'
                         });
                     }
                     if (statusLoad == 'KirimBalik') {
@@ -552,8 +555,9 @@ define(['initialize'], function (initialize) {
                     strukkirim: strukkirim,
                     details: data2
                 }
-                console.log(objSave)
-                medifirstService.post('laundry/save-terima-laundry', objSave).then(function (e) {
+                // console.log(objSave)
+                
+                medifirstService.post('laundry/save-terima-laundryv2', objSave).then(function (e) {
                     $scope.item.noKirim = e.data.nokirim.nokirim
                     norecCetak = $scope.item.noKirim;
                     Kosongkan();
@@ -675,17 +679,23 @@ define(['initialize'], function (initialize) {
                         }
                     }
 
-                    if (groupingData2.length == jumlah) {
+                    $scope.SaveKirim();
+
+                    /**
+                     * dimatikan karena tidak melalui registrasi linen sehingga
+                     * stok selalu kosong
+                     */
+                    // if (groupingData2.length == jumlah) {
 
 
-                        $scope.SaveKirim();
+                    //     $scope.SaveKirim();
 
 
-                    } else {
-                        toastr.error("Stok Tidak Ada, Tidak Bisa Dikirim!!!")
+                    // } else {
+                    //     toastr.error("Stok Tidak Ada, Tidak Bisa Dikirim!!!")
 
-                        return;
-                    }
+                    //     return;
+                    // }
 
                 });
 
