@@ -2996,6 +2996,13 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
               Route::post('sysadmin/simpan-masterrekanan','SysAdmin\GeneralController@simpanMasterRekananPerbaikan');
               Route::post('sysadmin/master/save-data-ruangan-aset','SysAdmin\Master\MasterController@saveMasterRuanganAset');
               Route::get('sysadmin/master/get-data-ruangan-aset', 'SysAdmin\Master\MasterController@getLoadRuanganAset');
+              Route::get('sysadmin/master/get-data-gedung-aset', 'SysAdmin\Master\MasterController@getLoadGedungAset');
+              Route::post('sysadmin/master/save-statusenabled-gedung', 'SysAdmin\Master\MasterController@UpdateStatusEnabledGedung');
+              Route::post('sysadmin/master/save-statusenabled-ruanganaset', 'SysAdmin\Master\MasterController@UpdateStatusEnabledRuanganAset');
+              Route::post('sysadmin/master/save-data-gedung-aset','SysAdmin\Master\MasterController@saveMasterGedungAset');
+              Route::get('sysadmin/master/get-data-lantai-aset', 'SysAdmin\Master\MasterController@getLoadLantaiAset');
+              Route::post('sysadmin/master/save-data-lantai-aset','SysAdmin\Master\MasterController@saveMasterLantaiAset');
+              Route::post('sysadmin/master/save-statusenabled-lantai', 'SysAdmin\Master\MasterController@UpdateStatusEnabledRuanganLantai');
               // });
             // Route::group(['prefix' => 'general'], function () {
                 // GET //
