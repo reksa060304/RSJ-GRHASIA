@@ -192,7 +192,7 @@
                         <td   style="text-align:center; padding-left: 50px; padding-bottom: 80px; padding-top: 5px; width: 300px;">
                             <font style="font-size: 12pt" color="#000000">Mengetahui dan Menyetujui<br>Direktur Selaku KPA</font>
                         </td>
-                        <td style="text-align:center;  padding-bottom: 80px; padding-top: 5px; width: 250px;">
+                        <td style="text-align:center;  padding-bottom: 80px; padding-top: 5px; width: 300px;">
                             <font style="font-size: 12pt" color="#000000">Bendahara Pengeluaran</font>
                         </td>
                         <td  style="padding: 10px; padding-bottom: 80px; padding-top: 5px; width: 300px;" align="center">
@@ -203,7 +203,7 @@
                         <td  style="text-align:center; padding-left: 50px; padding-bottom: 5px; padding-top: 5px; width: 120px;">
                             <font style="font-size: 12pt" color="#000000"><u>{{$settingrba[0]->namalengkap}}</u><br>NIP. {{$settingrba[0]->nippns}}</font>
                         </td>
-                        <td style="text-align:center; padding-bottom: 5px; padding-top: 5px; width: 80px;">
+                        <td style="text-align:center; padding-bottom: 5px; padding-top: 5px; width: 90px;">
                             <font style="font-size: 12pt" color="#000000"><u>{{ $spj[0]->namabendahara}}</u><br>NIP. {{ $spj[0]->nipbendahara}}</font>
                         </td>
                         <td  style="padding: 10px; padding-bottom: 5px; padding-top: 5px; width: 100px;" align="center">
