@@ -44,6 +44,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
 
 		// Cetakan
 		Route::get('report/cetak-label-pilihan', 'Report\ReportController@cetakLabelPilihan');
+    Route::get('report/cetak-label-pilihan-pengemasan', 'Report\ReportController@cetakLabelPilihanPengemasan');
 
 		// RBA
         Route::get('rba/get-data-rba', 'Perencanaan\RBAController@getRBA');
@@ -1568,6 +1569,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('logistik/get-barang-for-regis', 'Logistik\LogistikController@getDetailBarang');
             Route::get('logistik/get-detail-registrasiasset', 'Logistik\LogistikController@getDetailBarangRegisterAset');
             Route::get('logistik/get-daftar-asset', 'Logistik\LogistikController@getDataBarangRegisterAset');
+            Route::get('logistik/get-daftar-pengemasan', 'Logistik\LogistikController@getDataPengemasan');
             Route::get('logistik/get-data-produkforkirim', 'Logistik\LogistikController@getDataProdukKirim');
             Route::get('logistik/get-nomor-asset', 'Logistik\LogistikController@getNoAsset');
             Route::get('logistik/get-data-detail-asset', 'Logistik\LogistikControllerr@getProdukDetailAsset');

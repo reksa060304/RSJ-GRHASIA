@@ -1,0 +1,109 @@
+<c-panel item="item" header="'Daftar Barang Pengemasan'" style="margin-top:50px" disabled>
+    <div class="grid_12">
+        <div class="grid_1">
+            <label c-label>Barang Asset</label>
+            <!-- <input kendo-combo-box k-ng-model="item.produk" k-data-text-field="'namaproduk'" k-data-value-field="'id'"
+                k-data-source="sourceProduk" k-filter="'contains'" style=\ "width: 100%\"></input> -->
+            <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.NamaProduk" />
+        </div>
+        <!-- <div class="grid_2">
+            <label c-label>Departemen</label>
+            <input kendo-combo-box k-ng-model="item.departemen" k-data-text-field="'departemen'"
+                k-data-value-field="'id'" k-data-source="sourceDepartemen" k-filter="'contains'" style="width: 100%"
+                k-on-change="getIsiComboRuangan()"></input>
+        </div> -->
+        <div class="grid_2">
+            <label c-label>Ruangan</label>
+            <input kendo-combo-box k-ng-model="item.ruangan" k-data-text-field="'ruangan'" k-data-value-field="'id'"
+                k-data-source="sourceRuanganAset" k-filter="'contains'" style="width: 100%"></input>
+        </div>
+        <div class="grid_2">
+            <label c-label>Detail Jenis Produk</label>
+            <input kendo-combo-box k-ng-model="item.DetailJenis" k-data-text-field="'detailjenisproduk'"
+                k-data-value-field="'id'" k-data-source="sourceDetailJenis" k-filter="'contains'"
+                style="width: 100%"></input>
+        </div>
+        <div class="grid_4">
+            <div class="grid_12">
+                <label c-label item="item" c-label-text="Periode Tanggal"></label>
+            </div>
+            <div class="grid_12">
+                 <!-- AwalPeriode -->
+                 <div class="grid_5 padDatePicker">
+                    <div class="grid_12">
+                        <input style="width: 100%" k-ng-model="item.tglpengemasan" kendo-datetimepicker k-max="now"
+                            placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" />
+                    </div>
+                </div>
+
+                <!-- AkhirPeriode -->
+                <div class="grid_5 padDatePicker">
+                    <div class="grid_12">
+                        <input style="width: 100%" k-ng-model="item.tglpengemasan" kendo-datetimepicker
+                            placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="grid_1" style="margin-top:7px">
+            <label c-label>&nbsp;</label>
+            <button class="c-button" ng-click="Search()">
+                <span style="font-size:10!important">Cari</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="grid_12" style="margin-top: 10px;">
+        <div id="kGrid" kendo-grid k-data-source="sourceBarang" k-selectable="'row'" k-columns="columnGrid"
+            k-pageable="'true'" k-sortable="'true'" k-ng-model="dataSelected" ng-click="klikGrid(dataSelected)">
+        </div>
+    </div>
+    <div class="clear">&nbsp;</div>
+
+</c-panel>
+<div class="grid_12" style="margin-top:60px">
+    <div ng-include='"../app/template/Shared/TemplateLoading"'></div>
+</div>
+<div class="grid_12 place_button" style="float:right;" ng-hide="isHide">
+    <div class="grid_6" style="float:right;">
+        <c-button style="width: 100%; font-size: 24px; padding:0px; margin:0px;" item="item" size="36"
+            position="'right'" ng-click="cetakPilihan()">
+            <span class="title">Cetak Label Pilihan</span>
+        </c-button>
+    </div>
+</div>
+
+<!-- Popup select ketua dan kepala ruangan -->
+<div kendo-window="popUp" k-title="'Mengetahui'" k-width="600" k-visible="false" k-on-open="win2visible = true" k-on-close="win2visible = false">
+    <div class="panel panel-default container_12" style="padding: 0px 10px;"> 
+        <div class="grid_12">
+            <fieldset>
+                <legend><b>Mengetahui</b></legend>
+                <div class="grid_12">
+                    <div class="grid_12">
+                        <div class="grid_12" style="margin-top: 10px">
+                            <label c-label item="item" c-label-text="Kepala" real></label>
+                        </div>
+                        <div class="grid_12">
+                            <input kendo-combo-box k-ng-model="item.kepala" k-data-text-field="'namalengkap'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listPegawai" />
+                        </div>
+                    </div>
+                        <div class="grid_13">
+                        <div class="grid_12" style="margin-top: 10px">
+                            <label c-label item="item" c-label-text="Ketua Ruangan" real></label>
+                        </div>
+                        <div class="grid_12">
+                            <input kendo-combo-box k-ng-model="item.penanggungjawab" k-data-text-field="'namalengkap'" k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false" k-data-source="listPegawai" />
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+    </div>
+    <!-- kata kunci confirm -->   
+    <div class="dialog_buttons pull-right" style="margin-top:5%">
+        <input type="button" class="confirm_no k-button" value="Tidak" style="width: 70px" ng-click="batalCetakKartuInventaris()"/>
+        &nbsp;
+        <input type="button" class="confirm_yes k-button" value="Ya" style="width: 70px" ng-click="cetakKartuInventaris()"/>
+    </div>
+</div>

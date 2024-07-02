@@ -22863,5 +22863,23 @@ public function suratBuktiPengembalian(Request $request)
             'data' => $query
         ]);
     }
+    public function cetakLabelPilihanPengemasan(Request $request)
+    {
+        $norec = explode(',', $request['norec']);
+
+        $kdProfile = (int) $request['kodeprofile'];
+
+        $data = \DB::table('pengemasan_t as ra')            
+        ->leftJOIN('kelompokalat_m as kp','kp.id','=','ra.objectkelompoksetfk')
+        ->JOIN('pegawai_m as pg','pg.id','=','ra.objectpegawaifk')       
+        ->select('ra.tglpengemasan','ra.nomor', 'ra.norec','kp.namakelompokalat', 'pg.id','pg.namalengkap')     
+        ->whereIn('ra.norec', $norec)
+        ->where('ra.kdprofile', $kdProfile)
+        ->where('ra.statusenabled', true)
+        ->orderBy('ra.nomor')
+        ->get();
+
+        return view('report.asset.cetak-label-pilihan-pengemasan', compact('data'));
+    }
 
 }

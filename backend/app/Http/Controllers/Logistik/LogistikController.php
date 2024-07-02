@@ -16895,6 +16895,52 @@ FROM
 
         return $this->respond($dataProdukResult);
     }
+    
+    public function getDataPengemasan(Request $request) {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $data = \DB::table('pengemasan_t as ra')            
+            ->leftJOIN('kelompokalat_m as kp','kp.id','=','ra.objectkelompoksetfk')
+            ->JOIN('pegawai_m as pg','pg.id','=','ra.objectpegawaifk')
+            ->limit('100')           
+            ->select('ra.nomor', 'ra.tglpengemasan','ra.norec','kp.namakelompokalat', 'pg.id','pg.namalengkap')           
+            ->where('ra.kdprofile', $idProfile)
+            ->where('ra.statusenabled', true);
+            // ->where('pr.statusenabled', true);
+
+
+        if (isset($request['tglAwal']) && $request['tglAwal'] != "" && $request['tglAwal'] != "undefined") {
+            $data = $data->where('ra.tglpengemasan', '>=', $request['tglAwal']);
+        }
+        if (isset($request['tglAkhir']) && $request['tglAkhir'] != "" && $request['tglAkhir'] != "undefined") {
+            $data = $data->where('ra.tglpengemasan', '<=', $request['tglAkhir']);
+        }
+        if(isset($request['kdproduk']) && $request['kdproduk']!="" && $request['kdproduk']!="undefined"){
+            $data = $data->where('ra.objectprodukfk','=', $request['kdproduk']);
+        }
+        if(isset($request['kdDetailJenis']) && $request['kdDetailJenis']!="" && $request['kdDetailJenis']!="undefined"){
+            $data = $data->where('djp.id','=', $request['kdDetailJenis']);
+        }
+        if(isset($request['ruangancurrenfk']) && $request['ruangancurrenfk']!="" && $request['ruangancurrenfk']!="undefined"){
+            $data = $data->where('ru1.id','=', $request['ruangancurrenfk']);
+        }
+        if (isset($request['norecAsset']) && $request['norecAsset'] != "" && $request['norecAsset'] != "undefined") {
+            $data = $data->where('ra.norec', '=', $request['norecAsset']);
+        }
+        if (isset($request['namaproduk']) && $request['namaproduk'] != "" && $request['namaproduk'] != "undefined") {
+            $data = $data->where('pr.namaproduk', 'ILIKE', '%'.$request['namaproduk'].'%');
+        }
+        // $data = $data->where('ra.statusenabled',true);
+        $data = $data->orderBy('ra.tglpengemasan');
+        $data = $data->get();
+
+        $result = array(
+            'datas' => $data,
+            'message' => 'ea@epic',
+        );
+
+        return $this->respond($result);
+    }
 
     
 }
