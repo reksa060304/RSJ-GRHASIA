@@ -80,12 +80,21 @@
             </div> -->
             <div class="grid_4">
                 <div class="grid_12">
+                    <label c-label item="item" c-label-text="Jenis Linen"></label>
+                </div>
+                <di class="grid_6">
+                    <input style="width: 100%;" kendo-combo-box k-ng-model="item.Keterangan"
+                        k-data-text-field="'nama'" k-data-value-field="'nama'" k-filter="'contains'"
+                        k-auto-bind="false" k-data-source="listKeterangan" />
+                </div>
+                <!-- <div class="grid_12">
                     <label c-label item="item" c-label-text="Keterangan"></label>
                 </div>
 
                 <div class="grid_12">
                     <input c-text-box type="input" filter="" class="k-textbox" ng-model="item.Keterangan" />
-                </div>
+                </div> -->
+                
             </div>
     
     </div>
@@ -136,7 +145,7 @@
                     ng-model="item.nilaiKonversi" ng-disabled="true" />
             </div>
         </div> -->
-        <div class="grid_1">
+        <!-- <div class="grid_1">
             <div class="grid_12">
                 <label c-label item="item" c-label-text="Stok"></label>
             </div>
@@ -144,7 +153,7 @@
                 <input c-text-box type="input" style="text-align: right" filter="" class="k-textbox"
                     ng-model="item.stok" ng-disabled="true" />
             </div>
-        </div>
+        </div> -->
         <div class="grid_1" ng-show="hideBukanKirimBalik">
             <div class="grid_12">
                 <label c-label item="item" c-label-text="Terima"></label>

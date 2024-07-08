@@ -155,7 +155,7 @@ define(['initialize'], function (initialize) {
                 }
                 var chacePeriode = {
                     0: $scope.dataSelected.norec,
-                    1: '',
+                    1: $scope.dataSelected.noorderfk,
                     2: 'EditKirim',
                     3: '',
                     4: '',
@@ -714,7 +714,7 @@ define(['initialize'], function (initialize) {
                 }
                 var chacePeriode = {
                     0: $scope.dataSelected.norec,
-                    1: '',
+                    1: $scope.dataSelected.noorderfk,
                     2: 'KirimBalik',
                     3: '',
                     4: '',

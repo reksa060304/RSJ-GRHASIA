@@ -1672,26 +1672,66 @@ class LaundryController extends ApiController
 
         DB::beginTransaction();
         try {
+            $norecStrukOrder = null;
 
-            // kondisi untuk simpan dan update
+            // kondisi untuk simpan atau update detail
             if ($request['strukkirim']['noreckirim'] == ''){
 
                 // update strukordermenjadi kirim
                 if($request['strukkirim']['norecOrder']){
+                    
+                    //update order 
                     StrukOrder::where('norec',$request['strukkirim']['norecOrder'])
                         ->where('kdprofile', $idProfile)
                         ->update([
                             'statusorder' => 1,
                         ]);
-                }
 
+                    $norecStrukOrder = $request['strukkirim']['norecOrder'];
+                }else{
+
+                    // tambah order
+                    $noOrder = $this->generateCode(new StrukOrder, 'noorder', 14, 'OTRL-' . $this->getDateTime()->format('ym'), $idProfile);
+                    $KdPelayananLaundry = $this->settingDataFixed('KdPelayananLaundry',$idProfile);
+
+                    $dataSO = new StrukOrder();
+                    $dataSO->norec = $dataSO->generateNewId();
+                    $dataSO->kdprofile = $idProfile;
+                    $dataSO->statusenabled = true;
+                    $dataSO->isdelivered = 0;
+                    $dataSO->noorder = $noOrder;
+                    $dataSO->jenispermintaanfk = isset($request['strukorder']['jenispermintaanfk']) ? $request['strukorder']['jenispermintaanfk'] : null;
+                    $dataSO->objectkelompoktransaksifk = $KdPelayananLaundry;
+                    $dataSO->keteranganorder = isset($request['strukorder']['keteranganorder']) ? $request['strukorder']['keteranganorder'] : null;
+                    $dataSO->objectpegawaiorderfk = $request['strukorder']['pegawaiorderfk'];
+                    $dataSO->qtyjenisproduk = $request['strukorder']['qtyjenisproduk'];
+                    $dataSO->qtyproduk = $request['strukorder']['qtyjenisproduk'];
+                    $dataSO->objectruanganfk = $request['strukorder']['ruanganfk'];
+                    $dataSO->objectruangantujuanfk = $request['strukorder']['ruangantujuanfk'];
+                    $dataSO->tglorder = $request['strukorder']['tglorder'];
+                    $dataSO->statusorder = 1; //status langsung kirim
+                    $dataSO->totalbeamaterai = 0;
+                    $dataSO->totalbiayakirim = 0;
+                    $dataSO->totalbiayatambahan = 0;
+                    $dataSO->totaldiscount = 0;
+                    $dataSO->totalhargasatuan = 0;
+                    $dataSO->totalharusdibayar = 0;
+                    $dataSO->totalpph = 0;
+                    $dataSO->totalppn = 0;
+                    $dataSO->save();
+
+                    $norecStrukOrder = $dataSO->norec;
+                }
+                
+
+                // membuat struk kirim
                 $dataSK = new StrukKirim;
                 $dataSK->norec = $dataSK->generateNewId();
                 $dataSK->nokirim = $noKirim;
-
             }else{
 
                 $dataSK = StrukKirim::where('norec',$request['strukkirim']['noreckirim'])->where('kdprofile', $idProfile)->first();
+                $norecSK = $dataSK->norec;
 
                 // delete kirim produk
                 KirimProduk::where('nokirimfk',$request['strukkirim']['noreckirim'])->delete();
@@ -1716,8 +1756,7 @@ class LaundryController extends ApiController
             $dataSK->totalharusdibayar = 0;
             $dataSK->totalpph =0;
             $dataSK->totalppn = 0;
-            $dataSK->noregistrasifk = $request['strukkirim']['norec_apd'];
-            $dataSK->noorderfk = $request['strukkirim']['norecOrder'];
+            $dataSK->noorderfk = $norecStrukOrder;
             $dataSK->statuskirim = $request['strukkirim']['status'];
             $dataSK->save();
 
@@ -1744,18 +1783,17 @@ class LaundryController extends ApiController
                 $dataKP = new KirimProduk;
                 $dataKP->norec = $dataKP->generateNewId();
                 $dataKP->kdprofile = $idProfile;
+                $dataKP->nokirimfk = $norecSK;
                 $dataKP->statusenabled = true;
-                // $dataKP->objectasalprodukfk = $items->asalprodukfk;
                 $dataKP->hargadiscount = 0;
                 $dataKP->harganetto = 0;
                 $dataKP->hargapph = 0;
                 $dataKP->hargappn = 0;
-                $dataKP->hargasatuan = 0;//$items->hargasatuan;
+                $dataKP->hargasatuan = 0;
                 $dataKP->hargatambahan = 0;
                 $dataKP->hasilkonversi = $jumlah;
                 $dataKP->objectprodukfk = $item['produkfk'];
                 $dataKP->objectprodukkirimfk = $item['produkfk'];
-                $dataKP->nokirimfk = $norecSK;
                 $dataKP->persendiscount = 0;
                 $dataKP->qtyproduk = $jumlah;
                 $dataKP->qtyprodukkonfirmasi = $jumlah;
@@ -1763,11 +1801,10 @@ class LaundryController extends ApiController
                 $dataKP->qtyorder = $item['qtyorder'];
                 $dataKP->qtyproduk = $jumlah;
                 $dataKP->qtyprodukterima = $jumlah;
-                // $dataKP->nostrukterimafk = $items->nostrukterimafk;
                 $dataKP->objectruanganfk = $request['strukkirim']['objectruangantujuanfk'];
                 $dataKP->objectruanganpengirimfk = $request['strukkirim']['objectruanganfk'];
                 $dataKP->satuan = '-';
-                $dataKP->objectsatuanstandarfk = $satuanstandarfk;//$item['satuanstandarfk'];
+                $dataKP->objectsatuanstandarfk = $satuanstandarfk;
                 $dataKP->satuanviewfk = $item['satuanviewfk'];
                 $dataKP->tglpelayanan = date($request['strukkirim']['tglkirim']);
                 $dataKP->qtyprodukterimakonversi = $jumlah;
@@ -1778,8 +1815,9 @@ class LaundryController extends ApiController
             }
 
             $transStatus = 'true';
-        } catch (\Exception $th) {
+        } catch (\Exception $e) {
             $transStatus = 'false';
+            $errMsg = $e->getMessage(). ' ' .$e->getLine();
         }
 
         $transMessage =$request['strukkirim']['jenis']. " Linen";
@@ -1799,6 +1837,7 @@ class LaundryController extends ApiController
             $result = array(
                 "status" => 400,
                 "message"  => $transMessage,
+                "errMsg" => $errMsg,
                 "req" => $request->all(),
                 "as" => 'as@epic',
             );
