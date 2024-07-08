@@ -284,7 +284,7 @@
                     <td class="content">{{ $item->asalproduk }}</td>
                     <td class="content" style="text-align: right;">{{ number_format( $item->hargaperolehan, 2, '.', ',') }}</td>
                     <td class="content">{{ $item->deskripsiproduk }}</td>
-                    <td class="content">Keterangan</td>
+                    <td class="content">{{ $item->keteranganlainnya }}</td>
                     <td class="content">1.02.01.04.00.000 - RUMAH SAKIT JIWA GRHASIA</td>
                 </tr>
                 @php

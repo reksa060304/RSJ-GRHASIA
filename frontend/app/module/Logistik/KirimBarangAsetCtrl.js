@@ -49,7 +49,7 @@ define(['initialize'], function(initialize) {
                     $scope.listDataJabatan = dataCombo.jabatan;                    
                     $scope.ListKondisiProduk = dataCombo.kondisiaset;
                     $scope.listSatuan = dataCombo.satuan; 
-                    loadProduk();
+                    // loadProduk();
                 });
 
                 medifirstService.getPart("logistik/get-combo-pegawai-logistik", true, true, 20).then(function (data) {
@@ -126,10 +126,19 @@ define(['initialize'], function(initialize) {
         }
 
         $scope.getAsset = function(){
+
+            // $scope.item.tahunperolehan = $scope.item.produk.tahunperolehan
+            // $scope.item.koderegisterrs = $scope.item.produk.koderegisterrs
+            // $scope.item.hargaperolehan = $scope.item.produk.hargaperolehan
+            // $scope.item.stok = $scope.item.produk.qtyprodukaset
+            // $scope.item.NoAsset = { noregisteraset: $scope.item.produk.noregisteraset, norecasset: $scope.item.produk.norec }
             medifirstService.get("logistik/get-nomor-asset?"+
                 "produkfk="+ $scope.item.produk.id +
                 "&ruanganfk="+ $scope.item.ruangan.id , true).then(function(dat){
-                    $scope.listAsset = dat.data.result;
+                    let list = dat.data.result
+                        .map(item => ({...item, gabung: item.tahunperolehan + ' / ' + item.koderegisterrs + ' / ' + item.hargaperolehan}))
+                    
+                    $scope.listAsset = list
                   
             });
         }
@@ -337,7 +346,6 @@ define(['initialize'], function(initialize) {
                 $scope.item.totalSubTotal=parseFloat(subTotal).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
             }
             Kosongkan()
-            racikan =''
         }
 
         $scope.klikGrid = function(dataSelected){
@@ -354,6 +362,15 @@ define(['initialize'], function(initialize) {
             $scope.item.jumlah = dataSelected.jumlah
             $scope.item.stok = dataSelected.jmlstok
             $scope.item.NoAsset = {norec:dataSelected.norecasset,noregisteraset:dataSelected.noasset};
+            
+            // cari kondisi
+            let kondisi = null
+            $scope.ListKondisiProduk.map(item => {
+                if(item.id == dataSelected.kondisiprodukfk){
+                    kondisi = item
+                }
+            })
+            $scope.item.kondisiproduk = kondisi
             // GETKONVERSI(dataSelected.jumlah)
             // $scope.item.nilaiKonversi = dataSelected.nilaikonversi
             // $scope.item.satuan = {ssid:dataSelected.satuanstandarfk,satuanstandar:dataSelected.satuanstandar}
@@ -365,6 +382,9 @@ define(['initialize'], function(initialize) {
             $scope.item.stok=0
             $scope.item.jumlah=0
             $scope.item.tglAwal=moment($scope.now).format('YYYY-MM-DD HH:mm:ss')
+            $scope.item.tahunperolehan = null
+            $scope.item.noregisterrs = null
+            $scope.item.hargaperolehan = null
         }
         $scope.batal = function(){
             Kosongkan()
@@ -499,14 +519,14 @@ define(['initialize'], function(initialize) {
                 racikan =''
             }
             $scope.hapus = function(){
-                if ($scope.item.jumlah == 0) {
-                    alert("Jumlah harus di isi!")
-                    return;
-                }
-                if ($scope.item.total == 0) {
-                    alert("Stok tidak ada harus di isi!")
-                    return;
-                }
+                // if ($scope.item.jumlah == 0) {
+                //     alert("Jumlah harus di isi!")
+                //     return;
+                // }
+                // if ($scope.item.total == 0) {
+                //     alert("Stok tidak ada harus di isi!")
+                //     return;
+                // }
                 // if ($scope.item.jenisKemasan == undefined) {
                 //     alert("Pilih Jenis Kemasan terlebih dahulu!!")
                 //     return;
@@ -519,10 +539,10 @@ define(['initialize'], function(initialize) {
                     alert("Pilih Produk terlebih dahulu!!")
                     return;
                 }
-                if ($scope.item.satuan == undefined) {
-                    alert("Pilih Satuan terlebih dahulu!!")
-                    return;
-                }
+                // if ($scope.item.satuan == undefined) {
+                //     alert("Pilih Satuan terlebih dahulu!!")
+                //     return;
+                // }
                 // var nomor =0
                 // if ($scope.dataGrid == undefined) {
                 //     nomor = 1
@@ -550,7 +570,7 @@ define(['initialize'], function(initialize) {
                             // for (var i = data2.length - 1; i >= 0; i--) {
                             //     subTotal=subTotal+ parseFloat(data2[i].total)
                             // }
-                            $scope.item.totalSubTotal=parseFloat(subTotal).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
+                            // $scope.item.totalSubTotal=parseFloat(subTotal).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
 
                         }
                         // break;

@@ -42,13 +42,13 @@
     <div style="margin-top: 1em; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.8em; font-size: 11pt">
         
         @foreach ($data as $row)
-            <table style="font-size: 7pt; border-collapse: collapse;">
+            <table style="font-size: 6pt; border-collapse: collapse;">
                 <tr>
                     <td style="border: 1px solid black; text-align:center;">
                         @if(stripos(\Request::url(), 'localhost') !== FALSE)
-                        <img src="{{ asset('img/logo-diy.jpeg') }}" style="width: 60%;" alt="LOGO DIY">
+                        <img src="{{ asset('img/logo-diy.jpeg') }}" style="width: 1.5cm;" alt="LOGO DIY">
                         @else
-                        <img src="{{ asset('service/img/logo-diy.jpeg') }}" style="width: 60%;" alt="LOGO DIY">
+                        <img src="{{ asset('service/img/logo-diy.jpeg') }}" style="width: 1.5cm;" alt="LOGO DIY">
                         @endif
                     </td>
                     <td style="font-weight: bold; border: 1px solid black;">
@@ -64,9 +64,9 @@
                     </td>
                     <td style="border: 1px solid black; text-align:center;">
                         @if(stripos(\Request::url(), 'localhost') !== FALSE)
-                        <img src="{{ asset('img/logo_grhasia_new.png') }}" style="width: 100%;" alt="LOGO DIY">
+                        <img src="{{ asset('img/logo_grhasia_new.png') }}" style="width: 1.5cm;" alt="LOGO DIY">
                         @else
-                        <img src="{{ asset('service/img/logo_grhasia_new.png') }}" style="width: 100%;" alt="LOGO DIY">
+                        <img src="{{ asset('service/img/logo_grhasia_new.png') }}" style="width: 1.5cm;" alt="LOGO DIY">
                         @endif
                     </td>
                 </tr>
@@ -74,7 +74,7 @@
                     <td style="font-weight: bold; border: 1px solid black">
                         NOMER BARANG
                     </td>
-                    <td colspan="2" style="border: 1px solid black">
+                    <td colspan="2" style="font-weight: bold; border: 1px solid black">
                         <p>11.01.34.00.1.02.2.22.0.00.01.0004.{{$row->tahunperolehan}}</p>
                         <p>{{ $row->kdbmn }}</p>
                     </td>
@@ -83,7 +83,7 @@
                     <td style="font-weight: bold; border: 1px solid black">
                         NOMER REGISTER SIMRS
                     </td>
-                    <td colspan="2" style="border: 1px solid black">
+                    <td colspan="2" style="font-weight: bold; border: 1px solid black">
                         {{ $row->noregisteraset }}
                     </td>
                 </tr>
@@ -91,7 +91,7 @@
                     <td style="font-weight: bold; border: 1px solid black">
                         NAMA BARANG
                     </td>
-                    <td colspan="2" style="border: 1px solid black">
+                    <td colspan="2" style="font-weight: bold; border: 1px solid black">
                         {{$row->namaproduk}}
                     </td>
                 </tr>
@@ -99,7 +99,7 @@
                     <td style="font-weight: bold; border: 1px solid black">
                         MERK
                     </td>
-                    <td colspan="2" style="border: 1px solid black">
+                    <td colspan="2" style="font-weight: bold; border: 1px solid black">
                         @if (isset($row->merkproduk))
                             {{ $row->merkproduk }}
                         @else
@@ -111,7 +111,7 @@
                     <td style="font-weight: bold; border: 1px solid black">
                         TAHUN PEROLEHAN
                     </td>
-                    <td colspan="2" style="border: 1px solid black">
+                    <td colspan="2" style="font-weight: bold; border: 1px solid black">
                         {{ $row->tahunperolehan }}
                     </td>
                 </tr>
@@ -119,7 +119,7 @@
                     <td style="font-weight: bold; border: 1px solid black">
                         NILAI BARANG
                     </td>
-                    <td colspan="2" style="border: 1px solid black">
+                    <td colspan="2" style="font-weight: bold; border: 1px solid black">
                         {{ number_format($row->hargaperolehan,2,',','.') }}
                     </td>
                 </tr>
@@ -127,7 +127,7 @@
                     <td style="font-weight: bold; border: 1px solid black">
                         PENEMPATAN
                     </td>
-                    <td colspan="2" style="border: 1px solid black">
+                    <td colspan="2" style="font-weight: bold; border: 1px solid black">
                         {{$row->namaruanganasal}}
                     </td>
                 </tr>

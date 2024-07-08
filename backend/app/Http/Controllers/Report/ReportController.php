@@ -21771,6 +21771,7 @@ public function suratBuktiPengembalian(Request $request)
             ra.nobpkb,
             ra.hargaperolehan,
             ra.kdprofile,
+            ra.keteranganlainnya,
             cha1.ID AS idcha1,
             cha1.kodeakun AS kodeakuncha1,
             cha1.urian AS uriancha1,
@@ -21786,24 +21787,35 @@ public function suratBuktiPengembalian(Request $request)
             cha5.ID AS idcha5,
             cha5.kodeakun AS kodeakuncha5,
             cha5.urian AS uriancha5,
-            cha6.ID AS idch6,
+            cha6.ID AS idcha6,
             cha6.kodeakun AS kodeakuncha6,
             cha6.urian AS uriancha6 
         FROM
             registrasiaset_t AS ra
-            INNER JOIN charkodeakunasset_m AS cha6 ON cha6.kodeakun = ra.kdbmn
-            LEFT JOIN charkodeakunasset_m AS cha1 ON cha1.ID = cha6.idlevel1
-            LEFT JOIN charkodeakunasset_m AS cha2 ON cha2.ID = cha6.idlevel2
-            LEFT JOIN charkodeakunasset_m AS cha3 ON cha3.ID = cha6.idlevel3
-            LEFT JOIN charkodeakunasset_m AS cha4 ON cha4.ID = cha6.idlevel4
-            LEFT JOIN charkodeakunasset_m AS cha5 ON cha5.ID = cha6.idlevel5
-            LEFT JOIN produk_m AS pr ON pr.ID = ra.idprodukfk
+            INNER JOIN produk_m AS pr ON pr.ID = ra.idprodukfk
+            INNER JOIN charkodeakunasset_m AS cha6 ON cha6.id = pr.objectprodukassetfk
+            INNER JOIN charkodeakunasset_m AS cha1 ON cha1.ID = cha6.idlevel1
+            INNER JOIN charkodeakunasset_m AS cha2 ON cha2.ID = cha6.idlevel2
+            INNER JOIN charkodeakunasset_m AS cha3 ON cha3.ID = cha6.idlevel3
+            INNER JOIN charkodeakunasset_m AS cha4 ON cha4.ID = cha6.idlevel4
+            INNER JOIN charkodeakunasset_m AS cha5 ON cha5.ID = cha6.idlevel5
             LEFT JOIN bahanproduk_m AS bhn ON bhn.ID = ra.objectbahanprodukfk
             LEFT JOIN merkproduk_m AS mrk ON mrk.ID = ra.objectmerkprodukfk
             LEFT JOIN asalproduk_m AS ap ON ap.ID = ra.objectasalprodukfk
         WHERE
             ra.kdprofile=".$kdProfile."
+            AND ra.statusenabled= TRUE
             AND ra.objectkelompokasetfk=".$request['kelompokaset']."
+            AND pr.statusenabled = TRUE 
+        ORDER BY
+            CAST(cha1.kodeakun AS DECIMAL), 
+            CAST(SPLIT_PART(cha2.kodeakun, '.', 3) AS DECIMAL),
+            CAST(SPLIT_PART(cha3.kodeakun, '.', 4) AS DECIMAL),
+            CAST(SPLIT_PART(cha4.kodeakun, '.', 5) AS DECIMAL),
+            CAST(SPLIT_PART(cha5.kodeakun, '.', 6) AS DECIMAL),
+            CAST(SPLIT_PART(cha6.kodeakun, '.', 7) AS DECIMAL),
+            CAST(SPLIT_PART(ra.noregisteraset, 'AST', 2) AS DECIMAL)
+             asc
         "));
 
         // dd($query);
@@ -22475,7 +22487,7 @@ public function suratBuktiPengembalian(Request $request)
                      'spd.norec as norecspd','ap.asalproduk','ra.keteranganlainnya','ra.spesifikasi','ra.jenisaset','ra.judul','ra.kdbmn', 'ra.koderegisterrs', 'ra.tahunperolehan', 'pr.deskripsiproduk', 'mrk.merkproduk', 'ra.nilaisisa')
             ->whereIn('ra.norec', $norec)
             ->where('ra.kdprofile', $kdProfile)
-            ->where('pr.statusenabled', true)
+            ->where('ra.statusenabled', true)
             ->orderBy('ra.noregisteraset')
             ->get();
 

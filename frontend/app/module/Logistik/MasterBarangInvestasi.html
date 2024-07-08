@@ -22,7 +22,7 @@
 </style>
 <!-- <div class="panel panel-default container_12"> -->
 	<div class="grid_12 headerBox">
-        <h1 style="color: white;"><b>Master Barang Investasi</b></h1>
+        <h1 style="color: white;"><b>Registrasi Barang Investasi</b></h1>
     </div>
 	<!-- <c-panel item="item" header="'MasterBarangInvestasi'" style="margin-top:50px" disabled> -->
 		<div class="grid_12" style="margin-top: 5px">
@@ -1008,6 +1008,29 @@
 												
 												<!-- Inputan penambahan nilai asset -->
 												<div class="grid_4">
+
+													<!-- Tanggal BAST -->
+													<div class="grid_3">
+														<div class="grid_12">
+															<label style="text-transform: capitalize;"  c-label item="item" c-label-text="Tanggal BAST"></label>
+														</div>
+														<div class="grid_12">
+															<input k-ng-model="item.tglbast" kendo-datetimepicker
+																placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'"
+															 />
+														</div>
+													</div>
+
+													<!-- Nomor BAST -->
+													<div class="grid_12" style="margin-top: .5em;">
+														<div class="grid_12">
+															<label style="text-transform: capitalize;"  c-label item="item" c-label-text="Nomor BAST"></label>
+														</div>
+														<div class="grid_12">
+															<input c-text-box type="text" class="k-textbox" ng-model="item.nomorbast"  />
+														</div>
+													</div>
+
 													<!-- tanggal penambahan -->
 													<div class="grid_3">
 														<div class="grid_12">
@@ -1036,10 +1059,10 @@
 															<label style="text-transform: capitalize;"  c-label item="item" c-label-text="Harga penambahan"></label>
 														</div>
 														<div class="grid_12">
-															<input c-text-box type="input" class="k-textbox" ng-model="item.hargapenambahan"  />
+															<input c-text-box type="number" class="k-textbox" ng-model="item.hargapenambahan"  />
 														</div>
 													</div>
-	
+
 													<!-- Tombol2 -->
 													<div class="grid_12" style="margin-top: 18px">
 														<div class="grid_6">

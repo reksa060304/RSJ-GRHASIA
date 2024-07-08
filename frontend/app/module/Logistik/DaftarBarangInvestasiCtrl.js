@@ -65,6 +65,10 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 
             function LoadData() {
                 $scope.isRouteLoading = true;
+
+                // clear seleksi checkbox
+                $scope.selectedAsset = []
+                
                 var tglAwal = $scope.item.tglAwal == undefined ? '' : moment($scope.item.tglAwal).format('YYYY-MM-DD hh:mm:ss');
                 var tglAkhir = $scope.item.tglAkhir == undefined ? '' : moment($scope.item.tglAkhir).format('YYYY-MM-DD hh:mm:ss');
                 

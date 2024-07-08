@@ -9781,7 +9781,9 @@ class LogistikController extends ApiController{
                             ->update([
                                 'keteranganpenambahan' => $penambahan['keteranganpenambahan'],
                                 'hargapenambahan' => $penambahan['hargapenambahan'],
-                                'tglpenambahan' => $penambahan['tglpenambahan']
+                                'tglpenambahan' => $penambahan['tglpenambahan'],
+                                'tglbast' => $penambahan['tglbast'],
+                                'nomorbast' => $penambahan['nomorbast'],
                             ]);
 
                     }else{
@@ -9792,7 +9794,9 @@ class LogistikController extends ApiController{
                             'objectregistrasiassetfk' => $dataRegAset->norec,
                             'keteranganpenambahan' => $penambahan['keteranganpenambahan'],
                             'hargapenambahan' => $penambahan['hargapenambahan'],
-                            'tglpenambahan' => $penambahan['tglpenambahan']
+                            'tglpenambahan' => $penambahan['tglpenambahan'],
+                            'tglbast' => $penambahan['tglbast'],
+                            'nomorbast' => $penambahan['nomorbast'],
                         ]);
                     }
 
@@ -10034,11 +10038,12 @@ class LogistikController extends ApiController{
             ->leftJOIN('jenisproduk_m as jp','jp.id','=','ra.objectjenisproduk')
             ->leftJOIN('satuanstandar_m as ss','ss.id','=','ra.objectsatuan')
             ->leftJOIN('ruanganasset_m as ru','ru.id','=','ra.objectruanganposisicurrentfk')
-            ->select('ra.noregisteraset','pr.id','pr.namaproduk','ss.id as ssid','ss.satuanstandar','pr.kdproduk','ra.qtyprodukaset','ru.namaruangan')
+            ->select('pr.id','pr.namaproduk')
             ->where('ra.qtyprodukaset','>',0)
             ->where('ra.kdprofile', $idProfile)
 //            ->groupBy('pr.id','ss.id','ra.qtyprodukaset','ru.namaruangan','noregisteraset')
-            ->orderBy('pr.namaproduk');
+            ->orderBy('pr.namaproduk')
+            ->groupBy('pr.id', 'pr.namaproduk');
         if(isset($request['ruanganId']) && $request['ruanganId']!="" && $request['ruanganId']!="undefined"){
             $dataProduk = $dataProduk->where('ru.id','=', $request['ruanganId']);
         }
@@ -10075,7 +10080,7 @@ class LogistikController extends ApiController{
     public function getNoAsset(Request $request) {
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
-        $results = \DB::select(DB::raw("select ra.norec,ra.noregisteraset, pr.id as kdproduk, pr.namaproduk,ru.namaruangan as ruanganasal ,ru.id as ruanganasalfk,
+        $results = \DB::select(DB::raw("select ra.norec,ra.noregisteraset, ra.tahunperolehan, ra.koderegisterrs, ra.hargaperolehan, pr.id as kdproduk, pr.namaproduk,ru.namaruangan as ruanganasal ,ru.id as ruanganasalfk,
                                        ru1.id as ruangancurrentfk, ru1.namaruangan as ruangancurrent, ra.qtyprodukaset
                                        from registrasiaset_t as ra
                                        inner JOIN produk_m as pr on pr.id = ra.objectprodukfk
@@ -10090,7 +10095,7 @@ class LogistikController extends ApiController{
             )
         );
 
-        $data = DB::select(DB::raw("select ra.norec,ra.noregisteraset, pr.id as kdproduk, pr.namaproduk,ru.namaruangan as ruanganasal ,ru.id as ruanganasalfk,
+        $data = DB::select(DB::raw("select ra.norec,ra.noregisteraset, ra.tahunperolehan, ra.koderegisterrs, ra.hargaperolehan, pr.id as kdproduk, pr.namaproduk,ru.namaruangan as ruanganasal ,ru.id as ruanganasalfk,
                                        ru1.id as ruangancurrentfk, ru1.namaruangan as ruangancurrent, ra.qtyprodukaset
                                        from registrasiaset_t as ra
                                        inner JOIN produk_m as pr on pr.id = ra.objectprodukfk

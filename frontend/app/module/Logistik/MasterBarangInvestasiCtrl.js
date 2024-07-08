@@ -18,8 +18,14 @@ define(['initialize'], function (initialize) {
 			$scope.ListBahanProduk = []
 			$scope.ListJenisSertifikat = []
 
+			// default tanggal penambahan nilai asset
+			// $scope.item.tglpenambahan = moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+
 			loadDataCombo();
-			LoadCache();
+			setTimeout(
+				LoadCache(),
+				2500
+			)
 
 			// cari list
 			function cariDariList(id, list){
@@ -90,7 +96,7 @@ define(['initialize'], function (initialize) {
 					$scope.ListkondisiFisik = dataComboMaster.kondisiFisik;
 					$scope.ListKeterangan = dataComboMaster.keterangan;
 					$scope.ListRuanganAset = dataComboMaster.ruanganaset;
-					$scope.ListRuanganAsetAsal = dataComboMaster.ruanganasetasal;
+					$scope.ListRuanganAsetAsal = dataComboMaster.ruanganaset;
 
 
 					$scope.listDataKecamatan = dataComboAlamat.kecamatan
@@ -1546,6 +1552,14 @@ define(['initialize'], function (initialize) {
 						"title": "No",
 					},
 					{
+						"field": "tglbast",
+						"title": "Tanggal BAST",
+					},
+					{
+						"field": "nomorbast",
+						"title": "Nomor BAST",
+					},
+					{
 						"field": "tglpenambahan",
 						"title": "Tanggal Penambahan",
 					},
@@ -1561,6 +1575,16 @@ define(['initialize'], function (initialize) {
 			}
 
 			$scope.tambahItemPenambahan = function(){
+
+				if($scope.item.tglbast == null || $scope.item.tglbast == undefined){
+					toastr.error('Tanggal BAST perlu diisi')
+					return
+				}
+
+				if($scope.item.nomorbast == null || $scope.item.nomorbast == undefined){
+					toastr.error('Nomor BAST perlu diisi')
+					return
+				}
 
 				if($scope.item.tglpenambahan == null || $scope.item.tglpenambahan == undefined){
 					toastr.error('Tanggal penambahan nilai asset perlu diisi')
@@ -1587,6 +1611,8 @@ define(['initialize'], function (initialize) {
 					$scope.listItemPenambahan[index].tglpenambahan = $scope.item.tglpenambahan
 					$scope.listItemPenambahan[index].keteranganpenambahan = $scope.item.keteranganpenambahan
 					$scope.listItemPenambahan[index].hargapenambahan = $scope.item.hargapenambahan
+					$scope.listItemPenambahan[index].tglbast = $scope.item.tglbast
+					$scope.listItemPenambahan[index].nomorbast = $scope.item.nomorbast
 
 				}else{
 					// masukkan data ke array
@@ -1595,6 +1621,8 @@ define(['initialize'], function (initialize) {
 						tglpenambahan: moment($scope.item.tglpenambahan).format('YYYY-MM-DD HH:mm:ss'),
 						keteranganpenambahan: $scope.item.keteranganpenambahan,
 						hargapenambahan: $scope.item.hargapenambahan,
+						tglbast: $scope.item.tglbast,
+						nomorbast: $scope.item.nomorbast
 					})
 				}
 
@@ -1613,6 +1641,8 @@ define(['initialize'], function (initialize) {
 				$scope.item.tglpenambahan = null
 				$scope.item.keteranganpenambahan = null
 				$scope.item.hargapenambahan = null
+				$scope.item.tglbast = null
+				$scope.item.nomorbast = null
 			}
 
 			$scope.hapusItemGridPenambahan = function(selectedData){
@@ -1637,7 +1667,8 @@ define(['initialize'], function (initialize) {
 				$scope.item.tglpenambahan = moment(selectedData.tglpenambahan).format('YYYY-MM-DD HH:mm:ss')
 				$scope.item.keteranganpenambahan = selectedData.keteranganpenambahan
 				$scope.item.hargapenambahan = selectedData.hargapenambahan
-
+				$scope.item.tglbast = moment(selectedData.tglbast).format('YYYY-MM-DD HH:mm:ss')
+				$scope.item.nomorbast = selectedData.nomorbast
 			}
 
 			//////////////			`

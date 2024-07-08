@@ -78,7 +78,7 @@
 
 
 
-    <div class="grid_12" ng-show='showInputObat'>
+    <div class="grid_12">
         <div class="grid_12 headerBox">
             <p>Detail Barang</p>
         </div>
@@ -92,18 +92,48 @@
                     k-on-change='getAsset()' />
             </div>
         </div>
+
         <div class="grid_2">
             <div class="grid_12">
-                <label c-label item="item">No Asset</label>
+                <label c-label item="item">Tahun / Koderegister / Harga Perolehan</label>
             </div>
             <div class="grid_12">
-                <!-- <input c-text-box type="input" style="text-align: right" filter="" class="k-textbox"
-                    ng-model="item.NoAsset" /> -->
-                <input kendo-combo-box k-ng-model="item.NoAsset" k-data-text-field="'noregisteraset'"
-                    k-data-value-field="'norec'" k-filter="'contains'" k-auto-bind="false" k-data-source="listAsset"
-                    k-on-change='getQty()' />
+                <input kendo-combo-box k-ng-model="item.NoAsset" k-data-text-field="'gabung'"
+                    k-data-value-field="'norec'" k-filter="'contains'" k-auto-bind="false" k-data-source="listAsset" 
+                    k-on-change="getQty()"/>
             </div>
         </div>
+        
+        <!-- tahun perolehan -->
+        <!-- <div class="grid_1">
+            <div class="grid_12">
+                <label c-label item="item" c-label-text="Tahun Perolehan" />
+            </div>
+            <div class="grid_12">
+                <input c-text-box type="input" class="k-textbox" ng-model="item.tahunperolehan" ng-disabled="true" />
+            </div>
+        </div> -->
+
+        <!-- kode register -->
+        <!-- <div class="grid_1">
+            <div class="grid_12">
+                <label c-label item="item" c-label-text="Kode Register" />
+            </div>
+            <div class="grid_12">
+                <input c-text-box type="input" class="k-textbox" ng-model="item.koderegisterrs" ng-disabled="true" />
+            </div>
+        </div> -->
+
+        <!-- harga perolehan -->
+        <!-- <div class="grid_1">
+            <div class="grid_12">
+                <label c-label item="item" c-label-text="Harga Perolehan" />
+            </div>
+            <div class="grid_12">
+                <input c-text-box type="input" class="k-textbox" ng-model="item.hargaperolehan" ng-disabled="true" />
+            </div>
+        </div> -->
+
         <div class="grid_1">
             <div class="grid_12">
                 <label c-label item="item" c-label-text="Stok"></label>
