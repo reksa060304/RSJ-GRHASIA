@@ -246,7 +246,7 @@ class PindahPulangController extends ApiController
             if ($r_NewPD['nocmfk'] != 'undefined' && $r_NewPD['objectstatuspulangfk']== 9) {
                 $updatePS= Pasien::where('id', $r_NewPD['nocmfk'])
                     ->update([
-                            'tglmeninggald' => $r_NewPD['tglmeninggal'],
+                            'tglmeninggal' => $r_NewPD['tglmeninggal'],
                         ]
                     );
 

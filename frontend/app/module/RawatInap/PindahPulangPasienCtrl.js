@@ -276,7 +276,7 @@ define(['initialize'], function (initialize) {
 
             $scope.SavePulang = function () {
 
-                debugger;
+                // debugger;
 
                 var statusKeluarId = null;
                 if ($scope.item.statusKeluar != undefined) {
