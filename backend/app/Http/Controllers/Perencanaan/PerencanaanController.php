@@ -6314,6 +6314,87 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
         return $this->respond($result);
     }
 
+    public function getTotalSisaAnggaran(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        // setting anggaran
+        $setting = DB::table('settinganggaran_t')
+            ->where('statusenabled', true)
+            ->where('kdprofile', $idProfile)
+            ->first();
+        
+        $kegiatan = DB::table('kegiatananggaran_m')
+            ->where('statusenabled', true)
+            ->where('kdprofile', $idProfile)
+            ->where('id', $request['kegiatan'])
+            ->first();
+
+        // cari kegiatan yang kodenya sama
+        $cari = DB::table('kegiatananggaran_m')
+            ->where('statusenabled', true)
+            ->where('kdprofile', $idProfile)
+            ->where('tahun', $setting->tahunanggaran)
+            ->where('kode', $kegiatan->kode)
+            ->get();
+
+        $arrIdKegiatan = [];
+        foreach($cari as $item){
+            array_push($arrIdKegiatan, $item->id);
+        }
+        
+        $spj = collect(
+            DB::select(DB::raw("
+                SELECT 
+                    COALESCE(SUM(rd.subtotal),0) AS totalspj
+                FROM strukrealisasi_t AS sr
+                JOIN realisasidetail_t AS rd ON rd.strukrealisasifk = sr.norec AND rd.statusenabled = TRUE
+                JOIN keteranganbelanja_t AS kb ON kb.norec = rd.keteranganbelanjafk AND kb.statusenabled = TRUE
+                WHERE 
+                    sr.statusenabled = TRUE
+                    AND sr.kdprofile = ".$idProfile."
+                    AND sr.objectkegiatanfk IN (".implode(',', $arrIdKegiatan).")
+                    AND sr.objectmataanggaranfk = ".$request['mataanggaran']."
+                    AND sr.objectasalprodukfk = ".$request['sumberdana']."
+            "))
+        )->first();
+
+        $panjar = collect(
+            DB::select(DB::raw("
+                SELECT 
+                    COALESCE ( SUM ( pj.jumlah ), 0 ) - COALESCE ( SUM ( pengpj.jumlahpengembalian ), 0 ) - COALESCE ( SUM ( spjtopanjar.jumlahspj ), 0 ) AS panjar
+                FROM panjar_t AS pj
+                LEFT JOIN pengembalianpanjar_t AS pengpj ON pengpj.objectpanjarfk = pj.norec AND pengpj.statusenabled = TRUE
+                LEFT JOIN spjtopanjar_t AS spjtopanjar ON spjtopanjar.objectpanjarfk = pj.norec AND spjtopanjar.statusenabled = TRUE
+                WHERE pj.objectsubsubkegiatanfk IN (".implode(',', $arrIdKegiatan).")
+            "))
+        )->first();
+
+        $anggaran = collect(DB::select(DB::raw("
+            SELECT SUM
+                ( kb.subtotal ) AS totalanggaran
+            FROM
+                kegiatananggaran_m AS ka
+                JOIN keteranganbelanja_t AS kb ON kb.objectkegiatanfk = ka.ID AND kb.statusenabled = TRUE AND kb.kdprofile = ".$idProfile." 
+            WHERE
+                ka.statusenabled = TRUE 
+                AND ka.kdprofile = ".$idProfile." 
+                AND ka.kode = '".$kegiatan->kode."'
+                AND ka.tahun = '".$setting->tahunanggaran."'
+                AND kb.objectmataanggaranfk = ".$request['mataanggaran']."
+                AND kb.objectasalprodukfk = ".$request['sumberdana']."
+                AND kb.objecttahapfk = ".$setting->objecttahapaktivfk."
+             
+        ")))->first();
+
+        $total = $spj->totalspj + $panjar->panjar;
+        
+        $sisa = $anggaran->totalanggaran - $total;
+
+        return $this->respond($sisa);
+    }
+
 
     public function getTotalKeterangan(Request $request){
         $kdProfile = $this->getDataKdProfile($request);
@@ -8201,31 +8282,54 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
         $idProfile = (int) $kdProfile;
         $norec = $request['norec'];
 
-        $data = DB::select(DB::raw("select pp.objectbkufk,pep.objectbkufk,
-        pep.nopajak nopajakpep, pp.nopajak nopajakpp, pp.uraianpajak, sr.norealisasi,string_agg(DISTINCT rd.uraian, ',') uraian, sr.tglverif tglrealisasi, jp.jenispajak as kode, pp.pph as jumlah 
-        from strukrealisasi_t sr 
-        left join realisasidetail_t rd on rd.strukrealisasifk = sr.norec
-		inner join pemungutanpajak_t pp on pp.objectspjfk = sr.norec and pp.statusenabled = true and pp.kdprofile = 30 
-        inner join penyetoranpajak_t pep on left(pep.nopajak, 3) = left(pp.nopajak, 3) and pep.statusenabled = true and pep.kdprofile = 30
-        left join jenispajak_m jp on jp.id = pp.objectjenispphfk and jp.statusenabled = true and jp.kdprofile = 30
-        where sr.norec = '$norec'
-		and jp.namaexternal ilike '%pph%'
-        group by pp.objectbkufk,pep.objectbkufk,jp.jenispajak, pep.nopajak, pp.nopajak, pp.uraianpajak, sr.norealisasi, sr.tglverif, pp.pph
+        // $data = DB::select(DB::raw("select pp.objectbkufk,pep.objectbkufk,
+        // pep.nopajak nopajakpep, pp.nopajak nopajakpp, pp.uraianpajak, sr.norealisasi,string_agg(DISTINCT rd.uraian, ',') uraian, sr.tglverif tglrealisasi, jp.jenispajak as kode, pp.pph as jumlah 
+        // from strukrealisasi_t sr 
+        // left join realisasidetail_t rd on rd.strukrealisasifk = sr.norec
+		// inner join pemungutanpajak_t pp on pp.objectspjfk = sr.norec and pp.statusenabled = true and pp.kdprofile = 30 
+        // inner join penyetoranpajak_t pep on left(pep.nopajak, 3) = left(pp.nopajak, 3) and pep.statusenabled = true and pep.kdprofile = 30
+        // left join jenispajak_m jp on jp.id = pp.objectjenispphfk and jp.statusenabled = true and jp.kdprofile = 30
+        // where sr.norec = '$norec'
+		// and jp.namaexternal ilike '%pph%'
+        // group by pp.objectbkufk,pep.objectbkufk,jp.jenispajak, pep.nopajak, pp.nopajak, pp.uraianpajak, sr.norealisasi, sr.tglverif, pp.pph
 
-        union all
+        // union all
 
-        select pp.objectbkufk,pep.objectbkufk,
-        pep.nopajak nopajakpep, pp.nopajak nopajakpp, pp.uraianpajak, sr.norealisasi,string_agg(DISTINCT rd.uraian, ',') uraian, sr.tglverif tglrealisasi, jp.jenispajak as kode, pp.ppn as jumlah 
-        from strukrealisasi_t sr 
-        left join realisasidetail_t rd on rd.strukrealisasifk = sr.norec
-		inner join pemungutanpajak_t pp on pp.objectspjfk = sr.norec and pp.statusenabled = true and pp.kdprofile = 30
-        inner join penyetoranpajak_t pep on left(pep.nopajak, 3) = left(pp.nopajak, 3) and pep.statusenabled = true and pep.kdprofile = 30
-        left join jenispajak_m jp on jp.id = pp.objectjenispphfk and jp.statusenabled = true and jp.kdprofile = 30
-        where sr.norec = '$norec'
-		and jp.namaexternal ilike '%ppn%'
-        group by pp.objectbkufk,pep.objectbkufk,jp.jenispajak, pep.nopajak, pp.nopajak, pp.uraianpajak, sr.norealisasi, sr.tglverif, pp.ppn
-            ")
-        );
+        // select pp.objectbkufk,pep.objectbkufk,
+        // pep.nopajak nopajakpep, pp.nopajak nopajakpp, pp.uraianpajak, sr.norealisasi,string_agg(DISTINCT rd.uraian, ',') uraian, sr.tglverif tglrealisasi, jp.jenispajak as kode, pp.ppn as jumlah 
+        // from strukrealisasi_t sr 
+        // left join realisasidetail_t rd on rd.strukrealisasifk = sr.norec
+		// inner join pemungutanpajak_t pp on pp.objectspjfk = sr.norec and pp.statusenabled = true and pp.kdprofile = 30
+        // inner join penyetoranpajak_t pep on left(pep.nopajak, 3) = left(pp.nopajak, 3) and pep.statusenabled = true and pep.kdprofile = 30
+        // left join jenispajak_m jp on jp.id = pp.objectjenispphfk and jp.statusenabled = true and jp.kdprofile = 30
+        // where sr.norec = '$norec'
+		// and jp.namaexternal ilike '%ppn%'
+        // group by pp.objectbkufk,pep.objectbkufk,jp.jenispajak, pep.nopajak, pp.nopajak, pp.uraianpajak, sr.norealisasi, sr.tglverif, pp.ppn
+        //     ")
+        // );
+
+        $data = DB::select(DB::raw("
+            select pp.objectbkufk,pep.objectbkufk,
+                pep.nopajak nopajakpep, pp.nopajak nopajakpp, pp.uraianpajak, sr.norealisasi,string_agg(DISTINCT rd.uraian, ',') uraian, sr.tglverif tglrealisasi, jp.jenispajak as kode, pp.ppn as jumlah 
+            from strukrealisasi_t sr 
+            left join realisasidetail_t rd on rd.strukrealisasifk = sr.norec
+            left join pemungutanpajak_t pp on pp.objectspjfk = sr.norec and pp.statusenabled = true and pp.kdprofile = 30
+            left join penyetoranpajak_t pep on pep.objectspjfk = sr.norec and pep.statusenabled = true and pep.kdprofile = 30
+            left join jenispajak_m jp on jp.id = pp.objectjenispphfk and jp.statusenabled = true and jp.kdprofile = 30
+            where sr.norec = '$norec'
+                and jp.namaexternal ilike '%pph%'
+            group by pp.objectbkufk,pep.objectbkufk,jp.jenispajak, pep.nopajak, pp.nopajak, pp.uraianpajak, sr.norealisasi, sr.tglverif, pp.ppn
+            union all
+            select pp.objectbkufk,pep.objectbkufk,pep.nopajak nopajakpep, pp.nopajak nopajakpp, pp.uraianpajak, sr.norealisasi,string_agg(DISTINCT rd.uraian, ',') uraian, sr.tglverif tglrealisasi, jp.jenispajak as kode, pp.ppn as jumlah 
+            from strukrealisasi_t sr 
+            left join realisasidetail_t rd on rd.strukrealisasifk = sr.norec
+            left join pemungutanpajak_t pp on pp.objectspjfk = sr.norec and pp.statusenabled = true and pp.kdprofile = 30
+            left join penyetoranpajak_t pep on pep.objectspjfk = sr.norec and pep.statusenabled = true and pep.kdprofile = 30
+            left join jenispajak_m jp on jp.id = pp.objectjenispphfk and jp.statusenabled = true and jp.kdprofile = 30
+            where sr.norec = '$norec'
+                and jp.namaexternal ilike '%ppn%'
+            group by pp.objectbkufk,pep.objectbkufk,jp.jenispajak, pep.nopajak, pp.nopajak, pp.uraianpajak, sr.norealisasi, sr.tglverif, pp.ppn
+        "));
 
         $result = array(
             'data' => $data,

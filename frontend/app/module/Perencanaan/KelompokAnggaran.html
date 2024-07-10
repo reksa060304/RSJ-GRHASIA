@@ -2136,7 +2136,7 @@
 					<input kendo-combo-box k-ng-model="item.mataAnggaranSPJ"
 						k-data-text-field="'text'" k-data-value-field="'kodemataanggaran'"
 						k-filter="'contains'" k-auto-bind="false"
-						k-data-source="listMataAnggaranSPJ" k-on-change='changeCboPilihNoRekening()'  />
+						k-data-source="listMataAnggaranSPJ" />
 				</div>
 			</div>
 			<div class="grid_12">
@@ -2147,7 +2147,7 @@
 					<input kendo-combo-box k-ng-model="item.sumberDanaSPJ"
 						k-data-text-field="'asalproduk'" k-data-value-field="'id'"
 						k-filter="'contains'" k-auto-bind="false"
-						k-data-source="listAsalProduk"  />
+						k-data-source="listAsalProduk" k-on-change="handleSumberDana()" />
 				</div>
 				<div class="grid_3" style="text-align: left;">
 					SISA ANGGARAN
