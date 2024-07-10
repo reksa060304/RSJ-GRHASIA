@@ -47,6 +47,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
     Route::get('report/cetak-label-pilihan-pengemasan', 'Report\ReportController@cetakLabelPilihanPengemasan');
 
 		// RBA
+		Route::get('perencanaan/get-total-sisa-anggaran', 'Perencanaan\PerencanaanController@getTotalSisaAnggaran');
         Route::get('rba/get-data-rba', 'Perencanaan\RBAController@getRBA');
         Route::get('rba/get-combo-rba', 'Perencanaan\RBAController@getComboRBA');
 		Route::get('rba/getSubSubRBA', 'Perencanaan\RBAController@getSubSubRBA');
