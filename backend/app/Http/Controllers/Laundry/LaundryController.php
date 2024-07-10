@@ -356,7 +356,8 @@ class LaundryController extends ApiController
         }
 
         $data = $data->where('sp.statusenabled',true);
-        $data = $data->where('sp.objectkelompoktransaksifk',$request['kelompokTransaksi']);
+        //untuk menampilkan semua data dihijaukan
+        //$data = $data->where('sp.objectkelompoktransaksifk',$request['kelompokTransaksi']);
 //        $data = $data->wherein('sp.objectruanganasalfk',$strRuangan);
         $data = $data->orderBy('sp.nokirim');
         $data = $data->get();
@@ -365,11 +366,11 @@ class LaundryController extends ApiController
         foreach ($data as $item){
             $details = DB::select(DB::raw("
                      select  pr.id as kdproduk,pr.kdproduk as kdsirs,pr.namaproduk,
-                    ss.satuanstandar,spd.qtyproduk,spd.qtyprodukretur,spd.objectprodukfk
+                    ss.satuanstandar,spd.qtyorder as qtyproduk,spd.qtyprodukretur,spd.objectprodukfk
                      from kirimproduk_t as spd 
                     left JOIN produk_m as pr on pr.id=spd.objectprodukfk
                     left JOIN satuanstandar_m as ss on ss.id=spd.objectsatuanstandarfk
-                    where spd.kdprofile = $idProfile and nokirimfk=:norec and spd.qtyproduk > 0"),
+                    where spd.kdprofile = $idProfile and nokirimfk=:norec and spd.qtyorder > 0"),
                 array(
                     'norec' => $item->norec,
                 )
@@ -2103,11 +2104,11 @@ class LaundryController extends ApiController
         foreach ($data as $item){
             $details = DB::select(DB::raw("
                      select  pr.id as kdproduk,pr.kdproduk as kdsirs,pr.namaproduk,
-                    ss.satuanstandar,spd.qtyproduk,spd.qtyprodukretur,spd.objectprodukfk
+                    ss.satuanstandar,spd.qtyorder as qtyproduk,spd.qtyprodukretur,spd.objectprodukfk
                      from kirimproduk_t as spd 
                     left JOIN produk_m as pr on pr.id=spd.objectprodukfk
                     left JOIN satuanstandar_m as ss on ss.id=spd.objectsatuanstandarfk
-                    where spd.kdprofile = $idProfile and nokirimfk=:norec and spd.qtyproduk > 0"),
+                    where spd.kdprofile = $idProfile and nokirimfk=:norec and spd.qtyorder > 0"),
                 array(
                     'norec' => $item->norec,
                 )
@@ -3092,7 +3093,7 @@ class LaundryController extends ApiController
         }
 
         $data = $data->where('sp.statusenabled',true);
-        $data = $data->where('sp.objectkelompoktransaksifk',$request['kelompokTransaksi']);
+        //$data = $data->where('sp.objectkelompoktransaksifk',$request['kelompokTransaksi']);
         $data = $data->orderBy('sp.nokirim');
         $data = $data->get();
 

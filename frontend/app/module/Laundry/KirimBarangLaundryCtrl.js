@@ -29,6 +29,13 @@ define(['initialize'], function (initialize) {
             // $scope.item.tglAkhir = $scope.now;           
             LoadCache();
 
+            $scope.listKeterangan = [
+                { id: 1, nama: 'Linen Pasien Infeksius' },
+                { id: 2, nama: 'Linen Pasien Non Infeksius' },
+                { id: 3, nama: 'Linen Petugas Infeksius' },
+                { id: 4, nama: 'Linen Petugas Non Infeksius' },
+            ]
+
             // init();
             function LoadCache() {
                 ComboLoad();
@@ -83,7 +90,7 @@ define(['initialize'], function (initialize) {
                         medifirstService.get("laundry/get-detail-kirim-laundry-ruangan?norec=" + noreckirim, true).then(function (data_ih) {
                             $scope.isRouteLoading = false;
                             $scope.item.noKirim = data_ih.data.head.nokirim
-                            $scope.item.tglAwal =new Date( data_ih.data.head.tglkirim)
+                            $scope.item.tglAwal = new Date(data_ih.data.head.tglkirim)
                             $scope.item.ruangan = { id: data_ih.data.head.id, namaruangan: data_ih.data.head.namaruangan }
                             $scope.item.ruanganTujuan = { id: data_ih.data.head.ruid2, namaruangan: data_ih.data.head.namaruangan2 }
                             $scope.item.Keterangan = data_ih.data.head.keterangan;
@@ -239,8 +246,8 @@ define(['initialize'], function (initialize) {
                     // }
                     // if ($scope.item.stok == 0) {
                     //     $scope.item.jumlah = 0
-                        // toastr.error('Stok kosong')
-                        // return;
+                    // toastr.error('Stok kosong')
+                    // return;
                     // }
 
                     $scope.item.hargaSatuan = 0
@@ -394,7 +401,7 @@ define(['initialize'], function (initialize) {
             }
 
             $scope.klikGrid = function (dataSelected) {
-                if(dataSelected == undefined)return
+                if (dataSelected == undefined) return
                 var dataProduk = [];
                 $scope.item.no = dataSelected.no
                 for (var i = $scope.listProduk.length - 1; i >= 0; i--) {
@@ -473,7 +480,7 @@ define(['initialize'], function (initialize) {
             $scope.SaveKirim = function () {
                 $scope.saveShow = false
                 var Keterangan = 'Penerimaan Linen'
-                if ($scope.item.Keterangan != undefined ) {
+                if ($scope.item.Keterangan != undefined) {
                     Keterangan = $scope.item.Keterangan
                 }
 
@@ -581,7 +588,7 @@ define(['initialize'], function (initialize) {
                     toastr.error("Pilih Produk terlebih dahulu!!")
                     return
                 }
-            
+
                 $scope.SaveKirim();
                 // medifirstService.post('logistik/cek-kirim-barang-ruangan', objSave).then(function (dat) {
                 //     var datax = dat.data.data;
@@ -625,14 +632,14 @@ define(['initialize'], function (initialize) {
                 //             .cancel('Tidak')
                 //             .ok('Ya')
                 //         $mdDialog.show(confirm).then(function () {
-                            // $scope.SaveKirim();
-                    //     })
+                // $scope.SaveKirim();
+                //     })
 
-                    // } else {
-                    //     toastr.error("Stok Tidak Ada, Tidak Bisa Dikirim!!!")
-                    //     $scope.winDialog.close();
-                    //     return;
-                    // }
+                // } else {
+                //     toastr.error("Stok Tidak Ada, Tidak Bisa Dikirim!!!")
+                //     $scope.winDialog.close();
+                //     return;
+                // }
 
                 // });
 
