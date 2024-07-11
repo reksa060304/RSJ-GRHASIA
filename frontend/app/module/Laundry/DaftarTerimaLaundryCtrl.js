@@ -671,7 +671,7 @@ define(['initialize'], function (initialize) {
                             "width": "30px",
                         },
                         {
-                            "field": "qtyproduk",
+                            "field": "qtyorder",
                             "title": "Qty",
                             "width": "30px",
                         },

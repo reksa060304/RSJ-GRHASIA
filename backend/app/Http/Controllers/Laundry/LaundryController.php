@@ -366,7 +366,7 @@ class LaundryController extends ApiController
         foreach ($data as $item){
             $details = DB::select(DB::raw("
                      select  pr.id as kdproduk,pr.kdproduk as kdsirs,pr.namaproduk,
-                    ss.satuanstandar,spd.qtyorder as qtyproduk,spd.qtyprodukretur,spd.objectprodukfk
+                    ss.satuanstandar,spd.qtyorder, spd.qtyproduk, spd.qtyprodukretur,spd.objectprodukfk
                      from kirimproduk_t as spd 
                     left JOIN produk_m as pr on pr.id=spd.objectprodukfk
                     left JOIN satuanstandar_m as ss on ss.id=spd.objectsatuanstandarfk
