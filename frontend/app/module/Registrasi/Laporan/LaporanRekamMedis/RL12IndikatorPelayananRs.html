@@ -23,14 +23,15 @@
     </div>
     <div class="grid_12">
         <div class="grid_3">
-            <label c-label item="item" c-label-text="Tanggal awal"></label>
-            <input style="width: 100%" k-ng-model="item.tglawal" kendo-datetimepicker placeholer="yyyy-mm-dd"
-                k-format="'yyyy-MM-dd HH:mm'" />
+            <label c-label item="item" c-label-text="Bulan"></label>
+            <input style="width: 100%" k-options="monthUngkul" k-ng-model="item.bulan" kendo-date-picker
+                        placeholer="MMMM" k-format="'MMMM'" />
         </div>
+
         <div class="grid_3">
-            <label c-label item="item" c-label-text="Tanggal Akhir"></label>
-            <input style="width: 100%" k-ng-model="item.tglakhir" kendo-datetimepicker placeholer="yyyy-mm-dd"
-                k-format="'yyyy-MM-dd HH:mm'" />
+            <label c-label item="item" c-label-text="Tahun"></label>
+            <input style="width: 100%" k-options="yearUngkul" k-ng-model="item.tahun" kendo-date-picker
+                        placeholer="YYYY" k-format="'yyyy'" />
         </div>
         <div class="grid_1">
             <div class="grid_12">

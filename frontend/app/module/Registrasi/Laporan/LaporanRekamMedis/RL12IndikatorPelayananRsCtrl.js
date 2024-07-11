@@ -8,8 +8,18 @@ define(['initialize'], function (initialize) {
             $scope.dataSelected = {};
             $scope.item = {};
             $scope.isRouteLoading = false;
-            $scope.item.tglawal = $scope.now;
-            $scope.item.tglakhir = $scope.now;
+            // $scope.item.tglawal = $scope.now;
+            // $scope.item.tglakhir = $scope.now;
+            $scope.yearUngkul = {
+                start: "decade",
+                depth: "decade"
+            }
+    
+            $scope.monthUngkul = {
+                start: "year",
+                depth: "year"
+                
+            }
 
             $scope.CariData = function () {
                 LoadData()
@@ -20,16 +30,14 @@ define(['initialize'], function (initialize) {
                 var tglAwal = moment($scope.item.tglawal).format('YYYY-MM-DD HH:mm');
                 var tglAkhir = moment($scope.item.tglakhir).format('YYYY-MM-DD HH:mm');;
 
-               medifirstService.get("registrasi/laporan/get-laporan-rl12?" +
-                    "tglAwal=" + tglAwal +
-                    "&tglAkhir=" + tglAkhir
+               medifirstService.get('registrasi/laporan/get-laporan-rl12?bulan='+ moment($scope.item.bulan).format('MM')+ "&tahun="+ moment($scope.item.tahun).format('YYYY')
                 ).then(function (data) {
                     var data = data.data
-                    for(var i = 0; i < data.data.length; i++){
-                        data.data[i].koders = '3404022';
-                        data.data[i].kdprov = '24';
-                        data.data[i].kabkota = 'Kab. Sleman';
-                    }
+                    // for(var i = 0; i < data.data.length; i++){
+                    //     data.data[i].koders = '3404022';
+                    //     data.data[i].kdprov = '24';
+                    //     data.data[i].kabkota = 'Kab. Sleman';
+                    // }
                     $scope.isRouteLoading = false;
                     $scope.sourceLaporan = new kendo.data.DataSource({
                         data: data.data,
@@ -115,7 +123,7 @@ define(['initialize'], function (initialize) {
                 
                 columns: [
                     {
-                        field: "koders",
+                        field: "kdrs",
                         title: "Kode RS",
                         width: "80px",
                         headerAttributes: {
@@ -200,14 +208,6 @@ define(['initialize'], function (initialize) {
                         field: "gdr",
                         title: "GDR",
                         width: "80px",
-                        headerAttributes: {
-                            style: "text-align : center"
-                        },
-                    },
-                    {
-                        field: "hasil",
-                        title: "Rata-rata Kunjungan/Hari",
-                        width: "120px",
                         headerAttributes: {
                             style: "text-align : center"
                         },
