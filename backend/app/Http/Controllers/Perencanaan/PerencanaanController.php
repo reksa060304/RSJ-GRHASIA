@@ -6344,26 +6344,32 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
             array_push($arrIdKegiatan, $item->id);
         }
         
+        $sumberdanaspj = '';
+        $sumberdanaanggaran = '';
+        if(isset($request['sumberdana']) && $request['sumberdana'] !== '' && $request['sumberdana'] !== 'undefined'){
+            $sumberdanaspj = "and sr.objectasalprodukfk = ".$request['sumberdana'];
+            $sumberdanaanggaran = "and kb.objectasalprodukfk = ".$request['sumberdana'];
+        }
+
         $spj = collect(
             DB::select(DB::raw("
                 SELECT 
                     COALESCE(SUM(rd.subtotal),0) AS totalspj
                 FROM strukrealisasi_t AS sr
                 JOIN realisasidetail_t AS rd ON rd.strukrealisasifk = sr.norec AND rd.statusenabled = TRUE
-                JOIN keteranganbelanja_t AS kb ON kb.norec = rd.keteranganbelanjafk AND kb.statusenabled = TRUE
                 WHERE 
                     sr.statusenabled = TRUE
                     AND sr.kdprofile = ".$idProfile."
                     AND sr.objectkegiatanfk IN (".implode(',', $arrIdKegiatan).")
                     AND sr.objectmataanggaranfk = ".$request['mataanggaran']."
-                    AND sr.objectasalprodukfk = ".$request['sumberdana']."
+                    $sumberdanaspj
             "))
         )->first();
 
         $panjar = collect(
             DB::select(DB::raw("
                 SELECT 
-                    COALESCE ( SUM ( pj.jumlah ), 0 ) - COALESCE ( SUM ( pengpj.jumlahpengembalian ), 0 ) - COALESCE ( SUM ( spjtopanjar.jumlahspj ), 0 ) AS panjar
+                    COALESCE ( SUM ( pj.jumlah ), 0 ) - COALESCE ( SUM ( pengpj.jumlahpengembalian ), 0 ) - COALESCE ( SUM ( spjtopanjar.jumlahspj ), 0 ) AS totalpanjar
                 FROM panjar_t AS pj
                 LEFT JOIN pengembalianpanjar_t AS pengpj ON pengpj.objectpanjarfk = pj.norec AND pengpj.statusenabled = TRUE
                 LEFT JOIN spjtopanjar_t AS spjtopanjar ON spjtopanjar.objectpanjarfk = pj.norec AND spjtopanjar.statusenabled = TRUE
@@ -6383,13 +6389,13 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
                 AND ka.kdprofile = ".$idProfile." 
                 AND ka.kode = '".$kegiatan->kode."'
                 AND ka.tahun = '".$setting->tahunanggaran."'
-                AND kb.objectmataanggaranfk = ".$request['mataanggaran']."
-                AND kb.objectasalprodukfk = ".$request['sumberdana']."
                 AND kb.objecttahapfk = ".$setting->objecttahapaktivfk."
+                AND kb.objectmataanggaranfk = ".$request['mataanggaran']."
+                $sumberdanaanggaran
              
         ")))->first();
 
-        $total = $spj->totalspj + $panjar->panjar;
+        $total = $spj->totalspj + $panjar->totalpanjar;
         
         $sisa = $anggaran->totalanggaran - $total;
 

@@ -509,22 +509,35 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
             $scope.$watch('item.darirekeningpanjar', function (newValue, oldValue) {
                 if (newValue != oldValue) {
-                    medifirstService.get("perencanaan/get-data-combo?tahun="+moment($scope.now).format('YYYY')).then(function (e) {
-                        medifirstService.get("perencanaan/get-total-keterangan?tahap=" +e.data.setting[0].objecttahapaktivfk + "&subsubkegiatan=" + $scope.item.subsubkegiatanpanjar.id + "&rekening=" + $scope.item.darirekeningpanjar.kodemataanggaran).then(function (e) {
-                            $scope.totalketerangan = e.data.data[0].totalketerangan
-                            $scope.totalrealisasidetail = e.data.detail[0].totalrealisasidetail
-                            if(e.data.panjar.length > 0){
-                                $scope.panjar = e.data.panjar[0].jumlah
-                                $scope.pengembalian = e.data.panjar[0].jumlahpengembalian
-                                $scope.item.sisaAnggaranPanjar = parseInt($scope.totalketerangan) - parseInt($scope.totalrealisasidetail)
-                            }else if(e.data.panjar.length == 0){
-                                $scope.item.sisaAnggaranPanjar = parseInt($scope.totalketerangan) - parseInt($scope.totalrealisasidetail)
-                            }
+                    // medifirstService.get("perencanaan/get-data-combo?tahun="+moment($scope.now).format('YYYY')).then(function (e) {
+                    //     medifirstService.get("perencanaan/get-total-keterangan?tahap=" +e.data.setting[0].objecttahapaktivfk + "&subsubkegiatan=" + $scope.item.subsubkegiatanpanjar.id + "&rekening=" + $scope.item.darirekeningpanjar.kodemataanggaran).then(function (e) {
+                    //         $scope.totalketerangan = e.data.data[0].totalketerangan
+                    //         $scope.totalrealisasidetail = e.data.detail[0].totalrealisasidetail
+                    //         if(e.data.panjar.length > 0){
+                    //             $scope.panjar = e.data.panjar[0].jumlah
+                    //             $scope.pengembalian = e.data.panjar[0].jumlahpengembalian
+                    //             $scope.item.sisaAnggaranPanjar = parseInt($scope.totalketerangan) - parseInt($scope.totalrealisasidetail)
+                    //         }else if(e.data.panjar.length == 0){
+                    //             $scope.item.sisaAnggaranPanjar = parseInt($scope.totalketerangan) - parseInt($scope.totalrealisasidetail)
+                    //         }
                             
-                            //console.log($scope.item.sisaAnggaranspj)
-                        })
-                    })
+                    //         //console.log($scope.item.sisaAnggaranspj)
+                    //     })
+                    // })
 
+                    if($scope.item.subsubkegiatanpanjar == undefined || $scope.item.subsubkegiatanpanjar == null){
+                        toastr.error('Pilih sub sub kegiatan terlebih dahulu')
+                        return
+                    }
+
+                    medifirstService.get("perencanaan/get-total-sisa-anggaran" 
+                        + "?kegiatan=" + $scope.item.subsubkegiatanpanjar.id
+                        + "&mataanggaran=" + $scope.item.darirekeningpanjar.id)
+                        .then(function (e) {
+                            
+                            $scope.item.sisaAnggaranPanjar = e.data
+
+                        })
                     
                 }
             });
@@ -870,7 +883,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
 				})
                 
-                console.log(dataItem)
+                // console.log(dataItem)
                 $scope.norecrcntotalanggaran = dataItem.norec 
                 $scope.datakegiatanbro = dataItem
                 medifirstService.get("perencanaan/get-total-anggaran-rcn?kegiatan=" + $scope.norecrcntotalanggaran).then(function (e) {
