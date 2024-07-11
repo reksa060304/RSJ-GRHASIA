@@ -4918,7 +4918,8 @@ class LogistikController extends ApiController{
             $qtyJumlahSisa = 0;
             
                 foreach ($req['details'] as $item) {
-                    if(($request['struk']['nostruk'] != '' && $item['jumlah'] != 0 && $item['sisa'] != 0) || ($request['struk']['nostruk'] == '' && $item['jumlah'] != 0 && $item['sisa'] != 0) || ($request['struk']['nostruk'] != '' && $item['jumlah'] == 0 && $item['sisa'] == 0)){
+                    // return $req['details'];
+                    if(($request['struk']['nostruk'] != '' && $item['jumlah'] != 0 && $item['sisa'] != 0) || ($request['struk']['nostruk'] == '' && $item['jumlah'] != 0 && $item['sisa'] != 0) || ($request['struk']['nostruk'] != '')){
                         $qtyJumlah=0;
                         $qtyJumlah = (float)$item['jumlah'] * (float)$item['nilaikonversi'];
                         $qtyJumlahSisa = (float)$item['sisa'] * (float)$item['nilaikonversi'];
