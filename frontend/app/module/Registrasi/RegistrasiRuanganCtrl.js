@@ -176,7 +176,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     }
                     $scope.item.dokter = { id: arrOnline.objectpegawaifk, namalengkap: arrOnline.dokter }
                     isRegisOnline = arrOnline.noreservasi
-                    isMobileJKN = true
+                    isMobileJKN = arrOnline.ismobilejkn
 
 
                 }
