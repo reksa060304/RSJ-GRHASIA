@@ -21656,6 +21656,7 @@ public function suratBuktiPengembalian(Request $request)
                 SELECT
                     x.namaproduk,
                     x.merkproduk,
+                    x.namaruanganasal,
                     x.noseri,
                     x.norangka,
                     x.nomesin,
@@ -21737,6 +21738,7 @@ public function suratBuktiPengembalian(Request $request)
                     x.nopolisi,
                     x.dayalistrik,
                     x.namabahanproduk,
+                    x.namaruanganasal,
                     tahun,
                     x.kdbmn,
                     x.hargaperolehan

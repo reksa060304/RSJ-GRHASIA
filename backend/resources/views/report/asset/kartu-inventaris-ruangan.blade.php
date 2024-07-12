@@ -72,7 +72,7 @@
             <tr>
                 <td>RUANGAN</td>
                 <td>:</td>
-                <td>RUANG LAB KOMPUTER PDTI</td>
+                <td>{{ $data[0]->namaruanganasal }}</td>
             </tr>
             <tr>
                 <td>KLASIFIKASI</td>
