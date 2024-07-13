@@ -525,6 +525,7 @@ define(['initialize'], function (initialize) {
                     $scope.saveShow = true;
                     window.history.back();
                     // $scope.popUp.center().open();
+                    $state.go("DaftarTerimaLaundry")
                 }, function (error) {
                     $scope.saveShow = true;
                 });
@@ -589,6 +590,11 @@ define(['initialize'], function (initialize) {
                 }
                 if ($scope.item.ruanganTujuan == undefined) {
                     toastr.error("Pilih Ruanganan Tujuan!!")
+                    return
+                }
+
+                if ($scope.item.Keterangan == undefined) {
+                    toastr.error("Pilih dan isi Jenis Linen Dulu!!")
                     return
                 }
 

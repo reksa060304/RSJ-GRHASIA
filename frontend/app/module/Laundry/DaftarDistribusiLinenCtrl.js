@@ -60,7 +60,7 @@ define(['initialize'], function (initialize) {
                 }
                 var tglAwal = moment($scope.item.tglAwal).format('YYYY-MM-DD HH:mm:ss');
                 var tglAkhir = moment($scope.item.tglAkhir).format('YYYY-MM-DD HH:mm:ss');
-                medifirstService.get("laundry/get-daftar-kirim-laundry?" +
+                medifirstService.get("laundry/get-daftar-distribusi-laundry?" +
                     "tglAwal=" + tglAwal +
                     "&tglAkhir=" + tglAkhir +
                     "&kelompokTransaksi=" + 120 +

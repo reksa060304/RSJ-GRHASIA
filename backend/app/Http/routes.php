@@ -1477,6 +1477,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             //Route::get('get-combo-logistik','Laundry\LaundryController@getComboLaundry');
             Route::get('laundry/get-combo-laundry','Laundry\LaundryController@getComboLaundry');
             Route::get('laundry/get-daftar-kirim-laundry','Laundry\LaundryController@getDaftarKirimLaundry');
+            Route::get('laundry/get-daftar-distribusi-laundry','Laundry\LaundryController@getDaftarDistribusiLaundry');
             Route::get('laundry/get-detail-kirim-laundry-ruangan', 'Laundry\LaundryController@getDetailKirimLaundry');
             Route::get('laundry/get-daftar-order-laundry-ruangan', 'Laundry\LaundryController@getDaftarOrderLaundry');
             Route::get('laundry/get-detail-order-laundry-ruangan', 'Laundry\LaundryController@getDetailOrderLaundry');
