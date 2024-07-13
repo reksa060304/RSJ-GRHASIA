@@ -21654,60 +21654,53 @@ public function suratBuktiPengembalian(Request $request)
         $data = DB::select(
             DB::raw("
                 SELECT
+                    x.namaruangansekarang,
+
                     x.namaproduk,
                     x.merkproduk,
-                    x.namaruanganasal,
                     x.noseri,
                     x.norangka,
                     x.nomesin,
                     x.nobpkb,
                     x.nopolisi,
-                    x.dayalistrik,
                     x.namabahanproduk,
                     to_char(x.tglproduksi, 'YYYY') AS tahun,
                     x.kdbmn,
-                    COUNT ( x.noregisteraset ) || '/' ||
-                    array_to_string( ARRAY_AGG ( x.koderegisterrs ), ' - ' ) AS registerasset,
-                    x.hargaperolehan
+                    COUNT(x.idprodukfk) as jumlah,
+                    array_to_string(ARRAY_AGG( x.koderegisterrs ), '-' ) AS registerasset,
+                    x.hargaperolehan,
+                    x.keteranganlainnya,
+                    x.kondisibarangfk,
+                    x.spesifikasi
                 FROM
                     (
                         SELECT
-                            ra.norec,
                             ra.noregisteraset,
-                            ra.objectprodukfk AS kdproduk,
-                            ra.nilaisisa,
-                            ra.tglregisteraset,
-                            ra.tglstrukterima,
-                            ra.qtyprodukaset,
-                            ra.hargaperolehan,
-                            ra.tglregisteraset,
-                            ra.tglstrukterima,
-                            ra.keteranganlainnya,
-                            ra.spesifikasi,
-                            ra.jenisaset,
-                            ra.judul,
-                            ra.kdbmn,
-                            ra.koderegisterrs,
-                            ra.tahunperolehan,
+                            ru.namaruangan as namaruangansekarang,
+                            ra.idprodukfk,
+
+                            pr.namaproduk,
+                            mrk.merkproduk,
                             ra.noseri,
                             ra.norangka,
                             ra.nomesin,
                             ra.nobpkb,
                             ra.nopolisi,
-                            ra.dayalistrik,
+                            coalesce(ra.spesifikasi,'-') as spesifikasi,
+                            bp.namabahanproduk,
                             ra.tglproduksi,
-                            pr.namaproduk,
-                            jp.jenisproduk,
-                            ru1.id AS ruanganasalfk,
-                            ru1.namaruangan AS namaruanganasal,
-                            rek.namarekanan AS namasupplier,
-                            rek.alamatlengkap AS almSupplier,
-                            sp.norec AS norecsp,
-                            spd.norec AS norecspd,
-                            ap.asalproduk,
-                            pr.deskripsiproduk,
-                            mrk.merkproduk,
-                            bp.namabahanproduk
+                            ra.kdbmn,
+                            ra.koderegisterrs,
+                            ra.hargaperolehan,
+                            ra.kondisibarangfk,
+                            ra.keteranganlainnya,
+                            coalesce(ra.keteranganlainnya,'-'),
+                            cha1.kodeakun as kode1,
+                            cha2.kodeakun as kode2,
+                            cha3.kodeakun as kode3,
+                            cha4.kodeakun as kode4,
+                            cha5.kodeakun as kode5,
+                            cha6.kodeakun as kode6
                         FROM
                             registrasiaset_t AS ra
                             LEFT JOIN strukpelayanan_t AS sp ON sp.norec = ra.nostrukterimafk
@@ -21719,16 +21712,33 @@ public function suratBuktiPengembalian(Request $request)
                             LEFT JOIN kelompokproduk_m AS kp ON kp.id = jp.objectkelompokprodukfk
                             LEFT JOIN satuanstandar_m AS ss ON ss.id = pr.objectsatuanstandarfk
                             LEFT JOIN asalproduk_m AS ap ON ap.id = ra.objectasalprodukfk
-                            LEFT JOIN ruanganasset_m AS ru1 ON ru1.id = ra.objectruanganposisicurrentfk
+                            LEFT JOIN ruanganasset_m AS ru ON ru.id = ra.objectruanganposisicurrentfk
                             LEFT JOIN rekanan_m AS rek ON rek.id = ra.objectsupplier
                             LEFT JOIN bahanproduk_m AS bp ON bp.id = ra.objectbahanprodukfk
+                            LEFT JOIN kondisibarang_m AS kb ON kb.id = ra.kondisibarangfk
+                            INNER JOIN charkodeakunasset_m AS cha6 ON cha6.id = pr.objectprodukassetfk
+                            INNER JOIN charkodeakunasset_m AS cha1 ON cha1.ID = cha6.idlevel1
+                            INNER JOIN charkodeakunasset_m AS cha2 ON cha2.ID = cha6.idlevel2
+                            INNER JOIN charkodeakunasset_m AS cha3 ON cha3.ID = cha6.idlevel3
+                            INNER JOIN charkodeakunasset_m AS cha4 ON cha4.ID = cha6.idlevel4
+                            INNER JOIN charkodeakunasset_m AS cha5 ON cha5.ID = cha6.idlevel5
                         WHERE
                             ra.kdprofile=$kdProfile
                             AND ra.objectruanganposisicurrentfk=".$request['ruangancurrenfk']."
                         ORDER BY
-                            ra.noregisteraset ASC 
+                            CAST(cha1.kodeakun AS DECIMAL), 
+                            CAST(SPLIT_PART(cha2.kodeakun, '.', 3) AS DECIMAL),
+                            CAST(SPLIT_PART(cha3.kodeakun, '.', 4) AS DECIMAL),
+                            CAST(SPLIT_PART(cha4.kodeakun, '.', 5) AS DECIMAL),
+                            CAST(SPLIT_PART(cha5.kodeakun, '.', 6) AS DECIMAL),
+                            CAST(SPLIT_PART(cha6.kodeakun, '.', 7) AS DECIMAL),
+                            ra.noregisteraset,
+                            ra.koderegisterrs
+                            asc 
                     ) x 
                 GROUP BY
+                    x.namaruangansekarang,
+                    
                     x.namaproduk,
                     x.merkproduk,
                     x.noseri,
@@ -21736,21 +21746,38 @@ public function suratBuktiPengembalian(Request $request)
                     x.nomesin,
                     x.nobpkb,
                     x.nopolisi,
-                    x.dayalistrik,
+                    x.spesifikasi,
                     x.namabahanproduk,
-                    x.namaruanganasal,
                     tahun,
                     x.kdbmn,
-                    x.hargaperolehan
-                        
+                    x.hargaperolehan,
+                    x.keteranganlainnya,
+                    x.kondisibarangfk,
+                    x.spesifikasi,
+                    x.kode1,
+                    x.kode2,
+                    x.kode3,
+                    x.kode4,
+                    x.kode5,
+                    x.kode6
+                ORDER BY
+                    CAST(x.kode1 AS DECIMAL), 
+                    CAST(SPLIT_PART(x.kode2, '.', 3) AS DECIMAL),
+                    CAST(SPLIT_PART(x.kode3, '.', 4) AS DECIMAL),
+                    CAST(SPLIT_PART(x.kode4, '.', 5) AS DECIMAL),
+                    CAST(SPLIT_PART(x.kode5, '.', 6) AS DECIMAL),
+                    CAST(SPLIT_PART(x.kode6, '.', 7) AS DECIMAL)
+                    asc
             ")
         );
+
+        $kondisibarang = DB::table('kondisibarang_m')->where('statusenabled', true)->orderBy('id')->get();
 
         $dataKepala = DB::table('pegawai_m')->where('id', $request['idkepala'])->first();
 
         $dataPenanggung = DB::table('pegawai_m')->where('id', $request['idpenanggung'])->first();
 
-        return view('report.asset.kartu-inventaris-ruangan', compact('data', 'dataKepala', 'dataPenanggung'));
+        return view('report.asset.kartu-inventaris-ruangan', compact('data', 'dataKepala', 'dataPenanggung', 'kondisibarang'));
     }
 
 
@@ -21897,6 +21924,8 @@ public function suratBuktiPengembalian(Request $request)
                 }
             }
         }
+
+        // dd($data);
 
         return view('report.apd.laporan-bulanan-apd', [
             'data' => $data,

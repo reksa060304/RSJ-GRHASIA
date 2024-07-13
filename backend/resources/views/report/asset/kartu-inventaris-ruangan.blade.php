@@ -72,7 +72,7 @@
             <tr>
                 <td>RUANGAN</td>
                 <td>:</td>
-                <td>{{ $data[0]->namaruanganasal }}</td>
+                <td>{{ $data[0]->namaruangansekarang }}</td>
             </tr>
             <tr>
                 <td>KLASIFIKASI</td>
@@ -105,9 +105,12 @@
                 <th rowspan="2">Keterangan Mutasi</th>
             </tr>
             <tr>
-                <th>Baik (B)</th>
+                @foreach ($kondisibarang as $kb)
+                    <th>{{ $kb->name }} ({{$kb->kodeexternal}})</th>
+                @endforeach
+                {{-- <th>Baik (B)</th>
                 <th>Kurang Baik (KB)</th>
-                <th>Rusak Berat (RB)</th>
+                <th>Rusak Berat (RB)</th> --}}
             </tr>
             <tr style="font-size: 8px;">
                 <th>1</th>
@@ -125,9 +128,15 @@
                 <th>13</th>
                 <th>14</th>
                 <th>15</th>
-                <th>16</th>
-                <th>17</th>
-                <th>18</th>
+                @php
+                    $no = 16;
+                @endphp
+                @foreach ($kondisibarang as $kb)
+                    <th>{{ $no }}</th>
+                    @php
+                        $no = $no+1;
+                    @endphp
+                @endforeach
                 <th>19</th>
             </tr>
         </thead>
@@ -145,17 +154,33 @@
                     <td>{{ ($row->nomesin != null) ? $row->nomesin : '-' }}</td>
                     <td>{{ ($row->nobpkb != null) ? $row->nobpkb : '-' }}</td>
                     <td>{{ ($row->nopolisi != null) ? $row->nopolisi : '-' }}</td>
-                    <td>100Watt</td>
+                    <td></td>
                     <td>{{ $row->namabahanproduk }}</td>
                     <td>null</td>
                     <td>{{ $row->tahun }}</td>
                     <td>{{ $row->kdbmn }}</td>
-                    <td>{{ $row->registerasset }}</td>
+                    @php
+                        $arr = explode('-', $row->registerasset);
+                    @endphp
+
+                    <td>
+                        {{ $row->jumlah }} / 
+                        {{ $arr[0] }} 
+                        @if (count($arr) > 1)
+                            - {{ end($arr) }}
+                        @else
+                            
+                        @endif
+                    </td>
                     <td>{{ $row->hargaperolehan }}</td>
-                    <td>Baik</td>
-                    <td></td>
-                    <td></td>
-                    <td>BOR Listrik DC, PDTI</td>
+                    @foreach ($kondisibarang as $kb)
+                        @if ($kb->id == $row->kondisibarangfk)
+                            <td>{{ $kb->name }}</td>
+                        @else
+                            <td></td>
+                        @endif
+                    @endforeach
+                    <td>{{ $row->keteranganlainnya }}</td>
                 </tr>
                 @php
                     $i++

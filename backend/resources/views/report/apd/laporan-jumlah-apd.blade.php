@@ -30,7 +30,14 @@
             <td>LAPORAN PENGGUNAAN APD</td>
         </tr>
         <tr>
-            <td>DI RS JIWA GRHASIA DIY TAHUN {{ date_format(date_create($jumlahAPD[0]->tanggal_apd), 'Y') }}</td>
+            <td>
+                DI RS JIWA GRHASIA DIY TAHUN 
+                @if ($jumlahAPD && count($jumlahAPD) > 0)
+                    {{ date_format(date_create($jumlahAPD[0]->tanggal_apd), 'Y') }}
+                @else
+                    {{ date('Y') }}
+                @endif
+            </td>
         </tr>
     </table>
 
@@ -45,12 +52,26 @@
             <tr>
                 <td>WISMA</td>
                 <td style="padding-left: 1em; padding-right: 1em">:</td>
-                <td>{{ $jumlahAPD[0]->namaruangan }}</td>
+                <td>
+                    {{-- {{ $jumlahAPD[0]->namaruangan }} --}}
+                    @if ($jumlahAPD && count($jumlahAPD) > 0)
+                        {{ $jumlahAPD[0]->namaruangan }}
+                    @else
+                        -
+                    @endif
+                </td>
             </tr>
             <tr>
                 <td>BULAN</td>
                 <td style="padding-left: 1em; padding-right: 1em">:</td>
-                <td>{{ date_format(date_create($jumlahAPD[0]->tanggal_apd), 'm-Y') }}</td>
+                {{-- <td>{{ date_format(date_create($jumlahAPD[0]->tanggal_apd), 'm-Y') }}</td> --}}
+                <td>
+                    @if ($jumlahAPD && count($jumlahAPD) > 0)
+                        {{ date_format(date_create($jumlahAPD[0]->tanggal_apd), 'm-Y') }}
+                    @else
+                        {{ date('m-Y') }}
+                    @endif
+                </td>
             </tr>
         </tbody>
     </table>
