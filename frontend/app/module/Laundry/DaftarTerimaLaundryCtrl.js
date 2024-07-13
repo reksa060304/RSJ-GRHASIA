@@ -671,7 +671,7 @@ define(['initialize'], function (initialize) {
                             "width": "30px",
                         },
                         {
-                            "field": "qtyorder",
+                            "field": "qtyprodukterima",
                             "title": "Qty",
                             "width": "30px",
                         },
@@ -708,6 +708,12 @@ define(['initialize'], function (initialize) {
                     toastr.error("Pilih yg akan di ubah!!")
                     return;
                 }
+
+                if($scope.dataSelected.tglcuci == null || $scope.dataSelected.tglcuci == ''){
+                    toastr.error("Belum dicuci")
+                    return
+                }
+
                 if ($scope.dataSelected.statuskirim == 'Kirim') {
                     toastr.error("Sudah dikirim")
                     return;

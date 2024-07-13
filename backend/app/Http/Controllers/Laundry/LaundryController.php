@@ -336,6 +336,7 @@ class LaundryController extends ApiController
                 DB::raw('count(kp.objectprodukfk) as jmlitem')
             )
             ->where('sp.kdprofile', $idProfile)
+            ->where('keteranganlainnyakirim', 'like', '%Linen%')
             ->groupBy('sp.norec','sp.tglkirim','sp.nokirim','sp.jenispermintaanfk','pg.namalengkap','sp.noorderfk','ru.id',
                 'ru.namaruangan','ru2.id','ru2.namaruangan','sp.keteranganlainnyakirim','sp.statuskirim','penc.tgl');
 
@@ -367,11 +368,11 @@ class LaundryController extends ApiController
         foreach ($data as $item){
             $details = DB::select(DB::raw("
                      select  pr.id as kdproduk,pr.kdproduk as kdsirs,pr.namaproduk,
-                    ss.satuanstandar,spd.qtyorder, spd.qtyproduk, spd.qtyprodukretur,spd.objectprodukfk
+                    ss.satuanstandar,spd.qtyorder, spd.qtyproduk, spd.qtyprodukretur, spd.qtyprodukterima, spd.objectprodukfk
                      from kirimproduk_t as spd 
                     left JOIN produk_m as pr on pr.id=spd.objectprodukfk
                     left JOIN satuanstandar_m as ss on ss.id=spd.objectsatuanstandarfk
-                    where spd.kdprofile = $idProfile and nokirimfk=:norec and spd.qtyorder > 0"),
+                    where spd.kdprofile = $idProfile and nokirimfk=:norec and spd.qtyproduk > 0"),
                 array(
                     'norec' => $item->norec,
                 )
@@ -543,7 +544,7 @@ class LaundryController extends ApiController
             ->JOIN('pegawai_m as pg','pg.id','=','sr.objectpegawaipengirimfk')
             ->JOIN('ruangan_m as ru','ru.id','=','sr.objectruanganfk')
             ->JOIN('ruangan_m as ru2','ru2.id','=','sr.objectruangantujuanfk')
-            ->select('sr.nokirim','pg.id as pgid','pg.namalengkap','ru.id','ru.namaruangan','ru2.id as ruid2','ru2.namaruangan as namaruangan2',
+            ->select('sr.nokirim', 'sr.norec as norecstrukkirim', 'sr.noorderfk', 'pg.id as pgid','pg.namalengkap','ru.id','ru.namaruangan','ru2.id as ruid2','ru2.namaruangan as namaruangan2',
                 'sr.jenispermintaanfk','sr.tglkirim','sr.keteranganlainnyakirim as keterangan')
             ->where('sr.kdprofile', $idProfile);
         if(isset($request['norec']) && $request['norec']!="" && $request['norec']!="undefined"){
@@ -557,10 +558,10 @@ class LaundryController extends ApiController
 //            ->JOIN('jeniskemasan_m as jk','jk.id','=','spd.objectjeniskemasanfk')
             ->JOIN('produk_m as pr','pr.id','=','spd.objectprodukfk')
             ->JOIN('satuanstandar_m as ss','ss.id','=','spd.objectsatuanstandarfk')
-            ->select('sp.nokirim','spd.hargasatuan','spd.qtyprodukoutext','sp.objectruanganfk','ru.namaruangan','spd.nostrukterimafk',
+            ->select('sp.noorderfk', 'sp.nokirim','spd.hargasatuan','spd.qtyprodukoutext','sp.objectruanganfk','ru.namaruangan','spd.nostrukterimafk',
                 'spd.objectprodukfk as produkfk','pr.kdproduk','pr.namaproduk','spd.hasilkonversi as nilaikonversi',
                 'spd.objectsatuanstandarfk','ss.satuanstandar','spd.objectsatuanstandarfk as satuanviewfk','ss.satuanstandar as ssview',
-                'spd.qtyproduk as jumlah','spd.hargadiscount','spd.hargatambahan as jasa','spd.hargasatuan as hargajual','spd.harganetto','spd.qtyprodukretur')
+                'spd.qtyproduk as jumlah','spd.qtyprodukterima', 'spd.hargadiscount','spd.hargatambahan as jasa','spd.hargasatuan as hargajual','spd.harganetto','spd.qtyprodukretur')
             ->where('sp.kdprofile', $idProfile);
 
         if(isset($request['norec']) && $request['norec']!="" && $request['norec']!="undefined"){
@@ -600,8 +601,10 @@ class LaundryController extends ApiController
                     'jumlah' => $item->jumlah,
                     'qtyorder' => $item->jumlah,
                     'qtyretur' => $item->qtyprodukretur,
+                    'qtyprodukterima' => $item->qtyprodukterima,
                     'jasa' => $item->jasa,
-                    'nostrukterimafk' => $item->nostrukterimafk
+                    'nostrukterimafk' => $item->nostrukterimafk,
+                    'noorderfk' => $item->noorderfk
                 );
             }
 
@@ -1771,7 +1774,7 @@ class LaundryController extends ApiController
         $idProfile = (int) $kdProfile;
         
         if($request['strukkirim']['jenis'] =='terima'){
-            $noKirim = $this->generateCodeBySeqTable(new StrukKirim, 'nokirim', 13, 'RL-' . $this->getDateTime()->format('ym'), $idProfile);
+            $noKirim = $this->generateCode(new StrukKirim, 'nokirim', 13, 'RL-' . $this->getDateTime()->format('ym'), $idProfile);
         }
         if($request['strukkirim']['jenis'] =='kirim'){
             $noKirim = $this->generateCodeBySeqTable(new StrukKirim, 'nokirim', 13, 'SL-' . $this->getDateTime()->format('ym'), $idProfile);
@@ -1850,7 +1853,7 @@ class LaundryController extends ApiController
             }else{
 
                 $dataSK = StrukKirim::where('norec',$request['strukkirim']['noreckirim'])->where('kdprofile', $idProfile)->first();
-                $norecSK = $dataSK->norec;
+                $norecStrukOrder = $dataSK->norec;
 
                 // delete kirim produk
                 KirimProduk::where('nokirimfk',$request['strukkirim']['noreckirim'])->delete();
@@ -1919,7 +1922,7 @@ class LaundryController extends ApiController
                 $dataKP->qtyprodukretur = 0;
                 $dataKP->qtyorder = $item['qtyorder'];
                 $dataKP->qtyproduk = $jumlah;
-                $dataKP->qtyprodukterima = $jumlah;
+                $dataKP->qtyprodukterima = ($request['strukkirim']['status'] == 'Kirim') ? (int)$item['qtyprodukterima'] : $jumlah;
                 $dataKP->objectruanganfk = $request['strukkirim']['objectruangantujuanfk'];
                 $dataKP->objectruanganpengirimfk = $request['strukkirim']['objectruanganfk'];
                 $dataKP->satuan = '-';

@@ -34,7 +34,14 @@
                 <td>FORMULIR AUDIT KEPATUHAN PENGGUNAAN APD</td>
             </tr>
             <tr>
-                <td>DI RS JIWA GRHASIA DIY TAHUN 2024</td>
+                <td>
+                    DI RS JIWA GRHASIA DIY TAHUN 
+                    @if ($data && count($data) > 0)
+                        {{ date_format(date_create($data[0]->tanggal), 'Y') }}
+                    @else
+                        {{ date('Y') }}
+                    @endif
+                </td>
             </tr>
         </table>
     
@@ -49,12 +56,24 @@
                 <tr>
                     <td>WISMA</td>
                     <td style="padding-left: 1em; padding-right: 1em">:</td>
-                    <td>{{ $data[0]->namaruangan }}</td>
+                    <td>
+                        @if ($data && count($data) > 0)
+                            {{ $data[0]->namaruangan }}
+                        @else
+                            -
+                        @endif
+                    </td>
                 </tr>
                 <tr>
                     <td>BULAN</td>
                     <td style="padding-left: 1em; padding-right: 1em">:</td>
-                    <td>{{ date_format(date_create($data[0]->tanggal), 'F Y') }}</td>
+                    <td>
+                        @if ($data && count($data) > 0)
+                            {{ date_format(date_create($data[0]->tanggal), 'F Y') }}
+                        @else
+                            {{ date('F Y') }}
+                        @endif
+                    </td>
                 </tr>
             </tbody>
         </table>
