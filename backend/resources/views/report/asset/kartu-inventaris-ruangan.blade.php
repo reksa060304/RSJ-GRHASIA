@@ -6,10 +6,15 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>KARTU INVENTARIS RUANGAN</title>
     <style>
+        @page {
+            size: 33cm 21.5cm;
+            font-size: 10pt;
+        }
+        
         table {
             border-collapse: collapse;
-            max-width: 3508px;
             width: 100%;
+            table-layout: auto;
         }
 
         #table-content {
@@ -21,10 +26,9 @@
             word-wrap: break-word;
             overflow: hidden;
             border: 1px solid black;
-            padding: .3em .6em;
+            padding: .2em .3em;
         }
 
-        @media print{@page {size: landscape}}
     </style>
 </head>
 <body>
