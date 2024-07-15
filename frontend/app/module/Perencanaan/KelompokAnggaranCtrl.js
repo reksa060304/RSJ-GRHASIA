@@ -3366,21 +3366,32 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                         console.log($scope.totalspjawal)
                                         console.log($scope.item.jumlahSPJ)
                                         console.log(parseFloat($scope.item.jumlahpanjardipilih) - parseFloat($scope.item.jumlahspjdipilih) - parseFloat($scope.item.jumlahpengembaliandipilih))
-                                        if(((parseFloat($scope.item.jumlahpanjardipilih) - parseFloat($scope.item.jumlahspjdipilih) - parseFloat($scope.item.jumlahpengembaliandipilih))) >= parseFloat($scope.item.jumlahdibayarSPJ)){
-                                            medifirstService.post('perencanaan/save-realisasi-spj-verif',datasave).then(function (e) {
-                                                medifirstService.post('perencanaan/save-verif-spj', objSave).then(function (e) {
-                                                    loadDataGrid();
-                                                    $scope.popupVerifSPJ.center().close()
-                                                }, function (error) {
-                                                
-                                                })
+
+                                        medifirstService.post('perencanaan/save-realisasi-spj-verif',datasave).then(function (e) {
+                                            medifirstService.post('perencanaan/save-verif-spj', objSave).then(function (e) {
+                                                loadDataGrid();
+                                                $scope.popupVerifSPJ.center().close()
                                             }, function (error) {
-                                    
+                                            
                                             })
-                                        } else{
-                                            toastr.error('Ada panjar yang tidak mencukupi spj', 'Informasi');
-                                            return
-                                        }
+                                        }, function (error) {
+                                
+                                        })
+                                        // if(((parseFloat($scope.item.jumlahpanjardipilih) - parseFloat($scope.item.jumlahspjdipilih) - parseFloat($scope.item.jumlahpengembaliandipilih))) >= parseFloat($scope.item.jumlahdibayarSPJ)){
+                                        //     medifirstService.post('perencanaan/save-realisasi-spj-verif',datasave).then(function (e) {
+                                        //         medifirstService.post('perencanaan/save-verif-spj', objSave).then(function (e) {
+                                        //             loadDataGrid();
+                                        //             $scope.popupVerifSPJ.center().close()
+                                        //         }, function (error) {
+                                                
+                                        //         })
+                                        //     }, function (error) {
+                                    
+                                        //     })
+                                        // } else{
+                                        //     toastr.error('Ada panjar yang tidak mencukupi spj', 'Informasi');
+                                        //     return
+                                        // }
                                 
                                 });
                             } else{
