@@ -62,6 +62,13 @@
             bottom: 30%;
             right: 3%;
             }
+        .footer3 {
+            text-align: center;
+            position: absolute;
+            left: 1%;
+            bottom: 10%;
+            right: 1%;
+            }
 
         footer {
             text-align: center;
@@ -260,7 +267,12 @@
                         <tr>
                             <td></td>
                             <td></td>
-                            <td height="100px"> </td>
+                            <td height="100px">
+                                <p style="text-align: center; color:grey;font-family: 'Times New Roman', Times, serif;font-size: 16px;">
+                                    Ditandatangani Secara 
+                                    <br>Elektronik
+                                </p>
+                            </td>
                         </tr>
                         <tr>
                             <td style="text-align: center"></td>
@@ -275,10 +287,31 @@
                 </table>
             </div>
         </section>
-        <p
-            style="font-size:10px;color: rgb(173, 173, 173); position: absolute; bottom: 30%; left: 3%; width: 50%; text-align: center;">
+        {{-- <img src="img/bsre.png" alt="Logo" style="width: 50px; margin-bottom:10px"> --}}
+        <div class="footer3">
+            <table>
+                <tr>
+                    <td>
+                        <img src="img/bsre.png" alt="Logo" style="width: 8%; margin-left: 40px; margin-bottom: 38px;">
+                    </td>
+                    <td style="text-align: center">
+                        <p>ä</p>
+                    </td>
+                    {{-- <td> --}}
+                        {{-- <img src="img/qrcode.png" alt="Logo" style="width: 10%;"> --}}
+                        
+                    {{-- </td> --}}
+                    <td>
+                        <p><i>Dokumen ini ditandatangani secara elektronik menggunakan sertifikat elektronik
+                            yang diterbitkan oleh Balai Sertifikasi Elektronik (BSrE) Badan Siber dan Sandi Negara</i></p>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        {{-- <p
+        style="font-size:10px;color: rgb(173, 173, 173); position: absolute; bottom: 10%; left: 3%; width: 50%; text-align: center;">
             <i>Dokumen ini ditandatangani secara elektronik menggunakan sertifikat elektronik
-                yang diterbitkan oleh Balai Sertifikasi Elektronik (BSrE) Badan Siber dan Sandi Negara</i></p>
+                yang diterbitkan oleh Balai Sertifikasi Elektronik (BSrE) Badan Siber dan Sandi Negara</i></p> --}}
     </body>
 </html>
 
