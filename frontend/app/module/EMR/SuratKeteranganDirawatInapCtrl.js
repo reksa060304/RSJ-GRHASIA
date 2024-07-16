@@ -148,7 +148,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         }
                         else
                         {
-                            norecEMR = ''
+                            // norecEMR = ''
                             $scope.item.obj[190130811] = $scope.cc.namapasien
                             $scope.item.obj[190130812] = $scope.cc.nocm
                             $scope.item.obj[190130813] = $scope.cc.jeniskelamin
