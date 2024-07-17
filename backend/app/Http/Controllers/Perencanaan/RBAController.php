@@ -26,6 +26,11 @@ class RBAController extends ApiController
         $kdProfile = $this->getDataKdProfile($request);
         $idProfile = (int) $kdProfile;
 
+        $settingAnggaran = DB::table('settinganggaran_t')
+            ->where('statusenabled', true)
+            ->where('kdprofile', $idProfile)
+            ->get();
+
         // SubSub
         $subSubKegiatan = DB::select(DB::raw("
             SELECT ka.id, ka.id || '-' || ka.keterangan as keterangan
@@ -94,7 +99,8 @@ class RBAController extends ApiController
             'asalProduk' => $asalProduk,
             'prioritas' => $prioritas,
             'satuan' => $satuan,
-            'mataanggarancombo' => $mataanggarancombo
+            'mataanggarancombo' => $mataanggarancombo,
+            'settinganggaran' => $settingAnggaran
         ];
 
         return $this->respond($result);
