@@ -73,6 +73,13 @@
             position: fixed;
             bottom: 0;
         }
+        .footer3 {
+            text-align: center;
+            position: fixed;
+            left: 1%;
+            bottom: 10%;
+            right: 1%;
+        }
     </style>
 
 </head>
@@ -213,7 +220,12 @@
                             <tr>
                                 <td></td>
                                 <td></td>
-                                <td height="100px"> </td>
+                                <td height="100px">
+                                    <p style="text-align: center; color:grey;font-family: 'Times New Roman', Times, serif;font-size: 16px;">
+                                        Ditandatangani Secara 
+                                        <br>Elektronik
+                                    </p>    
+                                </td>
                             </tr>
                             <!-- <tr>
                                 <td></td>
@@ -261,10 +273,26 @@
                 </table>
             </div> -->
         </section>
-        <p
+        {{-- <p
             style="font-size:10px;color: rgb(173, 173, 173); position: absolute; bottom: 30%; left: 3%; width: 50%; text-align: center;">
             <i>Dokumen ini ditandatangani secara elektronik menggunakan sertifikat elektronik
-                yang diterbitkan oleh Balai Sertifikasi Elektronik (BSrE) Badan Siber dan Sandi Negara</i></p>
+                yang diterbitkan oleh Balai Sertifikasi Elektronik (BSrE) Badan Siber dan Sandi Negara</i></p> --}}
+                <div class="footer3">
+                    <table border="0">
+                        <tr>
+                            <td style="width: 15%; text-align:center;">
+                                <img src="img/bsre.png" alt="Logo" style="width: 50%; object-fit:contain; object-position:center; margin-bottom:10px;">
+                            </td>
+                            <td style="width: 15%; text-align: center;">
+                                <p>$</p>
+                            </td>
+                            <td style="width: 70%;">
+                                <p><i>Dokumen ini ditandatangani secara elektronik menggunakan sertifikat elektronik
+                                    yang diterbitkan oleh Balai Sertifikasi Elektronik (BSrE) Badan Siber dan Sandi Negara</i></p>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
     </body>
 </html>
 

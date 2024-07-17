@@ -43,6 +43,13 @@
             bottom: 0%;
             /* right: 3%; */
         }
+        .footer3 {
+            text-align: center;
+            position: fixed;
+            left: 1%;
+            bottom: 10%;
+            right: 1%;
+        }
 
         
         
@@ -327,7 +334,12 @@
                     <tr>
                         <td></td>
                         <td></td>
-                        <td height="40px"> </td>
+                        <td height="40px"> 
+                            <p style="text-align: center; color:grey;font-family: 'Times New Roman', Times, serif;font-size: 16px;">
+                                Ditandatangani Secara 
+                                <br>Elektronik
+                            </p>
+                        </td>
                     </tr>
                     <tr>
                         <td style="text-align: center"> {!!$res['d']['pasien']!!}</td>
@@ -342,5 +354,21 @@
             </table>
         </div>
     </section>
+    <div class="footer3">
+        <table border="0">
+            <tr>
+                <td style="width: 15%; text-align:center;">
+                    <img src="img/bsre.png" alt="Logo" style="width: 50%; object-fit:contain; object-position:center; margin-bottom:10px;">
+                </td>
+                <td style="width: 15%; text-align: center;">
+                    <p>$</p>
+                </td>
+                <td style="width: 70%;">
+                    <p><i>Dokumen ini ditandatangani secara elektronik menggunakan sertifikat elektronik
+                        yang diterbitkan oleh Balai Sertifikasi Elektronik (BSrE) Badan Siber dan Sandi Negara</i></p>
+                </td>
+            </tr>
+        </table>
+    </div>
 </body>
 </html>
