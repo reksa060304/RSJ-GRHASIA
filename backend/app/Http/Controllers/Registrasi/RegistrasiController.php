@@ -347,7 +347,12 @@ class RegistrasiController extends ApiController
         if($cekUdahDaftar > 0 && $r_NewPD['norec_pd']=='') {
             $transStatus='belumdipulangkan';
         } else {
-
+            //menambahkan kondisi pasien statusnya lama atau baru 
+            $isPasienLama = DB::table('pasiendaftar_t')
+            ->where('nocmfk', $r_NewPD['nocmfk'])
+            ->where('statusenabled', true)
+            ->exists();
+            $statusPasien = $isPasienLama ? 'LAMA' : 'BARU';
             try{
                 //region Save PasienDaftar
                 if ($r_NewPD['norec_pd']==''){
@@ -369,8 +374,9 @@ class RegistrasiController extends ApiController
                     $dataPD->statusenabled = true;
                     $noRegistrasi = $noRegistrasiSeq;//$this->generateNoReg(new PasienDaftar, 'noregistrasi', 10, date('ym'));//$this->getMaxNoregistrasi();
                     $dataPD->objectruanganasalfk = $r_NewPD['objectruanganfk'];
-                    if(isset($r_NewPD['statuspasien'])){
-                        $dataPD->statuspasien = $r_NewPD['statuspasien'];
+                    if (isset($r_NewPD['statuspasien'])) {
+                        // $dataPD->statuspasien = $r_NewPD['statuspasien'];
+                        $dataPD->statuspasien = $statusPasien;
                     }
     
 //                    $saveAdminstrasi = $this->saveAdministrasi($idProdile);
