@@ -214,10 +214,9 @@
                         SUB SUB KEGIATAN
                     </div>
                     <div class="grid_9" style="margin-top: -10px;">
-                        <input disabled id="subusbinput" kendo-combo-box k-ng-model="item.subSubKegiatanSPJ"
+                        <input disabled id="subusbinput" kendo-combo-box k-ng-model="item.subSubKegiatan"
                             k-data-text-field="'keterangan'" k-data-value-field="'id'"
-                            k-filter="'contains'" k-auto-bind="false"
-                            k-data-source="listSubSubKegiatanSPJ"  />
+                            k-filter="'contains'" k-data-source="listSubSubKegiatan"  />
                     </div>
                 </div>
             </div>
@@ -264,18 +263,6 @@
                             kendo-combo-box k-ng-model="item.prioritas"
                             k-data-value-field="'id'" k-data-text-field="'nama'" k-filter="'contains'" 
                             k-auto-bind="false" k-data-source="listPrioritas"
-                        />
-                    </div>
-                </div>
-                <div class="grid_3">
-                    <div class="grid_4">
-                        Sumber Dana
-                    </div>
-                    <div class="grid_12">
-                        <input 
-                            kendo-combo-box k-ng-model="item.asalproduk"
-                            k-data-value-field="'id'" k-data-text-field="'asalproduk'" k-filter="'contains'" 
-                            k-auto-bind="false" k-data-source="listAsalProduk"
                         />
                     </div>
                 </div>
@@ -401,11 +388,22 @@
                             k-data-value-field="'id'"
                             k-filter="'contains'" 
                             k-auto-bind="false" 
-                            k-data-source="listMataAnggaranSPJ"
+                            k-data-source="listMataAnggaran"
                         />
                     </div>
                 </div>
-
+                <div class="grid_2">
+                    <div class="grid_12">
+                        Sumber Dana
+                    </div>
+                    <div class="grid_12">
+                        <input 
+                            kendo-combo-box k-ng-model="item.asalproduk"
+                            k-data-value-field="'id'" k-data-text-field="'asalproduk'" k-filter="'contains'" 
+                            k-auto-bind="false" k-data-source="listAsalProduk"
+                        />
+                    </div>
+                </div>
                 <div class="grid_3">
                     <div class="grid_12">
                         Verifikasi
@@ -521,12 +519,21 @@
             <legend id="filterData">
                 <a ng-click="showAndHide()">List Sub Sub Kegiatan</a>
             </legend>
-            <div class="grid_12" ng-repeat="item in listSubSubKegiatan track by $index">
-                <input type="checkbox" ng-checked="item.isChecked" class="k-checkbox" name="{{item.idsubsubkegiatan}}"
-                    id="{{item.idsubsubkegiatan}}" ng-model="bool" value="{{item.idsubsubkegiatan}}" ng-click="ceklisOne(bool,item)">
+            <div class="grid_12">
+                <div ng-if="listSubSubKegiatanTransfer.length > 0">
+                    <div class="grid_12" ng-repeat="item in listSubSubKegiatan track by $index">
     
-                <label class="k-checkbox-label {{item.style}}" for="{{item.idsubsubkegiatan}}">{{item.idsubsubkegiatan}} -
-                    {{item.kodesubsubkegiatan}} ~ {{item.keterangansubsubkegiatan}}</label>
+                        <input type="checkbox" ng-checked="item.isChecked" class="k-checkbox" name="{{item.idsubsubkegiatan}}"
+                            id="{{item.idsubsubkegiatan}}" ng-model="bool" value="{{item.idsubsubkegiatan}}" ng-click="ceklisOne(bool,item)">
+            
+                        <label class="k-checkbox-label {{item.style}}" for="{{item.idsubsubkegiatan}}">{{item.idsubsubkegiatan}} -
+                            {{item.kodesubsubkegiatan}} ~ {{item.keterangansubsubkegiatan}}</label>
+                    </div>
+                </div>
+    
+                <div ng-if="listSubSubKegiatanTransfer.length == 0">
+                    <p>Belum ada perencanaan yang diinput dan divalidasi</p>
+                </div>
             </div>
         </div>
         <div class="grid_12">

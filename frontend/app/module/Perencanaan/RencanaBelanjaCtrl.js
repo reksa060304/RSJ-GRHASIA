@@ -26,9 +26,20 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
             // data
             $scope.listReverensi = []
-            $scope.listSubKegiatanSPJ = []
+            $scope.listSubSubKegiatanRencana = []
             $scope.listSatuan = []
             $scope.dataPerencanaan = []
+            $scope.listVerifikasi = [
+                { name: "Disetujui", value: 1 }, 
+                { name: "Ditolak", value: 2 },
+                { name: "Diskusi", value: 3 }
+            ]
+            $scope.listKeterangan = [
+                { id: 1, nama: 'Rutin/wajib' },
+                { id: 2, nama: 'Pemenuhan akreditasi' },
+                { id: 3, nama: 'Penggantian' },
+                { id: 4, nama: 'Lain-lain' }
+            ]
 
             loadDataCombo()
 
@@ -46,20 +57,21 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     .then(function(e){
                         let result = e.data
                         
-                        // Memberi penomeran
-                        for (var i = 0; i < result.length; i++) {
-                            result[i].rencana.no = i + 1
+                        result.map(function(item, index){
+                            item.rencana.no = index + 1
 
-                            for (let e = 0; e < result[i].details.length; e++) {
-                                result[i].details[e].no = e + 1;
+                            item.details.map(function(detail, indexDetail){
+                                detail.no = indexDetail + 1
 
-                                if(result[i].details[e].isverifikasi == true){
-                                    result[i].details[e].isverifikasi = 'Telah Diverifikasi'
+                                let cari = $scope.listVerifikasi.find(item => item.value == detail.statusverif)
+
+                                if(cari){
+                                    detail.statusverif = cari.name
                                 }else{
-                                    result[i].details[e].isverifikasi = 'Belum verifikasi'
+                                    detail.statusverif = 'Belum verifikasi'
                                 }
-                            }
-                        }
+                            })
+                        })
                         
                         // Data ke Grid
                         $scope.dataGridPerencanaan = new kendo.data.DataSource({
@@ -107,7 +119,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                             "title": "Reverensi"
                                         },
                                         {
-                                            "field": "isverifikasi",
+                                            "field": "statusverif",
                                             "title": "Telah di Verifikasi"
                                         },
                                     ]
@@ -144,7 +156,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                             "title": "Reverensi"
                                         },
                                         {
-                                            "field": "isverifikasi",
+                                            "field": "statusverif",
                                             "title": "Telah di Verifikasi"
                                         },
                                     ]
@@ -158,7 +170,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             
             // Load data combo
             function loadDataCombo() {
-                $scope.item.tahunAnggaran = moment($scope.now).add(1, 'y').format('YYYY')
+                $scope.item.tahunAnggaran = moment($scope.settingAnggaran).add(1, 'y').format('YYYY')
 
                 $scope.dataVOloaded = true
 
@@ -167,10 +179,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     .then(function(e){
                         $scope.dataVOloaded = false
 
-                        $scope.listSubSubKegiatanSPJ = e.data.subSubKegiatan
+                        $scope.listSubSubKegiatanRencana = e.data.subSubKegiatan
                         $scope.listAsalProduk = e.data.asalProduk
                         $scope.listSatuan = e.data.satuan
                         $scope.listProduk = e.data.dataProdukAll
+                        $scope.settingAnggaran = e.data.settinganggaran
 
                     })
                 
@@ -257,9 +270,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
             // Simpan reverensi
             $scope.tambahReverensi = function(){
-                $scope.listReverensi.push($scope.item.reverensi)
-                $scope.item.reverensi = null
-                $scope.item.listReverensi = $scope.listReverensi.toString()
+                $scope.listReverensi.push($scope.item.inputreverensi)
+                $scope.item.inputreverensi = null
+                $scope.item.reverensi = $scope.listReverensi.toString()
+                // $scope.item.listReverensi = $scope.listReverensi.toString()
             }
 
             // Tambah detail perencanaan
@@ -291,38 +305,69 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     return
                 }
 
-                if($scope.item.listReverensi == null || $scope.item.listReverensi == undefined){
+                if($scope.item.reverensi == null || $scope.item.reverensi == undefined){
                     toastr.error('Isi Reverensi Terlebih Dahulu')
                     return
                 }
 
+                // kondisi untuk produk atau kegiatan
                 if($scope.isRencanaProduk){
+                    // kondisi untuk update
+                    if($scope.selectedListPerencanaan !== undefined && $scope.selectedListPerencanaan !== null){
+                        let indexData = $scope.dataPerencanaan.findIndex(item => item.no == $scope.selectedListPerencanaan.no)
 
-                    const data = {
-                        no: ($scope.dataPerencanaan.length + 1),
-                        produk: $scope.item.produk,
-                        stokProduk: $scope.item.stokProduk,
-                        jumlahRencana: $scope.item.jumlahRencana,
-                        hargaSatuan: $scope.item.hargaSatuan,
-                        listReverensi: $scope.item.listReverensi,
-                        totalHarga: $scope.item.totalHarga,
-                        satuan: $scope.item.satuan,
+                        $scope.dataPerencanaan[indexData].no = $scope.selectedListPerencanaan.no
+                        $scope.dataPerencanaan[indexData].produk = $scope.item.produk
+                        $scope.dataPerencanaan[indexData].jumlahRencana = $scope.item.stokProduk
+                        $scope.dataPerencanaan[indexData].hargaSatuan = $scope.item.hargaSatuan
+                        $scope.dataPerencanaan[indexData].listReverensi = $scope.item.reverensi
+                        $scope.dataPerencanaan[indexData].totalHarga = $scope.item.totalHarga
+                        $scope.dataPerencanaan[indexData].satuan = $scope.item.satuan
+
+                        $scope.selectedListPerencanaan = null
+                    }else{
+                        let data = {
+                            no: ($scope.dataPerencanaan.length + 1),
+                            produk: $scope.item.produk,
+                            stokProduk: $scope.item.stokProduk,
+                            jumlahRencana: $scope.item.jumlahRencana,
+                            hargaSatuan: $scope.item.hargaSatuan,
+                            listReverensi: $scope.item.reverensi,
+                            totalHarga: $scope.item.totalHarga,
+                            satuan: $scope.item.satuan,
+                        }
+
+                        $scope.dataPerencanaan.push(data)
                     }
 
-                    $scope.dataPerencanaan.push(data)
                 }else{
+                    // kondisi untuk update
+                    if($scope.selectedListPerencanaan !== undefined && $scope.selectedListPerencanaan !== null){
+                        let indexData = $scope.dataPerencanaan.findIndex(item => item.no == $scope.selectedListPerencanaan.no)
 
-                    const data = {
-                        no: ($scope.dataPerencanaan.length + 1),
-                        namaKegiatan: $scope.item.namaKegiatan,
-                        jumlahRencana: $scope.item.jumlahRencana,
-                        hargaSatuan: $scope.item.hargaSatuan,
-                        listReverensi: $scope.item.listReverensi,
-                        totalHarga: $scope.item.totalHarga,
-                        satuan: $scope.item.satuan,
+                        $scope.dataPerencanaan[indexData].no = $scope.selectedListPerencanaan.no
+                        $scope.dataPerencanaan[indexData].namaKegiatan = $scope.item.namaKegiatan
+                        $scope.dataPerencanaan[indexData].jumlahRencana = $scope.item.jumlahRencana
+                        $scope.dataPerencanaan[indexData].hargaSatuan = $scope.item.hargaSatuan
+                        $scope.dataPerencanaan[indexData].listReverensi = $scope.item.reverensi
+                        $scope.dataPerencanaan[indexData].totalHarga = $scope.item.totalHarga
+                        $scope.dataPerencanaan[indexData].satuan = $scope.item.satuan
+
+                        $scope.selectedListPerencanaan = null
+                    }else{
+                        let data = {
+                            no: ($scope.dataPerencanaan.length + 1),
+                            namaKegiatan: $scope.item.namaKegiatan,
+                            jumlahRencana: $scope.item.jumlahRencana,
+                            hargaSatuan: $scope.item.hargaSatuan,
+                            listReverensi: $scope.item.reverensi,
+                            totalHarga: $scope.item.totalHarga,
+                            satuan: $scope.item.satuan,
+                        }
+                        
+                        $scope.dataPerencanaan.push(data)
                     }
 
-                    $scope.dataPerencanaan.push(data)
                 }
 
                 $scope.gridDataPerencanaan = new kendo.data.DataSource({
@@ -332,23 +377,51 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 })
                 
                 // Reset input
-                $scope.item.produk = undefined
+                if($scope.isRencanaProduk == true){
+                    $scope.item.produk = null
+                }
                 $scope.item.stokProduk = null
-                $scope.item.listReverensi = null
+                $scope.item.reverensi = null
                 $scope.listReverensi = []
                 $scope.item.namaKegiatan = null
                 $scope.item.jumlahRencana = null
                 $scope.item.hargaSatuan = null
                 $scope.item.satuan = null
                 $scope.item.totalHarga = null
+                $scope.item.keterangan = null
 
             }
 
             // Klik grid detail perencanaan
             $scope.klikListPerencanaan = function(dataSelected){
+                // console.log($scope.isUpdate)
                 if(dataSelected != undefined){
                     $scope.selectedListPerencanaan = dataSelected
 
+                    // console.log($scope.selectedListPerencanaan)
+                    // console.log($scope.isRencanaProduk)
+                    
+                    // jika rencana kegiatan atau barang
+                    if($scope.isRencanaProduk == false){
+                        $scope.item.namaKegiatan = $scope.selectedListPerencanaan.namaKegiatan
+                        $scope.item.jumlahRencana = $scope.selectedListPerencanaan.jumlahRencana
+                        $scope.item.hargaSatuan = parseFloat($scope.selectedListPerencanaan.hargaSatuan)
+                        $scope.item.satuan = $scope.selectedListPerencanaan.satuan
+                        $scope.handleHarga(parseFloat($scope.selectedListPerencanaan.hargaSatuan))
+
+                        // referensi
+                        $scope.listReverensi = $scope.selectedListPerencanaan.listReverensi.split(',')
+                        $scope.item.reverensi = $scope.listReverensi.toString()
+                    }else{
+                        $scope.item.jumlahRencana = $scope.selectedListPerencanaan.jumlahRencana
+                        $scope.item.hargaSatuan = parseFloat($scope.selectedListPerencanaan.hargaSatuan)
+                        $scope.item.satuan = $scope.selectedListPerencanaan.satuan
+                        $scope.handleHarga(parseFloat($scope.selectedListPerencanaan.hargaSatuan))
+                        
+                        // referensi
+                        $scope.listReverensi = $scope.selectedListPerencanaan.listReverensi.split(',')
+                        $scope.item.reverensi = $scope.listReverensi.toString()
+                    }
                 }
             }
 
@@ -376,13 +449,18 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             // Simpan perencanaan
             $scope.simpanPerencanaan = function(){
 
-                if($scope.item.subSubKegiatanSPJ == undefined){
+                if($scope.item.subSubKegiatanRencana == undefined){
                     toastr.error('Pilih Sub Sub Kegiatan Terlebih Dahulu')
                     return false
                 }
 
                 if($scope.item.idRuanganLoginUser == undefined){
                     toastr.error('Pilih Ruangan Terlebih Dahulu')
+                    return false
+                }
+
+                if($scope.item.keterangan == undefined || $scope.item.keterangan == null){
+                    toastr.error('Pilih Keterangan terlebih dahulu')
                     return false
                 }
 
@@ -399,10 +477,13 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.dataVOloaded = true
                 medifirstService.post('perencanaan/simpan-rencana-belanja', {
                         tgldokumen: moment($scope.now).format('YYYY-MM-DD HH:mm:ss'),
-                        idSubSubKegiatan: $scope.item.subSubKegiatanSPJ.id,
+                        idSubSubKegiatan: $scope.item.subSubKegiatanRencana.id,
                         idLogin: $scope.pegawai.id,
                         idRuangan: $scope.item.idRuanganLoginUser.id,
                         tahunanggaran: $scope.item.tahunAnggaran,
+                        keterangan: $scope.item.keterangan.id,
+
+                        // detail
                         dataPerencanaan: $scope.dataPerencanaan
                     }).then(function(e){
                         $scope.dataVOloaded = false
@@ -423,8 +504,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.klikGrid = function (dataSelected){
                 if (dataSelected != undefined) {
                     $scope.dataSelected = dataSelected
+                    console.log($scope.dataSelected)
                 }
-                // console.log($scope.dataSelected.rencana.norec)
             }
 
             // Hapus data perencanaan
@@ -452,18 +533,31 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
             // Edit data perencanaan
             $scope.editData = function(){
-                $scope.dataPerencanaan = []
-                $scope.isUpdate = true
-
                 if($scope.dataSelected == undefined || $scope.dataSelected == null){
                     toastr.error("Pilih Data Terlebih Dahulu")
                     return
                 }
 
-                if($scope.dataSelected.rencana.tglverifikasi){
-                    toastr.error("Data sudah divalidasi")
+                let sudahVerif = null
+                $scope.dataSelected.details.map(function(detail){
+
+                    let cari = $scope.listVerifikasi.find(item => item.name == detail.statusverif)
+
+                    if(cari){
+                        sudahVerif = cari
+                    }
+                })
+
+                console.log(sudahVerif)
+
+                if(sudahVerif){
+                    toastr.error('Data sudah ada yang diverif')
                     return
                 }
+                
+
+                $scope.dataPerencanaan = []
+                $scope.isUpdate = true
 
                 $scope.dataVOloaded = true
 
@@ -485,9 +579,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         $scope.popupTambahRencanaBelanja.center().open()
 
                         // Data ke form
-                        $scope.item.subSubKegiatanSPJ = result.subsub
+                        $scope.item.tglPengajuan = moment(result.tgldokumen).format('YYYY-MM-DD HH:mm:ss')
+                        $scope.item.subSubKegiatanRencana = result.subsub
                         $scope.item.idRuanganLoginUser = result.ruangan
                         $scope.item.tahunAnggaran = moment(result.tahunanggaran).format('YYYY')
+                        $scope.item.keterangan = $scope.cariDariList($scope.listKeterangan, result.objectketeranganfk)
 
                         result.details.map(function(data, index){
 
@@ -499,11 +595,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                     norec: data.norec,
                                     produk: { id: data.objectprodukfk, namaproduk: data.namaproduk },
                                     stokProduk: data.qtystok,
-                                    jumlahRencana: data.qtyrencana,
-                                    hargaSatuan: data.hargasatuan,
+                                    jumlahRencana: parseInt(data.qtyrencana),
+                                    hargaSatuan: parseFloat(data.hargasatuan),
                                     listReverensi: data.keteranganlainnya,
                                     satuan: data.satuan,
-                                    totalHarga: data.totalharga,
+                                    totalHarga: parseFloat(data.totalharga),
                                 }
             
                                 $scope.dataPerencanaan.push(item)
@@ -513,18 +609,18 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                     no: (index + 1),
                                     norec: data.norec,
                                     namaKegiatan: data.namakegiatan,
-                                    jumlahRencana: data.qtyrencana,
-                                    hargaSatuan: data.hargasatuan,
+                                    jumlahRencana: parseInt(data.qtyrencana),
+                                    hargaSatuan: parseFloat(data.hargasatuan),
                                     listReverensi: data.keteranganlainnya,
                                     satuan: data.satuan,
-                                    totalHarga: data.totalharga,
+                                    totalHarga: parseFloat(data.totalharga),
                                 }
             
                                 $scope.dataPerencanaan.push(item)
                             }
                         })
 
-                        console.log($scope.dataPerencanaan)
+                        // console.log($scope.dataPerencanaan)
 
                         // Data ke Grid
                         $scope.gridDataPerencanaan = new kendo.data.DataSource({
@@ -542,7 +638,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     return
                 }
 
-                if($scope.item.subSubKegiatanSPJ == undefined){
+                if($scope.item.subSubKegiatanRencana == undefined){
                     toastr.error('Pilih Sub Sub Kegiatan Terlebih Dahulu')
                     return false
                 }
@@ -556,8 +652,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 
                 medifirstService.post('perencanaan/update-rencana-belanja', {
                     norec: $scope.dataSelected.rencana.norec,
-                    tgldokumen: moment($scope.now).format('YYYY-MM-DD HH:mm:ss'),
-                    idSubSubKegiatan: $scope.item.subSubKegiatanSPJ.id,
+                    tgldokumen: $scope.item.tglPengajuan,
+                    idSubSubKegiatan: $scope.item.subSubKegiatanRencana.id,
                     idLogin: $scope.pegawai.id,
                     idRuangan: $scope.item.idRuanganLoginUser.id,
                     dataPerencanaan: $scope.dataPerencanaan
@@ -582,10 +678,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.dataPerencanaan = []
 
                 // Reset form
-                $scope.item.subSubKegiatanSPJ = undefined
-                $scope.item.mataAnggaranSPJ = undefined
-                $scope.item.idRuanganLoginUser = undefined
-                $scope.item.produk = undefined
+                $scope.item.subSubKegiatanRencana = null
+                $scope.item.idRuanganLoginUser = null
+                $scope.item.produk = null
                 $scope.item.stokProduk = null
                 $scope.item.jumlahRencana = null
                 $scope.item.listReverensi = null
@@ -605,13 +700,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     return false
                 }
 
-                if($scope.item.subSubKegiatanSPJ == undefined){
+                if($scope.item.subSubKegiatanRencana == undefined){
                     toastr.error('Pilih Sub Sub Kegiatan Terlebih Dahulu')
-                    return false
-                }
-
-                if($scope.item.mataAnggaranSPJ == undefined){
-                    toastr.error('Pilih Rekening Terlebih Dahulu')
                     return false
                 }
 
@@ -697,6 +787,17 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.yearUngkul = {
                 start: "decade",
                 depth: "decade"
+            }
+
+            $scope.cariDariList = function(list, id) {
+                let hasil = null
+                list.map(function(item){
+                    if(item.id == id){
+                        hasil = item
+                    }
+                })
+
+                return hasil
             }
         }
     ]);
