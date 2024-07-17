@@ -12,6 +12,9 @@ define(['initialize'], function (initialize) {
             $scope.item.tglAkhir = $scope.now;
             $scope.btnSimpanVis = false;
             $scope.headerVerif = {}
+
+            let dataOrder = []
+
             $scope.item.belumVerifikasi = true;
             var loginRadiologi = false
             if ($scope.item.belumVerifikasi)
@@ -44,6 +47,17 @@ define(['initialize'], function (initialize) {
                     + "&noorder=" + $scope.dataSelected.noorder + "&idruangan=" + $scope.dataSelected.objectruangantujuanfk).then(function (e) {                        
                         $scope.norec_apd = e.data.data[0].norec_apd
                     })
+            }
+
+            function ClearIsian(){
+                $scope.item.namaprodukInput = null
+                $scope.item.KeteranganProduk = null
+                $scope.item.jumlah = null
+                $scope.item.hargabahanbakar = null
+                $scope.item.Harga = null
+                $scope.item.Total = null
+                $scope.item.jenisPelaksana = null
+                $scope.selectedPegawai = []
             }
 
             LoadCache();
@@ -863,19 +877,18 @@ define(['initialize'], function (initialize) {
 
             $scope.columnDaftarTagihan = [
 				{
-					"field": "",
+					"field": "no",
 					"title": "No",
 					"width": "45px"
 				},
 				{
-					"field": "",
+					"field": "namaproduk",
 					"title": "Tagihan",
 					"width": "200px"
 				},
 				{
-					"field": "",
+					"field": "keterangan",
 					"title": "Keterangan",
-					"width": "100px"
 				},
 				{
 					"field": "jumlah",
@@ -883,17 +896,17 @@ define(['initialize'], function (initialize) {
 					"width": "90px"
 				},
 				{
-					"field": "",
+					"field": "penambahantarif",
 					"title": "Qty Per Org/Per Km",
 					"width": "90px"
 				},
 				{
-					"field": "",
+					"field": "harga",
 					"title": "Harga",
 					"width": "110px"
 				},
 				{
-					"field": "",
+					"field": "total",
 					"title": "Total",
 					"width": "110px"
 				},
@@ -1052,19 +1065,20 @@ define(['initialize'], function (initialize) {
 				}
 
 				var no = 0
-				if (dataProduk.length == 0) {
+				if (dataOrder.length == 0) {
 					no = 1
 				} else {
-					no = dataProduk[dataProduk.length - 1].no + 1
+					no = dataOrder[dataOrder.length - 1].no + 1
 				}
 
 				if ($scope.item.no != undefined) {
 					no = $scope.item.no
 				}
 				var data = {};
+
 				if ($scope.item.no != undefined) {//LAMA
-					for (var i = dataProduk.length - 1; i >= 0; i--) {
-						if (dataProduk[i].no == $scope.item.no) {
+					for (var i = dataOrder.length - 1; i >= 0; i--) {
+						if (dataOrder[i].no == $scope.item.no) {
 							data.no = $scope.item.no
 							var bensin = null;
 							var objectprodukasetfk = null;
@@ -1090,13 +1104,19 @@ define(['initialize'], function (initialize) {
 							data.keterangan = $scope.item.KeteranganProduk
 							data.objectprodukasetfk = objectprodukasetfk;
 							data.bahanbakar = bensin
-							dataProduk[i] = data;
+                            data.penambahantarif = parseFloat($scope.item.hargabahanbakar)
+                            data.total = (parseFloat($scope.item.jumlah) * parseFloat($scope.item.Harga)) + parseFloat($scope.item.hargabahanbakar)
+                            data.jenispelaksana = $scope.item.jenisPelaksana
+                            
+                            data.petugas = $scope.selectedPegawai
+
+							dataOrder[i] = data;
 							$scope.dataDaftarTagihan = new kendo.data.DataSource({
-								data: dataProduk
+								data: dataOrder
 							});
 							var subTotal = 0;
-							for (var i = dataProduk.length - 1; i >= 0; i--) {
-								subTotal = subTotal + parseFloat(dataProduk[i].totalK)
+							for (var i = dataOrder.length - 1; i >= 0; i--) {
+								subTotal = subTotal + parseFloat(dataOrder[i].totalK)
 							}
 							$scope.item.totalBilling = parseFloat(subTotal).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
 							ClearIsian();
@@ -1124,7 +1144,7 @@ define(['initialize'], function (initialize) {
 
 					data = {
 						no: no,
-						id: $scope.item.idProduk,
+						idproduk: $scope.item.idProduk,
 						namaproduk: $scope.item.namaprodukInput,
 						jumlah: parseFloat($scope.item.jumlah),
 						qtyoranglast: parseFloat($scope.item.QtyPerOrang),
@@ -1132,16 +1152,20 @@ define(['initialize'], function (initialize) {
 						keterangan: $scope.item.KeteranganProduk,
 						totalK: $scope.item.Total, //parseFloat($scope.item.jumlah) * parseFloat($scope.item.Harga)
 						objectprodukasetfk: objectprodukasetfk,
-						bahanbakar: bahanbakar
+						bahanbakar: bahanbakar,
+                        penambahantarif: parseFloat($scope.item.hargabahanbakar),
+                        total: (parseFloat($scope.item.jumlah) * parseFloat($scope.item.Harga)) + parseFloat($scope.item.hargabahanbakar),
+                        jenispelaksana: $scope.item.jenisPelaksana,
+                        petugas: $scope.selectedPegawai,
 					}
-					dataProduk.push(data)
+					dataOrder.push(data)
 					// $scope.dataGrid.add($scope.dataSelectedProduk)
 					$scope.dataDaftarTagihan = new kendo.data.DataSource({
-						data: dataProduk
+						data: dataOrder
 					});
 					var subTotal = 0;
-					for (var i = dataProduk.length - 1; i >= 0; i--) {
-						subTotal = subTotal + parseFloat(dataProduk[i].totalK)
+					for (var i = dataOrder.length - 1; i >= 0; i--) {
+						subTotal = subTotal + parseFloat(dataOrder[i].totalK)
 					}
 					$scope.item.totalBilling = parseFloat(subTotal).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
 					ClearIsian();
@@ -1171,6 +1195,22 @@ define(['initialize'], function (initialize) {
 					$scope.gridPetugasPelaksana.add(pushData);
 				}
 			}
+
+            $scope.klikGridDetail = function(data){
+                // console.log(data)
+
+                // data yang dipilih ke form
+                $scope.item.no = data.no
+                $scope.item.namaprodukInput = data.namaproduk
+                $scope.item.KeteranganProduk = data.keterangan
+                $scope.item.jumlah = data.jumlah
+                $scope.item.hargabahanbakar = data.penambahantarif
+                $scope.item.Harga = data.harga
+                $scope.item.Total = data.total
+                $scope.item.jenisPelaksana = data.jenispelaksana
+                $scope.selectedPegawai = data.petugas
+            }
+
 
             $scope.$watch('item.jumlah', function(newValue, oldValue) {
 				if (newValue != oldValue) {

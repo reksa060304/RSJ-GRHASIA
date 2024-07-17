@@ -208,8 +208,8 @@ define(['initialize'], function (initialize) {
                        "title": "Total Nilai",
                        "width": "200px",
                        aggregates: ["average"],
-                       groupFooterTemplate: "<span class='style-left'> #= kendo.toString(data.nilailangkah.average, '0.00')# %",
-                       footerTemplate: "<span class='style-left'> #= kendo.toString(data.nilailangkah.average, '0.00')# %"
+                       groupFooterTemplate: "<span class='style-left'> #= kendo.toString(data.nilailangkah?.average, '0.00')# %",
+                       footerTemplate: "<span class='style-left'> #= kendo.toString(data.nilailangkah?.average, '0.00')# %"
                     }              
                     
                     
@@ -681,23 +681,23 @@ define(['initialize'], function (initialize) {
             $scope.formatTanggalAjah = function (tanggal) {
                 return moment(tanggal).format('DD-MM-YYYY');
             }
-            var timeoutPromise;
-            $scope.$watch('cari.indikator', function (newVal, oldVal) {
-                $timeout.cancel(timeoutPromise);
-                timeoutPromise = $timeout(function () {
-                    if (newVal != oldVal) {
-                        applyFilter("indikator", newVal)
-                    }
-                }, 500)
-            })
-            $scope.$watch('cari.pic', function (newVal, oldVal) {
-                $timeout.cancel(timeoutPromise);
-                timeoutPromise = $timeout(function () {
-                    if (newVal != oldVal) {
-                        applyFilter("pic", newVal)
-                    }
-                }, 500)
-            })
+            // var timeoutPromise;
+            // $scope.$watch('cari.indikator', function (newVal, oldVal) {
+            //     $timeout.cancel(timeoutPromise);
+            //     timeoutPromise = $timeout(function () {
+            //         if (newVal != oldVal) {
+            //             applyFilter("indikator", newVal)
+            //         }
+            //     }, 500)
+            // })
+            // $scope.$watch('cari.pic', function (newVal, oldVal) {
+            //     $timeout.cancel(timeoutPromise);
+            //     timeoutPromise = $timeout(function () {
+            //         if (newVal != oldVal) {
+            //             applyFilter("pic", newVal)
+            //         }
+            //     }, 500)
+            // })
 
             $scope.$watch('cari.jenisIndikator', function (newVal, oldVal) {
                 if (newVal !== oldVal) {
