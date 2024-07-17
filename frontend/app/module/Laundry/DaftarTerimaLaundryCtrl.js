@@ -516,12 +516,12 @@ define(['initialize'], function (initialize) {
                 },
                 {
                     "field": "namaruanganasal",
-                    "title": "Nama Ruangan Asal",
+                    "title": "Ruangan Penerima",
                     "width": "100px",
                 },
                 {
                     "field": "namaruangantujuan",
-                    "title": "Nama Ruangan Tujuan",
+                    "title": "Ruangan Pengirim",
                     "width": "100px",
                 },
                 {

@@ -336,7 +336,8 @@ class LaundryController extends ApiController
                 DB::raw('count(kp.objectprodukfk) as jmlitem')
             )
             ->where('sp.kdprofile', $idProfile)
-            ->where('keteranganlainnyakirim', 'like', '%Linen%')
+            ->whereRaw('sp.objectkelompoktransaksifk in(120)')
+            // ->where('keteranganlainnyakirim', 'like', '%Linen%')
             ->groupBy('sp.norec','sp.tglkirim','sp.nokirim','sp.jenispermintaanfk','pg.namalengkap','sp.noorderfk','ru.id',
                 'ru.namaruangan','ru2.id','ru2.namaruangan','sp.keteranganlainnyakirim','sp.statuskirim','penc.tgl');
 
@@ -361,7 +362,7 @@ class LaundryController extends ApiController
         //untuk menampilkan semua data dihijaukan
         $data = $data->where('sp.objectkelompoktransaksifk',$request['kelompokTransaksi']);
 //        $data = $data->wherein('sp.objectruanganasalfk',$strRuangan);
-        $data = $data->orderBy('sp.nokirim');
+        $data = $data->orderByRaw('sp.tglkirim DESC');
         $data = $data->get();
 
         $results =array();
@@ -454,6 +455,7 @@ class LaundryController extends ApiController
                 DB::raw('count(kp.objectprodukfk) as jmlitem')
             )
             ->where('sp.kdprofile', $idProfile)
+            ->whereRaw('sp.objectkelompoktransaksifk in(119,120)')
             ->groupBy('sp.norec','sp.tglkirim','sp.nokirim','sp.jenispermintaanfk','pg.namalengkap','sp.noorderfk','ru.id',
                 'ru.namaruangan','ru2.id','ru2.namaruangan','sp.keteranganlainnyakirim','sp.statuskirim','penc.tgl');
 
@@ -477,15 +479,16 @@ class LaundryController extends ApiController
         $data = $data->where('sp.statusenabled',true);
         //untuk menampilkan semua data dihijaukan
         //$data = $data->where('sp.objectkelompoktransaksifk',$request['kelompokTransaksi']);
-//        $data = $data->wherein('sp.objectruanganasalfk',$strRuangan);
-        $data = $data->orderBy('sp.nokirim');
+        // $data = $data->where('sp.objectkelompoktransaksifk', '=',120);
+        // $data = $data->wherein('sp.objectruanganasalfk',$strRuangan);
+        $data = $data->orderByRaw('sp.tglkirim DESC');
         $data = $data->get();
 
         $results =array();
         foreach ($data as $item){
             $details = DB::select(DB::raw("
                      select  pr.id as kdproduk,pr.kdproduk as kdsirs,pr.namaproduk,
-                    ss.satuanstandar,spd.qtyprodukterima as qtyorder, spd.qtyproduk, spd.qtyprodukretur,spd.objectprodukfk
+                    ss.satuanstandar,spd.qtyprodukterima, spd.qtyproduk, spd.qtyprodukretur,spd.objectprodukfk
                      from kirimproduk_t as spd 
                     left JOIN produk_m as pr on pr.id=spd.objectprodukfk
                     left JOIN satuanstandar_m as ss on ss.id=spd.objectsatuanstandarfk
@@ -2218,14 +2221,14 @@ class LaundryController extends ApiController
         $data = $data->where('sp.statusenabled',true);
 
 //        $data = $data->wherein('sp.objectruanganasalfk',$strRuangan);
-        $data = $data->orderBy('sp.nokirim');
+        $data = $data->orderByRaw('sp.tglkirim DESC');
         $data = $data->get();
 
         $results =array();
         foreach ($data as $item){
             $details = DB::select(DB::raw("
                      select  pr.id as kdproduk,pr.kdproduk as kdsirs,pr.namaproduk,
-                    ss.satuanstandar,spd.qtyorder as qtyproduk,spd.qtyprodukretur,spd.objectprodukfk
+                    ss.satuanstandar,spd.qtyprodukterima as qtyproduk,spd.qtyprodukretur,spd.objectprodukfk
                      from kirimproduk_t as spd 
                     left JOIN produk_m as pr on pr.id=spd.objectprodukfk
                     left JOIN satuanstandar_m as ss on ss.id=spd.objectsatuanstandarfk
