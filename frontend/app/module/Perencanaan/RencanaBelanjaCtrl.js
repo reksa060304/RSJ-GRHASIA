@@ -24,7 +24,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.isUpdate = false
             $scope.isRencanaProduk = null
 
-            // data
+            // data            
             $scope.listReverensi = []
             $scope.listSubSubKegiatanRencana = []
             $scope.listSatuan = []
@@ -42,6 +42,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             ]
 
             loadDataCombo()
+            
 
             // Load data perencanaan
             function loadPerencanaan(){
@@ -169,19 +170,19 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }
             
             // Load data combo
-            function loadDataCombo() {
+            function loadDataCombo() {                
                 $scope.item.tahunAnggaran = moment($scope.settingAnggaran).add(1, 'y').format('YYYY')
 
                 $scope.dataVOloaded = true
 
                 medifirstService.get("perencanaan/get-combo-perencanaan-belanja?" 
                     + "idLogin=" + $scope.userLogin.id)
-                    .then(function(e){
+                    .then(function (e) {
                         $scope.dataVOloaded = false
 
                         $scope.listSubSubKegiatanRencana = e.data.subSubKegiatan
                         $scope.listAsalProduk = e.data.asalProduk
-                        $scope.listSatuan = e.data.satuan
+                        $scope.listSatuan = e.data.satuan                        
                         $scope.listProduk = e.data.dataProdukAll
                         $scope.settingAnggaran = e.data.settinganggaran
 
@@ -196,7 +197,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }
 
             // Tambah rencana barang
-            $scope.bukaTambahRencanaProduk = function() {
+            $scope.bukaTambahRencanaProduk = function () {
                 // Update state
                 $scope.isRencanaProduk = true
                 $scope.isUpdate = false
@@ -208,7 +209,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 })
                 
                 // open popup
-                $scope.popupTambahRencanaBelanja.center().open()
+                $scope.popupTambahRencanaBelanja.center().open()                
             }
 
             // Tambah rencana kegiatan
@@ -256,6 +257,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         $scope.dataVOloaded = false
                         $scope.item.stokProduk = e.data[0].qtyproduk
                     })
+                $scope.item.kodeBmn = $scope.item.produk.kodebmn
             }
 
             // Tambah reverensi

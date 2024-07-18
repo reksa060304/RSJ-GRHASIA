@@ -56,17 +56,20 @@ class RBAController extends ApiController
         foreach ($kdjenisobat as $it){
             $arrkdjenisobat []=  (int)$it;
         }
+        $id = array_merge($arrkdjenisobat, [133]);
+        // var_dump($id);
         $dataProdukAll = DB::table('produk_m as pr')
             ->JOIN('detailjenisproduk_m as djp','djp.id','=','pr.objectdetailjenisprodukfk')
             ->JOIN('jenisproduk_m as jp','jp.id','=','djp.objectjenisprodukfk')
             ->leftJOIN('satuanstandar_m as ss','ss.id','=','pr.objectsatuanstandarfk')
-            ->JOIN('stokprodukdetail_t as spd','spd.objectprodukfk','=','pr.id')
-            ->select('pr.id','pr.namaproduk')
+            ->leftJoin('stokprodukdetail_t as spd','spd.objectprodukfk','=','pr.id')
+            ->leftJOIN('charkodeakunasset_m AS ak', 'ak.id', '=', 'pr.objectprodukassetfk')
+            ->select('pr.id','pr.namaproduk', 'ak.kodeakun as kodebmn')
             ->where('pr.kdprofile', $idProfile)
             ->where('pr.statusenabled',true)
-            // ->whereIn('jp.id',[97,283])
-            ->whereIn('jp.id',$arrkdjenisobat)
-            ->groupBy('pr.id','pr.namaproduk')
+            ->whereIn('jp.id', $id)
+            // ->whereIn('jp.id',$arrkdjenisobat)
+            ->groupBy('pr.id','pr.namaproduk', 'ak.kodeakun')
             ->orderBy('pr.namaproduk')
             ->get();
         
@@ -237,7 +240,7 @@ class RBAController extends ApiController
                 ka.id || '-' || ka.keterangan AS keterangan, 
                 ru.namaruangan"))
             ->leftJoin('pegawai_m as pg', 'pg.id', '=', 'sp.objectpegawaifk')
-            ->leftJoin('kegiatananggaran_m as ka', 'ka.id', '=', 'sp.objectsubkegiatanfk')
+            // ->leftJoin('kegiatananggaran_m as ka', 'ka.id', '=', 'sp.objectsubkegiatanfk')
             ->leftJoin('ruangan_m as ru', 'ru.id', '=', 'sp.objectruanganasalfk')
             ->where('sp.keteranganlainnya', 'Rencana Usulan Pengadaan')
             ->where('sp.statusenabled', true)
