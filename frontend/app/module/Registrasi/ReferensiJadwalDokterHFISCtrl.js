@@ -33,7 +33,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 var datas= []
                 for (let i = 0; i <  data.data.ruanganRajal.length; i++) {
                     const element =  data.data.ruanganRajal[i];
-                    datas.push({id:element.kdinternal ? element.kdinternal : i,namaruangan:element.namaruangan})
+                    datas.push({id:element.noruangan ? element.noruangan : i,namaruangan:element.namaruangan})
                 }
 
                 var datasdokter = []
