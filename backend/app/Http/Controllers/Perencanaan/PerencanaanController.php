@@ -6354,7 +6354,7 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
         $spj = collect(
             DB::select(DB::raw("
                 SELECT 
-                    COALESCE(SUM(rd.subtotal),0) AS totalspj
+                    COALESCE(SUM(sr.totalbelanja),0) AS totalspj
                 FROM strukrealisasi_t AS sr
                 JOIN realisasidetail_t AS rd ON rd.strukrealisasifk = sr.norec AND rd.statusenabled = TRUE
                 WHERE 
@@ -8459,11 +8459,12 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
         // menghitung spj dari semua tahap
         $sisa_semua_tahap = DB::select(DB::raw("
             SELECT
-                SUM(rd.subtotal) AS total_sisa
+                SUM(sr.totalbelanja) AS total_sisa
             FROM keteranganbelanja_t AS kb 
             JOIN realisasidetail_t AS rd ON rd.keteranganbelanjafk = kb.norec 
                 AND rd.statusenabled = TRUE 
                 AND rd.kdprofile = 30
+            JOIN strukrealisasi_t as sr ON sr.norec = rd.strukrealisasifk AND sr.statusenabled = TRUE
             WHERE
                 kb.statusenabled = TRUE 
                 AND kb.kdprofile = 30
