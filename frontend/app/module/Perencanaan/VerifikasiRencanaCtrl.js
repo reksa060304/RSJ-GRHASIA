@@ -446,6 +446,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         data.satuan = $scope.item.satuan
                         data.mataAnggaran = $scope.item.mataAnggaran
                         data.statusverif = $scope.item.statusVerif
+                        data.sumberdana = $scope.item.asalproduk
+                        data.tahunanggaran = $scope.item.tahunAnggaran
                     }
                 })
 

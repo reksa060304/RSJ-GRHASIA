@@ -240,7 +240,7 @@ class RBAController extends ApiController
                 ka.id || '-' || ka.keterangan AS keterangan, 
                 ru.namaruangan"))
             ->leftJoin('pegawai_m as pg', 'pg.id', '=', 'sp.objectpegawaifk')
-            // ->leftJoin('kegiatananggaran_m as ka', 'ka.id', '=', 'sp.objectsubkegiatanfk')
+            ->leftJoin('kegiatananggaran_m as ka', 'ka.id', '=', 'sp.objectsubkegiatanfk')
             ->leftJoin('ruangan_m as ru', 'ru.id', '=', 'sp.objectruanganasalfk')
             ->where('sp.keteranganlainnya', 'Rencana Usulan Pengadaan')
             ->where('sp.statusenabled', true)
