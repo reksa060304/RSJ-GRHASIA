@@ -31,8 +31,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
 
 		// Masih dalam percobaan. abaikan
 		Route::get('report/coba-lapung', 'Report\ReportController@cobaLapung');
-		Route::get('report/surat-rehab-napza', 'Report\ReportController@cetakRehabNapza');
-
+		Route::get('rawatinap/get-bundle-hais', 'RawatInapController@getBundleHais');
+		
 		// terima laundry
 		Route::post('laundry/save-terima-laundryv2', 'Laundry\LaundryController@saveTerimaLaundryV2');
 
@@ -41,10 +41,11 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
 		Route::post('perencanaan/save-lock-angkas', 'Perencanaan\PerencanaanController@saveLockAngkas');
 		Route::post('sysadmin/logging/save-log-lock-angkas', 'SysAdmin\LoggingController@saveLoggingLockAngkas');
 
-
 		// Cetakan
 		Route::get('report/cetak-label-pilihan', 'Report\ReportController@cetakLabelPilihan');
-    Route::get('report/cetak-label-pilihan-pengemasan', 'Report\ReportController@cetakLabelPilihanPengemasan');
+    	Route::get('report/cetak-label-pilihan-pengemasan', 'Report\ReportController@cetakLabelPilihanPengemasan');
+		Route::get('report/surat-rehab-napza', 'Report\ReportController@CetakSKNapza');
+		Route::get('report/get-cetak-suratpasienmelarikandiri', 'Report\ReportController@suratPasienMelarikanDiri');
 
 		// RBA
 		Route::get('perencanaan/get-total-sisa-anggaran', 'Perencanaan\PerencanaanController@getTotalSisaAnggaran');

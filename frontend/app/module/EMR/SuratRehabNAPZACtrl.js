@@ -24,8 +24,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             var pegawaiInputDetail= ''
             $scope.item.kasusbaru = true
             $scope.item.kasuslama = false
+            $scope.isTTD_E = true
             if(medifirstService.getKelompokUser() == 'mahasiswadiklat'){
                 $scope.tombolSimpanVis = false
+                $scope.isTTD_E = false
             }
             medifirstService.getPart('emr/get-datacombo-part-pegawai', true, true, 20).then(function (data) {
                 $scope.listPegawai = data
@@ -37,6 +39,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             ]
 
             var cacheNomorEMR = cacheHelper.get('cacheNomorEMR');
+            if (cacheNomorEMR != undefined) {
+                nomorEMR = cacheNomorEMR[0]
+                norecEMR = cacheNomorEMR[1]
+                $scope.cc.norec_emr = nomorEMR
+            }
             if (cacheNomorEMR != undefined) {
                 nomorEMR = cacheNomorEMR[0]
                 $scope.cc.norec_emr = nomorEMR
@@ -387,20 +394,6 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.item.obj[jawab.target] = $scope.SkorSkalaFlacc[jawab.target]
                 setSkor();
             }
-
-
-            function setSkor()
-            {
-                var nilai1 = $scope.SkorSkalaFlacc[21008224]
-                var nilai2 = $scope.SkorSkalaFlacc[21008229]
-                var nilai3 = $scope.SkorSkalaFlacc[21008234]
-                var nilai4 = $scope.SkorSkalaFlacc[21008239]
-                var nilai5 = $scope.SkorSkalaFlacc[21008244]
-            
-                var total = nilai1 + nilai2 + nilai3 + nilai4 + nilai5
-                $scope.item.obj[21008245] = total;
-                
-            }
    
             $scope.getSkorNutrisi = function (jawab) {
                 var arrobj = Object.keys($scope.item.obj);
@@ -439,10 +432,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 
             })
 
-
             
-                
-
             $scope.getSkalaNyeri = function (data, stat) {
                 $scope.activeStatus = stat.descNilai
                 var nilai = stat.descNilai
@@ -498,28 +488,6 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
             }
 
-            $scope.getSkor = function (stat) {
-
-                var arrobj = Object.keys($scope.item.obj)
-                var arrSave = []
-                for (var i = arrobj.length - 1; i >= 0; i--) {
-                    if (arrobj[i] == stat.id) {
-                        if ($scope.item.obj[parseFloat(arrobj[i])] == true) {
-                            $scope.totalSkor = $scope.totalSkor + parseFloat(stat.descNilai)
-                            break
-                        } else {
-                            $scope.totalSkor = $scope.totalSkor - parseFloat(stat.descNilai)
-                            break
-                        }
-
-
-                    } else {
-
-                    }
-                }
-                $scope.item.obj[3152] = $scope.totalSkor + $scope.totalSkor2
-                setSkorAkhir($scope.item.obj[3152])
-            }
             $scope.getSkoralegi = function (stat) {
 
                 var arrobj = Object.keys($scope.item.obj)
@@ -735,16 +703,70 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 var local = JSON.parse(localStorage.getItem('profile'))
                 var nama = medifirstService.getPegawaiLogin().namaLengkap
 
-                window.open(configuration.baseApiBackend + 'report/get-cetak-suratketerangandokter?nocm=' + $scope.cc.nocm +
-                '&norec_apd=' + $scope.cc.norec +
-                '&emr=' + norecEMR +
-                '&emrfk=' + $scope.cc.emrfk +
-                '&kdprofile=' + local.id +
-                '&nama=' + nama +
-                // '&isttd=true' +
-                // '&pegawaittd=' + pegawai.value +
-                '&noregistrasi=' + $scope.cc.noregistrasi +
-                '&norec_pd=' + $scope.cc.norec_pd, '_blank');
+                window.open(configuration.baseApiBackend 
+                    + 'report/surat-rehab-napza'
+                    + '?noemr=' + nomorEMR
+                    + '&emrfk=' + $scope.cc.emrfk
+                    + '&kdprofile=' + local.id
+                )
+
+                // window.open(configuration.baseApiBackend 
+                //     + 'report/get-cetak-suratketerangandokter' 
+                //     + '?nocm=' + $scope.cc.nocm +
+                // '&norec_apd=' + $scope.cc.norec +
+                // '&emr=' + norecEMR +
+                // '&emrfk=' + $scope.cc.emrfk +
+                // '&kdprofile=' + local.id +
+                // '&nama=' + nama +
+                // // '&isttd=true' +
+                // // '&pegawaittd=' + pegawai.value +
+                // '&noregistrasi=' + $scope.cc.noregistrasi +
+                // '&norec_pd=' + $scope.cc.norec_pd, '_blank');
+            }
+
+            $scope.ttdElek = function () {
+                if (norecEMR == '') {
+                    toastr.error('Dokumen belum pernah di isi')
+                    return
+                }
+
+                if ($scope.item.obj[1901301450] != undefined) {
+                    $scope.listPegawai.add($scope.item.obj[1901301450])
+                    $scope.item.pegawai = $scope.item.obj[1901301450]
+                }
+                $scope.winDialog.center().open()
+                // })
+            }
+
+            $scope.savePengajuanTTE = function (pegawai) {
+                if (pegawai == undefined) {
+                    toastr.error('Pilih pegawai dulu')
+                    return
+                }
+                var local = JSON.parse(localStorage.getItem('profile'))
+                var nama = medifirstService.getPegawaiLogin().namaLengkap
+                $scope.isRouteLoading = true
+                medifirstService.get('report/surat-rehab-napza?nocm=' + $scope.cc.nocm +
+                    '&norec_apd=' + $scope.cc.norec +
+                    '&noemr=' + nomorEMR +
+                    '&emr=' + norecEMR +
+                    '&emrfk=' + $scope.cc.emrfk +
+                    '&kdprofile=' + local.id +
+                    '&nama=' + nama +
+                    '&isttd=' + $scope.isTTD_E +
+                    '&pegawaittd=' + pegawai.value +
+                    '&noregistrasi=' + $scope.cc.noregistrasi +
+                    '&norec_pd=' + $scope.cc.norec_pd
+                ).then(function (e) {
+                    if (e.data.status == 201) {
+                        toastr.success(e.data.message)
+                        $scope.winDialog.close()
+                    } else {
+                        toastr.error(e.data.message)
+                    }
+                    $scope.isRouteLoading = false
+
+                })
             }
         }
         

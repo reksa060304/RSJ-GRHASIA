@@ -16714,7 +16714,7 @@ from kegiatananggaran_m km
 
     public function CetakSKNapza(Request $request)
     {   
-        // $norec = $request['emr'];
+        $norec = $request['emr'];
         $noemr = $request['noemr'];
         $kdProfile = (int) $request['kdprofile'];
         $emrfk = $request['emfk'];
@@ -16764,6 +16764,7 @@ from kegiatananggaran_m km
         $res['profile'] = Profile::where('id',$request['kdprofile'])->first();
         $res['d'] = $data;
         $item =[];   
+        $item2 = [];
         
         foreach( $res['d'] as $items){
                 if($items->type  ==  "textbox" ||$items->type  ==  "textarea"  ){
@@ -16794,6 +16795,9 @@ from kegiatananggaran_m km
                     $item[$items->emrdfk] = $arr[1];
                 }
         }
+
+        // dd($item);
+
         $pageWidth = 950;
         $peg = null;    
         if(isset($request['isttd']) && $request['isttd'] == true){
@@ -16829,7 +16833,7 @@ from kegiatananggaran_m km
         }
 
         return $pdf->stream();
-        return view('report.EMR.suratketerangannapza',compact('data','pageWidth', 'profile'));
+        return view('report.EMR.suratketerangannapza',compact('data','pageWidth', 'profile', 'item'));
     }
 
     public function CetakSKJiwa(Request $request)
