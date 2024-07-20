@@ -268,6 +268,54 @@ class RBAController extends ApiController
         return $this->respond($data);
     }
 
+    public function getUsulanDiTolak(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        $tglAwal = $request['tglAwal'];
+        $tglAkhir = $request['tglAkhir'];
+
+        $rencana = DB::table('strukperencanaan_t as sp')
+        ->select(DB::raw("sp.tglverifikasi, sp.statusenabled, sp.objectsubkegiatanfk, sp.norec, sp.tgldokumen, sp.nostruk, 
+            pg.namalengkap, 
+            ka.id || '-' || ka.keterangan AS keterangan, 
+            ru.namaruangan"))
+        ->leftJoin('pegawai_m as pg', 'pg.id', '=', 'sp.objectpegawaifk')
+        ->leftJoin('kegiatananggaran_m as ka', 'ka.id', '=', 'sp.objectsubkegiatanfk')
+        ->leftJoin('ruangan_m as ru', 'ru.id', '=', 'sp.objectruanganasalfk')
+        ->where('sp.keteranganlainnya', 'Rencana Usulan Pengadaan')
+        ->where('sp.statusenabled', true)
+        ->where('sp.kdprofile', $idProfile)
+        ->whereBetween('sp.tgldokumen', [$tglAwal, $tglAkhir])
+        ->orderBy('sp.nostruk')
+        ->get();
+    
+    $data = [];
+    foreach($rencana as $item) {
+        $detail = DB::table('strukperencanaandetail_t as spd')
+            ->select(DB::raw("spd.qtyverifikasi, spd.namakegiatan, spd.hargasatuan, 
+                spd.statusverif, spd.norec, spd.nostrukfk, spd.objectprodukfk, 
+                spd.qtyrencana, spd.qtystok, spd.keteranganlainnya, pr.namaproduk"))
+            ->leftJoin('produk_m as pr', 'pr.id', '=', 'spd.objectprodukfk')
+            ->where('spd.nostrukfk', $item->norec)
+            ->where('spd.statusenabled', true)
+            ->where('spd.kdprofile', $idProfile)
+            ->where('spd.statusverif', 2)            
+            ->get(); 
+            
+            //buat kondisi untuk mengecek apakah detail tidak kosong
+            if (count($detail) > 0) { 
+                array_push($data, [
+                    'rencana' => $item,
+                    'details' => $detail
+                ]);        
+                
+            }  
+        }
+
+        return $this->respond($data);
+    }
     /**
      * Delete data rencana belanja
      */

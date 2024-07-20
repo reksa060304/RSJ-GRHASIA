@@ -6794,6 +6794,25 @@
         "define": "MedifirstService"
       }
     ]
+  },
+  {
+    "name": "DaftarUsulanDiTolak",
+    "url": "/RGFmdGFyVXN1bGFuRGl0b2xhaw==",
+    "templateurl": "module/Perencanaan/DaftarUsulanDiTolak.html",
+    "controller": "DaftarUsulanDiTolakCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
   }
-
 ]
