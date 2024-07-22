@@ -79,10 +79,15 @@
         <input style="width: 100%; " kendo-combo-box k-ng-model="item.dokter" k-data-text-field=" 'namalengkap' "
             k-filter=" 'contains' " k-data-value-field=" 'id' " k-auto-bind="false " k-data-source="listDokter " />
     </div>     -->
-    <div class="grid_2" style="margin-top:5px">
+    <div class="grid_1" style="margin-top:5px">
         <label c-label c-label-text="Kelompok Pasien" real></label>
         <input style="width: 100%; " kendo-combo-box k-ng-model="item.kelompokpasien" k-data-text-field=" 'kelompokpasien' "
             k-filter=" 'contains' " k-data-value-field=" 'id' " k-auto-bind="false " k-data-source="listKelompokPasien " />
+    </div>
+    <div class="grid_1" style="margin-top:5px">
+        <label c-label c-label-text="Status Pasien" real></label>
+        <input style="width: 100%; " kendo-combo-box k-ng-model="item.statuspasien" k-data-text-field="'status'"
+            k-filter=" 'contains' " k-data-value-field=" 'status' " k-auto-bind="false " k-data-source="listStatusPasien " />
     </div>
     <div class="grid_1" style="margin-top:5px">
         <label c-label c-label-text="Jenis Ranap" real></label>
@@ -100,7 +105,6 @@
         <input style="width: 100%; " kendo-combo-box k-ng-model="item.kondisipasien" k-data-text-field=" 'kondisipasien' "
             k-filter=" 'contains' " k-data-value-field=" 'id' " k-auto-bind="false " k-data-source="listkondisipulang" />
     </div>
-
 
 
     <div class="grid_2" style="margin-top:5px">

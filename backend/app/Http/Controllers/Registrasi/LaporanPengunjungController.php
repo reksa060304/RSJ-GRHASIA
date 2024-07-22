@@ -7060,6 +7060,10 @@ class LaporanPengunjungController extends ApiController
         if (isset($request['departemen']) && $request['departemen'] != "" && $request['departemen'] != "undefined") {
             $dep = 'and ru.objectdepartemenfk = '. $request['departemen'];
         }
+        $statuspasien = '';
+        if(isset($request['statuspasien']) && $request['statuspasien'] !== "" && $request['statuspasien'] !== "undefined"){
+            $statuspasien = "and pd.statuspasien ilike '".'%'.$request['statuspasien']."%'";
+        }
         //laporan kunjungan v2
         $v2 = DB::select(DB::raw(
         "
@@ -7090,6 +7094,7 @@ class LaporanPengunjungController extends ApiController
         $paramRuangan
         $paramkp
         $dep
+        $statuspasien
         and ru.objectdepartemenfk not in (16,14,27) 
         
         union all
@@ -7119,6 +7124,7 @@ class LaporanPengunjungController extends ApiController
         $paramRuangan
         $paramkp
         $dep
+        $statuspasien
         and ru.objectdepartemenfk = 27 and so.keteranganorder ilike 'Order Radiologi' 
         
         union all 
@@ -7152,7 +7158,7 @@ class LaporanPengunjungController extends ApiController
         $paramRuangan
         $paramkp
         $dep
-
+        $statuspasien
         and ru.objectdepartemenfk = 27
         and ru2.objectdepartemenfk <> 16
         order by tglmasuk asc
@@ -7215,7 +7221,8 @@ class LaporanPengunjungController extends ApiController
         END as statuskeluar,
         kp.kondisipasien,
         -- peg.namalengkap,
-        kep.kelompokpasien
+        kep.kelompokpasien,
+        pd.statuspasien
         FROM
         antrianpasiendiperiksa_t apd
         inner join pasiendaftar_t pd on pd.norec = apd.noregistrasifk
@@ -7239,7 +7246,7 @@ class LaporanPengunjungController extends ApiController
         $jenisPasien
         $dep
         $kondisipasien
-        
+        $statuspasien
         union all
 
         SELECT DISTINCT
@@ -7267,7 +7274,8 @@ class LaporanPengunjungController extends ApiController
         'Order Radiologi' as statuskeluar,
         '' as kondisipasien,
         -- peg.namalengkap,
-        kep.kelompokpasien
+        kep.kelompokpasien,
+        pd.statuspasien
         -- op.norec
         -- op.objectprodukfk
 
@@ -7293,7 +7301,7 @@ class LaporanPengunjungController extends ApiController
         $jenisPasien
         $dep
         $kondisipasien
-
+        $statuspasien
         and so.keteranganorder ilike 'Order Radiologi'
         union all
         sELECT DISTINCT 
@@ -7321,7 +7329,8 @@ class LaporanPengunjungController extends ApiController
         '' as statuskeluar,
         '' as kondisipasien,
         -- peg.namalengkap,
-        kep.kelompokpasien
+        kep.kelompokpasien,
+        pd.statuspasien
         -- op.norec
         -- op.objectprodukfk
 
@@ -7347,7 +7356,7 @@ class LaporanPengunjungController extends ApiController
         $jenisPasien
         $dep
         $kondisipasien
-
+        $statuspasien
 
 
         and ru.objectdepartemenfk = 27

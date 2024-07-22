@@ -1611,9 +1611,8 @@ define(['initialize'], function (initialize) {
 					$scope.listItemPenambahan[index].tglpenambahan = $scope.item.tglpenambahan
 					$scope.listItemPenambahan[index].keteranganpenambahan = $scope.item.keteranganpenambahan
 					$scope.listItemPenambahan[index].hargapenambahan = $scope.item.hargapenambahan
-					$scope.listItemPenambahan[index].tglbast = $scope.item.tglbast
+					$scope.listItemPenambahan[index].tglbast = moment($scope.item.tglbast).format('YYYY-MM-DD HH:mm:ss')
 					$scope.listItemPenambahan[index].nomorbast = $scope.item.nomorbast
-
 				}else{
 					// masukkan data ke array
 					$scope.listItemPenambahan.push({
@@ -1621,7 +1620,7 @@ define(['initialize'], function (initialize) {
 						tglpenambahan: moment($scope.item.tglpenambahan).format('YYYY-MM-DD HH:mm:ss'),
 						keteranganpenambahan: $scope.item.keteranganpenambahan,
 						hargapenambahan: $scope.item.hargapenambahan,
-						tglbast: $scope.item.tglbast,
+						tglbast: moment($scope.item.tglbast).format('YYYY-MM-DD HH:mm:ss'),
 						nomorbast: $scope.item.nomorbast
 					})
 				}
@@ -1666,7 +1665,7 @@ define(['initialize'], function (initialize) {
 				// masukkan data ke input
 				$scope.item.tglpenambahan = moment(selectedData.tglpenambahan).format('YYYY-MM-DD HH:mm:ss')
 				$scope.item.keteranganpenambahan = selectedData.keteranganpenambahan
-				$scope.item.hargapenambahan = selectedData.hargapenambahan
+				$scope.item.hargapenambahan = parseFloat(selectedData.hargapenambahan)
 				$scope.item.tglbast = moment(selectedData.tglbast).format('YYYY-MM-DD HH:mm:ss')
 				$scope.item.nomorbast = selectedData.nomorbast
 			}
