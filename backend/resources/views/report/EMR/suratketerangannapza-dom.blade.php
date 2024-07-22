@@ -4,21 +4,12 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Resume Medis</title>
-    {{-- @if (stripos(\Request::url(), 'localhost') !== false) --}}
+    <title>Surat Keterangan Rehabilitasi NAPZA</title>
         <link rel="stylesheet" href="css/report/paper.css">
         <link rel="stylesheet" href="css/report/table.css">
         <link rel="stylesheet" href="css/report/tabel.css">
 
         <link href="css/style.css" rel="stylesheet">
-    {{-- @else
-        <link rel="stylesheet" href="service/css/report/paper.css">
-        <link rel="stylesheet" href="service/css/report/table.css">
-        <link rel="stylesheet" href="service/css/report/tabel.css">
-
-        <link href="service/css/style.css" rel="stylesheet">
-    @endif --}}
-
     <style>
         @page {
             size:A4
@@ -89,16 +80,11 @@
             <tbody>
                 <tr>
                     <td width="10%" style="padding: 5px">
-                        {{-- @if (stripos(\Request::url(), 'localhost') !== false) --}}
-                            <img src="img/logo_grhasia_com.png" alt="Logo" style="width: 70px; margin-bottom:10px">
-                            <br>
-                            <b >
-                                <span style="font-size: 10px;"> RSJ GRHASIA</span>
-
-                            </b>
-                        {{-- @else --}}
-                            {{-- <img src="service/img/logo_only.png" alt="" style="width: 90px;"> --}}
-                        {{-- @endif --}}
+                        <img src="img/logo_grhasia_com.png" alt="Logo" style="width: 70px; margin-bottom:10px">
+                        <br>
+                        <b >
+                            <span style="font-size: 10px;"> RSJ GRHASIA</span>
+                        </b>
                     </td>
                     <td style="text-align: left">
                         <b>
