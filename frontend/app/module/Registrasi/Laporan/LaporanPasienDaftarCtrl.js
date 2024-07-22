@@ -36,6 +36,8 @@ define(['initialize'], function (initialize) {
 
             ]
 
+            $scope.listStatusPasien = [{ status: "Lama" }, { status: "Baru" }]
+
             //debugger;
             $scope.date = new Date();
             var tanggals = DateHelper.getDateTimeFormatted3($scope.date);
@@ -160,10 +162,16 @@ define(['initialize'], function (initialize) {
                     noRm ="&noRm="+ $scope.item.noRm
                 }
 
+                var statuspasien = ''
+                if($scope.item.statuspasien !== undefined && $scope.item.statuspasien !== null){
+                    statuspasien = "&statuspasien=" + $scope.item.statuspasien.status
+                }
+
                 var chacePeriode = {
                     0: tglAwal,
                     1: tglAkhir
                 }
+
                 cacheHelper.set('LaporanPasienDaftarCtrl', chacePeriode);
 
                 medifirstService.get("registrasi/laporan/get-laporan-pasien-daftar?"
@@ -174,7 +182,8 @@ define(['initialize'], function (initialize) {
                     + tempKelPasienId
                     + namaPasien
                     + noRm
-                    +isTglPulang).then(function (data) {
+                    + isTglPulang
+                    + statuspasien).then(function (data) {
                         $scope.isLoadingData = false;
                         var datas = data.data;
                         for (let i = 0; i < datas.length; i++) {

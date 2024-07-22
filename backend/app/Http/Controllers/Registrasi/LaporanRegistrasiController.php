@@ -311,6 +311,12 @@ class LaporanRegistrasiController extends  App\Http\Controllers\ApiController
         if (isset($request['noRm']) && $request['noRm'] != "" && $request['noRm'] != "undefined") {
             $norm = ' and pm.nocm = \'' . $request['noRm'].'\'';
         }
+
+        $statuspasien = '';
+        if(isset($request['statuspasien']) && $request['statuspasien'] !== '' && $request['statuspasien'] !== 'undefined'){
+            $statuspasien = "and pd.statuspasien ilike '%".$request['statuspasien']."%'";
+        }
+
         $dataLogin = $request->all();
         // $data = DB::select(DB::raw("SELECT distinct pm.alamatrmh, pm.penanggungjawab, pd.tglregistrasi::date - pm.tgllahir::date as umurhari,
         //     case when kab.objectpropinsifk = 14 then alm.namakotakabupaten else 'LUARDIY' end as datadiy, 
@@ -468,7 +474,7 @@ class LaporanRegistrasiController extends  App\Http\Controllers\ApiController
         $idRuangan
         $idKelompok
         $norm
-
+        $statuspasien
         GROUP BY apr.norec, sk.statuskeluar, pd.objectstatuskeluarfk, pg.namalengkap, pm.nocm, pd.noregistrasi, pd.statuspasien, pm.tgllahir, pm.namapasien,alm.alamatlengkap, kab.objectpropinsifk,
         alm.namakotakabupaten, prop.namapropinsi, sp.statusperkawinan, pd.tglregistrasi,jk.reportdisplay,pm.alamatrmh, pm.penanggungjawab,
         ru.namaruangan ,kl.namakelas,klp.kelompokpasien,rk.namarekanan,ag.agama,pend.pendidikan, peker.pekerjaan,pd.tglpulang,ru.objectdepartemenfk,
