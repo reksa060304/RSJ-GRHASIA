@@ -6354,7 +6354,7 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
         $spj = collect(
             DB::select(DB::raw("
                 SELECT 
-                    COALESCE(SUM(sr.totalbelanja),0) AS totalspj
+                    COALESCE(SUM(rd.subtotal),0) AS totalspj
                 FROM strukrealisasi_t AS sr
                 JOIN realisasidetail_t AS rd ON rd.strukrealisasifk = sr.norec AND rd.statusenabled = TRUE
                 WHERE 
@@ -6387,12 +6387,11 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
             WHERE
                 ka.statusenabled = TRUE 
                 AND ka.kdprofile = ".$idProfile." 
-                AND ka.kode = '".$kegiatan->kode."'
+                AND ka.id IN (".implode(',', $arrIdKegiatan).")
                 AND ka.tahun = '".$setting->tahunanggaran."'
                 AND kb.objecttahapfk = ".$setting->objecttahapaktivfk."
                 AND kb.objectmataanggaranfk = ".$request['mataanggaran']."
                 $sumberdanaanggaran
-             
         ")))->first();
 
         $total = $spj->totalspj + $panjar->totalpanjar;
