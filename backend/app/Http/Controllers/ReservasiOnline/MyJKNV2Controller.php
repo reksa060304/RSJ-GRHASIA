@@ -497,7 +497,8 @@ class MyJKNV2Controller extends ApiController
             WHERE pd.tglregistrasi BETWEEN '$tglAwal' and '$tglAkhir'
             AND ru.id = '$kdInternalRuangan' 
             AND pd.statusenabled = true 
-            and apd.statusantrian = '1'
+            --and apd.statusantrian = '1'
+            and apd.tgldipanggilsuster is not null
             order by apd.noantrian desc 
         "))->first();
         $nomorNA = collect(DB::select("
