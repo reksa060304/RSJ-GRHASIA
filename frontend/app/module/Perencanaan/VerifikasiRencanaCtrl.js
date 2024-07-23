@@ -174,7 +174,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         $scope.listTahapKegiatan = response.data.tahapAnggaran
                         
                         // Memilih tahap indikatif 1
-                        $scope.item.tahap =  $scope.listTahapKegiatan[0]
+                        $scope.item.tahap =  $scope.listTahapKegiatan[1]
         
                         medifirstService.get('perencanaan/get-combo-perencanaan-belanja?'
                             +'idLogin=' + $scope.userLogin.id)

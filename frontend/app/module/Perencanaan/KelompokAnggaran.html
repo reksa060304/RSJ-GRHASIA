@@ -470,7 +470,7 @@
 											k-data-source="listKegiatanCombo" />
 									</div>
 									
-								</div>
+								</div>							
 								<div class="grid_2">
 									<div class="grid_12">
 										<label c-label item="item">Sub Sub Kegiatan</label>
@@ -481,16 +481,26 @@
 											k-data-source="listSubSubKegiatanCombo" />
 									</div>
 								</div>
-								<div class="grid_3" style="margin-top: 20px;">
+								<div class="grid_2">
+									<div class="grid_12">
+										<label c-label item="item">Tahap</label>
+									</div>
+									<div class="grid_12">
+										<input style="width: 100%;" kendo-combo-box k-ng-model="item.searchtahap"
+											k-data-text-field="'tahap'" k-data-value-field="'id'"
+											k-filter="'contains'" k-auto-bind="false" k-data-source="listTahap" ng-disabled="disidpegawai"/>
+									</div>
+								</div>
+								<!-- <div class="grid_3" style="margin-top: 20px;">
 									<div class="grid_4" style="text-align: center;">
-										Tahap
+										<label c-label item="item">Tahap</label>
 									</div>
 									<div class="grid_8" style="margin-top: -10px;">
 										<input style="width: 100%;" kendo-combo-box k-ng-model="item.searchtahap"
 											k-data-text-field="'tahap'" k-data-value-field="'id'"
 											k-filter="'contains'" k-auto-bind="false" k-data-source="listTahap" ng-disabled="disidpegawai"/>
 									</div>
-								</div>
+								</div> -->
 								<div class="grid_1">
 									<div class="grid_12">
 										<label c-label item="item" c-label-text="Tahun"></label>
@@ -500,7 +510,7 @@
 												placeholer="YYYY" k-format="'yyyy'" ng-disabled="disidpegawai"/>
 									</div>
 								</div>
-								<div class="grid_1" style="margin-top: 10px;">
+								<div class="grid_1" style="margin-top: 20px; right: 20px;">
 									<button class="btnTemplate1" ng-click="findData()">Search</button>
 								</div>
 								<div class="grid_12 borderBox">

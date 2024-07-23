@@ -451,25 +451,17 @@
     
             <!-- Simpan hapus update -->
             <div class="grid_12">
-                <div class="grid_6"></div>
-                <div class="grid_6">
-                    <div class="grid_12" style="margin-top: 10px">
-                        
-                        <div class="grid_6">
-                            <button class="btnTemplate1 cancel" ng-click="tutup()">
-                                <i class="fa fa-trash"></i>
-                                Tutup
-                            </button>
-                        </div>
-                        
-                        <div class="grid_6">
-                            <button class="btnTemplate1" ng-click="verifikasiPerencanaan()">
-                                <i class="fa fa-refresh"></i>
-                                Validasi
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                <div class="grid_2" style="margin-right: 10px;">
+                    <button class="btnTemplate1 cancel" ng-click="tutup()">
+                        <i class="fa fa-close"></i>
+                        Tutup
+                    </button>
+                </div>              
+                <div class="grid_2" style="margin-right: 10px;">
+                    <button class="btnTemplate1" ng-click="verifikasiPerencanaan()">
+                        <i class="fa fa-refresh"></i>
+                        Validasi
+                    </button>
             </div>
         </div>
     </div>
@@ -482,7 +474,7 @@
             <div class="grid_12" style="width: 100%;">
                 <div class="grid_12">
                     <div class="grid_10">
-                        Reverensi
+                        Referensi
                     </div>
                     <div class="grid_12">
                         <input c-text-box type="input" class="k-textbox" ng-model="item.reverensi"  style="width: 100%;" />

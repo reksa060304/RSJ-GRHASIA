@@ -261,22 +261,22 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }
 
             // Tambah reverensi
-            $scope.bukaTambahReverensi = function(){
-                $scope.popupTambahReverensi.center().open()
-            }
+            // $scope.bukaTambahReverensi = function(){
+            //     $scope.popupTambahReverensi.center().open()
+            // }
 
             // Tutup reverensi
-            $scope.tutupTambahReverensi = function(){
-                $scope.popupTambahReverensi.close()
-            }
+            // $scope.tutupTambahReverensi = function(){
+            //     $scope.popupTambahReverensi.close()
+            // }
 
             // Simpan reverensi
-            $scope.tambahReverensi = function(){
-                $scope.listReverensi.push($scope.item.inputreverensi)
-                $scope.item.inputreverensi = null
-                $scope.item.reverensi = $scope.listReverensi.toString()
-                // $scope.item.listReverensi = $scope.listReverensi.toString()
-            }
+            // $scope.tambahReverensi = function(){
+            //     $scope.listReverensi.push($scope.item.inputreverensi)
+            //     $scope.item.inputreverensi = null
+            //     $scope.item.reverensi = $scope.listReverensi.toString()
+            //     // $scope.item.listReverensi = $scope.listReverensi.toString()
+            // }
 
             // Tambah detail perencanaan
             $scope.tambahPerencanaan = function(){
@@ -696,44 +696,44 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
             }
 
-            function validation() {
-                if($scope.item.tglPengajuan == undefined){
-                    toastr.error('Isi Tanggal Pengajuan Terlebih Dahulu')
-                    return false
-                }
+            // function validation() {
+            //     if($scope.item.tglPengajuan == undefined){
+            //         toastr.error('Isi Tanggal Pengajuan Terlebih Dahulu')
+            //         return false
+            //     }
 
-                if($scope.item.subSubKegiatanRencana == undefined){
-                    toastr.error('Pilih Sub Sub Kegiatan Terlebih Dahulu')
-                    return false
-                }
+            //     if($scope.item.subSubKegiatanRencana == undefined){
+            //         toastr.error('Pilih Sub Sub Kegiatan Terlebih Dahulu')
+            //         return false
+            //     }
 
-                if($scope.item.jumlahRencana == null || $scope.item.jumlahRencana == undefined){
-                    toastr.error('Isi Jumlah Rencana Terlebih Dahulu')
-                    return false
-                }
+            //     if($scope.item.jumlahRencana == null || $scope.item.jumlahRencana == undefined){
+            //         toastr.error('Isi Jumlah Rencana Terlebih Dahulu')
+            //         return false
+            //     }
 
-                if($scope.item.hargaSatuan == null || $scope.item.hargaSatuan == undefined){
-                    toastr.error('Isi Harga Terlebih Dahulu')
-                    return false
-                }
+            //     if($scope.item.hargaSatuan == null || $scope.item.hargaSatuan == undefined){
+            //         toastr.error('Isi Harga Terlebih Dahulu')
+            //         return false
+            //     }
 
-                if($scope.item.listReverensi == null || $scope.item.listReverensi == undefined){
-                    toastr.error('Isi Reverensi Terlebih Dahulu')
-                    return false
-                }
+            //     if($scope.item.listReverensi == null || $scope.item.listReverensi == undefined){
+            //         toastr.error('Isi Reverensi Terlebih Dahulu')
+            //         return false
+            //     }
 
-                if($scope.listLoginUserToRuangan == undefined || $scope.listLoginUserToRuangan.length <= 0){
-                    toastr.error('Login User Belum di Map ke Ruangan')
-                    return false
-                }
+            //     if($scope.listLoginUserToRuangan == undefined || $scope.listLoginUserToRuangan.length <= 0){
+            //         toastr.error('Login User Belum di Map ke Ruangan')
+            //         return false
+            //     }
 
-                if($scope.item.idRuanganLoginUser == undefined){
-                    toastr.error('Pilih Ruangan Terlebih Dahulu')
-                    return false
-                }
+            //     if($scope.item.idRuanganLoginUser == undefined){
+            //         toastr.error('Pilih Ruangan Terlebih Dahulu')
+            //         return false
+            //     }
 
-                return (true)
-            }
+            //     return (true)
+            // }
 
             $scope.columnGrid = [
                 { "field": "no", "title": "No", "width": "45px", },
@@ -743,7 +743,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 { "field": "hargaSatuan", "title": "Harga Satuan"},
                 { "field": "satuan.satuanstandar", "title": "Satuan" },
                 { "field": "totalHarga", "title": "Total Harga" }, 
-                { "field": "listReverensi", "title": "Reverensi" },
+                { "field": "listReverensi", "title": "Referensi" },
             ]
 
             $scope.columnGridPerencanaan = {
@@ -783,7 +783,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 { "field": "hargaSatuan", "title": "Harga Satuan"},
                 { "field": "satuan.satuanstandar", "title": "Satuan" },
                 { "field": "totalHarga", "title": "Total Harga" }, 
-                { "field": "listReverensi", "title": "Reverensi" },
+                { "field": "listReverensi", "title": "Referensi" },
             ]
 
             $scope.yearUngkul = {
