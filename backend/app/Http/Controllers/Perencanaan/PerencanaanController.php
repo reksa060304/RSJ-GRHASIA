@@ -6354,9 +6354,8 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
         $spj = collect(
             DB::select(DB::raw("
                 SELECT 
-                    COALESCE(SUM(rd.subtotal),0) AS totalspj
+                    COALESCE(SUM(sr.totalbelanja),0) AS totalspj
                 FROM strukrealisasi_t AS sr
-                JOIN realisasidetail_t AS rd ON rd.strukrealisasifk = sr.norec AND rd.statusenabled = TRUE
                 WHERE 
                     sr.statusenabled = TRUE
                     AND sr.kdprofile = ".$idProfile."
@@ -6371,8 +6370,8 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
                 SELECT 
                     COALESCE ( SUM ( pj.jumlah ), 0 ) - COALESCE ( SUM ( pengpj.jumlahpengembalian ), 0 ) - COALESCE ( SUM ( spjtopanjar.jumlahspj ), 0 ) AS totalpanjar
                 FROM panjar_t AS pj
-                LEFT JOIN pengembalianpanjar_t AS pengpj ON pengpj.objectpanjarfk = pj.norec AND pengpj.statusenabled = TRUE
-                LEFT JOIN spjtopanjar_t AS spjtopanjar ON spjtopanjar.objectpanjarfk = pj.norec AND spjtopanjar.statusenabled = TRUE
+                JOIN pengembalianpanjar_t AS pengpj ON pengpj.objectpanjarfk = pj.norec AND pengpj.statusenabled = TRUE
+                JOIN spjtopanjar_t AS spjtopanjar ON spjtopanjar.objectpanjarfk = pj.norec AND spjtopanjar.statusenabled = TRUE
                 WHERE pj.objectsubsubkegiatanfk IN (".implode(',', $arrIdKegiatan).")
                 AND pj.objectmataanggaranfk = ".$request['mataanggaran']."
             "))
@@ -8468,7 +8467,7 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
                 kb.statusenabled = TRUE 
                 AND kb.kdprofile = 30
                 AND kb.objectkegiatanfk IN (".implode(',', $idKegiatan).") 
-                AND kb.keteranganbelanja = '".$keterangan->keteranganbelanja."'
+                AND kb.norec = '".$keterangan->norec."'
         "));
         
     
