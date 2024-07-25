@@ -8441,7 +8441,7 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
             ->first();
 
         // ambil kegiatan dengan kode yang sama
-        $kegiatan = DB::table('kegiatananggaran_m')
+        $kegiatanSemua = DB::table('kegiatananggaran_m')
             ->where('statusenabled', true)
             ->where('kode', $kegiatan->kode)
             ->where('tahun', $settingRBA->tahunanggaran)
@@ -8450,26 +8450,35 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
         $idKegiatan = [];
 
         // masukkan setiap id kegiatan ke ada dalam array
-        foreach($kegiatan as $kegi){
+        foreach($kegiatanSemua as $kegi){
             array_push($idKegiatan, $kegi->id);
         }
 
         // menghitung spj dari semua tahap
+        // $sisa_semua_tahap = DB::select(DB::raw("
+        //     SELECT
+        //         SUM(sr.totalbelanja) AS total_sisa
+        //     FROM keteranganbelanja_t AS kb 
+        //     JOIN realisasidetail_t AS rd ON rd.keteranganbelanjafk = kb.norec AND rd.statusenabled = TRUE AND rd.kdprofile = 30
+        //     JOIN strukrealisasi_t as sr ON sr.norec = rd.strukrealisasifk AND sr.statusenabled = TRUE
+        //     WHERE
+        //         kb.statusenabled = TRUE 
+        //         AND kb.kdprofile = 30
+        //         AND sr.objectkegiatanfk IN (".implode(',', $idKegiatan).") 
+        //         AND kb.norec = '".$keterangan->norec."'
+        // "));
+              
         $sisa_semua_tahap = DB::select(DB::raw("
-            SELECT
-                SUM(sr.totalbelanja) AS total_sisa
-            FROM keteranganbelanja_t AS kb 
-            JOIN realisasidetail_t AS rd ON rd.keteranganbelanjafk = kb.norec 
-                AND rd.statusenabled = TRUE 
-                AND rd.kdprofile = 30
-            JOIN strukrealisasi_t as sr ON sr.norec = rd.strukrealisasifk AND sr.statusenabled = TRUE
-            WHERE
-                kb.statusenabled = TRUE 
-                AND kb.kdprofile = 30
-                AND kb.objectkegiatanfk IN (".implode(',', $idKegiatan).") 
-                AND kb.norec = '".$keterangan->norec."'
+            SELECT 
+                COALESCE(SUM(sr.totalbelanja),0) AS total_sisa
+            FROM strukrealisasi_t AS sr
+            WHERE 
+                sr.statusenabled = TRUE
+                AND sr.kdprofile = ".$idProfile."
+                AND sr.objectkegiatanfk IN (".implode(',', $idKegiatan).")
+                AND sr.objectmataanggaranfk = ".$keterangan->objectmataanggaranfk."
+                AND sr.objectasalprodukfk = ".$keterangan->objectasalprodukfk."
         "));
-        
     
         // foreach ($data as $d) {
         //     $sisa = DB::select(DB::raw("
