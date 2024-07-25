@@ -393,8 +393,9 @@ class RBAController extends ApiController
         // Detail rencana 
         $detail = DB::table('strukperencanaandetail_t as spd')
             ->select(DB::raw("
-                spd.*, pr.namaproduk"))
+                spd.*, pr.namaproduk, ak.kodeakun as kdbmn"))
             ->leftJoin('produk_m as pr', 'pr.id', '=', 'spd.objectprodukfk')
+            ->leftJoin('charkodeakunasset_m as ak', 'ak.id', '=', 'pr.objectprodukassetfk')
             ->leftJoin('satuanstandar_m as sa', 'sa.id', '=', 'spd.objectsatuanfk')
             ->where('spd.nostrukfk', $rencana->norec)
             ->where('spd.statusenabled', true)

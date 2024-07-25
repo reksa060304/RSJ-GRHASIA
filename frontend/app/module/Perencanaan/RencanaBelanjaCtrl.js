@@ -320,7 +320,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                         $scope.dataPerencanaan[indexData].no = $scope.selectedListPerencanaan.no
                         $scope.dataPerencanaan[indexData].produk = $scope.item.produk
-                        $scope.dataPerencanaan[indexData].jumlahRencana = $scope.item.stokProduk
+                        $scope.dataPerencanaan[indexData].jumlahRencana = $scope.item.jumlahRencana
                         $scope.dataPerencanaan[indexData].hargaSatuan = $scope.item.hargaSatuan
                         $scope.dataPerencanaan[indexData].listReverensi = $scope.item.reverensi
                         $scope.dataPerencanaan[indexData].totalHarga = $scope.item.totalHarga
@@ -390,7 +390,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.item.hargaSatuan = null
                 $scope.item.satuan = null
                 $scope.item.totalHarga = null
-                $scope.item.keterangan = null
+                // $scope.item.keterangan = null
 
             }
 
@@ -400,7 +400,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 if(dataSelected != undefined){
                     $scope.selectedListPerencanaan = dataSelected
 
-                    // console.log($scope.selectedListPerencanaan)
+                    console.log($scope.selectedListPerencanaan)
                     // console.log($scope.isRencanaProduk)
                     
                     // jika rencana kegiatan atau barang
@@ -415,6 +415,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         $scope.listReverensi = $scope.selectedListPerencanaan.listReverensi.split(',')
                         $scope.item.reverensi = $scope.listReverensi.toString()
                     }else{
+                        $scope.item.produk = $scope.cariDariList($scope.listProduk, $scope.selectedListPerencanaan.objectprodukfk)
+                        $scope.item.kodeBmn = $scope.selectedListPerencanaan.kdbmn
                         $scope.item.jumlahRencana = $scope.selectedListPerencanaan.jumlahRencana
                         $scope.item.hargaSatuan = parseFloat($scope.selectedListPerencanaan.hargaSatuan)
                         $scope.item.satuan = $scope.selectedListPerencanaan.satuan
@@ -594,6 +596,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                                 const item = {
                                     no: (index + 1),
+                                    objectprodukfk: data.objectprodukfk,
                                     norec: data.norec,
                                     produk: { id: data.objectprodukfk, namaproduk: data.namaproduk },
                                     stokProduk: data.qtystok,
@@ -602,6 +605,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                     listReverensi: data.keteranganlainnya,
                                     satuan: data.satuan,
                                     totalHarga: parseFloat(data.totalharga),
+                                    kdbmn: data.kdbmn
                                 }
             
                                 $scope.dataPerencanaan.push(item)
