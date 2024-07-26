@@ -257,12 +257,19 @@ class RBAController extends ApiController
                     spd.qtyrencana, spd.qtystok, spd.keteranganlainnya, pr.namaproduk"))
                 ->leftJoin('produk_m as pr', 'pr.id', '=', 'spd.objectprodukfk')
                 ->where('spd.nostrukfk', $item->norec)
-                ->where('spd.statusenabled', true)
-                ->where('spd.kdprofile', $idProfile)
-                ->get();
+                ->where('spd.statusenabled', true);
+                if(isset($request['statusverif']) && $request['statusverif'] !== '' && $request['tahap'] != "undefined"){
+                    $detail = $detail->where('spd.statusverif', $request['statusverif']);
+                }
+            $detail = $detail->where('spd.kdprofile', $idProfile)->get();
             
-            $data[$key]['rencana'] = $item;
-            $data[$key]['details'] = $detail;
+            if (count($detail) > 0) { 
+                array_push($data, [
+                    'rencana' => $item,
+                    'details' => $detail
+                ]);        
+                
+            }
         }
 
         return $this->respond($data);

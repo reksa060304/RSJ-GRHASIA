@@ -47,9 +47,14 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 const tglAwal = $scope.item.tglAwal
                 const tglAkhir = $scope.item.tglAkhir
 
+                var status = '';
+                if ($scope.item.statusverif != undefined && $scope.item.statusverif != null) {
+                    status = '&statusverif=' + $scope.item.statusverif.value
+                }
                 medifirstService.get('perencanaan/get-rencana-belanja?' 
                     + 'tglAwal=' + moment(tglAwal).format('YYYY-MM-DD HH:mm:ss')
-                    + '&tglAkhir=' + moment(tglAkhir).format('YYY-MM-DD HH:mm:ss'))
+                    + '&tglAkhir=' + moment(tglAkhir).format('YYY-MM-DD HH:mm:ss')
+                    + status)
                     .then(function(e){
                         let result = e.data
                         
@@ -110,7 +115,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                         },
                                         {
                                             "field": "keteranganlainnya",
-                                            "title": "Reverensi"
+                                            "title": "Referensi"
                                         },
                                         {
                                             "field": "statusverif",
@@ -147,7 +152,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                         },
                                         {
                                             "field": "keteranganlainnya",
-                                            "title": "Reverensi"
+                                            "title": "Referensi"
                                         },
                                         {
                                             "field": "statusverif",
@@ -696,7 +701,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     { field: "satuan.satuanstandar", title: "Satuan", width: "80px" },
                     { field: "hargaSatuan", title: "Harga Satuan", width: "80px" },
                     { field: "totalHarga", title: "Total Harga", width: "100px" }, 
-                    { field: "listReverensi", title: "Reverensi" },
+                    { field: "listReverensi", title: "Referensi" },
                     { field: "mataAnggaran.text", title: "Rekening" },
                 ]
             }
@@ -720,7 +725,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 { field: "satuan.satuanstandar", title: "Satuan", width: "80px" },
                 { field: "hargaSatuan", title: "Harga Satuan", width: "80px" },
                 { field: "totalHarga", title: "Total Harga", width: "100px" }, 
-                { field: "listReverensi", title: "Reverensi" },
+                { field: "listReverensi", title: "Referensi" },
                 { field: "mataAnggaran.text", title: "Rekening" }
             ]
             

@@ -143,6 +143,12 @@
                     <input style="width: 100%" k-ng-model="item.tglAkhir" kendo-datepicker
                         k-format="'yyyy-MM-dd HH:mm:ss'" />
                 </div>
+                <div class="grid_2">
+                    <label c-label item="item">Status Verifikasi</label>
+                    <input kendo-combo-box k-ng-model="item.statusverif" k-data-value-field="'value'"
+                    k-data-text-field="'name'" k-filter="'contains'" k-auto-bind="false"
+                    k-data-source="listVerifikasi" />
+                </div>
                 <div class="grid_1" style="margin-top: 12px;">
                     <button class="btnTemplate1" ng-click="cari()">Cari</button>
                 </div>
@@ -370,7 +376,7 @@
             <div class="grid_12">
                 <div class="grid_2">
                     <div class="grid_12">
-                        Reverensi
+                        Referensi
                     </div>
                     <div class="grid_12">
                         <input c-text-box disabled type="input" class="k-textbox" ng-model="item.listReverensi"  style="width: 100%;" />

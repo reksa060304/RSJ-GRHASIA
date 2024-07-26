@@ -10,13 +10,16 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 start: "decade",
                 depth: "decade"
             }
-            var norec= "";
+            var norec = "";
+            $scope.listTahapKegiatan = []
             LoadCombo()
             // LoadData()
-            function LoadCombo(){
+            function LoadCombo() {
+                
                 console.log($scope.dataSelected)
                 medifirstService.get('anggaran/load-combo-rincian-pendapatan').then(function(data){
                     var datas = data.data
+                    $scope.listTahapKegiatan = datas.tahapanggaran
                     $scope.listSumberPendapatan = datas.sumberpendapatan
                     $scope.listUraianPendapatan = datas.uraianpendapatan
                     $scope.listAkun = datas.akun
@@ -405,7 +408,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 console.log($scope.dataSelected)
                 var tahun = $scope.itemRincian.tahun;
                 
-           
+           //tambahain validasi
                 norec = ''
                 if($scope.itemRincian.norec != undefined){
                     norec = $scope.itemRincian.norec
@@ -421,11 +424,13 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     'objectasalprodukfk': null,
                     'uraianpendapatan': $scope.itemPendapatan.uraianPendapatan,
                     'jumlahpendapatan': $scope.itemPendapatan.jumlahPendapatan,                    
-                    'objecturaianpendapatanfk':akun,
-                    'objectakunpendapatanfk': $scope.itemPendapatan.Akun.id ,
+                    'objecturaianpendapatanfk':null,
+                    'keterangan':null,
+                    // 'objectakunpendapatanfk': $scope.itemPendapatan.jumlahPendapatan,
+                    'objecttahapfk' : $scope.item.tahap.id,
                     'isperubahan': false,
                 }
-                medifirstService.post('anggaran/save-target-pendapatan', objSave).then(function(data){
+                medifirstService.post('anggaran/save-rincian-pendapatan', objSave).then(function(data){
                     console.log(data);
                     $scope.popupTambahRencanaPendapatan.close()
                     $scope.itemRincian = {}

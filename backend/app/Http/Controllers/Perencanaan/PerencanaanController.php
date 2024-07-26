@@ -9208,6 +9208,8 @@ public function loadComboRincian(Request $request)
         ->join('uraianpendapatan_m as up','up.id','=','rp.objecturaianpendapatanfk')
         ->select('rp.norec','rp.isperubahan', 'rp.jumlahpendapatan','rp.tahun', 'rp.tglinput', 'rp.keterangan', 'rp.objectasalprodukfk', 'rp.objecturaianpendapatanfk','up.uraianpendapatan','ap.namaexternal', 'rp.uraianpendapatan as uraian')
         ->where('rp.kdprofile', 30)->where('rp.statusenabled', true)->get();
+        //menambahkan tahap anggaran tabel
+        $tahapanggaran = \DB::table('tahapanggaran_m')->where('kdprofile', 30)->where('statusenabled', true)->get();
 
         if(isset($request['tahun']) && $request['tahun'] != ''){
             $uraianpendapatan = $uraianpendapatan->where('tahun', $request['tahun']);
@@ -9219,6 +9221,8 @@ public function loadComboRincian(Request $request)
             'sumberpendapatan'=> $sumberpendapatan,
             'uraianpendapatan'=> $uraianpendapatan,
             'rincianpendapatan'=> $rincianpendapatan,
+            //menampilkan tahap anggaran
+            'tahapanggaran' => $tahapanggaran,
             'as'=> 'FiziLucky'
         );
         return $this->respond($result);

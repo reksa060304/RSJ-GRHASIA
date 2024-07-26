@@ -117,7 +117,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                         },
                                         {
                                             "field": "keteranganlainnya",
-                                            "title": "Reverensi"
+                                            "title": "Referensi"
                                         },
                                         {
                                             "field": "statusverif",
@@ -154,7 +154,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                         },
                                         {
                                             "field": "keteranganlainnya",
-                                            "title": "Reverensi"
+                                            "title": "Referensi"
                                         },
                                         {
                                             "field": "statusverif",
@@ -180,7 +180,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     .then(function (e) {
                         $scope.dataVOloaded = false
 
-                        $scope.listSubSubKegiatanRencana = e.data.subSubKegiatan
+                        $scope.listSubSubKegiatanRencana = e.data.subSubKegiatan                                     
                         $scope.listAsalProduk = e.data.asalProduk
                         $scope.listSatuan = e.data.satuan                        
                         $scope.listProduk = e.data.dataProdukAll
