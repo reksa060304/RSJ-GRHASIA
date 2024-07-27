@@ -32,7 +32,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
 		// Masih dalam percobaan. abaikan
 		Route::get('report/coba-lapung', 'Report\ReportController@cobaLapung');
 		Route::get('rawatinap/get-bundle-hais', 'RawatInapController@getBundleHais');
-		
+
 		// terima laundry
 		Route::post('laundry/save-terima-laundryv2', 'Laundry\LaundryController@saveTerimaLaundryV2');
 
@@ -1437,7 +1437,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('report/get-cetak-ro','Report\ReportController@CetakRO');
           Route::get('report/get-cetak-rk','Report\ReportController@CetakRK');
           Route::get('report/get-rekap-order-kirim-barang-cetak','Report\ReportController@CetakLapOrderKirim');
-          Route::get('report/get-cetak-suratketerangannapza','Report\ReportController@CetakSKNapza');
+          Route::get('report/get-cetak-suratketerangannapza','Report\ReportController@cetakPemeriksaanNapza');
           Route::get('report/get-cetak-suratketerangankesehatanjiwa','Report\ReportController@CetakSKJiwa');
           Route::get('report/get-cetak-surathppcfit','Report\ReportController@CetakHPPCFIT');
           Route::get('report/get-cetak-surathppctki', 'Report\ReportController@CetakHPPCTKI');
