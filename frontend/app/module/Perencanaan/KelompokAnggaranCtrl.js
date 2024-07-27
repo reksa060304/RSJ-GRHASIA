@@ -72,11 +72,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.hidetabspm = false
             $scope.item.tahun = null
             $scope.item.tahunkas = null
-            $scope.item.tglawal = moment($scope.now).format('YYYY-01-01');
+            $scope.item.tglawal = moment().startOf('month').format('YYYY-MM-DD');
             $scope.item.tglakhir = moment($scope.now).format('YYYY-MM-DD');
             $scope.item.tglVerifSPJ = moment($scope.now).format('YYYY-MM-DD');
             $scope.item.tglPanjar = moment($scope.now).format('YYYY-MM-DD');
-            $scope.item.tglSPPawalSearch = moment($scope.now).format('YYYY-01-01')
+            $scope.item.tglSPPawalSearch = moment().startOf('month').format('YYYY-MM-DD');
             $scope.item.tglSPPakhirSearch = moment($scope.now).format('YYYY-MM-DD')
             $scope.totalketerangan = 0;
             $scope.totalrealisasidetail = 0;
