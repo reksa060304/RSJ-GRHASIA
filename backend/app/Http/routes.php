@@ -488,6 +488,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
               Route::get('registrasi/get-nocm-terakhir', 'Registrasi\RegistrasiController@getNoRMTerakhir');
               Route::post('registrasi/update-nocm', 'Registrasi\RegistrasiController@updateNORM');
           Route::get('api/trigger-telemedicine', 'Bridging\DokterKeluargaController@sendPHR');
+          Route::get('registrasi/get-histori-emr', 'Registrasi\RegistrasiController@getHistoriEMR');
+          Route::get('registrasi/get-list-berkas-monitoring','Registrasi\RegistrasiController@getListBerkasMonitoring');
 
               Route::get('bridging/penunjang/get-hasil-vans-lab', 'Bridging\BridgingPenunjangController@getHasilLaborat');
             // });
