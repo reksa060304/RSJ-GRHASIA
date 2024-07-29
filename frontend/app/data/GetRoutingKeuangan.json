@@ -2398,5 +2398,25 @@
       }
     ]
   }
-  
+  ,
+  {
+    "name": "KelompokAnggaran2024",
+    "url": "/TWFzdGVyTWF0YUFuZ2dhcmFuMjAyNA==",
+    "templateurl": "module/Anggaran_2024/KelompokAnggaran2024.html",
+    "controller": "KelompokAnggaran2024Ctrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  }
 ]

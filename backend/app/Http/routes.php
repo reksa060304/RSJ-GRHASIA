@@ -1879,6 +1879,16 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('perencanaan/get-data-spm', 'Perencanaan\PerencanaanController@getDataSPM');
             Route::get('perencanaan/get-data-rba-belum', 'Perencanaan\PerencanaanController@getRBABelum');
             Route::get('perencanaan/get-password-rba', 'Perencanaan\PerencanaanController@getPassRBA');
+
+            // Route Anggaran 2024
+            Route::get('anggaran/get-pertama', 'Anggaran_2024\AnggaranController@getpertama');
+            Route::get('anggaran/get-combo-anggaran','Anggaran_2024\AnggaranController@getComboLogistik');
+            Route::post('anggaran/save-kegiatan-anggaran','Anggaran_2024\AnggaranController@saveKegiatanAnggaran');
+            Route::get('anggaran/get-daftar-master-kegiatan','Anggaran_2024\AnggaranController@getKegiatanAnggaran');
+
+            // End Anggaran 2024
+
+
         // });
         // Route::group(['prefix' => 'piutang'], function () {
             /*GET*/

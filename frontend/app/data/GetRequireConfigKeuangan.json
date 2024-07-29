@@ -487,6 +487,10 @@
         {
             "nameDep": "TargetPendapatanCtrl",
             "urlDep": "module/Perencanaan/TargetPendapatanCtrl"
+        },
+        {
+            "nameDep": "KelompokAnggaran2024Ctrl",
+            "urlDep": "module/Anggaran_2024/KelompokAnggaran2024Ctrl"
         }
     ]
 }
