@@ -1888,7 +1888,14 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('anggaran/get-combo-anggaran','Anggaran_2024\AnggaranController@getComboLogistik');
             Route::post('anggaran/save-kegiatan-anggaran','Anggaran_2024\AnggaranController@saveKegiatanAnggaran');
             Route::get('anggaran/get-daftar-master-kegiatan','Anggaran_2024\AnggaranController@getKegiatanAnggaran');
-
+            Route::post('anggaran/save-entry-rbav2','Anggaran_2024\AnggaranController@saveRBAAnggaran');
+            Route::get('anggaran/get-daftar-master-kegiatanRBA','Anggaran_2024\AnggaranController@getKegiatanAnggaranRBA');
+            Route::get('anggaran/get-detail-kegiatan','Anggaran_2024\AnggaranController@getDetailKegiatanAnggaranRBA');
+            Route::get('anggaran/get-daftar-pptk', 'Anggaran_2024\AnggaranController@getPPTK');
+            Route::post('anggaran/save-kegiatan-transaksi-anggaran','Anggaran_2024\AnggaranController@saveTransaksiAnggaran');
+            Route::get('anggaran/get-keterangan-belanja', 'Anggaran_2024\AnggaranController@getTotalAnggaran');
+            Route::post('anggaran/save-keterangan-belanja','Anggaran_2024\AnggaranController@saveKeteranganBelanja');
+            Route::get('anggaran/get-total-anggaran-rcn', 'Anggaran_2024\AnggaranController@getTotalAnggaranRcn');
             // End Anggaran 2024
 
 

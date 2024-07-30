@@ -2419,4 +2419,25 @@
       }
     ]
   }
+  ,
+  {
+    "name": "EntryRBA2024",
+    "url": "/RW50cnlSQkF2Mg==",
+    "templateurl": "module/Anggaran_2024/EntryRBA2024.html",
+    "controller": "EntryRBA2024Ctrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
+  }
 ]
