@@ -2431,32 +2431,32 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             // });
 
             $scope.$watch('item.itemRincian', function (newValue, oldValue) {
-                let sisa = $scope.item.sisaAnggaranSPJ
+                // let sisa = $scope.item.sisaAnggaranSPJ
 
-                $scope.item.sisaa = sisa
+                // $scope.item.sisaa = sisa
 
                 // $scope.dataVOloaded = true;
 
-                // if (newValue != oldValue) {
-                //     medifirstService.get("perencanaan/get-password-rba?norec="+$scope.item.itemRincian.norec).then(function (e) {
-                //         $scope.dataVOloaded = false;
+                if (newValue != oldValue) {
+                    medifirstService.get("perencanaan/get-password-rba?norec="+$scope.item.itemRincian.norec).then(function (e) {
+                        // $scope.dataVOloaded = false;
 
-                //         // Check jika ada sisa anggaran
-                //         if(e.data.sisa.total_sisa !== null){
-                //             $scope.item.sisaa = parseInt(e.data.keterangan.subtotal) - parseInt(e.data.sisa.total_sisa)
-                //         }else{
-                //             $scope.item.sisaa = parseInt(e.data.keterangan.subtotal) - 0
-                //         }
+                        // Check jika ada sisa anggaran
+                        if(e.data.sisa.total_sisa !== null){
+                            $scope.item.sisaa = parseInt(e.data.keterangan.subtotal) - parseInt(e.data.sisa.total_sisa)
+                        }else{
+                            $scope.item.sisaa = parseInt(e.data.keterangan.subtotal) - 0
+                        }
 
-                //         if(e.data.keterangan.password != null){
-                //             $scope.passrba = false
-                //             $scope.item.passwordbenar = e.data.keterangan.password
-                //         } else{
-                //             $scope.passrba = true
-                //             $scope.item.passwordbenar = undefined
-                //         }
-                //     })
-                // }
+                        if(e.data.keterangan.password != null){
+                            $scope.passrba = false
+                            $scope.item.passwordbenar = e.data.keterangan.password
+                        } else{
+                            $scope.passrba = true
+                            $scope.item.passwordbenar = undefined
+                        }
+                    })
+                }
             });
 
             // $scope.$watch('item.subSubKegiatanSPJ', function (newValue, oldValue) {
@@ -3823,7 +3823,6 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         data: DataSPJ,
                         group: $scope.groupmataanggaran,
                     });
-                    
                     var arr = {
                         0: $scope.item.statusspj
                     }

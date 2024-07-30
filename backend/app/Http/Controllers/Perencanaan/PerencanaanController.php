@@ -3494,7 +3494,16 @@ class PerencanaanController extends ApiController {
                         $MA->norec = $norecKS;
                         $MA->kdprofile = $idProfile;
                         $MA->statusenabled = true;
-                        $noas = $this->generateCode(new PemungutanPajak, 'nopajak', 3, '', $idProfile);
+                        
+                        $nopemungutan = DB::select(DB::raw("
+                            SELECT 
+                                COALESCE(MAX(CAST(SPLIT_PART(pp.nopajak, '/', 1) as INTEGER)), 0) as max
+                            FROM pemungutanpajak_t pp 
+                            WHERE pp.kdprofile = 30
+                        "));
+                        $noas = $nopemungutan[0]->max + 1;
+
+                        // $noas = $this->generateCode(new PemungutanPajak, 'nopajak', 3, '', $idProfile);
                         $noa = $this->generateCode(new PemungutanPajak, 'nopajak', 30, '/PJK/1.02.2.22.0.00.01.', $idProfile);
                         $MA->nopajak = $noas.$noa.'/'.$month.'/'.$year;
 
@@ -3503,7 +3512,16 @@ class PerencanaanController extends ApiController {
                         $MP->norec = $norecKS;
                         $MP->kdprofile = $idProfile;
                         $MP->statusenabled = true;
-                        $nops = $this->generateCode(new PenyetoranPajak, 'nopajak', 3, '', $idProfile);
+
+                        $nopenyetoran = DB::select(DB::raw("
+                            SELECT 
+                                COALESCE(MAX(CAST(SPLIT_PART(pep.nopajak, '/', 1) as integer)), 0) as max
+                            FROM penyetoranpajak_t pep 
+                            where pep.kdprofile = 30
+                        "));
+                        $nops = $nopenyetoran[0]->max + 1;
+
+                        // $nops = $this->generateCode(new PenyetoranPajak, 'nopajak', 3, '', $idProfile);
                         $nop = $this->generateCode(new PenyetoranPajak, 'nopajak', 33, '/STRPJK/1.02.2.22.0.00.01.', $idProfile);
                         $MP->nopajak = $nops.$nop.'/'.$month.'/'.$year;
                     } else{
@@ -3552,7 +3570,16 @@ class PerencanaanController extends ApiController {
                     $MA->norec = $norecKS;
                     $MA->kdprofile = $idProfile;
                     $MA->statusenabled = true;
-                    $noas = $this->generateCode(new PemungutanPajak, 'nopajak', 3, '', $idProfile);
+                    
+                    $nopemungutan = DB::select(DB::raw("
+                    SELECT 
+                        COALESCE(MAX(CAST(SPLIT_PART(pp.nopajak, '/', 1) as integer)), 0) as max
+                    FROM pemungutanpajak_t pp 
+                    WHERE pp.kdprofile = 30
+                    "));
+                    $noas = $nopemungutan[0]->max + 1;
+                    
+                    // $noas = $this->generateCode(new PemungutanPajak, 'nopajak', 3, '', $idProfile);
                     $noa = $this->generateCode(new PemungutanPajak, 'nopajak', 30, '/PJK/1.02.2.22.0.00.01.', $idProfile);
                     $MA->nopajak = $noas.$noa.'/'.$month.'/'.$year;
 
@@ -3561,7 +3588,16 @@ class PerencanaanController extends ApiController {
                     $MP->norec = $norecKS;
                     $MP->kdprofile = $idProfile;
                     $MP->statusenabled = true;
-                    $nops = $this->generateCode(new PenyetoranPajak, 'nopajak', 3, '', $idProfile);
+
+                    $nopenyetoran = DB::select(DB::raw("
+                        SELECT 
+                            COALESCE(MAX(CAST(SPLIT_PART(pep.nopajak, '/', 1) as integer)), 0) as max
+                        FROM penyetoranpajak_t pep 
+                        WHERE pep.kdprofile = 30
+                    "));
+                    $nops = $nopenyetoran[0]->max + 1;
+
+                    // $nops = $this->generateCode(new PenyetoranPajak, 'nopajak', 3, '', $idProfile);
                     $nop = $this->generateCode(new PenyetoranPajak, 'nopajak', 33, '/STRPJK/1.02.2.22.0.00.01.', $idProfile);
                     $MP->nopajak = $nops.$nop.'/'.$month.'/'.$year;
                 } else{
@@ -6370,10 +6406,13 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
                 SELECT 
                     COALESCE ( SUM ( pj.jumlah ), 0 ) - COALESCE ( SUM ( pengpj.jumlahpengembalian ), 0 ) - COALESCE ( SUM ( spjtopanjar.jumlahspj ), 0 ) AS totalpanjar
                 FROM panjar_t AS pj
-                JOIN pengembalianpanjar_t AS pengpj ON pengpj.objectpanjarfk = pj.norec AND pengpj.statusenabled = TRUE
-                JOIN spjtopanjar_t AS spjtopanjar ON spjtopanjar.objectpanjarfk = pj.norec AND spjtopanjar.statusenabled = TRUE
-                WHERE pj.objectsubsubkegiatanfk IN (".implode(',', $arrIdKegiatan).")
-                AND pj.objectmataanggaranfk = ".$request['mataanggaran']."
+                JOIN pengembalianpanjar_t AS pengpj ON pengpj.objectpanjarfk = pj.norec AND pengpj.statusenabled = TRUE AND pengpj.kdprofile=".$idProfile."
+                JOIN spjtopanjar_t AS spjtopanjar ON spjtopanjar.objectpanjarfk = pj.norec AND spjtopanjar.statusenabled = TRUE AND spjtopanjar.kdprofile = ".$idProfile."
+                WHERE 
+                    pj.statusenabled = TRUE 
+                    AND pj.kdprofile =  ".$idProfile."
+                    AND pj.objectsubsubkegiatanfk IN (".implode(',', $arrIdKegiatan).")
+                    AND pj.objectmataanggaranfk = ".$request['mataanggaran']."
             "))
         )->first();
 
@@ -8356,7 +8395,7 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
         pep.norec norecpep
             from strukrealisasi_t sr 
         inner join pemungutanpajak_t pp on pp.objectspjfk = sr.norec and pp.statusenabled = true and pp.kdprofile = 30 
-        inner join penyetoranpajak_t pep on left(pep.nopajak, 3) = left(pp.nopajak, 3) and pep.statusenabled = true and pep.kdprofile = 30
+        inner join penyetoranpajak_t pep on pep.objectspjfk = sr.norec and pep.statusenabled = true and pep.kdprofile = 30
         left join jenispajak_m jp on jp.id = pp.objectjenispphfk and jp.statusenabled = true and jp.kdprofile = 30
         where sr.norec = '$norec'
         and pp.objectjenispphfk is not null
@@ -8370,7 +8409,7 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
         pp.norec norecpp, pep.norec norecpep
             from strukrealisasi_t sr 
         inner join pemungutanpajak_t pp on pp.objectspjfk = sr.norec and pp.statusenabled = true and pp.kdprofile = 30
-        inner join penyetoranpajak_t pep on left(pep.nopajak, 3) = left(pp.nopajak, 3) and pep.statusenabled = true and pep.kdprofile = 30
+        inner join penyetoranpajak_t pep on pep.objectspjfk = sr.norec and pep.statusenabled = true and pep.kdprofile = 30
         where sr.norec = '$norec'
         and pp.objectjenispphfk is null
 
@@ -8455,30 +8494,29 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
         }
 
         // menghitung spj dari semua tahap
-        // $sisa_semua_tahap = DB::select(DB::raw("
-        //     SELECT
-        //         SUM(sr.totalbelanja) AS total_sisa
-        //     FROM keteranganbelanja_t AS kb 
-        //     JOIN realisasidetail_t AS rd ON rd.keteranganbelanjafk = kb.norec AND rd.statusenabled = TRUE AND rd.kdprofile = 30
-        //     JOIN strukrealisasi_t as sr ON sr.norec = rd.strukrealisasifk AND sr.statusenabled = TRUE
-        //     WHERE
-        //         kb.statusenabled = TRUE 
-        //         AND kb.kdprofile = 30
-        //         AND sr.objectkegiatanfk IN (".implode(',', $idKegiatan).") 
-        //         AND kb.norec = '".$keterangan->norec."'
-        // "));
-              
         $sisa_semua_tahap = DB::select(DB::raw("
-            SELECT 
-                COALESCE(SUM(sr.totalbelanja),0) AS total_sisa
-            FROM strukrealisasi_t AS sr
-            WHERE 
-                sr.statusenabled = TRUE
-                AND sr.kdprofile = ".$idProfile."
-                AND sr.objectkegiatanfk IN (".implode(',', $idKegiatan).")
-                AND sr.objectmataanggaranfk = ".$keterangan->objectmataanggaranfk."
-                AND sr.objectasalprodukfk = ".$keterangan->objectasalprodukfk."
+            SELECT
+                SUM(rd.subtotal) AS total_sisa
+            FROM keteranganbelanja_t AS kb 
+            JOIN realisasidetail_t AS rd ON rd.keteranganbelanjafk = kb.norec AND rd.statusenabled = TRUE AND rd.kdprofile = ".$idProfile."
+            JOIN strukrealisasi_t as sr ON sr.norec = rd.strukrealisasifk AND sr.statusenabled = TRUE AND sr.kdprofile = ".$idProfile."
+            WHERE
+                kb.statusenabled = TRUE 
+                AND kb.kdprofile = ".$idProfile."
+                AND kb.norec = '".$keterangan->norec."'
         "));
+              
+        // $sisa_semua_tahap = DB::select(DB::raw("
+        //     SELECT 
+        //         COALESCE(SUM(sr.totalbelanja),0) AS total_sisa
+        //     FROM strukrealisasi_t AS sr
+        //     WHERE 
+        //         sr.statusenabled = TRUE
+        //         AND sr.kdprofile = ".$idProfile."
+        //         AND sr.objectkegiatanfk IN (".implode(',', $idKegiatan).")
+        //         AND sr.objectmataanggaranfk = ".$keterangan->objectmataanggaranfk."
+        //         AND sr.objectasalprodukfk = ".$keterangan->objectasalprodukfk."
+        // "));
     
         // foreach ($data as $d) {
         //     $sisa = DB::select(DB::raw("
