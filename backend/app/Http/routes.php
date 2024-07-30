@@ -490,6 +490,9 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('api/trigger-telemedicine', 'Bridging\DokterKeluargaController@sendPHR');
           Route::get('registrasi/get-histori-emr', 'Registrasi\RegistrasiController@getHistoriEMR');
           Route::get('registrasi/get-list-berkas-monitoring','Registrasi\RegistrasiController@getListBerkasMonitoring');
+          Route::get('registrasi/get-parameter', 'Registrasi\RegistrasiController@getParameterDok');
+          Route::post('registrasi/post-dokumen-klaim', 'Registrasi\RegistrasiController@postDokumenKlaim');
+          Route::post('registrasi/delete-dokumen-klaim', 'Registrasi\RegistrasiController@deleteDokumenKlaim');
 
               Route::get('bridging/penunjang/get-hasil-vans-lab', 'Bridging\BridgingPenunjangController@getHasilLaborat');
             // });
@@ -3656,6 +3659,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
                 'Content-Type: '. $type,
                 );
         return Response::download($path,  $request['filename'], $headers);
+        Route::get('storage/dokumenklaim', 'Registrasi\MonitoringDokumenKlaimController@lihatDokumen');
+        Route::get('storage/bundledokumenklaim', 'Registrasi\MonitoringDokumenKlaimController@bundleDokumen');
     });
 
     

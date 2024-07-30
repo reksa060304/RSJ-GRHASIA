@@ -8199,7 +8199,7 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 
             //     if (e.target.files[0]) {
             //         $scope.isRouteLoading = true;
-            //         const url = baseTransaksi + 'bridging/inacbg/post-dokumen-klaim'
+            //         const url = baseTransaksi + 'registrasi/post-dokumen-klaim'
             //         const formData = new FormData()
 			// 	    const file = e.target.files[0];
             //         if(file.type != "application/pdf") {
@@ -8262,7 +8262,7 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
                         "filename": namafile,
                     }
                     $scope.isRouteLoading = true;
-                    medifirstService.post('bridging/inacbg/delete-dokumen-klaim', jsondel).then(function (data) {
+                    medifirstService.post('registrasi/delete-dokumen-klaim', jsondel).then(function (data) {
                         $scope.isRouteLoading = false;
                         medifirstService.postLogging('Dokumen Klaim', 'noregistrasi pasiendaftar', noregistrasi, 
                         'Hapus Dokumen Klaim  pada No Registrasi ' + noregistrasi + ' dengan id dokumen klaim ' + documentklaimfk).then(function (res) {
@@ -8276,7 +8276,7 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
                 var id = $(this).data("id");
                 var noregistrasi = $(this).data("noreg");
                 $scope.isRouteLoading = true
-				medifirstService.get(`bridging/inacbg/get-parameter?id=${id}&noregistrasi=${noregistrasi}&user=${$scope.user.namaLengkap}`).then(function (e) {
+				medifirstService.get(`registrasi/get-parameter?id=${id}&noregistrasi=${noregistrasi}&user=${$scope.user.namaLengkap}`).then(function (e) {
 					$scope.isRouteLoading = false
                     for (let i = 0; i < e.data.data.length; i++) {
                         e.data.data[i].no = i + 1;
@@ -8322,7 +8322,7 @@ define(['initialize', 'Configuration'], function (initialize,configuration) {
 			
 				if (e.target.files.length > 0) {
 					$scope.isRouteLoading = true;
-					const url = baseTransaksi + 'bridging/inacbg/post-dokumen-klaim';
+					const url = baseTransaksi + 'registrasi/post-dokumen-klaim';
 					
 					Array.from(e.target.files).forEach((file, index) => {
 						if(file.type != "application/pdf") {

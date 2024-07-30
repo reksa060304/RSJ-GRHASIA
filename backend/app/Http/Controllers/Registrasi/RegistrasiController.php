@@ -16061,4 +16061,179 @@ GROUP BY y.KET
         $res['upload'] = $cek;
         return $this->respond($res);
     }
+
+    public function getParameterDok(Request $request) {
+        $noregistrasi = $request['noregistrasi'];
+        $user = $request['user'];
+        $dataDokasuransi = DB::table("dokklaim_m")
+        ->where("id", $request['id'])
+        ->where("statusenabled", true)
+        ->first();
+
+        try {
+            $jsonData = json_decode($dataDokasuransi->config);
+            $sql = str_replace('$noregistrasi', "$noregistrasi", $jsonData->sql);
+            $sql = str_replace('$user', "$user", $sql);
+            $config = collect(DB::select($sql));
+            
+            $result = [];
+            foreach($config as $item) {
+                $parameter = "?q=q";
+                foreach($item as $fieldName => $fieldValue){
+                    $parameter .= "&$fieldName=$fieldValue";
+                }
+                array_push($result, array(
+                    "id" => $dataDokasuransi->id,
+                    "param" => $parameter,
+                    "namafile" => $dataDokasuransi->namaberkas,
+                    "url" => $dataDokasuransi->url,
+                    "noregistrasi" => $noregistrasi,
+                ));
+            }
+
+            $result = array(
+                'data' => $result,
+            );
+
+        } catch (\Exception $e) {
+            $result = array(
+                'data' => [],
+            );
+        }
+
+        return $this->respond($result);
+    }
+
+    public function postDokumenKlaim(Request $request) 
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $dataReq = $request->all();
+
+        // $request->validate([
+        //      'fileBerkas'=>'required|mimes:pdf'
+        // ]);
+
+        $uploadBerkasPasien = $request->file('fileBerkas');
+        $dataRegistrasi = PasienDaftar::where('norec', $dataReq['noregistrasifk'])->first();
+        $path = 'dokumen_klaim/'.$dataRegistrasi->noregistrasi;
+
+        DB::beginTransaction();
+        try {
+            if(is_array($uploadBerkasPasien)) {
+                foreach($uploadBerkasPasien as $file) {
+                    $extension = $file->getClientOriginalExtension();
+                    $filename = $dataReq['namafile'].'_'.$dataRegistrasi->noregistrasi.'.'.$extension;
+
+                    $dataInsert = array(
+                        "norec" => substr(Uuid::generate(), 0, 32),
+                        "kdprofile" => $idProfile,
+                        "statusenabled" => true,
+                        "filename" => $filename,
+                        "filepath" => $path . '/' . $filename,
+                        "nocmfk" => $dataRegistrasi->nocmfk,
+                        "noregistrasifk" => $dataReq['noregistrasifk'],
+                        "documentklaimfk" => $dataReq['documentklaimfk'],
+                        "tglupload" => date('Y-m-d H:i:s'),
+                    );
+                    DB::table('dokklaim_t')->updateOrInsert(["filename" => $filename], $dataInsert);
+                    $file->move(public_path($path), $filename);
+                }
+            } else {
+                $extension = $uploadBerkasPasien->getClientOriginalExtension();
+                $filename = $dataReq['namafile'].'_'.$dataRegistrasi->noregistrasi.'.'.$extension;
+
+                $dataInsert = array(
+                    "norec" => substr(Uuid::generate(), 0, 32),
+                    "kdprofile" => $idProfile,
+                    "statusenabled" => true,
+                    "filename" => $filename,
+                    "filepath" => $path.'/'.$filename,
+                    "nocmfk" => $dataRegistrasi->nocmfk,
+                    "noregistrasifk" => $dataReq['noregistrasifk'],
+                    "documentklaimfk" => $dataReq['documentklaimfk'],
+                    "tglupload" => date('Y-m-d H:i:s'),
+                );
+                DB::table('dokklaim_t')->updateOrInsert(["filename" => $filename], $dataInsert);
+                $uploadBerkasPasien->move(public_path($path), $filename);
+            }
+
+            $transStatus = true;
+        } catch (\Exception $e) {
+            $transStatus = false;
+        }
+
+        if ($transStatus) {
+            $transMessage = 'Simpan Berhasil';
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMessage,
+                "dokumen" => $dataInsert,
+                "as" => 'inhuman',
+            );
+        } else {
+            $transMessage = "Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message" => $transMessage,
+                "as" => 'inhuman',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function deleteDokumenKlaim(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        DB::beginTransaction();
+        try {
+            $dataRegistrasi = PasienDaftar::where('noregistrasi', $request['noregistrasi'])->first();
+            $Dkmn = DB::table("dokklaim_t")
+            ->where('noregistrasifk', $dataRegistrasi->norec)
+            ->where('documentklaimfk',$request['documentklaimfk'])
+            ->where('filename', $request['filename'])
+            ->where('kdprofile',$idProfile)
+            ->first();
+            
+            // delete file
+            $path = public_path($Dkmn->filepath);
+            if (\File::exists($Dkmn->filepath)){
+                \File::delete($path);
+            }
+
+            // detele data
+            DB::table("dokklaim_t")
+            ->where('noregistrasifk', $dataRegistrasi->norec)
+            ->where('documentklaimfk',$request['documentklaimfk'])
+            ->where('filename', $request['filename'])
+            ->where('kdprofile',$idProfile)
+            ->delete();
+
+            $transStatus = true;
+        } catch (\Exception $e) {
+            $transStatus = false;
+        }
+
+        if ($transStatus) {
+            $transMessage = 'Hapus Berhasil';
+            DB::commit();
+            $result = array(
+                "status" => 201,
+                "message" => $transMessage,
+                "as" => 'inhuman',
+            );
+        } else {
+            $transMessage = "Hapus Gagal";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message" => $transMessage,
+                "as" => 'inhuman',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
 }
