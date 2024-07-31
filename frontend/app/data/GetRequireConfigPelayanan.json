@@ -3724,6 +3724,10 @@
         {
             "nameDep": "ResumeRINonJiwaCtrl",
             "urlDep": "module/EMR/ResumeRINonJiwaCtrl"
+        },
+        {
+            "nameDep": "HistoriEMRCtrl",
+            "urlDep": "module/Registrasi/HistoriEMRCtrl"
         }
     ]
 }

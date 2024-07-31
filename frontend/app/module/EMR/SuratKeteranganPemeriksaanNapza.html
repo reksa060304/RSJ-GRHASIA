@@ -241,16 +241,15 @@
         </div> -->
         <div class="grid_12 margin-top-30">
             
-            </div>
             <div class="grid_3">
                 <label c-label item="item">Yogyakarta, </label>
                 <input style="width: 100%" k-ng-model="item.obj[3003971]" kendo-datetimepicker
                     placeholer="yyyy-MM-dd HH:mm" k-format="'yyyy-MM-dd HH:mm'" parsedate="yyyy-MM-dd HH:mm" />
             </div>
-            <div class="grid_3"">
+            <div class="grid_3">
                
             </div>
-            <div class="grid_3"">
+            <div class="grid_3">
                 <label c-label item="item" class="margin-bottom">No. CM.RJP.03.003/20... </label>
                 <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3003970]"
                     style="height: 30px; width: 98%; "/>
@@ -298,53 +297,52 @@
                 <div class="grid_12 margin-top-20 margin-bottom">
                     <label c-label item="item" class="margin-bottom">Alamat :</label>
                     <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3003981]"
-                            style="height: 55px; width: 100%; "/>
-                            <div class="grid_12 margin-top-30 margin-bottom">
-                            <label c-label item="item">Dengan Hasil Pemeriksaan NAPZA menunjukan :  </label>
-                            </div>
-                            <div class="grid_2">
-                                <input type="checkbox" class="k-checkbox" id="item.obj3003973"
-                                    ng-model="item.obj[3003973]">
-                                <label class="k-checkbox-label" for="item.obj3003973">
-                                    &nbsp;<b>ADA</b></label>
-                            </div>
-                            <div class="grid_2">
-                                <input type="checkbox" class="k-checkbox" id="item.obj3003974"
-                                    ng-model="item.obj[3003974]">
-                                <label class="k-checkbox-label" for="item.obj3003974">
-                                    &nbsp;<b>TIDAK ADA</b></label>
-                            </div>
-                            <div class="grid_12">
-                            <label c-label item="item"><br><br>TANDA DAN GEJALA PENGGUNAAN NAPZA <br><br>
-                            Demikian Surat Keterangan Pemeriksaan NAPZA ini dibuat untuk keperluan : </label>
-                            </div>
-                            <div class="grid_12 margin-top-30">
-                            <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3003975]"
-                            style="height: 55px; width: 100%; "/>
-                             </div>
-                             <div class="grid_12 margin-top-30 margin bottom">
-                            <label c-label item="item">dan tidak dapat digunakan untuk kepentingan hukum lainnya.</label>
-                             </div>
-               
-              
-
-        <div class="grid_12">
-            <fie
-                <div class="grid_4 margin-top-30 text-center margin-bottom">
-                    <label c-label item="item" c-label-text="Dokter yang memeriksa"></label>
-                    <input style="width: 80%;" kendo-combo-box k-ng-model="item.obj[3003976]"
-                            k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
-                            k-auto-bind="false" k-data-source="listPegawai" />
+                        style="height: 55px; width: 100%; "/>
+                </div>
+                <div class="grid_12 margin-top-30 margin-bottom">
+                    <label c-label item="item">Dengan Hasil Pemeriksaan NAPZA menunjukan :  </label>
+                </div>
+                <div class="grid_2">
+                    <input type="checkbox" class="k-checkbox" id="item.obj3003973"
+                        ng-model="item.obj[3003973]">
+                    <label class="k-checkbox-label" for="item.obj3003973">
+                        &nbsp;<b>ADA</b></label>
+                </div>
+                <div class="grid_2">
+                    <input type="checkbox" class="k-checkbox" id="item.obj3003974"
+                        ng-model="item.obj[3003974]">
+                    <label class="k-checkbox-label" for="item.obj3003974">
+                        &nbsp;<b>TIDAK ADA</b></label>
+                </div>
+                <div class="grid_12">
+                    <label c-label item="item">
+                        <br>
+                        <br>
+                        TANDA DAN GEJALA PENGGUNAAN NAPZA 
+                        <br>
+                        <br>
+                        Demikian Surat Keterangan Pemeriksaan NAPZA ini dibuat untuk keperluan : 
+                    </label>
+                </div>
+                <div class="grid_12 margin-top-30">
+                    <textarea c-text-area type="input" filter="'string'" class="k-textbox" ng-model="item.obj[3003975]"
+                    style="height: 55px; width: 100%; "/>
+                </div>
+                <div class="grid_12 margin-top-30 margin bottom">
+                    <label c-label item="item">dan tidak dapat digunakan untuk kepentingan hukum lainnya.</label>
                 </div>
                
+                <div class="grid_12">
+                    
+                    <div class="grid_4 margin-top-30 text-center margin-bottom">
+                        <label c-label item="item" c-label-text="Dokter yang memeriksa"></label>
+                        <input style="width: 80%;" kendo-combo-box k-ng-model="item.obj[3003976]"
+                                k-data-text-field="'text'" k-data-value-field="'value'" k-filter="'contains'"
+                                k-auto-bind="false" k-data-source="listPegawai" />
+                    </div>
+                </div>
             </fieldset>
         </div>
-
-
-
-
-
-    
     </div>
 </div>
 
@@ -353,4 +351,15 @@
 <div class="grid_12">
     <div ng-include='"../app/module/EMR/TemplateButtonDinamis" '></div>
 
+</div>
+
+<div kendo-window="winDialog" k-title="'Pilih Pegawai'" k-width="400" k-height="120" k-visible="false"
+    k-on-open="win2visible = true" k-on-close="win2visible = false">
+    <label c-label item="item " c-label-text="pegawaiPenandaTangan "></label>
+    <input style="width: 100%; " kendo-combo-box k-ng-model="item.pegawai" k-data-text-field="'text'"
+        k-filter=" 'contains' " k-data-value-field=" 'value' " k-auto-bind="false " k-data-source="listPegawai" />
+    <div class="clear">
+        <button class="k-button" ng-click="savePengajuanTTE(item.pegawai)"
+            style="float:right;margin-top:4%">Simpan</button>
+    </div>
 </div>

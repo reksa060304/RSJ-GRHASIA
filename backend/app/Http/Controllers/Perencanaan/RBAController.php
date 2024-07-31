@@ -85,16 +85,49 @@ class RBAController extends ApiController
             ->get();
 
         // mataanggaran 
-        $mataanggarancombo = DB::select(DB::raw("select cbs.id, cbs.kodemataanggaran, cbs.namamataanggaran, cbs.kodemataanggaran || ' - ' || cbs.namamataanggaran as text
-            , split_part(cbs.kodemataanggaran, '.', 1) as subkodepertama
-            , split_part(cbs.kodemataanggaran, '.', 2) as subkodekedua
-            , case when split_part(cbs.kodemataanggaran, '.', 3) = '' then '0' else split_part(cbs.kodemataanggaran, '.', 3)::int4 end as subkodeketiga
-            , case when split_part(cbs.kodemataanggaran, '.', 4) = '' then '0' else split_part(cbs.kodemataanggaran, '.', 4)::int4 end as subkodekeempat
-            , case when split_part(cbs.kodemataanggaran, '.', 5) = '' then '0' else split_part(cbs.kodemataanggaran, '.', 5)::int4 end as subkodekelima
-            from mataanggaran_m as cbs
-            where cbs.kdprofile = $idProfile
-            and cbs.statusenabled = true
-            order by subkodepertama asc, subkodekedua asc, subkodeketiga asc, subkodekeempat asc, subkodekelima asc ;"));
+        $mataanggarancombo = DB::select(DB::raw("
+            select 
+                ma.id, 
+                ma.kodemataanggaran, 
+                ma.namamataanggaran, 
+                map.id as idmap, 
+                map.mataanggaranpermen, 
+                coalesce(sum(kt.subtotal),0) as total,
+                split_part(ma.kodemataanggaran, '.', 1) as subkodepertama,
+                split_part(ma.kodemataanggaran, '.', 2) as subkodekedua,
+                case when split_part(ma.kodemataanggaran, '.', 3) = '' then '0' else split_part(ma.kodemataanggaran, '.', 3)::int4 end as subkodeketiga,
+                case when split_part(ma.kodemataanggaran, '.', 4) = '' then '0' else split_part(ma.kodemataanggaran, '.', 4)::int4 end as subkodekeempat,
+                case when split_part(ma.kodemataanggaran, '.', 5) = '' then '0' else split_part(ma.kodemataanggaran, '.', 5)::int4 end as subkodekelima,
+                ma.kodemataanggaran || ' - ' || ma.namamataanggaran as namaanggaran
+            from 
+                mataanggaran_m ma 
+            left join 
+                mataanggaranpermen_m map on map.id = ma.mataanggaranpermenfk
+            left join 
+                keteranganbelanja_t kt on kt.objectmataanggaranfk = ma.id
+            where 
+                ma.statusenabled = true 
+                and ma.kdprofile = 30
+                and case 
+                    when ma.kodemataanggaran ilike 'I.%' then length(ma.kodemataanggaran) in (9,10)
+                    when ma.kodemataanggaran ilike 'III.%' then length(ma.kodemataanggaran) in (9,10)
+                end
+            group by 
+                ma.id, ma.kodemataanggaran, ma.namamataanggaran, map.id, map.mataanggaranpermen,
+                split_part(ma.kodemataanggaran, '.', 1),
+                split_part(ma.kodemataanggaran, '.', 2),
+                case when split_part(ma.kodemataanggaran, '.', 3) = '' then '0' else split_part(ma.kodemataanggaran, '.', 3)::int4 end,
+                case when split_part(ma.kodemataanggaran, '.', 4) = '' then '0' else split_part(ma.kodemataanggaran, '.', 4)::int4 end,
+                case when split_part(ma.kodemataanggaran, '.', 5) = '' then '0' else split_part(ma.kodemataanggaran, '.', 5)::int4 end
+            order by 
+                subkodepertama asc, 
+                subkodekedua asc, 
+                subkodeketiga asc, 
+                subkodekeempat asc, 
+                subkodekelima asc;
+        "));
+
+
 
         $result = [
             'subSubKegiatan' => $subSubKegiatan,

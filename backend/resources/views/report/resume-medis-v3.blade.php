@@ -27,8 +27,6 @@
         /* Padding for the header on subsequent pages */
         @page {
             margin: 10mm;
-            margin: 10mm;
-
         }
         .footer {
             text-align: center;
@@ -45,18 +43,23 @@
         }
         .footer3 {
             text-align: center;
-            position: fixed;
+            position: absolute;
             left: 1%;
-            bottom: 10%;
+            bottom: 10mm;
             right: 1%;
         }
 
-        
+        #footer {
+        height: 30px;
+        }
+        #page {
+        height: calc(100vh - 30px); //viewport height - footer height
+        }
         
     </style>
 </head>
 <body>
-    <section style="font-family:Arial;padding:5mm">
+    <section id="page" style="font-family:Arial">
         <table cellspacing="0" cellpadding="0" border="1" width="100%">
             <tr>
                 <td style="text-align: center" width="60%">
@@ -113,7 +116,7 @@
             </tr>
             <tr>
                 <th colspan="2">
-                    RINGKASAN PULANG NON JIWA
+                    RINGKASAN PULANG JIWA
                 </th>
             </tr>
             <tr>
@@ -139,7 +142,7 @@
                     <table >
                         <tr>
                             <td style="font-weight:bold;padding:2px;">Indikasi Dirawat : </td>
-                            <td>{!! $res['d']['indikasi'] !!}</td>
+                            <td>{!! $res['d']['alasandirawat'] !!}</td>
                         </tr>
                         <tr>
                             <td style="font-weight:bold;padding:2px;">Diagnosa Masuk : </td>
@@ -150,40 +153,24 @@
                 <td style="white-space: pre-line; padding:2px">
                     <b>Hasil Pemeriksaan Fisik</b><br>
                     <div style="padding:2px">
-                        {!! $res['d']['pemeriksaanfisik'] !!}
+                        {!! $res['d']['hasilfisik'] !!}
                     </div>
                 </td>
             </tr>
+            
             <tr>
                 <td colspan="2" style="padding:2px">
-                    <b>Riwayat Kesehatan</b><br>
-                    <div style="padding:2px">
-                        {!! $res['d']['riwayatlalu'] !!}
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2" style="padding:2px">
-                    <b>Alergi</b>
+                    <b>Hasil Pemeriksaan Psikiatri :</b>
                     <br>
-                    @if ($res['d']['ralergi'] == 1)
-                    <div style="padding:2px">
-                       Tidak
-                    </div> 
-                    @else
-                    Ya, {!! $res['d']['alergi'] !!}
-                    @endif
-                
+                    @php
+                        $psikiatri = preg_split('/\n+/' , trim($res['d']['hasilpsikiatri']));
+                    @endphp
+                    @foreach ($psikiatri as $item)
+                        {{ $item }} <br>
+                    @endforeach
                 </td>
             </tr>
-            {{-- <tr>
-                <td colspan="2" style="padding:10px">
-                    <b>Alergi</b><br>
-                    <div style="padding:5px">
-                        {!! $res['d']['alergi'] !!}
-                    </div>
-                </td>
-            </tr> --}}
+            
             <tr>
                 <td colspan="2" style="padding:2px">
                     <b>Pemeriksaan Diagnostik / Penunjang</b><br>
@@ -222,6 +209,17 @@
                     </table>
                 </td>
             </tr>
+
+            <tr>
+                <td colspan="2" style="padding:2px">
+                    <b>Terapi dan Tindakan Yang Diberikan</b><br>
+                    <b>a. Selama dirawat :</b><br>
+                    {!! $res['d']['terapi'] !!}
+                    <br>
+                    <b>b. Waktu pulang :</b><br>
+                    {!! $res['d']['terapipulang'] !!}
+                </td>
+            </tr>
            
             <tr>
                 <td colspan="2" style="padding:2px">
@@ -240,13 +238,28 @@
                         </tr>
                         <tr>
                             <td>{!! $res['d']['axis2'] !!}</td>
-                            <td>2. {!! $res['d']['kddiagnosistambahan'][1] !!}</td>
+                            <td>2. {!! $res['d']['kddiagnosistambahan2'][1] !!}</td>
                         </tr>
-                        
+                        <tr>
+                            <td>{!! $res['d']['axis3'] !!}</td>
+                            <td>3. {!! $res['d']['kddiagnosistambahan3'][1] !!}</td>
+                        </tr>
+                        <tr>
+                            <td>{!! $res['d']['axis4'] !!}</td>
+                            <td>4. {!! $res['d']['kddiagnosistambahan4'][1] !!}</td>
+                        </tr>
                     </table>
                 </td>
             </tr>
+
             <tr>
+                <td colspan="2" style="padding:2px">
+                    <b>Status / Kondisi Pasien Waktu Pulang :</b><br>
+                    {!! $res['d']['ringkasanriwayatpenyakit'] !!}
+                </td>
+            </tr>
+
+            {{-- <tr>
                 <td colspan="2" style="padding:2px">
                     <b>Tindakan Diagnostik dan Prosedur Terapi :</b><br>
                     {!! $res['d']['instruksianjuran'] !!}
@@ -257,24 +270,24 @@
                     <b>Pemberian Obat Selama Perawatan :</b><br>
                     {!! $res['d']['terapi'] !!}
                 </td>
-            </tr>
+            </tr> --}}
             <tr>
                 <td colspan="2" style="padding:2px">
-                    <b>Instruksi Follow Up / Tindak Lanjut</b><br>
-                    <b>a. Pemberian Obat Waktu Pulang :</b><br>
-                    {!! $res['d']['terapipulang'] !!}
+                    <b>Instruksi Follow Up / Tindak Lanjut</b>
                     <br>
-                    <b>b. Edukasi Pulang :</b><br>
-                    {!! $res['d']['edukasi'] !!}
+                    a. Minum obat sesuai aturan
+                    <br>
+                    b. Kontrol klinik {!! $res['d']['kontrolklinik'] !!} di RS Jiwa Grhasia / {!! $res['d']['rumahsakittujuan'] !!} tanggal {{ date('d-M-Y', strtotime($res['d']['tglkontrolpoli'])) }}
+                    <br>
+                    c. Edukasi perawatan lanjut : {{ $res['d']['instruksianjuran'] }}
+                    <br>
+                    d. {{ $res['d']['kondisiwaktukeluar'] }}
+                    <br>
+                    e. {{ $res['d']['kondisiwaktukeluare'] }}
                 </td>
             </tr>
-            <tr>
-                <td colspan="2" style="padding:2px">
-                    <b>Status / Kondisi Pasien Waktu Pulang :</b><br>
-                    {!! $res['d']['ringkasanriwayatpenyakit'] !!}
-                </td>
-            </tr>
-            <tr>
+            
+            {{-- <tr>
                 <td colspan="2" style="padding:2px">
                     <b>Keadaan Keluar :</b><br>
                     @if ($res['d']['rkeadaankeluar'] == 1)
@@ -303,9 +316,10 @@
                     @endif
                     
                 </td>
-            </tr>
+            </tr> --}}
         </table>
-        <table style="padding: 5px">
+
+        <table>
             <tr>
                 <td>Saya telah menerima informasi tersebut dan menyetujui bahwa Ringkasan Pulang ini hanya digunakan untuk
                     kepentingan pengobatan, serta TIDAK DAPAT digunakan untuk kepentingan lainnya.</td>
@@ -313,7 +327,7 @@
         </table>
    
 
-        <div class="footer2">
+        <div style="margin-top: 3cm;">
             <table width="100%">
                 <tbody>
                     <tr>
@@ -354,7 +368,7 @@
             </table>
         </div>
     </section>
-    <div class="footer3">
+    <div id="footer" class="footer3">
         <table border="0">
             <tr>
                 <td style="width: 15%; text-align:center;">
