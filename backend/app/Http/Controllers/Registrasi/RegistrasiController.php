@@ -2352,7 +2352,8 @@ class RegistrasiController extends ApiController
                 'ps.tgllahir',
                 'ps.tempatlahir',
                 'ps.namasuamiistri',
-                'alm.kodepos'
+                'alm.kodepos',
+                'ps.noidentitas'
             )
             ->where('ps.statusenabled', true)
             ->where('ps.kdprofile', (int)$kdProfile)
