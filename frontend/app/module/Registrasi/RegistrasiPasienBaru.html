@@ -162,8 +162,13 @@
 
                                     <input required style="width: 100%;" kendo-combo-box k-ng-model="item.agama"
                                         k-data-text-field="'agama'" k-filter="'contains'" k-minLength="'3'"
-                                        k-data-value-field="'id'" k-data-source="listDataAgama" />
+                                        k-data-value-field="'id'" k-data-source="listDataAgama" k-on-change="changeAgama(item.agama)" />
 
+                                </div>
+                                <div ng-show="agamaLain" class="grid_4">
+                                    <label c-label item="item">Agama Lain</label>
+
+                                    <input required c-text-box type="input" filter="'string'" class="k-textbox" ng-model="item.agamaLain" />
                                 </div>
                                 <div class="grid_4">
                                     <label c-label item="item">Status Perkawinan</label>
@@ -189,14 +194,19 @@
                                         k-data-value-field="'id'" k-data-source="listDataPendidikan"
                                         ng-disabled="isBayi" />
                                 </div>
-                                   <div class="grid_4">
-                                        <label c-label item="item">Pekerjaan</label>
+                                <div class="grid_4">
+                                    <label c-label item="item">Pekerjaan</label>
 
-                                        <input required style="width: 100%;" kendo-combo-box k-ng-model="item.pekerjaan"
-                                            k-data-text-field="'pekerjaan'" k-filter="'contains'" k-minLength="'3'"
-                                            k-data-value-field="'id'" k-data-source="listDataPekerjaan"
-                                            ng-disabled="isBayi" />
-                                    </div>
+                                    <input required style="width: 100%;" kendo-combo-box k-ng-model="item.pekerjaan"
+                                        k-data-text-field="'pekerjaan'" k-filter="'contains'" k-minLength="'3'"
+                                        k-data-value-field="'id'" k-data-source="listDataPekerjaan"
+                                        ng-disabled="isBayi" k-on-change="changePekerjaan(item.pekerjaan)" />
+                                </div>
+                                <div ng-show="pekerjaanLain" class="grid_4">
+                                    <label c-label item="item">Pekerjaan lain</label>
+
+                                    <input required c-text-box type="input" filter="'string'" class="k-textbox" ng-model="item.pekerjaanLain" />
+                                </div>
                                 <div class="grid_4">
                                     <label c-label item="item">Hambatan Komunikasi</label>
 
@@ -230,12 +240,12 @@
                                             k-filter="'contains'" k-minLength="'3'" k-data-value-field="'id'"
                                             k-data-source="listKebangsaan" />
                                     </div>
-                                    <div class="grid_4">
+                                    <!-- <div class="grid_4">
                                         <label c-label item="item">Negara</label>
                                         <input required style="width: 100%;" kendo-combo-box k-ng-model="item.negara"
                                             k-data-text-field="'namanegara'" k-filter="'contains'" k-minLength="'3'"
                                             k-data-value-field="'id'" k-data-source="listNegara" />
-                                    </div>
+                                    </div> -->
                                     <div class="grid_4" >
                                         <label c-label item="item">Alergi </label>
                                         <input c-text-box type="input" filter="'string'" class="k-textbox"
@@ -281,10 +291,10 @@
                                     </div> -->
                                     <div class="grid_12" ng-show="item.kebangsaan.name=='WNA'">
                                         <div class="grid_4" style="margin-top:10px">
-                                            <label c-label item="item">Paspor</label>
+                                            <label c-label item="item">No Identitas Lain</label>
                                         </div>
                                         <div class="grid_8">
-                                            <input c-text-box type="input" class="k-textbox" ng-model="item.paspor" />
+                                            <input c-text-box type="input" class="k-textbox" ng-model="item.noidentitaslain" placeholder="Paspor/KITAS/dll" />
                                         </div>
                                     </div>
 
@@ -324,7 +334,7 @@
 
                     <div class="grid_6">
                         <div class="panel panel-default panel-white">
-                            <div class="panel-heading-white"><span class="title" c-translate>Geografi</span></div>
+                            <div class="panel-heading-white"><span class="title" c-translate>Alamat Lengkap</span></div>
                             <div class="panel-body">
                                 <div class="grid_12">
                                     <label c-label item="item" c-label-text="pasien.alamat"
@@ -335,7 +345,11 @@
                                         margin-left: 5px;
                                         resize: none;" ng-model="item.alamatLengkap"></textarea>
                                 </div>
-                                <div class="grid_4">
+                                <div class="grid_2">
+                                    <label c-label item="item">RT/RW</label>
+                                    <input required is-busy='isBusy' c-text-box type="input" class="k-textbox" ng-model="item.rtrw" placeholder="RT / RW" />
+                                </div>
+                                <div class="grid_2">
                                     <label c-label item="item">Kode Pos</label>
 
                                     <input required is-busy='isBusy' c-text-box type="input" filter="'numeric'"
@@ -373,6 +387,84 @@
                                         k-data-value-field="'id'" k-data-source="listDataPropinsi"
                                         k-auto-bind="'false'" />
                                 </div>
+                                <div class="grid_4">
+                                    <label c-label item="item">Negara</label>
+                                    <input required style="width: 100%;" kendo-combo-box k-ng-model="item.negara"
+                                        k-data-text-field="'namanegara'" k-filter="'contains'"
+                                        k-data-value-field="'id'" k-data-source="listNegara" />
+                                </div>
+                            </div>
+
+
+                        </div>
+                        <div class="panel panel-default panel-white">
+                            <div class="panel-heading-white">
+                                <div class="grid_3">
+                                    <span class="title" c-translate>Alamat Domisili</span> 
+                                </div>
+                                <div class="grid_6" style="margin-top: 10px;">
+                                    <input type="checkbox" class="k-checkbox" id="samaDenganAlamat" ng-model="item.cekSama" value="true" ng-click="salinAlamat(item.cekSama)">
+                                    <label class="k-checkbox-label" for="samaDenganAlamat"><b> Sesuai dengan alamat</b></label>
+                                </div>
+                            </div>
+                            <div class="panel-body">
+                                <div class="grid_12">
+                                    <label c-label item="item" c-label-text="pasien.alamat"
+                                        style=" margin-top: 5px;   margin-left: 5px;" required></label>
+                                    <textarea required class="k-textbox" style="    height: 76px;
+                                        width: 100%;
+                                        margin-top: 5px;
+                                        margin-left: 5px;
+                                        resize: none;" ng-model="item.alamatDomisili"></textarea>
+                                </div>
+                                <div class="grid_2">
+                                    <label c-label item="item">RT/RW</label>
+                                    <input required is-busy='isBusy' c-text-box type="input" class="k-textbox" ng-model="item.rtrwDomisili" placeholder="RT / RW" />
+                                </div>
+                                <div class="grid_2">
+                                    <label c-label item="item">Kode Pos</label>
+
+                                    <input required is-busy='isBusy' c-text-box type="input" filter="'numeric'"
+                                        ng-blur="findKodePos(item.kodePos)" class="k-textbox" ng-blur="checkKodePos"
+                                        ng-model="item.kodePosDomisili" />
+                                </div>
+                                <div class="grid_8" style="margin-bottom: 2px;">
+                                    <label c-label item="item" c-label-text="kelurahan" required></label>
+                                    <input required style="width: 100%;" kendo-combo-box k-ng-model="item.desaKelurahanDomisili"
+                                        k-data-text-field="'desa'" k-filter="'contains'" k-data-value-field="'value'"
+                                        k-data-source="listDataKelurahan" k-auto-bind="'false'"
+                                        k-on-change="findAddress(item.desaKelurahanDomisili)" />
+
+                                </div>
+
+                                <div class="grid_4" style="margin-bottom: 2px;">
+                                    <label c-label item="item" c-label-text="kecamatan"></label>
+                                    <input required style="width: 100%;" kendo-combo-box k-ng-model="item.kecamatanDomisili"
+                                        k-data-text-field="'namakecamatan'" k-filter="'contains'"
+                                        k-data-value-field="'id'" k-data-source="listDataKecamatan"
+                                        k-auto-bind="'false'" />
+                                </div>
+
+                                <div class="grid_4">
+                                    <label c-label item="item" c-label-text="kotaKabupaten"></label>
+                                    <input required style="width: 100%;" kendo-combo-box k-ng-model="item.kotaKabupatenDomisili"
+                                        k-data-text-field="'namakotakabupaten'" k-filter="'contains'"
+                                        k-data-value-field="'id'" k-data-source="listDataKotaKabupaten"
+                                        k-auto-bind="'false'" />
+                                </div>
+                                <div class="grid_4">
+                                    <label c-label item="item" c-label-text="propinsi"></label>
+                                    <input required style="width: 100%;" kendo-combo-box k-ng-model="item.propinsiDomisili"
+                                        k-data-text-field="'namapropinsi'" k-filter="'contains'"
+                                        k-data-value-field="'id'" k-data-source="listDataPropinsi"
+                                        k-auto-bind="'false'" />
+                                </div>
+                                <div class="grid_4">
+                                    <label c-label item="item">Negara</label>
+                                    <input required style="width: 100%;" kendo-combo-box k-ng-model="item.negaraDomisili"
+                                        k-data-text-field="'namanegara'" k-filter="'contains'"
+                                        k-data-value-field="'id'" k-data-source="listNegara" />
+                                </div>
                             </div>
 
 
@@ -395,8 +487,7 @@
                                         <label c-label item="item">No Telepon</label>
                                     </div>
                                     <div class="grid_8">
-                                        <input required c-text-box type="input" class="k-textbox"
-                                            ng-model="item.noTelepon" />
+                                        <input required c-text-box type="number" class="k-textbox" ng-model="item.noTelepon" />
                                     </div>
                                 </div>
                                 <div class="grid_12">
@@ -404,8 +495,7 @@
                                         <label class="c-label" required>No. HP / Ponsel</label>
                                     </div>
                                     <div class="grid_8">
-                                        <input required c-text-box type="input" class="k-textbox"
-                                            ng-model="item.noHp" />
+                                        <input required c-text-box type="number" class="k-textbox" ng-model="item.noHp" />
                                     </div>
                                 </div>
                                 <div class="grid_12">

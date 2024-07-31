@@ -23,7 +23,7 @@ var app = require('../app');
 // });
 // var io = require('socket.io').listen(server);
 
-app.set('port', 2222);
+app.set('port', 2009);
 
 var server = app.listen(app.get('port'), function() {
     console.log('Express Server for HTPP Server & Notification Server, listening on port ' + server.address().port);

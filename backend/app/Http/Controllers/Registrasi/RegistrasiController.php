@@ -25,6 +25,7 @@ use App\Master\SettingDataFixed;
 use App\Master\StatusPerkawinan;
 use App\Master\TempatTidur;
 use App\Master\KelompokPasien;
+use App\Master\Pekerjaan;
 use App\Transaksi\AntrianPasienDiperiksa;
 use App\Transaksi\AntrianPasienRegistrasi;
 use App\Transaksi\BatalRegistrasi;
@@ -1196,7 +1197,9 @@ class RegistrasiController extends ApiController
     public function getDaftarPasien( Request $request) {
         $kdProfile = $this->getDataKdProfile($request);
         $data = \DB::table('pasien_m as ps')
-            ->leftjoin('alamat_m as alm','alm.nocmfk','=','ps.id')
+            ->leftjoin('alamat_m as alm', function($join) {
+                $join->on('alm.nocmfk', '=', 'ps.id')->where('alm.objectjenisalamatfk', '=', 1);
+            })
             ->leftjoin('profile_m as pro','pro.id','=','ps.kdprofile')
             ->leftjoin('jeniskelamin_m as jk','jk.id','=','ps.objectjeniskelaminfk')
             ->select('ps.isrmhilang','ps.isinaktif','ps.nocm','ps.namapasien','ps.tgldaftar', 'ps.tgllahir',
@@ -1252,7 +1255,7 @@ class RegistrasiController extends ApiController
         };
         $data = $data->where('ps.kdprofile', (int)$kdProfile);
         $data = $data->where('ps.statusenabled',true);
-         $data = $data->orderBy('ps.id','desc');
+        $data = $data->orderBy('ps.id','desc');
         $data=$data->get();
         $data2= [];
         foreach ($data as $item){
@@ -3065,7 +3068,10 @@ class RegistrasiController extends ApiController
     public function getPsnByNoCm(Request $request) {
         $kdProfile = $this->getDataKdProfile($request);
         $data = \DB::table('pasien_m as ps')
-            ->leftJOIN ('alamat_m as alm','alm.nocmfk','=','ps.id')
+            ->leftJOIN ('alamat_m as alm', function ($join) {
+                $join->on('alm.nocmfk', '=', 'ps.id')
+                    ->where('alm.objectjenisalamatfk', '=', 1);
+            })
             ->leftjoin ('pendidikan_m as pdd','ps.objectpendidikanfk','=','pdd.id')
             ->leftjoin ('pekerjaan_m as pk','ps.objectpekerjaanfk','=','pk.id')
             ->leftjoin ('jeniskelamin_m as jk','jk.id','=','ps.objectjeniskelaminfk')
@@ -3097,7 +3103,7 @@ class RegistrasiController extends ApiController
                     'ps.objectgolongandarahfk','gol.golongandarah','ps.objectsukufk','sk.suku','ps.bahasa as bahasapj','ps.teleponpenanggungjawab',
                     'ps.dokterpengirim','ps.alamatdokterpengirim','jk1.id as jkidpenanggungjawab','ps.jeniskelaminpenanggungjawab','ps.umurpenanggungjawab','ps.hambatankomunikasifk','ps.bahasafk','ham.hambatankomunikasi','bh.bahasa',
                     'ps.penanggungjawab2','ps.hubungankeluargapj2','ps.pekerjaanpenangggungjawab2','ps.alamatrmh2','ps.bahasa2',
-                    'ps.teleponpenanggungjawab2','ps.jeniskelaminpenanggungjawab2','ps.umurpenanggungjawab2','jk2.id as idjk2','pk2.id as idpek2','ps.nik1','ps.nik2','ps.alergi','ps.sidik_jari')
+                    'ps.teleponpenanggungjawab2','ps.jeniskelaminpenanggungjawab2','ps.umurpenanggungjawab2','jk2.id as idjk2','pk2.id as idpek2','ps.nik1','ps.nik2','ps.alergi','ps.sidik_jari','ps.noidentitaslain','ps.agamalain','ps.pekerjaanlain')
             ->where('ps.kdprofile', (int)$kdProfile);
 
         if(isset($request['noCm'] ) && $request['noCm']!= '' && $request['noCm']!= 'undefined'){
@@ -3108,6 +3114,33 @@ class RegistrasiController extends ApiController
         }
 
         $data=$data->first();
+        $dataAlamatD = DB::table('alamat_m as alm')
+            ->leftJoin('desakelurahan_m as des', 'des.id', '=', 'alm.objectdesakelurahanfk')
+            ->leftJoin('kecamatan_m as kc', 'kc.id', '=', 'alm.objectkecamatanfk')
+            ->leftJoin('kotakabupaten_m as kot', 'kot.id', '=', 'alm.objectkotakabupatenfk')
+            ->leftJoin('propinsi_m as pro', 'pro.id', '=', 'alm.objectpropinsifk')
+            ->leftJoin('negara_m as ng', 'ng.id', '=', 'alm.objectnegarafk')
+            ->select(
+                'alm.alamatlengkap',
+                'alm.rtrw',
+                'alm.kodepos',
+                'alm.objectdesakelurahanfk',
+                'des.namadesakelurahan',
+                'alm.objectkecamatanfk',
+                'kc.namakecamatan',
+                'alm.objectkotakabupatenfk',
+                'kot.namakotakabupaten',
+                'alm.objectpropinsifk',
+                'pro.namapropinsi',
+                'alm.objectnegarafk',
+                'ng.namanegara'
+            )
+            ->where('alm.kdprofile', (int)$kdProfile)
+            ->where('alm.statusenabled', true)
+            ->where('alm.objectjenisalamatfk', 3)
+            ->where('alm.nocmfk', $data->nocmfk)
+            ->first();
+        
         $alamatd = DB::table('alamatd_m')->where('nocmfk',$data->nocmfk)->get();
 //        $dt=[];
 //        foreach ($data as $itm){
@@ -3132,18 +3165,29 @@ class RegistrasiController extends ApiController
                 'jeniskelamin' => $data->jeniskelamin,
                 'objectagamafk' => $data->objectagamafk,
                 'agama' => $data->agama,
+                'agamalain' => $data->agamalain,
                 'objectstatusperkawinanfk' => $data->objectstatusperkawinanfk,
                 'statusperkawinan' => $data->statusperkawinan,
                 'objectpendidikanfk' => $data->objectpendidikanfk,
                 'pendidikan' => $data->pendidikan,
-                'objectpekerjaanfk' => $data->objectpekerjaanfk,                'pekerjaan' => $data->pekerjaan,
-                'objectkebangsaanfk' => $data->objectkebangsaanfk,                'kebangsaan' => $data->kebangsaan,
-                'objectnegarafk' => $data->objectnegarafk,                'namanegara' => $data->namanegara,
-                'noidentitas' => $data->noidentitas,                'nobpjs' => $data->nobpjs,
-                'noasuransilain' => $data->noasuransilain,                'alamatlengkap' => $data->alamatlengkap,
-                'kodepos' => $data->kodepos,                'objectdesakelurahanfk' => $data->objectdesakelurahanfk,
-                'namadesakelurahan' => $data->namadesakelurahan,                'objectkecamatanfk' => $data->objectkecamatanfk,
-                'namakecamatan' => $data->namakecamatan,                'objectkotakabupatenfk' => $data->objectkotakabupatenfk,
+                'objectpekerjaanfk' => $data->objectpekerjaanfk,                
+                'pekerjaan' => $data->pekerjaan,
+                'pekerjaanlain' => $data->pekerjaanlain,
+                'objectkebangsaanfk' => $data->objectkebangsaanfk,                
+                'kebangsaan' => $data->kebangsaan,
+                'objectnegarafk' => $data->objectnegarafk,                
+                'namanegara' => $data->namanegara,
+                'noidentitas' => $data->noidentitas,                
+                'noidentitaslain' => $data->noidentitaslain,              
+                'nobpjs' => $data->nobpjs,
+                'noasuransilain' => $data->noasuransilain,                
+                'alamatlengkap' => $data->alamatlengkap,
+                'kodepos' => $data->kodepos,                
+                'objectdesakelurahanfk' => $data->objectdesakelurahanfk,
+                'namadesakelurahan' => $data->namadesakelurahan,                
+                'objectkecamatanfk' => $data->objectkecamatanfk,
+                'namakecamatan' => $data->namakecamatan,                
+                'objectkotakabupatenfk' => $data->objectkotakabupatenfk,
                 'namakotakabupaten' => $data->namakotakabupaten,
                 'objectpropinsifk' => $data->objectpropinsifk,
                 'namapropinsi' => $data->namapropinsi,
@@ -3165,8 +3209,6 @@ class RegistrasiController extends ApiController
                 'jkidpenanggungjawab' => $data->jkidpenanggungjawab,
                 'jeniskelaminpenanggungjawab' => $data->jeniskelaminpenanggungjawab,
                 'umurpenanggungjawab' => $data->umurpenanggungjawab,
-
-
                 'hambatankomunikasifk' => $data->hambatankomunikasifk,
                 'bahasafk' => $data->bahasafk,
                 'hambatankomunikasi' => $data->hambatankomunikasi,
@@ -3187,6 +3229,19 @@ class RegistrasiController extends ApiController
                 'alergi' => $data->alergi,
                 'sidik_jari' => $data->sidik_jari,
                 'bahasapj' => $data->bahasapj,
+                'alamatdomisili' => !empty($dataAlamatD) ? $dataAlamatD->alamatlengkap : null,
+                'rtrwdomisili' => !empty($dataAlamatD) ? $dataAlamatD->rtrw : null,
+                'kodeposdomisili' => !empty($dataAlamatD) ? $dataAlamatD->kodepos : null,
+                'objectdesakelurahandomisilifk' => !empty($dataAlamatD) ? $dataAlamatD->objectdesakelurahanfk : null,
+                'namadesakelurahandomisili' => !empty($dataAlamatD) ? $dataAlamatD->namadesakelurahan : null,
+                'objectkecamatandomisilifk' => !empty($dataAlamatD) ? $dataAlamatD->objectkecamatanfk : null,
+                'namakecamatandomisili' => !empty($dataAlamatD) ? $dataAlamatD->namakecamatan : null,
+                'objectkotakabupatendomisilifk' => !empty($dataAlamatD) ? $dataAlamatD->objectkotakabupatenfk : null,
+                'namakotakabupatendomisili' => !empty($dataAlamatD) ? $dataAlamatD->namakotakabupaten : null,
+                'objectpropinsidomisilifk' => !empty($dataAlamatD) ? $dataAlamatD->objectpropinsifk : null,
+                'namapropinsidomisili' => !empty($dataAlamatD) ? $dataAlamatD->namapropinsi : null,
+                'objectnegaradomisilifk' => !empty($dataAlamatD) ? $dataAlamatD->objectnegarafk : null,
+                'namanegaradomisili' => !empty($dataAlamatD) ? $dataAlamatD->namanegara : null,
             );
 //        }
         $result = array(
@@ -3884,6 +3939,7 @@ class RegistrasiController extends ApiController
             $dataPS->namaexternal =  $request['pasien']['namaPasien'];
             $dataPS->reportdisplay =  $request['pasien']['namaPasien'];
             $dataPS->objectagamafk = $request['agama']?$request['agama']['id']:null;
+            $dataPS->agamalain = $request['agamaLain']?$request['agamaLain']:null;
             if (isset($request['jenisKelamin']['id'])){
                 $dataPS->objectjeniskelaminfk = $request['jenisKelamin']['id'];
             }else{
@@ -3891,6 +3947,7 @@ class RegistrasiController extends ApiController
             }
             $dataPS->namapasien = $request['pasien']['namaPasien'];
             $dataPS->objectpekerjaanfk = $request['pekerjaan']?$request['pekerjaan']['id']:null;
+            $dataPS->pekerjaanlain = $request['pekerjaanLain']?$request['pekerjaanLain']:null;
             $dataPS->objectpendidikanfk = $request['pendidikan']?$request['pendidikan']['id']:null;
             $dataPS->qpasien = 1;
             $dataPS->objectstatusperkawinanfk = $request['statusPerkawinan']? $request['statusPerkawinan']['id']:null;
@@ -4025,6 +4082,9 @@ class RegistrasiController extends ApiController
             if (isset($request['umurpenanggungjawab2'])){
                 $dataPS->umurpenanggungjawab2 = $request['umurpenanggungjawab2'];
             }
+            if (isset($request['noIdentitasLain'])){
+                $dataPS->noidentitaslain = $request['noIdentitasLain'];
+            }
             $dataPS->save();
             $dataNoCMFk = $newId;
             $nocmfk =$dataPS->id;
@@ -4084,7 +4144,7 @@ class RegistrasiController extends ApiController
                 $dataAL->kodeexternal = $idAlamat;
                 $dataAL->norec = $dataAL->generateNewId();
             }else{
-                $dataAL = Alamat::where('nocmfk', $dataNoCMFk)->first();
+                $dataAL = Alamat::where('nocmfk', $dataNoCMFk)->where('objectjenisalamatfk', 1)->first();
                 if(empty($dataAL)){
                     $idAlamat = Alamat::max('id') + 1;
                     $dataAL = new Alamat();
@@ -4111,6 +4171,7 @@ class RegistrasiController extends ApiController
                 $dataAL->objectkecamatanfk = $request['kecamatan']['id'];
             }
             $dataAL->kodepos = $request['kodePos'];
+            $dataAL->rtrw = $request['rtRw'];
             if (isset($request['kotaKabupaten']['id']) && $request['kotaKabupaten']['id']!=null){
                 $dataAL->objectkotakabupatenfk = $request['kotaKabupaten']['id'];
             }
@@ -4174,6 +4235,80 @@ class RegistrasiController extends ApiController
             // $dataAL->penanggungjawab_norec = $request['xxxx']['xxxxx'];
             //endregion
             $dataAL->save();
+
+            // Save Alamat Domisili;
+            if($request['idpasien'] == '') {
+                $idAlamatD = Alamat::max('id') + 1;
+                $dataALD = new Alamat();
+                $dataALD->id = $idAlamatD;
+                $dataALD->kdprofile = (int)$kdProfile;;//12;
+                $dataALD->statusenabled = true;
+                $dataALD->kodeexternal = $idAlamatD;
+                $dataALD->norec = $dataALD->generateNewId();
+            }else{
+                $dataALD = Alamat::where('nocmfk', $dataNoCMFk)->where('objectjenisalamatfk', 3)->first();
+                if(empty($dataALD)){
+                    $idAlamatD = Alamat::max('id') + 1;
+                    $dataALD = new Alamat();
+                    $dataALD->id = $idAlamatD;
+                    $dataALD->kdprofile = (int)$kdProfile;
+                    $dataALD->statusenabled = true;
+                    $dataALD->kodeexternal = $idAlamatD;
+                    $dataALD->norec = $dataALD->generateNewId();
+                    $idAlamatD = $dataALD->id;
+                }else{
+                    $idAlamatD = $dataALD->id;
+                }
+            }
+            $dataALD->statusenabled = true;
+            $dataALD->alamatlengkap = $request['alamatDomisili'];
+            $dataALD->objecthubungankeluargafk = 7;//dirisendiri
+            if (isset($request['desaKelurahanDomisili']['id']) && $request['desaKelurahanDomisili']['id']!=null){
+                $dataALD->objectdesakelurahanfk = $request['desaKelurahanDomisili']['id'];
+            }
+            $dataALD->objectjenisalamatfk = 3; // Domisili
+            $dataALD->kdalamat = $idAlamatD;
+            if (isset($request['kecamatanDomisili']['id']) && $request['kecamatanDomisili']['id']!=null){
+                $dataALD->objectkecamatanfk = $request['kecamatanDomisili']['id'];
+            }
+            $dataALD->kodepos = $request['kodePosDomisili'];
+            $dataALD->rtrw = $request['rtrwDomisili'];
+            if (isset($request['kotaKabupatenDomisili']['id']) && $request['kotaKabupatenDomisili']['id']!=null){
+                $dataALD->objectkotakabupatenfk = $request['kotaKabupatenDomisili']['id'];
+            }
+            if (isset($request['desaKelurahanDomisili']['namaDesaKelurahan']) && $request['desaKelurahanDomisili']['namaDesaKelurahan']!=null){
+                $dataALD->namadesakelurahan = $request['desaKelurahanDomisili']['namaDesaKelurahan'];
+            }
+            if (isset($request['kecamatanDomisili']['namaKecamatan']) && $request['kecamatanDomisili']['namaKecamatan']!=null){
+                $dataALD->namakecamatan = $request['kecamatanDomisili']['namaKecamatan'];
+            }
+            if (isset($request['kotaKabupatenDomisili']['namaKotaKabupaten']) && $request['kotaKabupatenDomisili']['namaKotaKabupaten']!=null){
+                $dataALD->namakotakabupaten = $request['kotaKabupatenDomisili']['namaKotaKabupaten'];
+            }
+            // if (isset($request['propinsiDomisili'])){
+            //     $dataALD->propinsi = $request['propinsiDomisili'];
+            // }
+            $dataALD->objectnegarafk = $request['negaraDomisili']['id'];
+            $dataALD->nocmfk = $dataNoCMFk;
+            if (isset($detLogin['userData']['id'])){
+                $dataALD->objectpegawaifk = $detLogin['userData']['id'];
+            }
+            if (isset($request['propinsi']['id']) &&$request['propinsi']['id']!=null ){
+                $dataALD->objectpropinsifk = $request['propinsi']['id'];
+            }else{
+                $dataALD->objectpropinsifk = null;
+            }
+            if (isset($request['kecamatanDomisili']['namaKecamatan'])){
+                $dataALD->kecamatan = $request['kecamatanDomisili']['namaKecamatan'];
+            }
+            if (isset($request['kotaKabupatenDomisili']['namaKotaKabupaten'])){
+                $dataALD->kotakabupaten = $request['kotaKabupatenDomisili']['namaKotaKabupaten'];
+            }
+            if (isset($request['isjkn'])){
+                $dataALD->isjkn = $request['isjkn'];
+            }
+            $dataALD->save();
+
             //endregion
             if(isset($request['detailalamat'])) {
                 foreach($request['detailalamat'] as $item){
