@@ -15,6 +15,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.reservasi = {}
             $scope.agamaLain = false
             $scope.pekerjaanLain = false
+            $scope.isDomisili = false
             $scope.item.image = "../app/images/avatar.jpg"
             loadCombo()
             init()

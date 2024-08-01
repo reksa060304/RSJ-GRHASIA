@@ -4676,77 +4676,77 @@ class RegistrasiController extends ApiController
             $dataAL->save();
 
             // Save Alamat Domisili;
-            if($request['idpasien'] == '') {
-                $idAlamatD = Alamat::max('id') + 1;
-                $dataALD = new Alamat();
-                $dataALD->id = $idAlamatD;
-                $dataALD->kdprofile = (int)$kdProfile;;//12;
-                $dataALD->statusenabled = true;
-                $dataALD->kodeexternal = $idAlamatD;
-                $dataALD->norec = $dataALD->generateNewId();
-            }else{
-                $dataALD = Alamat::where('nocmfk', $dataNoCMFk)->where('objectjenisalamatfk', 3)->first();
-                if(empty($dataALD)){
-                    $idAlamatD = Alamat::max('id') + 1;
-                    $dataALD = new Alamat();
-                    $dataALD->id = $idAlamatD;
-                    $dataALD->kdprofile = (int)$kdProfile;
-                    $dataALD->statusenabled = true;
-                    $dataALD->kodeexternal = $idAlamatD;
-                    $dataALD->norec = $dataALD->generateNewId();
-                    $idAlamatD = $dataALD->id;
-                }else{
-                    $idAlamatD = $dataALD->id;
-                }
-            }
-            $dataALD->statusenabled = true;
-            $dataALD->alamatlengkap = $request['alamatDomisili'];
-            $dataALD->objecthubungankeluargafk = 7;//dirisendiri
-            if (isset($request['desaKelurahanDomisili']['id']) && $request['desaKelurahanDomisili']['id']!=null){
-                $dataALD->objectdesakelurahanfk = $request['desaKelurahanDomisili']['id'];
-            }
-            $dataALD->objectjenisalamatfk = 3; // Domisili
-            $dataALD->kdalamat = $idAlamatD;
-            if (isset($request['kecamatanDomisili']['id']) && $request['kecamatanDomisili']['id']!=null){
-                $dataALD->objectkecamatanfk = $request['kecamatanDomisili']['id'];
-            }
-            $dataALD->kodepos = $request['kodePosDomisili'];
-            $dataALD->rtrw = $request['rtrwDomisili'];
-            if (isset($request['kotaKabupatenDomisili']['id']) && $request['kotaKabupatenDomisili']['id']!=null){
-                $dataALD->objectkotakabupatenfk = $request['kotaKabupatenDomisili']['id'];
-            }
-            if (isset($request['desaKelurahanDomisili']['namaDesaKelurahan']) && $request['desaKelurahanDomisili']['namaDesaKelurahan']!=null){
-                $dataALD->namadesakelurahan = $request['desaKelurahanDomisili']['namaDesaKelurahan'];
-            }
-            if (isset($request['kecamatanDomisili']['namaKecamatan']) && $request['kecamatanDomisili']['namaKecamatan']!=null){
-                $dataALD->namakecamatan = $request['kecamatanDomisili']['namaKecamatan'];
-            }
-            if (isset($request['kotaKabupatenDomisili']['namaKotaKabupaten']) && $request['kotaKabupatenDomisili']['namaKotaKabupaten']!=null){
-                $dataALD->namakotakabupaten = $request['kotaKabupatenDomisili']['namaKotaKabupaten'];
-            }
-            // if (isset($request['propinsiDomisili'])){
-            //     $dataALD->propinsi = $request['propinsiDomisili'];
+            // if($request['idpasien'] == '') {
+            //     $idAlamatD = Alamat::max('id') + 1;
+            //     $dataALD = new Alamat();
+            //     $dataALD->id = $idAlamatD;
+            //     $dataALD->kdprofile = (int)$kdProfile;;//12;
+            //     $dataALD->statusenabled = true;
+            //     $dataALD->kodeexternal = $idAlamatD;
+            //     $dataALD->norec = $dataALD->generateNewId();
+            // }else{
+            //     $dataALD = Alamat::where('nocmfk', $dataNoCMFk)->where('objectjenisalamatfk', 3)->first();
+            //     if(empty($dataALD)){
+            //         $idAlamatD = Alamat::max('id') + 1;
+            //         $dataALD = new Alamat();
+            //         $dataALD->id = $idAlamatD;
+            //         $dataALD->kdprofile = (int)$kdProfile;
+            //         $dataALD->statusenabled = true;
+            //         $dataALD->kodeexternal = $idAlamatD;
+            //         $dataALD->norec = $dataALD->generateNewId();
+            //         $idAlamatD = $dataALD->id;
+            //     }else{
+            //         $idAlamatD = $dataALD->id;
+            //     }
             // }
-            $dataALD->objectnegarafk = $request['negaraDomisili']['id'];
-            $dataALD->nocmfk = $dataNoCMFk;
-            if (isset($detLogin['userData']['id'])){
-                $dataALD->objectpegawaifk = $detLogin['userData']['id'];
-            }
-            if (isset($request['propinsi']['id']) &&$request['propinsi']['id']!=null ){
-                $dataALD->objectpropinsifk = $request['propinsi']['id'];
-            }else{
-                $dataALD->objectpropinsifk = null;
-            }
-            if (isset($request['kecamatanDomisili']['namaKecamatan'])){
-                $dataALD->kecamatan = $request['kecamatanDomisili']['namaKecamatan'];
-            }
-            if (isset($request['kotaKabupatenDomisili']['namaKotaKabupaten'])){
-                $dataALD->kotakabupaten = $request['kotaKabupatenDomisili']['namaKotaKabupaten'];
-            }
-            if (isset($request['isjkn'])){
-                $dataALD->isjkn = $request['isjkn'];
-            }
-            $dataALD->save();
+            // $dataALD->statusenabled = true;
+            // $dataALD->alamatlengkap = $request['alamatDomisili'];
+            // $dataALD->objecthubungankeluargafk = 7;//dirisendiri
+            // if (isset($request['desaKelurahanDomisili']['id']) && $request['desaKelurahanDomisili']['id']!=null){
+            //     $dataALD->objectdesakelurahanfk = $request['desaKelurahanDomisili']['id'];
+            // }
+            // $dataALD->objectjenisalamatfk = 3; // Domisili
+            // $dataALD->kdalamat = $idAlamatD;
+            // if (isset($request['kecamatanDomisili']['id']) && $request['kecamatanDomisili']['id']!=null){
+            //     $dataALD->objectkecamatanfk = $request['kecamatanDomisili']['id'];
+            // }
+            // $dataALD->kodepos = $request['kodePosDomisili'];
+            // $dataALD->rtrw = $request['rtrwDomisili'];
+            // if (isset($request['kotaKabupatenDomisili']['id']) && $request['kotaKabupatenDomisili']['id']!=null){
+            //     $dataALD->objectkotakabupatenfk = $request['kotaKabupatenDomisili']['id'];
+            // }
+            // if (isset($request['desaKelurahanDomisili']['namaDesaKelurahan']) && $request['desaKelurahanDomisili']['namaDesaKelurahan']!=null){
+            //     $dataALD->namadesakelurahan = $request['desaKelurahanDomisili']['namaDesaKelurahan'];
+            // }
+            // if (isset($request['kecamatanDomisili']['namaKecamatan']) && $request['kecamatanDomisili']['namaKecamatan']!=null){
+            //     $dataALD->namakecamatan = $request['kecamatanDomisili']['namaKecamatan'];
+            // }
+            // if (isset($request['kotaKabupatenDomisili']['namaKotaKabupaten']) && $request['kotaKabupatenDomisili']['namaKotaKabupaten']!=null){
+            //     $dataALD->namakotakabupaten = $request['kotaKabupatenDomisili']['namaKotaKabupaten'];
+            // }
+            // // if (isset($request['propinsiDomisili'])){
+            // //     $dataALD->propinsi = $request['propinsiDomisili'];
+            // // }
+            // $dataALD->objectnegarafk = $request['negaraDomisili']['id'];
+            // $dataALD->nocmfk = $dataNoCMFk;
+            // if (isset($detLogin['userData']['id'])){
+            //     $dataALD->objectpegawaifk = $detLogin['userData']['id'];
+            // }
+            // if (isset($request['propinsi']['id']) &&$request['propinsi']['id']!=null ){
+            //     $dataALD->objectpropinsifk = $request['propinsi']['id'];
+            // }else{
+            //     $dataALD->objectpropinsifk = null;
+            // }
+            // if (isset($request['kecamatanDomisili']['namaKecamatan'])){
+            //     $dataALD->kecamatan = $request['kecamatanDomisili']['namaKecamatan'];
+            // }
+            // if (isset($request['kotaKabupatenDomisili']['namaKotaKabupaten'])){
+            //     $dataALD->kotakabupaten = $request['kotaKabupatenDomisili']['namaKotaKabupaten'];
+            // }
+            // if (isset($request['isjkn'])){
+            //     $dataALD->isjkn = $request['isjkn'];
+            // }
+            // $dataALD->save();
 
             //endregion
             if (isset($request['detailalamat'])) {
