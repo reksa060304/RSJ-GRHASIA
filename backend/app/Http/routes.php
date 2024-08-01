@@ -46,7 +46,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
     	Route::get('report/cetak-label-pilihan-pengemasan', 'Report\ReportController@cetakLabelPilihanPengemasan');
 		Route::get('report/surat-rehab-napza', 'Report\ReportController@CetakSKNapza');
 		Route::get('report/get-cetak-suratpasienmelarikandiri', 'Report\ReportController@suratPasienMelarikanDiri');
-
+		Route::get('report/cetak-rba-rekap-subsub', 'Report\ReportController@cetakPerjenisAnggaranV2');
+		
 		// RBA
 		Route::get('perencanaan/get-total-sisa-anggaran', 'Perencanaan\PerencanaanController@getTotalSisaAnggaran');
         Route::get('rba/get-data-rba', 'Perencanaan\RBAController@getRBA');

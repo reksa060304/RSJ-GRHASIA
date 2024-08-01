@@ -23347,4 +23347,128 @@ public function suratBuktiPengembalian(Request $request)
 
         return $pdf->stream();
     }
+
+    public function cetakPerjenisAnggaranV2(Request $request)
+    {
+
+        $sesudah = DB::select(DB::raw("
+            SELECT 
+                ka.id, 
+                ka.kode, 
+                ka3.kode as kode3,
+                ka2.kode as kode2,
+                ka.keterangan,
+                ka3.keterangan as keterangan3,
+                ka2.keterangan as keterangan2,
+                SUM(kb.subtotal) AS total,
+                SUM(CASE WHEN ja.jenisanggaran = 'Belanja Pegawai' THEN kb.subtotal ELSE 0 END) AS belanjapegawai,
+                SUM(CASE WHEN ja.jenisanggaran = 'Belanja Barang dan Jasa' THEN kb.subtotal ELSE 0 END) AS belanjabarangjasa,
+                SUM(CASE WHEN ja.jenisanggaran = 'Belanja Modal Gedung' THEN kb.subtotal ELSE 0 END) AS belanjamodalgedung,
+                SUM(CASE WHEN ja.jenisanggaran = 'Belanja Modal Alat dan Mesin' THEN kb.subtotal ELSE 0 END) AS belanjamodalalatmesin,
+                SUM(CASE WHEN ja.jenisanggaran = 'Belanja Modal Lainnya' THEN kb.subtotal ELSE 0 END) AS belanjamodallainnya
+            FROM kegiatananggaran_m ka
+            JOIN kegiatananggaran_m ka3 ON ka3.kode = split_part(ka.kode,'.', 1) || '.' || split_part(ka.kode,'.', 2) || '.' || split_part(ka.kode, '.', 3) || '.' || split_part(ka.kode, '.', 4) || '.' || split_part(ka.kode, '.', 5) || '.' || split_part(ka.kode, '.', 6) AND ka3.statusenabled = TRUE 
+            JOIN kegiatananggaran_m ka2 ON ka2.kode = split_part(ka.kode,'.', 1) || '.' || split_part(ka.kode,'.', 2) || '.' || split_part(ka.kode, '.', 3) || '.' || split_part(ka.kode, '.', 4) || '.' || split_part(ka.kode, '.', 5) AND ka2.statusenabled = true
+            JOIN keteranganbelanja_t kb ON kb.objectkegiatanfk = ka.id AND kb.statusenabled = TRUE AND kb.kdprofile = 30
+            JOIN mataanggaran_m ma ON ma.id = kb.objectmataanggaranfk AND ma.statusenabled = TRUE AND ma.kdprofile = 30 
+            JOIN mataanggaran_m ma3 ON ma3.kodemataanggaran ILIKE split_part(ma.kodemataanggaran, '.', 1) || '.' || split_part(ma.kodemataanggaran, '.', 2) || '.' || split_part(ma.kodemataanggaran, '.', 3) AND ma3.statusenabled = TRUE AND ma3.kdprofile = 30
+            JOIN jenisanggaran_m ja ON ja.id = ma3.objectjenisanggaranfk AND ja.statusenabled = TRUE AND ja.kdprofile = 30
+            WHERE 
+                ka.statusenabled = TRUE
+                AND ka.kdprofile = 30
+                AND ka.tahun = '".$request['tahun']."'
+                AND kb.objecttahapfk = ".$request['tahapsesudah']."
+            GROUP BY 
+                ka.id,
+                ka.kode,
+                ka3.kode,
+                ka2.kode,
+                ka.keterangan,
+                ka3.keterangan,
+                ka2.keterangan
+            ORDER BY 
+                CAST(split_part(ka.kode, '.', 2) AS integer),
+                CAST(split_part(ka.kode, '.', 3) AS integer),
+                CAST(split_part(ka.kode, '.', 4) AS integer),
+                CAST(split_part(ka.kode, '.', 5) AS integer),
+                CAST(split_part(ka.kode, '.', 6) AS integer),
+                CAST(split_part(ka.kode, '.', 7) AS integer) ASC 
+        "));
+
+        $sebelum = DB::select(DB::raw("
+            SELECT 
+                ka.id, 
+                ka.kode, 
+                ka.keterangan,
+                SUM(kb.subtotal) AS total,
+                SUM(CASE WHEN ja.jenisanggaran = 'Belanja Pegawai' THEN kb.subtotal ELSE 0 END) AS belanjapegawai,
+                SUM(CASE WHEN ja.jenisanggaran = 'Belanja Barang dan Jasa' THEN kb.subtotal ELSE 0 END) AS belanjabarangjasa,
+                SUM(CASE WHEN ja.jenisanggaran = 'Belanja Modal Gedung' THEN kb.subtotal ELSE 0 END) AS belanjamodalgedung,
+                SUM(CASE WHEN ja.jenisanggaran = 'Belanja Modal Alat dan Mesin' THEN kb.subtotal ELSE 0 END) AS belanjamodalalatmesin,
+                SUM(CASE WHEN ja.jenisanggaran = 'Belanja Modal Lainnya' THEN kb.subtotal ELSE 0 END) AS belanjamodallainnya
+            FROM kegiatananggaran_m ka
+            JOIN keteranganbelanja_t kb ON kb.objectkegiatanfk = ka.id AND kb.statusenabled = TRUE AND kb.kdprofile = 30
+            JOIN mataanggaran_m ma ON ma.id = kb.objectmataanggaranfk AND ma.statusenabled = TRUE AND ma.kdprofile = 30 
+            JOIN mataanggaran_m ma3 ON ma3.kodemataanggaran ILIKE split_part(ma.kodemataanggaran, '.', 1) || '.' || split_part(ma.kodemataanggaran, '.', 2) || '.' || split_part(ma.kodemataanggaran, '.', 3) AND ma3.statusenabled = TRUE AND ma3.kdprofile = 30
+            JOIN jenisanggaran_m ja ON ja.id = ma3.objectjenisanggaranfk AND ja.statusenabled = TRUE AND ja.kdprofile = 30
+            WHERE 
+                ka.statusenabled = TRUE
+                AND ka.kdprofile = 30
+                AND ka.tahun = '".$request['tahun']."'
+                AND kb.objecttahapfk = ".$request['tahapsebelum']."
+            GROUP BY 
+                ka.id,
+                ka.kode,
+                ka.keterangan
+            ORDER BY 
+                CAST(split_part(ka.kode, '.', 2) AS integer),
+                CAST(split_part(ka.kode, '.', 3) AS integer),
+                CAST(split_part(ka.kode, '.', 4) AS integer),
+                CAST(split_part(ka.kode, '.', 5) AS integer),
+                CAST(split_part(ka.kode, '.', 6) AS integer),
+                CAST(split_part(ka.kode, '.', 7) AS integer) ASC 
+        "));
+
+        $tahap = DB::select(DB::raw("
+            SELECT * FROM tahapanggaran_m as ta WHERE ta.statusenabled = TRUE AND ta.kdprofile = 30 AND ta.id = ".$request['tahapsesudah']."
+        "));
+
+        // dd($sesudah);
+
+        foreach($sesudah as $item){
+
+            $item->total2 = 0;
+            $item->belanjapegawai2 = 0;
+            $item->belanjabarangjasa2 = 0;
+            $item->belanjamodalgedung2 = 0;
+            $item->belanjamodalalatmesin2 = 0;
+            $item->belanjamodallainnya2 = 0;
+
+            foreach($sebelum as $item2){
+                if($item->kode == $item2->kode){
+                    $item->total2 = $item2->total;
+                    $item->belanjapegawai2 = $item2->belanjapegawai;
+                    $item->belanjabarangjasa2 = $item2->belanjabarangjasa;
+                    $item->belanjamodalgedung2 = $item2->belanjamodalgedung;
+                    $item->belanjamodalalatmesin2 = $item2->belanjamodalalatmesin;
+                    $item->belanjamodallainnya2 = $item2->belanjamodallainnya;
+                }
+            }
+        }
+
+        $tanggalcetak = $this->tanggal_indonesia(date('Y-m-d',strtotime($request['tglcetak'])));
+
+        // $pdf = PDF::loadView('report.spj.cetak-jenisanggaran-sebelumsesudah-v2', array(
+        //     'data' => $sesudah,
+        //     'tanggalcetak' => $tanggalcetak,
+        //     'tahap' => $tahap
+        // ));
+
+        return view('report.spj.cetak-jenisanggaran-sebelumsesudah-v2', [
+            'data' => $sesudah,
+            'tanggalcetak' => $tanggalcetak,
+            'tahap' => $tahap
+        ]);
+
+    }
 }
