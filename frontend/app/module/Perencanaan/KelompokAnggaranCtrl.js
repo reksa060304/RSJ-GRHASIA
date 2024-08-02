@@ -6956,7 +6956,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 if($scope.item.itemRincian != undefined){
                     if($scope.item.SPJstatusTambah == 'new'){
                         // let nourut = DataDetailSPJ.length + 1
-                        if($scope.item.subTotalSPJ > $scope.item.sisaAnggaranSPJ){
+                        if(parseFloat($scope.item.subTotalSPJ) > parseFloat($scope.item.sisaAnggaranSPJ)){
                             toastr.error('Subtotal yang diinput melebihi sisa anggaran', 'Informasi');
                             return
                         }
