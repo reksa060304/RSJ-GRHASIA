@@ -32,7 +32,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
 		// Masih dalam percobaan. abaikan
 		Route::get('report/coba-lapung', 'Report\ReportController@cobaLapung');
 		Route::get('rawatinap/get-bundle-hais', 'RawatInapController@getBundleHais');
-
+		
 		// terima laundry
 		Route::post('laundry/save-terima-laundryv2', 'Laundry\LaundryController@saveTerimaLaundryV2');
 
@@ -54,6 +54,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         Route::get('rba/get-combo-rba', 'Perencanaan\RBAController@getComboRBA');
 		Route::get('rba/getSubSubRBA', 'Perencanaan\RBAController@getSubSubRBA');
 		Route::get('report/cetak-rba-detail-sebelum-sesudah-rev', 'Report\ReportController@cetakRBADetailRev');
+		Route::get('perencanaan/get-transfer-target', 'Perencanaan\PerencanaanController@getTransferTarget');
+		Route::post('perencanaan/simpan-transfer-target', 'Perencanaan\PerencanaanController@simpanTransferTarget');
 
         // Start Verif HAIS Route-------------------------------------------------------------------------------------------
         Route::get('verif-hais/get-bundlehais', 'EMR\BundleHaisController@getBundleHais');

@@ -9238,20 +9238,31 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
     
-public function loadComboRincian(Request $request)
+    public function loadComboRincian(Request $request)
     {
-        $sumberpendapatan = \DB::table('asalproduk_m')->where('kdprofile', 30)->where('statusenabled', true)->where('isanggaran', null)->orderBy('id', 'asc')->get();        $uraianpendapatan = \DB::table('uraianpendapatan_m')->where('kdprofile', 30)->where('statusenabled', true);
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        $sumberpendapatan = \DB::table('asalproduk_m')->where('kdprofile', $idProfile)->where('statusenabled', true)->where('isanggaran', null)->orderBy('id', 'asc')->get();        
+        $uraianpendapatan = \DB::table('uraianpendapatan_m')->where('kdprofile', $idProfile)->where('statusenabled', true);
         $rincianpendapatan = \DB::table('rincianpendapatan_t as rp')
         ->join('asalproduk_m as ap','ap.id','=','rp.objectasalprodukfk')
         ->join('uraianpendapatan_m as up','up.id','=','rp.objecturaianpendapatanfk')
         ->select('rp.norec','rp.isperubahan', 'rp.jumlahpendapatan','rp.tahun', 'rp.tglinput', 'rp.keterangan', 'rp.objectasalprodukfk', 'rp.objecturaianpendapatanfk','up.uraianpendapatan','ap.namaexternal', 'rp.uraianpendapatan as uraian')
-        ->where('rp.kdprofile', 30)->where('rp.statusenabled', true)->get();
+        ->where('rp.kdprofile', $idProfile)->where('rp.statusenabled', true)->get();
         //menambahkan tahap anggaran tabel
-        $tahapanggaran = \DB::table('tahapanggaran_m')->where('kdprofile', 30)->where('statusenabled', true)->get();
+        $tahapanggaran = \DB::table('tahapanggaran_m')->where('kdprofile', $idProfile)->where('statusenabled', true)->get();
 
         if(isset($request['tahun']) && $request['tahun'] != ''){
             $uraianpendapatan = $uraianpendapatan->where('tahun', $request['tahun']);
         }
+
+        $uraianpendapatanbaru = DB::table('char_akun_pendapatan_m')
+            ->where('statusenabled', true)
+            ->where('kdprofile', $idProfile)
+            ->where('level', 12)
+            ->orderBy('nourut', 'asc')
+            ->get();
 
         $uraianpendapatan = $uraianpendapatan->orderBy('nourut')->get();
 
@@ -9261,6 +9272,7 @@ public function loadComboRincian(Request $request)
             'rincianpendapatan'=> $rincianpendapatan,
             //menampilkan tahap anggaran
             'tahapanggaran' => $tahapanggaran,
+            'urianpendapatanbaru' => $uraianpendapatanbaru,
             'as'=> 'FiziLucky'
         );
         return $this->respond($result);
@@ -9285,7 +9297,8 @@ public function loadComboRincian(Request $request)
                 'objecturaianpendapatanfk'=> $request['objecturaianpendapatanfk'],
                 'keterangan'=> $request['keterangan'],
                 'isperubahan'=> $request['isperubahan'],
-                'tahun'=> date('Y', strtotime($request['tahun']))
+                'tahun'=> date('Y', strtotime($request['tahun'])),
+                'objecttahapfk' => $request['objecttahapfk']
                 ]);
             } else {
                 $data = \DB::table('rincianpendapatan_t')->where('norec',$request['norec'])->update([
@@ -9299,7 +9312,8 @@ public function loadComboRincian(Request $request)
                     'objecturaianpendapatanfk'=> $request['objecturaianpendapatanfk'],
                     'keterangan'=> $request['keterangan'],
                     'isperubahan'=> $request['isperubahan'],
-                    'tahun'=> date('Y', strtotime($request['tahun']))
+                    'tahun'=> date('Y', strtotime($request['tahun'])),
+                    'objecttahapfk' => $request['objecttahapfk']
                 ]);
             }
             
@@ -9332,9 +9346,134 @@ public function loadComboRincian(Request $request)
     }
     public function loadDataRincian(Request $request)
     {
-        $data = \DB::select(DB::raw("SELECT * FROM rincianpendapatan_t rp 
-        where rp.statusenabled = true and rp.kdprofile = 30 and rp.objectasalprodukfk = 2 and isperubahan = true and rp.norec ilike '74d3fce0-0189-11ed-b9a4-bff4c5c2'"));
+        $data = \DB::select(DB::raw("
+            SELECT
+                rp.norec,
+                rp.keterangan,
+                rp.uraianpendapatan,
+                rp.tahun,
+                rp.objectasalprodukfk,
+                rp.jumlahpendapatan,
+                rp.objecturaianpendapatanfk,
+                rp.objecttahapfk,
+                cap.koderekening,
+                cap.namarekening 
+            FROM rincianpendapatan_t rp
+            JOIN char_akun_pendapatan_m AS cap ON cap.id = rp.objecturaianpendapatanfk AND cap.statusenabled = TRUE AND cap.kdprofile = 30
+            JOIN tahapanggaran_m AS ta ON ta.id = rp.objecttahapfk AND ta.statusenabled = true AND ta.kdprofile = 30
+            JOIN asalproduk_m AS ap ON ap.id = rp.objectasalprodukfk AND ap.statusenabled = true AND ap.kdprofile = 30
+            WHERE rp.statusenabled = true and rp.kdprofile = 30
+            ORDER BY
+                cap.nourut,
+                CAST(rp.tahun AS INTEGER) asc
+        "));
+
+        return $this->respond($data);
     }
+
+    public function getTransferTarget(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        $tahun = '';
+        if(isset($request['tahunawal']) && $request['tahunawal'] !== '' && $request['tahunawal'] !== "undefined"){
+            $tahun = "AND rp.tahun = '". $request['tahunawal']."'";
+        }
+
+        $tahap = '';
+        if(isset($request['tahapawal']) && $request['tahapawal'] !== '' && $request['tahapawal'] !== "undefined"){
+            $tahap = "AND rp.objecttahapfk = ".$request['tahapawal'];
+        }
+
+        $data = DB::select(DB::raw("
+            SELECT
+                cap.id as idrekening,
+                cap.koderekening,
+                cap.namarekening,
+                cap.nourut,
+                rp.norec as norecrincian,
+                rp.tglinput,
+                rp.jumlahpendapatan,
+                rp.objectasalprodukfk,
+                rp.objecttahapfk,
+                rp.keterangan
+            FROM rincianpendapatan_t rp
+            JOIN char_akun_pendapatan_m AS cap ON cap.id = rp.objecturaianpendapatanfk AND cap.statusenabled = TRUE AND cap.kdprofile = ".$idProfile."
+            JOIN tahapanggaran_m AS ta ON ta.id = rp.objecttahapfk AND ta.statusenabled = true AND ta.kdprofile = ".$idProfile."
+            JOIN asalproduk_m AS ap ON ap.id = rp.objectasalprodukfk AND ap.statusenabled = true AND ap.kdprofile = ".$idProfile."
+            WHERE 
+                rp.statusenabled = true 
+                AND rp.kdprofile = ".$idProfile."
+                ".$tahun."
+                ".$tahap."
+            ORDER BY
+                cap.nourut
+        "));
+        
+        return $this->respond($data);
+
+    }
+
+    public function simpanTransferTarget(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        DB::beginTransaction();
+        try {
+            
+            // loop list
+            foreach($request['listTarget'] as $item){
+
+                $update = DB::table('rincianpendapatan_t')
+                    ->where('norec', $item['norecrincian'])
+                    ->update([
+                        'tanggaltransfer' => $request['tanggaltransfer']
+                    ]);
+
+                $data = DB::table('rincianpendapatan_t')->insert([
+                    'norec'=>substr(\Webpatser\Uuid\Uuid::generate(), 0, 32),
+                    'kdprofile'=> $idProfile,
+                    'statusenabled'=> true,
+                    'tglinput'=> $item['tglinput'],
+                    'uraianpendapatan'=> $item['namarekening'],
+                    'jumlahpendapatan'=> $item['jumlahpendapatan'],
+                    'objectasalprodukfk'=> $item['objectasalprodukfk'],
+                    'objecturaianpendapatanfk'=> $item['idrekening'],
+                    'keterangan'=> $item['keterangan'],
+                    'tahun'=> $request['tahunakhir'],
+                    'objecttahapfk' => $request['tahapakhir'],
+                    'norectransfer' => $item['norecrincian']
+                ]);
+
+            }
+
+            $transStatus = 'true';
+        } catch (\Throwable $th) {
+            $transStatus = 'false';
+        }
+        if ($transStatus == 'true') {
+            $transMessage = "Simpan";
+            DB::commit();
+            $result = array(
+                'status' => 201,
+                'message' => $transMessage,
+                'as' => '@epic',
+            );
+        } else {
+            $transMessage = "Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                'status' => 400,
+                'line'=> $th->getLine(),
+                'message'=> $th->getMessage(),
+                'as' => 'Fizi@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
     public function hapusRincianPendapatan(Request $request)
     {
         DB::beginTransaction();

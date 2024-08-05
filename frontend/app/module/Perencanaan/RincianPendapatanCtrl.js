@@ -12,26 +12,55 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }
             var norec = "";
             $scope.listTahapKegiatan = []
+            $scope.listRekeningTarget = []
             LoadCombo()
-            // LoadData()
+            LoadData()
             function LoadCombo() {
                 
-                console.log($scope.dataSelected)
+                // console.log($scope.dataSelected)
                 medifirstService.get('anggaran/load-combo-rincian-pendapatan').then(function(data){
                     var datas = data.data
                     $scope.listTahapKegiatan = datas.tahapanggaran
                     $scope.listSumberPendapatan = datas.sumberpendapatan
                     $scope.listUraianPendapatan = datas.uraianpendapatan
+
+                    let urian = datas.urianpendapatanbaru.map(item => ({...item, text: item.koderekening + ' ' + item.namarekening}))
+
+                    $scope.listUrianPendapatanBaru = urian
+
                     $scope.listAkun = datas.akun
                     $scope.listTarget = datas.targetpendapatan
-                    for (let i = 0; i < datas.targetpendapatan.length; i++) {
-                        datas.targetpendapatan[i].no = i+1;
+                    // for (let i = 0; i < datas.targetpendapatan.length; i++) {
+                    //     datas.targetpendapatan[i].no = i+1;
                         
-                    }
+                    // }
+                    // $scope.dataSourceRincianPendapatan = new kendo.data.DataSource({
+                    //     data: datas.targetpendapatan,
+                    //     pageSize: 150,
+                    //     total: datas.targetpendapatan.length,
+                    //     serverPaging: false,
+                    //     schema: {
+                    //         model: {
+                    //             fields: {}
+                    //         }
+                    //     },
+                    // });
+                })
+            }
+            function LoadData(){
+                medifirstService.get('anggaran/load-data-rincian-pendapatan').then(function(response){
+
+                    // console.log(response.data)
+
+                    let data = response.data.map(function(item, index){
+                        return {...item, no: index+1}
+                    })
+
+                    // console.log(data)
+
                     $scope.dataSourceRincianPendapatan = new kendo.data.DataSource({
-                        data: datas.targetpendapatan,
-                        pageSize: 150,
-                        total: datas.targetpendapatan.length,
+                        data: data,
+                        total: data.length,
                         serverPaging: false,
                         schema: {
                             model: {
@@ -39,10 +68,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                             }
                         },
                     });
+
                 })
-            }
-            function LoadData(){
-                medifirstService.get('anggaran/load-data-rincian-pendapatan')
             }
             $scope.columnRincianPendapatan = {
                 toolbar: [{
@@ -82,14 +109,14 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         // hidden: true
                     },
                     {
-                        "field": "uraian",
+                        "field": "keterangan",
                         "title": "Keterangan",
                         "width": "60px",
                         // hidden: true
                     },
                     {
                         "field": "jumlahpendapatan",
-                        "title": "Target",
+                        "title": "Target pendapatan",
                         "width": "60px",
                         // hidden: true
                     },
@@ -117,7 +144,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.itemRincian ={}
                 $scope.itemRincian.tglinput = moment($scope.now).format('YYYY-MM-DD')
                 $scope.dataSelected = undefined
-                console.log($scope.dataSelected)
+                // console.log($scope.dataSelected)
                 $scope.itemRincian.norec = undefined
                 // $scope.popupTambahRincianPendapatan.center().open()
                 $scope.popupTambahRencanaPendapatan.center().open()
@@ -349,18 +376,18 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             // }
             function EditRincian(e){
                 e.preventDefault();
-                console.log(e.preventDefault())
+                // console.log(e.preventDefault())
                 var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
                 if (dataItem == undefined) {
 					alert("Data Belum Dipilih!")
 					return;
 				};
-                console.log(dataItem.tahun)
-                console.log(moment(dataItem.tahun).format('YYYY'))
+                // console.log(dataItem.tahun)
+                // console.log(moment(dataItem.tahun).format('YYYY'))
 
                 $scope.itemRincian.tglinput = moment(dataItem.tglinput).format('YYYY-MM-DD')
                 $scope.itemRincian.tahun = dataItem.tahun
-                $scope.itemRincian.sumberPendapatan = {id:dataItem.objectasalprodukfk,namaexternal:dataItem.namaexternal}
+                // $scope.itemRincian.sumberPendapatan = {id:dataItem.objectasalprodukfk,namaexternal:dataItem.namaexternal}
                 $scope.itemRincian.uraianpendapatans = {id:dataItem.objecturaianpendapatanfk,uraianpendapatan:dataItem.uraianpendapatan}
                 $scope.itemRincian.uraianPendapatan = dataItem.uraian
                 $scope.itemRincian.jumlahPendapatan = parseFloat(dataItem.jumlahpendapatan)
@@ -374,8 +401,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     $scope.itemRincian.nonPerubahan = true
                 }
 
+                $scope.itemRincian.tahap = $scope.cariDariList($scope.listTahapKegiatan, dataItem.objecttahapfk)
+                $scope.itemRincian.sumberPendapatan = $scope.cariDariList($scope.listSumberPendapatan, dataItem.objectasalprodukfk)
+                $scope.itemRincian.uraianPendapatan = $scope.cariDariList($scope.listUrianPendapatanBaru, dataItem.objecturaianpendapatanfk)
 
-                $scope.popupTambahRincianPendapatan.center().open()
+                $scope.popupTambahRencanaPendapatan.center().open()
                 
             }
             function Hapus(e){
@@ -405,43 +435,147 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }
 
             $scope.simpanPendapatan = function(){
-                console.log($scope.dataSelected)
+                // console.log($scope.dataSelected)
                 var tahun = $scope.itemRincian.tahun;
                 
-           //tambahain validasi
+                //tambahain validasi
                 norec = ''
                 if($scope.itemRincian.norec != undefined){
                     norec = $scope.itemRincian.norec
                 }
-                var akun = ''
-                if($scope.itemPendapatan.Akun != undefined){
-                    akun = $scope.itemPendapatan.Akun.id
-                }
+                // var akun = ''
+                // if($scope.itemPendapatan.Akun != undefined){
+                //     akun = $scope.itemPendapatan.Akun.id
+                // }
                 var objSave = {
                     'norec': norec,
                     'tglinput': $scope.itemRincian.tglinput,
                     'tahun': tahun,
-                    'objectasalprodukfk': null,
-                    'uraianpendapatan': $scope.itemPendapatan.uraianPendapatan,
-                    'jumlahpendapatan': $scope.itemPendapatan.jumlahPendapatan,                    
-                    'objecturaianpendapatanfk':null,
-                    'keterangan':null,
+                    'objectasalprodukfk': $scope.itemRincian.sumberPendapatan.id,
+                    'uraianpendapatan': $scope.itemRincian.uraianPendapatan.namarekening,
+                    'jumlahpendapatan': $scope.itemRincian.jumlahPendapatan,                    
+                    'objecturaianpendapatanfk':$scope.itemRincian.uraianPendapatan.id,
+                    'keterangan':$scope.itemRincian.uraianPendapatan.text,
                     // 'objectakunpendapatanfk': $scope.itemPendapatan.jumlahPendapatan,
-                    'objecttahapfk' : $scope.item.tahap.id,
+                    'objecttahapfk' : $scope.itemRincian.tahap.id,
                     'isperubahan': false,
                 }
+                
+                // console.log(objSave);
+
                 medifirstService.post('anggaran/save-rincian-pendapatan', objSave).then(function(data){
-                    console.log(data);
+                    // console.log(data);
                     $scope.popupTambahRencanaPendapatan.close()
                     $scope.itemRincian = {}
                     $scope.itemPendapatan = {}
-                    LoadCombo()
                     $scope.dataSelected = {}
+                    LoadData()
                     // norec = ""
-                    console.log(norec);
+                    // console.log(norec);
                 })
-                console.log(objSave);
+                
             }
+
+            $scope.cariDariList = function(arrayList, idCari){
+                let hasil = null
+                arrayList.map(function(item){
+                    if(item.id == idCari){
+                        hasil = item
+                    }
+                })
+
+                return hasil
+            }
+
+            $scope.transferTarget = function(){
+                // reset
+                $scope.listRekeningTarget = []
+                $scope.item.tahunawal = null
+                $scope.item.tahapawal = null
+                $scope.item.tahunakhir = null
+                $scope.item.tahapakhir = null
+
+                $scope.popupTransferTarget.open().center()
+            }
+
+            $scope.cariTansferTarget = function(){
+
+                if($scope.item.tahapawal == undefined || $scope.item.tahapawal == null){
+                    toastr.error("Pilih tahap awal terlebihdahulu")
+                    return
+                }
+
+                if($scope.item.tahunawal == undefined || $scope.item.tahunawal == null){
+                    toastr.error("Pilih tahun awal terlebihdahulu")
+                    return
+                }
+
+                medifirstService.get("perencanaan/get-transfer-target" 
+                    + "?tahapawal=" + $scope.item.tahapawal.id 
+                    + "&tahunawal=" + moment($scope.item.tahunawal).format('YYYY') 
+                    ).then(function (response) {
+                        
+                        let data = response.data.map(item => ({...item, checked: false}))
+
+                        // console.log(response.data)
+                        $scope.listRekeningTarget = data
+
+                    });
+
+            }
+
+            $scope.simpanTransferTarget = function(){
+
+                if($scope.item.tahapakhir == undefined || $scope.item.tahapakhir == null){
+                    toastr.error("Pilih tahap akhir terlebihdahulu")
+                    return
+                }
+
+                if($scope.item.tahunakhir == undefined || $scope.item.tahunakhir == null){
+                    toastr.error("Pilih tahun akhir terlebihdahulu")
+                    return
+                }
+
+                // ambil yang checked = true dari checkbox yang dipilih
+                let selected = []
+                $scope.listRekeningTarget.map(function(item){
+                    if(item.checked == true){
+                        selected.push(item)
+                    }
+                })
+
+                if(selected.length == 0){
+                    toastr.error("Pilih rekening yang akan ditransfer")
+                    return
+                }
+
+                let objSave = {
+                    tahunakhir: moment($scope.item.tahunakhir).format('YYYY'),
+                    tahapakhir: $scope.item.tahapakhir.id,
+                    tanggaltransfer: moment(new Date()).format('YYY-MM-DD HH:mm:ss'),
+                    listTarget: selected
+                }
+
+                // console.log(objSave)
+
+                medifirstService.post("perencanaan/simpan-transfer-target", objSave)
+                    .then(function (response) {
+                        
+                        // reset
+                        $scope.listRekeningTarget = []
+                        $scope.item.tahunawal = null
+                        $scope.item.tahapawal = null
+                        $scope.item.tahunakhir = null
+                        $scope.item.tahapakhir = null
+
+                        $scope.popupTransferTarget.close()
+
+                        LoadData()
+                        
+                    });
+
+            }
+
             // BATASSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
         }
     ])
