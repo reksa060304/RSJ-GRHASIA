@@ -2936,13 +2936,22 @@ class BendaharaPenerimaanController extends ApiController {
         foreach($data as $konten){
             $cekjumlah = '';
             $cekharga = 0;
-            if($konten->idkelompokpasien != 0 && $konten->idkelompokpasien != 1 && $konten->idkelompokpasien != 12 && $konten->idkelompokpasien != 18 && $konten->idkelompokpasien != 8 && $konten->objectdepartemenfk2 != 0 && $konten->objectdepartemenfk2 != 16 && $konten->totaldibayarclosing != $konten->totaldibayarsbm){
+
+            // pasien ipwl ranap
+            // masukk ke kelas III
+            if($konten->idkelompokpasien == 4 && $konten->objectdepartemenfk2 == 16 && $konten->totaldibayarclosing != $konten->totaldibayarsbm){
+                $jumlahkelastiga += $konten->totaldibayarclosing;
+                $voljumlahkelastiga++;
+                $cekjumlah = $konten->namaproduk;
+            }
+
+            else if($konten->idkelompokpasien != 0 && $konten->idkelompokpasien != 1 && $konten->idkelompokpasien != 12 && $konten->idkelompokpasien != 18 && $konten->idkelompokpasien != 8 && $konten->objectdepartemenfk2 != 0 && $konten->objectdepartemenfk2 != 16 && $konten->totaldibayarclosing != $konten->totaldibayarsbm){
                 $jumlahcostsharingbpjsrajal = $konten->totaldibayarsbm;
                 $voljumlahcostsharingbpjsrajal++;
                 $cekjumlah = $konten->namaproduk;
             }
 
-            else if($konten->idkelompokpasien != 0 && $konten->idkelompokpasien != 1 && $konten->idkelompokpasien != 12 && $konten->idkelompokpasien != 18 && $konten->idkelompokpasien != 8 && $konten->objectdepartemenfk2 != 0 && $konten->objectdepartemenfk2 == 16 && $konten->totaldibayarclosing != $konten->totaldibayarsbm){
+            else if($konten->idkelompokpasien != 4 && $konten->idkelompokpasien != 0 && $konten->idkelompokpasien != 1 && $konten->idkelompokpasien != 12 && $konten->idkelompokpasien != 18 && $konten->idkelompokpasien != 8 && $konten->objectdepartemenfk2 != 0 && $konten->objectdepartemenfk2 == 16 && $konten->totaldibayarclosing != $konten->totaldibayarsbm){
                 $jumlahcostsharingbpjsranap = $konten->totaldibayarsbm;
                 $voljumlahcostsharingbpjsranap++;
                 $cekjumlah = $konten->namaproduk;

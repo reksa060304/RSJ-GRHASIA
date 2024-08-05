@@ -306,17 +306,16 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 					}
 				}
 
-                console.log($scope.selectedData2);
+                // console.log($scope.selectedData2);
 
                 if(cektunai == 111 && cektransfer == 123){
                     toastr.error('Cara Bayar Transfer dan Tunai Tercampur');
                 }
-                else if(ceksudahsts == 1214)
-                {
+                else if(ceksudahsts == 1214) {
                     toastr.error('Data sudah ada yang di STS');
                 }                
-                else
-                {
+                else{
+                    // console.log(objSave)
                     medifirstService.post('bendaharapenerimaan/save-sts', objSave).then(function (dat) {
                         $scope.isRouteLoading = false;
                         for (var i = 0; i < dat.data.data.length; i++) {
