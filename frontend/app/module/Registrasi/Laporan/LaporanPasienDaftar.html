@@ -79,11 +79,36 @@
 				<button class="btnTemplate1" style="margin-left: 0;" ng-click="ClearSearch()">Clear</button>
 			</div>
 		</div>
-		  <div class="grid_2" style="margin-top: -5px">
-            <input type="checkbox" class="k-checkbox" id="isTglPulang" ng-model="item.cekTglPulang"
-                value="true" ng-click="cekTgl(item.cekTglPulang)">
-            <label class="k-checkbox-label" for="isTglPulang"><b>Tgl Pulang</b></label>
-        </div>
+	</div>
+
+	<div class="grid_12">
+		<div class="grid_12">
+			<div class="grid_1">
+				<div class="grid_12">
+					<label c-label item="item">No RM</label>
+				</div>
+				<div class="clear"></div>
+				<div class="grid_12">
+					<input c-text-box type="input" filter="" class="k-textbox" ng-model="item.noRm" />
+				</div>
+			</div>
+			<div class="grid_2">
+				<div class="grid_12">
+					<label c-label item="item">Nama Pasien</label>
+				</div>
+				<div class="clear"></div>
+		
+				<div class="grid_12">
+					<input c-text-box type="input" filter="" class="k-textbox" ng-model="item.nama" />
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="grid_2" style="margin-top: -5px">
+		<input type="checkbox" class="k-checkbox" id="isTglPulang" ng-model="item.cekTglPulang"
+			value="true" ng-click="cekTgl(item.cekTglPulang)">
+		<label class="k-checkbox-label" for="isTglPulang"><b>Tgl Pulang</b></label>
 	</div>
 
 	<div class="grid_12" style="margin-top:10px">
@@ -101,30 +126,6 @@
 
 	</div>
 
-	<div class="clear"></div>
-	<div class="grid_12">
-		<div class="grid_12" style="float:right">
-			<div class="grid_1 " style="margin-top: 15px ">
-				<div class="grid_12">
-					<label c-label item="item">No RM</label>
-				</div>
-				<div class="clear"></div>
-				<div class="grid_12">
-					<input c-text-box type="input" filter="" class="k-textbox" ng-model="item.noRm" />
-				</div>
-			</div>
-			<div class="grid_2 " style="margin-top: 15px ">
-				<div class="grid_12">
-					<label c-label item="item">Nama Pasien</label>
-				</div>
-				<div class="clear"></div>
-		
-				<div class="grid_12">
-					<input c-text-box type="input" filter="" class="k-textbox" ng-model="item.nama" />
-				</div>
-			</div>
-		</div>
-	</div>
 	<br />
 </div>
 <!-- <div class="loading" style="margin-top:10px" class="animated" ng-show="isLoadingData">
