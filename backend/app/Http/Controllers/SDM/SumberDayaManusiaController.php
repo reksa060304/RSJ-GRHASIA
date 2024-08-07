@@ -98,7 +98,7 @@ class SumberDayaManusiaController extends ApiController {
         $KategoryPegawai = KategoryPegawai::where('statusenabled',true)->where('kdprofile', $kdProfile)->get();
         // $KategoryPegawaiInpasing = KategoryPegawai::where('statusenabled',true)->where('kdprofile', $kdProfile)->whereIn('id',[13,1,23])->get();
         $KategoryPegawaiInpasing = DB::select( DB::raw("select '' as kategorypegawai union select kategorypegawai from kategorypegawai_m where statusenabled = true and kdprofile='$kdProfile' and id in(1,23)") );
-        $jabatan = Jabatan::where('statusenabled', true)->where('kdprofile', $kdProfile)->whereIn('objectjenisjabatanfk',[6,7,8])->get();
+        $jabatan = Jabatan::where('statusenabled', true)->where('kdprofile', $kdProfile)->whereIn('objectjenisjabatanfk',[6,7,9])->get();
         $jabatanbaru = Jabatan::where('statusenabled', true)->where('objectjenisjabatanfk', $request['jabatan'])->where('kdprofile', $kdProfile)->get();
         $suratkeputusan = SuratKeputusan::where('statusenabled', true)->where('objectjeniskeputusanfk', 9)->where('kdprofile', $kdProfile)->select('*','nosk as nosk2')->get();
 
