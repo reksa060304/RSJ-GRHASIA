@@ -8358,7 +8358,7 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
             from strukrealisasi_t sr 
             left join realisasidetail_t rd on rd.strukrealisasifk = sr.norec
             left join pemungutanpajak_t pp on pp.objectspjfk = sr.norec and pp.statusenabled = true and pp.kdprofile = 30
-            left join penyetoranpajak_t pep on pep.objectspjfk = sr.norec and pep.statusenabled = true and pep.kdprofile = 30
+            left join penyetoranpajak_t pep on split_part(pep.nopajak, '/', 1) = split_part(pp.nopajak, '/', 1) and pep.statusenabled = true and pep.kdprofile = 30
             left join jenispajak_m jp on jp.id = pp.objectjenispphfk and jp.statusenabled = true and jp.kdprofile = 30
             where sr.norec = '$norec'
                 and jp.namaexternal ilike '%pph%'
@@ -8368,7 +8368,7 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
             from strukrealisasi_t sr 
             left join realisasidetail_t rd on rd.strukrealisasifk = sr.norec
             left join pemungutanpajak_t pp on pp.objectspjfk = sr.norec and pp.statusenabled = true and pp.kdprofile = 30
-            left join penyetoranpajak_t pep on pep.objectspjfk = sr.norec and pep.statusenabled = true and pep.kdprofile = 30
+            left join penyetoranpajak_t pep on split_part(pep.nopajak, '/', 1) = split_part(pp.nopajak, '/', 1) and pep.statusenabled = true and pep.kdprofile = 30
             left join jenispajak_m jp on jp.id = pp.objectjenispphfk and jp.statusenabled = true and jp.kdprofile = 30
             where sr.norec = '$norec'
                 and jp.namaexternal ilike '%ppn%'
@@ -8395,7 +8395,7 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
         pep.norec norecpep
             from strukrealisasi_t sr 
         inner join pemungutanpajak_t pp on pp.objectspjfk = sr.norec and pp.statusenabled = true and pp.kdprofile = 30 
-        inner join penyetoranpajak_t pep on pep.objectspjfk = sr.norec and pep.statusenabled = true and pep.kdprofile = 30
+        inner join penyetoranpajak_t pep on split_part(pep.nopajak, '/', 1) = split_part(pp.nopajak, '/', 1) and pep.statusenabled = true and pep.kdprofile = 30
         left join jenispajak_m jp on jp.id = pp.objectjenispphfk and jp.statusenabled = true and jp.kdprofile = 30
         where sr.norec = '$norec'
         and pp.objectjenispphfk is not null
@@ -8409,7 +8409,7 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
         pp.norec norecpp, pep.norec norecpep
             from strukrealisasi_t sr 
         inner join pemungutanpajak_t pp on pp.objectspjfk = sr.norec and pp.statusenabled = true and pp.kdprofile = 30
-        inner join penyetoranpajak_t pep on pep.objectspjfk = sr.norec and pep.statusenabled = true and pep.kdprofile = 30
+        inner join penyetoranpajak_t pep on split_part(pep.nopajak, '/', 1) = split_part(pp.nopajak, '/', 1) and pep.statusenabled = true and pep.kdprofile = 30
         where sr.norec = '$norec'
         and pp.objectjenispphfk is null
 
