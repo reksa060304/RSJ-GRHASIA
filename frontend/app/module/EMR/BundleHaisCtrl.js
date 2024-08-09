@@ -306,6 +306,8 @@ define(['initialize'], function (initialize) {
             $scope.klikGrid = function(dataSelected){
                 if (dataSelected != undefined) {
                     $scope.dataSelected = dataSelected;
+
+                    // console.log($scope.dataSelected)
                 }
             }
 
@@ -319,6 +321,8 @@ define(['initialize'], function (initialize) {
                     $scope.item.suhu = $scope.dataSelected.suhu;
                     $scope.item.diagnosa = $scope.dataSelected.diagnosa;
                     $scope.item.tirahbaring = $scope.dataSelected.tirahbaring;
+                    $scope.item.pemeriksaan = $scope.dataSelected.pemeriksaan
+                    $scope.item.terapi = $scope.dataSelected.terapi
                     LoadHistory();
                 } else {
                     window.messageContainer.error("Data Belum Dipilih!");

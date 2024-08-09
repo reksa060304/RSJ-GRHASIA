@@ -303,7 +303,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     }
                 }
                 $scope.listData5 = arrayAskep5
-                console.log($scope.listData5);
+                // console.log($scope.listData5);
 
 
                 
@@ -1135,7 +1135,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     if (datas[i].type == "checkbox") {
                         if (datas[i].value == "1") {
                             $scope.item.obj[datas[i].idtujuan] = datas[i].value
-                            console.log(datas[i].type);
+                            // console.log(datas[i].type);
                         }
                     }
                     if (datas[i].type == "textarea") {
@@ -1202,7 +1202,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         if (datas[i].type == "checkbox") {
                             if (datas[i].value == "1") {
                                 $scope.item.obj[datas[i].idtujuan] = datas[i].value 
-                                console.log(datas[i].type);
+                                // console.log(datas[i].type);
                             }
                         }       
                         if (datas[i].type == "textarea") {
@@ -1219,11 +1219,37 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 $scope.item.obj[3017344] = moment($scope.now).format('YYYY-MM-DD HH:mm')
                 dataLoad = dat.data.data                                      
 
+                // get datavital sign
+                let datasvitalsign = []
+                medifirstService.get("emr/get-emr-otomatisvitalsign?emrfk=147"+"&noregistrasi="+$scope.cc.noregistrasi).then(function (resvitalsign) {
+                    datasvitalsign = resvitalsign.data.data2
+                    
+                    if(datasvitalsign.length > 0){
+
+                        $scope.item.obj[3017348]= datasvitalsign[0].td
+                        $scope.item.obj[3017349]= datasvitalsign[0].nadi
+                        $scope.item.obj[3017350]= datasvitalsign[0].suhu
+                        $scope.item.obj[3017351]= datasvitalsign[0].pernapasan
+                        $scope.item.obj[3017352]= datasvitalsign[0].tb
+                        $scope.item.obj[3017353]= datasvitalsign[0].bb
+
+                    }
+                })
+
                 for (var i = 0; i <= dataLoad.length - 1; i++) {
                     if (parseFloat($scope.cc.emrfk) == dataLoad[i].emrfk) {
 
                         if (dataLoad[i].type == "textbox") {
-                            $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
+
+                            // check jika ada value
+                            if(dataLoad[i].value){
+                                $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
+                            }
+
+                            // check jika datavitalsign kosong
+                            // gunakan vitalsign di emr
+                            
+
                               if(dataLoad[i].emrdfk == 36100777)
                                 $scope.totalSkor2 = parseFloat(dataLoad[i].value)
                               if(dataLoad[i].emrdfk == 33100323)
@@ -1431,6 +1457,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
 
                 }
             })
+            
             $scope.skorNutrisi = 0
             $scope.getSkorNutrisi = function (jawab) {
                 var arrobj = Object.keys($scope.item.obj);
@@ -1901,12 +1928,12 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 });
             }
             $scope.cetakBlade = function(){
-                if (norecEMR == '') return
+                if (norecEMR == '-') return
             
-              var local =JSON.parse(localStorage.getItem('profile')) 
-              var nama = medifirstService.getPegawaiLogin().namaLengkap
+                var local =JSON.parse(localStorage.getItem('profile')) 
+                var nama = medifirstService.getPegawaiLogin().namaLengkap
           
-               window.open(config.baseApiBackend + 'report/cetak-pengkajian-rajal-nonjiwa?nocm='
+                window.open(config.baseApiBackend + 'report/cetak-pengkajian-rajal-nonjiwa?nocm='
                    + $scope.cc.nocm + '&norec_apd='+  $scope.cc.norec +'&emr=' + norecEMR
                    + '&emrfk='+  $scope.cc.emrfk
                    +'&kdprofile='+local.id 

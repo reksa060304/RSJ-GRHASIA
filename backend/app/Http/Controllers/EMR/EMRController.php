@@ -10936,19 +10936,24 @@ class EMRController  extends ApiController
         // $sec = \DB::select(DB::raw("SELECT id,id2, type from emrd_t where emrfk = $request[emrid] and statusenabled = true and kdprofile = $kdProfile and id2 is not null order by id
         // "));
 
-        $data = \DB::select(DB::raw("SELECT x.noemr, string_agg(x.bb, null)as bb, string_agg(x.nadi, null)as nadi, string_agg(x.pernapasan, null)as pernapasan, string_agg(x.suhu, null)as suhu,
-        string_agg(x.tb, null) as tb, string_agg(x.td, null)as td, x.tgl FROM (SELECT ep.noemr, 
-        case when epd.emrdfk = 4241 then epd.value end as td, 
-        case when epd.emrdfk = 4242 then epd.value end as tb, 
-        case when epd.emrdfk = 4243 then epd.value end as bb, 
-        case when epd.emrdfk = 4244 then epd.value end as suhu, 
-        case when epd.emrdfk = 4245 then epd.value end as nadi, 
-        case when epd.emrdfk = 4246 then epd.value end as pernapasan, epd.tgl FROM emrpasien_t ep inner join emrpasiend_t epd on epd.emrpasienfk = ep.noemr where ep.emrfk = 147 and ep.noregistrasifk= '$request[noregistrasi]'
+        $data = \DB::select(DB::raw("SELECT --x.noemr, 
+        string_agg(x.bb, null)as bb, string_agg(x.nadi, null)as nadi, string_agg(x.pernapasan, null)as pernapasan, string_agg(x.suhu, null)as suhu,
+        string_agg(x.tb, null) as tb, string_agg(x.td, null)as td --x.tgl 
+        FROM (SELECT ep.noemr, 
+        case when epd.emrdfk = 4241 and epd.value <> '-' then epd.value end as td, 
+        case when epd.emrdfk = 4242 and epd.value <> '-' then epd.value end as tb, 
+        case when epd.emrdfk = 4243 and epd.value <> '-' then epd.value end as bb, 
+        case when epd.emrdfk = 4244 and epd.value <> '-' then epd.value end as suhu, 
+        case when epd.emrdfk = 4245 and epd.value <> '-' then epd.value end as nadi, 
+        case when epd.emrdfk = 4246 and epd.value <> '-' then epd.value end as pernapasan, epd.tgl 
+        FROM emrpasien_t ep inner join emrpasiend_t epd on epd.emrpasienfk = ep.noemr 
+        where ep.statusenabled = TRUE AND ep.emrfk = 147 and ep.noregistrasifk= '$request[noregistrasi]'
         
         
         )as x
         GROUP BY x.noemr, x.tgl
-        ORDER BY x.tgl desc limit 1"));
+        -- ORDER BY x.tgl desc limit 1
+        "));
 
         // $detail = [];
         // $id=0;
@@ -13799,7 +13804,11 @@ class EMRController  extends ApiController
     {
         $kdProfile = (int) $this->getDataKdProfile($request);
         $norec = $request['norec'];
-        $jenis = $request['jenis'];
+        $jenis = null;
+        if(isset($request['jenis']) && $request['jenis'] != "" && $request['jenis'] != "undefined"){
+            $jenis = 'and hb.jenisbundle = '.$request['jenis'];
+        }
+        // $jenis = $request['jenis'];
         $data = collect(DB::select("
             SELECT hb.id AS idbundle,hb.namaexternal || '. ' || hb.kelompok AS kelompok,
                    hb.namabundle as keterangan,hb.jenisbundle,hb.nourut,hb.kelompok AS namakelompok,
@@ -13807,7 +13816,7 @@ class EMRController  extends ApiController
             FROM bundlehaidetail_t AS bhd
             INNER JOIN haisbundle_m AS hb ON hb.id = bhd.bundlefk
             WHERE bhd.statusenabled = true AND bhd.kdprofile = $kdProfile 
-            AND bhd.bundlehaifk = '$norec' AND hb.jenisbundle = '$jenis'
+            AND bhd.bundlehaifk = '$norec' $jenis
             ORDER BY hb.nourut
         "));
 

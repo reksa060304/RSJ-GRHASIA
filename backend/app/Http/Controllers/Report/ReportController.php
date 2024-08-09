@@ -19867,7 +19867,7 @@ public function suratBuktiPengembalian(Request $request)
       foreach( $res['d'] as $items){
               if($items->type  ==  "textbox" ||$items->type  ==  "textarea"  ){
                   $item[$items->emrdfk] =  $items->value;
-      }
+              }
               if($items->type  ==  "datetime"){
                   $item[$items->emrdfk] = $this->tanggal_indonesia(date('Y-m-d',strtotime( $items->value))) ;
               }
