@@ -1095,6 +1095,9 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     return
                 }
 
+                $scope.listDokter = [{id: $scope.modelGrid.pegawaifk, namalengkap: $scope.modelGrid.namadokter}]
+                $scope.item.pegawai = $scope.listDokter[0]
+
                 // var confirm = $mdDialog.confirm()
                 //   .title('Info')
                 //   .textContent('Yakin mau tanda tangani dokumen ini ? ')
