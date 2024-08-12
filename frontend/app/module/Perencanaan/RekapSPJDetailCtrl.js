@@ -37,7 +37,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             var DataDetailSPJ = []
             var DataDetailSPJALL = []
             var ListSubKegiatan = []
-            var ListSubSubKegiatan = []
+            var ListSubSubKegiatanspj = []
             var ListMataAnggaran = []
             var buttonhide = true
             $scope.dispanjar = false
@@ -185,7 +185,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         $scope.listTahap = e.data.tahap
                         $scope.listAsalProduk = e.data.asalproduk
                         $scope.listKonsolidasi2 = e.data.konsolidasi2
-                        $scope.listSubSubKegiatan = e.data.kegiatansubsub
+                        $scope.listSubSubKegiatanspj = e.data.kegiatansubsubspj
                         $scope.listKegiatanCombo = e.data.kegiatancombo
                         $scope.listKegiatanComboakhir = e.data.kegiatancombo
                         // $scope.dataSourcePanjarPengembalian = e.data.panjar
@@ -3817,8 +3817,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 }
 
                 var sub = ''
-                if ($scope.item.kegiatansubsub != undefined) { 
-                    sub = $scope.item.kegiatansubsub.id
+                if ($scope.item.kegiatansubsubspj != undefined) { 
+                    sub = $scope.item.kegiatansubsubspj.id
                 }
                 
                 medifirstService.get("perencanaan/get-spj?tglAwal=" + tglawal

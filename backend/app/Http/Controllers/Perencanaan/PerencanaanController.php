@@ -645,6 +645,29 @@ class PerencanaanController extends ApiController {
         dp.objectjenisbelanjafk, dp.objectpptkfk, dp.id, dp.keterangan
         order by dp.kode"));
 
+        $kegiatansubsubspj = DB::select(DB::raw("select dp.headfk, dp.idrelasi, dp.tahun tahunsubsubkegiatan, dp.id idsubsubkegiatan, dp.kode kodesubsubkegiatan, dp.id || '-' || dp.keterangan keterangansubsubkegiatan,
+        dp.indikatormasuk, dp.indikatorkeluaran, dp.indikatorhasil, dp.targetmasuk, dp.targetkeluaran, dp.targethasil, dp.div,
+        dp.objectjenisbelanjafk, dp.objectpptkfk, dp.id, dp.keterangan
+        from kegiatananggaran_m as dp
+        inner join kegiatananggaran_m as dp2 on dp.kode ilike dp2.kode || '%'
+        inner join keteranganbelanja_t as ktb on ktb.objectkegiatanfk = dp.id 
+        where dp.kdprofile = $idProfile
+        and dp.statusenabled = true
+        and dp2.kdprofile = $idProfile 
+        and dp2.statusenabled = true 
+        and ktb.kdprofile = $idProfile
+        and ktb.statusenabled = true
+        and dp.div = 4
+        and dp2.div = 3
+        and ktb.objecttahapfk = ".$setting[0]->objecttahapaktivfk."
+        $ktahap
+        $ktahun
+        $ksubkegiatan
+        $pptk
+        group by dp.id, dp.kode, dp.id || '-' || dp.keterangan, dp.tahun, dp.indikatormasuk, dp.indikatorkeluaran, dp.indikatorhasil, dp.targetmasuk, dp.targetkeluaran, dp.targethasil, dp.div,
+        dp.objectjenisbelanjafk, dp.objectpptkfk, dp.id, dp.keterangan
+        order by dp.kode"));
+
         $subsubkegiatanangkas = \DB::table('kegiatananggaran_m as dp')
             ->select('dp.id', 'dp.kode', 'dp.keterangan', 'dp.norec')
             ->where('dp.kdprofile', $idProfile)
@@ -1118,6 +1141,7 @@ class PerencanaanController extends ApiController {
             'kegiatan' => $kegiatan,
             'subsubkegiatanangkas' => $subsubkegiatanangkas,
             'kegiatansubsub' => $kegiatansubsub,
+            'kegiatansubsubspj' => $kegiatansubsubspj,
             'kegiatansubsubcombo' => $kegiatansubsubcombo,
             'kegiatancombo' => $kegiatancombo,
             'mataanggarancombo' => $mataanggarancombo,
