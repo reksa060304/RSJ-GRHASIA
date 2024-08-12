@@ -488,6 +488,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     return
                 }
 
+                if ($scope.item.statusVerif!= null && $scope.item.statusVerif != undefined) {
+                    toastr.error('Data sudah di Verifikasi, tidak bisa verifikasi ulang');
+                    return;
+                  }
+
                 $scope.dataPerencanaan.map(function(data, index){
                     if(data.jumlahVerifikasi == undefined || data.jumlahVerifikasi == null){
                         toastr.error('Isi Jumlah Verifikasi Terlebih Dahulu')
