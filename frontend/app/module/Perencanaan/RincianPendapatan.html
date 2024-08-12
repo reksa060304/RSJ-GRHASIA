@@ -127,15 +127,14 @@
         </div> -->
         <div class="grid_12">
             <div class="grid_12">
-                <div class="grid_2" style="text-align: left;vertical-align: middle;">
-                    PILIH SUMBER PENDAPATAN
-                </div>
                 <div class="grid_4">
+                    <label c-label item="item" c-label-text="Pilih Sumber Pendapatan"></label>
+
                     <input kendo-combo-box k-ng-model="item.sumberPendapatan" k-data-text-field="'namaexternal'"
                         k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
                         k-data-source="listSumberPendapatan" />
                 </div>
-                <div class="grid_3">
+                <!-- <div class="grid_3">
                     <div class="grid_5">
                         <input type="checkbox" class="k-checkbox" id="perubahans" ng-model="item.perubahans"
                             value="true" ng-click="perubahans(item.perubahans)">
@@ -146,14 +145,29 @@
                             value="true" ng-click="nonPerubahans(item.nonPerubahans)">
                         <label class="k-checkbox-label" for="nonPerubahans"><b>Non Perubahan</b></label>
                     </div>
+                </div> -->
+
+                <div class="grid_4">
+                    <label c-label item="item" c-label-text="Tahap"></label>
+
+                    <input kendo-combo-box k-ng-model="item.tahap" k-data-text-field="'tahap'"
+                        k-data-value-field="'id'" k-filter="'contains'" k-auto-bind="false"
+                        k-data-source="listTahapKegiatan" />
                 </div>
+
                 <div class="grid_2">
                     <label c-label item="item" c-label-text="Tahun Diperoleh"></label>
                     <input style="width: 100%" k-options="yearUngkul" k-ng-model="item.tahun" kendo-date-picker
                         placeholer="YYYY" k-format="'yyyy'" />
                 </div>
+
+                <div class="grid_2" style="margin-top: 12px;">
+                    <button class="btnTemplate1" ng-click="cari()">
+                        <i class="fa fa-refresh"></i>Cari
+                    </button>
+                </div>
             </div>
-            <div class="grid_12">
+            <!-- <div class="grid_12">
                 <div class="grid_2" style="text-align: left;">
                     RINCIAN URAIAN PENDAPATAN
                 </div>
@@ -167,7 +181,7 @@
                     <button class="btnTemplate1" style="margin-left: 0;" ng-click="resetFilters()"> <i
                             class="fa fa-refresh"></i>Reset</button>
                 </div>
-            </div>
+            </div> -->
             <div class="grid_12 borderBox">
                 <kendo-grid id="kGrids" k-data-source="dataSourceRincianPendapatan" k-selectable="'row'"
                     k-options="columnRincianPendapatan" k-ng-model="dataSelected"
@@ -325,12 +339,18 @@
 		<legend id="filterData">
 			<p>List rekening</p>
 		</legend>
-		<div class="grid_12" ng-repeat="item in listRekeningTarget track by $index">
-			<input type="checkbox" class="k-checkbox" id="{{item.norecrincian}}" ng-model="item.checked">
 
-			<label class="k-checkbox-label" for="{{item.norecrincian}}">
-                {{item.koderekening}} - {{item.namarekening}} (Rp. {{item.jumlahpendapatan}})
+        <div class="grid_12" ng-show="listRekeningTarget.length == 0">
+            <label>Data tidak ada</label>
+        </div>
+
+		<div class="grid_12" ng-repeat="item in listRekeningTarget track by $index">
+			<!-- <input type="checkbox" class="k-checkbox" id="{{item.norecrincian}}" ng-model="item.checked"> -->
+
+			<label>
+                {{item.no}} - {{item.asalproduk}} (Rp. {{item.totaltarget}})
             </label>
+            
 		</div>
         
 	</div>

@@ -15,6 +15,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.listRekeningTarget = []
             LoadCombo()
             LoadData()
+
             function LoadCombo() {
                 
                 // console.log($scope.dataSelected)
@@ -47,30 +48,58 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     // });
                 })
             }
+
             function LoadData(){
-                medifirstService.get('anggaran/load-data-rincian-pendapatan').then(function(response){
 
-                    // console.log(response.data)
+                let sumberdana = ''
+                if($scope.item.sumberPendapatan !== undefined && $scope.item.sumberPendapatan !== null){
+                    sumberdana = $scope.item.sumberPendapatan.id
+                }
 
-                    let data = response.data.map(function(item, index){
-                        return {...item, no: index+1}
+                let tahap = ''
+                if($scope.item.tahap !== undefined && $scope.item.tahap !== null){
+                    tahap = $scope.item.tahap.id
+                }
+
+                let tahun = ''
+                if($scope.item.tahun !== undefined && $scope.item.tahun !== null){
+                    tahun =  moment($scope.item.tahun).format('YYYY')
+                }
+
+
+                medifirstService.get('anggaran/load-data-rincian-pendapatan' 
+                    + '?sumberpendapatan=' + sumberdana
+                    + '&tahap=' + tahap
+                    + '&tahun=' + tahun)
+                    .then(function(response){
+
+                        // console.log(response.data)
+
+                        let data = response.data.map(function(item, index){
+                            return {...item, no: index+1}
+                        })
+
+                        // console.log(data)
+
+                        $scope.dataSourceRincianPendapatan = new kendo.data.DataSource({
+                            data: data,
+                            total: data.length,
+                            pageSize: 10,
+                            serverPaging: false,
+                            schema: {
+                                model: {
+                                    fields: {}
+                                }
+                            },
+                        });
+
                     })
-
-                    // console.log(data)
-
-                    $scope.dataSourceRincianPendapatan = new kendo.data.DataSource({
-                        data: data,
-                        total: data.length,
-                        serverPaging: false,
-                        schema: {
-                            model: {
-                                fields: {}
-                            }
-                        },
-                    });
-
-                })
             }
+
+            $scope.cari = function(){
+                LoadData()
+            }
+
             $scope.columnRincianPendapatan = {
                 toolbar: [{
                         name: "add",
@@ -126,8 +155,12 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         "width": "100px",
                         // hidden: true
                     },
-                  
-                   
+                    {
+                        "field": "tahap",
+                        "title": "Tahap",
+                        "width": "100px",
+                        // hidden: true
+                    },
                     {
 						"command": [
 							{ text: "Edit", click: EditRincian, imageClass: "k-icon k-i-pencil" },
@@ -138,7 +171,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 					}
                     
                 ]
-            };
+            }
+
             $scope.TambahRincian = function (){
                 var tahun = moment($scope.now).format('YYYY');
                 $scope.itemRincian ={}
@@ -149,28 +183,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 // $scope.popupTambahRincianPendapatan.center().open()
                 $scope.popupTambahRencanaPendapatan.center().open()
             }
-            $scope.perubahan = function(data){
-                if (data == true) {
-                    $scope.itemRincian.nonPerubahan = undefined
-                } 
-            }
-
-            $scope.nonPerubahan = function(data){
-                 if (data == true) {
-                     $scope.itemRincian.perubahan = undefined
-                 }
-            }
-            $scope.perubahans = function (data) {
-                if (data == true) {
-                    $scope.item.nonPerubahans = undefined
-                }
-            }
-
-            $scope.nonPerubahans = function (data) {
-                if (data == true) {
-                    $scope.item.perubahans = undefined
-                }
-            }
+            
             $scope.simpanRincian = function(){
                 console.log($scope.dataSelected)
                 var tahun = $scope.itemRincian.tahun;
@@ -216,140 +229,18 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 $scope.popupTambahRincianPendapatan.close()
                 $scope.itemRincian = {}
             }
-            $scope.$watch('item.tahun', function (newValue, oldValue) {
-                if (newValue != oldValue) {
-                    if ($scope.item.tahun != undefined) {
-                        var tahun = "tahun=" + moment($scope.item.tahun).format('YYYY')
-                    }
-                    medifirstService.get("registrasi/laporan/get-combo-mapping-sts?"+tahun, true).then(function (dat) {
-                        $scope.listUraianPendapatan = dat.data.uraianpendapatan
-                    });
-                }
-            });
-            $scope.$watch('itemRincian.tahun', function (newValue, oldValue) {
-                if (newValue != oldValue) {
-                    if ($scope.itemRincian.tahun != undefined) {
-                        var tahun = "tahun=" + moment($scope.itemRincian.tahun).format('YYYY')
-                    }
-                    medifirstService.get("registrasi/laporan/get-combo-mapping-sts?"+tahun, true).then(function (dat) {
-                        $scope.listUraianPendapatan = dat.data.uraianpendapatan
-                    });
-                }
-            });
-            var timeoutPromise;
-            $scope.$watch('item.sumberPendapatan', function (newVal, oldVal) {
-                if (!newVal) return;
-                $timeout.cancel(timeoutPromise);
-                timeoutPromise = $timeout(function () {
-                    if (newVal && newVal !== oldVal) {
-                        applyFilter("objectasalprodukfk", newVal);
-                    }
-                }, 500)
-            });
-            $scope.$watch('item.uraianPendapatan', function (newVal, oldVal) {
-                if (!newVal) return;
-                $timeout.cancel(timeoutPromise);
-                timeoutPromise = $timeout(function () {
-                    if (newVal && newVal !== oldVal) {
-                        applyFilter("objecturaianpendapatanfk", newVal);
-                    }
-                }, 500)
-            });
-            $scope.$watch('item.perubahans', function (newVal, oldVal) {
-                if (!newVal) return;
-                $timeout.cancel(timeoutPromise);
-                timeoutPromise = $timeout(function () {
-                    if (newVal && newVal !== oldVal) {
-                        applyFilter("isperubahan", newVal);
-                    }
-                }, 500)
-            });
-            $scope.$watch('item.nonPerubahans', function (newVal, oldVal) {
-                if (!newVal) return;
-                $timeout.cancel(timeoutPromise);
-                timeoutPromise = $timeout(function () {
-                    if (newVal && newVal !== oldVal) {
-                        applyFilter("isperubahan", newVal);
-                    }
-                }, 500)
-            });
-            $scope.$watch('item.tahun', function (newVal, oldVal) {
-                if (!newVal) return;
-                $timeout.cancel(timeoutPromise);
-                timeoutPromise = $timeout(function () {
-                    if (newVal && newVal !== oldVal) {
-                        applyFilter("tahun", newVal);
-                    }
-                }, 500)
-            });
-            function applyFilter(filterField, filterValue) {
-                var dataGrid = $("#kGrids").data("kendoGrid");
-                var currFilterObject = dataGrid.dataSource.filter();
-                var currentFilters = currFilterObject ? currFilterObject.filters : [];
-                console.log(filterField, filterValue);
-                if (currentFilters && currentFilters.length > 0) {
-                    for (var i = 0; i < currentFilters.length; i++) {
-                        if (currentFilters[i].field == filterField) {
-                            currentFilters.splice(i, 1);
-                            break;
-                        }
-                    }
-                }
-                if (filterField === "objectasalprodukfk" ) {
-                    currentFilters.push({
-                        field: filterField,
-                        operator: "eq",
-                        value: filterValue.id
-                    });
-                }
-                if (filterField === "objecturaianpendapatanfk") {
-                    currentFilters.push({
-                        field: filterField,
-                        operator: "eq",
-                        value: filterValue.id
-                    });
-                }
-                if (filterField === "isperubahan") {
-                    if ($scope.item.perubahans == true) {
-                        currentFilters.push({
-                            field: filterField,
-                            operator: "eq",
-                            value: true
-                        });
-                    }
-                    if ($scope.item.nonPerubahans == true) {
-                        currentFilters.push({
-                            field: filterField,
-                            operator: "eq",
-                            value: false
-                        });
-                    }
-                }
-                if (filterField === "tahun") {
-                    currentFilters.push({
-                        field: filterField,
-                        operator: "eq",
-                        value: moment(filterValue).format('YYYY')
-                        
-                    });
-                    console.log(currentFilters);
-                }
-                
-                dataGrid.dataSource.filter({
-                    logic: "and",
-                    filters: currentFilters
-                });
-                var allData = dataGrid.dataSource.data();
-                var params = dataGrid.dataSource.filter();
-                var query = new kendo.data.Query(allData);
-                $scope.filteredData = query.filter(params).data;
-            }
-            $scope.resetFilters = function () {
-                var gridData = $("#kGrids").data("kendoGrid");
-                gridData.dataSource.filter({});
-                $scope.item = {};
-                $scope.filteredData = [];
-            };
+
+            // $scope.$watch('item.tahun', function (newValue, oldValue) {
+            //     if (newValue != oldValue) {
+            //         if ($scope.item.tahun != undefined) {
+            //             var tahun = "tahun=" + moment($scope.item.tahun).format('YYYY')
+            //         }
+            //         medifirstService.get("registrasi/laporan/get-combo-mapping-sts?"+tahun, true).then(function (dat) {
+            //             $scope.listUraianPendapatan = dat.data.uraianpendapatan
+            //         });
+            //     }
+            // });
+
 
             // $scope.Edit=function(){
             //     if ($scope.dataSelected == undefined) {
@@ -374,6 +265,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             //     $scope.popupTambahRincianPendapatan.center().open()
                 
             // }
+
             function EditRincian(e){
                 e.preventDefault();
                 // console.log(e.preventDefault())
@@ -425,7 +317,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         'norec': dataItem.norec
                     }
                     medifirstService.post('anggaran/hapus-rincian-pendapatan', objSave).then(function () {
-                        LoadCombo()
+                        LoadData()
                         $scope.dataSelected = {}
                         // console.log(norec);
                     })
@@ -515,7 +407,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     + "&tahunawal=" + moment($scope.item.tahunawal).format('YYYY') 
                     ).then(function (response) {
                         
-                        let data = response.data.map(item => ({...item, checked: false}))
+                        let data = response.data.map((item, index) => ({...item, no: index+1}))
 
                         // console.log(response.data)
                         $scope.listRekeningTarget = data
@@ -536,24 +428,30 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     return
                 }
 
-                // ambil yang checked = true dari checkbox yang dipilih
-                let selected = []
-                $scope.listRekeningTarget.map(function(item){
-                    if(item.checked == true){
-                        selected.push(item)
-                    }
-                })
-
-                if(selected.length == 0){
-                    toastr.error("Pilih rekening yang akan ditransfer")
+                if($scope.listRekeningTarget.length == 0){
+                    toastr.error("Belum ada target pendapatan")
                     return
                 }
+                // ambil yang checked = true dari checkbox yang dipilih
+                // let selected = []
+                // $scope.listRekeningTarget.map(function(item){
+                //     if(item.checked == true){
+                //         selected.push(item)
+                //     }
+                // })
+
+                // if(selected.length == 0){
+                //     toastr.error("Pilih rekening yang akan ditransfer")
+                //     return
+                // }
 
                 let objSave = {
+                    tahunawal: moment($scope.item.tahunawal).format('YYYY'),
+                    tahapawal: $scope.item.tahapawal.id,
                     tahunakhir: moment($scope.item.tahunakhir).format('YYYY'),
                     tahapakhir: $scope.item.tahapakhir.id,
                     tanggaltransfer: moment(new Date()).format('YYY-MM-DD HH:mm:ss'),
-                    listTarget: selected
+                    // listTarget: selected
                 }
 
                 // console.log(objSave)

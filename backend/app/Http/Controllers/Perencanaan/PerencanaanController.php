@@ -9376,6 +9376,24 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
     }
     public function loadDataRincian(Request $request)
     {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        $sumberpendapatan = '';
+        if(isset($request['sumberpendapatan']) && $request['sumberpendapatan'] !== '' && $request['sumberpendapatan'] !== "undefined"){
+            $sumberpendapatan = "AND rp.objectasalprodukfk = ".$request['sumberpendapatan'];
+        }
+
+        $tahap = '';
+        if(isset($request['tahap']) && $request['tahap'] !== '' && $request['tahap'] !== "undefined"){
+            $tahap = "AND rp.objecttahapfk = ". $request['tahap'];
+        }
+
+        $tahun = '';
+        if(isset($request['tahun']) && $request['tahun'] !== '' && $request['tahun'] !== "undefined"){
+            $tahun = "AND rp.tahun = '". $request['tahun']."'";
+        }
+
         $data = \DB::select(DB::raw("
             SELECT
                 rp.norec,
@@ -9387,12 +9405,18 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
                 rp.objecturaianpendapatanfk,
                 rp.objecttahapfk,
                 cap.koderekening,
-                cap.namarekening 
+                cap.namarekening,
+                ta.tahap 
             FROM rincianpendapatan_t rp
-            JOIN char_akun_pendapatan_m AS cap ON cap.id = rp.objecturaianpendapatanfk AND cap.statusenabled = TRUE AND cap.kdprofile = 30
-            JOIN tahapanggaran_m AS ta ON ta.id = rp.objecttahapfk AND ta.statusenabled = true AND ta.kdprofile = 30
-            JOIN asalproduk_m AS ap ON ap.id = rp.objectasalprodukfk AND ap.statusenabled = true AND ap.kdprofile = 30
-            WHERE rp.statusenabled = true and rp.kdprofile = 30
+            JOIN char_akun_pendapatan_m AS cap ON cap.id = rp.objecturaianpendapatanfk AND cap.statusenabled = TRUE AND cap.kdprofile = ".$idProfile."
+            JOIN tahapanggaran_m AS ta ON ta.id = rp.objecttahapfk AND ta.statusenabled = true AND ta.kdprofile = ".$idProfile."
+            JOIN asalproduk_m AS ap ON ap.id = rp.objectasalprodukfk AND ap.statusenabled = true AND ap.kdprofile = ".$idProfile."
+            WHERE 
+                rp.statusenabled = true 
+                AND rp.kdprofile = ".$idProfile."
+                ".$sumberpendapatan."
+                ".$tahap."
+                ".$tahun."
             ORDER BY
                 cap.nourut,
                 CAST(rp.tahun AS INTEGER) asc
@@ -9418,16 +9442,9 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
 
         $data = DB::select(DB::raw("
             SELECT
-                cap.id as idrekening,
-                cap.koderekening,
-                cap.namarekening,
-                cap.nourut,
-                rp.norec as norecrincian,
-                rp.tglinput,
-                rp.jumlahpendapatan,
-                rp.objectasalprodukfk,
-                rp.objecttahapfk,
-                rp.keterangan
+                ap.id,
+                ap.asalproduk,
+                SUM(rp.jumlahpendapatan) AS totaltarget
             FROM rincianpendapatan_t rp
             JOIN char_akun_pendapatan_m AS cap ON cap.id = rp.objecturaianpendapatanfk AND cap.statusenabled = TRUE AND cap.kdprofile = ".$idProfile."
             JOIN tahapanggaran_m AS ta ON ta.id = rp.objecttahapfk AND ta.statusenabled = true AND ta.kdprofile = ".$idProfile."
@@ -9435,10 +9452,12 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
             WHERE 
                 rp.statusenabled = true 
                 AND rp.kdprofile = ".$idProfile."
+                AND rp.tanggaltransfer IS NULL
                 ".$tahun."
                 ".$tahap."
-            ORDER BY
-                cap.nourut
+            GROUP BY 
+                ap.id,
+                ap.asalproduk
         "));
         
         return $this->respond($data);
@@ -9453,28 +9472,42 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
         DB::beginTransaction();
         try {
             
-            // loop list
-            foreach($request['listTarget'] as $item){
+            // target pendapatan
+            $target = DB::select(DB::raw("
+                SELECT 
+                    rp.* 
+                FROM rincianpendapatan_t rp 
+                WHERE 
+                    rp.statusenabled = TRUE 
+                    AND rp.kdprofile = ".$idProfile."
+                    AND rp.tahun = '".$request['tahunawal']."'
+                    AND rp.objecttahapfk = ".$request['tahapawal']."
+                    AND rp.tanggaltransfer IS NULL
+            "));
 
+            // loop list
+            foreach($target as $item){
+                // update tgl transfer
                 $update = DB::table('rincianpendapatan_t')
-                    ->where('norec', $item['norecrincian'])
+                    ->where('norec', $item->norec)
                     ->update([
                         'tanggaltransfer' => $request['tanggaltransfer']
                     ]);
-
+                
+                // transfer
                 $data = DB::table('rincianpendapatan_t')->insert([
                     'norec'=>substr(\Webpatser\Uuid\Uuid::generate(), 0, 32),
                     'kdprofile'=> $idProfile,
                     'statusenabled'=> true,
-                    'tglinput'=> $item['tglinput'],
-                    'uraianpendapatan'=> $item['namarekening'],
-                    'jumlahpendapatan'=> $item['jumlahpendapatan'],
-                    'objectasalprodukfk'=> $item['objectasalprodukfk'],
-                    'objecturaianpendapatanfk'=> $item['idrekening'],
-                    'keterangan'=> $item['keterangan'],
+                    'tglinput'=> $item->tglinput,
+                    'uraianpendapatan'=> $item->uraianpendapatan,
+                    'jumlahpendapatan'=> $item->jumlahpendapatan,
+                    'objectasalprodukfk'=> $item->objectasalprodukfk,
+                    'objecturaianpendapatanfk'=> $item->objecturaianpendapatanfk,
+                    'keterangan'=> $item->keterangan,
                     'tahun'=> $request['tahunakhir'],
                     'objecttahapfk' => $request['tahapakhir'],
-                    'norectransfer' => $item['norecrincian']
+                    'norectransfer' => $item->norec
                 ]);
 
             }
@@ -9511,7 +9544,9 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
         $idProfile = (int) $kdProfile;
         $data = "";
         try {
-            $data = \DB::table('rincianpendapatan_t')->where('norec', $request['norec'])->delete();
+            $data = \DB::table('rincianpendapatan_t')->where('norec', $request['norec'])->update([
+                'statusenabled' => false
+            ]);
             $transStatus = 'true';
         } catch (\Throwable $th) {
             $transStatus = 'false';
