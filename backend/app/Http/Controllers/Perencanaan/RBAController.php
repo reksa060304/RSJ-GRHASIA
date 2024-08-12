@@ -268,7 +268,7 @@ class RBAController extends ApiController
         $tglAkhir = $request['tglAkhir'];
 
         $rencana = DB::table('strukperencanaan_t as sp')
-            ->select(DB::raw("sp.tglverifikasi, sp.statusenabled, sp.objectsubkegiatanfk, sp.norec, sp.tgldokumen, sp.nostruk, 
+            ->select(DB::raw("sp.tglverifikasi, sp.statusenabled, sp.objectsubkegiatanfk, sp.norec, sp.tgldokumen, sp.nostruk,  sp.keterangan As keteranganp, 
                 pg.namalengkap, 
                 ka.id || '-' || ka.keterangan AS keterangan, 
                 ru.namaruangan"))
@@ -418,7 +418,7 @@ class RBAController extends ApiController
             ->select(DB::raw("sp.statusenabled, sp.objectsubkegiatanfk, sp.norec, 
                 sp.tgldokumen, sp.nostruk, sp.objectruanganasalfk, sp.tahunanggaran, 
                 pg.namalengkap, ka.id || '-' || ka.keterangan AS keterangan, sp.objectprioritasfk, 
-                ru.namaruangan, dp.namadepartemen AS departemen, ru.objectdepartemenfk, sp.objectketeranganfk"))
+                ru.namaruangan, dp.namadepartemen AS departemen, ru.objectdepartemenfk, sp.objectketeranganfk, sp.keterangan AS keteranganp"))
             ->leftJoin('pegawai_m as pg', 'pg.id', '=', 'sp.objectpegawaifk')
             ->leftJoin('kegiatananggaran_m as ka', 'ka.id', '=', 'sp.objectsubkegiatanfk')
             ->leftJoin('ruangan_m as ru', 'ru.id', '=', 'sp.objectruanganasalfk')
@@ -570,7 +570,8 @@ class RBAController extends ApiController
                 'statusenabled' => true,
                 'objectpegawaiveriffk' => $request['idLogin'],
                 'tglverifikasi' => $request['tglVerifikasi'],
-                'objectprioritasfk' => $request['idPrioritas']
+                'objectprioritasfk' => $request['idPrioritas'],
+                'keterangan' => $request['keterangan']
             ]);
 
             foreach($request['dataPerencanaan'] as $item){

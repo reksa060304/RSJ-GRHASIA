@@ -7952,6 +7952,11 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
             $pegawai = "and ka.objectpptkfk = ".$request['idpegawai'];
         }
 
+        $sub = '';
+        if(isset($request['subkegiatan']) && $request['subkegiatan'] != "undefined" && $request['subkegiatan'] != ''){
+            $sub = "and sr.objectkegiatanfk = ".$request['subkegiatan'];
+        }
+
         $status = '';
         if(isset($request['status']) && $request['status'] != "undefined" && $request['status'] != '' && $request['status'] == 0){
             $status = "";
@@ -7986,6 +7991,7 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
                 and sr.statusenabled = true
                 and rd.statusenabled = true
                 and rd.kdprofile = 30
+                $sub
                 $pegawai
                 $status
 				group by dp0.kode, dp0.keterangan, sr.norec, cbs.carabayar, sr.tglverif, sr.keterangan, sr.jumlahdibayarverif, sr.kdprofile, sr.statusenabled, sr.tglrealisasi, sr.norealisasi, sr.status, sr.totalbelanja, sr.objectcarabayarfk, sr.rekananfk, sr.deskripsi, sr.objectkegiatanfk, sr.objectmataanggaranfk, sr.bendaharafk, sr.penerimafk, sr.pph, sr.ppn, pg1.namalengkap, pg2.namalengkap, rkn.namarekanan ,

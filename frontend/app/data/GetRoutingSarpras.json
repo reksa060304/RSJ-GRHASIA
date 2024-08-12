@@ -6814,5 +6814,25 @@
         "define": "MedifirstService"
       }
     ]
+  },  
+  {
+    "name": "RekapSPJDetail",
+    "url": "/UmVrYXBTUEpEZXRhaWw=",
+    "templateurl": "module/Perencanaan/RekapSPJDetail.html",
+    "controller": "RekapSPJDetailCtrl",
+    "deps": [
+      {
+        "module": "Services",
+        "define": "Service"
+      },
+      {
+        "module": "LoginServices",
+        "define": "LoginService"
+      },
+      {
+        "module": "MedifirstService",
+        "define": "MedifirstService"
+      }
+    ]
   }
 ]

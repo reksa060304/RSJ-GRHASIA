@@ -75,6 +75,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         Route::get('perencanaan/get-combo-perencanaan-belanja', 'Perencanaan\RBAController@getComboRencanaBelanja');
         Route::get('perencanaan/get-rencana-belanja', 'Perencanaan\RBAController@getRencanaBelanja');
         Route::get('perencanaan/get-usulan-ditolak', 'Perencanaan\RBAController@getUsulanDiTolak');
+        Route::get('perencanaan/get-spj-detail', 'Perencanaan\RBAController@getSubSubRBA');
         Route::get('perencanaan/get-info-stok-perencanaan', 'Perencanaan\RBAController@getInfoStokRencanaBelanja');
         Route::post('perencanaan/simpan-rencana-belanja', 'Perencanaan\RBAController@simpanRencanaBelanja');
         Route::post('perencanaan/delete-rencana-belanja', 'Perencanaan\RBAController@deleteRencanaBelanja');

@@ -179,7 +179,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         $scope.listTahapKegiatan = response.data.tahapAnggaran
                         
                         // Memilih tahap indikatif 1
-                        $scope.item.tahap =  $scope.listTahapKegiatan[1]
+                        $scope.item.tahap =  $scope.listTahapKegiatan[0]
         
                         medifirstService.get('perencanaan/get-combo-perencanaan-belanja?'
                             +'idLogin=' + $scope.userLogin.id)
@@ -257,6 +257,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         $scope.item.subSubKegiatan = result.subsub
                         $scope.item.idRuanganLoginUser = result.ruangan
                         $scope.item.tahunAnggaran = moment(result.tahunanggaran).format('YYYY')
+                        $scope.item.keterangan = result.keteranganp
                         
                         // prioritas
                         let prioritas = null
@@ -519,6 +520,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         tglVerifikasi: $scope.item.tglVerifikasi,
                         dataPerencanaan: $scope.dataPerencanaan,
                         idPrioritas: $scope.item.prioritas.id,
+                        keterangan:  $scope.item.keterangan
                     }).then(function(e){
                         
                         // Tutup popup
@@ -702,11 +704,53 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     { field: "hargaSatuan", title: "Harga Satuan", width: "80px" },
                     { field: "totalHarga", title: "Total Harga", width: "100px" }, 
                     { field: "listReverensi", title: "Referensi" },
-                    { field: "mataAnggaran.text", title: "Rekening" },
+                    { field: "mataAnggaran.namaanggaran", title: "Rekening" },
                 ]
             }
 
             $scope.columnGridPerencanaan = {
+                toolbar: [
+
+                        "excel",
+                    
+                        ],
+                    
+                        excel: {
+                    
+                            fileName: "DaftarVerifikasiBelanja.xlsx",
+                    
+                            allPages: true,
+                    
+                            },
+                    
+                        excelExport: function(e){
+                    
+                        var sheet = e.workbook.sheets[0];
+                    
+                        sheet.frozenRows = 2;
+                    
+                        sheet.mergedCells = ["A1:K1"];
+                    
+                        sheet.name = "Daftar Verifikasi";
+                    
+                      
+                        var myHeaders = [{
+                    
+                            value:"Daftar Verifikasi Belanja",
+                    
+                            fontSize: 20,
+                    
+                            textAlign: "center",
+                    
+                            background:"#ffffff",
+                    
+                        // color:"#ffffff"
+                    
+                        }];
+                    
+                      sheet.rows.splice(0, 0, { cells: myHeaders, type: "header", height: 70});
+                    
+                    },
                 columns: [
                     { field: "rencana.no", title: "No", width: "45px", },
                     { field: "rencana.nostruk", title: "No Struk", },
@@ -726,13 +770,26 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 { field: "hargaSatuan", title: "Harga Satuan", width: "80px" },
                 { field: "totalHarga", title: "Total Harga", width: "100px" }, 
                 { field: "listReverensi", title: "Referensi" },
-                { field: "mataAnggaran.text", title: "Rekening" }
+                { field: "mataAnggaran.namaanggaran", title: "Rekening" }
             ]
             
             $scope.yearUngkul = {
                 start: "decade",
                 depth: "decade"
             }
+
+            $scope.cariDariList = function(list, id){
+                let hasil = null
+                list.map(function (item) {
+                    if (item.id == id) {
+                        hasil = item
+                    }
+                })
+
+                return hasil
+            }
         }
+
+        
     ]);
 });
