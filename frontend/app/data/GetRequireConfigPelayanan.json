@@ -3728,6 +3728,10 @@
         {
             "nameDep": "HistoriEMRCtrl",
             "urlDep": "module/Registrasi/HistoriEMRCtrl"
+        },
+        {
+            "nameDep": "LaporanRekapKunjunganRSCtrl",
+            "urlDep": "module/Registrasi/Laporan/LaporanRekapKunjunganRSCtrl"
         }
     ]
 }

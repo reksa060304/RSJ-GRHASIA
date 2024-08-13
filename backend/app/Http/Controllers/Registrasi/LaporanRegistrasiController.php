@@ -4422,4 +4422,73 @@ select '-' as smf,* from  (
         return $this->respond($data10);
 
     }
+
+    public function getRekapKunjunganRS(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+
+        $data = DB::select(DB::raw("
+            SELECT 
+                COUNT(CASE WHEN pd.statuspasien = 'BARU' THEN 1 END) AS pasienbaru,
+                COUNT(CASE WHEN pd.statuspasien = 'LAMA' THEN 1 END) AS pasienlama,
+                
+                COUNT(CASE WHEN EXTRACT(YEAR FROM AGE(NOW(), pm.tgllahir)) BETWEEN 0 AND 4 THEN 1 END) AS umr0sd4,
+                COUNT(CASE WHEN EXTRACT(YEAR FROM AGE(NOW(), pm.tgllahir)) BETWEEN 5 AND 14 THEN 1 END) AS umr5sd14,
+                COUNT(CASE WHEN EXTRACT(YEAR FROM AGE(NOW(), pm.tgllahir)) BETWEEN 15 AND 24 THEN 1 END) AS umr15sd24,
+                COUNT(CASE WHEN EXTRACT(YEAR FROM AGE(NOW(), pm.tgllahir)) BETWEEN 25 AND 44 THEN 1 END) AS umr25sd44,
+                COUNT(CASE WHEN EXTRACT(YEAR FROM AGE(NOW(), pm.tgllahir)) BETWEEN 45 AND 64 THEN 1 END) AS umr45sd64,
+                COUNT(CASE WHEN EXTRACT(YEAR FROM AGE(NOW(), pm.tgllahir)) > 64 THEN 1 END) AS umr65,
+            
+                COUNT(CASE WHEN jk.kodeexternal = 'M' THEN 1 END) AS lakilaki,
+                COUNT(CASE WHEN jk.kodeexternal = 'F' THEN 1 END) AS perempuan,
+                COUNT(CASE WHEN jk.kodeexternal = 'O' THEN 1 END) AS jklainnya,
+                
+                COUNT(CASE WHEN ped.id IN (0,1,17) THEN 1 END) AS tstk,
+                COUNT(CASE WHEN ped.id IN (2) THEN 1 END) AS sd,
+                COUNT(CASE WHEN ped.id IN (3) THEN 1 END) AS sltp,
+                COUNT(CASE WHEN ped.id IN (4) THEN 1 END) AS slta,
+                COUNT(CASE WHEN ped.id IN (5,6,7,8,9,10,11,24,19) THEN 1 END) AS d1s3,
+                
+                COUNT(CASE WHEN ag.kodeexternal = 'I' THEN 1 END) AS islam,
+                COUNT(CASE WHEN ag.kodeexternal = 'P' THEN 1 END) AS protestan,
+                COUNT(CASE WHEN ag.kodeexternal = 'K' THEN 1 END) AS katholik,
+                COUNT(CASE WHEN ag.kodeexternal = 'H' THEN 1 END) AS hindu,
+                COUNT(CASE WHEN ag.kodeexternal = 'B' THEN 1 END) AS budha,
+                COUNT(CASE WHEN ag.kodeexternal NOT IN('I', 'P', 'K', 'H', 'B') THEN 1 END) AS aglainnya,
+                
+                COUNT(CASE WHEN pk.id IN (11) THEN 1 END) AS tani,
+                COUNT(CASE WHEN pk.id IN (15) THEN 1 END) AS buruh,
+                COUNT(CASE WHEN pk.id IN (16) THEN 1 END) AS pns,
+                COUNT(CASE WHEN pk.id IN (25, 28, 18, 6) THEN 1 END) AS tnipolri,
+                COUNT(CASE WHEN pk.id IN (17) THEN 1 END) AS swasta,
+                COUNT(CASE WHEN pk.id IN (1) THEN 1 END) AS tidakbekerja,
+                COUNT(CASE WHEN pk.id IN (3, 26) THEN 1  END) AS pelajarmahasiswa
+            FROM pasiendaftar_t pd
+            JOIN antrianpasiendiperiksa_t apd ON apd.noregistrasifk = pd.norec
+            JOIN ruangan_m ru ON ru.id = apd.objectruanganfk
+            JOIN pasien_m pm ON pm.id = pd.nocmfk
+            LEFT JOIN jeniskelamin_m jk ON jk.id = pm.objectjeniskelaminfk
+            LEFT JOIN pendidikan_m ped ON ped.id = pm.objectpendidikanfk
+            LEFT JOIN agama_m ag ON ag.id = pm.objectagamafk
+            LEFT JOIN pekerjaan_m pk ON pk.id = pm.objectpekerjaanfk
+            WHERE 
+                pd.statusenabled = TRUE 
+                AND pd.kdprofile = ".$idProfile."
+                AND apd.statusenabled = TRUE 
+                AND apd.kdprofile = ".$idProfile."
+                AND ru.statusenabled = TRUE 
+                AND ru.kdprofile = ".$idProfile."
+                AND pm.statusenabled = TRUE 
+                AND pm.kdprofile = ".$idProfile."
+                AND jk.statusenabled = TRUE
+                AND jk.kdprofile = ".$idProfile."
+                AND apd.tglmasuk BETWEEN '".$request['tglAwal']."' AND '".$request['tglAkhir']."'
+                AND ru.id NOT IN (94);
+        
+        "));
+
+        return $this->respond($data);
+
+    }
 }
