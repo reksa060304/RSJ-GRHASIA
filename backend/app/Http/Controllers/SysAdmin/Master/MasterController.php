@@ -243,6 +243,7 @@ class MasterController extends ApiController{
             $prod->status = $data['status'];
             $prod->verifikasianggaran = $data['verifikasianggaran'];
             $prod->objectprodukassetfk = $data['objectProductAsset'];
+            $prod->estimasikg = (isset($data['estimasikg'])) ? $data['estimasikg'] : null;
             if (isset($request['isprodukintern'])){
                 $prod->isprodukintern = $data['isprodukintern'];
             }

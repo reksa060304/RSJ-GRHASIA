@@ -12,6 +12,8 @@ define(['initialize'], function (initialize) {
 			$scope.kembali = function () { $state.go('MasterProdukLinen') }
 			load();
 
+			let defaultJenis = null
+
 			$scope.currentAsset = [];
 
 			function load() {
@@ -46,9 +48,33 @@ define(['initialize'], function (initialize) {
 						dataLoad = e.data
 						$scope.isRouteLoading = false;
 						$scope.item.getKelompok = { id: e.data[0].objectkelompokprodukfk, kelompokproduk: e.data[0].kelompokproduk };
+						
 						medifirstService.get("sysadmin/master/get-jenis-produk?kelompokProdukfk=" + e.data[0].objectkelompokprodukfk, true).then(function (dat) {
 							$scope.listJenisProduk = dat.data;
-							$scope.item.jenisProduk = { id: dataLoad[0].objectjenisprodukfk, jenisproduk: dataLoad[0].jenisproduk };
+							
+							// default pilihan
+							$scope.listJenisProduk.map(function(item){
+								if(item.id == 27707){
+									defaultJenis = item
+
+								}
+							})
+
+							$scope.item.jenisproduk = defaultJenis
+							// $scope.item.jenisProduk = { id: dataLoad[0].objectjenisprodukfk, jenisproduk: dataLoad[0].jenisproduk };
+
+							
+							// get detailjenis saat ubah
+							medifirstService.get("sysadmin/master/get-detail-jenis-produk?jenisProdukId=" + $scope.item.jenisproduk.id, true).then(function (dat) {
+								$scope.listdetailjenis = dat.data;
+
+								$scope.listdetailjenis.map(function(detailJenis){
+									if(detailJenis.id == dataLoad[0].objectdetailjenisprodukfk){
+										$scope.item.detailJenisProduk = detailJenis
+									}
+								})
+							})
+
 						})
 						$scope.getJP = { id: e.data[0].objectjenisprodukfk, jenisproduk: e.data[0].jenisproduk };
 						$scope.item.id = e.data[0].id;
@@ -66,7 +92,7 @@ define(['initialize'], function (initialize) {
 						$scope.item.keterangan = e.data[0].keterangan;
 						$scope.item.namaExternal = e.data[0].namaexternal;
 						$scope.item.reportDisplay = e.data[0].reportdisplay;
-						$scope.item.detailJenisProduk = { id: e.data[0].objectdetailjenisprodukfk, detailjenisproduk: e.data[0].detailjenisproduk };
+						// $scope.item.detailJenisProduk = { id: e.data[0].objectdetailjenisprodukfk, detailjenisproduk: e.data[0].detailjenisproduk };
 						$scope.item.kategoryProduk = { id: e.data[0].objectkategoryprodukfk, kategoryproduk: "" };
 						$scope.item.generik = { id: e.data[0].objectgenerikfk, name: "" }
 						$scope.item.gProduk = { id: e.data[0].objectgprodukfk, namagproduk: "" }
@@ -220,6 +246,15 @@ define(['initialize'], function (initialize) {
 				}
 				medifirstService.get("sysadmin/master/get-jenis-produk?kelompokProdukfk=" + kelompok.id, true).then(function (dat) {
 					$scope.listJenisProduk = dat.data;
+
+					// default pilihan
+					$scope.listJenisProduk.map(function(item){
+						if(item.id == 27707){
+							defaultJenis = item
+
+						}
+					})
+					$scope.jenisproduk = defaultJenis
 				})
 			}
 
@@ -291,7 +326,7 @@ define(['initialize'], function (initialize) {
 							$scope.item.levelProduk = { id: dataLoad[0].objectlevelprodukfk, levelproduk: dataLoad[0].levelproduk };
 							$scope.item.kelompok = { id: dataLoad[0].objectkelompokprodukfk, kelompokproduk: dataLoad[0].kelompokproduk };
 							$scope.item.jenisProduk = { id: dataLoad[0].objectjenisprodukfk, jenisproduk: dataLoad[0].jenisproduk };
-							$scope.item.detailJenisProduk = { id: dataLoad[0].objectdetailjenisprodukfk, detailjenisproduk: dataLoad[0].detailjenisproduk };
+							// $scope.item.detailJenisProduk = { id: dataLoad[0].objectdetailjenisprodukfk, detailjenisproduk: dataLoad[0].detailjenisproduk };
 							$scope.item.satuanStandar = { id: dataLoad[0].objectsatuanstandarfk, satuanstandar: dataLoad[0].satuanstandar };
 							$scope.item.fungsiProduk = { id: dataLoad[0].objectfungsiprodukfk, fungsiproduk: dataLoad[0].fungsiproduk };
 							$scope.item.bentukProduk = { id: dataLoad[0].objectbentukprodukfk, namabentukproduk: dataLoad[0].namabentukproduk };
@@ -349,6 +384,11 @@ define(['initialize'], function (initialize) {
 					return
 				}
 
+				if($scope.item.estimasikg == undefined || $scope.item.estimasikg == null || $scope.item.estimasikg == ''){
+					alert('Estimasi kg perlu diinput')
+					return
+				}
+
 				var confirm = $mdDialog.confirm()
 					.title('Peringatan!')
 					.textContent('Apakah anda yakin akan menyimpan data ini?')
@@ -362,6 +402,16 @@ define(['initialize'], function (initialize) {
 			};
 
 			$scope.simpan = function () {
+				if($scope.item.namaProduk == undefined || $scope.item.namaProduk == null){
+					toastr.error('Nama produk perlu diisi')
+					return
+				}
+
+				if($scope.item.estimasikg == undefined || $scope.item.estimasikg == null){
+					toastr.error('Estimasi Kg perlu diisi')
+					return
+				}
+
 				if ($scope.item.kelompok == undefined) {
 					alert("Kelompok Produk Kosong!!!")
 					return
@@ -704,31 +754,33 @@ define(['initialize'], function (initialize) {
 					"objectsediaanfk": objectsediaanfk,
 					"harganetto": harganetto,
 					"objectstatusbarangfk": 1,
-					"tglproduksi": "2017-07-12",
+					"tglproduksi": moment(new Date()).format('YYYY-MM-DD'),
 					"status": null,
 					"objectjenisgenerikfk": null,
 					"poinmedis": null,
-					"objectProductAsset": objectProductAsset
+					"objectProductAsset": objectProductAsset,
+					"estimasikg": $scope.item.estimasikg
 				}
+				// console.log(objSave)
 				if ($scope.item.id != undefined) {
 					medifirstService.post('sysadmin/master/save-data-produk', objSave).then(function (e) {
-						console.log(JSON.stringify(e.data));
+						// console.log(JSON.stringify(e.data));
 						$scope.item = {};
-						$state.go("MasterProduk")
+						// $state.go("")
 					});
 				} else if ($scope.item.id == undefined) {
 					medifirstService.post('sysadmin/master/save-data-produk', objSave).then(function (e) {
-						console.log(JSON.stringify(e.data));
-						$scope.item = {};
-						var confirm = $mdDialog.confirm()
-							.title('Caution')
-							.textContent('Apakah Anda Akan Menambah Data Lagi?')
-							.ariaLabel('Lucky day')
-							.cancel('Ya')
-							.ok('Tidak')
-						$mdDialog.show(confirm).then(function () {
-							$state.go("MasterProduk");
-						})
+						// console.log(JSON.stringify(e.data));
+						// $scope.item = {};
+						// var confirm = $mdDialog.confirm()
+						// 	.title('Caution')
+						// 	.textContent('Apakah Anda Akan Menambah Data Lagi?')
+						// 	.ariaLabel('Lucky day')
+						// 	.cancel('Ya')
+						// 	.ok('Tidak')
+						// $mdDialog.show(confirm).then(function () {
+						// 	$state.go("MasterProduk");
+						// })
 					});
 				}
 			}
