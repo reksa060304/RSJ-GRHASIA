@@ -31,7 +31,6 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
 
 		// Masih dalam percobaan. abaikan
 		Route::get('report/coba-lapung', 'Report\ReportController@cobaLapung');
-		Route::get('rawatinap/get-bundle-hais', 'RawatInapController@getBundleHais');
 		
 		// terima laundry
 		Route::post('laundry/save-terima-laundryv2', 'Laundry\LaundryController@saveTerimaLaundryV2');
@@ -87,6 +86,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
         Route::post('anggaran/save-master-pendapatan', 'Perencanaan\PerencanaanController@saveMasterPendapatan');
         Route::get('anggaran/get-master-pendapatan', 'Perencanaan\PerencanaanController@getComboPendapatan');
         // End Rencana Belanja Route-------------------------------------------------------------------------------------------
+
+		Route::get('registrasi/laporan/get-rekap-kunjunganrs', 'Registrasi\LaporanRegistrasiController@getRekapKunjunganRS');
 
         Route::get('get-profile-login', function(){
            $profile = \App\Web\Profile::where('statusenabled',true)->first();
