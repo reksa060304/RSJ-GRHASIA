@@ -209,13 +209,19 @@ define(['initialize','Configuration'], function (initialize,configuration) {
                     data: arrSave
                 }
                 medifirstService.post('emr/save-emr-dinamis', jsonSave).then(function (e) {
+                    
+                    // agar bisa langsung cetak dan tte
+                    if(norecEMR == '-' || norecEMR == null || norecEMR == ''){
+                        norecEMR = e.data.norecEMR
+                    }
+                    
                     var confirm = $mdDialog.confirm()
                     .title('Peringatan')
                     .textContent('EMR SUDAH TERSIMPAN, KLIK YA UNTUK KONFIRMASI')
                     .ariaLabel('Lucky day')
                     .cancel('Tidak')
                     .ok('Ya')
-                $mdDialog.show(confirm).then(function () {})
+                    $mdDialog.show(confirm).then(function () {})
                   
                     // $state.go("RekamMedis.OrderJadwalBedah.ProsedurKeselamatan", {
                     //     namaEMR : $scope.cc.emrfk,
@@ -235,7 +241,7 @@ define(['initialize','Configuration'], function (initialize,configuration) {
 
             $scope.cetakBlade = function () {
                 // console.log(nomorEMR, $scope.cc.emrfk)
-                if (nomorEMR == '-') {
+                if (norecEMR == '') {
                     toastr.error('Dokumen belum pernah di isi')
                     return
                 }
@@ -243,7 +249,9 @@ define(['initialize','Configuration'], function (initialize,configuration) {
                 var local = JSON.parse(localStorage.getItem('profile'))
                 var nama = medifirstService.getPegawaiLogin().namaLengkap
                 window.open(configuration.baseApiBackend + 'report/get-cetak-suratketerangankesehatanjiwa' 
-                    + '?noemr=' + nomorEMR 
+                    + '?nocm=' + $scope.cc.nocm 
+                    + '&norec_apd=' + $scope.cc.norec
+                    + '&emr=' + norecEMR
                     + '&emrfk=' + $scope.cc.emrfk 
                     + '&kdprofile=' + local.id, '_blank');
             }

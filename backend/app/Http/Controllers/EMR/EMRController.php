@@ -9772,14 +9772,18 @@ class EMRController  extends ApiController
         if ($transStatus == 'true') {
             $transMessage = $transMessage . "Sukses";
             DB::commit();
+
+            $emrpasien = DB::table('emrpasien_t')->where('noemr', $noemr)->first();
+
             $result = array(
                 "status" => 201,
                 "data" => $EMR,
                 // "data2" => $EMRD,
-               "jumlah" => count($EMRPASIENDETAIL),
-               "update" => $j,
-               "index" => $idx,
-               "new" => $h,
+                "jumlah" => count($EMRPASIENDETAIL),
+                "update" => $j,
+                "index" => $idx,
+                "new" => $h,
+                'norecEMR' => $emrpasien->norec,
                 "as" => 'as@epic',
             );
             $this->saveEMRBackup($data, $head, $norec_EMR,$kdProfile);

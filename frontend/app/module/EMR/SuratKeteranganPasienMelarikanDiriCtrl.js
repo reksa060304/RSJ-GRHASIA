@@ -948,6 +948,14 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     data: arrSave
                 }
                 medifirstService.post('emr/save-emr-dinamis', jsonSave).then(function (e) {
+
+                    // agar bisa langsung cetak dan tte
+                    if(norecEMR == '-' || norecEMR == null || norecEMR == ''){
+                        norecEMR = e.data.norecEMR
+                    }
+
+                    console.log(norecEMR)
+
                     var confirm = $mdDialog.confirm()
                         .title('Peringatan')
                         .textContent('EMR SUDAH TERSIMPAN, KLIK YA UNTUK KONFIRMASI')
@@ -973,7 +981,10 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }
 
             $scope.cetakBlade = function () {
-                if (nomorEMR == '-') return
+                if (norecEMR == '') {
+                    toastr.error('Dokumen belum pernah di isi')
+                    return
+                }
 
                 var local = JSON.parse(localStorage.getItem('profile'))
                 var nama = medifirstService.getPegawaiLogin().namaLengkap

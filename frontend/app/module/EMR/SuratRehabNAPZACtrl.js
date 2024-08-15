@@ -669,6 +669,12 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     data: arrSave
                 }
                 medifirstService.post('emr/save-emr-dinamis', jsonSave).then(function (e) {
+
+                    // agar bisa langsung cetak dan tte
+                    if(norecEMR == '-' || norecEMR == null || norecEMR == ''){
+                        norecEMR = e.data.norecEMR
+                    }
+
                     var confirm = $mdDialog.confirm()
                         .title('Informasi')
                         .textContent('EMR SUDAH TERSIMPAN, KLIK YA UNTUK KONFIRMASI')
@@ -698,14 +704,19 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             }
 
             $scope.cetakBlade = function () {
-                if (nomorEMR == '-') return
+                if (norecEMR == '') {
+                    toastr.error('Dokumen belum pernah di isi')
+                    return
+                }
 
                 var local = JSON.parse(localStorage.getItem('profile'))
                 var nama = medifirstService.getPegawaiLogin().namaLengkap
 
                 window.open(configuration.baseApiBackend 
                     + 'report/surat-rehab-napza'
-                    + '?noemr=' + nomorEMR
+                    + '?nocm=' + $scope.cc.nocm 
+                    + '&norec_apd=' + $scope.cc.norec
+                    + '&emr=' + norecEMR
                     + '&emrfk=' + $scope.cc.emrfk
                     + '&kdprofile=' + local.id
                 )

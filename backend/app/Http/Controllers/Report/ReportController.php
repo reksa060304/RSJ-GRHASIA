@@ -16746,7 +16746,7 @@ from kegiatananggaran_m km
                 left JOIN pasien_m as pa on ep.nocm =  pa.nocm
                 left JOIN alamat_m as al on pa.id = al.nocmfk
             WHERE
-                epd.emrpasienfk = '".$request['noemr']."'
+                ep.norec = '".$request['emr']."'
                 AND ep.kdprofile = ".$kdProfile." 
                 AND epd.statusenabled = TRUE 
                 and epd.emrfk = '".$request['emrfk']."'
@@ -16869,7 +16869,7 @@ from kegiatananggaran_m km
                 left JOIN pasien_m as pa on ep.nocm =  pa.nocm
                 left JOIN alamat_m as al on pa.id = al.nocmfk
             WHERE
-                epd.emrpasienfk = '".$request['noemr']."'
+                ep.norec = '".$request['emr']."'
                 AND ep.kdprofile = ".$kdProfile." 
                 AND epd.statusenabled = TRUE 
                 and epd.emrfk = '".$request['emrfk']."'
@@ -23252,7 +23252,7 @@ public function suratBuktiPengembalian(Request $request)
                 left JOIN pasien_m as pa on ep.nocm =  pa.nocm
                 left JOIN alamat_m as al on pa.id = al.nocmfk
             WHERE
-                epd.emrpasienfk = '".$request['noemr']."'
+                ep.norec = '".$request['emr']."'
                 AND ep.kdprofile = ".$kdProfile." 
                 AND epd.statusenabled = TRUE 
                 and epd.emrfk = '".$request['emrfk']."'

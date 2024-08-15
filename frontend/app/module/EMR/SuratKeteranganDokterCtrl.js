@@ -303,6 +303,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     value: medifirstService.getPegawaiLogin().id,
                     text: medifirstService.getPegawaiLogin().namaLengkap
                 }
+
+                $scope.item.obj[3003990] = $scope.cc.nocm
+
                 medifirstService.get("emr/get-emr-otomatisvitalsign?emrfk=147"+"&noregistrasi="+$scope.cc.noregistrasi).then(function (dat) {
                     var datas = dat.data.data2
                     $scope.isRouteLoading = false
@@ -971,13 +974,19 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     data: arrSave
                 }
                 medifirstService.post('emr/save-emr-dinamis', jsonSave).then(function (e) {
+
+                    // agar bisa langsung cetak dan tte
+                    if(norecEMR == '-' || norecEMR == null || norecEMR == ''){
+                        norecEMR = e.data.norecEMR
+                    }
+
                     var confirm = $mdDialog.confirm()
                     .title('Peringatan')
                     .textContent('EMR SUDAH TERSIMPAN, KLIK YA UNTUK KONFIRMASI')
                     .ariaLabel('Lucky day')
                     .cancel('Tidak')
                     .ok('Ya')
-                $mdDialog.show(confirm).then(function () {})
+                    $mdDialog.show(confirm).then(function () {})
                  
                     // $state.go("RekamMedis.OrderJadwalBedah.ProsedurKeselamatan", {
                     //     namaEMR : $scope.cc.emrfk,
