@@ -3815,8 +3815,18 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 if($scope.item.statusspj != undefined){
                     stat = $scope.item.statusspj.id
                 }
+
+                var cari = ''
+                if($scope.item.carispj !== undefined && $scope.item.carispj !== null){
+                    cari = "&cari=" + $scope.item.carispj
+                }
                 
-                medifirstService.get("perencanaan/get-spj?tglAwal="+tglawal+"&tglAkhir="+tglakhir+"&idpegawai="+$scope.idpegawailogin+"&status="+stat).then(function (e) {
+                medifirstService.get("perencanaan/get-spj" 
+                    + "?tglAwal=" + tglawal 
+                    + "&tglAkhir=" + tglakhir 
+                    + "&idpegawai="+ $scope.idpegawailogin 
+                    + "&status="+ stat
+                    + cari).then(function (e) {
                     DataSPJ = e.data.data
                     DataDetailSPJALL = e.data.detail
                     $scope.dataSourceSPJ = new kendo.data.DataSource({
@@ -5174,15 +5184,22 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                         text: "asd",
                         template: '<div class="grid_6"></div>'
                     },
-                    {
-                        name: "src", 
-                        text: "src",
-                        template:  '<div class="grid_4" style="margin-top: -8px;"><div class="grid_1" style="margin-top: 10px;"><label c-label item="item" c-label-text="Search"></label></div><div class="grid_11"><input c-text-box type="input" class="k-textbox" ng-model="item.searchSPJ" /></div></div>'
-                    }
+                    // {
+                    //     name: "src", 
+                    //     text: "src",
+                    //     template:  '<div class="grid_4" style="margin-top: -8px;"><div class="grid_1" style="margin-top: 10px;"><label c-label item="item" c-label-text="Search"></label></div><div class="grid_11"><input c-text-box type="input" class="k-textbox" ng-model="item.searchSPJ" /></div></div>'
+                    // }
                 ],
                 selectable: 'row',
                 scrollable: true,
-
+                search: {
+                    fields: [
+                        { name: "mataanggaran", operator: "contains" },
+                        { name: "norealisasi", operator: "contains" },
+                        { name: "deskripsi", operator: "contains" },
+                        { name: "totalbelanja", operator: "contains" },
+                    ]
+                },
                 pageable: true,
                 groupable: true,  
                 columns:[
