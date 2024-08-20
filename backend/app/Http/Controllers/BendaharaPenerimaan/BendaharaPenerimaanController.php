@@ -147,7 +147,9 @@ class BendaharaPenerimaanController extends ApiController {
                 'sc.noclosing as noClosing','sbm.nosbm as noSbm','sv.noverifikasi as noVerifikasi','sc.tglclosing as tglClosing',
                 'sbm.tglsbm as tglSbm','sv.tglverifikasi as tglVerif','sbm.totaldibayar as totalPenerimaan','pd.noregistrasi','ps.namapasien',
                 'sp.norec as norec_sp','ru.id as ruid','ru.namaruangan','sp.namapasien_klien','ps.nocm','sbm.noclosingfk')
-            ->where('sbm.kdprofile', $idProfile);
+            ->where('sbm.kdprofile', $idProfile)
+            ->where('sbm.statusenabled',true);
+
         //->whereNull('pd.nostruklastfk');
 
         $filter = $request->all();
