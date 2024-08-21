@@ -2443,11 +2443,11 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
                         // Check jika ada sisa anggaran
                         if(e.data.sisa.total_sisa !== null){
-                            $scope.item.sisaa = parseInt(e.data.keterangan.subtotal) - parseInt(e.data.sisa.total_sisa)
+                            $scope.item.sisaa = parseInt(e.data.keterangan.subtotal) - parseInt(e.data.sisa)
                         }else{
                             $scope.item.sisaa = parseInt(e.data.keterangan.subtotal) - 0
                         }
-
+s
                         if(e.data.keterangan.password != null){
                             $scope.passrba = false
                             $scope.item.passwordbenar = e.data.keterangan.password

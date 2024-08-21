@@ -450,7 +450,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     tahapawal: $scope.item.tahapawal.id,
                     tahunakhir: moment($scope.item.tahunakhir).format('YYYY'),
                     tahapakhir: $scope.item.tahapakhir.id,
-                    tanggaltransfer: moment(new Date()).format('YYY-MM-DD HH:mm:ss'),
+                    tanggaltransfer: moment(new Date()).format('YYYY-MM-DD HH:mm'),
                     // listTarget: selected
                 }
 

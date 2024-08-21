@@ -6430,8 +6430,8 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
                 SELECT 
                     COALESCE ( SUM ( pj.jumlah ), 0 ) - COALESCE ( SUM ( pengpj.jumlahpengembalian ), 0 ) - COALESCE ( SUM ( spjtopanjar.jumlahspj ), 0 ) AS totalpanjar
                 FROM panjar_t AS pj
-                JOIN pengembalianpanjar_t AS pengpj ON pengpj.objectpanjarfk = pj.norec AND pengpj.statusenabled = TRUE AND pengpj.kdprofile=".$idProfile."
-                JOIN spjtopanjar_t AS spjtopanjar ON spjtopanjar.objectpanjarfk = pj.norec AND spjtopanjar.statusenabled = TRUE AND spjtopanjar.kdprofile = ".$idProfile."
+                LEFT JOIN pengembalianpanjar_t AS pengpj ON pengpj.objectpanjarfk = pj.norec AND pengpj.statusenabled = TRUE AND pengpj.kdprofile=".$idProfile."
+                LEFT JOIN spjtopanjar_t AS spjtopanjar ON spjtopanjar.objectpanjarfk = pj.norec AND spjtopanjar.statusenabled = TRUE AND spjtopanjar.kdprofile = ".$idProfile."
                 WHERE 
                     pj.statusenabled = TRUE 
                     AND pj.kdprofile =  ".$idProfile."
@@ -6655,7 +6655,9 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
         and subkeg.statusenabled = true
         and subsubkeg.kdprofile = 30
         and subsubkeg.statusenabled = true
+        and NOT EXISTS ( SELECT * FROM spjtopanjar_t stp WHERE stp.objectpanjarfk = pj.norec AND stp.statusenabled = TRUE and stp.kdprofile = ".$idProfile." )
         --and ma.kodemataanggaran = '$kode'--munculkan semunya 23-042024
+        ORDER BY cast(split_part(nopanjar, '/', 1)  as integer) desc
         ")
         );
 
@@ -8535,17 +8537,46 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
         }
 
         // menghitung spj dari semua tahap
-        $sisa_semua_tahap = DB::select(DB::raw("
+        $spj = DB::select(DB::raw("
             SELECT
-                SUM(rd.subtotal) AS total_sisa
+                sr.norec, sr.norealisasi, sr.totalbelanja
             FROM keteranganbelanja_t AS kb 
             JOIN realisasidetail_t AS rd ON rd.keteranganbelanjafk = kb.norec AND rd.statusenabled = TRUE AND rd.kdprofile = ".$idProfile."
             JOIN strukrealisasi_t as sr ON sr.norec = rd.strukrealisasifk AND sr.statusenabled = TRUE AND sr.kdprofile = ".$idProfile."
             WHERE
                 kb.statusenabled = TRUE 
                 AND kb.kdprofile = ".$idProfile."
-                AND kb.norec = '".$keterangan->norec."'
+                AND kb.objectkegiatanfk IN (".implode(',', $idKegiatan).")
+                AND kb.keteranganbelanja ILIKE '".$keterangan->keteranganbelanja."'
+                AND sr.objectmataanggaranfk = ".$keterangan->objectmataanggaranfk."
+                AND sr.objectasalprodukfk = ".$keterangan->objectasalprodukfk." 
+            GROUP BY
+                sr.norec
         "));
+
+        // menghitung panjar
+        $panjar = collect(
+            DB::select(DB::raw("
+                SELECT 
+                    COALESCE ( SUM ( pj.jumlah ), 0 ) - COALESCE ( SUM ( pengpj.jumlahpengembalian ), 0 ) - COALESCE ( SUM ( spjtopanjar.jumlahspj ), 0 ) AS totalpanjar
+                FROM panjar_t AS pj
+                LEFT JOIN pengembalianpanjar_t AS pengpj ON pengpj.objectpanjarfk = pj.norec AND pengpj.statusenabled = TRUE AND pengpj.kdprofile=".$idProfile."
+                LEFT JOIN spjtopanjar_t AS spjtopanjar ON spjtopanjar.objectpanjarfk = pj.norec AND spjtopanjar.statusenabled = TRUE AND spjtopanjar.kdprofile = ".$idProfile."
+                WHERE 
+                    pj.statusenabled = TRUE 
+                    AND pj.kdprofile =  ".$idProfile."
+                    AND pj.objectsubsubkegiatanfk IN (".implode(',', $idKegiatan).")
+                    AND pj.objectmataanggaranfk = ".$keterangan->objectmataanggaranfk."
+            "))
+        )->first();
+
+        $sisa = 0;
+        foreach($spj as $row){
+            $sisa += (int)$row->totalbelanja;
+        }
+
+        
+        
               
         // $sisa_semua_tahap = DB::select(DB::raw("
         //     SELECT 
@@ -8568,7 +8599,7 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
             // 'data' => $data,
             // 'sisa' => $sisa,
             'keterangan' => $keterangan,
-            'sisa' => $sisa_semua_tahap[0],
+            'sisa' => $sisa + $panjar->totalpanjar,
             'message' => '@epic',
         );
 
