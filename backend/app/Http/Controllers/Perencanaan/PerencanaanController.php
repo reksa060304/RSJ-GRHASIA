@@ -8539,7 +8539,7 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
         // menghitung spj dari semua tahap
         $spj = DB::select(DB::raw("
             SELECT
-                sr.norec, sr.norealisasi, sr.totalbelanja
+                sr.norec, sr.norealisasi, sr.totalbelanja, SUM(rd.subtotal) as totaldetailspj
             FROM keteranganbelanja_t AS kb 
             JOIN realisasidetail_t AS rd ON rd.keteranganbelanjafk = kb.norec AND rd.statusenabled = TRUE AND rd.kdprofile = ".$idProfile."
             JOIN strukrealisasi_t as sr ON sr.norec = rd.strukrealisasifk AND sr.statusenabled = TRUE AND sr.kdprofile = ".$idProfile."
@@ -8572,7 +8572,7 @@ order by  split_part(kode, '.', 1)asc, split_part(kode, '.', 2)asc,  split_part(
 
         $sisa = 0;
         foreach($spj as $row){
-            $sisa += (int)$row->totalbelanja;
+            $sisa += (int)$row->totaldetailspj;
         }
 
         

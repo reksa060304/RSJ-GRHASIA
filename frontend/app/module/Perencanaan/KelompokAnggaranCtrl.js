@@ -565,7 +565,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 }
             });
 
-            $scope.handleSumberDana = function () {
+            $scope.totalsisaAnggaran = function () {
                 // $scope.dataVOloaded = true
 
                 if($scope.item.subSubKegiatanSPJ == undefined || $scope.item.subSubKegiatanSPJ == null){
@@ -578,11 +578,12 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     return
                 }
 
-                if($scope.item.sumberDanaSPJ == undefined || $scope.item.sumberDanaSPJ == null){
-                    toastr.error('Pilih rekening terlebih dahulu')
-                    return
-                }
+                // if($scope.item.sumberDanaSPJ == undefined || $scope.item.sumberDanaSPJ == null){
+                //     toastr.error('Pilih rekening terlebih dahulu')
+                //     return
+                // }
 
+                
                 medifirstService.get("perencanaan/get-total-sisa-anggaran" 
                     + "?kegiatan=" + $scope.item.subSubKegiatanSPJ.id
                     + "&mataanggaran=" + $scope.item.mataAnggaranSPJ.id
