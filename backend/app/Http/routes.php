@@ -829,6 +829,10 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
           Route::get('emr/get-datacombo-pekerjaan', 'EMR\EMRController@getDataPekerjaan');
           Route::get('emr/get-riwayat-perawatan-pasien', 'EMR\EMRController@getDaftarRiwayatRegistrasiPHR');
           Route::get('emr/get-emr-transaksi-detail-img', 'EMR\EMRController@getEMRTransaksiImage');
+          Route::post('emr/post-cppt-new', 'EMR\EMRController@saveCPPTNew');
+          Route::get('emr/get-cppt-new', 'EMR\EMRController@getCPPTNew2');
+          Route::get('emr/get-cppt-new-nocppt', 'EMR\EMRController@getCPPTNewNocppt');
+          Route::post('emr/update-cppt-new', 'EMR\EMRController@reviewCPPT');
 
            Route::post('emr/get-status-dipake', 'EMR\EMRController@getStatusDipake');
           Route::post('emr/save-status-dipake', 'EMR\EMRController@saveStatusDipake');

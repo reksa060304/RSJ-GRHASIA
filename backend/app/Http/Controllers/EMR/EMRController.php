@@ -28,6 +28,7 @@ use App\Transaksi\AntrianPasienDiperiksa;
 use App\Transaksi\AntrianPasienRegistrasi;
 use App\Transaksi\CPPT;
 use App\Transaksi\CPPTDetail;
+use App\Transaksi\RiwayatCPPT;
 use App\Transaksi\DetailDiagnosaPasien;
 use App\Transaksi\DetailDiagnosaTindakanPasien;
 use App\Transaksi\DiagnosaPasien;
@@ -14072,6 +14073,310 @@ class EMRController  extends ApiController
             'message' => 'Inhuman',
         );
         return $this->respond($result);
+    }
+
+    public function getCPPTNew2(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;      
+        $noreg = $request['noregistrasifk'];
+      
+        $objectjenispegawaifk = '';
+        $tglawal = '';
+        $tglakhir = '';
+        if(isset($request['asuhanId']) && $request['asuhanId']!="" && $request['asuhanId']!="undefined"){
+            $objectjenispegawaifk ="and cp.objectjenispegawaifk = '".$request['asuhanId']."'";
+        }
+        if(isset($request['tglAwal']) && $request['tglAwal']!="" && $request['tglAwal']!="undefined"){
+            $tglawal ="and cp.tglasesmen >= '".$request['tglAwal']."'";
+         
+        }
+        if(isset($request['tglAkhir']) && $request['tglAkhir']!="" && $request['tglAkhir']!="undefined"){
+            $tglakhir ="and cp.tglasesmen <= '".$request['tglAkhir']."'";         
+        }       
+        $data = collect(DB::select(" select * from (SELECT
+            ROW_NUMBER() OVER (PARTITION BY cp.nocppt ORDER BY cp.tglinput desc ) row_num,cp.tglinput,	cp.norec,	pd.noregistrasi,
+            pd.tglregistrasi,	ps.nocm,ps.namapasien,cp.noregistrasifk,cp.antrianpasiendiperiksafk,ru.namaruangan,
+            pg.namalengkap,cp.nocppt,cp.s,cp.o,	cp.a,	cp.p,	cp.intruksi,cp.riview,cp.ruanganfk,
+            cp.pegawaifk,	cp.objectjenisdokumenfk,pg2.namalengkap AS namariview,pg3.namalengkap AS penerima,	cp.tglasesmen,
+            cp.objectjenispegawaifk,jp.jenispegawai,
+            CASE WHEN cp.objectjenisdokumenfk = '7' THEN 'Nilai Kritis' WHEN cp.objectjenisdokumenfk = '2' THEN'SBAR' ELSE'CPPT' END AS jenisdokumen,cp.status 
+            ,cp.perawatpenunjang,cp.dpjpkonsulan,pg4.namalengkap AS namapp,pg5.namalengkap AS namadpjpkonsulan
+        FROM
+            cppt_t AS cp
+            INNER JOIN pasiendaftar_t AS pd ON pd.norec = cp.noregistrasifk
+            INNER JOIN pasien_m AS ps ON ps.id = pd.nocmfk
+            LEFT JOIN ruangan_m AS ru ON ru.id = cp.ruanganfk
+            LEFT JOIN pegawai_m AS pg ON pg.id = cp.pegawaifk
+            LEFT JOIN pegawai_m AS pg2 ON pg2.id = cp.pegawaireviewfk
+            LEFT JOIN pegawai_m AS pg3 ON pg3.id = cp.pegawaiterimafk
+            LEFT JOIN antrianpasiendiperiksa_t AS apd ON apd.norec = cp.antrianpasiendiperiksafk
+            LEFT JOIN jenispegawai_m AS jp ON jp.id = cp.objectjenispegawaifk 
+            LEFT JOIN pegawai_m AS pg4 ON pg4.id = cp.perawatpenunjang
+            LEFT JOIN pegawai_m AS pg5 ON pg5.id = cp.dpjpkonsulan
+        WHERE
+            cp.kdprofile = $idProfile
+            AND cp.noregistrasifk = '$noreg'
+            AND cp.statusenabled = true
+            $objectjenispegawaifk $tglawal $tglakhir
+            
+        ORDER BY
+            cp.tglasesmen DESC) as x where row_num = '1'
+
+        "));
+       
+    
+        $result = array(
+            'data' => $data,
+            'message' => 'Inhuman',
+        );
+        return $this->respond($result);
+    }
+
+    public function getCPPTNewNocppt(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;      
+        $nocppt = $request['nocppt'];
+         
+        $data = collect(DB::select(" SELECT	cp.norec,	pd.noregistrasi,cp.tglinput,
+            pd.tglregistrasi,	ps.nocm,ps.namapasien,cp.noregistrasifk,cp.antrianpasiendiperiksafk,ru.namaruangan,
+            pg.namalengkap,cp.nocppt,cp.s,cp.o,	cp.a,	cp.p,	cp.intruksi,cp.riview,cp.ruanganfk,
+            cp.pegawaifk,	cp.objectjenisdokumenfk,pg2.namalengkap AS namariview,pg3.namalengkap AS penerima,	cp.tglasesmen,
+            cp.objectjenispegawaifk,jp.jenispegawai,
+            CASE WHEN cp.objectjenisdokumenfk = '7' THEN 'Nilai Kritis' WHEN cp.objectjenisdokumenfk = '2' THEN'SBAR' ELSE'CPPT' END AS jenisdokumen,cp.status 
+        FROM
+            cppt_t AS cp
+            INNER JOIN pasiendaftar_t AS pd ON pd.norec = cp.noregistrasifk
+            INNER JOIN pasien_m AS ps ON ps.id = pd.nocmfk
+            LEFT JOIN ruangan_m AS ru ON ru.id = cp.ruanganfk
+            LEFT JOIN pegawai_m AS pg ON pg.id = cp.pegawaifk
+            LEFT JOIN pegawai_m AS pg2 ON pg2.id = cp.pegawaireviewfk
+            LEFT JOIN pegawai_m AS pg3 ON pg3.id = cp.pegawaiterimafk
+            LEFT JOIN antrianpasiendiperiksa_t AS apd ON apd.norec = cp.antrianpasiendiperiksafk
+            LEFT JOIN jenispegawai_m AS jp ON jp.id = cp.objectjenispegawaifk 
+        WHERE
+            cp.kdprofile = $idProfile
+            AND cp.nocppt = '$nocppt'
+            AND cp.statusenabled = true
+        ORDER BY
+            cp.tglinput desc
+        "));
+       
+    
+        $result = array(
+            'data' => $data,
+            'message' => 'Inhuman',
+        );
+        return $this->respond($result);
+    }
+
+    public function saveCPPTNew(Request $request)
+    {
+        $kdProfile = (int) $this->getDataKdProfile($request);
+        DB::beginTransaction();
+        try {
+            $tglAyeuna = date('Y-m-d H:i:s');
+            $dataPD = PasienDaftar::where('norec', $request['norec_pd'])->where('kdprofile', $kdProfile)->first();            
+            $dataAPDKelas = AntrianPasienDiperiksa::where('norec', $request['norec_apd'])->where('kdprofile', $kdProfile)->first();
+            // dd($dataAPDKelas);
+            if ($request['status'] == "Baru") {
+                $dataSO = new CPPT();
+                $dataSO->norec = $dataSO->generateNewId();
+                $dataSO->kdprofile = $kdProfile;
+                $dataSO->statusenabled = true;
+                $dataSO->isverifikasi = false;                
+                $noCPPT = $this->generateCode(new CPPT, 'nocppt', 11, 'C' . $this->getDateTime()->format('ymd'), $kdProfile);
+                $dataSO->nocppt = $noCPPT;
+                $dataSO->tglinput = $tglAyeuna ;
+                $dataSO->pasienfk = $dataPD->nocmfk;            
+                $dataSO->noregistrasifk = $dataPD->norec;  
+                $dataSO->s = $request['subject'];          
+                $dataSO->o = $request['object']; 
+                $dataSO->a = $request['assesment'];
+                $dataSO->p = $request['plan']; 
+                $dataSO->intruksi = $request['intruksi']; 
+                $dataSO->tglasesmen = $request['tglinput']; 
+                $dataSO->pegawaifk = $request['pegawaipemberiasuhan']; 
+                $dataSO ->ruanganfk = $dataAPDKelas->objectruanganfk; 
+                $dataSO->antrianpasiendiperiksafk = $request['norec_apd'];
+                $dataSO->objectjenispegawaifk = $request['pemberiasuhan'];
+                $dataSO->objectjenisdokumenfk = $request['objectjenisdokumenfk'];
+                $dataSO->status =  $request['status'];
+                $dataSO->dpjpkonsulan = $request['dpjp'];
+                $dataSO->perawatpenunjang =  $request['PerawatPenunjang'];
+                if (isset($request['tranfusi']) && $request['tranfusi'] != null) {
+                    $dataSO->tranfusi = $request['tranfusi'];
+                }
+                $dataSO->save();
+                $dataRCnorec = $dataSO->norec;
+                
+            } else {
+                $dataSO = new CPPT();
+                $dataSO->norec = $dataSO->generateNewId();
+                $dataSO->kdprofile = $kdProfile;
+                $dataSO->statusenabled = true;
+                $dataSO->isverifikasi = false;
+                $dataSO->nocppt = $request['nocppt'];
+                $dataSO->tglinput = $tglAyeuna ;
+                $dataSO->pasienfk = $dataPD->nocmfk;            
+                $dataSO->noregistrasifk = $dataPD->norec;  
+                $dataSO->s = $request['subject'];          
+                $dataSO->o = $request['object']; 
+                $dataSO->a = $request['assesment'];
+                $dataSO->p = $request['plan']; 
+                $dataSO->intruksi = $request['intruksi']; 
+                $dataSO->tglasesmen = $request['tglinput']; 
+                $dataSO->pegawaifk = $request['pegawaipemberiasuhan']; 
+                $dataSO ->ruanganfk = $dataAPDKelas->objectruanganfk; 
+                $dataSO->antrianpasiendiperiksafk = $request['norec_apd'];
+                $dataSO->objectjenispegawaifk = $request['pemberiasuhan'];
+                $dataSO->objectjenisdokumenfk = $request['objectjenisdokumenfk'];
+                $dataSO->status =  $request['status'];
+                $dataSO->dpjpkonsulan = $request['dpjp'];
+                $dataSO->perawatpenunjang =  $request['PerawatPenunjang'];
+                if (isset($request['tranfusi']) && $request['tranfusi'] != null) {
+                    $dataSO->tranfusi = $request['tranfusi'];
+                }
+                $dataSO->save();
+                $dataRCnorec = $dataSO->norec;
+            }
+           
+            // dd($dataRCnorec);
+
+            if ($request['norec_riwayat']==''){                
+                $dataRC =new RiwayatCPPT;
+                $dataRC->norec = $dataRC->generateNewId();
+                $dataRC->kdprofile = (int)$kdProfile;
+                $dataRC->statusenabled = true;
+                $dataRC->objectcpptfk =  $dataSO->norec;
+                
+            }else{
+                $dataRC = RiwayatCPPT::where('norec', $request['norec_riwayat'])->where('kdprofile', $kdProfile)->first();
+        
+            }
+            $dataRC->save();
+
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+
+        if ($transStatus == 'true') {
+            $transMessage = 'Sukses';
+            DB::commit();
+            $result = array(
+                "status" => 200,
+                "message" => $transMessage,
+                "strukorder" => $dataSO,
+                "as" => 'inhuman',
+            );
+        } else {
+            $transMessage = "Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message" => $transMessage,
+                "as" => 'inhuman',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function reviewCPPT(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $idProfile = (int) $kdProfile;
+        $tglAyeuna = date('Y-m-d H:i:s');
+        $tglawal = $request['tglcppt'].' 00:00';
+        $tglakhir = $request['tglcppt'].' 23:59';
+     
+        DB::beginTransaction();
+        try {
+            if ( $request['jenis']== 'review') {
+                if ($request['jenisdokumenfk'] == 1){
+                   $dataSO = CPPT::where('kdprofile', $idProfile)
+                            ->where('tglasesmen', '>=', $tglawal)
+                            ->where('tglasesmen', '<=', $tglakhir)
+                            ->whereNull('tglreview')
+                            ->where('noregistrasifk', $request['norec_pd'])
+                            ->where('objectjenisdokumenfk','=', 1)
+                  ->update([                
+                          'riview' => $request['review'],
+                          'pegawaireviewfk' => $request['pegawaireviewfk'],
+                          'isverifikasi' => true,
+                          'tglreview' => $request['tglreview' ],
+                          ]); 
+                }else{
+                    $dataSO = CPPT::where('kdprofile', $idProfile)
+                            ->whereNull('tglreview')
+                            ->where('norec', $request['norec_cp'])
+                  ->update([                
+                          'riview' => $request['review'],
+                          'pegawaireviewfk' => $request['pegawaireviewfk'],
+                          'isverifikasi' => true,
+                          'tglreview' => $request['tglreview'],
+                          ]);
+                }
+            }elseif($request['jenis']== 'instruksi'){
+                $dataSO = CPPT::where('kdprofile', $idProfile)
+                            ->whereNull('tglinstruksi')
+                            ->where('norec', $request['norec_cp'])
+                  ->update([                
+                          'intruksi' => $request['instruksi'],
+                          'pegawaiinstruksifk' => $request['pegawaiinstruksifk'],
+                          'tglinstruksi' => $request['tglinstruksi' ],
+                          ]);
+            }elseif($request['jenis']== 'hapus'){
+                $dataSO = CPPT::where('kdprofile', $idProfile)
+                            ->where('norec', $request['norec_cp'])
+                    ->update([                
+                            'statusenabled' =>'f',
+                            'alasanhapus' => $request['alasanhapus'],
+                            'pelapor' => $request['pelapor'],
+                            'tglhapus' => $request['tglhapus'],
+                            'userhapus' => $request['user'],
+                            ]);
+            }elseif($request['jenis']== 'RPenerima'){
+                $dataSO = CPPT::where('kdprofile', $idProfile)
+                            ->where('norec', $request['norec_cp'])
+                    ->update([                
+                            'pegawaiterimafk' => null,
+                            'tglterima' => null,
+                            'petugasReset' => $request['pegawaifk'],
+                            'tglreset' => $request['tglreset']
+                            ]);
+            }else{
+                    $dataSO = CPPT::where('norec', $request['norec_cp'])->where('kdprofile', $idProfile)
+                    ->update([                
+                            'tglterima' => $tglAyeuna,
+                            'pegawaiterimafk' => $request['pegawaifk'],
+                            
+                            ]); 
+            };
+            $transStatus = 'true';
+        } catch (\Exception $e) {
+            $transStatus = 'false';
+        }
+        if ($transStatus == 'true') {
+            $transMessage = 'Sukses';
+            DB::commit();
+            $result = array(
+                "status" => 200,
+                "message" => $transMessage,
+
+                "as" => 'er@epic',
+            );
+        } else {
+            $transMessage = "Simpan Gagal";
+            DB::rollBack();
+            $result = array(
+                "status" => 400,
+                "message" => $transMessage,
+                "as" => 'er@epic',
+            );
+        }
+        return $this->setStatusCode($result['status'])->respond($result, $transMessage);
     }
     
     

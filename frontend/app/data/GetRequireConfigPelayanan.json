@@ -3732,6 +3732,10 @@
         {
             "nameDep": "LaporanRekapKunjunganRSCtrl",
             "urlDep": "module/Registrasi/Laporan/LaporanRekapKunjunganRSCtrl"
+        },
+        {
+          "nameDep": "CatatanKlinikNewCtrl",
+          "urlDep": "module/EMR/CatatanKlinikNewCtrl"
         }
     ]
 }

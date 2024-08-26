@@ -23575,4 +23575,150 @@ public function suratBuktiPengembalian(Request $request)
         ]);
 
     }
+
+    public function cetakCPPTNewPerTgl(Request $request)
+    {
+        $noregistrasi = $request['noregistrasi'];
+        $tglAwal = $request['tglAwal'];
+        $tglAkhir = $request['tglAkhir'];
+        $kdProfile = (int) $request['kdprofile'];
+
+        $profile = \DB::select(DB::raw("
+                select * from profile_m where id = $kdProfile limit 1
+            "));
+
+        $data = DB::select(DB::raw(
+            "
+                select * from (SELECT
+                ROW_NUMBER() OVER (PARTITION BY cp.nocppt ORDER BY cp.tglinput desc ) row_num,
+                cp.norec,
+                pd.noregistrasi,
+                pd.tglregistrasi,
+                ps.nocm,
+                ps.namapasien,
+                cp.noregistrasifk,
+                cp.antrianpasiendiperiksafk,
+                ru.namaruangan,
+                pg.namalengkap,
+                cp.nocppt,
+                cp.s,
+                cp.o,
+                cp.a,
+                cp.p,
+                cp.intruksi,
+                cp.riview,cp.tglreview,
+                pg2.namalengkap AS namareview,
+                cp.tglasesmen,
+                cp.objectjenisdokumenfk,
+                cp.objectjenispegawaifk,
+                cp.s ||cp.o||cp.a||cp.a as soap ,
+                jp.jenispegawai,
+                to_char(ps.tgllahir, 'DD-MM-YYYY') as tgllahir,
+                jk.jeniskelamin,
+                ru2.namaruangan as ruanganakhir,pg3.namalengkap as namaterima,
+                pg4.namalengkap as dpjpkonsulan, pg5.namalengkap as PPenunjang,
+                ru3.namaruangan as ruangcppt
+            FROM
+                cppt_t AS cp
+                INNER JOIN pasiendaftar_t AS pd ON pd.norec = cp.noregistrasifk
+                INNER JOIN pasien_m AS ps ON ps.id = pd.nocmfk
+                LEFT JOIN ruangan_m AS ru ON ru.id = cp.ruanganfk
+                LEFT JOIN pegawai_m AS pg ON pg.id = cp.pegawaifk
+                LEFT JOIN pegawai_m AS pg2 ON pg2.id = cp.pegawaireviewfk
+                LEFT JOIN pegawai_m AS pg3 ON pg3.id = cp.pegawaiterimafk
+                LEFT JOIN antrianpasiendiperiksa_t AS apd ON apd.norec = cp.antrianpasiendiperiksafk
+                LEFT JOIN jenispegawai_m AS jp ON jp.id = cp.objectjenispegawaifk 
+                inner join jeniskelamin_m as jk on jk.id = ps.objectjeniskelaminfk
+                LEFT JOIN ruangan_m AS ru2 ON ru2.id = pd.objectruanganlastfk
+                LEFT JOIN pegawai_m AS pg4 ON pg4.id = cp.dpjpkonsulan
+                LEFT JOIN pegawai_m AS pg5 ON pg5.id = cp.perawatpenunjang
+                LEFT JOIN ruangan_m AS ru3 ON ru3.id = apd.objectruanganfk
+            WHERE                
+                 cp.statusenabled = true 
+                AND cp.noregistrasifk = '$noregistrasi' and cp.tglasesmen between  '" . $request['tglAwal'] . "' and '" . $request['tglAkhir'] . "'
+            ORDER BY
+                cp.tglasesmen asc) as x where row_num = '1'
+                
+                "
+        ));
+
+        $pageWidth = 500;
+
+        $res['d'] = $data;
+            //    dd( $res['d'] );
+
+        return view('report.cppt-ranap-new', compact('res', 'profile', 'pageWidth'));
+    }
+
+    public function cetakCPPTNew(Request $request)
+    {
+        $q = $request['q'];
+        $noregistrasi = ($q == 'q') ? $request['norec'] : $request['noregistrasi'];
+        $kdProfile = (int) $request['kdprofile'];
+
+        $profile = \DB::select(DB::raw("
+                select * from profile_m where id =$kdProfile limit 1
+            "));
+
+        $data = DB::select(DB::raw(
+            "
+                select * from (SELECT
+                ROW_NUMBER() OVER (PARTITION BY cp.nocppt ORDER BY cp.tglinput desc ) row_num,
+                cp.norec,
+                pd.noregistrasi,
+                pd.tglregistrasi,
+                ps.nocm,
+                ps.namapasien,
+                cp.noregistrasifk,
+                cp.antrianpasiendiperiksafk,
+                ru.namaruangan,
+                pg.namalengkap,
+                cp.nocppt,
+                cp.s,
+                cp.o,
+                cp.a,
+                cp.p,
+                cp.intruksi,
+                cp.riview,cp.tglreview,
+                pg2.namalengkap AS namareview,
+                cp.tglasesmen,
+                cp.objectjenisdokumenfk,
+                cp.objectjenispegawaifk,
+                cp.s ||cp.o||cp.a|| cp.p as soap ,
+                jp.jenispegawai,
+                to_char(ps.tgllahir, 'DD-MM-YYYY') as tgllahir,
+                jk.jeniskelamin,
+                ru2.namaruangan as ruanganakhir,pg3.namalengkap as namaterima,
+                pg4.namalengkap as dpjpkonsulan, pg5.namalengkap as PPenunjang,
+                ru3.namaruangan as ruangcppt
+            FROM
+                cppt_t AS cp
+                INNER JOIN pasiendaftar_t AS pd ON pd.norec = cp.noregistrasifk
+                INNER JOIN pasien_m AS ps ON ps.id = pd.nocmfk
+                LEFT JOIN ruangan_m AS ru ON ru.id = cp.ruanganfk
+                LEFT JOIN pegawai_m AS pg ON pg.id = cp.pegawaifk
+                LEFT JOIN pegawai_m AS pg2 ON pg2.id = cp.pegawaireviewfk
+                LEFT JOIN pegawai_m AS pg3 ON pg3.id = cp.pegawaiterimafk
+                LEFT JOIN antrianpasiendiperiksa_t AS apd ON apd.norec = cp.antrianpasiendiperiksafk
+                LEFT JOIN jenispegawai_m AS jp ON jp.id = cp.objectjenispegawaifk 
+                inner join jeniskelamin_m as jk on jk.id = ps.objectjeniskelaminfk
+                LEFT JOIN ruangan_m AS ru2 ON ru2.id = pd.objectruanganlastfk
+                LEFT JOIN pegawai_m AS pg4 ON pg4.id = cp.dpjpkonsulan
+                LEFT JOIN pegawai_m AS pg5 ON pg5.id = cp.perawatpenunjang
+                LEFT JOIN ruangan_m AS ru3 ON ru3.id = apd.objectruanganfk
+            WHERE                
+                 cp.statusenabled = true 
+                AND cp.noregistrasifk = '$noregistrasi'
+            ORDER BY
+                cp.tglasesmen asc) as x where row_num = '1'
+                     "
+        ));
+
+        $pageWidth = 500;
+
+        $res['d'] = $data;
+        // dd(json_encode($res['d']));
+        return view('report.cppt-ranap-new', compact('res', 'profile', 'pageWidth'));
+    }
+
 }
