@@ -684,7 +684,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 //     toastr.error("Data Sudah Diclosing, Hubungi Tatarekening!");
                 //     return;
                 // }
-                if ($scope.item.jumlah == NaN || $scope.item.jumlah == undefined || $scope.item.jumlah == '') {
+                if ($scope.item.jumlah == NaN || $scope.item.jumlah == undefined || $scope.item.jumlah == '' || $scope.item.jumlah == '0') {
                     alert("Jumlah harus di isi!")
                     return;
                 }
