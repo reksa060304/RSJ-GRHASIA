@@ -274,6 +274,10 @@ class EMRController  extends ApiController
             ->where('ru.statusenabled', true)
             ->orderBy('ru.namaruangan')
             ->get();
+        $JenisPegawai  = \DB::table('jenispegawai_m as jp')
+            ->select('jp.id', 'jp.jenispegawai')
+            ->where('jp.statusenabled', true)
+            ->get();
         $result = array(
             'kebangsaan' => $kebangsaan,
             'agama' => $agama,
@@ -286,6 +290,7 @@ class EMRController  extends ApiController
             'pegawailogin' => $dataPegawaiLogin,
             'jeniskelamin' => $JenisKelamin,
             'ruangkonsulnonpenunjang' => $ruangKonsulNonPenunjang,
+            'jenispegawai' => $JenisPegawai,
             'message' => 'inhuman',
         );
 
