@@ -207,14 +207,19 @@
             <tr>
                 <td align="center">Dokter yang memeriksa</td>
             </tr>
+            @if ($tte == 'true')
+                <tr>
+                    <td style="padding: 0 2em;">
+                        <p style="text-align: center; color:grey;font-family: 'Times New Roman', Times, serif;font-size: 16px;">
+                            Ditandatangani Secara<br>Elektronik
+                        </p>
+                    </td>
+                </tr>
+            @else
             <tr>
-                <td style="padding: 0 2em;">
-                    <p style="text-align: center; color:grey;font-family: 'Times New Roman', Times, serif;font-size: 16px;">
-                        Ditandatangani Secara 
-                        <br>Elektronik
-                    </p>
-                </td>
+                <td style="padding: 3em 0;"></td>
             </tr>
+            @endif
             <tr>
                 <td align="center">{{ isset($item[3003976]) ? $item[3003976] : '' }}</td>
             </tr>
@@ -222,22 +227,24 @@
     </section>
 
     {{-- footer bsre --}}
-    <footer class="footer3">
-        <table>
-            <tr>
-                <td style="width: 15%; text-align:center;">
-                    <img src="img/bsre.png" alt="Logo" style="width: 50%; object-fit:contain; object-position:center; margin-bottom:10px;">
-                </td>
-                <td style="width: 15%; text-align: center;">
-                    <p>$</p>
-                </td>
-                <td style="width: 70%;">
-                    <p><i>Dokumen ini ditandatangani secara elektronik menggunakan sertifikat elektronik
-                        yang diterbitkan oleh Balai Sertifikasi Elektronik (BSrE) Badan Siber dan Sandi Negara</i></p>
-                </td>
-            </tr>
-        </table>
-    </footer>
+    @if ($tte == 'true')
+        <footer class="footer3">
+            <table>
+                <tr>
+                    <td style="width: 15%; text-align:center;">
+                        <img src="img/bsre.png" alt="Logo" style="width: 50%; object-fit:contain; object-position:center; margin-bottom:10px;">
+                    </td>
+                    <td style="width: 15%; text-align: center;">
+                        <p>$</p>
+                    </td>
+                    <td style="width: 70%;">
+                        <p><i>Dokumen ini ditandatangani secara elektronik menggunakan sertifikat elektronik
+                            yang diterbitkan oleh Balai Sertifikasi Elektronik (BSrE) Badan Siber dan Sandi Negara</i></p>
+                    </td>
+                </tr>
+            </table>
+        </footer>
+    @endif
 </body>
 </html>
 

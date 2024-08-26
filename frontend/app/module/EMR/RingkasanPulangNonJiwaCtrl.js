@@ -496,6 +496,11 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                 }
                 medifirstService.post('emr/save-emr-dinamis', jsonSave).then(function (e) {
 
+                    // agar bisa langsung cetak dan tte
+                    if(norecEMR == '-' || norecEMR == null || norecEMR == ''){
+                        norecEMR = e.data.norecEMR
+                    }
+
                     // $rootScope.loadRiwayat()
                     medifirstService.postLogging('EMR', 'norec emrpasien_t', e.data.data.norec,  
                     'RingkasanPulangNonJiwaCtrl' + ' dengan No EMR - ' +e.data.data.noemr +  ' pada No Registrasi ' 
@@ -515,7 +520,7 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     + $scope.cc.nocm + '&norec_apd='+  $scope.cc.norec +'&emr=' + norecEMR
                     + '&emrfk='+  $scope.cc.emrfk
                     + '&kdprofile='+local.id 
-                    + '&nama='+nama,  '_blank');
+                    + '&nama='+nama);
                    
             } 
 

@@ -1033,7 +1033,9 @@ define(['initialize','Configuration'], function (initialize, configuration) {
                 var local = JSON.parse(localStorage.getItem('profile'))
                 var nama = medifirstService.getPegawaiLogin().namaLengkap
                 $scope.isRouteLoading = true
-                medifirstService.get('report/get-cetak-suratketerangannapza?noemr=' + nomorEMR +
+                medifirstService.get('report/get-cetak-suratketerangannapza' + 
+                    '?noemr=' + nomorEMR +
+                    'nocm=' + $scope.cc.nocm +
                     '&norec_apd=' + $scope.cc.norec +
                     '&emr=' + norecEMR +
                     '&emrfk=' + $scope.cc.emrfk +

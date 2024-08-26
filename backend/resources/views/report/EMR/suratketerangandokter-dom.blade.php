@@ -264,16 +264,26 @@
                                 <b>Dokter yang memeriksa</b>
                             </td>
                         </tr>
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td height="100px">
-                                <p style="text-align: center; color:grey;font-family: 'Times New Roman', Times, serif;font-size: 16px;">
-                                    Ditandatangani Secara 
-                                    <br>Elektronik
-                                </p>
-                            </td>
-                        </tr>
+                        @if ($tte == 'true')
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td>
+                                    <p style="text-align: center; color:grey;font-family: 'Times New Roman', Times, serif;font-size: 16px;">
+                                        Ditandatangani Secara 
+                                        <br>Elektronik
+                                    </p>
+                                </td>
+                            </tr>
+                        @else
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td style="padding: 2em 0;">
+                                    
+                                </td>
+                            </tr>
+                        @endif
                         <tr>
                             <td style="text-align: center"></td>
                             <td style="text-align: center">&nbsp;</td>
@@ -291,6 +301,8 @@
         style="font-size:10px;color: rgb(173, 173, 173); position: absolute; bottom: 10%; left: 3%; width: 50%; text-align: center;">
             <i>Dokumen ini ditandatangani secara elektronik menggunakan sertifikat elektronik
                 yang diterbitkan oleh Balai Sertifikasi Elektronik (BSrE) Badan Siber dan Sandi Negara</i></p> --}}
+        
+    @if ($tte == 'true')
         <div class="footer3">
             <table border="0">
                 <tr>
@@ -307,6 +319,7 @@
                 </tr>
             </table>
         </div>
+    @endif
     </body>
 </html>
 

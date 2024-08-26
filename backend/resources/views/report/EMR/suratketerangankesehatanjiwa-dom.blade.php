@@ -190,36 +190,47 @@
             <tr>
                 <td>Dokter yang memeriksa</td>
             </tr>
+            @if ($tte == 'true')
+                <tr>
+                    <td>
+                        <p style="color:grey;font-family: 'Times New Roman', Times, serif;font-size: 16px;">
+                            Ditandatangani Secara 
+                            <br>Elektronik
+                        </p>
+                    </td>
+                </tr>
+            @else
             <tr>
-                <td>
-                    <p style="color:grey;font-family: 'Times New Roman', Times, serif;font-size: 16px;">
-                        Ditandatangani Secara 
-                        <br>Elektronik
-                    </p>
+                <td style="padding: 3em 0em;">
+                    
                 </td>
             </tr>
+            @endif
             <tr>
                 <td>{{ $item[3003956] ? $item[3003956] : '' }}</td>
             </tr>
         </table>
 
     </section>
-    <div class="footer3">
-        <table border="0">
-            <tr>
-                <td style="width: 15%; text-align:center;">
-                    <img src="img/bsre.png" alt="Logo" style="width: 50%; object-fit:contain; object-position:center; margin-bottom:10px;">
-                </td>
-                <td style="width: 15%; text-align: center;">
-                    <p>$</p>
-                </td>
-                <td style="width: 70%;">
-                    <p><i>Dokumen ini ditandatangani secara elektronik menggunakan sertifikat elektronik
-                        yang diterbitkan oleh Balai Sertifikasi Elektronik (BSrE) Badan Siber dan Sandi Negara</i></p>
-                </td>
-            </tr>
-        </table>
-    </div>
+
+    @if ($tte == 'true')
+        <div class="footer3">
+            <table border="0">
+                <tr>
+                    <td style="width: 15%; text-align:center;">
+                        <img src="img/bsre.png" alt="Logo" style="width: 50%; object-fit:contain; object-position:center; margin-bottom:10px;">
+                    </td>
+                    <td style="width: 15%; text-align: center;">
+                        <p>$</p>
+                    </td>
+                    <td style="width: 70%;">
+                        <p><i>Dokumen ini ditandatangani secara elektronik menggunakan sertifikat elektronik
+                            yang diterbitkan oleh Balai Sertifikasi Elektronik (BSrE) Badan Siber dan Sandi Negara</i></p>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    @endif
 </body>
 
 </html>

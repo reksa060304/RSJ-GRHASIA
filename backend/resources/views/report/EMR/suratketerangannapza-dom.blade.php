@@ -180,17 +180,17 @@
             <tr>
                 <td style="font-weight: bold; width: 25%;">Nama</td>
                 <td width="1%">:</td>
-                <td>{{ $item[1901301360] ? $item[1901301360] : null }}</td>
+                <td>{{ isset($item[1901301360]) ? $item[1901301360] : null }}</td>
             </tr>
             <tr>
                 <td style="font-weight: bold; width: 25%;">Hubungan</td>
                 <td width="1%">:</td>
-                <td>{{ $item[1901301370] ? $item[1901301370] : null }}</td>
+                <td>{{ isset($item[1901301370]) ? $item[1901301370] : null }}</td>
             </tr>
             <tr>
                 <td style="font-weight: bold; width: 25%;">Alamat</td>
                 <td width="1%">:</td>
-                <td>{{ $item[1901301380] ? $item[1901301380] : null }}</td>
+                <td>{{ isset($item[1901301380]) ? $item[1901301380] : null }}</td>
             </tr>
         </table>
 
@@ -228,16 +228,26 @@
                 <td>Yogyakarta, {{ $item[1901301440] ? $item[1901301440] : null }}</td>
             </tr>
             <tr>
-                <td>Dokter Penanggung Jawab</td>
+                <td>Dokter Penanggung Jawab {{ $tte }}</td>
             </tr>
-            <tr>
-                <td style="padding: 0 2em;">
-                    <p style="text-align: center; color:grey;font-family: 'Times New Roman', Times, serif;font-size: 16px;">
-                        Ditandatangani Secara 
-                        <br>Elektronik
-                    </p>
-                </td>
-            </tr>
+            @if ($tte == 'true')
+                <tr>
+                    <td style="padding: 0em 2em;">
+                        <p style="text-align: center; color:grey;font-family: 'Times New Roman', Times, serif;font-size: 16px;">
+                            Ditandatangani Secara 
+                            <br>Elektronik
+                        </p>
+                    </td>
+                </tr>
+            @else
+                <tr>
+                    <td style="padding: 4em 0em;">
+                        <p style="text-align: center; color:grey;font-family: 'Times New Roman', Times, serif;font-size: 16px;">
+                            
+                        </p>
+                    </td>
+                </tr>
+            @endif
             <tr>
                 @php
                     $string = $item[1901301450];
@@ -250,22 +260,24 @@
         </table>
 
         {{-- footer bsre --}}
-        <div class="footer3">
-            <table border="0">
-                <tr>
-                    <td style="width: 15%; text-align:center;">
-                        <img src="img/bsre.png" alt="Logo" style="width: 50%; object-fit:contain; object-position:center; margin-bottom:10px;">
-                    </td>
-                    <td style="width: 15%; text-align: center;">
-                        <p>$</p>
-                    </td>
-                    <td style="width: 70%;">
-                        <p><i>Dokumen ini ditandatangani secara elektronik menggunakan sertifikat elektronik
-                            yang diterbitkan oleh Balai Sertifikasi Elektronik (BSrE) Badan Siber dan Sandi Negara</i></p>
-                    </td>
-                </tr>
-            </table>
-        </div>
+        @if ($tte == 'true')
+            <div class="footer3">
+                <table border="0">
+                    <tr>
+                        <td style="width: 15%; text-align:center;">
+                            <img src="img/bsre.png" alt="Logo" style="width: 50%; object-fit:contain; object-position:center; margin-bottom:10px;">
+                        </td>
+                        <td style="width: 15%; text-align: center;">
+                            <p>$</p>
+                        </td>
+                        <td style="width: 70%;">
+                            <p><i>Dokumen ini ditandatangani secara elektronik menggunakan sertifikat elektronik
+                                yang diterbitkan oleh Balai Sertifikasi Elektronik (BSrE) Badan Siber dan Sandi Negara</i></p>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        @endif
     </section>
 </body>
 </html>

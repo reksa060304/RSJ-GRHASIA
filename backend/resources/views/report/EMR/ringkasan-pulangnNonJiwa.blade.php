@@ -142,6 +142,7 @@
 
 <body class="A4" style="font-family:Tahoma;height: auto" >
     <section id="page" style="font-family:Arial;padding:5mm 5mm 5mm 5mm;page-break-after: page;">
+        {{-- KOP --}}
         <table cellspacing="0" cellpadding="0" border="0" width="100%">
             <tbody>
                 <tr>
@@ -215,10 +216,12 @@
                     <th colspan="3" >DISCHARGE SUMMARY</th>
 
                 </tr>
-             
+            </tbody> 
               
 
         </table>
+
+        {{-- Isi --}}
         <table  cellspacing="0" cellpadding="0"  width="100%" style="padding: 3px; ">
             <tr >
                 <td style="font-size: 8pt;padding-left:5px;"> 
@@ -770,11 +773,14 @@
                     </font>
                 </td>
             </tr>
+        </table>
+
+        {{-- ttd --}}
+        <table style="width: 100%;">
             <tr>
                 <td></td>
                 <td></td>
-                <td></td>
-                <td width="35%" style="font-size: 8pt;padding-left:5px;" colspan="3">
+                <td style="font-size: 8pt;text-align: center;">
                     <font style="font-size: 9px; font-weight: 400;">
                         Yogyakarta, @foreach ($res['d'] as $item)
                         @if ($item->emrdfk == 30008029 && !empty($item->value))
@@ -786,31 +792,43 @@
                 </td>
             </tr>
             <tr>
-                <td style="font-size: 8pt;padding-left:5px;text-align: center;">
+                <td style="font-size: 8pt;text-align: center;">
                     <font style="font-size: 9px; font-weight: 400;">
                         Penerima Informasi
                     </font>
                 </td>
-                <td style="font-size: 8pt;padding-left:5px;text-align: center;">
+                <td style="font-size: 8pt;text-align: center;">
                     <font style="font-size: 9px; font-weight: 400;">
                         Pemberi Informasi
                     </font>
                 </td>
-                <td></td>
-                <td width="35%"  style="font-size: 8pt;padding-left:5px;" colspan="3">
+                <td style="font-size: 8pt;text-align: center;">
                     <font style="font-size: 9px; font-weight: 400;">
                         Dokter Penanggung Jawab Pasien
                     </font>
                 </td>
             </tr>
+            @if ($tte == 'true')
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td style="text-align:center;">
+                        <p style="text-align: center; color:grey;">
+                            Ditandatangani Secara<br>Elektronik
+                        </p>
+                    </td>
+                </tr>
+            @else
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td style="text-align:center; padding: 2em 0em;">
+                        
+                    </td>
+                </tr>
+            @endif
             <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td height="60px"> </td>
-            </tr>
-            <tr>
-                <td style="font-size: 8pt;padding-left:5px;text-align: center;">
+                <td style="font-size: 8pt;text-align: center;">
                     <font style="font-size: 9px; font-weight: 400;">
                         (   @foreach ($res['d'] as $item)
                                     @if ($item->emrdfk == 30008030 && !empty($item->value))
@@ -822,7 +840,7 @@
                                 )
                     </font>
                 </td>
-                <td style="font-size: 8pt;padding-left:5px;text-align: center;">
+                <td style="font-size: 8pt;text-align: center;">
                     <font style="font-size: 9px; font-weight: 400;">
                         (  @foreach ($res['d'] as $item)
                                     @if ($item->emrdfk == 30008031 && !empty($item->value))
@@ -834,8 +852,7 @@
                                 )
                     </font>
                 </td>
-                <td></td>
-                <td width="35%"  style="font-size: 8pt;padding-left:10px;" colspan="3">
+                <td style="font-size: 8pt;text-align: center;">
                     <font style="font-size: 9px; font-weight: 400;">
                         ( @foreach ($res['d'] as $item)
                                     @if ($item->emrdfk == 30008032 && !empty($item->value))
@@ -851,22 +868,24 @@
         </table>
     </section>
     
-    <div id="footer" class="footer3">
-        <table border="0">
-            <tr>
-                <td style="width: 15%; text-align:center;">
-                    <img src="img/bsre.png" alt="Logo" style="width: 50%; object-fit:contain; object-position:center; margin-bottom:10px;">
-                </td>
-                <td style="width: 15%; text-align: center;">
-                    <p>$</p>
-                </td>
-                <td style="width: 70%;">
-                    <p><i>Dokumen ini ditandatangani secara elektronik menggunakan sertifikat elektronik
-                        yang diterbitkan oleh Balai Sertifikasi Elektronik (BSrE) Badan Siber dan Sandi Negara</i></p>
-                </td>
-            </tr>
-        </table>
-    </div>
+    @if ($tte == 'true')
+        <div id="footer" class="footer3">
+            <table border="0">
+                <tr>
+                    <td style="width: 15%; text-align:center;">
+                        <img src="img/bsre.png" alt="Logo" style="width: 50%; object-fit:contain; object-position:center; margin-bottom:10px;">
+                    </td>
+                    <td style="width: 15%; text-align: center;">
+                        <p>$</p>
+                    </td>
+                    <td style="width: 70%;">
+                        <p><i>Dokumen ini ditandatangani secara elektronik menggunakan sertifikat elektronik
+                            yang diterbitkan oleh Balai Sertifikasi Elektronik (BSrE) Badan Siber dan Sandi Negara</i></p>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    @endif
 </body>
 
 </html>

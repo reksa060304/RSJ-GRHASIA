@@ -217,16 +217,26 @@
                                 <td></td>
                                 <td align="center" style="font-size: 13px">Dokter yang memeriksa</td>
                             </tr>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td height="100px">
-                                    <p style="text-align: center; color:grey;font-family: 'Times New Roman', Times, serif;font-size: 16px;">
-                                        Ditandatangani Secara 
-                                        <br>Elektronik
-                                    </p>    
-                                </td>
-                            </tr>
+
+                            @if ($tte == 'true')
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td style="padding: 2em 0;">
+                                        <p style="text-align: center; color:grey;font-family: 'Times New Roman', Times, serif;font-size: 16px;">
+                                            Ditandatangani Secara 
+                                            <br>Elektronik
+                                        </p>    
+                                    </td>
+                                </tr>
+                            @else
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td style="padding: 2em 0;"></td>
+                                </tr>
+                            @endif
+
                             <!-- <tr>
                                 <td></td>
                                 <td></td>
@@ -277,22 +287,24 @@
             style="font-size:10px;color: rgb(173, 173, 173); position: absolute; bottom: 30%; left: 3%; width: 50%; text-align: center;">
             <i>Dokumen ini ditandatangani secara elektronik menggunakan sertifikat elektronik
                 yang diterbitkan oleh Balai Sertifikasi Elektronik (BSrE) Badan Siber dan Sandi Negara</i></p> --}}
-                <div class="footer3">
-                    <table border="0">
-                        <tr>
-                            <td style="width: 15%; text-align:center;">
-                                <img src="img/bsre.png" alt="Logo" style="width: 50%; object-fit:contain; object-position:center; margin-bottom:10px;">
-                            </td>
-                            <td style="width: 15%; text-align: center;">
-                                <p>$</p>
-                            </td>
-                            <td style="width: 70%;">
-                                <p><i>Dokumen ini ditandatangani secara elektronik menggunakan sertifikat elektronik
-                                    yang diterbitkan oleh Balai Sertifikasi Elektronik (BSrE) Badan Siber dan Sandi Negara</i></p>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
+    @if ($tte == 'true')
+        <div class="footer3">
+            <table border="0">
+                <tr>
+                    <td style="width: 15%; text-align:center;">
+                        <img src="img/bsre.png" alt="Logo" style="width: 50%; object-fit:contain; object-position:center; margin-bottom:10px;">
+                    </td>
+                    <td style="width: 15%; text-align: center;">
+                        <p>$</p>
+                    </td>
+                    <td style="width: 70%;">
+                        <p><i>Dokumen ini ditandatangani secara elektronik menggunakan sertifikat elektronik
+                            yang diterbitkan oleh Balai Sertifikasi Elektronik (BSrE) Badan Siber dan Sandi Negara</i></p>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    @endif
     </body>
 </html>
 

@@ -2894,7 +2894,8 @@ class EMRController  extends ApiController
             ->where('bsre.norec_pd',$request['norec_pd'])
             ->where('bsre.noregistrasi',$request['noregistrasi'])
             ->where('bsre.statusenabled', true)
-            ->where('bsre.kdprofile',$kdProfile );
+            ->where('bsre.kdprofile',$kdProfile)
+            ->where('bsre.status', true);
 
         $data = $data->get();
         $result = array(

@@ -2500,7 +2500,7 @@ class ReportController extends ApiController{
         foreach( $res['d'] as $items){
                 if($items->type  ==  "textbox" ||$items->type  ==  "textarea"  ){
                     $item[$items->emrdfk] =  $items->value;
-        }
+                }
                 if($items->type  ==  "datetime"){
                     $item[$items->emrdfk] = $this->tanggal_indonesia(date('Y-m-d',strtotime( $items->value))) ;
                 }
@@ -2532,7 +2532,21 @@ class ReportController extends ApiController{
             $peg = DB::table('pegawai_m')->where('id',$request['pegawaittd'])->first();
             
         }
-        // var_dump($data);
+
+        // cari pdf yang sudah di ttd
+        $cekPdf = DB::table('emr_bsre_t')
+            ->where('statusenabled', true)
+            ->where('noregistrasi', trim($data[0]->noregistrasi))
+            ->where('nocm', $data[0]->nocm)
+            ->where('nomoremr', $data[0]->noemr)
+            ->where('status', true)
+            ->get();
+
+        if(count($cekPdf) > 0){
+            $link = '/service/storage_path?path='.$cekPdf[0]->file.'&filename='.$cekPdf[0]->namafile.'&mimetype=application/pdf';
+            return redirect($link);
+        }
+
         $pdf = PDF::loadView(
             'report.EMR.suratketerangandokter-dom',
             array(
@@ -2540,7 +2554,8 @@ class ReportController extends ApiController{
                 'pageWidth' => $pageWidth,
                 'data' => $data,
                 'item'=> $item,
-                'peg'=> $peg
+                'peg'=> $peg,
+                'tte' => (isset($request['isttd']) && $request['isttd'] == true) ? 'true' : 'false'
             )
         );
         if(isset($request['isttd']) && $request['isttd'] == true){
@@ -2561,7 +2576,7 @@ class ReportController extends ApiController{
         }
 
         return $pdf->stream();
-        return view('report.EMR.suratketerangandokter',compact('data','pageWidth'));
+        // return view('report.EMR.suratketerangandokter',compact('data','pageWidth'));
     }
 
     public function CetakSKGawatDarurat(Request $request)
@@ -2625,7 +2640,7 @@ class ReportController extends ApiController{
         foreach( $res['d'] as $items){
                 if($items->type  ==  "textbox" ||$items->type  ==  "textarea"  ){
                     $item[$items->emrdfk] =  $items->value;
-        }
+                }
                 if($items->type  ==  "datetime"){
                     $item[$items->emrdfk] = $this->tanggal_indonesia(date('Y-m-d',strtotime( $items->value))) ;
                 }
@@ -2665,7 +2680,8 @@ class ReportController extends ApiController{
                 'pageWidth' => $pageWidth,
                 'data' => $data,
                 'item'=> $item,
-                'peg'=> $peg
+                'peg'=> $peg,
+                'tte' => (isset($request['isttd']) && $request['isttd'] == true) ? 'true' : 'false'
             )
         );
         if(isset($request['isttd']) && $request['isttd'] == true){
@@ -2790,7 +2806,8 @@ class ReportController extends ApiController{
                 'pageWidth' => $pageWidth,
                 'data' => $data,
                 'item'=> $item,
-                'peg'=> $peg
+                'peg'=> $peg,
+                'tte' => (isset($request['isttd']) && $request['isttd'] == true) ? 'true' : 'false'
             )
         );
         if(isset($request['isttd']) && $request['isttd'] == true){
@@ -16808,6 +16825,21 @@ from kegiatananggaran_m km
             $peg = DB::table('pegawai_m')->where('id',$request['pegawaittd'])->first();
             
         }
+        
+        // cari pdf yang sudah di ttd
+        $cekPdf = DB::table('emr_bsre_t')
+            ->where('statusenabled', true)
+            ->where('noregistrasi', trim($data[0]->noregistrasi))
+            ->where('nocm', $data[0]->nocm)
+            ->where('nomoremr', $data[0]->noemr)
+            ->where('status', true)
+            ->get();
+
+        if(count($cekPdf) > 0){
+            $link = '/service/storage_path?path='.$cekPdf[0]->file.'&filename='.$cekPdf[0]->namafile.'&mimetype=application/pdf';
+            return redirect($link);
+        }
+
         $pdf = PDF::loadView(
             'report.EMR.suratketerangannapza-dom',
             array(
@@ -16816,7 +16848,8 @@ from kegiatananggaran_m km
                 'data' => $data,
                 'profile' => $profile,
                 'item'=> $item,
-                'peg'=> $peg
+                'peg'=> $peg,
+                'tte' => (isset($request['isttd']) && $request['isttd'] == true) ? 'true' : 'false'
             )
         );
         if(isset($request['isttd']) && $request['isttd'] == true){
@@ -16928,13 +16961,27 @@ from kegiatananggaran_m km
             
         }
 
+        $cekPdf = DB::table('emr_bsre_t')
+            ->where('statusenabled', true)
+            ->where('noregistrasi', trim($data[0]->noregistrasi))
+            ->where('nocm', $data[0]->nocm)
+            ->where('nomoremr', $data[0]->noemr)
+            ->where('status', true)
+            ->get();
+
+        if(count($cekPdf) > 0){
+            $link = '/service/storage_path?path='.$cekPdf[0]->file.'&filename='.$cekPdf[0]->namafile.'&mimetype=application/pdf';
+            return redirect($link);
+        }
+
         $pdf = PDF::loadView(
             'report.EMR.suratketerangankesehatanjiwa-dom',
             array(
                 'pageWidth' => $pageWidth,
                 'data' => $data,
                 'profile' => $profile,
-                'item' => $item
+                'item' => $item,
+                'tte' => (isset($request['isttd']) && $request['isttd'] == true) ? 'true' : 'false'
             )
         );
 
@@ -19212,17 +19259,16 @@ public function suratBuktiPengembalian(Request $request)
             ep.norec = '$norec'
                 AND ep.kdprofile = '$kdProfile' 
             AND epd.statusenabled = TRUE 
-            and epd.emrfk = $request[emrfk]
+            and epd.emrfk = ".$request['emrfk']."
         ORDER BY
             ed.nourut
             "
         ));
-        foreach ($data as $z){
-            if ($z->type=="datetime"){
-                $z->value=date('Y-m-d H:i:s',strtotime($z->value));
-            }
-//            $z->value = nl2br( $z->value);
-        }
+        // foreach ($data as $z){
+        //     if ($z->type=="datetime"){
+        //         $z->value=date('Y-m-d H:i:s',strtotime($z->value));
+        //     }
+        // }
         // foreach ($data as $z){
         //     if (isset($z->tgllahir) ||isset($z->tgl)){
         //         $z->tgllahir=$this->tanggal_indonesia(date('Y-m-d',strtotime($z->tgllahir)));
@@ -19271,9 +19317,22 @@ public function suratBuktiPengembalian(Request $request)
             $peg = DB::table('pegawai_m')->where('id',$request['pegawaittd'])->first();
             
         }
-        // dd($data, $item);
 
-        // var_dump($data);
+        // cari pdf yang sudah di ttd
+        $cekPdf = DB::table('emr_bsre_t')
+            ->where('statusenabled', true)
+            ->where('noregistrasi', trim($data[0]->noregistrasi))
+            ->where('nocm', $data[0]->nocm)
+            ->where('nomoremr', $data[0]->noemr)
+            ->where('status', true)
+            ->get();
+        
+        if(count($cekPdf) > 0){
+            $link = "/service/storage_path?path=".$cekPdf[0]->file."&filename=".$cekPdf[0]->namafile."&mimetype=application/pdf";
+            
+            return redirect($link);
+        }
+
         $pdf = PDF::loadView(
             'report.EMR.ringkasan-pulangnNonJiwa',
             array(
@@ -19281,9 +19340,11 @@ public function suratBuktiPengembalian(Request $request)
                 'pageWidth' => $pageWidth,
                 'data' => $data,
                 'item'=> $item,
-                'peg'=> $peg
+                'peg'=> $peg,
+                'tte' => (isset($request['isttd']) && $request['isttd'] == true) ? 'true' : 'false'
             )
         );
+
         if(isset($request['isttd']) && $request['isttd'] == true){
             $objetoRequest = new \Illuminate\Http\Request();
             $objetoRequest ['emrfk'] = $request['emrfk'];
@@ -20969,8 +21030,20 @@ public function suratBuktiPengembalian(Request $request)
         //        dd($result);
         $res['terapi'][] = array('tera' => 'asas');
         $res['d'] =$result;
+        
+        // cari pdf yang sudah di tte
+        $cekPdf = DB::table('emr_bsre_t')
+            ->where('statusenabled', true)
+            ->where('noregistrasi', trim($result['noregistrasi']))
+            ->where('nocm', $result['nocm'])
+            ->where('nomoremr', $result['koderesume'])
+            ->where('status', true)
+            ->get();
 
-        // dd($result);
+        if(count($cekPdf) > 0){
+            $link = '/service/storage_path?path='.$cekPdf[0]->file.'&filename='.$cekPdf[0]->namafile.'&mimetype=application/pdf';
+            return redirect($link);
+        }
 
         $username ='asa';
         $pdf = PDF::loadView(
@@ -20978,8 +21051,9 @@ public function suratBuktiPengembalian(Request $request)
             array(
                 'res' => $res,
                 'username'=> $username,
+                'tte' => (isset($request['isttd'])) ? 'true' : 'false'
             ));
-            // dd($pdf);
+        
         if(isset($r['isttd']) && $r['isttd'] == true){
             $objetoRequest = new \Illuminate\Http\Request();
             $objetoRequest ['emrfk'] = $r['emrfk'];
@@ -20990,6 +21064,8 @@ public function suratBuktiPengembalian(Request $request)
             $objetoRequest ['norec_pd'] = $r['norec_pd'];
             $objetoRequest ['tipe'] = 'resumemedis';
             $bsre = $this->pengajuanTTE($objetoRequest, true);
+
+            // dd($bsre);
             if($bsre['status'] == 201){
                 $content = $pdf->download()->getOriginalContent();
                 \Storage::disk('local')->put( 'TTD_BSRE/' . $bsre['dokumen']->id . '/file' . '.pdf' , $content);
@@ -23189,6 +23265,19 @@ public function suratBuktiPengembalian(Request $request)
             
         }
 
+        $cekPdf = DB::table('emr_bsre_t')
+            ->where('statusenabled', true)
+            ->where('noregistrasi', trim($data[0]->noregistrasi))
+            ->where('nocm', $data[0]->nocm)
+            ->where('nomoremr', $data[0]->noemr)
+            ->where('status', true)
+            ->get();
+
+        if(count($cekPdf) > 0){
+            $link = '/service/storage_path?path='.$cekPdf[0]->file.'&filename='.$cekPdf[0]->namafile.'&mimetype=application/pdf';
+            return redirect($link);
+        }
+
         $pdf = PDF::loadView(
             'report.EMR.suratpasienmelarikandiri-dom',
             array(
@@ -23197,7 +23286,8 @@ public function suratBuktiPengembalian(Request $request)
                 'data' => $data,
                 'item'=> $item,
                 'peg'=> $peg,
-                'profile' => $profile
+                'profile' => $profile,
+                'tte' => (isset($request['isttd']) && $request['isttd'] == true) ? 'true' : 'false'
             )
         );
         if(isset($request['isttd']) && $request['isttd'] == true){
@@ -23314,7 +23404,20 @@ public function suratBuktiPengembalian(Request $request)
             
         }
         
-        // dd($item);
+
+        // cari pdf yang sudah di ttd
+        $cekPdf = DB::table('emr_bsre_t')
+            ->where('statusenabled', true)
+            ->where('noregistrasi', trim($data[0]->noregistrasi))
+            ->where('nocm', $data[0]->nocm)
+            ->where('nomoremr', $data[0]->noemr)
+            ->where('status', true)
+            ->get();
+
+        if(count($cekPdf) > 0){
+            $link = '/service/storage_path?path='.$cekPdf[0]->file.'&filename='.$cekPdf[0]->namafile.'&mimetype=application/pdf';
+            return redirect($link);
+        }
 
         $pdf = PDF::loadView(
             'report.EMR.surat-pemeriksaan-napza-dom',
@@ -23324,7 +23427,8 @@ public function suratBuktiPengembalian(Request $request)
                 'data' => $data,
                 'profile' => $profile,
                 'item'=> $item,
-                'peg'=> $peg
+                'peg'=> $peg,
+                'tte' => (isset($request['isttd']) && $request['isttd'] == true) ? 'true' : 'false'
             )
         );
 
