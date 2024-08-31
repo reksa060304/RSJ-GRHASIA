@@ -1803,6 +1803,10 @@ class MasterController extends ApiController{
             $data = $data->where('ht.objectpenjaminfk', $request['objectpenjaminfk'] );
         }
 
+        if(isset($request['objectpenjaminfk']) && $request['objectpenjaminfk']!="" && $request['objectpenjaminfk']!="undefined" && $request['objectpenjaminfk']=='null'){
+            $data = $data->whereNull('ht.objectpenjaminfk');
+        }
+
         $data = $data->get();
         //return $this->respond(array($request['namaproduk']));
         return $this->respond($data);
