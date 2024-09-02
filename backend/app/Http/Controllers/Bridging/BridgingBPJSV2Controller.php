@@ -3255,7 +3255,6 @@ class BridgingBPJSV2Controller extends ApiController
             //return $cekData;
          
             if (isset($request['jenis']) && $request['jenis'] == 'antrean') {
-                return $cekData;
                 $consId = $headers['cons']['data'];
                 $signature = $headers['cons']['secretKey'];
                 $timestamp = $headers['cons']['tStamp'];
