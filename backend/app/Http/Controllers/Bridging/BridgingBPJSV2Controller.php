@@ -3237,22 +3237,22 @@ class BridgingBPJSV2Controller extends ApiController
   
             $response = $this->curlAPI2($headers['headers'], $dataJsonSend, $url, $methods, null);
 
-            $cekData = array(
-                'request' => array(
-                    'url' => $url,
-                    'headers' =>  $headers['headers'],
-                    'payload' => json_decode($dataJsonSend),
-                    'secretKey' => $headers['cons']['secretKey'],
-                    'key_encrypt' => $headers['cons']['data'] .  $headers['cons']['secretKey'] .$this->getKodeRS()
-                ), 'response' => $response
-            );
+            // $cekData = array(
+            //     'request' => array(
+            //         'url' => $url,
+            //         'headers' =>  $headers['headers'],
+            //         'payload' => json_decode($dataJsonSend),
+            //         'secretKey' => $headers['cons']['secretKey'],
+            //         'key_encrypt' => $headers['cons']['data'] .  $headers['cons']['secretKey'] .$this->getKodeRS()
+            //     ), 'response' => $response
+            // );
             if (isset($request['jenis']) && $request['jenis'] == 'eRekamMedis') {
                 $objetoRequest = new \Illuminate\Http\Request();
                 $objetoRequest['nosep'] = $request['data']['request']['noSep'];
                 $objetoRequest['keterangan'] = $response;
                 $this->saveLogMRBundle($objetoRequest);
             }
-            //return $cekData;
+            // return $cekData;
          
             if (isset($request['jenis']) && $request['jenis'] == 'antrean') {
                 $consId = $headers['cons']['data'];
