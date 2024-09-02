@@ -1203,8 +1203,8 @@ class BridgingBPJSV2Controller extends ApiController
 
     public function getMonitoringHistori($noKartu)
     {
-        $tglMulai = Carbon::now()->subMonth(1)->format('Y-m-d');
-        //        return $this->respond($tglMulai);
+        // $tglMulai = Carbon::now()->subMonth(3)->format('Y-m-d');
+        $tglMulai = date('Y-m-d', strtotime("-90 days"));
         $tglAkhir = Carbon::now()->format('Y-m-d');
 
         $headers = $this->getHeaderBPJSV2();
@@ -2421,7 +2421,8 @@ class BridgingBPJSV2Controller extends ApiController
                 CURLOPT_SSL_VERIFYPEER => 0,
                 CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
                 CURLOPT_CUSTOMREQUEST => $method,
-                CURLOPT_HTTPHEADER => isset($headers['headers']) ? $headers['headers'] :  $headers
+                CURLOPT_HTTPHEADER => isset($headers['headers']) ? $headers['headers'] :  $headers,
+                CURLOPT_SSL_CIPHER_LIST => 'DEFAULT@SECLEVEL=1'
             ));
         } else {
             curl_setopt_array($curl, array(
@@ -2435,7 +2436,8 @@ class BridgingBPJSV2Controller extends ApiController
                 CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
                 CURLOPT_CUSTOMREQUEST => $method,
                 CURLOPT_POSTFIELDS => $dataJsonSend,
-                CURLOPT_HTTPHEADER => isset($headers['headers']) ? $headers['headers'] :  $headers
+                CURLOPT_HTTPHEADER => isset($headers['headers']) ? $headers['headers'] :  $headers,
+                CURLOPT_SSL_CIPHER_LIST => 'DEFAULT@SECLEVEL=1'
             ));
         }
 
@@ -2450,7 +2452,7 @@ class BridgingBPJSV2Controller extends ApiController
             $result = array(
                 'metaData' => array(
                     'code' => 400,
-                    'message' => 'Gagal menghubungkan ke BPJS (' . $url . ')'
+                    'message' => 'Gagal menghubungkan ke BPJS (' . $url . ')'.$err
                 ),
             );
         } else {
@@ -3235,15 +3237,15 @@ class BridgingBPJSV2Controller extends ApiController
   
             $response = $this->curlAPI2($headers['headers'], $dataJsonSend, $url, $methods, null);
 
-            // $cekData = array(
-            //     'request' => array(
-            //         'url' => $url,
-            //         'headers' =>  $headers['headers'],
-            //         'payload' =>$dataJsonSend,
-            //         'secretKey' => $headers['cons']['secretKey'],
-            //     ), 'response' => $response
-            // );
-
+            $cekData = array(
+                'request' => array(
+                    'url' => $url,
+                    'headers' =>  $headers['headers'],
+                    'payload' => json_decode($dataJsonSend),
+                    'secretKey' => $headers['cons']['secretKey'],
+                    'key_encrypt' => $headers['cons']['data'] .  $headers['cons']['secretKey'] .$this->getKodeRS()
+                ), 'response' => $response
+            );
             if (isset($request['jenis']) && $request['jenis'] == 'eRekamMedis') {
                 $objetoRequest = new \Illuminate\Http\Request();
                 $objetoRequest['nosep'] = $request['data']['request']['noSep'];
@@ -3253,6 +3255,7 @@ class BridgingBPJSV2Controller extends ApiController
             //return $cekData;
          
             if (isset($request['jenis']) && $request['jenis'] == 'antrean') {
+                return $cekData;
                 $consId = $headers['cons']['data'];
                 $signature = $headers['cons']['secretKey'];
                 $timestamp = $headers['cons']['tStamp'];
@@ -3324,7 +3327,8 @@ class BridgingBPJSV2Controller extends ApiController
                 CURLOPT_SSL_VERIFYPEER => 0,
                 CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
                 CURLOPT_CUSTOMREQUEST => $method,
-                CURLOPT_HTTPHEADER => $headers
+                CURLOPT_HTTPHEADER => $headers,
+                CURLOPT_SSL_CIPHER_LIST => 'DEFAULT@SECLEVEL=1'
             ));
         } else {
             curl_setopt_array($curl, array(
@@ -3338,7 +3342,8 @@ class BridgingBPJSV2Controller extends ApiController
                 CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
                 CURLOPT_CUSTOMREQUEST => $method,
                 CURLOPT_POSTFIELDS => $dataJsonSend,
-                CURLOPT_HTTPHEADER => $headers
+                CURLOPT_HTTPHEADER => $headers,
+                CURLOPT_SSL_CIPHER_LIST => 'DEFAULT@SECLEVEL=1'
             ));
         }
 
