@@ -5418,6 +5418,8 @@ class PerencanaanController extends ApiController {
                 select *
                 from panjar_t 
                 where nopanjar = '$nopanjar'
+                AND statusenabled = TRUE
+                AND kdprofile = '$idProfile'
             ")
         );
 
