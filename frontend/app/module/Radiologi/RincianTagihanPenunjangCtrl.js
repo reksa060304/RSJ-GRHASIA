@@ -1404,6 +1404,11 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     window.messageContainer.error("Tanggal Tidak Boleh Kosong!");
                     return;
                 }
+                if (!$scope.item.keterangan || $scope.item.keterangan.trim() === '') {
+                    toastr.error("Keterangan Tidak Boleh Kosong!");
+                    return;
+                }
+                
                 if ($scope.item.dokter == undefined) {
                     window.messageContainer.error("Dokter Tidak Boleh Kosong!");
                     return;
