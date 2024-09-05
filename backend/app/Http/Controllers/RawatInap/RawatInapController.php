@@ -245,7 +245,7 @@ class RawatInapController extends ApiController
                  inner join kelas_m as kls on kls.id = pd.objectkelasfk
                  inner join ruangan_m as ru on ru.id = apd.objectruanganfk
                  inner join departemen_m as dept on dept.id = ru.objectdepartemenfk
-                 left join pegawai_m as pg on pg.id = apd.objectpegawaifk
+                 left join pegawai_m as pg on pg.id = pd.objectpegawaifk
                  left join kelompokpasien_m as kp on kp.id = pd.objectkelompokpasienlastfk
                  left join rekanan_m as rek on rek.id = pd.objectrekananfk
                 left join pemakaianasuransi_t as pa on pa.noregistrasifk=pd.norec
