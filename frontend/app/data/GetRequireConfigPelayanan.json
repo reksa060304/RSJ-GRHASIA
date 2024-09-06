@@ -3736,6 +3736,10 @@
         {
           "nameDep": "CatatanKlinikNewCtrl",
           "urlDep": "module/EMR/CatatanKlinikNewCtrl"
+        },
+        {
+            "nameDep": "UpdateAntrolOtomatisCtrl",
+            "urlDep": "module/RawatJalan/UpdateAntrolOtomatisCtrl"
         }
     ]
 }

@@ -2235,6 +2235,8 @@ Route::group(['middleware' => 'cors', 'prefix' => 'service'], function () {
             Route::get('registrasi/get-data-pasien-reservasi-v2', 'Registrasi\RegistrasiController@getPasienPerjanjianV2');
             Route::get('registrasi/get-data-pasien-reservasi', 'Registrasi\RegistrasiController@getPasienPerjanjian');
             Route::get('registrasi/get-combo-perjanjian', 'Registrasi\RegistrasiController@getComboPasienPerjanjian');
+            Route::get('registrasi/get-total-pasien-poli-bpjs', 'Registrasi\RegistrasiController@getTotalPasienPoliBPJS');
+            Route::get('registrasi/get-total-pasien-poli-umum', 'Registrasi\RegistrasiController@getTotalPasienPoliUmum');
             Route::get('report/cetak-sep-new','Report\ReportController@cetakSEPV2');
             Route::get('report/ttd-digital/{noregistrasi}/{type}','Report\ReportController@ttdDigital');
 

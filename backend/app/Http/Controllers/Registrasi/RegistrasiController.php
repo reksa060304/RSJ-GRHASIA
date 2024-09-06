@@ -1252,13 +1252,16 @@ class RegistrasiController extends ApiController
                 'jpl.jenispelayanan',
                 'apd.objectasalrujukanfk',
                 'ru.kdinternal',
+                'ru.id as idruangan',
                 'jpl.kodeinternal as objectjenispelayananfk',
                 'pd.objectpegawaifk',
                 'pd.statuspasien',
                 'ps.nobpjs',
                 'pd.statuspasien',
                 'ru.namaexternal',
-                DB::raw('case when ru.objectdepartemenfk in (16,35,17) then \'true\' else \'false\' end as israwatinap')
+                'apd.noantrian',
+                DB::raw('case when ru.objectdepartemenfk in (16,35,17) then \'true\' else \'false\' end as israwatinap'),
+                DB::raw("case when pd.statusschedule = '' then pd.noregistrasi when pd.statusschedule = 'Kios-K' then pd.noregistrasi else pd.statusschedule end as kodebooking")
             )
             ->where('pd.norec', '=', $norec_pd)
             ->where('apd.norec', '=', $norec_apd)
@@ -7825,7 +7828,7 @@ class RegistrasiController extends ApiController
                     ->Orwhere('pa.nosep', "")
                     ->Orwhere(function ($query2) {
                         $query2->where('dept.id', 16)
-                            ->where('pa.ppkrujukan', '<>', "1124R004");
+                            ->where('pa.ppkrujukan', '<>', "1202R003");
                     });
             });
         } elseif (isset($filter['isBlmInputSep']) && $filter['isBlmInputSep'] != "" && $filter['isBlmInputSep'] != "undefined" && $filter['isBlmInputSep'] != 'false') {
@@ -7842,7 +7845,7 @@ class RegistrasiController extends ApiController
                     ->where('pa.nosep', '<>', "");
             });
 
-            $data = $data->where('pa.ppkrujukan', '<>', "1124R004");
+            $data = $data->where('pa.ppkrujukan', '<>', "1202R003");
         }
         if (isset($filter['jenisPel']) && $filter['jenisPel'] != "" && $filter['jenisPel'] != "undefined") {
             $data = $data->where('pd.jenispelayanan', '=', $filter['jenisPel']);
@@ -8240,6 +8243,7 @@ class RegistrasiController extends ApiController
                 'apd.objectruanganasalfk'
             )
             ->where('pd.noregistrasi', $request['noregistrasi'])
+            ->where('apd.objectruanganfk', $request['objectruanganlastfk'])
             ->where('pd.kdprofile', (int)$kdProfile)
             ->orderBy('pd.objectruanganlastfk')
             ->get();
@@ -16290,5 +16294,57 @@ GROUP BY y.KET
             );
         }
         return $this->setStatusCode($result['status'])->respond($result, $transMessage);
+    }
+
+    public function getTotalPasienPoliBPJS(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $tgl = $request->input('tglRegis');
+        $idruangan = $request->input('idruangan');
+
+        $data = \DB::table('pasiendaftar_t as pd')
+            ->leftjoin('pegawai_m as pg', 'pg.id', '=', 'pd.objectpegawaifk')
+            ->join('ruangan_m as ru', 'ru.id', '=', 'pd.objectruanganasalfk')
+            ->where('pd.kdprofile', (int) $kdProfile)
+            ->where('pd.statusenabled', true)
+            ->where('pd.objectkelompokpasienlastfk', 2)
+            ->whereRaw("to_char(pd.tglregistrasi, 'yyyy-MM-dd') = ?", [$tgl])
+            ->where('ru.objectdepartemenfk', 18)
+            ->where('ru.id', '=', $idruangan)
+            ->selectRaw('COUNT(*) AS pasienterdaftar, pg.kddokterbpjs')
+            ->groupBy('pg.kddokterbpjs')
+            ->get();
+
+        $result = array(
+            'data' =>  $data,
+            'msg' => '@epic'
+        );
+        return $this->respond($result);
+    }
+
+    public function getTotalPasienPoliUmum(Request $request)
+    {
+        $kdProfile = $this->getDataKdProfile($request);
+        $tgl = $request->input('tglRegis');
+        $idruangan = $request->input('idruangan');
+
+        $data = \DB::table('pasiendaftar_t as pd')
+            ->leftjoin('pegawai_m as pg', 'pg.id', '=', 'pd.objectpegawaifk')
+            ->join('ruangan_m as ru', 'ru.id', '=', 'pd.objectruanganasalfk')
+            ->where('pd.kdprofile', (int) $kdProfile)
+            ->where('pd.statusenabled', true)
+            ->where('pd.objectkelompokpasienlastfk' , '<>', 2)
+            ->whereRaw("to_char(pd.tglregistrasi, 'yyyy-MM-dd') = ?", [$tgl])
+            ->where('ru.objectdepartemenfk', 18)
+            ->where('ru.id', '=', $idruangan)
+            ->selectRaw('COUNT(*) AS pasienterdaftar, pg.kddokterbpjs')
+            ->groupBy('pg.kddokterbpjs')
+            ->get();
+
+        $result = array(
+            'data' =>  $data,
+            'msg' => '@epic'
+        );
+        return $this->respond($result);
     }
 }

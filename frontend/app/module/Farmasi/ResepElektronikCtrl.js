@@ -228,6 +228,17 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                     "width": "80px",
 
                 },
+                {
+                    "command": [
+                        {
+                            text: "Selesai",
+                            click: updateDone2,
+                            imageClass: ""
+                        },
+                        ],
+                    title: "#",
+                    width: "80px",
+                },
                 
                 {
                     hidden: true,
@@ -728,11 +739,11 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                                         $scope.refresh();
                                     })
                             });
-                            // let params = $scope.item.noregistrasi
-                            // if ($scope.item.noreservasi != undefined && $scope.item.noreservasi != '' && $scope.item.noreservasi != 'Kios-K') {
-                            //     params = $scope.item.noreservasi
-                            // }
-                            // saveAntrol(params, 7, $scope.item.norec)
+                            let params = $scope.item.noregistrasi
+                            if ($scope.item.noreservasi != undefined && $scope.item.noreservasi != '' && $scope.item.noreservasi != 'Kios-K') {
+                                params = $scope.item.noreservasi
+                            }
+                            saveAntrol(params, 7, $scope.item.norec)
                             
                         } else {
                             if ($scope.item.statusorder == 'Menunggu') {
@@ -745,6 +756,50 @@ define(['initialize', 'Configuration'], function (initialize, config) {
                         }
                 //if ($scope.item.statusorder == 'Verifikasi' || $scope.item.statusorder == 'Packaging') {
                 
+            }
+            function updateDone2 (e) {
+				e.preventDefault();
+				var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                if (dataItem.statusorder != 'Menunggu') {
+                    var strukresep = ""
+                    if (dataItem.noorder == dataItem.noresep) { //resep yang input langsung tanpa order
+                        strukresep = true
+                    }
+                    var objSave =
+                    {
+                        noorder: dataItem.noorder,
+                        statusorder: 3,
+                        tglambil: null,
+                        namapengambil: null,
+                        tglselesai: null,
+                        namaselesai: 'selesai',
+                        strukresep: strukresep
+                    }
+                    medifirstService.post('farmasi/save-status-resepelektonik', objSave).then(function (e) {
+                        var userLogin = medifirstService.getPegawaiLogin();
+                        var Norec = dataItem.noresep;
+                        var Noreg = dataItem.noregistrasi;
+
+
+                        medifirstService.postLogging('Rubah Status Selasai Order Resep Elektronik', 'No Order Struk Order',
+                            dataItem.noorder, 'Rubah Status Selasai Order Resep Elektronik No Order: ' + dataItem.noorder + '/ Noregistrasi : ' + dataItem.noregistrasi).then(function (res) {
+                                $scope.refresh();
+                            })
+                    });
+                    let params = dataItem.noregistrasi
+                    if (dataItem.noreservasi != undefined && dataItem.noreservasi != '' && dataItem.noreservasi != 'Kios-K') {
+                        params = dataItem.noreservasi
+                    }
+                    saveAntrol(params, 7, dataItem.norec)
+                } else {
+                    if (dataItem.statusorder == 'Menunggu') {
+                        toastr.error("Status Data Belum Diverifikasi !!")
+                        return;
+                    } else {
+                        toastr.error("Status Data Belum Packaging !!")
+                        return;
+                    }
+                }
             }
 
             $scope.Riwayat = function () {

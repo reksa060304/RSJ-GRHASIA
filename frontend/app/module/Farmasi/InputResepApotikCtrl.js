@@ -2391,7 +2391,7 @@ Which will check for empty strings (""), null, undefined, false and the numbers 
                             if ($scope.item.noreservasi != undefined && $scope.item.noreservasi != '' && $scope.item.noreservasi != 'Kios-K') {
                                 params = $scope.item.noreservasi
                             }
-                            saveAntrol(params, 5, $scope.item.norec_pd) //waktu mulai farmasi
+                            saveAntrol(params, 6, $scope.item.norec_pd) //waktu mulai farmasi
                             $scope.isRouteLoading = false;
                             $scope.tombolSimpanVis = true;
                             window.history.back();
