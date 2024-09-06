@@ -186,7 +186,7 @@ define(['initialize'], function (initialize) {
                             $scope.item.obj[dataLoad[i].emrdfk] = dataLoad[i].value
                         }
                         // pengeculian untuk combo dpjp dan ttdpjp karena mengambil dari apd
-                        if (dataLoad[i].type == "combobox" && (dataLoad[i].emrdfk !== 1901308400 && dataLoad[i].emrdfk !== 1901308410)) {
+                        if (dataLoad[i].type == "combobox") {
                             var str = dataLoad[i].value
                             if(str != undefined){
                                 var res = str.split("~");
@@ -201,8 +201,8 @@ define(['initialize'], function (initialize) {
                 }
 
                 // dpjp
-                $scope.item.obj[1901308400] = {value: $scope.cc.iddpjp, text: $scope.cc.dokterdpjp}
-                $scope.item.obj[1901308410] = {value: $scope.cc.iddpjp, text: $scope.cc.dokterdpjp}
+                // $scope.item.obj[1901308400] = {value: $scope.cc.iddpjp, text: $scope.cc.dokterdpjp}
+                // $scope.item.obj[1901308410] = {value: $scope.cc.iddpjp, text: $scope.cc.dokterdpjp}
             })
             $scope.totalSkor5 = 0
             $scope.getSkor5 = function (stat) {
@@ -760,37 +760,37 @@ define(['initialize'], function (initialize) {
                     cacheHelper.set('cacheNomorEMR', arrStr);
 
                     // Update dpjp
-                    let arrDPJPPeralihan = [1901308530, 1901308570, 1901308610, 1901308650, 1901308690]
-                    let id = 1901308530
+                    // let arrDPJPPeralihan = [1901308530, 1901308570, 1901308610, 1901308650, 1901308690]
+                    // let id = 1901308530
                     
-                    // mendapatkan yang sudah di diisi yang terbesar
-                    arrDPJPPeralihan.map(function(row){
-                        if($scope.item.obj[row] !== undefined && $scope.item.obj[row] !== null){
-                            if($scope.item.obj[row].hasOwnProperty('value')){
-                                if(row > id){
-                                    id = row
-                                }
-                            }
+                    // // mendapatkan yang sudah di diisi yang terbesar
+                    // arrDPJPPeralihan.map(function(row){
+                    //     if($scope.item.obj[row] !== undefined && $scope.item.obj[row] !== null){
+                    //         if($scope.item.obj[row].hasOwnProperty('value')){
+                    //             if(row > id){
+                    //                 id = row
+                    //             }
+                    //         }
 
-                        }
-                    })
+                    //     }
+                    // })
 
-                    // console.log('id = ' + id)
+                    // // console.log('id = ' + id)
 
-                    if(id > 0){
-                        // update dpjp menggunakan fungsi di DaftarAntrianSusterRanap
-                        var tmpData = {
-                            norec_apd: $scope.cc.norec,
-                            iddokter: $scope.item.obj[id].value
-                        }
+                    // if(id > 0){
+                    //     // update dpjp menggunakan fungsi di DaftarAntrianSusterRanap
+                    //     var tmpData = {
+                    //         norec_apd: $scope.cc.norec,
+                    //         iddokter: $scope.item.obj[id].value
+                    //     }
 
-                        medifirstService.post('rawatinap/save-update-dokter-antrian', tmpData)
-                            .then(function (res) {
-                                if(res.status == 201){
-                                    toastr.success("Berhasil mengganti dokter")
-                                }
-                            });
-                    }
+                    //     medifirstService.post('rawatinap/save-update-dokter-antrian', tmpData)
+                    //         .then(function (res) {
+                    //             if(res.status == 201){
+                    //                 toastr.success("Berhasil mengganti dokter")
+                    //             }
+                    //         });
+                    // }
                 });
             }
 
