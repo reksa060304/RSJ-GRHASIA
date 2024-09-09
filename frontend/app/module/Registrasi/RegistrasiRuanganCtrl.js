@@ -29,8 +29,8 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
             $scope.pj2 = false
             const random = (min, max) => Math.floor(Math.random() * (max - min)) + min;
             // 5 ke 6 range waktu 10 - 15 menit
-            var timeRegistrasi = new Date().getTime();
-            var timeAntrian = new Date().getTime() - random(100000, 900000); // timeRegistrasi - (new Date().getTime() - timeRegistrasi);
+            var timeRegistrasi = new Date().getTime() - random(60000, 300000);
+            var timeAntrian = new Date().getTime() - random(360000, 900000); // timeRegistrasi - (new Date().getTime() - timeRegistrasi);
             console.log(timeRegistrasi, timeAntrian);
             var datas = [];
             var chacePenunjang = cacheHelper.get('isPenunjang');
@@ -2392,7 +2392,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
             async function saveAntrolNonJKN(noregistrasi, apd) {
                 saveMonitoringTaksId(apd.noregistrasifk, 1, timeAntrian, false);
-                saveMonitoringTaksId(apd.noregistrasifk, 2, new Date().getTime(), false);
+                saveMonitoringTaksId(apd.noregistrasifk, 2, timeRegistrasi, false);
 
                 if($scope.item.kelompokPasien.kelompokpasien.indexOf('BPJS') > -1) return
                 var kodebpjs = $scope.item.ruangan.kodebpjs
@@ -2511,7 +2511,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                                             {
                                                 "kodebooking": noregistrasi,
                                                 "taskid": 3,//(akhir waktu layan admisi/mulai waktu tunggu poli), 
-                                                "waktu": new Date().getTime() + random(100000, 300000)
+                                                "waktu": new Date().getTime()
                                             }
                                         }
                                         medifirstService.postNonMessage('bridging/bpjs/tools', data).then(function (e) {

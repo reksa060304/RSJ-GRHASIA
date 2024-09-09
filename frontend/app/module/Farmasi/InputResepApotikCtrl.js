@@ -490,6 +490,7 @@ define(['initialize'], function (initialize) {
                     $scope.item.TglMeninggal = e.data.tglmeninggal;
                     $scope.item.StatKeluar = e.data.statuskeluar;
                     $scope.item.StatPulang = e.data.statuspulang;
+                    $scope.item.norec_pd = e.data.norec_pd
                     if (e.data.noreservasi != ''){
                         $scope.item.noreservasi = e.data.noreservasi;
                         
