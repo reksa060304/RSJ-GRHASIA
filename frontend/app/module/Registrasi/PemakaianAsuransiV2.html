@@ -583,12 +583,12 @@
                 <div ng-hide='isSimpan' class="grid_2" style="float:right">
                     <!-- title="Harap kirim antrian terlebih dahulu" -->
                     <button ng-show="!isLoading" kendo-button style="width: 100%" class="success" ng-click="Save()"
-                        ng-hide='hideBtnSimpan' ng-disabled="!isKirimAntrian"><i class="fa fa-save"></i>Simpan</button>
+                        ng-hide='hideBtnSimpan'><i class="fa fa-save"></i>Simpan</button>
                 </div>
-                <div ng-hide='isSimpan' class="grid_2" style="float:right">
+                <!-- <div ng-hide='isSimpan' class="grid_2" style="float:right">
                     <button ng-show="!isLoading" kendo-button style="width: 100%" class="primary" ng-click="kirimAntrian()"
                         ng-hide='hideBtnSimpan'><i class="fa fa-save"></i>Kirim Antrian</button>
-                </div>
+                </div> -->
                 
 
                 <div class="grid_2" style="float:right">
@@ -613,6 +613,9 @@
                     <button ng-show="!isLoading" kendo-button style="width: 100%" class="primary"
                         ng-click="popPRB()"><i class="fa fa-stethoscope"></i>PRB</button>
                 </div>
+            </div>
+            <div class="grid_12">
+            
                 <div class="grid_2" style="float:right">
                     <button ng-show="!isLoading" kendo-button style="width: 100%" class="primary" is-back><i
                             class="fa fa-arrow-left"></i>Kembali</button>
@@ -630,11 +633,11 @@
                 <!-- <div ng-include='"../app/template/Shared/TemplateButtonRegistrasiNew " ' style="margin-top:30px"
                     ng-hide="hideSimpan"></div> -->
             </div>
-            <div class="grid_12">
+            <!-- <div class="grid_12">
                 <span style="margin-left: 5px;font-size: 1rem;">{{ pesenpengingat }}</span>
                 <br />
                 <br />
-            </div>
+            </div> -->
         </div>
         <div kendo-window="popUpHistoriPelayananPeserta" k-title="'Histori Pelayanan Peserta'" k-width="1500"
             k-visible="false" k-on-open="win2visible = true" k-on-close="win2visible = false">

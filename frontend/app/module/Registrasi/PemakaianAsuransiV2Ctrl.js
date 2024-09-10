@@ -1469,7 +1469,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                 });
             };
 
-            $scope.generateSEP = function () {
+            $scope.generateSEP = async function () {
 
                 if (!$scope.model.generateNoSEP) return;
                 if ($scope.item.kelompokPasien.kelompokpasien.toLowerCase().indexOf('umum') > -1) {
@@ -1623,6 +1623,144 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     $scope.isSimpan = true;
                     //##Generate SEP
                     if ($scope.model.noSep == '' || $scope.model.noSep == undefined) {
+                        // kirim antrol sebelum buat sep
+                        if(kdJenisPelayanan == "2" && $scope.item.pasien.kdinternal !== 'UGD' && $scope.item.pasien.kdinternal !== 'IGD') 
+                        {
+                            if(!$scope.model.DPJPMelayani) {
+                                $scope.isSimpan = false;
+                                toastr.error("DPJP yang melayani belum diisi !")
+                                return
+                            }
+                            var cekAntrol = {
+                                "url": `antrean/pendaftaran/kodebooking/${$scope.model.kodebooking}`,
+                                "jenis": "antrean",
+                                "method": "GET",
+                                "data": null
+                            }
+                            let resCekAntrol = await medifirstService.postNonMessage('bridging/bpjs/tools', cekAntrol)
+                            if(resCekAntrol.data.metaData.code !== 200){
+                                var jeniskunjungan,nomorreferensi,statuspasien,kodeDokterBPJS;
+                                if($scope.model.statuspasien == 'BARU'){ statuspasien = '1'; } 
+                                else { statuspasien = '0'; }
+
+                                let pilihan = $scope.model.asalRujukan.toString()
+                                switch (pilihan) {
+                                    case "1":
+                                        jeniskunjungan = 1
+                                        nomorreferensi = $scope.model.noRujukan === undefined ? "" : $scope.model.noRujukan
+                                        if($scope.model.skdp) { 
+                                            jeniskunjungan = 3
+                                            nomorreferensi = $scope.model.skdp
+                                        }
+                                        break;
+                                    case "2":
+                                        jeniskunjungan = 4
+                                        nomorreferensi = $scope.model.noRujukan === undefined ? "" : $scope.model.noRujukan
+                                        if($scope.model.skdp) { 
+                                            jeniskunjungan = 3
+                                            nomorreferensi = $scope.model.skdp
+                                        }
+                                        break;
+                                    case "7":
+                                        jeniskunjungan = 3
+                                        nomorreferensi = $scope.model.noRujukan === undefined ? "" : $scope.model.noRujukan
+                                        break;
+                                }
+
+                                if ($scope.poliRujukanKode != undefined && $scope.item.pasien.kdinternal != $scope.poliRujukanKode) {
+                                    jeniskunjungan = 2
+                                    nomorreferensi = $scope.model.noRujukan === undefined ? "" : $scope.model.noRujukan
+                                }
+
+                                var json  = {
+                                    "url": "jadwaldokter/kodepoli/"+ poliTujuans +"/tanggal/"+ moment($scope.item.tglRegistrasi).format('YYYY-MM-DD'),
+                                    "jenis": "antrean",
+                                    "method": "GET",
+                                    "data": null
+                                }
+                                let resJadwalDokter = await medifirstService.postNonMessage('bridging/bpjs/tools', json)
+                                if(resJadwalDokter.data.metaData.code == 200){
+                                    for (var i = resJadwalDokter.data.response.length - 1; i >= 0; i--) {
+                                        const element = resJadwalDokter.data.response[i]
+                                        const dokternya =  $scope.model.DPJPMelayani ? $scope.model.DPJPMelayani.kode : ""
+                                        if(element.kodedokter == dokternya){
+                                            kodeDokterBPJS = {
+                                                "jadwal" : element.jadwal,
+                                                "namadokter" : element.namadokter,
+                                                "kodedokter" : element.kodedokter,
+                                                "kapasitaspasien": element.kapasitaspasien,
+                                            }
+                                            break;
+                                        }
+                                    }
+                                }
+
+                                var sisakuotajkn = 0;
+                                for (let i = 0; i < $scope.totalPasienBPJSRajal.length; i++) {
+                                    const element = $scope.totalPasienBPJSRajal[i];
+                                    if(kodeDokterBPJS) {
+                                        if(kodeDokterBPJS.kodedokter == element.kddokterbpjs) {
+                                            sisakuotajkn = kodeDokterBPJS.kapasitaspasien - element.pasienterdaftar
+                                        }
+                                    }
+                                }
+                                var sisakuotanonjkn = 0;
+                                for (let i = 0; i < $scope.totalPasienUmumRajal.length; i++) {
+                                    const element = $scope.totalPasienUmumRajal[i];
+                                    if(kodeDokterBPJS) {
+                                        if(kodeDokterBPJS.kodedokter == element.kddokterbpjs) {
+                                            sisakuotanonjkn = kodeDokterBPJS.kapasitaspasien - element.pasienterdaftar
+                                        }
+                                    }
+                                }
+
+                                var jsonAntrol = {
+                                    "url": "antrean/add",
+                                    "jenis": "antrean",
+                                    "method": "POST",
+                                    "data": {
+                                        "kodebooking": $scope.model.kodebooking,
+                                        "jenispasien": "JKN",
+                                        "nomorkartu": noKartu,
+                                        "nik": $scope.model.noIdentitas,
+                                        "nohp": $scope.model.noTelpons,
+                                        "kodepoli": poliTujuans,
+                                        "namapoli": $scope.item.pasien.namaruangan,
+                                        "pasienbaru": statuspasien,
+                                        "norm": $scope.item.pasien.nocm,
+                                        "tanggalperiksa": moment($scope.item.pasien.tglregistrasi).format('YYYY-MM-DD'),
+                                        "kodedokter": kodeDokterBPJS ? kodeDokterBPJS.kodedokter : "",
+                                        "namadokter": kodeDokterBPJS ? kodeDokterBPJS.namadokter : "", 
+                                        "jampraktek": kodeDokterBPJS ? kodeDokterBPJS.jadwal : "",  
+                                        "jeniskunjungan": jeniskunjungan,
+                                        "nomorreferensi": nomorreferensi,
+                                        "nomorantrean": $scope.model.noantrian,
+                                        "angkaantrean": $scope.model.noantrian,
+                                        "estimasidilayani": new Date().getTime(),
+                                        "sisakuotajkn": sisakuotajkn,
+                                        "kuotajkn": kodeDokterBPJS ? kodeDokterBPJS.kapasitaspasien : 0,
+                                        "sisakuotanonjkn": sisakuotanonjkn,
+                                        "kuotanonjkn": kodeDokterBPJS ? kodeDokterBPJS.kapasitaspasien : 0,
+                                        "keterangan": ""
+                                    }
+                                }
+                                let resTambahAntrean = await medifirstService.postNonMessage('bridging/bpjs/tools', jsonAntrol)
+                                if(resTambahAntrean.data.metaData.code == 200){
+                                    $scope.saveLogging('Antrol Task ID', 'norec Pasien Daftar',
+                                    $scope.item.pasien.noregistrasi, 'Tambah Antrean Kode ' + $scope.item.pasien.noregistrasi +' | '+
+                                    JSON.stringify(jsonAntrol) + ' | '+ JSON.stringify(resTambahAntrean.data))
+
+                                    // kirim taks id
+                                    medifirstService.get('rawatjalan/get-monitoring-taskid?taskid=3&norec_pd=' + $scope.currentNorecPD).then(function (res) {
+                                        updateWaktuId(res, $scope.model.kodebooking, $scope.currentNorecPD)
+                                    })
+
+                                } else {
+                                    toastr.error(resTambahAntrean.data.metaData.message,'Peringatan Kirim Antrian Online')
+                                    return
+                                }
+                            }
+                        }
                         var dataSend = {
                             "url": "SEP/2.0/insert",
                             "method": "POST",
@@ -1793,7 +1931,6 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
 
             $scope.SimpanNonGenerate = function (statusCreateSep) {
 
-                saveMonitoringTaksId($scope.currentNorecPD, 3, new Date().getTime(), false);
                 $scope.hideBtnSimpan = true
                 var noasuransi = "";
                 if ($scope.model.noKepesertaan == undefined) {
@@ -2047,9 +2184,9 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     $scope.isKembali = true;
 
                     // kirim taks id
-                    medifirstService.get('rawatjalan/get-monitoring-taskid?taskid=3&norec_pd=' + $scope.currentNorecPD).then(function (res) {
-                        updateWaktuId(res, $scope.model.kodebooking, $scope.currentNorecPD)
-                    })
+                    // medifirstService.get('rawatjalan/get-monitoring-taskid?taskid=3&norec_pd=' + $scope.currentNorecPD).then(function (res) {
+                    //     updateWaktuId(res, $scope.model.kodebooking, $scope.currentNorecPD)
+                    // })
 
                     var cachePasienDaftars = $scope.resultPA.objectasuransipasienfk
                         + "~" + $scope.resultPA.norec
@@ -2079,6 +2216,7 @@ define(['initialize', 'Configuration'], function (initialize, configuration) {
                     $scope.model.statuskunjungan = 2
                 }
 
+                saveMonitoringTaksId($scope.currentNorecPD, 3, new Date().getTime(), false);
 
                 if ($scope.model.generateNoSEP) {
 
