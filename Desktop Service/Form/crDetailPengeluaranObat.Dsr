@@ -12,3 +12,6 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 
+Private Sub Section8_Format(ByVal pFormattingInfo As Object)
+
+End Sub
