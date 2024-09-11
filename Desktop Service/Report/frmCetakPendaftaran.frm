@@ -1,6 +1,6 @@
 VERSION 5.00
 Object = "{C4847593-972C-11D0-9567-00A0C9273C2A}#8.0#0"; "crviewer.dll"
-Object = "{248DD890-BB45-11CF-9ABC-0080C7E7B78D}#1.0#0"; "mswinsck.ocx"
+Object = "{248DD890-BB45-11CF-9ABC-0080C7E7B78D}#1.0#0"; "MSWINSCK.ocx"
 Begin VB.Form frmCetakPendaftaran 
    Caption         =   "Transmedic"
    ClientHeight    =   7005
@@ -424,7 +424,8 @@ Dim namaRs As String
                     "CASE WHEN ap.alamatlengkap ILIKE'%kec.%' OR ap.alamatlengkap ILIKE'%kab.%' OR ap.alamatlengkap ILIKE'%kel.%' THEN " & _
                     "ap.alamatlengkap ELSE ap.alamatlengkap || ' - Kel. ' || ap.namadesakelurahan || ' - Kec. ' || ap.namakecamatan || ' - ' || ap.namakotakabupaten END AS alamatlengkap,ap.mobilephone2,ru.namaruangan AS ruanganPeriksa,pp.namalengkap AS namadokter,kp.kelompokpasien,apdp.noantrian,pd.statuspasien,apr.noreservasi,apr.tanggalreservasi " & _
                     "from pasiendaftar_t pd INNER JOIN pasien_m ps ON pd.nocmfk = ps.ID LEFT JOIN alamat_m ap ON ap.nocmfk = ps.ID INNER JOIN jeniskelamin_m jk ON ps.objectjeniskelaminfk = jk.ID INNER JOIN ruangan_m ru ON pd.objectruanganlastfk = ru.ID LEFT JOIN pegawai_m pp ON pd.objectpegawaifk = pp.ID INNER JOIN kelompokpasien_m kp ON pd.objectkelompokpasienlastfk = kp.ID INNER JOIN antrianpasiendiperiksa_t apdp ON apdp.noregistrasifk = pd.norec LEFT JOIN antrianpasienregistrasi_t AS apr ON apr.noreservasi = pd.statusschedule " & _
-                    "WHERE pd.noregistrasi = '" & strNorec & "')as x"
+                    "WHERE pd.noregistrasi = '" & strNorec & "' )as x ORDER BY x.noantrian DESC"
+    limit 1"
                      
             adoReport.CommandText = strSQL
             adoReport.CommandType = adCmdUnknown
@@ -2935,7 +2936,7 @@ boolGelangPasienBayi = False
                        " left JOIN kamar_m as kmr on apdp.objectkamarfk=kmr.id " & _
                        " INNER join ruangan_m  as ru2 on ru2.id=apdp.objectruanganfk " & _
                        " LEFT JOIN pegawai_m as pg1 on pg1.id = pd.objectpegawaifk " & _
-                       " LEFT JOIN alamat_m as alm on alm.nocmfk = ps.id " & _
+                       " LEFT JOIN alamat_m as alm on alm.nocmfk = ps.id and objectjenisalamatfk = 1 " & _
                        " where tp.norec  in (" & norec_apc & ") and pro.id <> 402611  " & StrFilter
             
             ReadRs strSQL

@@ -1,9 +1,9 @@
 VERSION 5.00
 Begin {BD4B4E61-F7B8-11D0-964D-00A0C9273C2A} Cr_cetakLabelTracer 
-   ClientHeight    =   2880
+   ClientHeight    =   13920
    ClientLeft      =   0
    ClientTop       =   0
-   ClientWidth     =   2880
+   ClientWidth     =   25275
    OleObjectBlob   =   "Cr_cetakLabelTracer.dsx":0000
 End
 Attribute VB_Name = "Cr_cetakLabelTracer"
